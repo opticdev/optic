@@ -1,0 +1,3 @@
+package compiler
+
+trait Compilable
