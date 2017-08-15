@@ -14,6 +14,14 @@ object Schema extends Description[Schema] {
     }
   }
 
+  implicit val schemaReads: Reads[Schema] = (json: JsValue) => {
+    if (json.isInstanceOf[JsObject]) {
+      JsSuccess(Schema(json.as[JsObject]))
+    } else {
+      JsError(error = "Schema must be an object")
+    }
+  }
+
   private val validatorFactory = JsonSchemaFactory.newBuilder().freeze()
 
   def schemaObjectfromJson(schema: JsObject): JsonSchema = {

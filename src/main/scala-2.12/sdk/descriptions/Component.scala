@@ -4,10 +4,12 @@ import sdk.descriptions.helpers.{EnumReader, ParsableEnum}
 
 object Component extends Description[Component] {
 
-  private implicit val componentReads: Reads[Component] = Json.reads[Component]
-
   private implicit val typesReads: Reads[Types.Value] = EnumReader.forEnum(Types)
   private implicit val codeTypesReads: Reads[CodeTypes.Value] = EnumReader.forEnum(CodeTypes)
+  private implicit val finderReads = Finder.finderReads
+  private implicit val optionsReads = ComponentOptions.componentOptionsReads
+
+  private implicit val componentReads: Reads[Component] = Json.reads[Component]
 
   object Types extends ParsableEnum {
     val Code, Schema = Value
@@ -29,11 +31,10 @@ object Component extends Description[Component] {
   }
 }
 
-case class Component(`type`: Component.Types.Value,
+case class Component(
+                     `type`: Component.Types.Value,
                      codeType: Component.CodeTypes.Value,
-                     propertyPath: String
-//                     finder: Object
-//                     pathObject: Object,
-//                     options: Object
-
+                     propertyPath: String,
+                     finder: Finder,
+                     options: ComponentOptions
                     )

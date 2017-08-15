@@ -11,22 +11,20 @@ class SdkComponentTest extends FunSpec {
                       "type": "code",
                       "codeType": "token",
                       "finder": {
-                        "asJson": {
                         "type": "string",
                         "rule": "entire",
                         "string": "definedAs",
                         "occurrence": 0
-                      }
                       },
                       "propertyPath": "definedAs",
                       "pathObject": {
-                      "type": "string"
+                        "type": "string"
                       },
                       "options": {
-                      "lookupTable": null,
-                      "invariant": false,
-                      "parser": null,
-                      "mutator": null
+                        "lookupTable": null,
+                        "invariant": false,
+                        "parser": null,
+                        "mutator": null
                       }
                       }"""
 
@@ -37,13 +35,20 @@ class SdkComponentTest extends FunSpec {
         Component.fromJson(Json.parse(validJson))
       }
       it("for invalid json") {
-        assertThrows[Error] {
-//          Component.fromJson(Json.parse(invalidSnippetMissingFields))
-        }
+
+        val invalidJson = """{
+                      "type": "not-real",
+                      "codeType": "wrong",
+                      "finder": [],
+                      "propertyPath": 43,
+                      "options": { }
+                      }"""
+
 
         assertThrows[Error] {
-//          Component.fromJson(Json.parse(invalidSnippetTypeIssues))
+          Component.fromJson(Json.parse(invalidJson))
         }
+
       }
     }
 

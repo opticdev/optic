@@ -6,7 +6,7 @@ import Snippet.snippetReads
 
 object Lens extends Description[Lens] {
 
-  private implicit val lensReads = Json.reads[Lens]
+  implicit val lensReads = Json.reads[Lens]
 
   override def fromJson(jsValue: JsValue): Lens = {
 

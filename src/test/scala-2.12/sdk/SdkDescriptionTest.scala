@@ -16,6 +16,7 @@ class SdkDescriptionTest extends FunSpec {
         it("finds all schemas") {
           val description = SdkDescription.fromJson(Json.parse(jsonString))
           assert(description.schemas.size === 1)
+          assert(description.lenses.size === 1)
         }
 
       }

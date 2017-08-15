@@ -16,6 +16,16 @@ object Finder extends Description[Finder] {
   private implicit val nodeFinderReads : Reads[NodeFinder] = Json.reads[NodeFinder]
 
 
+  val finderReads = new Reads[Finder] {
+    override def reads(json: JsValue): JsResult[Finder] = {
+      try {
+        JsSuccess(Finder.fromJson(json))
+      } catch {
+        case _=> JsError()
+      }
+    }
+  }
+
   override def fromJson(jsValue: JsValue): Finder = {
     val finderType = (jsValue \ "type")
 

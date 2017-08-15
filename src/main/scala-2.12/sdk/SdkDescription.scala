@@ -1,21 +1,30 @@
 package sdk
 
-import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
-import sdk.descriptions.Schema
+import play.api.libs.json._
+import sdk.descriptions.{Lens, Schema}
 
 object SdkDescription {
+
+  private implicit val schemaMapReads = new Reads[Vector[Schema]] {
+    override def reads(json: JsValue): JsResult[Vector[Schema]] = {
+      val asObject = json.as[JsObject]
+      val schemasJson = asObject.value.map(_._2)
+      val asSchemas = schemasJson.map(Schema.fromJson)
+      JsSuccess(asSchemas.toVector)
+    }
+  }
+  private implicit val lensReads = Lens.lensReads
+
+  private implicit val descriptionReads: Reads[SdkDescription] = Json.reads[SdkDescription]
+
   def fromJson(jsValue: JsValue): SdkDescription = {
-    try {
-      val schemasJson = (jsValue \ "schemas").get.as[JsObject]
-      val schemas = schemasJson.value.values.map(i=> new Schema(i.as[JsObject])).toVector
-
-      val lensesJson = (jsValue \ "lenses").get.as[JsArray]
-
-      SdkDescription(schemas)
-    } catch {
-      case _=> throw new Error("Invalid Sdk Description")
+    val description: JsResult[SdkDescription] = Json.fromJson[SdkDescription](jsValue)
+    if (description.isSuccess) {
+      description.get
+    } else {
+      throw new Error("Description Parsing Failed "+description)
     }
   }
 }
 
-case class SdkDescription(schemas: Vector[Schema])
+case class SdkDescription(schemas: Vector[Schema], lenses: Vector[Lens])
