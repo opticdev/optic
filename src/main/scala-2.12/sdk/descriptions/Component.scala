@@ -6,10 +6,13 @@ object Component extends Description[Component] {
 
   private implicit val typesReads: Reads[Types.Value] = EnumReader.forEnum(Types)
   private implicit val codeTypesReads: Reads[CodeTypes.Value] = EnumReader.forEnum(CodeTypes)
-  private implicit val finderReads = Finder.finderReads
-  private implicit val optionsReads = ComponentOptions.componentOptionsReads
 
-  private implicit val componentReads: Reads[Component] = Json.reads[Component]
+  implicit val componentReads: Reads[Component] = {
+    import Finder._
+    import ComponentOptions._
+
+    Json.reads[Component]
+  }
 
   object Types extends ParsableEnum {
     val Code, Schema = Value
@@ -22,6 +25,7 @@ object Component extends Description[Component] {
   }
 
   override def fromJson(jsValue: JsValue): Component = {
+
     val component: JsResult[Component] = Json.fromJson[Component](jsValue)
     if (component.isSuccess) {
       component.get

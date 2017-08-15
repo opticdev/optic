@@ -3,7 +3,7 @@ package sdk.descriptions.helpers
 import play.api.libs.json.{JsString, JsSuccess, _}
 
 object LookupTable {
-  val reads = new Reads[Map[String, Vector[String]]] {
+  implicit val reads = new Reads[Map[String, Vector[String]]] {
     override def reads(json: JsValue): JsResult[Map[String, Vector[String]]] = {
       if (json == JsNull) {
         JsSuccess(null)

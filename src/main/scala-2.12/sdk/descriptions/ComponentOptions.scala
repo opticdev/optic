@@ -9,9 +9,6 @@ import play.api.libs.functional.syntax._
 
 object ComponentOptions extends Description[ComponentOptions] {
 
-  private implicit val lookupTableReads = LookupTable.reads
-
-
   implicit val componentOptionsReads: Reads[ComponentOptions] = (
       (JsPath \ "invariant").read[Boolean] and
       (JsPath \ "lookupTable").readNullable[ Map[String, Vector[String]] ] and
@@ -20,6 +17,9 @@ object ComponentOptions extends Description[ComponentOptions] {
     )(ComponentOptions.apply _)
 
   override def fromJson(jsValue: JsValue): ComponentOptions = {
+
+    import LookupTable._
+
     val options: JsResult[ComponentOptions] = Json.fromJson[ComponentOptions](jsValue)
     if (options.isSuccess) {
       options.get

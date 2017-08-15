@@ -27,6 +27,27 @@ class SdkSchemaTest extends FunSpec {
         "exported": true
       }""").as[JsObject]
 
+
+  val validAltSchema = Json.parse("""{
+        "title": "importOther",
+        "version": "1.0.0",
+        "slug": "js-import",
+        "type": "object",
+        "required": [
+          "pathTo",
+          "definedAs"
+        ],
+        "properties": {
+          "otherPathTo": {
+            "type": "string"
+          },
+          "otherDefinedAs": {
+            "type": "string"
+          }
+        },
+        "exported": true
+      }""").as[JsObject]
+
   val invalidTestSchema = Json.parse("""{
         "title": "import",
         "type": "not-real"
@@ -106,7 +127,7 @@ class SdkSchemaTest extends FunSpec {
       }
 
       it("unequal schemas are different") {
-        assert(Schema(validTestSchema) != Schema(invalidTestSchema))
+        assert(Schema(validTestSchema) != Schema(validAltSchema))
       }
     }
 

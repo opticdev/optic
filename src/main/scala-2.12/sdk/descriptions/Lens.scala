@@ -1,17 +1,19 @@
 package sdk.descriptions
 
 import play.api.libs.json.{JsResult, JsValue, Json, Reads}
-import Schema.schemaIdReads
-import Snippet.snippetReads
+
 
 object Lens extends Description[Lens] {
 
-  implicit val lensReads = Json.reads[Lens]
+  implicit val lensReads = {
+    import Schema._
+    import Snippet._
+    import Component._
+
+    Json.reads[Lens]
+  }
 
   override def fromJson(jsValue: JsValue): Lens = {
-
-    implicit val schemaReads: Reads[SchemaId] = schemaIdReads
-    implicit val snippetReds: Reads[Snippet] = snippetReads
 
     val lens: JsResult[Lens] = Json.fromJson[Lens](jsValue)
 
@@ -25,7 +27,8 @@ object Lens extends Description[Lens] {
 
 case class Lens(name: String,
                 schema: SchemaId,
-                snippet: Snippet
+                snippet: Snippet,
+               //@todo implement rules
 //                rules: Vector[String],
-//                components: Vector[String]
+                components: Vector[Component]
                )

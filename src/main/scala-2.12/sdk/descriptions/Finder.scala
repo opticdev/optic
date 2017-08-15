@@ -16,7 +16,7 @@ object Finder extends Description[Finder] {
   private implicit val nodeFinderReads : Reads[NodeFinder] = Json.reads[NodeFinder]
 
 
-  val finderReads = new Reads[Finder] {
+  implicit val finderReads = new Reads[Finder] {
     override def reads(json: JsValue): JsResult[Finder] = {
       try {
         JsSuccess(Finder.fromJson(json))
