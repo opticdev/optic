@@ -56,6 +56,6 @@ case class Schema(schema: JsObject) {
 }
 
 case class SchemaId(id: String) {
-  //@todo impliment provider lookup
+  //@todo implement provider lookup
   def resolve : Schema = null
 }

@@ -35,7 +35,7 @@ object SourceParserManager {
     }).toMap
   }
 
-  private def parserByLanguageName(lang: String): Option[ParserBase] = {
+  def parserByLanguageName(lang: String): Option[ParserBase] = {
     parsers.find(_.languageName == lang)
   }
 
@@ -43,6 +43,7 @@ object SourceParserManager {
     parsers = parsers.filterNot(_==instance)
     generateSignature()
   }
+
 
   def clearParsers = parsers = Set()
 

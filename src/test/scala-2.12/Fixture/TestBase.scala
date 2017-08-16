@@ -77,7 +77,7 @@ class TestBase extends FunSpec with BeforeAndAfterAll {
 
   def start = {
     PreTest.run
-    SourceParserManager.installParser("~/Developer/knack/parsers/javascript-lang/out/artifacts/javascript_lang_jar/javascript-lang.jar")
+    SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/out/artifacts/javascript_lang_jar/javascript-lang.jar")
     provider.clearAll
   }
 
