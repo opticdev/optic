@@ -1,5 +1,6 @@
 package sdk.descriptions
 import play.api.libs.json._
+import sdk.descriptions.Finders.Finder
 import sdk.descriptions.helpers.{EnumReader, ParsableEnum}
 
 object Component extends Description[Component] {

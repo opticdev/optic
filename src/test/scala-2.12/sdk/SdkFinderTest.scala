@@ -2,6 +2,7 @@ package sdk
 
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
+import sdk.descriptions.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
 import sdk.descriptions._
 
 class SdkFinderTest extends FunSpec {

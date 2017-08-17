@@ -30,11 +30,11 @@ object Compiler {
     }
   }
 
-  class CompileWorker(lens: Lens) {
+  class CompileWorker(sourceLens: Lens) {
     def compile()(implicit schemas: Vector[Schema], lenses: Vector[Lens], completed: ListBuffer[Output], errorAccumulator: ErrorAccumulator = new ErrorAccumulator): Output = {
-
+      implicit val lens = sourceLens
       //Find the right parser and snippets into an AST Tree Graph
-      val snippetBuilder = new SnippetBuilder(lens, lens.snippet)
+      val snippetBuilder = new SnippetBuilder(lens.snippet)
       val snippetOutput = Try(snippetBuilder.run)
 
 

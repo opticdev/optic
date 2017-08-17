@@ -18,11 +18,7 @@ class FinderTest extends TestBase {
 
       val parsed = SourceParserManager.parseString(template, "Javascript")
 
-      println(parsed)
-
       val node = FinderEvaluator.find(template, parsed._1, parsed._2, stringFinder)
-
-      println(node)
 
       //found a hit
       it("Can be constructed") {

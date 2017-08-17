@@ -1,6 +1,12 @@
-package sdk.descriptions
+package sdk.descriptions.Finders
+
+import cognitro.parsers.GraphUtils.AstPrimitiveNode
+import compiler_new.SnippetStageOutput
 import play.api.libs.json._
+import sdk.descriptions.{Description, Lens}
 import sdk.descriptions.helpers.{EnumReader, ParsableEnum}
+
+import scala.util.control.Breaks._
 
 object Finder extends Description[Finder] {
 
@@ -51,10 +57,6 @@ object Finder extends Description[Finder] {
 }
 
 
-trait Finder
-
-case class StringFinder(rule: Finder.StringRules.Value, string: String, occurrence: Int) extends Finder
-
-case class RangeFinder(start: Int, end: Int) extends Finder
-
-case class NodeFinder(enterOn: String, block: String) extends Finder
+trait Finder {
+  def evaluateFinder(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode
+}
