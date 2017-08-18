@@ -1,10 +1,10 @@
 package sdk.Finders
 
 import Fixture.TestBase
-import cognitro.parsers.GraphUtils.AstType
+import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType}
 import compiler_new.SnippetStageOutput
 import compiler_new.errors.{NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
-import compiler_new.stages.SnippetBuilder
+import compiler_new.stages.SnippetStage
 import sdk.descriptions.Finders.Finder.StringRules
 import sdk.descriptions.Finders.{RangeFinder, StringFinder}
 import sdk.descriptions.{Lens, Snippet}
@@ -14,7 +14,7 @@ class FinderEvaluationTest extends TestBase {
   val block = "var hello = require('world'); var next = hello+1"
   implicit val lens : Lens = Lens("Example", null, Snippet("Testing", "Javascript", "es6", block), null)
 
-  val snippetBuilder = new SnippetBuilder(lens.snippet)
+  val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run
 
   describe("Finder evaluation") {
@@ -107,6 +107,30 @@ class FinderEvaluationTest extends TestBase {
         val result = rangeFinder.evaluateFinder(snippetStageOutput)
         assert(result.nodeType == AstType("Identifier", "Javascript"))
         assert(result.range == (4, 9))
+      }
+
+    }
+
+    describe("with path finder") {
+
+      describe("can find the right path for ") {
+        val rangeFinder = RangeFinder(4,9)
+        val finderPath = rangeFinder.evaluateFinderPath(snippetStageOutput)
+
+        it("root node") {
+          val path = finderPath.fromNode(snippetStageOutput.rootNode)
+          assert(path.isDefined)
+          assert(path.get.childPath.size == 3)
+        }
+
+        it("parent node") {
+          implicit val graph = finderPath.astGraph
+          val parent = finderPath.targetNode.dependencies.head
+          val path = finderPath.fromNode(parent.asInstanceOf[AstPrimitiveNode])
+          assert(path.isDefined)
+          assert(path.get.childPath.size == 1)
+        }
+
       }
 
     }

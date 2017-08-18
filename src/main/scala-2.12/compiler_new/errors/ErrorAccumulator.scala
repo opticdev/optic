@@ -3,7 +3,7 @@ package compiler_new.errors
 import scala.collection.mutable.ListBuffer
 
 class ErrorAccumulator {
-  private val list = ListBuffer[CompilerError]()
+  private val list = ListBuffer[Throwable]()
   def clear = list.clear()
-  def add(compilerError: CompilerError): Unit = list += compilerError
+  def add(compilerError: Throwable): Unit = list += compilerError
 }

@@ -29,7 +29,7 @@ object ComponentOptions extends Description[ComponentOptions] {
   }
 }
 
-case class ComponentOptions(invariant: Boolean,
-                            lookupTable: Option[Map[String, Vector[String]]],
-                            parser: Option[String],
-                            mutator: Option[String])
+case class ComponentOptions(invariant: Boolean = false,
+                            lookupTable: Option[Map[String, Vector[String]]] = None,
+                            parser: Option[String] = None,
+                            mutator: Option[String] = None)

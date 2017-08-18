@@ -10,7 +10,7 @@ import sourceparsers.SourceParserManager
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-class SnippetBuilder(snippet: Snippet)(implicit lens: Lens) {
+class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[SnippetStageOutput] {
 
   def run : SnippetStageOutput = {
     val parser = getParser()

@@ -1,12 +1,15 @@
 package sdk.descriptions.Finders
 
-import cognitro.parsers.GraphUtils.AstPrimitiveNode
+import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
+import cognitro.parsers.GraphUtils.Path.{PathFinder, WalkablePath}
 import compiler_new.SnippetStageOutput
 import play.api.libs.json._
 import sdk.descriptions.{Description, Lens}
 import sdk.descriptions.helpers.{EnumReader, ParsableEnum}
 
 import scala.util.control.Breaks._
+import scalax.collection.edge.LkDiEdge
+import scalax.collection.mutable.Graph
 
 object Finder extends Description[Finder] {
 
@@ -57,6 +60,22 @@ object Finder extends Description[Finder] {
 }
 
 
+abstract class FinderPath {
+  val targetNode: AstPrimitiveNode
+  val astGraph : Graph[BaseNode, LkDiEdge]
+  def fromNode(astPrimitiveNode: AstPrimitiveNode) : Option[WalkablePath]
+}
+
 trait Finder {
   def evaluateFinder(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode
+  def evaluateFinderPath(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : FinderPath = {
+    val result = evaluateFinder(snippetStageOutput)
+    new FinderPath {
+      override def fromNode(root: AstPrimitiveNode): Option[WalkablePath] =
+        PathFinder.getPath(snippetStageOutput.astGraph, root, result)
+
+      override val targetNode: AstPrimitiveNode = result
+      override val astGraph : Graph[BaseNode, LkDiEdge] = snippetStageOutput.astGraph
+    }
+  }
 }

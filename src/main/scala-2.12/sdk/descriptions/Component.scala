@@ -41,5 +41,5 @@ case class Component(
                      codeType: Component.CodeTypes.Value,
                      propertyPath: String,
                      finder: Finder,
-                     options: ComponentOptions
+                     options: ComponentOptions = ComponentOptions()
                     )

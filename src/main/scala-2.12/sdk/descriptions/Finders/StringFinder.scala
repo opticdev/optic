@@ -12,15 +12,15 @@ case class StringFinder(rule: Finder.StringRules.Value, string: String, occurren
 
     val regex = string.r
 
-    val matches = regex.findAllMatchIn(snippetStageOutput.raw.block).toVector
+    val matches = regex.findAllMatchIn(snippetStageOutput.snippet.block).toVector
 
     //not found at all
-    if (matches.size == 0) throw new StringNotFound(this)
+    if (matches.size == 0) throw StringNotFound(this)
 
     val matchOption = matches.lift(occurrence)
 
     //occurrence not found
-    if (matchOption.isEmpty) throw new StringOccurrenceOutOfBounds(this, matches.size)
+    if (matchOption.isEmpty) throw StringOccurrenceOutOfBounds(this, matches.size)
 
     val (start, end) = (matchOption.get.start, matchOption.get.end)
 
@@ -36,7 +36,7 @@ case class StringFinder(rule: Finder.StringRules.Value, string: String, occurren
 
         val nodeOption = containingNodes.lastOption
 
-        if (nodeOption.isEmpty) throw new NodeContainingStringNotFound(this)
+        if (nodeOption.isEmpty) throw NodeContainingStringNotFound(this)
         else nodeOption.get.value.asInstanceOf[AstPrimitiveNode]
       }
 
@@ -48,7 +48,7 @@ case class StringFinder(rule: Finder.StringRules.Value, string: String, occurren
 
         val nodeOption = containingNodes.lastOption
 
-        if (nodeOption.isEmpty) throw new NodeStartingWithStringNotFound(this)
+        if (nodeOption.isEmpty) throw NodeStartingWithStringNotFound(this)
         else nodeOption.get.value.asInstanceOf[AstPrimitiveNode]
       }
     }

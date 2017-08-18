@@ -3,34 +3,34 @@ package compiler.stages
 import Fixture.TestBase
 import cognitro.parsers.GraphUtils.AstType
 import compiler_new.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
-import compiler_new.stages.{MatchType, SnippetBuilder}
+import compiler_new.stages.{MatchType, SnippetStage}
 import org.scalatest.{FunSpec, PrivateMethodTester}
 import sdk.descriptions.{Lens, Snippet}
 import sourceparsers.SourceParserManager
 
 import scala.util.Try
 
-class SnippetBuilderStageTest extends TestBase with PrivateMethodTester {
+class SnippetStageTest extends TestBase with PrivateMethodTester {
 
 
-  implicit val lens : Lens = Lens(name= "Example", null, null, null)
+  implicit val lens : Lens = Lens("Example", null, null, null)
 
-  describe("Snippet Builder Stage") {
+  describe("Snippet Stage") {
 
     describe("constructor") {
       it("accepts a valid snippet") {
-        new SnippetBuilder(Snippet("Testing", "Javascript", "es6", "function add (a, b) { a+b }"))
+        new SnippetStage(Snippet("Testing", "Javascript", "es6", "function add (a, b) { a+b }"))
       }
     }
 
     describe("Finds the correct parser") {
       it("when it exists") {
-        val snippetBuilder = new SnippetBuilder(Snippet("Testing", "Javascript", "es6", "function add (a, b) { a+b }"))
+        val snippetBuilder = new SnippetStage(Snippet("Testing", "Javascript", "es6", "function add (a, b) { a+b }"))
         assert(snippetBuilder.getParser().languageName == "Javascript")
       }
 
       it("fails when it does not") {
-        val snippetBuilder = new SnippetBuilder(Snippet("Testing", "MadeUp", "0.0.1", "YO"))
+        val snippetBuilder = new SnippetStage(Snippet("Testing", "MadeUp", "0.0.1", "YO"))
         assertThrows[ParserNotFound] {
           snippetBuilder.getParser()
         }
@@ -39,13 +39,13 @@ class SnippetBuilderStageTest extends TestBase with PrivateMethodTester {
 
     describe("parses snippet") {
       it("if it is valid") {
-        val snippetBuilder = new SnippetBuilder(Snippet("Testing", "Javascript", "es6", "function add (a, b) { a+b }"))
+        val snippetBuilder = new SnippetStage(Snippet("Testing", "Javascript", "es6", "function add (a, b) { a+b }"))
         snippetBuilder.buildAstTree()
       }
 
       it("fails on snippet errors") {
         assertThrows[SyntaxError] {
-          val snippetBuilder = new SnippetBuilder(Snippet("Testing", "Javascript", "es6", "function whoops { a+b }"))
+          val snippetBuilder = new SnippetStage(Snippet("Testing", "Javascript", "es6", "function whoops { a+b }"))
           snippetBuilder.buildAstTree()
         }
       }
@@ -55,7 +55,7 @@ class SnippetBuilderStageTest extends TestBase with PrivateMethodTester {
     describe("calculates valid enterOn and MatchType") {
 
       def parseResult(codeBlock: String) = {
-        val snippetBuilder = new SnippetBuilder(Snippet("Testing", "Javascript", "es6", codeBlock))
+        val snippetBuilder = new SnippetStage(Snippet("Testing", "Javascript", "es6", codeBlock))
 
         val parser = snippetBuilder.getParser()
         val (ast, root) = snippetBuilder.buildAstTree()
@@ -89,7 +89,7 @@ class SnippetBuilderStageTest extends TestBase with PrivateMethodTester {
   }
 
   describe("works end to end") {
-    val snippetBuilder = new SnippetBuilder(Snippet("Testing", "Javascript", "es6", "function add (a, b) { a+b }"))
+    val snippetBuilder = new SnippetStage(Snippet("Testing", "Javascript", "es6", "function add (a, b) { a+b }"))
     val outputTry = Try(snippetBuilder.run)
     assert(outputTry.isSuccess)
   }
