@@ -1,7 +1,7 @@
 package compiler_new
 
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, ChildNode}
-import compiler_new.stages.MatchType
+import compiler_new.stages.{MatchType}
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions.{Component, Snippet}
 
@@ -9,6 +9,10 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
 trait Output
+
+case class ValidationStageOutput(isValid: Boolean,
+                                 missingPaths: Set[String],
+                                 extraPaths: Set[String])
 
 case class SnippetStageOutput(astGraph: Graph[BaseNode, LkDiEdge],
                               rootNode: AstPrimitiveNode,

@@ -6,7 +6,7 @@ import compiler_new.{FinderStageOutput, SnippetStageOutput}
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions.{Component, Lens}
 
-import scala.util.{Failure, Success, Try}
+import scala.util.{Failure, Try}
 
 class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Lens, errorAccumulator: ErrorAccumulator = new ErrorAccumulator) extends CompilerStage[FinderStageOutput] {
   override def run: FinderStageOutput = {

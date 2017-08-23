@@ -1,7 +1,7 @@
 package compiler_new
 
 import compiler_new.errors.{CompilerException, ErrorAccumulator}
-import compiler_new.stages.{FinderStage, SnippetStage}
+import compiler_new.stages.{FinderStage, SnippetStage, ValidationStage}
 import sdk.SdkDescription
 import sdk.descriptions.{Lens, Schema}
 
@@ -33,6 +33,10 @@ object Compiler {
   class CompileWorker(sourceLens: Lens) {
     def compile()(implicit schemas: Vector[Schema], lenses: Vector[Lens], completed: ListBuffer[Output], errorAccumulator: ErrorAccumulator = new ErrorAccumulator): Output = {
       implicit val lens = sourceLens
+
+      //@todo figure out how to make this a warning
+      val validationOutput = new ValidationStage().run
+
       //Find the right parser and snippets into an AST Tree Graph
       val snippetBuilder = new SnippetStage(lens.snippet)
       val snippetOutput = Try(snippetBuilder.run)
@@ -41,6 +45,10 @@ object Compiler {
       if (snippetOutput.isSuccess) {
         val finderStage = new FinderStage(snippetOutput.get)
         val finderStageOutput = Try(finderStage.run)
+
+        if (finderStageOutput.isSuccess) {
+
+        }
 
       }
 

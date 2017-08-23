@@ -51,11 +51,13 @@ case class Schema(schema: JsObject) {
 
   val identifier = name+"^"+version
 
+  def asSchemaId = SchemaId(identifier)
+
   def validate(jsValue: JsValue): Boolean = jsonSchema.validate(jsValue.as[JsonNode]).isSuccess
 
 }
 
 case class SchemaId(id: String) {
-  //@todo implement provider lookup
-  def resolve : Schema = null
+  def resolve(implicit schemas: Vector[Schema]) : Option[Schema] =
+    schemas.find(_.identifier == id)
 }

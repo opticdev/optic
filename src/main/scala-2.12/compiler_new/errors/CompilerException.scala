@@ -2,12 +2,17 @@ package compiler_new.errors
 
 import sdk.descriptions.Finders.RangeFinder
 import sdk.descriptions.Finders.StringFinder
-import sdk.descriptions.{Component, Lens}
+import sdk.descriptions.{Component, Lens, SchemaId}
 
 import scala.util.control.NonFatal
 
 trait CompilerException extends Exception {
   val lens: Lens
+}
+
+//Validation Stage
+case class SchemaNotFound(schemaId: SchemaId)(implicit val lens: Lens) extends CompilerException {
+  override def toString = "The schema "+schemaId.id+" was not found in description"
 }
 
 //Snippet Exception
