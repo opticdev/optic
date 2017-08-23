@@ -1,9 +1,10 @@
 package compiler_new
 
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, ChildNode}
-import compiler_new.stages.{MatchType}
+import compiler_new.stages.MatchType
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions.{Component, Snippet}
+import sourcegear.gears.ParseGear
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -24,3 +25,8 @@ case class SnippetStageOutput(astGraph: Graph[BaseNode, LkDiEdge],
 
 case class FinderStageOutput(snippetStageOutput: SnippetStageOutput,
                              componentFinders: Map[Component, FinderPath])
+
+
+//Source Gear factory output
+
+case class ParserFactoryOutput(parseGear: ParseGear)

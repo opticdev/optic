@@ -1,7 +1,7 @@
 package compiler_new
 
 import compiler_new.errors.{CompilerException, ErrorAccumulator}
-import compiler_new.stages.{FinderStage, SnippetStage, ValidationStage}
+import compiler_new.stages.{FinderStage, ParserFactoryStage, SnippetStage, ValidationStage}
 import sdk.SdkDescription
 import sdk.descriptions.{Lens, Schema}
 
@@ -47,7 +47,9 @@ object Compiler {
         val finderStageOutput = Try(finderStage.run)
 
         if (finderStageOutput.isSuccess) {
-
+          val parser = new ParserFactoryStage(finderStageOutput.get)
+//          val mutater = new ParserFactoryStage()
+//          val generator = new ParserFactoryStage()
         }
 
       }
