@@ -18,7 +18,7 @@ class FinderStageTest extends TestBase {
     val snippetBlock = "var hello = require('world')"
     val snippet = Snippet("Testing", "Javascript", "es6", snippetBlock)
 
-    implicit val lens : Lens = Lens("Example", null, snippet, Vector(
+    implicit val lens : Lens = Lens("Example", null, snippet, Vector(), Vector(
       Component(Code, Token, "definedAs", StringFinder(StringRules.Entire, "hello"))
     ))
     val snippetBuilder = new SnippetStage(snippet)
@@ -27,7 +27,7 @@ class FinderStageTest extends TestBase {
     val finderStage = new FinderStage(outputTry.get)
 
     it("Can find paths for components") {
-      val finderPath = finderStage.pathForComponent(lens.components.head)
+      val finderPath = finderStage.pathForFinder(lens.components.head.finder)
       val targetNode = finderPath.get.targetNode
       assert(targetNode.nodeType == AstType("Identifier", "Javascript"))
     }
@@ -36,19 +36,20 @@ class FinderStageTest extends TestBase {
       val output = finderStage.run
       assert(output.snippetStageOutput == outputTry.get)
       assert(output.componentFinders.size == 1)
+      assert(output.ruleFinders.size == 1)
     }
 
     it("catches errors valid output") {
 
       val brokenComponent = Component(Code, Token, "firstProblem", StringFinder(StringRules.Entire, "not-anywhere"))
 
-      finderStage.pathForComponent(brokenComponent)
+      finderStage.pathForFinder(brokenComponent.finder)
 
     }
 
     describe("error handling") {
 
-      implicit val lens : Lens = Lens("Example", null, snippet, Vector(
+      implicit val lens : Lens = Lens("Example", null, snippet, Vector(), Vector(
         Component(Code, Token, "definedAs", StringFinder(StringRules.Entire, "hello")),
         Component(Code, Token, "firstProblem", StringFinder(StringRules.Entire, "not-anywhere")),
         Component(Code, Token, "nextProblem", StringFinder(StringRules.Entire, "nowhere"))
@@ -57,7 +58,7 @@ class FinderStageTest extends TestBase {
       val finderStage = new FinderStage(outputTry.get)
 
       it("collects exceptions from failed component lookup") {
-        val results = finderStage.pathForComponent(lens.components(1))
+        val results = finderStage.pathForFinder(lens.components(1).finder)
         assert(results.isFailure)
       }
 

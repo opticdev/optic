@@ -13,7 +13,7 @@ import scala.util.Try
 class SnippetStageTest extends TestBase with PrivateMethodTester {
 
 
-  implicit val lens : Lens = Lens("Example", null, null, null)
+  implicit val lens : Lens = Lens("Example", null, null, null, null)
 
   describe("Snippet Stage") {
 

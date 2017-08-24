@@ -53,7 +53,7 @@ object Finder extends Description[Finder] {
       }
 
     } else {
-      throw new Error("Finder Parsing Failed. Invalid Type.")
+      throw new Error("Finder Parsing Failed. Type not provided.")
     }
 
   }

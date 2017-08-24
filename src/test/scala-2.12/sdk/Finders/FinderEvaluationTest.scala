@@ -12,7 +12,7 @@ import sdk.descriptions.{Lens, Snippet}
 class FinderEvaluationTest extends TestBase {
 
   val block = "var hello = require('world'); var next = hello+1"
-  implicit val lens : Lens = Lens("Example", null, Snippet("Testing", "Javascript", "es6", block), null)
+  implicit val lens : Lens = Lens("Example", null, Snippet("Testing", "Javascript", "es6", block), Vector(), null)
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run

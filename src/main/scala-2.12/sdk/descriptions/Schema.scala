@@ -49,7 +49,7 @@ case class Schema(schema: JsObject) {
 
   private val jsonSchema : JsonSchema = Schema.schemaObjectfromJson(schema)
 
-  val identifier = name+"^"+version
+  val identifier = slug+"^"+version
 
   def asSchemaId = SchemaId(identifier)
 

@@ -41,5 +41,22 @@ case class Component(
                      codeType: Component.CodeTypes.Value,
                      propertyPath: String,
                      finder: Finder,
-                     options: ComponentOptions = ComponentOptions()
-                    )
+                     options: ComponentOptions = ComponentOptions()) {
+
+  import Component.Types._
+  import Component.CodeTypes._
+  def rules : Vector[Rule] = `type` match {
+    case Code=> {
+      codeType match {
+        case Literal=> Vector(
+          RawRuleDesc(finder, "ANY")
+        )
+        case Token=>  Vector (
+          RawRuleDesc(finder, "ANY")
+        )
+      }
+    }
+    case _ => Vector()
+  }
+
+}

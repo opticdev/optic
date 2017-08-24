@@ -9,6 +9,7 @@ object Lens extends Description[Lens] {
     import Schema._
     import Snippet._
     import Component._
+    import Rule._
 
     Json.reads[Lens]
   }
@@ -28,7 +29,6 @@ object Lens extends Description[Lens] {
 case class Lens(name: String,
                 schema: SchemaId,
                 snippet: Snippet,
-               //@todo implement rules
-//                rules: Vector[String],
+                rules: Vector[Rule],
                 components: Vector[Component]
                )

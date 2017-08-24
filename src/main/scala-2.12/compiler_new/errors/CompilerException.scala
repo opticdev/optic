@@ -1,7 +1,7 @@
 package compiler_new.errors
 
-import sdk.descriptions.Finders.RangeFinder
-import sdk.descriptions.Finders.StringFinder
+import cognitro.parsers.GraphUtils.AstPrimitiveNode
+import sdk.descriptions.Finders.{FinderPath, RangeFinder, StringFinder}
 import sdk.descriptions.{Component, Lens, SchemaId}
 
 import scala.util.control.NonFatal
@@ -53,4 +53,9 @@ case class NodeWithRangeNotFound(rangeFinder: RangeFinder)(implicit val lens: Le
 //Finder Stage CompilerError
 case class InvalidComponents(invalidComponents: Set[Component])(implicit val lens: Lens) extends CompilerException {
   override def toString = invalidComponents.size+" components were not found in Snippet."
+}
+
+//Walkable Paths Error
+case class AstPathNotFound(finderPath: FinderPath)(implicit val lens: Lens) extends CompilerException {
+  override def toString = "AstPathNotFound to target node. Internal Error. "+finderPath
 }

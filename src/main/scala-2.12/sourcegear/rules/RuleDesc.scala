@@ -15,6 +15,7 @@ trait RuleDesc[I] {
 *
 *
 * */
+
 case class PropertyRule(key: String, value: PropertyRuleValue) extends RuleDesc[JsValue] {
   def evaluate(jsValue: JsValue) : Boolean = value.evaluate(jsValue)
 }

@@ -9,7 +9,7 @@ import scalax.collection.mutable.Graph
 abstract class Gear {
   val enterOn : Set[AstType]
 
-  def matches(entryNode: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge]): parser.MatchResults =
+  def matches(entryNode: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String): parser.MatchResults =
     parser.matches(entryNode)
 
   val parser : ParseGear
