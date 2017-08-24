@@ -10,8 +10,8 @@ import scalax.collection.mutable.Graph
 
 object Rule extends Description[Rule] {
 
-  implicit val rawRule = Json.reads[RawRuleDesc]
-  implicit val propertyRule = Json.reads[PropertyRuleDesc]
+  implicit val rawRule = Json.reads[RawRule]
+  implicit val propertyRule = Json.reads[PropertyRule]
   implicit val childrenRule = Json.reads[ChildrenRule]
 
   implicit val ruleReads = new Reads[Rule] {
@@ -26,13 +26,13 @@ object Rule extends Description[Rule] {
 
   override def fromJson(jsValue: JsValue): Rule = {
 
-    val ruleType = (jsValue \ "type")
+    val ruleType = jsValue \ "type"
 
     if (ruleType.isDefined && ruleType.get.isInstanceOf[JsString]) {
 
       val result: JsResult[Rule] = ruleType.get.as[JsString].value match {
-        case "raw" => Json.fromJson[RawRuleDesc](jsValue)
-        case "property" => Json.fromJson[PropertyRuleDesc](jsValue)
+        case "raw" => Json.fromJson[RawRule](jsValue)
+        case "property" => Json.fromJson[PropertyRule](jsValue)
         case "children" => Json.fromJson[ChildrenRule](jsValue)
         case _ => throw new Error("Rule Parsing Failed. Invalid Type " + ruleType.get)
       }
@@ -52,24 +52,15 @@ object Rule extends Description[Rule] {
 
 trait Rule {
   val finder: Finder
-  def evaluate(node: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) : Boolean = false
   val isRawRule = false
   val isPropertyRule = false
   val isChildrenRule = false
 }
 
-case class RawRuleDesc(finder: Finder, comparator: String, value: String = "") extends Rule {
+case class RawRule(finder: Finder, comparator: String, value: String = "") extends Rule {
   override val isRawRule = true
-  override def evaluate(node: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String): Boolean = {
-    val raw = fileContents.substring(node.range._1, node.range._2)
-    comparator match {
-      case "==" => raw == value
-      case "!=" => raw != value
-      case "ANY" => true
-      case _ => false
-    }
-  }
-
 }
-case class PropertyRuleDesc(finder: Finder, comparator: String, value: String = "") extends Rule
+case class PropertyRule(finder: Finder, key: String, comparator: String, jsValue: JsValue = JsNull) extends Rule {
+  override val isPropertyRule = true
+}
 case class ChildrenRule(finder: Finder) extends Rule

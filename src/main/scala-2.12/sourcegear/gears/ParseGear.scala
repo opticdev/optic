@@ -3,7 +3,7 @@ package sourcegear.gears
 import cognitro.parsers.GraphUtils.Path.{FlatWalkablePath, WalkablePath}
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, Child}
 import play.api.libs.json.{JsObject, JsValue}
-import sdk.descriptions.{Component, Rule}
+import sdk.descriptions.{Component, PropertyRule, RawRule, Rule}
 import sdk.descriptions.Finders.FinderPath
 import sourcegear.gears.helpers.ModelField
 
@@ -26,12 +26,12 @@ abstract class ParseGear extends Serializable {
         val nodeTypesMatch = node.nodeType == desc.astType
         val childTypesMatch = childType == desc.childType
 
-        //@todo implement property rule key overrides
-        val propertiesMatch = desc.propertiesMatch(node.properties)
+        val propertyRules = rulesAtPath.filter(_.isPropertyRule).asInstanceOf[Vector[PropertyRule]]
+        val propertiesMatch = desc.propertiesMatch(node, propertyRules)
 
-        val rawRules = rulesAtPath.filter(_.isRawRule)
-
-        val rawRulesEvaluated = rawRules.filter(_.isRawRule).forall(_.evaluate(node))
+        val rawRules = rulesAtPath.filter(_.isRawRule).asInstanceOf[Vector[RawRule]]
+        import sourcegear.gears.helpers.RuleEvaluation._
+        val rawRulesEvaluated = rawRules.forall(_.evaluate(node))
 
         val compareSet = {
           val base = Seq(nodeTypesMatch, childTypesMatch)
@@ -44,10 +44,6 @@ abstract class ParseGear extends Serializable {
 
         compareSet.forall(_ == true)
       }
-
-//      val isMatch = node.nodeType == desc.astType &&
-//                    childType == desc.childType &&
-//                    desc.propertiesMatch(node.properties)
 
       //proceed only if raw parts match (avoids costly/unneeded recursion)
       if (isMatch) {
@@ -102,10 +98,22 @@ case class NodeDesc(astType: AstType,
                     children: Vector[NodeDesc],
                     rules: Vector[RulesDesc]) {
 
-  def propertiesMatch(jsValue: JsValue) : Boolean = {
+  def propertiesMatch(node: AstPrimitiveNode, propertyRules: Vector[PropertyRule])(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String)  : Boolean = {
+    val jsValue = node.properties
     if (!jsValue.isInstanceOf[JsObject]) return false
-    val asObject = jsValue.as[JsObject]
-    asObject.value.toMap == properties
+    val asMap = jsValue.as[JsObject].value.toMap
+    if (asMap.nonEmpty) {
+      import sourcegear.gears.helpers.RuleEvaluation._
+
+      val overridenKeys = propertyRules.map(_.key)
+
+      val filteredMap        = asMap.filterKeys(!overridenKeys.contains(_))
+      val filteredProperties = properties.filterKeys(!overridenKeys.contains(_))
+
+      filteredMap == filteredProperties && propertyRules.forall(_.evaluate(node) == true)
+    } else {
+      asMap == properties
+    }
   }
 }
 

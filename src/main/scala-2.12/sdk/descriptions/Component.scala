@@ -49,10 +49,10 @@ case class Component(
     case Code=> {
       codeType match {
         case Literal=> Vector(
-          RawRuleDesc(finder, "ANY")
+          RawRule(finder, "ANY")
         )
         case Token=>  Vector (
-          RawRuleDesc(finder, "ANY")
+          RawRule(finder, "ANY")
         )
       }
     }
