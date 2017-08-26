@@ -63,33 +63,13 @@ abstract class ParseGear()(implicit ruleProvider: RuleProvider) extends Serializ
         } else Set()
 
 
+        import sourcegear.gears.helpers.RuleEvaluation.ChildrenRuleWithEvaluation
+
         val childrenRule = rulesAtPath.find(_.isChildrenRule).getOrElse(ruleProvider.globalChildrenDefaultRule).asInstanceOf[ChildrenRule]
+        //returns final results & extractions
+        val childrenResults = childrenRule.evaluate(node, desc, currentPath, compareWith)
 
-        val childrenRuleEvaluated = {
-          import sourcegear.gears.helpers.RuleEvaluation.ChildrenRuleWithEvaluation
-
-          childrenRule.evaluate(node, desc, currentPath, compareWith)
-        }
-
-        val childResults = node.getChildren.zipWithIndex.map{
-          case ((edge, node), index) => {
-            val childDesc = desc.children.lift(index)
-            if (childDesc.isDefined) {
-              compareToDescription(node, edge.asInstanceOf[Child].typ, childDesc.get, currentPath.append(edge.asInstanceOf[Child]))
-            } else {
-              MatchResults(false, None)
-            }
-          }
-        }
-
-
-        val isMatchPlusChildren = isMatch && !childResults.exists(_.isMatch == false)
-
-        if (isMatchPlusChildren) {
-          MatchResults(true, Option(childResults.flatMap(_.extracted.getOrElse(Set())).toSet ++ extractedFields))
-        } else {
-          MatchResults(false, None)
-        }
+        MatchResults(childrenResults.isMatch, if (childrenResults.isMatch) Option(childrenResults.extracted.getOrElse(Set()) ++ extractedFields) else None)
 
       } else MatchResults(false, None)
 
