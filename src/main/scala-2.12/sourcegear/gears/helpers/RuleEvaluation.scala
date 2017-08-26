@@ -39,46 +39,30 @@ object RuleEvaluation {
   implicit class ChildrenRuleWithEvaluation(childrenRule: ChildrenRule)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) {
 
     def evaluate(node: AstPrimitiveNode, desc: NodeDesc, currentPath: FlatWalkablePath, compareWith: (AstPrimitiveNode, String, NodeDesc, FlatWalkablePath) => MatchResults): MatchResults = {
+
+      val childrenVecor: Vector[(AstPrimitiveNode, String)] = node.getChildren.map(c=> (c._2, c._1.asInstanceOf[Child].typ))
+
+
+      def equality(astNodeWithType: (AstPrimitiveNode, String), nodeDesc: NodeDesc): MatchResults = {
+        compareWith(astNodeWithType._1, astNodeWithType._2, nodeDesc, currentPath.append(nodeDesc.edge))
+      }
+
       import sdk.descriptions.ChildrenRuleType._
       childrenRule.ruleType match {
-        case Any => MatchResults(true, None)
-        case Exact => {
-          false
-        }
-        case SamePlus => false
-        case SameAnyOrder => false
-        case SameAnyOrderPlus => false
+        case Any => ChildrenVectorComparison.any
+          [(AstPrimitiveNode, String), NodeDesc](childrenVecor, desc.children, equality)
+        case Exact => ChildrenVectorComparison.exact
+          [(AstPrimitiveNode, String), NodeDesc](childrenVecor, desc.children, equality)
+        case SamePlus => ChildrenVectorComparison.samePlus
+          [(AstPrimitiveNode, String), NodeDesc](childrenVecor, desc.children, equality)
+        case SameAnyOrder => ChildrenVectorComparison.sameAnyOrder
+          [(AstPrimitiveNode, String), NodeDesc](childrenVecor, desc.children, equality)
+        case SameAnyOrderPlus => ChildrenVectorComparison.sameAnyOrderPlus
+          [(AstPrimitiveNode, String), NodeDesc](childrenVecor, desc.children, equality)
+
+        case _ => MatchResults(false, None)
       }
 
-      MatchResults(true, None)
-    }
-
-
-    private def exactComparison(node: AstPrimitiveNode, desc: NodeDesc, currentPath: FlatWalkablePath, compareWith: (AstPrimitiveNode, String, NodeDesc, FlatWalkablePath) => MatchResults): () => MatchResults = () => {
-      //same size assumed since its step 2
-
-      val childResults = node.getChildren.zip(desc.children).map {
-        case ((edge, node), descChild) => {
-          val edgeAsChild = edge.asInstanceOf[Child]
-          compareWith(node, edgeAsChild.typ, descChild, currentPath.append(edgeAsChild))
-        }
-      }
-
-      val isChildMatch = !childResults.exists(_.isMatch == false)
-
-      if (isChildMatch) {
-        MatchResults(true, Option(childResults.flatMap(_.extracted.getOrElse(Set())).toSet))
-      } else {
-        MatchResults(false, None)
-      }
-
-    }
-
-    private def containsSameChildren(node: AstPrimitiveNode, desc: NodeDesc, currentPath: FlatWalkablePath, compareWith: (AstPrimitiveNode, String, NodeDesc, FlatWalkablePath) => MatchResults): () => MatchResults = () => {
-
-      val descriptionChildren = collection.mutable.Set(desc.children:_*)
-
-      null
     }
 
   }

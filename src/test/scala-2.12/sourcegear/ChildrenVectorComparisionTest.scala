@@ -1,13 +1,60 @@
 package sourcegear
 
 import org.scalatest.FunSpec
+import play.api.libs.json.JsString
 import sourcegear.gears.MatchResults
-import sourcegear.gears.helpers.ChildrenVectorComparison
+import sourcegear.gears.helpers.{ChildrenVectorComparison, ModelField}
 
 class ChildrenVectorComparisonTest extends FunSpec {
   describe("Children Vector Comparison") {
 
-    def stringEquality(a: String, b: String) = MatchResults(a == b, None)
+    def stringEquality(a: String, b: String) = MatchResults(a == b,
+      //simulated extraction
+      {if (a == b) Option(Set(ModelField(b, JsString(a)))) else None})
+
+    describe("Any") {
+      it("matches anything") {
+
+        val result = ChildrenVectorComparison.samePlus[String, String](
+          Vector("A", "C", "F", "Q", "Z"),
+          Vector(),
+          stringEquality
+        )
+
+        assert(result.isMatch)
+
+      }
+    }
+
+    describe("Exact") {
+      it("matches same vector") {
+
+        val result = ChildrenVectorComparison.exact[String, String](
+          Vector("A", "B", "C"),
+          Vector("A", "B", "C"),
+          stringEquality
+        )
+
+        assert(result.isMatch)
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
+      }
+
+      it("fails on different vectors") {
+
+        val result = ChildrenVectorComparison.exact[String, String](
+          Vector("A", "B", "C"),
+          Vector("A"),
+          stringEquality
+        )
+
+        assert(!result.isMatch)
+        assert(result.extracted.isEmpty)
+
+      }
+
+    }
+
 
     describe("SamePlus") {
 
@@ -20,6 +67,8 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(result.isMatch)
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
 
       }
 
@@ -32,6 +81,7 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(result.isMatch)
+        assert(result.extracted.isEmpty)
 
       }
 
@@ -44,6 +94,8 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(result.isMatch)
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
 
       }
 
@@ -56,6 +108,8 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(result.isMatch)
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
 
       }
 
@@ -67,6 +121,7 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(!result.isMatch)
+        assert(result.extracted.isEmpty)
 
       }
 
@@ -78,6 +133,7 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(!result.isMatch)
+        assert(result.extracted.isEmpty)
 
       }
 
@@ -93,6 +149,9 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(result.isMatch)
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
+
 
       }
 
@@ -105,6 +164,9 @@ class ChildrenVectorComparisonTest extends FunSpec {
 
         assert(result.isMatch)
 
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
+
       }
 
       it("matches when in random order") {
@@ -115,6 +177,9 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(result.isMatch)
+
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
 
       }
 
@@ -127,6 +192,9 @@ class ChildrenVectorComparisonTest extends FunSpec {
 
         assert(result.isMatch)
 
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
+
       }
 
       it("matches with duplicates any order") {
@@ -138,6 +206,9 @@ class ChildrenVectorComparisonTest extends FunSpec {
 
         assert(result.isMatch)
 
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
+
       }
 
       it("does not match when different number of items") {
@@ -148,6 +219,7 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(!result.isMatch)
+        assert(result.extracted.isEmpty)
 
       }
 
@@ -159,6 +231,8 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(!result.isMatch)
+        assert(result.extracted.isEmpty)
+
 
       }
 
@@ -175,6 +249,8 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(result.isMatch)
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
       }
 
       it("matches with an extra item reversed") {
@@ -185,6 +261,8 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(result.isMatch)
+        assert(result.extracted.isDefined)
+        assert(result.extracted.get.size == 3)
       }
 
       it("fails when item is missing") {
@@ -195,6 +273,7 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(!result.isMatch)
+        assert(result.extracted.isEmpty)
 
       }
 
@@ -206,6 +285,7 @@ class ChildrenVectorComparisonTest extends FunSpec {
         )
 
         assert(!result.isMatch)
+        assert(result.extracted.isEmpty)
 
       }
 

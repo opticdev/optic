@@ -28,7 +28,7 @@ abstract class ParseGear()(implicit ruleProvider: RuleProvider) extends Serializ
 
       val isMatch = {
         val nodeTypesMatch = node.nodeType == desc.astType
-        val childTypesMatch = childType == desc.childType
+        val childTypesMatch = childType == desc.edge.typ
 
         val propertyRules = rulesAtPath.filter(_.isPropertyRule).asInstanceOf[Vector[PropertyRule]]
         val propertiesMatch = desc.propertiesMatch(node, propertyRules)
@@ -107,7 +107,7 @@ case class MatchResults(isMatch: Boolean, extracted: Option[Set[ModelField]])
 //Serializable for Storage
 case class RulesDesc()
 case class NodeDesc(astType: AstType,
-                    childType: String,
+                    edge: Child = Child(0, null),
                     properties: Map[String, JsValue],
                     children: Vector[NodeDesc],
                     rules: Vector[RulesDesc]) {

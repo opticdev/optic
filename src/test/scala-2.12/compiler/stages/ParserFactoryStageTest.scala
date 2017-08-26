@@ -3,7 +3,6 @@ package compiler.stages
 import Fixture.TestBase
 import compiler_new.SnippetStageOutput
 import compiler_new.stages.{FinderStage, ParserFactoryStage, SnippetStage}
-import org.scalatest.FunSpec
 import play.api.libs.json.JsString
 import sdk.descriptions.Component.CodeTypes.{apply => _, _}
 import sdk.descriptions.Component.Types._
@@ -11,8 +10,6 @@ import sdk.descriptions.Finders.Finder.StringFinderRules
 import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions._
 import sourcegear.gears.ParseGear
-
-import scala.util.Try
 
 class ParserFactoryStageTest extends TestBase {
 
@@ -43,8 +40,7 @@ class ParserFactoryStageTest extends TestBase {
       val block = "var hello = require('world')"
 
       val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
-      println(parseGear.description.toString)
-      assert(parseGear.description.toString == """NodeDesc(AstType(VariableDeclaration,Javascript),null,Map(kind -> "var"),Vector(NodeDesc(AstType(VariableDeclarator,Javascript),declarations,Map(),Vector(NodeDesc(AstType(Identifier,Javascript),id,Map(name -> "hello"),Vector(),Vector()), NodeDesc(AstType(CallExpression,Javascript),init,Map(),Vector(NodeDesc(AstType(Identifier,Javascript),callee,Map(name -> "require"),Vector(),Vector()), NodeDesc(AstType(Literal,Javascript),arguments,Map(value -> "world"),Vector(),Vector())),Vector())),Vector())),Vector())""")
+      assert(parseGear.description.toString == """NodeDesc(AstType(VariableDeclaration,Javascript),Child(0,null),Map(kind -> "var"),Vector(NodeDesc(AstType(VariableDeclarator,Javascript),Child(0,declarations),Map(),Vector(NodeDesc(AstType(Identifier,Javascript),Child(0,id),Map(name -> "hello"),Vector(),Vector()), NodeDesc(AstType(CallExpression,Javascript),Child(0,init),Map(),Vector(NodeDesc(AstType(Identifier,Javascript),Child(0,callee),Map(name -> "require"),Vector(),Vector()), NodeDesc(AstType(Literal,Javascript),Child(0,arguments),Map(value -> "world"),Vector(),Vector())),Vector())),Vector())),Vector())""")
     }
 
     it("Can match its original snippet to the description") {

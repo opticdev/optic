@@ -43,13 +43,13 @@ class ParserFactoryStage(finderStageOutput: FinderStageOutput)(implicit lens: Le
     path.get.toFlatPath
   }
 
-  def nodeToDescription(astPrimitiveNode: AstPrimitiveNode, childType: String = null) : NodeDesc = {
+  def nodeToDescription(astPrimitiveNode: AstPrimitiveNode, edge: Child = Child(0, null)) : NodeDesc = {
     val children = astPrimitiveNode.getChildren(finderStageOutput.snippetStageOutput.astGraph)
-      .map(i=> nodeToDescription(i._2, i._1.asInstanceOf[Child].typ))
+      .map(i=> nodeToDescription(i._2, i._1.asInstanceOf[Child]))
 
     NodeDesc(
       astPrimitiveNode.nodeType,
-      childType,
+      edge,
       astPrimitiveNode.properties.as[JsObject].value.toMap,
       children,
       Vector())
