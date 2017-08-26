@@ -25,7 +25,7 @@ class SdkFinderTest extends FunSpec {
 
             val parsed = Finder.fromJson(Json.parse(validExample))
             assert(parsed.isInstanceOf[StringFinder])
-            assert(parsed.asInstanceOf[StringFinder].rule == Finder.StringRules.Entire)
+            assert(parsed.asInstanceOf[StringFinder].rule == Finder.StringFinderRules.Entire)
             assert(parsed.asInstanceOf[StringFinder].occurrence == 0)
             assert(parsed.asInstanceOf[StringFinder].string == "definedAs")
           }
@@ -39,7 +39,7 @@ class SdkFinderTest extends FunSpec {
                                   }"""
 
             val parsed = Finder.fromJson(Json.parse(validExample))
-            assert(parsed.asInstanceOf[StringFinder].rule == Finder.StringRules.Starting)
+            assert(parsed.asInstanceOf[StringFinder].rule == Finder.StringFinderRules.Starting)
 
           }
 
@@ -52,7 +52,7 @@ class SdkFinderTest extends FunSpec {
                                   }"""
 
             val parsed = Finder.fromJson(Json.parse(validExample))
-            assert(parsed.asInstanceOf[StringFinder].rule == Finder.StringRules.Containing)
+            assert(parsed.asInstanceOf[StringFinder].rule == Finder.StringFinderRules.Containing)
 
           }
 

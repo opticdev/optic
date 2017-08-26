@@ -13,12 +13,12 @@ import scalax.collection.mutable.Graph
 
 object Finder extends Description[Finder] {
 
-  object StringRules extends ParsableEnum {
+  object StringFinderRules extends ParsableEnum {
     val Entire, Containing, Starting = Value
     override val mapping: Map[String, Value] = Map("entire"-> Entire, "containing"-> Containing, "starting"-> Starting)
   }
 
-  private implicit val stringRulesReads = EnumReader.forEnum(StringRules)
+  private implicit val stringRulesReads = EnumReader.forEnum(StringFinderRules)
 
   private implicit val stringFinderReads : Reads[StringFinder] = Json.reads[StringFinder]
   private implicit val rangeFinderReads : Reads[RangeFinder] = Json.reads[RangeFinder]

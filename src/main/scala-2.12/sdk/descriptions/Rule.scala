@@ -3,12 +3,14 @@ package sdk.descriptions
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.{JsError, JsSuccess, _}
 import sdk.descriptions.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
-import sdk.descriptions.helpers.ParsableEnum
+import sdk.descriptions.helpers.{EnumReader, ParsableEnum}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
 object Rule extends Description[Rule] {
+
+  private implicit val childrenRuleTypeReads = EnumReader.forEnum(ChildrenRuleType)
 
   implicit val rawRule = Json.reads[RawRule]
   implicit val propertyRule = Json.reads[PropertyRule]
@@ -60,7 +62,16 @@ trait Rule {
 case class RawRule(finder: Finder, comparator: String, value: String = "") extends Rule {
   override val isRawRule = true
 }
+
 case class PropertyRule(finder: Finder, key: String, comparator: String, jsValue: JsValue = JsNull) extends Rule {
   override val isPropertyRule = true
 }
-case class ChildrenRule(finder: Finder) extends Rule
+
+object ChildrenRuleType extends ParsableEnum {
+  val Any, Exact, SameAnyOrder, SamePlus, SameAnyOrderPlus, Custom = Value
+  override val mapping = Map("any"-> Any, "exact"-> Exact, "same-any-order"-> SameAnyOrder, "same-plus"-> SamePlus, "same-any-order-plus"-> SameAnyOrderPlus)
+}
+
+case class ChildrenRule(finder: Finder, ruleType: ChildrenRuleType.Value) extends Rule {
+  override val isChildrenRule = true
+}

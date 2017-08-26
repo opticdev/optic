@@ -7,7 +7,7 @@ import compiler_new.{FinderStageOutput, ParserFactoryOutput}
 import play.api.libs.json.JsObject
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions.{Component, Lens, Rule}
-import sourcegear.gears.{NodeDesc, ParseGear}
+import sourcegear.gears.{NodeDesc, ParseGear, RuleProvider}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -19,6 +19,8 @@ class ParserFactoryStage(finderStageOutput: FinderStageOutput)(implicit lens: Le
     val enterOn = finderStageOutput.snippetStageOutput.entryChildren.head
 
     val nodeDescription = nodeToDescription(enterOn)
+
+    implicit val ruleProvider = new RuleProvider()
 
     ParserFactoryOutput(new ParseGear {
       override val description: NodeDesc = nodeDescription
