@@ -1,6 +1,7 @@
 package compiler.stages
 
 import Fixture.TestBase
+import Fixture.compilerUtils.ParserUtils
 import compiler_new.SnippetStageOutput
 import compiler_new.stages.{FinderStage, ParserFactoryStage, SnippetStage}
 import play.api.libs.json.JsString
@@ -11,30 +12,9 @@ import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions._
 import sourcegear.gears.ParseGear
 
-class ParserFactoryStageTest extends TestBase {
+class ParserFactoryStageTest extends TestBase with ParserUtils {
 
   describe("Parser factory stage") {
-
-    def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[Rule] = Vector()) : ParseGear = {
-      val snippet = Snippet("Testing", "Javascript", "es6", block)
-      implicit val lens : Lens = Lens("Example", null, snippet, rules, components)
-
-      val snippetBuilder = new SnippetStage(snippet)
-      val snippetOutput = snippetBuilder.run
-      val finderStage = new FinderStage(snippetOutput)
-      val finderStageOutput = finderStage.run
-      val parserFactoryStage = new ParserFactoryStage(finderStageOutput)
-      val output = parserFactoryStage.run
-
-      output.parseGear
-    }
-
-    def sample(block: String) : SnippetStageOutput = {
-      val snippet = Snippet("Testing", "Javascript", "es6", block)
-      implicit val lens : Lens = Lens("Example", null, snippet, Vector(), Vector())
-      val snippetBuilder = new SnippetStage(snippet)
-      snippetBuilder.run
-    }
 
     it("Can build a valid description from snippet") {
       val block = "var hello = require('world')"
@@ -139,8 +119,6 @@ class ParserFactoryStageTest extends TestBase {
         assert(result.extracted.get.head.value == JsString("otherValue"))
         assert(result.extracted.get.last.value == JsString("that-lib"))
       }
-
-//      it("Can extra a mapped X onto an array")
 
     }
 

@@ -4,13 +4,12 @@ import cognitro.parsers.GraphUtils.Path.{FlatWalkablePath, WalkablePath}
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, Child}
 import play.api.libs.json.{JsObject, JsValue}
 import sdk.descriptions._
-import sdk.descriptions.Finders.FinderPath
 import sourcegear.gears.helpers.ModelField
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-abstract class ParseGear()(implicit ruleProvider: RuleProvider) extends Serializable {
+abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
 
   val description : NodeDesc
   val components: Map[FlatWalkablePath, Vector[Component]]
@@ -110,5 +109,4 @@ case class NodeDesc(astType: AstType,
     }
   }
 }
-
 

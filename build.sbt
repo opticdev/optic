@@ -13,6 +13,7 @@ libraryDependencies += "com.optic-dev" %% "parser-base" % "1.0.0"
 libraryDependencies += "com.github.pathikrit" % "better-files_2.12" % "2.17.1"
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
 
+
 //test suites
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
