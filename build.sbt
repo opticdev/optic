@@ -6,13 +6,11 @@ version := "1.0"
 
 scalaVersion := "2.12.3"
 
-
 libraryDependencies += "com.optic-dev" %% "parser-base" % "1.0.0"
 
 //io
 libraryDependencies += "com.github.pathikrit" % "better-files_2.12" % "2.17.1"
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
-
 
 //test suites
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
