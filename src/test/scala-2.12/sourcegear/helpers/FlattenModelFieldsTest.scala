@@ -12,12 +12,6 @@ class FlattenModelFieldsTest extends FunSpec {
     ModelField("three", JsNumber(3))
   )
 
-  val nestedInvalid = Set(
-    ModelField("one", JsString("value1")),
-    ModelField("two", JsString("value2")),
-    ModelField("two.three", JsString("value3"))
-  )
-
   val nested = Set(
     ModelField("one", JsString("value1")),
     ModelField("two", JsString("value2")),
@@ -38,6 +32,18 @@ class FlattenModelFieldsTest extends FunSpec {
             } """)
 
       assert(FlattenModelFields.flattenFields(flat) == expected)
+    }
+
+    it("Can can merge onto an existing object") {
+      val expected = Json.parse("""
+            {
+              "existingField" : true,
+              "one" : "value1",
+              "two" : false,
+              "three" : 3
+            } """)
+
+      assert(FlattenModelFields.flattenFields(flat, JsObject(Seq("existingField"-> JsTrue))) == expected)
     }
 
     it("Can create JsObject from nested fields") {
