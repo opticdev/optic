@@ -5,12 +5,13 @@ import Fixture.compilerUtils.ParserUtils
 import compiler_new.SnippetStageOutput
 import compiler_new.stages.{FinderStage, ParserFactoryStage, SnippetStage}
 import play.api.libs.json.JsString
-import sdk.descriptions.Component.CodeTypes.{apply => _, _}
-import sdk.descriptions.Component.Types._
-import sdk.descriptions.Finders.Finder.StringFinderRules
+import sdk.descriptions.enums.ComponentEnums._
+import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions._
+import sdk.descriptions.enums.RuleEnums._
 import sourcegear.gears.ParseGear
+
 
 class ParserFactoryStageTest extends TestBase with ParserUtils {
 
@@ -49,7 +50,7 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
       it("Matches any value for a token component/extracts value") {
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
           //this causes any token rule to be applied
-          Component(Code, Token, "definedAs", StringFinder(StringFinderRules.Entire, "hello"))
+          Component(Code, Token, "definedAs", StringFinder(Entire, "hello"))
         ))
 
         val block = "var otherValue = require('world')"
@@ -63,11 +64,11 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
       it("works for property rules") {
 
-        val customRules = Vector(PropertyRule(StringFinder(StringFinderRules.Starting, "var"), "kind", "ANY"))
+        val customRules = Vector(PropertyRule(StringFinder(Starting, "var"), "kind", "ANY"))
 
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
           //this causes any token rule to be applied
-          Component(Code, Token, "definedAs", StringFinder(StringFinderRules.Entire, "hello"))
+          Component(Code, Token, "definedAs", StringFinder(Entire, "hello"))
         ), customRules)
 
         //different kind operator var -> let
@@ -84,7 +85,7 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
       describe("for children") {
 
         it("Matches Any") {
-          val customRules = Vector(ChildrenRule(StringFinder(StringFinderRules.Starting, "{"), ChildrenRuleType.Any))
+          val customRules = Vector(ChildrenRule(StringFinder(Starting, "{"), Any))
 
           val parseGear = parseGearFromSnippetWithComponents("function hello () { }", Vector(), customRules)
 
@@ -106,8 +107,8 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
       it("Extracts definedAs (token) and pathTo (literal) from an import") {
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
-          Component(Code, Token, "definedAs", StringFinder(StringFinderRules.Entire, "hello")),
-          Component(Code, Literal, "pathTo", StringFinder(StringFinderRules.Containing, "world"))
+          Component(Code, Token, "definedAs", StringFinder(Entire, "hello")),
+          Component(Code, Literal, "pathTo", StringFinder(Containing, "world"))
         ))
 
         val block = "var otherValue = require('that-lib')"

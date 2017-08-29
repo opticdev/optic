@@ -47,7 +47,7 @@ object RuleEvaluation {
         compareWith(astNodeWithType._1, astNodeWithType._2, nodeDesc, currentPath.append(nodeDesc.edge))
       }
 
-      import sdk.descriptions.ChildrenRuleType._
+      import sdk.descriptions.enums.RuleEnums._
       childrenRule.ruleType match {
         case Any => ChildrenVectorComparison.any
           [(AstPrimitiveNode, String), NodeDesc](childrenVecor, desc.children, equality)

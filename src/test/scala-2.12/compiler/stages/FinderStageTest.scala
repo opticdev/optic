@@ -5,10 +5,9 @@ import cognitro.parsers.GraphUtils.AstType
 import compiler_new.errors.InvalidComponents
 import compiler_new.stages.{FinderStage, SnippetStage}
 import sdk.descriptions.{Component, Lens, Snippet}
-import sdk.descriptions.Component.Types._
-import sdk.descriptions.Component.CodeTypes._
-import sdk.descriptions.Finders.Finder.StringFinderRules
+import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.Finders.StringFinder
+import sdk.descriptions.enums.ComponentEnums._
 
 import scala.util.{Failure, Try}
 
@@ -19,7 +18,7 @@ class FinderStageTest extends TestBase {
     val snippet = Snippet("Testing", "Javascript", "es6", snippetBlock)
 
     implicit val lens : Lens = Lens("Example", null, snippet, Vector(), Vector(
-      Component(Code, Token, "definedAs", StringFinder(StringFinderRules.Entire, "hello"))
+      Component(Code, Token, "definedAs", StringFinder(Entire, "hello"))
     ))
     val snippetBuilder = new SnippetStage(snippet)
     val outputTry = Try(snippetBuilder.run)
@@ -41,7 +40,7 @@ class FinderStageTest extends TestBase {
 
     it("catches errors valid output") {
 
-      val brokenComponent = Component(Code, Token, "firstProblem", StringFinder(StringFinderRules.Entire, "not-anywhere"))
+      val brokenComponent = Component(Code, Token, "firstProblem", StringFinder(Entire, "not-anywhere"))
 
       finderStage.pathForFinder(brokenComponent.finder)
 
@@ -50,9 +49,9 @@ class FinderStageTest extends TestBase {
     describe("error handling") {
 
       implicit val lens : Lens = Lens("Example", null, snippet, Vector(), Vector(
-        Component(Code, Token, "definedAs", StringFinder(StringFinderRules.Entire, "hello")),
-        Component(Code, Token, "firstProblem", StringFinder(StringFinderRules.Entire, "not-anywhere")),
-        Component(Code, Token, "nextProblem", StringFinder(StringFinderRules.Entire, "nowhere"))
+        Component(Code, Token, "definedAs", StringFinder(Entire, "hello")),
+        Component(Code, Token, "firstProblem", StringFinder(Entire, "not-anywhere")),
+        Component(Code, Token, "nextProblem", StringFinder(Entire, "nowhere"))
       ))
 
       val finderStage = new FinderStage(outputTry.get)

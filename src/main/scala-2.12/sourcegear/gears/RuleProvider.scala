@@ -1,11 +1,13 @@
 package sourcegear.gears
 
 import cognitro.parsers.GraphUtils.AstType
-import sdk.descriptions.{ChildrenRule, ChildrenRuleType, Rule}
+import sdk.descriptions.{ChildrenRule, Rule}
+import sdk.descriptions.enums.RuleEnums._
+
 
 class RuleProvider(defaultRules: Map[AstType, Vector[Rule]] = Map()) {
 
-  val globalChildrenDefaultRule = ChildrenRule(null, ChildrenRuleType.Exact)
+  val globalChildrenDefaultRule = ChildrenRule(null, Exact)
 
   //@todo doing this at every node may not be performant. better way possible
   def applyDefaultRulesForType(rules: Vector[Rule], astType: AstType) = {

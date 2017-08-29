@@ -3,7 +3,7 @@ package compiler.stages
 import compiler_new.stages.ValidationStage
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
-import sdk.descriptions.Component.CodeTypes
+import sdk.descriptions.enums.ComponentEnums._
 import sdk.descriptions.{Component, Lens, Schema}
 
 class ValidationStageTest extends FunSpec {
@@ -36,8 +36,8 @@ class ValidationStageTest extends FunSpec {
 
       it("works properly") {
         implicit val lens: Lens = Lens("Example", basicSchema.asSchemaId, null, Vector(), Vector(
-          Component(Component.Types.Code, CodeTypes.Token, "firstName", null),
-          Component(Component.Types.Code, CodeTypes.Token, "lastName", null)
+          Component(Code, Token, "firstName", null),
+          Component(Code, Token, "lastName", null)
         ))
 
         val validationStage = new ValidationStage()
@@ -52,10 +52,10 @@ class ValidationStageTest extends FunSpec {
 
       it("finds extra fields") {
         implicit val lens: Lens = Lens("Example", basicSchema.asSchemaId, null, Vector(), Vector(
-          Component(Component.Types.Code, CodeTypes.Token, "firstName", null),
-          Component(Component.Types.Code, CodeTypes.Token, "lastName", null),
-          Component(Component.Types.Code, CodeTypes.Token, "fakePROP", null),
-          Component(Component.Types.Code, CodeTypes.Token, "fakePROP2", null)
+          Component(Code, Token, "firstName", null),
+          Component(Code, Token, "lastName", null),
+          Component(Code, Token, "fakePROP", null),
+          Component(Code, Token, "fakePROP2", null)
         ))
 
         val validationStage = new ValidationStage()
@@ -72,7 +72,7 @@ class ValidationStageTest extends FunSpec {
 
       it("finds missing fields") {
         implicit val lens: Lens = Lens("Example", basicSchema.asSchemaId, null, Vector(), Vector(
-          Component(Component.Types.Code, CodeTypes.Token, "firstName", null)
+          Component(Code, Token, "firstName", null)
         ))
 
         val validationStage = new ValidationStage()
@@ -87,8 +87,8 @@ class ValidationStageTest extends FunSpec {
 
     it("finds missing fields when extra ones are present") {
       implicit val lens: Lens = Lens("Example", basicSchema.asSchemaId, null, Vector(), Vector(
-        Component(Component.Types.Code, CodeTypes.Token, "firstName", null),
-        Component(Component.Types.Code, CodeTypes.Token, "fakePROP2", null)
+        Component(Code, Token, "firstName", null),
+        Component(Code, Token, "fakePROP2", null)
       ))
 
       val validationStage = new ValidationStage()

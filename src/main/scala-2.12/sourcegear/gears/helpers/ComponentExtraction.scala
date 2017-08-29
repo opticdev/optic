@@ -7,14 +7,13 @@ import sourcegear.gears.ParseGear
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
+import sdk.descriptions.enums.ComponentEnums._
 
 case class ModelField(propertyPath: String, value: JsValue)
 
 object ComponentExtraction {
   implicit class ComponentWithExtractors(component: Component) {
     def extract(node: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) : ModelField = {
-      import Component.CodeTypes._
-      import Component.Types._
       component.`type` match {
         case Code => {
 

@@ -4,6 +4,7 @@ import org.scalatest.FunSpec
 import play.api.libs.json.Json
 import sdk.descriptions.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
 import sdk.descriptions._
+import sdk.descriptions.enums.FinderEnums._
 
 class SdkFinderTest extends FunSpec {
 
@@ -25,7 +26,7 @@ class SdkFinderTest extends FunSpec {
 
             val parsed = Finder.fromJson(Json.parse(validExample))
             assert(parsed.isInstanceOf[StringFinder])
-            assert(parsed.asInstanceOf[StringFinder].rule == Finder.StringFinderRules.Entire)
+            assert(parsed.asInstanceOf[StringFinder].rule == Entire)
             assert(parsed.asInstanceOf[StringFinder].occurrence == 0)
             assert(parsed.asInstanceOf[StringFinder].string == "definedAs")
           }
@@ -39,7 +40,7 @@ class SdkFinderTest extends FunSpec {
                                   }"""
 
             val parsed = Finder.fromJson(Json.parse(validExample))
-            assert(parsed.asInstanceOf[StringFinder].rule == Finder.StringFinderRules.Starting)
+            assert(parsed.asInstanceOf[StringFinder].rule == Starting)
 
           }
 
@@ -52,7 +53,7 @@ class SdkFinderTest extends FunSpec {
                                   }"""
 
             val parsed = Finder.fromJson(Json.parse(validExample))
-            assert(parsed.asInstanceOf[StringFinder].rule == Finder.StringFinderRules.Containing)
+            assert(parsed.asInstanceOf[StringFinder].rule == Containing)
 
           }
 

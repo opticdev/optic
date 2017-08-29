@@ -1,28 +1,20 @@
 package sdk.descriptions
 import play.api.libs.json._
 import sdk.descriptions.Finders.Finder
+import sdk.descriptions.enums.ComponentEnums.TypesEnum
 import sdk.descriptions.helpers.{EnumReader, ParsableEnum}
+
+import scala.util.Try
+import enums.ComponentEnums._
 
 object Component extends Description[Component] {
 
-  private implicit val typesReads: Reads[Types.Value] = EnumReader.forEnum(Types)
-  private implicit val codeTypesReads: Reads[CodeTypes.Value] = EnumReader.forEnum(CodeTypes)
 
   implicit val componentReads: Reads[Component] = {
     import Finder._
     import ComponentOptions._
 
     Json.reads[Component]
-  }
-
-  object Types extends ParsableEnum {
-    val Code, Schema = Value
-    override val mapping: Map[String, Value] = Map("code"-> Code, "schema"-> Schema)
-  }
-
-  object CodeTypes extends ParsableEnum {
-    val Token, Literal = Value
-    override val mapping: Map[String, Value] = Map("token"-> Token, "literal"-> Literal)
   }
 
   override def fromJson(jsValue: JsValue): Component = {
@@ -37,14 +29,12 @@ object Component extends Description[Component] {
 }
 
 case class Component(
-                     `type`: Component.Types.Value,
-                     codeType: Component.CodeTypes.Value,
-                     propertyPath: String,
-                     finder: Finder,
-                     options: ComponentOptions = ComponentOptions()) {
+                      `type`: TypesEnum,
+                      codeType: CodeEnum,
+                      propertyPath: String,
+                      finder: Finder,
+                      options: ComponentOptions = ComponentOptions()) {
 
-  import Component.Types._
-  import Component.CodeTypes._
   def rules : Vector[Rule] = `type` match {
     case Code=> {
       codeType match {

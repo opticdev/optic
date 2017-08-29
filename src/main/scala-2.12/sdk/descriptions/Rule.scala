@@ -7,10 +7,9 @@ import sdk.descriptions.helpers.{EnumReader, ParsableEnum}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
+import enums.RuleEnums._
 
 object Rule extends Description[Rule] {
-
-  private implicit val childrenRuleTypeReads = EnumReader.forEnum(ChildrenRuleType)
 
   implicit val rawRule = Json.reads[RawRule]
   implicit val propertyRule = Json.reads[PropertyRule]
@@ -67,11 +66,6 @@ case class PropertyRule(finder: Finder, key: String, comparator: String, jsValue
   override val isPropertyRule = true
 }
 
-object ChildrenRuleType extends ParsableEnum {
-  val Any, Exact, SameAnyOrder, SamePlus, SameAnyOrderPlus, Custom = Value
-  override val mapping = Map("any"-> Any, "exact"-> Exact, "same-any-order"-> SameAnyOrder, "same-plus"-> SamePlus, "same-any-order-plus"-> SameAnyOrderPlus)
-}
-
-case class ChildrenRule(finder: Finder, ruleType: ChildrenRuleType.Value) extends Rule {
+case class ChildrenRule(finder: Finder, ruleType: ChildrenRuleTypeEnum) extends Rule {
   override val isChildrenRule = true
 }

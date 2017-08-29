@@ -2,12 +2,12 @@ package sdk.descriptions.Finders
 import cognitro.parsers.GraphUtils.AstPrimitiveNode
 import compiler_new.SnippetStageOutput
 import compiler_new.errors.{NodeContainingStringNotFound, NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
-import sdk.descriptions.Finders.Finder.StringFinderRules
 import sdk.descriptions.Lens
+import sdk.descriptions.enums.FinderEnums._
 
 import scala.util.control.Breaks._
 
-case class StringFinder(rule: Finder.StringFinderRules.Value, string: String, occurrence: Int = 0) extends Finder {
+case class StringFinder(rule: StringEnums, string: String, occurrence: Int = 0) extends Finder {
   override def evaluateFinder(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = {
 
     val regex = string.r
@@ -26,10 +26,10 @@ case class StringFinder(rule: Finder.StringFinderRules.Value, string: String, oc
 
     rule match {
       //offload to a range finder. search for exact matches, least graph depth
-      case StringFinderRules.Entire => RangeFinder(start, end).evaluateFinder(snippetStageOutput)
+      case Entire => RangeFinder(start, end).evaluateFinder(snippetStageOutput)
 
       //node with deepest graph depth that contains entire string
-      case StringFinderRules.Containing => {
+      case Containing => {
         val containingNodes = RangeFinder.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
           nStart <= start && nEnd >= end
         }).sortBy(_.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph))
@@ -41,7 +41,7 @@ case class StringFinder(rule: Finder.StringFinderRules.Value, string: String, oc
       }
 
       //node with least graph depth that starts with string
-      case StringFinderRules.Starting => {
+      case Starting => {
         val containingNodes = RangeFinder.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
           nStart == start
         }).sortBy(_.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph))
