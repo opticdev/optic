@@ -16,7 +16,7 @@ abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
   val components: Map[FlatWalkablePath, Vector[Component]]
   val rules: Map[FlatWalkablePath, Vector[Rule]]
 
-  def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) : MatchResults = {
+  def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) : Option[ParseResult] = {
 
     def compareWith(n:AstPrimitiveNode, edgeType: String, d:NodeDesc, path: FlatWalkablePath) = {
       compareToDescription(n, edgeType, d, path)
@@ -78,11 +78,9 @@ abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
     val matchResults = compareToDescription(entryNode, null, description, FlatWalkablePath())
 
     output(matchResults)
-
-    matchResults
   }
 
-  def output(matchResults: MatchResults) : ParseResult
+  def output(matchResults: MatchResults) : Option[ParseResult] = None
 
 }
 

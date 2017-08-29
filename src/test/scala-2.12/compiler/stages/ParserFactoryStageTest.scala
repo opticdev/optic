@@ -4,7 +4,7 @@ import Fixture.TestBase
 import Fixture.compilerUtils.ParserUtils
 import compiler_new.SnippetStageOutput
 import compiler_new.stages.{FinderStage, ParserFactoryStage, SnippetStage}
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsObject, JsString}
 import sdk.descriptions.enums.ComponentEnums._
 import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.Finders.StringFinder
@@ -31,7 +31,7 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
       val parsedSample = sample(block)
       val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block)
-      assert(result.isMatch)
+      assert(result.isDefined)
     }
 
     it("fails to match a different snippet than the description") {
@@ -41,7 +41,7 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
       val parsedSample = sample(block)
       val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block)
-      assert(!result.isMatch)
+      assert(!result.isDefined)
 
     }
 
@@ -57,9 +57,9 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
         val parsedSample = sample(block)
         val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
-        assert(result.isMatch)
-        assert(result.extracted.isDefined)
-        assert(result.extracted.get.head.value == JsString("otherValue"))
+        assert(result.isDefined)
+
+        assert(result.get.model == JsObject(Seq("definedAs" -> JsString("otherValue"))))
       }
 
       it("works for property rules") {
@@ -76,9 +76,8 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
         val parsedSample = sample(block)
         val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
-        assert(result.isMatch)
-        assert(result.extracted.isDefined)
-        assert(result.extracted.get.head.value == JsString("otherValue"))
+        assert(result.isDefined)
+        assert(result.get.model == JsObject(Seq("definedAs" -> JsString("otherValue"))))
 
       }
 
@@ -95,7 +94,7 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
           val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
 
-          println(result)
+          assert(result.isDefined)
 
         }
 
@@ -115,10 +114,10 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
         val parsedSample = sample(block)
         val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
-        assert(result.isMatch)
-        assert(result.extracted.isDefined)
-        assert(result.extracted.get.head.value == JsString("otherValue"))
-        assert(result.extracted.get.last.value == JsString("that-lib"))
+        assert(result.isDefined)
+
+        val expected = JsObject(Seq("definedAs" -> JsString("otherValue"), "pathTo" -> JsString("that-lib")))
+        assert(result.get.model == expected)
       }
 
     }

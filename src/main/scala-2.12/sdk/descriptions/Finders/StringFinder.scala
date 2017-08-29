@@ -4,13 +4,14 @@ import compiler_new.SnippetStageOutput
 import compiler_new.errors.{NodeContainingStringNotFound, NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
 import sdk.descriptions.Lens
 import sdk.descriptions.enums.FinderEnums._
+import scala.util.matching.Regex
 
 import scala.util.control.Breaks._
 
 case class StringFinder(rule: StringEnums, string: String, occurrence: Int = 0) extends Finder {
   override def evaluateFinder(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = {
 
-    val regex = string.r
+    val regex = Regex.quote(string).r
 
     val matches = regex.findAllMatchIn(snippetStageOutput.snippet.block).toVector
 

@@ -24,7 +24,7 @@ class ParserFactoryStage(finderStageOutput: FinderStageOutput)(implicit lens: Le
 
     implicit val ruleProvider = new RuleProvider()
 
-    ParserFactoryOutput(new ParseAsModel {
+    val o = ParserFactoryOutput(new ParseAsModel {
       override val description: NodeDesc = nodeDescription
       override val components = {
         finderStageOutput.componentFinders.map {
@@ -38,6 +38,8 @@ class ParserFactoryStage(finderStageOutput: FinderStageOutput)(implicit lens: Le
       }
       override val schema = lens.schema
     })
+
+    o
   }
 
   def finderPathToFlatPath(finderPath: FinderPath, node: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge]): FlatWalkablePath = {
