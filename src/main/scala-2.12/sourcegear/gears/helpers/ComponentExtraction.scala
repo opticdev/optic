@@ -3,11 +3,11 @@ package sourcegear.gears.helpers
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import sdk.descriptions.Component
-import sourcegear.gears.ParseGear
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import sdk.descriptions.enums.ComponentEnums._
+import sourcegear.gears.parsing.ParseGear
 
 case class ModelField(propertyPath: String, value: JsValue)
 

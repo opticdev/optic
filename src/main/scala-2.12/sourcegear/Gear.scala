@@ -1,7 +1,8 @@
 package sourcegear
 
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
-import sourcegear.gears.{GenerateGear, MatchResults, MutateGear, ParseGear}
+import sourcegear.gears.parsing.{MatchResults, ParseGear}
+import sourcegear.gears.{GenerateGear, MutateGear}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

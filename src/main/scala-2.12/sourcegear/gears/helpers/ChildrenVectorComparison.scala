@@ -1,6 +1,6 @@
 package sourcegear.gears.helpers
 
-import sourcegear.gears.MatchResults
+import sourcegear.gears.parsing.MatchResults
 
 object ChildrenVectorComparison {
 

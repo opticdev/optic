@@ -10,7 +10,7 @@ import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions._
 import sdk.descriptions.enums.RuleEnums._
-import sourcegear.gears.ParseGear
+import sourcegear.gears.parsing.ParseGear
 
 
 class ParserFactoryStageTest extends TestBase with ParserUtils {

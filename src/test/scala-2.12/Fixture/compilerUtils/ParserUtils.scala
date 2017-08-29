@@ -3,7 +3,7 @@ package Fixture.compilerUtils
 import compiler_new.SnippetStageOutput
 import compiler_new.stages.{FinderStage, ParserFactoryStage, SnippetStage}
 import sdk.descriptions.{Component, Lens, Rule, Snippet}
-import sourcegear.gears.ParseGear
+import sourcegear.gears.parsing.ParseGear
 
 trait ParserUtils {
 

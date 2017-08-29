@@ -4,7 +4,7 @@ import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, ChildNo
 import compiler_new.stages.MatchType
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions.{Component, Rule, Snippet}
-import sourcegear.gears.ParseGear
+import sourcegear.gears.parsing.ParseGear
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

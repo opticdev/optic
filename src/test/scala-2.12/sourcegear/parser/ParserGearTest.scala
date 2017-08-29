@@ -3,7 +3,6 @@ package sourcegear.parser
 import Fixture.TestBase
 import Fixture.compilerUtils.ParserUtils
 import play.api.libs.json.{Json, Writes}
-import sourcegear.gears.{NodeDesc, ParseGear}
 
 class ParserGearTest extends TestBase with ParserUtils {
 

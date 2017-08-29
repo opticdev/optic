@@ -4,7 +4,7 @@ import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode, Child}
 import play.api.libs.json.JsObject
 import sdk.descriptions.{ChildrenRule, PropertyRule, RawRule}
-import sourcegear.gears.{MatchResults, NodeDesc}
+import sourcegear.gears.parsing.{MatchResults, NodeDesc}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

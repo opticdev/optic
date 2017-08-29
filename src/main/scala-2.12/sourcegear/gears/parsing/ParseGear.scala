@@ -1,9 +1,10 @@
-package sourcegear.gears
+package sourcegear.gears.parsing
 
-import cognitro.parsers.GraphUtils.Path.{FlatWalkablePath, WalkablePath}
+import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, Child}
 import play.api.libs.json.{JsObject, JsValue}
 import sdk.descriptions._
+import sourcegear.gears.RuleProvider
 import sourcegear.gears.helpers.ModelField
 
 import scalax.collection.edge.LkDiEdge
@@ -74,9 +75,14 @@ abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
 
     }
 
-    compareToDescription(entryNode, null, description, FlatWalkablePath())
+    val matchResults = compareToDescription(entryNode, null, description, FlatWalkablePath())
 
+    output(matchResults)
+
+    matchResults
   }
+
+  def output(matchResults: MatchResults) : ParseResult
 
 }
 

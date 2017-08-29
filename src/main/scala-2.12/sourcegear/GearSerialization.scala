@@ -2,7 +2,6 @@ package sourcegear
 
 import java.nio.ByteBuffer
 
-import sourcegear.gears.{NodeDesc, ParseGear}
 import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
 import sdk.descriptions.{Component, Rule}
 
