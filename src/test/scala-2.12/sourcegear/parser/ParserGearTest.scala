@@ -12,7 +12,6 @@ class ParserGearTest extends TestBase with ParserUtils {
 
       it("can serialize") {
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
-
       }
 
 

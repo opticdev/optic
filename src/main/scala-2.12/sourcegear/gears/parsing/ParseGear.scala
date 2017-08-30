@@ -4,6 +4,7 @@ import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, Child}
 import play.api.libs.json.{JsObject, JsValue}
 import sdk.descriptions._
+import sdk.descriptions.enums.ComponentEnums
 import sourcegear.gears.RuleProvider
 import sourcegear.gears.helpers.ModelField
 
@@ -18,12 +19,14 @@ abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
 
   def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) : Option[ParseResult] = {
 
+    val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
+
     def compareWith(n:AstPrimitiveNode, edgeType: String, d:NodeDesc, path: FlatWalkablePath) = {
       compareToDescription(n, edgeType, d, path)
     }
 
     def compareToDescription(node: AstPrimitiveNode, childType: String, desc: NodeDesc, currentPath: FlatWalkablePath) : MatchResults = {
-      val componentsAtPath = components.getOrElse(currentPath, Vector[Component]())
+      val componentsAtPath = extractableComponents.getOrElse(currentPath, Vector[Component]())
       val rulesAtPath      = ruleProvider.applyDefaultRulesForType(rules.getOrElse(currentPath, Vector[Rule]()), node.nodeType)
 
       val isMatch = {
@@ -81,6 +84,13 @@ abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
   }
 
   def output(matchResults: MatchResults) : Option[ParseResult] = None
+
+  def accumulatorListeners = {
+    val accumulatedComponents = components.mapValues(_.filter(_.isInstanceOf[SchemaComponent]))
+
+//    val allListeners = components.mapValues(i=> i.filter(_.`type` == ComponentEnums.Schema)).filter(_._2.nonEmpty)
+
+  }
 
 }
 

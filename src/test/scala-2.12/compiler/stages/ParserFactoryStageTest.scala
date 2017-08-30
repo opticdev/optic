@@ -2,15 +2,12 @@ package compiler.stages
 
 import Fixture.TestBase
 import Fixture.compilerUtils.ParserUtils
-import compiler_new.SnippetStageOutput
-import compiler_new.stages.{FinderStage, ParserFactoryStage, SnippetStage}
 import play.api.libs.json.{JsObject, JsString}
-import sdk.descriptions.enums.ComponentEnums._
-import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions._
+import sdk.descriptions.enums.ComponentEnums._
+import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.enums.RuleEnums._
-import sourcegear.gears.parsing.ParseGear
 
 
 class ParserFactoryStageTest extends TestBase with ParserUtils {
@@ -50,7 +47,7 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
       it("Matches any value for a token component/extracts value") {
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
           //this causes any token rule to be applied
-          Component(Code, Token, "definedAs", StringFinder(Entire, "hello"))
+          CodeComponent(Token, "definedAs", StringFinder(Entire, "hello"))
         ))
 
         val block = "var otherValue = require('world')"
@@ -68,7 +65,7 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
           //this causes any token rule to be applied
-          Component(Code, Token, "definedAs", StringFinder(Entire, "hello"))
+          CodeComponent(Token, "definedAs", StringFinder(Entire, "hello"))
         ), customRules)
 
         //different kind operator var -> let
@@ -97,7 +94,6 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
           assert(result.isDefined)
 
         }
-
       }
 
     }
@@ -106,8 +102,8 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
       it("Extracts definedAs (token) and pathTo (literal) from an import") {
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
-          Component(Code, Token, "definedAs", StringFinder(Entire, "hello")),
-          Component(Code, Literal, "pathTo", StringFinder(Containing, "world"))
+          CodeComponent(Token, "definedAs", StringFinder(Entire, "hello")),
+          CodeComponent(Literal, "pathTo", StringFinder(Containing, "world"))
         ))
 
         val block = "var otherValue = require('that-lib')"
@@ -118,6 +114,10 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
 
         val expected = JsObject(Seq("definedAs" -> JsString("otherValue"), "pathTo" -> JsString("that-lib")))
         assert(result.get.model == expected)
+      }
+
+      describe("that map schemas") {
+
       }
 
     }

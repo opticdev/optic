@@ -90,6 +90,7 @@ object SourceParserManager {
     } else null
   }
 
+  //@todo replace with a Try
   def parseFile(file: File, languageOverride: Option[String] = None, versionOverride: Option[String] = None): Option[ParsedFile] = {
 
     val parser = {

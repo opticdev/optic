@@ -13,8 +13,13 @@ abstract class ParseAsModel()(implicit ruleProvider: RuleProvider) extends Parse
   override def output(matchResults: MatchResults) : Option[ParseResult] = {
     if (!matchResults.isMatch) return None
 
+    val model = FlattenModelFields.flattenFields(matchResults.extracted.getOrElse(Set()))
+
+    //@todo have schema validate
+//    schema.resolve
+
     Option(ParseResult(this,
-      FlattenModelFields.flattenFields(matchResults.extracted.getOrElse(Set())),
+      model,
       null,
       null))
 

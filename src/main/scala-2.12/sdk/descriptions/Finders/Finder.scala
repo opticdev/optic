@@ -1,14 +1,11 @@
 package sdk.descriptions.Finders
 
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import cognitro.parsers.GraphUtils.Path.{PathFinder, WalkablePath}
+import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import compiler_new.SnippetStageOutput
 import play.api.libs.json._
 import sdk.descriptions.{Description, Lens}
-import sdk.descriptions.helpers.{EnumReader, ParsableEnum}
-import sdk.descriptions.enums.FinderEnums._
 
-import scala.util.control.Breaks._
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 

@@ -1,16 +1,37 @@
 package sourcegear
 
-import cognitro.parsers.GraphUtils.AstType
+import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
+import sourcegear.accumulate.FileAccumulator
+import sourcegear.gears.parsing.ParseResult
 
-class Gearset {
+import scalax.collection.edge.LkDiEdge
+import scalax.collection.mutable.Graph
 
-  private val gears = scala.collection.mutable.Set[Gear]()
+class GearSet(initialGears: Gear*) {
 
-  def addGear(gear: Gear) = gears add gear; reindex
-  def removeGear(gear: Gear) = gears remove gear; reindex
+  private val gears = scala.collection.mutable.Set[Gear](initialGears:_*)
+
+  private var fileAccumulator = new FileAccumulator(this)
+
+  def addGear(gear: Gear) = {
+    gears add gear
+    reindex
+  }
+
+  def addGears(gears: Gear*) = {
+    gears ++ gears
+    reindex
+  }
+
+  def removeGear(gear: Gear) = {
+    gears remove gear
+    reindex
+  }
 
   private var groupedStore : Map[AstType, Set[Gear]] = Map()
-  private def reindex = {
+
+  //@todo make sure this is used correctly
+  private def reindex = synchronized {
     val allEntryNodes = gears.flatMap(_.enterOn).toSet
 
     groupedStore = allEntryNodes
@@ -20,4 +41,24 @@ class Gearset {
 
   def grouped: Map[AstType, Set[Gear]] = groupedStore
 
+  def parseFromGraph(implicit fileContents: String, astGraph: Graph[BaseNode, LkDiEdge]): Vector[ParseResult] = {
+    val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[AstPrimitiveNode].nodeType)
+
+    //@todo optimize this
+    grouped.flatMap { case (nodeType, gears) => {
+      val foundOption = groupedByType.get(nodeType)
+      if (foundOption.isDefined) {
+        val entryNodeVector = foundOption.get
+        gears.flatMap(gear =>
+          entryNodeVector
+            .map(node => {
+              gear.parser.matches(node.value.asInstanceOf[AstPrimitiveNode], true).orNull
+            })
+            .filterNot(_ == null)
+        )
+      } else Vector()
+    }
+    }.toVector
+
+  }
 }
