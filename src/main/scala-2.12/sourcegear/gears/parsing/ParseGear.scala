@@ -6,12 +6,12 @@ import play.api.libs.json.{JsObject, JsValue}
 import sdk.descriptions._
 import sdk.descriptions.enums.ComponentEnums
 import sourcegear.gears.RuleProvider
-import sourcegear.gears.helpers.ModelField
+import sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
+sealed abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
 
   val description : NodeDesc
   val components: Map[FlatWalkablePath, Vector[Component]]
@@ -93,6 +93,30 @@ abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
   }
 
 }
+
+case class ParseAsModel(description: NodeDesc,
+                        schema: SchemaId,
+                        components: Map[FlatWalkablePath, Vector[Component]],
+                        rules: Map[FlatWalkablePath, Vector[Rule]]
+                       )(implicit ruleProvider: RuleProvider) extends ParseGear {
+
+  override def output(matchResults: MatchResults) : Option[ParseResult] = {
+    if (!matchResults.isMatch) return None
+
+    val model = FlattenModelFields.flattenFields(matchResults.extracted.getOrElse(Set()))
+
+    //@todo have schema validate
+    //    schema.resolve
+
+    Option(ParseResult(this,
+      model,
+      null,
+      null))
+
+  }
+
+}
+
 
 //Signaling
 case class MatchResults(isMatch: Boolean, extracted: Option[Set[ModelField]])

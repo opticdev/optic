@@ -3,7 +3,6 @@ package sdk.descriptions
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.{JsError, JsSuccess, _}
 import sdk.descriptions.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
-import sdk.descriptions.helpers.{EnumReader, ParsableEnum}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

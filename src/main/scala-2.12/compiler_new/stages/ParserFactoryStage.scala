@@ -7,9 +7,8 @@ import compiler_new.{FinderStageOutput, ParserFactoryOutput}
 import play.api.libs.json.JsObject
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions.{Component, Lens, Rule, Schema}
-import sourcegear.gears.parsing.{NodeDesc, ParseGear}
+import sourcegear.gears.parsing.{NodeDesc, ParseAsModel, ParseGear}
 import sourcegear.gears.RuleProvider
-import sourcegear.gears.parsing.types.ParseAsModel
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -24,20 +23,17 @@ class ParserFactoryStage(finderStageOutput: FinderStageOutput)(implicit lens: Le
 
     implicit val ruleProvider = new RuleProvider()
 
-    ParserFactoryOutput(new ParseAsModel {
-      override val description: NodeDesc = nodeDescription
-      override val components = {
-        finderStageOutput.componentFinders.map {
-          case (finderPath, components)=> (finderPathToFlatPath(finderPath, enterOn), components)
-        }
+    ParserFactoryOutput(
+      ParseAsModel(
+      nodeDescription,
+      lens.schema,
+      finderStageOutput.componentFinders.map {
+        case (finderPath, components)=> (finderPathToFlatPath(finderPath, enterOn), components)
+      },
+      finderStageOutput.ruleFinders.map {
+        case (finderPath, rules)=> (finderPathToFlatPath(finderPath, enterOn), rules)
       }
-      override val rules = {
-        finderStageOutput.ruleFinders.map {
-          case (finderPath, rules)=> (finderPathToFlatPath(finderPath, enterOn), rules)
-        }
-      }
-      override val schema = lens.schema
-    })
+    ))
   }
 
   def finderPathToFlatPath(finderPath: FinderPath, node: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge]): FlatWalkablePath = {

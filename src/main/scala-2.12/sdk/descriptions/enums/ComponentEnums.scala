@@ -6,13 +6,13 @@ import scala.util.Try
 
 object ComponentEnums {
 
-  trait TypesEnum
+  sealed trait TypesEnum
 
   case object Code extends TypesEnum
   case object Schema extends TypesEnum
 
 
-  trait CodeEnum
+  sealed trait CodeEnum
 
   case object Token extends CodeEnum
   case object Literal extends CodeEnum

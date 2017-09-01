@@ -3,9 +3,12 @@ package sdk.descriptions.Finders
 import cognitro.parsers.GraphUtils.Path.{PathFinder, WalkablePath}
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import compiler_new.SnippetStageOutput
+import compiler_new.errors._
 import play.api.libs.json._
+import sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting, StringEnums}
 import sdk.descriptions.{Description, Lens}
 
+import scala.util.matching.Regex
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
@@ -58,7 +61,7 @@ abstract class FinderPath {
   def fromNode(astPrimitiveNode: AstPrimitiveNode) : Option[WalkablePath]
 }
 
-trait Finder {
+sealed trait Finder {
   def evaluateFinder(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode
   def evaluateFinderPath(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : FinderPath = {
     val result = evaluateFinder(snippetStageOutput)
@@ -70,4 +73,84 @@ trait Finder {
       override val astGraph : Graph[BaseNode, LkDiEdge] = snippetStageOutput.astGraph
     }
   }
+}
+
+//@todo get these into different files. Picklers need them all here for some reason even though sealed should be package, not file specific
+case class StringFinder(rule: StringEnums, string: String, occurrence: Int = 0) extends Finder {
+  override def evaluateFinder(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = {
+
+    val regex = Regex.quote(string).r
+
+    val matches = regex.findAllMatchIn(snippetStageOutput.snippet.block).toVector
+
+    //not found at all
+    if (matches.size == 0) throw StringNotFound(this)
+
+    val matchOption = matches.lift(occurrence)
+
+    //occurrence not found
+    if (matchOption.isEmpty) throw StringOccurrenceOutOfBounds(this, matches.size)
+
+    val (start, end) = (matchOption.get.start, matchOption.get.end)
+
+    rule match {
+      //offload to a range finder. search for exact matches, least graph depth
+      case Entire => RangeFinder(start, end).evaluateFinder(snippetStageOutput)
+
+      //node with deepest graph depth that contains entire string
+      case Containing => {
+        val containingNodes = RangeFinder.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
+          nStart <= start && nEnd >= end
+        }).sortBy(_.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph))
+
+        val nodeOption = containingNodes.lastOption
+
+        if (nodeOption.isEmpty) throw NodeContainingStringNotFound(this)
+        else nodeOption.get.value.asInstanceOf[AstPrimitiveNode]
+      }
+
+      //node with least graph depth that starts with string
+      case Starting => {
+        val containingNodes = RangeFinder.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
+          nStart == start
+        }).sortBy(_.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph))
+
+        val nodeOption = containingNodes.lastOption
+
+        if (nodeOption.isEmpty) throw NodeStartingWithStringNotFound(this)
+        else nodeOption.get.value.asInstanceOf[AstPrimitiveNode]
+      }
+    }
+
+  }
+}
+
+case class NodeFinder(enterOn: String, block: String) extends Finder {
+  override def evaluateFinder(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens): AstPrimitiveNode = ???
+}
+
+case class RangeFinder(start: Int, end: Int) extends Finder {
+  override def evaluateFinder(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens): AstPrimitiveNode = {
+
+    val exactMatchingNodes = RangeFinder.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
+      (start, end) == (nStart, nEnd)
+    })
+
+    val node = exactMatchingNodes.sortBy(i=> i.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph)).reverse.headOption
+
+    if (node.isDefined) node.get.value.asInstanceOf[AstPrimitiveNode] else throw new NodeWithRangeNotFound(this)
+  }
+}
+
+object RangeFinder {
+
+  def nodesMatchingRangePredicate(graph: Graph[BaseNode, LkDiEdge], predicate: (Int, Int)=> Boolean) = {
+    graph.nodes.filter((n: graph.NodeT)=> {
+      n.isAstNode() && {
+        val (start, end) = n.value.asInstanceOf[AstPrimitiveNode].range
+        n.value.isAstNode() && predicate(start, end)
+      }
+    }).toSeq
+  }
+
 }

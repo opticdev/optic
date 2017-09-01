@@ -11,11 +11,11 @@ libraryDependencies += "com.optic-dev" %% "parser-base" % "1.0.0"
 //io
 libraryDependencies += "com.github.pathikrit" % "better-files_2.12" % "2.17.1"
 libraryDependencies += "commons-io" % "commons-io" % "2.4"
+libraryDependencies += "io.suzaku" %% "boopickle" % "1.2.6"
 
 //test suites
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
-
 
 //json
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.2"
