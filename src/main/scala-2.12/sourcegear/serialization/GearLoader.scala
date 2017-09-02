@@ -3,7 +3,7 @@ package sourcegear.serialization
 import java.nio.ByteBuffer
 
 import better.files.File
-import sourcegear.gears.parsing.ParseGear
+import sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 import boopickle.Default._
 import sourcegear.gears.RuleProvider
 
@@ -15,6 +15,6 @@ object GearLoader {
   //@todo this has to come from elsewhere...
   implicit val rulesProvider = new RuleProvider()
 
-  def parseGearFromFile(file: File) : Try[ParseGear] =
-    Try(Unpickle[ParseGear].fromBytes(ByteBuffer.wrap(file.byteArray)))
+  def parseGearFromFile(file: File) : Try[ParseAsModel] =
+    Try(Unpickle[ParseAsModel].fromBytes(ByteBuffer.wrap(file.byteArray)))
 }

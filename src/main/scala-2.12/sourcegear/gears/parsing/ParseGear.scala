@@ -145,7 +145,7 @@ case class NodeDesc(astType: AstType,
 
       filteredProperties == filteredMap && propertyRules.forall(_.evaluate(node) == true)
     } else {
-      properties == asMap
+      properties == asMap.value
     }
   }
 }

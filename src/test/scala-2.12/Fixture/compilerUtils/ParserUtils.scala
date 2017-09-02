@@ -3,11 +3,11 @@ package Fixture.compilerUtils
 import compiler_new.SnippetStageOutput
 import compiler_new.stages.{FinderStage, ParserFactoryStage, SnippetStage}
 import sdk.descriptions.{Component, Lens, Rule, Snippet}
-import sourcegear.gears.parsing.ParseGear
+import sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 
 trait ParserUtils {
 
-  def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[Rule] = Vector()) : ParseGear = {
+  def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[Rule] = Vector()) : ParseAsModel = {
     val snippet = Snippet("Testing", "Javascript", "es6", block)
     implicit val lens : Lens = Lens("Example", null, snippet, rules, components)
 
@@ -18,7 +18,7 @@ trait ParserUtils {
     val parserFactoryStage = new ParserFactoryStage(finderStageOutput)
     val output = parserFactoryStage.run
 
-    output.parseGear
+    output.parseGear.asInstanceOf[ParseAsModel]
   }
 
   def sample(block: String) : SnippetStageOutput = {
