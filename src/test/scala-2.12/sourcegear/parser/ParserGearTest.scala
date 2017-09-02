@@ -2,16 +2,20 @@ package sourcegear.parser
 
 import Fixture.TestBase
 import Fixture.compilerUtils.ParserUtils
+import better.files.File
 import play.api.libs.json.{Json, Writes}
 import boopickle.Default._
 import cognitro.parsers.GraphUtils.Child
 import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
-import sdk.descriptions.CodeComponent
+import sdk.StringProperty
+import sdk.descriptions.{CodeComponent, PropertyRule}
 import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions.enums.ComponentEnums.{CodeEnum, Token}
-import sdk.descriptions.enums.FinderEnums.Entire
+import sdk.descriptions.enums.FinderEnums.{Entire, Starting}
 import sourcegear.gears.RuleProvider
-import sourcegear.gears.parsing.ParseGear
+import sourcegear.gears.parsing.{ParseAsModel, ParseGear}
+import sourcegear.serialization.GearLoader
+import sourcegear.serialization.SerializeGears._
 
 class ParserGearTest extends TestBase with ParserUtils {
 
@@ -19,25 +23,19 @@ class ParserGearTest extends TestBase with ParserUtils {
 
     describe("save/load") {
 
-      it("can serialize") {
-        val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
-//        Pickle.intoBytes[ParseAsModel](parseGear.asInstanceOf[ParseAsModel])
+      it("can serialize & load") {
+        val parseGear: ParseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
 
-        val test = CodeComponent(Token, "definedAs", StringFinder(Entire, "hello"))
+        val toFile = parseGear.toFile(File("src/test/resources/tmp/exampleGear.optic"))
+        assert(toFile.isSuccess)
 
-        import sdk.descriptions.enums.ComponentEnums._
+        val loaded = GearLoader.parseGearFromFile(toFile.get)
+        assert(loaded.isSuccess)
 
-        implicit val rulesProvider = new RuleProvider()
-
-        Pickle.intoBytes(FlatWalkablePath(Vector(Child(3, "hello"))))
-//        Pickle.intoBytes(parseGear)
-
-        import sourcegear.serialization.PickleImplicits._
-
-//        Pickle.intoBytes[ParseAsModel](parseGear.asInstanceOf[ParseAsModel])
+        //compare to each other
+        assert(parseGear == loaded.get)
 
       }
-
 
     }
 

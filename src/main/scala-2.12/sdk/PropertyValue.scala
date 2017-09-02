@@ -2,15 +2,10 @@ package sdk
 
 import play.api.libs.json._
 
-trait PropertyValue {
+sealed trait PropertyValue {
   def asJson : JsValue
   val value : Any
-  override def equals(that: Any): Boolean =
-    that match {
-      case that: JsValue => this.asJson == that
-      case that: PropertyValue => this.value == that.value
-      case _ => super.equals(that)
-    }
+  def equalsJson(jsValue: JsValue) = this.asJson == jsValue
 }
 
 case class StringProperty(value: String) extends PropertyValue {
@@ -23,7 +18,6 @@ case class BoolProperty(value: Boolean) extends PropertyValue {
   override def asJson: JsBoolean = JsBoolean(value)
 }
 
-
 case class ObjectProperty(value: Map[String, PropertyValue]) extends PropertyValue {
   override def asJson: JsObject = JsObject(value.mapValues(_.asJson))
 }
@@ -31,8 +25,13 @@ case class ArrayProperty(value: Vector[PropertyValue]) extends PropertyValue {
   override def asJson: JsArray = JsArray(value.map(_.asJson))
 }
 
-
 object PropertyValuesConversions {
+
+  implicit val propertyValueReads = new Reads[PropertyValue] {
+    override def reads(json: JsValue): JsResult[PropertyValue] = {
+      JsSuccess(ValueConvert(json).toScala)
+    }
+  }
 
   implicit class StringConvert(jsString: JsString) {
     def toScala = StringProperty(jsString.value)
@@ -61,6 +60,7 @@ object PropertyValuesConversions {
       case x: JsBoolean => BoolConvert(x).toScala
       case x: JsObject => ObjectConvert(x).toScala
       case x: JsArray => ArrayConvert(x).toScala
+      case JsNull => null
     }
   }
 

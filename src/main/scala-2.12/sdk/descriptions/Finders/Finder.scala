@@ -99,7 +99,7 @@ case class StringFinder(rule: StringEnums, string: String, occurrence: Int = 0) 
 
       //node with deepest graph depth that contains entire string
       case Containing => {
-        val containingNodes = RangeFinder.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
+        val containingNodes = RangeFinderEvaluate.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
           nStart <= start && nEnd >= end
         }).sortBy(_.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph))
 
@@ -111,7 +111,7 @@ case class StringFinder(rule: StringEnums, string: String, occurrence: Int = 0) 
 
       //node with least graph depth that starts with string
       case Starting => {
-        val containingNodes = RangeFinder.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
+        val containingNodes = RangeFinderEvaluate.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
           nStart == start
         }).sortBy(_.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph))
 
@@ -132,7 +132,7 @@ case class NodeFinder(enterOn: String, block: String) extends Finder {
 case class RangeFinder(start: Int, end: Int) extends Finder {
   override def evaluateFinder(snippetStageOutput: SnippetStageOutput)(implicit lens: Lens): AstPrimitiveNode = {
 
-    val exactMatchingNodes = RangeFinder.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
+    val exactMatchingNodes = RangeFinderEvaluate.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
       (start, end) == (nStart, nEnd)
     })
 
@@ -142,7 +142,7 @@ case class RangeFinder(start: Int, end: Int) extends Finder {
   }
 }
 
-object RangeFinder {
+object RangeFinderEvaluate {
 
   def nodesMatchingRangePredicate(graph: Graph[BaseNode, LkDiEdge], predicate: (Int, Int)=> Boolean) = {
     graph.nodes.filter((n: graph.NodeT)=> {

@@ -11,7 +11,7 @@ class PropertyValuesTest extends FunSpec {
     def compare[P <: PropertyValue](propertyValues: P, jsValue: JsValue) = {
       assert(propertyValues.asJson == jsValue)
       assert(propertyValues == jsValue.toScala)
-      assert(propertyValues == jsValue)
+      assert(propertyValues.equalsJson(jsValue))
       assert(jsValue != propertyValues)
     }
 

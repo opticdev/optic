@@ -56,7 +56,7 @@ object Component extends Description[Component] {
   }
 }
 
-trait Component {
+sealed trait Component {
   def rules: Vector[Rule]
   val finder: Finder
   val propertyPath: String

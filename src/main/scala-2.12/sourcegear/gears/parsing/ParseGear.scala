@@ -3,6 +3,7 @@ package sourcegear.gears.parsing
 import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, Child}
 import play.api.libs.json.{JsObject, JsValue}
+import sdk.PropertyValue
 import sdk.descriptions._
 import sdk.descriptions.enums.ComponentEnums
 import sourcegear.gears.RuleProvider
@@ -11,7 +12,7 @@ import sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-sealed abstract class ParseGear()(implicit ruleProvider: RuleProvider) {
+sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
   val description : NodeDesc
   val components: Map[FlatWalkablePath, Vector[Component]]
@@ -125,25 +126,26 @@ case class MatchResults(isMatch: Boolean, extracted: Option[Set[ModelField]])
 case class RulesDesc()
 case class NodeDesc(astType: AstType,
                     edge: Child = Child(0, null),
-                    properties: Map[String, JsValue],
+                    properties: Map[String, PropertyValue],
                     children: Vector[NodeDesc],
                     rules: Vector[RulesDesc]) {
 
   def propertiesMatch(node: AstPrimitiveNode, propertyRules: Vector[PropertyRule])(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String)  : Boolean = {
+    import sdk.PropertyValuesConversions._
     val jsValue = node.properties
     if (!jsValue.isInstanceOf[JsObject]) return false
-    val asMap = jsValue.as[JsObject].value.toMap
-    if (asMap.nonEmpty) {
+    val asMap = jsValue.as[JsObject].toScala
+    if (asMap.value.nonEmpty) {
       import sourcegear.gears.helpers.RuleEvaluation.PropertyRuleWithEvaluation
 
       val overridenKeys = propertyRules.map(_.key)
 
-      val filteredMap        = asMap.filterKeys(!overridenKeys.contains(_))
+      val filteredMap        = asMap.value.filterKeys(!overridenKeys.contains(_))
       val filteredProperties = properties.filterKeys(!overridenKeys.contains(_))
 
-      filteredMap == filteredProperties && propertyRules.forall(_.evaluate(node) == true)
+      filteredProperties == filteredMap && propertyRules.forall(_.evaluate(node) == true)
     } else {
-      asMap == properties
+      properties == asMap
     }
   }
 }

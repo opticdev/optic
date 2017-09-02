@@ -2,7 +2,7 @@ package sourcegear.serialization
 
 import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
-
+import sdk.{BoolProperty, _}
 import sdk.descriptions.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
 
 object PickleImplicits {
@@ -32,6 +32,14 @@ object PickleImplicits {
       .addConcreteType[Starting.type]
   }
 
+  implicit val componentPickler = {
+    import sdk.descriptions.{CodeComponent, Component, SchemaComponent}
+    compositePickler[Component]
+      .addConcreteType[CodeComponent]
+      .addConcreteType[SchemaComponent]
+  }
+
+
   implicit val finderPickler = {
     import sdk.descriptions.Finders.{Finder, StringFinder, RangeFinder, NodeFinder}
     compositePickler[Finder]
@@ -40,19 +48,18 @@ object PickleImplicits {
       .addConcreteType[NodeFinder]
   }
 
-//  implicit val componentPickler = {
-//    import sdk.descriptions.{Component, CodeComponent, SchemaComponent}
-//    compositePickler[Component]
-//      .addConcreteType[CodeComponent]
-//      .addConcreteType[SchemaComponent]
-//  }
+  import sdk.{PropertyValue, StringProperty, NumberProperty, BoolProperty, ObjectProperty, ArrayProperty}
 
+  implicit val propertyValuePickler = compositePickler[PropertyValue]
+  implicit val objectPropertyValuePickler = PicklerGenerator.generatePickler[ObjectProperty]
+  implicit val arrayPropertyValuePickler = PicklerGenerator.generatePickler[ArrayProperty]
 
-  implicit val jsBooleanPickler = {
-    import play.api.libs.json.{JsBoolean, JsFalse, JsTrue}
-    compositePickler[JsBoolean]
-      .addConcreteType[JsFalse.type]
-      .addConcreteType[JsTrue.type]
-  }
+  propertyValuePickler
+    .addConcreteType[StringProperty]
+    .addConcreteType[NumberProperty]
+    .addConcreteType[BoolProperty]
+    .addConcreteType[ArrayProperty]
+    .addConcreteType[ObjectProperty]
+
 
 }

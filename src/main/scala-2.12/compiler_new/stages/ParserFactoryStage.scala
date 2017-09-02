@@ -46,10 +46,12 @@ class ParserFactoryStage(finderStageOutput: FinderStageOutput)(implicit lens: Le
     val children = astPrimitiveNode.getChildren(finderStageOutput.snippetStageOutput.astGraph)
       .map(i=> nodeToDescription(i._2, i._1.asInstanceOf[Child]))
 
+    import sdk.PropertyValuesConversions._
+
     NodeDesc(
       astPrimitiveNode.nodeType,
       edge,
-      astPrimitiveNode.properties.as[JsObject].value.toMap,
+      astPrimitiveNode.properties.as[JsObject].toScala.value,
       children,
       Vector())
   }

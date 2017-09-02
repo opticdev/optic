@@ -28,8 +28,8 @@ object RuleEvaluation {
       val valueOption = node.properties.as[JsObject] \ propertyRule.key
       if (valueOption.isEmpty) return false
       propertyRule.comparator match {
-        case "==" => valueOption.get == propertyRule.jsValue
-        case "!=" => valueOption.get != propertyRule.jsValue
+        case "==" => propertyRule.value.equalsJson(valueOption.get)
+        case "!=" => !propertyRule.value.equalsJson(valueOption.get)
         case "ANY" => true
         case _ => false
       }

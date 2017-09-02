@@ -7,6 +7,8 @@ import sdk.descriptions.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import enums.RuleEnums._
+import sdk.PropertyValue
+import sdk.PropertyValuesConversions.propertyValueReads
 
 object Rule extends Description[Rule] {
 
@@ -50,7 +52,7 @@ object Rule extends Description[Rule] {
   }
 }
 
-trait Rule {
+sealed trait Rule {
   val finder: Finder
   val isRawRule = false
   val isPropertyRule = false
@@ -61,7 +63,7 @@ case class RawRule(finder: Finder, comparator: String, value: String = "") exten
   override val isRawRule = true
 }
 
-case class PropertyRule(finder: Finder, key: String, comparator: String, jsValue: JsValue = JsNull) extends Rule {
+case class PropertyRule(finder: Finder, key: String, comparator: String, value: PropertyValue = null) extends Rule {
   override val isPropertyRule = true
 }
 
