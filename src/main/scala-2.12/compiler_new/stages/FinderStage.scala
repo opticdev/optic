@@ -39,7 +39,7 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
     val componentsGrouped = finderPaths.groupBy(_._2).mapValues(_.map(_._1))
     val rulesGrouped      = rulePaths.groupBy(_._2).mapValues(_.map(_._1))
 
-    FinderStageOutput(snippetStageOutput, componentsGrouped, rulesGrouped)
+    FinderStageOutput(componentsGrouped, rulesGrouped)
 
   }
 

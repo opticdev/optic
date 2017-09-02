@@ -5,7 +5,7 @@
       "schema": "js-import^1.0.0",
       "snippet": {
         "name": "Using Require",
-        "lang": "javascript",
+        "lang": "Javascript",
         "version": "es6",
         "block": "let definedAs = require('pathTo')"
       },

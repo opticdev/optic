@@ -34,12 +34,12 @@ class SourceGearTest extends TestBase with ParserUtils {
         PropertyRule(StringFinder(Starting, "var"), "kind", "ANY")
       ))
 
-      val importGear = new Gear {
-        override val enterOn: Set[AstType] = Set(AstType("VariableDeclaration", "Javascript"))
-        override val parser: ParseGear = parseGear
-        override val generater: GenerateGear = null
-        override val mutator: MutateGear = null
-      }
+      val importGear = Gear(
+        Set(AstType("VariableDeclaration", "Javascript")),
+        parseGear,
+        null,
+        null
+      )
 
       sourceGear.gearSet.addGear(importGear)
 

@@ -3,7 +3,7 @@ package compiler_new.stages
 import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode, Child}
 import compiler_new.errors.AstPathNotFound
-import compiler_new.{FinderStageOutput, ParserFactoryOutput}
+import compiler_new.{FinderStageOutput, ParserFactoryOutput, SnippetStageOutput}
 import play.api.libs.json.JsObject
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions.{Component, Lens, Rule, Schema}
@@ -13,11 +13,11 @@ import sourcegear.gears.RuleProvider
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-class ParserFactoryStage(finderStageOutput: FinderStageOutput)(implicit lens: Lens) extends CompilerStage[ParserFactoryOutput] {
+class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens) extends CompilerStage[ParserFactoryOutput] {
   override def run: ParserFactoryOutput = {
-    implicit val graph = finderStageOutput.snippetStageOutput.astGraph
+    implicit val graph = snippetStageOutput.astGraph
 
-    val enterOn = finderStageOutput.snippetStageOutput.entryChildren.head
+    val enterOn = snippetStageOutput.entryChildren.head
 
     val nodeDescription = nodeToDescription(enterOn)
 
@@ -43,7 +43,7 @@ class ParserFactoryStage(finderStageOutput: FinderStageOutput)(implicit lens: Le
   }
 
   def nodeToDescription(astPrimitiveNode: AstPrimitiveNode, edge: Child = Child(0, null)) : NodeDesc = {
-    val children = astPrimitiveNode.getChildren(finderStageOutput.snippetStageOutput.astGraph)
+    val children = astPrimitiveNode.getChildren(snippetStageOutput.astGraph)
       .map(i=> nodeToDescription(i._2, i._1.asInstanceOf[Child]))
 
     import sdk.PropertyValuesConversions._

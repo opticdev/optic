@@ -1,13 +1,16 @@
 package compiler
 
+import Fixture.TestBase
+import compiler_new.Failure
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
 import sdk.SdkDescription
+import sourceparsers.SourceParserManager
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
-class CompilerTest extends FunSpec {
+class CompilerTest extends TestBase {
 
   describe("Compiler") {
 
@@ -30,7 +33,9 @@ class CompilerTest extends FunSpec {
 
         val worker = new compiler_new.Compiler.CompileWorker(description.lenses.head)
 
-        println(worker.compile()(description.schemas, description.lenses, ListBuffer()))
+        val result = worker.compile()(description.schemas, description.lenses, ListBuffer())
+
+        result.printErrors
 
       }
 

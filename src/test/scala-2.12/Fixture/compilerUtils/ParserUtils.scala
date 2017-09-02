@@ -15,7 +15,7 @@ trait ParserUtils {
     val snippetOutput = snippetBuilder.run
     val finderStage = new FinderStage(snippetOutput)
     val finderStageOutput = finderStage.run
-    val parserFactoryStage = new ParserFactoryStage(finderStageOutput)
+    val parserFactoryStage = new ParserFactoryStage(snippetOutput, finderStageOutput)
     val output = parserFactoryStage.run
 
     output.parseGear.asInstanceOf[ParseAsModel]

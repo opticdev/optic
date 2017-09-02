@@ -33,7 +33,6 @@ class FinderStageTest extends TestBase {
 
     it("Returns valid output") {
       val output = finderStage.run
-      assert(output.snippetStageOutput == outputTry.get)
       assert(output.componentFinders.size == 1)
       assert(output.ruleFinders.size == 1)
     }

@@ -7,14 +7,7 @@ import sourcegear.gears.{GenerateGear, MutateGear}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-abstract class Gear {
-  val enterOn : Set[AstType]
-
+case class Gear(enterOn: Set[AstType], parser : ParseGear, mutator : MutateGear, generater : GenerateGear) {
   def matches(entryNode: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) =
     parser.matches(entryNode)
-
-  val parser : ParseGear
-  val mutator : MutateGear
-  val generater : GenerateGear
-
 }
