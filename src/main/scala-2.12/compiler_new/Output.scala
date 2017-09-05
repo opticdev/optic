@@ -8,6 +8,7 @@ import sdk.descriptions.{Component, Lens, Rule, Snippet}
 import sourcegear.Gear
 import sourcegear.gears.parsing.ParseGear
 
+import scala.util.Try
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
@@ -40,7 +41,10 @@ sealed trait FinalOutput extends Output {
   val isFailure = false
   def printErrors = {}
 }
-case class Success(gear: Gear) extends FinalOutput
+case class Success(gear: Gear) extends FinalOutput {
+  override val isSuccess = true
+}
 case class Failure(lens: Lens, errorAccumulator: ErrorAccumulator) extends FinalOutput {
+  override val isFailure = true
   override def printErrors = errorAccumulator.printAll
 }

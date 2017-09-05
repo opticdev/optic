@@ -37,6 +37,8 @@ class CompilerTest extends TestBase {
 
         result.printErrors
 
+        assert(result.isSuccess)
+
       }
 
     }

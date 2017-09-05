@@ -36,7 +36,7 @@
           "codeType": "token",
           "finder": {
             "type": "string",
-            "rule": "entire",
+            "rule": "containing",
             "string": "pathTo",
             "occurrence": 0
           },
