@@ -3,7 +3,8 @@ package sourcegear.parser
 import Fixture.TestBase
 import Fixture.compilerUtils.ParserUtils
 import better.files.File
-import play.api.libs.json.{JsObject, JsString}
+import play.api.libs.json.{JsObject, JsString, Json}
+import sdk.SdkDescription
 import sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule}
 import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions.enums.ComponentEnums.{Literal, Token}
@@ -12,6 +13,9 @@ import sdk.descriptions.enums.RuleEnums.Any
 import sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 import sourcegear.serialization.GearLoader
 import sourcegear.serialization.SerializeGears._
+
+import scala.collection.mutable.ListBuffer
+import scala.io.Source
 
 class ParserGearTest extends TestBase with ParserUtils {
 
@@ -99,6 +103,21 @@ class ParserGearTest extends TestBase with ParserUtils {
             assert(result.isDefined)
 
           }
+
+          it("Will not match Any without rule") {
+
+            val parseGear = parseGearFromSnippetWithComponents("function hello () { }", Vector())
+
+            val block = "function hello () { return hello }"
+
+            val parsedSample = sample(block)
+
+            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
+
+            assert(!result.isDefined)
+
+          }
+
         }
 
       }
@@ -120,11 +139,6 @@ class ParserGearTest extends TestBase with ParserUtils {
           val expected = JsObject(Seq("definedAs" -> JsString("otherValue"), "pathTo" -> JsString("that-lib")))
           assert(result.get.modelNode.value == expected)
         }
-
-        describe("that map schemas") {
-
-        }
-
       }
     }
 

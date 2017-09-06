@@ -52,7 +52,7 @@ class SdkComponentTest extends FunSpec {
                       }
                     },
                     "location": {
-                      "type": "SameParent",
+                      "type": "InParent",
                       "finder": null
                       },
                     "options": {
@@ -66,7 +66,7 @@ class SdkComponentTest extends FunSpec {
       it("for valid json") {
         val component = Component.fromJson(Json.parse(validJson))
         assert(component.isInstanceOf[SchemaComponent])
-        assert(component.asInstanceOf[SchemaComponent].location.in == SameParent)
+        assert(component.asInstanceOf[SchemaComponent].location.in == InParent)
       }
 
     }

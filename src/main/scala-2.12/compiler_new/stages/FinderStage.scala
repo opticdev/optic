@@ -5,6 +5,7 @@ import compiler_new.errors.{ErrorAccumulator, InvalidComponents, SyntaxError}
 import compiler_new.{FinderStageOutput, SnippetStageOutput}
 import sdk.descriptions.Finders.{Finder, FinderPath}
 import sdk.descriptions.{CodeComponent, Component, Lens}
+import sdk.descriptions.helpers.ComponentImplicits._
 
 import scala.util.{Failure, Success, Try}
 
@@ -13,7 +14,7 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
 
     implicit val evaluatedFinderPaths = scala.collection.mutable.Map[Finder, FinderPath]()
 
-    val finderPaths = lens.components.filter(_.isInstanceOf[CodeComponent]).asInstanceOf[Vector[CodeComponent]].map(c=> {
+    val finderPaths = lens.components.codeComponents.map(c=> {
       val finderPathTry = pathForFinder(c.finder)
       if (finderPathTry.isFailure) {
         errorAccumulator.add(finderPathTry.asInstanceOf[Failure[Exception]].exception)
@@ -21,8 +22,8 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
       } else (c, finderPathTry.get)
     }).filterNot(_ == null)
 
-    if (finderPaths.size != lens.components.size) {
-      val invalidComponents = lens.components.toSet diff finderPaths.map(_._1).toSet
+    if (finderPaths.size != lens.components.codeComponents.size) {
+      val invalidComponents = lens.components.codeComponents.toSet diff finderPaths.map(_._1).toSet
       throw new InvalidComponents(invalidComponents)
     }
 

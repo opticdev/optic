@@ -5,7 +5,7 @@
     "schema": "js-example-route-parameter^1.0.0",
     "snippet": {
       "name": "Parameter",
-      "lang": "javascript",
+      "lang": "Javascript",
       "version": "es6",
       "block": "req.query.name"
     },
@@ -55,11 +55,20 @@
     "schema": "js-example-route^1.0.0",
     "snippet": {
       "name": "Example Route",
-      "lang": "javascript",
+      "lang": "Javascript",
       "version": "es6",
       "block": "app.get('url', function (req, res) {\n\n})"
     },
-    "rules": [],
+    "rules": [{
+      "type": "children",
+      "finder": {
+        "type": "string",
+        "rule": "starting",
+        "string": "{",
+        "occurrence": 0
+      },
+      "ruleType": "any"
+    }],
     "components": [{
       "type": "code",
       "codeType": "token",
@@ -84,7 +93,7 @@
       "codeType": "literal",
       "finder": {
         "type": "string",
-        "rule": "entire",
+        "rule": "containing",
         "string": "url",
         "occurrence": 0
       },
@@ -109,7 +118,7 @@
         }
       },
       "location": {
-        "type": "SameParent",
+        "type": "InParent",
         "finder": null
       },
       "options": {

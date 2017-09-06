@@ -7,6 +7,7 @@ import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions._
 import sdk.descriptions.enums.ComponentEnums._
 import sdk.descriptions.enums.FinderEnums._
+import sdk.descriptions.enums.LocationEnums
 import sdk.descriptions.enums.RuleEnums._
 
 
@@ -55,11 +56,20 @@ class ParserFactoryStageTest extends TestBase with ParserUtils {
         //implied from the component
         assert(parseGear.rules.size == 2)
       }
+
+      it("listens to file accumulators") {
+        val schemaComponent = SchemaComponent("properties", SchemaId("example-parameter"), Location(LocationEnums.Anywhere))
+        val parseGear = parseGearFromSnippetWithComponents("function hello() { }", Vector(
+          schemaComponent
+        ))
+
+        assert(parseGear.listeners.size == 1)
+        val listener = parseGear.listeners.head
+        assert(listener.schema == schemaComponent.schema)
+      }
+
     }
 
-    describe("Listens to file accumulators") {
-
-    }
 
   }
 

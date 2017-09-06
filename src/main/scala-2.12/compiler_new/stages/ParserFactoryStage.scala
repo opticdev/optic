@@ -12,6 +12,9 @@ import sourcegear.gears.RuleProvider
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
+import sdk.descriptions.helpers.ComponentImplicits._
+import sourcegear.accumulate.MapSchemaListener
+
 
 class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens) extends CompilerStage[ParserFactoryOutput] {
   override def run: ParserFactoryOutput = {
@@ -20,6 +23,8 @@ class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutp
     val enterOn = snippetStageOutput.entryChildren.head
 
     val nodeDescription = nodeToDescription(enterOn)
+
+    val listeners = lens.components.schemaComponents.map(MapSchemaListener(_, lens.schema))
 
     implicit val ruleProvider = new RuleProvider()
 
@@ -32,7 +37,8 @@ class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutp
       },
       finderStageOutput.ruleFinders.map {
         case (finderPath, rules)=> (finderPathToFlatPath(finderPath, enterOn), rules)
-      }
+      },
+      listeners
     ))
   }
 

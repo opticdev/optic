@@ -13,22 +13,13 @@ import scalax.collection.mutable.Graph
 
 trait Accumulator {
 
-  private val listenersStore = scala.collection.mutable.Map[SchemaId, Set[(String) => Unit]]()
-
-  def reset = listenersStore.clear()
-
-  def listeners = listenersStore
-
-  def addListener(schemaId: SchemaId, action: ((String)=> Unit)) = listenersStore + {
-    val listenerSet = listenersStore.getOrElse(schemaId, Set()) + action
-    schemaId -> listenerSet
-  }
+  val listeners : Map[SchemaId, Set[Listener]]
 
   def run(implicit astGraph: Graph[BaseNode, LkDiEdge], parseResults: Vector[ParseResult]) : Unit
 
 }
 
-class FileAccumulator extends Accumulator {
+case class FileAccumulator(listeners: Map[SchemaId, Set[Listener]] = Map()) extends Accumulator {
   override def run(implicit astGraph: Graph[BaseNode, LkDiEdge], parseResults: Vector[ParseResult]): Unit = {
     //after this graph will contain all Model Nodes from the file.
     GraphOperations.addModelsToGraph(parseResults)
@@ -40,13 +31,14 @@ class FileAccumulator extends Accumulator {
         val listenerOption = listeners.get(schemaId)
         if (listenerOption.isDefined) {
           val listenersForSchema = listenerOption.get
-          listenersForSchema.foreach(i=> i(""))
+          listenersForSchema.foreach(_.collect())
           Vector()
         } else Vector()
       }
     }
 
   }
+
 }
 
 //class ProjectAccumulator(dir: File) extends Accumulator

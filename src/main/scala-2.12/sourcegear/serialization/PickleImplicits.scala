@@ -4,6 +4,7 @@ import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import sdk.{BoolProperty, _}
 import sdk.descriptions.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
+import sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 
 object PickleImplicits {
 
@@ -12,6 +13,18 @@ object PickleImplicits {
     compositePickler[CodeEnum]
       .addConcreteType[Token.type]
       .addConcreteType[Literal.type]
+  }
+
+  implicit val locationTypeEnumPickler = {
+    import sdk.descriptions.enums.LocationEnums._
+    compositePickler[LocationTypeEnums]
+      .addConcreteType[InSameFile.type]
+      .addConcreteType[Anywhere.type]
+      .addConcreteType[Sibling.type]
+      .addConcreteType[InScope.type]
+      .addConcreteType[InParent.type]
+      .addConcreteType[ChildOf]
+      .addConcreteType[ParentOf]
   }
 
   implicit val childrenRuleTypeEnumPickler = {
@@ -38,7 +51,6 @@ object PickleImplicits {
       .addConcreteType[CodeComponent]
       .addConcreteType[SchemaComponent]
   }
-
 
   implicit val finderPickler = {
     import sdk.descriptions.Finders.{Finder, StringFinder, RangeFinder, NodeFinder}

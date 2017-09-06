@@ -19,28 +19,40 @@ class CompilerTest extends TestBase {
 
     describe("can be setup") {
 
-      describe("with a test description") {
+      it("with a test description") {
         val pool = compiler_new.Compiler.setup(description)
-
         assert(pool.compilers.size == 1)
-
       }
     }
 
     describe("for individual lenses") {
 
       it("works when valid") {
+        val compiler = compiler_new.Compiler.setup(description)
+        val finalOutput = compiler.execute
 
-        val worker = new compiler_new.Compiler.CompileWorker(description.lenses.head)
-
-        val result = worker.compile()(description.schemas, description.lenses, ListBuffer())
-
-        result.printErrors
-
-        assert(result.isSuccess)
+        assert(finalOutput.isSuccess)
+        assert(!finalOutput.isFailure)
+        assert(finalOutput.gears.size == 1)
+        assert(finalOutput.errors.size == 0)
 
       }
 
+    }
+
+    describe("for complicated lenses") {
+      it("works when valid") {
+        val jsonString = Source.fromFile("src/test/resources/sdkDescriptions/RequestSdkDescription.json").getLines.mkString
+        val description = SdkDescription.fromJson(Json.parse(jsonString))
+
+        val compiler = compiler_new.Compiler.setup(description)
+        val finalOutput = compiler.execute
+
+        finalOutput.printErrors
+        assert(finalOutput.isSuccess)
+
+
+      }
     }
 
   }

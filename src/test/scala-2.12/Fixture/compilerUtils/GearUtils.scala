@@ -1,8 +1,9 @@
 package Fixture.compilerUtils
 
+import cognitro.parsers.ParserBase
 import play.api.libs.json.Json
 import sdk.SdkDescription
-import sourcegear.Gear
+import sourcegear.{Gear, SourceGear}
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
@@ -17,4 +18,24 @@ trait GearUtils {
 
     result.get
   }
+
+  def sourceGearFromDescription(path: String) : SourceGear = {
+
+    val sourceGear = new SourceGear {
+      override val parser: Set[ParserBase] = Set()
+    }
+
+    val jsonString = Source.fromFile("src/test/resources/sdkDescriptions/RequestSdkDescription.json").getLines.mkString
+    val description = SdkDescription.fromJson(Json.parse(jsonString))
+
+    val compiled = compiler_new.Compiler.setup(description).execute
+
+    if (compiled.isFailure) throw new Error("Compiling description failed. Test Stopped")
+
+    sourceGear.gearSet.addGears(compiled.gears.toSeq:_*)
+
+    sourceGear
+
+  }
+
 }

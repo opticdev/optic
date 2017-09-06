@@ -19,20 +19,21 @@ object Compiler {
     new CompilerPool(sdkDescription.lenses.map(l=> new CompileWorker(l)).toSet)
   }
 
-  class CompilerPool(val compilers: Set[CompileWorker]) {
+  class CompilerPool(val compilers: Set[CompileWorker])(implicit schemas: Vector[Schema], lenses: Vector[Lens], errorAccumulator: ErrorAccumulator) {
 
     private implicit var completed: ListBuffer[Output] = new scala.collection.mutable.ListBuffer[Output]()
 
     private def clear = completed = new scala.collection.mutable.ListBuffer[Output]()
 
-    def execute()(implicit schemas: Vector[Schema], lenses: Vector[Lens], errorAccumulator: ErrorAccumulator): Set[FinalOutput] = {
+    def execute: CompilerOutput = {
       clear
-      compilers.par.map(_.compile).seq
+      //@todo par should ideally be used here, but it is inconsistent for some reason. need to look into race conditions
+      CompilerOutput(compilers.map(_.compile).seq)
     }
   }
 
   class CompileWorker(sourceLens: Lens) {
-    def compile()(implicit schemas: Vector[Schema], lenses: Vector[Lens], completed: ListBuffer[Output], errorAccumulator: ErrorAccumulator = new ErrorAccumulator): FinalOutput = {
+    def compile()(implicit schemas: Vector[Schema], lenses: Vector[Lens], completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator): LensCompilerOutput = {
       implicit val lens = sourceLens
 
       //@todo reorder this / abstract. Looks very dirty.
@@ -58,7 +59,7 @@ object Compiler {
             val finalGear = Gear(snippetOutput.get.enterOn, parser.get.parseGear, null, null)
             //@todo add check (match self, ...)
 
-            return Success(finalGear)
+            return Success(sourceLens, finalGear)
           } else {
             errorAccumulator.handleFailure(parser.failed)
           }

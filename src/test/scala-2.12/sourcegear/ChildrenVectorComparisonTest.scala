@@ -53,6 +53,19 @@ class ChildrenVectorComparisonTest extends FunSpec {
 
       }
 
+      it("fails when empty vector is compared to non-empty vector") {
+
+        val result = ChildrenVectorComparison.exact[String, String](
+          Vector(),
+          Vector("A"),
+          stringEquality
+        )
+
+        assert(!result.isMatch)
+        assert(result.extracted.isEmpty)
+
+      }
+
     }
 
 

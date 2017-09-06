@@ -11,15 +11,17 @@ class GearSet(initialGears: Gear*) {
 
   private val gears = scala.collection.mutable.Set[Gear](initialGears:_*)
 
-  private var fileAccumulator = new FileAccumulator
+  private var fileAccumulator = FileAccumulator()
+
+  def size = gears.size
 
   def addGear(gear: Gear) = {
     gears add gear
     reindex
   }
 
-  def addGears(gears: Gear*) = {
-    gears ++ gears
+  def addGears(newGears: Gear*) = {
+    gears ++= newGears
     reindex
   }
 
@@ -30,13 +32,16 @@ class GearSet(initialGears: Gear*) {
 
   private var groupedStore : Map[AstType, Set[Gear]] = Map()
 
-  //@todo make sure this is used correctly
   private def reindex = synchronized {
+    val allListeners = gears.flatMap(_.parser.listeners)
+
     val allEntryNodes = gears.flatMap(_.enterOn).toSet
 
     groupedStore = allEntryNodes
       .map(nodeType=> (nodeType, gears.filter(_.enterOn.contains(nodeType)).toSet))
       .toMap
+
+    fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.schema))
   }
 
   def grouped: Map[AstType, Set[Gear]] = groupedStore

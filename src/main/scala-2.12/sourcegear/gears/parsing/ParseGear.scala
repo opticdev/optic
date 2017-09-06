@@ -6,6 +6,7 @@ import play.api.libs.json.{JsObject, JsValue}
 import sdk.PropertyValue
 import sdk.descriptions._
 import sdk.descriptions.enums.ComponentEnums
+import sourcegear.accumulate.Listener
 import sourcegear.gears.RuleProvider
 import sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import sourcegear.graph.ModelNode
@@ -18,6 +19,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
   val description : NodeDesc
   val components: Map[FlatWalkablePath, Vector[Component]]
   val rules: Map[FlatWalkablePath, Vector[Rule]]
+  val listeners : Vector[Listener]
 
   def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) : Option[ParseResult] = {
 
@@ -89,19 +91,14 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
   def output(matchResults: MatchResults) : Option[ParseResult] = None
 
-  def accumulatorListeners = {
-    val accumulatedComponents = components.mapValues(_.filter(_.isInstanceOf[SchemaComponent]))
-
-//    val allListeners = components.mapValues(i=> i.filter(_.`type` == ComponentEnums.Schema)).filter(_._2.nonEmpty)
-
-  }
 
 }
 
 case class ParseAsModel(description: NodeDesc,
                         schema: SchemaId,
                         components: Map[FlatWalkablePath, Vector[Component]],
-                        rules: Map[FlatWalkablePath, Vector[Rule]]
+                        rules: Map[FlatWalkablePath, Vector[Rule]],
+                        listeners : Vector[Listener]
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
   override def output(matchResults: MatchResults) : Option[ParseResult] = {
