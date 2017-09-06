@@ -26,7 +26,7 @@ class FinderStageTest extends TestBase {
     val finderStage = new FinderStage(outputTry.get)
 
     it("Can find paths for components") {
-      val finderPath = finderStage.pathForFinder(lens.components.head.finder)
+      val finderPath = finderStage.pathForFinder(lens.components.head.asInstanceOf[CodeComponent].finder)
       val targetNode = finderPath.get.targetNode
       assert(targetNode.nodeType == AstType("Identifier", "Javascript"))
     }
@@ -56,7 +56,7 @@ class FinderStageTest extends TestBase {
       val finderStage = new FinderStage(outputTry.get)
 
       it("collects exceptions from failed component lookup") {
-        val results = finderStage.pathForFinder(lens.components(1).finder)
+        val results = finderStage.pathForFinder(lens.components(1).asInstanceOf[CodeComponent].finder)
         assert(results.isFailure)
       }
 

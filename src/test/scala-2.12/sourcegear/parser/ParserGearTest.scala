@@ -61,7 +61,7 @@ class ParserGearTest extends TestBase with ParserUtils {
           val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
           assert(result.isDefined)
 
-          assert(result.get.model == JsObject(Seq("definedAs" -> JsString("otherValue"))))
+          assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("otherValue"))))
         }
 
         it("works for property rules") {
@@ -79,7 +79,7 @@ class ParserGearTest extends TestBase with ParserUtils {
           val parsedSample = sample(block)
           val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
           assert(result.isDefined)
-          assert(result.get.model == JsObject(Seq("definedAs" -> JsString("otherValue"))))
+          assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("otherValue"))))
 
         }
 
@@ -118,7 +118,7 @@ class ParserGearTest extends TestBase with ParserUtils {
           assert(result.isDefined)
 
           val expected = JsObject(Seq("definedAs" -> JsString("otherValue"), "pathTo" -> JsString("that-lib")))
-          assert(result.get.model == expected)
+          assert(result.get.modelNode.value == expected)
         }
 
         describe("that map schemas") {

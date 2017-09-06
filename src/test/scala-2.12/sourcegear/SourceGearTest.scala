@@ -1,7 +1,7 @@
 package sourcegear
 
 import Fixture.TestBase
-import Fixture.compilerUtils.ParserUtils
+import Fixture.compilerUtils.{GearUtils, ParserUtils}
 import better.files.File
 import cognitro.parsers.GraphUtils.AstType
 import cognitro.parsers.ParserBase
@@ -16,39 +16,24 @@ import sourcegear.gears.parsing.ParseGear
 INCOMPLETE TESTS. NEED TO DO SOME SERIOUS WORK ON THE SUITE
  */
 
-class SourceGearTest extends TestBase with ParserUtils {
+class SourceGearTest extends TestBase with GearUtils {
 
-  describe("Source gear test") {
-    //@todo factor out duplicate test code.
-    // We should have a representation saved which we load in.
+  describe("SourceGear") {
 
-    it("test") {
-      val sourceGear = new SourceGear {
-        override val parser: Set[ParserBase] = Set()
-      }
+    val sourceGear = new SourceGear {
+      override val parser: Set[ParserBase] = Set()
+    }
 
-      val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
-        CodeComponent(Token, "definedAs", StringFinder(Entire, "hello")),
-        CodeComponent(Literal, "pathTo", StringFinder(Containing, "world"))
-      ), Vector(
-        PropertyRule(StringFinder(Starting, "var"), "kind", "ANY")
-      ))
+    it("Finds matches in a test file.") {
 
-      val importGear = Gear(
-        Set(AstType("VariableDeclaration", "Javascript")),
-        parseGear,
-        null,
-        null
-      )
+      val importGear = gearFromDescription("src/test/resources/sdkDescriptions/ImportExample.json")
 
       sourceGear.gearSet.addGear(importGear)
 
       val testFilePath = getCurrentDirectory + "/src/test/resources/example_source/ImportSource.js"
-      println(testFilePath)
       val results = sourceGear.parseFile(File(testFilePath))
 
-      assert(results.size == 3)
-      println(results)
+      assert(results.size == 2)
 
     }
 

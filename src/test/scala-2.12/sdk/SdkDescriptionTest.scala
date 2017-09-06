@@ -11,12 +11,21 @@ class SdkDescriptionTest extends FunSpec {
     describe("parsing") {
 
       describe("from Json") {
-        val jsonString = Source.fromFile("src/test/resources/sdkDescriptions/ImportExample.json").getLines.mkString
 
-        it("finds all schemas") {
+        it("finds all schemas for simple Lens") {
+          val jsonString = Source.fromFile("src/test/resources/sdkDescriptions/ImportExample.json").getLines.mkString
           val description = SdkDescription.fromJson(Json.parse(jsonString))
           assert(description.schemas.size === 1)
           assert(description.lenses.size === 1)
+        }
+
+        it("finds all schemas for advanced lens") {
+          val jsonString = Source.fromFile("src/test/resources/sdkDescriptions/RequestSdkDescription.json").getLines.mkString
+          val description = SdkDescription.fromJson(Json.parse(jsonString))
+
+          assert(description.schemas.size === 2)
+          assert(description.lenses.size === 2)
+
         }
 
       }

@@ -31,6 +31,7 @@ object Component extends Description[Component] {
     import Finder._
     import ComponentOptions._
     import Schema._
+    import Location._
 
     Json.reads[SchemaComponent]
   }
@@ -47,7 +48,7 @@ object Component extends Description[Component] {
       if (result.isSuccess) {
         result.get
       } else {
-        throw new Error("Finder Parsing Failed "+result)
+        throw new Error("Component Parsing Failed "+result)
       }
 
     } else {
@@ -58,7 +59,6 @@ object Component extends Description[Component] {
 
 sealed trait Component {
   def rules: Vector[Rule]
-  val finder: Finder
   val propertyPath: String
 }
 
@@ -78,7 +78,7 @@ case class CodeComponent(codeType: CodeEnum,
 
 case class SchemaComponent(propertyPath: String,
                            schema: SchemaId,
-                           finder: Finder = null) extends Component {
+                           location: Location) extends Component {
 
   override def rules: Vector[Rule] = Vector()
 }

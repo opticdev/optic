@@ -11,7 +11,7 @@ class GearSet(initialGears: Gear*) {
 
   private val gears = scala.collection.mutable.Set[Gear](initialGears:_*)
 
-  private var fileAccumulator = new FileAccumulator(this)
+  private var fileAccumulator = new FileAccumulator
 
   def addGear(gear: Gear) = {
     gears add gear
@@ -45,7 +45,7 @@ class GearSet(initialGears: Gear*) {
     val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[AstPrimitiveNode].nodeType)
 
     //@todo optimize this
-    grouped.flatMap { case (nodeType, gears) => {
+    val results = grouped.flatMap { case (nodeType, gears) => {
       val foundOption = groupedByType.get(nodeType)
       if (foundOption.isDefined) {
         val entryNodeVector = foundOption.get
@@ -60,5 +60,8 @@ class GearSet(initialGears: Gear*) {
     }
     }.toVector
 
+    fileAccumulator.run(astGraph, results)
+
+    results
   }
 }

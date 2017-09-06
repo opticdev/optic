@@ -4,7 +4,7 @@ import cognitro.parsers.GraphUtils.Path.WalkablePath
 import compiler_new.errors.{ErrorAccumulator, InvalidComponents, SyntaxError}
 import compiler_new.{FinderStageOutput, SnippetStageOutput}
 import sdk.descriptions.Finders.{Finder, FinderPath}
-import sdk.descriptions.{Component, Lens}
+import sdk.descriptions.{CodeComponent, Component, Lens}
 
 import scala.util.{Failure, Success, Try}
 
@@ -13,7 +13,7 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
 
     implicit val evaluatedFinderPaths = scala.collection.mutable.Map[Finder, FinderPath]()
 
-    val finderPaths = lens.components.map(c=> {
+    val finderPaths = lens.components.filter(_.isInstanceOf[CodeComponent]).asInstanceOf[Vector[CodeComponent]].map(c=> {
       val finderPathTry = pathForFinder(c.finder)
       if (finderPathTry.isFailure) {
         errorAccumulator.add(finderPathTry.asInstanceOf[Failure[Exception]].exception)

@@ -1,13 +1,19 @@
 package sourcegear.accumulate
 
 import cognitro.parsers.GraphUtils.BaseNode
-import sdk.descriptions.SchemaComponent
+import sdk.descriptions.{SchemaComponent, SchemaId}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-case class AccumulatorListener(schemaComponent: SchemaComponent) {
-  def collectAndApply()(implicit graph: Graph[BaseNode, LkDiEdge]) = {
-    schemaComponent.schema
+sealed trait Listener {
+  def collect()(implicit astGraph: Graph[BaseNode, LkDiEdge])
+}
+
+case class MapSchemaListener(schemaComponent: SchemaComponent) extends Listener {
+  override def collect()(implicit astGraph: Graph[BaseNode, LkDiEdge]): Unit = {
+
+    println("HERE")
+
   }
 }

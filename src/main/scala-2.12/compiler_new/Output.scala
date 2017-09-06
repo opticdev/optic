@@ -40,9 +40,11 @@ sealed trait FinalOutput extends Output {
   val isSuccess = false
   val isFailure = false
   def printErrors = {}
+  def get : Gear = null
 }
 case class Success(gear: Gear) extends FinalOutput {
   override val isSuccess = true
+  override def get = gear
 }
 case class Failure(lens: Lens, errorAccumulator: ErrorAccumulator) extends FinalOutput {
   override val isFailure = true

@@ -8,6 +8,7 @@ import sdk.descriptions._
 import sdk.descriptions.enums.ComponentEnums
 import sourcegear.gears.RuleProvider
 import sourcegear.gears.helpers.{FlattenModelFields, ModelField}
+import sourcegear.graph.ModelNode
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -73,7 +74,9 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
         //returns final results & extractions
         val childrenResults = childrenRule.evaluate(node, desc, currentPath, compareWith)
 
-        MatchResults(childrenResults.isMatch, if (childrenResults.isMatch) Option(childrenResults.extracted.getOrElse(Set()) ++ extractedFields) else None)
+        MatchResults(childrenResults.isMatch,
+          if (childrenResults.isMatch) Option(childrenResults.extracted.getOrElse(Set()) ++ extractedFields) else None,
+          if (childrenResults.isMatch) Option(entryNode) else None)
 
       } else MatchResults(false, None)
 
@@ -107,12 +110,10 @@ case class ParseAsModel(description: NodeDesc,
     val model = FlattenModelFields.flattenFields(matchResults.extracted.getOrElse(Set()))
 
     //@todo have schema validate
-    //    schema.resolve
 
-    Option(ParseResult(this,
-      model,
-      null,
-      null))
+    val modelNode = ModelNode(schema, model)
+
+    Option(ParseResult(this, modelNode, matchResults.baseNode.get))
 
   }
 
@@ -120,7 +121,7 @@ case class ParseAsModel(description: NodeDesc,
 
 
 //Signaling
-case class MatchResults(isMatch: Boolean, extracted: Option[Set[ModelField]])
+case class MatchResults(isMatch: Boolean, extracted: Option[Set[ModelField]], baseNode: Option[AstPrimitiveNode] = None)
 
 //Serializable for Storage
 case class RulesDesc()
