@@ -23,8 +23,20 @@ object GraphImplicits {
   implicit class AstPrimitiveNodeInstance(node: AstPrimitiveNode) {
 
     def hasParent(parent: AstPrimitiveNode)(implicit astGraph: Graph[BaseNode, LkDiEdge]) : Boolean = {
+      if (parent == null) return false
       val dependencies = node.dependencies(astGraph).filter(_.isAstNode()).asInstanceOf[Set[AstPrimitiveNode]]
       dependencies.contains(parent) || dependencies.exists(i => i.hasParent(parent))
+    }
+
+    def hasChild(child: AstPrimitiveNode)(implicit astGraph: Graph[BaseNode, LkDiEdge]) : Boolean = {
+      if (child == null) return false
+      val dependents = node.dependents(astGraph).filter(_.isAstNode()).asInstanceOf[Set[AstPrimitiveNode]]
+      dependents.contains(child) || dependents.exists(i => i.hasChild(child))
+    }
+
+    def siblingOf(otherNode: AstPrimitiveNode)(implicit astGraph: Graph[BaseNode, LkDiEdge]): Boolean = {
+      if (otherNode == null) return false
+      otherNode.dependencies == node.dependencies
     }
 
   }
