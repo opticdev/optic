@@ -1,8 +1,9 @@
 package sourcegear.accumulate
 
 import cognitro.parsers.GraphUtils.BaseNode
+import play.api.libs.json.{JsArray, JsObject}
 import sdk.descriptions.{SchemaComponent, SchemaId}
-import sourcegear.gears.helpers.LocationEvaluation
+import sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelField}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -27,22 +28,12 @@ case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: Sche
         .toVector
         .sortBy(_.astRoot.range._1)
 
+      val modelFields = ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.value)))
 
+      val newModel = FlattenModelFields.flattenFields(Set(modelFields), instance.value)
 
+      instance.silentUpdate(newModel)
     })
-
-
-
-    //find all instances of Express Route
-
-    //for each, find instances of parameters whose location rules match
-
-    //merge into master graph
-
-
-
-    println("HERE")
-
 
   }
 }
