@@ -14,10 +14,10 @@ object RuleEnums {
   case object SamePlus extends ChildrenRuleTypeEnum
   case object SameAnyOrderPlus extends ChildrenRuleTypeEnum
 
+  //@todo add min/max, allowed types and other rules
 
 
   //reads
-
   implicit val childrenRuleReads: Reads[ChildrenRuleTypeEnum] = new Reads[ChildrenRuleTypeEnum] {
     override def reads(json: JsValue): JsResult[ChildrenRuleTypeEnum] = {
       val typeOption = Try(json.as[JsString].value)
