@@ -2,8 +2,8 @@ package sdk.descriptions.Finders
 
 import cognitro.parsers.GraphUtils.Path.{PathFinder, WalkablePath}
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
-import compiler_new.SnippetStageOutput
-import compiler_new.errors._
+import compiler.SnippetStageOutput
+import compiler.errors._
 import play.api.libs.json._
 import sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting, StringEnums}
 import sdk.descriptions.{Description, Lens}

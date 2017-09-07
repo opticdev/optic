@@ -2,8 +2,8 @@ package compiler.stages
 
 import Fixture.TestBase
 import cognitro.parsers.GraphUtils.AstType
-import compiler_new.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
-import compiler_new.stages.{MatchType, SnippetStage}
+import compiler.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
+import compiler.stages.{MatchType, SnippetStage}
 import org.scalatest.{FunSpec, PrivateMethodTester}
 import sdk.descriptions.{Lens, Snippet}
 import sourceparsers.SourceParserManager

@@ -1,49 +1,16 @@
 package Fixture
 
-import TestClasses.{TestAccumulatorManager, TestAstExtensionManager, TestInsightManager, TestModelManager}
 import cognitro.parsers.GraphUtils.{ModelNode, ModelType, _}
 import cognitro.parsers.Utils.Crypto
-import compiler.Compiler
-import graph.{DependencyHash, GraphManager}
-import nashorn.NashornParser
-import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSuite, Outcome}
+import org.scalatest.{BeforeAndAfterAll, FunSpec}
 import play.api.libs.json.JsValue
-import providers.Provider
 import sourceparsers.SourceParserManager
-import scalax.collection.edge.Implicits._
+
 import scala.util.Random
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
 class TestBase extends FunSpec with BeforeAndAfterAll {
-
-  implicit val provider = Provider(TestModelManager, TestInsightManager, TestAccumulatorManager, TestAstExtensionManager)
-  val parser = new NashornParser()
-
-  def installInsight(filePath: String) = {
-    provider.modelProvider.addModels(parser.parse(new java.io.File(filePath)).models:_*)
-    provider.insightProvider.addInsights(parser.parse(new java.io.File(filePath)).insights:_*)
-  }
-
-  def createMockGraph(block: (Graph[BaseNode, LkDiEdge])=> Unit): Graph[BaseNode, LkDiEdge] = {
-    val gm = new GraphManager()
-    block(gm.getGraph)
-    gm.getGraph
-  }
-
-  def installInsightFromLens(filePath: String): Unit = {
-    val parsed = parser.parse(new java.io.File(filePath))
-    val lenses = parsed.lenses
-    val models = parsed.models
-    provider.modelProvider.addModels(models:_*)
-    lenses.foreach(lens=> {
-      val result = Compiler.compile(lens)
-      val insight = Simulate.fromWriter(result, result.enterOn.name)
-      provider.insightProvider.addInsight(insight)
-    })
-  }
-
-  def clearAllProviders = provider.clearAll
 
   def parseFile(filePath: String) : Option[ParsedFile] = SourceParserManager.parseFile(new java.io.File(filePath))
 
@@ -78,7 +45,6 @@ class TestBase extends FunSpec with BeforeAndAfterAll {
   def start = {
     PreTest.run
     SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/out/artifacts/javascript_lang_jar/javascript-lang.jar")
-    provider.clearAll
   }
 
   start

@@ -2,9 +2,9 @@ package sdk.Finders
 
 import Fixture.TestBase
 import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType}
-import compiler_new.SnippetStageOutput
-import compiler_new.errors.{NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
-import compiler_new.stages.SnippetStage
+import compiler.SnippetStageOutput
+import compiler.errors.{NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
+import compiler.stages.SnippetStage
 import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.Finders.{RangeFinder, StringFinder}
 import sdk.descriptions.{Lens, Snippet}

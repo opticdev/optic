@@ -13,7 +13,7 @@ trait GearUtils {
     val jsonString = Source.fromFile(path).getLines.mkString
     val description = SdkDescription.fromJson(Json.parse(jsonString))
 
-    val worker = new compiler_new.Compiler.CompileWorker(description.lenses.head)
+    val worker = new compiler.Compiler.CompileWorker(description.lenses.head)
     val result = worker.compile()(description.schemas, description.lenses, ListBuffer())
 
     result.get
@@ -28,7 +28,7 @@ trait GearUtils {
     val jsonString = Source.fromFile("src/test/resources/sdkDescriptions/RequestSdkDescription.json").getLines.mkString
     val description = SdkDescription.fromJson(Json.parse(jsonString))
 
-    val compiled = compiler_new.Compiler.setup(description).execute
+    val compiled = compiler.Compiler.setup(description).execute
 
     if (compiled.isFailure) throw new Error("Compiling description failed. Test Stopped")
 

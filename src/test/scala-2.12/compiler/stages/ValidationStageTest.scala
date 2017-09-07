@@ -1,6 +1,6 @@
 package compiler.stages
 
-import compiler_new.stages.ValidationStage
+import compiler.stages.ValidationStage
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 import sdk.descriptions.enums.ComponentEnums._

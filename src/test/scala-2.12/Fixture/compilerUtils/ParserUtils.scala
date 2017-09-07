@@ -1,7 +1,7 @@
 package Fixture.compilerUtils
 
-import compiler_new.SnippetStageOutput
-import compiler_new.stages.{FinderStage, ParserFactoryStage, SnippetStage}
+import compiler.SnippetStageOutput
+import compiler.stages.{FinderStage, ParserFactoryStage, SnippetStage}
 import sdk.descriptions.{Component, Lens, Rule, Snippet}
 import sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 

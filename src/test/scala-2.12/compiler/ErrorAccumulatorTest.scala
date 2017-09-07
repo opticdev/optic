@@ -1,6 +1,6 @@
 package compiler
 
-import compiler_new.errors.{ErrorAccumulator, ParserNotFound}
+import compiler.errors.{ErrorAccumulator, ParserNotFound}
 import org.scalatest.FunSpec
 
 class ErrorAccumulatorTest extends FunSpec {

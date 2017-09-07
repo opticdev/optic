@@ -2,7 +2,7 @@ package sourcegear.helpers
 
 import Fixture.TestBase
 import better.files.File
-import compiler_new.stages.SnippetStage
+import compiler.stages.SnippetStage
 import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions.enums.ComponentEnums.Token
 import sdk.descriptions.{CodeComponent, Lens, Location, Snippet}

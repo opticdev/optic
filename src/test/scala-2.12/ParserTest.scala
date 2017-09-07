@@ -8,7 +8,7 @@ class ParserTest extends TestBase {
 
     it("Can have parsers cleared") {
       SourceParserManager.clearParsers
-      assert(SourceParserManager.getInstalledParsers().size == 0)
+      assert(SourceParserManager.getInstalledParsers().isEmpty)
     }
 
     it("Can install a parser") {

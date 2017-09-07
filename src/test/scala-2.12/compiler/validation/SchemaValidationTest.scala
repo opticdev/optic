@@ -1,6 +1,6 @@
 package compiler.validation
 
-import compiler_new.stages.SchemaValidation
+import compiler.stages.SchemaValidation
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString, Json}
 import sdk.descriptions.Schema

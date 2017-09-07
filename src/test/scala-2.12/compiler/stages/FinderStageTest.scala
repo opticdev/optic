@@ -2,8 +2,7 @@ package compiler.stages
 
 import Fixture.TestBase
 import cognitro.parsers.GraphUtils.AstType
-import compiler_new.errors.InvalidComponents
-import compiler_new.stages.{FinderStage, SnippetStage}
+import compiler.errors.InvalidComponents
 import sdk.descriptions.{CodeComponent, Component, Lens, Snippet}
 import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.Finders.StringFinder

@@ -1,156 +1,79 @@
 package compiler
 
-import cognitro.core.components.models.ModelInstance
-import cognitro.parsers.GraphUtils._
-import cognitro.parsers.GraphUtils.Path.{PropertyPathWalker, WalkablePath}
-import lensparser.FinderEvaluator
-import nashorn.scriptobjects.{ComponentImpl, GroupImpl, Groupable, LensImpl}
-import sourceparsers.SourceParserManager
-import utils.TupleToMap._
+import compiler.errors.{CompilerException, ErrorAccumulator}
+import compiler.stages.{FinderStage, ParserFactoryStage, SnippetStage, ValidationStage}
+import sdk.SdkDescription
+import sdk.descriptions.{Lens, Schema}
+import sourcegear.Gear
 
-import scalax.collection.edge.LkDiEdge
-import scalax.collection.mutable.Graph
-
+import scala.collection.mutable.ListBuffer
+import scala.util.Try
 
 object Compiler {
+  def setup(sdkDescription: SdkDescription) : CompilerPool = {
 
-  def compile(groupImpl: GroupImpl): Unit /* AccumulatorWriter */ = {
+    implicit val schemas: Vector[Schema] = sdkDescription.schemas
+    implicit val lenses: Vector[Lens] = sdkDescription.lenses
+    implicit val errorAccumulator: ErrorAccumulator = new ErrorAccumulator
 
-
-    //first we need to generate lenses for those groupables
-    val childLensesCompiled = groupImpl.allGroupables.filter(_.isLens).map(l=> compile(l.asInstanceOf[LensImpl]))
-
-
-    //then we need to extract the accumulator collect targets.
-    val lenses = childLensesCompiled
-        .map(i=> (i.lensImpl.modelDefinition.identifier, i.lensImpl))
-            .toMapWithSetValue
-              .asInstanceOf[Map[ModelType, Set[Groupable]]]
-
-    val models = groupImpl.allGroupables
-        .filter(_.isModel)
-          .map(i=> (i.asInstanceOf[ModelInstance].definition.identifier, i))
-            .toMapWithSetValue
-              .asInstanceOf[Map[ModelType, Set[Groupable]]]
-
-
-    val accumulatorCollect: Map[ModelType, Set[Groupable]] = lenses.concat(models)
-
-    new AccumulatorParserGenerator(accumulatorCollect)
-
+    new CompilerPool(sdkDescription.lenses.map(l=> new CompileWorker(l)).toSet)
   }
 
-  def compile(lensImpl: LensImpl): InsightWriter = {
+  class CompilerPool(val compilers: Set[CompileWorker])(implicit schemas: Vector[Schema], lenses: Vector[Lens], errorAccumulator: ErrorAccumulator) {
 
-    var enterOn : AstType = null
-    var entryChild : AstPrimitiveNode = null
+    private implicit var completed: ListBuffer[Output] = new scala.collection.mutable.ListBuffer[Output]()
 
-    val sourceRootType = SourceParserManager.programNodeTypeForLanguage(lensImpl.template.description.language).get
-    val baseNodeType   = lensImpl.template.rootNode.nodeType
-    if (baseNodeType == sourceRootType) {
-      val children = lensImpl.template.rootNode.getChildren(lensImpl.template.graph)
+    private def clear = completed = new scala.collection.mutable.ListBuffer[Output]()
 
-      val allNodeTypes = children.map(_._2.nodeType).distinct
-      if (allNodeTypes.size != 1) {
-        throw new Error("Ambiguous entry node in example '"+lensImpl.template.description.name+"'")
-      } else {
-        enterOn = allNodeTypes.head
-        entryChild = children.head._2
-      }
-
-    } else {
-      throw new Error("Base node in example '"+lensImpl.template.description.name+"' must be the language's program node. In this case "+baseNodeType+" was not "+ sourceRootType)
+    def execute: CompilerOutput = {
+      clear
+      //@todo par should ideally be used here, but it is inconsistent for some reason. need to look into race conditions
+      CompilerOutput(compilers.map(_.compile).seq)
     }
-
-
-
-    val parserGenerator = new LensParserGenerator(lensImpl, componentsWithPaths(lensImpl), entryChild, lensImpl.template.graph)
-
-
-//    println(parserGenerator.generate)
-    InsightWriter(parserGenerator, lensImpl, enterOn)
-
   }
 
-  def componentsWithPaths(lensImpl: LensImpl) : Vector[ComponentsWithPaths] = {
-    lensImpl.allComponents.map(component=> {
+  class CompileWorker(sourceLens: Lens) {
+    def compile()(implicit schemas: Vector[Schema], lenses: Vector[Lens], completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator): LensCompilerOutput = {
+      implicit val lens = sourceLens
 
-      if (!component.componentAccessorManager.isValid) {
-        throw new Error("Component invalid as described. Requires both a set and a get accessor")
-      }
+      //@todo reorder this / abstract. Looks very dirty.
 
-      println(component)
+      val validationOutput = new ValidationStage().run
 
-      val path = getPath(lensImpl, component)
+      //Find the right parser and snippets into an AST Tree Graph
+      val snippetBuilder = new SnippetStage(lens.snippet)
+      val snippetOutput = Try(snippetBuilder.run)
 
-      val relativePath = getPathRelative(lensImpl, path)
+      //snippet stage must succeed for anything else to happen.
+      if (snippetOutput.isSuccess) {
+        val finderStage = new FinderStage(snippetOutput.get)
+        val finderStageOutput = Try(finderStage.run)
 
+        if (finderStageOutput.isSuccess) {
+          val parser = Try(new ParserFactoryStage(snippetOutput.get, finderStageOutput.get).run)
 
-      if (path == null || path._1.isEmpty) {
-        throw new Error("No path found for component with "+component.finder)
-      }
+          //          val mutater = new ParserFactoryStage()
+          //          val generator = new ParserFactoryStage()
 
-      //validate property paths
-      val propertyPathWalker = new PropertyPathWalker(path._1.get)
-      val get = component.componentAccessorManager.accessors._1
-      val hasGet = propertyPathWalker.hasProperty(get.jsValue)
-      val set = component.componentAccessorManager.accessors._2
-      val hasSet = propertyPathWalker.hasProperty(set.jsValue)
+          if (parser.isSuccess) {
+            val finalGear = Gear(snippetOutput.get.enterOn, parser.get.parseGear, null, null)
+            //@todo add check (match self, ...)
 
-      if (!hasSet || !hasGet) {
-        val error : String = {
-          var e = ""
-          if (!hasGet) {
-            e = get.toString+" "
+            return Success(sourceLens, finalGear)
+          } else {
+            errorAccumulator.handleFailure(parser.failed)
           }
-          if (!hasSet) {
-            e += set.toString
-          }
-          e
+
+        } else {
+          errorAccumulator.handleFailure(finderStageOutput.failed)
         }
-        throw new Error("Invalid properties path "+ error)
+
+      } else {
+        errorAccumulator.handleFailure(snippetOutput.failed)
       }
 
-      val walkablePath = relativePath._2
-
-      ComponentsWithPaths(component, walkablePath)
-
-    })
-  }
-
-  case class ComponentsWithPaths(component: ComponentImpl, walkablePath: WalkablePath) {
-    lazy val jsCode : String =  JsUtils.doubleQuotes( ( Vector("node") ++ walkablePath.childPath.map(childPathJSString) ).mkString("."))
-  }
-
-  def getPathRelative(lensImpl: LensImpl, path: (Option[AstPrimitiveNode], Option[WalkablePath], (Graph[BaseNode, LkDiEdge], AstPrimitiveNode))) : (NodeType, WalkablePath) = {
-    val programNode = SourceParserManager.programNodeTypeForLanguage(lensImpl.template.description.language)
-
-    val walkablePath = path._2.get
-
-    if (walkablePath.childPath.size<1) {
-      throw new Error("Example code is empty")
+      Failure(lens, errorAccumulator)
     }
-
-    val firstStep = walkablePath.childPath.head
-
-    val firstStepPath = WalkablePath(walkablePath.rootNode, Vector(firstStep), walkablePath.graph)
-
-    val firstStepEvaluated = firstStepPath.walk(lensImpl.template.rootNode, lensImpl.template.graph)
-
-    (firstStepEvaluated.nodeType, WalkablePath(walkablePath.rootNode, walkablePath.childPath.slice(1, walkablePath.childPath.size), walkablePath.graph))
-
   }
 
-  private def getPath(lensImpl: LensImpl, componentImpl: ComponentImpl) = {
-    FinderEvaluator.findWithPath(lensImpl.template.contents,
-      lensImpl.template.graph,
-      lensImpl.template.rootNode,
-      componentImpl.finder)
-  }
-
-  private def childPathJSString(child: Child) = "dependents("+JsUtils.doubleQuotes(child.typ)+")["+child.index+"]"
-
-  case class InsightWriter(parserGenerator: LensParserGenerator, lensImpl: LensImpl, enterOn: AstType) extends ParserGeneratorNode {
-    override def jsCode : String = ""
-  }
 }
