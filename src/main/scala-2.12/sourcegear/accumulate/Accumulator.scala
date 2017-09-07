@@ -1,7 +1,7 @@
 package sourcegear.accumulate
 
 import better.files.File
-import cognitro.parsers.GraphUtils.{AstType, BaseNode, FileNode}
+import optic.parsers.GraphUtils.BaseNode
 import sdk.descriptions.SchemaId
 import sourcegear.GearSet
 import sourcegear.gears.parsing.ParseResult

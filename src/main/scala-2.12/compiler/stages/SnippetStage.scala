@@ -1,9 +1,9 @@
 package compiler.stages
 
-import cognitro.parsers.GraphUtils.{ASTBaseNode, AstPrimitiveNode, AstType, BaseNode}
-import cognitro.parsers.ParserBase
 import compiler.SnippetStageOutput
 import compiler.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
+import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
+import optic.parsers.ParserBase
 import sdk.descriptions.{Lens, Snippet}
 import sourceparsers.SourceParserManager
 

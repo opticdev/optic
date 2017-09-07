@@ -1,6 +1,7 @@
 package io
 
-import cognitro.parsers.GraphUtils.{BaseFileNode, FileNode}
+import optic.parsers.GraphUtils.BaseFileNode
+
 
 object FileUtils {
   implicit class FileNodeMethods(val fn: BaseFileNode) {

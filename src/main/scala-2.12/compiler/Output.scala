@@ -1,8 +1,8 @@
 package compiler
 
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, ChildNode}
 import compiler.errors.ErrorAccumulator
 import compiler.stages.MatchType
+import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions._
 import sourcegear.Gear

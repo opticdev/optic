@@ -1,6 +1,6 @@
 package sdk.descriptions.helpers
 
-import cognitro.parsers.GraphUtils.AstPrimitiveNode
+import optic.parsers.GraphUtils.AstPrimitiveNode
 import sdk.descriptions.Finders.Finder
 
 sealed trait CodeLocation {

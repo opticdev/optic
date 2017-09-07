@@ -1,6 +1,5 @@
 package compiler.stages
 
-import cognitro.parsers.GraphUtils.Path.WalkablePath
 import compiler.errors.{ErrorAccumulator, InvalidComponents, SyntaxError}
 import compiler.{FinderStageOutput, SnippetStageOutput}
 import sdk.descriptions.Finders.{Finder, FinderPath}

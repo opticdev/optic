@@ -1,6 +1,5 @@
 package compiler.errors
 
-import cognitro.parsers.GraphUtils.AstPrimitiveNode
 import sdk.descriptions.Finders.{FinderPath, RangeFinder, StringFinder}
 import sdk.descriptions.{CodeComponent, Component, Lens, SchemaId}
 

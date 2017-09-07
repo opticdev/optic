@@ -1,6 +1,6 @@
 package sourcegear.accumulate
 
-import cognitro.parsers.GraphUtils.BaseNode
+import optic.parsers.GraphUtils.BaseNode
 import play.api.libs.json.{JsArray, JsObject}
 import sdk.descriptions.{SchemaComponent, SchemaId}
 import sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelField}

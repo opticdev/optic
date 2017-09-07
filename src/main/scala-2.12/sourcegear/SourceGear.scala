@@ -1,8 +1,7 @@
 package sourcegear
 
 import better.files.File
-import cognitro.parsers.GraphUtils.BaseNode
-import cognitro.parsers.ParserBase
+import optic.parsers.ParserBase
 import sourcegear.accumulate.FileAccumulator
 import sourceparsers.SourceParserManager
 

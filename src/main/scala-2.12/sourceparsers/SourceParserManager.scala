@@ -6,8 +6,10 @@ import java.net.URLClassLoader
 import java.security.MessageDigest
 
 import cognitro.parsers.GraphUtils._
-import cognitro.parsers.{IdentifierNodeDesc, ParserBase}
 import io.FileCrypto
+import optic.parsers.GraphUtils._
+import optic.parsers.graph.Produces
+import optic.parsers.{IdentifierNodeDesc, ParserBase}
 
 import scalax.collection.edge.Implicits._
 import scalax.collection.edge.LkDiEdge

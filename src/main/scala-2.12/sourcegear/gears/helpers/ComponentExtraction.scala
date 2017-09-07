@@ -1,6 +1,6 @@
 package sourcegear.gears.helpers
 
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
+import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import sdk.descriptions.{CodeComponent, Component}
 

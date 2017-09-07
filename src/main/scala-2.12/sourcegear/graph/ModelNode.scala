@@ -1,6 +1,6 @@
 package sourcegear.graph
 
-import cognitro.parsers.GraphUtils.BaseNode
+import optic.parsers.GraphUtils.BaseNode
 import play.api.libs.json.JsObject
 import sdk.descriptions.SchemaId
 

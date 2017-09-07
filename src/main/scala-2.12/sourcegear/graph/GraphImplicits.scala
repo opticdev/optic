@@ -1,6 +1,6 @@
 package sourcegear.graph
 
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
+import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import sdk.descriptions.SchemaId
 
 import scala.collection.mutable

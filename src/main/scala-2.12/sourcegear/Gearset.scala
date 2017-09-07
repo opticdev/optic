@@ -1,6 +1,6 @@
 package sourcegear
 
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
+import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
 import sourcegear.accumulate.FileAccumulator
 import sourcegear.gears.parsing.ParseResult
 

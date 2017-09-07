@@ -3,8 +3,7 @@ package sourcegear
 import Fixture.TestBase
 import Fixture.compilerUtils.{GearUtils, ParserUtils}
 import better.files.File
-import cognitro.parsers.GraphUtils.AstType
-import cognitro.parsers.ParserBase
+import optic.parsers.ParserBase
 import sdk.descriptions.{CodeComponent, PropertyRule}
 import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions.enums.ComponentEnums.{Literal, Token}

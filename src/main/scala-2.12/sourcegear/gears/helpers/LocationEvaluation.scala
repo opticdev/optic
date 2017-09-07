@@ -1,6 +1,6 @@
 package sourcegear.gears.helpers
 
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
+import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import sdk.descriptions.Location
 
 import scalax.collection.edge.LkDiEdge

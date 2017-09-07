@@ -1,6 +1,6 @@
 package sourcegear.graph
 
-import cognitro.parsers.GraphUtils.{BaseNode, Produces}
+import optic.parsers.GraphUtils.BaseNode
 import sourcegear.gears.parsing.ParseResult
 
 import scalax.collection.edge.LkDiEdge

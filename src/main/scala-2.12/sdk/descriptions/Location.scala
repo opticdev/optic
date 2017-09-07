@@ -1,6 +1,5 @@
 package sdk.descriptions
 
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode, FileNode}
 import play.api.libs.json._
 import sdk.descriptions.Finders.Finder
 import sdk.descriptions.enums.LocationEnums

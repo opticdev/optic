@@ -1,7 +1,8 @@
 package sourcegear.gears.parsing
 
-import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode, Child}
+import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
+import optic.parsers.graph.Child
+import optic.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.{JsObject, JsValue}
 import sdk.PropertyValue
 import sdk.descriptions._

@@ -2,7 +2,6 @@ package sourcegear
 
 import java.nio.ByteBuffer
 
-import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
 import sdk.descriptions.{Component, Rule}
 
 object GearSerialization {

@@ -1,7 +1,7 @@
 package Fixture
 
-import cognitro.parsers.GraphUtils.{ModelNode, ModelType, _}
-import cognitro.parsers.Utils.Crypto
+import optic.parsers.GraphUtils._
+import optic.parsers.Utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec}
 import play.api.libs.json.JsValue
 import sourceparsers.SourceParserManager

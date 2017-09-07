@@ -1,6 +1,6 @@
 package Fixture.compilerUtils
 
-import cognitro.parsers.ParserBase
+import optic.parsers.ParserBase
 import play.api.libs.json.Json
 import sdk.SdkDescription
 import sourcegear.{Gear, SourceGear}

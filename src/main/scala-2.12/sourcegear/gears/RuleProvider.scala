@@ -1,6 +1,6 @@
 package sourcegear.gears
 
-import cognitro.parsers.GraphUtils.AstType
+import optic.parsers.GraphUtils.AstType
 import sdk.descriptions.{ChildrenRule, Rule}
 import sdk.descriptions.enums.RuleEnums._
 

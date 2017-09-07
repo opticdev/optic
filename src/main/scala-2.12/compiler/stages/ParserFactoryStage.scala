@@ -1,9 +1,10 @@
 package compiler.stages
 
-import cognitro.parsers.GraphUtils.Path.FlatWalkablePath
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode, Child}
 import compiler.errors.AstPathNotFound
 import compiler.{FinderStageOutput, ParserFactoryOutput, SnippetStageOutput}
+import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
+import optic.parsers.graph.Child
+import optic.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions.{Component, Lens, Rule, Schema}

@@ -1,7 +1,5 @@
 package utils
 
-import cognitro.parsers.GraphUtils.BaseNode
-
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 

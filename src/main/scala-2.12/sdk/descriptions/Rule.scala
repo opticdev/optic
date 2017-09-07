@@ -1,6 +1,5 @@
 package sdk.descriptions
 
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.{JsError, JsSuccess, _}
 import sdk.descriptions.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
 

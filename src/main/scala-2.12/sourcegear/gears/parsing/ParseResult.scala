@@ -1,6 +1,7 @@
 package sourcegear.gears.parsing
 
-import cognitro.parsers.GraphUtils.{AstPrimitiveNode, FileNode}
+
+import optic.parsers.GraphUtils.AstPrimitiveNode
 import play.api.libs.json.{JsObject, JsValue}
 import sourcegear.graph.ModelNode
 
