@@ -6,9 +6,10 @@ import sdk.descriptions.Location
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import sourcegear.graph.GraphImplicits._
+import optic.parsers.types.GraphTypes.AstGraph
 
 object LocationEvaluation {
-  def matches(location: Location, node: AstPrimitiveNode, forParent: AstPrimitiveNode = null)(implicit astGraph: Graph[BaseNode, LkDiEdge]) : Boolean = {
+  def matches(location: Location, node: AstPrimitiveNode, forParent: AstPrimitiveNode = null)(implicit astGraph: AstGraph) : Boolean = {
     import sdk.descriptions.enums.LocationEnums._
     location.in match {
       case Anywhere => true

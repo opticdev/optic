@@ -6,6 +6,7 @@ import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
 import optic.parsers.ParserBase
 import sdk.descriptions.{Lens, Snippet}
 import sourceparsers.SourceParserManager
+import optic.parsers.types.GraphTypes.AstGraph
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -33,7 +34,7 @@ class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[
     }
   }
 
-  def buildAstTree(): (Graph[BaseNode, LkDiEdge], AstPrimitiveNode) = {
+  def buildAstTree(): (AstGraph, AstPrimitiveNode) = {
     try {
       val parseResult = SourceParserManager.parseString(snippet.block, snippet.lang, Option(snippet.version)).get
       import sourcegear.graph.GraphImplicits._
@@ -44,7 +45,7 @@ class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[
     }
   }
 
-  def enterOnAndMatchType(implicit graph: Graph[BaseNode, LkDiEdge], rootNode: AstPrimitiveNode, parser: ParserBase): (Set[AstType], Vector[AstPrimitiveNode], MatchType.Value) = {
+  def enterOnAndMatchType(implicit graph: AstGraph, rootNode: AstPrimitiveNode, parser: ParserBase): (Set[AstType], Vector[AstPrimitiveNode], MatchType.Value) = {
     val programNodeType = parser.programNodeType
     val blockNodeTypes      = parser.blockNodeTypes
     if (programNodeType != rootNode.nodeType) throw new UnexpectedSnippetFormat(programNodeType+" did not appear first in the AST Tree.")

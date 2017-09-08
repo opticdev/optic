@@ -7,6 +7,7 @@ import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions._
 import sourcegear.Gear
 import sourcegear.gears.parsing.ParseGear
+import optic.parsers.types.GraphTypes.AstGraph
 
 import scala.util.Try
 import scalax.collection.edge.LkDiEdge
@@ -18,7 +19,7 @@ case class ValidationStageOutput(isValid: Boolean,
                                  missingPaths: Set[String],
                                  extraPaths: Set[String])
 
-case class SnippetStageOutput(astGraph: Graph[BaseNode, LkDiEdge],
+case class SnippetStageOutput(astGraph: AstGraph,
                               rootNode: AstPrimitiveNode,
                               snippet: Snippet,
                               enterOn: Set[AstType],

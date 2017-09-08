@@ -5,6 +5,7 @@ import optic.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec}
 import play.api.libs.json.JsValue
 import sourceparsers.SourceParserManager
+import optic.parsers.types.GraphTypes.AstGraph
 
 import scala.util.Random
 import scalax.collection.edge.LkDiEdge
@@ -27,13 +28,13 @@ class TestBase extends FunSpec with BeforeAndAfterAll {
     new AstPrimitiveNode(nT, (random.nextInt(6), random.nextInt(6)), v, fileHash) {}
   }
 
-  case class MockModelNode(nodeType: ModelType, jsValue: JsValue, dependencyHash: String)(implicit graph: Graph[BaseNode, LkDiEdge]) extends ModelNode {
+  case class MockModelNode(nodeType: ModelType, jsValue: JsValue, dependencyHash: String)(implicit graph: AstGraph) extends ModelNode {
     override def getValue = jsValue
     override def toString = "MockModelNode ("+nodeType.name+"): "+jsValue
     override def equals(that: Any): Boolean = false
   }
 
-  def mockModelNode(nT: ModelType, v: JsValue, vector: Vector[AstPrimitiveNode])(implicit graph: Graph[BaseNode, LkDiEdge]): MockModelNode = {
+  def mockModelNode(nT: ModelType, v: JsValue, vector: Vector[AstPrimitiveNode])(implicit graph: AstGraph): MockModelNode = {
     MockModelNode(nT, v,{
       Crypto.createSha1(vector.map(_.fileHash).mkString(""))
     })

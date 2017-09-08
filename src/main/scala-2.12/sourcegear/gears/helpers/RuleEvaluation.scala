@@ -6,6 +6,7 @@ import optic.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 import sdk.descriptions.{ChildrenRule, PropertyRule, RawRule}
 import sourcegear.gears.parsing.{MatchResults, NodeDesc}
+import optic.parsers.types.GraphTypes.AstGraph
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -13,7 +14,7 @@ import scalax.collection.mutable.Graph
 object RuleEvaluation {
 
   implicit class RawRuleWithEvaluation(rawRule: RawRule)  {
-    def evaluate(node: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String): Boolean = {
+    def evaluate(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String): Boolean = {
       val raw = fileContents.substring(node.range._1, node.range._2)
       rawRule.comparator match {
         case "==" => raw == rawRule.value
@@ -25,7 +26,7 @@ object RuleEvaluation {
   }
 
   implicit class PropertyRuleWithEvaluation(propertyRule: PropertyRule)  {
-    def evaluate(node: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String): Boolean = {
+    def evaluate(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String): Boolean = {
       val valueOption = node.properties.as[JsObject] \ propertyRule.key
       if (valueOption.isEmpty) return false
       propertyRule.comparator match {
@@ -37,7 +38,7 @@ object RuleEvaluation {
     }
   }
 
-  implicit class ChildrenRuleWithEvaluation(childrenRule: ChildrenRule)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) {
+  implicit class ChildrenRuleWithEvaluation(childrenRule: ChildrenRule)(implicit graph: AstGraph, fileContents: String) {
 
     def evaluate(node: AstPrimitiveNode, desc: NodeDesc, currentPath: FlatWalkablePath, compareWith: (AstPrimitiveNode, String, NodeDesc, FlatWalkablePath) => MatchResults): MatchResults = {
 

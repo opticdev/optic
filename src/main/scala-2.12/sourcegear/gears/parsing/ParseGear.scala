@@ -3,6 +3,7 @@ package sourcegear.gears.parsing
 import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
 import optic.parsers.graph.Child
 import optic.parsers.graph.path.FlatWalkablePath
+import optic.parsers.types.GraphTypes.AstGraph
 import play.api.libs.json.{JsObject, JsValue}
 import sdk.PropertyValue
 import sdk.descriptions._
@@ -22,7 +23,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
   val rules: Map[FlatWalkablePath, Vector[Rule]]
   val listeners : Vector[Listener]
 
-  def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) : Option[ParseResult] = {
+  def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit graph: AstGraph, fileContents: String) : Option[ParseResult] = {
 
     val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
 
@@ -129,7 +130,7 @@ case class NodeDesc(astType: AstType,
                     children: Vector[NodeDesc],
                     rules: Vector[RulesDesc]) {
 
-  def propertiesMatch(node: AstPrimitiveNode, propertyRules: Vector[PropertyRule])(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String)  : Boolean = {
+  def propertiesMatch(node: AstPrimitiveNode, propertyRules: Vector[PropertyRule])(implicit graph: AstGraph, fileContents: String)  : Boolean = {
     import sdk.PropertyValuesConversions._
     val jsValue = node.properties
     if (!jsValue.isInstanceOf[JsObject]) return false

@@ -3,6 +3,7 @@ package sourcegear
 import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
 import sourcegear.accumulate.FileAccumulator
 import sourcegear.gears.parsing.ParseResult
+import optic.parsers.types.GraphTypes.AstGraph
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -46,7 +47,7 @@ class GearSet(initialGears: Gear*) {
 
   def grouped: Map[AstType, Set[Gear]] = groupedStore
 
-  def parseFromGraph(implicit fileContents: String, astGraph: Graph[BaseNode, LkDiEdge]): Vector[ParseResult] = {
+  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph): Vector[ParseResult] = {
     val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[AstPrimitiveNode].nodeType)
 
     //@todo optimize this

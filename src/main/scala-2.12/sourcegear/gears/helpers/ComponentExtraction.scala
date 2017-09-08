@@ -8,12 +8,13 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import sdk.descriptions.enums.ComponentEnums._
 import sourcegear.gears.parsing.ParseGear
+import optic.parsers.types.GraphTypes.AstGraph
 
 case class ModelField(propertyPath: String, value: JsValue)
 
 object ComponentExtraction {
   implicit class ComponentWithExtractors(component: Component) {
-    def extract(node: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge], fileContents: String) : ModelField = {
+    def extract(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String) : ModelField = {
       component match {
         case c: CodeComponent => {
 

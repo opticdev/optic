@@ -7,6 +7,7 @@ import optic.parsers.graph.path.{PathFinder, WalkablePath}
 import play.api.libs.json._
 import sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting, StringEnums}
 import sdk.descriptions.{Description, Lens}
+import optic.parsers.types.GraphTypes.AstGraph
 
 import scala.util.matching.Regex
 import scalax.collection.edge.LkDiEdge
@@ -57,7 +58,7 @@ object Finder extends Description[Finder] {
 
 abstract class FinderPath {
   val targetNode: AstPrimitiveNode
-  val astGraph : Graph[BaseNode, LkDiEdge]
+  val astGraph : AstGraph
   def fromNode(astPrimitiveNode: AstPrimitiveNode) : Option[WalkablePath]
 }
 
@@ -70,7 +71,7 @@ sealed trait Finder {
         PathFinder.getPath(snippetStageOutput.astGraph, root, result)
 
       override val targetNode: AstPrimitiveNode = result
-      override val astGraph : Graph[BaseNode, LkDiEdge] = snippetStageOutput.astGraph
+      override val astGraph : AstGraph = snippetStageOutput.astGraph
     }
   }
 }
@@ -144,7 +145,7 @@ case class RangeFinder(start: Int, end: Int) extends Finder {
 
 object RangeFinderEvaluate {
 
-  def nodesMatchingRangePredicate(graph: Graph[BaseNode, LkDiEdge], predicate: (Int, Int)=> Boolean) = {
+  def nodesMatchingRangePredicate(graph: AstGraph, predicate: (Int, Int)=> Boolean) = {
     graph.nodes.filter((n: graph.NodeT)=> {
       n.isAstNode() && {
         val (start, end) = n.value.asInstanceOf[AstPrimitiveNode].range

@@ -15,6 +15,7 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import sdk.descriptions.helpers.ComponentImplicits._
 import sourcegear.accumulate.MapSchemaListener
+import optic.parsers.types.GraphTypes.AstGraph
 
 
 class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens) extends CompilerStage[ParserFactoryOutput] {
@@ -43,7 +44,7 @@ class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutp
     ))
   }
 
-  def finderPathToFlatPath(finderPath: FinderPath, node: AstPrimitiveNode)(implicit graph: Graph[BaseNode, LkDiEdge]): FlatWalkablePath = {
+  def finderPathToFlatPath(finderPath: FinderPath, node: AstPrimitiveNode)(implicit graph: AstGraph): FlatWalkablePath = {
     val path = finderPath.fromNode(node)
     if (path.isEmpty) throw AstPathNotFound(finderPath)
     path.get.toFlatPath

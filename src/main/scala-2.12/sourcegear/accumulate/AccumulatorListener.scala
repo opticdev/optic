@@ -8,15 +8,16 @@ import sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelFi
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import sourcegear.graph.GraphImplicits._
+import optic.parsers.types.GraphTypes.AstGraph
 
 sealed trait Listener {
-  def collect()(implicit astGraph: Graph[BaseNode, LkDiEdge])
+  def collect()(implicit astGraph: AstGraph)
   val schema: SchemaId
 }
 
 case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: SchemaId) extends Listener {
   override val schema = schemaComponent.schema
-  override def collect()(implicit astGraph: Graph[BaseNode, LkDiEdge]): Unit = {
+  override def collect()(implicit astGraph: AstGraph): Unit = {
 
     val mapToNodes = astGraph.modelNodes.ofType(mapToSchema)
     val targetNodes = astGraph.modelNodes.ofType(schema)
