@@ -8,14 +8,15 @@ class ParserTest extends TestBase {
 
     it("Can have parsers cleared") {
       SourceParserManager.clearParsers
-      assert(SourceParserManager.getInstalledParsers().isEmpty)
+      assert(SourceParserManager.getInstalledParsers.isEmpty)
     }
 
     it("Can install a parser") {
       SourceParserManager.clearParsers
 
-      SourceParserManager.installParser("~/Developer/knack/parsers/javascript-lang/out/artifacts/javascript_lang_jar/javascript-lang.jar")
-      assert(SourceParserManager.getInstalledParsers().size == 1)
+      val result = SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/out/artifacts/javascript_lang_jar/javascript-lang.jar")
+      assert(result.isSuccess)
+      assert(SourceParserManager.getInstalledParsers.size == 1)
     }
 
     it("Can parse a string with installed parser") {

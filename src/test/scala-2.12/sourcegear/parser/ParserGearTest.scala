@@ -27,7 +27,7 @@ class ParserGearTest extends TestBase with ParserUtils {
 
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
 
-        assert(parseGear.description.toString == """NodeDesc(AstType(VariableDeclaration,Javascript),Child(0,null),Map(kind -> StringProperty(var)),Vector(NodeDesc(AstType(VariableDeclarator,Javascript),Child(0,declarations),Map(),Vector(NodeDesc(AstType(Identifier,Javascript),Child(0,id),Map(name -> StringProperty(hello)),Vector(),Vector()), NodeDesc(AstType(CallExpression,Javascript),Child(0,init),Map(),Vector(NodeDesc(AstType(Identifier,Javascript),Child(0,callee),Map(name -> StringProperty(require)),Vector(),Vector()), NodeDesc(AstType(Literal,Javascript),Child(0,arguments),Map(value -> StringProperty(world)),Vector(),Vector())),Vector())),Vector())),Vector())""")
+        assert(parseGear.description.toString == """NodeDesc(AstType(VariableDeclaration,Javascript),Child(0,null,false),Map(kind -> StringProperty(var)),Vector(NodeDesc(AstType(VariableDeclarator,Javascript),Child(0,declarations,true),Map(),Vector(NodeDesc(AstType(Identifier,Javascript),Child(0,id,true),Map(name -> StringProperty(hello)),Vector(),Vector()), NodeDesc(AstType(CallExpression,Javascript),Child(0,init,true),Map(),Vector(NodeDesc(AstType(Literal,Javascript),Child(0,arguments,true),Map(value -> StringProperty(world)),Vector(),Vector()), NodeDesc(AstType(Identifier,Javascript),Child(0,callee,true),Map(name -> StringProperty(require)),Vector(),Vector())),Vector())),Vector())),Vector())""")
       }
 
       it("Can match its original snippet to the description") {

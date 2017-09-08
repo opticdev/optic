@@ -84,7 +84,7 @@ case class StringFinder(rule: StringEnums, string: String, occurrence: Int = 0) 
     val matches = regex.findAllMatchIn(snippetStageOutput.snippet.block).toVector
 
     //not found at all
-    if (matches.size == 0) throw StringNotFound(this)
+    if (matches.isEmpty) throw StringNotFound(this)
 
     val matchOption = matches.lift(occurrence)
 

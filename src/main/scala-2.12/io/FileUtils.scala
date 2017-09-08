@@ -22,5 +22,3 @@ object StringUtils {
   }
 
 }
-
-

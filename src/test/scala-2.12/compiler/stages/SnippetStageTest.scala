@@ -88,7 +88,7 @@ class SnippetStageTest extends TestBase with PrivateMethodTester {
 
   }
 
-  describe("works end to end") {
+  it("works end to end") {
     val snippetBuilder = new SnippetStage(Snippet("Testing", "Javascript", "es6", "function add (a, b) { a+b }"))
     val outputTry = Try(snippetBuilder.run)
     assert(outputTry.isSuccess)

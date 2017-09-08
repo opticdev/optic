@@ -15,8 +15,9 @@ abstract class SourceGear {
   def parseFile(file: File) = {
     val fileContents = file.contentAsString
     //@todo connect to parser list
-    val parsedOption = SourceParserManager.parseFile(file.toJava)
-    if (parsedOption.isDefined) {
+    val parsedOption = SourceParserManager.parseString(fileContents, "Javascript", Option("es6"))
+
+    if (parsedOption.isSuccess) {
       val parsed = parsedOption.get
       val astGraph = parsed.graph
       gearSet.parseFromGraph(fileContents, astGraph)

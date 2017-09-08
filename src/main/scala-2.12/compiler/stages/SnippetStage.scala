@@ -35,7 +35,10 @@ class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[
 
   def buildAstTree(): (Graph[BaseNode, LkDiEdge], AstPrimitiveNode) = {
     try {
-      SourceParserManager.parseString(snippet.block, snippet.lang, Option(snippet.version))
+      val parseResult = SourceParserManager.parseString(snippet.block, snippet.lang, Option(snippet.version)).get
+      import sourcegear.graph.GraphImplicits._
+      val root = parseResult.graph.root.get
+      (parseResult.graph, root)
     } catch {
       case a: Throwable => throw SyntaxError(a)
     }
@@ -44,9 +47,9 @@ class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[
   def enterOnAndMatchType(implicit graph: Graph[BaseNode, LkDiEdge], rootNode: AstPrimitiveNode, parser: ParserBase): (Set[AstType], Vector[AstPrimitiveNode], MatchType.Value) = {
     val programNodeType = parser.programNodeType
     val blockNodeTypes      = parser.blockNodeTypes
-    if (programNodeType != rootNode.nodeType) throw new UnexpectedSnippetFormat(programNodeType+" did not the appear first in the AST Tree.")
+    if (programNodeType != rootNode.nodeType) throw new UnexpectedSnippetFormat(programNodeType+" did not appear first in the AST Tree.")
 
-    val children = rootNode.getChildren.map(_._2)
+    val children = rootNode.children.map(_._2)
 
     children.length match {
       case l if l <= 0  => throw new UnexpectedSnippetFormat("Snippet is empty.")

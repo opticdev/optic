@@ -18,6 +18,11 @@ object GraphImplicits {
       .toSet
       .asInstanceOf[Set[ModelNode]]
 
+    def root : Option[AstPrimitiveNode] = graph
+        .nodes
+        .filter(i=> i.value.isAstNode && i.value.asInstanceOf[AstPrimitiveNode].parent(graph).isEmpty)
+        .map(_.value.asInstanceOf[AstPrimitiveNode])
+        .headOption
   }
 
   implicit class AstPrimitiveNodeInstance(node: AstPrimitiveNode) {

@@ -50,7 +50,7 @@ class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutp
   }
 
   def nodeToDescription(astPrimitiveNode: AstPrimitiveNode, edge: Child = Child(0, null)) : NodeDesc = {
-    val children = astPrimitiveNode.getChildren(snippetStageOutput.astGraph)
+    val children = astPrimitiveNode.children(snippetStageOutput.astGraph)
       .map(i=> nodeToDescription(i._2, i._1.asInstanceOf[Child]))
 
     import sdk.PropertyValuesConversions._

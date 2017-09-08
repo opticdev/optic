@@ -41,7 +41,7 @@ object RuleEvaluation {
 
     def evaluate(node: AstPrimitiveNode, desc: NodeDesc, currentPath: FlatWalkablePath, compareWith: (AstPrimitiveNode, String, NodeDesc, FlatWalkablePath) => MatchResults): MatchResults = {
 
-      val childrenVecor: Vector[(AstPrimitiveNode, String)] = node.getChildren.map(c=> (c._2, c._1.asInstanceOf[Child].typ))
+      val childrenVecor: Vector[(AstPrimitiveNode, String)] = node.children.map(c=> (c._2, c._1.asInstanceOf[Child].typ))
 
 
       def equality(astNodeWithType: (AstPrimitiveNode, String), nodeDesc: NodeDesc): MatchResults = {

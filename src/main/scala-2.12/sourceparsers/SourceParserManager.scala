@@ -6,11 +6,12 @@ import java.net.URLClassLoader
 import java.security.MessageDigest
 
 import cognitro.parsers.GraphUtils._
-import io.FileCrypto
 import optic.parsers.GraphUtils._
 import optic.parsers.graph.Produces
-import optic.parsers.{IdentifierNodeDesc, ParserBase}
+import optic.parsers.utils.FileCrypto
+import optic.parsers.{IdentifierNodeDesc, ParserBase, ParserResult}
 
+import scala.util.{Failure, Try}
 import scalax.collection.edge.Implicits._
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -24,11 +25,12 @@ object SourceParserManager {
 
   private lazy val sha = MessageDigest.getInstance("SHA")
 
-  def hasParserFor(lang: String) : Boolean = getInstalledParsers().find(_.languageName == lang).isDefined
+  def hasParserFor(lang: String) : Boolean = getInstalledParsers.exists(_.languageName == lang)
 
-  private def enableParser(instance: ParserBase) = {
+  private def enableParser(instance: ParserBase) : ParserBase = {
     parsers = parsers + instance
     generateSignature()
+    instance
   }
 
   private def generateSignature(): Unit = {
@@ -49,12 +51,12 @@ object SourceParserManager {
 
   def clearParsers = parsers = Set()
 
-  def getInstalledParsers() : Set[ParserBase] = parsers
-  def getParserSignatures() = parsersNameAndVersions
+  def getInstalledParsers : Set[ParserBase] = parsers
+  def getParserSignatures = parsersNameAndVersions
 
   def selectParserForFileName(name: String): Option[ParserBase] = {
     //@note does not support multiple things having same patterns
-    parsers.find(i=> i.fileExtensions.map(name.endsWith(_)).contains(true))
+    parsers.find(i=> i.fileExtensions.exists(name.endsWith))
   }
 
   def programNodeTypeForLanguage(language: String) : Option[NodeType] = {
@@ -75,80 +77,30 @@ object SourceParserManager {
     }
   }
 
-  def parseString(contents: String, language: String, versionOverride: Option[String] = None, fileHash: String = "SPACE"): (Graph[BaseNode, LkDiEdge], AstPrimitiveNode) = {
+  def parseString(contents: String, language: String, versionOverride: Option[String] = None, fileHash: String = "SPACE"): Try[ParserResult] = {
     val parser = parserByLanguageName(language)
-    if (parser.isDefined) {
-      val parsedResult = parser.get.parseString(versionOverride, contents)
-      val emptyGraph = GraphBuilder.emptyGraph
-
-      val rootNode = GraphBuilder.astGraphNode(parsedResult._1, language)(emptyGraph)
-      val fileNode = InMemoryFileNode(contents, FileCrypto.hashString(contents), language, parsedResult._2)
-
-      val mainEdge: LkDiEdge[BaseNode] = (fileNode ~+#> rootNode) (Produces())
-
-      emptyGraph.add(mainEdge)
-
-      (GraphBuilder.build(emptyGraph, parsedResult._1.asInstanceOf[ASTNode], language, fileHash = fileHash), rootNode)
-    } else null
+    Try(if (parser.isDefined) {
+      parser.get.parseString(versionOverride, contents)
+    } else throw new Error("No parser found for "+language+" "+versionOverride.toString))
   }
 
-  //@todo replace with a Try
-  def parseFile(file: File, languageOverride: Option[String] = None, versionOverride: Option[String] = None): Option[ParsedFile] = {
-
-    val parser = {
-      if (languageOverride.isDefined) {
-        parserByLanguageName(languageOverride.get)
-      } else {
-        selectParserForFileName(file.getName)
-      }
-    }
-
-    if (parser.isDefined) {
-
-      if (file.canRead) {
-        val lines = scala.io.Source.fromFile(file.getPath).mkString
-        val result = Option(
-          ParsedFile(
-            file.getAbsolutePath,
-            FileCrypto.hashFile(file.getAbsolutePath),
-            parser.get.languageName,
-            //@todo fix this typing issue
-            parser.get.parseString(versionOverride, lines).asInstanceOf[(ASTNode, String)]
-            /*AstExtensionManager.parserExtensionSet*/
-          )
-        )
-
-        result
-      } else {
-        println("No file found at path")
-        None
-      }
-
-    } else {
-      println("No parser found")
-      None
-    }
-
-  }
-
-  def installParser(pathToParser: String) : ParserResult = {
-    val file = new File(pathToParser)
-
-    if (file.exists() && file.canRead) {
-      try {
-        val instance = loadJar(file)
-        enableParser(instance)
-        Success(instance.languageName)
-      } catch {
-        case e: Exception => {
-          println(e)
-          Failure("Invalid Parser .jar")
+  def installParser(pathToParser: String) : Try[ParserBase] = {
+    Try({
+      val file = new File(pathToParser)
+      if (file.exists() && file.canRead) {
+        try {
+          val instance = loadJar(file)
+          enableParser(instance)
+        } catch {
+          case e: Exception => {
+            println(e)
+            throw new Error("Invalid Parser .jar")
+          }
         }
+      } else {
+        throw new Error("Unable to install parser. File not found at " + pathToParser)
       }
-    } else {
-      Failure("Unable to install parser. File not found at " + pathToParser)
-    }
-
+    })
   }
 
   @throws(classOf[Exception])

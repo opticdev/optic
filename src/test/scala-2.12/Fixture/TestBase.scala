@@ -1,7 +1,7 @@
 package Fixture
 
 import optic.parsers.GraphUtils._
-import optic.parsers.Utils.Crypto
+import optic.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec}
 import play.api.libs.json.JsValue
 import sourceparsers.SourceParserManager
@@ -11,8 +11,6 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
 class TestBase extends FunSpec with BeforeAndAfterAll {
-
-  def parseFile(filePath: String) : Option[ParsedFile] = SourceParserManager.parseFile(new java.io.File(filePath))
 
   def getCurrentDirectory = new java.io.File(".").getCanonicalPath
 
