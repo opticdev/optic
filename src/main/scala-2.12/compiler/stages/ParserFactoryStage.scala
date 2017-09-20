@@ -1,10 +1,10 @@
 package compiler.stages
 
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph.{AstPrimitiveNode, Child}
+import com.opticdev.parsers.graph.path.FlatWalkablePath
 import compiler.errors.AstPathNotFound
 import compiler.{FinderStageOutput, ParserFactoryOutput, SnippetStageOutput}
-import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
-import optic.parsers.graph.Child
-import optic.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions.{Component, Lens, Rule, Schema}
@@ -15,7 +15,6 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import sdk.descriptions.helpers.ComponentImplicits._
 import sourcegear.accumulate.MapSchemaListener
-import optic.parsers.types.GraphTypes.AstGraph
 
 
 class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens) extends CompilerStage[ParserFactoryOutput] {

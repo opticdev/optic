@@ -1,13 +1,13 @@
 package compiler
 
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import compiler.errors.ErrorAccumulator
 import compiler.stages.MatchType
-import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
 import sdk.descriptions.Finders.FinderPath
 import sdk.descriptions._
 import sourcegear.Gear
 import sourcegear.gears.parsing.ParseGear
-import optic.parsers.types.GraphTypes.AstGraph
 
 import scala.util.Try
 import scalax.collection.edge.LkDiEdge

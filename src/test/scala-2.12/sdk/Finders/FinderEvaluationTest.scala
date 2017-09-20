@@ -1,10 +1,10 @@
 package sdk.Finders
 
 import Fixture.TestBase
+import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import compiler.SnippetStageOutput
 import compiler.errors.{NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
 import compiler.stages.SnippetStage
-import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType}
 import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.Finders.{RangeFinder, StringFinder}
 import sdk.descriptions.{Lens, Snippet}

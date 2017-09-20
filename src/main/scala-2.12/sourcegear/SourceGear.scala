@@ -1,7 +1,7 @@
 package sourcegear
 
 import better.files.File
-import optic.parsers.ParserBase
+import com.opticdev.parsers.ParserBase
 import sourcegear.accumulate.FileAccumulator
 import sourceparsers.SourceParserManager
 

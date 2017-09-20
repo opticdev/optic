@@ -1,6 +1,6 @@
 package io
 
-import optic.parsers.GraphUtils.BaseFileNode
+import com.opticdev.parsers.graph.BaseFileNode
 
 
 object FileUtils {

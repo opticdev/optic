@@ -3,7 +3,7 @@ package sourcegear
 import Fixture.TestBase
 import Fixture.compilerUtils.{GearUtils, ParserUtils}
 import better.files.File
-import optic.parsers.ParserBase
+import com.opticdev.parsers.ParserBase
 import sdk.descriptions.{CodeComponent, PropertyRule}
 import sdk.descriptions.Finders.StringFinder
 import sdk.descriptions.enums.ComponentEnums.{Literal, Token}

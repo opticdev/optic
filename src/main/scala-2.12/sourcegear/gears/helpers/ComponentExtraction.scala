@@ -1,6 +1,7 @@
 package sourcegear.gears.helpers
 
-import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph.AstPrimitiveNode
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import sdk.descriptions.{CodeComponent, Component}
 
@@ -8,7 +9,6 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import sdk.descriptions.enums.ComponentEnums._
 import sourcegear.gears.parsing.ParseGear
-import optic.parsers.types.GraphTypes.AstGraph
 
 case class ModelField(propertyPath: String, value: JsValue)
 

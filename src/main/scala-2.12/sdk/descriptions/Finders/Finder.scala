@@ -1,13 +1,13 @@
 package sdk.descriptions.Finders
 
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.path.{PathFinder, WalkablePath}
 import compiler.SnippetStageOutput
 import compiler.errors._
-import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
-import optic.parsers.graph.path.{PathFinder, WalkablePath}
 import play.api.libs.json._
 import sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting, StringEnums}
 import sdk.descriptions.{Description, Lens}
-import optic.parsers.types.GraphTypes.AstGraph
 
 import scala.util.matching.Regex
 import scalax.collection.edge.LkDiEdge

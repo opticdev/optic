@@ -1,8 +1,8 @@
 package compiler.stages
 
 import Fixture.TestBase
+import com.opticdev.parsers.graph.AstType
 import compiler.errors.InvalidComponents
-import optic.parsers.GraphUtils.AstType
 import sdk.descriptions.{CodeComponent, Component, Lens, Snippet}
 import sdk.descriptions.enums.FinderEnums._
 import sdk.descriptions.Finders.StringFinder

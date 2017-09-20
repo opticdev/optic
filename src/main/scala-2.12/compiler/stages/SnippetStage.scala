@@ -1,12 +1,11 @@
 package compiler.stages
 
+import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
+import com.opticdev.parsers.{AstGraph, ParserBase}
 import compiler.SnippetStageOutput
 import compiler.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
-import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
-import optic.parsers.ParserBase
 import sdk.descriptions.{Lens, Snippet}
 import sourceparsers.SourceParserManager
-import optic.parsers.types.GraphTypes.AstGraph
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -26,7 +25,6 @@ class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[
 
   def getParser(): ParserBase = {
     val langOption = SourceParserManager.parserByLanguageName(snippet.lang)
-
     if (langOption.isDefined && langOption.get.supportedVersions.contains(snippet.version)) {
       langOption.get
     } else {

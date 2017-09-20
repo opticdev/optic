@@ -1,11 +1,13 @@
 package Fixture
 
-import optic.parsers.GraphUtils._
-import optic.parsers.utils.Crypto
+
+
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph._
+import com.opticdev.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec}
 import play.api.libs.json.JsValue
 import sourceparsers.SourceParserManager
-import optic.parsers.types.GraphTypes.AstGraph
 
 import scala.util.Random
 import scalax.collection.edge.LkDiEdge

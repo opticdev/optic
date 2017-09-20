@@ -1,12 +1,12 @@
 package sourcegear.gears.helpers
 
-import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph.AstPrimitiveNode
 import sdk.descriptions.Location
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import sourcegear.graph.GraphImplicits._
-import optic.parsers.types.GraphTypes.AstGraph
 
 object LocationEvaluation {
   def matches(location: Location, node: AstPrimitiveNode, forParent: AstPrimitiveNode = null)(implicit astGraph: AstGraph) : Boolean = {

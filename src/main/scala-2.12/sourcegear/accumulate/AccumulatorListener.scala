@@ -1,6 +1,6 @@
 package sourcegear.accumulate
 
-import optic.parsers.GraphUtils.BaseNode
+import com.opticdev.parsers.AstGraph
 import play.api.libs.json.{JsArray, JsObject}
 import sdk.descriptions.{SchemaComponent, SchemaId}
 import sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelField}
@@ -8,7 +8,6 @@ import sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelFi
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import sourcegear.graph.GraphImplicits._
-import optic.parsers.types.GraphTypes.AstGraph
 
 sealed trait Listener {
   def collect()(implicit astGraph: AstGraph)

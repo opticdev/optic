@@ -1,14 +1,12 @@
 package sourcegear.accumulate
 
 import better.files.File
-import optic.parsers.GraphUtils.BaseNode
-import optic.parsers.types.GraphTypes.AstGraph
+import com.opticdev.parsers.AstGraph
 import sdk.descriptions.SchemaId
 import sourcegear.GearSet
 import sourcegear.gears.parsing.ParseResult
 import sourcegear.graph.GraphOperations
 import sourceparsers.SourceParserManager
-import optic.parsers.types.GraphTypes.AstGraph
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

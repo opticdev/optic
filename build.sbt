@@ -6,7 +6,8 @@ version := "1.0"
 
 scalaVersion := "2.12.3"
 
-libraryDependencies += "com.optic-dev" %% "parser-base" % "1.0.0"
+libraryDependencies += "com.opticdev" %% "parser-foundation" % "1.0.0"
+libraryDependencies += "com.opticdev" %% "marvin-runtime" % "1.0.0"
 
 //io
 libraryDependencies += "com.github.pathikrit" % "better-files_2.12" % "2.17.1"
@@ -24,5 +25,3 @@ libraryDependencies += "org.gnieh" %% "diffson-play-json" % "2.2.1"
 
 //cli
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.6.0"
-
-

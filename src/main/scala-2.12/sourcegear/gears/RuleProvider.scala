@@ -1,6 +1,6 @@
 package sourcegear.gears
 
-import optic.parsers.GraphUtils.AstType
+import com.opticdev.parsers.graph.AstType
 import sdk.descriptions.{ChildrenRule, Rule}
 import sdk.descriptions.enums.RuleEnums._
 

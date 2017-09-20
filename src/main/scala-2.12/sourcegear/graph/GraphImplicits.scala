@@ -1,8 +1,8 @@
 package sourcegear.graph
 
-import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph.AstPrimitiveNode
 import sdk.descriptions.SchemaId
-import optic.parsers.types.GraphTypes.AstGraph
 
 import scala.collection.mutable
 import scalax.collection.edge.LkDiEdge

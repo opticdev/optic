@@ -1,6 +1,6 @@
 package Fixture.compilerUtils
 
-import optic.parsers.ParserBase
+import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
 import sdk.SdkDescription
 import sourcegear.{Gear, SourceGear}

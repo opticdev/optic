@@ -1,9 +1,8 @@
 package sourcegear.gears.parsing
 
-import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
-import optic.parsers.graph.Child
-import optic.parsers.graph.path.FlatWalkablePath
-import optic.parsers.types.GraphTypes.AstGraph
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType, Child}
+import com.opticdev.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.{JsObject, JsValue}
 import sdk.PropertyValue
 import sdk.descriptions._

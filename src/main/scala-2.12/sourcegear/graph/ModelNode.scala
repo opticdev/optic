@@ -1,6 +1,6 @@
 package sourcegear.graph
 
-import optic.parsers.GraphUtils.BaseNode
+import com.opticdev.parsers.graph.BaseNode
 import play.api.libs.json.JsObject
 import sdk.descriptions.SchemaId
 

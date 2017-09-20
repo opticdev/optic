@@ -1,9 +1,9 @@
 package sourcegear
 
-import optic.parsers.GraphUtils.{AstPrimitiveNode, AstType, BaseNode}
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import sourcegear.gears.parsing.{MatchResults, ParseGear}
 import sourcegear.gears.{GenerateGear, MutateGear}
-import optic.parsers.types.GraphTypes.AstGraph
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

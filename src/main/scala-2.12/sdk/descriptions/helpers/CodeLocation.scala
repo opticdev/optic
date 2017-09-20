@@ -1,6 +1,6 @@
 package sdk.descriptions.helpers
 
-import optic.parsers.GraphUtils.AstPrimitiveNode
+import com.opticdev.parsers.graph.AstPrimitiveNode
 import sdk.descriptions.Finders.Finder
 
 sealed trait CodeLocation {

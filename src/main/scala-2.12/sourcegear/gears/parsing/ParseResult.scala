@@ -1,7 +1,7 @@
 package sourcegear.gears.parsing
 
 
-import optic.parsers.GraphUtils.AstPrimitiveNode
+import com.opticdev.parsers.graph.AstPrimitiveNode
 import play.api.libs.json.{JsObject, JsValue}
 import sourcegear.graph.ModelNode
 

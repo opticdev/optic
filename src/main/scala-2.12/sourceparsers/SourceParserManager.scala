@@ -5,11 +5,8 @@ import java.io.File
 import java.net.URLClassLoader
 import java.security.MessageDigest
 
-import cognitro.parsers.GraphUtils._
-import optic.parsers.GraphUtils._
-import optic.parsers.graph.Produces
-import optic.parsers.utils.FileCrypto
-import optic.parsers.{IdentifierNodeDesc, ParserBase, ParserResult}
+import com.opticdev.parsers.graph.NodeType
+import com.opticdev.parsers.{IdentifierNodeDesc, ParserBase, ParserResult}
 
 import scala.util.{Failure, Try}
 import scalax.collection.edge.Implicits._
@@ -80,7 +77,7 @@ object SourceParserManager {
   def parseString(contents: String, language: String, versionOverride: Option[String] = None, fileHash: String = "SPACE"): Try[ParserResult] = {
     val parser = parserByLanguageName(language)
     Try(if (parser.isDefined) {
-      parser.get.parseString(versionOverride, contents)
+      parser.get.parseString(contents, versionOverride)
     } else throw new Error("No parser found for "+language+" "+versionOverride.toString))
   }
 

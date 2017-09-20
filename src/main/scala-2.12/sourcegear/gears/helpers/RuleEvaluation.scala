@@ -1,12 +1,12 @@
 package sourcegear.gears.helpers
 
-import optic.parsers.GraphUtils.{AstPrimitiveNode, BaseNode}
-import optic.parsers.graph.Child
-import optic.parsers.graph.path.FlatWalkablePath
+
+import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.graph.{AstPrimitiveNode, Child}
+import com.opticdev.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 import sdk.descriptions.{ChildrenRule, PropertyRule, RawRule}
 import sourcegear.gears.parsing.{MatchResults, NodeDesc}
-import optic.parsers.types.GraphTypes.AstGraph
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
