@@ -2,11 +2,11 @@ package compiler.stages
 
 import Fixture.TestBase
 import com.opticdev.parsers.graph.AstType
-import compiler.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
-import compiler.stages.{MatchType, SnippetStage}
+import com.opticdev.core.compiler.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
+import com.opticdev.core.compiler.stages.{MatchType, SnippetStage}
 import org.scalatest.{FunSpec, PrivateMethodTester}
-import sdk.descriptions.{Lens, Snippet}
-import sourceparsers.SourceParserManager
+import com.opticdev.core.sdk.descriptions.{Lens, Snippet}
+import com.opticdev.core.sourceparsers.SourceParserManager
 
 import scala.util.Try
 

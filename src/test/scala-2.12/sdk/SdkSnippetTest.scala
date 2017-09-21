@@ -1,8 +1,9 @@
 package sdk
 
+import com.opticdev.core.sdk.descriptions.Snippet
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
-import sdk.descriptions.Snippet
+import com.opticdev.core.sdk.descriptions.Snippet
 
 class SdkSnippetTest extends FunSpec {
 

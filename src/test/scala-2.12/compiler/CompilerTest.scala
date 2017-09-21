@@ -1,10 +1,10 @@
 package compiler
 
 import Fixture.TestBase
+import com.opticdev.core.sdk.SdkDescription
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
-import sdk.SdkDescription
-import sourceparsers.SourceParserManager
+import com.opticdev.core.compiler.Compiler
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
@@ -19,7 +19,7 @@ class CompilerTest extends TestBase {
     describe("can be setup") {
 
       it("with a test description") {
-        val pool = compiler.Compiler.setup(description)
+        val pool = Compiler.setup(description)
         assert(pool.compilers.size == 1)
       }
     }

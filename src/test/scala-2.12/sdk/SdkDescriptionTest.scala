@@ -1,5 +1,6 @@
 package sdk
 
+import com.opticdev.core.sdk.SdkDescription
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
 

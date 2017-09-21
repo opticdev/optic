@@ -4,8 +4,8 @@ import Fixture.TestBase
 import Fixture.compilerUtils.GearUtils
 import better.files.File
 import play.api.libs.json.Json
-import sdk.SdkDescription
-import sdk.descriptions.SchemaId
+import com.opticdev.core.sdk.SdkDescription
+import com.opticdev.core.sdk.descriptions.SchemaId
 
 import scala.io.Source
 

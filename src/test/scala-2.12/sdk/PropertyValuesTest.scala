@@ -1,12 +1,14 @@
 package sdk
 
+import com.opticdev.core.sdk._
 import org.scalatest.FunSpec
 import play.api.libs.json._
-import PropertyValuesConversions._
+import com.opticdev.core.sdk.PropertyValuesConversions._
 
 class PropertyValuesTest extends FunSpec {
 
   describe("Property Value for ") {
+
 
     def compare[P <: PropertyValue](propertyValues: P, jsValue: JsValue) = {
       assert(propertyValues.asJson == jsValue)

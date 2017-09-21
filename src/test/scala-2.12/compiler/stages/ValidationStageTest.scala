@@ -1,10 +1,10 @@
 package compiler.stages
 
-import compiler.stages.ValidationStage
+import com.opticdev.core.compiler.stages.ValidationStage
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
-import sdk.descriptions.enums.ComponentEnums._
-import sdk.descriptions.{CodeComponent, Component, Lens, Schema}
+import com.opticdev.core.sdk.descriptions.enums.ComponentEnums._
+import com.opticdev.core.sdk.descriptions.{CodeComponent, Component, Lens, Schema}
 
 class ValidationStageTest extends FunSpec {
 

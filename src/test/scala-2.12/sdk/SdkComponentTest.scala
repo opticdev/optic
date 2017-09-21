@@ -2,8 +2,8 @@ package sdk
 
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
-import sdk.descriptions.enums.LocationEnums._
-import sdk.descriptions.{CodeComponent, Component, SchemaComponent, Snippet}
+import com.opticdev.core.sdk.descriptions.enums.LocationEnums._
+import com.opticdev.core.sdk.descriptions.{CodeComponent, Component, SchemaComponent, Snippet}
 
 class SdkComponentTest extends FunSpec {
 

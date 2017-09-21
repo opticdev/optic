@@ -4,12 +4,12 @@ import Fixture.TestBase
 import Fixture.compilerUtils.{GearUtils, ParserUtils}
 import better.files.File
 import com.opticdev.parsers.ParserBase
-import sdk.descriptions.{CodeComponent, PropertyRule}
-import sdk.descriptions.Finders.StringFinder
-import sdk.descriptions.enums.ComponentEnums.{Literal, Token}
-import sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import sourcegear.gears.{GenerateGear, MutateGear}
-import sourcegear.gears.parsing.ParseGear
+import com.opticdev.core.sdk.descriptions.{CodeComponent, PropertyRule}
+import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
+import com.opticdev.core.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
+import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.gears.{GenerateGear, MutateGear}
+import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 
 /*
 INCOMPLETE TESTS. NEED TO DO SOME SERIOUS WORK ON THE SUITE

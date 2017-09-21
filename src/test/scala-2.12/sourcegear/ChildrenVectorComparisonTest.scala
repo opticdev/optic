@@ -2,8 +2,8 @@ package sourcegear
 
 import org.scalatest.FunSpec
 import play.api.libs.json.JsString
-import sourcegear.gears.helpers.{ChildrenVectorComparison, ModelField}
-import sourcegear.gears.parsing.MatchResults
+import com.opticdev.core.sourcegear.gears.helpers.{ChildrenVectorComparison, ModelField}
+import com.opticdev.core.sourcegear.gears.parsing.MatchResults
 
 class ChildrenVectorComparisonTest extends FunSpec {
   describe("Children Vector Comparison") {

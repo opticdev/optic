@@ -2,12 +2,12 @@ package sdk.Finders
 
 import Fixture.TestBase
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
-import compiler.SnippetStageOutput
-import compiler.errors.{NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
-import compiler.stages.SnippetStage
-import sdk.descriptions.enums.FinderEnums._
-import sdk.descriptions.Finders.{RangeFinder, StringFinder}
-import sdk.descriptions.{Lens, Snippet}
+import com.opticdev.core.compiler.SnippetStageOutput
+import com.opticdev.core.compiler.errors.{NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
+import com.opticdev.core.compiler.stages.SnippetStage
+import com.opticdev.core.sdk.descriptions.enums.FinderEnums._
+import com.opticdev.core.sdk.descriptions.enums.Finders.{RangeFinder, StringFinder}
+import com.opticdev.core.sdk.descriptions.{Lens, Snippet}
 
 class FinderEvaluationTest extends TestBase {
 

@@ -1,6 +1,6 @@
 import Fixture.{PostTest, PreTest, TestBase}
 import org.scalatest.FunSuite
-import sourceparsers.SourceParserManager
+import com.opticdev.core.sourceparsers.SourceParserManager
 
 class ParserTest extends TestBase {
 

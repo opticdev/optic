@@ -3,12 +3,12 @@ package compiler.stages
 import Fixture.TestBase
 import Fixture.compilerUtils.ParserUtils
 import play.api.libs.json.{JsObject, JsString}
-import sdk.descriptions.Finders.StringFinder
-import sdk.descriptions._
-import sdk.descriptions.enums.ComponentEnums._
-import sdk.descriptions.enums.FinderEnums._
-import sdk.descriptions.enums.LocationEnums
-import sdk.descriptions.enums.RuleEnums._
+import com.opticdev.core.sdk.descriptions._
+import com.opticdev.core.sdk.descriptions.enums.ComponentEnums._
+import com.opticdev.core.sdk.descriptions.enums.FinderEnums._
+import com.opticdev.core.sdk.descriptions.enums.Finders.StringFinder
+import com.opticdev.core.sdk.descriptions.enums.LocationEnums
+import com.opticdev.core.sdk.descriptions.enums.RuleEnums._
 
 
 class ParserFactoryStageTest extends TestBase with ParserUtils {

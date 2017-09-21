@@ -7,7 +7,7 @@ import com.opticdev.parsers.graph._
 import com.opticdev.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec}
 import play.api.libs.json.JsValue
-import sourceparsers.SourceParserManager
+import com.opticdev.core.sourceparsers.SourceParserManager
 
 import scala.util.Random
 import scalax.collection.edge.LkDiEdge

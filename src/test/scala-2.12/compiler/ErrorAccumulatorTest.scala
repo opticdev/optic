@@ -1,6 +1,6 @@
 package compiler
 
-import compiler.errors.{ErrorAccumulator, ParserNotFound}
+import com.opticdev.core.compiler.errors.{ErrorAccumulator, ParserNotFound}
 import org.scalatest.FunSpec
 
 class ErrorAccumulatorTest extends FunSpec {

@@ -3,7 +3,7 @@ package sdk
 import com.github.fge.jsonschema.main.JsonSchema
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString, Json}
-import sdk.descriptions.Schema
+import com.opticdev.core.sdk.descriptions.Schema
 
 class SdkSchemaTest extends FunSpec {
 

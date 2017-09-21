@@ -2,7 +2,7 @@ package sdk
 
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
-import sdk.descriptions.Lens
+import com.opticdev.core.sdk.descriptions.Lens
 
 class SdkLensTest extends FunSpec {
 

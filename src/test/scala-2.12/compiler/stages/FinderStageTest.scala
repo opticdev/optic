@@ -2,11 +2,12 @@ package compiler.stages
 
 import Fixture.TestBase
 import com.opticdev.parsers.graph.AstType
-import compiler.errors.InvalidComponents
-import sdk.descriptions.{CodeComponent, Component, Lens, Snippet}
-import sdk.descriptions.enums.FinderEnums._
-import sdk.descriptions.Finders.StringFinder
-import sdk.descriptions.enums.ComponentEnums._
+import com.opticdev.core.compiler.errors.InvalidComponents
+import com.opticdev.core.compiler.stages.{FinderStage, SnippetStage}
+import com.opticdev.core.sdk.descriptions.{CodeComponent, Component, Lens, Snippet}
+import com.opticdev.core.sdk.descriptions.enums.FinderEnums._
+import com.opticdev.core.sdk.descriptions.enums.ComponentEnums._
+import com.opticdev.core.sdk.descriptions.enums.Finders.StringFinder
 
 import scala.util.{Failure, Try}
 

@@ -2,7 +2,7 @@ package sdk
 
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
-import sdk.descriptions.ComponentOptions
+import com.opticdev.core.sdk.descriptions.ComponentOptions
 
 class SdkComponentOptionsTest extends FunSpec {
 

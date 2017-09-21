@@ -4,15 +4,15 @@ import Fixture.TestBase
 import Fixture.compilerUtils.ParserUtils
 import better.files.File
 import play.api.libs.json.{JsObject, JsString, Json}
-import sdk.SdkDescription
-import sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule}
-import sdk.descriptions.Finders.StringFinder
-import sdk.descriptions.enums.ComponentEnums.{Literal, Token}
-import sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import sdk.descriptions.enums.RuleEnums.Any
-import sourcegear.gears.parsing.{ParseAsModel, ParseGear}
-import sourcegear.serialization.GearLoader
-import sourcegear.serialization.SerializeGears._
+import com.opticdev.core.sdk.SdkDescription
+import com.opticdev.core.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule}
+import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
+import com.opticdev.core.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
+import com.opticdev.core.sdk.descriptions.enums.Finders.StringFinder
+import com.opticdev.core.sdk.descriptions.enums.RuleEnums.Any
+import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
+import com.opticdev.core.sourcegear.serialization.GearLoader
+import com.opticdev.core.sourcegear.serialization.SerializeGears._
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source

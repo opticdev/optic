@@ -2,7 +2,7 @@ package sourcegear.helpers
 
 import org.scalatest.FunSpec
 import play.api.libs.json._
-import sourcegear.gears.helpers.{FlattenModelFields, ModelField}
+import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 
 class FlattenModelFieldsTest extends FunSpec {
 

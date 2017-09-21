@@ -2,17 +2,17 @@ package sourcegear.helpers
 
 import Fixture.TestBase
 import better.files.File
-import compiler.stages.SnippetStage
-import sdk.descriptions.Finders.StringFinder
-import sdk.descriptions.enums.ComponentEnums.Token
-import sdk.descriptions.{CodeComponent, Lens, Location, Snippet}
-import sdk.descriptions.enums.FinderEnums
-import sdk.descriptions.enums.LocationEnums._
-import sdk.descriptions.enums.FinderEnums.Entire
-import sdk.descriptions.enums.LocationEnums.Anywhere
-import sdk.descriptions.helpers.AstLocation
-import sourcegear.gears.helpers.LocationEvaluation
-import sourceparsers.SourceParserManager
+import com.opticdev.core.compiler.stages.SnippetStage
+import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.Token
+import com.opticdev.core.sdk.descriptions.{CodeComponent, Lens, Location, Snippet}
+import com.opticdev.core.sdk.descriptions.enums.FinderEnums
+import com.opticdev.core.sdk.descriptions.enums.LocationEnums._
+import com.opticdev.core.sdk.descriptions.enums.FinderEnums.Entire
+import com.opticdev.core.sdk.descriptions.enums.Finders.StringFinder
+import com.opticdev.core.sdk.descriptions.enums.LocationEnums.Anywhere
+import com.opticdev.core.sdk.descriptions.helpers.AstLocation
+import com.opticdev.core.sourcegear.gears.helpers.LocationEvaluation
+import com.opticdev.core.sourceparsers.SourceParserManager
 
 class LocationEvaluationTest extends TestBase {
 

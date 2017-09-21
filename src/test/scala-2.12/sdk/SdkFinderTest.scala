@@ -2,9 +2,9 @@ package sdk
 
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
-import sdk.descriptions.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
-import sdk.descriptions._
-import sdk.descriptions.enums.FinderEnums._
+import com.opticdev.core.sdk.descriptions._
+import com.opticdev.core.sdk.descriptions.enums.FinderEnums._
+import com.opticdev.core.sdk.descriptions.enums.Finders.{Finder, NodeFinder, RangeFinder, StringFinder}
 
 class SdkFinderTest extends FunSpec {
 
