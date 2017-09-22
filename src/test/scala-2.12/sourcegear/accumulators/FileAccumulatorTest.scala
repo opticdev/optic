@@ -32,7 +32,7 @@ class FileAccumulatorTest extends TestBase with GearUtils {
         }""")
 
       val modelNode = result.get.modelNodes.find(_.schemaId == SchemaId("js-example-route^1.0.0")).get
-      assert(modelNode.value == expected)
+      assert(modelNode.expandedValue == expected)
 
     }
 

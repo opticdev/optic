@@ -25,19 +25,19 @@ case class FileAccumulator(listeners: Map[SchemaId, Set[Listener]] = Map()) exte
   override def run(implicit astGraph: AstGraph, parseResults: Vector[ParseResult]): Unit = {
     //after this graph will contain all Model Nodes from the file.
     GraphOperations.addModelsToGraph(parseResults)
-
-    val bySchemaId = parseResults.map(_.modelNode.flatten).groupBy(_.schemaId)
-
-    bySchemaId.foreach {
-      case (schemaId, modelNodes)=> {
-        val listenerOption = listeners.get(schemaId)
-        if (listenerOption.isDefined) {
-          val listenersForSchema = listenerOption.get
-          listenersForSchema.foreach(_.collect())
-        }
-      }
-    }
-
+//
+//    val bySchemaId = parseResults.map(_.modelNode.flatten).groupBy(_.schemaId)
+//
+//    bySchemaId.foreach {
+//      case (schemaId, modelNodes)=> {
+//        val listenerOption = listeners.get(schemaId)
+//        if (listenerOption.isDefined) {
+//          val listenersForSchema = listenerOption.get
+//          listenersForSchema.foreach(_.collect())
+//        }
+//      }
+//    }
+//
   }
 
 }

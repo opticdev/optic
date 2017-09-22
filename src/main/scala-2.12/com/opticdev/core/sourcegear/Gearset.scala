@@ -13,7 +13,7 @@ class GearSet(initialGears: Gear*) {
 
   private val gears = scala.collection.mutable.Set[Gear](initialGears:_*)
 
-  private var fileAccumulator = FileAccumulator()
+  var fileAccumulator = FileAccumulator()
 
   def size = gears.size
 
@@ -43,12 +43,12 @@ class GearSet(initialGears: Gear*) {
       .map(nodeType=> (nodeType, gears.filter(_.enterOn.contains(nodeType)).toSet))
       .toMap
 
-    fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.schema))
+    fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.mapToSchema))
   }
 
   def grouped: Map[AstType, Set[Gear]] = groupedStore
 
-  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph): FileParseResults = {
+  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SourceGearContext): FileParseResults = {
     val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[AstPrimitiveNode].nodeType)
 
     //@todo optimize this

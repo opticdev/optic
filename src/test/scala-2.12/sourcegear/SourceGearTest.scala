@@ -32,7 +32,7 @@ class SourceGearTest extends TestBase with GearUtils {
       val testFilePath = getCurrentDirectory + "/src/test/resources/example_source/ImportSource.js"
       val results = sourceGear.parseFile(File(testFilePath))
 
-      assert(results.size == 2)
+      assert(results.get.modelNodes.size == 2)
 
     }
 

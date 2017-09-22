@@ -10,6 +10,7 @@ import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.core.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.core.sdk.descriptions.enums.Finders.StringFinder
 import com.opticdev.core.sdk.descriptions.enums.RuleEnums.Any
+import com.opticdev.core.sourcegear.SourceGearContext
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.serialization.GearLoader
 import com.opticdev.core.sourcegear.serialization.SerializeGears._
@@ -20,6 +21,8 @@ import scala.io.Source
 class ParserGearTest extends TestBase with ParserUtils {
 
   describe("ParserGear") {
+
+    implicit val sourceGearContext = SourceGearContext(null, null)
 
     describe("Matching and extracting") {
       it("Can build a valid description from snippet") {
@@ -36,7 +39,7 @@ class ParserGearTest extends TestBase with ParserUtils {
         val block = "var hello = require('world')"
 
         val parsedSample = sample(block)
-        val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block)
+        val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext)
         assert(result.isDefined)
       }
 
@@ -46,7 +49,7 @@ class ParserGearTest extends TestBase with ParserUtils {
         val block = "var goodbye = notRequire('nation')"
 
         val parsedSample = sample(block)
-        val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block)
+        val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext)
         assert(!result.isDefined)
 
       }
@@ -62,7 +65,7 @@ class ParserGearTest extends TestBase with ParserUtils {
           val block = "var otherValue = require('world')"
 
           val parsedSample = sample(block)
-          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
+          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
           assert(result.isDefined)
 
           assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("otherValue"))))
@@ -81,7 +84,7 @@ class ParserGearTest extends TestBase with ParserUtils {
           val block = "let otherValue = require('world')"
 
           val parsedSample = sample(block)
-          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
+          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
           assert(result.isDefined)
           assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("otherValue"))))
 
@@ -98,7 +101,7 @@ class ParserGearTest extends TestBase with ParserUtils {
 
             val parsedSample = sample(block)
 
-            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
+            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
 
             assert(result.isDefined)
 
@@ -112,7 +115,7 @@ class ParserGearTest extends TestBase with ParserUtils {
 
             val parsedSample = sample(block)
 
-            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
+            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
 
             assert(!result.isDefined)
 
@@ -133,7 +136,7 @@ class ParserGearTest extends TestBase with ParserUtils {
           val block = "var otherValue = require('that-lib')"
 
           val parsedSample = sample(block)
-          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block)
+          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
           assert(result.isDefined)
 
           val expected = JsObject(Seq("definedAs" -> JsString("otherValue"), "pathTo" -> JsString("that-lib")))

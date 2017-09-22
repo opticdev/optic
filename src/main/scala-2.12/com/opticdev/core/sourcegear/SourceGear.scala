@@ -19,7 +19,8 @@ abstract class SourceGear {
     if (parsedOption.isSuccess) {
       val parsed = parsedOption.get
       val astGraph = parsed.graph
-      Option(gearSet.parseFromGraph(fileContents, astGraph))
+      implicit val sourceGearContext = SourceGearContext(gearSet.fileAccumulator, astGraph)
+      Option(gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext))
     } else {
       None
     }
