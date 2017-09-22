@@ -70,6 +70,6 @@ class GearSet(initialGears: Gear*) {
     fileAccumulator.run(astGraph, results)
 
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
-    FileParseResults(astGraph, astGraph.modelNodes)
+    FileParseResults(astGraph, astGraph.modelNodes.asInstanceOf[Set[ModelNode]])
   }
 }

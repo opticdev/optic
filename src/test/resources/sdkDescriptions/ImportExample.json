@@ -33,7 +33,7 @@
         },
         {
           "type": "code",
-          "codeType": "token",
+          "codeType": "literal",
           "finder": {
             "type": "string",
             "rule": "containing",

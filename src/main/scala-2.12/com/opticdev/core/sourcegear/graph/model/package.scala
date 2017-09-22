@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.graph
 
+import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.parsers.graph.AstPrimitiveNode
 
 package object model {
@@ -7,10 +8,9 @@ package object model {
 
   sealed trait ModelKey
   case class Path(path: String) extends ModelKey
-  case object RootNode extends ModelKey
 
-  sealed trait AstMapping
-  case class Node(node: AstPrimitiveNode) extends AstMapping
-  case class NodeVector(nodes: Vector[AstPrimitiveNode]) extends AstMapping
-  case object NoMapping extends AstMapping
+  sealed trait AstMapping {val relationship : AstPropertyRelationship.Value}
+  case class Node(node: AstPrimitiveNode, relationship : AstPropertyRelationship.Value) extends AstMapping
+  case class ModelVector(models: Vector[ModelNode]) extends AstMapping {override val relationship = AstPropertyRelationship.Model}
+  case object NoMapping extends AstMapping {override val relationship = AstPropertyRelationship.NoRelationship}
 }
