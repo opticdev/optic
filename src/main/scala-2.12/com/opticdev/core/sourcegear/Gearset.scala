@@ -2,8 +2,9 @@ package com.opticdev.core.sourcegear
 
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
+import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
+import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType, GraphImplicits}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -47,7 +48,7 @@ class GearSet(initialGears: Gear*) {
 
   def grouped: Map[AstType, Set[Gear]] = groupedStore
 
-  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph): Vector[ParseResult] = {
+  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph): FileParseResults = {
     val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[AstPrimitiveNode].nodeType)
 
     //@todo optimize this
@@ -68,6 +69,7 @@ class GearSet(initialGears: Gear*) {
 
     fileAccumulator.run(astGraph, results)
 
-    results
+    import com.opticdev.core.sourcegear.graph.GraphImplicits._
+    FileParseResults(astGraph, astGraph.modelNodes)
   }
 }

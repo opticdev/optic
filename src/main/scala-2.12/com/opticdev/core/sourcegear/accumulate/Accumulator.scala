@@ -26,16 +26,15 @@ case class FileAccumulator(listeners: Map[SchemaId, Set[Listener]] = Map()) exte
     //after this graph will contain all Model Nodes from the file.
     GraphOperations.addModelsToGraph(parseResults)
 
-    val bySchemaId = parseResults.map(_.modelNode).groupBy(_.schemaId)
+    val bySchemaId = parseResults.map(_.modelNode.flatten).groupBy(_.schemaId)
 
-    bySchemaId.flatMap {
+    bySchemaId.foreach {
       case (schemaId, modelNodes)=> {
         val listenerOption = listeners.get(schemaId)
         if (listenerOption.isDefined) {
           val listenersForSchema = listenerOption.get
           listenersForSchema.foreach(_.collect())
-          Vector()
-        } else Vector()
+        }
       }
     }
 

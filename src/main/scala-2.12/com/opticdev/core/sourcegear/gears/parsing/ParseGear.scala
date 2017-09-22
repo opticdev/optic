@@ -5,7 +5,7 @@ import com.opticdev.core.sdk.descriptions._
 import com.opticdev.core.sourcegear.accumulate.Listener
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
-import com.opticdev.core.sourcegear.graph.ModelNode
+import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType, Child}
 import com.opticdev.parsers.graph.path.FlatWalkablePath
@@ -104,18 +104,20 @@ case class ParseAsModel(description: NodeDesc,
   override def output(matchResults: MatchResults) : Option[ParseResult] = {
     if (!matchResults.isMatch) return None
 
-    val model = FlattenModelFields.flattenFields(matchResults.extracted.getOrElse(Set()))
+    val fields = matchResults.extracted.getOrElse(Set())
+
+    val model = FlattenModelFields.flattenFields(fields)
+    import com.opticdev.core.sourcegear.graph.model.MappingImplicits._
+    val mapping = fields.toMapping
+
+    val linkedModelNode = LinkedModelNode(schema, model, mapping)
 
     //@todo have schema validate
-
-    val modelNode = ModelNode(schema, model)
-
-    Option(ParseResult(this, modelNode, matchResults.baseNode.get))
+    Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))
 
   }
 
 }
-
 
 //Signaling
 case class MatchResults(isMatch: Boolean, extracted: Option[Set[ModelField]], baseNode: Option[AstPrimitiveNode] = None)

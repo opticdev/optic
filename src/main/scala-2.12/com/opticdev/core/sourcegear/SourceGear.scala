@@ -11,7 +11,7 @@ abstract class SourceGear {
   val parser: Set[ParserBase]
   val gearSet: GearSet = new GearSet
 
-  def parseFile(file: File) = {
+  def parseFile(file: File) : Option[FileParseResults] = {
     val fileContents = file.contentAsString
     //@todo connect to parser list
     val parsedOption = SourceParserManager.parseString(fileContents, "Javascript", Option("es6"))
@@ -19,9 +19,9 @@ abstract class SourceGear {
     if (parsedOption.isSuccess) {
       val parsed = parsedOption.get
       val astGraph = parsed.graph
-      gearSet.parseFromGraph(fileContents, astGraph)
+      Option(gearSet.parseFromGraph(fileContents, astGraph))
     } else {
-      Vector()
+      None
     }
 
   }

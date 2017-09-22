@@ -1,6 +1,6 @@
 name := "optic-core"
 
-organization := "com.optic-dev"
+organization := "com.opticdev"
 
 version := "1.0"
 

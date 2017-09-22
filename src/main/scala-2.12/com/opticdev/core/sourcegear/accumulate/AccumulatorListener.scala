@@ -8,6 +8,7 @@ import play.api.libs.json.{JsArray, JsObject}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
+import com.opticdev.core.sourcegear.graph.model.{ModelNode, NodeVector}
 
 sealed trait Listener {
   def collect()(implicit astGraph: AstGraph)
@@ -17,6 +18,8 @@ sealed trait Listener {
 case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: SchemaId) extends Listener {
   override val schema = schemaComponent.schema
   override def collect()(implicit astGraph: AstGraph): Unit = {
+
+    val modelNodes = astGraph.modelNodes
 
     val mapToNodes = astGraph.modelNodes.ofType(mapToSchema)
     val targetNodes = astGraph.modelNodes.ofType(schema)
@@ -28,11 +31,12 @@ case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: Sche
         .toVector
         .sortBy(_.astRoot.range._1)
 
-      val modelFields = ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.value)))
+      val modelFields = ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.value)), NodeVector(addToNodes.map(i=> i.astRoot())))
 
       val newModel = FlattenModelFields.flattenFields(Set(modelFields), instance.value)
 
-      instance.silentUpdate(newModel)
+      //@todo remove this casting
+      instance.asInstanceOf[ModelNode].silentUpdate(newModel)
     })
 
   }
