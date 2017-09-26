@@ -20,7 +20,7 @@ class SourceGearTest extends TestBase with GearUtils {
   describe("SourceGear") {
 
     val sourceGear = new SourceGear {
-      override val parser: Set[ParserBase] = Set()
+      override val parsers: Set[ParserBase] = Set()
     }
 
     it("Finds matches in a test file.") {

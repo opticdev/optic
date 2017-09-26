@@ -22,8 +22,6 @@ class ParserGearTest extends TestBase with ParserUtils {
 
   describe("ParserGear") {
 
-    implicit val sourceGearContext = SourceGearContext(null, null)
-
     describe("Matching and extracting") {
       it("Can build a valid description from snippet") {
         val block = "var hello = require('world')"

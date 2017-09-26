@@ -25,7 +25,7 @@ trait GearUtils {
   def sourceGearFromDescription(path: String) : SourceGear = {
 
     val sourceGear = new SourceGear {
-      override val parser: Set[ParserBase] = Set()
+      override val parsers: Set[ParserBase] = Set()
     }
 
     val jsonString = Source.fromFile("src/test/resources/sdkDescriptions/RequestSdkDescription.json").getLines.mkString

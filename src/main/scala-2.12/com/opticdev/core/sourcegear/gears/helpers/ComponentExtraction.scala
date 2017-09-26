@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear.gears.helpers
 
 import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.core.sdk.descriptions.{CodeComponent, Component}
+import com.opticdev.core.sourcegear.SourceGearContext
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, NoMapping, Node}
 import com.opticdev.parsers.AstGraph
@@ -16,19 +17,21 @@ case class ModelField(propertyPath: String, value: JsValue, astMapping: AstMappi
 
 object ComponentExtraction {
   implicit class ComponentWithExtractors(component: Component) {
-    def extract(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String) : ModelField = {
+    def extract(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SourceGearContext) : ModelField = {
       component match {
         case c: CodeComponent => {
 
           //@todo add some exceptions
           c.codeType match {
             case Literal=> {
-              //@todo need to move this logic to the parser, specifically the key.
-              val valueOption = node.properties.as[JsObject] \ "value"
-              ModelField(component.propertyPath, valueOption.get, Node(node, AstPropertyRelationship.Literal))
+              val result = sourceGearContext.parser.basicSourceInterface.literals.parseNode(node, node.raw)
+              if (result.isFailure) throw new Error("Source code extraction error " + result.failed.get)
+              ModelField(component.propertyPath, result.get, Node(node, AstPropertyRelationship.Literal))
             }
             case Token=> {
-              ModelField(component.propertyPath, JsString(fileContents.substring(node.range._1, node.range._2)), Node(node, AstPropertyRelationship.Token))
+              val result = sourceGearContext.parser.basicSourceInterface.tokens.parseNode(node, node.raw)
+              if (result.isFailure) throw new Error("Source code extraction error " + result.failed.get)
+              ModelField(component.propertyPath, result.get, Node(node, AstPropertyRelationship.Token))
             }
           }
 

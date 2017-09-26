@@ -8,7 +8,7 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
 abstract class SourceGear {
-  val parser: Set[ParserBase]
+  val parsers: Set[ParserBase]
   val gearSet: GearSet = new GearSet
 
   def parseFile(file: File) : Option[FileParseResults] = {
@@ -19,7 +19,11 @@ abstract class SourceGear {
     if (parsedOption.isSuccess) {
       val parsed = parsedOption.get
       val astGraph = parsed.graph
-      implicit val sourceGearContext = SourceGearContext(gearSet.fileAccumulator, astGraph)
+
+      //@todo clean this up and have the parser return in the parse result.
+      val parser = parsers.find(_.languageName == parsed.language).get
+
+      implicit val sourceGearContext = SourceGearContext(gearSet.fileAccumulator, astGraph, parser)
       Option(gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext))
     } else {
       None

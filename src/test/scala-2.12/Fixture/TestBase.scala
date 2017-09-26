@@ -2,6 +2,7 @@ package Fixture
 
 
 
+import com.opticdev.core.sourcegear.SourceGearContext
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph._
 import com.opticdev.parsers.utils.Crypto
@@ -19,12 +20,6 @@ class TestBase extends FunSpec with BeforeAndAfterAll {
 
   val random = new Random()
 
-  def mockFileNode(fP: String ): InMemoryFileNode = {
-    new InMemoryFileNode(fP, random.nextString(15), "Lang", "LangVersion") {
-      override val filePath = fP
-      override def toString = "MockFile("+fP+")"
-    }
-  }
 
   def mockAstPrimitiveNode(nT: AstType, v: JsValue, fileHash: String = "SPACE") : AstPrimitiveNode = {
     new AstPrimitiveNode(nT, (random.nextInt(6), random.nextInt(6)), v, fileHash) {}
@@ -49,6 +44,8 @@ class TestBase extends FunSpec with BeforeAndAfterAll {
   }
 
   start
+
+  implicit val sourceGearContext = SourceGearContext(null, null, SourceParserManager.getInstalledParsers.head)
 
   override def beforeAll = {
     start

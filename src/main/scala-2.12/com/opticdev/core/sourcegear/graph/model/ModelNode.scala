@@ -9,16 +9,9 @@ import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.JsObject
 
 
-sealed trait BaseModelNode extends BaseNode {
+sealed abstract class BaseModelNode(implicit sourceGearContext: SourceGearContext) extends BaseNode {
   val schemaId : SchemaId
   val value : JsObject
-}
-
-case class LinkedModelNode(schemaId: SchemaId, value: JsObject, mapping: ModelAstMapping) (implicit sourceGearContext: SourceGearContext) {
-  def flatten = ModelNode(schemaId, value)
-}
-
-case class ModelNode(schemaId: SchemaId, value: JsObject) (implicit sourceGearContext: SourceGearContext) extends BaseModelNode {
 
   lazy val expandedValue = {
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
@@ -29,6 +22,13 @@ case class ModelNode(schemaId: SchemaId, value: JsObject) (implicit sourceGearCo
       value
     }
   }
+}
+
+case class LinkedModelNode(schemaId: SchemaId, value: JsObject, mapping: ModelAstMapping) (implicit sourceGearContext: SourceGearContext) {
+  def flatten = ModelNode(schemaId, value)
+}
+
+case class ModelNode(schemaId: SchemaId, value: JsObject) (implicit sourceGearContext: SourceGearContext) extends BaseModelNode {
 
   def resolve : LinkedModelNode = {
     implicit val astGraph = sourceGearContext.astGraph
@@ -43,6 +43,6 @@ case class ModelNode(schemaId: SchemaId, value: JsObject) (implicit sourceGearCo
       }
     }.toMap
 
-    LinkedModelNode(schemaId, expandedValue, mapping)
+    LinkedModelNode(schemaId, value, mapping)
   }
 }

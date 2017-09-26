@@ -15,7 +15,7 @@ class ModelNodeTest extends TestBase with GearUtils {
   describe("Model node test") {
 
     val sourceGear = new SourceGear {
-      override val parser: Set[ParserBase] = Set()
+      override val parsers: Set[ParserBase] = Set()
     }
 
     val importResults = {

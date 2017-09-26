@@ -1,15 +1,13 @@
 package com.opticdev.core.io
 
-import com.opticdev.parsers.graph.BaseFileNode
-
 
 object FileUtils {
-  implicit class FileNodeMethods(val fn: BaseFileNode) {
-
-    def getString(range: (Int, Int) ) : String = fn.contents.substring(range._1, range._2)
-    def replaceRange(range: (Int, Int), newString: String ) : String = StringUtils.replaceRange(fn.contents, range, newString)
-
-  }
+//  implicit class FileNodeMethods(val fn: BaseFileNode) {
+//
+//    def getString(range: (Int, Int) ) : String = fn.contents.substring(range._1, range._2)
+//    def replaceRange(range: (Int, Int), newString: String ) : String = StringUtils.replaceRange(fn.contents, range, newString)
+//
+//  }
 }
 
 object StringUtils {
