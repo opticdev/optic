@@ -9,7 +9,7 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
-import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode, ModelVector}
+import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode, ModelVectorMapping}
 
 sealed trait Listener {
   def collect(implicit astGraph: AstGraph) : Set[ModelField]
@@ -33,7 +33,7 @@ case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: Sche
         .toVector
         .sortBy(_.astRoot.range._1)
 
-      ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.value)), ModelVector(addToNodes.map(i=> i.asInstanceOf[ModelNode])))
+      ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.value)), ModelVectorMapping(addToNodes.map(i=> i.asInstanceOf[ModelNode])))
     })
 
   }

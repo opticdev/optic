@@ -3,7 +3,8 @@ package com.opticdev.core.sourcegear.graph.model
 import com.opticdev.core.sdk.descriptions.SchemaId
 import com.opticdev.core.sourcegear.SourceGearContext
 import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
-import com.opticdev.core.sourcegear.graph.{YieldsModelProperty, YieldsProperty}
+import com.opticdev.core.sourcegear.gears.parsing.ParseGear
+import com.opticdev.core.sourcegear.graph.{YieldsModel, YieldsModelProperty, YieldsProperty}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.JsObject
@@ -24,7 +25,7 @@ sealed abstract class BaseModelNode(implicit sourceGearContext: SourceGearContex
   }
 }
 
-case class LinkedModelNode(schemaId: SchemaId, value: JsObject, mapping: ModelAstMapping) (implicit sourceGearContext: SourceGearContext) {
+case class LinkedModelNode(schemaId: SchemaId, value: JsObject, mapping: ModelAstMapping, parseGear: ParseGear)(implicit sourceGearContext: SourceGearContext) {
   def flatten = ModelNode(schemaId, value)
 }
 
@@ -37,12 +38,14 @@ case class ModelNode(schemaId: SchemaId, value: JsObject) (implicit sourceGearCo
         edge match {
           case property: YieldsModelProperty =>
             property match {
-              case YieldsProperty(path, relationship) => (path, Node(node.asInstanceOf[AstPrimitiveNode], relationship))
+              case YieldsProperty(path, relationship) => (path, NodeMapping(node.asInstanceOf[AstPrimitiveNode], relationship))
             }
         }
       }
     }.toMap
 
-    LinkedModelNode(schemaId, value, mapping)
+    val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
+
+    LinkedModelNode(schemaId, value, mapping, parseGear)
   }
 }

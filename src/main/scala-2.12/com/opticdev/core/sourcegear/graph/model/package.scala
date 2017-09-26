@@ -10,7 +10,7 @@ package object model {
   case class Path(path: String) extends ModelKey
 
   sealed trait AstMapping {val relationship : AstPropertyRelationship.Value}
-  case class Node(node: AstPrimitiveNode, relationship : AstPropertyRelationship.Value) extends AstMapping
-  case class ModelVector(models: Vector[ModelNode]) extends AstMapping {override val relationship = AstPropertyRelationship.Model}
+  case class NodeMapping(node: AstPrimitiveNode, relationship : AstPropertyRelationship.Value) extends AstMapping
+  case class ModelVectorMapping(models: Vector[ModelNode]) extends AstMapping {override val relationship = AstPropertyRelationship.Model}
   case object NoMapping extends AstMapping {override val relationship = AstPropertyRelationship.NoRelationship}
 }

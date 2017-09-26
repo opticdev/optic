@@ -27,8 +27,8 @@ object GraphOperations {
         val path = propertyPath.asInstanceOf[Path]
         import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship._
         astMapping match {
-          case Node(node, relationship) => astGraph add (node ~+#> flatNode) (YieldsProperty(path, relationship))
-          case ModelVector(models) => models.map(i=> astGraph add (i ~+#> flatNode) (YieldsProperty(path, Model)))
+          case NodeMapping(node, relationship) => astGraph add (node ~+#> flatNode) (YieldsProperty(path, relationship))
+          case ModelVectorMapping(models) => models.map(i=> astGraph add (i ~+#> flatNode) (YieldsProperty(path, Model)))
           case _ : Throwable => throw new Error("Unexpected mapping found "+ astMapping)
         }
     }

@@ -111,7 +111,7 @@ case class ParseAsModel(description: NodeDesc,
     import com.opticdev.core.sourcegear.graph.model.MappingImplicits._
     val mapping = fields.toMapping
 
-    val linkedModelNode = LinkedModelNode(schema, model, mapping)
+    val linkedModelNode = LinkedModelNode(schema, model, mapping, this)
 
     //@todo have schema validate
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))

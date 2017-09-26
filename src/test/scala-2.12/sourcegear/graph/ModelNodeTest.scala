@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, Path}
 import com.opticdev.core.sourceparsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.FunSpec
-import play.api.libs.json.JsString
+import play.api.libs.json.{JsObject, JsString}
 
 class ModelNodeTest extends TestBase with GearUtils {
 
@@ -27,6 +27,7 @@ class ModelNodeTest extends TestBase with GearUtils {
     }
 
     it("can resolve when flat") {
+
       implicit val astGraph = importResults.get.astGraph
 
       val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
@@ -36,6 +37,19 @@ class ModelNodeTest extends TestBase with GearUtils {
       assert(resolvedMapping.size == 2)
       assert(resolvedMapping.get(Path("definedAs")).get.relationship == AstPropertyRelationship.Token)
       assert(resolvedMapping.get(Path("pathTo")).get.relationship == AstPropertyRelationship.Literal)
+
+    }
+
+    describe("Mutation") {
+
+      val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
+      val resolved = helloWorldImport.resolve
+
+      it("Can mutate a token") {
+        import com.opticdev.core.sourcegear.mutate.MutationImplicits._
+        resolved.update(JsObject(Seq("definedAs" -> JsString("goodbye"), "pathTo" -> JsString("local"))))
+
+      }
 
     }
 
