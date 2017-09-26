@@ -6,6 +6,7 @@ import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, Path}
+import com.opticdev.core.sourceparsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.FunSpec
 import play.api.libs.json.JsString
@@ -15,7 +16,7 @@ class ModelNodeTest extends TestBase with GearUtils {
   describe("Model node test") {
 
     val sourceGear = new SourceGear {
-      override val parsers: Set[ParserBase] = Set()
+      override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
     }
 
     val importResults = {

@@ -21,7 +21,6 @@ object ComponentExtraction {
       component match {
         case c: CodeComponent => {
 
-          //@todo add some exceptions
           c.codeType match {
             case Literal=> {
               val result = sourceGearContext.parser.basicSourceInterface.literals.parseNode(node, node.raw)
