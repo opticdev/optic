@@ -15,7 +15,7 @@ object RuleEvaluation {
 
   implicit class RawRuleWithEvaluation(rawRule: RawRule)  {
     def evaluate(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String): Boolean = {
-      val raw = fileContents.substring(node.range._1, node.range._2)
+      val raw = fileContents.substring(node.range.start, node.range.end)
       rawRule.comparator match {
         case "==" => raw == rawRule.value
         case "!=" => raw != rawRule.value

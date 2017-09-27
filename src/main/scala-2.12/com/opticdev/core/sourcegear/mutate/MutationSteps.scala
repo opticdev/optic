@@ -66,17 +66,17 @@ object MutationSteps {
   def orderChanges(astChanges: List[AstChange]) = {
     astChanges.sortBy(change=> {
       change.mapping match {
-        case NodeMapping(node, relationship) => node.range
-        case _ => (0,0)
+        case NodeMapping(node, relationship) => node.range.end
+        case _ => 0
       }
     })
   }
 
   def combineChanges(astChanges: List[AstChange]) (implicit sourceGearContext: SourceGearContext, fileContents: String) = {
     val failedUpdates = astChanges.filter(_.replacementString.isFailure)
-
+    import com.opticdev.core.utils.StringBuilderImplicits._
     val ordered = orderChanges(astChanges.filter(_.replacementString.isSuccess))
-    ordered.foldLeft (fileContents) {
+    ordered.foldLeft ( new StringBuilder(fileContents) ) {
       case (contents, change) => {
         change.mapping match {
           case NodeMapping(node, relationship) => contents

@@ -26,6 +26,8 @@ object StringBuilderImplicits {
           stringBuilder.insert(i, endOfContents(i - range.size))
         )
       }
+
+      stringBuilder
     }
   }
 }

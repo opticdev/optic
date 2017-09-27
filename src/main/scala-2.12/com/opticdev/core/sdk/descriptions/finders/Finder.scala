@@ -148,8 +148,8 @@ object RangeFinderEvaluate {
   def nodesMatchingRangePredicate(graph: AstGraph, predicate: (Int, Int)=> Boolean) = {
     graph.nodes.filter((n: graph.NodeT)=> {
       n.isAstNode() && {
-        val (start, end) = n.value.asInstanceOf[AstPrimitiveNode].range
-        n.value.isAstNode() && predicate(start, end)
+        val range = n.value.asInstanceOf[AstPrimitiveNode].range
+        n.value.isAstNode() && predicate(range.start, range.end)
       }
     }).toSeq
   }

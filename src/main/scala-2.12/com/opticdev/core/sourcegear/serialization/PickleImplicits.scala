@@ -2,10 +2,21 @@ package com.opticdev.core.sourcegear.serialization
 
 import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
+import boopickle.PicklerHelper
 import com.opticdev.core.sdk.{BoolProperty, _}
 import com.opticdev.core.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 
-object PickleImplicits {
+object PickleImplicits extends PicklerHelper {
+
+  implicit object RangePickler extends P[Range] {
+    @inline override def pickle(value: Range)(implicit state: PickleState) = {
+      state.enc.writeInt(value.start)
+      state.enc.writeInt(value.end)
+    }
+    @inline override def unpickle(implicit state: UnpickleState): Range = {
+      Range(state.dec.readInt, state.dec.readInt)
+    }
+  }
 
   implicit val codeEnumPickler = {
     import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{CodeEnum, Literal, Token}
@@ -71,6 +82,4 @@ object PickleImplicits {
     .addConcreteType[BoolProperty]
     .addConcreteType[ArrayProperty]
     .addConcreteType[ObjectProperty]
-
-
 }

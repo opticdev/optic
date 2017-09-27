@@ -31,7 +31,7 @@ case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: Sche
       val addToNodes = targetNodes
         .filter(n=> LocationEvaluation.matches(schemaComponent.location, n.astRoot, astRoot))
         .toVector
-        .sortBy(_.astRoot.range._1)
+        .sortBy(_.astRoot.range.start)
 
       ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.value)), ModelVectorMapping(addToNodes.map(i=> i.asInstanceOf[ModelNode])))
     })

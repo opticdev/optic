@@ -22,7 +22,7 @@ class TestBase extends FunSpec with BeforeAndAfterAll {
 
 
   def mockAstPrimitiveNode(nT: AstType, v: JsValue, fileHash: String = "SPACE") : AstPrimitiveNode = {
-    new AstPrimitiveNode(nT, (random.nextInt(6), random.nextInt(6)), v, fileHash) {}
+    new AstPrimitiveNode(nT, Range(random.nextInt(6), random.nextInt(6)), v, fileHash) {}
   }
 
   case class MockModelNode(nodeType: ModelType, jsValue: JsValue, dependencyHash: String)(implicit graph: AstGraph) extends ModelNode {

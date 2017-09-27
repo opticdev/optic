@@ -27,14 +27,14 @@ class FinderEvaluationTest extends TestBase {
           val stringFinder = StringFinder(Entire, "hello", 0)
           val result = stringFinder.evaluateFinder(snippetStageOutput)
           assert(result.nodeType == AstType("Identifier", "Javascript"))
-          assert(result.range == (4, 9))
+          assert(result.range == Range(4, 9))
         }
 
         it("finds right node -- occurrence = 1") {
           val stringFinder = StringFinder(Entire, "hello", 1)
           val result = stringFinder.evaluateFinder(snippetStageOutput)
           assert(result.nodeType == AstType("Identifier", "Javascript"))
-          assert(result.range == (41, 46))
+          assert(result.range == Range(41, 46))
         }
 
         it("throws error when string is not found") {
@@ -59,14 +59,14 @@ class FinderEvaluationTest extends TestBase {
           val stringFinder = StringFinder(Containing, "ell", 0)
           val result = stringFinder.evaluateFinder(snippetStageOutput)
           assert(result.nodeType == AstType("Identifier", "Javascript"))
-          assert(result.range == (4, 9))
+          assert(result.range == Range(4, 9))
         }
 
         it("finds right node -- occurrence = 1") {
           val stringFinder = StringFinder(Containing, "ell", 1)
           val result = stringFinder.evaluateFinder(snippetStageOutput)
           assert(result.nodeType == AstType("Identifier", "Javascript"))
-          assert(result.range == (41, 46))
+          assert(result.range == Range(41, 46))
         }
 
       }
@@ -79,14 +79,14 @@ class FinderEvaluationTest extends TestBase {
           val stringFinder = StringFinder(Starting, "hel", 0)
           val result = stringFinder.evaluateFinder(snippetStageOutput)
           assert(result.nodeType == AstType("Identifier", "Javascript"))
-          assert(result.range == (4, 9))
+          assert(result.range == Range(4, 9))
         }
 
         it("finds right node -- occurrence = 1") {
           val stringFinder = StringFinder(Starting, "hel", 1)
           val result = stringFinder.evaluateFinder(snippetStageOutput)
           assert(result.nodeType == AstType("Identifier", "Javascript"))
-          assert(result.range == (41, 46))
+          assert(result.range == Range(41, 46))
         }
 
         it("throws error when it can't find a node that starts like this") {
@@ -106,7 +106,7 @@ class FinderEvaluationTest extends TestBase {
         val rangeFinder = RangeFinder(4,9)
         val result = rangeFinder.evaluateFinder(snippetStageOutput)
         assert(result.nodeType == AstType("Identifier", "Javascript"))
-        assert(result.range == (4, 9))
+        assert(result.range == Range(4, 9))
       }
 
     }
