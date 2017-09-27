@@ -11,7 +11,7 @@ object StringBuilderImplicits {
       }
 
       range.reverse.foreach(i=> {
-        val charOption = contents.lift(i)
+        val charOption = contents.lift(range.indexOf(i))
         if (charOption.isDefined) {
           stringBuilder.update(i, charOption.get)
         } else {
@@ -21,10 +21,9 @@ object StringBuilderImplicits {
 
       if (contents.length > range.size) {
         val endOfContents = contents.substring(range.size)
-        //a few items are left to insert
-        Range(range.end, range.end + contents.length - range.size).foreach(i=>
-          stringBuilder.insert(i, endOfContents(i - range.size))
-        )
+        val remainingRange = Range(range.end, range.end + contents.length - range.size)
+
+        remainingRange.foreach(i=> stringBuilder.insert(i, endOfContents(remainingRange.indexOf(i))))
       }
 
       stringBuilder

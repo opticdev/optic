@@ -35,7 +35,7 @@ object MutationSteps {
     })
   }
 
-  def handleChanges(updatedFields: List[UpdatedField]) (implicit sourceGearContext: SourceGearContext): List[AstChange] = {
+  def handleChanges(updatedFields: List[UpdatedField]) (implicit sourceGearContext: SourceGearContext, fileContents: String): List[AstChange] = {
     updatedFields.map(field=> {
       field.component match {
         case i: CodeComponent => i.codeType match {
@@ -46,19 +46,19 @@ object MutationSteps {
     })
   }
 
-  def mutateLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SourceGearContext) = {
+  def mutateLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SourceGearContext, fileContents: String) = {
     val node = updatedField.mapping.asInstanceOf[NodeMapping].node
     import com.opticdev.core.utils.DiffOperationImplicits.DiffTypes._
     updatedField.diffOperation.changeType match {
-      case REPLACE => sourceGearContext.parser.basicSourceInterface.literals.mutateNode(node, "", updatedField.newValue)
+      case REPLACE => sourceGearContext.parser.basicSourceInterface.literals.mutateNode(node, node.raw, updatedField.newValue)
       case _ => throw new Error("Literals can only be replaced.")
     }
   }
-  def mutateToken(updatedField: UpdatedField) (implicit sourceGearContext: SourceGearContext) = {
+  def mutateToken(updatedField: UpdatedField) (implicit sourceGearContext: SourceGearContext, fileContents: String) = {
     val node = updatedField.mapping.asInstanceOf[NodeMapping].node
     import com.opticdev.core.utils.DiffOperationImplicits.DiffTypes._
     updatedField.diffOperation.changeType match {
-      case REPLACE => sourceGearContext.parser.basicSourceInterface.tokens.mutateNode(node, "", updatedField.newValue.as[JsString])
+      case REPLACE => sourceGearContext.parser.basicSourceInterface.tokens.mutateNode(node, node.raw, updatedField.newValue.as[JsString])
       case _ => throw new Error("Literals can only be replaced.")
     }
   }
@@ -69,22 +69,21 @@ object MutationSteps {
         case NodeMapping(node, relationship) => node.range.end
         case _ => 0
       }
-    })
+    }).reverse
   }
 
-  def combineChanges(astChanges: List[AstChange]) (implicit sourceGearContext: SourceGearContext, fileContents: String) = {
+  def combineChanges(astChanges: List[AstChange]) (implicit sourceGearContext: SourceGearContext, fileContents: String): StringBuilder = {
     val failedUpdates = astChanges.filter(_.replacementString.isFailure)
     import com.opticdev.core.utils.StringBuilderImplicits._
     val ordered = orderChanges(astChanges.filter(_.replacementString.isSuccess))
     ordered.foldLeft ( new StringBuilder(fileContents) ) {
       case (contents, change) => {
         change.mapping match {
-          case NodeMapping(node, relationship) => contents
+          case NodeMapping(node, relationship) => contents.updateRange(node.range, change.replacementString.get)
         }
       }
 
     }
-
   }
 
 }

@@ -19,10 +19,12 @@ class ModelNodeTest extends TestBase with GearUtils {
       override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
     }
 
+    val testFilePath = getCurrentDirectory + "/src/test/resources/example_source/ImportSource.js"
+
+
     val importResults = {
       val importGear = gearFromDescription("src/test/resources/sdkDescriptions/ImportExample.json")
       sourceGear.gearSet.addGear(importGear)
-      val testFilePath = getCurrentDirectory + "/src/test/resources/example_source/ImportSource.js"
       sourceGear.parseFile(File(testFilePath))
     }
 
@@ -47,8 +49,10 @@ class ModelNodeTest extends TestBase with GearUtils {
 
       it("Can mutate a token") {
         import com.opticdev.core.sourcegear.mutate.MutationImplicits._
-        resolved.update(JsObject(Seq("definedAs" -> JsString("goodbye"), "pathTo" -> JsString("local"))))
+        implicit val fileContents = File(testFilePath).contentAsString
+        val result = resolved.update(JsObject(Seq("definedAs" -> JsString("goodbye"), "pathTo" -> JsString("local"))))
 
+        println(result)
       }
 
     }

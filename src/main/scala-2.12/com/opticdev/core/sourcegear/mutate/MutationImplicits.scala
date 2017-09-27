@@ -11,10 +11,11 @@ import com.opticdev.parsers.graph.path.PropertyPathWalker
 object MutationImplicits {
   implicit class MutableModelNode(linkedModelNode: LinkedModelNode) {
 
-    def update(newValue: JsObject) (implicit sourceGearContext: SourceGearContext)  = {
+    def update(newValue: JsObject) (implicit sourceGearContext: SourceGearContext, fileContents: String): String = {
       import MutationSteps._
       val changes = collectChanges(linkedModelNode, newValue)
-      handleChanges(changes)
+      val executedChanges = handleChanges(changes)
+      combineChanges(executedChanges).toString
     }
 
   }
