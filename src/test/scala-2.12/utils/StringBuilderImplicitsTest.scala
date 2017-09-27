@@ -24,6 +24,21 @@ class StringBuilderImplicitsTest extends FunSpec {
       assert(exampleBuilder.toString() == "THE World")
     }
 
+    it("fails on invalid range") {
+      val exampleBuilder: StringBuilder = new StringBuilder("Hello World")
+      assertThrows[Error] {
+        exampleBuilder.updateRange(Range(12, 2), "THE")
+      }
+
+      assertThrows[Error] {
+        exampleBuilder.updateRange(Range(-5, -2), "THE")
+      }
+
+      assertThrows[Error] {
+        exampleBuilder.updateRange(Range(33, 35), "THE")
+      }
+    }
+
   }
 
 }
