@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.core.sourcegear.gears.{GenerateGear, MutateGear}
+import com.opticdev.core.sourcegear.gears.MutateGear
+import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}

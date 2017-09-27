@@ -17,7 +17,8 @@ import scalax.collection.mutable.Graph
 
 
 
-class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens) extends CompilerStage[ParserFactoryOutput] {
+class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens) extends CompilerStage[ParserFactoryOutput] {
+  implicit val snippetStageOutput = snippetStage
   override def run: ParserFactoryOutput = {
 
     import com.opticdev.core.sdk.descriptions.helpers.ComponentImplicits._
@@ -26,7 +27,7 @@ class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutp
 
     val enterOn = snippetStageOutput.entryChildren.head
 
-    val nodeDescription = nodeToDescription(enterOn)
+    val nodeDescription = ParserFactoryStage.nodeToDescription(enterOn)
 
     val listeners = lens.components.schemaComponents.map(MapSchemaListener(_, lens.schema))
 
@@ -52,7 +53,10 @@ class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutp
     path.get.toFlatPath
   }
 
-  def nodeToDescription(astPrimitiveNode: AstPrimitiveNode, edge: Child = Child(0, null)) : NodeDesc = {
+}
+
+object ParserFactoryStage {
+  def nodeToDescription(astPrimitiveNode: AstPrimitiveNode, edge: Child = Child(0, null)) (implicit snippetStageOutput: SnippetStageOutput) : NodeDesc = {
     val children = astPrimitiveNode.children(snippetStageOutput.astGraph)
       .map(i=> nodeToDescription(i._2, i._1.asInstanceOf[Child]))
 
@@ -60,10 +64,10 @@ class ParserFactoryStage(snippetStageOutput: SnippetStageOutput, finderStageOutp
 
     NodeDesc(
       astPrimitiveNode.nodeType,
+      astPrimitiveNode.range,
       edge,
       astPrimitiveNode.properties.as[JsObject].toScala.value,
       children,
       Vector())
   }
-
 }

@@ -6,6 +6,7 @@ import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, Path}
+import com.opticdev.core.sourcegear.mutate.MutationSteps._
 import com.opticdev.core.sourceparsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.FunSpec
@@ -51,8 +52,7 @@ class ModelNodeTest extends TestBase with GearUtils {
         import com.opticdev.core.sourcegear.mutate.MutationImplicits._
         implicit val fileContents = File(testFilePath).contentAsString
         val result = resolved.update(JsObject(Seq("definedAs" -> JsString("goodbye"), "pathTo" -> JsString("local"))))
-
-        println(result)
+        assert(result.toString == "let goodbye = require('local')\n\nfunction test () {\n    let nextOne = require(\"PIZZA!\")\n}")
       }
 
     }

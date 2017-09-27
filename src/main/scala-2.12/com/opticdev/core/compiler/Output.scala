@@ -5,10 +5,10 @@ import com.opticdev.core.compiler.stages.MatchType
 import com.opticdev.core.sdk.descriptions.{Component, Lens, Rule, Snippet}
 import com.opticdev.core.sdk.descriptions.enums.Finders.FinderPath
 import com.opticdev.core.sourcegear.Gear
+import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
-
 
 import scala.util.Try
 import scalax.collection.edge.LkDiEdge
@@ -35,7 +35,7 @@ case class FinderStageOutput(componentFinders: Map[FinderPath, Vector[Component]
 //Source Gear factory output
 
 case class ParserFactoryOutput(parseGear: ParseGear)
-
+case class GeneratorFactoryOutput(generateGear: GenerateGear)
 
 sealed trait LensCompilerOutput extends Output {
   val isSuccess = false

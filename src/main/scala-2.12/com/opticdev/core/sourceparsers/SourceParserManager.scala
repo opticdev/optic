@@ -40,11 +40,15 @@ object SourceParserManager {
     parsers.find(_.languageName == lang)
   }
 
+  def parserById(languageId: LanguageId) : Option[ParserBase] = {
+    val parser = parserByLanguageName(languageId.name)
+    if (parser.isDefined && parser.get.supportedVersions.contains(languageId.version.orNull)) parser else None
+  }
+
   private def disableParser(instance: ParserBase) = {
     parsers = parsers.filterNot(_==instance)
     generateSignature()
   }
-
 
   def clearParsers = parsers = Set()
 

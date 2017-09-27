@@ -9,6 +9,9 @@ scalaVersion := "2.12.3"
 libraryDependencies += "com.opticdev" %% "parser-foundation" % "1.0.0"
 libraryDependencies += "com.opticdev" %% "marvin-runtime" % "1.0.0"
 
+//graph
+libraryDependencies += "org.scala-graph" %% "graph-core" % "1.12.0"
+
 //io
 libraryDependencies += "com.github.pathikrit" % "better-files_2.12" % "2.17.1"
 libraryDependencies += "commons-io" % "commons-io" % "2.4"

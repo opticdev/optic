@@ -15,6 +15,7 @@ package object parsing {
   case class RulesDesc()
 
   case class NodeDesc(astType: AstType,
+                      range: Range,
                       edge: Child = Child(0, null),
                       properties: Map[String, PropertyValue],
                       children: Vector[NodeDesc],
@@ -38,6 +39,9 @@ package object parsing {
         properties == asMap.value
       }
     }
+
+    def matchingPredicate = (astPrimitiveNode: AstPrimitiveNode) => astPrimitiveNode.nodeType == astType && astPrimitiveNode.range == range
+
   }
 
 

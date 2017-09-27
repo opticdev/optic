@@ -2,7 +2,7 @@ package com.opticdev.core.compiler
 
 
 import com.opticdev.core.compiler.errors.ErrorAccumulator
-import com.opticdev.core.compiler.stages.{FinderStage, ParserFactoryStage, SnippetStage, ValidationStage}
+import com.opticdev.core.compiler.stages._
 import com.opticdev.core.sdk.SdkDescription
 import com.opticdev.core.sdk.descriptions.{Lens, Schema}
 import com.opticdev.core.sourcegear.Gear
@@ -53,14 +53,16 @@ object Compiler {
         if (finderStageOutput.isSuccess) {
           val parser = Try(new ParserFactoryStage(snippetOutput.get, finderStageOutput.get).run)
 
-          //          val mutater = new ParserFactoryStage()
-          //          val generator = new ParserFactoryStage()
-
           if (parser.isSuccess) {
-            val finalGear = Gear(snippetOutput.get.enterOn, parser.get.parseGear, null, null)
-            //@todo add check (match self, ...)
 
-            return Success(sourceLens, finalGear)
+            val generator = Try(new GeneratorFactoryStage(snippetOutput.get, parser.get.parseGear).run)
+            if (generator.isSuccess) {
+
+              val finalGear = Gear(snippetOutput.get.enterOn, parser.get.parseGear, null, generator.get.generateGear)
+              return Success(sourceLens, finalGear)
+
+            } else errorAccumulator.handleFailure(generator.failed)
+
           } else {
             errorAccumulator.handleFailure(parser.failed)
           }

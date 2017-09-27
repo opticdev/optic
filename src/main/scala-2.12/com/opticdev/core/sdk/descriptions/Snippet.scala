@@ -1,5 +1,6 @@
 package com.opticdev.core.sdk.descriptions
 
+import com.opticdev.core.sourceparsers.LanguageId
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
@@ -21,4 +22,7 @@ object Snippet extends Description[Snippet] {
   }
 }
 
-case class Snippet(name: String, lang: String, version: String, block: String)
+//@todo remove raw lang and version and replace with languageId
+case class Snippet(name: String, lang: String, version: String, block: String) {
+  def languageId = LanguageId(lang, Option(version))
+}
