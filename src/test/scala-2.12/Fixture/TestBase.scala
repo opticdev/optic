@@ -6,7 +6,7 @@ import com.opticdev.core.sourcegear.SourceGearContext
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph._
 import com.opticdev.parsers.utils.Crypto
-import org.scalatest.{BeforeAndAfterAll, FunSpec}
+import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSpecLike}
 import play.api.libs.json.JsValue
 import com.opticdev.core.sourceparsers.SourceParserManager
 
@@ -14,7 +14,7 @@ import scala.util.Random
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-class TestBase extends FunSpec with BeforeAndAfterAll {
+trait TestBase extends FunSpecLike with BeforeAndAfterAll {
 
   def getCurrentDirectory = new java.io.File(".").getCanonicalPath
 

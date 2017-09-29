@@ -17,7 +17,7 @@ class FileAccumulatorTest extends TestBase with GearUtils {
       val sourceGear = sourceGearFromDescription("src/test/resources/sdkDescriptions/RequestSdkDescription.json")
       val result = sourceGear.parseFile(File("src/test/resources/example_source/ExampleExpress.js"))
 
-      assert(result.isDefined && result.get.modelNodes.size == 4)
+      assert(result.isSuccess && result.get.modelNodes.size == 4)
 
       val expected = Json.parse("""{
         	"parameters": [{
