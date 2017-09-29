@@ -12,6 +12,8 @@ abstract class SourceGear {
   val parsers: Set[ParserBase]
   val gearSet: GearSet = new GearSet
 
+  lazy val validExtensions = parsers.flatMap(_.fileExtensions)
+
   def parseFile(file: File) : Try[FileParseResults] = {
     Try {
       val fileContents = file.contentAsString
@@ -32,4 +34,10 @@ abstract class SourceGear {
     }
   }
 
+}
+
+object SourceGear {
+  def default = new SourceGear {
+    override val parsers: Set[ParserBase] = Set()
+  }
 }

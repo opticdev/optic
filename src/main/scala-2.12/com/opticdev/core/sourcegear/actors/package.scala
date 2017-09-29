@@ -5,7 +5,7 @@ import better.files.File
 import com.opticdev.core.sourcegear.actors.ParseSupervisorActor
 
 package object actors {
-  val actorSystem = ActorSystem("opticActors")
+  implicit val actorSystem = ActorSystem("opticActors")
   val (parserSupervisor, parserSupervisorRef) =
     (actorSystem.actorOf(Props[ParseSupervisorActor], "parseSupervisor"),
       actorSystem.actorSelection("user/parseSupervisor/"))
@@ -17,5 +17,8 @@ package object actors {
   //Project Receives
   case class ParseSuccessful(parseResults: FileParseResults)
   case class ParseFailed(file: File)
+  case class FileUpdated(file: File)
+  case class FileCreated(file: File)
+  case class FileDeleted(file: File)
 
 }

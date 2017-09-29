@@ -5,7 +5,7 @@ import com.opticdev.core.sourcegear.{FileParseResults, SourceGear}
 
 import scala.util.Try
 
-sealed class WorkerActor extends Actor {
+class WorkerActor extends Actor {
   override def receive: Receive = {
     case parseRequest : ParseFile => {
       val result: Try[FileParseResults] = parseRequest.sourceGear.parseFile(parseRequest.file)

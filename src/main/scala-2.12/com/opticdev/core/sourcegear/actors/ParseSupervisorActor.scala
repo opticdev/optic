@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.actors
 import akka.actor.{Actor, Props, Terminated}
 import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router}
 
-sealed class ParseSupervisorActor extends Actor {
+class ParseSupervisorActor extends Actor {
   var router = {
     val routees = Vector.fill(5) {
       val r = context.actorOf(Props[WorkerActor])

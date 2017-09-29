@@ -10,11 +10,11 @@ import com.opticdev.core.sourceparsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
 
-class ParseSupervisorActorTest extends TestKit(ActorSystem("MySpec")) with ImplicitSender with FunSpecLike with BeforeAndAfterAll with TestBase {
+class ParseSupervisorActorTest extends TestKit(actorSystem) with ImplicitSender with FunSpecLike with BeforeAndAfterAll with TestBase {
 
 
   override def afterAll {
-    TestKit.shutdownActorSystem(system)
+    TestKit.shutdownActorSystem(actorSystem)
   }
 
   describe("Parse supervisor actor test") {
