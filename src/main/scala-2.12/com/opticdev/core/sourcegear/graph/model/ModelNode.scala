@@ -4,13 +4,14 @@ import com.opticdev.core.sdk.descriptions.SchemaId
 import com.opticdev.core.sourcegear.SourceGearContext
 import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
-import com.opticdev.core.sourcegear.graph.{YieldsModel, YieldsModelProperty, YieldsProperty}
+import com.opticdev.core.sourcegear.graph.edges.{YieldsModel, YieldsModelProperty, YieldsProperty}
+import com.opticdev.core.sourcegear.graph.AstProjection
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.JsObject
 
 
-sealed abstract class BaseModelNode(implicit sourceGearContext: SourceGearContext) extends BaseNode {
+sealed abstract class BaseModelNode(implicit sourceGearContext: SourceGearContext) extends AstProjection {
   val schemaId : SchemaId
   val value : JsObject
 

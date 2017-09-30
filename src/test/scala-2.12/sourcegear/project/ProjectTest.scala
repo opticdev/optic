@@ -40,26 +40,38 @@ class ProjectTest extends TestKit(actorSystem) with ImplicitSender with FunSpecL
         override val projectActor = self
       }
 
+      def fileWatchTest = {
+        it("detects new file creation") {
+          File(getCurrentDirectory + "/src/test/resources/tmp/test_project/example.js").createIfNotExists(false)
+          expectMsgAllConformingOf[FileCreated]()
+        }
+
+        it("detects file modification") {
+          File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js").write("var new = 'content'")
+          expectMsgAllConformingOf[FileUpdated]()
+        }
+
+        it("detects file deletion") {
+          File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js").delete(false)
+          expectMsgAllConformingOf[FileDeleted]()
+        }
+      }
+
       project.watch
+      fileWatchTest
 
-      it("detects new file creation") {
-        File(getCurrentDirectory + "/src/test/resources/tmp/test_project/example.js").createIfNotExists(false)
-        expectMsgAllConformingOf[FileCreated]()
+      it("can stop watching files") {
+        project.stopWatching
+        File(getCurrentDirectory + "/src/test/resources/tmp/test_project/otherFile.js").createIfNotExists(false)
+        expectNoMsg
       }
 
-      it("detects file modification") {
-        File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js").write("var new = 'content'")
-        expectMsgAllConformingOf[FileUpdated]()
-      }
-
-      it("detects file deletion") {
-        File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js").delete(false)
-        expectMsgAllConformingOf[FileDeleted]()
+      describe("can start watching files again") {
+        project.watch
+        fileWatchTest
       }
 
     }
-
-
 
   }
 }

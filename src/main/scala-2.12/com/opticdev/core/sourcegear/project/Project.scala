@@ -8,12 +8,13 @@ import FileWatcher._
 import java.nio.file.{Path, WatchEvent, StandardWatchEventKinds => EventType}
 
 import com.opticdev.core.sourcegear.actors._
+import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 
-class Project(name: String, baseDirectory: File, var sourceGear: SourceGear = SourceGear.default) {
+class Project(name: String, baseDirectory: File, implicit var sourceGear: SourceGear = SourceGear.default) {
 
   import com.opticdev.core.sourcegear.actors._
-  private val watcher: ActorRef = (baseDirectory).newWatcher(recursive = true)
-  val projectActor = actorSystem.actorOf(Props[ProjectActor])
+  private val watcher: ActorRef = baseDirectory.newWatcher(recursive = true)
+  val projectActor = actorSystem.actorOf(ProjectActor.props(ProjectGraphWrapper.empty))
 
   def watch = {
     watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE) {

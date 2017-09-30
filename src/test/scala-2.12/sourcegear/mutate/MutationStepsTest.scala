@@ -15,7 +15,7 @@ import play.api.libs.json.{JsObject, JsString}
 
 class MutationStepsTest extends TestBase with GearUtils {
 
-  val sourceGear = new SourceGear {
+  override val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
   }
 

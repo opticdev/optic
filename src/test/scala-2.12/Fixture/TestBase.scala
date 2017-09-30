@@ -3,6 +3,7 @@ package Fixture
 
 
 import com.opticdev.core.sourcegear.SourceGearContext
+import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph._
 import com.opticdev.parsers.utils.Crypto
@@ -24,19 +25,6 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
   def mockAstPrimitiveNode(nT: AstType, v: JsValue, fileHash: String = "SPACE") : AstPrimitiveNode = {
     new AstPrimitiveNode(nT, Range(random.nextInt(6), random.nextInt(6)), v, fileHash) {}
   }
-
-  case class MockModelNode(nodeType: ModelType, jsValue: JsValue, dependencyHash: String)(implicit graph: AstGraph) extends ModelNode {
-    override def getValue = jsValue
-    override def toString = "MockModelNode ("+nodeType.name+"): "+jsValue
-    override def equals(that: Any): Boolean = false
-  }
-
-  def mockModelNode(nT: ModelType, v: JsValue, vector: Vector[AstPrimitiveNode])(implicit graph: AstGraph): MockModelNode = {
-    MockModelNode(nT, v,{
-      Crypto.createSha1(vector.map(_.fileHash).mkString(""))
-    })
-  }
-
 
   def start = {
     PreTest.run

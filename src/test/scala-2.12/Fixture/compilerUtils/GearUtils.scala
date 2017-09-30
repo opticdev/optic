@@ -12,6 +12,11 @@ import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
 trait GearUtils {
+
+  val sourceGear = new SourceGear {
+    override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
+  }
+
   def gearFromDescription(path: String): Gear = {
     val jsonString = Source.fromFile(path).getLines.mkString
     val description = SdkDescription.fromJson(Json.parse(jsonString))
@@ -24,10 +29,6 @@ trait GearUtils {
   }
 
   def sourceGearFromDescription(path: String) : SourceGear = {
-
-    val sourceGear = new SourceGear {
-      override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
-    }
 
     val jsonString = Source.fromFile("src/test/resources/sdkDescriptions/RequestSdkDescription.json").getLines.mkString
     val description = SdkDescription.fromJson(Json.parse(jsonString))

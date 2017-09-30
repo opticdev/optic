@@ -1,4 +1,4 @@
-package com.opticdev.core.sourcegear.graph
+package com.opticdev.core.sourcegear.graph.edges
 
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.Path

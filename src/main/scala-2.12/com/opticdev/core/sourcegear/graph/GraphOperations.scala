@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.graph
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
+import com.opticdev.core.sourcegear.graph.edges.{YieldsModel, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.model._
 import com.opticdev.parsers.AstGraph
 
