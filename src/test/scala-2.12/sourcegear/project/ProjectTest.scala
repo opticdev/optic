@@ -1,6 +1,6 @@
 package sourcegear.project
 
-import Fixture.TestBase
+import Fixture.{AkkaTestFixture, TestBase}
 import akka.actor.{Actor, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import better.files.File
@@ -14,9 +14,10 @@ import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSpecLike}
 import scala.concurrent.duration._
 
 
-class ProjectTest extends TestKit(actorSystem) with ImplicitSender with FunSpecLike with BeforeAndAfterAll with TestBase {
+class ProjectTest extends AkkaTestFixture {
 
-  override def afterAll {
+  override def beforeAll {
+    resetScratch
     TestKit.shutdownActorSystem(actorSystem)
   }
 
@@ -30,7 +31,7 @@ class ProjectTest extends TestKit(actorSystem) with ImplicitSender with FunSpecL
 
     it("can list all files recursively") {
       assert(project.watchedFiles.map(i=> i.pathAsString.split("/src/test/resources/tmp/test_project/")(1)) ==
-        Vector("app.js", "nested/firstFile.js", "nested/nested/secondFile.js"))
+        Set("app.js", "nested/firstFile.js", "nested/nested/secondFile.js"))
     }
 
     describe("can watch files") {

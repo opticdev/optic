@@ -40,9 +40,6 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph) {
     if (!ignoreExceptions && removeFileAttempt.isFailure) throw removeFileAttempt.failed.get
   }
 
-
-
-
   private def astGraphToProjectGraph(astGraph: AstGraph, forFile: File): ProjectGraph = {
     val newProjectGraph = Graph[AstProjection, LkDiEdge]()
     val fileNode = FileNode(forFile.pathAsString, Crypto.createSha1(forFile.contentAsString))

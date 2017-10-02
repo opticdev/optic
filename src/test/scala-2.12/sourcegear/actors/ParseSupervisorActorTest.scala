@@ -1,6 +1,6 @@
 package sourcegear.actors
 
-import Fixture.TestBase
+import Fixture.{AkkaTestFixture, TestBase}
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
 import better.files.File
@@ -10,11 +10,10 @@ import com.opticdev.core.sourceparsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
 
-class ParseSupervisorActorTest extends TestKit(actorSystem) with ImplicitSender with FunSpecLike with BeforeAndAfterAll with TestBase {
+class ParseSupervisorActorTest extends AkkaTestFixture {
 
-
-  override def afterAll {
-    TestKit.shutdownActorSystem(actorSystem)
+  override def beforeAll {
+    resetScratch
   }
 
   describe("Parse supervisor actor test") {
@@ -24,12 +23,12 @@ class ParseSupervisorActorTest extends TestKit(actorSystem) with ImplicitSender 
     }
 
     it("can parse file") {
-       parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/app.js"))
+       parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/app.js"), self)
        expectMsgAllConformingOf[ParseSuccessful]()
     }
 
     it("fails gracefully when file is unreadable") {
-      parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/fakeFile.js"))
+      parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/fakeFile.js"), self)
       expectMsgAllConformingOf[ParseFailed]()
     }
 

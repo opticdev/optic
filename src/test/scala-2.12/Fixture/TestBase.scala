@@ -35,6 +35,8 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
 
   implicit val sourceGearContext = SourceGearContext(null, null, SourceParserManager.getInstalledParsers.head)
 
+  def resetScratch = PreTest.resetScratch
+
   override def beforeAll = {
     start
   }

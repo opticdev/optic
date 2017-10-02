@@ -12,13 +12,14 @@ package object actors {
 
 
   //Parser Supervisor & Worker Receive
-  case class ParseFile(file: File)(implicit val sourceGear: SourceGear)
+  case class ParseFile(file: File, project: ActorRef)(implicit val sourceGear: SourceGear)
 
   //Project Receives
-  case class ParseSuccessful(parseResults: FileParseResults)
+  case class ParseSuccessful(parseResults: FileParseResults, file: File, project: ActorRef)
   case class ParseFailed(file: File)
   case class FileUpdated(file: File)(implicit val sourceGear: SourceGear)
   case class FileCreated(file: File)(implicit val sourceGear: SourceGear)
   case class FileDeleted(file: File)(implicit val sourceGear: SourceGear)
+  case object CurrentGraph
 
 }

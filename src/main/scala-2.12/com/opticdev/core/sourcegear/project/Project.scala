@@ -17,6 +17,9 @@ class Project(name: String, baseDirectory: File, implicit var sourceGear: Source
   val projectActor = actorSystem.actorOf(ProjectActor.props(ProjectGraphWrapper.empty))
 
   def watch = {
+    //add all files to graph to start
+    watchedFiles.foreach(i=> projectActor ! FileCreated(i))
+
     watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE) {
       case (EventType.ENTRY_CREATE, file) => {
         updateWatchedFiles
@@ -35,13 +38,13 @@ class Project(name: String, baseDirectory: File, implicit var sourceGear: Source
   }
 
 
-  private var watchedFilesStore : Vector[File] = updateWatchedFiles
+  private var watchedFilesStore : Set[File] = updateWatchedFiles
   def watchedFiles = watchedFilesStore
-  def updateWatchedFiles: Vector[File] = {
+  def updateWatchedFiles: Set[File] = {
     val filesToWatch = baseDirectory.listRecursively.toVector.filter(i=>
       i.isRegularFile &&
       i.extension.isDefined && sourceGear.validExtensions.contains(i.extension.get)
-    )
+    ).toSet
     watchedFilesStore = filesToWatch
     watchedFilesStore
   }
