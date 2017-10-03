@@ -7,35 +7,39 @@ import better.files._
 import FileWatcher._
 import java.nio.file.{Path, WatchEvent, StandardWatchEventKinds => EventType}
 
+import akka.stream.Supervision.Stop
 import com.opticdev.core.sourcegear.actors._
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
+import play.api.libs.json.{JsObject, JsString}
 
-class Project(name: String, baseDirectory: File, implicit var sourceGear: SourceGear = SourceGear.default) {
+class Project(val name: String, val baseDirectory: File, implicit var sourceGear: SourceGear = SourceGear.default) {
 
   import com.opticdev.core.sourcegear.actors._
-  private val watcher: ActorRef = baseDirectory.newWatcher(recursive = true)
+  private var watcher: ActorRef = baseDirectory.newWatcher(recursive = true)
   val projectActor = actorSystem.actorOf(ProjectActor.props(ProjectGraphWrapper.empty))
 
   def watch = {
     //add all files to graph to start
     watchedFiles.foreach(i=> projectActor ! FileCreated(i))
+    watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE)(callback)
+  }
 
-    watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE) {
-      case (EventType.ENTRY_CREATE, file) => {
-        updateWatchedFiles
-        if (watchedFiles.contains(file)) projectActor ! FileCreated(file)
-      }
-      case (EventType.ENTRY_MODIFY, file) => if (watchedFiles.contains(file)) projectActor ! FileUpdated(file)
-      case (EventType.ENTRY_DELETE, file) => {
-        if (watchedFiles.contains(file)) projectActor ! FileDeleted(file)
-        updateWatchedFiles
-      }
+  private val callback : better.files.FileWatcher.Callback = {
+    case (EventType.ENTRY_CREATE, file) => {
+      updateWatchedFiles
+      if (watchedFiles.contains(file)) projectActor ! FileCreated(file)
+    }
+    case (EventType.ENTRY_MODIFY, file) => if (watchedFiles.contains(file)) projectActor ! FileUpdated(file)
+    case (EventType.ENTRY_DELETE, file) => {
+      if (watchedFiles.contains(file)) projectActor ! FileDeleted(file)
+      updateWatchedFiles
     }
   }
 
-  def stopWatching = {
-    watcher ! Kill
-  }
+//  def stopWatching = {
+//    watcher ! stop(EventType.ENTRY_CREATE, callback)
+//    watcher ! PoisonPill
+//  }
 
 
   private var watchedFilesStore : Set[File] = updateWatchedFiles
@@ -49,4 +53,8 @@ class Project(name: String, baseDirectory: File, implicit var sourceGear: Source
     watchedFilesStore
   }
 
+  def asJson = JsObject(Seq(
+    "name" -> JsString(name),
+    "directory" -> JsString(baseDirectory.pathAsString)
+  ))
 }

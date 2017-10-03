@@ -9,10 +9,15 @@ import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.core.sourceparsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
+import scala.concurrent.duration._
 
 class ProjectActorTest extends AkkaTestFixture with GearUtils {
 
   describe("Project Actor") {
+
+    resetScratch
+
+    println(actorSystem.deadLetters)
 
     implicit val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
@@ -40,11 +45,6 @@ class ProjectActorTest extends AkkaTestFixture with GearUtils {
         }
       }
     }
-
-
-
-
-
 
     it("can return the graph") {
       project.projectActor ! CurrentGraph

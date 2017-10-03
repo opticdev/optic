@@ -18,6 +18,8 @@ class ProjectActor(initialGraph: ProjectGraphWrapper) extends Actor {
       println("Updated Graph "+ graph.projectGraph)
       context.become(active(graph))
     }
+
+    case i: ParseFailed => println("Failed to parse file "+ i.file)
     case deleted: FileDeleted => {
       graph.removeFile(deleted.file)
       sender() ! graph

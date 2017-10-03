@@ -32,13 +32,14 @@ libraryDependencies += "org.gnieh" %% "diffson-play-json" % "2.2.1"
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.6.0"
 
 //for server
-libraryDependencies += "com.typesafe.akka" %% "akka-http-core" % "10.0.10"
 libraryDependencies += "com.typesafe.akka" %% "akka-http" % "10.0.10"
 libraryDependencies += "com.typesafe.akka" %% "akka-http-testkit" % "10.0.10"
-libraryDependencies += "com.typesafe.akka" %% "akka-http-spray-json" % "10.0.10"
 libraryDependencies += "com.typesafe.akka" %% "akka-http-jackson" % "10.0.10"
-libraryDependencies += "com.typesafe.akka" %% "akka-http-xml" % "10.0.10"
+libraryDependencies += "de.heikoseeberger" %% "akka-http-play-json" % "1.19.0-M2"
+
+
 
 //for concurrency
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.5.4"
+libraryDependencies += "com.typesafe.akka" %% "akka-stream" % "2.5.4"
 
