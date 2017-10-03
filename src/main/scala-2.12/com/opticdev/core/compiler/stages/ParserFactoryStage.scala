@@ -6,7 +6,7 @@ import com.opticdev.core.sdk.descriptions.Lens
 import com.opticdev.core.sdk.descriptions.enums.Finders.FinderPath
 import com.opticdev.core.sourcegear.accumulate.MapSchemaListener
 import com.opticdev.core.sourcegear.gears.RuleProvider
-import com.opticdev.core.sourcegear.gears.parsing.{NodeDesc, ParseAsModel}
+import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, Child}
 import com.opticdev.parsers.graph.path.FlatWalkablePath
@@ -56,13 +56,13 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
 }
 
 object ParserFactoryStage {
-  def nodeToDescription(astPrimitiveNode: AstPrimitiveNode, edge: Child = Child(0, null)) (implicit snippetStageOutput: SnippetStageOutput) : NodeDesc = {
+  def nodeToDescription(astPrimitiveNode: AstPrimitiveNode, edge: Child = Child(0, null)) (implicit snippetStageOutput: SnippetStageOutput) : NodeDescription = {
     val children = astPrimitiveNode.children(snippetStageOutput.astGraph)
       .map(i=> nodeToDescription(i._2, i._1.asInstanceOf[Child]))
 
     import com.opticdev.core.sdk.PropertyValuesConversions._
 
-    NodeDesc(
+    NodeDescription(
       astPrimitiveNode.nodeType,
       astPrimitiveNode.range,
       edge,

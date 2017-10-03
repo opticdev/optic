@@ -17,7 +17,7 @@ import scalax.collection.mutable.Graph
 
 sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
-  val description : NodeDesc
+  val description : NodeDescription
   val components: Map[FlatWalkablePath, Vector[Component]]
   val rules: Map[FlatWalkablePath, Vector[Rule]]
   val listeners : Vector[Listener]
@@ -26,11 +26,11 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
     val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
 
-    def compareWith(n:AstPrimitiveNode, edgeType: String, d:NodeDesc, path: FlatWalkablePath) = {
+    def compareWith(n:AstPrimitiveNode, edgeType: String, d:NodeDescription, path: FlatWalkablePath) = {
       compareToDescription(n, edgeType, d, path)
     }
 
-    def compareToDescription(node: AstPrimitiveNode, childType: String, desc: NodeDesc, currentPath: FlatWalkablePath) : MatchResults = {
+    def compareToDescription(node: AstPrimitiveNode, childType: String, desc: NodeDescription, currentPath: FlatWalkablePath) : MatchResults = {
       val componentsAtPath = extractableComponents.getOrElse(currentPath, Vector[Component]())
       val rulesAtPath      = ruleProvider.applyDefaultRulesForType(rules.getOrElse(currentPath, Vector[Rule]()), node.nodeType)
 
@@ -95,7 +95,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
 }
 
-case class ParseAsModel(description: NodeDesc,
+case class ParseAsModel(description: NodeDescription,
                         schema: SchemaId,
                         components: Map[FlatWalkablePath, Vector[Component]],
                         rules: Map[FlatWalkablePath, Vector[Rule]],

@@ -27,4 +27,9 @@ object DataDirectory {
 
   def delete = root.delete(true)
 
+  def reset = {
+    delete
+    buildDirectoryStructure
+  }
+
 }

@@ -9,7 +9,8 @@ import scala.util.Try
 
 object SchemaStorage {
   def writeToStorage(schema: Schema): File = {
-    val file = DataDirectory.schemas / schema.identifier  createIfNotExists(asDirectory = false)
+    val file = DataDirectory.schemas / schema.identifier
+    file.createIfNotExists(asDirectory = false)
     file.write(schema.schema.toString())
   }
 

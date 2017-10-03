@@ -8,7 +8,6 @@ import com.opticdev.core.sdk.descriptions.{CodeComponent, PropertyRule}
 import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.core.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.core.sourcegear.SourceGear
-import com.opticdev.core.sourcegear.gears.MutateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourceparsers.SourceParserManager
 

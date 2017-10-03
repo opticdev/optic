@@ -10,6 +10,7 @@ import com.opticdev.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSpecLike}
 import play.api.libs.json.JsValue
 import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.core.storage.DataDirectory
 
 import scala.util.Random
 import scalax.collection.edge.LkDiEdge
@@ -27,6 +28,7 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
   }
 
   def start = {
+    DataDirectory.reset
     PreTest.run
     SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/out/artifacts/javascript_lang_jar/javascript-lang.jar")
   }

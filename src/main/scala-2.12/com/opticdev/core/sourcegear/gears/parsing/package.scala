@@ -14,12 +14,12 @@ package object parsing {
   //Serializable for Storage
   case class RulesDesc()
 
-  case class NodeDesc(astType: AstType,
-                      range: Range,
-                      edge: Child = Child(0, null),
-                      properties: Map[String, PropertyValue],
-                      children: Vector[NodeDesc],
-                      rules: Vector[RulesDesc]) {
+  case class NodeDescription(astType: AstType,
+                             range: Range,
+                             edge: Child = Child(0, null),
+                             properties: Map[String, PropertyValue],
+                             children: Vector[NodeDescription],
+                             rules: Vector[RulesDesc]) {
 
     def propertiesMatch(node: AstPrimitiveNode, propertyRules: Vector[PropertyRule])(implicit graph: AstGraph, fileContents: String)  : Boolean = {
       import com.opticdev.core.sdk.PropertyValuesConversions._

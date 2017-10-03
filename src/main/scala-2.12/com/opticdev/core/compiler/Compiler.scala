@@ -7,6 +7,7 @@ import com.opticdev.core.compiler.stages._
 import com.opticdev.core.sdk.SdkDescription
 import com.opticdev.core.sdk.descriptions.{Lens, Schema}
 import com.opticdev.core.sourcegear.Gear
+import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
@@ -71,7 +72,7 @@ object Compiler {
             val generator = Try(new GeneratorFactoryStage(snippetOutput.get, parser.get.parseGear).run)
             if (generator.isSuccess) {
 
-              val finalGear = Gear(lens.name, snippetOutput.get.enterOn, parser.get.parseGear, null, generator.get.generateGear)
+              val finalGear = Gear(lens.name, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], generator.get.generateGear)
 
               if (logToCli) cliLogger.gearFinished
 

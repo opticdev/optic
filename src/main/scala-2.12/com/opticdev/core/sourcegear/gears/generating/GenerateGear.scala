@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.gears.generating
 
 import com.opticdev.core.sourcegear.SourceGearContext
-import com.opticdev.core.sourcegear.gears.parsing.{NodeDesc, ParseGear}
+import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
 import com.opticdev.core.sourceparsers.{LanguageId, SourceParserManager}
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstPrimitiveNode, GraphImplicits}
@@ -10,8 +10,8 @@ import play.api.libs.json.{JsObject, JsValue}
 
 case class GenerateGear(block: String,
                         languageId: LanguageId,
-                        parseGear: ParseGear,
-                        entryChildren: Vector[NodeDesc]) {
+                        parseGear: ParseAsModel,
+                        entryChildren: Vector[NodeDescription]) {
 
   lazy val parseResult = {
     val parser = SourceParserManager.parserById(languageId)

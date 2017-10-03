@@ -1,11 +1,14 @@
 package storage
 
+import Fixture.TestBase
+import better.files.File
 import com.opticdev.core.sdk.descriptions.{Schema, SchemaId}
+import com.opticdev.core.storage.DataDirectory
 import com.opticdev.core.storage.schema.SchemaStorage
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 
-class SchemaStorageTest extends FunSpec {
+class SchemaStorageTest extends TestBase {
 
   val validTestSchema = Json.parse("""{
         "title": "import",
@@ -32,10 +35,13 @@ class SchemaStorageTest extends FunSpec {
 
     val asSchemaId = schema.asSchemaId
 
+    DataDirectory.reset
+
     describe("on disk") {
-      val outputFile = SchemaStorage.writeToStorage(schema)
+      var outputFile : File = null
 
       it("can save a schema") {
+        outputFile = SchemaStorage.writeToStorage(schema)
         assert(outputFile.exists)
       }
 
@@ -56,7 +62,6 @@ class SchemaStorageTest extends FunSpec {
       }
 
     }
-
 
   }
 
