@@ -2,7 +2,7 @@ package com.opticdev.core.compiler
 
 import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.stages.MatchType
-import com.opticdev.core.sdk.descriptions.{Component, Lens, Rule, Snippet}
+import com.opticdev.core.sdk.descriptions._
 import com.opticdev.core.sdk.descriptions.enums.Finders.FinderPath
 import com.opticdev.core.sourcegear.Gear
 import com.opticdev.core.sourcegear.gears.generating.GenerateGear
@@ -55,7 +55,7 @@ case class Failure(lens: Lens, errorAccumulator: ErrorAccumulator) extends LensC
   override def printErrors = errorAccumulator.printAll
 }
 
-case class CompilerOutput(lensOutputs: Set[LensCompilerOutput]) extends Output {
+case class CompilerOutput(lensOutputs: Set[LensCompilerOutput], schemas: Set[Schema]) extends Output {
   lazy val isSuccess = lensOutputs.forall(_.isSuccess)
   lazy val isFailure = !isSuccess
 
