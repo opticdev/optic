@@ -75,4 +75,17 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph) {
 
     } else None
   }
+
+  def prettyPrint = {
+    //clear it a bit println("\n\n\n")
+    import GraphImplicits._
+    val files = projectGraph.nodes.filter(_.value.isInstanceOf[FileNode]).toVector.sortBy(_.asInstanceOf[FileNode].filePath)
+    files.foreach(file=> {
+      val asFileNode = file.value.asInstanceOf[FileNode]
+      println(asFileNode+":")
+      projectGraph.allSuccessorsOf(asFileNode).foreach(println)
+      println()
+    })
+  }
+
 }

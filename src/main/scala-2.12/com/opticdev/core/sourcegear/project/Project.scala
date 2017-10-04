@@ -13,7 +13,7 @@ import com.opticdev.core.sourcegear.actors._
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import play.api.libs.json.{JsObject, JsString}
 
-class Project(val name: String, val baseDirectory: File, implicit var sourceGear: SourceGear = SourceGear.default) {
+class Project(val name: String, val baseDirectory: File, implicit var sourceGear: SourceGear = SourceGear.default)(implicit logToCli: Boolean = false) {
 
   import com.opticdev.core.sourcegear.actors._
   private var watcher: ActorRef = baseDirectory.newWatcher(recursive = true)

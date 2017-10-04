@@ -18,7 +18,7 @@ sealed abstract class BaseModelNode(implicit sourceGearContext: SourceGearContex
   lazy val expandedValue = {
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
-      val modelFields = listenersOption.get.flatMap(i=> i.collect(sourceGearContext.astGraph))
+      val modelFields = listenersOption.get.flatMap(i => i.collect(sourceGearContext.astGraph))
       FlattenModelFields.flattenFields(modelFields, value)
     } else {
       value

@@ -5,7 +5,7 @@ import akka.actor.Actor.Receive
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.parsers.AstGraph
 
-class ProjectActor(initialGraph: ProjectGraphWrapper) extends Actor {
+class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean) extends Actor {
   val parserActor = parserSupervisorRef
 
   override def receive: Receive = active(initialGraph)
@@ -14,16 +14,18 @@ class ProjectActor(initialGraph: ProjectGraphWrapper) extends Actor {
     //handle consequences of parsings
     case parsed: ParseSuccessful => {
       graph.updateFile(parsed.parseResults.astGraph, parsed.file)
-      parsed.project ! graph
-      println("Updated Graph "+ graph.projectGraph)
+
+      if (logToCli) graph.prettyPrint else parsed.project ! graph
+
       context.become(active(graph))
     }
 
     case i: ParseFailed => println("Failed to parse file "+ i.file)
     case deleted: FileDeleted => {
       graph.removeFile(deleted.file)
-      sender() ! graph
-      println("Updated Graph "+ graph.projectGraph)
+
+      if (logToCli) graph.prettyPrint else sender() ! graph
+
       context.become(active(graph))
     }
 
@@ -37,5 +39,5 @@ class ProjectActor(initialGraph: ProjectGraphWrapper) extends Actor {
 }
 
 object ProjectActor {
-  def props(initialGraph: ProjectGraphWrapper): Props = Props(new ProjectActor(initialGraph))
+  def props(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean): Props = Props(new ProjectActor(initialGraph))
 }
