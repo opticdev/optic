@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.project
 
+import com.opticdev._
 import akka.actor.{ActorRef, Kill, PoisonPill, Props}
 import better.files.File
 import com.opticdev.core.sourcegear.SourceGear

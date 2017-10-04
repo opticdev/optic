@@ -8,10 +8,10 @@ import com.opticdev.core.sdk.SdkDescription
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.storage.DataDirectory
 import com.opticdev.core.storage.stores.{ParserStorage, SchemaStorage}
-import com.opticdev.parsers.SourceParserManager
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import play.api.libs.json.Json
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 object Installer extends {
 
@@ -46,14 +46,20 @@ object Installer extends {
 
   }
 
-  def installParser(value: File)(implicit logToCli: Boolean = false) = Try {
+  def installParser(value: File)(implicit logToCli: Boolean = false): Try[ParserBase] = Try {
     val verifyTry = SourceParserManager.verifyParser(value.pathAsString)
 
     val writeToStorageTry = Try(ParserStorage.writeToStorage(value))
 
     if (logToCli) {
       if (verifyTry.isSuccess && writeToStorageTry.isSuccess) println("Installed parser "+ verifyTry.get.languageName)
-      else println("Unable to Install parser in jar "+value.name)
+      else println("Unable to install parser from jar "+value.name)
+    }
+
+    if (verifyTry.isSuccess && writeToStorageTry.isSuccess) {
+      verifyTry.get
+    } else {
+      throw new Error("Unable to install parser from jar "+value.name)
     }
 
   }

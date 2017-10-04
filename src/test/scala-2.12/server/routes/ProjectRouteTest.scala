@@ -5,7 +5,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import better.files.File
 import com.opticdev.core.sourcegear.project.Project
-import com.opticdev.server.http.routes.ProjectsRoute
+import com.opticdev.server.http.routes.ProjectRoute
 import com.opticdev.server.http.state.StateManager
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 import org.scalatest.{FunSpec, Matchers}
@@ -18,7 +18,7 @@ class ProjectRouteTest extends FunSpec with Matchers with ScalatestRouteTest wit
     val testProject = new Project("TestProject", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"))
     implicit val stateManager = new StateManager(Set(testProject))
 
-    val projectRoute = new ProjectsRoute()
+    val projectRoute = new ProjectRoute()
 
     it("return a list of projects at GET /projects") {
       Get("/projects") ~> projectRoute.route ~> check {

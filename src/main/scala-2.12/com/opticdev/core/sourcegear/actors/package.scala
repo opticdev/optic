@@ -3,9 +3,8 @@ package com.opticdev.core.sourcegear
 import akka.actor.{ActorRef, ActorSystem, Props}
 import better.files.File
 import com.opticdev.core.sourcegear.actors.ParseSupervisorActor
-
+import com.opticdev.actorSystem
 package object actors {
-  implicit val actorSystem = ActorSystem("opticActors")
   val (parserSupervisor, parserSupervisorRef) =
     (actorSystem.actorOf(Props[ParseSupervisorActor], "parseSupervisor"),
       actorSystem.actorSelection("user/parseSupervisor/"))

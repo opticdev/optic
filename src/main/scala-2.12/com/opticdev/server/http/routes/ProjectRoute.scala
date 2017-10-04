@@ -7,13 +7,13 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import scala.concurrent.ExecutionContext
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.StandardRoute
-import com.opticdev.HTTPResponse
+import com.opticdev.server.http.HTTPResponse
 import com.opticdev.server.http.routes.query.ModelQuery
 import com.opticdev.server.http.state.StateManager
 import play.api.libs.json.{JsArray, JsValue}
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
-class ProjectsRoute(implicit executionContext: ExecutionContext, stateManager: StateManager) {
+class ProjectRoute(implicit executionContext: ExecutionContext, stateManager: StateManager) {
 
 
   val route =

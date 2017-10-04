@@ -10,14 +10,12 @@ import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import scala.concurrent.duration._
-
+import com.opticdev._
 class ProjectActorTest extends AkkaTestFixture with GearUtils {
 
   describe("Project Actor") {
 
     resetScratch
-
-    println(actorSystem.deadLetters)
 
     implicit val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers

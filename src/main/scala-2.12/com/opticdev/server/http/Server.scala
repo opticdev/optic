@@ -12,10 +12,10 @@ object Server {
 
   def main(args: Array[String]) {
 
-    implicit val system = ActorSystem("my-system")
+    implicit val actorSystem = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
-    implicit val executionContext = system.dispatcher
+    implicit val executionContext = actorSystem.dispatcher
 
     implicit val stateManager = StateManager.clean
 
@@ -27,7 +27,7 @@ object Server {
     StdIn.readLine() // let it run until user presses return
     bindingFuture
       .flatMap(_.unbind()) // trigger unbinding from the port
-      .onComplete(_ => system.terminate()) // and shutdown when done
+      .onComplete(_ => actorSystem.terminate()) // and shutdown when done
   }
 
 }
