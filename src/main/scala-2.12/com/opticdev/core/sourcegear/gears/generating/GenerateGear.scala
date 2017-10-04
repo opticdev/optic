@@ -10,7 +10,7 @@ import com.opticdev.parsers.SourceParserManager
 case class GenerateGear(block: String,
                         languageId: LanguageId,
                         parseGear: ParseAsModel,
-                        entryChildren: Vector[NodeDescription]) {
+                        entryChild: NodeDescription) {
 
   lazy val parseResult = {
     val parser = SourceParserManager.parserById(languageId)
@@ -24,7 +24,7 @@ case class GenerateGear(block: String,
     implicit val astGraph = parseResult.graph
     //@todo make this work for all entry children
     val rootNode = astGraph.nodes.toVector
-      .find(node=> entryChildren.head.matchingPredicate(node.value.asInstanceOf[AstPrimitiveNode]))
+      .find(node=> entryChild.matchingPredicate(node.value.asInstanceOf[AstPrimitiveNode]))
       .get.value.asInstanceOf[AstPrimitiveNode]
     val isMatch = parseGear.matches(rootNode, true)
     if (isMatch.isEmpty) throw new Error("Can not generate. Snippet does not contain model "+parseGear)

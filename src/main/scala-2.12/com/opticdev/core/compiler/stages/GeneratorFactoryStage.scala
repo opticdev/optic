@@ -13,7 +13,7 @@ class GeneratorFactoryStage(snippetStageOutput: SnippetStageOutput, modelsParseG
       snippetStageOutput.snippet.block,
       snippetStageOutput.snippet.languageId,
       modelsParseGear.asInstanceOf[ParseAsModel],
-      snippetStageOutput.entryChildren.map(i=> ParserFactoryStage.nodeToDescription(i)(snippetStageOutput))
+      snippetStageOutput.entryChildren.map(i=> ParserFactoryStage.nodeToDescription(i)(snippetStageOutput)).head
     ))
   }
 }
