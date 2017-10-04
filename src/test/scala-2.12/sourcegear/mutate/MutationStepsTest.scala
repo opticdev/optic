@@ -8,7 +8,7 @@ import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.Literal
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString}
@@ -16,7 +16,7 @@ import play.api.libs.json.{JsObject, JsString}
 class MutationStepsTest extends TestBase with GearUtils {
 
   override val sourceGear = new SourceGear {
-    override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
+    override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
   }
 
   val testFilePath = getCurrentDirectory + "/src/test/resources/example_source/ImportSource.js"

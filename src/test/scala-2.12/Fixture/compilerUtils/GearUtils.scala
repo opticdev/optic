@@ -6,7 +6,7 @@ import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
 import com.opticdev.core.sdk.SdkDescription
 import com.opticdev.core.sourcegear.{Gear, SourceGear}
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
@@ -14,7 +14,7 @@ import scala.io.Source
 trait GearUtils {
 
   val sourceGear = new SourceGear {
-    override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
+    override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
   }
 
   def gearFromDescription(path: String): Gear = {

@@ -2,11 +2,10 @@ package com.opticdev.core.sourcegear.gears.generating
 
 import com.opticdev.core.sourcegear.SourceGearContext
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
-import com.opticdev.core.sourceparsers.{LanguageId, SourceParserManager}
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstPrimitiveNode, GraphImplicits}
 import play.api.libs.json.{JsObject, JsValue}
-
+import com.opticdev.parsers.SourceParserManager
 
 case class GenerateGear(block: String,
                         languageId: LanguageId,
@@ -23,7 +22,7 @@ case class GenerateGear(block: String,
   def generate(value: JsObject)(implicit sourceGearContext: SourceGearContext): String = {
     implicit val fileContents = block
     implicit val astGraph = parseResult.graph
-    //@todo make this work for all entrychildren
+    //@todo make this work for all entry children
     val rootNode = astGraph.nodes.toVector
       .find(node=> entryChildren.head.matchingPredicate(node.value.asInstanceOf[AstPrimitiveNode]))
       .get.value.asInstanceOf[AstPrimitiveNode]

@@ -9,7 +9,7 @@ import com.opticdev.parsers.graph._
 import com.opticdev.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSpecLike}
 import play.api.libs.json.JsValue
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.core.storage.DataDirectory
 
 import scala.util.Random
@@ -35,7 +35,7 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
 
   start
 
-  implicit val sourceGearContext = SourceGearContext(null, null, SourceParserManager.getInstalledParsers.head)
+  implicit val sourceGearContext = SourceGearContext(null, null, SourceParserManager.installedParsers.head)
 
   def resetScratch = PreTest.resetScratch
 

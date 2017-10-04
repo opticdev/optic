@@ -7,7 +7,7 @@ import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.actors._
 import com.opticdev.core.sourcegear.project.Project
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSpecLike}
 
@@ -23,7 +23,7 @@ class ProjectTest extends AkkaTestFixture {
   describe("Project test") {
 
     val sourceGear = new SourceGear {
-      override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
+      override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     }
 
     val project = new Project("test", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"), sourceGear)

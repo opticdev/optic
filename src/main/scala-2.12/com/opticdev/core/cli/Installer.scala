@@ -6,14 +6,15 @@ import better.files.File
 import com.opticdev.core.compiler.Compiler
 import com.opticdev.core.sdk.SdkDescription
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
-import com.opticdev.core.sourceparsers.SourceParserManager
 import com.opticdev.core.storage.DataDirectory
-import com.opticdev.core.storage.schema.SchemaStorage
+import com.opticdev.core.storage.stores.{ParserStorage, SchemaStorage}
+import com.opticdev.parsers.SourceParserManager
 import play.api.libs.json.Json
 
 import scala.util.Try
 
 object Installer extends {
+
   SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/out/artifacts/javascript_lang_jar/javascript-lang.jar")
 
   def installDescription(file: File) (implicit logToCli: Boolean = false) = Try {
@@ -44,4 +45,17 @@ object Installer extends {
     }
 
   }
+
+  def installParser(value: File)(implicit logToCli: Boolean = false) = Try {
+    val verifyTry = SourceParserManager.verifyParser(value.pathAsString)
+
+    val writeToStorageTry = Try(ParserStorage.writeToStorage(value))
+
+    if (logToCli) {
+      if (verifyTry.isSuccess && writeToStorageTry.isSuccess) println("Installed parser "+ verifyTry.get.languageName)
+      else println("Unable to Install parser in jar "+value.name)
+    }
+
+  }
+
 }

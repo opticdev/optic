@@ -6,7 +6,7 @@ import com.opticdev.core.compiler.errors.{ParserNotFound, SyntaxError, Unexpecte
 import com.opticdev.core.compiler.stages.{MatchType, SnippetStage}
 import org.scalatest.{FunSpec, PrivateMethodTester}
 import com.opticdev.core.sdk.descriptions.{Lens, Snippet}
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 
 import scala.util.Try
 

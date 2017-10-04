@@ -9,7 +9,7 @@ import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.core.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 
 /*
 INCOMPLETE TESTS. NEED TO DO SOME SERIOUS WORK ON THE SUITE
@@ -20,7 +20,7 @@ class SourceGearTest extends TestBase with GearUtils {
   describe("SourceGear") {
 
     val sourceGear = new SourceGear {
-      override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
+      override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     }
 
     it("Finds matches in a test file.") {

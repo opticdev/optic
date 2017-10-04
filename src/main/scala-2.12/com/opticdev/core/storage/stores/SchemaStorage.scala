@@ -1,4 +1,4 @@
-package com.opticdev.core.storage.schema
+package com.opticdev.core.storage.stores
 
 import better.files.File
 import com.opticdev.core.sdk.descriptions.{Schema, SchemaId}
@@ -8,6 +8,7 @@ import play.api.libs.json.Json
 import scala.util.Try
 
 object SchemaStorage {
+
   def writeToStorage(schema: Schema): File = {
     val file = DataDirectory.schemas / schema.identifier
     file.createIfNotExists(asDirectory = false)

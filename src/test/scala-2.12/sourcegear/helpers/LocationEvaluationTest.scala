@@ -12,7 +12,7 @@ import com.opticdev.core.sdk.descriptions.enums.Finders.StringFinder
 import com.opticdev.core.sdk.descriptions.enums.LocationEnums.Anywhere
 import com.opticdev.core.sdk.descriptions.helpers.AstLocation
 import com.opticdev.core.sourcegear.gears.helpers.LocationEvaluation
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 
 class LocationEvaluationTest extends TestBase {
 

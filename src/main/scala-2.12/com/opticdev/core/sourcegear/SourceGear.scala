@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 
 import scala.util.{Failure, Success, Try}

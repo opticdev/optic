@@ -1,6 +1,6 @@
 package com.opticdev.core.sdk.descriptions
 
-import com.opticdev.core.sourceparsers.LanguageId
+import com.opticdev.parsers.LanguageId
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import play.api.libs.json._
 import play.api.libs.functional.syntax._

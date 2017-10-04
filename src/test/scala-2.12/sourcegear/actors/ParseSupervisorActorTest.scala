@@ -6,7 +6,7 @@ import akka.testkit.{ImplicitSender, TestKit}
 import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.actors._
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
 
@@ -19,7 +19,7 @@ class ParseSupervisorActorTest extends AkkaTestFixture {
   describe("Parse supervisor actor test") {
 
     implicit val sourceGear = new SourceGear {
-      override val parsers: Set[ParserBase] = SourceParserManager.getInstalledParsers
+      override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     }
 
     it("can parse file") {

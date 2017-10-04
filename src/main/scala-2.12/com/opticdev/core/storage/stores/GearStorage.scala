@@ -1,4 +1,4 @@
-package com.opticdev.core.storage.schema
+package com.opticdev.core.storage.stores
 
 import java.nio.ByteBuffer
 

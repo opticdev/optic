@@ -1,6 +1,6 @@
 import Fixture.{PostTest, PreTest, TestBase}
 import org.scalatest.FunSuite
-import com.opticdev.core.sourceparsers.SourceParserManager
+import com.opticdev.parsers.SourceParserManager
 
 class ParserTest extends TestBase {
 
@@ -8,7 +8,7 @@ class ParserTest extends TestBase {
 
     it("Can have parsers cleared") {
       SourceParserManager.clearParsers
-      assert(SourceParserManager.getInstalledParsers.isEmpty)
+      assert(SourceParserManager.installedParsers.isEmpty)
     }
 
     it("Can install a parser") {
@@ -16,7 +16,7 @@ class ParserTest extends TestBase {
 
       val result = SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/out/artifacts/javascript_lang_jar/javascript-lang.jar")
       assert(result.isSuccess)
-      assert(SourceParserManager.getInstalledParsers.size == 1)
+      assert(SourceParserManager.installedParsers.size == 1)
     }
 
     it("Can parse a string with installed parser") {

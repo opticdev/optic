@@ -23,21 +23,36 @@ object CliMain {
             .action( (x, c) =>
             c.copy(in = x) ).text("SDK description file")
         )
+
+      cmd("install-parser").action( (_, c) => c.copy(mode = "install-parser") ).
+        text("installs a parser").
+        children(
+          arg[java.io.File]("<file>...").required().valueName("<file>")
+            .action( (x, c) =>
+              c.copy(in = x) ).text("parser jar")
+        )
     }
 
-    implicit val logToCli = true
 
     def main(args: Array[String]): Unit = {
-      parser.parse(args, Config())  match {
-        case Some(config) =>
-          config.mode match {
-            case "install" => {
-              Installer.installDescription(File(config.in.getAbsolutePath))
-            }
-          }
-        case None =>
+      implicit val logToCli = true
+      handle (parser.parse(args, Config()))
+    }
 
-        // arguments are bad, error message will have been displayed
-      }
+    def handleArgs(args: Array[String]) (implicit logToCli: Boolean = false): Any = handle (parser.parse(args, Config()))
+
+    def handle(configOption: Option[Config]) (implicit logToCli: Boolean = false): Any = configOption match {
+      case Some(config) =>
+        println(config)
+        config.mode match {
+          case "install" => {
+            Installer.installDescription(File(config.in.getAbsolutePath))
+          }
+          case "install-parser" => {
+            Installer.installParser(File(config.in.getAbsolutePath))
+          }
+        }
+      case None => "error"
+
     }
 }
