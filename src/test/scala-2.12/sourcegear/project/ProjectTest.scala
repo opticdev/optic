@@ -64,7 +64,7 @@ class ProjectTest extends AkkaTestFixture {
       //
 //      it("can stop watching files") {
 ////        Thread.sleep(1000)
-//        project.stopWatching
+////        project.stopWatching
 //        File(getCurrentDirectory + "/src/test/resources/tmp/test_project/otherFile.js").createIfNotExists(false)
 //        expectNoMsg(2 seconds)
 //      }

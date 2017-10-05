@@ -20,7 +20,6 @@ class Project(val name: String, val baseDirectory: File, implicit var sourceGear
   val projectActor = actorSystem.actorOf(ProjectActor.props(ProjectGraphWrapper.empty))
 
   def watch = {
-    //add all files to graph to start
     watchedFiles.foreach(i=> projectActor ! FileCreated(i))
     watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE)(callback)
   }
@@ -36,7 +35,7 @@ class Project(val name: String, val baseDirectory: File, implicit var sourceGear
       updateWatchedFiles
     }
   }
-
+////
 //  def stopWatching = {
 //    watcher ! stop(EventType.ENTRY_CREATE, callback)
 //    watcher ! PoisonPill
