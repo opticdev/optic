@@ -1,7 +1,7 @@
 package sourcegear
 
 import better.files.File
-import com.opticdev.core.sourcegear.{ParseCache, SourceGearConstants}
+import com.opticdev.core.sourcegear.{ParseCache, SGConstants}
 import org.scalatest.FunSpec
 
 import scalax.collection.mutable.Graph
@@ -10,11 +10,9 @@ class ParseCacheTest extends FunSpec {
 
   describe("Parse Cache") {
 
-    implicit val SGConstants = new SourceGearConstants {
-      override val parseCache = 4 //small for testing
+    val parseCache = new ParseCache {
+      override val maxCachedFiles = 4
     }
-
-    val parseCache = new ParseCache
 
     val file1 = File("/src/test/resources/tmp/test_project/1")
 

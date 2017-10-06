@@ -9,6 +9,6 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
 case class Gear(identifier: String, enterOn: Set[AstType], parser : ParseAsModel, generater : GenerateGear) {
-  def matches(entryNode: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SourceGearContext) =
+  def matches(entryNode: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SGContext) =
     parser.matches(entryNode)
 }

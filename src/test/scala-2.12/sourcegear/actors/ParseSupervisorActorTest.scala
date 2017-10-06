@@ -4,12 +4,17 @@ import Fixture.{AkkaTestFixture, TestBase}
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestKit}
 import better.files.File
-import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.{ParseCache, SourceGear}
 import com.opticdev.core.sourcegear.actors._
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
+import akka.pattern.ask
+import akka.util.Timeout
 
+import scala.concurrent.duration._
+import scala.concurrent.Await
+import scalax.collection.mutable.Graph
 class ParseSupervisorActorTest extends AkkaTestFixture {
 
   override def beforeAll {
@@ -32,7 +37,32 @@ class ParseSupervisorActorTest extends AkkaTestFixture {
       expectMsgAllConformingOf[ParseFailed]()
     }
 
-    describe("caches recent files") {
+    describe("caches") {
+
+      val file = File("/src/test/resources/tmp/test_project/example")
+      val parseCache = new ParseCache
+      parseCache.add(file, Graph())
+
+      it("can be assigned") {
+        parserSupervisorRef ! SetCache(parseCache)
+        ParseSupervisorSyncAccess.setCache(parseCache)
+        assert(ParseSupervisorSyncAccess.cacheSize == 1)
+      }
+
+      it("can be cleared") {
+        parserSupervisorRef ! ClearCache
+        assert(ParseSupervisorSyncAccess.cacheSize == 0)
+      }
+
+      it("can add records") {
+        parserSupervisorRef ! AddToCache(file, Graph())
+        assert(ParseSupervisorSyncAccess.cacheSize == 1)
+      }
+
+      it("can lookup records") {
+        assert(ParseSupervisorSyncAccess.lookup(file).isDefined)
+      }
+
 
     }
 

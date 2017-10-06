@@ -2,7 +2,7 @@ package Fixture
 
 
 
-import com.opticdev.core.sourcegear.SourceGearContext
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph._
@@ -35,7 +35,7 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
 
   start
 
-  implicit val sourceGearContext = SourceGearContext(null, null, SourceParserManager.installedParsers.head)
+  implicit val sourceGearContext = SGContext(null, null, SourceParserManager.installedParsers.head)
 
   def resetScratch = PreTest.resetScratch
 

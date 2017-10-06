@@ -48,7 +48,7 @@ class GearSet(initialGears: Gear*) {
 
   def grouped: Map[AstType, Set[Gear]] = groupedStore
 
-  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SourceGearContext): FileParseResults = {
+  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext): FileParseResults = {
     val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[AstPrimitiveNode].nodeType)
 
     //@todo optimize this

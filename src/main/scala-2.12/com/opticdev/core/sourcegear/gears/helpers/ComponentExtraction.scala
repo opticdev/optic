@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.gears.helpers
 
 import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.core.sdk.descriptions.{CodeComponent, Component}
-import com.opticdev.core.sourcegear.SourceGearContext
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, NoMapping, NodeMapping}
 import com.opticdev.parsers.AstGraph
@@ -17,7 +17,7 @@ case class ModelField(propertyPath: String, value: JsValue, astMapping: AstMappi
 
 object ComponentExtraction {
   implicit class ComponentWithExtractors(component: Component) {
-    def extract(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SourceGearContext) : ModelField = {
+    def extract(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SGContext) : ModelField = {
       component match {
         case c: CodeComponent => {
 

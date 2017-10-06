@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.gears.parsing
 
 import com.opticdev.core.sdk.PropertyValue
 import com.opticdev.core.sdk.descriptions._
-import com.opticdev.core.sourcegear.SourceGearContext
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.accumulate.Listener
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
@@ -22,7 +22,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
   val rules: Map[FlatWalkablePath, Vector[Rule]]
   val listeners : Vector[Listener]
 
-  def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SourceGearContext) : Option[ParseResult] = {
+  def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext) : Option[ParseResult] = {
 
     val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
 
@@ -90,7 +90,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
     output(matchResults)
   }
 
-  def output(matchResults: MatchResults)(implicit sourceGearContext: SourceGearContext) : Option[ParseResult] = None
+  def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext) : Option[ParseResult] = None
 
 
 }
@@ -102,7 +102,7 @@ case class ParseAsModel(description: NodeDescription,
                         listeners : Vector[Listener]
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
-  override def output(matchResults: MatchResults) (implicit sourceGearContext: SourceGearContext) : Option[ParseResult] = {
+  override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext) : Option[ParseResult] = {
     if (!matchResults.isMatch) return None
 
     val fields = matchResults.extracted.getOrElse(Set())

@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear
 
-abstract class SourceGearConstants {
+object SGConstants {
   val parseWorkers = 5
-  val parseCache = 10
+  val maxCachedFiles = 10
 }

@@ -6,7 +6,6 @@ import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.parsers.AstGraph
 
 class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean) extends Actor {
-  val parserActor = parserSupervisorRef
 
   override def receive: Receive = active(initialGraph)
 
@@ -32,8 +31,8 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     case CurrentGraph => sender ! graph
 
     //Forward parsing requests to the cluster supervisor
-    case created: FileCreated => parserActor ! ParseFile(created.file, sender())(created.sourceGear)
-    case updated: FileUpdated => parserActor ! ParseFile(updated.file, sender())(updated.sourceGear)
+    case created: FileCreated => parserSupervisorRef ! ParseFile(created.file, sender())(created.sourceGear)
+    case updated: FileUpdated => parserSupervisorRef ! ParseFile(updated.file, sender())(updated.sourceGear)
   }
 
 }

@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.mutate
 
 import com.opticdev.core.sdk.descriptions.CodeComponent
 import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
-import com.opticdev.core.sourcegear.SourceGearContext
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, LinkedModelNode, NodeMapping, Path}
 import com.opticdev.core.sourcegear.mutate.errors.{AstMappingNotFound, ComponentNotFound}
 import com.opticdev.parsers.graph.path.PropertyPathWalker
@@ -35,7 +35,7 @@ object MutationSteps {
     })
   }
 
-  def handleChanges(updatedFields: List[UpdatedField]) (implicit sourceGearContext: SourceGearContext, fileContents: String): List[AstChange] = {
+  def handleChanges(updatedFields: List[UpdatedField]) (implicit sourceGearContext: SGContext, fileContents: String): List[AstChange] = {
     updatedFields.map(field=> {
       field.component match {
         case i: CodeComponent => i.codeType match {
@@ -46,7 +46,7 @@ object MutationSteps {
     })
   }
 
-  def mutateLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SourceGearContext, fileContents: String) = {
+  def mutateLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String) = {
     val node = updatedField.mapping.asInstanceOf[NodeMapping].node
     import com.opticdev.core.utils.DiffOperationImplicits.DiffTypes._
     updatedField.diffOperation.changeType match {
@@ -54,7 +54,7 @@ object MutationSteps {
       case _ => throw new Error("Literals can only be replaced.")
     }
   }
-  def mutateToken(updatedField: UpdatedField) (implicit sourceGearContext: SourceGearContext, fileContents: String) = {
+  def mutateToken(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String) = {
     val node = updatedField.mapping.asInstanceOf[NodeMapping].node
     import com.opticdev.core.utils.DiffOperationImplicits.DiffTypes._
     updatedField.diffOperation.changeType match {
@@ -72,7 +72,7 @@ object MutationSteps {
     }).reverse
   }
 
-  def combineChanges(astChanges: List[AstChange]) (implicit sourceGearContext: SourceGearContext, fileContents: String): StringBuilder = {
+  def combineChanges(astChanges: List[AstChange]) (implicit sourceGearContext: SGContext, fileContents: String): StringBuilder = {
     val failedUpdates = astChanges.filter(_.replacementString.isFailure)
     import com.opticdev.core.utils.StringBuilderImplicits._
     val ordered = orderChanges(astChanges.filter(_.replacementString.isSuccess))

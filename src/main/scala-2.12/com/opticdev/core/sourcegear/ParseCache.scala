@@ -5,14 +5,16 @@ import com.opticdev.parsers.AstGraph
 
 import scala.collection.mutable
 
-class ParseCache(implicit val SGConstants: SourceGearConstants) {
+class ParseCache {
   private val fileStore: mutable.Map[File, AstGraph] = collection.mutable.Map[File, AstGraph]()
   private val lastNFiles = scala.collection.mutable.Buffer[File]()
+
+  val maxCachedFiles = SGConstants.maxCachedFiles
 
   def cache: Map[File, AstGraph] = fileStore.toMap
   def cachedFiles: Vector[File] = lastNFiles.toVector
 
-  def add(file: File, graph: AstGraph) : Unit = {
+  def add(file: File, graph: AstGraph) : ParseCache = {
     fileStore += file -> graph
 
     val indexOfFile = lastNFiles.indexOf(file)
@@ -21,17 +23,20 @@ class ParseCache(implicit val SGConstants: SourceGearConstants) {
     }
     lastNFiles.insert(0, file)
 
-    if (lastNFiles.size > SGConstants.parseCache)
-        lastNFiles.remove(SGConstants.parseCache, lastNFiles.size - SGConstants.parseCache)
+    if (lastNFiles.size > maxCachedFiles)
+        lastNFiles.remove(maxCachedFiles, lastNFiles.size - maxCachedFiles)
 
     fileStore --= fileStore.keys.filterNot(lastNFiles.contains(_))
+
+    this
   }
 
   def get(key: File): Option[AstGraph] = fileStore.get(key)
 
-  def clear = {
+  def clear: ParseCache = {
     fileStore.clear()
     lastNFiles.clear()
+    this
   }
 
 }

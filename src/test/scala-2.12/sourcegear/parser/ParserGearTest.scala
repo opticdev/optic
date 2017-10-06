@@ -10,7 +10,7 @@ import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.core.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.core.sdk.descriptions.enums.Finders.StringFinder
 import com.opticdev.core.sdk.descriptions.enums.RuleEnums.Any
-import com.opticdev.core.sourcegear.SourceGearContext
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 
 import scala.collection.mutable.ListBuffer

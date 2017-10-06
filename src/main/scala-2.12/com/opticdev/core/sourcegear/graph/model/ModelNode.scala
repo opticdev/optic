@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.graph.model
 
 import com.opticdev.core.sdk.descriptions.SchemaId
-import com.opticdev.core.sourcegear.SourceGearContext
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.graph.edges.{YieldsModel, YieldsModelProperty, YieldsProperty}
@@ -12,7 +12,7 @@ import play.api.libs.json.JsObject
 import com.opticdev.core.utils.UUID
 
 
-sealed abstract class BaseModelNode(implicit sourceGearContext: SourceGearContext) extends AstProjection {
+sealed abstract class BaseModelNode(implicit sourceGearContext: SGContext) extends AstProjection {
   val schemaId : SchemaId
   val value : JsObject
 
@@ -27,11 +27,11 @@ sealed abstract class BaseModelNode(implicit sourceGearContext: SourceGearContex
   }
 }
 
-case class LinkedModelNode(schemaId: SchemaId, value: JsObject, mapping: ModelAstMapping, parseGear: ParseGear)(implicit sourceGearContext: SourceGearContext) {
+case class LinkedModelNode(schemaId: SchemaId, value: JsObject, mapping: ModelAstMapping, parseGear: ParseGear)(implicit sourceGearContext: SGContext) {
   def flatten = ModelNode(schemaId, value)
 }
 
-case class ModelNode(schemaId: SchemaId, value: JsObject) (implicit sourceGearContext: SourceGearContext) extends BaseModelNode {
+case class ModelNode(schemaId: SchemaId, value: JsObject) (implicit sourceGearContext: SGContext) extends BaseModelNode {
 
   def resolve : LinkedModelNode = {
     implicit val astGraph = sourceGearContext.astGraph
