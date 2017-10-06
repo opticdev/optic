@@ -8,10 +8,16 @@ import better.files._
 import FileWatcher._
 import java.nio.file.{Path, WatchEvent, StandardWatchEventKinds => EventType}
 
+import akka.pattern.ask
 import akka.stream.Supervision.Stop
+import akka.util.Timeout
+
+import concurrent.duration._
 import com.opticdev.core.sourcegear.actors._
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
-import play.api.libs.json.{JsObject, JsString}
+import play.api.libs.json.{JsObject, JsString, JsValue}
+
+import scala.concurrent.Await
 
 class Project(val name: String, val baseDirectory: File, implicit var sourceGear: SourceGear = SourceGear.default)(implicit logToCli: Boolean = false) {
 
@@ -35,6 +41,17 @@ class Project(val name: String, val baseDirectory: File, implicit var sourceGear
       updateWatchedFiles
     }
   }
+
+  def updateModel(id: String, value: JsValue) = {
+
+  }
+
+  def projectGraph = {
+    implicit val timeout = Timeout(1 second)
+    val future = projectActor ? CurrentGraph
+    Await.result(future, timeout.duration).asInstanceOf[ProjectGraphWrapper].projectGraph
+  }
+
 ////
 //  def stopWatching = {
 //    watcher ! stop(EventType.ENTRY_CREATE, callback)

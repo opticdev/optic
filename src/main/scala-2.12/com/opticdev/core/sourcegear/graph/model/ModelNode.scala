@@ -9,6 +9,7 @@ import com.opticdev.core.sourcegear.graph.AstProjection
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.JsObject
+import com.opticdev.core.utils.UUID
 
 
 sealed abstract class BaseModelNode(implicit sourceGearContext: SourceGearContext) extends AstProjection {
@@ -49,4 +50,7 @@ case class ModelNode(schemaId: SchemaId, value: JsObject) (implicit sourceGearCo
 
     LinkedModelNode(schemaId, value, mapping, parseGear)
   }
+
+  val identifier: String = UUID.generate
+
 }

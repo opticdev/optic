@@ -16,13 +16,13 @@ class ParseSupervisorActorTest extends AkkaTestFixture {
     resetScratch
   }
 
-  describe("Parse supervisor actor test") {
+  describe("Parse supervisor actor") {
 
     implicit val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     }
 
-    it("can parse file") {
+    it("can parse files") {
        parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/app.js"), self)
        expectMsgAllConformingOf[ParseSuccessful]()
     }
@@ -32,7 +32,9 @@ class ParseSupervisorActorTest extends AkkaTestFixture {
       expectMsgAllConformingOf[ParseFailed]()
     }
 
+    describe("caches recent files") {
 
+    }
 
   }
 

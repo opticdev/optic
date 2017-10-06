@@ -1,20 +1,25 @@
 package sourcegear.project
 
+import Fixture.compilerUtils.GearUtils
 import Fixture.{AkkaTestFixture, TestBase}
 import akka.actor.{Actor, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.actors._
+import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
+import com.opticdev.core.sourcegear.graph.{AstProjection, ProjectGraph}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSpecLike}
+import play.api.libs.json.{JsObject, JsString}
+import scratch.ProjectMonitoringScratch._
 
 import scala.concurrent.duration._
 
 
-class ProjectTest extends AkkaTestFixture {
+class ProjectTest extends AkkaTestFixture with GearUtils {
 
   override def beforeAll {
     resetScratch
@@ -47,12 +52,12 @@ class ProjectTest extends AkkaTestFixture {
         }
 
         it("detects file modification") {
-          File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js").write("var new = 'content'")
+          File(getCurrentDirectory + "/src/test/resources/tmp/test_project/example.js").write("var new = 'content'")
           expectMsgAllConformingOf[FileUpdated]()
         }
 
         it("detects file deletion") {
-          File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js").delete(false)
+          File(getCurrentDirectory + "/src/test/resources/tmp/test_project/example.js").delete(false)
           expectMsgAllConformingOf[FileDeleted]()
         }
       }
@@ -73,6 +78,37 @@ class ProjectTest extends AkkaTestFixture {
 //        project.watch
 //        fileWatchTest
 //      }
+
+    }
+
+    it("can get the current graph") {
+      assert(project.projectGraph.isInstanceOf[ProjectGraph])
+    }
+
+    describe("updates a record") {
+
+      val sourceGear = new SourceGear {
+        override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      }
+
+      val importGear = gearFromDescription("src/test/resources/sdkDescriptions/ImportExample.json")
+      sourceGear.gearSet.addGear(importGear)
+
+      val project = new Project("test", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"), sourceGear)
+
+      project.watch
+
+
+      it("by unique id") {
+
+        println(project.projectGraph)
+
+        val option = project.projectGraph.nodes.toVector.find(_.value.asInstanceOf[ModelNode].value ==
+          JsObject(Seq("definedAs" -> JsString("first"), "pathTo" -> JsString("second"))))
+
+        println(option)
+
+      }
 
     }
 
