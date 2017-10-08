@@ -25,6 +25,10 @@ class ParseSupervisorActorTest extends AkkaTestFixture("ParseSupervisorActorTest
     resetScratch
   }
 
+  def fixture = new {
+    val actorCluster = new ActorCluster(system)
+  }
+
   describe("Parse supervisor actor") {
 
     implicit val sourceGear = new SourceGear {
@@ -32,20 +36,21 @@ class ParseSupervisorActorTest extends AkkaTestFixture("ParseSupervisorActorTest
     }
 
     describe("context lookup") {
+      val f = fixture
       implicit val logToCli = false
-      val projectActor = actorCluster.newProjectActor()
+      val projectActor = f.actorCluster.newProjectActor()
 
       it("for file in cache") {
         val file = File(getCurrentDirectory+"/src/test/resources/tmp/test_project/app.js")
-        actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(file), Graph(), SourceParserManager.installedParsers.head, "Contents")
-        actorCluster.parserSupervisorRef ! GetContext(FileNode.fromFile(file))(sourceGear, projectActor)
+        f.actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(file), Graph(), SourceParserManager.installedParsers.head, "Contents")
+        f.actorCluster.parserSupervisorRef ! GetContext(FileNode.fromFile(file))(sourceGear, projectActor)
         expectMsg(Option(SGContext(sourceGear.fileAccumulator, Graph(), SourceParserManager.installedParsers.head, "Contents")))
       }
 
       it("for file not in cache") {
         val file = File(getCurrentDirectory+"/src/test/resources/tmp/test_project/app.js")
-        actorCluster.parserSupervisorRef ! ClearCache
-        actorCluster.parserSupervisorRef ! GetContext(FileNode.fromFile(file))(sourceGear, projectActor)
+        f.actorCluster.parserSupervisorRef ! ClearCache
+        f.actorCluster.parserSupervisorRef ! GetContext(FileNode.fromFile(file))(sourceGear, projectActor)
         expectMsgPF() {
           case a: Option[SGContext] => assert(a.isDefined)
         }
@@ -55,8 +60,11 @@ class ParseSupervisorActorTest extends AkkaTestFixture("ParseSupervisorActorTest
 
 
     it("can parse files") {
-       actorCluster.parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/app.js"), self)
-       expectMsgAllConformingOf[ParseSuccessful]()
+      actorCluster.parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/app.js"), self)
+      expectMsgAllConformingOf[ParseSuccessful]()
+      expectMsgPF() {
+        case ps: ParseSuccessful => assert(ps.parseResults.astGraph.nonEmpty)
+      }
     }
 
     it("fails gracefully when file is unreadable") {

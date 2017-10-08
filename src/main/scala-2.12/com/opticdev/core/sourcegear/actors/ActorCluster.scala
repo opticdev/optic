@@ -6,7 +6,7 @@ import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 
 class ActorCluster(actorSystem: ActorSystem) {
   val parserSupervisorRef : ActorRef = {
-    actorSystem.actorOf(ParseSupervisorActor.props()(this), "parseSupervisor")
+    actorSystem.actorOf(ParseSupervisorActor.props()(this))
   }
 
   def newProjectActor()(implicit logToCli : Boolean = false) = {

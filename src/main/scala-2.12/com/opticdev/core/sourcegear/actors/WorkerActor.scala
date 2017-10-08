@@ -31,7 +31,7 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor {
           result.get.astGraph,
           result.get.parser,
           result.get.fileContents))
-//        ctxRequest.projectActor ! ParseSuccessful(result.get, file)
+        ctxRequest.projectActor ! ParseSuccessful(result.get, file)
       } else {
         ctxRequest.projectActor ! ParseFailed(file)
         sender() ! None
