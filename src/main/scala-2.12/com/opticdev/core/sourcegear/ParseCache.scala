@@ -1,23 +1,29 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
+import com.opticdev.core.sourcegear.graph.FileNode
 import com.opticdev.parsers.AstGraph
 
 import scala.collection.mutable
 
 class ParseCache {
-  private val fileStore: mutable.Map[File, AstGraph] = collection.mutable.Map[File, AstGraph]()
-  private val lastNFiles = scala.collection.mutable.Buffer[File]()
+
+  private val fileStore: mutable.Map[FileNode, AstGraph] = collection.mutable.Map[FileNode, AstGraph]()
+  private val lastNFiles = scala.collection.mutable.Buffer[FileNode]()
 
   val maxCachedFiles = SGConstants.maxCachedFiles
 
-  def cache: Map[File, AstGraph] = fileStore.toMap
-  def cachedFiles: Vector[File] = lastNFiles.toVector
+  def cache: Map[FileNode, AstGraph] = fileStore.toMap
+  def cachedFiles: Vector[FileNode] = lastNFiles.toVector
 
-  def add(file: File, graph: AstGraph) : ParseCache = {
+  def add(file: FileNode, graph: AstGraph) : ParseCache = {
+
+    //remove any records with same path and different hash
+    fileStore --= fileStore.keys.filter(_.filePath == file.filePath)
+    //add new file record to map
     fileStore += file -> graph
 
-    val indexOfFile = lastNFiles.indexOf(file)
+    val indexOfFile = lastNFiles.indexWhere(_.filePath == file.filePath)
     if (indexOfFile != -1) {
       lastNFiles.remove(indexOfFile)
     }
@@ -31,7 +37,7 @@ class ParseCache {
     this
   }
 
-  def get(key: File): Option[AstGraph] = fileStore.get(key)
+  def get(key: FileNode): Option[AstGraph] = fileStore.get(key)
 
   def clear: ParseCache = {
     fileStore.clear()

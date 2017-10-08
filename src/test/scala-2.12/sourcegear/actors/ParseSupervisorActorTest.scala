@@ -11,10 +11,13 @@ import com.opticdev.parsers.ParserBase
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
 import akka.pattern.ask
 import akka.util.Timeout
+import com.opticdev.core.sourcegear.graph.FileNode
+import com.opticdev.parsers.utils.Crypto
 
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import scalax.collection.mutable.Graph
+
 class ParseSupervisorActorTest extends AkkaTestFixture {
 
   override def beforeAll {
@@ -37,9 +40,17 @@ class ParseSupervisorActorTest extends AkkaTestFixture {
       expectMsgAllConformingOf[ParseFailed]()
     }
 
+    describe("context") {
+      it("for a file can be calculated") {
+        val file = File(getCurrentDirectory+"/src/test/resources/test_project/app.js")
+        val fileNode = FileNode(file.pathAsString, Crypto.createSha1(file.contentAsString))
+        parserSupervisorRef ! GetContext(fileNode)
+      }
+    }
+
     describe("caches") {
 
-      val file = File("/src/test/resources/tmp/test_project/example")
+      val file = FileNode.fromFile(File("/src/test/resources/tmp/test_project/example"))
       val parseCache = new ParseCache
       parseCache.add(file, Graph())
 
@@ -62,7 +73,6 @@ class ParseSupervisorActorTest extends AkkaTestFixture {
       it("can lookup records") {
         assert(ParseSupervisorSyncAccess.lookup(file).isDefined)
       }
-
 
     }
 

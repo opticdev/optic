@@ -7,7 +7,9 @@ import scalax.collection.mutable.Graph
 
 package object graph {
 
-  trait AstProjection extends BaseNode
+  trait AstProjection extends BaseNode {
+    val id : String = null
+  }
   type ProjectGraph = Graph[AstProjection, LkDiEdge]
 
 }

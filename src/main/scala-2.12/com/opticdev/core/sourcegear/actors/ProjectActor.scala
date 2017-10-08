@@ -1,9 +1,15 @@
 package com.opticdev.core.sourcegear.actors
 
-import akka.actor.{Actor, Props}
+import akka.actor.{Actor, ActorRef, Props}
 import akka.actor.Actor.Receive
-import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
+import com.opticdev.core.sourcegear.graph.{AstProjection, ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.parsers.AstGraph
+
+import scala.concurrent.Await
+import akka.pattern.ask
+import akka.util.Timeout
+
+import concurrent.duration._
 
 class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean) extends Actor {
 
@@ -29,6 +35,7 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     }
 
     case CurrentGraph => sender ! graph
+    case NodeForId(id) => sender ! graph.nodeForId(id)
 
     //Forward parsing requests to the cluster supervisor
     case created: FileCreated => parserSupervisorRef ! ParseFile(created.file, sender())(created.sourceGear)
@@ -39,4 +46,14 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
 
 object ProjectActor {
   def props(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean): Props = Props(new ProjectActor(initialGraph))
+}
+
+object ProjectActorImplicits {
+  implicit val timeout = Timeout(2 seconds)
+  implicit class ProjectActorRef(projectActor: ActorRef) {
+    def askForNode(id: String) = {
+      val future = projectActor ? NodeForId(id)
+      Await.result(future, timeout.duration).asInstanceOf[Option[AstProjection]]
+    }
+  }
 }

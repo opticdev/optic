@@ -98,15 +98,18 @@ class ProjectTest extends AkkaTestFixture with GearUtils {
 
       project.watch
 
-
       it("by unique id") {
 
-        println(project.projectGraph)
+        Thread.sleep(1000)
 
-        val option = project.projectGraph.nodes.toVector.find(_.value.asInstanceOf[ModelNode].value ==
-          JsObject(Seq("definedAs" -> JsString("first"), "pathTo" -> JsString("second"))))
+        val targetModel = project.projectGraph.nodes.toVector.find(_.value.asInstanceOf[ModelNode].value ==
+          JsObject(Seq("definedAs" -> JsString("first"), "pathTo" -> JsString("second")))).get.value.asInstanceOf[ModelNode]
 
-        println(option)
+        println(targetModel.identifier)
+
+        val linkedModel = targetModel.resolve
+        import com.opticdev.core.sourcegear.mutate.MutationImplicits._
+//        linkedModel.update(JsObject(Seq("definedAs" -> JsString("next"), "pathTo" -> JsString("last"))))
 
       }
 

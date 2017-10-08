@@ -14,6 +14,7 @@ import akka.util.Timeout
 
 import concurrent.duration._
 import com.opticdev.core.sourcegear.actors._
+import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import play.api.libs.json.{JsObject, JsString, JsValue}
 
@@ -42,8 +43,16 @@ class Project(val name: String, val baseDirectory: File, implicit var sourceGear
     }
   }
 
-  def updateModel(id: String, value: JsValue) = {
-
+  def updateModel(id: String, value: JsObject) = {
+//    import ProjectActorImplicits._
+//    val node = projectActor askForNode(id)
+//    if (node.isDefined) {
+//      import com.opticdev.core.sourcegear.mutate.MutationImplicits._
+//      node.get
+//        .asInstanceOf[ModelNode]
+//        .resolve
+//        .update(value)
+//    } else throw new Error("Node with id "+id+" not found in project graph")
   }
 
   def projectGraph = {

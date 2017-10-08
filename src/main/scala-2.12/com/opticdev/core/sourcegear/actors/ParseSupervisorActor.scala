@@ -4,7 +4,7 @@ import akka.actor.Actor.Receive
 import akka.actor.{Actor, Props, Terminated}
 import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router}
 import akka.util.Timeout
-import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
+import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.{ParseCache, SGConstants}
 
 import concurrent.duration._
@@ -16,7 +16,7 @@ import scala.concurrent.Await
 
 class ParseSupervisorActor() extends Actor {
   var router = {
-    val routees = Vector.fill(5) {
+    val routees = Vector.fill(SGConstants.parseWorkers) {
       val r = context.actorOf(Props[WorkerActor])
       context watch r
       ActorRefRoutee(r)
@@ -46,18 +46,17 @@ class ParseSupervisorActor() extends Actor {
 }
 
 object ParseSupervisorSyncAccess {
+  implicit val timeout = Timeout(2 seconds)
+
   def setCache(newCache: ParseCache): Unit = {
     parserSupervisorRef ! SetCache(newCache)
   }
-
   def cacheSize : Int  = {
-    implicit val timeout = Timeout(2 seconds)
     val future = parserSupervisorRef ? CacheSize
     Await.result(future, timeout.duration).asInstanceOf[Int]
   }
 
-  def lookup(file: File) : Option[AstGraph] = {
-    implicit val timeout = Timeout(2 seconds)
+  def lookup(file: FileNode) : Option[AstGraph] = {
     val future = parserSupervisorRef ? CheckCacheFor(file)
     Await.result(future, timeout.duration).asInstanceOf[Option[AstGraph]]
   }
