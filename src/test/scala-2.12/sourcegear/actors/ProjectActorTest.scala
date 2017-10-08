@@ -11,7 +11,7 @@ import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import scala.concurrent.duration._
 import com.opticdev._
-class ProjectActorTest extends AkkaTestFixture with GearUtils {
+class ProjectActorTest extends AkkaTestFixture("ProjectActorTest") with GearUtils {
 
   describe("Project Actor") {
 

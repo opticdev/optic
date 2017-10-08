@@ -19,7 +19,7 @@ import scratch.ProjectMonitoringScratch._
 import scala.concurrent.duration._
 
 
-class ProjectTest extends AkkaTestFixture with GearUtils {
+class ProjectTest extends AkkaTestFixture("ProjectTest") with GearUtils {
 
   override def beforeAll {
     resetScratch
@@ -34,7 +34,7 @@ class ProjectTest extends AkkaTestFixture with GearUtils {
     val project = new Project("test", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"), sourceGear)
 
     it("can list all files recursively") {
-      assert(project.watchedFiles.map(i=> i.pathAsString.split("/src/test/resources/tmp/test_project/")(1)) ==
+      assert(project.watchedFiles.map(i => i.pathAsString.split("/src/test/resources/tmp/test_project/")(1)) ==
         Set("app.js", "nested/firstFile.js", "nested/nested/secondFile.js"))
     }
 
@@ -67,53 +67,22 @@ class ProjectTest extends AkkaTestFixture with GearUtils {
 
       //@todo get these tests working again
       //
-//      it("can stop watching files") {
-////        Thread.sleep(1000)
-////        project.stopWatching
-//        File(getCurrentDirectory + "/src/test/resources/tmp/test_project/otherFile.js").createIfNotExists(false)
-//        expectNoMsg(2 seconds)
-//      }
-//
-//      describe("can start watching files again") {
-//        project.watch
-//        fileWatchTest
-//      }
+      //      it("can stop watching files") {
+      ////        Thread.sleep(1000)
+      ////        project.stopWatching
+      //        File(getCurrentDirectory + "/src/test/resources/tmp/test_project/otherFile.js").createIfNotExists(false)
+      //        expectNoMsg(2 seconds)
+      //      }
+      //
+      //      describe("can start watching files again") {
+      //        project.watch
+      //        fileWatchTest
+      //      }
 
     }
 
     it("can get the current graph") {
       assert(project.projectGraph.isInstanceOf[ProjectGraph])
     }
-
-    describe("updates a record") {
-
-      val sourceGear = new SourceGear {
-        override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-      }
-
-      val importGear = gearFromDescription("src/test/resources/sdkDescriptions/ImportExample.json")
-      sourceGear.gearSet.addGear(importGear)
-
-      val project = new Project("test", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"), sourceGear)
-
-      project.watch
-
-      it("by unique id") {
-
-        Thread.sleep(1000)
-
-        val targetModel = project.projectGraph.nodes.toVector.find(_.value.asInstanceOf[ModelNode].value ==
-          JsObject(Seq("definedAs" -> JsString("first"), "pathTo" -> JsString("second")))).get.value.asInstanceOf[ModelNode]
-
-        println(targetModel.identifier)
-
-        val linkedModel = targetModel.resolve
-        import com.opticdev.core.sourcegear.mutate.MutationImplicits._
-//        linkedModel.update(JsObject(Seq("definedAs" -> JsString("next"), "pathTo" -> JsString("last"))))
-
-      }
-
-    }
-
   }
 }

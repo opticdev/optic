@@ -1,9 +1,11 @@
 package server.routes
 
-import Fixture.TestBase
+import Fixture.{AkkaTestFixture, TestBase}
+import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import better.files.File
+import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.server.http.routes.ProjectRoute
 import com.opticdev.server.http.state.StateManager
@@ -15,6 +17,8 @@ class ProjectRouteTest extends FunSpec with Matchers with ScalatestRouteTest wit
 
   describe("The projects route should") {
 
+    implicit val logToCli = false
+    implicit val actorCluster = new ActorCluster(ActorSystem("ProjectRouteTest"))
     val testProject = new Project("TestProject", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"))
     implicit val stateManager = new StateManager(Set(testProject))
 

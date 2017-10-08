@@ -7,11 +7,13 @@ import com.opticdev.parsers.AstGraph
 
 import scala.concurrent.Await
 import akka.pattern.ask
+
 import akka.util.Timeout
+import scala.concurrent.Future
 
 import concurrent.duration._
 
-class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean) extends Actor {
+class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean, actorCluster: ActorCluster) extends Actor {
 
   override def receive: Receive = active(initialGraph)
 
@@ -20,7 +22,7 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     case parsed: ParseSuccessful => {
       graph.updateFile(parsed.parseResults.astGraph, parsed.file)
 
-      if (logToCli) graph.prettyPrint else parsed.project ! graph
+      if (logToCli) graph.prettyPrint else sender() ! graph
 
       context.become(active(graph))
     }
@@ -38,14 +40,14 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     case NodeForId(id) => sender ! graph.nodeForId(id)
 
     //Forward parsing requests to the cluster supervisor
-    case created: FileCreated => parserSupervisorRef ! ParseFile(created.file, sender())(created.sourceGear)
-    case updated: FileUpdated => parserSupervisorRef ! ParseFile(updated.file, sender())(updated.sourceGear)
+    case created: FileCreated => actorCluster.parserSupervisorRef ! ParseFile(created.file, sender())(created.sourceGear)
+    case updated: FileUpdated => actorCluster.parserSupervisorRef ! ParseFile(updated.file, sender())(updated.sourceGear)
   }
 
 }
 
 object ProjectActor {
-  def props(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean): Props = Props(new ProjectActor(initialGraph))
+  def props(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean, actorCluster: ActorCluster): Props = Props(new ProjectActor(initialGraph))
 }
 
 object ProjectActorImplicits {

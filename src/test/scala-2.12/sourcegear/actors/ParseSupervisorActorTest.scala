@@ -1,24 +1,25 @@
 package sourcegear.actors
 
 import Fixture.{AkkaTestFixture, TestBase}
-import akka.actor.ActorSystem
+import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import better.files.File
-import com.opticdev.core.sourcegear.{ParseCache, SourceGear}
+import com.opticdev.core.sourcegear.{CacheRecord, ParseCache, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.actors._
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike}
 import akka.pattern.ask
 import akka.util.Timeout
-import com.opticdev.core.sourcegear.graph.FileNode
+import com.opticdev._
+import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
 import com.opticdev.parsers.utils.Crypto
 
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import scalax.collection.mutable.Graph
 
-class ParseSupervisorActorTest extends AkkaTestFixture {
+class ParseSupervisorActorTest extends AkkaTestFixture("ParseSupervisorActorTest") {
 
   override def beforeAll {
     resetScratch
@@ -30,43 +31,58 @@ class ParseSupervisorActorTest extends AkkaTestFixture {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     }
 
+    describe("context lookup") {
+      implicit val logToCli = false
+      val projectActor = actorCluster.newProjectActor()
+
+      it("for file in cache") {
+        val file = File(getCurrentDirectory+"/src/test/resources/tmp/test_project/app.js")
+        actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(file), Graph(), SourceParserManager.installedParsers.head, "Contents")
+        actorCluster.parserSupervisorRef ! GetContext(FileNode.fromFile(file))(sourceGear, projectActor)
+        expectMsg(Option(SGContext(sourceGear.fileAccumulator, Graph(), SourceParserManager.installedParsers.head, "Contents")))
+      }
+
+      it("for file not in cache") {
+        val file = File(getCurrentDirectory+"/src/test/resources/tmp/test_project/app.js")
+        actorCluster.parserSupervisorRef ! ClearCache
+        actorCluster.parserSupervisorRef ! GetContext(FileNode.fromFile(file))(sourceGear, projectActor)
+        expectMsgPF() {
+          case a: Option[SGContext] => assert(a.isDefined)
+        }
+      }
+
+    }
+
+
     it("can parse files") {
-       parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/app.js"), self)
+       actorCluster.parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/app.js"), self)
        expectMsgAllConformingOf[ParseSuccessful]()
     }
 
     it("fails gracefully when file is unreadable") {
-      parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/fakeFile.js"), self)
-      expectMsgAllConformingOf[ParseFailed]()
-    }
-
-    describe("context") {
-      it("for a file can be calculated") {
-        val file = File(getCurrentDirectory+"/src/test/resources/test_project/app.js")
-        val fileNode = FileNode(file.pathAsString, Crypto.createSha1(file.contentAsString))
-        parserSupervisorRef ! GetContext(fileNode)
-      }
+      actorCluster.parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/src/test/resources/test_project/fakeFile.js"), self)
+      expectMsg(ParseFailed(File(getCurrentDirectory+"/src/test/resources/test_project/fakeFile.js")))
     }
 
     describe("caches") {
-
-      val file = FileNode.fromFile(File("/src/test/resources/tmp/test_project/example"))
+      val dummyRecord = CacheRecord(Graph(), null, "contents")
+      val file = FileNode.fromFile(File("/src/test/resources/tmp/test_project/app.js"))
       val parseCache = new ParseCache
-      parseCache.add(file, Graph())
+      parseCache.add(file, dummyRecord)
 
       it("can be assigned") {
-        parserSupervisorRef ! SetCache(parseCache)
         ParseSupervisorSyncAccess.setCache(parseCache)
         assert(ParseSupervisorSyncAccess.cacheSize == 1)
       }
 
       it("can be cleared") {
-        parserSupervisorRef ! ClearCache
+        actorCluster.parserSupervisorRef ! ClearCache
         assert(ParseSupervisorSyncAccess.cacheSize == 0)
       }
 
       it("can add records") {
-        parserSupervisorRef ! AddToCache(file, Graph())
+        actorCluster.parserSupervisorRef ! ClearCache
+        actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), null, "contents")
         assert(ParseSupervisorSyncAccess.cacheSize == 1)
       }
 

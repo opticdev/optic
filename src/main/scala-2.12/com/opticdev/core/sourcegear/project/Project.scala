@@ -20,11 +20,11 @@ import play.api.libs.json.{JsObject, JsString, JsValue}
 
 import scala.concurrent.Await
 
-class Project(val name: String, val baseDirectory: File, implicit var sourceGear: SourceGear = SourceGear.default)(implicit logToCli: Boolean = false) {
+class Project(val name: String, val baseDirectory: File, implicit var sourceGear: SourceGear = SourceGear.default)(implicit logToCli: Boolean = false, actorCluster: ActorCluster) {
 
   import com.opticdev.core.sourcegear.actors._
   private var watcher: ActorRef = baseDirectory.newWatcher(recursive = true)
-  val projectActor = actorSystem.actorOf(ProjectActor.props(ProjectGraphWrapper.empty))
+  val projectActor = actorCluster.newProjectActor
 
   def watch = {
     watchedFiles.foreach(i=> projectActor ! FileCreated(i))

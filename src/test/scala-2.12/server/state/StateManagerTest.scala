@@ -1,5 +1,6 @@
 package server.state
 
+import Fixture.AkkaTestFixture
 import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.project.Project
@@ -7,7 +8,7 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.server.http.state.StateManager
 import org.scalatest.FunSpec
 
-class StateManagerTest extends FunSpec {
+class StateManagerTest extends AkkaTestFixture("StateManagerTest") {
   describe("State Manager") {
 
     implicit val sourceGear = new SourceGear {

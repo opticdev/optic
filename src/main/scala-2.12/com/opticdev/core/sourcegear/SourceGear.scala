@@ -12,6 +12,8 @@ abstract class SourceGear {
   val parsers: Set[ParserBase]
   val gearSet: GearSet = new GearSet
 
+  val fileAccumulator = gearSet.fileAccumulator
+
   lazy val validExtensions = parsers.flatMap(_.fileExtensions)
 
   def parseFile(file: File) : Try[FileParseResults] = {
@@ -26,7 +28,7 @@ abstract class SourceGear {
         //@todo clean this up and have the parser return in the parse result.
         val parser = parsers.find(_.languageName == parsed.language).get
 
-        implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, parser)
+        implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, parser, fileContents)
         gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext)
       } else {
         throw parsedOption.failed.get

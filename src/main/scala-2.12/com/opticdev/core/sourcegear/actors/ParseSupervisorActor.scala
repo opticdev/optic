@@ -1,23 +1,23 @@
 package com.opticdev.core.sourcegear.actors
 
 import akka.actor.Actor.Receive
-import akka.actor.{Actor, Props, Terminated}
-import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router}
+import akka.actor.{Actor, ActorSystem, Props, Terminated}
+import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router, SeveralRoutees}
 import akka.util.Timeout
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
-import com.opticdev.core.sourcegear.{ParseCache, SGConstants}
+import com.opticdev.core.sourcegear.{CacheRecord, ParseCache, SGConstants, SGContext}
 
 import concurrent.duration._
 import akka.pattern.ask
 import better.files.File
 import com.opticdev.parsers.AstGraph
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, Future}
 
-class ParseSupervisorActor() extends Actor {
+class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor {
   var router = {
     val routees = Vector.fill(SGConstants.parseWorkers) {
-      val r = context.actorOf(Props[WorkerActor])
+      val r = context.actorOf(WorkerActor.props())
       context watch r
       ActorRefRoutee(r)
     }
@@ -35,8 +35,24 @@ class ParseSupervisorActor() extends Actor {
       context watch r
       router = router.addRoutee(r)
 
+    case ctxRequest: GetContext => {
+      val inCacheOption = parseCache.get(ctxRequest.fileNode)
+      if (inCacheOption.isDefined) {
+        val record = inCacheOption.get
+        sender() ! Option(
+          SGContext(
+            ctxRequest.sourceGear.fileAccumulator,
+            record.graph,
+            record.parser,
+            record.fileContents)
+        )
+      } else {
+        router.route(ctxRequest, sender())
+      }
+    }
+
     //cache events
-    case AddToCache(file, graph) => context.become(handler(parseCache.add(file, graph)))
+    case AddToCache(file, graph, parser, fileContents) => context.become(handler(parseCache.add(file, CacheRecord(graph, parser, fileContents))))
     case SetCache(newCache) => context.become(handler(newCache))
     case CacheSize => sender() ! parseCache.cache.size
     case ClearCache => context.become(handler(parseCache.clear))
@@ -45,19 +61,23 @@ class ParseSupervisorActor() extends Actor {
 
 }
 
+object ParseSupervisorActor {
+  def props()(implicit actorCluster: ActorCluster) = Props(new ParseSupervisorActor())
+}
+
 object ParseSupervisorSyncAccess {
   implicit val timeout = Timeout(2 seconds)
 
-  def setCache(newCache: ParseCache): Unit = {
-    parserSupervisorRef ! SetCache(newCache)
+  def setCache(newCache: ParseCache) (implicit actorCluster: ActorCluster): Unit = {
+    actorCluster.parserSupervisorRef ! SetCache(newCache)
   }
-  def cacheSize : Int  = {
-    val future = parserSupervisorRef ? CacheSize
+  def cacheSize()(implicit actorCluster: ActorCluster) : Int  = {
+    val future = actorCluster.parserSupervisorRef ? CacheSize
     Await.result(future, timeout.duration).asInstanceOf[Int]
   }
 
-  def lookup(file: FileNode) : Option[AstGraph] = {
-    val future = parserSupervisorRef ? CheckCacheFor(file)
+  def lookup(file: FileNode)(implicit actorCluster: ActorCluster) : Option[AstGraph] = {
+    val future = actorCluster.parserSupervisorRef ? CheckCacheFor(file)
     Await.result(future, timeout.duration).asInstanceOf[Option[AstGraph]]
   }
 

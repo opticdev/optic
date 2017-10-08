@@ -21,12 +21,17 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph) {
 
   import GraphImplicits._
 
-  def addFile(astGraph: AstGraph, forFile: File) =
-    projectGraph ++= astGraphToProjectGraph(astGraph, forFile)
+  def addFile(astGraph: AstGraph, forFile: File) = {
+    if (forFile.exists) {
+      projectGraph ++= astGraphToProjectGraph(astGraph, forFile)
+    }
+  }
 
   def updateFile(astGraph: AstGraph, forFile: File) = {
-    removeFile(forFile, ignoreExceptions = true)
-    addFile(astGraph, forFile)
+    if (forFile.exists) {
+      removeFile(forFile, ignoreExceptions = true)
+      addFile(astGraph, forFile)
+    }
   }
 
   def removeFile(file: File, ignoreExceptions: Boolean = false) = {
