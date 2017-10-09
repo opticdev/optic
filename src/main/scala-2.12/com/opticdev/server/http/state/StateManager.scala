@@ -20,6 +20,6 @@ class StateManager(initialProjects: Set[Project] = Set()) {
 }
 
 object StateManager {
-  def clean = new StateManager(Set())
-  def load  = clean
+  def empty = new StateManager(Set())
+  def load  = empty
 }

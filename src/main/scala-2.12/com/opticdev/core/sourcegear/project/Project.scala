@@ -16,6 +16,7 @@ import concurrent.duration._
 import com.opticdev.core.sourcegear.actors._
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
+import com.opticdev.core.sourcegear.project.config.ProjectFile
 import play.api.libs.json.{JsObject, JsString, JsValue}
 
 import scala.concurrent.Await
@@ -25,6 +26,8 @@ class Project(val name: String, val baseDirectory: File, implicit var sourceGear
   import com.opticdev.core.sourcegear.actors._
   private var watcher: ActorRef = baseDirectory.newWatcher(recursive = true)
   val projectActor = actorCluster.newProjectActor
+
+  val projectFile = new ProjectFile(baseDirectory / "project.optic", createIfDoesNotExist = true)
 
   def watch = {
     watchedFiles.foreach(i=> projectActor ! FileCreated(i, this))

@@ -31,6 +31,9 @@ libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.2"
 libraryDependencies += "com.github.fge" % "json-schema-validator" % "2.2.6"
 libraryDependencies += "org.gnieh" %% "diffson-play-json" % "2.2.1"
 
+//yaml
+libraryDependencies += "net.jcazevedo" %% "moultingyaml" % "0.4.0"
+
 //cli
 libraryDependencies += "com.github.scopt" %% "scopt" % "3.6.0"
 libraryDependencies += "com.lihaoyi" %% "fansi" % "0.2.5"

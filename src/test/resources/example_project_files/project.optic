@@ -1,0 +1,9 @@
+name: Test project
+parsers:
+  - JavaScript
+
+knowledge:
+  - js.express
+
+ignored_files:
+  - node_modules/
