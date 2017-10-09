@@ -1,18 +1,22 @@
 package sourcegear.graph
 
-import Fixture.TestBase
+import Fixture.{AkkaTestFixture, TestBase}
 import Fixture.compilerUtils.GearUtils
 import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, Path}
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
+import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString}
 
-class ModelNodeTest extends TestBase with GearUtils {
+import scalax.collection.mutable.Graph
+
+class ModelNodeTest extends AkkaTestFixture("ModelNodeTest") with GearUtils {
 
   describe("Model node test") {
 
@@ -22,6 +26,10 @@ class ModelNodeTest extends TestBase with GearUtils {
 
     val testFilePath = getCurrentDirectory + "/src/test/resources/example_source/ImportSource.js"
 
+    val projectGraphWrapper = new ProjectGraphWrapper(Graph())
+    implicit val project = new Project("test", File(getCurrentDirectory + "/src/test/resources/example_source/"), sourceGear) {
+      override def projectGraph = projectGraphWrapper.projectGraph
+    }
 
     val importResults = {
       val importGear = gearFromDescription("src/test/resources/sdkDescriptions/ImportExample.json")
@@ -29,9 +37,9 @@ class ModelNodeTest extends TestBase with GearUtils {
       sourceGear.parseFile(File(testFilePath))
     }
 
-    it("can resolve when flat") {
+    projectGraphWrapper.addFile(importResults.get.astGraph, File(testFilePath))
 
-      implicit val astGraph = importResults.get.astGraph
+    it("can resolve when flat") {
 
       val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
       val resolved = helloWorldImport.resolve
@@ -46,9 +54,9 @@ class ModelNodeTest extends TestBase with GearUtils {
     describe("Mutation") {
 
       val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
-      val resolved = helloWorldImport.resolve
 
       it("Can mutate a token") {
+        val resolved = helloWorldImport.resolve
         import com.opticdev.core.sourcegear.mutate.MutationImplicits._
         implicit val fileContents = File(testFilePath).contentAsString
         val result = resolved.update(JsObject(Seq("definedAs" -> JsString("goodbye"), "pathTo" -> JsString("local"))))

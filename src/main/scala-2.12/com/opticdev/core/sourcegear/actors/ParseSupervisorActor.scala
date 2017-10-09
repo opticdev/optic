@@ -1,15 +1,16 @@
 package com.opticdev.core.sourcegear.actors
 
 import akka.actor.Actor.Receive
-import akka.actor.{Actor, ActorSystem, Props, Terminated}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props, Terminated}
 import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router, SeveralRoutees}
 import akka.util.Timeout
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
-import com.opticdev.core.sourcegear.{CacheRecord, ParseCache, SGConstants, SGContext}
+import com.opticdev.core.sourcegear._
 
 import concurrent.duration._
 import akka.pattern.ask
 import better.files.File
+import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.AstGraph
 
 import scala.concurrent.{Await, Future}
@@ -74,6 +75,11 @@ object ParseSupervisorSyncAccess {
   def cacheSize()(implicit actorCluster: ActorCluster) : Int  = {
     val future = actorCluster.parserSupervisorRef ? CacheSize
     Await.result(future, timeout.duration).asInstanceOf[Int]
+  }
+
+  def getContext(file: File)(implicit actorCluster: ActorCluster, sourceGear: SourceGear, project: Project): Option[SGContext] = {
+    val future = actorCluster.parserSupervisorRef ? GetContext(FileNode.fromFile(file))
+    Await.result(future, timeout.duration).asInstanceOf[Option[SGContext]]
   }
 
   def lookup(file: FileNode)(implicit actorCluster: ActorCluster) : Option[AstGraph] = {

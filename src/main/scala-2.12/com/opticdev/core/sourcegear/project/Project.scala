@@ -27,18 +27,18 @@ class Project(val name: String, val baseDirectory: File, implicit var sourceGear
   val projectActor = actorCluster.newProjectActor
 
   def watch = {
-    watchedFiles.foreach(i=> projectActor ! FileCreated(i))
+    watchedFiles.foreach(i=> projectActor ! FileCreated(i, this))
     watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE)(callback)
   }
 
   private val callback : better.files.FileWatcher.Callback = {
     case (EventType.ENTRY_CREATE, file) => {
       updateWatchedFiles
-      if (watchedFiles.contains(file)) projectActor ! FileCreated(file)
+      if (watchedFiles.contains(file)) projectActor ! FileCreated(file, this)
     }
-    case (EventType.ENTRY_MODIFY, file) => if (watchedFiles.contains(file)) projectActor ! FileUpdated(file)
+    case (EventType.ENTRY_MODIFY, file) => if (watchedFiles.contains(file)) projectActor ! FileUpdated(file, this)
     case (EventType.ENTRY_DELETE, file) => {
-      if (watchedFiles.contains(file)) projectActor ! FileDeleted(file)
+      if (watchedFiles.contains(file)) projectActor ! FileDeleted(file, this)
       updateWatchedFiles
     }
   }

@@ -27,7 +27,7 @@ class ProjectActorTest extends AkkaTestFixture("ProjectActorTest") with GearUtil
     val project = new Project("test", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"), sourceGear)
 
     it("can handle a file creation") {
-      project.projectActor ! FileCreated(File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js"))
+      project.projectActor ! FileCreated(File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js"), project)
       expectMsgPF() {
         case i: ProjectGraphWrapper => {
           assert(i.projectGraph.size == 3)
@@ -36,7 +36,7 @@ class ProjectActorTest extends AkkaTestFixture("ProjectActorTest") with GearUtil
     }
 
     it("can handle a file deletion") {
-      project.projectActor ! FileDeleted(File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js"))
+      project.projectActor ! FileDeleted(File(getCurrentDirectory + "/src/test/resources/tmp/test_project/app.js"), project)
       expectMsgPF() {
         case i: ProjectGraphWrapper => {
           assert(i.projectGraph.isEmpty)

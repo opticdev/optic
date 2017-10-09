@@ -1,6 +1,6 @@
 package sourcegear.parser
 
-import Fixture.TestBase
+import Fixture.{AkkaTestFixture, TestBase}
 import Fixture.compilerUtils.ParserUtils
 import better.files.File
 import play.api.libs.json.{JsObject, JsString, Json}
@@ -10,13 +10,23 @@ import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.core.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.core.sdk.descriptions.enums.Finders.StringFinder
 import com.opticdev.core.sdk.descriptions.enums.RuleEnums.Any
-import com.opticdev.core.sourcegear.SGContext
+import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
+import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
-class ParserGearTest extends TestBase with ParserUtils {
+class ParserGearTest extends AkkaTestFixture("ParserGearTest") with ParserUtils {
+
+
+  implicit val sourceGear = new SourceGear {
+    override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+  }
+
+  implicit val project = new Project("test", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"), sourceGear)
+
 
   describe("ParserGear") {
 
@@ -35,7 +45,7 @@ class ParserGearTest extends TestBase with ParserUtils {
         val block = "var hello = require('world')"
 
         val parsedSample = sample(block)
-        val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext)
+        val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
         assert(result.isDefined)
       }
 
@@ -45,7 +55,7 @@ class ParserGearTest extends TestBase with ParserUtils {
         val block = "var goodbye = notRequire('nation')"
 
         val parsedSample = sample(block)
-        val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext)
+        val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
         assert(!result.isDefined)
 
       }
@@ -61,7 +71,7 @@ class ParserGearTest extends TestBase with ParserUtils {
           val block = "var otherValue = require('world')"
 
           val parsedSample = sample(block)
-          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
+          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
           assert(result.isDefined)
 
           assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("otherValue"))))
@@ -80,7 +90,7 @@ class ParserGearTest extends TestBase with ParserUtils {
           val block = "let otherValue = require('world')"
 
           val parsedSample = sample(block)
-          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
+          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
           assert(result.isDefined)
           assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("otherValue"))))
 
@@ -97,7 +107,7 @@ class ParserGearTest extends TestBase with ParserUtils {
 
             val parsedSample = sample(block)
 
-            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
+            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
 
             assert(result.isDefined)
 
@@ -111,7 +121,7 @@ class ParserGearTest extends TestBase with ParserUtils {
 
             val parsedSample = sample(block)
 
-            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
+            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
 
             assert(!result.isDefined)
 
@@ -132,7 +142,7 @@ class ParserGearTest extends TestBase with ParserUtils {
           val block = "var otherValue = require('that-lib')"
 
           val parsedSample = sample(block)
-          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext)
+          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
           assert(result.isDefined)
 
           val expected = JsObject(Seq("definedAs" -> JsString("otherValue"), "pathTo" -> JsString("that-lib")))

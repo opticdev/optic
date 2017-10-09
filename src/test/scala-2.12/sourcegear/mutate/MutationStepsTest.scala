@@ -1,22 +1,32 @@
 package sourcegear.mutate
 
-import Fixture.TestBase
+import Fixture.{AkkaTestFixture, TestBase}
 import Fixture.compilerUtils.GearUtils
 import better.files.File
 import com.opticdev.core.sdk.descriptions.CodeComponent
 import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.Literal
 import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
+import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString}
 
-class MutationStepsTest extends TestBase with GearUtils {
+import scalax.collection.mutable.Graph
+
+class MutationStepsTest extends AkkaTestFixture("MutationStepsTest") with GearUtils {
 
   override val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+  }
+
+  val projectGraphWrapper = new ProjectGraphWrapper(Graph())
+
+  implicit val project = new Project("test", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"), sourceGear) {
+    override def projectGraph = projectGraphWrapper.projectGraph
   }
 
   val testFilePath = getCurrentDirectory + "/src/test/resources/example_source/ImportSource.js"
@@ -26,6 +36,8 @@ class MutationStepsTest extends TestBase with GearUtils {
     sourceGear.gearSet.addGear(importGear)
     sourceGear.parseFile(File(testFilePath))
   }
+
+  projectGraphWrapper.addFile(importResults.get.astGraph, File(testFilePath))
 
   val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
   val resolved = helloWorldImport.resolve

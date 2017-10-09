@@ -30,7 +30,7 @@ trait GearUtils {
 
   def sourceGearFromDescription(path: String) : SourceGear = {
 
-    val jsonString = Source.fromFile("src/test/resources/sdkDescriptions/RequestSdkDescription.json").getLines.mkString
+    val jsonString = Source.fromFile(path).getLines.mkString
     val description = SdkDescription.fromJson(Json.parse(jsonString))
 
     val compiled = Compiler.setup(description).execute

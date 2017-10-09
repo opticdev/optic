@@ -1,17 +1,19 @@
 package sourcegear.graph
 
-import Fixture.TestBase
+import Fixture.{AkkaTestFixture, TestBase}
 import Fixture.compilerUtils.GearUtils
 import better.files.File
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
+import com.opticdev.core.sourcegear.project.Project
 
-class ProjectGraphWrapperTest extends TestBase with GearUtils {
+class ProjectGraphWrapperTest extends AkkaTestFixture("ProjectGraphWrapperTest") with GearUtils {
   describe("Project Graph Wrapper") {
 
     it("can be initialized empty") {
       assert(ProjectGraphWrapper.empty.projectGraph.isEmpty)
     }
 
+    implicit val project = new Project("test", File(getCurrentDirectory + "/src/test/resources/tmp/test_project/"), sourceGear)
 
     val testFilePath = getCurrentDirectory + "/src/test/resources/example_source/ImportSource.js"
     val file = File(testFilePath)

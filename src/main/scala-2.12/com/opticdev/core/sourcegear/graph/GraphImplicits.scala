@@ -58,6 +58,7 @@ object GraphImplicits {
         null
       }
     }
+
   }
 
   implicit class BaseModelNodes(modelNodes: Set[BaseModelNode]) {
@@ -77,6 +78,11 @@ object GraphImplicits {
     def allSuccessorsOf(astProjection: AstProjection) : Set[AstProjection] = {
       val diSuccessors = graph.get(astProjection).diSuccessors.map(_.value)
       diSuccessors ++ diSuccessors.flatMap(i=> allSuccessorsOf(i))
+    }
+
+    def allPredecessorOf(astProjection: AstProjection) : Set[AstProjection] = {
+      val diPredecessor = graph.get(astProjection).diPredecessors.map(_.value)
+      diPredecessor ++ diPredecessor.flatMap(i=> allPredecessorOf(i))
     }
 
   }

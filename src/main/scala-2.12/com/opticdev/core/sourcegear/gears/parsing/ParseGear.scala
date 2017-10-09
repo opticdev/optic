@@ -7,6 +7,7 @@ import com.opticdev.core.sourcegear.accumulate.Listener
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
+import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType, Child}
 import com.opticdev.parsers.graph.path.FlatWalkablePath
@@ -22,7 +23,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
   val rules: Map[FlatWalkablePath, Vector[Rule]]
   val listeners : Vector[Listener]
 
-  def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext) : Option[ParseResult] = {
+  def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: Project) : Option[ParseResult] = {
 
     val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
 
@@ -90,7 +91,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
     output(matchResults)
   }
 
-  def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext) : Option[ParseResult] = None
+  def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: Project) : Option[ParseResult] = None
 
 
 }
@@ -102,7 +103,7 @@ case class ParseAsModel(description: NodeDescription,
                         listeners : Vector[Listener]
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
-  override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext) : Option[ParseResult] = {
+  override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: Project) : Option[ParseResult] = {
     if (!matchResults.isMatch) return None
 
     val fields = matchResults.extracted.getOrElse(Set())

@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
+import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 
@@ -12,11 +13,11 @@ abstract class SourceGear {
   val parsers: Set[ParserBase]
   val gearSet: GearSet = new GearSet
 
-  val fileAccumulator = gearSet.fileAccumulator
+  def fileAccumulator = gearSet.fileAccumulator
 
   lazy val validExtensions = parsers.flatMap(_.fileExtensions)
 
-  def parseFile(file: File) : Try[FileParseResults] = {
+  def parseFile(file: File) (implicit project: Project) : Try[FileParseResults] = {
     Try {
       val fileContents = file.contentAsString
       //@todo connect to parser list
@@ -29,7 +30,7 @@ abstract class SourceGear {
         val parser = parsers.find(_.languageName == parsed.language).get
 
         implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, parser, fileContents)
-        gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext)
+        gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
       } else {
         throw parsedOption.failed.get
       }
