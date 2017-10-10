@@ -10,7 +10,7 @@ import com.opticdev.server.http.state.StateManager
 import scala.io.StdIn
 object Server {
 
-  def main(args: Array[String] = Array())(implicit stateManager: StateManager) {
+  def start()(implicit stateManager: StateManager) {
 
     implicit val actorSystem = ActorSystem("my-system")
     implicit val materializer = ActorMaterializer()

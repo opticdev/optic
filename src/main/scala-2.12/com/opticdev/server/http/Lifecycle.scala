@@ -2,16 +2,13 @@ package com.opticdev.server.http
 
 import com.opticdev.server.http.state.StateManager
 
-object Lifecycle {
+object Lifecycle extends App {
 
   implicit val stateManager = StateManager.empty
-
+  startup
   def startup = {
-    Server.main()
+    Server.start()
   }
 
-  def main(args: Array[String]) {
-    startup
-  }
 
 }
