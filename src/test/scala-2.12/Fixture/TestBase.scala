@@ -2,6 +2,7 @@ package Fixture
 
 
 
+import com.opticdev.common.storage.DataDirectory
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.parsers.AstGraph
@@ -10,7 +11,6 @@ import com.opticdev.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSpecLike}
 import play.api.libs.json.JsValue
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.core.storage.DataDirectory
 
 import scala.util.Random
 import scalax.collection.edge.LkDiEdge

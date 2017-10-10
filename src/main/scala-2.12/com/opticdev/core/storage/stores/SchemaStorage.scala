@@ -1,8 +1,8 @@
 package com.opticdev.core.storage.stores
 
 import better.files.File
+import com.opticdev.common.storage.DataDirectory
 import com.opticdev.core.sdk.descriptions.{Schema, SchemaId}
-import com.opticdev.core.storage.DataDirectory
 import play.api.libs.json.Json
 
 import scala.util.Try

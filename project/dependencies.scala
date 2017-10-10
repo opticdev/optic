@@ -6,12 +6,11 @@ object Dependencies {
     //optic
     "com.opticdev" %% "parser-foundation" % "1.0.0",
     "com.opticdev" %% "marvin-runtime" % "1.0.0",
+    "com.opticdev" %% "common" % "1.0.0",
 
     //graph
     "org.scala-graph" %% "graph-core" % "1.12.0",
 
-    //native
-    "org.apache.commons" % "commons-lang3" % "3.6",
     //io
     "com.github.pathikrit" % "better-files_2.12" % "2.17.1",
     "com.github.pathikrit" %% "better-files-akka" % "2.17.1",

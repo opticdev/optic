@@ -6,11 +6,11 @@ import java.nio.ByteBuffer
 import better.files.File
 import com.opticdev.core.sdk.descriptions.{Schema, SchemaId}
 import com.opticdev.core.sourcegear.Gear
-import com.opticdev.core.storage.DataDirectory
 import play.api.libs.json.Json
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel}
 import boopickle.Default._
+import com.opticdev.common.storage.DataDirectory
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
 import com.opticdev.parsers.LanguageId
 

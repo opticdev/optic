@@ -2,8 +2,8 @@ package storage.stores
 
 import Fixture.TestBase
 import better.files.File
+import com.opticdev.common.storage.DataDirectory
 import com.opticdev.core.sdk.descriptions.{Schema, SchemaId}
-import com.opticdev.core.storage.DataDirectory
 import com.opticdev.core.storage.stores.SchemaStorage
 import play.api.libs.json.{JsObject, Json}
 
