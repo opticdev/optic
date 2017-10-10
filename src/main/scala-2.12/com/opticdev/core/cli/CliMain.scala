@@ -2,6 +2,7 @@ package com.opticdev.core.cli
 
 import better.files.File
 import com.opticdev.core.cli.output.InstallSessionMonitor
+import com.opticdev.launcher.ServiceLauncher
 import me.tongfei.progressbar.ProgressBar
 import scopt.OptionParser
 object CliMain {
@@ -15,7 +16,8 @@ object CliMain {
 
       help("help").text("prints this usage text")
       version("version").text("prints the current version")
-
+      cmd("server-start").action( (_, c) => c.copy(mode = "server-start") ).
+        text("starts an Optic Server")
       cmd("install").action( (_, c) => c.copy(mode = "install") ).
         text("compiles and installs an Optic SDK Description").
         children(
@@ -43,13 +45,15 @@ object CliMain {
 
     def handle(configOption: Option[Config]) (implicit logToCli: Boolean = false): Any = configOption match {
       case Some(config) =>
-        println(config)
         config.mode match {
           case "install" => {
             Installer.installDescription(File(config.in.getAbsolutePath))
           }
           case "install-parser" => {
             Installer.installParser(File(config.in.getAbsolutePath))
+          }
+          case "server-start" => {
+            ServiceLauncher.startOpticServer
           }
         }
       case None => "error"
