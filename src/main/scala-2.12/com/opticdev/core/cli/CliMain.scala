@@ -1,8 +1,8 @@
 package com.opticdev.core.cli
 
 import better.files.File
+import com.opticdev.common.launcher.ServerLauncher
 import com.opticdev.core.cli.output.InstallSessionMonitor
-import com.opticdev.launcher.ServiceLauncher
 import me.tongfei.progressbar.ProgressBar
 import scopt.OptionParser
 object CliMain {
@@ -53,7 +53,7 @@ object CliMain {
             Installer.installParser(File(config.in.getAbsolutePath))
           }
           case "server-start" => {
-            ServiceLauncher.startOpticServer
+            ServerLauncher.launchServer
           }
         }
       case None => "error"
