@@ -1,17 +1,21 @@
-package com.opticdev.server.http.routes.socket
+package com.opticdev.server.http.routes.socket.editors
 
+import akka.NotUsed
 import akka.actor.{ActorSystem, PoisonPill, Props}
+import akka.http.scaladsl.model.ws.{Message, TextMessage}
+import akka.pattern.ask
 import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
-import com.opticdev.server.http.routes.socket.Protocol._
+import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
+import com.opticdev.server.http.routes.socket.editors.Protocol._
+
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.util.Try
-import akka.pattern.ask
+import scala.util.{Failure, Try}
 
-class EditorConnection(slug: String, actorSystem: ActorSystem) {
+class EditorConnection(slug: String, actorSystem: ActorSystem) extends Connection {
 
   private[this] val connectionActor = actorSystem.actorOf(Props(classOf[EditorConnectionActor], slug))
 
@@ -27,7 +31,7 @@ class EditorConnection(slug: String, actorSystem: ActorSystem) {
     connectionActor ! event
   }
 
-  def websocketFlow = {
+  override def websocketFlow: Flow[String, OpticEvent, NotUsed] = {
     val in =
       Flow[String]
         .map(i=> {
@@ -71,24 +75,10 @@ class EditorConnection(slug: String, actorSystem: ActorSystem) {
 
 }
 
-object EditorConnection {
+object EditorConnection extends ConnectionManager[EditorConnection] {
   case class EditorInformation(name: String, version: String)
-  def apply(slug: String)(implicit actorSystem: ActorSystem) = new EditorConnection(slug, actorSystem)
 
-
-  private var connections: Map[String, EditorConnection] = Map()
-
-  def listConnections = connections
-
-  def findOrCreate(slug: String)(implicit actorSystem: ActorSystem): EditorConnection = {
-    connections.getOrElse(slug, createEditorConnection(slug))
-  }
-
-  private def createEditorConnection(slug: String)(implicit actorSystem: ActorSystem): EditorConnection = {
-    val connection = EditorConnection(slug)
-    connections += slug -> connection
-    connection
-  }
+  override def apply(slug: String)(implicit actorSystem: ActorSystem) = new EditorConnection(slug, actorSystem)
 
   def killEditor(slug: String) = {
     val connectionOption = connections.get(slug)
@@ -97,6 +87,5 @@ object EditorConnection {
       connections -= slug
     }
   }
-
 }
 

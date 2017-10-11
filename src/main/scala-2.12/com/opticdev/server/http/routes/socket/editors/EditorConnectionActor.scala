@@ -1,7 +1,8 @@
-package com.opticdev.server.http.routes.socket
+package com.opticdev.server.http.routes.socket.editors
 
 import akka.actor.{Actor, ActorRef, Status}
-import com.opticdev.server.http.routes.socket.Protocol._
+import com.opticdev.server.http.routes.socket.{ErrorResponse, Success}
+import com.opticdev.server.http.routes.socket.editors.Protocol._
 
 class EditorConnectionActor(slug: String) extends Actor {
 
@@ -20,11 +21,11 @@ class EditorConnectionActor(slug: String) extends Actor {
     }
 
     case Context(file, start, end) => {
-      connection ! Protocol.Success()
+      connection ! Success()
     }
 
     case Search(query) => {
-      connection ! Protocol.Success()
+      connection ! Success()
     }
 
     case event: UpdateOpticEvent => {
@@ -35,7 +36,7 @@ class EditorConnectionActor(slug: String) extends Actor {
       this.name = name
       this.version = version
 
-      connection ! Protocol.Success()
+      connection ! Success()
     }
 
     case GetMetaInformation() => {
@@ -43,7 +44,7 @@ class EditorConnectionActor(slug: String) extends Actor {
     }
 
     case UnknownEvent(raw) => {
-      connection ! Protocol.ErrorResponse("Invalid Request")
+      connection ! ErrorResponse("Invalid Request")
     }
 
   }

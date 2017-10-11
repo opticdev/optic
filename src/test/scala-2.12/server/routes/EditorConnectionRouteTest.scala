@@ -1,24 +1,25 @@
 package server.routes
 
+import Fixture.SocketTestFixture
 import akka.http.scaladsl.testkit.{ScalatestRouteTest, WSProbe}
-import com.opticdev.server.http.routes.EditorConnectionRoute
-import com.opticdev.server.http.routes.socket.EditorConnection
-import com.opticdev.server.http.routes.socket.Protocol.{FileUpdate, RangeUpdate}
+import com.opticdev.server.http.routes.socket.SocketRoute
+import com.opticdev.server.http.routes.socket.editors.Protocol._
+import com.opticdev.server.http.routes.socket.editors.EditorConnection
 import com.opticdev.server.http.state.StateManager
 import org.scalatest.{FunSpec, Matchers}
 import play.api.libs.json.{JsNumber, JsObject, JsString}
 
-class EditorConnectionRouteTest extends FunSpec with Matchers with ScalatestRouteTest {
+class EditorConnectionRouteTest extends SocketTestFixture {
 
-  describe("The socket system") {
+  describe("Edtitor Connection Socket system") {
 
     implicit val stateManager = new StateManager(Set())
 
     val wsClient = WSProbe()
 
-    val editorConnectionRoute = new EditorConnectionRoute()
+    val editorConnectionRoute = new SocketRoute()
 
-    WS("/socket/sublime", wsClient.flow) ~> editorConnectionRoute.route ~>
+    WS("/socket/editor/sublime", wsClient.flow) ~> editorConnectionRoute.route ~>
       check {
 
         it("Connects properly") {
