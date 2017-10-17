@@ -28,6 +28,17 @@ trait GearUtils {
     result.get
   }
 
+  def gearsFromDescription(path: String) : Seq[Gear] = {
+    val jsonString = Source.fromFile(path).getLines.mkString
+    val descriptions = SdkDescription.fromJson(Json.parse(jsonString))
+
+    descriptions.lenses.map(i=> {
+      val worker = new CompileWorker(i)
+      val compileResult = worker.compile()(descriptions.schemas, descriptions.lenses, ListBuffer())
+      compileResult.get
+    })
+  }
+
   def sourceGearFromDescription(path: String) : SourceGear = {
 
     val jsonString = Source.fromFile(path).getLines.mkString
