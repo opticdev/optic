@@ -17,12 +17,12 @@ class SdkFinderTest extends FunSpec {
         describe("works when valid") {
 
           it("entire") {
-            val validExample = """{
-                                  "type": "string",
-                                  "rule": "entire",
-                                  "string": "definedAs",
-                                  "occurrence": 0
-                                  }"""
+            val validExample = """"{
+ |                                  "type": "string",
+ |                                  "rule": "entire",
+ |                                  "string": "definedAs",
+ |                                  "occurrence": 0
+ |                                  }"""
 
             val parsed = Finder.fromJson(Json.parse(validExample))
             assert(parsed.isInstanceOf[StringFinder])

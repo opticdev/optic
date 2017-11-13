@@ -8,6 +8,11 @@ object Dependencies {
     "com.opticdev" %% "marvin-runtime" % "1.0.0",
     "com.opticdev" %% "common" % "1.0.0",
 
+    //client http
+    "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
+    "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
+    "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
+
     //graph
     "org.scala-graph" %% "graph-core" % "1.12.0",
 
@@ -42,6 +47,9 @@ object Dependencies {
 
     //for concurrency
     "com.typesafe.akka" %% "akka-actor" % "2.5.4",
-    "com.typesafe.akka" %% "akka-stream" % "2.5.4")
+    "com.typesafe.akka" %% "akka-stream" % "2.5.4",
 
+    //logging
+    "org.slf4j" % "slf4j-simple" % "1.7.25" % "test"
+  )
 }
