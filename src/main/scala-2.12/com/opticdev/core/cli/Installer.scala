@@ -7,7 +7,7 @@ import com.opticdev.core.compiler.Compiler
 import com.opticdev.core.sdk.SdkDescription
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.core.storage.stores.{ParserStorage, SchemaStorage}
+import com.opticdev.core.storage.stores.{ParserStorage}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import play.api.libs.json.Json
 
@@ -38,7 +38,7 @@ object Installer extends {
       }
 
       //write to disk
-      output.schemas.foreach(SchemaStorage.writeToStorage)
+//      output.schemas.foreach(SchemaStorage.writeToStorage)
 
     } else {
       throw asDescription.failed.get

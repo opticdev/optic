@@ -1,10 +1,9 @@
-package opm.Fixture
+package opm
 
 import com.opticdev.opm.{BatchPackageResult, OpticPackage, PackageRef, Provider}
-import play.api.libs.json.{JsObject, JsString}
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 class TestProvider extends Provider {
 

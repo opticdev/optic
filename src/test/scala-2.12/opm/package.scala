@@ -1,9 +1,7 @@
-package opm
-
 import com.opticdev.opm.OpticPackage
 import play.api.libs.json.{JsObject, JsString}
 
-package object Fixture {
+package object opm {
 
 
   def mockPackage(name: String, author: String, version: String, dependencies: Seq[(String, String)]) = {

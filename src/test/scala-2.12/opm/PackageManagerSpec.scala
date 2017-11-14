@@ -1,7 +1,6 @@
 package opm
 
 import com.opticdev.opm.{PackageManager, PackageRef}
-import opm.Fixture.TestProvider
 import org.scalatest.FunSpec
 
 import scala.concurrent.Await
@@ -24,6 +23,7 @@ class PackageManagerSpec extends FunSpec {
       it("a single package") {
         assert(PackageManager.installPackage(PackageRef("optic:a", "1.1.1")).isDefined)
       }
+
 
 
 

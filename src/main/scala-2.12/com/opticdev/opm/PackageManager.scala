@@ -54,7 +54,9 @@ object PackageManager {
       }
     }
 
-    null
+    import com.opticdev.opm.utils.FlattenBatchResultsImplicits._
+
+    lookupResults.flattenResults
   }
 
 

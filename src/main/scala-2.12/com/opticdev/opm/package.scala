@@ -11,15 +11,11 @@ package object opm {
 
   val ws = StandaloneAhcWSClient()(ActorMaterializer())
 
-  case class PackageRef(packageId: String, version: String = "latest")
+  case class PackageRef(packageId: String, version: String = "latest") {
+    def author = packageId.split(":").head
+    def name = packageId.split(":").last
 
-  case class SemanticVersion(major: Int, minor: Int, patch: Int) {
-    override def toString = Seq(major, minor, patch).mkString(".")
-    def compareToString(version: String) = toString == version
   }
-
-
-  case class OpticPackageEntry(packageId: String, versions: Vector[SemanticVersion] )
 
   trait Provider {
     def resolvePackage(packageRef: PackageRef) : Future[Option[OpticPackage]]

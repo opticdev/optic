@@ -8,6 +8,10 @@ object Dependencies {
     "com.opticdev" %% "marvin-runtime" % "1.0.0",
     "com.opticdev" %% "common" % "1.0.0",
 
+    //package manager
+    "com.vdurmont" % "semver4j" % "2.1.0",
+
+
     //client http
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",

@@ -1,7 +1,7 @@
 package opm.utils
 
 import com.opticdev.opm.{BatchPackageResult, OpticPackage, PackageRef}
-import opm.Fixture.TestProvider
+import opm.TestProvider
 import org.scalatest.FunSpec
 
 class FlattenBatchResultsSpec extends FunSpec {
