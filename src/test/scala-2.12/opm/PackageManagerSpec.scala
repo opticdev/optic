@@ -68,9 +68,6 @@ class PackageManagerSpec extends FunSpec with BeforeAndAfter {
 
     }
 
-
-
-
   }
 
 }

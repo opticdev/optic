@@ -57,8 +57,6 @@ object PackageManager {
     foundPackages.map(_.packageRef.full).toVector.sorted
   }
 
-
-
   //provider query
   def resultsForRefs(packageRefs: PackageRef*) : BatchPackageResult= {
     val lookupResults = providerStore.foldLeft(Seq(): Seq[BatchPackageResult]) {
