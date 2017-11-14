@@ -14,11 +14,10 @@ package object opm {
   case class PackageRef(packageId: String, version: String = "latest") {
     def author = packageId.split(":").head
     def name = packageId.split(":").last
-
+    def full = packageId+"@"+version
   }
 
   trait Provider {
-    def resolvePackage(packageRef: PackageRef) : Future[Option[OpticPackage]]
     def resolvePackages(packageRef: PackageRef*) : Future[BatchPackageResult]
     def listInstalledPackages : Vector[OpticPackage]
   }

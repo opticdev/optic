@@ -61,6 +61,11 @@ class PackageStorageSpec extends FunSpec {
 
     }
 
+    it("will not throw when overwriting files") {
+      PackageStorage.writeToStorage(t.a)
+      PackageStorage.writeToStorage(t.a)
+    }
+
   }
 
 }
