@@ -46,6 +46,29 @@ object PackageStorage {
 
   }
 
+  def installedPackages: Vector[String] = {
+    val authors = DataDirectory.packages.list.filter(i=> !i.isHidden && i.isDirectory)
+
+    authors.flatMap(i=> {
+      val authorName = i.name
+      val packages = i.list.filter(i=> !i.isHidden && i.isDirectory)
+
+      packages.flatMap(p=> {
+
+        val packageName = p.name
+
+        p.list.filter(i=> !i.isHidden && i.isRegularFile && Try(new Semver(i.name, SemverType.NPM)).isSuccess)
+          .map(ver=> authorName+":"+packageName+"@"+ver.name)
+
+      })
+
+    }).toVector.sorted
+  }
+
+  def clearLocalPackages = {
+    DataDirectory.packages.list.foreach(_.delete(true))
+  }
+
   def findVersion(files: Vector[File], version: String) : Option[(Semver, File)]= {
     val versionFileTuples = files.map(file=> {
       val semVer = Try(new Semver(file.name, SemverType.NPM))
@@ -56,7 +79,7 @@ object PackageStorage {
         .asInstanceOf[Vector[(Semver, File)]]
 
     val matchingVersionsSorted = versionFileTuples.filter(pair=> {
-      pair._1.satisfies(version)
+      pair._1.satisfies(version) || version == "latest"
     }).sortWith((a, b)=> {
       //get highest satisfying version
       a._1.isGreaterThan(b._1)

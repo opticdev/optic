@@ -12,7 +12,7 @@ object PackageManager {
     val firstResultOption = firstResultForRef(packageRef)
 
     if (firstResultOption.isDefined) {
-
+      PackageStorage.writeToStorage(firstResultOption.get)
     }
 
     firstResultOption

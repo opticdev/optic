@@ -2,7 +2,7 @@ package opm
 
 import better.files.File
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.opm.{PackageRef, PackageStorage}
+import com.opticdev.opm.{OpticPackage, PackageRef, PackageStorage}
 import org.scalatest.FunSpec
 
 
@@ -43,12 +43,22 @@ class PackageStorageSpec extends FunSpec {
       )
 
       assert(versionOption.get._1.toString == "1.0.3")
-
     }
 
     it("will fail if version doesn't exist") {
       val loadedTry = PackageStorage.loadFromStorage(PackageRef("optic:test", "1.2.2"))
       assert(loadedTry.isFailure)
+    }
+
+    it("will list all installed items") {
+      PackageStorage.clearLocalPackages
+      PackageStorage.writeToStorage(t.a)
+      PackageStorage.writeToStorage(t.b)
+      PackageStorage.writeToStorage(t.c)
+
+      assert(PackageStorage.installedPackages ==
+        Vector("optic:a@1.1.1", "optic:b@1.0.0", "optic:c@3.5.2"))
+
     }
 
   }
