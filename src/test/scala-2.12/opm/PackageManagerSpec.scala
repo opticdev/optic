@@ -11,8 +11,8 @@ class PackageManagerSpec extends FunSpec with BeforeAndAfter {
 
   describe("Package Manager") {
 
-    val testProvider = new TestProvider()
-    PackageManager.setProviders(testProvider)
+    val t = new TestProvider()
+    PackageManager.setProviders(t)
 
     before {
       PackageStorage.clearLocalPackages
@@ -65,6 +65,31 @@ class PackageManagerSpec extends FunSpec with BeforeAndAfter {
             "optic:d@2.0.0",
             "optic:e@2.0.0"))
       }
+
+    }
+
+    describe("collect packages") {
+
+      it("works when all are valid") {
+        val collectTry = PackageManager.collectPackages(
+          PackageRef("optic:a", "1.1.1"),
+          PackageRef("optic:b", "1.1.1"))
+
+        assert(collectTry.get.toSet == Set(t.a, t.b1))
+
+      }
+
+      it("fails if any can not be resolved") {
+        val collectTry = PackageManager.collectPackages(
+          PackageRef("optic:b", "1.1.1"),
+          PackageRef("optic:abc", "1.1.1")
+        )
+
+        println(collectTry)
+        assert(collectTry.isFailure)
+
+      }
+
 
     }
 

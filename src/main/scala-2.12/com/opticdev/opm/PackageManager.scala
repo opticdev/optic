@@ -57,6 +57,30 @@ object PackageManager {
     foundPackages.map(_.packageRef.full).toVector.sorted
   }
 
+  def collectPackages(packages: PackageRef*) : Try[Vector[OpticPackage]] = Try {
+    var loaded = packages.map(p=> (p, PackageStorage.loadFromStorage(p)))
+
+    val tryInstall = {
+      if (loaded.exists(_._2.isFailure)) {
+        val failed = loaded.filter(_._2.isFailure).map(_._1)
+        val tryInstall = installPackages(failed: _*)
+        loaded = packages.map(p=> (p, PackageStorage.loadFromStorage(p)))
+        tryInstall
+      } else Try(Vector())
+    }
+
+    if (tryInstall.isSuccess) {
+      if (loaded.exists(_._2.isFailure)) {
+        throw new Error("Could not resolve packages "+ loaded.filter(_._2.isFailure).map(_._1.full).mkString(", ") )
+      } else {
+        loaded.map(_._2.get).toVector
+      }
+    } else {
+      throw tryInstall.failed.get
+    }
+
+  }
+
   //provider query
   def resultsForRefs(packageRefs: PackageRef*) : BatchPackageResult= {
     val lookupResults = providerStore.foldLeft(Seq(): Seq[BatchPackageResult]) {
