@@ -2,15 +2,25 @@ import sbt._
 import Keys._
 
 object Dependencies {
+
+  val sharedDependencies : Seq[ModuleID] = Seq(
+    //tests
+    "org.scalactic" %% "scalactic" % "3.0.1",
+    "org.scalatest" %% "scalatest" % "3.0.1" % "test",
+
+    //file library
+    "com.github.pathikrit" % "better-files_2.12" % "2.17.1",
+    "com.github.pathikrit" %% "better-files-akka" % "2.17.1",
+
+    //logging
+    "org.slf4j" % "slf4j-simple" % "1.7.25" % "test"
+  )
+
   val mainDependencies : Seq[ModuleID] = Seq(
     //optic
     "com.opticdev" %% "parser-foundation" % "1.0.0",
     "com.opticdev" %% "marvin-runtime" % "1.0.0",
     "com.opticdev" %% "common" % "1.0.0",
-
-    //package manager
-    "com.vdurmont" % "semver4j" % "2.1.0",
-
 
     //client http
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
@@ -51,9 +61,23 @@ object Dependencies {
 
     //for concurrency
     "com.typesafe.akka" %% "akka-actor" % "2.5.4",
-    "com.typesafe.akka" %% "akka-stream" % "2.5.4",
+    "com.typesafe.akka" %% "akka-stream" % "2.5.4"
 
-    //logging
-    "org.slf4j" % "slf4j-simple" % "1.7.25" % "test"
+  )
+
+  val coreDependencies : Seq[ModuleID] = sharedDependencies ++ mainDependencies
+
+  val sourcegearDependencies : Seq[ModuleID] = sharedDependencies ++ mainDependencies
+
+  val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
+    "com.vdurmont" % "semver4j" % "2.1.0",
+    "com.opticdev" %% "common" % "1.0.0",
+    "com.typesafe.play" %% "play-json" % "2.6.2",
+    "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
+    "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
+    "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2"
   )
 }
+
+
+

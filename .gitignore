@@ -1,4 +1,11 @@
 .idea/
 target/
 project/target/
-src/test/resources/tmp
+
+
+common/target/
+opm/target/
+server/target/
+core/target/
+
+test-examples/resources/tmp/
