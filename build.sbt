@@ -12,15 +12,16 @@ lazy val common = project.
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.commonDependencies)
 
-lazy val core = project.
- settings(Common.settings: _*)
- .settings(libraryDependencies ++= Dependencies.coreDependencies)
- .dependsOn(common)
-
 lazy val opm = project.
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.opmDependencies)
  .dependsOn(common)
+
+lazy val core = project.
+  settings(Common.settings: _*)
+  .settings(libraryDependencies ++= Dependencies.coreDependencies)
+  .dependsOn(common)
+  .dependsOn(opm)
 
 lazy val server = project.
  settings(Common.settings: _*)

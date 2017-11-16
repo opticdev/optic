@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.project
 
 import better.files.File
+import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.InvalidProjectFileException
 import com.opticdev.core.sourcegear.project.config.ProjectFile
@@ -28,6 +29,9 @@ class ProjectFileSpec extends TestBase {
 
 
     def fixture = new {
+      val defined4 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project4.optic"))
+      val defined3 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project3.optic"))
+      val defined2 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project2.optic"))
       val defined = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.optic"))
       val empty = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/empty.optic"))
     }
@@ -79,7 +83,7 @@ class ProjectFileSpec extends TestBase {
         val f = fixture
         f.defined.interface.name.set(YamlString("new name"))
         it("as yaml") {
-          assert(f.defined.yamlValue.prettyPrint == "name: new name\nparsers:\n- JavaScript\nknowledge:\n- js.express\nignored_files:\n- node_modules/\n")
+          assert(f.defined.yamlValue.prettyPrint == "name: new name\nparsers:\n- JavaScript\nknowledge:\n- js:express\nignored_files:\n- node_modules/\n")
         }
 
         it("to a file") {
@@ -109,6 +113,30 @@ class ProjectFileSpec extends TestBase {
         f.defined.reload
         assert(f.defined.file.exists)
         assert(f.defined.interface.name.yamlValue == YamlString(target))
+      }
+
+    }
+
+    describe("dependencies") {
+      resetScratch
+      val f = fixture
+      it("can be extracted") {
+        val dependencies = f.defined2.dependencies
+        assert(dependencies.get ==
+          Vector(
+            PackageRef("optic:express-js", "0.1.0"),
+            PackageRef("optic:react-js", "1.0.0"),
+            PackageRef("optic:rest", "latest")))
+      }
+
+      it("will fail if contains duplicates") {
+        val dependencies = f.defined3.dependencies
+        assert(dependencies.failed.get.getLocalizedMessage == "Some packages are defined multiple times: [optic:rest]")
+      }
+
+      it("will fail if any packages are not valid ") {
+        val dependencies = f.defined4.dependencies
+        assert(dependencies.failed.get.getLocalizedMessage == "Some packages are not valid: [optic:react-js@@@1.0.0]")
       }
 
     }

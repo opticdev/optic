@@ -3,6 +3,7 @@ package com.opticdev
 import java.net.URL
 
 import akka.stream.ActorMaterializer
+import com.opticdev.common.PackageRef
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 import scala.concurrent.Future
@@ -10,12 +11,6 @@ import scala.concurrent.Future
 package object opm {
 
 //  val ws = StandaloneAhcWSClient()(ActorMaterializer())
-
-  case class PackageRef(packageId: String, version: String = "latest") {
-    def author = packageId.split(":").head
-    def name = packageId.split(":").last
-    def full = packageId+"@"+version
-  }
 
   trait Provider {
     def resolvePackages(packageRef: PackageRef*) : Future[BatchPackageResult]

@@ -3,6 +3,7 @@ package com.opticdev.opm
 import java.io.FileNotFoundException
 
 import better.files.File
+import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType

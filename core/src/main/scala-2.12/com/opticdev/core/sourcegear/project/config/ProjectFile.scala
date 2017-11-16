@@ -3,6 +3,7 @@ package com.opticdev.core.sourcegear.project.config
 import java.nio.file.NoSuchFileException
 
 import better.files.File
+import com.opticdev.common.PackageRef
 import com.opticdev.core.sourcegear.InvalidProjectFileException
 import com.opticdev.parsers.utils.Crypto
 import org.yaml.snakeyaml.parser.ParserException
@@ -70,5 +71,30 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true) extends
   }
 
   def save = file.createIfNotExists(asDirectory = false).write(yamlValue.prettyPrint)
+
+  def dependencies = Try[Vector[PackageRef]] {
+    val dependencies = interface.knowledge.value.map(i=> (PackageRef.fromString(i.value), i))
+
+    val allValid = dependencies.forall(_._1.isSuccess)
+
+    if (allValid) {
+
+      val unwrappedDependencies = dependencies.map(i=> (i._1.get, i._2.value))
+
+      //guaranteed success
+      val groupedByPackageId = unwrappedDependencies.groupBy(_._1.packageId)
+      val duplicates = groupedByPackageId.filter(_._2.size > 1)
+
+      if (duplicates.nonEmpty) {
+        throw new Error("Some packages are defined multiple times: ["+ duplicates.keys.mkString(", ")+"]")
+      }
+
+      unwrappedDependencies.map(_._1).toVector.sortBy(_.full)
+
+    } else {
+      throw new Error("Some packages are not valid: ["+dependencies.filter(_._1.isFailure).map(_._2.value).mkString(", ")+"]")
+    }
+
+  }
 
 }

@@ -1,5 +1,6 @@
 package com.opticdev.opm
 
+import com.opticdev.common.PackageRef
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 

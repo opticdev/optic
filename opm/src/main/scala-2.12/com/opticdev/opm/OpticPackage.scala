@@ -1,5 +1,6 @@
 package com.opticdev.opm
 
+import com.opticdev.common.PackageRef
 import play.api.libs.json.{JsObject, JsString}
 
 case class OpticPackage(packageId: String, contents: JsObject) {

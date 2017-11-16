@@ -65,12 +65,10 @@ class Project(val name: String, val baseDirectory: File, implicit var sourceGear
     Await.result(future, timeout.duration).asInstanceOf[ProjectGraphWrapper].projectGraph
   }
 
-////
-//  def stopWatching = {
-//    watcher ! stop(EventType.ENTRY_CREATE, callback)
-//    watcher ! PoisonPill
-//  }
 
+  def stopWatching = {
+    actorSystem.stop(watcher)
+  }
 
   private var watchedFilesStore : Set[File] = updateWatchedFiles
   def watchedFiles = watchedFilesStore

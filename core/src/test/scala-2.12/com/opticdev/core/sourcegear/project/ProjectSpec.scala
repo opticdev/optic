@@ -8,15 +8,15 @@ import com.opticdev.core.sourcegear.actors.{FileCreated, FileDeleted, FileUpdate
 import com.opticdev.sourcegear.actors._
 import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
+import scala.concurrent.duration._
 
-
-class ProjectTest extends AkkaTestFixture("ProjectTest") with GearUtils {
+class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils {
 
   override def beforeAll {
     resetScratch
   }
 
-  describe("Project test") {
+  describe("Projects") {
 
     val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
@@ -57,18 +57,18 @@ class ProjectTest extends AkkaTestFixture("ProjectTest") with GearUtils {
       fileWatchTest
 
       //@todo get these tests working again
-      //
-      //      it("can stop watching files") {
-      ////        Thread.sleep(1000)
-      ////        project.stopWatching
-      //        File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/otherFile.js").createIfNotExists(false)
-      //        expectNoMsg(2 seconds)
-      //      }
-      //
-      //      describe("can start watching files again") {
-      //        project.watch
-      //        fileWatchTest
-      //      }
+
+//            it("can stop watching files") {
+//              project.stopWatching
+//              Thread.sleep(2000)
+//              File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/otherFile.js").createIfNotExists(false)
+//              expectNoMsg(2 seconds)
+//            }
+//
+//            describe("can start watching files again") {
+//              project.watch
+//              fileWatchTest
+//            }
 
     }
 

@@ -1,6 +1,7 @@
 package com.opticdev.opm
 import java.net.URL
 
+import com.opticdev.common.PackageRef
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.concurrent.Future
