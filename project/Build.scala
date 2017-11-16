@@ -4,5 +4,5 @@
  object MyBuild extends Build {
    import Dependencies._
 
-   val NamePrefix = "marvin-"
+   val NamePrefix = ""
  }

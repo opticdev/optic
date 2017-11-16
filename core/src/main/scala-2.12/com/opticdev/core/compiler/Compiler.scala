@@ -1,6 +1,5 @@
 package com.opticdev.core.compiler
 
-import com.opticdev.core.cli.output.InstallSessionMonitor
 import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.stages._
 import com.opticdev.core.sdk.SdkDescription
@@ -38,17 +37,17 @@ object Compiler {
     def compile()(implicit schemas: Vector[Schema], lenses: Vector[Lens], completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator, logToCli: Boolean = false): LensCompilerOutput = {
       implicit val lens = sourceLens
 
-      val cliLogger = new InstallSessionMonitor(lens.name)
+//      val cliLogger = new InstallSessionMonitor(lens.name)
 
-      if (logToCli) cliLogger.start
+//      if (logToCli) cliLogger.start
 
       //@todo reorder this / abstract. Looks very dirty.
 
-      if (logToCli) cliLogger.validateDescription
+//      if (logToCli) cliLogger.validateDescription
 
       val validationOutput = new ValidationStage().run
 
-      if (logToCli) cliLogger.parsingSnippets
+//      if (logToCli) cliLogger.parsingSnippets
 
       //Find the right parser and snippets into an AST Tree Graph
       val snippetBuilder = new SnippetStage(lens.snippet)
@@ -57,23 +56,23 @@ object Compiler {
       //snippet stage must succeed for anything else to happen.
       if (snippetOutput.isSuccess) {
 
-        if (logToCli) cliLogger.evaluatingFinders
+//        if (logToCli) cliLogger.evaluatingFinders
 
         val finderStage = new FinderStage(snippetOutput.get)
         val finderStageOutput = Try(finderStage.run)
 
         if (finderStageOutput.isSuccess) {
-          if (logToCli) cliLogger.writingParser
+//          if (logToCli) cliLogger.writingParser
           val parser = Try(new ParserFactoryStage(snippetOutput.get, finderStageOutput.get).run)
 
           if (parser.isSuccess) {
-            if (logToCli) cliLogger.writingGenerator
+//            if (logToCli) cliLogger.writingGenerator
             val generator = Try(new GeneratorFactoryStage(snippetOutput.get, parser.get.parseGear).run)
             if (generator.isSuccess) {
 
               val finalGear = Gear(lens.name, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], generator.get.generateGear)
 
-              if (logToCli) cliLogger.gearFinished
+//              if (logToCli) cliLogger.gearFinished
 
               return Success(sourceLens, finalGear)
 
