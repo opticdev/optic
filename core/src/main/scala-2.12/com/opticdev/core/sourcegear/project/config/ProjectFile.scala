@@ -53,6 +53,7 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
   def interface = interfaceStore
   def reload = {
     if (file.exists && Crypto.createSha1(file.contentAsString) != lastHash) {
+      //@todo send a message that the file is invalid. Right now it just uses the last valid parse.
       val parseTry = Try(interfaceForFile)
       if (parseTry.isSuccess) {
         interfaceStore = parseTry.get
