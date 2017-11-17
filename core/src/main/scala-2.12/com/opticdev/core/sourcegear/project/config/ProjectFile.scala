@@ -10,10 +10,16 @@ import org.yaml.snakeyaml.parser.ParserException
 
 import scala.util.Try
 
-class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true) extends PFInterface {
+class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChanged: (ProjectFile)=> Unit = (pf)=> {}) extends PFInterface {
   import net.jcazevedo.moultingyaml._
 
   private var interfaceStore : PFRootInterface = interfaceForFile
+
+  //create a blank one if it does not exist
+  if (createIfDoesNotExist && !file.exists) {
+    save
+  }
+
   private var lastHash : String = null
   private def interfaceForFile = {
     val (yaml, contents) = {
@@ -55,6 +61,8 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true) extends
       interfaceStore = interface
       save
     }
+
+    onChanged(this)
   }
 
 

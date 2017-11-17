@@ -22,25 +22,39 @@ import play.api.libs.json.{JsObject, JsString, JsValue}
 
 import scala.concurrent.Await
 
-class Project(val name: String, val baseDirectory: File, implicit var sourceGear: SourceGear = SourceGear.default)(implicit logToCli: Boolean = false, actorCluster: ActorCluster) {
+class Project(val name: String, val baseDirectory: File, initialSourceGear: SourceGear = SourceGear.default)(implicit logToCli: Boolean = false, actorCluster: ActorCluster) {
 
   import com.opticdev.core.sourcegear.actors._
   private var watcher: ActorRef = baseDirectory.newWatcher(recursive = true)
   val projectActor = actorCluster.newProjectActor
 
-  val projectFile = new ProjectFile(baseDirectory / "project.optic", createIfDoesNotExist = true)
+  def projectFileChanged(newPf: ProjectFile): Unit = {
+    println("The project file has changed")
+  }
+
+  val projectFile = new ProjectFile(baseDirectory / "optic.yaml", createIfDoesNotExist = true, onChanged = projectFileChanged)
+
+  private implicit var sourceGear = initialSourceGear
+  def projectSourcegear = sourceGear
 
   def watch = {
     watchedFiles.foreach(i=> projectActor ! FileCreated(i, this))
-    watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE)(callback)
+    watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE)(handleFileChange)
   }
 
-  private val callback : better.files.FileWatcher.Callback = {
+  val handleFileChange : better.files.FileWatcher.Callback = {
     case (EventType.ENTRY_CREATE, file) => {
       updateWatchedFiles
       if (watchedFiles.contains(file)) projectActor ! FileCreated(file, this)
     }
-    case (EventType.ENTRY_MODIFY, file) => if (watchedFiles.contains(file)) projectActor ! FileUpdated(file, this)
+    case (EventType.ENTRY_MODIFY, file) => {
+      println(file)
+      if (file === projectFile.file) {
+       projectFile.reload
+      } else {
+        if (watchedFiles.contains(file)) projectActor ! FileUpdated(file, this)
+      }
+    }
     case (EventType.ENTRY_DELETE, file) => {
       if (watchedFiles.contains(file)) projectActor ! FileDeleted(file, this)
       updateWatchedFiles

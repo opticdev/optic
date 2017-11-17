@@ -1,8 +1,9 @@
 package com.opticdev.opm
 
 import better.files.File
+import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.opm.{OpticPackage, PackageRef, PackageStorage}
+import com.opticdev.opm.{OpticPackage, PackageStorage}
 import org.scalatest.FunSpec
 
 

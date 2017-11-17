@@ -1,6 +1,7 @@
 package com.opticdev.opm
 
-import com.opticdev.opm.{BatchPackageResult, OpticPackage, PackageRef, Provider}
+import com.opticdev.common.PackageRef
+import com.opticdev.opm.{BatchPackageResult, OpticPackage, Provider}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import play.api.libs.json.{JsObject, JsString}

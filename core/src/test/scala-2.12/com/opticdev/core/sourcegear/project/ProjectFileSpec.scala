@@ -13,27 +13,27 @@ class ProjectFileSpec extends TestBase {
 
     describe("instantiates from a YAML file") {
       it("should work when valid") {
-        new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.optic"))
+        new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.yaml"))
       }
       it("should throw if the file does not exist") {
         assertThrows[InvalidProjectFileException] {
-          new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/notReal.optic"), false)
+          new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/notReal.yaml"), false)
         }
       }
       it("should throw when file is invalid YAML") {
         assertThrows[InvalidProjectFileException] {
-          new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/invalidFile.optic"), false)
+          new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/invalidFile.yaml"), false)
         }
       }
     }
 
 
     def fixture = new {
-      val defined4 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project4.optic"))
-      val defined3 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project3.optic"))
-      val defined2 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project2.optic"))
-      val defined = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.optic"))
-      val empty = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/empty.optic"))
+      val defined4 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project4.yaml"))
+      val defined3 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project3.yaml"))
+      val defined2 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project2.yaml"))
+      val defined = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.yaml"))
+      val empty = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/empty.yaml"))
     }
 
 

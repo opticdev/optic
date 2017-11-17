@@ -7,10 +7,16 @@ import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.actors.{FileCreated, FileDeleted, FileUpdated}
 import com.opticdev.sourcegear.actors._
 import com.opticdev.core.sourcegear.graph.ProjectGraph
+import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
+import org.scalatest.concurrent.Eventually
+import org.scalatest.time.{Millis, Seconds, Span}
+import java.nio.file.{Path, WatchEvent, StandardWatchEventKinds => EventType}
+
+
 import scala.concurrent.duration._
 
-class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils {
+class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eventually {
 
   override def beforeAll {
     resetScratch
@@ -70,6 +76,20 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils {
 //              fileWatchTest
 //            }
 
+    }
+
+    it("watches for changes specifically in the project file") {
+
+      var reached = false
+
+      val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)  {
+        override def projectFileChanged(pf: ProjectFile) : Unit = {
+          reached = true
+        }
+      }
+      project.handleFileChange((EventType.ENTRY_MODIFY, project.projectFile.file))
+
+      assert(reached)
     }
 
     it("can get the current graph") {

@@ -2,7 +2,7 @@ package com.opticdev.opm
 
 import java.net.URL
 
-import com.opticdev.opm.{OpticRegistryProvider, PackageRef}
+import com.opticdev.opm.OpticRegistryProvider
 import org.scalatest.{FlatSpec, FunSpec}
 
 import scala.concurrent.Await

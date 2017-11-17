@@ -17,7 +17,7 @@ case class SGContext(fileAccumulator: FileAccumulator,
 
 object SGContext {
   def forModelNode(modelNode: ModelNode)(implicit actorCluster: ActorCluster, project: Project) : Option[SGContext] = {
-    implicit val sourceGear = project.sourceGear
+    implicit val sourceGear = project.projectSourcegear
     val file = modelNode.fileNode.get.toFile
     ParseSupervisorSyncAccess.getContext(file)
   }

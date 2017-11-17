@@ -1,6 +1,7 @@
 package com.opticdev.opm.utils
 
-import com.opticdev.opm.{BatchPackageResult, OpticPackage, PackageRef, TestProvider}
+import com.opticdev.common.PackageRef
+import com.opticdev.opm.{BatchPackageResult, OpticPackage, TestProvider}
 import org.scalatest.FunSpec
 
 class FlattenBatchResultsSpec extends FunSpec {

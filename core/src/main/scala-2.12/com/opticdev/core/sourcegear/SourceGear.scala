@@ -29,7 +29,6 @@ abstract class SourceGear {
 
         //@todo clean this up and have the parser return in the parse result.
         val parser = parsers.find(_.languageName == parsed.language).get
-
         implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, parser, fileContents)
         gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
       } else {
