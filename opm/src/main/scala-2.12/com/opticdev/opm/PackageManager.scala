@@ -14,6 +14,8 @@ object PackageManager {
   def providers = providerStore
   def setProviders(newProviders: Provider*) = providerStore = newProviders
 
+//  def defaultProviders =
+
   def installPackage(packageRef: PackageRef): Try[Vector[String]] = {
     installPackages(packageRef)
   }
@@ -59,7 +61,10 @@ object PackageManager {
     foundPackages.map(_.packageRef.full).toVector.sorted
   }
 
-  def collectPackages(packages: PackageRef*) : Try[Vector[OpticPackage]] = Try {
+  def collectPackages(toLoad: Seq[PackageRef], alreadyResolved: collection.mutable.Set[PackageRef] = collection.mutable.Set()) : Try[Vector[OpticPackage]] = Try {
+
+    val packages = toLoad.filterNot(alreadyResolved.contains)
+
     var loaded = packages.map(p=> (p, PackageStorage.loadFromStorage(p)))
 
     val tryInstall = {
@@ -75,7 +80,21 @@ object PackageManager {
       if (loaded.exists(_._2.isFailure)) {
         throw new Error("Could not resolve packages "+ loaded.filter(_._2.isFailure).map(_._1.full).mkString(", ") )
       } else {
-        loaded.map(_._2.get).toVector
+        val packagesResolved = loaded.map(_._2.get).toVector
+        val dependencyRefs = packagesResolved.flatMap(_.dependencies)
+
+        //update already resolved so no duplicates are loaded
+        alreadyResolved ++= packages.toSet
+
+        val resolvedDependencies: Seq[OpticPackage] = {
+          if (dependencyRefs.nonEmpty) {
+            collectPackages(dependencyRefs, alreadyResolved).get
+          } else {
+            Vector()
+          }
+        }
+
+        packagesResolved ++ resolvedDependencies
       }
     } else {
       throw tryInstall.failed.get

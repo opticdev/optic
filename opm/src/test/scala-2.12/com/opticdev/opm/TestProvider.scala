@@ -1,10 +1,11 @@
 package com.opticdev.opm
 
+import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.{BatchPackageResult, OpticPackage, Provider}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
-import play.api.libs.json.{JsObject, JsString}
+import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -22,20 +23,26 @@ class TestProvider extends Provider {
     ))
   }
 
-  val a = mockPackage("a", "optic", "1.1.1", Seq("optic:b"-> "1.0.0"))
+  val a: OpticPackage = mockPackage("a", "optic", "1.1.1", Seq("optic:b"-> "1.0.0"))
 
-  val b = mockPackage("b", "optic", "1.0.0", Seq("optic:c"-> "3.5.2", "optic:d"-> "2.0.0"))
-  val b1 = mockPackage("b", "optic", "1.1.1", Seq("optic:c"-> "2.0.0"))
+  val b: OpticPackage = mockPackage("b", "optic", "1.0.0", Seq("optic:c"-> "3.5.2", "optic:d"-> "2.0.0"))
+  val b1: OpticPackage = mockPackage("b", "optic", "1.1.1", Seq("optic:c"-> "2.0.0"))
 
-  val c = mockPackage("c", "optic", "3.5.2", Seq("optic:d"-> "2.0.0"))
-  val c1 = mockPackage("c", "optic", "2.0.0", Seq())
+  val c: OpticPackage = mockPackage("c", "optic", "3.5.2", Seq("optic:d"-> "2.0.0"))
+  val c1: OpticPackage = mockPackage("c", "optic", "2.0.0", Seq())
 
-  val d = mockPackage("d", "optic", "2.0.0", Seq("optic:e"-> "2.0.0"))
+  val d: OpticPackage = mockPackage("d", "optic", "2.0.0", Seq("optic:e"-> "2.0.0"))
 
-  val e = mockPackage("e", "optic", "2.0.0", Seq("optic:c"-> "2.0.0"))
+  val e: OpticPackage = mockPackage("e", "optic", "2.0.0", Seq("optic:c"-> "2.0.0"))
 
 
-  val allPackages = Set(a, b, b1, c, c1, d, e)
+  val opticRest: OpticPackage = OpticPackage.fromJson(Json.parse(File(
+    "test-examples/resources/example_packages/express/optic:rest@0.1.0.json").contentAsString)).get
+
+  val opticExpress: OpticPackage = OpticPackage.fromJson(Json.parse(File(
+    "test-examples/resources/example_packages/express/optic:express-js@0.1.0.json").contentAsString)).get
+
+  val allPackages = Set(a, b, b1, c, c1, d, e, opticRest, opticExpress)
 
   override def listInstalledPackages: Vector[OpticPackage] = ???
 

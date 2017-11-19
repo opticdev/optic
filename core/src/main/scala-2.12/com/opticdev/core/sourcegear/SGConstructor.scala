@@ -14,8 +14,6 @@ object SGConstructor {
     if (resolvedTry.isSuccess) {
       val resolved = resolvedTry.get
 
-
-
     }
 
 

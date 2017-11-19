@@ -3,6 +3,8 @@ package com.opticdev.opm
 import com.opticdev.common.PackageRef
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
+import scala.util.Try
+
 case class OpticPackage(packageId: String, contents: JsObject) {
   val name: String = contents.value("name").as[JsString].value
   val author: String = contents.value("author").as[JsString].value
@@ -24,5 +26,14 @@ case class OpticPackage(packageId: String, contents: JsObject) {
     asJsObject.value.map(i=> {
       PackageRef(i._1, i._2.as[JsString].value)
     }).toVector
+  }
+}
+
+object OpticPackage {
+  def fromJson(value: JsValue) : Try[OpticPackage] = Try {
+    val jsObject = value.as[JsObject]
+    val name: String = jsObject.value("name").as[JsString].value
+    val author: String = jsObject.value("author").as[JsString].value
+    OpticPackage(author+":"+name, jsObject)
   }
 }

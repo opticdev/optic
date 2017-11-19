@@ -9,12 +9,9 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-class PackageManagerSpec extends FunSpec with BeforeAndAfter {
+class PackageManagerSpec extends FunSpec with BeforeAndAfter with TestPackageProviders {
 
   describe("Package Manager") {
-
-    val t = new TestProvider()
-    PackageManager.setProviders(t)
 
     before {
       PackageStorage.clearLocalPackages
@@ -73,18 +70,17 @@ class PackageManagerSpec extends FunSpec with BeforeAndAfter {
     describe("collect packages") {
 
       it("works when all are valid") {
-        val collectTry = PackageManager.collectPackages(
+        val collectTry = PackageManager.collectPackages(Seq(
           PackageRef("optic:a", "1.1.1"),
-          PackageRef("optic:b", "1.1.1"))
+          PackageRef("optic:b", "1.1.1")))
 
-        assert(collectTry.get.toSet == Set(t.a, t.b1))
-
+        assert(collectTry.get.toSet == Set(t.a, t.b, t.b1, t.c, t.c1, t.d, t.e))
       }
 
       it("fails if any can not be resolved") {
-        val collectTry = PackageManager.collectPackages(
+        val collectTry = PackageManager.collectPackages(Seq(
           PackageRef("optic:b", "1.1.1"),
-          PackageRef("optic:abc", "1.1.1")
+          PackageRef("optic:abc", "1.1.1"))
         )
 
         println(collectTry)
