@@ -26,6 +26,13 @@ object Dependencies {
     "org.scalatest" %% "scalatest" % "3.0.1" % "test"
   )
 
+  val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Seq(
+    "com.opticdev" %% "parser-foundation" % "1.0.0",
+    "com.typesafe.play" %% "play-json" % "2.6.2",
+    "com.github.fge" % "json-schema-validator" % "2.2.6",
+    "org.gnieh" %% "diffson-play-json" % "2.2.1"
+  )
+
   val serverDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "com.typesafe.akka" %% "akka-http" % "10.0.10",
     "com.typesafe.akka" %% "akka-http-testkit" % "10.0.10",

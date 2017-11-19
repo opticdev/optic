@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.accumulate
 
-import com.opticdev.core.sdk.descriptions.{SchemaComponent, SchemaId}
+import com.opticdev.sdk.descriptions.{SchemaComponent, SchemaId}
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelField}
 import com.opticdev.parsers.AstGraph
 import play.api.libs.json.{JsArray, JsObject}

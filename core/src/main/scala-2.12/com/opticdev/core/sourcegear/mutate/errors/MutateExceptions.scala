@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.mutate.errors
 
-import com.opticdev.core.sdk.descriptions.Component
+import com.opticdev.sdk.descriptions.Component
 
 trait MutateException extends Exception
 

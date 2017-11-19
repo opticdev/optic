@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.core.actorSystem
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaId
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.SourceParserManager

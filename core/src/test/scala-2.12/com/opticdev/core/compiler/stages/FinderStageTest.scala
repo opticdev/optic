@@ -3,10 +3,10 @@ package com.opticdev.core.compiler.stages
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.core.compiler.errors.InvalidComponents
-import com.opticdev.core.sdk.descriptions.{CodeComponent, Component, Lens, Snippet}
-import com.opticdev.core.sdk.descriptions.enums.ComponentEnums._
-import com.opticdev.core.sdk.descriptions.enums.FinderEnums.Entire
-import com.opticdev.core.sdk.descriptions.finders.StringFinder
+import com.opticdev.sdk.descriptions.{CodeComponent, Component, Lens, Snippet}
+import com.opticdev.sdk.descriptions.enums.ComponentEnums._
+import com.opticdev.sdk.descriptions.enums.FinderEnums.Entire
+import com.opticdev.sdk.descriptions.finders.StringFinder
 
 import scala.util.{Failure, Try}
 

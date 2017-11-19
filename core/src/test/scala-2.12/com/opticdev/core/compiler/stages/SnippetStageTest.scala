@@ -4,7 +4,7 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.core.compiler.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
 import org.scalatest.{FunSpec, PrivateMethodTester}
-import com.opticdev.core.sdk.descriptions.{Lens, Snippet}
+import com.opticdev.sdk.descriptions.{Lens, Snippet}
 import com.opticdev.parsers.SourceParserManager
 
 import scala.util.Try

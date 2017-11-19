@@ -2,12 +2,13 @@ package com.opticdev.core.sourcegear.helpers
 import com.opticdev.core.actorSystem
 import better.files.File
 import com.opticdev.core.Fixture.TestBase
+import com.opticdev.core.compiler.helpers.FinderEvaluator
 import com.opticdev.core.compiler.stages.SnippetStage
-import com.opticdev.core.sdk.descriptions.enums.FinderEnums
-import com.opticdev.core.sdk.descriptions.enums.LocationEnums.{Anywhere, _}
-import com.opticdev.core.sdk.descriptions.finders.StringFinder
-import com.opticdev.core.sdk.descriptions.helpers.AstLocation
-import com.opticdev.core.sdk.descriptions.{Lens, Location, Snippet}
+import com.opticdev.sdk.descriptions.enums.FinderEnums
+import com.opticdev.sdk.descriptions.enums.LocationEnums.{Anywhere, _}
+import com.opticdev.sdk.descriptions.finders.StringFinder
+import com.opticdev.sdk.descriptions.helpers.AstLocation
+import com.opticdev.sdk.descriptions.{Lens, Location, Snippet}
 import com.opticdev.core.sourcegear.gears.helpers.LocationEvaluation
 
 class LocationEvaluationTest extends TestBase {
@@ -24,18 +25,18 @@ class LocationEvaluationTest extends TestBase {
     val root = snippetOutput.rootNode
     implicit val astGraph = snippetOutput.astGraph
 
-    val hatfield1 = StringFinder(FinderEnums.Entire, "Hatfield1").evaluateFinder(snippetOutput)
-    val hatfield2 = StringFinder(FinderEnums.Entire, "Hatfield2").evaluateFinder(snippetOutput)
-    val williamHatfield = StringFinder(FinderEnums.Entire, "WilliamHatfield").evaluateFinder(snippetOutput)
+    val hatfield1 = FinderEvaluator.run(StringFinder(FinderEnums.Entire, "Hatfield1"), snippetOutput)
+    val hatfield2 = FinderEvaluator.run(StringFinder(FinderEnums.Entire, "Hatfield2"), snippetOutput)
+    val williamHatfield = FinderEvaluator.run(StringFinder(FinderEnums.Entire, "WilliamHatfield"), snippetOutput)
 
-    val farm = StringFinder(FinderEnums.Starting, "function farm").evaluateFinder(snippetOutput)
+    val farm = FinderEvaluator.run(StringFinder(FinderEnums.Starting, "function farm"), snippetOutput)
 
-      val mcCoy1 = StringFinder(FinderEnums.Entire, "McCoy1").evaluateFinder(snippetOutput)
-      val mcCoy2 = StringFinder(FinderEnums.Entire, "McCoy2").evaluateFinder(snippetOutput)
+      val mcCoy1 = FinderEvaluator.run(StringFinder(FinderEnums.Entire, "McCoy1"), snippetOutput)
+      val mcCoy2 = FinderEvaluator.run(StringFinder(FinderEnums.Entire, "McCoy2"), snippetOutput)
 
-      val shed = StringFinder(FinderEnums.Starting, "function shed").evaluateFinder(snippetOutput)
+      val shed = FinderEvaluator.run(StringFinder(FinderEnums.Starting, "function shed"), snippetOutput)
 
-        val moonshine = StringFinder(FinderEnums.Entire, "Moonshine").evaluateFinder(snippetOutput)
+        val moonshine = FinderEvaluator.run(StringFinder(FinderEnums.Entire, "Moonshine"), snippetOutput)
 
     it("Works for Anywhere") {
       assert(LocationEvaluation.matches(Location(Anywhere), shed, root))

@@ -2,7 +2,7 @@ package com.opticdev.core.storage.stores
 
 import better.files.File
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.core.sdk.descriptions.Schema
+import com.opticdev.sdk.descriptions.Schema
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 

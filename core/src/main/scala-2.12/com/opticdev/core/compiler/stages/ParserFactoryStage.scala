@@ -1,9 +1,9 @@
 package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.compiler.errors.AstPathNotFound
+import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.{FinderStageOutput, ParserFactoryOutput, SnippetStageOutput}
-import com.opticdev.core.sdk.descriptions.Lens
-import com.opticdev.core.sdk.descriptions.finders.FinderPath
+import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.core.sourcegear.accumulate.MapSchemaListener
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel}
@@ -21,7 +21,7 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
   implicit val snippetStageOutput = snippetStage
   override def run: ParserFactoryOutput = {
 
-    import com.opticdev.core.sdk.descriptions.helpers.ComponentImplicits._
+    import com.opticdev.sdk.descriptions.helpers.ComponentImplicits._
 
     implicit val graph = snippetStageOutput.astGraph
 
@@ -60,7 +60,7 @@ object ParserFactoryStage {
     val children = astPrimitiveNode.children(snippetStageOutput.astGraph)
       .map(i=> nodeToDescription(i._2, i._1.asInstanceOf[Child]))
 
-    import com.opticdev.core.sdk.PropertyValuesConversions._
+    import com.opticdev.sdk.PropertyValuesConversions._
 
     NodeDescription(
       astPrimitiveNode.nodeType,

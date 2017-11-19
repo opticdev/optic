@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.serialization
 
 import boopickle.Default._
-import com.opticdev.core.sdk.StringProperty
+import com.opticdev.sdk.StringProperty
 import com.opticdev.core.sourcegear.gears.parsing.NodeDescription
 import com.opticdev.parsers.graph.{AstType, Child}
 import org.scalatest.FunSpec

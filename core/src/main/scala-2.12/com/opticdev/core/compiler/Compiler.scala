@@ -2,10 +2,10 @@ package com.opticdev.core.compiler
 
 import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.stages._
-import com.opticdev.core.sdk.SdkDescription
-import com.opticdev.core.sdk.descriptions.{Lens, Schema}
 import com.opticdev.core.sourcegear.Gear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
+import com.opticdev.sdk.SdkDescription
+import com.opticdev.sdk.descriptions.{Lens, Schema}
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Try

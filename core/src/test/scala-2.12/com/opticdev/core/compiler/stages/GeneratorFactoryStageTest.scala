@@ -5,10 +5,10 @@ import com.opticdev.core.actorSystem
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import com.opticdev.core.compiler.stages.GeneratorFactoryStage
-import com.opticdev.core.sdk.descriptions.{CodeComponent, Lens}
-import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
-import com.opticdev.core.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
-import com.opticdev.core.sdk.descriptions.finders.StringFinder
+import com.opticdev.sdk.descriptions.{CodeComponent, Lens}
+import com.opticdev.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
+import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
+import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.core.sourcegear.SourceGear
 import play.api.libs.json.{JsObject, JsString}
 import com.opticdev.core.sourcegear.gears.RuleProvider

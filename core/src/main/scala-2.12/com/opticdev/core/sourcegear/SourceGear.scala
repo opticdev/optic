@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.core.sdk.descriptions.{Schema, SchemaId}
+import com.opticdev.sdk.descriptions.{Schema, SchemaId}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.opm.OpticPackage
 import com.opticdev.parsers.SourceParserManager

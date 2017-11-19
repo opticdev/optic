@@ -2,15 +2,16 @@ package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.compiler.{FinderStageOutput, SnippetStageOutput}
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, InvalidComponents}
-import com.opticdev.core.sdk.descriptions.Lens
-import com.opticdev.core.sdk.descriptions.finders.{Finder, FinderPath}
+import com.opticdev.core.compiler.helpers.{FinderEvaluator, FinderPath}
+import com.opticdev.sdk.descriptions.Lens
+import com.opticdev.sdk.descriptions.finders.Finder
 
 import scala.util.{Failure, Success, Try}
 
 class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Lens, errorAccumulator: ErrorAccumulator = new ErrorAccumulator) extends CompilerStage[FinderStageOutput] {
   override def run: FinderStageOutput = {
 
-    import com.opticdev.core.sdk.descriptions.helpers.ComponentImplicits._
+    import com.opticdev.sdk.descriptions.helpers.ComponentImplicits._
 
     implicit val evaluatedFinderPaths = scala.collection.mutable.Map[Finder, FinderPath]()
 
@@ -48,7 +49,7 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
     //no need to evaluate things more than once. Each finder has a distinct finderpath so this lookup is faster.
     if (evaluatedFinderPaths.get(finder).isDefined) return Success(evaluatedFinderPaths.get(finder).get)
 
-    val result = Try(finder.evaluateFinderPath(snippetStageOutput))
+    val result = Try(FinderEvaluator.finderPath(finder,snippetStageOutput))
 
     if (result.isSuccess) {
       evaluatedFinderPaths.put(finder, result.get)

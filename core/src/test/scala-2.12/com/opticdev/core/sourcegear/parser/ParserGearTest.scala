@@ -3,11 +3,11 @@ package com.opticdev.core.sourcegear.parser
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
-import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
-import com.opticdev.core.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import com.opticdev.core.sdk.descriptions.enums.RuleEnums.Any
-import com.opticdev.core.sdk.descriptions.finders.StringFinder
-import com.opticdev.core.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule}
+import com.opticdev.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
+import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
+import com.opticdev.sdk.descriptions.enums.RuleEnums.Any
+import com.opticdev.sdk.descriptions.finders.StringFinder
+import com.opticdev.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule}
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.{ParserBase, SourceParserManager}

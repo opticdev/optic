@@ -4,7 +4,7 @@ import com.opticdev.core.compiler.Compiler.CompileWorker
 import com.opticdev.core.compiler.Compiler
 import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
-import com.opticdev.core.sdk.SdkDescription
+import com.opticdev.sdk.SdkDescription
 import com.opticdev.core.sourcegear.{Gear, SourceGear}
 import com.opticdev.parsers.SourceParserManager
 

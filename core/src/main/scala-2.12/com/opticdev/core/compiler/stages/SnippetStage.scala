@@ -2,10 +2,10 @@ package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.compiler.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
-import com.opticdev.core.sdk.descriptions.{Lens, Snippet}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import com.opticdev.parsers.{AstGraph, ParserBase}
+import com.opticdev.sdk.descriptions.{Lens, Snippet}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

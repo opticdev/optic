@@ -1,7 +1,7 @@
 package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.compiler.{GeneratorFactoryOutput, SnippetStageOutput}
-import com.opticdev.core.sdk.descriptions.Lens
+import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 import com.opticdev.parsers.graph.AstPrimitiveNode

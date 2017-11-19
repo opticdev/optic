@@ -3,7 +3,7 @@ package com.opticdev.core.compiler.validation
 import com.opticdev.core.compiler.stages.SchemaValidation
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString, Json}
-import com.opticdev.core.sdk.descriptions.Schema
+import com.opticdev.sdk.descriptions.Schema
 
 class SchemaValidationTest extends FunSpec {
 

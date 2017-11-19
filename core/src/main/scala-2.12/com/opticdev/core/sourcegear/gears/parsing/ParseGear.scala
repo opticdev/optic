@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.gears.parsing
 
-import com.opticdev.core.sdk.PropertyValue
-import com.opticdev.core.sdk.descriptions._
+import com.opticdev.sdk.PropertyValue
+import com.opticdev.sdk.descriptions._
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.accumulate.Listener
 import com.opticdev.core.sourcegear.gears.RuleProvider

@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.gears.helpers
 
-import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
-import com.opticdev.core.sdk.descriptions.{CodeComponent, Component}
+import com.opticdev.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
+import com.opticdev.sdk.descriptions.{CodeComponent, Component}
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, NoMapping, NodeMapping}

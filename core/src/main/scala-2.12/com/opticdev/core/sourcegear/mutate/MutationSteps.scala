@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.mutate
 
-import com.opticdev.core.sdk.descriptions.CodeComponent
-import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
+import com.opticdev.sdk.descriptions.CodeComponent
+import com.opticdev.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, LinkedModelNode, NodeMapping, Path}
 import com.opticdev.core.sourcegear.mutate.errors.{AstMappingNotFound, ComponentNotFound}

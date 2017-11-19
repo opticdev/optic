@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.accumulate
 
-import com.opticdev.core.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaId
 import com.opticdev.parsers.AstGraph
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.GraphOperations

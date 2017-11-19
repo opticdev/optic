@@ -1,10 +1,10 @@
 package com.opticdev.core.sourcegear.gears
 
-import com.opticdev.core.sdk.PropertyValue
-import com.opticdev.core.sdk.descriptions.PropertyRule
 import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType, Child}
+import com.opticdev.sdk.PropertyValue
+import com.opticdev.sdk.descriptions.PropertyRule
 import play.api.libs.json.JsObject
 
 package object parsing {
@@ -22,7 +22,7 @@ package object parsing {
                              rules: Vector[RulesDesc]) {
 
     def propertiesMatch(node: AstPrimitiveNode, propertyRules: Vector[PropertyRule])(implicit graph: AstGraph, fileContents: String)  : Boolean = {
-      import com.opticdev.core.sdk.PropertyValuesConversions._
+      import com.opticdev.sdk.PropertyValuesConversions._
       val jsValue = node.properties
       if (!jsValue.isInstanceOf[JsObject]) return false
       val asMap = jsValue.as[JsObject].toScala

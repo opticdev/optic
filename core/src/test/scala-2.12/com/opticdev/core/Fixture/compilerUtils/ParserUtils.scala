@@ -2,7 +2,7 @@ package com.opticdev.core.Fixture.compilerUtils
 
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.compiler.stages.{FinderStage, ParserFactoryStage, SnippetStage}
-import com.opticdev.core.sdk.descriptions.{Component, Lens, Rule, Snippet}
+import com.opticdev.sdk.descriptions.{Component, Lens, Rule, Snippet}
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 
 trait ParserUtils {

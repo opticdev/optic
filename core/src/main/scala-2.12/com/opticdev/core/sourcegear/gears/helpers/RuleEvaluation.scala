@@ -4,7 +4,7 @@ import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, Child}
 import com.opticdev.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
-import com.opticdev.core.sdk.descriptions.{ChildrenRule, PropertyRule, RawRule}
+import com.opticdev.sdk.descriptions.{ChildrenRule, PropertyRule, RawRule}
 import com.opticdev.core.sourcegear.gears.parsing.{MatchResults, NodeDescription}
 
 import scalax.collection.edge.LkDiEdge
@@ -48,7 +48,7 @@ object RuleEvaluation {
         compareWith(astNodeWithType._1, astNodeWithType._2, nodeDesc, currentPath.append(nodeDesc.edge))
       }
 
-      import com.opticdev.core.sdk.descriptions.enums.RuleEnums._
+      import com.opticdev.sdk.descriptions.enums.RuleEnums._
       childrenRule.ruleType match {
         case Any => ChildrenVectorComparison.any
           [(AstPrimitiveNode, String), NodeDescription](childrenVecor, desc.children, equality)

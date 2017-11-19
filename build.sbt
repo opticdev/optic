@@ -12,6 +12,10 @@ lazy val common = project.
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.commonDependencies)
 
+lazy val sdk = project.
+  settings(Common.settings: _*)
+  .settings(libraryDependencies ++= Dependencies.sdkDependencies)
+
 lazy val opm = project.
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.opmDependencies)
@@ -21,6 +25,7 @@ lazy val core = project.
   settings(Common.settings: _*)
   .settings(libraryDependencies ++= Dependencies.coreDependencies)
   .dependsOn(common)
+  .dependsOn(sdk)
   .dependsOn(opm)
   .dependsOn(opm % "compile->compile;test->test")
 
@@ -32,7 +37,7 @@ lazy val server = project.
  .dependsOn(core % "compile->compile;test->test")
 
 lazy val root = (project in file(".")).
- aggregate(common, opm, server, core)
+ aggregate(common, sdk, opm, server, core)
 
 
 

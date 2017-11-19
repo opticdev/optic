@@ -1,14 +1,14 @@
 package com.opticdev.core.compiler
 
 import com.opticdev.core.compiler.errors.ErrorAccumulator
+import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.stages.MatchType
-import com.opticdev.core.sdk.descriptions._
-import com.opticdev.core.sdk.descriptions.finders.FinderPath
 import com.opticdev.core.sourcegear.Gear
 import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
+import com.opticdev.sdk.descriptions._
 
 import scala.util.Try
 import scalax.collection.edge.LkDiEdge

@@ -3,8 +3,8 @@ package com.opticdev.core.sourcegear.mutate
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.sdk.descriptions.CodeComponent
-import com.opticdev.core.sdk.descriptions.enums.ComponentEnums.Literal
+import com.opticdev.sdk.descriptions.CodeComponent
+import com.opticdev.sdk.descriptions.enums.ComponentEnums.Literal
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship

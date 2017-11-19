@@ -2,7 +2,7 @@ package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.compiler.ValidationStageOutput
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, SchemaNotFound}
-import com.opticdev.core.sdk.descriptions.{Lens, Schema}
+import com.opticdev.sdk.descriptions.{Lens, Schema}
 import play.api.libs.json.{JsArray, JsObject, JsString}
 
 

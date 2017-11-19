@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.graph.model
 
-import com.opticdev.core.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaId
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields

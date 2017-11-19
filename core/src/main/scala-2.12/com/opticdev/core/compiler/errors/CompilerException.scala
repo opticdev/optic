@@ -1,7 +1,10 @@
 package com.opticdev.core.compiler.errors
 
-import com.opticdev.core.sdk.descriptions.finders.{FinderPath, RangeFinder, StringFinder}
-import com.opticdev.core.sdk.descriptions.{CodeComponent, Lens, SchemaId}
+import com.opticdev.core.compiler.helpers.FinderPath
+import com.opticdev.sdk.descriptions.finders.{RangeFinder, StringFinder}
+import com.opticdev.sdk.descriptions.{CodeComponent, Lens, SchemaId}
+import com.opticdev.sdk.descriptions.finders.{RangeFinder, StringFinder}
+import com.opticdev.sdk.descriptions.{CodeComponent, Lens, SchemaId}
 
 import scala.util.control.NonFatal
 

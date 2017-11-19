@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.graph
 
 import better.files.File
 import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode, CustomEdge}
-import com.opticdev.core.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaId
 import com.opticdev.core.sourcegear.graph.edges.InFile
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.parsers.AstGraph

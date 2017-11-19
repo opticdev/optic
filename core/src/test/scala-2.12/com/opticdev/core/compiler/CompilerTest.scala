@@ -1,7 +1,7 @@
 package com.opticdev.core.compiler
 
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.core.sdk.SdkDescription
+import com.opticdev.sdk.SdkDescription
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
 import com.opticdev.core.compiler.Compiler
