@@ -4,7 +4,7 @@ import java.util.Scanner
 
 import com.opticdev.core.actorSystem
 import better.files.File
-import com.opticdev.core.sourcegear.{SGContext, SourceGear}
+import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.actors.{ActorCluster, CurrentGraph}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.SourceParserManager

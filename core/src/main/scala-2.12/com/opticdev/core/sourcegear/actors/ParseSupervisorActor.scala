@@ -5,7 +5,7 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props, Terminated}
 import akka.routing.{ActorRefRoutee, RoundRobinRoutingLogic, Router, SeveralRoutees}
 import akka.util.Timeout
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
-import com.opticdev.core.sourcegear._
+import com.opticdev.core.sourcegear.{SGContext, _}
 
 import concurrent.duration._
 import akka.pattern.ask

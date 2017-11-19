@@ -9,7 +9,7 @@ object SGConstructor {
 
   def fromProjectFile(projectFile: ProjectFile): Unit = {
     val dependencies = projectFile.dependencies.getOrElse(Vector())
-    val resolvedTry = PackageManager.collectPackages(dependencies:_*)
+    val resolvedTry = PackageManager.collectPackages(dependencies)
 
     if (resolvedTry.isSuccess) {
       val resolved = resolvedTry.get
