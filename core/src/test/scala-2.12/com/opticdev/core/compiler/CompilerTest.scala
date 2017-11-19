@@ -14,7 +14,7 @@ class CompilerTest extends TestBase {
   describe("Compiler") {
 
     val jsonString = Source.fromFile("test-examples/resources/sdkDescriptions/ImportExample.json").getLines.mkString
-    val description = SdkDescription.fromJson(Json.parse(jsonString))
+    val description = SdkDescription.fromJson(Json.parse(jsonString)).get
 
     describe("can be setup") {
 
@@ -42,7 +42,7 @@ class CompilerTest extends TestBase {
     describe("for complicated lenses") {
       it("works when valid") {
         val jsonString = Source.fromFile("test-examples/resources/sdkDescriptions/RequestSdkDescription.json").getLines.mkString
-        val description = SdkDescription.fromJson(Json.parse(jsonString))
+        val description = SdkDescription.fromJson(Json.parse(jsonString)).get
 
         val compiler = Compiler.setup(description)
         val finalOutput = compiler.execute

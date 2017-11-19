@@ -19,7 +19,7 @@ trait GearUtils {
 
   def gearFromDescription(path: String): Gear = {
     val jsonString = Source.fromFile(path).getLines.mkString
-    val description = SdkDescription.fromJson(Json.parse(jsonString))
+    val description = SdkDescription.fromJson(Json.parse(jsonString)).get
 
 
     val worker = new CompileWorker(description.lenses.head)
@@ -30,7 +30,7 @@ trait GearUtils {
 
   def gearsFromDescription(path: String) : Seq[Gear] = {
     val jsonString = Source.fromFile(path).getLines.mkString
-    val descriptions = SdkDescription.fromJson(Json.parse(jsonString))
+    val descriptions = SdkDescription.fromJson(Json.parse(jsonString)).get
 
     descriptions.lenses.map(i=> {
       val worker = new CompileWorker(i)
@@ -42,7 +42,7 @@ trait GearUtils {
   def sourceGearFromDescription(path: String) : SourceGear = {
 
     val jsonString = Source.fromFile(path).getLines.mkString
-    val description = SdkDescription.fromJson(Json.parse(jsonString))
+    val description = SdkDescription.fromJson(Json.parse(jsonString)).get
 
     val compiled = Compiler.setup(description).execute
 

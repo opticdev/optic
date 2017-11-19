@@ -1,6 +1,7 @@
 package com.opticdev.opm
 
 import com.opticdev.common.PackageRef
+import com.opticdev.opm.storage.PackageStorage
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 

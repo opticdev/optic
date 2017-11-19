@@ -1,7 +1,8 @@
 package com.opticdev.opm
 
 import com.opticdev.common.PackageRef
-import com.opticdev.opm.{PackageManager, PackageStorage}
+import com.opticdev.opm.PackageManager
+import com.opticdev.opm.storage.PackageStorage
 import org.scalatest.{BeforeAndAfter, FunSpec}
 
 import scala.concurrent.Await

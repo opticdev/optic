@@ -22,6 +22,7 @@ lazy val core = project.
   .settings(libraryDependencies ++= Dependencies.coreDependencies)
   .dependsOn(common)
   .dependsOn(opm)
+  .dependsOn(opm % "compile->compile;test->test")
 
 lazy val server = project.
  settings(Common.settings: _*)

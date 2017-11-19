@@ -1,7 +1,10 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
+import com.opticdev.common.PackageRef
+import com.opticdev.core.sdk.descriptions.{Schema, SchemaId}
 import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.opm.OpticPackage
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import com.opticdev.sourcegear.FileParseResults
@@ -11,12 +14,15 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
 abstract class SourceGear {
+
   val parsers: Set[ParserBase]
   val gearSet: GearSet = new GearSet
 
+  val schemas: Map[SchemaId, Schema] = Map()
+
   def fileAccumulator = gearSet.fileAccumulator
 
-  lazy val validExtensions = parsers.flatMap(_.fileExtensions)
+  lazy val validExtensions: Set[String] = parsers.flatMap(_.fileExtensions)
 
   def parseFile(file: File) (implicit project: Project) : Try[FileParseResults] = {
     Try {
@@ -40,7 +46,7 @@ abstract class SourceGear {
 }
 
 object SourceGear {
-  def default = new SourceGear {
+  def default: SourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = Set()
   }
 }
