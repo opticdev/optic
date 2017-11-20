@@ -6,7 +6,7 @@ import com.opticdev.sdk.descriptions.PackageExportable
 
 import scala.util.Try
 
-case class PackageContext(leaf: Leaf) {
+case class PackageContext(leaf: Leaf) extends Context {
 
   def getPackageContext(packageId: String): Option[PackageContext] = leaf.tree.leafs.find(_.opticPackage.packageId == packageId).collect {
     case l: Leaf => PackageContext(l)
@@ -35,21 +35,6 @@ case class PackageContext(leaf: Leaf) {
       schemasOption.asInstanceOf[Option[PackageExportable]]
     } else if (lensOption.isDefined) {
       lensOption.asInstanceOf[Option[PackageExportable]]
-    } else {
-      None
-    }
-
-  }
-
-  def apply(fullId: String) : Option[PackageExportable] = {
-
-    val leafPropertyOption = getProperty(fullId)
-    val dependenciesPropertyOption = getDependencyProperty(fullId)
-
-    if (leafPropertyOption.isDefined) {
-      leafPropertyOption
-    } else if (dependenciesPropertyOption.isDefined) {
-      dependenciesPropertyOption
     } else {
       None
     }

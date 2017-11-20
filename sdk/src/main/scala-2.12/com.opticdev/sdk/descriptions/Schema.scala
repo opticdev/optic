@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.github.fge.jsonschema.main.{JsonSchema, JsonSchemaFactory}
 import play.api.libs.json._
 
-object Schema extends Description[Schema] with PackageExportable {
+object Schema extends Description[Schema] {
 
   implicit val schemaIdReads: Reads[SchemaId] = (json: JsValue) => {
     if (json.isInstanceOf[JsString]) {
@@ -33,7 +33,7 @@ object Schema extends Description[Schema] with PackageExportable {
   override def fromJson(jsValue: JsValue): Schema = Schema(jsValue.as[JsObject])
 }
 
-case class Schema(schema: JsObject) {
+case class Schema(schema: JsObject) extends PackageExportable {
   private def getValue(key: String) = {
     val valueOption = (schema \ key)
     if (valueOption.isDefined) {

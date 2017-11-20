@@ -4,7 +4,7 @@ import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.stages._
 import com.opticdev.core.sourcegear.Gear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
-import com.opticdev.opm.context.PackageContext
+import com.opticdev.opm.context.{Context, PackageContext}
 import com.opticdev.opm.{DependencyTree, OpticPackage}
 import com.opticdev.sdk.descriptions.{Lens, Schema}
 
@@ -21,7 +21,7 @@ object Compiler {
     new CompilerPool(sdkDescription.lenses.map(_._2).toVector.map(l=> new CompileWorker(l)).toSet)
   }
 
-  class CompilerPool(val compilers: Set[CompileWorker])(implicit packageContext: PackageContext, dependencyTree: DependencyTree, errorAccumulator: ErrorAccumulator, logToCli: Boolean = false) {
+  class CompilerPool(val compilers: Set[CompileWorker])(implicit packageContext: Context, dependencyTree: DependencyTree, errorAccumulator: ErrorAccumulator, logToCli: Boolean = false) {
 
     private implicit var completed: ListBuffer[Output] = new scala.collection.mutable.ListBuffer[Output]()
 
@@ -35,7 +35,7 @@ object Compiler {
   }
 
   class CompileWorker(sourceLens: Lens) {
-    def compile()(implicit packageContext: PackageContext, completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator, logToCli: Boolean = false): LensCompilerOutput = {
+    def compile()(implicit packageContext: Context, completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator, logToCli: Boolean = false): LensCompilerOutput = {
       implicit val lens = sourceLens
 
 //      val cliLogger = new InstallSessionMonitor(lens.name)

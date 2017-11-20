@@ -4,7 +4,7 @@ import com.opticdev.core.Fixture.TestBase
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
 import com.opticdev.core.compiler.Compiler
-import com.opticdev.opm.context.PackageContext
+import com.opticdev.opm.context.{PackageContext, PackageContextFixture}
 import com.opticdev.opm.{Leaf, OpticPackage, Tree}
 
 import scala.collection.mutable.ListBuffer
@@ -18,7 +18,8 @@ class CompilerTest extends TestBase {
     val description = OpticPackage.fromJson(Json.parse(jsonString)).get
 
     implicit val dependencyTree = Tree(Leaf(description))
-    implicit val packageContext = dependencyTree.treeContext(description.packageFull).get
+
+    implicit val packageContext = PackageContextFixture(description.schemas)
 
     describe("can be setup") {
 

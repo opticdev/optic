@@ -6,7 +6,7 @@ import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
 import com.opticdev.core.sourcegear.{Gear, SourceGear}
 import com.opticdev.opm.{Leaf, OpticPackage, Tree}
-import com.opticdev.opm.context.PackageContext
+import com.opticdev.opm.context.{PackageContext, PackageContextFixture}
 import com.opticdev.parsers.SourceParserManager
 
 import scala.collection.mutable.ListBuffer
@@ -51,7 +51,7 @@ trait GearUtils {
     val description = OpticPackage.fromJson(Json.parse(jsonString)).get
 
     implicit val dependencyTree = Tree(Leaf(description))
-    implicit val packageContext = dependencyTree.treeContext(description.packageFull).get
+    implicit val packageContext = PackageContextFixture(description.schemas)
 
     val compiled = Compiler.setup(description).execute
 

@@ -1,13 +1,12 @@
 package com.opticdev.core.compiler.stages
 
-import com.opticdev.core.Fixture.MockPackageContext
-import com.opticdev.opm.context.PackageContext
+import com.opticdev.opm.context.{PackageContext, PackageContextFixture}
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.sdk.descriptions.enums.ComponentEnums._
 import com.opticdev.sdk.descriptions.{CodeComponent, Component, Lens, Schema}
 
-class ValidationStageTest extends FunSpec with MockPackageContext {
+class ValidationStageTest extends FunSpec {
 
   val basicSchema = Schema(Json.parse("""{
                             "title": "Test",
@@ -31,7 +30,7 @@ class ValidationStageTest extends FunSpec with MockPackageContext {
                         }""").as[JsObject])
 
 
-  implicit val packageContext: PackageContext = packageContext(Vector(basicSchema))
+  implicit val packageContext = PackageContextFixture(Map("test" -> basicSchema))
 
   describe("Validation Stage") {
 
