@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.github.fge.jsonschema.main.{JsonSchema, JsonSchemaFactory}
 import play.api.libs.json._
 
-object Schema extends Description[Schema] {
+object Schema extends Description[Schema] with PackageExportable {
 
   implicit val schemaIdReads: Reads[SchemaId] = (json: JsValue) => {
     if (json.isInstanceOf[JsString]) {

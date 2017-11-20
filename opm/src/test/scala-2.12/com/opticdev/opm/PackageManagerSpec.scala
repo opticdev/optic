@@ -74,7 +74,30 @@ class PackageManagerSpec extends FunSpec with BeforeAndAfter with TestPackagePro
           PackageRef("optic:a", "1.1.1"),
           PackageRef("optic:b", "1.1.1")))
 
-        assert(collectTry.get.toSet == Set(t.a, t.b, t.b1, t.c, t.c1, t.d, t.e))
+        val expectedTree = Tree(
+          Leaf(t.a, Tree(
+            Leaf(t.b, Tree(
+              Leaf(t.c, Tree(
+                Leaf(t.d, Tree(
+                  Leaf(t.e, Tree(
+                    Leaf(t.c1)
+                  ))
+                ))
+              )),
+              Leaf(t.d, Tree(
+                Leaf(t.e, Tree(
+                  Leaf(t.c1)
+                ))
+              )
+            )
+          )))),
+          Leaf(t.b1, Tree(
+            Leaf(t.c1)
+          ))
+        )
+
+        assert(collectTry.get == expectedTree)
+        assert(collectTry.get.flatten.toSet == Set(t.a, t.b, t.b1, t.c, t.c1, t.d, t.e))
       }
 
       it("fails if any can not be resolved") {

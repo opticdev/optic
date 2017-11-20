@@ -1,6 +1,7 @@
 package com.opticdev.opm
 
 import com.opticdev.common.PackageRef
+import com.opticdev.sdk.descriptions.{Lens, Schema}
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
 import scala.util.Try
@@ -12,13 +13,13 @@ case class OpticPackage(packageId: String, contents: JsObject) {
 
   def packageRef: PackageRef = PackageRef(packageId, version)
 
-  private def objectValueForKey(key: String) = {
+  private def objectValueForKey(key: String): Map[String, JsObject] = {
     val objectValue = contents.value.getOrElse(key, JsObject.empty).as[JsObject]
     objectValue.value.asInstanceOf[Map[String, JsObject]]
   }
 
-  lazy val schemas: Map[String, JsObject] = objectValueForKey("schemas")
-  lazy val lenses: Map[String, JsObject] = objectValueForKey("lenses")
+  lazy val schemas: Map[String, Schema] = objectValueForKey("schemas").mapValues(Schema.fromJson)
+  lazy val lenses: Map[String, Lens] = objectValueForKey("lenses").mapValues(Lens.fromJson)
   lazy val objects: Map[String, JsObject] = objectValueForKey("objects")
 
   lazy val dependencies: Vector[PackageRef] = {

@@ -1,5 +1,5 @@
 package com.opticdev.server.http.routes.query
-import com.opticdev.core.sdk.descriptions.Description
+import com.opticdev.sdk.descriptions.Description
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import play.api.libs.json.{JsResult, JsValue, Json, Reads}
 

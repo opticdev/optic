@@ -20,6 +20,7 @@ lazy val opm = project.
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.opmDependencies)
  .dependsOn(common)
+ .dependsOn(sdk)
 
 lazy val core = project.
   settings(Common.settings: _*)
@@ -32,6 +33,7 @@ lazy val core = project.
 lazy val server = project.
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.serverDependencies)
+ .dependsOn(sdk)
  .dependsOn(common)
  .dependsOn(core)
  .dependsOn(core % "compile->compile;test->test")

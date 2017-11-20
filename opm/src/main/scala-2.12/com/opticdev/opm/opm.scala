@@ -25,4 +25,6 @@ package object opm {
     def foundAll = notFound.isEmpty
   }
 
+  type DependencyTree = Tree
+
 }

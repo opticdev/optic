@@ -61,9 +61,7 @@ object PackageManager {
     foundPackages.map(_.packageRef.full).toVector.sorted
   }
 
-  def collectPackages(toLoad: Seq[PackageRef], alreadyResolved: collection.mutable.Set[PackageRef] = collection.mutable.Set()) : Try[Vector[OpticPackage]] = Try {
-
-    val packages = toLoad.filterNot(alreadyResolved.contains)
+  def collectPackages(packages: Seq[PackageRef]) : Try[DependencyTree] = Try {
 
     var loaded = packages.map(p=> (p, PackageStorage.loadFromStorage(p)))
 
@@ -81,20 +79,12 @@ object PackageManager {
         throw new Error("Could not resolve packages "+ loaded.filter(_._2.isFailure).map(_._1.full).mkString(", ") )
       } else {
         val packagesResolved = loaded.map(_._2.get).toVector
-        val dependencyRefs = packagesResolved.flatMap(_.dependencies)
 
-        //update already resolved so no duplicates are loaded
-        alreadyResolved ++= packages.toSet
+        val leafs = packagesResolved.map(i=>{
+          Leaf(i, collectPackages(i.dependencies).get)
+        })
 
-        val resolvedDependencies: Seq[OpticPackage] = {
-          if (dependencyRefs.nonEmpty) {
-            collectPackages(dependencyRefs, alreadyResolved).get
-          } else {
-            Vector()
-          }
-        }
-
-        packagesResolved ++ resolvedDependencies
+        Tree(leafs:_*)
       }
     } else {
       throw tryInstall.failed.get

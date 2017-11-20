@@ -3,7 +3,7 @@ package com.opticdev.sdk.descriptions
 import play.api.libs.json.{JsResult, JsValue, Json, Reads}
 
 
-object Lens extends Description[Lens] {
+object Lens extends Description[Lens] with PackageExportable {
 
   implicit val lensReads = {
     import Schema._
