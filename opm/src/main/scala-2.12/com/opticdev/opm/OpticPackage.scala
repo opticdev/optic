@@ -11,6 +11,7 @@ case class OpticPackage(packageId: String, contents: JsObject) {
   val author: String = contents.value("author").as[JsString].value
   val version: String = contents.value("version").as[JsString].value
 
+  def packageFull = author+":"+name+"@"+version
   def packageRef: PackageRef = PackageRef(packageId, version)
 
   private def objectValueForKey(key: String): Map[String, JsObject] = {
