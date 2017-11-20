@@ -1,8 +1,11 @@
 {
-  "lenses": [
-    {
+  "name": "ImportExample",
+  "version": "0.1.0",
+  "author": "optic",
+  "lenses": {
+    "usingRequire": {
       "name": "Using Require",
-      "schema": "js-import^1.0.0",
+      "schema": "js-import",
       "snippet": {
         "name": "Using Require",
         "lang": "Javascript",
@@ -53,9 +56,9 @@
         }
       ]
     }
-  ],
+  },
   "schemas": {
-    "js-import^1.0.0": {
+    "js-import": {
       "title": "import",
       "version": "1.0.0",
       "slug": "js-import",

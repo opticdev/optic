@@ -4,6 +4,8 @@ import com.opticdev.common.PackageRef
 import com.opticdev.opm.{Leaf, OpticPackage}
 import com.opticdev.sdk.descriptions.PackageExportable
 
+import scala.util.Try
+
 case class PackageContext(leaf: Leaf) {
 
   def getPackageContext(packageId: String): Option[PackageContext] = leaf.tree.leafs.find(_.opticPackage.packageId == packageId).collect {
@@ -12,14 +14,17 @@ case class PackageContext(leaf: Leaf) {
 
   def getDependencyProperty(fullPath: String): Option[PackageExportable] = {
     val split = fullPath.split("/")
-    if (split.size != 2) throw new Error("Invalid property path. Expects format {author}:{name}/{property} but found "+ fullPath)
-    val packageId = PackageRef.fromString(split.head).get.packageId
-    val property = split.last
+    if (split.size != 2) {
+      None
+    } else {
+      val packageId = PackageRef.fromString(split.head).get.packageId
+      val property = split.last
 
-    val packageOption = getPackageContext(packageId)
-    if (packageOption.isDefined) {
-      packageOption.get.getProperty(property)
-    } else None
+      val packageOption = getPackageContext(packageId)
+      if (packageOption.isDefined) {
+        packageOption.get.getProperty(property)
+      } else None
+    }
   }
 
   def getProperty(propertyKey: String) : Option[PackageExportable] = {
@@ -30,6 +35,21 @@ case class PackageContext(leaf: Leaf) {
       schemasOption.asInstanceOf[Option[PackageExportable]]
     } else if (lensOption.isDefined) {
       lensOption.asInstanceOf[Option[PackageExportable]]
+    } else {
+      None
+    }
+
+  }
+
+  def apply(fullId: String) : Option[PackageExportable] = {
+
+    val leafPropertyOption = getProperty(fullId)
+    val dependenciesPropertyOption = getDependencyProperty(fullId)
+
+    if (leafPropertyOption.isDefined) {
+      leafPropertyOption
+    } else if (dependenciesPropertyOption.isDefined) {
+      dependenciesPropertyOption
     } else {
       None
     }

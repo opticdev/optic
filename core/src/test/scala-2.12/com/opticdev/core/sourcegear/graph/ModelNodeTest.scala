@@ -28,7 +28,7 @@ class ModelNodeTest extends AkkaTestFixture("ModelNodeTest") with GearUtils {
     }
 
     val importResults = {
-      val importGear = gearFromDescription("test-examples/resources/sdkDescriptions/ImportExample.json")
+      val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
       sourceGear.gearSet.addGear(importGear)
       sourceGear.parseFile(File(testFilePath))
     }

@@ -30,7 +30,7 @@ class MutationStepsTest extends AkkaTestFixture("MutationStepsTest") with GearUt
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
 
   val importResults = {
-    val importGear = gearFromDescription("test-examples/resources/sdkDescriptions/ImportExample.json")
+    val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
     sourceGear.gearSet.addGear(importGear)
     sourceGear.parseFile(File(testFilePath))
   }

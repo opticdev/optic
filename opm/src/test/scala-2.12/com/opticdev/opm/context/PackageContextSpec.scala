@@ -14,18 +14,21 @@ class PackageContextSpec extends FunSpec with TestPackageProviders {
       val treeContext = PackageManager.collectPackages(Seq(t.opticExpress.packageRef, t.a.packageRef)).get.treeContext
 
       it("can resolve a property from a dependency") {
-        val propertyOption = treeContext("optic:express-js@0.1.0").get.getDependencyProperty("optic:rest/parameter")
+        val propertyOption = treeContext("optic:express-js@0.1.0").get("optic:rest/parameter")
         assert(propertyOption.get.asInstanceOf[Schema].name == "Parameter")
+      }
+
+      it("can resolve a property within self") {
+        val propertyOption = treeContext("optic:rest@0.1.0").get("parameter")
+        assert(propertyOption.isDefined)
       }
 
       it("will not resolve a dependency of another package") {
         assert(treeContext("optic:express-js@0.1.0").get.getPackageContext("optic:c").isEmpty)
       }
 
-      it("will throw error if lookup path is invalid") {
-        assertThrows[Error] {
-          treeContext("optic:express-js@0.1.0").get.getDependencyProperty("optic:rest  :) parameter")
-        }
+      it("will return None if lookup path is invalid") {
+          assert(treeContext("optic:express-js@0.1.0").get.getDependencyProperty("optic:rest  :) parameter").isEmpty)
       }
 
 

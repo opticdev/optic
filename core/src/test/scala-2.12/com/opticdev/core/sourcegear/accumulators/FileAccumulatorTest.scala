@@ -19,7 +19,7 @@ class FileAccumulatorTest extends AkkaTestFixture("FileAccumulatorTest") with Ge
 
     it("enables map schemas to work") {
 
-      val sourceGear = sourceGearFromDescription("test-examples/resources/sdkDescriptions/RequestSdkDescription.json")
+      val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress@0.1.0.json")
       val result = sourceGear.parseFile(File("test-examples/resources/example_source/ExampleExpress.js"))
 
       implicit val sourceGearContext = SGContext(sourceGear.fileAccumulator, result.get.astGraph, SourceParserManager.installedParsers.head, null)
@@ -38,7 +38,7 @@ class FileAccumulatorTest extends AkkaTestFixture("FileAccumulatorTest") with Ge
         	"method": "get"
         }""")
 
-      val modelNode = result.get.modelNodes.find(_.schemaId == SchemaId("js-example-route^1.0.0")).get
+      val modelNode = result.get.modelNodes.find(_.schemaId == SchemaId("route")).get
       assert(modelNode.expandedValue == expected)
 
     }

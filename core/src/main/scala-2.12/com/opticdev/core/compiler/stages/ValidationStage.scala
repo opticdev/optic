@@ -2,11 +2,13 @@ package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.compiler.ValidationStageOutput
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, SchemaNotFound}
+import com.opticdev.opm.DependencyTree
 import com.opticdev.sdk.descriptions.{Lens, Schema}
 import play.api.libs.json.{JsArray, JsObject, JsString}
+import com.opticdev.core.compiler.helpers.SchemaIdImplicits._
+import com.opticdev.opm.context.PackageContext
 
-
-class ValidationStage()(implicit val lens: Lens, schemas: Vector[Schema], errorAccumulator: ErrorAccumulator = new ErrorAccumulator) extends CompilerStage[ValidationStageOutput] {
+class ValidationStage()(implicit val lens: Lens, packageContext: PackageContext, errorAccumulator: ErrorAccumulator = new ErrorAccumulator) extends CompilerStage[ValidationStageOutput] {
   override def run: ValidationStageOutput = {
 
     val lensSchemaOption = lens.schema.resolve

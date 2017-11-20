@@ -73,7 +73,6 @@ class SdkSchemaTest extends FunSpec {
       it("on a valid schema") {
         val schema = Schema(validTestSchema)
         assert(schema.name === "import")
-        assert(schema.version === "1.0.0")
         assert(schema.slug === "js-import")
       }
 

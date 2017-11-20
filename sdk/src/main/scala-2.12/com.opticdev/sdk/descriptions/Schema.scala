@@ -44,12 +44,11 @@ case class Schema(schema: JsObject) {
   }
 
   val name : String = getValue("title")
-  val version : String = getValue("version")
   val slug : String = getValue("slug")
 
   private val jsonSchema : JsonSchema = Schema.schemaObjectfromJson(schema)
 
-  val identifier = slug+"^"+version
+  val identifier = slug
 
   def asSchemaId = SchemaId(identifier)
 
@@ -57,7 +56,4 @@ case class Schema(schema: JsObject) {
 
 }
 
-case class SchemaId(id: String) {
-  def resolve(implicit schemas: Vector[Schema]) : Option[Schema] =
-    schemas.find(_.identifier == id)
-}
+case class SchemaId(id: String)

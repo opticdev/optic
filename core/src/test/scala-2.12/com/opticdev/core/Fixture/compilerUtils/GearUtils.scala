@@ -4,8 +4,9 @@ import com.opticdev.core.compiler.Compiler.CompileWorker
 import com.opticdev.core.compiler.Compiler
 import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
-import com.opticdev.sdk.SdkDescription
 import com.opticdev.core.sourcegear.{Gear, SourceGear}
+import com.opticdev.opm.{Leaf, OpticPackage, Tree}
+import com.opticdev.opm.context.PackageContext
 import com.opticdev.parsers.SourceParserManager
 
 import scala.collection.mutable.ListBuffer
@@ -19,30 +20,38 @@ trait GearUtils {
 
   def gearFromDescription(path: String): Gear = {
     val jsonString = Source.fromFile(path).getLines.mkString
-    val description = SdkDescription.fromJson(Json.parse(jsonString)).get
+    val description = OpticPackage.fromJson(Json.parse(jsonString)).get
+    val dependencyTree = Tree(Leaf(description))
+    val packageContext = dependencyTree.treeContext(description.packageFull).get
 
-
-    val worker = new CompileWorker(description.lenses.head)
-    val result = worker.compile()(description.schemas, description.lenses, ListBuffer())
+    val worker = new CompileWorker(description.lenses.head._2)
+    val result = worker.compile()(packageContext, ListBuffer())
 
     result.get
   }
 
   def gearsFromDescription(path: String) : Seq[Gear] = {
     val jsonString = Source.fromFile(path).getLines.mkString
-    val descriptions = SdkDescription.fromJson(Json.parse(jsonString)).get
+    val descriptions = OpticPackage.fromJson(Json.parse(jsonString)).get
+
+    val dependencyTree = Tree(Leaf(descriptions))
+    val packageContext = dependencyTree.treeContext(descriptions.packageFull).get
+
 
     descriptions.lenses.map(i=> {
-      val worker = new CompileWorker(i)
-      val compileResult = worker.compile()(descriptions.schemas, descriptions.lenses, ListBuffer())
+      val worker = new CompileWorker(i._2)
+      val compileResult = worker.compile()(packageContext, ListBuffer())
       compileResult.get
-    })
+    }).toSeq
   }
 
   def sourceGearFromDescription(path: String) : SourceGear = {
 
     val jsonString = Source.fromFile(path).getLines.mkString
-    val description = SdkDescription.fromJson(Json.parse(jsonString)).get
+    val description = OpticPackage.fromJson(Json.parse(jsonString)).get
+
+    implicit val dependencyTree = Tree(Leaf(description))
+    implicit val packageContext = dependencyTree.treeContext(description.packageFull).get
 
     val compiled = Compiler.setup(description).execute
 

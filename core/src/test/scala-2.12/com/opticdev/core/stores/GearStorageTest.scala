@@ -8,7 +8,7 @@ class GearStorageTest extends TestBase with GearUtils {
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
 
-  val importGear = gearFromDescription("test-examples/resources/sdkDescriptions/ImportExample.json")
+  val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
 
 
   describe("Gear Storage") {

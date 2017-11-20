@@ -4,23 +4,24 @@ import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.stages._
 import com.opticdev.core.sourcegear.Gear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
-import com.opticdev.sdk.SdkDescription
+import com.opticdev.opm.context.PackageContext
+import com.opticdev.opm.{DependencyTree, OpticPackage}
 import com.opticdev.sdk.descriptions.{Lens, Schema}
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
 object Compiler {
-  def setup(sdkDescription: SdkDescription) (implicit logToCli: Boolean = false) : CompilerPool = {
+  def setup(sdkDescription: OpticPackage)(implicit logToCli: Boolean = false, dependencyTree: DependencyTree) : CompilerPool = {
 
-    implicit val schemas: Vector[Schema] = sdkDescription.schemas
-    implicit val lenses: Vector[Lens] = sdkDescription.lenses
+    implicit val packageContext = dependencyTree.treeContext(sdkDescription.packageFull).get
+
     implicit val errorAccumulator: ErrorAccumulator = new ErrorAccumulator
 
-    new CompilerPool(sdkDescription.lenses.map(l=> new CompileWorker(l)).toSet)
+    new CompilerPool(sdkDescription.lenses.map(_._2).toVector.map(l=> new CompileWorker(l)).toSet)
   }
 
-  class CompilerPool(val compilers: Set[CompileWorker])(implicit schemas: Vector[Schema], lenses: Vector[Lens], errorAccumulator: ErrorAccumulator, logToCli: Boolean = false) {
+  class CompilerPool(val compilers: Set[CompileWorker])(implicit packageContext: PackageContext, dependencyTree: DependencyTree, errorAccumulator: ErrorAccumulator, logToCli: Boolean = false) {
 
     private implicit var completed: ListBuffer[Output] = new scala.collection.mutable.ListBuffer[Output]()
 
@@ -29,12 +30,12 @@ object Compiler {
     def execute: CompilerOutput = {
       clear
       //@todo par should ideally be used here, but it is inconsistent for some reason. need to look into race conditions
-      CompilerOutput(compilers.map(_.compile).seq, schemas.toSet)
+      CompilerOutput(compilers.map(_.compile).seq, dependencyTree.flattenSchemas)
     }
   }
 
   class CompileWorker(sourceLens: Lens) {
-    def compile()(implicit schemas: Vector[Schema], lenses: Vector[Lens], completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator, logToCli: Boolean = false): LensCompilerOutput = {
+    def compile()(implicit packageContext: PackageContext, completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator, logToCli: Boolean = false): LensCompilerOutput = {
       implicit val lens = sourceLens
 
 //      val cliLogger = new InstallSessionMonitor(lens.name)
