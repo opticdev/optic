@@ -21,7 +21,10 @@ object PackageStorage {
     val name = author / opticPackage.name createIfNotExists(asDirectory = true)
     val version = name / opticPackage.version
 
-    version.overwrite(opticPackage.contents.toString())
+    version.delete(true)
+    version.touch()
+
+    version.write(opticPackage.contents.toString())
   }
 
   def loadFromStorage(packageRef: PackageRef) : Try[OpticPackage] = {

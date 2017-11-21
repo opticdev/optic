@@ -4,19 +4,15 @@ import com.opticdev.common.PackageRef
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.storage.PackageStorage
-import org.scalatest.{BeforeAndAfter, FunSpec}
+import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSpec}
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
-class PackageManagerSpec extends FunSpec with BeforeAndAfter with TestPackageProviders {
+class PackageManagerSpec extends FunSpec with TestPackageProviders {
 
   describe("Package Manager") {
-
-    before {
-      PackageStorage.clearLocalPackages
-    }
 
     it("can change providers") {
       assert(PackageManager.providers.size == 1)

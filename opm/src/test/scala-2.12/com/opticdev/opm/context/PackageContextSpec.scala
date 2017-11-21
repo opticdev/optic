@@ -1,17 +1,18 @@
 package com.opticdev.opm.context
 
 import com.opticdev.common.PackageRef
-import com.opticdev.opm.{PackageManager, TestPackageProviders}
+import com.opticdev.opm.{PackageManager, TestPackageProviders, TestProvider}
 import com.opticdev.sdk.descriptions
 import com.opticdev.sdk.descriptions.Schema
-import org.scalatest.FunSpec
+import org.scalatest.{BeforeAndAfter, FunSpec}
 
 class PackageContextSpec extends FunSpec with TestPackageProviders {
 
   describe("Package Context") {
 
     describe("within dependencies trees") {
-      val treeContext = PackageManager.collectPackages(Seq(t.opticExpress.packageRef, t.a.packageRef)).get.treeContext
+
+      lazy val treeContext = PackageManager.collectPackages(Seq(t.opticExpress.packageRef, t.a.packageRef)).get.treeContext
 
       it("can resolve a property from a dependency") {
         val propertyOption = treeContext("optic:express-js@0.1.0").get("optic:rest/parameter")

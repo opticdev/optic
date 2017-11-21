@@ -3,13 +3,11 @@ package com.opticdev.opm.storage
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.opm.TestProvider
+import com.opticdev.opm.{TestPackageProviders, TestProvider}
 import org.scalatest.FunSpec
 
 
-class PackageStorageSpec extends FunSpec {
-
-  val t = new TestProvider
+class PackageStorageSpec extends FunSpec with TestPackageProviders {
 
   describe("Package Storage") {
 

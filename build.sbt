@@ -42,10 +42,10 @@ lazy val root = (project in file(".")).
  aggregate(common, sdk, opm, server, core)
 
 
+concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
 
-//
-//assemblyJarName in assembly := "optic.jar"
-//test in assembly := {}
-//mainClass in assembly := Some("com.opticdev.server.http.Lifecycle")
+assemblyJarName in assembly := "optic.jar"
+test in assembly := {}
+mainClass in assembly := Some("com.opticdev.server.http.Lifecycle")
 
 

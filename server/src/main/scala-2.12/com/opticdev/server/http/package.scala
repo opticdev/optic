@@ -4,4 +4,5 @@ import akka.http.scaladsl.marshalling.ToResponseMarshallable
 
 package object http {
   type HTTPResponse = ToResponseMarshallable
+  val opticPort = 30333
 }
