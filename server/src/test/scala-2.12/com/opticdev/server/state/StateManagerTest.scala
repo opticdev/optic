@@ -2,8 +2,9 @@ package com.opticdev.server.state
 
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
-import com.opticdev.core.sourcegear.SourceGear
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.{GearSet, SourceGear}
+import com.opticdev.core.sourcegear.project.{OpticProject, Project, StaticSGProject}
+import com.opticdev.opm.OpticPackage
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.server.http.state.StateManager
 import org.scalatest.FunSpec
@@ -13,12 +14,15 @@ class StateManagerTest extends AkkaTestFixture("StateManagerTest") {
 
     implicit val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val gearSet = new GearSet()
+      override val schemas = Set()
     }
 
-    val initialProjects = Set(
-      new Project("A", File("test-examples/resources/test_project")),
-      new Project("B", File("test-examples/resources/example_source"))
+    val initialProjects: Set[OpticProject] = Set(
+      new StaticSGProject("A", File("test-examples/resources/test_project"), sourceGear),
+      new StaticSGProject("B", File("test-examples/resources/example_source"), sourceGear)
     )
+
 
     it("can set an initial state") {
       val stateManager = new StateManager(initialProjects)

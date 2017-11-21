@@ -5,8 +5,9 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import better.files.File
 import com.opticdev.core.Fixture.TestBase
+import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.actors.ActorCluster
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.server.http.routes.ProjectRoute
 import com.opticdev.server.http.state.StateManager
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
@@ -19,7 +20,7 @@ class ProjectRouteTest extends FunSpec with Matchers with ScalatestRouteTest wit
 
     implicit val logToCli = false
     implicit val actorCluster = new ActorCluster(ActorSystem("ProjectRouteTest"))
-    val testProject = new Project("TestProject", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"))
+    val testProject = new StaticSGProject("TestProject", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), SourceGear.default)
     implicit val stateManager = new StateManager(Set(testProject))
 
     val projectRoute = new ProjectRoute()
