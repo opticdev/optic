@@ -6,12 +6,15 @@ object DataDirectory {
   val packages = PlatformConstants.dataDirectory / "packages"
   val parsers = PlatformConstants.dataDirectory / "parsers"
   val compiled = PlatformConstants.dataDirectory / "compiled"
+  val sourcegear = PlatformConstants.dataDirectory / "sourcegear"
 
 
   def hasValidStructure = {
     root.isDirectory &&
       parsers.isDirectory &&
-      packages.isDirectory
+      packages.isDirectory &&
+      compiled.isDirectory &&
+      sourcegear.isDirectory
   }
 
   def buildDirectoryStructure = {
@@ -19,6 +22,7 @@ object DataDirectory {
     parsers.createIfNotExists(asDirectory = true)
     packages.createIfNotExists(asDirectory = true)
     compiled.createIfNotExists(asDirectory = true)
+    sourcegear.createIfNotExists(asDirectory = true)
   }
 
   def delete = root.delete(true)

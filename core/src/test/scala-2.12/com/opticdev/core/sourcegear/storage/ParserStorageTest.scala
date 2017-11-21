@@ -1,4 +1,4 @@
-package com.opticdev.core.stores
+package com.opticdev.core.sourcegear.storage
 
 import better.files.File
 import com.opticdev.core.sourcegear.storage.ParserStorage

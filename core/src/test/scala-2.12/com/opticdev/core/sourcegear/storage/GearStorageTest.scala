@@ -1,4 +1,4 @@
-package com.opticdev.core.stores
+package com.opticdev.core.sourcegear.storage
 
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
