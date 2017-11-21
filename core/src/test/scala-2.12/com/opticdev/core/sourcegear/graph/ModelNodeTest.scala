@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.graph
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.Path
 import com.opticdev.core.sourcegear.project.Project
@@ -18,6 +18,8 @@ class ModelNodeTest extends AkkaTestFixture("ModelNodeTest") with GearUtils {
 
     val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val gearSet = new GearSet()
+      override val schemas = Set()
     }
 
     val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"

@@ -5,6 +5,7 @@ import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 
+//@todo make this class immutable
 class GearSet(initialGears: Gear*) {
 
   private val gears = scala.collection.mutable.Set[Gear](initialGears:_*)

@@ -16,6 +16,8 @@ class SourceGearTest extends AkkaTestFixture("SourceGearTest") with GearUtils {
 
     val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val gearSet = new GearSet()
+      override val schemas = Set()
     }
 
     implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)

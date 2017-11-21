@@ -4,7 +4,7 @@ import java.util.Scanner
 
 import com.opticdev.core.actorSystem
 import better.files.File
-import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.actors.{ActorCluster, CurrentGraph}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.SourceParserManager
@@ -22,6 +22,8 @@ object ProjectMonitoringScratch extends GearUtils with TestBase {
 
     implicit val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val gearSet = new GearSet()
+      override val schemas = Set()
     }
 
 

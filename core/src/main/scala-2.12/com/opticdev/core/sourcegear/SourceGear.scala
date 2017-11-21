@@ -16,9 +16,9 @@ import scalax.collection.mutable.Graph
 abstract class SourceGear {
 
   val parsers: Set[ParserBase]
-  val gearSet: GearSet = new GearSet
+  val gearSet: GearSet
 
-  val schemas: Set[Schema] = Set()
+  val schemas: Set[Schema]
 
   def fileAccumulator = gearSet.fileAccumulator
 
@@ -48,5 +48,7 @@ abstract class SourceGear {
 object SourceGear {
   def default: SourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = Set()
+    override val gearSet = new GearSet()
+    override val schemas = Set()
   }
 }

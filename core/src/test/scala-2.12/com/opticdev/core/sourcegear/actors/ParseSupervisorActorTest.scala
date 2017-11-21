@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.sourcegear.graph.FileNode
 import com.opticdev.core.sourcegear.project.Project
-import com.opticdev.core.sourcegear.{CacheRecord, ParseCache, SGContext, SourceGear}
+import com.opticdev.core.sourcegear._
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.actors._
@@ -25,6 +25,8 @@ class ParseSupervisorActorTest extends AkkaTestFixture("ParseSupervisorActorTest
 
     implicit val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val gearSet = new GearSet()
+      override val schemas = Set()
     }
 
     describe("context lookup") {

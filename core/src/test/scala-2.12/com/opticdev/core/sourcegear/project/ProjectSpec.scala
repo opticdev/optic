@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.project
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.actors.{FileCreated, FileDeleted, FileUpdated}
 import com.opticdev.sourcegear.actors._
 import com.opticdev.core.sourcegear.graph.ProjectGraph
@@ -12,7 +12,6 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
 import java.nio.file.{Path, WatchEvent, StandardWatchEventKinds => EventType}
-
 
 import scala.concurrent.duration._
 
@@ -26,6 +25,8 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
 
     val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val gearSet = new GearSet()
+      override val schemas = Set()
     }
 
     val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)

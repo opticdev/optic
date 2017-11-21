@@ -1,10 +1,8 @@
-package com.opticdev.core.storage.stores
+package com.opticdev.core.sourcegear.storage
 
 import better.files.File
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.sdk.descriptions.Schema
-import com.opticdev.parsers.SourceParserManager
-import com.opticdev.parsers.ParserBase
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
 import scala.util.{Failure, Try}
 

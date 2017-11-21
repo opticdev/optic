@@ -8,7 +8,7 @@ import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Star
 import com.opticdev.sdk.descriptions.enums.RuleEnums.Any
 import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule}
-import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import play.api.libs.json.{JsObject, JsString}
@@ -18,6 +18,8 @@ class ParserGearTest extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
   implicit val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+    override val gearSet = new GearSet()
+    override val schemas = Set()
   }
 
   implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)

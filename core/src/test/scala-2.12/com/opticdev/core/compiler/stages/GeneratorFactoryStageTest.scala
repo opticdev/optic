@@ -9,7 +9,7 @@ import com.opticdev.sdk.descriptions.{CodeComponent, Lens}
 import com.opticdev.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
 import com.opticdev.sdk.descriptions.finders.StringFinder
-import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import play.api.libs.json.{JsObject, JsString}
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.project.Project
@@ -26,6 +26,8 @@ class GeneratorFactoryStageTest extends AkkaTestFixture("GeneratorFactoryStageTe
 
     implicit val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val gearSet = new GearSet()
+      override val schemas = Set()
     }
 
     implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)

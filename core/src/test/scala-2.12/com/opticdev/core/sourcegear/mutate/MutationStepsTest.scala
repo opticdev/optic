@@ -5,7 +5,7 @@ import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.sdk.descriptions.CodeComponent
 import com.opticdev.sdk.descriptions.enums.ComponentEnums.Literal
-import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
@@ -19,6 +19,8 @@ class MutationStepsTest extends AkkaTestFixture("MutationStepsTest") with GearUt
 
   override val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+    override val gearSet = new GearSet()
+    override val schemas = Set()
   }
 
   val projectGraphWrapper = new ProjectGraphWrapper(Graph())

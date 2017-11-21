@@ -11,23 +11,34 @@ import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
-import com.opticdev.core.storage.stores.GearStorage
+import com.opticdev.core.sourcegear.storage.GearStorage
 import com.opticdev.opm.TestPackageProviders
 import com.opticdev.parsers.graph.AstType
 class SGConfigSpec extends TestBase with TestPackageProviders {
 
   describe("SG Config") {
 
-    it("can be pickled") {
+    lazy val sgConfig = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
+      .get
 
-      val sgConfig = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
-        .get
+    it("can be pickled") {
 
       val picked = Pickle.intoBytes(sgConfig)
       val unpickled = Unpickle[SGConfig].fromBytes(picked)
 
       assert(unpickled == sgConfig)
 
+    }
+
+    it("can generate a hexadecimal from hash") {
+      assert(sgConfig.hashString == "c315b225")
+    }
+
+    it("can inflate to a sourcegear instance") {
+      val sourceGear = sgConfig.inflate
+      assert(sourceGear.gearSet.size == sgConfig.gears.size)
+      assert(sourceGear.schemas.size == sgConfig.schemas.size)
+      assert(sourceGear.parsers.size == sgConfig.parserIds.size)
     }
 
   }

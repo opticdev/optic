@@ -1,7 +1,7 @@
 package com.opticdev.core.stores
 
 import better.files.File
-import com.opticdev.core.storage.stores.ParserStorage
+import com.opticdev.core.sourcegear.storage.ParserStorage
 import org.scalatest.FunSpec
 
 class ParserStorageTest extends FunSpec {
