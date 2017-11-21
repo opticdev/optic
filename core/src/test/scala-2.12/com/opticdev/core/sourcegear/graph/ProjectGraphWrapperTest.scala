@@ -3,7 +3,8 @@ import com.opticdev.core.actorSystem
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 
 class ProjectGraphWrapperTest extends AkkaTestFixture("ProjectGraphWrapperTest") with GearUtils {
   describe("Project Graph Wrapper") {
@@ -12,7 +13,7 @@ class ProjectGraphWrapperTest extends AkkaTestFixture("ProjectGraphWrapperTest")
       assert(ProjectGraphWrapper.empty.projectGraph.isEmpty)
     }
 
-    implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
     val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
     val file = File(testFilePath)

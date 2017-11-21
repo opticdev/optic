@@ -6,7 +6,7 @@ import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.Path
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import play.api.libs.json.{JsObject, JsString}
 
@@ -25,8 +25,9 @@ class ModelNodeTest extends AkkaTestFixture("ModelNodeTest") with GearUtils {
     val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
 
     val projectGraphWrapper = new ProjectGraphWrapper(Graph())
-    implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear) {
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear) {
       override def projectGraph = projectGraphWrapper.projectGraph
+      override def projectSourcegear: SourceGear = sourceGear
     }
 
     val importResults = {

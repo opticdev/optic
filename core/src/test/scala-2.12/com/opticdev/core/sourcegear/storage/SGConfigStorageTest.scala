@@ -5,13 +5,16 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.SGConstructor
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.{TestPackageProviders, TestProvider}
+import scala.concurrent.duration._
+import scala.concurrent.Await
 
 class SGConfigStorageTest extends TestBase with TestPackageProviders {
 
   lazy val projectFile = new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml"))
-  lazy val sgConfig = SGConstructor.fromProjectFile(projectFile)
-    .get
-
+  lazy val sgConfig = {
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
+    Await.result(future, 5 seconds)
+  }
 
   describe("SG Config Storage") {
 

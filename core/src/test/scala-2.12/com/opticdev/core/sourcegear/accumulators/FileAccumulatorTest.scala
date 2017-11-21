@@ -5,15 +5,14 @@ import com.opticdev.core.actorSystem
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.sdk.descriptions.SchemaId
-import com.opticdev.core.sourcegear.SGContext
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.{SGContext, SourceGear}
+import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.SourceParserManager
 import play.api.libs.json.Json
 
 class FileAccumulatorTest extends AkkaTestFixture("FileAccumulatorTest") with GearUtils {
 
-
-  implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)
+  implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)
 
   describe("File Accumulator") {
 

@@ -6,7 +6,7 @@ import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.actors.{CurrentGraph, FileCreated, FileDeleted}
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
 class ProjectActorTest extends AkkaTestFixture("ProjectActorTest") with GearUtils {
@@ -24,7 +24,7 @@ class ProjectActorTest extends AkkaTestFixture("ProjectActorTest") with GearUtil
     val importGear = gearFromDescription("test-examples/resources/sdkDescriptions/ImportExample.json")
     sourceGear.gearSet.addGear(importGear)
 
-    val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+    val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
     it("can handle a file creation") {
       project.projectActor ! FileCreated(File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/app.js"), project)

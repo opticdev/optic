@@ -7,14 +7,14 @@ import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.graph.edges.{YieldsModel, YieldsModelProperty, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode}
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.JsObject
 import com.opticdev.core.utils.UUID
 
 
-sealed abstract class BaseModelNode(implicit val project: Project) extends AstProjection {
+sealed abstract class BaseModelNode(implicit val project: OpticProject) extends AstProjection {
   val schemaId : SchemaId
   val value : JsObject
 
@@ -41,11 +41,11 @@ sealed abstract class BaseModelNode(implicit val project: Project) extends AstPr
   }
 }
 
-case class LinkedModelNode(schemaId: SchemaId, value: JsObject, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: Project) extends BaseModelNode{
+case class LinkedModelNode(schemaId: SchemaId, value: JsObject, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode{
   def flatten = ModelNode(schemaId, value)
 }
 
-case class ModelNode(schemaId: SchemaId, value: JsObject)(implicit override val project: Project) extends BaseModelNode {
+case class ModelNode(schemaId: SchemaId, value: JsObject)(implicit override val project: OpticProject) extends BaseModelNode {
 
   def resolve()(implicit actorCluster: ActorCluster) : LinkedModelNode = {
     implicit val sourceGearContext = SGContext.forModelNode(this).get

@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import play.api.libs.json.{JsObject, JsString}
 
@@ -25,8 +25,10 @@ class MutationStepsTest extends AkkaTestFixture("MutationStepsTest") with GearUt
 
   val projectGraphWrapper = new ProjectGraphWrapper(Graph())
 
-  implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear) {
+  implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear) {
     override def projectGraph = projectGraphWrapper.projectGraph
+    override def projectSourcegear: SourceGear = sourceGear
+
   }
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"

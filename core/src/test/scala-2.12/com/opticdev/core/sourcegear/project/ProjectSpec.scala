@@ -29,7 +29,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
       override val schemas = Set()
     }
 
-    val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+    val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
     it("can list all files recursively") {
       assert(project.watchedFiles.map(i => i.pathAsString.split("test-examples/resources/tmp/test_project/")(1)) ==
@@ -38,7 +38,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
 
     describe("can watch files") {
 
-      val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear) {
+      val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear) {
         //turn our test into the middleman to ensure project actors will get the proper messages.
         override val projectActor = self
       }
@@ -83,10 +83,11 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
 
       var reached = false
 
-      val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)  {
+      val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)  {
         override def projectFileChanged(pf: ProjectFile) : Unit = {
           reached = true
         }
+        override def projectSourcegear: SourceGear = sourceGear
       }
       project.handleFileChange((EventType.ENTRY_MODIFY, project.projectFile.file))
 

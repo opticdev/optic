@@ -6,13 +6,14 @@ import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.{DependencyTree, OpticPackage, PackageManager}
 import com.opticdev.parsers.ParserBase
 import com.opticdev.sdk.descriptions.Lens
+import scala.concurrent.ExecutionContext.Implicits.global
 
+import scala.concurrent.Future
 import scala.util.{Failure, Try}
 
 object SGConstructor {
 
-
-  def fromProjectFile(projectFile: ProjectFile) : Try[SGConfig] = Try {
+  def fromProjectFile(projectFile: ProjectFile) : Future[SGConfig] = Future {
     val dependencies = dependenciesForProjectFile(projectFile).get
 
     val compiled = compileDependencyTree(dependencies).get

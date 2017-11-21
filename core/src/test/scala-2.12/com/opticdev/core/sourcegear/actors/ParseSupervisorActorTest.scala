@@ -3,7 +3,7 @@ package com.opticdev.sourcegear.actors
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.sourcegear.graph.FileNode
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.core.sourcegear._
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core.actorSystem
@@ -33,7 +33,7 @@ class ParseSupervisorActorTest extends AkkaTestFixture("ParseSupervisorActorTest
       val f = fixture
       implicit val logToCli = false
 
-      implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear) {
+      implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear) {
         override val projectActor = f.actorCluster.newProjectActor()
       }
 
@@ -55,8 +55,7 @@ class ParseSupervisorActorTest extends AkkaTestFixture("ParseSupervisorActorTest
 
     }
 
-
-    implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear) {
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear) {
       override val projectActor = self
     }
 

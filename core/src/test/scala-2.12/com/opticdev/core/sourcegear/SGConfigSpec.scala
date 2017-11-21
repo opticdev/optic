@@ -14,12 +14,16 @@ import com.opticdev.core.sourcegear.serialization.PickleImplicits._
 import com.opticdev.core.sourcegear.storage.GearStorage
 import com.opticdev.opm.TestPackageProviders
 import com.opticdev.parsers.graph.AstType
+import scala.concurrent.duration._
+import scala.concurrent.Await
 class SGConfigSpec extends TestBase with TestPackageProviders {
 
   describe("SG Config") {
 
-    lazy val sgConfig = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
-      .get
+    lazy val sgConfig = {
+      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
+      Await.result(future, 5 seconds)
+    }
 
     it("can be pickled") {
 

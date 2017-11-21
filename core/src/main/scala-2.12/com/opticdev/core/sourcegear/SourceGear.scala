@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.{Schema, SchemaId}
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.opm.OpticPackage
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
@@ -24,7 +24,7 @@ abstract class SourceGear {
 
   lazy val validExtensions: Set[String] = parsers.flatMap(_.fileExtensions)
 
-  def parseFile(file: File) (implicit project: Project) : Try[FileParseResults] = {
+  def parseFile(file: File) (implicit project: OpticProject) : Try[FileParseResults] = {
     Try {
       val fileContents = file.contentAsString
       //@todo connect to parser list

@@ -12,7 +12,7 @@ import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import play.api.libs.json.{JsObject, JsString}
 import com.opticdev.core.sourcegear.gears.RuleProvider
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
 class GeneratorFactoryStageTest extends AkkaTestFixture("GeneratorFactoryStageTest") with ParserUtils {
@@ -30,7 +30,7 @@ class GeneratorFactoryStageTest extends AkkaTestFixture("GeneratorFactoryStageTe
       override val schemas = Set()
     }
 
-    implicit val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
     val parseGear = parseGearFromSnippetWithComponents(block, Vector(
       CodeComponent(Token, "definedAs", StringFinder(Entire, "hello")),

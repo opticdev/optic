@@ -5,6 +5,8 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.{PackageManager, TestPackageProviders, TestProvider}
 import org.scalatest.FunSpec
+import scala.concurrent.duration._
+import scala.concurrent.Await
 
 class SGConstructorSpec extends TestBase with TestPackageProviders {
 
@@ -22,9 +24,12 @@ class SGConstructorSpec extends TestBase with TestPackageProviders {
     }
 
     it("can build a sourcegear instance") {
-      val sgConfigTry = SGConstructor.fromProjectFile(projectFile)
-      assert(sgConfigTry.isSuccess)
-      assert(sgConfigTry.get.gears.size == 2)
+      lazy val sgConfig = {
+        val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
+        Await.result(future, 5 seconds)
+      }
+      
+      assert(sgConfig.gears.size == 2)
     }
 
   }

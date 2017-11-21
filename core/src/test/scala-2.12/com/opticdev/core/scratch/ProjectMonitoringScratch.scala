@@ -6,7 +6,7 @@ import com.opticdev.core.actorSystem
 import better.files.File
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.actors.{ActorCluster, CurrentGraph}
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
 import akka.event.Logging
@@ -27,13 +27,13 @@ object ProjectMonitoringScratch extends GearUtils with TestBase {
     }
 
 
-    val importGear = gearFromDescription("test-examples/resources/sdkDescriptions/ImportExample.json")
+    val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
     sourceGear.gearSet.addGear(importGear)
 
-    val requestGears = gearsFromDescription("test-examples/resources/sdkDescriptions/RequestSdkDescription.json")
+    val requestGears = gearsFromDescription("test-examples/resources/example_packages/optic:FlatExpress@0.1.0.json")
     sourceGear.gearSet.addGears(requestGears:_*)
 
-    val project = new Project("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+    val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
     project.watch
 

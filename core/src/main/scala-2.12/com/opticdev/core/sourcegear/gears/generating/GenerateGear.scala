@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.gears.generating
 
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
-import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstPrimitiveNode, GraphImplicits}
 import play.api.libs.json.{JsObject, JsValue}
@@ -20,7 +20,7 @@ case class GenerateGear(block: String,
     } else throw new Error("Unable to find parser for generator")
   }
 
-  def generate(value: JsObject)(implicit sourceGearContext: SGContext, project: Project): String = {
+  def generate(value: JsObject)(implicit sourceGearContext: SGContext, project: OpticProject): String = {
     implicit val fileContents = block
     implicit val astGraph = parseResult.graph
     //@todo make this work for all entry children
