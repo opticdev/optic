@@ -12,16 +12,16 @@ import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
 object Compiler {
-  def setup(sdkDescription: OpticPackage)(implicit logToCli: Boolean = false, dependencyTree: DependencyTree) : CompilerPool = {
+  def setup(opticPackage: OpticPackage)(implicit logToCli: Boolean = false, dependencyTree: DependencyTree) : CompilerPool = {
 
-    implicit val packageContext = dependencyTree.treeContext(sdkDescription.packageFull).get
+    implicit val packageContext = dependencyTree.treeContext(opticPackage.packageFull).get
 
     implicit val errorAccumulator: ErrorAccumulator = new ErrorAccumulator
 
-    new CompilerPool(sdkDescription.lenses.map(_._2).toVector.map(l=> new CompileWorker(l)).toSet)
+    new CompilerPool(opticPackage, opticPackage.lenses.map(_._2).toVector.map(l=> new CompileWorker(l)).toSet)
   }
 
-  class CompilerPool(val compilers: Set[CompileWorker])(implicit packageContext: Context, dependencyTree: DependencyTree, errorAccumulator: ErrorAccumulator, logToCli: Boolean = false) {
+  class CompilerPool(opticPackage: OpticPackage, val compilers: Set[CompileWorker])(implicit packageContext: Context, dependencyTree: DependencyTree, errorAccumulator: ErrorAccumulator, logToCli: Boolean = false) {
 
     private implicit var completed: ListBuffer[Output] = new scala.collection.mutable.ListBuffer[Output]()
 
@@ -30,7 +30,7 @@ object Compiler {
     def execute: CompilerOutput = {
       clear
       //@todo par should ideally be used here, but it is inconsistent for some reason. need to look into race conditions
-      CompilerOutput(compilers.map(_.compile).seq, dependencyTree.flattenSchemas)
+      CompilerOutput(opticPackage, compilers.map(_.compile).seq, dependencyTree.flattenSchemas)
     }
   }
 

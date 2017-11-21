@@ -4,6 +4,7 @@ import java.net.URL
 
 import akka.stream.ActorMaterializer
 import com.opticdev.common.PackageRef
+import com.opticdev.opm.context.Tree
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
 import scala.concurrent.Future

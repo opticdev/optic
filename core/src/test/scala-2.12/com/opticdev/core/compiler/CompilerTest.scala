@@ -4,8 +4,8 @@ import com.opticdev.core.Fixture.TestBase
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
 import com.opticdev.core.compiler.Compiler
-import com.opticdev.opm.context.{PackageContext, PackageContextFixture}
-import com.opticdev.opm.{Leaf, OpticPackage, Tree}
+import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
+import com.opticdev.opm.{OpticPackage}
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source

@@ -3,6 +3,12 @@ package com.opticdev.core.sourcegear.serialization
 import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import boopickle.PicklerHelper
+import com.opticdev.core.sourcegear.gears.RuleProvider
+import com.opticdev.core.sourcegear.gears.generating.GenerateGear
+import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
+import com.opticdev.core.sourcegear.{Gear, SGConfig}
+import com.opticdev.parsers.graph.AstType
+import com.opticdev.sdk.descriptions.SchemaColdStorage
 import com.opticdev.sdk.{BoolProperty, _}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
@@ -83,4 +89,43 @@ object PickleImplicits extends PicklerHelper {
     .addConcreteType[BoolProperty]
     .addConcreteType[ArrayProperty]
     .addConcreteType[ObjectProperty]
+
+
+  //@todo this should be moved within the parsers
+  implicit val ruleProvider = new RuleProvider()
+
+  implicit object GearPickler extends Pickler[Gear] {
+    override def pickle(value: Gear)(implicit state: PickleState): Unit = {
+      state.pickle(value.identifier)
+      state.pickle(value.enterOn)
+      state.pickle(value.parser)
+      state.pickle(value.generater)
+    }
+    override def unpickle(implicit state: UnpickleState): Gear = {
+      Gear(
+        state.unpickle[String],
+        state.unpickle[Set[AstType]],
+        state.unpickle[ParseAsModel],
+        state.unpickle[GenerateGear]
+      )
+    }
+  }
+
+  implicit object SGConfigPickler extends Pickler[SGConfig] {
+    override def pickle(value: SGConfig)(implicit state: PickleState): Unit = {
+      state.pickle(value.hashInt)
+      state.pickle(value.parserIds)
+      state.pickle(value.gears)
+      state.pickle(value.schemas)
+    }
+    override def unpickle(implicit state: UnpickleState): SGConfig = {
+      SGConfig(
+        state.unpickle[Int],
+        state.unpickle[Set[String]],
+        state.unpickle[Set[Gear]],
+        state.unpickle[Set[SchemaColdStorage]]
+      )
+    }
+  }
+
 }

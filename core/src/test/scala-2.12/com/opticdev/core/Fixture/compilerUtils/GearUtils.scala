@@ -5,8 +5,8 @@ import com.opticdev.core.compiler.Compiler
 import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
 import com.opticdev.core.sourcegear.{Gear, SourceGear}
-import com.opticdev.opm.{Leaf, OpticPackage, Tree}
-import com.opticdev.opm.context.{PackageContext, PackageContextFixture}
+import com.opticdev.opm.{OpticPackage}
+import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
 import com.opticdev.parsers.SourceParserManager
 
 import scala.collection.mutable.ListBuffer

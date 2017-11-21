@@ -1,7 +1,7 @@
 package com.opticdev.opm.context
 
 import com.opticdev.common.PackageRef
-import com.opticdev.opm.{Leaf, OpticPackage}
+import com.opticdev.opm.OpticPackage
 import com.opticdev.sdk.descriptions.PackageExportable
 
 import scala.util.Try

@@ -7,7 +7,7 @@ import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.opm.OpticPackage
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
-import com.opticdev.sourcegear.FileParseResults
+import com.opticdev.core.sourcegear.FileParseResults
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge
@@ -18,7 +18,7 @@ abstract class SourceGear {
   val parsers: Set[ParserBase]
   val gearSet: GearSet = new GearSet
 
-  val schemas: Map[SchemaId, Schema] = Map()
+  val schemas: Set[Schema] = Set()
 
   def fileAccumulator = gearSet.fileAccumulator
 

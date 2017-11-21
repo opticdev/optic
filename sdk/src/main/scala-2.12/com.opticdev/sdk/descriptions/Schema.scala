@@ -54,6 +54,10 @@ case class Schema(schema: JsObject) extends PackageExportable {
 
   def validate(jsValue: JsValue): Boolean = jsonSchema.validate(jsValue.as[JsonNode]).isSuccess
 
+  def toColdStorage = SchemaColdStorage(schema.toString())
+
 }
+
+case class SchemaColdStorage(data: String)
 
 case class SchemaId(id: String)

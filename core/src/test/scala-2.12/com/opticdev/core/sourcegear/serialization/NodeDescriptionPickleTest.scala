@@ -28,7 +28,7 @@ class NodeDescriptionPickleTest extends FunSpec{
       assertCompiles("Vector(testNode, testNode)")
     }
 
-    it("can roundtrip via piclke") {
+    it("can roundtrip via pickle") {
       assert(Unpickle[NodeDescription].fromBytes(Pickle.intoBytes(testNode)) == testNode)
     }
 

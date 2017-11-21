@@ -1,14 +1,9 @@
 package com.opticdev.core.sourcegear
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
-import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType, GraphImplicits}
-import com.opticdev.sourcegear.FileParseResults
-
-import scalax.collection.edge.LkDiEdge
-import scalax.collection.mutable.Graph
+import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 
 class GearSet(initialGears: Gear*) {
 
@@ -32,6 +27,8 @@ class GearSet(initialGears: Gear*) {
     gears remove gear
     reindex
   }
+
+  def listGears = gears.toSet
 
   private var groupedStore : Map[AstType, Set[Gear]] = Map()
 

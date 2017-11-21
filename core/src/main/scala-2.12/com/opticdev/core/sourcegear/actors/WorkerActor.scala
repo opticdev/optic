@@ -5,7 +5,7 @@ import better.files.File
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
 import com.opticdev.parsers.AstGraph
-import com.opticdev.sourcegear.FileParseResults
+import com.opticdev.core.sourcegear.FileParseResults
 
 import scala.util.Try
 

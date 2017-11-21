@@ -20,7 +20,6 @@ class GearStorageTest extends TestBase with GearUtils {
     it("can read back in") {
       assert(GearStorage.loadFromStorage("Using Require").get == importGear)
     }
-
   }
 
 }

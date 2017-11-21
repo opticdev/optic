@@ -1,6 +1,6 @@
 package com.opticdev.opm.context
 
-import com.opticdev.opm.{DependencyTree, Leaf, Tree}
+import com.opticdev.opm.DependencyTree
 
 case class TreeContext(dependencyTree: DependencyTree) {
 
