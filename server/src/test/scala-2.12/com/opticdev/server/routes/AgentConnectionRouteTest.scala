@@ -6,7 +6,7 @@ import com.opticdev.core.Fixture.SocketTestFixture
 import com.opticdev.server.http.routes.socket.SocketRoute
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.agents.Protocol.ContextUpdate
-import com.opticdev.server.http.state.StateManager
+import com.opticdev.server.state.StateManager
 import org.scalatest.{FunSpec, Matchers}
 
 class AgentConnectionRouteTest extends SocketTestFixture {

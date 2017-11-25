@@ -1,6 +1,6 @@
 package com.opticdev.server.http
 
-import com.opticdev.server.http.state.StateManager
+import com.opticdev.server.state.StateManager
 
 object Lifecycle extends App {
 

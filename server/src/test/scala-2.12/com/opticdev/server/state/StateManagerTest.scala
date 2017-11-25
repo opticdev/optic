@@ -6,7 +6,6 @@ import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, StaticSGProject}
 import com.opticdev.opm.OpticPackage
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
-import com.opticdev.server.http.state.StateManager
 import org.scalatest.FunSpec
 
 class StateManagerTest extends AkkaTestFixture("StateManagerTest") {

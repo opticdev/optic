@@ -8,7 +8,7 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import com.opticdev.core.actorSystem
-import com.opticdev.server.http.state.StateManager
+import com.opticdev.server.state.StateManager
 
 import scala.io.StdIn
 object Server {

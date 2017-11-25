@@ -1,4 +1,4 @@
-package com.opticdev.server.http.state
+package com.opticdev.server.state
 
 import better.files.File
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}

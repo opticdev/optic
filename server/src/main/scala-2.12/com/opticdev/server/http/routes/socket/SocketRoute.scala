@@ -6,7 +6,7 @@ import akka.stream.scaladsl.Flow
 import com.opticdev.core.actorSystem
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.editors.EditorConnection
-import com.opticdev.server.http.state.StateManager
+import com.opticdev.server.state.StateManager
 
 import scala.concurrent.ExecutionContext
 import scala.util.Failure
