@@ -6,14 +6,14 @@ import com.opticdev.core.Fixture.SocketTestFixture
 import com.opticdev.server.http.routes.socket.SocketRoute
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.agents.Protocol.ContextUpdate
-import com.opticdev.server.state.StateManager
+import com.opticdev.server.state.ProjectsManager
 import org.scalatest.{FunSpec, Matchers}
 
 class AgentConnectionRouteTest extends SocketTestFixture {
 
   describe("Agent connection socket system") {
 
-    implicit val stateManager = new StateManager(Set())
+    implicit val projectsManager = new ProjectsManager()
 
     val wsClient = WSProbe()
 

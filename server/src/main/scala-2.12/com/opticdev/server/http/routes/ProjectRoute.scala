@@ -9,17 +9,16 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.StandardRoute
 import com.opticdev.server.http.HTTPResponse
 import com.opticdev.server.http.routes.query.ModelQuery
-import com.opticdev.server.state.StateManager
+import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsValue}
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
-class ProjectRoute(implicit executionContext: ExecutionContext, stateManager: StateManager) {
-
+class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager: ProjectsManager) {
 
   val route =
     pathPrefix("projects") {
       pathEnd {
-        complete(JsArray(stateManager.allProjects.toVector.map(_.asJson)))
+        complete(JsArray(projectsManager.allProjects.toVector.map(_.asJson)))
       } ~
         path(Segment) { projectName => complete(getProject(projectName)) } ~
         path(Segment / "models" / Segment) {
@@ -34,14 +33,14 @@ class ProjectRoute(implicit executionContext: ExecutionContext, stateManager: St
 
 
   def getProject(projectName: String) : HTTPResponse = {
-    val projectOption = stateManager.lookupProject(projectName)
-    if (projectOption.isDefined) projectOption.get.asJson
+    val projectOption = projectsManager.lookupProject(projectName)
+    if (projectOption.isSuccess) projectOption.get.asJson
     else StatusCodes.NotFound
   }
 
   def getModelsForProject(projectName: String, modelName: String, filter: ModelQuery) : HTTPResponse = {
-    val projectOption = stateManager.lookupProject(projectName)
-    if (projectOption.isDefined) {
+    val projectOption = projectsManager.lookupProject(projectName)
+    if (projectOption.isSuccess) {
       JsArray()
     } else StatusCodes.NotFound
   }

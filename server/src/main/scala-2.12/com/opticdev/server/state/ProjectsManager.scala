@@ -7,11 +7,13 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server
-
+import com.opticdev.core.actorSystem
 import scala.collection.mutable
 import scala.util.{Success, Try}
 
-class ProjectsManager()(implicit actorCluster: ActorCluster) {
+class ProjectsManager {
+
+  implicit val actorCluster: ActorCluster = new ActorCluster(actorSystem)
 
   val MAX_PROJECTS = 6
 

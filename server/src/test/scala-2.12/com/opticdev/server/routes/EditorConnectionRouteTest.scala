@@ -5,7 +5,7 @@ import com.opticdev.core.Fixture.SocketTestFixture
 import com.opticdev.server.http.routes.socket.SocketRoute
 import com.opticdev.server.http.routes.socket.editors.Protocol._
 import com.opticdev.server.http.routes.socket.editors.EditorConnection
-import com.opticdev.server.state.StateManager
+import com.opticdev.server.state.ProjectsManager
 import org.scalatest.{FunSpec, Matchers}
 import play.api.libs.json.{JsNumber, JsObject, JsString}
 
@@ -13,7 +13,7 @@ class EditorConnectionRouteTest extends SocketTestFixture {
 
   describe("Edtitor Connection Socket system") {
 
-    implicit val stateManager = new StateManager(Set())
+    implicit val projectsManager = new ProjectsManager
 
     val wsClient = WSProbe()
 

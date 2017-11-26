@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.server.http.routes.ProjectRoute
-import com.opticdev.server.state.StateManager
+import com.opticdev.server.state.ProjectsManager
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 import org.scalatest.{FunSpec, Matchers}
 import play.api.libs.json.{JsArray, JsObject}
@@ -21,7 +21,8 @@ class ProjectRouteTest extends FunSpec with Matchers with ScalatestRouteTest wit
     implicit val logToCli = false
     implicit val actorCluster = new ActorCluster(ActorSystem("ProjectRouteTest"))
     val testProject = new StaticSGProject("TestProject", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), SourceGear.default)
-    implicit val stateManager = new StateManager(Set(testProject))
+    implicit val projectsManager = new ProjectsManager
+    projectsManager.loadProject(testProject)
 
     val projectRoute = new ProjectRoute()
 

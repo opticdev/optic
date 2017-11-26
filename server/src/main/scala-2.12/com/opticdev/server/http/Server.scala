@@ -8,12 +8,12 @@ import akka.http.scaladsl.model._
 import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import com.opticdev.core.actorSystem
-import com.opticdev.server.state.StateManager
+import com.opticdev.server.state.ProjectsManager
 
 import scala.io.StdIn
 object Server {
 
-  def start()(implicit stateManager: StateManager) {
+  def start()(implicit projectsManager: ProjectsManager) {
 
     implicit val materializer = ActorMaterializer()
     // needed for the future flatMap/onComplete in the end
