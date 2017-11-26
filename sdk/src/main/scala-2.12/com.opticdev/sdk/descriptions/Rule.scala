@@ -21,7 +21,7 @@ object Rule extends Description[Rule] {
       try {
         JsSuccess(Rule.fromJson(json))
       } catch {
-        case _=> JsError()
+        case _ : Throwable => JsError()
       }
     }
   }

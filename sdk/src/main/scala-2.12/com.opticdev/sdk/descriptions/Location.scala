@@ -15,7 +15,7 @@ object Location extends Description[Location] {
       try {
         JsSuccess(Location.fromJson(json))
       } catch {
-        case _=> JsError()
+        case _ : Throwable => JsError()
       }
     }
   }

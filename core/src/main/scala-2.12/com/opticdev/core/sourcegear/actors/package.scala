@@ -7,7 +7,6 @@ import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.graph.FileNode
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.parsers._
-import com.opticdev.core.sourcegear.FileParseResults
 
 package object actors {
 

@@ -14,6 +14,7 @@ trait TestPackageProviders extends FunSpecLike with BeforeAndAfterAll {
   override def beforeAll(): Unit = {
     PackageStorage.clearLocalPackages
     installProviders
+    super.beforeAll()
   }
 
 }

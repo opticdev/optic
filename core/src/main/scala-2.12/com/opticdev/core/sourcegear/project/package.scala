@@ -3,7 +3,6 @@ package com.opticdev.core.sourcegear
 import com.opticdev._
 import akka.actor.{ActorRef, Kill, PoisonPill, Props}
 import better.files.File
-import com.opticdev.core.sourcegear.{SGConstructor, SourceGear}
 import better.files._
 import FileWatcher._
 import java.nio.file.{Path, WatchEvent, StandardWatchEventKinds => EventType}

@@ -14,7 +14,7 @@ object Component extends Description[Component] {
       try {
         JsSuccess(Component.fromJson(json))
       } catch {
-        case _=> JsError()
+        case _: Throwable => JsError()
       }
     }
   }

@@ -43,6 +43,9 @@ object SGConstructor {
     } else {
       val failedPackages = compiledPackages.filter(_.isFailure).map(i=> (i.opticPackage, i.errors))
         .toMap
+
+      failedPackages.values.flatMap(_.values).foreach(_.printAll)
+
       throw new SomePackagesFailedToCompile(failedPackages)
     }
   }

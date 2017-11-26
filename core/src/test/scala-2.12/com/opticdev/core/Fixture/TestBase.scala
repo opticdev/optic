@@ -28,7 +28,8 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
   def start = {
     DataDirectory.reset
     PreTest.run
-    SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/out/artifacts/javascript_lang_jar/javascript-lang.jar")
+    SourceParserManager.clearParsers
+    SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/target/scala-2.12/javascript-lang_2.12-1.0.jar")
   }
 
   start
@@ -39,6 +40,7 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
 
   override def beforeAll = {
     start
+    super.beforeAll()
   }
 
   override def afterAll = {

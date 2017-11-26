@@ -17,7 +17,7 @@ object Finder extends Description[Finder] {
       try {
         JsSuccess(Finder.fromJson(json))
       } catch {
-        case _=> JsError()
+        case _: Throwable => JsError()
       }
     }
   }

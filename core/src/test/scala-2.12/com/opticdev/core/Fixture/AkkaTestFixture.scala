@@ -12,6 +12,8 @@ class AkkaTestFixture(mySpec: String) extends TestKit(ActorSystem(mySpec)) with 
 
   override def beforeAll: Unit = {
     PreTest.resetScratch
+    start
+    super.beforeAll()
   }
 
   override def afterAll {

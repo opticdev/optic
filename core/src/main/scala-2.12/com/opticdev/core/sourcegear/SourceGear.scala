@@ -7,7 +7,6 @@ import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.opm.OpticPackage
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.ParserBase
-import com.opticdev.core.sourcegear.FileParseResults
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge

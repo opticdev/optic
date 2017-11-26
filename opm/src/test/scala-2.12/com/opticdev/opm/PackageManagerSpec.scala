@@ -1,7 +1,6 @@
 package com.opticdev.opm
 
 import com.opticdev.common.PackageRef
-import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.storage.PackageStorage
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSpec}

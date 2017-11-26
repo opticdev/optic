@@ -2,8 +2,6 @@ package com.opticdev.core.Fixture
 
 import org.apache.commons.io.FileUtils
 
-
-
 object PostTest {
   def run: Unit = {
     clearScratch

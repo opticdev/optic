@@ -23,7 +23,7 @@ object IsInFile extends Description[IsInFile] {
     try {
       JsSuccess(fromJson(json))
     } catch {
-      case _ => JsError()
+      case _ : Throwable => JsError()
     }
   }
 
