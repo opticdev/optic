@@ -19,8 +19,10 @@ import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import play.api.libs.json.{JsObject, JsString, JsValue}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Await
+import scala.util.Try
 
 class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = false, actorCluster: ActorCluster) extends OpticProject(name, baseDirectory) {
 
@@ -44,4 +46,12 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
   }
 
   override def projectSourcegear = sourceGear
+
+}
+
+object Project {
+  def fromProjectFile(pf: ProjectFile)(implicit actorCluster: ActorCluster) : Try[OpticProject] = Try {
+    val name = pf.interface.name
+    new Project(name.yamlValue.value, pf.file.parent)
+  }
 }

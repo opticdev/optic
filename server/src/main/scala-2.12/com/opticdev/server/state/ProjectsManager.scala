@@ -36,7 +36,7 @@ class ProjectsManager()(implicit actorCluster: ActorCluster) {
 
 
   //query for project / manage loading projects from storage
-  def lookup(projectName: String) : Try[OpticProject] = Try {
+  def lookupProject(projectName: String) : Try[OpticProject] = Try {
     //check if we are already watching the project. If so, return reference to it
     val alreadyTrackingOption = allProjects.find(_.name == projectName)
     if (alreadyTrackingOption.isDefined) return Success(alreadyTrackingOption.get)
@@ -53,6 +53,22 @@ class ProjectsManager()(implicit actorCluster: ActorCluster) {
 
   }
 
+  def lookupProject(includedFile: File) : Try[OpticProject] = Try {
+    import com.opticdev.core.utils.FileInPath._
+    //check if it's in memory
+    val projectOption = projectsStore.find(i=> includedFile.inPathOf(i.baseDirectory))
+    if (projectOption.isDefined) {
+      return Success(projectOption.get)
+    }
+
+    //check for an optic package in a parent directory
+    val projectFileOption = includedFile.projectFileOption
+    if (projectFileOption.isDefined) {
+      return Success(loadProject(Project.fromProjectFile(projectFileOption.get).get))
+    }
+
+    throw new Error("No project including "+includedFile.pathAsString+" found")
+  }
 
   //load project
   def loadProject(name: String, baseDir: File) : Try[OpticProject] = Try {
@@ -61,9 +77,12 @@ class ProjectsManager()(implicit actorCluster: ActorCluster) {
     if (allProjects.exists(_.name == name)) throw new Error("Project with name "+name+" already being tracked. Please give your projects unique names")
 
     val project = new Project(name, baseDir)
+    loadProject(project)
+  }
+
+  def loadProject(project: OpticProject) : OpticProject = {
     project.watch
     addProject(project)
-
     project
   }
 

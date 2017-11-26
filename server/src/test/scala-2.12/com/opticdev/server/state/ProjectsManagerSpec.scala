@@ -23,18 +23,32 @@ class ProjectsManagerSpec extends AkkaTestFixture("ProjectsManagerSpec") {
 
       it("fails when project does not exist") {
         val f = fixture()
-        assert(f.lookup("fake").isFailure)
+        assert(f.lookupProject("fake").isFailure)
       }
 
       it("works when project exists in known project") {
         val f = fixture(ServerStorage(Map("test" -> "test-examples/resources/tmp/test_project")))
-        assert(f.lookup("test").isSuccess)
+        assert(f.lookupProject("test").isSuccess)
       }
 
       it("works when project is already in memory") {
         val f = fixture()
         f.loadProject("test", File("test-examples/resources/tmp/test_project"))
-        assert(f.lookup("test").isSuccess)
+        assert(f.lookupProject("test").isSuccess)
+      }
+
+    }
+
+    describe("by file") {
+
+      it("fails when file is not included in any project") {
+        val f = fixture()
+        assert(f.lookupProject(File("path/to/not/real")).isFailure)
+      }
+
+      it("works when file is part of a project") {
+        val f = fixture()
+        assert(f.lookupProject(File("test-examples/resources/tmp/test_project/nested/firstFile.js")).isSuccess)
       }
 
     }
