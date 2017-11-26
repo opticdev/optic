@@ -76,7 +76,7 @@ package object project {
       actorSystem.stop(watcher)
     }
 
-    private var watchedFilesStore : Set[File] = updateWatchedFiles
+    private var watchedFilesStore : Set[File] = Set()
     def watchedFiles = watchedFilesStore
     def updateWatchedFiles: Set[File] = {
       val filesToWatch = baseDirectory.listRecursively.toVector.filter(i=>

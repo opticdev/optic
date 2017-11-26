@@ -29,12 +29,16 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
     SourceGear.default
   }
 
+  //do this after sourcegear is initialized
+  updateWatchedFiles
+
   def projectFileChanged(newPf: ProjectFile): Unit = {
-    println("The project file has changed")
+//    println("The project file has changed")
     SGConstructor.fromProjectFile(newPf).onComplete(i=> {
       if (i.isSuccess) {
         sourceGear = i.get.inflate
-        println("New sourcegear compiled")
+        updateWatchedFiles
+//        println("New sourcegear compiled")
       } else println("errors prevented new sourcegear from taking effect")
     })
   }

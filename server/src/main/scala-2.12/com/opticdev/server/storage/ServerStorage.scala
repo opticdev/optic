@@ -2,11 +2,9 @@ package com.opticdev.server.storage
 
 import better.files._
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.sdk.descriptions.{Lens, SchemaId}
 import play.api.libs.json._
 
 import scala.util.Try
-
 
 case class ServerStorage(projects: Map[String, String] = Map())
 
@@ -24,8 +22,6 @@ object ServerStorage {
   val prefFile : File = DataDirectory.root / "server.json"
 
   def reload : ServerStorage = {
-
-  import play.api.libs.json.JsValue
 
     val prefTry = Try {
       val jsValue = Json.parse(prefFile.contentAsString)

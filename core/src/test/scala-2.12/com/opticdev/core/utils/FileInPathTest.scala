@@ -20,4 +20,30 @@ class FileInPathTest extends FunSpec {
 
   }
 
+  it("All Parents of file found") {
+    import com.opticdev.core.utils.FileInPath._
+
+    val parents = File("/path/to/file").parentsOf
+    assert(parents == Seq(
+      File("/path/to"),
+      File("/path"),
+      File("/"),
+    ))
+  }
+
+  describe("Finding project file in parents") {
+    import com.opticdev.core.utils.FileInPath._
+
+    it("returns a project file when found") {
+      val pfOption = File("test-examples/resources/test_project/nested/firstFile.js").projectFileOption
+      assert(pfOption.isDefined)
+    }
+
+    it("returns none when on project file is found") {
+      val pfOption = File("/fake/path/to/place").projectFileOption
+      assert(pfOption.isEmpty)
+    }
+
+  }
+
 }
