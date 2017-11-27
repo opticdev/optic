@@ -1,2 +1,2 @@
-name := MyBuild.NamePrefix + "opm"
+name := "optic-opm"
 organization := "com.opticdev"

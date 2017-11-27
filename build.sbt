@@ -8,21 +8,21 @@ scalaVersion := "2.12.3"
 
 
 /* Project Components */
-lazy val common = project.
+lazy val common = (project in file("common")).
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.commonDependencies)
 
-lazy val sdk = project.
+lazy val sdk = (project in file("sdk")).
   settings(Common.settings: _*)
   .settings(libraryDependencies ++= Dependencies.sdkDependencies)
 
-lazy val opm = project.
+lazy val opm = (project in file("opm")).
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.opmDependencies)
  .dependsOn(common)
  .dependsOn(sdk)
 
-lazy val core = project.
+lazy val core = (project in file("core")).
   settings(Common.settings: _*)
   .settings(libraryDependencies ++= Dependencies.coreDependencies)
   .dependsOn(common)
@@ -30,7 +30,7 @@ lazy val core = project.
   .dependsOn(opm)
   .dependsOn(opm % "compile->compile;test->test")
 
-lazy val server = project.
+lazy val server = (project in file("server")).
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.serverDependencies)
  .dependsOn(sdk)
