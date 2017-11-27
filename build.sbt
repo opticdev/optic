@@ -45,7 +45,4 @@ lazy val root = (project in file(".")).
 concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
 
 assemblyJarName in assembly := "optic.jar"
-test in assembly := {}
 mainClass in assembly := Some("com.opticdev.server.http.Lifecycle")
-
-
