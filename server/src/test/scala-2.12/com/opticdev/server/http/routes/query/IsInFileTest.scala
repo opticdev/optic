@@ -1,4 +1,4 @@
-package com.opticdev.server.routes.query
+package com.opticdev.server.http.routes.query
 
 import com.opticdev.server.http.routes.query.{AnyFile, In, InFiles, IsInFile}
 import org.scalatest.FunSpec

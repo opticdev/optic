@@ -1,4 +1,4 @@
-package com.opticdev.server.routes
+package com.opticdev.server.http
 
 import akka.http.scaladsl.testkit.{ScalatestRouteTest, WSProbe}
 import akka.testkit.TestKit

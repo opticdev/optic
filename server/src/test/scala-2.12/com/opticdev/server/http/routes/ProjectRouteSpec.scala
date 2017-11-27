@@ -1,4 +1,4 @@
-package com.opticdev.server.routes
+package com.opticdev.server.http.routes
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes

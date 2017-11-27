@@ -64,12 +64,13 @@ package object project {
       }
     }
 
-    def projectGraph = {
+    def projectGraph: ProjectGraph = {
       implicit val timeout = Timeout(2 seconds)
       val future = projectActor ? CurrentGraph
       Await.result(future, timeout.duration).asInstanceOf[ProjectGraphWrapper].projectGraph
     }
 
+    def projectGraphWrapper : ProjectGraphWrapper = new ProjectGraphWrapper(projectGraph)
 
     def stopWatching = {
       actorSystem.stop(watcher)

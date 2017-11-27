@@ -17,7 +17,7 @@ package object editors {
 
     case class Search(input: String) extends EditorEvents
 
-    case class Context(filePath: String, start: Int, end: Int) extends EditorEvents
+    case class Context(filePath: String, range: Range) extends EditorEvents
 
     case class UnknownEvent(raw: String) extends EditorEvents
 

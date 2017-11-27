@@ -1,5 +1,6 @@
 package com.opticdev.server.storage
 
+import com.opticdev.server.storage.ServerStorage
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FunSpec}
 import play.api.libs.json.{JsObject, JsString, Json}
 

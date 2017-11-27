@@ -36,25 +36,25 @@ class EditorConnection(slug: String, actorSystem: ActorSystem) extends Connectio
       Flow[String]
         .map(i=> {
           val parsedTry = Try(Json.parse(i).as[JsObject])
-          val eventTry  = Try(parsedTry.get.value.get("event").get.as[JsString].value)
+          val eventTry  = Try(parsedTry.get.value("event").as[JsString].value)
           val message = if (eventTry.isSuccess) {
             eventTry.get match {
               case "search" => {
-                val queryTry  = Try(parsedTry.get.value.get("query").get.as[JsString].value)
+                val queryTry  = Try(parsedTry.get.value("query").as[JsString].value)
                 if (queryTry.isSuccess) Search(queryTry.get) else UnknownEvent(i)
               }
               case "updateMeta" => {
-                val nameTry  = Try(parsedTry.get.value.get("name").get.as[JsString].value)
-                val versionTry  = Try(parsedTry.get.value.get("version").get.as[JsString].value)
+                val nameTry  = Try(parsedTry.get.value("name").as[JsString].value)
+                val versionTry  = Try(parsedTry.get.value("version").as[JsString].value)
                 if (nameTry.isSuccess && versionTry.isSuccess) UpdateMetaInformation(nameTry.get, versionTry.get) else UnknownEvent(i)
               }
               case "context" => {
-                val fileTry = Try(parsedTry.get.value.get("file").get.as[JsString].value)
-                val startTry = Try(parsedTry.get.value.get("start").get.as[JsNumber].value.toInt)
-                val endTry = Try(parsedTry.get.value.get("end").get.as[JsNumber].value.toInt)
+                val fileTry = Try(parsedTry.get.value("file").as[JsString].value)
+                val startTry = Try(parsedTry.get.value("start").as[JsNumber].value.toInt)
+                val endTry = Try(parsedTry.get.value("end").as[JsNumber].value.toInt)
 
                 if (fileTry.isSuccess && startTry.isSuccess && endTry.isSuccess)
-                  Context(fileTry.get, startTry.get, endTry.get) else UnknownEvent(i)
+                  Context(fileTry.get, Range(startTry.get, endTry.get)) else UnknownEvent(i)
               }
               case _ => UnknownEvent(i)
             }
