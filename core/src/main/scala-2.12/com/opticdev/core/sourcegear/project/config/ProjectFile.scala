@@ -13,7 +13,7 @@ import scala.util.Try
 class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChanged: (ProjectFile)=> Unit = (pf)=> {}) extends PFInterface {
   import net.jcazevedo.moultingyaml._
 
-  private var interfaceStore : PFRootInterface = interfaceForFile
+  private var interfaceStore : Try[PFRootInterface] = interfaceForFile
 
   //create a blank one if it does not exist
   if (createIfDoesNotExist && !file.exists) {
@@ -21,7 +21,7 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
   }
 
   private var lastHash : String = null
-  private def interfaceForFile = {
+  private def interfaceForFile: Try[PFRootInterface] = Try {
     val (yaml, contents) = {
       val tryParse = Try({
         val contents = file.contentAsString
@@ -30,7 +30,7 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
       if (tryParse.isSuccess) tryParse.get
       else {
         tryParse.failed.get match {
-          case e:NoSuchFileException => if (createIfDoesNotExist) (YamlObject(), "") else throw InvalidProjectFileException("file not found")
+          case e:NoSuchFileException => if (createIfDoesNotExist) (YamlObject(), "") else throw InvalidProjectFileException("Project file not found")
           case e:ParserException => throw InvalidProjectFileException("syntax error in YAML")
           case _ => throw InvalidProjectFileException("unknown error")
         }
@@ -53,11 +53,7 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
   def interface = interfaceStore
   def reload = {
     if (file.exists && Crypto.createSha1(file.contentAsString) != lastHash) {
-      //@todo send a message that the file is invalid. Right now it just uses the last valid parse.
-      val parseTry = Try(interfaceForFile)
-      if (parseTry.isSuccess) {
-        interfaceStore = parseTry.get
-      }
+      interfaceStore = interfaceForFile
     } else if (file.notExists && createIfDoesNotExist) {
       interfaceStore = interface
       save
@@ -68,11 +64,13 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
 
 
   override def yamlValue: YamlValue = {
+    if (interface.isFailure) return null
+
     val obj : Map[YamlValue, YamlValue] = Map(
-      YamlString("name") -> interface.name.yamlValue,
-      YamlString("parsers") -> interface.parsers.yamlValue,
-      YamlString("knowledge") -> interface.knowledge.yamlValue,
-      YamlString("ignored_files") -> interface.ignored_files.yamlValue
+      YamlString("name") -> interface.get.name.yamlValue,
+      YamlString("parsers") -> interface.get.parsers.yamlValue,
+      YamlString("knowledge") -> interface.get.knowledge.yamlValue,
+      YamlString("ignored_files") -> interface.get.ignored_files.yamlValue
 //      YamlString("relationships") -> relationships.yamlValue
     )
 
@@ -81,8 +79,10 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
 
   def save = file.createIfNotExists(asDirectory = false).write(yamlValue.prettyPrint)
 
-  def dependencies = Try[Vector[PackageRef]] {
-    val dependencies = interface.knowledge.value.map(i=> (PackageRef.fromString(i.value), i))
+  def dependencies: Try[Vector[PackageRef]] = Try {
+    if (interface.isFailure) return null
+
+    val dependencies = interface.get.knowledge.value.map(i=> (PackageRef.fromString(i.value), i))
 
     val allValid = dependencies.forall(_._1.isSuccess)
 

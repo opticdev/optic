@@ -39,7 +39,7 @@ object PackageManager {
       val results = resultsForRefs(packageRefs.toSeq:_*)
 
       if (results.notFound.nonEmpty) {
-        throw new Error("Some packages could not be resolved "+ results.notFound.map(_.full).toVector.sorted.mkString(","))
+        throw new Exception("Some packages could not be resolved "+ results.notFound.map(_.full).toVector.sorted.mkString(","))
       } else {
         //mark all queried as satisfied
         packageRefs.foreach(key=> flattenedDependencyTree(key) = true)
@@ -77,7 +77,7 @@ object PackageManager {
 
     if (tryInstall.isSuccess) {
       if (loaded.exists(_._2.isFailure)) {
-        throw new Error("Could not resolve packages "+ loaded.filter(_._2.isFailure).map(_._1.full).mkString(", ") )
+        throw new Exception("Could not resolve packages "+ loaded.filter(_._2.isFailure).map(_._1.full).mkString(", ") )
       } else {
         val packagesResolved = loaded.map(_._2.get).toVector
 

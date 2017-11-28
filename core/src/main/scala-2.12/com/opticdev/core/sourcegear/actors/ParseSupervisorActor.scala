@@ -67,11 +67,16 @@ object ParseSupervisorActor {
 }
 
 object ParseSupervisorSyncAccess {
-  implicit val timeout = Timeout(2 seconds)
+  implicit val timeout: Timeout = Timeout(2 seconds)
 
   def setCache(newCache: ParseCache) (implicit actorCluster: ActorCluster): Unit = {
     actorCluster.parserSupervisorRef ! SetCache(newCache)
   }
+
+  def clearCache() (implicit actorCluster: ActorCluster): Unit = {
+    actorCluster.parserSupervisorRef ! ClearCache
+  }
+
   def cacheSize()(implicit actorCluster: ActorCluster) : Int  = {
     val future = actorCluster.parserSupervisorRef ? CacheSize
     Await.result(future, timeout.duration).asInstanceOf[Int]

@@ -4,11 +4,11 @@ import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
-import com.opticdev.core.sourcegear.actors.{CurrentGraph, FileCreated, FileDeleted}
+import com.opticdev.core.sourcegear.actors.{CurrentGraph, FileCreated, FileDeleted, ProjectActorSyncAccess}
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
-
+import scala.concurrent.ExecutionContext.Implicits.global
 class ProjectActorSpec extends AkkaTestFixture("ProjectActorTest") with GearUtils {
 
     override def beforeAll() = {
@@ -49,5 +49,11 @@ class ProjectActorSpec extends AkkaTestFixture("ProjectActorTest") with GearUtil
       project.projectActor ! CurrentGraph
       expectMsgAllClassOf[ProjectGraphWrapper]()
     }
+
+    it("can clear the graph synchronously") {
+      ProjectActorSyncAccess.clearGraph(project.projectActor)
+        .onComplete(i=> assert(i.get.projectGraph.isEmpty))
+    }
+
 
 }

@@ -13,7 +13,7 @@ class ParseCache {
   private val fileStore: mutable.Map[FileNode, CacheRecord] = collection.mutable.Map[FileNode, CacheRecord]()
   private val lastNFiles = scala.collection.mutable.Buffer[FileNode]()
 
-  val maxCachedFiles = SGConstants.maxCachedFiles
+  val maxCachedFiles: Int = SGConstants.maxCachedFiles
 
   def cache: Map[FileNode, CacheRecord] = fileStore.toMap
   def cachedFiles: Vector[FileNode] = lastNFiles.toVector

@@ -1,4 +1,5 @@
 name: Unnamed Project
-parsers: []
-knowledge: []
-ignored_files: []
+
+knowledge:
+  - optic:express-js@0.1.0
+  - optic:rest@0.1.0

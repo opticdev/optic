@@ -47,6 +47,8 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-actor" % "2.5.4",
     "com.typesafe.akka" %% "akka-stream" % "2.5.4",
 
+    "org.awaitility" % "awaitility-scala" % "3.0.0",
+
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
     "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2"

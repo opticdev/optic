@@ -28,6 +28,7 @@ package object actors {
   case class FileCreated(file: File, project: OpticProject)(implicit val sourceGear: SourceGear)
   case class FileDeleted(file: File, project: OpticProject)(implicit val sourceGear: SourceGear)
   case object CurrentGraph
+  case object ClearGraph
   case class GetContext(fileNode: FileNode)(implicit val sourceGear: SourceGear, val project: OpticProject)
   case class NodeForId(id: String)
 

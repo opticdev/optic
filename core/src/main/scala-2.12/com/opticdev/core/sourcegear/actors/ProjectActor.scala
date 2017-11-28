@@ -7,10 +7,10 @@ import com.opticdev.parsers.AstGraph
 
 import scala.concurrent.Await
 import akka.pattern.ask
-
 import akka.util.Timeout
-import scala.concurrent.Future
+import com.opticdev.core.sourcegear.ParseCache
 
+import scala.concurrent.Future
 import concurrent.duration._
 
 class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean, actorCluster: ActorCluster) extends Actor {
@@ -37,6 +37,11 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     }
 
     case CurrentGraph => sender ! graph
+    case ClearGraph => {
+      val emptyGraph = ProjectGraphWrapper.empty
+      sender ! emptyGraph
+      context.become(active(emptyGraph))
+    }
     case NodeForId(id) => sender ! graph.nodeForId(id)
 
     //Forward parsing requests to the cluster supervisor
@@ -49,6 +54,15 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
 object ProjectActor {
   def props(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean, actorCluster: ActorCluster): Props = Props(new ProjectActor(initialGraph))
 }
+
+object ProjectActorSyncAccess {
+  implicit val timeout: Timeout = Timeout(2 seconds)
+
+  def clearGraph(projectActor: ActorRef): Future[ProjectGraphWrapper] = {
+    (projectActor ? ClearGraph).asInstanceOf[Future[ProjectGraphWrapper]]
+  }
+}
+
 
 object ProjectActorImplicits {
   implicit val timeout = Timeout(2 seconds)

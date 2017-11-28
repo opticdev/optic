@@ -93,7 +93,7 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
         )
 
         assert(collectTry.get == expectedTree)
-        assert(collectTry.get.flatten.toSet == Set(t.a, t.b, t.b1, t.c, t.c1, t.d, t.e))
+        assert(collectTry.get.flatten == Set(t.a, t.b, t.b1, t.c, t.c1, t.d, t.e))
       }
 
       it("fails if any can not be resolved") {
