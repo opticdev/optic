@@ -4,6 +4,7 @@ import com.opticdev.sdk.descriptions.{Schema, SchemaColdStorage, SchemaId}
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
+import com.opticdev.parsers.SourceParserManager
 import play.api.libs.json.{JsObject, Json}
 
 case class SGConfig(hashInt: Int,
@@ -17,7 +18,7 @@ case class SGConfig(hashInt: Int,
     val inflatedSchemas = schemas.map(i=>
       Schema.fromJson(Json.parse(i.data).as[JsObject]))
     new SourceGear {
-      override val parsers = Set() //@todo impl
+      override val parsers = SourceParserManager.installedParsers //@todo impl
       override val gearSet = new GearSet(gears.toSeq: _*)
       override val schemas = inflatedSchemas
     }

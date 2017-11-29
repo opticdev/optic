@@ -4,10 +4,11 @@ import java.io.FileNotFoundException
 
 import better.files.File
 import com.opticdev.core.sourcegear.actors.ActorCluster
-import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server
 import com.opticdev.core.actorSystem
+import com.opticdev.core.sourcegear.project.{OpticProject, Project}
+
 import scala.collection.mutable
 import scala.util.{Success, Try}
 

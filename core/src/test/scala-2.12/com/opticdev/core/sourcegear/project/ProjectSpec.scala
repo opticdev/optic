@@ -46,7 +46,6 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
       override val projectActor = self
     }
 
-
     def fileWatchTest = {
       it("detects new file creation") {
         File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/example.js").createIfNotExists(false)
@@ -123,9 +122,12 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
     }
 
     it("finishes first pass of source") {
-      eventually (timeout(Span(5, Seconds))) {
+      project.watch
+      eventually (timeout(Span(15, Seconds))) {
         assert(status.firstPass == Complete)
       }
+
+      assert(project.projectGraph.nonEmpty)
     }
 
   }

@@ -9,6 +9,7 @@ import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import scala.concurrent.ExecutionContext.Implicits.global
+
 class ProjectActorSpec extends AkkaTestFixture("ProjectActorTest") with GearUtils {
 
     override def beforeAll() = {

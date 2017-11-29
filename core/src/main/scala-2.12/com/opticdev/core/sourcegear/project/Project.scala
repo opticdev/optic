@@ -41,7 +41,7 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
         if (i.isSuccess) {
           sourceGear = i.get.inflate
           projectStatusInstance.sourceGearStatus = Valid
-          rereadAll
+          if (projectStatus.monitoringStatus == Watching) rereadAll
         } else {
           projectStatusInstance.sourceGearStatus = Invalid(i.failed.get.getMessage)
         }

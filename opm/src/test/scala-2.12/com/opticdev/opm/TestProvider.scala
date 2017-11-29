@@ -35,13 +35,17 @@ class TestProvider extends Provider {
   val e: OpticPackage = mockPackage("e", "optic", "2.0.0", Seq("optic:c"-> "2.0.0"))
 
 
+  val opticImport: OpticPackage = OpticPackage.fromJson(Json.parse(File(
+    "test-examples/resources/example_packages/optic:ImportExample@0.1.0.json").contentAsString)).get
+
+
   val opticRest: OpticPackage = OpticPackage.fromJson(Json.parse(File(
     "test-examples/resources/example_packages/express/optic:rest@0.1.0.json").contentAsString)).get
 
   val opticExpress: OpticPackage = OpticPackage.fromJson(Json.parse(File(
     "test-examples/resources/example_packages/express/optic:express-js@0.1.0.json").contentAsString)).get
 
-  val allPackages = Set(a, b, b1, c, c1, d, e, opticRest, opticExpress)
+  val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticExpress)
 
   override def listInstalledPackages: Vector[OpticPackage] = ???
 

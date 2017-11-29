@@ -71,4 +71,9 @@ class GearSet(initialGears: Gear*) {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
     FileParseResults(astGraph, astGraph.modelNodes.asInstanceOf[Set[ModelNode]], sourceGearContext.parser, sourceGearContext.fileContents)
   }
+
+
+  //init code
+  reindex
+
 }

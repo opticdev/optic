@@ -20,7 +20,7 @@ class EditorConnectionActor(slug: String) extends Actor {
       EditorConnection.killEditor(slug)
     }
 
-    case Context(file, start, end) => {
+    case Context(file, range) => {
       connection ! Success()
     }
 

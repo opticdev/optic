@@ -19,6 +19,7 @@ import play.api.libs.json.{JsObject, JsString}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.util.{Failure, Success}
 
 abstract class OpticProject(val name: String, val baseDirectory: File)(implicit actorCluster: ActorCluster) {
 
@@ -54,8 +55,15 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     //should delete all
     ProjectActorSyncAccess.clearGraph(projectActor)
     ParseSupervisorSyncAccess.clearCache()
+
     projectStatusInstance.firstPass = InProgress
-    val futures = filesToWatch.map(i=> projectActor ? FileCreated(i, this))
+
+    val futures = filesToWatch.toSeq.map(i=> {
+      projectActor ? FileCreated(i, this)
+    }).map(
+      _.map(Success(_)).recover { case t => Failure(t) }
+    )
+
     Future.sequence(futures).onComplete(i=> {
       projectStatusInstance.firstPass = Complete
     })
