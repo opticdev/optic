@@ -41,7 +41,7 @@ sealed abstract class BaseModelNode(implicit val project: OpticProject) extends 
   }
 }
 
-case class LinkedModelNode(schemaId: SchemaId, value: JsObject, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode{
+case class LinkedModelNode(schemaId: SchemaId, value: JsObject, root: AstPrimitiveNode, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode{
   def flatten = ModelNode(schemaId, value)
 }
 
@@ -50,7 +50,10 @@ case class ModelNode(schemaId: SchemaId, value: JsObject)(implicit override val 
   def resolve()(implicit actorCluster: ActorCluster) : LinkedModelNode = {
     implicit val sourceGearContext = SGContext.forModelNode(this).get
     implicit val astGraph = sourceGearContext.astGraph
-    val mapping : ModelAstMapping = astGraph.get(this).labeledDependencies.filter(_._1.isInstanceOf[YieldsModelProperty]).map {
+    val labeledDependencies = astGraph.get(this).labeledDependencies
+    val root : AstPrimitiveNode = labeledDependencies.find(i=> i._1.isInstanceOf[YieldsModel] && i._1.asInstanceOf[YieldsModel].root)
+                                  .get._2.asInstanceOf[AstPrimitiveNode]
+    val mapping : ModelAstMapping = labeledDependencies.filter(_._1.isInstanceOf[YieldsModelProperty]).map {
       case (edge, node) => {
         edge match {
           case property: YieldsModelProperty =>
@@ -63,7 +66,7 @@ case class ModelNode(schemaId: SchemaId, value: JsObject)(implicit override val 
 
     val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
 
-    LinkedModelNode(schemaId, value, mapping, parseGear)
+    LinkedModelNode(schemaId, value, root, mapping, parseGear)
   }
 
   val identifier: String = UUID.generate

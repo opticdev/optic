@@ -1,10 +1,13 @@
 package com.opticdev.core.sourcegear.graph
 
+import com.opticdev.core.sourcegear.graph.edges.YieldsModel
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.parsers.graph.AstPrimitiveNode
 
 package object model {
   type ModelAstMapping = Map[ModelKey, AstMapping]
+
+  type ModelAstPair = (YieldsModel, AstPrimitiveNode)
 
   sealed trait ModelKey
   case class Path(path: String) extends ModelKey

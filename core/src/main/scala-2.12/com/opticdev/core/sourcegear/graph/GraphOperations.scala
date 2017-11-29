@@ -18,7 +18,7 @@ object GraphOperations {
 
   def addModelToGraph(parseResult: ParseResult) (implicit astGraph: AstGraph) : Unit = {
     val flatNode = parseResult.modelNode.flatten
-    astGraph add (parseResult.astNode ~+#> flatNode) (YieldsModel(parseResult.parseGear))
+    astGraph add (parseResult.astNode ~+#> flatNode) (YieldsModel(parseResult.parseGear, root = true))
     addMappingEdgesToModel(parseResult.modelNode)
   }
 
