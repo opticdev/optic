@@ -3,6 +3,7 @@ package com.opticdev.server.http.controllers
 import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.model.StatusCode._
 import better.files.File
+import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.server.data._
@@ -46,8 +47,17 @@ class ContextQuery(file: File, range: Range)(implicit projectsManager: ProjectsM
 
   def executeToApiResponse : Future[APIResponse] = {
     import com.opticdev.server.data.ModelNodeJsonImplicits._
+
     execute.transform {
-      case Success(vector: Vector[LinkedModelNode]) => Try(APIResponse(StatusCodes.OK, JsArray(vector.map(_.asJson))))
+      case Success(vector: Vector[LinkedModelNode]) => {
+        //@todo clean this up...way cleaner way possible
+//        implicit val project = projectsManager.lookupProject(file).get
+//        implicit val actorCluster = projectsManager.actorCluster
+//        implicit val sourceGear = project.projectSourcegear
+//        implicit val sourceGearContext = ParseSupervisorSyncAccess.getContext(file).get
+
+        Try(APIResponse(StatusCodes.OK, JsArray(vector.map(_.asJson))))
+      }
       case Failure(exception: ServerExceptions) => Try(APIResponse(StatusCodes.NotFound, exception.asJson))
     }
   }

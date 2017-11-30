@@ -9,10 +9,11 @@ class ProjectStatusSpec extends FunSpec {
   it("has default state when initialized") {
     val projectStatus = new ProjectStatus()
 
+    assert(projectStatus.loadedStatus == Loaded)
     assert(projectStatus.sourceGearStatus == Empty)
     assert(projectStatus.monitoringStatus == NotWatching)
     assert(projectStatus.configStatus == ValidConfig)
-    assert(projectStatus.firstPass == NotStarted)
+    assert(projectStatus.firstPassStatus == NotStarted)
 
   }
 
@@ -28,8 +29,8 @@ class ProjectStatusSpec extends FunSpec {
     projectStatus.configStatus = InvalidConfig("")
     assert(projectStatus.configStatus == InvalidConfig(""))
 
-    projectStatus.firstPass = InProgress
-    assert(projectStatus.firstPass == InProgress)
+    projectStatus.firstPassStatus = InProgress
+    assert(projectStatus.firstPassStatus == InProgress)
 
     val newTime = Calendar.getInstance().getTime
     projectStatus.lastUpdate = LastUpdateDate(newTime)
@@ -73,7 +74,7 @@ class ProjectStatusSpec extends FunSpec {
         projectStatus.firstPassChanged((a) => {
           didRun = true
         })
-        projectStatus.firstPass = Complete
+        projectStatus.firstPassStatus = Complete
         assert(didRun)
       }
 
@@ -100,8 +101,8 @@ class ProjectStatusSpec extends FunSpec {
     }
 
     it("changes when parent instance is changed") {
-      projectStatus.firstPass = Complete
-      assert(projectStatus.immutable.firstPass == Complete)
+      projectStatus.firstPassStatus = Complete
+      assert(projectStatus.immutable.firstPassStatus == Complete)
     }
 
     it("callbacks on parent can be registered from immutable instance") {
@@ -117,5 +118,11 @@ class ProjectStatusSpec extends FunSpec {
     }
 
   }
+
+  it("can output json") {
+    val projectStatus = new ProjectStatus()
+    val json = projectStatus.immutable.asJson.toString
+  }
+
 
 }

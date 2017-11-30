@@ -6,6 +6,10 @@ package object status {
 
   sealed trait ProjectStatusCase
 
+  sealed trait LoadedStatusCase
+  case object Loaded extends LoadedStatusCase
+  case object NotLoaded extends LoadedStatusCase
+
   sealed trait SourceGearStatus extends ProjectStatusCase
   case object Empty extends SourceGearStatus
   case object Valid extends SourceGearStatus

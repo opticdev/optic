@@ -9,7 +9,7 @@ import com.opticdev.server.Fixture.ProjectsManagerFixture
 import com.opticdev.server.data.{FileIsNotWatchedByProjectException, FileNotInProjectException}
 import com.opticdev.server.state.ProjectsManager
 import com.opticdev.server.storage.ServerStorage
-import org.scalatest.FunSpec
+import org.scalatest.{BeforeAndAfterAll, FunSpec}
 import play.api.libs.json.JsArray
 
 import scala.concurrent.ExecutionContext.Implicits.global

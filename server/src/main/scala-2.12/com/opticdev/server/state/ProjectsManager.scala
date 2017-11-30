@@ -7,7 +7,8 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server
 import com.opticdev.core.actorSystem
-import com.opticdev.core.sourcegear.project.{OpticProject, Project}
+import com.opticdev.core.sourcegear.project.status.ProjectStatus
+import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
 
 import scala.collection.mutable
 import scala.util.{Success, Try}
@@ -35,13 +36,18 @@ class ProjectsManager {
     projectsStore = projectsStore.filterNot(_ == project)
   }
 
-  def allProjects: Vector[OpticProject] = projectsStore
-
+  def activeProjects: Vector[OpticProject] = projectsStore
+  def allProjects: Vector[ProjectInfo] = {
+    projectsStore.map(_.projectInfo) ++
+      storage.projects
+        .filterNot(i=> projectsStore.exists(p=> p.name == i._1 || p.baseDirectory.isSameFileAs(File(i._2))))
+        .map(i=> ProjectInfo(i._1, i._2, ProjectStatus.notLoaded))
+  }
 
   //query for project / manage loading projects from storage
   def lookupProject(projectName: String) : Try[OpticProject] = Try {
     //check if we are already watching the project. If so, return reference to it
-    val alreadyTrackingOption = allProjects.find(_.name == projectName)
+    val alreadyTrackingOption = activeProjects.find(_.name == projectName)
     if (alreadyTrackingOption.isDefined) return Success(alreadyTrackingOption.get)
 
     //look in our known projects store and see if we can find it.
@@ -77,7 +83,7 @@ class ProjectsManager {
   def loadProject(name: String, baseDir: File) : Try[OpticProject] = Try {
     //@todo write a project validator function ie -> has optic.yaml, that is valid.
     if (!baseDir.exists) throw new FileNotFoundException("Optic project not found at "+baseDir.pathAsString)
-    if (allProjects.exists(_.name == name)) throw new Error("Project with name "+name+" already being tracked. Please give your projects unique names")
+    if (activeProjects.exists(_.name == name)) throw new Error("Project with name "+name+" already being tracked. Please give your projects unique names")
 
     val project = new Project(name, baseDir)
     loadProject(project)

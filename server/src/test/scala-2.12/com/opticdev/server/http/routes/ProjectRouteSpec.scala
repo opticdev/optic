@@ -26,14 +26,14 @@ class ProjectRouteSpec extends FunSpec with Matchers with ScalatestRouteTest wit
 
   it("return a list of projects at GET /projects") {
     Get("/projects") ~> projectRoute.route ~> check {
-      assert(responseAs[JsArray] == JsArray(Seq(testProject.asJson)))
+      assert(responseAs[JsArray] == JsArray(Seq(testProject.projectInfo.asJson)))
     }
   }
 
   it("returns a project at GET /projects/{name}") {
     val name = testProject.name
     Get("/projects/"+name) ~> projectRoute.route ~> check {
-      assert(responseAs[JsObject] == testProject.asJson)
+      assert(responseAs[JsObject] == testProject.projectInfo.asJson)
     }
   }
 

@@ -11,7 +11,7 @@ class ProjectsManagerSpec extends AkkaTestFixture("ProjectsManagerSpec") with Pr
 
   it("starts empty") {
     val f = projectsManagerWithStorage(ServerStorage())
-    assert(f.allProjects.isEmpty)
+    assert(f.activeProjects.isEmpty)
   }
 
   describe("project lookup") {
@@ -65,10 +65,10 @@ class ProjectsManagerSpec extends AkkaTestFixture("ProjectsManagerSpec") with Pr
       (0 to f.MAX_PROJECTS * 2).foreach(i=> {
         f.loadProject(i.toString, File("test-examples/resources/tmp/test_project")).isSuccess
 
-        val projectNamesInMemory = f.allProjects.map(_.name.toInt)
+        val projectNamesInMemory = f.activeProjects.map(_.name.toInt)
         val expected = (i-f.MAX_PROJECTS+1 to i).toVector.filterNot(_ < 0)
         assert(projectNamesInMemory == expected)
-        assert(f.allProjects.size <= f.MAX_PROJECTS)
+        assert(f.activeProjects.size <= f.MAX_PROJECTS)
       })
     }
 

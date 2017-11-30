@@ -1,11 +1,14 @@
 package com.opticdev.core.sourcegear.project.status
 
+import play.api.libs.json.{JsObject, JsString}
+
 class ImmutableProjectStatus(projectStatus: ProjectStatus) {
 
+  def loadedStatus = projectStatus.loadedStatus
   def sourceGearStatus = projectStatus.sourceGearStatus
   def monitoringStatus = projectStatus.monitoringStatus
   def configStatus = projectStatus.configStatus
-  def firstPass = projectStatus.firstPass
+  def firstPassStatus = projectStatus.firstPassStatus
   def lastUpdate = projectStatus.lastUpdate
 
 
@@ -13,5 +16,19 @@ class ImmutableProjectStatus(projectStatus: ProjectStatus) {
   def monitoringChanged(callback: (MonitoringStatus)=> Unit) = projectStatus.monitoringChanged(callback)
   def configChanged(callback: (ConfigStatus)=> Unit) = projectStatus.configChanged(callback)
   def firstPassChanged(callback: (FirstPassStatus)=> Unit) = projectStatus.firstPassChanged(callback)
+
+  def isValid: Boolean = projectStatus.isValid
+  def isReady: Boolean = projectStatus.isReady
+
+  def asJson = {
+    JsObject(Seq(
+      "loaded" -> JsString(loadedStatus.toString),
+      "sourcegear" -> JsString(sourceGearStatus.toString),
+      "monitoring" -> JsString(monitoringStatus.toString),
+      "config" -> JsString(configStatus.toString),
+      "firstPass" -> JsString(firstPassStatus.toString),
+      "lastUpdate" -> JsString(lastUpdate.time.toString),
+    ))
+  }
 
 }

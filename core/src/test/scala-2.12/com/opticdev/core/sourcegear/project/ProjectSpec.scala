@@ -109,7 +109,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
 
     it("validates config in constructor") {
 
-      assert(status.firstPass == NotStarted)
+      assert(status.firstPassStatus == NotStarted)
       assert(status.configStatus == ValidConfig)
       assert(status.monitoringStatus == NotWatching)
       assert(status.sourceGearStatus == Empty)
@@ -124,7 +124,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
     it("finishes first pass of source") {
       project.watch
       eventually (timeout(Span(15, Seconds))) {
-        assert(status.firstPass == Complete)
+        assert(status.firstPassStatus == Complete)
       }
 
       assert(project.projectGraph.nonEmpty)

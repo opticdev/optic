@@ -18,7 +18,7 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
   val route =
     pathPrefix("projects") {
       pathEnd {
-        complete(JsArray(projectsManager.allProjects.toVector.map(_.asJson)))
+        complete(JsArray(projectsManager.allProjects.map(_.asJson)))
       } ~
         path(Segment) { projectName => complete(getProject(projectName)) } ~
         path(Segment / "models" / Segment) {
@@ -34,7 +34,7 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
 
   def getProject(projectName: String) : HTTPResponse = {
     val projectOption = projectsManager.lookupProject(projectName)
-    if (projectOption.isSuccess) projectOption.get.asJson
+    if (projectOption.isSuccess) projectOption.get.projectInfo.asJson
     else StatusCodes.NotFound
   }
 

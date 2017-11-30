@@ -48,6 +48,10 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
 
   }
 
+  it("keeps the same identifier through resolve and flatten operations") {
+    //@todo write test
+  }
+
   describe("Mutation") {
 
     val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get

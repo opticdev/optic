@@ -3,14 +3,22 @@ package com.opticdev.core.sourcegear.project.status
 import java.util.Calendar
 
 import com.opticdev.core.sourcegear.project._
+import play.api.libs.json.JsObject
 
-class ProjectStatus(private var _sourceGearStatus: SourceGearStatus = Empty,
+class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
+                    private var _sourceGearStatus: SourceGearStatus = Empty,
                     private var _monitoringStatus: MonitoringStatus = NotWatching,
                     private var _configStatus: ConfigStatus = ValidConfig,
-                    private var _firstPass: FirstPassStatus = NotStarted,
+                    private var _firstPassStatus: FirstPassStatus = NotStarted,
                     private var _lastUpdate: LastUpdateDate = LastUpdateDate(Calendar.getInstance().getTime)) {
 
   //@todo consolidate replace with macros
+
+  def loadedStatus = _loadedStatus
+  def loadedStatus_=(s: LoadedStatusCase): Unit = {
+    _loadedStatus = s
+  }
+
   def sourceGearStatus = _sourceGearStatus
   def sourceGearStatus_=(s: SourceGearStatus): Unit = {
     val changed = _sourceGearStatus != s
@@ -32,10 +40,10 @@ class ProjectStatus(private var _sourceGearStatus: SourceGearStatus = Empty,
     if (changed) notify(s)
   }
 
-  def firstPass = _firstPass
-  def firstPass_=(s: FirstPassStatus): Unit = {
-    val changed = _firstPass != s
-    _firstPass = s
+  def firstPassStatus = _firstPassStatus
+  def firstPassStatus_=(s: FirstPassStatus): Unit = {
+    val changed = _firstPassStatus != s
+    _firstPassStatus = s
     if (changed) notify(s)
   }
 
@@ -45,6 +53,10 @@ class ProjectStatus(private var _sourceGearStatus: SourceGearStatus = Empty,
     _lastUpdate = s
     if (changed) notify(s)
   }
+
+  def touch : Unit = lastUpdate = LastUpdateDate(Calendar.getInstance().getTime)
+  def isValid: Boolean = configStatus == ValidConfig && sourceGearStatus == Valid
+  def isReady: Boolean = isValid && firstPassStatus == Complete
 
   private var sgChangedCallbacks = Set[(SourceGearStatus)=> Unit]()
   def sourcegearChanged(callback: (SourceGearStatus)=> Unit) = {
@@ -75,5 +87,14 @@ class ProjectStatus(private var _sourceGearStatus: SourceGearStatus = Empty,
   }
 
   lazy val immutable : ImmutableProjectStatus = new ImmutableProjectStatus(this)
+  def asJson : JsObject = immutable.asJson
 
+}
+
+object ProjectStatus {
+  def notLoaded: ImmutableProjectStatus = {
+    val ps = new ProjectStatus()
+    ps.loadedStatus = NotLoaded
+    ps.immutable
+  }
 }

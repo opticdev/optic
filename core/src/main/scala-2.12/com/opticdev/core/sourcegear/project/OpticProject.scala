@@ -33,6 +33,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   val watcher: ActorRef = baseDirectory.newWatcher(recursive = true)
 
   def projectFileChanged(newPf: ProjectFile) : Unit = {
+    projectStatusInstance.touch
     if (newPf.interface.isSuccess) {
       projectStatusInstance.configStatus = ValidConfig
     } else {
@@ -56,7 +57,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     ProjectActorSyncAccess.clearGraph(projectActor)
     ParseSupervisorSyncAccess.clearCache()
 
-    projectStatusInstance.firstPass = InProgress
+    projectStatusInstance.firstPassStatus = InProgress
 
     val futures = filesToWatch.toSeq.map(i=> {
       projectActor ? FileCreated(i, this)
@@ -65,17 +66,20 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     )
 
     Future.sequence(futures).onComplete(i=> {
-      projectStatusInstance.firstPass = Complete
+      projectStatusInstance.firstPassStatus = Complete
+      projectStatusInstance.touch
     })
   }
 
   val handleFileChange : better.files.FileWatcher.Callback = {
     case (EventType.ENTRY_CREATE, file) => {
       implicit val sourceGear = projectSourcegear
+      projectStatusInstance.touch
       if (shouldWatchFile(file)) projectActor ! FileCreated(file, this)
     }
     case (EventType.ENTRY_MODIFY, file) => {
       implicit val sourceGear = projectSourcegear
+      projectStatusInstance.touch
       if (file === projectFile.file) {
         projectFile.reload
       } else {
@@ -84,6 +88,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     }
     case (EventType.ENTRY_DELETE, file) => {
       implicit val sourceGear = projectSourcegear
+      projectStatusInstance.touch
       if (shouldWatchFile(file)) projectActor ! FileDeleted(file, this)
     }
   }
@@ -107,9 +112,6 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
 
-  def asJson = JsObject(Seq(
-    "name" -> JsString(name),
-    "directory" -> JsString(baseDirectory.pathAsString)
-  ))
+  def projectInfo : ProjectInfo = ProjectInfo(name, baseDirectory.pathAsString, projectStatus)
 
 }

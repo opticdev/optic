@@ -1,5 +1,6 @@
 package com.opticdev.server.data
 
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import play.api.libs.json.{JsNumber, JsObject, JsString}
 
@@ -7,9 +8,7 @@ object ModelNodeJsonImplicits {
 
   implicit class ModelNodeJson(modelNode: LinkedModelNode) {
 
-    def asJson : JsObject = {
-
-      implicit val SGContext = modelNode.project
+    def asJson() : JsObject = {
 
       JsObject(Seq(
         "id" -> JsString(modelNode.id),
