@@ -2,6 +2,8 @@ package com.opticdev.opm
 
 import better.files.File
 import com.opticdev.common.PackageRef
+import com.opticdev.opm.storage.ParserStorage
+import com.opticdev.parsers.ParserRef
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import play.api.libs.json.{JsObject, JsString, Json}
@@ -70,4 +72,21 @@ class TestProvider extends Provider {
 
     BatchPackageResult(found.toSet, notFound.toSet)
   }
+
+  override def resolveParsers(parsers: ParserRef*) : Future[BatchParserResult] = Future {
+
+    val installedParsers = listInstalledParsers
+
+    val parserOptions = parsers.map(ref=> {
+      (ref, installedParsers
+        .get(ref.packageId).flatMap(versions => versions.find(_.parserRef == ref)))
+    })
+
+    val found = parserOptions.filter(_._2.isDefined).map(_._2.get)
+    val notFound = parserOptions.filter(_._2.isEmpty).map(_._1)
+
+    BatchParserResult(found.toSet, notFound.toSet)
+  }
+
+  override def listInstalledParsers = ParserStorage.listAllParsers
 }

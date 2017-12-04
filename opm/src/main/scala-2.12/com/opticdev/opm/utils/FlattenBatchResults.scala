@@ -1,11 +1,11 @@
 package com.opticdev.opm.utils
 
-import com.opticdev.opm.{BatchPackageResult, OpticPackage}
+import com.opticdev.opm.{BatchPackageResult, BatchParserResult, OpticPackage}
 
 
 object FlattenBatchResultsImplicits {
 
-  implicit class FlattenBatchResults(seq: Seq[BatchPackageResult]) {
+  implicit class FlattenBatchPackageResults(seq: Seq[BatchPackageResult]) {
 
     def flattenResults : BatchPackageResult = {
 
@@ -21,6 +21,26 @@ object FlattenBatchResultsImplicits {
 
 
       BatchPackageResult(foundFlattened, notFoundFlattenedFiltered)
+    }
+
+  }
+
+  implicit class FlattenBatchParserResults(seq: Seq[BatchParserResult]) {
+
+    def flattenResults : BatchParserResult = {
+
+      val found = seq.map(i=> i.found)
+      val notFound = seq.map(i=> i.notFound)
+
+      val foundFlattened = found.flattenSequenceWith(i=> i.parserRef)
+      val notFoundFlattened = notFound.flattenSequenceWith(i=> i)
+
+      //clear out any not founds taken care of by another provider
+      val notFoundFlattenedFiltered = notFoundFlattened
+        .filterNot(n=> foundFlattened.exists(_.parserRef == n))
+
+      BatchParserResult(foundFlattened, notFoundFlattenedFiltered)
+
     }
 
   }

@@ -35,7 +35,7 @@ class FlattenBatchResultsSpec extends FunSpec {
     }
   }
 
-  describe("Batch Results Flattening") {
+  describe("Batch Package Results Flattening") {
 
     val t = new TestProvider()
 

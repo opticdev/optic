@@ -2,6 +2,7 @@ package com.opticdev.opm
 import java.net.URL
 
 import com.opticdev.common.PackageRef
+import com.opticdev.parsers.ParserRef
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import scala.concurrent.Future
@@ -44,4 +45,8 @@ class OpticRegistryProvider extends RemoteProvider {
   }
 
   override def resolvePackages(packageRef: PackageRef*): Future[BatchPackageResult] = ???
+
+  override def resolveParsers(parsers: ParserRef*) = ???
+
+  override def listInstalledParsers = ???
 }

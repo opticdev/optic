@@ -3,4 +3,3 @@ name: Unnamed Project
 knowledge:
   - optic:express-js@0.1.0
   - optic:rest@0.1.0
-  - optic:ImportExample@0.1.0

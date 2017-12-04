@@ -1,8 +1,10 @@
 package com.opticdev.opm
 
+import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
-import com.opticdev.opm.storage.PackageStorage
+import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
+import com.opticdev.parsers.ParserRef
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSpec}
 
 import scala.concurrent.Await
@@ -107,6 +109,21 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
 
       }
 
+
+    }
+
+    it("collects parsers") {
+
+      val fakeParserJar = File("test-examples/resources/example_parsers/fake-parser-0.1.0.jar")
+      ParserStorage.clearLocalParsers
+      ParserStorage.writeToStorage(fakeParserJar)
+
+      val collect = PackageManager.collectParsers(
+        ParserRef("Fake", "0.1.0")
+      )
+
+      assert(collect.foundAll)
+      assert(collect.found.size == 1)
 
     }
 

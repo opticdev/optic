@@ -3,10 +3,11 @@ package com.opticdev.opm
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.storage.PackageStorage
+import com.opticdev.parsers.ParserRef
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
-
-import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
 import scala.util.Try
 import scala.concurrent.duration._
 object PackageManager {
@@ -114,5 +115,20 @@ object PackageManager {
     lookupResults.flattenResults
   }
 
+  def collectParsers(parserRefs: ParserRef*) : BatchParserResult = {
+
+    val distinctParserRefs = parserRefs.distinct
+
+    val futures = providers.map(_.resolveParsers(distinctParserRefs:_*))
+
+    val future = Future.sequence(futures)
+
+    val result = Await.result(future, 7 seconds)
+
+    import com.opticdev.opm.utils.FlattenBatchResultsImplicits._
+
+    result.flattenResults
+
+  }
 
 }

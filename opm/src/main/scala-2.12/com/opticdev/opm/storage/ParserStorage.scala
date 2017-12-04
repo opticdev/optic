@@ -3,9 +3,9 @@ package com.opticdev.opm.storage
 import java.io.FileNotFoundException
 
 import better.files.File
-import com.opticdev.common.{PackageRef, ParserRef}
+import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.parsers.{ParserBase, SourceParserManager}
+import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 
 import scala.util.{Failure, Try}
 
@@ -40,6 +40,14 @@ object ParserStorage {
       throw new Error("Parser not found "+ parserRef.full)
     }
 
+  }
+
+  def listAllParsers : Map[String, Vector[ParserBase]] = {
+    val directory = DataDirectory.parsers
+    directory.children.filter(_.isDirectory).map(i=> {
+      val parserVerifications = i.list.map(p=>  SourceParserManager.verifyParser(p.pathAsString))
+      i.name -> parserVerifications.filter(_.isSuccess).map(_.get).toVector
+    }).toMap
   }
 
   def clearLocalParsers = {
