@@ -10,14 +10,15 @@ import akka.util.Timeout
 import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.editors.Protocol._
+import com.opticdev.server.state.ProjectsManager
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.{Failure, Try}
 
-class EditorConnection(slug: String, actorSystem: ActorSystem) extends Connection {
+class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projectsManager: ProjectsManager) extends Connection {
 
-  private[this] val connectionActor = actorSystem.actorOf(Props(classOf[EditorConnectionActor], slug))
+  private[this] val connectionActor = actorSystem.actorOf(Props(classOf[EditorConnectionActor], slug, projectsManager))
 
   def chatInSink(sender: String) = Sink.actorRef[EditorEvents](connectionActor, Terminated())
 
@@ -78,7 +79,7 @@ class EditorConnection(slug: String, actorSystem: ActorSystem) extends Connectio
 object EditorConnection extends ConnectionManager[EditorConnection] {
   case class EditorInformation(name: String, version: String)
 
-  override def apply(slug: String)(implicit actorSystem: ActorSystem) = new EditorConnection(slug, actorSystem)
+  override def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = new EditorConnection(slug, actorSystem)
 
   def killEditor(slug: String) = {
     val connectionOption = connections.get(slug)

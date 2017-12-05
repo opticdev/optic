@@ -9,14 +9,15 @@ import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, Op
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.http.routes.socket.editors.EditorConnection._
+import com.opticdev.server.state.ProjectsManager
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.Try
 
-class AgentConnection(slug: String, actorSystem: ActorSystem) extends Connection {
+class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsManager: ProjectsManager) extends Connection {
 
-  private[this] val connectionActor = actorSystem.actorOf(Props(classOf[AgentConnectionActor], slug))
+  private[this] val connectionActor = actorSystem.actorOf(Props(classOf[AgentConnectionActor], slug, projectsManager))
 
   def chatInSink(sender: String) = Sink.actorRef[AgentEvents](connectionActor, Terminated())
 
@@ -53,7 +54,7 @@ class AgentConnection(slug: String, actorSystem: ActorSystem) extends Connection
 }
 
 object AgentConnection extends ConnectionManager[AgentConnection] {
-  override def apply(slug: String)(implicit actorSystem: ActorSystem) = new AgentConnection(slug, actorSystem)
+  override def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = new AgentConnection(slug, actorSystem)
 
   def broadcastContext(contextUpdate: ContextUpdate) = listConnections.foreach(i=> i._2.sendUpdate(contextUpdate))
 

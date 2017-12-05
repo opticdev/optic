@@ -1,21 +1,28 @@
-package com.opticdev.server.http.routes
+package com.opticdev.server.http.routes.socket
 
-import akka.http.scaladsl.testkit.{ScalatestRouteTest, WSProbe}
-import com.opticdev.core.Fixture.SocketTestFixture
-import com.opticdev.server.http.routes.socket.SocketRoute
-import com.opticdev.server.http.routes.socket.editors.Protocol._
+import akka.http.scaladsl.testkit.WSProbe
+import better.files.File
+import com.opticdev.core.Fixture.{SocketTestFixture, TestBase}
+import com.opticdev.server.Fixture.ProjectsManagerFixture
+import com.opticdev.server.http.controllers.ContextQuery
 import com.opticdev.server.http.routes.socket.editors.EditorConnection
+import com.opticdev.server.http.routes.socket.editors.Protocol._
 import com.opticdev.server.state.ProjectsManager
-import org.scalatest.{FunSpec, Matchers}
 import play.api.libs.json.{JsNumber, JsObject, JsString}
 
-class EditorConnectionRouteSpec extends SocketTestFixture {
+import scala.concurrent.duration._
+import scala.concurrent.Await
 
-  implicit val projectsManager = new ProjectsManager
+class EditorConnectionSocketSpec extends SocketTestFixture with TestBase with ProjectsManagerFixture {
+
+  super.beforeAll()
+
+  val future = instanceWatchingTestProject
+  implicit val projectsManager = Await.result(future, 10 seconds)
 
   val wsClient = WSProbe()
-
   val editorConnectionRoute = new SocketRoute()
+
 
   WS("/socket/editor/sublime", wsClient.flow) ~> editorConnectionRoute.route ~>
     check {
@@ -53,13 +60,13 @@ class EditorConnectionRouteSpec extends SocketTestFixture {
           wsClient.sendMessage(
             JsObject(
               Seq("event" -> JsString("context"),
-                "file" -> JsString("the file path"),
-                "start" -> JsNumber(0),
-                "end" -> JsNumber(15)
+                "file" -> JsString("test-examples/resources/tmp/test_project/app.js"),
+                "start" -> JsNumber(35),
+                "end" -> JsNumber(37)
               ))
               .toString())
 
-          wsClient.expectMessage("Success")
+          wsClient.expectMessage("""{"event":"context-found","filePath":"test-examples/resources/tmp/test_project/app.js","range":{"start":35,"end":37},"results":[{"id":null,"schemaId":"optic:rest/route","astLocation":{"type":"ExpressionStatement:Javascript","start":31,"end":92},"value":{"method":"get","url":"user/:id"}}]}""")
 
         }
 
@@ -67,7 +74,7 @@ class EditorConnectionRouteSpec extends SocketTestFixture {
 
           wsClient.sendMessage(
             JsObject(
-              Seq("event" -> JsString("search")))
+              Seq("event" -> JsString("context")))
               .toString())
 
           wsClient.expectMessage("Invalid Request")

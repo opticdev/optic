@@ -1,10 +1,14 @@
 package com.opticdev.server.http.routes.socket.editors
 
 import akka.actor.{Actor, ActorRef, Status}
-import com.opticdev.server.http.routes.socket.{ErrorResponse, Success}
+import better.files.File
+import com.opticdev.server.http.controllers.ContextQuery
+import com.opticdev.server.http.routes.socket.{ContextFound, ErrorResponse, Success}
 import com.opticdev.server.http.routes.socket.editors.Protocol._
+import com.opticdev.server.state.ProjectsManager
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class EditorConnectionActor(slug: String) extends Actor {
+class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) extends Actor {
 
   private var connection : ActorRef = null
 
@@ -21,7 +25,16 @@ class EditorConnectionActor(slug: String) extends Actor {
     }
 
     case Context(file, range) => {
-      connection ! Success()
+
+      println(slug)
+      println(projectsManager)
+      println("HERE I AM")
+
+      new ContextQuery(File(file), range)(projectsManager).executeToApiResponse
+        .map(i=> {
+          println(i)
+          connection ! ContextFound(file, range, i.data)
+        })
     }
 
     case Search(query) => {

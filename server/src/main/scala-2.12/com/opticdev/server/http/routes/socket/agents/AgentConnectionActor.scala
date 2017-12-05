@@ -3,8 +3,9 @@ package com.opticdev.server.http.routes.socket.agents
 import akka.actor.{Actor, ActorRef, Status}
 import com.opticdev.server.http.routes.socket.ErrorResponse
 import com.opticdev.server.http.routes.socket.agents.Protocol._
+import com.opticdev.server.state.ProjectsManager
 
-class AgentConnectionActor(slug: String) extends Actor {
+class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) extends Actor {
 
   private var connection : ActorRef = null
 

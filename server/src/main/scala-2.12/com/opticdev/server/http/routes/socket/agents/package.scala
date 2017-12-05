@@ -1,7 +1,7 @@
 package com.opticdev.server.http.routes.socket
 
 import akka.actor.ActorRef
-import play.api.libs.json.{JsObject, JsString}
+import play.api.libs.json.{JsObject, JsString, JsValue}
 
 package object agents {
 
@@ -17,7 +17,7 @@ package object agents {
     trait UpdateAgentEvent extends OpticEvent
 
     case class ContextUpdate(newStuff: String) extends UpdateAgentEvent {
-      override def asString: String = JsObject(Seq("event" -> JsString("contextUpdate"))).toString()
+      override def asJson: JsValue = JsObject(Seq("event" -> JsString("contextUpdate")))
     }
 
   }

@@ -1,15 +1,13 @@
-package com.opticdev.server.http
+package com.opticdev.server.http.routes.socket
 
-import akka.http.scaladsl.testkit.{ScalatestRouteTest, WSProbe}
+import akka.http.scaladsl.testkit.WSProbe
 import akka.testkit.TestKit
 import com.opticdev.core.Fixture.SocketTestFixture
-import com.opticdev.server.http.routes.socket.SocketRoute
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.agents.Protocol.ContextUpdate
 import com.opticdev.server.state.ProjectsManager
-import org.scalatest.{FunSpec, Matchers}
 
-class AgentConnectionRouteSpec extends SocketTestFixture {
+class AgentConnectionSocketSpec extends SocketTestFixture {
 
   implicit val projectsManager = new ProjectsManager()
 

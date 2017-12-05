@@ -27,15 +27,15 @@ package object editors {
     sealed trait UpdateOpticEvent extends OpticEvent
 
     case class RequestMetaInformation() extends {
-      def asString = JsObject(Seq("event" -> JsString("requestMeta"))).toString
+      def asJson = JsObject(Seq("event" -> JsString("requestMeta")))
     }
 
     case class FileUpdate(filePath: String, newContents: String) extends UpdateOpticEvent {
-      override def asString: String = JsObject(Seq("event" -> JsString("fileUpdate"))).toString
+      override def asJson = JsObject(Seq("event" -> JsString("fileUpdate")))
     }
 
     case class RangeUpdate(filePath: String, start: Int, end: Int, newContents: String) extends UpdateOpticEvent {
-      override def asString: String = JsObject(Seq("event" -> JsString("rangeUpdate"))).toString
+      override def asJson = JsObject(Seq("event" -> JsString("rangeUpdate")))
     }
 
   }
