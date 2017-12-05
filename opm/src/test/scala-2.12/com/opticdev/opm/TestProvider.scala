@@ -3,7 +3,7 @@ package com.opticdev.opm
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.storage.ParserStorage
-import com.opticdev.parsers.ParserRef
+import com.opticdev.parsers.{ParserRef, SourceParserManager}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import play.api.libs.json.{JsObject, JsString, Json}
@@ -79,7 +79,15 @@ class TestProvider extends Provider {
 
     val parserOptions = parsers.map(ref=> {
       (ref, installedParsers
-        .get(ref.packageId).flatMap(versions => versions.find(_.parserRef == ref)))
+        .get(ref.packageId).flatMap(versions => {
+
+        val semversions = versions.map(i=> (new Semver(i.parserVersion, SemverType.NPM), i))
+          .filter(sV=> sV._1.satisfies(ref.version) || ref.version == "latest")
+
+        semversions.sortWith((a, b)=> {
+          a._1.isGreaterThan(b._1)
+        }).headOption.map(_._2)
+      }))
     })
 
     val found = parserOptions.filter(_._2.isDefined).map(_._2.get)
@@ -88,5 +96,8 @@ class TestProvider extends Provider {
     BatchParserResult(found.toSet, notFound.toSet)
   }
 
-  override def listInstalledParsers = ParserStorage.listAllParsers
+  override def listInstalledParsers = {
+    val js = SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/target/scala-2.12/javascript-lang_2.12-1.0.jar")
+    Map("Javascript" -> Vector(js.get))
+  }
 }

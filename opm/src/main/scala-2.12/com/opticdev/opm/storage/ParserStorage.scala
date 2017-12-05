@@ -6,6 +6,8 @@ import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
+import com.vdurmont.semver4j.Semver
+import com.vdurmont.semver4j.Semver.SemverType
 
 import scala.util.{Failure, Try}
 
@@ -32,10 +34,23 @@ object ParserStorage {
 
   def loadFromStorage(parserRef: ParserRef) : Try[ParserBase] = {
 
-    val parser = DataDirectory.parsers / parserRef.packageId / (parserRef.version + ".jar")
+    val parserOption = {
+      val version = parserRef.version
 
-    if (parser.exists) {
-      SourceParserManager.verifyParser(parser.pathAsString)
+        val versionFileTuples = (DataDirectory.parsers / parserRef.packageId).list
+          .map(i=> ( new Semver(i.nameWithoutExtension, SemverType.NPM), i))
+
+
+        val matchingVersionsSorted = versionFileTuples.filter(pair=> pair._1.satisfies(version) || version == "latest").toSeq
+        .sortWith((a, b)=> {
+          a._1.isGreaterThan(b._1)
+        })
+
+      matchingVersionsSorted.headOption
+    }
+
+    if (parserOption.isDefined) {
+      SourceParserManager.verifyParser(parserOption.get._2.pathAsString)
     } else {
       throw new Error("Parser not found "+ parserRef.full)
     }

@@ -18,6 +18,11 @@ import scala.concurrent.{Await, Promise}
 import scala.concurrent.duration._
 class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with ProjectsManagerFixture {
 
+  override def beforeAll(): Unit = {
+    resetScratch
+    super.beforeAll()
+  }
+
   it("finds context for file/range pair") {
 
     val future = instanceWatchingTestProject.flatMap(pm=> {

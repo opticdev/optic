@@ -7,6 +7,7 @@ import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.{Gear, SGConfig}
+import com.opticdev.parsers.ParserRef
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions.SchemaColdStorage
 import com.opticdev.sdk.{BoolProperty, _}
@@ -121,7 +122,7 @@ object PickleImplicits extends PicklerHelper {
     override def unpickle(implicit state: UnpickleState): SGConfig = {
       SGConfig(
         state.unpickle[Int],
-        state.unpickle[Set[String]],
+        state.unpickle[Set[ParserRef]],
         state.unpickle[Set[Gear]],
         state.unpickle[Set[SchemaColdStorage]]
       )

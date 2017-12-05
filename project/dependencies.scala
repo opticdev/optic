@@ -84,7 +84,9 @@ object Dependencies {
     "com.typesafe.play" %% "play-json" % "2.6.2",
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
-    "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2"
+    "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
+    "com.opticdev" %% "marvin-runtime" % "1.0.0",
+    "com.opticdev" %% "marvin-common" % "1.0.0"
   )
 
 }

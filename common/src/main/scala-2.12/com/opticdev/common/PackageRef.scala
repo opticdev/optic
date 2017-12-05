@@ -12,7 +12,7 @@ object PackageRef {
   def fromString(string: String): Try[PackageRef] = Try {
     val components = string.split("@")
     if (components.size > 2) {
-      throw new Error("Invalid Package format")
+      throw new Exception("Invalid Package format")
     }
 
     val packageId = components.head

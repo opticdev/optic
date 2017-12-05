@@ -1,6 +1,5 @@
 package com.opticdev.server.http.routes.query
 
-import com.opticdev.server.http.routes.query.{AnyFile, Equals, ModelQuery, NotEqual}
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsString, Json}
 

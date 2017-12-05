@@ -21,6 +21,13 @@ class ParserStorageSpec extends FunSpec {
     assert(parserLoad.get.languageName == "Fake")
   }
 
+  it("can load parser by version 'latest'") {
+    val parserLoad = ParserStorage.loadFromStorage(ParserRef("Fake", "latest"))
+    assert(parserLoad.isSuccess)
+    assert(parserLoad.get.languageName == "Fake")
+    assert(parserLoad.get.parserVersion == "0.1.0")
+  }
+
   it("can clear all local parsers") {
     ParserStorage.writeToStorage(fakeParserJar)
     ParserStorage.clearLocalParsers

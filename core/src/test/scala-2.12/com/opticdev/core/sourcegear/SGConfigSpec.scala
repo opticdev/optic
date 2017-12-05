@@ -22,7 +22,7 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
 
     lazy val sgConfig = {
       val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
-      Await.result(future, 5 seconds)
+      Await.result(future, 10 seconds)
     }
 
     it("can be pickled") {
@@ -42,7 +42,7 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
       val sourceGear = sgConfig.inflate
       assert(sourceGear.gearSet.size == sgConfig.gears.size)
       assert(sourceGear.schemas.size == sgConfig.schemas.size)
-//      assert(sourceGear.parsers.size == sgConfig.parserIds.size)
+      assert(sourceGear.parsers.size == sgConfig.parserIds.size)
     }
 
   }

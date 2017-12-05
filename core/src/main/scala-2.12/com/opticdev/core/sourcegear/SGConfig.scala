@@ -4,11 +4,13 @@ import com.opticdev.sdk.descriptions.{Schema, SchemaColdStorage, SchemaId}
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
-import com.opticdev.parsers.SourceParserManager
+import com.opticdev.opm.PackageManager
+import com.opticdev.opm.storage.ParserStorage
+import com.opticdev.parsers.{ParserRef, SourceParserManager}
 import play.api.libs.json.{JsObject, Json}
 
 case class SGConfig(hashInt: Int,
-                    parserIds : Set[String],
+                    parserIds : Set[ParserRef],
                     gears : Set[Gear],
                     schemas : Set[SchemaColdStorage]) {
 
@@ -17,8 +19,13 @@ case class SGConfig(hashInt: Int,
   def inflate : SourceGear = {
     val inflatedSchemas = schemas.map(i=>
       Schema.fromJson(Json.parse(i.data).as[JsObject]))
+
+    val parserCollections = PackageManager.collectParsers(parserIds.toSeq:_*)
+
+    if (!parserCollections.foundAll) throw new Error("Unable to resolve parsers "+ parserCollections.notFound.map(_.full))
+
     new SourceGear {
-      override val parsers = SourceParserManager.installedParsers //@todo impl
+      override val parsers = parserCollections.found
       override val gearSet = new GearSet(gears.toSeq: _*)
       override val schemas = inflatedSchemas
     }

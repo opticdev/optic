@@ -1,5 +1,6 @@
 name: Unnamed Project
-
+parsers:
+  - Javascript
 knowledge:
   - optic:express-js@0.1.0
   - optic:rest@0.1.0
