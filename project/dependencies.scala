@@ -66,6 +66,7 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-http-testkit" % "10.0.10",
     "com.typesafe.akka" %% "akka-http-jackson" % "10.0.10",
     "de.heikoseeberger" %% "akka-http-play-json" % "1.19.0-M2",
+    "ch.megard" %% "akka-http-cors" % "0.2.2",
 
     //for concurrency
     "com.typesafe.akka" %% "akka-actor" % "2.5.4",

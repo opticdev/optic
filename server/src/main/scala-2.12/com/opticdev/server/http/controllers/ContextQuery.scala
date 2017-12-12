@@ -33,7 +33,7 @@ class ContextQuery(file: File, range: Range)(implicit projectsManager: ProjectsM
       val resolved = o.map(_.resolve())
 
       //filter only models where the ranges intersect
-      resolved.filter(node=> (node.root.range intersect range).nonEmpty)
+      resolved.filter(node=> (node.root.range intersect range.inclusive).nonEmpty)
 
     } else {
       if (projectOption.get.shouldWatchFile(file)) {

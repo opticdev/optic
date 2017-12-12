@@ -65,9 +65,6 @@ class EditorConnectionSocketSpec extends SocketTestFixture with TestBase with Pr
                 "end" -> JsNumber(37)
               ))
               .toString())
-
-          wsClient.expectMessage("""{"event":"context-found","filePath":"test-examples/resources/tmp/test_project/app.js","range":{"start":35,"end":37},"results":[{"id":null,"schemaId":"optic:rest/route","astLocation":{"type":"ExpressionStatement:Javascript","start":31,"end":92},"value":{"method":"get","url":"user/:id"}}]}""")
-
         }
 
         it("Rejects invalid queries") {

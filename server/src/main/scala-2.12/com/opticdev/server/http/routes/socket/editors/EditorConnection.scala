@@ -79,9 +79,13 @@ class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projects
 object EditorConnection extends ConnectionManager[EditorConnection] {
   case class EditorInformation(name: String, version: String)
 
-  override def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = new EditorConnection(slug, actorSystem)
+  override def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
+    println(slug+" editor connected")
+    new EditorConnection(slug, actorSystem)
+  }
 
   def killEditor(slug: String) = {
+    println(slug+" editor disconnected")
     val connectionOption = connections.get(slug)
     if (connectionOption.isDefined) {
       connectionOption.get.poison

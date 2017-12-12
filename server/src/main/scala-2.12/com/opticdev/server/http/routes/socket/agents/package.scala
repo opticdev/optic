@@ -16,10 +16,6 @@ package object agents {
 
     trait UpdateAgentEvent extends OpticEvent
 
-    case class ContextUpdate(newStuff: String) extends UpdateAgentEvent {
-      override def asJson: JsValue = JsObject(Seq("event" -> JsString("contextUpdate")))
-    }
-
   }
 
 }

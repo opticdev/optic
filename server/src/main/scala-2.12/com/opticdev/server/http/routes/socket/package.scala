@@ -2,14 +2,20 @@ package com.opticdev.server.http.routes
 
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import com.opticdev.server.data.ToJsonImplicits._
+import com.opticdev.server.http.routes.socket.agents.Protocol.UpdateAgentEvent
 package object socket {
   trait OpticEvent {
     def asString: String = asJson.toString()
     def asJson: JsValue
   }
 
-  case class ContextFound(filePath: String, range: Range, results: JsValue) extends OpticEvent {
-    def asJson = JsObject(Seq("event"-> JsString("context-found"), "filePath" -> JsString(filePath), "range" -> range.toJson, "results"-> results))
+  case class ContextFound(filePath: String, range: Range, results: JsValue, isError: Boolean = false) extends OpticEvent with UpdateAgentEvent {
+    def asJson = JsObject(Seq(
+      "event"-> JsString("context-found"),
+      "filePath" -> JsString(filePath),
+      "range" -> range.toJson,
+      (if (isError) "errors" else "results") -> results)
+    )
   }
 
   case class Success() extends OpticEvent {

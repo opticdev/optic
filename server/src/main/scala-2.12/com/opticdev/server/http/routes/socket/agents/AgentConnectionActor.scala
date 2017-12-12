@@ -1,7 +1,7 @@
 package com.opticdev.server.http.routes.socket.agents
 
 import akka.actor.{Actor, ActorRef, Status}
-import com.opticdev.server.http.routes.socket.ErrorResponse
+import com.opticdev.server.http.routes.socket.{ContextFound, ErrorResponse}
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.state.ProjectsManager
 
@@ -13,9 +13,10 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
   private var version : String = ""
 
   override def receive: Receive = {
-    case Registered(actorRef) =>
+    case Registered(actorRef) => {
+      println("worked correctly")
       connection = actorRef
-
+    }
     case Terminated => {
       Status.Success(Unit)
       AgentConnection.killAgent(slug)
@@ -26,7 +27,9 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     }
 
 
-    case update: ContextUpdate => connection ! update
+    case update: ContextFound => {
+      connection ! update
+    }
 
   }
 
