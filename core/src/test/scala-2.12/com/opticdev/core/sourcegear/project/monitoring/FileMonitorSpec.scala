@@ -1,9 +1,10 @@
 package com.opticdev.core.sourcegear.project.monitoring
 
 import better.files.File
+import com.opticdev.core.Fixture.TestBase
 import org.scalatest.FunSpec
 
-class FilesStateSpec extends FunSpec {
+class FilesStateSpec extends TestBase {
 
   def fixture = new {
     val fileMonitor = new FilesState((f)=> true)

@@ -41,8 +41,9 @@ sealed abstract class BaseModelNode(implicit val project: OpticProject) extends 
   }
 }
 
-case class LinkedModelNode(schemaId: SchemaId, value: JsObject, root: AstPrimitiveNode, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode{
+case class LinkedModelNode(schemaId: SchemaId, value: JsObject, root: AstPrimitiveNode, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode {
   def flatten = ModelNode(schemaId, value)
+  override lazy val fileNode: Option[FileNode] = flatten.fileNode
 }
 
 case class ModelNode(schemaId: SchemaId, value: JsObject)(implicit override val project: OpticProject) extends BaseModelNode {
@@ -68,7 +69,5 @@ case class ModelNode(schemaId: SchemaId, value: JsObject)(implicit override val 
 
     LinkedModelNode(schemaId, value, root, mapping, parseGear)
   }
-
-  val identifier: String = UUID.generate
 
 }

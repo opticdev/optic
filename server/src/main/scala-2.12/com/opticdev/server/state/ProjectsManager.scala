@@ -17,6 +17,8 @@ class ProjectsManager {
 
   implicit val actorCluster: ActorCluster = new ActorCluster(actorSystem)
 
+  val nodeKeyStore: NodeKeyStore = new NodeKeyStore
+
   val MAX_PROJECTS = 6
 
   private var projectsStore: Vector[OpticProject] = Vector()
