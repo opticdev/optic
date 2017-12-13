@@ -33,6 +33,13 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
           val eventTry  = Try(parsedTry.get.value.get("event").get.as[JsString].value)
           val message = if (eventTry.isSuccess) {
             eventTry.get match {
+              case "put-update" => {
+                val idTry = Try( (parsedTry.get \ "id").get.as[JsString].value )
+                val newValueTry = Try( (parsedTry.get \ "newValue").get.as[JsObject] )
+                if (idTry.isSuccess && newValueTry.isSuccess) {
+                  PutUpdate(idTry.get, newValueTry.get)
+                } else UnknownEvent(i)
+              }
                 //does not recieve anything from agent...yet
               case _ => UnknownEvent(i)
             }

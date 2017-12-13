@@ -27,8 +27,12 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     }
 
 
-    case update: ContextFound => {
-      connection ! update
+    case contextUpdate: ContextFound => {
+      connection ! contextUpdate
+    }
+
+    case update : PutUpdate => {
+
     }
 
   }

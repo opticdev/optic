@@ -13,7 +13,7 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Await
 
-class PutUpdateSpec extends AkkaTestFixture("ContextQuerySpec") with ProjectsManagerFixture with BeforeAndAfterEach {
+class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with ProjectsManagerFixture with BeforeAndAfterEach {
 
   override def beforeAll(): Unit = {
     resetScratch
@@ -42,7 +42,7 @@ class PutUpdateSpec extends AkkaTestFixture("ContextQuerySpec") with ProjectsMan
 
   it("can update model") {
 
-    val putUpdate = new PutUpdate(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))))
+    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))))
     val future = putUpdate.execute
 
     val result = Await.result(future, 3 seconds)
@@ -54,7 +54,7 @@ class PutUpdateSpec extends AkkaTestFixture("ContextQuerySpec") with ProjectsMan
   }
 
   it("can update model and return API request") {
-    val putUpdate = new PutUpdate(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))))
+    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))))
     val future = putUpdate.executeToApiResponse
 
     val result = Await.result(future, 3 seconds)

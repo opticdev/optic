@@ -5,8 +5,9 @@ import akka.testkit.TestKit
 import com.opticdev.core.Fixture.SocketTestFixture
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.agents.Protocol
+import com.opticdev.server.http.routes.socket.agents.Protocol.PutUpdate
 import com.opticdev.server.state.ProjectsManager
-import play.api.libs.json.JsArray
+import play.api.libs.json.{JsArray, JsObject, JsString}
 
 class AgentConnectionSocketSpec extends SocketTestFixture {
 
@@ -23,7 +24,11 @@ class AgentConnectionSocketSpec extends SocketTestFixture {
         assert(AgentConnection.listConnections.size == 1)
       }
 
-      Thread.sleep(2000)
+      it("Can send a put update request") {
+        val event= PutUpdate("Id", JsObject.empty)
+        val asString = JsObject(Seq("id" -> JsString(event.id), "newValue" -> event.newValue)).toString
+        wsClient.sendMessage(asString)
+      }
 
       it("Broadcasts updated context to all agents") {
         val event= ContextFound("f/i/l/e", Range(0,1), JsArray.empty)

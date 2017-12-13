@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class PutUpdate(id: String, newValue: JsObject)(implicit projectsManager: ProjectsManager) {
+class PutUpdateRequest(id: String, newValue: JsObject)(implicit projectsManager: ProjectsManager) {
 
 
   def execute = Future[File] {

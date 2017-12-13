@@ -12,7 +12,7 @@ import scala.concurrent.ExecutionContext
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, StandardRoute}
 import com.opticdev.server.http.HTTPResponse
-import com.opticdev.server.http.controllers.PutUpdate
+import com.opticdev.server.http.controllers.PutUpdateRequest
 import com.opticdev.server.http.routes.query.ModelQuery
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
@@ -27,7 +27,7 @@ class PutUpdateRoute(implicit executionContext: ExecutionContext, projectsManage
     path("models" / Segment) { (modelId) => {
       put {
         entity(as[JsObject]) { json =>
-          onComplete(new PutUpdate(modelId, json).executeToApiResponse) {
+          onComplete(new PutUpdateRequest(modelId, json).executeToApiResponse) {
             case Success(value) => complete(value.statusCode, value.data)
             case Failure(ex)    => complete(StatusCodes.InternalServerError, JsString(s"An error occurred: ${ex.getMessage}"))
           }
