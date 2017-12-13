@@ -6,7 +6,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 
 import scala.concurrent.ExecutionContext
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.StandardRoute
+import akka.http.scaladsl.server.{Route, StandardRoute}
 import com.opticdev.server.http.HTTPResponse
 import com.opticdev.server.http.routes.query.ModelQuery
 import com.opticdev.server.state.ProjectsManager
@@ -15,7 +15,7 @@ import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
 class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager: ProjectsManager) {
 
-  val route =
+  val route: Route =
     pathPrefix("projects") {
       pathEnd {
         complete(JsArray(projectsManager.allProjects.map(_.asJson)))

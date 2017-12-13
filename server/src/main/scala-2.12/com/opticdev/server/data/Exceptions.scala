@@ -16,3 +16,7 @@ case class FileNotInProjectException(file: File) extends ServerExceptions {
 case class FileIsNotWatchedByProjectException(file: File) extends ServerExceptions {
   override def getMessage: String = "File "+file.pathAsString+" is not being watched by its optic project"
 }
+
+case class ModelNodeWithIdNotFound(id: String) extends ServerExceptions {
+  override def getMessage: String = "Model node with id "+id+ " is not found. If files were updated, it may not exist anymore"
+}

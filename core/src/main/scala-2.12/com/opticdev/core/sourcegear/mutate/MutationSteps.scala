@@ -15,6 +15,7 @@ import scala.util.Try
 
 object MutationSteps {
 
+  //requires newValue to be a valid model.
   def collectChanges(linkedModelNode: LinkedModelNode, newValue: JsObject): List[UpdatedField] = {
     //todo validate that newValue is a valid model
     val diff = JsonDiff.diff(linkedModelNode.value, newValue, true)

@@ -11,10 +11,18 @@ class NodeKeyStore {
   private val map: mutable.Map[File, mutable.Map[String, LinkedModelNode]] = mutable.Map[File, mutable.Map[String, LinkedModelNode]]()
 
   def leaseId(file: File, modelNode: LinkedModelNode) : String = {
-    val id = UUID.generate
     val fileIdMapping = map.getOrElseUpdate(file, mutable.Map[String, LinkedModelNode]())
-    fileIdMapping += id -> modelNode
-    id
+
+    val alreadyExists = fileIdMapping.find(_._2 == modelNode)
+
+    if (alreadyExists.isDefined) {
+      alreadyExists.get._1
+    } else {
+      val id = UUID.generate
+      fileIdMapping += id -> modelNode
+      id
+    }
+
   }
 
   def invalidateFileIds(file: File) = {

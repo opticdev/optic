@@ -13,6 +13,8 @@ import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode}
 import play.api.libs.json.JsObject
 import com.opticdev.core.utils.UUID
 
+import scala.util.Try
+
 
 sealed abstract class BaseModelNode(implicit val project: OpticProject) extends AstProjection {
   val schemaId : SchemaId
@@ -39,6 +41,9 @@ sealed abstract class BaseModelNode(implicit val project: OpticProject) extends 
 
     expandedValueStore.get
   }
+
+  def getContext()(implicit actorCluster: ActorCluster, project: OpticProject): Try[SGContext] = Try(SGContext.forModelNode(this).get)
+
 }
 
 case class LinkedModelNode(schemaId: SchemaId, value: JsObject, root: AstPrimitiveNode, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode {
