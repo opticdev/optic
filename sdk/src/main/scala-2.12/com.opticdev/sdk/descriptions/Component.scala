@@ -77,7 +77,7 @@ case class CodeComponent(codeType: CodeEnum,
 }
 
 case class SchemaComponent(propertyPath: String,
-                           schema: SchemaId,
+                           schema: SchemaRef,
                            location: Location) extends Component {
 
   override def rules: Vector[Rule] = Vector()

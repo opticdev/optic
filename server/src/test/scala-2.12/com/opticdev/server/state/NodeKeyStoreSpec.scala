@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import com.opticdev.core.sourcegear.project.{OpticProject, StaticSGProject}
-import com.opticdev.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaRef
 import org.scalatest.FunSpec
 import play.api.libs.json.JsObject
 

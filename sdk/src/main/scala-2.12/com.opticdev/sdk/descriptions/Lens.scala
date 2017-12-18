@@ -27,7 +27,7 @@ object Lens extends Description[Lens] {
 }
 
 case class Lens(name: String,
-                schema: SchemaId,
+                schema: SchemaRef,
                 snippet: Snippet,
                 rules: Vector[Rule],
                 components: Vector[Component]

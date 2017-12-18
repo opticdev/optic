@@ -49,4 +49,9 @@ class ProjectRouteSpec extends FunSpec with Matchers with ScalatestRouteTest wit
       assert(responseAs[JsArray] == JsArray())
     }
   }
+
+//  it("can return a schema by id") {
+//    val name = testProject.name
+//  }
+
 }

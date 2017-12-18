@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.graph
 
 import better.files.File
 import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode, CustomEdge}
-import com.opticdev.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.InFile
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.parsers.AstGraph
@@ -63,7 +63,7 @@ object GraphImplicits {
   }
 
   implicit class BaseModelNodes(modelNodes: Set[BaseModelNode]) {
-    def ofType(schemaId: SchemaId) = modelNodes.filter(_.schemaId == schemaId)
+    def ofType(schemaId: SchemaRef) = modelNodes.filter(_.schemaId == schemaId)
   }
 
   implicit class BaseNodeImplicits(node: BaseNode) {

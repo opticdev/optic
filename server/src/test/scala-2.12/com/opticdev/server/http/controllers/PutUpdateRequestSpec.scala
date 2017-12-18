@@ -3,7 +3,7 @@ package com.opticdev.server.http.controllers
 import akka.http.scaladsl.model.StatusCodes
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
-import com.opticdev.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.server.Fixture.ProjectsManagerFixture
 import com.opticdev.server.state.ProjectsManager
 import org.scalatest.BeforeAndAfterEach

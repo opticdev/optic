@@ -8,7 +8,7 @@ class SdkLensSpec extends FunSpec {
 
   val validLensJson = """{
                           "name": "Using Require",
-                          "schema": "js-import^1.0.0",
+                          "schema": "test:js-import@1.0.0/import",
                           "snippet": {
                             "name": "Using Require",
                             "lang": "javascript",

@@ -6,7 +6,6 @@
     "route": {
       "title": "Route",
       "version": "1.0.0",
-      "slug": "js-example-route",
       "type": "object",
       "required": ["method", "url"],
       "properties": {
@@ -45,7 +44,6 @@
     "parameter": {
       "title": "Parameter",
       "version": "1.0.0",
-      "slug": "js-example-route-parameter",
       "type": "object",
       "required": ["method"],
       "properties": {

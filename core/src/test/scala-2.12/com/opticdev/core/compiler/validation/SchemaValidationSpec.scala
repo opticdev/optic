@@ -1,13 +1,14 @@
 package com.opticdev.core.compiler.validation
 
+import com.opticdev.common.PackageRef
 import com.opticdev.core.compiler.stages.SchemaValidation
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString, Json}
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 
 class SchemaValidationSpec extends FunSpec {
 
-  val basicSchema = Schema(Json.parse("""{
+  val basicSchema = Schema(SchemaRef(PackageRef("test"), "test"), Json.parse("""{
                             "title": "Test",
                             "version": "test",
                             "slug": "test",
@@ -28,7 +29,7 @@ class SchemaValidationSpec extends FunSpec {
                             "required": ["firstName", "lastName"]
                         }""").as[JsObject])
 
-  val nestedRequired = Schema(Json.parse("""{
+  val nestedRequired = Schema(SchemaRef(PackageRef("test"), "test"), Json.parse("""{
                              "title": "Test",
                              "type": "object",
                              "version": "test",

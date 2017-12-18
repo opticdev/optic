@@ -7,7 +7,7 @@ version := "1.0"
 scalaVersion := "2.12.3"
 
 
-/* Project Components */
+/* Sub Projects */
 lazy val common = (project in file("common")).
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.commonDependencies)
@@ -15,6 +15,7 @@ lazy val common = (project in file("common")).
 lazy val sdk = (project in file("sdk")).
   settings(Common.settings: _*)
   .settings(libraryDependencies ++= Dependencies.sdkDependencies)
+  .dependsOn(common)
 
 lazy val opm = (project in file("opm")).
  settings(Common.settings: _*)

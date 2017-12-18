@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.accumulate
 
-import com.opticdev.sdk.descriptions.{SchemaComponent, SchemaId}
+import com.opticdev.sdk.descriptions.{SchemaComponent, SchemaRef}
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelField}
 import com.opticdev.parsers.AstGraph
 import play.api.libs.json.{JsArray, JsObject}
@@ -13,11 +13,11 @@ import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode, Mod
 
 sealed trait Listener {
   def collect(implicit astGraph: AstGraph) : Set[ModelField]
-  val schema: SchemaId
-  val mapToSchema: SchemaId
+  val schema: SchemaRef
+  val mapToSchema: SchemaRef
 }
 
-case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: SchemaId) extends Listener {
+case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: SchemaRef) extends Listener {
   override val schema = schemaComponent.schema
   override def collect(implicit astGraph: AstGraph) : Set[ModelField] = {
 

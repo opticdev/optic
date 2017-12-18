@@ -7,11 +7,15 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import scala.concurrent.ExecutionContext
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, StandardRoute}
+import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.server.http.HTTPResponse
 import com.opticdev.server.http.routes.query.ModelQuery
 import com.opticdev.server.state.ProjectsManager
+import com.sun.xml.internal.xsom.impl.util.SchemaTreeTraverser.SchemaRootNode
 import play.api.libs.json.{JsArray, JsValue}
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+
+import scala.util.Try
 
 class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager: ProjectsManager) {
 
@@ -21,6 +25,11 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
         complete(JsArray(projectsManager.allProjects.map(_.asJson)))
       } ~
         path(Segment) { projectName => complete(getProject(projectName)) } ~
+        path(Segment / "schemas" / Segment) {
+          (projectName, id) => {
+            complete(getSchema(projectName, SchemaRef.fromString(id).getOrElse(SchemaRef.empty)))
+          }
+        } ~
         path(Segment / "models" / Segment) {
           (projectName, modelType) => {
             parameters('filter.?) { (filterStringOption) =>
@@ -36,6 +45,17 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
     val projectOption = projectsManager.lookupProject(projectName)
     if (projectOption.isSuccess) projectOption.get.projectInfo.asJson
     else StatusCodes.NotFound
+  }
+
+  def getSchema(projectName: String, schemaRef: SchemaRef) : HTTPResponse = {
+    val schemaOption = projectsManager.lookupProject(projectName)
+      .flatMap(i=> Try(i.projectSourcegear.schemas.find(_.schemaRef == schemaRef).get))
+
+    if (schemaOption.isSuccess) {
+      schemaOption.get.schema
+    } else {
+      StatusCodes.NotFound
+    }
   }
 
   def getModelsForProject(projectName: String, modelName: String, filter: ModelQuery) : HTTPResponse = {

@@ -34,7 +34,7 @@ class ContextRouteSpec extends FunSpec with Matchers with ScalatestRouteTest wit
       assert(asArray.value.size == 1)
 
       val headObject = asArray.value.head.as[JsObject].value
-      assert(headObject("schemaId") == JsString("optic:rest/route"))
+//      assert(headObject("schemaId") == JsString("optic:rest/route"))
     }
   }
 

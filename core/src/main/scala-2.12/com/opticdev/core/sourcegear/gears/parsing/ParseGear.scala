@@ -97,7 +97,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 }
 
 case class ParseAsModel(description: NodeDescription,
-                        schema: SchemaId,
+                        schema: SchemaRef,
                         components: Map[FlatWalkablePath, Vector[Component]],
                         rules: Map[FlatWalkablePath, Vector[Rule]],
                         listeners : Vector[Listener]

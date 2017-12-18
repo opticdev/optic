@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.graph.model
 
-import com.opticdev.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
@@ -17,7 +17,7 @@ import scala.util.Try
 
 
 sealed abstract class BaseModelNode(implicit val project: OpticProject) extends AstProjection {
-  val schemaId : SchemaId
+  val schemaId : SchemaRef
   val value : JsObject
 
   lazy val fileNode: Option[FileNode] = {
@@ -46,12 +46,12 @@ sealed abstract class BaseModelNode(implicit val project: OpticProject) extends 
 
 }
 
-case class LinkedModelNode(schemaId: SchemaId, value: JsObject, root: AstPrimitiveNode, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode {
+case class LinkedModelNode(schemaId: SchemaRef, value: JsObject, root: AstPrimitiveNode, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode {
   def flatten = ModelNode(schemaId, value)
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
 }
 
-case class ModelNode(schemaId: SchemaId, value: JsObject)(implicit override val project: OpticProject) extends BaseModelNode {
+case class ModelNode(schemaId: SchemaRef, value: JsObject)(implicit override val project: OpticProject) extends BaseModelNode {
 
   def resolve()(implicit actorCluster: ActorCluster) : LinkedModelNode = {
     implicit val sourceGearContext = SGContext.forModelNode(this).get

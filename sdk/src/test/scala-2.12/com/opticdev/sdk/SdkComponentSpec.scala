@@ -40,7 +40,7 @@ class SdkComponentSpec extends FunSpec {
 
     val validJson = """{
                     "type": "schema",
-                    "schema": "js-example-route-parameter^1.0.0",
+                    "schema": "optic:rest@1.0.0/route",
                     "propertyPath": "parameters",
                     "pathObject": {
                     "type": "array",

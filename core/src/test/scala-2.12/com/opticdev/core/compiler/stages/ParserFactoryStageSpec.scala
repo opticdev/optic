@@ -1,5 +1,6 @@
 package com.opticdev.core.compiler.stages
 
+import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import com.opticdev.parsers.SourceParserManager
@@ -58,7 +59,7 @@ class ParserFactoryStageSpec extends TestBase with ParserUtils {
     }
 
     it("listens to file accumulators") {
-      val schemaComponent = SchemaComponent("properties", SchemaId("example-parameter"), Location(LocationEnums.Anywhere))
+      val schemaComponent = SchemaComponent("properties", SchemaRef(PackageRef("test"), "example-parameter"), Location(LocationEnums.Anywhere))
       val parseGear = parseGearFromSnippetWithComponents("function hello() { }", Vector(
         schemaComponent
       ))

@@ -1,10 +1,11 @@
 package com.opticdev.core.sourcegear.accumulators
 
 import better.files.File
+import com.opticdev.common.PackageRef
 import com.opticdev.core.actorSystem
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.SourceParserManager
@@ -36,7 +37,7 @@ class FileAccumulatorSpec extends AkkaTestFixture("FileAccumulatorTest") with Ge
         "method": "get"
       }""")
 
-    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaId("route")).get
+    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(PackageRef("test"), "route")).get
     assert(modelNode.expandedValue == expected)
 
   }

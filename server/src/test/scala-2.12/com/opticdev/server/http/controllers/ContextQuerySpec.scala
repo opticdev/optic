@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.SchemaId
+import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.server.Fixture.ProjectsManagerFixture
 import com.opticdev.server.data.{FileIsNotWatchedByProjectException, FileNotInProjectException}
 import com.opticdev.server.state.ProjectsManager
@@ -34,7 +34,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
     val result = Await.result(future, 10 seconds)
 
     assert(result.size == 1)
-    assert(result.head.schemaId == SchemaId("optic:rest/route"))
+    assert(result.head.schemaId == SchemaRef.fromString("optic:rest/route").get)
   }
 
   it("returns an empty vector if nothing is found") {
