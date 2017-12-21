@@ -8,6 +8,7 @@ case class PackageRef(packageId: String, version: String = "latest") {
   def full = packageId+"@"+version
 }
 
+
 object PackageRef {
   def fromString(string: String): Try[PackageRef] = Try {
     val components = string.split("@")

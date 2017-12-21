@@ -9,13 +9,13 @@ import com.opticdev.sdk.descriptions.enums.FinderEnums.Entire
 import com.opticdev.sdk.descriptions.finders.StringFinder
 
 import scala.util.{Failure, Try}
-
+import com.opticdev.core._
 class FinderStageSpec extends TestBase {
 
   val snippetBlock = "var hello = require('world')"
   val snippet = Snippet("Testing", "Javascript", "es6", snippetBlock)
 
-  implicit val lens : Lens = Lens("Example", null, snippet, Vector(), Vector(
+  implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector(
     CodeComponent(Token, "definedAs", StringFinder(Entire, "hello"))
   ))
   val snippetBuilder = new SnippetStage(snippet)
@@ -45,7 +45,7 @@ class FinderStageSpec extends TestBase {
 
   describe("error handling") {
 
-    implicit val lens : Lens = Lens("Example", null, snippet, Vector(), Vector(
+    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector(
       CodeComponent(Token, "definedAs", StringFinder(Entire, "hello")),
       CodeComponent(Token, "firstProblem", StringFinder(Entire, "not-anywhere")),
       CodeComponent(Token, "nextProblem", StringFinder(Entire, "nowhere"))

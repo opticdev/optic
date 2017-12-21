@@ -6,12 +6,12 @@ import com.opticdev.core.compiler.errors.{ParserNotFound, SyntaxError, Unexpecte
 import org.scalatest.{FunSpec, PrivateMethodTester}
 import com.opticdev.sdk.descriptions.{Lens, Snippet}
 import com.opticdev.parsers.SourceParserManager
-
+import com.opticdev.core._
 import scala.util.Try
 
 class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
-  implicit val lens : Lens = Lens("Example", null, null, null, null)
+  implicit val lens : Lens = Lens("Example", BlankSchema, null, null, null)
 
   describe("constructor") {
     it("accepts a valid snippet") {

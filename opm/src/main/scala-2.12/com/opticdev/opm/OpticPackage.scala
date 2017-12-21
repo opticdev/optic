@@ -23,7 +23,10 @@ case class OpticPackage(packageId: String, contents: JsObject) {
     i._1 -> Schema.fromJson(SchemaRef(packageRef, i._1), i._2)
   })
 
-  lazy val lenses: Map[String, Lens] = objectValueForKey("lenses").mapValues(Lens.fromJson)
+  lazy val lenses: Map[String, Lens] = objectValueForKey("lenses").mapValues(i=> {
+    //@todo this feels a little hacky
+    Lens.fromJson(i ++ JsObject(Seq("packageRef" -> JsString(packageRef.full))))
+  })
   lazy val objects: Map[String, JsObject] = objectValueForKey("objects")
 
   lazy val dependencies: Vector[PackageRef] = {

@@ -81,4 +81,6 @@ case class SchemaComponent(propertyPath: String,
                            location: Location) extends Component {
 
   override def rules: Vector[Rule] = Vector()
+
+  def fullyQualified(lens: Lens) = SchemaComponent(propertyPath, schema.fullyQualified(lens), location)
 }

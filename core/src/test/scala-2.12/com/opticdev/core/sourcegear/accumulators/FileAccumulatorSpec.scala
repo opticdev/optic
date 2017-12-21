@@ -37,7 +37,7 @@ class FileAccumulatorSpec extends AkkaTestFixture("FileAccumulatorTest") with Ge
         "method": "get"
       }""")
 
-    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(PackageRef("test"), "route")).get
+    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(PackageRef("optic:FlatExpress", "0.1.0"), "route")).get
     assert(modelNode.expandedValue == expected)
 
   }

@@ -1,6 +1,7 @@
 package com.opticdev.server.data
 
 import com.opticdev.core.sourcegear.SGContext
+import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import com.opticdev.server.state.ProjectsManager
 import com.vdurmont.semver4j.Semver
@@ -16,6 +17,11 @@ object ModelNodeJsonImplicits {
     def asJson()(implicit projectsManager: ProjectsManager) : JsObject = {
 
       val fileNode = modelNode.fileNode
+
+      implicit val project = projectsManager.lookupProject(fileNode.get.toFile).get
+      implicit val sourceGear = project.projectSourcegear
+      implicit val actorCluster = projectsManager.actorCluster
+      implicit val sourceGearContext: SGContext = ParseSupervisorSyncAccess.getContext(fileNode.get.toFile).get
 
       //@todo factor this out
       val schemaOption = {
@@ -50,6 +56,7 @@ object ModelNodeJsonImplicits {
         )),
         //@todo make this exapanded context
         "value" -> modelNode.value
+//        "value" -> modelNode.expandedValue()
       ))
 
     }

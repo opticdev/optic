@@ -7,11 +7,11 @@ import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import com.opticdev.sdk.descriptions.enums.FinderEnums._
 import com.opticdev.sdk.descriptions.finders.{RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.{Lens, Snippet}
-
+import com.opticdev.core._
 class FinderEvaluationSpec extends TestBase {
 
   val block = "var hello = require('world'); var next = hello+1"
-  implicit val lens : Lens = Lens("Example", null, Snippet("Testing", "Javascript", "es6", block), Vector(), null)
+  implicit val lens : Lens = Lens("Example", BlankSchema, Snippet("Testing", "Javascript", "es6", block), Vector(), null)
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run

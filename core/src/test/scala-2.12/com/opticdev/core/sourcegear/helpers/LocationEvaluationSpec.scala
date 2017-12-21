@@ -9,6 +9,7 @@ import com.opticdev.sdk.descriptions.enums.LocationEnums.{Anywhere, _}
 import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.sdk.descriptions.helpers.AstLocation
 import com.opticdev.sdk.descriptions.{Lens, Location, Snippet}
+import com.opticdev.core._
 import com.opticdev.core.sourcegear.gears.helpers.LocationEvaluation
 
 class LocationEvaluationSpec extends TestBase {
@@ -16,7 +17,7 @@ class LocationEvaluationSpec extends TestBase {
   val snippetBlock = File("test-examples/resources/example_source/LocationPlayground.js").contentAsString
   val snippet = Snippet("Testing", "Javascript", "es6", snippetBlock)
 
-  implicit val lens : Lens = Lens("Example", null, snippet, Vector(), Vector())
+  implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector())
 
   val snippetOutput = new SnippetStage(snippet).run
 

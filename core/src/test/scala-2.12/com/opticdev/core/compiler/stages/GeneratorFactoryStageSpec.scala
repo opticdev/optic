@@ -14,10 +14,10 @@ import play.api.libs.json.{JsObject, JsString}
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
-
+import com.opticdev.core._
 class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTest") with ParserUtils {
 
-  implicit val lens : Lens = Lens("Example", null, null, null, null)
+  implicit val lens : Lens = Lens("Example", BlankSchema, null, null, null)
 
   val block = "var hello = require('world')"
   implicit val ruleProvider = new RuleProvider()

@@ -67,6 +67,11 @@ case class SchemaColdStorage(data: String)
 
 case class SchemaRef(packageRef: PackageRef, id: String) {
   def full: String = if (packageRef == null) id else packageRef.full+"/"+id
+  def fullyQualified(lens: Lens) : SchemaRef = {
+    if (packageRef == null) {
+      SchemaRef(lens.packageRef, id)
+    } else this
+  }
 }
 
 object SchemaRef {

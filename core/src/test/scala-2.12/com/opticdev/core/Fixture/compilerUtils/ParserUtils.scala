@@ -4,12 +4,13 @@ import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.compiler.stages.{FinderStage, ParserFactoryStage, SnippetStage}
 import com.opticdev.sdk.descriptions.{Component, Lens, Rule, Snippet}
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
+import com.opticdev.core._
 
 trait ParserUtils {
 
   def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[Rule] = Vector()) : ParseAsModel = {
     val snippet = Snippet("Testing", "Javascript", "es6", block)
-    implicit val lens : Lens = Lens("Example", null, snippet, rules, components)
+    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, rules, components)
 
     val snippetBuilder = new SnippetStage(snippet)
     val snippetOutput = snippetBuilder.run
@@ -23,7 +24,7 @@ trait ParserUtils {
 
   def sample(block: String) : SnippetStageOutput = {
     val snippet = Snippet("Testing", "Javascript", "es6", block)
-    implicit val lens : Lens = Lens("Example", null, snippet, Vector(), Vector())
+    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector())
     val snippetBuilder = new SnippetStage(snippet)
     snippetBuilder.run
   }
