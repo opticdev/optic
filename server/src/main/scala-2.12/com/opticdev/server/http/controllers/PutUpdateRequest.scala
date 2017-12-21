@@ -20,6 +20,8 @@ class PutUpdateRequest(id: String, newValue: JsObject)(implicit projectsManager:
 
     implicit val actorCluster = projectsManager.actorCluster
 
+    //@todo make sure that model is valid before approving.
+
     val modelNodeOption = projectsManager.nodeKeyStore.lookupId(id)
     if (modelNodeOption.isDefined) {
 

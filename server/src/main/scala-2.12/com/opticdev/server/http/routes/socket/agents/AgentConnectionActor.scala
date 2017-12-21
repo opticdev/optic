@@ -1,6 +1,7 @@
 package com.opticdev.server.http.routes.socket.agents
 
 import akka.actor.{Actor, ActorRef, Status}
+import com.opticdev.server.http.controllers.PutUpdateRequest
 import com.opticdev.server.http.routes.socket.{ContextFound, ErrorResponse}
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.state.ProjectsManager
@@ -32,7 +33,9 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     }
 
     case update : PutUpdate => {
-
+      //@todo handle error states
+      new PutUpdateRequest(update.id, update.newValue)(projectsManager)
+        .executeToApiResponse
     }
 
   }
