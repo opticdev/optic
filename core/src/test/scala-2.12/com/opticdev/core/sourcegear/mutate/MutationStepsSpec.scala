@@ -50,8 +50,8 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
     it("can collect changes") {
       val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("hello"), "pathTo" -> JsString("CHANGED"))))
       assert(changes.size == 1)
-      assert(changes.head.component.propertyPath == "pathTo")
-      assert(changes.head.component.asInstanceOf[CodeComponent].codeType == Literal)
+      assert(changes.head.get.component.propertyPath == "pathTo")
+      assert(changes.head.get.component.asInstanceOf[CodeComponent].codeType == Literal)
     }
 
     it("doesn't calculate a diff for same properties") {
@@ -62,7 +62,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
   }
 
   describe("handle changes") {
-    val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED"))))
+    val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED")))).map(_.get)
     it("generates AST changes") {
       val astChanges = handleChanges(changes)
       assert(astChanges.find(_.mapping.relationship == AstPropertyRelationship.Literal).get.replacementString.get == "'CHANGED'")
@@ -73,7 +73,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
 
   describe("combine changes") {
     it("Combines changes in reverse to avoid range conflicts") {
-      val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED"))))
+      val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED")))).map(_.get)
       val astChanges = handleChanges(changes)
       assert(combineChanges(astChanges).toString == "let DIFFERENT = require('CHANGED')\n\nfunction test () {\n    let nextOne = require(\"PIZZA!\")\n}")
     }

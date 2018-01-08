@@ -55,8 +55,8 @@ object ModelNodeJsonImplicits {
           "end" -> JsNumber(modelNode.root.range.end)
         )),
         //@todo make this exapanded context
-        "value" -> modelNode.value
-//        "value" -> modelNode.expandedValue()
+//        "value" -> modelNode.value
+        "value" -> modelNode.expandedValue()
       ))
 
     }

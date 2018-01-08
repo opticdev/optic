@@ -16,12 +16,12 @@ import scala.util.Try
 object MutationSteps {
 
   //requires newValue to be a valid model.
-  def collectChanges(linkedModelNode: LinkedModelNode, newValue: JsObject): List[UpdatedField] = {
+  def collectChanges(linkedModelNode: LinkedModelNode, newValue: JsObject): List[Try[UpdatedField]] = {
     //todo validate that newValue is a valid model
     val diff = JsonDiff.diff(linkedModelNode.value, newValue, true)
     val components = linkedModelNode.parseGear.components.flatMap(_._2).toSet
 
-    diff.ops.map(change=> {
+    diff.ops.map(change=> Try {
       val propertyPath = change.propertyPath
 
       val newFieldValue = new PropertyPathWalker(newValue).getProperty(propertyPath).get

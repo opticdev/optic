@@ -32,7 +32,8 @@ class PutUpdateRequest(id: String, newValue: JsObject)(implicit projectsManager:
 
       val file = modelNodeOption.get.fileNode.get.toFile
 
-      val changes = collectChanges(modelNodeOption.get, newValue)
+      //@todo remove the filtering once we have end-end mutations for mapped schemas working
+      val changes = collectChanges(modelNodeOption.get, newValue).filter(_.isSuccess).map(_.get)
       val astChanges = handleChanges(changes)
       val combined = combineChanges(astChanges)
 

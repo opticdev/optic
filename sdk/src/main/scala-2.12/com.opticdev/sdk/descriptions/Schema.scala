@@ -78,6 +78,8 @@ object SchemaRef {
   def fromString(string: String, parentRef: PackageRef = null): Try[SchemaRef] = Try {
     val components = string.split("/")
 
+    if (string.isEmpty) throw new Exception("Invalid Schema format")
+
     if (components.size == 1) {
       SchemaRef(parentRef, components(0))
     } else if (components.size == 2) {

@@ -13,7 +13,11 @@ object MutationImplicits {
 
     def update(newValue: JsObject) (implicit sourceGearContext: SGContext, fileContents: String): String = {
       import MutationSteps._
-      val changes = collectChanges(linkedModelNode, newValue)
+      val changesTry = collectChanges(linkedModelNode, newValue)
+
+      //@todo replace this once we have the full system working
+      val changes = changesTry.filter(_.isSuccess).map(_.get)
+
       val executedChanges = handleChanges(changes)
       combineChanges(executedChanges).toString
     }

@@ -148,7 +148,6 @@ class SdkSchemaSpec extends FunSpec {
 
     it("fails when input is invalid") {
       assert(SchemaRef.fromString("").isFailure)
-      assert(SchemaRef.fromString("parameter").isFailure)
       assert(SchemaRef.fromString("/").isFailure)
     }
 
