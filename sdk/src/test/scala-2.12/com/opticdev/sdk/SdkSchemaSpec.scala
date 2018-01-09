@@ -56,12 +56,12 @@ class SdkSchemaSpec extends FunSpec {
 
     describe("Validator") {
       it("on a valid schema") {
-        assert(Schema.schemaObjectfromJson(validTestSchema).isInstanceOf[JsonSchema])
+        assert(Schema.schemaObjectFromJson(validTestSchema).isInstanceOf[JsonSchema])
       }
 
       it("on an invalid schema") {
         assertThrows[Error] {
-          Schema.schemaObjectfromJson(invalidTestSchema)
+          Schema.schemaObjectFromJson(invalidTestSchema)
         }
       }
     }

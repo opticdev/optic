@@ -6,59 +6,39 @@ import com.opticdev.sdk.descriptions.Lens
 
 class SdkLensSpec extends FunSpec {
 
-  val validLensJson = """{
-                          "name": "Using Require",
-                          "schema": "test:js-import@1.0.0/import",
-                          "snippet": {
-                            "name": "Using Require",
-                            "lang": "javascript",
-                            "version": "es6",
-                            "block": "let definedAs = require('pathTo')"
-                          },
-                          "rules": [],
-                          "components": [
-                            {
-                              "type": "code",
-                              "codeType": "token",
-                              "finder": {
-                                "type": "string",
-                                "rule": "entire",
-                                "string": "definedAs",
-                                "occurrence": 0
-                              },
-                              "propertyPath": "definedAs",
-                              "pathObject": {
-                                "type": "string"
-                              },
-                              "options": {
-                                "lookupTable": null,
-                                "invariant": false,
-                                "parser": null,
-                                "mutator": null
-                              }
-                            },
-                            {
-                              "type": "code",
-                              "codeType": "token",
-                              "finder": {
-                                "type": "string",
-                                "rule": "entire",
-                                "string": "pathTo",
-                                "occurrence": 0
-                              },
-                              "propertyPath": "pathTo",
-                              "pathObject": {
-                                "type": "string"
-                              },
-                              "options": {
-                                "lookupTable": null,
-                                "invariant": false,
-                                "parser": null,
-                                "mutator": null
-                              }
-                            }
-                          ]
-                        }"""
+  val validLensJson =
+    """
+      |{
+      |			"name": "import using require",
+      |			"packageRef": "test:test@1.11.1",
+      |			"schema": "js-import",
+      |			"snippet": {
+      |				"language": "javascript",
+      |				"block": "const definedAs = require('pathTo')"
+      |			},
+      |			"scope": "public",
+      |			"components": [{
+      |				"type": "code",
+      |				"finder": {
+      |					"type": "stringFinder",
+      |					"string": "pathTo",
+      |					"rule": "containing",
+      |					"occurrence": 0
+      |				},
+      |				"propertyPath": ["pathTo"]
+      |			}, {
+      |				"type": "code",
+      |				"finder": {
+      |					"type": "stringFinder",
+      |					"string": "definedAs",
+      |					"rule": "entire",
+      |					"occurrence": 0
+      |				},
+      |				"propertyPath": ["definedAs"]
+      |			}],
+      |			"rules": []
+      |		}
+    """.stripMargin
 
   val invalidLensJson = """{ "name": "hello world" }"""
 

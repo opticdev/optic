@@ -37,7 +37,8 @@ object Component extends Description[Component] {
   }
 
   override def fromJson(jsValue: JsValue): Component = {
-    val componentType = (jsValue \ "type")
+
+    val componentType = jsValue \ "type"
 
     if (componentType.isDefined && componentType.get.isInstanceOf[JsString]) {
       val result : JsResult[Component]= componentType.get.as[JsString].value match {
@@ -59,24 +60,18 @@ object Component extends Description[Component] {
 
 sealed trait Component {
   def rules: Vector[Rule]
-  val propertyPath: String
+  val propertyPath: Seq[String]
 }
 
-case class CodeComponent(codeType: CodeEnum,
-                         propertyPath: String,
+case class CodeComponent(propertyPath: Seq[String],
                          finder: Finder,
-                         options: ComponentOptions = ComponentOptions()) extends Component {
-  override def rules: Vector[Rule] = codeType match {
-    case Literal=> Vector(
-      RawRule(finder, "ANY")
-    )
-    case Token=>  Vector (
-      RawRule(finder, "ANY")
-    )
-  }
+                         options: Option[ComponentOptions]) extends Component {
+
+  override def rules: Vector[Rule] = Vector(RawRule(finder, "ANY"))
+
 }
 
-case class SchemaComponent(propertyPath: String,
+case class SchemaComponent(propertyPath: Seq[String],
                            schema: SchemaRef,
                            location: Location) extends Component {
 

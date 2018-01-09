@@ -27,9 +27,9 @@ object Finder extends Description[Finder] {
 
     if (finderType.isDefined && finderType.get.isInstanceOf[JsString]) {
       val result : JsResult[Finder]= finderType.get.as[JsString].value match {
-        case "string"=> Json.fromJson[StringFinder](jsValue)
-        case "range"=> Json.fromJson[RangeFinder](jsValue)
-        case "node"=> Json.fromJson[NodeFinder](jsValue)
+        case "stringFinder"=> Json.fromJson[StringFinder](jsValue)
+        case "rangeFinder"=> Json.fromJson[RangeFinder](jsValue)
+//        case "nodeFinder"=> Json.fromJson[NodeFinder](jsValue)
         case _=> throw new Error("Finder Parsing Failed. Invalid Type "+finderType.get)
       }
 

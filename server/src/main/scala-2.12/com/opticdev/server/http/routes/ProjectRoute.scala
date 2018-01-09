@@ -52,7 +52,7 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
       .flatMap(i=> Try(i.projectSourcegear.schemas.find(_.schemaRef == schemaRef).get))
 
     if (schemaOption.isSuccess) {
-      schemaOption.get.schema
+      schemaOption.get.definition
     } else {
       StatusCodes.NotFound
     }

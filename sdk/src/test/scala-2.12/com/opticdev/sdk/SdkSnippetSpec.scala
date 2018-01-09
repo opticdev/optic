@@ -8,7 +8,7 @@ import com.opticdev.sdk.descriptions.Snippet
 class SdkSnippetSpec extends FunSpec {
 
   val validSnippetJson = """{"name": "Using Require",
-                             "lang": "javascript",
+                             "language": "javascript",
                              "version": "es6",
                              "block": "let definedAs = require('pathTo')" }"""
 
@@ -16,7 +16,7 @@ class SdkSnippetSpec extends FunSpec {
                              "block": "let definedAs = require('pathTo')" }"""
 
   val invalidSnippetTypeIssues = """{"name": "Using Require",
-                             "lang": false,
+                             "language": false,
                              "version": "es6",
                              "block": 15 } """
 

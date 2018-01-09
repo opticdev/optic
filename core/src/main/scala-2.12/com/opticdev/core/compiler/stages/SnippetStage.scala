@@ -24,17 +24,17 @@ class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[
 
 
   def getParser(): ParserBase = {
-    val langOption = SourceParserManager.parserByLanguageName(snippet.lang)
+    val langOption = SourceParserManager.parserByLanguageName(snippet.language)
     if (langOption.isDefined && langOption.get.supportedVersions.contains(snippet.version)) {
       langOption.get
     } else {
-      throw ParserNotFound(snippet.lang, snippet.version)
+      throw ParserNotFound(snippet.language, snippet.version)
     }
   }
 
   def buildAstTree(): (AstGraph, AstPrimitiveNode) = {
     try {
-      val parseResult = SourceParserManager.parseString(snippet.block, snippet.lang, Option(snippet.version)).get
+      val parseResult = SourceParserManager.parseString(snippet.block, snippet.language, Option(snippet.version)).get
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
       val root = parseResult.graph.root.get
       (parseResult.graph, root)

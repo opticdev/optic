@@ -59,6 +59,7 @@ sealed trait Rule {
   val isChildrenRule = false
 }
 
+//@todo make comparator an enum
 case class RawRule(finder: Finder, comparator: String, value: String = "") extends Rule {
   override val isRawRule = true
 }

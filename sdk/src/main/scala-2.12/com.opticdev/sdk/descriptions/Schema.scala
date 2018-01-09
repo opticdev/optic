@@ -27,7 +27,7 @@ object Schema extends Description[Schema] {
 
   private val validatorFactory = JsonSchemaFactory.newBuilder().freeze()
 
-  def schemaObjectfromJson(schema: JsObject): JsonSchema = {
+  def schemaObjectFromJson(schema: JsObject): JsonSchema = {
     if (validatorFactory.getSyntaxValidator.schemaIsValid(schema.as[JsonNode])) {
       validatorFactory.getJsonSchema(schema.as[JsonNode])
     } else throw new Error("Invalid Schema "+ validatorFactory.getSyntaxValidator.validateSchema(schema.as[JsonNode]).toString)
@@ -40,9 +40,9 @@ object Schema extends Description[Schema] {
   override def fromJson(jsValue: JsValue) = fromJson(null, jsValue)
 }
 
-case class Schema(schemaRef: SchemaRef, schema: JsObject) extends PackageExportable {
+case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExportable {
   private def getValue(key: String) = {
-    val valueOption = (schema \ key)
+    val valueOption = (definition \ key)
     if (valueOption.isDefined) {
       valueOption.get.as[JsString].value
     } else {
@@ -52,12 +52,12 @@ case class Schema(schemaRef: SchemaRef, schema: JsObject) extends PackageExporta
 
   val name : String = getValue("title")
 
-  private val jsonSchema : JsonSchema = Schema.schemaObjectfromJson(schema)
+  private val jsonSchema : JsonSchema = Schema.schemaObjectFromJson(definition)
 
   def validate(jsValue: JsValue): Boolean = jsonSchema.validate(jsValue.as[JsonNode]).isSuccess
 
   def toColdStorage = {
-    val flattened = schema ++ JsObject(Seq("_identifier" -> JsString(schemaRef.full)))
+    val flattened = definition ++ JsObject(Seq("_identifier" -> JsString(schemaRef.full)))
     SchemaColdStorage(flattened.toString())
   }
 

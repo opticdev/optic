@@ -48,7 +48,7 @@ object ModelNodeJsonImplicits {
 
       JsObject(Seq(
         "id" -> JsString(projectsManager.nodeKeyStore.leaseId(fileNode.get.toFile, modelNode)),
-        "schema" -> schemaOption.get.schema,
+        "schema" -> schemaOption.get.definition,
         "astLocation" -> JsObject(Seq(
           "type" -> JsString(modelNode.root.nodeType.asString),
           "start" -> JsNumber(modelNode.root.range.start),

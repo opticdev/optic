@@ -16,7 +16,7 @@ class SdkFinderSpec extends FunSpec {
 
         it("entire") {
           val validExample = """{
-                                 "type": "string",
+                                 "type": "stringFinder",
                                  "rule": "entire",
                                  "string": "definedAs",
                                  "occurrence": 0
@@ -31,7 +31,7 @@ class SdkFinderSpec extends FunSpec {
 
         it("starting") {
           val validExample = """{
-                                "type": "string",
+                                "type": "stringFinder",
                                 "rule": "starting",
                                 "string": "definedAs",
                                 "occurrence": 0
@@ -44,7 +44,7 @@ class SdkFinderSpec extends FunSpec {
 
         it("containing") {
           val validExample = """{
-                                "type": "string",
+                                "type": "stringFinder",
                                 "rule": "containing",
                                 "string": "definedAs",
                                 "occurrence": 0
@@ -57,7 +57,7 @@ class SdkFinderSpec extends FunSpec {
 
         it("fails on invalid") {
           val invalidExample = """{
-                                "type": "string",
+                                "type": "stringFinder",
                                 "rule": "wrong-rule",
                                 "string": "definedAs"
                                 }"""
@@ -77,7 +77,7 @@ class SdkFinderSpec extends FunSpec {
 
       it("on valid") {
         val validExample = """{
-                                "type": "range",
+                                "type": "rangeFinder",
                                 "start": 15,
                                 "end": 24
                                 }"""
@@ -90,7 +90,7 @@ class SdkFinderSpec extends FunSpec {
 
       it("on invalid") {
         val invalidExample = """{
-                                "type": "range",
+                                "type": "rangeFinder",
                                 "wrongKey": "wrong-rule",
                                 "end": 15
                                 }"""
@@ -102,31 +102,31 @@ class SdkFinderSpec extends FunSpec {
     }
 
 
-    describe("Node") {
-      it("on valid") {
-        val validExample = """{
-                                "type": "node",
-                                "enterOn": "VariableDeclaration",
-                                "block": "function () {}"
-                                }"""
-
-        val parsed = Finder.fromJson(Json.parse(validExample))
-        assert(parsed.isInstanceOf[NodeFinder])
-        assert(parsed.asInstanceOf[NodeFinder].enterOn == "VariableDeclaration")
-        assert(parsed.asInstanceOf[NodeFinder].block == "function () {}")
-      }
-
-      it("on invalid") {
-        val invalidExample = """{
-                                "type": "node",
-                                "wrongKey": "wrong-rule"
-                                }"""
-        assertThrows[Error] {
-          Finder.fromJson(Json.parse(invalidExample))
-        }
-      }
-
-    }
+//    describe("Node") {
+//      it("on valid") {
+//        val validExample = """{
+//                                "type": "node",
+//                                "enterOn": "VariableDeclaration",
+//                                "block": "function () {}"
+//                                }"""
+//
+//        val parsed = Finder.fromJson(Json.parse(validExample))
+//        assert(parsed.isInstanceOf[NodeFinder])
+//        assert(parsed.asInstanceOf[NodeFinder].enterOn == "VariableDeclaration")
+//        assert(parsed.asInstanceOf[NodeFinder].block == "function () {}")
+//      }
+//
+//      it("on invalid") {
+//        val invalidExample = """{
+//                                "type": "node",
+//                                "wrongKey": "wrong-rule"
+//                                }"""
+//        assertThrows[Error] {
+//          Finder.fromJson(Json.parse(invalidExample))
+//        }
+//      }
+//
+//    }
 
 
     it("Rejects an invalid finder type") {

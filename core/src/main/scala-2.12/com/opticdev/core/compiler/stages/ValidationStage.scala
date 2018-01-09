@@ -83,13 +83,13 @@ object SchemaValidation {
 
     }
 
-    requiredFields(prefix(), schema.schema)
+    requiredFields(prefix(), schema.definition)
 
   }
 
   def getPath(propertyPath: String, schema: Schema): Option[JsObject] = {
     val path = propertyPath.split("\\.")
-    val (isValid, obj) = path.foldLeft((true, schema.schema)) { (current, key) =>
+    val (isValid, obj) = path.foldLeft((true, schema.definition)) { (current, key) =>
       val (bool, currentObj) = current
       if (!bool) {
         (false, null)
