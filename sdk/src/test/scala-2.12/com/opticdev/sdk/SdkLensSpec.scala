@@ -36,7 +36,8 @@ class SdkLensSpec extends FunSpec {
       |				},
       |				"propertyPath": ["definedAs"]
       |			}],
-      |			"rules": []
+      |			"rules": [],
+      |			"variables": []
       |		}
     """.stripMargin
 

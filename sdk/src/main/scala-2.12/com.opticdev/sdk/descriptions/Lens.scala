@@ -41,5 +41,6 @@ case class Lens(name: String,
                 snippet: Snippet,
                 rules: Vector[Rule],
                 components: Vector[Component],
+                variables: Vector[Variable],
                 packageRef: PackageRef = PackageRef(null, null)
                ) extends PackageExportable
