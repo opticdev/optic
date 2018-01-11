@@ -1,19 +1,19 @@
 package com.opticdev.core.sourcegear.gears.helpers
 
-import com.opticdev.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.sdk.descriptions.{CodeComponent, Component}
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, NoMapping, NodeMapping}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.sdk.descriptions.enums.{Literal, Token}
 import play.api.libs.json.{JsObject, JsString, JsValue}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
 
-case class ModelField(propertyPath: String, value: JsValue, astMapping: AstMapping = NoMapping)
+case class ModelField(propertyPath: Seq[String], value: JsValue, astMapping: AstMapping = NoMapping)
 
 object ComponentExtraction {
   implicit class ComponentWithExtractors(component: Component) {
@@ -21,7 +21,8 @@ object ComponentExtraction {
       component match {
         case c: CodeComponent => {
 
-          c.codeType match {
+          c.componentType match {
+
             case Literal=> {
               val result = sourceGearContext.parser.basicSourceInterface.literals.parseNode(node, node.raw)
               if (result.isFailure) throw new Error("Source code extraction error " + result.failed.get)

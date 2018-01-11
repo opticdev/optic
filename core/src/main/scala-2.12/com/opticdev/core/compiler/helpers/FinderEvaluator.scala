@@ -19,12 +19,18 @@ object FinderEvaluator {
 
   def finderPath(finder: Finder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : FinderPath = {
     val result = run(finder, snippetStageOutput)
+
+    val basicSourceInterface = snippetStageOutput.parser.basicSourceInterface
+
     new FinderPath {
       override def fromNode(root: AstPrimitiveNode): Option[WalkablePath] =
         PathFinder.getPath(snippetStageOutput.astGraph, root, result)
 
       override val targetNode: AstPrimitiveNode = result
       override val astGraph : AstGraph = snippetStageOutput.astGraph
+
+      override def leadsToLiteral = basicSourceInterface.literals.literalTypes.contains(targetNode.nodeType)
+      override def leadsToToken = basicSourceInterface.tokens.tokenTypes.contains(targetNode.nodeType)
     }
   }
 

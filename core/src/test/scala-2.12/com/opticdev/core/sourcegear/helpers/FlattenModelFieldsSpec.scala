@@ -7,16 +7,16 @@ import play.api.libs.json._
 class FlattenModelFieldsSpec extends FunSpec {
 
   val flat = Set(
-    ModelField("one", JsString("value1")),
-    ModelField("two", JsBoolean(false)),
-    ModelField("three", JsNumber(3))
+    ModelField(Seq("one"), JsString("value1")),
+    ModelField(Seq("two"), JsBoolean(false)),
+    ModelField(Seq("three"), JsNumber(3))
   )
 
   val nested = Set(
-    ModelField("one", JsString("value1")),
-    ModelField("two", JsString("value2")),
-    ModelField("three.one", JsString("value3-1")),
-    ModelField("three.two.one", JsString("value3-2-1"))
+    ModelField(Seq("one"), JsString("value1")),
+    ModelField(Seq("two"), JsString("value2")),
+    ModelField(Seq("three", "one"), JsString("value3-1")),
+    ModelField(Seq("three", "two", "one"), JsString("value3-2-1"))
   )
 
 

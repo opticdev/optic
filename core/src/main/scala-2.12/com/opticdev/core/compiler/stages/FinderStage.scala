@@ -4,6 +4,7 @@ import com.opticdev.core.compiler.{FinderStageOutput, SnippetStageOutput}
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, InvalidComponents}
 import com.opticdev.core.compiler.helpers.{FinderEvaluator, FinderPath}
 import com.opticdev.sdk.descriptions.Lens
+import com.opticdev.sdk.descriptions.enums.{Literal, Token}
 import com.opticdev.sdk.descriptions.finders.Finder
 
 import scala.util.{Failure, Success, Try}
@@ -20,7 +21,19 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
       if (finderPathTry.isFailure) {
         errorAccumulator.add(finderPathTry.asInstanceOf[Failure[Exception]].exception)
         null
-      } else (c, finderPathTry.get)
+      } else {
+        val finderPath = finderPathTry.get
+
+        val typedComponent = if (finderPath.leadsToLiteral) {
+          c.withComponentType(Literal)
+        } else if (finderPath.leadsToToken) {
+          c.withComponentType(Token)
+        } else {
+          c
+        }
+
+        (typedComponent, finderPathTry.get)
+      }
     }).filterNot(_ == null)
 
     if (finderPaths.size != lens.components.codeComponents.size) {

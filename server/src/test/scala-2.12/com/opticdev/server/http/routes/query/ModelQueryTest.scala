@@ -10,7 +10,7 @@ class ModelQueryTest extends FunSpec {
       val json = Json.parse("""{"file": {"rule": "Any"}, "predicates": [{ "key": "prop.prop1", "op": "!=", "value": "Hello!" }]}""")
       assert(ModelQuery.fromJson(json) ==
       ModelQuery(AnyFile, Vector(
-        NotEqual("prop.prop1", JsString("Hello!"))
+        NotEqual(Seq("prop", "prop1"), JsString("Hello!"))
       )))
     }
 

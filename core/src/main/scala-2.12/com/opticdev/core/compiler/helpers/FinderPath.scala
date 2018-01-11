@@ -8,4 +8,8 @@ abstract class FinderPath {
   val targetNode: AstPrimitiveNode
   val astGraph : AstGraph
   def fromNode(astPrimitiveNode: AstPrimitiveNode) : Option[WalkablePath]
+
+  def leadsToLiteral : Boolean
+  def leadsToToken : Boolean
+
 }

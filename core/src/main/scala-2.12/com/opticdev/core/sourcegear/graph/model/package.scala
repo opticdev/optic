@@ -10,7 +10,14 @@ package object model {
   type ModelAstPair = (YieldsModel, AstPrimitiveNode)
 
   sealed trait ModelKey
-  case class Path(path: String) extends ModelKey
+
+  case class Path(path: Seq[String]) extends ModelKey {
+    override def toString: String = path.mkString(".")
+  }
+
+  object Path {
+    def fromString(string: String) = Path(string.split("\\.").toSeq)
+  }
 
   sealed trait AstMapping {val relationship : AstPropertyRelationship.Value}
   case class NodeMapping(node: AstPrimitiveNode, relationship : AstPropertyRelationship.Value) extends AstMapping

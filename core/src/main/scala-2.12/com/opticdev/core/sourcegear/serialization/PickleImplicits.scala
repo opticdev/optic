@@ -9,7 +9,8 @@ import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.{Gear, SGConfig}
 import com.opticdev.parsers.ParserRef
 import com.opticdev.parsers.graph.AstType
-import com.opticdev.sdk.descriptions.SchemaColdStorage
+import com.opticdev.sdk.descriptions.{CodeComponent, SchemaColdStorage}
+import com.opticdev.sdk.descriptions.enums.{BasicComponentType, Literal, NotSupported, Token}
 import com.opticdev.sdk.{BoolProperty, _}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
@@ -24,13 +25,6 @@ object PickleImplicits extends PicklerHelper {
     @inline override def unpickle(implicit state: UnpickleState): Range = {
       Range(state.dec.readInt, state.dec.readInt)
     }
-  }
-
-  implicit val codeEnumPickler = {
-    import com.opticdev.sdk.descriptions.enums.ComponentEnums.{CodeEnum, Literal, Token}
-    compositePickler[CodeEnum]
-      .addConcreteType[Token.type]
-      .addConcreteType[Literal.type]
   }
 
   implicit val locationTypeEnumPickler = {
@@ -61,6 +55,15 @@ object PickleImplicits extends PicklerHelper {
       .addConcreteType[Entire.type]
       .addConcreteType[Containing.type]
       .addConcreteType[Starting.type]
+  }
+
+  implicit val basicComponentEnumPickler = {
+    import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported, Token, Literal}
+    compositePickler[BasicComponentType]
+      .addConcreteType[NotSupported.type]
+      .addConcreteType[Token.type]
+      .addConcreteType[Literal.type]
+
   }
 
   implicit val componentPickler = {

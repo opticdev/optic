@@ -4,10 +4,9 @@ import play.api.libs.json.{JsObject, JsString, JsValue}
 
 object FlattenModelFields {
   def flattenFields(fieldSet: Set[ModelField], onto: JsObject = JsObject.empty) : JsObject = {
-    if (fieldSet.size == 0) return JsObject.empty
+    if (fieldSet.isEmpty) return JsObject.empty
 
-    case class Field(propertyPath: Vector[String], jsValue: JsValue)
-    val withPathVectors = fieldSet.map(i=> (i.propertyPath.split("\\."), i.value))
+    val withPathVectors = fieldSet.map(i=> (i.propertyPath, i.value))
 
     val individualObjects = withPathVectors.map(field=> {
       val path = field._1

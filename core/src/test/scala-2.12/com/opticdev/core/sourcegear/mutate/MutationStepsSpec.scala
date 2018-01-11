@@ -4,13 +4,13 @@ import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.sdk.descriptions.CodeComponent
-import com.opticdev.sdk.descriptions.enums.ComponentEnums.Literal
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
+import com.opticdev.sdk.descriptions.enums.Literal
 import play.api.libs.json.{JsObject, JsString}
 
 import scalax.collection.mutable.Graph
@@ -50,8 +50,8 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
     it("can collect changes") {
       val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("hello"), "pathTo" -> JsString("CHANGED"))))
       assert(changes.size == 1)
-      assert(changes.head.get.component.propertyPath == "pathTo")
-      assert(changes.head.get.component.asInstanceOf[CodeComponent].codeType == Literal)
+      assert(changes.head.get.component.propertyPath == Seq("pathTo"))
+      assert(changes.head.get.component.asInstanceOf[CodeComponent].componentType == Literal)
     }
 
     it("doesn't calculate a diff for same properties") {
@@ -62,7 +62,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
   }
 
   describe("handle changes") {
-    val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED")))).map(_.get)
+    lazy val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED")))).map(_.get)
     it("generates AST changes") {
       val astChanges = handleChanges(changes)
       assert(astChanges.find(_.mapping.relationship == AstPropertyRelationship.Literal).get.replacementString.get == "'CHANGED'")

@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear
 
 import com.opticdev.core.sourcegear.gears.helpers.{ChildrenVectorComparison, ModelField}
 import com.opticdev.core.sourcegear.gears.parsing.MatchResults
+import com.opticdev.core.sourcegear.graph.model.Path
 import org.scalatest.FunSpec
 import play.api.libs.json.JsString
 
@@ -9,7 +10,7 @@ class ChildrenVectorComparisonSpec extends FunSpec {
 
   def stringEquality(a: String, b: String) = MatchResults(a == b,
     //simulated extraction
-    {if (a == b) Option(Set(ModelField(b, JsString(a)))) else None})
+    {if (a == b) Option(Set(ModelField(Path.fromString(b).path, JsString(a)))) else None})
 
   describe("Any") {
     it("matches anything") {

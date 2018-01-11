@@ -59,12 +59,12 @@ class SchemaValidationSpec extends FunSpec {
   describe("gets required paths") {
     it("works on a flat schema") {
       val paths = SchemaValidation.requiredPaths(basicSchema)
-      assert(paths == Set("firstName", "lastName"))
+      assert(paths == Set(Seq("firstName"), Seq("lastName")))
     }
 
     it("works on a nested schema") {
       val paths = SchemaValidation.requiredPaths(nestedRequired)
-      assert(paths == Set("foo", "bar", "bar.me"))
+      assert(paths == Set(Seq("foo"), Seq("bar"), Seq("bar", "me")))
     }
 
   }
@@ -72,24 +72,24 @@ class SchemaValidationSpec extends FunSpec {
   describe("can get an arbitrary path") {
 
     it("works for flat properties") {
-      val pathOption = SchemaValidation.getPath("firstName", basicSchema)
+      val pathOption = SchemaValidation.getPath(Seq("firstName"), basicSchema)
       assert(pathOption.isDefined)
       assert(pathOption.get.value.get("type").get.as[JsString].value == "string")
     }
 
     it("fails to find missing flat properties") {
-      val pathOption = SchemaValidation.getPath("othername", basicSchema)
+      val pathOption = SchemaValidation.getPath(Seq("othername"), basicSchema)
       assert(pathOption.isEmpty)
     }
 
     it("works for nested properties") {
-      val pathOption = SchemaValidation.getPath("bar.me", nestedRequired)
+      val pathOption = SchemaValidation.getPath(Seq("bar", "me"), nestedRequired)
       assert(pathOption.isDefined)
       assert(pathOption.get.value.get("type").get.as[JsString].value == "string")
     }
 
     it("fails to find missing nested properties") {
-      val pathOption = SchemaValidation.getPath("bar.me.not_here", nestedRequired)
+      val pathOption = SchemaValidation.getPath(Seq("bar","me","not_here"), nestedRequired)
       assert(pathOption.isEmpty)
     }
 

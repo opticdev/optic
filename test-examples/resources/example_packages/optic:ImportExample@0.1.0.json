@@ -8,7 +8,7 @@
       "schema": "js-import",
       "snippet": {
         "name": "Using Require",
-        "lang": "Javascript",
+        "language": "Javascript",
         "version": "es6",
         "block": "let definedAs = require('pathTo')"
       },
@@ -16,43 +16,23 @@
       "components": [
         {
           "type": "code",
-          "codeType": "token",
           "finder": {
-            "type": "string",
+            "type": "stringFinder",
             "rule": "entire",
             "string": "definedAs",
             "occurrence": 0
           },
-          "propertyPath": "definedAs",
-          "pathObject": {
-            "type": "string"
-          },
-          "options": {
-            "lookupTable": null,
-            "invariant": false,
-            "parser": null,
-            "mutator": null
-          }
+          "propertyPath": ["definedAs"]
         },
         {
           "type": "code",
-          "codeType": "literal",
           "finder": {
-            "type": "string",
+            "type": "stringFinder",
             "rule": "containing",
             "string": "pathTo",
             "occurrence": 0
           },
-          "propertyPath": "pathTo",
-          "pathObject": {
-            "type": "string"
-          },
-          "options": {
-            "lookupTable": null,
-            "invariant": false,
-            "parser": null,
-            "mutator": null
-          }
+          "propertyPath": ["pathTo"]
         }
       ]
     }

@@ -3,7 +3,6 @@ package com.opticdev.core.sourcegear.parser
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
-import com.opticdev.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.sdk.descriptions.enums.RuleEnums.Any
 import com.opticdev.sdk.descriptions.finders.StringFinder
@@ -11,6 +10,7 @@ import com.opticdev.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule}
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
+import com.opticdev.sdk.descriptions.enums.Token
 import play.api.libs.json.{JsObject, JsString}
 
 class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {
@@ -60,7 +60,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
       it("Matches any value for a token component/extracts value") {
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
           //this causes any token rule to be applied
-          CodeComponent(Token, "definedAs", StringFinder(Entire, "hello"))
+          CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
         ))
 
         val block = "var otherValue = require('world')"
@@ -78,7 +78,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
           //this causes any token rule to be applied
-          CodeComponent(Token, "definedAs", StringFinder(Entire, "hello"))
+          CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
         ), customRules)
 
         //different kind operator var -> let
@@ -130,8 +130,8 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
       it("Extracts definedAs (token) and pathTo (literal) from an import") {
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
-          CodeComponent(Token, "definedAs", StringFinder(Entire, "hello")),
-          CodeComponent(Literal, "pathTo", StringFinder(Containing, "world"))
+          CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
+          CodeComponent(Seq("pathTo"), StringFinder(Containing, "world"))
         ))
 
         val block = "var otherValue = require('that-lib')"

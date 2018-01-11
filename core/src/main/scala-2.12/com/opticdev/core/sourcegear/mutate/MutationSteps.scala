@@ -1,7 +1,6 @@
 package com.opticdev.core.sourcegear.mutate
 
 import com.opticdev.sdk.descriptions.CodeComponent
-import com.opticdev.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, LinkedModelNode, NodeMapping, Path}
 import com.opticdev.core.sourcegear.mutate.errors.{AstMappingNotFound, ComponentNotFound}
@@ -10,6 +9,7 @@ import play.api.libs.json.{JsObject, JsString}
 import gnieh.diffson.playJson._
 import com.opticdev.core.utils.DiffOperationImplicits._
 import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.sdk.descriptions.enums.{Literal, Token}
 
 import scala.util.Try
 
@@ -39,7 +39,7 @@ object MutationSteps {
   def handleChanges(updatedFields: List[UpdatedField]) (implicit sourceGearContext: SGContext, fileContents: String): List[AstChange] = {
     updatedFields.map(field=> {
       field.component match {
-        case i: CodeComponent => i.codeType match {
+        case i: CodeComponent => i.componentType match {
           case Literal => AstChange(field.mapping, mutateLiteral(field))
           case Token => AstChange(field.mapping, mutateToken(field))
         }

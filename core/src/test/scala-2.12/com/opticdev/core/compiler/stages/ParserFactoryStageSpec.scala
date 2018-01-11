@@ -37,7 +37,7 @@ class ParserFactoryStageSpec extends TestBase with ParserUtils {
     it("when a component is set") {
       val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
         //this causes any token rule to be applied
-        CodeComponent(Token, "definedAs", StringFinder(Entire, "hello"))
+        CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
       ))
 
       assert(parseGear.components.size == 1)
@@ -50,7 +50,7 @@ class ParserFactoryStageSpec extends TestBase with ParserUtils {
 
       val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
         //this causes any token rule to be applied
-        CodeComponent(Token, "definedAs", StringFinder(Entire, "hello"))
+        CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
       ), customRules)
 
       assert(parseGear.components.size == 1)
@@ -59,7 +59,7 @@ class ParserFactoryStageSpec extends TestBase with ParserUtils {
     }
 
     it("listens to file accumulators") {
-      val schemaComponent = SchemaComponent("properties", SchemaRef(PackageRef("test"), "example-parameter"), Location(LocationEnums.Anywhere))
+      val schemaComponent = SchemaComponent(Seq("properties"), SchemaRef(PackageRef("test"), "example-parameter"), Location(LocationEnums.Anywhere))
       val parseGear = parseGearFromSnippetWithComponents("function hello() { }", Vector(
         schemaComponent
       ))

@@ -12,7 +12,7 @@ object DiffOperationImplicits {
 
   implicit class DiffOperation(operation: Operation) {
     //@todo validate nested cases
-    def propertyPath : String = operation.path.toString.replaceAll("\\/", ".").substring(1)
+    def propertyPath : Seq[String] = operation.path.toString.split("\\/").toSeq.drop(1)
 
     def changeType : DiffTypes.Value = operation match {
       case Add(path: Pointer, value: JsValue) => DiffTypes.ADD

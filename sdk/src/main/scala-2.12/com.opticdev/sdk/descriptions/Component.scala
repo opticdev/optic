@@ -1,8 +1,9 @@
 package com.opticdev.sdk.descriptions
 
+import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported}
 import com.opticdev.sdk.descriptions.finders.Finder
 import play.api.libs.json._
-
+import play.api.libs.functional.syntax._
 import scala.util.Try
 import enums.ComponentEnums._
 
@@ -24,7 +25,13 @@ object Component extends Description[Component] {
     import com.opticdev.sdk.descriptions.finders.Finder._
     import ComponentOptions._
 
-    Json.reads[CodeComponent]
+    val codeComponentReads: Reads[(Seq[String], Finder)] =
+      (JsPath \ "propertyPath").read[Seq[String]] and
+      (JsPath \ "finder").read[Finder] tupled
+
+    codeComponentReads.map(i=> {
+      CodeComponent(i._1, i._2, NotSupported)
+    })
   }
 
   private implicit val schemaComponentReads: Reads[SchemaComponent] = {
@@ -61,13 +68,25 @@ object Component extends Description[Component] {
 sealed trait Component {
   def rules: Vector[Rule]
   val propertyPath: Seq[String]
+  val componentType : BasicComponentType = NotSupported
 }
 
 case class CodeComponent(propertyPath: Seq[String],
                          finder: Finder,
-                         options: Option[ComponentOptions]) extends Component {
+                         override val componentType: BasicComponentType = NotSupported) extends Component {
 
   override def rules: Vector[Rule] = Vector(RawRule(finder, "ANY"))
+
+  def withComponentType(basicComponentType: BasicComponentType) =
+    new CodeComponent(propertyPath, finder, basicComponentType)
+
+  override def equals(obj: Any): Boolean = obj match {
+    case other:CodeComponent =>
+      other.propertyPath == this.propertyPath &&
+      other.rules == this.rules &&
+      other.finder == this.finder
+    case _ => false
+  }
 
 }
 

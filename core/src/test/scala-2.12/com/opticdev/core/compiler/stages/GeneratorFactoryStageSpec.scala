@@ -6,7 +6,6 @@ import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import com.opticdev.core.compiler.stages.GeneratorFactoryStage
 import com.opticdev.sdk.descriptions.{CodeComponent, Lens}
-import com.opticdev.sdk.descriptions.enums.ComponentEnums.{Literal, Token}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
 import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
@@ -31,8 +30,8 @@ class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTe
   implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
   val parseGear = parseGearFromSnippetWithComponents(block, Vector(
-    CodeComponent(Token, "definedAs", StringFinder(Entire, "hello")),
-    CodeComponent(Literal, "pathTo", StringFinder(Containing, "world"))
+    CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
+    CodeComponent(Seq("pathTo"), StringFinder(Containing, "world"))
   ))
 
   val importSample = sample(block)

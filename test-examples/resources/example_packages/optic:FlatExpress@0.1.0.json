@@ -12,49 +12,29 @@
       "schema": "parameter",
       "snippet": {
         "name": "Parameter",
-        "lang": "Javascript",
+        "language": "Javascript",
         "version": "es6",
         "block": "req.query.name"
       },
       "rules": [],
       "components": [{
         "type": "code",
-        "codeType": "token",
         "finder": {
-          "type": "string",
+          "type": "stringFinder",
           "rule": "entire",
           "string": "query",
           "occurrence": 0
         },
-        "propertyPath": "in",
-        "pathObject": {
-          "type": "string"
-        },
-        "options": {
-          "lookupTable": null,
-          "invariant": false,
-          "parser": null,
-          "mutator": null
-        }
+        "propertyPath": ["in"]
       }, {
         "type": "code",
-        "codeType": "token",
         "finder": {
-          "type": "string",
+          "type": "stringFinder",
           "rule": "entire",
           "string": "name",
           "occurrence": 0
         },
-        "propertyPath": "name",
-        "pathObject": {
-          "type": "string"
-        },
-        "options": {
-          "lookupTable": null,
-          "invariant": false,
-          "parser": null,
-          "mutator": null
-        }
+        "propertyPath": ["name"]
       }]
     },
     "route": {
@@ -63,14 +43,14 @@
       "schema": "route",
       "snippet": {
         "name": "Example Route",
-        "lang": "Javascript",
+        "language": "Javascript",
         "version": "es6",
         "block": "app.get('url', function (req, res) {\n\n})"
       },
       "rules": [{
         "type": "children",
         "finder": {
-          "type": "string",
+          "type": "stringFinder",
           "rule": "starting",
           "string": "{",
           "occurrence": 0
@@ -79,52 +59,26 @@
       }],
       "components": [{
         "type": "code",
-        "codeType": "token",
         "finder": {
-          "type": "string",
+          "type": "stringFinder",
           "rule": "entire",
           "string": "get",
           "occurrence": 0
         },
-        "propertyPath": "method",
-        "pathObject": {
-          "type": "string"
-        },
-        "options": {
-          "lookupTable": null,
-          "invariant": false,
-          "parser": null,
-          "mutator": null
-        }
+        "propertyPath": ["method"]
       }, {
         "type": "code",
-        "codeType": "literal",
         "finder": {
-          "type": "string",
+          "type": "stringFinder",
           "rule": "containing",
           "string": "url",
           "occurrence": 0
         },
-        "propertyPath": "url",
-        "pathObject": {
-          "type": "string"
-        },
-        "options": {
-          "lookupTable": null,
-          "invariant": false,
-          "parser": null,
-          "mutator": null
-        }
+        "propertyPath": ["url"]
       }, {
         "type": "schema",
         "schema": "parameter",
-        "propertyPath": "parameters",
-        "pathObject": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/parameter"
-          }
-        },
+        "propertyPath": ["parameters"],
         "location": {
           "type": "InParent",
           "finder": null

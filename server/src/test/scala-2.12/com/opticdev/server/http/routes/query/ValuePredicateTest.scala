@@ -11,17 +11,17 @@ class ValuePredicateTest extends FunSpec {
 
       it("works for equals expressions") {
         val json = Json.parse("""{ "key": "prop.prop1", "op": "==", "value": "Hello!" }""")
-        assert(ValuePredicate.fromJson(json) == Equals("prop.prop1", JsString("Hello!")))
+        assert(ValuePredicate.fromJson(json) == Equals(Seq("prop", "prop1"), JsString("Hello!")))
       }
 
       it("works for not equals expressions") {
         val json = Json.parse("""{ "key": "prop.prop1", "op": "!=", "value": "Hello!" }""")
-        assert(ValuePredicate.fromJson(json) == NotEqual("prop.prop1", JsString("Hello!")))
+        assert(ValuePredicate.fromJson(json) == NotEqual(Seq("prop","prop1"), JsString("Hello!")))
       }
 
       it("works for not oneOf expressions") {
         val json = Json.parse("""{ "key": "prop.prop1", "op": "oneOf", "values": ["Hello!", 15, false] }""")
-        assert(ValuePredicate.fromJson(json) == OneOf("prop.prop1", Set(JsString("Hello!"), JsNumber(15), JsBoolean(false))))
+        assert(ValuePredicate.fromJson(json) == OneOf(Seq("prop","prop1"), Set(JsString("Hello!"), JsNumber(15), JsBoolean(false))))
       }
     }
 

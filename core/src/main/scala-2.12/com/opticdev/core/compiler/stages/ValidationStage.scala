@@ -33,17 +33,9 @@ class ValidationStage()(implicit val lens: Lens, packageContext: Context, errorA
 
 object SchemaValidation {
 
-  def requiredPaths(schema: Schema): Set[String] = {
+  def requiredPaths(schema: Schema): Set[Seq[String]] = {
 
-    def prefix(p: String = ""): (String) => String = (suffix: String) => {
-      if (p == "") {
-        suffix
-      } else {
-        p + "." + suffix
-      }
-    }
-
-    def requiredFields(pathPrefix: (String) => String, jsObject: JsObject): Set[String] = {
+    def requiredFields(path: Seq[String], jsObject: JsObject): Set[Seq[String]] = {
       val objTypeOption = jsObject \ "type"
 
       if (objTypeOption.isDefined &&
@@ -58,7 +50,7 @@ object SchemaValidation {
             .filter(_.isInstanceOf[JsString])
             .map(i => {
               val key = i.as[JsString].value
-              pathPrefix(key)
+              path ++ Seq(key)
             }).toSet
 
           val otherFields = jsObject \ "properties"
@@ -71,8 +63,7 @@ object SchemaValidation {
               }
             }).flatMap(i => {
               val obj = i._2.as[JsObject]
-              val newPrefix = prefix(pathPrefix(i._1))
-              requiredFields(newPrefix, obj)
+              requiredFields(path ++ Seq(i._1), obj)
             })
           } else Set()
 
@@ -83,18 +74,18 @@ object SchemaValidation {
 
     }
 
-    requiredFields(prefix(), schema.definition)
+    requiredFields(Seq(), schema.definition)
 
   }
 
-  def getPath(propertyPath: String, schema: Schema): Option[JsObject] = {
-    val path = propertyPath.split("\\.")
+  def getPath(path: Seq[String], schema: Schema): Option[JsObject] = {
+
     val (isValid, obj) = path.foldLeft((true, schema.definition)) { (current, key) =>
       val (bool, currentObj) = current
       if (!bool) {
         (false, null)
       } else {
-        val nextObj = (currentObj \ "properties" \ key)
+        val nextObj = currentObj \ "properties" \ key
         if (nextObj.isDefined && nextObj.get.isInstanceOf[JsObject]) {
           (true, nextObj.get.as[JsObject])
         } else {

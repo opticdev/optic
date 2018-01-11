@@ -7,7 +7,7 @@ import com.opticdev.core.sourcegear.Gear
 import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.opm.OpticPackage
-import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import com.opticdev.sdk.descriptions._
 
@@ -18,15 +18,16 @@ import scalax.collection.mutable.Graph
 sealed trait Output
 
 case class ValidationStageOutput(isValid: Boolean,
-                                 missingPaths: Set[String],
-                                 extraPaths: Set[String])
+                                 missingPaths: Set[Seq[String]],
+                                 extraPaths: Set[Seq[String]])
 
 case class SnippetStageOutput(astGraph: AstGraph,
                               rootNode: AstPrimitiveNode,
                               snippet: Snippet,
                               enterOn: Set[AstType],
                               entryChildren: Vector[AstPrimitiveNode],
-                              matchType: MatchType.Value)
+                              matchType: MatchType.Value,
+                              parser: ParserBase)
 
 
 case class FinderStageOutput(componentFinders: Map[FinderPath, Vector[Component]],

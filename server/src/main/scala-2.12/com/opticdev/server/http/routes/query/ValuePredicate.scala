@@ -7,19 +7,19 @@ import play.api.libs.json.{JsError, JsSuccess, _}
 
 trait ValuePredicate extends QueryComponent
 
-case class Equals(propertyPath: String, value: JsValue) extends ValuePredicate {
+case class Equals(propertyPath: Seq[String], value: JsValue) extends ValuePredicate {
   override def evaluate(linkedModelNode: LinkedModelNode): Boolean = {
     val propertyValueOption = new PropertyPathWalker(linkedModelNode.value).getProperty(propertyPath)
     if (propertyValueOption.isDefined) propertyValueOption.get == value else false
   }
 }
-case class NotEqual(propertyPath: String, value: JsValue) extends ValuePredicate {
+case class NotEqual(propertyPath: Seq[String], value: JsValue) extends ValuePredicate {
   override def evaluate(linkedModelNode: LinkedModelNode): Boolean = {
     val propertyValueOption = new PropertyPathWalker(linkedModelNode.value).getProperty(propertyPath)
     if (propertyValueOption.isDefined) propertyValueOption.get != value else false
   }
 }
-case class OneOf(propertyPath: String, values: Set[JsValue]) extends ValuePredicate {
+case class OneOf(propertyPath: Seq[String], values: Set[JsValue]) extends ValuePredicate {
   override def evaluate(linkedModelNode: LinkedModelNode): Boolean = {
     val propertyValueOption = new PropertyPathWalker(linkedModelNode.value).getProperty(propertyPath)
     if (propertyValueOption.isDefined) values.contains(propertyValueOption.get) else false
@@ -39,7 +39,7 @@ object ValuePredicate extends Description[ValuePredicate] {
   override def fromJson(jsValue: JsValue): ValuePredicate = {
     jsValue match {
       case jsObject : JsObject => {
-        val key = (jsObject \ "key").get.as[JsString].value
+        val key = (jsObject \ "key").get.as[JsString].value.split("\\.").toSeq
         val value = jsObject \ "value"
         val values = jsObject \ "values"
         (jsObject \ "op").get.as[JsString].value.toLowerCase match {

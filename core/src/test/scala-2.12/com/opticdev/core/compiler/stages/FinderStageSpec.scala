@@ -10,13 +10,14 @@ import com.opticdev.sdk.descriptions.finders.StringFinder
 
 import scala.util.{Failure, Try}
 import com.opticdev.core._
+import com.opticdev.parsers.SourceParserManager
 class FinderStageSpec extends TestBase {
 
   val snippetBlock = "var hello = require('world')"
-  val snippet = Snippet("Testing", "Javascript", "es6", snippetBlock)
+  val snippet = Snippet("Javascript", Some("es6"), snippetBlock)
 
   implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector(
-    CodeComponent(Token, "definedAs", StringFinder(Entire, "hello"))
+    CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
   ))
   val snippetBuilder = new SnippetStage(snippet)
   val outputTry = Try(snippetBuilder.run)
@@ -37,7 +38,7 @@ class FinderStageSpec extends TestBase {
 
   it("catches errors valid output") {
 
-    val brokenComponent = CodeComponent(Token, "firstProblem", StringFinder(Entire, "not-anywhere"))
+    val brokenComponent = CodeComponent(Seq("firstProblem"), StringFinder(Entire, "not-anywhere"))
 
     finderStage.pathForFinder(brokenComponent.finder)
 
@@ -46,9 +47,9 @@ class FinderStageSpec extends TestBase {
   describe("error handling") {
 
     implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector(
-      CodeComponent(Token, "definedAs", StringFinder(Entire, "hello")),
-      CodeComponent(Token, "firstProblem", StringFinder(Entire, "not-anywhere")),
-      CodeComponent(Token, "nextProblem", StringFinder(Entire, "nowhere"))
+      CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
+      CodeComponent(Seq("firstProblem"), StringFinder(Entire, "not-anywhere")),
+      CodeComponent(Seq("nextProblem"), StringFinder(Entire, "nowhere"))
     ))
 
     val finderStage = new FinderStage(outputTry.get)

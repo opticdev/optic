@@ -5,7 +5,6 @@ import com.opticdev.opm.context.{PackageContext, PackageContextFixture}
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.sdk.descriptions._
-import com.opticdev.sdk.descriptions.enums.ComponentEnums.Token
 
 class ValidationStageSpec extends FunSpec {
 
@@ -35,8 +34,8 @@ class ValidationStageSpec extends FunSpec {
 
   it("works properly") {
     implicit val lens: Lens = Lens("Example", basicSchema.schemaRef, null, Vector(), Vector(
-      CodeComponent(Token, "firstName", null),
-      CodeComponent(Token, "lastName", null)
+      CodeComponent(Seq("firstName"), null),
+      CodeComponent(Seq("lastName"), null)
     ))
 
     val validationStage = new ValidationStage()
@@ -51,10 +50,10 @@ class ValidationStageSpec extends FunSpec {
 
   it("finds extra fields") {
     implicit val lens: Lens = Lens("Example", basicSchema.schemaRef, null, Vector(), Vector(
-      CodeComponent(Token, "firstName", null),
-      CodeComponent(Token, "lastName", null),
-      CodeComponent(Token, "fakePROP", null),
-      CodeComponent(Token, "fakePROP2", null)
+      CodeComponent(Seq("firstName"), null),
+      CodeComponent(Seq("lastName"), null),
+      CodeComponent(Seq("fakePROP"), null),
+      CodeComponent(Seq("fakePROP2"), null)
     ))
 
     val validationStage = new ValidationStage()
@@ -63,7 +62,7 @@ class ValidationStageSpec extends FunSpec {
 
     assert(!results.isValid)
     assert(results.extraPaths.size == 2)
-    assert(results.extraPaths == Set("fakePROP", "fakePROP2"))
+    assert(results.extraPaths == Set(Seq("fakePROP"), Seq("fakePROP2")))
     assert(results.missingPaths.isEmpty)
 
   }
@@ -71,7 +70,7 @@ class ValidationStageSpec extends FunSpec {
 
   it("finds missing fields") {
     implicit val lens: Lens = Lens("Example", basicSchema.schemaRef, null, Vector(), Vector(
-      CodeComponent(Token, "firstName", null)
+      CodeComponent(Seq("firstName"), null)
     ))
 
     val validationStage = new ValidationStage()
@@ -86,8 +85,8 @@ class ValidationStageSpec extends FunSpec {
 
 it("finds missing fields when extra ones are present") {
   implicit val lens: Lens = Lens("Example", basicSchema.schemaRef, null, Vector(), Vector(
-    CodeComponent(Token, "firstName", null),
-    CodeComponent(Token, "fakePROP2", null)
+    CodeComponent(Seq("firstName"), null),
+    CodeComponent(Seq("fakePROP2"), null)
   ))
 
   val validationStage = new ValidationStage()
@@ -97,7 +96,7 @@ it("finds missing fields when extra ones are present") {
   assert(!results.isValid)
   assert(results.extraPaths.size == 1)
   assert(results.missingPaths.size == 1)
-  assert(results.missingPaths == Set("lastName"))
+  assert(results.missingPaths == Set(Seq("lastName")))
 
 }
 

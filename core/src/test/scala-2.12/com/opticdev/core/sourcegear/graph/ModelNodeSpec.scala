@@ -43,8 +43,8 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
     val resolvedMapping = resolved.mapping
 
     assert(resolvedMapping.size == 2)
-    assert(resolvedMapping.get(Path("definedAs")).get.relationship == AstPropertyRelationship.Token)
-    assert(resolvedMapping.get(Path("pathTo")).get.relationship == AstPropertyRelationship.Literal)
+    assert(resolvedMapping.get(Path.fromString("definedAs")).get.relationship == AstPropertyRelationship.Token)
+    assert(resolvedMapping.get(Path.fromString("pathTo")).get.relationship == AstPropertyRelationship.Literal)
 
   }
 
