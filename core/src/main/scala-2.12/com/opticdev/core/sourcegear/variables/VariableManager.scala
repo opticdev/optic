@@ -56,7 +56,7 @@ case class VariableManager(variables: Vector[Variable], identifierNodeDesc: Iden
 }
 
 object VariableManager {
-  def empty = new VariableManager(Vector.empty[Variable], null) {
-    override def variableLookupTable = VariableLookupTable(variables, null)
+  def empty = new VariableManager(Vector.empty[Variable], IdentifierNodeDesc(null, Seq(""))) {
+    override def variableLookupTable = VariableLookupTable(variables, "")
   }
 }
