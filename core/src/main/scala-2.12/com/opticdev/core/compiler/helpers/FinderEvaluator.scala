@@ -2,12 +2,13 @@ package com.opticdev.core.compiler.helpers
 
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.compiler.errors._
+import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode}
 import com.opticdev.parsers.graph.path.{PathFinder, WalkablePath}
 import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import com.opticdev.sdk.descriptions.finders.{Finder, RangeFinder, StringFinder}
+import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
 
 import scala.util.matching.Regex
 
@@ -15,6 +16,7 @@ object FinderEvaluator {
   def run(finder: Finder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = finder match {
     case f: StringFinder => forStringFinder(f, snippetStageOutput)
     case f: RangeFinder => forRangeFinder(f, snippetStageOutput)
+    case f: NodeFinder => forNodeFinder(f, snippetStageOutput)
   }
 
   def finderPath(finder: Finder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : FinderPath = {
@@ -32,6 +34,15 @@ object FinderEvaluator {
       override def leadsToLiteral = basicSourceInterface.literals.literalTypes.contains(targetNode.nodeType)
       override def leadsToToken = basicSourceInterface.tokens.tokenTypes.contains(targetNode.nodeType)
     }
+  }
+
+  def forNodeFinder(finder: NodeFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = {
+    val nodeOption = RangeFinderEvaluate.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
+      (finder.range.start, finder.range.end) == (nStart, nEnd)
+    }).find(_.value.asInstanceOf[AstPrimitiveNode].nodeType == finder.astType)
+
+    if (nodeOption.isDefined) nodeOption.get.value.asInstanceOf[AstPrimitiveNode] else throw NodeNotFound(finder)
+
   }
 
   def forStringFinder(finder: StringFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = {

@@ -1,7 +1,7 @@
 package com.opticdev.sdk.descriptions
 
 import com.opticdev.sdk.PropertyValue
-import com.opticdev.sdk.descriptions.finders.Finder
+import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder}
 import play.api.libs.json.{JsError, JsSuccess, _}
 
 import scalax.collection.edge.LkDiEdge
@@ -53,12 +53,14 @@ object Rule extends Description[Rule] {
 }
 
 sealed trait Rule {
-  val finder: Finder
+  val finder : Finder
   val isRawRule = false
   val isPropertyRule = false
   val isChildrenRule = false
+  val isVariableRule = false
 }
 
+/* SDK Configurable Rules */
 //@todo make comparator an enum
 case class RawRule(finder: Finder, comparator: String, value: String = "") extends Rule {
   override val isRawRule = true
@@ -70,4 +72,9 @@ case class PropertyRule(finder: Finder, key: String, comparator: String, value: 
 
 case class ChildrenRule(finder: Finder, ruleType: ChildrenRuleTypeEnum) extends Rule {
   override val isChildrenRule = true
+}
+
+/* Implicit Rules */
+case class VariableRule(finder: NodeFinder, variableId: String) extends Rule {
+  override val isVariableRule = true
 }

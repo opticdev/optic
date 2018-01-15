@@ -42,6 +42,10 @@ package object parsing {
 
     def matchingPredicate = (astPrimitiveNode: AstPrimitiveNode) => astPrimitiveNode.nodeType == astType && astPrimitiveNode.range == range
 
+    def flatNodes: Seq[NodeDescription] = {
+      children.flatMap(_.flatNodes) :+ this
+    }
+
   }
 
 

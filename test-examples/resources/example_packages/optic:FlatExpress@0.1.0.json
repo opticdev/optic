@@ -17,6 +17,7 @@
         "block": "req.query.name"
       },
       "rules": [],
+      "variables": [],
       "components": [{
         "type": "code",
         "finder": {
@@ -57,6 +58,7 @@
         },
         "ruleType": "any"
       }],
+      "variables": [],
       "components": [{
         "type": "code",
         "finder": {

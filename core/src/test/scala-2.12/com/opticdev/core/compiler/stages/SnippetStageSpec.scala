@@ -11,7 +11,7 @@ import scala.util.Try
 
 class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
-  implicit val lens : Lens = Lens("Example", BlankSchema, null, null, null)
+  implicit val lens : Lens = Lens("Example", BlankSchema, null, null, null, null)
 
   describe("constructor") {
     it("accepts a valid snippet") {

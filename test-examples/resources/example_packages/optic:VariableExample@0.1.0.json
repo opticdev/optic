@@ -1,30 +1,23 @@
 {
-  "name": "ImportExample",
+  "name": "Variable",
   "version": "0.1.0",
   "author": "optic",
   "lenses": {
     "usingRequire": {
-      "name": "Using Require",
+      "name": "test",
       "schema": "js-import",
       "snippet": {
-        "name": "Using Require",
+        "name": "test",
         "language": "Javascript",
         "version": "es6",
-        "block": "let definedAs = require('pathTo')"
+        "block": "function test () { \n let definedAs = require('pathTo') \n definedAs() \n definedAs + definedAs \n }"
       },
       "rules": [],
-      "variables": [],
+      "variables": [{
+        "token": "definedAs",
+        "in": "self"
+      }],
       "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "rule": "entire",
-            "string": "definedAs",
-            "occurrence": 0
-          },
-          "propertyPath": ["definedAs"]
-        },
         {
           "type": "code",
           "finder": {
@@ -45,14 +38,10 @@
       "slug": "js-import",
       "type": "object",
       "required": [
-        "pathTo",
-        "definedAs"
+        "pathTo"
       ],
       "properties": {
         "pathTo": {
-          "type": "string"
-        },
-        "definedAs": {
           "type": "string"
         }
       },

@@ -7,6 +7,7 @@ import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.core.sourcegear.accumulate.MapSchemaListener
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel}
+import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, Child}
 import com.opticdev.parsers.graph.path.FlatWalkablePath

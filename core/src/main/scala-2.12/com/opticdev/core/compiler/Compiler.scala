@@ -4,6 +4,7 @@ import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.stages._
 import com.opticdev.core.sourcegear.Gear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
+import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Context, PackageContext}
 import com.opticdev.opm.{DependencyTree, OpticPackage}
 import com.opticdev.sdk.descriptions.{Lens, Schema}
@@ -54,10 +55,13 @@ object Compiler {
       val snippetBuilder = new SnippetStage(lens.snippet)
       val snippetOutput = Try(snippetBuilder.run)
 
+
       //snippet stage must succeed for anything else to happen.
       if (snippetOutput.isSuccess) {
 
 //        if (logToCli) cliLogger.evaluatingFinders
+
+        implicit val variableManager = new VariableManager(lens.variables, snippetOutput.get.parser)
 
         val finderStage = new FinderStage(snippetOutput.get)
         val finderStageOutput = Try(finderStage.run)

@@ -2,8 +2,7 @@ package com.opticdev.core.compiler.errors
 
 import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.opm.OpticPackage
-import com.opticdev.sdk.descriptions.finders.{RangeFinder, StringFinder}
-import com.opticdev.sdk.descriptions.{CodeComponent, Lens, SchemaRef}
+import com.opticdev.sdk.descriptions.finders.{NodeFinder, RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.finders.{RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.{CodeComponent, Lens, SchemaRef}
 
@@ -32,6 +31,11 @@ case class UnexpectedSnippetFormat(description: String)(implicit val lens: Lens)
 }
 
 //Finder CompilerError
+
+case class NodeNotFound(nodeFinder: NodeFinder)(implicit val lens: Lens) extends CompilerException {
+  override def toString = "A node of type " + nodeFinder.astType +" not found at range "+ nodeFinder.range
+}
+
 case class StringNotFound(stringFinder: StringFinder)(implicit val lens: Lens) extends CompilerException {
   override def toString = "String not found in snippet. "+stringFinder
 }

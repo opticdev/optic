@@ -1,5 +1,6 @@
 package com.opticdev.sdk.descriptions.finders
 
+import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions.Description
 import com.opticdev.sdk.descriptions.enums.FinderEnums.StringEnums
 import play.api.libs.json._
@@ -9,7 +10,6 @@ object Finder extends Description[Finder] {
 
   private implicit val stringFinderReads : Reads[StringFinder] = Json.reads[StringFinder]
   private implicit val rangeFinderReads : Reads[RangeFinder] = Json.reads[RangeFinder]
-  private implicit val nodeFinderReads : Reads[NodeFinder] = Json.reads[NodeFinder]
 
 
   implicit val finderReads = new Reads[Finder] {
@@ -51,6 +51,6 @@ sealed trait Finder
 //@todo get these into different files. Picklers need them all here for some reason even though sealed should be package, not file specific
 case class StringFinder(rule: StringEnums, string: String, occurrence: Int = 0) extends Finder
 
-case class NodeFinder(enterOn: String, block: String) extends Finder
+case class NodeFinder(astType: AstType, range: Range) extends Finder
 
 case class RangeFinder(start: Int, end: Int) extends Finder

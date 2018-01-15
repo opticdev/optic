@@ -5,13 +5,13 @@ import com.opticdev.core.compiler.errors.{NodeStartingWithStringNotFound, String
 import com.opticdev.core.compiler.stages.SnippetStage
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import com.opticdev.sdk.descriptions.enums.FinderEnums._
-import com.opticdev.sdk.descriptions.finders.{RangeFinder, StringFinder}
+import com.opticdev.sdk.descriptions.finders.{NodeFinder, RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.{Lens, Snippet}
 import com.opticdev.core._
 class FinderEvaluationSpec extends TestBase {
 
   val block = "var hello = require('world'); var next = hello+1"
-  implicit val lens : Lens = Lens("Example", BlankSchema, Snippet("Javascript", Some("es6"), block), Vector(), null)
+  implicit val lens : Lens = Lens("Example", BlankSchema, Snippet("Javascript", Some("es6"), block), Vector(), Vector(), Vector())
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run
@@ -102,6 +102,17 @@ class FinderEvaluationSpec extends TestBase {
     it("finds the right node") {
       val rangeFinder = RangeFinder(4,9)
       val result = FinderEvaluator.run(rangeFinder, snippetStageOutput)
+      assert(result.nodeType == AstType("Identifier", "Javascript"))
+      assert(result.range == Range(4, 9))
+    }
+
+  }
+
+  describe("Node Finders") {
+
+    it("finds the right node") {
+      val nodeFinder = NodeFinder( AstType("Identifier", "Javascript"), Range(4,9))
+      val result =  FinderEvaluator.run(nodeFinder, snippetStageOutput)
       assert(result.nodeType == AstType("Identifier", "Javascript"))
       assert(result.range == Range(4, 9))
     }
