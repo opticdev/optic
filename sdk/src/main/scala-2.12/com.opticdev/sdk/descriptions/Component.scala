@@ -4,6 +4,7 @@ import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported}
 import com.opticdev.sdk.descriptions.finders.Finder
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
+
 import scala.util.Try
 import enums.ComponentEnums._
 
@@ -92,9 +93,10 @@ case class CodeComponent(propertyPath: Seq[String],
 
 case class SchemaComponent(propertyPath: Seq[String],
                            schema: SchemaRef,
+                           mapUnique: Boolean,
                            location: Location) extends Component {
 
   override def rules: Vector[Rule] = Vector()
 
-  def fullyQualified(lens: Lens) = SchemaComponent(propertyPath, schema.fullyQualified(lens), location)
+  def fullyQualified(lens: Lens) = SchemaComponent(propertyPath, schema.fullyQualified(lens), mapUnique, location)
 }

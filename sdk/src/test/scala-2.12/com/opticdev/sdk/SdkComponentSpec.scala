@@ -37,6 +37,7 @@ class SdkComponentSpec extends FunSpec {
                     "type": "schema",
                     "schema": "optic:rest@1.0.0/route",
                     "propertyPath": ["parameters"],
+                    "mapUnique": true,
                     "location": {
                       "type": "InParent",
                       "finder": null
