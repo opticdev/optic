@@ -52,10 +52,7 @@ class VariableManager(variables: Vector[Variable], parser: ParserBase) {
   }
 
   def variableLookupTable: VariableLookupTable = {
-    new VariableLookupTable(variables, (astPrimitiveNode)=> {
-      astPrimitiveNode.properties.as[JsObject].value(parser.identifierNodeDesc.path.head)
-        .as[JsString].value
-    })
+    new VariableLookupTable(variables, parser.identifierNodeDesc.path.head)
   }
 
 }

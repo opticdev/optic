@@ -14,9 +14,7 @@ class VariableLookupTableSpec extends FunSpec {
       Variable("test", VariableEnums.Self),
       Variable("test1", VariableEnums.Self),
       Variable("test2", VariableEnums.Self)
-    ), (astPrimitiveNode)=> {
-      astPrimitiveNode.properties.as[JsObject].value("name")
-      .as[JsString].value })
+    ), "name")
   }
 
   it("can lookup a variable by its id") {
