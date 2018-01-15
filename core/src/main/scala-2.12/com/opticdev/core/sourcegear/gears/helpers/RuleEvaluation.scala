@@ -4,8 +4,9 @@ import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, Child}
 import com.opticdev.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
-import com.opticdev.sdk.descriptions.{ChildrenRule, PropertyRule, RawRule}
+import com.opticdev.sdk.descriptions.{ChildrenRule, PropertyRule, RawRule, VariableRule}
 import com.opticdev.core.sourcegear.gears.parsing.{MatchResults, NodeDescription}
+import com.opticdev.core.sourcegear.variables.VariableLookupTable
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -36,6 +37,13 @@ object RuleEvaluation {
       }
     }
   }
+
+  implicit class VariableRuleWithEvaluation(variableRule: VariableRule)  {
+    def evaluate(node: AstPrimitiveNode, variableLookupTable: VariableLookupTable)(implicit graph: AstGraph, fileContents: String): Boolean = {
+      variableLookupTable.astNodeMatchesVariable(variableRule, node)
+    }
+  }
+
 
   implicit class ChildrenRuleWithEvaluation(childrenRule: ChildrenRule)(implicit graph: AstGraph, fileContents: String) {
 

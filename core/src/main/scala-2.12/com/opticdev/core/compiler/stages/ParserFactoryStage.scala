@@ -18,7 +18,7 @@ import scalax.collection.mutable.Graph
 
 
 
-class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens) extends CompilerStage[ParserFactoryOutput] {
+class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens, variableManager: VariableManager = VariableManager.empty) extends CompilerStage[ParserFactoryOutput] {
   implicit val snippetStageOutput = snippetStage
   override def run: ParserFactoryOutput = {
 
@@ -44,7 +44,8 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       finderStageOutput.ruleFinders.map {
         case (finderPath, rules)=> (finderPathToFlatPath(finderPath, enterOn), rules)
       },
-      listeners
+      listeners,
+      variableManager
     ))
   }
 

@@ -61,7 +61,7 @@ object Compiler {
 
 //        if (logToCli) cliLogger.evaluatingFinders
 
-        implicit val variableManager = new VariableManager(lens.variables, snippetOutput.get.parser)
+        implicit val variableManager = new VariableManager(lens.variables, snippetOutput.get.parser.identifierNodeDesc)
 
         val finderStage = new FinderStage(snippetOutput.get)
         val finderStageOutput = Try(finderStage.run)

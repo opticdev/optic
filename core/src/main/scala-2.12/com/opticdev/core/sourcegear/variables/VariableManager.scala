@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.variables
 
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.sourcegear.gears.parsing.NodeDescription
-import com.opticdev.parsers.ParserBase
+import com.opticdev.parsers.{IdentifierNodeDesc, ParserBase}
 import com.opticdev.parsers.graph.AstPrimitiveNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.sdk.descriptions.finders.NodeFinder
@@ -12,10 +12,10 @@ import play.api.libs.json.{JsObject, JsString}
 import scala.collection.immutable
 import scala.util.Try
 
-class VariableManager(variables: Vector[Variable], parser: ParserBase) {
+case class VariableManager(variables: Vector[Variable], identifierNodeDesc: IdentifierNodeDesc) {
 
   def rules(snippetStageOutput: SnippetStageOutput): Vector[Rule] = {
-    val variableAstType = parser.identifierNodeDesc.nodeType
+    val variableAstType = identifierNodeDesc.nodeType
 
     val flatNodes : Vector[AstPrimitiveNode] =
       snippetStageOutput.astGraph.nodes.toVector
@@ -25,10 +25,10 @@ class VariableManager(variables: Vector[Variable], parser: ParserBase) {
 
     val variablesInSnippet = flatNodes.filter(i=> {
       i.nodeType == variableAstType && {
-        val token = i.properties.as[JsObject].value(parser.identifierNodeDesc.path.head)
+        val token = i.properties.as[JsObject].value(identifierNodeDesc.path.head)
         variables.exists(variable=> token == JsString(variable.token))
       }
-    }).groupBy(i=> variables.find(v=> i.properties(parser.identifierNodeDesc.path.head) == JsString(v.token)).get)
+    }).groupBy(i=> variables.find(v=> i.properties(identifierNodeDesc.path.head) == JsString(v.token)).get)
       .filterNot(_._2.isEmpty)
 
 
@@ -37,7 +37,7 @@ class VariableManager(variables: Vector[Variable], parser: ParserBase) {
       val first = variable._2.minBy(_.range.start)
 
       //add a property rule for ANY
-      val initialPropertyRule: Rule = PropertyRule(NodeFinder(first.nodeType, first.range), parser.identifierNodeDesc.path.head, "ANY")
+      val initialPropertyRule: Rule = PropertyRule(NodeFinder(first.nodeType, first.range), identifierNodeDesc.path.head, "ANY")
       val initialVariableRule: Rule =  VariableRule(NodeFinder(first.nodeType, first.range), variable._1.token)
 
       //ADD MATCHING RULES TO VARIABLE DEFINITION
@@ -51,12 +51,12 @@ class VariableManager(variables: Vector[Variable], parser: ParserBase) {
 
   }
 
-  def variableLookupTable: VariableLookupTable = {
-    new VariableLookupTable(variables, parser.identifierNodeDesc.path.head)
-  }
+  def variableLookupTable: VariableLookupTable = VariableLookupTable(variables, identifierNodeDesc.path.head)
 
 }
 
 object VariableManager {
-  def empty = new VariableManager(Vector.empty[Variable], null)
+  def empty = new VariableManager(Vector.empty[Variable], null) {
+    override def variableLookupTable = VariableLookupTable(variables, null)
+  }
 }

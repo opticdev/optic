@@ -15,6 +15,9 @@ import play.api.libs.json.{JsObject, JsValue}
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
+import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEvaluation
+import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.VariableRuleWithEvaluation
+import com.opticdev.core.sourcegear.variables.VariableManager
 
 sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
@@ -23,9 +26,14 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
   val rules: Map[FlatWalkablePath, Vector[Rule]]
   val listeners : Vector[Listener]
 
+  val variableManager : VariableManager
+
   def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: OpticProject) : Option[ParseResult] = {
 
     val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
+
+    //new for each search instance
+    val variableLookupTable = variableManager.variableLookupTable
 
     def compareWith(n:AstPrimitiveNode, edgeType: String, d:NodeDescription, path: FlatWalkablePath) = {
       compareToDescription(n, edgeType, d, path)
@@ -44,14 +52,18 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
         val rawRules = rulesAtPath.filter(_.isRawRule).asInstanceOf[Vector[RawRule]]
 
-        import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEvaluation
-
         val rawRulesEvaluated = rawRules.forall(_.evaluate(node))
+
+        val variableRules = rulesAtPath.filter(_.isVariableRule).asInstanceOf[Vector[VariableRule]]
+
+        val variableRulesEvaluated = variableRules.forall(_.evaluate(node, variableLookupTable))
 
         val compareSet = {
           val base = Seq(nodeTypesMatch, childTypesMatch)
           if (rawRules.nonEmpty) {
             base :+ rawRulesEvaluated
+          } else if (variableRules.nonEmpty) {
+            base :+ variableRulesEvaluated
           } else {
             base :+ propertiesMatch
           }
@@ -100,7 +112,8 @@ case class ParseAsModel(description: NodeDescription,
                         schema: SchemaRef,
                         components: Map[FlatWalkablePath, Vector[Component]],
                         rules: Map[FlatWalkablePath, Vector[Rule]],
-                        listeners : Vector[Listener]
+                        listeners : Vector[Listener],
+                        variableManager: VariableManager = VariableManager.empty
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
   override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: OpticProject) : Option[ParseResult] = {

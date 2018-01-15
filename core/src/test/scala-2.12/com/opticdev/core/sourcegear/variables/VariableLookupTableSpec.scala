@@ -8,9 +8,8 @@ import play.api.libs.json.{JsObject, JsString}
 
 class VariableLookupTableSpec extends FunSpec {
 
-
   def f = new {
-    val testTable = new VariableLookupTable(Vector(
+    val testTable = VariableLookupTable(Vector(
       Variable("test", VariableEnums.Self),
       Variable("test1", VariableEnums.Self),
       Variable("test2", VariableEnums.Self)

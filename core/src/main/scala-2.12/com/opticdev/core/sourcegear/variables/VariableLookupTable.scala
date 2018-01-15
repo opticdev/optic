@@ -4,7 +4,7 @@ import com.opticdev.parsers.graph.AstPrimitiveNode
 import com.opticdev.sdk.descriptions.{Variable, VariableRule}
 import play.api.libs.json.{JsObject, JsString}
 
-class VariableLookupTable(variables: Vector[Variable], identifierValuePath: String) {
+case class VariableLookupTable(variables: Vector[Variable], identifierValuePath: String) {
 
   private val assignments = collection.mutable.Map[Variable, String]()
 
