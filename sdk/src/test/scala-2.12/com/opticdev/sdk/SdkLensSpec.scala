@@ -1,7 +1,7 @@
 package com.opticdev.sdk
 
 import org.scalatest.FunSpec
-import play.api.libs.json.Json
+import play.api.libs.json.{JsError, Json}
 import com.opticdev.sdk.descriptions.Lens
 
 class SdkLensSpec extends FunSpec {
@@ -37,7 +37,25 @@ class SdkLensSpec extends FunSpec {
       |				"propertyPath": ["definedAs"]
       |			}],
       |			"rules": [],
-      |			"variables": []
+      |			"variables": [],
+      |			"subcontainers": [{
+      |						"name": "container name",
+      |						"subcontainer": true,
+      |						"pulls": ["test:package/schema"],
+      |						"childrenRule": "same-plus-any-order",
+      |						"schemaComponents": [
+      |             {
+      |                    "type": "schema",
+      |                    "schema": "optic:rest@1.0.0/route",
+      |                    "propertyPath": ["parameters"],
+      |                    "mapUnique": true,
+      |                    "location": {
+      |                      "type": "InParent",
+      |                      "finder": null
+      |                      }
+      |                  }
+      |             ]
+      |					}]
       |		}
     """.stripMargin
 
@@ -50,7 +68,9 @@ class SdkLensSpec extends FunSpec {
     }
 
     it("fails when invalid") {
-      Lens.fromJson(Json.parse(validLensJson))
+      assertThrows[Error] {
+        Lens.fromJson(Json.parse(invalidLensJson))
+      }
     }
 
   }

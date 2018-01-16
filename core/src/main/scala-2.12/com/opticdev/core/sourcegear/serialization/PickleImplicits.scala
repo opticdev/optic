@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.{Gear, SGConfig}
 import com.opticdev.parsers.ParserRef
 import com.opticdev.parsers.graph.AstType
-import com.opticdev.sdk.descriptions.{CodeComponent, SchemaColdStorage}
+import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, Literal, NotSupported, Token}
 import com.opticdev.sdk.{BoolProperty, _}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
@@ -71,6 +71,12 @@ object PickleImplicits extends PicklerHelper {
     compositePickler[Component]
       .addConcreteType[CodeComponent]
       .addConcreteType[SchemaComponent]
+  }
+
+  implicit val containerPickler = {
+    compositePickler[ContainerBase]
+      .addConcreteType[Container]
+      .addConcreteType[SubContainer]
   }
 
   implicit val finderPickler = {

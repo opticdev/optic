@@ -18,6 +18,7 @@
       },
       "rules": [],
       "variables": [],
+      "subcontainers": [],
       "components": [{
         "type": "code",
         "finder": {
@@ -59,6 +60,7 @@
         "ruleType": "any"
       }],
       "variables": [],
+      "subcontainers": [],
       "components": [{
         "type": "code",
         "finder": {
@@ -80,6 +82,7 @@
       }, {
         "type": "schema",
         "schema": "parameter",
+        "mapUnique": true,
         "propertyPath": ["parameters"],
         "location": {
           "type": "InParent",

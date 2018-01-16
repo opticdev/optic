@@ -16,7 +16,7 @@ class VariablesSpec extends TestBase with GearUtils with ParserUtils {
   val block = "function test () { \n let definedAs = require('pathTo') \n definedAs() \n definedAs + definedAs \n }"
   implicit val lens : Lens = Lens("Example", BlankSchema, Snippet("Javascript", Some("es6"), block), Vector(), Vector(), Vector(
     Variable("definedAs", VariableEnums.Self)
-  ))
+  ), Vector())
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run

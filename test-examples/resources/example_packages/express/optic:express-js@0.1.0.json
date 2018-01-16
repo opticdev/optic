@@ -18,6 +18,7 @@
       },
       "rules": [],
       "variables": [],
+      "subcontainers": [],
       "components": [{
         "type": "code",
         "finder": {
@@ -59,6 +60,7 @@
         "ruleType": "any"
       }],
       "variables": [],
+      "subcontainers": [],
       "components": [{
         "type": "code",
         "finder": {
@@ -81,6 +83,7 @@
         "type": "schema",
         "schema": "optic:rest/parameter",
         "propertyPath": ["parameters"],
+        "mapUnique": true,
         "location": {
           "type": "InParent",
           "finder": null

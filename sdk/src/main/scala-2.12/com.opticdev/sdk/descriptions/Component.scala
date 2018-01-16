@@ -22,7 +22,7 @@ object Component extends Description[Component] {
   }
 
 
-  private implicit val codeComponentReads: Reads[CodeComponent] = {
+  implicit val codeComponentReads: Reads[CodeComponent] = {
     import com.opticdev.sdk.descriptions.finders.Finder._
     import ComponentOptions._
 
@@ -35,7 +35,7 @@ object Component extends Description[Component] {
     })
   }
 
-  private implicit val schemaComponentReads: Reads[SchemaComponent] = {
+  implicit val schemaComponentReads: Reads[SchemaComponent] = {
     import Finder._
     import ComponentOptions._
     import Schema._

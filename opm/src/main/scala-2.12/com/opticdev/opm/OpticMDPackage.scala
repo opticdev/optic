@@ -3,7 +3,7 @@ package com.opticdev.opm
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.MarkdownParser
-import com.opticdev.sdk.descriptions.{Lens, Schema, SchemaRef}
+import com.opticdev.sdk.descriptions._
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
 import scala.util.Try
@@ -34,6 +34,12 @@ case class OpticMDPackage(description: JsObject) {
     val lensObject = i.as[JsObject]
     //@todo this feels a little hacky
     Lens.fromJson(lensObject ++ JsObject(Seq("packageRef" -> JsString(packageRef.full))))
+  }).toVector
+
+  lazy val containers: Vector[Container] = (description \ "containers").getOrElse(JsArray.empty).as[JsArray].value.map(i=> {
+    val containerObject = i.as[JsObject]
+    //this works because all subcontainers come from within a lense.
+    ContainerBase.fromJson(containerObject).asInstanceOf[Container]
   }).toVector
 
   lazy val objects: Map[String, JsObject] = objectValueForKey("objects")

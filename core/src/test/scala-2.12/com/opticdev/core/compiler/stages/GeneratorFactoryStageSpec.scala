@@ -16,7 +16,7 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
 class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTest") with ParserUtils {
 
-  implicit val lens : Lens = Lens("Example", BlankSchema, null, null, null, null)
+  implicit val lens : Lens = Lens("Example", BlankSchema, null, null, null, null, null)
 
   val block = "var hello = require('world')"
   implicit val ruleProvider = new RuleProvider()

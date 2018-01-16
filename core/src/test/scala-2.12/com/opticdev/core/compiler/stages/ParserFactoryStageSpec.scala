@@ -59,7 +59,7 @@ class ParserFactoryStageSpec extends TestBase with ParserUtils {
     }
 
     it("listens to file accumulators") {
-      val schemaComponent = SchemaComponent(Seq("properties"), SchemaRef(PackageRef("test"), "example-parameter"), Location(LocationEnums.Anywhere))
+      val schemaComponent = SchemaComponent(Seq("properties"), SchemaRef(PackageRef("test"), "example-parameter"), true, Location(LocationEnums.Anywhere))
       val parseGear = parseGearFromSnippetWithComponents("function hello() { }", Vector(
         schemaComponent
       ))

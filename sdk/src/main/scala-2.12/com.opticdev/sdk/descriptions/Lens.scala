@@ -19,6 +19,7 @@ object Lens extends Description[Lens] {
     import Snippet._
     import Component._
     import Rule._
+    import ContainerBase._
 
     Json.reads[Lens]
   }
@@ -42,5 +43,6 @@ case class Lens(name: String,
                 rules: Vector[Rule],
                 components: Vector[Component],
                 variables: Vector[Variable],
+                subcontainers: Vector[SubContainer],
                 packageRef: PackageRef = PackageRef(null, null)
                ) extends PackageExportable

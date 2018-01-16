@@ -17,6 +17,7 @@
         "token": "definedAs",
         "in": "self"
       }],
+      "subcontainers": [],
       "components": [
         {
           "type": "code",
