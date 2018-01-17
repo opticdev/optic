@@ -1,7 +1,11 @@
 package com.opticdev.core.compiler.stages
 
+import java.util.regex.Pattern
+
 import com.opticdev.core.compiler.SnippetStageOutput
-import com.opticdev.core.compiler.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
+import com.opticdev.core.compiler.errors._
+import com.opticdev.core.compiler.helpers.FinderEvaluator.RangeFinderEvaluate
+import com.opticdev.core.io.StringUtils
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import com.opticdev.parsers.{AstGraph, ParserBase}
@@ -10,31 +14,43 @@ import com.opticdev.sdk.descriptions.{Lens, Snippet}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[SnippetStageOutput] {
+class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerStage[SnippetStageOutput] {
+
+  lazy val parser = getParser()
 
   def run : SnippetStageOutput = {
-    val parser = getParser()
-    val (ast, root) = buildAstTree()
+    var processedSnippet = snippet
+    var (ast, root) = buildAstTree(snippet)
+
+    val containerHooks = connectContainerHooksToAst(findContainerHooks, ast)
+    //reprocess out hooks
+    if (containerHooks.nonEmpty) {
+      processedSnippet = stripContainerHooks(containerHooks)
+      val newAstTree = buildAstTree(processedSnippet)
+      ast = newAstTree._1
+      root = newAstTree._2
+    }
 
     //calculate enterOn and children
-    val (enterOn, children, matchType) = enterOnAndMatchType(ast, root, parser)
+    val (enterOn, children, matchType) = enterOnAndMatchType(ast, root)
 
-    SnippetStageOutput(ast, root, lens.snippet, enterOn, children, matchType, parser)
+
+    SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerHooks, parser)
   }
 
 
   def getParser(): ParserBase = {
     val langOption = SourceParserManager.parserByLanguageName(snippet.language)
-    if (langOption.isDefined && (langOption.get.supportedVersions.contains(snippet.version.get) || snippet.version.isEmpty)) {
+    if (langOption.isDefined && (langOption.get.supportedVersions.contains(snippet.version.orNull) || snippet.version.isEmpty)) {
       langOption.get
     } else {
       throw ParserNotFound(snippet.language, snippet.version.getOrElse("latest"))
     }
   }
 
-  def buildAstTree(): (AstGraph, AstPrimitiveNode) = {
+  def buildAstTree(fromSnippet: Snippet = snippet): (AstGraph, AstPrimitiveNode) = {
     try {
-      val parseResult = SourceParserManager.parseString(snippet.block, snippet.language, snippet.version).get
+      val parseResult = SourceParserManager.parseString(fromSnippet.block, fromSnippet.language, fromSnippet.version).get
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
       val root = parseResult.graph.root.get
       (parseResult.graph, root)
@@ -43,7 +59,7 @@ class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[
     }
   }
 
-  def enterOnAndMatchType(implicit graph: AstGraph, rootNode: AstPrimitiveNode, parser: ParserBase): (Set[AstType], Vector[AstPrimitiveNode], MatchType.Value) = {
+  def enterOnAndMatchType(implicit graph: AstGraph, rootNode: AstPrimitiveNode): (Set[AstType], Vector[AstPrimitiveNode], MatchType.Value) = {
     val programNodeType = parser.programNodeType
     val blockNodeTypes      = parser.blockNodeTypes
     if (programNodeType != rootNode.nodeType) throw new UnexpectedSnippetFormat(programNodeType+" did not appear first in the AST Tree.")
@@ -55,6 +71,58 @@ class SnippetStage(snippet: Snippet)(implicit lens: Lens) extends CompilerStage[
       case 1            => (Set(children.head.nodeType), children, MatchType.Parent)
       case l if l > 1   => (blockNodeTypes, children, MatchType.Children)
     }
+
+  }
+
+  def findContainerHooks : Vector[ContainerHook] = {
+    val commentPrefix = Pattern.quote(parser.inlineCommentPrefix)
+    val containerHookRegex = s"[ \t]*(?:$commentPrefix)[ \t]*:[ \t]*(.*)".r
+
+    val hooks = containerHookRegex.findAllMatchIn(snippet.block)
+      .map(m=> ContainerHook(m.group(1), Range(m.start, m.end))).toVector
+
+    val duplicateNames = hooks.map(_.name) diff hooks.map(_.name).distinct
+
+    if (duplicateNames.nonEmpty) throw DuplicateContainerNamesInSnippet(duplicateNames)
+
+    hooks
+  }
+
+  def connectContainerHooksToAst(hooks: Vector[ContainerHook], astGraph: AstGraph) : Map[ContainerHook, AstPrimitiveNode] = {
+
+    val allowedContainerTypes = parser.blockNodeTypes.map(_.name)
+
+    val connected = hooks.map(hook=> {
+
+      //sorted by graph depth so the deepest encapsulating block is always chosen
+      val foundNodes : Seq[AstPrimitiveNode] = RangeFinderEvaluate.nodesMatchingRangePredicate(astGraph, (start, end) => {
+        start < hook.range.start && end > hook.range.end
+      }).map(_.value.asInstanceOf[AstPrimitiveNode])
+        .filter(i=> allowedContainerTypes.contains(i.nodeType.name))
+        .sortBy(i=> i.graphDepth(astGraph))
+
+      if (foundNodes.isEmpty) {
+        throw ContainerHookIsNotInAValidAstNode(hook.name, allowedContainerTypes.toSeq)
+      } else {
+        (hook, foundNodes.last)
+      }
+
+    }).toMap
+
+    if ((connected.values.toSeq diff connected.values.toSeq.distinct).nonEmpty) throw  ContainerDefinitionConflict()
+
+    connected
+
+  }
+
+  def stripContainerHooks(connected: Map[ContainerHook, AstPrimitiveNode]) : Snippet = {
+    val sorted = connected.toSeq.sortBy(_._2.range.start).reverse.map(_._1)
+
+    val newBlock = sorted.foldLeft(snippet.block) {
+      case (string, hook)=> StringUtils.replaceRange(string, (hook.range.start, hook.range.end), "")
+    }
+
+    Snippet(snippet.language, snippet.version, newBlock)
 
   }
 

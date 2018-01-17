@@ -2,22 +2,17 @@ package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.parsers.graph.AstType
-import com.opticdev.core.compiler.errors.{ParserNotFound, SyntaxError, UnexpectedSnippetFormat}
+import com.opticdev.core.compiler.errors._
 import org.scalatest.{FunSpec, PrivateMethodTester}
 import com.opticdev.sdk.descriptions.{Lens, Snippet}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.core._
+
 import scala.util.Try
 
 class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
   implicit val lens : Lens = Lens("Example", BlankSchema, null, null, null, null, null)
-
-  describe("constructor") {
-    it("accepts a valid snippet") {
-      new SnippetStage(Snippet("Javascript", Some("es6"), "function add (a, b) { a+b }"))
-    }
-  }
 
   describe("Finds the correct parser") {
     it("when it exists") {
@@ -56,7 +51,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
       val parser = snippetBuilder.getParser()
       val (ast, root) = snippetBuilder.buildAstTree()
 
-      snippetBuilder.enterOnAndMatchType(ast, root, parser)
+      snippetBuilder.enterOnAndMatchType(ast, root)
     }
 
     it("for single node snippets") {
@@ -81,6 +76,134 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
     }
 
   }
+
+  describe("Extracts possible subcontainers") {
+
+    it("will find the container hooks") {
+
+      val example =
+        """
+          |function code () {
+          |   //:container name
+          |   //:container2 name
+          |}
+        """.stripMargin
+
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val containerHooks = snippetBuilder.findContainerHooks
+
+      assert(containerHooks == Vector(
+        ContainerHook("container name", Range(20, 40)),
+        ContainerHook("container2 name", Range(41, 62))
+      ))
+    }
+
+    it("will throw an error if any of the containers have the same name") {
+      val example =
+        """
+          |function code () {
+          |   //:container name
+          |   //:container name
+          |}
+        """.stripMargin
+
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      assertThrows[DuplicateContainerNamesInSnippet] {
+        snippetBuilder.findContainerHooks
+      }
+
+    }
+
+    it("connects container hooks to compatible ast nodes") {
+
+      val example =
+        """
+          |function code () {
+          |   //:container name
+          |}
+        """.stripMargin
+
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val containerHooks = snippetBuilder.findContainerHooks
+      val (ast, root) = snippetBuilder.buildAstTree()
+      val hookMap = snippetBuilder.connectContainerHooksToAst(containerHooks, ast)
+
+      val foundNode = hookMap.head._2
+      assert(foundNode.nodeType.name == "BlockStatement")
+      assert(foundNode.range == Range(18, 42))
+
+    }
+
+    it("will throw an error if >1 containers connects to same node") {
+      val example =
+        """
+          |function code () {
+          |   //:container1
+          |   //:container2
+          |}
+        """.stripMargin
+
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val containerHooks = snippetBuilder.findContainerHooks
+      val (ast, root) = snippetBuilder.buildAstTree()
+      assertThrows[ContainerDefinitionConflict] {
+        snippetBuilder.connectContainerHooksToAst(containerHooks, ast)
+      }
+
+    }
+
+    it("can strip hooks from a snippet") {
+      val example =
+        """
+          |function code () {
+          |   if (true) {
+          |   //:if true
+          |   } else {
+          |   //:if false
+          |   }
+          |}
+        """.stripMargin
+
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val containerHooks = snippetBuilder.findContainerHooks
+      val (ast, root) = snippetBuilder.buildAstTree()
+      val mapping = snippetBuilder.connectContainerHooksToAst(containerHooks, ast)
+
+      val result = snippetBuilder.stripContainerHooks(mapping)
+
+      assert(result.block ===
+        """
+          |function code () {
+          |   if (true) {
+          |
+          |   } else {
+          |
+          |   }
+          |}
+        """.stripMargin)
+
+    }
+
+    it("works end-end") {
+      val example =
+        """
+          |function code () {
+          |   if (true) {
+          |   //:if true
+          |   } else {
+          |   //:if false
+          |   }
+          |}
+        """.stripMargin
+
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val output = snippetBuilder.run
+      assert(output.containerHooks.size == 2)
+    }
+
+
+  }
+
 
   it("works end to end") {
     val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), "function add (a, b) { a+b }"))

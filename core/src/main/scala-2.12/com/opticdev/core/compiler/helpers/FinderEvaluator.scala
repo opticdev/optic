@@ -111,7 +111,7 @@ object FinderEvaluator {
   }
 
   object RangeFinderEvaluate {
-    def nodesMatchingRangePredicate(graph: AstGraph, predicate: (Int, Int) => Boolean) = {
+    def nodesMatchingRangePredicate(graph: AstGraph, predicate: (Int, Int) => Boolean) : Seq[graph.NodeT] = {
       graph.nodes.filter((n: graph.NodeT) => {
         n.isAstNode() && {
           val range = n.value.asInstanceOf[AstPrimitiveNode].range

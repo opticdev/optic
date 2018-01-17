@@ -22,6 +22,19 @@ case class ParserNotFound(lang: String, version: String)(implicit val lens: Lens
   override def toString = "Parser Not Found for "+lens.name+". Please install "+lang+" version "+version
 }
 
+case class DuplicateContainerNamesInSnippet(duplicateNames: Vector[String])(implicit val lens: Lens) extends CompilerException {
+  override def toString = s"Duplicate container names [${duplicateNames.mkString(", ")}] defined in snippet."
+}
+
+case class ContainerDefinitionConflict()(implicit val lens: Lens) extends CompilerException {
+  override def toString = s"More than one container is defined for the same AST node."
+}
+
+case class ContainerHookIsNotInAValidAstNode(containerName: String, validNodes: Seq[String])(implicit val lens: Lens) extends CompilerException {
+  override def toString = s"Container Hook $containerName is not in a valid node for this language: [${validNodes.mkString(", ")}]"
+}
+
+
 case class SyntaxError(error: Throwable)(implicit val lens: Lens) extends CompilerException {
   override def toString = "Syntax error in Snippet: "+error.toString
 }
