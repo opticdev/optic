@@ -14,6 +14,7 @@ import play.api.libs.json.JsObject
 import com.opticdev.core.utils.UUID
 
 import scala.util.Try
+import scala.util.hashing.MurmurHash3
 
 
 sealed abstract class BaseModelNode(implicit val project: OpticProject) extends AstProjection {
@@ -47,11 +48,14 @@ sealed abstract class BaseModelNode(implicit val project: OpticProject) extends 
 }
 
 case class LinkedModelNode(schemaId: SchemaRef, value: JsObject, root: AstPrimitiveNode, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode {
-  def flatten = ModelNode(schemaId, value)
+  def flatten = {
+    val hash = MurmurHash3.stringHash(root.toString() + mapping.toString())
+    ModelNode(schemaId, value, hash)
+  }
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
 }
 
-case class ModelNode(schemaId: SchemaRef, value: JsObject)(implicit override val project: OpticProject) extends BaseModelNode {
+case class ModelNode(schemaId: SchemaRef, value: JsObject, hash: Int)(implicit override val project: OpticProject) extends BaseModelNode {
 
   def resolve()(implicit actorCluster: ActorCluster) : LinkedModelNode = {
     implicit val sourceGearContext = SGContext.forModelNode(this).get

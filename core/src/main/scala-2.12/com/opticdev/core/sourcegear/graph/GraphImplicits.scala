@@ -15,12 +15,12 @@ object GraphImplicits {
 
   implicit class AstGraphInstance(graph: AstGraph) {
 
-    def modelNodes: Set[BaseModelNode] = graph
+    def modelNodes: Vector[BaseModelNode] = graph
       .nodes
       .filter(_.value.isInstanceOf[BaseModelNode])
       .map(_.value)
-      .toSet
-      .asInstanceOf[Set[BaseModelNode]]
+      .toVector
+      .asInstanceOf[Vector[BaseModelNode]]
 
     def root : Option[AstPrimitiveNode] = graph
         .nodes
@@ -62,7 +62,7 @@ object GraphImplicits {
 
   }
 
-  implicit class BaseModelNodes(modelNodes: Set[BaseModelNode]) {
+  implicit class BaseModelNodes(modelNodes: Vector[BaseModelNode]) {
     def ofType(schemaId: SchemaRef) = modelNodes.filter(_.schemaId == schemaId)
   }
 
