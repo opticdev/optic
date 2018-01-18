@@ -2,8 +2,9 @@ package com.opticdev.core.compiler
 
 import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.helpers.FinderPath
-import com.opticdev.core.compiler.stages.{ContainerHook, MatchType}
+import com.opticdev.core.compiler.stages.MatchType
 import com.opticdev.core.sourcegear.Gear
+import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping}
 import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.opm.OpticPackage
@@ -27,7 +28,7 @@ case class SnippetStageOutput(astGraph: AstGraph,
                               enterOn: Set[AstType],
                               entryChildren: Vector[AstPrimitiveNode],
                               matchType: MatchType.Value,
-                              containerHooks: Map[ContainerHook, AstPrimitiveNode],
+                              containerHooks: ContainerMapping,
                               parser: ParserBase)
 
 

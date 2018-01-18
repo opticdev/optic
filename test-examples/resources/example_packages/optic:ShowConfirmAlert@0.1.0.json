@@ -27,7 +27,7 @@
       "schema": "confirmAlert",
       "snippet": {
         "language": "Javascript",
-        "block": "    showConfirm('message', (didConfirm)=> {\n        if (didConfirm) {\n            //:on yes\n        } else {\n            //:on no\n        }\n    })"
+        "block": "showConfirm('message', (didConfirm)=> {\n        if (didConfirm) {\n            //:on yes\n        } else {\n            //:on no\n        }\n    })"
       },
       "scope": "public",
       "components": [

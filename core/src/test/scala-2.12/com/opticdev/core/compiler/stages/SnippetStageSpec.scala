@@ -7,6 +7,7 @@ import org.scalatest.{FunSpec, PrivateMethodTester}
 import com.opticdev.sdk.descriptions.{Lens, Snippet}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.core._
+import com.opticdev.core.sourcegear.containers.ContainerHook
 
 import scala.util.Try
 
@@ -126,11 +127,11 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
       val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
-      val hookMap = snippetBuilder.connectContainerHooksToAst(containerHooks, ast)
+      val hookMap = snippetBuilder.connectContainerHooksToAst(containerHooks, ast, root)
 
       val foundNode = hookMap.head._2
-      assert(foundNode.nodeType.name == "BlockStatement")
-      assert(foundNode.range == Range(18, 42))
+      assert(foundNode.node.nodeType.name == "BlockStatement")
+      assert(foundNode.node.range == Range(18, 42))
 
     }
 
@@ -147,7 +148,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
       assertThrows[ContainerDefinitionConflict] {
-        snippetBuilder.connectContainerHooksToAst(containerHooks, ast)
+        snippetBuilder.connectContainerHooksToAst(containerHooks, ast, root)
       }
 
     }
@@ -167,7 +168,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
       val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
-      val mapping = snippetBuilder.connectContainerHooksToAst(containerHooks, ast)
+      val mapping = snippetBuilder.connectContainerHooksToAst(containerHooks, ast, root)
 
       val result = snippetBuilder.stripContainerHooks(mapping)
 

@@ -5,8 +5,10 @@ import java.util.regex.Pattern
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.compiler.errors._
 import com.opticdev.core.compiler.helpers.FinderEvaluator.RangeFinderEvaluate
-import com.opticdev.core.io.StringUtils
+import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping, ContainerNodeMapping}
+import com.opticdev.core.utils.StringUtils
 import com.opticdev.parsers.SourceParserManager
+import com.opticdev.parsers.graph.path.PathFinder
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.sdk.descriptions.{Lens, Snippet}
@@ -22,18 +24,22 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     var processedSnippet = snippet
     var (ast, root) = buildAstTree(snippet)
 
-    val containerHooks = connectContainerHooksToAst(findContainerHooks, ast)
+    var containerHooks = connectContainerHooksToAst(findContainerHooks, ast, root)
+
     //reprocess out hooks
     if (containerHooks.nonEmpty) {
       processedSnippet = stripContainerHooks(containerHooks)
       val newAstTree = buildAstTree(processedSnippet)
       ast = newAstTree._1
       root = newAstTree._2
+
+      //reconnect to updated Ast Nodes
+      containerHooks = containerHooks.mapValues(n=> n.withNode(n.path.walk(root, ast)))
+
     }
 
     //calculate enterOn and children
     val (enterOn, children, matchType) = enterOnAndMatchType(ast, root)
-
 
     SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerHooks, parser)
   }
@@ -88,7 +94,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     hooks
   }
 
-  def connectContainerHooksToAst(hooks: Vector[ContainerHook], astGraph: AstGraph) : Map[ContainerHook, AstPrimitiveNode] = {
+  def connectContainerHooksToAst(hooks: Vector[ContainerHook], astGraph: AstGraph, root: AstPrimitiveNode) : ContainerMapping = {
 
     val allowedContainerTypes = parser.blockNodeTypes.map(_.name)
 
@@ -104,7 +110,10 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
       if (foundNodes.isEmpty) {
         throw ContainerHookIsNotInAValidAstNode(hook.name, allowedContainerTypes.toSeq)
       } else {
-        (hook, foundNodes.last)
+
+        val path = PathFinder.getPath(astGraph, root, foundNodes.last).get
+
+        (hook, ContainerNodeMapping(foundNodes.last, path))
       }
 
     }).toMap
@@ -115,8 +124,8 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
 
   }
 
-  def stripContainerHooks(connected: Map[ContainerHook, AstPrimitiveNode]) : Snippet = {
-    val sorted = connected.toSeq.sortBy(_._2.range.start).reverse.map(_._1)
+  def stripContainerHooks(connected: ContainerMapping) : Snippet = {
+    val sorted = connected.toSeq.sortBy(_._2.node.range.start).reverse.map(_._1)
 
     val newBlock = sorted.foldLeft(snippet.block) {
       case (string, hook)=> StringUtils.replaceRange(string, (hook.range.start, hook.range.end), "")

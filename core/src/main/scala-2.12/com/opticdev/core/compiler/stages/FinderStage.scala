@@ -3,6 +3,7 @@ package com.opticdev.core.compiler.stages
 import com.opticdev.core.compiler.{FinderStageOutput, SnippetStageOutput}
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, InvalidComponents}
 import com.opticdev.core.compiler.helpers.{FinderEvaluator, FinderPath}
+import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.sdk.descriptions.enums.{Literal, Token}
@@ -10,7 +11,7 @@ import com.opticdev.sdk.descriptions.finders.Finder
 
 import scala.util.{Failure, Success, Try}
 
-class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Lens, errorAccumulator: ErrorAccumulator = new ErrorAccumulator, variableManager: VariableManager = VariableManager.empty) extends CompilerStage[FinderStageOutput] {
+class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Lens, errorAccumulator: ErrorAccumulator = new ErrorAccumulator, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[FinderStageOutput] {
   override def run: FinderStageOutput = {
 
     import com.opticdev.sdk.descriptions.helpers.ComponentImplicits._
@@ -44,7 +45,9 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
 
     val variableRules = variableManager.rules(snippetStageOutput)
 
-    val combinedRules = lens.rules ++ lens.components.flatMap(_.rules) ++ variableRules
+    val subContainerRules = subcontainersManager.rules
+
+    val combinedRules = lens.rules ++ lens.components.flatMap(_.rules) ++ variableRules ++ subContainerRules
 
     val rulePaths = combinedRules.map(r=> {
       val finderPathTry = pathForFinder(r.finder)

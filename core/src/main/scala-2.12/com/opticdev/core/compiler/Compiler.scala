@@ -3,6 +3,7 @@ package com.opticdev.core.compiler
 import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.stages._
 import com.opticdev.core.sourcegear.Gear
+import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Context, PackageContext}
@@ -62,6 +63,7 @@ object Compiler {
 //        if (logToCli) cliLogger.evaluatingFinders
 
         implicit val variableManager = new VariableManager(lens.variables, snippetOutput.get.parser.identifierNodeDesc)
+        implicit val subcontainersManager = new SubContainerManager(lens.subcontainers, snippetOutput.get.containerHooks)
 
         val finderStage = new FinderStage(snippetOutput.get)
         val finderStageOutput = Try(finderStage.run)
