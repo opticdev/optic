@@ -24,17 +24,37 @@ class ContainerSpec extends TestBase with ParserUtils with GearUtils {
       assert(gearWithSubContainer.parser.rules.flatMap(_._2.map(_.isChildrenRule)).exists(_ == true))
     }
 
+    describe("child rule evaluation") {
+      //@todo implement these tests
+    }
+
     it("can parse any content within if true and if false containers") {
       val test =
       """showConfirm('message', (didConfirm)=> {
         |        if (didConfirm) {
         |           whatever = code+Iwant
+        |           const freePeople = (go)=> { myfunc(go) }
         |        } else {
         |           hereTo(we.are.free)
         |        }
         |})""".stripMargin
 
-      assert(testBlock(test).isDefined)
+      val result = testBlock(test)
+
+      assert(result.isDefined)
+    }
+
+    it("will parse if non-container areas are changed") {
+      val test =
+        """showConfirm('message', (didConfirm)=> {
+          |        if (didConfirm != pizza) {
+          |           whatever = code+Iwant
+          |        } else {
+          |           hereTo(we.are.free)
+          |        }
+          |})""".stripMargin
+
+      assert(testBlock(test).isEmpty)
 
     }
 

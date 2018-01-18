@@ -28,7 +28,7 @@ case class SnippetStageOutput(astGraph: AstGraph,
                               enterOn: Set[AstType],
                               entryChildren: Vector[AstPrimitiveNode],
                               matchType: MatchType.Value,
-                              containerHooks: ContainerMapping,
+                              containerMapping: ContainerMapping,
                               parser: ParserBase)
 
 

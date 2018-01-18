@@ -24,24 +24,35 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     var processedSnippet = snippet
     var (ast, root) = buildAstTree(snippet)
 
-    var containerHooks = connectContainerHooksToAst(findContainerHooks, ast, root)
+    var containerMappings = connectContainerHooksToAst(findContainerHooks, ast, root)
 
     //reprocess out hooks
-    if (containerHooks.nonEmpty) {
-      processedSnippet = stripContainerHooks(containerHooks)
+    if (containerMappings.nonEmpty) {
+      processedSnippet = stripContainerHooks(containerMappings)
       val newAstTree = buildAstTree(processedSnippet)
       ast = newAstTree._1
       root = newAstTree._2
 
+      val (enterOn, children, matchType) = enterOnAndMatchType(ast, root)
+
       //reconnect to updated Ast Nodes
-      containerHooks = containerHooks.mapValues(n=> n.withNode(n.path.walk(root, ast)))
+      containerMappings = containerMappings.map(cH=> {
+
+        val node = cH._2.path.walk(root, ast)
+
+        val path = PathFinder.getPath(ast, children.head, node).get
+
+        (cH._1, ContainerNodeMapping(node, path))
+      })
+
+      SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerMappings, parser)
+    } else {
+
+      val (enterOn, children, matchType) = enterOnAndMatchType(ast, root)
+
+      SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerMappings, parser)
 
     }
-
-    //calculate enterOn and children
-    val (enterOn, children, matchType) = enterOnAndMatchType(ast, root)
-
-    SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerHooks, parser)
   }
 
 

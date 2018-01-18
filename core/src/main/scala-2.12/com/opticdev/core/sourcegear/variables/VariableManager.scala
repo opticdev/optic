@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.variables
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.sourcegear.gears.parsing.NodeDescription
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserBase}
-import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.sdk.descriptions.finders.NodeFinder
 import com.opticdev.sdk.descriptions.{PropertyRule, Rule, Variable, VariableRule}
@@ -51,12 +51,12 @@ case class VariableManager(variables: Vector[Variable], identifierNodeDesc: Iden
 
   }
 
-  def variableLookupTable: VariableLookupTable = VariableLookupTable(variables, identifierNodeDesc.path.head)
+  def variableLookupTable: VariableLookupTable = VariableLookupTable(variables, identifierNodeDesc.path.head, identifierNodeDesc.nodeType)
 
 }
 
 object VariableManager {
   def empty = new VariableManager(Vector.empty[Variable], IdentifierNodeDesc(null, Seq(""))) {
-    override def variableLookupTable = VariableLookupTable(variables, "")
+    override def variableLookupTable = VariableLookupTable(variables, "", AstType("", ""))
   }
 }

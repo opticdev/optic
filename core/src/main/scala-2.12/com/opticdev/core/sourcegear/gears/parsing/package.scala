@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.gears
 
+import com.opticdev.core.sourcegear.containers.{SubContainerManager, SubContainerMatch}
 import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType, Child}
@@ -9,7 +10,11 @@ import play.api.libs.json.JsObject
 
 package object parsing {
   //Signaling
-  case class MatchResults(isMatch: Boolean, extracted: Option[Set[ModelField]], baseNode: Option[AstPrimitiveNode] = None)
+  case class MatchResults(isMatch: Boolean,
+                          extracted: Option[Set[ModelField]] = None,
+                          baseNode: Option[AstPrimitiveNode] = None,
+                          containers: Option[Set[SubContainerMatch]] = None
+                         )
 
   //Serializable for Storage
   case class RulesDesc()
@@ -47,6 +52,7 @@ package object parsing {
     }
 
   }
+
 
 
 }

@@ -199,7 +199,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
       val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
       val output = snippetBuilder.run
-      assert(output.containerHooks.size == 2)
+      assert(output.containerMapping.size == 2)
     }
 
 

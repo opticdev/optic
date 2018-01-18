@@ -5,8 +5,9 @@ import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.{FinderStageOutput, ParserFactoryOutput, SnippetStageOutput}
 import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.core.sourcegear.accumulate.MapSchemaListener
+import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.gears.RuleProvider
-import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel}
+import com.opticdev.core.sourcegear.gears.parsing.{AdditionalParserInformation, NodeDescription, ParseAsModel}
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstPrimitiveNode, Child}
@@ -18,7 +19,7 @@ import scalax.collection.mutable.Graph
 
 
 
-class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens, variableManager: VariableManager = VariableManager.empty) extends CompilerStage[ParserFactoryOutput] {
+class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput)(implicit lens: Lens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {
   implicit val snippetStageOutput = snippetStage
   override def run: ParserFactoryOutput = {
 
@@ -41,11 +42,13 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       finderStageOutput.componentFinders.map {
         case (finderPath, components)=> (finderPathToFlatPath(finderPath, enterOn), components)
       },
+      subcontainersManager.containerPaths,
       finderStageOutput.ruleFinders.map {
         case (finderPath, rules)=> (finderPathToFlatPath(finderPath, enterOn), rules)
       },
       listeners,
-      variableManager
+      variableManager,
+      AdditionalParserInformation(snippetStage.parser.identifierNodeDesc, snippetStage.parser.blockNodeTypes.toSeq)
     ))
   }
 

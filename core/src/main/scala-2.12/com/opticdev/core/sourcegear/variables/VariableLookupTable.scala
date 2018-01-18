@@ -1,10 +1,10 @@
 package com.opticdev.core.sourcegear.variables
 
-import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import com.opticdev.sdk.descriptions.{Variable, VariableRule}
 import play.api.libs.json.{JsObject, JsString}
 
-case class VariableLookupTable(variables: Vector[Variable], identifierValuePath: String) {
+case class VariableLookupTable(variables: Vector[Variable], identifierValuePath: String, nodeType: AstType) {
 
   private val assignments = collection.mutable.Map[Variable, String]()
 
@@ -29,8 +29,10 @@ case class VariableLookupTable(variables: Vector[Variable], identifierValuePath:
   }
 
   def astNodeMatchesVariable(variableRule: VariableRule, astPrimitiveNode: AstPrimitiveNode) : Boolean = {
-    val instanceValue = astPrimitiveNode.properties.as[JsObject].value(identifierValuePath).as[JsString].value
-    matchesVariableValue(variableRule.variableId, instanceValue)
+    if (astPrimitiveNode.nodeType == nodeType) {
+      val instanceValue = astPrimitiveNode.properties.as[JsObject].value(identifierValuePath).as[JsString].value
+      matchesVariableValue(variableRule.variableId, instanceValue)
+    } else false
   }
 
 }

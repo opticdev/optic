@@ -13,7 +13,7 @@ class VariableLookupTableSpec extends FunSpec {
       Variable("test", VariableEnums.Self),
       Variable("test1", VariableEnums.Self),
       Variable("test2", VariableEnums.Self)
-    ), "name")
+    ), "name", AstType("Identifier", "Javascript"))
   }
 
   it("can lookup a variable by its id") {
