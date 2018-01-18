@@ -98,12 +98,15 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
         //returns final results & extractions
         val childrenResults = childrenRule.evaluate(node, desc, currentPath, compareWith)
 
-        val foundContainer = expectedSubContainerAtPath.map(c=> Set(SubContainerMatch(c, node))).getOrElse(Set())
+        val foundContainer: Set[SubContainerMatch] = expectedSubContainerAtPath.map(c=> Set(SubContainerMatch(c, node))).getOrElse(Set())
+
+//        println("LOOK HERE "+ childrenResults.containers)
+//        println(foundContainer)
 
         MatchResults(childrenResults.isMatch,
           if (childrenResults.isMatch) Some(childrenResults.extracted.getOrElse(Set()) ++ extractedFields) else None,
           if (childrenResults.isMatch) Some(entryNode) else None,
-          if (childrenResults.isMatch) Some(childrenResults.containers.getOrElse(foundContainer) ++ foundContainer) else None
+          if (childrenResults.isMatch) Some(childrenResults.containers.getOrElse(Set()) ++ foundContainer) else None
         )
 
       } else MatchResults(false, None)

@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.gears.helpers
 
+import com.opticdev.core.sourcegear.containers.SubContainerMatch
 import com.opticdev.core.sourcegear.gears.parsing.MatchResults
 
 object ChildrenVectorComparison {
@@ -19,7 +20,7 @@ object ChildrenVectorComparison {
 
     val childResults = source.zip(description).map(i=> equality(i._1, i._2))
     if (childResults.forall(_.isMatch)) {
-      MatchResults(true, collectExtracted(childResults))
+      MatchResults(true, collectExtracted(childResults), containers = collectContainers(childResults))
     } else {
       MatchResults(false, None)
     }
@@ -55,7 +56,9 @@ object ChildrenVectorComparison {
       }
     }
 
-    MatchResults(foundAll, {if (foundAll) collectExtracted(extractions.toVector) else None})
+    MatchResults(foundAll,
+      {if (foundAll) collectExtracted(extractions.toVector) else None},
+      containers = {if (foundAll) collectContainers(extractions.toVector) else None})
   }
 
   def sameAnyOrder[A, B](source: Vector[A], description: Vector[B], equality: (A, B) => MatchResults ): MatchResults = {
@@ -84,7 +87,9 @@ object ChildrenVectorComparison {
       }
     })
 
-    MatchResults(isMatch, if (isMatch) collectExtracted(extractions.toVector) else None)
+    MatchResults(isMatch,
+      if (isMatch) collectExtracted(extractions.toVector) else None,
+      containers = {if (isMatch) collectContainers(extractions.toVector) else None})
 
   }
 
@@ -115,7 +120,8 @@ object ChildrenVectorComparison {
       }
     })
 
-    MatchResults(isMatch, if (isMatch) collectExtracted(extractions.toVector) else None)
+    MatchResults(isMatch, if (isMatch) collectExtracted(extractions.toVector) else None,
+      containers = {if (isMatch) collectContainers(extractions.toVector) else None})
 
   }
 
@@ -125,6 +131,13 @@ object ChildrenVectorComparison {
   private def collectExtracted(matchResults: Vector[MatchResults]) : Option[Set[ModelField]] = {
     val results = matchResults.filter(_.extracted.isDefined)
       .flatMap(_.extracted.get).toSet
+
+    if (results.nonEmpty) Option(results) else None
+  }
+
+  private def collectContainers(matchResults: Vector[MatchResults]) : Option[Set[SubContainerMatch]] = {
+    val results = matchResults.filter(_.containers.isDefined)
+      .flatMap(_.containers.get).toSet
 
     if (results.nonEmpty) Option(results) else None
   }
