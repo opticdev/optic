@@ -47,7 +47,7 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
 
     val subContainerRules = subcontainersManager.rules
 
-    val combinedRules = lens.rules ++ lens.components.flatMap(_.rules) ++ variableRules ++ subContainerRules
+    val combinedRules = /* lens.rules ++ */ lens.components.flatMap(_.rules) ++ variableRules ++ subContainerRules
 
     val rulePaths = combinedRules.map(r=> {
       val finderPathTry = pathForFinder(r.finder)

@@ -1,5 +1,6 @@
 package com.opticdev.sdk.descriptions.enums
 
+import com.opticdev.sdk.descriptions.{Container, ContainerBase, Lens}
 import com.opticdev.sdk.descriptions.finders.Finder
 import com.opticdev.sdk.descriptions.helpers.{CodeLocation, FinderLocation}
 import play.api.libs.json.{JsError, _}
@@ -10,6 +11,12 @@ object LocationEnums {
 
   sealed trait LocationTypeEnums
 
+  /* used today */
+  case object InCurrentLens extends LocationTypeEnums
+  case class InContainer(name: String) extends LocationTypeEnums
+
+
+  /* no current use but working & testing from past implementation */
   case object InSameFile extends LocationTypeEnums
   case object Anywhere extends LocationTypeEnums
   case object Sibling extends LocationTypeEnums

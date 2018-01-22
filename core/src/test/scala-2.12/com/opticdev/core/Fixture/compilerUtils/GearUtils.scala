@@ -49,6 +49,12 @@ trait GearUtils {
 
   def sourceGearFromDescription(path: String) : SourceGear = {
 
+    val sourceGear = new SourceGear {
+      override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val gearSet = new GearSet()
+      override val schemas = Set()
+    }
+
     val jsonString = Source.fromFile(path).getLines.mkString
     val description = OpticPackage.fromJson(Json.parse(jsonString)).get
 

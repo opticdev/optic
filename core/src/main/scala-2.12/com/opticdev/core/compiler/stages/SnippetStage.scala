@@ -96,7 +96,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     val containerHookRegex = s"[ \t]*(?:$commentPrefix)[ \t]*:[ \t]*(.*)".r
 
     val hooks = containerHookRegex.findAllMatchIn(snippet.block)
-      .map(m=> ContainerHook(m.group(1), Range(m.start, m.end))).toVector
+      .map(m=> ContainerHook(m.group(1).trim, Range(m.start, m.end))).toVector
 
     val duplicateNames = hooks.map(_.name) diff hooks.map(_.name).distinct
 

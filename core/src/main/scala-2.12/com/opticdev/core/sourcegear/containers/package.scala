@@ -5,6 +5,8 @@ import com.opticdev.parsers.graph.path.{FlatWalkablePath, WalkablePath}
 import com.opticdev.sdk.descriptions.SubContainer
 
 package object containers {
+
+  /* For Compiler  */
   type ContainerMapping = Map[ContainerHook, ContainerNodeMapping]
 
   case class ContainerNodeMapping(node: AstPrimitiveNode, path: WalkablePath) {
@@ -13,7 +15,10 @@ package object containers {
 
   case class ContainerHook(name: String, range: Range)
 
-  case class SubContainerMatch(subcontainer: SubContainer, astPrimitiveNode: AstPrimitiveNode)
 
+  /* For Runtime */
+
+  case class SubContainerMatch(subcontainer: SubContainer, astPrimitiveNode: AstPrimitiveNode)
+  type ContainerAstMapping = Map[String, AstPrimitiveNode]
 
 }

@@ -72,58 +72,6 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
         assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("otherValue"))))
       }
 
-      it("works for property rules") {
-
-        val customRules = Vector(PropertyRule(StringFinder(Starting, "var"), "kind", "ANY"))
-
-        val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
-          //this causes any token rule to be applied
-          CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
-        ), customRules)
-
-        //different kind operator var -> let
-        val block = "let otherValue = require('world')"
-
-        val parsedSample = sample(block)
-        val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
-        assert(result.isDefined)
-        assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("otherValue"))))
-
-      }
-
-      describe("for children") {
-
-        it("Matches Any") {
-          val customRules = Vector(ChildrenRule(StringFinder(Starting, "{"), Any))
-
-          val parseGear = parseGearFromSnippetWithComponents("function hello () { }", Vector(), customRules)
-
-          val block = "function hello () { return hello }"
-
-          val parsedSample = sample(block)
-
-          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
-
-          assert(result.isDefined)
-
-        }
-
-        it("Will not match Any without rule") {
-
-          val parseGear = parseGearFromSnippetWithComponents("function hello () { }", Vector())
-
-          val block = "function hello () { return hello }"
-
-          val parsedSample = sample(block)
-
-          val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
-
-          assert(!result.isDefined)
-
-        }
-
-      }
-
     }
 
     describe("with extractors") {

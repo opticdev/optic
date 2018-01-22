@@ -16,7 +16,6 @@
         "version": "es6",
         "block": "req.query.name"
       },
-      "rules": [],
       "variables": [],
       "subcontainers": [],
       "components": [{
@@ -47,20 +46,23 @@
         "name": "Example Route",
         "language": "Javascript",
         "version": "es6",
-        "block": "app.get('url', function (req, res) {\n\n})"
+        "block": "app.get('url', function (req, res) {\n //:callback \n})"
       },
-      "rules": [{
-        "type": "children",
-        "finder": {
-          "type": "stringFinder",
-          "rule": "starting",
-          "string": "{",
-          "occurrence": 0
-        },
-        "ruleType": "any"
-      }],
       "variables": [],
-      "subcontainers": [],
+      "subcontainers": [{
+        "name": "callback",
+        "subcontainer": true,
+        "pulls": [],
+        "childrenRule": "any",
+        "schemaComponents": [
+          {
+            "type": "schema",
+            "schema": "parameter",
+            "propertyPath": ["parameters"],
+            "mapUnique": false
+          }
+        ]
+      }],
       "components": [{
         "type": "code",
         "finder": {
@@ -79,21 +81,6 @@
           "occurrence": 0
         },
         "propertyPath": ["url"]
-      }, {
-        "type": "schema",
-        "schema": "parameter",
-        "mapUnique": false,
-        "propertyPath": ["parameters"],
-        "location": {
-          "type": "InParent",
-          "finder": null
-        },
-        "options": {
-          "lookupTable": null,
-          "invariant": false,
-          "parser": null,
-          "mutator": null
-        }
       }]
     }
   },

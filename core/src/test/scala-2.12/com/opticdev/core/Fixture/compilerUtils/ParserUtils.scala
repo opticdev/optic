@@ -12,7 +12,7 @@ trait ParserUtils {
 
   def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[Rule] = Vector()) : ParseAsModel = {
     val snippet = Snippet("Javascript", Some("es6"), block)
-    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, rules, components, Vector(), Vector())
+    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, components, Vector(), Vector())
     implicit val variableManager = VariableManager(Vector(), SourceParserManager.installedParsers.head.identifierNodeDesc)
 
     val snippetBuilder = new SnippetStage(snippet)
@@ -27,7 +27,7 @@ trait ParserUtils {
 
   def sample(block: String) : SnippetStageOutput = {
     val snippet = Snippet("Javascript", Some("es6"), block)
-    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector(), Vector(), Vector())
+    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector(), Vector())
     val snippetBuilder = new SnippetStage(snippet)
     snippetBuilder.run
   }

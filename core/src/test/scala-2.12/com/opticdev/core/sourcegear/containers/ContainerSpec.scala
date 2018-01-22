@@ -1,20 +1,25 @@
 package com.opticdev.core.sourcegear.containers
 
-import com.opticdev.core.Fixture.TestBase
+import better.files.File
+import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
+import com.opticdev.core.sourcegear.project.StaticSGProject
+import com.opticdev.core.sourcegear.{Gear, SGContext}
+import com.opticdev.parsers.SourceParserManager
+import play.api.libs.json.Json
 
-class ContainerSpec extends TestBase with ParserUtils with GearUtils {
+class ContainerSpec extends AkkaTestFixture("ContainerSpec") with ParserUtils with GearUtils {
+
+  def testBlock(fileContents: String)(implicit gearWithSubContainer: Gear) = {
+    val parsed = sample(fileContents)
+    val astGraph = parsed.astGraph
+    val enterOn = parsed.entryChildren.head
+    gearWithSubContainer.parser.matches(enterOn)(astGraph, fileContents, sourceGearContext, null)
+  }
 
   describe("Subcontainers") {
 
-    lazy val gearWithSubContainer = gearFromDescription("test-examples/resources/example_packages/optic:ShowConfirmAlert@0.1.0.json")
-
-    def testBlock(fileContents: String) = {
-      val parsed = sample(fileContents)
-      val astGraph = parsed.astGraph
-      val enterOn = parsed.entryChildren.head
-      gearWithSubContainer.parser.matches(enterOn)(astGraph, fileContents, sourceGearContext, null)
-    }
+    implicit lazy val gearWithSubContainer: Gear = gearFromDescription("test-examples/resources/example_packages/optic:ShowConfirmAlert@0.1.0.json")
 
     it("can compile") {
       assert(gearWithSubContainer != null)
@@ -58,9 +63,57 @@ class ContainerSpec extends TestBase with ParserUtils with GearUtils {
 
     }
 
+    describe("schema mapping") {
+
+      val test =
+        """app.get('url', function (req, res, next) {
+          |    testing.this.works
+          |    req.query.notMe
+          |}, function (req, res) {
+          |    req.header.me
+          |    req.body.first
+          |    req.body.second
+          |    req.body.first
+          |})""".stripMargin
+
+
+      implicit lazy val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)
+      implicit lazy val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress_container_mapping@0.1.0.json")
+      lazy val result = sourceGear.parseString(test)
+      implicit lazy val sourceGearContext = SGContext(sourceGear.fileAccumulator, result.get.astGraph, SourceParserManager.installedParsers.head, null)
+
+
+
+      it("only finds schema within proper component") {
+        val test =
+          """app.get('url', function (req, res, next) {
+            |    testing.this.works
+            |    req.query.notMe
+            |}, function (req, res) {
+            |    req.header.me
+            |    req.body.first
+            |    req.body.second
+            |    req.body.first
+            |})""".stripMargin
+
+        val expected =
+          Json.parse("""
+            | { "url": "url", "method": "get", "parameters": [
+            |   { "in": "header", "name": "me" },
+            |   { "in": "body", "name": "first" },
+            |   { "in": "body", "name": "second" }
+            | ] }
+          """.stripMargin)
+
+        val route = result.get.modelNodes.find(_.schemaId.id == "route").get
+
+        assert(route.expandedValue() == expected)
+
+      }
+
+
+    }
+
   }
-
-
-
 
 }

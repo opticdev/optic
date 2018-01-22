@@ -3,9 +3,10 @@ package com.opticdev.core.sourcegear.graph.model
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ActorCluster
+import com.opticdev.core.sourcegear.containers.ContainerAstMapping
 import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
-import com.opticdev.core.sourcegear.graph.edges.{YieldsModel, YieldsModelProperty, YieldsProperty}
+import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsModelProperty, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.parsers.AstGraph
@@ -47,9 +48,9 @@ sealed abstract class BaseModelNode(implicit val project: OpticProject) extends 
 
 }
 
-case class LinkedModelNode(schemaId: SchemaRef, value: JsObject, root: AstPrimitiveNode, mapping: ModelAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode {
+case class LinkedModelNode(schemaId: SchemaRef, value: JsObject, root: AstPrimitiveNode, modelMapping: ModelAstMapping, containerMapping: ContainerAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode {
   def flatten = {
-    val hash = MurmurHash3.stringHash(root.toString() + mapping.toString())
+    val hash = MurmurHash3.stringHash(root.toString() + modelMapping.toString() + containerMapping.toString())
     ModelNode(schemaId, value, hash)
   }
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
@@ -63,7 +64,15 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, hash: Int)(implicit o
     val labeledDependencies = astGraph.get(this).labeledDependencies
     val root : AstPrimitiveNode = labeledDependencies.find(i=> i._1.isInstanceOf[YieldsModel] && i._1.asInstanceOf[YieldsModel].root)
                                   .get._2.asInstanceOf[AstPrimitiveNode]
-    val mapping : ModelAstMapping = labeledDependencies.filter(_._1.isInstanceOf[YieldsModelProperty]).map {
+
+    val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
+
+    LinkedModelNode(schemaId, value, root, modelMapping, containerMapping, parseGear)
+  }
+
+  def modelMapping(implicit astGraph: AstGraph) : ModelAstMapping = {
+    val labeledDependencies = astGraph.get(this).labeledDependencies
+    labeledDependencies.filter(_._1.isInstanceOf[YieldsModelProperty]).map {
       case (edge, node) => {
         edge match {
           case property: YieldsModelProperty =>
@@ -73,10 +82,20 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, hash: Int)(implicit o
         }
       }
     }.toMap
+  }
 
-    val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
-
-    LinkedModelNode(schemaId, value, root, mapping, parseGear)
+  def containerMapping(implicit astGraph: AstGraph) : ContainerAstMapping = {
+    val labeledDependencies = astGraph.get(this).labeledDependencies
+    labeledDependencies.filter(_._1.isInstanceOf[ContainerRoot]).map {
+      case (edge, node) => {
+        edge match {
+          case property: ContainerRoot =>
+            property match {
+              case ContainerRoot(name) => (name, node.asInstanceOf[AstPrimitiveNode])
+            }
+        }
+      }
+    }.toMap
   }
 
 }

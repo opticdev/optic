@@ -47,7 +47,7 @@
         "name": "Example Route",
         "language": "Javascript",
         "version": "es6",
-        "block": "app.get('url', function (req, res) {\n\n})"
+        "block": "app.get('url', function (req, res) {\n //:callback \n})"
       },
       "rules": [{
         "type": "children",
@@ -60,7 +60,20 @@
         "ruleType": "any"
       }],
       "variables": [],
-      "subcontainers": [],
+      "subcontainers": [{
+        "name": "callback",
+        "subcontainer": true,
+        "pulls": [],
+        "childrenRule": "any",
+        "schemaComponents": [
+          {
+            "type": "schema",
+            "schema": "parameter",
+            "propertyPath": ["parameters"],
+            "mapUnique": true
+          }
+        ]
+      }],
       "components": [{
         "type": "code",
         "finder": {

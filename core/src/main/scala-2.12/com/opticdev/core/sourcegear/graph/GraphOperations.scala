@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.graph
 
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
-import com.opticdev.core.sourcegear.graph.edges.{YieldsModel, YieldsProperty}
+import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.model._
 import com.opticdev.parsers.AstGraph
 
@@ -24,7 +24,14 @@ object GraphOperations {
 
   def addMappingEdgesToModel(linkedModelNode: LinkedModelNode) (implicit astGraph: AstGraph) = {
     val flatNode = linkedModelNode.flatten
-    linkedModelNode.mapping.foreach {
+
+    linkedModelNode.containerMapping.foreach {
+      case (name, astNode) => {
+        astGraph add (astNode ~+#> flatNode) (ContainerRoot(name))
+      }
+    }
+
+    linkedModelNode.modelMapping.foreach {
       case (propertyPath, astMapping) =>
         val path = propertyPath.asInstanceOf[Path]
         import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship._

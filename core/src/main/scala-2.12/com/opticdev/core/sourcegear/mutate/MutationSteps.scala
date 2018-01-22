@@ -29,7 +29,7 @@ object MutationSteps {
       val component = components.find(_.propertyPath == propertyPath)
       if (component.isEmpty) throw new ComponentNotFound(propertyPath)
 
-      val mapping = linkedModelNode.mapping.get(Path(propertyPath))
+      val mapping = linkedModelNode.modelMapping.get(Path(propertyPath))
       if (mapping.isEmpty) throw new AstMappingNotFound(propertyPath)
 
       UpdatedField(component.get, change, mapping.get, newFieldValue)

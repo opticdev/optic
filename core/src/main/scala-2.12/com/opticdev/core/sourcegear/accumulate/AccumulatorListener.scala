@@ -10,6 +10,7 @@ import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode, ModelVectorMapping}
+import com.opticdev.sdk.descriptions.enums.LocationEnums.InCurrentLens
 
 sealed trait Listener {
   def collect(implicit astGraph: AstGraph) : Vector[ModelField]
@@ -27,10 +28,12 @@ case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: Sche
     val targetNodes = astGraph.modelNodes.ofType(schema)
 
     mapToNodes.map(instance=> {
+
       val astRoot = instance.astRoot
+      val containerMapping = instance.asInstanceOf[ModelNode].containerMapping
       val addToNodes = {
         val found = targetNodes
-          .filter(n=> LocationEvaluation.matches(schemaComponent.location, n.astRoot, astRoot))
+          .filter(n=> LocationEvaluation.matches(schemaComponent.location.get, n.astRoot, astRoot, containerMapping))
           .sortBy(_.astRoot.range.start)
 
         //account for different map schema types

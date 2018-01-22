@@ -140,9 +140,12 @@ case class ParseAsModel(description: NodeDescription,
 
     val model = FlattenModelFields.flattenFields(fields)
     import com.opticdev.core.sourcegear.graph.model.MappingImplicits._
-    val mapping = fields.toMapping
+    val modelMapping = fields.toMapping
 
-    val linkedModelNode = LinkedModelNode(schema, model, matchResults.baseNode.get, mapping, this)
+    import com.opticdev.core.sourcegear.containers.ContainerMappingImplicits._
+    val containerMapping = matchResults.containers.getOrElse(Set()).toMapping
+
+    val linkedModelNode = LinkedModelNode(schema, model, matchResults.baseNode.get, modelMapping, containerMapping, this)
 
     //@todo have schema validate
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))

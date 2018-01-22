@@ -1,0 +1,177 @@
+{
+  "name": "FlatExpress",
+  "author": "optic",
+  "version": "0.1.0",
+  "dependencies": {
+    "optic:rest": "0.1.0"
+  },
+  "lenses": {
+    "parameter": {
+      "name": "Parameter",
+      "scope": "internal",
+      "schema": "parameter",
+      "snippet": {
+        "name": "Parameter",
+        "language": "Javascript",
+        "version": "es6",
+        "block": "req.query.name"
+      },
+      "rules": [],
+      "variables": [],
+      "subcontainers": [],
+      "components": [
+        {
+          "type": "code",
+          "finder": {
+            "type": "stringFinder",
+            "rule": "entire",
+            "string": "query",
+            "occurrence": 0
+          },
+          "propertyPath": [
+            "in"
+          ]
+        },
+        {
+          "type": "code",
+          "finder": {
+            "type": "stringFinder",
+            "rule": "entire",
+            "string": "name",
+            "occurrence": 0
+          },
+          "propertyPath": [
+            "name"
+          ]
+        }
+      ]
+    },
+    "route": {
+      "name": "Example Route",
+      "scope": "public",
+      "schema": "route",
+      "snippet": {
+        "name": "Example Route",
+        "language": "Javascript",
+        "version": "es6",
+        "block": "app.get('url', function (req, res, next) { \n //:middleware \n }, function (req, res) {\n //:actions \n})"
+      },
+      "rules": [],
+      "variables": [],
+      "subcontainers": [
+        {
+          "name": "middleware",
+          "subcontainer": true,
+          "pulls": [],
+          "childrenRule": "any",
+          "schemaComponents": []
+        },
+        {
+          "name": "actions",
+          "subcontainer": true,
+          "pulls": [],
+          "childrenRule": "any",
+          "schemaComponents": [
+            {
+              "type": "schema",
+              "schema": "parameter",
+              "mapUnique": true,
+              "propertyPath": [
+                "parameters"
+              ]
+            }
+          ]
+        }
+      ],
+      "components": [
+        {
+          "type": "code",
+          "finder": {
+            "type": "stringFinder",
+            "rule": "entire",
+            "string": "get",
+            "occurrence": 0
+          },
+          "propertyPath": [
+            "method"
+          ]
+        },
+        {
+          "type": "code",
+          "finder": {
+            "type": "stringFinder",
+            "rule": "containing",
+            "string": "url",
+            "occurrence": 0
+          },
+          "propertyPath": [
+            "url"
+          ]
+        }
+      ]
+    }
+  },
+  "schemas": {
+    "route": {
+      "title": "Route",
+      "version": "1.0.0",
+      "slug": "route",
+      "type": "object",
+      "required": [
+        "method",
+        "url"
+      ],
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "parameters": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/parameter"
+          }
+        }
+      },
+      "definitions": {
+        "parameter": {
+          "title": "Parameter",
+          "version": "1.0.0",
+          "slug": "parameter",
+          "type": "object",
+          "required": [
+            "method"
+          ],
+          "properties": {
+            "in": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "exported": true
+    },
+    "parameter": {
+      "title": "Parameter",
+      "version": "1.0.0",
+      "slug": "parameter",
+      "type": "object",
+      "required": [
+        "method"
+      ],
+      "properties": {
+        "in": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

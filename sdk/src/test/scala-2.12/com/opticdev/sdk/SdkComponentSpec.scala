@@ -37,17 +37,13 @@ class SdkComponentSpec extends FunSpec {
                     "type": "schema",
                     "schema": "optic:rest@1.0.0/route",
                     "propertyPath": ["parameters"],
-                    "mapUnique": true,
-                    "location": {
-                      "type": "InParent",
-                      "finder": null
-                      }
+                    "mapUnique": true
                   }"""
 
     it("for valid json") {
       val component = Component.fromJson(Json.parse(validJson))
       assert(component.isInstanceOf[SchemaComponent])
-      assert(component.asInstanceOf[SchemaComponent].location.in == InParent)
+//      assert(component.asInstanceOf[SchemaComponent].location)
     }
 
   }

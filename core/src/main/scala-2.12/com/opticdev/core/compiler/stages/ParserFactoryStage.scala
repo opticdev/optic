@@ -31,7 +31,9 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
 
     val nodeDescription = ParserFactoryStage.nodeToDescription(enterOn)
 
-    val listeners = lens.components.schemaComponents.map(watchForSchema => MapSchemaListener(watchForSchema.fullyQualified(lens), lens.schema.fullyQualified(lens)))
+    val listeners = lens.allSchemaComponents.map(watchForSchema => {
+      MapSchemaListener(watchForSchema.fullyQualified(lens), lens.schema.fullyQualified(lens))
+    })
 
     implicit val ruleProvider = new RuleProvider()
 

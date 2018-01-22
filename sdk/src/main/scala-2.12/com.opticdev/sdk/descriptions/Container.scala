@@ -20,9 +20,9 @@ object ContainerBase extends Description[ContainerBase] {
   implicit val subcontainerReads: Reads[SubContainer] = Json.reads[SubContainer]
 
   override def fromJson(jsValue: JsValue) = {
-    val componentType = jsValue \ "subcontainer"
+    val componentType = (jsValue \ "subcontainer").getOrElse(JsBoolean(false))
 
-      val result : JsResult[ContainerBase] = componentType.get.as[JsBoolean].value match {
+      val result : JsResult[ContainerBase] = componentType.as[JsBoolean].value match {
         case true => Json.fromJson[SubContainer](jsValue)
         case false => Json.fromJson[Container](jsValue)
       }

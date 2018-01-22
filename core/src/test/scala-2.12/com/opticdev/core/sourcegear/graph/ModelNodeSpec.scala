@@ -40,7 +40,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
 
     val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
     val resolved = helloWorldImport.resolve
-    val resolvedMapping = resolved.mapping
+    val resolvedMapping = resolved.modelMapping
 
     assert(resolvedMapping.size == 2)
     assert(resolvedMapping(Path.fromString("definedAs")).relationship == AstPropertyRelationship.Token)

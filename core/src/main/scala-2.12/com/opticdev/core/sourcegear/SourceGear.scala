@@ -23,22 +23,23 @@ abstract class SourceGear {
 
   lazy val validExtensions: Set[String] = parsers.flatMap(_.fileExtensions)
 
-  def parseFile(file: File) (implicit project: OpticProject) : Try[FileParseResults] = {
-    Try {
-      val fileContents = file.contentAsString
-      //@todo connect to parser list
-      val parsedOption = SourceParserManager.parseString(fileContents, "Javascript", Option("es6"))
-      if (parsedOption.isSuccess) {
-        val parsed = parsedOption.get
-        val astGraph = parsed.graph
+  def parseFile(file: File) (implicit project: OpticProject) : Try[FileParseResults] =
+    Try(file.contentAsString).flatMap(i=> parseString(i))
 
-        //@todo clean this up and have the parser return in the parse result.
-        val parser = parsers.find(_.languageName == parsed.language).get
-        implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, parser, fileContents)
-        gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
-      } else {
-        throw parsedOption.failed.get
-      }
+  def parseString(string: String) (implicit  project: OpticProject) : Try[FileParseResults] = Try {
+    val fileContents = string
+    //@todo connect to parser list
+    val parsedOption = SourceParserManager.parseString(fileContents, "Javascript", Option("es6"))
+    if (parsedOption.isSuccess) {
+      val parsed = parsedOption.get
+      val astGraph = parsed.graph
+
+      //@todo clean this up and have the parser return in the parse result.
+      val parser = parsers.find(_.languageName == parsed.language).get
+      implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, parser, fileContents)
+      gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
+    } else {
+      throw parsedOption.failed.get
     }
   }
 

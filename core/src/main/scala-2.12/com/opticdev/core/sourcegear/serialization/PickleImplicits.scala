@@ -27,18 +27,6 @@ object PickleImplicits extends PicklerHelper {
     }
   }
 
-  implicit val locationTypeEnumPickler = {
-    import com.opticdev.sdk.descriptions.enums.LocationEnums._
-    compositePickler[LocationTypeEnums]
-      .addConcreteType[InSameFile.type]
-      .addConcreteType[Anywhere.type]
-      .addConcreteType[Sibling.type]
-      .addConcreteType[InScope.type]
-      .addConcreteType[InParent.type]
-      .addConcreteType[ChildOf]
-      .addConcreteType[ParentOf]
-  }
-
   implicit val childrenRuleTypeEnumPickler = {
     import com.opticdev.sdk.descriptions.enums.RuleEnums._
     compositePickler[ChildrenRuleTypeEnum]
@@ -47,6 +35,27 @@ object PickleImplicits extends PicklerHelper {
       .addConcreteType[SameAnyOrder.type]
       .addConcreteType[SamePlus.type]
       .addConcreteType[SameAnyOrderPlus.type]
+  }
+
+  implicit val locationTypeEnumPickler = {
+    import com.opticdev.sdk.descriptions.enums.LocationEnums._
+    compositePickler[LocationTypeEnums]
+      .addConcreteType[InSameFile.type]
+      .addConcreteType[Anywhere.type]
+      .addConcreteType[Sibling.type]
+      .addConcreteType[InScope.type]
+      .addConcreteType[InParent.type]
+      .addConcreteType[InCurrentLens.type]
+      .addConcreteType[InContainer]
+      .addConcreteType[ChildOf]
+      .addConcreteType[ParentOf]
+  }
+
+  implicit val componentPickler = {
+    import com.opticdev.sdk.descriptions.{CodeComponent, Component, SchemaComponent}
+    compositePickler[Component]
+      .addConcreteType[CodeComponent]
+      .addConcreteType[SchemaComponent]
   }
 
   implicit val stringFinderEnumPickler = {
@@ -64,13 +73,6 @@ object PickleImplicits extends PicklerHelper {
       .addConcreteType[Token.type]
       .addConcreteType[Literal.type]
 
-  }
-
-  implicit val componentPickler = {
-    import com.opticdev.sdk.descriptions.{CodeComponent, Component, SchemaComponent}
-    compositePickler[Component]
-      .addConcreteType[CodeComponent]
-      .addConcreteType[SchemaComponent]
   }
 
   implicit val containerPickler = {

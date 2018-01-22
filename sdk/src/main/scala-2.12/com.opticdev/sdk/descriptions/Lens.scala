@@ -1,6 +1,8 @@
 package com.opticdev.sdk.descriptions
 
-import com.opticdev.common.{PackageRef}
+import com.opticdev.common.PackageRef
+import com.opticdev.sdk.descriptions.enums.LocationEnums
+import com.opticdev.sdk.descriptions.enums.LocationEnums.InContainer
 import play.api.libs.json._
 
 
@@ -40,9 +42,16 @@ object Lens extends Description[Lens] {
 case class Lens(name: String,
                 schema: SchemaRef,
                 snippet: Snippet,
-                rules: Vector[Rule],
                 components: Vector[Component],
                 variables: Vector[Variable],
                 subcontainers: Vector[SubContainer],
                 packageRef: PackageRef = PackageRef(null, null)
-               ) extends PackageExportable
+               ) extends PackageExportable {
+
+  def allSchemaComponents : Vector[SchemaComponent] = {
+    val lensComponents = components.filter(_.isInstanceOf[SchemaComponent]).map(i=> i.asInstanceOf[SchemaComponent].withLocation(Location(LocationEnums.InCurrentLens)))
+    val containerComponents = subcontainers.flatMap(c=> c.schemaComponents.map(_.withLocation(Location(InContainer(c.name)))))
+    lensComponents ++ containerComponents
+  }
+
+}

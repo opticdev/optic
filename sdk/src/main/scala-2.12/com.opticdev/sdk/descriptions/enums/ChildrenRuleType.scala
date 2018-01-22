@@ -6,7 +6,7 @@ import scala.util.Try
 
 object RuleEnums {
 
-  trait ChildrenRuleTypeEnum
+  sealed trait ChildrenRuleTypeEnum
 
   case object Any extends ChildrenRuleTypeEnum
   case object Exact extends ChildrenRuleTypeEnum

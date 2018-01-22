@@ -1,5 +1,6 @@
 package com.opticdev.sdk.descriptions
 
+import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported}
 import com.opticdev.sdk.descriptions.finders.Finder
 import play.api.libs.json._
@@ -94,9 +95,12 @@ case class CodeComponent(propertyPath: Seq[String],
 case class SchemaComponent(propertyPath: Seq[String],
                            schema: SchemaRef,
                            mapUnique: Boolean,
-                           location: Location) extends Component {
+                           location: Option[Location]) extends Component {
 
   override def rules: Vector[Rule] = Vector()
 
   def fullyQualified(lens: Lens) = SchemaComponent(propertyPath, schema.fullyQualified(lens), mapUnique, location)
+
+  def withLocation(setLocation: Location) = SchemaComponent(propertyPath, schema, mapUnique, Some(setLocation))
+
 }

@@ -17,11 +17,7 @@ import scalax.collection.mutable.Graph
 
 class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUtils {
 
-  override val sourceGear = new SourceGear {
-    override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-    override val gearSet = new GearSet()
-    override val schemas = Set()
-  }
+  override val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
 
   val projectGraphWrapper = new ProjectGraphWrapper(Graph())
 
@@ -33,11 +29,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
 
-  val importResults = {
-    val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
-    sourceGear.gearSet.addGear(importGear)
-    sourceGear.parseFile(File(testFilePath))
-  }
+  val importResults = sourceGear.parseFile(File(testFilePath))
 
   projectGraphWrapper.addFile(importResults.get.astGraph, File(testFilePath))
 
