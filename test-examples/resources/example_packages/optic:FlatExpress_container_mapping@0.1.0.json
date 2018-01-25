@@ -5,8 +5,8 @@
   "dependencies": {
     "optic:rest": "0.1.0"
   },
-  "lenses": {
-    "parameter": {
+  "lenses": [
+    {
       "name": "Parameter",
       "scope": "internal",
       "schema": "parameter",
@@ -46,7 +46,7 @@
         }
       ]
     },
-    "route": {
+    {
       "name": "Example Route",
       "scope": "public",
       "schema": "route",
@@ -110,9 +110,10 @@
         }
       ]
     }
-  },
-  "schemas": {
-    "route": {
+  ],
+  "schemas": [
+    {
+      "id": "route",
       "title": "Route",
       "version": "1.0.0",
       "slug": "route",
@@ -156,22 +157,25 @@
       },
       "exported": true
     },
-    "parameter": {
-      "title": "Parameter",
-      "version": "1.0.0",
-      "slug": "parameter",
-      "type": "object",
-      "required": [
-        "method"
-      ],
-      "properties": {
-        "in": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
+    {
+      "id": "parameter",
+      "definition": {
+        "title": "Parameter",
+        "version": "1.0.0",
+        "slug": "parameter",
+        "type": "object",
+        "required": [
+          "method"
+        ],
+        "properties": {
+          "in": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
         }
       }
     }
-  }
+  ]
 }

@@ -2,8 +2,8 @@
   "name": "Variable",
   "version": "0.1.0",
   "author": "optic",
-  "lenses": {
-    "usingRequire": {
+  "lenses": [
+    {
       "name": "test",
       "schema": "js-import",
       "snippet": {
@@ -31,22 +31,24 @@
         }
       ]
     }
-  },
-  "schemas": {
-    "js-import": {
-      "title": "import",
-      "version": "1.0.0",
-      "slug": "js-import",
-      "type": "object",
-      "required": [
-        "pathTo"
-      ],
-      "properties": {
-        "pathTo": {
-          "type": "string"
+  ],
+  "schemas": [
+    {
+      "id": "js-import",
+      "definition": {
+        "title": "import",
+        "version": "1.0.0",
+        "slug": "js-import",
+        "type": "object",
+        "required": [
+          "pathTo"
+        ],
+        "properties": {
+          "pathTo": {
+            "type": "string"
+          }
         }
-      },
-      "exported": true
+      }
     }
-  }
+  ]
 }

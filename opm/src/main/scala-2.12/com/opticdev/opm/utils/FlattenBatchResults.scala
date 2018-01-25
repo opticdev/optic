@@ -1,6 +1,6 @@
 package com.opticdev.opm.utils
 
-import com.opticdev.opm.{BatchPackageResult, BatchParserResult, OpticPackage}
+import com.opticdev.opm.{BatchPackageResult, BatchParserResult}
 
 
 object FlattenBatchResultsImplicits {

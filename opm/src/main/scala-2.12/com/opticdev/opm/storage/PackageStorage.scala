@@ -5,7 +5,7 @@ import java.io.FileNotFoundException
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.opm.OpticPackage
+import com.opticdev.opm.OpticMDPackage
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import play.api.libs.json.{JsObject, Json}
@@ -14,7 +14,7 @@ import scala.util.{Failure, Try}
 
 object PackageStorage {
 
-  def writeToStorage(opticPackage: OpticPackage): File = {
+  def writeToStorage(opticPackage: OpticMDPackage): File = {
     val packages = DataDirectory.packages / ""  createIfNotExists(asDirectory = true)
 
     val author = packages / opticPackage.author createIfNotExists(asDirectory = true)
@@ -24,10 +24,10 @@ object PackageStorage {
     version.delete(true)
     version.touch()
 
-    version.write(opticPackage.contents.toString())
+    version.write(opticPackage.description.toString())
   }
 
-  def loadFromStorage(packageRef: PackageRef) : Try[OpticPackage] = {
+  def loadFromStorage(packageRef: PackageRef) : Try[OpticMDPackage] = {
 
     def notFound = Failure(new FileNotFoundException("Can not find local version of package "+packageRef.packageId))
 
@@ -39,7 +39,7 @@ object PackageStorage {
 
       if (versionOption.isDefined) {
         val (version, file) = versionOption.get
-        Try(OpticPackage(packageRef.packageId, Json.parse(file.contentAsString).as[JsObject]))
+        Try(OpticMDPackage(Json.parse(file.contentAsString).as[JsObject]))
       } else {
         notFound
       }

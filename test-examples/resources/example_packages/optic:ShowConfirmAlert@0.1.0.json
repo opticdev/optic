@@ -6,23 +6,25 @@
   "dependencies": {
     "dependencySet": {}
   },
-  "schemas": {
-    "confirmAlert": {
+  "schemas": [
+    {
       "id": "confirmAlert",
-      "title": "confirm alert",
-      "type": "object",
-      "required": [
-        "message"
-      ],
-      "properties": {
-        "message": {
-          "type": "string"
+      "definition": {
+        "title": "confirm alert",
+        "type": "object",
+        "required": [
+          "message"
+        ],
+        "properties": {
+          "message": {
+            "type": "string"
+          }
         }
       }
     }
-  },
-  "lenses": {
-    "showConfirm": {
+  ],
+  "lenses": [
+    {
       "name": "Show Confirm Alert",
       "schema": "confirmAlert",
       "snippet": {
@@ -68,6 +70,6 @@
         }
       ]
     }
-  },
+  ],
   "containers": []
 }

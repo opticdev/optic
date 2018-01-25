@@ -28,7 +28,7 @@ object PackageManager {
     val flattenedDependencyTree = collection.mutable.Map[PackageRef, Boolean]()
     packages.foreach(i=> flattenedDependencyTree(i) = false)
 
-    val foundPackages = collection.mutable.Buffer[OpticPackage]()
+    val foundPackages = collection.mutable.Buffer[OpticMDPackage]()
 
     def alreadySatisfies(packageId: String, range: String): Boolean =
       foundPackages.exists(p=> p.packageId == packageId && new Semver(p.version, SemverType.NPM).satisfies(range))

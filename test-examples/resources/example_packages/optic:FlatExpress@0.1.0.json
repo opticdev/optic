@@ -5,8 +5,8 @@
   "dependencies": {
     "optic:rest":"0.1.0"
   },
-  "lenses": {
-    "parameter": {
+  "lenses": [
+    {
       "name": "Parameter",
       "scope": "internal",
       "schema": "parameter",
@@ -39,7 +39,7 @@
         "propertyPath": ["name"]
       }]
     },
-    "route": {
+    {
       "name": "Example Route",
       "scope": "public",
       "schema": "route",
@@ -109,62 +109,73 @@
         }
       }]
     }
-  },
-  "schemas": {
-    "route": {
-      "title": "Route",
-      "version": "1.0.0",
-      "slug": "route",
-      "type": "object",
-      "required": ["method", "url"],
-      "properties": {
-        "method": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "parameters": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/parameter"
+  ],
+  "schemas": [
+    {
+      "id": "route",
+      "definition": {
+        "title": "Route",
+        "version": "1.0.0",
+        "slug": "route",
+        "type": "object",
+        "required": [
+          "method",
+          "url"
+        ],
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/parameter"
+            }
           }
-        }
-      },
-      "definitions": {
-        "parameter": {
-          "title": "Parameter",
-          "version": "1.0.0",
-          "slug": "parameter",
-          "type": "object",
-          "required": ["method"],
-          "properties": {
-            "in": {
-              "type": "string"
-            },
-            "name": {
-              "type": "string"
+        },
+        "definitions": {
+          "parameter": {
+            "title": "Parameter",
+            "version": "1.0.0",
+            "slug": "parameter",
+            "type": "object",
+            "required": [
+              "method"
+            ],
+            "properties": {
+              "in": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
             }
           }
         }
-      },
-      "exported": true
+      }
     },
-    "parameter": {
-      "title": "Parameter",
-      "version": "1.0.0",
-      "slug": "parameter",
-      "type": "object",
-      "required": ["method"],
-      "properties": {
-        "in": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
+    {
+      "id": "parameter",
+      "definition": {
+        "title": "Parameter",
+        "version": "1.0.0",
+        "slug": "parameter",
+        "type": "object",
+        "required": [
+          "method"
+        ],
+        "properties": {
+          "in": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
         }
       }
     }
-  }
-
+  ]
 }

@@ -1,12 +1,14 @@
 {
-  "name": "express-js",
-  "author": "optic",
-  "version": "0.1.0",
+  "metadata": {
+    "name": "express-js",
+    "author": "optic",
+    "version": "0.1.0"
+  },
   "dependencies": {
     "optic:rest":"0.1.0"
   },
-  "lenses": {
-    "parameter": {
+  "lenses": [
+    {
       "name": "Parameter",
       "scope": "internal",
       "schema": "optic:rest/parameter",
@@ -39,7 +41,7 @@
         "propertyPath": ["name"]
       }]
     },
-    "route": {
+    {
       "name": "Example Route",
       "scope": "public",
       "schema": "optic:rest/route",
@@ -96,6 +98,6 @@
         }
       }]
     }
-  }
+  ]
 
 }

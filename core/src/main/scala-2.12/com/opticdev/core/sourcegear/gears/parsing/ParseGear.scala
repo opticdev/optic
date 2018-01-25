@@ -123,6 +123,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
 }
 
+
 case class ParseAsModel(description: NodeDescription,
                         schema: SchemaRef,
                         components: Map[FlatWalkablePath, Vector[Component]],
@@ -151,5 +152,22 @@ case class ParseAsModel(description: NodeDescription,
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))
 
   }
+}
 
+
+case class ParseAsContainer(description: NodeDescription,
+                        containers: Map[FlatWalkablePath, SubContainer],
+                        rules: Map[FlatWalkablePath, Vector[Rule]],
+                        variableManager: VariableManager = VariableManager.empty,
+                        additionalParserInformation : AdditionalParserInformation
+                       )(implicit ruleProvider: RuleProvider) extends ParseGear {
+
+  override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: OpticProject): Option[ParseResult] = {
+
+    None
+  }
+
+  //not set for containers
+  override val components = Map()
+  override val listeners = Vector()
 }

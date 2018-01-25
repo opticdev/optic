@@ -12,7 +12,7 @@ class OpticRegistryProvider extends RemoteProvider {
 
   override val baseUrl: URL = new URL("https://registry.opticdev.com/")
 
-//  override def resolvePackage(packageRef: PackageRef): Future[Option[OpticPackage]] = {
+//  override def resolvePackage(packageRef: PackageRef): Future[Option[OpticMDPackage]] = {
 //
 //    ws.url(baseUrl+"package/"+packageRef.packageId)
 //      .withQueryStringParameters(("version", packageRef.version))
@@ -26,7 +26,7 @@ class OpticRegistryProvider extends RemoteProvider {
 //  }
 
 
-  def requestEntry(packageRef: PackageRef) : Future[Option[OpticPackage]] = {
+  def requestEntry(packageRef: PackageRef) : Future[Option[OpticMDPackage]] = {
     null
   }
 
@@ -34,7 +34,7 @@ class OpticRegistryProvider extends RemoteProvider {
     null
   }
 
-  override def listInstalledPackages: Vector[OpticPackage] = ???
+  override def listInstalledPackages: Vector[OpticMDPackage] = ???
 
 
 

@@ -1,7 +1,6 @@
 package com.opticdev.opm.context
 
 import com.opticdev.common.PackageRef
-import com.opticdev.opm.OpticPackage
 import com.opticdev.sdk.descriptions.PackageExportable
 
 import scala.util.Try
@@ -28,8 +27,8 @@ case class PackageContext(leaf: Leaf) extends Context {
   }
 
   def getProperty(propertyKey: String) : Option[PackageExportable] = {
-    val schemasOption = leaf.opticPackage.schemas.get(propertyKey)
-    val lensOption = leaf.opticPackage.lenses.get(propertyKey)
+    val schemasOption = leaf.opticPackage.schemas.find(_.schemaRef.id == propertyKey)
+    val lensOption = leaf.opticPackage.lenses.find(_.name == propertyKey)
 
     if (schemasOption.isDefined) {
       schemasOption.asInstanceOf[Option[PackageExportable]]

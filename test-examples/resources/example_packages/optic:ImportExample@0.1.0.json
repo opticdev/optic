@@ -1,9 +1,11 @@
 {
-  "name": "ImportExample",
-  "version": "0.1.0",
-  "author": "optic",
-  "lenses": {
-    "usingRequire": {
+  "metadata": {
+    "name": "ImportExample",
+    "version": "0.1.0",
+    "author": "optic"
+  },
+  "lenses": [
+    {
       "name": "Using Require",
       "schema": "js-import",
       "snippet": {
@@ -38,26 +40,29 @@
         }
       ]
     }
-  },
-  "schemas": {
-    "js-import": {
-      "title": "import",
-      "version": "1.0.0",
-      "slug": "js-import",
-      "type": "object",
-      "required": [
-        "pathTo",
-        "definedAs"
-      ],
-      "properties": {
-        "pathTo": {
-          "type": "string"
+  ],
+  "schemas": [
+    {
+      "id": "js-import",
+      "definition": {
+        "title": "import",
+        "version": "1.0.0",
+        "slug": "js-import",
+        "type": "object",
+        "required": [
+          "pathTo",
+          "definedAs"
+        ],
+        "properties": {
+          "pathTo": {
+            "type": "string"
+          },
+          "definedAs": {
+            "type": "string"
+          }
         },
-        "definedAs": {
-          "type": "string"
-        }
-      },
-      "exported": true
+        "exported": true
+      }
     }
-  }
+  ]
 }

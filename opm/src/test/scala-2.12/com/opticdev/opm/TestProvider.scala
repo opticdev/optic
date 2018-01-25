@@ -14,42 +14,45 @@ import scala.concurrent.Future
 class TestProvider extends Provider {
 
   def mockPackage(name: String, author: String, version: String, dependencies: Seq[(String, String)]) = {
-    OpticPackage(author+":"+name, JsObject(
+    OpticMDPackage(JsObject(
       Seq(
-        "name"-> JsString(name),
-        "version"-> JsString(version),
-        "author"-> JsString(author),
+        "metadata" -> JsObject(
+          Seq(
+           "name"-> JsString(name),
+           "version"-> JsString(version),
+           "author"-> JsString(author),
+          )),
         "dependencies" -> JsObject(dependencies.map(i=> i._1 -> JsString(i._2)))
       )
     ))
   }
 
-  val a: OpticPackage = mockPackage("a", "optic", "1.1.1", Seq("optic:b"-> "1.0.0"))
+  val a: OpticMDPackage = mockPackage("a", "optic", "1.1.1", Seq("optic:b"-> "1.0.0"))
 
-  val b: OpticPackage = mockPackage("b", "optic", "1.0.0", Seq("optic:c"-> "3.5.2", "optic:d"-> "2.0.0"))
-  val b1: OpticPackage = mockPackage("b", "optic", "1.1.1", Seq("optic:c"-> "2.0.0"))
+  val b: OpticMDPackage = mockPackage("b", "optic", "1.0.0", Seq("optic:c"-> "3.5.2", "optic:d"-> "2.0.0"))
+  val b1: OpticMDPackage = mockPackage("b", "optic", "1.1.1", Seq("optic:c"-> "2.0.0"))
 
-  val c: OpticPackage = mockPackage("c", "optic", "3.5.2", Seq("optic:d"-> "2.0.0"))
-  val c1: OpticPackage = mockPackage("c", "optic", "2.0.0", Seq())
+  val c: OpticMDPackage = mockPackage("c", "optic", "3.5.2", Seq("optic:d"-> "2.0.0"))
+  val c1: OpticMDPackage = mockPackage("c", "optic", "2.0.0", Seq())
 
-  val d: OpticPackage = mockPackage("d", "optic", "2.0.0", Seq("optic:e"-> "2.0.0"))
+  val d: OpticMDPackage = mockPackage("d", "optic", "2.0.0", Seq("optic:e"-> "2.0.0"))
 
-  val e: OpticPackage = mockPackage("e", "optic", "2.0.0", Seq("optic:c"-> "2.0.0"))
+  val e: OpticMDPackage = mockPackage("e", "optic", "2.0.0", Seq("optic:c"-> "2.0.0"))
 
 
-  val opticImport: OpticPackage = OpticPackage.fromJson(Json.parse(File(
+  val opticImport: OpticMDPackage = OpticMDPackage.fromJson(Json.parse(File(
     "test-examples/resources/example_packages/optic:ImportExample@0.1.0.json").contentAsString)).get
 
 
-  val opticRest: OpticPackage = OpticPackage.fromJson(Json.parse(File(
+  val opticRest: OpticMDPackage = OpticMDPackage.fromJson(Json.parse(File(
     "test-examples/resources/example_packages/express/optic:rest@0.1.0.json").contentAsString)).get
 
-  val opticExpress: OpticPackage = OpticPackage.fromJson(Json.parse(File(
+  val opticExpress: OpticMDPackage = OpticMDPackage.fromJson(Json.parse(File(
     "test-examples/resources/example_packages/express/optic:express-js@0.1.0.json").contentAsString)).get
 
   val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticExpress)
 
-  override def listInstalledPackages: Vector[OpticPackage] = ???
+  override def listInstalledPackages: Vector[OpticMDPackage] = ???
 
   override def resolvePackages(packageRefs: PackageRef*): Future[BatchPackageResult] = Future {
     val foundPackages = allPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))

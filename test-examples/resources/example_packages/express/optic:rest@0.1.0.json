@@ -1,59 +1,73 @@
 {
-  "name": "rest",
-  "author": "optic",
-  "version": "0.1.0",
-  "schemas": {
-    "route": {
-      "title": "Route",
-      "version": "1.0.0",
-      "type": "object",
-      "required": ["method", "url"],
-      "properties": {
-        "method": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "parameters": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/parameter"
+  "metadata": {
+    "name": "rest",
+    "author": "optic",
+    "version": "0.1.0"
+  },
+  "schemas": [
+    {
+      "id": "route",
+      "definition": {
+        "title": "Route",
+        "version": "1.0.0",
+        "type": "object",
+        "required": [
+          "method",
+          "url"
+        ],
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/parameter"
+            }
           }
-        }
-      },
-      "definitions": {
-        "parameter": {
-          "title": "Parameter",
-          "version": "1.0.0",
-          "slug": "js-example-route-parameter",
-          "type": "object",
-          "required": ["method"],
-          "properties": {
-            "in": {
-              "type": "string"
-            },
-            "name": {
-              "type": "string"
+        },
+        "definitions": {
+          "parameter": {
+            "title": "Parameter",
+            "version": "1.0.0",
+            "slug": "js-example-route-parameter",
+            "type": "object",
+            "required": [
+              "method"
+            ],
+            "properties": {
+              "in": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
             }
           }
         }
-      },
-      "exported": true
+      }
     },
-    "parameter": {
-      "title": "Parameter",
-      "version": "1.0.0",
-      "type": "object",
-      "required": ["method"],
-      "properties": {
-        "in": {
-          "type": "string"
-        },
-        "name": {
-          "type": "string"
+    {
+      "id": "parameter",
+      "definition": {
+        "title": "Parameter",
+        "version": "1.0.0",
+        "type": "object",
+        "required": [
+          "method"
+        ],
+        "properties": {
+          "in": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
         }
       }
     }
-  }
+  ]
 }

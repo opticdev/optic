@@ -30,7 +30,7 @@ class DependencyTreeSpec extends FunSpec with TestPackageProviders {
 
     it("can have all schemas flattened") {
       assert(exampleTree.flattenSchemas ==
-        t.opticRest.schemas.values.toSet)
+        t.opticRest.schemas.toSet)
     }
 
     describe("leaf") {

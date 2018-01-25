@@ -9,6 +9,9 @@ import com.opticdev.sdk.descriptions.PropertyRule
 import play.api.libs.json.JsObject
 
 package object parsing {
+
+  sealed case class Hello(string: String)
+
   //Signaling
   case class MatchResults(isMatch: Boolean,
                           extracted: Option[Set[ModelField]] = None,

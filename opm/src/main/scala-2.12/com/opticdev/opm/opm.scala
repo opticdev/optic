@@ -18,7 +18,7 @@ package object opm {
 
   trait Provider {
     def resolvePackages(packageRef: PackageRef*) : Future[BatchPackageResult]
-    def listInstalledPackages : Vector[OpticPackage]
+    def listInstalledPackages : Vector[OpticMDPackage]
 
     def resolveParsers(parsers: ParserRef*) : Future[BatchParserResult]
     def listInstalledParsers : Map[String, Vector[ParserBase]]
@@ -34,8 +34,8 @@ package object opm {
     def foundAll = notFound.isEmpty
   }
 
-  case class BatchPackageResult(found: Set[OpticPackage] = Set(), notFound: Set[PackageRef] = Set())
-    extends BatchOpmResult[OpticPackage, PackageRef]
+  case class BatchPackageResult(found: Set[OpticMDPackage] = Set(), notFound: Set[PackageRef] = Set())
+    extends BatchOpmResult[OpticMDPackage, PackageRef]
 
   case class BatchParserResult(found: Set[ParserBase] = Set(), notFound: Set[ParserRef] = Set())
     extends BatchOpmResult[ParserBase, ParserRef]
