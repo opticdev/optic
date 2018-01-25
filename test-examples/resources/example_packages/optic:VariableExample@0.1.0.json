@@ -1,7 +1,9 @@
 {
-  "name": "Variable",
-  "version": "0.1.0",
-  "author": "optic",
+  "metadata": {
+    "name": "Variable",
+    "version": "0.1.0",
+    "author": "optic"
+  },
   "lenses": [
     {
       "name": "test",

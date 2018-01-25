@@ -5,7 +5,7 @@ import com.opticdev.core.compiler.Compiler
 import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
 import com.opticdev.core.sourcegear.{Gear, GearSet, SourceGear}
-import com.opticdev.opm.OpticPackage
+import com.opticdev.opm.OpticMDPackage
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
 import com.opticdev.parsers.SourceParserManager
 
@@ -22,11 +22,11 @@ trait GearUtils {
 
   def gearFromDescription(path: String): Gear = {
     val jsonString = Source.fromFile(path).getLines.mkString
-    val description = OpticPackage.fromJson(Json.parse(jsonString)).get
+    val description = OpticMDPackage.fromJson(Json.parse(jsonString)).get
     val dependencyTree = Tree(Leaf(description))
     val packageContext = dependencyTree.treeContext(description.packageFull).get
 
-    val worker = new CompileWorker(description.lenses.head._2)
+    val worker = new CompileWorker(description.lenses.head)
     val result = worker.compile()(packageContext, ListBuffer())
 
     result.get
@@ -34,14 +34,14 @@ trait GearUtils {
 
   def gearsFromDescription(path: String) : Seq[Gear] = {
     val jsonString = Source.fromFile(path).getLines.mkString
-    val descriptions = OpticPackage.fromJson(Json.parse(jsonString)).get
+    val descriptions = OpticMDPackage.fromJson(Json.parse(jsonString)).get
 
     val dependencyTree = Tree(Leaf(descriptions))
     val packageContext = dependencyTree.treeContext(descriptions.packageFull).get
 
 
     descriptions.lenses.map(i=> {
-      val worker = new CompileWorker(i._2)
+      val worker = new CompileWorker(i)
       val compileResult = worker.compile()(packageContext, ListBuffer())
       compileResult.get
     }).toSeq
@@ -56,10 +56,10 @@ trait GearUtils {
     }
 
     val jsonString = Source.fromFile(path).getLines.mkString
-    val description = OpticPackage.fromJson(Json.parse(jsonString)).get
+    val description = OpticMDPackage.fromJson(Json.parse(jsonString)).get
 
     implicit val dependencyTree = Tree(Leaf(description))
-    implicit val packageContext = PackageContextFixture(description.schemas)
+    implicit val packageContext = PackageContextFixture.fromSchemas(description.schemas)
 
     val compiled = Compiler.setup(description).execute
 

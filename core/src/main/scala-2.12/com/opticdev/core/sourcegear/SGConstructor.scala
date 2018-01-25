@@ -3,7 +3,7 @@ import com.opticdev.core.compiler.{Compiler, CompilerOutput}
 import com.opticdev.common.PackageRef
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, SomePackagesFailedToCompile}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
-import com.opticdev.opm.{DependencyTree, OpticPackage, PackageManager}
+import com.opticdev.opm.{DependencyTree, OpticMDPackage, PackageManager}
 import com.opticdev.parsers.{ParserBase, ParserRef}
 import com.opticdev.sdk.descriptions.Lens
 

@@ -1,7 +1,9 @@
 {
-  "name": "FlatExpress",
-  "author": "optic",
-  "version": "0.1.0",
+  "metadata": {
+    "name": "FlatExpress",
+    "author": "optic",
+    "version": "0.1.0"
+  },
   "dependencies": {
     "optic:rest":"0.1.0"
   },
@@ -87,43 +89,49 @@
   "schemas": [
     {
       "id": "route",
-      "title": "Route",
-      "version": "1.0.0",
-      "slug": "route",
-      "type": "object",
-      "required": ["method", "url"],
-      "properties": {
-        "method": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "parameters": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/parameter"
+      "definition": {
+        "title": "Route",
+        "version": "1.0.0",
+        "slug": "route",
+        "type": "object",
+        "required": [
+          "method",
+          "url"
+        ],
+        "properties": {
+          "method": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/parameter"
+            }
           }
-        }
-      },
-      "definitions": {
-        "parameter": {
-          "title": "Parameter",
-          "version": "1.0.0",
-          "slug": "parameter",
-          "type": "object",
-          "required": ["method"],
-          "properties": {
-            "in": {
-              "type": "string"
-            },
-            "name": {
-              "type": "string"
+        },
+        "definitions": {
+          "parameter": {
+            "title": "Parameter",
+            "version": "1.0.0",
+            "slug": "parameter",
+            "type": "object",
+            "required": [
+              "method"
+            ],
+            "properties": {
+              "in": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
             }
           }
         }
-      },
-      "exported": true
+      }
     },
     {
       "id": "parameter",
