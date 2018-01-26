@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
-import com.opticdev.core.sourcegear.actors.{FileCreated, FileDeleted, FileUpdated}
+import com.opticdev.core.sourcegear.actors._
 import com.opticdev.sourcegear.actors._
 import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.project.config.ProjectFile
@@ -12,11 +12,15 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
 import java.nio.file.{Path, WatchEvent, StandardWatchEventKinds => EventType}
+import scala.concurrent.ExecutionContext.Implicits.global
+import akka.actor.ActorSystem
 
+import scala.concurrent.duration._
 import com.opticdev.core.sourcegear.project.status._
 import com.opticdev.opm.{PackageManager, TestPackageProviders, TestProvider}
 import org.scalatest.BeforeAndAfterAll
 
+import scala.concurrent.Await
 import scala.concurrent.duration._
 
 class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eventually with BeforeAndAfterAll with TestPackageProviders {
@@ -26,7 +30,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
     super.beforeAll()
   }
 
-  override val sourceGear = new SourceGear {
+  override implicit val sourceGear : SourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     override val gearSet = new GearSet()
     override val schemas = Set()
@@ -129,6 +133,37 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
 
       assert(project.projectGraph.nonEmpty)
     }
+
+  }
+
+  describe("file staging") {
+    implicit val actorCluster : ActorCluster = new ActorCluster(system)
+    implicit val project = new OpticProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"))  {
+      override def projectSourcegear: SourceGear = sourceGear
+    }
+
+    project.watch
+
+    val file = File("test-examples/resources/tmp/test_project/app.js")
+    it("can override disk contents") {
+      val stagedContents = "var me = you"
+      val contentsInCacheFuture = project.stageFileContents(file, "var me = you").map(i=> {
+        assert(project.filesStateMonitor.fileHasStagedContents(file))
+        ParseSupervisorSyncAccess.getContext(file).get.fileContents
+      })
+
+      assert(Await.result(contentsInCacheFuture, 6 seconds) == stagedContents)
+    }
+
+    it("will take from disk again if a file changed event registers") {
+      val newContents = "var them = now"
+      file.write(newContents)
+      eventually (timeout(Span(15, Seconds))) {
+        assert(ParseSupervisorSyncAccess.getContext(file).get.fileContents == newContents)
+        assert(!project.filesStateMonitor.fileHasStagedContents(file))
+      }
+    }
+
 
   }
 

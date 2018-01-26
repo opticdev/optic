@@ -33,4 +33,6 @@ class FileStateMonitor(shouldWatchFile: (File) => Boolean) {
     stagedContents -= file
   }
 
+  def fileHasStagedContents(file: File) : Boolean = stagedContents.contains(file)
+
 }
