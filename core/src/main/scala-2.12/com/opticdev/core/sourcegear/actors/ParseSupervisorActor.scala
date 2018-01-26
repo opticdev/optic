@@ -28,7 +28,7 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
   override def receive: Receive = handler(new ParseCache)
 
   def handler(parseCache: ParseCache) : Receive = {
-    case request: ParseFile =>
+    case request: ParserRequest =>
       router.route(request, sender())
     case Terminated(a) =>
       router = router.removeRoutee(a)

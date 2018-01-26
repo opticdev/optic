@@ -24,10 +24,23 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor {
       }
     }
 
+    case parseWithContentsRequest : ParseFileWithContents => {
+      implicit val project = parseWithContentsRequest.project
+      val requestingActor = parseWithContentsRequest.requestingActor
+      val result: Try[FileParseResults] = parseWithContentsRequest.sourceGear.parseString(parseWithContentsRequest.contents)
+      if (result.isSuccess) {
+        actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(parseWithContentsRequest.file), result.get.astGraph, result.get.parser, parseWithContentsRequest.contents)
+        sender() tell(ParseSuccessful(result.get, parseWithContentsRequest.file), requestingActor)
+      } else {
+        sender() tell(ParseFailed(parseWithContentsRequest.file), requestingActor)
+      }
+    }
+
     case ctxRequest: GetContext => {
       implicit val project = ctxRequest.project
       val file = ctxRequest.fileNode.toFile
-      val result: Try[FileParseResults] = ctxRequest.sourceGear.parseFile(file)
+      val fileContents = project.filesStateMonitor.contentsForFile(file).get
+      val result: Try[FileParseResults] = ctxRequest.sourceGear.parseString(fileContents)
       if (result.isSuccess) {
         actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(file), result.get.astGraph, result.get.parser, result.get.fileContents)
         sender() ! Option(SGContext(

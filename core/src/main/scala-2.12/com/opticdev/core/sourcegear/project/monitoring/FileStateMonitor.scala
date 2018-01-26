@@ -14,7 +14,7 @@ import scala.util.Try
 
  */
 
-class FilesState(shouldWatchFile: (File) => Boolean) {
+class FileStateMonitor(shouldWatchFile: (File) => Boolean) {
 
   def contentsForPath(path: String): Try[String] = contentsForFile(File(path))
   def contentsForFile(file: File): Try[String] = Try {

@@ -57,7 +57,17 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
   }
 
   it("can parse files") {
-    actorCluster.parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/test-examples/resources/test_project/app.js"), self, project)
+    val f = fixture
+    f.actorCluster.parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/test-examples/resources/test_project/app.js"), self, project)
+    expectMsgAllConformingOf[ParseSuccessful]()
+    expectMsgPF() {
+      case ps: ParseSuccessful => assert(ps.parseResults.astGraph.nonEmpty)
+    }
+  }
+
+  it("can parse files with explicit contents passed") {
+    val f = fixture
+    f.actorCluster.parserSupervisorRef ! ParseFileWithContents(File(getCurrentDirectory+"/test-examples/resources/test_project/app.js"), "var me = you", self, project)
     expectMsgAllConformingOf[ParseSuccessful]()
     expectMsgPF() {
       case ps: ParseSuccessful => assert(ps.parseResults.astGraph.nonEmpty)
@@ -65,11 +75,13 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
   }
 
   it("fails gracefully when file is unreadable") {
-    actorCluster.parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/test-examples/resources/test_project/fakeFile.js"), self, project)
+    val f = fixture
+    f.actorCluster.parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/test-examples/resources/test_project/fakeFile.js"), self, project)
     expectMsg(ParseFailed(File(getCurrentDirectory+"/test-examples/resources/test_project/fakeFile.js")))
   }
 
   describe("caches") {
+    val f = fixture
     val dummyRecord = CacheRecord(Graph(), null, "contents")
     val file = FileNode.fromFile(File("/test-examples/resources/tmp/test_project/app.js"))
     val parseCache = new ParseCache
@@ -81,18 +93,18 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
     }
 
     it("can be cleared") {
-      actorCluster.parserSupervisorRef ! ClearCache
-      assert(ParseSupervisorSyncAccess.cacheSize == 0)
+      f.actorCluster.parserSupervisorRef ! ClearCache
+      assert(ParseSupervisorSyncAccess.cacheSize()(f.actorCluster) == 0)
     }
 
     it("can add records") {
-      actorCluster.parserSupervisorRef ! ClearCache
-      actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), null, "contents")
-      assert(ParseSupervisorSyncAccess.cacheSize == 1)
+      f.actorCluster.parserSupervisorRef ! ClearCache
+      f.actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), null, "contents")
+      assert(ParseSupervisorSyncAccess.cacheSize()(f.actorCluster) == 1)
     }
 
     it("can lookup records") {
-      assert(ParseSupervisorSyncAccess.lookup(file).isDefined)
+      assert(ParseSupervisorSyncAccess.lookup(file)(f.actorCluster).isDefined)
     }
 
   }

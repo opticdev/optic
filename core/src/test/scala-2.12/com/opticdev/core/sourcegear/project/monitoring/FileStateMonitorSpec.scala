@@ -7,7 +7,7 @@ import org.scalatest.FunSpec
 class FilesStateSpec extends TestBase {
 
   def fixture = new {
-    val fileMonitor = new FilesState((f)=> true)
+    val fileMonitor = new FileStateMonitor((f)=> true)
   }
 
   val testFile = File("test-examples/resources/tmp/test_project/nested/firstFile.js")
