@@ -37,7 +37,7 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
   override def projectFileChanged(newPf: ProjectFile): Unit = {
     super.projectFileChanged(newPf)
     if (newPf.interface.isSuccess) {
-      SGConstructor.fromProjectFile(newPf).onComplete(i => {
+      SGConstructor.fromProjectFile(newPf)(projectSearchPaths).onComplete(i => {
         if (i.isSuccess) {
           sourceGear = i.get.inflate
           projectStatusInstance.sourceGearStatus = Valid

@@ -2,10 +2,12 @@ package com.opticdev.opm
 
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
+import com.opticdev.opm.providers.Provider
 import com.opticdev.opm.storage.PackageStorage
 import com.opticdev.parsers.ParserRef
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.util.Try
@@ -18,7 +20,7 @@ object PackageManager {
 
 //  def defaultProviders =
 
-  def installPackage(packageRef: PackageRef): Try[Vector[String]] = {
+  def installPackage(packageRef: PackageRef) : Try[Vector[String]] = {
     installPackages(packageRef)
   }
 

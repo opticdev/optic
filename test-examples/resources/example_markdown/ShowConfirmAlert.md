@@ -1,3 +1,5 @@
+<!-- metadata name="confirmAlert" author="aidan" version="0.1.0" -->
+
 ## Confirm Alert
 Sometimes it's useful to ask a user to confirm an action. To show an alert box with a message, a confirm an a cancel button you can use the following code. 
 

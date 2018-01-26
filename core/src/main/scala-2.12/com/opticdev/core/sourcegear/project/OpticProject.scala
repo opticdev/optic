@@ -14,6 +14,8 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.project.status.ProjectStatus
+import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
+import net.jcazevedo.moultingyaml.YamlString
 import play.api.libs.json.{JsObject, JsString}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -113,5 +115,17 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
 
   def projectInfo : ProjectInfo = ProjectInfo(name, baseDirectory.pathAsString, projectStatus)
+
+  def projectSearchPaths : ProjectKnowledgeSearchPaths = {
+    val searchPaths = projectFile.interface
+      .map(_.knowledgePaths.value.toVector)
+      .getOrElse(Vector())
+      .collect {
+        case s: YamlString => File(s.value)
+      }
+      .filter(f=> f.exists && f.isDirectory)
+
+    ProjectKnowledgeSearchPaths(searchPaths:_*)
+  }
 
 }

@@ -5,5 +5,8 @@ parsers:
 knowledge:
   - js:express
 
+knowledge_paths:
+  - /docs
+
 ignored_files:
   - node_modules/

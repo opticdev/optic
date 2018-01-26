@@ -1,7 +1,9 @@
-package com.opticdev.opm
+package com.opticdev.opm.providers
+
 import java.net.URL
 
 import com.opticdev.common.PackageRef
+import com.opticdev.opm.{BatchPackageResult, OpticMDPackage}
 import com.opticdev.parsers.ParserRef
 import play.api.libs.json.{JsObject, JsValue, Json}
 
@@ -34,7 +36,7 @@ class OpticRegistryProvider extends RemoteProvider {
     null
   }
 
-  override def listInstalledPackages: Vector[OpticMDPackage] = ???
+  override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Vector[OpticMDPackage] = ???
 
 
 
@@ -44,7 +46,7 @@ class OpticRegistryProvider extends RemoteProvider {
     Json.parse(response.body)
   }
 
-  override def resolvePackages(packageRef: PackageRef*): Future[BatchPackageResult] = ???
+  override def resolvePackages(packageRef: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Future[BatchPackageResult] = ???
 
   override def resolveParsers(parsers: ParserRef*) = ???
 

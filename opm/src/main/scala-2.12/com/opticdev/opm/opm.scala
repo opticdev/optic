@@ -16,18 +16,6 @@ package object opm {
 
   //  val ws = StandaloneAhcWSClient()(ActorMaterializer())
 
-  trait Provider {
-    def resolvePackages(packageRef: PackageRef*) : Future[BatchPackageResult]
-    def listInstalledPackages : Vector[OpticMDPackage]
-
-    def resolveParsers(parsers: ParserRef*) : Future[BatchParserResult]
-    def listInstalledParsers : Map[String, Vector[ParserBase]]
-  }
-
-  trait RemoteProvider extends Provider {
-    val baseUrl : URL
-  }
-
   trait BatchOpmResult[O, R] {
     val found : Set[O]
     val notFound : Set[R]

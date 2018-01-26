@@ -1,3 +1,5 @@
+<!-- metadata name="rest" author="optic" version="0.1.0" -->
+
 # Rest
 RESTful APIs are a key feature of the modern web. 
 

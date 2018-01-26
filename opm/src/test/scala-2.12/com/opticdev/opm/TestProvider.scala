@@ -2,6 +2,7 @@ package com.opticdev.opm
 
 import better.files.File
 import com.opticdev.common.PackageRef
+import com.opticdev.opm.providers.{ProjectKnowledgeSearchPaths, Provider}
 import com.opticdev.opm.storage.ParserStorage
 import com.opticdev.parsers.{ParserRef, SourceParserManager}
 import com.vdurmont.semver4j.Semver
@@ -52,9 +53,9 @@ class TestProvider extends Provider {
 
   val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticExpress)
 
-  override def listInstalledPackages: Vector[OpticMDPackage] = ???
+  override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Vector[OpticMDPackage] = ???
 
-  override def resolvePackages(packageRefs: PackageRef*): Future[BatchPackageResult] = Future {
+  override def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Future[BatchPackageResult] = Future {
     val foundPackages = allPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 
     val foundVersions = packageRefs.map(i=> {

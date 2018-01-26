@@ -12,6 +12,7 @@ case class PFRootInterface(
                           name: PFFieldInterface[YamlString],
                           parsers: PFListInterface[YamlString],
                           knowledge: PFListInterface[YamlString],
+                          knowledgePaths: PFListInterface[YamlString],
                           ignored_files: PFListInterface[YamlString]
                           )
 

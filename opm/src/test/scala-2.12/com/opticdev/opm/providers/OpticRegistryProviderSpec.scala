@@ -1,12 +1,6 @@
-package com.opticdev.opm
+package com.opticdev.opm.providers
 
-import java.net.URL
-
-import org.scalatest.{FlatSpec, FunSpec}
-
-import scala.concurrent.Await
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration
+import org.scalatest.FunSpec
 
 
 class OpticRegistryProviderSpec extends FunSpec {
