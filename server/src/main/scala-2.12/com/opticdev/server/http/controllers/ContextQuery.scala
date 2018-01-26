@@ -14,35 +14,46 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class ContextQuery(file: File, range: Range)(implicit projectsManager: ProjectsManager) {
+class ContextQuery(file: File, range: Range, contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
 
-  def execute : Future[Vector[LinkedModelNode]] = Future {
+  def execute : Future[Vector[LinkedModelNode]] = {
+
     val projectOption = projectsManager.lookupProject(file)
-    if (projectOption.isFailure) throw new FileNotInProjectException(file)
 
-    val graph = new ProjectGraphWrapper(projectOption.get.projectGraph)
+    def query = Future {
+      if (projectOption.isFailure) throw new FileNotInProjectException(file)
 
-    val fileGraph = graph.subgraphForFile(file)
+      val graph = new ProjectGraphWrapper(projectOption.get.projectGraph)
 
-    if (fileGraph.isDefined) {
-      val o : Vector[ModelNode] = fileGraph.get.nodes.toVector.filter(i=>
-        i.isNode && i.value.isInstanceOf[ModelNode]
-      ).map(_.value.asInstanceOf[ModelNode])
+      val fileGraph = graph.subgraphForFile(file)
 
-      implicit val actorCluster = projectsManager.actorCluster
-      val resolved = o.map(_.resolve())
+      if (fileGraph.isDefined) {
+        val o: Vector[ModelNode] = fileGraph.get.nodes.toVector.filter(i =>
+          i.isNode && i.value.isInstanceOf[ModelNode]
+        ).map(_.value.asInstanceOf[ModelNode])
 
-      //filter only models where the ranges intersect
-      resolved.filter(node=> (node.root.range intersect range.inclusive).nonEmpty)
+        implicit val actorCluster = projectsManager.actorCluster
+        val resolved = o.map(_.resolve())
 
-    } else {
-      if (projectOption.get.shouldWatchFile(file)) {
-        //wait for it to be processed
-        Vector()
+        //filter only models where the ranges intersect
+        resolved.filter(node => (node.root.range intersect range.inclusive).nonEmpty)
+
       } else {
-        throw new FileIsNotWatchedByProjectException(file)
+        if (projectOption.get.shouldWatchFile(file)) {
+          //wait for it to be processed
+          Vector()
+        } else {
+          throw new FileIsNotWatchedByProjectException(file)
+        }
       }
     }
+
+    if (contentsOption.isDefined && projectOption.isSuccess) {
+      projectOption.get.stageFileContents(file, contentsOption.get).map(i=> query).flatten
+    } else {
+      query
+    }
+
   }
 
   def executeToApiResponse : Future[APIResponse] = {

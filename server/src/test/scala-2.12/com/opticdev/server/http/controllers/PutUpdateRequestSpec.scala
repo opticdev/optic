@@ -30,7 +30,7 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
 
     val future = instanceWatchingTestProject.flatMap(pm=> {
       projectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37))
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)
       cq.executeToApiResponse
     })
 

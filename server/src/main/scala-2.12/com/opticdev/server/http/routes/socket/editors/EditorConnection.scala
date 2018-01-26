@@ -53,9 +53,10 @@ class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projects
                 val fileTry = Try(parsedTry.get.value("file").as[JsString].value)
                 val startTry = Try(parsedTry.get.value("start").as[JsNumber].value.toInt)
                 val endTry = Try(parsedTry.get.value("end").as[JsNumber].value.toInt)
+                val contentsTry = Try(parsedTry.get.value("contents").as[JsString].value).toOption
 
                 if (fileTry.isSuccess && startTry.isSuccess && endTry.isSuccess)
-                  Context(fileTry.get, Range(startTry.get, endTry.get)) else UnknownEvent(i)
+                  Context(fileTry.get, Range(startTry.get, endTry.get), contentsTry) else UnknownEvent(i)
               }
               case _ => UnknownEvent(i)
             }

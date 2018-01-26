@@ -26,9 +26,9 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
       EditorConnection.killEditor(slug)
     }
 
-    case Context(file, range) => {
+    case Context(file, range, contentsOption) => {
 
-      new ContextQuery(File(file), range)(projectsManager).executeToApiResponse
+      new ContextQuery(File(file), range, contentsOption)(projectsManager).executeToApiResponse
         .map(i=> {
           println(i)
           AgentConnection.broadcastContext( ContextFound(file, range, i.data) )

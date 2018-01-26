@@ -38,5 +38,5 @@ class ContextRoute(implicit executionContext: ExecutionContext, projectsManager:
     }
 
 
-  def contextQuery(file: String, range: Range) = new ContextQuery(File(file), range).executeToApiResponse
+  def contextQuery(file: String, range: Range) = new ContextQuery(File(file), range, None).executeToApiResponse
 }

@@ -27,7 +27,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
 
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37))
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)
       cq.execute
     })
 
@@ -40,7 +40,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
   it("returns an empty vector if nothing is found") {
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(400, 450))
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(400, 450), None)
       cq.execute
     })
 
@@ -52,7 +52,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
   it("will fail if project does not watch queried file") {
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/README"), Range(400, 450))
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/README"), Range(400, 450), None)
       cq.execute
     })
 
@@ -63,7 +63,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
 
   it("will fail if project doesn't exist") {
     implicit val projectsManager = projectsManagerWithStorage(ServerStorage(Map("test" -> "test-examples/resources/tmp/test_project")))
-    val cq = new ContextQuery(File("not/real/file"), Range(12, 35))
+    val cq = new ContextQuery(File("not/real/file"), Range(12, 35), None)
     cq.execute.onComplete(i=> {
       assert(i.isFailure)
       assert(i.failed.get.isInstanceOf[FileNotInProjectException])
@@ -76,7 +76,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
 
       val future = instanceWatchingTestProject.flatMap(pm=> {
         implicit val projectsManager: ProjectsManager = pm
-        val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37))
+        val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)
         cq.executeToApiResponse
       })
 
@@ -88,7 +88,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
 
     it("converts exceptions into an error object") {
       implicit val projectsManager = projectsManagerWithStorage(ServerStorage(Map("test" -> "test-examples/resources/tmp/test_project")))
-      val cq = new ContextQuery(File("not/real/file"), Range(12, 35))
+      val cq = new ContextQuery(File("not/real/file"), Range(12, 35), None)
       val future = cq.executeToApiResponse
 
       val result = Await.result(future, 10 seconds)
@@ -97,6 +97,18 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
 
     }
 
+  }
+
+  it("can work with a staged output") {
+    val future = instanceWatchingTestProject.flatMap(pm=> {
+      implicit val projectsManager: ProjectsManager = pm
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), Some("var me = you"))
+      cq.executeToApiResponse
+    })
+
+    val result = Await.result(future, 10 seconds)
+    assert(result.statusCode == StatusCodes.OK)
+    assert(result.data.asInstanceOf[JsArray].value.isEmpty)
   }
 
 }
