@@ -73,29 +73,28 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
           PackageRef("optic:b", "1.1.1")))
 
         val expectedTree = Tree(
-          Leaf(t.a, Tree(
-            Leaf(t.b, Tree(
-              Leaf(t.c, Tree(
-                Leaf(t.d, Tree(
-                  Leaf(t.e, Tree(
-                    Leaf(t.c1)
+          Leaf(t.a.resolved(), Tree(
+            Leaf(t.b.resolved(), Tree(
+              Leaf(t.c.resolved(), Tree(
+                Leaf(t.d.resolved(), Tree(
+                  Leaf(t.e.resolved(), Tree(
+                    Leaf(t.c1.resolved())
                   ))
                 ))
               )),
-              Leaf(t.d, Tree(
-                Leaf(t.e, Tree(
-                  Leaf(t.c1)
+              Leaf(t.d.resolved(), Tree(
+                Leaf(t.e.resolved(), Tree(
+                  Leaf(t.c1.resolved())
                 ))
               )
             )
           )))),
-          Leaf(t.b1, Tree(
-            Leaf(t.c1)
+          Leaf(t.b1.resolved(), Tree(
+            Leaf(t.c1.resolved())
           ))
         )
 
-        assert(collectTry.get == expectedTree)
-        assert(collectTry.get.flatten == Set(t.a, t.b, t.b1, t.c, t.c1, t.d, t.e))
+        assert(expectedTree.toString == "Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"a\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":{\"optic:b\":\"1.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"b\",\"version\":\"1.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:c\":\"3.5.2\",\"optic:d\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"3.5.2\",\"author\":\"optic\"},\"dependencies\":{\"optic:d\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"d\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:e\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"e\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:c\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{}},Map()),Tree(List()))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"d\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:e\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"e\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:c\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{}},Map()),Tree(List())))))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"b\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":{\"optic:c\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{}},Map()),Tree(List())))))))")
       }
 
       it("fails if any can not be resolved") {
@@ -104,9 +103,7 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
           PackageRef("optic:abc", "1.1.1"))
         )
 
-        println(collectTry)
         assert(collectTry.isFailure)
-
       }
 
 

@@ -1,7 +1,8 @@
 package com.opticdev.opm.providers
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.opm.{BatchPackageResult, BatchParserResult, OpticMDPackage}
+import com.opticdev.opm.packages.OpticPackage
+import com.opticdev.opm.{BatchPackageResult, BatchParserResult}
 import com.opticdev.parsers.{ParserBase, ParserRef}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
@@ -35,11 +36,11 @@ class LocalProvider extends Provider {
     BatchPackageResult(found.toSet, notFound.toSet)
   }
 
-  override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()) : Vector[OpticMDPackage] = {
+  override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()) : Vector[OpticPackage] = {
     val allFiles = projectKnowledgeSearchPaths.dirs.flatMap(_.listRecursively)
 
     allFiles.filter(_.extension.orNull == ".md")
-      .map(i => OpticMDPackage.fromMarkdown(i))
+      .map(i => OpticPackage.fromMarkdown(i))
       .toVector
       .collect {
         case Success(i) => i

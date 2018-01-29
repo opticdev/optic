@@ -17,7 +17,7 @@ object GearStorage {
   implicit val rulesProvider = new RuleProvider()
 
   def writeToStorage(gear: Gear): File = {
-    val file = DataDirectory.compiled / gear.identifier  createIfNotExists(asDirectory = false)
+    val file = DataDirectory.compiled / gear.name  createIfNotExists(asDirectory = false)
 
     val bytes = Pickle.intoBytes(gear)
     file.writeByteArray(bytes.array())

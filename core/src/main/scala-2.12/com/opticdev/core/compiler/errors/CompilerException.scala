@@ -1,7 +1,7 @@
 package com.opticdev.core.compiler.errors
 
 import com.opticdev.core.compiler.helpers.FinderPath
-import com.opticdev.opm.OpticMDPackage
+import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.sdk.descriptions.finders.{NodeFinder, RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.finders.{RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.{CodeComponent, Lens, SchemaRef}

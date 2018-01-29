@@ -7,7 +7,7 @@ import com.opticdev.core.sourcegear.Gear
 import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping}
 import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
-import com.opticdev.opm.OpticMDPackage
+import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
 import com.opticdev.sdk.descriptions._

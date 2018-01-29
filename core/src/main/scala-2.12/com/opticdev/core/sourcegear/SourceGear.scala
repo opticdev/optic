@@ -20,6 +20,8 @@ abstract class SourceGear {
 
   def fileAccumulator = gearSet.fileAccumulator
 
+  def findSchema(schemaRef: SchemaRef) = schemas.find(_.schemaRef == schemaRef)
+
   lazy val validExtensions: Set[String] = parsers.flatMap(_.fileExtensions)
 
   def parseFile(file: File) (implicit project: OpticProject) : Try[FileParseResults] =

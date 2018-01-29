@@ -16,7 +16,7 @@ object Dependencies {
     "org.slf4j" % "slf4j-simple" % "1.7.25" % "test",
 
     //graph
-    "org.scala-graph" %% "graph-core" % "1.12.0"
+    "org.scala-graph" %% "graph-core" % "1.12.3"
   )
 
   val commonDependencies: Seq[ModuleID] = Seq(
@@ -77,6 +77,10 @@ object Dependencies {
     "com.opticdev" %% "parser-foundation" % "1.0.0",
     "com.opticdev" %% "marvin-runtime" % "1.0.0",
     "com.opticdev" %% "marvin-common" % "1.0.0"
+  )
+
+  val arrowDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
+    "me.xdrop" % "fuzzywuzzy" % "1.1.9"
   )
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(

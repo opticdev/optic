@@ -1,2 +1,2 @@
-name := "optic-sdk"
+name := "sdk"
 organization := "com.opticdev"

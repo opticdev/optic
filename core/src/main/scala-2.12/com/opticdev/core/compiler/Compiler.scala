@@ -7,7 +7,8 @@ import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Context, PackageContext}
-import com.opticdev.opm.{DependencyTree, OpticMDPackage}
+import com.opticdev.opm.DependencyTree
+import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.sdk.descriptions.{Lens, Schema}
 
 import scala.collection.mutable.ListBuffer

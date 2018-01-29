@@ -2,12 +2,13 @@ package com.opticdev.opm
 
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
+import com.opticdev.opm.packages.StagedPackage
 import com.opticdev.opm.providers.Provider
 import com.opticdev.opm.storage.PackageStorage
 import com.opticdev.parsers.ParserRef
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
-
+import com.opticdev.opm.packages.OpticPackage
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.util.Try
@@ -30,7 +31,7 @@ object PackageManager {
     val flattenedDependencyTree = collection.mutable.Map[PackageRef, Boolean]()
     packages.foreach(i=> flattenedDependencyTree(i) = false)
 
-    val foundPackages = collection.mutable.Buffer[OpticMDPackage]()
+    val foundPackages = collection.mutable.Buffer[OpticPackage]()
 
     def alreadySatisfies(packageId: String, range: String): Boolean =
       foundPackages.exists(p=> p.packageId == packageId && new Semver(p.version, SemverType.NPM).satisfies(range))
@@ -85,7 +86,13 @@ object PackageManager {
         val packagesResolved = loaded.map(_._2.get).toVector
 
         val leafs = packagesResolved.map(i=>{
-          Leaf(i, collectPackages(i.dependencies).get)
+          val collectedPackages = collectPackages(i.dependencies).get
+          val dependencyMapping = i.dependencies.map(dep=> {
+            (dep, collectedPackages.leafs.find(_.opticPackage.packageRef.packageId == dep.packageId).get.opticPackage.packageRef)
+          }).toMap
+
+          Leaf(i.resolved(dependencyMapping), collectedPackages)
+
         })
 
         Tree(leafs:_*)

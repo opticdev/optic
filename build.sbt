@@ -31,6 +31,12 @@ lazy val core = (project in file("core")).
   .dependsOn(opm)
   .dependsOn(opm % "compile->compile;test->test")
 
+lazy val arrow = (project in file("arrow")).
+  settings(Common.settings: _*)
+  .settings(libraryDependencies ++= Dependencies.arrowDependencies)
+  .dependsOn(core)
+  .dependsOn(sdk)
+
 lazy val server = (project in file("server")).
  settings(Common.settings: _*)
  .settings(libraryDependencies ++= Dependencies.serverDependencies)

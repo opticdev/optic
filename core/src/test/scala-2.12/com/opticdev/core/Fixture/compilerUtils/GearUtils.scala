@@ -5,8 +5,8 @@ import com.opticdev.core.compiler.Compiler
 import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
 import com.opticdev.core.sourcegear.{Gear, GearSet, SourceGear}
-import com.opticdev.opm.OpticMDPackage
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
+import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.parsers.SourceParserManager
 
 import scala.collection.mutable.ListBuffer
@@ -22,7 +22,7 @@ trait GearUtils {
 
   def gearFromDescription(path: String): Gear = {
     val jsonString = Source.fromFile(path).getLines.mkString
-    val description = OpticMDPackage.fromJson(Json.parse(jsonString)).get
+    val description = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
     val dependencyTree = Tree(Leaf(description))
     val packageContext = dependencyTree.treeContext(description.packageFull).get
 
@@ -34,7 +34,7 @@ trait GearUtils {
 
   def gearsFromDescription(path: String) : Seq[Gear] = {
     val jsonString = Source.fromFile(path).getLines.mkString
-    val descriptions = OpticMDPackage.fromJson(Json.parse(jsonString)).get
+    val descriptions = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
 
     val dependencyTree = Tree(Leaf(descriptions))
     val packageContext = dependencyTree.treeContext(descriptions.packageFull).get
@@ -56,7 +56,7 @@ trait GearUtils {
     }
 
     val jsonString = Source.fromFile(path).getLines.mkString
-    val description = OpticMDPackage.fromJson(Json.parse(jsonString)).get
+    val description = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
 
     implicit val dependencyTree = Tree(Leaf(description))
     implicit val packageContext = PackageContextFixture.fromSchemas(description.schemas)

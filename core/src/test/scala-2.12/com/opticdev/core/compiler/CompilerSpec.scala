@@ -5,7 +5,7 @@ import org.scalatest.FunSpec
 import play.api.libs.json.Json
 import com.opticdev.core.compiler.Compiler
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
-import com.opticdev.opm.{OpticMDPackage}
+import com.opticdev.opm.packages.OpticPackage
 
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
@@ -13,7 +13,7 @@ import scala.io.Source
 class CompilerSpec extends TestBase {
 
   val jsonString = Source.fromFile("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json").getLines.mkString
-  val description = OpticMDPackage.fromJson(Json.parse(jsonString)).get
+  val description = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
 
   implicit val dependencyTree = Tree(Leaf(description))
 
@@ -45,7 +45,7 @@ class CompilerSpec extends TestBase {
   describe("for complicated lenses") {
     it("works when valid") {
       val jsonString = Source.fromFile("test-examples/resources/example_packages/optic:FlatExpress@0.1.0.json").getLines.mkString
-      val description = OpticMDPackage.fromJson(Json.parse(jsonString)).get
+      val description = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
       implicit val dependencyTree = Tree(Leaf(description))
 
       val compiler = Compiler.setup(description)(false, dependencyTree)
@@ -53,7 +53,6 @@ class CompilerSpec extends TestBase {
 
       finalOutput.printErrors
       assert(finalOutput.isSuccess)
-
 
     }
   }

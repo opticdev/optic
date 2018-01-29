@@ -1,6 +1,6 @@
 package com.opticdev.opm.context
 
-import com.opticdev.opm.OpticMDPackage
+import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.sdk.descriptions.Schema
 
 import scala.util.hashing.MurmurHash3

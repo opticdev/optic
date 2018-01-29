@@ -1,2 +1,2 @@
-name := "optic-core"
+name := "core"
 organization := "com.opticdev"
