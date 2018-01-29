@@ -10,6 +10,7 @@ import com.opticdev.server.http.Server
 import com.opticdev.server.state.ProjectsManager
 
 object Scratch extends TestBase with TestPackageProviders {
+
   installProviders
   super.beforeAll()
 
@@ -24,4 +25,5 @@ object Scratch extends TestBase with TestPackageProviders {
   def main(args: Array[String]): Unit = {
     Server.start()
   }
+
 }

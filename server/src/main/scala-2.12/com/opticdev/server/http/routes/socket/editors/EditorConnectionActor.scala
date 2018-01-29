@@ -4,9 +4,11 @@ import akka.actor.{Actor, ActorRef, Status}
 import better.files.File
 import com.opticdev.server.http.controllers.ContextQuery
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
-import com.opticdev.server.http.routes.socket.{ContextFound, ErrorResponse, Success}
+import com.opticdev.server.http.routes.socket.agents.Protocol.{ContextFound, SearchResults}
+import com.opticdev.server.http.routes.socket.{ErrorResponse, Success}
 import com.opticdev.server.http.routes.socket.editors.Protocol._
 import com.opticdev.server.state.ProjectsManager
+import play.api.libs.json.JsArray
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -31,12 +33,12 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
       new ContextQuery(File(file), range, contentsOption)(projectsManager).executeToApiResponse
         .map(i=> {
           println(i)
-          AgentConnection.broadcastContext( ContextFound(file, range, i.data) )
+          AgentConnection.broadcastUpdate( ContextFound(file, range, i.data) )
         })
     }
 
     case Search(query) => {
-      connection ! Success()
+      AgentConnection.broadcastUpdate( SearchResults(query, JsArray.empty) )
     }
 
     case event: UpdateOpticEvent => {

@@ -15,7 +15,7 @@ package object editors {
 
     case class Terminated() extends EditorEvents
 
-    case class Search(input: String) extends EditorEvents
+    case class Search(query: String) extends EditorEvents
 
     case class Context(filePath: String, range: Range, contentsOption: Option[String]) extends EditorEvents
 

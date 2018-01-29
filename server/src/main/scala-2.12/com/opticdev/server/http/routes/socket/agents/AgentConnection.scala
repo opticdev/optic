@@ -5,7 +5,7 @@ import akka.pattern.ask
 import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
-import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, ContextFound, OpticEvent}
+import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.http.routes.socket.editors.EditorConnection._
@@ -66,7 +66,7 @@ object AgentConnection extends ConnectionManager[AgentConnection] {
     new AgentConnection(slug, actorSystem)
   }
 
-  def broadcastContext(contextFound: ContextFound) = listConnections.foreach(i=> i._2.sendUpdate(contextFound))
+  def broadcastUpdate(update: UpdateAgentEvent) = listConnections.foreach(i=> i._2.sendUpdate(update))
 
   def killAgent(slug: String) = {
     val connectionOption = connections.get(slug)

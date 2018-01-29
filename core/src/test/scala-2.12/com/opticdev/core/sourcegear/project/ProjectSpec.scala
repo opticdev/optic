@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.project
 
 import better.files.File
-import com.opticdev.core.Fixture.AkkaTestFixture
+import com.opticdev.core.Fixture.{AkkaTestFixture, PreTest}
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.actors._
@@ -12,6 +12,7 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Millis, Seconds, Span}
 import java.nio.file.{Path, WatchEvent, StandardWatchEventKinds => EventType}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import akka.actor.ActorSystem
 
@@ -137,6 +138,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
   }
 
   describe("file staging") {
+    resetScratch
     implicit val actorCluster : ActorCluster = new ActorCluster(system)
     implicit val project = new OpticProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"))  {
       override def projectSourcegear: SourceGear = sourceGear
@@ -158,7 +160,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
     it("will take from disk again if a file changed event registers") {
       val newContents = "var them = now"
       file.write(newContents)
-      eventually (timeout(Span(15, Seconds))) {
+      eventually (timeout(Span(25, Seconds))) {
         assert(ParseSupervisorSyncAccess.getContext(file).get.fileContents == newContents)
         assert(!project.filesStateMonitor.fileHasStagedContents(file))
       }

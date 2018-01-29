@@ -5,7 +5,7 @@ import akka.testkit.TestKit
 import com.opticdev.core.Fixture.SocketTestFixture
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.agents.Protocol
-import com.opticdev.server.http.routes.socket.agents.Protocol.PutUpdate
+import com.opticdev.server.http.routes.socket.agents.Protocol.{ContextFound, PutUpdate}
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsObject, JsString}
 
@@ -32,7 +32,7 @@ class AgentConnectionSocketSpec extends SocketTestFixture {
 
       it("Broadcasts updated context to all agents") {
         val event= ContextFound("f/i/l/e", Range(0,1), JsArray.empty)
-        AgentConnection.broadcastContext(event)
+        AgentConnection.broadcastUpdate(event)
         wsClient.expectMessage(event.asString)
       }
 

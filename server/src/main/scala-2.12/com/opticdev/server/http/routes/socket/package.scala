@@ -9,15 +9,6 @@ package object socket {
     def asJson: JsValue
   }
 
-  case class ContextFound(filePath: String, range: Range, results: JsValue, isError: Boolean = false) extends OpticEvent with UpdateAgentEvent {
-    def asJson = JsObject(Seq(
-      "event"-> JsString("context-found"),
-      "filePath" -> JsString(filePath),
-      "range" -> range.toJson,
-      (if (isError) "errors" else "results") -> results)
-    )
-  }
-
   case class Success() extends OpticEvent {
     def asJson = JsString("Success")
     override def asString = "Success"
