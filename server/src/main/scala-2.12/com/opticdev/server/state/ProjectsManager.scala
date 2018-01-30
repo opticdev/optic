@@ -3,6 +3,7 @@ package com.opticdev.server.state
 import java.io.FileNotFoundException
 
 import better.files.File
+import com.opticdev.arrow.Arrow
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server
@@ -21,10 +22,19 @@ class ProjectsManager {
 
   val MAX_PROJECTS = 6
 
+  private var arrowStore: Map[OpticProject, Arrow] = Map()
   private var projectsStore: Vector[OpticProject] = Vector()
 
   private def addProject(project: OpticProject) : Unit =  {
+
+    //attach a sourcegear changed callback
+    project.onSourcegearChanged((sg)=> {
+      //overwrite old sg instance with the new one
+      arrowStore = arrowStore + (project -> new Arrow(sg))
+    })
+
     projectsStore = projectsStore :+ project
+    arrowStore = arrowStore + (project -> new Arrow(project.projectSourcegear))
     if (projectsStore.size > MAX_PROJECTS) {
       val (toRemove, projects) = projectsStore.splitAt(projectsStore.size - MAX_PROJECTS)
       projectsStore = projects
@@ -36,6 +46,7 @@ class ProjectsManager {
     //spin down projects and save to disk
     project.stopWatching
     projectsStore = projectsStore.filterNot(_ == project)
+    arrowStore = arrowStore.filterNot(_._1 == project)
   }
 
   def activeProjects: Vector[OpticProject] = projectsStore
@@ -98,5 +109,10 @@ class ProjectsManager {
   }
 
   def storage = ServerStorage.reload
+
+
+  //finding arrow instances
+  def lookupArrow(includedFile: File) : Option[Arrow] = lookupProject(includedFile).map(i=> arrowStore(i)).toOption
+  def lookupArrow(projectName: String) : Option[Arrow] = lookupProject(projectName).map(i=> arrowStore(i)).toOption
 
 }

@@ -1,6 +1,6 @@
 package com.opticdev.arrow.search
 
-import com.opticdev.arrow.GearResult
+import com.opticdev.arrow.results.GearResult
 import com.opticdev.core.sourcegear.Gear
 import org.scalatest.FunSpec
 

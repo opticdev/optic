@@ -34,7 +34,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
     val result = Await.result(future, 10 seconds)
 
     assert(result.size == 1)
-    assert(result.head.schemaId == SchemaRef.fromString("optic:rest/route").get)
+    assert(result.head.schemaId == SchemaRef.fromString("optic:rest@0.1.0/route").get)
   }
 
   it("returns an empty vector if nothing is found") {

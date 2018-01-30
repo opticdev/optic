@@ -50,9 +50,12 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       projectStatusInstance.configStatus = InvalidConfig(newPf.interface.failed.get.getMessage)
     }
   }
+
   val projectFile = new ProjectFile(baseDirectory / "optic.yaml", createIfDoesNotExist = true, onChanged = projectFileChanged)
 
   def projectSourcegear : SourceGear
+
+  def onSourcegearChanged(callback: (SourceGear)=> Unit) : Unit = Unit
 
   def watch = {
     rereadAll

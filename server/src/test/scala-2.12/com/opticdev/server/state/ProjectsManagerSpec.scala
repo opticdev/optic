@@ -80,4 +80,15 @@ class ProjectsManagerSpec extends AkkaTestFixture("ProjectsManagerSpec") with Pr
     it("can stop watching projects") {}
   }
 
+
+  describe("arrow") {
+
+    it("will maintain an arrow instance for all loaded projects") {
+      val f = projectsManagerWithStorage()
+      assert(f.loadProject("test", File("test-examples/resources/tmp/test_project")).isSuccess)
+      assert(f.lookupArrow("test").isDefined)
+    }
+
+  }
+
 }

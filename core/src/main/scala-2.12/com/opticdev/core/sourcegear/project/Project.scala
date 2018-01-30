@@ -26,6 +26,8 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
       SGConstructor.fromProjectFile(newPf)(projectSearchPaths).onComplete(i => {
         if (i.isSuccess) {
           sourceGear = i.get.inflate
+          //run all callbacks
+          sourcegearchangedCallbacks.foreach(_.apply(sourceGear))
           projectStatusInstance.sourceGearStatus = Valid
           if (projectStatus.monitoringStatus == Watching) rereadAll
         } else {
@@ -36,6 +38,11 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
   }
 
   override def projectSourcegear = sourceGear
+
+
+  private val sourcegearchangedCallbacks = scala.collection.mutable.ListBuffer[(SourceGear)=> Unit]()
+  override def onSourcegearChanged(callback: (SourceGear)=> Unit) : Unit =
+    if (callback != null) sourcegearchangedCallbacks += callback
 
 }
 

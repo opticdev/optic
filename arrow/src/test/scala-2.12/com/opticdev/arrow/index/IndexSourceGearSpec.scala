@@ -16,9 +16,10 @@ class IndexSourceGearSpec extends TestBase with TestPackageProviders {
     Await.result(future, 10 seconds)
   }.inflate
 
-  it("can index a sourcegear instance for arrow") {
+  it("can index a sourcegear instance") {
     val knowledgeGraph = IndexSourceGear.runFor(sourcegear)
-    null
+    assert(knowledgeGraph.nodes.size == 4)
+    assert(knowledgeGraph.size == 6)
   }
 
 
