@@ -2,7 +2,7 @@ package com.opticdev.server.http.routes.socket.editors
 
 import akka.actor.{Actor, ActorRef, Status}
 import better.files.File
-import com.opticdev.server.http.controllers.ContextQuery
+import com.opticdev.server.http.controllers.{ArrowQuery, ContextQuery}
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.agents.Protocol.{ContextFound, SearchResults}
 import com.opticdev.server.http.routes.socket.{ErrorResponse, Success}
@@ -37,8 +37,10 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
         })
     }
 
-    case Search(query) => {
-      AgentConnection.broadcastUpdate( SearchResults(query, JsArray.empty) )
+    case Search(query, file, range) => {
+      new ArrowQuery(file, query, range, None)(projectsManager).executeToApiResponse.map(i=> {
+        AgentConnection.broadcastUpdate( SearchResults(query, i.data) )
+      })
     }
 
     case event: UpdateOpticEvent => {

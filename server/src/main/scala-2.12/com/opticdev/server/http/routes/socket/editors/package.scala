@@ -1,6 +1,7 @@
 package com.opticdev.server.http.routes.socket
 
 import akka.actor.ActorRef
+import better.files.File
 import play.api.libs.json.{JsObject, JsString}
 
 package object editors {
@@ -15,7 +16,7 @@ package object editors {
 
     case class Terminated() extends EditorEvents
 
-    case class Search(query: String) extends EditorEvents
+    case class Search(query: String, file: File, range: Range) extends EditorEvents
 
     case class Context(filePath: String, range: Range, contentsOption: Option[String]) extends EditorEvents
 

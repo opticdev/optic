@@ -26,7 +26,7 @@ package object agents {
       )
     }
 
-    case class SearchResults(query: String, results: JsArray) extends OpticEvent with UpdateAgentEvent {
+    case class SearchResults(query: String, results: JsValue) extends OpticEvent with UpdateAgentEvent {
       def asJson = JsObject(Seq(
         "event"-> JsString("search-results"),
         "results"-> results

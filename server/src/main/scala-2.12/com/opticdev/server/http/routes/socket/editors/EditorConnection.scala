@@ -7,6 +7,7 @@ import akka.pattern.ask
 import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
+import better.files.File
 import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.editors.Protocol._
@@ -41,8 +42,13 @@ class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projects
           val message = if (eventTry.isSuccess) {
             eventTry.get match {
               case "search" => {
+                val fileTry = Try(parsedTry.get.value("file").as[JsString].value)
+                val startTry = Try(parsedTry.get.value("start").as[JsNumber].value.toInt)
+                val endTry = Try(parsedTry.get.value("end").as[JsNumber].value.toInt)
+
                 val queryTry  = Try(parsedTry.get.value("query").as[JsString].value)
-                if (queryTry.isSuccess) Search(queryTry.get) else UnknownEvent(i)
+                if (queryTry.isSuccess && fileTry.isSuccess && startTry.isSuccess && endTry.isSuccess)
+                  Search(queryTry.get, File(fileTry.get), Range(startTry.get, endTry.get)) else UnknownEvent(i)
               }
               case "updateMeta" => {
                 val nameTry  = Try(parsedTry.get.value("name").as[JsString].value)

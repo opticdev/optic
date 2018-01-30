@@ -18,7 +18,6 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class ArrowQuerySpec extends AkkaTestFixture("ArrowQuerySpec") with ProjectsManagerFixture with TestPackageProviders {
 
-
   def runquery(query: String) = {
     instanceWatchingTestProject.flatMap(pm => {
       implicit val projectsManager: ProjectsManager = pm
