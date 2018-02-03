@@ -23,15 +23,21 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
       AgentConnection.killAgent(slug)
     }
 
+    //message to client routing
     case UnknownEvent(raw) => {
       connection ! ErrorResponse("Invalid Request")
     }
-
 
     case contextUpdate: ContextFound => {
       connection ! contextUpdate
     }
 
+    case searchResults: SearchResults => {
+      connection ! searchResults
+    }
+
+
+    //client actions
     case update : PutUpdate => {
       //@todo handle error states
       new PutUpdateRequest(update.id, update.newValue)(projectsManager)

@@ -30,11 +30,8 @@ class ArrowQuery(file: File, query: String, range: Range, contentsOption: Option
 
     execute.transform {
       case Success(vector: Vector[Result]) => {
-        //@todo clean this up...way cleaner way possible
-        //        implicit val project = projectsManager.lookupProject(file).get
-        //        implicit val actorCluster = projectsManager.actorCluster
-        //        implicit val sourceGear = project.projectSourcegear
-        //        implicit val sourceGearContext = ParseSupervisorSyncAccess.getContext(file).get
+        implicit val project = projectsManager.lookupProject(file).get
+        implicit val sourceGear = project.projectSourcegear
 
         Try(APIResponse(StatusCodes.OK, JsArray(vector.map(_.asJson))))
       }

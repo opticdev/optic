@@ -30,11 +30,11 @@ class AgentConnectionSocketSpec extends SocketTestFixture {
         wsClient.sendMessage(asString)
       }
 
-      it("Broadcasts updated context to all agents") {
-        val event= ContextFound("f/i/l/e", Range(0,1), JsArray.empty)
-        AgentConnection.broadcastUpdate(event)
-        wsClient.expectMessage(event.asString)
-      }
+//      it("Broadcasts updated context to all agents") {
+//        val event= ContextFound("f/i/l/e", Range(0,1), JsArray.empty)
+//        AgentConnection.broadcastUpdate(event)
+//        wsClient.expectMessage(event.asString)
+//      }
 
     }
 }

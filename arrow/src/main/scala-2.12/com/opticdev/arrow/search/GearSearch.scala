@@ -10,7 +10,9 @@ object GearSearch {
 
   def search(query: String, gears: Set[Gear]) : Vector[Result] =
     gears
-      .map(i=> GearResult(i, FuzzySearch.tokenSetPartialRatio(i.name, query)))
+      .map(i=> {
+        GearResult(i, FuzzySearch.tokenSetPartialRatio(i.name, query))
+      })
       .toVector
       .filterNot(_.score < 50)
       .sortBy(_.score * -1) // to reverse it as it sorts

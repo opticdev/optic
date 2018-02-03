@@ -29,7 +29,6 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
     }
 
     case Context(file, range, contentsOption) => {
-
       new ContextQuery(File(file), range, contentsOption)(projectsManager).executeToApiResponse
         .map(i=> {
           println(i)

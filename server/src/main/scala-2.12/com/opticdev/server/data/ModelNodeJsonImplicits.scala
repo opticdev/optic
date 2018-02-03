@@ -24,25 +24,7 @@ object ModelNodeJsonImplicits {
       implicit val sourceGearContext: SGContext = ParseSupervisorSyncAccess.getContext(fileNode.get.toFile).get
 
       //@todo factor this out
-      val schemaOption = {
-        val project = modelNode.project
-
-        val possibleMatches = project.projectSourcegear.schemas.filter(i=>
-          i.schemaRef.packageRef.name == modelNode.schemaId.packageRef.name &&
-          i.schemaRef.id == modelNode.schemaId.id)
-
-        val targetVersion = modelNode.schemaId.packageRef.version
-
-        val withVersions = possibleMatches.filter(i=> {
-          val semVer = Try(new Semver(i.schemaRef.packageRef.version, SemverType.NPM))
-          if (semVer.isSuccess) semVer.get.satisfies(targetVersion) || targetVersion == "latest" else false
-        }).toVector.sortWith((a, b)=> {
-          new Semver(a.schemaRef.packageRef.version, SemverType.NPM).isGreaterThan(
-          new Semver(b.schemaRef.packageRef.version, SemverType.NPM))
-        })
-
-        withVersions.headOption
-      }
+      val schemaOption = sourceGear.findSchema(modelNode.schemaId)
 
       println(schemaOption)
 
