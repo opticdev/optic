@@ -10,8 +10,8 @@ import scala.util.{Failure, Success, Try}
 object JsonImplicits {
 
   //SDK Objects refs
-  implicit val packageRefFormat = Json.format[PackageRef]
-  implicit val schemaRefFormat = Json.format[SchemaRef]
+  import PackageRef.packageRefJsonFormat
+  import SchemaRef.schemaRefFormats
 
 
   //File
@@ -76,5 +76,7 @@ object JsonImplicits {
     }
   }
 
+
+  implicit val changeGroupFormat = Json.format[ChangeGroup]
 
 }

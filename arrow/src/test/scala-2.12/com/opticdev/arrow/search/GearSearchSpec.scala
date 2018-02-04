@@ -1,5 +1,6 @@
 package com.opticdev.arrow.search
 
+import com.opticdev.arrow.context.NoContext
 import com.opticdev.arrow.results.GearResult
 import com.opticdev.core.sourcegear.Gear
 import org.scalatest.FunSpec
@@ -17,16 +18,16 @@ class GearSearchSpec extends FunSpec {
   )
 
   it("will rank gears correctly") {
-    val searchResults1 = GearSearch.search("route", testGears)
+    val searchResults1 = GearSearch.search("route", NoContext, testGears)(null)
     assert(
       searchResults1.map(_.asInstanceOf[GearResult].gear.name) ==
         Seq("REST Route", "Route")
     )
 
-    val searchResults2 = GearSearch.search("model", testGears)
+    val searchResults2 = GearSearch.search("model", NoContext, testGears)(null)
     assert(
       searchResults2.map(_.asInstanceOf[GearResult].gear.name) ==
-        Seq("Model Creation", "Model", "Model Definition")
+        Seq("Model Creation", "Model Definition", "Model")
     )
 
   }

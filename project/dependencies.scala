@@ -22,6 +22,7 @@ object Dependencies {
   val commonDependencies: Seq[ModuleID] = Seq(
     "org.apache.commons" % "commons-lang3" % "3.6",
     "com.github.pathikrit" % "better-files_2.12" % "2.17.1",
+    "com.typesafe.play" %% "play-json" % "2.6.2",
     "org.scalactic" %% "scalactic" % "3.0.1",
     "org.scalatest" %% "scalatest" % "3.0.1" % "test"
   )

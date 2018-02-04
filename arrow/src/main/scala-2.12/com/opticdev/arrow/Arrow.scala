@@ -11,7 +11,7 @@ class Arrow(sourcegear: SourceGear) {
   val indexed = IndexSourceGear.runFor(sourcegear)
 
   def search(query: String, context: ArrowContextBase = NoContext): Vector[Result] = {
-    GearSearch.search(query)(sourcegear)
+    GearSearch.search(query, context)(sourcegear)
   }
 
 }

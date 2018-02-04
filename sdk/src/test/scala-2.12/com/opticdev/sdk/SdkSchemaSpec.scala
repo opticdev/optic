@@ -159,4 +159,10 @@ class SdkSchemaSpec extends FunSpec {
 
   }
 
+  it("can serialize and deserialize in json") {
+    val ref = SchemaRef.fromString("optic:rest@1.0.0/parameter").get
+    import SchemaRef.schemaRefFormats
+    assert(Json.fromJson[SchemaRef](Json.toJson[SchemaRef](ref)).get == ref)
+  }
+
 }

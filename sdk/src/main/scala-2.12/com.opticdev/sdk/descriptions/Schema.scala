@@ -75,6 +75,16 @@ case class SchemaRef(packageRef: PackageRef, id: String) {
 }
 
 object SchemaRef {
+
+  implicit val schemaRefFormats = new Format[SchemaRef] {
+    import PackageRef.packageRefJsonFormat
+
+    override def writes(o: SchemaRef) = JsString(o.full)
+
+    override def reads(json: JsValue) = JsSuccess(SchemaRef.fromString(json.as[JsString].value).get)
+  }
+
+
   def fromString(string: String, parentRef: PackageRef = null): Try[SchemaRef] = Try {
     val components = string.split("/")
 

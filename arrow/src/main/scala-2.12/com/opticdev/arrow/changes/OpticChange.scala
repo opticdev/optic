@@ -6,6 +6,7 @@ import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 sealed trait OpticChange {
   def execute : ChangeResult
   def asJson : JsValue
+  def schemaRefOption : Option[SchemaRef] = None
 }
 
 /* Updates an existing model found in the code by an ID  */
@@ -20,6 +21,8 @@ case class InsertModel(schemaRef: SchemaRef, value: JsObject, atLocation: Insert
   import JsonImplicits.insertModelFormat
   override def execute = ???
   def asJson : JsValue = Json.toJson[InsertModel](this)
+
+  override def schemaRefOption = Some(schemaRef)
 }
 
 case class RawInsert(content: String, position: RawPosition) extends OpticChange {
