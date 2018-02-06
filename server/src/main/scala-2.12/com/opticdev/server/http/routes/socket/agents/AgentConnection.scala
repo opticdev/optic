@@ -5,6 +5,7 @@ import akka.pattern.ask
 import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
+import better.files.File
 import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.agents.Protocol._
@@ -30,7 +31,7 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
       Flow[String]
         .map(i=> {
           val parsedTry = Try(Json.parse(i).as[JsObject])
-          val eventTry  = Try(parsedTry.get.value.get("event").get.as[JsString].value)
+          val eventTry  = Try(parsedTry.get.value("event").as[JsString].value)
           val message = if (eventTry.isSuccess) {
             eventTry.get match {
               case "put-update" => {
@@ -40,7 +41,27 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
                   PutUpdate(idTry.get, newValueTry.get)
                 } else UnknownEvent(i)
               }
-                //does not recieve anything from agent...yet
+
+              case "search" => {
+
+                val queryTry  = Try(parsedTry.get.value("query").as[JsString].value)
+
+                val fileOption = Try(File(parsedTry.get.value("file").as[JsString].value)).toOption
+                val rangeOption = Try {
+                  val start = parsedTry.get.value("start").as[JsNumber].value.toInt
+                  val end = parsedTry.get.value("end").as[JsNumber].value.toInt
+                  Range(start, end)
+                }.toOption
+
+                if (queryTry.isSuccess) {
+                  AgentSearch(queryTry.get, None, fileOption, rangeOption)
+                } else {
+                  UnknownEvent(i)
+                }
+
+              }
+
+              //does not receive anything from agent...yet
               case _ => UnknownEvent(i)
             }
           } else UnknownEvent(i)

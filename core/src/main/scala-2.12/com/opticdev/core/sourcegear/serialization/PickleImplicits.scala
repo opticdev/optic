@@ -109,6 +109,8 @@ object PickleImplicits extends PicklerHelper {
   implicit object GearPickler extends Pickler[Gear] {
     override def pickle(value: Gear)(implicit state: PickleState): Unit = {
       state.pickle(value.name)
+      state.pickle(value.packageFull)
+      state.pickle(value.schemaRef)
       state.pickle(value.enterOn)
       state.pickle(value.parser)
       state.pickle(value.generater)
@@ -116,6 +118,8 @@ object PickleImplicits extends PicklerHelper {
     override def unpickle(implicit state: UnpickleState): Gear = {
       Gear(
         state.unpickle[String],
+        state.unpickle[String],
+        state.unpickle[SchemaRef],
         state.unpickle[Set[AstType]],
         state.unpickle[ParseAsModel],
         state.unpickle[GenerateGear]

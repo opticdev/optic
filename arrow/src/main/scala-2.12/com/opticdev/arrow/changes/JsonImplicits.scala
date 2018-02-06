@@ -2,7 +2,7 @@ package com.opticdev.arrow.changes
 import better.files.File
 import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
@@ -51,7 +51,30 @@ object JsonImplicits {
 
 
   //Insert Model
-  implicit val insertModelFormat = Json.format[InsertModel]
+  implicit val insertModelFormat = new OFormat[InsertModel] {
+    override def writes(o: InsertModel) : JsObject = {
+      JsObject(Seq(
+        "schema" -> o.schema.toJson,
+        "value" -> o.value,
+        "gearId" -> Try(JsString(o.gearId.get)).getOrElse(JsNull),
+        "atLocation" -> Json.toJson[InsertLocation](o.atLocation)
+      ))
+    }
+
+    override def reads(json: JsValue) = {
+      val schemaJson = (json \ "schema").get.as[JsObject]
+      val schemaRef = SchemaRef.fromString((schemaJson \ "_identifier").get.as[JsString].value)
+      val schema = Schema(schemaRef.get, schemaJson - "_identifier")
+
+      val value = (json \ "value").get.as[JsObject]
+
+      val gearId = Try(Some((json \ "gearId").get.as[JsString].value)).getOrElse(None)
+
+      val atLocation = Json.fromJson[InsertLocation]((json \ "atLocation").get).get
+
+      JsSuccess(InsertModel(schema, gearId, value, atLocation))
+    }
+  }
   //Raw Insert
   implicit val rawInsertFormat = Json.format[RawInsert]
 
@@ -77,6 +100,15 @@ object JsonImplicits {
   }
 
 
-  implicit val changeGroupFormat = Json.format[ChangeGroup]
+  implicit val changeGroupFormat = new Format[ChangeGroup] {
+    override def reads(json: JsValue) = {
+      val result = json.as[JsArray].value.map(i=> Json.fromJson[OpticChange](i).get)
+      JsSuccess(ChangeGroup(result:_*))
+    }
+
+    override def writes(o: ChangeGroup) = {
+      JsArray(o.changes.map(_.asJson))
+    }
+  }
 
 }

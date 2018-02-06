@@ -56,9 +56,10 @@ case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExp
 
   def validate(jsValue: JsValue): Boolean = jsonSchema.validate(jsValue.as[JsonNode]).isSuccess
 
+  def toJson = definition ++ JsObject(Seq("_identifier" -> JsString(schemaRef.full)))
+
   def toColdStorage = {
-    val flattened = definition ++ JsObject(Seq("_identifier" -> JsString(schemaRef.full)))
-    SchemaColdStorage(flattened.toString())
+    SchemaColdStorage(toJson.toString())
   }
 
 }

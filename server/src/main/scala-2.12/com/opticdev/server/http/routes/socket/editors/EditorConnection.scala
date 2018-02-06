@@ -48,7 +48,7 @@ class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projects
 
                 val queryTry  = Try(parsedTry.get.value("query").as[JsString].value)
                 if (queryTry.isSuccess && fileTry.isSuccess && startTry.isSuccess && endTry.isSuccess)
-                  Search(queryTry.get, File(fileTry.get), Range(startTry.get, endTry.get)) else UnknownEvent(i)
+                  EditorSearch(queryTry.get, File(fileTry.get), Range(startTry.get, endTry.get)) else UnknownEvent(i)
               }
               case "updateMeta" => {
                 val nameTry  = Try(parsedTry.get.value("name").as[JsString].value)

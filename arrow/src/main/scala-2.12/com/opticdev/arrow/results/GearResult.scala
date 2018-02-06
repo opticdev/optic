@@ -10,13 +10,13 @@ case class GearResult(gear: Gear, score: Int, context: ArrowContextBase)(implici
   override def asJson = {
     JsObject(Seq(
       "name" -> JsString(gear.name),
-      "packageId" -> JsString(""),
-      "schema" -> sourcegear.findSchema(gear.parser.schema).get.definition,
+      "packageId" -> JsString(gear.packageFull),
+      "schemaRef" -> JsString(gear.schemaRef.full),
       "changes" -> changes.asJson
     ))
   }
 
   override def changes = ChangeGroup(
-    InsertModel(gear.parser.schema, JsObject.empty, context.toInsertLocation.orNull)
+    InsertModel(sourcegear.findSchema(gear.schemaRef).get, Some(gear.id), JsObject.empty, context.toInsertLocation.orNull)
   )
 }

@@ -1,12 +1,14 @@
 package com.opticdev.core.sourcegear.gears.generating
 
-import com.opticdev.core.sourcegear.SGContext
+import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstPrimitiveNode, GraphImplicits}
 import play.api.libs.json.{JsObject, JsValue}
 import com.opticdev.parsers.SourceParserManager
+
+import scala.util.hashing.MurmurHash3
 
 case class GenerateGear(block: String,
                         languageId: LanguageId,
@@ -20,18 +22,28 @@ case class GenerateGear(block: String,
     } else throw new Error("Unable to find parser for generator")
   }
 
-  def generate(value: JsObject)(implicit sourceGearContext: SGContext, project: OpticProject): String = {
+  def generate(value: JsObject)(implicit sourceGear: SourceGear): String = {
+
+    implicit val sourceGearContext = SGContext.forGeneration(sourceGear, languageId)
+
     implicit val fileContents = block
     implicit val astGraph = parseResult.graph
     //@todo make this work for all entry children
     val rootNode = astGraph.nodes.toVector
       .find(node=> entryChild.matchingPredicate(node.value.asInstanceOf[AstPrimitiveNode]))
       .get.value.asInstanceOf[AstPrimitiveNode]
-    val isMatch = parseGear.matches(rootNode, true)
+    val isMatch = parseGear.matches(rootNode, true)(astGraph, fileContents, sourceGearContext, null)
     if (isMatch.isEmpty) throw new Error("Can not generate. Snippet does not contain model "+parseGear)
 
     import com.opticdev.core.sourcegear.mutate.MutationImplicits._
     isMatch.get.modelNode.update(value)
+  }
+
+  def hash = {
+      MurmurHash3.stringHash(block) ^
+      MurmurHash3.stringHash(entryChild.toString) ^
+      MurmurHash3.stringHash(languageId.toString) ^
+      parseGear.hash
   }
 
 }

@@ -4,8 +4,8 @@ import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
-import com.opticdev.parsers.SourceParserManager
-import com.opticdev.parsers.ParserBase
+import com.opticdev.parsers
+import com.opticdev.parsers.{LanguageId, ParserBase, SourceParserManager}
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge
@@ -21,6 +21,10 @@ abstract class SourceGear {
   def fileAccumulator = gearSet.fileAccumulator
 
   def findSchema(schemaRef: SchemaRef) = schemas.find(_.schemaRef == schemaRef)
+
+  def findGear(id: String) = gearSet.listGears.find(_.id == id)
+
+  def findParser(languageId: LanguageId) = parsers.find(_.languageName == languageId.name)
 
   lazy val validExtensions: Set[String] = parsers.flatMap(_.fileExtensions)
 
@@ -43,6 +47,7 @@ abstract class SourceGear {
       throw parsedOption.failed.get
     }
   }
+
 
 }
 

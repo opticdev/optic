@@ -61,7 +61,10 @@ class ProjectsManager {
   def lookupProject(projectName: String) : Try[OpticProject] = Try {
     //check if we are already watching the project. If so, return reference to it
     val alreadyTrackingOption = activeProjects.find(_.name == projectName)
-    if (alreadyTrackingOption.isDefined) return Success(alreadyTrackingOption.get)
+    if (alreadyTrackingOption.isDefined) return {
+      _lastProjectName = Some(alreadyTrackingOption.get.name)
+      Success(alreadyTrackingOption.get)
+    }
 
     //look in our known projects store and see if we can find it.
     val knownProjects = storage.projects
@@ -80,6 +83,7 @@ class ProjectsManager {
     //check if it's in memory
     val projectOption = projectsStore.find(i=> includedFile.inPathOf(i.baseDirectory))
     if (projectOption.isDefined) {
+      _lastProjectName = Some(projectOption.get.name)
       return Success(projectOption.get)
     }
 
@@ -97,13 +101,14 @@ class ProjectsManager {
     //@todo write a project validator function ie -> has optic.yaml, that is valid.
     if (!baseDir.exists) throw new FileNotFoundException("Optic project not found at "+baseDir.pathAsString)
     if (activeProjects.exists(_.name == name)) throw new Error("Project with name "+name+" already being tracked. Please give your projects unique names")
-
+    _lastProjectName = Some(name)
     val project = new Project(name, baseDir)
     loadProject(project)
   }
 
   def loadProject(project: OpticProject) : OpticProject = {
     project.watch
+    _lastProjectName = Some(project.name)
     addProject(project)
     project
   }
@@ -114,5 +119,9 @@ class ProjectsManager {
   //finding arrow instances
   def lookupArrow(includedFile: File) : Option[Arrow] = lookupProject(includedFile).map(i=> arrowStore(i)).toOption
   def lookupArrow(projectName: String) : Option[Arrow] = lookupProject(projectName).map(i=> arrowStore(i)).toOption
+
+
+  private var _lastProjectName : Option[String] = None
+  def lastProjectName = _lastProjectName
 
 }

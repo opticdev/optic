@@ -20,6 +20,8 @@ import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEval
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.VariableRuleWithEvaluation
 import com.opticdev.core.sourcegear.variables.VariableManager
 
+import scala.util.hashing.MurmurHash3
+
 sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
   val description : NodeDescription
@@ -31,6 +33,15 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
   val additionalParserInformation : AdditionalParserInformation
 
   val variableManager : VariableManager
+
+  def hash = {
+        MurmurHash3.stringHash(description.toString) ^
+        MurmurHash3.mapHash(components) ^
+        MurmurHash3.mapHash(containers) ^
+        MurmurHash3.mapHash(rules) ^
+        MurmurHash3.listHash(listeners.toList, 3221945) ^
+        MurmurHash3.listHash(variableManager.variables.toList, 2317453)
+  }
 
   def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: OpticProject) : Option[ParseResult] = {
 

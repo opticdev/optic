@@ -78,7 +78,7 @@ object Compiler {
             val generator = Try(new GeneratorFactoryStage(snippetOutput.get, parser.get.parseGear).run)
             if (generator.isSuccess) {
 
-              val finalGear = Gear(lens.name, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], generator.get.generateGear)
+              val finalGear = Gear(lens.name, lens.packageRef.full, lens.schema, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], generator.get.generateGear)
 
 //              if (logToCli) cliLogger.gearFinished
 

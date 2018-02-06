@@ -36,9 +36,9 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
         })
     }
 
-    case Search(query, file, range) => {
-      new ArrowQuery(file, query, range, None)(projectsManager).executeToApiResponse.map(i=> {
-        AgentConnection.broadcastUpdate( SearchResults(query, i.data) )
+    case search: EditorSearch => {
+      ArrowQuery(search)(projectsManager).executeToApiResponse.map(i=> {
+        AgentConnection.broadcastUpdate( SearchResults(search.query, i.data) )
       })
     }
 

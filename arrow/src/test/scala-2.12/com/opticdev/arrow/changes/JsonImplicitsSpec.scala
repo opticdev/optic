@@ -5,7 +5,7 @@ import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.arrow.changes.location.{AsChildOf, RawPosition}
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 
 class JsonImplicitsSpec extends FunSpec {
 
@@ -38,10 +38,14 @@ class JsonImplicitsSpec extends FunSpec {
 
   describe("Optic Change format") {
     import JsonImplicits.opticChangeFormat
-
+    
     it("Insert model toJSON & back again") {
-      val o = InsertModel(SchemaRef(PackageRef("optic:test"), "name"),
-        JsObject.empty, RawPosition(File("path/To/file"), 12))
+      val testSchema = Json.parse(
+        """
+          |{ "title": "hello", "properties": {}, "type": "object" }
+        """.stripMargin)
+      val o = InsertModel(Schema(SchemaRef(PackageRef("optic:test"), "name"), testSchema.as[JsObject]),
+        Some("hash"), JsObject.empty, RawPosition(File("path/To/file"), 12))
 
       val json = Json.toJson[OpticChange](o)
       assert(Json.fromJson[OpticChange](json).get == o)
