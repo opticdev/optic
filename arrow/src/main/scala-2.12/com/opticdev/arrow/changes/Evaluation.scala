@@ -15,6 +15,8 @@ object Evaluation {
         val gear = gearOption.get
         val generatedCode = gear.generater.generate(im.value)(sourcegear)
 
+        im.atLocation
+
         println(generatedCode)
 
         null
