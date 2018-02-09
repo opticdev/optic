@@ -2,19 +2,23 @@ package com.opticdev.arrow.changes.location
 
 import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
-import com.opticdev.parsers.ParserBase
+import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.AstPrimitiveNode
 import com.opticdev.sdk.descriptions.Container
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
+import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
+
 import scala.util.Try
 
 sealed trait InsertLocation {
-  def resolveToLocation(sourceGear: SourceGear) : Try[ResolvedLocation]
+  val file: File
+  def resolveToLocation(sourceGear: SourceGear)(implicit filesStateMonitor: FileStateMonitor) : Try[ResolvedLocation]
 }
 
 case class AsChildOf(file: File, position: Int) extends InsertLocation {
-  override def resolveToLocation(sourceGear: SourceGear) = Try {
-    val parsed = sourceGear.parseFile(file)(null)
+  override def resolveToLocation(sourceGear: SourceGear)(implicit filesStateMonitor: FileStateMonitor) = Try {
+    val fileContents = filesStateMonitor.contentsForFile(file).get
+    val parsed = sourceGear.parseString(fileContents)(null)
     val graph = parsed.get.astGraph
     val parser = parsed.get.parser
 
@@ -40,13 +44,14 @@ case class AsChildOf(file: File, position: Int) extends InsertLocation {
       throw new Exception("Insert position is within a sibling node")
     }
 
-    ResolvedChildInsertLocation(insertionIndex, actualParent, parser)
+    ResolvedChildInsertLocation(insertionIndex, actualParent, graph, parser)
   }
 }
 
 case class RawPosition(file: File, position: Int) extends InsertLocation {
-  override def resolveToLocation(sourceGear: SourceGear) = Try {
-    val parsed = sourceGear.parseFile(file)(null)
+  override def resolveToLocation(sourceGear: SourceGear)(implicit filesStateMonitor: FileStateMonitor) = Try {
+    val fileContents = filesStateMonitor.contentsForFile(file).get
+    val parsed = sourceGear.parseString(fileContents)(null)
     val parser = parsed.get.parser
     ResolvedRawLocation(position, parser)
   }
@@ -59,4 +64,4 @@ sealed trait ResolvedLocation {
   val parser : ParserBase
 }
 case class ResolvedRawLocation(rawPosition: Int, parser : ParserBase) extends ResolvedLocation
-case class ResolvedChildInsertLocation(index: Int, parent: AstPrimitiveNode, parser : ParserBase) extends ResolvedLocation
+case class ResolvedChildInsertLocation(index: Int, parent: AstPrimitiveNode, graph: AstGraph, parser : ParserBase) extends ResolvedLocation

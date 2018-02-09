@@ -64,7 +64,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		},
         |		"atLocation": {
         |			"file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/tmp/test_project/app.js",
-        |			"position": 95,
+        |			"position": 93,
         |			"type": "as-child-of"
         |		},
         |   "gearId": "7b00f2ec",

@@ -3,11 +3,15 @@ package com.opticdev.core.utils
 
 object StringUtils {
 
-  def replaceRange(contents: String, range: (Int, Int), newString: String ) : String = {
-    val finalString = contents.substring(0, range._1) +
+  def replaceRange(contents: String, range: Range, newString: String ) : String = {
+    val finalString = contents.substring(0, range.start) +
       newString +
-      contents.substring(range._2, contents.length)
+      contents.substring(range.end, contents.length)
     finalString
+  }
+
+  def insertAtIndex(contents: String, insertAt: Int, newString: String ) : String = {
+    replaceRange(contents, Range(insertAt, insertAt), newString)
   }
 
 //  /* !!Important note on range mutable code. Should only be used for formatting and other non structural characters

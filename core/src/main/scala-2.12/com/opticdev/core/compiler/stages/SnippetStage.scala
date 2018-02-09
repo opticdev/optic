@@ -139,7 +139,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     val sorted = connected.toSeq.sortBy(_._2.node.range.start).reverse.map(_._1)
 
     val newBlock = sorted.foldLeft(snippet.block) {
-      case (string, hook)=> StringUtils.replaceRange(string, (hook.range.start, hook.range.end), "")
+      case (string, hook)=> StringUtils.replaceRange(string, Range(hook.range.start, hook.range.end), "")
     }
 
     Snippet(snippet.language, snippet.version, newBlock)

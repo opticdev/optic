@@ -1,5 +1,6 @@
 package com.opticdev.arrow.changes
 
+import com.opticdev.arrow.changes.evaluation.ChangeResult
 import com.opticdev.arrow.changes.location.{InsertLocation, RawPosition}
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}

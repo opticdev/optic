@@ -14,7 +14,7 @@ import scala.util.Try
 
  */
 
-class FileStateMonitor(shouldWatchFile: (File) => Boolean) {
+class FileStateMonitor() {
 
   def contentsForPath(path: String): Try[String] = contentsForFile(File(path))
   def contentsForFile(file: File): Try[String] = Try {
@@ -34,5 +34,7 @@ class FileStateMonitor(shouldWatchFile: (File) => Boolean) {
   }
 
   def fileHasStagedContents(file: File) : Boolean = stagedContents.contains(file)
+
+  def allStaged: Map[File, StagedContent] = stagedContents.toMap
 
 }

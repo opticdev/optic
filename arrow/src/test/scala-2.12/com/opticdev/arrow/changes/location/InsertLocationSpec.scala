@@ -4,10 +4,13 @@ import better.files.File
 import com.opticdev.arrow.changes.ExampleChanges.simpleModelInsert
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
+import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import org.scalatest.FunSpec
 
 class InsertLocationSpec extends TestBase with GearUtils {
   //uses built-in sourcegear with nothing but a parser
+
+  implicit val filesStateMonitor = new FileStateMonitor
 
   val example1 = File("test-examples/resources/example_source/InsertAtLocation/file1.js")
   val example2 = File("test-examples/resources/example_source/InsertAtLocation/file2.js")

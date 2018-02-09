@@ -15,7 +15,7 @@ case class GenerateGear(block: String,
                         parseGear: ParseAsModel,
                         entryChild: NodeDescription) {
 
-  lazy val parseResult = {
+  def parseResult(b: String) = {
     val parser = SourceParserManager.parserById(languageId)
     if (parser.isDefined) {
       parser.get.parseString(block, languageId.version)
@@ -27,7 +27,7 @@ case class GenerateGear(block: String,
     implicit val sourceGearContext = SGContext.forGeneration(sourceGear, languageId)
 
     implicit val fileContents = block
-    implicit val astGraph = parseResult.graph
+    implicit val astGraph = parseResult(block).graph
     //@todo make this work for all entry children
     val rootNode = astGraph.nodes.toVector
       .find(node=> entryChild.matchingPredicate(node.value.asInstanceOf[AstPrimitiveNode]))
