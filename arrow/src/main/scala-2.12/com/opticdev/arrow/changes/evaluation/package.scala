@@ -2,6 +2,7 @@ package com.opticdev.arrow.changes
 
 import better.files.File
 import com.opticdev.core.sourcegear.project.monitoring.{FileStateMonitor, StagedContent}
+import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString}
 
 import scala.util.Try
 
@@ -16,6 +17,16 @@ package object evaluation {
         case (file, stagedContent) => file.write(stagedContent.text)
       }
     }
+
+    def asJson = {
+      JsObject(Seq("success" -> JsBoolean(isSuccess), "stagedFileChanges" -> JsArray(
+        stagedFiles.map(i=> JsObject(Seq(
+          "path" -> JsString(i._1.pathAsString),
+          "contents" -> JsString(i._2.text)
+        ))).toSeq
+      )))
+    }
+
   }
 
 }

@@ -30,11 +30,11 @@ class ProjectsManager {
     //attach a sourcegear changed callback
     project.onSourcegearChanged((sg)=> {
       //overwrite old sg instance with the new one
-      arrowStore = arrowStore + (project -> new Arrow(sg))
+      arrowStore = arrowStore + (project -> new Arrow(project))
     })
 
     projectsStore = projectsStore :+ project
-    arrowStore = arrowStore + (project -> new Arrow(project.projectSourcegear))
+    arrowStore = arrowStore + (project -> new Arrow(project))
     if (projectsStore.size > MAX_PROJECTS) {
       val (toRemove, projects) = projectsStore.splitAt(projectsStore.size - MAX_PROJECTS)
       projectsStore = projects

@@ -6,6 +6,7 @@ import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
 import better.files.File
+import com.opticdev.arrow.changes.ChangeGroup
 import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.agents.Protocol._
@@ -33,6 +34,8 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
           val parsedTry = Try(Json.parse(i).as[JsObject])
           val eventTry  = Try(parsedTry.get.value("event").as[JsString].value)
           val message = if (eventTry.isSuccess) {
+
+            //@todo replace Unknown event with invalid event response
             eventTry.get match {
               case "put-update" => {
                 val idTry = Try( (parsedTry.get \ "id").get.as[JsString].value )
@@ -40,6 +43,17 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
                 if (idTry.isSuccess && newValueTry.isSuccess) {
                   PutUpdate(idTry.get, newValueTry.get)
                 } else UnknownEvent(i)
+              }
+
+              case "post-changes" => {
+                import com.opticdev.arrow.changes.JsonImplicits._
+                val projectName = Try( (parsedTry.get \ "projectName").get.as[JsString].value)
+                val changes = Try(Json.fromJson[ChangeGroup]((parsedTry.get \ "changes").get).get)
+                if (projectName.isSuccess && changes.isSuccess) {
+                  PostChanges(projectName.get, changes.get)
+                } else {
+                  UnknownEvent(i)
+                }
               }
 
               case "search" => {

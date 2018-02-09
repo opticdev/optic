@@ -13,6 +13,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
+//@todo Use Arrow for 'Put Update' request. Benefit: Less surface area to test/reason about. Limits ways to write to disk through the API to 1.
+
 class PutUpdateRequest(id: String, newValue: JsObject)(implicit projectsManager: ProjectsManager) {
 
 

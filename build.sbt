@@ -45,6 +45,7 @@ lazy val server = (project in file("server")).
  .dependsOn(core)
  .dependsOn(arrow)
  .dependsOn(core % "compile->compile;test->test")
+ .dependsOn(arrow % "compile->compile;test->test")
 
 lazy val root = (project in file(".")).
  aggregate(common, sdk, opm, server, core)

@@ -15,10 +15,9 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
 
   describe("Insert Model") {
 
-    val expectedChange = "let first = require('second')\n\napp.get('user/:id', function (req, res) {\n    req.query.id\n})\n\napp.get('post/:id', function (req, res) {\n    req.query.id\n})\n\napp.post('path/to/resource', function (req, res) {\n\n})"
 
     it("can evaluate insert model operations") {
-      val (changeGroup, sourcegear) = simpleModelInsert
+      val (changeGroup, sourcegear, expectedChange) = simpleModelInsert
       val results = changeGroup.evaluate(sourcegear)
 
       assert(results.isSuccess)
@@ -26,7 +25,7 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
     }
 
     it("can write changes to disk") {
-      val (changeGroup, sourcegear) = simpleModelInsert
+      val (changeGroup, sourcegear, expectedChange) = simpleModelInsert
       val results = changeGroup.evaluateAndWrite(sourcegear)
       File("test-examples/resources/test_project/app.js").contentAsString == expectedChange
     }

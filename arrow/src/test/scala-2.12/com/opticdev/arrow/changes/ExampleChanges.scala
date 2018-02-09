@@ -16,7 +16,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
   beforeAll
   installProviders
 
-  lazy val simpleModelInsert : (ChangeGroup, SourceGear)= {
+  lazy val simpleModelInsert : (ChangeGroup, SourceGear, String)= {
     val exampleChangesJSON =
       """
         | [{
@@ -79,7 +79,9 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(exampleChangesJSON)).get
 
-    (changeGroup, sourcegear)
+    val expectedChange = "let first = require('second')\n\napp.get('user/:id', function (req, res) {\n    req.query.id\n})\n\napp.get('post/:id', function (req, res) {\n    req.query.id\n})\n\napp.post('path/to/resource', function (req, res) {\n\n})"
+
+    (changeGroup, sourcegear, expectedChange)
   }
 
 }

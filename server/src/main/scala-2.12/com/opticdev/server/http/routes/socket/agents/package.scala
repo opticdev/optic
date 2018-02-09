@@ -1,7 +1,8 @@
 package com.opticdev.server.http.routes.socket
 
 import akka.actor.ActorRef
-import better.files.File
+import better.files.{File, Files}
+import com.opticdev.arrow.changes.ChangeGroup
 import play.api.libs.json._
 import com.opticdev.server.data.ToJsonImplicits._
 import com.opticdev.server.http.routes.socket.editors.Protocol.EditorEvents
@@ -16,6 +17,7 @@ package object agents {
     case class UnknownEvent(raw: String) extends AgentEvents
 
     case class PutUpdate(id: String, newValue: JsObject) extends AgentEvents
+    case class PostChanges(projectName: String, changes: ChangeGroup) extends AgentEvents
     case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range]) extends AgentEvents
 
 
@@ -36,6 +38,14 @@ package object agents {
         "ignoreQueryUpdate" -> JsBoolean(ignoreQueryUpdate),
         "query"-> JsString(query),
         "results"-> results
+      ))
+    }
+
+    case class PostChangesResults(success: Boolean, filesUpdated: Set[File]) extends OpticEvent with UpdateAgentEvent {
+      def asJson = JsObject(Seq(
+        "event"-> JsString("post-changes-results"),
+        "success"-> JsBoolean(success),
+        "filesChanges" -> JsArray(filesUpdated.map(i=> JsString(i.pathAsString)).toSeq)
       ))
     }
 

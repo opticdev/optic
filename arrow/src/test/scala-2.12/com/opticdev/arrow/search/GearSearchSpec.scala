@@ -18,14 +18,14 @@ class GearSearchSpec extends FunSpec {
   )
 
   it("will rank gears correctly") {
-    val searchResults1 = GearSearch.search("route", NoContext, testGears)(null)
+    val searchResults1 = GearSearch.search("route", NoContext, testGears)(null, null)
     assert(
       searchResults1.map(_.asInstanceOf[GearResult].gear.name) ==
         Seq("REST Route", "Route")
     )
 
     //@todo figure out why this is non-deterministic. shouldn't be an unordered test
-    val searchResults2 = GearSearch.search("model", NoContext, testGears)(null)
+    val searchResults2 = GearSearch.search("model", NoContext, testGears)(null, null)
     assert(
       searchResults2.map(_.asInstanceOf[GearResult].gear.name).toSet ==
         Set("Model Creation", "Model Definition", "Model")

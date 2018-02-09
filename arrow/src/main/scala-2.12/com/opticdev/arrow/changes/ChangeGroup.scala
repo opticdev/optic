@@ -14,10 +14,11 @@ case class ChangeGroup(changes: OpticChange*) {
     Evaluation.forChangeGroup(this, sourcegear)
   }
 
-  def evaluateAndWrite(sourcegear: SourceGear) : Try[Unit] = {
+  def evaluateAndWrite(sourcegear: SourceGear) : Try[BatchedChanges] = Try {
     val evaluated = evaluate(sourcegear)
     if (evaluated.isSuccess) {
       evaluated.flushToDisk
+      evaluated
     } else {
       throw new Exception("Changes could not be applied.")
     }

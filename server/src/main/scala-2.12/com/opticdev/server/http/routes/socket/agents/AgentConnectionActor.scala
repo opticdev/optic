@@ -1,10 +1,11 @@
 package com.opticdev.server.http.routes.socket.agents
 
 import akka.actor.{Actor, ActorRef, Status}
-import com.opticdev.server.http.controllers.{ArrowQuery, PutUpdateRequest}
+import com.opticdev.server.http.controllers.{ArrowPostChanges, ArrowQuery, PutUpdateRequest}
 import com.opticdev.server.http.routes.socket.ErrorResponse
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.state.ProjectsManager
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) extends Actor {
@@ -38,10 +39,19 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     }
 
     case search: AgentSearch => {
-      ArrowQuery(search, projectsManager.lastProjectName)(projectsManager).executeToApiResponse.map(i=> {
+      ArrowQuery(search, projectsManager.lastProjectName)(projectsManager).executeToApiResponse.foreach(i=> {
         AgentConnection.broadcastUpdate( SearchResults(search.query, i.data, ignoreQueryUpdate = true) )
       })
     }
+
+    case postChanges: PostChanges => {
+      new ArrowPostChanges(postChanges.projectName, postChanges.changes)(projectsManager).execute
+        .foreach(i=> {
+          AgentConnection.broadcastUpdate( PostChangesResults(i.isSuccess, i.stagedFiles.keys.toSet) )
+        })
+
+    }
+
 
 
     //client actions
