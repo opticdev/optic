@@ -42,7 +42,7 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
       })
     }
 
-    case event: UpdateOpticEvent => {
+    case event: UpdateEditorEvent => {
       connection ! event
     }
 
@@ -59,6 +59,10 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
 
     case UnknownEvent(raw) => {
       connection ! ErrorResponse("Invalid Request")
+    }
+
+    case filesUpdates: FilesUpdated => {
+      connection ! filesUpdates
     }
 
   }

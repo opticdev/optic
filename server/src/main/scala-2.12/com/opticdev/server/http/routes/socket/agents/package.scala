@@ -18,7 +18,7 @@ package object agents {
 
     case class PutUpdate(id: String, newValue: JsObject) extends AgentEvents
     case class PostChanges(projectName: String, changes: ChangeGroup) extends AgentEvents
-    case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range]) extends AgentEvents
+    case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range], contents: Option[String]) extends AgentEvents
 
 
     trait UpdateAgentEvent extends OpticEvent

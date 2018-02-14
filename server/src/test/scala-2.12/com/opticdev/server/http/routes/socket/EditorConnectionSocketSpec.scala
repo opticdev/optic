@@ -3,6 +3,7 @@ package com.opticdev.server.http.routes.socket
 import akka.http.scaladsl.testkit.WSProbe
 import better.files.File
 import com.opticdev.core.Fixture.{SocketTestFixture, TestBase}
+import com.opticdev.core.sourcegear.project.monitoring.StagedContent
 import com.opticdev.server.Fixture.ProjectsManagerFixture
 import com.opticdev.server.http.controllers.ContextQuery
 import com.opticdev.server.http.routes.socket.editors.EditorConnection
@@ -104,21 +105,11 @@ class EditorConnectionSocketSpec extends SocketTestFixture with TestBase with Pr
 
       }
 
-      describe("Can send arbitrary messages to client") {
+      describe("Can send messages to client") {
 
         it("FileUpdate works") {
           val connection = EditorConnection.listConnections.head._2
-          val event = FileUpdate("path/to/file", "contents")
-
-          connection.sendUpdate(event)
-
-          wsClient.expectMessage(event.asString)
-
-        }
-
-        it("RangeUpdate works") {
-          val connection = EditorConnection.listConnections.head._2
-          val event = RangeUpdate("path/to/file", 0, 1, "contents")
+          val event = FilesUpdated(Map(File("path/to/file") -> StagedContent("")))
 
           connection.sendUpdate(event)
 

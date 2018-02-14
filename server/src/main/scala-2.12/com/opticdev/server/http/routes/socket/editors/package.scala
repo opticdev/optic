@@ -2,6 +2,7 @@ package com.opticdev.server.http.routes.socket
 
 import akka.actor.ActorRef
 import better.files.File
+import com.opticdev.core.sourcegear.project.monitoring.StagedContent
 import play.api.libs.json.{JsObject, JsString}
 
 package object editors {
@@ -16,7 +17,7 @@ package object editors {
 
     case class Terminated() extends EditorEvents
 
-    case class EditorSearch(query: String, file: File, range: Range) extends EditorEvents
+    case class EditorSearch(query: String, file: File, range: Range, contentsOption: Option[String]) extends EditorEvents
 
     case class Context(filePath: String, range: Range, contentsOption: Option[String]) extends EditorEvents
 
@@ -25,18 +26,15 @@ package object editors {
 
     //Emits
 
-    sealed trait UpdateOpticEvent extends OpticEvent
+    sealed trait UpdateEditorEvent extends OpticEvent
 
-    case class RequestMetaInformation() extends {
-      def asJson = JsObject(Seq("event" -> JsString("requestMeta")))
-    }
+    case class FilesUpdated(fileUpdates: Map[File, StagedContent]) extends UpdateEditorEvent {
+      override def asJson = {
 
-    case class FileUpdate(filePath: String, newContents: String) extends UpdateOpticEvent {
-      override def asJson = JsObject(Seq("event" -> JsString("fileUpdate")))
-    }
+        val updates = JsObject(fileUpdates.map(i=> (i._1.pathAsString, JsString(i._2.text)) ))
 
-    case class RangeUpdate(filePath: String, start: Int, end: Int, newContents: String) extends UpdateOpticEvent {
-      override def asJson = JsObject(Seq("event" -> JsString("rangeUpdate")))
+        JsObject(Seq("event" -> JsString("files-updated"), "updates" -> updates))
+      }
     }
 
   }

@@ -65,7 +65,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
     it("for multi-node snippets") {
       val (enterOn, children, matchType) = parseResult("function subtract(a,b) { return a-b } function add(a,b) { return a+b }")
       val blockNodeTypes = SourceParserManager.parserByLanguageName("Javascript").get.blockNodeTypes
-      assert(enterOn.size == 2 && enterOn == blockNodeTypes)
+      assert(enterOn.size == 2 && enterOn == blockNodeTypes.nodeTypes)
       assert(children.size == 2)
       assert(matchType == MatchType.Children)
     }

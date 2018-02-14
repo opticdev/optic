@@ -7,7 +7,7 @@ import com.opticdev.arrow.search.GearSearch
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 
-class Arrow(project: OpticProject) {
+class Arrow(val project: OpticProject) {
 
   val sourcegear = project.projectSourcegear
 

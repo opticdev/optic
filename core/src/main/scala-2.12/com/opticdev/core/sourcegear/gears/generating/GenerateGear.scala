@@ -3,6 +3,7 @@ package com.opticdev.core.sourcegear.gears.generating
 import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
+import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstPrimitiveNode, GraphImplicits}
 import play.api.libs.json.{JsObject, JsValue}
@@ -22,8 +23,7 @@ case class GenerateGear(block: String,
     } else throw new Error("Unable to find parser for generator")
   }
 
-  def generate(value: JsObject)(implicit sourceGear: SourceGear): String = {
-
+  def generateWithNewAstNode(value: JsObject)(implicit sourceGear: SourceGear): (NewAstNode, String) = {
     implicit val sourceGearContext = SGContext.forGeneration(sourceGear, languageId)
 
     implicit val fileContents = block
@@ -36,8 +36,16 @@ case class GenerateGear(block: String,
     if (isMatch.isEmpty) throw new Error("Can not generate. Snippet does not contain model "+parseGear)
 
     import com.opticdev.core.sourcegear.mutate.MutationImplicits._
-    isMatch.get.modelNode.update(value)
+    import com.opticdev.marvin.common.ast.OpticGraphConverter._
+
+    val raw = isMatch.get.modelNode.update(value)
+
+    (NewAstNode(rootNode.nodeType.name, rootNode.getAstProperties, Some(raw)),
+      raw)
   }
+
+  def generate(value: JsObject)(implicit sourceGear: SourceGear): String =
+    generateWithNewAstNode(value)._2
 
   def hash = {
       MurmurHash3.stringHash(block) ^

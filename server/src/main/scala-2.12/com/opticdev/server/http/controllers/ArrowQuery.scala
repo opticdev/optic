@@ -15,12 +15,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class ArrowQuery(query: String, file: Option[File], range: Option[Range], lastProjectName: Option[String], contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
+class ArrowQuery(query: String, fileOption: Option[File], range: Option[Range], lastProjectName: Option[String], contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
 
   def execute : Future[Vector[Result]] = Future {
     val arrowOption = {
-      if (file.isDefined) {
-        projectsManager.lookupArrow(file.get)
+      if (fileOption.isDefined) {
+        projectsManager.lookupArrow(fileOption.get)
       } else if (lastProjectName.isDefined) {
         projectsManager.lookupArrow(lastProjectName.get)
       } else {
@@ -28,10 +28,15 @@ class ArrowQuery(query: String, file: Option[File], range: Option[Range], lastPr
       }
     }
 
+    //stage new file contents
+     if (arrowOption.isDefined && fileOption.isDefined && contentsOption.isDefined) {
+      arrowOption.get.project.stageFileContents(fileOption.get, contentsOption.get)
+    }
+
     val context : ArrowContextBase = {
 
-      if (file.isDefined && range.isDefined) {
-        FileContext(file.get, range.get)
+      if (fileOption.isDefined && range.isDefined) {
+        FileContext(fileOption.get, range.get)
       } else if (lastProjectName.isDefined) {
         ProjectContext(projectsManager.lookupProject(lastProjectName.get).get)
       } else {
@@ -74,7 +79,7 @@ object ArrowQuery {
   }
 
   def apply(editorSearch: EditorSearch)(implicit projectsManager: ProjectsManager) : ArrowQuery = {
-    new ArrowQuery(editorSearch.query, Some(editorSearch.file), Some(editorSearch.range), None, None)
+    new ArrowQuery(editorSearch.query, Some(editorSearch.file), Some(editorSearch.range), None, editorSearch.contentsOption)
   }
 
 }

@@ -3,7 +3,7 @@ package com.opticdev.arrow.changes
 import better.files.File
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
-import com.opticdev.arrow.changes.location.{AsChildOf, RawPosition}
+import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 
@@ -15,23 +15,22 @@ class JsonImplicitsSpec extends FunSpec {
     val json = Json.toJson[File](File("path/to/file"))
 
     assert(Json.fromJson[File](json).get == file)
-
   }
 
   describe("Location format") {
 
     it("Raw Position toJSON & back again") {
-      import JsonImplicits.rawPosition
+      import JsonImplicits.insertLocationFormat
       val o = RawPosition(File("path/to/File"), 621)
-      val json = Json.toJson[RawPosition](o)
-      assert(Json.fromJson[RawPosition](json).get == o)
+      val json = Json.toJson[InsertLocation](o)
+      assert(Json.fromJson[InsertLocation](json).get == o)
     }
 
     it("As child of toJSON & back again") {
-      import JsonImplicits.asChildOfFormat
+      import JsonImplicits.insertLocationFormat
       val o = AsChildOf(File("path/to/File"), 621)
-      val json = Json.toJson[AsChildOf](o)
-      assert(Json.fromJson[AsChildOf](json).get == o)
+      val json = Json.toJson[InsertLocation](o)
+      assert(Json.fromJson[InsertLocation](json).get == o)
     }
 
   }

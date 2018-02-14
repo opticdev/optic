@@ -26,7 +26,7 @@ case class AsChildOf(file: File, position: Int) extends InsertLocation {
 
     val possibleParents = graph.nodes.toVector.collect {
       case n if n.value.isAstNode() &&
-        blockTypes.contains(n.value.asInstanceOf[AstPrimitiveNode].nodeType) &&
+        blockTypes.nodeTypes.contains(n.value.asInstanceOf[AstPrimitiveNode].nodeType) &&
         n.value.asInstanceOf[AstPrimitiveNode].range
           .contains(position) => n.value.asInstanceOf[AstPrimitiveNode]
     }

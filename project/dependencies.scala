@@ -52,7 +52,9 @@ object Dependencies {
 
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
-    "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2"
+    "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
+
+    "de.digitalistbesser" %% "scaladiff" % "0.1-SNAPSHOT"
   )
 
   val coreDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
@@ -62,6 +64,8 @@ object Dependencies {
 
     "commons-io" % "commons-io" % "2.4",
     "io.suzaku" %% "boopickle" % "1.2.6",
+
+    "de.digitalistbesser" %% "scaladiff" % "0.1-SNAPSHOT",
 
     "com.typesafe.akka" %% "akka-http" % "10.0.10",
     "com.typesafe.akka" %% "akka-http-testkit" % "10.0.10",
@@ -81,7 +85,9 @@ object Dependencies {
   )
 
   val arrowDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
-    "me.xdrop" % "fuzzywuzzy" % "1.1.9"
+    "me.xdrop" % "fuzzywuzzy" % "1.1.9",
+    "com.opticdev" %% "marvin-runtime" % "1.0.0",
+    "com.opticdev" %% "marvin-common" % "1.0.0"
   )
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(

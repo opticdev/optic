@@ -14,11 +14,20 @@ import scala.util.Try
 
  */
 
-class FileStateMonitor() {
+class FileStateMonitor(otherMonitors: FileStateMonitor*) {
+
+  private val prioritySeq = Seq(this) ++ otherMonitors
 
   def contentsForPath(path: String): Try[String] = contentsForFile(File(path))
   def contentsForFile(file: File): Try[String] = Try {
-    stagedContents.getOrElse(file, StagedContent(file.contentAsString)).text
+    val starting : Option[StagedContent] = None
+    prioritySeq.foldLeft(starting) {
+      case (foundOption, fileMonitor) => {
+        if (foundOption.isEmpty) {
+          fileMonitor.allStaged.get(file)
+        } else None
+      }
+    }.getOrElse(StagedContent(file.contentAsString)).text
   }
 
 
@@ -29,8 +38,9 @@ class FileStateMonitor() {
     stagedContents += file -> StagedContent(content)
   }
 
-  def markUpdated(file: File) = {
+  def markUpdated(file: File) : Unit = {
     stagedContents -= file
+    prioritySeq.splitAt(1)._2.foreach(_.markUpdated(file))
   }
 
   def fileHasStagedContents(file: File) : Boolean = stagedContents.contains(file)

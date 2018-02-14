@@ -14,10 +14,10 @@ import scala.util.{Failure, Success, Try}
 class ArrowPostChanges(projectName: String, changeGroup: ChangeGroup)(implicit projectsManager: ProjectsManager) {
 
   def execute : Future[BatchedChanges] = Future {
-    val project = projectsManager.lookupProject(projectName).get
+    val project = projectsManager.lookupProject(projectName).toOption
     val arrow = projectsManager.lookupArrow(projectName).get
 
-    changeGroup.evaluateAndWrite(arrow.sourcegear).get
+    changeGroup.evaluateAndWrite(arrow.sourcegear, project).get
   }
 
   def executeToApiResponse : Future[APIResponse] = {
@@ -42,10 +42,10 @@ class ArrowPostChanges(projectName: String, changeGroup: ChangeGroup)(implicit p
   //Run the request but don't push changes to disk. Return a preview for the client
 
   def stage : Future[BatchedChanges] = Future {
-    val project = projectsManager.lookupProject(projectName).get
+    val project = projectsManager.lookupProject(projectName).toOption
     val arrow = projectsManager.lookupArrow(projectName).get
 
-    changeGroup.evaluate(arrow.sourcegear)
+    changeGroup.evaluate(arrow.sourcegear, project)
   }
 
   def stageToApiResponse : Future[APIResponse] = {

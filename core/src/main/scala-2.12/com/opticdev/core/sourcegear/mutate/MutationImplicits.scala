@@ -19,6 +19,7 @@ object MutationImplicits {
       val changes = changesTry.filter(_.isSuccess).map(_.get)
 
       val executedChanges = handleChanges(changes)
+
       combineChanges(executedChanges).toString
     }
 

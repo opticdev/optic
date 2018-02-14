@@ -4,6 +4,8 @@ import akka.actor.{Actor, ActorRef, Status}
 import com.opticdev.server.http.controllers.{ArrowPostChanges, ArrowQuery, PutUpdateRequest}
 import com.opticdev.server.http.routes.socket.ErrorResponse
 import com.opticdev.server.http.routes.socket.agents.Protocol._
+import com.opticdev.server.http.routes.socket.editors.EditorConnection
+import com.opticdev.server.http.routes.socket.editors.Protocol.FilesUpdated
 import com.opticdev.server.state.ProjectsManager
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -45,10 +47,19 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     }
 
     case postChanges: PostChanges => {
-      new ArrowPostChanges(postChanges.projectName, postChanges.changes)(projectsManager).execute
-        .foreach(i=> {
+      val future = new ArrowPostChanges(postChanges.projectName, postChanges.changes)(projectsManager).execute
+        future.foreach(i=> {
           AgentConnection.broadcastUpdate( PostChangesResults(i.isSuccess, i.stagedFiles.keys.toSet) )
+          EditorConnection.broadcastUpdate( FilesUpdated(i.stagedFiles) )
         })
+
+      future.onComplete(i=> {
+        if (i.isFailure) {
+          println(i.failed.get)
+        } else {
+          println(i.get)
+        }
+      })
 
     }
 

@@ -31,4 +31,37 @@ class FilesStateSpec extends TestBase {
     assert(f.fileMonitor.contentsForFile(testFile).get == "let me = \"you\"")
   }
 
+  describe("nested file monitors") {
+
+    it("will get a parent file monitor's state before reading from disk") {
+      val fs1 =  new FileStateMonitor
+      val fs2 =  new FileStateMonitor(fs1)
+
+      fs1.stageContents(testFile, "let fun = \"time\"")
+
+      assert(fs2.contentsForFile(testFile).get == "let fun = \"time\"")
+
+    }
+
+    it("will fallback to files if no file monitor has staged contents") {
+      val fs1 =  new FileStateMonitor
+      val fs2 =  new FileStateMonitor(fs1)
+      assert(fs2.contentsForFile(testFile).get == "let me = \"you\"")
+    }
+
+    it("marking something as updated will ripple to all state monitors") {
+      val fs1 =  new FileStateMonitor
+      val fs2 =  new FileStateMonitor(fs1)
+
+      fs1.stageContents(testFile, "let fun = \"time\"")
+
+      fs2.markUpdated(testFile)
+
+      assert(fs1.allStaged.isEmpty)
+      assert(fs2.allStaged.isEmpty)
+
+    }
+
+  }
+
 }

@@ -78,7 +78,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
 
   def enterOnAndMatchType(implicit graph: AstGraph, rootNode: AstPrimitiveNode): (Set[AstType], Vector[AstPrimitiveNode], MatchType.Value) = {
     val programNodeType = parser.programNodeType
-    val blockNodeTypes      = parser.blockNodeTypes
+    val blockNodeTypes      = parser.blockNodeTypes.nodeTypes
     if (programNodeType != rootNode.nodeType) throw new UnexpectedSnippetFormat(programNodeType+" did not appear first in the AST Tree.")
 
     val children = rootNode.children.map(_._2)
@@ -107,7 +107,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
 
   def connectContainerHooksToAst(hooks: Vector[ContainerHook], astGraph: AstGraph, root: AstPrimitiveNode) : ContainerMapping = {
 
-    val allowedContainerTypes = parser.blockNodeTypes.map(_.name)
+    val allowedContainerTypes = parser.blockNodeTypes.nodeTypes.map(_.name)
 
     val connected = hooks.map(hook=> {
 

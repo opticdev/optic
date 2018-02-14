@@ -10,12 +10,12 @@ import scala.util.Try
 
 case class ChangeGroup(changes: OpticChange*) {
 
-  def evaluate(sourcegear: SourceGear): BatchedChanges = {
-    Evaluation.forChangeGroup(this, sourcegear)
+  def evaluate(sourcegear: SourceGear, project: Option[OpticProject] = None): BatchedChanges = {
+    Evaluation.forChangeGroup(this, sourcegear, project)
   }
 
-  def evaluateAndWrite(sourcegear: SourceGear) : Try[BatchedChanges] = Try {
-    val evaluated = evaluate(sourcegear)
+  def evaluateAndWrite(sourcegear: SourceGear, project: Option[OpticProject] = None) : Try[BatchedChanges] = Try {
+    val evaluated = evaluate(sourcegear, project)
     if (evaluated.isSuccess) {
       evaluated.flushToDisk
       evaluated

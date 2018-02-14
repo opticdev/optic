@@ -8,6 +8,8 @@ import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
 import better.files.File
+import com.opticdev.server.http.routes.socket.agents.AgentConnection.listConnections
+import com.opticdev.server.http.routes.socket.agents.Protocol.UpdateAgentEvent
 import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.editors.Protocol._
@@ -29,7 +31,7 @@ class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projects
     Await.result(future, timeout.duration).asInstanceOf[EditorConnection.EditorInformation]
   }
 
-  def sendUpdate(event: UpdateOpticEvent) = {
+  def sendUpdate(event: UpdateEditorEvent) = {
     connectionActor ! event
   }
 
@@ -45,10 +47,11 @@ class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projects
                 val fileTry = Try(parsedTry.get.value("file").as[JsString].value)
                 val startTry = Try(parsedTry.get.value("start").as[JsNumber].value.toInt)
                 val endTry = Try(parsedTry.get.value("end").as[JsNumber].value.toInt)
+                val contentsOption = Try(parsedTry.get.value("contents").as[JsString].value).toOption
 
                 val queryTry  = Try(parsedTry.get.value("query").as[JsString].value)
                 if (queryTry.isSuccess && fileTry.isSuccess && startTry.isSuccess && endTry.isSuccess)
-                  EditorSearch(queryTry.get, File(fileTry.get), Range(startTry.get, endTry.get)) else UnknownEvent(i)
+                  EditorSearch(queryTry.get, File(fileTry.get), Range(startTry.get, endTry.get), contentsOption) else UnknownEvent(i)
               }
               case "updateMeta" => {
                 val nameTry  = Try(parsedTry.get.value("name").as[JsString].value)
@@ -90,6 +93,9 @@ object EditorConnection extends ConnectionManager[EditorConnection] {
     println(slug+" editor connected")
     new EditorConnection(slug, actorSystem)
   }
+
+  def broadcastUpdate(update: UpdateEditorEvent) = listConnections.foreach(i=> i._2.sendUpdate(update))
+
 
   def killEditor(slug: String) = {
     println(slug+" editor disconnected")

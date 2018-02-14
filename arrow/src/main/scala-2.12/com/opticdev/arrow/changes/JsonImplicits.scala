@@ -26,11 +26,11 @@ object JsonImplicits {
   }
 
   //Location
-  implicit val asChildOfFormat = Json.format[AsChildOf]
-  implicit val rawPosition = Json.format[RawPosition]
-
 
   implicit val insertLocationFormat = new Format[InsertLocation] {
+
+    implicit val asChildOfFormat = Json.format[AsChildOf]
+    implicit val rawPosition = Json.format[RawPosition]
 
     override def reads(json: JsValue) = {
       val locationType = (json.as[JsObject] \ "type").get.as[JsString].value
@@ -57,7 +57,8 @@ object JsonImplicits {
         "schema" -> o.schema.toJson,
         "value" -> o.value,
         "gearId" -> Try(JsString(o.gearId.get)).getOrElse(JsNull),
-        "atLocation" -> Json.toJson[InsertLocation](o.atLocation)
+        "atLocation" -> Json.toJson[InsertLocation](o.atLocation),
+        "type" -> JsString("insert-model")
       ))
     }
 
@@ -76,7 +77,23 @@ object JsonImplicits {
     }
   }
   //Raw Insert
-  implicit val rawInsertFormat = Json.format[RawInsert]
+  implicit val rawInsertFormat = new OFormat[RawInsert] {
+
+    override def reads(json: JsValue) = {
+      val content = (json.as[JsObject] \ "content").get.as[JsString].value
+      val position = Json.fromJson[InsertLocation]((json.as[JsObject] \ "position").get).get
+      JsSuccess(RawInsert(content, position.asInstanceOf[RawPosition]))
+    }
+
+    override def writes(o: RawInsert) : JsObject = {
+      JsObject(Seq(
+        "content" -> JsString(o.content),
+        "position" -> Json.toJson[RawPosition](o.position),
+        "type" -> JsString("raw-insert")
+      ))
+    }
+
+  }
 
 
   implicit val opticChangeFormat = new Format[OpticChange] {
@@ -92,8 +109,8 @@ object JsonImplicits {
 
     override def writes(o: OpticChange) = {
       o match {
-        case a: InsertModel => Json.toJsObject[InsertModel](a) ++ JsObject(Seq("type" -> JsString("insert-model")))
-        case a: RawInsert => Json.toJsObject[RawInsert](a) ++ JsObject(Seq("type" -> JsString("raw-insert")))
+        case a: InsertModel => Json.toJsObject[InsertModel](a)
+        case a: RawInsert => Json.toJsObject[RawInsert](a)
         case _ => throw new Error(s"Optic change type ${o.getClass.toString} not implemented")
       }
     }

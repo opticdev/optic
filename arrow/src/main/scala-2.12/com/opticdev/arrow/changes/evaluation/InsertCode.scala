@@ -15,11 +15,11 @@ import scala.util.{Failure, Success, Try}
 
 object InsertCode {
 
-  def atLocation(generatedCode: String, file: File, resolvedLocation: ResolvedLocation)(implicit filesStateMonitor : FileStateMonitor): ChangeResult = Try {
+  def atLocation(generatedNode: (NewAstNode, String), file: File, resolvedLocation: ResolvedLocation)(implicit filesStateMonitor : FileStateMonitor): ChangeResult = Try {
     val fileContents = filesStateMonitor.contentsForFile(file).get
     resolvedLocation match {
       case loc : ResolvedRawLocation => {
-        val changed = StringUtils.insertAtIndex(fileContents, loc.rawPosition, generatedCode)
+        val changed = StringUtils.insertAtIndex(fileContents, loc.rawPosition, generatedNode._2)
         FileChanged(file, changed)
 
       }
@@ -29,20 +29,23 @@ object InsertCode {
 
         val childrenIndent = marvinAstParent.indent.next
 
-        val gcWithLeadingWhiteSpace = LineOperations.padAllLinesWith(childrenIndent.generate, generatedCode)
+        val gcWithLeadingWhiteSpace = LineOperations.padAllLinesWith(childrenIndent.generate, generatedNode._2)
 
         implicit val nodeMutatorMap = loc.parser.marvinSourceInterface.asInstanceOf[NodeMutatorMap]
 
-        val array = marvinAstParent.properties("body").asInstanceOf[AstArray]
+        val blockPropertyPath = loc.parser.blockNodeTypes.getPropertyPath(loc.parent.nodeType).get
 
-        val newArray = array.children :+
-          NewAstNode(
-          array.children.head.nodeType,
-          array.children.head.properties + ("kind" -> AstString("const")),
+        val array = marvinAstParent.properties(blockPropertyPath).asInstanceOf[AstArray]
+
+        val newNode = NewAstNode(
+          generatedNode._1.nodeType,
+          generatedNode._1.properties,
           //overriding with our own string.
           Some(gcWithLeadingWhiteSpace))
 
-        val newProperties: AstProperties = marvinAstParent.properties + ("body" -> AstArray(newArray:_*))
+        val newArray = array.children.patch(loc.index, Seq(newNode), 0)
+
+        val newProperties: AstProperties = marvinAstParent.properties + (blockPropertyPath -> AstArray(newArray:_*))
 
         val changes = marvinAstParent.mutator.applyChanges(marvinAstParent, newProperties)
 
@@ -54,7 +57,10 @@ object InsertCode {
     }
   } match {
     case Success(fileChanged) => fileChanged
-    case Failure(e) => FailedToChange(e)
+    case Failure(e) => {
+      e.printStackTrace()
+      FailedToChange(e)
+    }
   }
 
 }

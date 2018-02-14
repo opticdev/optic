@@ -60,6 +60,8 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
 
                 val queryTry  = Try(parsedTry.get.value("query").as[JsString].value)
 
+                val contentsOption  = Try(parsedTry.get.value("contents").as[JsString].value).toOption
+
                 val fileOption = Try(File(parsedTry.get.value("file").as[JsString].value)).toOption
                 val rangeOption = Try {
                   val start = parsedTry.get.value("start").as[JsNumber].value.toInt
@@ -68,7 +70,7 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
                 }.toOption
 
                 if (queryTry.isSuccess) {
-                  AgentSearch(queryTry.get, None, fileOption, rangeOption)
+                  AgentSearch(queryTry.get, None, fileOption, rangeOption, contentsOption)
                 } else {
                   UnknownEvent(i)
                 }
