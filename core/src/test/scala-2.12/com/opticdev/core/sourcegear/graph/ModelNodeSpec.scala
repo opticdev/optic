@@ -57,6 +57,9 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
       import com.opticdev.core.sourcegear.mutate.MutationImplicits._
       implicit val fileContents = File(testFilePath).contentAsString
       val result = resolved.update(JsObject(Seq("definedAs" -> JsString("goodbye"), "pathTo" -> JsString("local"))))
+
+      println(result)
+
       assert(result.toString == "let goodbye = require('local')\n\nfunction test () {\n    let nextOne = require(\"PIZZA!\")\n}")
     }
 

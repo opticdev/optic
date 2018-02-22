@@ -17,12 +17,12 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
   describe("Finds the correct parser") {
     it("when it exists") {
-      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), "function add (a, b) { a+b }"))
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", "function add (a, b) { a+b }"))
       assert(snippetBuilder.getParser().languageName == "Javascript")
     }
 
     it("fails when it does not") {
-      val snippetBuilder = new SnippetStage(Snippet("MadeUp", Some("0.0.1"), "YO"))
+      val snippetBuilder = new SnippetStage(Snippet("MadeUp", "NOT REAL"))
       assertThrows[ParserNotFound] {
         snippetBuilder.getParser()
       }
@@ -31,13 +31,13 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
   describe("parses snippet") {
     it("if it is valid") {
-      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), "function add (a, b) { a+b }"))
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", "function add (a, b) { a+b }"))
       snippetBuilder.buildAstTree()
     }
 
     it("fails on snippet errors") {
       assertThrows[SyntaxError] {
-        val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), "function whoops { a+b }"))
+        val snippetBuilder = new SnippetStage(Snippet("Javascript", "function whoops { a+b }"))
         snippetBuilder.buildAstTree()
       }
     }
@@ -47,7 +47,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
   describe("calculates valid enterOn and MatchType") {
 
     def parseResult(codeBlock: String) = {
-      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), codeBlock))
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", codeBlock))
 
       val parser = snippetBuilder.getParser()
       val (ast, root) = snippetBuilder.buildAstTree()
@@ -90,7 +90,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", example))
       val containerHooks = snippetBuilder.findContainerHooks
 
       assert(containerHooks == Vector(
@@ -108,7 +108,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", example))
       assertThrows[DuplicateContainerNamesInSnippet] {
         snippetBuilder.findContainerHooks
       }
@@ -124,7 +124,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", example))
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
       val hookMap = snippetBuilder.connectContainerHooksToAst(containerHooks, ast, root)
@@ -144,7 +144,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", example))
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
       assertThrows[ContainerDefinitionConflict] {
@@ -165,7 +165,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", example))
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
       val mapping = snippetBuilder.connectContainerHooksToAst(containerHooks, ast, root)
@@ -197,7 +197,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), example))
+      val snippetBuilder = new SnippetStage(Snippet("Javascript", example))
       val output = snippetBuilder.run
       assert(output.containerMapping.size == 2)
     }
@@ -207,7 +207,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
 
   it("works end to end") {
-    val snippetBuilder = new SnippetStage(Snippet("Javascript", Some("es6"), "function add (a, b) { a+b }"))
+    val snippetBuilder = new SnippetStage(Snippet("Javascript", "function add (a, b) { a+b }"))
     val outputTry = Try(snippetBuilder.run)
     assert(outputTry.isSuccess)
   }

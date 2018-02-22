@@ -24,12 +24,12 @@ object ComponentExtraction {
           c.componentType match {
 
             case Literal=> {
-              val result = sourceGearContext.parser.basicSourceInterface.literals.parseNode(node, node.raw)
+              val result = sourceGearContext.parser.basicSourceInterface.literals.parseNode(node, graph, node.raw)
               if (result.isFailure) throw new Error("Source code extraction error " + result.failed.get)
               ModelField(component.propertyPath, result.get, NodeMapping(node, AstPropertyRelationship.Literal))
             }
             case Token=> {
-              val result = sourceGearContext.parser.basicSourceInterface.tokens.parseNode(node, node.raw)
+              val result = sourceGearContext.parser.basicSourceInterface.tokens.parseNode(node, graph, node.raw)
               if (result.isFailure) throw new Error("Source code extraction error " + result.failed.get)
               ModelField(component.propertyPath, result.get, NodeMapping(node, AstPropertyRelationship.Token))
             }

@@ -4,7 +4,7 @@ import com.opticdev.core.sourcegear.accumulate.FileAccumulator
 import com.opticdev.core.sourcegear.actors.{ActorCluster, ParseSupervisorSyncAccess}
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
-import com.opticdev.parsers.{AstGraph, LanguageId, ParserBase}
+import com.opticdev.parsers.{AstGraph, ParserBase, ParserRef}
 
 case class SGContext(fileAccumulator: FileAccumulator,
                      astGraph: AstGraph,
@@ -20,8 +20,8 @@ object SGContext {
     ParseSupervisorSyncAccess.getContext(file)
   }
 
-  def forGeneration(sourceGear: SourceGear, languageId: LanguageId): SGContext = {
-    SGContext(sourceGear.fileAccumulator, null, sourceGear.findParser(languageId).get, null)
+  def forGeneration(sourceGear: SourceGear, parserRef: ParserRef): SGContext = {
+    SGContext(sourceGear.fileAccumulator, null, sourceGear.findParser(parserRef).get, null)
   }
 
 }

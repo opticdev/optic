@@ -47,19 +47,21 @@ object MutationSteps {
     })
   }
 
-  def mutateLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String) = {
+  //@
+
+  def mutateLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String): Try[String] = {
     val node = updatedField.mapping.asInstanceOf[NodeMapping].node
     import com.opticdev.core.utils.DiffOperationImplicits.DiffTypes._
     updatedField.diffOperation.changeType match {
-      case REPLACE => sourceGearContext.parser.basicSourceInterface.literals.mutateNode(node, node.raw, updatedField.newValue)
+      case REPLACE => sourceGearContext.parser.basicSourceInterface.literals.mutateNode(node, null, node.raw, updatedField.newValue)
       case _ => throw new Error("Literals can only be replaced.")
     }
   }
-  def mutateToken(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String) = {
+  def mutateToken(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String): Try[String] = {
     val node = updatedField.mapping.asInstanceOf[NodeMapping].node
     import com.opticdev.core.utils.DiffOperationImplicits.DiffTypes._
     updatedField.diffOperation.changeType match {
-      case REPLACE => sourceGearContext.parser.basicSourceInterface.tokens.mutateNode(node, node.raw, updatedField.newValue.as[JsString])
+      case REPLACE => sourceGearContext.parser.basicSourceInterface.tokens.mutateNode(node, null, node.raw, updatedField.newValue.as[JsString])
       case _ => throw new Error("Literals can only be replaced.")
     }
   }

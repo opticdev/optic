@@ -7,7 +7,7 @@ class ErrorAccumulatorSpec extends FunSpec {
 
   it("Stores all known Compiler errors") {
     val errorAccumulator = new ErrorAccumulator
-    errorAccumulator.add(ParserNotFound("","")(null))
+    errorAccumulator.add(ParserNotFound("")(null))
   }
 
   it("Will opt to throw an internal error") {

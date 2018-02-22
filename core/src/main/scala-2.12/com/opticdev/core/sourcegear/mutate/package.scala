@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear
 
 import com.opticdev.sdk.descriptions.Component
 import com.opticdev.core.sourcegear.graph.model.AstMapping
+import com.opticdev.parsers.AstGraph
 import gnieh.diffson.playJson.Operation
 import play.api.libs.json.JsValue
 

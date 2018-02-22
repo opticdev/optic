@@ -1,6 +1,6 @@
 package com.opticdev.sdk.descriptions
 
-import com.opticdev.parsers.LanguageId
+import com.opticdev.parsers.{ParserRef}
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import play.api.libs.json._
 
@@ -22,6 +22,6 @@ object Snippet extends Description[Snippet] {
 }
 
 //@todo remove raw lang and version and replace with languageId
-case class Snippet(language: String, version: Option[String], block: String) {
-  def languageId = LanguageId(language, version)
+case class Snippet(language: String, block: String) {
+  def languageId = ParserRef(language)
 }

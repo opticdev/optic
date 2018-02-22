@@ -37,7 +37,7 @@ object ParserStorage {
     val parserOption = {
       val version = parserRef.version
 
-        val versionFileTuples = (DataDirectory.parsers / parserRef.packageId).list
+        val versionFileTuples = (DataDirectory.parsers / parserRef.languageName).list
           .map(i=> ( new Semver(i.nameWithoutExtension, SemverType.NPM), i))
 
 

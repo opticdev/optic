@@ -4,9 +4,6 @@ organization := "com.opticdev"
 
 version := "0.1.0"
 
-scalaVersion := "2.12.4"
-
-
 /* Sub Projects */
 lazy val common = (project in file("common")).
  settings(Common.settings: _*)

@@ -18,8 +18,8 @@ case class SchemaNotFound(schemaId: SchemaRef)(implicit val lens: Lens) extends 
 }
 
 //Snippet Exception
-case class ParserNotFound(lang: String, version: String)(implicit val lens: Lens) extends CompilerException {
-  override def toString = "Parser Not Found for "+lens.name+". Please install "+lang+" version "+version
+case class ParserNotFound(lang: String)(implicit val lens: Lens) extends CompilerException {
+  override def toString = "Parser Not Found for "+lens.name+". Please install "+lang
 }
 
 case class DuplicateContainerNamesInSnippet(duplicateNames: Vector[String])(implicit val lens: Lens) extends CompilerException {

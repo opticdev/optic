@@ -28,7 +28,7 @@ object Dependencies {
   )
 
   val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Seq(
-    "com.opticdev" %% "parser-foundation" % "1.0.0",
+    "com.opticdev" %% "parser-foundation" % "0.1.0",
     "com.typesafe.play" %% "play-json" % "2.6.2",
     "com.github.fge" % "json-schema-validator" % "2.2.6",
     "org.gnieh" %% "diffson-play-json" % "2.2.1"
@@ -79,26 +79,26 @@ object Dependencies {
 
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
 
-    "com.opticdev" %% "parser-foundation" % "1.0.0",
-    "com.opticdev" %% "marvin-runtime" % "1.0.0",
-    "com.opticdev" %% "marvin-common" % "1.0.0"
+    "com.opticdev" %% "parser-foundation" % "0.1.0",
+    "com.opticdev" %% "marvin-runtime" % "0.1.0",
+    "com.opticdev" %% "marvin-common" % "0.1.0"
   )
 
   val arrowDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "me.xdrop" % "fuzzywuzzy" % "1.1.9",
-    "com.opticdev" %% "marvin-runtime" % "1.0.0",
-    "com.opticdev" %% "marvin-common" % "1.0.0"
+    "com.opticdev" %% "marvin-runtime" % "0.1.0",
+    "com.opticdev" %% "marvin-common" % "0.1.0"
   )
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "com.vdurmont" % "semver4j" % "2.1.0",
-    "com.opticdev" %% "parser-foundation" % "1.0.0",
+    "com.opticdev" %% "parser-foundation" % "0.1.0",
     "com.typesafe.play" %% "play-json" % "2.6.2",
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
     "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
-    "com.opticdev" %% "marvin-runtime" % "1.0.0",
-    "com.opticdev" %% "marvin-common" % "1.0.0"
+    "com.opticdev" %% "marvin-runtime" % "0.1.0",
+    "com.opticdev" %% "marvin-common" % "0.1.0"
   )
 
 }

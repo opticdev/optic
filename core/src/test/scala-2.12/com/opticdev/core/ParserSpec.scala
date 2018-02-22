@@ -19,7 +19,7 @@ class ParserSpec extends TestBase {
   }
 
   it("Can parse a string with installed parser") {
-    val didParse = SourceParserManager.parseString("var test = 1+1", "Javascript", None)
+    val didParse = SourceParserManager.parseString("var test = 1+1", "Javascript")
     assert(didParse != null)
   }
 

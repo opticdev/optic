@@ -84,7 +84,7 @@ class TestProvider extends Provider {
 
     val parserOptions = parsers.map(ref=> {
       (ref, installedParsers
-        .get(ref.packageId).flatMap(versions => {
+        .get(ref.languageName).flatMap(versions => {
 
         val semversions = versions.map(i=> (new Semver(i.parserVersion, SemverType.NPM), i))
           .filter(sV=> sV._1.satisfies(ref.version) || ref.version == "latest")

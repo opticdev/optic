@@ -5,7 +5,7 @@ import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.parsers
-import com.opticdev.parsers.{LanguageId, ParserBase, SourceParserManager}
+import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge
@@ -24,7 +24,7 @@ abstract class SourceGear {
 
   def findGear(id: String) = gearSet.listGears.find(_.id == id)
 
-  def findParser(languageId: LanguageId) = parsers.find(_.languageName == languageId.name)
+  def findParser(parserRef: ParserRef) = parsers.find(_.languageName == parserRef.languageName)
 
   lazy val validExtensions: Set[String] = parsers.flatMap(_.fileExtensions)
 
@@ -34,7 +34,7 @@ abstract class SourceGear {
   def parseString(string: String) (implicit  project: OpticProject) : Try[FileParseResults] = Try {
     val fileContents = string
     //@todo connect to parser list
-    val parsedOption = SourceParserManager.parseString(fileContents, "Javascript", Option("es6"))
+    val parsedOption = SourceParserManager.parseString(fileContents, "Javascript")
     if (parsedOption.isSuccess) {
       val parsed = parsedOption.get
       val astGraph = parsed.graph

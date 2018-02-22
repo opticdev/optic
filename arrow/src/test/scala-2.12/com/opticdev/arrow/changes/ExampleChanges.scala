@@ -67,7 +67,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"position": 93,
         |			"type": "as-child-of"
         |		},
-        |   "gearId": "7b00f2ec",
+        |   "gearId": "4d96c7df",
         |		"type": "insert-model"
         |	}]
       """.stripMargin
@@ -131,7 +131,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"method": "post",
         |			"url": "test/url"
         |		},
-        |		"gearId": "7b00f2ec",
+        |		"gearId": "4d96c7df",
         |		"atLocation": {
         |			"file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/tmp/test_project/app.js",
         |			"position": 38,

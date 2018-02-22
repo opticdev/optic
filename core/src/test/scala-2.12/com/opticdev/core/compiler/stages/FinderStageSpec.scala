@@ -14,7 +14,7 @@ import com.opticdev.parsers.SourceParserManager
 class FinderStageSpec extends TestBase {
 
   val snippetBlock = "var hello = require('world')"
-  val snippet = Snippet("Javascript", Some("es6"), snippetBlock)
+  val snippet = Snippet("Javascript", snippetBlock)
 
   implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(
     CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))

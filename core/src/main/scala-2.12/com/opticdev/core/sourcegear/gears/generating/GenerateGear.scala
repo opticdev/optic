@@ -12,19 +12,19 @@ import com.opticdev.parsers.SourceParserManager
 import scala.util.hashing.MurmurHash3
 
 case class GenerateGear(block: String,
-                        languageId: LanguageId,
+                        parserRef: ParserRef,
                         parseGear: ParseAsModel,
                         entryChild: NodeDescription) {
 
   def parseResult(b: String) = {
-    val parser = SourceParserManager.parserById(languageId)
+    val parser = SourceParserManager.parserById(parserRef)
     if (parser.isDefined) {
-      parser.get.parseString(block, languageId.version)
+      parser.get.parseString(block)
     } else throw new Error("Unable to find parser for generator")
   }
 
   def generateWithNewAstNode(value: JsObject)(implicit sourceGear: SourceGear): (NewAstNode, String) = {
-    implicit val sourceGearContext = SGContext.forGeneration(sourceGear, languageId)
+    implicit val sourceGearContext = SGContext.forGeneration(sourceGear, parserRef)
 
     implicit val fileContents = block
     implicit val astGraph = parseResult(block).graph
@@ -50,7 +50,7 @@ case class GenerateGear(block: String,
   def hash = {
       MurmurHash3.stringHash(block) ^
       MurmurHash3.stringHash(entryChild.toString) ^
-      MurmurHash3.stringHash(languageId.toString) ^
+      MurmurHash3.stringHash(parserRef.full) ^
       parseGear.hash
   }
 
