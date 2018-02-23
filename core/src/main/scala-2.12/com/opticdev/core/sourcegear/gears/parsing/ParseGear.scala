@@ -10,7 +10,7 @@ import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelFiel
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType, Child}
+import com.opticdev.parsers.graph.{CommonAstNode, AstType, Child}
 import com.opticdev.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.{JsObject, JsValue}
 
@@ -43,18 +43,18 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
         MurmurHash3.listHash(variableManager.variables.toList, 2317453)
   }
 
-  def matches(entryNode: AstPrimitiveNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: OpticProject) : Option[ParseResult] = {
+  def matches(entryNode: CommonAstNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: OpticProject) : Option[ParseResult] = {
 
     val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
 
     //new for each search instance
     val variableLookupTable = variableManager.variableLookupTable
 
-    def compareWith(n:AstPrimitiveNode, edgeType: String, d:NodeDescription, path: FlatWalkablePath) = {
+    def compareWith(n:CommonAstNode, edgeType: String, d:NodeDescription, path: FlatWalkablePath) = {
       compareToDescription(n, edgeType, d, path)
     }
 
-    def compareToDescription(node: AstPrimitiveNode, childType: String, desc: NodeDescription, currentPath: FlatWalkablePath) : MatchResults = {
+    def compareToDescription(node: CommonAstNode, childType: String, desc: NodeDescription, currentPath: FlatWalkablePath) : MatchResults = {
       val componentsAtPath = extractableComponents.getOrElse(currentPath, Vector[Component]())
       val expectedSubContainerAtPath = containers.get(currentPath)
       val rulesAtPath      = ruleProvider.applyDefaultRulesForType(rules.getOrElse(currentPath, Vector[Rule]()), node.nodeType)

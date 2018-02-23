@@ -1,8 +1,8 @@
 package com.opticdev.core.sourcegear.gears.parsing
 
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
-import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.CommonAstNode
 import play.api.libs.json.{JsObject, JsValue}
 
-case class ParseResult(parseGear: ParseGear, modelNode: LinkedModelNode, astNode: AstPrimitiveNode)
+case class ParseResult(parseGear: ParseGear, modelNode: LinkedModelNode, astNode: CommonAstNode)
 

@@ -14,7 +14,7 @@ import com.opticdev.parsers.SourceParserManager
 class FinderStageSpec extends TestBase {
 
   val snippetBlock = "var hello = require('world')"
-  val snippet = Snippet("Javascript", snippetBlock)
+  val snippet = Snippet("es7", snippetBlock)
 
   implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(
     CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
@@ -27,7 +27,7 @@ class FinderStageSpec extends TestBase {
   it("can find paths for components") {
     val finderPath = finderStage.pathForFinder(lens.components.head.asInstanceOf[CodeComponent].finder)
     val targetNode = finderPath.get.targetNode
-    assert(targetNode.nodeType == AstType("Identifier", "Javascript"))
+    assert(targetNode.nodeType == AstType("Identifier", "es7"))
   }
 
   it("returns valid output") {

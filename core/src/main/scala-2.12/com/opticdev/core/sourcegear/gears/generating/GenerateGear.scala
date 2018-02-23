@@ -5,7 +5,7 @@ import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers._
-import com.opticdev.parsers.graph.{AstPrimitiveNode, GraphImplicits}
+import com.opticdev.parsers.graph.{CommonAstNode, GraphImplicits}
 import play.api.libs.json.{JsObject, JsValue}
 import com.opticdev.parsers.SourceParserManager
 
@@ -30,8 +30,8 @@ case class GenerateGear(block: String,
     implicit val astGraph = parseResult(block).graph
     //@todo make this work for all entry children
     val rootNode = astGraph.nodes.toVector
-      .find(node=> entryChild.matchingPredicate(node.value.asInstanceOf[AstPrimitiveNode]))
-      .get.value.asInstanceOf[AstPrimitiveNode]
+      .find(node=> entryChild.matchingPredicate(node.value.asInstanceOf[CommonAstNode]))
+      .get.value.asInstanceOf[CommonAstNode]
     val isMatch = parseGear.matches(rootNode, true)(astGraph, fileContents, sourceGearContext, null)
     if (isMatch.isEmpty) throw new Error("Can not generate. Snippet does not contain model "+parseGear)
 

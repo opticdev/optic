@@ -3,7 +3,7 @@ package com.opticdev.core.compiler.helpers
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.compiler.errors.{NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
 import com.opticdev.core.compiler.stages.SnippetStage
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
+import com.opticdev.parsers.graph.{CommonAstNode, AstType}
 import com.opticdev.sdk.descriptions.enums.FinderEnums._
 import com.opticdev.sdk.descriptions.finders.{NodeFinder, RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.{Lens, Snippet}
@@ -11,7 +11,7 @@ import com.opticdev.core._
 class FinderEvaluationSpec extends TestBase {
 
   val block = "var hello = require('world'); var next = hello+1"
-  implicit val lens : Lens = Lens("Example", BlankSchema, Snippet("Javascript", block), Vector(), Vector(), Vector())
+  implicit val lens : Lens = Lens("Example", BlankSchema, Snippet("es7", block), Vector(), Vector(), Vector())
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run
@@ -23,14 +23,14 @@ class FinderEvaluationSpec extends TestBase {
       it("finds right node -- occurrence = 0") {
         val stringFinder = StringFinder(Entire, "hello", 0)
         val result = FinderEvaluator.run(stringFinder, snippetStageOutput)
-        assert(result.nodeType == AstType("Identifier", "Javascript"))
+        assert(result.nodeType == AstType("Identifier", "es7"))
         assert(result.range == Range(4, 9))
       }
 
       it("finds right node -- occurrence = 1") {
         val stringFinder = StringFinder(Entire, "hello", 1)
         val result = FinderEvaluator.run(stringFinder, snippetStageOutput)
-        assert(result.nodeType == AstType("Identifier", "Javascript"))
+        assert(result.nodeType == AstType("Identifier", "es7"))
         assert(result.range == Range(41, 46))
       }
 
@@ -55,14 +55,14 @@ class FinderEvaluationSpec extends TestBase {
       it("finds right node -- occurrence = 0") {
         val stringFinder = StringFinder(Containing, "ell", 0)
         val result = FinderEvaluator.run(stringFinder, snippetStageOutput)
-        assert(result.nodeType == AstType("Identifier", "Javascript"))
+        assert(result.nodeType == AstType("Identifier", "es7"))
         assert(result.range == Range(4, 9))
       }
 
       it("finds right node -- occurrence = 1") {
         val stringFinder = StringFinder(Containing, "ell", 1)
         val result = FinderEvaluator.run(stringFinder, snippetStageOutput)
-        assert(result.nodeType == AstType("Identifier", "Javascript"))
+        assert(result.nodeType == AstType("Identifier", "es7"))
         assert(result.range == Range(41, 46))
       }
 
@@ -75,14 +75,14 @@ class FinderEvaluationSpec extends TestBase {
       it("finds right node -- occurrence = 0") {
         val stringFinder = StringFinder(Starting, "hel", 0)
         val result = FinderEvaluator.run(stringFinder, snippetStageOutput)
-        assert(result.nodeType == AstType("Identifier", "Javascript"))
+        assert(result.nodeType == AstType("Identifier", "es7"))
         assert(result.range == Range(4, 9))
       }
 
       it("finds right node -- occurrence = 1") {
         val stringFinder = StringFinder(Starting, "hel", 1)
         val result = FinderEvaluator.run(stringFinder, snippetStageOutput)
-        assert(result.nodeType == AstType("Identifier", "Javascript"))
+        assert(result.nodeType == AstType("Identifier", "es7"))
         assert(result.range == Range(41, 46))
       }
 
@@ -102,7 +102,7 @@ class FinderEvaluationSpec extends TestBase {
     it("finds the right node") {
       val rangeFinder = RangeFinder(4,9)
       val result = FinderEvaluator.run(rangeFinder, snippetStageOutput)
-      assert(result.nodeType == AstType("Identifier", "Javascript"))
+      assert(result.nodeType == AstType("Identifier", "es7"))
       assert(result.range == Range(4, 9))
     }
 
@@ -111,9 +111,9 @@ class FinderEvaluationSpec extends TestBase {
   describe("Node Finders") {
 
     it("finds the right node") {
-      val nodeFinder = NodeFinder( AstType("Identifier", "Javascript"), Range(4,9))
+      val nodeFinder = NodeFinder( AstType("Identifier", "es7"), Range(4,9))
       val result =  FinderEvaluator.run(nodeFinder, snippetStageOutput)
-      assert(result.nodeType == AstType("Identifier", "Javascript"))
+      assert(result.nodeType == AstType("Identifier", "es7"))
       assert(result.range == Range(4, 9))
     }
 
@@ -134,7 +134,7 @@ class FinderEvaluationSpec extends TestBase {
       it("parent node") {
         implicit val graph = finderPath.astGraph
         val parent = finderPath.targetNode.dependencies.head
-        val path = finderPath.fromNode(parent.asInstanceOf[AstPrimitiveNode])
+        val path = finderPath.fromNode(parent.asInstanceOf[CommonAstNode])
         assert(path.isDefined)
         assert(path.get.childPath.size == 1)
       }

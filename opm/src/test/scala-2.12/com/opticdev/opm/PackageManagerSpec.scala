@@ -116,7 +116,7 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
       ParserStorage.writeToStorage(fakeParserJar)
 
       val collect = PackageManager.collectParsers(
-        ParserRef("Javascript", "0.1.0")
+        ParserRef("es7", "0.1.0")
       )
 
       assert(collect.foundAll)

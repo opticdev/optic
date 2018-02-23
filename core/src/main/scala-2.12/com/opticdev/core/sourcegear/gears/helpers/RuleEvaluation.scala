@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.gears.helpers
 
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{AstPrimitiveNode, Child}
+import com.opticdev.parsers.graph.{CommonAstNode, Child}
 import com.opticdev.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 import com.opticdev.sdk.descriptions.{ChildrenRule, PropertyRule, RawRule, VariableRule}
@@ -14,7 +14,7 @@ import scalax.collection.mutable.Graph
 object RuleEvaluation {
 
   implicit class RawRuleWithEvaluation(rawRule: RawRule)  {
-    def evaluate(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String): Boolean = {
+    def evaluate(node: CommonAstNode)(implicit graph: AstGraph, fileContents: String): Boolean = {
       val raw = fileContents.substring(node.range.start, node.range.end)
       rawRule.comparator match {
         case "==" => raw == rawRule.value
@@ -26,7 +26,7 @@ object RuleEvaluation {
   }
 
   implicit class PropertyRuleWithEvaluation(propertyRule: PropertyRule)  {
-    def evaluate(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String): Boolean = {
+    def evaluate(node: CommonAstNode)(implicit graph: AstGraph, fileContents: String): Boolean = {
       val valueOption = node.properties.as[JsObject] \ propertyRule.key
       if (valueOption.isEmpty) return false
       propertyRule.comparator match {
@@ -39,7 +39,7 @@ object RuleEvaluation {
   }
 
   implicit class VariableRuleWithEvaluation(variableRule: VariableRule)  {
-    def evaluate(node: AstPrimitiveNode, variableLookupTable: VariableLookupTable)(implicit graph: AstGraph, fileContents: String): Boolean = {
+    def evaluate(node: CommonAstNode, variableLookupTable: VariableLookupTable)(implicit graph: AstGraph, fileContents: String): Boolean = {
       variableLookupTable.astNodeMatchesVariable(variableRule, node)
     }
   }
@@ -47,27 +47,27 @@ object RuleEvaluation {
 
   implicit class ChildrenRuleWithEvaluation(childrenRule: ChildrenRule)(implicit graph: AstGraph, fileContents: String) {
 
-    def evaluate(node: AstPrimitiveNode, desc: NodeDescription, currentPath: FlatWalkablePath, compareWith: (AstPrimitiveNode, String, NodeDescription, FlatWalkablePath) => MatchResults): MatchResults = {
+    def evaluate(node: CommonAstNode, desc: NodeDescription, currentPath: FlatWalkablePath, compareWith: (CommonAstNode, String, NodeDescription, FlatWalkablePath) => MatchResults): MatchResults = {
 
-      val childrenVecor: Vector[(AstPrimitiveNode, String)] = node.children.map(c=> (c._2, c._1.asInstanceOf[Child].typ))
+      val childrenVecor: Vector[(CommonAstNode, String)] = node.children.map(c=> (c._2, c._1.asInstanceOf[Child].typ))
 
 
-      def equality(astNodeWithType: (AstPrimitiveNode, String), nodeDesc: NodeDescription): MatchResults = {
+      def equality(astNodeWithType: (CommonAstNode, String), nodeDesc: NodeDescription): MatchResults = {
         compareWith(astNodeWithType._1, astNodeWithType._2, nodeDesc, currentPath.append(nodeDesc.edge))
       }
 
       import com.opticdev.sdk.descriptions.enums.RuleEnums._
       childrenRule.ruleType match {
         case Any => ChildrenVectorComparison.any
-          [(AstPrimitiveNode, String), NodeDescription](childrenVecor, desc.children, equality)
+          [(CommonAstNode, String), NodeDescription](childrenVecor, desc.children, equality)
         case Exact => ChildrenVectorComparison.exact
-          [(AstPrimitiveNode, String), NodeDescription](childrenVecor, desc.children, equality)
+          [(CommonAstNode, String), NodeDescription](childrenVecor, desc.children, equality)
         case SamePlus => ChildrenVectorComparison.samePlus
-          [(AstPrimitiveNode, String), NodeDescription](childrenVecor, desc.children, equality)
+          [(CommonAstNode, String), NodeDescription](childrenVecor, desc.children, equality)
         case SameAnyOrder => ChildrenVectorComparison.sameAnyOrder
-          [(AstPrimitiveNode, String), NodeDescription](childrenVecor, desc.children, equality)
+          [(CommonAstNode, String), NodeDescription](childrenVecor, desc.children, equality)
         case SameAnyOrderPlus => ChildrenVectorComparison.sameAnyOrderPlus
-          [(AstPrimitiveNode, String), NodeDescription](childrenVecor, desc.children, equality)
+          [(CommonAstNode, String), NodeDescription](childrenVecor, desc.children, equality)
 
         case _ => MatchResults(false, None)
       }

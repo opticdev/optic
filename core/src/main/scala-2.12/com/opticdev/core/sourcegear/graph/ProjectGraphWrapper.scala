@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.core.sourcegear.graph.edges.{InFile, YieldsModel}
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{AstPrimitiveNode, CustomEdge}
+import com.opticdev.parsers.graph.{CommonAstNode, CustomEdge}
 import com.opticdev.parsers.utils.Crypto
 
 import scala.util.Try
@@ -57,7 +57,7 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph) {
       if (fromNode.isModel && toNode.isModel) {
         newProjectGraph add (fromNode.asInstanceOf[BaseModelNode] ~+#> toNode.asInstanceOf[BaseModelNode]) (edge.label)
       } else if (fromNode.isAstNode() && toNode.isModel && edge.label.isInstanceOf[YieldsModel]) {
-        newProjectGraph add (fileNode ~+#> toNode.asInstanceOf[BaseModelNode]) (InFile(fromNode.asInstanceOf[AstPrimitiveNode].range))
+        newProjectGraph add (fileNode ~+#> toNode.asInstanceOf[BaseModelNode]) (InFile(fromNode.asInstanceOf[CommonAstNode].range))
       }
     })
     newProjectGraph

@@ -45,7 +45,7 @@ class SdkContainerSpec extends FunSpec {
 
     val json =
       """
-        |{ "snippet": {"language": "javascript", "block": "function test () {}"},
+        |{ "snippet": {"language": "es7", "block": "function test () {}"},
         |					"subcontainer": false,
         |					"name": "Test",
         |					"pulls": ["test:package/schema"],

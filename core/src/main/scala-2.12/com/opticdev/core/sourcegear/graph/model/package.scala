@@ -2,12 +2,12 @@ package com.opticdev.core.sourcegear.graph
 
 import com.opticdev.core.sourcegear.graph.edges.YieldsModel
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
-import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.CommonAstNode
 
 package object model {
   type ModelAstMapping = Map[ModelKey, AstMapping]
 
-  type ModelAstPair = (YieldsModel, AstPrimitiveNode)
+  type ModelAstPair = (YieldsModel, CommonAstNode)
 
   sealed trait ModelKey
 
@@ -20,7 +20,7 @@ package object model {
   }
 
   sealed trait AstMapping {val relationship : AstPropertyRelationship.Value}
-  case class NodeMapping(node: AstPrimitiveNode, relationship : AstPropertyRelationship.Value) extends AstMapping
+  case class NodeMapping(node: CommonAstNode, relationship : AstPropertyRelationship.Value) extends AstMapping
   case class ModelVectorMapping(models: Vector[ModelNode]) extends AstMapping {override val relationship = AstPropertyRelationship.Model}
   case object NoMapping extends AstMapping {override val relationship = AstPropertyRelationship.NoRelationship}
 }

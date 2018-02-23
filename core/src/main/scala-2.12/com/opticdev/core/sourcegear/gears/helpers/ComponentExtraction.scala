@@ -5,7 +5,7 @@ import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, NoMapping, NodeMapping}
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
 import play.api.libs.json.{JsObject, JsString, JsValue}
 
@@ -17,7 +17,7 @@ case class ModelField(propertyPath: Seq[String], value: JsValue, astMapping: Ast
 
 object ComponentExtraction {
   implicit class ComponentWithExtractors(component: Component) {
-    def extract(node: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SGContext) : ModelField = {
+    def extract(node: CommonAstNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SGContext) : ModelField = {
       component match {
         case c: CodeComponent => {
 

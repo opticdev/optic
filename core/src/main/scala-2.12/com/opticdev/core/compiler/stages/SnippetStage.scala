@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping,
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.PathFinder
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
+import com.opticdev.parsers.graph.{CommonAstNode, AstType}
 import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.sdk.descriptions.{Lens, Snippet}
 
@@ -65,7 +65,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     }
   }
 
-  def buildAstTree(fromSnippet: Snippet = snippet): (AstGraph, AstPrimitiveNode) = {
+  def buildAstTree(fromSnippet: Snippet = snippet): (AstGraph, CommonAstNode) = {
     try {
       val parseResult = SourceParserManager.parseString(fromSnippet.block, fromSnippet.language).get
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
@@ -76,7 +76,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     }
   }
 
-  def enterOnAndMatchType(implicit graph: AstGraph, rootNode: AstPrimitiveNode): (Set[AstType], Vector[AstPrimitiveNode], MatchType.Value) = {
+  def enterOnAndMatchType(implicit graph: AstGraph, rootNode: CommonAstNode): (Set[AstType], Vector[CommonAstNode], MatchType.Value) = {
     val programNodeType = parser.programNodeType
     val blockNodeTypes      = parser.blockNodeTypes.nodeTypes
     if (programNodeType != rootNode.nodeType) throw new UnexpectedSnippetFormat(programNodeType+" did not appear first in the AST Tree.")
@@ -105,16 +105,16 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     hooks
   }
 
-  def connectContainerHooksToAst(hooks: Vector[ContainerHook], astGraph: AstGraph, root: AstPrimitiveNode) : ContainerMapping = {
+  def connectContainerHooksToAst(hooks: Vector[ContainerHook], astGraph: AstGraph, root: CommonAstNode) : ContainerMapping = {
 
     val allowedContainerTypes = parser.blockNodeTypes.nodeTypes.map(_.name)
 
     val connected = hooks.map(hook=> {
 
       //sorted by graph depth so the deepest encapsulating block is always chosen
-      val foundNodes : Seq[AstPrimitiveNode] = RangeFinderEvaluate.nodesMatchingRangePredicate(astGraph, (start, end) => {
+      val foundNodes : Seq[CommonAstNode] = RangeFinderEvaluate.nodesMatchingRangePredicate(astGraph, (start, end) => {
         start < hook.range.start && end > hook.range.end
-      }).map(_.value.asInstanceOf[AstPrimitiveNode])
+      }).map(_.value.asInstanceOf[CommonAstNode])
         .filter(i=> allowedContainerTypes.contains(i.nodeType.name))
         .sortBy(i=> i.graphDepth(astGraph))
 

@@ -82,7 +82,7 @@ class ProjectFileSpec extends TestBase {
     it("works for lists") {
       val f = fixture
       f.defined.interface.get.parsers.value += YamlString("CSS")
-      f.defined.interface.get.parsers.value.toList == List(YamlString("JavaScript"), YamlString("CSS"))
+      f.defined.interface.get.parsers.value.toList == List(YamlString("es7"), YamlString("CSS"))
     }
 
     describe("can can be output") {

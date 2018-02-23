@@ -15,7 +15,7 @@ import com.opticdev.core.sourcegear.gears.helpers.LocationEvaluation
 class LocationEvaluationSpec extends TestBase {
 
   val snippetBlock = File("test-examples/resources/example_source/LocationPlayground.js").contentAsString
-  val snippet = Snippet("Javascript", snippetBlock)
+  val snippet = Snippet("es7", snippetBlock)
 
   implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector(), Vector())
 

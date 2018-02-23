@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.variables
 
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
+import com.opticdev.parsers.graph.{CommonAstNode, AstType}
 import com.opticdev.sdk.descriptions.{Variable, VariableRule}
 import com.opticdev.sdk.descriptions.enums.VariableEnums
 import org.scalatest.FunSpec
@@ -13,7 +13,7 @@ class VariableLookupTableSpec extends FunSpec {
       Variable("test", VariableEnums.Self),
       Variable("test1", VariableEnums.Self),
       Variable("test2", VariableEnums.Self)
-    ), "name", AstType("Identifier", "Javascript"))
+    ), "name", AstType("Identifier", "es7"))
   }
 
   it("can lookup a variable by its id") {
@@ -40,9 +40,9 @@ class VariableLookupTableSpec extends FunSpec {
     val fixture = f
 
     val variableRule = VariableRule(null, "test")
-    val first = AstPrimitiveNode(AstType("Identifier", "Javascript"), Range(0,5), JsObject(Seq("name" -> JsString("ANY_VALUE"))))
-    val second = AstPrimitiveNode(AstType("Identifier", "Javascript"), Range(10,15), JsObject(Seq("name" -> JsString("ANY_VALUE"))))
-    val different = AstPrimitiveNode(AstType("Identifier", "Javascript"), Range(20,25), JsObject(Seq("name" -> JsString("different"))))
+    val first = CommonAstNode(AstType("Identifier", "es7"), Range(0,5), JsObject(Seq("name" -> JsString("ANY_VALUE"))))
+    val second = CommonAstNode(AstType("Identifier", "es7"), Range(10,15), JsObject(Seq("name" -> JsString("ANY_VALUE"))))
+    val different = CommonAstNode(AstType("Identifier", "es7"), Range(20,25), JsObject(Seq("name" -> JsString("different"))))
 
     assert(fixture.testTable.astNodeMatchesVariable(variableRule, first))
     assert(fixture.testTable.astNodeMatchesVariable(variableRule, second))

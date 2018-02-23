@@ -10,8 +10,7 @@
       "schema": "js-import",
       "snippet": {
         "name": "Using Require",
-        "language": "Javascript",
-        "version": "es6",
+        "language": "es7",
         "block": "let definedAs = require('pathTo')"
       },
       "rules": [],

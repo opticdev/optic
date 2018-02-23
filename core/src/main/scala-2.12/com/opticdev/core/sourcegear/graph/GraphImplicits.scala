@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.graph
 
 import better.files.File
-import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode, CustomEdge}
+import com.opticdev.parsers.graph.{CommonAstNode, BaseNode, CustomEdge}
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.InFile
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
@@ -22,28 +22,28 @@ object GraphImplicits {
       .toVector
       .asInstanceOf[Vector[BaseModelNode]]
 
-    def root : Option[AstPrimitiveNode] = graph
+    def root : Option[CommonAstNode] = graph
         .nodes
-        .filter(i=> i.value.isAstNode && i.value.asInstanceOf[AstPrimitiveNode].parent(graph).isEmpty)
-        .map(_.value.asInstanceOf[AstPrimitiveNode])
+        .filter(i=> i.value.isAstNode && i.value.asInstanceOf[CommonAstNode].parent(graph).isEmpty)
+        .map(_.value.asInstanceOf[CommonAstNode])
         .headOption
   }
 
-  implicit class AstPrimitiveNodeInstance(node: AstPrimitiveNode) {
+  implicit class CommonAstNodeInstance(node: CommonAstNode) {
 
-    def hasParent(parent: AstPrimitiveNode)(implicit astGraph: AstGraph) : Boolean = {
+    def hasParent(parent: CommonAstNode)(implicit astGraph: AstGraph) : Boolean = {
       if (parent == null) return false
-      val dependencies = node.dependencies(astGraph).filter(_.isAstNode()).asInstanceOf[Set[AstPrimitiveNode]]
+      val dependencies = node.dependencies(astGraph).filter(_.isAstNode()).asInstanceOf[Set[CommonAstNode]]
       dependencies.contains(parent) || dependencies.exists(i => i.hasParent(parent))
     }
 
-    def hasChild(child: AstPrimitiveNode)(implicit astGraph: AstGraph) : Boolean = {
+    def hasChild(child: CommonAstNode)(implicit astGraph: AstGraph) : Boolean = {
       if (child == null) return false
-      val dependents = node.dependents(astGraph).filter(_.isAstNode()).asInstanceOf[Set[AstPrimitiveNode]]
+      val dependents = node.dependents(astGraph).filter(_.isAstNode()).asInstanceOf[Set[CommonAstNode]]
       dependents.contains(child) || dependents.exists(i => i.hasChild(child))
     }
 
-    def siblingOf(otherNode: AstPrimitiveNode)(implicit astGraph: AstGraph): Boolean = {
+    def siblingOf(otherNode: CommonAstNode)(implicit astGraph: AstGraph): Boolean = {
       if (otherNode == null) return false
       otherNode.dependencies == node.dependencies
     }
@@ -51,10 +51,10 @@ object GraphImplicits {
   }
 
   implicit class BaseModelNodeInstance(modelNode: BaseModelNode) {
-    def astRoot()(implicit astGraph: AstGraph): AstPrimitiveNode = {
+    def astRoot()(implicit astGraph: AstGraph): CommonAstNode = {
       val dependencies = modelNode.dependencies(astGraph)
       if (dependencies.head.isAstNode()) {
-        dependencies.head.asInstanceOf[AstPrimitiveNode]
+        dependencies.head.asInstanceOf[CommonAstNode]
       } else {
         null
       }

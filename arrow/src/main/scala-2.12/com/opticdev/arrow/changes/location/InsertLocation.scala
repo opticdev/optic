@@ -3,7 +3,7 @@ package com.opticdev.arrow.changes.location
 import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.Container
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
@@ -26,9 +26,9 @@ case class AsChildOf(file: File, position: Int) extends InsertLocation {
 
     val possibleParents = graph.nodes.toVector.collect {
       case n if n.value.isAstNode() &&
-        blockTypes.nodeTypes.contains(n.value.asInstanceOf[AstPrimitiveNode].nodeType) &&
-        n.value.asInstanceOf[AstPrimitiveNode].range
-          .contains(position) => n.value.asInstanceOf[AstPrimitiveNode]
+        blockTypes.nodeTypes.contains(n.value.asInstanceOf[CommonAstNode].nodeType) &&
+        n.value.asInstanceOf[CommonAstNode].range
+          .contains(position) => n.value.asInstanceOf[CommonAstNode]
     }
 
     //we want the deepest block node that contains our desired insert location
@@ -56,7 +56,7 @@ case class RawPosition(file: File, position: Int) extends InsertLocation {
     ResolvedRawLocation(position, parser)
   }
 }
-//case class InContainer(container: AstPrimitiveNode, atIndex: RelativeIndex = Last) extends InsertLocation
+//case class InContainer(container: CommonAstNode, atIndex: RelativeIndex = Last) extends InsertLocation
 
 
 /* Resolved Location */
@@ -64,4 +64,4 @@ sealed trait ResolvedLocation {
   val parser : ParserBase
 }
 case class ResolvedRawLocation(rawPosition: Int, parser : ParserBase) extends ResolvedLocation
-case class ResolvedChildInsertLocation(index: Int, parent: AstPrimitiveNode, graph: AstGraph, parser : ParserBase) extends ResolvedLocation
+case class ResolvedChildInsertLocation(index: Int, parent: CommonAstNode, graph: AstGraph, parser : ParserBase) extends ResolvedLocation

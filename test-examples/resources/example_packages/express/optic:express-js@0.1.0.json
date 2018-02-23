@@ -14,7 +14,7 @@
       "schema": "optic:rest/parameter",
       "snippet": {
         "name": "Parameter",
-        "language": "Javascript",
+        "language": "es7",
         "version": "es6",
         "block": "req.query.name"
       },
@@ -47,8 +47,7 @@
       "schema": "optic:rest/route",
       "snippet": {
         "name": "Example Route",
-        "language": "Javascript",
-        "version": "es6",
+        "language": "es7",
         "block": "app.get('url', function (req, res) {\n //:callback \n})"
       },
       "rules": [{

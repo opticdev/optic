@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.gears.helpers
 import com.opticdev.core.sourcegear.containers.{ContainerAstMapping, ContainerMapping}
 import com.opticdev.sdk.descriptions.Location
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.CommonAstNode
 
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -11,7 +11,7 @@ import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 
 object LocationEvaluation {
-  def matches(location: Location, node: AstPrimitiveNode, forParent: AstPrimitiveNode = null, containerMapping: ContainerAstMapping = Map())(implicit astGraph: AstGraph) : Boolean = {
+  def matches(location: Location, node: CommonAstNode, forParent: CommonAstNode = null, containerMapping: ContainerAstMapping = Map())(implicit astGraph: AstGraph) : Boolean = {
     import com.opticdev.sdk.descriptions.enums.LocationEnums._
     location.in match {
 

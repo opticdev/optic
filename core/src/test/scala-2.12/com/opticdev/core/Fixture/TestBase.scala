@@ -1,5 +1,6 @@
 package com.opticdev.core.Fixture
 
+import better.files.File
 import com.opticdev.common.storage.DataDirectory
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.model.ModelNode
@@ -7,12 +8,14 @@ import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph._
 import com.opticdev.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSpecLike}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsObject, JsValue}
 import com.opticdev.parsers.SourceParserManager
+import org.yaml.snakeyaml.Yaml
 
-import scala.util.Random
+import scala.util.{Random, Try}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
+import net.jcazevedo.moultingyaml._
 
 trait TestBase extends FunSpecLike with BeforeAndAfterAll {
 
@@ -21,15 +24,21 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
   val random = new Random()
 
 
-  def mockAstPrimitiveNode(nT: AstType, v: JsValue, fileHash: String = "SPACE") : AstPrimitiveNode = {
-    new AstPrimitiveNode(nT, Range(random.nextInt(6), random.nextInt(6)), v, fileHash) {}
+  def mockCommonAstNode(nT: AstType, v: JsObject, fileHash: String = "SPACE") : CommonAstNode = {
+    new CommonAstNode(nT, Range(random.nextInt(6), random.nextInt(6)), v, fileHash) {}
   }
 
   def start = {
     DataDirectory.reset
     PreTest.run
     SourceParserManager.clearParsers
-    SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/target/scala-2.12/javascript-lang_2.12-1.0.jar")
+
+    val parserPath = Try({
+      val contents = File("config.yaml").contentAsString
+      contents.parseYaml.asYamlObject.fields(YamlString("testParser")).asInstanceOf[YamlString].value
+    }).getOrElse(throw new Error("No testParser found in config.yaml"))
+
+    SourceParserManager.installParser(parserPath)
   }
 
   start
@@ -39,7 +48,8 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
   def resetScratch = PreTest.resetScratch
 
   override def beforeAll = {
-    start
+    DataDirectory.reset
+    PreTest.run
     super.beforeAll()
   }
 

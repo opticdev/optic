@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
+import com.opticdev.parsers.graph.{CommonAstNode, AstType}
 import com.opticdev.sdk.descriptions._
 
 import scala.util.Try
@@ -23,10 +23,10 @@ case class ValidationStageOutput(isValid: Boolean,
                                  extraPaths: Set[Seq[String]])
 
 case class SnippetStageOutput(astGraph: AstGraph,
-                              rootNode: AstPrimitiveNode,
+                              rootNode: CommonAstNode,
                               snippet: Snippet,
                               enterOn: Set[AstType],
-                              entryChildren: Vector[AstPrimitiveNode],
+                              entryChildren: Vector[CommonAstNode],
                               matchType: MatchType.Value,
                               containerMapping: ContainerMapping,
                               parser: ParserBase)

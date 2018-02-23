@@ -13,7 +13,7 @@ class SdkLensSpec extends FunSpec {
       |			"packageRef": "test:test@1.11.1",
       |			"schema": "js-import",
       |			"snippet": {
-      |				"language": "javascript",
+      |				"language": "es7",
       |				"block": "const definedAs = require('pathTo')"
       |			},
       |			"scope": "public",

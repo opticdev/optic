@@ -5,7 +5,7 @@ import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.core.utils.UUID
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
+import com.opticdev.parsers.graph.{CommonAstNode, AstType}
 import com.opticdev.sdk.descriptions.SchemaRef
 
 import scala.util.hashing.MurmurHash3
@@ -27,6 +27,6 @@ case class Gear(name: String, packageFull: String, schemaRef: SchemaRef, enterOn
     Integer.toHexString(int)
   }
 
-  def matches(entryNode: AstPrimitiveNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: Project) =
+  def matches(entryNode: CommonAstNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: Project) =
     parser.matches(entryNode)
 }

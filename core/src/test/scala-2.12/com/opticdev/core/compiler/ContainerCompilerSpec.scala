@@ -8,7 +8,7 @@ class ContainerCompilerSpec extends TestBase {
 
   val testContainer = Container(
     "express-subroute",
-    Snippet("Javascript",
+    Snippet("es7",
       """
         |import express from 'express'
         |

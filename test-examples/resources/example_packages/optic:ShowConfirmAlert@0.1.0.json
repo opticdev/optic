@@ -29,7 +29,7 @@
       "name": "Show Confirm Alert",
       "schema": "confirmAlert",
       "snippet": {
-        "language": "Javascript",
+        "language": "es7",
         "block": "showConfirm('message', (didConfirm)=> {\n        if (didConfirm) {\n            //:on yes\n        } else {\n            //:on no\n        }\n    })"
       },
       "scope": "public",

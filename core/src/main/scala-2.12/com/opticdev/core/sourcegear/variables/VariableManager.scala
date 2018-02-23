@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.variables
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.sourcegear.gears.parsing.NodeDescription
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserBase}
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType}
+import com.opticdev.parsers.graph.{CommonAstNode, AstType}
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.sdk.descriptions.finders.NodeFinder
 import com.opticdev.sdk.descriptions.{PropertyRule, Rule, Variable, VariableRule}
@@ -17,11 +17,11 @@ case class VariableManager(variables: Vector[Variable], identifierNodeDesc: Iden
   def rules(snippetStageOutput: SnippetStageOutput): Vector[Rule] = {
     val variableAstType = identifierNodeDesc.nodeType
 
-    val flatNodes : Vector[AstPrimitiveNode] =
+    val flatNodes : Vector[CommonAstNode] =
       snippetStageOutput.astGraph.nodes.toVector
         .filter(_.value.isASTType(variableAstType))
         .map(_.value)
-        .asInstanceOf[Vector[AstPrimitiveNode]]
+        .asInstanceOf[Vector[CommonAstNode]]
 
     val variablesInSnippet = flatNodes.filter(i=> {
       i.nodeType == variableAstType && {

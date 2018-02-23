@@ -8,10 +8,12 @@ import com.opticdev.opm.storage.ParserStorage
 import com.opticdev.parsers.{ParserRef, SourceParserManager}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
+import net.jcazevedo.moultingyaml.YamlString
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.Try
 
 class TestProvider extends Provider {
 
@@ -102,7 +104,17 @@ class TestProvider extends Provider {
   }
 
   override def listInstalledParsers = {
-    val js = SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/target/scala-2.12/javascript-lang_2.12-1.0.jar")
-    Map("Javascript" -> Vector(js.get))
+    import net.jcazevedo.moultingyaml._
+
+    SourceParserManager.clearParsers
+
+    val parserPath = Try({
+      val contents = File("config.yaml").contentAsString
+      contents.parseYaml.asYamlObject.fields(YamlString("testParser")).asInstanceOf[YamlString].value
+    }).getOrElse(throw new Error("No testParser found in config.yaml"))
+
+    val js = SourceParserManager.installParser(parserPath)
+
+    Map("es7" -> Vector(js.get))
   }
 }

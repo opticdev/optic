@@ -14,8 +14,7 @@
       "schema": "parameter",
       "snippet": {
         "name": "Parameter",
-        "language": "Javascript",
-        "version": "es6",
+        "language": "es7",
         "block": "req.query.name"
       },
       "rules": [],
@@ -54,8 +53,7 @@
       "schema": "route",
       "snippet": {
         "name": "Example Route",
-        "language": "Javascript",
-        "version": "es6",
+        "language": "es7",
         "block": "app.get('url', function (req, res, next) { \n //:middleware \n }, function (req, res) {\n //:actions \n})"
       },
       "rules": [],

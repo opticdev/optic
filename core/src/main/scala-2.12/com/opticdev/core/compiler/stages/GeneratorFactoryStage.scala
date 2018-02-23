@@ -4,7 +4,7 @@ import com.opticdev.core.compiler.{GeneratorFactoryOutput, SnippetStageOutput}
 import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.core.sourcegear.gears.generating.GenerateGear
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
-import com.opticdev.parsers.graph.AstPrimitiveNode
+import com.opticdev.parsers.graph.CommonAstNode
 
 
 class GeneratorFactoryStage(snippetStageOutput: SnippetStageOutput, modelsParseGear: ParseGear)(implicit lens: Lens) extends CompilerStage[GeneratorFactoryOutput] {

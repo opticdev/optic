@@ -4,7 +4,7 @@ import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.compiler.errors._
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{AstPrimitiveNode, BaseNode}
+import com.opticdev.parsers.graph.{CommonAstNode, BaseNode}
 import com.opticdev.parsers.graph.path.{PathFinder, WalkablePath}
 import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
@@ -13,7 +13,7 @@ import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, S
 import scala.util.matching.Regex
 
 object FinderEvaluator {
-  def run(finder: Finder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = finder match {
+  def run(finder: Finder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : CommonAstNode = finder match {
     case f: StringFinder => forStringFinder(f, snippetStageOutput)
     case f: RangeFinder => forRangeFinder(f, snippetStageOutput)
     case f: NodeFinder => forNodeFinder(f, snippetStageOutput)
@@ -25,10 +25,10 @@ object FinderEvaluator {
     val basicSourceInterface = snippetStageOutput.parser.basicSourceInterface
 
     new FinderPath {
-      override def fromNode(root: AstPrimitiveNode): Option[WalkablePath] =
+      override def fromNode(root: CommonAstNode): Option[WalkablePath] =
         PathFinder.getPath(snippetStageOutput.astGraph, root, result)
 
-      override val targetNode: AstPrimitiveNode = result
+      override val targetNode: CommonAstNode = result
       override val astGraph : AstGraph = snippetStageOutput.astGraph
 
       override def leadsToLiteral = basicSourceInterface.literals.literalTypes.contains(targetNode.nodeType)
@@ -37,16 +37,16 @@ object FinderEvaluator {
     }
   }
 
-  def forNodeFinder(finder: NodeFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = {
+  def forNodeFinder(finder: NodeFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : CommonAstNode = {
     val nodeOption = RangeFinderEvaluate.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
       (finder.range.start, finder.range.end) == (nStart, nEnd)
-    }).find(_.value.asInstanceOf[AstPrimitiveNode].nodeType == finder.astType)
+    }).find(_.value.asInstanceOf[CommonAstNode].nodeType == finder.astType)
 
-    if (nodeOption.isDefined) nodeOption.get.value.asInstanceOf[AstPrimitiveNode] else throw NodeNotFound(finder)
+    if (nodeOption.isDefined) nodeOption.get.value.asInstanceOf[CommonAstNode] else throw NodeNotFound(finder)
 
   }
 
-  def forStringFinder(finder: StringFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = {
+  def forStringFinder(finder: StringFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : CommonAstNode = {
 
     val string = finder.string
     val rule   = finder.rule
@@ -74,30 +74,30 @@ object FinderEvaluator {
       case Containing => {
         val containingNodes = RangeFinderEvaluate.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
           nStart <= start && nEnd >= end
-        }).sortBy(_.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph))
+        }).sortBy(_.value.asInstanceOf[CommonAstNode].graphDepth(snippetStageOutput.astGraph))
 
         val nodeOption = containingNodes.lastOption
 
         if (nodeOption.isEmpty) throw NodeContainingStringNotFound(finder)
-        else nodeOption.get.value.asInstanceOf[AstPrimitiveNode]
+        else nodeOption.get.value.asInstanceOf[CommonAstNode]
       }
 
       //node with least graph depth that starts with string
       case Starting => {
         val containingNodes = RangeFinderEvaluate.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
           nStart == start
-        }).sortBy(_.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph))
+        }).sortBy(_.value.asInstanceOf[CommonAstNode].graphDepth(snippetStageOutput.astGraph))
 
         val nodeOption = containingNodes.lastOption
 
         if (nodeOption.isEmpty) throw NodeStartingWithStringNotFound(finder)
-        else nodeOption.get.value.asInstanceOf[AstPrimitiveNode]
+        else nodeOption.get.value.asInstanceOf[CommonAstNode]
       }
     }
 
 
   }
-  def forRangeFinder(finder: RangeFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : AstPrimitiveNode = {
+  def forRangeFinder(finder: RangeFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : CommonAstNode = {
 
     val start = finder.start
     val end   = finder.end
@@ -106,16 +106,16 @@ object FinderEvaluator {
       (start, end) == (nStart, nEnd)
     })
 
-    val node = exactMatchingNodes.sortBy(i=> i.value.asInstanceOf[AstPrimitiveNode].graphDepth(snippetStageOutput.astGraph)).reverse.headOption
+    val node = exactMatchingNodes.sortBy(i=> i.value.asInstanceOf[CommonAstNode].graphDepth(snippetStageOutput.astGraph)).reverse.headOption
 
-    if (node.isDefined) node.get.value.asInstanceOf[AstPrimitiveNode] else throw new NodeWithRangeNotFound(finder)
+    if (node.isDefined) node.get.value.asInstanceOf[CommonAstNode] else throw new NodeWithRangeNotFound(finder)
   }
 
   object RangeFinderEvaluate {
     def nodesMatchingRangePredicate(graph: AstGraph, predicate: (Int, Int) => Boolean) : Seq[graph.NodeT] = {
       graph.nodes.filter((n: graph.NodeT) => {
         n.isAstNode() && {
-          val range = n.value.asInstanceOf[AstPrimitiveNode].range
+          val range = n.value.asInstanceOf[CommonAstNode].range
           n.value.isAstNode() && predicate(range.start, range.end)
         }
       }).toSeq

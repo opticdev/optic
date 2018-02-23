@@ -34,7 +34,7 @@ abstract class SourceGear {
   def parseString(string: String) (implicit  project: OpticProject) : Try[FileParseResults] = Try {
     val fileContents = string
     //@todo connect to parser list
-    val parsedOption = SourceParserManager.parseString(fileContents, "Javascript")
+    val parsedOption = SourceParserManager.parseString(fileContents, "es7")
     if (parsedOption.isSuccess) {
       val parsed = parsedOption.get
       val astGraph = parsed.graph

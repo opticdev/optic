@@ -10,7 +10,7 @@ import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.parsing.{AdditionalParserInformation, NodeDescription, ParseAsModel}
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{AstPrimitiveNode, Child}
+import com.opticdev.parsers.graph.{CommonAstNode, Child}
 import com.opticdev.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 
@@ -54,7 +54,7 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
     ))
   }
 
-  def finderPathToFlatPath(finderPath: FinderPath, node: AstPrimitiveNode)(implicit graph: AstGraph): FlatWalkablePath = {
+  def finderPathToFlatPath(finderPath: FinderPath, node: CommonAstNode)(implicit graph: AstGraph): FlatWalkablePath = {
     val path = finderPath.fromNode(node)
     if (path.isEmpty) throw AstPathNotFound(finderPath)
     path.get.toFlatPath
@@ -63,17 +63,17 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
 }
 
 object ParserFactoryStage {
-  def nodeToDescription(astPrimitiveNode: AstPrimitiveNode, edge: Child = Child(0, null)) (implicit snippetStageOutput: SnippetStageOutput) : NodeDescription = {
-    val children = astPrimitiveNode.children(snippetStageOutput.astGraph)
+  def nodeToDescription(CommonAstNode: CommonAstNode, edge: Child = Child(0, null)) (implicit snippetStageOutput: SnippetStageOutput) : NodeDescription = {
+    val children = CommonAstNode.children(snippetStageOutput.astGraph)
       .map(i=> nodeToDescription(i._2, i._1.asInstanceOf[Child]))
 
     import com.opticdev.sdk.PropertyValuesConversions._
 
     NodeDescription(
-      astPrimitiveNode.nodeType,
-      astPrimitiveNode.range,
+      CommonAstNode.nodeType,
+      CommonAstNode.range,
       edge,
-      astPrimitiveNode.properties.as[JsObject].toScala.value,
+      CommonAstNode.properties.as[JsObject].toScala.value,
       children,
       Vector())
   }

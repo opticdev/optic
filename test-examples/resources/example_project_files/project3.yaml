@@ -1,6 +1,6 @@
 name: Test project
 parsers:
-  - JavaScript
+  - es7
 
 knowledge:
   - optic:rest

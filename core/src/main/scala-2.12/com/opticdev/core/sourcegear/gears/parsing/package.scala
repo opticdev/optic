@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.gears
 import com.opticdev.core.sourcegear.containers.{SubContainerManager, SubContainerMatch}
 import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.parsers._
-import com.opticdev.parsers.graph.{AstPrimitiveNode, AstType, Child}
+import com.opticdev.parsers.graph.{CommonAstNode, AstType, Child}
 import com.opticdev.sdk.PropertyValue
 import com.opticdev.sdk.descriptions.PropertyRule
 import play.api.libs.json.JsObject
@@ -15,7 +15,7 @@ package object parsing {
   //Signaling
   case class MatchResults(isMatch: Boolean,
                           extracted: Option[Set[ModelField]] = None,
-                          baseNode: Option[AstPrimitiveNode] = None,
+                          baseNode: Option[CommonAstNode] = None,
                           containers: Option[Set[SubContainerMatch]] = None
                          )
 
@@ -29,7 +29,7 @@ package object parsing {
                              children: Vector[NodeDescription],
                              rules: Vector[RulesDesc]) {
 
-    def propertiesMatch(node: AstPrimitiveNode, propertyRules: Vector[PropertyRule])(implicit graph: AstGraph, fileContents: String)  : Boolean = {
+    def propertiesMatch(node: CommonAstNode, propertyRules: Vector[PropertyRule])(implicit graph: AstGraph, fileContents: String)  : Boolean = {
       import com.opticdev.sdk.PropertyValuesConversions._
       val jsValue = node.properties
       if (!jsValue.isInstanceOf[JsObject]) return false
@@ -48,7 +48,7 @@ package object parsing {
       }
     }
 
-    def matchingPredicate = (astPrimitiveNode: AstPrimitiveNode) => astPrimitiveNode.nodeType == astType && astPrimitiveNode.range == range
+    def matchingPredicate = (CommonAstNode: CommonAstNode) => CommonAstNode.nodeType == astType && CommonAstNode.range == range
 
     def flatNodes: Seq[NodeDescription] = {
       children.flatMap(_.flatNodes) :+ this
