@@ -6,7 +6,7 @@ import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, NoMapping, NodeMapping}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.AstPrimitiveNode
-import com.opticdev.sdk.descriptions.enums.{Literal, Token}
+import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
 import play.api.libs.json.{JsObject, JsString, JsValue}
 
 import scalax.collection.edge.LkDiEdge
@@ -33,6 +33,12 @@ object ComponentExtraction {
               if (result.isFailure) throw new Error("Source code extraction error " + result.failed.get)
               ModelField(component.propertyPath, result.get, NodeMapping(node, AstPropertyRelationship.Token))
             }
+            case ObjectLiteral=> {
+              val result = sourceGearContext.parser.basicSourceInterface.objectLiterals.parseNode(node, graph, fileContents)
+              if (result.isFailure) throw new Error("Source code extraction error " + result.failed.get)
+              ModelField(component.propertyPath, result.get, NodeMapping(node, AstPropertyRelationship.ObjectLiteral))
+            }
+
           }
 
         }

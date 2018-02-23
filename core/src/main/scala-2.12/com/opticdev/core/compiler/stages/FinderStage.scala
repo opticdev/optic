@@ -6,7 +6,7 @@ import com.opticdev.core.compiler.helpers.{FinderEvaluator, FinderPath}
 import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.sdk.descriptions.Lens
-import com.opticdev.sdk.descriptions.enums.{Literal, Token}
+import com.opticdev.sdk.descriptions.enums.{Literal, Token, ObjectLiteral}
 import com.opticdev.sdk.descriptions.finders.Finder
 
 import scala.util.{Failure, Success, Try}
@@ -26,12 +26,11 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
       } else {
         val finderPath = finderPathTry.get
 
-        val typedComponent = if (finderPath.leadsToLiteral) {
-          c.withComponentType(Literal)
-        } else if (finderPath.leadsToToken) {
-          c.withComponentType(Token)
-        } else {
-          c
+        val typedComponent = finderPath match {
+          case x if x.leadsToLiteral => c.withComponentType(Literal)
+          case x if x.leadsToToken => c.withComponentType(Token)
+          case x if x.leadsToObjectLiteral => c.withComponentType(ObjectLiteral)
+          case _ => c
         }
 
         (typedComponent, finderPathTry.get)

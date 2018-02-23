@@ -1,7 +1,7 @@
 package com.opticdev.sdk.descriptions
 
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
-import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported}
+import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported, RuleEnums}
 import com.opticdev.sdk.descriptions.finders.Finder
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
@@ -77,7 +77,7 @@ case class CodeComponent(propertyPath: Seq[String],
                          finder: Finder,
                          override val componentType: BasicComponentType = NotSupported) extends Component {
 
-  override def rules: Vector[Rule] = Vector(RawRule(finder, "ANY"))
+  override def rules: Vector[Rule] = Vector(RawRule(finder, "ANY"), ChildrenRule(finder, RuleEnums.Any))
 
   def withComponentType(basicComponentType: BasicComponentType) =
     new CodeComponent(propertyPath, finder, basicComponentType)

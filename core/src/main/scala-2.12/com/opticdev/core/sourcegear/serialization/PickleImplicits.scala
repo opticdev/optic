@@ -67,10 +67,11 @@ object PickleImplicits extends PicklerHelper {
   }
 
   implicit val basicComponentEnumPickler = {
-    import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported, Token, Literal}
+    import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported, Token, Literal, ObjectLiteral}
     compositePickler[BasicComponentType]
       .addConcreteType[NotSupported.type]
       .addConcreteType[Token.type]
+      .addConcreteType[ObjectLiteral.type]
       .addConcreteType[Literal.type]
 
   }

@@ -33,6 +33,7 @@ object FinderEvaluator {
 
       override def leadsToLiteral = basicSourceInterface.literals.literalTypes.contains(targetNode.nodeType)
       override def leadsToToken = basicSourceInterface.tokens.tokenTypes.contains(targetNode.nodeType)
+      override def leadsToObjectLiteral = basicSourceInterface.objectLiterals.objectLiteralsType.contains(targetNode.nodeType)
     }
   }
 

@@ -11,5 +11,6 @@ abstract class FinderPath {
 
   def leadsToLiteral : Boolean
   def leadsToToken : Boolean
+  def leadsToObjectLiteral : Boolean
 
 }

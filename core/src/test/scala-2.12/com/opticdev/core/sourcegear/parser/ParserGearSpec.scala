@@ -11,7 +11,7 @@ import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.enums.Token
-import play.api.libs.json.{JsObject, JsString}
+import play.api.libs.json.{JsArray, JsNumber, JsObject, JsString}
 
 class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {
 
@@ -76,21 +76,56 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
     describe("with extractors") {
 
-      it("Extracts definedAs (token) and pathTo (literal) from an import") {
+      it("literals") {
         val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
-          CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
           CodeComponent(Seq("pathTo"), StringFinder(Containing, "world"))
         ))
 
-        val block = "var otherValue = require('that-lib')"
+        val block = "var hello = require('that-lib')"
 
         val parsedSample = sample(block)
         val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
         assert(result.isDefined)
 
-        val expected = JsObject(Seq("definedAs" -> JsString("otherValue"), "pathTo" -> JsString("that-lib")))
+        val expected = JsObject(Seq("pathTo" -> JsString("that-lib")))
         assert(result.get.modelNode.value == expected)
       }
+
+      it("tokens") {
+        val parseGear = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
+          CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
+        ))
+
+        val block = "var otherValue = require('world')"
+
+        val parsedSample = sample(block)
+        val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
+        assert(result.isDefined)
+
+        val expected = JsObject(Seq("definedAs" -> JsString("otherValue")))
+        assert(result.get.modelNode.value == expected)
+      }
+
+      it("object literals") {
+        val parseGear = parseGearFromSnippetWithComponents("var hello = { object: 'value' }", Vector(
+          CodeComponent(Seq("value"), StringFinder(Starting, "{ object:")),
+        ))
+
+        val block = "var hello = { one: 1, two: 2, three: { asNumber: 3 } }"
+
+        val parsedSample = sample(block)
+        val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
+        assert(result.isDefined)
+
+        val value = JsObject(Seq("one" -> JsNumber(1), "two" -> JsNumber(2), "three" -> JsObject(
+          Seq("asNumber" -> JsNumber(3), "_order" -> JsArray(Seq(JsString("asNumber"))))
+        ), "_order" -> JsArray(Seq(JsString("one"), JsString("two"), JsString("three"))))
+        )
+
+        val expected = JsObject(Seq("value" -> value))
+        assert(result.get.modelNode.value == expected)
+      }
+
     }
 }
 
