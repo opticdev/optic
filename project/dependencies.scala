@@ -8,6 +8,8 @@ object Dependencies {
     "org.scalactic" %% "scalactic" % "3.0.1",
     "org.scalatest" %% "scalatest" % "3.0.1" % "test",
 
+    "com.opticdev" %% "parser-foundation" % "0.1.0",
+
     //file library
     "com.github.pathikrit" % "better-files_2.12" % "2.17.1",
     "com.github.pathikrit" %% "better-files-akka" % "2.17.1",
@@ -27,8 +29,7 @@ object Dependencies {
     "org.scalatest" %% "scalatest" % "3.0.1" % "test"
   )
 
-  val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Seq(
-    "com.opticdev" %% "parser-foundation" % "0.1.0",
+  val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Se,
     "com.typesafe.play" %% "play-json" % "2.6.2",
     "com.github.fge" % "json-schema-validator" % "2.2.6",
     "org.gnieh" %% "diffson-play-json" % "2.2.1"
@@ -78,8 +79,6 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-stream" % "2.5.4",
 
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
-
-    "com.opticdev" %% "parser-foundation" % "0.1.0",
     "com.opticdev" %% "marvin-runtime" % "0.1.0",
     "com.opticdev" %% "marvin-common" % "0.1.0"
   )
@@ -92,7 +91,6 @@ object Dependencies {
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "com.vdurmont" % "semver4j" % "2.1.0",
-    "com.opticdev" %% "parser-foundation" % "0.1.0",
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
     "com.typesafe.play" %% "play-json" % "2.6.2",
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
