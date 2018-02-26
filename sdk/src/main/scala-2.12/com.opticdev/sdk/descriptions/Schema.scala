@@ -41,16 +41,8 @@ object Schema extends Description[Schema] {
 }
 
 case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExportable {
-  private def getValue(key: String) = {
-    val valueOption = (definition \ key)
-    if (valueOption.isDefined) {
-      valueOption.get.as[JsString].value
-    } else {
-      throw new Error("Invalid Schema No field "+key+" defined.")
-    }
-  }
 
-  val name : String = getValue("title")
+  val name : String = (definition \ "title").asOpt[JsString].getOrElse(JsString(schemaRef.id)).value
 
   private val jsonSchema : JsonSchema = Schema.schemaObjectFromJson(definition)
 

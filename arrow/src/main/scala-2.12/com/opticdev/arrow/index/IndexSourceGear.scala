@@ -3,8 +3,9 @@ package com.opticdev.arrow.index
 import com.opticdev.arrow.graph
 import com.opticdev.arrow.graph.{GearNode, KnowledgeGraph, SchemaNode}
 import com.opticdev.core.sourcegear.SourceGear
-import scalax.collection.edge.Implicits._
+import com.opticdev.sdk.descriptions.Transformation
 
+import scalax.collection.edge.Implicits._
 import scala.collection.immutable
 import scalax.collection.Graph
 import scalax.collection.GraphPredef._
@@ -24,9 +25,15 @@ object IndexSourceGear {
       }
     }.toVector
 
-    //@todo transformation paths
+    val transformationNodes = sourceGear.transformations.map {
+      case t: Transformation =>
+        val inputSchemaNode = SchemaNode(sourceGear.findSchema(t.inputSchema).get)
+        val outputSchemaNode = SchemaNode(sourceGear.findSchema(t.outputSchema).get)
 
-    Graph(schemaGearNodes:_*).asInstanceOf[KnowledgeGraph]
+        (inputSchemaNode ~+#> outputSchemaNode)(t)
+    }.toVector
+
+    Graph((schemaGearNodes ++ transformationNodes):_*).asInstanceOf[KnowledgeGraph]
   }
 
 }
