@@ -18,6 +18,7 @@ trait GearUtils {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     override val gearSet = new GearSet()
     override val schemas = Set()
+    override val transformations = Set()
   }
 
   def gearFromDescription(path: String): Gear = {
@@ -53,6 +54,7 @@ trait GearUtils {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val gearSet = new GearSet()
       override val schemas = Set()
+      override val transformations = Set()
     }
 
     val jsonString = Source.fromFile(path).getLines.mkString

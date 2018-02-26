@@ -20,11 +20,12 @@ object SGConstructor {
     val compiled = compileDependencyTree(dependencies).get
 
     val schemaSet = dependencies.flattenSchemas.map(_.toColdStorage)
+    val transformationSet = dependencies.flattenTransformations
     val gears = compiled.flatMap(_.gears).toSet
 
     val parsersRefs = parsersForProjectFile(projectFile)
 
-    SGConfig(dependencies.hash, parsersRefs.get, gears, schemaSet)
+    SGConfig(dependencies.hash, parsersRefs.get, gears, schemaSet, transformationSet)
   }
 
   def dependenciesForProjectFile(projectFile: ProjectFile) : Try[DependencyTree] = {

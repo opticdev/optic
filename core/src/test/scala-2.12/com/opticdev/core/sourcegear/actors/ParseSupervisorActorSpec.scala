@@ -21,6 +21,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     override val gearSet = new GearSet()
     override val schemas = Set()
+    override val transformations = Set()
   }
 
   describe("context lookup") {

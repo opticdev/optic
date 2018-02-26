@@ -1,7 +1,7 @@
 package com.opticdev.opm.context
 
 import com.opticdev.opm.packages.OpticMDPackage
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.descriptions.{Schema, Transformation}
 
 import scala.util.hashing.MurmurHash3
 
@@ -14,6 +14,7 @@ case class Leaf(opticPackage: OpticMDPackage, tree: Tree = Tree()) {
 case class Tree(leafs: Leaf*) {
   def flatten : Set[OpticMDPackage] = leafs.flatMap(l=> l.tree.flatten + l.opticPackage).toSet
   def flattenSchemas : Set[Schema] = flatten.flatMap(_.schemas).toSet
+  def flattenTransformations : Set[Transformation] = flatten.flatMap(_.transformations).toSet
   def treeContext: TreeContext = TreeContext(this)
 
   final def hash: Int = leafs.map(_.hash).fold(0) { (int, lHash) => int ^ lHash }

@@ -21,6 +21,7 @@ class ProjectActorSpec extends AkkaTestFixture("ProjectActorTest") with GearUtil
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val gearSet = new GearSet()
       override val schemas = Set()
+      override val transformations = Set()
     }
 
     val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")

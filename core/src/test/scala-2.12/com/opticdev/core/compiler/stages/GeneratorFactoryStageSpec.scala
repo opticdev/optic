@@ -25,6 +25,7 @@ class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTe
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     override val gearSet = new GearSet()
     override val schemas = Set()
+    override val transformations = Set()
   }
 
   implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)

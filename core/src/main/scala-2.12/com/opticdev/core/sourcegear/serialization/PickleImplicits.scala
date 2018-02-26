@@ -134,13 +134,15 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.parserIds)
       state.pickle(value.gears)
       state.pickle(value.schemas)
+      state.pickle(value.transformations)
     }
     override def unpickle(implicit state: UnpickleState): SGConfig = {
       SGConfig(
         state.unpickle[Int],
         state.unpickle[Set[ParserRef]],
         state.unpickle[Set[Gear]],
-        state.unpickle[Set[SchemaColdStorage]]
+        state.unpickle[Set[SchemaColdStorage]],
+        state.unpickle[Set[Transformation]]
       )
     }
   }

@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.{Schema, SchemaRef, Transformation}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
@@ -17,6 +17,8 @@ abstract class SourceGear {
   val gearSet: GearSet
 
   val schemas: Set[Schema]
+
+  val transformations: Set[Transformation]
 
   def fileAccumulator = gearSet.fileAccumulator
 
@@ -56,5 +58,6 @@ object SourceGear {
     override val parsers: Set[ParserBase] = Set()
     override val gearSet = new GearSet()
     override val schemas = Set()
+    override val transformations = Set()
   }
 }

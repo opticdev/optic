@@ -35,6 +35,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     override val gearSet = new GearSet()
     override val schemas = Set()
+    override val transformations = Set()
   }
 
 

@@ -18,6 +18,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     override val gearSet = new GearSet()
     override val schemas = Set()
+    override val transformations = Set()
   }
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
