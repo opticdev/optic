@@ -3,7 +3,7 @@ package com.opticdev.sdk
 import com.opticdev.common.PackageRef
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
-import com.opticdev.sdk.descriptions.{SchemaRef, Transformation}
+import com.opticdev.sdk.descriptions.{SchemaRef, TransformFunction, Transformation}
 class SdkTransformationSpec extends FunSpec {
 
   val validTransformationJson =
@@ -33,5 +33,29 @@ class SdkTransformationSpec extends FunSpec {
 
   }
 
+  describe("Transform Function") {
+
+    val valid = new TransformFunction(
+      """
+        |function(a, b) {
+        | return "HELLO WORLD"
+        |}
+      """.stripMargin)
+
+    it("can inflate code to script objects") {
+      val inflated = valid.inflated
+      assert(inflated.isSuccess)
+    }
+
+    it("will fail code it is not syntactically valid") {
+      assert(new TransformFunction("_dasd dd+( ").inflated.isFailure)
+    }
+
+    it("will fail it is not a function ") {
+      assert(new TransformFunction("'Hello World'").inflated.isFailure)
+    }
+
+
+  }
 
 }
