@@ -2,8 +2,10 @@ package com.opticdev.sdk
 
 import com.opticdev.common.PackageRef
 import org.scalatest.FunSpec
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, JsString, Json}
 import com.opticdev.sdk.descriptions.{SchemaRef, TransformFunction, Transformation}
+
+import scala.util.Success
 class SdkTransformationSpec extends FunSpec {
 
   val validTransformationJson =
@@ -37,8 +39,8 @@ class SdkTransformationSpec extends FunSpec {
 
     val valid = new TransformFunction(
       """
-        |function(a, b) {
-        | return "HELLO WORLD"
+        |function(a) {
+        | return {hello: a.test}
         |}
       """.stripMargin)
 
@@ -55,6 +57,10 @@ class SdkTransformationSpec extends FunSpec {
       assert(new TransformFunction("'Hello World'").inflated.isFailure)
     }
 
+    it("can execute a transformation") {
+      val result = valid.transform(JsObject(Seq("test" -> JsString("world"))))
+      assert(result == Success(JsObject(Seq("hello" -> JsString("world")))))
+    }
 
   }
 
