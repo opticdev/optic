@@ -17,6 +17,9 @@ object Transformation extends Description[Transformation] {
 
   implicit val transformationReads = Json.reads[Transformation]
 
+  def fromJson(packageRef: PackageRef, jsValue: JsValue): Transformation = {
+    fromJson(jsValue.as[JsObject] + ("packageId" -> JsString(packageRef.full)))
+  }
   override def fromJson(jsValue: JsValue) = {
     val transformation = Json.fromJson[Transformation](jsValue)
 
@@ -57,6 +60,8 @@ sealed trait TransformationBase extends PackageExportable {
 }
 //case class InlineTransformation() extends TransformationBase
 
-case class Transformation( inputSchema: SchemaRef,
+case class Transformation( name: String,
+                           packageId: PackageRef,
+                           inputSchema: SchemaRef,
                            outputSchema: SchemaRef,
                            code: String) extends TransformationBase

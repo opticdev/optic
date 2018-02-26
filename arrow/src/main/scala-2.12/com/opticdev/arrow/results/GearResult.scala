@@ -19,6 +19,6 @@ case class GearResult(gear: Gear, score: Int, context: ArrowContextBase)(implici
   }
 
   override def changes = ChangeGroup(
-    InsertModel(sourcegear.findSchema(gear.schemaRef).get, Some(gear.id), JsObject.empty, context.toInsertLocation.orNull)
+    InsertModel(sourcegear.findSchema(gear.schemaRef).get, Some(gear.id), JsObject.empty, context.toInsertLocation)
   )
 }

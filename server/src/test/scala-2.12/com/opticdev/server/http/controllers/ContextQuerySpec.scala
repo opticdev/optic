@@ -2,7 +2,7 @@ package com.opticdev.server.http.controllers
 
 import akka.http.scaladsl.model.StatusCodes
 import better.files.File
-import com.opticdev.core.Fixture.AkkaTestFixture
+import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.opm.TestPackageProviders
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.server.Fixture.ProjectsManagerFixture
@@ -16,7 +16,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Promise}
 import scala.concurrent.duration._
-class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with ProjectsManagerFixture {
+class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase with ProjectsManagerFixture {
 
   override def beforeAll(): Unit = {
     resetScratch
@@ -24,7 +24,6 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with Projects
   }
 
   it("finds context for file/range pair") {
-
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
       val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)

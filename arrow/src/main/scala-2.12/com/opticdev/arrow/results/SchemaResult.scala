@@ -14,6 +14,6 @@ case class SchemaResult(schema: Schema, score: Int, context : ArrowContextBase)(
   ))
 
   override def changes = ChangeGroup(
-    InsertModel(schema, None, JsObject.empty, context.toInsertLocation.orNull)
+    InsertModel(schema, None, JsObject.empty, context.toInsertLocation)
   )
 }

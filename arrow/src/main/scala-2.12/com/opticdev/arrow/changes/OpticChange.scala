@@ -2,25 +2,34 @@ package com.opticdev.arrow.changes
 
 import com.opticdev.arrow.changes.evaluation.ChangeResult
 import com.opticdev.arrow.changes.location.{InsertLocation, RawPosition}
+import com.opticdev.arrow.graph.KnowledgeGraphImplicits.TransformationChanges
+import com.opticdev.core.sourcegear.Gear
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
+
 sealed trait OpticChange {
   def asJson : JsValue
   def schemaOption : Option[Schema] = None
 }
 
 /* Updates an existing model found in the code by an ID  */
-case class UpdateModel(modelNodeId: String, newValue: JsObject) extends OpticChange {
-  def asJson : JsValue = ???
-
-}
+//case class UpdateModel(modelNodeId: String, newValue: JsObject) extends OpticChange {
+//  def asJson : JsValue = ???
+//
+//}
 
 /* Inserts model somewhere in code */
-case class InsertModel(schema: Schema, gearId: Option[String], value: JsObject, atLocation: InsertLocation) extends OpticChange {
+case class InsertModel(schema: Schema, gearId: Option[String], value: JsObject, atLocation: Option[InsertLocation]) extends OpticChange {
   import JsonImplicits.insertModelFormat
   def asJson : JsValue = Json.toJson[InsertModel](this)
 
   override def schemaOption = Some(schema)
+}
+
+case class RunTransformation(transformationChanges: TransformationChanges, gearOptions: Seq[GearOption], locationOptions: Seq[InsertLocation] = Seq()) extends OpticChange {
+  val generatedTransformationSchema : Schema = null
+  import JsonImplicits.runTransformationFormat
+  override def asJson = Json.toJson[RunTransformation](this)
 }
 
 case class RawInsert(content: String, position: RawPosition) extends OpticChange {

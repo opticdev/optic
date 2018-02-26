@@ -11,6 +11,7 @@ class SdkTransformationSpec extends FunSpec {
   val validTransformationJson =
     """
       |{
+          "name": "Schema from Test",
           "inputSchema": "optic:test@1.0.0/schema",
           "outputSchema": "test",
           "code": "const parser = ()=> {}"
@@ -23,6 +24,7 @@ class SdkTransformationSpec extends FunSpec {
 
     it("works when valid") {
       val result = Transformation.fromJson(Json.parse(validTransformationJson))
+      assert(result.name == "Schema from Test")
       assert(result.inputSchema == SchemaRef(PackageRef("optic:test", "1.0.0"), "schema"))
       assert(result.outputSchema == SchemaRef(null, "test"))
     }

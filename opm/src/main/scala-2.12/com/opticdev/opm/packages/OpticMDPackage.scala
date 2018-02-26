@@ -37,7 +37,7 @@ case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMa
 
   lazy val transformations: Vector[Transformation] = (description \ "transformation").getOrElse(JsArray.empty).as[JsArray].value.map(i=> {
     val transformationObject = i.as[JsObject]
-    val transformation = Transformation.fromJson(transformationObject)
+    val transformation = Transformation.fromJson(packageRef, transformationObject)
     resolveTransformation(transformation, packageRef, dependencyMapping)
   }).toVector
 

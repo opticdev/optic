@@ -11,7 +11,7 @@ package object graph {
 
   sealed trait SGNode
   case class SchemaNode(schema: Schema) extends SGNode
-  case class GearNode(gearNode: Gear) extends SGNode
+  case class GearNode(gear: Gear) extends SGNode
 
   type KnowledgeGraph = Graph[SGNode, UnDiEdge]
 

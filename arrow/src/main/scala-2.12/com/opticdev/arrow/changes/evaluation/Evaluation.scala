@@ -22,9 +22,9 @@ object Evaluation {
         val gear = gearOption.get
         val generatedNode = gear.generater.generateWithNewAstNode(im.value)(sourcegear)
 
-        val location = im.atLocation.resolveToLocation(sourcegear).get
+        val location = im.atLocation.get.resolveToLocation(sourcegear).get
 
-        val changeResult = InsertCode.atLocation(generatedNode, im.atLocation.file, location)
+        val changeResult = InsertCode.atLocation(generatedNode, im.atLocation.get.file, location)
 
         if (changeResult.isSuccess) {
           changeResult.asFileChanged.stageContentsIn(filesStateMonitor)

@@ -44,9 +44,10 @@ class JsonImplicitsSpec extends FunSpec {
           |{ "title": "hello", "properties": {}, "type": "object" }
         """.stripMargin)
       val o = InsertModel(Schema(SchemaRef(PackageRef("optic:test"), "name"), testSchema.as[JsObject]),
-        Some("hash"), JsObject.empty, RawPosition(File("path/To/file"), 12))
+        Some("hash"), JsObject.empty, Some(RawPosition(File("path/To/file"), 12)))
 
       val json = Json.toJson[OpticChange](o)
+      println(json)
       assert(Json.fromJson[OpticChange](json).get == o)
     }
 

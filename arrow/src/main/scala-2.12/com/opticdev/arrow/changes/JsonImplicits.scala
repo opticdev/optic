@@ -1,8 +1,9 @@
 package com.opticdev.arrow.changes
 import better.files.File
 import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
+import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.{Schema, SchemaRef, Transformation}
 import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
@@ -13,6 +14,17 @@ object JsonImplicits {
   import PackageRef.packageRefJsonFormat
   import SchemaRef.schemaRefFormats
 
+
+  implicit val schemaFormat = new Format[Schema] {
+    override def reads(json: JsValue) = {
+      val schemaJson = json.as[JsObject]
+      val schemaRef = SchemaRef.fromString((schemaJson \ "_identifier").get.as[JsString].value)
+      val schema = Schema(schemaRef.get, schemaJson - "_identifier")
+      JsSuccess(schema)
+    }
+
+    override def writes(o: Schema) = o.toJson
+  }
 
   //File
   implicit val fileFormat = new Format[File] {
@@ -27,95 +39,27 @@ object JsonImplicits {
 
   //Location
 
-  implicit val insertLocationFormat = new Format[InsertLocation] {
+  implicit val asChildOfFormat = Json.format[AsChildOf]
+  implicit val rawPosition = Json.format[RawPosition]
 
-    implicit val asChildOfFormat = Json.format[AsChildOf]
-    implicit val rawPosition = Json.format[RawPosition]
-
-    override def reads(json: JsValue) = {
-      val locationType = (json.as[JsObject] \ "type").get.as[JsString].value
-      locationType match {
-        case "raw-position" => Json.fromJson[RawPosition](json)
-        case "as-child-of" => Json.fromJson[AsChildOf](json)
-      }
-    }
-
-    override def writes(o: InsertLocation) = {
-      o match {
-        case a: RawPosition => Json.toJsObject[RawPosition](a) ++ JsObject(Seq("type" -> JsString("raw-position")))
-        case a: AsChildOf => Json.toJsObject[AsChildOf](a) ++ JsObject(Seq("type" -> JsString("as-child-of")))
-      }
-    }
-  }
-
-
+  implicit val insertLocationFormat = Json.format[InsertLocation]
 
   //Insert Model
-  implicit val insertModelFormat = new OFormat[InsertModel] {
-    override def writes(o: InsertModel) : JsObject = {
-      JsObject(Seq(
-        "schema" -> o.schema.toJson,
-        "value" -> o.value,
-        "gearId" -> Try(JsString(o.gearId.get)).getOrElse(JsNull),
-        "atLocation" -> Json.toJson[InsertLocation](o.atLocation),
-        "type" -> JsString("insert-model")
-      ))
-    }
+  implicit val insertModelFormat = Json.format[InsertModel]
 
-    override def reads(json: JsValue) = {
-      val schemaJson = (json \ "schema").get.as[JsObject]
-      val schemaRef = SchemaRef.fromString((schemaJson \ "_identifier").get.as[JsString].value)
-      val schema = Schema(schemaRef.get, schemaJson - "_identifier")
+  implicit val transformationFormat = Json.format[Transformation]
+  implicit val gearOptionFormat = Json.format[GearOption]
+  implicit val directTransformationFormat = Json.format[DirectTransformation]
+  implicit val transformationChangesFormat = Json.format[TransformationChanges]
 
-      val value = (json \ "value").get.as[JsObject]
+  //Run Transformation
+  implicit val runTransformationFormat = Json.format[RunTransformation]
 
-      val gearId = Try(Some((json \ "gearId").get.as[JsString].value)).getOrElse(None)
-
-      val atLocation = Json.fromJson[InsertLocation]((json \ "atLocation").get).get
-
-      JsSuccess(InsertModel(schema, gearId, value, atLocation))
-    }
-  }
   //Raw Insert
-  implicit val rawInsertFormat = new OFormat[RawInsert] {
-
-    override def reads(json: JsValue) = {
-      val content = (json.as[JsObject] \ "content").get.as[JsString].value
-      val position = Json.fromJson[InsertLocation]((json.as[JsObject] \ "position").get).get
-      JsSuccess(RawInsert(content, position.asInstanceOf[RawPosition]))
-    }
-
-    override def writes(o: RawInsert) : JsObject = {
-      JsObject(Seq(
-        "content" -> JsString(o.content),
-        "position" -> Json.toJson[RawPosition](o.position),
-        "type" -> JsString("raw-insert")
-      ))
-    }
-
-  }
+  implicit val rawInsertFormat =  Json.format[RawInsert]
 
 
-  implicit val opticChangeFormat = new Format[OpticChange] {
-
-    override def reads(json: JsValue) = {
-      val changeType = (json.as[JsObject] \ "type").get.as[JsString].value
-      changeType match {
-        case "insert-model" => Json.fromJson[InsertModel](json)
-        case "raw-insert" => Json.fromJson[RawInsert](json)
-        case _ => throw new Error(s"Optic change type ${changeType} not implemented")
-      }
-    }
-
-    override def writes(o: OpticChange) = {
-      o match {
-        case a: InsertModel => Json.toJsObject[InsertModel](a)
-        case a: RawInsert => Json.toJsObject[RawInsert](a)
-        case _ => throw new Error(s"Optic change type ${o.getClass.toString} not implemented")
-      }
-    }
-  }
-
+  implicit val opticChangeFormat = Json.format[OpticChange]
 
   implicit val changeGroupFormat = new Format[ChangeGroup] {
     override def reads(json: JsValue) = {
