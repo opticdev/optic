@@ -119,6 +119,7 @@ class ProjectsManager {
   //finding arrow instances
   def lookupArrow(includedFile: File) : Option[Arrow] = lookupProject(includedFile).map(i=> arrowStore(i)).toOption
   def lookupArrow(projectName: String) : Option[Arrow] = lookupProject(projectName).map(i=> arrowStore(i)).toOption
+  def lookupArrow(project: OpticProject) : Option[Arrow] = arrowStore.get(project)
 
 
   private var _lastProjectName : Option[String] = None

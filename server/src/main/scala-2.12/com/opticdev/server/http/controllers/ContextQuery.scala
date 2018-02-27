@@ -3,12 +3,14 @@ package com.opticdev.server.http.controllers
 import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.model.StatusCode._
 import better.files.File
+import com.opticdev.arrow.context.ModelContext
+import com.opticdev.arrow.results.Result
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.server.data._
 import com.opticdev.server.state.ProjectsManager
-import play.api.libs.json.JsArray
+import play.api.libs.json.{JsArray, JsObject}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -16,7 +18,9 @@ import scala.util.{Failure, Success, Try}
 
 class ContextQuery(file: File, range: Range, contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
 
-  def execute : Future[Vector[LinkedModelNode]] = {
+  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode], availableTransformations: Vector[Result])
+
+  def execute : Future[ContextQueryResults] = {
 
     val projectOption = projectsManager.lookupProject(file)
 
@@ -48,10 +52,20 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
       }
     }
 
+    def addTransformationsAndFinalize(modelResults: Vector[LinkedModelNode]) = Future {
+      val modelContext = ModelContext(file, range, modelResults.map(_.flatten))
+      val arrow = projectsManager.lookupArrow(projectOption.get).get
+      ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext))
+    }
+
+
     if (contentsOption.isDefined && projectOption.isSuccess) {
-      projectOption.get.stageFileContents(file, contentsOption.get).map(i=> query).flatten
+      projectOption.get.stageFileContents(file, contentsOption.get)
+        .map(i=> query).flatten
+        .map(addTransformationsAndFinalize)
+        .flatten
     } else {
-      query
+      query.map(addTransformationsAndFinalize).flatten
     }
 
   }
@@ -60,14 +74,11 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
     import com.opticdev.server.data.ModelNodeJsonImplicits._
 
     execute.transform {
-      case Success(vector: Vector[LinkedModelNode]) => {
-        //@todo clean this up...way cleaner way possible
-//        implicit val project = projectsManager.lookupProject(file).get
-//        implicit val actorCluster = projectsManager.actorCluster
-//        implicit val sourceGear = project.projectSourcegear
-//        implicit val sourceGearContext = ParseSupervisorSyncAccess.getContext(file).get
-
-        Try(APIResponse(StatusCodes.OK, JsArray(vector.map(_.asJson))))
+      case Success(results: ContextQueryResults) => {
+        Try(APIResponse(StatusCodes.OK, JsObject(Seq(
+          "models" -> JsArray(results.modelNodes.map(_.asJson)),
+          "transformations" -> JsArray(results.availableTransformations.map(_.asJson))
+        ))))
       }
       case Failure(exception: ServerExceptions) => Try(APIResponse(StatusCodes.NotFound, exception.asJson))
     }

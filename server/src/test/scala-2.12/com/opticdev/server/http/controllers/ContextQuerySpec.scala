@@ -10,7 +10,7 @@ import com.opticdev.server.data.{FileIsNotWatchedByProjectException, FileNotInPr
 import com.opticdev.server.state.ProjectsManager
 import com.opticdev.server.storage.ServerStorage
 import org.scalatest.{BeforeAndAfterAll, FunSpec}
-import play.api.libs.json.JsArray
+import play.api.libs.json.{JsArray, JsObject}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -18,12 +18,8 @@ import scala.concurrent.{Await, Promise}
 import scala.concurrent.duration._
 class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase with ProjectsManagerFixture {
 
-  override def beforeAll(): Unit = {
-    resetScratch
-    super.beforeAll()
-  }
-
   it("finds context for file/range pair") {
+    resetScratch
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
       val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)
@@ -32,11 +28,12 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
 
     val result = Await.result(future, 10 seconds)
 
-    assert(result.size == 1)
-    assert(result.head.schemaId == SchemaRef.fromString("optic:rest@0.1.0/route").get)
+    assert(result.modelNodes.size == 1)
+    assert(result.modelNodes.head.schemaId == SchemaRef.fromString("optic:rest@0.1.0/route").get)
   }
 
   it("returns an empty vector if nothing is found") {
+    resetScratch
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
       val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(400, 450), None)
@@ -45,10 +42,11 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
 
     val result = Await.result(future, 10 seconds)
 
-    assert(result.isEmpty)
+    assert(result.modelNodes.isEmpty)
   }
 
   it("will fail if project does not watch queried file") {
+    resetScratch
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
       val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/README"), Range(400, 450), None)
@@ -61,6 +59,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
   }
 
   it("will fail if project doesn't exist") {
+    resetScratch
     implicit val projectsManager = projectsManagerWithStorage(ServerStorage(Map("test" -> "test-examples/resources/tmp/test_project")))
     val cq = new ContextQuery(File("not/real/file"), Range(12, 35), None)
     cq.execute.onComplete(i=> {
@@ -81,7 +80,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
 
       val result = Await.result(future, 10 seconds)
       assert(result.statusCode == StatusCodes.OK)
-      assert(result.data.asInstanceOf[JsArray].value.size == 1)
+      assert((result.data.asInstanceOf[JsObject] \ "models").get.as[JsArray].value.size == 1)
 
     }
 
@@ -107,7 +106,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
 
     val result = Await.result(future, 10 seconds)
     assert(result.statusCode == StatusCodes.OK)
-    assert(result.data.asInstanceOf[JsArray].value.isEmpty)
+    assert((result.data.asInstanceOf[JsObject] \ "models").get.as[JsArray].value.isEmpty)
   }
 
 }

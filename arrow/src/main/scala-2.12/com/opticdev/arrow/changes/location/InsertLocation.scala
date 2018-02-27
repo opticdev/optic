@@ -56,8 +56,8 @@ case class RawPosition(file: File, position: Int) extends InsertLocation {
     ResolvedRawLocation(position, parser)
   }
 }
-//case class InContainer(container: CommonAstNode, atIndex: RelativeIndex = Last) extends InsertLocation
 
+//case class InContainer(container: CommonAstNode, atIndex: RelativeIndex = Last) extends InsertLocation
 
 /* Resolved Location */
 sealed trait ResolvedLocation {

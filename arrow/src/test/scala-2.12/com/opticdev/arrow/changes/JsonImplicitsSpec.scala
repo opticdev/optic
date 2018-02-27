@@ -47,7 +47,6 @@ class JsonImplicitsSpec extends FunSpec {
         Some("hash"), JsObject.empty, Some(RawPosition(File("path/To/file"), 12)))
 
       val json = Json.toJson[OpticChange](o)
-      println(json)
       assert(Json.fromJson[OpticChange](json).get == o)
     }
 

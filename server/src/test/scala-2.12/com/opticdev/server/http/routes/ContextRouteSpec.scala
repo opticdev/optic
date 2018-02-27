@@ -30,11 +30,13 @@ class ContextRouteSpec extends FunSpec with Matchers with ScalatestRouteTest wit
   it("returns context once project has loaded for valid queries") {
     val url = s"/context?file=${URLEncoder.encode(getCurrentDirectory + "/test-examples/resources/tmp/test_project/app.js", "UTF-8")}&start=${31}&end=${32}"
     Get(url) ~> contextRoute.route ~> check {
-      val asArray = responseAs[JsArray]
+      val asArray = (responseAs[JsObject] \ "models").get.as[JsArray]
       assert(asArray.value.size == 1)
 
-      val headObject = asArray.value.head.as[JsObject].value
-//      assert(headObject("schemaId") == JsString("optic:rest/route"))
+      val headObject = asArray.value.head.as[JsObject]
+
+      (headObject \ "schema" \ "_identifier").get
+      assert((headObject \ "schema" \ "_identifier").get == JsString("optic:rest@0.1.0/route"))
     }
   }
 
