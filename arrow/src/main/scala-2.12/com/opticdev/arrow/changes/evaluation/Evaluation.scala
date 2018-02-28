@@ -20,7 +20,7 @@ object Evaluation {
     val results = changeGroup.changes.map {
       case im: InsertModel => {
         val gearOption = sourcegear.findGear(im.gearId.get)
-        assert(gearOption.isEmpty, "Gear not found for id. "+ im.gearId.get)
+        assert(gearOption.isDefined, "Gear not found for id. "+ im.gearId.get)
 
         val gear = gearOption.get
         val generatedNode = gear.generater.generateWithNewAstNode(im.value)(sourcegear)
