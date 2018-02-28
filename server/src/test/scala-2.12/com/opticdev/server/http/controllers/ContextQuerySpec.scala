@@ -26,7 +26,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
       cq.execute
     })
 
-    val result = Await.result(future, 10 seconds)
+    val result = Await.result(future, 20 seconds)
 
     assert(result.modelNodes.size == 1)
     assert(result.modelNodes.head.schemaId == SchemaRef.fromString("optic:rest@0.1.0/route").get)
@@ -40,7 +40,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
       cq.execute
     })
 
-    val result = Await.result(future, 10 seconds)
+    val result = Await.result(future, 20 seconds)
 
     assert(result.modelNodes.isEmpty)
   }
