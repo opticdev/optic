@@ -58,6 +58,8 @@ object JsonImplicits {
   //Raw Insert
   implicit val rawInsertFormat =  Json.format[RawInsert]
 
+  //Clear Search Lines
+  implicit val clearSearchLinesFormat = Json.format[ClearSearchLines]
 
   implicit val opticChangeFormat = Json.format[OpticChange]
 

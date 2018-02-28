@@ -1,6 +1,6 @@
 package com.opticdev.arrow.results
 
-import com.opticdev.arrow.changes.{ChangeGroup, InsertModel}
+import com.opticdev.arrow.changes.{ChangeGroup, ClearSearchLines, InsertModel}
 import com.opticdev.arrow.context.ArrowContextBase
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.{Gear, SourceGear}
@@ -18,7 +18,16 @@ case class GearResult(gear: Gear, score: Int, context: ArrowContextBase)(implici
     ))
   }
 
-  override def changes = ChangeGroup(
-    InsertModel(sourcegear.findSchema(gear.schemaRef).get, Some(gear.id), JsObject.empty, context.toInsertLocation)
-  )
+  override def changes = {
+
+    val insertModel = InsertModel(sourcegear.findSchema(gear.schemaRef).get, Some(gear.id), JsObject.empty, context.toInsertLocation)
+
+    val changes = if (context.toInsertLocation.isDefined) {
+      Seq(insertModel, ClearSearchLines(context.toInsertLocation.get.file))
+    } else {
+      Seq(insertModel)
+    }
+
+    ChangeGroup(changes:_*)
+  }
 }

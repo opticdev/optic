@@ -1,5 +1,6 @@
 package com.opticdev.arrow.changes
 
+import better.files.File
 import com.opticdev.arrow.changes.evaluation.ChangeResult
 import com.opticdev.arrow.changes.location.{InsertLocation, RawPosition}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.TransformationChanges
@@ -45,5 +46,10 @@ case class RunTransformation(transformationChanges: TransformationChanges,
 case class RawInsert(content: String, position: RawPosition) extends OpticChange {
   import JsonImplicits.rawInsertFormat
   def asJson : JsValue = Json.toJson[RawInsert](this)
+}
 
+case class ClearSearchLines(file: File, prefixPattern: String = "^\\s*\\/\\/\\/.*") extends OpticChange {
+  import JsonImplicits.clearSearchLinesFormat
+  val regex = prefixPattern.r
+  override def asJson : JsValue = Json.toJson[ClearSearchLines](this)
 }

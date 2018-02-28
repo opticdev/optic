@@ -21,3 +21,8 @@ case class FileChanged(file: File, newContents: String) extends ChangeResult {
 case class FailedToChange(throwable: Throwable) extends ChangeResult {
   override def isSuccess = false
 }
+
+//a valid response to do nothing
+case object NoChanges extends ChangeResult {
+  override def isSuccess = true
+}
