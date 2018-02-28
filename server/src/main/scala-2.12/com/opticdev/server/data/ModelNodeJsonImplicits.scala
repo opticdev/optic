@@ -3,6 +3,7 @@ package com.opticdev.server.data
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
+import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.server.state.ProjectsManager
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
@@ -13,6 +14,13 @@ import scala.util.Try
 object ModelNodeJsonImplicits {
 
   implicit class ModelNodeJson(modelNode: LinkedModelNode) {
+
+    def sourceGearContext()(implicit project: OpticProject) : SGContext = {
+      implicit val sourceGear = project.projectSourcegear
+      implicit val actorCluster = project.actorCluster
+      val fileNode = modelNode.fileNode
+      ParseSupervisorSyncAccess.getContext(fileNode.get.toFile).get
+    }
 
     def asJson()(implicit projectsManager: ProjectsManager) : JsObject = {
 

@@ -24,12 +24,18 @@ case class AsChildOf(file: File, position: Int) extends InsertLocation {
 
     val blockTypes = parser.blockNodeTypes
 
+    val backupRoot = graph.root
+
     val possibleParents = graph.nodes.toVector.collect {
-      case n if n.value.isAstNode() &&
+      case n if (n.value.isAstNode() &&
         blockTypes.nodeTypes.contains(n.value.asInstanceOf[CommonAstNode].nodeType) &&
-        n.value.asInstanceOf[CommonAstNode].range
-          .contains(position) => n.value.asInstanceOf[CommonAstNode]
+        n.value.asInstanceOf[CommonAstNode].range.contains(position)) ||
+
+        n.value == backupRoot.get //ensures that there is always a parent node even if its outside of range
+
+          => n.value.asInstanceOf[CommonAstNode]
     }
+
 
     //we want the deepest block node that contains our desired insert location
     val actualParent = possibleParents.maxBy(_.graphDepth(graph))

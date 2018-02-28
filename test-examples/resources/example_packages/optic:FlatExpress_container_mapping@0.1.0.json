@@ -144,7 +144,8 @@
             "slug": "parameter",
             "type": "object",
             "required": [
-              "method"
+              "in",
+              "name"
             ],
             "properties": {
               "in": {
@@ -166,7 +167,8 @@
         "slug": "parameter",
         "type": "object",
         "required": [
-          "method"
+          "in",
+          "name"
         ],
         "properties": {
           "in": {

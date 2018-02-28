@@ -4,7 +4,6 @@ import better.files.File
 import com.opticdev.core.actorSystem
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
-import com.opticdev.core.compiler.stages.GeneratorFactoryStage
 import com.opticdev.sdk.descriptions.{CodeComponent, Lens}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
 import com.opticdev.sdk.descriptions.finders.StringFinder

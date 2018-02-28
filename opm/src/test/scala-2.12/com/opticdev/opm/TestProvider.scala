@@ -47,14 +47,16 @@ class TestProvider extends Provider {
   val opticImport = OpticPackage.fromJson(Json.parse(File(
     "test-examples/resources/example_packages/optic:ImportExample@0.1.0.json").contentAsString)).get
 
-
   val opticRest = OpticPackage.fromJson(Json.parse(File(
     "test-examples/resources/example_packages/express/optic:rest@0.1.0.json").contentAsString)).get
+
+  val opticMongoose = OpticPackage.fromJson(Json.parse(File(
+    "test-examples/resources/example_packages/optic:mongoose@0.1.0.json").contentAsString)).get
 
   val opticExpress = OpticPackage.fromJson(Json.parse(File(
     "test-examples/resources/example_packages/express/optic:express-js@0.1.0.json").contentAsString)).get
 
-  val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticExpress)
+  val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticMongoose, opticExpress)
 
   override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Vector[OpticMDPackage] = ???
 

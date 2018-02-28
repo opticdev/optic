@@ -4,24 +4,42 @@ organization := "com.opticdev"
 
 version := "0.1.0"
 
+
+val appVersion = "0.1.0"
+
+val commonSettings: Seq[Def.Setting[_]] = Seq(
+  version := appVersion,
+  scalaVersion := "2.12.4",
+  test in assembly := {},
+  javacOptions ++= Seq("-source", "1.8", "-target", "1.8"), //, "-Xmx2G"),
+  scalacOptions ++= Seq("-deprecation", "-unchecked"),
+  resolvers += Opts.resolver.mavenLocalFile,
+  //    copyDepTask,
+  resolvers ++= Seq(DefaultMavenRepository,
+    Resolver.defaultLocal,
+    Resolver.mavenLocal
+  )
+
+)
+
 /* Sub Projects */
 lazy val common = (project in file("common")).
- settings(Common.settings: _*)
+ settings(commonSettings: _*)
  .settings(libraryDependencies ++= Dependencies.commonDependencies)
 
 lazy val sdk = (project in file("sdk")).
-  settings(Common.settings: _*)
+  settings(commonSettings: _*)
   .settings(libraryDependencies ++= Dependencies.sdkDependencies)
   .dependsOn(common)
 
 lazy val opm = (project in file("opm")).
- settings(Common.settings: _*)
+ settings(commonSettings: _*)
  .settings(libraryDependencies ++= Dependencies.opmDependencies)
  .dependsOn(common)
  .dependsOn(sdk)
 
 lazy val core = (project in file("core")).
-  settings(Common.settings: _*)
+  settings(commonSettings: _*)
   .settings(libraryDependencies ++= Dependencies.coreDependencies)
   .dependsOn(common)
   .dependsOn(sdk)
@@ -29,13 +47,15 @@ lazy val core = (project in file("core")).
   .dependsOn(opm % "compile->compile;test->test")
 
 lazy val arrow = (project in file("arrow")).
-  settings(Common.settings: _*)
+  settings(commonSettings: _*)
   .settings(libraryDependencies ++= Dependencies.arrowDependencies)
   .dependsOn(core)
+  .dependsOn(core % "compile->compile;test->test")
+  .dependsOn(opm % "compile->compile;test->test")
   .dependsOn(sdk)
 
 lazy val server = (project in file("server")).
- settings(Common.settings: _*)
+ settings(commonSettings: _*)
  .settings(libraryDependencies ++= Dependencies.serverDependencies)
  .dependsOn(sdk)
  .dependsOn(common)
@@ -43,12 +63,12 @@ lazy val server = (project in file("server")).
  .dependsOn(arrow)
  .dependsOn(core % "compile->compile;test->test")
  .dependsOn(arrow % "compile->compile;test->test")
-
-lazy val root = (project in file(".")).
- aggregate(common, sdk, opm, server, core)
+ .settings(
+   test in assembly := {},
+   mainClass in assembly := Some("com.opticdev.server.http.Lifecycle"),
+   mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle")
+  )
+  .enablePlugins(AssemblyPlugin)
 
 
 concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
-
-assemblyJarName in assembly := "optic.jar"
-mainClass in assembly := Some("com.opticdev.server.http.Lifecycle")

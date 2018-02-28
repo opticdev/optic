@@ -168,4 +168,54 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
   }
 
+  lazy val transformModelToRoute = {
+
+    val changesJSON =
+
+      """
+        |[{
+        |		"transformationChanges": {
+        |			"transformation": {
+        |				"name": "Model -> Route",
+        |				"packageId": "optic:test-transform@latest",
+        |				"input": "optic:rest@0.1.0/model",
+        |				"output": "optic:rest@0.1.0/route",
+        |				"script": "function transform(input) {\n    var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n    return {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n}"
+        |			},
+        |			"target": "optic:test@latest/route",
+        |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
+        |		},
+        |		"gearOptions": [{
+        |     "name": "Route",
+        |     "packageFull": "optic:expressjs@0.1.0",
+        |     "id": "aacee631"
+        |   }],
+        |   "gearId": "aacee631",
+        | 	"locationOptions": [{
+        |		  "file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/tmp/test_project/nested/model.js",
+        |		  "position": 173,
+        |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |  	}],
+        |   "location": {
+        |		  "file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/tmp/test_project/nested/model.js",
+        |		  "position": 173,
+        |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |  	},
+        |   "inputValue": {"name": "user", "schema": { "firstName": { "type": "string"} }},
+     		|   "_type":"com.opticdev.arrow.changes.RunTransformation"
+        | }]
+      """.stripMargin
+
+      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yaml")))
+        .map(_.inflate)
+
+      val sourcegear = Await.result(future, 10 seconds)
+
+      val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
+
+
+    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst user = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/user', function (req, res) {\n\n})")
+
+  }
+
 }

@@ -23,7 +23,7 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-abstract class OpticProject(val name: String, val baseDirectory: File)(implicit actorCluster: ActorCluster) {
+abstract class OpticProject(val name: String, val baseDirectory: File)(implicit val actorCluster: ActorCluster) {
 
   import com.opticdev.core.sourcegear.actors._
 

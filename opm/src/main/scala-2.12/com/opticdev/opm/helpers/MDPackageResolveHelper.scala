@@ -33,10 +33,10 @@ object MDPackageResolveHelper {
   })
 
   def resolveTransformation(transformation: Transformation, parentPackageRef: PackageRef, mapping: DependencyMapping) = {
-    val newInputSchema = resolveSchemaToGlobalSchema(transformation.inputSchema, parentPackageRef, mapping)
-    val newOutputSchema = resolveSchemaToGlobalSchema(transformation.outputSchema, parentPackageRef, mapping)
+    val newInputSchema = resolveSchemaToGlobalSchema(transformation.input, parentPackageRef, mapping)
+    val newOutputSchema = resolveSchemaToGlobalSchema(transformation.output, parentPackageRef, mapping)
 
-    Transformation(transformation.name, transformation.packageId, newInputSchema, newOutputSchema, transformation.code)
+    Transformation(transformation.name, transformation.packageId, newInputSchema, newOutputSchema, transformation.script)
   }
 
   def resolveLens(lens: Lens, parentPackageRef: PackageRef, mapping: DependencyMapping) : Lens = {

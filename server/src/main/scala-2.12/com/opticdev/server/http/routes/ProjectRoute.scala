@@ -11,7 +11,6 @@ import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.server.http.HTTPResponse
 import com.opticdev.server.http.routes.query.ModelQuery
 import com.opticdev.server.state.ProjectsManager
-import com.sun.xml.internal.xsom.impl.util.SchemaTreeTraverser.SchemaRootNode
 import play.api.libs.json.{JsArray, JsValue}
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 

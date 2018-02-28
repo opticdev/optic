@@ -15,7 +15,6 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
 
   describe("Insert Model") {
 
-
     it("can evaluate insert model operations") {
       val (changeGroup, sourcegear, expectedChange) = simpleModelInsert
       val results = changeGroup.evaluate(sourcegear)
@@ -31,5 +30,14 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
     }
 
   }
+
+  it("Runs Transformation") {
+    val (changeGroup, sourcegear, expectedChange) = transformModelToRoute
+    val results = changeGroup.evaluateAndWrite(sourcegear)
+
+    assert(results.get.stagedFiles.head._2.text == expectedChange)
+
+  }
+
 
 }

@@ -27,7 +27,6 @@ RESTful APIs are a key feature of the modern web.
             }
           },
           "definitions": {
-          "self": {
             "parameter": {
               "title": "Parameter",
               "type": "object",
@@ -41,7 +40,6 @@ RESTful APIs are a key feature of the modern web.
                 }
               }
              }
-            }
           }
     }
 ```

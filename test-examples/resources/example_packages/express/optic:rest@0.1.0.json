@@ -36,7 +36,8 @@
             "slug": "js-example-route-parameter",
             "type": "object",
             "required": [
-              "method"
+              "in",
+              "name"
             ],
             "properties": {
               "in": {
@@ -57,7 +58,8 @@
         "version": "1.0.0",
         "type": "object",
         "required": [
-          "method"
+          "in",
+          "name"
         ],
         "properties": {
           "in": {

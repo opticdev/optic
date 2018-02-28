@@ -55,13 +55,15 @@ class TransformFunction(code: String) {
 }
 
 sealed trait TransformationBase extends PackageExportable {
-  def code: String
-  val transformFunction = new TransformFunction(code)
+  def script: String
+  def input: SchemaRef
+  def output: SchemaRef
+  val transformFunction = new TransformFunction(script)
 }
 //case class InlineTransformation() extends TransformationBase
 
-case class Transformation( name: String,
-                           packageId: PackageRef,
-                           inputSchema: SchemaRef,
-                           outputSchema: SchemaRef,
-                           code: String) extends TransformationBase
+case class Transformation(name: String,
+                          packageId: PackageRef,
+                          input: SchemaRef,
+                          output: SchemaRef,
+                          script: String) extends TransformationBase

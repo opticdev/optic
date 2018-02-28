@@ -27,8 +27,8 @@ object IndexSourceGear {
 
     val transformationNodes = sourceGear.transformations.map {
       case t: Transformation =>
-        val inputSchemaNode = SchemaNode(sourceGear.findSchema(t.inputSchema).get)
-        val outputSchemaNode = SchemaNode(sourceGear.findSchema(t.outputSchema).get)
+        val inputSchemaNode = SchemaNode(sourceGear.findSchema(t.input).get)
+        val outputSchemaNode = SchemaNode(sourceGear.findSchema(t.output).get)
 
         (inputSchemaNode ~+#> outputSchemaNode)(t)
     }.toVector

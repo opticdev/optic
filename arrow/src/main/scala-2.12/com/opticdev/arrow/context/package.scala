@@ -29,7 +29,9 @@ package object context {
 
   //more advanced context with file context & models
   case class ModelContext(file: File, range: Range, models: Vector[ModelNode]) extends ArrowContextBase {
-    override def toInsertLocation: Option[InsertLocation] = ???
+    override def toInsertLocation: Option[InsertLocation] = {
+      Some(AsChildOf(file, range.end + 1))
+    }
   }
 
 }

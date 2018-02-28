@@ -63,7 +63,13 @@ object JsonImplicits {
 
   implicit val changeGroupFormat = new Format[ChangeGroup] {
     override def reads(json: JsValue) = {
-      val result = json.as[JsArray].value.map(i=> Json.fromJson[OpticChange](i).get)
+      val result = json.as[JsArray].value.map(i=> {
+        val parsed = Json.fromJson[OpticChange](i)
+        if (parsed.isError) {
+          println(parsed)
+        }
+        parsed.get
+      })
       JsSuccess(ChangeGroup(result:_*))
     }
 

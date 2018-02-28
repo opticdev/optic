@@ -19,14 +19,24 @@ sealed trait OpticChange {
 //}
 
 /* Inserts model somewhere in code */
-case class InsertModel(schema: Schema, gearId: Option[String], value: JsObject, atLocation: Option[InsertLocation]) extends OpticChange {
+case class InsertModel( schema: Schema,
+                        gearId: Option[String] = None,
+                        value: JsObject, atLocation:
+                        Option[InsertLocation]
+                      ) extends OpticChange {
   import JsonImplicits.insertModelFormat
   def asJson : JsValue = Json.toJson[InsertModel](this)
 
   override def schemaOption = Some(schema)
 }
 
-case class RunTransformation(transformationChanges: TransformationChanges, gearOptions: Seq[GearOption], locationOptions: Seq[InsertLocation] = Seq()) extends OpticChange {
+case class RunTransformation(transformationChanges: TransformationChanges,
+                             inputValue: JsObject,
+                             gearOptions: Seq[GearOption],
+                             gearId: Option[String] = None,
+                             locationOptions: Seq[InsertLocation] = Seq(),
+                             location: Option[InsertLocation] = None
+                            ) extends OpticChange {
   val generatedTransformationSchema : Schema = null
   import JsonImplicits.runTransformationFormat
   override def asJson = Json.toJson[RunTransformation](this)
