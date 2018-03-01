@@ -1,7 +1,7 @@
 package com.opticdev.common.utils
 
 import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 
 import scala.util.Try
 
@@ -9,10 +9,12 @@ object JsObjectNashornImplicits {
 
   implicit class JsObjectToNashorn(jsObject: JsObject)(implicit val engine: NashornScriptEngine) {
     def asScriptObject : Try[ScriptObjectMirror] = Try {
-      val asString = jsObject.toString()
+
+      val removeReservedFields = JsonUtils.removeReservedFields(jsObject)
+
       //@todo there's probably a faster/better way to do this but its infrequently called so not worth the work now
       val evalString = s"""(function () {
-                          | var obj = ${jsObject.toString()}
+                          | var obj = ${removeReservedFields.toString()}
                           | return obj
                           | })() """.stripMargin
 

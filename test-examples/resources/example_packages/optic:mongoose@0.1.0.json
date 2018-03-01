@@ -85,7 +85,7 @@
         "type": "code",
         "finder": {
           "type": "stringFinder",
-          "string": "{",
+          "string": "{\n    name",
           "rule": "starting",
           "occurrence": 0
         },
