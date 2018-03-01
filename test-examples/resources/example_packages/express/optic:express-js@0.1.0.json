@@ -69,7 +69,7 @@
         "schemaComponents": [
           {
             "type": "schema",
-            "schema": "parameter",
+            "schema": "optic:rest/parameter",
             "propertyPath": ["parameters"],
             "mapUnique": true
           }

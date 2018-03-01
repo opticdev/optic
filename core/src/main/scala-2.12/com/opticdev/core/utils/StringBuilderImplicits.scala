@@ -4,7 +4,7 @@ object StringBuilderImplicits {
   implicit class StringBuilderWithRangeUpdate(stringBuilder: scala.collection.mutable.StringBuilder) {
     def updateRange(range: Range, contents: String) = {
 
-      def validRange(int: Int) = int >= 0 && int < stringBuilder.length
+      def validRange(int: Int) = int >= 0 && int < stringBuilder.length + 1
 
       if (!validRange(range.start) || !validRange(range.end) || range.end < range.start) {
         throw new Error("Invalid range "+ range)

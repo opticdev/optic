@@ -38,6 +38,8 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
     val (changeGroup, sourcegear, expectedChange) = transformModelToRoute
     val results = changeGroup.evaluateAndWrite(sourcegear)
 
+    println(results.get.stagedFiles.head._2.text)
+
     assert(results.get.stagedFiles.head._2.text == expectedChange)
 
   }

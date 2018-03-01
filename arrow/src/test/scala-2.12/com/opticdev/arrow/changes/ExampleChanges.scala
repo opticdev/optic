@@ -214,7 +214,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
       val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
 
-    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst user = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/user', function (req, res) {\n\n})")
+    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst user = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/user', function (req, res) {\n  req.body.firstName\n})")
 
   }
 

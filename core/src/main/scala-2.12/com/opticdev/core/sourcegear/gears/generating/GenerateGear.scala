@@ -52,6 +52,7 @@ case class GenerateGear(block: String,
 
     //1. Generate Node
 
+    println(value)
     val raw = isMatch.get.modelNode.update(value)
 
     //2. fill subcontainers
@@ -80,6 +81,9 @@ case class GenerateGear(block: String,
           } else Seq()
 
         })
+
+        println(value)
+        println(newAstNodesFromSchemaComponents)
 
         implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(nodeRaw)
 
