@@ -39,8 +39,8 @@ case class RunTransformation(transformationChanges: TransformationChanges,
                              location: Option[InsertLocation] = None
                             ) extends OpticChange {
   val generatedTransformationSchema : Schema = null
-  import JsonImplicits.runTransformationFormat
-  override def asJson = Json.toJson[RunTransformation](this)
+  import JsonImplicits.opticChangeFormat
+  override def asJson = Json.toJson[OpticChange](this)
 }
 
 case class RawInsert(content: String, position: RawPosition) extends OpticChange {

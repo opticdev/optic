@@ -49,6 +49,7 @@ package object parsing {
     }
 
     def matchingPredicate = (CommonAstNode: CommonAstNode) => CommonAstNode.nodeType == astType && CommonAstNode.range == range
+    def matchingLoosePredicate = (CommonAstNode: CommonAstNode) => CommonAstNode.nodeType == astType && CommonAstNode.range.start == range.start
 
     def flatNodes: Seq[NodeDescription] = {
       children.flatMap(_.flatNodes) :+ this

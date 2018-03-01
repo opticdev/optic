@@ -1,6 +1,7 @@
 package com.opticdev.core.compiler
 
 import com.opticdev.core.Fixture.TestBase
+import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
 import com.opticdev.core.compiler.Compiler
@@ -10,7 +11,7 @@ import com.opticdev.opm.packages.OpticPackage
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
-class CompilerSpec extends TestBase {
+class CompilerSpec extends TestBase with ParserUtils {
 
   val jsonString = Source.fromFile("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json").getLines.mkString
   val description = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
@@ -56,5 +57,4 @@ class CompilerSpec extends TestBase {
 
     }
   }
-
 }

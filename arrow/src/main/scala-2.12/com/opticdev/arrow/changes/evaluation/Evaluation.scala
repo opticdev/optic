@@ -12,7 +12,7 @@ import scala.util.Try
 
 object Evaluation {
 
-  def forChange(opticChange: OpticChange, sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit filesStateMonitor: FileStateMonitor) = opticChange match {
+  def forChange(opticChange: OpticChange, sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit filesStateMonitor: FileStateMonitor): ChangeResult = opticChange match {
     case im: InsertModel => {
       val gearOption = sourcegear.findGear(im.gearId.get)
       assert(gearOption.isDefined, "Gear not found for id. "+ im.gearId.get)
@@ -65,7 +65,14 @@ object Evaluation {
           case (lines, i) => lines.patch(i, Seq("\n"), 1) //replace with empty line
         }
 
-        FileChanged(cSL.file, newLines.mkString)
+        val changeResult = FileChanged(cSL.file, newLines.mkString)
+
+        if (changeResult.isSuccess) {
+          changeResult.asFileChanged.stageContentsIn(filesStateMonitor)
+        }
+
+        changeResult
+
       } else {
         NoChanges
       }

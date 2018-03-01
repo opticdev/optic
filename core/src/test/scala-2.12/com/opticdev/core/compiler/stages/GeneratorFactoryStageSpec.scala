@@ -83,7 +83,7 @@ class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTe
       ))
     )))
 
-    val expected = """call("value", function () {
+    val expected = """call("TEST VARIABLE", function () {
                      |  start(first)
                      |  start(second)
                      |  start(third)

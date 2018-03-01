@@ -21,7 +21,7 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
   describe("SG Config") {
 
     lazy val sgConfig = {
-      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
+      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/test_project/optic.yaml")))
       Await.result(future, 10 seconds)
     }
 
@@ -35,14 +35,15 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
     }
 
     it("can generate a hexadecimal from hash") {
-      assert(sgConfig.hashString == "a414e8a9")
+      assert(sgConfig.hashString == "284d6a51")
     }
 
     it("can inflate to a sourcegear instance") {
       val sourceGear = sgConfig.inflate
-      assert(sourceGear.gearSet.size == sgConfig.gears.size)
-      assert(sourceGear.schemas.size == sgConfig.schemas.size)
-      assert(sourceGear.parsers.size == sgConfig.parserIds.size)
+      assert(sourceGear.gearSet.size == 4)
+      assert(sourceGear.schemas.size == 4)
+      assert(sourceGear.parsers.size == 1)
+      assert(sourceGear.transformations.size == 1)
     }
 
   }

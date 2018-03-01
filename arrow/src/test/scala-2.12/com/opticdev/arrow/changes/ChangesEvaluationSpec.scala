@@ -20,6 +20,9 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
       val results = changeGroup.evaluate(sourcegear)
 
       assert(results.isSuccess)
+
+      println(results.stagedFiles.head._2.text)
+
       assert(results.stagedFiles.head._2.text === expectedChange)
     }
 

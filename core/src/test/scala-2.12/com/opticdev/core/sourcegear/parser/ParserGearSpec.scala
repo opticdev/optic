@@ -128,6 +128,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
       }
 
     }
+
 }
 
 }

@@ -25,15 +25,15 @@ case class GenerateGear(block: String,
 
   def parseResult(b: String): ParserResult = {
     if (parser.isDefined) {
-      parser.get.parseString(block)
+      parser.get.parseString(b)
     } else throw new Error("Unable to find parser for generator")
   }
 
-  def parseAndGetRoot(fileContents: String): (String, AstGraph, CommonAstNode) = {
-    implicit val fileContents = block
-    implicit val astGraph = parseResult(block).graph
+  def parseAndGetRoot(contents: String): (String, AstGraph, CommonAstNode) = {
+    implicit val fileContents = contents
+    implicit val astGraph = parseResult(contents).graph
     val rootNode = astGraph.nodes.toVector
-      .find(node=> entryChild.matchingPredicate(node.value.asInstanceOf[CommonAstNode]))
+      .find(node=> entryChild.matchingLoosePredicate(node.value.asInstanceOf[CommonAstNode]))
       .get.value.asInstanceOf[CommonAstNode]
 
     (fileContents, astGraph, rootNode)
@@ -81,7 +81,7 @@ case class GenerateGear(block: String,
 
         })
 
-        implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(block)
+        implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(nodeRaw)
 
         Try {
           implicit val nodeMutatorMap = parser.get.marvinSourceInterface.asInstanceOf[NodeMutatorMap]

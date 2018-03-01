@@ -78,7 +78,7 @@
       "schema": "mongoose-schema",
       "snippet": {
         "language": "es7",
-        "block": "const model = mongoose.model('ModelName', \nnew Schema({\n    name    : 'string',\n    age    : 'number',\n}));"
+        "block": "const model = mongoose.model('ModelName', \nnew mongoose.Schema({\n    name    : 'string',\n    age    : 'number',\n}));"
       },
       "scope": "public",
       "components": [{
@@ -90,18 +90,23 @@
           "occurrence": 0
         },
         "propertyPath": ["schema"]
-      }, {
-        "type": "code",
-        "finder": {
-          "type": "stringFinder",
-          "string": "model",
-          "rule": "entire",
-          "occurrence": 0
-        },
-        "propertyPath": ["name"]
-      }],
+      },
+        {
+          "type": "code",
+          "finder": {
+            "type": "stringFinder",
+            "string": "ModelName",
+            "rule": "containing",
+            "occurrence": 0
+          },
+          "propertyPath": ["name"]
+        }
+      ],
       "rules": [],
-      "variables": [],
+      "variables": [{
+        "token": "model",
+        "in": "self"
+      }],
       "subcontainers": []
     }],
     "containers": [],

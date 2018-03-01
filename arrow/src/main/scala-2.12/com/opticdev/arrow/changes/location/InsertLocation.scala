@@ -42,12 +42,13 @@ case class AsChildOf(file: File, position: Int) extends InsertLocation {
 
     val children = actualParent.children(graph).map(_._2)
     //by counting all the children that come before we can determine the insertion index
-    val insertionIndex = children.count((n)=> {
+    var insertionIndex = children.count((n)=> {
       n.range.end < position
     })
 
+    //prefer insertions after current node
     if (children.exists(_.range.contains(position))) {
-      throw new Exception("Insert position is within a sibling node")
+      insertionIndex = children.indexOf(children.find(_.range.contains(position)).get) + 1
     }
 
     ResolvedChildInsertLocation(insertionIndex, actualParent, graph, parser)

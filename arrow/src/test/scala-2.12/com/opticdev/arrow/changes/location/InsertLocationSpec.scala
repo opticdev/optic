@@ -44,11 +44,6 @@ class InsertLocationSpec extends TestBase with GearUtils {
       assert(result.parent.nodeType.name == "BlockStatement")
     }
 
-    it("will fail if index is not somewhere valid") {
-      val aco = AsChildOf(example1, 8)
-      assert(aco.resolveToLocation(sourceGear).isFailure)
-    }
-
   }
 
 
