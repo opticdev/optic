@@ -35,7 +35,7 @@ object InsertCode {
 
         val blockPropertyPath = loc.parser.blockNodeTypes.getPropertyPath(loc.parent.nodeType).get
 
-        val array = marvinAstParent.properties(blockPropertyPath).asInstanceOf[AstArray]
+        val array = marvinAstParent.properties.getOrElse(blockPropertyPath, AstArray()).asInstanceOf[AstArray]
 
         val newNode = NewAstNode(
           generatedNode._1.nodeType,
