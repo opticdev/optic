@@ -4,7 +4,6 @@ organization := "com.opticdev"
 
 version := "0.1.0"
 
-
 val appVersion = "0.1.0"
 
 val commonSettings: Seq[Def.Setting[_]] = Seq(

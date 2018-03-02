@@ -14,6 +14,7 @@ import scalax.collection.mutable.Graph
 abstract class SourceGear {
 
   val parsers: Set[ParserBase]
+
   val gearSet: GearSet
 
   val schemas: Set[Schema]

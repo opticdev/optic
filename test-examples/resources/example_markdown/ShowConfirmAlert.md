@@ -10,7 +10,6 @@ name="Show Confirm Alert"
 "didConfirm"*
 "on yes" = ( any )
 "on no" = ( any )
-
 -->
 ```javascript
     showConfirm('message', (didConfirm)=> {
