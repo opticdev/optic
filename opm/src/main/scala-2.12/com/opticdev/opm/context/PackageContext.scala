@@ -17,17 +17,19 @@ case class PackageContext(leaf: Leaf) extends Context {
       None
     } else {
       val packageId = PackageRef.fromString(split.head).get.packageId
-//      val property = split.last
+      val property = split.last
 
       val packageOption = getPackageContext(packageId)
       if (packageOption.isDefined) {
-        packageOption.get.getProperty(fullPath)
+        val a = packageOption.get.getProperty(fullPath)
+        val b = packageOption.get.getProperty(property)
+        if (a.isDefined) a else if (b.isDefined) b else None
       } else None
     }
   }
 
   def getProperty(propertyKey: String) : Option[PackageExportable] = {
-    val schemasOption = leaf.opticPackage.schemas.find(_.schemaRef.full == propertyKey)
+    val schemasOption = leaf.opticPackage.schemas.find(i=> i.schemaRef.full == propertyKey || i.schemaRef.id == propertyKey)
     val lensOption = leaf.opticPackage.lenses.find(_.name == propertyKey)
 
     if (schemasOption.isDefined) {

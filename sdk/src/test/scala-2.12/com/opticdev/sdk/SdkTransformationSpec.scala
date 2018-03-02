@@ -13,9 +13,9 @@ class SdkTransformationSpec extends FunSpec {
       |{
           "name": "Schema from Test",
           "packageId": "optic:test@1.0.0/schema",
-          "inputSchema": "optic:test@1.0.0/schema",
-          "outputSchema": "test",
-          "code": "const parser = ()=> {}"
+          "input": "optic:test@1.0.0/schema",
+          "output": "test",
+          "script": "const parser = ()=> {}"
       |		}
     """.stripMargin
 

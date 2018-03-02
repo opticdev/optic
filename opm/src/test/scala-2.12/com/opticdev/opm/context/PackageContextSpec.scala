@@ -15,6 +15,7 @@ class PackageContextSpec extends FunSpec with TestPackageProviders {
       lazy val treeContext = PackageManager.collectPackages(Seq(t.opticExpress.packageRef, t.a.packageRef)).get.treeContext
 
       it("can resolve a property from a dependency") {
+        val context: Option[PackageContext] = treeContext("optic:express-js@0.1.0")
         val propertyOption = treeContext("optic:express-js@0.1.0").get("optic:rest/parameter")
         assert(propertyOption.get.asInstanceOf[Schema].name == "Parameter")
       }

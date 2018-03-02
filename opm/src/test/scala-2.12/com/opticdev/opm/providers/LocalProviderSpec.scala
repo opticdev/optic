@@ -15,7 +15,7 @@ class LocalProviderSpec extends FunSpec {
   val localProvider = new LocalProvider
 
   it("can list all local packages") {
-    assert(localProvider.listInstalledPackages.size == 3)
+    assert(localProvider.listInstalledPackages.size == 4)
   }
 
   it("can resolve a local package") {
