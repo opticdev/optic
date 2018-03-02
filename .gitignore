@@ -3,9 +3,11 @@ target/
 project/target/
 config.yaml
 
+arrow/target/
 common/target/
 opm/target/
 server/target/
+sdk/target/
 core/target/
 
 test-examples/resources/tmp/
