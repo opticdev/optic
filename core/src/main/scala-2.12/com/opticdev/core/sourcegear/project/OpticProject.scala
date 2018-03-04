@@ -139,19 +139,4 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   }
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
-
-  /* Output the search paths for MD in project */
-
-  def projectSearchPaths : ProjectKnowledgeSearchPaths = {
-    val searchPaths = projectFile.interface
-      .map(_.knowledgePaths.value.toVector)
-      .getOrElse(Vector())
-      .collect {
-        case s: YamlString => File(s.value)
-      }
-      .filter(f=> f.exists && f.isDirectory)
-
-    ProjectKnowledgeSearchPaths(searchPaths:_*)
-  }
-
 }

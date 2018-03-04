@@ -3,9 +3,9 @@ package com.opticdev.opm.packages
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.MarkdownParser
-import play.api.libs.json.{JsObject, JsString, JsValue}
+import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
-import scala.util.Try
+import scala.util.{Success, Try}
 
 trait OpticPackage {
   val description: JsObject
@@ -19,10 +19,11 @@ trait OpticPackage {
   def packageRef: PackageRef = PackageRef(packageId, version)
 
   lazy val dependencies: Vector[PackageRef] = {
-    val asJsObject: JsObject = description.value.getOrElse("dependencies", JsObject.empty).as[JsObject]
-    asJsObject.value.map(i=> {
-      PackageRef(i._1, i._2.as[JsString].value)
-    }).toVector
+    val asJsObject: JsArray = description.value.getOrElse("dependencies", JsArray.empty).as[JsArray]
+    asJsObject.value
+      .collect { case s: JsString => PackageRef.fromString(s.value)}
+      .collect { case Success(i) => i }
+      .toVector
   }
 
   def resolved(map: Map[PackageRef, PackageRef] = Map()) = OpticMDPackage(description, map)

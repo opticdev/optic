@@ -9,7 +9,7 @@ import com.opticdev.parsers.{ParserRef, SourceParserManager}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import net.jcazevedo.moultingyaml.YamlString
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -17,7 +17,7 @@ import scala.util.Try
 
 class TestProvider extends Provider {
 
-  def mockPackage(name: String, author: String, version: String, dependencies: Seq[(String, String)]) = {
+  def mockPackage(name: String, author: String, version: String, dependencies: Seq[String]) = {
     StagedPackage(JsObject(
       Seq(
         "metadata" -> JsObject(
@@ -26,22 +26,22 @@ class TestProvider extends Provider {
            "version"-> JsString(version),
            "author"-> JsString(author),
           )),
-        "dependencies" -> JsObject(dependencies.map(i=> i._1 -> JsString(i._2)))
+        "dependencies" -> JsArray(dependencies.map(JsString))
       )
     ))
   }
 
-  val a = mockPackage("a", "optic", "1.1.1", Seq("optic:b"-> "1.0.0"))
+  val a = mockPackage("a", "optic", "1.1.1", Seq("optic:b@1.0.0"))
 
-  val b = mockPackage("b", "optic", "1.0.0", Seq("optic:c"-> "3.5.2", "optic:d"-> "2.0.0"))
-  val b1 = mockPackage("b", "optic", "1.1.1", Seq("optic:c"-> "2.0.0"))
+  val b = mockPackage("b", "optic", "1.0.0", Seq("optic:c@3.5.2", "optic:d@2.0.0"))
+  val b1 = mockPackage("b", "optic", "1.1.1", Seq("optic:c@2.0.0"))
 
-  val c = mockPackage("c", "optic", "3.5.2", Seq("optic:d"-> "2.0.0"))
+  val c = mockPackage("c", "optic", "3.5.2", Seq("optic:d@2.0.0"))
   val c1 = mockPackage("c", "optic", "2.0.0", Seq())
 
-  val d = mockPackage("d", "optic", "2.0.0", Seq("optic:e"-> "2.0.0"))
+  val d = mockPackage("d", "optic", "2.0.0", Seq("optic:e@2.0.0"))
 
-  val e = mockPackage("e", "optic", "2.0.0", Seq("optic:c"-> "2.0.0"))
+  val e = mockPackage("e", "optic", "2.0.0", Seq("optic:c@2.0.0"))
 
 
   val opticImport = OpticPackage.fromJson(Json.parse(File(

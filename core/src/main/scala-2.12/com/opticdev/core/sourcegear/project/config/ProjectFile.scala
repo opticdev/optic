@@ -5,6 +5,7 @@ import java.nio.file.NoSuchFileException
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.core.sourcegear.InvalidProjectFileException
+import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.utils.Crypto
 import org.yaml.snakeyaml.parser.ParserException
 
@@ -107,6 +108,22 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
       throw new Error("Some packages are not valid: ["+dependencies.filter(_._1.isFailure).map(_._2.value).mkString(", ")+"]")
     }
 
+  }
+
+  def projectKnowledgeSearchPaths : ProjectKnowledgeSearchPaths = {
+    val searchPaths = interface
+      .map(_.knowledgePaths.value.toVector)
+      .getOrElse(Vector())
+      .collect {
+        case s: YamlString => {
+          val b = new java.io.File(file.parent.pathAsString, s.value)
+          val absolute = b.getCanonicalPath
+          File(absolute)
+        }
+      }
+      .filter(f=> f.exists && f.isDirectory)
+
+    ProjectKnowledgeSearchPaths(searchPaths:_*)
   }
 
 }

@@ -4,9 +4,7 @@
     "author": "optic",
     "version": "0.1.0"
   },
-  "dependencies": {
-    "optic:rest":"0.1.0"
-  },
+  "dependencies": ["optic:rest@0.1.0"],
   "lenses": [
     {
       "name": "Parameter",

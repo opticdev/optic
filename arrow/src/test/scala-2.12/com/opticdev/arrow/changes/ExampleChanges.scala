@@ -63,7 +63,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"url": "path/to/resource"
         |		},
         |		"atLocation": {
-        |			"file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/tmp/test_project/app.js",
+        |			"file": "test-examples/resources/tmp/test_project/app.js",
         |			"position": 93,
         |			"_type":"com.opticdev.arrow.changes.location.AsChildOf"
         |		},
@@ -133,7 +133,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		},
         |		"gearId": "aacee631",
         |		"atLocation": {
-        |			"file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/tmp/test_project/app.js",
+        |			"file": "test-examples/resources/tmp/test_project/app.js",
         |			"position": 38,
         |			"_type":"com.opticdev.arrow.changes.location.AsChildOf"
         |		},
@@ -192,16 +192,16 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |   }],
         |   "gearId": "aacee631",
         | 	"locationOptions": [{
-        |		  "file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/tmp/test_project/nested/model.js",
+        |		  "file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |  	}],
         |   "location": {
-        |		  "file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/tmp/test_project/nested/model.js",
+        |		  "file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |  	},
-        |   "inputValue": {"name": "user", "schema": { "firstName": { "type": "string"} }},
+        |   "inputValue": {"name": "user", "schema": { "firstName": { "type": "string"}, "lastName": { "type": "string"}, "email": { "type": "string"} }},
      		|   "_type":"com.opticdev.arrow.changes.RunTransformation"
         | }]
       """.stripMargin
@@ -214,7 +214,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
       val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
 
-    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst user = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/user', function (req, res) {\n  req.body.firstName\n})")
+    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst model = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/user', function (req, res) {\n  req.body.firstName\n  req.body.lastName\n  req.body.email\n})")
 
   }
 

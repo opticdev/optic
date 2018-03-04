@@ -3,12 +3,13 @@ package com.opticdev.opm
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.StagedPackage
-import com.opticdev.opm.providers.Provider
+import com.opticdev.opm.providers.{ProjectKnowledgeSearchPaths, Provider}
 import com.opticdev.opm.storage.PackageStorage
 import com.opticdev.parsers.ParserRef
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import com.opticdev.opm.packages.OpticPackage
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.util.Try
@@ -21,11 +22,11 @@ object PackageManager {
 
 //  def defaultProviders =
 
-  def installPackage(packageRef: PackageRef) : Try[Vector[String]] = {
+  def installPackage(packageRef: PackageRef)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Try[Vector[String]] = {
     installPackages(packageRef)
   }
 
-  def installPackages(packages: PackageRef*) = Try {
+  def installPackages(packages: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) = Try {
 
     //name -> satisfied
     val flattenedDependencyTree = collection.mutable.Map[PackageRef, Boolean]()
@@ -66,8 +67,7 @@ object PackageManager {
     foundPackages.map(_.packageRef.full).toVector.sorted
   }
 
-  def collectPackages(packages: Seq[PackageRef]) : Try[DependencyTree] = Try {
-
+  def collectPackages(packages: Seq[PackageRef])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Try[DependencyTree] = Try {
     var loaded = packages.map(p=> (p, PackageStorage.loadFromStorage(p)))
 
     val tryInstall = {
@@ -104,7 +104,7 @@ object PackageManager {
   }
 
   //provider query
-  def resultsForRefs(packageRefs: PackageRef*) : BatchPackageResult= {
+  def resultsForRefs(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : BatchPackageResult= {
     val lookupResults = providerStore.foldLeft(Seq(): Seq[BatchPackageResult]) {
       case (results, provider)=> {
         if (results.nonEmpty && results.last.foundAll) {
@@ -113,7 +113,7 @@ object PackageManager {
           results
         } else {
           val future = provider.resolvePackages(packageRefs:_*)
-          val result = Await.result(future, 7 seconds)
+          val result = Await.result(future, 20 seconds)
           results :+ result
         }
       }
@@ -132,7 +132,7 @@ object PackageManager {
 
     val future = Future.sequence(futures)
 
-    val result = Await.result(future, 7 seconds)
+    val result = Await.result(future, 20 seconds)
 
     import com.opticdev.opm.utils.FlattenBatchResultsImplicits._
 

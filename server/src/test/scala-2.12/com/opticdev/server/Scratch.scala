@@ -8,13 +8,23 @@ import com.opticdev.opm.{TestPackageProviders, TestProvider}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.server.http.Server
 import com.opticdev.server.state.ProjectsManager
+import net.jcazevedo.moultingyaml.YamlString
+import net.jcazevedo.moultingyaml._
+
+import scala.util.Try
 
 object Scratch extends TestBase with TestPackageProviders {
 
   installProviders
   super.beforeAll()
 
-  SourceParserManager.installParser(System.getProperty("user.home")+"/Developer/knack/parsers/javascript-lang/target/scala-2.12/javascript-lang_2.12-1.0.jar")
+  val parserPath = Try({
+    val contents = File("config.yaml").contentAsString
+    contents.parseYaml.asYamlObject.fields(YamlString("testParser")).asInstanceOf[YamlString].value
+  }).getOrElse(throw new Error("No testParser found in config.yaml"))
+
+
+  SourceParserManager.installParser("parserPath")
 
   implicit val projectsManager: ProjectsManager = new ProjectsManager()
   implicit val actorCluster = projectsManager.actorCluster

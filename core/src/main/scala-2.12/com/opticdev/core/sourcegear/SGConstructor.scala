@@ -14,7 +14,10 @@ import scala.util.{Failure, Try}
 
 object SGConstructor {
 
-  def fromProjectFile(projectFile: ProjectFile) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths())  : Future[SGConfig] = Future {
+  def fromProjectFile(projectFile: ProjectFile)  : Future[SGConfig] = Future {
+
+    implicit val projectKnowledgeSearchPaths = projectFile.projectKnowledgeSearchPaths
+
     val dependencies = dependenciesForProjectFile(projectFile).get
 
     val compiled = compileDependencyTree(dependencies).get
@@ -28,8 +31,11 @@ object SGConstructor {
     SGConfig(dependencies.hash, parsersRefs.get, gears, schemaSet, transformationSet)
   }
 
-  def dependenciesForProjectFile(projectFile: ProjectFile) : Try[DependencyTree] = {
-    val dependencies = projectFile.dependencies.getOrElse(Vector())
+  def dependenciesForProjectFile(projectFile: ProjectFile): Try[DependencyTree] = {
+
+    implicit val projectKnowledgeSearchPaths = projectFile.projectKnowledgeSearchPaths
+
+    val dependencies: Seq[PackageRef] = projectFile.dependencies.getOrElse(Vector())
     PackageManager.collectPackages(dependencies)
   }
 

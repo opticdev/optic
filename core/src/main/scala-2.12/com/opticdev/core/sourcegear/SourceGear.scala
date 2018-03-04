@@ -42,16 +42,26 @@ abstract class SourceGear {
       val parsed = parsedOption.get
       val astGraph = parsed.graph
 
-      //@todo clean this up and have the parser return in the parse result.
-      val parser = parsers.find(_.languageName == parsed.language).get
-      implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, parser, fileContents)
+      //@todo clean this up and have the parser return in the parse result. right now it only supports the test one
+//      val parser = parsers.find(_.languageName == parsed.language).get
+      implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents)
       gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
     } else {
       throw parsedOption.failed.get
     }
   }
 
+  def isLoaded : Boolean = true
 
+}
+
+case object UnloadedSourceGear extends SourceGear {
+  override val parsers = Set()
+  override val gearSet = new GearSet()
+  override val schemas = Set()
+  override val transformations = Set()
+
+  override def isLoaded = false
 }
 
 object SourceGear {
@@ -61,4 +71,6 @@ object SourceGear {
     override val schemas = Set()
     override val transformations = Set()
   }
+
+  def unloaded = UnloadedSourceGear
 }

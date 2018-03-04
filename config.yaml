@@ -1,1 +1,1 @@
-testParser: "/Users/aidancunniffe/Developer/knack/parsers/javascript-lang/target/scala-2.12/es7_2.12-0.1.0.jar"
+testParser: "server/src/main/resources/es7_2.12-0.1.0.jar"

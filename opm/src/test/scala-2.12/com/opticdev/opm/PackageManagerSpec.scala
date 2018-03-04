@@ -3,6 +3,7 @@ package com.opticdev.opm
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
+import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
 import com.opticdev.parsers.ParserRef
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSpec}
@@ -12,6 +13,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
 
 class PackageManagerSpec extends FunSpec with TestPackageProviders {
+
+  implicit val projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
 
   describe("Package Manager") {
 
@@ -94,7 +97,7 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
           ))
         )
 
-        assert(expectedTree.toString == "Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"a\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":{\"optic:b\":\"1.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"b\",\"version\":\"1.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:c\":\"3.5.2\",\"optic:d\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"3.5.2\",\"author\":\"optic\"},\"dependencies\":{\"optic:d\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"d\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:e\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"e\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:c\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{}},Map()),Tree(List()))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"d\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:e\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"e\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{\"optic:c\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{}},Map()),Tree(List())))))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"b\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":{\"optic:c\":\"2.0.0\"}},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":{}},Map()),Tree(List())))))))")
+        assert(expectedTree.toString == "Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"a\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":[\"optic:b@1.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"b\",\"version\":\"1.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:c@3.5.2\",\"optic:d@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"3.5.2\",\"author\":\"optic\"},\"dependencies\":[\"optic:d@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"d\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:e@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"e\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:c@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[]},Map()),Tree(List()))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"d\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:e@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"e\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:c@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[]},Map()),Tree(List())))))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"b\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":[\"optic:c@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[]},Map()),Tree(List())))))))")
       }
 
       it("fails if any can not be resolved") {

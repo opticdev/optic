@@ -43,7 +43,8 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
         resolved.filter(node => (node.root.range intersect range.inclusive).nonEmpty)
 
       } else {
-        if (projectOption.get.shouldWatchFile(file)) {
+        val project = projectOption.get
+        if (project.projectSourcegear.isLoaded && project.shouldWatchFile(file)) {
           //wait for it to be processed
           Vector()
         } else {

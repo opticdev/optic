@@ -3,7 +3,7 @@ import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.packages.OpticPackage
 import com.opticdev.opm.{BatchPackageResult, BatchParserResult}
-import com.opticdev.parsers.{ParserBase, ParserRef}
+import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 
@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 
 class LocalProvider extends Provider {
 
-  override def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()) : Future[BatchPackageResult] = Future {
+  override def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Future[BatchPackageResult] = Future {
 
     val foundPackages = listInstalledPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 
@@ -36,21 +36,47 @@ class LocalProvider extends Provider {
     BatchPackageResult(found.toSet, notFound.toSet)
   }
 
-  override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()) : Vector[OpticPackage] = {
+  override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage] = {
     val allFiles = projectKnowledgeSearchPaths.dirs.flatMap(_.listRecursively)
 
-    allFiles.filter(_.extension.orNull == ".md")
+    val allPackages = allFiles.filter(_.extension.orNull == ".md")
       .map(i => OpticPackage.fromMarkdown(i))
       .toVector
       .collect {
         case Success(i) => i
       }
+
+    allPackages
   }
+
 
   override def resolveParsers(parsers: ParserRef*) : Future[BatchParserResult] = Future {
-    BatchParserResult(Set(), Set())
+
+    val installedParsers = listInstalledParsers
+
+    val parserOptions = parsers.map(ref=> {
+      (ref, installedParsers
+        .get(ref.languageName).flatMap(versions => {
+
+        val semversions = versions.map(i=> (new Semver(i.parserVersion, SemverType.NPM), i))
+          .filter(sV=> sV._1.satisfies(ref.version) || ref.version == "latest")
+
+        semversions.sortWith((a, b)=> {
+          a._1.isGreaterThan(b._1)
+        }).headOption.map(_._2)
+      }))
+    })
+
+    val found = parserOptions.filter(_._2.isDefined).map(_._2.get)
+    val notFound = parserOptions.filter(_._2.isEmpty).map(_._1)
+
+    BatchParserResult(found.toSet, notFound.toSet)
   }
 
-  override def listInstalledParsers : Map[String, Vector[ParserBase]] = Map()
+  override def listInstalledParsers = {
+    import net.jcazevedo.moultingyaml._
+    val installedParsers = SourceParserManager.installedParsers.map(i=> (i.languageName, Vector(i))).toMap
+    installedParsers
+  }
 
 }

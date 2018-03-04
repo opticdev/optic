@@ -1,7 +1,6 @@
 .idea/
 target/
 project/target/
-config.yaml
 
 arrow/target/
 common/target/

@@ -1,12 +1,16 @@
 package com.opticdev.opm.context
 
 import com.opticdev.common.PackageRef
+import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.{PackageManager, TestPackageProviders, TestProvider}
 import com.opticdev.sdk.descriptions
 import com.opticdev.sdk.descriptions.Schema
 import org.scalatest.{BeforeAndAfter, FunSpec}
 
 class PackageContextSpec extends FunSpec with TestPackageProviders {
+
+  implicit val projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
+
 
   describe("Package Context") {
 

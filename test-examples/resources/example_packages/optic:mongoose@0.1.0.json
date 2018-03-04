@@ -4,9 +4,7 @@
       "name": "mongoose",
       "version": "0.1.0"
     },
-    "dependencies": {
-      "optic:rest":"0.1.0"
-    },
+    "dependencies": ["optic:rest@0.1.0"],
     "schemas": [{
       "id": "mongoose-schema",
       "definition": {

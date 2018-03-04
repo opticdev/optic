@@ -21,8 +21,6 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
 
       assert(results.isSuccess)
 
-      println(results.stagedFiles.head._2.text)
-
       assert(results.stagedFiles.head._2.text === expectedChange)
     }
 
@@ -37,8 +35,6 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
   it("Runs Transformation") {
     val (changeGroup, sourcegear, expectedChange) = transformModelToRoute
     val results = changeGroup.evaluateAndWrite(sourcegear)
-
-    println(results.get.stagedFiles.head._2.text)
 
     assert(results.get.stagedFiles.head._2.text == expectedChange)
 
