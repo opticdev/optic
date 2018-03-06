@@ -81,7 +81,9 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
           "transformations" -> JsArray(results.availableTransformations.map(_.asJson))
         ))))
       }
-      case Failure(exception: ServerExceptions) => Try(APIResponse(StatusCodes.NotFound, exception.asJson))
+      case Failure(exception: ServerExceptions) => {
+        Try(APIResponse(StatusCodes.NotFound, exception.asJson))
+      }
     }
   }
 

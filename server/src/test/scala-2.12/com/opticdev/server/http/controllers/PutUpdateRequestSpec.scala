@@ -47,7 +47,7 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
 
     val result = Await.result(future, 3 seconds)
 
-    val newContents = result.contentAsString
+    val newContents = result.fileUpdates.head._2.text
     println(newContents)
     assert(newContents.contains("app.post('other/url'"))
 
@@ -55,16 +55,10 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
 
   it("can update model and return API request") {
     val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))))
-    val future = putUpdate.executeToApiResponse
-
+    val future = putUpdate.execute
     val result = Await.result(future, 3 seconds)
 
-    println(result.data.as[JsObject])
-
-    assert(result.statusCode == StatusCodes.OK)
-    assert(result.data.as[JsObject]
-      .value("filesUpdated").as[JsArray]
-      .value.exists(_.as[JsString].value.contains("app.js")))
+    assert(result.fileUpdates.size == 1)
 
   }
 

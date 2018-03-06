@@ -39,12 +39,18 @@ class LocalProvider extends Provider {
   override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage] = {
     val allFiles = projectKnowledgeSearchPaths.dirs.flatMap(_.listRecursively)
 
-    val allPackages = allFiles.filter(_.extension.orNull == ".md")
+    val results = allFiles.filter(_.extension.orNull == ".md")
       .map(i => OpticPackage.fromMarkdown(i))
       .toVector
-      .collect {
-        case Success(i) => i
-      }
+
+    //print out failing pacakges
+    results.collect {
+      case Failure(i) => println(i)
+    }
+
+    val allPackages = results.collect {
+      case Success(i) => i
+    }
 
     allPackages
   }

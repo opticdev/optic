@@ -52,7 +52,7 @@ class ArrowPostChanges(projectName: String, changeGroup: ChangeGroup)(implicit p
     import com.opticdev.server.data.ModelNodeJsonImplicits._
     stage.transform {
       case Success(batchedChanges: BatchedChanges) => {
-        val updatedFiles = batchedChanges.stagedFiles.keys.map(i=> JsString(i.pathAsString)).toSeq
+        val updatedFiles: Seq[JsString] = batchedChanges.stagedFiles.keys.map(i=> JsString(i.pathAsString)).toSeq
 
         if (batchedChanges.isSuccess) {
           Try(APIResponse(StatusCodes.OK, JsObject(Seq("success" -> JsBoolean(true), "updatedFiles" -> JsArray(updatedFiles)))))

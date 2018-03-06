@@ -27,7 +27,6 @@ object PackageManager {
   }
 
   def installPackages(packages: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) = Try {
-
     //name -> satisfied
     val flattenedDependencyTree = collection.mutable.Map[PackageRef, Boolean]()
     packages.foreach(i=> flattenedDependencyTree(i) = false)

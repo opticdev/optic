@@ -29,13 +29,15 @@ object MarkdownParser {
     def noErrors = errors.value.isEmpty
   }
 
+  private val pathToExecutable = "/usr/local/bin/node /usr/local/lib/node_modules/optic-markdown/lib/cli.js"
+
   def parseMarkdown(file: File) = Try[MDParseOutput] {
     //check the version eventually
-    val version = "optic-md --version" !!
+    val version = pathToExecutable+ " --version" !!
 
     if (version.contains("not found")) throw new Error("optic-md is not installed. Run npm install optic-md -g")
 
-    val result = "optic-md " + file.pathAsString !!
+    val result = pathToExecutable+ " " + file.pathAsString !!
 
     val parsedJson = Try(Json.parse(result))
 

@@ -36,7 +36,7 @@ object KnowledgeGraphImplicits {
         knowledgeGraph
           .get(i)
           .edges
-          .filter(e => e.isOut && e.to != this && e.isLabeled && e.label.isInstanceOf[Transformation])
+          .filter(e => e.isDirected && e.isLabeled && e.from.value == i && e.label.isInstanceOf[Transformation])
           .map(i => {
             DirectTransformation(i.label.asInstanceOf[Transformation], i.to.value.asInstanceOf[SchemaNode].schema.schemaRef)
           }).toSet

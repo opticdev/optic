@@ -33,7 +33,7 @@ object IndexSourceGear {
         (inputSchemaNode ~+#> outputSchemaNode)(t)
     }.toVector
 
-    Graph((schemaGearNodes ++ transformationNodes):_*).asInstanceOf[KnowledgeGraph]
+    Graph(schemaGearNodes ++ transformationNodes:_*).asInstanceOf[KnowledgeGraph]
   }
 
 }

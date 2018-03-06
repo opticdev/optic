@@ -69,7 +69,14 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     case update : PutUpdate => {
       //@todo handle error states
       new PutUpdateRequest(update.id, update.newValue)(projectsManager)
-        .executeToApiResponse
+        .execute.onComplete(i=> {
+        if (i.isFailure) {
+          println(i.failed.get)
+        } else {
+          EditorConnection.broadcastUpdate( i.get )
+        }
+
+      })
     }
 
   }

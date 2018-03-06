@@ -29,6 +29,7 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
           //run all callbacks
           sourcegearchangedCallbacks.foreach(_.apply(sourceGear))
           projectStatusInstance.sourceGearStatus = Valid
+          sourceGear.print
           if (projectStatus.monitoringStatus == Watching) rereadAll
         } else {
           println(i.failed.get.printStackTrace())

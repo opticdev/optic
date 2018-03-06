@@ -60,6 +60,7 @@ object SGConstructor {
       val failedPackages = compiledPackages.filter(_.isFailure).map(i=> (i.opticPackage, i.errors))
         .toMap
 
+      println("Compile Errors:")
       failedPackages.values.flatMap(_.values).foreach(_.printAll)
 
       throw new SomePackagesFailedToCompile(failedPackages)

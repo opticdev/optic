@@ -40,4 +40,15 @@ class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
     assert(results.size == 1)
   }
 
+  it("will not find the inverse of a transformation") {
+    val f = fixture
+    val ref = SchemaRef(PackageRef("optic:test"), "route")
+
+    val results = f.knowledgeGraphWithTransformations.availableTransformations(ref)
+
+
+    assert(!results.map(_.transformation.output).contains(SchemaRef(PackageRef("optic:test"), "model")))
+
+  }
+
 }

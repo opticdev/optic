@@ -53,6 +53,14 @@ abstract class SourceGear {
 
   def isLoaded : Boolean = true
 
+  def print = println(
+    s"""
+      | Parsers: ${parsers.map(_.parserRef.full).mkString(",")}
+      | Schemas: ${schemas.map(_.schemaRef.full).mkString(",")}
+      | Gears: ${gearSet.listGears.map(_.name).mkString(",")}
+      | Transformations: ${transformations.map(_.name).mkString(",")}
+    """.stripMargin)
+
 }
 
 case object UnloadedSourceGear extends SourceGear {

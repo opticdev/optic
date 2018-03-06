@@ -21,18 +21,18 @@ import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
-class PutUpdateRoute(implicit executionContext: ExecutionContext, projectsManager: ProjectsManager) {
-
-  val route: Route =
-    path("models" / Segment) { (modelId) => {
-      put {
-        entity(as[JsObject]) { json =>
-          onComplete(new PutUpdateRequest(modelId, json).executeToApiResponse) {
-            case Success(value) => complete(value.statusCode, value.data)
-            case Failure(ex)    => complete(StatusCodes.InternalServerError, JsString(s"An error occurred: ${ex.getMessage}"))
-          }
-        }
-      }
-    }}
-
-}
+//class PutUpdateRoute(implicit executionContext: ExecutionContext, projectsManager: ProjectsManager) {
+//
+//  val route: Route =
+//    path("models" / Segment) { (modelId) => {
+//      put {
+//        entity(as[JsObject]) { json =>
+//          onComplete(new PutUpdateRequest(modelId, json).executeToApiResponse) {
+//            case Success(value) => complete(value.statusCode, value.data)
+//            case Failure(ex)    => complete(StatusCodes.InternalServerError, JsString(s"An error occurred: ${ex.getMessage}"))
+//          }
+//        }
+//      }
+//    }}
+//
+//}
