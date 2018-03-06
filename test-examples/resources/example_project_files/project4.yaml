@@ -7,5 +7,5 @@ knowledge:
   - optic:express-js@0.1.0
   - optic:react-js@@@1.0.0
 
-ignored_files:
+exclude:
   - node_modules/

@@ -13,7 +13,7 @@ import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
-import com.opticdev.core.sourcegear.project.monitoring.{FileStateMonitor}
+import com.opticdev.core.sourcegear.project.monitoring.{FileStateMonitor, ShouldWatch}
 import com.opticdev.core.sourcegear.project.status.ProjectStatus
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import net.jcazevedo.moultingyaml.YamlString
@@ -132,11 +132,10 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   /* Control logic for watching files */
 
-  def shouldWatchFile(file: File) : Boolean = {
-    file.isRegularFile &&
-    file.extension.isDefined &&
-    projectSourcegear.validExtensions.contains(file.extension.get)
-  }
+  def shouldWatchFile(file: File) : Boolean =
+    ShouldWatch.file(file,
+      projectSourcegear.validExtensions,
+      projectFile.interface.get.exclude.value.map(i=> File(i.value)))
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
 }

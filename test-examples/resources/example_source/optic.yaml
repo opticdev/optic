@@ -1,4 +1,4 @@
 name: Unnamed Project
 parsers: []
 knowledge: []
-ignored_files: []
+exclude: []

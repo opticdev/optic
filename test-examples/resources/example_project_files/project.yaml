@@ -8,5 +8,5 @@ knowledge:
 knowledge_paths:
   - /docs
 
-ignored_files:
+exclude:
   - node_modules/

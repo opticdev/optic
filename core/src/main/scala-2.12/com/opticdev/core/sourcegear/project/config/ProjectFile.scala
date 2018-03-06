@@ -46,11 +46,11 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
 
     val knowledgePaths =PFListInterface.forKey[YamlString]("knowledge_paths", YamlArray(Vector()), yaml)
 
-    val ignored_files =PFListInterface.forKey[YamlString]("ignored_files", YamlArray(Vector()), yaml)
+    val exclude =PFListInterface.forKey[YamlString]("exclude", YamlArray(Vector()), yaml)
 
     lastHash = Crypto.createSha1(contents)
     //      val relationships =PFListInterface.forKey[YamlString]("relationships", YamlArray(Vector()), yaml)
-    PFRootInterface(name, parsers, knowledge, knowledgePaths, ignored_files)
+    PFRootInterface(name, parsers, knowledge, knowledgePaths, exclude)
   }
 
   def interface = interfaceStore
@@ -74,7 +74,7 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
       YamlString("parsers") -> interface.get.parsers.yamlValue,
       YamlString("knowledge") -> interface.get.knowledge.yamlValue,
       YamlString("knowledge_paths") -> interface.get.knowledgePaths.yamlValue,
-      YamlString("ignored_files") -> interface.get.ignored_files.yamlValue
+      YamlString("exclude") -> interface.get.exclude.yamlValue
 //      YamlString("relationships") -> relationships.yamlValue
     )
 
