@@ -131,11 +131,11 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   }
 
   /* Control logic for watching files */
-
+  //@todo profile this. Seems liable to cause big slowdowns with many files running through it
   def shouldWatchFile(file: File) : Boolean =
     ShouldWatch.file(file,
       projectSourcegear.validExtensions,
-      projectFile.interface.get.exclude.value.map(i=> File(i.value)))
+      projectFile.interface.get.exclude.value.map(i=> File(i.value)) ++ projectSourcegear.excludedPaths.map(i=> File(i)))
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
 }

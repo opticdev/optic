@@ -30,6 +30,7 @@ abstract class SourceGear {
   def findParser(parserRef: ParserRef) = parsers.find(_.languageName == parserRef.languageName)
 
   lazy val validExtensions: Set[String] = parsers.flatMap(_.fileExtensions)
+  lazy val excludedPaths: Seq[String] = parsers.flatMap(_.excludedPaths).toSeq
 
   def parseFile(file: File) (implicit project: OpticProject) : Try[FileParseResults] =
     Try(file.contentAsString).flatMap(i=> parseString(i))
