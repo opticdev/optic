@@ -16,6 +16,7 @@ class ImmutableProjectStatus(projectStatus: ProjectStatus) {
   def monitoringChanged(callback: (MonitoringStatus)=> Unit) = projectStatus.monitoringChanged(callback)
   def configChanged(callback: (ConfigStatus)=> Unit) = projectStatus.configChanged(callback)
   def firstPassChanged(callback: (FirstPassStatus)=> Unit) = projectStatus.firstPassChanged(callback)
+  def statusChanged(callback: (ProjectStatusCase, ImmutableProjectStatus)=> Unit) = projectStatus.statusChanged(callback)
 
   def isValid: Boolean = projectStatus.isValid
   def isReady: Boolean = projectStatus.isReady

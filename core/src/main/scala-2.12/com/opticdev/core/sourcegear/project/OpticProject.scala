@@ -37,7 +37,6 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   val projectStatus = projectStatusInstance.immutable
   def projectInfo : ProjectInfo = ProjectInfo(name, baseDirectory.pathAsString, projectStatus)
 
-
   /* Normal Disk Monitoring */
 
   val watcher: ActorRef = baseDirectory.newWatcher(recursive = true)

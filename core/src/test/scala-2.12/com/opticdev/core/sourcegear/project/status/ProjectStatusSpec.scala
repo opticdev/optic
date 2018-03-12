@@ -89,7 +89,7 @@ class ProjectStatusSpec extends FunSpec {
         val projectStatus = new ProjectStatus()
 
         var didRun = false
-        projectStatus.statusChanged((a) => {
+        projectStatus.statusChanged((a, s) => {
           didRun = true
         })
         projectStatus.firstPassStatus = Complete

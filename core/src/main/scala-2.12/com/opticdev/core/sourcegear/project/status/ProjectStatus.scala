@@ -78,8 +78,8 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
     firstPassChangedCallbacks = firstPassChangedCallbacks + callback
   }
 
-  private var statusChangedCallbacks = Set[(ProjectStatusCase)=> Unit]()
-  def statusChanged(callback: (ProjectStatusCase)=> Unit) = {
+  private var statusChangedCallbacks = Set[(ProjectStatusCase, ImmutableProjectStatus)=> Unit]()
+  def statusChanged(callback: (ProjectStatusCase, ImmutableProjectStatus)=> Unit) = {
     statusChangedCallbacks = statusChangedCallbacks + callback
   }
 
@@ -93,7 +93,7 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
       case _ =>
     }
     //send to any status changed callbacks
-    statusChangedCallbacks.foreach(_.apply(status))
+    statusChangedCallbacks.foreach(_.apply(status, immutable))
   }
 
   lazy val immutable : ImmutableProjectStatus = new ImmutableProjectStatus(this)
