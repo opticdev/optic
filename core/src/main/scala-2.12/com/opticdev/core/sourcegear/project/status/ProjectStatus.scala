@@ -78,12 +78,22 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
     firstPassChangedCallbacks = firstPassChangedCallbacks + callback
   }
 
-  private def notify(status: ProjectStatusCase) = status match {
-    case a: SourceGearStatus => sgChangedCallbacks.foreach(i=> i(a))
-    case a: MonitoringStatus => monitoringChangedCallbacks.foreach(i=> i(a))
-    case a: ConfigStatus => configChangedCallbacks.foreach(i=> i(a))
-    case a: FirstPassStatus => firstPassChangedCallbacks.foreach(i=> i(a))
-    case _ =>
+  private var statusChangedCallbacks = Set[(ProjectStatusCase)=> Unit]()
+  def statusChanged(callback: (ProjectStatusCase)=> Unit) = {
+    statusChangedCallbacks = statusChangedCallbacks + callback
+  }
+
+  private def notify(status: ProjectStatusCase) = {
+    //send to specific callbacks
+    status match {
+      case a: SourceGearStatus => sgChangedCallbacks.foreach(i=> i(a))
+      case a: MonitoringStatus => monitoringChangedCallbacks.foreach(i=> i(a))
+      case a: ConfigStatus => configChangedCallbacks.foreach(i=> i(a))
+      case a: FirstPassStatus => firstPassChangedCallbacks.foreach(i=> i(a))
+      case _ =>
+    }
+    //send to any status changed callbacks
+    statusChangedCallbacks.foreach(_.apply(status))
   }
 
   lazy val immutable : ImmutableProjectStatus = new ImmutableProjectStatus(this)
