@@ -2,7 +2,7 @@ package com.opticdev.opm.packages
 
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.MarkdownParser
+import com.opticdev.sdk.markdown.MarkdownParser
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
 import scala.util.{Success, Try}

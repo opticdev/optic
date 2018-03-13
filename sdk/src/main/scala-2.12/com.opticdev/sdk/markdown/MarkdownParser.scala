@@ -1,11 +1,11 @@
-package com.opticdev.sdk
+package com.opticdev.sdk.markdown
 
 import better.files.File
 import com.opticdev.sdk.descriptions.Schema
 import play.api.libs.json.{JsArray, JsObject, Json}
 
+import scala.sys.process._
 import scala.util.Try
-import sys.process._
 
 object MarkdownParser {
 

@@ -71,3 +71,12 @@ lazy val server = (project in file("server")).
 
 
 concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
+
+lazy val hello = taskKey[Unit]("Prints 'Hello World'")
+hello := {
+  import sys.process._
+  import java.net.URL
+  import java.io.File
+  new URL(Constants.opticMDTar) #> new File("Output.tgz") !!
+
+}
