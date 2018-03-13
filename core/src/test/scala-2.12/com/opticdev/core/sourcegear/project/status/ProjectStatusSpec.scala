@@ -38,11 +38,12 @@ class ProjectStatusSpec extends FunSpec {
   }
 
   describe("callbacks") {
-    val projectStatus = new ProjectStatus()
 
     describe("register") {
 
       it("for sourcegear") {
+        val projectStatus = new ProjectStatus()
+
         var didRun = false
         projectStatus.sourcegearChanged((a) => {
           didRun = true
@@ -52,6 +53,8 @@ class ProjectStatusSpec extends FunSpec {
       }
 
       it("for file monitoring") {
+        val projectStatus = new ProjectStatus()
+
         var didRun = false
         projectStatus.monitoringChanged((a) => {
           didRun = true
@@ -61,6 +64,8 @@ class ProjectStatusSpec extends FunSpec {
       }
 
       it("for config") {
+        val projectStatus = new ProjectStatus()
+
         var didRun = false
         projectStatus.configChanged((a) => {
           didRun = true
@@ -70,8 +75,21 @@ class ProjectStatusSpec extends FunSpec {
       }
 
       it("for firstpass") {
+        val projectStatus = new ProjectStatus()
+
         var didRun = false
         projectStatus.firstPassChanged((a) => {
+          didRun = true
+        })
+        projectStatus.firstPassStatus = Complete
+        assert(didRun)
+      }
+
+      it("for any") {
+        val projectStatus = new ProjectStatus()
+
+        var didRun = false
+        projectStatus.statusChanged((a, s) => {
           didRun = true
         })
         projectStatus.firstPassStatus = Complete

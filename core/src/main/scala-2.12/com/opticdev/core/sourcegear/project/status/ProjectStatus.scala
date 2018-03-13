@@ -56,6 +56,7 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
 
   def touch : Unit = lastUpdate = LastUpdateDate(Calendar.getInstance().getTime)
   def isValid: Boolean = configStatus == ValidConfig && sourceGearStatus == Valid
+  def isLoading: Boolean = configStatus == ValidConfig && sourceGearStatus == Building
   def isReady: Boolean = isValid && firstPassStatus == Complete
 
   private var sgChangedCallbacks = Set[(SourceGearStatus)=> Unit]()
@@ -78,12 +79,22 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
     firstPassChangedCallbacks = firstPassChangedCallbacks + callback
   }
 
-  private def notify(status: ProjectStatusCase) = status match {
-    case a: SourceGearStatus => sgChangedCallbacks.foreach(i=> i(a))
-    case a: MonitoringStatus => monitoringChangedCallbacks.foreach(i=> i(a))
-    case a: ConfigStatus => configChangedCallbacks.foreach(i=> i(a))
-    case a: FirstPassStatus => firstPassChangedCallbacks.foreach(i=> i(a))
-    case _ =>
+  private var statusChangedCallbacks = Set[(ProjectStatusCase, ImmutableProjectStatus)=> Unit]()
+  def statusChanged(callback: (ProjectStatusCase, ImmutableProjectStatus)=> Unit) = {
+    statusChangedCallbacks = statusChangedCallbacks + callback
+  }
+
+  private def notify(status: ProjectStatusCase) = {
+    //send to specific callbacks
+    status match {
+      case a: SourceGearStatus => sgChangedCallbacks.foreach(i=> i(a))
+      case a: MonitoringStatus => monitoringChangedCallbacks.foreach(i=> i(a))
+      case a: ConfigStatus => configChangedCallbacks.foreach(i=> i(a))
+      case a: FirstPassStatus => firstPassChangedCallbacks.foreach(i=> i(a))
+      case _ =>
+    }
+    //send to any status changed callbacks
+    statusChangedCallbacks.foreach(_.apply(status, immutable))
   }
 
   lazy val immutable : ImmutableProjectStatus = new ImmutableProjectStatus(this)

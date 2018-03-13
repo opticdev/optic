@@ -3,8 +3,10 @@ package com.opticdev.server.http.routes.socket
 import akka.actor.ActorRef
 import better.files.{File, Files}
 import com.opticdev.arrow.changes.ChangeGroup
+import com.opticdev.core.sourcegear.project.status.ImmutableProjectStatus
 import play.api.libs.json._
 import com.opticdev.server.data.ToJsonImplicits._
+import com.opticdev.server.http.routes.socket.agents.Protocol.UpdateAgentEvent
 import com.opticdev.server.http.routes.socket.editors.Protocol.EditorEvents
 package object agents {
 
@@ -21,6 +23,7 @@ package object agents {
     case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range], contents: Option[String]) extends AgentEvents
 
 
+    //Sends
     trait UpdateAgentEvent extends OpticEvent
 
     case class ContextFound(filePath: String, range: Range, results: JsValue, isError: Boolean = false) extends OpticEvent with UpdateAgentEvent {
@@ -49,6 +52,14 @@ package object agents {
       ))
     }
 
+  }
+
+  case class StatusUpdate(projectName: String, immutableProjectStatus: ImmutableProjectStatus) extends OpticEvent with UpdateAgentEvent {
+    def asJson = JsObject(Seq(
+      "event"-> JsString("status-update"),
+      "projectName"-> JsString(projectName),
+      "status"-> immutableProjectStatus.asJson
+    ))
   }
 
 }
