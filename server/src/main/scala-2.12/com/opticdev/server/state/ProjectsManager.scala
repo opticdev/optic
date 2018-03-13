@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server
 import com.opticdev.core.actorSystem
-import com.opticdev.core.sourcegear.project.status.ProjectStatus
+import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, ProjectStatus}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
 import com.opticdev.server.http.routes.socket.agents.{AgentConnection, StatusUpdate}
 
@@ -130,5 +130,10 @@ class ProjectsManager {
 
   private var _lastProjectName : Option[String] = None
   def lastProjectName = _lastProjectName
+
+  def sendMostRecentUpdate = Try {
+    val project = lookupProject(_lastProjectName.get).get
+    AgentConnection.broadcastUpdate(StatusUpdate(_lastProjectName.get, project.projectStatus))
+  }
 
 }

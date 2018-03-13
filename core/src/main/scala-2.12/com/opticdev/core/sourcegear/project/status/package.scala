@@ -13,6 +13,7 @@ package object status {
   sealed trait SourceGearStatus extends ProjectStatusCase
   case object Empty extends SourceGearStatus
   case object Valid extends SourceGearStatus
+  case object Building extends SourceGearStatus
   case class Invalid(error: String) extends SourceGearStatus
 
   sealed trait MonitoringStatus extends ProjectStatusCase

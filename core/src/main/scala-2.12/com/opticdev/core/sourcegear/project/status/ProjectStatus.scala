@@ -56,6 +56,7 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
 
   def touch : Unit = lastUpdate = LastUpdateDate(Calendar.getInstance().getTime)
   def isValid: Boolean = configStatus == ValidConfig && sourceGearStatus == Valid
+  def isLoading: Boolean = configStatus == ValidConfig && sourceGearStatus == Building
   def isReady: Boolean = isValid && firstPassStatus == Complete
 
   private var sgChangedCallbacks = Set[(SourceGearStatus)=> Unit]()

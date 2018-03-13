@@ -19,8 +19,10 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
 
   override def receive: Receive = {
     case Registered(actorRef) => {
-      println("worked correctly")
+//      println("worked correctly")
       connection = actorRef
+      //trigger a status update to send to Agent
+      projectsManager.sendMostRecentUpdate
     }
     case Terminated => {
       Status.Success(Unit)
@@ -30,14 +32,6 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     //message to client routing
     case UnknownEvent(raw) => {
       connection ! ErrorResponse("Invalid Request")
-    }
-
-    case contextUpdate: ContextFound => {
-      connection ! contextUpdate
-    }
-
-    case searchResults: SearchResults => {
-      connection ! searchResults
     }
 
     case search: AgentSearch => {
@@ -77,6 +71,10 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
         }
 
       })
+    }
+
+    case updateAgentEvent: UpdateAgentEvent => {
+      connection ! updateAgentEvent
     }
 
   }
