@@ -7,39 +7,38 @@ import org.scalatest.FunSpec
 
 class ParserStorageSpec extends FunSpec {
 
-  lazy val fakeParserJar = File("test-examples/resources/example_parsers/fake-parser-0.1.0.jar")
+  lazy val parserJar = File("server/src/main/resources/es7_2.12-0.1.1.jar")
 
   it("can save parsers to local") {
-    val parserSaved = ParserStorage.writeToStorage(fakeParserJar)
-    println(parserSaved)
+    val parserSaved = ParserStorage.writeToStorage(parserJar)
     assert(parserSaved.isSuccess)
   }
 
   it("can lookup items from local") {
-    val parserLoad = ParserStorage.loadFromStorage(ParserRef("Fake", "0.1.0"))
+    val parserLoad = ParserStorage.loadFromStorage(ParserRef("es7", "0.1.1"))
     assert(parserLoad.isSuccess)
-    assert(parserLoad.get.languageName == "Fake")
+    assert(parserLoad.get.languageName == "es7")
   }
 
   it("can load parser by version 'latest'") {
-    val parserLoad = ParserStorage.loadFromStorage(ParserRef("Fake", "latest"))
+    val parserLoad = ParserStorage.loadFromStorage(ParserRef("es7", "latest"))
     assert(parserLoad.isSuccess)
-    assert(parserLoad.get.languageName == "Fake")
-    assert(parserLoad.get.parserVersion == "0.1.0")
+    assert(parserLoad.get.languageName == "es7")
+    assert(parserLoad.get.parserVersion == "0.1.1")
   }
 
   it("can clear all local parsers") {
-    ParserStorage.writeToStorage(fakeParserJar)
+    ParserStorage.writeToStorage(parserJar)
     ParserStorage.clearLocalParsers
     assert(ParserStorage.listAllParsers.isEmpty)
   }
 
   it("can load all parsers") {
     ParserStorage.clearLocalParsers
-    ParserStorage.writeToStorage(fakeParserJar)
+    ParserStorage.writeToStorage(parserJar)
     val listAll = ParserStorage.listAllParsers
                   .mapValues(_.map(_.parserRef))
-    assert(listAll == Map("Fake" -> Vector(ParserRef("Fake", "0.1.0"))))
+    assert(listAll == Map("es7" -> Vector(ParserRef("es7", "0.1.1"))))
   }
 
 }

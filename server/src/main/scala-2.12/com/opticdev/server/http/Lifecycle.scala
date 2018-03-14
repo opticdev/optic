@@ -9,11 +9,16 @@ import com.opticdev.opm.PackageManager
 import com.opticdev.opm.providers.LocalProvider
 import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
 import com.opticdev.parsers.SourceParserManager
+import com.opticdev.sdk.markdown.OpticMarkdownInstaller
 import com.opticdev.server.state.ProjectsManager
 
 import scala.io.Source
 import scala.util.Try
 object Lifecycle extends App {
+
+  //tap the OpticMarkdown Installer in case this is a fresh install
+  OpticMarkdownInstaller.getOrInstall
+
   //@todo load parsers dynamically.
   val jar = this.getClass.getClassLoader.getResource("es7_2.12-0.1.0.jar").getFile
   val parserBase = Try {

@@ -32,7 +32,8 @@ object Dependencies {
   val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Seq(
     "com.typesafe.play" %% "play-json" % "2.6.2",
     "com.github.fge" % "json-schema-validator" % "2.2.6",
-    "org.gnieh" %% "diffson-play-json" % "2.2.1"
+    "org.gnieh" %% "diffson-play-json" % "2.2.1",
+    "org.apache.commons" % "commons-compress" % "1.16.1"
   )
 
   val serverDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
