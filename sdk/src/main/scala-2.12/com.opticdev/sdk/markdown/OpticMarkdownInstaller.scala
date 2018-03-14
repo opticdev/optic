@@ -59,7 +59,7 @@ object OpticMarkdownInstaller {
     target.delete(true)
 
     //will throw if doesn't work
-    new URL(opticMDTar) #> target.toJava !!
+    new URL(opticMDTar) #> target.toJava !!(ProcessLogger(stdout append _, stderr append _))
 
     assert(target.sha1.toLowerCase == opticMDTarSum.toLowerCase, "optic-markdown sha does not match. Download failed")
 
@@ -76,14 +76,14 @@ object OpticMarkdownInstaller {
       DataDirectory.bin.pathAsString,
     )
 
-    unzip.!!
+    unzip.!!(ProcessLogger(stdout append _, stderr append _))
 
     val mv: Seq[String] = Seq(
       "mv",
       (DataDirectory.bin / "package").pathAsString,
       mdDirectory.pathAsString
     )
-    mv.!!
+    mv.!!(ProcessLogger(stdout append _, stderr append _))
 
     file.delete(true)
     assert(mdDirectory.isDirectory, "Optic Markdown could not be unzipped.")

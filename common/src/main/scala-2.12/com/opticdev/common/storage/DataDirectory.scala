@@ -1,5 +1,6 @@
 package com.opticdev.common.storage
 
+import better.files.File
 import com.opticdev.common.PlatformConstants
 
 object DataDirectory {
@@ -34,6 +35,14 @@ object DataDirectory {
   def reset = {
     delete
     buildDirectoryStructure
+  }
+
+  def init : File = {
+    if (!hasValidStructure) {
+      reset
+    }
+
+    DataDirectory.root
   }
 
 }
