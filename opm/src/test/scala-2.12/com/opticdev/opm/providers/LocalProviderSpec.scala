@@ -19,12 +19,12 @@ class LocalProviderSpec extends FunSpec {
   }
 
   it("can resolve a local package") {
-    val r = Await.result(localProvider.resolvePackages(PackageRef("optic:rest")), 5 seconds)
+    val r = Await.result(localProvider.resolvePackages(PackageRef("optic:rest")), 10 seconds)
     assert(r.foundAll)
   }
 
   it("will not resolve a non-existent local package") {
-    val r = Await.result(localProvider.resolvePackages(PackageRef("optic:dadasd")), 5 seconds)
+    val r = Await.result(localProvider.resolvePackages(PackageRef("optic:dadasd")), 10 seconds)
     assert(!r.foundAll)
   }
 

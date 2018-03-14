@@ -1,6 +1,7 @@
 package com.opticdev.common.storage
 
 import better.files.File
+import com.opticdev.common.PlatformConstants
 import org.scalatest.FunSpec
 
 class DataDirectorySpec extends FunSpec {

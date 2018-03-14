@@ -1,4 +1,4 @@
-package com.opticdev.sdk
+package com.opticdev.sdk.markdown
 
 import better.files.File
 import org.scalatest.FunSpec

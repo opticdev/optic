@@ -2,12 +2,12 @@ package com.opticdev.opm.packages
 
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.MarkdownParser
 import com.opticdev.sdk.descriptions._
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
 import scala.util.Try
 import com.opticdev.opm.helpers.MDPackageResolveHelper._
+import com.opticdev.sdk.markdown.MarkdownParser
 case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMapping) extends OpticPackage{
 
   private def objectValueForKey(key: String): Map[String, JsObject] = {

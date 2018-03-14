@@ -118,7 +118,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
       assert(status.firstPassStatus == NotStarted)
       assert(status.configStatus == ValidConfig)
       assert(status.monitoringStatus == NotWatching)
-      assert(status.sourceGearStatus == Empty)
+      assert(status.sourceGearStatus == Building)
     }
 
     it("creates a sourcegear instance from config") {
