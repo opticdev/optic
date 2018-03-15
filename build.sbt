@@ -2,9 +2,10 @@ name := "optic-core"
 
 organization := "com.opticdev"
 
-version := "0.1.0"
+val appVersion = "0.1.1"
 
-val appVersion = "0.1.0"
+version := appVersion
+
 
 val commonSettings: Seq[Def.Setting[_]] = Seq(
   version := appVersion,
