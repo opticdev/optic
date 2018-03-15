@@ -63,10 +63,10 @@ class ProjectFileSpec extends TestBase {
       assert(f.empty.interface.get.knowledgePaths.value.isEmpty)
     }
 
-    it("includes ignored files") {
+    it("includes excluded files") {
       val f = fixture
-      assert(f.defined.interface.get.ignored_files.value.size == 1)
-      assert(f.empty.interface.get.ignored_files.value.isEmpty)
+      assert(f.defined.interface.get.exclude.value.size == 1)
+      assert(f.empty.interface.get.exclude.value.isEmpty)
     }
 
   }
@@ -92,7 +92,7 @@ class ProjectFileSpec extends TestBase {
       //@todo figure out why this TEST won't pass
 //      it("as yaml") {
 //        assert(f.defined.yamlValue.prettyPrint ==
-////          "name: new name\nknowledge_paths:\n- /docs\nignored_files:\n- node_modules/\nknowledge:\n- js:express\nparsers:\n- JavaScript")
+////          "name: new name\nknowledge_paths:\n- /docs\nexclude:\n- node_modules/\nknowledge:\n- js:express\nparsers:\n- JavaScript")
 //      }
 
       it("to a file") {

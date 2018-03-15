@@ -8,8 +8,9 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server
 import com.opticdev.core.actorSystem
-import com.opticdev.core.sourcegear.project.status.ProjectStatus
+import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, ProjectStatus}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
+import com.opticdev.server.http.routes.socket.agents.{AgentConnection, StatusUpdate}
 
 import scala.collection.mutable
 import scala.util.{Success, Try}
@@ -32,6 +33,15 @@ class ProjectsManager {
       //overwrite old sg instance with the new one
       arrowStore = arrowStore + (project -> new Arrow(project))
     })
+
+    //attach a project status changed callback
+    project.projectStatus.statusChanged((changed, status)=> {
+      AgentConnection.broadcastUpdate(StatusUpdate(project.name, status))
+    })
+
+
+    //send an initial status update
+    AgentConnection.broadcastUpdate(StatusUpdate(project.name, project.projectStatus))
 
     projectsStore = projectsStore :+ project
     arrowStore = arrowStore + (project -> new Arrow(project))
@@ -124,5 +134,10 @@ class ProjectsManager {
 
   private var _lastProjectName : Option[String] = None
   def lastProjectName = _lastProjectName
+
+  def sendMostRecentUpdate = Try {
+    val project = lookupProject(_lastProjectName.get).get
+    AgentConnection.broadcastUpdate(StatusUpdate(_lastProjectName.get, project.projectStatus))
+  }
 
 }

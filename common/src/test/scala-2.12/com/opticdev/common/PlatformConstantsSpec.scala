@@ -1,8 +1,9 @@
-package com.opticdev.common.storage
+package com.opticdev.common
 
 import better.files.File
-import org.scalatest.FunSpec
+import com.opticdev.common.storage.{Mac, OS}
 import org.apache.commons.lang3.SystemUtils
+import org.scalatest.FunSpec
 
 class PlatformConstantsSpec extends FunSpec {
 

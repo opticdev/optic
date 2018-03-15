@@ -8,7 +8,7 @@ object Dependencies {
     "org.scalactic" %% "scalactic" % "3.0.1",
     "org.scalatest" %% "scalatest" % "3.0.1" % "test",
 
-    "com.opticdev" %% "parser-foundation" % "0.1.0",
+    "com.opticdev" %% "parser-foundation" % "0.1.1",
 
     //file library
     "com.github.pathikrit" % "better-files_2.12" % "2.17.1",
@@ -32,7 +32,8 @@ object Dependencies {
   val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Seq(
     "com.typesafe.play" %% "play-json" % "2.6.2",
     "com.github.fge" % "json-schema-validator" % "2.2.6",
-    "org.gnieh" %% "diffson-play-json" % "2.2.1"
+    "org.gnieh" %% "diffson-play-json" % "2.2.1",
+    "org.apache.commons" % "commons-compress" % "1.16.1"
   )
 
   val serverDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(

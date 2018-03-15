@@ -2,9 +2,10 @@ name := "optic-core"
 
 organization := "com.opticdev"
 
-version := "0.1.0"
+val appVersion = "0.1.1"
 
-val appVersion = "0.1.0"
+version := appVersion
+
 
 val commonSettings: Seq[Def.Setting[_]] = Seq(
   version := appVersion,
@@ -27,8 +28,16 @@ lazy val common = (project in file("common")).
  .settings(libraryDependencies ++= Dependencies.commonDependencies)
 
 lazy val sdk = (project in file("sdk")).
+  enablePlugins(BuildInfoPlugin).
   settings(commonSettings: _*)
-  .settings(libraryDependencies ++= Dependencies.sdkDependencies)
+  .settings(
+    libraryDependencies ++= Dependencies.sdkDependencies,
+    buildInfoKeys := Seq[BuildInfoKey](
+      "opticMDTar" -> Constants.opticMDTar,
+      "opticMDTarSum" -> Constants.opticMDTarSum,
+    ),
+    buildInfoPackage := "com.opticdev.sdk"
+  )
   .dependsOn(common)
 
 lazy val opm = (project in file("opm")).
@@ -64,10 +73,10 @@ lazy val server = (project in file("server")).
  .dependsOn(arrow % "compile->compile;test->test")
  .settings(
    test in assembly := {},
+   assemblyJarName in assembly := "server-assembly.jar",
    mainClass in assembly := Some("com.opticdev.server.http.Lifecycle"),
    mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle")
-  )
+ )
   .enablePlugins(AssemblyPlugin)
-
 
 concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)

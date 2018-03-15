@@ -13,7 +13,7 @@ import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
-import com.opticdev.core.sourcegear.project.monitoring.{FileStateMonitor}
+import com.opticdev.core.sourcegear.project.monitoring.{FileStateMonitor, ShouldWatch}
 import com.opticdev.core.sourcegear.project.status.ProjectStatus
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import net.jcazevedo.moultingyaml.YamlString
@@ -36,7 +36,6 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   protected val projectStatusInstance: ProjectStatus = new ProjectStatus()
   val projectStatus = projectStatusInstance.immutable
   def projectInfo : ProjectInfo = ProjectInfo(name, baseDirectory.pathAsString, projectStatus)
-
 
   /* Normal Disk Monitoring */
 
@@ -95,7 +94,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       implicit val sourceGear = projectSourcegear
       projectStatusInstance.touch
       filesStateMonitor.markUpdated(file)
-      if (file === projectFile.file) {
+      if (file.isSameFileAs(projectFile.file)) {
         projectFile.reload
       } else {
         if (shouldWatchFile(file)) projectActor ! FileUpdated(file, this)
@@ -131,12 +130,11 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   }
 
   /* Control logic for watching files */
-
-  def shouldWatchFile(file: File) : Boolean = {
-    file.isRegularFile &&
-    file.extension.isDefined &&
-    projectSourcegear.validExtensions.contains(file.extension.get)
-  }
+  //@todo profile this. Seems liable to cause big slowdowns with many files running through it
+  def shouldWatchFile(file: File) : Boolean =
+    ShouldWatch.file(file,
+      projectSourcegear.validExtensions,
+      projectFile.interface.get.exclude.value.map(i=> File(i.value)) ++ projectSourcegear.excludedPaths.map(i=> File(i)))
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
 }

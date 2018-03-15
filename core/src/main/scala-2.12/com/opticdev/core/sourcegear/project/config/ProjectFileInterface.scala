@@ -9,11 +9,11 @@ trait PFInterface {
 }
 
 case class PFRootInterface(
-                          name: PFFieldInterface[YamlString],
-                          parsers: PFListInterface[YamlString],
-                          knowledge: PFListInterface[YamlString],
-                          knowledgePaths: PFListInterface[YamlString],
-                          ignored_files: PFListInterface[YamlString]
+                            name: PFFieldInterface[YamlString],
+                            parsers: PFListInterface[YamlString],
+                            knowledge: PFListInterface[YamlString],
+                            knowledgePaths: PFListInterface[YamlString],
+                            exclude: PFListInterface[YamlString]
                           )
 
 case class PFListInterface[T <: YamlValue](initialValue: List[T]) extends PFInterface {
