@@ -39,6 +39,10 @@ class ProjectsManager {
       AgentConnection.broadcastUpdate(StatusUpdate(project.name, status))
     })
 
+
+    //send an initial status update
+    AgentConnection.broadcastUpdate(StatusUpdate(project.name, project.projectStatus))
+
     projectsStore = projectsStore :+ project
     arrowStore = arrowStore + (project -> new Arrow(project))
     if (projectsStore.size > MAX_PROJECTS) {
