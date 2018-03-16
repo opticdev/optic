@@ -22,7 +22,7 @@ class PlatformConstantsSpec extends FunSpec {
   }
 
   it("It finds valid node paths") {
-    println(PlatformConstants.nodePath)
+    PlatformConstants.nodePath
   }
 
 }
