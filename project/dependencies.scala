@@ -54,7 +54,9 @@ object Dependencies {
 
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
-    "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2"
+    "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
+
+    "com.mixpanel" % "mixpanel-java" % "1.4.4"
   )
 
   val coreDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(

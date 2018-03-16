@@ -1,3 +1,6 @@
+import scala.io.Source
+import scala.util.Try
+
 name := "optic-core"
 
 organization := "com.opticdev"
@@ -64,6 +67,7 @@ lazy val arrow = (project in file("arrow")).
 
 lazy val server = (project in file("server")).
  settings(commonSettings: _*)
+ .enablePlugins(BuildInfoPlugin)
  .settings(libraryDependencies ++= Dependencies.serverDependencies)
  .dependsOn(sdk)
  .dependsOn(common)
@@ -75,7 +79,11 @@ lazy val server = (project in file("server")).
    test in assembly := {},
    assemblyJarName in assembly := "server-assembly.jar",
    mainClass in assembly := Some("com.opticdev.server.http.Lifecycle"),
-   mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle")
+   mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle"),
+   buildInfoKeys := Seq[BuildInfoKey](
+     "mixpanelToken" -> Constants.mixpanelToken
+   ),
+   buildInfoPackage := "com.opticdev.server"
  )
   .enablePlugins(AssemblyPlugin)
 
