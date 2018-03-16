@@ -36,7 +36,7 @@ object PlatformConstants {
   }
 
   val nodePath: String = platform match {
-    case Mac => Try { Seq(bashPath, "-l", "-c", "which node").!! }.get
+    case Mac => Try { Seq(bashPath, "-l", "-c", "which node").!!.trim }.get
   }
 
 }

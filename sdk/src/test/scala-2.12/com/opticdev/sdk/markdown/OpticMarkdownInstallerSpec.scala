@@ -12,12 +12,13 @@ import scala.concurrent.duration._
 import scala.util.Try
 
 /*
-This test is long running. It's really important to cover all these cases and make sure its threadsafe.
+This suite is long running. It's really important to cover all these cases and make sure its threadsafe.
  */
 
 class OpticMarkdownInstallerSpec extends FunSpec with PrivateMethodTester with BeforeAndAfterEach with Eventually {
 
   override protected def beforeEach(): Unit = {
+    DataDirectory.init
     DataDirectory.bin.list.foreach(_.delete(true))
   }
 
