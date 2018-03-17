@@ -18,8 +18,12 @@ object OpticMarkdownInstaller {
         download(BuildInfo.opticMDTar, BuildInfo.opticMDTarSum)
           .flatMap(unzip)
           .flatMap(npmInstall) match {
-            case Success(a) => Success(CallOpticMarkdown)
+            case Success(a) => {
+              println("\nOPTIC-MARKDOWN INSTALLED")
+              Success(CallOpticMarkdown)
+            }
             case Failure(f) => {
+              println("\nOPTIC-MARKDOWN DID NOT INSTALL")
               cleanupOnFail
               Failure(f)
             }
@@ -91,7 +95,7 @@ object OpticMarkdownInstaller {
   }
 
   private def npmInstall(directory: File) : Try[Unit] = Try {
-    val process = sys.process.Process(Seq("npm", "install"), directory.toJava)
+    val process = sys.process.Process(Seq(PlatformConstants.npmPath, "install"), directory.toJava)
     process.!(ProcessLogger(stdout append _, stderr append _))
   }
 

@@ -39,4 +39,8 @@ object PlatformConstants {
     case Mac => Try { Seq(bashPath, "-l", "-c", "which node").!!.trim }.get
   }
 
+  val npmPath: String = platform match {
+    case Mac => Try { Seq(bashPath, "-l", "-c", "which npm").!!.trim }.get
+  }
+
 }
