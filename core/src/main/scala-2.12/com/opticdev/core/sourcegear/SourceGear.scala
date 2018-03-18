@@ -2,10 +2,11 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef, Transformation}
+import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
+import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge

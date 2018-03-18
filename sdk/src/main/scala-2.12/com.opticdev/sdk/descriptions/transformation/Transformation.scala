@@ -1,8 +1,9 @@
-package com.opticdev.sdk.descriptions
+package com.opticdev.sdk.descriptions.transformation
 
-import javax.script.{CompiledScript, ScriptEngineManager}
+import javax.script.ScriptEngineManager
 
 import com.opticdev.common.PackageRef
+import com.opticdev.sdk.descriptions._
 import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}
 import play.api.libs.json._
 
@@ -13,7 +14,6 @@ object Transformation extends Description[Transformation] {
 
   val engine: NashornScriptEngine = new ScriptEngineManager(null).getEngineByName("nashorn").asInstanceOf[NashornScriptEngine]
 
-  import Schema._
 
   implicit val transformationReads = Json.reads[Transformation]
 
@@ -36,15 +36,7 @@ object Transformation extends Description[Transformation] {
 class TransformFunction(code: String) {
   import com.opticdev.common.utils.JsObjectNashornImplicits._
   private implicit val engine = Transformation.engine
-  lazy val inflated: Try[ScriptObjectMirror] = Try {
-      val evalString = s"""(function () {
-      | var transform = ${code}
-      | return transform
-      | })() """.stripMargin
-
-    val evaled = Transformation.engine.eval(evalString).asInstanceOf[ScriptObjectMirror]
-    if (evaled.isFunction) evaled else throw new Error("Transform must be a function")
-  }
+  lazy val inflated: Try[ScriptObjectMirror] = Inflate.fromString(code)
 
   def transform(jsObject: JsObject): Try[JsObject] = inflated.map(transformFunction => Try {
     val scriptObject = jsObject.asScriptObject.get

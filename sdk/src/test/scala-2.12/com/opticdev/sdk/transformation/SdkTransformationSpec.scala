@@ -1,9 +1,10 @@
-package com.opticdev.sdk
+package com.opticdev.sdk.transformation
 
 import com.opticdev.common.PackageRef
+import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.transformation.{TransformFunction, Transformation}
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString, Json}
-import com.opticdev.sdk.descriptions.{SchemaRef, TransformFunction, Transformation}
 
 import scala.util.Success
 class SdkTransformationSpec extends FunSpec {
@@ -50,10 +51,6 @@ class SdkTransformationSpec extends FunSpec {
     it("can inflate code to script objects") {
       val inflated = valid.inflated
       assert(inflated.isSuccess)
-    }
-
-    it("will fail code it is not syntactically valid") {
-      assert(new TransformFunction("_dasd dd+( ").inflated.isFailure)
     }
 
     it("will fail it is not a function ") {

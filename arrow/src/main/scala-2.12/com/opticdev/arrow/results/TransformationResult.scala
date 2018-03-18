@@ -6,10 +6,10 @@ import com.opticdev.arrow.context.{ArrowContextBase, ModelContext}
 import com.opticdev.arrow.graph.KnowledgeGraph
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
 import com.opticdev.core.sourcegear.SourceGear
-import com.opticdev.sdk.descriptions.Transformation
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits._
 import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try
 

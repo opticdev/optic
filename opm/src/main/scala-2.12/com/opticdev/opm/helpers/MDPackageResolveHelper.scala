@@ -3,6 +3,7 @@ package com.opticdev.opm.helpers
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.packages.DependencyMapping
 import com.opticdev.sdk.descriptions._
+import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try
 

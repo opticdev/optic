@@ -1,7 +1,8 @@
 package com.opticdev.arrow.graph
 
 import com.opticdev.core.sourcegear.Gear
-import com.opticdev.sdk.descriptions.{SchemaRef, Transformation}
+import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.transformation.Transformation
 
 object KnowledgeGraphImplicits {
 

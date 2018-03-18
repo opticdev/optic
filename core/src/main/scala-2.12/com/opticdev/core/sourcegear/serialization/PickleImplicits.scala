@@ -14,6 +14,7 @@ import com.opticdev.sdk.descriptions.enums.{BasicComponentType, Literal, NotSupp
 import com.opticdev.sdk.{BoolProperty, _}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
+import com.opticdev.sdk.descriptions.transformation.Transformation
 
 object PickleImplicits extends PicklerHelper {
 

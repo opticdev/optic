@@ -3,7 +3,8 @@ import better.files.File
 import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef, Transformation}
+import com.opticdev.sdk.descriptions.transformation.Transformation
+import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
