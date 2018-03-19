@@ -35,7 +35,7 @@ object Transformation extends Description[Transformation] {
 
 }
 
-class TransformFunction(code: String, askSchema: JsObject = Transformation.emptyAskSchema) {
+class TransformFunction(code: String, askSchema: JsObject = Transformation.emptyAskSchema)(implicit outputSchemaRef: SchemaRef) {
   import com.opticdev.common.utils.JsObjectNashornImplicits._
   private implicit val engine: NashornScriptEngine = Transformation.engine
   lazy val inflated: Try[ScriptObjectMirror] = Inflate.fromString(code)
@@ -43,7 +43,6 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
   private lazy val askSchemaInflated = Schema.schemaObjectFromJson(askSchema)
 
   def transform(jsObject: JsObject, ask: JsObject = JsObject.empty): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
-
     if (!Schema.validate(askSchemaInflated, ask)) {
       throw new Exception("Ask Object does not match the Ask Schema for this transformation "+ askSchema.toString)
     }
@@ -62,7 +61,7 @@ sealed trait TransformationBase extends PackageExportable {
   def input: SchemaRef
   def output: SchemaRef
   def ask: JsObject
-  val transformFunction = new TransformFunction(script, ask)
+  val transformFunction = new TransformFunction(script, ask)(output)
 }
 
 //case class InlineTransformation() extends TransformationBase

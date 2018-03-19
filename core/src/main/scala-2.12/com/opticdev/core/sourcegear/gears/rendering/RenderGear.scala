@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.gears.rendering
 
-import com.opticdev.core.sourcegear.{SGContext, SourceGear}
+import com.opticdev.core.sourcegear.{Render, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.core.utils.StringUtils
@@ -12,6 +12,7 @@ import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
+import com.opticdev.sdk.descriptions.transformation.ContainersContent
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
@@ -39,7 +40,7 @@ case class RenderGear(block: String,
     (fileContents, astGraph, rootNode)
   }
 
-  def generateWithNewAstNode(value: JsObject)(implicit sourceGear: SourceGear): (NewAstNode, String) = {
+  def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty)(implicit sourceGear: SourceGear): (NewAstNode, String) = {
     implicit val sourceGearContext = SGContext.forGeneration(sourceGear, parserRef)
 
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(block)
@@ -59,27 +60,35 @@ case class RenderGear(block: String,
 
     val rawWithContainersFilled = parseGear.containers.foldLeft(raw) {
       case (nodeRaw, (path, subcontainer)) => {
-        val newAstNodesFromSchemaComponents = subcontainer.schemaComponents.flatMap(i=> {
-          val schemaComponentValue = Try(propertyPathWalker.getProperty(i.propertyPath).get.as[JsArray]).getOrElse(JsArray.empty)
-            .value.toSeq
 
-          //@todo allow a choice to be made if there are multiple lenses that can fulfill this operation
-          val gearOption = sourceGear.gearSet.listGears.find(_.schemaRef == i.schema)
+        // collect contents. If its set in a staged node override, else just map the schema components in
+        val containerContents: Seq[NewAstNode] =
+          if (containersContent.contains(subcontainer.name)) {
+            val stagedNodes = containersContent.getOrElse(subcontainer.name, Vector())
+            stagedNodes.map(staged=> Render.fromStagedNode(staged).get._1)
+          } else {
+            subcontainer.schemaComponents.flatMap(i=> {
+            val schemaComponentValue = Try(propertyPathWalker.getProperty(i.propertyPath).get.as[JsArray]).getOrElse(JsArray.empty)
+              .value.toSeq
 
-          if (gearOption.isDefined) {
+            //@todo allow a choice to be made if there are multiple lenses that can fulfill this operation
+            val gearOption = sourceGear.gearSet.listGears.find(_.schemaRef == i.schema)
 
-            val generator = gearOption.get.renderer
-            val nodeType = generator.entryChild.astType.name
+            if (gearOption.isDefined) {
 
-            schemaComponentValue.map(child => {
-              NewAstNode(nodeType, Map(), Some(
-                gearOption.get.renderer.render(child.as[JsObject])
-              ))
-            })
+              val generator = gearOption.get.renderer
+              val nodeType = generator.entryChild.astType.name
 
-          } else Seq()
+              schemaComponentValue.map(child => {
+                NewAstNode(nodeType, Map(), Some(
+                  gearOption.get.renderer.render(child.as[JsObject])
+                ))
+              })
 
-        })
+            } else Seq()
+
+          })
+          }
 
         implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(nodeRaw)
 
@@ -91,7 +100,7 @@ case class RenderGear(block: String,
           val marvinAstParent = parent.toMarvinAstNode(astGraph, nodeRaw, parser.get)
 
           val childrenIndent = marvinAstParent.indent.next
-          val newAstNodes = newAstNodesFromSchemaComponents.map(newAstNode=> newAstNode.withForcedContent(
+          val newAstNodes = containerContents.map(newAstNode=> newAstNode.withForcedContent(
             Some(childrenIndent.generate+newAstNode.forceContent.get)))
 
           val blockPropertyPath = parser.get.blockNodeTypes.getPropertyPath(parent.nodeType).get
@@ -109,8 +118,8 @@ case class RenderGear(block: String,
       rawWithContainersFilled)
   }
 
-  def render(value: JsObject)(implicit sourceGear: SourceGear): String =
-    generateWithNewAstNode(value)._2
+  def render(value: JsObject, containersContent: ContainersContent = Map.empty)(implicit sourceGear: SourceGear): String =
+    renderWithNewAstNode(value, containersContent)._2
 
   def hash = {
       MurmurHash3.stringHash(block) ^

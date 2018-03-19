@@ -15,6 +15,7 @@ import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
 import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
+import com.opticdev.sdk.descriptions.transformation.StagedNode
 
 class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec") with ParserUtils with GearUtils {
 
@@ -32,20 +33,19 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
     val importSample = sample(block)
 
-    val renderer = new RenderFactoryStage(importSample, parseGear).run.generateGear
+    val renderer = new RenderFactoryStage(importSample, parseGear).run.renderGear
     val result = renderer.render(JsObject(Seq("definedAs" -> JsString("VARIABLE"), "pathTo" -> JsString("PATH"))))
     assert(result == "var VARIABLE = require('PATH')")
   }
 
-  it("can create a renderer for node with sub-containers") {
-
+  lazy val callbackFixture = new {
     val childGear = {
       val block = "start(thing)"
       implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
         CodeComponent(Seq("operation"), StringFinder(Entire, "thing"))
       ))
 
-      val renderer = new RenderFactoryStage(sample(block), parseGear).run.generateGear
+      val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
       Gear("do", "optic:test", SchemaRef(PackageRef("optic:test"), "a"), Set(), parseGear, renderer)
     }
@@ -63,19 +63,23 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
       ))
     ))
 
-    val renderer = new RenderFactoryStage(sample(block), parseGear).run.generateGear
+    val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
     val thisGear = Gear("wrapper", "optic:test", SchemaRef(PackageRef("optic:test"), "b"), Set(), parseGear, renderer)
 
-    implicit val sourceGear = new SourceGear {
+    val sourceGear : SourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val gearSet = new GearSet(thisGear, childGear)
       override val schemas = Set()
       override val transformations = Set()
     }
+  }
 
+  it("can create a renderer for node with sub-containers") {
 
-    val result = renderer.render(JsObject(Seq("arg1" -> JsString("TEST VARIABLE"),
+    val f = callbackFixture
+    implicit val sourceGear = f.sourceGear
+    val result = f.renderer.render(JsObject(Seq("arg1" -> JsString("TEST VARIABLE"),
       "properties" -> JsArray(Seq(
         JsObject(Seq("operation" -> JsString("first"))),
         JsObject(Seq("operation" -> JsString("second"))),
@@ -87,6 +91,26 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
                      |  start(first)
                      |  start(second)
                      |  start(third)
+                     |})""".stripMargin
+
+    assert(result == expected)
+
+  }
+
+  it("can create a renderer for node that explicitly fills subcontainers") {
+
+    val f = callbackFixture
+    implicit val sourceGear = f.sourceGear
+    val result = f.renderer.render(JsObject(Seq("arg1" -> JsString("TEST VARIABLE"),
+      "properties" -> JsArray(Seq(
+        JsObject(Seq("operation" -> JsString("first"))),
+        JsObject(Seq("operation" -> JsString("second"))),
+        JsObject(Seq("operation" -> JsString("third"))),
+      ))
+    )), Map("callback" -> Seq(StagedNode(f.childGear.schemaRef, JsObject(Seq("operation" -> JsString("OVERride")))))))
+
+    val expected = """call("TEST VARIABLE", function () {
+                     |  start(OVERride)
                      |})""".stripMargin
 
     assert(result == expected)

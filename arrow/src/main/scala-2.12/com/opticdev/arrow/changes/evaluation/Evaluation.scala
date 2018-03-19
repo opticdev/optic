@@ -19,7 +19,7 @@ object Evaluation {
       assert(gearOption.isDefined, "Gear not found for id. "+ im.gearId.get)
 
       val gear = gearOption.get
-      val generatedNode = gear.renderer.generateWithNewAstNode(im.value)(sourcegear)
+      val generatedNode = gear.renderer.renderWithNewAstNode(im.value)(sourcegear)
 
       val resolvedLocation = im.atLocation.get.resolveToLocation(sourcegear).get
 
@@ -40,7 +40,7 @@ object Evaluation {
       assert(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed.get)
       assert(schema.validate(transformationTry.get.asInstanceOf[SingleModel].value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
 
-      val generatedNode = gearOption.get.renderer.generateWithNewAstNode(transformationTry.get.asInstanceOf[SingleModel].value)(sourcegear)
+      val generatedNode = gearOption.get.renderer.renderWithNewAstNode(transformationTry.get.asInstanceOf[SingleModel].value)(sourcegear)
 
       val resolvedLocation = rt.location.get.resolveToLocation(sourcegear).get
 

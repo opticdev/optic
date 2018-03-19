@@ -8,6 +8,8 @@ import play.api.libs.json.{JsBoolean, JsObject, Json}
 import com.opticdev.sdk.descriptions.transformation._
 class ProcessResultSpec extends FunSpec {
 
+  implicit val outputSchemaRef = SchemaRef.fromString("test:package/schema").get
+
   describe("for scriptobjects") {
     implicit val engine = Transformation.engine
 
@@ -24,7 +26,7 @@ class ProcessResultSpec extends FunSpec {
 
   it("will return SingleModel for a model return") {
     val obj = JsObject(Seq("test" -> JsBoolean(true)))
-    assert(ProcessResult.objectResult(obj).get == SingleModel(obj))
+    assert(ProcessResult.objectResult(obj).get == SingleModel(outputSchemaRef, obj))
   }
 
   it("will return a staged node for a generate call") {

@@ -9,11 +9,11 @@ case class StagedNode(schema: SchemaRef,
                       value: JsObject,
                       options: Option[TransformationOptions] = Some(TransformationOptions(None, None, None))) extends TransformationResult
 
-case class SingleModel(value: JsObject) extends TransformationResult
+case class SingleModel(schema: SchemaRef, value: JsObject) extends TransformationResult
 
 
 //Transformation Options
 
-case class TransformationOptions(gearId: Option[String],
-                                 containers: Option[Map[String, Seq[StagedNode]]],
-                                 variables: Option[Map[String, String]])
+case class TransformationOptions(gearId: Option[String] = None,
+                                 containers: Option[ContainersContent] = None,
+                                 variables: Option[Map[String, String]] = None)

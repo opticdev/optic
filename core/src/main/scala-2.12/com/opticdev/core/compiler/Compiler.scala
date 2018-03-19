@@ -78,7 +78,7 @@ object Compiler {
             val renderer = Try(new RenderFactoryStage(snippetOutput.get, parser.get.parseGear).run)
             if (renderer.isSuccess) {
 
-              val finalGear = Gear(lens.name, lens.packageRef.full, lens.schema, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], renderer.get.generateGear)
+              val finalGear = Gear(lens.name, lens.packageRef.full, lens.schema, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], renderer.get.renderGear)
 
 //              if (logToCli) cliLogger.gearFinished
 

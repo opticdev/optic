@@ -8,6 +8,7 @@ import play.api.libs.json.Reads._
 package object transformation {
 
   trait TransformationResult
+  type ContainersContent = Map[String, Seq[StagedNode]]
 
   //SDK Objects refs
   import PackageRef.packageRefJsonFormat

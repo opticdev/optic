@@ -4,9 +4,10 @@ import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
+import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
-import com.opticdev.sdk.descriptions.transformation.Transformation
+import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation}
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge
@@ -62,6 +63,8 @@ abstract class SourceGear {
       | Gears: ${gearSet.listGears.map(_.name).mkString(",")}
       | Transformations: ${transformations.map(_.name).mkString(",")}
     """.stripMargin)
+
+  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String)] = Render.fromStagedNode(stagedNode)(this)
 
 }
 

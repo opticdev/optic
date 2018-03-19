@@ -9,6 +9,8 @@ import play.api.libs.json.{JsBoolean, JsObject, JsString, Json}
 import scala.util.Success
 class SdkTransformationSpec extends FunSpec {
 
+  implicit val outputSchemaRef = SchemaRef.fromString("test:package/schema").get
+
   val validTransformationJson =
     """
       |{
@@ -60,7 +62,7 @@ class SdkTransformationSpec extends FunSpec {
 
     it("can execute a transformation") {
       val result = valid.transform(JsObject(Seq("test" -> JsString("world"))))
-      assert(result == Success(SingleModel(JsObject(Seq("hello" -> JsString("world"))))))
+      assert(result == Success(SingleModel(outputSchemaRef, JsObject(Seq("hello" -> JsString("world"))))))
     }
 
     describe("receives answers from Ask") {
@@ -73,7 +75,7 @@ class SdkTransformationSpec extends FunSpec {
 
       it("when valid answers object passed") {
         val result = valid.transform(JsObject.empty, JsObject(Seq("value" -> JsString("world"))))
-        assert(result == Success(SingleModel(JsObject(Seq("hello" -> JsString("world"))))))
+        assert(result == Success(SingleModel(outputSchemaRef, JsObject(Seq("hello" -> JsString("world"))))))
       }
 
       it("will fail when invalid answers object is input") {

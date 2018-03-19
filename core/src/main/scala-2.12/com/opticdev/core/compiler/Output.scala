@@ -39,7 +39,7 @@ case class FinderStageOutput(componentFinders: Map[FinderPath, Vector[Component]
 //Source Gear factory output
 
 case class ParserFactoryOutput(parseGear: ParseGear)
-case class GeneratorFactoryOutput(generateGear: RenderGear)
+case class GeneratorFactoryOutput(renderGear: RenderGear)
 
 sealed trait LensCompilerOutput extends Output {
   val isSuccess = false
