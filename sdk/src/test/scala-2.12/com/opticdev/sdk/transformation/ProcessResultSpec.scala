@@ -33,5 +33,4 @@ class ProcessResultSpec extends FunSpec {
     assert(ProcessResult.objectResult(asJson.as[JsObject]).get == stagedNode)
   }
 
-
 }
