@@ -31,16 +31,26 @@ object Transformation extends Description[Transformation] {
 
   }
 
+  def emptyAskSchema = JsObject(Seq("type" -> JsString("object")))
+
 }
 
-class TransformFunction(code: String) {
+class TransformFunction(code: String, askSchema: JsObject = Transformation.emptyAskSchema) {
   import com.opticdev.common.utils.JsObjectNashornImplicits._
   private implicit val engine: NashornScriptEngine = Transformation.engine
   lazy val inflated: Try[ScriptObjectMirror] = Inflate.fromString(code)
 
-  def transform(jsObject: JsObject): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
+  private lazy val askSchemaInflated = Schema.schemaObjectFromJson(askSchema)
+
+  def transform(jsObject: JsObject, ask: JsObject = JsObject.empty): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
+
+    if (!Schema.validate(askSchemaInflated, ask)) {
+      throw new Exception("Ask Object does not match the Ask Schema for this transformation "+ askSchema.toString)
+    }
+
     val scriptObject = jsObject.asScriptObject.get
-    val result = transformFunction.call(null, scriptObject).asInstanceOf[ScriptObjectMirror]
+    val askObject = ask.asScriptObject.get
+    val result = transformFunction.call(null, scriptObject, askObject).asInstanceOf[ScriptObjectMirror]
 
     ProcessResult.objectResultFromScriptObject(result)
   }).flatten
@@ -51,12 +61,19 @@ sealed trait TransformationBase extends PackageExportable {
   def script: String
   def input: SchemaRef
   def output: SchemaRef
-  val transformFunction = new TransformFunction(script)
+  def ask: JsObject
+  lazy val transformFunction = new TransformFunction(script, ask)
 }
+
 //case class InlineTransformation() extends TransformationBase
 
 case class Transformation(name: String,
                           packageId: PackageRef,
                           input: SchemaRef,
                           output: SchemaRef,
-                          script: String) extends TransformationBase
+                          ask: JsObject,
+                          script: String) extends TransformationBase {
+
+  def hasAsk : Boolean = Try((ask \ "properties").asInstanceOf[JsObject].fields.nonEmpty).getOrElse(false)
+
+}

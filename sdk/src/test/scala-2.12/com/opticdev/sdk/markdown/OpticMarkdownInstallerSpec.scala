@@ -3,9 +3,11 @@ package com.opticdev.sdk.markdown
 import akka.dispatch.Futures
 import better.files.File
 import com.opticdev.common.storage.DataDirectory
+import com.opticdev.sdk.BuildInfo
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
 import org.scalatest.{BeforeAndAfterEach, FunSpec, PrivateMethodTester}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
@@ -31,8 +33,8 @@ class OpticMarkdownInstallerSpec extends FunSpec with PrivateMethodTester with B
 
     it("works with valid url & checksum") {
       val result = download(
-        "https://registry.npmjs.org/optic-markdown/-/optic-markdown-0.1.2.tgz",
-        "764f6cf924fdd8a899e26b8eb982d3a497878656"
+        BuildInfo.opticMDTar,
+        BuildInfo.opticMDTarSum
       )
       assert(result.isSuccess)
     }
@@ -40,14 +42,14 @@ class OpticMarkdownInstallerSpec extends FunSpec with PrivateMethodTester with B
     it("fails if url is invalid") {
       val result = download(
         "NOT REAL",
-        "764f6cf924fdd8a899e26b8eb982d3a497878656"
+        BuildInfo.opticMDTarSum
       )
       assert(result.isFailure)
     }
 
     it("fails if checksum is wrong") {
       val result = download(
-        "https://registry.npmjs.org/optic-markdown/-/optic-markdown-0.1.2.tgz",
+        BuildInfo.opticMDTar,
         "FAKE_WRONG"
       )
       assert(result.isFailure)
@@ -64,8 +66,8 @@ class OpticMarkdownInstallerSpec extends FunSpec with PrivateMethodTester with B
 
     it("works with valid file piped in") {
       val downloadResult = download(
-        "https://registry.npmjs.org/optic-markdown/-/optic-markdown-0.1.2.tgz",
-        "764f6cf924fdd8a899e26b8eb982d3a497878656"
+        BuildInfo.opticMDTar,
+        BuildInfo.opticMDTarSum
       )
 
       val unzipResult = downloadResult.map(i=> unzip(i)).flatten
@@ -84,8 +86,8 @@ class OpticMarkdownInstallerSpec extends FunSpec with PrivateMethodTester with B
 
   it("npm install works") {
     val unzippedDirectory = download(
-      "https://registry.npmjs.org/optic-markdown/-/optic-markdown-0.1.2.tgz",
-      "764f6cf924fdd8a899e26b8eb982d3a497878656"
+      BuildInfo.opticMDTar,
+      BuildInfo.opticMDTarSum
     ).map(unzip).flatten
 
     val result = npmInstall(unzippedDirectory.get)

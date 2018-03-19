@@ -4,7 +4,7 @@ import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.{SingleModel, TransformFunction, Transformation}
 import org.scalatest.FunSpec
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsBoolean, JsObject, JsString, Json}
 
 import scala.util.Success
 class SdkTransformationSpec extends FunSpec {
@@ -16,6 +16,7 @@ class SdkTransformationSpec extends FunSpec {
           "packageId": "optic:test@1.0.0/schema",
           "input": "optic:test@1.0.0/schema",
           "output": "test",
+          "ask": {"type": "object"},
           "script": "const parser = ()=> {}"
       |		}
     """.stripMargin
@@ -60,6 +61,27 @@ class SdkTransformationSpec extends FunSpec {
     it("can execute a transformation") {
       val result = valid.transform(JsObject(Seq("test" -> JsString("world"))))
       assert(result == Success(SingleModel(JsObject(Seq("hello" -> JsString("world"))))))
+    }
+
+    describe("receives answers from Ask") {
+      val valid = new TransformFunction(
+        """
+          |function(input, answers) {
+          | return {hello: answers.value}
+          |}
+        """.stripMargin, Json.parse("""{"type": "object", "properties": { "value": { "type": "string" } }}""").as[JsObject])
+
+      it("when valid answers object passed") {
+        val result = valid.transform(JsObject.empty, JsObject(Seq("value" -> JsString("world"))))
+        assert(result == Success(SingleModel(JsObject(Seq("hello" -> JsString("world"))))))
+      }
+
+      it("will fail when invalid answers object is input") {
+        val result = valid.transform(JsObject.empty, JsObject(Seq("value" -> JsBoolean(false))))
+        assert(result.isFailure)
+      }
+
+
     }
 
   }

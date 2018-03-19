@@ -33,6 +33,8 @@ object Schema extends Description[Schema] {
     } else throw new Error("Invalid Schema "+ validatorFactory.getSyntaxValidator.validateSchema(schema.as[JsonNode]).toString)
   }
 
+  def validate(jsonSchema: JsonSchema, value: JsValue) = jsonSchema.validate(value.as[JsonNode]).isSuccess
+
   def fromJson(schemaId: SchemaRef, jsValue: JsValue): Schema = {
     Schema(schemaId, jsValue.as[JsObject])
   }
@@ -46,7 +48,7 @@ case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExp
 
   private val jsonSchema : JsonSchema = Schema.schemaObjectFromJson(definition)
 
-  def validate(jsValue: JsValue): Boolean = jsonSchema.validate(jsValue.as[JsonNode]).isSuccess
+  def validate(jsValue: JsValue): Boolean = Schema.validate(jsonSchema, jsValue)
 
   def toJson = definition ++ JsObject(Seq("_identifier" -> JsString(schemaRef.full)))
 
