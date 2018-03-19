@@ -180,6 +180,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |				"packageId": "optic:test-transform@latest",
         |				"input": "optic:rest@0.1.0/model",
         |				"output": "optic:rest@0.1.0/route",
+        |       "ask": {"type": "object"},
         |				"script": "function transform(input) {\n    var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n    return {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n}"
         |			},
         |			"target": "optic:test@latest/route",

@@ -62,7 +62,7 @@ sealed trait TransformationBase extends PackageExportable {
   def input: SchemaRef
   def output: SchemaRef
   def ask: JsObject
-  lazy val transformFunction = new TransformFunction(script, ask)
+  val transformFunction = new TransformFunction(script, ask)
 }
 
 //case class InlineTransformation() extends TransformationBase

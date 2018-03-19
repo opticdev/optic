@@ -28,8 +28,8 @@ class LocalProviderSpec extends FunSpec {
     assert(!r.foundAll)
   }
 
-  it("does not work for parsers") {
-    assert(localProvider.listInstalledParsers.size == 1)
-  }
+//  it("does not work for parsers") {
+//    assert(localProvider.listInstalledParsers.size == 1)
+//  }
 
 }

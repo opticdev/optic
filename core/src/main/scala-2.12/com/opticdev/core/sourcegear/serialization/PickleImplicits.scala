@@ -15,6 +15,7 @@ import com.opticdev.sdk.{BoolProperty, _}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.transformation.Transformation
+import play.api.libs.json.{Format, JsObject, JsValue, Json}
 
 object PickleImplicits extends PicklerHelper {
 
@@ -25,6 +26,26 @@ object PickleImplicits extends PicklerHelper {
     }
     @inline override def unpickle(implicit state: UnpickleState): Range = {
       Range(state.dec.readInt, state.dec.readInt)
+    }
+  }
+
+  implicit object JsValuePickler extends P[JsValue] {
+    @inline override def pickle(value: JsValue)(implicit state: PickleState) = {
+      state.enc.writeString(value.toString())
+    }
+    @inline override def unpickle(implicit state: UnpickleState): JsValue = {
+      val input = state.dec.readString
+      Json.parse(input)
+    }
+  }
+
+  implicit object JsObjectPickler extends P[JsObject] {
+    @inline override def pickle(value: JsObject)(implicit state: PickleState) = {
+      state.enc.writeString(value.toString())
+    }
+    @inline override def unpickle(implicit state: UnpickleState): JsObject = {
+      val input = state.dec.readString
+      Json.parse(input).as[JsObject]
     }
   }
 

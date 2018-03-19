@@ -27,9 +27,9 @@ object ExampleSourcegears {
       override val gearSet = new GearSet()
       override val schemas = Set(schemaModel, schemaRoute, schemaForm, schemaFetch)
       override val transformations = Set(
-        Transformation("Model -> Route", transformationPackage,  schemaModel.schemaRef, schemaRoute.schemaRef, ""),
-        Transformation("Route -> Form", transformationPackage, schemaRoute.schemaRef, schemaForm.schemaRef, ""),
-        Transformation("Route -> Fetch", transformationPackage, schemaRoute.schemaRef, schemaFetch.schemaRef, "")
+        Transformation("Model -> Route", transformationPackage,  schemaModel.schemaRef, schemaRoute.schemaRef, Transformation.emptyAskSchema, ""),
+        Transformation("Route -> Form", transformationPackage, schemaRoute.schemaRef, schemaForm.schemaRef, Transformation.emptyAskSchema, ""),
+        Transformation("Route -> Fetch", transformationPackage, schemaRoute.schemaRef, schemaFetch.schemaRef, Transformation.emptyAskSchema, "")
       )
     }
 

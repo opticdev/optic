@@ -6,6 +6,7 @@ import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.marvin.common.helpers.LineOperations
+import com.opticdev.sdk.descriptions.transformation.SingleModel
 import play.api.libs.json.JsObject
 
 import scala.util.Try
@@ -37,9 +38,9 @@ object Evaluation {
 
       val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue)
       assert(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed.get)
-      assert(schema.validate(transformationTry.get), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
+      assert(schema.validate(transformationTry.get.asInstanceOf[SingleModel].value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
 
-      val generatedNode = gearOption.get.generater.generateWithNewAstNode(transformationTry.get)(sourcegear)
+      val generatedNode = gearOption.get.generater.generateWithNewAstNode(transformationTry.get.asInstanceOf[SingleModel].value)(sourcegear)
 
       val resolvedLocation = rt.location.get.resolveToLocation(sourcegear).get
 
