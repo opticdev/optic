@@ -35,13 +35,14 @@ object Transformation extends Description[Transformation] {
 
 class TransformFunction(code: String) {
   import com.opticdev.common.utils.JsObjectNashornImplicits._
-  private implicit val engine = Transformation.engine
+  private implicit val engine: NashornScriptEngine = Transformation.engine
   lazy val inflated: Try[ScriptObjectMirror] = Inflate.fromString(code)
 
-  def transform(jsObject: JsObject): Try[JsObject] = inflated.map(transformFunction => Try {
+  def transform(jsObject: JsObject): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
     val scriptObject = jsObject.asScriptObject.get
     val result = transformFunction.call(null, scriptObject).asInstanceOf[ScriptObjectMirror]
-    result.asJsObject.get
+
+    ProcessResult.objectResultFromScriptObject(result)
   }).flatten
 
 }

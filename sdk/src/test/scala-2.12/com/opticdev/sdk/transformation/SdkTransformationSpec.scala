@@ -2,7 +2,7 @@ package com.opticdev.sdk.transformation
 
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.SchemaRef
-import com.opticdev.sdk.descriptions.transformation.{TransformFunction, Transformation}
+import com.opticdev.sdk.descriptions.transformation.{SingleModel, TransformFunction, Transformation}
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString, Json}
 
@@ -59,7 +59,7 @@ class SdkTransformationSpec extends FunSpec {
 
     it("can execute a transformation") {
       val result = valid.transform(JsObject(Seq("test" -> JsString("world"))))
-      assert(result == Success(JsObject(Seq("hello" -> JsString("world")))))
+      assert(result == Success(SingleModel(JsObject(Seq("hello" -> JsString("world"))))))
     }
 
   }

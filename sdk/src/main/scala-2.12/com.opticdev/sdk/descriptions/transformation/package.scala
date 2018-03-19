@@ -7,6 +7,8 @@ import play.api.libs.json.Reads._
 
 package object transformation {
 
+  trait TransformationResult
+
   //SDK Objects refs
   import PackageRef.packageRefJsonFormat
   import SchemaRef.schemaRefFormats
