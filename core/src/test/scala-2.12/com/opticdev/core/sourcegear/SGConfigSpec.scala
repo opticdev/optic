@@ -8,7 +8,7 @@ import play.api.libs.json.{JsObject, Json}
 import boopickle.Default._
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.gears.RuleProvider
-import com.opticdev.core.sourcegear.gears.generating.GenerateGear
+import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
 import com.opticdev.core.sourcegear.storage.GearStorage

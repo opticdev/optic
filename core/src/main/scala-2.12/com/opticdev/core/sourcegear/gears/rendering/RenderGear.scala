@@ -1,4 +1,4 @@
-package com.opticdev.core.sourcegear.gears.generating
+package com.opticdev.core.sourcegear.gears.rendering
 
 import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
@@ -16,10 +16,10 @@ import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
 
-case class GenerateGear(block: String,
-                        parserRef: ParserRef,
-                        parseGear: ParseAsModel,
-                        entryChild: NodeDescription) {
+case class RenderGear(block: String,
+                      parserRef: ParserRef,
+                      parseGear: ParseAsModel,
+                      entryChild: NodeDescription) {
 
   def parser = SourceParserManager.parserById(parserRef)
 
@@ -50,9 +50,8 @@ case class GenerateGear(block: String,
     import com.opticdev.core.sourcegear.mutate.MutationImplicits._
     import com.opticdev.marvin.common.ast.OpticGraphConverter._
 
-    //1. Generate Node
+    //1. Render Node
 
-    println(value)
     val raw = isMatch.get.modelNode.update(value)
 
     //2. fill subcontainers
@@ -69,21 +68,18 @@ case class GenerateGear(block: String,
 
           if (gearOption.isDefined) {
 
-            val generator = gearOption.get.generater
+            val generator = gearOption.get.renderer
             val nodeType = generator.entryChild.astType.name
 
             schemaComponentValue.map(child => {
               NewAstNode(nodeType, Map(), Some(
-                gearOption.get.generater.generate(child.as[JsObject])
+                gearOption.get.renderer.render(child.as[JsObject])
               ))
             })
 
           } else Seq()
 
         })
-
-        println(value)
-        println(newAstNodesFromSchemaComponents)
 
         implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(nodeRaw)
 
@@ -113,7 +109,7 @@ case class GenerateGear(block: String,
       rawWithContainersFilled)
   }
 
-  def generate(value: JsObject)(implicit sourceGear: SourceGear): String =
+  def render(value: JsObject)(implicit sourceGear: SourceGear): String =
     generateWithNewAstNode(value)._2
 
   def hash = {

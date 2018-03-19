@@ -5,7 +5,7 @@ import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.stages.MatchType
 import com.opticdev.core.sourcegear.Gear
 import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping}
-import com.opticdev.core.sourcegear.gears.generating.GenerateGear
+import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.parsers.{AstGraph, ParserBase}
@@ -39,7 +39,7 @@ case class FinderStageOutput(componentFinders: Map[FinderPath, Vector[Component]
 //Source Gear factory output
 
 case class ParserFactoryOutput(parseGear: ParseGear)
-case class GeneratorFactoryOutput(generateGear: GenerateGear)
+case class GeneratorFactoryOutput(generateGear: RenderGear)
 
 sealed trait LensCompilerOutput extends Output {
   val isSuccess = false

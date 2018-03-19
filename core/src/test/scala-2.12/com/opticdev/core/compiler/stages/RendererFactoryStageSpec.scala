@@ -16,9 +16,9 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
 import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
 
-class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTest") with ParserUtils with GearUtils {
+class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec") with ParserUtils with GearUtils {
 
-  it("can create a simple generator") {
+  it("can create a simple renderer") {
 
     val block = "var hello = require('world')"
     implicit val ruleProvider = new RuleProvider()
@@ -32,12 +32,12 @@ class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTe
 
     val importSample = sample(block)
 
-    val generator = new GeneratorFactoryStage(importSample, parseGear).run.generateGear
-    val result = generator.generate(JsObject(Seq("definedAs" -> JsString("VARIABLE"), "pathTo" -> JsString("PATH"))))
+    val renderer = new RenderFactoryStage(importSample, parseGear).run.generateGear
+    val result = renderer.render(JsObject(Seq("definedAs" -> JsString("VARIABLE"), "pathTo" -> JsString("PATH"))))
     assert(result == "var VARIABLE = require('PATH')")
   }
 
-  it("can create a generator for node with sub-containers") {
+  it("can create a renderer for node with sub-containers") {
 
     val childGear = {
       val block = "start(thing)"
@@ -45,9 +45,9 @@ class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTe
         CodeComponent(Seq("operation"), StringFinder(Entire, "thing"))
       ))
 
-      val generator = new GeneratorFactoryStage(sample(block), parseGear).run.generateGear
+      val renderer = new RenderFactoryStage(sample(block), parseGear).run.generateGear
 
-      Gear("do", "optic:test", SchemaRef(PackageRef("optic:test"), "a"), Set(), parseGear, generator)
+      Gear("do", "optic:test", SchemaRef(PackageRef("optic:test"), "a"), Set(), parseGear, renderer)
     }
 
     val block =
@@ -63,9 +63,9 @@ class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTe
       ))
     ))
 
-    val generator = new GeneratorFactoryStage(sample(block), parseGear).run.generateGear
+    val renderer = new RenderFactoryStage(sample(block), parseGear).run.generateGear
 
-    val thisGear = Gear("wrapper", "optic:test", SchemaRef(PackageRef("optic:test"), "b"), Set(), parseGear, generator)
+    val thisGear = Gear("wrapper", "optic:test", SchemaRef(PackageRef("optic:test"), "b"), Set(), parseGear, renderer)
 
     implicit val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
@@ -75,7 +75,7 @@ class GeneratorFactoryStageSpec extends AkkaTestFixture("GeneratorFactoryStageTe
     }
 
 
-    val result = generator.generate(JsObject(Seq("arg1" -> JsString("TEST VARIABLE"),
+    val result = renderer.render(JsObject(Seq("arg1" -> JsString("TEST VARIABLE"),
       "properties" -> JsArray(Seq(
         JsObject(Seq("operation" -> JsString("first"))),
         JsObject(Seq("operation" -> JsString("second"))),

@@ -4,7 +4,7 @@ import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import boopickle.PicklerHelper
 import com.opticdev.core.sourcegear.gears.RuleProvider
-import com.opticdev.core.sourcegear.gears.generating.GenerateGear
+import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.{Gear, SGConfig}
 import com.opticdev.parsers.ParserRef
@@ -136,7 +136,7 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.schemaRef)
       state.pickle(value.enterOn)
       state.pickle(value.parser)
-      state.pickle(value.generater)
+      state.pickle(value.renderer)
     }
     override def unpickle(implicit state: UnpickleState): Gear = {
       Gear(
@@ -145,7 +145,7 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[SchemaRef],
         state.unpickle[Set[AstType]],
         state.unpickle[ParseAsModel],
-        state.unpickle[GenerateGear]
+        state.unpickle[RenderGear]
       )
     }
   }
