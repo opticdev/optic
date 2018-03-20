@@ -16,4 +16,4 @@ case class SingleModel(schema: SchemaRef, value: JsObject) extends Transformatio
 
 case class TransformationOptions(gearId: Option[String] = None,
                                  containers: Option[ContainersContent] = None,
-                                 variables: Option[Map[String, String]] = None)
+                                 variables: Option[VariableMapping] = None)

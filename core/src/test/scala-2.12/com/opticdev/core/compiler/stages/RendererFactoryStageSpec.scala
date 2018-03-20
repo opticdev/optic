@@ -15,6 +15,7 @@ import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
 import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
+import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.StagedNode
 
 class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec") with ParserUtils with GearUtils {
@@ -36,6 +37,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
     val renderer = new RenderFactoryStage(importSample, parseGear).run.renderGear
     val result = renderer.render(JsObject(Seq("definedAs" -> JsString("VARIABLE"), "pathTo" -> JsString("PATH"))))
     assert(result == "var VARIABLE = require('PATH')")
+
   }
 
   lazy val callbackFixture = new {
@@ -117,5 +119,26 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
   }
 
+
+  it("can create a renderer that supports variables") {
+
+    val block = "const variable = function thing() {}"
+    implicit val ruleProvider = new RuleProvider()
+
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+
+    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
+      CodeComponent(Seq("name"), StringFinder(Entire, "thing")),
+    ), variables = Vector(Variable("variable", VariableEnums.Self)))
+
+    val importSample = sample(block)
+
+    val renderer = new RenderFactoryStage(importSample, parseGear).run.renderGear
+    val result = renderer.render(JsObject(Seq("name" -> JsString("OTHER"))),
+      variableMapping = Map("variable" -> "v_name")
+    )
+    assert(result == "const v_name = function OTHER() {}")
+
+  }
 
 }

@@ -50,12 +50,7 @@ trait GearUtils {
 
   def sourceGearFromDescription(path: String) : SourceGear = {
 
-    val sourceGear = new SourceGear {
-      override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-      override val gearSet = new GearSet()
-      override val schemas = Set()
-      override val transformations = Set()
-    }
+    val outerGearSet = new GearSet()
 
     val jsonString = Source.fromFile(path).getLines.mkString
     val description = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
@@ -67,9 +62,14 @@ trait GearUtils {
 
     if (compiled.isFailure) throw new Error("Compiling description failed. Test Stopped")
 
-    sourceGear.gearSet.addGears(compiled.gears.toSeq:_*)
+    outerGearSet.addGears(compiled.gears.toSeq:_*)
 
-    sourceGear
+    new SourceGear {
+      override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val gearSet = outerGearSet
+      override val schemas = compiled.schemas
+      override val transformations = Set()
+    }
 
   }
 

@@ -9,6 +9,7 @@ package object transformation {
 
   trait TransformationResult
   type ContainersContent = Map[String, Seq[StagedNode]]
+  type VariableMapping = Map[String, String]
 
   //SDK Objects refs
   import PackageRef.packageRefJsonFormat

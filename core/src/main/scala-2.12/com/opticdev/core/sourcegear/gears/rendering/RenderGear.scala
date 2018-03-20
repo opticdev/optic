@@ -12,7 +12,7 @@ import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
-import com.opticdev.sdk.descriptions.transformation.ContainersContent
+import com.opticdev.sdk.descriptions.transformation.{ContainersContent, VariableMapping}
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
@@ -40,10 +40,11 @@ case class RenderGear(block: String,
     (fileContents, astGraph, rootNode)
   }
 
-  def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty)(implicit sourceGear: SourceGear): (NewAstNode, String) = {
-    implicit val sourceGearContext = SGContext.forGeneration(sourceGear, parserRef)
+  def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): (NewAstNode, String) = {
 
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(block)
+
+    implicit val sourceGearContext = SGContext.forGeneration(sourceGear, astGraph, parserRef)
 
     val isMatch = parseGear.matches(rootNode, true)(astGraph, fileContents, sourceGearContext, null)
     if (isMatch.isEmpty) throw new Error("Can not generate. Snippet does not contain model "+parseGear)
@@ -53,11 +54,11 @@ case class RenderGear(block: String,
 
     //1. Render Node
 
-    val raw = isMatch.get.modelNode.update(value)
+    val variableChanges = parseGear.variableManager.changesFromMapping(variableMapping)
+    val raw = isMatch.get.modelNode.update(value, Some(variableChanges))
 
     //2. fill subcontainers
     val propertyPathWalker = new PropertyPathWalker(value)
-
     val rawWithContainersFilled = parseGear.containers.foldLeft(raw) {
       case (nodeRaw, (path, subcontainer)) => {
 
@@ -65,7 +66,7 @@ case class RenderGear(block: String,
         val containerContents: Seq[NewAstNode] =
           if (containersContent.contains(subcontainer.name)) {
             val stagedNodes = containersContent.getOrElse(subcontainer.name, Vector())
-            stagedNodes.map(staged=> Render.fromStagedNode(staged).get._1)
+            stagedNodes.map(staged=> Render.fromStagedNode(staged, variableMapping).get._1)
           } else {
             subcontainer.schemaComponents.flatMap(i=> {
             val schemaComponentValue = Try(propertyPathWalker.getProperty(i.propertyPath).get.as[JsArray]).getOrElse(JsArray.empty)
@@ -118,8 +119,8 @@ case class RenderGear(block: String,
       rawWithContainersFilled)
   }
 
-  def render(value: JsObject, containersContent: ContainersContent = Map.empty)(implicit sourceGear: SourceGear): String =
-    renderWithNewAstNode(value, containersContent)._2
+  def render(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): String =
+    renderWithNewAstNode(value, containersContent, variableMapping)._2
 
   def hash = {
       MurmurHash3.stringHash(block) ^

@@ -20,8 +20,8 @@ object SGContext {
     ParseSupervisorSyncAccess.getContext(file)
   }
 
-  def forGeneration(sourceGear: SourceGear, parserRef: ParserRef): SGContext = {
-    SGContext(sourceGear.fileAccumulator, null, sourceGear.findParser(parserRef).get, null)
+  def forGeneration(sourceGear: SourceGear, astGraph: AstGraph, parserRef: ParserRef): SGContext = {
+    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null)
   }
 
 }
