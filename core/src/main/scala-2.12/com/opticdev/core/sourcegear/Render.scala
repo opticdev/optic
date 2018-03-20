@@ -1,18 +1,19 @@
 package com.opticdev.core.sourcegear
 
 import com.opticdev.marvin.common.ast.NewAstNode
+import com.opticdev.sdk.{RenderOptions, VariableMapping}
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.sdk.descriptions.enums.VariableEnums
-import com.opticdev.sdk.descriptions.transformation.{StagedNode, TransformationOptions, VariableMapping}
+import com.opticdev.sdk.descriptions.transformation.StagedNode
 import play.api.libs.json.JsObject
 
 import scala.util.{Failure, Try}
 
 object Render {
 
-  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear) : Try[(NewAstNode, String)] = Try {
+  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear) : Try[(NewAstNode, String, Gear)] = Try {
 
-    val options = stagedNode.options.getOrElse(TransformationOptions())
+    val options = stagedNode.options.getOrElse(RenderOptions())
 
     val gearOption = resolveGear(stagedNode)
     assert(gearOption.isDefined, "No gear found that can render this node.")
@@ -27,7 +28,8 @@ object Render {
     //apply the local mappings onto the parent ones so they can override them.
     val variableMapping = parentVariableMappingFiltered ++ setVariablesMapping
 
-    gear.renderer.renderWithNewAstNode(stagedNode.value, containerContents, variableMapping)
+    val result = gear.renderer.renderWithNewAstNode(stagedNode.value, containerContents, variableMapping)
+    (result._1, result._2, gear)
   }
 
   private def resolveGear(stagedNode: StagedNode)(implicit sourceGear: SourceGear) : Option[Gear] = {
@@ -43,7 +45,7 @@ object Render {
   //initializers
   def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None)(implicit sourceGear: SourceGear) = {
     fromStagedNode(StagedNode(schemaRef, value, Some(
-      TransformationOptions(
+      RenderOptions(
         gearId = gearIdOption
       )
     )))

@@ -64,7 +64,7 @@ abstract class SourceGear {
       | Transformations: ${transformations.map(_.name).mkString(",")}
     """.stripMargin)
 
-  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String)] = Render.fromStagedNode(stagedNode)(this)
+  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, Gear)] = Render.fromStagedNode(stagedNode)(this)
 
 }
 

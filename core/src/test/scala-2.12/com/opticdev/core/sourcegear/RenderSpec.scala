@@ -3,8 +3,9 @@ package com.opticdev.core.sourcegear
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.Fixture.{DummyCompilerOutputs, TestBase}
 import com.opticdev.parsers.ParserBase
+import com.opticdev.sdk.RenderOptions
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
-import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation, TransformationOptions}
+import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation}
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsObject, JsString}
 
@@ -27,7 +28,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils {
     lazy val resolveGear = PrivateMethod[Option[Gear]]('resolveGear)
 
     it("if set in options") {
-      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(TransformationOptions(gearId = Some(a.id))))
+      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(gearId = Some(a.id))))
       val result = Render invokePrivate resolveGear(stagedNode, sourceGear)
       assert(result.contains(a))
     }
@@ -39,7 +40,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils {
     }
 
     it("will return none if gear is not found") {
-      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(TransformationOptions(gearId = Some("FAKE"))))
+      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(gearId = Some("FAKE"))))
       val result = Render invokePrivate resolveGear(stagedNode, sourceGear)
       assert(result.isEmpty)
     }

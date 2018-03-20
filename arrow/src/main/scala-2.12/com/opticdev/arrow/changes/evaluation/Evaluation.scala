@@ -2,11 +2,12 @@ package com.opticdev.arrow.changes.evaluation
 
 import better.files.File
 import com.opticdev.arrow.changes._
-import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.{Render, SourceGear}
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.marvin.common.helpers.LineOperations
-import com.opticdev.sdk.descriptions.transformation.SingleModel
+import com.opticdev.sdk.RenderOptions
+import com.opticdev.sdk.descriptions.transformation.{SingleModel, StagedNode, TransformationResult}
 import play.api.libs.json.JsObject
 
 import scala.util.Try
@@ -15,11 +16,16 @@ object Evaluation {
 
   def forChange(opticChange: OpticChange, sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit filesStateMonitor: FileStateMonitor): ChangeResult = opticChange match {
     case im: InsertModel => {
-      val gearOption = sourcegear.findGear(im.gearId.get)
-      assert(gearOption.isDefined, "Gear not found for id. "+ im.gearId.get)
 
-      val gear = gearOption.get
-      val generatedNode = gear.renderer.renderWithNewAstNode(im.value)(sourcegear)
+      val stagedNode = StagedNode(im.schema.schemaRef, im.value, Some(RenderOptions(
+        gearId = im.gearId
+      )))
+
+      val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear)
+
+      assert(renderedTry.isSuccess, "Could not render model "+ renderedTry.failed.get.toString)
+
+      val generatedNode = (renderedTry.get._1, renderedTry.get._2)
 
       val resolvedLocation = im.atLocation.get.resolveToLocation(sourcegear).get
 
@@ -32,19 +38,22 @@ object Evaluation {
       changeResult
     }
     case rt: RunTransformation => {
-      val gearOption = sourcegear.findGear(rt.gearId.get)
-      assert(gearOption.isDefined, "Gear not found for id. "+ rt.gearId.get)
+
       val schema = sourcegear.findSchema(rt.transformationChanges.transformation.output).get
 
       val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue)
       assert(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed.get)
       assert(schema.validate(transformationTry.get.asInstanceOf[SingleModel].value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
 
-      val generatedNode = gearOption.get.renderer.renderWithNewAstNode(transformationTry.get.asInstanceOf[SingleModel].value)(sourcegear)
+      val stagedNode = transformationTry.get.toStagedNode(Some(RenderOptions(
+        gearId = rt.gearId
+      )))
+
+      val generatedNode = Render.fromStagedNode(stagedNode)(sourcegear).get
 
       val resolvedLocation = rt.location.get.resolveToLocation(sourcegear).get
 
-      val changeResult = InsertCode.atLocation(generatedNode, rt.location.get.file, resolvedLocation)
+      val changeResult = InsertCode.atLocation((generatedNode._1, generatedNode._2), rt.location.get.file, resolvedLocation)
 
       if (changeResult.isSuccess) {
         changeResult.asFileChanged.stageContentsIn(filesStateMonitor)

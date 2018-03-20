@@ -12,7 +12,8 @@ import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
-import com.opticdev.sdk.descriptions.transformation.{ContainersContent, VariableMapping}
+import com.opticdev.sdk.descriptions.transformation.StagedNode
+import com.opticdev.sdk.{ContainersContent, VariableMapping}
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
@@ -72,21 +73,12 @@ case class RenderGear(block: String,
             val schemaComponentValue = Try(propertyPathWalker.getProperty(i.propertyPath).get.as[JsArray]).getOrElse(JsArray.empty)
               .value.toSeq
 
-            //@todo allow a choice to be made if there are multiple lenses that can fulfill this operation
-            val gearOption = sourceGear.gearSet.listGears.find(_.schemaRef == i.schema)
-
-            if (gearOption.isDefined) {
-
-              val generator = gearOption.get.renderer
-              val nodeType = generator.entryChild.astType.name
-
+            Try {
               schemaComponentValue.map(child => {
-                NewAstNode(nodeType, Map(), Some(
-                  gearOption.get.renderer.render(child.as[JsObject])
-                ))
+                val rendered = Render.fromStagedNode(StagedNode(i.schema, child.as[JsObject])).get
+                NewAstNode(rendered._3.renderer.entryChild.astType.name, Map(), Some(rendered._2))
               })
-
-            } else Seq()
+            }.getOrElse(Seq.empty)
 
           })
           }

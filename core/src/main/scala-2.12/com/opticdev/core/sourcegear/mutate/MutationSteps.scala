@@ -13,7 +13,6 @@ import com.opticdev.core.utils.DiffOperationImplicits._
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
-import com.opticdev.sdk.descriptions.transformation.VariableMapping
 
 import scala.util.{Success, Try}
 
