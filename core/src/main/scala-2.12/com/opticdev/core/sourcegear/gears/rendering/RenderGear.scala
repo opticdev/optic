@@ -5,6 +5,7 @@ import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.marvin.common.ast.{AstArray, AstProperties, NewAstNode}
+import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{CommonAstNode, GraphImplicits}
 import play.api.libs.json.{JsArray, JsObject, JsValue}
@@ -17,6 +18,7 @@ import com.opticdev.sdk.{ContainersContent, VariableMapping}
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
+import com.opticdev.marvin.common.helpers.InRangeImplicits._
 
 case class RenderGear(block: String,
                       parserRef: ParserRef,
@@ -93,16 +95,18 @@ case class RenderGear(block: String,
           val marvinAstParent = parent.toMarvinAstNode(astGraph, nodeRaw, parser.get)
 
           val childrenIndent = marvinAstParent.indent.next
-          val newAstNodes = containerContents.map(newAstNode=> newAstNode.withForcedContent(
-            Some(childrenIndent.generate+newAstNode.forceContent.get)))
+          val newAstNodes = containerContents.map(newAstNode=> newAstNode.withForcedContent(Some(LineOperations.padAllLinesWith(childrenIndent.generate, newAstNode.forceContent.get))))
 
           val blockPropertyPath = parser.get.blockNodeTypes.getPropertyPath(parent.nodeType).get
           val array = marvinAstParent.properties.getOrElse(blockPropertyPath, AstArray()).asInstanceOf[AstArray]
           val newArray = array.children ++ newAstNodes
           val newProperties: AstProperties = marvinAstParent.properties + (blockPropertyPath -> AstArray(newArray:_*))
-          val changes = marvinAstParent.mutator.applyChanges(marvinAstParent, newProperties)
+          val lastPadding = LineOperations.paddingForLastLine(fileContents.substring(parent.range))
+
+          val changes = marvinAstParent.mutator.applyChanges(marvinAstParent, newProperties, lastPadding, Set(0))
 
           StringUtils.replaceRange(fileContents, parent.range, changes)
+
         }.getOrElse(nodeRaw)
       }
     }

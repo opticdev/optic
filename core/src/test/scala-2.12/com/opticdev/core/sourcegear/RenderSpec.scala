@@ -1,15 +1,21 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.Fixture.{DummyCompilerOutputs, TestBase}
-import com.opticdev.parsers.ParserBase
+import com.opticdev.common.PackageRef
+import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
+import com.opticdev.core.Fixture.{DummyCompilerOutputs, ExampleSourcegearFixtures, TestBase}
+import com.opticdev.core.compiler.stages.RenderFactoryStage
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.RenderOptions
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
+import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
+import com.opticdev.sdk.descriptions.finders.StringFinder
+import com.opticdev.sdk.descriptions._
+import com.opticdev.sdk.descriptions.enums.{RuleEnums, VariableEnums}
 import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation}
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsObject, JsString}
 
-class RenderSpec extends TestBase with PrivateMethodTester with GearUtils {
+class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with ParserUtils {
   describe("uses the proper gear") {
 
     lazy val testSchemaRef = SchemaRef.fromString("test:schemas/a").get
@@ -57,6 +63,28 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils {
 
     assert(result.get._2 == """let ABC = require('DEF')""")
 
+  }
+
+  it("can render node with nested gears and variables") {
+
+    import ExampleSourcegearFixtures._
+    val f = routeQueryResponse
+
+    val stagedNode = StagedNode(f.routeGear.schemaRef, JsObject.empty, Some(RenderOptions(
+      variables = Some(Map("request" -> "req", "response" -> "res")),
+      containers = Some(Map("callback" -> Seq(
+        StagedNode(f.queryGear.schemaRef, JsObject.empty, Some(RenderOptions(
+          containers = Some(Map(
+            "success" -> Seq(
+              StagedNode(f.responseGear.schemaRef, JsObject.empty)
+            )
+          ))
+        )))
+      )))
+    )))
+    val result = Render.fromStagedNode(stagedNode)(f.sourceGear)
+
+    println(result.get._2)
   }
 
 }

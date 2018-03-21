@@ -78,14 +78,14 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-stream" % "2.5.4",
 
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
-    "com.opticdev" %% "marvin-runtime" % "0.1.0",
-    "com.opticdev" %% "marvin-common" % "0.1.0"
+    "com.opticdev" %% "marvin-runtime" % "0.1.2",
+    "com.opticdev" %% "marvin-common" % "0.1.2"
   )
 
   val arrowDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "me.xdrop" % "fuzzywuzzy" % "1.1.9",
-    "com.opticdev" %% "marvin-runtime" % "0.1.0",
-    "com.opticdev" %% "marvin-common" % "0.1.0"
+    "com.opticdev" %% "marvin-runtime" % "0.1.2",
+    "com.opticdev" %% "marvin-common" % "0.1.2"
   )
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
@@ -95,8 +95,8 @@ object Dependencies {
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
     "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
-    "com.opticdev" %% "marvin-runtime" % "0.1.0",
-    "com.opticdev" %% "marvin-common" % "0.1.0"
+    "com.opticdev" %% "marvin-runtime" % "0.1.2",
+    "com.opticdev" %% "marvin-common" % "0.1.2"
   )
 
 }
