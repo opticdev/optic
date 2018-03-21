@@ -8,7 +8,7 @@ object Dependencies {
     "org.scalactic" %% "scalactic" % "3.0.1",
     "org.scalatest" %% "scalatest" % "3.0.1" % "test",
 
-    "com.opticdev" %% "parser-foundation" % "0.1.1",
+    "com.opticdev" %% "parser-foundation" % "0.1.2",
 
     //file library
     "com.github.pathikrit" % "better-files_2.12" % "2.17.1",
