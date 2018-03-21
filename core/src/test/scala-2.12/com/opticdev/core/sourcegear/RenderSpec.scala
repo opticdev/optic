@@ -70,10 +70,14 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
     import ExampleSourcegearFixtures._
     val f = routeQueryResponse
 
+    val queryValue = JsObject(Seq(
+      "fields" -> JsObject(Seq("fieldA" -> JsObject(Seq("_valueFormat" -> JsString("code"), "value" -> JsString("req.query.fieldA")))))
+    ))
+
     val stagedNode = StagedNode(f.routeGear.schemaRef, JsObject.empty, Some(RenderOptions(
       variables = Some(Map("request" -> "req", "response" -> "res")),
       containers = Some(Map("callback" -> Seq(
-        StagedNode(f.queryGear.schemaRef, JsObject.empty, Some(RenderOptions(
+        StagedNode(f.queryGear.schemaRef, queryValue, Some(RenderOptions(
           containers = Some(Map(
             "success" -> Seq(
               StagedNode(f.responseGear.schemaRef, JsObject.empty)

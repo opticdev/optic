@@ -6,7 +6,6 @@ import com.opticdev.core.sourcegear.mutate.errors.{AstMappingNotFound, Component
 import com.opticdev.core.sourcegear.variables.{VariableChanges}
 import play.api.libs.json.JsObject
 import gnieh.diffson.playJson._
-import com.opticdev.core.utils.DiffOperationImplicits._
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 
 import scala.collection.immutable

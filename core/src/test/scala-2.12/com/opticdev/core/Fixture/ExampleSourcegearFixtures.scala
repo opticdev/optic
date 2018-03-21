@@ -6,7 +6,7 @@ import com.opticdev.core.compiler.stages.RenderFactoryStage
 import com.opticdev.core.sourcegear.{Gear, GearSet, SourceGear}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions._
-import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
+import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
 import com.opticdev.sdk.descriptions.enums.{RuleEnums, VariableEnums}
 import com.opticdev.sdk.descriptions.finders.StringFinder
@@ -37,7 +37,10 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
           |   //:failure
           |  }
           |})""".stripMargin
-      implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(),
+      implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block,
+        Vector(
+          CodeComponent(Seq("fields"), StringFinder(Entire, "{}"))
+        ),
         variables = Vector(Variable("err", VariableEnums.Self), Variable("item", VariableEnums.Self)),
         subContainers = Vector(
           SubContainer("success", Vector(), RuleEnums.Any, Vector()),

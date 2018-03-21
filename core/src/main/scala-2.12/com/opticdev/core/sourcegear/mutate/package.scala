@@ -12,7 +12,7 @@ package object mutate {
 
   trait Mutation
 
-  case class UpdatedField(component: Component, diffOperation: Operation, mapping: AstMapping, newValue: JsValue)
+  case class UpdatedField(component: Component, mapping: AstMapping, newValue: JsValue)
   case class AstChange(mapping: AstMapping, replacementString: Try[String])
 
 }
