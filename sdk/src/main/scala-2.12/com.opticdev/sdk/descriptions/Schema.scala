@@ -6,6 +6,7 @@ import com.opticdev.common.PackageRef
 import play.api.libs.json._
 
 import scala.util.Try
+import scala.util.hashing.MurmurHash3
 
 object Schema extends Description[Schema] {
 

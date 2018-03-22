@@ -43,6 +43,13 @@ class ProjectRouteSpec extends FunSpec with Matchers with ScalatestRouteTest wit
     }
   }
 
+  it("returns a project knowledge graph at GET /projects/{name}/knowledge-graph") {
+    val name = testProject.name
+    Get("/projects/"+name+"/knowledge-graph") ~> projectRoute.route ~> check {
+      assert(responseAs[JsObject] == projectsManager.lookupArrow(name).get.knowledgeGraphAsJson)
+    }
+  }
+
   it("can return all models in a project") {
     val name = testProject.name
     Get("/projects/"+name+"/models/Imports") ~> projectRoute.route ~> check {

@@ -29,6 +29,11 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
             complete(getSchema(projectName, SchemaRef.fromString(id).getOrElse(SchemaRef.empty)))
           }
         } ~
+        path(Segment / "knowledge-graph") {
+          (projectName) => {
+            complete(getProjectGraph(projectName))
+          }
+        } ~
         path(Segment / "models" / Segment) {
           (projectName, modelType) => {
             parameters('filter.?) { (filterStringOption) =>
@@ -55,6 +60,19 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
     } else {
       StatusCodes.NotFound
     }
+  }
+
+  def getProjectGraph(projectName: String) : HTTPResponse = {
+
+    val projectArrowGraph = projectsManager.lookupArrow(projectName)
+      .map(i=> i.knowledgeGraphAsJson)
+
+    if (projectArrowGraph.isDefined) {
+      projectArrowGraph.get
+    } else {
+      StatusCodes.NotFound
+    }
+
   }
 
   def getModelsForProject(projectName: String, modelName: String, filter: ModelQuery) : HTTPResponse = {
