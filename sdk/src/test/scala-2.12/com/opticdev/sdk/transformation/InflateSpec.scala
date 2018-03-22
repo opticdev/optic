@@ -46,6 +46,16 @@ class InflateSpec extends FunSpec {
       assert(output.get == Json.parse("""{"schema":"test:schema","value":{"bool":true},"options":{}}"""))
     }
 
+    it("code function") {
+      val output = testFunction("""function(a) { return Code("hello") }""")
+      assert(output.get == Json.parse("""{"_valueFormat":"code","value": "hello"}"""))
+    }
+
+    it("token function") {
+      val output = testFunction("""function(a) { return Token("hello") }""")
+      assert(output.get == Json.parse("""{"_valueFormat":"token","value": "hello"}"""))
+    }
+
   }
 
 }

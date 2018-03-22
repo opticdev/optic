@@ -7,3 +7,18 @@ function Generate(schema, value, options) {
         options: options,
     }
 }
+
+//Model Setters
+function Code(value) {
+    return {
+        _valueFormat: 'code',
+        value: value
+    }
+}
+
+function Token(value) {
+    return {
+        _valueFormat: 'token',
+        value: value
+    }
+}
