@@ -68,6 +68,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"_type":"com.opticdev.arrow.changes.location.AsChildOf"
         |		},
         |   "gearId": "aacee631",
+        |   "answers": {},
         |		"_type":"com.opticdev.arrow.changes.InsertModel"
         |	}]
       """.stripMargin
@@ -137,6 +138,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"position": 38,
         |			"_type":"com.opticdev.arrow.changes.location.AsChildOf"
         |		},
+        |   "answers": {},
         |		"_type":"com.opticdev.arrow.changes.InsertModel"
         |	}]
       """.stripMargin
@@ -203,6 +205,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |  	},
         |   "inputValue": {"name": "user", "schema": { "firstName": { "type": "string"}, "lastName": { "type": "string"}, "email": { "type": "string"} }},
+        |   "answers": {},
      		|   "_type":"com.opticdev.arrow.changes.RunTransformation"
         | }]
       """.stripMargin

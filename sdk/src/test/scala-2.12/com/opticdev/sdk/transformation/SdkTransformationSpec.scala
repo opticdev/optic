@@ -61,7 +61,7 @@ class SdkTransformationSpec extends FunSpec {
     }
 
     it("can execute a transformation") {
-      val result = valid.transform(JsObject(Seq("test" -> JsString("world"))))
+      val result = valid.transform(JsObject(Seq("test" -> JsString("world"))), JsObject.empty)
       assert(result == Success(SingleModel(outputSchemaRef, JsObject(Seq("hello" -> JsString("world"))))))
     }
 

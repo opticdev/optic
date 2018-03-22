@@ -41,7 +41,7 @@ object Evaluation {
 
       val schema = sourcegear.findSchema(rt.transformationChanges.transformation.output).get
 
-      val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue)
+      val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue, rt.answers.getOrElse(JsObject.empty))
       assert(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed.get)
       assert(schema.validate(transformationTry.get.asInstanceOf[SingleModel].value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
 

@@ -26,6 +26,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
         knowledgeGraph.gearsForSchema(dt.transformation.output).map(i=> GearOption(i.name, i.packageFull, i.id)).toSeq,
         None,
         if (insertLocationOption.isDefined) Seq(insertLocationOption.get) else Seq(), //@todo add all location options
+        None,
         None
       ))
     }

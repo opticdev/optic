@@ -42,7 +42,7 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
 
   private lazy val askSchemaInflated = Schema.schemaObjectFromJson(askSchema)
 
-  def transform(jsObject: JsObject, ask: JsObject = JsObject.empty): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
+  def transform(jsObject: JsObject, ask: JsObject): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
     if (!Schema.validate(askSchemaInflated, ask)) {
       throw new Exception("Ask Object does not match the Ask Schema for this transformation "+ askSchema.toString)
     }

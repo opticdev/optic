@@ -16,6 +16,7 @@ object JsonImplicits {
   import SchemaRef.schemaRefFormats
 
 
+
   implicit val schemaFormat = new Format[Schema] {
     override def reads(json: JsValue) = {
       val schemaJson = json.as[JsObject]

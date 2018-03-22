@@ -21,5 +21,4 @@ class Arrow(val project: OpticProject) {
   def transformationsForContext(context: ArrowContextBase) = {
     TransformationSearch.search(context)(sourcegear, project, knowledgeGraph)
   }
-
 }
