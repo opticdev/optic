@@ -1,8 +1,11 @@
+import scala.io.Source
+import scala.util.Try
+
 name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "0.1.1"
+val appVersion = "0.1.2"
 
 version := appVersion
 
@@ -14,7 +17,6 @@ val commonSettings: Seq[Def.Setting[_]] = Seq(
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8"), //, "-Xmx2G"),
   scalacOptions ++= Seq("-deprecation", "-unchecked"),
   resolvers += Opts.resolver.mavenLocalFile,
-  //    copyDepTask,
   resolvers ++= Seq(DefaultMavenRepository,
     Resolver.defaultLocal,
     Resolver.mavenLocal
@@ -64,6 +66,7 @@ lazy val arrow = (project in file("arrow")).
 
 lazy val server = (project in file("server")).
  settings(commonSettings: _*)
+ .enablePlugins(BuildInfoPlugin)
  .settings(libraryDependencies ++= Dependencies.serverDependencies)
  .dependsOn(sdk)
  .dependsOn(common)
@@ -75,7 +78,11 @@ lazy val server = (project in file("server")).
    test in assembly := {},
    assemblyJarName in assembly := "server-assembly.jar",
    mainClass in assembly := Some("com.opticdev.server.http.Lifecycle"),
-   mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle")
+   mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle"),
+   buildInfoKeys := Seq[BuildInfoKey](
+     "mixpanelToken" -> Constants.mixpanelToken
+   ),
+   buildInfoPackage := "com.opticdev.server"
  )
   .enablePlugins(AssemblyPlugin)
 

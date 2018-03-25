@@ -19,6 +19,16 @@ class FlattenModelFieldsSpec extends FunSpec {
     ModelField(Seq("three", "two", "one"), JsString("value3-2-1"))
   )
 
+  it("will not change original object if no fields are added") {
+    val expected = Json.parse("""
+          {
+            "one" : "value1",
+            "two" : false,
+            "three" : 3
+          } """)
+
+    assert(FlattenModelFields.flattenFields(Set(), expected.as[JsObject]) == expected)
+  }
 
   it("Can create JsObject from flat fields") {
 

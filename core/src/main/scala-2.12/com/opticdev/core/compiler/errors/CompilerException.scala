@@ -36,7 +36,7 @@ case class ContainerHookIsNotInAValidAstNode(containerName: String, validNodes: 
 
 
 case class SyntaxError(error: Throwable)(implicit val lens: Lens) extends CompilerException {
-  override def toString = "Syntax error in Snippet: "+error.toString
+  override def toString = s"Syntax error in Snippet: ${lens.snippet.block} \n\n ${error.toString}"
 }
 
 case class UnexpectedSnippetFormat(description: String)(implicit val lens: Lens) extends CompilerException {

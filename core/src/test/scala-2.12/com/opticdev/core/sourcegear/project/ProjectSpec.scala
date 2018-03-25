@@ -122,14 +122,14 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
     }
 
     it("creates a sourcegear instance from config") {
-      eventually (timeout(Span(5, Seconds))) {
+      eventually (timeout(Span(30, Seconds))) {
         assert(status.sourceGearStatus == Valid)
       }
     }
 
     it("finishes first pass of source") {
       project.watch
-      eventually (timeout(Span(15, Seconds))) {
+      eventually (timeout(Span(30, Seconds))) {
         assert(status.firstPassStatus == Complete)
       }
 
@@ -155,13 +155,13 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
         ParseSupervisorSyncAccess.getContext(file).get.fileContents
       })
 
-      assert(Await.result(contentsInCacheFuture, 6 seconds) == stagedContents)
+      assert(Await.result(contentsInCacheFuture, 30 seconds) == stagedContents)
     }
 
     it("will take from disk again if a file changed event registers") {
       val newContents = "var them = now"
       file.write(newContents)
-      eventually (timeout(Span(25, Seconds))) {
+      eventually (timeout(Span(30, Seconds))) {
         assert(ParseSupervisorSyncAccess.getContext(file).get.fileContents == newContents)
         assert(!project.filesStateMonitor.fileHasStagedContents(file))
       }

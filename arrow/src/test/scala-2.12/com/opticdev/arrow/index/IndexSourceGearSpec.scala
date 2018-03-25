@@ -7,7 +7,7 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.{GearSet, SGConstructor, SourceGear}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef, Transformation}
+import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import play.api.libs.json.JsObject
 
 import scala.concurrent.duration._

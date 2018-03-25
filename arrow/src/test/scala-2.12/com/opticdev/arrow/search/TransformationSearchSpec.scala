@@ -14,7 +14,7 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 
 class TransformationSearchSpec extends TestBase {
 
-  implicit val project = new StaticSGProject("test", File("test-examples/resources/tmp/test_project"), null)(false, new ActorCluster(ActorSystem("test")))
+  implicit lazy val project = new StaticSGProject("test", File("test-examples/resources/tmp/test_project"), null)(false, new ActorCluster(ActorSystem("test")))
 
   it("finds transformations when valid context is present") {
     import com.opticdev.arrow.ExampleSourcegears.sgWithTransformations._
@@ -35,7 +35,7 @@ class TransformationSearchSpec extends TestBase {
 
     val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph)
 
-    assert(results.head.asJson.toString() == """{"name":"Model -> Route","projectName":"test","packageId":"optic:test-transform@latest","input":"optic:test@latest/model","output":"optic:test@latest/route","changes":[{"transformationChanges":{"transformation":{"name":"Model -> Route","packageId":"optic:test-transform@latest","input":"optic:test@latest/model","output":"optic:test@latest/route","script":""},"target":"optic:test@latest/route","_type":"com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"},"inputValue":{},"gearOptions":[],"locationOptions":[{"file":"/test/file","position":43,"_type":"com.opticdev.arrow.changes.location.AsChildOf"}],"_type":"com.opticdev.arrow.changes.RunTransformation"}]}""")
+    assert(results.head.asJson.toString() == """{"name":"Model -> Route","projectName":"test","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","changes":[{"transformationChanges":{"transformation":{"name":"Model -> Route","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","ask":{"type":"object"},"script":""},"target":"optic:test@0.1.0/route","_type":"com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"},"inputValue":{},"gearOptions":[],"locationOptions":[{"file":"/test/file","position":43,"_type":"com.opticdev.arrow.changes.location.AsChildOf"}],"_type":"com.opticdev.arrow.changes.RunTransformation"}]}""")
 
   }
 

@@ -3,11 +3,18 @@ package com.opticdev.opm.storage
 import better.files.File
 import com.opticdev.common.storage.DataDirectory
 import com.opticdev.parsers.{ParserRef, SourceParserManager}
-import org.scalatest.FunSpec
+import org.scalatest.{BeforeAndAfterAll, FunSpec}
 
-class ParserStorageSpec extends FunSpec {
+class ParserStorageSpec extends FunSpec with BeforeAndAfterAll {
 
-  lazy val parserJar = File("server/src/main/resources/es7_2.12-0.1.1.jar")
+  override def beforeAll(): Unit = {
+    DataDirectory.init
+    super.beforeAll()
+  }
+
+  val parserVersion = "0.1.2"
+
+  lazy val parserJar = File("server/src/main/resources/es7_2.12-0.1.2.jar")
 
   it("can save parsers to local") {
     val parserSaved = ParserStorage.writeToStorage(parserJar)
@@ -15,7 +22,7 @@ class ParserStorageSpec extends FunSpec {
   }
 
   it("can lookup items from local") {
-    val parserLoad = ParserStorage.loadFromStorage(ParserRef("es7", "0.1.1"))
+    val parserLoad = ParserStorage.loadFromStorage(ParserRef("es7", parserVersion))
     assert(parserLoad.isSuccess)
     assert(parserLoad.get.languageName == "es7")
   }
@@ -24,7 +31,7 @@ class ParserStorageSpec extends FunSpec {
     val parserLoad = ParserStorage.loadFromStorage(ParserRef("es7", "latest"))
     assert(parserLoad.isSuccess)
     assert(parserLoad.get.languageName == "es7")
-    assert(parserLoad.get.parserVersion == "0.1.1")
+    assert(parserLoad.get.parserVersion == parserVersion)
   }
 
   it("can clear all local parsers") {
@@ -38,7 +45,7 @@ class ParserStorageSpec extends FunSpec {
     ParserStorage.writeToStorage(parserJar)
     val listAll = ParserStorage.listAllParsers
                   .mapValues(_.map(_.parserRef))
-    assert(listAll == Map("es7" -> Vector(ParserRef("es7", "0.1.1"))))
+    assert(listAll == Map("es7" -> Vector(ParserRef("es7", parserVersion))))
   }
 
 }

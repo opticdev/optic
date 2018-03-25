@@ -5,8 +5,6 @@ import com.opticdev.sdk.descriptions.enums.VariableEnums.InEnum
 import com.opticdev.sdk.descriptions.finders.Finder
 import play.api.libs.json.{JsValue, Json}
 
-
-
 object Variable extends Description[Variable] {
 
   import com.opticdev.sdk.descriptions.enums.VariableEnums.inReads

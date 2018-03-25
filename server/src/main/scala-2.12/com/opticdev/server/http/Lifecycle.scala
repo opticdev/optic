@@ -11,6 +11,7 @@ import com.opticdev.opm.providers.LocalProvider
 import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.markdown.OpticMarkdownInstaller
+import com.opticdev.server.analytics.{MixpanelManager, ServerStart}
 import com.opticdev.server.state.ProjectsManager
 
 import scala.io.Source
@@ -22,13 +23,13 @@ object Lifecycle extends App {
   DataDirectory.init
 
   //@todo load parsers dynamically.
-  val jar = this.getClass.getClassLoader.getResource("es7_2.12-0.1.1.jar").getFile
+  val jar = this.getClass.getClassLoader.getResource("es7_2.12-0.1.2.jar").getFile
   val parserBase = Try {
     ParserStorage.writeToStorage(File(jar))
     SourceParserManager.installParser(jar).get
   }.getOrElse {
     val withoutFileExtension = jar.substring(5)
-    val pathAsString = (File(withoutFileExtension).parent.parent / "es7_2.12-0.1.1.jar").pathAsString
+    val pathAsString = (File(withoutFileExtension).parent.parent / "es7_2.12-0.1.2.jar").pathAsString
     ParserStorage.writeToStorage(File(pathAsString))
     SourceParserManager.installParser(pathAsString).get
   }
@@ -46,6 +47,9 @@ object Lifecycle extends App {
 
     //tap the OpticMarkdown Installer in case this is a fresh install
     OpticMarkdownInstaller.getOrInstall
+
+    MixpanelManager.event(ServerStart)
+
   }
 
 

@@ -32,11 +32,11 @@ case class InsertModel( schema: Schema,
 case class RunTransformation(transformationChanges: TransformationChanges,
                              inputValue: JsObject,
                              gearOptions: Seq[GearOption],
-                             gearId: Option[String] = None,
-                             locationOptions: Seq[InsertLocation] = Seq(),
-                             location: Option[InsertLocation] = None
+                             gearId: Option[String],
+                             locationOptions: Seq[InsertLocation],
+                             location: Option[InsertLocation],
+                             answers: Option[JsObject]
                             ) extends OpticChange {
-  val generatedTransformationSchema : Schema = null
   override def asJson = Json.toJson[OpticChange](this)
 }
 

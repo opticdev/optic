@@ -1,12 +1,13 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.sdk.descriptions.{Schema, SchemaColdStorage, SchemaRef, Transformation}
+import com.opticdev.sdk.descriptions.{Schema, SchemaColdStorage, SchemaRef}
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.storage.ParserStorage
 import com.opticdev.parsers.{ParserRef, SourceParserManager}
+import com.opticdev.sdk.descriptions.transformation.Transformation
 import play.api.libs.json.{JsObject, JsString, Json}
 
 case class SGConfig(hashInt: Int,

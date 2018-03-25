@@ -21,4 +21,8 @@ class PlatformConstantsSpec extends FunSpec {
     platformTests(Mac, File(SystemUtils.USER_HOME+"/Library/Application Support/Optic"))
   }
 
+  it("It finds valid node paths") {
+    PlatformConstants.nodePath
+  }
+
 }

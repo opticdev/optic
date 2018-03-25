@@ -6,6 +6,8 @@ import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage, StagedPackage}
+import com.opticdev.opm.utils.SemverHelper
+import com.opticdev.opm.utils.SemverHelper.VersionWrapper
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import play.api.libs.json.{JsObject, Json}
@@ -35,7 +37,7 @@ object PackageStorage {
 
     if (packageDirectory.exists && packageDirectory.isDirectory) {
 
-      val versionOption = findVersion(packageDirectory.list.toVector, packageRef.version)
+      val versionOption = SemverHelper.findVersion(packageDirectory.list.toSet, (file: File) => VersionWrapper(file.name), packageRef.version)
 
       if (versionOption.isDefined) {
         val (version, file) = versionOption.get
@@ -73,23 +75,5 @@ object PackageStorage {
     DataDirectory.packages.list.foreach(_.delete(true))
   }
 
-  def findVersion(files: Vector[File], version: String) : Option[(Semver, File)]= {
-    val versionFileTuples = files.map(file=> {
-      val semVer = Try(new Semver(file.name, SemverType.NPM))
-      if (semVer.isSuccess) {
-        (semVer.get, file)
-      } else None
-    }).filterNot(_ == None)
-        .asInstanceOf[Vector[(Semver, File)]]
-
-    val matchingVersionsSorted = versionFileTuples.filter(pair=> {
-      pair._1.satisfies(version) || version == "latest"
-    }).sortWith((a, b)=> {
-      //get highest satisfying version
-      a._1.isGreaterThan(b._1)
-    })
-
-    matchingVersionsSorted.headOption
-  }
 
 }

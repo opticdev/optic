@@ -40,21 +40,21 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
 
   describe("collect changes") {
     it("can collect changes") {
-      val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("hello"), "pathTo" -> JsString("CHANGED"))))
+      val changes = collectFieldChanges(resolved, JsObject(Seq("definedAs" -> JsString("hello"), "pathTo" -> JsString("CHANGED"))))
       assert(changes.size == 1)
       assert(changes.head.get.component.propertyPath == Seq("pathTo"))
       assert(changes.head.get.component.asInstanceOf[CodeComponent].componentType == Literal)
     }
 
     it("doesn't calculate a diff for same properties") {
-      val changes = collectChanges(resolved, resolved.value)
+      val changes = collectFieldChanges(resolved, resolved.value)
       assert(changes.isEmpty)
     }
 
   }
 
   describe("handle changes") {
-    lazy val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED")))).map(_.get)
+    lazy val changes = collectFieldChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED")))).map(_.get)
     it("generates AST changes") {
       val astChanges = handleChanges(changes)
       assert(astChanges.find(_.mapping.relationship == AstPropertyRelationship.Literal).get.replacementString.get == "'CHANGED'")
@@ -65,7 +65,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
 
   describe("combine changes") {
     it("Combines changes in reverse to avoid range conflicts") {
-      val changes = collectChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED")))).map(_.get)
+      val changes = collectFieldChanges(resolved, JsObject(Seq("definedAs" -> JsString("DIFFERENT"), "pathTo" -> JsString("CHANGED")))).map(_.get)
       val astChanges = handleChanges(changes)
       assert(combineChanges(astChanges).toString == "let DIFFERENT = require('CHANGED')\n\nfunction test () {\n    let nextOne = require(\"PIZZA!\")\n}")
     }

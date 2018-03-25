@@ -11,10 +11,10 @@ import com.opticdev.parsers.SourceParserManager
 
 trait ParserUtils {
 
-  def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[Rule] = Vector(), subContainers: Vector[SubContainer] = Vector()) : (ParseAsModel, Lens) = {
+  def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[Rule] = Vector(), subContainers: Vector[SubContainer] = Vector(), variables: Vector[Variable] = Vector()) : (ParseAsModel, Lens) = {
     val snippet = Snippet("es7", block)
-    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, components, Vector(), subContainers)
-    implicit val variableManager = VariableManager(Vector(), SourceParserManager.installedParsers.head.identifierNodeDesc)
+    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, components, variables, subContainers)
+    implicit val variableManager = VariableManager(variables, SourceParserManager.installedParsers.head.identifierNodeDesc)
 
     val snippetBuilder = new SnippetStage(snippet)
     val snippetOutput = snippetBuilder.run

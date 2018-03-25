@@ -22,7 +22,7 @@ class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
     val resultsOption = f.knowledgeGraphWithTransformations.schemaNodeForRef(ref)
 
     assert(resultsOption.isDefined)
-    assert(resultsOption.get.schema.schemaRef == ref)
+    assert(resultsOption.get.schema.schemaRef == SchemaRef(PackageRef("optic:test", "0.1.0"), "model"))
   }
 
   it("can find gears for schemas") {

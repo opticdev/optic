@@ -112,20 +112,20 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
 
     }
 
-    it("collects parsers") {
-
-      val fakeParserJar = File("test-examples/resources/example_parsers/fake-parser-0.1.0.jar")
-      ParserStorage.clearLocalParsers
-      ParserStorage.writeToStorage(fakeParserJar)
-
-      val collect = PackageManager.collectParsers(
-        ParserRef("es7", "0.1.0")
-      )
-
-      assert(collect.foundAll)
-      assert(collect.found.size == 1)
-
-    }
+//    it("collects parsers") {
+//
+//      val fakeParserJar = File("test-examples/resources/example_parsers/fake-parser-0.1.0.jar")
+//      ParserStorage.clearLocalParsers
+//      ParserStorage.writeToStorage(fakeParserJar)
+//
+//      val collect = PackageManager.collectParsers(
+//        ParserRef("es7", "0.1.0")
+//      )
+//
+//      assert(collect.foundAll)
+//      assert(collect.found.size == 1)
+//
+//    }
 
   }
 

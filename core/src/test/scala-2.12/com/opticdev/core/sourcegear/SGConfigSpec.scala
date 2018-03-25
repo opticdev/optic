@@ -8,7 +8,7 @@ import play.api.libs.json.{JsObject, Json}
 import boopickle.Default._
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.gears.RuleProvider
-import com.opticdev.core.sourcegear.gears.generating.GenerateGear
+import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
 import com.opticdev.core.sourcegear.storage.GearStorage
@@ -35,13 +35,13 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
     }
 
     it("can generate a hexadecimal from hash") {
-      assert(sgConfig.hashString == "55ea873")
+      assert(sgConfig.hashString == "e13b3ba2")
     }
 
     it("can inflate to a sourcegear instance") {
       val sourceGear = sgConfig.inflate
-      assert(sourceGear.gearSet.size == 4)
-      assert(sourceGear.schemas.size == 4)
+      assert(sourceGear.gearSet.size == 5)
+      assert(sourceGear.schemas.size == 5)
       assert(sourceGear.parsers.size == 1)
       assert(sourceGear.transformations.size == 1)
     }

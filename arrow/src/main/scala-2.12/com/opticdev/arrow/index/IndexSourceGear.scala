@@ -3,7 +3,7 @@ package com.opticdev.arrow.index
 import com.opticdev.arrow.graph
 import com.opticdev.arrow.graph.{GearNode, KnowledgeGraph, SchemaNode}
 import com.opticdev.core.sourcegear.SourceGear
-import com.opticdev.sdk.descriptions.Transformation
+import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scalax.collection.edge.Implicits._
 import scala.collection.immutable

@@ -7,6 +7,7 @@ import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
 import scala.util.Try
 import com.opticdev.opm.helpers.MDPackageResolveHelper._
+import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.markdown.MarkdownParser
 case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMapping) extends OpticPackage{
 

@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.core.sourcegear.gears.generating.GenerateGear
+import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.core.utils.UUID
@@ -12,7 +12,7 @@ import scala.util.hashing.MurmurHash3
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-case class Gear(name: String, packageFull: String, schemaRef: SchemaRef, enterOn: Set[AstType], parser : ParseAsModel, generater : GenerateGear) {
+case class Gear(name: String, packageFull: String, schemaRef: SchemaRef, enterOn: Set[AstType], parser : ParseAsModel, renderer : RenderGear) {
   //@todo make sure this is good enough
   def id = {
     val int = {
@@ -21,7 +21,7 @@ case class Gear(name: String, packageFull: String, schemaRef: SchemaRef, enterOn
       MurmurHash3.stringHash(schemaRef.full) ^
       MurmurHash3.setHash(enterOn) ^
       parser.hash ^
-      generater.hash
+      renderer.hash
     }
 
     Integer.toHexString(int)

@@ -1,7 +1,8 @@
 package com.opticdev.opm.context
 
 import com.opticdev.opm.packages.OpticMDPackage
-import com.opticdev.sdk.descriptions.{Schema, Transformation}
+import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.hashing.MurmurHash3
 

@@ -75,16 +75,16 @@ object Compiler {
 
           if (parser.isSuccess) {
 //            if (logToCli) cliLogger.writingGenerator
-            val generator = Try(new GeneratorFactoryStage(snippetOutput.get, parser.get.parseGear).run)
-            if (generator.isSuccess) {
+            val renderer = Try(new RenderFactoryStage(snippetOutput.get, parser.get.parseGear).run)
+            if (renderer.isSuccess) {
 
-              val finalGear = Gear(lens.name, lens.packageRef.full, lens.schema, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], generator.get.generateGear)
+              val finalGear = Gear(lens.name, lens.packageRef.full, lens.schema, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], renderer.get.renderGear)
 
 //              if (logToCli) cliLogger.gearFinished
 
               return Success(sourceLens, finalGear)
 
-            } else errorAccumulator.handleFailure(generator.failed)
+            } else errorAccumulator.handleFailure(renderer.failed)
 
           } else {
             errorAccumulator.handleFailure(parser.failed)
