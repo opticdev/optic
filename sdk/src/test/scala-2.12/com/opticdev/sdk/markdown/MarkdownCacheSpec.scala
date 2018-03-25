@@ -9,6 +9,7 @@ import scala.concurrent.Await
 class MarkdownCacheSpec extends FunSpec with BeforeAndAfterAll {
 
   override def beforeAll(): Unit = {
+//    DataDirectory.delete
     DataDirectory.init
     DataDirectory.markdownCache.list.foreach(_.delete(true))
     super.beforeAll()

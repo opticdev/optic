@@ -17,7 +17,7 @@ object MarkdownCache {
     jsObject.toString()
 
     val targetFile = DataDirectory.markdownCache / hash
-    targetFile.touch()
+    targetFile.createIfNotExists()
 
     targetFile.writeByteArray(jsObject.toString().getBytes)
   }
