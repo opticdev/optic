@@ -30,14 +30,27 @@ object MarkdownParser {
   }
 
 
-  def parseMarkdown(file: File) : Try[MDParseOutput] = {
+  def parseMarkdown(file: File, andCache: Boolean = true) : Try[MDParseOutput] = {
     OpticMarkdownInstaller.getOrInstall
       .map(i=> {
-        val result = i.parseFile(file.pathAsString)
-        if (!outputSchema.validate(result)) {
-          throw new Error("Invalid output from markdown parser")
-        } else
-          MDParseOutput(result)
+
+        val cacheLookup = MarkdownCache.lookup(file)
+        if (cacheLookup.isDefined) {
+          cacheLookup.get
+        } else {
+
+          val result = i.parseFile(file.pathAsString)
+          if (!outputSchema.validate(result)) {
+            throw new Error("Invalid output from markdown parser")
+          } else {
+            if (andCache) {
+              MarkdownCache.cacheMarkdown(file, result)
+            }
+            MDParseOutput(result)
+          }
+
+        }
+
       })
   }
 
