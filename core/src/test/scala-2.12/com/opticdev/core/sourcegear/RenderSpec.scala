@@ -18,7 +18,7 @@ import play.api.libs.json.{JsObject, JsString}
 class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with ParserUtils {
   describe("uses the proper gear") {
 
-    lazy val testSchemaRef = SchemaRef.fromString("test:schemas/a").get
+    lazy val testSchemaRef = SchemaRef.fromString("test:schemas@0.1.0/a").get
 
     lazy val a = Gear("test", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
     lazy val b = Gear("other", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
@@ -28,7 +28,9 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
       override val parsers: Set[ParserBase] = Set()
       override val gearSet: GearSet = new GearSet(a, b)
       override val transformations: Set[Transformation] = Set()
-      override val schemas: Set[Schema] = Set()
+      override val schemas: Set[Schema] = Set(
+        Schema(testSchemaRef, JsObject.empty)
+      )
     }
 
     lazy val resolveGear = PrivateMethod[Option[Gear]]('resolveGear)
@@ -67,7 +69,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
   it("can render node with nested gears and variables") {
 
-    import ExampleSourcegearFixtures._
+    import ExampleSourcegearFixtures.routeQueryResponse
     val f = routeQueryResponse
 
     val queryValue = JsObject(Seq(
@@ -88,15 +90,17 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
     )))
     val result = Render.fromStagedNode(stagedNode)(f.sourceGear)
 
-    println(result.get._2)
-  }
-
-  it("will replace staged nodes in value with generated code") {
-    lazy val processValue = PrivateMethod[JsObject]('processValue)
-
-
-
+    val expected = "call(\"value\", function (req, res) {\n  \n  query({ fieldA: req.query.fieldA }, function (err, item) {\n    if (!err) {\n        res.send(thing)\n    } else {\n    \n    }\n  })\n})"
+    assert(result.get._2 == expected)
 
   }
+
+//  it("will replace staged nodes in value with generated code") {
+//    lazy val processValue = PrivateMethod[JsObject]('processValue)
+//
+//
+//
+//
+//  }
 
 }

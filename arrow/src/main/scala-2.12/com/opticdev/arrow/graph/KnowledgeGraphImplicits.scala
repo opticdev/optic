@@ -1,6 +1,7 @@
 package com.opticdev.arrow.graph
 
 import com.opticdev.core.sourcegear.Gear
+import com.opticdev.opm.utils.SemverHelper
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.Transformation
 
@@ -14,9 +15,14 @@ object KnowledgeGraphImplicits {
 
   implicit class KnowledgeGraphWrapper(knowledgeGraph: KnowledgeGraph) {
 
-    def schemaNodeForRef(schemaRef: SchemaRef): Option[SchemaNode] =
-      knowledgeGraph.nodes.find(i=> i.value.isInstanceOf[SchemaNode] && i.value.asInstanceOf[SchemaNode].schema.schemaRef == schemaRef)
-      .map(i=> i.value.asInstanceOf[SchemaNode])
+    def schemaNodeForRef(schemaRef: SchemaRef): Option[SchemaNode] = {
+      val availibleSchemas = knowledgeGraph.nodes.filter(i=> i.value.isInstanceOf[SchemaNode] && i.value.asInstanceOf[SchemaNode].schema.schemaRef.packageRef.packageId == schemaRef.packageRef.packageId)
+        .map(i=> i.value.asInstanceOf[SchemaNode]).toSet
+
+      val result = SemverHelper.findVersion(availibleSchemas, (a: SchemaNode) => a.schema.schemaRef.packageRef, schemaRef.packageRef.version)
+      result.map(_._2)
+    }
+
 
     def gearsForSchema(schemaRef: SchemaRef) : Set[Gear] = {
 

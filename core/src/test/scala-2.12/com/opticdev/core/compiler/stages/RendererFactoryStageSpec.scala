@@ -49,7 +49,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      Gear("do", "optic:test", SchemaRef(PackageRef("optic:test"), "a"), Set(), parseGear, renderer)
+      Gear("do", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.1"), "a"), Set(), parseGear, renderer)
     }
 
     val block =
@@ -67,12 +67,15 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
     val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-    val thisGear = Gear("wrapper", "optic:test", SchemaRef(PackageRef("optic:test"), "b"), Set(), parseGear, renderer)
+    val thisGear = Gear("wrapper", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.1"), "b"), Set(), parseGear, renderer)
 
     val sourceGear : SourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val gearSet = new GearSet(thisGear, childGear)
-      override val schemas = Set()
+      override val schemas = Set(
+        Schema(SchemaRef(PackageRef("optic:test", "0.1.1"), "b"), JsObject.empty),
+        Schema(SchemaRef(PackageRef("optic:test", "0.1.1"), "a"), JsObject.empty)
+      )
       override val transformations = Set()
     }
   }
@@ -85,9 +88,11 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
       "properties" -> JsArray(Seq(
         JsObject(Seq("operation" -> JsString("first"))),
         JsObject(Seq("operation" -> JsString("second"))),
-        JsObject(Seq("operation" -> JsString("third"))),
+        JsObject(Seq("operation" -> JsString("third")))
       ))
     )))
+
+    println(result)
 
     val expected = """call("TEST VARIABLE", function () {
                      |  start(first)

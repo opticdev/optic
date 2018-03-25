@@ -15,10 +15,10 @@ import scala.concurrent.Await
 object ExampleSourcegears {
 
   lazy val sgWithTransformations = new {
-    val schemaModel = Schema(SchemaRef(PackageRef("optic:test"), "model"), JsObject.empty)
-    val schemaRoute = Schema(SchemaRef(PackageRef("optic:test"), "route"), JsObject.empty)
-    val schemaForm = Schema(SchemaRef(PackageRef("optic:test"), "form"), JsObject.empty)
-    val schemaFetch = Schema(SchemaRef(PackageRef("optic:test"), "fetch"), JsObject.empty)
+    val schemaModel = Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "model"), JsObject.empty)
+    val schemaRoute = Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "route"), JsObject.empty)
+    val schemaForm = Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "form"), JsObject.empty)
+    val schemaFetch = Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "fetch"), JsObject.empty)
 
     val transformationPackage = PackageRef("optic:test-transform")
 

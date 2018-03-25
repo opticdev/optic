@@ -5,6 +5,8 @@ import java.io.FileNotFoundException
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
+import com.opticdev.opm.utils.SemverHelper
+import com.opticdev.opm.utils.SemverHelper.VersionWrapper
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
@@ -36,21 +38,15 @@ object ParserStorage {
 
     val parserOption = {
       val version = parserRef.version
+      val availible = (DataDirectory.parsers / parserRef.languageName).list.toSet
+      val versionOption = SemverHelper.findVersion(availible, (file: File) => VersionWrapper(file.nameWithoutExtension), version)
 
-        val versionFileTuples = (DataDirectory.parsers / parserRef.languageName).list
-          .map(i=> ( new Semver(i.nameWithoutExtension, SemverType.NPM), i))
 
-
-        val matchingVersionsSorted = versionFileTuples.filter(pair=> pair._1.satisfies(version) || version == "latest").toSeq
-        .sortWith((a, b)=> {
-          a._1.isGreaterThan(b._1)
-        })
-
-      matchingVersionsSorted.headOption
+      versionOption.map(_._2)
     }
 
     if (parserOption.isDefined) {
-      SourceParserManager.verifyParser(parserOption.get._2.pathAsString)
+      SourceParserManager.verifyParser(parserOption.get.pathAsString)
     } else {
       throw new Error("Parser not found "+ parserRef.full)
     }
