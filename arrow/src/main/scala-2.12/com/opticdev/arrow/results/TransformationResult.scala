@@ -6,10 +6,10 @@ import com.opticdev.arrow.context.{ArrowContextBase, ModelContext}
 import com.opticdev.arrow.graph.KnowledgeGraph
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
 import com.opticdev.core.sourcegear.SourceGear
-import com.opticdev.sdk.descriptions.Transformation
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits._
 import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try
 
@@ -26,6 +26,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
         knowledgeGraph.gearsForSchema(dt.transformation.output).map(i=> GearOption(i.name, i.packageFull, i.id)).toSeq,
         None,
         if (insertLocationOption.isDefined) Seq(insertLocationOption.get) else Seq(), //@todo add all location options
+        None,
         None
       ))
     }

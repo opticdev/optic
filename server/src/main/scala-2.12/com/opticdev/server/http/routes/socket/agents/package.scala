@@ -62,4 +62,12 @@ package object agents {
     ))
   }
 
+  case class KnowledgeGraphUpdate(projectName: String, knowledgeGraph: JsObject) extends OpticEvent with UpdateAgentEvent {
+    def asJson = JsObject(Seq(
+      "event"-> JsString("knowledge-graph-update"),
+      "projectName"-> JsString(projectName),
+      "knowledgeGraph"-> knowledgeGraph
+    ))
+  }
+
 }

@@ -3,6 +3,7 @@ package com.opticdev.opm.helpers
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.packages.DependencyMapping
 import com.opticdev.sdk.descriptions._
+import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try
 
@@ -36,7 +37,7 @@ object MDPackageResolveHelper {
     val newInputSchema = resolveSchemaToGlobalSchema(transformation.input, parentPackageRef, mapping)
     val newOutputSchema = resolveSchemaToGlobalSchema(transformation.output, parentPackageRef, mapping)
 
-    Transformation(transformation.name, transformation.packageId, newInputSchema, newOutputSchema, transformation.script)
+    Transformation(transformation.name, transformation.packageId, newInputSchema, newOutputSchema, transformation.ask, transformation.script)
   }
 
   def resolveLens(lens: Lens, parentPackageRef: PackageRef, mapping: DependencyMapping) : Lens = {

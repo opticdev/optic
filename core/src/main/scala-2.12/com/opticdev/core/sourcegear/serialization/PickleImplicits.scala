@@ -4,7 +4,7 @@ import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import boopickle.PicklerHelper
 import com.opticdev.core.sourcegear.gears.RuleProvider
-import com.opticdev.core.sourcegear.gears.generating.GenerateGear
+import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.{Gear, SGConfig}
 import com.opticdev.parsers.ParserRef
@@ -14,6 +14,8 @@ import com.opticdev.sdk.descriptions.enums.{BasicComponentType, Literal, NotSupp
 import com.opticdev.sdk.{BoolProperty, _}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
+import com.opticdev.sdk.descriptions.transformation.Transformation
+import play.api.libs.json.{Format, JsObject, JsValue, Json}
 
 object PickleImplicits extends PicklerHelper {
 
@@ -24,6 +26,26 @@ object PickleImplicits extends PicklerHelper {
     }
     @inline override def unpickle(implicit state: UnpickleState): Range = {
       Range(state.dec.readInt, state.dec.readInt)
+    }
+  }
+
+  implicit object JsValuePickler extends P[JsValue] {
+    @inline override def pickle(value: JsValue)(implicit state: PickleState) = {
+      state.enc.writeString(value.toString())
+    }
+    @inline override def unpickle(implicit state: UnpickleState): JsValue = {
+      val input = state.dec.readString
+      Json.parse(input)
+    }
+  }
+
+  implicit object JsObjectPickler extends P[JsObject] {
+    @inline override def pickle(value: JsObject)(implicit state: PickleState) = {
+      state.enc.writeString(value.toString())
+    }
+    @inline override def unpickle(implicit state: UnpickleState): JsObject = {
+      val input = state.dec.readString
+      Json.parse(input).as[JsObject]
     }
   }
 
@@ -114,7 +136,7 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.schemaRef)
       state.pickle(value.enterOn)
       state.pickle(value.parser)
-      state.pickle(value.generater)
+      state.pickle(value.renderer)
     }
     override def unpickle(implicit state: UnpickleState): Gear = {
       Gear(
@@ -123,7 +145,7 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[SchemaRef],
         state.unpickle[Set[AstType]],
         state.unpickle[ParseAsModel],
-        state.unpickle[GenerateGear]
+        state.unpickle[RenderGear]
       )
     }
   }

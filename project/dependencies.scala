@@ -8,7 +8,7 @@ object Dependencies {
     "org.scalactic" %% "scalactic" % "3.0.1",
     "org.scalatest" %% "scalatest" % "3.0.1" % "test",
 
-    "com.opticdev" %% "parser-foundation" % "0.1.1",
+    "com.opticdev" %% "parser-foundation" % "0.1.2",
 
     //file library
     "com.github.pathikrit" % "better-files_2.12" % "2.17.1",
@@ -56,6 +56,8 @@ object Dependencies {
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
     "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
 
+    "ch.megard" %% "akka-http-cors" % "0.2.2",
+
     "com.mixpanel" % "mixpanel-java" % "1.4.4"
   )
 
@@ -78,14 +80,14 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-stream" % "2.5.4",
 
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
-    "com.opticdev" %% "marvin-runtime" % "0.1.0",
-    "com.opticdev" %% "marvin-common" % "0.1.0"
+    "com.opticdev" %% "marvin-runtime" % "0.1.2",
+    "com.opticdev" %% "marvin-common" % "0.1.2"
   )
 
   val arrowDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "me.xdrop" % "fuzzywuzzy" % "1.1.9",
-    "com.opticdev" %% "marvin-runtime" % "0.1.0",
-    "com.opticdev" %% "marvin-common" % "0.1.0"
+    "com.opticdev" %% "marvin-runtime" % "0.1.2",
+    "com.opticdev" %% "marvin-common" % "0.1.2"
   )
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
@@ -95,11 +97,8 @@ object Dependencies {
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
     "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
-    "com.opticdev" %% "marvin-runtime" % "0.1.0",
-    "com.opticdev" %% "marvin-common" % "0.1.0"
+    "com.opticdev" %% "marvin-runtime" % "0.1.2",
+    "com.opticdev" %% "marvin-common" % "0.1.2"
   )
 
 }
-
-
-

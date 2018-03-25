@@ -3,8 +3,9 @@ package com.opticdev.core.sourcegear.variables
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.sourcegear.gears.parsing.NodeDescription
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserBase}
-import com.opticdev.parsers.graph.{CommonAstNode, AstType}
+import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.finders.NodeFinder
 import com.opticdev.sdk.descriptions.{PropertyRule, Rule, Variable, VariableRule}
 import play.api.libs.json.{JsObject, JsString}
@@ -52,6 +53,15 @@ case class VariableManager(variables: Vector[Variable], identifierNodeDesc: Iden
   }
 
   def variableLookupTable: VariableLookupTable = VariableLookupTable(variables, identifierNodeDesc.path.head, identifierNodeDesc.nodeType)
+
+
+  def changesFromMapping(variableMapping: VariableMapping): VariableChanges = {
+    val changes = variables.map(i=> (i, variableMapping.get(i.token))).collect {
+      case (variable, Some(string)) => SetVariable(variable, string)
+    }
+
+    VariableChanges(identifierNodeDesc, changes)
+  }
 
 }
 

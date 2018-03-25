@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.transformations
 
-import com.opticdev.sdk.descriptions.Transformation
+import com.opticdev.sdk.descriptions.transformation.Transformation
 import play.api.libs.json.JsObject
 
 object TransformationEvaluationImplicits {

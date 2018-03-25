@@ -10,7 +10,7 @@ import com.opticdev.server
 import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, ProjectStatus}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
-import com.opticdev.server.http.routes.socket.agents.{AgentConnection, StatusUpdate}
+import com.opticdev.server.http.routes.socket.agents.{AgentConnection, KnowledgeGraphUpdate, StatusUpdate}
 
 import scala.collection.mutable
 import scala.util.{Success, Try}
@@ -31,7 +31,9 @@ class ProjectsManager {
     //attach a sourcegear changed callback
     project.onSourcegearChanged((sg)=> {
       //overwrite old sg instance with the new one
-      arrowStore = arrowStore + (project -> new Arrow(project))
+      val arrow = new Arrow(project)
+      arrowStore = arrowStore + (project -> arrow)
+      AgentConnection.broadcastUpdate(KnowledgeGraphUpdate(project.name, arrow.knowledgeGraphAsJson))
     })
 
     //attach a project status changed callback

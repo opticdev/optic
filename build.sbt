@@ -17,7 +17,6 @@ val commonSettings: Seq[Def.Setting[_]] = Seq(
   javacOptions ++= Seq("-source", "1.8", "-target", "1.8"), //, "-Xmx2G"),
   scalacOptions ++= Seq("-deprecation", "-unchecked"),
   resolvers += Opts.resolver.mavenLocalFile,
-  //    copyDepTask,
   resolvers ++= Seq(DefaultMavenRepository,
     Resolver.defaultLocal,
     Resolver.mavenLocal
