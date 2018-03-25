@@ -25,7 +25,8 @@ object JsObjectNashornImplicits {
   implicit class ScriptObjectToJsObject(scriptObjectMirror: ScriptObjectMirror)(implicit val engine: NashornScriptEngine) {
     def asJsObject : Try[JsObject] = Try {
       val json = engine.eval("JSON").asInstanceOf[ScriptObjectMirror]
-      Json.parse(json.callMember("stringify", scriptObjectMirror).asInstanceOf[String]).as[JsObject]
+      val asJsObject = Json.parse(json.callMember("stringify", scriptObjectMirror).asInstanceOf[String]).as[JsObject]
+      asJsObject
     }
   }
 

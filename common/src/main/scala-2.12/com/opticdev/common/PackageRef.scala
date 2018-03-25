@@ -4,7 +4,7 @@ import play.api.libs.json._
 
 import scala.util.Try
 
-case class PackageRef(packageId: String, version: String = "latest") {
+case class PackageRef(packageId: String, version: String = "latest") extends Versioned {
   def author = packageId.split(":").head
   def name = packageId.split(":").last
   def full = packageId+"@"+version

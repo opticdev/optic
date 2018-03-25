@@ -17,14 +17,12 @@ package object sdk {
   import PackageRef.packageRefJsonFormat
   import SchemaRef.schemaRefFormats
 
-  implicit val renderOptionsFormat = Json.format[RenderOptions]
+  implicit lazy val renderOptionsFormat = Json.format[RenderOptions]
 
-  implicit val stagedNodeFormat: Format[StagedNode] = (
+  implicit lazy val stagedNodeFormat: Format[StagedNode] = (
     (__ \ 'schema).format[SchemaRef] and
       (__ \ 'value).format[JsObject] and
       (__ \ 'options).lazyFormatNullable(implicitly[Format[RenderOptions]])
     )(StagedNode.apply, unlift(StagedNode.unapply))
-
-
 
 }

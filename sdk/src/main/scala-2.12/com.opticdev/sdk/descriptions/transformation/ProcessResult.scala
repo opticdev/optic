@@ -1,7 +1,7 @@
 package com.opticdev.sdk.descriptions.transformation
 
 import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsResult, Json}
 
 import scala.util.{Success, Try}
 import com.opticdev.common.utils.JsObjectNashornImplicits._
@@ -10,7 +10,7 @@ import com.opticdev.sdk.descriptions.SchemaRef
 object ProcessResult {
   def objectResult(jsObject: JsObject)(implicit outputSchemaRef: SchemaRef): Try[TransformationResult] = Try {
 
-    lazy val stagedNodeOption = Json.fromJson[StagedNode](jsObject)
+    val stagedNodeOption = Try ( Json.fromJson[StagedNode](jsObject).asOpt ).map(_.get)
 
     jsObject match {
       case result if stagedNodeOption.isSuccess => stagedNodeOption.get

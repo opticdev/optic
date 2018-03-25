@@ -23,7 +23,7 @@ object Evaluation {
 
       val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear)
 
-      assert(renderedTry.isSuccess, "Could not render model "+ renderedTry.failed.get.toString)
+      require(renderedTry.isSuccess, "Could not render model "+ renderedTry.failed.get.toString)
 
       val generatedNode = (renderedTry.get._1, renderedTry.get._2)
 
@@ -42,12 +42,13 @@ object Evaluation {
       val schema = sourcegear.findSchema(rt.transformationChanges.transformation.output).get
 
       val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue, rt.answers.getOrElse(JsObject.empty))
-      assert(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed.get)
-      assert(schema.validate(transformationTry.get.asInstanceOf[SingleModel].value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
+      require(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed)
 
       val stagedNode = transformationTry.get.toStagedNode(Some(RenderOptions(
         gearId = rt.gearId
       )))
+
+      require(schema.validate(stagedNode.value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
 
       val generatedNode = Render.fromStagedNode(stagedNode)(sourcegear).get
 

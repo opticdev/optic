@@ -56,6 +56,8 @@ object Dependencies {
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
     "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
 
+    "ch.megard" %% "akka-http-cors" % "0.2.2",
+
     "com.mixpanel" % "mixpanel-java" % "1.4.4"
   )
 

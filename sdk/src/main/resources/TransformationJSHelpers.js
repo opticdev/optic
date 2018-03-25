@@ -5,6 +5,7 @@ function Generate(schema, value, options) {
         schema: schema,
         value: value,
         options: options,
+        _isStagedNode: true
     }
 }
 

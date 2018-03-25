@@ -5,6 +5,7 @@ import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.marvin.common.ast.NewAstNode
+import com.opticdev.opm.utils.SemverHelper
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation}
@@ -25,7 +26,14 @@ abstract class SourceGear {
 
   def fileAccumulator = gearSet.fileAccumulator
 
-  def findSchema(schemaRef: SchemaRef) = schemas.find(_.schemaRef == schemaRef)
+  def findSchema(schemaRef: SchemaRef) : Option[Schema] = {
+    val availible = schemas.filter(s=>
+      s.schemaRef.packageRef.packageId == schemaRef.packageRef.packageId
+      && s.schemaRef.id == schemaRef.id
+    )
+    val schemaVersion = SemverHelper.findVersion(availible, (s: Schema) => s.schemaRef.packageRef, schemaRef.packageRef.version)
+    schemaVersion.map(_._2)
+  }
 
   def findGear(id: String) = gearSet.listGears.find(_.id == id)
 

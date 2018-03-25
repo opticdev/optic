@@ -43,7 +43,7 @@ class InflateSpec extends FunSpec {
 
     it("generate function") {
       val output = testFunction("""function(a) { return Generate('test:schema', {bool: true}, {}) }""")
-      assert(output.get == Json.parse("""{"schema":"test:schema","value":{"bool":true},"options":{}}"""))
+      assert(output.get == Json.parse("""{"schema":"test:schema","value":{"bool":true},"options":{}, "_isStagedNode": true}"""))
     }
 
     it("code function") {

@@ -40,5 +40,15 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
 
   }
 
+  it("Runs Nested Transformation") {
+    val (changeGroup, sourcegear, expectedChange) = nestedTransformModelToRoute
+    val results = changeGroup.evaluateAndWrite(sourcegear)
+
+    println(results.get.stagedFiles.head._2.text)
+
+    assert(results.get.stagedFiles.head._2.text == expectedChange)
+
+  }
+
 
 }

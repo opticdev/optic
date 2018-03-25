@@ -91,4 +91,12 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
     println(result.get._2)
   }
 
+  it("will replace staged nodes in value with generated code") {
+    lazy val processValue = PrivateMethod[JsObject]('processValue)
+
+
+
+
+  }
+
 }

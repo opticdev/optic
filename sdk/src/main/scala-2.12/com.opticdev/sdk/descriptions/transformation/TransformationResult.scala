@@ -5,7 +5,7 @@ import com.opticdev.sdk.descriptions.SchemaRef
 import play.api.libs.json.JsObject
 
 
-trait TransformationResult {def toStagedNode(options: Option[RenderOptions]) : StagedNode}
+trait TransformationResult {def toStagedNode(options: Option[RenderOptions] = None) : StagedNode}
 
 case class StagedNode(schema: SchemaRef,
                       value: JsObject,

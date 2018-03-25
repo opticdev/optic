@@ -49,7 +49,7 @@ class SdkTransformationSpec extends FunSpec {
         |function(a) {
         | return {hello: a.test}
         |}
-      """.stripMargin)
+      """.stripMargin, JsObject.empty, SchemaRef.fromString("t:f/g").get, outputSchemaRef)
 
     it("can inflate code to script objects") {
       val inflated = valid.inflated
@@ -57,12 +57,19 @@ class SdkTransformationSpec extends FunSpec {
     }
 
     it("will fail it is not a function ") {
-      assert(new TransformFunction("'Hello World'").inflated.isFailure)
+      assert(new TransformFunction("'Hello World'", JsObject.empty, SchemaRef.fromString("t:f/g").get, outputSchemaRef).inflated.isFailure)
     }
 
     it("can execute a transformation") {
       val result = valid.transform(JsObject(Seq("test" -> JsString("world"))), JsObject.empty)
       assert(result == Success(SingleModel(outputSchemaRef, JsObject(Seq("hello" -> JsString("world"))))))
+    }
+
+    it("can execute a real world transformation") {
+
+      val transformation = """"""
+
+
     }
 
     describe("receives answers from Ask") {
@@ -71,7 +78,8 @@ class SdkTransformationSpec extends FunSpec {
           |function(input, answers) {
           | return {hello: answers.value}
           |}
-        """.stripMargin, Json.parse("""{"type": "object", "properties": { "value": { "type": "string" } }}""").as[JsObject])
+        """.stripMargin, Json.parse("""{"type": "object", "properties": { "value": { "type": "string" } }}""").as[JsObject],
+        SchemaRef.fromString("t:f/g").get, outputSchemaRef)
 
       it("when valid answers object passed") {
         val result = valid.transform(JsObject.empty, JsObject(Seq("value" -> JsString("world"))))

@@ -31,7 +31,7 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
         } ~
         path(Segment / "knowledge-graph") {
           (projectName) => {
-            complete(getProjectGraph(projectName))
+            complete(getKnowledgeGraph(projectName))
           }
         } ~
         path(Segment / "models" / Segment) {
@@ -62,7 +62,7 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
     }
   }
 
-  def getProjectGraph(projectName: String) : HTTPResponse = {
+  def getKnowledgeGraph(projectName: String) : HTTPResponse = {
 
     val projectArrowGraph = projectsManager.lookupArrow(projectName)
       .map(i=> i.knowledgeGraphAsJson)

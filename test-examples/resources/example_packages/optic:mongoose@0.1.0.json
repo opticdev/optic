@@ -1,118 +1,183 @@
 {
-    "metadata": {
-      "author": "optic",
-      "name": "mongoose",
-      "version": "0.1.0"
-    },
-    "dependencies": ["optic:rest@0.1.0"],
-    "schemas": [{
-      "id": "mongoose-schema",
-      "definition": {
-        "title": "Mongoose Schema",
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "schema": {
-            "type": "object",
-            "patternProperties": {
-              "^.*$": {
-                "anyOf": [{
-                  "$ref": "#/definitions/field"
-                }]
-              }
-            },
-            "additionalProperties": false
-          }
+  "metadata": {
+    "author": "optic",
+    "name": "mongoose",
+    "version": "0.1.0"
+  },
+  "dependencies": ["optic:rest@0.1.0"],
+  "schemas": [{
+    "id": "schema",
+    "definition": {
+      "title": "Mongoose Schema",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
         },
-        "definitions": {
-          "field": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": ["string", "number", "boolean", "date"]
-              }
+        "schema": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {
+              "anyOf": [{
+                "$ref": "#/definitions/field"
+              }]
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "definitions": {
+        "field": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["string", "number", "boolean", "date"]
             }
           }
         }
       }
-    }, {
-      "id": "connect",
-      "definition": {
-        "title": "Connect Schema",
-        "type": "object",
-        "properties": {
-          "URI": {
-            "type": "string"
-          }
+    }
+  }, {
+    "id": "connect",
+    "definition": {
+      "title": "Connect Schema",
+      "type": "object",
+      "properties": {
+        "URI": {
+          "type": "string"
         }
       }
-    }],
-    "lenses": [{
-      "name": "Connect to MongoDB",
-      "schema": "connect",
-      "snippet": {
-        "language": "es7",
-        "block": "mongoose.connect('mongodb://localhost/my_database');"
-      },
-      "scope": "public",
-      "components": [{
-        "type": "code",
-        "finder": {
-          "type": "stringFinder",
-          "string": "mongodb",
-          "rule": "containing",
-          "occurrence": 0
-        },
-        "propertyPath": ["URI"]
-      }],
-      "rules": [],
-      "variables": [],
-      "subcontainers": []
-    }, {
-      "name": "Define Model",
-      "schema": "mongoose-schema",
-      "snippet": {
-        "language": "es7",
-        "block": "const model = mongoose.model('ModelName', \nnew mongoose.Schema({\n    name    : 'string',\n    age    : 'number',\n}));"
-      },
-      "scope": "public",
-      "components": [{
-        "type": "code",
-        "finder": {
-          "type": "stringFinder",
-          "string": "{\n    name",
-          "rule": "starting",
-          "occurrence": 0
-        },
-        "propertyPath": ["schema"]
-      },
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "ModelName",
-            "rule": "containing",
-            "occurrence": 0
-          },
-          "propertyPath": ["name"]
+    }
+  }, {
+    "id": "create-record",
+    "definition": {
+      "title": "Connect Schema",
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "object"
         }
-      ],
-      "rules": [],
-      "variables": [{
-        "token": "model",
-        "in": "self"
-      }],
-      "subcontainers": []
+      }
+    }
+  }],
+  "lenses": [{
+    "name": "Connect to MongoDB",
+    "schema": "connect",
+    "snippet": {
+      "language": "es7",
+      "block": "mongoose.connect('mongodb://localhost/my_database');"
+    },
+    "scope": "public",
+    "components": [{
+      "type": "code",
+      "finder": {
+        "type": "stringFinder",
+        "string": "mongodb",
+        "rule": "containing",
+        "occurrence": 0
+      },
+      "propertyPath": ["URI"]
     }],
-    "containers": [],
-    "transformations": [{
-      "name": "Schema -> Create Route",
-      "input": "mongoose-schema",
-      "output": "optic:rest/route",
-      "ask": {"type": "object"},
-      "script": "function transform(input) {\n    var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n    return {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n}"
+    "rules": [],
+    "variables": [],
+    "subcontainers": []
+  }, {
+    "name": "Define Model",
+    "schema": "schema",
+    "snippet": {
+      "language": "es7",
+      "block": "const modelName = mongoose.model('ModelName',\nnew mongoose.Schema({\n    name    : 'string',\n    age    : 'number',\n}));"
+    },
+    "scope": "public",
+    "components": [{
+      "type": "code",
+      "finder": {
+        "type": "stringFinder",
+        "string": "{",
+        "rule": "starting",
+        "occurrence": 0
+      },
+      "propertyPath": ["schema"]
+    }, {
+      "type": "code",
+      "finder": {
+        "type": "stringFinder",
+        "string": "ModelName",
+        "rule": "containing",
+        "occurrence": 0
+      },
+      "propertyPath": ["name"]
+    }],
+    "rules": [],
+    "variables": [{
+      "in": "self",
+      "token": "modelName"
+    }],
+    "subcontainers": []
+  }, {
+    "name": "Insert Record",
+    "schema": "create-record",
+    "snippet": {
+      "language": "es7",
+      "block": "new Model({\n\n}).save((err, item) => {\n  if (!err) {\n    //:success\n  } else {\n    //:failure\n  }\n})"
+    },
+    "scope": "public",
+    "components": [{
+      "type": "code",
+      "finder": {
+        "type": "stringFinder",
+        "string": "{",
+        "rule": "starting",
+        "occurrence": 0
+      },
+      "propertyPath": ["fields"]
+    }],
+    "rules": [],
+    "variables": [{
+      "in": "self",
+      "token": "err"
+    }, {
+      "in": "self",
+      "token": "item"
+    }, {
+      "in": "self",
+      "token": "Model"
+    }],
+    "subcontainers": [{
+      "name": "failure",
+      "subcontainer": true,
+      "pulls": [],
+      "childrenRule": "any",
+      "schemaComponents": []
+    }, {
+      "name": "success",
+      "subcontainer": true,
+      "pulls": [],
+      "childrenRule": "any",
+      "schemaComponents": []
     }]
+  }],
+  "containers": [],
+  "transformations": [{
+    "name": "Schema -> Create Route",
+    "input": "schema",
+    "output": "optic:rest/route",
+    "ask": {
+      "type": "object",
+      "properties": {
+        "queryProvider": {
+          "description": "The gear you want to use to resolve this query",
+          "type": "string",
+          "_opticValidation": {
+            "accepts": "lens",
+            "withSchema": "optic:mongoose@0.1.0/create-record"
+          }
+        }
+      },
+      "_order": ["queryProvider"],
+      "required": ["queryProvider"]
+    },
+    "script": "function transform(input, answers) {\n    var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n    var routeDescription = {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n\n    var queryDescription = {\n        fields: Object.keys(input.schema).reduce(function (previous, current) {\n            previous[current] = Generate('optic:rest/parameter', { in: 'body', name: current });\n            return previous;\n        }, {})\n    };\n\n    Generate(answers.output, routeDescription, {\n        containers: {\n            \"callback\": [Generate(answers.queryProvider, queryDescription)]\n        }\n    });\n}"
+  }]
 }

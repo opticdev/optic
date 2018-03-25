@@ -1,11 +1,10 @@
 package com.opticdev.sdk.descriptions.transformation
 
 import javax.script.ScriptEngineManager
-
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions._
 import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}
-import play.api.libs.json._
+import play.api.libs.json.{JsObject, _}
 
 import scala.util.Try
 
@@ -35,21 +34,25 @@ object Transformation extends Description[Transformation] {
 
 }
 
-class TransformFunction(code: String, askSchema: JsObject = Transformation.emptyAskSchema)(implicit outputSchemaRef: SchemaRef) {
+class TransformFunction(code: String, askSchema: JsObject = Transformation.emptyAskSchema, inputSchemaRef: SchemaRef, implicit val outputSchemaRef: SchemaRef) {
   import com.opticdev.common.utils.JsObjectNashornImplicits._
   private implicit val engine: NashornScriptEngine = Transformation.engine
   lazy val inflated: Try[ScriptObjectMirror] = Inflate.fromString(code)
 
   private lazy val askSchemaInflated = Schema.schemaObjectFromJson(askSchema)
 
-  def transform(jsObject: JsObject, ask: JsObject): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
-    if (!Schema.validate(askSchemaInflated, ask)) {
+  def transform(jsObject: JsObject, answers: JsObject): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
+    if (!Schema.validate(askSchemaInflated, answers)) {
       throw new Exception("Ask Object does not match the Ask Schema for this transformation "+ askSchema.toString)
     }
 
     val scriptObject = jsObject.asScriptObject.get
-    val askObject = ask.asScriptObject.get
-    val result = transformFunction.call(null, scriptObject, askObject).asInstanceOf[ScriptObjectMirror]
+    val answersObject = {answers ++ JsObject(Seq(
+        "input" -> JsString(inputSchemaRef.full),
+        "output" -> JsString(outputSchemaRef.full)
+      ))}.asScriptObject.get
+
+    val result = transformFunction.call(null, scriptObject, answersObject).asInstanceOf[ScriptObjectMirror]
 
     ProcessResult.objectResultFromScriptObject(result)
   }).flatten
@@ -61,7 +64,7 @@ sealed trait TransformationBase extends PackageExportable {
   def input: SchemaRef
   def output: SchemaRef
   def ask: JsObject
-  val transformFunction = new TransformFunction(script, ask)(output)
+  val transformFunction = new TransformFunction(script, ask, input, output)
 }
 
 //case class InlineTransformation() extends TransformationBase

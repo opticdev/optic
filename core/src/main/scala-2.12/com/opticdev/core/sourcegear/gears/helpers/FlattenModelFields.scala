@@ -4,7 +4,7 @@ import play.api.libs.json.{JsObject, JsString, JsValue}
 
 object FlattenModelFields {
   def flattenFields(fieldSet: Set[ModelField], onto: JsObject = JsObject.empty) : JsObject = {
-    if (fieldSet.isEmpty) return JsObject.empty
+    if (fieldSet.isEmpty) return onto
 
     val withPathVectors = fieldSet.map(i=> (i.propertyPath, i.value))
 
@@ -20,7 +20,7 @@ object FlattenModelFields {
     })
 
     val merged = individualObjects.foldLeft(onto) { (obj, finalObj) =>
-      finalObj.deepMerge(obj)
+      obj deepMerge finalObj
     }
 
     merged

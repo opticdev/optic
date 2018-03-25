@@ -1,7 +1,7 @@
 package com.opticdev.common.utils
 
 import org.scalatest.FunSpec
-import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString}
+import play.api.libs.json._
 
 class JsonUtilsSpec extends FunSpec {
 
@@ -26,5 +26,71 @@ class JsonUtilsSpec extends FunSpec {
     }
 
   }
+
+  describe("Filter paths") {
+
+    //is an integer & is even
+    val predicate = (a: JsValue) => a match {
+      case JsNumber(n) => n%2==0
+      case _ => false
+    }
+
+    it("can find the paths that match a predicate in the root object") {
+
+      val source = JsObject(Seq(
+        "one" -> JsNumber(1),
+        "two" -> JsNumber(2),
+        "three" -> JsString("three"),
+        "four" -> JsNumber(4)
+      ))
+
+      val result = JsonUtils.filterPaths(source, predicate)
+
+      result == Set(
+        Seq("two"),
+        Seq("four")
+      )
+
+    }
+
+    it("can find nested paths that match a predicate") {
+      val source = JsObject(
+          Seq("secondLevel" -> JsObject(
+          Seq("thirdLevel" -> JsObject(
+          Seq(
+          "one" -> JsNumber(1),
+          "two" -> JsNumber(2),
+          "three" -> JsString("three"),
+          "four" -> JsNumber(4)
+      ))))))
+
+      val result = JsonUtils.filterPaths(source, predicate, true)
+
+      result == Set(
+        Seq("secondLevel", "thirdLevel", "two"),
+        Seq("secondLevel", "thirdLevel", "four")
+      )
+
+    }
+
+    it("will not find nested paths if deep is=false") {
+      val source = JsObject(
+        Seq("secondLevel" -> JsObject(
+          Seq("thirdLevel" -> JsObject(
+            Seq(
+              "one" -> JsNumber(1),
+              "two" -> JsNumber(2),
+              "three" -> JsString("three"),
+              "four" -> JsNumber(4)
+            ))))))
+
+      val result = JsonUtils.filterPaths(source, predicate, false)
+
+      result == Set()
+
+    }
+
+  }
+
 
 }
