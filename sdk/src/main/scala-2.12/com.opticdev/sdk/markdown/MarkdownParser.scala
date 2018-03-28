@@ -1,6 +1,7 @@
 package com.opticdev.sdk.markdown
 
 import better.files.File
+import com.opticdev.parsers.utils.FileCrypto
 import com.opticdev.sdk.descriptions.Schema
 import play.api.libs.json.{JsArray, JsObject, Json}
 
@@ -30,7 +31,33 @@ object MarkdownParser {
   }
 
 
-  def parseMarkdown(file: File, useCache: Boolean = true) : Try[MDParseOutput] = {
+  def parseMarkdownString(string: String, useCache: Boolean = true) : Try[MDParseOutput] = {
+    OpticMarkdownInstaller.getOrInstall
+      .map(i=> {
+
+        val cacheLookup = {
+          if (useCache) MarkdownCache.lookup(FileCrypto.sha256Hash(string)) else None
+        }
+        if (cacheLookup.isDefined) {
+          cacheLookup.get
+        } else {
+
+          val result = i.parseString(string)
+          if (!outputSchema.validate(result)) {
+            throw new Error("Invalid output from markdown parser")
+          } else {
+            if (useCache) {
+              MarkdownCache.cacheMarkdown(string, result)
+            }
+            MDParseOutput(result)
+          }
+
+        }
+
+      })
+  }
+
+  def parseMarkdownFile(file: File, useCache: Boolean = true) : Try[MDParseOutput] = {
     OpticMarkdownInstaller.getOrInstall
       .map(i=> {
 

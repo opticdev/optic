@@ -23,7 +23,7 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
-abstract class OpticProject(val name: String, val baseDirectory: File)(implicit val actorCluster: ActorCluster) {
+abstract class OpticProject(val name: String, val baseDirectory: File)(implicit val actorCluster: ActorCluster) extends ProjectBase {
 
   import com.opticdev.core.sourcegear.actors._
 
@@ -34,7 +34,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   /* Private & public declarations of the project status & info */
 
   protected val projectStatusInstance: ProjectStatus = new ProjectStatus()
-  val projectStatus = projectStatusInstance.immutable
+  val projectStatus: ImmutableProjectStatus = projectStatusInstance.immutable
   def projectInfo : ProjectInfo = ProjectInfo(name, baseDirectory.pathAsString, projectStatus)
 
   /* Normal Disk Monitoring */
@@ -118,7 +118,6 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     implicit val timeout = Timeout(2 seconds)
     val future = projectActor ? CurrentGraph
     Await.result(future, timeout.duration).asInstanceOf[ProjectGraphWrapper].projectGraph
-
   }
 
   /* Staged File Monitor */

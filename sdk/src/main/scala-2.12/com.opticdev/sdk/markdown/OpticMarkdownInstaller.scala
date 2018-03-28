@@ -51,9 +51,11 @@ object OpticMarkdownInstaller {
       Json.parse(result).as[JsObject]
     }
 
-//    def parseString : JsObject = {
-//
-//    }
+    def parseString(contents: String) : JsObject = {
+      val cmd = Seq(PlatformConstants.nodePath, "--raw", contents)
+      val result = cmd.!!(ProcessLogger(stdout append _, stderr append _))
+      Json.parse(result).as[JsObject]
+    }
   }
 
   private def download(opticMDTar: String, opticMDTarSum: String) : Try[File] = Try {
