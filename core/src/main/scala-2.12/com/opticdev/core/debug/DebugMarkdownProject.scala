@@ -19,7 +19,7 @@ case class DebugMarkdownProject(name: String)(implicit logToCli: Boolean = false
   protected val projectStatusInstance: ProjectStatus = new ProjectStatus(_configStatus = ValidConfig, _sourceGearStatus = Valid)
   val projectStatus = projectStatusInstance.immutable
 
-  override def projectSourcegear: SourceGear = ???
+  override def projectSourcegear: SourceGear = DebugSourceGear
 
   override def projectGraph: ProjectGraph = ???
 

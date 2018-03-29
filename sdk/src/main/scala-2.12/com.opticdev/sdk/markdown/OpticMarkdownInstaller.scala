@@ -13,7 +13,6 @@ object OpticMarkdownInstaller {
   def getOrInstall : Try[CallOpticMarkdown.type] = {
     synchronized {
       if (CallOpticMarkdown.isInstalled) {
-        println("OPTIC-MARKDOWN ALREADY INSTALLED")
         Success(CallOpticMarkdown)
       } else {
         println("\nSTARTING OPTIC-MARKDOWN-INSTALL")

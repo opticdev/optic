@@ -29,7 +29,6 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
   }
 
   def start = {
-    DataDirectory.reset
     PreTest.run
     SourceParserManager.clearParsers
 
@@ -48,7 +47,7 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
   def resetScratch = PreTest.resetScratch
 
   override def beforeAll = {
-    DataDirectory.reset
+//    DataDirectory.reset
     PreTest.run
     super.beforeAll()
   }
