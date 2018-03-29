@@ -12,11 +12,11 @@ import scalax.collection.mutable.Graph
 import scalax.collection.edge.Implicits._
 
 object GraphOperations {
-  def addModelsToGraph(parseResults: Vector[ParseResult]) (implicit astGraph: AstGraph) : Unit = {
+  def addModelsToGraph[T <: WithinFile](parseResults: Vector[ParseResult[T]]) (implicit astGraph: AstGraph) : Unit = {
     parseResults.foreach(result=> addModelToGraph(result))
   }
 
-  def addModelToGraph(parseResult: ParseResult) (implicit astGraph: AstGraph) : Unit = {
+  def addModelToGraph[T <: WithinFile](parseResult: ParseResult[T]) (implicit astGraph: AstGraph) : Unit = {
     val flatNode = parseResult.modelNode.flatten
     astGraph add (parseResult.astNode ~+#> flatNode) (YieldsModel(parseResult.parseGear, root = true))
     addMappingEdgesToModel(parseResult.modelNode)

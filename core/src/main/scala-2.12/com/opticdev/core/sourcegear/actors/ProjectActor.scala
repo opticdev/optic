@@ -23,7 +23,6 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
       graph.updateFile(parsed.parseResults.astGraph, parsed.file)
 
       if (logToCli) graph.prettyPrint else sender() ! graph
-
       context.become(active(graph))
     }
 

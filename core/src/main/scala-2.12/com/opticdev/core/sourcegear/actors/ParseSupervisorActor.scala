@@ -10,7 +10,7 @@ import com.opticdev.core.sourcegear.{SGContext, _}
 import concurrent.duration._
 import akka.pattern.ask
 import better.files.File
-import com.opticdev.core.sourcegear.project.{OpticProject, Project}
+import com.opticdev.core.sourcegear.project.{ProjectBase, Project}
 import com.opticdev.parsers.AstGraph
 
 import scala.concurrent.{Await, Future}
@@ -82,7 +82,7 @@ object ParseSupervisorSyncAccess {
     Await.result(future, timeout.duration).asInstanceOf[Int]
   }
 
-  def getContext(file: File)(implicit actorCluster: ActorCluster, sourceGear: SourceGear, project: OpticProject): Option[SGContext] = {
+  def getContext(file: File)(implicit actorCluster: ActorCluster, sourceGear: SourceGear, project: ProjectBase): Option[SGContext] = {
     val future = actorCluster.parserSupervisorRef ? GetContext(FileNode.fromFile(file))
     Await.result(future, timeout.duration).asInstanceOf[Option[SGContext]]
   }

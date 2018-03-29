@@ -54,7 +54,7 @@ object OpticMarkdownInstaller {
     }
 
     def parseString(contents: String) : JsObject = {
-      val cmd = Seq(PlatformConstants.nodePath, "--raw", contents)
+      val cmd = Seq(PlatformConstants.nodePath, script.pathAsString, "--raw", contents)
       val result = cmd.!!(ProcessLogger(stdout append _, stderr append _))
       Json.parse(result).as[JsObject]
     }

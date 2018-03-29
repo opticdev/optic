@@ -29,6 +29,7 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
   }
 
   def start = {
+    DataDirectory.init
     PreTest.run
     SourceParserManager.clearParsers
 

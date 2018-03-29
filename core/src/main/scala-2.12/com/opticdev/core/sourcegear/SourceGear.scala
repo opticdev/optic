@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
-import com.opticdev.core.sourcegear.project.{OpticProject, Project}
+import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.utils.SemverHelper
 import com.opticdev.parsers
@@ -42,10 +42,10 @@ abstract class SourceGear {
   lazy val validExtensions: Set[String] = parsers.flatMap(_.fileExtensions)
   lazy val excludedPaths: Seq[String] = parsers.flatMap(_.excludedPaths).toSeq
 
-  def parseFile(file: File) (implicit project: OpticProject) : Try[FileParseResults] =
+  def parseFile(file: File) (implicit project: ProjectBase) : Try[FileParseResults] =
     Try(file.contentAsString).flatMap(i=> parseString(i))
 
-  def parseString(string: String) (implicit  project: OpticProject) : Try[FileParseResults] = Try {
+  def parseString(string: String) (implicit  project: ProjectBase) : Try[FileParseResults] = Try {
     val fileContents = string
     //@todo connect to parser list
     val parsedOption = SourceParserManager.parseString(fileContents, "es7")

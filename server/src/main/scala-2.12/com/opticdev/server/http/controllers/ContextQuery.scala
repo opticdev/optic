@@ -8,6 +8,7 @@ import com.opticdev.arrow.results.Result
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.server.data._
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsObject}
@@ -38,7 +39,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
         ).map(_.value.asInstanceOf[ModelNode])
 
         implicit val actorCluster = projectsManager.actorCluster
-        val resolved: immutable.Seq[LinkedModelNode] = o.map(_.resolve())
+        val resolved: immutable.Seq[LinkedModelNode[CommonAstNode]] = o.map(_.resolve[CommonAstNode]())
 
         //filter only models where the ranges intersect
         resolved.filter(node => (node.root.range intersect range.inclusive).nonEmpty)

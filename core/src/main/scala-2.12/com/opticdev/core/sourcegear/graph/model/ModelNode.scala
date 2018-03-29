@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsModelProperty, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode}
-import com.opticdev.core.sourcegear.project.{OpticProject, Project}
+import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, WithinFile}
 import play.api.libs.json.JsObject
@@ -18,7 +18,7 @@ import scala.util.Try
 import scala.util.hashing.MurmurHash3
 
 
-sealed abstract class BaseModelNode(implicit val project: OpticProject) extends AstProjection {
+sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends AstProjection {
   val schemaId : SchemaRef
   val value : JsObject
 
@@ -48,7 +48,7 @@ sealed abstract class BaseModelNode(implicit val project: OpticProject) extends 
 
 }
 
-case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, root: N, modelMapping: ModelAstMapping, containerMapping: ContainerAstMapping, parseGear: ParseGear)(implicit override val project: OpticProject) extends BaseModelNode {
+case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, root: N, modelMapping: ModelAstMapping, containerMapping: ContainerAstMapping, parseGear: ParseGear)(implicit override val project: ProjectBase) extends BaseModelNode {
   def flatten = {
     val hash = MurmurHash3.stringHash(root.toString() + modelMapping.toString() + containerMapping.toString())
     ModelNode(schemaId, value, hash)
@@ -56,7 +56,7 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
 }
 
-case class ModelNode(schemaId: SchemaRef, value: JsObject, hash: Int)(implicit override val project: OpticProject) extends BaseModelNode {
+case class ModelNode(schemaId: SchemaRef, value: JsObject, hash: Int)(implicit override val project: ProjectBase) extends BaseModelNode {
 
   def resolve[T <: WithinFile]()(implicit actorCluster: ActorCluster) : LinkedModelNode[T] = {
     implicit val sourceGearContext = SGContext.forModelNode(this).get

@@ -31,7 +31,7 @@ object MarkdownParser {
   }
 
 
-  def parseMarkdownString(string: String, useCache: Boolean = true) : Try[MDParseOutput] = {
+  def parseMarkdownString(string: String, useCache: Boolean = true) : Try[MDParseOutput] = Try {
     OpticMarkdownInstaller.getOrInstall
       .map(i=> {
 
@@ -55,9 +55,9 @@ object MarkdownParser {
         }
 
       })
-  }
+  }.flatten
 
-  def parseMarkdownFile(file: File, useCache: Boolean = true) : Try[MDParseOutput] = {
+  def parseMarkdownFile(file: File, useCache: Boolean = true) : Try[MDParseOutput] = Try {
     OpticMarkdownInstaller.getOrInstall
       .map(i=> {
 
@@ -81,6 +81,6 @@ object MarkdownParser {
         }
 
       })
-  }
+  }.flatten
 
 }

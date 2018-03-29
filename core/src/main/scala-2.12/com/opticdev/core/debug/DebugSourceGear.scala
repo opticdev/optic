@@ -2,19 +2,22 @@ package com.opticdev.core.debug
 
 import com.opticdev.common.PackageRef
 import com.opticdev.core.sourcegear
-import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.{FileParseResults, GearSet, SourceGear}
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
-import com.opticdev.parsers.ParserBase
+import com.opticdev.parsers.{ParserBase, ParserResult}
 import com.opticdev.parsers.graph.{CommonAstNode, GraphBuilder, WithinFile}
 import com.opticdev.sdk.descriptions.{Lens, PackageExportable, Schema, SchemaRef}
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.markdown.MarkdownParser
 import play.api.libs.json.{JsObject, JsString}
 import OpticMDPackageRangeImplicits._
+import com.opticdev.core.sourcegear.gears.parsing.ParseResult
+import com.opticdev.core.sourcegear.graph.GraphOperations
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
+import com.opticdev.core.sourcegear.project.config.ProjectFile
 
 import scala.util.{Failure, Success, Try}
 
@@ -26,12 +29,10 @@ object DebugSourceGear extends SourceGear {
   override val schemas: Set[Schema] = Set()
 
   //make sure to pass in the project context (if present) so OPM can tap into its knowledge paths
-  override def parseString(string: String)(implicit project: OpticProject = null): Try[sourcegear.FileParseResults] = {
+  override def parseString(string: String)(implicit project: ProjectBase): Try[sourcegear.FileParseResults] = Try {
 
-    implicit val projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = {
-      if (project == null) ProjectKnowledgeSearchPaths() else
-        project.projectFile.projectKnowledgeSearchPaths
-    }
+    implicit val projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths =
+      Try(project.asInstanceOf[OpticProject].projectFile.projectKnowledgeSearchPaths).getOrElse(ProjectKnowledgeSearchPaths())
 
     MarkdownParser.parseMarkdownString(string).map(result => {
       val dependenciesTry = Try(result.dependencies.value.map(i=> PackageRef.fromString(i.as[JsString].value).get))
@@ -60,24 +61,26 @@ object DebugSourceGear extends SourceGear {
       lensNodes.zipWithIndex.map { case (n, i) => phase.addChild(i, "lenses", n, true) }
       transformationNodes.zipWithIndex.map { case (n, i) => phase.addChild(i, "transformations", n, true) }
 
-      val astGraph = graphBuilder.graph
+      implicit val astGraph = graphBuilder.graph
 
       def linkedModelNode[S <: PackageExportable](schemaRef: SchemaRef, node: DebugAstNode[S]): LinkedModelNode[DebugAstNode[S]] =
-        LinkedModelNode(schemaRef, JsObject.empty, node, Map(), Map(), null)(null)
+        LinkedModelNode(schemaRef, JsObject.empty, node, Map(), Map(), null)(project)
 
-      val linkedModelNodes = astGraph.nodes.toVector.map(_.value).collect {
+      val linkedModelNodes : Vector[LinkedModelNode[DebugAstNode[PackageExportable]]] = astGraph.nodes.toVector.map(_.value).collect {
         //for some reason the if is needed. likely type erasure
         case a: DebugAstNode[Schema] if a.nodeType == DebugLanguageProxy.schemaNode => linkedModelNode(DebugSchemaProxy.schemaNode, a)
         case a: DebugAstNode[Lens] if a.nodeType == DebugLanguageProxy.lensNode => linkedModelNode(DebugSchemaProxy.lensNode, a)
         case a: DebugAstNode[Transformation] if a.nodeType == DebugLanguageProxy.transformationNode => linkedModelNode(DebugSchemaProxy.transformationNode, a)
-      }
+      }.asInstanceOf[Vector[LinkedModelNode[DebugAstNode[PackageExportable]]]]
+
+      GraphOperations.addModelsToGraph(linkedModelNodes.map(i=> ParseResult(null, i, i.root)))
 
       val flat = linkedModelNodes.map(i=> i.flatten)
 
       FileParseResults(graphBuilder.graph, flat, null, string)
     })
 
-  }
+  }.flatten
 
   def toAst(lens: Lens)(implicit opticMDPackage: OpticMDPackage) : Option[DebugAstNode[Lens]] = {
     opticMDPackage.rangeOfLens(lens).map(range=> {
