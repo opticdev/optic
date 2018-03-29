@@ -20,7 +20,7 @@ class MarkdownCacheSpec extends FunSpec with BeforeAndAfterAll {
   val file = File("test-examples/resources/example_markdown/Importing-JS.md")
 
   it("cache markdown by file hash") {
-    val jsObject = MarkdownParser.parseMarkdownFile(file).get.jsObject
+    val jsObject = MarkdownParser.parseMarkdownFile(file, useCache = false).get.jsObject
 
     val result = Await.result(MarkdownCache.cacheMarkdown(file, jsObject), 5 seconds)
 

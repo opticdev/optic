@@ -13,9 +13,12 @@ object OpticMarkdownInstaller {
   def getOrInstall : Try[CallOpticMarkdown.type] = {
     synchronized {
       if (CallOpticMarkdown.isInstalled) {
+        println("ALREADY INSTALLED")
         Success(CallOpticMarkdown)
       } else {
         println("\nSTARTING OPTIC-MARKDOWN-INSTALL")
+        //clear folder of older version if exists
+        DataDirectory.bin.list.foreach(_.delete(true))
         download(BuildInfo.opticMDTar, BuildInfo.opticMDTarSum)
           .flatMap(unzip)
           .flatMap(npmInstall) match {
@@ -39,9 +42,9 @@ object OpticMarkdownInstaller {
 
     def isInstalled : Boolean = Try {
       val cmd = Seq(PlatformConstants.nodePath, script.pathAsString, "--version")
-      val result = cmd.!!(ProcessLogger(stdout append _, stderr append _))
+      cmd.!!(ProcessLogger(stdout append _, stderr append _))
     } match {
-      case Success(a) => true
+      case Success(a) => a.trim == BuildInfo.opticMDVersion
       case Failure(a) => false
     }
 
