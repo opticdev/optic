@@ -6,7 +6,9 @@ import scala.util.Try
 
 object FinderEnums {
 
-  sealed trait StringEnums
+  sealed trait StringEnums {
+    def toDebugString: String = this.getClass.getName.dropRight(1)
+  }
 
   case object Entire extends StringEnums
   case object Containing extends StringEnums

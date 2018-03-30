@@ -3,14 +3,22 @@ package com.opticdev.core.debug
 import better.files.File
 import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.opm.TestPackageProviders
+import com.opticdev.sdk.descriptions.Lens
+import com.opticdev.sdk.markdown.OpticMarkdownInstaller
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
-import scala.concurrent.duration._
 
+import scala.concurrent.duration._
 import scala.concurrent.Await
 
-class DebugMarkdownProjectSpec extends AkkaTestFixture("DebugMarkdownProjectSpec") with TestPackageProviders with Eventually {
+class DebugMarkdownProjectSpec extends AkkaTestFixture("DebugMarkdownProjectSpec") with TestPackageProviders with BeforeAndAfterAll {
   def fixture = DebugMarkdownProject()
+
+  override def beforeAll(): Unit = {
+    OpticMarkdownInstaller.getOrInstall
+    super.beforeAll()
+  }
 
   lazy val testPackage = File("test-examples/resources/example_markdown/Mongoose.md")
 
@@ -24,6 +32,7 @@ class DebugMarkdownProjectSpec extends AkkaTestFixture("DebugMarkdownProjectSpec
     val f = fixture
     val result = Await.result(f.contextFor(testPackage, Range(1155, 1155)), 10 seconds)
     assert(result.isDefined)
+    assert(result.get.isInstanceOf[Lens])
   }
 
   it ("will not return an SDK object if file is not real") {

@@ -4,8 +4,15 @@ import better.files.File
 import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.opm.TestPackageProviders
+import com.opticdev.sdk.markdown.OpticMarkdownInstaller
+import org.scalatest.BeforeAndAfterAll
 
-class DebugSourceGearSpec extends AkkaTestFixture("DebugSourceGearSpec") with TestPackageProviders {
+class DebugSourceGearSpec extends AkkaTestFixture("DebugSourceGearSpec") with TestPackageProviders with BeforeAndAfterAll {
+
+  override def beforeAll(): Unit = {
+    OpticMarkdownInstaller.getOrInstall
+    super.beforeAll()
+  }
 
   lazy val testPackage = File("test-examples/resources/example_markdown/Mongoose.md")
   implicit lazy val project : ProjectBase = new DebugMarkdownProject()

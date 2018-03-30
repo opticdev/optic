@@ -90,6 +90,8 @@ case class CodeComponent(propertyPath: Seq[String],
     case _ => false
   }
 
+  def toDebugString : String = s"${propertyPath.mkString(".")}"
+
 }
 
 case class SchemaComponent(propertyPath: Seq[String],

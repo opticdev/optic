@@ -46,11 +46,19 @@ object Finder extends Description[Finder] {
   }
 }
 
-sealed trait Finder
+sealed trait Finder {
+  def toDebugString : String
+}
 
 //@todo get these into different files. Picklers need them all here for some reason even though sealed should be package, not file specific
-case class StringFinder(rule: StringEnums, string: String, occurrence: Int = 0) extends Finder
+case class StringFinder(rule: StringEnums, string: String, occurrence: Int = 0) extends Finder {
+  def toDebugString : String = s"${rule.toDebugString} ${string} ${if (occurrence!=0) s"[${occurrence}]"}"
+}
 
-case class NodeFinder(astType: AstType, range: Range) extends Finder
+case class NodeFinder(astType: AstType, range: Range) extends Finder {
+  def toDebugString : String = s"${astType.name} at [${range.start}, ${range.end}]"
+}
 
-case class RangeFinder(start: Int, end: Int) extends Finder
+case class RangeFinder(start: Int, end: Int) extends Finder {
+  def toDebugString : String = s"Node at [${start}, ${end}]"
+}

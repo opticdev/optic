@@ -2,6 +2,7 @@ package com.opticdev.core
 
 import com.opticdev.common.PackageRef
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
+import com.opticdev.opm.DependencyTree
 import com.opticdev.parsers.graph.{AstType, WithinFile}
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.{Lens, PackageExportable, Schema, SchemaRef}
@@ -9,7 +10,7 @@ import play.api.libs.json.JsObject
 
 package object debug {
 
-  case class DebugAstNode[S <: PackageExportable](nodeType: AstType, range: Range, sdkObject: S) extends WithinFile {
+  case class DebugAstNode[S <: PackageExportable](nodeType: AstType, range: Range, sdkObject: S)(implicit dependencyTree: DependencyTree) extends WithinFile {
     def isSchema = sdkObject.isInstanceOf[Schema]
     def isLens = sdkObject.isInstanceOf[Lens]
     def isTransformation = sdkObject.isInstanceOf[Transformation]
