@@ -14,6 +14,7 @@ import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.markdown.MarkdownParser
 import play.api.libs.json.{JsObject, JsString}
 import OpticMDPackageRangeImplicits._
+import better.files.File
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.GraphOperations
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
@@ -29,11 +30,23 @@ object DebugSourceGear extends SourceGear {
   override val transformations: Set[Transformation] = Set()
   override val schemas: Set[Schema] = Set()
 
-  //make sure to pass in the project context (if present) so OPM can tap into its knowledge paths
-  override def parseString(string: String)(implicit project: ProjectBase): Try[sourcegear.FileParseResults] = Try {
+  var getHostProjectOption: Option[(File)=> Option[ProjectBase]] = None
 
-    implicit val projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths =
-      Try(project.asInstanceOf[OpticProject].projectFile.projectKnowledgeSearchPaths).getOrElse(ProjectKnowledgeSearchPaths())
+  override def parseFile(file: File) (implicit project: ProjectBase) : Try[FileParseResults] = {
+
+    val projectKnowledgeSearchPaths = getHostProjectOption.flatMap(_.apply(file)).getOrElse(project) match {
+      case a: OpticProject => a.projectFile.projectKnowledgeSearchPaths
+      case _ => ProjectKnowledgeSearchPaths()
+    }
+
+
+    Try(file.contentAsString).flatMap(i => parseStringWithKnowledgePaths(i)(project, projectKnowledgeSearchPaths))
+  }
+
+  override def parseString(string: String)(implicit project: ProjectBase): Try[sourcegear.FileParseResults] =
+    parseStringWithKnowledgePaths(string)(project, ProjectKnowledgeSearchPaths())
+
+  def parseStringWithKnowledgePaths(string: String)(implicit project: ProjectBase, projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths): Try[sourcegear.FileParseResults] = Try {
 
     MarkdownParser.parseMarkdownString(string).map(result => {
       val dependenciesTry = Try(result.dependencies.value.map(i=> PackageRef.fromString(i.as[JsString].value).get))

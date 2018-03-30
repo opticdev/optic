@@ -7,7 +7,7 @@ import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
 import better.files.File
-import com.opticdev.server.http.routes.socket.editors.Protocol._
+import com.opticdev.server.http.routes.socket.debuggers.debuggers.Protocol._
 import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
@@ -20,9 +20,9 @@ class DebuggerConnection(slug: String, actorSystem: ActorSystem)(implicit projec
 
   private[this] val connectionActor = actorSystem.actorOf(Props(classOf[DebuggerConnectionActor], slug, projectsManager))
 
-  def chatInSink(sender: String) = Sink.actorRef[EditorEvents](connectionActor, Terminated())
+  def chatInSink(sender: String) = Sink.actorRef[DebuggerEvents](connectionActor, Terminated())
 
-  def sendUpdate(event: UpdateEditorEvent) = {
+  def sendUpdate(event: UpdateDebuggerEvent) = {
     connectionActor ! event
   }
 
@@ -54,14 +54,13 @@ class DebuggerConnection(slug: String, actorSystem: ActorSystem)(implicit projec
 }
 
 object DebuggerConnection extends ConnectionManager[DebuggerConnection] {
-  case class EditorInformation(name: String, version: String)
 
   override def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
-    println(slug+" editor connected")
+    println(slug+" debugger connected")
     new DebuggerConnection(slug, actorSystem)
   }
 
-  def broadcastUpdate(update: UpdateEditorEvent) = listConnections.foreach(i=> i._2.sendUpdate(update))
+  def broadcastUpdate(update: UpdateDebuggerEvent) = listConnections.foreach(i=> i._2.sendUpdate(update))
 
   def killDebugger(slug: String) = {
     println(slug+" debugger disconnected")

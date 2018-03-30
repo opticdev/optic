@@ -7,7 +7,7 @@ import com.opticdev.opm.context.Context
 import com.opticdev.parsers.graph.{AstType, WithinFile}
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.{Lens, PackageExportable, Schema, SchemaRef}
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, JsValue}
 
 package object debug {
 
@@ -39,6 +39,8 @@ package object debug {
     //  val containerNode = AstType(debugLanguageProxy, "CONTAINER")
   }
 
-  trait DebugInfo
+  trait DebugInfo {
+    def toJson : JsValue
+  }
 
 }

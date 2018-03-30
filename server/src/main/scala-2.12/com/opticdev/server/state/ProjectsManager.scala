@@ -8,6 +8,7 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server
 import com.opticdev.core.actorSystem
+import com.opticdev.core.debug.{DebugMarkdownProject, DebugSourceGear}
 import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, ProjectStatus}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
 import com.opticdev.server.http.routes.socket.agents.{AgentConnection, KnowledgeGraphUpdate, StatusUpdate}
@@ -25,6 +26,12 @@ class ProjectsManager {
 
   private var arrowStore: Map[OpticProject, Arrow] = Map()
   private var projectsStore: Vector[OpticProject] = Vector()
+
+  //do not allocate unless it's being used.
+  lazy val debugMarkdownProject = {
+    DebugSourceGear.getHostProjectOption = Some((file)=> lookupProject(file).toOption)
+    DebugMarkdownProject()
+  }
 
   private def addProject(project: OpticProject) : Unit =  {
 
