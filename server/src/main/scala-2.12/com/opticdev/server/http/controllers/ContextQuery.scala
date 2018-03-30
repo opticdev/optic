@@ -20,13 +20,13 @@ import scala.util.{Failure, Success, Try}
 
 class ContextQuery(file: File, range: Range, contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
 
-  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode], availableTransformations: Vector[Result])
+  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result])
 
   def execute : Future[ContextQueryResults] = {
 
     val projectOption = projectsManager.lookupProject(file)
 
-    def query = Future {
+    def query: Future[Vector[LinkedModelNode[CommonAstNode]]] = Future {
       if (projectOption.isFailure) throw new FileNotInProjectException(file)
 
       val graph = new ProjectGraphWrapper(projectOption.get.projectGraph)
@@ -42,7 +42,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
         val resolved: immutable.Seq[LinkedModelNode[CommonAstNode]] = o.map(_.resolve[CommonAstNode]())
 
         //filter only models where the ranges intersect
-        resolved.filter(node => (node.root.range intersect range.inclusive).nonEmpty)
+        resolved.filter(node => (node.root.range intersect range.inclusive).nonEmpty).toVector
 
       } else {
         val project = projectOption.get
@@ -55,18 +55,16 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
       }
     }
 
-    def addTransformationsAndFinalize(modelResults: Vector[LinkedModelNode]) = Future {
+    def addTransformationsAndFinalize(modelResults: Vector[LinkedModelNode[CommonAstNode]]): Future[ContextQueryResults] = Future {
       val modelContext = ModelContext(file, range, modelResults.map(_.flatten))
       val arrow = projectsManager.lookupArrow(projectOption.get).get
       ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext))
     }
 
-
     if (contentsOption.isDefined && projectOption.isSuccess) {
       projectOption.get.stageFileContents(file, contentsOption.get)
-        .map(i=> query).flatten
-        .map(addTransformationsAndFinalize)
-        .flatten
+        .flatMap(i=> query)
+        .flatMap(i=> addTransformationsAndFinalize(i))
     } else {
       query.map(addTransformationsAndFinalize).flatten
     }

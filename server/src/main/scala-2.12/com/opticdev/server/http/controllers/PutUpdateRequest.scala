@@ -6,7 +6,7 @@ import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
-import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.project.monitoring.StagedContent
 import com.opticdev.server.data.{APIResponse, ModelNodeWithIdNotFound, ServerExceptions}
 import com.opticdev.server.http.routes.socket.editors.Protocol.FilesUpdated
@@ -29,7 +29,7 @@ class PutUpdateRequest(id: String, newValue: JsObject)(implicit projectsManager:
     val modelNodeOption = projectsManager.nodeKeyStore.lookupId(id)
     if (modelNodeOption.isDefined) {
 
-      implicit val project: OpticProject = modelNodeOption.get.project
+      implicit val project: ProjectBase = modelNodeOption.get.project
       implicit val sourceGearContext = modelNodeOption.get.getContext.get
       //@todo make this play nicely with out File monitoring system
       implicit val fileContents = sourceGearContext.fileContents

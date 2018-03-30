@@ -22,10 +22,10 @@ class EditorConnectionSocketSpec extends SocketTestFixture with TestBase with Pr
   implicit val projectsManager = Await.result(future, 10 seconds)
 
   val wsClient = WSProbe()
-  val editorConnectionRoute = new SocketRoute()
+  val socketRoute = new SocketRoute()
 
 
-  WS("/socket/editor/sublime", wsClient.flow) ~> editorConnectionRoute.route ~>
+  WS("/socket/editor/sublime", wsClient.flow) ~> socketRoute.route ~>
     check {
 
       it("Connects properly") {

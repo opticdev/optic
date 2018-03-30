@@ -15,9 +15,9 @@ class AgentConnectionSocketSpec extends SocketTestFixture {
 
   val wsClient = WSProbe()
 
-  val editorConnectionRoute = new SocketRoute()
+  val socketRoute = new SocketRoute()
 
-  WS("/socket/agent/1.0", wsClient.flow) ~> editorConnectionRoute.route ~>
+  WS("/socket/agent/optic-agent", wsClient.flow) ~> socketRoute.route ~>
     check {
 
       it("Connects properly") {

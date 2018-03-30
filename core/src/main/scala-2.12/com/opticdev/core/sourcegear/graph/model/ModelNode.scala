@@ -44,7 +44,7 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
     expandedValueStore.get
   }
 
-  def getContext()(implicit actorCluster: ActorCluster, project: OpticProject): Try[SGContext] = Try(SGContext.forModelNode(this).get)
+  def getContext()(implicit actorCluster: ActorCluster, project: ProjectBase): Try[SGContext] = Try(SGContext.forModelNode(this).get)
 
 }
 
