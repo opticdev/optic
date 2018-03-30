@@ -115,7 +115,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
 
   def projectGraph: ProjectGraph = {
-    implicit val timeout = Timeout(2 seconds)
+    implicit val timeout = Timeout(15 seconds)
     val future = projectActor ? CurrentGraph
     Await.result(future, timeout.duration).asInstanceOf[ProjectGraphWrapper].projectGraph
   }

@@ -6,7 +6,7 @@ import com.opticdev.core.compiler.errors.{CompilerException, ErrorAccumulator}
 import com.opticdev.core.compiler.stages.SnippetStage
 import com.opticdev.opm.context.{Context, PackageContext}
 import com.opticdev.sdk.descriptions._
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 
 import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
@@ -15,9 +15,9 @@ import com.opticdev.common.rangeJsonFormats
 
 object LensDebug {
 
-  case class CodeComponentInfo(propertyPath: String, finder: String)
+  case class CodeComponentInfo(propertyPath: String, finder: String, error: Option[String] = None)
   case class HighlightComponent(component: CodeComponentInfo, range: Range)
-  case class ComponentsInfo(isSuccess: Boolean, found: Seq[HighlightComponent], notFound: Seq[FinderError])
+  case class ComponentsInfo(isSuccess: Boolean, found: Seq[HighlightComponent], notFound: Seq[CodeComponentInfo])
 
   case class HighlightContainer(subContainerName: String, range: Range)
   case class ContainersInfo(isSuccess: Boolean, found: Seq[HighlightContainer], notFound: Seq[String])
@@ -25,13 +25,13 @@ object LensDebug {
   case class VariablesInfo(name: String, ranges: Seq[Range])
 
   //json formatters
-  lazy val codeComponentInfoFormats = Json.format[CodeComponentInfo]
-  lazy val highlightComponentsFormats = Json.format[HighlightComponent]
-  lazy val componentsInfoFormats = Json.format[ComponentsInfo]
-  lazy val highlightsContainerFormats = Json.format[HighlightContainer]
-  lazy val containersInfoFormats = Json.format[ContainersInfo]
-  lazy val variablesInfoFormats = Json.format[VariablesInfo]
-  lazy val lensDebugInfoFormats = Json.format[LensDebugInfo]
+  implicit lazy val codeComponentInfoFormats = Json.format[CodeComponentInfo]
+  implicit lazy val highlightComponentsFormats = Json.format[HighlightComponent]
+  implicit lazy val componentsInfoFormats = Json.format[ComponentsInfo]
+  implicit lazy val highlightsContainerFormats = Json.format[HighlightContainer]
+  implicit lazy val containersInfoFormats = Json.format[ContainersInfo]
+  implicit lazy val variablesInfoFormats = Json.format[VariablesInfo]
+  implicit lazy val lensDebugInfoFormats = Json.format[LensDebugInfo]
 
   case class LensDebugInfo(isSuccess: Boolean,
                            snippetStageError: Option[String],
@@ -39,9 +39,9 @@ object LensDebug {
                            containersInfo: Option[ContainersInfo],
                            variables: Seq[VariablesInfo],
                            gearId: Option[String]
-                          ) {
+                          ) extends DebugInfo {
 
-    def toJson : JsValue = Json.toJson[LensDebugInfo](this)
+    def toJson : JsValue = Json.toJson[LensDebugInfo](this).as[JsObject] + ("sdkType" -> JsString("lens"))
   }
 
 
@@ -65,9 +65,11 @@ object LensDebug {
         val foundWithHighlights: Seq[HighlightComponent] = {
           val foundComponents = finderOutput.componentFinders.flatMap(_._2).toVector.distinct.asInstanceOf[Seq[CodeComponent]]
           foundComponents.map(i=> HighlightComponent(CodeComponentInfo(i.toDebugString, i.finder.toDebugString), finderOutput.componentFinders.find(_._2.contains(i)).get._1.targetNode.range))
-        }
+        }.sortBy(_.range.start)
 
-        Some(ComponentsInfo(!finderOutput.hasErrors, foundWithHighlights, finderOutput.failedFinders))
+        Some(ComponentsInfo(!finderOutput.hasErrors, foundWithHighlights, finderOutput.failedFinders.map(f=> {
+          CodeComponentInfo(f.codeComponent.toDebugString, f.codeComponent.finder.toDebugString, Some(f.error))
+        })))
       } else None
     }
 

@@ -36,7 +36,8 @@ class SDKObjectsDebugSpec extends TestBase with TestPackageProviders {
     }
 
     it("Can be turned into JSON") {
-
+      val lensDebug = LensDebug.run(importLens.lens, importLens.packageContext)
+      assert(lensDebug.toJson == Json.parse("{\"isSuccess\":true,\"componentsInfo\":{\"isSuccess\":true,\"found\":[{\"component\":{\"propertyPath\":\"definedAs\",\"finder\":\"Entire definedAs ()\"},\"range\":{\"start\":4,\"end\":13}},{\"component\":{\"propertyPath\":\"pathTo\",\"finder\":\"Containing pathTo ()\"},\"range\":{\"start\":24,\"end\":32}}],\"notFound\":[]},\"containersInfo\":{\"isSuccess\":true,\"found\":[],\"notFound\":[]},\"variables\":[],\"gearId\":\"88cbe311\",\"sdkType\":\"lens\"}"))
     }
 
   }

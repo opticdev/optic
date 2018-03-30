@@ -18,6 +18,7 @@ import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.GraphOperations
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
+import com.opticdev.opm.context._
 
 import scala.util.{Failure, Success, Try}
 
@@ -40,13 +41,14 @@ object DebugSourceGear extends SourceGear {
       val dependencies = dependenciesTry.get
       val dependencyTreeTry = PackageManager.collectPackages(dependencies)
       require(dependencyTreeTry.isSuccess, "Could not resolve dependencies "+ dependencyTreeTry.failed.get.toString)
-      implicit val dependencyTree = dependencyTreeTry.get
+      val dependencyTree = dependencyTreeTry.get
       val dependencyMapping = dependencies.map(dep=> {
         (dep, dependencyTree.leafs.find(_.opticPackage.packageRef.packageId == dep.packageId).get.opticPackage.packageRef)
       }).toMap
 
-
       implicit val opticMDPackage = OpticPackage.fromJson(result.description).get.resolved(dependencyMapping)
+
+      implicit val packageContext = PackageContext(Leaf(opticMDPackage, dependencyTree))
 
       val schemaNodes = opticMDPackage.schemas.map(toAst).collect { case Some(n) => n }
       val lensNodes = opticMDPackage.lenses.map(toAst).collect { case Some(n) => n }
@@ -82,19 +84,19 @@ object DebugSourceGear extends SourceGear {
 
   }.flatten
 
-  def toAst(lens: Lens)(implicit opticMDPackage: OpticMDPackage, dependencyTree: DependencyTree) : Option[DebugAstNode[Lens]] = {
+  def toAst(lens: Lens)(implicit opticMDPackage: OpticMDPackage, packageContext: Context) : Option[DebugAstNode[Lens]] = {
     opticMDPackage.rangeOfLens(lens).map(range=> {
       DebugAstNode(DebugLanguageProxy.lensNode, range, lens)
     })
   }
 
-  def toAst(schema: Schema)(implicit opticMDPackage: OpticMDPackage, dependencyTree: DependencyTree) : Option[DebugAstNode[Schema]] = {
+  def toAst(schema: Schema)(implicit opticMDPackage: OpticMDPackage, packageContext: Context) : Option[DebugAstNode[Schema]] = {
     opticMDPackage.rangeOfSchema(schema).map(range=> {
       DebugAstNode(DebugLanguageProxy.schemaNode, range, schema)
     })
   }
 
-  def toAst(transformation: Transformation)(implicit opticMDPackage: OpticMDPackage, dependencyTree: DependencyTree) : Option[DebugAstNode[Transformation]] = {
+  def toAst(transformation: Transformation)(implicit opticMDPackage: OpticMDPackage, packageContext: Context) : Option[DebugAstNode[Transformation]] = {
     opticMDPackage.rangeOfTransformation(transformation).map(range=> {
       DebugAstNode(DebugLanguageProxy.transformationNode, range, transformation)
     })

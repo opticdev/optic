@@ -12,12 +12,13 @@ import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.core.sourcegear.project.status.{ProjectStatus, _}
 import com.opticdev.parsers.AstGraph
-import com.opticdev.sdk.descriptions.PackageExportable
+import com.opticdev.sdk.descriptions.{Lens, PackageExportable}
 
 import scala.collection.immutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
+import scala.util.Try
 
 case class DebugMarkdownProject(implicit logToCli: Boolean = false, actorCluster: ActorCluster) extends ProjectBase {
 
@@ -52,7 +53,7 @@ case class DebugMarkdownProject(implicit logToCli: Boolean = false, actorCluster
     }
   }
 
-  def contextFor(file: File, range: Range) : Future[Option[PackageExportable]] = {
+  def contextFor(file: File, range: Range): Future[Option[DebugInfo]] = {
     implicit val project = this
     graphForFile(file).map(i=> {
       if (i.isDefined) {
@@ -62,7 +63,12 @@ case class DebugMarkdownProject(implicit logToCli: Boolean = false, actorCluster
         val resolved: Seq[LinkedModelNode[DebugAstNode[PackageExportable]]] = o.map(_.resolve[DebugAstNode[PackageExportable]]())
 
         //Unlike a normal context query ONLY 1 result is possible. Hardcoding singular
-        resolved.find(node => (node.root.range intersect range.inclusive).nonEmpty).map(_.root.sdkObject)
+        resolved.find(node => (node.root.range intersect range.inclusive).nonEmpty).flatMap(found => {
+          found.root.sdkObject match {
+            case l: Lens => Try(LensDebug.run(l, found.root.packageContext)).toOption
+            case _ => None
+          }
+        })
       } else {
         None
       }
