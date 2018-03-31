@@ -25,6 +25,7 @@ object LensDebug {
   case class VariablesInfo(name: String, ranges: Seq[Range])
 
   //json formatters
+  implicit lazy val snippetFormats = Json.format[Snippet]
   implicit lazy val codeComponentInfoFormats = Json.format[CodeComponentInfo]
   implicit lazy val highlightComponentsFormats = Json.format[HighlightComponent]
   implicit lazy val componentsInfoFormats = Json.format[ComponentsInfo]
@@ -34,6 +35,7 @@ object LensDebug {
   implicit lazy val lensDebugInfoFormats = Json.format[LensDebugInfo]
 
   case class LensDebugInfo(isSuccess: Boolean,
+                           snippet: Snippet,
                            snippetStageError: Option[String],
                            componentsInfo: Option[ComponentsInfo],
                            containersInfo: Option[ContainersInfo],
@@ -97,6 +99,14 @@ object LensDebug {
     }.getOrElse(Seq())
 
 
-    LensDebugInfo(isSuccess, snippetStageError, componentsInfo, containersInfo, variables, Try(result.get.id).toOption)
+    LensDebugInfo(
+      isSuccess,
+      lens.snippet,
+      snippetStageError,
+      componentsInfo,
+      containersInfo,
+      variables,
+      Try(result.get.id).toOption
+    )
   }
 }
