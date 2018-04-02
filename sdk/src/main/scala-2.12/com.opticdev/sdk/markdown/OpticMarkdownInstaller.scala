@@ -16,6 +16,8 @@ object OpticMarkdownInstaller {
         Success(CallOpticMarkdown)
       } else {
         println("\nSTARTING OPTIC-MARKDOWN-INSTALL")
+        //clear folder of older version if exists
+        DataDirectory.bin.list.foreach(_.delete(true))
         download(BuildInfo.opticMDTar, BuildInfo.opticMDTarSum)
           .flatMap(unzip)
           .flatMap(npmInstall) match {
@@ -39,9 +41,9 @@ object OpticMarkdownInstaller {
 
     def isInstalled : Boolean = Try {
       val cmd = Seq(PlatformConstants.nodePath, script.pathAsString, "--version")
-      val result = cmd.!!(ProcessLogger(stdout append _, stderr append _))
+      cmd.!!(ProcessLogger(stdout append _, stderr append _))
     } match {
-      case Success(a) => true
+      case Success(a) => a.trim == BuildInfo.opticMDVersion
       case Failure(a) => false
     }
 
@@ -51,9 +53,11 @@ object OpticMarkdownInstaller {
       Json.parse(result).as[JsObject]
     }
 
-//    def parseString : JsObject = {
-//
-//    }
+    def parseString(contents: String) : JsObject = {
+      val cmd = Seq(PlatformConstants.nodePath, script.pathAsString, "--raw", contents)
+      val result = cmd.!!(ProcessLogger(stdout append _, stderr append _))
+      Json.parse(result).as[JsObject]
+    }
   }
 
   private def download(opticMDTar: String, opticMDTarSum: String) : Try[File] = Try {

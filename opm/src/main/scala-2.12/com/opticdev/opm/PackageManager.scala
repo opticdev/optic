@@ -112,7 +112,7 @@ object PackageManager {
           results
         } else {
           val future = provider.resolvePackages(packageRefs:_*)
-          val result = Await.result(future, 20 seconds)
+          val result = Await.result(future, 2 minutes)
           results :+ result
         }
       }
@@ -131,7 +131,7 @@ object PackageManager {
 
     val future = Future.sequence(futures)
 
-    val result = Await.result(future, 20 seconds)
+    val result = Await.result(future, 2 minutes)
 
     import com.opticdev.opm.utils.FlattenBatchResultsImplicits._
 

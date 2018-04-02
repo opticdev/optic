@@ -7,9 +7,9 @@ import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.Path
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import play.api.libs.json.{JsObject, JsString}
-
 import scalax.collection.mutable.Graph
 
 class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
@@ -54,7 +54,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
     val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
 
     it("Can mutate a token") {
-      val resolved = helloWorldImport.resolve
+      val resolved = helloWorldImport.resolve[CommonAstNode]
       import com.opticdev.core.sourcegear.mutate.MutationImplicits._
       implicit val fileContents = File(testFilePath).contentAsString
       val result = resolved.update(JsObject(Seq("definedAs" -> JsString("goodbye"), "pathTo" -> JsString("local"))))

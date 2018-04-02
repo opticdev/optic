@@ -8,12 +8,11 @@ import com.opticdev.core.sourcegear.containers.SubContainerMatch
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
-import com.opticdev.core.sourcegear.project.{OpticProject, Project}
+import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.parsers.graph.{CommonAstNode, AstType, Child}
+import com.opticdev.parsers.graph.{AstType, Child, CommonAstNode}
 import com.opticdev.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.{JsObject, JsValue}
-
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEvaluation
@@ -43,7 +42,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
         MurmurHash3.listHash(variableManager.variables.toList, 2317453)
   }
 
-  def matches(entryNode: CommonAstNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: OpticProject) : Option[ParseResult] = {
+  def matches(entryNode: CommonAstNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: ProjectBase) : Option[ParseResult[CommonAstNode]] = {
 
     val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
 
@@ -129,7 +128,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
     output(matchResults)
   }
 
-  def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: OpticProject) : Option[ParseResult] = None
+  def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase) : Option[ParseResult[CommonAstNode]] = None
 
 
 }
@@ -145,7 +144,7 @@ case class ParseAsModel(description: NodeDescription,
                         additionalParserInformation : AdditionalParserInformation
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
-  override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: OpticProject) : Option[ParseResult] = {
+  override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: ProjectBase) : Option[ParseResult[CommonAstNode]] = {
     if (!matchResults.isMatch) return None
 
     val fields = matchResults.extracted.getOrElse(Set())
@@ -173,7 +172,7 @@ case class ParseAsContainer(description: NodeDescription,
                         additionalParserInformation : AdditionalParserInformation
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
-  override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: OpticProject): Option[ParseResult] = {
+  override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase): Option[ParseResult[CommonAstNode]] = {
 
     None
   }

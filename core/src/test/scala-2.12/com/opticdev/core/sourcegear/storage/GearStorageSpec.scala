@@ -2,7 +2,6 @@ package com.opticdev.core.sourcegear.storage
 
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.sourcegear.storage.GearStorage
 
 class GearStorageSpec extends TestBase with GearUtils {
 

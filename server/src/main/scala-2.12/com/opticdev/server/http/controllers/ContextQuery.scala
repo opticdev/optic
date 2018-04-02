@@ -8,23 +8,25 @@ import com.opticdev.arrow.results.Result
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.server.data._
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsObject}
 
+import scala.collection.immutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 class ContextQuery(file: File, range: Range, contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
 
-  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode], availableTransformations: Vector[Result])
+  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result])
 
   def execute : Future[ContextQueryResults] = {
 
     val projectOption = projectsManager.lookupProject(file)
 
-    def query = Future {
+    def query: Future[Vector[LinkedModelNode[CommonAstNode]]] = Future {
       if (projectOption.isFailure) throw new FileNotInProjectException(file)
 
       val graph = new ProjectGraphWrapper(projectOption.get.projectGraph)
@@ -37,10 +39,10 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
         ).map(_.value.asInstanceOf[ModelNode])
 
         implicit val actorCluster = projectsManager.actorCluster
-        val resolved = o.map(_.resolve())
+        val resolved: immutable.Seq[LinkedModelNode[CommonAstNode]] = o.map(_.resolve[CommonAstNode]())
 
         //filter only models where the ranges intersect
-        resolved.filter(node => (node.root.range intersect range.inclusive).nonEmpty)
+        resolved.filter(node => (node.root.range intersect range.inclusive).nonEmpty).toVector
 
       } else {
         val project = projectOption.get
@@ -53,18 +55,16 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
       }
     }
 
-    def addTransformationsAndFinalize(modelResults: Vector[LinkedModelNode]) = Future {
+    def addTransformationsAndFinalize(modelResults: Vector[LinkedModelNode[CommonAstNode]]): Future[ContextQueryResults] = Future {
       val modelContext = ModelContext(file, range, modelResults.map(_.flatten))
       val arrow = projectsManager.lookupArrow(projectOption.get).get
       ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext))
     }
 
-
     if (contentsOption.isDefined && projectOption.isSuccess) {
       projectOption.get.stageFileContents(file, contentsOption.get)
-        .map(i=> query).flatten
-        .map(addTransformationsAndFinalize)
-        .flatten
+        .flatMap(i=> query)
+        .flatMap(i=> addTransformationsAndFinalize(i))
     } else {
       query.map(addTransformationsAndFinalize).flatten
     }

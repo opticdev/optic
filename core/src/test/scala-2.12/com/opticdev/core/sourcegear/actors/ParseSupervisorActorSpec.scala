@@ -110,4 +110,24 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
 
   }
 
+  describe("faddish routing and mailbox") {
+    it("will not parse intermediate jobs") {
+      val f = fixture
+      val lotsOfWastefulJobs = (0 to 50).map(i=> {
+        ParseFileWithContents(File(getCurrentDirectory+"/test-examples/resources/test_project/app.js"), s"var me = ${i}", self, project)
+      })
+
+      lotsOfWastefulJobs.foreach(j=> f.actorCluster.parserSupervisorRef ! j)
+
+      expectMsgPF() {
+        case ps: ParseSuccessful => assert(ps.parseResults.fileContents == s"var me = 0")
+      }
+
+      expectMsgPF() {
+        case ps: ParseSuccessful => assert(ps.parseResults.fileContents == s"var me = 50")
+      }
+
+    }
+  }
+
 }

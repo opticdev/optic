@@ -5,7 +5,7 @@ name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "0.1.2"
+val appVersion = "0.1.3"
 
 version := appVersion
 
@@ -37,6 +37,7 @@ lazy val sdk = (project in file("sdk")).
     buildInfoKeys := Seq[BuildInfoKey](
       "opticMDTar" -> Constants.opticMDTar,
       "opticMDTarSum" -> Constants.opticMDTarSum,
+      "opticMDVersion" -> Constants.opticMDVersion,
     ),
     buildInfoPackage := "com.opticdev.sdk"
   )

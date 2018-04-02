@@ -47,7 +47,7 @@ case class RenderGear(block: String,
 
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(block)
 
-    implicit val sourceGearContext = SGContext.forGeneration(sourceGear, astGraph, parserRef)
+    implicit val sourceGearContext = SGContext.forRender(sourceGear, astGraph, parserRef)
 
     val isMatch = parseGear.matches(rootNode, true)(astGraph, fileContents, sourceGearContext, null)
     if (isMatch.isEmpty) throw new Error("Can not generate. Snippet does not contain model "+parseGear)

@@ -7,12 +7,13 @@ import com.opticdev.sdk.descriptions.CodeComponent
 import com.opticdev.core.sourcegear.{GearSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
+import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.enums.Literal
 import play.api.libs.json.{JsObject, JsString}
-
 import scalax.collection.mutable.Graph
 
 class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUtils {
@@ -34,7 +35,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
   projectGraphWrapper.addFile(importResults.get.astGraph, File(testFilePath))
 
   val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
-  val resolved = helloWorldImport.resolve
+  val resolved: LinkedModelNode[CommonAstNode] = helloWorldImport.resolve[CommonAstNode]
 
   implicit val fileContents = File(testFilePath).contentAsString
 
