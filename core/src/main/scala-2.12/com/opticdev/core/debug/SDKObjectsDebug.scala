@@ -101,7 +101,7 @@ object LensDebug {
 
     LensDebugInfo(
       isSuccess,
-      lens.snippet,
+      debugInfo.snippetStageOutput.map(_.snippet).getOrElse(lens.snippet), //only use lens snippet when neeeded
       snippetStageError,
       componentsInfo,
       containersInfo,

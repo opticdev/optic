@@ -18,7 +18,9 @@ package object actors {
   case class SetCache(newCache: ParseCache)
 
   //Parser Supervisor & Worker Receive
-  sealed trait ParserRequest
+  sealed trait ParserRequest {
+    val file: File
+  }
   case class ParseFile(file: File, requestingActor: ActorRef, project: ProjectBase)(implicit val sourceGear: SourceGear) extends ParserRequest
   case class ParseFileWithContents(file: File, contents: String, requestingActor: ActorRef, project: ProjectBase)(implicit val sourceGear: SourceGear) extends ParserRequest
 

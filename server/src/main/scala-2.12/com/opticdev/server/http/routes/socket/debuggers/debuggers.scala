@@ -26,7 +26,13 @@ package object debuggers {
 
     case object DebugLoading extends UpdateDebuggerEvent {
       override def asJson: JsValue = JsObject(
-          Seq("event"-> JsString("debug-information")
+          Seq("event"-> JsString("debug-loading")
+        ))
+    }
+
+    case object NoneFound extends UpdateDebuggerEvent {
+      override def asJson: JsValue = JsObject(
+        Seq("event"-> JsString("debug-none")
         ))
     }
 

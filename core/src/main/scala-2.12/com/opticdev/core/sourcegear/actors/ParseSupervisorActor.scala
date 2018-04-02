@@ -14,15 +14,21 @@ import com.opticdev.core.sourcegear.project.{ProjectBase, Project}
 import com.opticdev.parsers.AstGraph
 
 import scala.concurrent.{Await, Future}
-
+import com.opticdev.scala.akka.HashDispatchedRoutingLogic
 class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor {
   var router = {
     val routees = Vector.fill(SGConstants.parseWorkers) {
-      val r = context.actorOf(WorkerActor.props())
+      val r = context.actorOf(WorkerActor.props().withDispatcher("faddish-parse-worker-mailbox"))
       context watch r
       ActorRefRoutee(r)
     }
-    Router(RoundRobinRoutingLogic(), routees)
+
+    val routingLogic = HashDispatchedRoutingLogic({
+      case pR: ParserRequest => Some(pR.file.pathAsString)
+      case _ => None
+    })
+
+    Router(routingLogic, routees)
   }
 
   override def receive: Receive = handler(new ParseCache)

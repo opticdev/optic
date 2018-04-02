@@ -78,6 +78,7 @@ object Dependencies {
     //for concurrency
     "com.typesafe.akka" %% "akka-actor" % "2.5.4",
     "com.typesafe.akka" %% "akka-stream" % "2.5.4",
+    "com.opticdev" %% "akka-faddish-mailbox" % "0.1.0",
 
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
     "com.opticdev" %% "marvin-runtime" % "0.1.2",

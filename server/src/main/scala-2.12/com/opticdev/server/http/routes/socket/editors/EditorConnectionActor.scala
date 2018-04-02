@@ -7,7 +7,7 @@ import com.opticdev.server.http.helpers.IsMarkdown
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.agents.Protocol.{ContextFound, SearchResults}
 import com.opticdev.server.http.routes.socket.debuggers.DebuggerConnection
-import com.opticdev.server.http.routes.socket.debuggers.debuggers.Protocol.{DebugInformation, DebugLoading}
+import com.opticdev.server.http.routes.socket.debuggers.debuggers.Protocol.{DebugInformation, DebugLoading, NoneFound}
 import com.opticdev.server.http.routes.socket.{ErrorResponse, Success}
 import com.opticdev.server.http.routes.socket.editors.Protocol._
 import com.opticdev.server.state.ProjectsManager
@@ -41,6 +41,8 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
             DebuggerConnection.broadcastUpdate(
               DebugInformation(file, range, debugInfoOption.get)
             )
+          } else {
+            DebuggerConnection.broadcastUpdate(NoneFound)
           }
         })
       } else {
