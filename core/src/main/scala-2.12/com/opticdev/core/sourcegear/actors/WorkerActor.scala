@@ -1,17 +1,18 @@
 package com.opticdev.core.sourcegear.actors
 
 import akka.actor.{Actor, Props}
+import akka.dispatch.RequiresMessageQueue
 import better.files.File
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.core.sourcegear.FileParseResults
+import com.opticdev.scala.akka.FaddishUnboundedMessageQueueSemantics
 
 import scala.util.Try
 
-class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor {
+class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with RequiresMessageQueue[FaddishUnboundedMessageQueueSemantics] {
   override def receive: Receive = {
-
     case parseRequest : ParseFile => {
       implicit val project = parseRequest.project
       val requestingActor = parseRequest.requestingActor

@@ -71,7 +71,7 @@ case class NodeWithRangeNotFound(rangeFinder: RangeFinder)(implicit val lens: Le
 
 
 //Finder Stage CompilerError
-case class InvalidComponents(invalidComponents: Set[CodeComponent])(implicit val lens: Lens) extends CompilerException {
+case class InvalidComponents(invalidComponents: Seq[CodeComponent])(implicit val lens: Lens) extends CompilerException {
   override def toString = invalidComponents.size+" code components were not found in Snippet."
 }
 

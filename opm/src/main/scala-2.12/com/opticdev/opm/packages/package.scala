@@ -39,7 +39,7 @@ object OpticPackage {
 
   def fromMarkdown(file: File) : Try[StagedPackage] = Try {
     //@todo cleanup errors
-    val parsedOption = MarkdownParser.parseMarkdown(file)
+    val parsedOption = MarkdownParser.parseMarkdownFile(file)
     if (parsedOption.isSuccess /* && parsedOption.get.noErrors */) {
       StagedPackage(parsedOption.get.description)
     } else {

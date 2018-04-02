@@ -1,19 +1,20 @@
 package com.opticdev.server.http.routes.query
 import com.opticdev.sdk.descriptions.{ComponentOptions, Description}
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
+import com.opticdev.parsers.graph.CommonAstNode
 import play.api.libs.json._
 
 sealed trait IsInFile extends QueryComponent
 case class In(filePath: String) extends IsInFile {
   //@todo implement
-  override def evaluate(linkedModelNode: LinkedModelNode): Boolean = true
+  override def evaluate(linkedModelNode: LinkedModelNode[CommonAstNode]): Boolean = true
 }
 case class InFiles(files: Set[String]) extends IsInFile {
   //@todo implement
-  override def evaluate(linkedModelNode: LinkedModelNode): Boolean = true
+  override def evaluate(linkedModelNode: LinkedModelNode[CommonAstNode]): Boolean = true
 }
 case object AnyFile extends IsInFile {
-  override def evaluate(linkedModelNode: LinkedModelNode): Boolean = true
+  override def evaluate(linkedModelNode: LinkedModelNode[CommonAstNode]): Boolean = true
 }
 
 

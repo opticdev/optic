@@ -45,12 +45,12 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
         (cH._1, ContainerNodeMapping(node, path))
       })
 
-      SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerMappings, parser)
+      SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerMappings, parser, missingContainers(containerMappings))
     } else {
 
       val (enterOn, children, matchType) = enterOnAndMatchType(ast, root)
 
-      SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerMappings, parser)
+      SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerMappings, parser, missingContainers())
 
     }
   }
@@ -144,6 +144,11 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
 
     Snippet(snippet.language, newBlock)
 
+  }
+
+  def missingContainers(containerMappings: ContainerMapping = Map()): Seq[String] = {
+    (lens.subcontainers.map(_.name).toSet diff containerMappings.keys.map(_.name).toSet)
+      .toSeq.sorted
   }
 
 }

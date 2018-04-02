@@ -16,7 +16,7 @@ case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMa
     objectValue.value.asInstanceOf[Map[String, JsObject]]
   }
 
-  lazy val schemas: IndexedSeq[Schema] = (description \ "schemas").getOrElse(JsArray.empty).as[JsArray].value.map(i=> {
+  lazy val schemas: Vector[Schema] = (description \ "schemas").getOrElse(JsArray.empty).as[JsArray].value.map(i=> {
     val schemaObject = i.as[JsObject]
     val id = (schemaObject \ "id").get.as[JsString].value
     val definition = (schemaObject \ "definition").get.as[JsObject]

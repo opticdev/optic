@@ -1,9 +1,9 @@
 package com.opticdev.core.sourcegear
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
 import com.opticdev.core.sourcegear.graph.model.ModelNode
-import com.opticdev.core.sourcegear.project.{OpticProject, Project}
+import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{CommonAstNode, AstType}
+import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 
 //@todo make this class immutable
 class GearSet(initialGears: Gear*) {
@@ -47,7 +47,7 @@ class GearSet(initialGears: Gear*) {
 
   def grouped: Map[AstType, Set[Gear]] = groupedStore
 
-  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: OpticProject): FileParseResults = {
+  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase): FileParseResults = {
     val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[CommonAstNode].nodeType)
 
     //@todo optimize this

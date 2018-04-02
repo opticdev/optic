@@ -16,6 +16,8 @@ trait ConnectionManager[A <: Connection] {
 
   def listConnections = connections
 
+  def hasConnection = connections.nonEmpty
+
   def findOrCreate(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager): A = {
     connections.getOrElse(slug, createEditorConnection(slug))
   }

@@ -4,6 +4,7 @@ import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.server.state.ProjectsManager
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
@@ -13,7 +14,7 @@ import scala.util.Try
 
 object ModelNodeJsonImplicits {
 
-  implicit class ModelNodeJson(modelNode: LinkedModelNode) {
+  implicit class ModelNodeJson(modelNode: LinkedModelNode[CommonAstNode]) {
 
     def sourceGearContext()(implicit project: OpticProject) : SGContext = {
       implicit val sourceGear = project.projectSourcegear

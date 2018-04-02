@@ -38,20 +38,12 @@ object Compiler {
   }
 
   class CompileWorker(sourceLens: Lens) {
-    def compile()(implicit packageContext: Context, completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator, logToCli: Boolean = false): LensCompilerOutput = {
+    def compile()(implicit packageContext: Context, completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator, debug: Boolean = false): LensCompilerOutput = {
       implicit val lens = sourceLens
-
-//      val cliLogger = new InstallSessionMonitor(lens.name)
-
-//      if (logToCli) cliLogger.start
 
       //@todo reorder this / abstract. Looks very dirty.
 
-//      if (logToCli) cliLogger.validateDescription
-
       val validationOutput = new ValidationStage().run
-
-//      if (logToCli) cliLogger.parsingSnippets
 
       //Find the right parser and snippets into an AST Tree Graph
       val snippetBuilder = new SnippetStage(lens.snippet)
@@ -61,8 +53,6 @@ object Compiler {
       //snippet stage must succeed for anything else to happen.
       if (snippetOutput.isSuccess) {
 
-//        if (logToCli) cliLogger.evaluatingFinders
-
         implicit val variableManager = new VariableManager(lens.variables, snippetOutput.get.parser.identifierNodeDesc)
         implicit val subcontainersManager = new SubContainerManager(lens.subcontainers, snippetOutput.get.containerMapping)
 
@@ -70,19 +60,15 @@ object Compiler {
         val finderStageOutput = Try(finderStage.run)
 
         if (finderStageOutput.isSuccess) {
-//          if (logToCli) cliLogger.writingParser
           val parser = Try(new ParserFactoryStage(snippetOutput.get, finderStageOutput.get).run)
 
           if (parser.isSuccess) {
-//            if (logToCli) cliLogger.writingGenerator
             val renderer = Try(new RenderFactoryStage(snippetOutput.get, parser.get.parseGear).run)
             if (renderer.isSuccess) {
 
               val finalGear = Gear(lens.name, lens.packageRef.full, lens.schema, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], renderer.get.renderGear)
 
-//              if (logToCli) cliLogger.gearFinished
-
-              return Success(sourceLens, finalGear)
+              return Success(sourceLens, finalGear, if (debug) Some(DebugOutput(validationOutput, snippetOutput, finderStageOutput, variableManager)) else None)
 
             } else errorAccumulator.handleFailure(renderer.failed)
 

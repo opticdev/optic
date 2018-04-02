@@ -1,26 +1,27 @@
 package com.opticdev.server.http.routes.query
 
-import com.opticdev.sdk.descriptions.Description
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
+import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.sdk.descriptions.Description
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import play.api.libs.json.{JsError, JsSuccess, _}
 
 trait ValuePredicate extends QueryComponent
 
 case class Equals(propertyPath: Seq[String], value: JsValue) extends ValuePredicate {
-  override def evaluate(linkedModelNode: LinkedModelNode): Boolean = {
+  override def evaluate(linkedModelNode: LinkedModelNode[CommonAstNode]): Boolean = {
     val propertyValueOption = new PropertyPathWalker(linkedModelNode.value).getProperty(propertyPath)
     if (propertyValueOption.isDefined) propertyValueOption.get == value else false
   }
 }
 case class NotEqual(propertyPath: Seq[String], value: JsValue) extends ValuePredicate {
-  override def evaluate(linkedModelNode: LinkedModelNode): Boolean = {
+  override def evaluate(linkedModelNode: LinkedModelNode[CommonAstNode]): Boolean = {
     val propertyValueOption = new PropertyPathWalker(linkedModelNode.value).getProperty(propertyPath)
     if (propertyValueOption.isDefined) propertyValueOption.get != value else false
   }
 }
 case class OneOf(propertyPath: Seq[String], values: Set[JsValue]) extends ValuePredicate {
-  override def evaluate(linkedModelNode: LinkedModelNode): Boolean = {
+  override def evaluate(linkedModelNode: LinkedModelNode[CommonAstNode]): Boolean = {
     val propertyValueOption = new PropertyPathWalker(linkedModelNode.value).getProperty(propertyPath)
     if (propertyValueOption.isDefined) values.contains(propertyValueOption.get) else false
   }

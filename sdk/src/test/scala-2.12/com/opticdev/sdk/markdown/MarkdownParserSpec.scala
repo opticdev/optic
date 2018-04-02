@@ -13,16 +13,21 @@ class MarkdownParserSpec extends FunSpec with BeforeAndAfterAll {
   }
 
   it("will succeed if given a valid file") {
-    val outputTry = MarkdownParser.parseMarkdown(File("test-examples/resources/example_markdown/Importing-JS.md"))
+    val outputTry = MarkdownParser.parseMarkdownFile(File("test-examples/resources/example_markdown/Importing-JS.md"))
+    assert(outputTry.isSuccess)
+  }
+
+  it("will succeed if given a valid string") {
+    val outputTry = MarkdownParser.parseMarkdownString(File("test-examples/resources/example_markdown/Importing-JS.md").contentAsString)
     assert(outputTry.isSuccess)
   }
 
   it("will fail if given no file") {
-    assert(MarkdownParser.parseMarkdown(File("")).isFailure)
+    assert(MarkdownParser.parseMarkdownFile(File("")).isFailure)
   }
 
   it("will fail if given an invalid file") {
-    assert(MarkdownParser.parseMarkdown(File("not-real.file")).isFailure)
+    assert(MarkdownParser.parseMarkdownFile(File("not-real.file")).isFailure)
   }
 
 }

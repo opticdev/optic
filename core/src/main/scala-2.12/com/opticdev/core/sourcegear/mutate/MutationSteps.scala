@@ -18,7 +18,7 @@ import scala.util.{Success, Try}
 object MutationSteps {
 
   //require newValue to be a valid model.
-  def collectFieldChanges(linkedModelNode: LinkedModelNode, newValue: JsObject): List[Try[UpdatedField]] = {
+  def collectFieldChanges(linkedModelNode: LinkedModelNode[CommonAstNode], newValue: JsObject): List[Try[UpdatedField]] = {
     val components = linkedModelNode.parseGear.components.flatMap(_._2).toSet
 
     def collectComponentValues(value: JsObject): Set[(Component, JsValue)] = {
@@ -44,7 +44,7 @@ object MutationSteps {
 
   }
 
-  def collectVariableChanges(linkedModelNode: LinkedModelNode, variableChanges: VariableChanges) (implicit sourceGearContext: SGContext, fileContents: String) : List[AstChange] = {
+  def collectVariableChanges(linkedModelNode: LinkedModelNode[CommonAstNode], variableChanges: VariableChanges) (implicit sourceGearContext: SGContext, fileContents: String) : List[AstChange] = {
     if (variableChanges.hasChanges) {
       val foundIdentifierNodes = sourceGearContext.astGraph.nodes.collect {
         case n if n.isASTType(variableChanges.identifierNodeDesc.nodeType) => n.value.asInstanceOf[CommonAstNode]

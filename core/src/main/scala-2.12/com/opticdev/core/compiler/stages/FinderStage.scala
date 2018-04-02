@@ -1,28 +1,30 @@
 package com.opticdev.core.compiler.stages
 
-import com.opticdev.core.compiler.{FinderStageOutput, SnippetStageOutput}
+import com.opticdev.core.compiler.{FinderError, FinderStageOutput, SnippetStageOutput}
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, InvalidComponents}
 import com.opticdev.core.compiler.helpers.{FinderEvaluator, FinderPath}
 import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.sdk.descriptions.Lens
-import com.opticdev.sdk.descriptions.enums.{Literal, Token, ObjectLiteral}
+import com.opticdev.sdk.descriptions.{CodeComponent, Lens}
+import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
 import com.opticdev.sdk.descriptions.finders.Finder
 
+import scala.collection.immutable
 import scala.util.{Failure, Success, Try}
 
-class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Lens, errorAccumulator: ErrorAccumulator = new ErrorAccumulator, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[FinderStageOutput] {
+class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Lens, errorAccumulator: ErrorAccumulator = new ErrorAccumulator, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty, debug: Boolean = false) extends CompilerStage[FinderStageOutput] {
   override def run: FinderStageOutput = {
 
     import com.opticdev.sdk.descriptions.helpers.ComponentImplicits._
 
     implicit val evaluatedFinderPaths = scala.collection.mutable.Map[Finder, FinderPath]()
 
-    val finderPaths = lens.components.codeComponents.map(c=> {
+    val evaluated = lens.components.codeComponents.map(c=> {
       val finderPathTry = pathForFinder(c.finder)
       if (finderPathTry.isFailure) {
         errorAccumulator.add(finderPathTry.asInstanceOf[Failure[Exception]].exception)
-        null
+        val errorString = finderPathTry.asInstanceOf[Failure[Exception]].exception.toString
+        FinderError(c, errorString)
       } else {
         val finderPath = finderPathTry.get
 
@@ -35,11 +37,20 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
 
         (typedComponent, finderPathTry.get)
       }
-    }).filterNot(_ == null)
+    })
 
-    if (finderPaths.size != lens.components.codeComponents.size) {
-      val invalidComponents = lens.components.codeComponents.toSet diff finderPaths.map(_._1).toSet
-      throw new InvalidComponents(invalidComponents)
+
+    val finderPaths = evaluated.collect {
+      case a: (CodeComponent, FinderPath) => a
+    }
+
+    val invalidComponents = evaluated.collect {
+      case a: FinderError => a
+    }
+
+    //do not interrupt when in debug mode
+    if (invalidComponents.nonEmpty && !debug) {
+      throw new InvalidComponents(invalidComponents.map(_.codeComponent))
     }
 
     val variableRules = variableManager.rules(snippetStageOutput)
@@ -59,7 +70,7 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
     val componentsGrouped = finderPaths.groupBy(_._2).mapValues(_.map(_._1))
     val rulesGrouped      = rulePaths.groupBy(_._2).mapValues(_.map(_._1))
 
-    FinderStageOutput(componentsGrouped, rulesGrouped)
+    FinderStageOutput(componentsGrouped, rulesGrouped, invalidComponents)
 
   }
 

@@ -1,12 +1,13 @@
 package com.opticdev.server.http.routes.query
 import com.opticdev.sdk.descriptions.Description
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
+import com.opticdev.parsers.graph.CommonAstNode
 import play.api.libs.json.{JsResult, JsValue, Json, Reads}
 
 import scala.util.Try
 
 case class ModelQuery(file: IsInFile = AnyFile, predicates: Vector[ValuePredicate] = Vector()) extends QueryComponent {
-  override def evaluate(linkedModelNode: LinkedModelNode): Boolean =
+  override def evaluate(linkedModelNode: LinkedModelNode[CommonAstNode]): Boolean =
     file.evaluate(linkedModelNode) && predicates.forall(_.evaluate(linkedModelNode))
 }
 

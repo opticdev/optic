@@ -37,6 +37,7 @@ lazy val sdk = (project in file("sdk")).
     buildInfoKeys := Seq[BuildInfoKey](
       "opticMDTar" -> Constants.opticMDTar,
       "opticMDTarSum" -> Constants.opticMDTarSum,
+      "opticMDVersion" -> Constants.opticMDVersion,
     ),
     buildInfoPackage := "com.opticdev.sdk"
   )

@@ -1,11 +1,13 @@
 package com.opticdev.core.sourcegear.graph
 
 import better.files.File
+import com.opticdev.core.debug.DebugAstNode
 import com.opticdev.core.sourcegear.graph.edges.{InFile, YieldsModel}
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{CommonAstNode, CustomEdge}
+import com.opticdev.parsers.graph.{CommonAstNode, CustomEdge, WithinFile}
 import com.opticdev.parsers.utils.Crypto
+import com.opticdev.sdk.descriptions.PackageExportable
 
 import scala.util.Try
 import scalax.collection.GraphPredef.Param
@@ -56,8 +58,8 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph) {
 
       if (fromNode.isModel && toNode.isModel) {
         newProjectGraph add (fromNode.asInstanceOf[BaseModelNode] ~+#> toNode.asInstanceOf[BaseModelNode]) (edge.label)
-      } else if (fromNode.isAstNode() && toNode.isModel && edge.label.isInstanceOf[YieldsModel]) {
-        newProjectGraph add (fileNode ~+#> toNode.asInstanceOf[BaseModelNode]) (InFile(fromNode.asInstanceOf[CommonAstNode].range))
+      } else if ( (fromNode.isAstNode() || fromNode.isInstanceOf[DebugAstNode[PackageExportable]]) && toNode.isModel && edge.label.isInstanceOf[YieldsModel]) {
+        newProjectGraph add (fileNode ~+#> toNode.asInstanceOf[BaseModelNode]) (InFile(fromNode.asInstanceOf[WithinFile].range))
       }
     })
     newProjectGraph
