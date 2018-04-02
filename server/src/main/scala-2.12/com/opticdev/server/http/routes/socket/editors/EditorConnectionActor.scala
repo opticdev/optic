@@ -5,7 +5,7 @@ import better.files.File
 import com.opticdev.server.http.controllers.{ArrowQuery, ContextQuery, DebugQuery}
 import com.opticdev.server.http.helpers.IsMarkdown
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
-import com.opticdev.server.http.routes.socket.agents.Protocol.{ContextFound, SearchResults}
+import com.opticdev.server.http.routes.socket.agents.Protocol.{ContextFound, NoContextFound, SearchResults}
 import com.opticdev.server.http.routes.socket.debuggers.DebuggerConnection
 import com.opticdev.server.http.routes.socket.debuggers.debuggers.Protocol.{DebugInformation, DebugLoading, NoneFound}
 import com.opticdev.server.http.routes.socket.{ErrorResponse, Success}
@@ -36,6 +36,8 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
       //override for markdown debugger. only run if we have debuggers listening (costly otherwise)
       if (IsMarkdown.check(asFile) && (DebuggerConnection.hasConnection || System.getenv().containsKey("forceDebug"))) {
         DebuggerConnection.broadcastUpdate(DebugLoading)
+        //clear out blue dot
+        AgentConnection.broadcastUpdate(NoContextFound(file, range))
         new DebugQuery(asFile, range)(projectsManager).execute.map(debugInfoOption=> {
           if (debugInfoOption.isDefined) {
             DebuggerConnection.broadcastUpdate(

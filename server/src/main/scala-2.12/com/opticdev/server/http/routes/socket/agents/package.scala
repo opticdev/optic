@@ -35,6 +35,15 @@ package object agents {
       )
     }
 
+    case class NoContextFound(filePath: String, range: Range, isError: Boolean = false) extends OpticEvent with UpdateAgentEvent {
+      def asJson = JsObject(Seq(
+        "event"-> JsString("context-found"),
+        "filePath" -> JsString(filePath),
+        "range" -> range.toJson,
+        (if (isError) "errors" else "results") -> JsObject(Seq("models" -> JsArray.empty, "transformations" -> JsArray.empty)))
+      )
+    }
+
     case class SearchResults(query: String, results: JsValue, ignoreQueryUpdate: Boolean = false) extends OpticEvent with UpdateAgentEvent {
       def asJson = JsObject(Seq(
         "event"-> JsString("search-results"),
