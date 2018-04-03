@@ -34,7 +34,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
 
   override def asJson = {
     JsObject(Seq(
-      "name" -> JsString(transformationChange.transformation.name),
+      "name" -> JsString(transformationChange.transformation.yields),
       "projectName" -> JsString(project.name),
       "packageId" -> JsString(transformationChange.transformation.packageId.full),
       "input" -> JsString(transformationChange.transformation.input.full),

@@ -23,7 +23,7 @@ object GraphSerialization {
           "from" -> JsString(e.from.value.id),
           "to" -> JsString(e.to.value.id),
           "label" -> JsObject(Seq(
-            "name" -> JsString(e.label.asInstanceOf[Transformation].name),
+            "name" -> JsString(e.label.asInstanceOf[Transformation].yields),
             "packageFull" -> JsString(e.label.asInstanceOf[Transformation].packageId.full)
           )),
           "isTransformation" -> JsBoolean(true)

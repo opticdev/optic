@@ -69,7 +69,7 @@ abstract class SourceGear {
       | Parsers: ${parsers.map(_.parserRef.full).mkString(",")}
       | Schemas: ${schemas.map(_.schemaRef.full).mkString(",")}
       | Gears: ${gearSet.listGears.map(_.name).mkString(",")}
-      | Transformations: ${transformations.map(_.name).mkString(",")}
+      | Transformations: ${transformations.map(_.yields).mkString(",")}
     """.stripMargin)
 
   def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, Gear)] = Render.fromStagedNode(stagedNode)(this)

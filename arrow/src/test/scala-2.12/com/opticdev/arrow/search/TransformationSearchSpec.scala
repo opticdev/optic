@@ -24,7 +24,7 @@ class TransformationSearchSpec extends TestBase {
     val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph)
 
     assert(results.size == 1)
-    assert(results.head.transformationChange.asInstanceOf[DirectTransformation].transformation.name == "Model -> Route")
+    assert(results.head.transformationChange.asInstanceOf[DirectTransformation].transformation.yields == "Model -> Route")
 
   }
 
