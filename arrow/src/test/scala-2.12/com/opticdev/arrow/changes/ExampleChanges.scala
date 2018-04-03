@@ -178,7 +178,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |[{
         |		"transformationChanges": {
         |			"transformation": {
-        |				"name": "Model -> Route",
+        |				"yields": "Model -> Route",
         |				"packageId": "optic:test-transform@latest",
         |				"input": "optic:rest@0.1.0/model",
         |				"output": "optic:rest@0.1.0/route",
@@ -230,7 +230,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |[{
         |		"transformationChanges": {
         |			"transformation": {
-        |				"name": "Schema -> Create Route",
+        |				"yields": "Schema -> Create Route",
         |				"packageId": "optic:mongoose@0.1.0",
         |				"input": "optic:mongoose@0.1.0/schema",
         |				"output": "optic:rest@0.1.0/route",
