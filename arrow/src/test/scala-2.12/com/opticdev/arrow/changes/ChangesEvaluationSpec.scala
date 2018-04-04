@@ -51,7 +51,6 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
     val (changeGroup, sourcegear, expectedChange) = nestedTransformModelToRoute
     val results = changeGroup.evaluateAndWrite(sourcegear)
 
-    println(results.get.stagedFiles.head._2.text)
 
     assert(results.get.stagedFiles.head._2.text == expectedChange)
 
@@ -61,8 +60,6 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
     val (changeGroup, sourcegear, expectedChange) = transformationFromSearch
 
     val results = changeGroup.evaluateAndWrite(sourcegear)
-
-    val text= results.get.stagedFiles.head._2.text
 
     assert(results.get.stagedFiles.head._2.text == expectedChange)
   }
