@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
+import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.parsers.AstGraph

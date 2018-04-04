@@ -8,6 +8,7 @@ import com.opticdev.core.sourcegear.Gear
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import JsonImplicits.opticChangeFormat
+import com.opticdev.arrow.results.ModelOption
 
 sealed trait OpticChange {
   def asJson = Json.toJson[OpticChange](this)
@@ -30,12 +31,18 @@ case class InsertModel( schema: Schema,
 }
 
 case class RunTransformation(transformationChanges: TransformationChanges,
-                             inputValue: JsObject,
+                             inputValue: Option[JsObject],
+
                              gearOptions: Seq[GearOption],
                              gearId: Option[String],
+
                              locationOptions: Seq[InsertLocation],
                              location: Option[InsertLocation],
-                             answers: Option[JsObject]
+
+                             answers: Option[JsObject],
+
+                             objectSelection: Option[String],
+                             objectOptions: Option[Seq[ModelOption]]
                             ) extends OpticChange {
   override def asJson = Json.toJson[OpticChange](this)
 }

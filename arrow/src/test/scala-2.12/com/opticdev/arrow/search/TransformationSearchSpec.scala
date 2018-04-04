@@ -2,7 +2,7 @@ package com.opticdev.arrow.search
 
 import akka.actor.ActorSystem
 import better.files.File
-import com.opticdev.arrow.context.ModelContext
+import com.opticdev.arrow.context.{ModelContext, NoContext}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.graph.model.ModelNode
@@ -25,6 +25,20 @@ class TransformationSearchSpec extends TestBase {
 
     assert(results.size == 1)
     assert(results.head.transformationChange.asInstanceOf[DirectTransformation].transformation.yields == "Model -> Route")
+
+  }
+
+  it("finds transformations based on search query") {
+    import com.opticdev.arrow.ExampleSourcegears.sgWithTransformations._
+
+    val context = NoContext
+
+    val results = TransformationSearch.search("Route", context)(sourceGear, project, knowledgeGraph)
+
+    assert(results.size == 3)
+    assert(results.head.transformationChange.asInstanceOf[DirectTransformation].transformation.yields == "Model -> Route")
+
+    println(results.head.asJson.toString())
 
   }
 

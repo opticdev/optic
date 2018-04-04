@@ -15,6 +15,8 @@ import scalax.collection.edge.Implicits._
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
+import scala.collection.mutable
+
 object ProjectGraphWrapper {
   def empty = new ProjectGraphWrapper(Graph[AstProjection, LkDiEdge]())
 }
@@ -84,6 +86,11 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph) {
 
     } else None
   }
+
+  def query(nodeFilter: (projectGraph.NodeT) => Boolean): Set[AstProjection] =
+    projectGraph.nodes.collect {
+      case n: projectGraph.NodeT if (nodeFilter(n)) => n.value
+    }.toSet
 
   def prettyPrint = {
     //clear it a bit println("\n\n\n")
