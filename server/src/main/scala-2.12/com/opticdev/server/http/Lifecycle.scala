@@ -23,13 +23,13 @@ object Lifecycle extends App {
   DataDirectory.init
 
   //@todo load parsers dynamically.
-  val jar = this.getClass.getClassLoader.getResource("es7_2.12-0.1.2.jar").getFile
+  val jar = this.getClass.getClassLoader.getResource("es7_2.12-0.1.3.jar").getFile
   val parserBase = Try {
     ParserStorage.writeToStorage(File(jar))
     SourceParserManager.installParser(jar).get
   }.getOrElse {
     val withoutFileExtension = jar.substring(5)
-    val pathAsString = (File(withoutFileExtension).parent.parent / "es7_2.12-0.1.2.jar").pathAsString
+    val pathAsString = (File(withoutFileExtension).parent.parent / "es7_2.12-0.1.3.jar").pathAsString
     ParserStorage.writeToStorage(File(pathAsString))
     SourceParserManager.installParser(pathAsString).get
   }

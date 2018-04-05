@@ -19,7 +19,7 @@ class GearSerializationSpec extends TestBase with TestPackageProviders {
 
   it("can turn a gear node into json") {
     val json = GraphSerialization.jsonFromNode(GearNode(exampleProjectSG.gearSet.listGears.find(_.name.contains("Parameter")).get))
-    assert(json == Json.parse("""{"id":"f1cc4d30","name":"Parameter","packageFull":"optic:express-js@0.1.0","type":"gear"}"""))
+    assert(json == Json.parse("""{"id":"a8e4b19b","name":"Parameter","packageFull":"optic:express-js@0.1.0","type":"gear"}"""))
   }
 
   it("can turn a schema node into json") {
@@ -32,7 +32,7 @@ class GearSerializationSpec extends TestBase with TestPackageProviders {
     val graph = IndexSourceGear.runFor(exampleProjectSG)
     val result = GraphSerialization.serialize(graph)
 
-    assert(result == Json.parse("""{"nodes":[{"id":"optic:rest@0.1.0/route","name":"Route","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"f1cc4d30","name":"Parameter","packageFull":"optic:express-js@0.1.0","type":"gear"},{"id":"optic:rest@0.1.0/parameter","name":"Parameter","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"aacee631","name":"Example Route","packageFull":"optic:express-js@0.1.0","type":"gear"}],"edges":[{"n1":"optic:rest@0.1.0/route","n2":"aacee631"},{"n1":"optic:rest@0.1.0/parameter","n2":"f1cc4d30"}]}"""))
+    assert(result == Json.parse("""{"nodes":[{"id":"optic:rest@0.1.0/route","name":"Route","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"85c0d9c3","name":"Example Route","packageFull":"optic:express-js@0.1.0","type":"gear"},{"id":"optic:rest@0.1.0/parameter","name":"Parameter","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"a8e4b19b","name":"Parameter","packageFull":"optic:express-js@0.1.0","type":"gear"}],"edges":[{"n1":"optic:rest@0.1.0/route","n2":"85c0d9c3"},{"n1":"optic:rest@0.1.0/parameter","n2":"a8e4b19b"}]}"""))
   }
 
   it("can serialize a graph with transformations") {

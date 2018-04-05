@@ -7,7 +7,7 @@ import com.opticdev.core.utils.StringUtils
 import com.opticdev.marvin.common.ast.{AstArray, AstProperties, NewAstNode}
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers._
-import com.opticdev.parsers.graph.{CommonAstNode, GraphImplicits}
+import com.opticdev.parsers.graph.{CommonAstNode, GraphImplicits, WithinFile}
 import play.api.libs.json.{JsArray, JsObject, JsValue}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
@@ -37,8 +37,8 @@ case class RenderGear(block: String,
     implicit val fileContents = contents
     implicit val astGraph = parseResult(contents).graph
     val rootNode = astGraph.nodes.toVector
-      .find(node=> entryChild.matchingLoosePredicate(node.value.asInstanceOf[CommonAstNode]))
-      .get.value.asInstanceOf[CommonAstNode]
+      .filter(node => entryChild.matchingLoosePredicate(node.value.asInstanceOf[CommonAstNode]))
+      .minBy(_.value.asInstanceOf[CommonAstNode].graphDepth(astGraph)).value.asInstanceOf[CommonAstNode]
 
     (fileContents, astGraph, rootNode)
   }

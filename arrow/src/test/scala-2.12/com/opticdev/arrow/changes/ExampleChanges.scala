@@ -67,7 +67,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"position": 93,
         |			"_type":"com.opticdev.arrow.changes.location.AsChildOf"
         |		},
-        |   "gearId": "aacee631",
+        |   "gearId": "85c0d9c3",
         |   "answers": {},
         |		"_type":"com.opticdev.arrow.changes.InsertModel"
         |	}]
@@ -132,7 +132,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"method": "post",
         |			"url": "test/url"
         |		},
-        |		"gearId": "aacee631",
+        |		"gearId": "85c0d9c3",
         |		"atLocation": {
         |			"file": "test-examples/resources/tmp/test_project/app.js",
         |			"position": 38,
@@ -191,9 +191,9 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		"gearOptions": [{
         |     "name": "Route",
         |     "packageFull": "optic:expressjs@0.1.0",
-        |     "id": "aacee631"
+        |     "id": "85c0d9c3"
         |   }],
-        |   "gearId": "aacee631",
+        |   "gearId": "85c0d9c3",
         | 	"locationOptions": [{
         |		  "file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
@@ -266,7 +266,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		"gearOptions": [{
         |			"name": "Route",
         |			"packageFull": "optic:express-js@0.1.0",
-        |			"id": "aacee631"
+        |			"id": "85c0d9c3"
         |		}],
         |		"locationOptions": [{
         |			"file": "test-examples/resources/tmp/test_project/nested/model.js",
@@ -274,14 +274,14 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |		}],
         |		"_type": "com.opticdev.arrow.changes.RunTransformation",
-        |		"gearId": "aacee631",
+        |		"gearId": "85c0d9c3",
         |		"location": {
         |			"file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |		},
         |		"answers": {
-        |			"queryProvider": "6f8d5c40"
+        |			"queryProvider": "41a092b8"
         |		}
         |	}]
       """.stripMargin

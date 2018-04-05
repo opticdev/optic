@@ -20,6 +20,28 @@ import com.opticdev.sdk.descriptions.transformation.StagedNode
 
 class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec") with ParserUtils with GearUtils {
 
+  it("can create an expression renderer") {
+
+    val block = "my.hello.world"
+    implicit val ruleProvider = new RuleProvider()
+
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+
+    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
+      CodeComponent(Seq("test"), StringFinder(Entire, "hello")),
+      CodeComponent(Seq("testA"), StringFinder(Entire, "world"))
+    ))
+
+    val importSample = sample(block)
+
+    println(importSample)
+
+    val renderer = new RenderFactoryStage(importSample, parseGear).run.renderGear
+    val result = renderer.render(JsObject(Seq("test" -> JsString("world"), "testA" -> JsString("hello"))))
+    assert(result == "my.world.hello")
+
+  }
+
   it("can create a simple renderer") {
 
     val block = "var hello = require('world')"

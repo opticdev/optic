@@ -35,7 +35,7 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
 
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
-      val modelFields = listenersOption.get.flatMap(i => i.collect(sourceGearContext.astGraph))
+      val modelFields = listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
       expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields, value))
     } else {
       expandedValueStore = Option(value)

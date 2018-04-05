@@ -81,11 +81,20 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     val blockNodeTypes      = parser.blockNodeTypes.nodeTypes
     if (programNodeType != rootNode.nodeType) throw new UnexpectedSnippetFormat(programNodeType+" did not appear first in the AST Tree.")
 
+    val postProcessors = parser.enterOnPostProcessor
+
     val children = rootNode.children.map(_._2)
 
     children.length match {
       case l if l <= 0  => throw new UnexpectedSnippetFormat("Snippet is empty.")
-      case 1            => (Set(children.head.nodeType), children, MatchType.Parent)
+      case 1            => {
+        postProcessors.get(children.head.nodeType)
+          .map(p=> {
+            val results = p.apply(children.head.nodeType, graph, children.head)
+            (results._1, Vector(results._2), MatchType.Parent)
+          })
+          .getOrElse((Set(children.head.nodeType), children, MatchType.Parent))
+      }
       case l if l > 1   => (blockNodeTypes, children, MatchType.Children)
     }
 

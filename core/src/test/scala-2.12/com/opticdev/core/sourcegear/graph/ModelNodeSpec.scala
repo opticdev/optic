@@ -23,9 +23,9 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
 
-  val projectGraphWrapper = new ProjectGraphWrapper(Graph())
+  val pgW = new ProjectGraphWrapper(Graph())
   implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear) {
-    override def projectGraph = projectGraphWrapper.projectGraph
+    override def projectGraph = pgW.projectGraph
     override def projectSourcegear: SourceGear = sourceGear
   }
 
@@ -35,7 +35,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
     sourceGear.parseFile(File(testFilePath))
   }
 
-  projectGraphWrapper.addFile(importResults.get.astGraph, File(testFilePath))
+  pgW.addFile(importResults.get.astGraph, File(testFilePath))
 
   it("can resolve when flat") {
 
