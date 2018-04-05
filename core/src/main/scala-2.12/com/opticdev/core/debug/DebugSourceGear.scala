@@ -34,13 +34,15 @@ object DebugSourceGear extends SourceGear {
 
   override def parseFile(file: File) (implicit project: ProjectBase) : Try[FileParseResults] = {
 
+    val contents = project.filesStateMonitor.contentsForFile(file).getOrElse(file.contentAsString)
+
     val projectKnowledgeSearchPaths = getHostProjectOption.flatMap(_.apply(file)).getOrElse(project) match {
       case a: OpticProject => a.projectFile.projectKnowledgeSearchPaths
       case _ => ProjectKnowledgeSearchPaths()
     }
 
 
-    Try(file.contentAsString).flatMap(i => parseStringWithKnowledgePaths(i)(project, projectKnowledgeSearchPaths))
+    Try(contents).flatMap(i => parseStringWithKnowledgePaths(i)(project, projectKnowledgeSearchPaths))
   }
 
   override def parseString(string: String)(implicit project: ProjectBase): Try[sourcegear.FileParseResults] =

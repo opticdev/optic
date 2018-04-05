@@ -38,7 +38,7 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
         DebuggerConnection.broadcastUpdate(DebugLoading)
         //clear out blue dot
         AgentConnection.broadcastUpdate(NoContextFound(file, range))
-        new DebugQuery(asFile, range)(projectsManager).execute.map(debugInfoOption=> {
+        new DebugQuery(asFile, range, contentsOption)(projectsManager).execute.map(debugInfoOption=> {
           if (debugInfoOption.isDefined) {
             DebuggerConnection.broadcastUpdate(
               DebugInformation(file, range, debugInfoOption.get)
