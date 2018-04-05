@@ -58,6 +58,9 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject
 
 case class ModelNode(schemaId: SchemaRef, value: JsObject, hash: Int)(implicit override val project: ProjectBase) extends BaseModelNode {
 
+  //@todo check how stable/collision prone this is
+  override val id: String = Integer.toHexString(hash)
+
   def resolve[T <: WithinFile]()(implicit actorCluster: ActorCluster) : LinkedModelNode[T] = {
     implicit val sourceGearContext = SGContext.forModelNode(this).get
     implicit val astGraph = sourceGearContext.astGraph

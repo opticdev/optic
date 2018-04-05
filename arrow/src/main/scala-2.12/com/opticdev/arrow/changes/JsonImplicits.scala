@@ -2,6 +2,7 @@ package com.opticdev.arrow.changes
 import better.files.File
 import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
+import com.opticdev.arrow.results.ModelOption
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
@@ -38,6 +39,8 @@ object JsonImplicits {
       JsString(o.pathAsString)
     }
   }
+
+  implicit val modelOptionsFormat = Json.format[ModelOption]
 
   //Location
 

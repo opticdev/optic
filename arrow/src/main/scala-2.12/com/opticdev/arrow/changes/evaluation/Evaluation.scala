@@ -41,7 +41,9 @@ object Evaluation {
 
       val schema = sourcegear.findSchema(rt.transformationChanges.transformation.output).get
 
-      val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue, rt.answers.getOrElse(JsObject.empty))
+      require(rt.inputValue.isDefined, "Transformation must have an input value specified")
+
+      val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue.get, rt.answers.getOrElse(JsObject.empty))
       require(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed)
 
       val stagedNode = transformationTry.get.toStagedNode(Some(RenderOptions(

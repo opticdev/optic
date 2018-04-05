@@ -178,7 +178,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |[{
         |		"transformationChanges": {
         |			"transformation": {
-        |				"name": "Model -> Route",
+        |				"yields": "Model -> Route",
         |				"packageId": "optic:test-transform@latest",
         |				"input": "optic:rest@0.1.0/model",
         |				"output": "optic:rest@0.1.0/route",
@@ -230,7 +230,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |[{
         |		"transformationChanges": {
         |			"transformation": {
-        |				"name": "Schema -> Create Route",
+        |				"yields": "Schema -> Create Route",
         |				"packageId": "optic:mongoose@0.1.0",
         |				"input": "optic:mongoose@0.1.0/schema",
         |				"output": "optic:rest@0.1.0/route",
@@ -293,7 +293,81 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
-    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst model = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/user', function (req, res) {\n  req.body.firstName\n  req.body.lastName\n  req.body.email\n})\n\napp.post('/hello', function (req, res) {\n  new Model({ firstName: req.body.firstName,\n  lastName: req.body.lastName,\n  email: req.body.email }).save((err, item) => {\n    if (!err) {\n    \n    } else {\n    \n    }\n  })\n})")
+    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst model = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/hello', function (req, res) {\n  new Model({ firstName: req.body.firstName,\n  lastName: req.body.lastName,\n  email: req.body.email }).save((err, item) => {\n    if (!err) {\n    \n    } else {\n    \n    }\n  })\n})")
+
+  }
+
+
+  lazy val transformationFromSearch = {
+
+    val changesJSON =
+      """[{
+        |	"transformationChanges": {
+        |		"transformation": {
+        |			"yields": "Create Route",
+        |			"packageId": "optic:mongoose@0.1.0",
+        |			"input": "optic:mongoose@0.1.0/schema",
+        |			"output": "optic:rest@0.1.0/route",
+        |			"ask": {
+        |				"type": "object",
+        |				"properties": {},
+        |				"_order": []
+        |			},
+        |			"script": "function transform(input) {\n    var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n    return {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n}"
+        |		},
+        |		"target": "optic:rest@0.1.0/route",
+        |		"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
+        |	},
+        |	"gearOptions": [{
+        |		"name": "Route",
+        |		"packageFull": "optic:express-js@0.1.0",
+        |		"id": "1eac58c9"
+        |	}],
+        |	"locationOptions": [{
+        |		"file": "test-examples/resources/tmp/test_project/app.js",
+        |		"position": 93,
+        |		"_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |	}],
+        | "location": {
+        |		"file": "test-examples/resources/tmp/test_project/app.js",
+        |		"position": 93,
+        |		"_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |	},
+        |	"objectOptions": [{
+        |		"id": "a520740e",
+        |		"value": {
+        |			"name": "Hello",
+        |			"schema": {
+        |				"first": "string",
+        |				"last": "string",
+        |				"isAdmin": "boolean",
+        |				"_order": ["first", "last", "isAdmin"]
+        |			}
+        |		},
+        |		"name": "schema(name: \"Hello\", schema: {4 fields})"
+        |	}],
+        |	"_type": "com.opticdev.arrow.changes.RunTransformation",
+        |	"answers": {},
+        |	"objectSelection": "a520740e",
+        |	"inputValue": {
+        |		"name": "Hello",
+        |		"schema": {
+        |			"first": "string",
+        |			"last": "string",
+        |			"isAdmin": "boolean",
+        |			"_order": ["first", "last", "isAdmin"]
+        |		}
+        |	}
+        |}]""".stripMargin
+
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yaml")))
+      .map(_.inflate)
+
+    val sourcegear = Await.result(future, 10 seconds)
+
+    val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
+
+    (changeGroup, sourcegear, "let first = require('second')\n\napp.get('user/:id', function (req, res) {\n    req.query.id\n})\n\napp.post('/hello', function (req, res) {\n  req.body.first\n  req.body.last\n  req.body.isAdmin\n})\n\napp.get('post/:id', function (req, res) {\n    req.query.id\n})")
 
   }
 

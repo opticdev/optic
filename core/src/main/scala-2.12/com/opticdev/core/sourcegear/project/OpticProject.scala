@@ -120,6 +120,12 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     Await.result(future, timeout.duration).asInstanceOf[ProjectGraphWrapper].projectGraph
   }
 
+  def projectGraphWrapper: ProjectGraphWrapper = {
+    implicit val timeout = Timeout(15 seconds)
+    val future = projectActor ? CurrentGraph
+    Await.result(future, timeout.duration).asInstanceOf[ProjectGraphWrapper]
+  }
+
   /* Staged File Monitor */
   val filesStateMonitor : FileStateMonitor = new FileStateMonitor()
   def stageFileContents(file: File, contents: String): Future[Any] = {

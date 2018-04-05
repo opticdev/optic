@@ -4,7 +4,9 @@ import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
+import com.opticdev.sdk.descriptions.SchemaRef
 
 class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest") with GearUtils {
 
@@ -29,6 +31,19 @@ class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest")
 
     assert(projectGraphWrapper.projectGraph.nodes.size == 3)
     assert(projectGraphWrapper.projectGraph.edges.size == 2)
+  }
+
+  it("can apply queries to the project graph") {
+    val projectGraphWrapper = ProjectGraphWrapper.empty
+    projectGraphWrapper.addFile(importResults.get.astGraph, file)
+    val results = projectGraphWrapper.query((node)=> {
+      node.value match {
+        case mn: BaseModelNode => mn.schemaId == SchemaRef.fromString("optic:ImportExample@0.1.0/js-import").get
+        case _ => false
+      }
+    })
+
+    assert(results.size == 2)
   }
 
   it("gets the subgraph for a file") {
