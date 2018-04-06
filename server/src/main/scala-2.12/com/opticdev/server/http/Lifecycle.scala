@@ -3,7 +3,7 @@ package com.opticdev.server.http
 import java.io.{BufferedReader, InputStreamReader}
 
 import better.files.File
-import com.opticdev.common.storage.DataDirectory
+import com.opticdev.common.storage.{DataDirectory, DataDirectoryConfig}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.PackageManager
@@ -44,6 +44,8 @@ object Lifecycle extends App {
   startup
   def startup = {
     Server.start()
+
+    DataDirectoryConfig.triggerMigration
 
     //tap the OpticMarkdown Installer in case this is a fresh install
     OpticMarkdownInstaller.getOrInstall

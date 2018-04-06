@@ -48,4 +48,9 @@ object DataDirectory {
     DataDirectory.root
   }
 
+  def emptyFolder(file: File): Unit = {
+    file.delete(true)
+    file.createIfNotExists(asDirectory = true)
+  }
+
 }
