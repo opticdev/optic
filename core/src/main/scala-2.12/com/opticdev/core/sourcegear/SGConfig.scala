@@ -12,7 +12,7 @@ import play.api.libs.json.{JsObject, JsString, Json}
 
 case class SGConfig(hashInt: Int,
                     parserIds : Set[ParserRef],
-                    gears : Set[Gear],
+                    gears : Set[CompiledLens],
                     schemas : Set[SchemaColdStorage],
                     transformations: Set[Transformation]) {
 
@@ -33,7 +33,7 @@ case class SGConfig(hashInt: Int,
 
     new SourceGear {
       override val parsers = parserCollections.found
-      override val gearSet = new GearSet(gears.toSeq: _*)
+      override val lensSet = new LensSet(gears.toSeq: _*)
       override val schemas = inflatedSchemas
       override val transformations = inflatedTransformations
     }

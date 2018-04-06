@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.project
 import better.files.File
 import com.opticdev.core.Fixture.{AkkaTestFixture, PreTest}
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.sourcegear.{GearSet, SourceGear}
+import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.actors._
 import com.opticdev.sourcegear.actors._
 import com.opticdev.core.sourcegear.graph.ProjectGraph
@@ -33,7 +33,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
 
   override implicit val sourceGear : SourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-    override val gearSet = new GearSet()
+    override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
   }

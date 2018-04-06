@@ -40,7 +40,7 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
 
     it("can inflate to a sourcegear instance") {
       val sourceGear = sgConfig.inflate
-      assert(sourceGear.gearSet.size == 5)
+      assert(sourceGear.lensSet.size == 5)
       assert(sourceGear.schemas.size == 5)
       assert(sourceGear.parsers.size == 1)
       assert(sourceGear.transformations.size == 1)

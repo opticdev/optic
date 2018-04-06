@@ -20,20 +20,20 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
     lazy val testSchemaRef = SchemaRef.fromString("test:schemas@0.1.0/a").get
 
-    lazy val a = Gear("test", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
-    lazy val b = Gear("other", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
+    lazy val a = CompiledLens("test", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
+    lazy val b = CompiledLens("other", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
 
 
     val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = Set()
-      override val gearSet: GearSet = new GearSet(a, b)
+      override val lensSet: LensSet = new LensSet(a, b)
       override val transformations: Set[Transformation] = Set()
       override val schemas: Set[Schema] = Set(
         Schema(testSchemaRef, JsObject.empty)
       )
     }
 
-    lazy val resolveGear = PrivateMethod[Option[Gear]]('resolveGear)
+    lazy val resolveGear = PrivateMethod[Option[CompiledLens]]('resolveGear)
 
     it("if set in options") {
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(gearId = Some(a.id))))

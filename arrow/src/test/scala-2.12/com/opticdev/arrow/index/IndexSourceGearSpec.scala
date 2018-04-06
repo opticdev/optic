@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.arrow.ExampleSourcegears
 import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.core.sourcegear.{GearSet, SGConstructor, SourceGear}
+import com.opticdev.core.sourcegear.{LensSet, SGConstructor, SourceGear}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.TestPackageProviders
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}

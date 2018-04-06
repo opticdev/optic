@@ -16,7 +16,7 @@ object IndexSourceGear {
 
   def runFor(sourceGear: SourceGear) : KnowledgeGraph = {
 
-    val gearsBySchemas = sourceGear.gearSet.listGears.groupBy(_.parser.schema)
+    val gearsBySchemas = sourceGear.lensSet.listGears.groupBy(_.parser.schema)
 
     val schemaGearNodes: Seq[UnDiEdge[graph.SGNode]] = gearsBySchemas.flatMap {
       case (schemaRef, gears)=> {

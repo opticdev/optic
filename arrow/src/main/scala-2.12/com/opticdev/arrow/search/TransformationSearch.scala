@@ -4,7 +4,7 @@ import com.opticdev.arrow.context.{ArrowContextBase, ModelContext}
 import com.opticdev.arrow.graph.KnowledgeGraph
 import com.opticdev.arrow.results.{GearResult, Result, TransformationResult}
 import com.opticdev.core.sourcegear.project.OpticProject
-import com.opticdev.core.sourcegear.{Gear, SGContext, SourceGear}
+import com.opticdev.core.sourcegear.{CompiledLens, SGContext, SourceGear}
 import me.xdrop.fuzzywuzzy.FuzzySearch
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits._
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess

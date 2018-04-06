@@ -18,13 +18,13 @@ abstract class SourceGear {
 
   val parsers: Set[ParserBase]
 
-  val gearSet: GearSet
+  val lensSet: LensSet
 
   val schemas: Set[Schema]
 
   val transformations: Set[Transformation]
 
-  def fileAccumulator = gearSet.fileAccumulator
+  def fileAccumulator = lensSet.fileAccumulator
 
   def findSchema(schemaRef: SchemaRef) : Option[Schema] = {
     val availible = schemas.filter(s=>
@@ -35,7 +35,7 @@ abstract class SourceGear {
     schemaVersion.map(_._2)
   }
 
-  def findGear(id: String) = gearSet.listGears.find(_.id == id)
+  def findLens(id: String) = lensSet.listGears.find(_.id == id)
 
   def findParser(parserRef: ParserRef) = parsers.find(_.languageName == parserRef.languageName)
 
@@ -55,8 +55,8 @@ abstract class SourceGear {
 
       //@todo clean this up and have the parser return in the parse result. right now it only supports the test one
 //      val parser = parsers.find(_.languageName == parsed.language).get
-      implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents)
-      gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
+      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents)
+      lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
     } else {
       throw parsedOption.failed.get
     }
@@ -68,17 +68,17 @@ abstract class SourceGear {
     s"""
       | Parsers: ${parsers.map(_.parserRef.full).mkString(",")}
       | Schemas: ${schemas.map(_.schemaRef.full).mkString(",")}
-      | Gears: ${gearSet.listGears.map(_.name).mkString(",")}
+      | Gears: ${lensSet.listGears.map(_.name).mkString(",")}
       | Transformations: ${transformations.map(_.yields).mkString(",")}
     """.stripMargin)
 
-  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, Gear)] = Render.fromStagedNode(stagedNode)(this)
+  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, CompiledLens)] = Render.fromStagedNode(stagedNode)(this)
 
 }
 
 case object UnloadedSourceGear extends SourceGear {
   override val parsers = Set()
-  override val gearSet = new GearSet()
+  override val lensSet = new LensSet()
   override val schemas = Set()
   override val transformations = Set()
 
@@ -88,7 +88,7 @@ case object UnloadedSourceGear extends SourceGear {
 object SourceGear {
   def default: SourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = Set()
-    override val gearSet = new GearSet()
+    override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
   }

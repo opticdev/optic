@@ -7,32 +7,32 @@ import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 
 //@todo make this class immutable
-class GearSet(initialGears: Gear*) {
+class LensSet(initialGears: CompiledLens*) {
 
-  private val gears = scala.collection.mutable.Set[Gear](initialGears:_*)
+  private val gears = scala.collection.mutable.Set[CompiledLens](initialGears:_*)
 
   var fileAccumulator = FileAccumulator()
 
   def size = gears.size
 
-  def addGear(gear: Gear) = {
+  def addGear(gear: CompiledLens) = {
     gears add gear
     reindex
   }
 
-  def addGears(newGears: Gear*) = {
+  def addGears(newGears: CompiledLens*) = {
     gears ++= newGears
     reindex
   }
 
-  def removeGear(gear: Gear) = {
+  def removeGear(gear: CompiledLens) = {
     gears remove gear
     reindex
   }
 
   def listGears = gears.toSet
 
-  private var groupedStore : Map[AstType, Set[Gear]] = Map()
+  private var groupedStore : Map[AstType, Set[CompiledLens]] = Map()
 
   private def reindex = synchronized {
     val allListeners = gears.flatMap(_.parser.listeners)
@@ -46,7 +46,7 @@ class GearSet(initialGears: Gear*) {
     fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.mapToSchema))
   }
 
-  def grouped: Map[AstType, Set[Gear]] = groupedStore
+  def grouped: Map[AstType, Set[CompiledLens]] = groupedStore
 
   def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase): FileParseResults = {
     val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[CommonAstNode].nodeType)

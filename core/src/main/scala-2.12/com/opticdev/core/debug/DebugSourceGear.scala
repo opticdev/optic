@@ -3,7 +3,7 @@ package com.opticdev.core.debug
 import com.opticdev.common.PackageRef
 import com.opticdev.core.sourcegear
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
-import com.opticdev.core.sourcegear.{FileParseResults, GearSet, SourceGear}
+import com.opticdev.core.sourcegear.{FileParseResults, LensSet, SourceGear}
 import com.opticdev.opm.{DependencyTree, PackageManager}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
@@ -26,7 +26,7 @@ import scala.util.{Failure, Success, Try}
 object DebugSourceGear extends SourceGear {
 
   override val parsers: Set[ParserBase] = Set()
-  override val gearSet: GearSet = new GearSet()
+  override val lensSet: LensSet = new LensSet()
   override val transformations: Set[Transformation] = Set()
   override val schemas: Set[Schema] = Set()
 

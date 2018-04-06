@@ -4,13 +4,13 @@ import better.files.File
 import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.sourcegear.project.StaticSGProject
-import com.opticdev.core.sourcegear.{Gear, SGContext}
+import com.opticdev.core.sourcegear.{CompiledLens, SGContext}
 import com.opticdev.parsers.SourceParserManager
 import play.api.libs.json.Json
 
 class ContainerSpec extends AkkaTestFixture("ContainerSpec") with ParserUtils with GearUtils {
 
-  def testBlock(fileContents: String)(implicit gearWithSubContainer: Gear) = {
+  def testBlock(fileContents: String)(implicit gearWithSubContainer: CompiledLens) = {
     val parsed = sample(fileContents)
     val astGraph = parsed.astGraph
     val enterOn = parsed.entryChildren.head
@@ -19,7 +19,7 @@ class ContainerSpec extends AkkaTestFixture("ContainerSpec") with ParserUtils wi
 
   describe("Subcontainers") {
 
-    implicit lazy val gearWithSubContainer: Gear = gearFromDescription("test-examples/resources/example_packages/optic:ShowConfirmAlert@0.1.0.json")
+    implicit lazy val gearWithSubContainer: CompiledLens = gearFromDescription("test-examples/resources/example_packages/optic:ShowConfirmAlert@0.1.0.json")
 
     it("can compile") {
       assert(gearWithSubContainer != null)

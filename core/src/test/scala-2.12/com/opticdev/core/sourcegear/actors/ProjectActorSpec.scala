@@ -3,7 +3,7 @@ package com.opticdev.sourcegear.actors
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.sourcegear.{GearSet, SourceGear}
+import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.actors.{CurrentGraph, FileCreated, FileDeleted, ProjectActorSyncAccess}
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
@@ -19,13 +19,13 @@ class ProjectActorSpec extends AkkaTestFixture("ProjectActorTest") with GearUtil
 
     override implicit val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-      override val gearSet = new GearSet()
+      override val lensSet = new LensSet()
       override val schemas = Set()
       override val transformations = Set()
     }
 
     val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
-    sourceGear.gearSet.addGear(importGear)
+    sourceGear.lensSet.addGear(importGear)
 
     val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 

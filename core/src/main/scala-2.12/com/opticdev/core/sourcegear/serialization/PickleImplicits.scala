@@ -6,7 +6,7 @@ import boopickle.PicklerHelper
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
-import com.opticdev.core.sourcegear.{Gear, SGConfig}
+import com.opticdev.core.sourcegear.{CompiledLens, SGConfig}
 import com.opticdev.parsers.ParserRef
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions._
@@ -129,8 +129,8 @@ object PickleImplicits extends PicklerHelper {
   //@todo this should be moved within the parsers
   implicit val ruleProvider = new RuleProvider()
 
-  implicit object GearPickler extends Pickler[Gear] {
-    override def pickle(value: Gear)(implicit state: PickleState): Unit = {
+  implicit object GearPickler extends Pickler[CompiledLens] {
+    override def pickle(value: CompiledLens)(implicit state: PickleState): Unit = {
       state.pickle(value.name)
       state.pickle(value.packageFull)
       state.pickle(value.schemaRef)
@@ -138,8 +138,8 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.parser)
       state.pickle(value.renderer)
     }
-    override def unpickle(implicit state: UnpickleState): Gear = {
-      Gear(
+    override def unpickle(implicit state: UnpickleState): CompiledLens = {
+      CompiledLens(
         state.unpickle[String],
         state.unpickle[String],
         state.unpickle[SchemaRef],
@@ -162,7 +162,7 @@ object PickleImplicits extends PicklerHelper {
       SGConfig(
         state.unpickle[Int],
         state.unpickle[Set[ParserRef]],
-        state.unpickle[Set[Gear]],
+        state.unpickle[Set[CompiledLens]],
         state.unpickle[Set[SchemaColdStorage]],
         state.unpickle[Set[Transformation]]
       )

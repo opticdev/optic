@@ -4,7 +4,7 @@ import com.opticdev.arrow.ExampleSourcegears
 import com.opticdev.arrow.graph.GraphSerialization.jsonFromEdge
 import com.opticdev.arrow.index.IndexSourceGear
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.core.sourcegear.Gear
+import com.opticdev.core.sourcegear.CompiledLens
 import com.opticdev.opm.TestPackageProviders
 import com.opticdev.sdk.descriptions.SchemaRef
 import org.scalatest.FunSpec
@@ -18,7 +18,7 @@ class GearSerializationSpec extends TestBase with TestPackageProviders {
   lazy val exampleProjectSG = ExampleSourcegears.exampleProjectSG.sourceGear
 
   it("can turn a gear node into json") {
-    val json = GraphSerialization.jsonFromNode(GearNode(exampleProjectSG.gearSet.listGears.find(_.name.contains("Parameter")).get))
+    val json = GraphSerialization.jsonFromNode(GearNode(exampleProjectSG.lensSet.listGears.find(_.name.contains("Parameter")).get))
     assert(json == Json.parse("""{"id":"a8e4b19b","name":"Parameter","packageFull":"optic:express-js@0.1.0","type":"gear"}"""))
   }
 

@@ -1,6 +1,6 @@
 package com.opticdev.arrow.graph
 
-import com.opticdev.core.sourcegear.Gear
+import com.opticdev.core.sourcegear.CompiledLens
 import com.opticdev.opm.utils.SemverHelper
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.Transformation
@@ -24,7 +24,7 @@ object KnowledgeGraphImplicits {
     }
 
 
-    def gearsForSchema(schemaRef: SchemaRef) : Set[Gear] = {
+    def gearsForSchema(schemaRef: SchemaRef) : Set[CompiledLens] = {
 
       schemaNodeForRef(schemaRef).map(i => {
         knowledgeGraph
@@ -35,7 +35,7 @@ object KnowledgeGraphImplicits {
             i.to.value.asInstanceOf[GearNode].gear
           }).toSet
       }).getOrElse(Set())
-        .asInstanceOf[Set[Gear]]
+        .asInstanceOf[Set[CompiledLens]]
     }
 
     def availableTransformations(schemaRef: SchemaRef) : Set[TransformationChanges] = {

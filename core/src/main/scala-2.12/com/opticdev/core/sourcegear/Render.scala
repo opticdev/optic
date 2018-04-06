@@ -16,7 +16,7 @@ import scala.util.{Failure, Success, Try}
 
 object Render {
 
-  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear) : Try[(NewAstNode, String, Gear)] = Try {
+  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear) : Try[(NewAstNode, String, CompiledLens)] = Try {
 
     val options = stagedNode.options.getOrElse(RenderOptions())
 
@@ -39,12 +39,12 @@ object Render {
     (result._1, result._2, gear)
   }
 
-  private def resolveGear(stagedNode: StagedNode)(implicit sourceGear: SourceGear) : Option[Gear] = {
+  private def resolveGear(stagedNode: StagedNode)(implicit sourceGear: SourceGear) : Option[CompiledLens] = {
     if (stagedNode.options.isDefined && stagedNode.options.get.gearId.isDefined) {
       val gearId = stagedNode.options.get.gearId.get
-      sourceGear.findGear(gearId)
+      sourceGear.findLens(gearId)
     } else {
-      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.gearSet.listGears.find(_.schemaRef == schema.schemaRef))
+      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listGears.find(_.schemaRef == schema.schemaRef))
     }
   }
 

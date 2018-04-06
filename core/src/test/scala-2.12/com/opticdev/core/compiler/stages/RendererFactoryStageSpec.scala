@@ -8,7 +8,7 @@ import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
 import com.opticdev.sdk.descriptions.finders.StringFinder
-import com.opticdev.core.sourcegear.{Gear, GearSet, SourceGear}
+import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
@@ -71,7 +71,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      Gear("do", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.1"), "a"), Set(), parseGear, renderer)
+      CompiledLens("do", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.1"), "a"), Set(), parseGear, renderer)
     }
 
     val block =
@@ -89,11 +89,11 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
     val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-    val thisGear = Gear("wrapper", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.1"), "b"), Set(), parseGear, renderer)
+    val thisGear = CompiledLens("wrapper", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.1"), "b"), Set(), parseGear, renderer)
 
     val sourceGear : SourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-      override val gearSet = new GearSet(thisGear, childGear)
+      override val lensSet = new LensSet(thisGear, childGear)
       override val schemas = Set(
         Schema(SchemaRef(PackageRef("optic:test", "0.1.1"), "b"), JsObject.empty),
         Schema(SchemaRef(PackageRef("optic:test", "0.1.1"), "a"), JsObject.empty)

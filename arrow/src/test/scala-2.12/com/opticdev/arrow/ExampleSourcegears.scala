@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.arrow.index.IndexSourceGear
 import com.opticdev.common.PackageRef
 import com.opticdev.core.sourcegear.project.config.ProjectFile
-import com.opticdev.core.sourcegear.{GearSet, SGConstructor, SourceGear}
+import com.opticdev.core.sourcegear.{LensSet, SGConstructor, SourceGear}
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import play.api.libs.json.JsObject
@@ -24,7 +24,7 @@ object ExampleSourcegears {
 
     val sourceGear = new SourceGear {
       override val parsers = Set()
-      override val gearSet = new GearSet()
+      override val lensSet = new LensSet()
       override val schemas = Set(schemaModel, schemaRoute, schemaForm, schemaFetch)
       override val transformations = Set(
         Transformation("Model -> Route", transformationPackage,  schemaModel.schemaRef, schemaRoute.schemaRef, Transformation.emptyAskSchema, ""),

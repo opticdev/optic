@@ -12,7 +12,7 @@ import scala.util.hashing.MurmurHash3
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-case class Gear(name: String, packageFull: String, schemaRef: SchemaRef, enterOn: Set[AstType], parser : ParseAsModel, renderer : RenderGear) {
+case class CompiledLens(name: String, packageFull: String, schemaRef: SchemaRef, enterOn: Set[AstType], parser : ParseAsModel, renderer : RenderGear) {
   //@todo make sure this is good enough
   def id = {
     val int = {
