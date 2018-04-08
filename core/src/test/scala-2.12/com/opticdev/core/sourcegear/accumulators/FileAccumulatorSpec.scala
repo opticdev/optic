@@ -44,7 +44,7 @@ class FileAccumulatorSpec extends AkkaTestFixture("FileAccumulatorTest") with Ge
         |	"url": "url"
         |}""".stripMargin)
 
-    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(PackageRef("optic:FlatExpress", "0.1.0"), "route")).get
+    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(Some(PackageRef("optic:FlatExpress", "0.1.0")), "route")).get
     val expandedValue = modelNode.expandedValue
 
     assert(expandedValue == expected)
@@ -76,7 +76,7 @@ class FileAccumulatorSpec extends AkkaTestFixture("FileAccumulatorTest") with Ge
         |	"url": "url"
         |}""".stripMargin)
 
-    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(PackageRef("optic:FlatExpress", "0.1.0"), "route")).get
+    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(Some(PackageRef("optic:FlatExpress", "0.1.0")), "route")).get
     val expandedValue = modelNode.expandedValue
     assert(expandedValue == expected)
 

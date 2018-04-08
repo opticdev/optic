@@ -14,7 +14,7 @@ class VariablesSpec extends TestBase with GearUtils with ParserUtils {
 
 
   val block = "function test () { \n let definedAs = require('pathTo') \n definedAs() \n definedAs + definedAs \n }"
-  implicit val lens : Lens = Lens("Example", BlankSchema, Snippet("es7", block), Vector(), Vector(
+  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, Snippet("es7", block), Vector(), Vector(
     Variable("definedAs", VariableEnums.Self)
   ), Vector())
 
@@ -34,7 +34,7 @@ class VariablesSpec extends TestBase with GearUtils with ParserUtils {
 
   }
 
-  lazy val gearWithVariables = gearFromDescription("test-examples/resources/example_packages/optic:VariableExample@0.1.0.json")
+  lazy val gearWithVariables = compiledLensFromDescription("test-examples/resources/example_packages/optic:VariableExample@0.1.0.json")
 
   it("variable rules will get added to parser's ruleset") {
     val rules = gearWithVariables.parser.rules.flatMap(_._2)

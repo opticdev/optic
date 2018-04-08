@@ -7,6 +7,6 @@ package object changes {
 
   case class FileContents(file: File, contents: String)
 
-  case class GearOption(name: String, packageFull: String, id: String)
+  case class GearOption(name: Option[String], packageFull: String, id: String)
 
 }

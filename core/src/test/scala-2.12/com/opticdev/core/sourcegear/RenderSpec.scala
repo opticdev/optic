@@ -20,8 +20,8 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
     lazy val testSchemaRef = SchemaRef.fromString("test:schemas@0.1.0/a").get
 
-    lazy val a = CompiledLens("test", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
-    lazy val b = CompiledLens("other", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
+    lazy val a = CompiledLens(Some("test"), "test", PackageRef.fromString("optic:test@0.1.0").get, testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
+    lazy val b = CompiledLens(Some("other"), "other", PackageRef.fromString("optic:test@0.1.0").get, testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
 
 
     val sourceGear = new SourceGear {
@@ -33,23 +33,24 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
       )
     }
 
-    lazy val resolveGear = PrivateMethod[Option[CompiledLens]]('resolveGear)
+    lazy val resolveLens = PrivateMethod[Option[CompiledLens]]('resolveLens)
 
     it("if set in options") {
-      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(gearId = Some(a.id))))
-      val result = Render invokePrivate resolveGear(stagedNode, sourceGear)
+      LensRef.fromString(a.id, Some(a.packageRef))
+      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(lensId = Some(LensRef.fromString(a.id, Some(a.packageRef)).get.full))))
+      val result = Render invokePrivate resolveLens(stagedNode, sourceGear)
       assert(result.contains(a))
     }
 
     it("if not set in options gets first matching") {
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty)
-      val result = Render invokePrivate resolveGear(stagedNode, sourceGear)
+      val result = Render invokePrivate resolveLens(stagedNode, sourceGear)
       assert(result.contains(a))
     }
 
     it("will return none if gear is not found") {
-      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(gearId = Some("FAKE"))))
-      val result = Render invokePrivate resolveGear(stagedNode, sourceGear)
+      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(lensId = Some("FAKE"))))
+      val result = Render invokePrivate resolveLens(stagedNode, sourceGear)
       assert(result.isEmpty)
     }
 

@@ -19,7 +19,7 @@ class ContainerSpec extends AkkaTestFixture("ContainerSpec") with ParserUtils wi
 
   describe("Subcontainers") {
 
-    implicit lazy val gearWithSubContainer: CompiledLens = gearFromDescription("test-examples/resources/example_packages/optic:ShowConfirmAlert@0.1.0.json")
+    implicit lazy val gearWithSubContainer: CompiledLens = compiledLensFromDescription("test-examples/resources/example_packages/optic:ShowConfirmAlert@0.1.0.json")
 
     it("can compile") {
       assert(gearWithSubContainer != null)

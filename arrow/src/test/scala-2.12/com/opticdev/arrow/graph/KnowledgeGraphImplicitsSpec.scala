@@ -18,22 +18,22 @@ class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
 
   it("can find schema nodes by ref") {
     val f = fixture
-    val ref = SchemaRef(PackageRef("optic:test"), "model")
+    val ref = SchemaRef(Some(PackageRef("optic:test")), "model")
     val resultsOption = f.knowledgeGraphWithTransformations.schemaNodeForRef(ref)
 
     assert(resultsOption.isDefined)
-    assert(resultsOption.get.schema.schemaRef == SchemaRef(PackageRef("optic:test", "0.1.0"), "model"))
+    assert(resultsOption.get.schema.schemaRef == SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "model"))
   }
 
   it("can find gears for schemas") {
     val f = fixture
-    val gears = f.simpleKnowledgeGraph.gearsForSchema(SchemaRef(PackageRef("optic:rest", "0.1.0"), "parameter"))
+    val gears = f.simpleKnowledgeGraph.gearsForSchema(SchemaRef(Some(PackageRef("optic:rest", "0.1.0")), "parameter"))
     assert(gears.size == 1)
   }
 
   it("can find direct transformations for a schema") {
     val f = fixture
-    val ref = SchemaRef(PackageRef("optic:test"), "model")
+    val ref = SchemaRef(Some(PackageRef("optic:test")), "model")
 
     val results = f.knowledgeGraphWithTransformations.availableTransformations(ref)
 
@@ -42,12 +42,12 @@ class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
 
   it("will not find the inverse of a transformation") {
     val f = fixture
-    val ref = SchemaRef(PackageRef("optic:test"), "route")
+    val ref = SchemaRef(Some(PackageRef("optic:test")), "route")
 
     val results = f.knowledgeGraphWithTransformations.availableTransformations(ref)
 
 
-    assert(!results.map(_.transformation.output).contains(SchemaRef(PackageRef("optic:test"), "model")))
+    assert(!results.map(_.transformation.output).contains(SchemaRef(Some(PackageRef("optic:test")), "model")))
 
   }
 

@@ -39,7 +39,8 @@ object Lens extends Description[Lens] {
 }
 
 
-case class Lens(name: String,
+case class Lens(name: Option[String],
+                id: String,
                 schema: SchemaRef,
                 snippet: Snippet,
                 components: Vector[Component],

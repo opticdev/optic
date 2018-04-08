@@ -10,6 +10,7 @@ class SdkLensSpec extends FunSpec {
     """
       |{
       |			"name": "import using require",
+      |			"id": "using-require",
       |			"packageRef": "test:test@1.11.1",
       |			"schema": "js-import",
       |			"snippet": {

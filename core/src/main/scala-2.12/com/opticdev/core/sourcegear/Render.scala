@@ -20,7 +20,7 @@ object Render {
 
     val options = stagedNode.options.getOrElse(RenderOptions())
 
-    val gearOption = resolveGear(stagedNode)
+    val gearOption = resolveLens(stagedNode)
     require(gearOption.isDefined, "No gear found that can render this node.")
 
     val gear = gearOption.get
@@ -39,12 +39,13 @@ object Render {
     (result._1, result._2, gear)
   }
 
-  private def resolveGear(stagedNode: StagedNode)(implicit sourceGear: SourceGear) : Option[CompiledLens] = {
-    if (stagedNode.options.isDefined && stagedNode.options.get.gearId.isDefined) {
-      val gearId = stagedNode.options.get.gearId.get
-      sourceGear.findLens(gearId)
+  private def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear) : Option[CompiledLens] = {
+    val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.lensId.get).get)
+    if (lensRefTry.isSuccess) {
+      val lensRef = lensRefTry.get
+      sourceGear.findLens(lensRef)
     } else {
-      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listGears.find(_.schemaRef == schema.schemaRef))
+      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listLenses.find(_.schemaRef == schema.schemaRef))
     }
   }
 
@@ -77,7 +78,7 @@ object Render {
   def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None)(implicit sourceGear: SourceGear) = {
     fromStagedNode(StagedNode(schemaRef, value, Some(
       RenderOptions(
-        gearId = gearIdOption
+        lensId = gearIdOption
       )
     )))
   }

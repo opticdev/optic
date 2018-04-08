@@ -23,9 +23,9 @@ class SourceGearSpec extends AkkaTestFixture("SourceGearTest") with GearUtils {
 
   it("Finds matches in a test file.") {
 
-    val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
+    val importGear = compiledLensFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
 
-    sourceGear.lensSet.addGear(importGear)
+    sourceGear.lensSet.addLens(importGear)
 
     val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
     val results = sourceGear.parseFile(File(testFilePath))

@@ -20,7 +20,7 @@ case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMa
     val schemaObject = i.as[JsObject]
     val id = (schemaObject \ "id").get.as[JsString].value
     val definition = (schemaObject \ "definition").get.as[JsObject]
-    Schema.fromJson(SchemaRef(packageRef, id), definition)
+    Schema.fromJson(SchemaRef(Some(packageRef), id), definition)
   }).toVector
 
   lazy val lenses: Vector[Lens] = (description \ "lenses").getOrElse(JsArray.empty).as[JsArray].value.map(i=> {

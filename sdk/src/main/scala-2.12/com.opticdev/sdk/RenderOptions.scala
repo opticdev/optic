@@ -1,17 +1,17 @@
 package com.opticdev.sdk
 
-case class RenderOptions(gearId: Option[String] = None,
+case class RenderOptions(lensId: Option[String] = None,
                          containers: Option[ContainersContent] = None,
                          variables: Option[VariableMapping] = None) {
 
   def mergeWith(other: RenderOptions): RenderOptions = RenderOptions(
-    gearId = {
-      if (this.gearId.isEmpty) {
-        other.gearId
-      } else if (this.gearId.isDefined && other.gearId.isEmpty) {
-        this.gearId
+    lensId = {
+      if (this.lensId.isEmpty) {
+        other.lensId
+      } else if (this.lensId.isDefined && other.lensId.isEmpty) {
+        this.lensId
       } else {
-        other.gearId
+        other.lensId
       }
     },
     containers = {
@@ -38,5 +38,5 @@ case class RenderOptions(gearId: Option[String] = None,
     }
   )
 
-  def isEmpty = gearId.isEmpty && containers.isEmpty && variables.isEmpty
+  def isEmpty = lensId.isEmpty && containers.isEmpty && variables.isEmpty
 }

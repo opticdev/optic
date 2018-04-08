@@ -6,6 +6,7 @@ Sometimes it's useful to ask a user to confirm an action. To show an alert box w
 <!-- lens-def
 schema="confirmAlert"
 name="Show Confirm Alert"
+id="show-confirm"
 "message".containing => message
 "didConfirm"*
 "on yes" = ( any )

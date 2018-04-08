@@ -17,8 +17,8 @@ package object graph {
   case class SchemaNode(schema: Schema) extends SGNode {
     override def id: String = schema.schemaRef.full
   }
-  case class GearNode(gear: CompiledLens) extends SGNode {
-    override def id: String = gear.id
+  case class LensNode(gear: CompiledLens) extends SGNode {
+    override def id: String = gear.lensRef.full
   }
 
   type KnowledgeGraph = Graph[SGNode, LkDiEdge]

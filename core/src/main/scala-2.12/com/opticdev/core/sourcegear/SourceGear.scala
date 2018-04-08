@@ -28,14 +28,24 @@ abstract class SourceGear {
 
   def findSchema(schemaRef: SchemaRef) : Option[Schema] = {
     val availible = schemas.filter(s=>
-      s.schemaRef.packageRef.packageId == schemaRef.packageRef.packageId
+      s.schemaRef.packageRef.get.packageId == schemaRef.packageRef.get.packageId
       && s.schemaRef.id == schemaRef.id
     )
-    val schemaVersion = SemverHelper.findVersion(availible, (s: Schema) => s.schemaRef.packageRef, schemaRef.packageRef.version)
+    val schemaVersion = SemverHelper.findVersion(availible, (s: Schema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))
     schemaVersion.map(_._2)
   }
 
-  def findLens(id: String) = lensSet.listGears.find(_.id == id)
+  def findLens(lensRef: LensRef): Option[CompiledLens] = {
+
+    val available: Set[CompiledLens] = lensSet.listLenses.filter(lens=>
+      lensRef.packageRef.map(_.packageId).contains(lens.packageRef.packageId)
+        && lens.id.contains(lensRef.id)
+    )
+
+    val lensVersion = SemverHelper.findVersion(available, (l: CompiledLens) => l.packageRef, lensRef.packageRef.map(_.version).getOrElse("latest"))
+
+    lensVersion.map(_._2)
+  }
 
   def findParser(parserRef: ParserRef) = parsers.find(_.languageName == parserRef.languageName)
 
@@ -68,7 +78,7 @@ abstract class SourceGear {
     s"""
       | Parsers: ${parsers.map(_.parserRef.full).mkString(",")}
       | Schemas: ${schemas.map(_.schemaRef.full).mkString(",")}
-      | Gears: ${lensSet.listGears.map(_.name).mkString(",")}
+      | Gears: ${lensSet.listLenses.map(_.name).mkString(",")}
       | Transformations: ${transformations.map(_.yields).mkString(",")}
     """.stripMargin)
 

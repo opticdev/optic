@@ -66,7 +66,7 @@ object Compiler {
             val renderer = Try(new RenderFactoryStage(snippetOutput.get, parser.get.parseGear).run)
             if (renderer.isSuccess) {
 
-              val finalGear = CompiledLens(lens.name, lens.packageRef.full, lens.schema, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], renderer.get.renderGear)
+              val finalGear = CompiledLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], renderer.get.renderGear)
 
               return Success(sourceLens, finalGear, if (debug) Some(DebugOutput(validationOutput, snippetOutput, finderStageOutput, variableManager)) else None)
 

@@ -21,7 +21,7 @@ trait GearUtils {
     override val transformations = Set()
   }
 
-  def gearFromDescription(path: String): CompiledLens = {
+  def compiledLensFromDescription(path: String): CompiledLens = {
     val jsonString = Source.fromFile(path).getLines.mkString
     val description = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
     val dependencyTree = Tree(Leaf(description))
@@ -33,7 +33,7 @@ trait GearUtils {
     result.get
   }
 
-  def gearsFromDescription(path: String) : Seq[CompiledLens] = {
+  def compiledLensesFromDescription(path: String) : Seq[CompiledLens] = {
     val jsonString = Source.fromFile(path).getLines.mkString
     val descriptions = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
 
@@ -45,7 +45,7 @@ trait GearUtils {
       val worker = new CompileWorker(i)
       val compileResult = worker.compile()(packageContext, ListBuffer())
       compileResult.get
-    }).toSeq
+    })
   }
 
   def sourceGearFromDescription(path: String) : SourceGear = {
@@ -62,7 +62,7 @@ trait GearUtils {
 
     if (compiled.isFailure) throw new Error("Compiling description failed. Test Stopped")
 
-    outerLensSet.addGears(compiled.gears.toSeq:_*)
+    outerLensSet.addLenses(compiled.gears.toSeq:_*)
 
     new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers

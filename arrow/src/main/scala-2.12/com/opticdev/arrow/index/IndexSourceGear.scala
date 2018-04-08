@@ -1,7 +1,7 @@
 package com.opticdev.arrow.index
 
 import com.opticdev.arrow.graph
-import com.opticdev.arrow.graph.{GearNode, KnowledgeGraph, SchemaNode}
+import com.opticdev.arrow.graph.{LensNode, KnowledgeGraph, SchemaNode}
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.sdk.descriptions.transformation.Transformation
 
@@ -16,12 +16,12 @@ object IndexSourceGear {
 
   def runFor(sourceGear: SourceGear) : KnowledgeGraph = {
 
-    val gearsBySchemas = sourceGear.lensSet.listGears.groupBy(_.parser.schema)
+    val gearsBySchemas = sourceGear.lensSet.listLenses.groupBy(_.parser.schema)
 
     val schemaGearNodes: Seq[UnDiEdge[graph.SGNode]] = gearsBySchemas.flatMap {
       case (schemaRef, gears)=> {
         val schemaNode = SchemaNode(sourceGear.findSchema(schemaRef).get)
-        gears.map(g=> schemaNode ~ GearNode(g))
+        gears.map(g=> schemaNode ~ LensNode(g))
       }
     }.toVector
 

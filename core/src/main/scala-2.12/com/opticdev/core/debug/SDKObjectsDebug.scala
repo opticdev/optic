@@ -40,7 +40,7 @@ object LensDebug {
                            componentsInfo: Option[ComponentsInfo],
                            containersInfo: Option[ContainersInfo],
                            variables: Seq[VariablesInfo],
-                           gearId: Option[String]
+                           gearHash: Option[String]
                           ) extends DebugInfo {
 
     def toJson : JsValue = Json.toJson[LensDebugInfo](this).as[JsObject] + ("sdkType" -> JsString("lens"))
@@ -106,7 +106,7 @@ object LensDebug {
       componentsInfo,
       containersInfo,
       variables,
-      Try(result.get.id).toOption
+      Try(result.get.hash).toOption
     )
   }
 }

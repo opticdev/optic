@@ -8,6 +8,9 @@ case class PackageRef(packageId: String, version: String = "latest") extends Ver
   def author = packageId.split(":").head
   def name = packageId.split(":").last
   def full = packageId+"@"+version
+
+  def apply(string: String) = PackageRef.fromString(string).get
+
 }
 
 object PackageRef {

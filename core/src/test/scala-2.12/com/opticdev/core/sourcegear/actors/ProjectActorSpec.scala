@@ -24,8 +24,8 @@ class ProjectActorSpec extends AkkaTestFixture("ProjectActorTest") with GearUtil
       override val transformations = Set()
     }
 
-    val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
-    sourceGear.lensSet.addGear(importGear)
+    val importGear = compiledLensFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
+    sourceGear.lensSet.addLens(importGear)
 
     val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 

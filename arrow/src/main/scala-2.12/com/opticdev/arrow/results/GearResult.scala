@@ -5,14 +5,14 @@ import com.opticdev.arrow.context.ArrowContextBase
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.{CompiledLens, SourceGear}
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
-import play.api.libs.json.{JsObject, JsString}
+import play.api.libs.json.{JsNull, JsObject, JsString}
 
 case class GearResult(gear: CompiledLens, score: Int, context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject) extends Result {
   override def asJson = {
     JsObject(Seq(
-      "name" -> JsString(gear.name),
+      "name" -> gear.name.map(JsString).getOrElse(JsNull),
       "projectName" -> JsString(project.name),
-      "packageId" -> JsString(gear.packageFull),
+      "packageId" -> JsString(gear.lensRef.packageRef.get.full),
       "schemaRef" -> JsString(gear.schemaRef.full),
       "changes" -> changes.asJson
     ))

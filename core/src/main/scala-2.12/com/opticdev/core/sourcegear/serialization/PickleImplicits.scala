@@ -3,6 +3,7 @@ package com.opticdev.core.sourcegear.serialization
 import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import boopickle.PicklerHelper
+import com.opticdev.common.PackageRef
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
@@ -132,7 +133,8 @@ object PickleImplicits extends PicklerHelper {
   implicit object GearPickler extends Pickler[CompiledLens] {
     override def pickle(value: CompiledLens)(implicit state: PickleState): Unit = {
       state.pickle(value.name)
-      state.pickle(value.packageFull)
+      state.pickle(value.id)
+      state.pickle(value.packageRef)
       state.pickle(value.schemaRef)
       state.pickle(value.enterOn)
       state.pickle(value.parser)
@@ -140,8 +142,9 @@ object PickleImplicits extends PicklerHelper {
     }
     override def unpickle(implicit state: UnpickleState): CompiledLens = {
       CompiledLens(
+        state.unpickle[Option[String]],
         state.unpickle[String],
-        state.unpickle[String],
+        state.unpickle[PackageRef],
         state.unpickle[SchemaRef],
         state.unpickle[Set[AstType]],
         state.unpickle[ParseAsModel],

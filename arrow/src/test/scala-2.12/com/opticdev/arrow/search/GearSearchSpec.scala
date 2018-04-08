@@ -7,7 +7,7 @@ import org.scalatest.FunSpec
 
 class GearSearchSpec extends FunSpec {
 
-  def gearWithName(name: String) = CompiledLens(name, null, null, null, null, null)
+  def gearWithName(name: String) = CompiledLens(Some(name), "name", null, null, null, null, null)
   val testGears = Set(
     gearWithName("Route"),
     gearWithName("REST Route"),
@@ -27,7 +27,7 @@ class GearSearchSpec extends FunSpec {
     //@todo figure out why this is non-deterministic. shouldn't be an unordered test
     val searchResults2 = GearSearch.search("model", NoContext, testGears)(null, null)
     assert(
-      searchResults2.map(_.asInstanceOf[GearResult].gear.name).toSet ==
+      searchResults2.map(_.asInstanceOf[GearResult].gear.name).map(_.get).toSet ==
         Set("Model Creation", "Model Definition", "Model")
     )
 

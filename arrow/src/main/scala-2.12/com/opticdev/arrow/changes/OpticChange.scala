@@ -22,10 +22,10 @@ sealed trait OpticChange {
 //}
 
 /* Inserts model somewhere in code */
-case class InsertModel( schema: Schema,
-                        gearId: Option[String] = None,
-                        value: JsObject, atLocation:
-                        Option[InsertLocation]
+case class InsertModel(schema: Schema,
+                       lensId: Option[String] = None,
+                       value: JsObject,
+                       atLocation: Option[InsertLocation]
                       ) extends OpticChange {
   override def schemaOption = Some(schema)
 }

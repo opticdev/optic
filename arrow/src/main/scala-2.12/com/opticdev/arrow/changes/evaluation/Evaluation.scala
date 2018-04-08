@@ -18,7 +18,7 @@ object Evaluation {
     case im: InsertModel => {
 
       val stagedNode = StagedNode(im.schema.schemaRef, im.value, Some(RenderOptions(
-        gearId = im.gearId
+        lensId = im.lensId
       )))
 
       val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear)
@@ -47,7 +47,7 @@ object Evaluation {
       require(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed)
 
       val stagedNode = transformationTry.get.toStagedNode(Some(RenderOptions(
-        gearId = rt.gearId
+        lensId = rt.gearId
       )))
 
       require(schema.validate(stagedNode.value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)

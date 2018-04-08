@@ -1,7 +1,7 @@
 package com.opticdev.arrow.graph
 
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString}
+import play.api.libs.json._
 import scalax.collection.GraphEdge.UnDiEdge
 import scalax.collection.edge.LkDiEdge
 
@@ -45,16 +45,16 @@ object GraphSerialization {
   }
 
   def jsonFromNode(sGNode: SGNode) : JsObject = sGNode match {
-    case g: GearNode => JsObject(Seq(
+    case g: LensNode => JsObject(Seq(
       "id" -> JsString(g.id),
-      "name" -> JsString(g.gear.name),
-      "packageFull" -> JsString(g.gear.packageFull),
+      "name" -> g.gear.name.map(JsString).getOrElse(JsNull),
+      "packageFull" -> JsString(g.gear.lensRef.packageRef.get.full),
       "type" -> JsString("gear")
     ))
     case s: SchemaNode => JsObject(Seq(
       "id" -> JsString(s.id),
       "name" -> JsString(s.schema.name),
-      "packageFull" -> JsString(s.schema.schemaRef.packageRef.full),
+      "packageFull" -> JsString(s.schema.schemaRef.packageRef.get.full),
       "type" -> JsString("schema")
     ))
   }

@@ -17,7 +17,7 @@ class LocationEvaluationSpec extends TestBase {
   val snippetBlock = File("test-examples/resources/example_source/LocationPlayground.js").contentAsString
   val snippet = Snippet("es7", snippetBlock)
 
-  implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(), Vector(), Vector())
+  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, Vector(), Vector(), Vector())
 
   val snippetOutput = new SnippetStage(snippet).run
 

@@ -10,12 +10,12 @@ import scala.util.Try
 object MDPackageResolveHelper {
 
   def resolveSchemaToGlobalSchema(schemaRef: SchemaRef, parentPackageRef: PackageRef, mapping: DependencyMapping) = {
-    if (schemaRef.packageRef == null) {
-      SchemaRef(parentPackageRef, schemaRef.id)
+    if (schemaRef.packageRef.isEmpty) {
+      SchemaRef(Some(parentPackageRef), schemaRef.id)
     } else {
-      val resolvedPackageRefOption = mapping.find(_._1.packageId == schemaRef.packageRef.packageId)
-      if (resolvedPackageRefOption.isEmpty) throw new Error("Schema "+ schemaRef.packageRef.packageId+" not imported in package "+ parentPackageRef.packageId)
-      SchemaRef(resolvedPackageRefOption.get._2, schemaRef.id)
+      val resolvedPackageRefOption = mapping.find(_._1.packageId == schemaRef.packageRef.get.packageId)
+      if (resolvedPackageRefOption.isEmpty) throw new Error("Schema "+ schemaRef.packageRef.get.packageId+" not imported in package "+ parentPackageRef.packageId)
+      SchemaRef(Some(resolvedPackageRefOption.get._2), schemaRef.id)
     }
   }
 
@@ -58,6 +58,7 @@ object MDPackageResolveHelper {
 
     Lens(
       lens.name,
+      lens.id,
       newSchema,
       lens.snippet,
       newComponents,

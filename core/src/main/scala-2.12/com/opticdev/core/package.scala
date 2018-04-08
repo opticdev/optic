@@ -6,7 +6,7 @@ import com.opticdev.sdk.descriptions.SchemaRef
 package object core {
     implicit val actorSystem = ActorSystem("opticActors")
 
-    val BlankSchema = SchemaRef(PackageRef("none:none"), "BLANK")
+    val BlankSchema = SchemaRef(Some(PackageRef("none:none")), "BLANK")
 
 //    private class MarvinRef extends BaseAstNode {
 //

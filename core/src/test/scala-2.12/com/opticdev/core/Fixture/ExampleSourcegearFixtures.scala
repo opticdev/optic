@@ -25,7 +25,7 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      CompiledLens("do", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.0"), "response"), Set(), parseGear, renderer)
+      CompiledLens(Some("do"), "do", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response"), Set(), parseGear, renderer)
     }
 
     val queryGear = {
@@ -51,7 +51,7 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      CompiledLens("query", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.0"), "query"), Set(), parseGear, renderer)
+      CompiledLens(Some("query"), "query", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), Set(), parseGear, renderer)
     }
 
     val block =
@@ -71,15 +71,15 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
 
     val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-    val routeGear = CompiledLens("wrapper", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.0"), "route"), Set(), parseGear, renderer)
+    val routeGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), Set(), parseGear, renderer)
 
     val sourceGear : SourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val lensSet = new LensSet(routeGear, queryGear, responseGear)
       override val schemas = Set(
-        Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "query"), JsObject.empty),
-        Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "response"), JsObject.empty),
-        Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "route"), JsObject.empty)
+        Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), JsObject.empty),
+        Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response"), JsObject.empty),
+        Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), JsObject.empty)
       )
       override val transformations = Set()
     }

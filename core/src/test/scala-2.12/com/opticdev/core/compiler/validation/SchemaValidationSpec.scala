@@ -8,7 +8,7 @@ import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 
 class SchemaValidationSpec extends FunSpec {
 
-  val basicSchema = Schema(SchemaRef(PackageRef("test"), "test"), Json.parse("""{
+  val basicSchema = Schema(SchemaRef(Some(PackageRef("test")), "test"), Json.parse("""{
                             "title": "Test",
                             "version": "test",
                             "slug": "test",
@@ -29,7 +29,7 @@ class SchemaValidationSpec extends FunSpec {
                             "required": ["firstName", "lastName"]
                         }""").as[JsObject])
 
-  val nestedRequired = Schema(SchemaRef(PackageRef("test"), "test"), Json.parse("""{
+  val nestedRequired = Schema(SchemaRef(Some(PackageRef("test")), "test"), Json.parse("""{
                              "title": "Test",
                              "type": "object",
                              "version": "test",
