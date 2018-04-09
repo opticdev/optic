@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.{LensRef, Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.utils.SemverHelper

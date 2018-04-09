@@ -53,7 +53,7 @@ object JsonImplicits {
   implicit val insertModelFormat = Json.format[InsertModel]
 
   implicit val transformationFormat = Json.format[Transformation]
-  implicit val gearOptionFormat = Json.format[GearOption]
+  implicit val gearOptionFormat = Json.format[LensOption]
   implicit val directTransformationFormat = Json.format[DirectTransformation]
   implicit val transformationChangesFormat = Json.format[TransformationChanges]
 

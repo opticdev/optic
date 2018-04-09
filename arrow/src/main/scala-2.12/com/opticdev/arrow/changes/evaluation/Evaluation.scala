@@ -47,7 +47,7 @@ object Evaluation {
       require(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed)
 
       val stagedNode = transformationTry.get.toStagedNode(Some(RenderOptions(
-        lensId = rt.gearId
+        lensId = rt.lensId
       )))
 
       require(schema.validate(stagedNode.value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)

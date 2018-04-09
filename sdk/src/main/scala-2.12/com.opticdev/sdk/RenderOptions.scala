@@ -1,5 +1,8 @@
 package com.opticdev.sdk
 
+import com.opticdev.sdk.descriptions.LensRef
+
+
 case class RenderOptions(lensId: Option[String] = None,
                          containers: Option[ContainersContent] = None,
                          variables: Option[VariableMapping] = None) {
@@ -39,4 +42,7 @@ case class RenderOptions(lensId: Option[String] = None,
   )
 
   def isEmpty = lensId.isEmpty && containers.isEmpty && variables.isEmpty
+
+  def lensRef : Option[LensRef] = lensId.flatMap(i=> LensRef.fromString(i).toOption)
+
 }

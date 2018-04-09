@@ -6,7 +6,7 @@ import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.parsers.sourcegear.basic.ObjectLiteralValueFormat
 import com.opticdev.sdk.{RenderOptions, VariableMapping}
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
 import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.StagedNode
 import com.vdurmont.semver4j.Semver

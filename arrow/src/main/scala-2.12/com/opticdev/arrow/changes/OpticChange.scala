@@ -33,8 +33,8 @@ case class InsertModel(schema: Schema,
 case class RunTransformation(transformationChanges: TransformationChanges,
                              inputValue: Option[JsObject],
 
-                             gearOptions: Seq[GearOption],
-                             gearId: Option[String],
+                             lensOptions: Seq[LensOption],
+                             lensId: Option[String],
 
                              locationOptions: Seq[InsertLocation],
                              location: Option[InsertLocation],

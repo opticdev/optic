@@ -21,7 +21,7 @@ class GearSearchSpec extends FunSpec {
     val searchResults1 = GearSearch.search("route", NoContext, testGears)(null, null)
     assert(
       searchResults1.map(_.asInstanceOf[GearResult].gear.name) ==
-        Seq("REST Route", "Route")
+        Seq(Some("Route"), Some("REST Route"))
     )
 
     //@todo figure out why this is non-deterministic. shouldn't be an unordered test
