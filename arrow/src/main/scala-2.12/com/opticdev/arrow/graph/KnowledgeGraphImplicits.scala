@@ -16,7 +16,8 @@ object KnowledgeGraphImplicits {
   implicit class KnowledgeGraphWrapper(knowledgeGraph: KnowledgeGraph) {
 
     def schemaNodeForRef(schemaRef: SchemaRef): Option[SchemaNode] = {
-      val availibleSchemas = knowledgeGraph.nodes.filter(i=> i.value.isInstanceOf[SchemaNode] && i.value.asInstanceOf[SchemaNode].schema.schemaRef.packageRef.get.packageId == schemaRef.packageRef.get.packageId)
+      val availibleSchemas = knowledgeGraph.nodes.filter(i=> i.value.isInstanceOf[SchemaNode] && i.value.asInstanceOf[SchemaNode].schema.schemaRef.packageRef.get.packageId == schemaRef.packageRef.get.packageId
+      && i.value.asInstanceOf[SchemaNode].schema.schemaRef.id == schemaRef.id)
         .map(i=> i.value.asInstanceOf[SchemaNode]).toSet
 
       val result = SemverHelper.findVersion(availibleSchemas, (a: SchemaNode) => a.schema.schemaRef.packageRef.get, schemaRef.packageRef.get.version)
