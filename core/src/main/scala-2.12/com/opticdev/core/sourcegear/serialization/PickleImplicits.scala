@@ -8,6 +8,7 @@ import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.{CompiledLens, SGConfig}
+import com.opticdev.opm.context.{Leaf, TreeContext}
 import com.opticdev.parsers.ParserRef
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions._
@@ -130,7 +131,7 @@ object PickleImplicits extends PicklerHelper {
   //@todo this should be moved within the parsers
   implicit val ruleProvider = new RuleProvider()
 
-  implicit object GearPickler extends Pickler[CompiledLens] {
+  implicit object ConmpiledLensPickler extends Pickler[CompiledLens] {
     override def pickle(value: CompiledLens)(implicit state: PickleState): Unit = {
       state.pickle(value.name)
       state.pickle(value.id)
@@ -157,7 +158,7 @@ object PickleImplicits extends PicklerHelper {
     override def pickle(value: SGConfig)(implicit state: PickleState): Unit = {
       state.pickle(value.hashInt)
       state.pickle(value.parserIds)
-      state.pickle(value.gears)
+      state.pickle(value.compiledLenses)
       state.pickle(value.schemas)
       state.pickle(value.transformations)
     }

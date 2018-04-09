@@ -18,7 +18,14 @@ object SGConstructor {
 
     implicit val projectKnowledgeSearchPaths = projectFile.projectKnowledgeSearchPaths
 
-    val dependencies = dependenciesForProjectFile(projectFile).get
+    val dependencies: DependencyTree = dependenciesForProjectFile(projectFile).get
+
+    val parsersRefs = parsersForProjectFile(projectFile).get
+
+    fromDependencies(dependencies, parsersRefs)
+  }.flatten
+
+  def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths)  : Future[SGConfig] = Future {
 
     val compiled = compileDependencyTree(dependencies).get
 
@@ -26,9 +33,7 @@ object SGConstructor {
     val transformationSet = dependencies.flattenTransformations
     val gears = compiled.flatMap(_.gears).toSet
 
-    val parsersRefs = parsersForProjectFile(projectFile)
-
-    SGConfig(dependencies.hash, parsersRefs.get, gears, schemaSet, transformationSet)
+    SGConfig(dependencies.hash, parserRefs, gears, schemaSet, transformationSet)
   }
 
   def dependenciesForProjectFile(projectFile: ProjectFile): Try[DependencyTree] = {

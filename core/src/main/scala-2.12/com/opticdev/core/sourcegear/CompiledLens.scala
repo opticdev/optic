@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SGExportable}
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.Project
@@ -22,7 +22,7 @@ case class CompiledLens(name: Option[String],
                         schemaRef: SchemaRef,
                         enterOn: Set[AstType],
                         parser : ParseAsModel,
-                        renderer : RenderGear) {
+                        renderer : RenderGear) extends SGExportable {
 
   //@todo make sure this is good enough
   lazy val hash: String = {

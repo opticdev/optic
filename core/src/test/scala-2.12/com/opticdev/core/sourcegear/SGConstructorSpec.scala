@@ -28,7 +28,7 @@ class SGConstructorSpec extends TestBase with TestPackageProviders {
       val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
       Await.result(future, 5 seconds)
     }
-    assert(sgConfig.gears.size == 2)
+    assert(sgConfig.compiledLenses.size == 2)
   }
 
 }

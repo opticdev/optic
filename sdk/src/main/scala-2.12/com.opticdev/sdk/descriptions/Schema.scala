@@ -2,7 +2,7 @@ package com.opticdev.sdk.descriptions
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.github.fge.jsonschema.main.{JsonSchema, JsonSchemaFactory}
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SGExportable}
 import play.api.libs.json._
 
 import scala.util.Try
@@ -43,7 +43,7 @@ object Schema extends Description[Schema] {
   override def fromJson(jsValue: JsValue) = fromJson(null, jsValue)
 }
 
-case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExportable {
+case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExportable with SGExportable {
 
   val name : String = (definition \ "title").asOpt[JsString].getOrElse(JsString(schemaRef.id)).value
 

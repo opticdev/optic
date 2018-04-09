@@ -5,6 +5,7 @@ import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.{LensRef, Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.marvin.common.ast.NewAstNode
+import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.opm.utils.SemverHelper
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
@@ -91,7 +92,6 @@ case object UnloadedSourceGear extends SourceGear {
   override val lensSet = new LensSet()
   override val schemas = Set()
   override val transformations = Set()
-
   override def isLoaded = false
 }
 
