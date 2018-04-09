@@ -3,7 +3,8 @@ package com.opticdev.core.sourcegear.serialization
 import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import boopickle.PicklerHelper
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SGExportable}
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
@@ -154,9 +155,19 @@ object PickleImplicits extends PicklerHelper {
     }
   }
 
+  object FlatContextTreePickler {
+    implicit val treePickler = compositePickler[SGExportable]
+    treePickler.addConcreteType[FlatContext]
+      .addConcreteType[Schema]
+      .addConcreteType[CompiledLens]
+  }
+
+  import FlatContextTreePickler.treePickler
+
   implicit object SGConfigPickler extends Pickler[SGConfig] {
     override def pickle(value: SGConfig)(implicit state: PickleState): Unit = {
       state.pickle(value.hashInt)
+      state.pickle(value._flatContext)
       state.pickle(value.parserIds)
       state.pickle(value.compiledLenses)
       state.pickle(value.schemas)
@@ -165,6 +176,7 @@ object PickleImplicits extends PicklerHelper {
     override def unpickle(implicit state: UnpickleState): SGConfig = {
       SGConfig(
         state.unpickle[Int],
+        state.unpickle[FlatContext],
         state.unpickle[Set[ParserRef]],
         state.unpickle[Set[CompiledLens]],
         state.unpickle[Set[SchemaColdStorage]],

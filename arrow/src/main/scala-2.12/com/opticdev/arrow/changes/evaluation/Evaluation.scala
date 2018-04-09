@@ -52,7 +52,9 @@ object Evaluation {
 
       require(schema.validate(stagedNode.value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
 
-      val generatedNode = Render.fromStagedNode(stagedNode)(sourcegear).get
+      val prefixedFlatContent = sourcegear.flatContext.prefix(rt.transformationChanges.transformation.packageId.packageId)
+
+      val generatedNode = Render.fromStagedNode(stagedNode)(sourcegear, prefixedFlatContent).get
 
       val resolvedLocation = rt.location.get.resolveToLocation(sourcegear).get
 

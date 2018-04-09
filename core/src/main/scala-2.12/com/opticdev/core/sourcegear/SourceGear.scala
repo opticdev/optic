@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.common.PackageRef
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.sdk.descriptions.{LensRef, Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.marvin.common.ast.NewAstNode
@@ -24,6 +25,8 @@ abstract class SourceGear {
   val schemas: Set[Schema]
 
   val transformations: Set[Transformation]
+
+  val flatContext: FlatContext
 
   def fileAccumulator = lensSet.fileAccumulator
 
@@ -93,6 +96,7 @@ case object UnloadedSourceGear extends SourceGear {
   override val schemas = Set()
   override val transformations = Set()
   override def isLoaded = false
+  override val flatContext = FlatContext(None, Map())
 }
 
 object SourceGear {
@@ -101,6 +105,7 @@ object SourceGear {
     override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
+    override val flatContext = FlatContext(None, Map())
   }
 
   def unloaded = UnloadedSourceGear

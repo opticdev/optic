@@ -15,6 +15,7 @@ import com.opticdev.sdk.markdown.MarkdownParser
 import play.api.libs.json.{JsObject, JsString}
 import OpticMDPackageRangeImplicits._
 import better.files.File
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.GraphOperations
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
@@ -116,5 +117,7 @@ object DebugSourceGear extends SourceGear {
       DebugAstNode(DebugLanguageProxy.transformationNode, range, transformation)
     })
   }
+
+  override val flatContext: FlatContext = FlatContext(None, Map())
 
 }

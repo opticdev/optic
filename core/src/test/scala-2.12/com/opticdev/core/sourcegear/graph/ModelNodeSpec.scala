@@ -3,6 +3,7 @@ package com.opticdev.core.sourcegear.graph
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.Path
@@ -19,6 +20,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
     override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
+    override val flatContext: FlatContext = FlatContext(None, Map.empty)
   }
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"

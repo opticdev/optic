@@ -3,6 +3,7 @@ package com.opticdev.core.Fixture
 import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.compiler.stages.RenderFactoryStage
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions._
@@ -82,6 +83,7 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
         Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), JsObject.empty)
       )
       override val transformations = Set()
+      override val flatContext: FlatContext = FlatContext(None, Map.empty)
     }
   }
 

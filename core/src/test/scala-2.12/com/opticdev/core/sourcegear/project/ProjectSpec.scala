@@ -15,6 +15,7 @@ import java.nio.file.{Path, WatchEvent, StandardWatchEventKinds => EventType}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import akka.actor.ActorSystem
+import com.opticdev.core.sourcegear.context.FlatContext
 
 import scala.concurrent.duration._
 import com.opticdev.core.sourcegear.project.status._
@@ -36,6 +37,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
     override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
+    override val flatContext: FlatContext = FlatContext(None, Map.empty)
   }
 
 

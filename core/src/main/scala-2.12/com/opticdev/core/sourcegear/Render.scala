@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import com.opticdev.common.utils.JsonUtils
+import com.opticdev.core.sourcegear.context.FlatContextBase
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
@@ -16,11 +17,13 @@ import scala.util.{Failure, Success, Try}
 
 object Render {
 
-  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear) : Try[(NewAstNode, String, CompiledLens)] = Try {
+  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = null) : Try[(NewAstNode, String, CompiledLens)] = Try {
+
+    val flatContext: FlatContextBase = if (context == null) sourceGear.flatContext else context
 
     val options = stagedNode.options.getOrElse(RenderOptions())
 
-    val gearOption = resolveLens(stagedNode)
+    val gearOption = resolveLens(stagedNode)(sourceGear, flatContext)
     require(gearOption.isDefined, "No gear found that can render this node.")
 
     val gear = gearOption.get
@@ -39,11 +42,22 @@ object Render {
     (result._1, result._2, gear)
   }
 
-  private def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear) : Option[CompiledLens] = {
+  private def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[CompiledLens] = {
     val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.lensId.get).get)
     if (lensRefTry.isSuccess) {
       val lensRef = lensRefTry.get
-      sourceGear.findLens(lensRef)
+
+      val localOption = Try(context.resolve(lensRef.internalFull).get.asInstanceOf[CompiledLens])
+        .toOption
+
+
+      if (localOption.isDefined) {
+        localOption
+      } else {
+        //transformations should be able to reach outside of their tree
+        sourceGear.findLens(lensRef)
+      }
+
     } else {
       sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listLenses.find(_.schemaRef == schema.schemaRef))
     }

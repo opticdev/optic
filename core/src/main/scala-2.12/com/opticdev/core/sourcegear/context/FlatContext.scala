@@ -11,9 +11,14 @@ import scala.util.Try
   * A simplified tree we can save/recall within sourcegear instances. Maps paths to actual SGExportable nodes
   */
 
-case class FlatContext(packageRef: Option[PackageRef], mapping: Map[String, SGExportable]) extends SGExportable {
+sealed trait FlatContextBase {
+  def resolve(string: String) : Option[SGExportable]
+  def prefix(prefix: String) : FlatContextBase = PrefixedFlatContent(prefix, this)
+}
+
+case class FlatContext(packageRef: Option[PackageRef], mapping: Map[String, SGExportable]) extends SGExportable with FlatContextBase {
   def resolve(string: String) : Option[SGExportable] = {
-    val path = string.split("/").filterNot(_.isEmpty)
+    val path = string.split("\\/+").filterNot(_.isEmpty)
 
     Try(path.foldLeft(None: Option[SGExportable]) {
       case (opt, comp) => {
@@ -32,14 +37,20 @@ case class FlatContext(packageRef: Option[PackageRef], mapping: Map[String, SGEx
   }
 }
 
-object FlatContext {
-  def fromDependencyTree(dependencyTree: Tree, packageRef: Option[PackageRef] = None)(implicit config: SGConfig) : FlatContext = {
+case class PrefixedFlatContent(prefix: String, flatContext: FlatContextBase) extends FlatContextBase {
+  override def resolve(string: String): Option[SGExportable] = {
+    flatContext.resolve(s"${prefix}/${string}")
+  }
+}
 
-    val includedSchemas: Set[(String, Schema)] = config.inflatedSchemas.collect {
+object FlatContextBuilder {
+  def fromDependencyTree(dependencyTree: Tree, packageRef: Option[PackageRef] = None)(implicit schemas: Set[Schema], compiledLenses: Set[CompiledLens]) : FlatContext = {
+
+    val includedSchemas: Set[(String, Schema)] = schemas.collect {
       case s: Schema if s.schemaRef.packageRef.contains(packageRef.getOrElse(None)) =>
         (s.schemaRef.id, s)
     }
-    val includedLenses: Set[(String, CompiledLens)] = config.compiledLenses.collect {
+    val includedLenses: Set[(String, CompiledLens)] = compiledLenses.collect {
       case l: CompiledLens if packageRef.contains(l.packageRef) =>
         (l.id, l)
     }
@@ -50,4 +61,5 @@ object FlatContext {
       (i.opticPackage.packageId, fromDependencyTree(i.tree, Some(i.opticPackage.packageRef)))
     }) ++ exportables).toMap)
   }
+
 }

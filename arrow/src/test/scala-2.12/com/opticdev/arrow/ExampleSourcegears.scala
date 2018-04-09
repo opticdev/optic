@@ -3,6 +3,7 @@ package com.opticdev.arrow
 import better.files.File
 import com.opticdev.arrow.index.IndexSourceGear
 import com.opticdev.common.PackageRef
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{LensSet, SGConstructor, SourceGear}
 import com.opticdev.sdk.descriptions.transformation.Transformation
@@ -31,6 +32,7 @@ object ExampleSourcegears {
         Transformation("Route -> Form", transformationPackage, schemaRoute.schemaRef, schemaForm.schemaRef, Transformation.emptyAskSchema, ""),
         Transformation("Route -> Fetch", transformationPackage, schemaRoute.schemaRef, schemaFetch.schemaRef, Transformation.emptyAskSchema, "")
       )
+      override val flatContext: FlatContext = FlatContext(None, Map.empty)
     }
 
     val knowledgeGraph = IndexSourceGear.runFor(sourceGear)

@@ -14,6 +14,7 @@ import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
 import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.StagedNode
@@ -99,6 +100,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
         Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a"), JsObject.empty)
       )
       override val transformations = Set()
+      override val flatContext: FlatContext = FlatContext(None, Map.empty)
     }
   }
 

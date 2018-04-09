@@ -67,7 +67,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"position": 93,
         |			"_type":"com.opticdev.arrow.changes.location.AsChildOf"
         |		},
-        |   "lensId": "optic:express-js@0.1.0/route",
+        |   "lensId": "optic:express-js/route",
         |   "answers": {},
         |		"_type":"com.opticdev.arrow.changes.InsertModel"
         |	}]
@@ -193,7 +193,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |     "packageFull": "optic:expressjs@0.1.0",
         |     "id": "85c0d9c3"
         |   }],
-        |   "lensId": "optic:express-js@0.1.0/route",
+        |   "lensId": "optic:express-js/route",
         | 	"locationOptions": [{
         |		  "file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
@@ -274,14 +274,14 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |		}],
         |		"_type": "com.opticdev.arrow.changes.RunTransformation",
-        |		"lensId": "optic:express-js@0.1.0/route",
+        |		"lensId": "optic:express-js/route",
         |		"location": {
         |			"file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |		},
         |		"answers": {
-        |			"queryProvider": "optic:mongoose@0.1.0/insert-record"
+        |			"queryProvider": "optic:mongoose/insert-record"
         |		}
         |	}]
       """.stripMargin

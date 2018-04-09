@@ -2,6 +2,7 @@ package com.opticdev.core.Fixture.compilerUtils
 
 import com.opticdev.core.compiler.Compiler.CompileWorker
 import com.opticdev.core.compiler.Compiler
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
 import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
@@ -19,6 +20,7 @@ trait GearUtils {
     override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
+    override val flatContext: FlatContext = FlatContext(None, Map.empty)
   }
 
   def compiledLensFromDescription(path: String): CompiledLens = {
@@ -69,6 +71,7 @@ trait GearUtils {
       override val lensSet = outerLensSet
       override val schemas = compiled.schemas
       override val transformations = Set()
+      override val flatContext: FlatContext = FlatContext(None, Map.empty)
     }
 
   }

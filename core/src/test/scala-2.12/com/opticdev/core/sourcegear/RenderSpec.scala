@@ -4,6 +4,7 @@ import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.Fixture.{DummyCompilerOutputs, ExampleSourcegearFixtures, TestBase}
 import com.opticdev.core.compiler.stages.RenderFactoryStage
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.RenderOptions
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
@@ -31,6 +32,12 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
       override val schemas: Set[Schema] = Set(
         Schema(testSchemaRef, JsObject.empty)
       )
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        "optic:test" -> FlatContext(Some(a.packageRef), Map(
+          "test" -> a,
+          "other" -> b
+        ))
+      ))
     }
 
     lazy val resolveLens = PrivateMethod[Option[CompiledLens]]('resolveLens)
@@ -38,19 +45,19 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
     it("if set in options") {
       LensRef.fromString(a.id, Some(a.packageRef))
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(lensId = Some(LensRef.fromString(a.id, Some(a.packageRef)).get.full))))
-      val result = Render invokePrivate resolveLens(stagedNode, sourceGear)
+      val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
       assert(result.contains(a))
     }
 
     it("if not set in options gets first matching") {
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty)
-      val result = Render invokePrivate resolveLens(stagedNode, sourceGear)
+      val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
       assert(result.contains(a))
     }
 
     it("will return none if gear is not found") {
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(lensId = Some("FAKE"))))
-      val result = Render invokePrivate resolveLens(stagedNode, sourceGear)
+      val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
       assert(result.isEmpty)
     }
 

@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.gears.rendering
 
+import com.opticdev.core.sourcegear.context.FlatContextBase
 import com.opticdev.core.sourcegear.{Render, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
@@ -43,7 +44,7 @@ case class RenderGear(block: String,
     (fileContents, astGraph, rootNode)
   }
 
-  def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): (NewAstNode, String) = {
+  def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = null): (NewAstNode, String) = {
 
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(block)
 
@@ -115,7 +116,7 @@ case class RenderGear(block: String,
       rawWithContainersFilled)
   }
 
-  def render(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): String =
+  def render(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = null): String =
     renderWithNewAstNode(value, containersContent, variableMapping)._2
 
   def hash = {

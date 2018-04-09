@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear._
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.actors._
-
+import com.opticdev.core.sourcegear.context.FlatContext
 import scalax.collection.mutable.Graph
 
 class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest") {
@@ -22,6 +22,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
     override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
+    override val flatContext: FlatContext = FlatContext(None, Map.empty)
   }
 
   describe("context lookup") {

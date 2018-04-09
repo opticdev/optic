@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear
 import com.opticdev.core.compiler.{Compiler, CompilerOutput}
 import com.opticdev.common.PackageRef
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, SomePackagesFailedToCompile}
+import com.opticdev.core.sourcegear.context.{FlatContext, FlatContextBuilder}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.{DependencyTree, PackageManager}
@@ -29,11 +30,14 @@ object SGConstructor {
 
     val compiled = compileDependencyTree(dependencies).get
 
-    val schemaSet = dependencies.flattenSchemas.map(_.toColdStorage)
+    implicit val schemas = dependencies.flattenSchemas
+    val schemaSetColdStorage = schemas.map(_.toColdStorage)
     val transformationSet = dependencies.flattenTransformations
-    val gears = compiled.flatMap(_.gears).toSet
+    implicit val compiledLenses = compiled.flatMap(_.gears).toSet
 
-    SGConfig(dependencies.hash, parserRefs, gears, schemaSet, transformationSet)
+    val flatContext = FlatContextBuilder.fromDependencyTree(dependencies)
+
+    SGConfig(dependencies.hash, flatContext, parserRefs, compiledLenses, schemaSetColdStorage, transformationSet)
   }
 
   def dependenciesForProjectFile(projectFile: ProjectFile): Try[DependencyTree] = {

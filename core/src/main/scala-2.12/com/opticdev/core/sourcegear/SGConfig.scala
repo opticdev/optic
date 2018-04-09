@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear
 
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.sdk.descriptions.{Schema, SchemaColdStorage, SchemaRef}
 
 import scala.util.hashing.MurmurHash3
@@ -12,6 +13,7 @@ import com.opticdev.sdk.descriptions.transformation.Transformation
 import play.api.libs.json.{JsObject, JsString, Json}
 
 case class SGConfig(hashInt: Int,
+                    _flatContext: FlatContext,
                     parserIds : Set[ParserRef],
                     compiledLenses : Set[CompiledLens],
                     schemas : Set[SchemaColdStorage],
@@ -38,6 +40,7 @@ case class SGConfig(hashInt: Int,
       override val lensSet = new LensSet(compiledLenses.toSeq: _*)
       override val schemas = inflatedSchemas
       override val transformations = inflatedTransformations
+      override val flatContext: FlatContext = _flatContext
     }
   }
 
