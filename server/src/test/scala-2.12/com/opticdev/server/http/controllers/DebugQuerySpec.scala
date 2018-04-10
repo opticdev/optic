@@ -17,7 +17,7 @@ class DebugQuerySpec extends AkkaTestFixture("DebugQuerySpec") with TestBase wit
 
   it("gets debug information for a lens from markdown file") {
 
-    val future = new DebugQuery(File("test-examples/resources/example_markdown/Mongoose.md"), Range(1155, 1155)).execute
+    val future = new DebugQuery(File("test-examples/resources/example_markdown/Mongoose.md"), Range(1155, 1155), None).execute
 
     val result = Await.result(future, 20 seconds)
 
@@ -28,7 +28,7 @@ class DebugQuerySpec extends AkkaTestFixture("DebugQuerySpec") with TestBase wit
 
   it("will not find any debug info for invalid file") {
 
-    val future = new DebugQuery(File("test-examples/not-real"), Range(1155, 1155)).execute
+    val future = new DebugQuery(File("test-examples/not-real"), Range(1155, 1155), None).execute
 
     val result = Await.result(future, 20 seconds)
 

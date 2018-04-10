@@ -14,7 +14,7 @@ class SdkTransformationSpec extends FunSpec {
   val validTransformationJson =
     """
       |{
-          "name": "Schema from Test",
+          "yields": "Schema from Test",
           "packageId": "optic:test@1.0.0/schema",
           "input": "optic:test@1.0.0/schema",
           "output": "test",
@@ -29,9 +29,9 @@ class SdkTransformationSpec extends FunSpec {
 
     it("works when valid") {
       val result = Transformation.fromJson(Json.parse(validTransformationJson))
-      assert(result.name == "Schema from Test")
-      assert(result.input == SchemaRef(PackageRef("optic:test", "1.0.0"), "schema"))
-      assert(result.output == SchemaRef(null, "test"))
+      assert(result.yields == "Schema from Test")
+      assert(result.input == SchemaRef(Some(PackageRef("optic:test", "1.0.0")), "schema"))
+      assert(result.output == SchemaRef(None, "test"))
     }
 
     it("fails when invalid") {
@@ -63,13 +63,6 @@ class SdkTransformationSpec extends FunSpec {
     it("can execute a transformation") {
       val result = valid.transform(JsObject(Seq("test" -> JsString("world"))), JsObject.empty)
       assert(result == Success(SingleModel(outputSchemaRef, JsObject(Seq("hello" -> JsString("world"))))))
-    }
-
-    it("can execute a real world transformation") {
-
-      val transformation = """"""
-
-
     }
 
     describe("receives answers from Ask") {

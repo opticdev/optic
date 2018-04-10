@@ -1,10 +1,10 @@
 package com.opticdev.core.sourcegear.graph
 
 import better.files.File
-import com.opticdev.parsers.graph.{CommonAstNode, BaseNode, CustomEdge}
+import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, CustomEdge}
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.InFile
-import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode}
 import com.opticdev.parsers.AstGraph
 
 import scala.collection.mutable
@@ -51,12 +51,15 @@ object GraphImplicits {
   }
 
   implicit class BaseModelNodeInstance(modelNode: BaseModelNode) {
-    def astRoot()(implicit astGraph: AstGraph): CommonAstNode = {
-      val dependencies = modelNode.dependencies(astGraph)
-      if (dependencies.head.isAstNode()) {
-        dependencies.head.asInstanceOf[CommonAstNode]
-      } else {
-        null
+    def astRoot()(implicit astGraph: AstGraph): CommonAstNode = modelNode match {
+      case l: LinkedModelNode[CommonAstNode] => l.root
+      case _ => {
+        val dependencies = modelNode.dependencies(astGraph)
+        if (dependencies.head.isAstNode()) {
+          dependencies.head.asInstanceOf[CommonAstNode]
+        } else {
+          throw new Error("Unable to find AST Root for Model Node " + modelNode)
+        }
       }
     }
 

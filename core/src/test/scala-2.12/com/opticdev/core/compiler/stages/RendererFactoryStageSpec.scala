@@ -8,17 +8,40 @@ import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
 import com.opticdev.sdk.descriptions.finders.StringFinder
-import com.opticdev.core.sourcegear.{Gear, GearSet, SourceGear}
+import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
 import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.StagedNode
 
 class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec") with ParserUtils with GearUtils {
+
+  it("can create an expression renderer") {
+
+    val block = "my.hello.world"
+    implicit val ruleProvider = new RuleProvider()
+
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+
+    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
+      CodeComponent(Seq("test"), StringFinder(Entire, "hello")),
+      CodeComponent(Seq("testA"), StringFinder(Entire, "world"))
+    ))
+
+    val importSample = sample(block)
+
+    println(importSample)
+
+    val renderer = new RenderFactoryStage(importSample, parseGear).run.renderGear
+    val result = renderer.render(JsObject(Seq("test" -> JsString("world"), "testA" -> JsString("hello"))))
+    assert(result == "my.world.hello")
+
+  }
 
   it("can create a simple renderer") {
 
@@ -49,7 +72,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      Gear("do", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.1"), "a"), Set(), parseGear, renderer)
+      CompiledLens(Some("do"), "do", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a"), Set(), parseGear, renderer)
     }
 
     val block =
@@ -67,16 +90,24 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
     val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-    val thisGear = Gear("wrapper", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.1"), "b"), Set(), parseGear, renderer)
+    val thisGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b"), Set(), parseGear, renderer)
+
+    val a = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b"), JsObject.empty)
+    val b = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a"), JsObject.empty)
 
     val sourceGear : SourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-      override val gearSet = new GearSet(thisGear, childGear)
-      override val schemas = Set(
-        Schema(SchemaRef(PackageRef("optic:test", "0.1.1"), "b"), JsObject.empty),
-        Schema(SchemaRef(PackageRef("optic:test", "0.1.1"), "a"), JsObject.empty)
-      )
+      override val lensSet = new LensSet(thisGear, childGear)
+      override val schemas = Set(a,b)
       override val transformations = Set()
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        "optic:test" -> FlatContext(Some(PackageRef("optic:test", "0.1.1")), Map(
+          thisGear.id -> thisGear,
+          childGear.id -> childGear,
+          a.schemaRef.id -> a,
+          b.schemaRef.id -> b
+        ))
+      ))
     }
   }
 
@@ -90,7 +121,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
         JsObject(Seq("operation" -> JsString("second"))),
         JsObject(Seq("operation" -> JsString("third")))
       ))
-    )))
+    )))(sourceGear, context = sourceGear.flatContext)
 
     println(result)
 

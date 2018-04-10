@@ -33,9 +33,9 @@ package object debug {
 
     private val debugLanguageProxyPackage = PackageRef("optic:internal", "1.0.0")
 
-    val schemaNode = SchemaRef(debugLanguageProxyPackage, "SCHEMA")
-    val lensNode = SchemaRef(debugLanguageProxyPackage, "LENS")
-    val transformationNode = SchemaRef(debugLanguageProxyPackage, "TRANSFORMATION")
+    val schemaNode = SchemaRef(Some(debugLanguageProxyPackage), "SCHEMA")
+    val lensNode = SchemaRef(Some(debugLanguageProxyPackage), "LENS")
+    val transformationNode = SchemaRef(Some(debugLanguageProxyPackage), "TRANSFORMATION")
     //  val containerNode = AstType(debugLanguageProxy, "CONTAINER")
   }
 

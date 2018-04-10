@@ -3,11 +3,12 @@ package com.opticdev.core.sourcegear.parser
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.sdk.descriptions.enums.RuleEnums.Any
 import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule}
-import com.opticdev.core.sourcegear.{GearSet, SourceGear}
+import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.enums.Token
@@ -18,9 +19,10 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
   implicit val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-    override val gearSet = new GearSet()
+    override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
+    override val flatContext: FlatContext = FlatContext(None, Map.empty)
   }
 
   implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)

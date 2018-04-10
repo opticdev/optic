@@ -3,7 +3,8 @@ package com.opticdev.core.Fixture
 import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.compiler.stages.RenderFactoryStage
-import com.opticdev.core.sourcegear.{Gear, GearSet, SourceGear}
+import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
@@ -25,7 +26,7 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      Gear("do", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.0"), "response"), Set(), parseGear, renderer)
+      CompiledLens(Some("do"), "do", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response"), Set(), parseGear, renderer)
     }
 
     val queryGear = {
@@ -51,7 +52,7 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      Gear("query", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.0"), "query"), Set(), parseGear, renderer)
+      CompiledLens(Some("query"), "queryLens", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), Set(), parseGear, renderer)
     }
 
     val block =
@@ -71,17 +72,28 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
 
     val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-    val routeGear = Gear("wrapper", "optic:test", SchemaRef(PackageRef("optic:test", "0.1.0"), "route"), Set(), parseGear, renderer)
+    val routeGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), Set(), parseGear, renderer)
+
+    val schemaSet = Seq(
+      Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), JsObject.empty),
+      Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response"), JsObject.empty),
+      Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), JsObject.empty)
+    )
 
     val sourceGear : SourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-      override val gearSet = new GearSet(routeGear, queryGear, responseGear)
-      override val schemas = Set(
-        Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "query"), JsObject.empty),
-        Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "response"), JsObject.empty),
-        Schema(SchemaRef(PackageRef("optic:test", "0.1.0"), "route"), JsObject.empty)
-      )
+      override val lensSet = new LensSet(routeGear, queryGear, responseGear)
+      override val schemas = schemaSet.toSet
       override val transformations = Set()
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        "optic:test" -> FlatContext(Some(PackageRef("optic:test", "0.1.0")), Map(
+          "queryLens" -> queryGear,
+          "do" -> responseGear,
+          "query" -> schemaSet(0),
+          "response" -> schemaSet(1),
+          "route" -> schemaSet(2)
+        ))
+      ))
     }
   }
 

@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.gears.rendering
 
+import com.opticdev.core.sourcegear.context.{FlatContextBase, FlatContextBuilder}
 import com.opticdev.core.sourcegear.{Render, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
@@ -7,7 +8,7 @@ import com.opticdev.core.utils.StringUtils
 import com.opticdev.marvin.common.ast.{AstArray, AstProperties, NewAstNode}
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers._
-import com.opticdev.parsers.graph.{CommonAstNode, GraphImplicits}
+import com.opticdev.parsers.graph.{CommonAstNode, GraphImplicits, WithinFile}
 import play.api.libs.json.{JsArray, JsObject, JsValue}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
@@ -19,7 +20,7 @@ import com.opticdev.sdk.{ContainersContent, VariableMapping}
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
-
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 case class RenderGear(block: String,
                       parserRef: ParserRef,
                       parseGear: ParseAsModel,
@@ -37,13 +38,13 @@ case class RenderGear(block: String,
     implicit val fileContents = contents
     implicit val astGraph = parseResult(contents).graph
     val rootNode = astGraph.nodes.toVector
-      .find(node=> entryChild.matchingLoosePredicate(node.value.asInstanceOf[CommonAstNode]))
-      .get.value.asInstanceOf[CommonAstNode]
+      .filter(node => entryChild.matchingLoosePredicate(node.value.asInstanceOf[CommonAstNode]))
+      .minBy(_.value.asInstanceOf[CommonAstNode].graphDepth(astGraph)).value.asInstanceOf[CommonAstNode]
 
     (fileContents, astGraph, rootNode)
   }
 
-  def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): (NewAstNode, String) = {
+  def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): (NewAstNode, String) = {
 
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(block)
 
@@ -77,7 +78,7 @@ case class RenderGear(block: String,
 
             Try {
               schemaComponentValue.map(child => {
-                val rendered = Render.fromStagedNode(StagedNode(i.schema, child.as[JsObject])).get
+                val rendered = Render.fromStagedNode(StagedNode(i.resolvedSchema, child.as[JsObject])).get
                 NewAstNode(rendered._3.renderer.entryChild.astType.name, Map(), Some(rendered._2))
               })
             }.getOrElse(Seq.empty)
@@ -115,7 +116,7 @@ case class RenderGear(block: String,
       rawWithContainersFilled)
   }
 
-  def render(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): String =
+  def render(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = null): String =
     renderWithNewAstNode(value, containersContent, variableMapping)._2
 
   def hash = {

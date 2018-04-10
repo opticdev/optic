@@ -5,7 +5,7 @@ import akka.pattern.ask
 import akka.util.Timeout
 import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
-import com.opticdev.core.sourcegear.actors.{ActorCluster, CurrentGraph, FileUpdated}
+import com.opticdev.core.sourcegear.actors.{ActorCluster, CurrentGraph, FileUpdated, FileUpdatedInMemory}
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.project.ProjectBase
@@ -54,6 +54,7 @@ case class DebugMarkdownProject(implicit logToCli: Boolean = false, actorCluster
   }
 
   def contextFor(file: File, range: Range): Future[Option[DebugInfo]] = {
+
     implicit val project = this
     graphForFile(file).map(i=> {
       if (i.isDefined) {
@@ -79,4 +80,10 @@ case class DebugMarkdownProject(implicit logToCli: Boolean = false, actorCluster
     file.extension(includeDot = false).contains("md")
 
   override val filesStateMonitor: FileStateMonitor = new FileStateMonitor()
+
+  def stageFileContents(file: File, contents: String): Future[Any] = {
+    implicit val timeout: akka.util.Timeout = Timeout(10 seconds)
+    filesStateMonitor.stageContents(file, contents)
+    projectActor ? FileUpdatedInMemory(file, contents, this)(projectSourcegear)
+  }
 }

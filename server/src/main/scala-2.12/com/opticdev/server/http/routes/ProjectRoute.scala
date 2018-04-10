@@ -9,7 +9,6 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, StandardRoute}
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.server.http.HTTPResponse
-import com.opticdev.server.http.routes.query.ModelQuery
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsValue}
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
@@ -32,14 +31,6 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
         path(Segment / "knowledge-graph") {
           (projectName) => {
             complete(getKnowledgeGraph(projectName))
-          }
-        } ~
-        path(Segment / "models" / Segment) {
-          (projectName, modelType) => {
-            parameters('filter.?) { (filterStringOption) =>
-              val filter = if (filterStringOption.isDefined) ModelQuery.fromString(filterStringOption.get) else ModelQuery()
-              complete(getModelsForProject(projectName, modelType, filter))
-            }
           }
         }
   }
@@ -73,13 +64,6 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
       StatusCodes.NotFound
     }
 
-  }
-
-  def getModelsForProject(projectName: String, modelName: String, filter: ModelQuery) : HTTPResponse = {
-    val projectOption = projectsManager.lookupProject(projectName)
-    if (projectOption.isSuccess) {
-      JsArray()
-    } else StatusCodes.NotFound
   }
 
 }

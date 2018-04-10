@@ -69,7 +69,7 @@ sealed trait TransformationBase extends PackageExportable {
 
 //case class InlineTransformation() extends TransformationBase
 
-case class Transformation(name: String,
+case class Transformation(yields: String,
                           packageId: PackageRef,
                           input: SchemaRef,
                           output: SchemaRef,

@@ -30,6 +30,7 @@ An import can be described with the following schema:
 You can import code using RequireJS like so where `pathTo` is the path or name of the module and `definedAs` is the name that module gets in the scope. 
 <!-- lens-def
      name="import using require"
+     id="using-require"
      schema="js-import" 
      "definedAs" => definedAs
      "pathTo".containing => pathTo 
@@ -43,6 +44,7 @@ In es6 you can import modules directly using an import statement at the top of y
 
 <!-- lens-def
      name="import entire module w/ import statement"
+     id="using-import"
      schema="js-import" 
      "definedAs" => definedAs
      "pathTo".containing => pathTo 

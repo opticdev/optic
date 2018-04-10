@@ -35,7 +35,7 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
 
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
-      val modelFields = listenersOption.get.flatMap(i => i.collect(sourceGearContext.astGraph))
+      val modelFields = listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
       expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields, value))
     } else {
       expandedValueStore = Option(value)
@@ -57,6 +57,9 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject
 }
 
 case class ModelNode(schemaId: SchemaRef, value: JsObject, hash: Int)(implicit override val project: ProjectBase) extends BaseModelNode {
+
+  //@todo check how stable/collision prone this is
+  override val id: String = Integer.toHexString(hash)
 
   def resolve[T <: WithinFile]()(implicit actorCluster: ActorCluster) : LinkedModelNode[T] = {
     implicit val sourceGearContext = SGContext.forModelNode(this).get

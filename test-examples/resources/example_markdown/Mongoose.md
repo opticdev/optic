@@ -35,6 +35,7 @@ Both `connect` and `createConnection` take a `mongodb://` URI, or the parameters
 <!-- 
 lens-def
 name="Connect to MongoDB"
+id="connect-to"
 language="es7"
 schema="connect"
 'mongodb'.containing => URI
@@ -56,6 +57,7 @@ Models are defined through the `Schema` interface.
 <!-- 
 lens-def
 name="Define Model"
+id="define"
 language="es7"
 schema="mongoose-schema"
 'model' => name
@@ -125,7 +127,7 @@ The basic schema for connect. v0.2.0 of Markdown SDK will support anonymous sche
 ### Transformations
 #### Generate Rest Route From Schema
 <!-- transformation-def
-name="Schema -> Create Route"
+yields="Create Route"
 input="schema"
 output="optic:rest/route" -->
 ```javascript

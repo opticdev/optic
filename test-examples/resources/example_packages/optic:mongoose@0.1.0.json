@@ -63,6 +63,7 @@
   }],
   "lenses": [{
     "name": "Connect to MongoDB",
+    "id": "connect-to-mongo",
     "schema": "connect",
     "snippet": {
       "language": "es7",
@@ -84,6 +85,7 @@
     "subcontainers": []
   }, {
     "name": "Define Model",
+    "id": "define-model",
     "schema": "schema",
     "snippet": {
       "language": "es7",
@@ -117,6 +119,7 @@
     "subcontainers": []
   }, {
     "name": "Insert Record",
+    "id": "insert-record",
     "schema": "create-record",
     "snippet": {
       "language": "es7",
@@ -160,7 +163,7 @@
   }],
   "containers": [],
   "transformations": [{
-    "name": "Schema -> Create Route",
+    "yields": "Create Route",
     "input": "schema",
     "output": "optic:rest/route",
     "ask": {

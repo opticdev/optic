@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear._
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.actors._
-
+import com.opticdev.core.sourcegear.context.FlatContext
 import scalax.collection.mutable.Graph
 
 class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest") {
@@ -19,9 +19,10 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
 
   implicit val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-    override val gearSet = new GearSet()
+    override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
+    override val flatContext: FlatContext = FlatContext(None, Map.empty)
   }
 
   describe("context lookup") {
@@ -36,7 +37,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
       val file = File(getCurrentDirectory+"/test-examples/resources/tmp/test_project/app.js")
       f.actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(file), Graph(), SourceParserManager.installedParsers.head, "Contents")
       f.actorCluster.parserSupervisorRef ! GetContext(FileNode.fromFile(file))(sourceGear, project)
-      expectMsg(Option(SGContext(sourceGear.fileAccumulator, Graph(), SourceParserManager.installedParsers.head, "Contents")))
+      expectMsg(Option(SGContext(sourceGear.fileAccumulator, Graph(), SourceParserManager.installedParsers.head, "Contents", null)))
     }
 
     it("for file not in cache") {

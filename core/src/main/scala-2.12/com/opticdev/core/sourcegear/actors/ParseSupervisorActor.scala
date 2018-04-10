@@ -51,7 +51,8 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
             ctxRequest.sourceGear.fileAccumulator,
             record.graph,
             record.parser,
-            record.fileContents)
+            record.fileContents,
+            ctxRequest.sourceGear)
         )
       } else {
         router.route(ctxRequest, sender())

@@ -2,9 +2,11 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.sdk.descriptions.{LensRef, Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.marvin.common.ast.NewAstNode
+import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.opm.utils.SemverHelper
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
@@ -18,24 +20,36 @@ abstract class SourceGear {
 
   val parsers: Set[ParserBase]
 
-  val gearSet: GearSet
+  val lensSet: LensSet
 
   val schemas: Set[Schema]
 
   val transformations: Set[Transformation]
 
-  def fileAccumulator = gearSet.fileAccumulator
+  val flatContext: FlatContext
+
+  def fileAccumulator = lensSet.fileAccumulator
 
   def findSchema(schemaRef: SchemaRef) : Option[Schema] = {
     val availible = schemas.filter(s=>
-      s.schemaRef.packageRef.packageId == schemaRef.packageRef.packageId
+      s.schemaRef.packageRef.get.packageId == schemaRef.packageRef.get.packageId
       && s.schemaRef.id == schemaRef.id
     )
-    val schemaVersion = SemverHelper.findVersion(availible, (s: Schema) => s.schemaRef.packageRef, schemaRef.packageRef.version)
+    val schemaVersion = SemverHelper.findVersion(availible, (s: Schema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))
     schemaVersion.map(_._2)
   }
 
-  def findGear(id: String) = gearSet.listGears.find(_.id == id)
+  def findLens(lensRef: LensRef): Option[CompiledLens] = {
+
+    val available: Set[CompiledLens] = lensSet.listLenses.filter(lens=>
+      lensRef.packageRef.map(_.packageId).contains(lens.packageRef.packageId)
+        && lens.id.contains(lensRef.id)
+    )
+
+    val lensVersion = SemverHelper.findVersion(available, (l: CompiledLens) => l.packageRef, lensRef.packageRef.map(_.version).getOrElse("latest"))
+
+    lensVersion.map(_._2)
+  }
 
   def findParser(parserRef: ParserRef) = parsers.find(_.languageName == parserRef.languageName)
 
@@ -55,8 +69,8 @@ abstract class SourceGear {
 
       //@todo clean this up and have the parser return in the parse result. right now it only supports the test one
 //      val parser = parsers.find(_.languageName == parsed.language).get
-      implicit val sourceGearContext = SGContext(gearSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents)
-      gearSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
+      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents, this)
+      lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
     } else {
       throw parsedOption.failed.get
     }
@@ -68,29 +82,30 @@ abstract class SourceGear {
     s"""
       | Parsers: ${parsers.map(_.parserRef.full).mkString(",")}
       | Schemas: ${schemas.map(_.schemaRef.full).mkString(",")}
-      | Gears: ${gearSet.listGears.map(_.name).mkString(",")}
-      | Transformations: ${transformations.map(_.name).mkString(",")}
+      | Gears: ${lensSet.listLenses.map(_.name).mkString(",")}
+      | Transformations: ${transformations.map(_.yields).mkString(",")}
     """.stripMargin)
 
-  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, Gear)] = Render.fromStagedNode(stagedNode)(this)
+  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, CompiledLens)] = Render.fromStagedNode(stagedNode)(this)
 
 }
 
 case object UnloadedSourceGear extends SourceGear {
   override val parsers = Set()
-  override val gearSet = new GearSet()
+  override val lensSet = new LensSet()
   override val schemas = Set()
   override val transformations = Set()
-
   override def isLoaded = false
+  override val flatContext = FlatContext(None, Map())
 }
 
 object SourceGear {
   def default: SourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = Set()
-    override val gearSet = new GearSet()
+    override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
+    override val flatContext = FlatContext(None, Map())
   }
 
   def unloaded = UnloadedSourceGear

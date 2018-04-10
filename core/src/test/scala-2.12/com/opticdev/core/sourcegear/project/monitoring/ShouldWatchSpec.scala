@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.project.monitoring
 
 import better.files.File
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.core.sourcegear.{GearSet, SourceGear}
+import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
 class ShouldWatchSpec extends TestBase {

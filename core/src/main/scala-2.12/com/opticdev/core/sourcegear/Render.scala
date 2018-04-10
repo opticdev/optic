@@ -1,26 +1,29 @@
 package com.opticdev.core.sourcegear
 
 import com.opticdev.common.utils.JsonUtils
+import com.opticdev.core.sourcegear.context.FlatContextBase
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.parsers.sourcegear.basic.ObjectLiteralValueFormat
 import com.opticdev.sdk.{RenderOptions, VariableMapping}
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
 import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.StagedNode
 import com.vdurmont.semver4j.Semver
 import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
-
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 object Render {
 
-  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear) : Try[(NewAstNode, String, Gear)] = Try {
+  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = null) : Try[(NewAstNode, String, CompiledLens)] = Try {
+
+    val flatContext: FlatContextBase = if (context == null) sourceGear.flatContext else context
 
     val options = stagedNode.options.getOrElse(RenderOptions())
 
-    val gearOption = resolveGear(stagedNode)
+    val gearOption = resolveLens(stagedNode)(sourceGear, flatContext)
     require(gearOption.isDefined, "No gear found that can render this node.")
 
     val gear = gearOption.get
@@ -39,12 +42,24 @@ object Render {
     (result._1, result._2, gear)
   }
 
-  private def resolveGear(stagedNode: StagedNode)(implicit sourceGear: SourceGear) : Option[Gear] = {
-    if (stagedNode.options.isDefined && stagedNode.options.get.gearId.isDefined) {
-      val gearId = stagedNode.options.get.gearId.get
-      sourceGear.findGear(gearId)
+  private def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[CompiledLens] = {
+    val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.lensId.get).get)
+    if (lensRefTry.isSuccess) {
+      val lensRef = lensRefTry.get
+
+      val localOption = Try(context.resolve(lensRef.internalFull).get.asInstanceOf[CompiledLens])
+        .toOption
+
+
+      if (localOption.isDefined) {
+        localOption
+      } else {
+        //transformations should be able to reach outside of their tree
+        sourceGear.findLens(lensRef)
+      }
+
     } else {
-      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.gearSet.listGears.find(_.schemaRef == schema.schemaRef))
+      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listLenses.find(_.resolvedSchema == schema.schemaRef))
     }
   }
 
@@ -77,7 +92,7 @@ object Render {
   def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None)(implicit sourceGear: SourceGear) = {
     fromStagedNode(StagedNode(schemaRef, value, Some(
       RenderOptions(
-        gearId = gearIdOption
+        lensId = gearIdOption
       )
     )))
   }

@@ -35,8 +35,6 @@ object ModelNodeJsonImplicits {
       //@todo factor this out
       val schemaOption = sourceGear.findSchema(modelNode.schemaId)
 
-      println(schemaOption)
-
       JsObject(Seq(
         "id" -> JsString(projectsManager.nodeKeyStore.leaseId(fileNode.get.toFile, modelNode)),
         "schema" -> schemaOption.get.definition,

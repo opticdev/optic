@@ -7,11 +7,18 @@ import ExampleChanges._
 import better.files.File
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{SGConfig, SGConstructor}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
+class ChangesEvaluationSpec extends TestBase with TestPackageProviders with BeforeAndAfterEach {
+
+  override def beforeEach(): Unit = {
+    resetScratch
+    super.beforeEach()
+  }
 
   describe("Insert Model") {
 
@@ -44,10 +51,15 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders {
     val (changeGroup, sourcegear, expectedChange) = nestedTransformModelToRoute
     val results = changeGroup.evaluateAndWrite(sourcegear)
 
-    println(results.get.stagedFiles.head._2.text)
+    assert(results.get.stagedFiles.head._2.text == expectedChange)
+  }
+
+  it("Runs transformation from search") {
+    val (changeGroup, sourcegear, expectedChange) = transformationFromSearch
+
+    val results = changeGroup.evaluateAndWrite(sourcegear)
 
     assert(results.get.stagedFiles.head._2.text == expectedChange)
-
   }
 
 

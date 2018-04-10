@@ -2,7 +2,7 @@ package com.opticdev.sdk.descriptions
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.github.fge.jsonschema.main.{JsonSchema, JsonSchemaFactory}
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SGExportable}
 import play.api.libs.json._
 
 import scala.util.Try
@@ -43,7 +43,7 @@ object Schema extends Description[Schema] {
   override def fromJson(jsValue: JsValue) = fromJson(null, jsValue)
 }
 
-case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExportable {
+case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExportable with SGExportable {
 
   val name : String = (definition \ "title").asOpt[JsString].getOrElse(JsString(schemaRef.id)).value
 
@@ -61,11 +61,12 @@ case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExp
 
 case class SchemaColdStorage(data: String)
 
-case class SchemaRef(packageRef: PackageRef, id: String) {
-  def full: String = if (packageRef == null) id else packageRef.full+"/"+id
+case class SchemaRef(packageRef: Option[PackageRef], id: String) {
+  def full: String = if (packageRef.isEmpty) id else packageRef.get.full+"/"+id
+  def internalFull = if (packageRef.isEmpty) id else packageRef.get.packageId+"/"+id
   def fullyQualified(lens: Lens) : SchemaRef = {
-    if (packageRef == null) {
-      SchemaRef(lens.packageRef, id)
+    if (packageRef.isEmpty) {
+      SchemaRef(Some(lens.packageRef), id)
     } else this
   }
 }
@@ -81,7 +82,7 @@ object SchemaRef {
   }
 
 
-  def fromString(string: String, parentRef: PackageRef = null): Try[SchemaRef] = Try {
+  def fromString(string: String, parentRef: Option[PackageRef] = None): Try[SchemaRef] = Try {
     val components = string.split("/")
 
     if (string.isEmpty) throw new Exception("Invalid Schema format")
@@ -91,7 +92,7 @@ object SchemaRef {
     } else if (components.size == 2) {
       val packageId = PackageRef.fromString(components.head)
       val schema = components(1)
-      SchemaRef(packageId.get, schema)
+      SchemaRef(Some(packageId.get), schema)
     } else {
       throw new Exception("Invalid Schema format")
     }

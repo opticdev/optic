@@ -1,3 +1,5 @@
+import sbtbuildinfo.BuildInfoPlugin.autoImport.buildInfoPackage
+
 import scala.io.Source
 import scala.util.Try
 
@@ -5,7 +7,7 @@ name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "0.1.3"
+val appVersion = "0.1.4"
 
 version := appVersion
 
@@ -27,7 +29,14 @@ val commonSettings: Seq[Def.Setting[_]] = Seq(
 /* Sub Projects */
 lazy val common = (project in file("common")).
  settings(commonSettings: _*)
- .settings(libraryDependencies ++= Dependencies.commonDependencies)
+ .enablePlugins(BuildInfoPlugin)
+ .settings(
+   libraryDependencies ++= Dependencies.commonDependencies,
+   buildInfoKeys := Seq[BuildInfoKey](
+     "opticMDVersion" -> Constants.opticMDVersion
+   ),
+   buildInfoPackage := "com.opticdev.common"
+ )
 
 lazy val sdk = (project in file("sdk")).
   enablePlugins(BuildInfoPlugin).

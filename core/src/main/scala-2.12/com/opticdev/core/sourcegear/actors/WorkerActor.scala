@@ -48,7 +48,8 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
           ctxRequest.sourceGear.fileAccumulator,
           result.get.astGraph,
           result.get.parser,
-          result.get.fileContents))
+          result.get.fileContents,
+          ctxRequest.sourceGear))
         ctxRequest.project.projectActor ! ParseSuccessful(result.get, file)
       } else {
         ctxRequest.project.projectActor ! ParseFailed(file)

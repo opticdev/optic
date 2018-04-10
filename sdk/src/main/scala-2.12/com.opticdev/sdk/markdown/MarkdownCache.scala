@@ -34,4 +34,8 @@ object MarkdownCache {
     MDParseOutput(Json.parse(str).as[JsObject])
   }.toOption
 
+  def clear = {
+    DataDirectory.markdownCache.delete(true)
+    DataDirectory.markdownCache.createIfNotExists(true, true)
+  }
 }
