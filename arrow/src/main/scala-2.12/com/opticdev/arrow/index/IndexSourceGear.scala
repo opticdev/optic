@@ -10,6 +10,7 @@ import scala.collection.immutable
 import scalax.collection.Graph
 import scalax.collection.GraphPredef._
 import scalax.collection.GraphEdge._
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 //schemas <-> lenses undirected edges
 //schema -- transformation --> schema
 object IndexSourceGear {
@@ -27,8 +28,8 @@ object IndexSourceGear {
 
     val transformationNodes = sourceGear.transformations.map {
       case t: Transformation =>
-        val inputSchemaNode = SchemaNode(sourceGear.findSchema(t.input).get)
-        val outputSchemaNode = SchemaNode(sourceGear.findSchema(t.output).get)
+        val inputSchemaNode = SchemaNode(sourceGear.findSchema(t.resolvedInput(sourceGear)).get)
+        val outputSchemaNode = SchemaNode(sourceGear.findSchema(t.resolvedOutput(sourceGear)).get)
 
         (inputSchemaNode ~+#> outputSchemaNode)(t)
     }.toVector

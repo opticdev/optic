@@ -23,7 +23,7 @@ object SDKObjectsResolvedImplicits {
 
     def resolvedOutput(implicit sourceGear: SourceGear) : SchemaRef = {
 
-      val pId = if (transformation.input.packageRef.isDefined) {
+      val pId = if (transformation.output.packageRef.isDefined) {
         transformation.output.packageRef.map(_.packageId).getOrElse("")
       } else {
         transformation.packageId.packageId
