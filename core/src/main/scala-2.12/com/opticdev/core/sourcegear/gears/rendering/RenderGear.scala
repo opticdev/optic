@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.gears.rendering
 
-import com.opticdev.core.sourcegear.context.FlatContextBase
+import com.opticdev.core.sourcegear.context.{FlatContextBase, FlatContextBuilder}
 import com.opticdev.core.sourcegear.{Render, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
@@ -20,7 +20,7 @@ import com.opticdev.sdk.{ContainersContent, VariableMapping}
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
-
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 case class RenderGear(block: String,
                       parserRef: ParserRef,
                       parseGear: ParseAsModel,
@@ -44,7 +44,7 @@ case class RenderGear(block: String,
     (fileContents, astGraph, rootNode)
   }
 
-  def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = null): (NewAstNode, String) = {
+  def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): (NewAstNode, String) = {
 
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(block)
 
@@ -78,7 +78,7 @@ case class RenderGear(block: String,
 
             Try {
               schemaComponentValue.map(child => {
-                val rendered = Render.fromStagedNode(StagedNode(i.schema, child.as[JsObject])).get
+                val rendered = Render.fromStagedNode(StagedNode(i.resolvedSchema, child.as[JsObject])).get
                 NewAstNode(rendered._3.renderer.entryChild.astType.name, Map(), Some(rendered._2))
               })
             }.getOrElse(Seq.empty)

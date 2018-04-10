@@ -9,7 +9,9 @@ import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.parsers.SourceParserManager
+import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 
+import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
 import scala.io.Source
 
@@ -61,17 +63,28 @@ trait GearUtils {
     implicit val packageContext = PackageContextFixture.fromSchemas(description.schemas)
 
     val compiled = Compiler.setup(description).execute
+    val compiledGears = compiled.gears.map(i=> {
+      i.copy(schemaRef = SchemaRef(Some(description.packageRef), i.schemaRef.id))
+    })
 
     if (compiled.isFailure) throw new Error("Compiling description failed. Test Stopped")
 
-    outerLensSet.addLenses(compiled.gears.toSeq:_*)
+    outerLensSet.addLenses(compiledGears.toSeq:_*)
+    
+    val lenses: Seq[(String, CompiledLens)] = outerLensSet.listLenses.map(i=> (i.id, i)).toSeq
+
+    val schemas: Seq[(String, Schema)] = description.schemas.map(i=> (i.schemaRef.id, i))
+
+    val g = (lenses ++ schemas).toMap
 
     new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val lensSet = outerLensSet
       override val schemas = compiled.schemas
       override val transformations = Set()
-      override val flatContext: FlatContext = FlatContext(None, Map.empty)
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        description.packageId -> FlatContext(Some(description.packageRef), g)
+      ))
     }
 
   }

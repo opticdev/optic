@@ -69,7 +69,7 @@ abstract class SourceGear {
 
       //@todo clean this up and have the parser return in the parse result. right now it only supports the test one
 //      val parser = parsers.find(_.languageName == parsed.language).get
-      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents)
+      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents, this)
       lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
     } else {
       throw parsedOption.failed.get

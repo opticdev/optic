@@ -52,7 +52,7 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      CompiledLens(Some("query"), "query", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), Set(), parseGear, renderer)
+      CompiledLens(Some("query"), "queryLens", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), Set(), parseGear, renderer)
     }
 
     val block =
@@ -74,16 +74,26 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
 
     val routeGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), Set(), parseGear, renderer)
 
+    val schemaSet = Seq(
+      Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), JsObject.empty),
+      Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response"), JsObject.empty),
+      Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), JsObject.empty)
+    )
+
     val sourceGear : SourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val lensSet = new LensSet(routeGear, queryGear, responseGear)
-      override val schemas = Set(
-        Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), JsObject.empty),
-        Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response"), JsObject.empty),
-        Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), JsObject.empty)
-      )
+      override val schemas = schemaSet.toSet
       override val transformations = Set()
-      override val flatContext: FlatContext = FlatContext(None, Map.empty)
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        "optic:test" -> FlatContext(Some(PackageRef("optic:test", "0.1.0")), Map(
+          "queryLens" -> queryGear,
+          "do" -> responseGear,
+          "query" -> schemaSet(0),
+          "response" -> schemaSet(1),
+          "route" -> schemaSet(2)
+        ))
+      ))
     }
   }
 

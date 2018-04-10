@@ -62,4 +62,6 @@ object FlatContextBuilder {
     }) ++ exportables).toMap)
   }
 
+  def empty = FlatContext(None, Map.empty)
+
 }

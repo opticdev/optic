@@ -92,15 +92,22 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
     val thisGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b"), Set(), parseGear, renderer)
 
+    val a = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b"), JsObject.empty)
+    val b = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a"), JsObject.empty)
+
     val sourceGear : SourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val lensSet = new LensSet(thisGear, childGear)
-      override val schemas = Set(
-        Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b"), JsObject.empty),
-        Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a"), JsObject.empty)
-      )
+      override val schemas = Set(a,b)
       override val transformations = Set()
-      override val flatContext: FlatContext = FlatContext(None, Map.empty)
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        "optic:test" -> FlatContext(Some(PackageRef("optic:test", "0.1.1")), Map(
+          thisGear.id -> thisGear,
+          childGear.id -> childGear,
+          a.schemaRef.id -> a,
+          b.schemaRef.id -> b
+        ))
+      ))
     }
   }
 
@@ -114,7 +121,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
         JsObject(Seq("operation" -> JsString("second"))),
         JsObject(Seq("operation" -> JsString("third")))
       ))
-    )))
+    )))(sourceGear, context = sourceGear.flatContext)
 
     println(result)
 

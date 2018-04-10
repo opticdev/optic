@@ -12,7 +12,7 @@ import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode, ModelVectorMapping}
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InCurrentLens
-
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 sealed trait Listener {
   def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext) : ModelField
   val schema: SchemaRef
@@ -20,15 +20,18 @@ sealed trait Listener {
 }
 
 case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: SchemaRef) extends Listener {
+
   override val schema = schemaComponent.schema
   override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): ModelField = {
+
+    val resolvedSchema = schemaComponent.resolvedSchema(sourceGearContext.sourceGear)
 
     val asModelNode : ModelNode = modelNode match {
       case l: LinkedModelNode[CommonAstNode] => l.flatten
       case mN: ModelNode => mN
     }
 
-    val targetNodes = astGraph.modelNodes.ofType(schema)
+    val targetNodes = astGraph.modelNodes.ofType(resolvedSchema)
 
     val astRoot = asModelNode.astRoot
     val containerMapping = asModelNode.asInstanceOf[ModelNode].containerMapping

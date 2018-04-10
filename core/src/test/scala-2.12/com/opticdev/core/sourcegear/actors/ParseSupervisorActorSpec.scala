@@ -37,7 +37,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
       val file = File(getCurrentDirectory+"/test-examples/resources/tmp/test_project/app.js")
       f.actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(file), Graph(), SourceParserManager.installedParsers.head, "Contents")
       f.actorCluster.parserSupervisorRef ! GetContext(FileNode.fromFile(file))(sourceGear, project)
-      expectMsg(Option(SGContext(sourceGear.fileAccumulator, Graph(), SourceParserManager.installedParsers.head, "Contents")))
+      expectMsg(Option(SGContext(sourceGear.fileAccumulator, Graph(), SourceParserManager.installedParsers.head, "Contents", null)))
     }
 
     it("for file not in cache") {

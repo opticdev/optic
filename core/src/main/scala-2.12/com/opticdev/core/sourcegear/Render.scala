@@ -14,7 +14,7 @@ import com.vdurmont.semver4j.Semver
 import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
-
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 object Render {
 
   def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = null) : Try[(NewAstNode, String, CompiledLens)] = Try {
@@ -59,7 +59,7 @@ object Render {
       }
 
     } else {
-      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listLenses.find(_.schemaRef == schema.schemaRef))
+      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listLenses.find(_.resolvedSchema == schema.schemaRef))
     }
   }
 
