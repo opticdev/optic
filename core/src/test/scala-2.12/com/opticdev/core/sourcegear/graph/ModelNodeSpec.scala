@@ -3,7 +3,8 @@ package com.opticdev.core.sourcegear.graph
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
-import com.opticdev.core.sourcegear.{GearSet, SourceGear}
+import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.Path
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
@@ -16,9 +17,10 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
 
   override val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
-    override val gearSet = new GearSet()
+    override val lensSet = new LensSet()
     override val schemas = Set()
     override val transformations = Set()
+    override val flatContext: FlatContext = FlatContext(None, Map.empty)
   }
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
@@ -30,8 +32,8 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
   }
 
   val importResults = {
-    val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
-    sourceGear.gearSet.addGear(importGear)
+    val importGear = compiledLensFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
+    sourceGear.lensSet.addLens(importGear)
     sourceGear.parseFile(File(testFilePath))
   }
 

@@ -9,7 +9,8 @@ import com.opticdev.parsers.{AstGraph, ParserBase, ParserRef}
 case class SGContext(fileAccumulator: FileAccumulator,
                      astGraph: AstGraph,
                      parser: ParserBase,
-                     fileContents: String
+                     fileContents: String,
+                     sourceGear: SourceGear
                     )
 
 
@@ -21,7 +22,7 @@ object SGContext {
   }
 
   def forRender(sourceGear: SourceGear, astGraph: AstGraph, parserRef: ParserRef): SGContext = {
-    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null)
+    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear)
   }
 
 }

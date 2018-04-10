@@ -24,4 +24,6 @@ package object common {
     }
   }
 
+  trait SGExportable
+
 }

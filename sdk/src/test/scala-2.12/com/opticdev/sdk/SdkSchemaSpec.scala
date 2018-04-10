@@ -70,13 +70,13 @@ class SdkSchemaSpec extends FunSpec {
     describe("Constructor") {
 
       it("on a valid schema") {
-        val schema = Schema(SchemaRef(PackageRef("test"), "import"), validTestSchema)
+        val schema = Schema(SchemaRef(Some(PackageRef("optic:test")), "import"), validTestSchema)
         assert(schema.name === "import")
       }
 
       it("on an invalid schema") {
         assertThrows[Error] {
-          Schema(SchemaRef(PackageRef("test"), "import"), invalidTestSchema)
+          Schema(SchemaRef(Some(PackageRef("optic:test")), "import"), invalidTestSchema)
         }
       }
 
@@ -84,7 +84,7 @@ class SdkSchemaSpec extends FunSpec {
 
     describe("Instance validator") {
 
-      val schema = Schema(SchemaRef(PackageRef("test"), "import"), validTestSchema)
+      val schema = Schema(SchemaRef(Some(PackageRef("optic:test")), "import"), validTestSchema)
 
       it("on a valid instance") {
         assert(schema.validate(JsObject(Seq("pathTo"-> JsString("Hello"), "definedAs"-> JsString("World")))))
@@ -98,11 +98,11 @@ class SdkSchemaSpec extends FunSpec {
 
     describe("equality method says") {
       it("equal schemas as equal") {
-        assert(Schema(SchemaRef(PackageRef("test"), "import"), validTestSchema) == Schema(SchemaRef(PackageRef("test"), "import"), validTestSchema))
+        assert(Schema(SchemaRef(Some(PackageRef("optic:test")), "import"), validTestSchema) == Schema(SchemaRef(Some(PackageRef("optic:test")), "import"), validTestSchema))
       }
 
       it("equal schemas with different json refs as equal") {
-        assert(Schema(SchemaRef(PackageRef("test"), "import"), validTestSchema) == Schema(SchemaRef(PackageRef("test"), "import"), Json.parse("""{
+        assert(Schema(SchemaRef(Some(PackageRef("optic:test")), "import"), validTestSchema) == Schema(SchemaRef(Some(PackageRef("optic:test")), "import"), Json.parse("""{
         "title": "import",
         "version": "1.0.0",
         "slug": "js-import",
@@ -124,7 +124,7 @@ class SdkSchemaSpec extends FunSpec {
       }
 
       it("unequal schemas are different") {
-        assert(Schema(SchemaRef(PackageRef("test"), "import"), validTestSchema) != Schema(SchemaRef(PackageRef("test"), "import"), validAltSchema))
+        assert(Schema(SchemaRef(Some(PackageRef("optic:test")), "import"), validTestSchema) != Schema(SchemaRef(Some(PackageRef("optic:test")), "import"), validAltSchema))
       }
     }
 
@@ -136,12 +136,12 @@ class SdkSchemaSpec extends FunSpec {
     it("works for valid input") {
       {
         val ref = SchemaRef.fromString("optic:rest/parameter").get
-        assert(ref.packageRef.full == "optic:rest@latest")
+        assert(ref.packageRef.get.full == "optic:rest@latest")
         assert(ref.id == "parameter")
       }
       {
         val ref = SchemaRef.fromString("optic:rest@1.0.0/parameter").get
-        assert(ref.packageRef.full == "optic:rest@1.0.0")
+        assert(ref.packageRef.get.full == "optic:rest@1.0.0")
         assert(ref.id == "parameter")
       }
     }
@@ -152,8 +152,8 @@ class SdkSchemaSpec extends FunSpec {
     }
 
     it("works for self lookups") {
-      val ref = SchemaRef.fromString("parameter", PackageRef.fromString( "optic:rest@1.0.0" ).get).get
-      assert(ref.packageRef.full == "optic:rest@1.0.0")
+      val ref = SchemaRef.fromString("parameter", Some(PackageRef( "optic:rest", "1.0.0" ))).get
+      assert(ref.packageRef.get.full == "optic:rest@1.0.0")
       assert(ref.id == "parameter")
     }
 

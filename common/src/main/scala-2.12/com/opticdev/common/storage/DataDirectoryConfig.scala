@@ -24,7 +24,7 @@ object DataDirectoryConfig {
 
   def saveConfigStatus(configStatus: ConfigStatus = defaultStatus) : ConfigStatus = {
     DataDirectory.init
-    configLocation.createIfNotExists(false, true)
+    Try(configLocation.createIfNotExists(false, true))
     configLocation.write(Json.toJson(configStatus).toString())
     configStatus
   }

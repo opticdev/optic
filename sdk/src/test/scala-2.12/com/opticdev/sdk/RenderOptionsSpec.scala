@@ -19,18 +19,18 @@ class RenderOptionsSpec extends FunSpec {
     describe("gearIds") {
 
       it("will not overwrite a value with None") {
-        val merged = RenderOptions(gearId = Some("ABC")).mergeWith(RenderOptions())
-        assert(merged.gearId.get == "ABC")
+        val merged = RenderOptions(lensId = Some("ABC")).mergeWith(RenderOptions())
+        assert(merged.lensId.get == "ABC")
       }
 
       it("will replace existing value with new value") {
-        val merged = RenderOptions(gearId = Some("ABC")).mergeWith(RenderOptions(gearId = Some("abc")))
-        assert(merged.gearId.get == "abc")
+        val merged = RenderOptions(lensId = Some("ABC")).mergeWith(RenderOptions(lensId = Some("abc")))
+        assert(merged.lensId.get == "abc")
       }
 
       it("will replace None with new value") {
-        val merged = RenderOptions().mergeWith(RenderOptions(gearId = Some("abc")))
-        assert(merged.gearId.get == "abc")
+        val merged = RenderOptions().mergeWith(RenderOptions(lensId = Some("abc")))
+        assert(merged.lensId.get == "abc")
       }
 
     }

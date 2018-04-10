@@ -3,10 +3,13 @@ package com.opticdev.core.sourcegear.serialization
 import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import boopickle.PicklerHelper
+import com.opticdev.common.{PackageRef, SGExportable}
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
-import com.opticdev.core.sourcegear.{Gear, SGConfig}
+import com.opticdev.core.sourcegear.{CompiledLens, SGConfig}
+import com.opticdev.opm.context.{Leaf, TreeContext}
 import com.opticdev.parsers.ParserRef
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions._
@@ -129,19 +132,21 @@ object PickleImplicits extends PicklerHelper {
   //@todo this should be moved within the parsers
   implicit val ruleProvider = new RuleProvider()
 
-  implicit object GearPickler extends Pickler[Gear] {
-    override def pickle(value: Gear)(implicit state: PickleState): Unit = {
+  implicit object ConmpiledLensPickler extends Pickler[CompiledLens] {
+    override def pickle(value: CompiledLens)(implicit state: PickleState): Unit = {
       state.pickle(value.name)
-      state.pickle(value.packageFull)
+      state.pickle(value.id)
+      state.pickle(value.packageRef)
       state.pickle(value.schemaRef)
       state.pickle(value.enterOn)
       state.pickle(value.parser)
       state.pickle(value.renderer)
     }
-    override def unpickle(implicit state: UnpickleState): Gear = {
-      Gear(
+    override def unpickle(implicit state: UnpickleState): CompiledLens = {
+      CompiledLens(
+        state.unpickle[Option[String]],
         state.unpickle[String],
-        state.unpickle[String],
+        state.unpickle[PackageRef],
         state.unpickle[SchemaRef],
         state.unpickle[Set[AstType]],
         state.unpickle[ParseAsModel],
@@ -150,19 +155,30 @@ object PickleImplicits extends PicklerHelper {
     }
   }
 
+  object FlatContextTreePickler {
+    implicit val treePickler = compositePickler[SGExportable]
+    treePickler.addConcreteType[FlatContext]
+      .addConcreteType[Schema]
+      .addConcreteType[CompiledLens]
+  }
+
+  import FlatContextTreePickler.treePickler
+
   implicit object SGConfigPickler extends Pickler[SGConfig] {
     override def pickle(value: SGConfig)(implicit state: PickleState): Unit = {
       state.pickle(value.hashInt)
+      state.pickle(value._flatContext)
       state.pickle(value.parserIds)
-      state.pickle(value.gears)
+      state.pickle(value.compiledLenses)
       state.pickle(value.schemas)
       state.pickle(value.transformations)
     }
     override def unpickle(implicit state: UnpickleState): SGConfig = {
       SGConfig(
         state.unpickle[Int],
+        state.unpickle[FlatContext],
         state.unpickle[Set[ParserRef]],
-        state.unpickle[Set[Gear]],
+        state.unpickle[Set[CompiledLens]],
         state.unpickle[Set[SchemaColdStorage]],
         state.unpickle[Set[Transformation]]
       )

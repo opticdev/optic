@@ -4,6 +4,7 @@ import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.Fixture.{DummyCompilerOutputs, ExampleSourcegearFixtures, TestBase}
 import com.opticdev.core.compiler.stages.RenderFactoryStage
+import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.RenderOptions
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
@@ -20,36 +21,46 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
     lazy val testSchemaRef = SchemaRef.fromString("test:schemas@0.1.0/a").get
 
-    lazy val a = Gear("test", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
-    lazy val b = Gear("other", "test", testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
+    lazy val a = CompiledLens(Some("test"), "test", PackageRef.fromString("optic:test@0.1.0").get, testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
+    lazy val b = CompiledLens(Some("other"), "other", PackageRef.fromString("optic:test@0.1.0").get, testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
 
+
+    val testSchema = Schema(testSchemaRef, JsObject.empty)
 
     val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = Set()
-      override val gearSet: GearSet = new GearSet(a, b)
+      override val lensSet: LensSet = new LensSet(a, b)
       override val transformations: Set[Transformation] = Set()
-      override val schemas: Set[Schema] = Set(
-        Schema(testSchemaRef, JsObject.empty)
-      )
+      override val schemas: Set[Schema] = Set(testSchema)
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        "optic:test" -> FlatContext(Some(a.packageRef), Map(
+          "test" -> a,
+          "other" -> b
+        )),
+        "test:schemas" -> FlatContext(Some(a.packageRef), Map(
+          "a" -> testSchema
+        ))
+      ))
     }
 
-    lazy val resolveGear = PrivateMethod[Option[Gear]]('resolveGear)
+    lazy val resolveLens = PrivateMethod[Option[CompiledLens]]('resolveLens)
 
     it("if set in options") {
-      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(gearId = Some(a.id))))
-      val result = Render invokePrivate resolveGear(stagedNode, sourceGear)
+      LensRef.fromString(a.id, Some(a.packageRef))
+      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(lensId = Some(LensRef.fromString(a.id, Some(a.packageRef)).get.full))))
+      val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
       assert(result.contains(a))
     }
 
     it("if not set in options gets first matching") {
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty)
-      val result = Render invokePrivate resolveGear(stagedNode, sourceGear)
+      val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
       assert(result.contains(a))
     }
 
     it("will return none if gear is not found") {
-      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(gearId = Some("FAKE"))))
-      val result = Render invokePrivate resolveGear(stagedNode, sourceGear)
+      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(lensId = Some("FAKE"))))
+      val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
       assert(result.isEmpty)
     }
 
@@ -59,7 +70,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
     implicit val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
 
-    val result = Render.simpleNode(sourceGear.schemas.head.schemaRef, JsObject(
+    val result = Render.simpleNode(SchemaRef(Some(PackageRef("optic:ImportExample")), "js-import"), JsObject(
       Seq("definedAs" -> JsString("ABC"), "pathTo" -> JsString("DEF"))
     ))
 
@@ -88,7 +99,8 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
         )))
       )))
     )))
-    val result = Render.fromStagedNode(stagedNode)(f.sourceGear)
+
+    val result = Render.fromStagedNode(stagedNode)(f.sourceGear, f.sourceGear.flatContext)
 
     val expected = "call(\"value\", function (req, res) {\n  \n  query({ fieldA: req.query.fieldA }, function (err, item) {\n    if (!err) {\n        res.send(thing)\n    } else {\n    \n    }\n  })\n})"
     assert(result.get._2 == expected)

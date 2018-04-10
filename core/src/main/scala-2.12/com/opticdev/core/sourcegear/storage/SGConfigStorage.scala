@@ -6,7 +6,7 @@ import java.nio.ByteBuffer
 import better.files.File
 import boopickle.Default._
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.core.sourcegear.{Gear, SGConfig}
+import com.opticdev.core.sourcegear.{CompiledLens, SGConfig}
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
 import com.opticdev.opm.DependencyTree

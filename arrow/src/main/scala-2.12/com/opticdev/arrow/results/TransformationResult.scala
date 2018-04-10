@@ -1,7 +1,7 @@
 package com.opticdev.arrow.results
 
 import com.opticdev.arrow.changes.location.AsChildOf
-import com.opticdev.arrow.changes.{ChangeGroup, GearOption, InsertModel, RunTransformation}
+import com.opticdev.arrow.changes.{ChangeGroup, LensOption, InsertModel, RunTransformation}
 import com.opticdev.arrow.context.{ArrowContextBase, ModelContext}
 import com.opticdev.arrow.graph.KnowledgeGraph
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
@@ -38,7 +38,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
       ChangeGroup(RunTransformation(
         transformationChange,
         inputValue,
-        knowledgeGraph.gearsForSchema(dt.transformation.output).map(i=> GearOption(i.name, i.packageFull, i.id)).toSeq,
+        knowledgeGraph.gearsForSchema(dt.transformation.output).map(i=> LensOption(i.name, i.lensRef.packageRef.get.full, i.lensRef.internalFull)).toSeq,
         None,
         if (insertLocationOption.isDefined) Seq(insertLocationOption.get) else Seq(), //@todo add all location options
         None,

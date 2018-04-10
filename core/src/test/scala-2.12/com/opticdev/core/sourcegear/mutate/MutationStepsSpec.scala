@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.sdk.descriptions.CodeComponent
-import com.opticdev.core.sourcegear.{GearSet, SourceGear}
+import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode

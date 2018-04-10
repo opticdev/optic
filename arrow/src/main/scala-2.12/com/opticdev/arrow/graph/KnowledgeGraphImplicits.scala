@@ -1,6 +1,6 @@
 package com.opticdev.arrow.graph
 
-import com.opticdev.core.sourcegear.Gear
+import com.opticdev.core.sourcegear.CompiledLens
 import com.opticdev.opm.utils.SemverHelper
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.Transformation
@@ -16,26 +16,27 @@ object KnowledgeGraphImplicits {
   implicit class KnowledgeGraphWrapper(knowledgeGraph: KnowledgeGraph) {
 
     def schemaNodeForRef(schemaRef: SchemaRef): Option[SchemaNode] = {
-      val availibleSchemas = knowledgeGraph.nodes.filter(i=> i.value.isInstanceOf[SchemaNode] && i.value.asInstanceOf[SchemaNode].schema.schemaRef.packageRef.packageId == schemaRef.packageRef.packageId)
+      val availibleSchemas = knowledgeGraph.nodes.filter(i=> i.value.isInstanceOf[SchemaNode] && i.value.asInstanceOf[SchemaNode].schema.schemaRef.packageRef.get.packageId == schemaRef.packageRef.get.packageId
+      && i.value.asInstanceOf[SchemaNode].schema.schemaRef.id == schemaRef.id)
         .map(i=> i.value.asInstanceOf[SchemaNode]).toSet
 
-      val result = SemverHelper.findVersion(availibleSchemas, (a: SchemaNode) => a.schema.schemaRef.packageRef, schemaRef.packageRef.version)
+      val result = SemverHelper.findVersion(availibleSchemas, (a: SchemaNode) => a.schema.schemaRef.packageRef.get, schemaRef.packageRef.get.version)
       result.map(_._2)
     }
 
 
-    def gearsForSchema(schemaRef: SchemaRef) : Set[Gear] = {
+    def gearsForSchema(schemaRef: SchemaRef) : Set[CompiledLens] = {
 
       schemaNodeForRef(schemaRef).map(i => {
         knowledgeGraph
           .get(i)
           .edges
-          .filter(e => e.isUndirected && e.to != this && e.to.value.isInstanceOf[GearNode])
+          .filter(e => e.isUndirected && e.to != this && e.to.value.isInstanceOf[LensNode])
           .map(i => {
-            i.to.value.asInstanceOf[GearNode].gear
+            i.to.value.asInstanceOf[LensNode].gear
           }).toSet
       }).getOrElse(Set())
-        .asInstanceOf[Set[Gear]]
+        .asInstanceOf[Set[CompiledLens]]
     }
 
     def availableTransformations(schemaRef: SchemaRef) : Set[TransformationChanges] = {

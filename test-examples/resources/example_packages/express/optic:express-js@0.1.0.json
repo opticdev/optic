@@ -7,7 +7,7 @@
   "dependencies": ["optic:rest@0.1.0"],
   "lenses": [
     {
-      "name": "Parameter",
+      "id": "parameter",
       "scope": "internal",
       "schema": "optic:rest/parameter",
       "snippet": {
@@ -41,6 +41,7 @@
     },
     {
       "name": "Example Route",
+      "id": "route",
       "scope": "public",
       "schema": "optic:rest/route",
       "snippet": {

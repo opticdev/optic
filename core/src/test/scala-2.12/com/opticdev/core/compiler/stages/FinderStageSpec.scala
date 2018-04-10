@@ -16,7 +16,7 @@ class FinderStageSpec extends TestBase {
   val snippetBlock = "var hello = require('world')"
   val snippet = Snippet("es7", snippetBlock)
 
-  implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(
+  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, Vector(
     CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
   ), Vector(), Vector())
   val snippetBuilder = new SnippetStage(snippet)
@@ -46,7 +46,7 @@ class FinderStageSpec extends TestBase {
 
   describe("error handling") {
 
-    implicit val lens : Lens = Lens("Example", BlankSchema, snippet, Vector(
+    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, Vector(
       CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
       CodeComponent(Seq("firstProblem"), StringFinder(Entire, "not-anywhere")),
       CodeComponent(Seq("nextProblem"), StringFinder(Entire, "nowhere"))

@@ -19,8 +19,8 @@ class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest")
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
   val file = File(testFilePath)
   val importResults = {
-    val importGear = gearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
-    sourceGear.gearSet.addGear(importGear)
+    val importGear = compiledLensFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
+    sourceGear.lensSet.addLens(importGear)
     sourceGear.parseFile(File(testFilePath))
   }
 

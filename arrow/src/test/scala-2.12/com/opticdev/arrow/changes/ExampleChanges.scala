@@ -67,7 +67,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"position": 93,
         |			"_type":"com.opticdev.arrow.changes.location.AsChildOf"
         |		},
-        |   "gearId": "85c0d9c3",
+        |   "lensId": "optic:express-js/route",
         |   "answers": {},
         |		"_type":"com.opticdev.arrow.changes.InsertModel"
         |	}]
@@ -132,7 +132,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"method": "post",
         |			"url": "test/url"
         |		},
-        |		"gearId": "85c0d9c3",
+        |		"lensId": "85c0d9c3",
         |		"atLocation": {
         |			"file": "test-examples/resources/tmp/test_project/app.js",
         |			"position": 38,
@@ -188,12 +188,12 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"target": "optic:test@latest/route",
         |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
         |		},
-        |		"gearOptions": [{
+        |		"lensOptions": [{
         |     "name": "Route",
         |     "packageFull": "optic:expressjs@0.1.0",
         |     "id": "85c0d9c3"
         |   }],
-        |   "gearId": "85c0d9c3",
+        |   "lensId": "optic:express-js/route",
         | 	"locationOptions": [{
         |		  "file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
@@ -249,7 +249,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |					"_order": ["queryProvider"],
         |					"required": ["queryProvider"]
         |				},
-        |				"script": "function transform(input, answers) {\n var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n  var routeDescription = {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n\n   var queryDescription = {\n        fields: Object.keys(input.schema).reduce(function (previous, current) {\n            previous[current] = Generate('optic:rest/parameter', { in: 'body', name: current });\n            return previous;\n        }, {})\n    };\n\n  return Generate(answers.output, routeDescription, {\n        containers: {\n            \"callback\": [Generate('optic:mongoose/create-record', queryDescription, { \n gearId: answers.queryProvider \n  })]\n        }\n    });\n}"
+        |				"script": "function transform(input, answers) {\n var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n  var routeDescription = {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n\n   var queryDescription = {\n        fields: Object.keys(input.schema).reduce(function (previous, current) {\n            previous[current] = Generate('optic:rest/parameter', { in: 'body', name: current });\n            return previous;\n        }, {})\n    };\n\n  return Generate(answers.output, routeDescription, {\n        containers: {\n            \"callback\": [Generate('optic:mongoose/create-record', queryDescription, { \n lensId: answers.queryProvider \n  })]\n        }\n    });\n}"
         |			},
         |			"target": "optic:rest@0.1.0/route",
         |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
@@ -263,7 +263,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			},
         |			"name": "Hello"
         |		},
-        |		"gearOptions": [{
+        |		"lensOptions": [{
         |			"name": "Route",
         |			"packageFull": "optic:express-js@0.1.0",
         |			"id": "85c0d9c3"
@@ -274,14 +274,14 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |		}],
         |		"_type": "com.opticdev.arrow.changes.RunTransformation",
-        |		"gearId": "85c0d9c3",
+        |		"lensId": "optic:express-js/route",
         |		"location": {
         |			"file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |		},
         |		"answers": {
-        |			"queryProvider": "41a092b8"
+        |			"queryProvider": "optic:mongoose/insert-record"
         |		}
         |	}]
       """.stripMargin
@@ -318,7 +318,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		"target": "optic:rest@0.1.0/route",
         |		"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
         |	},
-        |	"gearOptions": [{
+        |	"lensOptions": [{
         |		"name": "Route",
         |		"packageFull": "optic:express-js@0.1.0",
         |		"id": "1eac58c9"

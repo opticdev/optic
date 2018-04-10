@@ -8,6 +8,7 @@
   "lenses": [
     {
       "name": "Parameter",
+      "id": "parameter",
       "scope": "internal",
       "schema": "parameter",
       "snippet": {
@@ -47,6 +48,7 @@
     },
     {
       "name": "Example Route",
+      "id": "route",
       "scope": "public",
       "schema": "route",
       "snippet": {

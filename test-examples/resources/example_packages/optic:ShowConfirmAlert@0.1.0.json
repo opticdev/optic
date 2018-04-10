@@ -25,6 +25,7 @@
   "lenses": [
     {
       "name": "Show Confirm Alert",
+      "id": "confirm-alert",
       "schema": "confirmAlert",
       "snippet": {
         "language": "es7",
