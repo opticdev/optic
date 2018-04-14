@@ -35,7 +35,7 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
     })
 
 
-    val result = Await.result(future, 10 seconds)
+    val result = Await.result(future, 1 minute)
     println(result.data.toString())
     (result.data.as[JsObject] \ "models").get.as[JsArray].value.head.as[JsObject].value("id").as[JsString].value
   }

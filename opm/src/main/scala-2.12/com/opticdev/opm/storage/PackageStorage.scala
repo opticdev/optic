@@ -33,7 +33,7 @@ object PackageStorage {
 
     def notFound = Failure(new FileNotFoundException("Can not find local version of package "+packageRef.packageId))
 
-    val packageDirectory = DataDirectory.packages / packageRef.author / packageRef.name
+    val packageDirectory = DataDirectory.packages / packageRef.namespace / packageRef.name
 
     if (packageDirectory.exists && packageDirectory.isDirectory) {
 

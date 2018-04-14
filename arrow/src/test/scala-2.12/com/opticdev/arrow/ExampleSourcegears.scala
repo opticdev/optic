@@ -32,7 +32,14 @@ object ExampleSourcegears {
         Transformation("Route -> Form", transformationPackage, schemaRoute.schemaRef, schemaForm.schemaRef, Transformation.emptyAskSchema, ""),
         Transformation("Route -> Fetch", transformationPackage, schemaRoute.schemaRef, schemaFetch.schemaRef, Transformation.emptyAskSchema, "")
       )
-      override val flatContext: FlatContext = FlatContext(None, Map.empty)
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        "optic:test" -> FlatContext(Some(PackageRef("optic:test", "0.1.0")), Map(
+          "model" -> schemaModel,
+          "route" -> schemaRoute,
+          "form" -> schemaForm,
+          "fetch" -> schemaFetch,
+        ))
+      ))
     }
 
     val knowledgeGraph = IndexSourceGear.runFor(sourceGear)

@@ -15,7 +15,7 @@ import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try
-
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 case class TransformationResult(score: Int, transformationChange: TransformationChanges, context : ArrowContextBase, inputValue: Option[JsObject])(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph) extends Result {
 
   override def changes : ChangeGroup = transformationChange match {
@@ -25,7 +25,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
 
       def modelOptions = project.projectGraphWrapper.query((node)=> {
         node.value match {
-          case mn: BaseModelNode => mn.schemaId == transformationChange.transformation.input
+          case mn: BaseModelNode => mn.schemaId == transformationChange.transformation.resolvedInput
           case _ => false
         }
       }).asInstanceOf[Set[BaseModelNode]]
@@ -38,7 +38,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
       ChangeGroup(RunTransformation(
         transformationChange,
         inputValue,
-        knowledgeGraph.gearsForSchema(dt.transformation.output).map(i=> LensOption(i.name, i.lensRef.packageRef.get.full, i.lensRef.internalFull)).toSeq,
+        knowledgeGraph.gearsForSchema(dt.transformation.resolvedOutput).map(i=> LensOption(i.name, i.lensRef.packageRef.get.full, i.lensRef.internalFull)).toSeq,
         None,
         if (insertLocationOption.isDefined) Seq(insertLocationOption.get) else Seq(), //@todo add all location options
         None,
@@ -54,8 +54,8 @@ case class TransformationResult(score: Int, transformationChange: Transformation
       "name" -> JsString(transformationChange.transformation.yields),
       "projectName" -> JsString(project.name),
       "packageId" -> JsString(transformationChange.transformation.packageId.full),
-      "input" -> JsString(transformationChange.transformation.input.full),
-      "output" -> JsString(transformationChange.transformation.output.full),
+      "input" -> JsString(transformationChange.transformation.resolvedInput.full),
+      "output" -> JsString(transformationChange.transformation.resolvedOutput.full),
       "changes" -> changes.asJson
     ))
   }

@@ -5,11 +5,14 @@ import play.api.libs.json._
 import scala.util.Try
 
 case class PackageRef(packageId: String, version: String = "latest") extends Versioned {
-  def author = packageId.split(":").head
+  def namespace = packageId.split(":").head
   def name = packageId.split(":").last
   def full = packageId+"@"+version
 
   def apply(string: String) = PackageRef.fromString(string).get
+
+  require(namespace.matches(Regexes.namespace), s"'${namespace}' is not a valid namespace")
+  require(name.matches(Regexes.packageName), s"'${name}' is not a valid package name")
 
 }
 

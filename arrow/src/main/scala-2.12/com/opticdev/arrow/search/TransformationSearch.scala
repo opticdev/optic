@@ -11,6 +11,7 @@ import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 
 import scala.util.Try
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 object TransformationSearch {
 
   def search(context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph) : Vector[TransformationResult] =
@@ -33,7 +34,7 @@ object TransformationSearch {
     sourcegear.transformations.map(i=> {
       TransformationResult(
         FuzzySearch.tokenSetPartialRatio(i.yields, query),
-        DirectTransformation(i, i.output),
+        DirectTransformation(i, i.resolvedOutput),
         context,
         None
       )

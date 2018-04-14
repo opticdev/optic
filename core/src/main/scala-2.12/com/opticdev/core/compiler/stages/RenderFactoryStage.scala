@@ -13,7 +13,8 @@ class RenderFactoryStage(snippetStageOutput: SnippetStageOutput, modelsParseGear
       snippetStageOutput.snippet.block,
       snippetStageOutput.snippet.languageId,
       modelsParseGear.asInstanceOf[ParseAsModel],
-      snippetStageOutput.entryChildren.map(i=> ParserFactoryStage.nodeToDescription(i)(snippetStageOutput)).head
+      snippetStageOutput.entryChildren.map(i=> ParserFactoryStage.nodeToDescription(i)(snippetStageOutput)).head,
+      lens.packageRef.packageId
     ))
   }
 }

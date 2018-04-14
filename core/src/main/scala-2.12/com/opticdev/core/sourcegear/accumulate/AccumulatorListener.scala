@@ -19,12 +19,12 @@ sealed trait Listener {
   val mapToSchema: SchemaRef
 }
 
-case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: SchemaRef) extends Listener {
+case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: SchemaRef, packageId: String) extends Listener {
 
   override val schema = schemaComponent.schema
   override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): ModelField = {
 
-    val resolvedSchema = schemaComponent.resolvedSchema(sourceGearContext.sourceGear)
+    val resolvedSchema = schemaComponent.resolvedSchema(packageId)(sourceGearContext.sourceGear)
 
     val asModelNode : ModelNode = modelNode match {
       case l: LinkedModelNode[CommonAstNode] => l.flatten

@@ -1,15 +1,17 @@
 package com.opticdev.core.compiler
 
+import com.opticdev.common.PackageRef
 import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.stages._
 import com.opticdev.core.sourcegear.CompiledLens
 import com.opticdev.core.sourcegear.containers.SubContainerManager
+import com.opticdev.core.sourcegear.context.{FlatContext, FlatContextBuilder, SDKObjectsResolvedImplicits}
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Context, PackageContext}
 import com.opticdev.opm.DependencyTree
 import com.opticdev.opm.packages.OpticMDPackage
-import com.opticdev.sdk.descriptions.{Lens, Schema}
+import com.opticdev.sdk.descriptions.{Lens, Schema, SchemaRef}
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
@@ -60,7 +62,12 @@ object Compiler {
         val finderStageOutput = Try(finderStage.run)
 
         if (finderStageOutput.isSuccess) {
-          val parser = Try(new ParserFactoryStage(snippetOutput.get, finderStageOutput.get).run)
+
+          val qualifySchema = (pr: PackageRef, sr: SchemaRef) => {
+            SDKObjectsResolvedImplicits.qualifySchema(pr, sr)
+          }
+
+          val parser = Try(new ParserFactoryStage(snippetOutput.get, finderStageOutput.get, qualifySchema).run)
 
           if (parser.isSuccess) {
             val renderer = Try(new RenderFactoryStage(snippetOutput.get, parser.get.parseGear).run)

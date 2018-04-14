@@ -23,7 +23,6 @@ val commonSettings: Seq[Def.Setting[_]] = Seq(
     Resolver.defaultLocal,
     Resolver.mavenLocal
   )
-
 )
 
 /* Sub Projects */

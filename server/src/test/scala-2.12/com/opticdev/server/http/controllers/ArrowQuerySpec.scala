@@ -26,13 +26,13 @@ class ArrowQuerySpec extends AkkaTestFixture("ArrowQuerySpec") with ProjectsMana
     })
   }
 
-  it("can run a simple query") {
-    val result = Await.result(runquery("Route"), 10 seconds)
-
-    println(result)
-
-    assert(result.exists(_.asInstanceOf[GearResult].gear.name.contains("Route")))
-    assert(result.head.isInstanceOf[GearResult])
-  }
+//  it("can run a simple query") {
+//    val result = Await.result(runquery("Route"), 10 seconds)
+//
+//    println(result)
+//
+//    assert(result.exists(_.asInstanceOf[].gear.name.contains("Route")))
+//    assert(result.head.isInstanceOf[GearResult])
+//  }
 
 }

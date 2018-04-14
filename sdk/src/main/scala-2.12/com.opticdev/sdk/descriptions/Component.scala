@@ -100,9 +100,7 @@ case class SchemaComponent(propertyPath: Seq[String],
                            location: Option[Location]) extends Component {
 
   override def rules: Vector[Rule] = Vector()
-
-  def fullyQualified(lens: Lens) = SchemaComponent(propertyPath, schema.fullyQualified(lens), mapUnique, location)
-
+  
   def withLocation(setLocation: Location) = SchemaComponent(propertyPath, schema, mapUnique, Some(setLocation))
 
 }

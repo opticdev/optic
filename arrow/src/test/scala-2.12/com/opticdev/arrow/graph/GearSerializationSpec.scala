@@ -32,7 +32,7 @@ class GearSerializationSpec extends TestBase with TestPackageProviders {
     val graph = IndexSourceGear.runFor(exampleProjectSG)
     val result = GraphSerialization.serialize(graph)
 
-    assert(result == Json.parse("""{"nodes":[{"id":"optic:express-js@0.1.0/route","name":"Example Route","packageFull":"optic:express-js@0.1.0","type":"gear"},{"id":"optic:rest@0.1.0/parameter","name":"Parameter","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:rest@0.1.0/route","name":"Route","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:express-js@0.1.0/parameter","name":null,"packageFull":"optic:express-js@0.1.0","type":"gear"}],"edges":[{"n1":"optic:rest@0.1.0/parameter","n2":"optic:express-js@0.1.0/parameter"},{"n1":"optic:rest@0.1.0/route","n2":"optic:express-js@0.1.0/route"}]}"""))
+    assert(result == Json.parse("""{"nodes":[{"id":"optic:rest@0.1.0/parameter","name":"Parameter","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:express-js@0.1.0/parameter","name":null,"packageFull":"optic:express-js@0.1.0","type":"gear"},{"id":"optic:rest@0.1.0/route","name":"Route","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:express-js@0.1.0/route","name":"Example Route","packageFull":"optic:express-js@0.1.0","type":"gear"}],"edges":[{"n1":"optic:rest@0.1.0/parameter","n2":"optic:express-js@0.1.0/parameter"},{"n1":"optic:rest@0.1.0/route","n2":"optic:express-js@0.1.0/route"}]}"""))
   }
 
   it("can serialize a graph with transformations") {

@@ -132,7 +132,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"method": "post",
         |			"url": "test/url"
         |		},
-        |		"lensId": "85c0d9c3",
+        |		"lensId": "optic:express-js/route",
         |		"atLocation": {
         |			"file": "test-examples/resources/tmp/test_project/app.js",
         |			"position": 38,
