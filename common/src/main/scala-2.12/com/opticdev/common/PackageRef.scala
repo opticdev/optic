@@ -31,6 +31,7 @@ object PackageRef {
     }
 
     val packageId = components.head
+    require(packageId.matches(Regexes.packageId))
     val versionOption = components.lift(1)
 
     PackageRef(packageId, versionOption.getOrElse("latest"))

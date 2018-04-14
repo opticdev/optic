@@ -36,4 +36,20 @@ class RegexesSpec extends FunSpec {
     }
   }
 
+  describe("package ids") {
+    def test(string: String): Boolean = string.matches(Regexes.packageId)
+
+    it("matches valid packageId") {
+      assert(test("package:other"))
+      assert(test("package12:other2"))
+      assert(test("package12:package-other"))
+    }
+    it("rejects invalid packageId") {
+      assert(!test("f 1"))
+      assert(!test("1f #force"))
+      assert(!test("hello - company"))
+      assert(!test("fds fjhk_jhksdhjf"))
+    }
+  }
+
 }

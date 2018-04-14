@@ -1,9 +1,10 @@
 package com.opticdev.core.compiler.helpers
 
+import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.compiler.errors.{NodeStartingWithStringNotFound, StringNotFound, StringOccurrenceOutOfBounds}
 import com.opticdev.core.compiler.stages.SnippetStage
-import com.opticdev.parsers.graph.{CommonAstNode, AstType}
+import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.sdk.descriptions.enums.FinderEnums._
 import com.opticdev.sdk.descriptions.finders.{NodeFinder, RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.{Lens, Snippet}
@@ -11,7 +12,7 @@ import com.opticdev.core._
 class FinderEvaluationSpec extends TestBase {
 
   val block = "var hello = require('world'); var next = hello+1"
-  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, Snippet("es7", block), Vector(), Vector(), Vector())
+  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, Snippet("es7", block), Vector(), Vector(), Vector(), PackageRef("test:test"))
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run

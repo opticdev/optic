@@ -31,17 +31,17 @@ class TestProvider extends Provider {
     ))
   }
 
-  val a = mockPackage("a", "optic", "1.1.1", Seq("optic:b@1.0.0"))
+  val a = mockPackage("aaaa", "optic", "1.1.1", Seq("optic:bbbb@1.0.0"))
 
-  val b = mockPackage("b", "optic", "1.0.0", Seq("optic:c@3.5.2", "optic:d@2.0.0"))
-  val b1 = mockPackage("b", "optic", "1.1.1", Seq("optic:c@2.0.0"))
+  val b = mockPackage("bbbb", "optic", "1.0.0", Seq("optic:cccc@3.5.2", "optic:dddd@2.0.0"))
+  val b1 = mockPackage("bbbb", "optic", "1.1.1", Seq("optic:cccc@2.0.0"))
 
-  val c = mockPackage("c", "optic", "3.5.2", Seq("optic:d@2.0.0"))
-  val c1 = mockPackage("c", "optic", "2.0.0", Seq())
+  val c = mockPackage("cccc", "optic", "3.5.2", Seq("optic:dddd@2.0.0"))
+  val c1 = mockPackage("cccc", "optic", "2.0.0", Seq())
 
-  val d = mockPackage("d", "optic", "2.0.0", Seq("optic:e@2.0.0"))
+  val d = mockPackage("dddd", "optic", "2.0.0", Seq("optic:eeee@2.0.0"))
 
-  val e = mockPackage("e", "optic", "2.0.0", Seq("optic:c@2.0.0"))
+  val e = mockPackage("eeee", "optic", "2.0.0", Seq("optic:cccc@2.0.0"))
 
 
   val opticImport = OpticPackage.fromJson(Json.parse(File(
