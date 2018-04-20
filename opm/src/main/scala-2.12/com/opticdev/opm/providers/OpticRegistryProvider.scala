@@ -68,9 +68,7 @@ class OpticRegistryProvider extends RemoteProvider {
     val downloadFutures = found.map(i=> Future{
       val contents = Source.fromURL(i.satisfiedWith.url).mkString
       require(FileCrypto.sha256Hash(contents) == i.satisfiedWith.hash, s"Hash for ${i.`for`.full} does not match downloaded contents")
-      val fullPackageRef = i.`for`.copy(version = i.satisfiedWith.version)
-      val file = PackageStorage.writeToStorage(fullPackageRef, contents)
-      OpticPackage.fromMarkdown(file).get
+      OpticPackage.fromString(contents).get
     })
 
     Future.sequence(downloadFutures).map(opticPackages=> {
@@ -79,8 +77,6 @@ class OpticRegistryProvider extends RemoteProvider {
 
   }.flatten
 
-
-  override def listInstalledPackages(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths): Vector[OpticPackage] = ???
 
   override def resolveParsers(parsers: ParserRef*): Future[opm.BatchParserResult] = ???
 

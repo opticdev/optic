@@ -31,4 +31,10 @@ class SGConstructorSpec extends TestBase with TestPackageProviders {
     assert(sgConfig.compiledLenses.size == 2)
   }
 
+  it("can load from the cache") {
+    assert(SGConstructor.loadFromCache(projectFile).isSuccess)
+  }
+
+
+
 }

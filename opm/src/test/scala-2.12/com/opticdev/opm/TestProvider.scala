@@ -58,8 +58,6 @@ class TestProvider extends Provider {
 
   val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticMongoose, opticExpress)
 
-  override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Vector[OpticMDPackage] = ???
-
   override def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Future[BatchPackageResult] = Future {
     val foundPackages = allPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 

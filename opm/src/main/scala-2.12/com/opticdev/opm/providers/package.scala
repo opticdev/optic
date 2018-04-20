@@ -15,10 +15,13 @@ package object providers {
 
   trait Provider {
     def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Future[BatchPackageResult]
-    def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage]
+//    def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage]
 
     def resolveParsers(parsers: ParserRef*) : Future[BatchParserResult]
     def listInstalledParsers : Map[String, Vector[ParserBase]]
+
+    def isCache: Boolean  = false
+
   }
 
   trait RemoteProvider extends Provider {

@@ -36,7 +36,7 @@ class LocalProvider extends Provider {
     BatchPackageResult(found.toSet, notFound.toSet)
   }
 
-  override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage] = {
+  def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage] = {
     val allFiles = projectKnowledgeSearchPaths.dirs.flatMap(_.listRecursively)
 
     val results = allFiles.filter(_.extension.orNull == ".md")

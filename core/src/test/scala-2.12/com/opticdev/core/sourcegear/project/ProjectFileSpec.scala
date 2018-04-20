@@ -150,4 +150,12 @@ class ProjectFileSpec extends TestBase {
 
   }
 
+  describe("hashing") {
+    it("can hash a project file/disk state") {
+      val f = fixture
+      assert(f.defined.hash == f.defined.hash)
+    }
+
+  }
+
 }

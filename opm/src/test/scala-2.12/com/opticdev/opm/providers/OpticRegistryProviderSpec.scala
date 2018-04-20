@@ -1,17 +1,22 @@
 package com.opticdev.opm.providers
 
 import com.opticdev.common.PackageRef
-import org.scalatest.FunSpec
+import com.opticdev.opm.PackageManager
+import com.opticdev.sdk.markdown.OpticMarkdownInstaller
+import org.scalatest.{BeforeAndAfterAll, FunSpec}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
+class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
 
-class OpticRegistryProviderSpec extends FunSpec {
+  override def beforeAll(): Unit = {
+    PackageManager.setProviders(com.opticdev.opm.defaultProviderSeq:_*)
+  }
 
   describe("Optic Registry Provider") {
 
-    val provider = new OpticRegistryProvider()
+    val provider = new OpticRegistryProvider
 
     it("can download a package") {
       val future = provider.resolvePackages(PackageRef("test:A", "0.1.0"))
@@ -40,6 +45,21 @@ class OpticRegistryProviderSpec extends FunSpec {
       val result = Await.result(future, 20 seconds)
       assert(result.foundAll)
       assert(result.found.size == 2)
+    }
+
+  }
+
+  describe("works within the package manager") {
+
+    implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
+    it("can install a set of nested dependencies") {
+      val results = PackageManager.installPackages(PackageRef("test:AB", "latest"), PackageRef("test:B", "latest"))
+      assert(results.get == Set("test:A@0.1.0", "test:AB@0.1.0", "test:B@0.1.0"))
+    }
+
+    it("can install a set of dependencies") {
+      val results = PackageManager.installPackages(PackageRef("test:A", "latest"), PackageRef("test:B", "latest"))
+      assert(results.get == Set("test:A@0.1.0", "test:B@0.1.0"))
     }
 
   }

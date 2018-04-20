@@ -47,4 +47,15 @@ object OpticPackage {
     }
   }
 
+  def fromString(contents: String) : Try[StagedPackage] = Try {
+    //@todo cleanup errors
+    val parsedOption = MarkdownParser.parseMarkdownString(contents)
+    if (parsedOption.isSuccess /* && parsedOption.get.noErrors */) {
+      StagedPackage(parsedOption.get.description)
+    } else {
+      throw new Error("Invalid Optic Markdown" + parsedOption.failed.get.toString)
+    }
+  }
+
+
 }

@@ -17,19 +17,13 @@ class SGConfigStorageSpec extends TestBase with TestPackageProviders {
   }
 
   it("can be saved to disk") {
-    SGConfigStorage.writeToStorage(sgConfig)
+    SGConfigStorage.writeToStorage(sgConfig, projectFile.hash)
   }
 
   describe("can be loaded from disk") {
 
-    lazy val dependencyTree = SGConstructor.dependenciesForProjectFile(projectFile).get
-
     it("by hash") {
-      assert(SGConfigStorage.loadFromStorage(sgConfig.hashString).get == sgConfig)
-    }
-
-    it("by dependency tree") {
-      assert(SGConfigStorage.loadFromStorage(dependencyTree).get == sgConfig)
+      assert(SGConfigStorage.loadFromStorage(projectFile.hash).get == sgConfig)
     }
 
   }

@@ -29,7 +29,7 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
         val installTry = PackageManager.installPackage(PackageRef("optic:aaaa", "1.1.1"))
 
         assert(installTry.get ==
-          Vector(
+          Set(
             "optic:aaaa@1.1.1",
             "optic:bbbb@1.0.0",
             "optic:cccc@2.0.0",
@@ -43,7 +43,7 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
           PackageRef("optic:aaaa", "1.1.1"),
           PackageRef("optic:bbbb", "1.1.1"))
 
-        assert(installTry.get ==  Vector(
+        assert(installTry.get ==  Set(
           "optic:aaaa@1.1.1",
           "optic:bbbb@1.0.0",
           "optic:bbbb@1.1.1",
@@ -57,7 +57,7 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
         val installTry = PackageManager.installPackage(PackageRef("optic:aaaa", "~1.1.0"))
 
         assert(installTry.get ==
-          Vector(
+          Set(
             "optic:aaaa@1.1.1",
             "optic:bbbb@1.0.0",
             "optic:cccc@2.0.0",
