@@ -39,12 +39,14 @@ object OpticMarkdownInstaller {
 
     val script = DataDirectory.bin / "optic-markdown" / "lib" / "cli.js"
 
-    def isInstalled : Boolean = Try {
-      val cmd = Seq(PlatformConstants.nodePath, script.pathAsString, "--version")
-      cmd.!!(ProcessLogger(stdout append _, stderr append _))
-    } match {
+    def isInstalled : Boolean = Try {version} match {
       case Success(a) => a.trim == BuildInfo.opticMDVersion
       case Failure(a) => false
+    }
+
+    def version: String = {
+      val cmd = Seq(PlatformConstants.nodePath, script.pathAsString, "--version")
+      cmd.!!(ProcessLogger(stdout append _, stderr append _)).trim
     }
 
     def parseFile(filePath: String) : JsObject = {

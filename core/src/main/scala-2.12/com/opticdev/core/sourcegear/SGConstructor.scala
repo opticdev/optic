@@ -4,6 +4,7 @@ import com.opticdev.common.PackageRef
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, SomePackagesFailedToCompile}
 import com.opticdev.core.sourcegear.context.{FlatContext, FlatContextBuilder}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
+import com.opticdev.core.sourcegear.storage.SGConfigStorage
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.{DependencyTree, PackageManager}
 import com.opticdev.parsers.{ParserBase, ParserRef}
@@ -15,16 +16,32 @@ import scala.util.{Failure, Try}
 
 object SGConstructor {
 
-  def fromProjectFile(projectFile: ProjectFile)  : Future[SGConfig] = Future {
+  def fromProjectFile(projectFile: ProjectFile)(implicit useCache: Boolean = true)  : Future[SGConfig] = Future {
+    val cacheTry = loadFromCache(projectFile)
+    if (useCache && cacheTry.isSuccess) {
+      Future(loadFromCache(projectFile).get)
+    } else {
 
-    implicit val projectKnowledgeSearchPaths = projectFile.projectKnowledgeSearchPaths
+      implicit val projectKnowledgeSearchPaths = projectFile.projectKnowledgeSearchPaths
 
-    val dependencies: DependencyTree = dependenciesForProjectFile(projectFile).get
+      val dependencies: DependencyTree = dependenciesForProjectFile(projectFile).get
 
-    val parsersRefs = parsersForProjectFile(projectFile).get
+      val parsersRefs = parsersForProjectFile(projectFile).get
 
-    fromDependencies(dependencies, parsersRefs)
+      val config = fromDependencies(dependencies, parsersRefs)
+
+      //save to cache on complete to make next time easier
+      if (useCache) {
+        config.onComplete(_.map(c => {
+          SGConfigStorage.writeToStorage(c, projectFile.hash)
+        }))
+      }
+
+      config
+    }
   }.flatten
+
+  def loadFromCache(projectFile: ProjectFile) = SGConfigStorage.loadFromStorage(projectFile.hash)
 
   def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths)  : Future[SGConfig] = Future {
 

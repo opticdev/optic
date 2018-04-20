@@ -2,19 +2,21 @@ package com.opticdev
 
 import java.net.URL
 
+import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.Tree
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage, StagedPackage}
+import com.opticdev.opm.providers.{LocalProvider, OpticRegistryProvider}
 import com.opticdev.parsers.{ParserBase, ParserRef}
 import play.api.libs.json.{JsObject, JsString}
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 
-import scala.concurrent.Future
-
 package object opm {
 
   type DependencyTree = Tree
+
+  implicit val opmActorSystem = ActorSystem("opm")
 
   //  val ws = StandaloneAhcWSClient()(ActorMaterializer())
 
@@ -29,5 +31,11 @@ package object opm {
 
   case class BatchParserResult(found: Set[ParserBase] = Set(), notFound: Set[ParserRef] = Set())
     extends BatchOpmResult[ParserBase, ParserRef]
+
+  def defaultProviderSeq = Seq(
+    new LocalProvider, //check the project docs paths
+    //local cache should be here somewhere
+    new OpticRegistryProvider //then check the remote provider
+  )
 
 }

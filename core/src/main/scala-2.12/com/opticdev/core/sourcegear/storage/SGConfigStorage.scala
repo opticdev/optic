@@ -17,14 +17,11 @@ object SGConfigStorage {
   //@todo this has to come from preferences...
   implicit val rulesProvider = new RuleProvider()
 
-  def writeToStorage(sgConfig: SGConfig): File = {
-    val file = DataDirectory.sourcegear / sgConfig.hashString  createIfNotExists(asDirectory = false)
+  def writeToStorage(sgConfig: SGConfig, projectFileHash: String): File = {
+    val file = DataDirectory.sourcegear / projectFileHash  createIfNotExists(asDirectory = false)
     val bytes = Pickle.intoBytes(sgConfig)
     file.writeByteArray(bytes.array())
   }
-
-  def loadFromStorage(dependencyTree: DependencyTree) : Try[SGConfig] =
-    loadFromStorage(Integer.toHexString(dependencyTree.hash))
 
   def loadFromStorage(hashString: String) : Try[SGConfig] = {
 

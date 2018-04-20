@@ -17,7 +17,7 @@ object FlattenBatchResultsImplicits {
 
       //clear out any not founds taken care of by another provider
       val notFoundFlattenedFiltered = notFoundFlattened
-        .filterNot(n=> foundFlattened.exists(_.packageRef == n))
+        .filterNot(n=> foundFlattened.exists(fp=> fp.packageId == n.packageId))
 
 
       BatchPackageResult(foundFlattened, notFoundFlattenedFiltered)
@@ -37,7 +37,7 @@ object FlattenBatchResultsImplicits {
 
       //clear out any not founds taken care of by another provider
       val notFoundFlattenedFiltered = notFoundFlattened
-        .filterNot(n=> foundFlattened.exists(_.parserRef == n))
+        .filterNot(n=> foundFlattened.exists(_.parserRef.languageName == n.languageName))
 
       BatchParserResult(foundFlattened, notFoundFlattenedFiltered)
 

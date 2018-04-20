@@ -34,10 +34,6 @@ object Lifecycle extends App {
     SourceParserManager.installParser(pathAsString).get
   }
 
-  PackageStorage.clearLocalPackages
-  //set the local providers for the OPM
-  PackageManager.setProviders(new LocalProvider)
-
   implicit val projectsManager: ProjectsManager = new ProjectsManager()
   implicit val actorCluster = projectsManager.actorCluster
 

@@ -11,7 +11,6 @@ val appVersion = "0.1.4"
 
 version := appVersion
 
-
 val commonSettings: Seq[Def.Setting[_]] = Seq(
   version := appVersion,
   scalaVersion := "2.12.4",
