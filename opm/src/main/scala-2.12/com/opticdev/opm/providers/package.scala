@@ -22,7 +22,7 @@ package object providers {
   }
 
   trait RemoteProvider extends Provider {
-    val baseUrl : URL
+    val baseUrl : String
   }
 
 }

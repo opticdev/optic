@@ -16,17 +16,20 @@ import scala.util.{Failure, Try}
 
 object PackageStorage {
 
-  def writeToStorage(opticPackage: OpticPackage): File = {
+  def writeToStorage(opticPackage: OpticPackage): File =
+    writeToStorage(opticPackage.packageRef, opticPackage.description.toString())
+
+  def writeToStorage(packageRef: PackageRef, contents: String): File = {
     val packages = DataDirectory.packages / ""  createIfNotExists(asDirectory = true)
 
-    val author = packages / opticPackage.author createIfNotExists(asDirectory = true)
-    val name = author / opticPackage.name createIfNotExists(asDirectory = true)
-    val version = name / opticPackage.version
+    val author = packages / packageRef.namespace createIfNotExists(asDirectory = true)
+    val name = author / packageRef.name createIfNotExists(asDirectory = true)
+    val version = name / packageRef.version
 
     version.delete(true)
     version.touch()
 
-    version.write(opticPackage.description.toString())
+    version.write(contents)
   }
 
   def loadFromStorage(packageRef: PackageRef) : Try[OpticPackage] = {
