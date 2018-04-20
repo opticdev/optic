@@ -24,8 +24,6 @@ class CacheProvider extends Provider {
 
   override def resolveParsers(parsers: ParserRef*): Future[opm.BatchParserResult] = ???
 
-  override def listInstalledParsers: Map[String, Vector[ParserBase]] = ???
-
   override def isCache: Boolean = true
 
 }

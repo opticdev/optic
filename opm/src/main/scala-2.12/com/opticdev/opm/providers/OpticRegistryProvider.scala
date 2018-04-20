@@ -13,7 +13,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
 import com.opticdev.common.{PackageRef, PackageResult, PackageVersion}
 import com.opticdev.opm
-import com.opticdev.opm.BatchPackageResult
+import com.opticdev.opm.{BatchPackageResult, BatchParserResult, opmActorSystem}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.parsers.{ParserBase, ParserRef}
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
@@ -22,7 +22,6 @@ import scala.concurrent.Future
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Try
 import akka.stream.ActorMaterializer
-import com.opticdev.opm.opmActorSystem
 import com.opticdev.opm.storage.PackageStorage
 import com.opticdev.parsers.utils.FileCrypto
 
@@ -38,6 +37,8 @@ class OpticRegistryProvider extends RemoteProvider {
   override val baseUrl: String = s"https://cdmfgxf5e1.execute-api.us-east-2.amazonaws.com/production/packages"
 
   override def resolvePackages(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Future[BatchPackageResult] = {
+
+    println("Hitting the registry")
 
     val refStringMapping: Map[PackageRef, String] = packageRefs.map(pr=> (pr, pr.full)).toMap
 
@@ -78,7 +79,7 @@ class OpticRegistryProvider extends RemoteProvider {
   }.flatten
 
 
-  override def resolveParsers(parsers: ParserRef*): Future[opm.BatchParserResult] = ???
+  //@todo properly impliment this when we do parser registry
+  override def resolveParsers(parsers: ParserRef*): Future[opm.BatchParserResult] = Future(BatchParserResult(Set(), Set()))
 
-  override def listInstalledParsers: Map[String, Vector[ParserBase]] = ???
 }

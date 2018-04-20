@@ -1,5 +1,6 @@
 package com.opticdev.common
 
+import com.vdurmont.semver4j.Semver
 import play.api.libs.json._
 
 import scala.util.Try
@@ -13,6 +14,8 @@ case class PackageRef(packageId: String, version: String = "latest") extends Ver
 
   require(namespace.matches(Regexes.namespace), s"'${namespace}' is not a valid namespace")
   require(name.matches(Regexes.packageName), s"'${name}' is not a valid package name")
+
+  def semver = Try(new Semver(version))
 
 }
 

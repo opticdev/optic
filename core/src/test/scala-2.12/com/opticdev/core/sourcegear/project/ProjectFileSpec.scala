@@ -29,6 +29,8 @@ class ProjectFileSpec extends TestBase {
 
 
   def fixture = new {
+    val defined6 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project6.yaml"))
+    val defined5 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project5.yaml"))
     val defined4 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project4.yaml"))
     val defined3 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project3.yaml"))
     val defined2 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project2.yaml"))
@@ -154,6 +156,11 @@ class ProjectFileSpec extends TestBase {
     it("can hash a project file/disk state") {
       val f = fixture
       assert(f.defined.hash == f.defined.hash)
+    }
+
+    it("knowledge paths are part of hash") {
+      val f = fixture
+      assert(f.defined5.hash != f.defined6.hash)
     }
 
   }

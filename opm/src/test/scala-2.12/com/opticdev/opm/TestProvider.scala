@@ -103,7 +103,7 @@ class TestProvider extends Provider {
     BatchParserResult(found.toSet, notFound.toSet)
   }
 
-  override def listInstalledParsers = {
+  def listInstalledParsers = {
     import net.jcazevedo.moultingyaml._
 
     SourceParserManager.clearParsers

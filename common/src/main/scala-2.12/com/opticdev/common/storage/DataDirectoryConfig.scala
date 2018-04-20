@@ -33,9 +33,13 @@ object DataDirectoryConfig {
     if (readConfigStatus == defaultStatus) return
 
     if (readConfigStatus.opticMDVersion != defaultStatus.opticMDVersion) {
-      //clear the markdown cache
+      //clear the markdown, package & sg cache
       println("MIGRATING OPTIC MARKDOWN")
       DataDirectory.emptyFolder(DataDirectory.markdownCache)
+      DataDirectory.emptyFolder(DataDirectory.packages)
+      DataDirectory.emptyFolder(DataDirectory.sourcegear)
+
+      saveConfigStatus()
     }
 
   }

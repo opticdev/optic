@@ -79,7 +79,7 @@ class LocalProvider extends Provider {
     BatchParserResult(found.toSet, notFound.toSet)
   }
 
-  override def listInstalledParsers = {
+  def listInstalledParsers = {
     import net.jcazevedo.moultingyaml._
     val installedParsers = SourceParserManager.installedParsers.map(i=> (i.languageName, Vector(i))).toMap
     installedParsers

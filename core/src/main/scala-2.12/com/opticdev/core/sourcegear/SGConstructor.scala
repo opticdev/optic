@@ -32,7 +32,9 @@ object SGConstructor {
 
       //save to cache on complete to make next time easier
       if (useCache) {
-        config.onComplete(_.map(c => SGConfigStorage.writeToStorage(c, projectFile.hash)))
+        config.onComplete(_.map(c => {
+          SGConfigStorage.writeToStorage(c, projectFile.hash)
+        }))
       }
 
       config

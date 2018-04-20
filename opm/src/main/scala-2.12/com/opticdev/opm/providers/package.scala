@@ -18,7 +18,7 @@ package object providers {
 //    def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage]
 
     def resolveParsers(parsers: ParserRef*) : Future[BatchParserResult]
-    def listInstalledParsers : Map[String, Vector[ParserBase]]
+//    def listInstalledParsers : Map[String, Vector[ParserBase]]
 
     def isCache: Boolean  = false
 
