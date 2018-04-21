@@ -11,9 +11,10 @@ import com.opticdev.server.http.routes.socket.debuggers.debuggers.Protocol.{Debu
 import com.opticdev.server.http.routes.socket.{ErrorResponse, Success}
 import com.opticdev.server.http.routes.socket.editors.Protocol._
 import com.opticdev.server.state.ProjectsManager
-import play.api.libs.json.JsArray
+import play.api.libs.json.{JsArray, JsObject}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) extends Actor {
 
@@ -49,10 +50,14 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
         })
       } else {
         //normal context query started from an editor
-        new ContextQuery(asFile, range, contentsOption)(projectsManager).executeToApiResponse
+        new ContextQuery(asFile, range, contentsOption)(projectsManager).execute
           .map(i => {
-            println(i)
-            AgentConnection.broadcastUpdate(ContextFound(file, range, i.data))
+            import com.opticdev.server.data.ModelNodeJsonImplicits._
+            val contextFound = Try(ContextFound(file, range, JsObject(Seq(
+              "models" -> JsArray(i.modelNodes.map(_.asJson()(projectsManager))),
+              "transformations" -> JsArray(i.availableTransformations.map(_.asJson))
+            ))))
+            AgentConnection.broadcastUpdate(contextFound.get)
           })
 
       }

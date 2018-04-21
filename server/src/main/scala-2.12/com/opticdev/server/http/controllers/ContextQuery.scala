@@ -71,21 +71,4 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
 
   }
 
-  def executeToApiResponse : Future[APIResponse] = {
-    import com.opticdev.server.data.ModelNodeJsonImplicits._
-
-    execute.transform {
-      case Success(results: ContextQueryResults) => {
-        Try(APIResponse(StatusCodes.OK, JsObject(Seq(
-          "models" -> JsArray(results.modelNodes.map(_.asJson)),
-          "transformations" -> JsArray(results.availableTransformations.map(_.asJson))
-        ))))
-      }
-      case Failure(exception: ServerExceptions) => {
-        Try(APIResponse(StatusCodes.NotFound, exception.asJson))
-      }
-    }
-  }
-
-
 }
