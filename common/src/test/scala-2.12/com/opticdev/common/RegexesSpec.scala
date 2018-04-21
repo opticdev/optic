@@ -13,7 +13,7 @@ class RegexesSpec extends FunSpec {
       assert(test("mycompany"))
     }
     it("rejects invalid namespaces") {
-      assert(!test("ab"))
+      assert(!test("a"))
       assert(!test("1force"))
       assert(!test("hello-company"))
       assert(!test("  fdsfjhk   jhksdhjf"))
@@ -29,7 +29,7 @@ class RegexesSpec extends FunSpec {
       assert(test("package-name"))
     }
     it("rejects invalid namespaces") {
-      assert(!test("f1"))
+      assert(!test(""))
       assert(!test("1fforce"))
       assert(!test("hello - company"))
       assert(!test("fdsfjhk_jhksdhjf"))

@@ -38,7 +38,7 @@ class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest")
     projectGraphWrapper.addFile(importResults.get.astGraph, file)
     val results = projectGraphWrapper.query((node)=> {
       node.value match {
-        case mn: BaseModelNode => mn.schemaId == SchemaRef.fromString("optic:ImportExample@0.1.0/js-import").get
+        case mn: BaseModelNode => mn.schemaId == SchemaRef.fromString("optic:importexample@0.1.0/js-import").get
         case _ => false
       }
     })

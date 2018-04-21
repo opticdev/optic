@@ -70,7 +70,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
     implicit val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
 
-    val result = Render.simpleNode(SchemaRef(Some(PackageRef("optic:ImportExample")), "js-import"), JsObject(
+    val result = Render.simpleNode(SchemaRef(Some(PackageRef("optic:importexample")), "js-import"), JsObject(
       Seq("definedAs" -> JsString("ABC"), "pathTo" -> JsString("DEF"))
     ))
 

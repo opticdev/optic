@@ -13,7 +13,7 @@ class PackageRefSpec extends FunSpec {
     assert(PackageRef.fromString("optic:test@2.1.2").get == PackageRef("optic:test", "2.1.2"))
     assert(PackageRef.fromString("optic:test@2.1.2").get == PackageRef("optic:test", "2.1.2"))
     assert(PackageRef.fromString("optic:test").get == PackageRef("optic:test", "latest"))
-    assert(PackageRef.fromString("test:A@0.1.0").get == PackageRef("test:A", "0.1.0"))
+    assert(PackageRef.fromString("test:a@0.1.0").get == PackageRef("test:a", "0.1.0"))
   }
 
   it("can be written/loaded from JSON") {

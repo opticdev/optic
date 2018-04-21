@@ -34,11 +34,9 @@ class OpticRegistryProvider extends RemoteProvider {
   implicit val packageResultFormat = Json.format[PackageResult]
 
 //  override val baseUrl: URL = new URL("https://registry.opticdev.com/")
-  override val baseUrl: String = s"https://cdmfgxf5e1.execute-api.us-east-2.amazonaws.com/production/packages"
+  override val baseUrl: String = s"https://registry.opticdev.com/packages"
 
   override def resolvePackages(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Future[BatchPackageResult] = {
-
-    println("Hitting the registry")
 
     val refStringMapping: Map[PackageRef, String] = packageRefs.map(pr=> (pr, pr.full)).toMap
 

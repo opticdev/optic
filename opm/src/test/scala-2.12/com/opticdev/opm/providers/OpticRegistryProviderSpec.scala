@@ -19,17 +19,17 @@ class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
     val provider = new OpticRegistryProvider
 
     it("can download a package") {
-      val future = provider.resolvePackages(PackageRef("test:A", "0.1.0"))
+      val future = provider.resolvePackages(PackageRef("test:a", "0.1.0"))
       val result = Await.result(future, 20 seconds)
       assert(result.foundAll)
-      assert(result.found.head.packageId == "test:A")
+      assert(result.found.head.packageId == "test:a")
     }
 
     it("can download a package with a fuzzy version") {
-      val future = provider.resolvePackages(PackageRef("test:A", "latest"))
+      val future = provider.resolvePackages(PackageRef("test:a", "latest"))
       val result = Await.result(future, 20 seconds)
       assert(result.foundAll)
-      assert(result.found.head.packageId == "test:A")
+      assert(result.found.head.packageId == "test:a")
       assert(result.found.head.version == "0.1.0")
     }
 
@@ -41,7 +41,7 @@ class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
     }
 
     it("can download multiple packages") {
-      val future = provider.resolvePackages(PackageRef("test:A", "0.1.0"), PackageRef("test:B", "0.1.0"))
+      val future = provider.resolvePackages(PackageRef("test:a", "0.1.0"), PackageRef("test:b", "0.1.0"))
       val result = Await.result(future, 20 seconds)
       assert(result.foundAll)
       assert(result.found.size == 2)
@@ -53,13 +53,13 @@ class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
 
     implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
     it("can install a set of nested dependencies") {
-      val results = PackageManager.installPackages(PackageRef("test:AB", "latest"), PackageRef("test:B", "latest"))
-      assert(results.get == Set("test:A@0.1.0", "test:AB@0.1.0", "test:B@0.1.0"))
+      val results = PackageManager.installPackages(PackageRef("test:ab", "latest"), PackageRef("test:b", "latest"))
+      assert(results.get == Set("test:a@0.1.0", "test:ab@0.1.0", "test:b@0.1.0"))
     }
 
     it("can install a set of dependencies") {
-      val results = PackageManager.installPackages(PackageRef("test:A", "latest"), PackageRef("test:B", "latest"))
-      assert(results.get == Set("test:A@0.1.0", "test:B@0.1.0"))
+      val results = PackageManager.installPackages(PackageRef("test:a", "latest"), PackageRef("test:b", "latest"))
+      assert(results.get == Set("test:a@0.1.0", "test:b@0.1.0"))
     }
 
   }
