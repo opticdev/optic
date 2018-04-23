@@ -24,7 +24,8 @@ import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 case class RenderGear(block: String,
                       parserRef: ParserRef,
                       parseGear: ParseAsModel,
-                      entryChild: NodeDescription) {
+                      entryChild: NodeDescription,
+                      packageId: String) {
 
   def parser = SourceParserManager.parserById(parserRef)
 
@@ -78,7 +79,7 @@ case class RenderGear(block: String,
 
             Try {
               schemaComponentValue.map(child => {
-                val rendered = Render.fromStagedNode(StagedNode(i.resolvedSchema, child.as[JsObject])).get
+                val rendered = Render.fromStagedNode(StagedNode(i.resolvedSchema(packageId), child.as[JsObject])).get
                 NewAstNode(rendered._3.renderer.entryChild.astType.name, Map(), Some(rendered._2))
               })
             }.getOrElse(Seq.empty)

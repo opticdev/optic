@@ -29,6 +29,8 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
   val rules: Map[FlatWalkablePath, Vector[Rule]]
   val listeners : Vector[Listener]
 
+  val packageId: String
+
   val additionalParserInformation : AdditionalParserInformation
 
   val variableManager : VariableManager
@@ -141,7 +143,8 @@ case class ParseAsModel(description: NodeDescription,
                         rules: Map[FlatWalkablePath, Vector[Rule]],
                         listeners : Vector[Listener],
                         variableManager: VariableManager = VariableManager.empty,
-                        additionalParserInformation : AdditionalParserInformation
+                        additionalParserInformation : AdditionalParserInformation,
+                        packageId: String
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
   override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: ProjectBase) : Option[ParseResult[CommonAstNode]] = {
@@ -169,7 +172,8 @@ case class ParseAsContainer(description: NodeDescription,
                         containers: Map[FlatWalkablePath, SubContainer],
                         rules: Map[FlatWalkablePath, Vector[Rule]],
                         variableManager: VariableManager = VariableManager.empty,
-                        additionalParserInformation : AdditionalParserInformation
+                        additionalParserInformation : AdditionalParserInformation,
+                        packageId: String
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
   override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase): Option[ParseResult[CommonAstNode]] = {

@@ -92,21 +92,6 @@
           "occurrence": 0
         },
         "propertyPath": ["url"]
-      }, {
-        "type": "schema",
-        "schema": "parameter",
-        "mapUnique": true,
-        "propertyPath": ["parameters"],
-        "location": {
-          "type": "InParent",
-          "finder": null
-        },
-        "options": {
-          "lookupTable": null,
-          "invariant": false,
-          "parser": null,
-          "mutator": null
-        }
       }]
     }
   ]

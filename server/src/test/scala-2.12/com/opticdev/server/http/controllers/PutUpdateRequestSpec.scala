@@ -3,6 +3,7 @@ package com.opticdev.server.http.controllers
 import akka.http.scaladsl.model.StatusCodes
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
+import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.server.Fixture.ProjectsManagerFixture
 import com.opticdev.server.state.ProjectsManager
@@ -12,6 +13,7 @@ import play.api.libs.json.{JsArray, JsObject, JsString}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Await
+import scala.util.Try
 
 class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with ProjectsManagerFixture with BeforeAndAfterEach {
 
@@ -31,13 +33,13 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
     val future = instanceWatchingTestProject.flatMap(pm=> {
       projectsManager = pm
       val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)
-      cq.executeToApiResponse
+      cq.execute
     })
 
 
-    val result = Await.result(future, 10 seconds)
-    println(result.data.toString())
-    (result.data.as[JsObject] \ "models").get.as[JsArray].value.head.as[JsObject].value("id").as[JsString].value
+    val result = Await.result(future, 1 minute)
+    import com.opticdev.server.data.ModelNodeJsonImplicits._
+    (result.modelNodes.head.asJson() \ "id").get.as[JsString].value
   }
 
   it("can update model") {

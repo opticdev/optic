@@ -48,7 +48,7 @@ case class Lens(name: Option[String],
                 components: Vector[Component],
                 variables: Vector[Variable],
                 subcontainers: Vector[SubContainer],
-                packageRef: PackageRef = PackageRef(null, null)
+                packageRef: PackageRef = PackageRef("test:test")
                ) extends PackageExportable {
 
   def allSchemaComponents : Vector[SchemaComponent] = {

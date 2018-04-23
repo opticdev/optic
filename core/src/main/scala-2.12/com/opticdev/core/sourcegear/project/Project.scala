@@ -25,7 +25,7 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
     super.projectFileChanged(newPf)
     if (newPf.interface.isSuccess) {
       projectStatusInstance.sourceGearStatus = Building
-      SGConstructor.fromProjectFile(newPf).onComplete(i => {
+      SGConstructor.fromProjectFile(newPf)(useCache = true).onComplete(i => {
         if (i.isSuccess) {
           sourceGear = i.get.inflate
           //run all callbacks

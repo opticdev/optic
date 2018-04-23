@@ -1,12 +1,10 @@
-package com.opticdev.opm.utils
+package com.opticdev.common.utils
 
-import better.files.File
 import com.opticdev.common.Versioned
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 
 import scala.util.Try
-
 object SemverHelper {
 
   case class VersionWrapper(version: String) extends Versioned

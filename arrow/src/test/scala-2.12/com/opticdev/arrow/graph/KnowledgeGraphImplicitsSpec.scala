@@ -13,6 +13,7 @@ class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
 
   def fixture = new {
     val knowledgeGraphWithTransformations = ExampleSourcegears.sgWithTransformations.knowledgeGraph
+    val sourcegearhWithTransformations = ExampleSourcegears.sgWithTransformations
     val simpleKnowledgeGraph = ExampleSourcegears.exampleProjectSG.knowledgeGraph
   }
 
@@ -41,13 +42,14 @@ class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
   }
 
   it("will not find the inverse of a transformation") {
+    import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
     val f = fixture
     val ref = SchemaRef(Some(PackageRef("optic:test")), "route")
 
     val results = f.knowledgeGraphWithTransformations.availableTransformations(ref)
 
 
-    assert(!results.map(_.transformation.output).contains(SchemaRef(Some(PackageRef("optic:test")), "model")))
+    assert(!results.map(_.transformation.resolvedOutput(f.sourcegearhWithTransformations.sourceGear)).contains(SchemaRef(Some(PackageRef("optic:test")), "model")))
 
   }
 

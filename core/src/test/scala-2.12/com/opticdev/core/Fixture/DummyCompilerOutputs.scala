@@ -26,7 +26,8 @@ object DummyCompilerOutputs {
     Map(),
     Vector(),
     VariableManager.empty,
-    AdditionalParserInformation(IdentifierNodeDesc(AstType("A", "B"), Seq()), Seq())
+    AdditionalParserInformation(IdentifierNodeDesc(AstType("A", "B"), Seq()), Seq()),
+    "test:test"
   )
 
   val render = RenderGear(
@@ -38,7 +39,8 @@ object DummyCompilerOutputs {
       properties = Map(),
       children = Vector() ,
       rules = Vector()
-    )
+    ),
+    "test:test"
   )
 
 }

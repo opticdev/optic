@@ -75,23 +75,11 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
       val future = instanceWatchingTestProject.flatMap(pm=> {
         implicit val projectsManager: ProjectsManager = pm
         val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)
-        cq.executeToApiResponse
+        cq.execute
       })
 
       val result = Await.result(future, 10 seconds)
-      assert(result.statusCode == StatusCodes.OK)
-      assert((result.data.asInstanceOf[JsObject] \ "models").get.as[JsArray].value.size == 1)
-
-    }
-
-    it("converts exceptions into an error object") {
-      implicit val projectsManager = projectsManagerWithStorage(ServerStorage(Map("test" -> "test-examples/resources/tmp/test_project")))
-      val cq = new ContextQuery(File("not/real/file"), Range(12, 35), None)
-      val future = cq.executeToApiResponse
-
-      val result = Await.result(future, 10 seconds)
-
-      assert(result.statusCode == StatusCodes.NotFound)
+      assert(result.modelNodes.size == 1)
 
     }
 
@@ -101,12 +89,11 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
       val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), Some("var me = you"))
-      cq.executeToApiResponse
+      cq.execute
     })
 
     val result = Await.result(future, 10 seconds)
-    assert(result.statusCode == StatusCodes.OK)
-    assert((result.data.asInstanceOf[JsObject] \ "models").get.as[JsArray].value.isEmpty)
+    assert(result.modelNodes.isEmpty)
   }
 
 }

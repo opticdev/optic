@@ -7,7 +7,7 @@ import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph._
 import com.opticdev.parsers.utils.Crypto
-import org.scalatest.{BeforeAndAfterAll, FunSpec, FunSpecLike}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FunSpec, FunSpecLike}
 import play.api.libs.json.{JsObject, JsValue}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.markdown.MarkdownCache
@@ -31,6 +31,7 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
 
   def start = {
     DataDirectory.init
+    DataDirectory.clearCaches
     PreTest.run
     SourceParserManager.clearParsers
     MarkdownCache.clear

@@ -10,6 +10,7 @@ import com.opticdev.parsers.utils.Crypto
 import org.yaml.snakeyaml.parser.ParserException
 
 import scala.util.Try
+import scala.util.hashing.MurmurHash3
 
 class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChanged: (ProjectFile)=> Unit = (pf)=> {}) extends PFInterface {
   import net.jcazevedo.moultingyaml._
@@ -125,5 +126,12 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
 
     ProjectKnowledgeSearchPaths(searchPaths:_*)
   }
+
+  def hash: String = Integer.toHexString({
+    MurmurHash3.stringHash(file.parent.pathAsString) ^
+    MurmurHash3.setHash(dependencies.get.map(_.full).toSet) ^
+    MurmurHash3.setHash(interfaceForFile.get.parsers.value.map(_.value).toSet) ^
+    MurmurHash3.setHash(projectKnowledgeSearchPaths.dirs.filter(_.exists).map(_.sha1).toSet)
+  })
 
 }

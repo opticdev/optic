@@ -2,12 +2,12 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.common.PackageRef
+import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.sdk.descriptions.{LensRef, Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.context.{Tree, TreeContext}
-import com.opticdev.opm.utils.SemverHelper
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation}
@@ -32,7 +32,7 @@ abstract class SourceGear {
 
   def findSchema(schemaRef: SchemaRef) : Option[Schema] = {
     val availible = schemas.filter(s=>
-      s.schemaRef.packageRef.get.packageId == schemaRef.packageRef.get.packageId
+      s.schemaRef.packageRef.map(_.packageId) == schemaRef.packageRef.map(_.packageId)
       && s.schemaRef.id == schemaRef.id
     )
     val schemaVersion = SemverHelper.findVersion(availible, (s: Schema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))

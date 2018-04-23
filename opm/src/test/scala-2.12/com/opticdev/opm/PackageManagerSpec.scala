@@ -26,44 +26,44 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
 
       it("a single package w/Dependencies") {
 
-        val installTry = PackageManager.installPackage(PackageRef("optic:a", "1.1.1"))
+        val installTry = PackageManager.installPackage(PackageRef("optic:aaaa", "1.1.1"))
 
         assert(installTry.get ==
-          Vector(
-            "optic:a@1.1.1",
-            "optic:b@1.0.0",
-            "optic:c@2.0.0",
-            "optic:c@3.5.2",
-            "optic:d@2.0.0",
-            "optic:e@2.0.0"))
+          Set(
+            "optic:aaaa@1.1.1",
+            "optic:bbbb@1.0.0",
+            "optic:cccc@2.0.0",
+            "optic:cccc@3.5.2",
+            "optic:dddd@2.0.0",
+            "optic:eeee@2.0.0"))
       }
 
       it("a list of packages") {
         val installTry = PackageManager.installPackages(
-          PackageRef("optic:a", "1.1.1"),
-          PackageRef("optic:b", "1.1.1"))
+          PackageRef("optic:aaaa", "1.1.1"),
+          PackageRef("optic:bbbb", "1.1.1"))
 
-        assert(installTry.get ==  Vector(
-          "optic:a@1.1.1",
-          "optic:b@1.0.0",
-          "optic:b@1.1.1",
-          "optic:c@2.0.0",
-          "optic:c@3.5.2",
-          "optic:d@2.0.0",
-          "optic:e@2.0.0"))
+        assert(installTry.get ==  Set(
+          "optic:aaaa@1.1.1",
+          "optic:bbbb@1.0.0",
+          "optic:bbbb@1.1.1",
+          "optic:cccc@2.0.0",
+          "optic:cccc@3.5.2",
+          "optic:dddd@2.0.0",
+          "optic:eeee@2.0.0"))
       }
 
       it("works for fuzzy versions") {
-        val installTry = PackageManager.installPackage(PackageRef("optic:a", "~1.1.0"))
+        val installTry = PackageManager.installPackage(PackageRef("optic:aaaa", "~1.1.0"))
 
         assert(installTry.get ==
-          Vector(
-            "optic:a@1.1.1",
-            "optic:b@1.0.0",
-            "optic:c@2.0.0",
-            "optic:c@3.5.2",
-            "optic:d@2.0.0",
-            "optic:e@2.0.0"))
+          Set(
+            "optic:aaaa@1.1.1",
+            "optic:bbbb@1.0.0",
+            "optic:cccc@2.0.0",
+            "optic:cccc@3.5.2",
+            "optic:dddd@2.0.0",
+            "optic:eeee@2.0.0"))
       }
 
     }
@@ -72,8 +72,8 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
 
       it("works when all are valid") {
         val collectTry = PackageManager.collectPackages(Seq(
-          PackageRef("optic:a", "1.1.1"),
-          PackageRef("optic:b", "1.1.1")))
+          PackageRef("optic:aaaa", "1.1.1"),
+          PackageRef("optic:bbbb", "1.1.1")))
 
         val expectedTree = Tree(
           Leaf(t.a.resolved(), Tree(
@@ -97,13 +97,14 @@ class PackageManagerSpec extends FunSpec with TestPackageProviders {
           ))
         )
 
-        assert(expectedTree.toString == "Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"a\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":[\"optic:b@1.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"b\",\"version\":\"1.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:c@3.5.2\",\"optic:d@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"3.5.2\",\"author\":\"optic\"},\"dependencies\":[\"optic:d@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"d\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:e@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"e\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:c@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[]},Map()),Tree(List()))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"d\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:e@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"e\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:c@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[]},Map()),Tree(List())))))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"b\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":[\"optic:c@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"c\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[]},Map()),Tree(List())))))))")
+        println(expectedTree.toString)
+        assert(expectedTree.toString == "Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"aaaa\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":[\"optic:bbbb@1.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"bbbb\",\"version\":\"1.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:cccc@3.5.2\",\"optic:dddd@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"cccc\",\"version\":\"3.5.2\",\"author\":\"optic\"},\"dependencies\":[\"optic:dddd@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"dddd\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:eeee@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"eeee\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:cccc@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"cccc\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[]},Map()),Tree(List()))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"dddd\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:eeee@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"eeee\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[\"optic:cccc@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"cccc\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[]},Map()),Tree(List())))))))))))))), Leaf(OpticMDPackage({\"metadata\":{\"name\":\"bbbb\",\"version\":\"1.1.1\",\"author\":\"optic\"},\"dependencies\":[\"optic:cccc@2.0.0\"]},Map()),Tree(WrappedArray(Leaf(OpticMDPackage({\"metadata\":{\"name\":\"cccc\",\"version\":\"2.0.0\",\"author\":\"optic\"},\"dependencies\":[]},Map()),Tree(List())))))))")
       }
 
       it("fails if any can not be resolved") {
         val collectTry = PackageManager.collectPackages(Seq(
-          PackageRef("optic:b", "1.1.1"),
-          PackageRef("optic:abc", "1.1.1"))
+          PackageRef("optic:bbbb", "1.1.1"),
+          PackageRef("optic:aaaabc", "1.1.1"))
         )
 
         assert(collectTry.isFailure)

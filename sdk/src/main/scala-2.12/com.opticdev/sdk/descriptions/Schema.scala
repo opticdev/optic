@@ -64,11 +64,6 @@ case class SchemaColdStorage(data: String)
 case class SchemaRef(packageRef: Option[PackageRef], id: String) {
   def full: String = if (packageRef.isEmpty) id else packageRef.get.full+"/"+id
   def internalFull = if (packageRef.isEmpty) id else packageRef.get.packageId+"/"+id
-  def fullyQualified(lens: Lens) : SchemaRef = {
-    if (packageRef.isEmpty) {
-      SchemaRef(Some(lens.packageRef), id)
-    } else this
-  }
 }
 
 object SchemaRef {

@@ -42,12 +42,20 @@ class FlattenBatchResultsSpec extends FunSpec {
     it("works & respects priority") {
       val first = BatchPackageResult(Set(t.a, t.b), Set(PackageRef("fake", "1.1.1")))
       val second = BatchPackageResult(Set(t.b, t.c, t.d), Set(PackageRef("fake", "1.1.2")))
-
       import com.opticdev.opm.utils.FlattenBatchResultsImplicits._
-      val results = Seq(first, second).flattenResults
 
-      assert(results.found == Set(t.a, t.b, t.c, t.d))
-      assert(results.notFound == Set(PackageRef("fake", "1.1.1"), PackageRef("fake", "1.1.2")))
+      {
+        val results = Seq(first, second).flattenResults
+
+        assert(results.found == Set(t.a, t.b, t.c, t.d))
+        assert(results.notFound == Set(PackageRef("fake", "1.1.1"), PackageRef("fake", "1.1.2")))
+      }
+      {
+        val results = Seq(second, first).flattenResults
+
+        assert(results.found == Set(t.a, t.b, t.c, t.d))
+        assert(results.notFound == Set(PackageRef("fake", "1.1.1"), PackageRef("fake", "1.1.2")))
+      }
     }
 
     it("erases all not founds resolved by another provider") {
@@ -55,10 +63,31 @@ class FlattenBatchResultsSpec extends FunSpec {
       val second = BatchPackageResult(Set(t.b), Set(t.a.packageRef))
 
       import com.opticdev.opm.utils.FlattenBatchResultsImplicits._
-      val results = Seq(first, second).flattenResults
 
-      assert(results.found == Set(t.a, t.b))
+      {
+        val results = Seq(first, second).flattenResults
+
+        assert(results.found == Set(t.a, t.b))
+        assert(results.notFound == Set())
+      }
+      {
+        val results = Seq(second, first).flattenResults
+
+        assert(results.found == Set(t.a, t.b))
+        assert(results.notFound == Set())
+      }
+    }
+
+    it("works when first provider fails and second succeeds") {
+      val first = BatchPackageResult(Set(), Set(t.b.packageRef))
+      val second = BatchPackageResult(Set(t.b), Set())
+
+      import com.opticdev.opm.utils.FlattenBatchResultsImplicits._
+
+      val results = Seq(first, second).flattenResults
+      assert(results.found == Set(t.b))
       assert(results.notFound == Set())
+
     }
 
   }

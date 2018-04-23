@@ -5,9 +5,9 @@ import java.io.FileNotFoundException
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
+import com.opticdev.common.utils.SemverHelper
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage, StagedPackage}
-import com.opticdev.opm.utils.SemverHelper
-import com.opticdev.opm.utils.SemverHelper.VersionWrapper
+import com.opticdev.common.utils.SemverHelper.VersionWrapper
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import play.api.libs.json.{JsObject, Json}
@@ -16,24 +16,27 @@ import scala.util.{Failure, Try}
 
 object PackageStorage {
 
-  def writeToStorage(opticPackage: OpticPackage): File = {
+  def writeToStorage(opticPackage: OpticPackage): File =
+    writeToStorage(opticPackage.packageRef, opticPackage.description.toString())
+
+  def writeToStorage(packageRef: PackageRef, contents: String): File = {
     val packages = DataDirectory.packages / ""  createIfNotExists(asDirectory = true)
 
-    val author = packages / opticPackage.author createIfNotExists(asDirectory = true)
-    val name = author / opticPackage.name createIfNotExists(asDirectory = true)
-    val version = name / opticPackage.version
+    val author = packages / packageRef.namespace createIfNotExists(asDirectory = true)
+    val name = author / packageRef.name createIfNotExists(asDirectory = true)
+    val version = name / packageRef.version
 
     version.delete(true)
     version.touch()
 
-    version.write(opticPackage.description.toString())
+    version.write(contents)
   }
 
   def loadFromStorage(packageRef: PackageRef) : Try[OpticPackage] = {
 
     def notFound = Failure(new FileNotFoundException("Can not find local version of package "+packageRef.packageId))
 
-    val packageDirectory = DataDirectory.packages / packageRef.author / packageRef.name
+    val packageDirectory = DataDirectory.packages / packageRef.namespace / packageRef.name
 
     if (packageDirectory.exists && packageDirectory.isDirectory) {
 

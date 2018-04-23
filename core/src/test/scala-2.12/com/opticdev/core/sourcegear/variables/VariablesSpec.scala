@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.variables
 
+import com.opticdev.common.PackageRef
 import com.opticdev.core.BlankSchema
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
@@ -16,7 +17,7 @@ class VariablesSpec extends TestBase with GearUtils with ParserUtils {
   val block = "function test () { \n let definedAs = require('pathTo') \n definedAs() \n definedAs + definedAs \n }"
   implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, Snippet("es7", block), Vector(), Vector(
     Variable("definedAs", VariableEnums.Self)
-  ), Vector())
+  ), Vector(), PackageRef("example:testing"))
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run

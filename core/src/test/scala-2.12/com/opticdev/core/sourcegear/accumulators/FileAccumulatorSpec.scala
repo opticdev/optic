@@ -44,7 +44,7 @@ class FileAccumulatorSpec extends AkkaTestFixture("FileAccumulatorTest") with Ge
         |	"url": "url"
         |}""".stripMargin)
 
-    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(Some(PackageRef("optic:FlatExpress", "0.1.0")), "route")).get
+    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(Some(PackageRef("optic:flatexpress", "0.1.0")), "route")).get
     val expandedValue = modelNode.expandedValue
 
     assert(expandedValue == expected)
@@ -53,7 +53,7 @@ class FileAccumulatorSpec extends AkkaTestFixture("FileAccumulatorTest") with Ge
 
   it("map unique schemas finds valid + distinct instances") {
 
-    val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress@0.1.0.json")
+    val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:flatexpress@0.1.0.json")
     val result = sourceGear.parseFile(File("test-examples/resources/example_source/ExampleExpress.js"))
 
     implicit val sourceGearContext = SGContext(sourceGear.fileAccumulator, result.get.astGraph, SourceParserManager.installedParsers.head, null, sourceGear)
@@ -76,7 +76,7 @@ class FileAccumulatorSpec extends AkkaTestFixture("FileAccumulatorTest") with Ge
         |	"url": "url"
         |}""".stripMargin)
 
-    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(Some(PackageRef("optic:FlatExpress", "0.1.0")), "route")).get
+    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(Some(PackageRef("optic:flatexpress", "0.1.0")), "route")).get
     val expandedValue = modelNode.expandedValue
     assert(expandedValue == expected)
 

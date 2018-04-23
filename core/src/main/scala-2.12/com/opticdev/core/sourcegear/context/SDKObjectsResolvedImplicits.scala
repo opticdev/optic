@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.context
-import com.opticdev.common.SGExportable
+import com.opticdev.common.{PackageRef, SGExportable}
 import com.opticdev.core.sourcegear.{CompiledLens, SourceGear}
+import com.opticdev.opm.context.Context
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.{Lens, Schema, SchemaComponent, SchemaRef}
 
@@ -34,7 +35,7 @@ object SDKObjectsResolvedImplicits {
     }
   }
 
-  implicit class LensResolved(compiledLens: CompiledLens) {
+  implicit class CompiledLensResolved(compiledLens: CompiledLens) {
     def resolvedSchema(implicit sourceGear: SourceGear) : SchemaRef = {
 
       val pId = if (compiledLens.schemaRef.packageRef.isDefined) {
@@ -49,12 +50,33 @@ object SDKObjectsResolvedImplicits {
   }
 
   implicit class SchemaComponentResolved(schemaComponent: SchemaComponent) {
-    def resolvedSchema(implicit sourceGear: SourceGear) : SchemaRef =
-      Try(resolveSchema(schemaComponent.schema.packageRef.map(_.packageId).getOrElse(""), schemaComponent.schema.id).get.asInstanceOf[Schema].schemaRef)
+    def resolvedSchema(packageId: String)(implicit sourceGear: SourceGear) : SchemaRef = {
+
+      val pId = if (schemaComponent.schema.packageRef.isDefined) {
+        schemaComponent.schema.packageRef.map(_.packageId).getOrElse("")
+      } else {
+        packageId
+      }
+
+      Try(resolveSchema(pId, schemaComponent.schema.id).get.asInstanceOf[Schema].schemaRef)
         .getOrElse(throw new Exception(s"Schema '${schemaComponent.schema}' not found"))
+
+    }
   }
 
   private def resolveSchema(packageId: String, item: String)(implicit sourceGear: SourceGear): Option[SGExportable] =
     sourceGear.flatContext.prefix(packageId).resolve(item)
+
+
+  def qualifySchema(packageRef: PackageRef, schemaRef: SchemaRef)(implicit packageContext: Context) : SchemaRef = {
+    val a = if (schemaRef.packageRef.isDefined) {
+      packageContext.getPackageContext(schemaRef.packageRef.get.packageId).get
+        .getProperty(schemaRef.id).get.asInstanceOf[Schema].schemaRef
+    } else {
+      SchemaRef(Some(packageRef), schemaRef.id)
+    }
+
+    a
+  }
 
 }

@@ -16,17 +16,15 @@ import scala.util.Try
 import scala.concurrent.duration._
 object PackageManager {
 
-  private var providerStore : Seq[Provider] = Seq()
+  private var providerStore : Seq[Provider] = defaultProviderSeq
   def providers = providerStore
   def setProviders(newProviders: Provider*) = providerStore = newProviders
 
-//  def defaultProviders =
-
-  def installPackage(packageRef: PackageRef)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Try[Vector[String]] = {
+  def installPackage(packageRef: PackageRef)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true) : Try[Set[String]] = {
     installPackages(packageRef)
   }
 
-  def installPackages(packages: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) = Try {
+  def installPackages(packages: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true): Try[Set[String]] = Try {
     //name -> satisfied
     val flattenedDependencyTree = collection.mutable.Map[PackageRef, Boolean]()
     packages.foreach(i=> flattenedDependencyTree(i) = false)
@@ -63,10 +61,10 @@ object PackageManager {
     }
 
     foundPackages.foreach(p=> PackageStorage.writeToStorage(p))
-    foundPackages.map(_.packageRef.full).toVector.sorted
+    foundPackages.map(_.packageRef.full).toSet
   }
 
-  def collectPackages(packages: Seq[PackageRef])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Try[DependencyTree] = Try {
+  def collectPackages(packages: Seq[PackageRef])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true) : Try[DependencyTree] = Try {
     var loaded = packages.map(p=> (p, PackageStorage.loadFromStorage(p)))
 
     val tryInstall = {
@@ -103,8 +101,8 @@ object PackageManager {
   }
 
   //provider query
-  def resultsForRefs(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : BatchPackageResult= {
-    val lookupResults = providerStore.foldLeft(Seq(): Seq[BatchPackageResult]) {
+  def resultsForRefs(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true) : BatchPackageResult= {
+    val lookupResults = providerStore.filterNot(i=> i.isCache && !useCache).foldLeft(Seq(): Seq[BatchPackageResult]) {
       case (results, provider)=> {
         if (results.nonEmpty && results.last.foundAll) {
 

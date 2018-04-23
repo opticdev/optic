@@ -7,10 +7,9 @@ name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "0.1.4"
+val appVersion = "0.1.6"
 
 version := appVersion
-
 
 val commonSettings: Seq[Def.Setting[_]] = Seq(
   version := appVersion,
@@ -23,7 +22,6 @@ val commonSettings: Seq[Def.Setting[_]] = Seq(
     Resolver.defaultLocal,
     Resolver.mavenLocal
   )
-
 )
 
 /* Sub Projects */

@@ -11,7 +11,7 @@ import com.opticdev.sdk.descriptions.transformation.{SingleModel, StagedNode, Tr
 import play.api.libs.json.JsObject
 
 import scala.util.Try
-
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 object Evaluation {
 
   def forChange(opticChange: OpticChange, sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit filesStateMonitor: FileStateMonitor): ChangeResult = opticChange match {
@@ -39,7 +39,7 @@ object Evaluation {
     }
     case rt: RunTransformation => {
 
-      val schema = sourcegear.findSchema(rt.transformationChanges.transformation.output).get
+      val schema = sourcegear.findSchema(rt.transformationChanges.transformation.resolvedOutput(sourcegear)).get
 
       require(rt.inputValue.isDefined, "Transformation must have an input value specified")
 

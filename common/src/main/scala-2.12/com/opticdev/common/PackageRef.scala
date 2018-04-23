@@ -1,15 +1,21 @@
 package com.opticdev.common
 
+import com.vdurmont.semver4j.Semver
 import play.api.libs.json._
 
 import scala.util.Try
 
 case class PackageRef(packageId: String, version: String = "latest") extends Versioned {
-  def author = packageId.split(":").head
+  def namespace = packageId.split(":").head
   def name = packageId.split(":").last
   def full = packageId+"@"+version
 
   def apply(string: String) = PackageRef.fromString(string).get
+
+  require(namespace.matches(Regexes.namespace), s"'${namespace}' is not a valid namespace")
+  require(name.matches(Regexes.packageName), s"'${name}' is not a valid package name")
+
+  def semver = Try(new Semver(version))
 
 }
 
@@ -28,6 +34,7 @@ object PackageRef {
     }
 
     val packageId = components.head
+    require(packageId.matches(Regexes.packageId))
     val versionOption = components.lift(1)
 
     PackageRef(packageId, versionOption.getOrElse("latest"))

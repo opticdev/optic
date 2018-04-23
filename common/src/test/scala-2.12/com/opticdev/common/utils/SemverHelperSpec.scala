@@ -1,4 +1,4 @@
-package com.opticdev.opm.utils
+package com.opticdev.common.utils
 
 import com.opticdev.common.Versioned
 import org.scalatest.FunSpec

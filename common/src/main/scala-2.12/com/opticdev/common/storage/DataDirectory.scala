@@ -53,4 +53,10 @@ object DataDirectory {
     file.createIfNotExists(asDirectory = true)
   }
 
+  def clearCaches = {
+    emptyFolder(packages)
+    emptyFolder(sourcegear)
+    emptyFolder(markdownCache)
+  }
+
 }

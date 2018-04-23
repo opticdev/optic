@@ -36,7 +36,7 @@ class LocalProvider extends Provider {
     BatchPackageResult(found.toSet, notFound.toSet)
   }
 
-  override def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage] = {
+  def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage] = {
     val allFiles = projectKnowledgeSearchPaths.dirs.flatMap(_.listRecursively)
 
     val results = allFiles.filter(_.extension.orNull == ".md")
@@ -79,7 +79,7 @@ class LocalProvider extends Provider {
     BatchParserResult(found.toSet, notFound.toSet)
   }
 
-  override def listInstalledParsers = {
+  def listInstalledParsers = {
     import net.jcazevedo.moultingyaml._
     val installedParsers = SourceParserManager.installedParsers.map(i=> (i.languageName, Vector(i))).toMap
     installedParsers
