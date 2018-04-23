@@ -65,8 +65,14 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
 
     case search: EditorSearch => {
       ArrowQuery(search)(projectsManager).executeToApiResponse.map(i=> {
+        println("SEARCH RESULTS "+ i.data)
         AgentConnection.broadcastUpdate( SearchResults(search.query, i.data) )
-      })
+      }).recover {
+        case a: Throwable => {
+          a.printStackTrace()
+          AgentConnection.broadcastUpdate( SearchResults(search.query) )
+        }
+      }
     }
 
     case event: UpdateEditorEvent => {

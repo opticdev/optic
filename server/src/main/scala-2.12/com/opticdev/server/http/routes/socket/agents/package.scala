@@ -44,7 +44,7 @@ package object agents {
       )
     }
 
-    case class SearchResults(query: String, results: JsValue, ignoreQueryUpdate: Boolean = false) extends OpticEvent with UpdateAgentEvent {
+    case class SearchResults(query: String, results: JsValue = JsObject(Seq("models" -> JsArray.empty, "transformations" -> JsArray.empty)), ignoreQueryUpdate: Boolean = false) extends OpticEvent with UpdateAgentEvent {
       def asJson = JsObject(Seq(
         "event"-> JsString("search-results"),
         "ignoreQueryUpdate" -> JsBoolean(ignoreQueryUpdate),

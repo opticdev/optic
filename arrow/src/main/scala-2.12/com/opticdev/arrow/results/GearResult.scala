@@ -19,8 +19,9 @@ case class GearResult(gear: CompiledLens, score: Int, context: ArrowContextBase)
   }
 
   override def changes = {
+    import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 
-    val insertModel = InsertModel(sourcegear.findSchema(gear.schemaRef).get, Some(gear.lensRef.full), JsObject.empty, context.toInsertLocation)
+    val insertModel = InsertModel(sourcegear.findSchema(gear.resolvedSchema).get, Some(gear.lensRef.full), JsObject.empty, context.toInsertLocation)
 
     val changes = if (context.toInsertLocation.isDefined) {
       Seq(insertModel, ClearSearchLines(context.toInsertLocation.get.file))
