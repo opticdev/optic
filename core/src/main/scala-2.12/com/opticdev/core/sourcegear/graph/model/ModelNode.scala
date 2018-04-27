@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.graph.model
 
+import com.opticdev.common.ObjectRef
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ActorCluster
@@ -21,6 +22,7 @@ import scala.util.hashing.MurmurHash3
 sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends AstProjection {
   val schemaId : SchemaRef
   val value : JsObject
+  val objectRef: Option[ObjectRef]
 
   lazy val fileNode: Option[FileNode] = {
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
@@ -48,15 +50,15 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
 
 }
 
-case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, root: N, modelMapping: ModelAstMapping, containerMapping: ContainerAstMapping, parseGear: ParseGear)(implicit override val project: ProjectBase) extends BaseModelNode {
+case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, root: N, modelMapping: ModelAstMapping, containerMapping: ContainerAstMapping, parseGear: ParseGear, objectRef: Option[ObjectRef])(implicit override val project: ProjectBase) extends BaseModelNode {
   def flatten = {
-    val hash = MurmurHash3.stringHash(root.toString() + modelMapping.toString() + containerMapping.toString())
-    ModelNode(schemaId, value, hash)
+    val hash = MurmurHash3.stringHash(root.toString() + modelMapping.toString() + objectRef.toString + containerMapping.toString())
+    ModelNode(schemaId, value, objectRef, hash)
   }
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
 }
 
-case class ModelNode(schemaId: SchemaRef, value: JsObject, hash: Int)(implicit override val project: ProjectBase) extends BaseModelNode {
+case class ModelNode(schemaId: SchemaRef, value: JsObject, objectRef: Option[ObjectRef], hash: Int)(implicit override val project: ProjectBase) extends BaseModelNode {
 
   //@todo check how stable/collision prone this is
   override val id: String = Integer.toHexString(hash)
@@ -70,7 +72,7 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, hash: Int)(implicit o
 
     val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
 
-    LinkedModelNode(schemaId, value, root, modelMapping, containerMapping, parseGear)
+    LinkedModelNode(schemaId, value, root, modelMapping, containerMapping, parseGear, objectRef)
   }
 
   def modelMapping(implicit astGraph: AstGraph) : ModelAstMapping = {

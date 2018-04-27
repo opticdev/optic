@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.parser
 
 import better.files.File
+import com.opticdev.common.ObjectRef
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import com.opticdev.core.sourcegear.context.FlatContext
@@ -131,6 +132,17 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
     }
 
-}
+  }
+
+  it("can get name from comment on first line") {
+    val block = "var hello = require('world') //name: Test"
+
+    val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
+    val parsedSample = sample(block)
+    val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
+    assert(result.isDefined)
+    assert(result.get.modelNode.objectRef.contains(ObjectRef("Test")))
+
+  }
 
 }

@@ -82,7 +82,7 @@ object DebugSourceGear extends SourceGear {
       implicit val astGraph = graphBuilder.graph
 
       def linkedModelNode[S <: PackageExportable](schemaRef: SchemaRef, node: DebugAstNode[S]): LinkedModelNode[DebugAstNode[S]] =
-        LinkedModelNode(schemaRef, JsObject.empty, node, Map(), Map(), null)(project)
+        LinkedModelNode(schemaRef, JsObject.empty, node, Map(), Map(), null, None)(project)
 
       val linkedModelNodes : Vector[LinkedModelNode[DebugAstNode[PackageExportable]]] = astGraph.nodes.toVector.map(_.value).collect {
         //for some reason the if is needed. likely type erasure

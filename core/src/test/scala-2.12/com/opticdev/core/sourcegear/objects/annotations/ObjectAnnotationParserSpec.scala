@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear.objects.annotations
 
 import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.TestBase
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.{ParserRef, SourceParserManager}
 import com.opticdev.sdk.descriptions.SchemaRef
 import org.scalatest.FunSpec
@@ -50,6 +51,20 @@ class ObjectAnnotationParserSpec extends TestBase {
       assert(a.head == NameAnnotation("Model", testSchema))
     }
 
+  }
+
+  describe("choosing contents to check") {
+    it("works for one liner") {
+      val test = "thing.model() //name: Here"
+      val contentsToCheck = ObjectAnnotationParser.contentsToCheck(CommonAstNode(null, Range(0, 13), null))(test)
+      assert(contentsToCheck == test)
+    }
+
+    it("works for multi liner") {
+      val test = "thing.model() //name: Here \n\n otherLine() \n line()"
+      val contentsToCheck = ObjectAnnotationParser.contentsToCheck(CommonAstNode(null, Range(0, 72), null))(test)
+      assert(contentsToCheck == test)
+    }
   }
 
 }

@@ -17,9 +17,11 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEvaluation
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.VariableRuleWithEvaluation
+import com.opticdev.core.sourcegear.objects.annotations.{NameAnnotation, ObjectAnnotationParser}
 import com.opticdev.core.sourcegear.variables.VariableManager
 
 import scala.util.hashing.MurmurHash3
+import com.opticdev.marvin.common.helpers.LineOperations
 
 sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
@@ -127,7 +129,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
     output(matchResults)
   }
 
-  def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase) : Option[ParseResult[CommonAstNode]] = None
+  def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = None
 
 
 }
@@ -144,7 +146,7 @@ case class ParseAsModel(description: NodeDescription,
                         packageId: String
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
-  override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: ProjectBase) : Option[ParseResult[CommonAstNode]] = {
+  override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = {
     if (!matchResults.isMatch) return None
 
     val fields = matchResults.extracted.getOrElse(Set())
@@ -156,7 +158,13 @@ case class ParseAsModel(description: NodeDescription,
     import com.opticdev.core.sourcegear.containers.ContainerMappingImplicits._
     val containerMapping = matchResults.containers.getOrElse(Set()).toMapping
 
-    val linkedModelNode = LinkedModelNode(schema, model, matchResults.baseNode.get, modelMapping, containerMapping, this)
+    val objectRefOptions = {
+      val raw = ObjectAnnotationParser.contentsToCheck(matchResults.baseNode.get)
+      val annotations = ObjectAnnotationParser.extract(raw, schema)(sourceGearContext.parser)
+      annotations.collectFirst { case na: NameAnnotation => na }.map(_.objectRef)
+    }
+
+    val linkedModelNode = LinkedModelNode(schema, model, matchResults.baseNode.get, modelMapping, containerMapping, this, objectRefOptions)
 
     //@todo have schema validate
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))
@@ -173,7 +181,7 @@ case class ParseAsContainer(description: NodeDescription,
                         packageId: String
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
-  override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase): Option[ParseResult[CommonAstNode]] = {
+  override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String): Option[ParseResult[CommonAstNode]] = {
     None
   }
 

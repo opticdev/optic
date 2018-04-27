@@ -35,7 +35,7 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
     }
 
     it("can generate a hexadecimal from hash") {
-      assert(sgConfig.hashString == "3c77f032")
+      assert(sgConfig.hashString == "cccb7d6f")
     }
 
     it("can inflate to a sourcegear instance") {
