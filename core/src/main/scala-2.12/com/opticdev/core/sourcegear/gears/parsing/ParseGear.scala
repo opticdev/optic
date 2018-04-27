@@ -112,9 +112,6 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
         val foundContainer: Set[SubContainerMatch] = expectedSubContainerAtPath.map(c=> Set(SubContainerMatch(c, node))).getOrElse(Set())
 
-//        println("LOOK HERE "+ childrenResults.containers)
-//        println(foundContainer)
-
         MatchResults(childrenResults.isMatch,
           if (childrenResults.isMatch) Some(childrenResults.extracted.getOrElse(Set()) ++ extractedFields) else None,
           if (childrenResults.isMatch) Some(entryNode) else None,
@@ -177,7 +174,6 @@ case class ParseAsContainer(description: NodeDescription,
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
   override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase): Option[ParseResult[CommonAstNode]] = {
-
     None
   }
 
