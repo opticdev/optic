@@ -24,13 +24,16 @@ Invalid States:
  */
 
 object SyncGraphFunctions {
+
+  def getSyncSubgraph(projectGraph: ProjectGraph) = {
+    implicit val conf: Config = Acyclic
+    val filtered = projectGraph.filter(projectGraph.having(edge = (e) => e.isLabeled && e.label.isInstanceOf[DerivedFrom]))
+    Graph(filtered.edges:_*)
+  }
+
   def updateSyncEdges(fileGraph: AstGraph, projectGraph: ProjectGraph)(implicit project: ProjectBase) : UpdateResults = {
     implicit val actorCluster = project.actorCluster
-    val syncSubgraph: ProjectGraph = {
-      implicit val conf: Config = Acyclic
-      val filtered = projectGraph.filter(projectGraph.having(edge = (e) => e.isLabeled && e.label.isInstanceOf[DerivedFrom]))
-      Graph(filtered.edges:_*)
-    }
+    val syncSubgraph = getSyncSubgraph(projectGraph)
 
     val warnings = scala.collection.mutable.ListBuffer[() => SyncWarning]()
     var validTargets = 0
@@ -66,7 +69,7 @@ object SyncGraphFunctions {
 
       if (sourceNodeOption.isDefined) {
         validTargets += 1
-        val didAdd = syncSubgraph add (sourceNodeOption.get ~+#> targetNode)(DerivedFrom())
+        val didAdd = syncSubgraph add (sourceNodeOption.get ~+#> targetNode)(DerivedFrom(sourceAnnotation.transformationRef, sourceAnnotation.askObject))
         if (!didAdd) {
           warnings += {
             () => CircularDependency(sourceName, Try(targetNode.resolved().toDebugLocation).getOrElse(defaultAstDebugLocation))

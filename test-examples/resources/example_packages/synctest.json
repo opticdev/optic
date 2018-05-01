@@ -72,5 +72,14 @@
         "exported": true
       }
     }
-  ]
+  ],
+  "transformations": [{
+    "yields": "Returns its input",
+    "id": "passthrough-transformation",
+    "input": "source-schema",
+    "output": "source-schema",
+    "ask": {},
+    "script": "function transform(input, answers) { \n return input \n }"
+  }]
+
 }

@@ -57,6 +57,8 @@ case class Lens(name: Option[String],
     lensComponents ++ containerComponents
   }
 
+  def lensRef = LensRef(Some(packageRef), id)
+
 }
 
 case class LensRef(packageRef: Option[PackageRef], id: String) {

@@ -10,7 +10,7 @@ import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
-import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation}
+import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation, TransformationRef}
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge
@@ -49,6 +49,18 @@ abstract class SourceGear {
     val lensVersion = SemverHelper.findVersion(available, (l: CompiledLens) => l.packageRef, lensRef.packageRef.map(_.version).getOrElse("latest"))
 
     lensVersion.map(_._2)
+  }
+
+  def findTransformation(transformationRef: TransformationRef): Option[Transformation] = {
+
+    val available: Set[Transformation] = transformations.filter(trans=>
+      transformationRef.packageRef.map(_.packageId).contains(trans.packageId.packageId)
+        && trans.id.contains(transformationRef.id)
+    )
+
+    val transformationVersion = SemverHelper.findVersion(available, (l: Transformation) => l.packageId, transformationRef.packageRef.map(_.version).getOrElse("latest"))
+
+    transformationVersion.map(_._2)
   }
 
   def findParser(parserRef: ParserRef) = parsers.find(_.languageName == parserRef.languageName)

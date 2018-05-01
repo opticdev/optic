@@ -33,6 +33,8 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
   val packageId: String
 
+  val parsingLensRef: LensRef
+
   val additionalParserInformation : AdditionalParserInformation
 
   val variableManager : VariableManager
@@ -143,7 +145,8 @@ case class ParseAsModel(description: NodeDescription,
                         listeners : Vector[Listener],
                         variableManager: VariableManager = VariableManager.empty,
                         additionalParserInformation : AdditionalParserInformation,
-                        packageId: String
+                        packageId: String,
+                        parsingLensRef: LensRef
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
   override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = {
@@ -166,7 +169,7 @@ case class ParseAsModel(description: NodeDescription,
       )
     }
 
-    val linkedModelNode = LinkedModelNode(schema, model, matchResults.baseNode.get, modelMapping, containerMapping, this, objectRefOption, sourceAnnotationOption)
+    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, objectRefOption, sourceAnnotationOption)
 
     //@todo have schema validate
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))
@@ -180,7 +183,8 @@ case class ParseAsContainer(description: NodeDescription,
                         rules: Map[FlatWalkablePath, Vector[Rule]],
                         variableManager: VariableManager = VariableManager.empty,
                         additionalParserInformation : AdditionalParserInformation,
-                        packageId: String
+                        packageId: String,
+                        parsingLensRef: LensRef
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
   override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String): Option[ParseResult[CommonAstNode]] = {

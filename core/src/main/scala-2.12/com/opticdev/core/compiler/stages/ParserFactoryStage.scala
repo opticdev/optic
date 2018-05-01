@@ -56,7 +56,8 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       listeners,
       variableManager,
       AdditionalParserInformation(snippetStage.parser.identifierNodeDesc, snippetStage.parser.blockNodeTypes.nodeTypes.toSeq),
-      lens.packageRef.packageId
+      lens.packageRef.packageId,
+      lens.lensRef
     ))
   }
 

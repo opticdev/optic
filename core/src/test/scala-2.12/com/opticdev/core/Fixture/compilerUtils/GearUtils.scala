@@ -75,13 +75,15 @@ trait GearUtils {
 
     val schemas: Seq[(String, Schema)] = description.schemas.map(i=> (i.schemaRef.id, i))
 
+    val t = description.transformations
+
     val g = (lenses ++ schemas).toMap
 
     new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val lensSet = outerLensSet
       override val schemas = compiled.schemas
-      override val transformations = Set()
+      override val transformations = t.toSet
       override val flatContext: FlatContext = FlatContext(None, Map(
         description.packageId -> FlatContext(Some(description.packageRef), g)
       ))
