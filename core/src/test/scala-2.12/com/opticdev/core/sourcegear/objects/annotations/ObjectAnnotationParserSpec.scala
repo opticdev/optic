@@ -5,6 +5,7 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.{ParserRef, SourceParserManager}
 import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import org.scalatest.FunSpec
 
 import scala.util.Try
@@ -20,22 +21,27 @@ class ObjectAnnotationParserSpec extends TestBase {
 
     it("works for single key") {
       val map = ObjectAnnotationParser.extractRawAnnotationsFromLine("name: Test Name")
-      assert(map == Map("name" -> "Test Name"))
+      assert(map == Map("name" -> StringValue("Test Name")))
     }
 
     it("works for multiple keys") {
       val map = ObjectAnnotationParser.extractRawAnnotationsFromLine("name: Test Name, source: Other")
-      assert(map == Map("name" -> "Test Name", "source" -> "Other"))
+      assert(map == Map("name" -> StringValue("Test Name"), "source" -> StringValue("Other")))
     }
 
     it("last assignment wins") {
       val map = ObjectAnnotationParser.extractRawAnnotationsFromLine("name: Test Name, source: Other, name: second")
-      assert(map == Map("name" -> "second", "source" -> "Other"))
+      assert(map == Map("name" -> StringValue("second"), "source" -> StringValue("Other")))
     }
 
     it("invalid annotation returns empty map") {
       val map = ObjectAnnotationParser.extractRawAnnotationsFromLine("NA  ME: Test Name, source: Other")
       assert(map.isEmpty)
+    }
+
+    it("can extract expressions") {
+      val map = ObjectAnnotationParser.extractRawAnnotationsFromLine("source: TEST IDEA -> optic:test/transform")
+      assert(map == Map("source" -> ExpressionValue("TEST IDEA", TransformationRef(Some(PackageRef("optic:test")), "transform"), None)))
     }
 
   }

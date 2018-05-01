@@ -9,7 +9,7 @@ import scalax.collection.edge.Implicits._
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.constrained._
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
-import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import scalax.collection.constrained.constraints.Acyclic
 import scalax.collection.constrained.mutable.Graph
 // import scalax.collection.constrained.constraints.Acyclic
@@ -23,8 +23,8 @@ Invalid States:
 
  */
 
-object GraphFunctions {
-  def updateSyncEdges(fileGraph: AstGraph, projectGraph: ProjectGraph)(implicit project: OpticProject) : UpdateResults = {
+object SyncGraphFunctions {
+  def updateSyncEdges(fileGraph: AstGraph, projectGraph: ProjectGraph)(implicit project: ProjectBase) : UpdateResults = {
     implicit val actorCluster = project.actorCluster
     val syncSubgraph: ProjectGraph = {
       implicit val conf: Config = Acyclic

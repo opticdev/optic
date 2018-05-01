@@ -31,7 +31,7 @@ class GraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with Gear
   }
 
   it("Can add edges from new graph") {
-    val updatedGraphResults = GraphFunctions.updateSyncEdges(results.astGraph, ProjectGraphWrapper.empty.projectGraph)
+    val updatedGraphResults = SyncGraphFunctions.updateSyncEdges(results.astGraph, ProjectGraphWrapper.empty.projectGraph)
 
     val edges = updatedGraphResults.graph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
     assert(edges.size == 2)
@@ -45,9 +45,9 @@ class GraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with Gear
     it("warning raised for orphaned target") {
       val code =
         """
-          |source('test') //source: find A Fake One
+          |source('test') //source: find A Fake One -> optic:test/passthrough-transform
         """.stripMargin
-      val updatedGraphResults = GraphFunctions.updateSyncEdges(astGraphFromString(code), ProjectGraphWrapper.empty.projectGraph)
+      val updatedGraphResults = SyncGraphFunctions.updateSyncEdges(astGraphFromString(code), ProjectGraphWrapper.empty.projectGraph)
       assert(updatedGraphResults.warnings.size == 1)
       assert(updatedGraphResults.warnings.head == SourceDoesNotExist("find A Fake One", defaultAstDebugLocation))
     }
@@ -58,7 +58,7 @@ class GraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with Gear
           |source('test') //name: THIS ONE
           |source('test2') //name: THIS ONE
         """.stripMargin
-      val updatedGraphResults = GraphFunctions.updateSyncEdges(astGraphFromString(code), ProjectGraphWrapper.empty.projectGraph)
+      val updatedGraphResults = SyncGraphFunctions.updateSyncEdges(astGraphFromString(code), ProjectGraphWrapper.empty.projectGraph)
       assert(updatedGraphResults.warnings.size == 1)
       assert(updatedGraphResults.sources == 0)
       assert(updatedGraphResults.warnings.head == DuplicateSourceName("THIS ONE", Seq()))
@@ -66,9 +66,9 @@ class GraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with Gear
 
     it("will warn if there is a circular dependency") {
       val astGraph = astGraphFromString(File("test-examples/resources/example_source/sync/CircularSync.js").contentAsString)
-      val updatedGraphResults = GraphFunctions.updateSyncEdges(astGraph, ProjectGraphWrapper.empty.projectGraph)
+      val updatedGraphResults = SyncGraphFunctions.updateSyncEdges(astGraph, ProjectGraphWrapper.empty.projectGraph)
 
-      assert(updatedGraphResults.warnings.head == CircularDependency("Third", defaultAstDebugLocation))
+      assert(updatedGraphResults.warnings.head == CircularDependency("Second", defaultAstDebugLocation))
 
     }
   }

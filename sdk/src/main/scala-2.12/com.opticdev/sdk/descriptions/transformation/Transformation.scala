@@ -59,6 +59,11 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
 
 }
 
+case class TransformationRef(packageRef: Option[PackageRef], id: String) {
+  def full: String = if (packageRef.isEmpty) id else packageRef.get.full+"/"+id
+  def internalFull = if (packageRef.isEmpty) id else packageRef.get.packageId+"/"+id
+}
+
 sealed trait TransformationBase extends PackageExportable {
   def script: String
   def input: SchemaRef

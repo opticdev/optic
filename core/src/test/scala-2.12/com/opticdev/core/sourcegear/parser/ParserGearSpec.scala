@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.parser
 
 import better.files.File
-import com.opticdev.common.ObjectRef
+import com.opticdev.common.{ObjectRef, PackageRef}
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import com.opticdev.core.sourcegear.context.FlatContext
@@ -14,6 +14,7 @@ import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.enums.Token
+import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import play.api.libs.json.{JsArray, JsNumber, JsObject, JsString}
 
 class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {
@@ -149,14 +150,13 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     }
 
     it("can get source from comment on first line") {
-      val block = "var hello = require('world') //source: Test"
+      val block = "var hello = require('world') //source: Test -> optic:test/transform"
 
       val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
       val parsedSample = sample(block)
       val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
       assert(result.isDefined)
-      assert(result.get.modelNode.sourceAnnotation.contains(SourceAnnotation("Test")))
-
+      assert(result.get.modelNode.sourceAnnotation.contains(SourceAnnotation("Test", TransformationRef(Some(PackageRef("optic:test")), "transform"))))
     }
 
   }

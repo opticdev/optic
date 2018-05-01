@@ -1,10 +1,14 @@
 package com.opticdev.core.sourcegear.objects.annotations
 
+import com.opticdev.common.PackageRef
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers.ParserBase
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
+import com.opticdev.sdk.descriptions.transformation.TransformationRef
+
+import scala.util.{Success, Try}
 import scala.util.matching.Regex
 
 object ObjectAnnotationParser {
@@ -22,8 +26,11 @@ object ObjectAnnotationParser {
       lineRegex.findFirstIn(lineContents).map(i=> extractRawAnnotationsFromLine(i.substring(2)))
     }.map(_.map(pair=> {
       pair._1 match {
-        case "name" => Some(NameAnnotation(pair._2, schemaRef))
-        case "source" => Some(SourceAnnotation(pair._2))
+        case "name" => Some(NameAnnotation(pair._2.name, schemaRef))
+        case "source" => pair._2 match {
+          case exp: ExpressionValue => Some(SourceAnnotation(exp.name, exp.transformationRef))
+          case _ => None
+        }
         case _ => None
       }
     }).collect {case Some(a)=> a}
@@ -32,11 +39,35 @@ object ObjectAnnotationParser {
     found.getOrElse(Set())
   }
 
-  def extractRawAnnotationsFromLine(string: String) : Map[String, String] = {
+  def extractRawAnnotationsFromLine(string: String) : Map[String, AnnotationValues] = {
     if (topLevelCapture.pattern.matcher(string).matches()) {
-      propertiesCapture.findAllIn(string).matchData.map(i=> {
-        (i.group(1).trim, i.group(2).trim)
-      }).toMap
+      propertiesCapture.findAllIn(string).matchData.map {
+        i =>
+          Try {
+            val key = i.group("key").trim
+            val name = i.group("name").trim
+            val transform  = i.group("transformRef")
+            val askOption = Option(i.group("askJson"))
+
+            val value = if (transform != null) {
+
+              val namespace = i.group("namespace")
+              val packageName = i.group("packageName")
+              val version = Option(i.group("version")).getOrElse("latest")
+              val id = i.group("id")
+
+              require(!Set(namespace, packageName, version, id).contains(null))
+
+              val transformationRef = TransformationRef(Some(PackageRef(namespace + ":" + packageName, version)), id)
+
+              ExpressionValue(name, transformationRef, askOption)
+            } else {
+              StringValue(name)
+            }
+
+            (key, value)
+          }
+      }.collect {case Success(a) => a} .toMap
     } else Map.empty
   }
 
