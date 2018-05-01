@@ -23,7 +23,7 @@ object ObjectAnnotationParser {
     }.map(_.map(pair=> {
       pair._1 match {
         case "name" => Some(NameAnnotation(pair._2, schemaRef))
-//        case "source" => Some()
+        case "source" => Some(SourceAnnotation(pair._2))
         case _ => None
       }
     }).collect {case Some(a)=> a}

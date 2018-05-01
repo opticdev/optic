@@ -19,7 +19,7 @@ class TransformationSearchSpec extends TestBase {
   it("finds transformations when valid context is present") {
     import com.opticdev.arrow.ExampleSourcegears.sgWithTransformations._
 
-    val context = ModelContext(null, null, Vector(ModelNode(schemaModel.schemaRef, JsObject.empty, 0)))
+    val context = ModelContext(null, null, Vector(ModelNode(schemaModel.schemaRef, JsObject.empty, None, 0)))
 
     val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph)
 
@@ -45,7 +45,7 @@ class TransformationSearchSpec extends TestBase {
   it("can convert transformation result to JSON ") {
     import com.opticdev.arrow.ExampleSourcegears.sgWithTransformations._
 
-    val context = ModelContext(File("/test/file"), Range(32, 42), Vector(ModelNode(schemaModel.schemaRef, JsObject.empty, 0)))
+    val context = ModelContext(File("/test/file"), Range(32, 42), Vector(ModelNode(schemaModel.schemaRef, JsObject.empty, None, 0)))
 
     val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph)
 

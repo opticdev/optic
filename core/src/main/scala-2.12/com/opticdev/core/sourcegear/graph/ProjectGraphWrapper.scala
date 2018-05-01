@@ -4,6 +4,7 @@ import better.files.File
 import com.opticdev.core.debug.DebugAstNode
 import com.opticdev.core.sourcegear.graph.edges.{InFile, YieldsModel}
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{CommonAstNode, CustomEdge, WithinFile}
 import com.opticdev.parsers.utils.Crypto
@@ -18,10 +19,10 @@ import scalax.collection.mutable.Graph
 import scala.collection.mutable
 
 object ProjectGraphWrapper {
-  def empty = new ProjectGraphWrapper(Graph[AstProjection, LkDiEdge]())
+  def empty()(implicit project: ProjectBase) = new ProjectGraphWrapper(Graph[AstProjection, LkDiEdge]())
 }
 
-class ProjectGraphWrapper(val projectGraph: ProjectGraph) {
+class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: ProjectBase) {
 
   import GraphImplicits._
 
@@ -89,7 +90,7 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph) {
 
   def query(nodeFilter: (projectGraph.NodeT) => Boolean): Set[AstProjection] =
     projectGraph.nodes.collect {
-      case n: projectGraph.NodeT if (nodeFilter(n)) => n.value
+      case n: projectGraph.NodeT if nodeFilter(n) => n.value
     }.toSet
 
   def prettyPrint = {

@@ -15,6 +15,7 @@ class SdkTransformationSpec extends FunSpec {
     """
       |{
           "yields": "Schema from Test",
+          "id": "theid",
           "packageId": "optic:test@1.0.0/schema",
           "input": "optic:test@1.0.0/schema",
           "output": "test",
@@ -30,6 +31,7 @@ class SdkTransformationSpec extends FunSpec {
     it("works when valid") {
       val result = Transformation.fromJson(Json.parse(validTransformationJson))
       assert(result.yields == "Schema from Test")
+      assert(result.id == "theid")
       assert(result.input == SchemaRef(Some(PackageRef("optic:test", "1.0.0")), "schema"))
       assert(result.output == SchemaRef(None, "test"))
     }
@@ -83,7 +85,6 @@ class SdkTransformationSpec extends FunSpec {
         val result = valid.transform(JsObject.empty, JsObject(Seq("value" -> JsBoolean(false))))
         assert(result.isFailure)
       }
-
 
     }
 

@@ -9,4 +9,6 @@ package object sourcegear {
 
   case class FileParseResults(astGraph: AstGraph, modelNodes: Vector[ModelNode], parser: ParserBase, fileContents: String)
 
+  case class AstDebugLocation(file: String, range: Range)
+
 }

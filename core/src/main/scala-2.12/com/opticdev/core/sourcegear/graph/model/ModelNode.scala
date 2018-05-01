@@ -2,13 +2,14 @@ package com.opticdev.core.sourcegear.graph.model
 
 import com.opticdev.common.ObjectRef
 import com.opticdev.sdk.descriptions.SchemaRef
-import com.opticdev.core.sourcegear.SGContext
+import com.opticdev.core.sourcegear.{AstDebugLocation, SGContext}
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.containers.ContainerAstMapping
 import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsModelProperty, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode}
+import com.opticdev.core.sourcegear.objects.annotations.SourceAnnotation
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, WithinFile}
@@ -23,6 +24,7 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
   val schemaId : SchemaRef
   val value : JsObject
   val objectRef: Option[ObjectRef]
+  val sourceAnnotation: Option[SourceAnnotation]
 
   lazy val fileNode: Option[FileNode] = {
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
@@ -48,17 +50,24 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
 
   def getContext()(implicit actorCluster: ActorCluster, project: ProjectBase): Try[SGContext] = Try(SGContext.forModelNode(this).get)
 
+  def resolved()(implicit actorCluster: ActorCluster): LinkedModelNode[CommonAstNode] = this match {
+    case l: LinkedModelNode[CommonAstNode] => l
+    case m: ModelNode => m.resolve[CommonAstNode]()
+  }
+
 }
 
-case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, root: N, modelMapping: ModelAstMapping, containerMapping: ContainerAstMapping, parseGear: ParseGear, objectRef: Option[ObjectRef])(implicit override val project: ProjectBase) extends BaseModelNode {
+case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, root: N, modelMapping: ModelAstMapping, containerMapping: ContainerAstMapping, parseGear: ParseGear, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation])(implicit override val project: ProjectBase) extends BaseModelNode {
   def flatten = {
     val hash = MurmurHash3.stringHash(root.toString() + modelMapping.toString() + objectRef.toString + containerMapping.toString())
-    ModelNode(schemaId, value, objectRef, hash)
+    ModelNode(schemaId, value, objectRef, sourceAnnotation, hash)
   }
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
+
+  def toDebugLocation = AstDebugLocation(fileNode.map(_.filePath).getOrElse(""), root.range)
 }
 
-case class ModelNode(schemaId: SchemaRef, value: JsObject, objectRef: Option[ObjectRef], hash: Int)(implicit override val project: ProjectBase) extends BaseModelNode {
+case class ModelNode(schemaId: SchemaRef, value: JsObject, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation], hash: Int)(implicit override val project: ProjectBase) extends BaseModelNode {
 
   //@todo check how stable/collision prone this is
   override val id: String = Integer.toHexString(hash)
@@ -72,7 +81,7 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, objectRef: Option[Obj
 
     val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
 
-    LinkedModelNode(schemaId, value, root, modelMapping, containerMapping, parseGear, objectRef)
+    LinkedModelNode(schemaId, value, root, modelMapping, containerMapping, parseGear, objectRef, sourceAnnotation)
   }
 
   def modelMapping(implicit astGraph: AstGraph) : ModelAstMapping = {

@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "name": "synctest",
+    "version": "0.1.0",
+    "author": "optic"
+  },
+  "lenses": [
+    {
+      "name": "Source",
+      "id": "source",
+      "schema": "source-schema",
+      "snippet": {
+        "name": "Using Require",
+        "language": "es7",
+        "block": "source('test')"
+      },
+      "rules": [],
+      "variables": [],
+      "subcontainers": [],
+      "components": [
+        {
+          "type": "code",
+          "finder": {
+            "type": "stringFinder",
+            "rule": "containing",
+            "string": "test",
+            "occurrence": 0
+          },
+          "propertyPath": ["value"]
+        }
+      ]
+    },
+    {
+      "name": "Target",
+      "id": "target",
+      "schema": "source-schema",
+      "snippet": {
+        "name": "Using Require",
+        "language": "es7",
+        "block": "target('test')"
+      },
+      "rules": [],
+      "variables": [],
+      "subcontainers": [],
+      "components": [
+        {
+          "type": "code",
+          "finder": {
+            "type": "stringFinder",
+            "rule": "containing",
+            "string": "test",
+            "occurrence": 0
+          },
+          "propertyPath": ["value"]
+        }
+      ]
+    }
+  ],
+  "schemas": [
+    {
+      "id": "source-schema",
+      "definition": {
+        "title": "source",
+        "version": "1.0.0",
+        "slug": "js-import",
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        },
+        "exported": true
+      }
+    }
+  ]
+}

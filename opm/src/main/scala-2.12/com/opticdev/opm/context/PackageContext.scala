@@ -30,12 +30,15 @@ case class PackageContext(leaf: Leaf) extends Context {
 
   def getProperty(propertyKey: String) : Option[PackageExportable] = {
     val schemasOption = leaf.opticPackage.schemas.find(i=> i.schemaRef.full == propertyKey || i.schemaRef.id == propertyKey)
-    val lensOption = leaf.opticPackage.lenses.find(_.name == propertyKey)
+    val lensOption = leaf.opticPackage.lenses.find(_.id == propertyKey)
+    val transformationsOption = leaf.opticPackage.transformations.find(_.id == propertyKey)
 
     if (schemasOption.isDefined) {
       schemasOption.asInstanceOf[Option[PackageExportable]]
     } else if (lensOption.isDefined) {
       lensOption.asInstanceOf[Option[PackageExportable]]
+    } else if (transformationsOption.isDefined) {
+      transformationsOption.asInstanceOf[Option[PackageExportable]]
     } else {
       None
     }

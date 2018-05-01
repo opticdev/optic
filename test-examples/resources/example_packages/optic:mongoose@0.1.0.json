@@ -164,6 +164,7 @@
   "containers": [],
   "transformations": [{
     "yields": "Create Route",
+    "id": "createroutefromschema",
     "input": "schema",
     "output": "optic:rest/route",
     "ask": {

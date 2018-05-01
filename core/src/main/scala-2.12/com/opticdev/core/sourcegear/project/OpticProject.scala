@@ -29,7 +29,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   /* Project Actor setup */
 
-  val projectActor: ActorRef = actorCluster.newProjectActor
+  val projectActor: ActorRef = actorCluster.newProjectActor()(project = this)
 
   /* Private & public declarations of the project status & info */
 

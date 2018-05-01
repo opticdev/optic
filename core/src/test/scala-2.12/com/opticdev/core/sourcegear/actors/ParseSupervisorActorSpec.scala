@@ -30,7 +30,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
     implicit val logToCli = false
 
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear) {
-      override val projectActor = f.actorCluster.newProjectActor()
+      override val projectActor = f.actorCluster.newProjectActor()(false, this)
     }
 
     it("for file in cache") {

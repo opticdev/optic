@@ -5,6 +5,7 @@ import com.opticdev.common.ObjectRef
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.objects.annotations.SourceAnnotation
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.sdk.descriptions.enums.RuleEnums.Any
 import com.opticdev.sdk.descriptions.finders.StringFinder
@@ -134,14 +135,29 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
   }
 
-  it("can get name from comment on first line") {
-    val block = "var hello = require('world') //name: Test"
+  describe("Sync annotation extraction") {
 
-    val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
-    val parsedSample = sample(block)
-    val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
-    assert(result.isDefined)
-    assert(result.get.modelNode.objectRef.contains(ObjectRef("Test")))
+    it("can get name from comment on first line") {
+      val block = "var hello = require('world') //name: Test"
+
+      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
+      val parsedSample = sample(block)
+      val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
+      assert(result.isDefined)
+      assert(result.get.modelNode.objectRef.contains(ObjectRef("Test")))
+
+    }
+
+    it("can get source from comment on first line") {
+      val block = "var hello = require('world') //source: Test"
+
+      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
+      val parsedSample = sample(block)
+      val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
+      assert(result.isDefined)
+      assert(result.get.modelNode.sourceAnnotation.contains(SourceAnnotation("Test")))
+
+    }
 
   }
 

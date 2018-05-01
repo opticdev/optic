@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear
 
 import akka.actor.ActorRef
 import better.files.File
+import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.core.sourcegear.project.status.ImmutableProjectStatus
@@ -17,6 +18,7 @@ package object project {
     val projectActor: ActorRef
     val projectStatus: ImmutableProjectStatus
     val filesStateMonitor : FileStateMonitor
+    val actorCluster: ActorCluster
     def projectSourcegear : SourceGear
     def projectGraph: ProjectGraph
     def shouldWatchFile(file: File) : Boolean

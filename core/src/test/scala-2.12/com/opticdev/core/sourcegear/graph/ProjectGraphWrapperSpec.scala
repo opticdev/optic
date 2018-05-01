@@ -11,7 +11,7 @@ import com.opticdev.sdk.descriptions.SchemaRef
 class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest") with GearUtils {
 
   it("can be initialized empty") {
-    assert(ProjectGraphWrapper.empty.projectGraph.isEmpty)
+    assert(ProjectGraphWrapper.empty()(project = null).projectGraph.isEmpty)
   }
 
   implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)

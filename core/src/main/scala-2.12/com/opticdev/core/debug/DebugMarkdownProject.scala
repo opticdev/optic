@@ -24,7 +24,7 @@ case class DebugMarkdownProject(implicit logToCli: Boolean = false, actorCluster
 
   val name: String = "_internal:DEBUG_PROJECT"
 
-  val projectActor: ActorRef = actorCluster.newProjectActor
+  val projectActor: ActorRef = actorCluster.newProjectActor()(project = this)
 
   protected val projectStatusInstance: ProjectStatus = new ProjectStatus(_configStatus = ValidConfig, _sourceGearStatus = Valid)
   val projectStatus = projectStatusInstance.immutable

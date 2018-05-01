@@ -37,7 +37,7 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
 
     case CurrentGraph => sender ! graph
     case ClearGraph => {
-      val emptyGraph = ProjectGraphWrapper.empty
+      val emptyGraph = ProjectGraphWrapper.empty()(initialGraph.project)
       sender ! emptyGraph
       context.become(active(emptyGraph))
     }

@@ -12,7 +12,7 @@ package object annotations {
     def objectRef = ObjectRef(name)
   }
 
-  case class TargetAnnotation(sourceName: String, askObject: JsObject = JsObject.empty) extends ObjectAnnotation
+  case class SourceAnnotation(sourceName: String, askObject: JsObject = JsObject.empty) extends ObjectAnnotation
 
   def topLevelCapture = s"^(\\s*([a-z]+)\\s*:\\s*[a-zA-z ]+[,]{0,1})+".r
   def propertiesCapture = s"\\s*([a-z]+)\\s*:\\s*([a-zA-z ]+)".r

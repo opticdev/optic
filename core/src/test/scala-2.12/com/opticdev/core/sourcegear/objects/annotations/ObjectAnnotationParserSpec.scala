@@ -62,7 +62,7 @@ class ObjectAnnotationParserSpec extends TestBase {
 
     it("works for multi liner") {
       val test = "thing.model() //name: Here \n\n otherLine() \n line()"
-      val contentsToCheck = ObjectAnnotationParser.contentsToCheck(CommonAstNode(null, Range(0, 72), null))(test)
+      val contentsToCheck = ObjectAnnotationParser.contentsToCheck(CommonAstNode(null, Range(0, 50), null))(test)
       assert(contentsToCheck == test)
     }
   }
