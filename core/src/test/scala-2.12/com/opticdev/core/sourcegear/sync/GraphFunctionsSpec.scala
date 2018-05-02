@@ -61,7 +61,7 @@ class GraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with Gear
       val updatedGraphResults = SyncGraphFunctions.updateSyncEdges(astGraphFromString(code), ProjectGraphWrapper.empty.projectGraph)
       assert(updatedGraphResults.warnings.size == 1)
       assert(updatedGraphResults.sources == 0)
-      assert(updatedGraphResults.warnings.head == DuplicateSourceName("THIS ONE", Seq()))
+      assert(updatedGraphResults.warnings.head == DuplicateSourceName("THIS ONE", Vector()))
     }
 
     it("will warn if there is a circular dependency") {

@@ -74,7 +74,7 @@ object ParseSupervisorActor {
 }
 
 object ParseSupervisorSyncAccess {
-  implicit val timeout: Timeout = Timeout(2 seconds)
+  implicit val timeout: Timeout = Timeout(1 minute)
 
   def setCache(newCache: ParseCache) (implicit actorCluster: ActorCluster): Unit = {
     actorCluster.parserSupervisorRef ! SetCache(newCache)

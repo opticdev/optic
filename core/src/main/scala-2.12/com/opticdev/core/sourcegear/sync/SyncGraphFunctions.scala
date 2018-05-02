@@ -51,7 +51,7 @@ object SyncGraphFunctions {
       val an = newFileDefinesNames ++ pgDefinesNames
       val duplicates = an.groupBy(_.objectRef.get.name).filter(_._2.size > 1).keys
       duplicates.foreach(dup=> warnings += {
-        () => DuplicateSourceName(dup, Try(an.map(_.resolved().toDebugLocation).toSeq).getOrElse(Seq()))
+        () => DuplicateSourceName(dup, Try(an.map(_.resolved().toDebugLocation).toVector).getOrElse(Vector()))
       })
       an.filterNot(_.objectRef.exists(i=> duplicates.exists(_ == i.name)))
     }
@@ -84,7 +84,7 @@ object SyncGraphFunctions {
 
     projectGraph ++= syncSubgraph
 
-    UpdateResults(allNames.size, validTargets, warnings.map(_.apply()), projectGraph)
+    UpdateResults(allNames.size, validTargets, warnings.map(_.apply()).toVector, projectGraph)
   }
 
 }
