@@ -16,9 +16,12 @@ import scala.collection.mutable
 import scala.concurrent.Future
 import scala.util.Try
 
+
+///only call from a project actor
+
 object DiffSyncGraph {
 
-  def calculateDiff(implicit project: ProjectBase) : Diffs = {
+  def calculateDiff(implicit project: ProjectBase, includeNoChange: Boolean = false) : Diffs = {
     val projectGraph = project.projectGraph
 
     implicit val actorCluster = project.actorCluster
@@ -77,7 +80,7 @@ object DiffSyncGraph {
       }
     }
 
-    Diffs(startingNodes.flatMap(i=> compareFuturesAlongPath(i)):_*)
+    Diffs(startingNodes.flatMap(i=> compareFuturesAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange ):_*)
   }
 
 }

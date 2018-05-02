@@ -29,6 +29,4 @@ package object sync {
     def containsErrors = changes.exists(_.isError)
   }
 
-  //@todo get rid of this notion. should never be needed
-  val defaultAstDebugLocation = AstDebugLocation("Unknown File", Range(0,0))
 }

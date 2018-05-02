@@ -15,6 +15,9 @@ import scalax.collection.constrained.mutable.Graph
 // import scalax.collection.constrained.constraints.Acyclic
 
 import scala.util.Try
+
+//only call from a project actor
+
 /*
 Invalid States:
 1. Multiple models with the same name -> None work, warnings generated
@@ -31,7 +34,8 @@ object SyncGraphFunctions {
     Graph(filtered.edges:_*)
   }
 
-  def updateSyncEdges(fileGraph: AstGraph, projectGraph: ProjectGraph)(implicit project: ProjectBase) : UpdateResults = {
+  def updateSyncEdges(fileGraph: AstGraph)(implicit project: ProjectBase) : UpdateResults = {
+    val projectGraph = project.projectGraph
     implicit val actorCluster = project.actorCluster
     val syncSubgraph = getSyncSubgraph(projectGraph)
 
@@ -72,12 +76,12 @@ object SyncGraphFunctions {
         val didAdd = syncSubgraph add (sourceNodeOption.get ~+#> targetNode)(DerivedFrom(sourceAnnotation.transformationRef, sourceAnnotation.askObject))
         if (!didAdd) {
           warnings += {
-            () => CircularDependency(sourceName, Try(targetNode.resolved().toDebugLocation).getOrElse(defaultAstDebugLocation))
+            () => CircularDependency(sourceName, targetNode.resolved().toDebugLocation)
           }
         }
       } else {
         warnings += {
-          () => SourceDoesNotExist(sourceName, Try(targetNode.resolved().toDebugLocation).getOrElse(defaultAstDebugLocation))
+          () => SourceDoesNotExist(sourceName, targetNode.resolved().toDebugLocation)
         }
       }
     })

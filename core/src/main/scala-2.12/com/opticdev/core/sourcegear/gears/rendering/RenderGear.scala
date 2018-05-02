@@ -46,7 +46,6 @@ case class RenderGear(block: String,
   }
 
   def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Option[JsObject] = Try {
-    parseAndGetRoot(contents)
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(contents)
     implicit val sourceGearContext = SGContext.forRender(sourceGear, astGraph, parserRef)
     val isMatch = parseGear.matches(rootNode, true)(astGraph, fileContents, sourceGearContext, null)

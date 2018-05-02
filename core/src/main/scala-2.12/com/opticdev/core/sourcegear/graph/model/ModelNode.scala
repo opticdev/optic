@@ -27,7 +27,7 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
   val sourceAnnotation: Option[SourceAnnotation]
   val lensRef: LensRef
 
-  def fileNode: Option[FileNode] = {
+  lazy val fileNode: Option[FileNode] = {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
     project.projectGraph
     .allPredecessorOf(this).find(_.isInstanceOf[FileNode])
