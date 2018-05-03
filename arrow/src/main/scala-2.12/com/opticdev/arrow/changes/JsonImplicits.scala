@@ -66,6 +66,9 @@ object JsonImplicits {
   //Clear Search Lines
   implicit val clearSearchLinesFormat = Json.format[ClearSearchLines]
 
+  //Put Update
+  implicit val putUpdateFormat = Json.format[PutUpdate]
+
   implicit val opticChangeFormat = Json.format[OpticChange]
 
   implicit val changeGroupFormat = new Format[ChangeGroup] {

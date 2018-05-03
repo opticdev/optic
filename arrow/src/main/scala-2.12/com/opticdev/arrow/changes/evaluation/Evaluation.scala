@@ -2,19 +2,21 @@ package com.opticdev.arrow.changes.evaluation
 
 import better.files.File
 import com.opticdev.arrow.changes._
+import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.{Render, SourceGear}
-import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.sdk.RenderOptions
 import com.opticdev.sdk.descriptions.transformation.{SingleModel, StagedNode, TransformationResult}
 import play.api.libs.json.JsObject
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
 object Evaluation {
 
-  def forChange(opticChange: OpticChange, sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit filesStateMonitor: FileStateMonitor): ChangeResult = opticChange match {
+  def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore): ChangeResult = opticChange match {
     case im: InsertModel => {
 
       val stagedNode = StagedNode(im.schema.schemaRef, im.value, Some(RenderOptions(
@@ -67,7 +69,31 @@ object Evaluation {
       changeResult
 
     }
+    case pu: PutUpdate => {
+      val changeResult : ChangeResult = Try {
+        val modelNode = nodeKeyStore.lookupId(pu.id).get
+        implicit val project = projectOption.get
+        implicit val actorCluster = project.actorCluster
+        implicit val sourceGearContext = modelNode.getContext.get
+        val file = modelNode.fileNode.get.toFile
+        implicit val fileContents = filesStateMonitor.contentsForFile(file).get
+        val changes = collectFieldChanges(modelNode, pu.newModel).filter(_.isSuccess).map(_.get)
+        val astChanges = handleChanges(changes)
+        val combined = combineChanges(astChanges)
+        val output = combined.toString()
 
+        FileChanged(file, output)
+      } match {
+        case s: Success[FileChanged] => s.get
+        case Failure(ex) => FailedToChange(ex)
+      }
+
+      if (changeResult.isSuccess) {
+        changeResult.asFileChanged.stageContentsIn(filesStateMonitor)
+      }
+
+      changeResult
+    }
 
     //cleanup
     case cSL: ClearSearchLines => {
@@ -94,7 +120,7 @@ object Evaluation {
     }
   }
 
-  def forChangeGroup(changeGroup: ChangeGroup, sourcegear: SourceGear, project: Option[OpticProject] = None) = {
+  def forChangeGroup(changeGroup: ChangeGroup, sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit nodeKeyStore: NodeKeyStore) = {
 
     implicit val filesStateMonitor : FileStateMonitor = {
       //hook up to existing in-memory representation of files

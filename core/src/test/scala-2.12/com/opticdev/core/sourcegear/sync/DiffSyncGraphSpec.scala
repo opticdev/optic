@@ -81,8 +81,6 @@ class DiffSyncGraphSpec extends AkkaTestFixture("GraphFunctionsSpec") with GearU
     checkReplace(diff.changes(3), """{"value":"b"}""", """{"value":"a"}""")
   }
 
-  //write test for no change
-
   describe("error handling") {
 
     it("will handle errors gracefully") {
@@ -107,7 +105,6 @@ class DiffSyncGraphSpec extends AkkaTestFixture("GraphFunctionsSpec") with GearU
       checkReplace(diff.changes(2), """{"value":"d"}""", """{"value":"c"}""")
       checkReplace(diff.changes(3), """{"value":"e"}""", """{"value":"c"}""")
     }
-
 
   }
 

@@ -5,6 +5,7 @@ import com.opticdev.opm.TestPackageProviders
 import play.api.libs.json.Json
 import ExampleChanges._
 import better.files.File
+import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{SGConfig, SGConstructor}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
@@ -14,6 +15,8 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ChangesEvaluationSpec extends TestBase with TestPackageProviders with BeforeAndAfterEach {
+
+  implicit val nodeKeyStore = new NodeKeyStore
 
   override def beforeEach(): Unit = {
     resetScratch

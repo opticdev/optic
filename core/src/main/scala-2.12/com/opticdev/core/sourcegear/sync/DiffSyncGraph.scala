@@ -30,7 +30,7 @@ object DiffSyncGraph {
 
     val startingNodes= graph.nodes.collect { case n if n.dependencies.isEmpty => n.value.asInstanceOf[BaseModelNode] }.toVector
 
-    def compareFuturesAlongPath(sourceNode: BaseModelNode, predecessorDiff: Option[SyncDiff] = None) : Vector[SyncDiff] = {
+    def compareDiffAlongPath(sourceNode: BaseModelNode, predecessorDiff: Option[SyncDiff] = None) : Vector[SyncDiff] = {
       val sourceValue = {
         if (predecessorDiff.exists(_.newValue.isDefined)) {
           predecessorDiff.get.newValue.get
@@ -73,14 +73,14 @@ object DiffSyncGraph {
 
           }
 
-          Vector(diff) ++ compareFuturesAlongPath(targetNode, Some(diff))
+          Vector(diff) ++ compareDiffAlongPath(targetNode, Some(diff))
 
         }
         case _ => Vector()   ///should never be hit
       }
     }
 
-    Diffs(startingNodes.flatMap(i=> compareFuturesAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange ):_*)
+    Diffs(startingNodes.flatMap(i=> compareDiffAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange ):_*)
   }
 
 }

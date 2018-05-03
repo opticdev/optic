@@ -1,6 +1,7 @@
 package com.opticdev.server.http.routes.socket.agents
 
 import akka.actor.{Actor, ActorRef, Status}
+import com.opticdev.arrow.changes.evaluation.BatchedChanges
 import com.opticdev.server.http.controllers.{ArrowPostChanges, ArrowQuery, PutUpdateRequest}
 import com.opticdev.server.http.routes.socket.ErrorResponse
 import com.opticdev.server.http.routes.socket.agents.Protocol._
@@ -63,14 +64,19 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     case update : PutUpdate => {
       //@todo handle error states
       new PutUpdateRequest(update.id, update.newValue)(projectsManager)
-        .execute.onComplete(i=> {
-        if (i.isFailure) {
-          println(i.failed.get)
-        } else {
-          EditorConnection.broadcastUpdate( i.get )
+        .execute.map {
+        case bc:BatchedChanges => {
+          AgentConnection.broadcastUpdate( PostChangesResults(bc.isSuccess, bc.stagedFiles.keys.toSet) )
+          EditorConnection.broadcastUpdate( FilesUpdated(bc.stagedFiles) )
         }
+      }
+//      (i=> {
+//        if (i.isFailure) {
+//          println(i.failed.get)
+//        } else {
+//          EditorConnection.broadcastUpdate( i.get )
+//        }
 
-      })
     }
 
     case updateAgentEvent: UpdateAgentEvent => {

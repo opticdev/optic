@@ -20,6 +20,8 @@ import scala.util.{Failure, Success, Try}
 
 class ContextQuery(file: File, range: Range, contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
 
+  implicit val nodeKeyStore = projectsManager.nodeKeyStore
+
   case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result])
 
   def execute : Future[ContextQueryResults] = {
@@ -29,7 +31,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
     def query: Future[Vector[LinkedModelNode[CommonAstNode]]] = Future {
       if (projectOption.isFailure) throw new FileNotInProjectException(file)
 
-      val graph = new ProjectGraphWrapper(projectOption.get.projectGraph)
+      val graph = new ProjectGraphWrapper(projectOption.get.projectGraph)(projectOption.get)
 
       val fileGraph = graph.subgraphForFile(file)
 
