@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.StaticSGProject
 
-class SyncGraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with GearUtils {
+class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
 
   lazy val syncTestSourceGear = sourceGearFromDescription("test-examples/resources/example_packages/synctest.json")
 
@@ -38,8 +38,8 @@ class SyncGraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with 
     assert(f.results.modelNodes.exists(_.sourceAnnotation.isDefined))
   }
 
-  def testEdgeForSourceName(updatedGraphResults: UpdateResults, sourceName: String) = {
-    val edges = updatedGraphResults.graph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
+  def testEdgeForSourceName(syncSubgraph: SyncSubGraph, sourceName: String) = {
+    val edges = syncSubgraph.graph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
     assert(edges.exists(i=> {
       i.from.value.asInstanceOf[BaseModelNode].objectRef.get.name == sourceName &&
         i.to.value.asInstanceOf[BaseModelNode].sourceAnnotation.get.sourceName == sourceName
@@ -49,12 +49,12 @@ class SyncGraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with 
   it("Can add edges from new graph") {
     val f = fixture("test-examples/resources/example_source/sync/Sync.js")
     implicit val project = f.project
-    val updatedGraphResults = SyncGraphFunctions.updateSyncEdges(f.results.astGraph)
+    val syncSubgraph = SyncGraph.getSyncGraph
 
-    val edges = updatedGraphResults.graph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
+    val edges = syncSubgraph.graph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
     assert(edges.size == 2)
-    testEdgeForSourceName(updatedGraphResults, "Hello Model")
-    testEdgeForSourceName(updatedGraphResults, "Good Morning")
+    testEdgeForSourceName(syncSubgraph, "Hello Model")
+    testEdgeForSourceName(syncSubgraph, "Good Morning")
   }
 
   describe("warnings") {
@@ -66,10 +66,10 @@ class SyncGraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with 
 
       val f = stringFixture(code)
       implicit val project = f.project
-      val updatedGraphResults = SyncGraphFunctions.updateSyncEdges(f.results.astGraph)
-      assert(updatedGraphResults.warnings.size == 1)
-      assert(updatedGraphResults.warnings.head.isInstanceOf[SourceDoesNotExist])
-      assert(updatedGraphResults.warnings.head.asInstanceOf[SourceDoesNotExist].missingSource == "find A Fake One")
+      val syncSubgraph = SyncGraph.getSyncGraph
+      assert(syncSubgraph.warnings.size == 1)
+      assert(syncSubgraph.warnings.head.isInstanceOf[SourceDoesNotExist])
+      assert(syncSubgraph.warnings.head.asInstanceOf[SourceDoesNotExist].missingSource == "find A Fake One")
     }
 
     it("warning raised for duplicate sources") {
@@ -80,21 +80,20 @@ class SyncGraphFunctionsSpec extends AkkaTestFixture("GraphFunctionsSpec") with 
         """.stripMargin
       val f = stringFixture(code)
       implicit val project = f.project
-      val updatedGraphResults = SyncGraphFunctions.updateSyncEdges(f.results.astGraph)
-      assert(updatedGraphResults.warnings.size == 1)
-      assert(updatedGraphResults.sources == 0)
-      assert(updatedGraphResults.warnings.head.isInstanceOf[DuplicateSourceName])
-      assert(updatedGraphResults.warnings.head.asInstanceOf[DuplicateSourceName].locations.size == 2)
-      assert(updatedGraphResults.warnings.head.asInstanceOf[DuplicateSourceName].name == "THIS ONE")
+      val syncSubgraph = SyncGraph.getSyncGraph
+      assert(syncSubgraph.warnings.size == 1)
+      assert(syncSubgraph.sources == 0)
+      assert(syncSubgraph.warnings.head.isInstanceOf[DuplicateSourceName])
+      assert(syncSubgraph.warnings.head.asInstanceOf[DuplicateSourceName].locations.size == 2)
+      assert(syncSubgraph.warnings.head.asInstanceOf[DuplicateSourceName].name == "THIS ONE")
     }
 
     it("will warn if there is a circular dependency") {
       val f = fixture("test-examples/resources/example_source/sync/CircularSync.js")
       implicit val project = f.project
-      val updatedGraphResults = SyncGraphFunctions.updateSyncEdges(f.results.astGraph)
-      assert(updatedGraphResults.warnings.head.isInstanceOf[CircularDependency])
-      assert(updatedGraphResults.warnings.head.asInstanceOf[CircularDependency].location.range == Range(171, 186))
-
+      val syncSubgraph = SyncGraph.getSyncGraph
+      assert(syncSubgraph.warnings.head.isInstanceOf[CircularDependency])
+      assert(syncSubgraph.warnings.head.asInstanceOf[CircularDependency].location.range == Range(171, 186))
     }
   }
 

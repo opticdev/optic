@@ -6,7 +6,7 @@ import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import play.api.libs.json.Json
 
-class SyncPatchSpec extends AkkaTestFixture("GraphFunctionsSpec") with GearUtils {
+class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
 
   lazy val syncTestSourceGear = sourceGearFromDescription("test-examples/resources/example_packages/synctest.json")
 
@@ -16,7 +16,7 @@ class SyncPatchSpec extends AkkaTestFixture("GraphFunctionsSpec") with GearUtils
     val results = syncTestSourceGear.parseFile(file).get
     val updatedGraphResults = {
       project.projectGraphWrapper.addFile(results.astGraph, file)
-      SyncGraphFunctions.updateSyncEdges(results.astGraph)
+      SyncGraph.getSyncGraph
     }
   }
 

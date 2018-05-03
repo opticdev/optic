@@ -8,7 +8,7 @@ import scalax.collection.edge.LkDiEdge
 
 package object sync {
 
-  case class UpdateResults(sources: Int, targets: Int, warnings: Vector[SyncWarning], graph: ProjectGraph) {
+  case class SyncSubGraph(sources: Int, targets: Int, warnings: Vector[SyncWarning], graph: ProjectGraph) {
     def noWarnings : Boolean = warnings.isEmpty
   }
 

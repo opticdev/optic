@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import play.api.libs.json.Json
 
-class DiffSyncGraphSpec extends AkkaTestFixture("GraphFunctionsSpec") with GearUtils {
+class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with GearUtils {
 
   lazy val syncTestSourceGear = sourceGearFromDescription("test-examples/resources/example_packages/synctest.json")
 
@@ -25,7 +25,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("GraphFunctionsSpec") with GearU
     val results = syncTestSourceGear.parseFile(file).get
     val updatedGraphResults = {
       project.projectGraphWrapper.addFile(results.astGraph, file)
-      SyncGraphFunctions.updateSyncEdges(results.astGraph)
+      SyncGraph.getSyncGraph
     }
   }
 

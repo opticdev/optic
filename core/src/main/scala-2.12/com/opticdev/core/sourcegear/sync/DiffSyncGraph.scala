@@ -22,11 +22,11 @@ import scala.util.Try
 object DiffSyncGraph {
 
   def calculateDiff(implicit project: ProjectBase, includeNoChange: Boolean = false) : SyncPatch = {
-    val projectGraph = project.projectGraph
-
     implicit val actorCluster = project.actorCluster
     implicit val sourceGear = project.projectSourcegear
-    implicit val graph: Graph[BaseNode, LkDiEdge] = SyncGraphFunctions.getSyncSubgraph(projectGraph).asInstanceOf[Graph[BaseNode, LkDiEdge]]
+
+    val projectGraph: Graph[BaseNode, LkDiEdge] = SyncGraph.getSyncGraph(project).graph.asInstanceOf[Graph[BaseNode, LkDiEdge]]
+    implicit val graph: Graph[BaseNode, LkDiEdge] = projectGraph.filter(projectGraph.having(edge = (e) => e.isLabeled && e.label.isInstanceOf[DerivedFrom]))
 
     val startingNodes= graph.nodes.collect { case n if n.dependencies.isEmpty => n.value.asInstanceOf[BaseModelNode] }.toVector
 

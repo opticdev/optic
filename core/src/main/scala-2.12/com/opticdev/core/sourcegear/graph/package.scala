@@ -11,5 +11,6 @@ package object graph {
     val id : String = null
   }
   type ProjectGraph = Graph[AstProjection, LkDiEdge]
+  type SyncGraph = ProjectGraph
 
 }
