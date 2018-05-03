@@ -21,7 +21,7 @@ import scala.util.Try
 
 object DiffSyncGraph {
 
-  def calculateDiff(implicit project: ProjectBase, includeNoChange: Boolean = false) : Diffs = {
+  def calculateDiff(implicit project: ProjectBase, includeNoChange: Boolean = false) : SyncPatch = {
     val projectGraph = project.projectGraph
 
     implicit val actorCluster = project.actorCluster
@@ -46,26 +46,27 @@ object DiffSyncGraph {
             val extractValuesTry = for {
               transformation <- Try(sourceGear.findTransformation(label.transformationRef).get)
               transformationResult <- transformation.transformFunction.transform(sourceValue, label.askAnswers)
-              currentValue <- Try {
+              (currentValue, linkedModel, context) <- Try {
                 implicit val sourceGearContext: SGContext = targetNode.getContext().get
-                targetNode.expandedValue()
+                (targetNode.expandedValue(), targetNode.resolved(), sourceGearContext)
               }
-              expectedValue <- Try {
+              (expectedValue, expectedRaw) <- Try {
                 val stagedNode = transformationResult.toStagedNode(Some(RenderOptions(
                   lensId = Some(targetNode.lensRef.full)
                 )))
                 val prefixedFlatContent = sourceGear.flatContext.prefix(transformation.packageId.packageId)
                 val generatedNode = Render.fromStagedNode(stagedNode)(sourceGear, prefixedFlatContent).get
-                generatedNode._3.renderer.parseAndGetModel(generatedNode._2)(sourceGear, prefixedFlatContent).get
+                (generatedNode._3.renderer.parseAndGetModel(generatedNode._2)(sourceGear, prefixedFlatContent).get, generatedNode._2)
               }
-            } yield (expectedValue, currentValue)
+            } yield (expectedValue, currentValue, linkedModel, expectedRaw, context)
 
             if (extractValuesTry.isSuccess) {
-              val (expectedValue, currentValue) = extractValuesTry.get
+              val (expectedValue, currentValue, linkedModel, expectedRaw, context) = extractValuesTry.get
               if (expectedValue == currentValue) {
                 NoChange(label)
               } else {
-                Replace(label, currentValue, expectedValue)
+                Replace(label, currentValue, expectedValue,
+                  RangePatch(linkedModel.root.range, expectedRaw, context.file, context.fileContents))
               }
             } else {
               ErrorEvaluating(label, extractValuesTry.failed.get.getMessage)
@@ -80,7 +81,7 @@ object DiffSyncGraph {
       }
     }
 
-    Diffs(startingNodes.flatMap(i=> compareDiffAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange ):_*)
+    SyncPatch(startingNodes.flatMap(i=> compareDiffAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange ):_*)
   }
 
 }

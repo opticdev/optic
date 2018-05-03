@@ -69,9 +69,9 @@ abstract class SourceGear {
   lazy val excludedPaths: Seq[String] = parsers.flatMap(_.excludedPaths).toSeq
 
   def parseFile(file: File) (implicit project: ProjectBase) : Try[FileParseResults] =
-    Try(file.contentAsString).flatMap(i=> parseString(i))
+    Try(file.contentAsString).flatMap(i=> parseString(i, file))
 
-  def parseString(string: String) (implicit  project: ProjectBase) : Try[FileParseResults] = Try {
+  def parseString(string: String, file: File = null) (implicit  project: ProjectBase) : Try[FileParseResults] = Try {
     val fileContents = string
     //@todo connect to parser list
     val parsedOption = SourceParserManager.parseString(fileContents, "es7")
@@ -81,7 +81,7 @@ abstract class SourceGear {
 
       //@todo clean this up and have the parser return in the parse result. right now it only supports the test one
 //      val parser = parsers.find(_.languageName == parsed.language).get
-      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents, this)
+      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents, this, file)
       lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project)
     } else {
       throw parsedOption.failed.get

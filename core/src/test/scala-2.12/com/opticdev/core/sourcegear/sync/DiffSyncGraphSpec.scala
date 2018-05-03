@@ -81,6 +81,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("GraphFunctionsSpec") with GearU
     checkReplace(diff.changes(3), """{"value":"b"}""", """{"value":"a"}""")
   }
 
+  //write a test for a multi-file diff
+
   describe("error handling") {
 
     it("will handle errors gracefully") {

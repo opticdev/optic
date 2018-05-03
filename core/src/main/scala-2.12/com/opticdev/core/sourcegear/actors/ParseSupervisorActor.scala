@@ -52,7 +52,9 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
             record.graph,
             record.parser,
             record.fileContents,
-            ctxRequest.sourceGear)
+            ctxRequest.sourceGear,
+            ctxRequest.fileNode.toFile
+          )
         )
       } else {
         router.route(ctxRequest, sender())

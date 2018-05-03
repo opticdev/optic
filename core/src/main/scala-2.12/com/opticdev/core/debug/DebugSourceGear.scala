@@ -46,7 +46,7 @@ object DebugSourceGear extends SourceGear {
     Try(contents).flatMap(i => parseStringWithKnowledgePaths(i)(project, projectKnowledgeSearchPaths))
   }
 
-  override def parseString(string: String)(implicit project: ProjectBase): Try[sourcegear.FileParseResults] =
+  override def parseString(string: String, file: File = null)(implicit project: ProjectBase): Try[sourcegear.FileParseResults] =
     parseStringWithKnowledgePaths(string)(project, ProjectKnowledgeSearchPaths())
 
   def parseStringWithKnowledgePaths(string: String)(implicit project: ProjectBase, projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths): Try[sourcegear.FileParseResults] = Try {
