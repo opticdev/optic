@@ -6,7 +6,10 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.core.sourcegear.project.status.ImmutableProjectStatus
+import com.opticdev.core.sourcegear.sync.SyncPatch
 import play.api.libs.json.{JsObject, JsString}
+
+import scala.concurrent.Future
 
 package object project {
   case class ProjectInfo(name: String, baseDir: String, status: ImmutableProjectStatus) {
@@ -21,6 +24,7 @@ package object project {
     val actorCluster: ActorCluster
     def projectSourcegear : SourceGear
     def projectGraph: ProjectGraph
+    def syncPatch: Future[SyncPatch]
     def shouldWatchFile(file: File) : Boolean
   }
 

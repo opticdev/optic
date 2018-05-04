@@ -8,7 +8,7 @@ import scalax.collection.edge.LkDiEdge
 
 package object sync {
 
-  case class SyncSubGraph(sources: Int, targets: Int, warnings: Vector[SyncWarning], graph: ProjectGraph) {
+  case class SyncSubGraph(sources: Int, targets: Int, warnings: Vector[SyncWarning], syncGraph: ProjectGraph) {
     def noWarnings : Boolean = warnings.isEmpty
   }
 
@@ -28,6 +28,10 @@ package object sync {
   }
   case class NoChange(edge: DerivedFrom) extends SyncDiff
   case class Replace(edge: DerivedFrom, before: JsObject, after: JsObject, rangePatch: RangePatch) extends SyncDiff { override def newValue = Some(after) }
-  case class ErrorEvaluating(edge: DerivedFrom, error: String) extends SyncDiff { override def isError: Boolean = true }
+  case class ErrorEvaluating(edge: DerivedFrom, error: String, location: AstDebugLocation) extends SyncDiff {
+    override def isError: Boolean = true
+
+    override def toString: String = s""""${error}" encountered when calculating patch. Check location $location"""
+  }
 
 }

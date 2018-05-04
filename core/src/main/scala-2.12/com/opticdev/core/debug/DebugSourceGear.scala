@@ -9,7 +9,7 @@ import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.{ParserBase, ParserResult}
 import com.opticdev.parsers.graph.{CommonAstNode, GraphBuilder, WithinFile}
-import com.opticdev.sdk.descriptions.{Lens, PackageExportable, Schema, SchemaRef}
+import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.markdown.MarkdownParser
 import play.api.libs.json.{JsObject, JsString}
@@ -82,7 +82,7 @@ object DebugSourceGear extends SourceGear {
       implicit val astGraph = graphBuilder.graph
 
       def linkedModelNode[S <: PackageExportable](schemaRef: SchemaRef, node: DebugAstNode[S]): LinkedModelNode[DebugAstNode[S]] =
-        LinkedModelNode(schemaRef, JsObject.empty, null, node, Map(), Map(), null, None, None)(project)
+        LinkedModelNode(schemaRef, JsObject.empty, LensRef(Some(PackageRef("optic:internal")), "lens"), node, Map(), Map(), null, None, None)(project)
 
       val linkedModelNodes : Vector[LinkedModelNode[DebugAstNode[PackageExportable]]] = astGraph.nodes.toVector.map(_.value).collect {
         //for some reason the if is needed. likely type erasure

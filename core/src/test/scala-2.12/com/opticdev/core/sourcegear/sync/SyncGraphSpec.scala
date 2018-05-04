@@ -39,7 +39,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
   }
 
   def testEdgeForSourceName(syncSubgraph: SyncSubGraph, sourceName: String) = {
-    val edges = syncSubgraph.graph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
+    val edges = syncSubgraph.syncGraph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
     assert(edges.exists(i=> {
       i.from.value.asInstanceOf[BaseModelNode].objectRef.get.name == sourceName &&
         i.to.value.asInstanceOf[BaseModelNode].sourceAnnotation.get.sourceName == sourceName
@@ -51,7 +51,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
     implicit val project = f.project
     val syncSubgraph = SyncGraph.getSyncGraph
 
-    val edges = syncSubgraph.graph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
+    val edges = syncSubgraph.syncGraph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
     assert(edges.size == 2)
     testEdgeForSourceName(syncSubgraph, "Hello Model")
     testEdgeForSourceName(syncSubgraph, "Good Morning")
@@ -77,7 +77,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
 
     val syncSubgraph = SyncGraph.getSyncGraph
 
-    val edges = syncSubgraph.graph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
+    val edges = syncSubgraph.syncGraph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
     assert(edges.size == 2)
     testEdgeForSourceName(syncSubgraph, "Hello Model")
     testEdgeForSourceName(syncSubgraph, "Good Morning")

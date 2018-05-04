@@ -5,6 +5,12 @@ import scala.collection.immutable
 
 case class SyncPatch(changes: SyncDiff*) {
   def containsErrors = changes.exists(_.isError)
+  def noErrors = !containsErrors
+
+  def isEmpty = changes.isEmpty
+  def nonEmpty = changes.nonEmpty
+
+  def errors: Seq[SyncDiff] = changes.collect { case e: ErrorEvaluating => e }
 
   def filePatches: Vector[FilePatch] = {
     val rangePatches = changes.collect {

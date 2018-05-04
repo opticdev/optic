@@ -5,7 +5,7 @@ import com.opticdev.core.debug.DebugAstNode
 import com.opticdev.core.sourcegear.graph.edges.{InFile, YieldsModel}
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
-import com.opticdev.core.sourcegear.sync.SyncGraph
+import com.opticdev.core.sourcegear.sync.{SyncGraph, SyncStatusManager}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{CommonAstNode, CustomEdge, WithinFile}
 import com.opticdev.parsers.utils.Crypto
@@ -24,6 +24,9 @@ object ProjectGraphWrapper {
 }
 
 class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: ProjectBase) {
+
+  //monitors project for sync updates. debounced 5 seconds
+  private val syncStatus = new SyncStatusManager
 
   import GraphImplicits._
 

@@ -10,6 +10,7 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.constrained._
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
+import scalax.collection.GraphPredef
 import scalax.collection.constrained.constraints.Acyclic
 import scalax.collection.constrained.mutable.Graph
 // import scalax.collection.constrained.constraints.Acyclic
@@ -32,6 +33,8 @@ object SyncGraph {
     implicit val conf: Config = Acyclic
     Graph()
   }
+
+  def syncGraphFromProjectGraph(pg: ProjectGraph) = pg.filter(pg.having(edge = (e) => e.isLabeled && e.label.isInstanceOf[DerivedFrom]))
 
   def getSyncGraph(implicit project: ProjectBase) : SyncSubGraph = {
     val projectGraph = project.projectGraph

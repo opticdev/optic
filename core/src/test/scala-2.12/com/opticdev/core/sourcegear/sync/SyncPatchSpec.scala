@@ -26,7 +26,7 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     val f = fixture("test-examples/resources/example_source/sync/Sync.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.graph)
+    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
     val diff = DiffSyncGraph.calculateDiff(project)
     val filePatches = diff.filePatches
 

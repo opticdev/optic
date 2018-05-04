@@ -29,6 +29,11 @@ package object status {
   case object InProgress extends FirstPassStatus
   case object Complete extends FirstPassStatus
 
+  sealed trait SyncStatus extends ProjectStatusCase
+  case object UpToDate extends SyncStatus
+  case object SyncPending extends SyncStatus
+  case class ErrorSyncing(error: String) extends SyncStatus
+
   case class LastUpdateDate(time: Date) extends ProjectStatusCase
 
 }

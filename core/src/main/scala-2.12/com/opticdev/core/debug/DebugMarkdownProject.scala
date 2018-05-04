@@ -11,6 +11,7 @@ import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.core.sourcegear.project.status.{ProjectStatus, _}
+import com.opticdev.core.sourcegear.sync.SyncPatch
 import com.opticdev.parsers.AstGraph
 import com.opticdev.sdk.descriptions.{Lens, PackageExportable}
 
@@ -86,4 +87,7 @@ case class DebugMarkdownProject(implicit logToCli: Boolean = false, actorCluster
     filesStateMonitor.stageContents(file, contents)
     projectActor ? FileUpdatedInMemory(file, contents, this)(projectSourcegear)
   }
+
+  override def syncPatch: Future[SyncPatch] = Future(SyncPatch())
+
 }

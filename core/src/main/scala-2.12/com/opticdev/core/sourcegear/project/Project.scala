@@ -14,7 +14,7 @@ import scala.util.Try
 class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = false, actorCluster: ActorCluster) extends OpticProject(name, baseDirectory) {
 
   private var sourceGear: SourceGear = {
-    projectStatusInstance.sourceGearStatus = Building
+    _projectStatusInstance.sourceGearStatus = Building
     projectFileChanged(projectFile)
     SourceGear.unloaded
   }
@@ -24,18 +24,18 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
   override def projectFileChanged(newPf: ProjectFile): Unit = {
     super.projectFileChanged(newPf)
     if (newPf.interface.isSuccess) {
-      projectStatusInstance.sourceGearStatus = Building
+      _projectStatusInstance.sourceGearStatus = Building
       SGConstructor.fromProjectFile(newPf)(useCache = true).onComplete(i => {
         if (i.isSuccess) {
           sourceGear = i.get.inflate
           //run all callbacks
           sourcegearchangedCallbacks.foreach(_.apply(sourceGear))
-          projectStatusInstance.sourceGearStatus = Valid
+          _projectStatusInstance.sourceGearStatus = Valid
           sourceGear.print
           if (projectStatus.monitoringStatus == Watching) rereadAll
         } else {
           println(i.failed.get.printStackTrace())
-          projectStatusInstance.sourceGearStatus = Invalid(i.failed.get.getMessage)
+          _projectStatusInstance.sourceGearStatus = Invalid(i.failed.get.getMessage)
         }
       })
     }

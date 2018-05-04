@@ -9,9 +9,7 @@ import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import play.api.libs.json.Json
 
-class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with GearUtils {
-
-  lazy val syncTestSourceGear = sourceGearFromDescription("test-examples/resources/example_packages/synctest.json")
+class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFixture {
 
   def checkReplace(diff: SyncDiff, before: String, after: String) = {
     val asReplace = diff.asInstanceOf[Replace]
@@ -19,27 +17,17 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with GearUt
     assert(asReplace.after == Json.parse(after))
   }
 
-  def fixture(filePath: String) = new {
-    val file = File(filePath)
-    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), syncTestSourceGear)
-    val results = syncTestSourceGear.parseFile(file).get
-    val updatedGraphResults = {
-      project.projectGraphWrapper.addFile(results.astGraph, file)
-      SyncGraph.getSyncGraph
-    }
-  }
-
   it("can calculate a valid diff for direct dependencies (1 edge)") {
 
     val f = fixture("test-examples/resources/example_source/sync/Sync.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.graph)
+    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
     val diff = DiffSyncGraph.calculateDiff(project)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
-    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
   }
 
   it("can calculate a valid diff when no changes") {
@@ -47,7 +35,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with GearUt
     val f = fixture("test-examples/resources/example_source/sync/NoSyncNeeded.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.graph)
+    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
     val diff = DiffSyncGraph.calculateDiff(project, includeNoChange = true)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 1)
@@ -58,7 +46,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with GearUt
     val f = fixture("test-examples/resources/example_source/sync/TreeSync.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.graph)
+    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
     val diff = DiffSyncGraph.calculateDiff(project)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 3)
@@ -71,7 +59,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with GearUt
     val f = fixture("test-examples/resources/example_source/sync/BranchedTreeSync.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.graph)
+    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
     val diff = DiffSyncGraph.calculateDiff(project)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 4)
@@ -110,7 +98,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with GearUt
       val f = fixture("test-examples/resources/example_source/sync/InvalidSync.js")
       implicit val project = f.project
 
-      project.stageProjectGraph(f.updatedGraphResults.graph)
+      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
       val diff = DiffSyncGraph.calculateDiff(project)
       assert(diff.containsErrors)
       checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
@@ -120,7 +108,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with GearUt
     it("will handle errors for a tree gracefully") {
       val f = fixture("test-examples/resources/example_source/sync/InvalidTreeSync.js")
       implicit val project = f.project
-      project.stageProjectGraph(f.updatedGraphResults.graph)
+      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
       val diff = DiffSyncGraph.calculateDiff(project)
       assert(diff.containsErrors)
       checkReplace(diff.changes(0), """{"value":"b"}""", """{"value":"a"}""")

@@ -25,7 +25,7 @@ object DiffSyncGraph {
     implicit val actorCluster = project.actorCluster
     implicit val sourceGear = project.projectSourcegear
 
-    val projectGraph: Graph[BaseNode, LkDiEdge] = SyncGraph.getSyncGraph(project).graph.asInstanceOf[Graph[BaseNode, LkDiEdge]]
+    val projectGraph: Graph[BaseNode, LkDiEdge] = SyncGraph.getSyncGraph(project).syncGraph.asInstanceOf[Graph[BaseNode, LkDiEdge]]
     implicit val graph: Graph[BaseNode, LkDiEdge] = projectGraph.filter(projectGraph.having(edge = (e) => e.isLabeled && e.label.isInstanceOf[DerivedFrom]))
 
     val startingNodes= graph.nodes.collect { case n if n.dependencies.isEmpty => n.value.asInstanceOf[BaseModelNode] }.toVector
@@ -44,7 +44,7 @@ object DiffSyncGraph {
 
           val diff = {
             val extractValuesTry = for {
-              transformation <- Try(sourceGear.findTransformation(label.transformationRef).get)
+              transformation <- Try(sourceGear.findTransformation(label.transformationRef).getOrElse(throw new Error(s"No Transformation with id '${label.transformationRef.full}' found")))
               transformationResult <- transformation.transformFunction.transform(sourceValue, label.askAnswers)
               (currentValue, linkedModel, context) <- Try {
                 implicit val sourceGearContext: SGContext = targetNode.getContext().get
@@ -69,7 +69,7 @@ object DiffSyncGraph {
                   RangePatch(linkedModel.root.range, expectedRaw, context.file, context.fileContents))
               }
             } else {
-              ErrorEvaluating(label, extractValuesTry.failed.get.getMessage)
+              ErrorEvaluating(label, extractValuesTry.failed.get.getMessage, targetNode.resolved().toDebugLocation)
             }
 
           }

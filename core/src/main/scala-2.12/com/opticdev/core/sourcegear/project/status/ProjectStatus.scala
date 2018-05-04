@@ -10,6 +10,7 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
                     private var _monitoringStatus: MonitoringStatus = NotWatching,
                     private var _configStatus: ConfigStatus = ValidConfig,
                     private var _firstPassStatus: FirstPassStatus = NotStarted,
+                    private var _syncStatus: SyncStatus = UpToDate,
                     private var _lastUpdate: LastUpdateDate = LastUpdateDate(Calendar.getInstance().getTime)) {
 
   //@todo consolidate replace with macros
@@ -47,6 +48,13 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
     if (changed) notify(s)
   }
 
+  def syncStatus = _syncStatus
+  def syncStatus_=(s: SyncStatus): Unit = {
+    val changed = _syncStatus != s
+    _syncStatus = s
+    if (changed) notify(s)
+  }
+
   def lastUpdate = _lastUpdate
   def lastUpdate_=(s: LastUpdateDate): Unit = {
     val changed = _lastUpdate != s
@@ -79,6 +87,11 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
     firstPassChangedCallbacks = firstPassChangedCallbacks + callback
   }
 
+  private var syncStatusChangedCallbacks = Set[(SyncStatus)=> Unit]()
+  def syncStatusChanged(callback: (SyncStatus)=> Unit) = {
+    syncStatusChangedCallbacks = syncStatusChangedCallbacks + callback
+  }
+
   private var statusChangedCallbacks = Set[(ProjectStatusCase, ImmutableProjectStatus)=> Unit]()
   def statusChanged(callback: (ProjectStatusCase, ImmutableProjectStatus)=> Unit) = {
     statusChangedCallbacks = statusChangedCallbacks + callback
@@ -91,6 +104,7 @@ class ProjectStatus(private var _loadedStatus: LoadedStatusCase = Loaded,
       case a: MonitoringStatus => monitoringChangedCallbacks.foreach(i=> i(a))
       case a: ConfigStatus => configChangedCallbacks.foreach(i=> i(a))
       case a: FirstPassStatus => firstPassChangedCallbacks.foreach(i=> i(a))
+      case a: SyncStatus => syncStatusChangedCallbacks.foreach(i=> i(a))
       case _ =>
     }
     //send to any status changed callbacks

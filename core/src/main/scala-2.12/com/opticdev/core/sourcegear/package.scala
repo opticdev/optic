@@ -9,6 +9,8 @@ package object sourcegear {
 
   case class FileParseResults(astGraph: AstGraph, modelNodes: Vector[ModelNode], parser: ParserBase, fileContents: String)
 
-  case class AstDebugLocation(file: String, range: Range)
+  case class AstDebugLocation(filePath: String, range: Range) {
+    override def toString: String = s"${range.start}, ${range.end} in $filePath"
+  }
 
 }

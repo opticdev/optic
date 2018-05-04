@@ -27,6 +27,8 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
   val sourceAnnotation: Option[SourceAnnotation]
   val lensRef: LensRef
 
+  def hash: String
+
   lazy val fileNode: Option[FileNode] = {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
     project.projectGraph
@@ -59,8 +61,21 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
 }
 
 case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, lensRef: LensRef, root: N, modelMapping: ModelAstMapping, containerMapping: ContainerAstMapping, parseGear: ParseGear, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation])(implicit override val project: ProjectBase) extends BaseModelNode {
+
+  //not sure this is a better approach
+//  def hash = Integer.toHexString(
+//    MurmurHash3.stringHash(schemaId.full) ^
+//    MurmurHash3.stringHash(value.toString()) ^
+//    MurmurHash3.stringHash(lensRef.full) ^
+//    MurmurHash3.stringHash(root.hash) ^
+//    MurmurHash3.mapHash(modelMapping) ^
+//    MurmurHash3.mapHash(containerMapping) ^
+//    MurmurHash3.stringHash(objectRef.toString) ^
+//    MurmurHash3.stringHash(sourceAnnotation.toString))
+
+  def hash = Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMapping.toString + sourceAnnotation.toString + objectRef.toString + containerMapping.toString))
+
   def flatten = {
-    val hash = MurmurHash3.stringHash(root.toString() + modelMapping.toString() + objectRef.toString + containerMapping.toString())
     ModelNode(schemaId, value, lensRef, objectRef, sourceAnnotation, hash)
   }
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
@@ -68,10 +83,10 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject
   def toDebugLocation = AstDebugLocation(fileNode.map(_.filePath).getOrElse(""), root.range)
 }
 
-case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation], hash: Int)(implicit override val project: ProjectBase) extends BaseModelNode {
+case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation], hash: String)(implicit override val project: ProjectBase) extends BaseModelNode {
 
   //@todo check how stable/collision prone this is
-  override val id: String = Integer.toHexString(hash)
+  override val id: String = hash
 
   def resolve[T <: WithinFile]()(implicit actorCluster: ActorCluster) : LinkedModelNode[T] = {
     implicit val sourceGearContext = SGContext.forModelNode(this).get

@@ -9,6 +9,7 @@ import scala.concurrent.Await
 import akka.pattern.ask
 import akka.util.Timeout
 import com.opticdev.core.sourcegear.ParseCache
+import com.opticdev.core.sourcegear.sync.DiffSyncGraph
 
 import scala.concurrent.Future
 import concurrent.duration._
@@ -42,6 +43,8 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
       context.become(active(emptyGraph))
     }
     case NodeForId(id) => sender ! graph.nodeForId(id)
+
+    case CalculateSyncPatch => sender ! DiffSyncGraph.calculateDiff(graph.project)
 
     //Forward parsing requests to the cluster supervisor
     case created: FileCreated => actorCluster.parserSupervisorRef ! ParseFile(created.file, sender(), created.project)(created.sourceGear)
