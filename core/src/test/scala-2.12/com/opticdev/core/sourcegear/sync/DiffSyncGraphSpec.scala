@@ -81,7 +81,28 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with GearUt
     checkReplace(diff.changes(3), """{"value":"b"}""", """{"value":"a"}""")
   }
 
-  //write a test for a multi-file diff
+  it("can do a diff across multiple files") {
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), syncTestSourceGear)
+    val pgw = ProjectGraphWrapper.empty()
+    val resultsA = {
+      val file = File("test-examples/resources/example_source/sync/multi_file/A.js")
+      val astResults = syncTestSourceGear.parseFile(file).get
+      pgw.addFile(astResults.astGraph, file)
+    }
+
+    val resultsB = {
+      val file = File("test-examples/resources/example_source/sync/multi_file/B.js")
+      val astResults = syncTestSourceGear.parseFile(file).get
+      pgw.addFile(astResults.astGraph, file)
+    }
+
+    project.stageProjectGraph(pgw.projectGraph)
+
+    val diff = DiffSyncGraph.calculateDiff(project)
+    assert(diff.changes.size == 2)
+    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
+  }
 
   describe("error handling") {
 

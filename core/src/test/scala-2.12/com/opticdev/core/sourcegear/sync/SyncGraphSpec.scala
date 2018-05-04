@@ -57,6 +57,32 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
     testEdgeForSourceName(syncSubgraph, "Good Morning")
   }
 
+  it("Can add across files") {
+
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), syncTestSourceGear)
+    val pgw = ProjectGraphWrapper.empty()
+    val resultsA = {
+      val file = File("test-examples/resources/example_source/sync/multi_file/A.js")
+      val astResults = syncTestSourceGear.parseFile(file).get
+      pgw.addFile(astResults.astGraph, file)
+    }
+
+    val resultsB = {
+      val file = File("test-examples/resources/example_source/sync/multi_file/B.js")
+      val astResults = syncTestSourceGear.parseFile(file).get
+      pgw.addFile(astResults.astGraph, file)
+    }
+
+    project.stageProjectGraph(pgw.projectGraph)
+
+    val syncSubgraph = SyncGraph.getSyncGraph
+
+    val edges = syncSubgraph.graph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
+    assert(edges.size == 2)
+    testEdgeForSourceName(syncSubgraph, "Hello Model")
+    testEdgeForSourceName(syncSubgraph, "Good Morning")
+  }
+
   describe("warnings") {
     it("warning raised for orphaned target") {
       val code =

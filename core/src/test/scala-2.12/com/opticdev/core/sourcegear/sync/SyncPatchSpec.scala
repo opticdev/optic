@@ -3,6 +3,7 @@ package com.opticdev.core.sourcegear.sync
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
+import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import play.api.libs.json.Json
 
@@ -38,6 +39,27 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
                                                   |target('good morning') //source: Good Morning -> optic:synctest/passthrough-transform
                                                   |target('not_real') //source: Not Real -> optic:synctest/passthrough-transform""".stripMargin)
 
+  }
+
+  it("will work across multiple files") {
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), syncTestSourceGear)
+    val pgw = ProjectGraphWrapper.empty()
+    val resultsA = {
+      val file = File("test-examples/resources/example_source/sync/multi_file/A.js")
+      val astResults = syncTestSourceGear.parseFile(file).get
+      pgw.addFile(astResults.astGraph, file)
+    }
+
+    val resultsB = {
+      val file = File("test-examples/resources/example_source/sync/multi_file/B.js")
+      val astResults = syncTestSourceGear.parseFile(file).get
+      pgw.addFile(astResults.astGraph, file)
+    }
+
+    project.stageProjectGraph(pgw.projectGraph)
+    val filePatches = DiffSyncGraph.calculateDiff(project).filePatches
+
+    assert(filePatches.map(_.file.nameWithoutExtension).toSet == Set("A", "B"))
   }
 
 }
