@@ -7,6 +7,7 @@ import com.opticdev.common.Regexes.packages
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
 import scala.util.Try
+import scala.util.matching.Regex
 
 package object annotations {
 
@@ -18,15 +19,25 @@ package object annotations {
   }
 
   //Processed Annotation Classes
-  sealed trait ObjectAnnotation
+  sealed trait ObjectAnnotation {def asString: String}
   case class NameAnnotation(name: String, schemaRef: SchemaRef) extends ObjectAnnotation {
     def objectRef = ObjectRef(name)
+    def asString = s"name: $name"
   }
-  case class SourceAnnotation(sourceName: String, transformationRef: TransformationRef, askObject: JsObject = JsObject.empty) extends ObjectAnnotation
+  case class SourceAnnotation(sourceName: String, transformationRef: TransformationRef, askObject: JsObject = JsObject.empty) extends ObjectAnnotation {
+    def asString = s"source: $sourceName -> ${transformationRef.full}"
+  }
+  case class TagAnnotation(tag: String, schemaRef: SchemaRef) extends ObjectAnnotation {
+    def asString = s"tag: $tag"
+  }
 
   //Regexes
   def topLevelCapture = "^(\\s*([a-z]+)\\s*:\\s*[a-zA-z \\-\\>\\{\\}\\.\\d\\@\\/\\:\\'\\\"]+)(,\\s*([a-z]+)\\s*:\\s*[a-zA-z \\-\\>\\{\\}\\.\\d\\@\\/\\:\\'\\\"]+)*".r
   def propertiesCapture = s"\\s*([a-z]+)\\s*:\\s*([a-zA-z ]+)(?:\\s*->\\s*($packages)\\s*(\\{.*\\}){0,1}){0,1}"
     .r("key", "name", "transformRef", "namespace", "packageName", "version", "id", "askJson")
+
+  def annotationRegex(inlineCommentPrefix: String) : Regex =
+    ("["+Regex.quote(inlineCommentPrefix)+"](.+)$").r
+
 
 }

@@ -13,7 +13,7 @@ import scala.util.Try
 class ObjectAnnotationParserSpec extends TestBase {
 
   it("can generate the proper annotation regex from parser") {
-    val matches = ObjectAnnotationParser.annotationRegex("//").findAllIn("code //hello //world")
+    val matches = annotationRegex("//").findAllIn("code //hello //world")
     assert(matches.toVector.head == "//hello //world")
   }
 
@@ -51,10 +51,16 @@ class ObjectAnnotationParserSpec extends TestBase {
 
     val testSchema = SchemaRef(Some(PackageRef("test:package")), "test")
 
-    it("will extract annotations on the first line of a model") {
+    it("will extract name annotations on the first line of a model") {
       val a = ObjectAnnotationParser.extract("test.code('thing') //name: Model", testSchema, "//")
       assert(a.size == 1)
       assert(a.head == NameAnnotation("Model", testSchema))
+    }
+
+    it("will extract tags from a model") {
+      val a = ObjectAnnotationParser.extract("test.code('thing') //tag: query", testSchema, "//")
+      assert(a.size == 1)
+      assert(a.head == TagAnnotation("query", testSchema))
     }
 
   }

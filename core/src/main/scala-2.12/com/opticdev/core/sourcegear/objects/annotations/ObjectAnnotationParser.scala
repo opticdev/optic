@@ -31,6 +31,7 @@ object ObjectAnnotationParser {
           case exp: ExpressionValue => Some(SourceAnnotation(exp.name, exp.transformationRef))
           case _ => None
         }
+        case "tag" => Some(TagAnnotation(pair._2.name, schemaRef))
         case _ => None
       }
     }).collect {case Some(a)=> a}
@@ -84,9 +85,5 @@ object ObjectAnnotationParser {
     }
 
   }
-
-  //@todo make this lazy...
-  def annotationRegex(inlineCommentPrefix: String) : Regex =
-    ("["+Regex.quote(inlineCommentPrefix)+"](.+)$").r
 
 }
