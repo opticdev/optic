@@ -2,6 +2,7 @@ package com.opticdev.server.http.routes.socket.agents
 
 import akka.actor.{Actor, ActorRef, Status}
 import com.opticdev.arrow.changes.evaluation.BatchedChanges
+import com.opticdev.core.sourcegear.sync.SyncPatch
 import com.opticdev.server.http.controllers.{ArrowPostChanges, ArrowQuery, PutUpdateRequest}
 import com.opticdev.server.http.routes.socket.ErrorResponse
 import com.opticdev.server.http.routes.socket.agents.Protocol._
@@ -58,13 +59,10 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
 
     }
 
-
-
-    //client actions
     case update : PutUpdate => {
       //@todo handle error states
       new PutUpdateRequest(update.id, update.newValue)(projectsManager)
-        .execute.map {
+        .execute.foreach {
         case bc:BatchedChanges => {
           AgentConnection.broadcastUpdate( PostChangesResults(bc.isSuccess, bc.stagedFiles.keys.toSet) )
           EditorConnection.broadcastUpdate( FilesUpdated(bc.stagedFiles) )
@@ -77,6 +75,14 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
 //          EditorConnection.broadcastUpdate( i.get )
 //        }
 
+    }
+
+    case StageSync(projectName) => {
+      projectsManager.lookupProject(projectName).map(project=> {
+        project.syncPatch.foreach {
+          case patch: SyncPatch => AgentConnection.broadcastUpdate(StagedSyncResults(projectName, patch))
+        }
+      })
     }
 
     case updateAgentEvent: UpdateAgentEvent => {

@@ -26,7 +26,8 @@ object DiffSyncGraph {
     implicit val actorCluster = project.actorCluster
     implicit val sourceGear = project.projectSourcegear
 
-    val projectPlusSyncGraph: Graph[BaseNode, LkDiEdge] = SyncGraph.getSyncGraph(projectGraph.asInstanceOf[ProjectGraph]).syncGraph.asInstanceOf[Graph[BaseNode, LkDiEdge]]
+    val resultsFromSyncGraph = SyncGraph.getSyncGraph(projectGraph.asInstanceOf[ProjectGraph])
+    val projectPlusSyncGraph: Graph[BaseNode, LkDiEdge] = resultsFromSyncGraph.syncGraph.asInstanceOf[Graph[BaseNode, LkDiEdge]]
     implicit val graph: Graph[BaseNode, LkDiEdge] = projectPlusSyncGraph.filter(projectPlusSyncGraph.having(edge = (e) => e.isLabeled && e.label.isInstanceOf[DerivedFrom]))
 
     val startingNodes= graph.nodes.collect { case n if n.dependencies.isEmpty => n.value.asInstanceOf[BaseModelNode] }.toVector
@@ -82,7 +83,7 @@ object DiffSyncGraph {
       }
     }
 
-    SyncPatch(startingNodes.flatMap(i=> compareDiffAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange ):_*)
+    SyncPatch(startingNodes.flatMap(i=> compareDiffAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange), resultsFromSyncGraph.warnings)
   }
 
 }

@@ -77,6 +77,16 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
 
               }
 
+              case "stage-sync" => {
+                val projectName = Try( (parsedTry.get \ "projectName").get.as[JsString].value)
+                StageSync("")
+                if (projectName.isSuccess) {
+                  StageSync(projectName.get)
+                } else {
+                  UnknownEvent(i)
+                }
+              }
+
               //does not receive anything from agent...yet
               case _ => UnknownEvent(i)
             }

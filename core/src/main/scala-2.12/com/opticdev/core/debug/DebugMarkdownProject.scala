@@ -88,6 +88,6 @@ case class DebugMarkdownProject(implicit logToCli: Boolean = false, actorCluster
     projectActor ? FileUpdatedInMemory(file, contents, this)(projectSourcegear)
   }
 
-  override def syncPatch: Future[SyncPatch] = Future(SyncPatch())
+  override def syncPatch: Future[SyncPatch] = Future(SyncPatch(Vector(), Vector()))
 
 }

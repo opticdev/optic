@@ -31,7 +31,6 @@ object SyncStatusManager {
 
   def getStatus(projectGraph: ProjectGraph)(implicit project: ProjectBase) : SyncStatus = {
     val patch = DiffSyncGraph.calculateDiff(projectGraph)
-    println(patch)
     patch match {
       case p if p.containsErrors => ErrorSyncing(p.errors.map(_.toString).mkString(", "))
       case p if p.isEmpty => UpToDate

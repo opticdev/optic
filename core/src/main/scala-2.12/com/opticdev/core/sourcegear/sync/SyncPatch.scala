@@ -1,16 +1,17 @@
 package com.opticdev.core.sourcegear.sync
 import com.opticdev.core.utils.StringBuilderImplicits._
+import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 
 import scala.collection.immutable
 
-case class SyncPatch(changes: SyncDiff*) {
+case class SyncPatch(changes: Vector[SyncDiff], warnings: Vector[SyncWarning]) {
   def containsErrors = changes.exists(_.isError)
   def noErrors = !containsErrors
 
   def isEmpty = changes.isEmpty
   def nonEmpty = changes.nonEmpty
 
-  def errors: Seq[SyncDiff] = changes.collect { case e: ErrorEvaluating => e }
+  def errors: Vector[ErrorEvaluating] = changes.collect { case e: ErrorEvaluating => e }
 
   def filePatches: Vector[FilePatch] = {
     val rangePatches = changes.collect {
@@ -31,9 +32,16 @@ case class SyncPatch(changes: SyncDiff*) {
               }
             }.toString()
 
-        FilePatch(patches.head.file, newFileContents)
+        FilePatch(patches.head.file, patches.head.fileContents, newFileContents)
       }
     }.toVector
   }
+
+  def asJson : JsValue = JsObject(Seq(
+    "warnings" -> JsArray(warnings.map(_.asJson)),
+    "errors" -> JsArray(errors.map(_.asJson)),
+    "changes" -> JsArray(filePatches.map(Json.toJson[FilePatch]))
+  ))
+
 
 }

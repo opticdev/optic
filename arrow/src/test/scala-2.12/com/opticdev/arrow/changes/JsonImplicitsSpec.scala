@@ -9,14 +9,6 @@ import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 
 class JsonImplicitsSpec extends FunSpec {
 
-  it("Files toJSON & back again") {
-    import JsonImplicits.fileFormat
-    val file = File("path/to/file")
-    val json = Json.toJson[File](File("path/to/file"))
-
-    assert(Json.fromJson[File](json).get == file)
-  }
-
   describe("Location format") {
 
     it("Raw Position toJSON & back again") {

@@ -10,6 +10,7 @@ import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import JsonImplicits.opticChangeFormat
 import com.opticdev.arrow.results.ModelOption
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
+import com.opticdev.core.sourcegear.sync.{FilePatch, FilePatchTrait, SyncPatch}
 import com.opticdev.parsers.graph.CommonAstNode
 
 sealed trait OpticChange {
@@ -58,3 +59,5 @@ case class ClearSearchLines(file: File, prefixPattern: String = "^\\s*\\/\\/\\/.
 }
 
 case class PutUpdate(id: String, newModel: JsObject) extends OpticChange
+
+case class FileContentsUpdate(file: File, originalFileContents: String, newFileContents: String) extends OpticChange with FilePatchTrait

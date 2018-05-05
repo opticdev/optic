@@ -95,6 +95,25 @@ object Evaluation {
       changeResult
     }
 
+    case fileContentsUpdate: FileContentsUpdate => {
+
+      val changeResult = Try {
+        require(fileContentsUpdate.file.exists, s"File '${fileContentsUpdate.file}' to update must exist")
+        val currentContents = filesStateMonitor.contentsForFile(fileContentsUpdate.file).get
+        require(currentContents == fileContentsUpdate.originalFileContents, s"The contents of File '${fileContentsUpdate.file}' have changed since patch was generated. Aborted Patch.")
+        FileChanged(fileContentsUpdate.file, fileContentsUpdate.newFileContents)
+      } match {
+        case s: Success[FileChanged] => s.get
+        case Failure(ex) => FailedToChange(ex)
+      }
+
+      if (changeResult.isSuccess) {
+        changeResult.asFileChanged.stageContentsIn(filesStateMonitor)
+      }
+
+      changeResult
+    }
+
     //cleanup
     case cSL: ClearSearchLines => {
       val fileContentsOption = filesStateMonitor.contentsForFile(cSL.file)
