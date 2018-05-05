@@ -16,6 +16,7 @@ import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.project.monitoring.{FileStateMonitor, ShouldWatch}
 import com.opticdev.core.sourcegear.project.status.ProjectStatus
 import com.opticdev.core.sourcegear.sync.SyncPatch
+import com.opticdev.core.utils.ScheduledTask
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import net.jcazevedo.moultingyaml.YamlString
 
@@ -34,8 +35,8 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   /* Private & public declarations of the project status & info */
 
-  val _projectStatusInstance: ProjectStatus = new ProjectStatus()
-  val projectStatus: ImmutableProjectStatus = _projectStatusInstance.immutable
+  protected val projectStatusInstance: ProjectStatus = new ProjectStatus()
+  val projectStatus: ImmutableProjectStatus = projectStatusInstance.immutable
   def projectInfo : ProjectInfo = ProjectInfo(name, baseDirectory.pathAsString, projectStatus)
 
   /* Normal Disk Monitoring */
@@ -43,11 +44,11 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   val watcher: ActorRef = baseDirectory.newWatcher(recursive = true)
 
   def projectFileChanged(newPf: ProjectFile) : Unit = {
-    _projectStatusInstance.touch
+    projectStatusInstance.touch
     if (newPf.interface.isSuccess) {
-      _projectStatusInstance.configStatus = ValidConfig
+      projectStatusInstance.configStatus = ValidConfig
     } else {
-      _projectStatusInstance.configStatus = InvalidConfig(newPf.interface.failed.get.getMessage)
+      projectStatusInstance.configStatus = InvalidConfig(newPf.interface.failed.get.getMessage)
     }
   }
 
@@ -60,7 +61,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   def watch = {
     rereadAll
     watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE)(handleFileChange)
-    _projectStatusInstance.monitoringStatus = Watching
+    projectStatusInstance.monitoringStatus = Watching
   }
 
   def rereadAll = {
@@ -70,7 +71,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     ProjectActorSyncAccess.clearGraph(projectActor)
     ParseSupervisorSyncAccess.clearCache()
 
-    _projectStatusInstance.firstPassStatus = InProgress
+    projectStatusInstance.firstPassStatus = InProgress
 
     val futures = filesToWatch.toSeq.map(i=> {
       projectActor ? FileCreated(i, this)
@@ -79,21 +80,21 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     )
 
     Future.sequence(futures).onComplete(i=> {
-      _projectStatusInstance.firstPassStatus = Complete
-      _projectStatusInstance.touch
+      projectStatusInstance.firstPassStatus = Complete
+      projectStatusInstance.touch
     })
   }
 
   val handleFileChange : better.files.FileWatcher.Callback = {
     case (EventType.ENTRY_CREATE, file) => {
       implicit val sourceGear = projectSourcegear
-      _projectStatusInstance.touch
+      projectStatusInstance.touch
       filesStateMonitor.markUpdated(file)
       if (shouldWatchFile(file)) projectActor ! FileCreated(file, this)
     }
     case (EventType.ENTRY_MODIFY, file) => {
       implicit val sourceGear = projectSourcegear
-      _projectStatusInstance.touch
+      projectStatusInstance.touch
       filesStateMonitor.markUpdated(file)
       if (file.isSameFileAs(projectFile.file)) {
         projectFile.reload
@@ -104,16 +105,24 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     case (EventType.ENTRY_DELETE, file) => {
       implicit val sourceGear = projectSourcegear
       filesStateMonitor.markUpdated(file)
-      _projectStatusInstance.touch
+      projectStatusInstance.touch
       if (shouldWatchFile(file)) projectActor ! FileDeleted(file, this)
     }
   }
 
   def stopWatching = {
     actorSystem.stop(watcher)
-    _projectStatusInstance.monitoringStatus = NotWatching
+    projectStatusInstance.monitoringStatus = NotWatching
   }
 
+  /* Sync Monitoring */
+  private val syncMonitor = new ScheduledTask(10 seconds, ()=> {
+    implicit val timeout = Timeout(2 minutes)
+    val future = projectActor ? CalculateSyncStatus
+    val syncStatus = Await.result(future, timeout.duration).asInstanceOf[SyncStatus]
+    println("CHECKING SYNC STATUS "+ syncStatus)
+    projectStatusInstance.syncStatus = syncStatus
+  }, 8 seconds).start
 
   def projectGraph: ProjectGraph = {
     implicit val timeout = Timeout(15 seconds)
@@ -148,5 +157,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     implicit val timeout: akka.util.Timeout = Timeout(1 minute)
     (projectActor ? CalculateSyncPatch).collect { case p: SyncPatch => p }
   }
-  
+
+
+
 }

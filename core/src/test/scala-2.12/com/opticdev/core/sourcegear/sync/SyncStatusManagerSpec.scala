@@ -22,23 +22,20 @@ class SyncStatusManagerSpec extends AkkaTestFixture("SyncStatusSpec") with SyncF
   it("will not show a pending sync when everything is up to date") {
     val f = fixture("test-examples/resources/example_source/sync/InSync.js")
     implicit val project = f.project
-    val manager = new SyncStatusManager()
-    assert(manager.getStatus == UpToDate)
+    assert(SyncStatusManager.getStatus(project.projectGraph) == UpToDate)
   }
 
   it("will show a pending sync when things are not up to date") {
     val f = fixture("test-examples/resources/example_source/sync/NotInSync.js")
     implicit val project = f.project
-    val manager = new SyncStatusManager()
-    assert(manager.getStatus == SyncPending)
+    assert(SyncStatusManager.getStatus(project.projectGraph) == SyncPending)
   }
 
   it("will show an error if sync was invalid") {
     val f = fixture("test-examples/resources/example_source/sync/InvalidSync.js")
     implicit val project = f.project
-    val manager = new SyncStatusManager()
-    assert(manager.getStatus.isInstanceOf[ErrorSyncing])
-    assert(manager.getStatus.asInstanceOf[ErrorSyncing].error.contains("No Transformation with id 'optic:synctest@latest/errrrrrrorrrrrrrr"))
+    assert(SyncStatusManager.getStatus(project.projectGraph).isInstanceOf[ErrorSyncing])
+    assert(SyncStatusManager.getStatus(project.projectGraph).asInstanceOf[ErrorSyncing].error.contains("No Transformation with id 'optic:synctest@latest/errrrrrrorrrrrrrr"))
   }
 
 }

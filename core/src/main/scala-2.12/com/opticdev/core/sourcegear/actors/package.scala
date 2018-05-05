@@ -36,6 +36,7 @@ package object actors {
   case object CurrentGraph
   case object ClearGraph
   case object CalculateSyncPatch
+  case object CalculateSyncStatus
   case class GetContext(fileNode: FileNode)(implicit val sourceGear: SourceGear, val project: ProjectBase)
   case class NodeForId(id: String)
 

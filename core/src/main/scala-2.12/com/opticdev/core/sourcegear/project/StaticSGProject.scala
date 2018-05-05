@@ -23,7 +23,7 @@ class StaticSGProject(name: String, baseDirectory: File, sourceGear: SourceGear)
 
   override def projectGraphWrapper: ProjectGraphWrapper = new ProjectGraphWrapper(projectGraph)(project = this)
 
-  _projectStatusInstance.configStatus = ValidConfig
-  _projectStatusInstance.sourceGearStatus = Valid
+  projectStatusInstance.configStatus = ValidConfig
+  projectStatusInstance.sourceGearStatus = Valid
 
 }

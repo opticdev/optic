@@ -5,7 +5,7 @@ import com.opticdev._
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 
-class ActorCluster(actorSystem: ActorSystem) {
+class ActorCluster(val actorSystem: ActorSystem) {
   val parserSupervisorRef : ActorRef = {
     actorSystem.actorOf(ParseSupervisorActor.props()(this))
   }

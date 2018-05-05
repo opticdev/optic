@@ -23,7 +23,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     implicit val project = f.project
 
     project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project)
+    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 2)
     checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
@@ -36,7 +36,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     implicit val project = f.project
 
     project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project, includeNoChange = true)
+    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)(project, true)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 1)
     assert(diff.changes(0).isInstanceOf[NoChange])
@@ -47,7 +47,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     implicit val project = f.project
 
     project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project)
+    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 3)
     checkReplace(diff.changes(0), """{"value":"b"}""", """{"value":"a"}""")
@@ -60,7 +60,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     implicit val project = f.project
 
     project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project)
+    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 4)
     checkReplace(diff.changes(0), """{"value":"0"}""", """{"value":"a"}""")
@@ -86,7 +86,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     project.stageProjectGraph(pgw.projectGraph)
 
-    val diff = DiffSyncGraph.calculateDiff(project)
+    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
     assert(diff.changes.size == 2)
     checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
     checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
@@ -99,7 +99,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       implicit val project = f.project
 
       project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-      val diff = DiffSyncGraph.calculateDiff(project)
+      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
       assert(diff.containsErrors)
       checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
       assert(diff.changes(1).isInstanceOf[ErrorEvaluating])
@@ -109,7 +109,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       val f = fixture("test-examples/resources/example_source/sync/InvalidTreeSync.js")
       implicit val project = f.project
       project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-      val diff = DiffSyncGraph.calculateDiff(project)
+      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
       assert(diff.containsErrors)
       checkReplace(diff.changes(0), """{"value":"b"}""", """{"value":"a"}""")
       assert(diff.changes(1).isInstanceOf[ErrorEvaluating])  //gets skipped, then sync continues at the next leaf

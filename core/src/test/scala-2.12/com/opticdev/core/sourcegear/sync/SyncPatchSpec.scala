@@ -17,7 +17,7 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     val results = syncTestSourceGear.parseFile(file).get
     val updatedGraphResults = {
       project.projectGraphWrapper.addFile(results.astGraph, file)
-      SyncGraph.getSyncGraph
+      SyncGraph.getSyncGraph(project.projectGraph)
     }
   }
 
@@ -27,7 +27,7 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     implicit val project = f.project
 
     project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project)
+    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
     val filePatches = diff.filePatches
 
     assert(filePatches.head.newFileContents === """source('hello') //name: Hello Model
@@ -57,7 +57,7 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     }
 
     project.stageProjectGraph(pgw.projectGraph)
-    val filePatches = DiffSyncGraph.calculateDiff(project).filePatches
+    val filePatches = DiffSyncGraph.calculateDiff(project.projectGraph).filePatches
 
     assert(filePatches.map(_.file.nameWithoutExtension).toSet == Set("A", "B"))
   }

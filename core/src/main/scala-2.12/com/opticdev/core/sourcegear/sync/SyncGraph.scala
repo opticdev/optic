@@ -36,8 +36,7 @@ object SyncGraph {
 
   def syncGraphFromProjectGraph(pg: ProjectGraph) = pg.filter(pg.having(edge = (e) => e.isLabeled && e.label.isInstanceOf[DerivedFrom]))
 
-  def getSyncGraph(implicit project: ProjectBase) : SyncSubGraph = {
-    val projectGraph = project.projectGraph
+  def getSyncGraph(projectGraph: ProjectGraph)(implicit project: ProjectBase) : SyncSubGraph = {
     implicit val actorCluster = project.actorCluster
     val syncSubgraph = emptySyncGraph
     val warnings = scala.collection.mutable.ListBuffer[() => SyncWarning]()

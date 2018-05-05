@@ -25,9 +25,6 @@ object ProjectGraphWrapper {
 
 class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: ProjectBase) {
 
-  //monitors project for sync updates. debounced 5 seconds
-  private val syncStatus = new SyncStatusManager
-
   import GraphImplicits._
 
   def addFile(astGraph: AstGraph, forFile: File) = {

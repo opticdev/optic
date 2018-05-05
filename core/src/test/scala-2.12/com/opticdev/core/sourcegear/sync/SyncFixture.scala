@@ -15,7 +15,7 @@ trait SyncFixture extends TestBase with GearUtils {
     val results = syncTestSourceGear.parseFile(file).get
     val updatedGraphResults = {
       project.projectGraphWrapper.addFile(results.astGraph, file)
-      SyncGraph.getSyncGraph
+      SyncGraph.getSyncGraph(project.projectGraphWrapper.projectGraph)
     }
   }
 

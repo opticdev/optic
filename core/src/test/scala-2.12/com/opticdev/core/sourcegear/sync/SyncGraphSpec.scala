@@ -49,7 +49,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
   it("Can add edges from new graph") {
     val f = fixture("test-examples/resources/example_source/sync/Sync.js")
     implicit val project = f.project
-    val syncSubgraph = SyncGraph.getSyncGraph
+    val syncSubgraph = SyncGraph.getSyncGraph(project.projectGraph)
 
     val edges = syncSubgraph.syncGraph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
     assert(edges.size == 2)
@@ -75,7 +75,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
 
     project.stageProjectGraph(pgw.projectGraph)
 
-    val syncSubgraph = SyncGraph.getSyncGraph
+    val syncSubgraph = SyncGraph.getSyncGraph(project.projectGraph)
 
     val edges = syncSubgraph.syncGraph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
     assert(edges.size == 2)
@@ -92,7 +92,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
 
       val f = stringFixture(code)
       implicit val project = f.project
-      val syncSubgraph = SyncGraph.getSyncGraph
+      val syncSubgraph = SyncGraph.getSyncGraph(project.projectGraph)
       assert(syncSubgraph.warnings.size == 1)
       assert(syncSubgraph.warnings.head.isInstanceOf[SourceDoesNotExist])
       assert(syncSubgraph.warnings.head.asInstanceOf[SourceDoesNotExist].missingSource == "find A Fake One")
@@ -106,7 +106,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
         """.stripMargin
       val f = stringFixture(code)
       implicit val project = f.project
-      val syncSubgraph = SyncGraph.getSyncGraph
+      val syncSubgraph = SyncGraph.getSyncGraph(project.projectGraph)
       assert(syncSubgraph.warnings.size == 1)
       assert(syncSubgraph.sources == 0)
       assert(syncSubgraph.warnings.head.isInstanceOf[DuplicateSourceName])
@@ -117,7 +117,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
     it("will warn if there is a circular dependency") {
       val f = fixture("test-examples/resources/example_source/sync/CircularSync.js")
       implicit val project = f.project
-      val syncSubgraph = SyncGraph.getSyncGraph
+      val syncSubgraph = SyncGraph.getSyncGraph(project.projectGraph)
       assert(syncSubgraph.warnings.head.isInstanceOf[CircularDependency])
       assert(syncSubgraph.warnings.head.asInstanceOf[CircularDependency].location.range == Range(171, 186))
     }
