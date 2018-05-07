@@ -21,7 +21,7 @@ class FlatContextSpec extends TestBase with TestPackageProviders {
     val flatContext = FlatContextBuilder.fromDependencyTree(dt)
 
     assert(flatContext.mapping.size == 2)
-    assert(flatContext.mapping("optic:express-js").asInstanceOf[FlatContext].mapping.keys == Set("route", "parameter", "optic:rest"))
+    assert(flatContext.mapping("optic:express-js").asInstanceOf[FlatContext].mapping.keys == Set("route", "parameter", "optic:rest", "response"))
 
   }
 

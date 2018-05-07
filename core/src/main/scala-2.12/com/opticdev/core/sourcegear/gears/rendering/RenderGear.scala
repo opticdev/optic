@@ -21,6 +21,8 @@ import scala.util.Try
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+import com.opticdev.core.sourcegear.graph.model.ModelNode
+import scalax.collection.mutable.Graph
 case class RenderGear(block: String,
                       parserRef: ParserRef,
                       parseGear: ParseAsModel,
@@ -45,12 +47,15 @@ case class RenderGear(block: String,
     (fileContents, astGraph, rootNode)
   }
 
-  def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Option[JsObject] = Try {
+  def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Try[JsObject] = parseAndGetModelWithGraph(contents).map(_._1)
+
+  def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, ModelNode)] = Try {
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(contents)
     implicit val sourceGearContext = SGContext.forRender(sourceGear, astGraph, parserRef)
-    val isMatch = parseGear.matches(rootNode, true)(astGraph, fileContents, sourceGearContext, null)
-    isMatch.map(_.modelNode.expandedValue())
-  }.toOption.flatten
+    val results = sourceGear.lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, null)
+    val model = results.modelNodes.find(_.resolveInGraph[CommonAstNode](results.astGraph).root == rootNode).get
+    (model.expandedValue()(SGContext.forRender(sourceGear, results.astGraph, parserRef)), results.astGraph, model)
+  }
 
   def renderWithNewAstNode(value: JsObject, containersContent: ContainersContent = Map.empty, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): (NewAstNode, String) = {
 

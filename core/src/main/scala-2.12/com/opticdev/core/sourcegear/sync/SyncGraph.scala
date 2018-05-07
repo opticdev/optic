@@ -10,6 +10,7 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.constrained._
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
+import play.api.libs.json.JsObject
 import scalax.collection.GraphPredef
 import scalax.collection.constrained.constraints.Acyclic
 import scalax.collection.constrained.mutable.Graph
@@ -66,7 +67,7 @@ object SyncGraph {
 
       if (sourceNodeOption.isDefined) {
         validTargets += 1
-        val didAdd = syncSubgraph add (sourceNodeOption.get ~+#> targetNode)(DerivedFrom(sourceAnnotation.transformationRef, sourceAnnotation.askObject))
+        val didAdd = syncSubgraph add (sourceNodeOption.get ~+#> targetNode)(DerivedFrom(sourceAnnotation.transformationRef, sourceAnnotation.askObject.getOrElse(JsObject.empty)))
         if (!didAdd) {
           warnings += {
             () => CircularDependency(sourceName, targetNode.resolved().toDebugLocation)

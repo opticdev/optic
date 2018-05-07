@@ -116,7 +116,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
   }
 
   /* Sync Monitoring */
-  private val syncMonitor = new ScheduledTask(10 seconds, ()=> {
+  protected val syncMonitor = new ScheduledTask(10 seconds, ()=> {
     implicit val timeout = Timeout(2 minutes)
     val future = projectActor ? CalculateSyncStatus
     val syncStatus = Await.result(future, timeout.duration).asInstanceOf[SyncStatus]

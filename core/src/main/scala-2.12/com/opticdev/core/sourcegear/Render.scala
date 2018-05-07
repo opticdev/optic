@@ -51,7 +51,7 @@ object Render {
     (result._1.withForcedContent(Some(stringResult)), stringResult, gear)
   }
 
-  private def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[CompiledLens] = {
+  def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[CompiledLens] = {
     val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.lensId.get).get)
     if (lensRefTry.isSuccess) {
       val lensRef = lensRefTry.get

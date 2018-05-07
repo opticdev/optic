@@ -129,6 +129,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
       )))
     )))
 
+
     val result = Render.fromStagedNode(stagedNode)(f.sourceGear, f.sourceGear.flatContext)
 
     val expected = "call(\"value\", function (req, res) {\n  \n  query({ fieldA: req.query.fieldA }, function (err, item) {  //tag: query\n    if (!err) {\n        res.send(thing)\n    } else {\n    \n    }\n  })\n})"

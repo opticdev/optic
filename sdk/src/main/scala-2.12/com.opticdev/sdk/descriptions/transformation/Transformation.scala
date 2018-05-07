@@ -52,9 +52,8 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
         "output" -> JsString(outputSchemaRef.full)
       ))}.asScriptObject.get
 
-    val result = transformFunction.call(null, scriptObject, answersObject).asInstanceOf[ScriptObjectMirror]
-
-    ProcessResult.objectResultFromScriptObject(result)
+    val result = transformFunction.call(null, scriptObject, answersObject)
+    ProcessResult.objectResultFromScriptObject(result.asInstanceOf[ScriptObjectMirror])
   }).flatten
 
 }
@@ -69,7 +68,7 @@ sealed trait TransformationBase extends PackageExportable {
   def input: SchemaRef
   def output: SchemaRef
   def ask: JsObject
-  val transformFunction = new TransformFunction(script, ask, input, output)
+  lazy val transformFunction = new TransformFunction(script, ask, input, output)
 }
 
 //case class InlineTransformation() extends TransformationBase

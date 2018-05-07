@@ -7,6 +7,8 @@ import play.api.libs.json._
 import scalax.collection.edge.LkDiEdge
 import com.opticdev.core.sourcegear.astDebugLocationFormats
 import com.opticdev.common.fileFormat
+import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.objects.annotations.TagAnnotation
 
 package object sync {
 
@@ -53,8 +55,9 @@ package object sync {
     def newValue : Option[JsObject] = None
     def isError : Boolean = false
   }
-  case class NoChange(edge: DerivedFrom) extends SyncDiff
+  case class NoChange(edge: DerivedFrom, tagOption: Option[TagAnnotation] = None) extends SyncDiff
   case class Replace(edge: DerivedFrom, before: JsObject, after: JsObject, rangePatch: RangePatch) extends SyncDiff { override def newValue = Some(after) }
+  case class UpdatedTag(tag: String, edge: DerivedFrom, modelNode: BaseModelNode, before: JsObject, after: JsObject, rangePatch: RangePatch) extends SyncDiff { override def newValue = Some(after) }
   case class ErrorEvaluating(edge: DerivedFrom, error: String, location: AstDebugLocation) extends SyncDiff {
     override def isError: Boolean = true
     private def message = s""""${error}" encountered when calculating patch"""

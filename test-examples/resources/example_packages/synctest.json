@@ -81,5 +81,4 @@
     "ask": {},
     "script": "function transform(input, answers) { \n return input \n }"
   }]
-
 }

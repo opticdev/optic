@@ -20,7 +20,7 @@ class ObjectAnnotationRendererSpec extends FunSpec {
   }
 
   it("can generate a multiple annotations") {
-    val target = Vector(NameAnnotation("test", testSchema), SourceAnnotation("other", TransformationRef(Some(PackageRef("optic:test")), "transform")))
+    val target = Vector(NameAnnotation("test", testSchema), SourceAnnotation("other", TransformationRef(Some(PackageRef("optic:test")), "transform"), None))
 
     val result = ObjectAnnotationRenderer.render(prefix, target)
     val parsed = ObjectAnnotationParser.extract(result, testSchema, prefix)

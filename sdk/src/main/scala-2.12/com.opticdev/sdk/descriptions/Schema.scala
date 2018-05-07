@@ -64,6 +64,11 @@ case class SchemaColdStorage(data: String)
 case class SchemaRef(packageRef: Option[PackageRef], id: String) {
   def full: String = if (packageRef.isEmpty) id else packageRef.get.full+"/"+id
   def internalFull = if (packageRef.isEmpty) id else packageRef.get.packageId+"/"+id
+
+  def matchLoose(schemaRef: SchemaRef) = {
+    this.packageRef.map(_.packageId) == schemaRef.packageRef.map(_.packageId) &&
+    this.id == schemaRef.id
+  }
 }
 
 object SchemaRef {

@@ -15,7 +15,7 @@ package object annotations {
   sealed trait AnnotationValues {val name: String}
   case class StringValue(name: String) extends AnnotationValues
   case class ExpressionValue(name: String, transformationRef: TransformationRef, askJsonRaw: Option[String]) extends AnnotationValues {
-    def jsObject = askJsonRaw.map(Json.parse).map(_.as[JsObject])
+    def askJsObject: Option[JsObject] = askJsonRaw.map(Json.parse).map(_.as[JsObject])
   }
 
   //Processed Annotation Classes
@@ -24,7 +24,7 @@ package object annotations {
     def objectRef = ObjectRef(name)
     def asString = s"name: $name"
   }
-  case class SourceAnnotation(sourceName: String, transformationRef: TransformationRef, askObject: JsObject = JsObject.empty) extends ObjectAnnotation {
+  case class SourceAnnotation(sourceName: String, transformationRef: TransformationRef, askObject: Option[JsObject]) extends ObjectAnnotation {
     def asString = s"source: $sourceName -> ${transformationRef.full}"
   }
   case class TagAnnotation(tag: String, schemaRef: SchemaRef) extends ObjectAnnotation {
@@ -35,9 +35,5 @@ package object annotations {
   def topLevelCapture = "^(\\s*([a-z]+)\\s*:\\s*[a-zA-z \\-\\>\\{\\}\\.\\d\\@\\/\\:\\'\\\"]+)(,\\s*([a-z]+)\\s*:\\s*[a-zA-z \\-\\>\\{\\}\\.\\d\\@\\/\\:\\'\\\"]+)*".r
   def propertiesCapture = s"\\s*([a-z]+)\\s*:\\s*([a-zA-z ]+)(?:\\s*->\\s*($packages)\\s*(\\{.*\\}){0,1}){0,1}"
     .r("key", "name", "transformRef", "namespace", "packageName", "version", "id", "askJson")
-
-  def annotationRegex(inlineCommentPrefix: String) : Regex =
-    ("["+Regex.quote(inlineCommentPrefix)+"](.+)$").r
-
 
 }

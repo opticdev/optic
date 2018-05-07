@@ -3,13 +3,16 @@ package com.opticdev.core.sourcegear.sync
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
+import com.opticdev.core.sourcegear.SGConstructor
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.StaticSGProject
-import play.api.libs.json.Json
+import com.opticdev.opm
+import com.opticdev.opm.TestPackageProviders
+import play.api.libs.json.{JsObject, Json}
 
-class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFixture {
+class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFixture with GearUtils with TestPackageProviders {
 
   def checkReplace(diff: SyncDiff, before: String, after: String) = {
     val asReplace = diff.asInstanceOf[Replace]
@@ -88,8 +91,47 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
-    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+  }
+
+  it("will diff based on tags") {
+    val sourceGear = fromDependenciesList("optic:express-js@0.1.0", "optic:rest@0.1.0", "optic:mongoose@0.1.0")
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+    val pgw = ProjectGraphWrapper.empty()
+    val file = File("test-examples/resources/example_source/sync/Tagged.js")
+    val astResults = sourceGear.parseFile(file).get
+    pgw.addFile(astResults.astGraph, file)
+
+    project.stageProjectGraph(pgw.projectGraph)
+
+    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+
+    assert(diff.noErrors)
+    assert(diff.filePatches.size == 1)
+    assert(diff.filePatches.head.newFileContents === """const user = mongoose.model('peoples', new mongoose.Schema({ //name: User Model
+                                                       |    'firstName': 'string',
+                                                       |    'lastName': 'string',
+                                                       |    'isAdmin': 'boolean',
+                                                       |    'newField': 'string',
+                                                       |}))
+                                                       |
+                                                       |app.post('/peoples', function (req, res) { //source: User Model -> optic:mongoose@0.1.0/createroutefromschema {"queryProvider": "optic:mongoose/insert-record"}
+                                                       |
+                                                       |  otherCode.weWantToKeep()
+                                                       |
+                                                       |  new Model({ firstName: req.body.firstName, //tag: query
+                                                       |  lastName: req.body.lastName,
+                                                       |  isAdmin: req.body.isAdmin,
+                                                       |  newField: req.body.newField }).save((err, item) => {
+                                                       |    if (!err) {
+                                                       |        res.send(200, item)
+                                                       |    } else {
+                                                       |        res.send(400, err)
+                                                       |    }
+                                                       |  })
+                                                       |})""".stripMargin)
+
   }
 
   describe("error handling") {

@@ -156,7 +156,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
       val parsedSample = sample(block)
       val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
       assert(result.isDefined)
-      assert(result.get.modelNode.sourceAnnotation.contains(SourceAnnotation("Test", TransformationRef(Some(PackageRef("optic:test")), "transform"))))
+      assert(result.get.modelNode.sourceAnnotation.contains(SourceAnnotation("Test", TransformationRef(Some(PackageRef("optic:test")), "transform"), None)))
     }
 
   }

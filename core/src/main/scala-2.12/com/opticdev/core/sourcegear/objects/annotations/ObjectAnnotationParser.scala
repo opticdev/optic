@@ -8,7 +8,7 @@ import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
-import scala.util.{Success, Try}
+import scala.util.{Failure, Success, Try}
 import scala.util.matching.Regex
 
 object ObjectAnnotationParser {
@@ -17,18 +17,19 @@ object ObjectAnnotationParser {
     extract(string, schemaRef, parserBase.inlineCommentPrefix)
 
   def extract(string: String, schemaRef: SchemaRef, inlineCommentPrefix: String) : Set[ObjectAnnotation] = {
-    val lineRegex = annotationRegex(inlineCommentPrefix)
-
     if (string.isEmpty) return Set()
 
     val found = {
       val lineContents = string.lines.next()
-      lineRegex.findFirstIn(lineContents).map(i=> extractRawAnnotationsFromLine(i.substring(2)))
+      val lastComment = findAnnotationComment(inlineCommentPrefix, lineContents)
+      lastComment.map(i=> extractRawAnnotationsFromLine(i.substring(inlineCommentPrefix.size)))
     }.map(_.map(pair=> {
       pair._1 match {
         case "name" => Some(NameAnnotation(pair._2.name, schemaRef))
         case "source" => pair._2 match {
-          case exp: ExpressionValue => Some(SourceAnnotation(exp.name, exp.transformationRef))
+          case exp: ExpressionValue => {
+            Some(SourceAnnotation(exp.name, exp.transformationRef, exp.askJsObject))
+          }
           case _ => None
         }
         case "tag" => Some(TagAnnotation(pair._2.name, schemaRef))
@@ -42,7 +43,7 @@ object ObjectAnnotationParser {
 
   def extractRawAnnotationsFromLine(string: String) : Map[String, AnnotationValues] = {
     if (topLevelCapture.pattern.matcher(string).matches()) {
-      propertiesCapture.findAllIn(string).matchData.map {
+      val extracts = propertiesCapture.findAllIn(string).matchData.map {
         i =>
           Try {
             val key = i.group("key").trim
@@ -68,7 +69,8 @@ object ObjectAnnotationParser {
 
             (key, value)
           }
-      }.collect {case Success(a) => a} .toMap
+      }
+      extracts.collect {case Success(a) => a} .toMap
     } else Map.empty
   }
 
@@ -84,6 +86,11 @@ object ObjectAnnotationParser {
       fileContents.substring(node)
     }
 
+  }
+
+  def findAnnotationComment(inlineCommentPrefix: String, contents: String) : Option[String] = {
+    val result = contents.lastIndexOf(inlineCommentPrefix)
+    if (result == -1) None else Some(contents.substring(result))
   }
 
 }

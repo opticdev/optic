@@ -7,14 +7,20 @@ import com.opticdev.parsers.{ParserRef, SourceParserManager}
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import org.scalatest.FunSpec
+import play.api.libs.json.{JsNumber, JsObject, JsString}
 
 import scala.util.Try
 
 class ObjectAnnotationParserSpec extends TestBase {
 
-  it("can generate the proper annotation regex from parser") {
-    val matches = annotationRegex("//").findAllIn("code //hello //world")
-    assert(matches.toVector.head == "//hello //world")
+  describe("extracting comments") {
+    it("returns none when no comment found") {
+      assert(ObjectAnnotationParser.findAnnotationComment("//", "hello.code()").isEmpty)
+    }
+
+    it("returns the last comment when found") {
+      assert(ObjectAnnotationParser.findAnnotationComment("//", "hello.code('//hello') //realone").contains("//realone"))
+    }
   }
 
   describe("extract annotation values") {
@@ -56,6 +62,13 @@ class ObjectAnnotationParserSpec extends TestBase {
       assert(a.size == 1)
       assert(a.head == NameAnnotation("Model", testSchema))
     }
+
+    it("will extract source from a model") {
+      val a = ObjectAnnotationParser.extract("test.code('thing') //source: User Model -> optic:mongoose@0.1.0/createroutefromschema {\"queryProvider\": \"optic:mongoose/insert-record\"}", testSchema, "//")
+      assert(a.size == 1)
+      assert(a.head == SourceAnnotation("User Model", TransformationRef(Some(PackageRef("optic:mongoose", "0.1.0")), "createroutefromschema"), Some(JsObject(Seq("queryProvider" -> JsString("optic:mongoose/insert-record"))))))
+    }
+
 
     it("will extract tags from a model") {
       val a = ObjectAnnotationParser.extract("test.code('thing') //tag: query", testSchema, "//")

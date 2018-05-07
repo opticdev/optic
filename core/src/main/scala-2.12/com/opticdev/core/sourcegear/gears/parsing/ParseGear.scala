@@ -17,7 +17,7 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEvaluation
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.VariableRuleWithEvaluation
-import com.opticdev.core.sourcegear.objects.annotations.{NameAnnotation, ObjectAnnotationParser, SourceAnnotation}
+import com.opticdev.core.sourcegear.objects.annotations.{NameAnnotation, ObjectAnnotationParser, SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.variables.VariableManager
 
 import scala.util.hashing.MurmurHash3
@@ -161,15 +161,16 @@ case class ParseAsModel(description: NodeDescription,
     import com.opticdev.core.sourcegear.containers.ContainerMappingImplicits._
     val containerMapping = matchResults.containers.getOrElse(Set()).toMapping
 
-    val (objectRefOption, sourceAnnotationOption) = {
+    val (objectRefOption, sourceAnnotationOption, tagAnnotation) = {
       val raw = ObjectAnnotationParser.contentsToCheck(matchResults.baseNode.get)
       val annotations = ObjectAnnotationParser.extract(raw, schema)(sourceGearContext.parser)
       ( annotations.collectFirst { case na: NameAnnotation => na }.map(_.objectRef),
         annotations.collectFirst { case sa: SourceAnnotation => sa },
+        annotations.collectFirst { case ta: TagAnnotation => ta },
       )
     }
 
-    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, objectRefOption, sourceAnnotationOption)
+    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, objectRefOption, sourceAnnotationOption, tagAnnotation)
 
     //@todo have schema validate
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))

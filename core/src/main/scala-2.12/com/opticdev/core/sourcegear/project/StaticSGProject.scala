@@ -26,4 +26,6 @@ class StaticSGProject(name: String, baseDirectory: File, sourceGear: SourceGear)
   projectStatusInstance.configStatus = ValidConfig
   projectStatusInstance.sourceGearStatus = Valid
 
+  syncMonitor.cancel()
+
 }
