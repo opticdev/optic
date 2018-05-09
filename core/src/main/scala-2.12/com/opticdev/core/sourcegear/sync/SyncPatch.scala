@@ -1,10 +1,11 @@
 package com.opticdev.core.sourcegear.sync
+import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.core.utils.StringBuilderImplicits._
-import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
+import play.api.libs.json._
 
 import scala.collection.immutable
 
-case class SyncPatch(changes: Vector[SyncDiff], warnings: Vector[SyncWarning]) {
+case class SyncPatch(changes: Vector[SyncDiff], warnings: Vector[SyncWarning])(implicit project: ProjectBase) {
   def containsErrors = changes.exists(_.isError)
   def noErrors = !containsErrors
 
@@ -37,10 +38,25 @@ case class SyncPatch(changes: Vector[SyncDiff], warnings: Vector[SyncWarning]) {
     }.toVector
   }
 
+  def triggers: Map[Trigger, Vector[Replace]] = {
+    changes.collect { case a: Replace => a }.groupBy(_.trigger.get)
+  }
+
   def asJson : JsValue = JsObject(Seq(
     "warnings" -> JsArray(warnings.map(_.asJson)),
     "errors" -> JsArray(errors.map(_.asJson)),
-    "changes" -> JsArray(filePatches.map(Json.toJson[FilePatch]))
+    "changes" -> JsArray(filePatches.map(fp=> fp.asJson(project.trimAbsoluteFilePath(fp.file.pathAsString)))),
+    "triggers" -> {
+      JsArray(triggers.map {
+        case (trigger, changes) => {
+          import com.opticdev.core.sourcegear.sync.triggerFormat
+          val jsObject = Json.toJsObject(trigger)
+          val groupedBySchema = changes.groupBy(_.schemaRef)
+          val changeString = JsArray(groupedBySchema.map(i=> JsString(s"${i._2.length} ${if (i._2.length == 1) "instance" else "instances"} of ${i._1.internalFull}")).toSeq)
+          jsObject + ("changes" -> changeString)
+        }
+      }.toSeq)
+    }
   ))
 
 

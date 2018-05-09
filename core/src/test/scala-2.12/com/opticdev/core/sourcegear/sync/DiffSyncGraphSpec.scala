@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.sync
 
 import better.files.File
+import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.SGConstructor
@@ -10,7 +11,8 @@ import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.opm
 import com.opticdev.opm.TestPackageProviders
-import play.api.libs.json.{JsObject, Json}
+import com.opticdev.sdk.descriptions.SchemaRef
+import play.api.libs.json.{JsObject, JsString, Json}
 
 class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFixture with GearUtils with TestPackageProviders {
 
@@ -159,6 +161,73 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       checkReplace(diff.changes(3), """{"value":"e"}""", """{"value":"c"}""")
     }
 
+  }
+
+  describe("Trigger events are saved with changes") {
+
+    it("a single change that propagates across a tree will be the trigger for everything") {
+      val f = fixture("test-examples/resources/example_source/sync/BranchedTreeSync.js")
+      implicit val project = f.project
+
+      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
+      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+
+      val allTriggers = diff.changes.map(_.asInstanceOf[Replace].trigger.get).distinct
+      assert(allTriggers.size == 1)
+      assert(allTriggers.head == Trigger("a", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("a")))))
+
+    }
+
+    it("two single changes will have their own triggers") {
+      val f = fixture("test-examples/resources/example_source/sync/Sync.js")
+      implicit val project = f.project
+
+      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
+      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+
+      val allTriggers = diff.changes.map(_.asInstanceOf[Replace].trigger.get).distinct
+      assert(allTriggers.size == 2)
+      assert(allTriggers ==
+        Vector(Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello")))),
+          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning"))))))
+    }
+
+    it("partiality evaluated trees get multiple triggers") {
+      val f = fixture("test-examples/resources/example_source/sync/InvalidTreeSync.js")
+      implicit val project = f.project
+      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
+      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+      val allTriggers = diff.changes.filter(_.newValue.isDefined).map(_.asInstanceOf[Replace].trigger.get).distinct
+      assert(allTriggers.size == 2)
+    }
+
+  }
+
+  it("to Json") {
+
+    val f = fixture("test-examples/resources/example_source/sync/TreeSync.js")
+    implicit val project = f.project
+
+    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
+    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+    assert(diff.asJson == Json.parse("""{
+                                |	"warnings": [],
+                                |	"errors": [],
+                                |	"changes": [{
+                                |		"file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/example_source/sync/TreeSync.js",
+                                |		"originalFileContents": "source('a') //name: a\nsource('b') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('c') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('d') //name: d, source: c -> optic:synctest/passthrough-transform",
+                                |		"newFileContents": "source('a') //name: a\nsource('a') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('a') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('a') //name: d, source: c -> optic:synctest/passthrough-transform",
+                                |		"relativePath": "/resources/example_source/sync/TreeSync.js"
+                                |	}],
+                                |	"triggers": [{
+                                |		"name": "a",
+                                |		"schemaRef": "optic:synctest@0.1.0/source-schema",
+                                |		"newValue": {
+                                |			"value": "a"
+                                |		},
+                                |		"changes": ["3 instances of optic:synctest/source-schema"]
+                                |	}]
+                                |}""".stripMargin))
   }
 
 }

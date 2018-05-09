@@ -54,7 +54,16 @@ object DiffSyncGraph {
 
           val diff = compareNode(label, sourceNode, sourceValue, targetNode)
 
-          Vector(diff) ++ compareDiffAlongPath(targetNode, Some(diff))
+          val diffWithTrigger = diff match {
+            //if its parent has a trigger, take it...
+            case r: Replace if predecessorDiff.exists(_.isInstanceOf[Replace]) && predecessorDiff.get.asInstanceOf[Replace].trigger.isDefined => r.copy(trigger = predecessorDiff.get.asInstanceOf[Replace].trigger)
+            //if its the trigger set it equal to itself
+            case r: Replace if predecessorDiff.isEmpty || predecessorDiff.exists(_.newValue.isEmpty) => r.copy(trigger = Some(Trigger(sourceNode.objectRef.get.name, sourceNode.schemaId, r.after)))
+            //return self
+            case d=> d
+          }
+
+          Vector(diffWithTrigger) ++ compareDiffAlongPath(targetNode, Some(diffWithTrigger))
 
         }
         case _ => Vector()   ///should never be hit
@@ -123,11 +132,11 @@ object DiffSyncGraph {
       if (expectedValue == currentValue) {
         NoChange(label)
       } else {
-        Replace(label, currentValue, expectedValue,
+        Replace(label, targetNode.schemaId, currentValue, expectedValue,
           RangePatch(linkedModel.root.range, expectedRaw, context.file, context.fileContents))
       }
     } else {
-      println(extractValuesTry.failed.get.printStackTrace())
+//      println(extractValuesTry.failed.get.printStackTrace())
       ErrorEvaluating(label, extractValuesTry.failed.get.getMessage, targetNode.resolved().toDebugLocation)
     }
 

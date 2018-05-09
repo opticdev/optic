@@ -21,7 +21,7 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
 
   private[this] val connectionActor = actorSystem.actorOf(Props(classOf[AgentConnectionActor], slug, projectsManager))
 
-  def chatInSink(sender: String) = Sink.actorRef[AgentEvents](connectionActor, Terminated())
+  def chatInSink(sender: String) = Sink.actorRef[AgentEvents](connectionActor, Terminated)
 
   def sendUpdate(event: UpdateAgentEvent) = {
     connectionActor ! event

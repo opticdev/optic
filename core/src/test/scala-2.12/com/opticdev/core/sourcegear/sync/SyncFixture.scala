@@ -11,7 +11,7 @@ trait SyncFixture extends TestBase with GearUtils {
 
   def fixture(filePath: String)(implicit actorCluster: ActorCluster) = new {
     val file = File(filePath)
-    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), syncTestSourceGear)
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/"), syncTestSourceGear)
     val results = syncTestSourceGear.parseFile(file).get
     val updatedGraphResults = {
       project.projectGraphWrapper.addFile(results.astGraph, file)
