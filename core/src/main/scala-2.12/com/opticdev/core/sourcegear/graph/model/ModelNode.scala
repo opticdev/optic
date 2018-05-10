@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear.containers.ContainerAstMapping
 import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsModelProperty, YieldsProperty}
-import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode}
+import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraph}
 import com.opticdev.core.sourcegear.objects.annotations.{SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.parsers.AstGraph
@@ -30,11 +30,18 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
 
   def hash: String
 
-  lazy val fileNode: Option[FileNode] = {
+  def fileNode: Option[FileNode] = {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
     project.projectGraph
     .allPredecessorOf(this).find(_.isInstanceOf[FileNode])
     .asInstanceOf[Option[FileNode]]
+  }
+
+  def fileNode(projectGraph: ProjectGraph): Option[FileNode] = {
+    import com.opticdev.core.sourcegear.graph.GraphImplicits._
+    projectGraph
+      .allPredecessorOf(this).find(_.isInstanceOf[FileNode])
+      .asInstanceOf[Option[FileNode]]
   }
 
   private var expandedValueStore : Option[JsObject] = None
@@ -59,6 +66,8 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
     case l: LinkedModelNode[CommonAstNode] => l
     case m: ModelNode => m.resolve[CommonAstNode]()
   }
+
+  def includedInSync: Boolean = sourceAnnotation.isDefined || tag.isDefined || objectRef.isDefined
 
 }
 

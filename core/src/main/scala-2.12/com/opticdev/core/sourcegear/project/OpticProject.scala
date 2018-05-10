@@ -15,6 +15,7 @@ import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.project.monitoring.{FileStateMonitor, ShouldWatch}
 import com.opticdev.core.sourcegear.project.status.ProjectStatus
+import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.core.sourcegear.sync.SyncPatch
 import com.opticdev.core.utils.ScheduledTask
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
@@ -152,6 +153,8 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       projectFile.interface.get.exclude.value.map(i=> File(i.value)) ++ projectSourcegear.excludedPaths.map(i=> File(i)))
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
+
+  def snapshot: Future[Snapshot] = Snapshot.forProject(this)
 
   def syncPatch: Future[SyncPatch] = {
     implicit val timeout: akka.util.Timeout = Timeout(1 minute)
