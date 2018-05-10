@@ -14,6 +14,8 @@ import com.opticdev.opm.TestPackageProviders
 import com.opticdev.sdk.descriptions.SchemaRef
 import play.api.libs.json.{JsObject, JsString, Json}
 
+import scala.concurrent.Await
+
 class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFixture with GearUtils with TestPackageProviders {
 
   def checkReplace(diff: SyncDiff, before: String, after: String) = {
@@ -230,4 +232,15 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
                                 |}""".stripMargin))
   }
 
+  it("works from within actor") {
+
+    val f = fixture("test-examples/resources/example_source/sync/TreeSync.js")
+    implicit val project = f.project
+
+    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
+    import scala.concurrent.duration._
+    val r = Await.result(project.syncPatch, 10 seconds)
+    println(r)
+
+  }
 }

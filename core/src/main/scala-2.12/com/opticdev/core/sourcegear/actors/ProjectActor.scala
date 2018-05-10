@@ -19,13 +19,13 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
 
   override def receive: Receive = active(initialGraph)
 
-  def active(graph: ProjectGraphWrapper, lastParse: Option[Long] = None, lastSyncCheck: Option[Long] = None, lastSyncStatus: Option[SyncStatus] = None): Receive = {
+  def active(graph: ProjectGraphWrapper): Receive = {
     //handle consequences of parsings
     case parsed: ParseSuccessful => {
       graph.updateFile(parsed.parseResults.astGraph, parsed.file)
 
       if (logToCli) graph.prettyPrint else sender() ! graph
-      context.become(active(graph, Some(System.currentTimeMillis()), lastSyncCheck, lastSyncStatus))
+      context.become(active(graph))
     }
 
     case i: ParseFailed => println("Failed to parse file "+ i.file)
@@ -34,10 +34,14 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
 
       if (logToCli) graph.prettyPrint else sender() ! graph
 
-      context.become(active(graph, Some(System.currentTimeMillis()), lastSyncCheck, lastSyncStatus))
+      context.become(active(graph))
     }
 
     case CurrentGraph => sender ! graph
+    case SetCurrentGraph(newGraph: ProjectGraph) => {
+      context.become(active(new ProjectGraphWrapper(newGraph)(initialGraph.project)))
+      sender ! Unit
+    }
     case ClearGraph => {
       val emptyGraph = ProjectGraphWrapper.empty()(initialGraph.project)
       sender ! emptyGraph
@@ -46,15 +50,6 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     case NodeForId(id) => sender ! graph.nodeForId(id)
 
     case CalculateSyncPatch => sender ! DiffSyncGraph.calculateDiff(graph.projectGraph)(graph.project)
-    case CalculateSyncStatus => {
-      if (lastParse.isDefined && lastSyncCheck.isDefined && lastParse.get < lastSyncCheck.get && lastSyncStatus.isDefined) {
-        sender ! lastSyncStatus.get
-      } else {
-        val status = SyncStatusManager.getStatus(graph.projectGraph)(graph.project)
-        sender ! status
-        context.become(active(graph, lastSyncCheck, Some(System.currentTimeMillis()), Some(status)))
-      }
-    }
 
     //Forward parsing requests to the cluster supervisor
     case created: FileCreated => actorCluster.parserSupervisorRef ! ParseFile(created.file, sender(), created.project)(created.sourceGear)

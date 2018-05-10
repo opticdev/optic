@@ -30,7 +30,6 @@ import com.opticdev.parsers.ParserBase
 object DiffSyncGraph {
 
   def calculateDiff(projectGraph: ProjectGraph)(implicit project: ProjectBase, includeNoChange: Boolean = false) : SyncPatch = {
-
     implicit val actorCluster = project.actorCluster
     implicit val sourceGear = project.projectSourcegear
 
@@ -69,7 +68,6 @@ object DiffSyncGraph {
         case _ => Vector()   ///should never be hit
       }
     }
-
     SyncPatch(startingNodes.flatMap(i=> compareDiffAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange), resultsFromSyncGraph.warnings)
   }
 

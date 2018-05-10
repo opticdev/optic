@@ -29,9 +29,10 @@ package object agents {
     //Sends
     trait UpdateAgentEvent extends OpticEvent
 
-    case class ContextFound(filePath: String, range: Range, results: JsValue, isError: Boolean = false) extends OpticEvent with UpdateAgentEvent {
+    case class ContextFound(filePath: String, range: Range, projectName: String, results: JsValue, isError: Boolean = false) extends OpticEvent with UpdateAgentEvent {
       def asJson = JsObject(Seq(
         "event"-> JsString("context-found"),
+        "projectName"-> JsString(projectName),
         "filePath" -> JsString(filePath),
         "range" -> range.toJson,
         (if (isError) "errors" else "results") -> results)
@@ -82,10 +83,9 @@ package object agents {
     ))
   }
 
-  case class StagedSyncResults(projectName: String, syncPatch: SyncPatch) extends OpticEvent with UpdateAgentEvent {
+  case class StagedSyncResults(syncPatch: SyncPatch) extends OpticEvent with UpdateAgentEvent {
     override def asJson: JsValue = JsObject(Seq(
-      "event"-> JsString("staged-sync-results"),
-      "projectName"-> JsString(projectName),
+      "event"-> JsString("sync-staged"),
       "patch" -> syncPatch.asJson
     ))
   }

@@ -4,8 +4,8 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import better.files.File
 import com.opticdev.core.sourcegear.actors.ParseSupervisorActor
 import com.opticdev.core.actorSystem
-import com.opticdev.core.sourcegear.graph.FileNode
-import com.opticdev.core.sourcegear.project.{ProjectBase, Project}
+import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraph}
+import com.opticdev.core.sourcegear.project.{Project, ProjectBase}
 import com.opticdev.parsers._
 
 package object actors {
@@ -34,6 +34,7 @@ package object actors {
   case class FileCreated(file: File, project: ProjectBase)(implicit val sourceGear: SourceGear)
   case class FileDeleted(file: File, project: ProjectBase)(implicit val sourceGear: SourceGear)
   case object CurrentGraph
+  case class SetCurrentGraph(projectGraph: ProjectGraph)
   case object ClearGraph
   case object CalculateSyncPatch
   case object CalculateSyncStatus

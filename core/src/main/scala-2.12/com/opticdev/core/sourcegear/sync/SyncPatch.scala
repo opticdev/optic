@@ -43,6 +43,7 @@ case class SyncPatch(changes: Vector[SyncDiff], warnings: Vector[SyncWarning])(i
   }
 
   def asJson : JsValue = JsObject(Seq(
+    "projectName" -> JsString(project.name),
     "warnings" -> JsArray(warnings.map(_.asJson)),
     "errors" -> JsArray(errors.map(_.asJson)),
     "changes" -> JsArray(filePatches.map(fp=> fp.asJson(project.trimAbsoluteFilePath(fp.file.pathAsString)))),

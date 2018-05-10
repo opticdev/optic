@@ -115,14 +115,14 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     projectStatusInstance.monitoringStatus = NotWatching
   }
 
-  /* Sync Monitoring */
-  protected val syncMonitor = new ScheduledTask(10 seconds, ()=> {
-    implicit val timeout = Timeout(2 minutes)
-    val future = projectActor ? CalculateSyncStatus
-    val syncStatus = Await.result(future, timeout.duration).asInstanceOf[SyncStatus]
-    println("CHECKING SYNC STATUS "+ syncStatus)
-    projectStatusInstance.syncStatus = syncStatus
-  }, 8 seconds).start
+//  /* Sync Monitoring */ scoped out of use in 1.0. Syncs will be triggered manually
+//  protected val syncMonitor = new ScheduledTask(10 seconds, ()=> {
+//    implicit val timeout = Timeout(2 minutes)
+//    val future = projectActor ? CalculateSyncStatus
+//    val syncStatus = Await.result(future, timeout.duration).asInstanceOf[SyncStatus]
+//    println("CHECKING SYNC STATUS "+ syncStatus)
+//    projectStatusInstance.syncStatus = syncStatus
+//  }, 8 seconds).start
 
   def projectGraph: ProjectGraph = {
     implicit val timeout = Timeout(15 seconds)
@@ -155,7 +155,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   def syncPatch: Future[SyncPatch] = {
     implicit val timeout: akka.util.Timeout = Timeout(1 minute)
-    (projectActor ? CalculateSyncPatch).collect { case p: SyncPatch => p }
+    (projectActor ? CalculateSyncPatch).mapTo[SyncPatch]
   }
 
 

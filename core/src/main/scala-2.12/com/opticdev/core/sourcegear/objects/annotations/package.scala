@@ -28,7 +28,7 @@ package object annotations {
   }
   case class SourceAnnotation(sourceName: String, transformationRef: TransformationRef, askObject: Option[JsObject]) extends ObjectAnnotation {
     def asString = s"source: $sourceName -> ${transformationRef.full}"
-    def asJson: JsValue = JsString(s"$sourceName -> ${transformationRef.full}")
+    def asJson: JsValue = JsString(s"$sourceName")
   }
   case class TagAnnotation(tag: String, schemaRef: SchemaRef) extends ObjectAnnotation {
     def asString = s"tag: $tag"

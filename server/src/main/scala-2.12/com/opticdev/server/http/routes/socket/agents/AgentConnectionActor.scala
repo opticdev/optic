@@ -10,7 +10,9 @@ import com.opticdev.server.http.routes.socket.editors.EditorConnection
 import com.opticdev.server.http.routes.socket.editors.Protocol.FilesUpdated
 import com.opticdev.server.state.ProjectsManager
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) extends Actor {
 
@@ -51,6 +53,7 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
 
       future.onComplete(i=> {
         if (i.isFailure) {
+          i.failed.foreach(_.printStackTrace())
           println(i.failed.get)
         } else {
           println(i.get)
@@ -78,9 +81,11 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     }
 
     case StageSync(projectName) => {
+
       projectsManager.lookupProject(projectName).map(project=> {
-        project.syncPatch.foreach {
-          case patch: SyncPatch => AgentConnection.broadcastUpdate(StagedSyncResults(projectName, patch))
+        val future = project.syncPatch
+        future.foreach {
+          case patch: SyncPatch => AgentConnection.broadcastUpdate(StagedSyncResults(patch))
         }
       })
     }

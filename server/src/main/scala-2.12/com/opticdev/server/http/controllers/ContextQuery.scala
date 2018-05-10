@@ -22,7 +22,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
 
   implicit val nodeKeyStore = projectsManager.nodeKeyStore
 
-  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result])
+  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result], projectName: String)
 
   def execute : Future[ContextQueryResults] = {
 
@@ -60,7 +60,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
     def addTransformationsAndFinalize(modelResults: Vector[LinkedModelNode[CommonAstNode]]): Future[ContextQueryResults] = Future {
       val modelContext = ModelContext(file, range, modelResults.map(_.flatten))
       val arrow = projectsManager.lookupArrow(projectOption.get).get
-      ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext))
+      ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext), projectOption.get.name)
     }
 
     if (contentsOption.isDefined && projectOption.isSuccess) {

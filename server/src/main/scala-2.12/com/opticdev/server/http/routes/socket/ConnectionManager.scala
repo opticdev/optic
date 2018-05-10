@@ -39,7 +39,7 @@ trait ConnectionManager[A <: Connection] {
       .via(connection.websocketFlow)
       .map {
         case msg: OpticEvent => {
-          println("SENT "+ msg)
+          println("SENT "+ msg.asJson)
           TextMessage.Strict(msg.asString)
         }
       }.via(reportErrorsFlow())
