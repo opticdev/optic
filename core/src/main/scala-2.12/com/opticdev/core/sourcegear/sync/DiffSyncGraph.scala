@@ -138,7 +138,8 @@ object DiffSyncGraph {
   }
 
   def expectedValuesForStagedNode(stagedNode: StagedNode, context: FlatContextBase)(implicit sourceGear: SourceGear): (JsObject, String) = {
-    val generatedNode = Render.fromStagedNode(stagedNode)(sourceGear, context).get
+    val variables = stagedNode.options.flatMap(_.variables).getOrElse(Map.empty)
+    val generatedNode = Render.fromStagedNode(stagedNode, variables)(sourceGear, context).get
     val value = generatedNode._3.renderer.parseAndGetModel(generatedNode._2)(sourceGear, context).get
     val raw = generatedNode._2
     (value, raw)
@@ -154,10 +155,13 @@ object DiffSyncGraph {
 
     if (targetNodeOption.isDefined) {
       val tag = targetNodeOption.get
+      val variables = masterStagedNode.variablesForTag(tag.tag)
       val taggedModelNode = astGraph.modelNodes.find(_.tag.contains(tag)).get.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph)
-      taggedModelNode.update(newValue)
+      val variableChanges = taggedModelNode.parseGear.variableManager.changesFromMapping(variables)
+      taggedModelNode.update(newValue, Some(variableChanges))
     } else {
-      modelNode.resolveInGraph[CommonAstNode](astGraph).update(newValue)
+      val variableChanges = lens.parser.variableManager.changesFromMapping(masterStagedNode.options.flatMap(_.variables).getOrElse(Map.empty))
+      modelNode.resolveInGraph[CommonAstNode](astGraph).update(newValue, Some(variableChanges))
     }
 
   }

@@ -1,6 +1,6 @@
 package com.opticdev.sdk.descriptions.transformation
 
-import com.opticdev.sdk.RenderOptions
+import com.opticdev.sdk.{RenderOptions, VariableMapping}
 import com.opticdev.sdk.descriptions.SchemaRef
 import play.api.libs.json.JsObject
 
@@ -26,6 +26,16 @@ case class StagedNode(schema: SchemaRef,
       val tags = opt.containers.getOrElse(Map.empty).values.flatten.flatMap(_.tags).toVector
       if (thisEntryOption.isDefined) (tags :+ thisEntryOption.get).toVector else tags.toVector
     }).getOrElse(Vector.empty)
+  }
+
+  def variablesForTag(tag: String) : VariableMapping = {
+    if (!tagsMap.contains(tag)) {
+      Map.empty
+    } else {
+      val childContainers = options.flatMap(_.containers).getOrElse(Map.empty)
+      val childNodes = childContainers.flatMap(_._2).find(_.tagsMap.contains(tag))
+      childNodes.map(_.variablesForTag(tag)).getOrElse(Map.empty) ++ this.options.flatMap(_.variables).getOrElse(Map.empty)
+    }
   }
 
   def hasTags = tags.nonEmpty

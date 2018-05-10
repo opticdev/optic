@@ -16,7 +16,7 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 class TransformationSearchSpec extends TestBase {
   implicit val nodeKeyStore = new NodeKeyStore
 
-  implicit lazy val project = new StaticSGProject("test", File("test-examples/resources/tmp/test_project"), null)(false, new ActorCluster(ActorSystem("test")))
+  implicit lazy val project = new StaticSGProject("test", File("test-examples/resources/tmp/test_project"), null)(new ActorCluster(ActorSystem("test")))
 
   it("finds transformations when valid context is present") {
     import com.opticdev.arrow.ExampleSourcegears.sgWithTransformations._
