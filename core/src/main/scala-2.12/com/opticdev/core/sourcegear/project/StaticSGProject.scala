@@ -14,7 +14,7 @@ import akka.pattern.ask
 
 //@todo consider moving this class to a test suite. Has no use in prod
 
-class StaticSGProject(name: String, baseDirectory: File, sourceGear: SourceGear)(implicit logToCli: Boolean = false, actorCluster: ActorCluster) extends OpticProject(name, baseDirectory) {
+class StaticSGProject(name: String, baseDirectory: File, sourceGear: SourceGear)(implicit actorCluster: ActorCluster) extends OpticProject(name, baseDirectory) {
 
   override def projectFileChanged(newPf: ProjectFile): Unit = {}
   override def projectSourcegear: SourceGear = sourceGear

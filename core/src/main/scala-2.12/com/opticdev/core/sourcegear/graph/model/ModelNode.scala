@@ -67,6 +67,8 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
     case m: ModelNode => m.resolve[CommonAstNode]()
   }
 
+  def flatten : ModelNode
+
   def includedInSync: Boolean = sourceAnnotation.isDefined || tag.isDefined || objectRef.isDefined
 
 }
@@ -141,5 +143,7 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, obj
       }
     }.toMap
   }
+
+  def flatten : ModelNode = this
 
 }

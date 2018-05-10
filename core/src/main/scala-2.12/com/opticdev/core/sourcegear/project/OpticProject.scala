@@ -16,13 +16,13 @@ import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.project.monitoring.{FileStateMonitor, ShouldWatch}
 import com.opticdev.core.sourcegear.project.status.ProjectStatus
 import com.opticdev.core.sourcegear.snapshot.Snapshot
-import com.opticdev.core.sourcegear.sync.SyncPatch
+import com.opticdev.core.sourcegear.sync.{DiffSyncGraph, SyncPatch}
 import com.opticdev.core.utils.ScheduledTask
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import net.jcazevedo.moultingyaml.YamlString
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
@@ -154,11 +154,14 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
 
-  def snapshot: Future[Snapshot] = Snapshot.forProject(this)
+  def snapshot: Future[Snapshot] = {
+    implicit val timeout: akka.util.Timeout = Timeout(1 minute)
+    (projectActor ? GetSnapshot(projectSourcegear, this)).mapTo[Future[Snapshot]].flatten
+  }
 
   def syncPatch: Future[SyncPatch] = {
     implicit val timeout: akka.util.Timeout = Timeout(1 minute)
-    (projectActor ? CalculateSyncPatch).mapTo[SyncPatch]
+    snapshot.map(snapshot=> DiffSyncGraph.calculateDiff(snapshot)(this))
   }
 
 

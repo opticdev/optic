@@ -13,12 +13,13 @@ class SnapshotSpec extends AkkaTestFixture("SnapshotSpec") with SyncFixture with
   it("can create a snapshot from a project") {
     val f = fixture("test-examples/resources/example_source/sync/Sync.js")
     implicit val project = f.project
-    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
 
     val snapshot = project.snapshot
 
     val result = Await.result(snapshot, 20 seconds)
 
+    assert(result.projectGraph.nonEmpty)
+    assert(result.sourceGear.lensSet.listLenses.nonEmpty)
     assert(result.linkedModelNodes.size == 7)
     assert(result.contextForNode.size == 7)
     assert(result.files.size == 7)

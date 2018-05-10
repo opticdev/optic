@@ -1,7 +1,8 @@
 package com.opticdev.core.sourcegear.snapshot
 
+import akka.actor.ActorRef
 import akka.dispatch.Futures
-import com.opticdev.core.sourcegear.SGContext
+import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.core.sourcegear.actors.GetContext
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraph}
@@ -18,6 +19,7 @@ import scala.concurrent.duration._
 
 //A snapshot of a project's state. contains all the information required to calculate a sync patch.
 case class Snapshot(projectGraph: ProjectGraph,
+                    sourceGear: SourceGear,
                     linkedModelNodes: Map[ModelNode, LinkedModelNode[CommonAstNode]],
                     expandedValues: Map[ModelNode, JsObject],
                     files: Map[ModelNode, FileNode],
@@ -26,16 +28,16 @@ case class Snapshot(projectGraph: ProjectGraph,
 object Snapshot {
   implicit private val timeout: akka.util.Timeout = Timeout(1 minute)
 
-  def forProject(implicit project: ProjectBase): Future[Snapshot] = {
-    implicit val sourceGear = project.projectSourcegear
-    val projectGraph = project.projectGraph
+  def forProject(implicit project: ProjectBase): Future[Snapshot] =
+    forSourceGearAndProjectGraph(project.projectSourcegear, project.projectGraph, project.actorCluster.parserSupervisorRef, project)
+
+  /* use this if you're within an actor so you don't block it */
+  def forSourceGearAndProjectGraph(implicit sourceGear: SourceGear, projectGraph: ProjectGraph, parserSupervisorRef: ActorRef, projectBase: ProjectBase): Future[Snapshot] = {
 
     val modelNodes = projectGraph.nodes.collect {
       case a if a.value.isModel &&
         a.value.asInstanceOf[BaseModelNode].includedInSync => a.value.asInstanceOf[ModelNode]
     }
-
-    val parserSupervisorRef = project.actorCluster.parserSupervisorRef
 
     val files: Map[ModelNode, FileNode] = modelNodes.map{
       case mn => (mn, mn.fileNode(projectGraph).get)
@@ -62,7 +64,7 @@ object Snapshot {
         }
       }.toMap
 
-      Snapshot(projectGraph, linkedNodes, expandedValues, files, contextForNode)
+      Snapshot(projectGraph, sourceGear, linkedNodes, expandedValues, files, contextForNode)
     })
 
   }

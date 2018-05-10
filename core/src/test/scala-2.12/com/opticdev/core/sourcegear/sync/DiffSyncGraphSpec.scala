@@ -9,13 +9,14 @@ import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.StaticSGProject
+import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.opm
 import com.opticdev.opm.TestPackageProviders
 import com.opticdev.sdk.descriptions.SchemaRef
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.concurrent.Await
-
+import scala.concurrent.duration._
 class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFixture with GearUtils with TestPackageProviders {
 
   def checkReplace(diff: SyncDiff, before: String, after: String) = {
@@ -29,8 +30,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val f = fixture("test-examples/resources/example_source/sync/Sync.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 2)
     checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
@@ -42,8 +42,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val f = fixture("test-examples/resources/example_source/sync/NoSyncNeeded.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)(project, true)
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)(project, true)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 1)
     assert(diff.changes(0).isInstanceOf[NoChange])
@@ -53,8 +52,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val f = fixture("test-examples/resources/example_source/sync/TreeSync.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 3)
     checkReplace(diff.changes(0), """{"value":"b"}""", """{"value":"a"}""")
@@ -66,8 +64,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val f = fixture("test-examples/resources/example_source/sync/BranchedTreeSync.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 4)
     checkReplace(diff.changes(0), """{"value":"0"}""", """{"value":"a"}""")
@@ -93,7 +90,9 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     project.stageProjectGraph(pgw.projectGraph)
 
-    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+    val snapshot = Await.result(Snapshot.forSourceGearAndProjectGraph(syncTestSourceGear, project.projectGraphWrapper.projectGraph, project.actorCluster.parserSupervisorRef, project), 30 seconds)
+
+    val diff = DiffSyncGraph.calculateDiff(snapshot)
     assert(diff.changes.size == 2)
     checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
     checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
@@ -109,7 +108,9 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     project.stageProjectGraph(pgw.projectGraph)
 
-    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+    val snapshot = Await.result(Snapshot.forSourceGearAndProjectGraph(sourceGear, pgw.projectGraph, project.actorCluster.parserSupervisorRef, project), 30 seconds)
+
+    val diff = DiffSyncGraph.calculateDiff(snapshot)
 
     assert(diff.noErrors)
     assert(diff.filePatches.size == 1)
@@ -144,8 +145,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       val f = fixture("test-examples/resources/example_source/sync/InvalidSync.js")
       implicit val project = f.project
 
-      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+      val diff = DiffSyncGraph.calculateDiff(f.snapshot)
       assert(diff.containsErrors)
       checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
       assert(diff.changes(1).isInstanceOf[ErrorEvaluating])
@@ -154,8 +154,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     it("will handle errors for a tree gracefully") {
       val f = fixture("test-examples/resources/example_source/sync/InvalidTreeSync.js")
       implicit val project = f.project
-      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+
+      val diff = DiffSyncGraph.calculateDiff(f.snapshot)
       assert(diff.containsErrors)
       checkReplace(diff.changes(0), """{"value":"b"}""", """{"value":"a"}""")
       assert(diff.changes(1).isInstanceOf[ErrorEvaluating])  //gets skipped, then sync continues at the next leaf
@@ -171,8 +171,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       val f = fixture("test-examples/resources/example_source/sync/BranchedTreeSync.js")
       implicit val project = f.project
 
-      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+      val diff = DiffSyncGraph.calculateDiff(f.snapshot)
 
       val allTriggers = diff.changes.map(_.asInstanceOf[Replace].trigger.get).distinct
       assert(allTriggers.size == 1)
@@ -184,8 +183,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       val f = fixture("test-examples/resources/example_source/sync/Sync.js")
       implicit val project = f.project
 
-      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+      val diff = DiffSyncGraph.calculateDiff(f.snapshot)
 
       val allTriggers = diff.changes.map(_.asInstanceOf[Replace].trigger.get).distinct
       assert(allTriggers.size == 2)
@@ -197,8 +195,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     it("partiality evaluated trees get multiple triggers") {
       val f = fixture("test-examples/resources/example_source/sync/InvalidTreeSync.js")
       implicit val project = f.project
-      project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-      val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+      val diff = DiffSyncGraph.calculateDiff(f.snapshot)
       val allTriggers = diff.changes.filter(_.newValue.isDefined).map(_.asInstanceOf[Replace].trigger.get).distinct
       assert(allTriggers.size == 2)
     }
@@ -206,41 +203,11 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
   }
 
   it("to Json") {
-
     val f = fixture("test-examples/resources/example_source/sync/TreeSync.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
-    assert(diff.asJson == Json.parse("""{
-                                |	"warnings": [],
-                                |	"errors": [],
-                                |	"changes": [{
-                                |		"file": "/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/example_source/sync/TreeSync.js",
-                                |		"originalFileContents": "source('a') //name: a\nsource('b') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('c') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('d') //name: d, source: c -> optic:synctest/passthrough-transform",
-                                |		"newFileContents": "source('a') //name: a\nsource('a') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('a') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('a') //name: d, source: c -> optic:synctest/passthrough-transform",
-                                |		"relativePath": "/resources/example_source/sync/TreeSync.js"
-                                |	}],
-                                |	"triggers": [{
-                                |		"name": "a",
-                                |		"schemaRef": "optic:synctest@0.1.0/source-schema",
-                                |		"newValue": {
-                                |			"value": "a"
-                                |		},
-                                |		"changes": ["3 instances of optic:synctest/source-schema"]
-                                |	}]
-                                |}""".stripMargin))
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)
+    assert(diff.asJson == Json.parse("""{"projectName":"test","warnings":[],"errors":[],"changes":[{"file":"/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/example_source/sync/TreeSync.js","originalFileContents":"source('a') //name: a\nsource('b') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('c') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('d') //name: d, source: c -> optic:synctest/passthrough-transform","newFileContents":"source('a') //name: a\nsource('a') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('a') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('a') //name: d, source: c -> optic:synctest/passthrough-transform","relativePath":"/resources/example_source/sync/TreeSync.js"}],"triggers":[{"name":"a","schemaRef":"optic:synctest@0.1.0/source-schema","newValue":{"value":"a"},"changes":["3 instances of optic:synctest/source-schema"]}]}"""))
   }
 
-  it("works from within actor") {
-
-    val f = fixture("test-examples/resources/example_source/sync/TreeSync.js")
-    implicit val project = f.project
-
-    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    import scala.concurrent.duration._
-    val r = Await.result(project.syncPatch, 10 seconds)
-    println(r)
-
-  }
 }

@@ -5,7 +5,11 @@ import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.project.StaticSGProject
+import com.opticdev.core.sourcegear.snapshot.Snapshot
 import play.api.libs.json.Json
+
+import scala.concurrent.Await
+import scala.concurrent.duration._
 
 class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
 
@@ -17,8 +21,10 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     val results = syncTestSourceGear.parseFile(file).get
     val updatedGraphResults = {
       project.projectGraphWrapper.addFile(results.astGraph, file)
-      SyncGraph.getSyncGraph(project.projectGraph)
+      SyncGraph.getSyncGraph(snapshot)
     }
+
+    def snapshot = Await.result(Snapshot.forSourceGearAndProjectGraph(syncTestSourceGear, project.projectGraphWrapper.projectGraph, actorCluster.parserSupervisorRef, project), 30 seconds)
   }
 
   it("can calculate valid file patch from diff") {
@@ -26,8 +32,7 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     val f = fixture("test-examples/resources/example_source/sync/Sync.js")
     implicit val project = f.project
 
-    project.stageProjectGraph(f.updatedGraphResults.syncGraph)
-    val diff = DiffSyncGraph.calculateDiff(project.projectGraph)
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     val filePatches = diff.filePatches
 
     assert(filePatches.head.newFileContents === """source('hello') //name: Hello Model
@@ -57,7 +62,10 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     }
 
     project.stageProjectGraph(pgw.projectGraph)
-    val filePatches = DiffSyncGraph.calculateDiff(project.projectGraph).filePatches
+
+    val snapshot = Await.result(Snapshot.forSourceGearAndProjectGraph(syncTestSourceGear, project.projectGraphWrapper.projectGraph, actorCluster.parserSupervisorRef, project), 30 seconds)
+
+    val filePatches = DiffSyncGraph.calculateDiff(snapshot).filePatches
 
     assert(filePatches.map(_.file.nameWithoutExtension).toSet == Set("A", "B"))
   }

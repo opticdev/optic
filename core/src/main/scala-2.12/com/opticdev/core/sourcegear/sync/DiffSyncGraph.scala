@@ -23,17 +23,16 @@ import scala.concurrent.Future
 import scala.util.Try
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
+import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.parsers.ParserBase
-
-///only call from a project actor
 
 object DiffSyncGraph {
 
-  def calculateDiff(projectGraph: ProjectGraph)(implicit project: ProjectBase, includeNoChange: Boolean = false) : SyncPatch = {
-    implicit val actorCluster = project.actorCluster
-    implicit val sourceGear = project.projectSourcegear
+  def calculateDiff(snapshot: Snapshot)(implicit project: ProjectBase, includeNoChange: Boolean = false) : SyncPatch = {
 
-    val resultsFromSyncGraph = SyncGraph.getSyncGraph(projectGraph.asInstanceOf[ProjectGraph])
+    implicit val sourceGear = snapshot.sourceGear
+
+    val resultsFromSyncGraph = SyncGraph.getSyncGraph(snapshot)
     val projectPlusSyncGraph: Graph[BaseNode, LkDiEdge] = resultsFromSyncGraph.syncGraph.asInstanceOf[Graph[BaseNode, LkDiEdge]]
     implicit val graph: Graph[BaseNode, LkDiEdge] = projectPlusSyncGraph.filter(projectPlusSyncGraph.having(edge = (e) => e.isLabeled && e.label.isInstanceOf[DerivedFrom]))
 
@@ -44,14 +43,13 @@ object DiffSyncGraph {
         if (predecessorDiff.exists(_.newValue.isDefined)) {
           predecessorDiff.get.newValue.get
         } else {
-          implicit val sourceGearContext: SGContext = sourceNode.getContext().get
-          sourceNode.expandedValue()
+          snapshot.expandedValues(sourceNode.flatten)
         }
       }
       sourceNode.labeledDependents.toVector.flatMap {
         case (label: DerivedFrom, targetNode: BaseModelNode) => {
 
-          val diff = compareNode(label, sourceNode, sourceValue, targetNode)
+          val diff = compareNode(label, sourceNode, sourceValue, targetNode)(sourceGear, snapshot, project)
 
           val diffWithTrigger = diff match {
             //if its parent has a trigger, take it...
@@ -71,14 +69,13 @@ object DiffSyncGraph {
     SyncPatch(startingNodes.flatMap(i=> compareDiffAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange), resultsFromSyncGraph.warnings)
   }
 
-  def compareNode(label: DerivedFrom, sourceNode: BaseModelNode, sourceValue: JsObject, targetNode: BaseModelNode)(implicit sourceGear: SourceGear, actorCluster: ActorCluster, graph: Graph[BaseNode, LkDiEdge], project: ProjectBase) = {
+  def compareNode(label: DerivedFrom, sourceNode: BaseModelNode, sourceValue: JsObject, targetNode: BaseModelNode)(implicit sourceGear: SourceGear, snapshot: Snapshot, project: ProjectBase) = {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
     val extractValuesTry = for {
       transformation <- Try(sourceGear.findTransformation(label.transformationRef).getOrElse(throw new Error(s"No Transformation with id '${label.transformationRef.full}' found")))
       transformationResult <- transformation.transformFunction.transform(sourceValue, label.askAnswers)
       (currentValue, linkedModel, context) <- Try {
-        implicit val sourceGearContext: SGContext = targetNode.getContext().get
-        (targetNode.expandedValue(), targetNode.resolved(), sourceGearContext)
+        (snapshot.expandedValues(targetNode.flatten), snapshot.linkedModelNodes(targetNode.flatten), snapshot.contextForNode(targetNode.flatten))
       }
       (expectedValue, expectedRaw) <- Try {
 
@@ -88,12 +85,12 @@ object DiffSyncGraph {
           lensId = Some(targetNode.lensRef.full)
         )))
 
-        implicit val sourceGearContext: SGContext = targetNode.getContext().get
+        implicit val sourceGearContext: SGContext = snapshot.contextForNode(targetNode.flatten)
         val tagVector = sourceGearContext.astGraph.nodes.filter(_.value match {
           case mn: BaseModelNode if mn.tag.isDefined &&
             stagedNode.tags.map(_._1).contains(mn.tag.get.tag) &&
             stagedNode.tagsMap(mn.tag.get.tag).schema.matchLoose(mn.schemaId) && //reduces ambiguity. need a long term fix.
-            linkedModel.root.hasChild(mn.resolved().root)(sourceGearContext.astGraph) => true
+            linkedModel.root.hasChild(snapshot.linkedModelNodes(mn.flatten).root)(sourceGearContext.astGraph) => true
           case _ => false
         }).map(i=> (i.value.asInstanceOf[BaseModelNode].tag.get.tag, i.value.asInstanceOf[BaseModelNode]))
           .toVector
@@ -135,7 +132,7 @@ object DiffSyncGraph {
       }
     } else {
 //      println(extractValuesTry.failed.get.printStackTrace())
-      ErrorEvaluating(label, extractValuesTry.failed.get.getMessage, targetNode.resolved().toDebugLocation)
+      ErrorEvaluating(label, extractValuesTry.failed.get.getMessage, snapshot.linkedModelNodes(targetNode.flatten).toDebugLocation)
     }
 
   }
