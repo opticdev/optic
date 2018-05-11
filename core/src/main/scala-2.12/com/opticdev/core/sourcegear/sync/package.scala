@@ -52,6 +52,7 @@ package object sync {
   implicit val filePatchFormat = Json.format[FilePatch]
   case class FilePatch(file: File, originalFileContents: String, newFileContents: String) extends FilePatchTrait {
     def asJson(relativePath: String) = Json.toJson[FilePatch](this).as[JsObject] + ("relativePath" -> JsString(relativePath))
+    def causesSourceChange : Boolean = originalFileContents != newFileContents
   }
 
   sealed trait SyncDiff {

@@ -24,22 +24,20 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     //handle consequences of parsings
     case parsed: ParseSuccessful => {
       graph.updateFile(parsed.parseResults.astGraph, parsed.file)
-
-      if (logToCli) graph.prettyPrint else sender() ! graph
       context.become(active(graph))
+      sender() ! graph
     }
 
     case i: ParseFailed => {
-      graph.removeFile(i.file)
+      graph.removeFile(i.file, ignoreExceptions = true)
       context.become(active(graph))
       println("Failed to parse file "+ i.file)
+      sender() ! graph
     }
     case deleted: FileDeleted => {
       graph.removeFile(deleted.file)
-
-      if (logToCli) graph.prettyPrint else sender() ! graph
-
       context.become(active(graph))
+      sender() ! graph
     }
 
     case CurrentGraph => sender ! graph

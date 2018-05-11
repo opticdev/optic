@@ -74,11 +74,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
     projectStatusInstance.firstPassStatus = InProgress
 
-    val futures = filesToWatch.toSeq.map(i=> {
-      projectActor ? FileCreated(i, this)
-    }).map(
-      _.map(Success(_)).recover { case t => Failure(t) }
-    )
+    val futures = filesToWatch.toSeq.map(i=> projectActor ? FileCreated(i, this))
 
     Future.sequence(futures).onComplete(i=> {
       projectStatusInstance.firstPassStatus = Complete

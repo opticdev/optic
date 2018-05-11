@@ -83,4 +83,6 @@ case class Transformation(yields: String,
 
   def hasAsk : Boolean = Try((ask \ "properties").asInstanceOf[JsObject].fields.nonEmpty).getOrElse(false)
 
+  def transformationRef = TransformationRef(Some(packageId), id)
+
 }

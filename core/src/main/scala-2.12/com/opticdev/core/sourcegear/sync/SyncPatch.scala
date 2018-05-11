@@ -35,7 +35,7 @@ case class SyncPatch(changes: Vector[SyncDiff], warnings: Vector[SyncWarning])(i
 
         FilePatch(patches.head.file, patches.head.fileContents, newFileContents)
       }
-    }.toVector
+    }.toVector.filter(_.causesSourceChange)
   }
 
   def triggers: Map[Trigger, Vector[Replace]] = {
