@@ -33,9 +33,16 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
 
   override def receive: Receive = handler(new ParseCache)
 
+  //cache won't play nicely if files are in multiple projects with different sourcegears
   def handler(parseCache: ParseCache) : Receive = {
-    case request: ParserRequest =>
-      router.route(request, sender())
+    case request: ParserRequest => {
+      val fileNode = FileNode(request.file.pathAsString)
+      if (parseCache.isCurrentForFile(fileNode, request.contents)) {
+        sender() ! ParseSuccessful(parseCache.get(fileNode).get.asFileParseResults, request.file, fromCache = true)
+      } else {
+        router.route(request, sender())
+      }
+    }
     case Terminated(a) =>
       router = router.removeRoutee(a)
       val r = context.actorOf(Props[WorkerActor])
@@ -92,7 +99,7 @@ object ParseSupervisorSyncAccess {
   }
 
   def getContext(file: File)(implicit actorCluster: ActorCluster, sourceGear: SourceGear, project: ProjectBase): Option[SGContext] = {
-    val future = actorCluster.parserSupervisorRef ? GetContext(FileNode.fromFile(file))
+    val future = actorCluster.parserSupervisorRef ? GetContext(FileNode(file.pathAsString))
     Await.result(future, timeout.duration).asInstanceOf[Option[SGContext]]
   }
 

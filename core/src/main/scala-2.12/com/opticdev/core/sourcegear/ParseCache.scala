@@ -2,11 +2,23 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.core.sourcegear.graph.FileNode
+import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.parsers.{AstGraph, ParserBase}
 
 import scala.collection.mutable
 
-case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String)
+case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String) {
+  //WARNING: Negating this does not determine equality
+  def differentFrom(other: String) : Boolean = {
+    other.size != fileContents.size ||
+    other != fileContents
+  }
+
+  def asFileParseResults = {
+    import com.opticdev.core.sourcegear.graph.GraphImplicits._
+    FileParseResults(graph, graph.modelNodes.asInstanceOf[Vector[ModelNode]], parser, fileContents)
+  }
+}
 
 class ParseCache {
 
@@ -20,7 +32,6 @@ class ParseCache {
 
   def add(file: FileNode, record: CacheRecord) : ParseCache = {
 
-    //remove any records with same path and different hash
     fileStore --= fileStore.keys.filter(_.filePath == file.filePath)
     //add new file record to map
     fileStore += file -> record
@@ -40,6 +51,10 @@ class ParseCache {
   }
 
   def get(key: FileNode): Option[CacheRecord] = fileStore.get(key)
+
+  def isCurrentForFile(fileNode: FileNode, contents: String) : Boolean = {
+    get(fileNode).exists(record => !record.differentFrom(contents))
+  }
 
   def clear: ParseCache = {
     fileStore.clear()
