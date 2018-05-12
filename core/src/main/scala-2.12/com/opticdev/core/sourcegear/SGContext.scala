@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear
 
+import better.files.File
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
 import com.opticdev.core.sourcegear.actors.{ActorCluster, ParseSupervisorSyncAccess}
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
@@ -10,7 +11,8 @@ case class SGContext(fileAccumulator: FileAccumulator,
                      astGraph: AstGraph,
                      parser: ParserBase,
                      fileContents: String,
-                     sourceGear: SourceGear
+                     sourceGear: SourceGear,
+                     file: File
                     )
 
 
@@ -22,7 +24,7 @@ object SGContext {
   }
 
   def forRender(sourceGear: SourceGear, astGraph: AstGraph, parserRef: ParserRef): SGContext = {
-    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear)
+    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear, null)
   }
 
 }

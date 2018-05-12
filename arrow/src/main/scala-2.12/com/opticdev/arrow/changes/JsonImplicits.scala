@@ -4,10 +4,11 @@ import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPositi
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
 import com.opticdev.arrow.results.ModelOption
 import com.opticdev.common.PackageRef
+import com.opticdev.core.sourcegear.sync.FilePatch
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import play.api.libs.json._
-
+import com.opticdev.common.fileFormat
 import scala.util.{Failure, Success, Try}
 
 object JsonImplicits {
@@ -15,7 +16,6 @@ object JsonImplicits {
   //SDK Objects refs
   import PackageRef.packageRefJsonFormat
   import SchemaRef.schemaRefFormats
-
 
 
   implicit val schemaFormat = new Format[Schema] {
@@ -27,17 +27,6 @@ object JsonImplicits {
     }
 
     override def writes(o: Schema) = o.toJson
-  }
-
-  //File
-  implicit val fileFormat = new Format[File] {
-    override def reads(json: JsValue) = {
-      JsSuccess(Try(File(json.as[JsString].value)).get)
-    }
-
-    override def writes(o: File) = {
-      JsString(o.pathAsString)
-    }
   }
 
   implicit val modelOptionsFormat = Json.format[ModelOption]
@@ -65,6 +54,11 @@ object JsonImplicits {
 
   //Clear Search Lines
   implicit val clearSearchLinesFormat = Json.format[ClearSearchLines]
+
+  //Put Update
+  implicit val putUpdateFormat = Json.format[PutUpdate]
+  //File Contents Update
+  implicit val fileContentsUpdateFormat = Json.format[FileContentsUpdate]
 
   implicit val opticChangeFormat = Json.format[OpticChange]
 

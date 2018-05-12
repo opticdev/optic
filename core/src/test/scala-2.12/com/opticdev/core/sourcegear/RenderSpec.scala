@@ -55,7 +55,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
     it("if not set in options gets first matching") {
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty)
       val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
-      assert(result.contains(a))
+      assert(result.contains(b))
     }
 
     it("will return none if gear is not found") {
@@ -107,12 +107,34 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
   }
 
-//  it("will replace staged nodes in value with generated code") {
-//    lazy val processValue = PrivateMethod[JsObject]('processValue)
-//
-//
-//
-//
-//  }
+  it("will add tags to generated code") {
+    import ExampleSourcegearFixtures.routeQueryResponse
+    val f = routeQueryResponse
+
+    val queryValue = JsObject(Seq(
+      "fields" -> JsObject(Seq("fieldA" -> JsObject(Seq("_valueFormat" -> JsString("code"), "value" -> JsString("req.query.fieldA")))))
+    ))
+
+    val stagedNode = StagedNode(f.routeGear.schemaRef, JsObject.empty, Some(RenderOptions(
+      variables = Some(Map("request" -> "req", "response" -> "res")),
+      containers = Some(Map("callback" -> Seq(
+        StagedNode(f.queryGear.schemaRef, queryValue, Some(RenderOptions(
+          containers = Some(Map(
+            "success" -> Seq(
+              StagedNode(f.responseGear.schemaRef, JsObject.empty)
+            )
+          )),
+          tag = Some("query")
+        )))
+      )))
+    )))
+
+
+    val result = Render.fromStagedNode(stagedNode)(f.sourceGear, f.sourceGear.flatContext)
+
+    val expected = "call(\"value\", function (req, res) {\n  \n  query({ fieldA: req.query.fieldA }, function (err, item) {  //tag: query\n    if (!err) {\n        res.send(thing)\n    } else {\n    \n    }\n  })\n})"
+    assert(result.get._2 == expected)
+
+  }
 
 }

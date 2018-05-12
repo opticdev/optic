@@ -9,6 +9,9 @@ import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import JsonImplicits.opticChangeFormat
 import com.opticdev.arrow.results.ModelOption
+import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
+import com.opticdev.core.sourcegear.sync.{FilePatch, FilePatchTrait, SyncPatch}
+import com.opticdev.parsers.graph.CommonAstNode
 
 sealed trait OpticChange {
   def asJson = Json.toJson[OpticChange](this)
@@ -47,9 +50,14 @@ case class RunTransformation(transformationChanges: TransformationChanges,
   override def asJson = Json.toJson[OpticChange](this)
 }
 
+
 case class RawInsert(content: String, position: RawPosition) extends OpticChange
 
 case class ClearSearchLines(file: File, prefixPattern: String = "^\\s*\\/\\/\\/.*") extends OpticChange {
   import JsonImplicits.clearSearchLinesFormat
   val regex = prefixPattern.r
 }
+
+case class PutUpdate(id: String, newModel: JsObject) extends OpticChange
+
+case class FileContentsUpdate(file: File, originalFileContents: String, newFileContents: String) extends OpticChange with FilePatchTrait

@@ -69,14 +69,12 @@ object SDKObjectsResolvedImplicits {
 
 
   def qualifySchema(packageRef: PackageRef, schemaRef: SchemaRef)(implicit packageContext: Context) : SchemaRef = {
-    val a = if (schemaRef.packageRef.isDefined) {
+    if (schemaRef.packageRef.isDefined) {
       packageContext.getPackageContext(schemaRef.packageRef.get.packageId).get
         .getProperty(schemaRef.id).get.asInstanceOf[Schema].schemaRef
     } else {
       SchemaRef(Some(packageRef), schemaRef.id)
     }
-
-    a
   }
 
 }

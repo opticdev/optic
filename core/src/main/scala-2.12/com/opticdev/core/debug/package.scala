@@ -9,12 +9,16 @@ import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.{Lens, PackageExportable, Schema, SchemaRef}
 import play.api.libs.json.{JsObject, JsValue}
 
+import scala.util.hashing.MurmurHash3
+
 package object debug {
 
   case class DebugAstNode[S <: PackageExportable](nodeType: AstType, range: Range, sdkObject: S)(implicit val packageContext: Context) extends WithinFile {
     def isSchema = sdkObject.isInstanceOf[Schema]
     def isLens = sdkObject.isInstanceOf[Lens]
     def isTransformation = sdkObject.isInstanceOf[Transformation]
+
+    override def hash: String = Integer.toHexString(MurmurHash3.stringHash(this.toString))
   }
 
   object DebugLanguageProxy {

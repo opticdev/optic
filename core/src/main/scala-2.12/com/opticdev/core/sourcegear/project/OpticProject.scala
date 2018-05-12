@@ -15,11 +15,14 @@ import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.project.monitoring.{FileStateMonitor, ShouldWatch}
 import com.opticdev.core.sourcegear.project.status.ProjectStatus
+import com.opticdev.core.sourcegear.snapshot.Snapshot
+import com.opticdev.core.sourcegear.sync.{DiffSyncGraph, SyncPatch}
+import com.opticdev.core.utils.ScheduledTask
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import net.jcazevedo.moultingyaml.YamlString
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Future, Promise}
 import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
@@ -29,7 +32,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   /* Project Actor setup */
 
-  val projectActor: ActorRef = actorCluster.newProjectActor
+  val projectActor: ActorRef = actorCluster.newProjectActor()(project = this)
 
   /* Private & public declarations of the project status & info */
 
@@ -71,11 +74,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
     projectStatusInstance.firstPassStatus = InProgress
 
-    val futures = filesToWatch.toSeq.map(i=> {
-      projectActor ? FileCreated(i, this)
-    }).map(
-      _.map(Success(_)).recover { case t => Failure(t) }
-    )
+    val futures = filesToWatch.toSeq.map(i=> projectActor ? FileCreated(i, this))
 
     Future.sequence(futures).onComplete(i=> {
       projectStatusInstance.firstPassStatus = Complete
@@ -113,6 +112,14 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     projectStatusInstance.monitoringStatus = NotWatching
   }
 
+//  /* Sync Monitoring */ scoped out of use in 1.0. Syncs will be triggered manually
+//  protected val syncMonitor = new ScheduledTask(10 seconds, ()=> {
+//    implicit val timeout = Timeout(2 minutes)
+//    val future = projectActor ? CalculateSyncStatus
+//    val syncStatus = Await.result(future, timeout.duration).asInstanceOf[SyncStatus]
+//    println("CHECKING SYNC STATUS "+ syncStatus)
+//    projectStatusInstance.syncStatus = syncStatus
+//  }, 8 seconds).start
 
   def projectGraph: ProjectGraph = {
     implicit val timeout = Timeout(15 seconds)
@@ -142,4 +149,17 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       projectFile.interface.get.exclude.value.map(i=> File(i.value)) ++ projectSourcegear.excludedPaths.map(i=> File(i)))
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
+
+  def snapshot: Future[Snapshot] = {
+    implicit val timeout: akka.util.Timeout = Timeout(1 minute)
+    (projectActor ? GetSnapshot(projectSourcegear, this)).mapTo[Future[Snapshot]].flatten
+  }
+
+  def syncPatch: Future[SyncPatch] = {
+    implicit val timeout: akka.util.Timeout = Timeout(1 minute)
+    snapshot.map(snapshot=> DiffSyncGraph.calculateDiff(snapshot)(this))
+  }
+
+
+
 }

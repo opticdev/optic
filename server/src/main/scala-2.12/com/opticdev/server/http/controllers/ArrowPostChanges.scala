@@ -13,6 +13,8 @@ import scala.util.{Failure, Success, Try}
 
 class ArrowPostChanges(projectName: String, changeGroup: ChangeGroup)(implicit projectsManager: ProjectsManager) {
 
+  implicit val nodeKeyStore = projectsManager.nodeKeyStore
+
   def execute : Future[BatchedChanges] = Future {
     val project = projectsManager.lookupProject(projectName).toOption
     val arrow = projectsManager.lookupArrow(projectName).get

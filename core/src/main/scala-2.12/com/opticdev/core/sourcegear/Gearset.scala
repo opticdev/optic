@@ -69,7 +69,6 @@ class LensSet(initialGears: CompiledLens*) {
 
     fileAccumulator.run(astGraph, results)
 
-
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
     FileParseResults(astGraph, astGraph.modelNodes.asInstanceOf[Vector[ModelNode]], sourceGearContext.parser, sourceGearContext.fileContents)
   }

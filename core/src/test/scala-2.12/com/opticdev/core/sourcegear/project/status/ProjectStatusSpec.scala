@@ -14,6 +14,7 @@ class ProjectStatusSpec extends FunSpec {
     assert(projectStatus.monitoringStatus == NotWatching)
     assert(projectStatus.configStatus == ValidConfig)
     assert(projectStatus.firstPassStatus == NotStarted)
+    assert(projectStatus.syncStatus == UpToDate)
 
   }
 
@@ -82,6 +83,17 @@ class ProjectStatusSpec extends FunSpec {
           didRun = true
         })
         projectStatus.firstPassStatus = Complete
+        assert(didRun)
+      }
+
+      it("for sync") {
+        val projectStatus = new ProjectStatus()
+
+        var didRun = false
+        projectStatus.syncStatusChanged((a) => {
+          didRun = true
+        })
+        projectStatus.syncStatus = SyncPending
         assert(didRun)
       }
 

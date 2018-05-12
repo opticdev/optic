@@ -2,6 +2,7 @@ package com.opticdev.server.http.controllers
 
 import akka.http.scaladsl.model.StatusCodes
 import better.files.File
+import com.opticdev.arrow.changes.evaluation.BatchedChanges
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.sdk.descriptions.SchemaRef
@@ -47,9 +48,9 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
     val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))))
     val future = putUpdate.execute
 
-    val result = Await.result(future, 3 seconds)
+    val result = Await.result(future, 3 seconds).asInstanceOf[BatchedChanges]
 
-    val newContents = result.fileUpdates.head._2.text
+    val newContents = result.stagedFiles.head._2.text
     println(newContents)
     assert(newContents.contains("app.post('other/url'"))
 
@@ -58,9 +59,9 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
   it("can update model and return API request") {
     val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))))
     val future = putUpdate.execute
-    val result = Await.result(future, 3 seconds)
+    val result = Await.result(future, 3 seconds).asInstanceOf[BatchedChanges]
 
-    assert(result.fileUpdates.size == 1)
+    assert(result.stagedFiles.size == 1)
 
   }
 

@@ -20,7 +20,9 @@ import scala.util.{Failure, Success, Try}
 
 class ContextQuery(file: File, range: Range, contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
 
-  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result])
+  implicit val nodeKeyStore = projectsManager.nodeKeyStore
+
+  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result], projectName: String)
 
   def execute : Future[ContextQueryResults] = {
 
@@ -29,7 +31,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
     def query: Future[Vector[LinkedModelNode[CommonAstNode]]] = Future {
       if (projectOption.isFailure) throw new FileNotInProjectException(file)
 
-      val graph = new ProjectGraphWrapper(projectOption.get.projectGraph)
+      val graph = new ProjectGraphWrapper(projectOption.get.projectGraph)(projectOption.get)
 
       val fileGraph = graph.subgraphForFile(file)
 
@@ -58,7 +60,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
     def addTransformationsAndFinalize(modelResults: Vector[LinkedModelNode[CommonAstNode]]): Future[ContextQueryResults] = Future {
       val modelContext = ModelContext(file, range, modelResults.map(_.flatten))
       val arrow = projectsManager.lookupArrow(projectOption.get).get
-      ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext))
+      ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext), projectOption.get.name)
     }
 
     if (contentsOption.isDefined && projectOption.isSuccess) {

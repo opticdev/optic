@@ -39,6 +39,6 @@ case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMa
   }).toVector
 
 
-  lazy val objects: Map[String, JsObject] = objectValueForKey("objects")
+//  lazy val objects: Map[String, JsObject] = objectValueForKey("objects")
 
 }

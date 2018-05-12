@@ -15,6 +15,8 @@ import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+import com.opticdev.core.sourcegear.objects.annotations.{ObjectAnnotationRenderer, TagAnnotation}
+import com.opticdev.marvin.common.helpers.LineOperations
 object Render {
 
   def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = null) : Try[(NewAstNode, String, CompiledLens)] = Try {
@@ -39,10 +41,17 @@ object Render {
     val processedValue = processValue(stagedNode)(sourceGear, variableMapping)
 
     val result = gear.renderer.renderWithNewAstNode(processedValue, containerContents, variableMapping)
-    (result._1, result._2, gear)
+
+    val stringResult = if (options.tag.isDefined) {
+      ObjectAnnotationRenderer.renderToFirstLine(gear.renderer.parser.get.inlineCommentPrefix, Vector(TagAnnotation(options.tag.get, gear.schemaRef)), result._2)
+    } else {
+      result._2
+    }
+
+    (result._1.withForcedContent(Some(stringResult)), stringResult, gear)
   }
 
-  private def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[CompiledLens] = {
+  def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[CompiledLens] = {
     val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.lensId.get).get)
     if (lensRefTry.isSuccess) {
       val lensRef = lensRefTry.get

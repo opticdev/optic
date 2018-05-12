@@ -1,18 +1,22 @@
 package com.opticdev.core.Fixture.compilerUtils
 
+import com.opticdev.common.PackageRef
 import com.opticdev.core.compiler.Compiler.CompileWorker
 import com.opticdev.core.compiler.Compiler
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
-import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
+import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SGConfig, SGConstructor, SourceGear}
+import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
+import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 
 import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
+import scala.concurrent.{Await, Future}
 import scala.io.Source
 
 trait GearUtils {
@@ -75,13 +79,15 @@ trait GearUtils {
 
     val schemas: Seq[(String, Schema)] = description.schemas.map(i=> (i.schemaRef.id, i))
 
+    val t = description.transformations
+
     val g = (lenses ++ schemas).toMap
 
     new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val lensSet = outerLensSet
       override val schemas = compiled.schemas
-      override val transformations = Set()
+      override val transformations = t.toSet
       override val flatContext: FlatContext = FlatContext(None, Map(
         description.packageId -> FlatContext(Some(description.packageRef), g)
       ))
@@ -89,4 +95,14 @@ trait GearUtils {
 
   }
 
+  //for debug only
+  def fromDependenciesList(dependencies: String*): SourceGear = {
+    val packages = dependencies.map(d=> PackageRef.fromString(d).get)
+    implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
+    val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef))
+    import scala.concurrent.duration._
+    Await.result(sgFuture, 20 seconds).inflate
+  }
+
 }
+

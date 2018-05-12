@@ -5,7 +5,8 @@ import com.opticdev.sdk.descriptions.LensRef
 
 case class RenderOptions(lensId: Option[String] = None,
                          containers: Option[ContainersContent] = None,
-                         variables: Option[VariableMapping] = None) {
+                         variables: Option[VariableMapping] = None,
+                         tag: Option[String] = None) {
 
   def mergeWith(other: RenderOptions): RenderOptions = RenderOptions(
     lensId = {
@@ -38,10 +39,17 @@ case class RenderOptions(lensId: Option[String] = None,
       } else {
         other.variables
       }
+    },
+    tag = {
+      if (this.tag.isEmpty) {
+        other.tag
+      } else if (this.tag.isDefined && other.tag.isEmpty) {
+        this.tag
+      } else {
+        other.tag
+      }
     }
   )
-
-  def isEmpty = lensId.isEmpty && containers.isEmpty && variables.isEmpty
 
   def lensRef : Option[LensRef] = lensId.flatMap(i=> LensRef.fromString(i).toOption)
 

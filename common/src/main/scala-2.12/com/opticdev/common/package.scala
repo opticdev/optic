@@ -1,6 +1,7 @@
 package com.opticdev
-
+import better.files.File
 import play.api.libs.json._
+import scala.util.Try
 
 package object common {
 
@@ -23,6 +24,18 @@ package object common {
       JsSuccess(Range(start, end))
     }
   }
+
+  //File
+  implicit val fileFormat = new Format[File] {
+    override def reads(json: JsValue) = {
+      JsSuccess(Try(File(json.as[JsString].value)).get)
+    }
+
+    override def writes(o: File) = {
+      JsString(o.pathAsString)
+    }
+  }
+
 
   trait SGExportable
 

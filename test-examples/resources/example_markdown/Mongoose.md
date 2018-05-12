@@ -128,6 +128,7 @@ The basic schema for connect. v0.2.0 of Markdown SDK will support anonymous sche
 #### Generate Rest Route From Schema
 <!-- transformation-def
 yields="Create Route"
+id="createroutefromschema"
 input="schema"
 output="optic:rest/route" -->
 ```javascript

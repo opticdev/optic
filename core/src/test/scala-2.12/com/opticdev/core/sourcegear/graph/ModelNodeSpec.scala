@@ -25,8 +25,9 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
 
-  val pgW = new ProjectGraphWrapper(Graph())
+  var pgW : ProjectGraphWrapper = null
   implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear) {
+    pgW = new ProjectGraphWrapper(Graph())(this)
     override def projectGraph = pgW.projectGraph
     override def projectSourcegear: SourceGear = sourceGear
   }

@@ -4,6 +4,7 @@ import java.io.FileNotFoundException
 
 import better.files.File
 import com.opticdev.arrow.Arrow
+import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server

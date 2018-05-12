@@ -9,7 +9,7 @@ import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.{ParserBase, ParserResult}
 import com.opticdev.parsers.graph.{CommonAstNode, GraphBuilder, WithinFile}
-import com.opticdev.sdk.descriptions.{Lens, PackageExportable, Schema, SchemaRef}
+import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.markdown.MarkdownParser
 import play.api.libs.json.{JsObject, JsString}
@@ -46,7 +46,7 @@ object DebugSourceGear extends SourceGear {
     Try(contents).flatMap(i => parseStringWithKnowledgePaths(i)(project, projectKnowledgeSearchPaths))
   }
 
-  override def parseString(string: String)(implicit project: ProjectBase): Try[sourcegear.FileParseResults] =
+  override def parseString(string: String, file: File = null)(implicit project: ProjectBase): Try[sourcegear.FileParseResults] =
     parseStringWithKnowledgePaths(string)(project, ProjectKnowledgeSearchPaths())
 
   def parseStringWithKnowledgePaths(string: String)(implicit project: ProjectBase, projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths): Try[sourcegear.FileParseResults] = Try {
@@ -82,7 +82,7 @@ object DebugSourceGear extends SourceGear {
       implicit val astGraph = graphBuilder.graph
 
       def linkedModelNode[S <: PackageExportable](schemaRef: SchemaRef, node: DebugAstNode[S]): LinkedModelNode[DebugAstNode[S]] =
-        LinkedModelNode(schemaRef, JsObject.empty, node, Map(), Map(), null)(project)
+        LinkedModelNode(schemaRef, JsObject.empty, LensRef(Some(PackageRef("optic:internal")), "lens"), node, Map(), Map(), null, None, None, None)(project)
 
       val linkedModelNodes : Vector[LinkedModelNode[DebugAstNode[PackageExportable]]] = astGraph.nodes.toVector.map(_.value).collect {
         //for some reason the if is needed. likely type erasure

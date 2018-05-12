@@ -52,11 +52,15 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
         "output" -> JsString(outputSchemaRef.full)
       ))}.asScriptObject.get
 
-    val result = transformFunction.call(null, scriptObject, answersObject).asInstanceOf[ScriptObjectMirror]
-
-    ProcessResult.objectResultFromScriptObject(result)
+    val result = transformFunction.call(null, scriptObject, answersObject)
+    ProcessResult.objectResultFromScriptObject(result.asInstanceOf[ScriptObjectMirror])
   }).flatten
 
+}
+
+case class TransformationRef(packageRef: Option[PackageRef], id: String) {
+  def full: String = if (packageRef.isEmpty) id else packageRef.get.full+"/"+id
+  def internalFull = if (packageRef.isEmpty) id else packageRef.get.packageId+"/"+id
 }
 
 sealed trait TransformationBase extends PackageExportable {
@@ -64,12 +68,13 @@ sealed trait TransformationBase extends PackageExportable {
   def input: SchemaRef
   def output: SchemaRef
   def ask: JsObject
-  val transformFunction = new TransformFunction(script, ask, input, output)
+  lazy val transformFunction = new TransformFunction(script, ask, input, output)
 }
 
 //case class InlineTransformation() extends TransformationBase
 
 case class Transformation(yields: String,
+                          id: String,
                           packageId: PackageRef,
                           input: SchemaRef,
                           output: SchemaRef,
@@ -77,5 +82,7 @@ case class Transformation(yields: String,
                           script: String) extends TransformationBase {
 
   def hasAsk : Boolean = Try((ask \ "properties").asInstanceOf[JsObject].fields.nonEmpty).getOrElse(false)
+
+  def transformationRef = TransformationRef(Some(packageId), id)
 
 }

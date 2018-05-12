@@ -52,7 +52,9 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
             record.graph,
             record.parser,
             record.fileContents,
-            ctxRequest.sourceGear)
+            ctxRequest.sourceGear,
+            ctxRequest.fileNode.toFile
+          )
         )
       } else {
         router.route(ctxRequest, sender())
@@ -74,7 +76,7 @@ object ParseSupervisorActor {
 }
 
 object ParseSupervisorSyncAccess {
-  implicit val timeout: Timeout = Timeout(2 seconds)
+  implicit val timeout: Timeout = Timeout(1 minute)
 
   def setCache(newCache: ParseCache) (implicit actorCluster: ActorCluster): Unit = {
     actorCluster.parserSupervisorRef ! SetCache(newCache)

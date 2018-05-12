@@ -3,6 +3,7 @@ package com.opticdev.arrow.changes
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 import JsonImplicits.changeGroupFormat
 import com.opticdev.arrow.changes.evaluation.{BatchedChanges, Evaluation}
+import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.project.OpticProject
 
@@ -10,11 +11,11 @@ import scala.util.Try
 
 case class ChangeGroup(changes: OpticChange*) {
 
-  def evaluate(sourcegear: SourceGear, project: Option[OpticProject] = None): BatchedChanges = {
+  def evaluate(sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit nodeKeyStore: NodeKeyStore): BatchedChanges = {
     Evaluation.forChangeGroup(this, sourcegear, project)
   }
 
-  def evaluateAndWrite(sourcegear: SourceGear, project: Option[OpticProject] = None) : Try[BatchedChanges] = Try {
+  def evaluateAndWrite(sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit nodeKeyStore: NodeKeyStore) : Try[BatchedChanges] = Try {
     val evaluated = evaluate(sourcegear, project)
     if (evaluated.isSuccess) {
       evaluated.flushToDisk
