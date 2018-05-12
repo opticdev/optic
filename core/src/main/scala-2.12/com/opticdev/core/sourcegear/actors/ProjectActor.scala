@@ -23,7 +23,9 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
   def active(graph: ProjectGraphWrapper): Receive = {
     //handle consequences of parsings
     case parsed: ParseSuccessful => {
-      graph.updateFile(parsed.parseResults.astGraph, parsed.file)
+      if (!parsed.fromCache) {
+        graph.updateFile(parsed.parseResults.astGraph, parsed.file)
+      }
       context.become(active(graph))
       sender() ! graph
     }

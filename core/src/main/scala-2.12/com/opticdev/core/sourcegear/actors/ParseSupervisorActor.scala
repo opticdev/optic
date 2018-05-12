@@ -38,7 +38,7 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
     case request: ParserRequest => {
       val fileNode = FileNode(request.file.pathAsString)
       if (parseCache.isCurrentForFile(fileNode, request.contents)) {
-        sender() ! ParseSuccessful(parseCache.get(fileNode).get.asFileParseResults, request.file, fromCache = true)
+        sender() tell(ParseSuccessful(parseCache.get(fileNode).get.asFileParseResults, request.file, fromCache = true), request.requestingActor)
       } else {
         router.route(request, sender())
       }

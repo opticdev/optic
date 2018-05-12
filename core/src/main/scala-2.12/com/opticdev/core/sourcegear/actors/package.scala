@@ -21,6 +21,7 @@ package object actors {
   sealed trait ParserRequest {
     val file: File
     def contents: String
+    def requestingActor: ActorRef
   }
   case class ParseFile(file: File, requestingActor: ActorRef, project: ProjectBase)(implicit val sourceGear: SourceGear) extends ParserRequest {
     def contents = file.contentAsString
