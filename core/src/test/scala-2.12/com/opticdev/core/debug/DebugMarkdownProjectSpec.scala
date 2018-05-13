@@ -1,8 +1,10 @@
 package com.opticdev.core.debug
 
+import akka.actor.ActorSystem
 import better.files.File
 import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.core.debug.LensDebug.LensDebugInfo
+import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.opm.TestPackageProviders
 import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.sdk.markdown.OpticMarkdownInstaller
@@ -14,7 +16,10 @@ import scala.concurrent.duration._
 import scala.concurrent.Await
 
 class DebugMarkdownProjectSpec extends AkkaTestFixture("DebugMarkdownProjectSpec") with TestPackageProviders with BeforeAndAfterAll {
-  def fixture = DebugMarkdownProject()
+  def fixture = {
+    implicit val actorCluster = new ActorCluster(ActorSystem())
+    DebugMarkdownProject()
+  }
 
   override def beforeAll(): Unit = {
     OpticMarkdownInstaller.getOrInstall

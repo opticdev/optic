@@ -1,9 +1,11 @@
 package com.opticdev.core.sourcegear.sync
 
+import akka.actor.ActorSystem
 import better.files.File
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.core.sourcegear.AstDebugLocation
+import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
@@ -18,6 +20,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
   lazy val syncTestSourceGear = sourceGearFromDescription("test-examples/resources/example_packages/synctest.json")
 
   def fixture(filePath: String) = new {
+    implicit val actorCluster = new ActorCluster(ActorSystem())
     val file = File(filePath)
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), syncTestSourceGear)
     val results = {

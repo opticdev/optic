@@ -23,7 +23,7 @@ import scala.concurrent.duration.FiniteDuration
 import scala.util.Try
 import akka.stream.ActorMaterializer
 import com.opticdev.opm.storage.PackageStorage
-import com.opticdev.parsers.utils.FileCrypto
+import com.opticdev.parsers.utils.Crypto
 
 import scala.io.Source
 
@@ -66,7 +66,7 @@ class OpticRegistryProvider extends RemoteProvider {
     //download packages -- assumes all packages are valid
     val downloadFutures = found.map(i=> Future{
       val contents = Source.fromURL(i.satisfiedWith.url).mkString
-      require(FileCrypto.sha256Hash(contents) == i.satisfiedWith.hash, s"Hash for ${i.`for`.full} does not match downloaded contents")
+      require(Crypto.createSha256Hash(contents) == i.satisfiedWith.hash, s"Hash for ${i.`for`.full} does not match downloaded contents")
       OpticPackage.fromString(contents).get
     })
 

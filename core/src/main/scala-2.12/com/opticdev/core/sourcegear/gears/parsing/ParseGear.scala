@@ -146,7 +146,8 @@ case class ParseAsModel(description: NodeDescription,
                         variableManager: VariableManager = VariableManager.empty,
                         additionalParserInformation : AdditionalParserInformation,
                         packageId: String,
-                        parsingLensRef: LensRef
+                        parsingLensRef: LensRef,
+                        initialValue: JsObject = JsObject.empty
                        )(implicit ruleProvider: RuleProvider) extends ParseGear {
 
   override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = {
@@ -154,7 +155,7 @@ case class ParseAsModel(description: NodeDescription,
 
     val fields = matchResults.extracted.getOrElse(Set())
 
-    val model = FlattenModelFields.flattenFields(fields)
+    val model = FlattenModelFields.flattenFields(fields, initialValue)
     import com.opticdev.core.sourcegear.graph.model.MappingImplicits._
     val modelMapping = fields.toMapping
 

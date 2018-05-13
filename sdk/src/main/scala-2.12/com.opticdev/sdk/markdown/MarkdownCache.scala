@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets
 
 import better.files.File
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.parsers.utils.FileCrypto
+import com.opticdev.parsers.utils.Crypto
 import com.opticdev.sdk.markdown.MarkdownParser.MDParseOutput
 import play.api.libs.json.{JsObject, Json}
 
@@ -17,7 +17,7 @@ object MarkdownCache {
   def cacheMarkdown(file: File, jsObject: JsObject) : Future[File] = cacheMarkdown(file.contentAsString, jsObject)
 
   def cacheMarkdown(contents: String, jsObject: JsObject) = Future[File] {
-    val hash = FileCrypto.sha256Hash(contents).toLowerCase
+    val hash = Crypto.createSha256Hash(contents).toLowerCase
     jsObject.toString()
 
     val targetFile = DataDirectory.markdownCache / hash

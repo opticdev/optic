@@ -13,7 +13,7 @@ import scala.util.Try
 
 class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
-  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, null, null, null, Vector(), null)
+  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, null, null, null, Vector(), null, initialValue = None)
 
   describe("Finds the correct parser") {
     it("when it exists") {

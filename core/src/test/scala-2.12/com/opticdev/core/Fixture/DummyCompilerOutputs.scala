@@ -8,6 +8,7 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserRef}
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
+import play.api.libs.json.JsObject
 
 
 object DummyCompilerOutputs {
@@ -29,7 +30,8 @@ object DummyCompilerOutputs {
     VariableManager.empty,
     AdditionalParserInformation(IdentifierNodeDesc(AstType("A", "B"), Seq()), Seq()),
     "test:test",
-    LensRef(Some(PackageRef("test:test")), "place-lens")
+    LensRef(Some(PackageRef("test:test")), "place-lens"),
+    JsObject.empty
   )
 
   val render = RenderGear(

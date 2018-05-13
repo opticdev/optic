@@ -17,8 +17,8 @@ class IndexSourceGearSpec extends TestBase with TestPackageProviders {
 
   it("can map schema and gear connections") {
     val knowledgeGraph = ExampleSourcegears.exampleProjectSG.knowledgeGraph
-    assert(knowledgeGraph.nodes.size == 4)
-    assert(knowledgeGraph.size == 6)
+    assert(knowledgeGraph.nodes.size == 6)
+    assert(knowledgeGraph.size == 9)
   }
 
   val schemaModel = Schema(SchemaRef(Some(PackageRef("optic:test")), "model"), JsObject.empty)

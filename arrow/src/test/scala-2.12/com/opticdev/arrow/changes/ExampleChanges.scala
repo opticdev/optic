@@ -351,7 +351,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |	}],
         |	"_type": "com.opticdev.arrow.changes.RunTransformation",
         |	"answers": {},
-        |	"objectSelection": "a520740e",
+        |	"objectSelection": "Hello",
         |	"inputValue": {
         |		"name": "Hello",
         |		"schema": {
@@ -370,7 +370,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
-    (changeGroup, sourcegear, "let first = require('second')\n\napp.get('user/:id', function (req, res) {\n    req.query.id\n})\n\napp.post('/hello', function (req, res) {\n  req.body.first\n  req.body.last\n  req.body.isAdmin\n})\n\napp.get('post/:id', function (req, res) {\n    req.query.id\n})")
+    (changeGroup, sourcegear, "let first = require('second')\n\napp.get('user/:id', function (req, res) {\n    req.query.id\n})\n\napp.post('/hello', function (req, res) {  //source: Hello -> optic:mongoose/cr {}\n  req.body.first\n  req.body.last\n  req.body.isAdmin\n})\n\napp.get('post/:id', function (req, res) {\n    req.query.id\n})")
 
   }
 

@@ -57,7 +57,8 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       variableManager,
       AdditionalParserInformation(snippetStage.parser.identifierNodeDesc, snippetStage.parser.blockNodeTypes.nodeTypes.toSeq),
       lens.packageRef.packageId,
-      lens.lensRef
+      lens.lensRef,
+      lens.initialValue.getOrElse(JsObject.empty)
     ))
   }
 
