@@ -2,7 +2,7 @@ package com.opticdev.core.compiler
 
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.sdk.descriptions.{Container, Snippet}
-import com.opticdev.sdk.descriptions.enums.RuleEnums.SamePlus
+import com.opticdev.parsers.rules._
 
 class ContainerCompilerSpec extends TestBase {
 

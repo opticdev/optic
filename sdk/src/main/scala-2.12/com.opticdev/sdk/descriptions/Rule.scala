@@ -1,9 +1,9 @@
 package com.opticdev.sdk.descriptions
 
+import com.opticdev.parsers.rules.ChildrenRuleTypeEnum
 import com.opticdev.sdk.PropertyValue
 import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder}
 import play.api.libs.json.{JsError, JsSuccess, _}
-
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import enums.RuleEnums._

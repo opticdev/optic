@@ -1,8 +1,8 @@
 package com.opticdev.core.sourcegear.gears
 
-import com.opticdev.sdk.descriptions.enums.RuleEnums.Exact
 import com.opticdev.sdk.descriptions.{ChildrenRule, Rule}
 import com.opticdev.parsers.graph.AstType
+import com.opticdev.parsers.rules.Exact
 import com.opticdev.sdk.descriptions.Rule
 
 

@@ -15,7 +15,7 @@ import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.context.FlatContext
-import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
+import com.opticdev.parsers.rules._
 import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.StagedNode
 

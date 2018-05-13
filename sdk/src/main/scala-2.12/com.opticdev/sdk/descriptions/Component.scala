@@ -1,5 +1,6 @@
 package com.opticdev.sdk.descriptions
 
+import com.opticdev.parsers.rules.Any
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported, RuleEnums}
 import com.opticdev.sdk.descriptions.finders.Finder
@@ -77,7 +78,7 @@ case class CodeComponent(propertyPath: Seq[String],
                          finder: Finder,
                          override val componentType: BasicComponentType = NotSupported) extends Component {
 
-  override def rules: Vector[Rule] = Vector(RawRule(finder, "ANY"), ChildrenRule(finder, RuleEnums.Any))
+  override def rules: Vector[Rule] = Vector(RawRule(finder, "ANY"), ChildrenRule(finder, Any))
 
   def withComponentType(basicComponentType: BasicComponentType) =
     new CodeComponent(propertyPath, finder, basicComponentType)
