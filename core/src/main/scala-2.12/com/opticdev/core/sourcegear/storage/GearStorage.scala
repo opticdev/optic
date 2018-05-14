@@ -13,8 +13,6 @@ import com.opticdev.core.sourcegear.serialization.PickleImplicits._
 import scala.util.{Failure, Try}
 
 object GearStorage {
-  //@todo this has to come from preferences...
-  implicit val rulesProvider = new RuleProvider()
 
   def writeToStorage(gear: CompiledLens): File = {
     val file = DataDirectory.compiled / gear.id  createIfNotExists(asDirectory = false)

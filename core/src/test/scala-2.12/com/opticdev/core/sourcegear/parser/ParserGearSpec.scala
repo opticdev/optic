@@ -7,11 +7,11 @@ import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.objects.annotations.SourceAnnotation
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import com.opticdev.sdk.descriptions.enums.RuleEnums.Any
 import com.opticdev.sdk.descriptions.finders.StringFinder
-import com.opticdev.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule}
+import com.opticdev.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule, SubContainer}
 import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
+import com.opticdev.parsers.rules.Any
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.enums.Token
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
@@ -76,6 +76,67 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
         assert(result.isDefined)
 
         assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("otherValue"))))
+      }
+
+      describe("matches based on parser defined rules") {
+
+        describe("specific children") {
+
+          it("matches when specific children rules are enforced") {
+            val (parseGear, lens) = parseGearFromSnippetWithComponents(
+              """var hello = (<div attrOne="OneValue" attrTwo="Two"><span/><hr/></div>)""", Vector(
+                //this causes any token rule to be applied
+                CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
+                CodeComponent(Seq("attrOneValue"), StringFinder(Containing, "OneValue"))
+              ))
+
+            val block = """var hello = (<div attrTwo="Two" attrOne="changedIt" plusOther="Three"><span/><hr/></div>)"""
+
+            val parsedSample = sample(block)
+            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
+            assert(result.isDefined)
+            assert(result.get.modelNode.value == JsObject(Seq("definedAs" -> JsString("hello"), "attrOneValue" -> JsString("changedIt"))))
+          }
+
+          it("matches when specific children rules are enforced and a global rule for other children is set") {
+            val (parseGear, lens) = parseGearFromSnippetWithComponents(
+              s"""var hello = (
+                 |<div attrOne="OneValue" attrTwo="Two">
+                 |  //:children
+                 |  <span/>
+                 |  <hr/>
+                 |</div>)""".stripMargin, Vector(
+                //this causes any token rule to be applied
+                CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
+                CodeComponent(Seq("attrOneValue"), StringFinder(Containing, "OneValue"))
+              ), subContainers = Vector(SubContainer("children", Vector(), childrenRule = Any, Vector())))
+
+            val block =  s"""var hello = (
+                            |<div attrOne="OneValue" attrTwo="Two">
+                            |  <RANDOM />
+                            |</div>)""".stripMargin
+
+            val parsedSample = sample(block)
+            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
+            assert(result.isDefined)
+          }
+
+          it("does not match when specific children rules match but other do not") {
+            val (parseGear, lens) = parseGearFromSnippetWithComponents(
+              """var hello = (<div attrOne="OneValue" attrTwo="Two"><span/><hr/></div>)""", Vector(
+                //this causes any token rule to be applied
+                CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
+                CodeComponent(Seq("attrOneValue"), StringFinder(Containing, "OneValue"))
+              ))
+
+            val block = """var hello = (<div attrTwo="Two" attrOne="changedIt" plusOther="Three"></div>)"""
+
+            val parsedSample = sample(block)
+            val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
+            assert(result.isEmpty)
+          }
+
+        }
       }
 
     }

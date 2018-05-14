@@ -65,7 +65,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
     it("for multi-node snippets") {
       val (enterOn, children, matchType) = parseResult("function subtract(a,b) { return a-b } function add(a,b) { return a+b }")
       val blockNodeTypes = SourceParserManager.parserByLanguageName("es7").get.blockNodeTypes
-      assert(enterOn.size == 2 && enterOn == blockNodeTypes.nodeTypes)
+      assert(enterOn.size == 3 && enterOn == blockNodeTypes.nodeTypes)
       assert(children.size == 2)
       assert(matchType == MatchType.Children)
     }
@@ -96,6 +96,24 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
       assert(containerHooks == Vector(
         ContainerHook("container name", Range(20, 40)),
         ContainerHook("container2 name", Range(41, 62))
+      ))
+    }
+
+    it("will find the parent when put in a seqence of children nodes") {
+
+      val example =
+        """
+          |<div>
+          |   //:kids
+          |   <span/>
+          |</div>
+        """.stripMargin
+
+      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val containerHooks = snippetBuilder.findContainerHooks
+
+      assert(containerHooks == Vector(
+        ContainerHook("kids", Range(7, 17))
       ))
     }
 
@@ -132,6 +150,27 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
       val foundNode = hookMap.head._2
       assert(foundNode.node.nodeType.name == "BlockStatement")
       assert(foundNode.node.range == Range(18, 42))
+
+    }
+
+    it("connects container hooks to parent when in a sequence of children ast nodes") {
+
+      val example =
+        """
+          |<div>
+          |   //:kids
+          |   <span/>
+          |</div>
+        """.stripMargin
+
+      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val containerHooks = snippetBuilder.findContainerHooks
+      val (ast, root) = snippetBuilder.buildAstTree()
+      val hookMap = snippetBuilder.connectContainerHooksToAst(containerHooks, ast, root)
+
+      val foundNode = hookMap.head._2
+      assert(foundNode.node.nodeType.name == "JSXElement")
+      assert(foundNode.node.range == Range(1, 35))
 
     }
 

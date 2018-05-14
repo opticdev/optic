@@ -22,13 +22,14 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.LineOperations
+import com.opticdev.parsers.rules.{AllChildrenRule, ParserChildrenRule, Rule}
 
-sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
+sealed abstract class ParseGear() {
 
   val description : NodeDescription
   val components: Map[FlatWalkablePath, Vector[Component]]
   val containers: Map[FlatWalkablePath, SubContainer]
-  val rules: Map[FlatWalkablePath, Vector[Rule]]
+  val rules: Map[FlatWalkablePath, Vector[RuleWithFinder]]
   val listeners : Vector[Listener]
 
   val packageId: String
@@ -50,6 +51,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
 
   def matches(entryNode: CommonAstNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: ProjectBase) : Option[ParseResult[CommonAstNode]] = {
 
+    implicit val parser = sourceGearContext.parser
     val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
 
     //new for each search instance
@@ -62,7 +64,7 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
     def compareToDescription(node: CommonAstNode, childType: String, desc: NodeDescription, currentPath: FlatWalkablePath) : MatchResults = {
       val componentsAtPath = extractableComponents.getOrElse(currentPath, Vector[Component]())
       val expectedSubContainerAtPath = containers.get(currentPath)
-      val rulesAtPath      = ruleProvider.applyDefaultRulesForType(rules.getOrElse(currentPath, Vector[Rule]()), node.nodeType)
+      val rulesAtPath      = RuleProvider.applyDefaultRulesForType(rules.getOrElse(currentPath, Vector[Rule]()), node.nodeType)
 
       val isMatch = {
         val nodeTypesMatch = node.nodeType == desc.astType
@@ -108,11 +110,14 @@ sealed abstract class ParseGear()(implicit val ruleProvider: RuleProvider) {
         } else Set()
 
 
-        import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.ChildrenRuleWithEvaluation
+        import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.ParserChildrenRuleVectorWithEvaluation
 
-        val childrenRule = rulesAtPath.find(_.isChildrenRule).getOrElse(ruleProvider.globalChildrenDefaultRule).asInstanceOf[ChildrenRule]
+        val childrenRules = {
+          val ruleVector = rulesAtPath.collect{ case i: ParserChildrenRule => i}
+          if (ruleVector.isEmpty) Vector(RuleProvider.globalChildrenDefaultRule) else ruleVector
+        }
         //returns final results & extractions
-        val childrenResults = childrenRule.evaluate(node, desc, currentPath, compareWith)
+        val childrenResults = childrenRules.evaluate(node, desc, currentPath, compareWith)
 
         val foundContainer: Set[SubContainerMatch] = expectedSubContainerAtPath.map(c=> Set(SubContainerMatch(c, node))).getOrElse(Set())
 
@@ -141,14 +146,14 @@ case class ParseAsModel(description: NodeDescription,
                         schema: SchemaRef,
                         components: Map[FlatWalkablePath, Vector[Component]],
                         containers: Map[FlatWalkablePath, SubContainer],
-                        rules: Map[FlatWalkablePath, Vector[Rule]],
+                        rules: Map[FlatWalkablePath, Vector[RuleWithFinder]],
                         listeners : Vector[Listener],
                         variableManager: VariableManager = VariableManager.empty,
                         additionalParserInformation : AdditionalParserInformation,
                         packageId: String,
                         parsingLensRef: LensRef,
                         initialValue: JsObject = JsObject.empty
-                       )(implicit ruleProvider: RuleProvider) extends ParseGear {
+                       ) extends ParseGear {
 
   override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = {
     if (!matchResults.isMatch) return None
@@ -182,12 +187,12 @@ case class ParseAsModel(description: NodeDescription,
 
 case class ParseAsContainer(description: NodeDescription,
                         containers: Map[FlatWalkablePath, SubContainer],
-                        rules: Map[FlatWalkablePath, Vector[Rule]],
+                        rules: Map[FlatWalkablePath, Vector[RuleWithFinder]],
                         variableManager: VariableManager = VariableManager.empty,
                         additionalParserInformation : AdditionalParserInformation,
                         packageId: String,
                         parsingLensRef: LensRef
-                       )(implicit ruleProvider: RuleProvider) extends ParseGear {
+                       ) extends ParseGear {
 
   override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String): Option[ParseResult[CommonAstNode]] = {
     None

@@ -11,6 +11,7 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
+import com.opticdev.parsers.rules.Rule
 import com.opticdev.sdk.descriptions._
 
 import scala.util.Try
@@ -35,7 +36,7 @@ case class SnippetStageOutput(astGraph: AstGraph,
 
 
 case class FinderStageOutput(componentFinders: Map[FinderPath, Vector[Component]],
-                             ruleFinders: Map[FinderPath, Vector[Rule]],
+                             ruleFinders: Map[FinderPath, Vector[RuleWithFinder]],
                              failedFinders: Vector[FinderError]) {
   def hasErrors = failedFinders.nonEmpty
 }

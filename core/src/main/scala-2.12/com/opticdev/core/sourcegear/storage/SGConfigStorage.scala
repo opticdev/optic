@@ -14,8 +14,6 @@ import com.opticdev.opm.DependencyTree
 import scala.util.{Failure, Try}
 
 object SGConfigStorage {
-  //@todo this has to come from preferences...
-  implicit val rulesProvider = new RuleProvider()
 
   def writeToStorage(sgConfig: SGConfig, projectFileHash: String): File = {
     val file = DataDirectory.sourcegear / projectFileHash  createIfNotExists(asDirectory = false)

@@ -13,8 +13,6 @@ import play.api.libs.json.JsObject
 
 object DummyCompilerOutputs {
 
-  private implicit val ruleProvider = new RuleProvider()
-
   val parser = ParseAsModel(
     NodeDescription(AstType("test", "test"),
       Range(1,10),

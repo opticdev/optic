@@ -40,8 +40,6 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       )
     })
 
-    implicit val ruleProvider = new RuleProvider()
-
     ParserFactoryOutput(
       ParseAsModel(
       nodeDescription,

@@ -129,9 +129,6 @@ object PickleImplicits extends PicklerHelper {
     .addConcreteType[ObjectProperty]
 
 
-  //@todo this should be moved within the parsers
-  implicit val ruleProvider = new RuleProvider()
-
   implicit object ConmpiledLensPickler extends Pickler[CompiledLens] {
     override def pickle(value: CompiledLens)(implicit state: PickleState): Unit = {
       state.pickle(value.name)

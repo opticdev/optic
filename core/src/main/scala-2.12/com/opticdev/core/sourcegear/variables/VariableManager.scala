@@ -5,6 +5,7 @@ import com.opticdev.core.sourcegear.gears.parsing.NodeDescription
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.parsers.rules.Rule
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.finders.NodeFinder
 import com.opticdev.sdk.descriptions.{PropertyRule, Rule, Variable, VariableRule}
