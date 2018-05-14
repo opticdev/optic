@@ -25,7 +25,7 @@ object TransformationSearch {
           }.getOrElse(c.value)
 
           //@todo rank based on usage over time...
-          transformations.map(t=> TransformationResult(100, t, context, Some(inputValue)))
+          transformations.map(t=> TransformationResult(100, t, context, Some(inputValue), c.flatten.objectRef.map(_.name)))
         })
       case _ => Vector()
     }
@@ -36,6 +36,7 @@ object TransformationSearch {
         FuzzySearch.tokenSetPartialRatio(i.yields, query),
         DirectTransformation(i, i.resolvedOutput),
         context,
+        None,
         None
       )
     }).toVector
