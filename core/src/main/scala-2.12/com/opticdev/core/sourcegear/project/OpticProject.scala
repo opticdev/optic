@@ -87,7 +87,8 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       implicit val sourceGear = projectSourcegear
       projectStatusInstance.touch
       filesStateMonitor.markUpdated(file)
-      if (shouldWatchFile(file)) projectActor ! FileCreated(file, this)
+      if (shouldWatchFile(file)) projectActor ! FileCreated(file, this) else
+      if (inProjectKnowledgeSearchPaths(file)) rereadAll
     }
     case (EventType.ENTRY_MODIFY, file) => {
       implicit val sourceGear = projectSourcegear
@@ -96,14 +97,16 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       if (file.isSameFileAs(projectFile.file)) {
         projectFile.reload
       } else {
-        if (shouldWatchFile(file)) projectActor ! FileUpdated(file, this)
+        if (shouldWatchFile(file)) projectActor ! FileUpdated(file, this) else
+        if (inProjectKnowledgeSearchPaths(file)) rereadAll
       }
     }
     case (EventType.ENTRY_DELETE, file) => {
       implicit val sourceGear = projectSourcegear
       filesStateMonitor.markUpdated(file)
       projectStatusInstance.touch
-      if (shouldWatchFile(file)) projectActor ! FileDeleted(file, this)
+      if (shouldWatchFile(file)) projectActor ! FileDeleted(file, this) else
+      if (inProjectKnowledgeSearchPaths(file)) rereadAll
     }
   }
 
@@ -160,6 +163,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     snapshot.map(snapshot=> DiffSyncGraph.calculateDiff(snapshot)(this))
   }
 
-
+  def inProjectKnowledgeSearchPaths(file: File) =
+    file.extension(false).contains("md") && projectFile.projectKnowledgeSearchPaths.dirs.exists(searchPath=> file.isChildOf(searchPath))
 
 }
