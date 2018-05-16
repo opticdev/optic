@@ -2,7 +2,7 @@ package com.opticdev.sdk.markdown
 
 import better.files.File
 import com.opticdev.common.storage.DataDirectory
-import com.opticdev.parsers.utils.FileCrypto
+import com.opticdev.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, FunSpec}
 
 import scala.concurrent.duration._
@@ -48,7 +48,7 @@ class MarkdownCacheSpec extends FunSpec with BeforeAndAfterAll {
   }
 
   it("a sha256 hash of file is the same as a hash of its contents") {
-    assert(file.sha256.toLowerCase == FileCrypto.sha256Hash(file.contentAsString).toLowerCase)
+    assert(file.sha256.toLowerCase == Crypto.createSha256Hash(file.contentAsString).toLowerCase)
   }
 
 }

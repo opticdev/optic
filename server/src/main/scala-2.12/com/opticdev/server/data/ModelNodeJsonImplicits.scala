@@ -8,7 +8,7 @@ import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.server.state.ProjectsManager
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
-import play.api.libs.json.{JsNumber, JsObject, JsString}
+import play.api.libs.json._
 
 import scala.util.Try
 
@@ -43,9 +43,11 @@ object ModelNodeJsonImplicits {
           "start" -> JsNumber(modelNode.root.range.start),
           "end" -> JsNumber(modelNode.root.range.end)
         )),
-        //@todo make this exapanded context
-//        "value" -> modelNode.value
-        "value" -> modelNode.expandedValue()
+        "value" -> modelNode.expandedValue(),
+        "sync" -> JsObject(Seq(
+          "name" -> modelNode.objectRef.map(i=> JsString(i.name)).getOrElse(JsNull),
+          "source" -> modelNode.sourceAnnotation.map(_.asJson).getOrElse(JsNull)
+        ))
       ))
 
     }

@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.containers
 
 import com.opticdev.parsers.graph.path.FlatWalkablePath
+import com.opticdev.parsers.rules.Rule
 import com.opticdev.sdk.descriptions.finders.NodeFinder
 import com.opticdev.sdk.descriptions.{ChildrenRule, Rule, SubContainer}
 

@@ -15,7 +15,7 @@ import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.context.FlatContext
-import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
+import com.opticdev.parsers.rules._
 import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.StagedNode
 
@@ -24,7 +24,6 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
   it("can create an expression renderer") {
 
     val block = "my.hello.world"
-    implicit val ruleProvider = new RuleProvider()
 
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
@@ -46,7 +45,6 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
   it("can create a simple renderer") {
 
     val block = "var hello = require('world')"
-    implicit val ruleProvider = new RuleProvider()
 
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
@@ -159,7 +157,6 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
   it("can create a renderer that supports variables") {
 
     val block = "const variable = function thing() {}"
-    implicit val ruleProvider = new RuleProvider()
 
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 

@@ -1,9 +1,9 @@
 package com.opticdev.sdk.descriptions
 
+import com.opticdev.parsers.rules.{AllChildrenRule, ChildrenRuleTypeEnum, ParserChildrenRule, Rule}
 import com.opticdev.sdk.PropertyValue
 import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder}
 import play.api.libs.json.{JsError, JsSuccess, _}
-
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import enums.RuleEnums._
@@ -52,29 +52,26 @@ object Rule extends Description[Rule] {
   }
 }
 
-sealed trait Rule {
-  val finder : Finder
-  val isRawRule = false
-  val isPropertyRule = false
-  val isChildrenRule = false
-  val isVariableRule = false
+sealed trait RuleWithFinder extends Rule {
+  def finder: Finder
 }
 
 /* SDK Configurable Rules */
 //@todo make comparator an enum
-case class RawRule(finder: Finder, comparator: String, value: String = "") extends Rule {
+case class RawRule(finder: Finder, comparator: String, value: String = "") extends RuleWithFinder {
   override val isRawRule = true
 }
 
-case class PropertyRule(finder: Finder, key: String, comparator: String, value: PropertyValue = null) extends Rule {
+case class PropertyRule(finder: Finder, key: String, comparator: String, value: PropertyValue = null) extends RuleWithFinder {
   override val isPropertyRule = true
 }
 
-case class ChildrenRule(finder: Finder, ruleType: ChildrenRuleTypeEnum) extends Rule {
+case class ChildrenRule(finder: Finder, rule: ChildrenRuleTypeEnum) extends RuleWithFinder {
   override val isChildrenRule = true
+  def asParserChildrenRule = AllChildrenRule(rule)
 }
 
 /* Implicit Rules */
-case class VariableRule(finder: NodeFinder, variableId: String) extends Rule {
+case class VariableRule(finder: NodeFinder, variableId: String) extends RuleWithFinder {
   override val isVariableRule = true
 }

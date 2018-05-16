@@ -27,7 +27,8 @@ object Dependencies {
     "org.slf4j" % "slf4j-simple" % "1.7.25" % "test",
 
     //graph
-    "org.scala-graph" %% "graph-core" % "1.12.3"
+    "org.scala-graph" %% "graph-core" % "1.12.3",
+    "org.scala-graph" %% "graph-constrained" % "1.12.3"
   )
 
   val commonDependencies: Seq[ModuleID] = Seq(

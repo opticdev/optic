@@ -1,28 +1,34 @@
 package com.opticdev.core.sourcegear.gears
 
-import com.opticdev.sdk.descriptions.enums.RuleEnums.Exact
+import com.opticdev.parsers.ParserBase
 import com.opticdev.sdk.descriptions.{ChildrenRule, Rule}
 import com.opticdev.parsers.graph.AstType
+import com.opticdev.parsers.rules.{AllChildrenRule, Exact, ParserChildrenRule, Rule}
 import com.opticdev.sdk.descriptions.Rule
 
 
-class RuleProvider(defaultRules: Map[AstType, Vector[Rule]] = Map()) {
+object RuleProvider {
 
-  val globalChildrenDefaultRule = ChildrenRule(null, Exact)
+  val globalChildrenDefaultRule = AllChildrenRule(Exact)
 
   //@todo doing this at every node may not be performant. better way possible
-  def applyDefaultRulesForType(rules: Vector[Rule], astType: AstType) = {
-
-    var updatedRules: Vector[Rule] = rules
+  def applyDefaultRulesForType(rules: Vector[Rule], astType: AstType)(implicit parser: ParserBase) : Vector[Rule] = {
 
     //add the default rule for children only if one is not already set
     if (!rules.exists(_.isChildrenRule)) {
-      val defaultOption = defaultRules.get(astType)
-      if (defaultOption.isDefined && defaultOption.get.exists(_.isChildrenRule)) {
-        updatedRules = updatedRules ++ defaultOption.get.filter(_.isChildrenRule)
+      val defaultRulesForType = parser.defaultChildrenRules.get(astType)
+      if (defaultRulesForType.isDefined) {
+        rules ++ parser.defaultChildrenRules(astType) :+ globalChildrenDefaultRule
+      } else {
+        rules :+ globalChildrenDefaultRule
       }
+    } else {
+      rules.map {
+        case i: ChildrenRule => i.asParserChildrenRule
+        case other => other
+      } ++ parser.defaultChildrenRules.getOrElse(astType, Vector())
     }
 
-    updatedRules
   }
+
 }

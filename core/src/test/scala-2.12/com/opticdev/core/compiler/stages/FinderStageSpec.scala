@@ -18,7 +18,7 @@ class FinderStageSpec extends TestBase {
 
   implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, Vector(
     CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
-  ), Vector(), Vector())
+  ), Vector(), Vector(), initialValue = None)
   val snippetBuilder = new SnippetStage(snippet)
   val outputTry = Try(snippetBuilder.run)
 
@@ -50,7 +50,7 @@ class FinderStageSpec extends TestBase {
       CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
       CodeComponent(Seq("firstProblem"), StringFinder(Entire, "not-anywhere")),
       CodeComponent(Seq("nextProblem"), StringFinder(Entire, "nowhere"))
-    ), Vector(), Vector())
+    ), Vector(), Vector(), initialValue = None)
 
     val finderStage = new FinderStage(outputTry.get)
 

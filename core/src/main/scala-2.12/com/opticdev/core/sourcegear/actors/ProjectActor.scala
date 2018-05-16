@@ -9,6 +9,9 @@ import scala.concurrent.Await
 import akka.pattern.ask
 import akka.util.Timeout
 import com.opticdev.core.sourcegear.ParseCache
+import com.opticdev.core.sourcegear.project.status.SyncStatus
+import com.opticdev.core.sourcegear.snapshot.Snapshot
+import com.opticdev.core.sourcegear.sync.DiffSyncGraph
 
 import scala.concurrent.Future
 import concurrent.duration._
@@ -20,28 +23,37 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
   def active(graph: ProjectGraphWrapper): Receive = {
     //handle consequences of parsings
     case parsed: ParseSuccessful => {
-      graph.updateFile(parsed.parseResults.astGraph, parsed.file)
-
-      if (logToCli) graph.prettyPrint else sender() ! graph
+      if (!parsed.fromCache) {
+        graph.updateFile(parsed.parseResults.astGraph, parsed.file)
+      }
       context.become(active(graph))
+      sender() ! graph
     }
 
-    case i: ParseFailed => println("Failed to parse file "+ i.file)
+    case i: ParseFailed => {
+      graph.removeFile(i.file, ignoreExceptions = true)
+      context.become(active(graph))
+      println("Failed to parse file "+ i.file)
+      sender() ! graph
+    }
     case deleted: FileDeleted => {
       graph.removeFile(deleted.file)
-
-      if (logToCli) graph.prettyPrint else sender() ! graph
-
       context.become(active(graph))
+      sender() ! graph
     }
 
     case CurrentGraph => sender ! graph
+    case SetCurrentGraph(newGraph: ProjectGraph) => {
+      context.become(active(new ProjectGraphWrapper(newGraph)(initialGraph.project)))
+      sender ! Unit
+    }
     case ClearGraph => {
-      val emptyGraph = ProjectGraphWrapper.empty
+      val emptyGraph = ProjectGraphWrapper.empty()(initialGraph.project)
       sender ! emptyGraph
       context.become(active(emptyGraph))
     }
     case NodeForId(id) => sender ! graph.nodeForId(id)
+    case GetSnapshot(sg, project) => sender ! Snapshot.forSourceGearAndProjectGraph(sg, graph.projectGraph, project.actorCluster.parserSupervisorRef, project)
 
     //Forward parsing requests to the cluster supervisor
     case created: FileCreated => actorCluster.parserSupervisorRef ! ParseFile(created.file, sender(), created.project)(created.sourceGear)

@@ -36,7 +36,7 @@ class ValidationStageSpec extends FunSpec {
     implicit val lens: Lens = Lens(Some("Example"), "example", basicSchema.schemaRef, null, Vector(
       CodeComponent(Seq("firstName"), null),
       CodeComponent(Seq("lastName"), null)
-    ), Vector(), Vector())
+    ), Vector(), Vector(), initialValue = None)
 
     val validationStage = new ValidationStage()
 
@@ -54,7 +54,7 @@ class ValidationStageSpec extends FunSpec {
       CodeComponent(Seq("lastName"), null),
       CodeComponent(Seq("fakePROP"), null),
       CodeComponent(Seq("fakePROP2"), null)
-    ), Vector(), Vector())
+    ), Vector(), Vector(), initialValue = None)
 
     val validationStage = new ValidationStage()
 
@@ -71,7 +71,7 @@ class ValidationStageSpec extends FunSpec {
   it("finds missing fields") {
     implicit val lens: Lens = Lens(Some("Example"), "example", basicSchema.schemaRef, null, Vector(
       CodeComponent(Seq("firstName"), null)
-    ), Vector(), Vector())
+    ), Vector(), Vector(), initialValue = None)
 
     val validationStage = new ValidationStage()
 
@@ -87,7 +87,7 @@ it("finds missing fields when extra ones are present") {
   implicit val lens: Lens = Lens(Some("Example"), "example", basicSchema.schemaRef, null, Vector(
     CodeComponent(Seq("firstName"), null),
     CodeComponent(Seq("fakePROP2"), null)
-  ), Vector(), Vector())
+  ), Vector(), Vector(), initialValue = None)
 
   val validationStage = new ValidationStage()
 

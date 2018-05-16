@@ -1,6 +1,8 @@
 package com.opticdev.server.http.routes.socket.agents
 
 import akka.actor.{Actor, ActorRef, Status}
+import com.opticdev.arrow.changes.evaluation.BatchedChanges
+import com.opticdev.core.sourcegear.sync.SyncPatch
 import com.opticdev.server.http.controllers.{ArrowPostChanges, ArrowQuery, PutUpdateRequest}
 import com.opticdev.server.http.routes.socket.ErrorResponse
 import com.opticdev.server.http.routes.socket.agents.Protocol._
@@ -8,7 +10,9 @@ import com.opticdev.server.http.routes.socket.editors.EditorConnection
 import com.opticdev.server.http.routes.socket.editors.Protocol.FilesUpdated
 import com.opticdev.server.state.ProjectsManager
 
+import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) extends Actor {
 
@@ -49,6 +53,7 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
 
       future.onComplete(i=> {
         if (i.isFailure) {
+          i.failed.foreach(_.printStackTrace())
           println(i.failed.get)
         } else {
           println(i.get)
@@ -57,20 +62,37 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
 
     }
 
-
-
-    //client actions
     case update : PutUpdate => {
       //@todo handle error states
       new PutUpdateRequest(update.id, update.newValue)(projectsManager)
-        .execute.onComplete(i=> {
-        if (i.isFailure) {
-          println(i.failed.get)
-        } else {
-          EditorConnection.broadcastUpdate( i.get )
+        .execute.foreach {
+        case bc:BatchedChanges => {
+          AgentConnection.broadcastUpdate( PostChangesResults(bc.isSuccess, bc.stagedFiles.keys.toSet) )
+          EditorConnection.broadcastUpdate( FilesUpdated(bc.stagedFiles) )
         }
+      }
+//      (i=> {
+//        if (i.isFailure) {
+//          println(i.failed.get)
+//        } else {
+//          EditorConnection.broadcastUpdate( i.get )
+//        }
 
-      })
+    }
+
+    case StageSync(projectName) => {
+
+      val projectLookup = projectsManager.lookupProject(projectName)
+
+      if (projectLookup.isSuccess) {
+        val future = projectLookup.get.syncPatch
+        future.foreach {
+          case patch: SyncPatch => AgentConnection.broadcastUpdate(StagedSyncResults(patch))
+        }
+      } else {
+//        AgentConnection.broadcastUpdate(StagedSyncResults(SyncPatch.empty))
+      }
+
     }
 
     case updateAgentEvent: UpdateAgentEvent => {

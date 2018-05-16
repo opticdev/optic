@@ -10,12 +10,14 @@ class ImmutableProjectStatus(projectStatus: ProjectStatus) {
   def configStatus = projectStatus.configStatus
   def firstPassStatus = projectStatus.firstPassStatus
   def lastUpdate = projectStatus.lastUpdate
+  def syncStatus = projectStatus.syncStatus
 
 
   def sourcegearChanged(callback: (SourceGearStatus)=> Unit) = projectStatus.sourcegearChanged(callback)
   def monitoringChanged(callback: (MonitoringStatus)=> Unit) = projectStatus.monitoringChanged(callback)
   def configChanged(callback: (ConfigStatus)=> Unit) = projectStatus.configChanged(callback)
   def firstPassChanged(callback: (FirstPassStatus)=> Unit) = projectStatus.firstPassChanged(callback)
+  def syncStatusChanged(callback: (SyncStatus)=> Unit) = projectStatus.syncStatusChanged(callback)
   def statusChanged(callback: (ProjectStatusCase, ImmutableProjectStatus)=> Unit) = projectStatus.statusChanged(callback)
 
   def isValid: Boolean = projectStatus.isValid
@@ -35,7 +37,8 @@ class ImmutableProjectStatus(projectStatus: ProjectStatus) {
       "isValid"-> JsBoolean(isValid),
       "isLoading"-> JsBoolean(isLoading),
       "hasErrors"-> JsBoolean(errors.value.nonEmpty),
-      "errors" -> errors
+      "errors" -> errors,
+      "syncStatus" -> JsString(syncStatus.toString)
     ))
   }
 

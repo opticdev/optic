@@ -53,7 +53,7 @@ object PickleImplicits extends PicklerHelper {
   }
 
   implicit val childrenRuleTypeEnumPickler = {
-    import com.opticdev.sdk.descriptions.enums.RuleEnums._
+    import com.opticdev.parsers.rules._
     compositePickler[ChildrenRuleTypeEnum]
       .addConcreteType[Any.type]
       .addConcreteType[Exact.type]
@@ -128,9 +128,6 @@ object PickleImplicits extends PicklerHelper {
     .addConcreteType[ArrayProperty]
     .addConcreteType[ObjectProperty]
 
-
-  //@todo this should be moved within the parsers
-  implicit val ruleProvider = new RuleProvider()
 
   implicit object ConmpiledLensPickler extends Pickler[CompiledLens] {
     override def pickle(value: CompiledLens)(implicit state: PickleState): Unit = {

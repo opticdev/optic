@@ -1,21 +1,13 @@
 package com.opticdev.sdk.descriptions.enums
 
+import com.opticdev.parsers.rules._
 import play.api.libs.json.{JsError, _}
 
 import scala.util.Try
 
 object RuleEnums {
 
-  sealed trait ChildrenRuleTypeEnum
-
-  case object Any extends ChildrenRuleTypeEnum
-  case object Exact extends ChildrenRuleTypeEnum
-  case object SameAnyOrder extends ChildrenRuleTypeEnum
-  case object SamePlus extends ChildrenRuleTypeEnum
-  case object SameAnyOrderPlus extends ChildrenRuleTypeEnum
-
   //@todo add min/max, allowed types and other rules
-
 
   //reads
   implicit val childrenRuleReads: Reads[ChildrenRuleTypeEnum] = new Reads[ChildrenRuleTypeEnum] {

@@ -24,9 +24,7 @@ case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: Sche
   override val schema = schemaComponent.schema
   override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): ModelField = {
 
-    println(schemaComponent.schema)
     val resolvedSchema = schemaComponent.resolvedSchema(packageId)(sourceGearContext.sourceGear)
-    println(resolvedSchema)
 
     val asModelNode : ModelNode = modelNode match {
       case l: LinkedModelNode[CommonAstNode] => l.flatten

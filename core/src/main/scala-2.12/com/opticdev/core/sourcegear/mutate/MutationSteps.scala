@@ -108,7 +108,6 @@ object MutationSteps {
           case NodeMapping(node, relationship) => contents.updateRange(node.range, change.replacementString.get)
         }
       }
-
     }
   }
 

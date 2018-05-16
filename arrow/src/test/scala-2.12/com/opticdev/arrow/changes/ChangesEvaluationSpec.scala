@@ -5,6 +5,7 @@ import com.opticdev.opm.TestPackageProviders
 import play.api.libs.json.Json
 import ExampleChanges._
 import better.files.File
+import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{SGConfig, SGConstructor}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
@@ -14,6 +15,8 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class ChangesEvaluationSpec extends TestBase with TestPackageProviders with BeforeAndAfterEach {
+
+  implicit val nodeKeyStore = new NodeKeyStore
 
   override def beforeEach(): Unit = {
     resetScratch
@@ -39,28 +42,57 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
 
   }
 
-  it("Runs Transformation") {
-    val (changeGroup, sourcegear, expectedChange) = transformModelToRoute
-    val results = changeGroup.evaluateAndWrite(sourcegear)
+  describe("Transformations") {
 
-    assert(results.get.stagedFiles.head._2.text == expectedChange)
+    it("Runs Transformation") {
+      val (changeGroup, sourcegear, expectedChange) = transformModelToRoute
+      val results = changeGroup.evaluateAndWrite(sourcegear)
+
+      assert(results.get.stagedFiles.head._2.text == expectedChange)
+
+    }
+
+    it("Runs Nested Transformation") {
+      val (changeGroup, sourcegear, expectedChange) = nestedTransformModelToRoute
+      val results = changeGroup.evaluateAndWrite(sourcegear)
+
+      assert(results.get.stagedFiles.head._2.text == expectedChange)
+    }
+
+    it("Runs transformation from search") {
+      val (changeGroup, sourcegear, expectedChange) = transformationFromSearch
+
+      val results = changeGroup.evaluateAndWrite(sourcegear)
+
+      assert(results.get.stagedFiles.head._2.text == expectedChange)
+    }
 
   }
 
-  it("Runs Nested Transformation") {
-    val (changeGroup, sourcegear, expectedChange) = nestedTransformModelToRoute
-    val results = changeGroup.evaluateAndWrite(sourcegear)
+  describe("File Contents Updates") {
+    it("Updates file when valid") {
+      val newContents = "let test = 1234"
+      val changeGroup = ChangeGroup(FileContentsUpdate(File("test-examples/resources/tmp/test_project/nested/firstFile.js"), "let me = \"you\"", newContents))
+      val results = changeGroup.evaluateAndWrite(sourceGearContext.sourceGear)
+      assert(results.isSuccess)
+      assert(results.get.stagedFiles.size == 1)
+      assert(results.get.stagedFiles.head._2.text == newContents)
+    }
 
-    assert(results.get.stagedFiles.head._2.text == expectedChange)
+    it("Fails to update if current value is different") {
+      val newContents = "let test = 1234"
+      val changeGroup = ChangeGroup(FileContentsUpdate(File("test-examples/resources/tmp/test_project/nested/firstFile.js"), "let different = \"you\"", newContents))
+      val results = changeGroup.evaluateAndWrite(sourceGearContext.sourceGear)
+      assert(results.isFailure)
+    }
+
+    it("Fails to update if file does not exist") {
+      val newContents = "let test = 1234"
+      val changeGroup = ChangeGroup(FileContentsUpdate(File("test-examples/resources/tmp/test_project/nested/not-real-file.js"), "let different = \"you\"", newContents))
+      val results = changeGroup.evaluateAndWrite(sourceGearContext.sourceGear)
+      assert(results.isFailure)
+    }
+
   }
-
-  it("Runs transformation from search") {
-    val (changeGroup, sourcegear, expectedChange) = transformationFromSearch
-
-    val results = changeGroup.evaluateAndWrite(sourcegear)
-
-    assert(results.get.stagedFiles.head._2.text == expectedChange)
-  }
-
 
 }

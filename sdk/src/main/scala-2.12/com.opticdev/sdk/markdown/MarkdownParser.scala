@@ -1,7 +1,7 @@
 package com.opticdev.sdk.markdown
 
 import better.files.File
-import com.opticdev.parsers.utils.FileCrypto
+import com.opticdev.parsers.utils.Crypto
 import com.opticdev.sdk.descriptions.Schema
 import play.api.libs.json.{JsArray, JsObject, Json}
 
@@ -36,7 +36,7 @@ object MarkdownParser {
       .map(i=> {
 
         val cacheLookup = {
-          if (useCache) MarkdownCache.lookup(FileCrypto.sha256Hash(string)) else None
+          if (useCache) MarkdownCache.lookup(Crypto.createSha1(string)) else None
         }
         if (cacheLookup.isDefined) {
           cacheLookup.get

@@ -13,9 +13,9 @@ import com.opticdev.parsers.SourceParserManager
 
 trait ParserUtils {
 
-  def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[Rule] = Vector(), subContainers: Vector[SubContainer] = Vector(), variables: Vector[Variable] = Vector()) : (ParseAsModel, Lens) = {
+  def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[RuleWithFinder] = Vector(), subContainers: Vector[SubContainer] = Vector(), variables: Vector[Variable] = Vector()) : (ParseAsModel, Lens) = {
     val snippet = Snippet("es7", block)
-    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, components, variables, subContainers, PackageRef("test:example", "0.1.1"))
+    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, components, variables, subContainers, PackageRef("test:example", "0.1.1"), None)
     implicit val variableManager = VariableManager(variables, SourceParserManager.installedParsers.head.identifierNodeDesc)
 
     val snippetBuilder = new SnippetStage(snippet)
@@ -34,7 +34,7 @@ trait ParserUtils {
 
   def sample(block: String) : SnippetStageOutput = {
     val snippet = Snippet("es7", block)
-    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, Vector(), Vector(), Vector())
+    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, Vector(), Vector(), Vector(), initialValue = None)
     val snippetBuilder = new SnippetStage(snippet)
     snippetBuilder.run
   }

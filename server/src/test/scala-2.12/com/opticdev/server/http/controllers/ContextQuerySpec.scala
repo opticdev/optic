@@ -45,6 +45,19 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
     assert(result.modelNodes.isEmpty)
   }
 
+  it("returns an empty vector if parse error") {
+    resetScratch
+    val future = instanceWatchingTestProject.flatMap(pm=> {
+      implicit val projectsManager: ProjectsManager = pm
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/invalid.js"), Range(0, 3), None)
+      cq.execute
+    })
+
+    val result = Await.result(future, 20 seconds)
+
+    assert(result.modelNodes.isEmpty)
+  }
+
   it("will fail if project does not watch queried file") {
     resetScratch
     val future = instanceWatchingTestProject.flatMap(pm=> {

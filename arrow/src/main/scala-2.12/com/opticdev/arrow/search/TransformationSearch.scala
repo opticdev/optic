@@ -2,16 +2,16 @@ package com.opticdev.arrow.search
 
 import com.opticdev.arrow.context.{ArrowContextBase, ModelContext}
 import com.opticdev.arrow.graph.KnowledgeGraph
-import com.opticdev.arrow.results.{GearResult, Result, TransformationResult}
-import com.opticdev.core.sourcegear.project.OpticProject
-import com.opticdev.core.sourcegear.{CompiledLens, SGContext, SourceGear}
-import me.xdrop.fuzzywuzzy.FuzzySearch
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits._
+import com.opticdev.arrow.results.TransformationResult
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
-import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
+import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.core.sourcegear.{SGContext, SourceGear}
+import me.xdrop.fuzzywuzzy.FuzzySearch
 
 import scala.util.Try
-import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 object TransformationSearch {
 
   def search(context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph) : Vector[TransformationResult] =
@@ -25,7 +25,7 @@ object TransformationSearch {
           }.getOrElse(c.value)
 
           //@todo rank based on usage over time...
-          transformations.map(t=> TransformationResult(100, t, context, Some(inputValue)))
+          transformations.map(t=> TransformationResult(100, t, context, Some(inputValue), c.flatten.objectRef.map(_.name)))
         })
       case _ => Vector()
     }
@@ -36,6 +36,7 @@ object TransformationSearch {
         FuzzySearch.tokenSetPartialRatio(i.yields, query),
         DirectTransformation(i, i.resolvedOutput),
         context,
+        None,
         None
       )
     }).toVector

@@ -18,7 +18,7 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
       val requestingActor = parseRequest.requestingActor
       val result: Try[FileParseResults] = parseRequest.sourceGear.parseFile(parseRequest.file)
       if (result.isSuccess) {
-        actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(parseRequest.file), result.get.astGraph, result.get.parser, result.get.fileContents)
+        actorCluster.parserSupervisorRef ! AddToCache(FileNode(parseRequest.file.pathAsString), result.get.astGraph, result.get.parser, result.get.fileContents)
         sender() tell(ParseSuccessful(result.get, parseRequest.file), requestingActor)
       } else {
         sender() tell(ParseFailed(parseRequest.file), requestingActor)
@@ -30,7 +30,7 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
       val requestingActor = parseWithContentsRequest.requestingActor
       val result: Try[FileParseResults] = parseWithContentsRequest.sourceGear.parseString(parseWithContentsRequest.contents)
       if (result.isSuccess) {
-        actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(parseWithContentsRequest.file), result.get.astGraph, result.get.parser, parseWithContentsRequest.contents)
+        actorCluster.parserSupervisorRef ! AddToCache(FileNode(parseWithContentsRequest.file.pathAsString), result.get.astGraph, result.get.parser, parseWithContentsRequest.contents)
         sender() tell(ParseSuccessful(result.get, parseWithContentsRequest.file), requestingActor)
       } else {
         sender() tell(ParseFailed(parseWithContentsRequest.file), requestingActor)
@@ -43,13 +43,15 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
       val fileContents = project.filesStateMonitor.contentsForFile(file).get
       val result: Try[FileParseResults] = ctxRequest.sourceGear.parseString(fileContents)
       if (result.isSuccess) {
-        actorCluster.parserSupervisorRef ! AddToCache(FileNode.fromFile(file), result.get.astGraph, result.get.parser, result.get.fileContents)
+        actorCluster.parserSupervisorRef ! AddToCache(FileNode(file.pathAsString), result.get.astGraph, result.get.parser, result.get.fileContents)
         sender() ! Option(SGContext(
           ctxRequest.sourceGear.fileAccumulator,
           result.get.astGraph,
           result.get.parser,
           result.get.fileContents,
-          ctxRequest.sourceGear))
+          ctxRequest.sourceGear,
+          ctxRequest.fileNode.toFile
+        ))
         ctxRequest.project.projectActor ! ParseSuccessful(result.get, file)
       } else {
         ctxRequest.project.projectActor ! ParseFailed(file)

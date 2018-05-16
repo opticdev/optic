@@ -5,7 +5,7 @@ import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.core.utils.UUID
-import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.sdk.descriptions.{Lens, LensRef, SchemaRef}
 import play.api.libs.json.{Format, JsString, JsSuccess, JsValue}

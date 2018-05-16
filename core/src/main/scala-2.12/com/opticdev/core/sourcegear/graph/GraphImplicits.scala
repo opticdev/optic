@@ -11,6 +11,8 @@ import scala.collection.mutable
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
+import scala.util.Try
+
 object GraphImplicits {
 
   implicit class AstGraphInstance(graph: AstGraph) {
@@ -31,29 +33,29 @@ object GraphImplicits {
 
   implicit class CommonAstNodeInstance(node: CommonAstNode) {
 
-    def hasParent(parent: CommonAstNode)(implicit astGraph: AstGraph) : Boolean = {
+    def hasParent(parent: CommonAstNode)(implicit astGraph: AstGraph) : Boolean = Try {
       if (parent == null) return false
       val dependencies = node.dependencies(astGraph).filter(_.isAstNode()).asInstanceOf[Set[CommonAstNode]]
       dependencies.contains(parent) || dependencies.exists(i => i.hasParent(parent))
-    }
+    }.getOrElse(false)
 
-    def hasChild(child: CommonAstNode)(implicit astGraph: AstGraph) : Boolean = {
+    def hasChild(child: CommonAstNode)(implicit astGraph: AstGraph) : Boolean = Try {
       if (child == null) return false
       val dependents = node.dependents(astGraph).filter(_.isAstNode()).asInstanceOf[Set[CommonAstNode]]
       dependents.contains(child) || dependents.exists(i => i.hasChild(child))
-    }
+    }.getOrElse(false)
 
-    def siblingOf(otherNode: CommonAstNode)(implicit astGraph: AstGraph): Boolean = {
+    def siblingOf(otherNode: CommonAstNode)(implicit astGraph: AstGraph): Boolean = Try {
       if (otherNode == null) return false
       otherNode.dependencies == node.dependencies
-    }
+    }.getOrElse(false)
 
   }
 
   implicit class BaseModelNodeInstance(modelNode: BaseModelNode) {
     def astRoot()(implicit astGraph: AstGraph): CommonAstNode = modelNode match {
       case l: LinkedModelNode[CommonAstNode] => l.root
-      case _ => {
+      case m: ModelNode => {
         val dependencies = modelNode.dependencies(astGraph)
         if (dependencies.head.isAstNode()) {
           dependencies.head.asInstanceOf[CommonAstNode]

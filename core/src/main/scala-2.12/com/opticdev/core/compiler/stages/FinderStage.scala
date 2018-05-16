@@ -5,7 +5,7 @@ import com.opticdev.core.compiler.errors.{ErrorAccumulator, InvalidComponents}
 import com.opticdev.core.compiler.helpers.{FinderEvaluator, FinderPath}
 import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.sdk.descriptions.{CodeComponent, Lens}
+import com.opticdev.sdk.descriptions.{CodeComponent, Lens, RuleWithFinder}
 import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
 import com.opticdev.sdk.descriptions.finders.Finder
 
@@ -59,13 +59,14 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: Len
 
     val combinedRules = /* lens.rules ++ */ lens.components.flatMap(_.rules) ++ variableRules ++ subContainerRules
 
-    val rulePaths = combinedRules.map(r=> {
+    val rulePaths = combinedRules.collect {
+      case r: RuleWithFinder =>
       val finderPathTry = pathForFinder(r.finder)
       if (finderPathTry.isFailure) {
         errorAccumulator.add(finderPathTry.asInstanceOf[Failure[Exception]].exception)
         null
       } else (r, finderPathTry.get)
-    }).filterNot(_ == null)
+    }.filterNot(_ == null)
 
     val componentsGrouped = finderPaths.groupBy(_._2).mapValues(_.map(_._1))
     val rulesGrouped      = rulePaths.groupBy(_._2).mapValues(_.map(_._1))

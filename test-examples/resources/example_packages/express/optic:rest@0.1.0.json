@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "name": "rest",
     "author": "optic",
+    "name": "rest",
     "version": "0.1.0"
   },
+  "dependencies": [],
   "schemas": [
     {
       "id": "route",
       "definition": {
         "title": "Route",
-        "version": "1.0.0",
         "type": "object",
         "required": [
           "method",
@@ -17,7 +17,15 @@
         ],
         "properties": {
           "method": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "get",
+              "post",
+              "put",
+              "delete",
+              "head",
+              "options"
+            ]
           },
           "url": {
             "type": "string"
@@ -32,8 +40,6 @@
         "definitions": {
           "parameter": {
             "title": "Parameter",
-            "version": "1.0.0",
-            "slug": "js-example-route-parameter",
             "type": "object",
             "required": [
               "in",
@@ -49,13 +55,16 @@
             }
           }
         }
+      },
+      "range": {
+        "start": 184,
+        "end": 1149
       }
     },
     {
       "id": "parameter",
       "definition": {
         "title": "Parameter",
-        "version": "1.0.0",
         "type": "object",
         "required": [
           "in",
@@ -69,7 +78,34 @@
             "type": "string"
           }
         }
+      },
+      "range": {
+        "start": 1165,
+        "end": 1402
+      }
+    },
+    {
+      "id": "response",
+      "definition": {
+        "title": "Response",
+        "type": "object",
+        "required": [
+          "in",
+          "name"
+        ],
+        "properties": {
+          "code": {
+            "type": "number"
+          }
+        }
+      },
+      "range": {
+        "start": 1416,
+        "end": 1609
       }
     }
-  ]
+  ],
+  "lenses": [],
+  "containers": [],
+  "transformations": []
 }

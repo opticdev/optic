@@ -1,7 +1,8 @@
 package com.opticdev.sdk.descriptions
 
+import com.opticdev.parsers.rules.ChildrenRuleTypeEnum
 import com.opticdev.sdk.descriptions.enums.NotSupported
-import com.opticdev.sdk.descriptions.enums.RuleEnums.ChildrenRuleTypeEnum
+import com.opticdev.sdk.descriptions.enums.RuleEnums.childrenRuleReads
 import com.opticdev.sdk.descriptions.finders.Finder
 import play.api.libs.json._
 

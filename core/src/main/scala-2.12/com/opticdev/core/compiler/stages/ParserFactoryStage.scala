@@ -40,8 +40,6 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       )
     })
 
-    implicit val ruleProvider = new RuleProvider()
-
     ParserFactoryOutput(
       ParseAsModel(
       nodeDescription,
@@ -56,7 +54,9 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       listeners,
       variableManager,
       AdditionalParserInformation(snippetStage.parser.identifierNodeDesc, snippetStage.parser.blockNodeTypes.nodeTypes.toSeq),
-      lens.packageRef.packageId
+      lens.packageRef.packageId,
+      lens.lensRef,
+      lens.initialValue.getOrElse(JsObject.empty)
     ))
   }
 

@@ -41,8 +41,9 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
     }
   }
 
-  override def projectSourcegear = sourceGear
-
+  override def projectSourcegear = synchronized {
+    sourceGear
+  }
 
   private val sourcegearchangedCallbacks = scala.collection.mutable.ListBuffer[(SourceGear)=> Unit]()
   override def onSourcegearChanged(callback: (SourceGear)=> Unit) : Unit =

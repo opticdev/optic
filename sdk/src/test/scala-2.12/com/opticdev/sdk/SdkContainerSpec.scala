@@ -1,6 +1,6 @@
 package com.opticdev.sdk
 
-import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
+import com.opticdev.parsers.rules.SameAnyOrderPlus
 import com.opticdev.sdk.descriptions.{Container, ContainerBase, SubContainer}
 import org.scalatest.FunSpec
 import play.api.libs.json.Json

@@ -21,7 +21,7 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
 
   private[this] val connectionActor = actorSystem.actorOf(Props(classOf[AgentConnectionActor], slug, projectsManager))
 
-  def chatInSink(sender: String) = Sink.actorRef[AgentEvents](connectionActor, Terminated())
+  def chatInSink(sender: String) = Sink.actorRef[AgentEvents](connectionActor, Terminated)
 
   def sendUpdate(event: UpdateAgentEvent) = {
     connectionActor ! event
@@ -75,6 +75,15 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
                   UnknownEvent(i)
                 }
 
+              }
+
+              case "get-sync-patch" => {
+                val projectName = Try( (parsedTry.get \ "projectName").get.as[JsString].value)
+                if (projectName.isSuccess) {
+                  StageSync(projectName.get)
+                } else {
+                  UnknownEvent(i)
+                }
               }
 
               //does not receive anything from agent...yet

@@ -17,19 +17,4 @@ package object results {
   }
 
   case class ModelOption(id: String, value: JsObject, name: String)
-  object ModelOption {
-    def nameFromValue(schemaId: String, value: JsObject): String = {
-
-      val asStrings = value.fields.sortBy(_._1).map(i=> {
-        val stringValue = i._2 match {
-          case o: JsObject => s"{${o.fields.size} fields}"
-          case a: JsArray => s"{${a.value.size} items}"
-          case a: JsValue => a.toString()
-        }
-        s"${i._1}: ${stringValue}"
-      })
-
-      s"${schemaId}(${asStrings.mkString(", ")})"
-    }
-  }
 }

@@ -8,8 +8,8 @@ import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import com.opticdev.sdk.descriptions.enums.RuleEnums.SameAnyOrderPlus
-import com.opticdev.sdk.descriptions.enums.{RuleEnums, VariableEnums}
+import com.opticdev.parsers.rules._
+import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.finders.StringFinder
 import play.api.libs.json.JsObject
 
@@ -45,8 +45,8 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
         ),
         variables = Vector(Variable("err", VariableEnums.Self), Variable("item", VariableEnums.Self)),
         subContainers = Vector(
-          SubContainer("success", Vector(), RuleEnums.Any, Vector()),
-          SubContainer("failure", Vector(), RuleEnums.Any, Vector())
+          SubContainer("success", Vector(), Any, Vector()),
+          SubContainer("failure", Vector(), Any, Vector())
         )
       )
 

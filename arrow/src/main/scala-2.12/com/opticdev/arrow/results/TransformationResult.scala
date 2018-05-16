@@ -16,7 +16,7 @@ import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
-case class TransformationResult(score: Int, transformationChange: TransformationChanges, context : ArrowContextBase, inputValue: Option[JsObject])(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph) extends Result {
+case class TransformationResult(score: Int, transformationChange: TransformationChanges, context : ArrowContextBase, inputValue: Option[JsObject], objectSelection: Option[String])(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph) extends Result {
 
   override def changes : ChangeGroup = transformationChange match {
     case dt: DirectTransformation => {
@@ -25,14 +25,14 @@ case class TransformationResult(score: Int, transformationChange: Transformation
 
       def modelOptions = project.projectGraphWrapper.query((node)=> {
         node.value match {
-          case mn: BaseModelNode => mn.schemaId == transformationChange.transformation.resolvedInput
+          case mn: BaseModelNode => mn.schemaId == transformationChange.transformation.resolvedInput && mn.objectRef.isDefined
           case _ => false
         }
       }).asInstanceOf[Set[BaseModelNode]]
         .map(i=> {
           implicit val sourceGearContext = TransformationSearch.sourceGearContext(i)
           val expandedValue = i.expandedValue()
-          ModelOption(i.id, expandedValue, ModelOption.nameFromValue(i.schemaId.id, expandedValue))
+          ModelOption(i.id, expandedValue, i.objectRef.get.name)
         }).toSeq.sortBy(_.name)
 
       ChangeGroup(RunTransformation(
@@ -43,7 +43,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
         if (insertLocationOption.isDefined) Seq(insertLocationOption.get) else Seq(), //@todo add all location options
         None,
         None,
-        None,
+        objectSelection,
         if (inputValue.isDefined) None else Some(modelOptions)
       ))
     }

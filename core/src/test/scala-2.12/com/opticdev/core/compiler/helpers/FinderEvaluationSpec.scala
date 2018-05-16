@@ -12,7 +12,7 @@ import com.opticdev.core._
 class FinderEvaluationSpec extends TestBase {
 
   val block = "var hello = require('world'); var next = hello+1"
-  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, Snippet("es7", block), Vector(), Vector(), Vector(), PackageRef("test:test"))
+  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, Snippet("es7", block), Vector(), Vector(), Vector(), PackageRef("test:test"), None)
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run
