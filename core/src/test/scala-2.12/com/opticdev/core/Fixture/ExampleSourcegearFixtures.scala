@@ -66,7 +66,7 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
       variables = Vector(Variable("request", VariableEnums.Self), Variable("response", VariableEnums.Self)),
       subContainers = Vector(
       SubContainer("callback", Vector(), SameAnyOrderPlus, Vector(
-        SchemaComponent(Seq("properties"), responseGear.schemaRef, true, None)
+        SchemaComponent(Seq("properties"), responseGear.schemaRef, true, None, None)
       ))
     ))
 

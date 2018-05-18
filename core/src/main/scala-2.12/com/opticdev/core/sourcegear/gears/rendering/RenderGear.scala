@@ -9,7 +9,7 @@ import com.opticdev.marvin.common.ast.{AstArray, AstProperties, NewAstNode}
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{CommonAstNode, GraphImplicits, WithinFile}
-import play.api.libs.json.{JsArray, JsObject, JsValue}
+import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
@@ -86,8 +86,17 @@ case class RenderGear(block: String,
             stagedNodes.map(staged=> Render.fromStagedNode(staged, variableMapping).get._1)
           } else {
             subcontainer.schemaComponents.flatMap(i=> {
-            val schemaComponentValue = Try(propertyPathWalker.getProperty(i.propertyPath).get.as[JsArray]).getOrElse(JsArray.empty)
-              .value.toSeq
+
+              val schemaComponentValue : Seq[JsObject] = {
+              Try(propertyPathWalker.getProperty(i.propertyPath).get match {
+                case JsArray(a) => a.map(_.as[JsObject])
+                case JsObject(pairs) => {
+                  val removedSpecialFields = pairs.filterNot(_._1.charAt(0) == '_')
+                  val orderIfExists = Try(pairs("_order").as[JsArray].value.map(_.as[JsString].value)).getOrElse(Seq())
+                  removedSpecialFields.values.map(_.as[JsObject]).toSeq.sortBy(value=> orderIfExists.indexOf(pairs.find(_._2 == value).get._1))
+                }
+              }).getOrElse(Seq())
+            }
 
             Try {
               schemaComponentValue.map(child => {

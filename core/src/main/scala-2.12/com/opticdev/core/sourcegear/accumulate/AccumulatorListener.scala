@@ -4,7 +4,7 @@ import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.sdk.descriptions.{SchemaComponent, SchemaRef}
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelField}
 import com.opticdev.parsers.AstGraph
-import play.api.libs.json.{JsArray, JsObject, JsValue}
+import play.api.libs.json._
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
@@ -13,6 +13,7 @@ import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode,
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InCurrentLens
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+import com.opticdev.parsers.graph.path.PropertyPathWalker
 sealed trait Listener {
   def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext) : ModelField
   val schema: SchemaRef
@@ -43,12 +44,29 @@ case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: Sche
       //account for different map schema types
       if (schemaComponent.mapUnique) {
         import com.opticdev.core.utils.VectorDistinctBy.distinctBy
-        distinctBy[BaseModelNode, JsValue](found)((a)=> a.value)
+        distinctBy[BaseModelNode, JsValue](found)((a)=> a.expandedValue())
       } else {
         found
       }
     }
 
-    ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.value)), ModelVectorMapping(addToNodes.map(i=> i.asInstanceOf[ModelNode])))
+    if (schemaComponent.toMap.isDefined) {
+      val keyValues = addToNodes.map {
+        n => {
+          val value = n.expandedValue()
+          val keyOption = new PropertyPathWalker(value).getProperty(schemaComponent.toMap.get.split("\\."))
+            .filterNot(i => i.isInstanceOf[JsObject] || i.isInstanceOf[JsArray] || i.isInstanceOf[JsBoolean] || i == JsNull)
+            .map {
+              case JsString(s) => s
+              case JsNumber(n) => n.toString
+            }
+          keyOption.map(key => key -> value)
+        }
+      }.collect {case n if n.isDefined => n.get }
+
+      ModelField(schemaComponent.propertyPath, JsObject(keyValues), ModelVectorMapping(addToNodes.map(i=> i.asInstanceOf[ModelNode])))
+    } else {
+      ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.expandedValue())), ModelVectorMapping(addToNodes.map(i=> i.asInstanceOf[ModelNode])))
+    }
   }
 }

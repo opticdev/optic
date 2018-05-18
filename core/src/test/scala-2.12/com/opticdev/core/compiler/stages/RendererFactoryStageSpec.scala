@@ -82,7 +82,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
       CodeComponent(Seq("arg1"), StringFinder(Containing, "value"))
     ), subContainers = Vector(
       SubContainer("callback", Vector(), SameAnyOrderPlus, Vector(
-        SchemaComponent(Seq("properties"), childGear.schemaRef, true, None)
+        SchemaComponent(Seq("properties"), childGear.schemaRef, true, None, None)
       ))
     ))
 
@@ -133,7 +133,30 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
   }
 
-  it("can create a renderer for node that explicitly fills subcontainers") {
+  it("can create a renderer for node with sub-containers and object properties") {
+
+    val f = callbackFixture
+    implicit val sourceGear = f.sourceGear
+    val result = f.renderer.render(JsObject(Seq("arg1" -> JsString("TEST VARIABLE"),
+      "properties" -> JsObject(Seq(
+        "first" -> JsObject(Seq("operation" -> JsString("first"))),
+        "second" -> JsObject(Seq("operation" -> JsString("second"))),
+        "third" -> JsObject(Seq("operation" -> JsString("third"))),
+        "_order" -> JsArray(Seq(JsString("first"), JsString("second"), JsString("third")))
+      ))
+    )))(sourceGear, context = sourceGear.flatContext)
+
+    val expected = """call("TEST VARIABLE", function () {
+                     |  start(first)
+                     |  start(second)
+                     |  start(third)
+                     |})""".stripMargin
+
+    assert(result == expected)
+
+  }
+
+  it("can create a renderer for node that explicitly fills subcontainers and array properties") {
 
     val f = callbackFixture
     implicit val sourceGear = f.sourceGear

@@ -53,7 +53,7 @@ class FileAccumulatorSpec extends AkkaTestFixture("FileAccumulatorTest") with Ge
 
   it("map unique schemas finds valid + distinct instances") {
 
-    val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:flatexpress@0.1.0.json")
+    val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress@0.1.0.json")
     val result = sourceGear.parseFile(File("test-examples/resources/example_source/ExampleExpress.js"))
 
     implicit val sourceGearContext = SGContext(sourceGear.fileAccumulator, result.get.astGraph, SourceParserManager.installedParsers.head, null, sourceGear, null)
@@ -75,6 +75,43 @@ class FileAccumulatorSpec extends AkkaTestFixture("FileAccumulatorTest") with Ge
         |	"method": "get",
         |	"url": "url"
         |}""".stripMargin)
+
+    val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(Some(PackageRef("optic:flatexpress", "0.1.0")), "route")).get
+    val expandedValue = modelNode.expandedValue
+    assert(expandedValue == expected)
+
+  }
+
+  it("map schema to object results in an object with the fields as keys") {
+
+    val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpressToObject@0.1.0.json")
+    val result = sourceGear.parseFile(File("test-examples/resources/example_source/ExampleExpress.js"))
+
+    implicit val sourceGearContext = SGContext(sourceGear.fileAccumulator, result.get.astGraph, SourceParserManager.installedParsers.head, null, sourceGear, null)
+
+    assert(result.isSuccess && result.get.modelNodes.size == 6)
+
+    val expected = Json.parse(
+      """
+        |{
+        |	"url": "url",
+        |	"method": "get",
+        |	"parameters": {
+        |		"firstLevel": {
+        |			"in": "query",
+        |			"name": "firstLevel"
+        |		},
+        |		"nested": {
+        |			"in": "body",
+        |			"name": "nested"
+        |		},
+        |		"bob": {
+        |			"in": "header",
+        |			"name": "bob"
+        |		}
+        |	}
+        |}
+      """.stripMargin)
 
     val modelNode = result.get.modelNodes.find(_.schemaId == SchemaRef(Some(PackageRef("optic:flatexpress", "0.1.0")), "route")).get
     val expandedValue = modelNode.expandedValue
