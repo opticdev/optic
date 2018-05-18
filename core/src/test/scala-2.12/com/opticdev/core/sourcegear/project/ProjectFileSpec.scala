@@ -13,15 +13,15 @@ class ProjectFileSpec extends TestBase {
 
   describe("instantiates from a YAML file") {
     it("should work when valid") {
-      val pf = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.yaml"))
+      val pf = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.yml"))
       assert(pf.interface.isSuccess)
     }
     it("should not have interface if the file does not exist") {
-      val pf = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/notReal.yaml"), false)
+      val pf = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/notReal.yml"), false)
       assert(pf.interface.failed.get == InvalidProjectFileException("Project file not found"))
     }
     it("should not have interface if file is invalid YAML") {
-      val pf = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/invalidFile.yaml"), false)
+      val pf = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/invalidFile.yml"), false)
       assert(pf.interface.failed.get == InvalidProjectFileException("syntax error in YAML"))
     }
 
@@ -29,13 +29,13 @@ class ProjectFileSpec extends TestBase {
 
 
   def fixture = new {
-    val defined6 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project6.yaml"))
-    val defined5 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project5.yaml"))
-    val defined4 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project4.yaml"))
-    val defined3 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project3.yaml"))
-    val defined2 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project2.yaml"))
-    val defined = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.yaml"))
-    val empty = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/empty.yaml"))
+    val defined6 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project6.yml"))
+    val defined5 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project5.yml"))
+    val defined4 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project4.yml"))
+    val defined3 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project3.yml"))
+    val defined2 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project2.yml"))
+    val defined = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.yml"))
+    val empty = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/empty.yml"))
   }
 
 

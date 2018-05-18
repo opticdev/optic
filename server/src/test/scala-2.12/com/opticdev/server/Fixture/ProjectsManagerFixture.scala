@@ -21,7 +21,7 @@ trait ProjectsManagerFixture extends TestPackageProviders {
 
     val pm = new ProjectsManager()
     implicit val actorCluster = pm.actorCluster
-    val project = Project.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yaml"))).get
+    val project = Project.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml"))).get
     pm.loadProject(project)
     project.projectStatus.sourcegearChanged((i)=> {
       project.projectStatus.firstPassChanged((i)=> {

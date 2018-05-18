@@ -21,7 +21,7 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
   describe("SG Config") {
 
     lazy val sgConfig = {
-      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/test_project/optic.yaml")))
+      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/test_project/optic.yml")))
       Await.result(future, 10 seconds)
     }
 

@@ -49,7 +49,7 @@ object ExampleSourcegears {
   lazy val exampleProjectSG = new {
 
     val sourceGear = {
-      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
+      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yml")))
       Await.result(future, 10 seconds).inflate
     }
 

@@ -73,7 +73,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |	}]
       """.stripMargin
 
-    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yaml")))
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml")))
       .map(_.inflate)
 
     val sourcegear = Await.result(future, 10 seconds)
@@ -143,7 +143,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |	}]
       """.stripMargin
 
-    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yaml")))
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml")))
       .map(_.inflate)
 
     val sourcegear = Await.result(future, 10 seconds)
@@ -211,7 +211,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         | }]
       """.stripMargin
 
-      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yaml")))
+      val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml")))
         .map(_.inflate)
 
       val sourcegear = Await.result(future, 10 seconds)
@@ -288,7 +288,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |	}]
       """.stripMargin
 
-    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yaml")))
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml")))
       .map(_.inflate)
 
     val sourcegear = Await.result(future, 10 seconds)
@@ -363,7 +363,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |	}
         |}]""".stripMargin
 
-    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yaml")))
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml")))
       .map(_.inflate)
 
     val sourcegear = Await.result(future, 10 seconds)

@@ -1,4 +1,5 @@
 name: Unnamed Project
-parsers: []
+knowledge_paths: []
 knowledge: []
 exclude: []
+parsers: []

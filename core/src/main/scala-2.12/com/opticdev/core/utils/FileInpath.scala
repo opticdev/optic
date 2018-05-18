@@ -24,10 +24,10 @@ object FileInPath {
 
     def projectFileOption : Option[ProjectFile] = {
       val baseDirOption = parentsOf.find(i=> {
-        i.exists && i.list.exists(_.name == "optic.yaml")
+        i.exists && i.list.exists(_.name == "optic.yml")
       })
 
-      baseDirOption.map(i=> new ProjectFile(i / "optic.yaml"))
+      baseDirOption.map(i=> new ProjectFile(i / "optic.yml"))
     }
 
   }

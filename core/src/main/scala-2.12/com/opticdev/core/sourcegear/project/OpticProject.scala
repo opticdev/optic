@@ -53,7 +53,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     }
   }
 
-  val projectFile = new ProjectFile(baseDirectory / "optic.yaml", createIfDoesNotExist = true, onChanged = projectFileChanged)
+  val projectFile = new ProjectFile(baseDirectory / "optic.yml", createIfDoesNotExist = true, onChanged = projectFileChanged)
 
   def projectSourcegear : SourceGear
 

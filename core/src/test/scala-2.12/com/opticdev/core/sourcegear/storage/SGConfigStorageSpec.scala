@@ -10,9 +10,9 @@ import scala.concurrent.Await
 
 class SGConfigStorageSpec extends TestBase with TestPackageProviders {
 
-  lazy val projectFile = new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml"))
+  lazy val projectFile = new ProjectFile(File("test-examples/resources/example_packages/express/optic.yml"))
   lazy val sgConfig = {
-    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yaml")))
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/example_packages/express/optic.yml")))
     Await.result(future, 5 seconds)
   }
 
