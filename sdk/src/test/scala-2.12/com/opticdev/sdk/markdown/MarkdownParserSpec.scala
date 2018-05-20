@@ -9,7 +9,6 @@ class MarkdownParserSpec extends FunSpec with BeforeAndAfterAll {
   override def beforeAll(): Unit = {
     super.beforeAll()
     DataDirectory.init
-    DataDirectory.bin.list.foreach(_.delete(true))
   }
 
   it("will succeed if given a valid file") {
