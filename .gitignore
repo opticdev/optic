@@ -12,3 +12,5 @@ core/target/
 test-examples/resources/tmp/
 
 project/mixpanel-token
+
+server/src/main/resources/opticmarkdown

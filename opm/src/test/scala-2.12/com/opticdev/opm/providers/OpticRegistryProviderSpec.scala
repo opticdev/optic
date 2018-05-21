@@ -2,7 +2,6 @@ package com.opticdev.opm.providers
 
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.PackageManager
-import com.opticdev.sdk.markdown.OpticMarkdownInstaller
 import org.scalatest.{BeforeAndAfterAll, FunSpec}
 
 import scala.concurrent.Await

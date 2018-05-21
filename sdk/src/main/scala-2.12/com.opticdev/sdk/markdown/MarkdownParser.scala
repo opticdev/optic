@@ -32,55 +32,46 @@ object MarkdownParser {
 
 
   def parseMarkdownString(string: String, useCache: Boolean = true) : Try[MDParseOutput] = Try {
-    OpticMarkdownInstaller.getOrInstall
-      .map(i=> {
 
-        val cacheLookup = {
-          if (useCache) MarkdownCache.lookup(Crypto.createSha1(string)) else None
+    val cacheLookup = {
+      if (useCache) MarkdownCache.lookup(Crypto.createSha1(string)) else None
+    }
+    if (cacheLookup.isDefined) {
+      cacheLookup.get
+    } else {
+
+      val result = CallOpticMarkdown.parseString(string)
+      if (!outputSchema.validate(result)) {
+        throw new Error("Invalid output from markdown parser")
+      } else {
+        if (useCache) {
+          MarkdownCache.cacheMarkdown(string, result)
         }
-        if (cacheLookup.isDefined) {
-          cacheLookup.get
-        } else {
+        MDParseOutput(result)
+      }
 
-          val result = i.parseString(string)
-          if (!outputSchema.validate(result)) {
-            throw new Error("Invalid output from markdown parser")
-          } else {
-            if (useCache) {
-              MarkdownCache.cacheMarkdown(string, result)
-            }
-            MDParseOutput(result)
-          }
-
-        }
-
-      })
-  }.flatten
+    }
+  }
 
   def parseMarkdownFile(file: File, useCache: Boolean = true) : Try[MDParseOutput] = Try {
-    OpticMarkdownInstaller.getOrInstall
-      .map(i=> {
+    val cacheLookup = {
+      if (useCache) MarkdownCache.lookup(file) else None
+    }
+    if (cacheLookup.isDefined) {
+      cacheLookup.get
+    } else {
 
-        val cacheLookup = {
-          if (useCache) MarkdownCache.lookup(file) else None
+      val result = CallOpticMarkdown.parseFile(file.pathAsString)
+      if (!outputSchema.validate(result)) {
+        throw new Error("Invalid output from markdown parser")
+      } else {
+        if (useCache) {
+          MarkdownCache.cacheMarkdown(file, result)
         }
-        if (cacheLookup.isDefined) {
-          cacheLookup.get
-        } else {
+        MDParseOutput(result)
+      }
 
-          val result = i.parseFile(file.pathAsString)
-          if (!outputSchema.validate(result)) {
-            throw new Error("Invalid output from markdown parser")
-          } else {
-            if (useCache) {
-              MarkdownCache.cacheMarkdown(file, result)
-            }
-            MDParseOutput(result)
-          }
-
-        }
-
-      })
-  }.flatten
+    }
+  }
 
 }
