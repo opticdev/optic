@@ -10,6 +10,8 @@ import scala.util.Failure
 
 trait ConnectionManager[A <: Connection] {
 
+  val inProduction: Boolean = System.getProperty("prod") != null
+
   def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) : A
 
   protected var connections: Map[String, A] = Map()
@@ -32,14 +34,18 @@ trait ConnectionManager[A <: Connection] {
     Flow[Message]
       .collect {
         case TextMessage.Strict(msg) => {
-          println("RECEIVED "+ msg)
+          if (!inProduction) {
+            println("RECEIVED " + msg)
+          }
           msg
         }
       }
       .via(connection.websocketFlow)
       .map {
         case msg: OpticEvent => {
-          println("SENT "+ msg.asJson)
+          if (!inProduction) {
+            println("SENT " + msg.asJson)
+          }
           TextMessage.Strict(msg.asString)
         }
       }.via(reportErrorsFlow())

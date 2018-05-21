@@ -23,21 +23,20 @@ object Dependencies {
     "com.github.pathikrit" % "better-files_2.12" % betterFilesVersion,
     "com.github.pathikrit" %% "better-files-akka" % betterFilesVersion,
 
-    //logging
-    "org.slf4j" % "slf4j-simple" % "1.7.25" % "test",
 
-    //graph
+  //graph
     "org.scala-graph" %% "graph-core" % "1.12.3",
     "org.scala-graph" %% "graph-constrained" % "1.12.3"
   )
 
-  val commonDependencies: Seq[ModuleID] = Seq(
+  val commonDependencies: Seq[ModuleID] =  Seq(
     "org.apache.commons" % "commons-lang3" % "3.6",
     "com.github.pathikrit" % "better-files_2.12" % betterFilesVersion,
     "com.typesafe.play" %% "play-json" % "2.6.2",
     "org.scalactic" %% "scalactic" % scalaTestVersion,
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
-    "com.vdurmont" % "semver4j" % "2.1.0"
+    "com.vdurmont" % "semver4j" % "2.1.0",
+    "org.slf4j" % "slf4j-simple" % "1.7.25" % "test"
   )
 
   val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Seq(

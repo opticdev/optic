@@ -3,6 +3,7 @@ package com.opticdev.sdk.markdown
 import better.files.File
 import com.opticdev.common.storage.DataDirectory
 import com.opticdev.common.PlatformConstants
+import com.opticdev.sdk.BuildInfo
 import net.jcazevedo.moultingyaml.YamlString
 import play.api.libs.json.{JsObject, Json}
 
@@ -42,4 +43,7 @@ case object CallOpticMarkdown {
     val result = cmd.!!(ProcessLogger(stdout append _, stderr append _))
     Json.parse(result).as[JsObject]
   }
+
+  def isValid : Boolean = version == BuildInfo.opticMDVersion
+
 }
