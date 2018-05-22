@@ -3,7 +3,7 @@ package com.opticdev.opm
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.StagedPackage
-import com.opticdev.opm.providers.{ProjectKnowledgeSearchPaths, Provider}
+import com.opticdev.opm.providers.{LocalProvider, ProjectKnowledgeSearchPaths, Provider}
 import com.opticdev.opm.storage.PackageStorage
 import com.opticdev.parsers.ParserRef
 import com.vdurmont.semver4j.Semver
@@ -12,7 +12,7 @@ import com.opticdev.opm.packages.OpticPackage
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}
-import scala.util.Try
+import scala.util.{Failure, Try}
 import scala.concurrent.duration._
 object PackageManager {
 
@@ -65,7 +65,14 @@ object PackageManager {
   }
 
   def collectPackages(packages: Seq[PackageRef])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true) : Try[DependencyTree] = Try {
-    var loaded = packages.map(p=> (p, PackageStorage.loadFromStorage(p)))
+
+    val excludeFromCache = providers.filter(_.isLocalProvider).flatMap(_.asInstanceOf[LocalProvider].listInstalledPackages.map(_.packageRef))
+
+    var loaded = packages.map{
+      case packageRef if excludeFromCache.contains(packageRef) => (packageRef, Failure(new Exception("Package is local")))
+      case packageRef => (packageRef, PackageStorage.loadFromStorage(packageRef))
+    }
+
 
     val tryInstall = {
       if (loaded.exists(_._2.isFailure)) {

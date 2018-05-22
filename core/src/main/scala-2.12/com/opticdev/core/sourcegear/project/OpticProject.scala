@@ -59,6 +59,8 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   def onSourcegearChanged(callback: (SourceGear)=> Unit) : Unit = Unit
 
+  def regenerateSourceGear(newPf: ProjectFile) : Unit = Unit
+
   def watch = {
     rereadAll
     watcher ! when(events = EventType.ENTRY_CREATE, EventType.ENTRY_MODIFY, EventType.ENTRY_DELETE)(handleFileChange)
@@ -88,7 +90,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       projectStatusInstance.touch
       filesStateMonitor.markUpdated(file)
       if (shouldWatchFile(file)) projectActor ! FileCreated(file, this) else
-      if (inProjectKnowledgeSearchPaths(file)) rereadAll
+      if (inProjectKnowledgeSearchPaths(file)) regenerateSourceGear(projectFile)
     }
     case (EventType.ENTRY_MODIFY, file) => {
       implicit val sourceGear = projectSourcegear
@@ -98,7 +100,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
         projectFile.reload
       } else {
         if (shouldWatchFile(file)) projectActor ! FileUpdated(file, this) else
-        if (inProjectKnowledgeSearchPaths(file)) rereadAll
+        if (inProjectKnowledgeSearchPaths(file)) regenerateSourceGear(projectFile)
       }
     }
     case (EventType.ENTRY_DELETE, file) => {
@@ -106,7 +108,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       filesStateMonitor.markUpdated(file)
       projectStatusInstance.touch
       if (shouldWatchFile(file)) projectActor ! FileDeleted(file, this) else
-      if (inProjectKnowledgeSearchPaths(file)) rereadAll
+      if (inProjectKnowledgeSearchPaths(file)) regenerateSourceGear(projectFile)
     }
   }
 

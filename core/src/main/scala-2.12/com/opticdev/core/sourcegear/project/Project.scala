@@ -23,6 +23,10 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
 
   override def projectFileChanged(newPf: ProjectFile): Unit = {
     super.projectFileChanged(newPf)
+    regenerateSourceGear(newPf)
+  }
+
+  override def regenerateSourceGear(newPf: ProjectFile) = {
     if (newPf.interface.isSuccess) {
       projectStatusInstance.sourceGearStatus = Building
       SGConstructor.fromProjectFile(newPf)(useCache = true).onComplete(i => {
