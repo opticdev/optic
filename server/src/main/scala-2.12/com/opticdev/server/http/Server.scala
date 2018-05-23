@@ -10,7 +10,9 @@ import akka.stream.ActorMaterializer
 import com.opticdev.core.actorSystem
 import com.opticdev.server.state.ProjectsManager
 
+import scala.concurrent.Await
 import scala.io.StdIn
+import scala.concurrent.duration._
 object Server {
 
   def start()(implicit projectsManager: ProjectsManager) {
@@ -21,13 +23,11 @@ object Server {
 
     val httpService = new HttpService()
 
-    //@todo make this fail with an exception
     val future = Http().bindAndHandle(httpService.routes, "localhost", 30333)
-    future.onComplete(i=> {
-      if (i.isSuccess) println(s"Server online at http://localhost:30333/\nPress RETURN to stop...")
-      else throw i.failed.get
-    })
 
+    Await.result(future, 10 seconds)
+
+    println("Server Started on localhost:30333")
   }
 
 }

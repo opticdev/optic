@@ -39,6 +39,14 @@ case class StagedNode(schema: SchemaRef,
   }
 
   def hasTags = tags.nonEmpty
+
+  //defined will always override the things we are setting here
+  def withVariableMapping(variableMapping: VariableMapping) = {
+    this.copy(options = this.options.map(opts => {
+      opts.copy(variables = Some(variableMapping ++ opts.variables.getOrElse(Map.empty)))
+    }))
+  }
+
 }
 
 case class SingleModel(schema: SchemaRef, value: JsObject) extends TransformationResult {

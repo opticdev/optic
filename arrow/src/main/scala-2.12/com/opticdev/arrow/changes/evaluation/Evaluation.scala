@@ -7,9 +7,9 @@ import com.opticdev.core.sourcegear.{Render, SourceGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.marvin.common.helpers.LineOperations
-import com.opticdev.sdk.RenderOptions
+import com.opticdev.sdk.{RenderOptions, VariableMapping, variableMappingFormat}
 import com.opticdev.sdk.descriptions.transformation.{SingleModel, StagedNode, TransformationResult}
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 
 import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
@@ -25,6 +25,7 @@ object Evaluation {
       )))
 
       val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear)
+      renderedTry.failed.foreach(_.printStackTrace)
       require(renderedTry.isSuccess, "Could not render model "+ renderedTry.failed.get.toString)
       val generatedNode = (renderedTry.get._1, renderedTry.get._2)
       val resolvedLocation = im.atLocation.get.resolveToLocation(sourcegear).get
@@ -49,7 +50,11 @@ object Evaluation {
       require(schema.validate(stagedNode.value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
 
       val prefixedFlatContent = sourcegear.flatContext.prefix(rt.transformationChanges.transformation.packageId.packageId)
-      val generatedNode = Render.fromStagedNode(stagedNode)(sourcegear, prefixedFlatContent).get
+
+      val inputVariableMapping = Try((rt.inputValue.get \ "_variables").toOption.map(Json.fromJson[VariableMapping]).map(_.get).get)
+        .getOrElse(Map.empty)
+
+      val generatedNode = Render.fromStagedNode(stagedNode, inputVariableMapping)(sourcegear, prefixedFlatContent).get
 
       val updatedString = if (rt.objectSelection.isDefined) {
         val objName = rt.objectSelection.get

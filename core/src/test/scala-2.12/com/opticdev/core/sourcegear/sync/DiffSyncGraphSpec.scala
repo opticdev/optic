@@ -94,8 +94,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     val diff = DiffSyncGraph.calculateDiff(snapshot)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
-    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
   }
 
   it("will diff based on tags") {

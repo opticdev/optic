@@ -19,6 +19,15 @@ package object sdk {
 
   implicit lazy val renderOptionsFormat = Json.format[RenderOptions]
 
+  implicit lazy val variableMappingFormat = new Format[VariableMapping] {
+    override def writes(o: VariableMapping): JsValue =
+      JsObject(o.toSeq.map(i=> i._1 -> JsString(i._2)))
+
+    override def reads(json: JsValue): JsResult[VariableMapping] = {
+      JsSuccess(json.as[JsObject].value.mapValues(_.as[JsString].value).toMap)
+    }
+  }
+
   implicit lazy val stagedNodeFormat: Format[StagedNode] = (
     (__ \ 'schema).format[SchemaRef] and
       (__ \ 'value).format[JsObject] and

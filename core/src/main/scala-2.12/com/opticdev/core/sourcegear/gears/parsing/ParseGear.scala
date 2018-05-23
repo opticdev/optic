@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.gears.parsing
 
-import com.opticdev.sdk.PropertyValue
+import com.opticdev.sdk.{PropertyValue, VariableMapping}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.accumulate.Listener
@@ -133,10 +133,10 @@ sealed abstract class ParseGear() {
 
     val matchResults = compareToDescription(entryNode, null, description, FlatWalkablePath())
 
-    output(matchResults)
+    output(matchResults, variableLookupTable.toVariableMapping)
   }
 
-  def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = None
+  def output(matchResults: MatchResults, variableMapping: VariableMapping)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = None
 
 
 }
@@ -155,7 +155,7 @@ case class ParseAsModel(description: NodeDescription,
                         initialValue: JsObject = JsObject.empty
                        ) extends ParseGear {
 
-  override def output(matchResults: MatchResults) (implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = {
+  override def output(matchResults: MatchResults, variableMapping: VariableMapping) (implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = {
     if (!matchResults.isMatch) return None
 
     val fields = matchResults.extracted.getOrElse(Set())
@@ -176,7 +176,7 @@ case class ParseAsModel(description: NodeDescription,
       )
     }
 
-    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, objectRefOption, sourceAnnotationOption, tagAnnotation)
+    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, variableMapping, objectRefOption, sourceAnnotationOption, tagAnnotation)
 
     //@todo have schema validate
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))
@@ -194,7 +194,7 @@ case class ParseAsContainer(description: NodeDescription,
                         parsingLensRef: LensRef
                        ) extends ParseGear {
 
-  override def output(matchResults: MatchResults)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String): Option[ParseResult[CommonAstNode]] = {
+  override def output(matchResults: MatchResults, variableMapping: VariableMapping)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String): Option[ParseResult[CommonAstNode]] = {
     None
   }
 

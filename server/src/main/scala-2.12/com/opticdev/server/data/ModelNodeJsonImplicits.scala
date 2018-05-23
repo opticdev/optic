@@ -11,6 +11,7 @@ import com.vdurmont.semver4j.Semver.SemverType
 import play.api.libs.json._
 
 import scala.util.Try
+import com.opticdev.sdk.variableMappingFormat
 
 object ModelNodeJsonImplicits {
 
