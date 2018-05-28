@@ -8,6 +8,7 @@ object Dependencies {
     val scalaTestVersion = "3.0.1"
     val parserFoundationVersion = "0.1.3"
     val akkaHttpVersion = "10.1.1"
+    val marvinVersion = "0.1.3"
   }
 
   import Versions._
@@ -90,14 +91,14 @@ object Dependencies {
     "com.opticdev" %% "akka-faddish-mailbox" % "0.1.0",
 
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
-    "com.opticdev" %% "marvin-runtime" % "0.1.2",
-    "com.opticdev" %% "marvin-common" % "0.1.2"
+    "com.opticdev" %% "marvin-runtime" % marvinVersion,
+    "com.opticdev" %% "marvin-common" % marvinVersion
   )
 
   val arrowDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "me.xdrop" % "fuzzywuzzy" % "1.1.9",
-    "com.opticdev" %% "marvin-runtime" % "0.1.2",
-    "com.opticdev" %% "marvin-common" % "0.1.2"
+    "com.opticdev" %% "marvin-runtime" % marvinVersion,
+    "com.opticdev" %% "marvin-common" % marvinVersion
   )
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
@@ -106,8 +107,8 @@ object Dependencies {
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
     "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
-    "com.opticdev" %% "marvin-runtime" % "0.1.2",
-    "com.opticdev" %% "marvin-common" % "0.1.2",
+    "com.opticdev" %% "marvin-runtime" % marvinVersion,
+    "com.opticdev" %% "marvin-common" % marvinVersion,
     "com.vdurmont" % "semver4j" % "2.1.0",
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
     "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion
