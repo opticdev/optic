@@ -14,7 +14,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch
 import scala.util.Try
 object TransformationSearch {
 
-  def search(context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph) : Vector[TransformationResult] =
+  def search(context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph, editorSlug: String) : Vector[TransformationResult] =
     context match {
       case m: ModelContext => m.models.flatMap(c=> {
           val transformations = knowledgeGraph.availableTransformations(c.schemaId)
@@ -30,7 +30,7 @@ object TransformationSearch {
       case _ => Vector()
     }
 
-  def search(query: String, context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph) : Vector[TransformationResult] =
+  def search(query: String, context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph, editorSlug: String) : Vector[TransformationResult] =
     sourcegear.transformations.map(i=> {
       TransformationResult(
         FuzzySearch.tokenSetPartialRatio(i.yields, query),

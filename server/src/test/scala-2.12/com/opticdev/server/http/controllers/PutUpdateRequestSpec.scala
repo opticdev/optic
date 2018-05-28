@@ -33,7 +33,7 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
 
     val future = instanceWatchingTestProject.flatMap(pm=> {
       projectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None, "test")
       cq.execute
     })
 
@@ -45,7 +45,7 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
 
   it("can update model") {
 
-    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))))
+    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))), "test")
     val future = putUpdate.execute
 
     val result = Await.result(future, 3 seconds).asInstanceOf[BatchedChanges]
@@ -57,7 +57,7 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
   }
 
   it("can update model and return API request") {
-    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))))
+    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))), "test")
     val future = putUpdate.execute
     val result = Await.result(future, 3 seconds).asInstanceOf[BatchedChanges]
 

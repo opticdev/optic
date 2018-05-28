@@ -15,12 +15,12 @@ class Arrow(val project: OpticProject) {
 
   implicit val knowledgeGraph: KnowledgeGraph = IndexSourceGear.runFor(sourcegear)
 
-  def search(query: String, context: ArrowContextBase = NoContext): Vector[Result] = {
-    UnifiedSearch.search(query, context)(sourcegear, project, knowledgeGraph)
+  def search(query: String, editorSlug: String, context: ArrowContextBase = NoContext): Vector[Result] = {
+    UnifiedSearch.search(query, context)(sourcegear, project, knowledgeGraph, editorSlug)
   }
 
-  def transformationsForContext(context: ArrowContextBase) = {
-    TransformationSearch.search(context)(sourcegear, project, knowledgeGraph)
+  def transformationsForContext(context: ArrowContextBase, editorSlug: String) = {
+    TransformationSearch.search(context)(sourcegear, project, knowledgeGraph, editorSlug)
   }
 
   def knowledgeGraphAsJson: JsObject = GraphSerialization.serialize(knowledgeGraph)

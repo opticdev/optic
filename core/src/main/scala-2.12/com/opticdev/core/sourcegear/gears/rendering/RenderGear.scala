@@ -33,7 +33,6 @@ case class RenderGear(block: String,
 
   def parseResult(b: String): ParserResult = {
     if (parser.isDefined) {
-      println(b)
       parser.get.parseString(b)
     } else throw new Error("Unable to find parser for generator")
   }

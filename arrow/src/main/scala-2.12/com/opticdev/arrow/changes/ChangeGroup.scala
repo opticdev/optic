@@ -15,10 +15,12 @@ case class ChangeGroup(changes: OpticChange*) {
     Evaluation.forChangeGroup(this, sourcegear, project)
   }
 
-  def evaluateAndWrite(sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit nodeKeyStore: NodeKeyStore) : Try[BatchedChanges] = Try {
+  def evaluateAndWrite(sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit nodeKeyStore: NodeKeyStore, autorefreshes: Boolean) : Try[BatchedChanges] = Try {
     val evaluated = evaluate(sourcegear, project)
     if (evaluated.isSuccess) {
-      evaluated.flushToDisk
+      if (!autorefreshes) {
+        evaluated.flushToDisk
+      }
       evaluated
     } else {
       throw new Exception("Changes could not be applied.")

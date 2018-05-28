@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class ArrowQuery(query: String, fileOption: Option[File], range: Option[Range], lastProjectName: Option[String], contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
+class ArrowQuery(query: String, fileOption: Option[File], range: Option[Range], lastProjectName: Option[String], contentsOption: Option[String], editorSlug: String)(implicit projectsManager: ProjectsManager) {
 
   def execute : Future[Vector[Result]] = Future {
     val arrowOption = {
@@ -46,7 +46,7 @@ class ArrowQuery(query: String, fileOption: Option[File], range: Option[Range], 
     }
 
     if (arrowOption.isDefined) {
-      arrowOption.get.search(query, context)
+      arrowOption.get.search(query, editorSlug, context)
     } else {
       Vector()
     }
@@ -68,18 +68,18 @@ class ArrowQuery(query: String, fileOption: Option[File], range: Option[Range], 
 
 object ArrowQuery {
 
-  def apply(agentSearch: AgentSearch, lastProjectName: Option[String] = None)(implicit projectsManager: ProjectsManager) : ArrowQuery = {
+  def apply(agentSearch: AgentSearch, lastProjectName: Option[String] = None, editorSlug: String)(implicit projectsManager: ProjectsManager) : ArrowQuery = {
     new ArrowQuery(agentSearch.query, agentSearch.file, agentSearch.range, {
       if (lastProjectName.isDefined) {
         lastProjectName
       } else {
         agentSearch.lastProjectName
       }
-    }, None)
+    }, None, editorSlug)
   }
 
-  def apply(editorSearch: EditorSearch)(implicit projectsManager: ProjectsManager) : ArrowQuery = {
-    new ArrowQuery(editorSearch.query, Some(editorSearch.file), Some(editorSearch.range), None, editorSearch.contentsOption)
+  def apply(editorSearch: EditorSearch, editorSlug: String)(implicit projectsManager: ProjectsManager) : ArrowQuery = {
+    new ArrowQuery(editorSearch.query, Some(editorSearch.file), Some(editorSearch.range), None, editorSearch.contentsOption, editorSlug)
   }
 
 }

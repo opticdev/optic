@@ -296,7 +296,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
-    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst model = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/hello', function (req, res) {\n  new model({ firstName: req.body.firstName,\n  lastName: req.body.lastName,\n  email: req.body.email }).save((err, item) => {\n    if (!err) {\n    \n    } else {\n    \n    }\n  })\n})")
+    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst model = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/hello', function (req, res) {\n  new model({ firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email }).save((err, item) => {\n    if (!err) {\n    \n    } else {\n    \n    }\n  })\n})")
 
   }
 
@@ -371,7 +371,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
-    (changeGroup, sourcegear, "let first = require('second')\n\napp.get('user/:id', function (req, res) {\n    req.query.id\n})\n\napp.post('/hello', function (req, res) {  //source: Hello -> optic:mongoose/cr {}\n  req.body.first\n  req.body.last\n  req.body.isAdmin\n})\n\napp.get('post/:id', function (req, res) {\n    req.query.id\n})")
+    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst model = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/hello', function (req, res) {\n  new model({ firstName: req.body.firstName,\n  lastName: req.body.lastName,\n  email: req.body.email }).save((err, item) => {\n    if (!err) {\n    \n    } else {\n    \n    }\n  })\n})")
 
   }
 

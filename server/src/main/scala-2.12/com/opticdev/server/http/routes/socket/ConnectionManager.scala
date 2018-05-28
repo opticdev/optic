@@ -12,7 +12,7 @@ trait ConnectionManager[A <: Connection] {
 
   val inProduction: Boolean = System.getProperty("prod") != null
 
-  def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) : A
+  def apply(slug: String, socketRouteOptions: SocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) : A
 
   protected var connections: Map[String, A] = Map()
 
@@ -20,12 +20,12 @@ trait ConnectionManager[A <: Connection] {
 
   def hasConnection = connections.nonEmpty
 
-  def findOrCreate(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager): A = {
-    connections.getOrElse(slug, createEditorConnection(slug))
+  def findOrCreate(slug: String, socketRouteOptions: SocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager): A = {
+    connections.getOrElse(slug, createEditorConnection(slug, socketRouteOptions))
   }
 
-  private def createEditorConnection(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager): A = {
-    val connection = apply(slug)
+  private def createEditorConnection(slug: String, socketRouteOptions: SocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager): A = {
+    val connection = apply(slug, socketRouteOptions)
     connections += slug -> connection
     connection
   }

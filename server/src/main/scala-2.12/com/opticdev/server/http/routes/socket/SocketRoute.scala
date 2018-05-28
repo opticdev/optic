@@ -21,14 +21,19 @@ class SocketRoute(implicit executionContext: ExecutionContext, projectsManager: 
 
   val route = cors(settings)  {
     get {
-      pathPrefix("socket" / "editor" / Remaining) { editorName =>
-        handleWebSocketMessages(EditorConnection.websocketChatFlow(EditorConnection.findOrCreate(editorName)))
-      } ~
-      pathPrefix("socket" / "agent" / Remaining) { agentName =>
-        handleWebSocketMessages(AgentConnection.websocketChatFlow(AgentConnection.findOrCreate(agentName)))
-      } ~
-      pathPrefix("socket" / "debugger" / Remaining) { debuggerName =>
-        handleWebSocketMessages(DebuggerConnection.websocketChatFlow(DebuggerConnection.findOrCreate(debuggerName)))
+      parameters('autorefreshes.as[Boolean].?) { (autorefreshes) => {
+        val options = SocketRouteOptions(autorefreshes.getOrElse(false))
+
+          pathPrefix("socket" / "editor" / Remaining) { editorName =>
+            handleWebSocketMessages(EditorConnection.websocketChatFlow(EditorConnection.findOrCreate(editorName, options)))
+          } ~
+          pathPrefix("socket" / "agent" / Remaining) { agentName =>
+            handleWebSocketMessages(AgentConnection.websocketChatFlow(AgentConnection.findOrCreate(agentName, options)))
+          } ~
+          pathPrefix("socket" / "debugger" / Remaining) { debuggerName =>
+            handleWebSocketMessages(DebuggerConnection.websocketChatFlow(DebuggerConnection.findOrCreate(debuggerName, options)))
+          }
+        }
       }
     }
   }

@@ -22,7 +22,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
     resetScratch
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None, "test")
       cq.execute
     })
 
@@ -36,7 +36,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
     resetScratch
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(400, 450), None)
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(400, 450), None, "test")
       cq.execute
     })
 
@@ -49,7 +49,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
     resetScratch
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/invalid.js"), Range(0, 3), None)
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/invalid.js"), Range(0, 3), None, "test")
       cq.execute
     })
 
@@ -62,7 +62,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
     resetScratch
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/README"), Range(400, 450), None)
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/README"), Range(400, 450), None, "test")
       cq.execute
     })
 
@@ -74,7 +74,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
   it("will fail if project doesn't exist") {
     resetScratch
     implicit val projectsManager = projectsManagerWithStorage(ServerStorage(Map("test" -> "test-examples/resources/tmp/test_project")))
-    val cq = new ContextQuery(File("not/real/file"), Range(12, 35), None)
+    val cq = new ContextQuery(File("not/real/file"), Range(12, 35), None, "test")
     cq.execute.onComplete(i=> {
       assert(i.isFailure)
       assert(i.failed.get.isInstanceOf[FileNotInProjectException])
@@ -87,7 +87,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
 
       val future = instanceWatchingTestProject.flatMap(pm=> {
         implicit val projectsManager: ProjectsManager = pm
-        val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None)
+        val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), None, "test")
         cq.execute
       })
 
@@ -101,7 +101,7 @@ class ContextQuerySpec extends AkkaTestFixture("ContextQuerySpec") with TestBase
   it("can work with a staged output") {
     val future = instanceWatchingTestProject.flatMap(pm=> {
       implicit val projectsManager: ProjectsManager = pm
-      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), Some("var me = you"))
+      val cq = new ContextQuery(File("test-examples/resources/tmp/test_project/app.js"), Range(35, 37), Some("var me = you"), "test")
       cq.execute
     })
 

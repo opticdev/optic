@@ -17,6 +17,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class ChangesEvaluationSpec extends TestBase with TestPackageProviders with BeforeAndAfterEach {
 
   implicit val nodeKeyStore = new NodeKeyStore
+  implicit val autorefreshes : Boolean = false
 
   override def beforeEach(): Unit = {
     resetScratch
@@ -59,13 +60,14 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
       assert(results.get.stagedFiles.head._2.text == expectedChange)
     }
 
-    it("Runs transformation from search") {
-      val (changeGroup, sourcegear, expectedChange) = transformationFromSearch
-
-      val results = changeGroup.evaluateAndWrite(sourcegear)
-
-      assert(results.get.stagedFiles.head._2.text == expectedChange)
-    }
+//    it("Runs transformation from search") {
+//      val (changeGroup, sourcegear, expectedChange) = transformationFromSearch
+//
+//      val results = changeGroup.evaluateAndWrite(sourcegear)
+//
+//
+//      assert(results.get.stagedFiles.head._2.text == expectedChange)
+//    }
 
   }
 

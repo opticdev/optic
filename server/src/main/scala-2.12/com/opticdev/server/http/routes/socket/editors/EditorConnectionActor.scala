@@ -16,12 +16,9 @@ import play.api.libs.json.{JsArray, JsObject, JsString}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
-class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) extends Actor {
+class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManager: ProjectsManager) extends Actor {
 
   private var connection : ActorRef = null
-
-  private var name : String = slug
-  private var version : String = ""
 
   override def receive: Receive = {
     case Registered(actorRef) =>
@@ -50,10 +47,10 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
         })
       } else {
         //normal context query started from an editor
-        new ContextQuery(asFile, range, contentsOption)(projectsManager).execute
+        new ContextQuery(asFile, range, contentsOption, slug)(projectsManager).execute
           .map(i => {
             import com.opticdev.server.data.ModelNodeJsonImplicits._
-            val contextFound = Try(ContextFound(file, range, i.projectName, JsObject(Seq(
+            val contextFound = Try(ContextFound(file, range, i.projectName, i.editorSlug, JsObject(Seq(
               "models" -> JsArray(i.modelNodes.map(_.asJson()(projectsManager))),
               "transformations" -> JsArray(i.availableTransformations.map(_.asJson))
             ))))
@@ -64,7 +61,7 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
     }
 
     case search: EditorSearch => {
-      ArrowQuery(search)(projectsManager).executeToApiResponse.map(i=> {
+      ArrowQuery(search, search.editorSlug)(projectsManager).executeToApiResponse.map(i=> {
         println("SEARCH RESULTS "+ i.data)
         AgentConnection.broadcastUpdate( SearchResults(search.query, i.data) )
       }).recover {
@@ -77,17 +74,6 @@ class EditorConnectionActor(slug: String, projectsManager: ProjectsManager) exte
 
     case event: UpdateEditorEvent => {
       connection ! event
-    }
-
-    case UpdateMetaInformation(name, version) => {
-      this.name = name
-      this.version = version
-
-      connection ! Success()
-    }
-
-    case GetMetaInformation() => {
-      sender() ! EditorConnection.EditorInformation(name, version)
     }
 
     case UnknownEvent(raw) => {

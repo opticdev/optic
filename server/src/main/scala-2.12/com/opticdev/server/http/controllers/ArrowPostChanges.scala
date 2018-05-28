@@ -15,14 +15,14 @@ class ArrowPostChanges(projectName: String, changeGroup: ChangeGroup)(implicit p
 
   implicit val nodeKeyStore = projectsManager.nodeKeyStore
 
-  def execute : Future[BatchedChanges] = Future {
+  def execute()(implicit autorefreshes: Boolean) : Future[BatchedChanges] = Future {
     val project = projectsManager.lookupProject(projectName).toOption
     val arrow = projectsManager.lookupArrow(projectName).get
 
     changeGroup.evaluateAndWrite(arrow.sourcegear, project).get
   }
 
-  def executeToApiResponse : Future[APIResponse] = {
+  def executeToApiResponse()(implicit autorefreshes: Boolean) : Future[APIResponse] = {
     import com.opticdev.server.data.ModelNodeJsonImplicits._
     execute.transform {
       case Success(batchedChanges: BatchedChanges) => {

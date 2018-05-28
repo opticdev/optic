@@ -19,4 +19,6 @@ package object socket {
     override def asString = error
   }
 
+  case class SocketRouteOptions(autorefreshes: Boolean)
+
 }

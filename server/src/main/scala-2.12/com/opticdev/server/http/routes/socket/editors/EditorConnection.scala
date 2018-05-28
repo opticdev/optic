@@ -10,7 +10,7 @@ import akka.util.Timeout
 import better.files.File
 import com.opticdev.server.http.routes.socket.agents.AgentConnection.listConnections
 import com.opticdev.server.http.routes.socket.agents.Protocol.UpdateAgentEvent
-import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
+import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent, SocketRouteOptions}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.editors.Protocol._
 import com.opticdev.server.state.ProjectsManager
@@ -19,17 +19,11 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.{Failure, Try}
 
-class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projectsManager: ProjectsManager) extends Connection {
+class EditorConnection(slug: String, actorSystem: ActorSystem, val autorefreshes: Boolean)(implicit projectsManager: ProjectsManager) extends Connection {
 
-  private[this] val connectionActor = actorSystem.actorOf(Props(classOf[EditorConnectionActor], slug, projectsManager))
+  private[this] val connectionActor = actorSystem.actorOf(Props(classOf[EditorConnectionActor], slug, autorefreshes, projectsManager))
 
   def chatInSink(sender: String) = Sink.actorRef[EditorEvents](connectionActor, Terminated())
-
-  def information : EditorConnection.EditorInformation = {
-    implicit val timeout = Timeout(5 seconds)
-    val future = connectionActor ? GetMetaInformation()
-    Await.result(future, timeout.duration).asInstanceOf[EditorConnection.EditorInformation]
-  }
 
   def sendUpdate(event: UpdateEditorEvent) = {
     connectionActor ! event
@@ -51,7 +45,7 @@ class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projects
 
                 val queryTry  = Try(parsedTry.get.value("query").as[JsString].value)
                 if (queryTry.isSuccess && fileTry.isSuccess && startTry.isSuccess && endTry.isSuccess)
-                  EditorSearch(queryTry.get, File(fileTry.get), Range(startTry.get, endTry.get), contentsOption) else UnknownEvent(i)
+                  EditorSearch(queryTry.get, File(fileTry.get), Range(startTry.get, endTry.get), contentsOption, slug) else UnknownEvent(i)
               }
               case "updateMeta" => {
                 val nameTry  = Try(parsedTry.get.value("name").as[JsString].value)
@@ -87,15 +81,14 @@ class EditorConnection(slug: String, actorSystem: ActorSystem)(implicit projects
 }
 
 object EditorConnection extends ConnectionManager[EditorConnection] {
-  case class EditorInformation(name: String, version: String)
 
-  override def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
+  override def apply(slug: String, socketRouteOptions: SocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
     println(slug+" editor connected")
-    new EditorConnection(slug, actorSystem)
+    new EditorConnection(slug, actorSystem, socketRouteOptions.autorefreshes)
   }
 
   def broadcastUpdate(update: UpdateEditorEvent) = listConnections.foreach(i=> i._2.sendUpdate(update))
-
+  def broadcastUpdateTo(editorSlug: String, update: UpdateEditorEvent) = listConnections.get(editorSlug).foreach(_.sendUpdate(update))
 
   def killEditor(slug: String) = {
     println(slug+" editor disconnected")

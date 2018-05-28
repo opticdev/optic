@@ -16,6 +16,8 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 class TransformationSearchSpec extends TestBase {
   implicit val nodeKeyStore = new NodeKeyStore
 
+  implicit val editorSlug: String = "test"
+
   implicit lazy val project = new StaticSGProject("test", File("test-examples/resources/tmp/test_project"), null)(new ActorCluster(ActorSystem("test")))
 
   it("finds transformations when valid context is present") {
@@ -23,7 +25,7 @@ class TransformationSearchSpec extends TestBase {
 
     val context = ModelContext(null, null, Vector(ModelNode(schemaModel.schemaRef, JsObject.empty, null, Map(), None, None, None, "a")))
 
-    val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph)
+    val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph, editorSlug)
 
     assert(results.size == 1)
     assert(results.head.transformationChange.asInstanceOf[DirectTransformation].transformation.yields == "Model -> Route")
@@ -35,7 +37,7 @@ class TransformationSearchSpec extends TestBase {
 
     val context = NoContext
 
-    val results = TransformationSearch.search("Route", context)(sourceGear, project, knowledgeGraph)
+    val results = TransformationSearch.search("Route", context)(sourceGear, project, knowledgeGraph, editorSlug)
 
     assert(results.size == 3)
     assert(results.head.transformationChange.asInstanceOf[DirectTransformation].transformation.yields == "Model -> Route")
@@ -47,9 +49,9 @@ class TransformationSearchSpec extends TestBase {
 
     val context = ModelContext(File("/test/file"), Range(32, 42), Vector(ModelNode(schemaModel.schemaRef, JsObject.empty, null, Map(), None, None, None, "a")))
 
-    val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph)
+    val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph, editorSlug)
 
-    assert(results.head.asJson.toString() == """{"name":"Model -> Route","projectName":"test","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","changes":[{"transformationChanges":{"transformation":{"yields":"Model -> Route","id":"m2r","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","ask":{"type":"object"},"script":""},"target":"optic:test@0.1.0/route","_type":"com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"},"inputValue":{},"lensOptions":[],"locationOptions":[{"file":"/test/file","position":43,"_type":"com.opticdev.arrow.changes.location.AsChildOf"}],"_type":"com.opticdev.arrow.changes.RunTransformation"}]}""")
+    assert(results.head.asJson.toString() == """{"name":"Model -> Route","projectName":"test","editorSlug":"test","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","changes":[{"transformationChanges":{"transformation":{"yields":"Model -> Route","id":"m2r","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","ask":{"type":"object"},"script":""},"target":"optic:test@0.1.0/route","_type":"com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"},"inputValue":{},"lensOptions":[],"locationOptions":[{"file":"/test/file","position":43,"_type":"com.opticdev.arrow.changes.location.AsChildOf"}],"_type":"com.opticdev.arrow.changes.RunTransformation"}]}""")
 
   }
 

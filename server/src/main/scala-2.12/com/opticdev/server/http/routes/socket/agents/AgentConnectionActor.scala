@@ -39,16 +39,17 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     }
 
     case search: AgentSearch => {
-      ArrowQuery(search, projectsManager.lastProjectName)(projectsManager).executeToApiResponse.foreach(i=> {
+      ArrowQuery(search, projectsManager.lastProjectName, search.editorSlug)(projectsManager).executeToApiResponse.foreach(i=> {
         AgentConnection.broadcastUpdate( SearchResults(search.query, i.data, ignoreQueryUpdate = true) )
       })
     }
 
     case postChanges: PostChanges => {
+      implicit val autorefreshes = EditorConnection.listConnections.get(postChanges.editorSlug).map(_.autorefreshes).getOrElse(false)
       val future = new ArrowPostChanges(postChanges.projectName, postChanges.changes)(projectsManager).execute
         future.foreach(i=> {
           AgentConnection.broadcastUpdate( PostChangesResults(i.isSuccess, i.stagedFiles.keys.toSet) )
-          EditorConnection.broadcastUpdate( FilesUpdated(i.stagedFiles) )
+          EditorConnection.broadcastUpdateTo(postChanges.editorSlug, FilesUpdated(i.stagedFiles) )
         })
 
       future.onComplete(i=> {
@@ -64,11 +65,12 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
 
     case update : PutUpdate => {
       //@todo handle error states
-      new PutUpdateRequest(update.id, update.newValue)(projectsManager)
+      implicit val autorefreshes = EditorConnection.listConnections.get(update.editorSlug).map(_.autorefreshes).getOrElse(false)
+      new PutUpdateRequest(update.id, update.newValue, update.editorSlug)(projectsManager)
         .execute.foreach {
         case bc:BatchedChanges => {
           AgentConnection.broadcastUpdate( PostChangesResults(bc.isSuccess, bc.stagedFiles.keys.toSet) )
-          EditorConnection.broadcastUpdate( FilesUpdated(bc.stagedFiles) )
+          EditorConnection.broadcastUpdateTo( update.editorSlug, FilesUpdated(bc.stagedFiles) )
         }
       }
 //      (i=> {

@@ -18,11 +18,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class ContextQuery(file: File, range: Range, contentsOption: Option[String])(implicit projectsManager: ProjectsManager) {
+class ContextQuery(file: File, range: Range, contentsOption: Option[String], editorSlug: String)(implicit projectsManager: ProjectsManager) {
 
   implicit val nodeKeyStore = projectsManager.nodeKeyStore
 
-  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result], projectName: String)
+  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result], projectName: String, editorSlug: String)
 
   def execute : Future[ContextQueryResults] = {
 
@@ -60,7 +60,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String])(imp
     def addTransformationsAndFinalize(modelResults: Vector[LinkedModelNode[CommonAstNode]]): Future[ContextQueryResults] = Future {
       val modelContext = ModelContext(file, range, modelResults.map(_.flatten))
       val arrow = projectsManager.lookupArrow(projectOption.get).get
-      ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext), projectOption.get.name)
+      ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext, editorSlug), projectOption.get.name, editorSlug)
     }
 
     if (contentsOption.isDefined && projectOption.isSuccess) {

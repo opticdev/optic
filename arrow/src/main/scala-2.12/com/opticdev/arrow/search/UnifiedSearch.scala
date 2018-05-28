@@ -9,7 +9,7 @@ import me.xdrop.fuzzywuzzy.FuzzySearch
 
 object UnifiedSearch {
 
-  def search(query: String, context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph) : Vector[Result] = {
+  def search(query: String, context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph, editorSlug: String) : Vector[Result] = {
     val gearResults = GearSearch.search(query, context)
     val transformationResults = TransformationSearch.search(query, context)
 
