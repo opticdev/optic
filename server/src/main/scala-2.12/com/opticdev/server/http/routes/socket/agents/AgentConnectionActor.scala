@@ -82,17 +82,17 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
 
     }
 
-    case StageSync(projectName) => {
+    case StageSync(projectName, editorSlug) => {
 
       val projectLookup = projectsManager.lookupProject(projectName)
 
       if (projectLookup.isSuccess) {
         val future = projectLookup.get.syncPatch
         future.foreach {
-          case patch: SyncPatch => AgentConnection.broadcastUpdate(StagedSyncResults(patch))
+          case patch: SyncPatch => AgentConnection.broadcastUpdate(StagedSyncResults(patch, editorSlug))
         }
       } else {
-//        AgentConnection.broadcastUpdate(StagedSyncResults(SyncPatch.empty))
+        AgentConnection.broadcastUpdate(StagedSyncResults(SyncPatch.empty, editorSlug))
       }
 
     }

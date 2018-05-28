@@ -47,19 +47,24 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
   }
 
   private var expandedValueStore : Option[JsObject] = None
-  def expandedValue()(implicit sourceGearContext: SGContext) : JsObject = {
+  def expandedValue(withVariables: Boolean = false)(implicit sourceGearContext: SGContext) : JsObject = {
     if (expandedValueStore.isDefined) return expandedValueStore.get
 
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
       val modelFields = Try(listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext)))
       modelFields.failed.foreach(i=> i.printStackTrace())
-      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields.get, value) + ("_variables", Json.toJson(variableMapping)))
+      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields.get, value))
     } else {
-      expandedValueStore = Option(value  + ("_variables", Json.toJson(variableMapping) ))
+      expandedValueStore = Option(value)
     }
 
-    expandedValueStore.get
+    if (withVariables) {
+      expandedValueStore.get + ("_variables", Json.toJson(variableMapping))
+    } else {
+      expandedValueStore.get
+    }
+
   }
 
   def getContext()(implicit actorCluster: ActorCluster, project: ProjectBase): Try[SGContext] = Try(SGContext.forModelNode(this).get)

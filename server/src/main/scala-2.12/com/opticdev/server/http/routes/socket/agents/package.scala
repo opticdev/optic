@@ -23,7 +23,7 @@ package object agents {
     case class PostChanges(projectName: String, changes: ChangeGroup, editorSlug: String) extends AgentEvents
     case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range], contents: Option[String], editorSlug: String) extends AgentEvents
 
-    case class StageSync(projectName: String) extends AgentEvents
+    case class StageSync(projectName: String, editorSlug: String) extends AgentEvents
 
 
     //Sends
@@ -84,10 +84,10 @@ package object agents {
     ))
   }
 
-  case class StagedSyncResults(syncPatch: SyncPatch) extends OpticEvent with UpdateAgentEvent {
+  case class StagedSyncResults(syncPatch: SyncPatch, editorSlug: String) extends OpticEvent with UpdateAgentEvent {
     override def asJson: JsValue = JsObject(Seq(
       "event"-> JsString("sync-staged"),
-      "patch" -> syncPatch.asJson
+      "patch" -> syncPatch.asJson(editorSlug)
     ))
   }
 
