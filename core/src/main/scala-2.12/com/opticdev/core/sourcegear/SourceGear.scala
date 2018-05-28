@@ -30,7 +30,7 @@ abstract class SourceGear {
 
   def fileAccumulator = lensSet.fileAccumulator
 
-  def isEmpty = parsers.isEmpty || lensSet.listLenses.isEmpty || schemas.isEmpty || schemas.isEmpty
+  def isEmpty = parsers.isEmpty && lensSet.listLenses.isEmpty && schemas.isEmpty && schemas.isEmpty
 
   def findSchema(schemaRef: SchemaRef) : Option[Schema] = {
     val availible = schemas.filter(s=>

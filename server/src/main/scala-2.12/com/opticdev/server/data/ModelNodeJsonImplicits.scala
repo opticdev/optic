@@ -44,7 +44,7 @@ object ModelNodeJsonImplicits {
           "start" -> JsNumber(modelNode.root.range.start),
           "end" -> JsNumber(modelNode.root.range.end)
         )),
-        "value" -> modelNode.expandedValue(),
+        "value" -> modelNode.expandedValue(withVariables = true),
         "sync" -> JsObject(Seq(
           "name" -> modelNode.objectRef.map(i=> JsString(i.name)).getOrElse(JsNull),
           "source" -> modelNode.sourceAnnotation.map(_.asJson).getOrElse(JsNull)
