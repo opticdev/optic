@@ -140,10 +140,10 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   /* Staged File Monitor */
   val filesStateMonitor : FileStateMonitor = new FileStateMonitor()
-  def stageFileContents(file: File, contents: String): Future[Any] = {
+  def stageFileContents(file: File, contents: String, fromContextQuery: Boolean = false): Future[Any] = {
     implicit val timeout: akka.util.Timeout = Timeout(10 seconds)
     filesStateMonitor.stageContents(file, contents)
-    projectActor ? FileUpdatedInMemory(file, contents, this)(projectSourcegear)
+    projectActor ? FileUpdatedInMemory(file, contents, this, fromContextQuery)(projectSourcegear)
   }
 
   /* Control logic for watching files */

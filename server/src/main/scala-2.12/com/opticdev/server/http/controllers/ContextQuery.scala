@@ -64,7 +64,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String], edi
     }
 
     if (contentsOption.isDefined && projectOption.isSuccess) {
-      projectOption.get.stageFileContents(file, contentsOption.get)
+      projectOption.get.stageFileContents(file, contentsOption.get, fromContextQuery = true)
         .flatMap(i=> query)
         .flatMap(i=> addTransformationsAndFinalize(i))
     } else {

@@ -58,7 +58,7 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     //Forward parsing requests to the cluster supervisor
     case created: FileCreated => actorCluster.parserSupervisorRef ! ParseFile(created.file, sender(), created.project)(created.sourceGear)
     case updated: FileUpdated => actorCluster.parserSupervisorRef ! ParseFile(updated.file, sender(), updated.project)(updated.sourceGear)
-    case updated: FileUpdatedInMemory => actorCluster.parserSupervisorRef ! ParseFileWithContents(updated.file, updated.contents, sender(), updated.project)(updated.sourceGear)
+    case updated: FileUpdatedInMemory => actorCluster.parserSupervisorRef ! ParseFileWithContents(updated.file, updated.contents, sender(), updated.project, updated.fromContextQuery)(updated.sourceGear)
   }
 
 }
