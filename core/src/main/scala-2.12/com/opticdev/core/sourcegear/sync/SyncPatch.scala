@@ -42,23 +42,38 @@ case class SyncPatch(changes: Vector[SyncDiff], warnings: Vector[SyncWarning])(i
     changes.collect { case a: Replace => a }.groupBy(_.trigger.get)
   }
 
-  def asJson : JsValue = JsObject(Seq(
-    "projectName" -> JsString(project.name),
-    "warnings" -> JsArray(warnings.map(_.asJson)),
-    "errors" -> JsArray(errors.map(_.asJson)),
-    "changes" -> JsArray(filePatches.map(fp=> fp.asJson(project.trimAbsoluteFilePath(fp.file.pathAsString)))),
-    "triggers" -> {
-      JsArray(triggers.map {
-        case (trigger, changes) => {
-          import com.opticdev.core.sourcegear.sync.triggerFormat
-          val jsObject = Json.toJsObject(trigger)
-          val groupedBySchema = changes.groupBy(_.schemaRef)
-          val changeString = JsArray(groupedBySchema.map(i=> JsString(s"${i._2.length} ${if (i._2.length == 1) "instance" else "instances"} of ${i._1.internalFull}")).toSeq)
-          jsObject + ("changes" -> changeString)
-        }
-      }.toSeq)
+  def asJson(editorSlug: String) : JsValue = {
+    if (project == null) {
+      return JsObject(Seq(
+        "warnings" -> JsArray.empty,
+        "errors" -> JsArray.empty,
+        "changes" -> JsArray.empty
+      ))
     }
-  ))
+
+    JsObject(Seq(
+      "projectName" -> JsString(project.name),
+      "editorSlug" -> JsString(editorSlug),
+      "warnings" -> JsArray(warnings.map(_.asJson)),
+      "errors" -> JsArray(errors.map(_.asJson)),
+      "changes" -> JsArray(filePatches.map(fp=> fp.asJson(project.trimAbsoluteFilePath(fp.file.pathAsString)))),
+      "triggers" -> {
+        JsArray(triggers.map {
+          case (trigger, changes) => {
+            import com.opticdev.core.sourcegear.sync.triggerFormat
+            val jsObject = Json.toJsObject(trigger)
+            val groupedBySchema = changes.groupBy(_.schemaRef)
+            val changeString = JsArray(groupedBySchema.map(i=> JsString(s"${i._2.length} ${if (i._2.length == 1) "instance" else "instances"} of ${i._1.internalFull}")).toSeq)
+            jsObject + ("changes" -> changeString)
+          }
+        }.toSeq)
+      }
+    ))
+  }
 
 
+}
+
+object SyncPatch {
+  def empty = SyncPatch(Vector.empty, Vector.empty)(null)
 }
