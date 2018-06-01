@@ -84,11 +84,7 @@ lazy val server = (project in file("server")).
    test in assembly := {},
    assemblyJarName in assembly := "server-assembly.jar",
    mainClass in assembly := Some("com.opticdev.server.http.Lifecycle"),
-   mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle"),
-   buildInfoKeys := Seq[BuildInfoKey](
-     "mixpanelToken" -> Constants.mixpanelToken
-   ),
-   buildInfoPackage := "com.opticdev.server"
+   mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle")
  )
   .enablePlugins(AssemblyPlugin)
 

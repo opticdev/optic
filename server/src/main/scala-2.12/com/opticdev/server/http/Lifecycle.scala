@@ -11,7 +11,6 @@ import com.opticdev.opm.providers.LocalProvider
 import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.markdown.CallOpticMarkdown
-import com.opticdev.server.analytics.{MixpanelManager, ServerStart}
 import com.opticdev.server.state.ProjectsManager
 
 import scala.io.Source
@@ -48,8 +47,6 @@ object Lifecycle extends App {
 
     //tap the OpticMarkdown Installer in case this is a fresh install
 //    OpticMarkdownInstaller.getOrInstall
-
-    MixpanelManager.event(ServerStart)
 
   }
 
