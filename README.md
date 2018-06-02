@@ -1,9 +1,9 @@
-![alt text](http://opticdev.com/imgs/headerlogo.png "Optic Logo")
+![alt text](http://useoptic.com/imgs/headerlogo.png "Optic Logo")
 
 # Optic
-The engine behind [Optic's AI Pair Programming tool](http://opticdev.com/)
+The engine behind [Optic's AI Pair Programming tool](http://useoptic.com/)
 
-## [Product Docs](http://opticdev.com/docs/#/)
+## [Product Docs](http://useoptic.com/docs/#/)
 
 # Codebase
 
@@ -29,7 +29,7 @@ optic/
 Optic servers listen for state changes from Editors like Atom, Intellij and Vim. Those editors are constantly sending their state (cursor position and staged contents) to the server using a websocket. When results are found by the server those are forwarded to Optic's UI.
 
 Users can interact with the Optic API through the UI we provide. When they submit changes to the server they are processed and then forwarded back to the Editors and written to the file system.
-![alt text](http://opticdev.com/docs/images/system-overview.svg "Optic Logo")
+![alt text](http://useoptic.com/docs/images/system-overview.svg "Optic Logo")
 
 #### Companion Projects 
 There are several repos that we have chosen not to include in this monorepo:
