@@ -21,7 +21,7 @@ object TransformationSearch {
 
           val inputValue = Try {
             implicit val sourceGearcontext = sourceGearContext(c)
-            c.expandedValue()
+            c.expandedValue(withVariables = true)
           }.getOrElse(c.value)
 
           //@todo rank based on usage over time...

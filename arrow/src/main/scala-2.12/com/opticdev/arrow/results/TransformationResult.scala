@@ -31,7 +31,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
       }).asInstanceOf[Set[BaseModelNode]]
         .map(i=> {
           implicit val sourceGearContext = TransformationSearch.sourceGearContext(i)
-          val expandedValue = i.expandedValue()
+          val expandedValue = i.expandedValue(withVariables = true)
           ModelOption(i.id, expandedValue, i.objectRef.get.name)
         }).toSeq.sortBy(_.name)
 
