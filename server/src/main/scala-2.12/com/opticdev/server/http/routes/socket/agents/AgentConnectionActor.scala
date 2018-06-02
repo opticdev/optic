@@ -55,9 +55,7 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
       future.onComplete(i=> {
         if (i.isFailure) {
           i.failed.foreach(_.printStackTrace())
-          println(i.failed.get)
-        } else {
-          println(i.get)
+          AgentConnection.broadcastUpdate( PostChangesResults(success = false, Set(), Some(i.failed.get.getMessage)) )
         }
       })
 

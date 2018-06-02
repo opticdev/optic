@@ -58,11 +58,12 @@ package object agents {
       ))
     }
 
-    case class PostChangesResults(success: Boolean, filesUpdated: Set[File]) extends OpticEvent with UpdateAgentEvent {
+    case class PostChangesResults(success: Boolean, filesUpdated: Set[File], error: Option[String] = None) extends OpticEvent with UpdateAgentEvent {
       def asJson = JsObject(Seq(
         "event"-> JsString("post-changes-results"),
         "success"-> JsBoolean(success),
-        "filesChanges" -> JsArray(filesUpdated.map(i=> JsString(i.pathAsString)).toSeq)
+        "filesChanges" -> JsArray(filesUpdated.map(i=> JsString(i.pathAsString)).toSeq),
+        "error" -> error.map(JsString).getOrElse(JsNull)
       ))
     }
 
