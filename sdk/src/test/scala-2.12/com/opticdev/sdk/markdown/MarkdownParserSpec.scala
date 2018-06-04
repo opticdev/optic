@@ -21,10 +21,6 @@ class MarkdownParserSpec extends FunSpec with BeforeAndAfterAll {
     assert(outputTry.isSuccess)
   }
 
-  it("will fail if given no file") {
-    assert(MarkdownParser.parseMarkdownFile(File("")).isFailure)
-  }
-
   it("will fail if given an invalid file") {
     assert(MarkdownParser.parseMarkdownFile(File("not-real.file")).isFailure)
   }

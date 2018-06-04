@@ -184,6 +184,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |				"input": "optic:rest@0.1.0/model",
         |				"output": "optic:rest@0.1.0/route",
         |       "ask": {"type": "object"},
+        |       "dynamicAsk": {},
         |				"script": "function transform(input) {\n    var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n    return {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n}"
         |			},
         |			"target": "optic:test@latest/route",
@@ -194,6 +195,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |     "packageFull": "optic:expressjs@0.1.0",
         |     "id": "85c0d9c3"
         |   }],
+        |   "askSchema": {"type": "object"},
         |   "lensId": "optic:express-js/route",
         | 	"locationOptions": [{
         |		  "file": "test-examples/resources/tmp/test_project/nested/model.js",
@@ -236,6 +238,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |				"packageId": "optic:mongoose@0.1.0",
         |				"input": "optic:mongoose@0.1.0/schema",
         |				"output": "optic:rest@0.1.0/route",
+        |       "dynamicAsk": {},
         |				"ask": {
         |					"type": "object",
         |					"properties": {
@@ -255,6 +258,19 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			},
         |			"target": "optic:rest@0.1.0/route",
         |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
+        |		},
+        |   "askSchema": {
+        |					"type": "object",
+        |					"properties": {
+        |						"queryProvider": {
+        |							"description": "The gear you want to use to resolve this query",
+        |							"type": "string",
+        |							"_opticValidation": {
+        |								"accepts": "lens",
+        |								"withSchema": "optic:mongoose@0.1.0/create-record"
+        |							}
+        |						}
+        |      }
         |		},
         |		"inputValue": {
         |			"schema": {

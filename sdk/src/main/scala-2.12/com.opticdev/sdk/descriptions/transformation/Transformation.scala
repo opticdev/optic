@@ -3,6 +3,7 @@ package com.opticdev.sdk.descriptions.transformation
 import javax.script.ScriptEngineManager
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions._
+import com.opticdev.sdk.descriptions.transformation.ProcessResult.objectResult
 import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}
 import play.api.libs.json.{JsObject, _}
 
@@ -14,7 +15,7 @@ object Transformation extends Description[Transformation] {
   val engine: NashornScriptEngine = new ScriptEngineManager(null).getEngineByName("nashorn").asInstanceOf[NashornScriptEngine]
 
 
-  implicit val transformationReads = Json.reads[Transformation]
+  implicit val transformationReads = Json.using[Json.WithDefaultValues].reads[Transformation]
 
   def fromJson(packageRef: PackageRef, jsValue: JsValue): Transformation = {
     fromJson(jsValue.as[JsObject] + ("packageId" -> JsString(packageRef.full)))
@@ -34,30 +35,6 @@ object Transformation extends Description[Transformation] {
 
 }
 
-class TransformFunction(code: String, askSchema: JsObject = Transformation.emptyAskSchema, inputSchemaRef: SchemaRef, implicit val outputSchemaRef: SchemaRef) {
-  import com.opticdev.common.utils.JsObjectNashornImplicits._
-  private implicit val engine: NashornScriptEngine = Transformation.engine
-  lazy val inflated: Try[ScriptObjectMirror] = Inflate.fromString(code)
-
-  private lazy val askSchemaInflated = Schema.schemaObjectFromJson(askSchema)
-
-  def transform(jsObject: JsObject, answers: JsObject): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
-    if (!Schema.validate(askSchemaInflated, answers)) {
-      throw new Exception("Ask Object does not match the Ask Schema for this transformation "+ askSchema.toString)
-    }
-
-    val scriptObject = jsObject.asScriptObject.get
-    val answersObject = {answers ++ JsObject(Seq(
-        "input" -> JsString(inputSchemaRef.full),
-        "output" -> JsString(outputSchemaRef.full)
-      ))}.asScriptObject.get
-
-    val result = transformFunction.call(null, scriptObject, answersObject)
-    ProcessResult.objectResultFromScriptObject(result.asInstanceOf[ScriptObjectMirror])
-  }).flatten
-
-}
-
 case class TransformationRef(packageRef: Option[PackageRef], id: String) {
   def full: String = if (packageRef.isEmpty) id else packageRef.get.full+"/"+id
   def internalFull = if (packageRef.isEmpty) id else packageRef.get.packageId+"/"+id
@@ -68,7 +45,8 @@ sealed trait TransformationBase extends PackageExportable {
   def input: SchemaRef
   def output: SchemaRef
   def ask: JsObject
-  lazy val transformFunction = new TransformFunction(script, ask, input, output)
+  def dynamicAsk: JsObject
+  lazy val transformFunction = new TransformFunction(script, ask, dynamicAsk, input, output)
 }
 
 //case class InlineTransformation() extends TransformationBase
@@ -79,9 +57,15 @@ case class Transformation(yields: String,
                           input: SchemaRef,
                           output: SchemaRef,
                           ask: JsObject,
+                          dynamicAsk: JsObject = JsObject.empty,
                           script: String) extends TransformationBase {
 
-  def hasAsk : Boolean = Try((ask \ "properties").asInstanceOf[JsObject].fields.nonEmpty).getOrElse(false)
+  def hasAsk : Boolean = Try(
+    (ask \ "properties").asInstanceOf[JsObject].fields.nonEmpty ||
+    (dynamicAsk \ "properties").asInstanceOf[JsObject].fields.nonEmpty)
+   .getOrElse(false)
+
+  def combinedAsk(value: JsObject) : JsObject = transformFunction.combinedAskSchema(value)
 
   def transformationRef = TransformationRef(Some(packageId), id)
 

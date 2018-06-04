@@ -38,6 +38,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
       ChangeGroup(RunTransformation(
         transformationChange,
         inputValue,
+        transformationChange.transformation.combinedAsk(inputValue.getOrElse(JsObject.empty)),
         knowledgeGraph.gearsForSchema(dt.transformation.resolvedOutput).map(i=> LensOption(i.name, i.lensRef.packageRef.get.full, i.lensRef.internalFull)).toSeq,
         None,
         if (insertLocationOption.isDefined) Seq(insertLocationOption.get) else Seq(), //@todo add all location options

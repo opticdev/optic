@@ -28,9 +28,9 @@ object ExampleSourcegears {
       override val lensSet = new LensSet()
       override val schemas = Set(schemaModel, schemaRoute, schemaForm, schemaFetch)
       override val transformations = Set(
-        Transformation("Model -> Route", "m2r", transformationPackage,  schemaModel.schemaRef, schemaRoute.schemaRef, Transformation.emptyAskSchema, ""),
-        Transformation("Route -> Form", "r2f", transformationPackage, schemaRoute.schemaRef, schemaForm.schemaRef, Transformation.emptyAskSchema, ""),
-        Transformation("Route -> Fetch", "r2fe", transformationPackage, schemaRoute.schemaRef, schemaFetch.schemaRef, Transformation.emptyAskSchema, "")
+        Transformation("Model -> Route", "m2r", transformationPackage,  schemaModel.schemaRef, schemaRoute.schemaRef, Transformation.emptyAskSchema, Transformation.emptyAskSchema, ""),
+        Transformation("Route -> Form", "r2f", transformationPackage, schemaRoute.schemaRef, schemaForm.schemaRef, Transformation.emptyAskSchema, Transformation.emptyAskSchema, ""),
+        Transformation("Route -> Fetch", "r2fe", transformationPackage, schemaRoute.schemaRef, schemaFetch.schemaRef, Transformation.emptyAskSchema, Transformation.emptyAskSchema, "")
       )
       override val flatContext: FlatContext = FlatContext(None, Map(
         "optic:test" -> FlatContext(Some(PackageRef("optic:test", "0.1.0")), Map(
