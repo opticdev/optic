@@ -15,6 +15,7 @@ import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
 import com.opticdev.core.sourcegear.objects.annotations.{NameAnnotation, ObjectAnnotationRenderer, SourceAnnotation}
+import com.opticdev.core.sourcegear.mutate.MutationImplicits._
 object Evaluation {
 
   def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore): ChangeResult = opticChange match {
@@ -81,11 +82,8 @@ object Evaluation {
         implicit val sourceGearContext = modelNode.getContext.get
         val file = modelNode.fileNode.get.toFile
         implicit val fileContents = filesStateMonitor.contentsForFile(file).get
-        val changes = collectFieldChanges(modelNode, pu.newModel).filter(_.isSuccess).map(_.get)
-        val astChanges = handleChanges(changes)
-        val combined = combineChanges(astChanges)
-        val output = combined.toString()
-
+        import com.opticdev.core.sourcegear.mutate.MutationImplicits._
+        val output = modelNode.update(pu.newModel)
         FileChanged(file, output)
       } match {
         case s: Success[FileChanged] => s.get

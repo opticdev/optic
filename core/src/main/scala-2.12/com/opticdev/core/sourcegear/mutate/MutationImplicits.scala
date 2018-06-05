@@ -18,10 +18,13 @@ object MutationImplicits {
       import MutationSteps._
       val modelChanges: List[AstChange] = {
         val changesTry = collectFieldChanges(linkedModelNode, newValue)
+        val containerChangesTry = collectMapSchemaChanges(linkedModelNode, newValue)
 
-        val changes = changesTry.filter(_.isSuccess).map(_.get)
-
-        handleChanges(changes)
+        handleChanges(
+          changesTry.collect {case i if i.isSuccess => i.get},
+//          List()
+          containerChangesTry.collect {case i if i.isSuccess => i.get}
+        )
       }
 
       val variableEvaluatedChanges: List[AstChange] = if (variableChanges.isDefined)

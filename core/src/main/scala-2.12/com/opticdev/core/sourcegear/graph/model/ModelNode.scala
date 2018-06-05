@@ -5,7 +5,7 @@ import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
 import com.opticdev.core.sourcegear.{AstDebugLocation, CompiledLens, SGContext}
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.containers.ContainerAstMapping
-import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
+import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsModelProperty, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraph}
@@ -46,15 +46,23 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
       .asInstanceOf[Option[FileNode]]
   }
 
+  def mapSchemaFields()(implicit sourceGearContext: SGContext) : Set[ModelField] = {
+    val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
+    if (listenersOption.isDefined) {
+      listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
+    } else {
+      Set.empty
+    }
+  }
+
   private var expandedValueStore : Option[JsObject] = None
   def expandedValue(withVariables: Boolean = false)(implicit sourceGearContext: SGContext) : JsObject = {
     if (expandedValueStore.isDefined) return expandedValueStore.get
 
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
-      val modelFields = Try(listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext)))
-      modelFields.failed.foreach(i=> i.printStackTrace())
-      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields.get, value))
+      val modelFields = listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
+      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields, value))
     } else {
       expandedValueStore = Option(value)
     }

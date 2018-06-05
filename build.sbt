@@ -62,14 +62,6 @@ lazy val core = (project in file("core")).
   .dependsOn(opm)
   .dependsOn(opm % "compile->compile;test->test")
 
-lazy val arrow = (project in file("arrow")).
-  settings(commonSettings: _*)
-  .settings(libraryDependencies ++= Dependencies.arrowDependencies)
-  .dependsOn(core)
-  .dependsOn(core % "compile->compile;test->test")
-  .dependsOn(opm % "compile->compile;test->test")
-  .dependsOn(sdk)
-
 lazy val server = (project in file("server")).
  settings(commonSettings: _*)
  .enablePlugins(BuildInfoPlugin)
@@ -77,9 +69,7 @@ lazy val server = (project in file("server")).
  .dependsOn(sdk)
  .dependsOn(common)
  .dependsOn(core)
- .dependsOn(arrow)
  .dependsOn(core % "compile->compile;test->test")
- .dependsOn(arrow % "compile->compile;test->test")
  .settings(
    test in assembly := {},
    assemblyJarName in assembly := "server-assembly.jar",
