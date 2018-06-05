@@ -22,5 +22,6 @@ package object model {
   sealed trait AstMapping {val relationship : AstPropertyRelationship.Value}
   case class NodeMapping(node: CommonAstNode, relationship : AstPropertyRelationship.Value) extends AstMapping
   case class ModelVectorMapping(models: Vector[ModelNode]) extends AstMapping {override val relationship = AstPropertyRelationship.Model}
+  case class ContainerMapping(containerRoot: CommonAstNode) extends AstMapping {override val relationship = AstPropertyRelationship.NoRelationship}
   case object NoMapping extends AstMapping {override val relationship = AstPropertyRelationship.NoRelationship}
 }

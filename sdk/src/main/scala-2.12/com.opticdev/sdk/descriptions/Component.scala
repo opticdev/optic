@@ -105,4 +105,7 @@ case class SchemaComponent(propertyPath: Seq[String],
   
   def withLocation(setLocation: Location) = SchemaComponent(propertyPath, schema, mapUnique, toMap, Some(setLocation))
 
+  def yieldsArray : Boolean = this.toMap.isEmpty
+  def yieldsObject : Boolean = this.toMap.isDefined
+
 }
