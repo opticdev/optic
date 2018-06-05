@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.mutate
 
+import com.opticdev.arrow.changes.evaluation.InsertCode
 import com.opticdev.sdk.descriptions.{CodeComponent, Component, SchemaComponent}
 import com.opticdev.core.sourcegear.{Render, SGContext}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
@@ -15,9 +16,15 @@ import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
 import com.opticdev.core.sourcegear.gears.helpers.ParseGearImplicits._
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InContainer
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+import com.opticdev.marvin.common.ast.{AstArray, AstProperties, BaseAstNode}
+import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 
 import scala.util.{Success, Try}
 import gnieh.diffson.playJson._
+import com.opticdev.marvin.common.ast.OpticGraphConverter._
+import com.opticdev.marvin.common.helpers.LineOperations
+import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
+
 
 
 object MutationSteps {
@@ -42,7 +49,7 @@ object MutationSteps {
 
   }
 
-  def collectMapSchemaChanges(linkedModelNode: LinkedModelNode[CommonAstNode], newValue: JsObject)(implicit sourceGearContext: SGContext): List[Try[AddItemToContainer]] = {
+  def collectMapSchemaChanges(linkedModelNode: LinkedModelNode[CommonAstNode], newValue: JsObject)(implicit sourceGearContext: SGContext): List[Try[AddItemToContainer]] = Try {
     implicit val sourceGear = sourceGearContext.sourceGear
     val schemaComponents = linkedModelNode.parseGear.allSchemaComponents
     val mapSchemaFields = linkedModelNode.mapSchemaFields()
@@ -87,12 +94,14 @@ object MutationSteps {
             Vector.empty
           }
 
+        ///for objects
         } else {
+          //@todo implement this case
           Vector.empty
         }
       }
     }
-  }
+  }.getOrElse(List())
 
   def collectVariableChanges(linkedModelNode: LinkedModelNode[CommonAstNode], variableChanges: VariableChanges) (implicit sourceGearContext: SGContext, fileContents: String) : List[AstChange] = {
     if (variableChanges.hasChanges) {
@@ -114,6 +123,10 @@ object MutationSteps {
   }
 
   def handleChanges(updatedFields: List[UpdatedField], updatedContainerItems: List[AddItemToContainer]) (implicit sourceGearContext: SGContext, fileContents: String): List[AstChange] = {
+
+    implicit val nodeMutatorMap = sourceGearContext.parser.marvinSourceInterface.asInstanceOf[NodeMutatorMap]
+
+    val fieldChanges =
     updatedFields.map(field=> {
       field.component match {
         case i: CodeComponent => i.componentType match {
@@ -123,6 +136,35 @@ object MutationSteps {
         }
       }
     })
+
+
+    val containerChanges =
+    updatedContainerItems.groupBy(_.containerNode).map {
+      case (container, additions) => {
+
+        val changes =
+        Try {
+          val marvinAstParent = container.toMarvinAstNode(sourceGearContext.astGraph, sourceGearContext.fileContents, sourceGearContext.parser)
+          val indent = marvinAstParent.indent
+          val blockPropertyPath = sourceGearContext.parser.blockNodeTypes.getPropertyPath(container.nodeType).get
+          val array = marvinAstParent.properties.getOrElse(blockPropertyPath, AstArray()).asInstanceOf[AstArray]
+
+          val newArray: Seq[BaseAstNode] = array.children ++ additions.map {
+            case node => {
+              val gcWithLeadingWhiteSpace = LineOperations.padAllLinesWith(indent.generate, node.newAstNode.forceContent.get)
+              node.newAstNode.withForcedContent(Some(gcWithLeadingWhiteSpace))
+            }
+          }
+
+          val newProperties: AstProperties = marvinAstParent.properties + (blockPropertyPath -> AstArray(newArray: _*))
+          marvinAstParent.mutator.applyChanges(marvinAstParent, newProperties)
+        }
+
+        AstChange(ContainerMapping(container), changes)
+      }
+    }
+
+    fieldChanges ++ containerChanges
   }
 
   def mutateLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String): Try[String] = {
@@ -143,6 +185,7 @@ object MutationSteps {
     astChanges.sortBy(change=> {
       change.mapping match {
         case NodeMapping(node, relationship) => node.range.end
+        case ContainerMapping(container) => container.range.end
         case _ => 0
       }
     }).reverse
@@ -156,6 +199,7 @@ object MutationSteps {
       case (contents, change) => {
         change.mapping match {
           case NodeMapping(node, relationship) => contents.updateRange(node.range, change.replacementString.get)
+          case ContainerMapping(container) => contents.updateRange(container.range, change.replacementString.get)
         }
       }
     }

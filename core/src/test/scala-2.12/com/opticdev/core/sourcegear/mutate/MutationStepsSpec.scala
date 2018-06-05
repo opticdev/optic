@@ -143,7 +143,36 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
       implicit val sourceGearContext = f.sourceGearContext
       val update = f.route.resolved().update(f.newRouteValue)
 
-      null
+      assert(update == """app.get('differentURL', function (req, res) {
+                         |    req.query.firstLevel
+                         |    if (true) {
+                         |        req.body.nested
+                         |        req.body.nested
+                         |        req.header.bob
+                         |    }
+                         |    req.body.newOne
+                         |    req.query.oneMore
+                         |})
+                         |
+                         |req.param.outside""".stripMargin)
+
+    }
+
+    it("will not delete items") {
+      import MutationImplicits._
+      val f = fixture
+      implicit val fileContents = f.fileContents
+      implicit val project = f.project
+      implicit val sourceGearContext = f.sourceGearContext
+
+      val newRouteValue = {
+        f.routeValue + ("parameters" -> JsArray.empty)
+      }
+
+      val update = f.route.resolved().update(newRouteValue)
+
+      assert(update == f.fileContents)
+
     }
 
   }
