@@ -123,14 +123,6 @@ object MutationSteps {
         }
       }
     })
-
-    updatedContainerItems.map(addItem=> {
-
-      val
-
-      AstChange(ContainerMapping(addItem.containerNode), null)
-    })
-
   }
 
   def mutateLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String): Try[String] = {

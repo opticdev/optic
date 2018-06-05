@@ -92,13 +92,8 @@ object Dependencies {
 
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
     "com.opticdev" %% "marvin-runtime" % marvinVersion,
-    "com.opticdev" %% "marvin-common" % marvinVersion
-  )
-
-  val arrowDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
-    "me.xdrop" % "fuzzywuzzy" % "1.1.9",
-    "com.opticdev" %% "marvin-runtime" % marvinVersion,
-    "com.opticdev" %% "marvin-common" % marvinVersion
+    "com.opticdev" %% "marvin-common" % marvinVersion,
+    "me.xdrop" % "fuzzywuzzy" % "1.1.9"
   )
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
