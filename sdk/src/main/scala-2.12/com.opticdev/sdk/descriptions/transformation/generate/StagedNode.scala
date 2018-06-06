@@ -1,17 +1,13 @@
-package com.opticdev.sdk.descriptions.transformation
+package com.opticdev.sdk.descriptions.transformation.generate
 
-import com.opticdev.sdk.{RenderOptions, VariableMapping}
+import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.transformation.TransformationResult
 import play.api.libs.json.JsObject
-
-import scala.util.Try
-
-
-trait TransformationResult {def toStagedNode(options: Option[RenderOptions] = None) : StagedNode}
 
 case class StagedNode(schema: SchemaRef,
                       value: JsObject,
-                      options: Option[RenderOptions] = Some(RenderOptions(None, None, None))) extends TransformationResult {
+                      options: Option[RenderOptions] = Some(RenderOptions(None, None, None))) extends GenerateResult {
 
   def toStagedNode(newOptions: Option[RenderOptions]) : StagedNode = StagedNode(schema, value, {
     if (newOptions.isEmpty && options.isEmpty) None else {
@@ -47,8 +43,4 @@ case class StagedNode(schema: SchemaRef,
     }))
   }
 
-}
-
-case class SingleModel(schema: SchemaRef, value: JsObject) extends TransformationResult {
-  def toStagedNode(newOptions: Option[RenderOptions]) : StagedNode = StagedNode(schema, value, newOptions)
 }

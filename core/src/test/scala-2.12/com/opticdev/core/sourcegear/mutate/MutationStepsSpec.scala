@@ -14,9 +14,8 @@ import com.opticdev.core.sourcegear.mutate.MutationSteps._
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
-import com.opticdev.sdk.RenderOptions
 import com.opticdev.sdk.descriptions.enums.Literal
-import com.opticdev.sdk.descriptions.transformation.StagedNode
+import com.opticdev.sdk.descriptions.transformation.generate.RenderOptions
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import scalax.collection.mutable.Graph
 

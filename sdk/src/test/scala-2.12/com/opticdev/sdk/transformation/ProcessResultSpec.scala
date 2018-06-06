@@ -1,11 +1,12 @@
 package com.opticdev.sdk.transformation
 
 import com.opticdev.sdk.descriptions.SchemaRef
-import com.opticdev.sdk.descriptions.transformation.{ProcessResult, SingleModel, StagedNode, Transformation, TransformationResult}
+import com.opticdev.sdk.descriptions.transformation.{ProcessResult, Transformation, TransformationResult}
 import jdk.nashorn.api.scripting.ScriptObjectMirror
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsBoolean, JsObject, Json}
 import com.opticdev.sdk.descriptions.transformation._
+import com.opticdev.sdk.descriptions.transformation.generate.{SingleModel, StagedNode}
 class ProcessResultSpec extends FunSpec {
 
   implicit val outputSchemaRef = SchemaRef.fromString("test:package/schema").get

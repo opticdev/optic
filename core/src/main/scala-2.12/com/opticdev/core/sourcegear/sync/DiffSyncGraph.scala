@@ -9,8 +9,7 @@ import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.core.sourcegear.objects.annotations.TagAnnotation
 import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
-import com.opticdev.sdk.RenderOptions
-import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation}
+import com.opticdev.sdk.descriptions.transformation.Transformation
 import jdk.internal.org.objectweb.asm.tree.analysis.SourceValue
 import play.api.libs.json.{JsObject, JsString}
 import scalax.collection.edge.LkDiEdge
@@ -25,6 +24,7 @@ import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
 import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.parsers.ParserBase
+import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 
 object DiffSyncGraph {
 

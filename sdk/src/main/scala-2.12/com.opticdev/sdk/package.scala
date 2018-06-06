@@ -2,7 +2,7 @@ package com.opticdev
 
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.SchemaRef
-import com.opticdev.sdk.descriptions.transformation.StagedNode
+import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import play.api.libs.functional.syntax.unlift
 import play.api.libs.json.{Format, JsObject, Json, __}
 import play.api.libs.functional.syntax._

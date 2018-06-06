@@ -4,7 +4,7 @@ import com.opticdev.core.sourcegear.containers.{SubContainerManager, SubContaine
 import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstType, Child, CommonAstNode}
-import com.opticdev.sdk.{PropertyValue, RenderOptions}
+import com.opticdev.sdk.PropertyValue
 import com.opticdev.sdk.descriptions.PropertyRule
 import play.api.libs.json.JsObject
 

@@ -7,8 +7,8 @@ import com.opticdev.core.sourcegear.{Render, SourceGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.marvin.common.helpers.LineOperations
-import com.opticdev.sdk.{RenderOptions, VariableMapping, variableMappingFormat}
-import com.opticdev.sdk.descriptions.transformation.{SingleModel, StagedNode, TransformationResult}
+import com.opticdev.sdk.{VariableMapping, variableMappingFormat}
+import com.opticdev.sdk.descriptions.transformation.TransformationResult
 import play.api.libs.json.{JsObject, Json}
 
 import scala.util.{Failure, Success, Try}
@@ -16,6 +16,7 @@ import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
 import com.opticdev.core.sourcegear.objects.annotations.{NameAnnotation, ObjectAnnotationRenderer, SourceAnnotation}
 import com.opticdev.core.sourcegear.mutate.MutationImplicits._
+import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 object Evaluation {
 
   def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore): ChangeResult = opticChange match {

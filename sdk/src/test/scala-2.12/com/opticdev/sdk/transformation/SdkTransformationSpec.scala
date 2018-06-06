@@ -2,7 +2,8 @@ package com.opticdev.sdk.transformation
 
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.SchemaRef
-import com.opticdev.sdk.descriptions.transformation.{SingleModel, TransformFunction, Transformation}
+import com.opticdev.sdk.descriptions.transformation.generate.SingleModel
+import com.opticdev.sdk.descriptions.transformation.{TransformFunction, Transformation}
 import org.scalatest.FunSpec
 import play.api.libs.json._
 

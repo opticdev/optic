@@ -6,6 +6,7 @@ import play.api.libs.json.{JsObject, JsResult, Json}
 import scala.util.{Success, Try}
 import com.opticdev.common.utils.JsObjectNashornImplicits._
 import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.transformation.generate.{SingleModel, StagedNode}
 
 object ProcessResult {
   def objectResult(jsObject: JsObject)(implicit outputSchemaRef: SchemaRef): Try[TransformationResult] = Try {

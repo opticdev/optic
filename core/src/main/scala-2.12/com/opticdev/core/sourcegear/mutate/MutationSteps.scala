@@ -25,8 +25,6 @@ import com.opticdev.marvin.common.ast.OpticGraphConverter._
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
 
-
-
 object MutationSteps {
 
   //require newValue to be a valid model.
