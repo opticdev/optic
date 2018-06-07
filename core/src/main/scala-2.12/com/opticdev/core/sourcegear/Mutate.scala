@@ -14,10 +14,12 @@ import com.opticdev.marvin.common.ast._
 import com.opticdev.marvin.common.ast.OpticGraphConverter._
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 import ContainerMutationOperationsEnum._
+
 import scala.util.Try
 import com.opticdev.core.utils.StringUtils._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
+import play.api.libs.json.JsObject
 
 object Mutate {
 
@@ -71,12 +73,11 @@ object Mutate {
       containerMutations.foreach {
         case (containerName, mutation) => {
           mutateContainer(cModel, containerName, mutation)(cSGContext, project, nodeKeyStore).foreach(result => {
-            val oldCModelRange = cModel.root.range
             val newFileContents = StringUtils.replaceRange(cFileContents, result._1, result._2)
-
+            val newRaw = newFileContents.substring(result._1.start, result._1.start + result._2.length)
             val r = reparse(newFileContents)
             cModel = r._1
-            cRaw = newFileContents.substring(cModel.root.range.start, cModel.root.range.end)
+            cRaw = newRaw
             cFileContents = newFileContents
             cSGContext = r._3.copy(fileContents = cFileContents)
           })
@@ -89,7 +90,7 @@ object Mutate {
     })
 
     val modelRange = cModel.root.range
-    val updated = cModel.update(stagedMutation.value.getOrElse(modelNode.expandedValue()), variablesOption)(cSGContext, cFileContents)
+    val updated = cModel.update(stagedMutation.value.getOrElse(JsObject.empty), variablesOption)(cSGContext, cFileContents)
 
     val trimmed = updated.substring(modelRange.start, modelRange.end + (updated.length - cFileContents.length))
 

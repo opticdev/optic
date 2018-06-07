@@ -52,7 +52,7 @@ object MutationSteps {
     val schemaComponents = linkedModelNode.parseGear.allSchemaComponents
     val mapSchemaFields = linkedModelNode.mapSchemaFields()
 
-    val variableMapping = variableChanges.get.changes.map(i=> (i.variable.token, i.value)).toMap
+    val variableMapping = Try(variableChanges.get.changes.map(i=> (i.variable.token, i.value)).toMap).getOrElse(Map.empty)
 
     val oldMap = collectComponentValues(schemaComponents.asInstanceOf[Set[Component]], linkedModelNode.expandedValue())
     val newMap = collectComponentValues(schemaComponents.asInstanceOf[Set[Component]], newValue)
