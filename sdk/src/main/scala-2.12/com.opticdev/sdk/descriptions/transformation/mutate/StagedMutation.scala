@@ -12,3 +12,11 @@ case class StagedMutation(modelId: String,
   override def toStagedNode(options: Option[RenderOptions]): StagedNode = ???
 
 }
+
+case class StagedTagMutation(tag: String,
+                             value: Option[JsObject],
+                             options: Option[MutationOptions] = Some(MutationOptions(None, None, None))) {
+
+  def toStagedMutation(modelId: String) = StagedMutation(modelId, value, options)
+
+}

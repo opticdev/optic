@@ -7,14 +7,15 @@ package object mutate {
 
   trait MutateResult extends TransformationResult
 
-  type TagMutations = Map[String, StagedMutation]
+  type TagMutations = Map[String, StagedTagMutation]
   type ContainerMutations = Map[String, ContainerMutation]
 
   sealed trait ContainerMutation
-  case class Append(items: Seq[StagedNode])
-  case class Prepend(items: Seq[StagedNode])
-  case class InsertAt(index: Int, items: Seq[StagedNode])
-  case object Empty
+  case class Append(items: Seq[StagedNode]) extends ContainerMutation
+  case class Prepend(items: Seq[StagedNode]) extends ContainerMutation
+  case class ReplaceWith(items: Seq[StagedNode]) extends ContainerMutation
+  case class InsertAt(index: Int, items: Seq[StagedNode]) extends ContainerMutation
+  case object Empty extends ContainerMutation
 
 
 }

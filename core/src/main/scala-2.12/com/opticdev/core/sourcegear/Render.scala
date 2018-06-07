@@ -98,12 +98,12 @@ object Render {
   }
 
   //initializers
-  def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None)(implicit sourceGear: SourceGear): Try[(NewAstNode, String, CompiledLens)] = {
+  def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): Try[(NewAstNode, String, CompiledLens)] = {
     fromStagedNode(StagedNode(schemaRef, value, Some(
       RenderOptions(
         lensId = gearIdOption
       )
-    )))
+    )), variableMapping)
   }
 
 }

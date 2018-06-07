@@ -9,6 +9,16 @@ function Generate(schema, value, options) {
     }
 }
 
+function Mutate(modelId, value, options) {
+    return {
+        modelId: modelId,
+        value: value,
+        options: options,
+        _isStagedMutation: true
+    }
+}
+
+
 //Model Setters
 function Code(value) {
     return {
