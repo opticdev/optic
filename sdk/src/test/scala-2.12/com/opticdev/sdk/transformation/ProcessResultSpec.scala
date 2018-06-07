@@ -1,11 +1,14 @@
 package com.opticdev.sdk.transformation
 
 import com.opticdev.sdk.descriptions.SchemaRef
-import com.opticdev.sdk.descriptions.transformation.{ProcessResult, SingleModel, StagedNode, Transformation, TransformationResult}
+import com.opticdev.sdk.descriptions.transformation.{ProcessResult, Transformation, TransformationResult}
 import jdk.nashorn.api.scripting.ScriptObjectMirror
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsBoolean, JsObject, Json}
 import com.opticdev.sdk.descriptions.transformation._
+import com.opticdev.sdk.descriptions.transformation.generate.{SingleModel, StagedNode}
+import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
+
 class ProcessResultSpec extends FunSpec {
 
   implicit val outputSchemaRef = SchemaRef.fromString("test:package/schema").get
@@ -31,8 +34,14 @@ class ProcessResultSpec extends FunSpec {
 
   it("will return a staged node for a generate call") {
     val stagedNode = StagedNode(SchemaRef.fromString("hello:test/schema").get, JsObject.empty, None)
-    val asJson = Json.toJson[StagedNode](stagedNode)
-    assert(ProcessResult.objectResult(asJson.as[JsObject]).get == stagedNode)
+    val asJson = Json.toJson[StagedNode](stagedNode).as[JsObject] + ("_isStagedNode" -> JsBoolean(true))
+    assert(ProcessResult.objectResult(asJson).get == stagedNode)
+  }
+
+  it("will return a staged mutation") {
+    val stagedMutation = StagedMutation("id", None, None)
+    val asJson = Json.toJson[StagedMutation](stagedMutation).as[JsObject] + ("_isStagedMutation" -> JsBoolean(true))
+    assert(ProcessResult.objectResult(asJson.as[JsObject]).get == stagedMutation)
   }
 
 }

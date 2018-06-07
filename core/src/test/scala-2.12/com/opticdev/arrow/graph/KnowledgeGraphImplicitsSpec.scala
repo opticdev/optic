@@ -49,7 +49,7 @@ class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
     val results = f.knowledgeGraphWithTransformations.availableTransformations(ref)
 
 
-    assert(!results.map(_.transformation.resolvedOutput(f.sourcegearhWithTransformations.sourceGear)).contains(SchemaRef(Some(PackageRef("optic:test")), "model")))
+    assert(!results.map(_.transformation.resolvedOutput(f.sourcegearhWithTransformations.sourceGear)).contains(Some(SchemaRef(Some(PackageRef("optic:test")), "model"))))
 
   }
 

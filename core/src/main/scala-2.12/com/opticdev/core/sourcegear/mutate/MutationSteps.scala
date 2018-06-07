@@ -25,8 +25,6 @@ import com.opticdev.marvin.common.ast.OpticGraphConverter._
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
 
-
-
 object MutationSteps {
 
   //require newValue to be a valid model.
@@ -49,10 +47,12 @@ object MutationSteps {
 
   }
 
-  def collectMapSchemaChanges(linkedModelNode: LinkedModelNode[CommonAstNode], newValue: JsObject)(implicit sourceGearContext: SGContext): List[Try[AddItemToContainer]] = Try {
+  def collectMapSchemaChanges(linkedModelNode: LinkedModelNode[CommonAstNode], newValue: JsObject, variableChanges: Option[VariableChanges] = None)(implicit sourceGearContext: SGContext): List[Try[AddItemToContainer]] = Try {
     implicit val sourceGear = sourceGearContext.sourceGear
     val schemaComponents = linkedModelNode.parseGear.allSchemaComponents
     val mapSchemaFields = linkedModelNode.mapSchemaFields()
+
+    val variableMapping = Try(variableChanges.get.changes.map(i=> (i.variable.token, i.value)).toMap).getOrElse(Map.empty)
 
     val oldMap = collectComponentValues(schemaComponents.asInstanceOf[Set[Component]], linkedModelNode.expandedValue())
     val newMap = collectComponentValues(schemaComponents.asInstanceOf[Set[Component]], newValue)
@@ -76,7 +76,7 @@ object MutationSteps {
               added.map { case i => Try(AddItemToContainer(
                 component,
                 linkedModelNode.containerMapping(component.location.map(_.in.asInstanceOf[InContainer].name).get),
-                Render.simpleNode(resolvedSchema, i.as[JsObject], None).map(_._1).get))
+                Render.simpleNode(resolvedSchema, i.as[JsObject], None, variableMapping).map(_._1).get))
               }.toVector
             //add to the first container
             } else if (linkedModelNode.containerMapping.nonEmpty) {
@@ -84,7 +84,7 @@ object MutationSteps {
               added.map { case i => Try(AddItemToContainer(
                 component,
                 firstContainer,
-                Render.simpleNode(resolvedSchema, i.as[JsObject], None).map(_._1).get))
+                Render.simpleNode(resolvedSchema, i.as[JsObject], None, variableMapping).map(_._1).get))
               }.toVector
             //can't add, shouldn't ever happen
             } else {
@@ -144,7 +144,7 @@ object MutationSteps {
 
         val changes =
         Try {
-          val marvinAstParent = container.toMarvinAstNode(sourceGearContext.astGraph, sourceGearContext.fileContents, sourceGearContext.parser)
+          val marvinAstParent = container.toMarvinAstNode(sourceGearContext.astGraph, fileContents, sourceGearContext.parser)
           val indent = marvinAstParent.indent
           val blockPropertyPath = sourceGearContext.parser.blockNodeTypes.getPropertyPath(container.nodeType).get
           val array = marvinAstParent.properties.getOrElse(blockPropertyPath, AstArray()).asInstanceOf[AstArray]

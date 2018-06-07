@@ -3,13 +3,14 @@ package com.opticdev.arrow.search
 import com.opticdev.arrow.context.ArrowContextBase
 import com.opticdev.arrow.graph.KnowledgeGraph
 import com.opticdev.arrow.results.{Result, TransformationResult}
+import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.project.OpticProject
 import me.xdrop.fuzzywuzzy.FuzzySearch
 
 object UnifiedSearch {
 
-  def search(query: String, context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph, editorSlug: String) : Vector[Result] = {
+  def search(query: String, context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph, editorSlug: String, nodeKeyStore: NodeKeyStore) : Vector[Result] = {
     val gearResults = GearSearch.search(query, context)
     val transformationResults = TransformationSearch.search(query, context)
 

@@ -8,6 +8,7 @@ import better.files.File
 import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{SGConfig, SGConstructor}
+import com.opticdev.parsers.graph.CommonAstNode
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 import scala.concurrent.duration._
@@ -68,6 +69,22 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
 //
 //      assert(results.get.stagedFiles.head._2.text == expectedChange)
 //    }
+
+    it("Runs mutation transformation") {
+      val (changeGroup, sourcegear, project, expectedChange) = mutationTransformationAnyRouteToPostRoute
+      val file = File("test-examples/resources/test_project/nested/testMutationTransform.js")
+      val parsed = project.projectSourcegear.parseFile(file)(project).get
+      project.projectGraphWrapper.addFile(parsed.astGraph, file)
+      val graph = project.projectGraphWrapper.subgraphForFile(file)
+
+      val inputLinkedModelNode = parsed.modelNodes.find(_.lensRef.id == "route").get.resolveInGraph[CommonAstNode](parsed.astGraph)
+
+      nodeKeyStore.assignId(file, "test123", inputLinkedModelNode)
+
+      val results = changeGroup.evaluateAndWrite(sourcegear, Some(project))
+
+      assert(results.get.stagedFiles.head._2.text == expectedChange)
+    }
 
   }
 

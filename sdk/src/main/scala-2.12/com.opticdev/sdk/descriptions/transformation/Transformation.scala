@@ -43,10 +43,10 @@ case class TransformationRef(packageRef: Option[PackageRef], id: String) {
 sealed trait TransformationBase extends PackageExportable {
   def script: String
   def input: SchemaRef
-  def output: SchemaRef
+  def output: Option[SchemaRef]
   def ask: JsObject
   def dynamicAsk: JsObject
-  lazy val transformFunction = new TransformFunction(script, ask, dynamicAsk, input, output)
+  lazy val transformFunction = new TransformFunction(script, ask, dynamicAsk, input, output.getOrElse(input))
 }
 
 //case class InlineTransformation() extends TransformationBase
@@ -55,7 +55,7 @@ case class Transformation(yields: String,
                           id: String,
                           packageId: PackageRef,
                           input: SchemaRef,
-                          output: SchemaRef,
+                          output: Option[SchemaRef],
                           ask: JsObject,
                           dynamicAsk: JsObject = JsObject.empty,
                           script: String) extends TransformationBase {
@@ -64,6 +64,9 @@ case class Transformation(yields: String,
     (ask \ "properties").asInstanceOf[JsObject].fields.nonEmpty ||
     (dynamicAsk \ "properties").asInstanceOf[JsObject].fields.nonEmpty)
    .getOrElse(false)
+
+  def isMutationTransform = output.isEmpty
+  def isGenerateTransform = output.isDefined
 
   def combinedAsk(value: JsObject) : JsObject = transformFunction.combinedAskSchema(value)
 

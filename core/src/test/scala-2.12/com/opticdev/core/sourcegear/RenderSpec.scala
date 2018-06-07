@@ -6,12 +6,12 @@ import com.opticdev.core.Fixture.{DummyCompilerOutputs, ExampleSourcegearFixture
 import com.opticdev.core.compiler.stages.RenderFactoryStage
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
-import com.opticdev.sdk.RenderOptions
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
 import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.{RuleEnums, VariableEnums}
-import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation}
+import com.opticdev.sdk.descriptions.transformation.Transformation
+import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsObject, JsString}
 

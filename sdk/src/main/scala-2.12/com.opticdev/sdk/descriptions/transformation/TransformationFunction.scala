@@ -34,7 +34,7 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
   }
 
 
-  def transform(jsObject: JsObject, answers: JsObject): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
+  def transform(jsObject: JsObject, answers: JsObject, inputModelId: Option[String]): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
 
     val askSchemaInflated = Schema.schemaObjectFromJson(combinedAskSchema(jsObject))
 
@@ -48,7 +48,7 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
       "output" -> JsString(outputSchemaRef.full)
     ))}.asScriptObject.get
 
-    val result = transformFunction.call(null, scriptObject, answersObject)
+    val result = transformFunction.call(null, scriptObject, answersObject, inputModelId.orNull)
     ProcessResult.objectResultFromScriptObject(result.asInstanceOf[ScriptObjectMirror])
   }).flatten
 

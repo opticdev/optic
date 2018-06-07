@@ -1,6 +1,7 @@
-package com.opticdev.sdk
+package com.opticdev.sdk.descriptions.transformation.generate
 
 import com.opticdev.sdk.descriptions.LensRef
+import com.opticdev.sdk.{ContainersContent, VariableMapping}
 
 
 case class RenderOptions(lensId: Option[String] = None,

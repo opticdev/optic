@@ -17,7 +17,7 @@ import com.opticdev.core._
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.parsers.rules._
 import com.opticdev.sdk.descriptions.enums.VariableEnums
-import com.opticdev.sdk.descriptions.transformation.StagedNode
+import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 
 class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec") with ParserUtils with GearUtils {
 

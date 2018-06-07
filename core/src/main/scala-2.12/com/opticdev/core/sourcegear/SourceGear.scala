@@ -10,7 +10,8 @@ import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
-import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation, TransformationRef}
+import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
+import com.opticdev.sdk.descriptions.transformation.{Transformation, TransformationRef}
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge

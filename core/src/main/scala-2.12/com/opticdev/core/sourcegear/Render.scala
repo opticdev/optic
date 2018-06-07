@@ -6,10 +6,10 @@ import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelFiel
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.parsers.sourcegear.basic.ObjectLiteralValueFormat
-import com.opticdev.sdk.{RenderOptions, VariableMapping}
+import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
 import com.opticdev.sdk.descriptions.enums.VariableEnums
-import com.opticdev.sdk.descriptions.transformation.StagedNode
+import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import com.vdurmont.semver4j.Semver
 import play.api.libs.json._
 
@@ -98,12 +98,12 @@ object Render {
   }
 
   //initializers
-  def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None)(implicit sourceGear: SourceGear): Try[(NewAstNode, String, CompiledLens)] = {
+  def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): Try[(NewAstNode, String, CompiledLens)] = {
     fromStagedNode(StagedNode(schemaRef, value, Some(
       RenderOptions(
         lensId = gearIdOption
       )
-    )))
+    )), variableMapping)
   }
 
 }

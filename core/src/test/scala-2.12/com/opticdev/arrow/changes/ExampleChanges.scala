@@ -2,8 +2,11 @@ package com.opticdev.arrow.changes
 
 import play.api.libs.json.Json
 import JsonImplicits._
+import akka.actor.ActorSystem
 import better.files.File
 import com.opticdev.core.Fixture.TestBase
+import com.opticdev.core.sourcegear.actors.ActorCluster
+import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.core.sourcegear.{SGConstructor, SourceGear}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.TestPackageProviders
@@ -388,6 +391,65 @@ object ExampleChanges extends TestBase with TestPackageProviders {
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
     (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst model = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/hello', function (req, res) {\n  new model({ firstName: req.body.firstName,\n  lastName: req.body.lastName,\n  email: req.body.email }).save((err, item) => {\n    if (!err) {\n    \n    } else {\n    \n    }\n  })\n})")
+
+  }
+
+  lazy val mutationTransformationAnyRouteToPostRoute = {
+
+    val changesJSON =
+
+      """
+        |[{
+        |		"transformationChanges": {
+        |			"transformation": {
+        |				"yields": "Any Route to Post Route",
+        |				"id": "a2p",
+        |				"packageId": "optic:test-transform@latest",
+        |				"input": "optic:rest@0.1.0/route",
+        |				"output": "optic:rest@0.1.0/route",
+        |       "ask": {"type": "object"},
+        |       "dynamicAsk": {},
+        |				"script": "function transform(input, answers, inputModelId) {\n return Mutate(inputModelId, {method: 'post', url: input.url})   \n}"
+        |			},
+        |			"target": "optic:test@latest/route",
+        |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
+        |		},
+        |		"lensOptions": [{
+        |     "name": "Route",
+        |     "packageFull": "optic:expressjs@0.1.0",
+        |     "id": "85c0d9c3"
+        |   }],
+        |   "inputModelId": "test123",
+        |   "askSchema": {"type": "object"},
+        |   "lensId": "optic:express-js/route",
+        | 	"locationOptions": [{
+        |		  "file": "test-examples/resources/test_project/nested/testMutationTransform.js",
+        |		  "position": 173,
+        |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |  	}],
+        |   "location": {
+        |		  "file": "test-examples/resources/test_project/nested/testMutationTransform.js",
+        |		  "position": 173,
+        |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |  	},
+        |   "inputValue": {"url": "user/:id", "method": "get"},
+        |   "answers": {},
+        		|   "_type":"com.opticdev.arrow.changes.RunTransformation"
+        | }]
+      """.stripMargin
+
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml")))
+      .map(_.inflate)
+
+    val sourcegear = Await.result(future, 10 seconds)
+
+    implicit val actorCluster = new ActorCluster(ActorSystem("testone"))
+
+    val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/example_source/"), sourcegear)
+
+    val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
+
+    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})")
 
   }
 

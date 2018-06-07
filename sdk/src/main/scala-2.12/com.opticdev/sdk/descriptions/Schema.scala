@@ -1,6 +1,7 @@
 package com.opticdev.sdk.descriptions
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.github.fge.jsonschema.core.report.ProcessingReport
 import com.github.fge.jsonschema.main.{JsonSchema, JsonSchemaFactory}
 import com.opticdev.common.{PackageRef, SGExportable}
 import play.api.libs.json._
@@ -34,7 +35,8 @@ object Schema extends Description[Schema] {
     } else throw new Error("Invalid Schema "+ validatorFactory.getSyntaxValidator.validateSchema(schema.as[JsonNode]).toString)
   }
 
-  def validate(jsonSchema: JsonSchema, value: JsValue) = jsonSchema.validate(value.as[JsonNode]).isSuccess
+  def validate(jsonSchema: JsonSchema, value: JsValue) = jsonSchema.validInstance(value.as[JsonNode])
+  def validationReport(jsonSchema: JsonSchema, value: JsValue): ProcessingReport = jsonSchema.validate(value.as[JsonNode])
 
   def fromJson(schemaId: SchemaRef, jsValue: JsValue): Schema = {
     Schema(schemaId, jsValue.as[JsObject])
@@ -50,6 +52,7 @@ case class Schema(schemaRef: SchemaRef, definition: JsObject) extends PackageExp
   private val jsonSchema : JsonSchema = Schema.schemaObjectFromJson(definition)
 
   def validate(jsValue: JsValue): Boolean = Schema.validate(jsonSchema, jsValue)
+  def validationReport(jsValue: JsValue) = Schema.validationReport(jsonSchema, jsValue)
 
   def toJson = definition ++ JsObject(Seq("_identifier" -> JsString(schemaRef.full)))
 

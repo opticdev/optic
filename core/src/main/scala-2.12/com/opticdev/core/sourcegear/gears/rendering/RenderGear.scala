@@ -14,7 +14,7 @@ import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
-import com.opticdev.sdk.descriptions.transformation.StagedNode
+import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.{ContainersContent, VariableMapping}
 
 import scala.util.Try

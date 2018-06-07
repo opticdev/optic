@@ -35,6 +35,7 @@ case class InsertModel(schema: Schema,
 
 case class RunTransformation(transformationChanges: TransformationChanges,
                              inputValue: Option[JsObject],
+                             inputModelId: Option[String],
                              askSchema: JsObject,
 
                              lensOptions: Seq[LensOption],
