@@ -2,20 +2,28 @@ package com.opticdev.sdk.descriptions.transformation
 
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
+import play.api.libs.json._
+
+import scala.util.Try
 
 package object mutate {
 
   trait MutateResult extends TransformationResult
 
   type TagMutations = Map[String, StagedTagMutation]
-  type ContainerMutations = Map[String, ContainerMutation]
+  type ContainerMutations = Map[String, StagedContainerMutation]
 
-  sealed trait ContainerMutation
-  case class Append(items: Seq[StagedNode]) extends ContainerMutation
-  case class Prepend(items: Seq[StagedNode]) extends ContainerMutation
-  case class ReplaceWith(items: Seq[StagedNode]) extends ContainerMutation
-  case class InsertAt(index: Int, items: Seq[StagedNode]) extends ContainerMutation
-  case object Empty extends ContainerMutation
+
+  case class StagedContainerMutation(operation: ContainerMutationOperation)
+
+  sealed trait ContainerMutationOperation
+  object ContainerMutationOperationsEnum {
+    case class Append(items: Seq[StagedNode]) extends ContainerMutationOperation
+    case class Prepend(items: Seq[StagedNode]) extends ContainerMutationOperation
+    case class ReplaceWith(items: Seq[StagedNode]) extends ContainerMutationOperation
+    case class InsertAt(index: Int, items: Seq[StagedNode]) extends ContainerMutationOperation
+    case object Empty extends ContainerMutationOperation
+  }
 
 
 }

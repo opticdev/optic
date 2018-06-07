@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.arrow.state.NodeKeyStore
+import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
@@ -9,9 +10,12 @@ import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
 import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.sdk.descriptions.transformation.mutate.{MutationOptions, StagedMutation, StagedTagMutation}
+import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
+import com.opticdev.sdk.descriptions.transformation.mutate.{MutationOptions, StagedContainerMutation, StagedMutation, StagedTagMutation}
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsArray, JsObject, JsString}
+import com.opticdev.sdk.descriptions.transformation.mutate.ContainerMutationOperationsEnum._
 
 class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester with GearUtils with ParserUtils {
 
@@ -72,7 +76,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
       implicit val sourceGearContext = f.sourceGearContext
       val modelId = nodeKeyStore.leaseId(f.file, f.route)
 
-      val mutateTagResults = Mutate.mutateTag(f.route.root, StagedTagMutation("sub", Some(
+      val mutateTagResults = Mutate.mutateTag(f.route.root, "sub", StagedTagMutation(Some(
         JsObject(Seq("url" -> JsString("changed")))
       )))
 
@@ -89,7 +93,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
       val modelId = nodeKeyStore.leaseId(f.file, f.route)
 
       val stagedMutation = StagedMutation(modelId, None, Some(MutationOptions(
-        tags = Some(Map("sub" -> StagedTagMutation("sub", Some(
+        tags = Some(Map("sub" -> StagedTagMutation(Some(
           JsObject(Seq("url" -> JsString("changed")))
         )))))
       ))
@@ -107,10 +111,10 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
       val stagedMutation = StagedMutation(modelId, Some(JsObject(Seq("method" -> JsString("head")))), Some(MutationOptions(
         tags = Some(
           Map(
-            "sub" -> StagedTagMutation("sub", Some(
+            "sub" -> StagedTagMutation(Some(
               JsObject(Seq("url" -> JsString("first")))
             )),
-            "subTwo" -> StagedTagMutation("subTwo", Some(
+            "subTwo" -> StagedTagMutation(Some(
               JsObject(Seq("url" -> JsString("second")))
             ))
           )))
@@ -121,5 +125,101 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
 
   }
 
+
+  describe("container mutations") {
+
+    it("works directly emptying a valid container") {
+      val f = fixture
+      implicit val nodeKeyStore = new NodeKeyStore
+      implicit val project = f.project
+      implicit val sourceGearContext = f.sourceGearContext
+
+      val modelId = nodeKeyStore.leaseId(f.file, f.route)
+
+      val results = Mutate.mutateContainer(f.route, "callback", StagedContainerMutation(Empty))
+
+      assert(results.get._2 == "{\n    \n}")
+    }
+
+    it("does nothing when container not found") {
+      val f = fixture
+      implicit val nodeKeyStore = new NodeKeyStore
+      implicit val project = f.project
+      implicit val sourceGearContext = f.sourceGearContext
+
+      val modelId = nodeKeyStore.leaseId(f.file, f.route)
+
+      val results = Mutate.mutateContainer(f.route, "notReal", StagedContainerMutation(Empty))
+
+      assert(results.isEmpty)
+    }
+
+    it("works directly adding a staged node to a valid container") {
+      val f = fixture
+      implicit val nodeKeyStore = new NodeKeyStore
+      implicit val project = f.project
+      implicit val sourceGearContext = f.sourceGearContext
+
+      val modelId = nodeKeyStore.leaseId(f.file, f.route)
+
+      val results = Mutate.mutateContainer(f.route, "callback", StagedContainerMutation(Append(Seq(
+        StagedNode(SchemaRef(Some(PackageRef("optic:flatexpress",  "0.1.0")), "parameter"), JsObject(Seq(
+          "in" -> JsString("query"),
+          "name" -> JsString("justAdded")
+        ))))
+      )))
+
+      assert(results.get._2 == "{\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('suburl', function (req, res) { //tag: sub\n\n        })\n        app.get('suburl2', function (req, res) { //tag: subTwo\n\n        })\n    }\n    req.query.justAdded\n}")
+    }
+
+    it("work when its a sub mutation") {
+      val f = fixture
+      implicit val nodeKeyStore = new NodeKeyStore
+      implicit val project = f.project
+      implicit val sourceGearContext = f.sourceGearContext
+      val modelId = nodeKeyStore.leaseId(f.file, f.route)
+
+      val stagedMutation = StagedMutation(modelId, None, Some(MutationOptions(
+        containers = Some(Map(
+          "callback" -> StagedContainerMutation(Empty)
+        ))
+      )))
+
+      assert(Mutate.fromStagedMutation(stagedMutation).get._2 == "app.get('url', function (req, res) {\n    \n})")
+
+    }
+
+    it("work when combined with a tag & value update") {
+      val f = fixture
+      implicit val nodeKeyStore = new NodeKeyStore
+      implicit val project = f.project
+      implicit val sourceGearContext = f.sourceGearContext
+      val modelId = nodeKeyStore.leaseId(f.file, f.route)
+
+      val stagedMutation = StagedMutation(modelId, Some(JsObject(Seq("method" -> JsString("head")))), Some(MutationOptions(
+        tags = Some(
+          Map(
+            "sub" -> StagedTagMutation(Some(
+              JsObject(Seq("url" -> JsString("first")))
+            ))
+          )
+        ),
+        containers = Some(Map(
+          "callback" -> StagedContainerMutation(Append(Seq(
+            StagedNode(SchemaRef(Some(PackageRef("optic:flatexpress",  "0.1.0")), "parameter"), JsObject(Seq(
+              "in" -> JsString("query"),
+              "name" -> JsString("justAdded")
+            ))))
+          ))
+        ))
+      )))
+
+      println(Mutate.fromStagedMutation(stagedMutation).get._2)
+
+      assert(Mutate.fromStagedMutation(stagedMutation).get._2 == "app.head('url', function (req, res) {\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('first', function (req, res) { //tag: sub\n\n        })\n        app.get('suburl2', function (req, res) { //tag: subTwo\n\n        })\n    }\n    req.query.justAdded\n})")
+
+    }
+
+  }
 
 }

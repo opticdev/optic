@@ -5,14 +5,19 @@ import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode,
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.sdk.descriptions.transformation.mutate.{MutationOptions, StagedMutation, StagedTagMutation}
+import com.opticdev.sdk.descriptions.transformation.mutate._
 import com.opticdev.core.sourcegear.mutate.MutationImplicits._
 import com.opticdev.core.sourcegear.variables.VariableChanges
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
-
+import com.opticdev.marvin.common.ast._
+import com.opticdev.marvin.common.ast.OpticGraphConverter._
+import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
+import ContainerMutationOperationsEnum._
 import scala.util.Try
 import com.opticdev.core.utils.StringUtils._
+import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
+import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 
 object Mutate {
 
@@ -47,7 +52,7 @@ object Mutate {
     val tagsOption = stagedMutation.options.flatMap(_.tags).foreach(tagMutations=> {
       tagMutations.foreach {
         case (tag, mutation) => {
-          mutateTag(cModel.root, mutation)(cSGContext, project, nodeKeyStore)
+          mutateTag(cModel.root, tag, mutation)(cSGContext, project, nodeKeyStore)
             .foreach(result => {
               val updated = StringUtils.replaceRange(cRaw, cModel.root.range, result._2)
               val oldCModelRange = cModel.root.range
@@ -62,7 +67,22 @@ object Mutate {
       }
     })
 
-    val containersOptions = stagedMutation.options.flatMap(_.containers)
+    val containersOptions = stagedMutation.options.flatMap(_.containers).foreach(containerMutations=> {
+      containerMutations.foreach {
+        case (containerName, mutation) => {
+          mutateContainer(cModel, containerName, mutation)(cSGContext, project, nodeKeyStore).foreach(result => {
+            val oldCModelRange = cModel.root.range
+            val newFileContents = StringUtils.replaceRange(cFileContents, result._1, result._2)
+
+            val r = reparse(newFileContents)
+            cModel = r._1
+            cRaw = newFileContents.substring(cModel.root.range.start, cModel.root.range.end)
+            cFileContents = newFileContents
+            cSGContext = r._3.copy(fileContents = cFileContents)
+          })
+        }
+      }
+    })
 
     val variablesOption = stagedMutation.options.flatMap(_.variables).map(variable=> {
       VariableChanges.fromVariableMapping(variable, sourceGearContext.parser)
@@ -80,22 +100,56 @@ object Mutate {
   def resolveNode(modelId: String)(implicit nodeKeyStore: NodeKeyStore) =
     nodeKeyStore.lookupId(modelId)
 
-  def mutateTag(parent: CommonAstNode, stagedTagMutation: StagedTagMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore) = {
+  def mutateTag(parent: CommonAstNode, tag: String, stagedTagMutation: StagedTagMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore) = {
     implicit val astGraph = sourceGearContext.astGraph
     import com.opticdev.core.sourcegear.graph.GraphImplicits.CommonAstNodeInstance
 
     val modelNode = sourceGearContext.astGraph.nodes.collectFirst {
       case n if n.value.isInstanceOf[BaseModelNode] &&
-                n.value.asInstanceOf[BaseModelNode].tag.exists(_.tag == stagedTagMutation.tag) &&
+                n.value.asInstanceOf[BaseModelNode].tag.exists(_.tag == tag) &&
                 parent.hasChild(n.value.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph).root) =>
         n.value.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph)
     }
 
-    require(modelNode.isDefined, s"Tag ${stagedTagMutation.tag} not found")
+    require(modelNode.isDefined, s"Tag ${tag} not found")
     val modelId = nodeKeyStore.leaseId(sourceGearContext.file, modelNode.get)
     val stagedMutation = stagedTagMutation.toStagedMutation(modelId)
 
     Mutate.fromStagedMutation(stagedMutation)
   }
 
+  def mutateContainer(parentModel: LinkedModelNode[CommonAstNode], containerName: String, stagedContainerMutation: StagedContainerMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore) = {
+    implicit val astGraph = sourceGearContext.astGraph
+    implicit val nodeMutatorMap = sourceGearContext.parser.marvinSourceInterface.asInstanceOf[NodeMutatorMap]
+    val containerOption = parentModel.containerMapping.get(containerName)
+
+    containerOption.map(containerAstNode=> {
+
+      val containerAstNode = containerOption.get
+      val currentContents = sourceGearContext.fileContents.substring(containerAstNode.range)
+
+      val marvinAstNodeContainer = containerAstNode.toMarvinAstNode(astGraph, sourceGearContext.fileContents, sourceGearContext.parser)
+      val blockPropertyPath = sourceGearContext.parser.blockNodeTypes.getPropertyPath(containerAstNode.nodeType).get
+
+      val array = marvinAstNodeContainer.properties.getOrElse(blockPropertyPath, AstArray()).asInstanceOf[AstArray]
+
+      def renderItems(items: Seq[StagedNode]) = items.map(sn => Render.fromStagedNode(sn)(sourceGearContext.sourceGear).get._1)
+
+      val newArray: AstArray = stagedContainerMutation.operation match {
+        case Append(items) => AstArray(array.children ++ renderItems(items):_*)
+        case Prepend(items) => AstArray((renderItems(items) ++ array.children):_*)
+        case ReplaceWith(items) => AstArray(renderItems(items):_*)
+        case InsertAt(index: Int, items) => AstArray(array.children.patch(index, renderItems(items), 0):_*)
+        case Empty => AstArray()
+      }
+
+
+      val newProperties: AstProperties = marvinAstNodeContainer.properties + (blockPropertyPath -> newArray)
+
+      val changes = marvinAstNodeContainer.mutator.applyChanges(marvinAstNodeContainer, newProperties)
+
+      (containerAstNode.range, changes)
+
+    })
+  }
 }
