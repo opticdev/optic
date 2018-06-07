@@ -42,7 +42,7 @@ class SdkTransformationSpec extends FunSpec {
       assert(result.ask.fields.size == 1)
       assert(result.dynamicAsk.fields.size == 1)
       assert(result.input == SchemaRef(Some(PackageRef("optic:test", "1.0.0")), "schema"))
-      assert(result.output == SchemaRef(None, "test"))
+      assert(result.output == Some(SchemaRef(None, "test")))
     }
 
     it("fails when invalid") {
@@ -104,7 +104,7 @@ class SdkTransformationSpec extends FunSpec {
     }
 
     it("can execute a transformation") {
-      val result = valid.transform(JsObject(Seq("test" -> JsString("world"))), JsObject.empty)
+      val result = valid.transform(JsObject(Seq("test" -> JsString("world"))), JsObject.empty, None)
       assert(result == Success(SingleModel(outputSchemaRef, JsObject(Seq("hello" -> JsString("world"))))))
     }
 
@@ -126,12 +126,12 @@ class SdkTransformationSpec extends FunSpec {
         SchemaRef.fromString("tdasd:fdasdas/g").get, outputSchemaRef)
 
       it("when valid answers object passed") {
-        val result = valid.transform(JsObject.empty, JsObject(Seq("value" -> JsString("world"))))
+        val result = valid.transform(JsObject.empty, JsObject(Seq("value" -> JsString("world"))), None)
         assert(result == Success(SingleModel(outputSchemaRef, JsObject(Seq("hello" -> JsString("world"))))))
       }
 
       it("will fail when invalid answers object is input") {
-        val result = valid.transform(JsObject.empty, JsObject(Seq("value" -> JsBoolean(false))))
+        val result = valid.transform(JsObject.empty, JsObject(Seq("value" -> JsBoolean(false))), None)
         assert(result.isFailure)
       }
 

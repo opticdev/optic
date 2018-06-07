@@ -52,7 +52,7 @@ object Evaluation {
 
       require(rt.inputValue.isDefined, "Transformation must have an input value specified")
 
-      val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue.get, rt.answers.getOrElse(JsObject.empty))
+      val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue.get, rt.answers.getOrElse(JsObject.empty), rt.inputModelId)
       require(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed)
 
       def generateAndAdd(generateResult: GenerateResult) : ChangeResult = {

@@ -16,7 +16,7 @@ import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
-case class TransformationResult(score: Int, transformationChange: TransformationChanges, context : ArrowContextBase, inputValue: Option[JsObject], objectSelection: Option[String])(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph, editorSlug: String) extends Result {
+case class TransformationResult(score: Int, transformationChange: TransformationChanges, context : ArrowContextBase, inputValue: Option[JsObject], inputModelId: Option[String], objectSelection: Option[String])(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph, editorSlug: String) extends Result {
 
   override def changes : ChangeGroup = transformationChange match {
     case dt: DirectTransformation => {
@@ -38,6 +38,7 @@ case class TransformationResult(score: Int, transformationChange: Transformation
       ChangeGroup(RunTransformation(
         transformationChange,
         inputValue,
+        inputModelId,
         transformationChange.transformation.combinedAsk(inputValue.getOrElse(JsObject.empty)),
         knowledgeGraph.gearsForSchema({
           if (dt.transformation.isGenerateTransform) {

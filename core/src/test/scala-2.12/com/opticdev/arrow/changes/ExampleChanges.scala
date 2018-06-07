@@ -409,7 +409,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |				"output": "optic:rest@0.1.0/route",
         |       "ask": {"type": "object"},
         |       "dynamicAsk": {},
-        |				"script": "function transform(input) {\n return Mutate('test123', {method: 'post', url: input.url})   \n}"
+        |				"script": "function transform(input, answers, inputModelId) {\n return Mutate(inputModelId, {method: 'post', url: input.url})   \n}"
         |			},
         |			"target": "optic:test@latest/route",
         |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
@@ -419,6 +419,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |     "packageFull": "optic:expressjs@0.1.0",
         |     "id": "85c0d9c3"
         |   }],
+        |   "inputModelId": "test123",
         |   "askSchema": {"type": "object"},
         |   "lensId": "optic:express-js/route",
         | 	"locationOptions": [{

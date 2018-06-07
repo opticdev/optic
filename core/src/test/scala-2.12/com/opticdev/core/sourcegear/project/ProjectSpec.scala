@@ -44,7 +44,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
   it("can list all files recursively") {
     val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
     assert(project.filesToWatch.map(i => i.pathAsString.split("test-examples/resources/tmp/test_project/")(1)) ==
-      Set("app.js", "nested/firstFile.js", "nested/model.js", "nested/nested/secondFile.js", "invalid.js"))
+      Set("app.js", "nested/firstFile.js", "nested/testMutationTransform.js", "nested/model.js", "nested/nested/secondFile.js", "invalid.js"))
   }
 
   describe("can watch files") {

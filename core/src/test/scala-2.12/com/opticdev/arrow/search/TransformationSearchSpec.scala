@@ -25,7 +25,7 @@ class TransformationSearchSpec extends TestBase {
 
     val context = ModelContext(null, null, Vector(ModelNode(schemaModel.schemaRef, JsObject.empty, null, Map(), None, None, None, "a")))
 
-    val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph, editorSlug)
+    val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph, editorSlug, nodeKeyStore)
 
     assert(results.size == 1)
     assert(results.head.transformationChange.asInstanceOf[DirectTransformation].transformation.yields == "Model -> Route")
@@ -37,7 +37,7 @@ class TransformationSearchSpec extends TestBase {
 
     val context = NoContext
 
-    val results = TransformationSearch.search("Route", context)(sourceGear, project, knowledgeGraph, editorSlug)
+    val results = TransformationSearch.search("Route", context)(sourceGear, project, knowledgeGraph, editorSlug, nodeKeyStore)
 
     assert(results.size == 3)
     assert(results.head.transformationChange.asInstanceOf[DirectTransformation].transformation.yields == "Model -> Route")
@@ -49,7 +49,7 @@ class TransformationSearchSpec extends TestBase {
 
     val context = ModelContext(File("/test/file"), Range(32, 42), Vector(ModelNode(schemaModel.schemaRef, JsObject.empty, null, Map(), None, None, None, "a")))
 
-    val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph, editorSlug)
+    val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph, editorSlug, nodeKeyStore)
 
     println(results.head.asJson.toString())
 
