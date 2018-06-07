@@ -27,11 +27,17 @@ object IndexSourceGear {
     }.toVector
 
     val transformationNodes = sourceGear.transformations.map {
-      case t: Transformation =>
+      case t: Transformation if t.isGenerateTransform =>
         val inputSchemaNode = SchemaNode(sourceGear.findSchema(t.resolvedInput(sourceGear)).get)
-        val outputSchemaNode = SchemaNode(sourceGear.findSchema(t.resolvedOutput(sourceGear)).get)
+        val outputSchemaNode = SchemaNode(sourceGear.findSchema(t.resolvedOutput(sourceGear).get).get)
 
         (inputSchemaNode ~+#> outputSchemaNode)(t)
+
+      case t: Transformation if t.isMutationTransform => {
+        val inputSchemaNode = SchemaNode(sourceGear.findSchema(t.resolvedInput(sourceGear)).get)
+        (inputSchemaNode ~+#> inputSchemaNode)(t)
+      }
+
     }.toVector
 
     Graph(schemaGearNodes ++ transformationNodes:_*).asInstanceOf[KnowledgeGraph]

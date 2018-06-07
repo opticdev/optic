@@ -22,16 +22,18 @@ object SDKObjectsResolvedImplicits {
         .getOrElse(throw new Exception(s"Schema '${transformation.input}' not found"))
     }
 
-    def resolvedOutput(implicit sourceGear: SourceGear) : SchemaRef = {
+    def resolvedOutput(implicit sourceGear: SourceGear) : Option[SchemaRef] = {
+      transformation.output.map {
+        case output =>
+        val pId = if (output.packageRef.isDefined) {
+          output.packageRef.map(_.packageId).getOrElse("")
+        } else {
+          transformation.packageId.packageId
+        }
 
-      val pId = if (transformation.output.packageRef.isDefined) {
-        transformation.output.packageRef.map(_.packageId).getOrElse("")
-      } else {
-        transformation.packageId.packageId
+        Try(resolveSchema(pId, output.id).get.asInstanceOf[Schema].schemaRef)
+          .getOrElse(throw new Exception(s"Schema '${transformation.output}' not found"))
       }
-
-      Try(resolveSchema(pId, transformation.output.id).get.asInstanceOf[Schema].schemaRef)
-        .getOrElse(throw new Exception(s"Schema '${transformation.output}' not found"))
     }
   }
 

@@ -8,7 +8,9 @@ import scala.util.Try
 
 package object mutate {
 
-  trait MutateResult extends TransformationResult
+  trait MutateResult extends TransformationResult {
+    def toStagedMutation : StagedMutation
+  }
 
   type TagMutations = Map[String, StagedTagMutation]
   type ContainerMutations = Map[String, StagedContainerMutation]

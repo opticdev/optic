@@ -34,7 +34,13 @@ object TransformationSearch {
     sourcegear.transformations.map(i=> {
       TransformationResult(
         FuzzySearch.tokenSetPartialRatio(i.yields, query),
-        DirectTransformation(i, i.resolvedOutput),
+        DirectTransformation(i, {
+          if (i.isGenerateTransform) {
+            i.resolvedOutput.get
+          } else {
+            i.resolvedInput
+          }
+        }),
         context,
         None,
         None

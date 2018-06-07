@@ -14,6 +14,7 @@ import com.opticdev.marvin.common.ast._
 import com.opticdev.marvin.common.ast.OpticGraphConverter._
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 import ContainerMutationOperationsEnum._
+import com.opticdev.core.sourcegear.context.FlatContextBase
 
 import scala.util.Try
 import com.opticdev.core.utils.StringUtils._
@@ -23,7 +24,15 @@ import play.api.libs.json.JsObject
 
 object Mutate {
 
-  def fromStagedMutation(stagedMutation: StagedMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore) : Try[(NewAstNode, String, CommonAstNode)] = Try {
+  def fromStagedMutationWithoutSGContext(stagedMutation: StagedMutation)(implicit project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null): Try[(NewAstNode, String, CommonAstNode, LinkedModelNode[CommonAstNode])] = {
+    val modelNodeOption = resolveNode(stagedMutation.modelId)
+    require(modelNodeOption.isDefined, s"No model found with id ${stagedMutation.modelId}")
+    val modelNode = modelNodeOption.get
+    implicit val sourceGearContext = modelNode.getContext()(project.actorCluster, project).get
+    fromStagedMutation(stagedMutation)
+  }
+
+  def fromStagedMutation(stagedMutation: StagedMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null) : Try[(NewAstNode, String, CommonAstNode, LinkedModelNode[CommonAstNode])] = Try {
     val modelNodeOption = resolveNode(stagedMutation.modelId)
     require(modelNodeOption.isDefined, s"No model found with id ${stagedMutation.modelId}")
 
@@ -72,7 +81,7 @@ object Mutate {
     val containersOptions = stagedMutation.options.flatMap(_.containers).foreach(containerMutations=> {
       containerMutations.foreach {
         case (containerName, mutation) => {
-          mutateContainer(cModel, containerName, mutation)(cSGContext, project, nodeKeyStore).foreach(result => {
+          mutateContainer(cModel, containerName, mutation)(cSGContext, project, nodeKeyStore, context).foreach(result => {
             val newFileContents = StringUtils.replaceRange(cFileContents, result._1, result._2)
             val newRaw = newFileContents.substring(result._1.start, result._1.start + result._2.length)
             val r = reparse(newFileContents)
@@ -94,7 +103,7 @@ object Mutate {
 
     val trimmed = updated.substring(modelRange.start, modelRange.end + (updated.length - cFileContents.length))
 
-    (NewAstNode(cModel.root.nodeType.name, null, Some(trimmed)), trimmed, cModel.root)
+    (NewAstNode(cModel.root.nodeType.name, null, Some(trimmed)), trimmed, cModel.root, modelNode)
   }
 
   //steps
@@ -119,7 +128,7 @@ object Mutate {
     Mutate.fromStagedMutation(stagedMutation)
   }
 
-  def mutateContainer(parentModel: LinkedModelNode[CommonAstNode], containerName: String, stagedContainerMutation: StagedContainerMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore) = {
+  def mutateContainer(parentModel: LinkedModelNode[CommonAstNode], containerName: String, stagedContainerMutation: StagedContainerMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null) = {
     implicit val astGraph = sourceGearContext.astGraph
     implicit val nodeMutatorMap = sourceGearContext.parser.marvinSourceInterface.asInstanceOf[NodeMutatorMap]
     val containerOption = parentModel.containerMapping.get(containerName)
@@ -134,7 +143,7 @@ object Mutate {
 
       val array = marvinAstNodeContainer.properties.getOrElse(blockPropertyPath, AstArray()).asInstanceOf[AstArray]
 
-      def renderItems(items: Seq[StagedNode]) = items.map(sn => Render.fromStagedNode(sn)(sourceGearContext.sourceGear).get._1)
+      def renderItems(items: Seq[StagedNode]) = items.map(sn => Render.fromStagedNode(sn)(sourceGearContext.sourceGear, context).get._1)
 
       val newArray: AstArray = stagedContainerMutation.operation match {
         case Append(items) => AstArray(array.children ++ renderItems(items):_*)

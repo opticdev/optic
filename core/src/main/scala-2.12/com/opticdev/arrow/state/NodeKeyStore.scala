@@ -26,6 +26,12 @@ class NodeKeyStore {
 
   }
 
+  def assignId(file: File, id: String, modelNode: LinkedModelNode[CommonAstNode]) : String = {
+    val fileIdMapping = map.getOrElseUpdate(file, mutable.Map[String, LinkedModelNode[CommonAstNode]]())
+    fileIdMapping += id -> modelNode
+    id
+  }
+
   def invalidateFileIds(file: File) = {
     map -= file
   }

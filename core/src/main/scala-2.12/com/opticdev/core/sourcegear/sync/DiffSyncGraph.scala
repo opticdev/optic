@@ -24,7 +24,7 @@ import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
 import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.parsers.ParserBase
-import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
+import com.opticdev.sdk.descriptions.transformation.generate.{GenerateResult, RenderOptions, StagedNode}
 
 object DiffSyncGraph {
 
@@ -81,7 +81,8 @@ object DiffSyncGraph {
 
         val prefixedFlatContent: FlatContextBase = sourceGear.flatContext.prefix(transformation.packageId.packageId)
 
-        val stagedNode = transformationResult.toStagedNode(Some(RenderOptions(
+        //@todo need a better approach to this since mutation transforms are not syncable
+        val stagedNode = transformationResult.asInstanceOf[GenerateResult].toStagedNode(Some(RenderOptions(
           lensId = Some(targetNode.lensRef.full)
         )))
 

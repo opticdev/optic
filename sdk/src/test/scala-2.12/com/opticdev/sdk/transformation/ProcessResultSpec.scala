@@ -7,6 +7,8 @@ import org.scalatest.FunSpec
 import play.api.libs.json.{JsBoolean, JsObject, Json}
 import com.opticdev.sdk.descriptions.transformation._
 import com.opticdev.sdk.descriptions.transformation.generate.{SingleModel, StagedNode}
+import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
+
 class ProcessResultSpec extends FunSpec {
 
   implicit val outputSchemaRef = SchemaRef.fromString("test:package/schema").get
@@ -34,6 +36,12 @@ class ProcessResultSpec extends FunSpec {
     val stagedNode = StagedNode(SchemaRef.fromString("hello:test/schema").get, JsObject.empty, None)
     val asJson = Json.toJson[StagedNode](stagedNode)
     assert(ProcessResult.objectResult(asJson.as[JsObject]).get == stagedNode)
+  }
+
+  it("will return a staged mutation") {
+    val stagedMutation = StagedMutation("id", None, None)
+    val asJson = Json.toJson[StagedMutation](stagedMutation)
+    assert(ProcessResult.objectResult(asJson.as[JsObject]).get == stagedMutation)
   }
 
 }
