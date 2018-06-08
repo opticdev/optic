@@ -72,3 +72,4 @@ sealed trait ResolvedLocation {
 }
 case class ResolvedRawLocation(rawPosition: Int, parser : ParserBase) extends ResolvedLocation
 case class ResolvedChildInsertLocation(index: Int, parent: CommonAstNode, graph: AstGraph, parser : ParserBase) extends ResolvedLocation
+case class EndOfFile(parser : ParserBase) extends ResolvedLocation
