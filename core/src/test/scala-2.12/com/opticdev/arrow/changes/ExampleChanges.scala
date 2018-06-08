@@ -466,7 +466,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |				"input": "optic:rest@0.1.0/route",
         |       "ask": {"type": "object"},
         |       "dynamicAsk": {},
-        |				"script": "function transform(input, answers, inputModelId) {\n return [Mutate(inputModelId, {method: 'post', url: input.url}), Generate('optic:rest/parameter', { in: 'body', name: 'aidan' })]   \n}"
+        |				"script": "function transform(input, answers, inputModelId) {\n return [Mutate(inputModelId, {method: 'post', url: input.url}), Generate('optic:rest/parameter', { in: 'body', name: 'aidan' }), Generate('optic:rest/parameter', { in: 'body', name: 'lastName' })]   \n}"
         |			},
         |			"target": "optic:test@latest/route",
         |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
@@ -506,7 +506,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
-    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})\n\nreq.body.aidan\n\n\n\n\n")
+    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})\n\nreq.body.lastName\n\nreq.body.aidan\n\n\n\n\n")
 
   }
 
