@@ -12,6 +12,10 @@ package object transformation {
     def isMultiTransform = this.isInstanceOf[MultiTransform]
   }
 
+  abstract class TransformationCaller {
+    def get(id: String): ScriptObjectMirror
+  }
+
   case class DynamicAsk(key: String, description: String, code: ScriptObjectMirror)
 
 }

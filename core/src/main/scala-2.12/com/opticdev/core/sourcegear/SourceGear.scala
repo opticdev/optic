@@ -6,6 +6,7 @@ import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.sdk.descriptions.{LensRef, Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
+import com.opticdev.core.sourcegear.transformations.TransformationCallerImpl
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers
@@ -28,6 +29,8 @@ abstract class SourceGear {
   val transformations: Set[Transformation]
 
   val flatContext: FlatContext
+
+  val transformationCaller = new TransformationCallerImpl(this)
 
   def fileAccumulator = lensSet.fileAccumulator
 
