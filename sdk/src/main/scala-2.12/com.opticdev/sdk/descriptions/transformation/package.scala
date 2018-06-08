@@ -9,6 +9,11 @@ package object transformation {
   trait TransformationResult {
     def yieldsGeneration = this.isInstanceOf[GenerateResult]
     def yieldsMutation = this.isInstanceOf[MutateResult]
+    def isMultiTransform = this.isInstanceOf[MultiTransform]
+  }
+
+  abstract class TransformationCaller {
+    def get(id: String): ScriptObjectMirror
   }
 
   case class DynamicAsk(key: String, description: String, code: ScriptObjectMirror)

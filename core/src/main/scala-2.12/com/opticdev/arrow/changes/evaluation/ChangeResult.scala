@@ -11,13 +11,18 @@ trait ChangeResult {
   def asFileChanged = this.asInstanceOf[FileChanged]
 }
 
-case class FileChanged(file: File, newContents: String) extends ChangeResult {
+case class FileChanged(file: File, newContents: String, patchInfo: Option[PatchInfo] = None) extends ChangeResult {
   override def isSuccess = true
 
   def stageContentsIn(fileStateMonitor: FileStateMonitor) = {
     fileStateMonitor.stageContents(file, newContents)
   }
 }
+
+case class FilesChanged(fileChanges: FileChanged*) extends ChangeResult {
+  override def isSuccess = true
+}
+
 case class FailedToChange(throwable: Throwable) extends ChangeResult {
   override def isSuccess = false
 }
@@ -26,3 +31,7 @@ case class FailedToChange(throwable: Throwable) extends ChangeResult {
 case object NoChanges extends ChangeResult {
   override def isSuccess = true
 }
+
+
+//additional data
+case class PatchInfo(range: Range, updated: String)

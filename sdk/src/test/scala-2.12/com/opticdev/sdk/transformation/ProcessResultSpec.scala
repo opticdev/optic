@@ -2,9 +2,9 @@ package com.opticdev.sdk.transformation
 
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.{ProcessResult, Transformation, TransformationResult}
-import jdk.nashorn.api.scripting.ScriptObjectMirror
+import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}
 import org.scalatest.FunSpec
-import play.api.libs.json.{JsBoolean, JsObject, Json}
+import play.api.libs.json.{JsArray, JsBoolean, JsObject, Json}
 import com.opticdev.sdk.descriptions.transformation._
 import com.opticdev.sdk.descriptions.transformation.generate.{SingleModel, StagedNode}
 import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
@@ -42,6 +42,31 @@ class ProcessResultSpec extends FunSpec {
     val stagedMutation = StagedMutation("id", None, None)
     val asJson = Json.toJson[StagedMutation](stagedMutation).as[JsObject] + ("_isStagedMutation" -> JsBoolean(true))
     assert(ProcessResult.objectResult(asJson.as[JsObject]).get == stagedMutation)
+  }
+
+  it("will return a multi transformation") {
+    import com.opticdev.common.utils.JsObjectNashornImplicits._
+
+    val array = JsArray(Seq(
+      Json.toJson[StagedMutation](StagedMutation("id", None, None)).as[JsObject] + ("_isStagedMutation" -> JsBoolean(true)),
+      Json.toJson[StagedNode](StagedNode(SchemaRef.fromString("hello:test/schema").get, JsObject.empty, None)).as[JsObject] + ("_isStagedNode" -> JsBoolean(true)),
+    ))
+
+    implicit val engine: NashornScriptEngine = Transformation.engine
+
+    val evalString = s"""(function () {
+                        | var obj = ${array.toString()}
+                        | return obj
+                        | })() """.stripMargin
+
+    val so = engine.eval(evalString).asInstanceOf[ScriptObjectMirror]
+
+    val result = ProcessResult.objectResultFromScriptObject(so).get
+
+    assert(result == MultiTransform(Seq(
+      StagedMutation("id", None, None),
+      StagedNode(SchemaRef.fromString("hello:test/schema").get, JsObject.empty, None)
+    )))
   }
 
 }

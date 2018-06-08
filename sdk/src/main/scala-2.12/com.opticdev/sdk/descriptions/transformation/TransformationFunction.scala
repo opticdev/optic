@@ -11,6 +11,8 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
   private implicit val engine: NashornScriptEngine = Transformation.engine
   lazy val inflated: Try[ScriptObjectMirror] = Inflate.fromString(code)
 
+  def functionScriptObject = inflated
+
   lazy val dynamicAskSchemaInflated: Seq[DynamicAsk] = {
     dynamicAskSchema.fields.collect {
       case (key: String, value: JsObject) => Try {
@@ -34,7 +36,7 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
   }
 
 
-  def transform(jsObject: JsObject, answers: JsObject, inputModelId: Option[String]): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
+  def transform(jsObject: JsObject, answers: JsObject, transformationCaller: TransformationCaller, inputModelId: Option[String]): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
 
     val askSchemaInflated = Schema.schemaObjectFromJson(combinedAskSchema(jsObject))
 
@@ -48,7 +50,7 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
       "output" -> JsString(outputSchemaRef.full)
     ))}.asScriptObject.get
 
-    val result = transformFunction.call(null, scriptObject, answersObject, inputModelId.orNull)
+    val result = transformFunction.call(null, scriptObject, answersObject, inputModelId.orNull, transformationCaller)
     ProcessResult.objectResultFromScriptObject(result.asInstanceOf[ScriptObjectMirror])
   }).flatten
 

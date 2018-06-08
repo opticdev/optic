@@ -406,7 +406,6 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |				"id": "a2p",
         |				"packageId": "optic:test-transform@latest",
         |				"input": "optic:rest@0.1.0/route",
-        |				"output": "optic:rest@0.1.0/route",
         |       "ask": {"type": "object"},
         |       "dynamicAsk": {},
         |				"script": "function transform(input, answers, inputModelId) {\n return Mutate(inputModelId, {method: 'post', url: input.url})   \n}"
@@ -423,12 +422,12 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |   "askSchema": {"type": "object"},
         |   "lensId": "optic:express-js/route",
         | 	"locationOptions": [{
-        |		  "file": "test-examples/resources/test_project/nested/testMutationTransform.js",
+        |		  "file": "test-examples/resources/tmp/test_project/nested/testMutationTransform.js",
         |		  "position": 173,
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |  	}],
         |   "location": {
-        |		  "file": "test-examples/resources/test_project/nested/testMutationTransform.js",
+        |		  "file": "test-examples/resources/tmp/test_project/nested/testMutationTransform.js",
         |		  "position": 173,
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |  	},
@@ -449,8 +448,67 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
-    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})")
+    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})\n\n\n\n\n")
 
   }
+
+  lazy val multiTransformation = {
+
+    val changesJSON =
+
+      """
+        |[{
+        |		"transformationChanges": {
+        |			"transformation": {
+        |				"yields": "multitransformation",
+        |				"id": "a2p",
+        |				"packageId": "optic:test-transform@latest",
+        |				"input": "optic:rest@0.1.0/route",
+        |       "ask": {"type": "object"},
+        |       "dynamicAsk": {},
+        |				"script": "function transform(input, answers, inputModelId) {\n return [Mutate(inputModelId, {method: 'post', url: input.url}), Generate('optic:rest/parameter', { in: 'body', name: 'aidan' })]   \n}"
+        |			},
+        |			"target": "optic:test@latest/route",
+        |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
+        |		},
+        |		"lensOptions": [{
+        |     "name": "Route",
+        |     "packageFull": "optic:expressjs@0.1.0",
+        |     "id": "85c0d9c3"
+        |   }],
+        |   "inputModelId": "test123",
+        |   "askSchema": {"type": "object"},
+        |   "lensId": "optic:express-js/route",
+        | 	"locationOptions": [{
+        |		  "file": "test-examples/resources/tmp/test_project/nested/testMutationTransform.js",
+        |		  "position": 65,
+        |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |  	}],
+        |   "location": {
+        |		  "file": "test-examples/resources/tmp/test_project/nested/testMutationTransform.js",
+        |		  "position": 65,
+        |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |  	},
+        |   "inputValue": {"url": "user/:id", "method": "get"},
+        |   "answers": {},
+        		|   "_type":"com.opticdev.arrow.changes.RunTransformation"
+        | }]
+      """.stripMargin
+
+    implicit val actorCluster = new ActorCluster(ActorSystem("testMutation"))
+
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml")))
+      .map(_.inflate)
+
+    val sourcegear = Await.result(future, 10 seconds)
+
+    val project = new StaticSGProject("test222", File(getCurrentDirectory + "/test-examples/resources/tmp/example_source/"), sourcegear)
+
+    val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
+
+    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})\n\nreq.body.aidan\n\n\n\n\n")
+
+  }
+
 
 }

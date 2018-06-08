@@ -73,7 +73,7 @@ object DiffSyncGraph {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
     val extractValuesTry = for {
       transformation <- Try(sourceGear.findTransformation(label.transformationRef).getOrElse(throw new Error(s"No Transformation with id '${label.transformationRef.full}' found")))
-      transformationResult <- transformation.transformFunction.transform(sourceValue, label.askAnswers, None)
+      transformationResult <- transformation.transformFunction.transform(sourceValue, label.askAnswers, sourceGear.transformationCaller, None)
       (currentValue, linkedModel, context) <- Try {
         (snapshot.expandedValues(targetNode.flatten), snapshot.linkedModelNodes(targetNode.flatten), snapshot.contextForNode(targetNode.flatten))
       }

@@ -2,6 +2,7 @@ package com.opticdev
 
 import com.opticdev.common.PackageRef
 import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.sdk.descriptions.transformation.{MultiTransform, ProcessResult, TransformationResult}
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import com.opticdev.sdk.descriptions.transformation.mutate._
 import play.api.libs.functional.syntax.unlift
@@ -52,5 +53,4 @@ package object sdk {
       (__ \ 'value).formatNullable[JsObject] and
       (__ \ 'options).lazyFormatNullable(implicitly[Format[MutationOptions]])
     )(StagedMutation.apply, unlift(StagedMutation.unapply))
-
 }

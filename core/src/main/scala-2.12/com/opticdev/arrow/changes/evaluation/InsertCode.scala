@@ -20,8 +20,7 @@ object InsertCode {
     resolvedLocation match {
       case loc : ResolvedRawLocation => {
         val changed = StringUtils.insertAtIndex(fileContents, loc.rawPosition, generatedNode._2)
-        FileChanged(file, changed)
-
+        FileChanged(file, changed, Some(PatchInfo(Range(loc.rawPosition, loc.rawPosition), generatedNode._2)))
       }
       case loc : ResolvedChildInsertLocation => {
 
@@ -51,7 +50,15 @@ object InsertCode {
 
         val updatedFileContents = StringUtils.replaceRange(fileContents, loc.parent.range, changes)
 
-        FileChanged(file, updatedFileContents)
+        //compute patch info
+        val diff = updatedFileContents diff fileContents
+        val start = updatedFileContents.indexOf(diff)
+        val end = {
+          val i = fileContents.lastIndexOf(updatedFileContents.substring(start+diff.length))
+          if (i == -1) start else i
+        }
+
+        FileChanged(file, updatedFileContents, Some(PatchInfo(Range(start, end), diff)))
 
       }
     }

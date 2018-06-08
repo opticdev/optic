@@ -40,6 +40,24 @@ case class TransformationRef(packageRef: Option[PackageRef], id: String) {
   def internalFull = if (packageRef.isEmpty) id else packageRef.get.packageId+"/"+id
 }
 
+object TransformationRef {
+  def fromString(string: String, parentRef: Option[PackageRef] = None): Try[TransformationRef] = Try {
+    val components = string.split("/")
+
+    if (string.isEmpty) throw new Exception("Invalid Transformation format")
+
+    if (components.size == 1) {
+      TransformationRef(parentRef, components(0))
+    } else if (components.size == 2) {
+      val packageId = PackageRef.fromString(components.head)
+      val schema = components(1)
+      TransformationRef(Some(packageId.get), schema)
+    } else {
+      throw new Exception("Invalid Transformation format")
+    }
+  }
+}
+
 sealed trait TransformationBase extends PackageExportable {
   def script: String
   def input: SchemaRef
