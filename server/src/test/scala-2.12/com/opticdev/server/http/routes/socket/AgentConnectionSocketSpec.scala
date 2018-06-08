@@ -25,7 +25,7 @@ class AgentConnectionSocketSpec extends SocketTestFixture {
       }
 
       it("Can send a put update request") {
-        val event= PutUpdate("Id", JsObject.empty)
+        val event= PutUpdate("Id", JsObject.empty, "test")
         val asString = JsObject(Seq("id" -> JsString(event.id), "newValue" -> event.newValue)).toString
         wsClient.sendMessage(asString)
       }

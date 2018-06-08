@@ -9,8 +9,7 @@ import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.core.sourcegear.objects.annotations.TagAnnotation
 import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
-import com.opticdev.sdk.RenderOptions
-import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation}
+import com.opticdev.sdk.descriptions.transformation.Transformation
 import jdk.internal.org.objectweb.asm.tree.analysis.SourceValue
 import play.api.libs.json.{JsObject, JsString}
 import scalax.collection.edge.LkDiEdge
@@ -25,6 +24,7 @@ import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
 import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.parsers.ParserBase
+import com.opticdev.sdk.descriptions.transformation.generate.{GenerateResult, RenderOptions, StagedNode}
 
 object DiffSyncGraph {
 
@@ -73,7 +73,7 @@ object DiffSyncGraph {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
     val extractValuesTry = for {
       transformation <- Try(sourceGear.findTransformation(label.transformationRef).getOrElse(throw new Error(s"No Transformation with id '${label.transformationRef.full}' found")))
-      transformationResult <- transformation.transformFunction.transform(sourceValue, label.askAnswers)
+      transformationResult <- transformation.transformFunction.transform(sourceValue, label.askAnswers, sourceGear.transformationCaller, None)
       (currentValue, linkedModel, context) <- Try {
         (snapshot.expandedValues(targetNode.flatten), snapshot.linkedModelNodes(targetNode.flatten), snapshot.contextForNode(targetNode.flatten))
       }
@@ -81,7 +81,8 @@ object DiffSyncGraph {
 
         val prefixedFlatContent: FlatContextBase = sourceGear.flatContext.prefix(transformation.packageId.packageId)
 
-        val stagedNode = transformationResult.toStagedNode(Some(RenderOptions(
+        //@todo need a better approach to this since mutation transforms are not syncable
+        val stagedNode = transformationResult.asInstanceOf[GenerateResult].toStagedNode(Some(RenderOptions(
           lensId = Some(targetNode.lensRef.full)
         )))
 

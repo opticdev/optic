@@ -47,6 +47,7 @@ class ProjectsManager {
     //attach a project status changed callback
     project.projectStatus.statusChanged((changed, status)=> {
       AgentConnection.broadcastUpdate(StatusUpdate(project.name, status))
+      AgentConnection.broadcastUpdate(KnowledgeGraphUpdate(project.name, arrowStore(project).knowledgeGraphAsJson))
     })
 
 

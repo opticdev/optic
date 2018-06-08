@@ -7,7 +7,7 @@ import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
 import better.files.File
 import com.opticdev.arrow.changes.ChangeGroup
-import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
+import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent, SocketRouteOptions}
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.http.routes.socket.editors.EditorConnection._
@@ -39,18 +39,20 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
             eventTry.get match {
               case "put-update" => {
                 val idTry = Try( (parsedTry.get \ "id").get.as[JsString].value )
+                val editorSlugTry = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value )
                 val newValueTry = Try( (parsedTry.get \ "newValue").get.as[JsObject] )
-                if (idTry.isSuccess && newValueTry.isSuccess) {
-                  PutUpdate(idTry.get, newValueTry.get)
+                if (idTry.isSuccess && newValueTry.isSuccess && editorSlugTry.isSuccess) {
+                  PutUpdate(idTry.get, newValueTry.get, editorSlugTry.get)
                 } else UnknownEvent(i)
               }
 
               case "post-changes" => {
                 import com.opticdev.arrow.changes.JsonImplicits._
                 val projectName = Try( (parsedTry.get \ "projectName").get.as[JsString].value)
+                val editorSlugTry = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value )
                 val changes = Try(Json.fromJson[ChangeGroup]((parsedTry.get \ "changes").get).get)
-                if (projectName.isSuccess && changes.isSuccess) {
-                  PostChanges(projectName.get, changes.get)
+                if (projectName.isSuccess && changes.isSuccess && editorSlugTry.isSuccess) {
+                  PostChanges(projectName.get, changes.get, editorSlugTry.get)
                 } else {
                   UnknownEvent(i)
                 }
@@ -59,7 +61,7 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
               case "search" => {
 
                 val queryTry  = Try(parsedTry.get.value("query").as[JsString].value)
-
+                val editorSlugTry = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value )
                 val contentsOption  = Try(parsedTry.get.value("contents").as[JsString].value).toOption
 
                 val fileOption = Try(File(parsedTry.get.value("file").as[JsString].value)).toOption
@@ -69,8 +71,8 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
                   Range(start, end)
                 }.toOption
 
-                if (queryTry.isSuccess) {
-                  AgentSearch(queryTry.get, None, fileOption, rangeOption, contentsOption)
+                if (queryTry.isSuccess && editorSlugTry.isSuccess) {
+                  AgentSearch(queryTry.get, None, fileOption, rangeOption, contentsOption, editorSlugTry.get)
                 } else {
                   UnknownEvent(i)
                 }
@@ -79,8 +81,9 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
 
               case "get-sync-patch" => {
                 val projectName = Try( (parsedTry.get \ "projectName").get.as[JsString].value)
-                if (projectName.isSuccess) {
-                  StageSync(projectName.get)
+                val editorSlugTry = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value )
+                if (projectName.isSuccess && editorSlugTry.isSuccess) {
+                  StageSync(projectName.get, editorSlugTry.get)
                 } else {
                   UnknownEvent(i)
                 }
@@ -107,7 +110,7 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
 }
 
 object AgentConnection extends ConnectionManager[AgentConnection] {
-  override def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
+  override def apply(slug: String, socketRouteOptions: SocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
     println(slug+" agent connected")
     new AgentConnection(slug, actorSystem)
   }

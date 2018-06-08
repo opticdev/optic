@@ -16,7 +16,6 @@ The engine behind [Optic's AI Pair Programming tool](http://useoptic.com/)
 #### Project Structure:
 ```sh
 optic/
-├── arrow          # Builds/Queries Knowledge Graph for Users
 ├── common         # Common types and utilities used everywhere 
 ├── core           # Powers the Compiler, parsers, generators & mutators
 ├── opm            # Our Package Manager for resolving Optic Markdown

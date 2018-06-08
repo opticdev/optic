@@ -37,9 +37,9 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
     MarkdownCache.clear
 
     val parserPath = Try({
-      val contents = File("config.yaml").contentAsString
+      val contents = File("config.yml").contentAsString
       contents.parseYaml.asYamlObject.fields(YamlString("testParser")).asInstanceOf[YamlString].value
-    }).getOrElse(throw new Error("No testParser found in config.yaml"))
+    }).getOrElse(throw new Error("No testParser found in config.yml"))
 
     SourceParserManager.installParser(parserPath)
   }

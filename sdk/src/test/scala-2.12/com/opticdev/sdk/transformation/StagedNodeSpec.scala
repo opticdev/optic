@@ -1,7 +1,7 @@
 package com.opticdev.sdk.transformation
 
-import com.opticdev.sdk.{RenderOptions, VariableMapping}
-import com.opticdev.sdk.descriptions.transformation.StagedNode
+import com.opticdev.sdk.VariableMapping
+import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import org.scalatest.FunSpec
 
 class StagedNodeSpec extends FunSpec {

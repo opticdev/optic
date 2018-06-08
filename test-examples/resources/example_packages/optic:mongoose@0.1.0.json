@@ -171,7 +171,7 @@
       "schema": "create-record",
       "snippet": {
         "language": "es7",
-        "block": "new Model({\n\n}).save((err, item) => {\n  if (!err) {\n    //:success\n  } else {\n    //:failure\n  }\n})"
+        "block": "new modelName({\n\n}).save((err, item) => {\n  if (!err) {\n    //:success\n  } else {\n    //:failure\n  }\n})"
       },
       "scope": "public",
       "components": [
@@ -191,8 +191,8 @@
       "rules": [],
       "variables": [
         {
-          "in": "self",
-          "token": "Model"
+          "in": "scope",
+          "token": "modelName"
         },
         {
           "in": "self",

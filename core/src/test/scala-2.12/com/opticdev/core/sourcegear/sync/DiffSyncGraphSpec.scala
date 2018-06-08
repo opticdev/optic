@@ -94,8 +94,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     val diff = DiffSyncGraph.calculateDiff(snapshot)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
-    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
   }
 
   it("will diff based on tags") {
@@ -207,7 +207,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     implicit val project = f.project
 
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
-    assert(diff.asJson == Json.parse("""{"projectName":"test","warnings":[],"errors":[],"changes":[{"file":"/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/example_source/sync/TreeSync.js","originalFileContents":"source('a') //name: a\nsource('b') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('c') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('d') //name: d, source: c -> optic:synctest/passthrough-transform","newFileContents":"source('a') //name: a\nsource('a') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('a') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('a') //name: d, source: c -> optic:synctest/passthrough-transform","relativePath":"/resources/example_source/sync/TreeSync.js"}],"triggers":[{"name":"a","schemaRef":"optic:synctest@0.1.0/source-schema","newValue":{"value":"a"},"changes":["3 instances of optic:synctest/source-schema"]}]}"""))
+    assert(diff.asJson("atom") == Json.parse("""{"projectName":"test","editorSlug":"atom","warnings":[],"errors":[],"changes":[{"file":"/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/example_source/sync/TreeSync.js","originalFileContents":"source('a') //name: a\nsource('b') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('c') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('d') //name: d, source: c -> optic:synctest/passthrough-transform","newFileContents":"source('a') //name: a\nsource('a') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('a') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('a') //name: d, source: c -> optic:synctest/passthrough-transform","relativePath":"/resources/example_source/sync/TreeSync.js"}],"triggers":[{"name":"a","schemaRef":"optic:synctest@0.1.0/source-schema","newValue":{"value":"a"},"changes":["3 instances of optic:synctest/source-schema"]}]}"""))
   }
 
 }

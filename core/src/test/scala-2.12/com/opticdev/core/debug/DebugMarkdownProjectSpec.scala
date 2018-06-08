@@ -7,7 +7,6 @@ import com.opticdev.core.debug.LensDebug.LensDebugInfo
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.opm.TestPackageProviders
 import com.opticdev.sdk.descriptions.Lens
-import com.opticdev.sdk.markdown.OpticMarkdownInstaller
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.concurrent.Eventually
 import org.scalatest.time.{Seconds, Span}
@@ -19,11 +18,6 @@ class DebugMarkdownProjectSpec extends AkkaTestFixture("DebugMarkdownProjectSpec
   def fixture = {
     implicit val actorCluster = new ActorCluster(ActorSystem())
     DebugMarkdownProject()
-  }
-
-  override def beforeAll(): Unit = {
-    OpticMarkdownInstaller.getOrInstall
-    super.beforeAll()
   }
 
   lazy val testPackage = File("test-examples/resources/example_markdown/Mongoose.md")

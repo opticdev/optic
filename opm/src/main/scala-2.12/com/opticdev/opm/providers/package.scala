@@ -22,6 +22,8 @@ package object providers {
 
     def isCache: Boolean  = false
 
+    def isLocalProvider: Boolean = this.isInstanceOf[LocalProvider]
+
   }
 
   trait RemoteProvider extends Provider {

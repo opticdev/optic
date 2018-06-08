@@ -19,20 +19,21 @@ package object agents {
     case object Terminated extends AgentEvents
     case class UnknownEvent(raw: String) extends AgentEvents
 
-    case class PutUpdate(id: String, newValue: JsObject) extends AgentEvents
-    case class PostChanges(projectName: String, changes: ChangeGroup) extends AgentEvents
-    case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range], contents: Option[String]) extends AgentEvents
+    case class PutUpdate(id: String, newValue: JsObject, editorSlug: String) extends AgentEvents
+    case class PostChanges(projectName: String, changes: ChangeGroup, editorSlug: String) extends AgentEvents
+    case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range], contents: Option[String], editorSlug: String) extends AgentEvents
 
-    case class StageSync(projectName: String) extends AgentEvents
+    case class StageSync(projectName: String, editorSlug: String) extends AgentEvents
 
 
     //Sends
     trait UpdateAgentEvent extends OpticEvent
 
-    case class ContextFound(filePath: String, range: Range, projectName: String, results: JsValue, isError: Boolean = false) extends OpticEvent with UpdateAgentEvent {
+    case class ContextFound(filePath: String, range: Range, projectName: String, editorSlug: String, results: JsValue, isError: Boolean = false) extends OpticEvent with UpdateAgentEvent {
       def asJson = JsObject(Seq(
         "event"-> JsString("context-found"),
         "projectName"-> JsString(projectName),
+        "editorSlug"-> JsString(editorSlug),
         "filePath" -> JsString(filePath),
         "range" -> range.toJson,
         (if (isError) "errors" else "results") -> results)
@@ -57,11 +58,12 @@ package object agents {
       ))
     }
 
-    case class PostChangesResults(success: Boolean, filesUpdated: Set[File]) extends OpticEvent with UpdateAgentEvent {
+    case class PostChangesResults(success: Boolean, filesUpdated: Set[File], error: Option[String] = None) extends OpticEvent with UpdateAgentEvent {
       def asJson = JsObject(Seq(
         "event"-> JsString("post-changes-results"),
         "success"-> JsBoolean(success),
-        "filesChanges" -> JsArray(filesUpdated.map(i=> JsString(i.pathAsString)).toSeq)
+        "filesChanges" -> JsArray(filesUpdated.map(i=> JsString(i.pathAsString)).toSeq),
+        "error" -> error.map(JsString).getOrElse(JsNull)
       ))
     }
 
@@ -83,10 +85,10 @@ package object agents {
     ))
   }
 
-  case class StagedSyncResults(syncPatch: SyncPatch) extends OpticEvent with UpdateAgentEvent {
+  case class StagedSyncResults(syncPatch: SyncPatch, editorSlug: String) extends OpticEvent with UpdateAgentEvent {
     override def asJson: JsValue = JsObject(Seq(
       "event"-> JsString("sync-staged"),
-      "patch" -> syncPatch.asJson
+      "patch" -> syncPatch.asJson(editorSlug)
     ))
   }
 

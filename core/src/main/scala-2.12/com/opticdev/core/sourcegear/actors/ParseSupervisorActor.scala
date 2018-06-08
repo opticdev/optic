@@ -16,6 +16,9 @@ import com.opticdev.parsers.AstGraph
 import scala.concurrent.{Await, Future}
 import com.opticdev.scala.akka.HashDispatchedRoutingLogic
 class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor {
+
+  val dedicatedContextActor = context.actorOf(WorkerActor.props().withDispatcher("faddish-parse-worker-mailbox"))
+
   var router = {
     val routees = Vector.fill(SGConstants.parseWorkers) {
       val r = context.actorOf(WorkerActor.props().withDispatcher("faddish-parse-worker-mailbox"))
@@ -40,7 +43,11 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
       if (parseCache.isCurrentForFile(fileNode, request.contents)) {
         sender() tell(ParseSuccessful(parseCache.get(fileNode).get.asFileParseResults, request.file, fromCache = true), request.requestingActor)
       } else {
-        router.route(request, sender())
+        if (request.fromContextQuery) {
+          dedicatedContextActor tell (request, sender())
+        } else {
+          router.route(request, sender())
+        }
       }
     }
     case Terminated(a) =>

@@ -98,10 +98,14 @@ case class CodeComponent(propertyPath: Seq[String],
 case class SchemaComponent(propertyPath: Seq[String],
                            schema: SchemaRef,
                            mapUnique: Boolean,
+                           toMap: Option[String], //key property
                            location: Option[Location]) extends Component {
 
   override def rules: Vector[Rule] = Vector()
   
-  def withLocation(setLocation: Location) = SchemaComponent(propertyPath, schema, mapUnique, Some(setLocation))
+  def withLocation(setLocation: Location) = SchemaComponent(propertyPath, schema, mapUnique, toMap, Some(setLocation))
+
+  def yieldsArray : Boolean = this.toMap.isEmpty
+  def yieldsObject : Boolean = this.toMap.isDefined
 
 }

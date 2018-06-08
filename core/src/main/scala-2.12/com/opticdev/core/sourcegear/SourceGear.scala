@@ -6,11 +6,13 @@ import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.sdk.descriptions.{LensRef, Schema, SchemaRef}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
+import com.opticdev.core.sourcegear.transformations.TransformationCallerImpl
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
-import com.opticdev.sdk.descriptions.transformation.{StagedNode, Transformation, TransformationRef}
+import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
+import com.opticdev.sdk.descriptions.transformation.{Transformation, TransformationRef}
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge
@@ -28,7 +30,11 @@ abstract class SourceGear {
 
   val flatContext: FlatContext
 
+  val transformationCaller = new TransformationCallerImpl(this)
+
   def fileAccumulator = lensSet.fileAccumulator
+
+  def isEmpty = parsers.isEmpty && lensSet.listLenses.isEmpty && schemas.isEmpty && schemas.isEmpty
 
   def findSchema(schemaRef: SchemaRef) : Option[Schema] = {
     val availible = schemas.filter(s=>

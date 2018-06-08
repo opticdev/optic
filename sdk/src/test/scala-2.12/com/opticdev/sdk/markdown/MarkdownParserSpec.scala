@@ -9,7 +9,6 @@ class MarkdownParserSpec extends FunSpec with BeforeAndAfterAll {
   override def beforeAll(): Unit = {
     super.beforeAll()
     DataDirectory.init
-    DataDirectory.bin.list.foreach(_.delete(true))
   }
 
   it("will succeed if given a valid file") {
@@ -20,10 +19,6 @@ class MarkdownParserSpec extends FunSpec with BeforeAndAfterAll {
   it("will succeed if given a valid string") {
     val outputTry = MarkdownParser.parseMarkdownString(File("test-examples/resources/example_markdown/Importing-JS.md").contentAsString)
     assert(outputTry.isSuccess)
-  }
-
-  it("will fail if given no file") {
-    assert(MarkdownParser.parseMarkdownFile(File("")).isFailure)
   }
 
   it("will fail if given an invalid file") {

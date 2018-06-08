@@ -20,9 +20,9 @@ object Scratch extends TestBase with TestPackageProviders {
   super.beforeAll()
 
   val parserPath = Try({
-    val contents = File("config.yaml").contentAsString
+    val contents = File("config.yml").contentAsString
     contents.parseYaml.asYamlObject.fields(YamlString("testParser")).asInstanceOf[YamlString].value
-  }).getOrElse(throw new Error("No testParser found in config.yaml"))
+  }).getOrElse(throw new Error("No testParser found in config.yml"))
 
 
   SourceParserManager.installParser("parserPath")
@@ -33,7 +33,7 @@ object Scratch extends TestBase with TestPackageProviders {
 
   com.opticdev.core.actorSystem.scheduler.scheduleOnce(5 seconds) {
     //manually adding projects for testing
-    val project = Project.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yaml"))).get
+    val project = Project.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml"))).get
     projectsManager.loadProject(project)
   }
 

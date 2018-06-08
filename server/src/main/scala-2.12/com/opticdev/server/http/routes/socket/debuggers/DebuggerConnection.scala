@@ -8,7 +8,7 @@ import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
 import better.files.File
 import com.opticdev.server.http.routes.socket.debuggers.debuggers.Protocol._
-import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent}
+import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent, SocketRouteOptions}
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 
@@ -55,7 +55,7 @@ class DebuggerConnection(slug: String, actorSystem: ActorSystem)(implicit projec
 
 object DebuggerConnection extends ConnectionManager[DebuggerConnection] {
 
-  override def apply(slug: String)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
+  override def apply(slug: String, socketRouteOptions: SocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
     println(slug+" debugger connected")
     new DebuggerConnection(slug, actorSystem)
   }

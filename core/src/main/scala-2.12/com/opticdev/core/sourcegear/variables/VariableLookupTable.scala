@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.variables
 
-import com.opticdev.parsers.graph.{CommonAstNode, AstType}
+import com.opticdev.parsers.graph.{AstType, CommonAstNode}
+import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.{Variable, VariableRule}
 import play.api.libs.json.{JsObject, JsString}
 
@@ -34,5 +35,9 @@ case class VariableLookupTable(variables: Vector[Variable], identifierValuePath:
       matchesVariableValue(variableRule.variableId, instanceValue)
     } else false
   }
+
+  def toVariableMapping : VariableMapping = assignments.map(i=> {
+    (i._1.token, i._2)
+  }).toMap
 
 }

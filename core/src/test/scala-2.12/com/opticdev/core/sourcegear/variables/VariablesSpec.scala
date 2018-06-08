@@ -71,13 +71,9 @@ class VariablesSpec extends TestBase with GearUtils with ParserUtils {
       assert(testBlock(fileContents).isEmpty)
     }
 
-    describe("a real world lens") {
-
-      it("matches") {
-        val sg = sourceGearFromDescription("/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/example_packages/optic:mongoose@0.1.0.json")
-        assert(true)
-      }
-
+    it("will save current variables in model node") {
+      val fileContents = "function test () { \n let nowItsNew = require('pathTo') \n nowItsNew() \n nowItsNew + nowItsNew \n }"
+      assert(testBlock(fileContents).get.modelNode.variableMapping == Map("definedAs" -> "nowItsNew"))
     }
 
   }

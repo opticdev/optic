@@ -13,15 +13,16 @@ import scala.collection.immutable
 
 object MutationImplicits {
   implicit class MutableModelNode(linkedModelNode: LinkedModelNode[CommonAstNode]) {
-
     def update(newValue: JsObject, variableChanges: Option[VariableChanges] = None ) (implicit sourceGearContext: SGContext, fileContents: String): String = {
       import MutationSteps._
       val modelChanges: List[AstChange] = {
         val changesTry = collectFieldChanges(linkedModelNode, newValue)
+        val containerChangesTry = collectMapSchemaChanges(linkedModelNode, newValue, variableChanges)
 
-        val changes = changesTry.filter(_.isSuccess).map(_.get)
-
-        handleChanges(changes)
+        handleChanges(
+          changesTry.collect {case i if i.isSuccess => i.get},
+          containerChangesTry.collect {case i if i.isSuccess => i.get}
+        )
       }
 
       val variableEvaluatedChanges: List[AstChange] = if (variableChanges.isDefined)

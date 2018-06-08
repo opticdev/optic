@@ -22,18 +22,19 @@ package object actors {
     val file: File
     def contents: String
     def requestingActor: ActorRef
+    def fromContextQuery: Boolean
   }
-  case class ParseFile(file: File, requestingActor: ActorRef, project: ProjectBase)(implicit val sourceGear: SourceGear) extends ParserRequest {
+  case class ParseFile(file: File, requestingActor: ActorRef, project: ProjectBase, fromContextQuery: Boolean = false)(implicit val sourceGear: SourceGear) extends ParserRequest {
     def contents = file.contentAsString
   }
-  case class ParseFileWithContents(file: File, contents: String, requestingActor: ActorRef, project: ProjectBase)(implicit val sourceGear: SourceGear) extends ParserRequest
+  case class ParseFileWithContents(file: File, contents: String, requestingActor: ActorRef, project: ProjectBase, fromContextQuery: Boolean = false)(implicit val sourceGear: SourceGear) extends ParserRequest
 
 
   //Project Receives
   sealed trait ParseStatus
   case class ParseSuccessful(parseResults: FileParseResults, file: File, fromCache: Boolean = false) extends ParseStatus
   case class ParseFailed(file: File) extends ParseStatus
-  case class FileUpdatedInMemory(file: File, contents: String, project: ProjectBase)(implicit val sourceGear: SourceGear)
+  case class FileUpdatedInMemory(file: File, contents: String, project: ProjectBase, fromContextQuery: Boolean = false)(implicit val sourceGear: SourceGear)
   case class FileUpdated(file: File, project: ProjectBase)(implicit val sourceGear: SourceGear)
   case class FileCreated(file: File, project: ProjectBase)(implicit val sourceGear: SourceGear)
   case class FileDeleted(file: File, project: ProjectBase)(implicit val sourceGear: SourceGear)

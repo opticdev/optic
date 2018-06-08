@@ -7,7 +7,7 @@ name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "1.0.0"
+val appVersion = "1.0.1"
 
 version := appVersion
 
@@ -42,8 +42,6 @@ lazy val sdk = (project in file("sdk")).
   .settings(
     libraryDependencies ++= Dependencies.sdkDependencies,
     buildInfoKeys := Seq[BuildInfoKey](
-      "opticMDTar" -> Constants.opticMDTar,
-      "opticMDTarSum" -> Constants.opticMDTarSum,
       "opticMDVersion" -> Constants.opticMDVersion,
     ),
     buildInfoPackage := "com.opticdev.sdk"
@@ -64,14 +62,6 @@ lazy val core = (project in file("core")).
   .dependsOn(opm)
   .dependsOn(opm % "compile->compile;test->test")
 
-lazy val arrow = (project in file("arrow")).
-  settings(commonSettings: _*)
-  .settings(libraryDependencies ++= Dependencies.arrowDependencies)
-  .dependsOn(core)
-  .dependsOn(core % "compile->compile;test->test")
-  .dependsOn(opm % "compile->compile;test->test")
-  .dependsOn(sdk)
-
 lazy val server = (project in file("server")).
  settings(commonSettings: _*)
  .enablePlugins(BuildInfoPlugin)
@@ -79,18 +69,12 @@ lazy val server = (project in file("server")).
  .dependsOn(sdk)
  .dependsOn(common)
  .dependsOn(core)
- .dependsOn(arrow)
  .dependsOn(core % "compile->compile;test->test")
- .dependsOn(arrow % "compile->compile;test->test")
  .settings(
    test in assembly := {},
    assemblyJarName in assembly := "server-assembly.jar",
    mainClass in assembly := Some("com.opticdev.server.http.Lifecycle"),
-   mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle"),
-   buildInfoKeys := Seq[BuildInfoKey](
-     "mixpanelToken" -> Constants.mixpanelToken
-   ),
-   buildInfoPackage := "com.opticdev.server"
+   mainClass in packageBin := Some("com.opticdev.server.http.Lifecycle")
  )
   .enablePlugins(AssemblyPlugin)
 

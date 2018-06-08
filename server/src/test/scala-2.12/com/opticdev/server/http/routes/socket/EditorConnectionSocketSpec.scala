@@ -21,104 +21,65 @@ class EditorConnectionSocketSpec extends SocketTestFixture with TestBase with Pr
   val future = instanceWatchingTestProject
   implicit val projectsManager = Await.result(future, 10 seconds)
 
-  val wsClient = WSProbe()
-  val socketRoute = new SocketRoute()
+  def fixture = new {
+    val wsClient = WSProbe()
+    val socketRoute = new SocketRoute()
+  }
 
+  describe("Editor Socket") {
 
-  WS("/socket/editor/sublime", wsClient.flow) ~> socketRoute.route ~>
-    check {
+    val f = fixture
 
-      it("Connects properly") {
-        assert(EditorConnection.listConnections.size == 1)
-      }
+    WS("/socket/editor/sublime?autorefreshes=true", f.wsClient.flow) ~> f.socketRoute.route ~>
+      check {
 
-      //@todo figure out a way to test this query without getting a direct response
-//      describe("Can send a search query") {
-//
-//        it("Accepts a valid query") {
-//          wsClient.sendMessage(
-//            JsObject(
-//              Seq("event" -> JsString("search"), "query" -> JsString("test")))
-//              .toString())
-//
-//          wsClient.expectNoMessage()
-//        }
-//
-//        it("Rejects invalid queries") {
-//          wsClient.sendMessage(
-//            JsObject(
-//              Seq("event" -> JsString("search")))
-//              .toString())
-//
-//          wsClient.expectMessage("Invalid Request")
-//        }
-//
-//      }
-
-      describe("Can send a context query") {
-
-        it("Accepts a valid context query") {
-
-          wsClient.sendMessage(
-            JsObject(
-              Seq("event" -> JsString("context"),
-                "file" -> JsString("test-examples/resources/tmp/test_project/app.js"),
-                "start" -> JsNumber(35),
-                "end" -> JsNumber(37)
-              ))
-              .toString())
+        it("Connects properly") {
+          assert(EditorConnection.listConnections.size == 1)
+          assert(EditorConnection.listConnections.head._1 == "sublime")
+          assert(EditorConnection.listConnections.head._2.autorefreshes)
         }
 
-        it("Rejects invalid queries") {
+        describe("Can send a context query") {
 
-          wsClient.sendMessage(
-            JsObject(
-              Seq("event" -> JsString("context")))
-              .toString())
+          it("Accepts a valid context query") {
 
-          wsClient.expectMessage("Invalid Request")
+            f.wsClient.sendMessage(
+              JsObject(
+                Seq("event" -> JsString("context"),
+                  "file" -> JsString("test-examples/resources/tmp/test_project/app.js"),
+                  "start" -> JsNumber(35),
+                  "end" -> JsNumber(37)
+                ))
+                .toString())
+          }
 
+          it("Rejects invalid queries") {
+
+            f.wsClient.sendMessage(
+              JsObject(
+                Seq("event" -> JsString("context")))
+                .toString())
+
+            f.wsClient.expectMessage("Invalid Request")
+
+          }
         }
-      }
 
-      describe("Can update the Meta information") {
+        describe("Can send messages to client") {
 
-        it("Accepts valid updates") {
-          val name = "Sublime Text"
-          val version = "3"
-          wsClient.sendMessage(
-            JsObject(
-              Seq(
-                "event" -> JsString("updateMeta"),
-                "name" -> JsString("Sublime Text"),
-                "version" -> JsString("3")
-              ))
-              .toString())
-          wsClient.expectMessage("Success")
+          it("FileUpdate works") {
+            val connection = EditorConnection.listConnections.head._2
+            val event = FilesUpdated(Map(File("path/to/file") -> StagedContent("")))
 
-          //check if it worked
-          val information = EditorConnection.listConnections.head._2.information
-          assert(information.name == name)
-          assert(information.version == version)
+            connection.sendUpdate(event)
+
+            f.wsClient.expectMessage(event.asString)
+
+          }
 
         }
 
       }
-
-      describe("Can send messages to client") {
-
-        it("FileUpdate works") {
-          val connection = EditorConnection.listConnections.head._2
-          val event = FilesUpdated(Map(File("path/to/file") -> StagedContent("")))
-
-          connection.sendUpdate(event)
-
-          wsClient.expectMessage(event.asString)
-
-        }
-
-      }
-
-    }
+  }
 }
 

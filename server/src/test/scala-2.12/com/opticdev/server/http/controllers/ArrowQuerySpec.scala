@@ -21,7 +21,7 @@ class ArrowQuerySpec extends AkkaTestFixture("ArrowQuerySpec") with ProjectsMana
   def runquery(query: String) = {
     instanceWatchingTestProject.flatMap(pm => {
       implicit val projectsManager: ProjectsManager = pm
-      val aq = new ArrowQuery(query, Some(File("test-examples/resources/tmp/test_project/app.js")), Some(Range(35, 37)), None, None)
+      val aq = new ArrowQuery(query, Some(File("test-examples/resources/tmp/test_project/app.js")), Some(Range(35, 37)), None, None, "test")
       aq.execute
     })
   }

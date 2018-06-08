@@ -53,11 +53,13 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     }
   }
 
-  val projectFile = new ProjectFile(baseDirectory / "optic.yaml", createIfDoesNotExist = true, onChanged = projectFileChanged)
+  val projectFile = new ProjectFile(baseDirectory / "optic.yml", createIfDoesNotExist = true, onChanged = projectFileChanged)
 
   def projectSourcegear : SourceGear
 
   def onSourcegearChanged(callback: (SourceGear)=> Unit) : Unit = Unit
+
+  def regenerateSourceGear(newPf: ProjectFile) : Unit = Unit
 
   def watch = {
     rereadAll
@@ -88,7 +90,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       projectStatusInstance.touch
       filesStateMonitor.markUpdated(file)
       if (shouldWatchFile(file)) projectActor ! FileCreated(file, this) else
-      if (inProjectKnowledgeSearchPaths(file)) rereadAll
+      if (inProjectKnowledgeSearchPaths(file)) regenerateSourceGear(projectFile)
     }
     case (EventType.ENTRY_MODIFY, file) => {
       implicit val sourceGear = projectSourcegear
@@ -98,7 +100,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
         projectFile.reload
       } else {
         if (shouldWatchFile(file)) projectActor ! FileUpdated(file, this) else
-        if (inProjectKnowledgeSearchPaths(file)) rereadAll
+        if (inProjectKnowledgeSearchPaths(file)) regenerateSourceGear(projectFile)
       }
     }
     case (EventType.ENTRY_DELETE, file) => {
@@ -106,7 +108,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       filesStateMonitor.markUpdated(file)
       projectStatusInstance.touch
       if (shouldWatchFile(file)) projectActor ! FileDeleted(file, this) else
-      if (inProjectKnowledgeSearchPaths(file)) rereadAll
+      if (inProjectKnowledgeSearchPaths(file)) regenerateSourceGear(projectFile)
     }
   }
 
@@ -138,18 +140,20 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
 
   /* Staged File Monitor */
   val filesStateMonitor : FileStateMonitor = new FileStateMonitor()
-  def stageFileContents(file: File, contents: String): Future[Any] = {
+  def stageFileContents(file: File, contents: String, fromContextQuery: Boolean = false): Future[Any] = {
     implicit val timeout: akka.util.Timeout = Timeout(10 seconds)
     filesStateMonitor.stageContents(file, contents)
-    projectActor ? FileUpdatedInMemory(file, contents, this)(projectSourcegear)
+    projectActor ? FileUpdatedInMemory(file, contents, this, fromContextQuery)(projectSourcegear)
   }
 
   /* Control logic for watching files */
   //@todo profile this. Seems liable to cause big slowdowns with many files running through it
-  def shouldWatchFile(file: File) : Boolean =
+  def shouldWatchFile(file: File) : Boolean = {
+    if (projectSourcegear.isEmpty) return false
     ShouldWatch.file(file,
       projectSourcegear.validExtensions,
-      projectFile.interface.get.exclude.value.map(i=> File(i.value)) ++ projectSourcegear.excludedPaths.map(i=> File(i)))
+      projectFile.interface.get.exclude.value.map(i => File(baseDirectory.pathAsString +"/"+ i.value)) ++ projectSourcegear.excludedPaths.map(i => File(i)))
+  }
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet
 
