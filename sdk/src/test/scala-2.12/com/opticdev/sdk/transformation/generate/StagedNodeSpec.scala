@@ -1,4 +1,4 @@
-package com.opticdev.sdk.transformation
+package com.opticdev.sdk.transformation.generate
 
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}

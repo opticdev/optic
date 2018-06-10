@@ -128,7 +128,7 @@ object Mutate {
     Mutate.fromStagedMutation(stagedMutation)
   }
 
-  def mutateContainer(parentModel: LinkedModelNode[CommonAstNode], containerName: String, stagedContainerMutation: StagedContainerMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null) = {
+  def mutateContainer(parentModel: LinkedModelNode[CommonAstNode], containerName: String, stagedContainerMutation: ContainerMutationOperation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null) = {
     implicit val astGraph = sourceGearContext.astGraph
     implicit val nodeMutatorMap = sourceGearContext.parser.marvinSourceInterface.asInstanceOf[NodeMutatorMap]
     val containerOption = parentModel.containerMapping.get(containerName)
@@ -145,12 +145,12 @@ object Mutate {
 
       def renderItems(items: Seq[StagedNode]) = items.map(sn => Render.fromStagedNode(sn)(sourceGearContext.sourceGear, context).get._1)
 
-      val newArray: AstArray = stagedContainerMutation.operation match {
+      val newArray: AstArray = stagedContainerMutation match {
         case Append(items) => AstArray(array.children ++ renderItems(items):_*)
         case Prepend(items) => AstArray((renderItems(items) ++ array.children):_*)
         case ReplaceWith(items) => AstArray(renderItems(items):_*)
         case InsertAt(index: Int, items) => AstArray(array.children.patch(index, renderItems(items), 0):_*)
-        case Empty => AstArray()
+        case Empty() => AstArray()
       }
 
 

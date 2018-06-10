@@ -1,7 +1,7 @@
 package com.opticdev.arrow.changes.evaluation
 
 import better.files.File
-import com.opticdev.arrow.changes.location.{ResolvedChildInsertLocation, ResolvedLocation, ResolvedRawLocation}
+import com.opticdev.arrow.changes.location.{EndOfFile, ResolvedChildInsertLocation, ResolvedLocation, ResolvedRawLocation}
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.marvin.common.ast._
@@ -22,6 +22,12 @@ object InsertCode {
         val changed = StringUtils.insertAtIndex(fileContents, loc.rawPosition, generatedNode._2)
         FileChanged(file, changed, Some(PatchInfo(Range(loc.rawPosition, loc.rawPosition), generatedNode._2)))
       }
+
+      case loc : EndOfFile => {
+        val changed = StringUtils.insertAtIndex(fileContents, fileContents.length, "\n\n"+ generatedNode._2)
+        FileChanged(file, changed, Some(PatchInfo(Range(fileContents.length, fileContents.length), "\n\n"+ generatedNode._2)))
+      }
+
       case loc : ResolvedChildInsertLocation => {
 
         val marvinAstParent = loc.parent.toMarvinAstNode(loc.graph, fileContents, loc.parser)

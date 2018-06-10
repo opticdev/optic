@@ -13,10 +13,7 @@ package object mutate {
   }
 
   type TagMutations = Map[String, StagedTagMutation]
-  type ContainerMutations = Map[String, StagedContainerMutation]
-
-
-  case class StagedContainerMutation(operation: ContainerMutationOperation)
+  type ContainerMutations = Map[String, ContainerMutationOperation]
 
   sealed trait ContainerMutationOperation
   object ContainerMutationOperationsEnum {
@@ -24,7 +21,7 @@ package object mutate {
     case class Prepend(items: Seq[StagedNode]) extends ContainerMutationOperation
     case class ReplaceWith(items: Seq[StagedNode]) extends ContainerMutationOperation
     case class InsertAt(index: Int, items: Seq[StagedNode]) extends ContainerMutationOperation
-    case object Empty extends ContainerMutationOperation
+    case class Empty() extends ContainerMutationOperation
   }
 
 

@@ -47,10 +47,11 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     case postChanges: PostChanges => {
       implicit val autorefreshes = EditorConnection.listConnections.get(postChanges.editorSlug).map(_.autorefreshes).getOrElse(false)
       val future = new ArrowPostChanges(postChanges.projectName, postChanges.changes)(projectsManager).execute
-        future.foreach(i=> {
-          AgentConnection.broadcastUpdate( PostChangesResults(i.isSuccess, i.stagedFiles.keys.toSet) )
-          EditorConnection.broadcastUpdateTo(postChanges.editorSlug, FilesUpdated(i.stagedFiles) )
-        })
+
+      future.foreach(i=> {
+        AgentConnection.broadcastUpdate( PostChangesResults(true, i.stagedFiles.keys.toSet) )
+        EditorConnection.broadcastUpdateTo(postChanges.editorSlug, FilesUpdated(i.stagedFiles) )
+      })
 
       future.onComplete(i=> {
         if (i.isFailure) {

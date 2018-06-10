@@ -12,7 +12,7 @@ import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
-import com.opticdev.sdk.descriptions.transformation.mutate.{MutationOptions, StagedContainerMutation, StagedMutation, StagedTagMutation}
+import com.opticdev.sdk.descriptions.transformation.mutate.{MutationOptions, StagedMutation, StagedTagMutation}
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import com.opticdev.sdk.descriptions.transformation.mutate.ContainerMutationOperationsEnum._
@@ -136,7 +136,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
 
       val modelId = nodeKeyStore.leaseId(f.file, f.route)
 
-      val results = Mutate.mutateContainer(f.route, "callback", StagedContainerMutation(Empty))
+      val results = Mutate.mutateContainer(f.route, "callback", Empty())
 
       assert(results.get._2 == "{\n    \n}")
     }
@@ -149,7 +149,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
 
       val modelId = nodeKeyStore.leaseId(f.file, f.route)
 
-      val results = Mutate.mutateContainer(f.route, "notReal", StagedContainerMutation(Empty))
+      val results = Mutate.mutateContainer(f.route, "notReal", Empty())
 
       assert(results.isEmpty)
     }
@@ -162,11 +162,11 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
 
       val modelId = nodeKeyStore.leaseId(f.file, f.route)
 
-      val results = Mutate.mutateContainer(f.route, "callback", StagedContainerMutation(Append(Seq(
+      val results = Mutate.mutateContainer(f.route, "callback", Append(Seq(
         StagedNode(SchemaRef(Some(PackageRef("optic:flatexpress",  "0.1.0")), "parameter"), JsObject(Seq(
           "in" -> JsString("query"),
           "name" -> JsString("justAdded")
-        ))))
+        )))
       )))
 
       assert(results.get._2 == "{\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('suburl', function (req, res) { //tag: sub\n\n        })\n        app.get('suburl2', function (req, res) { //tag: subTwo\n\n        })\n    }\n    req.query.justAdded\n}")
@@ -181,7 +181,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
 
       val stagedMutation = StagedMutation(modelId, None, Some(MutationOptions(
         containers = Some(Map(
-          "callback" -> StagedContainerMutation(Empty)
+          "callback" -> Empty()
         ))
       )))
 
@@ -205,11 +205,11 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
           )
         ),
         containers = Some(Map(
-          "callback" -> StagedContainerMutation(Append(Seq(
+          "callback" -> Append(Seq(
             StagedNode(SchemaRef(Some(PackageRef("optic:flatexpress",  "0.1.0")), "parameter"), JsObject(Seq(
               "in" -> JsString("query"),
               "name" -> JsString("justAdded")
-            ))))
+            )))
           ))
         ))
       )))
