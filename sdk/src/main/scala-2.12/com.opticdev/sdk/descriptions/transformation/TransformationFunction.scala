@@ -33,7 +33,7 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
       case x if x.isSuccess => x.get
     }
 
-    val properties = (askSchema \ "properties").as[JsObject]
+    val properties = (askSchema \ "properties").getOrElse(JsObject.empty).as[JsObject]
 
     askSchema + ("properties" -> (properties ++ JsObject(dynamicAsk)))
   }
