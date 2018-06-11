@@ -44,7 +44,7 @@ object Snapshot {
     }.toMap
 
     val contexts = modelNodes.map {
-      case mn => (parserSupervisorRef ? GetContext(files(mn))).mapTo[Option[SGContext]].map(context=> {
+      case mn => (parserSupervisorRef ? GetContext(files(mn).toFile)).mapTo[Option[SGContext]].map(context=> {
         (mn, context.get)
       })
     }

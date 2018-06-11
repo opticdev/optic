@@ -26,7 +26,7 @@ class InsertCodeSpec extends TestBase with GearUtils {
 
     val aco = AsChildOf(empty, 0)
     val result = aco.resolveToLocation(sourceGear).get
-    val insertion = InsertCode.atLocation(node, empty, result)
+    val insertion = InsertCode.atLocation(node, result)
 
 
     assert(insertion.isSuccess)
@@ -46,7 +46,7 @@ class InsertCodeSpec extends TestBase with GearUtils {
 
     val aco = AsChildOf(empty, 0)
     val result = aco.resolveToLocation(sourceGear).get
-    val insertion = InsertCode.atLocation(node, empty, result)
+    val insertion = InsertCode.atLocation(node, result)
 
 
     assert(insertion.isSuccess)
@@ -67,7 +67,7 @@ class InsertCodeSpec extends TestBase with GearUtils {
 
     val aco = AsChildOf(toplevel, 30)
     val result = aco.resolveToLocation(sourceGear).get
-    val insertion = InsertCode.atLocation(node, toplevel, result)
+    val insertion = InsertCode.atLocation(node, result)
 
     assert(insertion.isSuccess)
     assert(insertion.asFileChanged.newContents == file)
@@ -83,7 +83,7 @@ class InsertCodeSpec extends TestBase with GearUtils {
 
     val aco = AsChildOf(between, 49)
     val result = aco.resolveToLocation(sourceGear).get
-    val insertion = InsertCode.atLocation(node, between, result)
+    val insertion = InsertCode.atLocation(node, result)
 
     println(insertion.asFileChanged.newContents)
 
@@ -100,7 +100,7 @@ class InsertCodeSpec extends TestBase with GearUtils {
 
     val aco = AsChildOf(between, 116)
     val result = aco.resolveToLocation(sourceGear).get
-    val insertion = InsertCode.atLocation(node, between, result)
+    val insertion = InsertCode.atLocation(node, result)
 
     assert(insertion.asFileChanged.newContents == file)
 

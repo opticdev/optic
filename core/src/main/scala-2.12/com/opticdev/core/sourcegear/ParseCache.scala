@@ -1,13 +1,14 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
+import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.graph.FileNode
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.parsers.{AstGraph, ParserBase}
 
 import scala.collection.mutable
 
-case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String) {
+case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String, fileNameAnnotationOption: Option[FileNameAnnotation]) {
   //WARNING: Negating this does not determine equality
   def differentFrom(other: String) : Boolean = {
     other.size != fileContents.size ||
@@ -16,30 +17,31 @@ case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String
 
   def asFileParseResults = {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
-    FileParseResults(graph, graph.modelNodes.asInstanceOf[Vector[ModelNode]], parser, fileContents)
+    FileParseResults(graph, graph.modelNodes.asInstanceOf[Vector[ModelNode]], parser, fileContents, fileNameAnnotationOption)
   }
 }
 
 class ParseCache {
 
-  private val fileStore: mutable.Map[FileNode, CacheRecord] = collection.mutable.Map[FileNode, CacheRecord]()
-  private val lastNFiles = scala.collection.mutable.Buffer[FileNode]()
+  private val fileStore: mutable.Map[File, CacheRecord] = collection.mutable.Map[File, CacheRecord]()
+  private val lastNFiles = scala.collection.mutable.Buffer[File]()
 
   val maxCachedFiles: Int = SGConstants.maxCachedFiles
 
-  def cache: Map[FileNode, CacheRecord] = fileStore.toMap
-  def cachedFiles: Vector[FileNode] = lastNFiles.toVector
+  def cache: Map[File, CacheRecord] = fileStore.toMap
+  def cachedFiles: Vector[File] = lastNFiles.toVector
 
-  def add(file: FileNode, record: CacheRecord) : ParseCache = {
+  def add(file: File, record: CacheRecord) : ParseCache = {
 
-    fileStore --= fileStore.keys.filter(_.filePath == file.filePath)
+    fileStore --= fileStore.keys.filter(_.pathAsString == file.pathAsString)
     //add new file record to map
     fileStore += file -> record
 
-    val indexOfFile = lastNFiles.indexWhere(_.filePath == file.filePath)
+    val indexOfFile = lastNFiles.indexWhere(_.pathAsString == file.pathAsString)
     if (indexOfFile != -1) {
       lastNFiles.remove(indexOfFile)
     }
+
     lastNFiles.insert(0, file)
 
     if (lastNFiles.size > maxCachedFiles)
@@ -50,10 +52,10 @@ class ParseCache {
     this
   }
 
-  def get(key: FileNode): Option[CacheRecord] = fileStore.get(key)
+  def get(file: File): Option[CacheRecord] = fileStore.get(file)
 
-  def isCurrentForFile(fileNode: FileNode, contents: String) : Boolean = {
-    get(fileNode).exists(record => !record.differentFrom(contents))
+  def isCurrentForFile(file: File, contents: String) : Boolean = {
+    get(file).exists(record => !record.differentFrom(contents))
   }
 
   def clear: ParseCache = {

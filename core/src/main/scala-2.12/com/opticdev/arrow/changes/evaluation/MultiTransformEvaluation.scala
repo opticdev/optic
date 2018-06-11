@@ -14,7 +14,7 @@ import scala.collection.immutable
 
 object MultiTransformEvaluation {
 
-  type GenerateEval = (GenerateResult, Schema, Option[String]) => IntermediateTransformPatch
+  type GenerateEval = (GenerateResult, Schema, Option[String], Boolean) => IntermediateTransformPatch
   type MutateEval = (MutateResult) => IntermediateTransformPatch
 
   def apply(multiTransform: MultiTransform, insertLocation: InsertLocation, mutateEval: MutateEval, generateEval: GenerateEval, sourcegear: SourceGear)(implicit fileStateMonitor: FileStateMonitor): FilesChanged = {
@@ -28,7 +28,7 @@ object MultiTransformEvaluation {
     val generations = multiTransform.transforms.collect {
       case generate: GenerateResult => {
         val stagedNode = generate.toStagedNode()
-        generateEval(generate, sourcegear.findSchema(stagedNode.schema).get, stagedNode.options.flatMap(_.lensId))
+        generateEval(generate, sourcegear.findSchema(stagedNode.schema).get, stagedNode.options.flatMap(_.lensId), false)
       }
     }
 
@@ -40,7 +40,7 @@ object MultiTransformEvaluation {
     FilesChanged(groupedByFile.map {
       case (file, patches)=> {
         import com.opticdev.core.utils.StringBuilderImplicits._
-        val fileContents = fileStateMonitor.contentsForFile(file).get
+        val fileContents = fileStateMonitor.contentsForFile(file).getOrElse("")
         val result = patches.foldLeft ( new StringBuilder(fileContents) ) {
           case (contents, patch) => {
             contents.updateRange(patch.range, patch.newContents)

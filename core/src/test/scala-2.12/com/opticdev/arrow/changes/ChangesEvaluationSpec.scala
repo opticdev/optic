@@ -60,13 +60,11 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
 
       assert(results.get.stagedFiles.head._2.text == expectedChange)
     }
-
+//
 //    it("Runs transformation from search") {
 //      val (changeGroup, sourcegear, expectedChange) = transformationFromSearch
 //
 //      val results = changeGroup.evaluateAndWrite(sourcegear)
-//
-//
 //      assert(results.get.stagedFiles.head._2.text == expectedChange)
 //    }
 
@@ -103,6 +101,17 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
 
       assert(results.get.stagedFiles.head._2.text == expectedChange)
     }
+
+    it("RunsTransformation and adds to another file which does not exist") {
+      val (changeGroup, sourcegear, project, expectedChange) = transformAndAddToAnotherFile
+      val results = changeGroup.evaluateAndWrite(sourcegear, Some(project))
+
+      assert(results.isSuccess)
+      assert(results.get.stagedFiles.head._1.exists)
+      assert(results.get.stagedFiles.head._2.text == expectedChange)
+
+    }
+
 
   }
 

@@ -2,21 +2,29 @@ package com.opticdev.arrow.changes.location
 
 import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
-import com.opticdev.parsers.{AstGraph, ParserBase}
+import com.opticdev.parsers.{AstGraph, ParserBase, SourceParserManager}
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.Container
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
+import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 
 import scala.util.Try
 
 sealed trait InsertLocation {
   val file: File
-  def resolveToLocation(sourceGear: SourceGear)(implicit filesStateMonitor: FileStateMonitor) : Try[ResolvedLocation]
+  def resolveToLocation(sourceGear: SourceGear, stagedNodeOption: Option[StagedNode] = None)(implicit filesStateMonitor: FileStateMonitor) : Try[ResolvedLocation]
 }
 
 case class AsChildOf(file: File, position: Int) extends InsertLocation {
-  override def resolveToLocation(sourceGear: SourceGear)(implicit filesStateMonitor: FileStateMonitor) = Try {
+  override def resolveToLocation(sourceGear: SourceGear, stagedNodeOption: Option[StagedNode] = None)(implicit filesStateMonitor: FileStateMonitor) : Try[ResolvedLocation] = Try {
+
+    val renderInOtherFile = stagedNodeOption.flatMap(_.options.flatMap(_.inFile))
+
+    if (renderInOtherFile.isDefined) {
+      return Try(EndOfFile(File(renderInOtherFile.get), SourceParserManager.selectParserForFileName(renderInOtherFile.get).get))
+    }
+
     val fileContents = filesStateMonitor.contentsForFile(file).get
     val parsed = sourceGear.parseString(fileContents)(null)
     val graph = parsed.get.astGraph
@@ -51,16 +59,23 @@ case class AsChildOf(file: File, position: Int) extends InsertLocation {
       insertionIndex = children.indexOf(children.find(_.range.contains(position)).get) + 1
     }
 
-    ResolvedChildInsertLocation(insertionIndex, actualParent, graph, parser)
+    ResolvedChildInsertLocation(file, insertionIndex, actualParent, graph, parser)
   }
 }
 
 case class RawPosition(file: File, position: Int) extends InsertLocation {
-  override def resolveToLocation(sourceGear: SourceGear)(implicit filesStateMonitor: FileStateMonitor) = Try {
+  override def resolveToLocation(sourceGear: SourceGear, stagedNodeOption: Option[StagedNode] = None)(implicit filesStateMonitor: FileStateMonitor) : Try[ResolvedLocation] = Try {
+
+    val renderInOtherFile = stagedNodeOption.flatMap(_.options.flatMap(_.inFile))
+
+    if (renderInOtherFile.isDefined) {
+      return Try(EndOfFile(File(renderInOtherFile.get), SourceParserManager.selectParserForFileName(renderInOtherFile.get).get))
+    }
+
     val fileContents = filesStateMonitor.contentsForFile(file).get
     val parsed = sourceGear.parseString(fileContents)(null)
     val parser = parsed.get.parser
-    ResolvedRawLocation(position, parser)
+    ResolvedRawLocation(file, position, parser)
   }
 }
 
@@ -69,7 +84,8 @@ case class RawPosition(file: File, position: Int) extends InsertLocation {
 /* Resolved Location */
 sealed trait ResolvedLocation {
   val parser : ParserBase
+  val file : File
 }
-case class ResolvedRawLocation(rawPosition: Int, parser : ParserBase) extends ResolvedLocation
-case class ResolvedChildInsertLocation(index: Int, parent: CommonAstNode, graph: AstGraph, parser : ParserBase) extends ResolvedLocation
-case class EndOfFile(parser : ParserBase) extends ResolvedLocation
+case class ResolvedRawLocation(file: File, rawPosition: Int, parser : ParserBase) extends ResolvedLocation
+case class ResolvedChildInsertLocation(file: File, index: Int, parent: CommonAstNode, graph: AstGraph, parser : ParserBase) extends ResolvedLocation
+case class EndOfFile(file: File, parser : ParserBase) extends ResolvedLocation

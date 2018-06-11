@@ -1,12 +1,12 @@
 package com.opticdev.core.sourcegear.sync
 
 import com.opticdev.core.sourcegear.actors.ActorCluster
+import com.opticdev.core.sourcegear.annotations.TagAnnotation
 import com.opticdev.core.sourcegear.context.FlatContextBase
 import com.opticdev.core.sourcegear.{Render, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
-import com.opticdev.core.sourcegear.objects.annotations.TagAnnotation
 import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
 import com.opticdev.sdk.descriptions.transformation.Transformation

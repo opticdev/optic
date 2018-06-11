@@ -4,7 +4,7 @@ import akka.actor.ActorRef
 import better.files.File
 import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.actors.ActorCluster
-import com.opticdev.core.sourcegear.graph.{NamedModel, ProjectGraph}
+import com.opticdev.core.sourcegear.graph.{FileNode, NamedFile, NamedModel, ProjectGraph}
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.core.sourcegear.project.status.ImmutableProjectStatus
 import com.opticdev.core.sourcegear.sync.SyncPatch
@@ -43,10 +43,10 @@ package object project {
 
 
     //callbacks on main thread
-    private var _updatedModelNodeOptionsCallbacks = Set[(Set[NamedModel])=> Unit]()
+    private var _updatedModelNodeOptionsCallbacks = Set[(Set[NamedModel], Set[NamedFile])=> Unit]()
     def hasUpdatedModelNodeOptionsCallbacks = _updatedModelNodeOptionsCallbacks.nonEmpty
-    def callOnUpdatedModelNodeOptions(modelNodes: Set[NamedModel]) = _updatedModelNodeOptionsCallbacks.foreach(_.apply(modelNodes))
-    def onUpdatedModelNodeOptions(callback: (Set[NamedModel])=> Unit) = {
+    def callOnUpdatedModelNodeOptions(modelNodes: Set[NamedModel], fileNodes: Set[NamedFile]) = _updatedModelNodeOptionsCallbacks.foreach(_.apply(modelNodes, fileNodes))
+    def onUpdatedModelNodeOptions(callback: (Set[NamedModel], Set[NamedFile])=> Unit) = {
       _updatedModelNodeOptionsCallbacks += callback
     }
 

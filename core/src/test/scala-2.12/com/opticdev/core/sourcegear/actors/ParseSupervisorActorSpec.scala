@@ -35,15 +35,15 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
 
     it("for file in cache") {
       val file = File(getCurrentDirectory+"/test-examples/resources/tmp/test_project/app.js")
-      f.actorCluster.parserSupervisorRef ! AddToCache(FileNode(file.pathAsString), Graph(), SourceParserManager.installedParsers.head, "Contents")
-      f.actorCluster.parserSupervisorRef ! GetContext(FileNode(file.pathAsString))(sourceGear, project)
+      f.actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), SourceParserManager.installedParsers.head, "Contents", None)
+      f.actorCluster.parserSupervisorRef ! GetContext(file)(sourceGear, project)
       expectMsg(Option(SGContext(sourceGear.fileAccumulator, Graph(), SourceParserManager.installedParsers.head, "Contents", null, file)))
     }
 
     it("for file not in cache") {
       val file = File(getCurrentDirectory+"/test-examples/resources/tmp/test_project/app.js")
       f.actorCluster.parserSupervisorRef ! ClearCache
-      f.actorCluster.parserSupervisorRef ! GetContext(FileNode(file.pathAsString))(sourceGear, project)
+      f.actorCluster.parserSupervisorRef ! GetContext(file)(sourceGear, project)
       expectMsgPF() {
         case a: Option[SGContext] => {
           println(a)
@@ -84,8 +84,8 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
 
   describe("caches") {
     val f = fixture
-    val dummyRecord = CacheRecord(Graph(), null, "contents")
-    val file = FileNode("/test-examples/resources/tmp/test_project/app.js")
+    val dummyRecord = CacheRecord(Graph(), null, "contents", None)
+    val file = File("/test-examples/resources/tmp/test_project/app.js")
     val parseCache = new ParseCache
     parseCache.add(file, dummyRecord)
 
@@ -101,7 +101,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
 
     it("can add records") {
       f.actorCluster.parserSupervisorRef ! ClearCache
-      f.actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), null, "contents")
+      f.actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), null, "contents", None)
       assert(ParseSupervisorSyncAccess.cacheSize()(f.actorCluster) == 1)
     }
 

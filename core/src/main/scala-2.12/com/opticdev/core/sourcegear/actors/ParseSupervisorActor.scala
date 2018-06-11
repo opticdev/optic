@@ -39,9 +39,8 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
   //cache won't play nicely if files are in multiple projects with different sourcegears
   def handler(parseCache: ParseCache) : Receive = {
     case request: ParserRequest => {
-      val fileNode = FileNode(request.file.pathAsString)
-      if (parseCache.isCurrentForFile(fileNode, request.contents)) {
-        sender() tell(ParseSuccessful(parseCache.get(fileNode).get.asFileParseResults, request.file, fromCache = true), request.requestingActor)
+      if (parseCache.isCurrentForFile(request.file, request.contents)) {
+        sender() tell(ParseSuccessful(parseCache.get(request.file).get.asFileParseResults, request.file, fromCache = true), request.requestingActor)
       } else {
         if (request.fromContextQuery) {
           dedicatedContextActor tell (request, sender())
@@ -57,7 +56,7 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
       router = router.addRoutee(r)
 
     case ctxRequest: GetContext => {
-      val inCacheOption = parseCache.get(ctxRequest.fileNode)
+      val inCacheOption = parseCache.get(ctxRequest.file)
       if (inCacheOption.isDefined) {
         val record = inCacheOption.get
         sender() ! Option(
@@ -67,7 +66,7 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
             record.parser,
             record.fileContents,
             ctxRequest.sourceGear,
-            ctxRequest.fileNode.toFile
+            ctxRequest.file
           )
         )
       } else {
@@ -76,7 +75,7 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
     }
 
     //cache events
-    case AddToCache(file, graph, parser, fileContents) => context.become(handler(parseCache.add(file, CacheRecord(graph, parser, fileContents))))
+    case AddToCache(file, graph, parser, fileContents, fileNameAnnotationOption) => context.become(handler(parseCache.add(file, CacheRecord(graph, parser, fileContents, fileNameAnnotationOption))))
     case SetCache(newCache) => context.become(handler(newCache))
     case CacheSize => sender() ! parseCache.cache.size
     case ClearCache => context.become(handler(parseCache.clear))
@@ -106,11 +105,11 @@ object ParseSupervisorSyncAccess {
   }
 
   def getContext(file: File)(implicit actorCluster: ActorCluster, sourceGear: SourceGear, project: ProjectBase): Option[SGContext] = {
-    val future = actorCluster.parserSupervisorRef ? GetContext(FileNode(file.pathAsString))
+    val future = actorCluster.parserSupervisorRef ? GetContext(file)
     Await.result(future, timeout.duration).asInstanceOf[Option[SGContext]]
   }
 
-  def lookup(file: FileNode)(implicit actorCluster: ActorCluster) : Option[AstGraph] = {
+  def lookup(file: File)(implicit actorCluster: ActorCluster) : Option[AstGraph] = {
     val future = actorCluster.parserSupervisorRef ? CheckCacheFor(file)
     Await.result(future, timeout.duration).asInstanceOf[Option[AstGraph]]
   }

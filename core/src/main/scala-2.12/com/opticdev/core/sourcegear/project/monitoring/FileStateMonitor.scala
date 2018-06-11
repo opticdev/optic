@@ -27,7 +27,9 @@ class FileStateMonitor(otherMonitors: FileStateMonitor*) {
           fileMonitor.allStaged.get(file)
         } else None
       }
-    }.getOrElse(StagedContent(file.contentAsString)).text
+    }.getOrElse(StagedContent({
+      if (file.exists) file.contentAsString else ""
+    })).text
   }
 
 
