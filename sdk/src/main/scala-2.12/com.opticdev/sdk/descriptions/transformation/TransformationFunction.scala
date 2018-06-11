@@ -24,15 +24,18 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
   }
 
   def combinedAskSchema(value: JsObject) : JsObject = {
-    val dynamicAsk = dynamicAskSchemaInflated.map(i=> Try {
+    val results = dynamicAskSchemaInflated.map(i=> Try {
       val mirror = i.code.call(null, value.asScriptObject.get).asInstanceOf[ScriptObjectMirror]
       i.key -> mirror.asJsObject.get
     })
-      .collect {
-        case x if x.isSuccess => x.get
-      }
 
-    askSchema ++ JsObject(dynamicAsk)
+    val dynamicAsk = results.collect {
+      case x if x.isSuccess => x.get
+    }
+
+    val properties = (askSchema \ "properties").as[JsObject]
+
+    askSchema + ("properties" -> (properties ++ JsObject(dynamicAsk)))
   }
 
 

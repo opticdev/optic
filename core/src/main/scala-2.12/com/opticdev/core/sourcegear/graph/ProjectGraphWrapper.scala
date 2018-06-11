@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.graph
 
 import better.files.File
+import com.opticdev.common.ObjectRef
 import com.opticdev.core.debug.DebugAstNode
 import com.opticdev.core.sourcegear.graph.edges.{InFile, YieldsModel}
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
@@ -10,7 +11,7 @@ import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{CommonAstNode, CustomEdge, WithinFile}
 import com.opticdev.parsers.utils.Crypto
 import com.opticdev.sdk.descriptions.PackageExportable
-
+import scala.concurrent.duration._
 import scala.util.Try
 import scalax.collection.GraphPredef.Param
 import scalax.collection.edge.Implicits._
@@ -30,6 +31,7 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
   def addFile(astGraph: AstGraph, forFile: File) = {
     if (forFile.exists) {
       projectGraph ++= astGraphToProjectGraph(astGraph, forFile)
+      checkForUpdatedNamedModelNodes
     }
   }
 
@@ -104,6 +106,29 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
       projectGraph.allSuccessorsOf(asFileNode).foreach(println)
       println()
     })
+  }
+
+
+  //model node gui options management
+  private var lastNamedModelNodeStore: Set[NamedModel] = Set()
+  def checkForUpdatedNamedModelNodes : Unit = {
+
+    if (!project.hasUpdatedModelNodeOptionsCallbacks) {
+      return
+    }
+
+    val newNamedModels: Set[NamedModel] = projectGraph.nodes.collect {
+      case n if n.value.isModel && n.value.asInstanceOf[BaseModelNode].objectRef.isDefined =>
+        val asBaseModelNode = n.value.asInstanceOf[BaseModelNode]
+        NamedModel(asBaseModelNode.objectRef.get.name, asBaseModelNode.schemaId.internalFull, asBaseModelNode.id)
+    }.toSet
+
+
+    if (lastNamedModelNodeStore != newNamedModels) {
+      lastNamedModelNodeStore = newNamedModels
+      project.callOnUpdatedModelNodeOptions(newNamedModels)
+    }
+
   }
 
 }

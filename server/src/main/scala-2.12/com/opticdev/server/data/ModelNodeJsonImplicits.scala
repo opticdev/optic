@@ -37,7 +37,7 @@ object ModelNodeJsonImplicits {
       val schemaOption = sourceGear.findSchema(modelNode.schemaId)
 
       JsObject(Seq(
-        "id" -> JsString(projectsManager.nodeKeyStore.leaseId(fileNode.get.toFile, modelNode)),
+        "id" -> JsString(project.nodeKeyStore.leaseId(fileNode.get.toFile, modelNode)),
         "schema" -> schemaOption.get.definition,
         "astLocation" -> JsObject(Seq(
           "type" -> JsString(modelNode.root.nodeType.asString),

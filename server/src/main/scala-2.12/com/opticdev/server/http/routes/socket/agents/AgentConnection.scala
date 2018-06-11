@@ -41,8 +41,9 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
                 val idTry = Try( (parsedTry.get \ "id").get.as[JsString].value )
                 val editorSlugTry = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value )
                 val newValueTry = Try( (parsedTry.get \ "newValue").get.as[JsObject] )
-                if (idTry.isSuccess && newValueTry.isSuccess && editorSlugTry.isSuccess) {
-                  PutUpdate(idTry.get, newValueTry.get, editorSlugTry.get)
+                val projectNameTry = Try( (parsedTry.get \ "projectName").get.as[JsString].value)
+                if (idTry.isSuccess && newValueTry.isSuccess && editorSlugTry.isSuccess && projectNameTry.isSuccess) {
+                  PutUpdate(idTry.get, newValueTry.get, editorSlugTry.get, projectNameTry.get)
                 } else UnknownEvent(i)
               }
 

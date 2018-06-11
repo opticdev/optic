@@ -65,19 +65,13 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     case update : PutUpdate => {
       //@todo handle error states
       implicit val autorefreshes = EditorConnection.listConnections.get(update.editorSlug).map(_.autorefreshes).getOrElse(false)
-      new PutUpdateRequest(update.id, update.newValue, update.editorSlug)(projectsManager)
+      new PutUpdateRequest(update.id, update.newValue, update.editorSlug, update.projectName)(projectsManager)
         .execute.foreach {
         case bc:BatchedChanges => {
           AgentConnection.broadcastUpdate( PostChangesResults(bc.isSuccess, bc.stagedFiles.keys.toSet) )
           EditorConnection.broadcastUpdateTo( update.editorSlug, FilesUpdated(bc.stagedFiles) )
         }
       }
-//      (i=> {
-//        if (i.isFailure) {
-//          println(i.failed.get)
-//        } else {
-//          EditorConnection.broadcastUpdate( i.get )
-//        }
 
     }
 

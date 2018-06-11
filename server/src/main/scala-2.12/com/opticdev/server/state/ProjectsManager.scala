@@ -12,7 +12,7 @@ import com.opticdev.core.actorSystem
 import com.opticdev.core.debug.{DebugMarkdownProject, DebugSourceGear}
 import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, ProjectStatus}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
-import com.opticdev.server.http.routes.socket.agents.{AgentConnection, KnowledgeGraphUpdate, StatusUpdate}
+import com.opticdev.server.http.routes.socket.agents.{AgentConnection, KnowledgeGraphUpdate, ModelNodeOptionsUpdate, StatusUpdate}
 
 import scala.collection.mutable
 import scala.util.{Success, Try}
@@ -20,8 +20,6 @@ import scala.util.{Success, Try}
 class ProjectsManager {
 
   implicit val actorCluster: ActorCluster = new ActorCluster(actorSystem)
-
-  implicit val nodeKeyStore: NodeKeyStore = new NodeKeyStore
 
   val MAX_PROJECTS = 6
 
@@ -50,6 +48,12 @@ class ProjectsManager {
       AgentConnection.broadcastUpdate(KnowledgeGraphUpdate(project.name, arrowStore(project).knowledgeGraphAsJson))
     })
 
+
+    //register a callback for model node options changes
+    project.onUpdatedModelNodeOptions((modelOptions)=> {
+      AgentConnection.broadcastUpdate(ModelNodeOptionsUpdate(project.name, modelOptions))
+      println("MODELS UPDATED "+ modelOptions.size)
+    })
 
     //send an initial status update
     AgentConnection.broadcastUpdate(StatusUpdate(project.name, project.projectStatus))
