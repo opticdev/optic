@@ -48,7 +48,8 @@ case class AsChildOf(file: File, position: Int) extends InsertLocation {
     //we want the deepest block node that contains our desired insert location
     val actualParent = possibleParents.maxBy(_.graphDepth(graph))
 
-    val children = actualParent.children(graph).map(_._2)
+    val children = actualParent.childrenOfType(parser.blockNodeTypes.getPropertyPath(actualParent.nodeType).get)(graph)
+      .map(_._2)
     //by counting all the children that come before we can determine the insertion index
     var insertionIndex = children.count((n)=> {
       n.range.end < position

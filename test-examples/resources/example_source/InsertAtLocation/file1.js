@@ -6,3 +6,13 @@ function me() {
    goingThere()
 
 }
+
+
+function test() {
+    switch (test) {
+
+        default:
+            return null
+
+    }
+}

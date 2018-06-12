@@ -56,6 +56,15 @@ class InsertLocationSpec extends TestBase with GearUtils {
       assert(result.asInstanceOf[ResolvedChildInsertLocation].parent.nodeType.name == "BlockStatement")
     }
 
+    it("can find its place when and first item") {
+      val aco = AsChildOf(example1, 104)
+
+      val result = aco.resolveToLocation(sourceGear).get
+
+      assert(result.asInstanceOf[ResolvedChildInsertLocation].index == 0)
+      assert(result.asInstanceOf[ResolvedChildInsertLocation].parent.nodeType.name == "SwitchStatement")
+    }
+
     it("is overriden by a staged node with a custom file set") {
       val aco = AsChildOf(example2, 168)
 
