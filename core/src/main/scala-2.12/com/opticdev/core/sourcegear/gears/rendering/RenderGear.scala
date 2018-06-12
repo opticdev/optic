@@ -33,7 +33,7 @@ case class RenderGear(block: String,
 
   def parseResult(b: String): ParserResult = {
     if (parser.isDefined) {
-      parser.get.parseString(b)
+      parser.get.parseStringWithProxies(b).get
     } else throw new Error("Unable to find parser for generator")
   }
 
@@ -47,7 +47,9 @@ case class RenderGear(block: String,
     (fileContents, astGraph, rootNode)
   }
 
-  def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Try[JsObject] = parseAndGetModelWithGraph(contents).map(_._1)
+  def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Try[JsObject] = {
+    parseAndGetModelWithGraph(contents).map(_._1)
+  }
 
   def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, ModelNode)] = Try {
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(contents)

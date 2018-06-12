@@ -67,7 +67,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
 
   def buildAstTree(fromSnippet: Snippet = snippet): (AstGraph, CommonAstNode) = {
     try {
-      val parseResult = SourceParserManager.parseString(fromSnippet.block, fromSnippet.language).get
+      val parseResult = SourceParserManager.parseStringWithProxies(fromSnippet.block, fromSnippet.language).get
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
       val root = parseResult.graph.root.get
       (parseResult.graph, root)
