@@ -41,10 +41,11 @@ object MutationSteps {
         val mapping = linkedModelNode.modelMapping.get(Path(component.propertyPath))
         if (mapping.isEmpty) throw new AstMappingNotFound(component.propertyPath)
 
-        UpdatedField(component, mapping.get, value)
+        val nodeMapping = mapping.get.find(_.supportsComponentMapping(component)).get
+
+        UpdatedField(component, nodeMapping, value)
       }
     }
-
   }
 
   def collectMapSchemaChanges(linkedModelNode: LinkedModelNode[CommonAstNode], newValue: JsObject, variableChanges: Option[VariableChanges] = None)(implicit sourceGearContext: SGContext): List[Try[AddItemToContainer]] = Try {

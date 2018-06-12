@@ -33,8 +33,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
-    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
   }
 
   it("can calculate a valid diff when no changes") {
@@ -94,8 +94,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     val diff = DiffSyncGraph.calculateDiff(snapshot)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
-    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
   }
 
   it("will diff based on tags") {
@@ -147,8 +147,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
       val diff = DiffSyncGraph.calculateDiff(f.snapshot)
       assert(diff.containsErrors)
-      checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
-      assert(diff.changes(1).isInstanceOf[ErrorEvaluating])
+      assert(diff.changes(0).isInstanceOf[ErrorEvaluating])
+      checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
     }
 
     it("will handle errors for a tree gracefully") {
@@ -188,8 +188,10 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       val allTriggers = diff.changes.map(_.asInstanceOf[Replace].trigger.get).distinct
       assert(allTriggers.size == 2)
       assert(allTriggers ==
-        Vector(Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello")))),
-          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning"))))))
+        Vector(
+          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning")))),
+          Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello"))))
+        ))
     }
 
     it("partiality evaluated trees get multiple triggers") {

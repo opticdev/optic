@@ -142,7 +142,8 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, var
             }
         }
       }
-    }.toMap
+    }.groupBy(_._1).mapValues(_.map(_._2))
+     .asInstanceOf[ModelAstMapping]
   }
 
   def containerMapping(implicit astGraph: AstGraph) : ContainerAstMapping = {

@@ -5,7 +5,10 @@ import com.opticdev.core.sourcegear.gears.helpers.ModelField
 object MappingImplicits {
 
   implicit class SubContainerMatchVector(set: Set[ModelField]) {
-    def toMapping: ModelAstMapping = set.map(i=> (Path(i.propertyPath) , i.astMapping)).toMap
+    def toMapping: ModelAstMapping =
+      set.groupBy(i=> Path(i.propertyPath)).mapValues(_.map(_.astMapping))
+      .asInstanceOf[ModelAstMapping]
+
   }
 
 }

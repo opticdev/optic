@@ -90,6 +90,21 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
         assert(combineChanges(astChanges).toString == "let DIFFERENT = require('CHANGED')\n\nfunction test () {\n    let nextOne = require(\"PIZZA!\")\n}")
       }
     }
+
+    it("can works when two fields have same binding") {
+      val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:ReduxActionExample@0.1.0.json")
+
+      val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ReduxActionSource.js"
+      val results = sourceGear.parseFile(File(testFilePath))(null)
+      val reduxAction = results.get.modelNodes.head
+      val resolved: LinkedModelNode[CommonAstNode] = reduxAction.resolveInGraph[CommonAstNode](results.get.astGraph)
+      implicit val fileContents = File(testFilePath).contentAsString
+
+      import MutationImplicits._
+      val changed = resolved.update(JsObject(Seq("name" -> JsString("NEW_NAME"))))
+      assert(changed == """export const NEW_NAME = 'NEW_NAME'""")
+    }
+
   }
 
   describe("map schema mappings") {

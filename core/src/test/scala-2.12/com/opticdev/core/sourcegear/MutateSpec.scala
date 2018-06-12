@@ -28,7 +28,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
     project.projectGraphWrapper.addFile(result.get.astGraph, file)
 
     implicit val sourceGearContext = ParseSupervisorSyncAccess.getContext(file)(project.actorCluster, sourceGear, project).get
-    val route = result.get.modelNodes.find(_.lensRef.id == "route").get.resolved()
+    val route = result.get.modelNodes.filter(_.lensRef.id == "route").minBy(_.resolveInGraph[CommonAstNode](result.get.astGraph).root.graphDepth(result.get.astGraph)).resolved()
     val routeValue = route.expandedValue(false)(sourceGearContext)
   }
 
