@@ -1,6 +1,6 @@
-package com.opticdev.core.sourcegear.objects.annotations
+package com.opticdev.core.sourcegear.annotations
 
-object ObjectAnnotationRenderer {
+object AnnotationRenderer {
   def render(inlineCommentPrefix: String, annotations: Vector[ObjectAnnotation]) : String = {
     val inner = annotations.map(_.asString).mkString(",")
     //2 spaces of padding

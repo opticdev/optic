@@ -21,4 +21,9 @@ package object graph {
     def toJson : JsValue = Json.toJson[NamedModel](this)
   }
 
+  implicit val namedFileFormat = Json.format[NamedFile]
+  case class NamedFile(name: String, path: String) {
+    def toJson : JsValue = Json.toJson[NamedFile](this)
+  }
+
 }

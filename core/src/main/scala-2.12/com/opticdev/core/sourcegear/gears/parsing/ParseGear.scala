@@ -4,6 +4,7 @@ import com.opticdev.sdk.{PropertyValue, VariableMapping}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.accumulate.Listener
+import com.opticdev.core.sourcegear.annotations.{AnnotationParser, NameAnnotation, SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.containers.SubContainerMatch
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
@@ -17,7 +18,6 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEvaluation
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.VariableRuleWithEvaluation
-import com.opticdev.core.sourcegear.objects.annotations.{NameAnnotation, ObjectAnnotationParser, SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.variables.VariableManager
 
 import scala.util.hashing.MurmurHash3
@@ -168,8 +168,8 @@ case class ParseAsModel(description: NodeDescription,
     val containerMapping = matchResults.containers.getOrElse(Set()).toMapping
 
     val (objectRefOption, sourceAnnotationOption, tagAnnotation) = {
-      val raw = ObjectAnnotationParser.contentsToCheck(matchResults.baseNode.get)
-      val annotations = ObjectAnnotationParser.extract(raw, schema)(sourceGearContext.parser)
+      val raw = AnnotationParser.contentsToCheck(matchResults.baseNode.get)
+      val annotations = AnnotationParser.extract(raw, schema)(sourceGearContext.parser)
       ( annotations.collectFirst { case na: NameAnnotation => na }.map(_.objectRef),
         annotations.collectFirst { case sa: SourceAnnotation => sa },
         annotations.collectFirst { case ta: TagAnnotation => ta },

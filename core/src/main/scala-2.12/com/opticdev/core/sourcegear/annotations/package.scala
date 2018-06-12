@@ -1,4 +1,4 @@
-package com.opticdev.core.sourcegear.objects
+package com.opticdev.core.sourcegear
 
 import com.opticdev.common.ObjectRef
 import com.opticdev.sdk.descriptions.SchemaRef
@@ -11,6 +11,8 @@ import scala.util.matching.Regex
 
 package object annotations {
 
+  sealed trait Annotation
+
   //Annotation Value Classes
   sealed trait AnnotationValues {val name: String}
   case class StringValue(name: String) extends AnnotationValues
@@ -18,8 +20,8 @@ package object annotations {
     def askJsObject: Option[JsObject] = askJsonRaw.map(Json.parse).map(_.as[JsObject])
   }
 
-  //Processed Annotation Classes
-  sealed trait ObjectAnnotation {
+  //Processed Object Annotation Classes
+  sealed trait ObjectAnnotation extends Annotation {
     def asString: String
   }
   case class NameAnnotation(name: String, schemaRef: SchemaRef) extends ObjectAnnotation {
@@ -33,6 +35,17 @@ package object annotations {
   case class TagAnnotation(tag: String, schemaRef: SchemaRef) extends ObjectAnnotation {
     def asString = s"tag: $tag"
   }
+
+
+  //Processed File Annotation Classes
+  sealed trait FileAnnotation extends Annotation {
+    def asString: String
+  }
+
+  case class FileNameAnnotation(name: String) extends FileAnnotation {
+    def asString = s"name: $name"
+  }
+
 
   //Regexes
   def topLevelCapture = "^(\\s*([a-z]+)\\s*:\\s*[a-zA-z \\-\\>\\{\\}\\.\\d\\@\\/\\:\\'\\\"]+)(,\\s*([a-z]+)\\s*:\\s*[a-zA-z \\-\\>\\{\\}\\.\\d\\@\\/\\:\\'\\\"]+)*".r

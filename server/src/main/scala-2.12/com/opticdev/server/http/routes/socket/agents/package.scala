@@ -3,7 +3,7 @@ package com.opticdev.server.http.routes.socket
 import akka.actor.ActorRef
 import better.files.{File, Files}
 import com.opticdev.arrow.changes.ChangeGroup
-import com.opticdev.core.sourcegear.graph.NamedModel
+import com.opticdev.core.sourcegear.graph.{NamedFile, NamedModel}
 import com.opticdev.core.sourcegear.project.status.ImmutableProjectStatus
 import com.opticdev.core.sourcegear.sync.SyncPatch
 import play.api.libs.json._
@@ -86,11 +86,12 @@ package object agents {
     ))
   }
 
-  case class ModelNodeOptionsUpdate(projectName: String, modelNodeOptions: Set[NamedModel]) extends OpticEvent with UpdateAgentEvent {
+  case class ModelNodeOptionsUpdate(projectName: String, modelNodeOptions: Set[NamedModel], fileNodeOptions: Set[NamedFile]) extends OpticEvent with UpdateAgentEvent {
     def asJson = JsObject(Seq(
       "event"-> JsString("model-node-options-update"),
       "projectName"-> JsString(projectName),
-      "options"-> JsArray(modelNodeOptions.map(_.toJson).toSeq)
+      "modelOptions"-> JsArray(modelNodeOptions.map(_.toJson).toSeq),
+      "fileOptions"-> JsArray(fileNodeOptions.map(_.toJson).toSeq)
     ))
   }
 

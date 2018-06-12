@@ -81,6 +81,12 @@ object GraphImplicits {
       if (result.nonEmpty) Option(result.head.value.asInstanceOf[FileNode]) else None
     }
 
+    def fileNodes : Set[FileNode] = {
+      graph.nodes.collect {
+        case f if f.value.isInstanceOf[FileNode] => f.value.asInstanceOf[FileNode]
+      }.toSet
+    }
+
     def allSuccessorsOf(astProjection: AstProjection) : Set[AstProjection] = {
       val diSuccessors = graph.get(astProjection).diSuccessors.map(_.value)
       diSuccessors ++ diSuccessors.flatMap(i=> allSuccessorsOf(i))

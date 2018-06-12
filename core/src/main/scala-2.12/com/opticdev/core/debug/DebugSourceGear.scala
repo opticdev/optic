@@ -95,7 +95,7 @@ object DebugSourceGear extends SourceGear {
 
       val flat = linkedModelNodes.map(i=> i.flatten)
 
-      FileParseResults(graphBuilder.graph, flat, null, string)
+      FileParseResults(graphBuilder.graph, flat, null, string, None)
     })
 
   }.flatten

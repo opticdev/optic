@@ -52,7 +52,7 @@ case class RenderGear(block: String,
   def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, ModelNode)] = Try {
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(contents)
     implicit val sourceGearContext = SGContext.forRender(sourceGear, astGraph, parserRef)
-    val results = sourceGear.lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, null)
+    val results = sourceGear.lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, null, None)
     val model = results.modelNodes.find(_.resolveInGraph[CommonAstNode](results.astGraph).root == rootNode).get
     (model.expandedValue()(SGContext.forRender(sourceGear, results.astGraph, parserRef)), results.astGraph, model)
   }

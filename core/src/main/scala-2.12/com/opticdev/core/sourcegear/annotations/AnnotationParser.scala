@@ -1,4 +1,4 @@
-package com.opticdev.core.sourcegear.objects.annotations
+package com.opticdev.core.sourcegear.annotations
 
 import com.opticdev.common.PackageRef
 import com.opticdev.marvin.common.helpers.LineOperations
@@ -11,7 +11,7 @@ import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import scala.util.{Failure, Success, Try}
 import scala.util.matching.Regex
 
-object ObjectAnnotationParser {
+object AnnotationParser {
 
   def extract(string: String, schemaRef: SchemaRef)(implicit parserBase: ParserBase) : Set[ObjectAnnotation]  =
     extract(string, schemaRef, parserBase.inlineCommentPrefix)
@@ -39,6 +39,18 @@ object ObjectAnnotationParser {
       .toSet.asInstanceOf[Set[ObjectAnnotation]])
 
     found.getOrElse(Set())
+  }
+
+  def extractFromFileContents(fileContents: String, inlineCommentPrefix: String): Set[FileNameAnnotation] = {
+    val lineContents = fileContents.lines.toVector.headOption.getOrElse("")
+    val foundAnnotations = findAnnotationComment(inlineCommentPrefix, lineContents)
+                            .map(_.substring(inlineCommentPrefix.length))
+                            .map(extractRawAnnotationsFromLine).getOrElse(Map.empty)
+    foundAnnotations.map {
+      case (name, value) if name == "filename" => Some(FileNameAnnotation(value.name))
+      case _ => None
+    }.collect {case Some(a)=> a}
+      .toSet
   }
 
   def extractRawAnnotationsFromLine(string: String) : Map[String, AnnotationValues] = {

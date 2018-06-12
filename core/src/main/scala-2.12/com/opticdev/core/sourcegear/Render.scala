@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import com.opticdev.common.utils.JsonUtils
+import com.opticdev.core.sourcegear.annotations.{AnnotationRenderer, TagAnnotation}
 import com.opticdev.core.sourcegear.context.FlatContextBase
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.marvin.common.ast.NewAstNode
@@ -15,7 +16,6 @@ import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
-import com.opticdev.core.sourcegear.objects.annotations.{ObjectAnnotationRenderer, TagAnnotation}
 import com.opticdev.marvin.common.helpers.LineOperations
 object Render {
 
@@ -43,7 +43,7 @@ object Render {
     val result = gear.renderer.renderWithNewAstNode(processedValue, containerContents, variableMapping)
 
     val stringResult = if (options.tag.isDefined) {
-      ObjectAnnotationRenderer.renderToFirstLine(gear.renderer.parser.get.inlineCommentPrefix, Vector(TagAnnotation(options.tag.get, gear.schemaRef)), result._2)
+      AnnotationRenderer.renderToFirstLine(gear.renderer.parser.get.inlineCommentPrefix, Vector(TagAnnotation(options.tag.get, gear.schemaRef)), result._2)
     } else {
       result._2
     }

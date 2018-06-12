@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
+import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
@@ -48,7 +49,7 @@ class LensSet(initialGears: CompiledLens*) {
 
   def grouped: Map[AstType, Set[CompiledLens]] = groupedStore
 
-  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase): FileParseResults = {
+  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase, fileNameAnnotationOption: Option[FileNameAnnotation]): FileParseResults = {
     val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[CommonAstNode].nodeType)
 
     //@todo optimize this
@@ -70,7 +71,7 @@ class LensSet(initialGears: CompiledLens*) {
     fileAccumulator.run(astGraph, results)
 
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
-    FileParseResults(astGraph, astGraph.modelNodes.asInstanceOf[Vector[ModelNode]], sourceGearContext.parser, sourceGearContext.fileContents)
+    FileParseResults(astGraph, astGraph.modelNodes.asInstanceOf[Vector[ModelNode]], sourceGearContext.parser, sourceGearContext.fileContents, fileNameAnnotationOption)
   }
 
   //init code

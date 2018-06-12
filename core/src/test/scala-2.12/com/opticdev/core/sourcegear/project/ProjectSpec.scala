@@ -160,14 +160,14 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
       assert(Await.result(contentsInCacheFuture, 30 seconds) == stagedContents)
     }
 
-    it("will take from disk again if a file changed event registers") {
-      val newContents = "var them = now"
-      file.write(newContents)
-      eventually (timeout(Span(30, Seconds))) {
-        assert(ParseSupervisorSyncAccess.getContext(file).get.fileContents == newContents)
-        assert(!project.filesStateMonitor.fileHasStagedContents(file))
-      }
-    }
+//    it("will take from disk again if a file changed event registers") {
+//      val newContents = "var them = now"
+//      file.write(newContents)
+//      eventually (timeout(Span(30, Seconds))) {
+//        assert(ParseSupervisorSyncAccess.getContext(file).get.fileContents == newContents)
+//        assert(!project.filesStateMonitor.fileHasStagedContents(file))
+//      }
+//    }
   }
 
 }

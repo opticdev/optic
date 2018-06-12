@@ -4,8 +4,8 @@ import better.files.File
 import com.opticdev.common.{ObjectRef, PackageRef}
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
+import com.opticdev.core.sourcegear.annotations.SourceAnnotation
 import com.opticdev.core.sourcegear.context.FlatContext
-import com.opticdev.core.sourcegear.objects.annotations.SourceAnnotation
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule, SubContainer}

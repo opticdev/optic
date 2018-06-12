@@ -17,6 +17,15 @@ case class ChangeGroup(changes: OpticChange*) {
 
   def evaluateAndWrite(sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit nodeKeyStore: NodeKeyStore, autorefreshes: Boolean) : Try[BatchedChanges] = Try {
     val evaluated = evaluate(sourcegear, project)
+
+    //create files if they do not exist
+    evaluated.stagedFiles.keys.foreach(file => {
+      if (!file.exists) {
+        require(file.isChildOf(project.get.baseDirectory), s"Optic will not create file '${file.pathAsString}' because it is outside of this project")
+        file.createIfNotExists(asDirectory = false, createParents = true)
+      }
+    })
+
     if (evaluated.isSuccess) {
       if (!autorefreshes) {
         evaluated.flushToDisk

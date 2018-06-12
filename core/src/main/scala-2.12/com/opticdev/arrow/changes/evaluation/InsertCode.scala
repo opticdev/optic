@@ -15,20 +15,31 @@ import scala.util.{Failure, Success, Try}
 
 object InsertCode {
 
-  def atLocation(generatedNode: (NewAstNode, String), file: File, resolvedLocation: ResolvedLocation)(implicit filesStateMonitor : FileStateMonitor): ChangeResult = Try {
-    val fileContents = filesStateMonitor.contentsForFile(file).get
+  def atLocation(generatedNode: (NewAstNode, String), resolvedLocation: ResolvedLocation)(implicit filesStateMonitor : FileStateMonitor): ChangeResult = Try {
     resolvedLocation match {
       case loc : ResolvedRawLocation => {
+        val fileContents = filesStateMonitor.contentsForFile(loc.file).getOrElse("")
         val changed = StringUtils.insertAtIndex(fileContents, loc.rawPosition, generatedNode._2)
-        FileChanged(file, changed, Some(PatchInfo(Range(loc.rawPosition, loc.rawPosition), generatedNode._2)))
+        FileChanged(loc.file, changed, Some(PatchInfo(Range(loc.rawPosition, loc.rawPosition), generatedNode._2)))
       }
 
       case loc : EndOfFile => {
-        val changed = StringUtils.insertAtIndex(fileContents, fileContents.length, "\n\n"+ generatedNode._2)
-        FileChanged(file, changed, Some(PatchInfo(Range(fileContents.length, fileContents.length), "\n\n"+ generatedNode._2)))
+        val fileContents = filesStateMonitor.contentsForFile(loc.file).getOrElse("")
+        val addition = {
+          if (fileContents.isEmpty) {
+            generatedNode._2
+          } else {
+            "\n\n"+ generatedNode._2
+          }
+        }
+
+        val changed = StringUtils.insertAtIndex(fileContents, fileContents.length, addition)
+        FileChanged(loc.file, changed, Some(PatchInfo(Range(fileContents.length, fileContents.length), addition)))
       }
 
       case loc : ResolvedChildInsertLocation => {
+
+        val fileContents = filesStateMonitor.contentsForFile(loc.file).getOrElse("")
 
         val marvinAstParent = loc.parent.toMarvinAstNode(loc.graph, fileContents, loc.parser)
 
@@ -64,7 +75,7 @@ object InsertCode {
           if (i == -1) start else i
         }
 
-        FileChanged(file, updatedFileContents, Some(PatchInfo(Range(start, end), diff)))
+        FileChanged(loc.file, updatedFileContents, Some(PatchInfo(Range(start, end), diff)))
 
       }
     }

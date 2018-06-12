@@ -4,12 +4,12 @@ import com.opticdev.common.ObjectRef
 import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
 import com.opticdev.core.sourcegear.{AstDebugLocation, CompiledLens, SGContext}
 import com.opticdev.core.sourcegear.actors.ActorCluster
+import com.opticdev.core.sourcegear.annotations.{SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.containers.ContainerAstMapping
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsModelProperty, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraph}
-import com.opticdev.core.sourcegear.objects.annotations.{SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, WithinFile}

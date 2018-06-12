@@ -50,9 +50,8 @@ class ProjectsManager {
 
 
     //register a callback for model node options changes
-    project.onUpdatedModelNodeOptions((modelOptions)=> {
-      AgentConnection.broadcastUpdate(ModelNodeOptionsUpdate(project.name, modelOptions))
-      println("MODELS UPDATED "+ modelOptions.size)
+    project.onUpdatedModelNodeOptions((modelOptions, fileOptions)=> {
+      AgentConnection.broadcastUpdate(ModelNodeOptionsUpdate(project.name, modelOptions, fileOptions))
     })
 
     //send an initial status update
