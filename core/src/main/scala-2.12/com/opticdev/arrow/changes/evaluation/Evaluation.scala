@@ -81,7 +81,7 @@ object Evaluation {
             generatedNode._2)
         } else generatedNode._2
 
-        val resolvedLocation = rt.location.get.resolveToLocation(sourcegear, if (topLevel) Some(stagedNode) else None).get
+        val resolvedLocation = rt.location.get.resolveToLocation(sourcegear, Some(stagedNode)).get
         val changeResult = InsertCode.atLocation((generatedNode._1, updatedString), resolvedLocation).asFileChanged
         IntermediateTransformPatch(changeResult.file, changeResult.patchInfo.get.range, changeResult.patchInfo.get.updated)
       }
