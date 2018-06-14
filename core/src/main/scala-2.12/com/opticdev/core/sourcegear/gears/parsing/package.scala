@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear.gears
 
 import com.opticdev.core.sourcegear.containers.{SubContainerManager, SubContainerMatch}
 import com.opticdev.core.sourcegear.gears.helpers.ModelField
+import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstType, Child, CommonAstNode}
 import com.opticdev.sdk.PropertyValue
@@ -97,5 +98,8 @@ package object parsing {
   }
 
 
+  case class MultiNodeMatchResults(isMatch: Boolean,
+                                   parentNode: CommonAstNode,
+                                   childrenNodes: Vector[ModelNode])
 
 }

@@ -3,7 +3,7 @@ package com.opticdev.core.compiler
 import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.stages.MatchType
-import com.opticdev.core.sourcegear.CompiledLens
+import com.opticdev.core.sourcegear.{CompiledLens, CompiledMultiNodeLens}
 import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping}
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
@@ -45,6 +45,9 @@ case class FinderStageOutput(componentFinders: Map[FinderPath, Vector[Component]
 
 case class ParserFactoryOutput(parseGear: ParseGear)
 case class RenderFactoryOutput(renderGear: RenderGear)
+
+case class MultiNodeLensOutput(multiNodeLens: CompiledMultiNodeLens)
+
 
 case class DebugOutput(validationStageOutput: ValidationStageOutput,
                        snippetStageOutput: Try[SnippetStageOutput],

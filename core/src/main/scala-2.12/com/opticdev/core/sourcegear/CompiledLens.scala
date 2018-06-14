@@ -22,7 +22,9 @@ case class CompiledLens(name: Option[String],
                         schemaRef: SchemaRef,
                         enterOn: Set[AstType],
                         parser : ParseAsModel,
-                        renderer : RenderGear) extends SGExportable {
+                        renderer : RenderGear,
+                        internal: Boolean = false,
+                       ) extends SGExportable {
 
   //@todo make sure this is good enough
   lazy val hash: String = {
@@ -32,6 +34,8 @@ case class CompiledLens(name: Option[String],
       MurmurHash3.stringHash(packageRef.full) ^
       MurmurHash3.stringHash(schemaRef.full) ^
       MurmurHash3.setHash(enterOn) ^
+      MurmurHash3.stringHash(internal.toString) ^
+      parser.hash ^
       parser.hash ^
       renderer.hash
     }

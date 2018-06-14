@@ -8,7 +8,7 @@ import play.api.libs.json.{JsObject, JsString}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.ComponentEnums._
 import com.opticdev.sdk.descriptions.enums.FinderEnums._
-import com.opticdev.sdk.descriptions.enums.LocationEnums
+import com.opticdev.sdk.descriptions.enums.{LocationEnums, VariableEnums}
 import com.opticdev.sdk.descriptions.enums.RuleEnums._
 import com.opticdev.sdk.descriptions.finders.StringFinder
 
@@ -70,6 +70,5 @@ class ParserFactoryStageSpec extends TestBase with ParserUtils {
     }
 
   }
-
 
 }
