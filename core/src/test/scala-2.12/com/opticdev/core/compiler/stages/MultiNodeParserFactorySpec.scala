@@ -195,6 +195,33 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
 
       }
 
+      it("is parsed with shared variable manager") {
+
+        val block =
+          testBlock(
+            """
+              |import test from 'package'
+              |
+              |function salutation() {
+              | return "What's UP"
+              |}
+              |
+              |function helloWorld() {
+              | if (true) {
+              |
+              | }
+              | return salutation()+' '+'FRIENDO'
+              |}
+              |
+        """.stripMargin)
+
+        val matches = multiNodeLens.parser.findMatches(block.astGraph)
+
+        assert(matches.size == 1)
+        assert(matches.head.childrenNodes.map(_.value).foldLeft(JsObject.empty)(_ ++ _) == Json.parse("""{"greeting": "What's UP", "to": "FRIENDO"}"""))
+
+      }
+
       it("will not parse if required node is missing") {
 
         val block =
