@@ -38,7 +38,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
       val (enterOn, children, matchType) = enterOnAndMatchType(ast, root)
 
       //reconnect to updated Ast Nodes
-      containerMappings.map(cH=> {
+      containerMappings = containerMappings.map(cH=> {
         val node = cH._2.path.walk(root, ast)
         val path = PathFinder.getPath(ast, children.head, node).get
         (cH._1, ContainerNodeMapping(node, path))

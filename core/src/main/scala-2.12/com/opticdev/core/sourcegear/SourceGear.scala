@@ -108,7 +108,7 @@ abstract class SourceGear {
       | Transformations: ${transformations.map(_.yields).mkString(",")}
     """.stripMargin)
 
-  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, CompiledLens)] = Render.fromStagedNode(stagedNode)(this)
+  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, CompiledLens)] = Render.fromStagedNode(stagedNode)(this, flatContext)
 
 }
 

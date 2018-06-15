@@ -3,26 +3,30 @@ package com.opticdev.core.compiler.stages
 import com.opticdev.common.PackageRef
 import com.opticdev.core.BlankSchema
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.core.Fixture.compilerUtils.ParserUtils
+import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.compiler.SnippetStageOutput
-import com.opticdev.core.sourcegear.{LensSet, SourceGear}
+import com.opticdev.core.sourcegear.{CompiledLens, LensSet, Render, SourceGear}
 import com.opticdev.core.sourcegear.containers.{ContainerHook, SubContainerManager}
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.gears.parsing.{ParseGear, ParseResult}
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.parsers.rules.{Any, ChildrenRuleTypeEnum}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Containing
 import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import play.api.libs.json.{JsObject, Json}
+import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
+import play.api.libs.json.{JsObject, JsString, Json}
 
-class MultiNodeParserFactorySpec extends TestBase with ParserUtils {
+import scala.util.Try
+
+class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtils {
 
   def fixture = new {
-    val snippet = new Snippet("es7", "function greeting() {\n return 'Hello' \n} \n function helloWorld() {\n//:callback\n return greeting()+' '+'name' \n}")
+    val snippet = new Snippet("es7", "function greeting() {\n return 'Hello' \n} \n function helloWorld() {\n if (true) { \n //:callback \n } \n return greeting()+' '+'name' \n}")
 
     val variables = Vector(Variable("greeting", VariableEnums.Scope))
 
@@ -31,7 +35,12 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils {
         CodeComponent(Seq("greeting"), StringFinder(Containing, "Hello")),
         CodeComponent(Seq("to"), StringFinder(Containing, "name"))
       ),
-      variables, Vector(), PackageRef("test:example", "0.1.1"), None)
+      variables,
+      Vector(
+        SubContainer("callback", Vector(), Any, Vector())
+      ),
+      PackageRef("test:example", "0.1.1"),
+      None)
     implicit val variableManager = VariableManager(variables, SourceParserManager.installedParsers.head.identifierNodeDesc)
 
     val snippetBuilder = new SnippetStage(snippet)
@@ -51,7 +60,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils {
 
     assert(childSnippets.size == 2)
     assert(childSnippets.head.snippet.block == "function greeting() {\n return 'Hello' \n}")
-    assert(childSnippets.last.snippet.block == "function helloWorld() {\n\n return greeting()+' '+'name' \n}")
+    assert(childSnippets.last.snippet.block == "function helloWorld() {\n if (true) { \n\n } \n return greeting()+' '+'name' \n}")
   }
 
   it("can segment containers by child") {
@@ -62,7 +71,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils {
 
     assert(containerMappings.size == 2)
     assert(containerMappings.head.isEmpty)
-    assert(containerMappings.last.nonEmpty && containerMappings.last.head._1 == ContainerHook("callback", Range(24, 35)))
+    assert(containerMappings.last.nonEmpty && containerMappings.last.head._1 == ContainerHook("callback", Range(38, 51)))
 
   }
 
@@ -89,7 +98,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils {
     val f = fixture
     implicit val lens = f.lens
     val factory = new MultiNodeParserFactoryStage(f.snippetOutput)
-    val childLenses = factory.childLenses
+    val childLenses: Try[Vector[CompiledLens]] = factory.childLenses
 
     assert(childLenses.isSuccess)
     assert(childLenses.get.size == 2)
@@ -98,8 +107,8 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils {
     implicit val sourcegear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val transformations: Set[Transformation] = Set()
-      override val flatContext: FlatContext = null
-      override val schemas: Set[Schema] = Set()
+      override val flatContext: FlatContext = FlatContext(None, Map())
+      override val schemas: Set[Schema] = childLenses.get.map(i=> Schema(i.schemaRef, JsObject.empty)).toSet
       override val lensSet: LensSet = new LensSet(childLenses.get:_*)
     }
 
@@ -110,21 +119,23 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils {
       assert(parseResult.isDefined)
       assert(parseResult.get.modelNode.value == Json.parse("""{"greeting": "Hello"}"""))
 
-      val generatedResult = first.renderer.render(Json.parse("""{"greeting": "HEY YOU"}""").as[JsObject])
+      val generatedResult = first.renderer.render(Json.parse("""{"greeting": "HEY YOU"}""").as[JsObject])(sourcegear)
       assert(generatedResult == "function greeting() {\n return 'HEY YOU' \n}")
     }
 
     {
       val second = childLenses.get.last
-      val parsedSample = sample("function helloWorld() {\n//:callback\n return greeting()+' '+'Aidan' \n}")
+      val parsedSample = sample("function helloWorld() {\n if (true) \n { \n go() \n } \n return greeting()+' '+'Aidan' \n}")
       val parseResult = testParse(second.parser, parsedSample)
+
+      assert(second.parser.containers.head._2.name == "callback")
+
       assert(parseResult.isDefined)
       assert(parseResult.get.modelNode.value == Json.parse("""{"to": "Aidan"}"""))
 
-      val generatedResult = second.renderer.render(Json.parse("""{"to": "Human"}""").as[JsObject])
-      assert(generatedResult == "function helloWorld() {\n\n return greeting()+' '+'Human' \n}")
+      val generatedResult = second.renderer.render(Json.parse("""{"to": "Human"}""").as[JsObject])(sourcegear)
+      assert(generatedResult == "function helloWorld() {\n if (true) {\n \n } \n return greeting()+' '+'Human' \n}")
     }
-
 
   }
 
@@ -135,137 +146,176 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils {
     implicit lazy val lens = f.lens
     lazy val multiNodeLens = new MultiNodeParserFactoryStage(f.snippetOutput).run.multiNodeLens
 
+    lazy val importSG = sourceGearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
+
     lazy implicit val sourcegear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val transformations: Set[Transformation] = Set()
-      override val flatContext: FlatContext = null
-      override val schemas: Set[Schema] = Set()
-      override val lensSet: LensSet = new LensSet(multiNodeLens.childLenses:_*)
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        "none:none" -> FlatContext(None, Map(
+          "example____0" -> multiNodeLens.childLenses.head,
+          "example____1" -> multiNodeLens.childLenses.last,
+          "example" -> multiNodeLens
+        ))
+      ) ++ importSG.flatContext.mapping)
+      override val schemas: Set[Schema] = importSG.schemas ++ multiNodeLens.childLenses.map(i=> Schema(i.schemaRef, JsObject.empty)).toSet
+      override val lensSet: LensSet = new LensSet((multiNodeLens.childLenses ++ importSG.lensSet.listLenses): _*)
     }
 
     def testBlock(string: String) = {
       sourcegear.lensSet.parseFromGraph(string, sample(string).astGraph, sourceGearContext, null, None)
     }
 
-    it("can be parsed from an ast graph") {
+    describe("parsing") {
 
-      val block =
-        testBlock(
-        """
-          |import test from 'package'
-          |
-          |function greeting() {
-          | return "What's UP"
-          |}
-          |
-          |function helloWorld() {
-          |
-          | return greeting()+' '+'FRIENDO'
-          |}
-          |
+      it("can be parsed from an ast graph") {
+
+        val block =
+          testBlock(
+            """
+              |import test from 'package'
+              |
+              |function greeting() {
+              | return "What's UP"
+              |}
+              |
+              |function helloWorld() {
+              | if (true) {
+              |
+              | }
+              | return greeting()+' '+'FRIENDO'
+              |}
+              |
         """.stripMargin)
 
-      val matches = multiNodeLens.parser.findMatches(block.astGraph)
+        val matches = multiNodeLens.parser.findMatches(block.astGraph)
 
-      assert(matches.size == 1)
-      assert(matches.head.childrenNodes.map(_.value).foldLeft(JsObject.empty)(_ ++ _) == Json.parse("""{"greeting": "What's UP", "to": "FRIENDO"}"""))
+        assert(matches.size == 1)
+        assert(matches.head.childrenNodes.map(_.value).foldLeft(JsObject.empty)(_ ++ _) == Json.parse("""{"greeting": "What's UP", "to": "FRIENDO"}"""))
 
-    }
+      }
 
-    it("will not parse if required node is missing") {
+      it("will not parse if required node is missing") {
 
-      val block =
-        testBlock(
-          """
-            |import test from 'package'
-            |
-            |function helloWorld() {
-            |
-            | return greeting()+' '+'FRIENDO'
-            |}
-            |
+        val block =
+          testBlock(
+            """
+              |import test from 'package'
+              |
+              |function helloWorld() {
+              | if (true) {
+              |
+              | }
+              |
+              | return greeting()+' '+'FRIENDO'
+              |}
+              |
         """.stripMargin)
 
-      val matches = multiNodeLens.parser.findMatches(block.astGraph)
+        val matches = multiNodeLens.parser.findMatches(block.astGraph)
 
-      assert(matches.isEmpty)
+        assert(matches.isEmpty)
 
-    }
+      }
 
-    it("will parse if other items are in between (even models of target type)") {
+      it("will parse if other items are in between (even models of target type)") {
 
-      val block =
-        testBlock(
-          """
-            |import test from 'package'
-            |
-            |function greeting() {
-            | return "What's UP"
-            |}
-            |
-            |function greeting() {
-            | return "SHOULD NOT SEE"
-            |}
-            |
-            |doThing()
-            |
-            |class GO {
-            |  haveFun() {
-            |
-            |  }
-            |}
-            |
-            |function helloWorld() {
-            |
-            | return greeting()+' '+'FRIENDO'
-            |}
-            |
+        val block =
+          testBlock(
+            """
+              |import test from 'package'
+              |
+              |function greeting() {
+              | return "What's UP"
+              |}
+              |
+              |function greeting() {
+              | if (true) {
+              |
+              | }
+              |
+              | return "SHOULD NOT SEE"
+              |}
+              |
+              |doThing()
+              |
+              |class GO {
+              |  haveFun() {
+              |
+              |  }
+              |}
+              |
+              |function helloWorld() {
+              | if (true) {
+              |
+              | }
+              |
+              | return greeting()+' '+'FRIENDO'
+              |}
+              |
         """.stripMargin)
 
-      val matches = multiNodeLens.parser.findMatches(block.astGraph)
+        val matches = multiNodeLens.parser.findMatches(block.astGraph)
 
-      assert(matches.size == 1)
-      assert(matches.head.childrenNodes.map(_.value).foldLeft(JsObject.empty)(_ ++ _) == Json.parse("""{"greeting": "What's UP", "to": "FRIENDO"}"""))
+        assert(matches.size == 1)
+        assert(matches.head.childrenNodes.map(_.value).foldLeft(JsObject.empty)(_ ++ _) == Json.parse("""{"greeting": "What's UP", "to": "FRIENDO"}"""))
 
-    }
+      }
 
-    it("will parse multiple items in the same parent") {
+      it("will parse multiple items in the same parent") {
 
-      val block =
-        testBlock(
-          """
-            |import test from 'package'
-            |
-            |function greeting() {
-            | return "What's UP"
-            |}
-            |
-            |function helloWorld() {
-            |
-            | return greeting()+' '+'FRIENDO'
-            |}
-            |
-            |
-            |function greeting() {
-            | return "Yo"
-            |}
-            |
-            |function helloWorld() {
-            |
-            | return greeting()+' '+'Man'
-            |}
-            |
+        val block =
+          testBlock(
+            """
+              |import test from 'package'
+              |
+              |function greeting() {
+              | return "What's UP"
+              |}
+              |
+              |function helloWorld() {
+              | if (true) {
+              |
+              | }
+              |
+              | return greeting()+' '+'FRIENDO'
+              |}
+              |
+              |
+              |function greeting() {
+              | return "Yo"
+              |}
+              |
+              |function helloWorld() {
+              | if (true) {
+              |
+              | }
+              |
+              | return greeting()+' '+'Man'
+              |}
+              |
         """.stripMargin)
 
-      val matches = multiNodeLens.parser.findMatches(block.astGraph)
+        val matches = multiNodeLens.parser.findMatches(block.astGraph)
 
-      assert(matches.size == 2)
-      assert(matches.head.childrenNodes.map(_.value).foldLeft(JsObject.empty)(_ ++ _) == Json.parse("""{"greeting": "What's UP", "to": "FRIENDO"}"""))
-      assert(matches.last.childrenNodes.map(_.value).foldLeft(JsObject.empty)(_ ++ _) == Json.parse("""{"greeting": "Yo", "to": "Man"}"""))
+        assert(matches.size == 2)
+        assert(matches.head.childrenNodes.map(_.value).foldLeft(JsObject.empty)(_ ++ _) == Json.parse("""{"greeting": "What's UP", "to": "FRIENDO"}"""))
+        assert(matches.last.childrenNodes.map(_.value).foldLeft(JsObject.empty)(_ ++ _) == Json.parse("""{"greeting": "Yo", "to": "Man"}"""))
 
+      }
     }
 
+    describe("rendering") {
+
+      it("can render multi node ") {
+        val generated = multiNodeLens.renderer.renderWithNewAstNodes(Json.parse("""{"greeting": "What's UP", "to": "FRIENDO"}""").as[JsObject], Map("callback" -> Seq(
+          StagedNode(SchemaRef(Some(PackageRef("optic:importexample")), "js-import"), JsObject(
+                    Seq("definedAs" -> JsString("ABC"), "pathTo" -> JsString("DEF"))))
+        )))(sourcegear, sourcegear.flatContext)
+
+        assert(generated._2 == "function greeting() {\n return 'What's UP' \n}\n\nfunction helloWorld() {\n if (true) {\n     let ABC = require('DEF')\n } \n return greeting()+' '+'FRIENDO' \n}")
+      }
+    }
 
   }
-
 }

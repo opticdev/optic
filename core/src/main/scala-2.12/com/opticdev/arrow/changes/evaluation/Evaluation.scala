@@ -30,7 +30,7 @@ object Evaluation {
         lensId = im.lensId
       )))
 
-      val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear)
+      val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear, sourcegear.flatContext)
       renderedTry.failed.foreach(_.printStackTrace)
       require(renderedTry.isSuccess, "Could not render model "+ renderedTry.failed.get.toString)
       val generatedNode = (renderedTry.get._1, renderedTry.get._2)

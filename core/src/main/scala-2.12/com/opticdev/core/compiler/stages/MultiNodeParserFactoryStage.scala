@@ -1,7 +1,7 @@
 package com.opticdev.core.compiler.stages
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.common.PackageRef
-import com.opticdev.core.compiler.errors.AstPathNotFound
+import com.opticdev.core.compiler.errors.{AstPathNotFound, ErrorAccumulator}
 import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.{FinderStageOutput, MultiNodeLensOutput, ParserFactoryOutput, SnippetStageOutput}
 import com.opticdev.core.sourcegear.{CompiledLens, CompiledMultiNodeLens}
@@ -30,6 +30,10 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput, qualifySchem
 
   def childLenses: Try[Vector[CompiledLens]] = {
 
+    val errorAccumulator = new ErrorAccumulator
+
+    val variableManager = new VariableManager(lens.variables, snippetStageOutput.parser.identifierNodeDesc)
+
     for {
       childSnippets <- Try(toChildrenSnippetOutputs)
       containersIndexed <- Try(containersByChild(childSnippets))
@@ -52,9 +56,11 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput, qualifySchem
                                         lens.subcontainers.filter(i=> containers.exists(_._1.name == i.name)),
                                         lens.packageRef, None)
 
-            val finderStage = new FinderStage(snippet)(childLens).run
+            implicit val subcontainersManager = new SubContainerManager(childLens.subcontainers, snippet.containerMapping)
 
-            val parser = new ParserFactoryStage(snippet, finderStage, qualifySchema)(childLens).run
+            val finderStage = new FinderStage(snippet)(childLens, errorAccumulator, variableManager, subcontainersManager).run
+
+            val parser = new ParserFactoryStage(snippet, finderStage, qualifySchema)(childLens, variableManager, subcontainersManager).run
             val renderer = new RenderFactoryStage(snippet, parser.parseGear)(childLens).run
 
             CompiledLens(childLens.name, childLens.id, childLens.packageRef, childLens.schema, snippet.enterOn, parser.parseGear.asInstanceOf[ParseAsModel], renderer.renderGear,

@@ -11,7 +11,7 @@ import com.opticdev.core.utils.VectorDistinctBy._
 
 class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType]) {
 
-  lazy val childSchemas = childLenses.map(_.schemaRef).toVector
+  private val childSchemas = childLenses.map(_.schemaRef).toVector
 
   def findMatches(implicit astGraph: AstGraph) = {
 

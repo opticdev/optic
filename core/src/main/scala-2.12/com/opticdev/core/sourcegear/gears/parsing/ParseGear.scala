@@ -121,6 +121,8 @@ sealed abstract class ParseGear() {
 
         val foundContainer: Set[SubContainerMatch] = expectedSubContainerAtPath.map(c=> Set(SubContainerMatch(c, node))).getOrElse(Set())
 
+        val c = (fileContents.substring(node.range.start, node.range.end))
+
         MatchResults(childrenResults.isMatch,
           if (childrenResults.isMatch) Some(childrenResults.extracted.getOrElse(Set()) ++ extractedFields) else None,
           if (childrenResults.isMatch) Some(entryNode) else None,

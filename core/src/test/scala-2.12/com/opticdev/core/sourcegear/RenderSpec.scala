@@ -54,7 +54,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
     it("if not set in options gets first matching") {
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty)
       val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
-      assert(result.contains(a))
+      assert(result.contains(b))
     }
 
     it("will return none if gear is not found") {

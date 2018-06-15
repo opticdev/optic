@@ -19,7 +19,7 @@ import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.marvin.common.helpers.LineOperations
 object Render {
 
-  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase = null) : Try[(NewAstNode, String, CompiledLens)] = Try {
+  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase) : Try[(NewAstNode, String, CompiledLens)] = Try {
 
     val flatContext: FlatContextBase = if (context == null) sourceGear.flatContext else context
 
@@ -68,7 +68,10 @@ object Render {
       }
 
     } else {
-      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listLenses.find(_.resolvedSchema == schema.schemaRef))
+      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listLenses.find(i=> {
+        val lookup = Try(i.resolvedSchema == schema.schemaRef)
+        lookup.isSuccess && lookup.get
+      }))
     }
   }
 
@@ -79,6 +82,8 @@ object Render {
       (jsValue: JsValue)=> Try(jsValue.as[JsObject].value("_isStagedNode").as[JsBoolean].value).getOrElse(false),
       deep = true
     )
+
+    implicit val flatContext = sourceGear.flatContext
 
     val fieldSet = stagedNodeValues.map(i=> Try {
       val obj = propertyPathWalker.getProperty(i).get.as[JsObject]
@@ -99,6 +104,7 @@ object Render {
 
   //initializers
   def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): Try[(NewAstNode, String, CompiledLens)] = {
+    implicit val flatContext = sourceGear.flatContext
     fromStagedNode(StagedNode(schemaRef, value, Some(
       RenderOptions(
         lensId = gearIdOption
