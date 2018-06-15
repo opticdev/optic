@@ -121,8 +121,6 @@ sealed abstract class ParseGear() {
 
         val foundContainer: Set[SubContainerMatch] = expectedSubContainerAtPath.map(c=> Set(SubContainerMatch(c, node))).getOrElse(Set())
 
-        val c = (fileContents.substring(node.range.start, node.range.end))
-
         MatchResults(childrenResults.isMatch,
           if (childrenResults.isMatch) Some(childrenResults.extracted.getOrElse(Set()) ++ extractedFields) else None,
           if (childrenResults.isMatch) Some(entryNode) else None,
@@ -184,23 +182,4 @@ case class ParseAsModel(description: NodeDescription,
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))
 
   }
-}
-
-
-case class ParseAsContainer(description: NodeDescription,
-                        containers: Map[FlatWalkablePath, SubContainer],
-                        rules: Map[FlatWalkablePath, Vector[RuleWithFinder]],
-                        variableManager: VariableManager = VariableManager.empty,
-                        additionalParserInformation : AdditionalParserInformation,
-                        packageId: String,
-                        parsingLensRef: LensRef
-                       ) extends ParseGear {
-
-  override def output(matchResults: MatchResults, variableMapping: VariableMapping)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String): Option[ParseResult[CommonAstNode]] = {
-    None
-  }
-
-  //not set for containers
-  override val components = Map()
-  override val listeners = Vector()
 }
