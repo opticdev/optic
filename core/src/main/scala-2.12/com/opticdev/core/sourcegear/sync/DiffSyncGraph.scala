@@ -161,7 +161,7 @@ object DiffSyncGraph {
       val variableChanges = taggedModelNode.parseGear.variableManager.changesFromMapping(variables)
       taggedModelNode.update(newValue, Some(variableChanges))
     } else {
-      val variableChanges = lens.parser.variableManager.changesFromMapping(masterStagedNode.options.flatMap(_.variables).getOrElse(Map.empty))
+      val variableChanges = lens.variableManager.changesFromMapping(masterStagedNode.options.flatMap(_.variables).getOrElse(Map.empty))
       modelNode.resolveInGraph[CommonAstNode](astGraph).update(newValue, Some(variableChanges))
     }
 

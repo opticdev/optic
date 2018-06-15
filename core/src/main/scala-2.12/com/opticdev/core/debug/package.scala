@@ -1,12 +1,12 @@
 package com.opticdev.core
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.opm.DependencyTree
 import com.opticdev.opm.context.Context
 import com.opticdev.parsers.graph.{AstType, WithinFile}
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.descriptions.{Lens, PackageExportable, Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.{Lens, PackageExportable, Schema}
 import play.api.libs.json.{JsObject, JsValue}
 
 import scala.util.hashing.MurmurHash3

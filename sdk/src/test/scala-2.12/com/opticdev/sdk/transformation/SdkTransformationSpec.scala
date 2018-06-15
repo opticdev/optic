@@ -3,7 +3,7 @@ package com.opticdev.sdk.transformation
 import akka.actor.ActorSystem
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.generate.SingleModel
 import com.opticdev.sdk.descriptions.transformation.{TransformFunction, Transformation, TransformationCaller}
 import jdk.nashorn.api.scripting.ScriptObjectMirror

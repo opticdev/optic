@@ -3,7 +3,7 @@ package com.opticdev.core.compiler.stages
 import com.opticdev.core.compiler.errors.AstPathNotFound
 import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.{FinderStageOutput, ParserFactoryOutput, SnippetStageOutput}
-import com.opticdev.sdk.descriptions.{Lens, SchemaRef}
+import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.core.sourcegear.accumulate.MapSchemaListener
 import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.gears.RuleProvider
@@ -15,7 +15,7 @@ import com.opticdev.parsers.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 
 
 class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, qualifySchema: (PackageRef, SchemaRef) => SchemaRef = (a,b) => b)(implicit lens: Lens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {

@@ -76,7 +76,7 @@ object Evaluation {
         val updatedString = if (rt.objectSelection.isDefined) {
           val objName = rt.objectSelection.get
           AnnotationRenderer.renderToFirstLine(
-            generatedNode._3.renderer.parser.get.inlineCommentPrefix,
+            generatedNode._3.renderer.parser.inlineCommentPrefix,
             Vector(SourceAnnotation(objName, rt.transformationChanges.transformation.transformationRef, rt.answers)),
             generatedNode._2)
         } else generatedNode._2

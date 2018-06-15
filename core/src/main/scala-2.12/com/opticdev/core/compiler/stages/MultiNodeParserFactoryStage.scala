@@ -1,6 +1,6 @@
 package com.opticdev.core.compiler.stages
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.compiler.errors.{AstPathNotFound, ErrorAccumulator}
 import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.{FinderStageOutput, MultiNodeLensOutput, ParserFactoryOutput, SnippetStageOutput}
@@ -13,7 +13,7 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.graph.path.FlatWalkablePath
-import com.opticdev.sdk.descriptions.{Component, Lens, RuleWithFinder, SchemaRef}
+import com.opticdev.sdk.descriptions.{Component, Lens, RuleWithFinder}
 import play.api.libs.json.JsObject
 
 import scala.util.Try
@@ -23,7 +23,7 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput, qualifySchem
 
   override def run: MultiNodeLensOutput = {
     MultiNodeLensOutput(
-      CompiledMultiNodeLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetStageOutput.enterOn, childLenses.getOrElse(throw childLenses.failed.get))
+      CompiledMultiNodeLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetStageOutput.enterOn, snippetStageOutput.parser.parserRef, childLenses.getOrElse(throw childLenses.failed.get))
     )
   }
 

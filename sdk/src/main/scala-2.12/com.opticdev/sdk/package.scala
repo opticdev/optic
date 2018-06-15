@@ -1,7 +1,7 @@
 package com.opticdev
 
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.{MultiTransform, ProcessResult, TransformationResult}
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import com.opticdev.sdk.descriptions.transformation.mutate.ContainerMutationOperationsEnum

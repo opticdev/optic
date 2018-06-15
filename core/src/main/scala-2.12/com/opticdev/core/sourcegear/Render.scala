@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.common.utils.JsonUtils
 import com.opticdev.core.sourcegear.annotations.{AnnotationRenderer, TagAnnotation}
 import com.opticdev.core.sourcegear.context.FlatContextBase
@@ -8,7 +9,7 @@ import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.parsers.sourcegear.basic.ObjectLiteralValueFormat
 import com.opticdev.sdk.VariableMapping
-import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
+import com.opticdev.sdk.descriptions.LensRef
 import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import com.vdurmont.semver4j.Semver
@@ -19,7 +20,7 @@ import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.marvin.common.helpers.LineOperations
 object Render {
 
-  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase) : Try[(NewAstNode, String, CompiledLens)] = Try {
+  def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase) : Try[(NewAstNode, String, SGExportableLens)] = Try {
 
     val flatContext: FlatContextBase = if (context == null) sourceGear.flatContext else context
 
@@ -31,7 +32,7 @@ object Render {
     val gear = gearOption.get
     val containerContents = options.containers.getOrElse(Map.empty)
 
-    val declaredVariables = gear.parser.variableManager.variables
+    val declaredVariables = gear.variableManager.variables
     val setVariablesMapping = options.variables.getOrElse(Map.empty)
     val parentVariableMappingFiltered = parentVariableMapping.filterNot(v=> declaredVariables.exists(d => d.token == v._1 && d.in == VariableEnums.Self))
 
@@ -43,7 +44,7 @@ object Render {
     val result = gear.renderer.renderWithNewAstNode(processedValue, containerContents, variableMapping)
 
     val stringResult = if (options.tag.isDefined) {
-      AnnotationRenderer.renderToFirstLine(gear.renderer.parser.get.inlineCommentPrefix, Vector(TagAnnotation(options.tag.get, gear.schemaRef)), result._2)
+      AnnotationRenderer.renderToFirstLine(gear.renderer.parser.inlineCommentPrefix, Vector(TagAnnotation(options.tag.get, gear.schemaRef)), result._2)
     } else {
       result._2
     }
@@ -51,7 +52,7 @@ object Render {
     (result._1.withForcedContent(Some(stringResult)), stringResult, gear)
   }
 
-  def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[CompiledLens] = {
+  def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[SGExportableLens] = {
     val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.lensId.get).get)
     if (lensRefTry.isSuccess) {
       val lensRef = lensRefTry.get
@@ -103,7 +104,7 @@ object Render {
   }
 
   //initializers
-  def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): Try[(NewAstNode, String, CompiledLens)] = {
+  def simpleNode(schemaRef: SchemaRef, value: JsObject, gearIdOption: Option[String] = None, variableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear): Try[(NewAstNode, String, SGExportableLens)] = {
     implicit val flatContext = sourceGear.flatContext
     fromStagedNode(StagedNode(schemaRef, value, Some(
       RenderOptions(

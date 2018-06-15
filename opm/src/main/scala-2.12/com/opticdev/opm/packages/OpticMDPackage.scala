@@ -1,7 +1,7 @@
 package com.opticdev.opm.packages
 
 import better.files.File
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.sdk.descriptions._
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 

@@ -1,7 +1,8 @@
 package com.opticdev.core.sourcegear
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.context.FlatContext
-import com.opticdev.sdk.descriptions.{Schema, SchemaColdStorage, SchemaRef}
+import com.opticdev.sdk.descriptions.{Schema, SchemaColdStorage}
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
@@ -15,7 +16,7 @@ import play.api.libs.json.{JsObject, JsString, Json}
 case class SGConfig(hashInt: Int,
                     _flatContext: FlatContext,
                     parserIds : Set[ParserRef],
-                    compiledLenses : Set[CompiledLens],
+                    compiledLenses : Set[SGExportableLens],
                     schemas : Set[SchemaColdStorage],
                     transformations: Set[Transformation]) {
 

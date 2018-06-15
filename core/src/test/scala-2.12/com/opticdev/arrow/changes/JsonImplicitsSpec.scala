@@ -4,8 +4,8 @@ import better.files.File
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
-import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.common.{PackageRef, SchemaRef}
+import com.opticdev.sdk.descriptions.Schema
 
 class JsonImplicitsSpec extends FunSpec {
 

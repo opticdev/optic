@@ -1,6 +1,7 @@
 package com.opticdev.sdk.descriptions.transformation
 
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.common.SchemaRef
+import com.opticdev.sdk.descriptions.Schema
 import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}
 import play.api.libs.json.{JsObject, JsString}
 

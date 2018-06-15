@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.gears.parsing
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.{PropertyValue, VariableMapping}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.core.sourcegear.SGContext

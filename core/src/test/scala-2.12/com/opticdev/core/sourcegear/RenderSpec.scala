@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.Fixture.{DummyCompilerOutputs, ExampleSourcegearFixtures, TestBase}
 import com.opticdev.core.compiler.stages.RenderFactoryStage

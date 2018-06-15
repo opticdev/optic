@@ -1,8 +1,9 @@
 package com.opticdev.core.compiler.helpers
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.opm.DependencyTree
 import com.opticdev.opm.context.{Context, PackageContext}
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.Schema
 
 object SchemaIdImplicits {
   implicit class SchemaIdResolver(schemaId: SchemaRef) {

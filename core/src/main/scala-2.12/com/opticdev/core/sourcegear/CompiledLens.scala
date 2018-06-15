@@ -1,13 +1,14 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.common.{PackageRef, SGExportable}
+import com.opticdev.common.{PackageRef, SGExportable, SchemaRef}
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.{ParseAsModel, ParseGear}
 import com.opticdev.core.sourcegear.project.Project
+import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.core.utils.UUID
 import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.sdk.descriptions.{Lens, LensRef, SchemaRef}
+import com.opticdev.sdk.descriptions.{Lens, LensRef}
 import play.api.libs.json.{Format, JsString, JsSuccess, JsValue}
 
 import scala.util.hashing.MurmurHash3
@@ -24,7 +25,7 @@ case class CompiledLens(name: Option[String],
                         parser : ParseAsModel,
                         renderer : RenderGear,
                         internal: Boolean = false,
-                       ) extends SGExportable {
+                       ) extends SGExportableLens {
 
   //@todo make sure this is good enough
   lazy val hash: String = {
@@ -42,6 +43,8 @@ case class CompiledLens(name: Option[String],
 
     Integer.toHexString(int)
   }
+
+  override def variableManager: VariableManager = parser.variableManager
 
   def lensRef : LensRef = LensRef(Some(packageRef), id)
 

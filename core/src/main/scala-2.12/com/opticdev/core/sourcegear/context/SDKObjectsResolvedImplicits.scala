@@ -1,9 +1,9 @@
 package com.opticdev.core.sourcegear.context
-import com.opticdev.common.{PackageRef, SGExportable}
-import com.opticdev.core.sourcegear.{CompiledLens, SourceGear}
+import com.opticdev.common.{PackageRef, SGExportable, SchemaRef}
+import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens, SourceGear}
 import com.opticdev.opm.context.Context
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.descriptions.{Lens, Schema, SchemaComponent, SchemaRef}
+import com.opticdev.sdk.descriptions.{Lens, Schema, SchemaComponent}
 
 import scala.util.Try
 
@@ -37,7 +37,7 @@ object SDKObjectsResolvedImplicits {
     }
   }
 
-  implicit class CompiledLensResolved(compiledLens: CompiledLens) {
+  implicit class CompiledLensResolved(compiledLens: SGExportableLens) {
     def resolvedSchema(implicit sourceGear: SourceGear) : SchemaRef = {
 
       val pId = if (compiledLens.schemaRef.packageRef.isDefined) {

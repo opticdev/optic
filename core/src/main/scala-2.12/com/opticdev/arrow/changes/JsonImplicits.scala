@@ -3,12 +3,12 @@ import better.files.File
 import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
 import com.opticdev.arrow.results.ModelOption
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef, fileFormat}
 import com.opticdev.core.sourcegear.sync.FilePatch
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.Schema
 import play.api.libs.json._
-import com.opticdev.common.fileFormat
+
 import scala.util.{Failure, Success, Try}
 
 object JsonImplicits {

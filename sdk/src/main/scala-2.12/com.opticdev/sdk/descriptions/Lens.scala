@@ -1,6 +1,6 @@
 package com.opticdev.sdk.descriptions
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.sdk.descriptions.enums.LocationEnums
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InContainer
 import play.api.libs.json._

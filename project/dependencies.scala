@@ -37,7 +37,8 @@ object Dependencies {
     "org.scalactic" %% "scalactic" % scalaTestVersion,
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
     "com.vdurmont" % "semver4j" % "2.1.0",
-    "org.slf4j" % "slf4j-simple" % "1.7.25" % "test"
+    "org.slf4j" % "slf4j-simple" % "1.7.25" % "test",
+    "com.opticdev" %% "parser-foundation" % parserFoundationVersion
   )
 
   val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Seq(

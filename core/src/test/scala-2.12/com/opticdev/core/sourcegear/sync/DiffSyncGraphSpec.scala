@@ -12,7 +12,7 @@ import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.opm
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.concurrent.Await

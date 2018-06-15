@@ -1,7 +1,7 @@
 package com.opticdev.arrow
 
 import com.opticdev.arrow.changes.location.AsChildOf
-import com.opticdev.core.sourcegear.CompiledLens
+import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens}
 import com.opticdev.parsers.graph.BaseNode
 import com.opticdev.sdk.descriptions.Schema
 import play.api.libs.json._
@@ -17,7 +17,7 @@ package object graph {
   case class SchemaNode(schema: Schema) extends SGNode {
     override def id: String = schema.schemaRef.full
   }
-  case class LensNode(gear: CompiledLens) extends SGNode {
+  case class LensNode(gear: SGExportableLens) extends SGNode {
     override def id: String = gear.lensRef.full
   }
 

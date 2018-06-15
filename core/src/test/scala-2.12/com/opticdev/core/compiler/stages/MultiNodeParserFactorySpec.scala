@@ -1,6 +1,6 @@
 package com.opticdev.core.compiler.stages
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.BlankSchema
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}

@@ -4,9 +4,9 @@ import com.opticdev.core.sourcegear.CompiledLens
 import com.opticdev.core.sourcegear.gears.helpers.ChildrenVectorComparison
 import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.graph.model.ModelNode
-import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.utils.VectorDistinctBy._
 
 class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType]) {

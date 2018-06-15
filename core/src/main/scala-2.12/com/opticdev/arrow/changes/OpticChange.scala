@@ -5,7 +5,7 @@ import com.opticdev.arrow.changes.evaluation.ChangeResult
 import com.opticdev.arrow.changes.location.{InsertLocation, RawPosition}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.TransformationChanges
 import com.opticdev.core.sourcegear.CompiledLens
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.{Schema}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import JsonImplicits.opticChangeFormat
 import com.opticdev.arrow.results.ModelOption

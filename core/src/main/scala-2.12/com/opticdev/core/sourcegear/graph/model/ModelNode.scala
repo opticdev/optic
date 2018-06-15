@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.graph.model
 
-import com.opticdev.common.ObjectRef
-import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
+import com.opticdev.common.{ObjectRef, SchemaRef}
+import com.opticdev.sdk.descriptions.LensRef
 import com.opticdev.core.sourcegear.{AstDebugLocation, CompiledLens, SGContext}
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.annotations.{SourceAnnotation, TagAnnotation}

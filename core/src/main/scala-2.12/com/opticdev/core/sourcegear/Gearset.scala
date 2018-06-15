@@ -8,9 +8,9 @@ import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 
 //@todo make this class immutable
-class LensSet(initialGears: CompiledLens*) {
+class LensSet(initialGears: SGExportableLens*) {
 
-  private val lenses = scala.collection.mutable.Set[CompiledLens](initialGears:_*)
+  private val lenses = scala.collection.mutable.Set[SGExportableLens](initialGears:_*)
 
   var fileAccumulator = FileAccumulator()
 
@@ -36,12 +36,15 @@ class LensSet(initialGears: CompiledLens*) {
   private var groupedStore : Map[AstType, Set[CompiledLens]] = Map()
 
   private def reindex = synchronized {
-    val allListeners = lenses.flatMap(_.parser.listeners)
+
+    val singleLenses: Seq[CompiledLens] = lenses.collect {case cl: CompiledLens => cl}.toSeq
+
+    val allListeners = singleLenses.flatMap(_.parser.listeners)
 
     val allEntryNodes = lenses.flatMap(_.enterOn).toSet
 
     groupedStore = allEntryNodes
-      .map(nodeType=> (nodeType, lenses.filter(_.enterOn.contains(nodeType)).toSet))
+      .map(nodeType=> (nodeType, singleLenses.filter(_.enterOn.contains(nodeType)).toSet))
       .toMap
 
     fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.mapToSchema))

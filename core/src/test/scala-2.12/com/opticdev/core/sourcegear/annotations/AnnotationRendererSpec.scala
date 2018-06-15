@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.annotations
 
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import org.scalatest.FunSpec
 

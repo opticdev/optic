@@ -1,10 +1,10 @@
 package com.opticdev.sdk
 
 import com.github.fge.jsonschema.main.JsonSchema
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString, Json}
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.Schema
 
 class SdkSchemaSpec extends FunSpec {
 
