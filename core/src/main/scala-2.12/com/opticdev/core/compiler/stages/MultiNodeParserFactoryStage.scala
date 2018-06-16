@@ -27,7 +27,6 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput, qualifySchem
     )
   }
 
-
   def childLenses: Try[Vector[CompiledLens]] = {
 
     val errorAccumulator = new ErrorAccumulator
@@ -60,7 +59,7 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput, qualifySchem
 
             val finderStage = new FinderStage(snippet)(childLens, errorAccumulator, variableManager, subcontainersManager).run
 
-            val parser = new ParserFactoryStage(snippet, finderStage, qualifySchema)(childLens, variableManager, subcontainersManager).run
+            val parser = new ParserFactoryStage(snippet, finderStage, qualifySchema, internal = true)(childLens, variableManager, subcontainersManager).run
             val renderer = new RenderFactoryStage(snippet, parser.parseGear)(childLens).run
 
             CompiledLens(childLens.name, childLens.id, childLens.packageRef, childLens.schema, snippet.enterOn, parser.parseGear.asInstanceOf[ParseAsModel], renderer.renderGear,

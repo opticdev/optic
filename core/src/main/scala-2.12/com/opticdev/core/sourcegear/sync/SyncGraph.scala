@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.sync
 
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.{AstProjection, ProjectGraph, ProjectGraphWrapper, SyncGraph}
-import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.BaseNode
 import scalax.collection.edge.Implicits._
@@ -54,7 +54,7 @@ object SyncGraph {
       val an = pgDefinesNames
       val duplicates = an.groupBy(_.objectRef.get.name).filter(_._2.size > 1).keys
       duplicates.foreach(dup=> warnings += {
-        () => DuplicateSourceName(dup, Try(an.map(mn=> snapshot.linkedModelNodes(mn.flatten).toDebugLocation).toVector).getOrElse(Vector()))
+        () => DuplicateSourceName(dup, Try(an.map(mn=> snapshot.linkedModelNodes(mn.flatten.asInstanceOf[ModelNode]).toDebugLocation).toVector).getOrElse(Vector()))
       })
       an.filterNot(_.objectRef.exists(i=> duplicates.exists(_ == i.name)))
     }
@@ -71,12 +71,12 @@ object SyncGraph {
         val didAdd = syncSubgraph add (sourceNodeOption.get ~+#> targetNode)(DerivedFrom(sourceAnnotation.transformationRef, sourceAnnotation.askObject.getOrElse(JsObject.empty)))
         if (!didAdd) {
           warnings += {
-            () => CircularDependency(sourceName, snapshot.linkedModelNodes(targetNode.flatten).toDebugLocation)
+            () => CircularDependency(sourceName, snapshot.linkedModelNodes(targetNode.flatten.asInstanceOf[ModelNode]).toDebugLocation)
           }
         }
       } else {
         warnings += {
-          () => SourceDoesNotExist(sourceName, snapshot.linkedModelNodes(targetNode.flatten).toDebugLocation)
+          () => SourceDoesNotExist(sourceName, snapshot.linkedModelNodes(targetNode.flatten.asInstanceOf[ModelNode]).toDebugLocation)
         }
       }
     })

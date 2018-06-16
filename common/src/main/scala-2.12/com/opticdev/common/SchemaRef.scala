@@ -12,6 +12,15 @@ case class SchemaRef(packageRef: Option[PackageRef], id: String) {
     this.packageRef.map(_.packageId) == schemaRef.packageRef.map(_.packageId) &&
       this.id == schemaRef.id
   }
+
+  def withPackageIfMissing(p: PackageRef) : SchemaRef = {
+    if (packageRef.isEmpty) {
+      this.copy(packageRef = Some(p))
+    } else {
+      this
+    }
+  }
+
 }
 
 object SchemaRef {

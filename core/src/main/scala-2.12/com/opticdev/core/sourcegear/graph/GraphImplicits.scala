@@ -81,6 +81,11 @@ object GraphImplicits {
       if (result.nonEmpty) Option(result.head.value.asInstanceOf[FileNode]) else None
     }
 
+    def modelNodes() : Vector[BaseModelNode] = {
+      val result = graph.nodes.filter(i=> i.value.isInstanceOf[BaseModelNode]).map(_.value.asInstanceOf[BaseModelNode])
+      result.toVector
+    }
+
     def fileNodes : Set[FileNode] = {
       graph.nodes.collect {
         case f if f.value.isInstanceOf[FileNode] => f.value.asInstanceOf[FileNode]

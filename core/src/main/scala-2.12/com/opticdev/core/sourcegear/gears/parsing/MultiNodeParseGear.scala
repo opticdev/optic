@@ -8,12 +8,15 @@ import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.utils.VectorDistinctBy._
+import com.opticdev.sdk.descriptions.LensRef
 
-class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType]) {
+import scala.collection.immutable
+
+class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType], lensRef: LensRef, schemaRef: SchemaRef) {
 
   private val childSchemas = childLenses.map(_.schemaRef).toVector
 
-  def findMatches(implicit astGraph: AstGraph) = {
+  def findMatches(implicit astGraph: AstGraph): Set[MultiNodeMatchResults] = {
 
     val foundNodes = astGraph.nodes.collect {
       case mn if mn.value.isInstanceOf[ModelNode] && childSchemas.contains(mn.value.asInstanceOf[ModelNode].schemaId)
@@ -48,11 +51,11 @@ class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType]) 
 
           val matchResults = ChildrenVectorComparison.samePlus[SchemaRef, SchemaRef](sortedSchemas, childSchemas, defaultEquality)
 
-          MultiNodeMatchResults(matchResults.isMatch, parent, distinctSeq.map(_.flatten))
+          MultiNodeMatchResults(matchResults.isMatch, schemaRef, lensRef, parent, distinctSeq.map(_.flatten))
         })
       }
     }.filter(_.isMatch)
-
+     .toSet
   }
 
 }

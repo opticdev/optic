@@ -6,7 +6,7 @@ import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
-import com.opticdev.core.sourcegear.graph.model.Path
+import com.opticdev.core.sourcegear.graph.model.{ModelNode, Path}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
@@ -42,7 +42,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
 
   it("can resolve when flat") {
 
-    val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
+    val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get.asInstanceOf[ModelNode]
     val resolved = helloWorldImport.resolve
     val resolvedMapping = resolved.modelMapping
 
@@ -54,7 +54,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
 
   describe("Mutation") {
 
-    val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
+    val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get.asInstanceOf[ModelNode]
 
     it("Can mutate a token") {
       val resolved = helloWorldImport.resolve[CommonAstNode]

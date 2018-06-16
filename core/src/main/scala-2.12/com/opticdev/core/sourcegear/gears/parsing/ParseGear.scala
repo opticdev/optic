@@ -41,6 +41,8 @@ sealed abstract class ParseGear() {
 
   val variableManager : VariableManager
 
+  val internal: Boolean
+
   def hash = {
         MurmurHash3.stringHash(description.toString) ^
         MurmurHash3.mapHash(components) ^
@@ -153,7 +155,8 @@ case class ParseAsModel(description: NodeDescription,
                         additionalParserInformation : AdditionalParserInformation,
                         packageId: String,
                         parsingLensRef: LensRef,
-                        initialValue: JsObject = JsObject.empty
+                        initialValue: JsObject = JsObject.empty,
+                        internal: Boolean = false,
                        ) extends ParseGear {
 
   override def output(matchResults: MatchResults, variableMapping: VariableMapping) (implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = {
@@ -177,7 +180,7 @@ case class ParseAsModel(description: NodeDescription,
       )
     }
 
-    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, variableMapping, objectRefOption, sourceAnnotationOption, tagAnnotation)
+    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, variableMapping, objectRefOption, sourceAnnotationOption, tagAnnotation, internal)
 
     //@todo have schema validate
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))

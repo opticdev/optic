@@ -33,8 +33,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
-    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
   }
 
   it("can calculate a valid diff when no changes") {
@@ -94,8 +94,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     val diff = DiffSyncGraph.calculateDiff(snapshot)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
-    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
   }
 
   it("will diff based on tags") {
@@ -189,8 +189,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       assert(allTriggers.size == 2)
       assert(allTriggers ==
         Vector(
-          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning")))),
-          Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello"))))
+          Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello")))),
+          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning"))))
         ))
     }
 

@@ -18,7 +18,7 @@ import scalax.collection.mutable.Graph
 import com.opticdev.common.{PackageRef, SchemaRef}
 
 
-class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, qualifySchema: (PackageRef, SchemaRef) => SchemaRef = (a,b) => b)(implicit lens: Lens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {
+class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, qualifySchema: (PackageRef, SchemaRef) => SchemaRef = (a,b) => b, internal: Boolean = false)(implicit lens: Lens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {
   implicit val snippetStageOutput = snippetStage
   override def run: ParserFactoryOutput = {
 
@@ -56,7 +56,8 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       AdditionalParserInformation(snippetStage.parser.identifierNodeDesc, snippetStage.parser.blockNodeTypes.nodeTypes.toSeq),
       lens.packageRef.packageId,
       lens.lensRef,
-      lens.initialValue.getOrElse(JsObject.empty)
+      lens.initialValue.getOrElse(JsObject.empty),
+      internal
     ))
   }
 

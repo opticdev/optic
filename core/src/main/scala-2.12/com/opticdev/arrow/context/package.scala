@@ -2,7 +2,7 @@ package com.opticdev.arrow
 
 import better.files.File
 import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
-import com.opticdev.core.sourcegear.graph.model.ModelNode
+import com.opticdev.core.sourcegear.graph.model.{FlatModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.opm.packages.OpticPackage
 
@@ -28,7 +28,7 @@ package object context {
   }
 
   //more advanced context with file context & models
-  case class ModelContext(file: File, range: Range, models: Vector[ModelNode]) extends ArrowContextBase {
+  case class ModelContext(file: File, range: Range, models: Vector[FlatModelNode]) extends ArrowContextBase {
     override def toInsertLocation: Option[InsertLocation] = {
       Some(AsChildOf(file, range.end + 1))
     }

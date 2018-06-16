@@ -5,10 +5,11 @@ import com.opticdev.core.BlankSchema
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.compiler.SnippetStageOutput
-import com.opticdev.core.sourcegear.{CompiledLens, LensSet, Render, SourceGear}
+import com.opticdev.core.sourcegear._
 import com.opticdev.core.sourcegear.containers.{ContainerHook, SubContainerManager}
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.gears.parsing.{ParseGear, ParseResult}
+import com.opticdev.core.sourcegear.graph.model.MultiModelNode
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.parsers.graph.CommonAstNode
@@ -163,7 +164,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
     }
 
     def testBlock(string: String) = {
-      sourcegear.lensSet.parseFromGraph(string, sample(string).astGraph, sourceGearContext, null, None)
+      sourcegear.lensSet.parseSingleModelsFromGraph(string, sample(string).astGraph, sourceGearContext, null, None)
     }
 
     describe("parsing") {
@@ -343,6 +344,67 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
         assert(generated._2 == "function greeting() {\n return 'What's UP' \n}\n\nfunction helloWorld() {\n if (true) {\n     let ABC = require('DEF')\n } \n return greeting()+' '+'FRIENDO' \n}")
       }
     }
+  }
+
+
+  describe("storage and mutation") {
+
+    lazy val f = fixture
+    implicit lazy val lens = f.lens
+    lazy val multiNodeLens = new MultiNodeParserFactoryStage(f.snippetOutput).run.multiNodeLens
+
+    lazy implicit val sourcegear = new SourceGear {
+      override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
+      override val transformations: Set[Transformation] = Set()
+      override val flatContext: FlatContext = FlatContext(None, Map(
+        "none:none" -> FlatContext(None, Map(
+          "example____0" -> multiNodeLens.childLenses.head,
+          "example____1" -> multiNodeLens.childLenses.last,
+          "example" -> multiNodeLens
+        ))
+      ))
+      override val schemas: Set[Schema] = Set(Schema(multiNodeLens.schemaRef, JsObject.empty)) ++ multiNodeLens.childLenses.map(i => Schema(i.schemaRef, JsObject.empty)).toSet
+      override val lensSet: LensSet = new LensSet(multiNodeLens)
+    }
+
+    val block =
+      """
+        |import test from 'package'
+        |
+        |function greeting() {
+        | return "What's UP"
+        |}
+        |
+        |function helloWorld() {
+        | if (true) {
+        |
+        | }
+        | return greeting()+' '+'FRIENDO'
+        |}
+        |
+        """.stripMargin
+
+    it("will be parsed into MultiModelNodes") {
+      val results = sourcegear.lensSet.parseFromGraph(block, sample(block).astGraph, sourceGearContext, null, None)
+      assert(results.modelNodes.collectFirst { case multi: MultiModelNode => multi }.get.value == Json.parse("""{"greeting": "What's UP", "to": "FRIENDO"}"""))
+    }
+
+    it("can be updated") {
+      implicit val fileContents = block
+      val results = sourcegear.lensSet.parseFromGraph(block, sample(block).astGraph, sourceGearContext, null, None)
+      val combinedNode = results.modelNodes.collectFirst { case multi: MultiModelNode => multi }.get
+      import com.opticdev.core.sourcegear.mutate.MutationImplicits._
+
+      implicit val astGraph = results.astGraph
+
+      val sgContext = SGContext(sourcegear.fileAccumulator, astGraph, sourcegear.parsers.head, fileContents, sourcegear, null)
+
+      val mutationResult = combinedNode.update(Json.parse("""{"greeting": "UPDATED_GREETING", "to": "UPDATED_NAME"}""").as[JsObject])(sgContext, fileContents)
+
+      assert(mutationResult == "\nimport test from 'package'\n\nfunction greeting() {\n return \"UPDATED_GREETING\"\n}\n\nfunction helloWorld() {\n if (true) {\n\n }\n return greeting()+' '+'UPDATED_NAME'\n}\n\n        ")
+
+    }
 
   }
+
 }

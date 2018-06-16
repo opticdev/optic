@@ -38,7 +38,7 @@ case class CompiledMultiNodeLens(name: Option[String],
 
   def sourceSourceParser = SourceParserManager.parserById(parserRef).getOrElse(throw new Error("Unable to find parser for generator"))
 
-  val parser = new MultiNodeParseGear(childLenses, enterOn)
+  val parser = new MultiNodeParseGear(childLenses, enterOn, lensRef, schemaRef)
   val renderer = new MultiNodeRenderGear(childLenses, sourceSourceParser)
   val internal: Boolean = false
 

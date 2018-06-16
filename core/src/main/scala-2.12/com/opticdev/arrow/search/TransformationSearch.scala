@@ -7,7 +7,7 @@ import com.opticdev.arrow.results.TransformationResult
 import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
-import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.parsers.graph.CommonAstNode
@@ -29,7 +29,10 @@ object TransformationSearch {
 
         val modelId = Try {
           val file = sourceGearcontext.get.file
-          nodeKeyStore.leaseId(file, c.resolveInGraph[CommonAstNode](sourceGearcontext.get.astGraph))
+          nodeKeyStore.leaseId(file, c match {
+            case mn: ModelNode => mn.resolveInGraph[CommonAstNode](sourceGearcontext.get.astGraph)
+            case mmn: MultiModelNode => mmn
+          })
         }.toOption
 
           //@todo rank based on usage over time...

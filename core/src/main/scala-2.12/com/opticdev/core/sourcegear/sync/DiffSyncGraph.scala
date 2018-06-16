@@ -43,7 +43,7 @@ object DiffSyncGraph {
         if (predecessorDiff.exists(_.newValue.isDefined)) {
           predecessorDiff.get.newValue.get
         } else {
-          snapshot.expandedValues(sourceNode.flatten)
+          snapshot.expandedValues(sourceNode.flatten.asInstanceOf[ModelNode]) //@todo make this universal
         }
       }
       sourceNode.labeledDependents.toVector.flatMap {
@@ -75,7 +75,7 @@ object DiffSyncGraph {
       transformation <- Try(sourceGear.findTransformation(label.transformationRef).getOrElse(throw new Error(s"No Transformation with id '${label.transformationRef.full}' found")))
       transformationResult <- transformation.transformFunction.transform(sourceValue, label.askAnswers, sourceGear.transformationCaller, None)
       (currentValue, linkedModel, context) <- Try {
-        (snapshot.expandedValues(targetNode.flatten), snapshot.linkedModelNodes(targetNode.flatten), snapshot.contextForNode(targetNode.flatten))
+        (snapshot.expandedValues(targetNode.flatten.asInstanceOf[ModelNode]), snapshot.linkedModelNodes(targetNode.flatten.asInstanceOf[ModelNode]), snapshot.contextForNode(targetNode.flatten.asInstanceOf[ModelNode]))
       }
       (expectedValue, expectedRaw) <- Try {
 
@@ -86,12 +86,12 @@ object DiffSyncGraph {
           lensId = Some(targetNode.lensRef.full)
         )))
 
-        implicit val sourceGearContext: SGContext = snapshot.contextForNode(targetNode.flatten)
+        implicit val sourceGearContext: SGContext = snapshot.contextForNode(targetNode.flatten.asInstanceOf[ModelNode])
         val tagVector = sourceGearContext.astGraph.nodes.filter(_.value match {
           case mn: BaseModelNode if mn.tag.isDefined &&
             stagedNode.tags.map(_._1).contains(mn.tag.get.tag) &&
             stagedNode.tagsMap(mn.tag.get.tag).schema.matchLoose(mn.schemaId) && //reduces ambiguity. need a long term fix.
-            linkedModel.root.hasChild(snapshot.linkedModelNodes(mn.flatten).root)(sourceGearContext.astGraph) => true
+            linkedModel.root.hasChild(snapshot.linkedModelNodes(mn.flatten.asInstanceOf[ModelNode]).root)(sourceGearContext.astGraph) => true
           case _ => false
         }).map(i=> (i.value.asInstanceOf[BaseModelNode].tag.get.tag, i.value.asInstanceOf[BaseModelNode]))
           .toVector
@@ -133,7 +133,7 @@ object DiffSyncGraph {
       }
     } else {
 //      println(extractValuesTry.failed.get.printStackTrace())
-      ErrorEvaluating(label, extractValuesTry.failed.get.getMessage, snapshot.linkedModelNodes(targetNode.flatten).toDebugLocation)
+      ErrorEvaluating(label, extractValuesTry.failed.get.getMessage, snapshot.linkedModelNodes(targetNode.flatten.asInstanceOf[ModelNode]).toDebugLocation)
     }
 
   }

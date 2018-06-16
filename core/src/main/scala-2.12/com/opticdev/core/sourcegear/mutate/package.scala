@@ -11,7 +11,6 @@ import play.api.libs.json.JsValue
 import scala.util.Try
 
 package object mutate {
-
   trait Mutation
 
   case class AddItemToContainer(component: SchemaComponent, containerNode: CommonAstNode, newAstNode: NewAstNode)
