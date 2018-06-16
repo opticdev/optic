@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.Fixture.{DummyCompilerOutputs, ExampleSourcegearFixtures, TestBase}
 import com.opticdev.core.compiler.stages.RenderFactoryStage
@@ -54,7 +54,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
     it("if not set in options gets first matching") {
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty)
       val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
-      assert(result.contains(a))
+      assert(result.contains(b))
     }
 
     it("will return none if gear is not found") {

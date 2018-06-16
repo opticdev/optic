@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.sync
 
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.{AstProjection, ProjectGraph, ProjectGraphWrapper, SyncGraph}
-import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.BaseNode
 import scalax.collection.edge.Implicits._
@@ -47,14 +47,14 @@ object SyncGraph {
     def hasName(baseNode: BaseNode) = baseNode.isInstanceOf[BaseModelNode] && baseNode.asInstanceOf[BaseModelNode].objectRef.isDefined
     def hasSource(baseNode: BaseNode) = baseNode.isInstanceOf[BaseModelNode] && baseNode.asInstanceOf[BaseModelNode].sourceAnnotation.isDefined
 
-    val pgDefinesNames = projectGraph.nodes.collect { case i if hasName(i) => i.value.asInstanceOf[BaseModelNode]}
-    val pgDefinesSources = projectGraph.nodes.collect { case i if hasSource(i) => i.value.asInstanceOf[BaseModelNode]}
+    val pgDefinesNames = projectGraph.nodes.collect { case i if hasName(i) && !i.value.asInstanceOf[BaseModelNode].internal => i.value.asInstanceOf[BaseModelNode]}
+    val pgDefinesSources = projectGraph.nodes.collect { case i if hasSource(i) && !i.value.asInstanceOf[BaseModelNode].internal => i.value.asInstanceOf[BaseModelNode]}
 
     val allNames = {
       val an = pgDefinesNames
       val duplicates = an.groupBy(_.objectRef.get.name).filter(_._2.size > 1).keys
       duplicates.foreach(dup=> warnings += {
-        () => DuplicateSourceName(dup, Try(an.map(mn=> snapshot.linkedModelNodes(mn.flatten).toDebugLocation).toVector).getOrElse(Vector()))
+        () => DuplicateSourceName(dup, Try(an.map(mn=> snapshot.linkedModelNodes(mn.flatten.asInstanceOf[ModelNode]).toDebugLocation).toVector).getOrElse(Vector()))
       })
       an.filterNot(_.objectRef.exists(i=> duplicates.exists(_ == i.name)))
     }

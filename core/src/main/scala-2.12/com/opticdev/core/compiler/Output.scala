@@ -3,7 +3,7 @@ package com.opticdev.core.compiler
 import com.opticdev.core.compiler.errors.ErrorAccumulator
 import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.stages.MatchType
-import com.opticdev.core.sourcegear.CompiledLens
+import com.opticdev.core.sourcegear.{CompiledLens, CompiledMultiNodeLens, SGExportableLens}
 import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping}
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
@@ -46,6 +46,9 @@ case class FinderStageOutput(componentFinders: Map[FinderPath, Vector[Component]
 case class ParserFactoryOutput(parseGear: ParseGear)
 case class RenderFactoryOutput(renderGear: RenderGear)
 
+case class MultiNodeLensOutput(multiNodeLens: CompiledMultiNodeLens)
+
+
 case class DebugOutput(validationStageOutput: ValidationStageOutput,
                        snippetStageOutput: Try[SnippetStageOutput],
                        finderStageOutput: Try[FinderStageOutput],
@@ -59,10 +62,10 @@ sealed trait LensCompilerOutput extends Output {
   val errorAccumulator: ErrorAccumulator
   val debug: Option[DebugOutput]
   def printErrors = {}
-  def get : CompiledLens = null
+  def get : SGExportableLens = null
 }
 
-case class Success(lens: Lens, gear: CompiledLens, debug: Option[DebugOutput] = None) extends LensCompilerOutput {
+case class Success(lens: Lens, gear: SGExportableLens, debug: Option[DebugOutput] = None) extends LensCompilerOutput {
   override val isSuccess = true
   override val errorAccumulator: ErrorAccumulator = null
   override def get = gear
@@ -76,7 +79,7 @@ case class CompilerOutput(opticPackage: OpticMDPackage, lensOutputs: Set[LensCom
   lazy val isSuccess = lensOutputs.forall(_.isSuccess)
   lazy val isFailure = !isSuccess
 
-  lazy val gears: Set[CompiledLens] = lensOutputs.filter(_.isSuccess).map(_.get)
+  lazy val gears: Set[SGExportableLens] = lensOutputs.filter(_.isSuccess).map(_.get)
   lazy val errors: Map[Lens, ErrorAccumulator] = lensOutputs.filter(_.isFailure).map(i=> i.lens -> i.errorAccumulator).toMap
 
   def printErrors = errors.foreach(i=> {

@@ -1,6 +1,6 @@
 package com.opticdev.core.Fixture
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.compiler.stages.RenderFactoryStage
 import com.opticdev.core.sourcegear.context.FlatContext

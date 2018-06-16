@@ -1,6 +1,6 @@
 package com.opticdev.sdk.transformation.mutate
 
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.mutate.ContainerMutationOperation
 import com.opticdev.sdk.descriptions.transformation.mutate.ContainerMutationOperationsEnum._

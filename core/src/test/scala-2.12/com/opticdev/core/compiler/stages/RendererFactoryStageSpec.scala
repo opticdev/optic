@@ -1,7 +1,7 @@
 package com.opticdev.core.compiler.stages
 
 import better.files.File
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.actorSystem
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}

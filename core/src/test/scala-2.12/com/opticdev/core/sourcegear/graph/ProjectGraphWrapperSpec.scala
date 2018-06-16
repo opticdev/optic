@@ -6,7 +6,7 @@ import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 
 class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest") with GearUtils {
 

@@ -3,12 +3,12 @@ package com.opticdev.core.sourcegear.serialization
 import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import boopickle.PicklerHelper
-import com.opticdev.common.{PackageRef, SGExportable}
+import com.opticdev.common.{PackageRef, SGExportable, SchemaRef}
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
-import com.opticdev.core.sourcegear.{CompiledLens, SGConfig}
+import com.opticdev.core.sourcegear.{CompiledLens, CompiledMultiNodeLens, SGConfig, SGExportableLens}
 import com.opticdev.opm.context.{Leaf, TreeContext}
 import com.opticdev.parsers.ParserRef
 import com.opticdev.parsers.graph.AstType
@@ -161,6 +161,38 @@ object PickleImplicits extends PicklerHelper {
 
   import FlatContextTreePickler.treePickler
 
+  implicit object CompiledMultiLensPickler extends Pickler[CompiledMultiNodeLens] {
+    override def pickle(value: CompiledMultiNodeLens)(implicit state: PickleState): Unit = {
+      state.pickle(value.name)
+      state.pickle(value.id)
+      state.pickle(value.packageRef)
+      state.pickle(value.schemaRef)
+      state.pickle(value.enterOn)
+      state.pickle(value.childLenses)
+    }
+    override def unpickle(implicit state: UnpickleState): CompiledMultiNodeLens = {
+      CompiledMultiNodeLens(
+        state.unpickle[Option[String]],
+        state.unpickle[String],
+        state.unpickle[PackageRef],
+        state.unpickle[SchemaRef],
+        state.unpickle[Set[AstType]],
+        state.unpickle[ParserRef],
+        state.unpickle[Seq[CompiledLens]]
+      )
+    }
+  }
+
+  object SGExportableLensPickler {
+    implicit val sgExportablePickler = compositePickler[SGExportableLens]
+    sgExportablePickler.addConcreteType[SGExportableLens]
+      .addConcreteType[CompiledLens]
+      .addConcreteType[CompiledMultiNodeLens]
+  }
+
+  import SGExportableLensPickler.sgExportablePickler
+
+
   implicit object SGConfigPickler extends Pickler[SGConfig] {
     override def pickle(value: SGConfig)(implicit state: PickleState): Unit = {
       state.pickle(value.hashInt)
@@ -175,7 +207,7 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[Int],
         state.unpickle[FlatContext],
         state.unpickle[Set[ParserRef]],
-        state.unpickle[Set[CompiledLens]],
+        state.unpickle[Set[SGExportableLens]],
         state.unpickle[Set[SchemaColdStorage]],
         state.unpickle[Set[Transformation]]
       )

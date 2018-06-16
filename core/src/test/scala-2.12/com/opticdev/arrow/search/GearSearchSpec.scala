@@ -2,13 +2,13 @@ package com.opticdev.arrow.search
 
 import com.opticdev.arrow.context.NoContext
 import com.opticdev.arrow.results.GearResult
-import com.opticdev.core.sourcegear.CompiledLens
+import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens}
 import org.scalatest.FunSpec
 
 class GearSearchSpec extends FunSpec {
 
   def gearWithName(name: String) = CompiledLens(Some(name), "name", null, null, null, null, null)
-  val testGears = Set(
+  val testGears : Set[SGExportableLens] = Set(
     gearWithName("Route"),
     gearWithName("REST Route"),
     gearWithName("Parameter"),

@@ -1,7 +1,8 @@
 package com.opticdev.core.sourcegear.accumulate
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.SGContext
-import com.opticdev.sdk.descriptions.{SchemaComponent, SchemaRef}
+import com.opticdev.sdk.descriptions.SchemaComponent
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelField}
 import com.opticdev.parsers.AstGraph
 import play.api.libs.json._

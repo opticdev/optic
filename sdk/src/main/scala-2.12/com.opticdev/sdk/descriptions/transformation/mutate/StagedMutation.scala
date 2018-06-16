@@ -1,6 +1,6 @@
 package com.opticdev.sdk.descriptions.transformation.mutate
 
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.TransformationResult
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import play.api.libs.json.JsObject

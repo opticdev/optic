@@ -1,6 +1,6 @@
 package com.opticdev.core.compiler.stages
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.opm.context.{PackageContext, PackageContextFixture}
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}

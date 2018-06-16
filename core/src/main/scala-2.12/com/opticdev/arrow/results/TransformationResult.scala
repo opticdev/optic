@@ -11,7 +11,7 @@ import com.opticdev.arrow.graph.KnowledgeGraphImplicits._
 import com.opticdev.arrow.search.TransformationSearch
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.OpticProject
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try

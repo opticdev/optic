@@ -1,5 +1,6 @@
 package com.opticdev.sdk.descriptions
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.parsers.rules.{Any, Rule}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported, RuleEnums}

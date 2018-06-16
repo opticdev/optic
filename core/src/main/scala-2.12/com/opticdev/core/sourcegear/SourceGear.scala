@@ -1,11 +1,11 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.annotations.AnnotationParser
 import com.opticdev.core.sourcegear.context.FlatContext
-import com.opticdev.sdk.descriptions.{LensRef, Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.{LensRef, Schema}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.core.sourcegear.transformations.TransformationCallerImpl
 import com.opticdev.marvin.common.ast.NewAstNode
@@ -46,14 +46,14 @@ abstract class SourceGear {
     schemaVersion.map(_._2)
   }
 
-  def findLens(lensRef: LensRef): Option[CompiledLens] = {
+  def findLens(lensRef: LensRef): Option[SGExportableLens] = {
 
-    val available: Set[CompiledLens] = lensSet.listLenses.filter(lens=>
+    val available: Set[SGExportableLens] = lensSet.listLenses.filter(lens=>
       lensRef.packageRef.map(_.packageId).contains(lens.packageRef.packageId)
         && lens.id.contains(lensRef.id)
     )
 
-    val lensVersion = SemverHelper.findVersion(available, (l: CompiledLens) => l.packageRef, lensRef.packageRef.map(_.version).getOrElse("latest"))
+    val lensVersion = SemverHelper.findVersion(available, (l: SGExportableLens) => l.packageRef, lensRef.packageRef.map(_.version).getOrElse("latest"))
 
     lensVersion.map(_._2)
   }
@@ -108,7 +108,7 @@ abstract class SourceGear {
       | Transformations: ${transformations.map(_.yields).mkString(",")}
     """.stripMargin)
 
-  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, CompiledLens)] = Render.fromStagedNode(stagedNode)(this)
+  def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, SGExportableLens)] = Render.fromStagedNode(stagedNode)(this, flatContext)
 
 }
 

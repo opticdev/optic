@@ -15,9 +15,11 @@ import play.api.libs.json.{JsObject, Json}
 
 import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
 import com.opticdev.core.sourcegear.mutate.MutationImplicits._
 import com.opticdev.core.utils.StringUtils
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.Schema
 import com.opticdev.sdk.descriptions.transformation.generate.{GenerateResult, RenderOptions, StagedNode}
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
@@ -30,7 +32,7 @@ object Evaluation {
         lensId = im.lensId
       )))
 
-      val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear)
+      val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear, sourcegear.flatContext)
       renderedTry.failed.foreach(_.printStackTrace)
       require(renderedTry.isSuccess, "Could not render model "+ renderedTry.failed.get.toString)
       val generatedNode = (renderedTry.get._1, renderedTry.get._2)
@@ -76,7 +78,7 @@ object Evaluation {
         val updatedString = if (rt.objectSelection.isDefined) {
           val objName = rt.objectSelection.get
           AnnotationRenderer.renderToFirstLine(
-            generatedNode._3.renderer.parser.get.inlineCommentPrefix,
+            generatedNode._3.renderer.parser.inlineCommentPrefix,
             Vector(SourceAnnotation(objName, rt.transformationChanges.transformation.transformationRef, rt.answers)),
             generatedNode._2)
         } else generatedNode._2
@@ -95,9 +97,8 @@ object Evaluation {
         val linkedModelNode = mutated.get._4
 
         val file = linkedModelNode.fileNode.get.toFile
-        val fileContents = filesStateMonitor.contentsForFile(file).get
 
-        IntermediateTransformPatch(file, linkedModelNode.root.range, mutated.get._2)
+        IntermediateTransformPatch(file, mutated.get._3, mutated.get._2)
       }
 
       transformationTry.get match {
@@ -133,7 +134,12 @@ object Evaluation {
         val file = modelNode.fileNode.get.toFile
         implicit val fileContents = filesStateMonitor.contentsForFile(file).get
         import com.opticdev.core.sourcegear.mutate.MutationImplicits._
-        val output = modelNode.update(pu.newModel)
+
+        val output = modelNode match {
+          case mn : LinkedModelNode[CommonAstNode] => mn.update(pu.newModel)
+          case mmn : MultiModelNode => mmn.update(pu.newModel)
+        }
+
         FileChanged(file, output)
       } match {
         case s: Success[FileChanged] => s.get

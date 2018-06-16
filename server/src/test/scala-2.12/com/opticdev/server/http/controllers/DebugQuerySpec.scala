@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.core.Fixture.{AkkaTestFixture, TestBase}
 import com.opticdev.core.debug.LensDebug.LensDebugInfo
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.server.Fixture.ProjectsManagerFixture
 import com.opticdev.server.state.ProjectsManager
 

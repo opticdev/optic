@@ -5,7 +5,7 @@ import better.files.File
 import com.opticdev.arrow.changes.evaluation.BatchedChanges
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.sourcegear.project.Project
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.server.Fixture.ProjectsManagerFixture
 import com.opticdev.server.state.ProjectsManager
 import org.scalatest.BeforeAndAfterEach

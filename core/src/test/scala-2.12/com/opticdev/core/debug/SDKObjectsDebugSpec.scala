@@ -32,12 +32,12 @@ class SDKObjectsDebugSpec extends TestBase with TestPackageProviders {
       assert(lensDebug.containersInfo.get.found.isEmpty)
       assert(lensDebug.containersInfo.get.notFound.isEmpty)
       assert(lensDebug.variables.isEmpty)
-      assert(lensDebug.gearHash.contains("7ba47bfc"))
+      assert(lensDebug.gearHash.contains("2643e37e"))
     }
 
     it("Can be turned into JSON") {
       val lensDebug = LensDebug.run(importLens.lens, importLens.packageContext)
-      assert(lensDebug.toJson == Json.parse("{\"isSuccess\":true,\"snippet\":{\"language\":\"es7\",\"block\":\"let definedAs = require('pathTo')\"},\"componentsInfo\":{\"isSuccess\":true,\"found\":[{\"component\":{\"propertyPath\":\"definedAs\",\"finder\":\"Entire definedAs \"},\"range\":{\"start\":4,\"end\":13}},{\"component\":{\"propertyPath\":\"pathTo\",\"finder\":\"Containing pathTo \"},\"range\":{\"start\":24,\"end\":32}}],\"notFound\":[]},\"containersInfo\":{\"isSuccess\":true,\"found\":[],\"notFound\":[]},\"variables\":[],\"gearHash\":\"7ba47bfc\",\"sdkType\":\"lens\"}"))
+      assert(lensDebug.toJson == Json.parse("{\"isSuccess\":true,\"snippet\":{\"language\":\"es7\",\"block\":\"let definedAs = require('pathTo')\"},\"componentsInfo\":{\"isSuccess\":true,\"found\":[{\"component\":{\"propertyPath\":\"definedAs\",\"finder\":\"Entire definedAs \"},\"range\":{\"start\":4,\"end\":13}},{\"component\":{\"propertyPath\":\"pathTo\",\"finder\":\"Containing pathTo \"},\"range\":{\"start\":24,\"end\":32}}],\"notFound\":[]},\"containersInfo\":{\"isSuccess\":true,\"found\":[],\"notFound\":[]},\"variables\":[],\"gearHash\":\"2643e37e\",\"sdkType\":\"lens\"}"))
     }
 
   }

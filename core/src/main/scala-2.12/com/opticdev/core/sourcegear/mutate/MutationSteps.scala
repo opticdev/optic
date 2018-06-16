@@ -76,12 +76,12 @@ object MutationSteps {
             if (component.location.exists(_.in.isInstanceOf[InContainer])) {
               added.map { case i => Try(AddItemToContainer(
                 component,
-                linkedModelNode.containerMapping(component.location.map(_.in.asInstanceOf[InContainer].name).get),
+                linkedModelNode.containerMapping(sourceGearContext.astGraph)(component.location.map(_.in.asInstanceOf[InContainer].name).get),
                 Render.simpleNode(resolvedSchema, i.as[JsObject], None, variableMapping).map(_._1).get))
               }.toVector
             //add to the first container
-            } else if (linkedModelNode.containerMapping.nonEmpty) {
-              val firstContainer = linkedModelNode.containerMapping.values.toSeq.minBy(_.range.start)
+            } else if (linkedModelNode.containerMapping(sourceGearContext.astGraph).nonEmpty) {
+              val firstContainer = linkedModelNode.containerMapping(sourceGearContext.astGraph).values.toSeq.minBy(_.range.start)
               added.map { case i => Try(AddItemToContainer(
                 component,
                 firstContainer,

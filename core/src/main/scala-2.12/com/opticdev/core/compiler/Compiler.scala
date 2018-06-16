@@ -1,9 +1,9 @@
 package com.opticdev.core.compiler
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.compiler.errors.ErrorAccumulator
-import com.opticdev.core.compiler.stages._
-import com.opticdev.core.sourcegear.CompiledLens
+import com.opticdev.core.compiler.stages.{FinderStage, _}
+import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens}
 import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.context.{FlatContext, FlatContextBuilder, SDKObjectsResolvedImplicits}
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
@@ -11,7 +11,7 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Context, PackageContext}
 import com.opticdev.opm.DependencyTree
 import com.opticdev.opm.packages.OpticMDPackage
-import com.opticdev.sdk.descriptions.{Lens, Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.{Lens, Schema}
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
@@ -50,48 +50,46 @@ object Compiler {
       //Find the right parser and snippets into an AST Tree Graph
       val snippetBuilder = new SnippetStage(lens.snippet)
       val snippetOutput = Try(snippetBuilder.run)
-
-
-      //snippet stage must succeed for anything else to happen.
       if (snippetOutput.isSuccess) {
-
         implicit val variableManager = new VariableManager(lens.variables, snippetOutput.get.parser.identifierNodeDesc)
         implicit val subcontainersManager = new SubContainerManager(lens.subcontainers, snippetOutput.get.containerMapping)
 
-        val finderStage = new FinderStage(snippetOutput.get)
-        val finderStageOutput = Try(finderStage.run)
+        val qualifySchema = (pr: PackageRef, sr: SchemaRef) => {
+          SDKObjectsResolvedImplicits.qualifySchema(pr, sr)
+        }
 
-        if (finderStageOutput.isSuccess) {
+        snippetOutput.get.matchType match {
+          case MatchType.Single => {
+            val compiledTry = for {
+              snippet <- snippetOutput
+              finderStageOutput <- Try(new FinderStage(snippet).run)
+              parser <- Try(new ParserFactoryStage(snippet, finderStageOutput, qualifySchema).run)
+              renderer <- Try(new RenderFactoryStage(snippetOutput.get, parser.parseGear).run)
+              compiledLens <- Try(CompiledLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetOutput.get.enterOn, parser.parseGear.asInstanceOf[ParseAsModel], renderer.renderGear))
+            } yield compiledLens
 
-          val qualifySchema = (pr: PackageRef, sr: SchemaRef) => {
-            SDKObjectsResolvedImplicits.qualifySchema(pr, sr)
+            if (compiledTry.isSuccess) {
+              Success(sourceLens, compiledTry.get, if (debug) Some(DebugOutput(validationOutput, snippetOutput, Try(new FinderStage(snippetOutput.get).run), variableManager)) else None)
+            } else {
+              errorAccumulator.handleFailure(compiledTry.failed)
+              Failure(lens, errorAccumulator)
+            }
           }
 
-          val parser = Try(new ParserFactoryStage(snippetOutput.get, finderStageOutput.get, qualifySchema).run)
-
-          if (parser.isSuccess) {
-            val renderer = Try(new RenderFactoryStage(snippetOutput.get, parser.get.parseGear).run)
-            if (renderer.isSuccess) {
-
-              val finalGear = CompiledLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetOutput.get.enterOn, parser.get.parseGear.asInstanceOf[ParseAsModel], renderer.get.renderGear)
-
-              return Success(sourceLens, finalGear, if (debug) Some(DebugOutput(validationOutput, snippetOutput, finderStageOutput, variableManager)) else None)
-
-            } else errorAccumulator.handleFailure(renderer.failed)
-
-          } else {
-            errorAccumulator.handleFailure(parser.failed)
+          case MatchType.Multi => {
+            val compiledTry = Try(new MultiNodeParserFactoryStage(snippetOutput.get, qualifySchema).run)
+            if (compiledTry.isSuccess) {
+              Success(sourceLens, compiledTry.get.asInstanceOf[SGExportableLens], if (debug) Some(DebugOutput(validationOutput, snippetOutput, Try(new FinderStage(snippetOutput.get).run), variableManager)) else None)
+            } else {
+              errorAccumulator.handleFailure(compiledTry.failed)
+              Failure(lens, errorAccumulator)
+            }
           }
-
-        } else {
-          errorAccumulator.handleFailure(finderStageOutput.failed)
         }
 
       } else {
-        errorAccumulator.handleFailure(snippetOutput.failed)
+        Failure(lens, errorAccumulator)
       }
-
-      Failure(lens, errorAccumulator)
     }
   }
 

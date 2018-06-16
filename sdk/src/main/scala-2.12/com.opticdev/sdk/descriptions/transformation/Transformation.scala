@@ -1,7 +1,7 @@
 package com.opticdev.sdk.descriptions.transformation
 
 import javax.script.ScriptEngineManager
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.transformation.ProcessResult.objectResult
 import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}

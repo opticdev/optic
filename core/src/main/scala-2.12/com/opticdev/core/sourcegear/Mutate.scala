@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import com.opticdev.arrow.state.NodeKeyStore
-import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode}
+import com.opticdev.core.sourcegear.graph.model._
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.graph.CommonAstNode
@@ -19,12 +19,13 @@ import com.opticdev.core.sourcegear.context.FlatContextBase
 import scala.util.Try
 import com.opticdev.core.utils.StringUtils._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
+import com.opticdev.parsers.AstGraph
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import play.api.libs.json.JsObject
 
 object Mutate {
 
-  def fromStagedMutationWithoutSGContext(stagedMutation: StagedMutation)(implicit project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null): Try[(NewAstNode, String, CommonAstNode, LinkedModelNode[CommonAstNode])] = {
+  def fromStagedMutationWithoutSGContext(stagedMutation: StagedMutation)(implicit project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null): Try[(NewAstNode, String, scala.Range, ExpandedModelNode)] = {
     val modelNodeOption = resolveNode(stagedMutation.modelId)
     require(modelNodeOption.isDefined, s"No model found with id ${stagedMutation.modelId}")
     val modelNode = modelNodeOption.get
@@ -32,13 +33,13 @@ object Mutate {
     fromStagedMutation(stagedMutation)
   }
 
-  def fromStagedMutation(stagedMutation: StagedMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null) : Try[(NewAstNode, String, CommonAstNode, LinkedModelNode[CommonAstNode])] = Try {
+  def fromStagedMutation(stagedMutation: StagedMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null) : Try[(NewAstNode, String, scala.Range, ExpandedModelNode)] = Try {
     val modelNodeOption = resolveNode(stagedMutation.modelId)
-    require(modelNodeOption.isDefined, s"No model found with id ${stagedMutation.modelId}")
+    require(modelNodeOption.isDefined && modelNodeOption.get.isInstanceOf[ExpandedModelNode], s"No model found with id ${stagedMutation.modelId}")
 
-    val modelNode = modelNodeOption.get
+    val modelNode = modelNodeOption.get.asInstanceOf[ExpandedModelNode]
 
-    def reparse(string: String): (LinkedModelNode[CommonAstNode], String, SGContext) = {
+    def reparse(string: String): (ExpandedModelNode, String, SGContext) = {
       val parsed = sourceGearContext.sourceGear.parseString(string, sourceGearContext.file).get
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
       val programNode = parsed.astGraph.root.get
@@ -53,24 +54,29 @@ object Mutate {
       (newModelNode, string, SGContext.forRender(sourceGearContext.sourceGear, parsed.astGraph, parsed.parser.parserRef))
     }
 
+    def tagParents(expandedModelNode: ExpandedModelNode, g: AstGraph) = expandedModelNode match {
+      case mn: LinkedModelNode[CommonAstNode] => Seq(mn.root)
+      case mmn: MultiModelNode => mmn.modelNodes.map(_.resolveInGraph[CommonAstNode](g).root)
+    }
 
     var (cModel, cRaw, cSGContext, cFileContents) = (
       modelNode,
-      sourceGearContext.fileContents.substring(Range(modelNode.root.range.start, modelNode.root.range.end)),
+      sourceGearContext.fileContents.substring(modelNode.range(sourceGearContext.astGraph)),
       sourceGearContext,
       sourceGearContext.fileContents)
 
     val tagsOption = stagedMutation.options.flatMap(_.tags).foreach(tagMutations=> {
       tagMutations.foreach {
         case (tag, mutation) => {
-          mutateTag(cModel.root, tag, mutation)(cSGContext, project, nodeKeyStore)
+          val oldCModelRange = cModel.range(sourceGearContext.astGraph)
+          mutateTag(tagParents(cModel, cSGContext.astGraph), tag, mutation)(cSGContext, project, nodeKeyStore)
             .foreach(result => {
-              val updated = StringUtils.replaceRange(cRaw, cModel.root.range, result._2)
-              val oldCModelRange = cModel.root.range
-              val newFileContents = StringUtils.replaceRange(cFileContents, result._3.range, updated)
+              val updated = StringUtils.replaceRange(cRaw, oldCModelRange, result._2)
+              val newFileContents = StringUtils.replaceRange(cFileContents, result._3, updated)
               val r = reparse(newFileContents)
               cModel = r._1
-              cRaw = newFileContents.substring(cModel.root.range.start, cModel.root.range.end)
+              val newModelRange = cModel.range(r._3.astGraph)
+              cRaw = newFileContents.substring(newModelRange)
               cFileContents = newFileContents
               cSGContext = r._3.copy(fileContents = cFileContents)
             })
@@ -98,26 +104,26 @@ object Mutate {
       VariableChanges.fromVariableMapping(variable, sourceGearContext.parser)
     })
 
-    val modelRange = cModel.root.range
+    val modelRange = cModel.range(cSGContext.astGraph)
     val updated = cModel.update(stagedMutation.value.getOrElse(JsObject.empty), variablesOption)(cSGContext, cFileContents)
 
     val trimmed = updated.substring(modelRange.start, modelRange.end + (updated.length - cFileContents.length))
 
-    (NewAstNode(cModel.root.nodeType.name, null, Some(trimmed)), trimmed, cModel.root, modelNode)
+    (NewAstNode(Try(cModel.asInstanceOf[LinkedModelNode[CommonAstNode]].root.nodeType.name).getOrElse("MultiWrapper"), null, Some(trimmed)), trimmed, modelRange, modelNode)
   }
 
   //steps
-  def resolveNode(modelId: String)(implicit nodeKeyStore: NodeKeyStore) =
+  def resolveNode(modelId: String)(implicit nodeKeyStore: NodeKeyStore): Option[ExpandedModelNode] =
     nodeKeyStore.lookupId(modelId)
 
-  def mutateTag(parent: CommonAstNode, tag: String, stagedTagMutation: StagedTagMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore) = {
+  def mutateTag(parents: Seq[CommonAstNode], tag: String, stagedTagMutation: StagedTagMutation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore) = {
     implicit val astGraph = sourceGearContext.astGraph
     import com.opticdev.core.sourcegear.graph.GraphImplicits.CommonAstNodeInstance
 
     val modelNode = sourceGearContext.astGraph.nodes.collectFirst {
       case n if n.value.isInstanceOf[BaseModelNode] &&
                 n.value.asInstanceOf[BaseModelNode].tag.exists(_.tag == tag) &&
-                parent.hasChild(n.value.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph).root) =>
+                parents.exists(parent=> parent.hasChild(n.value.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph).root)) =>
         n.value.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph)
     }
 
@@ -128,7 +134,7 @@ object Mutate {
     Mutate.fromStagedMutation(stagedMutation)
   }
 
-  def mutateContainer(parentModel: LinkedModelNode[CommonAstNode], containerName: String, stagedContainerMutation: ContainerMutationOperation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null) = {
+  def mutateContainer(parentModel: ExpandedModelNode, containerName: String, stagedContainerMutation: ContainerMutationOperation)(implicit sourceGearContext: SGContext, project: OpticProject, nodeKeyStore: NodeKeyStore, context: FlatContextBase = null) = {
     implicit val astGraph = sourceGearContext.astGraph
     implicit val nodeMutatorMap = sourceGearContext.parser.marvinSourceInterface.asInstanceOf[NodeMutatorMap]
     val containerOption = parentModel.containerMapping.get(containerName)

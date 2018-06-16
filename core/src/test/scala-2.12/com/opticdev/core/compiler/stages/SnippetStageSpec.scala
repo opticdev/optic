@@ -59,7 +59,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
       val (enterOn, children, matchType) = parseResult("function add(a, b) { return a+b }")
       assert(enterOn.size == 1 && enterOn.head == AstType("FunctionDeclaration", "es7"))
       assert(children.size == 1)
-      assert(matchType == MatchType.Parent)
+      assert(matchType == MatchType.Single)
     }
 
     it("for multi-node snippets") {
@@ -67,7 +67,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
       val blockNodeTypes = SourceParserManager.parserByLanguageName("es7").get.blockNodeTypes
       assert(enterOn.size == 4 && enterOn == blockNodeTypes.nodeTypes)
       assert(children.size == 2)
-      assert(matchType == MatchType.Children)
+      assert(matchType == MatchType.Multi)
     }
 
     it("throws on an empty snippet") {
@@ -255,8 +255,14 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
     assert(result.enterOn.head.name == "SwitchCase")
   }
 
-  it("works end to end") {
+  it("works end to end single node") {
     val snippetBuilder = new SnippetStage(Snippet("es7", "function add (a, b) { a+b }"))
+    val outputTry = Try(snippetBuilder.run)
+    assert(outputTry.isSuccess)
+  }
+
+  it("works end to end multi node") {
+    val snippetBuilder = new SnippetStage(Snippet("es7", "function subtract(a,b) { return a-b } function add(a,b) { return a+b }"))
     val outputTry = Try(snippetBuilder.run)
     assert(outputTry.isSuccess)
   }

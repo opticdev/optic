@@ -12,7 +12,7 @@ import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.opm
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.concurrent.Await
@@ -33,8 +33,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
-    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
+    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
   }
 
   it("can calculate a valid diff when no changes") {
@@ -94,8 +94,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     val diff = DiffSyncGraph.calculateDiff(snapshot)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
-    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
   }
 
   it("will diff based on tags") {
@@ -136,6 +136,43 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
                                                        |    }
                                                        |  })
                                                        |})""".stripMargin)
+
+  }
+
+  it("can diff a multinode model") {
+    val f = multiNodeSyncFixture("test-examples/resources/example_source/sync/MultiNodeSync.js")
+    implicit val project = f.project
+
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)
+
+
+    assert(diff.noErrors)
+    assert(diff.filePatches.size == 1)
+    assert(diff.filePatches.head.newFileContents === """function greeting() { //name: TestMulti
+                                                       | return "Whats UP"
+                                                       |}
+                                                       |
+                                                       |function helloWorld() {
+                                                       | if (true) {
+                                                       |
+                                                       | }
+                                                       | return greeting()+' '+'FRIENDO'
+                                                       |}
+                                                       |
+                                                       |
+                                                       |
+                                                       |function greeting() { //source: TestMulti -> optic:synctest/passthrough-transform
+                                                       | return "Whats UP"
+                                                       |}
+                                                       |
+                                                       |function helloWorld() {
+                                                       | if (true) {
+                                                       |
+                                                       | }
+                                                       | return greeting()+' '+'FRIENDO'
+                                                       |}
+                                                       |
+                                                       |""".stripMargin)
 
   }
 
@@ -189,8 +226,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       assert(allTriggers.size == 2)
       assert(allTriggers ==
         Vector(
-          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning")))),
-          Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello"))))
+          Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello")))),
+          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning"))))
         ))
     }
 

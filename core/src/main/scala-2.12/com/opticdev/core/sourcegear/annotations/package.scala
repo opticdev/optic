@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import com.opticdev.common.ObjectRef
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import com.opticdev.common.Regexes.packages
 import com.opticdev.sdk.descriptions.transformation.TransformationRef

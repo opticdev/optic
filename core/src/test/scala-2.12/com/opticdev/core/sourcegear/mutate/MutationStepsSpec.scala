@@ -9,7 +9,7 @@ import com.opticdev.sdk.descriptions.CodeComponent
 import com.opticdev.core.sourcegear.{LensSet, Render, SourceGear}
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
-import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
+import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.graph.CommonAstNode
@@ -41,7 +41,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
     lazy val importResults = sourceGear.parseFile(File(testFilePath))
     pgW.addFile(importResults.get.astGraph, File(testFilePath))
 
-    lazy val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get
+    lazy val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get.asInstanceOf[ModelNode]
     lazy val resolved: LinkedModelNode[CommonAstNode] = helloWorldImport.resolve[CommonAstNode]
 
     implicit val fileContents = File(testFilePath).contentAsString
@@ -96,7 +96,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
 
       val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ReduxActionSource.js"
       val results = sourceGear.parseFile(File(testFilePath))(null)
-      val reduxAction = results.get.modelNodes.head
+      val reduxAction = results.get.modelNodes.head.asInstanceOf[ModelNode]
       val resolved: LinkedModelNode[CommonAstNode] = reduxAction.resolveInGraph[CommonAstNode](results.get.astGraph)
       implicit val fileContents = File(testFilePath).contentAsString
 
@@ -118,7 +118,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
       project.projectGraphWrapper.addFile(result.get.astGraph, file)
 
       implicit val sourceGearContext = ParseSupervisorSyncAccess.getContext(file)(project.actorCluster, sourceGear, project).get
-      val route = result.get.modelNodes.find(_.lensRef.id == "route").get
+      val route = result.get.modelNodes.find(_.lensRef.id == "route").get.asInstanceOf[ModelNode]
       val routeValue = route.expandedValue(false)(sourceGearContext)
 
       val newRouteValue = {

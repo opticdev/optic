@@ -1,6 +1,6 @@
 package com.opticdev.core.debug
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.sourcegear
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.{FileParseResults, LensSet, SourceGear}

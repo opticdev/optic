@@ -1,18 +1,18 @@
 package com.opticdev.core.Fixture.compilerUtils
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.compiler.Compiler.CompileWorker
 import com.opticdev.core.compiler.Compiler
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
-import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SGConfig, SGConstructor, SourceGear}
+import com.opticdev.core.sourcegear._
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.descriptions.Schema
 
 import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
@@ -38,7 +38,7 @@ trait GearUtils {
     val worker = new CompileWorker(description.lenses.head)
     val result = worker.compile()(packageContext, ListBuffer())
 
-    result.get
+    result.get.asInstanceOf[CompiledLens]
   }
 
   def compiledLensesFromDescription(path: String) : Seq[CompiledLens] = {
@@ -52,7 +52,7 @@ trait GearUtils {
     descriptions.lenses.map(i=> {
       val worker = new CompileWorker(i)
       val compileResult = worker.compile()(packageContext, ListBuffer())
-      compileResult.get
+      compileResult.get.asInstanceOf[CompiledLens]
     })
   }
 
@@ -68,14 +68,14 @@ trait GearUtils {
 
     val compiled = Compiler.setup(description).execute
     val compiledGears = compiled.gears.map(i=> {
-      i.copy(schemaRef = SchemaRef(Some(description.packageRef), i.schemaRef.id))
+      i.asInstanceOf[CompiledLens].copy(schemaRef = SchemaRef(Some(description.packageRef), i.schemaRef.id))
     })
 
     if (compiled.isFailure) throw new Error("Compiling description failed. Test Stopped")
 
     outerLensSet.addLenses(compiledGears.toSeq:_*)
     
-    val lenses: Seq[(String, CompiledLens)] = outerLensSet.listLenses.map(i=> (i.id, i)).toSeq
+    val lenses: Seq[(String, SGExportableLens)] = outerLensSet.listLenses.map(i=> (i.id, i)).toSeq
 
     val schemas: Seq[(String, Schema)] = description.schemas.map(i=> (i.schemaRef.id, i))
 
