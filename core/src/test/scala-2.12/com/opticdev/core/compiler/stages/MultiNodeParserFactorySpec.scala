@@ -25,37 +25,11 @@ import play.api.libs.json.{JsObject, JsString, Json}
 import scala.util.Try
 
 class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtils {
-
-  def fixture = new {
-    val snippet = new Snippet("es7", "function greeting() {\n return 'Hello' \n} \n function helloWorld() {\n if (true) { \n //:callback \n } \n return greeting()+' '+'name' \n}")
-
-    val variables = Vector(Variable("greeting", VariableEnums.Scope))
-
-    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet,
-      Vector(
-        CodeComponent(Seq("greeting"), StringFinder(Containing, "Hello")),
-        CodeComponent(Seq("to"), StringFinder(Containing, "name"))
-      ),
-      variables,
-      Vector(
-        SubContainer("callback", Vector(), Any, Vector())
-      ),
-      PackageRef("test:example", "0.1.1"),
-      None)
-    implicit val variableManager = VariableManager(variables, SourceParserManager.installedParsers.head.identifierNodeDesc)
-
-    val snippetBuilder = new SnippetStage(snippet)
-    val snippetOutput = snippetBuilder.run
-
-    implicit val subcontainersManager = new SubContainerManager(lens.subcontainers, snippetOutput.containerMapping)
-
-  }
-
     //segment components by child
     //one variable manager for entire thing
 
   it("can extract individual snippets from the user provided one") {
-    val f = fixture
+    val f = MultiNodeFixture.fixture
     implicit val lens = f.lens
     val childSnippets = new MultiNodeParserFactoryStage(f.snippetOutput).toChildrenSnippetOutputs
 
@@ -65,7 +39,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
   }
 
   it("can segment containers by child") {
-    val f = fixture
+    val f = MultiNodeFixture.fixture
     implicit val lens = f.lens
     val factory = new MultiNodeParserFactoryStage(f.snippetOutput)
     val containerMappings = factory.containersByChild()
@@ -77,7 +51,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
   }
 
   it("can segment components and rules by child") {
-    val f = fixture
+    val f = MultiNodeFixture.fixture
     implicit val lens = f.lens
     val factory = new MultiNodeParserFactoryStage(f.snippetOutput)
     val (componentMappings, ruleMappings) = factory.componentsAndRulesByChild()
@@ -96,7 +70,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
   }
 
   it("can compile to sequence of lenses") {
-    val f = fixture
+    val f = MultiNodeFixture.fixture
     implicit val lens = f.lens
     val factory = new MultiNodeParserFactoryStage(f.snippetOutput)
     val childLenses: Try[Vector[CompiledLens]] = factory.childLenses
@@ -143,7 +117,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
 
   describe("mutli-node lenses") {
 
-    lazy val f = fixture
+    lazy val f = MultiNodeFixture.fixture
     implicit lazy val lens = f.lens
     lazy val multiNodeLens = new MultiNodeParserFactoryStage(f.snippetOutput).run.multiNodeLens
 
@@ -349,7 +323,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
 
   describe("storage and mutation") {
 
-    lazy val f = fixture
+    lazy val f = MultiNodeFixture.fixture
     implicit lazy val lens = f.lens
     lazy val multiNodeLens = new MultiNodeParserFactoryStage(f.snippetOutput).run.multiNodeLens
 

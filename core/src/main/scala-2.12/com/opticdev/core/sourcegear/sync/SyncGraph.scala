@@ -47,8 +47,8 @@ object SyncGraph {
     def hasName(baseNode: BaseNode) = baseNode.isInstanceOf[BaseModelNode] && baseNode.asInstanceOf[BaseModelNode].objectRef.isDefined
     def hasSource(baseNode: BaseNode) = baseNode.isInstanceOf[BaseModelNode] && baseNode.asInstanceOf[BaseModelNode].sourceAnnotation.isDefined
 
-    val pgDefinesNames = projectGraph.nodes.collect { case i if hasName(i) => i.value.asInstanceOf[BaseModelNode]}
-    val pgDefinesSources = projectGraph.nodes.collect { case i if hasSource(i) => i.value.asInstanceOf[BaseModelNode]}
+    val pgDefinesNames = projectGraph.nodes.collect { case i if hasName(i) && !i.value.asInstanceOf[BaseModelNode].internal => i.value.asInstanceOf[BaseModelNode]}
+    val pgDefinesSources = projectGraph.nodes.collect { case i if hasSource(i) && !i.value.asInstanceOf[BaseModelNode].internal => i.value.asInstanceOf[BaseModelNode]}
 
     val allNames = {
       val an = pgDefinesNames
@@ -71,12 +71,12 @@ object SyncGraph {
         val didAdd = syncSubgraph add (sourceNodeOption.get ~+#> targetNode)(DerivedFrom(sourceAnnotation.transformationRef, sourceAnnotation.askObject.getOrElse(JsObject.empty)))
         if (!didAdd) {
           warnings += {
-            () => CircularDependency(sourceName, snapshot.linkedModelNodes(targetNode.flatten.asInstanceOf[ModelNode]).toDebugLocation)
+            () => CircularDependency(sourceName, snapshot.linkedModelNodes(targetNode.flatten).toDebugLocation)
           }
         }
       } else {
         warnings += {
-          () => SourceDoesNotExist(sourceName, snapshot.linkedModelNodes(targetNode.flatten.asInstanceOf[ModelNode]).toDebugLocation)
+          () => SourceDoesNotExist(sourceName, snapshot.linkedModelNodes(targetNode.flatten).toDebugLocation)
         }
       }
     })

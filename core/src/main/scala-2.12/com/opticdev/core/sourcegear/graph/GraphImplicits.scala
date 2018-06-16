@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, CustomEdge}
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.InFile
-import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode}
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, FlatModelNode, LinkedModelNode, ModelNode}
 import com.opticdev.parsers.AstGraph
 
 import scala.collection.mutable
@@ -81,8 +81,8 @@ object GraphImplicits {
       if (result.nonEmpty) Option(result.head.value.asInstanceOf[FileNode]) else None
     }
 
-    def modelNodes() : Vector[BaseModelNode] = {
-      val result = graph.nodes.filter(i=> i.value.isInstanceOf[BaseModelNode]).map(_.value.asInstanceOf[BaseModelNode])
+    def modelNodes() : Vector[FlatModelNode] = {
+      val result = graph.nodes.filter(i=> i.value.isInstanceOf[FlatModelNode]).map(_.value.asInstanceOf[FlatModelNode])
       result.toVector
     }
 

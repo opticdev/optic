@@ -16,6 +16,8 @@ class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType], 
 
   private val childSchemas = childLenses.map(_.schemaRef).toVector
 
+  def variableManager = childLenses.head.variableManager
+
   def findMatches(implicit astGraph: AstGraph): Set[MultiNodeMatchResults] = {
 
     val foundNodes = astGraph.nodes.collect {
@@ -51,7 +53,7 @@ class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType], 
 
           val matchResults = ChildrenVectorComparison.samePlus[SchemaRef, SchemaRef](sortedSchemas, childSchemas, defaultEquality)
 
-          MultiNodeMatchResults(matchResults.isMatch, schemaRef, lensRef, parent, distinctSeq.map(_.flatten))
+          MultiNodeMatchResults(matchResults.isMatch, schemaRef, lensRef, parent, distinctSeq.map(_.flatten), this)
         })
       }
     }.filter(_.isMatch)

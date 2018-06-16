@@ -6,7 +6,7 @@ import com.opticdev.core.sourcegear.context.FlatContextBase
 import com.opticdev.core.sourcegear.{Render, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
-import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
 import com.opticdev.sdk.descriptions.transformation.Transformation
@@ -43,7 +43,7 @@ object DiffSyncGraph {
         if (predecessorDiff.exists(_.newValue.isDefined)) {
           predecessorDiff.get.newValue.get
         } else {
-          snapshot.expandedValues(sourceNode.flatten.asInstanceOf[ModelNode]) //@todo make this universal
+          snapshot.expandedValues(sourceNode.flatten)
         }
       }
       sourceNode.labeledDependents.toVector.flatMap {
@@ -75,7 +75,7 @@ object DiffSyncGraph {
       transformation <- Try(sourceGear.findTransformation(label.transformationRef).getOrElse(throw new Error(s"No Transformation with id '${label.transformationRef.full}' found")))
       transformationResult <- transformation.transformFunction.transform(sourceValue, label.askAnswers, sourceGear.transformationCaller, None)
       (currentValue, linkedModel, context) <- Try {
-        (snapshot.expandedValues(targetNode.flatten.asInstanceOf[ModelNode]), snapshot.linkedModelNodes(targetNode.flatten.asInstanceOf[ModelNode]), snapshot.contextForNode(targetNode.flatten.asInstanceOf[ModelNode]))
+        (snapshot.expandedValues(targetNode.flatten), snapshot.linkedModelNodes(targetNode.flatten), snapshot.contextForNode(targetNode.flatten))
       }
       (expectedValue, expectedRaw) <- Try {
 
@@ -86,12 +86,12 @@ object DiffSyncGraph {
           lensId = Some(targetNode.lensRef.full)
         )))
 
-        implicit val sourceGearContext: SGContext = snapshot.contextForNode(targetNode.flatten.asInstanceOf[ModelNode])
+        implicit val sourceGearContext: SGContext = snapshot.contextForNode(targetNode.flatten)
         val tagVector = sourceGearContext.astGraph.nodes.filter(_.value match {
           case mn: BaseModelNode if mn.tag.isDefined &&
             stagedNode.tags.map(_._1).contains(mn.tag.get.tag) &&
             stagedNode.tagsMap(mn.tag.get.tag).schema.matchLoose(mn.schemaId) && //reduces ambiguity. need a long term fix.
-            linkedModel.root.hasChild(snapshot.linkedModelNodes(mn.flatten.asInstanceOf[ModelNode]).root)(sourceGearContext.astGraph) => true
+            linkedModel.asInstanceOf[LinkedModelNode[CommonAstNode]].root.hasChild(snapshot.linkedModelNodes(mn.flatten).asInstanceOf[LinkedModelNode[CommonAstNode]].root)(sourceGearContext.astGraph) => true
           case _ => false
         }).map(i=> (i.value.asInstanceOf[BaseModelNode].tag.get.tag, i.value.asInstanceOf[BaseModelNode]))
           .toVector
@@ -110,7 +110,7 @@ object DiffSyncGraph {
           }
         }
 
-        val rawAfterTags = tagPatches.foldLeft(sourceGearContext.fileContents.substring(linkedModel.root)) {
+        val rawAfterTags = tagPatches.foldLeft(sourceGearContext.fileContents.substring(linkedModel.range(snapshot.contextForNode(linkedModel.flatten).astGraph))) {
           case (current: String, ut: UpdatedTag) =>
             updateNodeFromRaw(stagedNode, Some(ut.modelNode.tag.get), ut.after, current)(sourceGear, prefixedFlatContent, context.parser)
 
@@ -129,11 +129,11 @@ object DiffSyncGraph {
         NoChange(label)
       } else {
         Replace(label, targetNode.schemaId, currentValue, expectedValue,
-          RangePatch(linkedModel.root.range, expectedRaw, context.file, context.fileContents))
+          RangePatch(linkedModel.range(snapshot.contextForNode(linkedModel.flatten).astGraph), expectedRaw, context.file, context.fileContents))
       }
     } else {
 //      println(extractValuesTry.failed.get.printStackTrace())
-      ErrorEvaluating(label, extractValuesTry.failed.get.getMessage, snapshot.linkedModelNodes(targetNode.flatten.asInstanceOf[ModelNode]).toDebugLocation)
+      ErrorEvaluating(label, extractValuesTry.failed.get.getMessage, snapshot.linkedModelNodes(targetNode.flatten).toDebugLocation)
     }
 
   }
@@ -157,12 +157,23 @@ object DiffSyncGraph {
     if (targetNodeOption.isDefined) {
       val tag = targetNodeOption.get
       val variables = masterStagedNode.variablesForTag(tag.tag)
-      val taggedModelNode = astGraph.modelNodes.find(_.tag.contains(tag)).get.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph)
-      val variableChanges = taggedModelNode.parseGear.variableManager.changesFromMapping(variables)
+      val taggedModelNode = {
+        val model = astGraph.modelNodes.find(_.tag.contains(tag)).get
+        model match {
+          case mn: ModelNode => mn.resolveInGraph[CommonAstNode](astGraph)
+          case mmn: MultiModelNode => mmn
+        }
+      }
+      val variableChanges = {
+        taggedModelNode.variableManager.changesFromMapping(variables)
+      }
       taggedModelNode.update(newValue, Some(variableChanges))
     } else {
       val variableChanges = lens.variableManager.changesFromMapping(masterStagedNode.options.flatMap(_.variables).getOrElse(Map.empty))
-      modelNode.resolveInGraph[CommonAstNode](astGraph).update(newValue, Some(variableChanges))
+      modelNode match {
+        case mn: ModelNode=> mn.resolveInGraph[CommonAstNode](astGraph).update(newValue, Some(variableChanges))
+        case mmn: MultiModelNode => mmn.update(newValue, Some(variableChanges))
+      }
     }
 
   }

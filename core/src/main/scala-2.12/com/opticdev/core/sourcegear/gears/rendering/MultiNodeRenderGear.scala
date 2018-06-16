@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.gears.rendering
 
 import com.opticdev.core.sourcegear.context.{FlatContextBase, FlatContextBuilder}
 import com.opticdev.core.sourcegear.graph.GraphImplicits
-import com.opticdev.core.sourcegear.graph.model.ModelNode
+import com.opticdev.core.sourcegear.graph.model.{ExpandedModelNode, FlatModelNode, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.{CompiledLens, SGContext, SourceGear}
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.{AstGraph, ParserBase, ParserResult}
@@ -35,12 +35,32 @@ case class MultiNodeRenderGear(childLenses: Seq[CompiledLens], parser: ParserBas
   override def outputType: AstType = AstType("Wrapper", parser.languageName)
 
   //used for staging sync diffs
-  def parseResult(b: String): ParserResult = ???
+  def parseResult(b: String): ParserResult = {
+    parser.parseStringWithProxies(b).get
+  }
 
-  def parseAndGetRoot(contents: String): (String, AstGraph, CommonAstNode) = ???
+  def parseAndGetRoot(contents: String): (String, AstGraph, CommonAstNode) = {
+    implicit val fileContents = contents
+    val test = parser.parseString(contents)
+    implicit val astGraph = parseResult(contents).graph
+    import GraphImplicits._
+    val rootNode = astGraph.root.get
+    (fileContents, astGraph, rootNode)
+  }
 
-  def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Try[JsObject] = ???
+  def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Try[JsObject] = {
+    parseAndGetModelWithGraph(contents).map(_._1)
+  }
 
-  def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, ModelNode)] = ???
+  def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, FlatModelNode)] = Try {
+    implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(contents)
+    implicit val sourceGearContext = SGContext.forRender(sourceGear, astGraph, parser.parserRef)
+    val results = sourceGear.lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, null, None)
+    val model: MultiModelNode = results.modelNodes
+      .collect{case mmn: MultiModelNode => mmn}
+      .minBy(_.dependencies(astGraph).head.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph).root.graphDepth(astGraph))
+
+    (model.expandedValue()(SGContext.forRender(sourceGear, results.astGraph, parser.parserRef)), results.astGraph, model)
+  }
 
 }

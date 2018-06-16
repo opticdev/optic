@@ -21,7 +21,7 @@ import scala.util.Try
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
-import com.opticdev.core.sourcegear.graph.model.ModelNode
+import com.opticdev.core.sourcegear.graph.model.{FlatModelNode, ModelNode}
 import scalax.collection.mutable.Graph
 case class RenderGear(block: String,
                       parserRef: ParserRef,
@@ -51,7 +51,7 @@ case class RenderGear(block: String,
     parseAndGetModelWithGraph(contents).map(_._1)
   }
 
-  def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, ModelNode)] = Try {
+  def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, FlatModelNode)] = Try {
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(contents)
     implicit val sourceGearContext = SGContext.forRender(sourceGear, astGraph, parserRef)
     val results = sourceGear.lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, null, None)

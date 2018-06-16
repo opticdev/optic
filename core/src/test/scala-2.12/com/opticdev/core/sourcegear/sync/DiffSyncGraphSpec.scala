@@ -139,6 +139,43 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
   }
 
+  it("can diff a multinode model") {
+    val f = multiNodeSyncFixture("test-examples/resources/example_source/sync/MultiNodeSync.js")
+    implicit val project = f.project
+
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)
+
+
+    assert(diff.noErrors)
+    assert(diff.filePatches.size == 1)
+    assert(diff.filePatches.head.newFileContents === """function greeting() { //name: TestMulti
+                                                       | return "Whats UP"
+                                                       |}
+                                                       |
+                                                       |function helloWorld() {
+                                                       | if (true) {
+                                                       |
+                                                       | }
+                                                       | return greeting()+' '+'FRIENDO'
+                                                       |}
+                                                       |
+                                                       |
+                                                       |
+                                                       |function greeting() { //source: TestMulti -> optic:synctest/passthrough-transform
+                                                       | return "Whats UP"
+                                                       |}
+                                                       |
+                                                       |function helloWorld() {
+                                                       | if (true) {
+                                                       |
+                                                       | }
+                                                       | return greeting()+' '+'FRIENDO'
+                                                       |}
+                                                       |
+                                                       |""".stripMargin)
+
+  }
+
   describe("error handling") {
 
     it("will handle errors gracefully") {

@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.gears
 
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.context.{FlatContextBase, FlatContextBuilder}
-import com.opticdev.core.sourcegear.graph.model.ModelNode
+import com.opticdev.core.sourcegear.graph.model.{FlatModelNode, ModelNode}
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.AstType
@@ -21,7 +21,7 @@ package object rendering {
 
     //for sync diffs
     def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Try[JsObject]
-    def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, ModelNode)]
+    def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, FlatModelNode)]
   }
 
 }

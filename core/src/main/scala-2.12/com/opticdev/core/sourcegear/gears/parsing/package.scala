@@ -103,6 +103,7 @@ package object parsing {
                                    schema: SchemaRef,
                                    lensRef: LensRef,
                                    parentNode: CommonAstNode,
-                                   childrenNodes: Vector[ModelNode])
+                                   childrenNodes: Vector[ModelNode],
+                                   multiNodeParseGear: MultiNodeParseGear)
 
 }

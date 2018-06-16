@@ -7,10 +7,11 @@ import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.annotations.{SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.containers.ContainerAstMapping
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
-import com.opticdev.core.sourcegear.gears.parsing.ParseGear
+import com.opticdev.core.sourcegear.gears.parsing.{MultiNodeParseGear, ParseGear}
 import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsModelProperty, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraph}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
+import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, WithinFile}
 import play.api.libs.json.{JsObject, Json}
@@ -56,7 +57,7 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
 
   def getContext()(implicit actorCluster: ActorCluster, project: ProjectBase): Try[SGContext] = Try(SGContext.forModelNode(this).get)
 
-  def includedInSync: Boolean = sourceAnnotation.isDefined || tag.isDefined || objectRef.isDefined
+  def includedInSync: Boolean = (sourceAnnotation.isDefined || tag.isDefined || objectRef.isDefined) && !internal
 
 }
 
@@ -69,6 +70,11 @@ trait ExpandedModelNode extends BaseModelNode {
     case mn: LinkedModelNode[CommonAstNode] => mn.root.range
     case mmn: MultiModelNode => mmn.combinedRange(astGraph)
   }
+
+  def variableManager: VariableManager
+
+  def toDebugLocation: AstDebugLocation
+
 }
 
 trait SingleModelNode extends BaseModelNode {
@@ -124,6 +130,8 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject
 //    MurmurHash3.stringHash(sourceAnnotation.toString))
 
   def containerMapping(implicit astGraph: AstGraph): ContainerAstMapping = containerMappingStore
+
+  def variableManager: VariableManager = parseGear.variableManager
 
   def hash = Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMapping.toString + sourceAnnotation.toString + objectRef.toString + containerMappingStore.toString))
 
@@ -189,7 +197,7 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, var
 }
 
 
-case class MultiModelNode(schemaId: SchemaRef, lensRef: LensRef, modelNodes: Seq[ModelNode])(implicit override val project: ProjectBase) extends BaseModelNode with FlatModelNode with ExpandedModelNode {
+case class MultiModelNode(schemaId: SchemaRef, lensRef: LensRef, parseGear: MultiNodeParseGear, modelNodes: Seq[ModelNode])(implicit override val project: ProjectBase) extends BaseModelNode with FlatModelNode with ExpandedModelNode {
 
   override def internal: Boolean = false //always false for now
 
@@ -210,6 +218,8 @@ case class MultiModelNode(schemaId: SchemaRef, lensRef: LensRef, modelNodes: Seq
   }
 
   def variableMapping = modelNodes.map(_.variableMapping).fold(Map.empty) {_ ++ _}
+
+  def variableManager: VariableManager = parseGear.variableManager
 
   def objectRef: Option[ObjectRef] = modelNodes.find(_.objectRef.isDefined).flatMap(_.objectRef) //uses the first instance found
   def sourceAnnotation: Option[SourceAnnotation] = modelNodes.find(_.sourceAnnotation.isDefined).flatMap(_.sourceAnnotation) //uses the first instance found
@@ -238,5 +248,7 @@ case class MultiModelNode(schemaId: SchemaRef, lensRef: LensRef, modelNodes: Seq
     val ranges = modelNodes.map(_.resolveInGraph[CommonAstNode](astGraph)).map(_.root.range)
     Range(ranges.map(_.start).min, ranges.map(_.end).max)
   }
+
+  def toDebugLocation: AstDebugLocation = AstDebugLocation(fileNode.map(_.filePath).getOrElse(""), Range(0,0)) //@get a real range added
 
 }
