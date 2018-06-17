@@ -9,11 +9,12 @@ import com.opticdev.sdk.descriptions.{CodeComponent, Lens, Snippet}
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.sdk.descriptions.enums.{Literal, Token}
 import com.opticdev.sdk.descriptions.finders.NodeFinder
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, Json}
 
 import scala.collection.mutable
+import scala.util.Try
 
-class Trainer(filePath: String, languageName: String, exampleSnippet: String, expectedValue: JsObject) {
+case class Trainer(filePath: String, languageName: String, exampleSnippet: String, expectedValue: JsObject) {
 
   implicit val lens = Lens(null, null, null, null, null, null, Vector(), null, null)
 
@@ -21,20 +22,29 @@ class Trainer(filePath: String, languageName: String, exampleSnippet: String, ex
 
   val candidateValues = expectedValue.value.values
 
-  def generatePreview(range: Range) = {
-    val subStart = {
-      val s = range.start - 10
-      if (s < 0) 0 else s
-    }
-
-    val subEnd = {
-      val e = range.end + 10
-      if (e > exampleSnippet.length) exampleSnippet.length else e
-    }
-
-    s"...${exampleSnippet.substring(subStart, range.start)}<b>${exampleSnippet.substring(range)}</b>${exampleSnippet.substring(range.end, subEnd)}..."
+  def this(filePath: String, languageName: String, exampleSnippet: String, expectedValue: String) = {
+    this(filePath, languageName, exampleSnippet, Try(Json.parse(expectedValue).as[JsObject]).getOrElse(throw new Exception("Expected Value was not a valid JSON Object")))
   }
 
+  def returnAllCandidates = Try {
+    val basic = extractTokensCandidates ++ extractLiteralCandidates ++ extractObjectLiteralCandidates
+
+    val withKeysAsPropertyPaths = expectedValue.value.map(i=> (Seq(i._1), i._2))
+    val keysAsPropertyPaths = withKeysAsPropertyPaths.keys.toSet
+
+    val withSortedResults =
+    basic.groupBy(_.propertyPath)
+      .mapValues(_.toSeq.sortBy(_.stagedComponent.asInstanceOf[CodeComponent].finder.asInstanceOf[NodeFinder].range.start))
+
+    val notFoundProperties = keysAsPropertyPaths diff withSortedResults.keys.toSet
+
+    TrainingResults(
+      withSortedResults.map(i=> (i._1.mkString("."), i._2)),
+      notFoundProperties.map(_.mkString(".")).toSeq,
+      notFoundProperties.map(i=> (i.mkString("."), withKeysAsPropertyPaths(i))).toMap)
+  }
+
+  //basic interfaces
   def extractTokensCandidates: Set[ValueCandidate] = {
     val tokenInterfaces = snippetStageOutput.parser.basicSourceInterface.tokens
 
@@ -101,4 +111,22 @@ class Trainer(filePath: String, languageName: String, exampleSnippet: String, ex
     }.flatten.toSet
   }
 
+  //map schema interfaces
+
+
+
+  //formatters
+  def generatePreview(range: Range) = {
+    val subStart = {
+      val s = range.start - 10
+      if (s < 0) 0 else s
+    }
+
+    val subEnd = {
+      val e = range.end + 10
+      if (e > exampleSnippet.length) exampleSnippet.length else e
+    }
+
+    s"...${exampleSnippet.substring(subStart, range.start)}<b>${exampleSnippet.substring(range)}</b>${exampleSnippet.substring(range.end, subEnd)}..."
+  }
 }

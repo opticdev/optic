@@ -5,16 +5,22 @@ import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions.CodeComponent
 import com.opticdev.sdk.descriptions.enums.{ObjectLiteral, Token}
 import com.opticdev.sdk.descriptions.finders.NodeFinder
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsBoolean, JsObject, JsString, Json}
 
 class TrainerSpec extends TestBase {
 
-  val importTrainerValidExample = new Trainer("", "es7", "const definedAs = require('pathto')", JsObject(Seq(
+  val importTrainerValidExample = Trainer("", "es7", "const definedAs = require('pathto')", JsObject(Seq(
     "definedAs" -> JsString("definedAs"),
     "pathto" -> JsString("pathto"),
   )))
 
-  val objectLiteralTrainerValidExample = new Trainer("", "es7", """const initialState = {key: 'value', token: thisToken}""", JsObject(Seq(
+  val importTrainerExampleWithExtraProp = Trainer("", "es7", "const definedAs = require('pathto')", JsObject(Seq(
+    "definedAs" -> JsString("definedAs"),
+    "pathto" -> JsString("pathto"),
+    "otherProp" -> JsBoolean(true),
+  )))
+
+  val objectLiteralTrainerValidExample = Trainer("", "es7", """const initialState = {key: 'value', token: thisToken}""", JsObject(Seq(
     "object" -> Json.parse("""{"key":"value","token":{"_valueFormat":"token","value":"thisToken"}}"""),
   )))
 
@@ -44,6 +50,14 @@ class TrainerSpec extends TestBase {
           NodeFinder(AstType("ObjectExpression", "es7"), Range(21, 53)), ObjectLiteral))
     ))
 
+  }
+
+  it("can return all candidates and failures") {
+    val allCandidates = importTrainerExampleWithExtraProp.returnAllCandidates
+    assert(allCandidates.isSuccess)
+    assert(allCandidates.get.candidates.size == 2)
+    assert(allCandidates.get.keysNotFound == Seq("otherProp"))
+    assert(allCandidates.get.initialValues.head == (Seq("otherProp"), JsBoolean(true)))
   }
 
   describe("bolding") {
