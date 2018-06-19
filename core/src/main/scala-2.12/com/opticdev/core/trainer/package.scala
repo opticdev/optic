@@ -13,6 +13,8 @@ package object trainer {
     def propertyPath = stagedComponent.propertyPath
   }
 
+  case class ContainerCandidate(name: String, previewString: String, nodeFinder: NodeFinder)
+  case class VariableCandidate(name: String, occurrences: Seq[Range])
 
   //temp until refactored sdk
 
@@ -43,13 +45,16 @@ package object trainer {
   implicit val componentFormat = Json.format[Component]
 
   implicit val valueCandidateFormats = Json.format[ValueCandidate]
+  implicit val containerCandidateFormats = Json.format[ContainerCandidate]
+  implicit val variableCandidateFormats = Json.format[VariableCandidate]
   implicit val trainingResultsFormats = Json.format[TrainingResults]
-
-
 
   case class TrainingResults(candidates: Map[String, Seq[ValueCandidate]],
                              keysNotFound: Seq[String],
-                             initialValues: Map[String, JsValue]) {
+                             initialValue: JsObject,
+                             containerCandidates: Seq[ContainerCandidate],
+                             variableCandidates: Seq[VariableCandidate]
+                            ) {
 
     def asJson: JsValue = Json.toJson[TrainingResults](this)
 

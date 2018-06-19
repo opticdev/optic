@@ -1,7 +1,7 @@
 package com.opticdev.server.http.routes
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{StatusCodes, Uri}
+import akka.http.scaladsl.model._
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import better.files.File
 import com.opticdev.core.Fixture.TestBase
@@ -26,15 +26,20 @@ class TrainerRouteSpec extends FunSpec with Matchers with ScalatestRouteTest wit
     )))
 
 
-    val uri = Uri("/trainer/lens").withQuery(Uri.Query(
-      Map("exampleSnippet" -> importTrainerValidExample.exampleSnippet,
-          "expectedValue" -> importTrainerValidExample.expectedValue.toString(),
-          "languageName" -> importTrainerValidExample.languageName
+    val postBody = JsObject(Seq(
+      "exampleSnippet" -> JsString(importTrainerValidExample.exampleSnippet),
+      "expectedValue" -> JsString(importTrainerValidExample.expectedValue.toString()),
+      "languageName" -> JsString(importTrainerValidExample.languageName)
       )
-    ))
-    Get(uri) ~> trainerRoute.route ~> check {
+    )
+
+
+
+
+    Post("/trainer/lens", HttpEntity(ContentType(MediaTypes.`application/json`), postBody.toString())) ~> trainerRoute.route ~> check {
       val response = responseAs[JsObject]
       val expected = JsObject(Seq("success" -> JsBoolean(true), "trainingResults" -> importTrainerValidExample.returnAllCandidates.get.asJson))
+      println(expected)
       assert(response == expected)
     }
   }

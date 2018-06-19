@@ -2,22 +2,21 @@ package com.opticdev.core.trainer
 
 import com.opticdev.common.utils.JsonUtils
 import com.opticdev.core.compiler.stages.SnippetStage
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.{AstGraph, SourceParserManager}
 import com.opticdev.parsers.sourcegear.basic.TokenInterfaces
 import com.opticdev.sdk.descriptions.{CodeComponent, Lens, Snippet}
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.sdk.descriptions.enums.{Literal, Token}
 import com.opticdev.sdk.descriptions.finders.NodeFinder
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.collection.mutable
 import scala.util.Try
 
 case class Trainer(filePath: String, languageName: String, exampleSnippet: String, expectedValue: JsObject) {
-
-  implicit val lens = Lens(null, null, null, null, null, null, Vector(), null, null)
-
+  val snippet = new Snippet(languageName, exampleSnippet)
+  implicit val lens = Lens(null, null, null, snippet, null, null, Vector(), null, null)
   lazy val snippetStageOutput = new SnippetStage(new Snippet(languageName, exampleSnippet)).run
 
   val candidateValues = expectedValue.value.values
@@ -41,7 +40,10 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
     TrainingResults(
       withSortedResults.map(i=> (i._1.mkString("."), i._2)),
       notFoundProperties.map(_.mkString(".")).toSeq,
-      notFoundProperties.map(i=> (i.mkString("."), withKeysAsPropertyPaths(i))).toMap)
+      JsObject(notFoundProperties.map(i=> (i.mkString("."), withKeysAsPropertyPaths(i))).toSeq),
+      extractContainersCandidates,
+      extractVariableCandidates
+    )
   }
 
   //basic interfaces
@@ -96,7 +98,6 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
           objectLiteralInterfaces.parseNode(asAstNode, snippetStageOutput.astGraph, exampleSnippet)
             .map(value => {
               val trimmedValue = JsonUtils.removeReservedFields(value)
-              println(trimmedValue)
               candidateValues.exists(_ == trimmedValue)
             }).getOrElse(false)
       }  => {
@@ -114,6 +115,36 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
   //map schema interfaces
 
 
+  //containers
+  def extractContainersCandidates: Seq[ContainerCandidate] = {
+    snippetStageOutput.containerMapping.map(i=>
+      ContainerCandidate(i._1.name, generatePreview(i._2.node.range), NodeFinder(i._2.node.nodeType, i._2.node.range)))
+      .toSeq
+      .sortBy(_.nodeFinder.range.start)
+  }
+
+  //variables
+  def extractVariableCandidates: Seq[VariableCandidate] = {
+    val tokenInterfaces = snippetStageOutput.parser.basicSourceInterface.tokens
+
+    val allTokens =
+    snippetStageOutput.astGraph.nodes.collect {
+      case n if n.value.isAstNode() && {
+        val asAstNode = n.value.asInstanceOf[CommonAstNode]
+        tokenInterfaces.tokenTypes.contains(asAstNode.nodeType)
+      } => {
+        val node = n.value.asInstanceOf[CommonAstNode]
+        val value = tokenInterfaces.parseNode(node, snippetStageOutput.astGraph, exampleSnippet.substring(node)).get
+
+        (value.as[JsString].value, node)
+      }
+    }
+
+    val allTokensGrouped: Map[String, Seq[CommonAstNode]] = allTokens.groupBy(_._1).mapValues(_.map(_._2).toSeq.sortBy(_.range.start))
+    allTokensGrouped.map {
+      case (name, found) => VariableCandidate(name, found.map(_.range))
+    }.toSeq.sortBy(_.occurrences.size).reverse
+  }
 
   //formatters
   def generatePreview(range: Range) = {
@@ -127,6 +158,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
       if (e > exampleSnippet.length) exampleSnippet.length else e
     }
 
-    s"...${exampleSnippet.substring(subStart, range.start)}<b>${exampleSnippet.substring(range)}</b>${exampleSnippet.substring(range.end, subEnd)}..."
+    import scala.xml.Utility.escape
+    s"...${escape(exampleSnippet.substring(subStart, range.start))}<b>${escape(exampleSnippet.substring(range))}</b>${escape(exampleSnippet.substring(range.end, subEnd))}..."
   }
 }

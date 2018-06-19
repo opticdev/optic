@@ -1,8 +1,11 @@
 package com.opticdev.server.http.routes
 
 import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.headers.HttpOriginRange
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives.cors
+import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.trainer.Trainer
 import com.opticdev.server.http.HTTPResponse
@@ -16,21 +19,32 @@ import scala.util.Try
 class TrainerRoute(implicit executionContext: ExecutionContext) {
 
   val route: Route =
-    pathPrefix("trainer") {
-      parameters('expectedValue, 'languageName, 'exampleSnippet) { (expectedValue, languageName, exampleSnippet) =>
+    post {
+      pathPrefix("trainer") {
         path("lens") {
+          entity(as[JsObject]) { trainerRequest =>
+            val trainerResults = Try({
 
-          val trainerResults = Try(new Trainer("", languageName, exampleSnippet, expectedValue).returnAllCandidates).flatten
+              val expectedValue = trainerRequest.value("expectedValue").as[JsString].value
+              val languageName = trainerRequest.value("languageName").as[JsString].value
+              val exampleSnippet = trainerRequest.value("exampleSnippet").as[JsString].value
 
-          val resultWrapped = if (trainerResults.isSuccess) {
-            JsObject(Seq("success" -> JsBoolean(true), "trainingResults" -> trainerResults.get.asJson))
-          } else {
-            JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(trainerResults.failed.get.getMessage)))
+
+              new Trainer("", languageName, exampleSnippet, expectedValue).returnAllCandidates
+            }).flatten
+
+            val resultWrapped = if (trainerResults.isSuccess) {
+              JsObject(Seq("success" -> JsBoolean(true), "trainingResults" -> trainerResults.get.asJson))
+            } else {
+              JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(trainerResults.failed.get.toString)))
+            }
+
+            complete(resultWrapped)
+
           }
-
-          complete(resultWrapped)
-
         }
       }
-  }
+    }
 }
+
+

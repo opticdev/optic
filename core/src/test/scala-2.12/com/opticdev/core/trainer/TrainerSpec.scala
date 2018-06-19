@@ -24,6 +24,23 @@ class TrainerSpec extends TestBase {
     "object" -> Json.parse("""{"key":"value","token":{"_valueFormat":"token","value":"thisToken"}}"""),
   )))
 
+  val variableValidExample = Trainer("", "es7", """const initialState = [variableA, variableA, variableA]""", JsObject(Seq()))
+
+  val containerExample = Trainer("", "es7",
+    """
+      |app.get('url', (req, res) => {
+      | if (req) {
+      |   //:go
+      | } else {
+      |   //:fail
+      | }
+      |})
+    """.stripMargin,
+    JsObject(Seq(
+      "method" -> JsString("get"),
+      "url" -> JsString("url"),
+  )))
+
   it("can extract token candidates") {
     val tokenCandidates = importTrainerValidExample.extractTokensCandidates
 
@@ -57,7 +74,20 @@ class TrainerSpec extends TestBase {
     assert(allCandidates.isSuccess)
     assert(allCandidates.get.candidates.size == 2)
     assert(allCandidates.get.keysNotFound == Seq("otherProp"))
-    assert(allCandidates.get.initialValues.head == (Seq("otherProp"), JsBoolean(true)))
+    assert(allCandidates.get.initialValue.head == "otherProp" -> JsBoolean(true))
+    assert(allCandidates.get.containerCandidates.isEmpty)
+    assert(allCandidates.get.variableCandidates.size == 2)
+  }
+
+  it("can return all possible components") {
+    val containers = containerExample.extractContainersCandidates
+    assert(containers.map(_.name) == Seq("go", "fail"))
+  }
+
+  it("can return all possible variables") {
+    val variables = variableValidExample.extractVariableCandidates
+    assert(variables.map(_.name) == Seq("variableA", "initialState"))
+    assert(variables.map(_.occurrences.size) == Seq(3, 1))
   }
 
   describe("bolding") {
@@ -71,6 +101,11 @@ class TrainerSpec extends TestBase {
 
     it("works at the end of a string") {
       assert(importTrainerValidExample.generatePreview(Range(27,33)) == "... require('<b>pathto</b>')...")
+    }
+
+    it("will escape HTML") {
+      val escapedPreview = Trainer("", "es7", "const definedAs = <div><b></b><abc></abc></div>", JsObject.empty).generatePreview(Range(18, 30))
+      assert(escapedPreview == "...finedAs = <b>&lt;div&gt;&lt;b&gt;&lt;/b&gt;</b>&lt;abc&gt;&lt;/abc...")
     }
   }
 
