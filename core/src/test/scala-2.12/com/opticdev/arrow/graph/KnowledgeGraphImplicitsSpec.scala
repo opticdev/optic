@@ -7,7 +7,6 @@ import KnowledgeGraphImplicits._
 import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.Schema
 
 class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
 

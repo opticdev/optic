@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.sdk.descriptions.LensRef
+import com.opticdev.sdk.opticmarkdown2.LensRef
 import play.api.libs.json.Json
 
 package object sourcegear {

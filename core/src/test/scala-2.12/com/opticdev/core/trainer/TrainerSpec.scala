@@ -2,9 +2,8 @@ package com.opticdev.core.trainer
 
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.parsers.graph.AstType
-import com.opticdev.sdk.descriptions.CodeComponent
-import com.opticdev.sdk.descriptions.enums.{ObjectLiteral, Token}
-import com.opticdev.sdk.descriptions.finders.NodeFinder
+import com.opticdev.sdk.opticmarkdown2.OMRange
+import com.opticdev.sdk.opticmarkdown2.lens._
 import play.api.libs.json.{JsBoolean, JsObject, JsString, Json}
 
 class TrainerSpec extends TestBase {
@@ -45,7 +44,7 @@ class TrainerSpec extends TestBase {
     val tokenCandidates = importTrainerValidExample.extractTokensCandidates
 
     assert(tokenCandidates == Set(
-      ValueCandidate(JsString("definedAs"), "...const <b>definedAs</b> = require...", CodeComponent(List("definedAs"), NodeFinder(AstType("Identifier", "es7"), Range(6, 15)), Token))
+      ValueCandidate(JsString("definedAs"), "...const <b>definedAs</b> = require...", OMComponentWithPropertyPath(Seq("definedAs"), OMLensCodeComponent(Token, OMLensNodeFinder("Identifier", OMRange(6, 15)))))
     ))
   }
 
@@ -53,7 +52,7 @@ class TrainerSpec extends TestBase {
     val literalCandidates = importTrainerValidExample.extractLiteralCandidates
 
     assert(literalCandidates == Set(
-      ValueCandidate(JsString("pathto"), "...= require(<b>'pathto'</b>)...", CodeComponent(List("pathto"), NodeFinder(AstType("Literal", "es7"), Range(26, 34)), Token))
+      ValueCandidate(JsString("pathto"), "...= require(<b>'pathto'</b>)...", OMComponentWithPropertyPath(Seq("pathto"), OMLensCodeComponent(Token, OMLensNodeFinder("Identifier", OMRange(26, 34)))))
     ))
   }
 
@@ -63,9 +62,9 @@ class TrainerSpec extends TestBase {
     assert(objectLiteralCandidates == Set(
       ValueCandidate(Json.parse("""{"key":"value","token":{"_valueFormat":"token","value":"thisToken"},"_order":["key","token"]}"""),
         "...alState = <b>{key: 'value', token: thisToken}</b>...",
-        CodeComponent(List("object"),
-          NodeFinder(AstType("ObjectExpression", "es7"), Range(21, 53)), ObjectLiteral))
-    ))
+
+        OMComponentWithPropertyPath(Seq("object"), OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder("ObjectExpression", OMRange(21, 53))))
+    )))
 
   }
 

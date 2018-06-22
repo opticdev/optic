@@ -3,17 +3,18 @@ package com.opticdev.core
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions.enums.BasicComponentType
 import com.opticdev.sdk.descriptions.enums.FinderEnums.StringEnums
-import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
-import com.opticdev.sdk.descriptions.{CodeComponent, Component, SchemaComponent}
+import com.opticdev.sdk.opticmarkdown2.lens._
 import play.api.libs.json._
 
 package object trainer {
 
-  case class ValueCandidate(value: JsValue, previewString: String, stagedComponent: Component) {
+  import com.opticdev.sdk.opticmarkdown2.Serialization._
+
+  case class ValueCandidate(value: JsValue, previewString: String, stagedComponent: OMComponentWithPropertyPath[OMLensCodeComponent]) {
     def propertyPath = stagedComponent.propertyPath
   }
 
-  case class ContainerCandidate(name: String, previewString: String, nodeFinder: NodeFinder)
+  case class ContainerCandidate(name: String, previewString: String, nodeFinder: OMLensNodeFinder)
   case class VariableCandidate(name: String, occurrences: Seq[Range])
 
   //temp until refactored sdk
@@ -21,13 +22,6 @@ package object trainer {
   import com.opticdev.common.rangeJsonFormats
 
   implicit val astTypeFormat = Json.format[AstType]
-  implicit val nodeFinderFormat = Json.format[NodeFinder]
-  implicit val rangeFinderFormat = Json.format[RangeFinder]
-  implicit val stringFinderFormat = new Format[StringFinder] {
-    override def reads(json: JsValue): JsResult[StringFinder] = ???
-    override def writes(o: StringFinder): JsValue = ???
-  }
-  implicit val finderFormat = Json.format[Finder]
 
   implicit val basicComponentTypeFormat = new Format[BasicComponentType] {
     override def reads(json: JsValue): JsResult[BasicComponentType] = ???
@@ -36,13 +30,6 @@ package object trainer {
       JsString(o.getClass.getName)
     }
   }
-  implicit val codeComponentFormat = Json.format[CodeComponent]
-  implicit val schemaComponentFormat = new Format[SchemaComponent] {
-    override def reads(json: JsValue): JsResult[SchemaComponent] = ???
-
-    override def writes(o: SchemaComponent): JsValue = ???
-  }
-  implicit val componentFormat = Json.format[Component]
 
   implicit val valueCandidateFormats = Json.format[ValueCandidate]
   implicit val containerCandidateFormats = Json.format[ContainerCandidate]

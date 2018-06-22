@@ -1,7 +1,6 @@
 package com.opticdev.core.sourcegear.graph.model
 
 import com.opticdev.common.{ObjectRef, SchemaRef}
-import com.opticdev.sdk.descriptions.LensRef
 import com.opticdev.core.sourcegear.{AstDebugLocation, CompiledLens, SGContext}
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.annotations.{SourceAnnotation, TagAnnotation}
@@ -17,6 +16,7 @@ import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, WithinFile}
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.core.utils.UUID
 import com.opticdev.sdk.VariableMapping
+import com.opticdev.sdk.opticmarkdown2.LensRef
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3

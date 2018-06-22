@@ -7,7 +7,7 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.{LensSet, SGConstructor, SourceGear}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json.JsObject
 
 import scala.concurrent.duration._
@@ -21,10 +21,10 @@ class IndexSourceGearSpec extends TestBase with TestPackageProviders {
     assert(knowledgeGraph.size == 9)
   }
 
-  val schemaModel = Schema(SchemaRef(Some(PackageRef("optic:test")), "model"), JsObject.empty)
-  val schemaRoute = Schema(SchemaRef(Some(PackageRef("optic:test")), "route"), JsObject.empty)
-  val schemaForm = Schema(SchemaRef(Some(PackageRef("optic:test")), "form"), JsObject.empty)
-  val schemaFetch = Schema(SchemaRef(Some(PackageRef("optic:test")), "fetch"), JsObject.empty)
+  val schemaModel = OMSchema(SchemaRef(Some(PackageRef("optic:test")), "model"), JsObject.empty)
+  val schemaRoute = OMSchema(SchemaRef(Some(PackageRef("optic:test")), "route"), JsObject.empty)
+  val schemaForm = OMSchema(SchemaRef(Some(PackageRef("optic:test")), "form"), JsObject.empty)
+  val schemaFetch = OMSchema(SchemaRef(Some(PackageRef("optic:test")), "fetch"), JsObject.empty)
 
   it("can map transformations") {
     val knowledgeGraph = ExampleSourcegears.sgWithTransformations.knowledgeGraph

@@ -2,7 +2,7 @@ package com.opticdev.sdk.markdown
 
 import better.files.File
 import com.opticdev.parsers.utils.Crypto
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json.{JsArray, JsObject, Json}
 
 import scala.sys.process._
@@ -10,7 +10,7 @@ import scala.util.Try
 
 object MarkdownParser {
 
-  private val outputSchema = Schema(null, Json.parse(
+  private val outputSchema = OMSchema(null, Json.parse(
     """
       |{ "type": "object", "title": "MD Parse Output", "properties": {
       |   "description": { "type": "object" },

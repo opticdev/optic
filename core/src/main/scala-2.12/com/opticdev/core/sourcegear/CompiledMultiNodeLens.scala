@@ -7,14 +7,15 @@ import com.opticdev.parsers.graph.AstType
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{ParserRef, SourceParserManager}
-import com.opticdev.sdk.descriptions.LensRef
+import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.util.hashing.MurmurHash3
 
 case class CompiledMultiNodeLens(name: Option[String],
                                  id: String,
                                  packageRef: PackageRef,
-                                 schemaRef: SchemaRef,
+                                 schema: Either[SchemaRef, OMSchema],
                                  enterOn: Set[AstType],
                                  parserRef: ParserRef,
                                  childLenses: Seq[CompiledLens]) extends SGExportableLens {
@@ -43,5 +44,13 @@ case class CompiledMultiNodeLens(name: Option[String],
   val internal: Boolean = false
 
   override def variableManager: VariableManager = childLenses.head.variableManager
+
+  override def schemaRef: SchemaRef = {
+    if (schema.isLeft) {
+      schema.left.get
+    } else {
+      schema.right.get.schemaRef
+    }
+  }
 
 }

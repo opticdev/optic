@@ -8,7 +8,6 @@ import com.opticdev.core.sourcegear.storage.SGConfigStorage
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.{DependencyTree, PackageManager}
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
-import com.opticdev.sdk.descriptions.Lens
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

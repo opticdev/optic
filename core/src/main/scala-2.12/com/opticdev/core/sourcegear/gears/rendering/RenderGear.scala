@@ -102,7 +102,7 @@ case class RenderGear(block: String,
 
             Try {
               schemaComponentValue.map(child => {
-                val rendered = Render.fromStagedNode(StagedNode(i.resolvedSchema(packageId), child.as[JsObject]), variableMapping).get
+                val rendered = Render.fromStagedNode(StagedNode(i.component.resolvedSchema(packageId), child.as[JsObject]), variableMapping).get
                 NewAstNode(rendered._3.renderer.outputType.name, Map(), Some(rendered._2))
               })
             }.getOrElse(Seq.empty)

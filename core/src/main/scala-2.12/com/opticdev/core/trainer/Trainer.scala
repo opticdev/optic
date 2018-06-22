@@ -5,19 +5,18 @@ import com.opticdev.core.compiler.stages.SnippetStage
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.{AstGraph, SourceParserManager}
 import com.opticdev.parsers.sourcegear.basic.TokenInterfaces
-import com.opticdev.sdk.descriptions.{CodeComponent, Lens, Snippet}
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
-import com.opticdev.sdk.descriptions.enums.{Literal, Token}
-import com.opticdev.sdk.descriptions.finders.NodeFinder
+import com.opticdev.sdk.opticmarkdown2.{OMRange, OMSnippet}
+import com.opticdev.sdk.opticmarkdown2.lens._
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.collection.mutable
 import scala.util.Try
 
 case class Trainer(filePath: String, languageName: String, exampleSnippet: String, expectedValue: JsObject) {
-  val snippet = new Snippet(languageName, exampleSnippet)
-  implicit val lens = Lens(null, null, null, snippet, null, null, Vector(), null, null)
-  lazy val snippetStageOutput = new SnippetStage(new Snippet(languageName, exampleSnippet)).run
+  val snippet = OMSnippet(languageName, exampleSnippet)
+  implicit val lens = OMLens(null, null, snippet, null, null, null, null, null, null)
+  lazy val snippetStageOutput = new SnippetStage(snippet).run
 
   val candidateValues = expectedValue.value.values
 
@@ -33,9 +32,10 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
     val withSortedResults =
     basic.groupBy(_.propertyPath)
-      .mapValues(_.toSeq.sortBy(_.stagedComponent.asInstanceOf[CodeComponent].finder.asInstanceOf[NodeFinder].range.start))
+      .mapValues(_.toSeq.sortBy(_.stagedComponent.asInstanceOf[OMLensCodeComponent].at.asInstanceOf[OMLensNodeFinder].range.start))
 
     val notFoundProperties = keysAsPropertyPaths diff withSortedResults.keys.toSet
+
 
     TrainingResults(
       withSortedResults.map(i=> (i._1.mkString("."), i._2)),
@@ -62,7 +62,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
         expectedValue.value.filter(_._2 == value).map(i=> Seq(i._1))
         .map(propertyPath=> {
-          ValueCandidate(value, generatePreview(node.range), CodeComponent(propertyPath, NodeFinder(node.nodeType, node.range)).withComponentType(Token))
+          ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(Token, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))))
         })
       }
     }.flatten.toSet
@@ -83,7 +83,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
         expectedValue.value.filter(_._2 == value).map(i=> Seq(i._1))
           .map(propertyPath=> {
-            ValueCandidate(value, generatePreview(node.range), CodeComponent(propertyPath, NodeFinder(node.nodeType, node.range)).withComponentType(Literal))
+            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(Literal, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))))
           })
       }
     }.flatten.toSet
@@ -106,7 +106,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
         expectedValue.value.filter(_._2 == JsonUtils.removeReservedFields(value)).map(i=> Seq(i._1))
           .map(propertyPath=> {
-            ValueCandidate(value, generatePreview(node.range), CodeComponent(propertyPath, NodeFinder(node.nodeType, node.range)).withComponentType(Literal))
+            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))))
           })
       }
     }.flatten.toSet
@@ -118,7 +118,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
   //containers
   def extractContainersCandidates: Seq[ContainerCandidate] = {
     snippetStageOutput.containerMapping.map(i=>
-      ContainerCandidate(i._1.name, generatePreview(i._2.node.range), NodeFinder(i._2.node.nodeType, i._2.node.range)))
+      ContainerCandidate(i._1.name, generatePreview(i._2.node.range), OMLensNodeFinder(i._2.node.nodeType.name, OMRange(i._2.node.range))))
       .toSeq
       .sortBy(_.nodeFinder.range.start)
   }

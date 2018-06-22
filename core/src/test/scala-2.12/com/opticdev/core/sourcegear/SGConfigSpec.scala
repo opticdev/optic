@@ -2,7 +2,6 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.core.sourcegear.project.config.ProjectFile
-import com.opticdev.sdk.descriptions.{Schema, SchemaColdStorage}
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 import boopickle.Default._

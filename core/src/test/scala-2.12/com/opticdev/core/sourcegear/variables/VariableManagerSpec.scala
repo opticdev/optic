@@ -1,8 +1,9 @@
 package com.opticdev.core.sourcegear.variables
 
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.sdk.descriptions.enums.VariableEnums
-import com.opticdev.sdk.descriptions.{Variable, VariableRule}
+import com.opticdev.sdk.descriptions.VariableRule
+import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
+import com.opticdev.sdk.opticmarkdown2.lens.Self
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString}
 
@@ -12,15 +13,15 @@ class VariableManagerSpec extends FunSpec {
 
     def f = new {
       val testTable = VariableLookupTable(Vector(
-        Variable("test", VariableEnums.Self),
-        Variable("test1", VariableEnums.Self),
-        Variable("test2", VariableEnums.Self)
+        OMVariable("test", Self),
+        OMVariable("test1", Self),
+        OMVariable("test2", Self)
       ), "name", AstType("Identifier", "es7"))
     }
 
     it("can lookup a variable by its id") {
       val fixture = f
-      assert(f.testTable.lookupVariableValue("test").get == Variable("test", VariableEnums.Self))
+      assert(f.testTable.lookupVariableValue("test").get == OMVariable("test", Self))
     }
 
     it("will match a real variable with any value the first time") {
@@ -61,7 +62,7 @@ class VariableManagerSpec extends FunSpec {
   describe("Variable Changes") {
 
     it("Returns Changes from variable mappings") {
-      val v = Variable("variable", VariableEnums.Self)
+      val v = OMVariable("variable", Self)
       val testManager = VariableManager(Vector(v), null)
 
       val changes = testManager.changesFromMapping(Map("variable" -> "HELLO"))

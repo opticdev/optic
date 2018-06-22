@@ -25,7 +25,7 @@ object OMParser {
     ).get
   }
 
-  def parseLens(configuration: JsObject)(implicit packageRef: PackageRef, internal: Boolean = false): Try[OMLens] = Try {
+  def parseLens(configuration: JsObject)(implicit packageRef: PackageRef): Try[OMLens] = Try {
     import Serialization.omlensFormat
 
     val id = (configuration \ "id").get.as[JsString].value

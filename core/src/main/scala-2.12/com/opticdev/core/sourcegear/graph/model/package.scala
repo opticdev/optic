@@ -3,8 +3,8 @@ package com.opticdev.core.sourcegear.graph
 import com.opticdev.core.sourcegear.graph.edges.YieldsModel
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.sdk.descriptions.Component
-import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
+import com.opticdev.sdk.opticmarkdown2.lens.{Literal, ObjectLiteral, Token}
+import com.opticdev.sdk.opticmarkdown2.lens.OMLensComponent
 
 package object model {
   type ModelAstMapping = Map[ModelKey, Set[AstMapping]]
@@ -23,8 +23,8 @@ package object model {
 
   sealed trait AstMapping {
     val relationship : AstPropertyRelationship.Value
-    def supportsComponentMapping(component: Component) = {
-      component.componentType match {
+    def supportsComponentMapping(component: OMLensComponent) = {
+      component.`type` match {
         case Token if relationship == AstPropertyRelationship.Token => true
         case Literal if relationship == AstPropertyRelationship.Literal => true
         case ObjectLiteral if relationship == AstPropertyRelationship.ObjectLiteral => true

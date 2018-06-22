@@ -2,6 +2,7 @@ package com.opticdev.sdk.opticmarkdown2
 
 import com.opticdev.common.SchemaRef
 import com.opticdev.parsers.rules._
+import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting, StringEnums}
 import com.opticdev.sdk.opticmarkdown2.lens._
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import com.opticdev.sdk.opticmarkdown2.utils.EnumFormatsFromTypes
@@ -18,12 +19,19 @@ object Serialization {
   implicit lazy val omlenscomponenttypeFormat = EnumFormatsFromTypes.newFormats[OMLensComponentType](Map(
     "token" -> Token, "literal" -> Literal, "ObjectLiteral" -> ObjectLiteral
   ))
+
   implicit lazy val omchildrenruletypeFormat = EnumFormatsFromTypes.newFormats[OMChildrenRuleType](Map(
     "any" -> com.opticdev.parsers.rules.Any,
     "exact" -> Exact,
     "same-any-order" -> SameAnyOrder,
     "same-plus" -> SamePlus,
     "same-any-order-plus" -> SameAnyOrderPlus,
+  ))
+
+  implicit lazy val stringfindersenumtypeFormat = EnumFormatsFromTypes.newFormats[StringEnums](Map(
+    "entire" -> Entire,
+    "containing" -> Containing,
+    "starting" -> Starting
   ))
 
   //Shared
@@ -37,6 +45,18 @@ object Serialization {
 
   //OMLens
   implicit lazy val omlensnodefinder = Json.format[OMLensNodeFinder]
+  implicit lazy val omlensstringfinder = Json.format[OMStringFinder]
+  implicit lazy val omlensrangefinder = Json.format[OMRangeFinder]
+
+  implicit lazy val omfinderFormat = new Format[OMFinder] {
+    override def writes(o: OMFinder): JsValue = o match {
+      case nf: OMLensNodeFinder=> Json.toJson[OMLensNodeFinder](nf)
+    }
+    override def reads(json: JsValue): JsResult[OMFinder] = {
+      Json.fromJson[OMLensNodeFinder](json)
+    }
+  }
+
   implicit lazy val omlenscodecomponentFormat = Json.format[OMLensCodeComponent]
   implicit lazy val omlensschemacomponentFormat = Json.format[OMLensSchemaComponent]
 
@@ -74,4 +94,5 @@ object Serialization {
 
   implicit lazy val omlensFormat = Json.format[OMLens]
 
+  implicit val omcomponentwithpropertypathFormats = Json.format[OMComponentWithPropertyPath[OMLensCodeComponent]]
 }

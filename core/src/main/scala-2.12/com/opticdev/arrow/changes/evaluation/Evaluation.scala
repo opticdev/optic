@@ -20,9 +20,9 @@ import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, c
 import com.opticdev.core.sourcegear.mutate.MutationImplicits._
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.sdk.descriptions.Schema
 import com.opticdev.sdk.descriptions.transformation.generate.{GenerateResult, RenderOptions, StagedNode}
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 object Evaluation {
 
   def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore): ChangeResult = opticChange match {
@@ -61,7 +61,7 @@ object Evaluation {
 
       val prefixedFlatContent = sourcegear.flatContext.prefix(rt.transformationChanges.transformation.packageId.packageId)
 
-      def generateNode(generateResult: GenerateResult, schema: Schema, lensIdOption: Option[String], topLevel: Boolean = false) : IntermediateTransformPatch = {
+      def generateNode(generateResult: GenerateResult, schema: OMSchema, lensIdOption: Option[String], topLevel: Boolean = false) : IntermediateTransformPatch = {
         val stagedNode = generateResult.toStagedNode(Some(RenderOptions(
           lensId = lensIdOption
         )))

@@ -3,7 +3,7 @@ package com.opticdev.arrow
 import com.opticdev.arrow.changes.location.AsChildOf
 import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens}
 import com.opticdev.parsers.graph.BaseNode
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json._
 import scalax.collection.GraphEdge.{EdgeLike, UnDiEdge}
 import scalax.collection.edge.LkDiEdge
@@ -14,7 +14,7 @@ package object graph {
   sealed trait SGNode {
     def id: String
   }
-  case class SchemaNode(schema: Schema) extends SGNode {
+  case class SchemaNode(schema: OMSchema) extends SGNode {
     override def id: String = schema.schemaRef.full
   }
   case class LensNode(gear: SGExportableLens) extends SGNode {
