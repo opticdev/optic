@@ -52,7 +52,7 @@ abstract class SourceGear {
 
     val available: Set[SGExportableLens] = lensSet.listLenses.filter(lens=>
       lensRef.packageRef.map(_.packageId).contains(lens.packageRef.packageId)
-        && lens.id.contains(lensRef.id)
+        && lens.id == lensRef.id
     )
 
     val lensVersion = SemverHelper.findVersion(available, (l: SGExportableLens) => l.packageRef, lensRef.packageRef.map(_.version).getOrElse("latest"))

@@ -1,5 +1,6 @@
 package com.opticdev.core.trainer
 
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.common.utils.JsonUtils
 import com.opticdev.core.compiler.stages.SnippetStage
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
@@ -8,6 +9,7 @@ import com.opticdev.parsers.sourcegear.basic.TokenInterfaces
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.sdk.opticmarkdown2.{OMRange, OMSnippet}
 import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.collection.mutable
@@ -15,7 +17,10 @@ import scala.util.Try
 
 case class Trainer(filePath: String, languageName: String, exampleSnippet: String, expectedValue: JsObject) {
   val snippet = OMSnippet(languageName, exampleSnippet)
-  implicit val lens = OMLens(null, null, snippet, null, null, null, null, null, null)
+  implicit val lens = OMLens(Some("trainer-example"), "trainer-output", snippet, Map(), Map(), Map(), Right(OMSchema(
+    SchemaRef(Some(PackageRef("optic:trainer")), "trainer"),
+    JsObject.empty
+  )), JsObject.empty, PackageRef("optic:trainer"))
   lazy val snippetStageOutput = new SnippetStage(snippet).run
 
   val candidateValues = expectedValue.value.values

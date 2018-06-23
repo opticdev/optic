@@ -52,7 +52,7 @@ class TrainerSpec extends TestBase {
     val literalCandidates = importTrainerValidExample.extractLiteralCandidates
 
     assert(literalCandidates == Set(
-      ValueCandidate(JsString("pathto"), "...= require(<b>'pathto'</b>)...", OMComponentWithPropertyPath(Seq("pathto"), OMLensCodeComponent(Token, OMLensNodeFinder("Identifier", OMRange(26, 34)))))
+      ValueCandidate(JsString("pathto"), "...= require(<b>'pathto'</b>)...", OMComponentWithPropertyPath(Seq("pathto"), OMLensCodeComponent(Literal, OMLensNodeFinder("Literal", OMRange(26, 34)))))
     ))
   }
 
@@ -73,7 +73,7 @@ class TrainerSpec extends TestBase {
     assert(allCandidates.isSuccess)
     assert(allCandidates.get.candidates.size == 2)
     assert(allCandidates.get.keysNotFound == Seq("otherProp"))
-    assert(allCandidates.get.initialValue.head == "otherProp" -> JsBoolean(true))
+    assert(allCandidates.get.initialValue.fieldSet.head == ("otherProp", JsBoolean(true)))
     assert(allCandidates.get.containerCandidates.isEmpty)
     assert(allCandidates.get.variableCandidates.size == 2)
   }

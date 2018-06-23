@@ -54,6 +54,32 @@ object PickleImplicits extends PicklerHelper {
     }
   }
 
+  implicit object OMSchemaPickler extends P[OMSchema] {
+    @inline override def pickle(value: OMSchema)(implicit state: PickleState) = {
+      import com.opticdev.sdk.opticmarkdown2.Serialization.omschemaFormat
+      state.enc.writeString(Json.toJson[OMSchema](value).toString())
+    }
+    @inline override def unpickle(implicit state: UnpickleState): OMSchema = {
+      import com.opticdev.sdk.opticmarkdown2.Serialization.omschemaFormat
+      val input = state.dec.readString
+      Json.fromJson[OMSchema](Json.parse(input).as[JsObject]).get
+    }
+  }
+
+//  implicit object OMEitherSchemaPickler extends P[Either[SchemaRef, OMSchema]] {
+//    override def pickle(obj: Either[SchemaRef, OMSchema])(implicit state: PickleState): Unit = {
+//      import com.opticdev.sdk.opticmarkdown2.Serialization._
+//      val jsonString = Json.toJson[Either[SchemaRef, OMSchema]](obj).toString()
+//      state.enc.writeString(jsonString)
+//    }
+//
+//    override def unpickle(implicit state: UnpickleState): Either[SchemaRef, OMSchema] = {
+//      import com.opticdev.sdk.opticmarkdown2.Serialization._
+//      val input = state.dec.readString
+//      Json.fromJson[Either[SchemaRef, OMSchema]](Json.parse(input).as[JsObject]).get
+//    }
+//  }
+
   implicit val childrenRuleTypeEnumPickler = {
     import com.opticdev.parsers.rules._
     compositePickler[ChildrenRuleTypeEnum]
@@ -131,10 +157,11 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.name)
       state.pickle(value.id)
       state.pickle(value.packageRef)
-      state.pickle(value.schemaRef)
+      state.pickle(value.schema)
       state.pickle(value.enterOn)
       state.pickle(value.parser)
       state.pickle(value.renderer)
+      state.pickle(value.internal)
     }
     override def unpickle(implicit state: UnpickleState): CompiledLens = {
       CompiledLens(
@@ -144,7 +171,8 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[Either[SchemaRef, OMSchema]],
         state.unpickle[Set[AstType]],
         state.unpickle[ParseAsModel],
-        state.unpickle[RenderGear]
+        state.unpickle[RenderGear],
+        state.unpickle[Boolean]
       )
     }
   }
@@ -163,7 +191,7 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.name)
       state.pickle(value.id)
       state.pickle(value.packageRef)
-      state.pickle(value.schemaRef)
+      state.pickle(value.schema)
       state.pickle(value.enterOn)
       state.pickle(value.childLenses)
     }

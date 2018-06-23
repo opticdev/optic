@@ -18,7 +18,8 @@ case class CompiledMultiNodeLens(name: Option[String],
                                  schema: Either[SchemaRef, OMSchema],
                                  enterOn: Set[AstType],
                                  parserRef: ParserRef,
-                                 childLenses: Seq[CompiledLens]) extends SGExportableLens {
+                                 childLenses: Seq[CompiledLens]
+                                ) extends SGExportableLens {
 
   require(childLenses.size > 1, "Multi Node Lenses must have at least 2 child lenses defined")
 
