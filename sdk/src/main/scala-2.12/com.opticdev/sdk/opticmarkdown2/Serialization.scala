@@ -17,7 +17,7 @@ object Serialization {
     "self" -> Self, "scope" -> Scope
   ))
   implicit lazy val omlenscomponenttypeFormat = EnumFormatsFromTypes.newFormats[OMLensComponentType](Map(
-    "token" -> Token, "literal" -> Literal, "ObjectLiteral" -> ObjectLiteral
+    "token" -> Token, "literal" -> Literal, "object-literal" -> ObjectLiteral
   ))
 
   implicit lazy val omchildrenruletypeFormat = EnumFormatsFromTypes.newFormats[OMChildrenRuleType](Map(
@@ -38,7 +38,7 @@ object Serialization {
   implicit lazy val omrangeFormat = Json.format[OMRange]
 
   //Schema
-  implicit lazy val omschemaFormat = Json.format[OMSchema]
+  implicit lazy val omschemaFormat = Json.using[Json.WithDefaultValues].format[OMSchema]
 
   //Snippet
   implicit lazy val omsnippetFormat = Json.format[OMSnippet]
@@ -58,7 +58,7 @@ object Serialization {
   }
 
   implicit lazy val omlenscodecomponentFormat = Json.format[OMLensCodeComponent]
-  implicit lazy val omlensschemacomponentFormat = Json.format[OMLensSchemaComponent]
+  implicit lazy val omlensschemacomponentFormat = Json.using[Json.WithDefaultValues].format[OMLensSchemaComponent]
 
   implicit lazy val omlenscomponentFormat = new Format[OMLensComponent] {
     override def reads(json: JsValue): JsResult[OMLensComponent] = {
@@ -92,7 +92,7 @@ object Serialization {
     }
   }
 
-  implicit lazy val omlensFormat = Json.format[OMLens]
+  implicit lazy val omlensFormat = Json.using[Json.WithDefaultValues].format[OMLens]
 
   implicit val omcomponentwithpropertypathFormats = Json.format[OMComponentWithPropertyPath[OMLensCodeComponent]]
 }

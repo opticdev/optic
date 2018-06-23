@@ -70,14 +70,4 @@ object SDKObjectsResolvedImplicits {
   private def resolveSchema(packageId: String, item: String)(implicit sourceGear: SourceGear): Option[SGExportable] =
     sourceGear.flatContext.prefix(packageId).resolve(item)
 
-
-  def qualifySchema(packageRef: PackageRef, schemaRef: SchemaRef)(implicit packageContext: Context) : SchemaRef = {
-    if (schemaRef.packageRef.isDefined) {
-      packageContext.getPackageContext(schemaRef.packageRef.get.packageId).get
-        .getProperty(schemaRef.id).get.asInstanceOf[OMSchema].schemaRef
-    } else {
-      SchemaRef(Some(packageRef), schemaRef.id)
-    }
-  }
-
 }

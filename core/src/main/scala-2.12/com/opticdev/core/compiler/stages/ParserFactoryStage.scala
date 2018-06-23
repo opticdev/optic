@@ -18,7 +18,7 @@ import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.sdk.opticmarkdown2.lens.OMLens
 
 
-class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, qualifySchema: (PackageRef, SchemaRef) => SchemaRef = (a,b) => b, internal: Boolean = false)(implicit lens: OMLens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {
+class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, internal: Boolean = false)(implicit lens: OMLens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {
   implicit val snippetStageOutput = snippetStage
   override def run: ParserFactoryOutput = {
 
@@ -30,12 +30,10 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
 
     val nodeDescription = ParserFactoryStage.nodeToDescription(enterOn)
 
-    val qualifiedLensSchema = qualifySchema(lens.packageRef, lens.schemaRef)
-
     val listeners = lens.valueSchemaComponentsCompilerInput.map(watchForSchema => {
       MapSchemaListener(
         watchForSchema,
-        qualifiedLensSchema,
+        lens.schemaRef,
         lens.packageRef.packageId
       )
     })
@@ -43,7 +41,7 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
     ParserFactoryOutput(
       ParseAsModel(
       nodeDescription,
-      qualifiedLensSchema,
+      lens.schemaRef,
       finderStageOutput.componentFinders.map {
         case (finderPath, components)=> (finderPathToFlatPath(finderPath, enterOn), components)
       },

@@ -74,7 +74,7 @@ trait GearUtils {
     if (compiled.isFailure) throw new Error("Compiling description failed. Test Stopped")
 
     outerLensSet.addLenses(compiledGears.toSeq:_*)
-    
+
     val lenses: Seq[(String, SGExportableLens)] = outerLensSet.listLenses.map(i=> (i.id, i)).toSeq
 
     val schemas: Seq[(String, OMSchema)] = description.schemas.map(i=> (i.schemaRef.id, i))

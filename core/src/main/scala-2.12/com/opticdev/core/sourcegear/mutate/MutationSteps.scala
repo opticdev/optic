@@ -50,6 +50,11 @@ object MutationSteps {
   def collectMapSchemaChanges(linkedModelNode: LinkedModelNode[CommonAstNode], newValue: JsObject, variableChanges: Option[VariableChanges] = None)(implicit sourceGearContext: SGContext): List[Try[AddItemToContainer]] = Try {
     implicit val sourceGear = sourceGearContext.sourceGear
     val schemaComponents = linkedModelNode.parseGear.allSchemaComponents
+
+    if (schemaComponents.isEmpty) {
+      return List()
+    }
+
     val mapSchemaFields = linkedModelNode.mapSchemaFields()
 
     val variableMapping = Try(variableChanges.get.changes.map(i=> (i.variable.token, i.value)).toMap).getOrElse(Map.empty)
@@ -67,8 +72,8 @@ object MutationSteps {
 
         val resolvedSchema = component.resolvedSchema(linkedModelNode.parseGear.packageId)
         if (component.yieldsArray) {
-          val oldItems = oldMap.find(_._1 == component).get._2.as[JsArray].value
-          val newItems = newMap.find(_._1 == component).get._2.as[JsArray].value
+          val oldItems = oldMap.find(_._1.component == component).get._2.as[JsArray].value
+          val newItems = newMap.find(_._1.component == component).get._2.as[JsArray].value
 
           if (newItems.length > oldItems.length) {
             val added = newItems.slice(oldItems.length, newItems.length)
@@ -102,7 +107,7 @@ object MutationSteps {
         }
       }
     }
-  }.getOrElse(List())
+  }.get
 
   def collectVariableChanges(linkedModelNode: LinkedModelNode[CommonAstNode], variableChanges: VariableChanges) (implicit sourceGearContext: SGContext, fileContents: String) : List[AstChange] = {
     if (variableChanges.hasChanges) {

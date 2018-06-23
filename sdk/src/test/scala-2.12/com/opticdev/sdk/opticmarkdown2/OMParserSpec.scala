@@ -85,14 +85,13 @@ class OMParserSpec extends FunSpec {
                                   |	"value": {},
                                   |	"variables": {},
                                   |	"containers": {},
-                                  |	"schema": "optic:otherPackage@1.1.1/schema",
+                                  |	"schema": "optic:otherpackage@1.1.1/schema",
                                   |	"initialValue": {"test": true}
                                   |}""".stripMargin).as[JsObject]
 
       val parsedLens = OMParser.parseLens(lensJson)(testPackageRef)
-
       assert(parsedLens.isSuccess)
-      assert(parsedLens.get.schema.left.get.full == "optic:otherPackage@1.1.1/schema")
+      assert(parsedLens.get.schema.left.get.full == "optic:otherpackage@1.1.1/schema")
     }
 
   }

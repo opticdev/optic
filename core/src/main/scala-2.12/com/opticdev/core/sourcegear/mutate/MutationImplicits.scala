@@ -19,7 +19,7 @@ object MutationImplicits {
       import MutationSteps._
       val modelChanges: List[AstChange] = {
         val changesTry = collectFieldChanges(linkedModelNode, newValue)
-        val containerChangesTry = collectMapSchemaChanges(linkedModelNode, newValue, variableChanges)
+        val containerChangesTry = if (!sourceGearContext.forRender) collectMapSchemaChanges(linkedModelNode, newValue, variableChanges) else List.empty
 
         handleChanges(
           changesTry.collect {case i if i.isSuccess => i.get},

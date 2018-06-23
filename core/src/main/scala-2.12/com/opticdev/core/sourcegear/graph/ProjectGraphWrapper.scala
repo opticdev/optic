@@ -65,6 +65,8 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
 
       if (fromNode.isModel && toNode.isModel) {
         newProjectGraph add (fromNode.asInstanceOf[BaseModelNode] ~+#> toNode.asInstanceOf[BaseModelNode]) (edge.label)
+      } else if ( fromNode.isAstNode() && toNode.isModel && edge.label.isInstanceOf[YieldsModel]) {
+        newProjectGraph add (fileNode ~+#> toNode.asInstanceOf[BaseModelNode]) (InFile(fromNode.asInstanceOf[WithinFile].range))
       }
     })
     newProjectGraph

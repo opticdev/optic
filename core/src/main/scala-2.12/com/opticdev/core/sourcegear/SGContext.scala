@@ -12,7 +12,8 @@ case class SGContext(fileAccumulator: FileAccumulator,
                      parser: ParserBase,
                      fileContents: String,
                      sourceGear: SourceGear,
-                     file: File
+                     file: File,
+                     forRender: Boolean = false
                     )
 
 
@@ -29,7 +30,7 @@ object SGContext {
   }
 
   def forRender(sourceGear: SourceGear, astGraph: AstGraph, parserRef: ParserRef): SGContext = {
-    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear, null)
+    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear, null, true)
   }
 
 }

@@ -35,7 +35,6 @@ class VariablesSpec extends TestBase with GearUtils with ParserUtils {
     assert(variableRules(2).isVariableRule && variableRules(1).asInstanceOf[VariableRule].variableId == "definedAs")
     assert(variableRules(3).isVariableRule && variableRules(2).asInstanceOf[VariableRule].variableId == "definedAs")
     assert(variableRules(4).isVariableRule && variableRules(3).asInstanceOf[VariableRule].variableId == "definedAs")
-
   }
 
   lazy val gearWithVariables = compiledLensFromDescription("test-examples/resources/example_packages/optic:VariableExample@0.1.0.json")

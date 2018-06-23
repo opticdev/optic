@@ -7,7 +7,7 @@ class GearStorageSpec extends TestBase with GearUtils {
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
 
-  val importGear = compiledLensFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
+  lazy val importGear = compiledLensFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
 
   it("can write to storage") {
     assert(GearStorage.writeToStorage(importGear).exists)

@@ -2,6 +2,7 @@ package com.opticdev.sdk.opticmarkdown2.lens
 
 import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.parsers.rules.ChildrenRuleTypeEnum
+import com.opticdev.sdk.descriptions.PackageExportable
 import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
 import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
 import com.opticdev.sdk.opticmarkdown2.{LensRef, OMChildrenRuleType, OMSnippet}
@@ -12,11 +13,11 @@ case class OMLens(name: Option[String],
                   id: String,
                   snippet: OMSnippet,
                   value: Map[String, OMLensComponent],
-                  variables: Map[String, OMLensVariableScopeEnum],
-                  containers: Map[String, OMChildrenRuleType],
+                  variables: Map[String, OMLensVariableScopeEnum] = Map(),
+                  containers: Map[String, OMChildrenRuleType] = Map(),
                   schema: Either[SchemaRef, OMSchema],
                   initialValue: JsObject = JsObject.empty,
-                  packageRef: PackageRef) {
+                  packageRef: PackageRef) extends PackageExportable {
 
   def variablesCompilerInput: Vector[OMVariable] = variables.map(i=> OMVariable(i._1, i._2)).toVector
 

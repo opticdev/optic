@@ -54,16 +54,12 @@ object Compiler {
         implicit val variableManager = new VariableManager(lens.variablesCompilerInput, snippetOutput.get.parser.identifierNodeDesc)
         implicit val subcontainersManager = new SubContainerManager(lens.subcontainerCompilerInputs, snippetOutput.get.containerMapping)
 
-        val qualifySchema = (pr: PackageRef, sr: SchemaRef) => {
-          SDKObjectsResolvedImplicits.qualifySchema(pr, sr)
-        }
-
         snippetOutput.get.matchType match {
           case MatchType.Single => {
             val compiledTry = for {
               snippet <- snippetOutput
               finderStageOutput <- Try(new FinderStage(snippet).run)
-              parser <- Try(new ParserFactoryStage(snippet, finderStageOutput, qualifySchema).run)
+              parser <- Try(new ParserFactoryStage(snippet, finderStageOutput).run)
               renderer <- Try(new RenderFactoryStage(snippetOutput.get, parser.parseGear).run)
               compiledLens <- Try(CompiledLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetOutput.get.enterOn, parser.parseGear.asInstanceOf[ParseAsModel], renderer.renderGear))
             } yield compiledLens
@@ -77,7 +73,7 @@ object Compiler {
           }
 
           case MatchType.Multi => {
-            val compiledTry = Try(new MultiNodeParserFactoryStage(snippetOutput.get, qualifySchema).run)
+            val compiledTry = Try(new MultiNodeParserFactoryStage(snippetOutput.get).run)
             if (compiledTry.isSuccess) {
               Success(sourceLens, compiledTry.get.asInstanceOf[SGExportableLens], if (debug) Some(DebugOutput(validationOutput, snippetOutput, Try(new FinderStage(snippetOutput.get).run), variableManager)) else None)
             } else {

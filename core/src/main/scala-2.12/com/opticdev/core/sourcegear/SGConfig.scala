@@ -25,7 +25,7 @@ case class SGConfig(hashInt: Int,
 
   lazy val inflatedSchemas = schemas.map(i=> {
     val json = Json.parse(i.data).as[JsObject]
-    val schemaRef = SchemaRef.fromString((json \ "_identifier").get.as[JsString].value).get
+    val schemaRef = SchemaRef.fromString(i.schemaRefAsString).get
     OMParser.parseSchema(Json.parse(i.data).as[JsObject])(schemaRef).get
   })
 

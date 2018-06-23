@@ -11,12 +11,7 @@ import com.opticdev.sdk.markdown.MarkdownParser
 import com.opticdev.sdk.opticmarkdown2.OMParser
 import com.opticdev.sdk.opticmarkdown2.lens.OMLens
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
-case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMapping) extends OpticPackage{
-
-  private def objectValueForKey(key: String): Map[String, JsObject] = {
-    val objectValue = description.value.getOrElse(key, JsObject.empty).as[JsObject]
-    objectValue.value.asInstanceOf[Map[String, JsObject]]
-  }
+case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMapping) extends OpticPackage {
 
   lazy val schemas: Vector[OMSchema] = (description \ "schemas").getOrElse(JsArray.empty).as[JsArray].value.map(i=> {
     val schemaObject = i.as[JsObject]

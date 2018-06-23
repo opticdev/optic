@@ -73,8 +73,10 @@ case class RenderGear(block: String,
 
     //1. Render Node
 
+    implicit val parsedWithSourceGear = parseAndGetModelWithGraph(block)
+
     val variableChanges = parseGear.variableManager.changesFromMapping(variableMapping)
-    val raw = isMatch.get.modelNode.update(value, Some(variableChanges))
+    val raw = isMatch.get.modelNode.update(value, Some(variableChanges))(sourceGearContext.copy(astGraph = parsedWithSourceGear.map(_._2).getOrElse(astGraph)), fileContents)
 
     //2. fill subcontainers
     val propertyPathWalker = new PropertyPathWalker(value)

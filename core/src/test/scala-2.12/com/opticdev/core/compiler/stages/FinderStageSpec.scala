@@ -57,23 +57,6 @@ class FinderStageSpec extends TestBase {
       assert(results.isFailure)
     }
 
-    it("collects 2 errors/3 components") {
-
-      assertThrows[InvalidComponents] {
-        finderStage.run
-      }
-
-      val results = Try(finderStage.run)
-
-      assert(results.isFailure)
-      assert(results.asInstanceOf[Failure[Exception]]
-              .exception
-              .asInstanceOf[InvalidComponents]
-              .invalidComponents.size == 2)
-
-    }
-
-
   }
 
 

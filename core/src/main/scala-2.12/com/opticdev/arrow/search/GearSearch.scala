@@ -4,7 +4,6 @@ import com.opticdev.arrow.context.ArrowContextBase
 import com.opticdev.arrow.results.{GearResult, Result}
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens, SourceGear}
-import com.opticdev.sdk.descriptions.Lens
 import me.xdrop.fuzzywuzzy.FuzzySearch
 
 object GearSearch {

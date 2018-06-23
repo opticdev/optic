@@ -45,7 +45,7 @@ class LocalProvider extends Provider {
 
     //print out failing pacakges
     results.collect {
-      case Failure(i) => println(i)
+      case Failure(i) => i.printStackTrace()
     }
 
     val allPackages = results.collect {

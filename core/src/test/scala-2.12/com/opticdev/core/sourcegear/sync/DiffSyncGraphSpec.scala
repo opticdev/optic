@@ -146,6 +146,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
 
 
+    println(diff.filePatches.head.newFileContents)
+
     assert(diff.noErrors)
     assert(diff.filePatches.size == 1)
     assert(diff.filePatches.head.newFileContents === """function greeting() { //name: TestMulti

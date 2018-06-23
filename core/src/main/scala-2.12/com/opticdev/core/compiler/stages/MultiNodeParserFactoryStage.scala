@@ -19,7 +19,7 @@ import play.api.libs.json.JsObject
 
 import scala.util.Try
 
-class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput, qualifySchema: (PackageRef, SchemaRef) => SchemaRef = (a,b) => b)(implicit val lens: OMLens) extends CompilerStage[MultiNodeLensOutput] {
+class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput)(implicit val lens: OMLens) extends CompilerStage[MultiNodeLensOutput] {
   implicit val snippetStageOutput = snippetStage
 
   override def run: MultiNodeLensOutput = {
@@ -66,7 +66,7 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput, qualifySchem
 
             val finderStage = new FinderStage(snippet)(childLens, errorAccumulator, variableManager, subcontainersManager).run
 
-            val parser = new ParserFactoryStage(snippet, finderStage, qualifySchema, internal = true)(childLens, variableManager, subcontainersManager).run
+            val parser = new ParserFactoryStage(snippet, finderStage, internal = true)(childLens, variableManager, subcontainersManager).run
             val renderer = new RenderFactoryStage(snippet, parser.parseGear)(childLens).run
 
             CompiledLens(childLens.name, childLens.id, childLens.packageRef, childLens.schema, snippet.enterOn, parser.parseGear.asInstanceOf[ParseAsModel], renderer.renderGear,

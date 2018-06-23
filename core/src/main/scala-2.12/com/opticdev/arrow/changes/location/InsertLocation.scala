@@ -4,7 +4,6 @@ import better.files.File
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.parsers.{AstGraph, ParserBase, SourceParserManager}
 import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.sdk.descriptions.Container
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
