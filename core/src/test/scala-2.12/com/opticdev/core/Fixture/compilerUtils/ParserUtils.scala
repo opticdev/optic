@@ -28,6 +28,7 @@ trait ParserUtils {
       Left(BlankSchema),
       JsObject.empty,
       PackageRef("test:example", "0.1.1"))
+
     implicit val variableManager = VariableManager(lens.variablesCompilerInput, SourceParserManager.installedParsers.head.identifierNodeDesc)
 
     val snippetBuilder = new SnippetStage(snippet)

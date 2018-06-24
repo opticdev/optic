@@ -30,7 +30,6 @@ case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMa
     Transformation.fromJson(packageRef, transformationObject)
   }).toVector
 
-
 //  lazy val objects: Map[String, JsObject] = objectValueForKey("objects")
 
 }

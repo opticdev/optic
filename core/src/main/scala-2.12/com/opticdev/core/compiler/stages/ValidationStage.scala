@@ -12,10 +12,13 @@ import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 class ValidationStage()(implicit val lens: OMLens, packageContext: Context, errorAccumulator: ErrorAccumulator = new ErrorAccumulator) extends CompilerStage[ValidationStageOutput] {
   override def run: ValidationStageOutput = {
 
-    val lensSchemaOption = lens.schemaRef.resolve()
-    if (lensSchemaOption.isEmpty) throw new SchemaNotFound(lens.schemaRef)
-
-    val lensSchema = lensSchemaOption.get
+    val lensSchema = {
+      if (lens.schema.isLeft) {
+        lens.schemaRef.resolve().getOrElse(throw new SchemaNotFound(lens.schemaRef))
+      } else {
+        lens.schema.right.get
+      }
+    }
 
     val extraPaths = lens.valueComponentsCompilerInput.filter(i=> SchemaValidation.getPath(i.propertyPath, lensSchema).isEmpty)
                       .map(_.propertyPath)

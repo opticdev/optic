@@ -6,7 +6,6 @@ import com.opticdev.sdk.descriptions.enums.FinderEnums.StringEnums
 import com.opticdev.sdk.descriptions.{ChildrenRule, Location, RawRule}
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, LocationEnums}
 import com.opticdev.sdk.opticmarkdown2.OMRange
-import com.sun.tools.classfile.Dependency.Finder
 
 trait OMLensComponent {
   def rules: Vector[Rule]
