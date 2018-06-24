@@ -18,7 +18,7 @@ class ProjectRouteSpec extends FunSpec with Matchers with ScalatestRouteTest wit
 
   implicit val logToCli = false
   implicit val actorCluster = new ActorCluster(ActorSystem("ProjectRouteTest"))
-  val testProject = new StaticSGProject("TestProject", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), SourceGear.default)
+  val testProject = new StaticSGProject("TestProject", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), SourceGear.empty)
   implicit val projectsManager = new ProjectsManager
   projectsManager.loadProject(testProject)
 

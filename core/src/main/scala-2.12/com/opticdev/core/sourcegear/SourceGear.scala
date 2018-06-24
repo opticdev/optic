@@ -124,7 +124,7 @@ case object UnloadedSourceGear extends SourceGear {
 }
 
 object SourceGear {
-  def default: SourceGear = new SourceGear {
+  def empty: SourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = Set()
     override val lensSet = new LensSet()
     override val schemas = Set()

@@ -3,6 +3,7 @@ package com.opticdev.core.trainer
 import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.common.utils.JsonUtils
 import com.opticdev.core.compiler.stages.SnippetStage
+import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.{AstGraph, SourceParserManager}
 import com.opticdev.parsers.sourcegear.basic.TokenInterfaces
@@ -15,7 +16,7 @@ import play.api.libs.json._
 import scala.collection.mutable
 import scala.util.Try
 
-case class Trainer(filePath: String, languageName: String, exampleSnippet: String, expectedValue: JsObject) {
+case class Trainer(filePath: String, languageName: String, exampleSnippet: String, expectedValue: JsObject, stagedSourceGear: SourceGear = SourceGear.empty) {
   val snippet = OMSnippet(languageName, exampleSnippet)
   implicit val lens = OMLens(Some("trainer-example"), "trainer-output", snippet, Map(), Map(), Map(), Right(OMSchema(
     SchemaRef(Some(PackageRef("optic:trainer")), "trainer"),
@@ -131,7 +132,10 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
   }
 
   //map schema interfaces
-
+//  def extractMapSchemaCandidates = {
+//    implicit val sourceGearContext = SGContext(stagedSourceGear.fileAccumulator, snippetStageOutput.astGraph, snippetStageOutput.parser, exampleSnippet, stagedSourceGear, null)
+//    val fileParseResults = stagedSourceGear.lensSet.parseFromGraph(exampleSnippet, snippetStageOutput.astGraph, sourceGearContext, null, None)
+//  }
 
   //containers
   def extractContainersCandidates: Seq[ContainerCandidate] = {
