@@ -5,16 +5,16 @@ import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.graph.model.{ContainerMapping, NodeMapping}
 import com.opticdev.core.sourcegear.mutate.MutationSteps.orderChanges
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
-import com.opticdev.sdk.descriptions.Schema
 import com.opticdev.sdk.descriptions.transformation.MultiTransform
 import com.opticdev.sdk.descriptions.transformation.generate.GenerateResult
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.collection.immutable
 
 object MultiTransformEvaluation {
 
-  type GenerateEval = (GenerateResult, Schema, Option[String], Boolean) => IntermediateTransformPatch
+  type GenerateEval = (GenerateResult, OMSchema, Option[String], Boolean) => IntermediateTransformPatch
   type MutateEval = (MutateResult) => IntermediateTransformPatch
 
   def apply(multiTransform: MultiTransform, insertLocation: InsertLocation, mutateEval: MutateEval, generateEval: GenerateEval, sourcegear: SourceGear)(implicit fileStateMonitor: FileStateMonitor): FilesChanged = {

@@ -7,14 +7,16 @@ import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.parsers.rules.Rule
 import com.opticdev.sdk.VariableMapping
-import com.opticdev.sdk.descriptions.finders.NodeFinder
-import com.opticdev.sdk.descriptions.{PropertyRule, Rule, Variable, VariableRule}
+import com.opticdev.sdk.descriptions.{PropertyRule, VariableRule}
+import com.opticdev.sdk.opticmarkdown2.OMRange
+import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
+import com.opticdev.sdk.opticmarkdown2.lens.OMLensNodeFinder
 import play.api.libs.json.{JsObject, JsString}
 
 import scala.collection.immutable
 import scala.util.Try
 
-case class VariableManager(variables: Vector[Variable], identifierNodeDesc: IdentifierNodeDesc) {
+case class VariableManager(variables: Vector[OMVariable], identifierNodeDesc: IdentifierNodeDesc) {
 
   def rules(snippetStageOutput: SnippetStageOutput): Vector[Rule] = {
     val variableAstType = identifierNodeDesc.nodeType
@@ -39,12 +41,12 @@ case class VariableManager(variables: Vector[Variable], identifierNodeDesc: Iden
       val first = variable._2.minBy(_.range.start)
 
       //add a property rule for ANY
-      val initialPropertyRule: Rule = PropertyRule(NodeFinder(first.nodeType, first.range), identifierNodeDesc.path.head, "ANY")
-      val initialVariableRule: Rule =  VariableRule(NodeFinder(first.nodeType, first.range), variable._1.token)
+      val initialPropertyRule: Rule = PropertyRule(OMLensNodeFinder(first.nodeType.name, OMRange(first.range)), identifierNodeDesc.path.head, "ANY")
+      val initialVariableRule: Rule =  VariableRule(OMLensNodeFinder(first.nodeType.name, OMRange(first.range)), variable._1.token)
 
       //ADD MATCHING RULES TO VARIABLE DEFINITION
       val instanceRules: Seq[VariableRule] = variable._2.filterNot(_ == first).map(instance=> {
-        VariableRule(NodeFinder(instance.nodeType, instance.range), variable._1.token)
+        VariableRule(OMLensNodeFinder(instance.nodeType.name, OMRange(instance.range)), variable._1.token)
       })
 
       Vector(initialPropertyRule, initialVariableRule) ++ instanceRules
@@ -67,7 +69,7 @@ case class VariableManager(variables: Vector[Variable], identifierNodeDesc: Iden
 }
 
 object VariableManager {
-  def empty = new VariableManager(Vector.empty[Variable], IdentifierNodeDesc(null, Seq(""))) {
+  def empty = new VariableManager(Vector.empty[OMVariable], IdentifierNodeDesc(null, Seq(""))) {
     override def variableLookupTable = VariableLookupTable(variables, "", AstType("", ""))
   }
 }

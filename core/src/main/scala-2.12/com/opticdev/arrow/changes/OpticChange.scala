@@ -5,17 +5,17 @@ import com.opticdev.arrow.changes.evaluation.ChangeResult
 import com.opticdev.arrow.changes.location.{InsertLocation, RawPosition}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.TransformationChanges
 import com.opticdev.core.sourcegear.CompiledLens
-import com.opticdev.sdk.descriptions.{Schema}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import JsonImplicits.opticChangeFormat
 import com.opticdev.arrow.results.ModelOption
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import com.opticdev.core.sourcegear.sync.{FilePatch, FilePatchTrait, SyncPatch}
 import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 sealed trait OpticChange {
   def asJson = Json.toJson[OpticChange](this)
-  def schemaOption : Option[Schema] = None
+  def schemaOption : Option[OMSchema] = None
 }
 
 /* Updates an existing model found in the code by an ID  */
@@ -25,7 +25,7 @@ sealed trait OpticChange {
 //}
 
 /* Inserts model somewhere in code */
-case class InsertModel(schema: Schema,
+case class InsertModel(schema: OMSchema,
                        lensId: Option[String] = None,
                        value: JsObject,
                        atLocation: Option[InsertLocation]

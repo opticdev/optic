@@ -11,35 +11,36 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.parsers.rules.Any
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Containing
-import com.opticdev.sdk.descriptions.enums.VariableEnums
-import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.sdk.descriptions.transformation.Transformation
+import com.opticdev.sdk.opticmarkdown2.OMSnippet
+import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json.JsObject
 
 object MultiNodeFixture extends GearUtils {
 
   def fixture = new {
-    val snippet = new Snippet("es7", "function greeting() {\n return 'Hello' \n} \n function helloWorld() {\n if (true) { \n //:callback \n } \n return greeting()+' '+'name' \n}")
+    val snippet = new OMSnippet("es7", "function greeting() {\n return 'Hello' \n} \n function helloWorld() {\n if (true) { \n //:callback \n } \n return greeting()+' '+'name' \n}")
 
-    val variables = Vector(Variable("greeting", VariableEnums.Scope))
 
-    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet,
-      Vector(
-        CodeComponent(Seq("greeting"), StringFinder(Containing, "Hello")),
-        CodeComponent(Seq("to"), StringFinder(Containing, "name"))
+    implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet,
+      Map(
+        "greeting" -> OMLensCodeComponent(Literal, OMStringFinder(Containing, "Hello")),
+        "to" -> OMLensCodeComponent(Literal, OMStringFinder(Containing, "name")),
       ),
-      variables,
-      Vector(
-        SubContainer("callback", Vector(), Any, Vector())
+      Map("greeting" -> Scope),
+      Map(
+        "callback" -> Any,
       ),
-      PackageRef("test:example", "0.1.1"),
-      None)
-    implicit val variableManager = VariableManager(variables, SourceParserManager.installedParsers.head.identifierNodeDesc)
+      Left(BlankSchema),
+      JsObject.empty,
+      PackageRef("test:example", "0.1.1"))
+    implicit val variableManager = VariableManager(lens.variablesCompilerInput, SourceParserManager.installedParsers.head.identifierNodeDesc)
 
     val snippetBuilder = new SnippetStage(snippet)
     val snippetOutput = snippetBuilder.run
 
-    implicit val subcontainersManager = new SubContainerManager(lens.subcontainers, snippetOutput.containerMapping)
+    implicit val subcontainersManager = new SubContainerManager(lens.subcontainerCompilerInputs, snippetOutput.containerMapping)
 
   }
 
@@ -61,7 +62,7 @@ object MultiNodeFixture extends GearUtils {
           "example" -> multiNodeLens
         ))
       ))
-      override val schemas: Set[Schema] = Set(Schema(multiNodeLens.schemaRef, JsObject.empty)) ++ multiNodeLens.childLenses.map(i => Schema(i.schemaRef, JsObject.empty)).toSet
+      override val schemas: Set[OMSchema] = Set(OMSchema(multiNodeLens.schemaRef, JsObject.empty)) ++ multiNodeLens.childLenses.map(i => OMSchema(i.schemaRef, JsObject.empty)).toSet
       override val lensSet: LensSet = new LensSet(multiNodeLens)
     }
   }

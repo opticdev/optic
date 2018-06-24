@@ -1,6 +1,6 @@
 {
-  "metadata": {
-    "name": "importexample",
+  "info": {
+    "package": "importexample",
     "version": "0.1.0",
     "author": "optic"
   },
@@ -10,35 +10,31 @@
       "id": "using-require",
       "schema": "js-import",
       "snippet": {
-        "name": "Using Require",
         "language": "es7",
         "block": "let definedAs = require('pathTo')"
       },
-      "rules": [],
-      "variables": [],
-      "subcontainers": [],
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "rule": "entire",
-            "string": "definedAs",
-            "occurrence": 0
-          },
-          "propertyPath": ["definedAs"]
+      "value": {
+        "definedAs": {
+          "type": "token",
+          "at": {
+            "astType": "Identifier",
+            "range": {
+              "start": 4,
+              "end": 13
+            }
+          }
         },
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "rule": "containing",
-            "string": "pathTo",
-            "occurrence": 0
-          },
-          "propertyPath": ["pathTo"]
+        "pathTo": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 24,
+              "end": 32
+            }
+          }
         }
-      ]
+      }
     }
   ],
   "schemas": [

@@ -2,10 +2,12 @@ package com.opticdev.core.sourcegear.containers
 
 import com.opticdev.parsers.graph.path.FlatWalkablePath
 import com.opticdev.parsers.rules.Rule
-import com.opticdev.sdk.descriptions.finders.NodeFinder
-import com.opticdev.sdk.descriptions.{ChildrenRule, Rule, SubContainer}
+import com.opticdev.sdk.descriptions.ChildrenRule
+import com.opticdev.sdk.opticmarkdown2.OMRange
+import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
+import com.opticdev.sdk.opticmarkdown2.lens.OMLensNodeFinder
 
-class SubContainerManager(subcontainers: Vector[SubContainer], containerMapping: ContainerMapping) {
+class SubContainerManager(subcontainers: Vector[OMSubContainer], containerMapping: ContainerMapping) {
 
 
   def rules : Vector[Rule] = {
@@ -17,12 +19,12 @@ class SubContainerManager(subcontainers: Vector[SubContainer], containerMapping:
 
       val hook = hookMappingOption.get
 
-      Vector(ChildrenRule(NodeFinder(hook._2.node.nodeType, hook._2.node.range), i.childrenRule))
+      Vector(ChildrenRule(OMLensNodeFinder(hook._2.node.nodeType.name, OMRange(hook._2.node.range)), i.childrenRule))
     })
 
   }
 
-  def containerPaths: Map[FlatWalkablePath, SubContainer] = {
+  def containerPaths: Map[FlatWalkablePath, OMSubContainer] = {
     subcontainers.map(i=> {
       val hookMappingOption = containerMapping.find(_._1.name == i.name)
 

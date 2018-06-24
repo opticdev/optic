@@ -73,8 +73,10 @@ case class RenderGear(block: String,
 
     //1. Render Node
 
+    implicit val parsedWithSourceGear = parseAndGetModelWithGraph(block)
+
     val variableChanges = parseGear.variableManager.changesFromMapping(variableMapping)
-    val raw = isMatch.get.modelNode.update(value, Some(variableChanges))
+    val raw = isMatch.get.modelNode.update(value, Some(variableChanges))(sourceGearContext.copy(astGraph = parsedWithSourceGear.map(_._2).getOrElse(astGraph)), fileContents)
 
     //2. fill subcontainers
     val propertyPathWalker = new PropertyPathWalker(value)
@@ -102,7 +104,7 @@ case class RenderGear(block: String,
 
             Try {
               schemaComponentValue.map(child => {
-                val rendered = Render.fromStagedNode(StagedNode(i.resolvedSchema(packageId), child.as[JsObject]), variableMapping).get
+                val rendered = Render.fromStagedNode(StagedNode(i.component.resolvedSchema(packageId), child.as[JsObject]), variableMapping).get
                 NewAstNode(rendered._3.renderer.outputType.name, Map(), Some(rendered._2))
               })
             }.getOrElse(Seq.empty)

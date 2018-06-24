@@ -1,6 +1,6 @@
 {
-  "metadata": {
-    "name": "variable",
+  "info": {
+    "package": "variable",
     "version": "0.1.0",
     "author": "optic"
   },
@@ -10,28 +10,24 @@
       "id": "test",
       "schema": "js-import",
       "snippet": {
-        "name": "test",
         "language": "es7",
         "block": "function test () { \n let definedAs = require('pathTo') \n definedAs() \n definedAs + definedAs \n }"
       },
-      "rules": [],
-      "variables": [{
-        "token": "definedAs",
-        "in": "self"
-      }],
-      "subcontainers": [],
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "rule": "containing",
-            "string": "pathTo",
-            "occurrence": 0
-          },
-          "propertyPath": ["pathTo"]
+      "variables": {
+        "definedAs": "self"
+      },
+      "value": {
+        "pathTo": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 45,
+              "end": 53
+            }
+          }
         }
-      ]
+      }
     }
   ],
   "schemas": [

@@ -1,99 +1,122 @@
 {
-  "metadata": {
-    "name": "flatexpress",
+  "info": {
+    "package": "flatexpress",
     "author": "optic",
     "version": "0.1.0"
   },
-  "dependencies": ["optic:rest@0.1.0"],
+
   "lenses": [
+    {
+      "name": "Route",
+      "id": "route",
+      "schema": "route",
+      "snippet": {
+        "language": "es7",
+        "block": "app.get('url', function (req, res) {\n  //:callback\n})"
+      },
+      "value": {
+        "method": {
+          "type": "token",
+          "at": {
+            "astType": "Identifier",
+            "range": {
+              "start": 4,
+              "end": 7
+            }
+          }
+        },
+        "url": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 8,
+              "end": 13
+            }
+          }
+        },
+        "parameters": {
+          "schemaRef": "parameter",
+          "toMap": "name",
+          "inContainer": "callback"
+        }
+      },
+      "variables": {
+        "req": "self",
+        "res": "self"
+      },
+      "containers": {
+        "callback": "any"
+      },
+      "range": {
+        "start": 2019,
+        "end": 2287
+      }
+    },
     {
       "name": "Parameter",
       "id": "parameter",
-      "scope": "internal",
       "schema": "parameter",
       "snippet": {
-        "name": "Parameter",
         "language": "es7",
         "block": "req.query.name"
       },
-      "rules": [],
-      "variables": [],
-      "subcontainers": [],
-      "components": [{
-        "type": "code",
-        "finder": {
-          "type": "stringFinder",
-          "rule": "entire",
-          "string": "query",
-          "occurrence": 0
+      "scope": "public",
+      "value": {
+        "name": {
+          "type": "token",
+          "at": {
+            "astType": "Identifier",
+            "range": {
+              "start": 10,
+              "end": 14
+            }
+          }
         },
-        "propertyPath": ["in"]
-      }, {
-        "type": "code",
-        "finder": {
-          "type": "stringFinder",
-          "rule": "entire",
-          "string": "name",
-          "occurrence": 0
-        },
-        "propertyPath": ["name"]
-      }]
+        "in": {
+          "type": "token",
+          "at": {
+            "astType": "Identifier",
+            "range": {
+              "start": 4,
+              "end": 9
+            }
+          }
+        }
+      },
+      "range": {
+        "start": 2336,
+        "end": 2492
+      }
     },
     {
-      "name": "Example Route",
-      "id": "route",
-      "scope": "public",
-      "schema": "route",
+      "name": "Response",
+      "id": "response",
+      "schema": "response",
       "snippet": {
-        "name": "Example Route",
         "language": "es7",
-        "block": "app.get('url', function (req, res) {\n //:callback \n})"
+        "block": "res.send(200, item)"
       },
-      "rules": [{
-        "type": "children",
-        "finder": {
-          "type": "stringFinder",
-          "rule": "starting",
-          "string": "{",
-          "occurrence": 0
-        },
-        "ruleType": "any"
-      }],
-      "variables": [],
-      "subcontainers": [{
-        "name": "callback",
-        "subcontainer": true,
-        "pulls": [],
-        "childrenRule": "any",
-        "schemaComponents": [
-          {
-            "type": "schema",
-            "schema": "parameter",
-            "propertyPath": ["parameters"],
-            "mapUnique": true,
-            "toMap": "name"
+      "value": {
+        "code": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 9,
+              "end": 12
+            }
           }
-        ]
-      }],
-      "components": [{
-        "type": "code",
-        "finder": {
-          "type": "stringFinder",
-          "rule": "entire",
-          "string": "get",
-          "occurrence": 0
-        },
-        "propertyPath": ["method"]
-      }, {
-        "type": "code",
-        "finder": {
-          "type": "stringFinder",
-          "rule": "containing",
-          "string": "url",
-          "occurrence": 0
-        },
-        "propertyPath": ["url"]
-      }]
+        }
+      },
+      "variables": {
+        "item": "self",
+        "res": "self"
+      },
+      "range": {
+        "start": 2536,
+        "end": 2694
+      }
     }
   ],
   "schemas": [
@@ -101,8 +124,6 @@
       "id": "route",
       "definition": {
         "title": "Route",
-        "version": "1.0.0",
-        "slug": "route",
         "type": "object",
         "required": [
           "method",
@@ -110,7 +131,15 @@
         ],
         "properties": {
           "method": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "get",
+              "post",
+              "put",
+              "delete",
+              "head",
+              "options"
+            ]
           },
           "url": {
             "type": "string"
@@ -125,8 +154,6 @@
         "definitions": {
           "parameter": {
             "title": "Parameter",
-            "version": "1.0.0",
-            "slug": "parameter",
             "type": "object",
             "required": [
               "in",
@@ -142,14 +169,16 @@
             }
           }
         }
+      },
+      "range": {
+        "start": 184,
+        "end": 1149
       }
     },
     {
       "id": "parameter",
       "definition": {
         "title": "Parameter",
-        "version": "1.0.0",
-        "slug": "parameter",
         "type": "object",
         "required": [
           "in",
@@ -163,6 +192,30 @@
             "type": "string"
           }
         }
+      },
+      "range": {
+        "start": 1165,
+        "end": 1402
+      }
+    },
+    {
+      "id": "response",
+      "definition": {
+        "title": "Response",
+        "type": "object",
+        "required": [
+          "in",
+          "name"
+        ],
+        "properties": {
+          "code": {
+            "type": "number"
+          }
+        }
+      },
+      "range": {
+        "start": 1416,
+        "end": 1609
       }
     }
   ]

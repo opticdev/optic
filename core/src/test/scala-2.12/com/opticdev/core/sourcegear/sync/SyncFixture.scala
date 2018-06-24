@@ -28,7 +28,6 @@ trait SyncFixture extends TestBase with GearUtils {
   def multiNodeSyncFixture(filePath: String) = new {
     val sourceGear = MultiNodeFixture.endToEndFixture.sourcegear
 
-
     val file = File(filePath)
     implicit val actorCluster: ActorCluster = new ActorCluster(ActorSystem())
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/"), sourceGear)

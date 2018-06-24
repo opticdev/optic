@@ -19,7 +19,7 @@ class LocalProviderSpec extends FunSpec {
   }
 
   it("can resolve a local package") {
-    val r = Await.result(localProvider.resolvePackages(PackageRef("optic:rest")), 10 seconds)
+    val r = Await.result(localProvider.resolvePackages(PackageRef("aidan:rest")), 10 seconds)
     assert(r.foundAll)
   }
 
@@ -28,8 +28,5 @@ class LocalProviderSpec extends FunSpec {
     assert(!r.foundAll)
   }
 
-//  it("does not work for parsers") {
-//    assert(localProvider.listInstalledParsers.size == 1)
-//  }
 
 }

@@ -24,12 +24,15 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers.rules.{AllChildrenRule, ParserChildrenRule, Rule}
+import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
+import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLensCodeComponent, OMLensComponent}
 
 sealed abstract class ParseGear() {
 
   val description : NodeDescription
-  val components: Map[FlatWalkablePath, Vector[Component]]
-  val containers: Map[FlatWalkablePath, SubContainer]
+  val components: Map[FlatWalkablePath, Vector[OMComponentWithPropertyPath[OMLensCodeComponent]]]
+  val containers: Map[FlatWalkablePath, OMSubContainer]
   val rules: Map[FlatWalkablePath, Vector[RuleWithFinder]]
   val listeners : Vector[Listener]
 
@@ -55,7 +58,7 @@ sealed abstract class ParseGear() {
   def matches(entryNode: CommonAstNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: ProjectBase) : Option[ParseResult[CommonAstNode]] = {
 
     implicit val parser = sourceGearContext.parser
-    val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
+    val extractableComponents = components.mapValues(_.filter(_.component.isInstanceOf[OMLensCodeComponent]))
 
     //new for each search instance
     val variableLookupTable = variableManager.variableLookupTable
@@ -65,7 +68,7 @@ sealed abstract class ParseGear() {
     }
 
     def compareToDescription(node: CommonAstNode, childType: String, desc: NodeDescription, currentPath: FlatWalkablePath) : MatchResults = {
-      val componentsAtPath = extractableComponents.getOrElse(currentPath, Vector[Component]())
+      val componentsAtPath = extractableComponents.getOrElse(currentPath, Vector[OMComponentWithPropertyPath[OMLensCodeComponent]]())
       val expectedSubContainerAtPath = containers.get(currentPath)
       val rulesAtPath      = RuleProvider.applyDefaultRulesForType(rules.getOrElse(currentPath, Vector[Rule]()), node.nodeType)
 
@@ -147,8 +150,8 @@ sealed abstract class ParseGear() {
 
 case class ParseAsModel(description: NodeDescription,
                         schema: SchemaRef,
-                        components: Map[FlatWalkablePath, Vector[Component]],
-                        containers: Map[FlatWalkablePath, SubContainer],
+                        components: Map[FlatWalkablePath, Vector[OMComponentWithPropertyPath[OMLensCodeComponent]]],
+                        containers: Map[FlatWalkablePath, OMSubContainer],
                         rules: Map[FlatWalkablePath, Vector[RuleWithFinder]],
                         listeners : Vector[Listener],
                         variableManager: VariableManager = VariableManager.empty,

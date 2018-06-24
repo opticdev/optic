@@ -20,13 +20,13 @@ class TestProvider extends Provider {
   def mockPackage(name: String, author: String, version: String, dependencies: Seq[String]) = {
     StagedPackage(JsObject(
       Seq(
-        "metadata" -> JsObject(
+        "info" -> JsObject(
           Seq(
-           "name"-> JsString(name),
-           "version"-> JsString(version),
-           "author"-> JsString(author),
-          )),
-        "dependencies" -> JsArray(dependencies.map(JsString))
+            "author"-> JsString(author),
+            "package"-> JsString(name),
+            "version"-> JsString(version),
+            "dependencies" -> JsArray(dependencies.map(JsString))
+          ))
       )
     ))
   }

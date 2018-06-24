@@ -1,10 +1,9 @@
 {
-  "metadata": {
+  "info": {
     "author": "optic",
-    "name": "rest",
+    "package": "rest",
     "version": "0.1.0"
   },
-  "dependencies": [],
   "schemas": [
     {
       "id": "route",

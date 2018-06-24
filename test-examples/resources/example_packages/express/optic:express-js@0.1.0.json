@@ -1,12 +1,12 @@
 {
-  "metadata": {
+  "info": {
     "author": "optic",
-    "name": "express-js",
-    "version": "0.1.0"
+    "package": "express-js",
+    "version": "0.1.0",
+    "dependencies": [
+      "optic:rest@0.1.0"
+    ]
   },
-  "dependencies": [
-    "optic:rest@0.1.0"
-  ],
   "schemas": [],
   "lenses": [
     {
@@ -17,53 +17,40 @@
         "language": "es7",
         "block": "app.get('url', function (req, res) {\n  //:callback\n})"
       },
-      "scope": "public",
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "get",
-            "rule": "entire",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "method"
-          ]
-        },
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "url",
-            "rule": "containing",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "url"
-          ]
-        }
-      ],
-      "rules": [],
-      "variables": [],
-      "subcontainers": [
-        {
-          "name": "callback",
-          "subcontainer": true,
-          "pulls": [],
-          "childrenRule": "any",
-          "schemaComponents": [
-            {
-              "type": "schema",
-              "propertyPath": [
-                "parameters"
-              ],
-              "schema": "optic:rest/parameter",
-              "mapUnique": true
+      "value": {
+        "method": {
+          "type": "token",
+          "at": {
+            "astType": "Identifier",
+            "range": {
+              "start": 4,
+              "end": 7
             }
-          ]
+          }
+        },
+        "url": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 8,
+              "end": 13
+            }
+          }
+        },
+        "parameters": {
+          "schemaRef": "optic:rest/parameter",
+          "unique": true,
+          "inContainer": "callback"
         }
-      ],
+      },
+      "variables": {
+        "req": "self",
+        "res": "self"
+      },
+      "containers": {
+        "callback": "any"
+      },
       "range": {
         "start": 2019,
         "end": 2287
@@ -78,35 +65,28 @@
         "block": "req.query.name"
       },
       "scope": "public",
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "name",
-            "rule": "entire",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "name"
-          ]
+      "value": {
+        "name": {
+          "type": "token",
+          "at": {
+            "astType": "Identifier",
+            "range": {
+              "start": 10,
+              "end": 14
+            }
+          }
         },
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "query",
-            "rule": "entire",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "in"
-          ]
+        "in": {
+          "type": "token",
+          "at": {
+            "astType": "Identifier",
+            "range": {
+              "start": 4,
+              "end": 9
+            }
+          }
         }
-      ],
-      "rules": [],
-      "variables": [],
-      "subcontainers": [],
+      },
       "range": {
         "start": 2336,
         "end": 2492
@@ -120,33 +100,22 @@
         "language": "es7",
         "block": "res.send(200, item)"
       },
-      "scope": "public",
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "200",
-            "rule": "entire",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "code"
-          ]
+      "value": {
+        "code": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 9,
+              "end": 12
+            }
+          }
         }
-      ],
-      "rules": [],
-      "variables": [
-        {
-          "in": "self",
-          "token": "item"
-        },
-        {
-          "in": "self",
-          "token": "res"
-        }
-      ],
-      "subcontainers": [],
+      },
+      "variables": {
+        "item": "self",
+        "res": "self"
+      },
       "range": {
         "start": 2536,
         "end": 2694

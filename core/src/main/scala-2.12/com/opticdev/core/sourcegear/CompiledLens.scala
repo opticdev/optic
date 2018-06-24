@@ -8,7 +8,8 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.core.utils.UUID
 import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.sdk.descriptions.{Lens, LensRef}
+import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json.{Format, JsString, JsSuccess, JsValue}
 
 import scala.util.hashing.MurmurHash3
@@ -20,7 +21,7 @@ import scala.util.Try
 case class CompiledLens(name: Option[String],
                         id: String,
                         packageRef: PackageRef,
-                        schemaRef: SchemaRef,
+                        schema: Either[SchemaRef, OMSchema],
                         enterOn: Set[AstType],
                         parser : ParseAsModel,
                         renderer : RenderGear,
@@ -50,4 +51,12 @@ case class CompiledLens(name: Option[String],
 
   def matches(entryNode: CommonAstNode)(implicit graph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: Project) =
     parser.matches(entryNode)
+
+  override def schemaRef: SchemaRef = {
+    if (schema.isLeft) {
+      schema.left.get
+    } else {
+      schema.right.get.schemaRef
+    }
+  }
 }

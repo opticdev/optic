@@ -10,16 +10,16 @@ import scala.util.{Success, Try}
 trait OpticPackage {
   val description: JsObject
 
-  val name: String = (description \ "metadata" \ "name").get.as[JsString].value
-  val author: String = (description \ "metadata" \ "author").get.as[JsString].value
-  val version: String = (description \ "metadata" \ "version").get.as[JsString].value
+  val name: String = (description \ "info" \ "package").get.as[JsString].value
+  val author: String = (description \ "info" \ "author").get.as[JsString].value
+  val version: String = (description \ "info" \ "version").get.as[JsString].value
 
   def packageId = author+":"+name
   def packageFull = packageId+"@"+version
   def packageRef: PackageRef = PackageRef(packageId, version)
 
   lazy val dependencies: Vector[PackageRef] = {
-    val asJsObject: JsArray = description.value.getOrElse("dependencies", JsArray.empty).as[JsArray]
+    val asJsObject: JsArray = (description \ "info" \ "dependencies" ).getOrElse(JsArray.empty).as[JsArray]
     asJsObject.value
       .collect { case s: JsString => PackageRef.fromString(s.value)}
       .collect { case Success(i) => i }

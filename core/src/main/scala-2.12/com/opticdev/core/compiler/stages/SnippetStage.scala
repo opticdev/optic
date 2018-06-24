@@ -9,14 +9,14 @@ import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping,
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.PathFinder
-import com.opticdev.parsers.graph.{CommonAstNode, AstType}
+import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.sdk.descriptions.{Lens, Snippet}
-
+import com.opticdev.sdk.opticmarkdown2.OMSnippet
+import com.opticdev.sdk.opticmarkdown2.lens.OMLens
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerStage[SnippetStageOutput] {
+class SnippetStage(val snippet: OMSnippet)(implicit lens: OMLens) extends CompilerStage[SnippetStageOutput] {
 
   lazy val parser = getParser()
 
@@ -63,7 +63,7 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     }
   }
 
-  def buildAstTree(fromSnippet: Snippet = snippet): (AstGraph, CommonAstNode) = {
+  def buildAstTree(fromSnippet: OMSnippet = snippet): (AstGraph, CommonAstNode) = {
     try {
       val parseResult = SourceParserManager.parseStringWithProxies(fromSnippet.block, fromSnippet.language).get
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
@@ -142,19 +142,19 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
 
   }
 
-  def stripContainerHooks(connected: ContainerMapping) : Snippet = {
+  def stripContainerHooks(connected: ContainerMapping) : OMSnippet = {
     val sorted = connected.toSeq.sortBy(_._2.node.range.start).reverse.map(_._1)
 
     val newBlock = sorted.foldLeft(snippet.block) {
       case (string, hook)=> StringUtils.replaceRange(string, Range(hook.range.start, hook.range.end), "")
     }
 
-    Snippet(snippet.language, newBlock)
+    OMSnippet(snippet.language, newBlock)
 
   }
 
   def missingContainers(containerMappings: ContainerMapping = Map()): Seq[String] = {
-    (lens.subcontainers.map(_.name).toSet diff containerMappings.keys.map(_.name).toSet)
+    (lens.subcontainerCompilerInputs.map(_.name).toSet diff containerMappings.keys.map(_.name).toSet)
       .toSeq.sorted
   }
 

@@ -7,11 +7,12 @@ import com.opticdev.core.compiler.stages.RenderFactoryStage
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
-import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.sdk.descriptions._
-import com.opticdev.sdk.descriptions.enums.{RuleEnums, VariableEnums}
+import com.opticdev.sdk.descriptions.enums.RuleEnums
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
+import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsObject, JsString}
 
@@ -20,17 +21,17 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
     lazy val testSchemaRef = SchemaRef.fromString("test:schemas@0.1.0/a").get
 
-    lazy val a = CompiledLens(Some("test"), "test", PackageRef.fromString("optic:test@0.1.0").get, testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
-    lazy val b = CompiledLens(Some("other"), "other", PackageRef.fromString("optic:test@0.1.0").get, testSchemaRef, Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
+    lazy val a = CompiledLens(Some("test"), "test", PackageRef.fromString("optic:test@0.1.0").get, Left(testSchemaRef), Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
+    lazy val b = CompiledLens(Some("other"), "other", PackageRef.fromString("optic:test@0.1.0").get, Left(testSchemaRef), Set(), DummyCompilerOutputs.parser, DummyCompilerOutputs.render)
 
 
-    val testSchema = Schema(testSchemaRef, JsObject.empty)
+    val testSchema = OMSchema(testSchemaRef, JsObject.empty)
 
     val sourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = Set()
       override val lensSet: LensSet = new LensSet(a, b)
       override val transformations: Set[Transformation] = Set()
-      override val schemas: Set[Schema] = Set(testSchema)
+      override val schemas: Set[OMSchema] = Set(testSchema)
       override val flatContext: FlatContext = FlatContext(None, Map(
         "optic:test" -> FlatContext(Some(a.packageRef), Map(
           "test" -> a,
@@ -54,7 +55,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
     it("if not set in options gets first matching") {
       val stagedNode = StagedNode(testSchemaRef, JsObject.empty)
       val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
-      assert(result.contains(b))
+      assert(result.contains(a))
     }
 
     it("will return none if gear is not found") {

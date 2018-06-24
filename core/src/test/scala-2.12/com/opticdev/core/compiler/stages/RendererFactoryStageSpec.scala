@@ -7,7 +7,6 @@ import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
-import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import com.opticdev.core.sourcegear.gears.RuleProvider
@@ -15,9 +14,12 @@ import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.parsers.graph.AstType
 import com.opticdev.parsers.rules._
-import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
+import com.opticdev.sdk.opticmarkdown2.lens
+import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec") with ParserUtils with GearUtils {
 
@@ -27,14 +29,12 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
-    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
-      CodeComponent(Seq("test"), StringFinder(Entire, "hello")),
-      CodeComponent(Seq("testA"), StringFinder(Entire, "world"))
+    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Map(
+      "test" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "hello")),
+      "testA" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "world"))
     ))
 
     val importSample = sample(block)
-
-    println(importSample)
 
     val renderer = new RenderFactoryStage(importSample, parseGear).run.renderGear
     val result = renderer.render(JsObject(Seq("test" -> JsString("world"), "testA" -> JsString("hello"))))
@@ -48,9 +48,9 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
-    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
-      CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
-      CodeComponent(Seq("pathTo"), StringFinder(Containing, "world"))
+    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Map(
+      "definedAs" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "hello")),
+      "pathTo" -> OMLensCodeComponent(Literal, OMStringFinder(Containing, "world"))
     ))
 
     val importSample = sample(block)
@@ -64,13 +64,13 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
   lazy val callbackFixture = new {
     val childGear = {
       val block = "start(thing)"
-      implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
-        CodeComponent(Seq("operation"), StringFinder(Entire, "thing"))
+      implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Map(
+        "operation" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "thing"))
       ))
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      CompiledLens(Some("do"), "do", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a"), Set(), parseGear, renderer)
+      CompiledLens(Some("do"), "do", PackageRef.fromString("optic:test").get, Left(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a")), Set(AstType("CallExpression", "es7")), parseGear, renderer)
     }
 
     val block =
@@ -78,20 +78,23 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
         | //:callback
         |})""".stripMargin
 
-    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
-      CodeComponent(Seq("arg1"), StringFinder(Containing, "value"))
-    ), subContainers = Vector(
-      SubContainer("callback", Vector(), SameAnyOrderPlus, Vector(
-        SchemaComponent(Seq("properties"), childGear.schemaRef, true, None, None)
-      ))
+    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Map(
+      "arg1" ->  OMLensCodeComponent(Literal, OMStringFinder(Containing, "value")),
+      "properties" -> OMLensSchemaComponent(childGear.schemaRef, true, None, Some("callback"))
+    ), subContainers = Map(
+      "callback" -> Any
     ))
+
+
+    val parsedSample = sample(block)
+    val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, null)
 
     val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-    val thisGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b"), Set(), parseGear, renderer)
+    val thisGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, Left(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b")), Set(AstType("CallExpression", "es7")), parseGear, renderer)
 
-    val a = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b"), JsObject.empty)
-    val b = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a"), JsObject.empty)
+    val a = OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b"), JsObject.empty)
+    val b = OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a"), JsObject.empty)
 
     val sourceGear : SourceGear = new SourceGear {
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
@@ -120,8 +123,6 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
         JsObject(Seq("operation" -> JsString("third")))
       ))
     )))(sourceGear, context = sourceGear.flatContext)
-
-    println(result)
 
     val expected = """call("TEST VARIABLE", function () {
                      |  start(first)
@@ -183,9 +184,9 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
-    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
-      CodeComponent(Seq("name"), StringFinder(Entire, "thing")),
-    ), variables = Vector(Variable("variable", VariableEnums.Self)))
+    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Map(
+      "name" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "thing"))
+    ), variables = Map("variable" -> Self))
 
     val importSample = sample(block)
 

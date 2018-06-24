@@ -12,7 +12,7 @@ import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tr
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
@@ -68,16 +68,16 @@ trait GearUtils {
 
     val compiled = Compiler.setup(description).execute
     val compiledGears = compiled.gears.map(i=> {
-      i.asInstanceOf[CompiledLens].copy(schemaRef = SchemaRef(Some(description.packageRef), i.schemaRef.id))
+      i.asInstanceOf[CompiledLens].copy(schema = Left(SchemaRef(Some(description.packageRef), i.schemaRef.id)))
     })
 
     if (compiled.isFailure) throw new Error("Compiling description failed. Test Stopped")
 
     outerLensSet.addLenses(compiledGears.toSeq:_*)
-    
+
     val lenses: Seq[(String, SGExportableLens)] = outerLensSet.listLenses.map(i=> (i.id, i)).toSeq
 
-    val schemas: Seq[(String, Schema)] = description.schemas.map(i=> (i.schemaRef.id, i))
+    val schemas: Seq[(String, OMSchema)] = description.schemas.map(i=> (i.schemaRef.id, i))
 
     val t = description.transformations
 

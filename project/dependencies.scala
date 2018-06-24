@@ -24,8 +24,10 @@ object Dependencies {
     "com.github.pathikrit" % "better-files_2.12" % betterFilesVersion,
     "com.github.pathikrit" %% "better-files-akka" % betterFilesVersion,
 
+    "org.scala-lang.modules" %% "scala-xml" % "1.1.0",
 
-  //graph
+
+    //graph
     "org.scala-graph" %% "graph-core" % "1.12.3",
     "org.scala-graph" %% "graph-constrained" % "1.12.3"
   )

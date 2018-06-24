@@ -6,9 +6,10 @@ object JsonUtils {
 
   def removeReservedFields(value: JsValue) : JsValue = value match {
     case a: JsArray => JsArray(a.value.map(i=> removeReservedFields(i)))
-    case a: JsObject => JsObject(a.fields.filterNot(_._1.startsWith("_")).map(i=> (i._1, removeReservedFields(i._2))))
+    case a: JsObject => JsObject(a.fields.filterNot(i=> i._1.startsWith("_") && i._1 != "_valueFormat").map(i=> (i._1, removeReservedFields(i._2))))
     case _ => value
   }
+
 
   def filterPaths(source: JsObject, predicate: (JsValue)=> Boolean, deep: Boolean = false, startingPath: Seq[String] = Seq()) : Set[Seq[String]] = {
     val matchedPaths = source.fieldSet.collect {

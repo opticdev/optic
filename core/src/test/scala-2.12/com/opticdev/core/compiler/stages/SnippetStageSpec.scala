@@ -4,25 +4,27 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.core.compiler.errors._
 import org.scalatest.{FunSpec, PrivateMethodTester}
-import com.opticdev.sdk.descriptions.{Lens, Snippet}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.containers.ContainerHook
+import com.opticdev.sdk.opticmarkdown2.OMSnippet
+import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import play.api.libs.json.JsObject
 
 import scala.util.Try
 
 class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
-  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, null, null, null, Vector(), null, initialValue = None)
+  implicit val lens : OMLens = OMLens(Some("Example"), "example", null, Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, null)
 
   describe("Finds the correct parser") {
     it("when it exists") {
-      val snippetBuilder = new SnippetStage(Snippet("es7", "function add (a, b) { a+b }"))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", "function add (a, b) { a+b }"))
       assert(snippetBuilder.getParser().languageName == "es7")
     }
 
     it("fails when it does not") {
-      val snippetBuilder = new SnippetStage(Snippet("MadeUp", "NOT REAL"))
+      val snippetBuilder = new SnippetStage(OMSnippet("MadeUp", "NOT REAL"))
       assertThrows[ParserNotFound] {
         snippetBuilder.getParser()
       }
@@ -31,13 +33,13 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
   describe("parses snippet") {
     it("if it is valid") {
-      val snippetBuilder = new SnippetStage(Snippet("es7", "function add (a, b) { a+b }"))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", "function add (a, b) { a+b }"))
       snippetBuilder.buildAstTree()
     }
 
     it("fails on snippet errors") {
       assertThrows[SyntaxError] {
-        val snippetBuilder = new SnippetStage(Snippet("es7", "function whoops { a+b }"))
+        val snippetBuilder = new SnippetStage(OMSnippet("es7", "function whoops { a+b }"))
         snippetBuilder.buildAstTree()
       }
     }
@@ -47,7 +49,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
   describe("calculates valid enterOn and MatchType") {
 
     def parseResult(codeBlock: String) = {
-      val snippetBuilder = new SnippetStage(Snippet("es7", codeBlock))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", codeBlock))
 
       val parser = snippetBuilder.getParser()
       val (ast, root) = snippetBuilder.buildAstTree()
@@ -90,7 +92,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", example))
       val containerHooks = snippetBuilder.findContainerHooks
 
       assert(containerHooks == Vector(
@@ -109,7 +111,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |</div>
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", example))
       val containerHooks = snippetBuilder.findContainerHooks
 
       assert(containerHooks == Vector(
@@ -126,7 +128,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", example))
       assertThrows[DuplicateContainerNamesInSnippet] {
         snippetBuilder.findContainerHooks
       }
@@ -142,7 +144,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", example))
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
       val hookMap = snippetBuilder.connectContainerHooksToAst(containerHooks, ast, root)
@@ -163,7 +165,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |</div>
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", example))
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
       val hookMap = snippetBuilder.connectContainerHooksToAst(containerHooks, ast, root)
@@ -183,7 +185,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", example))
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
       assertThrows[ContainerDefinitionConflict] {
@@ -204,7 +206,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", example))
       val containerHooks = snippetBuilder.findContainerHooks
       val (ast, root) = snippetBuilder.buildAstTree()
       val mapping = snippetBuilder.connectContainerHooksToAst(containerHooks, ast, root)
@@ -236,7 +238,7 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
           |}
         """.stripMargin
 
-      val snippetBuilder = new SnippetStage(Snippet("es7", example))
+      val snippetBuilder = new SnippetStage(OMSnippet("es7", example))
       val output = snippetBuilder.run
       assert(output.containerMapping.size == 2)
     }
@@ -250,19 +252,19 @@ class SnippetStageSpec extends TestBase with PrivateMethodTester {
         |}
       """.stripMargin
 
-    val snippetBuilder = new SnippetStage(Snippet("es7", example))
+    val snippetBuilder = new SnippetStage(OMSnippet("es7", example))
     val result = snippetBuilder.run
     assert(result.enterOn.head.name == "SwitchCase")
   }
 
   it("works end to end single node") {
-    val snippetBuilder = new SnippetStage(Snippet("es7", "function add (a, b) { a+b }"))
+    val snippetBuilder = new SnippetStage(OMSnippet("es7", "function add (a, b) { a+b }"))
     val outputTry = Try(snippetBuilder.run)
     assert(outputTry.isSuccess)
   }
 
   it("works end to end multi node") {
-    val snippetBuilder = new SnippetStage(Snippet("es7", "function subtract(a,b) { return a-b } function add(a,b) { return a+b }"))
+    val snippetBuilder = new SnippetStage(OMSnippet("es7", "function subtract(a,b) { return a-b } function add(a,b) { return a+b }"))
     val outputTry = Try(snippetBuilder.run)
     assert(outputTry.isSuccess)
   }

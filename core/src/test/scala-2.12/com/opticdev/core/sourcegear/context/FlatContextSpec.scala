@@ -4,7 +4,7 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.{CompiledLens, SGConfig, SGConstructor, SourceGear}
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.{PackageManager, TestPackageProviders}
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import org.scalatest.FunSpec
 
 import scala.concurrent.duration._
@@ -32,8 +32,8 @@ class FlatContextSpec extends TestBase with TestPackageProviders {
     assert(expressJS.resolve("route").get.isInstanceOf[CompiledLens])
     assert(expressJS.resolve("/route").get.isInstanceOf[CompiledLens])
     assert(expressJS.resolve("//route").get.isInstanceOf[CompiledLens])
-    assert(expressJS.resolve("optic:rest/route").get.isInstanceOf[Schema])
-    assert(expressJS.resolve("optic:rest//route").get.isInstanceOf[Schema])
+    assert(expressJS.resolve("optic:rest/route").get.isInstanceOf[OMSchema])
+    assert(expressJS.resolve("optic:rest//route").get.isInstanceOf[OMSchema])
   }
 
   it("will not find non-existent paths") {
@@ -53,6 +53,6 @@ class FlatContextSpec extends TestBase with TestPackageProviders {
   it("can next prefixed paths") {
     val flatContext = FlatContextBuilder.fromDependencyTree(dt)
     val doublePrefixed = flatContext.prefix("optic:express-js").prefix("optic:rest")
-    assert(doublePrefixed.resolve("route").get.isInstanceOf[Schema])
+    assert(doublePrefixed.resolve("route").get.isInstanceOf[OMSchema])
   }
 }

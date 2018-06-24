@@ -24,7 +24,9 @@ object ExampleChanges extends TestBase with TestPackageProviders {
       """
         | [{
         |		"schema": {
-        |			"title": "Route",
+        |     "schemaRef": "optic:route/1.0.0",
+        |     "definition": {
+        |       "title": "Route",
         |			"version": "1.0.0",
         |			"type": "object",
         |			"required": ["method", "url"],
@@ -41,6 +43,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |						"$ref": "#/definitions/parameter"
         |					}
         |				}
+        |     }
         |			},
         |			"definitions": {
         |				"parameter": {

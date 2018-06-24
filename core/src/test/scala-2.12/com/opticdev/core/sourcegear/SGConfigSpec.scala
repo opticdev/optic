@@ -2,7 +2,6 @@ package com.opticdev.core.sourcegear
 
 import better.files.File
 import com.opticdev.core.sourcegear.project.config.ProjectFile
-import com.opticdev.sdk.descriptions.{Schema, SchemaColdStorage}
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 import boopickle.Default._
@@ -35,7 +34,7 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
     }
 
     it("can generate a hexadecimal from hash") {
-      assert(sgConfig.hashString == "a1a004d6")
+      assert(sgConfig.hashString == "547ca283")
     }
 
     it("can inflate to a sourcegear instance") {

@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.context
 import com.opticdev.common.{PackageRef, SGExportable}
 import com.opticdev.core.sourcegear.{CompiledLens, SGConfig, SGExportableLens, SourceGear}
 import com.opticdev.opm.context.Tree
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.util.Try
 
@@ -44,10 +44,10 @@ case class PrefixedFlatContent(prefix: String, flatContext: FlatContextBase) ext
 }
 
 object FlatContextBuilder {
-  def fromDependencyTree(dependencyTree: Tree, packageRef: Option[PackageRef] = None)(implicit schemas: Set[Schema], compiledLenses: Set[SGExportableLens]) : FlatContext = {
+  def fromDependencyTree(dependencyTree: Tree, packageRef: Option[PackageRef] = None)(implicit schemas: Set[OMSchema], compiledLenses: Set[SGExportableLens]) : FlatContext = {
 
-    val includedSchemas: Set[(String, Schema)] = schemas.collect {
-      case s: Schema if s.schemaRef.packageRef.contains(packageRef.getOrElse(None)) =>
+    val includedSchemas: Set[(String, OMSchema)] = schemas.collect {
+      case s: OMSchema if s.schemaRef.packageRef.contains(packageRef.getOrElse(None)) =>
         (s.schemaRef.id, s)
     }
     val includedLenses: Set[(String, CompiledLens)] = compiledLenses.collect {

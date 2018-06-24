@@ -2,7 +2,6 @@ package com.opticdev.core.sourcegear.accumulate
 
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.SGContext
-import com.opticdev.sdk.descriptions.SchemaComponent
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelField}
 import com.opticdev.parsers.AstGraph
 import play.api.libs.json._
@@ -15,18 +14,19 @@ import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InCurrentLens
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLensSchemaComponent}
 sealed trait Listener {
   def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext) : ModelField
   val schema: SchemaRef
   val mapToSchema: SchemaRef
 }
 
-case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: SchemaRef, packageId: String) extends Listener {
+case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLensSchemaComponent], mapToSchema: SchemaRef, packageId: String) extends Listener {
 
-  override val schema = schemaComponent.schema
+  override val schema = schemaComponent.component.schemaRef
   override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): ModelField = {
 
-    val resolvedSchema = schemaComponent.resolvedSchema(packageId)(sourceGearContext.sourceGear)
+    val resolvedSchema = schemaComponent.component.resolvedSchema(packageId)(sourceGearContext.sourceGear)
 
     val asModelNode : ModelNode = modelNode match {
       case l: LinkedModelNode[CommonAstNode] => l.flatten
@@ -39,11 +39,11 @@ case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: Sche
     val containerMapping = asModelNode.asInstanceOf[ModelNode].containerMapping
     val addToNodes = {
       val found = targetNodes
-        .filter(n=> LocationEvaluation.matches(schemaComponent.location.get, n.astRoot, astRoot, containerMapping))
+        .filter(n=> LocationEvaluation.matches(schemaComponent.component.locationForCompiler.get, n.astRoot, astRoot, containerMapping))
         .sortBy(_.astRoot.range.start)
 
       //account for different map schema types
-      if (schemaComponent.mapUnique) {
+      if (schemaComponent.component.unique) {
         import com.opticdev.core.utils.VectorDistinctBy.distinctBy
         distinctBy[BaseModelNode, JsValue](found)((a)=> a.expandedValue())
       } else {
@@ -51,11 +51,11 @@ case class MapSchemaListener(schemaComponent: SchemaComponent, mapToSchema: Sche
       }
     }
 
-    if (schemaComponent.toMap.isDefined) {
+    if (schemaComponent.component.toMap.isDefined) {
       val keyValues = addToNodes.map {
         n => {
           val value = n.expandedValue()
-          val keyOption = new PropertyPathWalker(value).getProperty(schemaComponent.toMap.get.split("\\."))
+          val keyOption = new PropertyPathWalker(value).getProperty(schemaComponent.component.toMap.get.split("\\."))
             .filterNot(i => i.isInstanceOf[JsObject] || i.isInstanceOf[JsArray] || i.isInstanceOf[JsBoolean] || i == JsNull)
             .map {
               case JsString(s) => s

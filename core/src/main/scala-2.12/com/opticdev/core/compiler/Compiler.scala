@@ -11,7 +11,7 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Context, PackageContext}
 import com.opticdev.opm.DependencyTree
 import com.opticdev.opm.packages.OpticMDPackage
-import com.opticdev.sdk.descriptions.{Lens, Schema}
+import com.opticdev.sdk.opticmarkdown2.lens.OMLens
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
@@ -39,7 +39,7 @@ object Compiler {
     }
   }
 
-  class CompileWorker(sourceLens: Lens) {
+  class CompileWorker(sourceLens: OMLens) {
     def compile()(implicit packageContext: Context, completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator, debug: Boolean = false): LensCompilerOutput = {
       implicit val lens = sourceLens
 
@@ -51,19 +51,15 @@ object Compiler {
       val snippetBuilder = new SnippetStage(lens.snippet)
       val snippetOutput = Try(snippetBuilder.run)
       if (snippetOutput.isSuccess) {
-        implicit val variableManager = new VariableManager(lens.variables, snippetOutput.get.parser.identifierNodeDesc)
-        implicit val subcontainersManager = new SubContainerManager(lens.subcontainers, snippetOutput.get.containerMapping)
-
-        val qualifySchema = (pr: PackageRef, sr: SchemaRef) => {
-          SDKObjectsResolvedImplicits.qualifySchema(pr, sr)
-        }
+        implicit val variableManager = new VariableManager(lens.variablesCompilerInput, snippetOutput.get.parser.identifierNodeDesc)
+        implicit val subcontainersManager = new SubContainerManager(lens.subcontainerCompilerInputs, snippetOutput.get.containerMapping)
 
         snippetOutput.get.matchType match {
           case MatchType.Single => {
             val compiledTry = for {
               snippet <- snippetOutput
               finderStageOutput <- Try(new FinderStage(snippet).run)
-              parser <- Try(new ParserFactoryStage(snippet, finderStageOutput, qualifySchema).run)
+              parser <- Try(new ParserFactoryStage(snippet, finderStageOutput).run)
               renderer <- Try(new RenderFactoryStage(snippetOutput.get, parser.parseGear).run)
               compiledLens <- Try(CompiledLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetOutput.get.enterOn, parser.parseGear.asInstanceOf[ParseAsModel], renderer.renderGear))
             } yield compiledLens
@@ -77,7 +73,7 @@ object Compiler {
           }
 
           case MatchType.Multi => {
-            val compiledTry = Try(new MultiNodeParserFactoryStage(snippetOutput.get, qualifySchema).run)
+            val compiledTry = Try(new MultiNodeParserFactoryStage(snippetOutput.get).run)
             if (compiledTry.isSuccess) {
               Success(sourceLens, compiledTry.get.asInstanceOf[SGExportableLens], if (debug) Some(DebugOutput(validationOutput, snippetOutput, Try(new FinderStage(snippetOutput.get).run), variableManager)) else None)
             } else {

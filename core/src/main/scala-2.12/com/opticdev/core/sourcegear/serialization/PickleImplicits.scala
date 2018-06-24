@@ -16,8 +16,10 @@ import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, Literal, NotSupported, Token}
 import com.opticdev.sdk.{BoolProperty, _}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
-import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
 import com.opticdev.sdk.descriptions.transformation.Transformation
+import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.{OMContainerBase, OMSubContainer}
+import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.opticmarkdown2.schema.{OMSchema, OMSchemaColdStorage}
 import play.api.libs.json.{Format, JsObject, JsValue, Json}
 
 object PickleImplicits extends PicklerHelper {
@@ -52,6 +54,32 @@ object PickleImplicits extends PicklerHelper {
     }
   }
 
+  implicit object OMSchemaPickler extends P[OMSchema] {
+    @inline override def pickle(value: OMSchema)(implicit state: PickleState) = {
+      import com.opticdev.sdk.opticmarkdown2.Serialization.omschemaFormat
+      state.enc.writeString(Json.toJson[OMSchema](value).toString())
+    }
+    @inline override def unpickle(implicit state: UnpickleState): OMSchema = {
+      import com.opticdev.sdk.opticmarkdown2.Serialization.omschemaFormat
+      val input = state.dec.readString
+      Json.fromJson[OMSchema](Json.parse(input).as[JsObject]).get
+    }
+  }
+
+//  implicit object OMEitherSchemaPickler extends P[Either[SchemaRef, OMSchema]] {
+//    override def pickle(obj: Either[SchemaRef, OMSchema])(implicit state: PickleState): Unit = {
+//      import com.opticdev.sdk.opticmarkdown2.Serialization._
+//      val jsonString = Json.toJson[Either[SchemaRef, OMSchema]](obj).toString()
+//      state.enc.writeString(jsonString)
+//    }
+//
+//    override def unpickle(implicit state: UnpickleState): Either[SchemaRef, OMSchema] = {
+//      import com.opticdev.sdk.opticmarkdown2.Serialization._
+//      val input = state.dec.readString
+//      Json.fromJson[Either[SchemaRef, OMSchema]](Json.parse(input).as[JsObject]).get
+//    }
+//  }
+
   implicit val childrenRuleTypeEnumPickler = {
     import com.opticdev.parsers.rules._
     compositePickler[ChildrenRuleTypeEnum]
@@ -77,10 +105,9 @@ object PickleImplicits extends PicklerHelper {
   }
 
   implicit val componentPickler = {
-    import com.opticdev.sdk.descriptions.{CodeComponent, Component, SchemaComponent}
-    compositePickler[Component]
-      .addConcreteType[CodeComponent]
-      .addConcreteType[SchemaComponent]
+    compositePickler[OMLensComponent]
+      .addConcreteType[OMLensCodeComponent]
+      .addConcreteType[OMLensSchemaComponent]
   }
 
   implicit val stringFinderEnumPickler = {
@@ -102,17 +129,13 @@ object PickleImplicits extends PicklerHelper {
   }
 
   implicit val containerPickler = {
-    compositePickler[ContainerBase]
-      .addConcreteType[Container]
-      .addConcreteType[SubContainer]
+    compositePickler[OMContainerBase]
+      .addConcreteType[OMSubContainer]
   }
 
   implicit val finderPickler = {
-    import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
-    compositePickler[Finder]
-      .addConcreteType[StringFinder]
-      .addConcreteType[RangeFinder]
-      .addConcreteType[NodeFinder]
+    compositePickler[OMFinder]
+      .addConcreteType[OMLensNodeFinder]
   }
 
   import com.opticdev.sdk.{PropertyValue, StringProperty, NumberProperty, BoolProperty, ObjectProperty, ArrayProperty}
@@ -134,20 +157,22 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.name)
       state.pickle(value.id)
       state.pickle(value.packageRef)
-      state.pickle(value.schemaRef)
+      state.pickle(value.schema)
       state.pickle(value.enterOn)
       state.pickle(value.parser)
       state.pickle(value.renderer)
+      state.pickle(value.internal)
     }
     override def unpickle(implicit state: UnpickleState): CompiledLens = {
       CompiledLens(
         state.unpickle[Option[String]],
         state.unpickle[String],
         state.unpickle[PackageRef],
-        state.unpickle[SchemaRef],
+        state.unpickle[Either[SchemaRef, OMSchema]],
         state.unpickle[Set[AstType]],
         state.unpickle[ParseAsModel],
-        state.unpickle[RenderGear]
+        state.unpickle[RenderGear],
+        state.unpickle[Boolean]
       )
     }
   }
@@ -155,7 +180,7 @@ object PickleImplicits extends PicklerHelper {
   object FlatContextTreePickler {
     implicit val treePickler = compositePickler[SGExportable]
     treePickler.addConcreteType[FlatContext]
-      .addConcreteType[Schema]
+      .addConcreteType[OMSchema]
       .addConcreteType[CompiledLens]
   }
 
@@ -166,7 +191,7 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.name)
       state.pickle(value.id)
       state.pickle(value.packageRef)
-      state.pickle(value.schemaRef)
+      state.pickle(value.schema)
       state.pickle(value.enterOn)
       state.pickle(value.childLenses)
     }
@@ -175,7 +200,7 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[Option[String]],
         state.unpickle[String],
         state.unpickle[PackageRef],
-        state.unpickle[SchemaRef],
+        state.unpickle[Either[SchemaRef, OMSchema]],
         state.unpickle[Set[AstType]],
         state.unpickle[ParserRef],
         state.unpickle[Seq[CompiledLens]]
@@ -208,7 +233,7 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[FlatContext],
         state.unpickle[Set[ParserRef]],
         state.unpickle[Set[SGExportableLens]],
-        state.unpickle[Set[SchemaColdStorage]],
+        state.unpickle[Set[OMSchemaColdStorage]],
         state.unpickle[Set[Transformation]]
       )
     }

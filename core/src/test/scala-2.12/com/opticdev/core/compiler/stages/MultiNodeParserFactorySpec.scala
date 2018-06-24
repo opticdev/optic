@@ -16,10 +16,9 @@ import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.rules.{Any, ChildrenRuleTypeEnum}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Containing
-import com.opticdev.sdk.descriptions.enums.VariableEnums
-import com.opticdev.sdk.descriptions.finders.StringFinder
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.util.Try
@@ -83,7 +82,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
       override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
       override val transformations: Set[Transformation] = Set()
       override val flatContext: FlatContext = FlatContext(None, Map())
-      override val schemas: Set[Schema] = childLenses.get.map(i=> Schema(i.schemaRef, JsObject.empty)).toSet
+      override val schemas: Set[OMSchema] = childLenses.get.map(i=> OMSchema(i.schemaRef, JsObject.empty)).toSet
       override val lensSet: LensSet = new LensSet(childLenses.get:_*)
     }
 
@@ -133,7 +132,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
           "example" -> multiNodeLens
         ))
       ) ++ importSG.flatContext.mapping)
-      override val schemas: Set[Schema] = importSG.schemas ++ multiNodeLens.childLenses.map(i=> Schema(i.schemaRef, JsObject.empty)).toSet
+      override val schemas: Set[OMSchema] = importSG.schemas ++ multiNodeLens.childLenses.map(i=> OMSchema(i.schemaRef, JsObject.empty)).toSet
       override val lensSet: LensSet = new LensSet((multiNodeLens.childLenses ++ importSG.lensSet.listLenses): _*)
     }
 
@@ -337,7 +336,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
           "example" -> multiNodeLens
         ))
       ))
-      override val schemas: Set[Schema] = Set(Schema(multiNodeLens.schemaRef, JsObject.empty)) ++ multiNodeLens.childLenses.map(i => Schema(i.schemaRef, JsObject.empty)).toSet
+      override val schemas: Set[OMSchema] = Set(OMSchema(multiNodeLens.schemaRef, JsObject.empty)) ++ multiNodeLens.childLenses.map(i => OMSchema(i.schemaRef, JsObject.empty)).toSet
       override val lensSet: LensSet = new LensSet(multiNodeLens)
     }
 

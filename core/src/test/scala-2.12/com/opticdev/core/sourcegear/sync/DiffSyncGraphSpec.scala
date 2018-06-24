@@ -7,7 +7,7 @@ import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.SGConstructor
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
-import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.opm
@@ -145,6 +145,9 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
 
+    val multiModelNodes = f.results.astGraph.nodes.collect {
+      case x if x.value.isInstanceOf[MultiModelNode] => x.value.asInstanceOf[MultiModelNode].expandedValue()
+    }
 
     assert(diff.noErrors)
     assert(diff.filePatches.size == 1)

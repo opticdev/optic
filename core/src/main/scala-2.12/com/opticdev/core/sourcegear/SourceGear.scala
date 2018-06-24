@@ -5,7 +5,7 @@ import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.annotations.AnnotationParser
 import com.opticdev.core.sourcegear.context.FlatContext
-import com.opticdev.sdk.descriptions.{LensRef, Schema}
+import com.opticdev.sdk.descriptions
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.core.sourcegear.transformations.TransformationCallerImpl
 import com.opticdev.marvin.common.ast.NewAstNode
@@ -14,6 +14,8 @@ import com.opticdev.parsers
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.{Transformation, TransformationRef}
+import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge
@@ -25,7 +27,7 @@ abstract class SourceGear {
 
   val lensSet: LensSet
 
-  val schemas: Set[Schema]
+  val schemas: Set[OMSchema]
 
   val transformations: Set[Transformation]
 
@@ -37,12 +39,12 @@ abstract class SourceGear {
 
   def isEmpty = parsers.isEmpty && lensSet.listLenses.isEmpty && schemas.isEmpty && schemas.isEmpty
 
-  def findSchema(schemaRef: SchemaRef) : Option[Schema] = {
+  def findSchema(schemaRef: SchemaRef) : Option[OMSchema] = {
     val availible = schemas.filter(s=>
       s.schemaRef.packageRef.map(_.packageId) == schemaRef.packageRef.map(_.packageId)
       && s.schemaRef.id == schemaRef.id
     )
-    val schemaVersion = SemverHelper.findVersion(availible, (s: Schema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))
+    val schemaVersion = SemverHelper.findVersion(availible, (s: OMSchema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))
     schemaVersion.map(_._2)
   }
 
@@ -50,7 +52,7 @@ abstract class SourceGear {
 
     val available: Set[SGExportableLens] = lensSet.listLenses.filter(lens=>
       lensRef.packageRef.map(_.packageId).contains(lens.packageRef.packageId)
-        && lens.id.contains(lensRef.id)
+        && lens.id == lensRef.id
     )
 
     val lensVersion = SemverHelper.findVersion(available, (l: SGExportableLens) => l.packageRef, lensRef.packageRef.map(_.version).getOrElse("latest"))
@@ -122,7 +124,7 @@ case object UnloadedSourceGear extends SourceGear {
 }
 
 object SourceGear {
-  def default: SourceGear = new SourceGear {
+  def empty: SourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = Set()
     override val lensSet = new LensSet()
     override val schemas = Set()

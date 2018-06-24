@@ -3,9 +3,9 @@ package com.opticdev.opm.context
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.{PackageManager, TestPackageProviders, TestProvider}
-import com.opticdev.sdk.descriptions
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.descriptions.{Lens, Schema}
+import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import org.scalatest.{BeforeAndAfter, FunSpec}
 
 class PackageContextSpec extends FunSpec with TestPackageProviders {
@@ -22,7 +22,7 @@ class PackageContextSpec extends FunSpec with TestPackageProviders {
       it("can resolve a property from a dependency") {
         val context: Option[PackageContext] = treeContext("optic:express-js@0.1.0")
         val propertyOption = treeContext("optic:express-js@0.1.0").get("optic:rest/parameter")
-        assert(propertyOption.get.asInstanceOf[Schema].name == "Parameter")
+        assert(propertyOption.get.asInstanceOf[OMSchema].name == "Parameter")
       }
 
       it("can resolve a property within self") {
@@ -46,12 +46,12 @@ class PackageContextSpec extends FunSpec with TestPackageProviders {
 
       it("schema") {
         val result = treeContext("optic:mongoose@0.1.0").get("schema")
-        assert(result.exists(_.isInstanceOf[Schema]))
+        assert(result.exists(_.isInstanceOf[OMSchema]))
       }
 
       it("lenses") {
         val result = treeContext("optic:mongoose@0.1.0").get("define-model")
-        assert(result.exists(_.isInstanceOf[Lens]))
+        assert(result.exists(_.isInstanceOf[OMLens]))
       }
 
       it("transformations") {

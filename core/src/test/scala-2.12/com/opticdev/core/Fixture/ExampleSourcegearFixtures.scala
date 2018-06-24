@@ -5,12 +5,13 @@ import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.compiler.stages.RenderFactoryStage
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
+import com.opticdev.parsers.graph.AstType
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.parsers.rules._
-import com.opticdev.sdk.descriptions.enums.VariableEnums
-import com.opticdev.sdk.descriptions.finders.StringFinder
+import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json.JsObject
 
 object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtils {
@@ -18,15 +19,15 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
   def routeQueryResponse = new {
     val responseGear = {
       val block = "response.send(thing)"
-      implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
-        CodeComponent(Seq("operation"), StringFinder(Entire, "thing"))
+      implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Map(
+        "operation" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "thing"))
       ),
-        variables = Vector(Variable("response", VariableEnums.Scope))
+        variables = Map("response" -> Scope)
       )
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      CompiledLens(Some("do"), "do", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response"), Set(), parseGear, renderer)
+      CompiledLens(Some("do"), "do", PackageRef.fromString("optic:test").get, Left(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response")), Set(AstType("MemberExpression", "es7")), parseGear, renderer)
     }
 
     val queryGear = {
@@ -40,19 +41,22 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
           |  }
           |})""".stripMargin
       implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block,
-        Vector(
-          CodeComponent(Seq("fields"), StringFinder(Entire, "{}"))
+        Map(
+          "fields" -> OMLensCodeComponent(ObjectLiteral, OMStringFinder(Entire, "{}"))
         ),
-        variables = Vector(Variable("err", VariableEnums.Self), Variable("item", VariableEnums.Self)),
-        subContainers = Vector(
-          SubContainer("success", Vector(), Any, Vector()),
-          SubContainer("failure", Vector(), Any, Vector())
+        variables = Map(
+          "err" -> Self,
+          "item" -> Self
+        ),
+        subContainers = Map(
+          "success" -> Any,
+          "failure" -> Any
         )
       )
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      CompiledLens(Some("query"), "queryLens", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), Set(), parseGear, renderer)
+      CompiledLens(Some("query"), "queryLens", PackageRef.fromString("optic:test").get, Left(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query")), Set(AstType("CallExpression", "es7")), parseGear, renderer)
     }
 
     val block =
@@ -60,24 +64,28 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
         | //:callback
         |})""".stripMargin
 
-    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block, Vector(
-      CodeComponent(Seq("arg1"), StringFinder(Containing, "value"))
-    ),
-      variables = Vector(Variable("request", VariableEnums.Self), Variable("response", VariableEnums.Self)),
-      subContainers = Vector(
-      SubContainer("callback", Vector(), SameAnyOrderPlus, Vector(
-        SchemaComponent(Seq("properties"), responseGear.schemaRef, true, None, None)
-      ))
-    ))
+    implicit val (parseGear, lens) = parseGearFromSnippetWithComponents(block,
+      Map(
+        "arg1" -> OMLensCodeComponent(Literal, OMStringFinder(Containing, "value")),
+        "properties" -> OMLensSchemaComponent(responseGear.schemaRef, unique = true)
+      ),
+      Map(
+        "callback" -> SameAnyOrderPlus
+      ),
+      Map(
+        "request" -> Self,
+        "response" -> Self
+      )
+    )
 
     val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-    val routeGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), Set(), parseGear, renderer)
+    val routeGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, Left(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route")), Set(AstType("CallExpression", "es7")), parseGear, renderer)
 
     val schemaSet = Seq(
-      Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), JsObject.empty),
-      Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response"), JsObject.empty),
-      Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), JsObject.empty)
+      OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "query"), JsObject.empty),
+      OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "response"), JsObject.empty),
+      OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), JsObject.empty)
     )
 
     val sourceGear : SourceGear = new SourceGear {

@@ -1,6 +1,6 @@
 {
-  "metadata": {
-    "name": "reduxaction",
+  "info": {
+    "package": "reduxaction",
     "version": "0.1.0",
     "author": "optic"
   },

@@ -7,14 +7,12 @@ import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import com.opticdev.core.sourcegear.annotations.SourceAnnotation
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import com.opticdev.sdk.descriptions.finders.StringFinder
-import com.opticdev.sdk.descriptions.{ChildrenRule, CodeComponent, PropertyRule, SubContainer}
 import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.rules.Any
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
-import com.opticdev.sdk.descriptions.enums.Token
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
+import com.opticdev.sdk.opticmarkdown2.lens._
 import play.api.libs.json.{JsArray, JsNumber, JsObject, JsString}
 
 class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {
@@ -35,13 +33,13 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     it("Can build a valid description from snippet") {
       val block = "var hello = require('world')"
 
-      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
+      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map())
 
       assert(parseGear.description.toString == """NodeDescription(AstType(VariableDeclaration,es7),Range 0 until 28,Child(0,null,false),Map(kind -> StringProperty(var)),Vector(NodeDescription(AstType(VariableDeclarator,es7),Range 4 until 28,Child(0,declarations,true),Map(),Vector(NodeDescription(AstType(Identifier,es7),Range 4 until 9,Child(0,id,false),Map(name -> StringProperty(hello)),Vector(),Vector()), NodeDescription(AstType(CallExpression,es7),Range 12 until 28,Child(0,init,false),Map(),Vector(NodeDescription(AstType(Literal,es7),Range 20 until 27,Child(0,arguments,true),Map(value -> StringProperty(world)),Vector(),Vector()), NodeDescription(AstType(Identifier,es7),Range 12 until 19,Child(0,callee,false),Map(name -> StringProperty(require)),Vector(),Vector())),Vector())),Vector())),Vector())""")
     }
 
     it("Can match its original snippet to the description") {
-      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
+      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map())
 
       val block = "var hello = require('world')"
 
@@ -51,7 +49,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     }
 
     it("fails to match a different snippet than the description") {
-      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
+      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map())
 
       val block = "var goodbye = notRequire('nation')"
 
@@ -64,9 +62,9 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     describe("with rules") {
 
       it("Matches any value for a token component/extracts value") {
-        val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
+        val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map(
           //this causes any token rule to be applied
-          CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
+          "definedAs" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "hello"))
         ))
 
         val block = "var otherValue = require('world')"
@@ -84,10 +82,10 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
           it("matches when specific children rules are enforced") {
             val (parseGear, lens) = parseGearFromSnippetWithComponents(
-              """var hello = (<div attrOne="OneValue" attrTwo="Two"><span/><hr/></div>)""", Vector(
+              """var hello = (<div attrOne="OneValue" attrTwo="Two"><span/><hr/></div>)""", Map(
                 //this causes any token rule to be applied
-                CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
-                CodeComponent(Seq("attrOneValue"), StringFinder(Containing, "OneValue"))
+                "definedAs" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "hello")),
+                "attrOneValue" -> OMLensCodeComponent(Literal, OMStringFinder(Containing, "OneValue"))
               ))
 
             val block = """var hello = (<div attrTwo="Two" attrOne="changedIt" plusOther="Three"><span/><hr/></div>)"""
@@ -105,11 +103,11 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
                  |  //:children
                  |  <span/>
                  |  <hr/>
-                 |</div>)""".stripMargin, Vector(
+                 |</div>)""".stripMargin, Map(
                 //this causes any token rule to be applied
-                CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
-                CodeComponent(Seq("attrOneValue"), StringFinder(Containing, "OneValue"))
-              ), subContainers = Vector(SubContainer("children", Vector(), childrenRule = Any, Vector())))
+                "definedAs" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "hello")),
+                "attrOneValue" -> OMLensCodeComponent(Literal, OMStringFinder(Containing, "OneValue"))
+              ), subContainers = Map("children" -> Any))
 
             val block =  s"""var hello = (
                             |<div attrOne="OneValue" attrTwo="Two">
@@ -123,10 +121,10 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
           it("does not match when specific children rules match but other do not") {
             val (parseGear, lens) = parseGearFromSnippetWithComponents(
-              """var hello = (<div attrOne="OneValue" attrTwo="Two"><span/><hr/></div>)""", Vector(
+              """var hello = (<div attrOne="OneValue" attrTwo="Two"><span/><hr/></div>)""", Map(
                 //this causes any token rule to be applied
-                CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
-                CodeComponent(Seq("attrOneValue"), StringFinder(Containing, "OneValue"))
+                "definedAs" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "hello")),
+                "attrOneValue" -> OMLensCodeComponent(Literal, OMStringFinder(Containing, "OneValue"))
               ))
 
             val block = """var hello = (<div attrTwo="Two" attrOne="changedIt" plusOther="Three"></div>)"""
@@ -144,8 +142,8 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     describe("with extractors") {
 
       it("literals") {
-        val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
-          CodeComponent(Seq("pathTo"), StringFinder(Containing, "world"))
+        val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map(
+          "pathTo" -> OMLensCodeComponent(Literal, OMStringFinder(Containing, "world"))
         ))
 
         val block = "var hello = require('that-lib')"
@@ -159,8 +157,8 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
       }
 
       it("tokens") {
-        val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector(
-          CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
+        val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map(
+          "definedAs" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "hello"))
         ))
 
         val block = "var otherValue = require('world')"
@@ -174,8 +172,8 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
       }
 
       it("object literals") {
-        val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = { object: 'value' }", Vector(
-          CodeComponent(Seq("value"), StringFinder(Starting, "{ object:")),
+        val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = { object: 'value' }", Map(
+          "value" -> OMLensCodeComponent(ObjectLiteral, OMStringFinder(Starting, "{ object:"))
         ))
 
         val block = "var hello = { one: 1, two: 2, three: { asNumber: 3 } }"
@@ -202,7 +200,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     it("can get name from comment on first line") {
       val block = "var hello = require('world') //name: Test"
 
-      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
+      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map())
       val parsedSample = sample(block)
       val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
       assert(result.isDefined)
@@ -213,7 +211,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     it("can get source from comment on first line") {
       val block = "var hello = require('world') //source: Test -> optic:test/transform"
 
-      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Vector())
+      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map())
       val parsedSample = sample(block)
       val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
       assert(result.isDefined)

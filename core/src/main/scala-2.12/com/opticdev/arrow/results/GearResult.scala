@@ -4,7 +4,6 @@ import com.opticdev.arrow.changes.{ChangeGroup, ClearSearchLines, InsertModel}
 import com.opticdev.arrow.context.ArrowContextBase
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens, SourceGear}
-import com.opticdev.sdk.descriptions.Schema
 import play.api.libs.json.{JsNull, JsObject, JsString}
 
 case class GearResult(gear: SGExportableLens, score: Int, context: ArrowContextBase)(implicit sourcegear: SourceGear, project: OpticProject, editorSlug: String) extends Result {

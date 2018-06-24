@@ -8,22 +8,25 @@ import com.opticdev.core.compiler.stages.SnippetStage
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions._
+import com.opticdev.sdk.opticmarkdown2.OMSnippet
+import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
+import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, Self}
+import play.api.libs.json.JsObject
 
 class VariablesSpec extends TestBase with GearUtils with ParserUtils {
 
 
   val block = "function test () { \n let definedAs = require('pathTo') \n definedAs() \n definedAs + definedAs \n }"
-  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, Snippet("es7", block), Vector(), Vector(
-    Variable("definedAs", VariableEnums.Self)
-  ), Vector(), PackageRef("example:testing"), None)
+  implicit val lens : OMLens = OMLens(Some("Example"), "example", OMSnippet("es7", block), Map(), Map(
+    "definedAs" -> Self
+  ), Map(), Left(BlankSchema), JsObject.empty, PackageRef("example:testing"))
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run
 
   it("can generate correct variable rules for parser") {
-    val variableManager = VariableManager(lens.variables, SourceParserManager.installedParsers.head.identifierNodeDesc)
+    val variableManager = VariableManager(lens.variablesCompilerInput, SourceParserManager.installedParsers.head.identifierNodeDesc)
     val variableRules = variableManager.rules(snippetStageOutput)
 
     assert(variableRules(0).isPropertyRule && variableRules(0).asInstanceOf[PropertyRule].comparator == "ANY")
@@ -32,7 +35,6 @@ class VariablesSpec extends TestBase with GearUtils with ParserUtils {
     assert(variableRules(2).isVariableRule && variableRules(1).asInstanceOf[VariableRule].variableId == "definedAs")
     assert(variableRules(3).isVariableRule && variableRules(2).asInstanceOf[VariableRule].variableId == "definedAs")
     assert(variableRules(4).isVariableRule && variableRules(3).asInstanceOf[VariableRule].variableId == "definedAs")
-
   }
 
   lazy val gearWithVariables = compiledLensFromDescription("test-examples/resources/example_packages/optic:VariableExample@0.1.0.json")

@@ -14,11 +14,11 @@ class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest")
     assert(ProjectGraphWrapper.empty()(project = null).projectGraph.isEmpty)
   }
 
-  implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
+  implicit lazy val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)
 
   val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
   val file = File(testFilePath)
-  val importResults = {
+  lazy val importResults = {
     val importGear = compiledLensFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
     sourceGear.lensSet.addLens(importGear)
     sourceGear.parseFile(File(testFilePath))

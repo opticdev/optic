@@ -5,7 +5,7 @@ import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
 import com.opticdev.common.{PackageRef, SchemaRef}
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 class JsonImplicitsSpec extends FunSpec {
 
@@ -35,7 +35,7 @@ class JsonImplicitsSpec extends FunSpec {
         """
           |{ "title": "hello", "properties": {}, "type": "object" }
         """.stripMargin)
-      val o = InsertModel(Schema(SchemaRef(Some(PackageRef("optic:test")), "name"), testSchema.as[JsObject]),
+      val o = InsertModel(OMSchema(SchemaRef(Some(PackageRef("optic:test")), "name"), testSchema.as[JsObject]),
         Some("hash"), JsObject.empty, Some(RawPosition(File("path/To/file"), 12)))
 
       val json = Json.toJson[OpticChange](o)

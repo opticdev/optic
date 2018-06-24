@@ -4,22 +4,21 @@ import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.compiler.errors._
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{CommonAstNode, BaseNode}
+import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
 import com.opticdev.parsers.graph.path.{PathFinder, WalkablePath}
-import com.opticdev.sdk.descriptions.Lens
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import com.opticdev.sdk.descriptions.finders.{Finder, NodeFinder, RangeFinder, StringFinder}
+import com.opticdev.sdk.opticmarkdown2.lens._
 
 import scala.util.matching.Regex
 
 object FinderEvaluator {
-  def run(finder: Finder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : CommonAstNode = finder match {
-    case f: StringFinder => forStringFinder(f, snippetStageOutput)
-    case f: RangeFinder => forRangeFinder(f, snippetStageOutput)
-    case f: NodeFinder => forNodeFinder(f, snippetStageOutput)
+  def run(finder: OMFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: OMLens) : CommonAstNode = finder match {
+    case f: OMLensNodeFinder => forNodeFinder(f, snippetStageOutput)
+    case f: OMStringFinder => forStringFinder(f, snippetStageOutput)
+    case f: OMRangeFinder => forRangeFinder(f, snippetStageOutput)
   }
 
-  def finderPath(finder: Finder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : FinderPath = {
+  def finderPath(finder: OMFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: OMLens) : FinderPath = {
     val result = run(finder, snippetStageOutput)
 
     val basicSourceInterface = snippetStageOutput.parser.basicSourceInterface
@@ -37,16 +36,15 @@ object FinderEvaluator {
     }
   }
 
-  def forNodeFinder(finder: NodeFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : CommonAstNode = {
+  def forNodeFinder(finder: OMLensNodeFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: OMLens) : CommonAstNode = {
     val nodeOption = RangeFinderEvaluate.nodesMatchingRangePredicate(snippetStageOutput.astGraph, (nStart, nEnd)=> {
       (finder.range.start, finder.range.end) == (nStart, nEnd)
-    }).find(_.value.asInstanceOf[CommonAstNode].nodeType == finder.astType)
+    }).find(_.value.asInstanceOf[CommonAstNode].nodeType.name == finder.astType)
 
     if (nodeOption.isDefined) nodeOption.get.value.asInstanceOf[CommonAstNode] else throw NodeNotFound(finder)
-
   }
 
-  def forStringFinder(finder: StringFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : CommonAstNode = {
+  def forStringFinder(finder: OMStringFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: OMLens) : CommonAstNode = {
 
     val string = finder.string
     val rule   = finder.rule
@@ -57,18 +55,18 @@ object FinderEvaluator {
     val matches = regex.findAllMatchIn(snippetStageOutput.snippet.block).toVector
 
     //not found at all
-    if (matches.isEmpty) throw StringNotFound(finder)
+    if (matches.isEmpty) throw new Error(finder.toDebugString)
 
     val matchOption = matches.lift(occurrence)
 
     //occurrence not found
-    if (matchOption.isEmpty) throw StringOccurrenceOutOfBounds(finder, matches.size)
+    if (matchOption.isEmpty) throw new Error(finder.toDebugString)
 
     val (start, end) = (matchOption.get.start, matchOption.get.end)
 
     rule match {
       //offload to a range finder. search for exact matches, least graph depth
-      case Entire => run(RangeFinder(start, end), snippetStageOutput)
+      case Entire => run(OMRangeFinder(start, end), snippetStageOutput)
 
       //node with deepest graph depth that contains entire string
       case Containing => {
@@ -78,7 +76,7 @@ object FinderEvaluator {
 
         val nodeOption = containingNodes.lastOption
 
-        if (nodeOption.isEmpty) throw NodeContainingStringNotFound(finder)
+        if (nodeOption.isEmpty) throw new Error(finder.toDebugString)
         else nodeOption.get.value.asInstanceOf[CommonAstNode]
       }
 
@@ -90,14 +88,13 @@ object FinderEvaluator {
 
         val nodeOption = containingNodes.lastOption
 
-        if (nodeOption.isEmpty) throw NodeStartingWithStringNotFound(finder)
+        if (nodeOption.isEmpty) throw new Error(finder.toDebugString)
         else nodeOption.get.value.asInstanceOf[CommonAstNode]
       }
     }
-
-
   }
-  def forRangeFinder(finder: RangeFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: Lens) : CommonAstNode = {
+
+  def forRangeFinder(finder: OMRangeFinder, snippetStageOutput: SnippetStageOutput)(implicit lens: OMLens) : CommonAstNode = {
 
     val start = finder.start
     val end   = finder.end
@@ -108,7 +105,7 @@ object FinderEvaluator {
 
     val node = exactMatchingNodes.sortBy(i=> i.value.asInstanceOf[CommonAstNode].graphDepth(snippetStageOutput.astGraph)).reverse.headOption
 
-    if (node.isDefined) node.get.value.asInstanceOf[CommonAstNode] else throw new NodeWithRangeNotFound(finder)
+    if (node.isDefined) node.get.value.asInstanceOf[CommonAstNode] else throw new Error(finder.toDebugString)
   }
 
   object RangeFinderEvaluate {

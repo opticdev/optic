@@ -9,8 +9,6 @@ import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.parsers.sourcegear.basic.ObjectLiteralValueFormat
 import com.opticdev.sdk.VariableMapping
-import com.opticdev.sdk.descriptions.LensRef
-import com.opticdev.sdk.descriptions.enums.VariableEnums
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import com.vdurmont.semver4j.Semver
 import play.api.libs.json._
@@ -18,6 +16,8 @@ import play.api.libs.json._
 import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.marvin.common.helpers.LineOperations
+import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.lens.Self
 object Render {
 
   def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase) : Try[(NewAstNode, String, SGExportableLens)] = Try {
@@ -34,7 +34,7 @@ object Render {
 
     val declaredVariables = gear.variableManager.variables
     val setVariablesMapping = options.variables.getOrElse(Map.empty)
-    val parentVariableMappingFiltered = parentVariableMapping.filterNot(v=> declaredVariables.exists(d => d.token == v._1 && d.in == VariableEnums.Self))
+    val parentVariableMappingFiltered = parentVariableMapping.filterNot(v=> declaredVariables.exists(d => d.token == v._1 && d.in == Self))
 
     //apply the local mappings onto the parent ones so they can override them.
     val variableMapping = parentVariableMappingFiltered ++ setVariablesMapping
