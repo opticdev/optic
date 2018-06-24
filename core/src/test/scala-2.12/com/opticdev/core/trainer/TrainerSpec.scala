@@ -44,15 +44,15 @@ class TrainerSpec extends TestBase {
     val tokenCandidates = importTrainerValidExample.extractTokensCandidates
 
     assert(tokenCandidates == Set(
-      ValueCandidate(JsString("definedAs"), "...const <b>definedAs</b> = require...", OMComponentWithPropertyPath(Seq("definedAs"), OMLensCodeComponent(Token, OMLensNodeFinder("Identifier", OMRange(6, 15)))))
-    ))
+      ValueCandidate(JsString("definedAs"), "...const <b>definedAs</b> = require...", OMComponentWithPropertyPath(Seq("definedAs"), OMLensCodeComponent(Token, OMLensNodeFinder("Identifier", OMRange(6, 15)))), JsObject(Seq("type" -> JsString("string")))
+    )))
   }
 
   it("can extract literal candidates") {
     val literalCandidates = importTrainerValidExample.extractLiteralCandidates
 
     assert(literalCandidates == Set(
-      ValueCandidate(JsString("pathto"), "...= require(<b>'pathto'</b>)...", OMComponentWithPropertyPath(Seq("pathto"), OMLensCodeComponent(Literal, OMLensNodeFinder("Literal", OMRange(26, 34)))))
+      ValueCandidate(JsString("pathto"), "...= require(<b>'pathto'</b>)...", OMComponentWithPropertyPath(Seq("pathto"), OMLensCodeComponent(Literal, OMLensNodeFinder("Literal", OMRange(26, 34)))), JsObject(Seq("type" -> JsString("string"))))
     ))
   }
 
@@ -63,8 +63,8 @@ class TrainerSpec extends TestBase {
       ValueCandidate(Json.parse("""{"key":"value","token":{"_valueFormat":"token","value":"thisToken"},"_order":["key","token"]}"""),
         "...alState = <b>{key: 'value', token: thisToken}</b>...",
 
-        OMComponentWithPropertyPath(Seq("object"), OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder("ObjectExpression", OMRange(21, 53))))
-    )))
+        OMComponentWithPropertyPath(Seq("object"), OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder("ObjectExpression", OMRange(21, 53)))),
+        JsObject(Seq("type" -> JsObject.empty)))))
 
   }
 

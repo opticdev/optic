@@ -29,8 +29,8 @@ object TestLens {
 
   implicit lazy val actorCluster = new ActorCluster(ActorSystem("trainer"))
 
-  def testLens(lensConfiguration: JsObject, inMarkdown: String, inputString: String) : Try[JsObject] = Try {
-    val description = descriptionFromString(inMarkdown)
+  def testLens(lensConfiguration: JsObject, markdown: String, testInput: String) : Try[JsObject] = Try {
+    val description = descriptionFromString(markdown)
 
     val lensId = (lensConfiguration \ "id").get.as[JsString]
 
@@ -52,13 +52,13 @@ object TestLens {
 
     implicit val project = new StaticSGProject("trainer_project", DataDirectory.trainerScratch, sgBuilt)
 
-    val parseResults = sgBuilt.parseString(inputString).get
+    val parseResults = sgBuilt.parseString(testInput).get
     val mn = parseResults.modelNodes.minBy(_.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)).asInstanceOf[ModelNode]
     implicit val sourceGearContext = SGContext(
       sgBuilt.fileAccumulator,
       parseResults.astGraph,
       parseResults.parser,
-      inputString,
+      testInput,
       sgBuilt,
       null,
     )

@@ -10,7 +10,7 @@ package object trainer {
 
   import com.opticdev.sdk.opticmarkdown2.Serialization._
 
-  case class ValueCandidate(value: JsValue, previewString: String, stagedComponent: OMComponentWithPropertyPath[OMLensCodeComponent]) {
+  case class ValueCandidate(value: JsValue, previewString: String, stagedComponent: OMComponentWithPropertyPath[OMLensCodeComponent], schemaField: JsObject) {
     def propertyPath = stagedComponent.propertyPath
   }
 

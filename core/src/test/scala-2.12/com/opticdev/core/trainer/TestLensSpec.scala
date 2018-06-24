@@ -22,38 +22,38 @@ class TestLensSpec extends TestBase {
 
     val importExample =
       Json.parse("""
-        |{
-        |      "name": "Using Require",
-        |      "id": "using-require",
-        |      "schema": {},
-        |      "snippet": {
-        |        "language": "es7",
-        |        "block": "let definedAs = require('pathTo')"
-        |      },
-        |      "value": {
-        |        "definedAs": {
-        |          "type": "token",
-        |          "at": {
-        |            "astType": "Identifier",
-        |            "range": {
-        |              "start": 4,
-        |              "end": 13
-        |            }
-        |          }
-        |        },
-        |        "pathTo": {
-        |          "type": "literal",
-        |          "at": {
-        |            "astType": "Literal",
-        |            "range": {
-        |              "start": 24,
-        |              "end": 32
-        |            }
-        |          }
-        |        }
-        |      }
-        |    }
-      """.stripMargin)
+                   |{
+                   |      "name": "Using Require",
+                   |      "id": "using-require",
+                   |      "schema": {},
+                   |      "snippet": {
+                   |        "language": "es7",
+                   |        "block": "let definedAs = require('pathTo')"
+                   |      },
+                   |      "value": {
+                   |        "definedAs": {
+                   |          "type": "token",
+                   |          "at": {
+                   |            "astType": "Identifier",
+                   |            "range": {
+                   |              "start": 4,
+                   |              "end": 13
+                   |            }
+                   |          }
+                   |        },
+                   |        "pathTo": {
+                   |          "type": "literal",
+                   |          "at": {
+                   |            "astType": "Literal",
+                   |            "range": {
+                   |              "start": 24,
+                   |              "end": 32
+                   |            }
+                   |          }
+                   |        }
+                   |      }
+                   |    }
+                 """.stripMargin)
 
     val results = TestLens.testLens(importExample.as[JsObject], File("test-examples/resources/example_markdown/Importing-JS.md").contentAsString,  "let definedAs = require('pathTo')")
     assert(results.get == Json.parse("""{"definedAs":"definedAs","pathTo":"pathTo","_variables":{}}"""))

@@ -10,7 +10,7 @@ import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.sdk.opticmarkdown2.{OMRange, OMSnippet}
 import com.opticdev.sdk.opticmarkdown2.lens._
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json._
 
 import scala.collection.mutable
 import scala.util.Try
@@ -42,6 +42,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
     val notFoundProperties = keysAsPropertyPaths diff withSortedResults.keys.toSet
 
 
+
     TrainingResults(
       withSortedResults.map(i=> (i._1.mkString("."), i._2)),
       notFoundProperties.map(_.mkString(".")).toSeq,
@@ -67,7 +68,9 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
         expectedValue.value.filter(_._2 == value).map(i=> Seq(i._1))
         .map(propertyPath=> {
-          ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(Token, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))))
+          ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(Token, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
+            JsObject(Seq("type" -> JsString("string")))
+          )
         })
       }
     }.flatten.toSet
@@ -86,9 +89,17 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
         val node = n.value.asInstanceOf[CommonAstNode]
         val value = literalInterfaces.parseNode(node, snippetStageOutput.astGraph, exampleSnippet.substring(node)).get
 
+        val jsontype = value match {
+          case a:JsString => JsString("string")
+          case n:JsNumber => JsString("number")
+          case b:JsBoolean => JsString("boolean")
+        }
+
         expectedValue.value.filter(_._2 == value).map(i=> Seq(i._1))
           .map(propertyPath=> {
-            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(Literal, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))))
+            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(Literal, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
+              JsObject(Seq("type" -> jsontype))
+            )
           })
       }
     }.flatten.toSet
@@ -111,7 +122,9 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
         expectedValue.value.filter(_._2 == JsonUtils.removeReservedFields(value)).map(i=> Seq(i._1))
           .map(propertyPath=> {
-            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))))
+            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
+              JsObject(Seq("type" -> JsObject.empty))
+            )
           })
       }
     }.flatten.toSet
