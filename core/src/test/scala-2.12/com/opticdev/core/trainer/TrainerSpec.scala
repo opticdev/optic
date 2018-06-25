@@ -4,7 +4,7 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.opticmarkdown2.OMRange
 import com.opticdev.sdk.opticmarkdown2.lens._
-import play.api.libs.json.{JsBoolean, JsObject, JsString, Json}
+import play.api.libs.json._
 
 class TrainerSpec extends TestBase {
 
@@ -60,9 +60,8 @@ class TrainerSpec extends TestBase {
     val objectLiteralCandidates = objectLiteralTrainerValidExample.extractObjectLiteralCandidates
 
     assert(objectLiteralCandidates == Set(
-      ValueCandidate(Json.parse("""{"key":"value","token":{"_valueFormat":"token","value":"thisToken"},"_order":["key","token"]}"""),
+      ValueCandidate(Json.parse("""{"key":"value","token":{"_valueFormat":"token","value":"thisToken"}}"""),
         "...alState = <b>{key: 'value', token: thisToken}</b>...",
-
         OMComponentWithPropertyPath(Seq("object"), OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder("ObjectExpression", OMRange(21, 53)))),
         JsObject(Seq("type" -> JsObject.empty)))))
 
@@ -106,6 +105,35 @@ class TrainerSpec extends TestBase {
       val escapedPreview = Trainer("", "es7", "const definedAs = <div><b></b><abc></abc></div>", JsObject.empty).generatePreview(Range(18, 30))
       assert(escapedPreview == "...finedAs = <b>&lt;div&gt;&lt;b&gt;&lt;/b&gt;</b>&lt;abc&gt;&lt;/abc...")
     }
+  }
+
+  describe("Works after container mutations") {
+
+    val snippet =
+      """
+        |request.get({}, (response)=> {
+        |   if (response) {
+        |       //:success
+        |   } else {
+        |       //:failure
+        |   }
+        |}, 500)
+      """.stripMargin
+
+    val withcontainerMutations = Trainer("", "es7", snippet, JsObject(Seq(
+      "method" -> JsString("get"),
+      "tiemout" -> JsNumber(500)
+    )))
+
+    it("can still create a valid candidate even after comments are removed") {
+      val result = withcontainerMutations.returnAllCandidates
+
+      assert(result.get.containerCandidates(0).previewString == "...response) <b>{\n\n   }</b> else {\n\n ...")
+      assert(result.get.containerCandidates(1).previewString == "...   } else <b>{\n\n   }</b>\n}, 500)\n ...")
+
+    }
+
+
   }
 
 }

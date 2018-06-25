@@ -43,15 +43,23 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
 
     val parsers =PFListInterface.forKey[YamlString]("parsers", YamlArray(Vector()), yaml)
 
-    val knowledge =PFListInterface.forKey[YamlString]("knowledge", YamlArray(Vector()), yaml)
+    val skills = {
+      val skills = PFListInterface.forKey[YamlString]("skills", YamlArray(Vector()), yaml)
+      val knowledge = PFListInterface.forKey[YamlString]("knowledge", YamlArray(Vector()), yaml)
+      if (skills.value.nonEmpty) {
+        skills
+      } else {
+        knowledge
+      }
+    }
 
-    val knowledgePaths =PFListInterface.forKey[YamlString]("knowledge_paths", YamlArray(Vector()), yaml)
+    def knowledgePaths =PFListInterface.forKey[YamlString]("knowledge_paths", YamlArray(Vector()), yaml)
 
     val exclude =PFListInterface.forKey[YamlString]("exclude", YamlArray(Vector()), yaml)
 
     lastHash = Crypto.createSha1(contents)
     //      val relationships =PFListInterface.forKey[YamlString]("relationships", YamlArray(Vector()), yaml)
-    PFRootInterface(name, parsers, knowledge, knowledgePaths, exclude)
+    PFRootInterface(name, parsers, skills, knowledgePaths, exclude)
   }
 
   def interface = interfaceStore
@@ -73,7 +81,7 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
     val obj : Map[YamlValue, YamlValue] = Map(
       YamlString("name") -> interface.get.name.yamlValue,
       YamlString("parsers") -> interface.get.parsers.yamlValue,
-      YamlString("knowledge") -> interface.get.knowledge.yamlValue,
+      YamlString("knowledge") -> interface.get.skills.yamlValue,
       YamlString("knowledge_paths") -> interface.get.knowledgePaths.yamlValue,
       YamlString("exclude") -> interface.get.exclude.yamlValue
 //      YamlString("relationships") -> relationships.yamlValue
@@ -87,7 +95,7 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
   def dependencies: Try[Vector[PackageRef]] = Try {
     if (interface.isFailure) return null
 
-    val dependencies = interface.get.knowledge.value.map(i=> (PackageRef.fromString(i.value), i))
+    val dependencies = interface.get.skills.value.map(i=> (PackageRef.fromString(i.value), i))
 
     val allValid = dependencies.forall(_._1.isSuccess)
 

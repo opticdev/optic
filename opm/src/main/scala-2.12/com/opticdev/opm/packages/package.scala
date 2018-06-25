@@ -19,9 +19,9 @@ trait OpticPackage {
   def packageRef: PackageRef = PackageRef(packageId, version)
 
   lazy val dependencies: Vector[PackageRef] = {
-    val asJsObject: JsArray = (description \ "info" \ "dependencies" ).getOrElse(JsArray.empty).as[JsArray]
+    val asJsObject: JsObject = (description \ "info" \ "dependencies" ).getOrElse(JsObject.empty).as[JsObject]
     asJsObject.value
-      .collect { case s: JsString => PackageRef.fromString(s.value)}
+      .collect { case (k:String, v:JsString) => PackageRef.fromString(s"$k@${v.value}")}
       .collect { case Success(i) => i }
       .toVector
   }

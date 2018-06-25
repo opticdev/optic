@@ -11,7 +11,7 @@ trait PFInterface {
 case class PFRootInterface(
                             name: PFFieldInterface[YamlString],
                             parsers: PFListInterface[YamlString],
-                            knowledge: PFListInterface[YamlString],
+                            skills: PFListInterface[YamlString],
                             knowledgePaths: PFListInterface[YamlString],
                             exclude: PFListInterface[YamlString]
                           )

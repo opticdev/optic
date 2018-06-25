@@ -29,13 +29,12 @@ object OMParser {
     import Serialization.omlensFormat
 
     val id = (configuration \ "id").get.as[JsString].value
-    val schemaId = id+"____schema"
 
     //add packageRef ->
 
     val updatedSchema = configuration.fieldSet.find(_._1 == "schema").collect {
       case (k: String, v: JsObject) => {
-        (k, schemaDefinitionToJsObject(v, SchemaRef(Some(packageRef), schemaId), internal = true))
+        (k, schemaDefinitionToJsObject(v, SchemaRef(Some(packageRef), id), internal = true))
       }
       case p => p
     }.get

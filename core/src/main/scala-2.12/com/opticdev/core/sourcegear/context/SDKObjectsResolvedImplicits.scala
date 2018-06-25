@@ -47,8 +47,12 @@ object SDKObjectsResolvedImplicits {
         compiledLens.packageRef.packageId
       }
 
-      Try(resolveSchema(pId, compiledLens.schemaRef.id).get.asInstanceOf[OMSchema].schemaRef)
-        .getOrElse(throw new Exception(s"Schema '${compiledLens.schemaRef}' not found"))
+      if (compiledLens.schema.isRight) {
+        compiledLens.schemaRef
+      } else {
+        Try(resolveSchema(pId, compiledLens.schemaRef.id).get.asInstanceOf[OMSchema].schemaRef)
+          .getOrElse(throw new Exception(s"Schema '${compiledLens.schemaRef}' not found"))
+      }
     }
   }
 

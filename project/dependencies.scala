@@ -38,7 +38,7 @@ object Dependencies {
     "com.typesafe.play" %% "play-json" % "2.6.2",
     "org.scalactic" %% "scalactic" % scalaTestVersion,
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
-    "com.vdurmont" % "semver4j" % "2.1.0",
+    "com.vdurmont" % "semver4j" % "2.2.0",
     "org.slf4j" % "slf4j-simple" % "1.7.25" % "test",
     "com.opticdev" %% "parser-foundation" % parserFoundationVersion
   )

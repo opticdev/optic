@@ -123,7 +123,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
         expectedValue.value.filter(_._2 == JsonUtils.removeReservedFields(value)).map(i=> Seq(i._1))
           .map(propertyPath=> {
-            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
+            ValueCandidate((value.as[JsObject] - "_order"), generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
               JsObject(Seq("type" -> JsObject.empty))
             )
           })
@@ -141,6 +141,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
   def extractContainersCandidates: Seq[ContainerCandidate] = {
     snippetStageOutput.containerMapping.map(i=>
       ContainerCandidate(i._1.name, generatePreview(i._2.node.range), OMLensNodeFinder(i._2.node.nodeType.name, OMRange(i._2.node.range))))
+//      ContainerCandidate(i._1.name, "PREVIEW HIJACKED", OMLensNodeFinder(i._2.node.nodeType.name, OMRange(i._2.node.range))))
       .toSeq
       .sortBy(_.nodeFinder.range.start)
   }
@@ -170,6 +171,9 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
   //formatters
   def generatePreview(range: Range) = {
+
+    val finalSnippet = snippetStageOutput.snippet.block
+
     val subStart = {
       val s = range.start - 10
       if (s < 0) 0 else s
@@ -177,10 +181,10 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
     val subEnd = {
       val e = range.end + 10
-      if (e > exampleSnippet.length) exampleSnippet.length else e
+      if (e > finalSnippet.length) finalSnippet.length else e
     }
 
     import scala.xml.Utility.escape
-    s"...${escape(exampleSnippet.substring(subStart, range.start))}<b>${escape(exampleSnippet.substring(range))}</b>${escape(exampleSnippet.substring(range.end, subEnd))}..."
+    s"...${escape(finalSnippet.substring(subStart, range.start))}<b>${escape(finalSnippet.substring(range))}</b>${escape(finalSnippet.substring(range.end, subEnd))}..."
   }
 }

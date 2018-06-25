@@ -22,10 +22,11 @@ class HttpService(implicit executionContext: ExecutionContext, projectsManager: 
     headers.HttpOrigin("http://localhost:3000")
   ))
 
-  val routes = cors(settings) {
+  val routes = {
       projectsRoute.route ~
-      socketRoute.route ~
-      trainerRoute.route
+      socketRoute.route ~ cors(settings) {
+        trainerRoute.route
+      }
   }
 
 }

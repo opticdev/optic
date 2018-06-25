@@ -9,6 +9,7 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json.Json
 
 package object sourcegear {
@@ -28,9 +29,15 @@ package object sourcegear {
     def packageRef: PackageRef
     def schemaRef: SchemaRef
     def lensRef: LensRef
+    def schema: Either[SchemaRef, OMSchema]
     def variableManager: VariableManager
     def enterOn: Set[AstType]
     def renderer: Renderer
+
+
+    def usesExternalSchema = schema.isLeft
+    def usesInternalSchema = schema.isRight
+
   }
 
 }

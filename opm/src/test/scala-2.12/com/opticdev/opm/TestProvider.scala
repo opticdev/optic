@@ -25,7 +25,10 @@ class TestProvider extends Provider {
             "author"-> JsString(author),
             "package"-> JsString(name),
             "version"-> JsString(version),
-            "dependencies" -> JsArray(dependencies.map(JsString))
+            "dependencies" -> JsObject(dependencies.map(i=> {
+              val split = i.split("@")
+              (split.head -> JsString(split.last))
+            }))
           ))
       )
     ))
@@ -62,7 +65,6 @@ class TestProvider extends Provider {
     val foundPackages = allPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 
     val foundVersions = packageRefs.map(i=> {
-
       val satisfyingVersionOption = foundPackages.filter(p=> {
         p.packageId == i.packageId &&
         new Semver(p.version, SemverType.NPM).satisfies(i.version)

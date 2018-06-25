@@ -56,23 +56,32 @@ object Render {
     val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.lensId.get).get)
     if (lensRefTry.isSuccess) {
       val lensRef = lensRefTry.get
-
       val localOption = Try(context.resolve(lensRef.internalFull).get.asInstanceOf[CompiledLens])
         .toOption
-
-
       if (localOption.isDefined) {
         localOption
       } else {
         //transformations should be able to reach outside of their tree
         sourceGear.findLens(lensRef)
       }
-
     } else {
-      sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listLenses.find(i=> {
+
+      val schemaFound = sourceGear.findSchema(stagedNode.schema).flatMap(schema => sourceGear.lensSet.listLenses.find(i=> {
         val lookup = Try(i.resolvedSchema == schema.schemaRef)
         lookup.isSuccess && lookup.get
       }))
+
+      if (schemaFound.isDefined) schemaFound else {
+        val lensRef = LensRef(stagedNode.schema.packageRef, stagedNode.schema.id) //look for lenses with internal schemas
+        val localOption = Try(context.resolve(lensRef.internalFull).get.asInstanceOf[CompiledLens])
+          .toOption
+        if (localOption.isDefined) {
+          localOption
+        } else {
+          //transformations should be able to reach outside of their tree
+          sourceGear.findLens(lensRef)
+        }
+      }
     }
   }
 

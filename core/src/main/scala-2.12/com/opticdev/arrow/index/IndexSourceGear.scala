@@ -17,7 +17,7 @@ object IndexSourceGear {
 
   def runFor(sourceGear: SourceGear) : KnowledgeGraph = {
 
-    val gearsBySchemas = sourceGear.lensSet.listLenses.groupBy(_.schemaRef)
+    val gearsBySchemas = sourceGear.lensSet.listLenses.filter(_.usesExternalSchema).groupBy(_.schemaRef)
 
     val schemaGearNodes: Seq[UnDiEdge[graph.SGNode]] = gearsBySchemas.flatMap {
       case (schemaRef, gears)=> {

@@ -2,7 +2,7 @@ name: Test project
 parsers:
   - es7
 
-knowledge:
+skills:
   - optic:rest
   - optic:rest@11.0.2
   - optic:express-js@0.1.0

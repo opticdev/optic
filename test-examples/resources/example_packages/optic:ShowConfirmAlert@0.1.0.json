@@ -3,7 +3,7 @@
     "package": "showconfirmalert",
     "author": "optic",
     "version": "0.1.0",
-    "dependencies": []
+    "dependencies": {}
   },
   "schemas": [
     {

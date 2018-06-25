@@ -1,7 +1,7 @@
 package com.opticdev.core.compiler
 
 import com.opticdev.common.{PackageRef, SchemaRef}
-import com.opticdev.core.compiler.errors.ErrorAccumulator
+import com.opticdev.core.compiler.errors.{ErrorAccumulator, SchemaNotFound}
 import com.opticdev.core.compiler.stages.{FinderStage, _}
 import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens}
 import com.opticdev.core.sourcegear.containers.SubContainerManager
@@ -41,7 +41,18 @@ object Compiler {
 
   class CompileWorker(sourceLens: OMLens) {
     def compile()(implicit packageContext: Context, completed: ListBuffer[Output] = ListBuffer(), errorAccumulator: ErrorAccumulator = new ErrorAccumulator, debug: Boolean = false): LensCompilerOutput = {
-      implicit val lens = sourceLens
+      implicit val lens = {
+        if (sourceLens.schema.isLeft) {
+          import com.opticdev.core.compiler.helpers.SchemaIdImplicits._
+          val schema = sourceLens.schema.left.get
+          if (schema.packageRef.isDefined && schema.packageRef.get != sourceLens.packageRef) { //external schema. Needs to be resolved
+            val resolved = sourceLens.schemaRef.resolve()
+            require(resolved.isDefined, throw new SchemaNotFound(sourceLens.schemaRef)(sourceLens))
+            sourceLens.copy(schema = Left(resolved.get.schemaRef))
+          } else sourceLens
+        } else sourceLens
+      }
+
 
       //@todo reorder this / abstract. Looks very dirty.
 

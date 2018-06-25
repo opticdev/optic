@@ -38,6 +38,12 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       )
     })
 
+    if (lens.schemaRef.packageRef.isDefined && lens.schemaRef.packageRef.get != lens.packageRef) {
+      //external schema
+      import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+      lens.schemaRef
+    }
+
     ParserFactoryOutput(
       ParseAsModel(
       nodeDescription,
