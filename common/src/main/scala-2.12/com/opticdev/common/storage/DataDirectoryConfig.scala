@@ -6,20 +6,26 @@ import play.api.libs.json.Json
 import scala.util.Try
 
 object DataDirectoryConfig {
-  case class ConfigStatus(opticMDVersion: String)
-  private val defaultStatus = ConfigStatus(BuildInfo.opticMDVersion)
+  case class ConfigStatus(opticMDVersion: String, knownProjects: Seq[String])
+  private val defaultStatus = ConfigStatus(BuildInfo.opticMDVersion, Seq())
 
   private implicit val configStatusFormats = Json.format[ConfigStatus]
 
   val configLocation = DataDirectory.root / "config.json"
 
-  def readConfigStatus = {
+  def readConfigStatus: ConfigStatus = {
     DataDirectory.init
     val tryRead = Try(Json.fromJson[ConfigStatus](Json.parse(configLocation.contentAsString)).get)
     tryRead.getOrElse({
       DataDirectory.reset
       saveConfigStatus()
     })
+  }
+
+  def addKnownProject(configYmlPath: String) = {
+    val current = readConfigStatus
+    val withNewPath = (configYmlPath +: current.knownProjects).distinct.splitAt(6)._1 //dedupe and limit to 6
+    saveConfigStatus(current.copy(knownProjects = withNewPath))
   }
 
   def saveConfigStatus(configStatus: ConfigStatus = defaultStatus) : ConfigStatus = {
@@ -35,10 +41,7 @@ object DataDirectoryConfig {
     if (readConfigStatus.opticMDVersion != defaultStatus.opticMDVersion) {
       //clear the markdown, package & sg cache
       println("MIGRATING OPTIC MARKDOWN")
-      DataDirectory.emptyFolder(DataDirectory.markdownCache)
-      DataDirectory.emptyFolder(DataDirectory.packages)
-      DataDirectory.emptyFolder(DataDirectory.sourcegear)
-
+      DataDirectory.reset
       saveConfigStatus()
     }
 

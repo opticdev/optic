@@ -124,7 +124,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
         expectedValue.value.filter(_._2 == JsonUtils.removeReservedFields(value)).map(i=> Seq(i._1))
           .map(propertyPath=> {
             ValueCandidate((value.as[JsObject] - "_order"), generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
-              JsObject(Seq("type" -> JsObject.empty))
+              JsObject(Seq("type" -> JsString("object")))
             )
           })
       }
@@ -157,7 +157,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
         tokenInterfaces.tokenTypes.contains(asAstNode.nodeType)
       } => {
         val node = n.value.asInstanceOf[CommonAstNode]
-        val value = tokenInterfaces.parseNode(node, snippetStageOutput.astGraph, exampleSnippet.substring(node)).get
+        val value = tokenInterfaces.parseNode(node, snippetStageOutput.astGraph, snippetStageOutput.snippet.block.substring(node)).get
 
         (value.as[JsString].value, node)
       }

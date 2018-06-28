@@ -1,5 +1,6 @@
-name: Unnamed Project
-knowledge_paths: []
+name: Test
+knowledge_paths:
+   - resources/example_markdown
 knowledge: []
 exclude: []
 parsers: []

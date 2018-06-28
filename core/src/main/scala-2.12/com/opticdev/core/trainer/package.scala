@@ -47,4 +47,8 @@ package object trainer {
 
   }
 
+
+  case class ProjectFileOptions(name: String, location: String, firstSearchPath: String, mdFiles: Map[String, String])
+  implicit val projectfileoptionsFormats = Json.format[ProjectFileOptions]
+
 }

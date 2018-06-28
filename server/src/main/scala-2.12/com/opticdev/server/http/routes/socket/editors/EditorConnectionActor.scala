@@ -29,6 +29,7 @@ class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManage
 
     case Context(file, range, contentsOption) => {
       val asFile = File(file)
+
       new ContextQuery(asFile, range, contentsOption, slug)(projectsManager).execute
         .map(i => {
           import com.opticdev.server.data.ModelNodeJsonImplicits._

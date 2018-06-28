@@ -5,6 +5,7 @@ import java.io.FileNotFoundException
 import better.files.File
 import com.opticdev.arrow.Arrow
 import com.opticdev.arrow.state.NodeKeyStore
+import com.opticdev.common.storage.DataDirectoryConfig
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server
@@ -49,6 +50,9 @@ class ProjectsManager {
 
     //send an initial status update
     AgentConnection.broadcastUpdate(StatusUpdate(project.name, project.projectStatus))
+
+    //Save its location
+    DataDirectoryConfig.addKnownProject(project.projectFile.file.pathAsString)
 
     projectsStore = projectsStore :+ project
     arrowStore = arrowStore + (project -> new Arrow(project))

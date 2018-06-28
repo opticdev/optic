@@ -9,6 +9,7 @@ import com.opticdev.core.sourcegear.{SGConstructor, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.project.StaticSGProject
+import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
@@ -29,7 +30,7 @@ object TestLens {
 
   implicit lazy val actorCluster = new ActorCluster(ActorSystem("trainer"))
 
-  def testLens(lensConfiguration: JsObject, markdown: String, testInput: String) : Try[JsObject] = Try {
+  def testLens(lensConfiguration: JsObject, markdown: String, testInput: String, projectBaseDir: Option[String] = None) : Try[JsObject] = Try {
     val description = descriptionFromString(markdown)
 
     val lensId = (lensConfiguration \ "id").get.as[JsString]
@@ -42,12 +43,14 @@ object TestLens {
     val testPackage = OpticMDPackage(descriptionIncludingLens, Map())
     val testPackageRef = testPackage.packageRef
 
-    implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
+    implicit val projectKnowledgeSearchPaths =
+      projectBaseDir.map(i=> new ProjectFile(File(i) / "optic.yml", createIfDoesNotExist = false).projectKnowledgeSearchPaths).getOrElse(ProjectKnowledgeSearchPaths())
     val dependencyTree = PackageManager.collectPackages(testPackage.dependencies).getOrElse(Tree())
 
     val dependencyTreeResolved = Tree(Leaf(testPackage, dependencyTree))
 
     val sg = SGConstructor.fromDependencies(dependencyTreeResolved, SourceParserManager.installedParsers.map(_.parserRef)).map(_.inflate)
+    sg.onComplete(i=> i.failed.foreach(_.printStackTrace()))
     val sgBuilt = Await.result(sg, 10 seconds)
 
     implicit val project = new StaticSGProject("trainer_project", DataDirectory.trainerScratch, sgBuilt)

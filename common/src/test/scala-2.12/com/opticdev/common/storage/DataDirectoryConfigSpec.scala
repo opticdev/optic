@@ -12,20 +12,44 @@ class DataDirectoryConfigSpec extends FunSpec with BeforeAndAfterAll {
 
   it("can read config status from data directory when doesn't exist") {
     DataDirectoryConfig.configLocation.delete(true)
-    DataDirectoryConfig.readConfigStatus == DataDirectoryConfig.ConfigStatus(BuildInfo.opticMDVersion)
+    DataDirectoryConfig.readConfigStatus == DataDirectoryConfig.ConfigStatus(BuildInfo.opticMDVersion, Seq())
   }
 
   it("can write new config status to data directory") {
     DataDirectoryConfig.configLocation.delete(true)
-    DataDirectoryConfig.saveConfigStatus(DataDirectoryConfig.ConfigStatus("ABC"))
-    DataDirectoryConfig.readConfigStatus == DataDirectoryConfig.ConfigStatus("ABC")
+    DataDirectoryConfig.saveConfigStatus(DataDirectoryConfig.ConfigStatus("ABC", Seq()))
+    DataDirectoryConfig.readConfigStatus == DataDirectoryConfig.ConfigStatus("ABC", Seq())
+  }
+
+
+  describe("storing last projects") {
+    it("no duplicates saved. ") {
+      DataDirectoryConfig.configLocation.delete(true)
+      DataDirectoryConfig.addKnownProject("one/two/three.yml")
+      DataDirectoryConfig.addKnownProject("one/two/three.yml")
+      DataDirectoryConfig.addKnownProject("one/two/three.yml")
+      DataDirectoryConfig.readConfigStatus.knownProjects == Seq("one/two/three.yml")
+    }
+
+    it("last in first out") {
+      DataDirectoryConfig.configLocation.delete(true)
+      DataDirectoryConfig.addKnownProject("1.yml")
+      DataDirectoryConfig.addKnownProject("2.yml")
+      DataDirectoryConfig.addKnownProject("3.yml")
+      DataDirectoryConfig.addKnownProject("4.yml")
+      DataDirectoryConfig.addKnownProject("5.yml")
+      DataDirectoryConfig.addKnownProject("6.yml")
+      DataDirectoryConfig.addKnownProject("6.yml")
+      DataDirectoryConfig.addKnownProject("7.yml")
+      assert(DataDirectoryConfig.readConfigStatus.knownProjects == Seq("7.yml", "6.yml", "5.yml", "4.yml", "3.yml", "2.yml"))
+    }
   }
 
   describe("can migrate data directory") {
 
     def stagedMigration =  {
       DataDirectory.init
-      DataDirectoryConfig.saveConfigStatus(DataDirectoryConfig.ConfigStatus("0.1.0"))
+      DataDirectoryConfig.saveConfigStatus(DataDirectoryConfig.ConfigStatus("0.1.0", Seq()))
       (DataDirectory.markdownCache / "testFile").createIfNotExists()
     }
 

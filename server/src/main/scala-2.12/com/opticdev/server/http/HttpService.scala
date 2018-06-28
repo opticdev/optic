@@ -19,7 +19,7 @@ class HttpService(implicit executionContext: ExecutionContext, projectsManager: 
   val trainerRoute = new TrainerRoute()
 
   val settings: CorsSettings.Default = CorsSettings.defaultSettings.copy().withAllowedOrigins(HttpOriginRange(
-    headers.HttpOrigin("http://localhost:3000")
+    headers.HttpOrigin("http://localhost:3000"), headers.HttpOrigin("http://localhost:30334")
   ))
 
   val routes = {
