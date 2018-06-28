@@ -55,4 +55,9 @@ case class OMLensSchemaComponent(schemaRef: SchemaRef,
 
 }
 
-case class OMComponentWithPropertyPath[T <: OMLensComponent](propertyPath: Seq[String], component: T)
+case class OMComponentWithPropertyPath[T <: OMLensComponent](propertyPath: Seq[String], component: T) {
+  def range: OMRange = component match {
+      case f: OMLensNodeFinder => f.range
+      case _ => OMRange(0,0)
+  }
+}

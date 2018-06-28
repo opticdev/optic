@@ -70,6 +70,7 @@ class TrainerRoute(implicit executionContext: ExecutionContext) {
               val resultWrapped = if (trainerResults.isSuccess) {
                 JsObject(Seq("success" -> JsBoolean(true), "trainingResults" -> trainerResults.get.asJson))
               } else {
+                println(trainerResults.failed.map(_.printStackTrace()))
                 JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(trainerResults.failed.get.toString)))
               }
 

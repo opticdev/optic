@@ -38,7 +38,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
 
     val withSortedResults =
     basic.groupBy(_.propertyPath)
-      .mapValues(_.toSeq.sortBy(_.stagedComponent.asInstanceOf[OMLensCodeComponent].at.asInstanceOf[OMLensNodeFinder].range.start))
+      .mapValues(_.toSeq.sortBy(_.stagedComponent.range.start))
 
     val notFoundProperties = keysAsPropertyPaths diff withSortedResults.keys.toSet
 

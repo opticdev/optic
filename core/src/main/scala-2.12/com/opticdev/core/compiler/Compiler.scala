@@ -86,7 +86,7 @@ object Compiler {
           case MatchType.Multi => {
             val compiledTry = Try(new MultiNodeParserFactoryStage(snippetOutput.get).run)
             if (compiledTry.isSuccess) {
-              Success(sourceLens, compiledTry.get.asInstanceOf[SGExportableLens], if (debug) Some(DebugOutput(validationOutput, snippetOutput, Try(new FinderStage(snippetOutput.get).run), variableManager)) else None)
+              Success(sourceLens, compiledTry.get.multiNodeLens.asInstanceOf[SGExportableLens], if (debug) Some(DebugOutput(validationOutput, snippetOutput, Try(new FinderStage(snippetOutput.get).run), variableManager)) else None)
             } else {
               errorAccumulator.handleFailure(compiledTry.failed)
               Failure(lens, errorAccumulator)
