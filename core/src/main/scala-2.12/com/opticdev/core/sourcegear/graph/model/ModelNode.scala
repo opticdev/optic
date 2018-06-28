@@ -1,34 +1,38 @@
 package com.opticdev.core.sourcegear.graph.model
 
-import com.opticdev.common.ObjectRef
-import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
+import com.opticdev.common.{ObjectRef, SchemaRef}
 import com.opticdev.core.sourcegear.{AstDebugLocation, CompiledLens, SGContext}
 import com.opticdev.core.sourcegear.actors.ActorCluster
+import com.opticdev.core.sourcegear.annotations.{SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.containers.ContainerAstMapping
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
-import com.opticdev.core.sourcegear.gears.parsing.ParseGear
+import com.opticdev.core.sourcegear.gears.parsing.{MultiNodeParseGear, ParseGear}
 import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsModelProperty, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraph}
-import com.opticdev.core.sourcegear.objects.annotations.{SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
+import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, WithinFile}
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.core.utils.UUID
 import com.opticdev.sdk.VariableMapping
+import com.opticdev.sdk.opticmarkdown2.LensRef
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
 
 
 sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends AstProjection {
-  val schemaId : SchemaRef
-  val value : JsObject
-  val objectRef: Option[ObjectRef]
-  val sourceAnnotation: Option[SourceAnnotation]
-  val tag: Option[TagAnnotation]
-  val lensRef: LensRef
-  val variableMapping: VariableMapping
+  def schemaId : SchemaRef
+  def value : JsObject
+  def expandedValue(withVariables: Boolean = false)(implicit sourceGearContext: SGContext) : JsObject
+  def objectRef: Option[ObjectRef]
+  def sourceAnnotation: Option[SourceAnnotation]
+  def tag: Option[TagAnnotation]
+  def lensRef: LensRef
+  def variableMapping: VariableMapping
+
+  def internal: Boolean
 
   def hash: String
 
@@ -46,6 +50,35 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
       .asInstanceOf[Option[FileNode]]
   }
 
+  def flatten : FlatModelNode = this match {
+    case a: SingleModelNode => a.flatten
+    case a: MultiModelNode => a
+  }
+
+  def getContext()(implicit actorCluster: ActorCluster, project: ProjectBase): Try[SGContext] = Try(SGContext.forModelNode(this).get)
+
+  def includedInSync: Boolean = (sourceAnnotation.isDefined || tag.isDefined || objectRef.isDefined) && !internal
+
+}
+
+trait FlatModelNode extends BaseModelNode
+trait ExpandedModelNode extends BaseModelNode {
+  def flatten: FlatModelNode
+  def containerMapping(implicit astGraph: AstGraph): ContainerAstMapping
+
+  def range(implicit astGraph: AstGraph) = this match {
+    case mn: LinkedModelNode[CommonAstNode] => mn.root.range
+    case mmn: MultiModelNode => mmn.combinedRange(astGraph)
+  }
+
+  def variableManager: VariableManager
+
+  def toDebugLocation: AstDebugLocation
+
+}
+
+trait SingleModelNode extends BaseModelNode {
+
   def mapSchemaFields()(implicit sourceGearContext: SGContext) : Set[ModelField] = {
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
@@ -53,6 +86,12 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
     } else {
       Set.empty
     }
+  }
+
+  def flatten : FlatModelNode
+  def resolved()(implicit actorCluster: ActorCluster): LinkedModelNode[CommonAstNode] = this match {
+    case l: LinkedModelNode[CommonAstNode] => l
+    case m: ModelNode => m.resolve[CommonAstNode]()
   }
 
   private var expandedValueStore : Option[JsObject] = None
@@ -75,20 +114,9 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
 
   }
 
-  def getContext()(implicit actorCluster: ActorCluster, project: ProjectBase): Try[SGContext] = Try(SGContext.forModelNode(this).get)
-
-  def resolved()(implicit actorCluster: ActorCluster): LinkedModelNode[CommonAstNode] = this match {
-    case l: LinkedModelNode[CommonAstNode] => l
-    case m: ModelNode => m.resolve[CommonAstNode]()
-  }
-
-  def flatten : ModelNode
-
-  def includedInSync: Boolean = sourceAnnotation.isDefined || tag.isDefined || objectRef.isDefined
-
 }
 
-case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, lensRef: LensRef, root: N, modelMapping: ModelAstMapping, containerMapping: ContainerAstMapping, parseGear: ParseGear, variableMapping: VariableMapping, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation], tag: Option[TagAnnotation])(implicit override val project: ProjectBase) extends BaseModelNode {
+case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, lensRef: LensRef, root: N, modelMapping: ModelAstMapping, containerMappingStore: ContainerAstMapping, parseGear: ParseGear, variableMapping: VariableMapping, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation], tag: Option[TagAnnotation], internal: Boolean = false)(implicit override val project: ProjectBase) extends BaseModelNode with SingleModelNode with ExpandedModelNode {
 
   //not sure this is a better approach
 //  def hash = Integer.toHexString(
@@ -101,17 +129,21 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject
 //    MurmurHash3.stringHash(objectRef.toString) ^
 //    MurmurHash3.stringHash(sourceAnnotation.toString))
 
-  def hash = Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMapping.toString + sourceAnnotation.toString + objectRef.toString + containerMapping.toString))
+  def containerMapping(implicit astGraph: AstGraph): ContainerAstMapping = containerMappingStore
 
-  def flatten = {
-    ModelNode(schemaId, value, lensRef, variableMapping, objectRef, sourceAnnotation, tag, hash)
+  def variableManager: VariableManager = parseGear.variableManager
+
+  def hash = Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMapping.toString + sourceAnnotation.toString + objectRef.toString + containerMappingStore.toString))
+
+  override def flatten : ModelNode = {
+    ModelNode(schemaId, value, lensRef, variableMapping, objectRef, sourceAnnotation, tag, hash, internal)
   }
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
 
   def toDebugLocation = AstDebugLocation(fileNode.map(_.filePath).getOrElse(""), root.range)
 }
 
-case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, variableMapping: VariableMapping, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation], tag: Option[TagAnnotation], hash: String)(implicit override val project: ProjectBase) extends BaseModelNode {
+case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, variableMapping: VariableMapping, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation], tag: Option[TagAnnotation], hash: String, internal: Boolean = false)(implicit override val project: ProjectBase) extends BaseModelNode with SingleModelNode with FlatModelNode {
 
   //@todo check how stable/collision prone this is
   override val id: String = hash
@@ -122,7 +154,7 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, var
     val root : T = labeledDependencies.find(i=> i._1.isInstanceOf[YieldsModel] && i._1.asInstanceOf[YieldsModel].root)
       .get._2.asInstanceOf[T]
     val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
-    LinkedModelNode(schemaId, value, lensRef, root, modelMapping, containerMapping, parseGear, variableMapping, objectRef, sourceAnnotation, tag)
+    LinkedModelNode(schemaId, value, lensRef, root, modelMapping, containerMapping, parseGear, variableMapping, objectRef, sourceAnnotation, tag, internal)
   }
 
   def resolve[T <: WithinFile]()(implicit actorCluster: ActorCluster) : LinkedModelNode[T] = {
@@ -142,7 +174,8 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, var
             }
         }
       }
-    }.toMap
+    }.groupBy(_._1).mapValues(_.map(_._2))
+     .asInstanceOf[ModelAstMapping]
   }
 
   def containerMapping(implicit astGraph: AstGraph) : ContainerAstMapping = {
@@ -159,6 +192,63 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, var
     }.toMap
   }
 
-  def flatten : ModelNode = this
+  override def flatten : ModelNode = this
+
+}
+
+
+case class MultiModelNode(schemaId: SchemaRef, lensRef: LensRef, parseGear: MultiNodeParseGear, modelNodes: Seq[ModelNode])(implicit override val project: ProjectBase) extends BaseModelNode with FlatModelNode with ExpandedModelNode {
+
+  override def internal: Boolean = false //always false for now
+
+  override def value: JsObject = modelNodes.foldLeft(JsObject.empty) {
+    case (aggregate, modelNode) => aggregate ++ modelNode.value
+  }
+
+  lazy val hash: String = {
+    Integer.toHexString(
+        MurmurHash3.stringHash(schemaId.full) ^
+        MurmurHash3.stringHash(lensRef.full) ^
+        MurmurHash3.stringHash(modelNodes.map(_.hash).mkString)
+    )
+  }
+
+  def containerMapping(implicit astGraph: AstGraph): ContainerAstMapping = {
+    modelNodes.map(_.containerMapping(astGraph)).foldLeft(Map.empty[String, CommonAstNode]){_ ++ _}
+  }
+
+  def variableMapping = modelNodes.map(_.variableMapping).fold(Map.empty) {_ ++ _}
+
+  def variableManager: VariableManager = parseGear.variableManager
+
+  def objectRef: Option[ObjectRef] = modelNodes.find(_.objectRef.isDefined).flatMap(_.objectRef) //uses the first instance found
+  def sourceAnnotation: Option[SourceAnnotation] = modelNodes.find(_.sourceAnnotation.isDefined).flatMap(_.sourceAnnotation) //uses the first instance found
+  def tag: Option[TagAnnotation] = modelNodes.find(_.tag.isDefined).flatMap(_.tag) //uses the first instance found
+
+  def expandedValue(withVariables: Boolean)(implicit sourceGearContext: SGContext): JsObject = {
+    val results = modelNodes.foldLeft((JsObject.empty, JsObject.empty)) {
+      case ((entire, variables), modelNode) => {
+        val modelValue = modelNode.expandedValue(true)
+        val modelVariables = (modelValue \ "_variables").getOrElse(JsObject.empty).as[JsObject]
+
+        (entire ++ modelValue - "_variables", variables ++ modelVariables)
+      }
+    }
+
+    if (withVariables) {
+      results._1 + ("_variables" -> results._2)
+    } else {
+      results._1
+    }
+  }
+
+  def combinedRange(implicit sourceGearContext: SGContext): Range = combinedRange(sourceGearContext.astGraph)
+
+  def combinedRange(implicit astGraph: AstGraph): Range = {
+    val ranges = modelNodes.map(_.resolveInGraph[CommonAstNode](astGraph)).map(_.root.range)
+    Range(ranges.map(_.start).min, ranges.map(_.end).max)
+  }
+
+  def toDebugLocation: AstDebugLocation = AstDebugLocation(fileNode.map(_.filePath).getOrElse(""), Range(0,0)) //@get a real range added
 
 }

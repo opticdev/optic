@@ -2,9 +2,9 @@ package com.opticdev.core.sourcegear.graph
 
 import better.files.File
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, CustomEdge}
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.InFile
-import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode}
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, FlatModelNode, LinkedModelNode, ModelNode}
 import com.opticdev.parsers.AstGraph
 
 import scala.collection.mutable
@@ -79,6 +79,17 @@ object GraphImplicits {
     def fileNode(file: File) : Option[FileNode] = {
       val result = graph.nodes.filter(i=> i.isNode && i.value.isInstanceOf[FileNode] && i.value.asInstanceOf[FileNode].filePath == file.pathAsString)
       if (result.nonEmpty) Option(result.head.value.asInstanceOf[FileNode]) else None
+    }
+
+    def modelNodes() : Vector[FlatModelNode] = {
+      val result = graph.nodes.filter(i=> i.value.isInstanceOf[FlatModelNode]).map(_.value.asInstanceOf[FlatModelNode])
+      result.toVector
+    }
+
+    def fileNodes : Set[FileNode] = {
+      graph.nodes.collect {
+        case f if f.value.isInstanceOf[FileNode] => f.value.asInstanceOf[FileNode]
+      }.toSet
     }
 
     def allSuccessorsOf(astProjection: AstProjection) : Set[AstProjection] = {

@@ -4,6 +4,7 @@ import akka.actor.{ActorRef, ActorSystem, Props}
 import better.files.File
 import com.opticdev.core.sourcegear.actors.ParseSupervisorActor
 import com.opticdev.core.actorSystem
+import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraph}
 import com.opticdev.core.sourcegear.project.{Project, ProjectBase}
 import com.opticdev.parsers._
@@ -11,8 +12,8 @@ import com.opticdev.parsers._
 package object actors {
 
   //Parser Supervisor Recieve
-  case class AddToCache(file: FileNode, astGraph: AstGraph, parser: ParserBase, fileContents: String)
-  case class CheckCacheFor(file: FileNode)
+  case class AddToCache(file: File, astGraph: AstGraph, parser: ParserBase, fileContents: String, fileNameAnnotationOption: Option[FileNameAnnotation])
+  case class CheckCacheFor(file: File)
   case object CacheSize
   case object ClearCache
   case class SetCache(newCache: ParseCache)
@@ -41,7 +42,7 @@ package object actors {
   case object CurrentGraph
   case class SetCurrentGraph(projectGraph: ProjectGraph)
   case object ClearGraph
-  case class GetContext(fileNode: FileNode)(implicit val sourceGear: SourceGear, val project: ProjectBase)
+  case class GetContext(file: File)(implicit val sourceGear: SourceGear, val project: ProjectBase)
   case class NodeForId(id: String)
   case class GetSnapshot(sourceGear: SourceGear, project: ProjectBase)
 

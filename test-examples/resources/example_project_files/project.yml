@@ -2,7 +2,7 @@ name: Test project
 parsers:
   - JavaScript
 
-knowledge:
+skills:
   - js:express
 
 knowledge_paths:

@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear.graph
 
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
-import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsProperty}
+import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsMultiNodeModel, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.model._
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.WithinFile
@@ -22,7 +22,11 @@ object GraphOperations {
     addMappingEdgesToModel(parseResult.modelNode)
   }
 
-  def addMappingEdgesToModel[T <: WithinFile](linkedModelNode: LinkedModelNode[T])(implicit astGraph: AstGraph) = {
+  def addMultiNodeModelToGraph(multiModelNode: MultiModelNode)(implicit astGraph: AstGraph) : Unit = {
+    multiModelNode.modelNodes.foreach(mn=> astGraph add (mn ~+#> multiModelNode)(YieldsMultiNodeModel(multiModelNode.lensRef)))
+  }
+
+  def addMappingEdgesToModel[T <: WithinFile](linkedModelNode: LinkedModelNode[T])(implicit astGraph: AstGraph): Unit = {
     val flatNode = linkedModelNode.flatten
 
     linkedModelNode.containerMapping.foreach {
@@ -32,7 +36,7 @@ object GraphOperations {
     }
 
     linkedModelNode.modelMapping.foreach {
-      case (propertyPath, astMapping) =>
+      case (propertyPath, astMappingings) => astMappingings.map(astMapping=> {
         val path = propertyPath.asInstanceOf[Path]
         import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship._
         astMapping match {
@@ -40,6 +44,7 @@ object GraphOperations {
           case ModelVectorMapping(models) => models.map(i=> astGraph add (i ~+#> flatNode) (YieldsProperty(path, Model)))
           case _ : Throwable => throw new Error("Unexpected mapping found "+ astMapping)
         }
+      })
     }
   }
 

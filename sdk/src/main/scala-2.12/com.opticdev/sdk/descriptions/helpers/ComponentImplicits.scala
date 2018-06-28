@@ -1,13 +1,10 @@
 package com.opticdev.sdk.descriptions.helpers
 
-import com.opticdev.sdk.descriptions.{CodeComponent, Component, SchemaComponent}
-
+import com.opticdev.sdk.opticmarkdown2.lens.{OMLensCodeComponent, OMLensComponent, OMLensSchemaComponent}
 
 object ComponentImplicits {
-  implicit class ComponentVector(vector: Vector[Component]) {
-    lazy val codeComponents: Vector[CodeComponent] = vector.filter(_.isInstanceOf[CodeComponent])
-                                                           .asInstanceOf[Vector[CodeComponent]]
-    lazy val schemaComponents: Vector[SchemaComponent] = vector.filter(_.isInstanceOf[SchemaComponent])
-                                                               .asInstanceOf[Vector[SchemaComponent]]
+  implicit class ComponentVector(vector: Vector[OMLensComponent]) {
+    lazy val codeComponents: Vector[OMLensCodeComponent] = vector.collect{case x: OMLensCodeComponent => x}
+    lazy val schemaComponents: Vector[OMLensSchemaComponent] = vector.collect{case x: OMLensSchemaComponent => x}
   }
 }

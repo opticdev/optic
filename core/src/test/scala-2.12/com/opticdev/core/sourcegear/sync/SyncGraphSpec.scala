@@ -131,7 +131,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
       implicit val project = f.project
       val syncSubgraph = SyncGraph.getSyncGraph(f.snapshot)
       assert(syncSubgraph.warnings.head.isInstanceOf[CircularDependency])
-      assert(syncSubgraph.warnings.head.asInstanceOf[CircularDependency].location.range == Range(171, 186))
+      assert(syncSubgraph.warnings.head.asInstanceOf[CircularDependency].location.range == Range(0, 15))
     }
   }
 

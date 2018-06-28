@@ -5,7 +5,7 @@ import play.api.libs.json.{JsBoolean, JsObject, JsResult, Json}
 import collection.JavaConverters._
 import scala.util.{Success, Try}
 import com.opticdev.common.utils.JsObjectNashornImplicits._
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.generate.{SingleModel, StagedNode}
 import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
 

@@ -1,7 +1,7 @@
 package com.opticdev
 import akka.actor.ActorSystem
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 
 package object core {
     implicit val actorSystem = ActorSystem("opticActors")

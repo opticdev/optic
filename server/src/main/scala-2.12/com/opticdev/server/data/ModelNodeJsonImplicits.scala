@@ -2,7 +2,7 @@ package com.opticdev.server.data
 
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
-import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
+import com.opticdev.core.sourcegear.graph.model.{ExpandedModelNode, LinkedModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.server.state.ProjectsManager
@@ -14,6 +14,15 @@ import scala.util.Try
 import com.opticdev.sdk.variableMappingFormat
 
 object ModelNodeJsonImplicits {
+
+  implicit class ExpandedModelNodeJson(node: ExpandedModelNode) {
+    def asJson()(implicit projectsManager: ProjectsManager) : JsObject = {
+      node match {
+        case mn: LinkedModelNode[CommonAstNode] => mn.asJson()
+        case mmn: MultiModelNode => mmn.asJson()
+      }
+    }
+  }
 
   implicit class ModelNodeJson(modelNode: LinkedModelNode[CommonAstNode]) {
 
@@ -37,7 +46,7 @@ object ModelNodeJsonImplicits {
       val schemaOption = sourceGear.findSchema(modelNode.schemaId)
 
       JsObject(Seq(
-        "id" -> JsString(projectsManager.nodeKeyStore.leaseId(fileNode.get.toFile, modelNode)),
+        "id" -> JsString(project.nodeKeyStore.leaseId(fileNode.get.toFile, modelNode)),
         "schema" -> schemaOption.get.definition,
         "astLocation" -> JsObject(Seq(
           "type" -> JsString(modelNode.root.nodeType.asString),
@@ -55,4 +64,33 @@ object ModelNodeJsonImplicits {
 
   }
 
+  implicit class MultiModelNodeJson(multiModelNode: MultiModelNode) {
+
+    def asJson()(implicit projectsManager: ProjectsManager) : JsObject = {
+      val fileNode = multiModelNode.fileNode
+
+      implicit val project = projectsManager.lookupProject(fileNode.get.toFile).get
+      implicit val sourceGear = project.projectSourcegear
+      implicit val actorCluster = projectsManager.actorCluster
+      implicit val sourceGearContext: SGContext = ParseSupervisorSyncAccess.getContext(fileNode.get.toFile).get
+
+      val schemaOption = sourceGear.findSchema(multiModelNode.schemaId)
+
+      val range = multiModelNode.combinedRange(sourceGearContext.astGraph)
+
+      JsObject(Seq(
+        "id" -> JsString(project.nodeKeyStore.leaseId(fileNode.get.toFile, multiModelNode)),
+        "schema" -> schemaOption.get.definition,
+        "astLocation" -> JsObject(Seq(
+          "start" -> JsNumber(range.start),
+          "end" -> JsNumber(range.end)
+        )),
+        "value" -> multiModelNode.expandedValue(withVariables = true),
+        "sync" -> JsObject(Seq(
+          "name" -> multiModelNode.objectRef.map(i=> JsString(i.name)).getOrElse(JsNull),
+          "source" -> multiModelNode.sourceAnnotation.map(_.asJson).getOrElse(JsNull)
+        ))
+      ))
+    }
+  }
 }

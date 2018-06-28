@@ -5,46 +5,58 @@ import akka.http.scaladsl.model.StatusCode._
 import better.files.File
 import com.opticdev.arrow.context.ModelContext
 import com.opticdev.arrow.results.Result
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraphWrapper}
-import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
+import com.opticdev.core.sourcegear.graph.model._
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.server.data._
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsObject}
 
-import scala.collection.immutable
+import scala.collection.{immutable, mutable}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
 class ContextQuery(file: File, range: Range, contentsOption: Option[String], editorSlug: String)(implicit projectsManager: ProjectsManager) {
 
-  implicit val nodeKeyStore = projectsManager.nodeKeyStore
-
-  case class ContextQueryResults(modelNodes: Vector[LinkedModelNode[CommonAstNode]], availableTransformations: Vector[Result], projectName: String, editorSlug: String)
+  case class ContextQueryResults(modelNodes: Vector[ExpandedModelNode], availableTransformations: Vector[Result], projectName: String, editorSlug: String)
 
   def execute : Future[ContextQueryResults] = {
 
     val projectOption = projectsManager.lookupProject(file)
 
-    def query: Future[Vector[LinkedModelNode[CommonAstNode]]] = Future {
+    def query: Future[Vector[ExpandedModelNode]] = Future {
       if (projectOption.isFailure) throw new FileNotInProjectException(file)
+
+      implicit val nodeKeyStore = projectOption.map(_.projectActor).get
 
       val graph = new ProjectGraphWrapper(projectOption.get.projectGraph)(projectOption.get)
 
       val fileGraph = graph.subgraphForFile(file)
 
       if (fileGraph.isDefined) {
-        val o: Vector[ModelNode] = fileGraph.get.nodes.toVector.filter(i =>
-          i.isNode && i.value.isInstanceOf[ModelNode]
-        ).map(_.value.asInstanceOf[ModelNode])
 
-        implicit val actorCluster = projectsManager.actorCluster
-        val resolved: immutable.Seq[LinkedModelNode[CommonAstNode]] = o.map(_.resolve[CommonAstNode]())
+        implicit val project = projectOption.get
+        implicit val actorClustor = project.actorCluster
 
-        //filter only models where the ranges intersect
-        resolved.filter(node => (node.root.range intersect range.inclusive).nonEmpty).toVector
+        implicit val sourceGearContext = SGContext.forFile(file).get
+        implicit val astGraph = sourceGearContext.astGraph
+
+        import com.opticdev.core.sourcegear.graph.GraphImplicits._
+        val allModelNodes = fileGraph.get.modelNodes()
+
+        val resolvedModelNodesByRange: Vector[LinkedModelNode[CommonAstNode]] = allModelNodes.collect{ case mn: ModelNode if !mn.internal => {
+          val resolved = mn.resolveInGraph[CommonAstNode](astGraph)
+          (resolved.root.range, resolved)
+        }}.collect { case i if (i._1 intersect range.inclusive).nonEmpty => i._2 }
+
+        val resolvedMultiModelNodesByRanges: Vector[MultiModelNode] = allModelNodes.collect{ case mmn: MultiModelNode => {
+          (mmn.modelNodes.map(_.resolveInGraph[CommonAstNode](astGraph).root.range), mmn)
+        }}.collect { case i if i._1.exists(nodeRange=> (nodeRange intersect range.inclusive).nonEmpty) => i._2 }
+
+        resolvedMultiModelNodesByRanges ++ resolvedModelNodesByRange
 
       } else {
         val project = projectOption.get
@@ -57,7 +69,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String], edi
       }
     }
 
-    def addTransformationsAndFinalize(modelResults: Vector[LinkedModelNode[CommonAstNode]]): Future[ContextQueryResults] = Future {
+    def addTransformationsAndFinalize(modelResults: Vector[ExpandedModelNode]): Future[ContextQueryResults] = Future {
       val modelContext = ModelContext(file, range, modelResults.map(_.flatten))
       val arrow = projectsManager.lookupArrow(projectOption.get).get
       ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext, editorSlug), projectOption.get.name, editorSlug)

@@ -51,9 +51,7 @@ class TransformationSearchSpec extends TestBase {
 
     val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph, editorSlug, nodeKeyStore)
 
-    println(results.head.asJson.toString())
-
-    assert(results.head.asJson.toString() == """{"name":"Model -> Route","projectName":"test","editorSlug":"test","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","changes":[{"transformationChanges":{"transformation":{"yields":"Model -> Route","id":"m2r","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","ask":{"type":"object"},"dynamicAsk":{"type":"object"},"script":""},"target":"optic:test@0.1.0/route","_type":"com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"},"inputValue":{},"askSchema":{"type":"object"},"lensOptions":[],"locationOptions":[{"file":"/test/file","position":43,"_type":"com.opticdev.arrow.changes.location.AsChildOf"}],"_type":"com.opticdev.arrow.changes.RunTransformation"}]}""")
+    assert(results.head.asJson.toString() == """{"name":"Model -> Route","projectName":"test","editorSlug":"test","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","changes":[{"transformationChanges":{"transformation":{"yields":"Model -> Route","id":"m2r","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","ask":{"type":"object"},"dynamicAsk":{"type":"object"},"script":""},"target":"optic:test@0.1.0/route","_type":"com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"},"inputValue":{},"askSchema":{"type":"object","properties":{}},"lensOptions":[],"locationOptions":[{"file":"/test/file","position":43,"_type":"com.opticdev.arrow.changes.location.AsChildOf"}],"_type":"com.opticdev.arrow.changes.RunTransformation"}]}""")
 
   }
 

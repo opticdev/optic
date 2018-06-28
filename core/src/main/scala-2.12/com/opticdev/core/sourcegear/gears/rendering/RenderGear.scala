@@ -8,7 +8,7 @@ import com.opticdev.core.utils.StringUtils
 import com.opticdev.marvin.common.ast.{AstArray, AstProperties, NewAstNode}
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers._
-import com.opticdev.parsers.graph.{CommonAstNode, GraphImplicits, WithinFile}
+import com.opticdev.parsers.graph.{AstType, CommonAstNode, GraphImplicits, WithinFile}
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
@@ -21,20 +21,20 @@ import scala.util.Try
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
-import com.opticdev.core.sourcegear.graph.model.ModelNode
+import com.opticdev.core.sourcegear.graph.model.{FlatModelNode, ModelNode}
 import scalax.collection.mutable.Graph
 case class RenderGear(block: String,
                       parserRef: ParserRef,
                       parseGear: ParseAsModel,
                       entryChild: NodeDescription,
-                      packageId: String) {
+                      packageId: String) extends Renderer {
 
-  def parser = SourceParserManager.parserById(parserRef)
+  def parser = SourceParserManager.parserById(parserRef).getOrElse(throw new Error("Unable to find parser for generator"))
+
+  def outputType: AstType = entryChild.astType
 
   def parseResult(b: String): ParserResult = {
-    if (parser.isDefined) {
-      parser.get.parseString(b)
-    } else throw new Error("Unable to find parser for generator")
+    parser.parseStringWithProxies(b).get
   }
 
   def parseAndGetRoot(contents: String): (String, AstGraph, CommonAstNode) = {
@@ -47,13 +47,15 @@ case class RenderGear(block: String,
     (fileContents, astGraph, rootNode)
   }
 
-  def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Try[JsObject] = parseAndGetModelWithGraph(contents).map(_._1)
+  def parseAndGetModel(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty) : Try[JsObject] = {
+    parseAndGetModelWithGraph(contents).map(_._1)
+  }
 
-  def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, ModelNode)] = Try {
+  def parseAndGetModelWithGraph(contents: String)(implicit sourceGear: SourceGear, context: FlatContextBase = FlatContextBuilder.empty): Try[(JsObject, AstGraph, FlatModelNode)] = Try {
     implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(contents)
     implicit val sourceGearContext = SGContext.forRender(sourceGear, astGraph, parserRef)
-    val results = sourceGear.lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, null)
-    val model = results.modelNodes.find(_.resolveInGraph[CommonAstNode](results.astGraph).root == rootNode).get
+    val results = sourceGear.lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, null, None)
+    val model = results.modelNodes.collect{case mn: ModelNode => mn}.find(_.resolveInGraph[CommonAstNode](results.astGraph).root == rootNode).get
     (model.expandedValue()(SGContext.forRender(sourceGear, results.astGraph, parserRef)), results.astGraph, model)
   }
 
@@ -71,8 +73,10 @@ case class RenderGear(block: String,
 
     //1. Render Node
 
+    implicit val parsedWithSourceGear = parseAndGetModelWithGraph(block)
+
     val variableChanges = parseGear.variableManager.changesFromMapping(variableMapping)
-    val raw = isMatch.get.modelNode.update(value, Some(variableChanges))
+    val raw = isMatch.get.modelNode.update(value, Some(variableChanges))(sourceGearContext.copy(astGraph = parsedWithSourceGear.map(_._2).getOrElse(astGraph)), fileContents)
 
     //2. fill subcontainers
     val propertyPathWalker = new PropertyPathWalker(value)
@@ -100,8 +104,8 @@ case class RenderGear(block: String,
 
             Try {
               schemaComponentValue.map(child => {
-                val rendered = Render.fromStagedNode(StagedNode(i.resolvedSchema(packageId), child.as[JsObject]), variableMapping).get
-                NewAstNode(rendered._3.renderer.entryChild.astType.name, Map(), Some(rendered._2))
+                val rendered = Render.fromStagedNode(StagedNode(i.component.resolvedSchema(packageId), child.as[JsObject]), variableMapping).get
+                NewAstNode(rendered._3.renderer.outputType.name, Map(), Some(rendered._2))
               })
             }.getOrElse(Seq.empty)
 
@@ -111,16 +115,16 @@ case class RenderGear(block: String,
         implicit val (fileContents, astGraph, rootNode) = parseAndGetRoot(nodeRaw)
 
         Try {
-          implicit val nodeMutatorMap = parser.get.marvinSourceInterface.asInstanceOf[NodeMutatorMap]
+          implicit val nodeMutatorMap = parser.marvinSourceInterface.asInstanceOf[NodeMutatorMap]
           val containerNode = WalkablePath(rootNode, path.path, astGraph).walk(rootNode, astGraph)
 
           val parent = containerNode
-          val marvinAstParent = parent.toMarvinAstNode(astGraph, nodeRaw, parser.get)
+          val marvinAstParent = parent.toMarvinAstNode(astGraph, nodeRaw, parser)
 
           val childrenIndent = marvinAstParent.indent.next
           val newAstNodes = containerContents.map(newAstNode=> newAstNode.withForcedContent(Some(LineOperations.padAllLinesWith(childrenIndent.generate, newAstNode.forceContent.get))))
 
-          val blockPropertyPath = parser.get.blockNodeTypes.getPropertyPath(parent.nodeType).get
+          val blockPropertyPath = parser.blockNodeTypes.getPropertyPath(parent.nodeType).get
           val array = marvinAstParent.properties.getOrElse(blockPropertyPath, AstArray()).asInstanceOf[AstArray]
           val newArray = array.children ++ newAstNodes
           val newProperties: AstProperties = marvinAstParent.properties + (blockPropertyPath -> AstArray(newArray:_*))

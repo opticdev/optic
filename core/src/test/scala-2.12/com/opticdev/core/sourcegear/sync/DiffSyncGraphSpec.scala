@@ -7,12 +7,12 @@ import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.SGConstructor
 import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
-import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.opm
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.concurrent.Await
@@ -139,6 +139,46 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
   }
 
+  it("can diff a multinode model") {
+    val f = multiNodeSyncFixture("test-examples/resources/example_source/sync/MultiNodeSync.js")
+    implicit val project = f.project
+
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)
+
+    val multiModelNodes = f.results.astGraph.nodes.collect {
+      case x if x.value.isInstanceOf[MultiModelNode] => x.value.asInstanceOf[MultiModelNode].expandedValue()
+    }
+
+    assert(diff.noErrors)
+    assert(diff.filePatches.size == 1)
+    assert(diff.filePatches.head.newFileContents === """function greeting() { //name: TestMulti
+                                                       | return "Whats UP"
+                                                       |}
+                                                       |
+                                                       |function helloWorld() {
+                                                       | if (true) {
+                                                       |
+                                                       | }
+                                                       | return greeting()+' '+'FRIENDO'
+                                                       |}
+                                                       |
+                                                       |
+                                                       |
+                                                       |function greeting() { //source: TestMulti -> optic:synctest/passthrough-transform
+                                                       | return "Whats UP"
+                                                       |}
+                                                       |
+                                                       |function helloWorld() {
+                                                       | if (true) {
+                                                       |
+                                                       | }
+                                                       | return greeting()+' '+'FRIENDO'
+                                                       |}
+                                                       |
+                                                       |""".stripMargin)
+
+  }
+
   describe("error handling") {
 
     it("will handle errors gracefully") {
@@ -147,8 +187,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
       val diff = DiffSyncGraph.calculateDiff(f.snapshot)
       assert(diff.containsErrors)
-      checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
-      assert(diff.changes(1).isInstanceOf[ErrorEvaluating])
+      assert(diff.changes(0).isInstanceOf[ErrorEvaluating])
+      checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
     }
 
     it("will handle errors for a tree gracefully") {
@@ -188,8 +228,10 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       val allTriggers = diff.changes.map(_.asInstanceOf[Replace].trigger.get).distinct
       assert(allTriggers.size == 2)
       assert(allTriggers ==
-        Vector(Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello")))),
-          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning"))))))
+        Vector(
+          Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello")))),
+          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning"))))
+        ))
     }
 
     it("partiality evaluated trees get multiple triggers") {

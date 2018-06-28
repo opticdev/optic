@@ -18,13 +18,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class PutUpdateRequest(id: String, newValue: JsObject, editorSlug: String)(implicit projectsManager: ProjectsManager) {
-  implicit val nodeKeyStore = projectsManager.nodeKeyStore
+class PutUpdateRequest(id: String, newValue: JsObject, editorSlug: String, projectName: String)(implicit projectsManager: ProjectsManager) {
   def execute = {
     implicit val actorCluster = projectsManager.actorCluster
-    val modelNodeOption = projectsManager.nodeKeyStore.lookupId(id)
+    implicit val project = projectsManager.lookupProject(projectName).get
+    implicit val nodeKeyStore = project.nodeKeyStore
+    val modelNodeOption = nodeKeyStore.lookupId(id)
     if (modelNodeOption.isDefined) {
-      implicit val project: ProjectBase = modelNodeOption.get.project
       implicit val sourceGearContext = modelNodeOption.get.getContext.get
       val file = modelNodeOption.get.fileNode.get.toFile
       implicit val autorefreshes = EditorConnection.listConnections.get(editorSlug).map(_.autorefreshes).getOrElse(false)

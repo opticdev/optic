@@ -53,10 +53,15 @@ class ProjectFileSpec extends TestBase {
       assert(f.empty.interface.get.parsers.value.isEmpty)
     }
 
-    it("includes knowledge") {
+    it("includes skills") {
       val f = fixture
-      assert(f.defined.interface.get.knowledge.value.size == 1)
-      assert(f.empty.interface.get.knowledge.value.isEmpty)
+      assert(f.defined.interface.get.skills.value.size == 1)
+      assert(f.empty.interface.get.skills.value.isEmpty)
+    }
+
+    it("backwards compatible with knowledge -> skills") {
+      val f = fixture
+      assert(f.defined6.interface.get.skills.value.size == 3)
     }
 
     it("includes knowledge paths") {

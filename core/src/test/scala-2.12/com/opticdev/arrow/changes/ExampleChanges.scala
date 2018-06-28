@@ -24,7 +24,9 @@ object ExampleChanges extends TestBase with TestPackageProviders {
       """
         | [{
         |		"schema": {
-        |			"title": "Route",
+        |     "schemaRef": "optic:route/1.0.0",
+        |     "definition": {
+        |       "title": "Route",
         |			"version": "1.0.0",
         |			"type": "object",
         |			"required": ["method", "url"],
@@ -41,6 +43,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |						"$ref": "#/definitions/parameter"
         |					}
         |				}
+        |     }
         |			},
         |			"definitions": {
         |				"parameter": {
@@ -466,7 +469,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |				"input": "optic:rest@0.1.0/route",
         |       "ask": {"type": "object"},
         |       "dynamicAsk": {},
-        |				"script": "function transform(input, answers, inputModelId) {\n return [Mutate(inputModelId, {method: 'post', url: input.url}), Generate('optic:rest/parameter', { in: 'body', name: 'aidan' })]   \n}"
+        |				"script": "function transform(input, answers, inputModelId) {\n return [Mutate(inputModelId, {method: 'post', url: input.url}), Generate('optic:rest/parameter', { in: 'body', name: 'aidan' }), Generate('optic:rest/parameter', { in: 'body', name: 'lastName' })]   \n}"
         |			},
         |			"target": "optic:test@latest/route",
         |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
@@ -506,7 +509,103 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
-    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})\n\nreq.body.aidan\n\n\n\n\n")
+    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})\n\nreq.body.lastName\n\nreq.body.aidan\n\n\n\n\n")
+
+  }
+
+
+  lazy val transformAndAddToAnotherFile = {
+
+    val changesJSON =
+
+      """
+        |[{
+        |		"transformationChanges": {
+        |			"transformation": {
+        |				"yields": "Schema -> Create Route",
+        |       "id": "s2r",
+        |				"packageId": "optic:mongoose@0.1.0",
+        |				"input": "optic:mongoose@0.1.0/schema",
+        |				"output": "optic:rest@0.1.0/route",
+        |       "dynamicAsk": {},
+        |				"ask": {
+        |					"type": "object",
+        |					"properties": {
+        |						"queryProvider": {
+        |							"description": "The gear you want to use to resolve this query",
+        |							"type": "string",
+        |							"_opticValidation": {
+        |								"accepts": "lens",
+        |								"withSchema": "optic:mongoose@0.1.0/create-record"
+        |							}
+        |						}
+        |					},
+        |					"_order": ["queryProvider"],
+        |					"required": ["queryProvider"]
+        |				},
+        |				"script": "function transform(input, answers) {\n var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n  var routeDescription = {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n\n   var queryDescription = {\n        fields: Object.keys(input.schema).reduce(function (previous, current) {\n            previous[current] = Generate('optic:rest/parameter', { in: 'body', name: current });\n            return previous;\n        }, {})\n    };\n\n  return Generate(answers.output, routeDescription, { \n inFile: 'test-examples/resources/tmp/test_project/nested/notHereYet.js', \n \n       containers: {\n            \"callback\": [Generate('optic:mongoose/create-record', queryDescription, { \n lensId: answers.queryProvider \n  })]\n        }\n    });\n}"
+        |			},
+        |			"target": "optic:rest@0.1.0/route",
+        |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
+        |		},
+        |   "askSchema": {
+        |					"type": "object",
+        |					"properties": {
+        |						"queryProvider": {
+        |							"description": "The gear you want to use to resolve this query",
+        |							"type": "string",
+        |							"_opticValidation": {
+        |								"accepts": "lens",
+        |								"withSchema": "optic:mongoose@0.1.0/create-record"
+        |							}
+        |						}
+        |      }
+        |		},
+        |		"inputValue": {
+        |			"schema": {
+        |				"firstName": "string",
+        |				"lastName": "string",
+        |				"email": "string",
+        |				"_order": ["firstName", "lastName", "email"]
+        |			},
+        |			"name": "Hello",
+        |     "_variables": { "modelName": "model" }
+        |		},
+        |		"lensOptions": [{
+        |			"name": "Route",
+        |			"packageFull": "optic:express-js@0.1.0",
+        |			"id": "85c0d9c3"
+        |		}],
+        |		"locationOptions": [{
+        |			"file": "test-examples/resources/tmp/test_project/nested/model.js",
+        |		  "position": 173,
+        |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |		}],
+        |		"_type": "com.opticdev.arrow.changes.RunTransformation",
+        |		"lensId": "optic:express-js/route",
+        |		"location": {
+        |			"file": "test-examples/resources/tmp/test_project/nested/model.js",
+        |		  "position": 173,
+        |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
+        |		},
+        |		"answers": {
+        |			"queryProvider": "optic:mongoose/insert-record"
+        |		}
+        |	}]
+      """.stripMargin
+
+    val future = SGConstructor.fromProjectFile(new ProjectFile(File("test-examples/resources/tmp/test_project/optic.yml")))
+      .map(_.inflate)
+
+    implicit val actorCluster = new ActorCluster(ActorSystem("testFileInsertion"))
+
+    val sourcegear = Await.result(future, 10 seconds)
+
+    val project = new StaticSGProject("test3333", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourcegear)
+
+    val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
+
+    (changeGroup, sourcegear, project, "app.post('/hello', function (req, res) {\n  new model({ firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email }).save((err, item) => {\n    if (!err) {\n    \n    } else {\n    \n    }\n  })\n})")
 
   }
 

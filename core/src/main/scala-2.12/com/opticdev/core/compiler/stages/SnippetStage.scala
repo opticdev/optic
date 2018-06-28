@@ -9,14 +9,14 @@ import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping,
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.PathFinder
-import com.opticdev.parsers.graph.{CommonAstNode, AstType}
+import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.sdk.descriptions.{Lens, Snippet}
-
+import com.opticdev.sdk.opticmarkdown2.OMSnippet
+import com.opticdev.sdk.opticmarkdown2.lens.OMLens
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
-class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerStage[SnippetStageOutput] {
+class SnippetStage(val snippet: OMSnippet)(implicit lens: OMLens) extends CompilerStage[SnippetStageOutput] {
 
   lazy val parser = getParser()
 
@@ -24,10 +24,12 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     var processedSnippet = snippet
     var (ast, root) = buildAstTree(snippet)
 
-    var containerMappings = connectContainerHooksToAst(findContainerHooks, ast, root)
+    val (enterOn, children, matchType) = enterOnAndMatchType(ast, root)
 
+    var containerMappings = connectContainerHooksToAst(findContainerHooks, ast, root)
     //reprocess out hooks
-    if (containerMappings.nonEmpty) {
+    if (containerMappings.nonEmpty && matchType == MatchType.Single) {
+
       processedSnippet = stripContainerHooks(containerMappings)
       val newAstTree = buildAstTree(processedSnippet)
       ast = newAstTree._1
@@ -37,21 +39,17 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
 
       //reconnect to updated Ast Nodes
       containerMappings = containerMappings.map(cH=> {
-
         val node = cH._2.path.walk(root, ast)
-
         val path = PathFinder.getPath(ast, children.head, node).get
-
         (cH._1, ContainerNodeMapping(node, path))
       })
 
       SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerMappings, parser, missingContainers(containerMappings))
     } else {
-
-      val (enterOn, children, matchType) = enterOnAndMatchType(ast, root)
-
-      SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerMappings, parser, missingContainers())
-
+      matchType match {
+        case MatchType.Single => SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, containerMappings, parser, missingContainers())
+        case MatchType.Multi =>  SnippetStageOutput(ast, root, processedSnippet, enterOn, children, matchType, Map.empty, parser, Seq.empty)
+      }
     }
   }
 
@@ -65,9 +63,9 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
     }
   }
 
-  def buildAstTree(fromSnippet: Snippet = snippet): (AstGraph, CommonAstNode) = {
+  def buildAstTree(fromSnippet: OMSnippet = snippet): (AstGraph, CommonAstNode) = {
     try {
-      val parseResult = SourceParserManager.parseString(fromSnippet.block, fromSnippet.language).get
+      val parseResult = SourceParserManager.parseStringWithProxies(fromSnippet.block, fromSnippet.language).get
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
       val root = parseResult.graph.root.get
       (parseResult.graph, root)
@@ -91,11 +89,11 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
         postProcessors.get(children.head.nodeType)
           .map(p=> {
             val results = p.apply(children.head.nodeType, graph, children.head)
-            (results._1, Vector(results._2), MatchType.Parent)
+            (results._1, Vector(results._2), MatchType.Single)
           })
-          .getOrElse((Set(children.head.nodeType), children, MatchType.Parent))
+          .getOrElse((Set(children.head.nodeType), children, MatchType.Single))
       }
-      case l if l > 1   => (blockNodeTypes, children, MatchType.Children)
+      case l if l > 1   => (blockNodeTypes, children, MatchType.Multi)
     }
 
   }
@@ -144,24 +142,24 @@ class SnippetStage(val snippet: Snippet)(implicit lens: Lens) extends CompilerSt
 
   }
 
-  def stripContainerHooks(connected: ContainerMapping) : Snippet = {
+  def stripContainerHooks(connected: ContainerMapping) : OMSnippet = {
     val sorted = connected.toSeq.sortBy(_._2.node.range.start).reverse.map(_._1)
 
     val newBlock = sorted.foldLeft(snippet.block) {
       case (string, hook)=> StringUtils.replaceRange(string, Range(hook.range.start, hook.range.end), "")
     }
 
-    Snippet(snippet.language, newBlock)
+    OMSnippet(snippet.language, newBlock)
 
   }
 
   def missingContainers(containerMappings: ContainerMapping = Map()): Seq[String] = {
-    (lens.subcontainers.map(_.name).toSet diff containerMappings.keys.map(_.name).toSet)
+    (lens.subcontainerCompilerInputs.map(_.name).toSet diff containerMappings.keys.map(_.name).toSet)
       .toSeq.sorted
   }
 
 }
 
 object MatchType extends Enumeration {
-  val Parent, Children /*Custom*/ = Value
+  val Single, Multi = Value
 }

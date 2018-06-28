@@ -3,29 +3,30 @@ package com.opticdev.core.compiler.stages
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.core.compiler.errors.InvalidComponents
-import com.opticdev.sdk.descriptions.{CodeComponent, Component, Lens, Snippet}
 import com.opticdev.sdk.descriptions.enums.ComponentEnums._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Entire
-import com.opticdev.sdk.descriptions.finders.StringFinder
 
 import scala.util.{Failure, Try}
 import com.opticdev.core._
 import com.opticdev.parsers.SourceParserManager
+import com.opticdev.sdk.opticmarkdown2.OMSnippet
+import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensCodeComponent, OMStringFinder, Token}
+import play.api.libs.json.JsObject
 class FinderStageSpec extends TestBase {
 
   val snippetBlock = "var hello = require('world')"
-  val snippet = Snippet("es7", snippetBlock)
+  val snippet = OMSnippet("es7", snippetBlock)
 
-  implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, Vector(
-    CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello"))
-  ), Vector(), Vector(), initialValue = None)
+  implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(
+    "definedAs" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "hello"))
+  ), Map(), Map(), Left(BlankSchema), JsObject.empty, null)
   val snippetBuilder = new SnippetStage(snippet)
   val outputTry = Try(snippetBuilder.run)
 
   val finderStage = new FinderStage(outputTry.get)
 
   it("can find paths for components") {
-    val finderPath = finderStage.pathForFinder(lens.components.head.asInstanceOf[CodeComponent].finder)
+    val finderPath = finderStage.pathForFinder(lens.value.head._2.asInstanceOf[OMLensCodeComponent].at)
     val targetNode = finderPath.get.targetNode
     assert(targetNode.nodeType == AstType("Identifier", "es7"))
   }
@@ -37,44 +38,24 @@ class FinderStageSpec extends TestBase {
   }
 
   it("catches errors valid output") {
-
-    val brokenComponent = CodeComponent(Seq("firstProblem"), StringFinder(Entire, "not-anywhere"))
-
-    finderStage.pathForFinder(brokenComponent.finder)
-
+    val brokenComponent = OMStringFinder(Entire, "not-anywhere")
+    finderStage.pathForFinder(brokenComponent)
   }
 
   describe("error handling") {
 
-    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, Vector(
-      CodeComponent(Seq("definedAs"), StringFinder(Entire, "hello")),
-      CodeComponent(Seq("firstProblem"), StringFinder(Entire, "not-anywhere")),
-      CodeComponent(Seq("nextProblem"), StringFinder(Entire, "nowhere"))
-    ), Vector(), Vector(), initialValue = None)
+    implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(
+      "definedAs" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "hello")),
+      "firstProblem" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "not-anywhere")),
+      "nextProblem" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "nowhere"))
+    ), Map(), Map(), Left(BlankSchema), JsObject.empty, null)
 
     val finderStage = new FinderStage(outputTry.get)
 
     it("collects exceptions from failed component lookup") {
-      val results = finderStage.pathForFinder(lens.components(1).asInstanceOf[CodeComponent].finder)
+      val results = finderStage.pathForFinder(lens.value("firstProblem").asInstanceOf[OMLensCodeComponent].at)
       assert(results.isFailure)
     }
-
-    it("collects 2 errors/3 components") {
-
-      assertThrows[InvalidComponents] {
-        finderStage.run
-      }
-
-      val results = Try(finderStage.run)
-
-      assert(results.isFailure)
-      assert(results.asInstanceOf[Failure[Exception]]
-              .exception
-              .asInstanceOf[InvalidComponents]
-              .invalidComponents.size == 2)
-
-    }
-
 
   }
 

@@ -2,16 +2,18 @@ package com.opticdev.core.sourcegear.variables
 
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.sdk.VariableMapping
-import com.opticdev.sdk.descriptions.{Variable, VariableRule}
+import com.opticdev.sdk.descriptions.VariableRule
+import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
+import com.sun.org.apache.xpath.internal.operations.Variable
 import play.api.libs.json.{JsObject, JsString}
 
-case class VariableLookupTable(variables: Vector[Variable], identifierValuePath: String, nodeType: AstType) {
+case class VariableLookupTable(variables: Vector[OMVariable], identifierValuePath: String, nodeType: AstType) {
 
-  private val assignments = collection.mutable.Map[Variable, String]()
+  private val assignments = collection.mutable.Map[OMVariable, String]()
 
   def reset = assignments.clear()
 
-  def lookupVariableValue(forId: String): Option[Variable] = variables.find(_.token == forId)
+  def lookupVariableValue(forId: String): Option[OMVariable] = variables.find(_.token == forId)
 
   def matchesVariableValue(forId: String, value: String) : Boolean = {
     val variable = variables.find(_.token == forId)

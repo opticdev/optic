@@ -10,18 +10,31 @@ import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers.SourceParserManager
+import com.opticdev.sdk.opticmarkdown2.{OMChildrenRuleType, OMSnippet}
+import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensComponent, OMLensVariableScopeEnum}
+import play.api.libs.json.JsObject
 
 trait ParserUtils {
 
-  def parseGearFromSnippetWithComponents(block: String, components: Vector[Component], rules: Vector[RuleWithFinder] = Vector(), subContainers: Vector[SubContainer] = Vector(), variables: Vector[Variable] = Vector()) : (ParseAsModel, Lens) = {
-    val snippet = Snippet("es7", block)
-    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, components, variables, subContainers, PackageRef("test:example", "0.1.1"), None)
-    implicit val variableManager = VariableManager(variables, SourceParserManager.installedParsers.head.identifierNodeDesc)
+  def parseGearFromSnippetWithComponents(block: String, value: Map[String, OMLensComponent], subContainers: Map[String, OMChildrenRuleType] = Map(), variables: Map[String, OMLensVariableScopeEnum] = Map()) : (ParseAsModel, OMLens) = {
+    val snippet = OMSnippet("es7", block)
+    implicit val lens : OMLens = OMLens(
+      Some("Example"),
+      "example",
+      snippet,
+      value,
+      variables,
+      subContainers,
+      Left(BlankSchema),
+      JsObject.empty,
+      PackageRef("test:example", "0.1.1"))
+
+    implicit val variableManager = VariableManager(lens.variablesCompilerInput, SourceParserManager.installedParsers.head.identifierNodeDesc)
 
     val snippetBuilder = new SnippetStage(snippet)
     val snippetOutput = snippetBuilder.run
 
-    implicit val subcontainersManager = new SubContainerManager(lens.subcontainers, snippetOutput.containerMapping)
+    implicit val subcontainersManager = new SubContainerManager(lens.subcontainerCompilerInputs, snippetOutput.containerMapping)
 
     val finderStage = new FinderStage(snippetOutput)
     val finderStageOutput = finderStage.run
@@ -33,8 +46,8 @@ trait ParserUtils {
   }
 
   def sample(block: String) : SnippetStageOutput = {
-    val snippet = Snippet("es7", block)
-    implicit val lens : Lens = Lens(Some("Example"), "example", BlankSchema, snippet, Vector(), Vector(), Vector(), initialValue = None)
+    val snippet = OMSnippet("es7", block)
+    implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, PackageRef("test:example", "0.1.1"))
     val snippetBuilder = new SnippetStage(snippet)
     snippetBuilder.run
   }

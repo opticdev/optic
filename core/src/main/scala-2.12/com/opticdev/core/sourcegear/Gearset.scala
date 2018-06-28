@@ -1,15 +1,22 @@
 package com.opticdev.core.sourcegear
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
+import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
-import com.opticdev.core.sourcegear.graph.model.ModelNode
+import com.opticdev.core.sourcegear.graph.GraphOperations
+import com.opticdev.core.sourcegear.graph.model.{ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 
 //@todo make this class immutable
-class LensSet(initialGears: CompiledLens*) {
+class LensSet(initialGears: SGExportableLens*) {
 
-  private val lenses = scala.collection.mutable.Set[CompiledLens](initialGears:_*)
+  private val lenses = scala.collection.mutable.Set[SGExportableLens]({
+    initialGears.collect {
+      case single: CompiledLens => Seq(single)
+      case multi: CompiledMultiNodeLens => multi.childLenses :+ multi
+    }.flatten
+  }:_*)
 
   var fileAccumulator = FileAccumulator()
 
@@ -34,21 +41,28 @@ class LensSet(initialGears: CompiledLens*) {
 
   private var groupedStore : Map[AstType, Set[CompiledLens]] = Map()
 
+  private var multiNodeLensStore : Set[CompiledMultiNodeLens] = Set()
+
   private def reindex = synchronized {
-    val allListeners = lenses.flatMap(_.parser.listeners)
+
+    val singleLenses: Seq[CompiledLens] = lenses.collect {case cl: CompiledLens => cl}.toSeq
+
+    val allListeners = singleLenses.flatMap(_.parser.listeners)
 
     val allEntryNodes = lenses.flatMap(_.enterOn).toSet
 
     groupedStore = allEntryNodes
-      .map(nodeType=> (nodeType, lenses.filter(_.enterOn.contains(nodeType)).toSet))
+      .map(nodeType=> (nodeType, singleLenses.filter(_.enterOn.contains(nodeType)).toSet))
       .toMap
+
+    multiNodeLensStore = lenses.collect{case mn: CompiledMultiNodeLens => mn}.toSet
 
     fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.mapToSchema))
   }
 
   def grouped: Map[AstType, Set[CompiledLens]] = groupedStore
 
-  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase): FileParseResults = {
+  def parseSingleModelsFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase, fileNameAnnotationOption: Option[FileNameAnnotation]): FileParseResults = {
     val groupedByType = astGraph.nodes.filter(_.isAstNode()).groupBy(_.value.asInstanceOf[CommonAstNode].nodeType)
 
     //@todo optimize this
@@ -70,8 +84,20 @@ class LensSet(initialGears: CompiledLens*) {
     fileAccumulator.run(astGraph, results)
 
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
-    FileParseResults(astGraph, astGraph.modelNodes.asInstanceOf[Vector[ModelNode]], sourceGearContext.parser, sourceGearContext.fileContents)
+    FileParseResults(astGraph, astGraph.modelNodes.asInstanceOf[Vector[ModelNode]], sourceGearContext.parser, sourceGearContext.fileContents, fileNameAnnotationOption)
   }
+
+  def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase, fileNameAnnotationOption: Option[FileNameAnnotation]): FileParseResults = {
+    val parsed = parseSingleModelsFromGraph(fileContents, astGraph, sourceGearContext, project, fileNameAnnotationOption)
+
+    val results = multiNodeLensStore
+      .flatMap(i=> i.parser.findMatches.map(result=> MultiModelNode(result.schema, result.lensRef, result.multiNodeParseGear, result.childrenNodes)))
+
+    results.foreach(GraphOperations.addMultiNodeModelToGraph) //add to graph
+
+    parsed.copy(astGraph = astGraph, modelNodes = parsed.modelNodes ++ results)
+  }
+
 
   //init code
   reindex

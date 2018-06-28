@@ -17,12 +17,11 @@ object IndexSourceGear {
 
   def runFor(sourceGear: SourceGear) : KnowledgeGraph = {
 
-    val gearsBySchemas = sourceGear.lensSet.listLenses.groupBy(_.parser.schema)
+    val gearsBySchemas = sourceGear.lensSet.listLenses.filter(_.usesExternalSchema).groupBy(_.schemaRef)
 
     val schemaGearNodes: Seq[UnDiEdge[graph.SGNode]] = gearsBySchemas.flatMap {
       case (schemaRef, gears)=> {
-        val schemaNode = SchemaNode(sourceGear.findSchema(schemaRef).get)
-        gears.map(g=> schemaNode ~ LensNode(g))
+        gears.map(g=> SchemaNode(sourceGear.findSchema(schemaRef.withPackageIfMissing(g.packageRef)).get) ~ LensNode(g))
       }
     }.toVector
 

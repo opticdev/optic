@@ -6,10 +6,10 @@ import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import play.api.libs.json._
 import scalax.collection.edge.LkDiEdge
 import com.opticdev.common.fileFormat
+import com.opticdev.core.sourcegear.annotations.TagAnnotation
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
-import com.opticdev.core.sourcegear.objects.annotations.TagAnnotation
 import com.opticdev.core.sourcegear.project.ProjectBase
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 
 package object sync {
 

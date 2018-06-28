@@ -3,7 +3,7 @@ package com.opticdev.sdk.transformation
 import akka.actor.ActorSystem
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.generate.SingleModel
 import com.opticdev.sdk.descriptions.transformation.{TransformFunction, Transformation, TransformationCaller}
 import jdk.nashorn.api.scripting.ScriptObjectMirror
@@ -90,7 +90,9 @@ class SdkTransformationSpec extends FunSpec {
         | return {hello: a.test}
         |}
       """.stripMargin,
-      JsObject(Seq("first" -> JsNumber(1))),
+      JsObject(Seq("type" -> JsString("object"), "properties" -> JsObject(Seq(
+        "one" -> JsObject(Seq("type" -> JsString("number")))
+      )))),
       Json.parse(
         """{ "test": {"description": "value", "func": "function (input) { return input; }" },
           |  "test2": {"description": "value2", "func": "function (inputValue) { return inputValue; }" } }""".stripMargin).as[JsObject],
@@ -117,7 +119,7 @@ class SdkTransformationSpec extends FunSpec {
     }
 
     it("can calculate combined schema of dynamic ask") {
-      assert(withDynamicAsk.combinedAskSchema(JsObject(Seq("two" -> JsNumber(2)))) == Json.parse("""{"first":1,"test":{"two":2},"test2":{"two":2}}"""))
+      assert(withDynamicAsk.combinedAskSchema(JsObject(Seq("two" -> JsNumber(2)))) == Json.parse("""{"type":"object","properties":{"one":{"type":"number"},"test":{"two":2},"test2":{"two":2}}}"""))
     }
 
     describe("receives answers from Ask") {

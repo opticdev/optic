@@ -3,27 +3,30 @@ package com.opticdev.core.compiler.stages
 import com.opticdev.core.compiler.ValidationStageOutput
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, SchemaNotFound}
 import com.opticdev.opm.DependencyTree
-import com.opticdev.sdk.descriptions.{Lens, Schema}
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import com.opticdev.core.compiler.helpers.SchemaIdImplicits._
 import com.opticdev.opm.context.{Context, PackageContext}
+import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
-class ValidationStage()(implicit val lens: Lens, packageContext: Context, errorAccumulator: ErrorAccumulator = new ErrorAccumulator) extends CompilerStage[ValidationStageOutput] {
+class ValidationStage()(implicit val lens: OMLens, packageContext: Context, errorAccumulator: ErrorAccumulator = new ErrorAccumulator) extends CompilerStage[ValidationStageOutput] {
   override def run: ValidationStageOutput = {
 
-    val lensSchemaOption = lens.schema.resolve
+    val lensSchema = {
+      if (lens.schema.isLeft) {
+        lens.schemaRef.resolve().getOrElse(throw new SchemaNotFound(lens.schemaRef))
+      } else {
+        lens.schema.right.get
+      }
+    }
 
-    if (lensSchemaOption.isEmpty) throw new SchemaNotFound(lens.schema)
-
-    val lensSchema = lensSchemaOption.get
-
-    val extraPaths = lens.components.filter(i=> SchemaValidation.getPath(i.propertyPath, lensSchema).isEmpty)
+    val extraPaths = lens.valueComponentsCompilerInput.filter(i=> SchemaValidation.getPath(i.propertyPath, lensSchema).isEmpty)
                       .map(_.propertyPath)
                       .toSet
 
     val requiredFields = SchemaValidation.requiredPaths(lensSchema)
 
-    val setPaths = lens.components.map(_.propertyPath).toSet
+    val setPaths = lens.valueComponentsCompilerInput.map(_.propertyPath).toSet
 
     val missingPaths = requiredFields diff setPaths -- extraPaths
 
@@ -33,7 +36,7 @@ class ValidationStage()(implicit val lens: Lens, packageContext: Context, errorA
 
 object SchemaValidation {
 
-  def requiredPaths(schema: Schema): Set[Seq[String]] = {
+  def requiredPaths(schema: OMSchema): Set[Seq[String]] = {
 
     def requiredFields(path: Seq[String], jsObject: JsObject): Set[Seq[String]] = {
       val objTypeOption = jsObject \ "type"
@@ -78,7 +81,7 @@ object SchemaValidation {
 
   }
 
-  def getPath(path: Seq[String], schema: Schema): Option[JsObject] = {
+  def getPath(path: Seq[String], schema: OMSchema): Option[JsObject] = {
 
     val (isValid, obj) = path.foldLeft((true, schema.definition)) { (current, key) =>
       val (bool, currentObj) = current

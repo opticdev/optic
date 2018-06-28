@@ -1,9 +1,10 @@
 package com.opticdev.core.sourcegear.context
-import com.opticdev.common.{PackageRef, SGExportable}
-import com.opticdev.core.sourcegear.{CompiledLens, SourceGear}
+import com.opticdev.common.{PackageRef, SGExportable, SchemaRef}
+import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens, SourceGear}
 import com.opticdev.opm.context.Context
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.descriptions.{Lens, Schema, SchemaComponent, SchemaRef}
+import com.opticdev.sdk.opticmarkdown2.lens.OMLensSchemaComponent
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.util.Try
 
@@ -18,7 +19,7 @@ object SDKObjectsResolvedImplicits {
         transformation.packageId.packageId
       }
 
-      Try(resolveSchema(pId, transformation.input.id).get.asInstanceOf[Schema].schemaRef)
+      Try(resolveSchema(pId, transformation.input.id).get.asInstanceOf[OMSchema].schemaRef)
         .getOrElse(throw new Exception(s"Schema '${transformation.input}' not found"))
     }
 
@@ -31,13 +32,13 @@ object SDKObjectsResolvedImplicits {
           transformation.packageId.packageId
         }
 
-        Try(resolveSchema(pId, output.id).get.asInstanceOf[Schema].schemaRef)
+        Try(resolveSchema(pId, output.id).get.asInstanceOf[OMSchema].schemaRef)
           .getOrElse(throw new Exception(s"Schema '${transformation.output}' not found"))
       }
     }
   }
 
-  implicit class CompiledLensResolved(compiledLens: CompiledLens) {
+  implicit class CompiledLensResolved(compiledLens: SGExportableLens) {
     def resolvedSchema(implicit sourceGear: SourceGear) : SchemaRef = {
 
       val pId = if (compiledLens.schemaRef.packageRef.isDefined) {
@@ -46,37 +47,31 @@ object SDKObjectsResolvedImplicits {
         compiledLens.packageRef.packageId
       }
 
-      Try(resolveSchema(pId, compiledLens.schemaRef.id).get.asInstanceOf[Schema].schemaRef)
-        .getOrElse(throw new Exception(s"Schema '${compiledLens.schemaRef}' not found"))
+      if (compiledLens.schema.isRight) {
+        compiledLens.schemaRef
+      } else {
+        Try(resolveSchema(pId, compiledLens.schemaRef.id).get.asInstanceOf[OMSchema].schemaRef)
+          .getOrElse(throw new Exception(s"Schema '${compiledLens.schemaRef}' not found"))
+      }
     }
   }
 
-  implicit class SchemaComponentResolved(schemaComponent: SchemaComponent) {
+  implicit class SchemaComponentResolved(schemaComponent: OMLensSchemaComponent) {
     def resolvedSchema(packageId: String)(implicit sourceGear: SourceGear) : SchemaRef = {
 
-      val pId = if (schemaComponent.schema.packageRef.isDefined) {
-        schemaComponent.schema.packageRef.map(_.packageId).getOrElse("")
+      val pId = if (schemaComponent.schemaRef.packageRef.isDefined) {
+        schemaComponent.schemaRef.packageRef.map(_.packageId).getOrElse("")
       } else {
         packageId
       }
 
-      Try(resolveSchema(pId, schemaComponent.schema.id).get.asInstanceOf[Schema].schemaRef)
-        .getOrElse(throw new Exception(s"Schema '${schemaComponent.schema}' not found"))
+      Try(resolveSchema(pId, schemaComponent.schemaRef.id).get.asInstanceOf[OMSchema].schemaRef)
+        .getOrElse(throw new Exception(s"Schema '${schemaComponent.schemaRef}' not found"))
 
     }
   }
 
   private def resolveSchema(packageId: String, item: String)(implicit sourceGear: SourceGear): Option[SGExportable] =
     sourceGear.flatContext.prefix(packageId).resolve(item)
-
-
-  def qualifySchema(packageRef: PackageRef, schemaRef: SchemaRef)(implicit packageContext: Context) : SchemaRef = {
-    if (schemaRef.packageRef.isDefined) {
-      packageContext.getPackageContext(schemaRef.packageRef.get.packageId).get
-        .getProperty(schemaRef.id).get.asInstanceOf[Schema].schemaRef
-    } else {
-      SchemaRef(Some(packageRef), schemaRef.id)
-    }
-  }
 
 }

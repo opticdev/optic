@@ -10,7 +10,9 @@ import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import play.api.libs.json.JsObject
 
-class Arrow(val project: OpticProject)(implicit nodeKeyStore: NodeKeyStore) {
+class Arrow(val project: OpticProject) {
+
+  implicit val nodeKeyStore = project.nodeKeyStore
 
   implicit val sourcegear: SourceGear = project.projectSourcegear
 

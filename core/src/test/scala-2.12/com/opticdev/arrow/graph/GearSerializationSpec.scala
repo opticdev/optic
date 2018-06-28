@@ -6,7 +6,7 @@ import com.opticdev.arrow.index.IndexSourceGear
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.CompiledLens
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
 import scalax.collection.edge.LkDiEdge
@@ -31,7 +31,7 @@ class GearSerializationSpec extends TestBase with TestPackageProviders {
   it("can serialize a basic graph") {
     val graph = IndexSourceGear.runFor(exampleProjectSG)
     val result = GraphSerialization.serialize(graph)
-    assert(result == Json.parse("""{"nodes":[{"id":"optic:rest@0.1.0/parameter","name":"Parameter","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:rest@0.1.0/response","name":"Response","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:rest@0.1.0/route","name":"Route","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:express-js@0.1.0/response","name":"Response","packageFull":"optic:express-js@0.1.0","type":"gear"},{"id":"optic:express-js@0.1.0/parameter","name":"Parameter","packageFull":"optic:express-js@0.1.0","type":"gear"},{"id":"optic:express-js@0.1.0/route","name":"Route","packageFull":"optic:express-js@0.1.0","type":"gear"}],"edges":[{"n1":"optic:rest@0.1.0/parameter","n2":"optic:express-js@0.1.0/parameter"},{"n1":"optic:rest@0.1.0/response","n2":"optic:express-js@0.1.0/response"},{"n1":"optic:rest@0.1.0/route","n2":"optic:express-js@0.1.0/route"}]}"""))
+    assert(result == Json.parse("""{"nodes":[{"id":"optic:express-js@0.1.0/parameter","name":"Parameter","packageFull":"optic:express-js@0.1.0","type":"gear"},{"id":"optic:express-js@0.1.0/route","name":"Route","packageFull":"optic:express-js@0.1.0","type":"gear"},{"id":"optic:rest@0.1.0/parameter","name":"Parameter","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:rest@0.1.0/route","name":"Route","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:rest@0.1.0/response","name":"Response","packageFull":"optic:rest@0.1.0","type":"schema"},{"id":"optic:express-js@0.1.0/response","name":"Response","packageFull":"optic:express-js@0.1.0","type":"gear"}],"edges":[{"n1":"optic:rest@0.1.0/parameter","n2":"optic:express-js@0.1.0/parameter"},{"n1":"optic:rest@0.1.0/route","n2":"optic:express-js@0.1.0/route"},{"n1":"optic:rest@0.1.0/response","n2":"optic:express-js@0.1.0/response"}]}"""))
   }
 
   it("can serialize a graph with transformations") {
@@ -39,7 +39,7 @@ class GearSerializationSpec extends TestBase with TestPackageProviders {
     val graph = IndexSourceGear.runFor(exampleProjectSG)
     val result = GraphSerialization.serialize(graph)
 
-    assert(result == Json.parse("""{"nodes":[{"id":"optic:test@0.1.0/model","name":"model","packageFull":"optic:test@0.1.0","type":"schema"},{"id":"optic:test@0.1.0/route","name":"route","packageFull":"optic:test@0.1.0","type":"schema"},{"id":"optic:test@0.1.0/fetch","name":"fetch","packageFull":"optic:test@0.1.0","type":"schema"},{"id":"optic:test@0.1.0/form","name":"form","packageFull":"optic:test@0.1.0","type":"schema"}],"edges":[{"from":"optic:test@0.1.0/model","to":"optic:test@0.1.0/route","label":{"name":"Model -> Route","packageFull":"optic:test-transform@latest"},"isTransformation":true},{"from":"optic:test@0.1.0/route","to":"optic:test@0.1.0/form","label":{"name":"Route -> Form","packageFull":"optic:test-transform@latest"},"isTransformation":true},{"from":"optic:test@0.1.0/route","to":"optic:test@0.1.0/fetch","label":{"name":"Route -> Fetch","packageFull":"optic:test-transform@latest"},"isTransformation":true}]}"""))
+    assert(result == Json.parse("""{"nodes":[{"id":"optic:test@0.1.0/model","name":"model","packageFull":"optic:test@0.1.0","type":"schema"},{"id":"optic:test@0.1.0/route","name":"route","packageFull":"optic:test@0.1.0","type":"schema"},{"id":"optic:test@0.1.0/form","name":"form","packageFull":"optic:test@0.1.0","type":"schema"},{"id":"optic:test@0.1.0/fetch","name":"fetch","packageFull":"optic:test@0.1.0","type":"schema"}],"edges":[{"from":"optic:test@0.1.0/model","to":"optic:test@0.1.0/route","label":{"name":"Model -> Route","packageFull":"optic:test-transform@latest"},"isTransformation":true},{"from":"optic:test@0.1.0/route","to":"optic:test@0.1.0/form","label":{"name":"Route -> Form","packageFull":"optic:test-transform@latest"},"isTransformation":true},{"from":"optic:test@0.1.0/route","to":"optic:test@0.1.0/fetch","label":{"name":"Route -> Fetch","packageFull":"optic:test-transform@latest"},"isTransformation":true}]}"""))
   }
 
 

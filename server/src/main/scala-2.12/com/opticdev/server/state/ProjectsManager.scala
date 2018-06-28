@@ -5,14 +5,14 @@ import java.io.FileNotFoundException
 import better.files.File
 import com.opticdev.arrow.Arrow
 import com.opticdev.arrow.state.NodeKeyStore
+import com.opticdev.common.storage.DataDirectoryConfig
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.server.storage.ServerStorage
 import com.opticdev.server
 import com.opticdev.core.actorSystem
-import com.opticdev.core.debug.{DebugMarkdownProject, DebugSourceGear}
 import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, ProjectStatus}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
-import com.opticdev.server.http.routes.socket.agents.{AgentConnection, KnowledgeGraphUpdate, StatusUpdate}
+import com.opticdev.server.http.routes.socket.agents.{AgentConnection, KnowledgeGraphUpdate, ModelNodeOptionsUpdate, StatusUpdate}
 
 import scala.collection.mutable
 import scala.util.{Success, Try}
@@ -21,18 +21,10 @@ class ProjectsManager {
 
   implicit val actorCluster: ActorCluster = new ActorCluster(actorSystem)
 
-  val nodeKeyStore: NodeKeyStore = new NodeKeyStore
-
   val MAX_PROJECTS = 6
 
   private var arrowStore: Map[OpticProject, Arrow] = Map()
   private var projectsStore: Vector[OpticProject] = Vector()
-
-  //do not allocate unless it's being used.
-  lazy val debugMarkdownProject = {
-    DebugSourceGear.getHostProjectOption = Some((file)=> lookupProject(file).toOption)
-    DebugMarkdownProject()
-  }
 
   private def addProject(project: OpticProject) : Unit =  {
 
@@ -51,8 +43,16 @@ class ProjectsManager {
     })
 
 
+    //register a callback for model node options changes
+    project.onUpdatedModelNodeOptions((modelOptions, fileOptions)=> {
+      AgentConnection.broadcastUpdate(ModelNodeOptionsUpdate(project.name, modelOptions, fileOptions))
+    })
+
     //send an initial status update
     AgentConnection.broadcastUpdate(StatusUpdate(project.name, project.projectStatus))
+
+    //Save its location
+    DataDirectoryConfig.addKnownProject(project.projectFile.file.pathAsString)
 
     projectsStore = projectsStore :+ project
     arrowStore = arrowStore + (project -> new Arrow(project))

@@ -12,7 +12,8 @@ case class SGContext(fileAccumulator: FileAccumulator,
                      parser: ParserBase,
                      fileContents: String,
                      sourceGear: SourceGear,
-                     file: File
+                     file: File,
+                     forRender: Boolean = false
                     )
 
 
@@ -23,8 +24,13 @@ object SGContext {
     ParseSupervisorSyncAccess.getContext(file)
   }
 
+  def forFile(file: File)(implicit actorCluster: ActorCluster, project: ProjectBase) : Option[SGContext] = {
+    implicit val sourceGear = project.projectSourcegear
+    ParseSupervisorSyncAccess.getContext(file)
+  }
+
   def forRender(sourceGear: SourceGear, astGraph: AstGraph, parserRef: ParserRef): SGContext = {
-    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear, null)
+    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear, null, true)
   }
 
 }

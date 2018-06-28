@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear
 
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.graph.path.{FlatWalkablePath, WalkablePath}
-import com.opticdev.sdk.descriptions.SubContainer
+import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
 
 package object containers {
 
@@ -18,7 +18,7 @@ package object containers {
 
   /* For Runtime */
 
-  case class SubContainerMatch(subcontainer: SubContainer, CommonAstNode: CommonAstNode)
+  case class SubContainerMatch(subcontainer: OMSubContainer, CommonAstNode: CommonAstNode)
   type ContainerAstMapping = Map[String, CommonAstNode]
 
 }

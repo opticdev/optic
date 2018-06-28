@@ -1,9 +1,11 @@
 package com.opticdev.core.sourcegear.gears.parsing
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.{PropertyValue, VariableMapping}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.accumulate.Listener
+import com.opticdev.core.sourcegear.annotations.{AnnotationParser, NameAnnotation, SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.containers.SubContainerMatch
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
@@ -17,18 +19,20 @@ import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEvaluation
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.VariableRuleWithEvaluation
-import com.opticdev.core.sourcegear.objects.annotations.{NameAnnotation, ObjectAnnotationParser, SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.variables.VariableManager
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers.rules.{AllChildrenRule, ParserChildrenRule, Rule}
+import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
+import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLensCodeComponent, OMLensComponent}
 
 sealed abstract class ParseGear() {
 
   val description : NodeDescription
-  val components: Map[FlatWalkablePath, Vector[Component]]
-  val containers: Map[FlatWalkablePath, SubContainer]
+  val components: Map[FlatWalkablePath, Vector[OMComponentWithPropertyPath[OMLensCodeComponent]]]
+  val containers: Map[FlatWalkablePath, OMSubContainer]
   val rules: Map[FlatWalkablePath, Vector[RuleWithFinder]]
   val listeners : Vector[Listener]
 
@@ -39,6 +43,8 @@ sealed abstract class ParseGear() {
   val additionalParserInformation : AdditionalParserInformation
 
   val variableManager : VariableManager
+
+  val internal: Boolean
 
   def hash = {
         MurmurHash3.stringHash(description.toString) ^
@@ -52,7 +58,7 @@ sealed abstract class ParseGear() {
   def matches(entryNode: CommonAstNode, extract: Boolean = false)(implicit astGraph: AstGraph, fileContents: String, sourceGearContext: SGContext, project: ProjectBase) : Option[ParseResult[CommonAstNode]] = {
 
     implicit val parser = sourceGearContext.parser
-    val extractableComponents = components.mapValues(_.filter(_.isInstanceOf[CodeComponent]))
+    val extractableComponents = components.mapValues(_.filter(_.component.isInstanceOf[OMLensCodeComponent]))
 
     //new for each search instance
     val variableLookupTable = variableManager.variableLookupTable
@@ -62,7 +68,7 @@ sealed abstract class ParseGear() {
     }
 
     def compareToDescription(node: CommonAstNode, childType: String, desc: NodeDescription, currentPath: FlatWalkablePath) : MatchResults = {
-      val componentsAtPath = extractableComponents.getOrElse(currentPath, Vector[Component]())
+      val componentsAtPath = extractableComponents.getOrElse(currentPath, Vector[OMComponentWithPropertyPath[OMLensCodeComponent]]())
       val expectedSubContainerAtPath = containers.get(currentPath)
       val rulesAtPath      = RuleProvider.applyDefaultRulesForType(rules.getOrElse(currentPath, Vector[Rule]()), node.nodeType)
 
@@ -144,15 +150,16 @@ sealed abstract class ParseGear() {
 
 case class ParseAsModel(description: NodeDescription,
                         schema: SchemaRef,
-                        components: Map[FlatWalkablePath, Vector[Component]],
-                        containers: Map[FlatWalkablePath, SubContainer],
+                        components: Map[FlatWalkablePath, Vector[OMComponentWithPropertyPath[OMLensCodeComponent]]],
+                        containers: Map[FlatWalkablePath, OMSubContainer],
                         rules: Map[FlatWalkablePath, Vector[RuleWithFinder]],
                         listeners : Vector[Listener],
                         variableManager: VariableManager = VariableManager.empty,
                         additionalParserInformation : AdditionalParserInformation,
                         packageId: String,
                         parsingLensRef: LensRef,
-                        initialValue: JsObject = JsObject.empty
+                        initialValue: JsObject = JsObject.empty,
+                        internal: Boolean = false,
                        ) extends ParseGear {
 
   override def output(matchResults: MatchResults, variableMapping: VariableMapping) (implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String) : Option[ParseResult[CommonAstNode]] = {
@@ -168,37 +175,18 @@ case class ParseAsModel(description: NodeDescription,
     val containerMapping = matchResults.containers.getOrElse(Set()).toMapping
 
     val (objectRefOption, sourceAnnotationOption, tagAnnotation) = {
-      val raw = ObjectAnnotationParser.contentsToCheck(matchResults.baseNode.get)
-      val annotations = ObjectAnnotationParser.extract(raw, schema)(sourceGearContext.parser)
+      val raw = AnnotationParser.contentsToCheck(matchResults.baseNode.get)
+      val annotations = AnnotationParser.extract(raw, schema)(sourceGearContext.parser)
       ( annotations.collectFirst { case na: NameAnnotation => na }.map(_.objectRef),
         annotations.collectFirst { case sa: SourceAnnotation => sa },
         annotations.collectFirst { case ta: TagAnnotation => ta },
       )
     }
 
-    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, variableMapping, objectRefOption, sourceAnnotationOption, tagAnnotation)
+    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, variableMapping, objectRefOption, sourceAnnotationOption, tagAnnotation, internal)
 
     //@todo have schema validate
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))
 
   }
-}
-
-
-case class ParseAsContainer(description: NodeDescription,
-                        containers: Map[FlatWalkablePath, SubContainer],
-                        rules: Map[FlatWalkablePath, Vector[RuleWithFinder]],
-                        variableManager: VariableManager = VariableManager.empty,
-                        additionalParserInformation : AdditionalParserInformation,
-                        packageId: String,
-                        parsingLensRef: LensRef
-                       ) extends ParseGear {
-
-  override def output(matchResults: MatchResults, variableMapping: VariableMapping)(implicit sourceGearContext: SGContext, project: ProjectBase, fileContents: String): Option[ParseResult[CommonAstNode]] = {
-    None
-  }
-
-  //not set for containers
-  override val components = Map()
-  override val listeners = Vector()
 }

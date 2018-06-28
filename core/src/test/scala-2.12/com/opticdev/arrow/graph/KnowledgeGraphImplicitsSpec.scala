@@ -4,10 +4,9 @@ import com.opticdev.arrow.ExampleSourcegears
 import com.opticdev.arrow.index.IndexSourceGear
 import org.scalatest.FunSpec
 import KnowledgeGraphImplicits._
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
 
 class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
 

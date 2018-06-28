@@ -5,6 +5,8 @@ import com.opticdev.arrow.changes.ExampleChanges.simpleModelInsert
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
+import com.opticdev.parsers.SourceParserManager
+import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
 import org.scalatest.FunSpec
 
 class InsertLocationSpec extends TestBase with GearUtils {
@@ -19,9 +21,19 @@ class InsertLocationSpec extends TestBase with GearUtils {
   describe("Raw position") {
     it("always returns the raw position") {
       val rp = RawPosition(example1, 22)
-      assert(rp.resolveToLocation(sourceGear).get == ResolvedRawLocation(22, sourceGear.parsers.head))
+      assert(rp.resolveToLocation(sourceGear).get == ResolvedRawLocation(example1, 22, sourceGear.parsers.head))
+    }
+
+    it("is overriden by a staged node with a custom file set") {
+      val rp = RawPosition(example1, 22)
+
+      assert(rp.resolveToLocation(sourceGear, Some(StagedNode(null, null, Some(RenderOptions(
+        inFile = Some("path/to/override.js")
+      ))))).get == EndOfFile(File("path/to/override.js"), SourceParserManager.installedParsers.head))
+
     }
   }
+
 
   describe("As Child Of") {
 
@@ -30,8 +42,8 @@ class InsertLocationSpec extends TestBase with GearUtils {
 
       val result = aco.resolveToLocation(sourceGear).get
 
-      assert(result.index == 1)
-      assert(result.parent.nodeType.name == "Program")
+      assert(result.asInstanceOf[ResolvedChildInsertLocation].index == 1)
+      assert(result.asInstanceOf[ResolvedChildInsertLocation].parent.nodeType.name == "Program")
 
     }
 
@@ -40,8 +52,26 @@ class InsertLocationSpec extends TestBase with GearUtils {
 
       val result = aco.resolveToLocation(sourceGear).get
 
-      assert(result.index == 3)
-      assert(result.parent.nodeType.name == "BlockStatement")
+      assert(result.asInstanceOf[ResolvedChildInsertLocation].index == 3)
+      assert(result.asInstanceOf[ResolvedChildInsertLocation].parent.nodeType.name == "BlockStatement")
+    }
+
+    it("can find its place when and first item") {
+      val aco = AsChildOf(example1, 104)
+
+      val result = aco.resolveToLocation(sourceGear).get
+
+      assert(result.asInstanceOf[ResolvedChildInsertLocation].index == 0)
+      assert(result.asInstanceOf[ResolvedChildInsertLocation].parent.nodeType.name == "SwitchStatement")
+    }
+
+    it("is overriden by a staged node with a custom file set") {
+      val aco = AsChildOf(example2, 168)
+
+      assert(aco.resolveToLocation(sourceGear, Some(StagedNode(null, null, Some(RenderOptions(
+        inFile = Some("path/to/override.js")
+      ))))).get == EndOfFile(File("path/to/override.js"), SourceParserManager.installedParsers.head))
+
     }
 
   }

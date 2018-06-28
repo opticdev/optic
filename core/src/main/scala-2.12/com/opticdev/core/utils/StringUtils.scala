@@ -1,6 +1,5 @@
 package com.opticdev.core.utils
 
-
 object StringUtils {
 
   def replaceRange(contents: String, range: Range, newString: String ) : String = {

@@ -1,6 +1,7 @@
 package com.opticdev.sdk.descriptions.transformation
 
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.common.SchemaRef
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}
 import play.api.libs.json.{JsObject, JsString}
 
@@ -24,23 +25,26 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
   }
 
   def combinedAskSchema(value: JsObject) : JsObject = {
-    val dynamicAsk = dynamicAskSchemaInflated.map(i=> Try {
+    val results = dynamicAskSchemaInflated.map(i=> Try {
       val mirror = i.code.call(null, value.asScriptObject.get).asInstanceOf[ScriptObjectMirror]
       i.key -> mirror.asJsObject.get
     })
-      .collect {
-        case x if x.isSuccess => x.get
-      }
 
-    askSchema ++ JsObject(dynamicAsk)
+    val dynamicAsk = results.collect {
+      case x if x.isSuccess => x.get
+    }
+
+    val properties = (askSchema \ "properties").getOrElse(JsObject.empty).as[JsObject]
+
+    askSchema + ("properties" -> (properties ++ JsObject(dynamicAsk)))
   }
 
 
   def transform(jsObject: JsObject, answers: JsObject, transformationCaller: TransformationCaller, inputModelId: Option[String]): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
 
-    val askSchemaInflated = Schema.schemaObjectFromJson(combinedAskSchema(jsObject))
+    val askSchemaInflated = OMSchema.schemaObjectFromJson(combinedAskSchema(jsObject))
 
-    if (!Schema.validate(askSchemaInflated, answers)) {
+    if (!OMSchema.validate(askSchemaInflated, answers)) {
       throw new Exception("Ask Object does not match the Ask Schema for this transformation "+ askSchema.toString)
     }
 

@@ -1,6 +1,6 @@
 package com.opticdev.sdk.transformation
 
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.{ProcessResult, Transformation, TransformationResult}
 import jdk.nashorn.api.scripting.{NashornScriptEngine, ScriptObjectMirror}
 import org.scalatest.FunSpec

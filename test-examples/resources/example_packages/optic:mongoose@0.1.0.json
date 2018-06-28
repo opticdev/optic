@@ -1,12 +1,12 @@
 {
-  "metadata": {
+  "info": {
     "author": "optic",
-    "name": "mongoose",
-    "version": "0.1.0"
+    "package": "mongoose",
+    "version": "0.1.0",
+    "dependencies": {
+      "optic:rest": "0.1.0"
+    }
   },
-  "dependencies": [
-    "optic:rest@0.1.0"
-  ],
   "schemas": [
     {
       "id": "schema",
@@ -94,24 +94,18 @@
         "language": "es7",
         "block": "mongoose.connect('mongodb://localhost/my_database');"
       },
-      "scope": "public",
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "mongodb",
-            "rule": "containing",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "URI"
-          ]
+      "value": {
+        "URI": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 17,
+              "end": 50
+            }
+          }
         }
-      ],
-      "rules": [],
-      "variables": [],
-      "subcontainers": [],
+      },
       "range": {
         "start": 1101,
         "end": 1297
@@ -125,41 +119,31 @@
         "language": "es7",
         "block": "const modelName = mongoose.model('ModelName',\nnew mongoose.Schema({\n    name    : 'string',\n    age    : 'number',\n}));"
       },
-      "scope": "public",
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "{",
-            "rule": "starting",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "schema"
-          ]
+      "value": {
+        "schema": {
+          "type": "object-literal",
+          "at": {
+            "astType": "ObjectExpression",
+            "range": {
+              "start": 66,
+              "end": 116
+            }
+          }
         },
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "ModelName",
-            "rule": "containing",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "name"
-          ]
+        "name": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 33,
+              "end": 44
+            }
+          }
         }
-      ],
-      "rules": [],
-      "variables": [
-        {
-          "in": "self",
-          "token": "modelName"
-        }
-      ],
-      "subcontainers": [],
+      },
+      "variables": {
+        "modelName": "self"
+      },
       "range": {
         "start": 1956,
         "end": 2247
@@ -173,52 +157,28 @@
         "language": "es7",
         "block": "new modelName({\n\n}).save((err, item) => {\n  if (!err) {\n    //:success\n  } else {\n    //:failure\n  }\n})"
       },
-      "scope": "public",
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "{",
-            "rule": "starting",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "fields"
-          ]
+      "value": {
+        "fields": {
+          "type": "object-literal",
+          "at": {
+            "astType": "ObjectExpression",
+            "range": {
+              "start": 14,
+              "end": 18
+            }
+          }
         }
-      ],
+      },
       "rules": [],
-      "variables": [
-        {
-          "in": "scope",
-          "token": "modelName"
-        },
-        {
-          "in": "self",
-          "token": "item"
-        },
-        {
-          "in": "self",
-          "token": "err"
-        }
-      ],
-      "subcontainers": [
-        {
-          "name": "failure",
-          "subcontainer": true,
-          "pulls": [],
-          "childrenRule": "any",
-          "schemaComponents": []
-        },
-        {
-          "name": "success",
-          "subcontainer": true,
-          "pulls": [],
-          "childrenRule": "any",
-          "schemaComponents": []
-        }
-      ],
+      "variables":  {
+        "modelName": "scope",
+        "item": "self",
+        "err": "self"
+      },
+      "containers": {
+          "failure": "any",
+          "success": "any"
+      },
       "range": {
         "start": 2303,
         "end": 2599

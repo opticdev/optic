@@ -1,7 +1,6 @@
 package com.opticdev.core.sourcegear.mutate
 
 import com.opticdev.arrow.changes.evaluation.InsertCode
-import com.opticdev.sdk.descriptions.{CodeComponent, Component, SchemaComponent}
 import com.opticdev.core.sourcegear.{Render, SGContext}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model._
@@ -12,7 +11,7 @@ import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 import gnieh.diffson.playJson._
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
-import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
+import com.opticdev.sdk.opticmarkdown2.lens._
 import com.opticdev.core.sourcegear.gears.helpers.ParseGearImplicits._
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InContainer
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
@@ -29,10 +28,10 @@ object MutationSteps {
 
   //require newValue to be a valid model.
   def collectFieldChanges(linkedModelNode: LinkedModelNode[CommonAstNode], newValue: JsObject): List[Try[UpdatedField]] = {
-    val components = linkedModelNode.parseGear.components.flatMap(_._2).filterNot(_.isInstanceOf[SchemaComponent]).toSet
+    val components: Set[OMComponentWithPropertyPath[OMLensCodeComponent]] = linkedModelNode.parseGear.components.flatMap(_._2).toSet
 
-    val oldMap = collectComponentValues(components, linkedModelNode.value)
-    val newMap = collectComponentValues(components, newValue)
+    val oldMap = collectComponentValues(components.asInstanceOf[Set[OMComponentWithPropertyPath[OMLensComponent]]], linkedModelNode.value)
+    val newMap = collectComponentValues(components.asInstanceOf[Set[OMComponentWithPropertyPath[OMLensComponent]]], newValue)
 
     val diff = newMap diff oldMap
 
@@ -41,46 +40,53 @@ object MutationSteps {
         val mapping = linkedModelNode.modelMapping.get(Path(component.propertyPath))
         if (mapping.isEmpty) throw new AstMappingNotFound(component.propertyPath)
 
-        UpdatedField(component, mapping.get, value)
+        val nodeMapping = mapping.get.find(_.supportsComponentMapping(component.component)).get
+
+        UpdatedField(component, nodeMapping, value)
       }
     }
-
   }
 
   def collectMapSchemaChanges(linkedModelNode: LinkedModelNode[CommonAstNode], newValue: JsObject, variableChanges: Option[VariableChanges] = None)(implicit sourceGearContext: SGContext): List[Try[AddItemToContainer]] = Try {
     implicit val sourceGear = sourceGearContext.sourceGear
     val schemaComponents = linkedModelNode.parseGear.allSchemaComponents
+
+    if (schemaComponents.isEmpty) {
+      return List()
+    }
+
     val mapSchemaFields = linkedModelNode.mapSchemaFields()
 
     val variableMapping = Try(variableChanges.get.changes.map(i=> (i.variable.token, i.value)).toMap).getOrElse(Map.empty)
 
-    val oldMap = collectComponentValues(schemaComponents.asInstanceOf[Set[Component]], linkedModelNode.expandedValue())
-    val newMap = collectComponentValues(schemaComponents.asInstanceOf[Set[Component]], newValue)
+    val oldMap = collectComponentValues(schemaComponents.asInstanceOf[Set[OMComponentWithPropertyPath[OMLensComponent]]], linkedModelNode.expandedValue())
+    val newMap = collectComponentValues(schemaComponents.asInstanceOf[Set[OMComponentWithPropertyPath[OMLensComponent]]], newValue)
 
-    val diff = newMap diff oldMap
+    val diff: Set[(OMComponentWithPropertyPath[OMLensSchemaComponent], JsValue)] = (newMap diff oldMap).asInstanceOf[Set[(OMComponentWithPropertyPath[OMLensSchemaComponent], JsValue)]]
 
     diff.toList.flatMap {
       //constraint: only going to add. removes and replaces get complex and not sure if they add any value.
-      case (component: SchemaComponent, value: JsValue) => {
+      case (keyValueComponentPair: OMComponentWithPropertyPath[OMLensSchemaComponent], value: JsValue) => {
+
+        val component = keyValueComponentPair.component
 
         val resolvedSchema = component.resolvedSchema(linkedModelNode.parseGear.packageId)
-
         if (component.yieldsArray) {
-          val oldItems = oldMap.find(_._1 == component).get._2.as[JsArray].value
-          val newItems = newMap.find(_._1 == component).get._2.as[JsArray].value
+          val oldItems = oldMap.find(_._1.component == component).get._2.as[JsArray].value
+          val newItems = newMap.find(_._1.component == component).get._2.as[JsArray].value
 
           if (newItems.length > oldItems.length) {
             val added = newItems.slice(oldItems.length, newItems.length)
             //add to the correct container
-            if (component.location.exists(_.in.isInstanceOf[InContainer])) {
+            if (component.locationForCompiler.exists(_.in.isInstanceOf[InContainer])) {
               added.map { case i => Try(AddItemToContainer(
                 component,
-                linkedModelNode.containerMapping(component.location.map(_.in.asInstanceOf[InContainer].name).get),
+                linkedModelNode.containerMapping(sourceGearContext.astGraph)(component.locationForCompiler.map(_.in.asInstanceOf[InContainer].name).get),
                 Render.simpleNode(resolvedSchema, i.as[JsObject], None, variableMapping).map(_._1).get))
               }.toVector
             //add to the first container
-            } else if (linkedModelNode.containerMapping.nonEmpty) {
-              val firstContainer = linkedModelNode.containerMapping.values.toSeq.minBy(_.range.start)
+            } else if (linkedModelNode.containerMapping(sourceGearContext.astGraph).nonEmpty) {
+              val firstContainer = linkedModelNode.containerMapping(sourceGearContext.astGraph).values.toSeq.minBy(_.range.start)
               added.map { case i => Try(AddItemToContainer(
                 component,
                 firstContainer,
@@ -101,7 +107,7 @@ object MutationSteps {
         }
       }
     }
-  }.getOrElse(List())
+  }.get
 
   def collectVariableChanges(linkedModelNode: LinkedModelNode[CommonAstNode], variableChanges: VariableChanges) (implicit sourceGearContext: SGContext, fileContents: String) : List[AstChange] = {
     if (variableChanges.hasChanges) {
@@ -129,7 +135,7 @@ object MutationSteps {
     val fieldChanges =
     updatedFields.map(field=> {
       field.component match {
-        case i: CodeComponent => i.componentType match {
+        case i if i.component.isInstanceOf[OMLensCodeComponent] => i.component.`type` match {
           case Literal => AstChange(field.mapping, mutateLiteral(field))
           case Token => AstChange(field.mapping, mutateToken(field))
           case ObjectLiteral => AstChange(field.mapping, mutateObjectLiteral(field))
@@ -206,7 +212,7 @@ object MutationSteps {
   }
 
 
-  def collectComponentValues(components: Set[Component], value: JsObject): Set[(Component, JsValue)] = {
+  def collectComponentValues(components: Set[OMComponentWithPropertyPath[OMLensComponent]], value: JsObject): Set[(OMComponentWithPropertyPath[OMLensComponent], JsValue)] = {
     val pathWalker = new PropertyPathWalker(value)
     components.collect {
       case comp if pathWalker.hasProperty(comp.propertyPath) => comp -> pathWalker.getProperty(comp.propertyPath).get

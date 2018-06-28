@@ -33,3 +33,39 @@ function Token(value) {
         value: value
     }
 }
+
+//Container Mutation Enums
+function Append(items) {
+    return {
+        items: items,
+        type: 'append'
+    }
+}
+
+function Prepend(items) {
+    return {
+        items: items,
+        type: 'prepend'
+    }
+}
+
+function ReplaceWith(items) {
+    return {
+        items: items,
+        type: 'replace-with'
+    }
+}
+
+function InsertAt(index, items) {
+    return {
+        index: index,
+        items: items,
+        type: 'replace-with'
+    }
+}
+
+function Empty() {
+    return {
+        type: 'empty'
+    }
+}

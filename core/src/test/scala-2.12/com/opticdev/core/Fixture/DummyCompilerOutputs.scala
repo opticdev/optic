@@ -1,13 +1,13 @@
 package com.opticdev.core.Fixture
 
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.parsing.{AdditionalParserInformation, NodeDescription, ParseAsModel}
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserRef}
 import com.opticdev.parsers.graph.AstType
-import com.opticdev.sdk.descriptions.{LensRef, SchemaRef}
+import com.opticdev.sdk.opticmarkdown2.LensRef
 import play.api.libs.json.JsObject
 
 

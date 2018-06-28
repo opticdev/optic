@@ -4,6 +4,7 @@ import better.files.File
 import com.opticdev.arrow.changes._
 import com.opticdev.arrow.changes.location.EndOfFile
 import com.opticdev.arrow.state.NodeKeyStore
+import com.opticdev.core.sourcegear.annotations.{AnnotationRenderer, SourceAnnotation}
 import com.opticdev.core.sourcegear.{Mutate, Render, SourceGear}
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
@@ -14,13 +15,14 @@ import play.api.libs.json.{JsObject, Json}
 
 import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
-import com.opticdev.core.sourcegear.objects.annotations.{NameAnnotation, ObjectAnnotationRenderer, SourceAnnotation}
 import com.opticdev.core.sourcegear.mutate.MutationImplicits._
 import com.opticdev.core.utils.StringUtils
-import com.opticdev.sdk.descriptions.Schema
+import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.transformation.generate.{GenerateResult, RenderOptions, StagedNode}
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 object Evaluation {
 
   def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore): ChangeResult = opticChange match {
@@ -30,12 +32,12 @@ object Evaluation {
         lensId = im.lensId
       )))
 
-      val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear)
+      val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear, sourcegear.flatContext)
       renderedTry.failed.foreach(_.printStackTrace)
       require(renderedTry.isSuccess, "Could not render model "+ renderedTry.failed.get.toString)
       val generatedNode = (renderedTry.get._1, renderedTry.get._2)
       val resolvedLocation = im.atLocation.get.resolveToLocation(sourcegear).get
-      val changeResult = InsertCode.atLocation(generatedNode, im.atLocation.get.file, resolvedLocation)
+      val changeResult = InsertCode.atLocation(generatedNode, resolvedLocation)
       if (changeResult.isSuccess) {
         changeResult.asFileChanged.stageContentsIn(filesStateMonitor)
       }
@@ -59,7 +61,7 @@ object Evaluation {
 
       val prefixedFlatContent = sourcegear.flatContext.prefix(rt.transformationChanges.transformation.packageId.packageId)
 
-      def generateNode(generateResult: GenerateResult, schema: Schema, lensIdOption: Option[String]) : IntermediateTransformPatch = {
+      def generateNode(generateResult: GenerateResult, schema: OMSchema, lensIdOption: Option[String], topLevel: Boolean = false) : IntermediateTransformPatch = {
         val stagedNode = generateResult.toStagedNode(Some(RenderOptions(
           lensId = lensIdOption
         )))
@@ -75,14 +77,14 @@ object Evaluation {
 
         val updatedString = if (rt.objectSelection.isDefined) {
           val objName = rt.objectSelection.get
-          ObjectAnnotationRenderer.renderToFirstLine(
-            generatedNode._3.renderer.parser.get.inlineCommentPrefix,
+          AnnotationRenderer.renderToFirstLine(
+            generatedNode._3.renderer.parser.inlineCommentPrefix,
             Vector(SourceAnnotation(objName, rt.transformationChanges.transformation.transformationRef, rt.answers)),
             generatedNode._2)
         } else generatedNode._2
 
-        val resolvedLocation = rt.location.get.resolveToLocation(sourcegear).get
-        val changeResult = InsertCode.atLocation((generatedNode._1, updatedString), rt.location.get.file, resolvedLocation).asFileChanged
+        val resolvedLocation = rt.location.get.resolveToLocation(sourcegear, Some(stagedNode)).get
+        val changeResult = InsertCode.atLocation((generatedNode._1, updatedString), resolvedLocation).asFileChanged
         IntermediateTransformPatch(changeResult.file, changeResult.patchInfo.get.range, changeResult.patchInfo.get.updated)
       }
 
@@ -95,14 +97,13 @@ object Evaluation {
         val linkedModelNode = mutated.get._4
 
         val file = linkedModelNode.fileNode.get.toFile
-        val fileContents = filesStateMonitor.contentsForFile(file).get
 
-        IntermediateTransformPatch(file, linkedModelNode.root.range, mutated.get._2)
+        IntermediateTransformPatch(file, mutated.get._3, mutated.get._2)
       }
 
       transformationTry.get match {
         case x if x.yieldsGeneration => {
-          val intermediateTransformPatch = generateNode(transformationTry.get.asInstanceOf[GenerateResult], schema, rt.lensId)
+          val intermediateTransformPatch = generateNode(transformationTry.get.asInstanceOf[GenerateResult], schema, rt.lensId, topLevel = true)
           val fileContents = filesStateMonitor.contentsForFile(intermediateTransformPatch.file).get
           val changes = FileChanged(intermediateTransformPatch.file, StringUtils.replaceRange(fileContents, intermediateTransformPatch.range, intermediateTransformPatch.newContents))
           changes.stageContentsIn(filesStateMonitor)
@@ -133,7 +134,12 @@ object Evaluation {
         val file = modelNode.fileNode.get.toFile
         implicit val fileContents = filesStateMonitor.contentsForFile(file).get
         import com.opticdev.core.sourcegear.mutate.MutationImplicits._
-        val output = modelNode.update(pu.newModel)
+
+        val output = modelNode match {
+          case mn : LinkedModelNode[CommonAstNode] => mn.update(pu.newModel)
+          case mmn : MultiModelNode => mmn.update(pu.newModel)
+        }
+
         FileChanged(file, output)
       } match {
         case s: Success[FileChanged] => s.get

@@ -3,12 +3,12 @@ import better.files.File
 import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
 import com.opticdev.arrow.results.ModelOption
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef, fileFormat}
 import com.opticdev.core.sourcegear.sync.FilePatch
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json._
-import com.opticdev.common.fileFormat
+
 import scala.util.{Failure, Success, Try}
 
 object JsonImplicits {
@@ -16,18 +16,9 @@ object JsonImplicits {
   //SDK Objects refs
   import PackageRef.packageRefJsonFormat
   import SchemaRef.schemaRefFormats
+  import com.opticdev.sdk.opticmarkdown2.Serialization.omschemaFormat
 
-
-  implicit val schemaFormat = new Format[Schema] {
-    override def reads(json: JsValue) = {
-      val schemaJson = json.as[JsObject]
-      val schemaRef = SchemaRef.fromString((schemaJson \ "_identifier").get.as[JsString].value)
-      val schema = Schema(schemaRef.get, schemaJson - "_identifier")
-      JsSuccess(schema)
-    }
-
-    override def writes(o: Schema) = o.toJson
-  }
+  import com.opticdev.sdk.opticmarkdown2.Serialization._
 
   implicit val modelOptionsFormat = Json.format[ModelOption]
 

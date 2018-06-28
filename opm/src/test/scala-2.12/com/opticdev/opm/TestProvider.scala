@@ -20,13 +20,16 @@ class TestProvider extends Provider {
   def mockPackage(name: String, author: String, version: String, dependencies: Seq[String]) = {
     StagedPackage(JsObject(
       Seq(
-        "metadata" -> JsObject(
+        "info" -> JsObject(
           Seq(
-           "name"-> JsString(name),
-           "version"-> JsString(version),
-           "author"-> JsString(author),
-          )),
-        "dependencies" -> JsArray(dependencies.map(JsString))
+            "author"-> JsString(author),
+            "package"-> JsString(name),
+            "version"-> JsString(version),
+            "dependencies" -> JsObject(dependencies.map(i=> {
+              val split = i.split("@")
+              (split.head -> JsString(split.last))
+            }))
+          ))
       )
     ))
   }
@@ -62,7 +65,6 @@ class TestProvider extends Provider {
     val foundPackages = allPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 
     val foundVersions = packageRefs.map(i=> {
-
       val satisfyingVersionOption = foundPackages.filter(p=> {
         p.packageId == i.packageId &&
         new Semver(p.version, SemverType.NPM).satisfies(i.version)

@@ -2,7 +2,7 @@ package com.opticdev.arrow.graph
 
 import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.CompiledLens
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.Transformation
 
 object KnowledgeGraphImplicits {

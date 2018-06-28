@@ -1,10 +1,10 @@
 {
-  "metadata": {
-    "name": "showconfirmalert",
+  "info": {
+    "package": "showconfirmalert",
     "author": "optic",
-    "version": "0.1.0"
+    "version": "0.1.0",
+    "dependencies": {}
   },
-  "dependencies": [],
   "schemas": [
     {
       "id": "confirmAlert",
@@ -32,44 +32,25 @@
         "block": "showConfirm('message', (didConfirm)=> {\n        if (didConfirm) {\n            //:on yes\n        } else {\n            //:on no\n        }\n    })"
       },
       "scope": "public",
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "string": "message",
-            "rule": "containing",
-            "occurrence": 0
-          },
-          "propertyPath": [
-            "message"
-          ]
+      "value": {
+        "message": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 12,
+              "end": 21
+            }
+          }
         }
-      ],
-      "rules": [],
-      "variables": [
-        {
-          "in": "self",
-          "token": "didConfirm"
-        }
-      ],
-      "subcontainers": [
-        {
-          "name": "on no",
-          "subcontainer": true,
-          "pulls": [],
-          "childrenRule": "any",
-          "schemaComponents": []
-        },
-        {
-          "name": "on yes",
-          "subcontainer": true,
-          "pulls": [],
-          "childrenRule": "any",
-          "schemaComponents": []
-        }
-      ]
+      },
+      "variables": {
+        "didConfirm": "self"
+      },
+      "containers": {
+        "on no": "any",
+        "on yes": "any"
+      }
     }
-  ],
-  "containers": []
+  ]
 }

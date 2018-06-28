@@ -1,6 +1,6 @@
 {
-  "metadata": {
-    "name": "synctest",
+  "info": {
+    "package": "synctest",
     "version": "0.1.0",
     "author": "optic"
   },
@@ -10,50 +10,42 @@
       "id": "source",
       "schema": "source-schema",
       "snippet": {
-        "name": "Using Require",
         "language": "es7",
         "block": "source('test')"
       },
-      "rules": [],
-      "variables": [],
-      "subcontainers": [],
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "rule": "containing",
-            "string": "test",
-            "occurrence": 0
-          },
-          "propertyPath": ["value"]
+      "value": {
+        "value": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 7,
+              "end": 13
+            }
+          }
         }
-      ]
+      }
     },
     {
       "name": "Target",
       "id": "target",
       "schema": "source-schema",
       "snippet": {
-        "name": "Using Require",
         "language": "es7",
         "block": "target('test')"
       },
-      "rules": [],
-      "variables": [],
-      "subcontainers": [],
-      "components": [
-        {
-          "type": "code",
-          "finder": {
-            "type": "stringFinder",
-            "rule": "containing",
-            "string": "test",
-            "occurrence": 0
-          },
-          "propertyPath": ["value"]
+      "value": {
+        "value": {
+          "type": "literal",
+          "at": {
+            "astType": "Literal",
+            "range": {
+              "start": 7,
+              "end": 13
+            }
+          }
         }
-      ]
+      }
     }
   ],
   "schemas": [

@@ -7,10 +7,6 @@ import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
-/*
-//@todo INCOMPLETE TESTS. NEED TO DO SOME SERIOUS WORK ON THE SUITE
- */
-
 class SourceGearSpec extends AkkaTestFixture("SourceGearTest") with GearUtils {
 
   override val sourceGear = new SourceGear {

@@ -2,12 +2,12 @@ package com.opticdev.arrow
 
 import better.files.File
 import com.opticdev.arrow.index.IndexSourceGear
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{LensSet, SGConstructor, SourceGear}
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.descriptions.{Schema, SchemaRef}
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import play.api.libs.json.JsObject
 
 import scala.concurrent.duration._
@@ -16,10 +16,10 @@ import scala.concurrent.Await
 object ExampleSourcegears {
 
   lazy val sgWithTransformations = new {
-    val schemaModel = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "model"), JsObject.empty)
-    val schemaRoute = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), JsObject.empty)
-    val schemaForm = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "form"), JsObject.empty)
-    val schemaFetch = Schema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "fetch"), JsObject.empty)
+    val schemaModel = OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "model"), JsObject.empty)
+    val schemaRoute = OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "route"), JsObject.empty)
+    val schemaForm = OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "form"), JsObject.empty)
+    val schemaFetch = OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.0")), "fetch"), JsObject.empty)
 
     val transformationPackage = PackageRef("optic:test-transform")
 

@@ -1,0 +1,61 @@
+{
+  "info": {
+    "package": "reduxaction",
+    "version": "0.1.0",
+    "author": "optic"
+  },
+  "lenses": [
+    {
+      "name": "Redux Action",
+      "id": "define-action",
+      "schema": "action",
+      "snippet": {
+        "name": "test",
+        "language": "es7",
+        "block": "export const name = 'same_name'"
+      },
+      "rules": [],
+      "variables": [],
+      "subcontainers": [],
+      "components": [
+        {
+          "type": "code",
+          "finder": {
+            "type": "stringFinder",
+            "rule": "entire",
+            "string": "name",
+            "occurrence": 0
+          },
+          "propertyPath": ["name"]
+        },
+        {
+          "type": "code",
+          "finder": {
+            "type": "stringFinder",
+            "rule": "containing",
+            "string": "same_name",
+            "occurrence": 0
+          },
+          "propertyPath": ["name"]
+        }
+      ]
+    }
+  ],
+  "schemas": [
+    {
+      "id": "action",
+      "definition": {
+        "title": "action",
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}

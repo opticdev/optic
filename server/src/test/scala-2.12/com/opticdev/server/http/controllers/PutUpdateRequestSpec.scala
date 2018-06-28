@@ -5,7 +5,7 @@ import better.files.File
 import com.opticdev.arrow.changes.evaluation.BatchedChanges
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.sourcegear.project.Project
-import com.opticdev.sdk.descriptions.SchemaRef
+import com.opticdev.common.SchemaRef
 import com.opticdev.server.Fixture.ProjectsManagerFixture
 import com.opticdev.server.state.ProjectsManager
 import org.scalatest.BeforeAndAfterEach
@@ -45,7 +45,7 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
 
   it("can update model") {
 
-    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))), "test")
+    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))), "test", "Unnamed Project")
     val future = putUpdate.execute
 
     val result = Await.result(future, 3 seconds).asInstanceOf[BatchedChanges]
@@ -57,7 +57,7 @@ class PutUpdateRequestSpec extends AkkaTestFixture("PutUpdateRequest") with Proj
   }
 
   it("can update model and return API request") {
-    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))), "test")
+    val putUpdate = new PutUpdateRequest(modelId, JsObject(Seq("method" -> JsString("post"), "url" -> JsString("other/url"))), "test", "Unnamed Project")
     val future = putUpdate.execute
     val result = Await.result(future, 3 seconds).asInstanceOf[BatchedChanges]
 
