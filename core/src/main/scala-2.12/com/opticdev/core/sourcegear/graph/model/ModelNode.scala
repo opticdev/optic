@@ -17,6 +17,7 @@ import play.api.libs.json.{JsObject, Json}
 import com.opticdev.core.utils.UUID
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
@@ -31,6 +32,11 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
   def tag: Option[TagAnnotation]
   def lensRef: LensRef
   def variableMapping: VariableMapping
+
+  def matchesSchema()(implicit sourceGearContext: SGContext): Boolean = {
+    sourceGearContext.sourceGear.findSchema(schemaId).getOrElse(OMSchema(schemaId, JsObject.empty))
+      .validate(expandedValue())
+  }
 
   def internal: Boolean
 

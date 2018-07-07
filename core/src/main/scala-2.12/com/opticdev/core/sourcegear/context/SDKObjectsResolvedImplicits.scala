@@ -1,9 +1,9 @@
 package com.opticdev.core.sourcegear.context
 import com.opticdev.common.{PackageRef, SGExportable, SchemaRef}
-import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens, SourceGear}
+import com.opticdev.core.sourcegear.{CompiledLens, CompiledMultiNodeLens, SGExportableLens, SourceGear}
 import com.opticdev.opm.context.Context
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.opticmarkdown2.lens.OMLensSchemaComponent
+import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensSchemaComponent}
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.util.Try
@@ -18,6 +18,8 @@ object SDKObjectsResolvedImplicits {
       } else {
         transformation.packageId.packageId
       }
+
+      val a = resolveSchema(pId, transformation.input.id)
 
       Try(resolveSchema(pId, transformation.input.id).get.asInstanceOf[OMSchema].schemaRef)
         .getOrElse(throw new Exception(s"Schema '${transformation.input}' not found"))
@@ -71,7 +73,12 @@ object SDKObjectsResolvedImplicits {
     }
   }
 
-  private def resolveSchema(packageId: String, item: String)(implicit sourceGear: SourceGear): Option[SGExportable] =
-    sourceGear.flatContext.prefix(packageId).resolve(item)
+  private def resolveSchema(packageId: String, item: String)(implicit sourceGear: SourceGear): Option[SGExportable] = {
+    sourceGear.flatContext.prefix(packageId).resolve(item).collect {
+      case x: OMSchema => x
+      case l: CompiledLens if l.schema.isRight => l.schema.right.get
+      case l: CompiledMultiNodeLens if l.schema.isRight => l.schema.right.get
+    }
+  }
 
 }

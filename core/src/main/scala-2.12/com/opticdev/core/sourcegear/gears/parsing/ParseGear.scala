@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.gears.parsing
 import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.{PropertyValue, VariableMapping}
 import com.opticdev.sdk.descriptions._
-import com.opticdev.core.sourcegear.SGContext
+import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.core.sourcegear.accumulate.Listener
 import com.opticdev.core.sourcegear.annotations.{AnnotationParser, NameAnnotation, SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.containers.SubContainerMatch
@@ -27,6 +27,7 @@ import com.opticdev.parsers.rules.{AllChildrenRule, ParserChildrenRule, Rule}
 import com.opticdev.sdk.opticmarkdown2.LensRef
 import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
 import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLensCodeComponent, OMLensComponent}
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 sealed abstract class ParseGear() {
 

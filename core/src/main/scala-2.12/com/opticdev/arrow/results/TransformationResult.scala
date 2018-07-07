@@ -35,18 +35,20 @@ case class TransformationResult(score: Int, transformationChange: Transformation
           ModelOption(i.id, expandedValue, i.objectRef.get.name)
         }).toSeq.sortBy(_.name)
 
+      val lensOptions = knowledgeGraph.gearsForSchema({
+        if (dt.transformation.isGenerateTransform) {
+          dt.transformation.resolvedOutput.get
+        } else {
+          dt.transformation.resolvedInput
+        }
+      }).map(i=> LensOption(i.name, i.lensRef.packageRef.get.full, i.lensRef.internalFull)).toSeq
+
       ChangeGroup(RunTransformation(
         transformationChange,
         inputValue,
         inputModelId,
         transformationChange.transformation.combinedAsk(inputValue.getOrElse(JsObject.empty)),
-        knowledgeGraph.gearsForSchema({
-          if (dt.transformation.isGenerateTransform) {
-            dt.transformation.resolvedOutput.get
-          } else {
-            dt.transformation.resolvedInput
-          }
-        }).map(i=> LensOption(i.name, i.lensRef.packageRef.get.full, i.lensRef.internalFull)).toSeq,
+        lensOptions,
         None,
         if (insertLocationOption.isDefined) Seq(insertLocationOption.get) else Seq(), //@todo add all location options
         None,

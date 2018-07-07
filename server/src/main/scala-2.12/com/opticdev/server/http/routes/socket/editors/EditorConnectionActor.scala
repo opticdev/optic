@@ -30,8 +30,9 @@ class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManage
     case Context(file, range, contentsOption) => {
       val asFile = File(file)
 
-      new ContextQuery(asFile, range, contentsOption, slug)(projectsManager).execute
-        .map(i => {
+      val results = new ContextQuery(asFile, range, contentsOption, slug)(projectsManager).execute
+        results.foreach(i => {
+
           import com.opticdev.server.data.ModelNodeJsonImplicits._
           val contextFound = Try(ContextFound(file, range, i.projectName, i.editorSlug, JsObject(Seq(
             "models" -> JsArray(i.modelNodes.map(_.asJson()(projectsManager))),
@@ -39,6 +40,10 @@ class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManage
           ))))
           AgentConnection.broadcastUpdate(contextFound.get)
         })
+
+//      results.onComplete(i=> {
+//        i.failed.foreach(_.printStackTrace())
+//      })
     }
 
     case search: EditorSearch => {

@@ -4,6 +4,11 @@ object StringBuilderImplicits {
   implicit class StringBuilderWithRangeUpdate(stringBuilder: scala.collection.mutable.StringBuilder) {
     def updateRange(range: Range, contents: String) = {
 
+      if (range.end > stringBuilder.length + 1) {
+        val extra = range.end - stringBuilder.length
+        stringBuilder.append(List.fill(extra)("_").mkString)
+      }
+
       def validRange(int: Int) = int >= 0 && int < stringBuilder.length + 1
 
       if (!validRange(range.start) || !validRange(range.end) || range.end < range.start) {

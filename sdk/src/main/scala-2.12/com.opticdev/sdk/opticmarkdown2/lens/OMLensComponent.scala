@@ -20,6 +20,7 @@ sealed trait OMLensComponentType
 case object Token extends OMLensComponentType
 case object Literal extends OMLensComponentType
 case object ObjectLiteral extends OMLensComponentType
+case object ArrayLiteral extends OMLensComponentType
 case object NotSupported extends OMLensComponentType
 
 sealed trait OMFinder {

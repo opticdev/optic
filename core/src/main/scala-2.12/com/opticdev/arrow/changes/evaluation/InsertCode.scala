@@ -10,8 +10,14 @@ import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
 import play.api.libs.json.JsString
+import java.util
+import name.fraser.neil.plaintext.diff_match_patch
 
 import scala.util.{Failure, Success, Try}
+import name.fraser.neil.plaintext.diff_match_patch
+import name.fraser.neil.plaintext.diff_match_patch.Diff
+
+import collection.JavaConverters._
 
 object InsertCode {
 
@@ -68,14 +74,16 @@ object InsertCode {
         val updatedFileContents = StringUtils.replaceRange(fileContents, loc.parent.range, changes)
 
         //compute patch info
-        val diff = updatedFileContents diff fileContents
-        val start = updatedFileContents.indexOf(diff)
-        val end = {
-          val i = fileContents.lastIndexOf(updatedFileContents.substring(start+diff.length))
-          if (i == -1) start else i
-        }
+        val dmp = new diff_match_patch()
+        val diff = dmp.diff_main(fileContents, updatedFileContents).asScala
+        val insertCode = diff.find(_.operation == diff_match_patch.Operation.INSERT).get
+        val start = diff.splitAt(diff.indexOf(insertCode))._1
+          .filter(_.operation == diff_match_patch.Operation.EQUAL)
+          .foldLeft(0){case (a, b) => a + b.text.length}
+        val end = start + insertCode.text.length
 
-        FileChanged(loc.file, updatedFileContents, Some(PatchInfo(Range(start, end), diff)))
+
+        FileChanged(loc.file, updatedFileContents, Some(PatchInfo(Range(start, end), insertCode.text)))
 
       }
     }

@@ -20,6 +20,7 @@ import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.{OMContainerBase, OMSubContainer}
 import com.opticdev.sdk.opticmarkdown2.lens._
 import com.opticdev.sdk.opticmarkdown2.schema.{OMSchema, OMSchemaColdStorage}
+import org.mozilla.javascript.ast.ArrayLiteral
 import play.api.libs.json.{Format, JsObject, JsValue, Json}
 
 object PickleImplicits extends PicklerHelper {
@@ -119,11 +120,12 @@ object PickleImplicits extends PicklerHelper {
   }
 
   implicit val basicComponentEnumPickler = {
-    import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported, Token, Literal, ObjectLiteral}
+    import com.opticdev.sdk.descriptions.enums.{BasicComponentType, NotSupported, Token, Literal, ObjectLiteral, ArrayLiteral}
     compositePickler[BasicComponentType]
       .addConcreteType[NotSupported.type]
       .addConcreteType[Token.type]
       .addConcreteType[ObjectLiteral.type]
+      .addConcreteType[ArrayLiteral.type]
       .addConcreteType[Literal.type]
 
   }

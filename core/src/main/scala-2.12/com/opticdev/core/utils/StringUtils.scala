@@ -3,10 +3,13 @@ package com.opticdev.core.utils
 object StringUtils {
 
   def replaceRange(contents: String, range: Range, newString: String ) : String = {
-    val finalString = contents.substring(0, range.start) +
-      newString +
-      contents.substring(range.end, contents.length)
-    finalString
+    if (range.end > contents.length) {
+      contents.substring(0, range.start) + newString
+    } else {
+      contents.substring(0, range.start) +
+        newString +
+        contents.substring(range.end, contents.length)
+    }
   }
 
   def insertAtIndex(contents: String, insertAt: Int, newString: String ) : String = {

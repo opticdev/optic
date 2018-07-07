@@ -31,7 +31,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
   }
 
   def returnAllCandidates = Try {
-    val basic = extractTokensCandidates ++ extractLiteralCandidates ++ extractObjectLiteralCandidates
+    val basic = extractTokensCandidates ++ extractLiteralCandidates ++ extractObjectLiteralCandidates ++ extractArrayLiteralCandidates
 
     val withKeysAsPropertyPaths = expectedValue.value.map(i=> (Seq(i._1), i._2))
     val keysAsPropertyPaths = withKeysAsPropertyPaths.keys.toSet
@@ -41,8 +41,6 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
       .mapValues(_.toSeq.sortBy(_.stagedComponent.range.start))
 
     val notFoundProperties = keysAsPropertyPaths diff withSortedResults.keys.toSet
-
-
 
     TrainingResults(
       withSortedResults.map(i=> (i._1.mkString("."), i._2)),
@@ -125,6 +123,30 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
           .map(propertyPath=> {
             ValueCandidate((value.as[JsObject] - "_order"), generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
               JsObject(Seq("type" -> JsString("object")))
+            )
+          })
+      }
+    }.flatten.toSet
+  }
+
+  def extractArrayLiteralCandidates: Set[ValueCandidate] = {
+    val arrayLiteralInterfaces = snippetStageOutput.parser.basicSourceInterface.arrayLiterals
+    snippetStageOutput.astGraph.nodes.collect {
+      case n if n.value.isAstNode() && {
+        val asAstNode = n.value.asInstanceOf[CommonAstNode]
+        arrayLiteralInterfaces.arrayLiteralsType.contains(asAstNode.nodeType) &&
+          arrayLiteralInterfaces.parseNode(asAstNode, snippetStageOutput.astGraph, exampleSnippet)
+            .map(value => {
+              candidateValues.exists(_ == value)
+            }).getOrElse(false)
+      }  => {
+        val node = n.value.asInstanceOf[CommonAstNode]
+        val value = arrayLiteralInterfaces.parseNode(node, snippetStageOutput.astGraph, exampleSnippet).get
+
+        expectedValue.value.filter(_._2 == value).map(i=> Seq(i._1))
+          .map(propertyPath=> {
+            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ArrayLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
+              JsObject(Seq("type" -> JsString("array")))
             )
           })
       }

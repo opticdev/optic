@@ -34,7 +34,7 @@ case class CompiledLens(name: Option[String],
       MurmurHash3.stringHash(name.getOrElse("NONE")) ^
       MurmurHash3.stringHash(id) ^
       MurmurHash3.stringHash(packageRef.full) ^
-      MurmurHash3.stringHash(schemaRef.full) ^
+      MurmurHash3.stringHash(schema.toString) ^
       MurmurHash3.setHash(enterOn) ^
       MurmurHash3.stringHash(internal.toString) ^
       parser.hash ^

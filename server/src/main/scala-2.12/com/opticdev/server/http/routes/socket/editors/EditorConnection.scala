@@ -33,7 +33,6 @@ class EditorConnection(slug: String, actorSystem: ActorSystem, val autorefreshes
     val in =
       Flow[String]
         .map(i=> {
-          println(i)
           val parsedTry = Try(Json.parse(i).as[JsObject])
           val eventTry  = Try(parsedTry.get.value("event").as[JsString].value)
           val message = if (eventTry.isSuccess) {

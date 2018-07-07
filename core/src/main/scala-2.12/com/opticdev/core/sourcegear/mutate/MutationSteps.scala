@@ -139,6 +139,7 @@ object MutationSteps {
           case Literal => AstChange(field.mapping, mutateLiteral(field))
           case Token => AstChange(field.mapping, mutateToken(field))
           case ObjectLiteral => AstChange(field.mapping, mutateObjectLiteral(field))
+          case ArrayLiteral => AstChange(field.mapping, mutateArrayLiteral(field))
         }
       }
     })
@@ -185,6 +186,11 @@ object MutationSteps {
   def mutateObjectLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String): Try[String] = {
     val node = updatedField.mapping.asInstanceOf[NodeMapping].node
     sourceGearContext.parser.basicSourceInterface.objectLiterals.mutateNode(node, sourceGearContext.astGraph, fileContents, updatedField.newValue.as[JsObject])
+  }
+
+  def mutateArrayLiteral(updatedField: UpdatedField) (implicit sourceGearContext: SGContext, fileContents: String): Try[String] = {
+    val node = updatedField.mapping.asInstanceOf[NodeMapping].node
+    sourceGearContext.parser.basicSourceInterface.arrayLiterals.mutateNode(node, sourceGearContext.astGraph, fileContents, updatedField.newValue.as[JsObject])
   }
 
   def orderChanges(astChanges: List[AstChange]) = {

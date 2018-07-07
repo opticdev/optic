@@ -34,7 +34,7 @@ package object actors {
   //Project Receives
   sealed trait ParseStatus
   case class ParseSuccessful(parseResults: FileParseResults, file: File, fromCache: Boolean = false) extends ParseStatus
-  case class ParseFailed(file: File) extends ParseStatus
+  case class ParseFailed(file: File, error: String) extends ParseStatus
   case class FileUpdatedInMemory(file: File, contents: String, project: ProjectBase, fromContextQuery: Boolean = false)(implicit val sourceGear: SourceGear)
   case class FileUpdated(file: File, project: ProjectBase)(implicit val sourceGear: SourceGear)
   case class FileCreated(file: File, project: ProjectBase)(implicit val sourceGear: SourceGear)

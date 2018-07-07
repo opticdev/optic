@@ -17,7 +17,7 @@ object Serialization {
     "self" -> Self, "scope" -> Scope
   ))
   implicit lazy val omlenscomponenttypeFormat = EnumFormatsFromTypes.newFormats[OMLensComponentType](Map(
-    "token" -> Token, "literal" -> Literal, "object-literal" -> ObjectLiteral
+    "token" -> Token, "literal" -> Literal, "object-literal" -> ObjectLiteral, "array-literal" -> ArrayLiteral
   ))
 
   implicit lazy val omchildrenruletypeFormat = EnumFormatsFromTypes.newFormats[OMChildrenRuleType](Map(
