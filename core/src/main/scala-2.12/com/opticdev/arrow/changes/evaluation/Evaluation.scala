@@ -103,7 +103,7 @@ object Evaluation {
         case x if x.yieldsGeneration => {
           val intermediateTransformPatch = generateNode(transformationTry.get.asInstanceOf[GenerateResult], schema, rt.lensId, topLevel = true)
           val fileContents = filesStateMonitor.contentsForFile(intermediateTransformPatch.file).get
-          val changes = FileChanged(intermediateTransformPatch.file, StringUtils.replaceRange(fileContents, intermediateTransformPatch.range, intermediateTransformPatch.newContents))
+          val changes = FileChanged(intermediateTransformPatch.file, StringUtils.insertAtIndex(fileContents, intermediateTransformPatch.range.start, intermediateTransformPatch.newContents))
           changes.stageContentsIn(filesStateMonitor)
           changes
         }
@@ -172,9 +172,10 @@ object Evaluation {
 
     //cleanup
     case cSL: ClearSearchLines => {
-      val fileContentsOption = filesStateMonitor.contentsForFile(cSL.file)
-      if (fileContentsOption.isSuccess) {
-        val lines = fileContentsOption.get.linesWithSeparators.toVector
+      val fileContentsOption = filesStateMonitor.allStaged.get(cSL.file)
+
+      if (fileContentsOption.isDefined) {
+        val lines = fileContentsOption.get.text.linesWithSeparators.toVector
         val searchIndices = lines.zipWithIndex.filter(i=> cSL.regex.findFirstIn(i._1).nonEmpty ).map(_._2).reverse
 
         val newLines = searchIndices.foldLeft(lines) {

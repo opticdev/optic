@@ -69,21 +69,13 @@ object InsertCode {
 
         val newProperties: AstProperties = marvinAstParent.properties + (blockPropertyPath -> AstArray(newArray:_*))
 
-        val changes = marvinAstParent.mutator.applyChanges(marvinAstParent, newProperties)
+        val changes = marvinAstParent.mutator.applyChangesWithPatches(marvinAstParent, newProperties)
 
-        val updatedFileContents = StringUtils.replaceRange(fileContents, loc.parent.range, changes)
+        val patches = changes._2.allChanges.head
 
-        //compute patch info
-        val dmp = new diff_match_patch()
-        val diff = dmp.diff_main(fileContents, updatedFileContents).asScala
-        val insertCode = diff.find(_.operation == diff_match_patch.Operation.INSERT).get
-        val start = diff.splitAt(diff.indexOf(insertCode))._1
-          .filter(_.operation == diff_match_patch.Operation.EQUAL)
-          .foldLeft(0){case (a, b) => a + b.text.length}
-        val end = start + insertCode.text.length
+        val updatedFileContents = StringUtils.replaceRange(fileContents, loc.parent.range, changes._1)
 
-
-        FileChanged(loc.file, updatedFileContents, Some(PatchInfo(Range(start, end), insertCode.text)))
+        FileChanged(loc.file, updatedFileContents, Some(PatchInfo(patches.range, patches.newContent)))
 
       }
     }

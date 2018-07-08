@@ -8,7 +8,7 @@ object Dependencies {
     val scalaTestVersion = "3.0.1"
     val parserFoundationVersion = "0.1.4"
     val akkaHttpVersion = "10.1.1"
-    val marvinVersion = "0.1.3"
+    val marvinVersion = "0.1.4"
   }
 
   import Versions._

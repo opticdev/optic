@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.graph.model
 
+import com.opticdev.common.utils.JsonUtils
 import com.opticdev.common.{ObjectRef, SchemaRef}
 import com.opticdev.core.sourcegear.{AstDebugLocation, CompiledLens, SGContext}
 import com.opticdev.core.sourcegear.actors.ActorCluster
@@ -34,8 +35,8 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
   def variableMapping: VariableMapping
 
   def matchesSchema()(implicit sourceGearContext: SGContext): Boolean = {
-    sourceGearContext.sourceGear.findSchema(schemaId).getOrElse(OMSchema(schemaId, JsObject.empty))
-      .validate(expandedValue())
+    val schema = sourceGearContext.sourceGear.findSchema(schemaId).getOrElse(OMSchema(schemaId, JsObject.empty))
+    schema.validate(JsonUtils.removeReservedFields(expandedValue()))
   }
 
   def internal: Boolean
