@@ -5,6 +5,7 @@ import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.graph.model.{ContainerMapping, NodeMapping}
 import com.opticdev.core.sourcegear.mutate.MutationSteps.orderChanges
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
+import com.opticdev.core.utils.StringUtils
 import com.opticdev.sdk.descriptions.transformation.MultiTransform
 import com.opticdev.sdk.descriptions.transformation.generate.GenerateResult
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
@@ -42,28 +43,14 @@ object MultiTransformEvaluation {
       case (file, patches)=> {
         import com.opticdev.core.utils.StringBuilderImplicits._
 
-        //offset multi generations in the same spot
-        val offsetGenerations=
-          patches
-            .filter(_.isGeneration)
-            .groupBy(_.range.start)
-            .filter(_._2.size > 1).flatMap {
-              case (startIndex, inserts) => {
-                inserts.zipWithIndex.map {case (item, index) => {
-                  val previous = inserts.lift(index - 1)
-                  previous.map(i=> (item, item.copy(range = Range(item.range.start + i.range.size, item.range.end + i.range.size))))
-                }}
-              }
-            }.collect{case x if x.isDefined => x.get}
-             .toMap
-
-        //replace patches with updated ones
-        val updatedPatches = patches.map(patch=> offsetGenerations.getOrElse(patch, patch))
-
         val fileContents = fileStateMonitor.contentsForFile(file).getOrElse("")
-        val result = updatedPatches.foldLeft ( new StringBuilder(fileContents) ) {
+        val result = patches.reverse.foldLeft ( new StringBuilder(fileContents) ) {
           case (contents, patch) => {
-            contents.updateRange(patch.range, patch.newContents)
+            if (patch.isGeneration) {
+              contents.insertAtIndex(patch.range.start, patch.newContents)
+            } else {
+              contents.updateRange(patch.range, patch.newContents)
+            }
           }
         }
         FileChanged(file, result.toString())

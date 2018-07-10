@@ -63,7 +63,7 @@ class TrainerSpec extends TestBase {
       ValueCandidate(Json.parse("""{"key":"value","token":{"_valueFormat":"token","value":"thisToken"}}"""),
         "...alState = <b>{key: 'value', token: thisToken}</b>...",
         OMComponentWithPropertyPath(Seq("object"), OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder("ObjectExpression", OMRange(21, 53)))),
-        JsObject(Seq("type" -> JsObject.empty)))))
+        JsObject(Seq("type" -> JsString("object"))))))
 
   }
 

@@ -9,6 +9,7 @@ import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 class OpticChangeSpec extends TestBase {
   implicit val nodeKeyStore = new NodeKeyStore
 
+  //weird issue with file monitors is preventing passing but does work. Larger fix needed
   it("Clear search change works") {
 
     val expected = "class code {\n\n}\n\nfunction code1(arg1, arg2) {\n\n}\n"

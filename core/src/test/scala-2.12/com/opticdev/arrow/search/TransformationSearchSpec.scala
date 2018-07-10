@@ -50,8 +50,8 @@ class TransformationSearchSpec extends TestBase {
     val context = ModelContext(File("/test/file"), Range(32, 42), Vector(ModelNode(schemaModel.schemaRef, JsObject.empty, null, Map(), None, None, None, "a")))
 
     val results = TransformationSearch.search(context)(sourceGear, project, knowledgeGraph, editorSlug, nodeKeyStore)
-
-    assert(results.head.asJson.toString() == """{"name":"Model -> Route","projectName":"test","editorSlug":"test","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","changes":[{"transformationChanges":{"transformation":{"yields":"Model -> Route","id":"m2r","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","ask":{"type":"object"},"dynamicAsk":{"type":"object"},"script":""},"target":"optic:test@0.1.0/route","_type":"com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"},"inputValue":{},"askSchema":{"type":"object","properties":{}},"lensOptions":[],"locationOptions":[{"file":"/test/file","position":43,"_type":"com.opticdev.arrow.changes.location.AsChildOf"}],"_type":"com.opticdev.arrow.changes.RunTransformation"}]}""")
+    
+    assert(results.head.asJson.toString() == """{"name":"Model -> Route","projectName":"test","editorSlug":"test","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","changes":[{"transformationChanges":{"transformation":{"yields":"Model -> Route","id":"m2r","packageId":"optic:test-transform@latest","input":"optic:test@0.1.0/model","output":"optic:test@0.1.0/route","ask":{"type":"object"},"dynamicAsk":{"type":"object"},"script":""},"target":"optic:test@0.1.0/route","_type":"com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"},"inputValue":{},"askSchema":{"type":"object","properties":{}},"lensOptions":[],"locationOptions":[{"file":"/test/file","position":43,"_type":"com.opticdev.arrow.changes.location.AsChildOf"}],"_type":"com.opticdev.arrow.changes.RunTransformation"},{"file":"/test/file","prefixPattern":"^\\s*\\/\\/\\/.*","_type":"com.opticdev.arrow.changes.ClearSearchLines"}]}""")
 
   }
 

@@ -509,7 +509,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val changeGroup = Json.fromJson[ChangeGroup](Json.parse(changesJSON)).get
 
-    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})\n\nreq.body.aidan\n\nreq.body.lastName")
+    (changeGroup, sourcegear, project, "app.post('user/:id', function (req, res) {\n    req.query.id\n})\n\nreq.body.aidan\n\nreq.body.lastName\n\n\n\n\n")
 
   }
 
