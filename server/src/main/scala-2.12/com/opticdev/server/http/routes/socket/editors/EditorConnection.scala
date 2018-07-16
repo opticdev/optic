@@ -8,6 +8,7 @@ import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
 import better.files.File
+import com.opticdev.server.http.routes.installer.TutorialDirectoryBuilder
 import com.opticdev.server.http.routes.socket.agents.AgentConnection.listConnections
 import com.opticdev.server.http.routes.socket.agents.Protocol.UpdateAgentEvent
 import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent, SocketRouteOptions}
@@ -84,6 +85,11 @@ object EditorConnection extends ConnectionManager[EditorConnection] {
 
   override def apply(slug: String, socketRouteOptions: SocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
     println(slug+" editor connected")
+
+    if (slug == "guided-tutorial") {
+      TutorialDirectoryBuilder.build
+    }
+
     new EditorConnection(slug, actorSystem, socketRouteOptions.autorefreshes)
   }
 

@@ -2369,13 +2369,8 @@ public class diff_match_patch {
                 return false;
             }
             if (text == null) {
-                if (other.text != null) {
-                    return false;
-                }
-            } else if (!text.equals(other.text)) {
-                return false;
-            }
-            return true;
+                return other.text == null;
+            } else return text.equals(other.text);
         }
     }
 
