@@ -21,6 +21,7 @@ class FileStateMonitor(otherMonitors: FileStateMonitor*) {
   def contentsForPath(path: String): Try[String] = contentsForFile(File(path))
   def contentsForFile(file: File): Try[String] = Try {
     val starting : Option[StagedContent] = None
+
     prioritySeq.foldLeft(starting) {
       case (foundOption, fileMonitor) => {
         if (foundOption.isEmpty) {

@@ -20,6 +20,7 @@ sealed trait OMLensComponentType
 case object Token extends OMLensComponentType
 case object Literal extends OMLensComponentType
 case object ObjectLiteral extends OMLensComponentType
+case object ArrayLiteral extends OMLensComponentType
 case object NotSupported extends OMLensComponentType
 
 sealed trait OMFinder {
@@ -55,4 +56,9 @@ case class OMLensSchemaComponent(schemaRef: SchemaRef,
 
 }
 
-case class OMComponentWithPropertyPath[T <: OMLensComponent](propertyPath: Seq[String], component: T)
+case class OMComponentWithPropertyPath[T <: OMLensComponent](propertyPath: Seq[String], component: T) {
+  def range: OMRange = component match {
+      case f: OMLensNodeFinder => f.range
+      case _ => OMRange(0,0)
+  }
+}

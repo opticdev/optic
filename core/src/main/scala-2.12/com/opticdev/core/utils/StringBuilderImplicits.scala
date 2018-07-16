@@ -2,7 +2,12 @@ package com.opticdev.core.utils
 
 object StringBuilderImplicits {
   implicit class StringBuilderWithRangeUpdate(stringBuilder: scala.collection.mutable.StringBuilder) {
-    def updateRange(range: Range, contents: String) = {
+    def updateRange(range: Range, contents: String) : StringBuilder = {
+
+      if (range.end > stringBuilder.length + 1) {
+        val extra = range.end - stringBuilder.length
+        stringBuilder.append(List.fill(extra)("_").mkString)
+      }
 
       def validRange(int: Int) = int >= 0 && int < stringBuilder.length + 1
 
@@ -27,6 +32,10 @@ object StringBuilderImplicits {
       }
 
       stringBuilder
+    }
+
+    def insertAtIndex(insertAt: Int, newString: String ) : StringBuilder = {
+      updateRange(Range(insertAt, insertAt), newString)
     }
   }
 }

@@ -43,11 +43,11 @@ object ModelNodeJsonImplicits {
       implicit val sourceGearContext: SGContext = ParseSupervisorSyncAccess.getContext(fileNode.get.toFile).get
 
       //@todo factor this out
-      val schemaOption = sourceGear.findSchema(modelNode.schemaId)
+      val schemaOption = sourceGear.findSchema(modelNode.schemaId).getOrElse(sourceGear.findLens(modelNode.parseGear.parsingLensRef).map(_.schema.right.get).get)
 
       JsObject(Seq(
         "id" -> JsString(project.nodeKeyStore.leaseId(fileNode.get.toFile, modelNode)),
-        "schema" -> schemaOption.get.definition,
+        "schema" -> schemaOption.definition,
         "astLocation" -> JsObject(Seq(
           "type" -> JsString(modelNode.root.nodeType.asString),
           "start" -> JsNumber(modelNode.root.range.start),

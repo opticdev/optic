@@ -13,6 +13,7 @@ import scala.concurrent.ExecutionContext
 import scala.util.Failure
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
+import com.opticdev.server.http.routes.installer.InstallerConnection
 
 class SocketRoute(implicit executionContext: ExecutionContext, projectsManager: ProjectsManager) {
 
@@ -28,6 +29,9 @@ class SocketRoute(implicit executionContext: ExecutionContext, projectsManager: 
           } ~
           pathPrefix("socket" / "agent" / Remaining) { agentName =>
             handleWebSocketMessages(AgentConnection.websocketChatFlow(AgentConnection.findOrCreate(agentName, options)))
+          } ~
+          pathPrefix("socket" / "installer" / Remaining) { installerName =>
+            handleWebSocketMessages(InstallerConnection.websocketChatFlow(InstallerConnection.findOrCreate(installerName, options)))
           }
         }
       }

@@ -7,7 +7,7 @@ import com.opticdev.common.storage.DataDirectory
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
 import com.opticdev.core.sourcegear.{SGConstructor, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.actors.ActorCluster
-import com.opticdev.core.sourcegear.graph.model.ModelNode
+import com.opticdev.core.sourcegear.graph.model.{FlatModelNode, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.PackageManager
@@ -56,7 +56,12 @@ object TestLens {
     implicit val project = new StaticSGProject("trainer_project", DataDirectory.trainerScratch, sgBuilt)
 
     val parseResults = sgBuilt.parseString(testInput).get
-    val mn = parseResults.modelNodes.minBy(_.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)).asInstanceOf[ModelNode]
+
+    val mn: FlatModelNode = parseResults.modelNodes.minBy {
+      case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
+      case mmn: MultiModelNode => mmn.modelNodes.head.resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
+    }
+
     implicit val sourceGearContext = SGContext(
       sgBuilt.fileAccumulator,
       parseResults.astGraph,

@@ -8,7 +8,7 @@ object Dependencies {
     val scalaTestVersion = "3.0.1"
     val parserFoundationVersion = "0.1.4"
     val akkaHttpVersion = "10.1.1"
-    val marvinVersion = "0.1.3"
+    val marvinVersion = "0.1.4"
   }
 
   import Versions._
@@ -25,7 +25,6 @@ object Dependencies {
     "com.github.pathikrit" %% "better-files-akka" % betterFilesVersion,
 
     "org.scala-lang.modules" %% "scala-xml" % "1.1.0",
-
 
     //graph
     "org.scala-graph" %% "graph-core" % "1.12.3",
@@ -73,7 +72,7 @@ object Dependencies {
 
     "ch.megard" %% "akka-http-cors" % "0.2.2",
 
-    "com.mixpanel" % "mixpanel-java" % "1.4.4"
+    "com.opticdev" %% "optic-plugins-installer" % "0.1.0"
   )
 
   val coreDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(

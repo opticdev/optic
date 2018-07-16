@@ -137,4 +137,16 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
   }
 
+  it("can render a node from builtin lens") {
+
+    implicit val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")
+
+    val result = Render.simpleNode(SchemaRef(Some(PackageRef("optic:builtins")), "raw"), JsObject(
+      Seq("rawText" -> JsString("raw.rendered()"))
+    ))
+
+    assert(result.get._2 == """raw.rendered()""")
+
+  }
+
 }

@@ -66,9 +66,7 @@ object Evaluation {
           lensId = lensIdOption
         )))
 
-        val report = schema.validationReport(stagedNode.value)
-
-        require(schema.validate(stagedNode.value), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
+        require(Try(schema.validate(stagedNode.value)).getOrElse(true), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
 
         val inputVariableMapping = Try((rt.inputValue.get \ "_variables").toOption.map(Json.fromJson[VariableMapping]).map(_.get).get)
           .getOrElse(Map.empty)
@@ -85,7 +83,7 @@ object Evaluation {
 
         val resolvedLocation = rt.location.get.resolveToLocation(sourcegear, Some(stagedNode)).get
         val changeResult = InsertCode.atLocation((generatedNode._1, updatedString), resolvedLocation).asFileChanged
-        IntermediateTransformPatch(changeResult.file, changeResult.patchInfo.get.range, changeResult.patchInfo.get.updated)
+        IntermediateTransformPatch(changeResult.file, changeResult.patchInfo.get.range, changeResult.patchInfo.get.updated, isGeneration = true)
       }
 
       def mutateNode(mutateResult: MutateResult) : IntermediateTransformPatch = {
@@ -98,14 +96,14 @@ object Evaluation {
 
         val file = linkedModelNode.fileNode.get.toFile
 
-        IntermediateTransformPatch(file, mutated.get._3, mutated.get._2)
+        IntermediateTransformPatch(file, mutated.get._3, mutated.get._2, isGeneration = false)
       }
 
       transformationTry.get match {
         case x if x.yieldsGeneration => {
           val intermediateTransformPatch = generateNode(transformationTry.get.asInstanceOf[GenerateResult], schema, rt.lensId, topLevel = true)
           val fileContents = filesStateMonitor.contentsForFile(intermediateTransformPatch.file).get
-          val changes = FileChanged(intermediateTransformPatch.file, StringUtils.replaceRange(fileContents, intermediateTransformPatch.range, intermediateTransformPatch.newContents))
+          val changes = FileChanged(intermediateTransformPatch.file, StringUtils.insertAtIndex(fileContents, intermediateTransformPatch.range.start, intermediateTransformPatch.newContents))
           changes.stageContentsIn(filesStateMonitor)
           changes
         }
@@ -174,9 +172,10 @@ object Evaluation {
 
     //cleanup
     case cSL: ClearSearchLines => {
-      val fileContentsOption = filesStateMonitor.contentsForFile(cSL.file)
-      if (fileContentsOption.isSuccess) {
-        val lines = fileContentsOption.get.linesWithSeparators.toVector
+      val fileContentsOption = filesStateMonitor.allStaged.get(cSL.file)
+
+      if (fileContentsOption.isDefined) {
+        val lines = fileContentsOption.get.text.linesWithSeparators.toVector
         val searchIndices = lines.zipWithIndex.filter(i=> cSL.regex.findFirstIn(i._1).nonEmpty ).map(_._2).reverse
 
         val newLines = searchIndices.foldLeft(lines) {

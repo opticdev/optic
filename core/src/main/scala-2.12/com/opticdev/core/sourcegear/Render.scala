@@ -3,6 +3,7 @@ package com.opticdev.core.sourcegear
 import com.opticdev.common.SchemaRef
 import com.opticdev.common.utils.JsonUtils
 import com.opticdev.core.sourcegear.annotations.{AnnotationRenderer, TagAnnotation}
+import com.opticdev.core.sourcegear.builtins.OpticLenses
 import com.opticdev.core.sourcegear.context.FlatContextBase
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.marvin.common.ast.NewAstNode
@@ -25,13 +26,18 @@ object Render {
     val flatContext: FlatContextBase = if (context == null) sourceGear.flatContext else context
 
     val options = stagedNode.options.getOrElse(RenderOptions())
+    val containerContents = options.containers.getOrElse(Map.empty)
+
+
+    val builtinOverrides = OpticLenses.builtinFor(stagedNode)
+    if (builtinOverrides.isDefined) {
+      return Try(builtinOverrides.get.render(stagedNode.value, containerContents, parentVariableMapping)).map(i=> (i._1, i._2, null))
+    }
 
     val gearOption = resolveLens(stagedNode)(sourceGear, flatContext)
     require(gearOption.isDefined, "No gear found that can render this node.")
 
     val gear = gearOption.get
-    val containerContents = options.containers.getOrElse(Map.empty)
-
     val declaredVariables = gear.variableManager.variables
     val setVariablesMapping = options.variables.getOrElse(Map.empty)
     val parentVariableMappingFiltered = parentVariableMapping.filterNot(v=> declaredVariables.exists(d => d.token == v._1 && d.in == Self))

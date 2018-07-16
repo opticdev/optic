@@ -36,7 +36,11 @@ object ComponentExtraction {
               if (result.isFailure) throw new Error("Source code extraction error " + result.failed.get)
               ModelField(c.propertyPath, result.get, NodeMapping(node, AstPropertyRelationship.ObjectLiteral))
             }
-
+            case ArrayLiteral=> {
+              val result = sourceGearContext.parser.basicSourceInterface.arrayLiterals.parseNode(node, graph, fileContents)
+              if (result.isFailure) throw new Error("Source code extraction error " + result.failed.get)
+              ModelField(c.propertyPath, result.get, NodeMapping(node, AstPropertyRelationship.ArrayLiteral))
+            }
           }
 
         }

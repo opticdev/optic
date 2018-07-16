@@ -34,7 +34,8 @@ object OMParser {
 
     val updatedSchema = configuration.fieldSet.find(_._1 == "schema").collect {
       case (k: String, v: JsObject) => {
-        (k, schemaDefinitionToJsObject(v, SchemaRef(Some(packageRef), id), internal = true))
+        val definition = v + ("title" -> (configuration \ "name").get.as[JsString])
+        (k, schemaDefinitionToJsObject(definition, SchemaRef(Some(packageRef), id), internal = true))
       }
       case p => p
     }.get

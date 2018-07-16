@@ -191,6 +191,29 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
         assert(result.get.modelNode.value == expected)
       }
 
+      it("array literals") {
+        val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = [1,2,3]", Map(
+          "value" -> OMLensCodeComponent(ArrayLiteral, OMStringFinder(Starting, "["))
+        ))
+
+        val block = "var hello = [1,2,3,4,5]"
+
+        val parsedSample = sample(block)
+        val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
+        assert(result.isDefined)
+
+        val value = JsArray(Seq(
+          JsNumber(1),
+          JsNumber(2),
+          JsNumber(3),
+          JsNumber(4),
+          JsNumber(5)
+        ))
+
+        val expected = JsObject(Seq("value" -> value))
+        assert(result.get.modelNode.value == expected)
+      }
+
     }
 
   }

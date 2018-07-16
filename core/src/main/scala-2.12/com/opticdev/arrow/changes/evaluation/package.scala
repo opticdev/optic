@@ -29,6 +29,6 @@ package object evaluation {
 
   }
 
-  case class IntermediateTransformPatch(file: File, range: Range, newContents: String)
+  case class IntermediateTransformPatch(file: File, range: Range, newContents: String, isGeneration: Boolean)
 
 }

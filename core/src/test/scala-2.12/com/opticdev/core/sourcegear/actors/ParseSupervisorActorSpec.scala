@@ -79,7 +79,10 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
   it("fails gracefully when file is unreadable") {
     val f = fixture
     f.actorCluster.parserSupervisorRef ! ParseFile(File(getCurrentDirectory+"/test-examples/resources/test_project/fakeFile.js"), self, project)
-    expectMsg(ParseFailed(File(getCurrentDirectory+"/test-examples/resources/test_project/fakeFile.js")))
+
+    expectMsgPF() {
+      case pf: ParseFailed => assert(pf.file == File(getCurrentDirectory+"/test-examples/resources/test_project/fakeFile.js"))
+    }
   }
 
   describe("caches") {

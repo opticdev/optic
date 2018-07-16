@@ -18,6 +18,19 @@ function Mutate(modelId, value, options) {
     }
 }
 
+//Builtins
+
+function Raw(rawText) {
+    return {
+        schema: 'optic:builtins/raw',
+        value: {
+            rawText: rawText
+        },
+        options: {},
+        _isStagedNode: true
+    }
+}
+
 
 //Model Setters
 function Code(value) {
@@ -60,7 +73,7 @@ function InsertAt(index, items) {
     return {
         index: index,
         items: items,
-        type: 'replace-with'
+        type: 'insert-at'
     }
 }
 

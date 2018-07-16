@@ -8,6 +8,7 @@ import akka.stream.OverflowStrategy
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
 import better.files.File
+import com.opticdev.server.http.routes.installer.TutorialDirectoryBuilder
 import com.opticdev.server.http.routes.socket.agents.AgentConnection.listConnections
 import com.opticdev.server.http.routes.socket.agents.Protocol.UpdateAgentEvent
 import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent, SocketRouteOptions}
@@ -33,7 +34,6 @@ class EditorConnection(slug: String, actorSystem: ActorSystem, val autorefreshes
     val in =
       Flow[String]
         .map(i=> {
-          println(i)
           val parsedTry = Try(Json.parse(i).as[JsObject])
           val eventTry  = Try(parsedTry.get.value("event").as[JsString].value)
           val message = if (eventTry.isSuccess) {
@@ -85,6 +85,11 @@ object EditorConnection extends ConnectionManager[EditorConnection] {
 
   override def apply(slug: String, socketRouteOptions: SocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
     println(slug+" editor connected")
+
+    if (slug == "guided-tutorial") {
+      TutorialDirectoryBuilder.build
+    }
+
     new EditorConnection(slug, actorSystem, socketRouteOptions.autorefreshes)
   }
 

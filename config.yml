@@ -1,2 +1,2 @@
-testParser: "server/src/main/resources/es7_2.12-1.0.1.jar"
+testParser: "server/src/main/resources/es7_2.12-1.0.2.jar"
 testOpticMarkdown: "server/src/main/resources/opticmarkdown"

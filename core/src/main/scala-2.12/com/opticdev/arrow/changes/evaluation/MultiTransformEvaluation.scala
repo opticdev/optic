@@ -5,10 +5,12 @@ import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.graph.model.{ContainerMapping, NodeMapping}
 import com.opticdev.core.sourcegear.mutate.MutationSteps.orderChanges
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
+import com.opticdev.core.utils.StringUtils
 import com.opticdev.sdk.descriptions.transformation.MultiTransform
 import com.opticdev.sdk.descriptions.transformation.generate.GenerateResult
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import play.api.libs.json.JsString
 
 import scala.collection.immutable
 
@@ -28,7 +30,7 @@ object MultiTransformEvaluation {
     val generations = multiTransform.transforms.collect {
       case generate: GenerateResult => {
         val stagedNode = generate.toStagedNode()
-        generateEval(generate, sourcegear.findSchema(stagedNode.schema).get, stagedNode.options.flatMap(_.lensId), false)
+        generateEval(generate, sourcegear.findSchema(stagedNode.schema).orNull, stagedNode.options.flatMap(_.lensId), false)
       }
     }
 
@@ -40,10 +42,15 @@ object MultiTransformEvaluation {
     FilesChanged(groupedByFile.map {
       case (file, patches)=> {
         import com.opticdev.core.utils.StringBuilderImplicits._
+
         val fileContents = fileStateMonitor.contentsForFile(file).getOrElse("")
-        val result = patches.foldLeft ( new StringBuilder(fileContents) ) {
+        val result = patches.reverse.foldLeft ( new StringBuilder(fileContents) ) {
           case (contents, patch) => {
-            contents.updateRange(patch.range, patch.newContents)
+            if (patch.isGeneration) {
+              contents.insertAtIndex(patch.range.start, patch.newContents)
+            } else {
+              contents.updateRange(patch.range, patch.newContents)
+            }
           }
         }
         FileChanged(file, result.toString())

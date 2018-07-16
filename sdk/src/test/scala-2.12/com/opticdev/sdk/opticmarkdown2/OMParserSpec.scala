@@ -69,8 +69,8 @@ class OMParserSpec extends FunSpec {
       val parsedLens = OMParser.parseLens(lensJson)(testPackageRef)
 
       assert(parsedLens.isSuccess)
-      assert(parsedLens.get.schema.right.get.definition == JsObject.empty)
-      assert(parsedLens.get.schema.right.get.schemaRef.full == "test:abcdef@0.1.1/exampleid____schema")
+      assert(parsedLens.get.schema.right.get.definition == Json.parse("""{"title":"exampleName"}"""))
+      assert(parsedLens.get.schema.right.get.schemaRef.full == "test:abcdef@0.1.1/exampleid")
       assert(parsedLens.get.schema.right.get.internal)
     }
 

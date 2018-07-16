@@ -45,7 +45,13 @@ abstract class SourceGear {
       && s.schemaRef.id == schemaRef.id
     )
     val schemaVersion = SemverHelper.findVersion(availible, (s: OMSchema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))
-    schemaVersion.map(_._2)
+    val result = schemaVersion.map(_._2)
+
+    if (result.isDefined) {
+      result
+    } else {
+      findLens(LensRef(schemaRef.packageRef, schemaRef.id)).collect{ case x: SGExportableLens if x.schema.isRight => x.schema.right.get}
+    }
   }
 
   def findLens(lensRef: LensRef): Option[SGExportableLens] = {

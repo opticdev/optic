@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.graph.model
 
+import com.opticdev.common.utils.JsonUtils
 import com.opticdev.common.{ObjectRef, SchemaRef}
 import com.opticdev.core.sourcegear.{AstDebugLocation, CompiledLens, SGContext}
 import com.opticdev.core.sourcegear.actors.ActorCluster
@@ -17,6 +18,7 @@ import play.api.libs.json.{JsObject, Json}
 import com.opticdev.core.utils.UUID
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
@@ -31,6 +33,11 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
   def tag: Option[TagAnnotation]
   def lensRef: LensRef
   def variableMapping: VariableMapping
+
+  def matchesSchema()(implicit sourceGearContext: SGContext): Boolean = {
+    val schema = sourceGearContext.sourceGear.findSchema(schemaId).getOrElse(OMSchema(schemaId, JsObject.empty))
+    schema.validate(JsonUtils.removeReservedFields(expandedValue()))
+  }
 
   def internal: Boolean
 
