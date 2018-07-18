@@ -2,7 +2,7 @@
 # Optic
 The engine behind [Optic's AI Pair Programming tool](http://useoptic.com/)
 
-## [Product Docs](https://useoptic.com/what-is-optic)
+## [Product Docs](https://useoptic.com/docs/what_is_optic/what-is-optic)
 
 # Codebase
 
