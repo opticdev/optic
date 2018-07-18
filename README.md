@@ -1,6 +1,6 @@
 
 # Optic
-The engine behind [Optic's AI Pair Programming tool](http://useoptic.com/)
+An API for Code
 
 ## [Product Docs](https://useoptic.com/docs/what_is_optic/what-is-optic)
 
