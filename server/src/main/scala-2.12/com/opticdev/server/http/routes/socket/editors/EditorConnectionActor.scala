@@ -41,9 +41,9 @@ class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManage
           AgentConnection.broadcastUpdate(contextFound.get)
         })
 
-//      results.onComplete(i=> {
-//        i.failed.foreach(_.printStackTrace())
-//      })
+      results.onComplete(i=> {
+        i.failed.foreach(_.printStackTrace())
+      })
     }
 
     case search: EditorSearch => {
