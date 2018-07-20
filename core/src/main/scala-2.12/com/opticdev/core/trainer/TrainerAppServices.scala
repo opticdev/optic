@@ -20,8 +20,6 @@ object TrainerAppServices {
 
     val validProjectFiles = projectFileInterfaces.collect {case x if x._2.interface.isSuccess && x._2.projectKnowledgeSearchPaths.dirs.nonEmpty => x._2}
 
-    val theLocalProvider = PackageManager.providers.find(_.isLocalProvider).get
-
     validProjectFiles.map(i=> {
       val name = i.interface.get.name
       val knowledgePaths = i.projectKnowledgeSearchPaths

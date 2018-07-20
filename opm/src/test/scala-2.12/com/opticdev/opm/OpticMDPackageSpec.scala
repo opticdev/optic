@@ -21,7 +21,7 @@ class OpticMDPackageSpec extends FunSpec {
 
   it("find lenses") {
     val lenses = resolved.lenses
-    assert(lenses.size == 2)
+    assert(lenses.size == 1)
   }
 
 }
