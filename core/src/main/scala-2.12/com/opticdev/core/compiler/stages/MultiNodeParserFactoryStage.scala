@@ -60,6 +60,7 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput)(implicit val
                                         lens.containers.filter(i=> containers.exists(_._1.name == i._1)),
                                         Left(schemaId(index)),
                                         JsObject.empty,
+                                        snippetStage.snippet.language,
                                         lens.packageRef)
 
             implicit val subcontainersManager = new SubContainerManager(childLens.subcontainerCompilerInputs, snippet.containerMapping)

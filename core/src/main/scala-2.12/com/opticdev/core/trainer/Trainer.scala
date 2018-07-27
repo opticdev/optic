@@ -21,7 +21,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
   implicit val lens = OMLens(Some("trainer-example"), "trainer-output", snippet, Map(), Map(), Map(), Right(OMSchema(
     SchemaRef(Some(PackageRef("optic:trainer")), "trainer"),
     JsObject.empty
-  )), JsObject.empty, PackageRef("optic:trainer"))
+  )), JsObject.empty, languageName, PackageRef("optic:trainer"))
   lazy val snippetStageOutput = new SnippetStage(snippet).run
 
   val candidateValues = expectedValue.value.values

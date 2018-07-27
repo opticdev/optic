@@ -39,7 +39,7 @@ class ValidationStageSpec extends FunSpec {
     implicit val lens: OMLens = OMLens(Some("Example"), "example", null, Map(
     "firstName" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "thing")),
     "lastName" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "thing"))
-    ), Map(), Map(), Left(basicSchema.schemaRef), JsObject.empty, null)
+    ), Map(), Map(), Left(basicSchema.schemaRef), JsObject.empty, "es7", null)
 
     val validationStage = new ValidationStage()
 
@@ -58,7 +58,7 @@ class ValidationStageSpec extends FunSpec {
       "fakePROP" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "thing")),
       "fakePROP2" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "thing"))
 
-    ), Map(), Map(), Left(basicSchema.schemaRef), JsObject.empty, null)
+    ), Map(), Map(), Left(basicSchema.schemaRef), JsObject.empty, "es7", null)
 
     val validationStage = new ValidationStage()
 
@@ -75,7 +75,7 @@ class ValidationStageSpec extends FunSpec {
   it("finds missing fields") {
     implicit val lens: OMLens = OMLens(Some("Example"), "example", null, Map(
       "firstName" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "thing"))
-    ), Map(), Map(), Left(basicSchema.schemaRef), JsObject.empty, null)
+    ), Map(), Map(), Left(basicSchema.schemaRef), JsObject.empty, "es7", null)
 
     val validationStage = new ValidationStage()
 
@@ -91,7 +91,7 @@ it("finds missing fields when extra ones are present") {
   implicit val lens: OMLens = OMLens(Some("Example"), "example", null, Map(
     "firstName" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "thing")),
     "fakePROP2" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "thing"))
-  ), Map(), Map(), Left(basicSchema.schemaRef), JsObject.empty, null)
+  ), Map(), Map(), Left(basicSchema.schemaRef), JsObject.empty, "es7", null)
 
   val validationStage = new ValidationStage()
 

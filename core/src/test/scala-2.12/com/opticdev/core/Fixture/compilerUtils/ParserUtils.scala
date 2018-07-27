@@ -27,6 +27,7 @@ trait ParserUtils {
       subContainers,
       Left(BlankSchema),
       JsObject.empty,
+      snippet.language,
       PackageRef("test:example", "0.1.1"))
 
     implicit val variableManager = VariableManager(lens.variablesCompilerInput, SourceParserManager.installedParsers.head.identifierNodeDesc)
@@ -47,7 +48,7 @@ trait ParserUtils {
 
   def sample(block: String) : SnippetStageOutput = {
     val snippet = OMSnippet("es7", block)
-    implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, PackageRef("test:example", "0.1.1"))
+    implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", PackageRef("test:example", "0.1.1"))
     val snippetBuilder = new SnippetStage(snippet)
     snippetBuilder.run
   }

@@ -7,6 +7,7 @@ import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContain
 import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
 import com.opticdev.sdk.opticmarkdown2.{LensRef, OMChildrenRuleType, OMSnippet}
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.sun.tools.internal.xjc.Language
 import play.api.libs.json.JsObject
 
 case class OMLens(name: Option[String],
@@ -17,6 +18,7 @@ case class OMLens(name: Option[String],
                   containers: Map[String, OMChildrenRuleType] = Map(),
                   schema: Either[SchemaRef, OMSchema],
                   initialValue: JsObject = JsObject.empty,
+                  language: String = "es7", //backwards compatibility
                   packageRef: PackageRef) extends PackageExportable {
 
   def variablesCompilerInput: Vector[OMVariable] = variables.map(i=> OMVariable(i._1, i._2)).toVector

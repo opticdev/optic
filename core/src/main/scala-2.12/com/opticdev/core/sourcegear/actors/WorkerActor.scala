@@ -5,7 +5,7 @@ import akka.dispatch.RequiresMessageQueue
 import better.files.File
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
-import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.{AstGraph, SourceParserManager}
 import com.opticdev.core.sourcegear.FileParseResults
 import com.opticdev.core.sourcegear.annotations.AnnotationParser
 import com.opticdev.scala.akka.FaddishUnboundedMessageQueueSemantics
@@ -29,6 +29,9 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
     case parseWithContentsRequest : ParseFileWithContents => {
       implicit val project = parseWithContentsRequest.project
       val requestingActor = parseWithContentsRequest.requestingActor
+
+      implicit val languageName = SourceParserManager.selectParserForFileName(parseWithContentsRequest.file.name).get.languageName
+
       val result: Try[FileParseResults] = parseWithContentsRequest.sourceGear.parseString(parseWithContentsRequest.contents)
       if (result.isSuccess) {
         actorCluster.parserSupervisorRef ! AddToCache(parseWithContentsRequest.file, result.get.astGraph, result.get.parser, parseWithContentsRequest.contents, result.get.fileNameAnnotationOption)
@@ -42,6 +45,9 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
       implicit val project = ctxRequest.project
       val file = ctxRequest.file
       val fileContents = project.filesStateMonitor.contentsForFile(file).get
+
+      implicit val languageName = SourceParserManager.selectParserForFileName(ctxRequest.file.name).get.languageName
+
       val result: Try[FileParseResults] = ctxRequest.sourceGear.parseString(fileContents)
       if (result.isSuccess) {
         actorCluster.parserSupervisorRef ! AddToCache(file, result.get.astGraph, result.get.parser, result.get.fileContents, result.get.fileNameAnnotationOption)

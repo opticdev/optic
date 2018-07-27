@@ -10,6 +10,8 @@ import play.api.libs.json.Json
 
 class ContainerSpec extends AkkaTestFixture("ContainerSpec") with ParserUtils with GearUtils {
 
+  implicit val languageName = "es7"
+
   def testBlock(fileContents: String)(implicit gearWithSubContainer: CompiledLens) = {
     val parsed = sample(fileContents)
     val astGraph = parsed.astGraph

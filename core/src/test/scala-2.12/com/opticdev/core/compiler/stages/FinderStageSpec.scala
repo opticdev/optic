@@ -19,7 +19,7 @@ class FinderStageSpec extends TestBase {
 
   implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(
     "definedAs" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "hello"))
-  ), Map(), Map(), Left(BlankSchema), JsObject.empty, null)
+  ), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", null)
   val snippetBuilder = new SnippetStage(snippet)
   val outputTry = Try(snippetBuilder.run)
 
@@ -48,7 +48,7 @@ class FinderStageSpec extends TestBase {
       "definedAs" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "hello")),
       "firstProblem" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "not-anywhere")),
       "nextProblem" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "nowhere"))
-    ), Map(), Map(), Left(BlankSchema), JsObject.empty, null)
+    ), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", null)
 
     val finderStage = new FinderStage(outputTry.get)
 

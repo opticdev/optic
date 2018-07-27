@@ -19,7 +19,7 @@ import com.opticdev.core.sourcegear.context.FlatContextBase
 import scala.util.Try
 import com.opticdev.core.utils.StringUtils._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
-import com.opticdev.parsers.AstGraph
+import com.opticdev.parsers.{AstGraph, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import play.api.libs.json.JsObject
 
@@ -40,6 +40,7 @@ object Mutate {
     val modelNode = modelNodeOption.get.asInstanceOf[ExpandedModelNode]
 
     def reparse(string: String): (ExpandedModelNode, String, SGContext) = {
+      implicit val languageName = SourceParserManager.selectParserForFileName(sourceGearContext.file.name).get.languageName
       val parsed = sourceGearContext.sourceGear.parseString(string, sourceGearContext.file).get
       import com.opticdev.core.sourcegear.graph.GraphImplicits._
       val programNode = parsed.astGraph.root.get
