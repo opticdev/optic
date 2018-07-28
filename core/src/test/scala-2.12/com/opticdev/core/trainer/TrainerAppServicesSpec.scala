@@ -8,7 +8,7 @@ class TrainerAppServicesSpec extends FunSpec {
     val results = TrainerAppServices.listAllProjects(Seq("test-examples/optic.yml"))
 
     assert(results.size == 1)
-    assert(results.head.mdFiles.size == 4)
+    assert(results.head.mdFiles.size == 5)
   }
 
 }

@@ -12,7 +12,7 @@ import play.api.libs.json.JsObject
 class FinderEvaluationSpec extends TestBase {
 
   val block = "var hello = require('world'); var next = hello+1"
-  implicit val lens : OMLens = OMLens(Some("Example"), "example", OMSnippet("es7", block), Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, PackageRef("test:test"))
+  implicit val lens : OMLens = OMLens(Some("Example"), "example", OMSnippet("es7", block), Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", PackageRef("test:test"))
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run

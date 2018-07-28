@@ -7,10 +7,9 @@ import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.marvin.common.ast.{AstArray, AstProperties, NewAstNode}
 import com.opticdev.marvin.common.helpers.LineOperations
-import com.opticdev.parsers._
 import com.opticdev.parsers.graph.{AstType, CommonAstNode, GraphImplicits, WithinFile}
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
-import com.opticdev.parsers.SourceParserManager
+import com.opticdev.parsers.{AstGraph, ParserRef, ParserResult, SourceParserManager}
 import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap

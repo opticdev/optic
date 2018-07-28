@@ -6,7 +6,7 @@ object Dependencies {
   object Versions {
     val betterFilesVersion = "2.17.1"
     val scalaTestVersion = "3.0.1"
-    val parserFoundationVersion = "0.1.4"
+    val parserFoundationVersion = "0.1.5"
     val akkaHttpVersion = "10.1.1"
     val marvinVersion = "0.1.4"
   }
@@ -96,7 +96,7 @@ object Dependencies {
     "com.opticdev" %% "marvin-runtime" % marvinVersion,
     "com.opticdev" %% "marvin-common" % marvinVersion,
     "me.xdrop" % "fuzzywuzzy" % "1.1.9"
-  )
+  ) ++ Parsers.list
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
@@ -109,6 +109,6 @@ object Dependencies {
     "com.vdurmont" % "semver4j" % "2.1.0",
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
     "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion
-  )
+  ) ++ Parsers.list
 
 }

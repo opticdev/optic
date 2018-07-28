@@ -63,6 +63,14 @@ trait GearUtils {
     val jsonString = Source.fromFile(path).getLines.mkString
     val description = OpticPackage.fromJson(Json.parse(jsonString)).get.resolved()
 
+    sourceGearFromPackage(description)
+
+  }
+
+  def sourceGearFromPackage(description: OpticMDPackage) : SourceGear = {
+
+    val outerLensSet = new LensSet()
+
     implicit val dependencyTree = Tree(Leaf(description))
     implicit val packageContext = PackageContextFixture.fromSchemas(description.schemas)
 

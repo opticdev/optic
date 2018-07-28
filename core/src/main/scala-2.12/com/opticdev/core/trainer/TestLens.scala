@@ -34,6 +34,7 @@ object TestLens {
     val description = descriptionFromString(markdown)
 
     val lensId = (lensConfiguration \ "id").get.as[JsString]
+    val language = (lensConfiguration \ "snippet" \ "language").get.as[JsString].value
 
     val output = MDParseOutput(description)
     val lensesSeq = MDParseOutput(description).lenses.value.filterNot(i=> (i.as[JsObject] \ "id").get == lensId) :+ lensConfiguration
@@ -55,7 +56,7 @@ object TestLens {
 
     implicit val project = new StaticSGProject("trainer_project", DataDirectory.trainerScratch, sgBuilt)
 
-    val parseResults = sgBuilt.parseString(testInput).get
+    val parseResults = sgBuilt.parseString(testInput)(project, language).get
 
     val mn: FlatModelNode = parseResults.modelNodes.minBy {
       case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
@@ -68,7 +69,7 @@ object TestLens {
       parseResults.parser,
       testInput,
       sgBuilt,
-      null,
+      null
     )
     mn.expandedValue(true)
   }

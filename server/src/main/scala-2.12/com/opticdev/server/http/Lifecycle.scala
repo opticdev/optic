@@ -9,6 +9,7 @@ import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.providers.LocalProvider
 import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
+import com.opticdev.parsers
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.markdown.CallOpticMarkdown
 import com.opticdev.server.state.ProjectsManager
@@ -21,17 +22,8 @@ object Lifecycle extends App {
   //init the data directory if missing
   DataDirectory.init
 
-  //@todo load parsers dynamically.
-  val jar = this.getClass.getClassLoader.getResource("es7_2.12-1.0.2.jar").getFile
-  val parserBase = Try {
-    ParserStorage.writeToStorage(File(jar))
-    SourceParserManager.installParser(jar).get
-  }.getOrElse {
-    val withoutFileExtension = jar.substring(5)
-    val pathAsString = (File(withoutFileExtension).parent.parent / "es7_2.12-1.0.2.jar").pathAsString
-    ParserStorage.writeToStorage(File(pathAsString))
-    SourceParserManager.installParser(pathAsString).get
-  }
+  SourceParserManager.enableParser(new parsers.es7.OpticParser)
+  SourceParserManager.enableParser(new parsers.scala.OpticParser)
 
   implicit val projectsManager: ProjectsManager = new ProjectsManager()
   implicit val actorCluster = projectsManager.actorCluster
@@ -44,9 +36,6 @@ object Lifecycle extends App {
     Server.start()
 
     DataDirectoryConfig.triggerMigration
-
-    //tap the OpticMarkdown Installer in case this is a fresh install
-//    OpticMarkdownInstaller.getOrInstall
 
   }
 

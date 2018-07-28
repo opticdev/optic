@@ -25,7 +25,9 @@ case class AsChildOf(file: File, position: Int) extends InsertLocation {
     }
 
     val fileContents = filesStateMonitor.contentsForFile(file).get
-    val parsed = sourceGear.parseString(fileContents)(null)
+    val languageName = SourceParserManager.selectParserForFileName(file.name).get.languageName
+
+    val parsed = sourceGear.parseString(fileContents)(null, languageName)
     val graph = parsed.get.astGraph
     val parser = parsed.get.parser
 
@@ -73,7 +75,8 @@ case class RawPosition(file: File, position: Int) extends InsertLocation {
     }
 
     val fileContents = filesStateMonitor.contentsForFile(file).get
-    val parsed = sourceGear.parseString(fileContents)(null)
+    val languageName = SourceParserManager.selectParserForFileName(file.name).get.languageName
+    val parsed = sourceGear.parseString(fileContents)(null, languageName)
     val parser = parsed.get.parser
     ResolvedRawLocation(file, position, parser)
   }
