@@ -37,9 +37,6 @@ object Lifecycle extends App {
 
     DataDirectoryConfig.triggerMigration
 
-    //tap the OpticMarkdown Installer in case this is a fresh install
-//    OpticMarkdownInstaller.getOrInstall
-
   }
 
 
