@@ -72,7 +72,7 @@ object Compiler {
               finderStageOutput <- Try(new FinderStage(snippet).run)
               parser <- Try(new ParserFactoryStage(snippet, finderStageOutput).run)
               renderer <- Try(new RenderFactoryStage(snippetOutput.get, parser.parseGear).run)
-              compiledLens <- Try(CompiledLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetOutput.get.enterOn, parser.parseGear.asInstanceOf[ParseAsModel], renderer.renderGear))
+              compiledLens <- Try(CompiledLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetOutput.get.enterOn, parser.parseGear.asInstanceOf[ParseAsModel], renderer.renderGear, lens.priority, lens.internal))
             } yield compiledLens
 
             if (compiledTry.isSuccess) {

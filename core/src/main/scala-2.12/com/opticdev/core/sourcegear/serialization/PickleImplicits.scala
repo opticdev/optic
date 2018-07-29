@@ -163,6 +163,7 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.enterOn)
       state.pickle(value.parser)
       state.pickle(value.renderer)
+      state.pickle(value.priority)
       state.pickle(value.internal)
     }
     override def unpickle(implicit state: UnpickleState): CompiledLens = {
@@ -174,6 +175,7 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[Set[AstType]],
         state.unpickle[ParseAsModel],
         state.unpickle[RenderGear],
+        state.unpickle[Int],
         state.unpickle[Boolean]
       )
     }
@@ -196,6 +198,7 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.schema)
       state.pickle(value.enterOn)
       state.pickle(value.childLenses)
+      state.pickle(value.priority)
     }
     override def unpickle(implicit state: UnpickleState): CompiledMultiNodeLens = {
       CompiledMultiNodeLens(
@@ -205,7 +208,8 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[Either[SchemaRef, OMSchema]],
         state.unpickle[Set[AstType]],
         state.unpickle[ParserRef],
-        state.unpickle[Seq[CompiledLens]]
+        state.unpickle[Seq[CompiledLens]],
+        state.unpickle[Int]
       )
     }
   }

@@ -60,6 +60,7 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       AdditionalParserInformation(snippetStage.parser.identifierNodeDesc, snippetStage.parser.blockNodeTypes.nodeTypes.toSeq),
       lens.packageRef.packageId,
       lens.lensRef,
+      lens.priority,
       lens.initialValue,
       internal
     ))

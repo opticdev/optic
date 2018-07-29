@@ -18,7 +18,10 @@ case class OMLens(name: Option[String],
                   schema: Either[SchemaRef, OMSchema],
                   initialValue: JsObject = JsObject.empty,
                   language: String = "es7", //backwards compatibility
-                  packageRef: PackageRef) extends PackageExportable {
+                  packageRef: PackageRef,
+                  priority: Int = 1,
+                  internal: Boolean = false
+                 ) extends PackageExportable {
 
   def variablesCompilerInput: Vector[OMVariable] = variables.map(i=> OMVariable(i._1, i._2)).toVector
 

@@ -12,7 +12,7 @@ import com.opticdev.sdk.opticmarkdown2.LensRef
 
 import scala.collection.immutable
 
-class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType], lensRef: LensRef, schemaRef: SchemaRef) {
+class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType], lensRef: LensRef, priority: Int, schemaRef: SchemaRef) {
 
   private val childSchemas = childLenses.map(_.schemaRef).toVector
 
@@ -53,7 +53,7 @@ class MultiNodeParseGear(childLenses: Seq[CompiledLens], enterOn: Set[AstType], 
 
           val matchResults = ChildrenVectorComparison.samePlus[SchemaRef, SchemaRef](sortedSchemas, childSchemas, defaultEquality)
 
-          MultiNodeMatchResults(matchResults.isMatch, schemaRef, lensRef, parent, distinctSeq.map(_.flatten), this)
+          MultiNodeMatchResults(matchResults.isMatch, schemaRef, lensRef, priority, parent, distinctSeq.map(_.flatten), this)
         })
       }
     }.filter(_.isMatch)

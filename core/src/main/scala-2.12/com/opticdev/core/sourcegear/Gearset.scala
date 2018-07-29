@@ -90,8 +90,9 @@ class LensSet(initialGears: SGExportableLens*) {
   def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase, fileNameAnnotationOption: Option[FileNameAnnotation]): FileParseResults = {
     val parsed = parseSingleModelsFromGraph(fileContents, astGraph, sourceGearContext, project, fileNameAnnotationOption)
 
+
     val results = multiNodeLensStore
-      .flatMap(i=> i.parser.findMatches.map(result=> MultiModelNode(result.schema, result.lensRef, result.multiNodeParseGear, result.childrenNodes)))
+      .flatMap(i=> i.parser.findMatches.map(result=> MultiModelNode(result.schema, result.lensRef, result.priority, result.multiNodeParseGear, result.childrenNodes)))
 
     results.foreach(GraphOperations.addMultiNodeModelToGraph) //add to graph
 
