@@ -70,7 +70,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
       val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-      CompiledLens(Some("do"), "do", PackageRef.fromString("optic:test").get, Left(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a")), Set(AstType("CallExpression", "es7")), parseGear, renderer)
+      CompiledLens(Some("do"), "do", PackageRef.fromString("optic:test").get, Left(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a")), Set(AstType("CallExpression", "es7")), parseGear, renderer, 1)
     }
 
     val block =
@@ -91,7 +91,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
 
     val renderer = new RenderFactoryStage(sample(block), parseGear).run.renderGear
 
-    val thisGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, Left(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b")), Set(AstType("CallExpression", "es7")), parseGear, renderer)
+    val thisGear = CompiledLens(Some("wrapper"), "wrapper", PackageRef.fromString("optic:test").get, Left(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b")), Set(AstType("CallExpression", "es7")), parseGear, renderer, 1)
 
     val a = OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "b"), JsObject.empty)
     val b = OMSchema(SchemaRef(Some(PackageRef("optic:test", "0.1.1")), "a"), JsObject.empty)

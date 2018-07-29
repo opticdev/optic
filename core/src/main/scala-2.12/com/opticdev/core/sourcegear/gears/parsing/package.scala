@@ -103,6 +103,7 @@ package object parsing {
   case class MultiNodeMatchResults(isMatch: Boolean,
                                    schema: SchemaRef,
                                    lensRef: LensRef,
+                                   priority: Int,
                                    parentNode: CommonAstNode,
                                    childrenNodes: Vector[ModelNode],
                                    multiNodeParseGear: MultiNodeParseGear)

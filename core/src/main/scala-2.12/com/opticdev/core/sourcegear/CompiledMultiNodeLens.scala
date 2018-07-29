@@ -18,7 +18,8 @@ case class CompiledMultiNodeLens(name: Option[String],
                                  schema: Either[SchemaRef, OMSchema],
                                  enterOn: Set[AstType],
                                  parserRef: ParserRef,
-                                 childLenses: Seq[CompiledLens]
+                                 childLenses: Seq[CompiledLens],
+                                 priority: Int,
                                 ) extends SGExportableLens {
 
   require(childLenses.size > 1, "Multi Node Lenses must have at least 2 child lenses defined")
@@ -40,7 +41,7 @@ case class CompiledMultiNodeLens(name: Option[String],
 
   def sourceSourceParser = SourceParserManager.parserById(parserRef).getOrElse(throw new Error("Unable to find parser for generator"))
 
-  val parser = new MultiNodeParseGear(childLenses, enterOn, lensRef, schemaRef)
+  val parser = new MultiNodeParseGear(childLenses, enterOn, lensRef, priority, schemaRef)
   val renderer = new MultiNodeRenderGear(childLenses, sourceSourceParser)
   val internal: Boolean = false
 

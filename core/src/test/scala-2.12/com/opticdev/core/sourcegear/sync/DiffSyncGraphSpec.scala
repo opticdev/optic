@@ -187,8 +187,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
       val diff = DiffSyncGraph.calculateDiff(f.snapshot)
       assert(diff.containsErrors)
-      assert(diff.changes(0).isInstanceOf[ErrorEvaluating])
-      checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
+      checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
+      assert(diff.changes(1).isInstanceOf[ErrorEvaluating])
     }
 
     it("will handle errors for a tree gracefully") {

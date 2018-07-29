@@ -40,7 +40,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String], edi
 
         implicit val project = projectOption.get
         implicit val actorClustor = project.actorCluster
-li
+
         implicit val sourceGearContext = SGContext.forFile(file).get
         implicit val astGraph = sourceGearContext.astGraph
 

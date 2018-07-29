@@ -25,6 +25,7 @@ case class CompiledLens(name: Option[String],
                         enterOn: Set[AstType],
                         parser : ParseAsModel,
                         renderer : RenderGear,
+                        priority: Int,
                         internal: Boolean = false,
                        ) extends SGExportableLens {
 

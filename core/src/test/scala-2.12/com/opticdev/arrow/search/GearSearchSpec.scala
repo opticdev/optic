@@ -7,7 +7,7 @@ import org.scalatest.FunSpec
 
 class GearSearchSpec extends FunSpec {
 
-  def gearWithName(name: String) = CompiledLens(Some(name), "name", null, null, null, null, null)
+  def gearWithName(name: String) = CompiledLens(Some(name), "name", null, null, null, null, null, 1)
   val testGears : Set[SGExportableLens] = Set(
     gearWithName("Route"),
     gearWithName("REST Route"),
@@ -21,7 +21,7 @@ class GearSearchSpec extends FunSpec {
     val searchResults1 = GearSearch.search("route", NoContext, testGears)(null, null, null)
     assert(
       searchResults1.map(_.asInstanceOf[GearResult].gear.name) ==
-        Seq(Some("Route"), Some("REST Route"))
+        Seq(Some("REST Route"), Some("Route"))
     )
 
     //@todo figure out why this is non-deterministic. shouldn't be an unordered test
