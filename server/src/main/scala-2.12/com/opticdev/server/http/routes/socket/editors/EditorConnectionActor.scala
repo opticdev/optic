@@ -32,7 +32,6 @@ class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManage
 
       val results = new ContextQuery(asFile, range, contentsOption, slug)(projectsManager).execute
         results.foreach(i => {
-
           import com.opticdev.server.data.ModelNodeJsonImplicits._
           val contextFound = Try(ContextFound(file, range, i.projectName, i.editorSlug, JsObject(Seq(
             "models" -> JsArray(i.modelNodes.map(_.asJson()(projectsManager))),
