@@ -9,6 +9,8 @@ import scala.concurrent.duration._
 
 class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
 
+  implicit val excludeFromCache : Seq[PackageRef] = Seq()
+
   override def beforeAll(): Unit = {
     PackageManager.setProviders(com.opticdev.opm.defaultProviderSeq:_*)
   }
@@ -18,18 +20,17 @@ class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
     val provider = new OpticRegistryProvider
 
     it("can download a package") {
-      val future = provider.resolvePackages(PackageRef("test:a", "0.1.0"))
+      val future = provider.resolvePackages(PackageRef("optic:rest", "0.3.0"))
       val result = Await.result(future, 20 seconds)
       assert(result.foundAll)
-      assert(result.found.head.packageId == "test:a")
+      assert(result.found.head.packageId == "optic:rest")
     }
 
     it("can download a package with a fuzzy version") {
-      val future = provider.resolvePackages(PackageRef("test:a", "latest"))
+      val future = provider.resolvePackages(PackageRef("optic:rest", "latest"))
       val result = Await.result(future, 20 seconds)
       assert(result.foundAll)
-      assert(result.found.head.packageId == "test:a")
-      assert(result.found.head.version == "0.1.0")
+      assert(result.found.head.packageId == "optic:rest")
     }
 
     it("will not find a package that does not exist") {
@@ -40,7 +41,7 @@ class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
     }
 
     it("can download multiple packages") {
-      val future = provider.resolvePackages(PackageRef("test:a", "0.1.0"), PackageRef("test:b", "0.1.0"))
+      val future = provider.resolvePackages(PackageRef("optic:rest", "latest"), PackageRef("optic:express-js", "latest"))
       val result = Await.result(future, 20 seconds)
       assert(result.foundAll)
       assert(result.found.size == 2)
@@ -52,13 +53,13 @@ class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
 
     implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
     it("can install a set of nested dependencies") {
-      val results = PackageManager.installPackages(PackageRef("test:ab", "latest"), PackageRef("test:b", "latest"))
-      assert(results.get == Set("test:a@0.1.0", "test:ab@0.1.0", "test:b@0.1.0"))
+      val results = PackageManager.installPackages(PackageRef("optic:express-js", "0.3.0"))
+      assert(results.get == Set("optic:rest@0.3.0", "optic:express-js@0.3.0"))
     }
 
     it("can install a set of dependencies") {
-      val results = PackageManager.installPackages(PackageRef("test:a", "latest"), PackageRef("test:b", "latest"))
-      assert(results.get == Set("test:a@0.1.0", "test:b@0.1.0"))
+      val results = PackageManager.installPackages(PackageRef("optic:rest", "latest"), PackageRef("optic:express-js", "latest"))
+      assert(results.get == Set("optic:rest@0.3.0", "optic:express-js@0.3.0"))
     }
 
   }

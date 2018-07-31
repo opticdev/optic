@@ -46,6 +46,8 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String], edi
 
         import com.opticdev.core.sourcegear.graph.GraphImplicits._
 
+        println(fileGraph.get.modelNodes())
+
         val allModelNodes = fileGraph.get.modelNodes().filter(_.matchesSchema())
 
         val resolvedModelNodesByRange: Vector[LinkedModelNode[CommonAstNode]] = allModelNodes.collect{ case mn: ModelNode if !mn.internal => {

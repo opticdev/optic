@@ -61,7 +61,7 @@ class TestProvider extends Provider {
 
   val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticMongoose, opticExpress)
 
-  override def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()): Future[BatchPackageResult] = Future {
+  override def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths(), excludeFromCache: Seq[PackageRef] = Seq()): Future[BatchPackageResult] = Future {
     val foundPackages = allPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 
     val foundVersions = packageRefs.map(i=> {
@@ -110,13 +110,10 @@ class TestProvider extends Provider {
 
     SourceParserManager.clearParsers
 
-    val parserPath = Try({
-      val contents = File("config.yml").contentAsString
-      contents.parseYaml.asYamlObject.fields(YamlString("testParser")).asInstanceOf[YamlString].value
-    }).getOrElse(throw new Error("No testParser found in config.yml"))
+    val jsParser = new com.opticdev.parsers.es7.OpticParser()
 
-    val js = SourceParserManager.installParser(parserPath)
+    val js = SourceParserManager.enableParser(jsParser)
 
-    Map("es7" -> Vector(js.get))
+    Map("es7" -> Vector(js))
   }
 }

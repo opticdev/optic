@@ -34,6 +34,7 @@ object MultiNodeFixture extends GearUtils {
       ),
       Left(BlankSchema),
       JsObject.empty,
+      "es7",
       PackageRef("test:example", "0.1.1"))
     implicit val variableManager = VariableManager(lens.variablesCompilerInput, SourceParserManager.installedParsers.head.identifierNodeDesc)
 

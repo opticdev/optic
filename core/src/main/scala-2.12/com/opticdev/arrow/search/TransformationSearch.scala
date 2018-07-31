@@ -12,6 +12,7 @@ import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import com.opticdev.parsers.graph.CommonAstNode
 import me.xdrop.fuzzywuzzy.FuzzySearch
+import play.api.libs.json.JsString
 
 import scala.util.Try
 object TransformationSearch {
@@ -23,7 +24,11 @@ object TransformationSearch {
 
         val sourceGearcontext = Try(sourceGearContext(c))
         val inputValue = Try {
-            c.expandedValue(withVariables = true)(sourceGearcontext.get)
+            val jsObject = c.expandedValue(withVariables = true)(sourceGearcontext.get)
+            if (c.objectRef.isDefined) {
+              //add name if there is one
+              jsObject + ("_name" -> JsString(c.objectRef.get.name))
+            } else jsObject
           }.getOrElse(c.value)
 
 

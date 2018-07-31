@@ -35,12 +35,18 @@ case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLens
 
     val targetNodes = astGraph.modelNodes.ofType(resolvedSchema)
 
+
     val astRoot = asModelNode.astRoot
     val containerMapping = asModelNode.asInstanceOf[ModelNode].containerMapping
     val addToNodes = {
-      val found = targetNodes
-        .filter(n=> LocationEvaluation.matches(schemaComponent.component.locationForCompiler.get, n.astRoot, astRoot, containerMapping))
-        .sortBy(_.astRoot.range.start)
+
+      val found = {
+        val allFound = targetNodes
+          .filter(n => LocationEvaluation.matches(schemaComponent.component.locationForCompiler.get, n.astRoot, astRoot, containerMapping))
+          .sortBy(_.astRoot.range.start)
+
+        PriorityFilter.apply(allFound:_*)
+      }
 
       //account for different map schema types
       if (schemaComponent.component.unique) {

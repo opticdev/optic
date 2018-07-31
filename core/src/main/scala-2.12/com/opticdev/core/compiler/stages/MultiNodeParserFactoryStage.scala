@@ -24,7 +24,15 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput)(implicit val
 
   override def run: MultiNodeLensOutput = {
     MultiNodeLensOutput(
-      CompiledMultiNodeLens(lens.name, lens.id, lens.packageRef, lens.schema, snippetStageOutput.enterOn, snippetStageOutput.parser.parserRef, childLenses.getOrElse(throw childLenses.failed.get))
+      CompiledMultiNodeLens(
+        lens.name,
+        lens.id,
+        lens.packageRef,
+        lens.schema,
+        snippetStageOutput.enterOn,
+        snippetStageOutput.parser.parserRef,
+        childLenses.getOrElse(throw childLenses.failed.get),
+        lens.priority)
     )
   }
 
@@ -60,6 +68,7 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput)(implicit val
                                         lens.containers.filter(i=> containers.exists(_._1.name == i._1)),
                                         Left(schemaId(index)),
                                         JsObject.empty,
+                                        snippetStage.snippet.language,
                                         lens.packageRef)
 
             implicit val subcontainersManager = new SubContainerManager(childLens.subcontainerCompilerInputs, snippet.containerMapping)
@@ -69,7 +78,15 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput)(implicit val
             val parser = new ParserFactoryStage(snippet, finderStage, internal = true)(childLens, variableManager, subcontainersManager).run
             val renderer = new RenderFactoryStage(snippet, parser.parseGear)(childLens).run
 
-            CompiledLens(childLens.name, childLens.id, childLens.packageRef, childLens.schema, snippet.enterOn, parser.parseGear.asInstanceOf[ParseAsModel], renderer.renderGear,
+            CompiledLens(
+              childLens.name,
+              childLens.id,
+              childLens.packageRef,
+              childLens.schema,
+              snippet.enterOn,
+              parser.parseGear.asInstanceOf[ParseAsModel],
+              renderer.renderGear,
+              lens.priority,
               internal = true)
           }
         }

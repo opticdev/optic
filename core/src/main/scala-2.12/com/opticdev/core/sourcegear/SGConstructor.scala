@@ -15,7 +15,7 @@ import scala.util.{Failure, Try}
 
 object SGConstructor {
 
-  def fromProjectFile(projectFile: ProjectFile)(implicit useCache: Boolean = false)  : Future[SGConfig] = Future {
+  def fromProjectFile(projectFile: ProjectFile)(implicit useCache: Boolean = true)  : Future[SGConfig] = Future {
     val cacheTry = loadFromCache(projectFile)
     if (useCache && cacheTry.isSuccess) {
       Future(loadFromCache(projectFile).get)

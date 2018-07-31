@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 
 class LocalProvider extends Provider {
 
-  override def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Future[BatchPackageResult] = Future {
+  override def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, excludeFromCache: Seq[PackageRef]) : Future[BatchPackageResult] = Future {
 
     val foundPackages = listInstalledPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 

@@ -20,11 +20,11 @@ object PackageManager {
   def providers = providerStore
   def setProviders(newProviders: Provider*) = providerStore = newProviders
 
-  def installPackage(packageRef: PackageRef)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true) : Try[Set[String]] = {
+  def installPackage(packageRef: PackageRef)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true, excludeFromCache: Seq[PackageRef]) : Try[Set[String]] = {
     installPackages(packageRef)
   }
 
-  def installPackages(packages: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true): Try[Set[String]] = Try {
+  def installPackages(packages: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true, excludeFromCache: Seq[PackageRef]): Try[Set[String]] = Try {
     //name -> satisfied
     val flattenedDependencyTree = collection.mutable.Map[PackageRef, Boolean]()
     packages.foreach(i=> flattenedDependencyTree(i) = false)
@@ -60,16 +60,16 @@ object PackageManager {
       })
     }
 
-    foundPackages.foreach(p=> PackageStorage.writeToStorage(p))
+    foundPackages.foreach(p => PackageStorage.writeToStorage(p))
     foundPackages.map(_.packageRef.full).toSet
   }
 
   def collectPackages(packages: Seq[PackageRef])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true) : Try[DependencyTree] = Try {
 
-    val excludeFromCache = providers.filter(_.isLocalProvider).flatMap(_.asInstanceOf[LocalProvider].listInstalledPackages.map(_.packageRef))
+    implicit val excludeFromCache: Seq[PackageRef] = providers.filter(_.isLocalProvider).flatMap(_.asInstanceOf[LocalProvider].listInstalledPackages.map(_.packageRef))
 
     var loaded = packages.map{
-      case packageRef if excludeFromCache.contains(packageRef) => (packageRef, Failure(new Exception("Package is local")))
+      case packageRef if excludeFromCache.exists(_.packageId == packageRef.packageId) => (packageRef, Failure(new Exception("Package is local")))
       case packageRef => (packageRef, PackageStorage.loadFromStorage(packageRef))
     }
 
@@ -108,10 +108,12 @@ object PackageManager {
   }
 
   //provider query
-  def resultsForRefs(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true) : BatchPackageResult= {
+  def resultsForRefs(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true, excludeFromCache: Seq[PackageRef]) : BatchPackageResult= {
     val lookupResults = providerStore.filterNot(i=> i.isCache && !useCache).foldLeft(Seq(): Seq[BatchPackageResult]) {
       case (results, provider)=> {
         if (results.nonEmpty && results.last.foundAll) {
+
+          println(provider)
 
           //no need to query another provider if it'll be overridden
           results

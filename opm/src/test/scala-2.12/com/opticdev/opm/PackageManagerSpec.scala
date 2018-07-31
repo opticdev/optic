@@ -15,6 +15,7 @@ import scala.concurrent.duration._
 class PackageManagerSpec extends FunSpec with TestPackageProviders {
 
   implicit val projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
+  implicit val excludeFromCache : Seq[PackageRef] = Seq()
 
   describe("Package Manager") {
 

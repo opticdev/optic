@@ -4,6 +4,7 @@ import com.opticdev.arrow.context.ArrowContextBase
 import com.opticdev.arrow.results.{GearResult, Result}
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens, SourceGear}
+import com.opticdev.parsers.SourceParserManager
 import me.xdrop.fuzzywuzzy.FuzzySearch
 
 object GearSearch {
@@ -18,5 +19,11 @@ object GearSearch {
       })
       .toVector
       .filterNot(_.score < 50)
+      .filter(gear=> {
+        context
+          .fileExtension
+          .flatMap(extension => SourceParserManager.selectParserForFileName("file." + extension))
+          .forall(i => i.languageName == gear.gear.renderer.parser.languageName)
+      })
       .sortBy(_.score * -1) // to reverse it as it sorts
 }

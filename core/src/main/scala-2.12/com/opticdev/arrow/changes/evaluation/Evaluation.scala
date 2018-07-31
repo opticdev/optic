@@ -11,7 +11,7 @@ import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.sdk.{VariableMapping, variableMappingFormat}
 import com.opticdev.sdk.descriptions.transformation.{MultiTransform, TransformationResult}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
@@ -56,14 +56,21 @@ object Evaluation {
 
       require(rt.inputValue.isDefined, "Transformation must have an input value specified")
 
-      val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(rt.inputValue.get, rt.answers.getOrElse(JsObject.empty), sourcegear.transformationCaller, rt.inputModelId)
+      val inputValue = {
+        if (rt.objectSelection.isDefined) {
+          rt.inputValue.get + ("_name" -> JsString(rt.objectSelection.get))
+        } else rt.inputValue.get
+      }
+
+      val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(inputValue, rt.answers.getOrElse(JsObject.empty), sourcegear.transformationCaller, rt.inputModelId)
       require(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed)
 
       val prefixedFlatContent = sourcegear.flatContext.prefix(rt.transformationChanges.transformation.packageId.packageId)
 
       def generateNode(generateResult: GenerateResult, schema: OMSchema, lensIdOption: Option[String], topLevel: Boolean = false) : IntermediateTransformPatch = {
+
         val stagedNode = generateResult.toStagedNode(Some(RenderOptions(
-          lensId = lensIdOption
+            lensId = lensIdOption
         )))
 
         require(Try(schema.validate(stagedNode.value)).getOrElse(true), "Result of transformation did not conform to schema "+ schema.schemaRef.full)

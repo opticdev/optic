@@ -49,7 +49,13 @@ case class OMLensSchemaComponent(schemaRef: SchemaRef,
   override def rules: Vector[Rule] = Vector()
   def `type`: OMLensComponentType = NotSupported
 
-  def locationForCompiler: Option[Location] = Some(Location(LocationEnums.InContainer(inContainer.get)))
+  def locationForCompiler: Option[Location] = {
+    if (inContainer.isDefined) {
+      Some(Location(LocationEnums.InContainer(inContainer.get)))
+    } else {
+      Some(Location(LocationEnums.InCurrentLens))
+    }
+  }
 
   def yieldsArray : Boolean = toMap.isEmpty
   def yieldsObject : Boolean = toMap.isDefined

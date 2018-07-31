@@ -29,7 +29,7 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
   override def regenerateSourceGear(newPf: ProjectFile) = {
     if (newPf.interface.isSuccess) {
       projectStatusInstance.sourceGearStatus = Building
-      SGConstructor.fromProjectFile(newPf)(useCache = false).onComplete(i => {
+      SGConstructor.fromProjectFile(newPf)(useCache = true).onComplete(i => {
         if (i.isSuccess) {
           sourceGear = i.get.inflate
           //run all callbacks
@@ -38,7 +38,6 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
           sourceGear.print
           if (projectStatus.monitoringStatus == Watching) rereadAll
         } else {
-          println(i.failed.get.printStackTrace())
           projectStatusInstance.sourceGearStatus = Invalid(i.failed.get.getMessage)
         }
       })

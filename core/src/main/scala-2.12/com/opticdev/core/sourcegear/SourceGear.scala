@@ -11,6 +11,7 @@ import com.opticdev.core.sourcegear.transformations.TransformationCallerImpl
 import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers
+import com.opticdev.parsers.SourceParserManager.parserByLanguageName
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.{Transformation, TransformationRef}
@@ -83,23 +84,23 @@ abstract class SourceGear {
   lazy val validExtensions: Set[String] = parsers.flatMap(_.fileExtensions)
   lazy val excludedPaths: Seq[String] = parsers.flatMap(_.excludedPaths).toSeq
 
-  def parseFile(file: File) (implicit project: ProjectBase) : Try[FileParseResults] =
-    Try(file.contentAsString).flatMap(i=> parseString(i, file))
+  def parseFile(file: File) (implicit project: ProjectBase) : Try[FileParseResults] = {
+    val parserByFileName = SourceParserManager.selectParserForFileName(file.name)
+    Try(file.contentAsString).flatMap(i => parseString(i, file)(project, parserByFileName.get.languageName))
+  }
 
-  def parseString(string: String, file: File = null) (implicit  project: ProjectBase) : Try[FileParseResults] = Try {
+  def parseString(string: String, file: File = null) (implicit  project: ProjectBase, languageName: String) : Try[FileParseResults] = Try {
     val fileContents = string
 
     //@todo connect to parser list
-    val parsedOption = SourceParserManager.parseString(fileContents, "es7")
+    val parsedOption = SourceParserManager.parseString(fileContents, languageName)
     if (parsedOption.isSuccess) {
       val parsed = parsedOption.get
       val astGraph = parsed.graph
 
       val fileNameAnnotation = AnnotationParser.extractFromFileContents(fileContents, parsed.parserBase.inlineCommentPrefix).headOption
-
-      //@todo clean this up and have the parser return in the parse result. right now it only supports the test one
-//      val parser = parsers.find(_.languageName == parsed.language).get
-      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, SourceParserManager.installedParsers.head, fileContents, this, file)
+      
+      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, parserByLanguageName(languageName).get, fileContents, this, file)
       lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project, fileNameAnnotation)
     } else {
       throw parsedOption.failed.get

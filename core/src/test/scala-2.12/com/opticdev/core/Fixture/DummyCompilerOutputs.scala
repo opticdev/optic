@@ -29,7 +29,9 @@ object DummyCompilerOutputs {
     AdditionalParserInformation(IdentifierNodeDesc(AstType("A", "B"), Seq()), Seq()),
     "test:test",
     LensRef(Some(PackageRef("test:test")), "place-lens"),
-    JsObject.empty
+    1,
+    JsObject.empty,
+    false
   )
 
   val render = RenderGear(

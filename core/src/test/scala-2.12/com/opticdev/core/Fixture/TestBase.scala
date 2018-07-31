@@ -36,17 +36,14 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
     SourceParserManager.clearParsers
     MarkdownCache.clear
 
-    val parserPath = Try({
-      val contents = File("config.yml").contentAsString
-      contents.parseYaml.asYamlObject.fields(YamlString("testParser")).asInstanceOf[YamlString].value
-    }).getOrElse(throw new Error("No testParser found in config.yml"))
+    val jsParser = new com.opticdev.parsers.es7.OpticParser()
 
-    SourceParserManager.installParser(parserPath)
+    SourceParserManager.enableParser(jsParser)
   }
 
   start
 
-  implicit val sourceGearContext = SGContext(null, null, SourceParserManager.installedParsers.head, null, null, null)
+  implicit def sourceGearContext = SGContext(null, null, SourceParserManager.installedParsers.head, null, null, null)
 
   def resetScratch = PreTest.resetScratch
 

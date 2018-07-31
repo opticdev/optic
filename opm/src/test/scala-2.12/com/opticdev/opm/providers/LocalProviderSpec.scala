@@ -10,12 +10,13 @@ import scala.concurrent.duration._
 
 class LocalProviderSpec extends FunSpec {
 
+  implicit val excludeFromCache : Seq[PackageRef] = Seq()
   implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths(File("test-examples/resources/example_markdown"))
 
   val localProvider = new LocalProvider
 
   it("can list all local packages") {
-    assert(localProvider.listInstalledPackages.size == 4)
+    assert(localProvider.listInstalledPackages.size == 5)
   }
 
   it("can resolve a local package") {

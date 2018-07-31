@@ -10,6 +10,7 @@ package object context {
 
   sealed trait ArrowContextBase {
     def toInsertLocation : Option[InsertLocation]
+    def fileExtension: Option[String] = None
   }
 
   case object NoContext extends ArrowContextBase {
@@ -20,6 +21,8 @@ package object context {
   case class FileContext(file: File, range: Range) extends ArrowContextBase {
     override def toInsertLocation: Option[InsertLocation] =
       Some(AsChildOf(file, range.start))
+
+    override def fileExtension: Option[String] = file.extension(includeAll = false)
   }
 
   //general context based on project
@@ -32,6 +35,8 @@ package object context {
     override def toInsertLocation: Option[InsertLocation] = {
       Some(AsChildOf(file, range.end + 1))
     }
+
+    override def fileExtension: Option[String] = file.extension(includeAll = false)
   }
 
 }

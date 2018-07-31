@@ -33,6 +33,7 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
   def tag: Option[TagAnnotation]
   def lensRef: LensRef
   def variableMapping: VariableMapping
+  def priority: Int
 
   def matchesSchema()(implicit sourceGearContext: SGContext): Boolean = {
     val schema = sourceGearContext.sourceGear.findSchema(schemaId).getOrElse(OMSchema(schemaId, JsObject.empty))
@@ -123,18 +124,19 @@ trait SingleModelNode extends BaseModelNode {
 
 }
 
-case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject, lensRef: LensRef, root: N, modelMapping: ModelAstMapping, containerMappingStore: ContainerAstMapping, parseGear: ParseGear, variableMapping: VariableMapping, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation], tag: Option[TagAnnotation], internal: Boolean = false)(implicit override val project: ProjectBase) extends BaseModelNode with SingleModelNode with ExpandedModelNode {
-
-  //not sure this is a better approach
-//  def hash = Integer.toHexString(
-//    MurmurHash3.stringHash(schemaId.full) ^
-//    MurmurHash3.stringHash(value.toString()) ^
-//    MurmurHash3.stringHash(lensRef.full) ^
-//    MurmurHash3.stringHash(root.hash) ^
-//    MurmurHash3.mapHash(modelMapping) ^
-//    MurmurHash3.mapHash(containerMapping) ^
-//    MurmurHash3.stringHash(objectRef.toString) ^
-//    MurmurHash3.stringHash(sourceAnnotation.toString))
+case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef,
+                                            value: JsObject,
+                                            lensRef: LensRef,
+                                            priority: Int,
+                                            root: N,
+                                            modelMapping: ModelAstMapping,
+                                            containerMappingStore: ContainerAstMapping,
+                                            parseGear: ParseGear,
+                                            variableMapping: VariableMapping,
+                                            objectRef: Option[ObjectRef],
+                                            sourceAnnotation: Option[SourceAnnotation],
+                                            tag: Option[TagAnnotation],
+                                            internal: Boolean = false)(implicit override val project: ProjectBase) extends BaseModelNode with SingleModelNode with ExpandedModelNode {
 
   def containerMapping(implicit astGraph: AstGraph): ContainerAstMapping = containerMappingStore
 
@@ -143,14 +145,23 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef, value: JsObject
   def hash = Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMapping.toString + sourceAnnotation.toString + objectRef.toString + containerMappingStore.toString))
 
   override def flatten : ModelNode = {
-    ModelNode(schemaId, value, lensRef, variableMapping, objectRef, sourceAnnotation, tag, hash, internal)
+    ModelNode(schemaId, value, lensRef, priority, variableMapping, objectRef, sourceAnnotation, tag, hash, internal)
   }
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
 
   def toDebugLocation = AstDebugLocation(fileNode.map(_.filePath).getOrElse(""), root.range)
 }
 
-case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, variableMapping: VariableMapping, objectRef: Option[ObjectRef], sourceAnnotation: Option[SourceAnnotation], tag: Option[TagAnnotation], hash: String, internal: Boolean = false)(implicit override val project: ProjectBase) extends BaseModelNode with SingleModelNode with FlatModelNode {
+case class ModelNode(schemaId: SchemaRef,
+                     value: JsObject,
+                     lensRef: LensRef,
+                     priority: Int,
+                     variableMapping: VariableMapping,
+                     objectRef: Option[ObjectRef],
+                     sourceAnnotation: Option[SourceAnnotation],
+                     tag: Option[TagAnnotation],
+                     hash: String,
+                     internal: Boolean = false)(implicit override val project: ProjectBase) extends BaseModelNode with SingleModelNode with FlatModelNode {
 
   //@todo check how stable/collision prone this is
   override val id: String = hash
@@ -161,7 +172,7 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, var
     val root : T = labeledDependencies.find(i=> i._1.isInstanceOf[YieldsModel] && i._1.asInstanceOf[YieldsModel].root)
       .get._2.asInstanceOf[T]
     val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
-    LinkedModelNode(schemaId, value, lensRef, root, modelMapping, containerMapping, parseGear, variableMapping, objectRef, sourceAnnotation, tag, internal)
+    LinkedModelNode(schemaId, value, lensRef, priority, root, modelMapping, containerMapping, parseGear, variableMapping, objectRef, sourceAnnotation, tag, internal)
   }
 
   def resolve[T <: WithinFile]()(implicit actorCluster: ActorCluster) : LinkedModelNode[T] = {
@@ -204,7 +215,11 @@ case class ModelNode(schemaId: SchemaRef, value: JsObject, lensRef: LensRef, var
 }
 
 
-case class MultiModelNode(schemaId: SchemaRef, lensRef: LensRef, parseGear: MultiNodeParseGear, modelNodes: Seq[ModelNode])(implicit override val project: ProjectBase) extends BaseModelNode with FlatModelNode with ExpandedModelNode {
+case class MultiModelNode(schemaId: SchemaRef,
+                          lensRef: LensRef,
+                          priority: Int,
+                          parseGear: MultiNodeParseGear,
+                          modelNodes: Seq[ModelNode])(implicit override val project: ProjectBase) extends BaseModelNode with FlatModelNode with ExpandedModelNode {
 
   override def internal: Boolean = false //always false for now
 

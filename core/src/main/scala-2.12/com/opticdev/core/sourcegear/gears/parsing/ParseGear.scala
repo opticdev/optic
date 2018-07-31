@@ -38,13 +38,10 @@ sealed abstract class ParseGear() {
   val listeners : Vector[Listener]
 
   val packageId: String
-
   val parsingLensRef: LensRef
-
+  val priority: Int
   val additionalParserInformation : AdditionalParserInformation
-
   val variableManager : VariableManager
-
   val internal: Boolean
 
   def hash = {
@@ -159,6 +156,7 @@ case class ParseAsModel(description: NodeDescription,
                         additionalParserInformation : AdditionalParserInformation,
                         packageId: String,
                         parsingLensRef: LensRef,
+                        priority: Int,
                         initialValue: JsObject = JsObject.empty,
                         internal: Boolean = false,
                        ) extends ParseGear {
@@ -184,7 +182,20 @@ case class ParseAsModel(description: NodeDescription,
       )
     }
 
-    val linkedModelNode = LinkedModelNode(schema, model, parsingLensRef, matchResults.baseNode.get, modelMapping, containerMapping, this, variableMapping, objectRefOption, sourceAnnotationOption, tagAnnotation, internal)
+    val linkedModelNode = LinkedModelNode(
+      schema,
+      model,
+      parsingLensRef,
+      priority,
+      matchResults.baseNode.get,
+      modelMapping,
+      containerMapping,
+      this,
+      variableMapping,
+      objectRefOption,
+      sourceAnnotationOption,
+      tagAnnotation,
+      internal)
 
     //@todo have schema validate
     Option(ParseResult(this, linkedModelNode, matchResults.baseNode.get))

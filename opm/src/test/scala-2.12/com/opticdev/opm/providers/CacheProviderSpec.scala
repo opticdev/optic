@@ -10,6 +10,8 @@ import scala.concurrent.Await
 
 class CacheProviderSpec extends FunSpec with BeforeAndAfterAll with TestPackageProviders {
 
+  implicit val excludeFromCache : Seq[PackageRef] = Seq()
+
   override def beforeAll(): Unit = {
     PackageStorage.writeToStorage(t.a)
     PackageStorage.writeToStorage(t.b)
