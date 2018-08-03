@@ -41,7 +41,7 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
 
     val name = PFFieldInterface.forKey[YamlString]("name", YamlString("Unnamed Project"), yaml)
 
-    val parsers =PFListInterface.forKey[YamlString]("parsers", YamlArray(Vector()), yaml)
+    val parsers = PFListInterface.forKey[YamlString]("parsers", YamlArray(Vector()), yaml)
 
     val skills = {
       val skills = PFListInterface.forKey[YamlString]("skills", YamlArray(Vector()), yaml)
@@ -55,11 +55,13 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
 
     def knowledgePaths =PFListInterface.forKey[YamlString]("knowledge_paths", YamlArray(Vector()), yaml)
 
+    val connectedProjects = PFListInterface.forKey[YamlString]("connected_projects", YamlArray(Vector()), yaml)
+
     val exclude =PFListInterface.forKey[YamlString]("exclude", YamlArray(Vector()), yaml)
 
     lastHash = Crypto.createSha1(contents)
     //      val relationships =PFListInterface.forKey[YamlString]("relationships", YamlArray(Vector()), yaml)
-    PFRootInterface(name, parsers, skills, knowledgePaths, exclude)
+    PFRootInterface(name, parsers, skills, knowledgePaths, connectedProjects, exclude)
   }
 
   def interface = interfaceStore
@@ -134,6 +136,10 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
 
     ProjectKnowledgeSearchPaths(searchPaths:_*)
   }
+
+  def connectedProjects: Set[String] = Try {
+    interface.get.connectedProjects.value.map(_.value).toSet
+  }.getOrElse(Set.empty[String])
 
   def hash: String = Integer.toHexString({
     MurmurHash3.stringHash(file.parent.pathAsString) ^

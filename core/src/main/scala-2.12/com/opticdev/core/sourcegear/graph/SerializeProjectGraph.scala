@@ -7,6 +7,7 @@ import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.core.sourcegear.graph.projects.ProjectNode
 import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.core.sourcegear.snapshot.Snapshot
+import com.opticdev.core.sourcegear.storage.ConnectedProjectGraphStorage
 import play.api.libs.json.{JsArray, JsObject, Json}
 import scalax.collection.mutable.Graph
 import scalax.collection.mutable.Graph
@@ -14,6 +15,7 @@ import scalax.collection.edge.Implicits._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.util.Try
 
 
 object SerializeProjectGraph {
@@ -38,11 +40,16 @@ object SerializeProjectGraph {
     })
   }
 
-  def loadProjectGraphFor(projectName: String) : Option[ProjectGraph] = ???
+  def loadProjectGraphFor(projectName: String) : Try[ProjectGraph] = {
+    ConnectedProjectGraphStorage.loadFromStorage(projectName).map(i=> {
+      val savedObjects = i.value.map(item=> Json.fromJson[SavedObject](item).get)
+      projectGraphFrom(savedObjects.toSet, projectName)
+    })
+  }
 
   def projectGraphFrom(set: Set[SavedObject], projectName: String): ProjectGraph = {
 
-    val allObjects = set.map(saved => ObjectNode(s"${projectName}: "+projectName, saved.schema, saved.expandedValue))
+    val allObjects = set.map(saved => ObjectNode(saved.name, saved.schema, saved.expandedValue))
 
     val projectNode = ProjectNode(projectName, null, new java.util.Date())
 

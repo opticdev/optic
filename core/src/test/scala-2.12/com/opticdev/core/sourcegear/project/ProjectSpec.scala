@@ -38,6 +38,7 @@ class ProjectSpec extends AkkaTestFixture("ProjectTest") with GearUtils with Eve
     override val schemas = Set()
     override val transformations = Set()
     override val flatContext: FlatContext = FlatContext(None, Map.empty)
+    override val connectedProjectGraphs: Set[ProjectGraph] = Set()
   }
 
 

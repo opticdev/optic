@@ -13,6 +13,7 @@ case class PFRootInterface(
                             parsers: PFListInterface[YamlString],
                             skills: PFListInterface[YamlString],
                             knowledgePaths: PFListInterface[YamlString],
+                            connectedProjects: PFListInterface[YamlString],
                             exclude: PFListInterface[YamlString]
                           )
 

@@ -4,9 +4,10 @@ import akka.actor.ActorRef
 import better.files.File
 import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.actors.ActorCluster
-import com.opticdev.core.sourcegear.graph.{FileNode, NamedFile, NamedModel, ProjectGraph}
+import com.opticdev.core.sourcegear.graph.{FileNode, NamedFile, NamedModel, ProjectGraph, SerializeProjectGraph}
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.core.sourcegear.project.status.ImmutableProjectStatus
+import com.opticdev.core.sourcegear.storage.ConnectedProjectGraphStorage
 import com.opticdev.core.sourcegear.sync.SyncPatch
 import play.api.libs.json.{JsObject, JsString}
 
@@ -48,6 +49,12 @@ package object project {
     def callOnUpdatedModelNodeOptions(modelNodes: Set[NamedModel], fileNodes: Set[NamedFile]) = _updatedModelNodeOptionsCallbacks.foreach(_.apply(modelNodes, fileNodes))
     def onUpdatedModelNodeOptions(callback: (Set[NamedModel], Set[NamedFile])=> Unit) = {
       _updatedModelNodeOptionsCallbacks += callback
+    }
+
+    def publishProjectGraph = {
+      import SerializeProjectGraph._
+      import scala.concurrent.ExecutionContext.Implicits.global
+      SerializeProjectGraph.fromProject(this).map(pg => ConnectedProjectGraphStorage.writeToStorage(name, pg.toJson))
     }
 
   }

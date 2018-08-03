@@ -4,6 +4,7 @@ import better.files.File
 import com.opticdev.arrow.index.IndexSourceGear
 import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{LensSet, SGConstructor, SourceGear}
 import com.opticdev.sdk.descriptions.transformation.Transformation
@@ -40,6 +41,7 @@ object ExampleSourcegears {
           "fetch" -> schemaFetch,
         ))
       ))
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
     }
 
     val knowledgeGraph = IndexSourceGear.runFor(sourceGear)

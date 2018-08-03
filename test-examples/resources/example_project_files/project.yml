@@ -2,6 +2,10 @@ name: Test project
 parsers:
   - JavaScript
 
+connected_projects:
+  - abc
+  - def
+
 skills:
   - js:express
 

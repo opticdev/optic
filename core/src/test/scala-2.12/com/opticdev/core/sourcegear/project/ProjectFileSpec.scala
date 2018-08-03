@@ -24,7 +24,6 @@ class ProjectFileSpec extends TestBase {
       val pf = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/invalidFile.yml"), false)
       assert(pf.interface.failed.get == InvalidProjectFileException("syntax error in YAML"))
     }
-
   }
 
 
@@ -50,6 +49,12 @@ class ProjectFileSpec extends TestBase {
     it("includes parsers") {
       val f = fixture
       assert(f.defined.interface.get.parsers.value.size == 1)
+      assert(f.empty.interface.get.parsers.value.isEmpty)
+    }
+
+    it("includes connected projects") {
+      val f = fixture
+      assert(f.defined.interface.get.connectedProjects.value.size == 2)
       assert(f.empty.interface.get.parsers.value.isEmpty)
     }
 

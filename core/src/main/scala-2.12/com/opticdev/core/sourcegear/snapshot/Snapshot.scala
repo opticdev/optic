@@ -11,6 +11,7 @@ import com.opticdev.parsers.graph.CommonAstNode
 import play.api.libs.json.JsObject
 import akka.pattern.ask
 import akka.util.Timeout
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -23,7 +24,8 @@ case class Snapshot(projectGraph: ProjectGraph,
                     linkedModelNodes: Map[FlatModelNode, ExpandedModelNode],
                     expandedValues: Map[FlatModelNode, JsObject],
                     files: Map[FlatModelNode, FileNode],
-                    contextForNode: Map[FlatModelNode, SGContext])
+                    contextForNode: Map[FlatModelNode, SGContext],
+                    objectNodes: Vector[ObjectNode])
 
 object Snapshot {
   implicit private val timeout: akka.util.Timeout = Timeout(1 minute)
@@ -37,6 +39,7 @@ object Snapshot {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
 
     val modelNodes: Seq[FlatModelNode] = projectGraph.modelNodes()
+    val objectNodes = projectGraph.objectNodes()
 
     val files: Map[FlatModelNode, FileNode] = modelNodes.map{
       case mn => (mn, mn.fileNode(projectGraph).get)
@@ -70,7 +73,7 @@ object Snapshot {
         }
       }.toMap
 
-      Snapshot(projectGraph, sourceGear, linkedNodes, expandedValues, files, contextForNode)
+      Snapshot(projectGraph, sourceGear, linkedNodes, expandedValues, files, contextForNode, objectNodes)
     })
 
   }
