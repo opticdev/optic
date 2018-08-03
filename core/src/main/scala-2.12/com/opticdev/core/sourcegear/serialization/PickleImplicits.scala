@@ -232,6 +232,7 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.compiledLenses)
       state.pickle(value.schemas)
       state.pickle(value.transformations)
+      state.pickle(value.connectedProjects)
     }
     override def unpickle(implicit state: UnpickleState): SGConfig = {
       SGConfig(
@@ -240,7 +241,8 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[Set[ParserRef]],
         state.unpickle[Set[SGExportableLens]],
         state.unpickle[Set[OMSchemaColdStorage]],
-        state.unpickle[Set[Transformation]]
+        state.unpickle[Set[Transformation]],
+        state.unpickle[Set[String]]
       )
     }
   }

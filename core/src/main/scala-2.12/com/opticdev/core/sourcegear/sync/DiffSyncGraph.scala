@@ -22,6 +22,7 @@ import scala.util.Try
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
 import com.opticdev.core.sourcegear.snapshot.Snapshot
+import com.opticdev.core.sourcegear.sync.SyncGraph.{NamedModelNode, NamedObjectNode, NamedSyncGraphNode}
 import com.opticdev.parsers.ParserBase
 import com.opticdev.sdk.descriptions.transformation.generate.{GenerateResult, RenderOptions, StagedNode}
 
@@ -35,31 +36,35 @@ object DiffSyncGraph {
     val projectPlusSyncGraph: Graph[BaseNode, LkDiEdge] = resultsFromSyncGraph.syncGraph.asInstanceOf[Graph[BaseNode, LkDiEdge]]
     implicit val graph: Graph[BaseNode, LkDiEdge] = projectPlusSyncGraph.filter(projectPlusSyncGraph.having(edge = (e) => e.isLabeled && e.label.isInstanceOf[DerivedFrom]))
 
-    val startingNodes= graph.nodes.collect { case n if n.dependencies.isEmpty => n.value.asInstanceOf[BaseModelNode] }.toVector
+    val startingNodes= graph.nodes.collect { case n if n.dependencies.isEmpty => n.value.asInstanceOf[NamedSyncGraphNode] }.toVector
 
-    def compareDiffAlongPath(sourceNode: BaseModelNode, predecessorDiff: Option[SyncDiff] = None) : Vector[SyncDiff] = {
+    def compareDiffAlongPath(sourceNode: NamedSyncGraphNode, predecessorDiff: Option[SyncDiff] = None) : Vector[SyncDiff] = {
       val sourceValue = {
         if (predecessorDiff.exists(_.newValue.isDefined)) {
           predecessorDiff.get.newValue.get
         } else {
-          snapshot.expandedValues(sourceNode.flatten)
+          sourceNode match {
+            case mn: NamedModelNode => snapshot.expandedValues(mn.modelNode.flatten)
+            case on: NamedObjectNode => on.objectNode.value
+          }
         }
       }
-      sourceNode.labeledDependents.toVector.flatMap {
-        case (label: DerivedFrom, targetNode: BaseModelNode) => {
 
-          val diff = compareNode(label, sourceNode, sourceValue, targetNode)(sourceGear, snapshot, project)
+      sourceNode.labeledDependents.toVector.flatMap {
+        case (label: DerivedFrom, targetNode: NamedModelNode) => {
+
+          val diff = compareNode(label, sourceNode, sourceValue, targetNode.modelNode)(sourceGear, snapshot, project)
 
           val diffWithTrigger = diff match {
             //if its parent has a trigger, take it...
             case r: Replace if predecessorDiff.exists(_.isInstanceOf[Replace]) && predecessorDiff.get.asInstanceOf[Replace].trigger.isDefined => r.copy(trigger = predecessorDiff.get.asInstanceOf[Replace].trigger)
             //if its the trigger set it equal to itself
-            case r: Replace if predecessorDiff.isEmpty || predecessorDiff.exists(_.newValue.isEmpty) => r.copy(trigger = Some(Trigger(sourceNode.objectRef.get.name, sourceNode.schemaId, r.after)))
+            case r: Replace if predecessorDiff.isEmpty || predecessorDiff.exists(_.newValue.isEmpty) => r.copy(trigger = Some(Trigger(sourceNode.name.get, sourceNode.schema, r.after)))
             //return self
             case d=> d
           }
 
-          Vector(diffWithTrigger) ++ compareDiffAlongPath(targetNode, Some(diffWithTrigger))
+          Vector(diffWithTrigger) ++ compareDiffAlongPath(NamedModelNode(targetNode.modelNode), Some(diffWithTrigger))
 
         }
         case _ => Vector()   ///should never be hit
@@ -68,7 +73,7 @@ object DiffSyncGraph {
     SyncPatch(startingNodes.flatMap(i=> compareDiffAlongPath(i)).filterNot(i=> i.isInstanceOf[NoChange] && !includeNoChange), resultsFromSyncGraph.warnings)
   }
 
-  def compareNode(label: DerivedFrom, sourceNode: BaseModelNode, sourceValue: JsObject, targetNode: BaseModelNode)(implicit sourceGear: SourceGear, snapshot: Snapshot, project: ProjectBase) = {
+  def compareNode(label: DerivedFrom, sourceNode: NamedSyncGraphNode, sourceValue: JsObject, targetNode: BaseModelNode)(implicit sourceGear: SourceGear, snapshot: Snapshot, project: ProjectBase) = {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
     val extractValuesTry = for {
       transformation <- Try(sourceGear.findTransformation(label.transformationRef).getOrElse(throw new Error(s"No Transformation with id '${label.transformationRef.full}' found")))

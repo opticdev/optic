@@ -14,6 +14,7 @@ import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.parsers.rules._
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
@@ -109,6 +110,7 @@ class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec
           b.schemaRef.id -> b
         ))
       ))
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
     }
   }
 

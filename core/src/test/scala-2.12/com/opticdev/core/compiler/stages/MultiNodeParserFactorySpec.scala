@@ -9,6 +9,7 @@ import com.opticdev.core.sourcegear._
 import com.opticdev.core.sourcegear.containers.{ContainerHook, SubContainerManager}
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.gears.parsing.{ParseGear, ParseResult}
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.graph.model.MultiModelNode
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
@@ -84,6 +85,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
       override val flatContext: FlatContext = FlatContext(None, Map())
       override val schemas: Set[OMSchema] = childLenses.get.map(i=> OMSchema(i.schemaRef, JsObject.empty)).toSet
       override val lensSet: LensSet = new LensSet(childLenses.get:_*)
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
     }
 
     {
@@ -134,6 +136,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
       ) ++ importSG.flatContext.mapping)
       override val schemas: Set[OMSchema] = importSG.schemas ++ multiNodeLens.childLenses.map(i=> OMSchema(i.schemaRef, JsObject.empty)).toSet
       override val lensSet: LensSet = new LensSet((multiNodeLens.childLenses ++ importSG.lensSet.listLenses): _*)
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
     }
 
     def testBlock(string: String) = {
@@ -336,6 +339,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
           "example" -> multiNodeLens
         ))
       ))
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
       override val schemas: Set[OMSchema] = Set(OMSchema(multiNodeLens.schemaRef, JsObject.empty)) ++ multiNodeLens.childLenses.map(i => OMSchema(i.schemaRef, JsObject.empty)).toSet
       override val lensSet: LensSet = new LensSet(multiNodeLens)
     }

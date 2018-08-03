@@ -52,6 +52,11 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
       sender ! emptyGraph
       context.become(active(emptyGraph))
     }
+    case AddConnectedProjectSubGraphs(subGraphs) => {
+      graph.addProjectSubGraph(subGraphs.toSeq:_*)
+      context.become(active(graph))
+      sender ! graph
+    }
     case NodeForId(id) => sender ! graph.nodeForId(id)
     case GetSnapshot(sg, project) => sender ! Snapshot.forSourceGearAndProjectGraph(sg, graph.projectGraph, project.actorCluster.parserSupervisorRef, project)
 
@@ -72,6 +77,10 @@ object ProjectActorSyncAccess {
 
   def clearGraph(projectActor: ActorRef): Future[ProjectGraphWrapper] = {
     (projectActor ? ClearGraph).asInstanceOf[Future[ProjectGraphWrapper]]
+  }
+
+  def addConnectedProjectSubGraphs(projectActor: ActorRef, connectedProjectGraphs: Set[ProjectGraph]): Future[ProjectGraphWrapper] = {
+    (projectActor ? AddConnectedProjectSubGraphs(connectedProjectGraphs)).asInstanceOf[Future[ProjectGraphWrapper]]
   }
 }
 

@@ -2,7 +2,7 @@ package com.opticdev.sourcegear.actors
 
 import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
-import com.opticdev.core.sourcegear.graph.FileNode
+import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraph}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.core.sourcegear._
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
@@ -23,6 +23,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
     override val schemas = Set()
     override val transformations = Set()
     override val flatContext: FlatContext = FlatContext(None, Map.empty)
+    override val connectedProjectGraphs: Set[ProjectGraph] = Set()
   }
 
   describe("context lookup") {

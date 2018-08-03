@@ -5,6 +5,7 @@ import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.annotations.AnnotationParser
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.sdk.descriptions
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.core.sourcegear.transformations.TransformationCallerImpl
@@ -33,6 +34,8 @@ abstract class SourceGear {
   val transformations: Set[Transformation]
 
   val flatContext: FlatContext
+
+  val connectedProjectGraphs: Set[ProjectGraph]
 
   val transformationCaller = new TransformationCallerImpl(this)
 
@@ -128,6 +131,7 @@ case object UnloadedSourceGear extends SourceGear {
   override val transformations = Set()
   override def isLoaded = false
   override val flatContext = FlatContext(None, Map())
+  override val connectedProjectGraphs: Set[ProjectGraph] = Set()
 }
 
 object SourceGear {
@@ -137,6 +141,7 @@ object SourceGear {
     override val schemas = Set()
     override val transformations = Set()
     override val flatContext = FlatContext(None, Map())
+    override val connectedProjectGraphs: Set[ProjectGraph] = Set()
   }
 
   def unloaded = UnloadedSourceGear

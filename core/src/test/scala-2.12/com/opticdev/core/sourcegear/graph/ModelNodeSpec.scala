@@ -23,6 +23,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
       override val schemas = Set()
       override val transformations = Set()
       override val flatContext: FlatContext = FlatContext(None, Map.empty)
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
     }
 
     val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"

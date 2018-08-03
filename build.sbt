@@ -31,7 +31,8 @@ lazy val common = (project in file("common")).
  .settings(
    libraryDependencies ++= Dependencies.commonDependencies,
    buildInfoKeys := Seq[BuildInfoKey](
-     "opticMDVersion" -> Constants.opticMDVersion
+     "opticMDVersion" -> Constants.opticMDVersion,
+     "currentOpticVersion" -> version,
    ),
    buildInfoPackage := "com.opticdev.common"
  )
@@ -53,6 +54,11 @@ lazy val opm = (project in file("opm")).
  .settings(libraryDependencies ++= Dependencies.opmDependencies)
  .dependsOn(common)
  .dependsOn(sdk)
+
+lazy val cli = (project in file("cli")).
+  settings(commonSettings: _*)
+  .settings(libraryDependencies ++= Dependencies.cliDependencies)
+  .dependsOn(common)
 
 lazy val core = (project in file("core")).
   settings(commonSettings: _*)

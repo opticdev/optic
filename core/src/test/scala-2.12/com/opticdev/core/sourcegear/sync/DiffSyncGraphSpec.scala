@@ -187,8 +187,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
       val diff = DiffSyncGraph.calculateDiff(f.snapshot)
       assert(diff.containsErrors)
-      checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
-      assert(diff.changes(1).isInstanceOf[ErrorEvaluating])
+      assert(diff.changes(0).isInstanceOf[ErrorEvaluating])
+      checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
     }
 
     it("will handle errors for a tree gracefully") {
@@ -204,6 +204,18 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     }
 
   }
+
+  it("can calculate a valid diff for connected project dependencies (1 edge)") {
+
+    val f = fixture("test-examples/resources/example_source/sync/ConnectedProjectSync.js")
+    implicit val project = f.project
+
+    val diff = DiffSyncGraph.calculateDiff(f.snapshot)
+    assert(!diff.containsErrors)
+    assert(diff.changes.size == 1)
+    checkReplace(diff.changes(0), """{"value":"hello"}""", """{"value":"fromForeignProject"}""")
+  }
+
 
   describe("Trigger events are saved with changes") {
 

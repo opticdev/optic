@@ -6,7 +6,7 @@ import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.actors.{CurrentGraph, FileCreated, FileDeleted, ProjectActorSyncAccess}
 import com.opticdev.core.sourcegear.context.FlatContext
-import com.opticdev.core.sourcegear.graph.ProjectGraphWrapper
+import com.opticdev.core.sourcegear.graph.{ProjectGraph, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
@@ -25,6 +25,7 @@ class ProjectActorSpec extends AkkaTestFixture("ProjectActorTest") with GearUtil
       override val schemas = Set()
       override val transformations = Set()
       override val flatContext: FlatContext = FlatContext(None, Map.empty)
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
     }
 
     val importGear = compiledLensFromDescription("test-examples/resources/example_packages/optic:ImportExample@0.1.0.json")

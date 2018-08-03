@@ -11,6 +11,7 @@ import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.core.sourcegear.snapshot.Snapshot
+import com.opticdev.core.sourcegear.sync.SyncGraph.NamedModelNode
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -51,8 +52,8 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
   def testEdgeForSourceName(syncSubgraph: SyncSubGraph, sourceName: String) = {
     val edges = syncSubgraph.syncGraph.edges.filter(_.value.label.isInstanceOf[DerivedFrom])
     assert(edges.exists(i=> {
-      i.from.value.asInstanceOf[BaseModelNode].objectRef.get.name == sourceName &&
-        i.to.value.asInstanceOf[BaseModelNode].sourceAnnotation.get.sourceName == sourceName
+      i.from.value.asInstanceOf[NamedModelNode].name.get == sourceName &&
+        i.to.value.asInstanceOf[NamedModelNode].modelNode.sourceAnnotation.get.sourceName == sourceName
     }))
   }
 
@@ -120,7 +121,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
       implicit val project = f.project
       val syncSubgraph = SyncGraph.getSyncGraph(f.snapshot)
       assert(syncSubgraph.warnings.size == 1)
-      assert(syncSubgraph.sources == 0)
+      assert(syncSubgraph.sources == 1)
       assert(syncSubgraph.warnings.head.isInstanceOf[DuplicateSourceName])
       assert(syncSubgraph.warnings.head.asInstanceOf[DuplicateSourceName].locations.size == 2)
       assert(syncSubgraph.warnings.head.asInstanceOf[DuplicateSourceName].name == "THIS ONE")

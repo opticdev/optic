@@ -42,6 +42,7 @@ package object actors {
   case object CurrentGraph
   case class SetCurrentGraph(projectGraph: ProjectGraph)
   case object ClearGraph
+  case class AddConnectedProjectSubGraphs(subGraphs: Set[ProjectGraph])
   case class GetContext(file: File)(implicit val sourceGear: SourceGear, val project: ProjectBase)
   case class NodeForId(id: String)
   case class GetSnapshot(sourceGear: SourceGear, project: ProjectBase)

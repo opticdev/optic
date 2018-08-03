@@ -7,6 +7,7 @@ import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.parsers.ParserBase
 import play.api.libs.json.Json
 import com.opticdev.core.sourcegear._
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
@@ -27,6 +28,7 @@ trait GearUtils {
     override val schemas = Set()
     override val transformations = Set()
     override val flatContext: FlatContext = FlatContext(None, Map.empty)
+    override val connectedProjectGraphs: Set[ProjectGraph] = Set()
   }
 
   def compiledLensFromDescription(path: String): CompiledLens = {
@@ -99,6 +101,7 @@ trait GearUtils {
       override val flatContext: FlatContext = FlatContext(None, Map(
         description.packageId -> FlatContext(Some(description.packageRef), g)
       ))
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
     }
 
   }
@@ -107,7 +110,7 @@ trait GearUtils {
   def fromDependenciesList(dependencies: String*): SourceGear = {
     val packages = dependencies.map(d=> PackageRef.fromString(d).get)
     implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
-    val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef))
+    val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef), Set())
     import scala.concurrent.duration._
     Await.result(sgFuture, 20 seconds).inflate
   }

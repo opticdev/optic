@@ -5,6 +5,7 @@ import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.Fixture.{DummyCompilerOutputs, ExampleSourcegearFixtures, TestBase}
 import com.opticdev.core.compiler.stages.RenderFactoryStage
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
 import com.opticdev.sdk.descriptions._
@@ -32,6 +33,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
       override val lensSet: LensSet = new LensSet(a, b)
       override val transformations: Set[Transformation] = Set()
       override val schemas: Set[OMSchema] = Set(testSchema)
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
       override val flatContext: FlatContext = FlatContext(None, Map(
         "optic:test" -> FlatContext(Some(a.packageRef), Map(
           "test" -> a,

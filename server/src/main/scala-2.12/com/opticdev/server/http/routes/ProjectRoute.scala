@@ -23,16 +23,17 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
         complete(JsArray(projectsManager.allProjects.map(_.asJson)))
       } ~
         path(Segment) { projectName => complete(getProject(projectName)) } ~
+        path(Segment / "publish") { projectName => complete(publishProject(projectName)) } ~
         path(Segment / "schemas" / Segment) {
           (projectName, id) => {
             complete(getSchema(projectName, SchemaRef.fromString(id).getOrElse(SchemaRef.empty)))
-          }
-        } ~
-        path(Segment / "knowledge-graph") {
-          (projectName) => {
-            complete(getKnowledgeGraph(projectName))
-          }
         }
+      } ~
+      path(Segment / "knowledge-graph") {
+        (projectName) => {
+          complete(getKnowledgeGraph(projectName))
+        }
+      }
   }
 
 
@@ -51,6 +52,18 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
     } else {
       StatusCodes.NotFound
     }
+  }
+
+  def publishProject(projectName: String) : HTTPResponse = {
+    val projectOption = projectsManager.lookupProject(projectName)
+    if (projectOption.isSuccess) {
+      projectOption.get.publishProjectGraph
+      projectsManager.activeProjects.foreach{
+        case project if project.projectFile.connectedProjects.contains(projectName) => project.fullRefresh
+      }
+      StatusCodes.OK
+
+    } else StatusCodes.NotFound
   }
 
   def getKnowledgeGraph(projectName: String) : HTTPResponse = {

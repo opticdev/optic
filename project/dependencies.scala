@@ -111,4 +111,10 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion
   ) ++ Parsers.list
 
+  val cliDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
+    "com.github.scopt" %% "scopt" % "3.7.0",
+    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
+    "com.typesafe.akka" %% "akka-stream" % "2.5.4"
+  )
+
 }
