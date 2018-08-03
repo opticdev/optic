@@ -39,7 +39,13 @@ class FileInPathSpec extends FunSpec {
       assert(pfOption.isDefined)
     }
 
-    it("returns none when on project file is found") {
+    it("returns a project file when in first child set") {
+      val pfOption = File("test-examples/resources/test_project/").projectFileOption
+      assert(pfOption.get.file.pathAsString.contains("test-examples/resources/test_project/optic.yml"))
+    }
+
+
+    it("returns none when no project file is found") {
       val pfOption = File("/fake/path/to/place").projectFileOption
       assert(pfOption.isEmpty)
     }

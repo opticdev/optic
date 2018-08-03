@@ -4,7 +4,7 @@ import org.scalatest.FunSpec
 
 class CallOpticMarkdownSpec extends FunSpec {
 
-  it("can find optic markdown binary in .yaml") {
+  it("can find optic markdown binary in .yml") {
     assert(CallOpticMarkdown.scriptPath.contains("server/src/main/resources/opticmarkdown"))
     CallOpticMarkdown.script
   }
