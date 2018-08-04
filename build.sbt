@@ -7,7 +7,7 @@ name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "1.0.4"
+val appVersion = "1.0.5"
 
 version := appVersion
 
@@ -83,6 +83,7 @@ lazy val server = (project in file("server")).
  .dependsOn(sdk)
  .dependsOn(common)
  .dependsOn(core)
+ .dependsOn(cli)
  .dependsOn(core % "compile->compile;test->test")
  .settings(
    test in assembly := {},

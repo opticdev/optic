@@ -11,30 +11,42 @@ import sys.process._
 
 object BindCLI {
 
-  private val jvmLocation = File(System.getProperties.getProperty("java.home"))
-  private val runningJar = new JFile(this.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).getPath
+  private val _jvmLocation = File(System.getProperties.getProperty("java.home"))
 
-
-  def toNativeBash = {
+  def toNativeBash(running: String, opticmdPath: String) = {
 
     PlatformConstants.platform match {
       case Mac => {
-        bindCmdMac
+        bindCmdMac(running, opticmdPath)
         null
       }
       case _ => println("Could not bind cli to native bash")
     }
   }
 
-  def bindCmdMac = {
+  def bindCmdMac(runningJar: String, opticmdPath: String) = {
     if (runningJar.contains(".jar")) {
 
-    } else {
       val cmd = Seq((
-        jvmLocation / "bin" / "java").toString().replaceAll(" ", "\\\\ "),
-        "-classpath",
+        _jvmLocation / "bin" / "java").toString().replaceAll(" ", "\\\\ "),
+        "-cp",
         runningJar.replaceAll(" ", "\\\\ "),
-        "com.opticdev.cli.binder.BindCLI$").mkString(" ")
+        "com.opticdev.cli.Cli",
+        s"""-Dopticmdbinary="${opticmdPath.replaceAll(" ", "\\\\ ")}" """
+      ).mkString(" ")
+
+      File("/usr/local/bin/optic").write(cmd).addPermission(PosixFilePermission.OWNER_EXECUTE)
+
+    } else {
+
+      val testCliJar = File("test-examples/resources/cli/test-cli.jar")
+
+      val cmd = Seq((
+        _jvmLocation / "bin" / "java").toString().replaceAll(" ", "\\\\ "),
+        "-jar",
+        testCliJar.pathAsString.replaceAll(" ", "\\\\ ")
+      ).mkString(" ")
+
       File("/usr/local/bin/optic").write(cmd).addPermission(PosixFilePermission.OWNER_EXECUTE)
     }
   }

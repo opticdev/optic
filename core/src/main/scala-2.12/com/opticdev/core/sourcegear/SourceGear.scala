@@ -116,7 +116,7 @@ abstract class SourceGear {
     s"""
       | Parsers: ${parsers.map(_.parserRef.full).mkString(",")}
       | Schemas: ${schemas.map(_.schemaRef.full).mkString(",")}
-      | Gears: ${lensSet.listLenses.map(_.name).mkString(",")}
+      | Lenses: ${lensSet.listLenses.map(_.name).mkString(",")}
       | Transformations: ${transformations.map(_.yields).mkString(",")}
     """.stripMargin)
 
