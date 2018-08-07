@@ -112,9 +112,6 @@ object PackageManager {
     val lookupResults = providerStore.filterNot(i=> i.isCache && !useCache).foldLeft(Seq(): Seq[BatchPackageResult]) {
       case (results, provider)=> {
         if (results.nonEmpty && results.last.foundAll) {
-
-          println(provider)
-
           //no need to query another provider if it'll be overridden
           results
         } else {

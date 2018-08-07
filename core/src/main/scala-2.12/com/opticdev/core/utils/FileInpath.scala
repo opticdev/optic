@@ -23,6 +23,15 @@ object FileInPath {
     }
 
     def projectFileOption : Option[ProjectFile] = {
+
+      if (potentialChild.isDirectory) {
+        val inthisDir = potentialChild.children.find(_.name == "optic.yml")
+
+        if (inthisDir.isDefined) {
+          return Some(new ProjectFile(inthisDir.get))
+        }
+      }
+
       val baseDirOption = parentsOf.find(i=> {
         i.exists && i.list.exists(_.name == "optic.yml")
       })
