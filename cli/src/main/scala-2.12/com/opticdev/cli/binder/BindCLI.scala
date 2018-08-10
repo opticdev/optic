@@ -32,7 +32,8 @@ object BindCLI {
         "-cp",
         runningJar.replaceAll(" ", "\\\\ "),
         "com.opticdev.cli.Cli",
-        s"""-Dopticmdbinary="${opticmdPath.replaceAll(" ", "\\\\ ")}" """
+        "\""+opticmdPath.replaceAll(" ", "\\\\ ")+"\"",
+        "\"$@\""
       ).mkString(" ")
 
       File("/usr/local/bin/optic").write(cmd).addPermission(PosixFilePermission.OWNER_EXECUTE)

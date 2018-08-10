@@ -44,7 +44,7 @@ object DumpGraph {
             finished(project, bashScript)
           }
           case Invalid(error) => {
-            println(Console.RED + "invalid project config: "+ error)
+            println(Console.RED + "invalid project config: "+ error + Console.RESET)
             actorCluster.actorSystem.terminate()
           }
           case _ =>
@@ -52,7 +52,7 @@ object DumpGraph {
       })
 
     } else {
-      println(Console.RED + projectOption.failed.get.getMessage)
+      println(Console.RED + projectOption.failed.get.getMessage + Console.RESET)
       actorCluster.actorSystem.terminate()
     }
 
@@ -93,7 +93,7 @@ object DumpGraph {
         exit
 
       } else {
-        println(Console.RED + "Unknown error encountered when building project snapshot")
+        println(Console.RED + "Unknown error encountered when building project snapshot" + Console.RESET)
         exit
       }
     })

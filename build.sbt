@@ -32,7 +32,7 @@ lazy val common = (project in file("common")).
    libraryDependencies ++= Dependencies.commonDependencies,
    buildInfoKeys := Seq[BuildInfoKey](
      "opticMDVersion" -> Constants.opticMDVersion,
-     "currentOpticVersion" -> version,
+     "currentOpticVersion" -> appVersion,
    ),
    buildInfoPackage := "com.opticdev.common"
  )
@@ -60,7 +60,7 @@ lazy val cli = (project in file("cli")).
   .settings(
     libraryDependencies ++= Dependencies.cliDependencies,
     buildInfoKeys := Seq[BuildInfoKey](
-      "opticVersion" -> version,
+      "opticVersion" -> appVersion,
     ),
     buildInfoPackage := "com.opticdev.cli"
   )

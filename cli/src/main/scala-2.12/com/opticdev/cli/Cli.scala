@@ -3,6 +3,7 @@ package com.opticdev.cli
 import better.files.File
 import com.opticdev.cli.commands.{DumpGraph, Publish}
 import com.opticdev.common.BuildInfo
+import com.opticdev.sdk.markdown.CallOpticMarkdown
 
 
 object Cli extends App  {
@@ -25,11 +26,17 @@ object Cli extends App  {
   }
 
   // parser.parse returns Option[C]
-  parser.parse(args, Config()) match {
+  val argsSeq = args.toSeq
+  System.setProperty("opticmdbinary", args(0))
+
+  val trimmedArgs = argsSeq.splitAt(1)._2
+
+  parser.parse(trimmedArgs, Config()) match {
     case Some(config) =>
       config.mode match {
         case "publish" => Publish.publish(File(System.getProperty("user.dir")))
         case "dumpgraph" => DumpGraph.run(File(System.getProperty("user.dir")), config.bashScript)
+        case _ => println(parser.usage)
       }
     case None =>
     // arguments are bad, error message will have been displayed
