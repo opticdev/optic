@@ -7,7 +7,7 @@ An API for Code
 # Codebase
 
 #### Technologies:
-* **Scala 2.12** - targetting the JVM makes it easy to ensure consistency across all the operating systems without sacrifcing performance or productivity. 
+* **Scala 2.12** - targeting the JVM makes it easy to ensure consistency across all the operating systems without sacrificing performance or productivity. 
 * **Akka** - We use Akka for almost everything. Our server runs akka-http, we use akka-streams for communicating with IDEs and the Optic GUI over websockets, and the actor model has made our realtime processing very quick & reliable. 
 * **JSON Schema** - JSON Schemas are used extensively throughout Optic as a de facto type system for knowledge. 
 * **Scala Graph** - Graph library we use to map codebases and relationships between different kinds of code 
