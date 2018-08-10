@@ -50,7 +50,7 @@ object TestLens {
 
     val dependencyTreeResolved = Tree(Leaf(testPackage, dependencyTree))
 
-    val sg = SGConstructor.fromDependencies(dependencyTreeResolved, SourceParserManager.installedParsers.map(_.parserRef)).map(_.inflate)
+    val sg = SGConstructor.fromDependencies(dependencyTreeResolved, SourceParserManager.installedParsers.map(_.parserRef), Set()).map(_.inflate)
     sg.onComplete(i=> i.failed.foreach(_.printStackTrace()))
     val sgBuilt = Await.result(sg, 10 seconds)
 

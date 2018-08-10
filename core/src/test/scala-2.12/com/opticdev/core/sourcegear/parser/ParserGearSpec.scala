@@ -6,6 +6,7 @@ import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
 import com.opticdev.core.sourcegear.annotations.SourceAnnotation
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
@@ -24,6 +25,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     override val schemas = Set()
     override val transformations = Set()
     override val flatContext: FlatContext = FlatContext(None, Map.empty)
+    override val connectedProjectGraphs: Set[ProjectGraph] = Set()
   }
 
   implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear)

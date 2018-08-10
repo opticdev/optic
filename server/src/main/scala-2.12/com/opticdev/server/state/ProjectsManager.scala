@@ -42,7 +42,6 @@ class ProjectsManager {
       AgentConnection.broadcastUpdate(KnowledgeGraphUpdate(project.name, arrowStore(project).knowledgeGraphAsJson))
     })
 
-
     //register a callback for model node options changes
     project.onUpdatedModelNodeOptions((modelOptions, fileOptions)=> {
       AgentConnection.broadcastUpdate(ModelNodeOptionsUpdate(project.name, modelOptions, fileOptions))

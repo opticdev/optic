@@ -5,6 +5,7 @@ import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, CustomEdge}
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.InFile
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, FlatModelNode, LinkedModelNode, ModelNode}
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.parsers.AstGraph
 
 import scala.collection.mutable
@@ -83,6 +84,11 @@ object GraphImplicits {
 
     def modelNodes() : Vector[FlatModelNode] = {
       val result = graph.nodes.filter(i=> i.value.isInstanceOf[FlatModelNode]).map(_.value.asInstanceOf[FlatModelNode])
+      result.toVector
+    }
+
+    def objectNodes() : Vector[ObjectNode] = {
+      val result = graph.nodes.filter(i=> i.value.isInstanceOf[ObjectNode]).map(_.value.asInstanceOf[ObjectNode])
       result.toVector
     }
 

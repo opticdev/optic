@@ -16,6 +16,7 @@ import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 case class TransformationResult(score: Int, transformationChange: TransformationChanges, context : ArrowContextBase, inputValue: Option[JsObject], inputModelId: Option[String], objectSelection: Option[String])(implicit sourcegear: SourceGear, project: OpticProject, knowledgeGraph: KnowledgeGraph, editorSlug: String) extends Result {
 
   override def changes : ChangeGroup = {
@@ -25,17 +26,21 @@ case class TransformationResult(score: Int, transformationChange: Transformation
 
         val insertLocationOption = context.toInsertLocation
 
-        def modelOptions = project.projectGraphWrapper.query((node)=> {
+        def modelOptions: Seq[ModelOption] = project.projectGraphWrapper.query((node)=> {
           node.value match {
             case mn: BaseModelNode => mn.schemaId == transformationChange.transformation.resolvedInput && mn.objectRef.isDefined
+            case on: ObjectNode => on.schemaRef == transformationChange.transformation.resolvedInput
             case _ => false
           }
-        }).asInstanceOf[Set[BaseModelNode]]
-          .map(i=> {
-            implicit val sourceGearContext = TransformationSearch.sourceGearContext(i)
-            val expandedValue = i.expandedValue(withVariables = true)
-            ModelOption(i.id, expandedValue, i.objectRef.get.name)
-          }).toSeq.sortBy(_.name)
+        }).map {
+            case mn: BaseModelNode => {
+              implicit val sourceGearContext = TransformationSearch.sourceGearContext(mn)
+              val expandedValue = mn.expandedValue(withVariables = true)
+              ModelOption(mn.id, expandedValue, mn.objectRef.get.name)
+            }
+            case on: ObjectNode =>
+              ModelOption(on.id, on.value, on.name)
+        }.toSeq.sortBy(_.name)
 
         val lensOptions = knowledgeGraph.gearsForSchema({
           if (dt.transformation.isGenerateTransform) {

@@ -4,6 +4,7 @@ import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.Fixture.compilerUtils.{GearUtils, ParserUtils}
 import com.opticdev.core.compiler.stages.RenderFactoryStage
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
@@ -102,6 +103,7 @@ object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtil
           "route" -> schemaSet(2)
         ))
       ))
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
     }
   }
 

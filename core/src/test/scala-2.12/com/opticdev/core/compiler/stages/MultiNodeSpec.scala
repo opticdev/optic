@@ -6,6 +6,7 @@ import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.parsers.rules.Any
@@ -63,6 +64,7 @@ object MultiNodeFixture extends GearUtils {
           "example" -> multiNodeLens
         ))
       ))
+      override val connectedProjectGraphs: Set[ProjectGraph] = Set()
       override val schemas: Set[OMSchema] = Set(OMSchema(multiNodeLens.schemaRef, JsObject.empty)) ++ multiNodeLens.childLenses.map(i => OMSchema(i.schemaRef, JsObject.empty)).toSet
       override val lensSet: LensSet = new LensSet(multiNodeLens)
     }

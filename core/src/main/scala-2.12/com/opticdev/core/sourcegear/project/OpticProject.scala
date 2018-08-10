@@ -67,11 +67,17 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     projectStatusInstance.monitoringStatus = Watching
   }
 
+  def fullRefresh = {
+    regenerateSourceGear(projectFile)
+    rereadAll
+  }
+
   def rereadAll = {
     implicit val timeout: akka.util.Timeout = Timeout(5 minutes)
     implicit val sourceGear = projectSourcegear
     //should delete all
     ProjectActorSyncAccess.clearGraph(projectActor)
+    ProjectActorSyncAccess.addConnectedProjectSubGraphs(projectActor, sourceGear.connectedProjectGraphs)
     ParseSupervisorSyncAccess.clearCache()
 
     projectStatusInstance.firstPassStatus = InProgress

@@ -25,10 +25,13 @@ object SGConfigStorage {
 
     val file = DataDirectory.sourcegear / hashString
     if (file.exists) {
-      Try(Unpickle[SGConfig].fromBytes(ByteBuffer.wrap(file.byteArray)))
+      loadFromBytes(ByteBuffer.wrap(file.byteArray))
     } else {
       Failure(new FileNotFoundException(file.pathAsString))
     }
   }
+
+  def loadFromBytes(bytes: ByteBuffer) =
+    Try(Unpickle[SGConfig].fromBytes(bytes))
 
 }

@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear
 
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.{ProjectGraph, SerializeProjectGraph}
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
@@ -19,7 +20,8 @@ case class SGConfig(hashInt: Int,
                     parserIds : Set[ParserRef],
                     compiledLenses : Set[SGExportableLens],
                     schemas : Set[OMSchemaColdStorage],
-                    transformations: Set[Transformation]) {
+                    transformations: Set[Transformation],
+                    connectedProjects: Set[String]) {
 
   def hashString : String = Integer.toHexString(hashInt)
 
@@ -37,12 +39,17 @@ case class SGConfig(hashInt: Int,
 
     if (!parserCollections.foundAll) throw new Error("Unable to resolve parsers "+ parserCollections.notFound.map(_.full))
 
+    val connectedGraphs = connectedProjects.map(projectName=> {
+      SerializeProjectGraph.loadProjectGraphFor(projectName)
+    }).collect{case n if n.isSuccess => n.get}
+
     new SourceGear {
       override val parsers = parserCollections.found
       override val lensSet = new LensSet(compiledLenses.toSeq: _*)
       override val schemas = inflatedSchemas
       override val transformations = inflatedTransformations
       override val flatContext: FlatContext = _flatContext
+      override val connectedProjectGraphs: Set[ProjectGraph] = connectedGraphs
     }
   }
 

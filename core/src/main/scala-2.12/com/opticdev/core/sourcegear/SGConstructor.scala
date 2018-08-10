@@ -27,7 +27,7 @@ object SGConstructor {
 
       val parsersRefs = parsersForProjectFile(projectFile).get
 
-      val config = fromDependencies(dependencies, parsersRefs)
+      val config = fromDependencies(dependencies, parsersRefs, projectFile.connectedProjects)
 
       //save to cache on complete to make next time easier
       if (useCache) {
@@ -42,7 +42,7 @@ object SGConstructor {
 
   def loadFromCache(projectFile: ProjectFile) = SGConfigStorage.loadFromStorage(projectFile.hash)
 
-  def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths)  : Future[SGConfig] = Future {
+  def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef], connectedProjects: Set[String])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths)  : Future[SGConfig] = Future {
 
     val compiled = compileDependencyTree(dependencies).get
 
@@ -53,7 +53,7 @@ object SGConstructor {
 
     val flatContext = FlatContextBuilder.fromDependencyTree(dependencies)
 
-    SGConfig(dependencies.hash, flatContext, parserRefs, compiledLenses, schemaSetColdStorage, transformationSet)
+    SGConfig(dependencies.hash, flatContext, parserRefs, compiledLenses, schemaSetColdStorage, transformationSet, connectedProjects)
   }
 
   def dependenciesForProjectFile(projectFile: ProjectFile): Try[DependencyTree] = {

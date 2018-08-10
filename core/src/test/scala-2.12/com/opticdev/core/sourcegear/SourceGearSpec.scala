@@ -4,6 +4,7 @@ import better.files.File
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
@@ -15,6 +16,7 @@ class SourceGearSpec extends AkkaTestFixture("SourceGearTest") with GearUtils {
     override val schemas = Set()
     override val transformations = Set()
     override val flatContext: FlatContext = FlatContext(None, Map.empty)
+    override val connectedProjectGraphs: Set[ProjectGraph] = Set()
   }
 
   implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)

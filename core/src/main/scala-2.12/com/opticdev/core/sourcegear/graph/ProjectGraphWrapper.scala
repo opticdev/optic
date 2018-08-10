@@ -5,6 +5,7 @@ import com.opticdev.common.ObjectRef
 import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.graph.edges.{InFile, YieldsModel}
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.sync.SyncGraph
 import com.opticdev.parsers.AstGraph
@@ -123,6 +124,9 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
       case n if n.value.isModel && n.value.asInstanceOf[BaseModelNode].objectRef.isDefined =>
         val asBaseModelNode = n.value.asInstanceOf[BaseModelNode]
         NamedModel(asBaseModelNode.objectRef.get.name, asBaseModelNode.schemaId.internalFull, asBaseModelNode.id)
+      case n if n.value.isObject =>
+        val objectNode = n.value.asInstanceOf[ObjectNode]
+        NamedModel(objectNode.name, objectNode.schemaRef.internalFull, objectNode.id)
     }.toSet
 
 
@@ -136,6 +140,11 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
       project.callOnUpdatedModelNodeOptions(newNamedModels, newNamedFiles)
     }
 
+  }
+
+  def addProjectSubGraph(subgraphs: ProjectGraph*) = {
+    subgraphs.foreach(sg => projectGraph ++= sg)
+    checkForUpdatedNamedModelNodes
   }
 
 }

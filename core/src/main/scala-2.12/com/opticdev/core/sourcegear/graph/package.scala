@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.parsers.graph.BaseNode
 import play.api.libs.json.{JsValue, Json}
 import scalax.collection.edge.LkDiEdge
@@ -11,7 +12,9 @@ package object graph {
   trait AstProjection extends BaseNode {
     val id : String = null
     def isModel : Boolean = this.isInstanceOf[BaseModelNode]
+    def isObject : Boolean = this.isInstanceOf[ObjectNode]
   }
+
   type ProjectGraph = Graph[AstProjection, LkDiEdge]
   type SyncGraph = ProjectGraph
 
