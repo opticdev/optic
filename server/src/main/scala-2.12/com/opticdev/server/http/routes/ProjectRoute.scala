@@ -10,7 +10,7 @@ import akka.http.scaladsl.server.{Route, StandardRoute}
 import com.opticdev.common.{BuildInfo, SchemaRef}
 import com.opticdev.server.http.HTTPResponse
 import com.opticdev.server.state.ProjectsManager
-import play.api.libs.json.{JsArray, JsValue}
+import play.api.libs.json._
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
 import scala.util.Try
@@ -35,9 +35,16 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
         }
       }
     } ~
-    path("build-version") {
+    path("sdk-version") {
       get {
-        complete(BuildInfo.currentOpticVersion)
+        parameters('v) { (sdkVersion) => {
+          complete(JsObject(Seq(
+            "opticVersion" -> JsString(BuildInfo.currentOpticVersion),
+            "isSupported" -> JsBoolean(BuildInfo.supportedSdks.contains(sdkVersion)),
+            "supportedSdks" -> JsArray(BuildInfo.supportedSdks.map(JsString))
+          )))
+        }
+        }
       }
     }
 
