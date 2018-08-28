@@ -7,7 +7,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import scala.concurrent.ExecutionContext
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, StandardRoute}
-import com.opticdev.common.SchemaRef
+import com.opticdev.common.{BuildInfo, SchemaRef}
 import com.opticdev.server.http.HTTPResponse
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsValue}
@@ -34,7 +34,12 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
           complete(getKnowledgeGraph(projectName))
         }
       }
-  }
+    } ~
+    path("build-version") {
+      get {
+        complete(BuildInfo.currentOpticVersion)
+      }
+    }
 
 
   def getProject(projectName: String) : HTTPResponse = {
