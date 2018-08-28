@@ -16,7 +16,7 @@ import play.api.libs.json._
 import scala.collection.mutable
 import scala.util.Try
 
-case class Trainer(filePath: String, languageName: String, exampleSnippet: String, expectedValue: JsObject, stagedSourceGear: SourceGear = SourceGear.empty) {
+case class Trainer(languageName: String, exampleSnippet: String, stagedSourceGear: SourceGear = SourceGear.empty) {
   val snippet = OMSnippet(languageName, exampleSnippet)
   implicit val lens = OMLens(Some("trainer-example"), "trainer-output", snippet, Map(), Map(), Map(), Right(OMSchema(
     SchemaRef(Some(PackageRef("optic:trainer")), "trainer"),
@@ -24,28 +24,11 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
   )), JsObject.empty, languageName, PackageRef("optic:trainer"))
   lazy val snippetStageOutput = new SnippetStage(snippet).run
 
-  val candidateValues = expectedValue.value.values
-
-  def this(filePath: String, languageName: String, exampleSnippet: String, expectedValue: String) = {
-    this(filePath, languageName, exampleSnippet, Try(Json.parse(expectedValue).as[JsObject]).getOrElse(throw new Exception("Expected Value was not a valid JSON Object")))
-  }
-
   def returnAllCandidates = Try {
     val basic = extractTokensCandidates ++ extractLiteralCandidates ++ extractObjectLiteralCandidates ++ extractArrayLiteralCandidates
 
-    val withKeysAsPropertyPaths = expectedValue.value.map(i=> (Seq(i._1), i._2))
-    val keysAsPropertyPaths = withKeysAsPropertyPaths.keys.toSet
-
-    val withSortedResults =
-    basic.groupBy(_.propertyPath)
-      .mapValues(_.toSeq.sortBy(_.stagedComponent.range.start))
-
-    val notFoundProperties = keysAsPropertyPaths diff withSortedResults.keys.toSet
-
     TrainingResults(
-      withSortedResults.map(i=> (i._1.mkString("."), i._2)),
-      notFoundProperties.map(_.mkString(".")).toSeq,
-      JsObject(notFoundProperties.map(i=> (i.mkString("."), withKeysAsPropertyPaths(i))).toSeq),
+      basic,
       extractContainersCandidates,
       extractVariableCandidates
     )
@@ -58,21 +41,15 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
     snippetStageOutput.astGraph.nodes.collect {
       case n if n.value.isAstNode() && {
         val asAstNode = n.value.asInstanceOf[CommonAstNode]
-        tokenInterfaces.tokenTypes.contains(asAstNode.nodeType) &&
-        tokenInterfaces.parseNode(asAstNode, snippetStageOutput.astGraph, exampleSnippet.substring(asAstNode))
-          .map(value => candidateValues.exists(_ == value)).getOrElse(false)
+        tokenInterfaces.tokenTypes.contains(asAstNode.nodeType)
       }  => {
         val node = n.value.asInstanceOf[CommonAstNode]
         val value = tokenInterfaces.parseNode(node, snippetStageOutput.astGraph, exampleSnippet.substring(node)).get
-
-        expectedValue.value.filter(_._2 == value).map(i=> Seq(i._1))
-        .map(propertyPath=> {
-          ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(Token, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
+          ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](Seq(), OMLensCodeComponent(Token, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
             JsObject(Seq("type" -> JsString("string")))
           )
-        })
       }
-    }.flatten.toSet
+    }.toSet
   }
 
   def extractLiteralCandidates: Set[ValueCandidate] = {
@@ -81,9 +58,7 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
     snippetStageOutput.astGraph.nodes.collect {
       case n if n.value.isAstNode() && {
         val asAstNode = n.value.asInstanceOf[CommonAstNode]
-        literalInterfaces.literalTypes.contains(asAstNode.nodeType) &&
-          literalInterfaces.parseNode(asAstNode, snippetStageOutput.astGraph, exampleSnippet.substring(asAstNode))
-            .map(value => candidateValues.exists(_ == value)).getOrElse(false)
+        literalInterfaces.literalTypes.contains(asAstNode.nodeType)
       }  => {
         val node = n.value.asInstanceOf[CommonAstNode]
         val value = literalInterfaces.parseNode(node, snippetStageOutput.astGraph, exampleSnippet.substring(node)).get
@@ -94,14 +69,11 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
           case b:JsBoolean => JsString("boolean")
         }
 
-        expectedValue.value.filter(_._2 == value).map(i=> Seq(i._1))
-          .map(propertyPath=> {
-            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(Literal, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
-              JsObject(Seq("type" -> jsontype))
-            )
-          })
+        ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](Seq(), OMLensCodeComponent(Literal, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
+          JsObject(Seq("type" -> jsontype))
+        )
       }
-    }.flatten.toSet
+    }.toSet
   }
 
   def extractObjectLiteralCandidates: Set[ValueCandidate] = {
@@ -109,24 +81,16 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
     snippetStageOutput.astGraph.nodes.collect {
       case n if n.value.isAstNode() && {
         val asAstNode = n.value.asInstanceOf[CommonAstNode]
-        objectLiteralInterfaces.objectLiteralsType.contains(asAstNode.nodeType) &&
-          objectLiteralInterfaces.parseNode(asAstNode, snippetStageOutput.astGraph, exampleSnippet)
-            .map(value => {
-              val trimmedValue = JsonUtils.removeReservedFields(value)
-              candidateValues.exists(_ == trimmedValue)
-            }).getOrElse(false)
+        objectLiteralInterfaces.objectLiteralsType.contains(asAstNode.nodeType)
       }  => {
         val node = n.value.asInstanceOf[CommonAstNode]
         val value = objectLiteralInterfaces.parseNode(node, snippetStageOutput.astGraph, exampleSnippet).get
 
-        expectedValue.value.filter(_._2 == JsonUtils.removeReservedFields(value)).map(i=> Seq(i._1))
-          .map(propertyPath=> {
-            ValueCandidate((value.as[JsObject] - "_order"), generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
-              JsObject(Seq("type" -> JsString("object")))
-            )
-          })
+        ValueCandidate((value.as[JsObject] - "_order"), generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](Seq(), OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
+          JsObject(Seq("type" -> JsString("object")))
+        )
       }
-    }.flatten.toSet
+    }.toSet
   }
 
   def extractArrayLiteralCandidates: Set[ValueCandidate] = {
@@ -134,23 +98,17 @@ case class Trainer(filePath: String, languageName: String, exampleSnippet: Strin
     snippetStageOutput.astGraph.nodes.collect {
       case n if n.value.isAstNode() && {
         val asAstNode = n.value.asInstanceOf[CommonAstNode]
-        arrayLiteralInterfaces.arrayLiteralsType.contains(asAstNode.nodeType) &&
-          arrayLiteralInterfaces.parseNode(asAstNode, snippetStageOutput.astGraph, exampleSnippet)
-            .map(value => {
-              candidateValues.exists(_ == value)
-            }).getOrElse(false)
+        arrayLiteralInterfaces.arrayLiteralsType.contains(asAstNode.nodeType)
       }  => {
         val node = n.value.asInstanceOf[CommonAstNode]
         val value = arrayLiteralInterfaces.parseNode(node, snippetStageOutput.astGraph, exampleSnippet).get
 
-        expectedValue.value.filter(_._2 == value).map(i=> Seq(i._1))
-          .map(propertyPath=> {
-            ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](propertyPath, OMLensCodeComponent(ArrayLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
-              JsObject(Seq("type" -> JsString("array")))
-            )
-          })
+        ValueCandidate(value, generatePreview(node.range), OMComponentWithPropertyPath[OMLensCodeComponent](Seq(), OMLensCodeComponent(ArrayLiteral, OMLensNodeFinder(node.nodeType.name, OMRange(node.range)))),
+          JsObject(Seq("type" -> JsString("array")))
+        )
+
       }
-    }.flatten.toSet
+    }.toSet
   }
 
   //map schema interfaces
