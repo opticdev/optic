@@ -36,7 +36,7 @@ package object trainer {
   implicit val variableCandidateFormats = Json.format[VariableCandidate]
   implicit val trainingResultsFormats = Json.format[TrainingResults]
 
-  case class TrainingResults(candidates: Set[ValueCandidate],
+  case class TrainingResults(candidates: Seq[ValueCandidate],
                              containerCandidates: Seq[ContainerCandidate],
                              variableCandidates: Seq[VariableCandidate]
                             ) {

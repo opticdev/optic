@@ -28,14 +28,14 @@ case class Trainer(languageName: String, exampleSnippet: String, stagedSourceGea
     val basic = extractTokensCandidates ++ extractLiteralCandidates ++ extractObjectLiteralCandidates ++ extractArrayLiteralCandidates
 
     TrainingResults(
-      basic,
+      basic.sortBy(_.stagedComponent.range.start),
       extractContainersCandidates,
       extractVariableCandidates
     )
   }
 
   //basic interfaces
-  def extractTokensCandidates: Set[ValueCandidate] = {
+  def extractTokensCandidates: Seq[ValueCandidate] = {
     val tokenInterfaces = snippetStageOutput.parser.basicSourceInterface.tokens
 
     snippetStageOutput.astGraph.nodes.collect {
@@ -49,10 +49,10 @@ case class Trainer(languageName: String, exampleSnippet: String, stagedSourceGea
             JsObject(Seq("type" -> JsString("string")))
           )
       }
-    }.toSet
+    }.toSeq
   }
 
-  def extractLiteralCandidates: Set[ValueCandidate] = {
+  def extractLiteralCandidates: Seq[ValueCandidate] = {
     val literalInterfaces = snippetStageOutput.parser.basicSourceInterface.literals
 
     snippetStageOutput.astGraph.nodes.collect {
@@ -73,10 +73,10 @@ case class Trainer(languageName: String, exampleSnippet: String, stagedSourceGea
           JsObject(Seq("type" -> jsontype))
         )
       }
-    }.toSet
+    }.toSeq
   }
 
-  def extractObjectLiteralCandidates: Set[ValueCandidate] = {
+  def extractObjectLiteralCandidates: Seq[ValueCandidate] = {
     val objectLiteralInterfaces = snippetStageOutput.parser.basicSourceInterface.objectLiterals
     snippetStageOutput.astGraph.nodes.collect {
       case n if n.value.isAstNode() && {
@@ -90,10 +90,10 @@ case class Trainer(languageName: String, exampleSnippet: String, stagedSourceGea
           JsObject(Seq("type" -> JsString("object")))
         )
       }
-    }.toSet
+    }.toSeq
   }
 
-  def extractArrayLiteralCandidates: Set[ValueCandidate] = {
+  def extractArrayLiteralCandidates: Seq[ValueCandidate] = {
     val arrayLiteralInterfaces = snippetStageOutput.parser.basicSourceInterface.arrayLiterals
     snippetStageOutput.astGraph.nodes.collect {
       case n if n.value.isAstNode() && {
@@ -108,7 +108,7 @@ case class Trainer(languageName: String, exampleSnippet: String, stagedSourceGea
         )
 
       }
-    }.toSet
+    }.toSeq
   }
 
   //map schema interfaces
