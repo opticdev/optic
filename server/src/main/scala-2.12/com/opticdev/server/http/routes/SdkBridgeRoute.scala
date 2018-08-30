@@ -2,7 +2,9 @@ package com.opticdev.server.http.routes
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.opticdev.core.trainer.{ProjectFileOptions, TestLens, Trainer, TrainerAppServices}
+import com.opticdev.core.trainer.{ProjectFileOptions, TestLens, Trainer}
+import com.opticdev.opm.packages.OpticPackage
+import com.opticdev.sdk.markdown.MarkdownParser
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 import play.api.libs.json._
 
@@ -31,6 +33,24 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
 
              complete(resultWrapped)
 
+           }
+         } ~
+         pathPrefix("lens" / "test") {
+           entity(as[JsObject]) { testRequest =>
+             val packageObject = Try {
+               val json = testRequest.value("packageJson").as[JsObject]
+               OpticPackage.fromJson(json)
+             }.flatten
+
+             path("generate") {
+               complete(packageObject.toString)
+             } ~
+             path("parse") {
+               complete("parse")
+             } ~
+             path("mutate") {
+               complete("mutate")
+             }
            }
          }
       }

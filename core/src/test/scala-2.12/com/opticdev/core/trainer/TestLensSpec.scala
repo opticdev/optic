@@ -2,61 +2,49 @@ package com.opticdev.core.trainer
 
 import better.files.File
 import com.opticdev.core.Fixture.TestBase
+import com.opticdev.opm.packages.OpticMDPackage
 import play.api.libs.json.{JsObject, JsString, Json}
 
 class TestLensSpec extends TestBase {
 
-  describe("using other markdown") {
-    it("can parse valid markdown file") {
-      val desc = TestLens.descriptionFromString(File("test-examples/resources/example_markdown/Importing-JS.md").contentAsString)
-      assert(desc.value("info").as[JsObject].value("package").as[JsString].value == "importingjs")
+  val importExample = Json.parse(File(
+    "test-examples/resources/example_packages/optic:ImportExample@0.1.0.json").contentAsString).as[JsObject]
+
+
+  describe("parsing") {
+    it("works when valid input and sourcegear") {
+      val results = TestLens.testLensParse(importExample, "using-require", "let definedAs = require('pathTo')", "es7")
+      assert(results.get == Json.parse("""{"definedAs":"definedAs","pathTo":"pathTo","_variables":{}}"""))
     }
 
-    it("will provide a default description when invalid") {
-      val desc = TestLens.descriptionFromString("not valid markdown <!-- {{Package {} --> ")
-      assert(desc.value("info").as[JsObject].value("package").as[JsString].value == "optictest")
+    it("fails when invalid input") {
+      val results = TestLens.testLensParse(importExample, "using-require", "let BAD CODE thTo')", "es7")
+      assert(results.isFailure)
+    }
+
+    it("fails when no match is found") {
+      val results = TestLens.testLensParse(importExample, "using-require", "let BAD CODE thTo')", "es7")
+      assert(results.isFailure)
     }
   }
 
-  it("can compile") {
+  describe("generation") {
+    it("works with valid input") {
+      val results = TestLens.testLensGenerate(importExample, "using-require",
+        Json.parse("""{"definedAs":"definedAs","pathTo":"pathTo","_variables":{}}""").as[JsObject])
+      assert(results.get === "let definedAs = require('pathTo')")
+    }
+  }
 
-    val importExample =
-      Json.parse("""
-                   |{
-                   |      "name": "Using Require",
-                   |      "id": "using-require",
-                   |      "schema": {},
-                   |      "snippet": {
-                   |        "language": "es7",
-                   |        "block": "let definedAs = require('pathTo')"
-                   |      },
-                   |      "value": {
-                   |        "definedAs": {
-                   |          "type": "token",
-                   |          "at": {
-                   |            "astType": "Identifier",
-                   |            "range": {
-                   |              "start": 4,
-                   |              "end": 13
-                   |            }
-                   |          }
-                   |        },
-                   |        "pathTo": {
-                   |          "type": "literal",
-                   |          "at": {
-                   |            "astType": "Literal",
-                   |            "range": {
-                   |              "start": 24,
-                   |              "end": 32
-                   |            }
-                   |          }
-                   |        }
-                   |      }
-                   |    }
-                 """.stripMargin)
+  describe("mutate") {
+    it("can mutate valid code") {
+      val results = TestLens.testLensMutate(importExample, "using-require", "let definedAs = require('pathTo')", "es7",
+        Json.parse("""{"definedAs":"testing","pathTo":"how_this_works","_variables":{}}""").as[JsObject])
 
-    val results = TestLens.testLens(importExample.as[JsObject], File("test-examples/resources/example_markdown/Importing-JS.md").contentAsString,  "let definedAs = require('pathTo')")
-    assert(results.get == Json.parse("""{"definedAs":"definedAs","pathTo":"pathTo","_variables":{}}"""))
+
+
+      assert(results.get === "let testing = require('how_this_works')")
+    }
   }
 
 }

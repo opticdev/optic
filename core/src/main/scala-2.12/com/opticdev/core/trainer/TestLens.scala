@@ -3,11 +3,12 @@ package com.opticdev.core.trainer
 import akka.actor.ActorSystem
 import akka.stream.scaladsl.JavaFlowSupport.Source
 import better.files.File
+import com.opticdev.common.PackageRef
 import com.opticdev.common.storage.DataDirectory
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
-import com.opticdev.core.sourcegear.{SGConstructor, SGContext, SourceGear}
+import com.opticdev.core.sourcegear._
 import com.opticdev.core.sourcegear.actors.ActorCluster
-import com.opticdev.core.sourcegear.graph.model.{FlatModelNode, ModelNode, MultiModelNode}
+import com.opticdev.core.sourcegear.graph.model.{FlatModelNode, LinkedModelNode, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.PackageManager
@@ -16,8 +17,10 @@ import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.{AstGraph, ParserBase, SourceParserManager}
 import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
 import com.opticdev.sdk.markdown.MarkdownParser
 import com.opticdev.sdk.markdown.MarkdownParser.MDParseOutput
+import com.opticdev.sdk.opticmarkdown2.LensRef
 import com.opticdev.sdk.opticmarkdown2.lens.OMLens
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 
@@ -30,31 +33,9 @@ object TestLens {
 
   implicit lazy val actorCluster = new ActorCluster(ActorSystem("trainer"))
 
-  def testLens(lensConfiguration: JsObject, markdown: String, testInput: String, projectBaseDir: Option[String] = None) : Try[JsObject] = Try {
-    val description = descriptionFromString(markdown)
+  def testLensParse(description: JsObject, lensId: String, testInput: String, language: String) : Try[JsObject] = Try {
 
-    val lensId = (lensConfiguration \ "id").get.as[JsString]
-    val language = (lensConfiguration \ "snippet" \ "language").get.as[JsString].value
-
-    val output = MDParseOutput(description)
-    val lensesSeq = MDParseOutput(description).lenses.value.filterNot(i=> (i.as[JsObject] \ "id").get == lensId) :+ lensConfiguration
-
-    val descriptionIncludingLens = description + ("lenses" -> JsArray(lensesSeq))
-
-    val testPackage = OpticMDPackage(descriptionIncludingLens, Map())
-    val testPackageRef = testPackage.packageRef
-
-    implicit val projectKnowledgeSearchPaths =
-      projectBaseDir.map(i=> new ProjectFile(File(i) / "optic.yml", createIfDoesNotExist = false).projectKnowledgeSearchPaths).getOrElse(ProjectKnowledgeSearchPaths())
-    val dependencyTree = PackageManager.collectPackages(testPackage.dependencies).getOrElse(Tree())
-
-    val dependencyTreeResolved = Tree(Leaf(testPackage, dependencyTree))
-
-    val sg = SGConstructor.fromDependencies(dependencyTreeResolved, SourceParserManager.installedParsers.map(_.parserRef), Set()).map(_.inflate)
-    sg.onComplete(i=> i.failed.foreach(_.printStackTrace()))
-    val sgBuilt = Await.result(sg, 10 seconds)
-
-    implicit val project = new StaticSGProject("trainer_project", DataDirectory.trainerScratch, sgBuilt)
+    implicit val (sgBuilt, project, testPackageRef) = sgAndParser(description)
 
     val parseResults = sgBuilt.parseString(testInput)(project, language).get
 
@@ -74,12 +55,54 @@ object TestLens {
     mn.expandedValue(true)
   }
 
-  def descriptionFromString(inMarkdown: String): JsObject = {
-    val desc = MarkdownParser.parseMarkdownString(inMarkdown).map(_.description).getOrElse(JsObject.empty)
-    if ((desc \ "info").isEmpty) {
-      desc ++ MarkdownParser.parseMarkdownString("""<!-- Package {"author": "optictest", "package": "optictest", "version": "0.0.0"} -->""").map(_.description).get
-    } else {
-      desc
+  def testLensGenerate(description: JsObject, lensId: String, input: JsObject) : Try[String] = Try {
+    implicit val (sgBuilt, project, testPackageRef) = sgAndParser(description)
+    sgBuilt.findLens(LensRef(Some(testPackageRef), lensId)).get.renderer.render(input)
+  }
+
+  def testLensMutate(description: JsObject, lensId: String, testInput: String, language: String, newValue: JsObject) : Try[String] = Try {
+    implicit val (sgBuilt, project, testPackageRef) = sgAndParser(description)
+    val parseResults = sgBuilt.parseString(testInput)(project, language).get
+
+    val mn: FlatModelNode = parseResults.modelNodes.minBy {
+      case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
+      case mmn: MultiModelNode => mmn.modelNodes.head.resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
+    }
+
+    implicit val sourceGearContext = SGContext(
+      sgBuilt.fileAccumulator,
+      parseResults.astGraph,
+      parseResults.parser,
+      testInput,
+      sgBuilt,
+      null
+    )
+
+    import com.opticdev.core.sourcegear.mutate.MutationImplicits._
+    implicit val fileContents = testInput
+
+    mn match {
+      case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).update(newValue)
+      case mmn: MultiModelNode => mmn.modelNodes.head.resolveInGraph[CommonAstNode](parseResults.astGraph).update(newValue)
     }
   }
+
+  private def sgAndParser(description: JsObject): (SourceGear, StaticSGProject, PackageRef) = {
+    val testPackage = OpticMDPackage(description, Map())
+    val testPackageRef = testPackage.packageRef
+
+    implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
+    val dependencyTree = PackageManager.collectPackages(testPackage.dependencies).getOrElse(Tree())
+
+    val dependencyTreeResolved = Tree(Leaf(testPackage, dependencyTree))
+
+    val sg = SGConstructor.fromDependencies(dependencyTreeResolved, SourceParserManager.installedParsers.map(_.parserRef), Set()).map(_.inflate)
+    sg.onComplete(i=> i.failed.foreach(_.printStackTrace()))
+    val sgBuilt = Await.result(sg, 10 seconds)
+
+    implicit val project = new StaticSGProject("trainer_project", DataDirectory.trainerScratch, sgBuilt)
+
+    (sgBuilt, project, testPackageRef)
+  }
+
 }
