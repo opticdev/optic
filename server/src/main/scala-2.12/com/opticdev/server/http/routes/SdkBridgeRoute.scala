@@ -37,19 +37,62 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
          } ~
          pathPrefix("lens" / "test") {
            entity(as[JsObject]) { testRequest =>
-             val packageObject = Try {
-               val json = testRequest.value("packageJson").as[JsObject]
-               OpticPackage.fromJson(json)
-             }.flatten
+             val packageObjectTry = Try(testRequest.value("packageJson").as[JsObject])
+             val lensIdTry = Try(testRequest.value("lensId").as[JsString].value)
 
              path("generate") {
-               complete(packageObject.toString)
+               val inputObjectTry = Try(testRequest.value("inputObject").as[JsObject])
+
+               val resultWrapped = if (packageObjectTry.isFailure || lensIdTry.isFailure || inputObjectTry.isFailure) {
+                 JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString("invalid request. must include fields for packageJson, lensId and inputObject")))
+               } else {
+                 val generate = TestLens.testLensGenerate(packageObjectTry.get, lensIdTry.get, inputObjectTry.get)
+                 if (generate.isSuccess) {
+                   JsObject(Seq("success" -> JsBoolean(true), "code" -> JsString(generate.get)))
+                 } else {
+                   JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(generate.failed.map(_.getMessage).get)))
+                 }
+               }
+
+               complete(resultWrapped)
+
              } ~
              path("parse") {
-               complete("parse")
+
+               val inputTry = Try(testRequest.value("input").as[JsString].value)
+               val languageTry = Try(testRequest.value("language").as[JsString].value)
+
+               val resultWrapped = if (packageObjectTry.isFailure || lensIdTry.isFailure || inputTry.isFailure || languageTry.isFailure) {
+                 JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString("invalid request. must include fields for packageJson, lensId, language and input")))
+               } else {
+                 val parse = TestLens.testLensParse(packageObjectTry.get, lensIdTry.get, inputTry.get, languageTry.get)
+                 if (parse.isSuccess) {
+                   JsObject(Seq("success" -> JsBoolean(true), "result" -> parse.get))
+                 } else {
+                   JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(parse.failed.map(_.getMessage).get)))
+                 }
+               }
+
+               complete(resultWrapped)
              } ~
              path("mutate") {
-               complete("mutate")
+
+               val inputTry = Try(testRequest.value("input").as[JsString].value)
+               val languageTry = Try(testRequest.value("language").as[JsString].value)
+               val newValueTry = Try(testRequest.value("newValue").as[JsObject])
+
+               val resultWrapped = if (packageObjectTry.isFailure || lensIdTry.isFailure || inputTry.isFailure || languageTry.isFailure || newValueTry.isFailure) {
+                 JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString("invalid request. must include fields for packageJson, lensId, language, input and newValue")))
+               } else {
+                 val mutate = TestLens.testLensMutate(packageObjectTry.get, lensIdTry.get, inputTry.get, languageTry.get, newValueTry.get)
+                 if (mutate.isSuccess) {
+                   JsObject(Seq("success" -> JsBoolean(true), "result" -> JsString(mutate.get)))
+                 } else {
+                   JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(mutate.failed.map(_.getMessage).get)))
+                 }
+               }
+
+               complete(resultWrapped)
              }
            }
          }

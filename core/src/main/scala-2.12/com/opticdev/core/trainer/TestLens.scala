@@ -39,6 +39,8 @@ object TestLens {
 
     val parseResults = sgBuilt.parseString(testInput)(project, language).get
 
+    assert(parseResults.modelNodes.nonEmpty, s"No model nodes from lens '${lensId}' found.")
+
     val mn: FlatModelNode = parseResults.modelNodes.minBy {
       case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
       case mmn: MultiModelNode => mmn.modelNodes.head.resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)

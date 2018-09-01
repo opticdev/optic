@@ -40,9 +40,6 @@ class TestLensSpec extends TestBase {
     it("can mutate valid code") {
       val results = TestLens.testLensMutate(importExample, "using-require", "let definedAs = require('pathTo')", "es7",
         Json.parse("""{"definedAs":"testing","pathTo":"how_this_works","_variables":{}}""").as[JsObject])
-
-
-
       assert(results.get === "let testing = require('how_this_works')")
     }
   }
