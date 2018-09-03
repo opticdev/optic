@@ -8,24 +8,15 @@ import play.api.libs.json._
 
 class TrainerSpec extends TestBase {
 
-  val importTrainerValidExample = Trainer("", "es7", "const definedAs = require('pathto')", JsObject(Seq(
-    "definedAs" -> JsString("definedAs"),
-    "pathto" -> JsString("pathto"),
-  )))
+  val importTrainerValidExample = Trainer("es7", "const definedAs = require('pathto')")
 
-  val importTrainerExampleWithExtraProp = Trainer("", "es7", "const definedAs = require('pathto')", JsObject(Seq(
-    "definedAs" -> JsString("definedAs"),
-    "pathto" -> JsString("pathto"),
-    "otherProp" -> JsBoolean(true),
-  )))
+  val importTrainerExampleWithExtraProp = Trainer("es7", "const definedAs = require('pathto')")
 
-  val objectLiteralTrainerValidExample = Trainer("", "es7", """const initialState = {key: 'value', token: thisToken}""", JsObject(Seq(
-    "object" -> Json.parse("""{"key":"value","token":{"_valueFormat":"token","value":"thisToken"}}"""),
-  )))
+  val objectLiteralTrainerValidExample = Trainer("es7", """const initialState = {key: 'value', token: thisToken}""")
 
-  val variableValidExample = Trainer("", "es7", """const initialState = [variableA, variableA, variableA]""", JsObject(Seq()))
+  val variableValidExample = Trainer("es7", """const initialState = [variableA, variableA, variableA]""")
 
-  val containerExample = Trainer("", "es7",
+  val containerExample = Trainer("es7",
     """
       |app.get('url', (req, res) => {
       | if (req) {
@@ -34,45 +25,31 @@ class TrainerSpec extends TestBase {
       |   //:fail
       | }
       |})
-    """.stripMargin,
-    JsObject(Seq(
-      "method" -> JsString("get"),
-      "url" -> JsString("url"),
-  )))
+    """.stripMargin)
 
   it("can extract token candidates") {
     val tokenCandidates = importTrainerValidExample.extractTokensCandidates
 
-    assert(tokenCandidates == Set(
-      ValueCandidate(JsString("definedAs"), "...const <b>definedAs</b> = require...", OMComponentWithPropertyPath(Seq("definedAs"), OMLensCodeComponent(Token, OMLensNodeFinder("Identifier", OMRange(6, 15)))), JsObject(Seq("type" -> JsString("string")))
-    )))
+    assert(tokenCandidates.size == 2)
   }
 
   it("can extract literal candidates") {
     val literalCandidates = importTrainerValidExample.extractLiteralCandidates
 
-    assert(literalCandidates == Set(
-      ValueCandidate(JsString("pathto"), "...= require(<b>'pathto'</b>)...", OMComponentWithPropertyPath(Seq("pathto"), OMLensCodeComponent(Literal, OMLensNodeFinder("Literal", OMRange(26, 34)))), JsObject(Seq("type" -> JsString("string"))))
-    ))
+    assert(literalCandidates.size == 1)
   }
 
   it("can extract object literal candidates") {
     val objectLiteralCandidates = objectLiteralTrainerValidExample.extractObjectLiteralCandidates
 
-    assert(objectLiteralCandidates == Set(
-      ValueCandidate(Json.parse("""{"key":"value","token":{"_valueFormat":"token","value":"thisToken"}}"""),
-        "...alState = <b>{key: 'value', token: thisToken}</b>...",
-        OMComponentWithPropertyPath(Seq("object"), OMLensCodeComponent(ObjectLiteral, OMLensNodeFinder("ObjectExpression", OMRange(21, 53)))),
-        JsObject(Seq("type" -> JsString("object"))))))
+    assert(objectLiteralCandidates.size == 1)
 
   }
 
-  it("can return all candidates and failures") {
+  it("can return all candidates") {
     val allCandidates = importTrainerExampleWithExtraProp.returnAllCandidates
     assert(allCandidates.isSuccess)
-    assert(allCandidates.get.candidates.size == 2)
-    assert(allCandidates.get.keysNotFound == Seq("otherProp"))
-    assert(allCandidates.get.initialValue.fieldSet.head == ("otherProp", JsBoolean(true)))
+    assert(allCandidates.get.candidates.size == 3)
     assert(allCandidates.get.containerCandidates.isEmpty)
     assert(allCandidates.get.variableCandidates.size == 2)
   }
@@ -102,7 +79,7 @@ class TrainerSpec extends TestBase {
     }
 
     it("will escape HTML") {
-      val escapedPreview = Trainer("", "es7", "const definedAs = <div><b></b><abc></abc></div>", JsObject.empty).generatePreview(Range(18, 30))
+      val escapedPreview = Trainer("es7", "const definedAs = <div><b></b><abc></abc></div>").generatePreview(Range(18, 30))
       assert(escapedPreview == "...finedAs = <b>&lt;div&gt;&lt;b&gt;&lt;/b&gt;</b>&lt;abc&gt;&lt;/abc...")
     }
   }
@@ -120,10 +97,7 @@ class TrainerSpec extends TestBase {
         |}, 500)
       """.stripMargin
 
-    val withcontainerMutations = Trainer("", "es7", snippet, JsObject(Seq(
-      "method" -> JsString("get"),
-      "tiemout" -> JsNumber(500)
-    )))
+    val withcontainerMutations = Trainer("es7", snippet)
 
     it("can still create a valid candidate even after comments are removed") {
       val result = withcontainerMutations.returnAllCandidates

@@ -1,7 +1,7 @@
 package com.opticdev.cli
 
 import better.files.File
-import com.opticdev.cli.commands.{DumpGraph, Publish}
+import com.opticdev.cli.commands.{DumpGraph, Publish, StartServer}
 import com.opticdev.common.BuildInfo
 import com.opticdev.sdk.markdown.CallOpticMarkdown
 
@@ -15,6 +15,9 @@ object Cli extends App  {
 
     cmd("publish").action( (_, c) => c.copy(mode = "publish") ).
       text("publishes the current project graph")
+
+    cmd("startserver").action( (_, c) => c.copy(mode = "startserver") ).
+      text("starts a headless optic server on port 30333")
 
     cmd("dumpgraph").action( (_, c) => c.copy(mode = "dumpgraph") ).
       text("dumps the project graph for the optic project in pwd").
@@ -35,6 +38,7 @@ object Cli extends App  {
     case Some(config) =>
       config.mode match {
         case "publish" => Publish.publish(File(System.getProperty("user.dir")))
+        case "startserver" => StartServer.start
         case "dumpgraph" => DumpGraph.run(File(System.getProperty("user.dir")), config.bashScript)
         case _ => println(parser.usage)
       }

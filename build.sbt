@@ -33,6 +33,7 @@ lazy val common = (project in file("common")).
    buildInfoKeys := Seq[BuildInfoKey](
      "opticMDVersion" -> Constants.opticMDVersion,
      "currentOpticVersion" -> appVersion,
+     "supportedSdks" -> Constants.supportedSdks,
    ),
    buildInfoPackage := "com.opticdev.common"
  )
