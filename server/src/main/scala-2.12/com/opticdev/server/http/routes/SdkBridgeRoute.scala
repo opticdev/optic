@@ -86,7 +86,7 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
                } else {
                  val mutate = TestLens.testLensMutate(packageObjectTry.get, lensIdTry.get, inputTry.get, languageTry.get, newValueTry.get)
                  if (mutate.isSuccess) {
-                   JsObject(Seq("success" -> JsBoolean(true), "result" -> JsString(mutate.get)))
+                   JsObject(Seq("success" -> JsBoolean(true), "code" -> JsString(mutate.get)))
                  } else {
                    JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(mutate.failed.map(_.getMessage).get)))
                  }
