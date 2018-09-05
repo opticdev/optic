@@ -5,7 +5,6 @@ import com.opticdev.core.compiler.errors.{ErrorAccumulator, SomePackagesFailedTo
 import com.opticdev.core.sourcegear.context.{FlatContext, FlatContextBuilder}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.storage.SGConfigStorage
-import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.{DependencyTree, PackageManager}
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 
@@ -20,8 +19,6 @@ object SGConstructor {
     if (useCache && cacheTry.isSuccess) {
       Future(loadFromCache(projectFile).get)
     } else {
-
-      implicit val projectKnowledgeSearchPaths = projectFile.projectKnowledgeSearchPaths
 
       val dependencies: DependencyTree = dependenciesForProjectFile(projectFile).get
 
@@ -42,7 +39,7 @@ object SGConstructor {
 
   def loadFromCache(projectFile: ProjectFile) = SGConfigStorage.loadFromStorage(projectFile.hash)
 
-  def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef], connectedProjects: Set[String])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths)  : Future[SGConfig] = Future {
+  def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef], connectedProjects: Set[String])  : Future[SGConfig] = Future {
 
     val compiled = compileDependencyTree(dependencies).get
 
@@ -57,9 +54,6 @@ object SGConstructor {
   }
 
   def dependenciesForProjectFile(projectFile: ProjectFile): Try[DependencyTree] = {
-
-    implicit val projectKnowledgeSearchPaths = projectFile.projectKnowledgeSearchPaths
-
     val dependencies: Seq[PackageRef] = projectFile.dependencies.getOrElse(Vector())
     PackageManager.collectPackages(dependencies)
   }

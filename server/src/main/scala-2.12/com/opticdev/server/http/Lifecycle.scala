@@ -12,7 +12,6 @@ import com.opticdev.opm.providers.LocalProvider
 import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
 import com.opticdev.parsers
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.markdown.CallOpticMarkdown
 import com.opticdev.server.state.ProjectsManager
 import java.io.{File => JFile}
 import scala.io.Source
@@ -33,10 +32,7 @@ object Lifecycle extends App {
   def startup = {
 
     Try(BindCLI.toNativeBash(
-      new JFile(this.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).getPath,
-      File(CallOpticMarkdown.scriptPath).pathAsString))
-
-    if (!CallOpticMarkdown.isValid) throw new Error("Optic Markdown version does not match expected")
+      new JFile(this.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).getPath))
 
     Server.start()
 

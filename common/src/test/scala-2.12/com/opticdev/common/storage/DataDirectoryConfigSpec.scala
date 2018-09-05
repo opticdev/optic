@@ -45,21 +45,6 @@ class DataDirectoryConfigSpec extends FunSpec with BeforeAndAfterAll {
     }
   }
 
-  describe("can migrate data directory") {
-
-    def stagedMigration =  {
-      DataDirectory.init
-      DataDirectoryConfig.saveConfigStatus(DataDirectoryConfig.ConfigStatus("0.1.0", Seq()))
-      (DataDirectory.markdownCache / "testFile").createIfNotExists()
-    }
-
-    it("when optic markdown version changes") {
-      stagedMigration
-      DataDirectoryConfig.triggerMigration
-      assert(DataDirectory.markdownCache.list.isEmpty)
-    }
-  }
-
   it("will reset data directory if config.json is invalid") {
     val test = DataDirectory.root / "test.isItStillThere"
     test.createIfNotExists()

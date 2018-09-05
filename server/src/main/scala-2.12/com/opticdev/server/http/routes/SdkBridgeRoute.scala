@@ -2,9 +2,9 @@ package com.opticdev.server.http.routes
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import com.opticdev.core.trainer.{ProjectFileOptions, TestLens, Trainer}
+import com.opticdev.core.trainer.{ProjectFileOptions, TestLens, TestTransformation, Trainer}
 import com.opticdev.opm.packages.OpticPackage
-import com.opticdev.sdk.markdown.MarkdownParser
+import com.opticdev.server.http.routes.SDKBridgeProtocol.TransformationTest
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 import play.api.libs.json._
 
@@ -16,7 +16,26 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
   val route: Route =
     post {
       pathPrefix("sdk-bridge") {
-         path("lens") {
+        path("transformation" / "test") {
+          entity(as[TransformationTest]) { transformationTest =>
+            val result = TestTransformation.testTransformation(
+              transformationTest.packageJson,
+              transformationTest.transformationId,
+              transformationTest.input,
+              transformationTest.answers
+            )
+
+
+
+            val jsonResult = if (result.isSuccess) {
+              JsObject(Seq("success" -> JsBoolean(true), "result" -> result.get))
+            } else {
+              JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(result.failed.get.getMessage)))
+            }
+            complete(transformationTest.toString)
+          }
+        } ~
+        path("lens") {
            entity(as[JsObject]) { trainerRequest =>
              val trainerResults = Try({
                val languageName = trainerRequest.value("languageName").as[JsString].value

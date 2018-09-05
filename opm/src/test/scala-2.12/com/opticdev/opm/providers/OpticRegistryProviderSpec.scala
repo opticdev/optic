@@ -51,7 +51,6 @@ class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
 
   describe("works within the package manager") {
 
-    implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
     it("can install a set of nested dependencies") {
       val results = PackageManager.installPackages(PackageRef("optic:express-js", "0.3.0"))
       assert(results.get == Set("optic:rest@0.3.0", "optic:express-js@0.3.0"))

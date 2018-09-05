@@ -36,7 +36,7 @@ class OpticRegistryProvider extends RemoteProvider {
 //  override val baseUrl: URL = new URL("https://registry.opticdev.com/")
   override val baseUrl: String = s"https://registry.opticdev.com/packages"
 
-  override def resolvePackages(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths(), excludeFromCache: Seq[PackageRef] = Seq()): Future[BatchPackageResult] = {
+  override def resolvePackages(packageRefs: PackageRef*)(implicit excludeFromCache: Seq[PackageRef] = Seq()): Future[BatchPackageResult] = {
 
     val refStringMapping: Map[PackageRef, String] = packageRefs.map(pr=> (pr, pr.full)).toMap
 

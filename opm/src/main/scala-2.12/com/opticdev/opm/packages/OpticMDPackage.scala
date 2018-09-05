@@ -7,7 +7,6 @@ import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
 import scala.util.Try
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.markdown.MarkdownParser
 import com.opticdev.sdk.opticmarkdown2.OMParser
 import com.opticdev.sdk.opticmarkdown2.lens.OMLens
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema

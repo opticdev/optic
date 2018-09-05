@@ -18,7 +18,6 @@ class CacheProviderSpec extends FunSpec with BeforeAndAfterAll with TestPackageP
     PackageStorage.writeToStorage(t.c)
   }
 
-  implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
   val provider = new CacheProvider
 
   it("can find packages saved to cache refs") {

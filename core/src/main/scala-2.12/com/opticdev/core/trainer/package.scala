@@ -1,10 +1,26 @@
 package com.opticdev.core
 
+import akka.actor.ActorSystem
+import com.opticdev.common.PackageRef
+import com.opticdev.common.storage.DataDirectory
+import com.opticdev.core.sourcegear.actors.ActorCluster
+import com.opticdev.core.sourcegear.project.StaticSGProject
+import com.opticdev.core.sourcegear.{SGConstructor, SourceGear}
+import com.opticdev.opm.PackageManager
+import com.opticdev.opm.context.{Leaf, Tree}
+import com.opticdev.opm.packages.OpticMDPackage
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions.enums.BasicComponentType
 import com.opticdev.sdk.descriptions.enums.FinderEnums.StringEnums
 import com.opticdev.sdk.opticmarkdown2.lens._
 import play.api.libs.json._
+
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.util.Try
+import scala.concurrent.Await
 
 package object trainer {
 
@@ -49,4 +65,23 @@ package object trainer {
   case class ProjectFileOptions(name: String, location: String, firstSearchPath: String, mdFiles: Map[String, String])
   implicit val projectfileoptionsFormats = Json.format[ProjectFileOptions]
 
+
+  implicit lazy val actorCluster = new ActorCluster(ActorSystem("trainer"))
+
+  def sgAndParser(description: JsObject): (SourceGear, StaticSGProject, PackageRef) = {
+    val testPackage = OpticMDPackage(description, Map())
+    val testPackageRef = testPackage.packageRef
+
+    val dependencyTree = PackageManager.collectPackages(testPackage.dependencies).getOrElse(Tree())
+
+    val dependencyTreeResolved = Tree(Leaf(testPackage, dependencyTree))
+
+    val sg = SGConstructor.fromDependencies(dependencyTreeResolved, SourceParserManager.installedParsers.map(_.parserRef), Set()).map(_.inflate)
+    sg.onComplete(i=> i.failed.foreach(_.printStackTrace()))
+    val sgBuilt = Await.result(sg, 10 seconds)
+
+    implicit val project = new StaticSGProject("trainer_project", DataDirectory.trainerScratch, sgBuilt)
+
+    (sgBuilt, project, testPackageRef)
+  }
 }

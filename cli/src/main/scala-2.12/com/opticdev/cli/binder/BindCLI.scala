@@ -13,18 +13,18 @@ object BindCLI {
 
   private val _jvmLocation = File(System.getProperties.getProperty("java.home"))
 
-  def toNativeBash(running: String, opticmdPath: String) = {
+  def toNativeBash(running: String) = {
 
     PlatformConstants.platform match {
       case Mac => {
-        bindCmdMac(running, opticmdPath)
+        bindCmdMac(running)
         null
       }
       case _ => println("Could not bind cli to native bash")
     }
   }
 
-  def bindCmdMac(runningJar: String, opticmdPath: String) = {
+  def bindCmdMac(runningJar: String) = {
     if (runningJar.contains(".jar")) {
 
       val cmd = Seq((
@@ -32,7 +32,6 @@ object BindCLI {
         "-cp",
         runningJar.replaceAll(" ", "\\\\ "),
         "com.opticdev.cli.Cli",
-        "\""+opticmdPath.replaceAll(" ", "\\\\ ")+"\"",
         "\"$@\""
       ).mkString(" ")
 

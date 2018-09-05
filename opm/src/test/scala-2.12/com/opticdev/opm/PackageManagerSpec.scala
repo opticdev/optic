@@ -3,7 +3,6 @@ package com.opticdev.opm
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
-import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
 import com.opticdev.parsers.ParserRef
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSpec}
@@ -14,7 +13,6 @@ import scala.concurrent.duration._
 
 class PackageManagerSpec extends FunSpec with TestPackageProviders {
 
-  implicit val projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
   implicit val excludeFromCache : Seq[PackageRef] = Seq()
 
   describe("Package Manager") {

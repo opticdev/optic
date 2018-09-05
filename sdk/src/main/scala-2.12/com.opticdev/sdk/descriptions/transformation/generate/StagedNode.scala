@@ -3,7 +3,7 @@ package com.opticdev.sdk.descriptions.transformation.generate
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.TransformationResult
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsObject, JsValue, Json}
 
 case class StagedNode(schema: SchemaRef,
                       value: JsObject,
@@ -43,4 +43,5 @@ case class StagedNode(schema: SchemaRef,
     }))
   }
 
+  override def jsonPreview: JsValue = Json.toJson(this)
 }

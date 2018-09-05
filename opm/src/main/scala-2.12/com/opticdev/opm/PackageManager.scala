@@ -3,7 +3,7 @@ package com.opticdev.opm
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.StagedPackage
-import com.opticdev.opm.providers.{LocalProvider, ProjectKnowledgeSearchPaths, Provider}
+import com.opticdev.opm.providers.{LocalProvider, Provider}
 import com.opticdev.opm.storage.PackageStorage
 import com.opticdev.parsers.ParserRef
 import com.vdurmont.semver4j.Semver
@@ -20,11 +20,11 @@ object PackageManager {
   def providers = providerStore
   def setProviders(newProviders: Provider*) = providerStore = newProviders
 
-  def installPackage(packageRef: PackageRef)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true, excludeFromCache: Seq[PackageRef]) : Try[Set[String]] = {
+  def installPackage(packageRef: PackageRef)(implicit useCache: Boolean = true, excludeFromCache: Seq[PackageRef]) : Try[Set[String]] = {
     installPackages(packageRef)
   }
 
-  def installPackages(packages: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true, excludeFromCache: Seq[PackageRef]): Try[Set[String]] = Try {
+  def installPackages(packages: PackageRef*)(implicit useCache: Boolean = true, excludeFromCache: Seq[PackageRef]): Try[Set[String]] = Try {
     //name -> satisfied
     val flattenedDependencyTree = collection.mutable.Map[PackageRef, Boolean]()
     packages.foreach(i=> flattenedDependencyTree(i) = false)
@@ -64,7 +64,7 @@ object PackageManager {
     foundPackages.map(_.packageRef.full).toSet
   }
 
-  def collectPackages(packages: Seq[PackageRef])(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true) : Try[DependencyTree] = Try {
+  def collectPackages(packages: Seq[PackageRef])(implicit useCache: Boolean = true) : Try[DependencyTree] = Try {
 
     implicit val excludeFromCache: Seq[PackageRef] = providers.filter(_.isLocalProvider).flatMap(_.asInstanceOf[LocalProvider].listInstalledPackages.map(_.packageRef))
 
@@ -108,7 +108,7 @@ object PackageManager {
   }
 
   //provider query
-  def resultsForRefs(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, useCache: Boolean = true, excludeFromCache: Seq[PackageRef]) : BatchPackageResult= {
+  def resultsForRefs(packageRefs: PackageRef*)(implicit useCache: Boolean = true, excludeFromCache: Seq[PackageRef]) : BatchPackageResult= {
     val lookupResults = providerStore.filterNot(i=> i.isCache && !useCache).foldLeft(Seq(): Seq[BatchPackageResult]) {
       case (results, provider)=> {
         if (results.nonEmpty && results.last.foundAll) {

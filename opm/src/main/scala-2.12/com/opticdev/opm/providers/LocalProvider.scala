@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 
 class LocalProvider extends Provider {
 
-  override def resolvePackages(packageRefs: PackageRef*) (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, excludeFromCache: Seq[PackageRef]) : Future[BatchPackageResult] = Future {
+  override def resolvePackages(packageRefs: PackageRef*) (implicit excludeFromCache: Seq[PackageRef]) : Future[BatchPackageResult] = Future {
 
     val foundPackages = listInstalledPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 
@@ -36,23 +36,8 @@ class LocalProvider extends Provider {
     BatchPackageResult(found.toSet, notFound.toSet)
   }
 
-  def listInstalledPackages (implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths) : Vector[OpticPackage] = {
-    val allFiles = projectKnowledgeSearchPaths.dirs.flatMap(_.listRecursively)
-
-    val results = allFiles.filter(_.extension.orNull == ".md")
-      .map(i => OpticPackage.fromMarkdown(i))
-      .toVector
-
-    //print out failing pacakges
-    results.collect {
-      case Failure(i) => i.printStackTrace()
-    }
-
-    val allPackages = results.collect {
-      case Success(i) => i
-    }
-
-    allPackages
+  def listInstalledPackages() : Vector[OpticPackage] = {
+    Vector()
   }
 
 
