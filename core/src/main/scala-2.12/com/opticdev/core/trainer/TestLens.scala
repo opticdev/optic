@@ -49,7 +49,15 @@ object TestLens {
       sgBuilt,
       null
     )
-    mn.expandedValue(true)
+
+    val expandedValue = mn.expandedValue(true)
+
+
+    if (!mn.matchesSchema()) {
+      throw new SchemaDoesNotMatchException(mn.matchesSchemaErrors().get)
+    }
+
+    expandedValue
   }
 
   def testLensGenerate(description: JsObject, lensId: String, input: JsObject) : Try[String] = Try {

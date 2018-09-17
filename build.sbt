@@ -1,13 +1,10 @@
 import sbtbuildinfo.BuildInfoPlugin.autoImport.buildInfoPackage
 
-import scala.io.Source
-import scala.util.Try
-
 name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "1.0.5"
+val appVersion = "1.0.6"
 
 version := appVersion
 

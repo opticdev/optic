@@ -72,7 +72,8 @@ package object trainer {
     val testPackage = OpticMDPackage(description, Map())
     val testPackageRef = testPackage.packageRef
 
-    val dependencyTree = PackageManager.collectPackages(testPackage.dependencies).getOrElse(Tree())
+    val dependencies = testPackage.dependencies
+    val dependencyTree = PackageManager.collectPackages(dependencies).getOrElse(Tree())
 
     val dependencyTreeResolved = Tree(Leaf(testPackage, dependencyTree))
 
@@ -83,5 +84,9 @@ package object trainer {
     implicit val project = new StaticSGProject("trainer_project", DataDirectory.trainerScratch, sgBuilt)
 
     (sgBuilt, project, testPackageRef)
+  }
+
+  case class SchemaDoesNotMatchException(errors: String) extends Exception {
+    override def toString: String = s"Parsed code does not conform to schema: ${errors}"
   }
 }

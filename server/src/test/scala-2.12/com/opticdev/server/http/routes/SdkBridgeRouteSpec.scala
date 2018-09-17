@@ -100,7 +100,7 @@ class SdkBridgeRouteSpec extends FunSpec with Matchers with ScalatestRouteTest w
 
         Post("/sdk-bridge/lens/test/parse", HttpEntity(ContentType(MediaTypes.`application/json`), postBody.toString())) ~> trainerRoute.route ~> check {
           val response = responseAs[JsObject]
-          assert(response == Json.parse("""{"success":false,"error":"assertion failed: No model nodes from lens 'using-require' found."}"""))
+          assert(response == Json.parse("""{"success":false,"error":"requirement failed: No model nodes from lens 'using-require' found."}"""))
         }
 
       }
@@ -121,7 +121,7 @@ class SdkBridgeRouteSpec extends FunSpec with Matchers with ScalatestRouteTest w
 
         Post("/sdk-bridge/lens/test/mutate", HttpEntity(ContentType(MediaTypes.`application/json`), postBody.toString())) ~> trainerRoute.route ~> check {
           val response = responseAs[JsObject]
-          assert(response == Json.parse("""{"success":true,"result":"let test = require('test2')"}"""))
+          assert(response == Json.parse("""{"success":true,"code":"let test = require('test2')"}"""))
         }
 
       }

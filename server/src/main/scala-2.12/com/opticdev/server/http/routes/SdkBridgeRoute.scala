@@ -28,7 +28,7 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
 
 
             val jsonResult = if (result.isSuccess) {
-              JsObject(Seq("success" -> JsBoolean(true), "result" -> result.get))
+              JsObject(Seq("success" -> JsBoolean(true), "value" -> result.get))
             } else {
               JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(result.failed.get.getMessage)))
             }
@@ -46,7 +46,6 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
              val resultWrapped = if (trainerResults.isSuccess) {
                JsObject(Seq("success" -> JsBoolean(true), "trainingResults" -> trainerResults.get.asJson))
              } else {
-               println(trainerResults.failed.map(_.printStackTrace()))
                JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(trainerResults.failed.get.toString)))
              }
 
@@ -61,7 +60,6 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
 
              path("generate") {
                val inputObjectTry = Try(testRequest.value("inputObject").as[JsObject])
-
                val resultWrapped = if (packageObjectTry.isFailure || lensIdTry.isFailure || inputObjectTry.isFailure) {
                  JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString("invalid request. must include fields for packageJson, lensId and inputObject")))
                } else {
@@ -69,7 +67,7 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
                  if (generate.isSuccess) {
                    JsObject(Seq("success" -> JsBoolean(true), "code" -> JsString(generate.get)))
                  } else {
-                   JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(generate.failed.map(_.getMessage).get)))
+                   JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(generate.failed.get.toString)))
                  }
                }
 
@@ -86,9 +84,10 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
                } else {
                  val parse = TestLens.testLensParse(packageObjectTry.get, lensIdTry.get, inputTry.get, languageTry.get)
                  if (parse.isSuccess) {
-                   JsObject(Seq("success" -> JsBoolean(true), "result" -> parse.get))
+                   JsObject(Seq("success" -> JsBoolean(true), "value" -> parse.get))
                  } else {
-                   JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(parse.failed.map(_.getMessage).get)))
+                   println(parse.failed.map(_.printStackTrace()))
+                   JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(parse.failed.get.toString)))
                  }
                }
 
@@ -107,7 +106,7 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
                  if (mutate.isSuccess) {
                    JsObject(Seq("success" -> JsBoolean(true), "code" -> JsString(mutate.get)))
                  } else {
-                   JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(mutate.failed.map(_.getMessage).get)))
+                   JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(mutate.failed.get.toString)))
                  }
                }
 
