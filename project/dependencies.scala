@@ -40,7 +40,7 @@ object Dependencies {
     "com.vdurmont" % "semver4j" % "2.2.0",
     "org.slf4j" % "slf4j-simple" % "1.7.25" % "test",
     "com.opticdev" %% "parser-foundation" % parserFoundationVersion
-  )
+  ) ++ Parsers.list
 
   val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Seq(
     "com.typesafe.play" %% "play-json" % "2.6.2",
@@ -96,7 +96,7 @@ object Dependencies {
     "com.opticdev" %% "marvin-runtime" % marvinVersion,
     "com.opticdev" %% "marvin-common" % marvinVersion,
     "me.xdrop" % "fuzzywuzzy" % "1.1.9"
-  ) ++ Parsers.list
+  )
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",

@@ -61,7 +61,7 @@ class TestProvider extends Provider {
 
   val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticMongoose, opticExpress)
 
-  override def resolvePackages(packageRefs: PackageRef*) (implicit excludeFromCache: Seq[PackageRef] = Seq()): Future[BatchPackageResult] = Future {
+  override def resolvePackages(packageRefs: PackageRef*): Future[BatchPackageResult] = Future {
     val foundPackages = allPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 
     val foundVersions = packageRefs.map(i=> {

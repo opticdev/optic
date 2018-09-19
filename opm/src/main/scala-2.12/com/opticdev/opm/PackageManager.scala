@@ -3,9 +3,9 @@ package com.opticdev.opm
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.StagedPackage
-import com.opticdev.opm.providers.{LocalProvider, Provider}
+import com.opticdev.opm.providers.Provider
 import com.opticdev.opm.storage.PackageStorage
-import com.opticdev.parsers.ParserRef
+import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import com.opticdev.opm.packages.OpticPackage
@@ -20,11 +20,11 @@ object PackageManager {
   def providers = providerStore
   def setProviders(newProviders: Provider*) = providerStore = newProviders
 
-  def installPackage(packageRef: PackageRef)(implicit useCache: Boolean = true, excludeFromCache: Seq[PackageRef]) : Try[Set[String]] = {
+  def installPackage(packageRef: PackageRef)(implicit useCache: Boolean = true) : Try[Set[String]] = {
     installPackages(packageRef)
   }
 
-  def installPackages(packages: PackageRef*)(implicit useCache: Boolean = true, excludeFromCache: Seq[PackageRef]): Try[Set[String]] = Try {
+  def installPackages(packages: PackageRef*)(implicit useCache: Boolean = true): Try[Set[String]] = Try {
     //name -> satisfied
     val flattenedDependencyTree = collection.mutable.Map[PackageRef, Boolean]()
     packages.foreach(i=> flattenedDependencyTree(i) = false)
@@ -66,13 +66,9 @@ object PackageManager {
 
   def collectPackages(packages: Seq[PackageRef])(implicit useCache: Boolean = true) : Try[DependencyTree] = Try {
 
-    implicit val excludeFromCache: Seq[PackageRef] = providers.filter(_.isLocalProvider).flatMap(_.asInstanceOf[LocalProvider].listInstalledPackages.map(_.packageRef))
-
     var loaded = packages.map{
-      case packageRef if excludeFromCache.exists(_.packageId == packageRef.packageId) => (packageRef, Failure(new Exception("Package is local")))
       case packageRef => (packageRef, PackageStorage.loadFromStorage(packageRef))
     }
-
 
     val tryInstall = {
       if (loaded.exists(_._2.isFailure)) {
@@ -108,7 +104,7 @@ object PackageManager {
   }
 
   //provider query
-  def resultsForRefs(packageRefs: PackageRef*)(implicit useCache: Boolean = true, excludeFromCache: Seq[PackageRef]) : BatchPackageResult= {
+  def resultsForRefs(packageRefs: PackageRef*)(implicit useCache: Boolean = true) : BatchPackageResult= {
     val lookupResults = providerStore.filterNot(i=> i.isCache && !useCache).foldLeft(Seq(): Seq[BatchPackageResult]) {
       case (results, provider)=> {
         if (results.nonEmpty && results.last.foundAll) {
@@ -131,16 +127,12 @@ object PackageManager {
 
     val distinctParserRefs = parserRefs.distinct
 
-    val futures = providers.map(_.resolveParsers(distinctParserRefs:_*))
+    val results = distinctParserRefs.map(l=> SourceParserManager.parserById(l).getOrElse(l))
 
-    val future = Future.sequence(futures)
+    val found = results.collect{ case p: ParserBase => p}.toSet
+    val notFound = results.collect{ case pr: ParserRef => pr}.toSet
 
-    val result = Await.result(future, 2 minutes)
-
-    import com.opticdev.opm.utils.FlattenBatchResultsImplicits._
-
-    result.flattenResults
-
+    BatchParserResult(found, notFound)
   }
 
 }

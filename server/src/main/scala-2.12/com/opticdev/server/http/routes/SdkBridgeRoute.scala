@@ -24,15 +24,12 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
               transformationTest.input,
               transformationTest.answers
             )
-
-
-
             val jsonResult = if (result.isSuccess) {
-              JsObject(Seq("success" -> JsBoolean(true), "value" -> result.get))
+              JsObject(Seq("success" -> JsBoolean(true), "result" -> result.get))
             } else {
               JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(result.failed.get.getMessage)))
             }
-            complete(transformationTest.toString)
+            complete(jsonResult)
           }
         } ~
         path("lens") {
@@ -86,7 +83,6 @@ class SdkBridgeRoute(implicit executionContext: ExecutionContext) {
                  if (parse.isSuccess) {
                    JsObject(Seq("success" -> JsBoolean(true), "value" -> parse.get))
                  } else {
-                   println(parse.failed.map(_.printStackTrace()))
                    JsObject(Seq("success" -> JsBoolean(false), "error" -> JsString(parse.failed.get.toString)))
                  }
                }

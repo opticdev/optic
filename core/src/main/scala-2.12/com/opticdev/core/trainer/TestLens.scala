@@ -16,6 +16,7 @@ import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.parsers.{AstGraph, ParserBase, SourceParserManager}
 import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
 import com.opticdev.sdk.opticmarkdown2.LensRef
 import com.opticdev.sdk.opticmarkdown2.lens.OMLens
@@ -34,9 +35,10 @@ object TestLens {
 
     val parseResults = sgBuilt.parseString(testInput)(project, language).get
 
-    require(parseResults.modelNodes.nonEmpty, s"No model nodes from lens '${lensId}' found.")
+    val filteredModelNodes = parseResults.modelNodes.filter(_.lensRef == LensRef(Some(testPackageRef), lensId))
+    require(filteredModelNodes.nonEmpty, s"No model nodes from lens '${lensId}' found.")
 
-    val mn: FlatModelNode = parseResults.modelNodes.minBy {
+    val mn: FlatModelNode = filteredModelNodes.minBy {
       case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
       case mmn: MultiModelNode => mmn.modelNodes.head.resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
     }
@@ -62,14 +64,21 @@ object TestLens {
 
   def testLensGenerate(description: JsObject, lensId: String, input: JsObject) : Try[String] = Try {
     implicit val (sgBuilt, project, testPackageRef) = sgAndParser(description)
-    sgBuilt.findLens(LensRef(Some(testPackageRef), lensId)).get.renderer.render(input)
+    val variableMapping: VariableMapping = Try(input.value.get("_variables").map(i=> {
+      Json.fromJson[VariableMapping](i).get
+    }).get).getOrElse(Map())
+
+    sgBuilt.findLens(LensRef(Some(testPackageRef), lensId)).get.renderer.render(input, Map(), variableMapping)
   }
 
   def testLensMutate(description: JsObject, lensId: String, testInput: String, language: String, newValue: JsObject) : Try[String] = Try {
     implicit val (sgBuilt, project, testPackageRef) = sgAndParser(description)
     val parseResults = sgBuilt.parseString(testInput)(project, language).get
 
-    val mn: FlatModelNode = parseResults.modelNodes.minBy {
+    val filteredModelNodes = parseResults.modelNodes.filter(_.lensRef == LensRef(Some(testPackageRef), lensId))
+    require(filteredModelNodes.nonEmpty, s"No model nodes from lens '${lensId}' found.")
+
+    val mn: FlatModelNode = filteredModelNodes.minBy {
       case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
       case mmn: MultiModelNode => mmn.modelNodes.head.resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
     }
