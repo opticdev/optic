@@ -59,7 +59,7 @@ object Render {
   }
 
   def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[SGExportableLens] = {
-    val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.lensId.get).get)
+    val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.generatorId.get).get)
     if (lensRefTry.isSuccess) {
       val lensRef = lensRefTry.get
       val localOption = Try(context.resolve(lensRef.internalFull).get.asInstanceOf[CompiledLens])
@@ -123,7 +123,7 @@ object Render {
     implicit val flatContext = sourceGear.flatContext
     fromStagedNode(StagedNode(schemaRef, value, Some(
       RenderOptions(
-        lensId = gearIdOption
+        generatorId = gearIdOption
       )
     )), variableMapping)
   }

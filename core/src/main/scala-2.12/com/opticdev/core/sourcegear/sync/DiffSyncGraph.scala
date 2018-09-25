@@ -87,7 +87,7 @@ object DiffSyncGraph {
 
         //@todo need a better approach to this since mutation transforms are not syncable
         val stagedNode = transformationResult.asInstanceOf[GenerateResult].toStagedNode(Some(RenderOptions(
-          lensId = Some(targetNode.lensRef.full)
+          generatorId = Some(targetNode.lensRef.full)
         )))
 
         implicit val sourceGearContext: SGContext = snapshot.contextForNode(targetNode.flatten)

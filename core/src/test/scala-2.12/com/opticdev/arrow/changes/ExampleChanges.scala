@@ -73,7 +73,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"position": 93,
         |			"_type":"com.opticdev.arrow.changes.location.AsChildOf"
         |		},
-        |   "lensId": "optic:express-js/route",
+        |   "generatorId": "optic:express-js/route",
         |   "answers": {},
         |		"_type":"com.opticdev.arrow.changes.InsertModel"
         |	}]
@@ -138,7 +138,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |			"method": "post",
         |			"url": "test/url"
         |		},
-        |		"lensId": "optic:express-js/route",
+        |		"generatorId": "optic:express-js/route",
         |		"atLocation": {
         |			"file": "test-examples/resources/tmp/test_project/app.js",
         |			"position": 38,
@@ -202,7 +202,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |     "id": "85c0d9c3"
         |   }],
         |   "askSchema": {"type": "object"},
-        |   "lensId": "optic:express-js/route",
+        |   "generatorId": "optic:express-js/route",
         | 	"locationOptions": [{
         |		  "file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
@@ -260,7 +260,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |					"_order": ["queryProvider"],
         |					"required": ["queryProvider"]
         |				},
-        |				"script": "function transform(input, answers) {\n var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n  var routeDescription = {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n\n   var queryDescription = {\n        fields: Object.keys(input.schema).reduce(function (previous, current) {\n            previous[current] = Generate('optic:rest/parameter', { in: 'body', name: current });\n            return previous;\n        }, {})\n    };\n\n  return Generate(answers.output, routeDescription, {\n        containers: {\n            \"callback\": [Generate('optic:mongoose/create-record', queryDescription, { \n lensId: answers.queryProvider \n  })]\n        }\n    });\n}"
+        |				"script": "function transform(input, answers) {\n var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n  var routeDescription = {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n\n   var queryDescription = {\n        fields: Object.keys(input.schema).reduce(function (previous, current) {\n            previous[current] = Generate('optic:rest/parameter', { in: 'body', name: current });\n            return previous;\n        }, {})\n    };\n\n  return Generate(answers.output, routeDescription, {\n        containers: {\n            \"callback\": [Generate('optic:mongoose/create-record', queryDescription, { \n generatorId: answers.queryProvider \n  })]\n        }\n    });\n}"
         |			},
         |			"target": "optic:rest@0.1.0/route",
         |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
@@ -299,7 +299,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |		}],
         |		"_type": "com.opticdev.arrow.changes.RunTransformation",
-        |		"lensId": "optic:express-js/route",
+        |		"generatorId": "optic:express-js/route",
         |		"location": {
         |			"file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,
@@ -423,7 +423,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |   }],
         |   "inputModelId": "test123",
         |   "askSchema": {"type": "object"},
-        |   "lensId": "optic:express-js/route",
+        |   "generatorId": "optic:express-js/route",
         | 	"locationOptions": [{
         |		  "file": "test-examples/resources/tmp/test_project/nested/testMutationTransform.js",
         |		  "position": 173,
@@ -481,7 +481,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |   }],
         |   "inputModelId": "test123",
         |   "askSchema": {"type": "object"},
-        |   "lensId": "optic:express-js/route",
+        |   "generatorId": "optic:express-js/route",
         | 	"locationOptions": [{
         |		  "file": "test-examples/resources/tmp/test_project/nested/testMutationTransform.js",
         |		  "position": 65,
@@ -543,7 +543,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |					"_order": ["queryProvider"],
         |					"required": ["queryProvider"]
         |				},
-        |				"script": "function transform(input, answers) {\n var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n  var routeDescription = {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n\n   var queryDescription = {\n        fields: Object.keys(input.schema).reduce(function (previous, current) {\n            previous[current] = Generate('optic:rest/parameter', { in: 'body', name: current });\n            return previous;\n        }, {})\n    };\n\n  return Generate(answers.output, routeDescription, { \n inFile: 'test-examples/resources/tmp/test_project/nested/notHereYet.js', \n \n       containers: {\n            \"callback\": [Generate('optic:mongoose/create-record', queryDescription, { \n lensId: answers.queryProvider \n  })]\n        }\n    });\n}"
+        |				"script": "function transform(input, answers) {\n var routeName = input.name.toLowerCase();\n    var route = \"/\" + routeName;\n\n    var parameters = Object.keys(input.schema).map(function (i) {\n        return {\n            in: 'body',\n            name: i\n        };\n    });\n\n  var routeDescription = {\n        method: \"post\",\n        url: route,\n        parameters: parameters\n    };\n\n   var queryDescription = {\n        fields: Object.keys(input.schema).reduce(function (previous, current) {\n            previous[current] = Generate('optic:rest/parameter', { in: 'body', name: current });\n            return previous;\n        }, {})\n    };\n\n  return Generate(answers.output, routeDescription, { \n inFile: 'test-examples/resources/tmp/test_project/nested/notHereYet.js', \n \n       containers: {\n            \"callback\": [Generate('optic:mongoose/create-record', queryDescription, { \n generatorId: answers.queryProvider \n  })]\n        }\n    });\n}"
         |			},
         |			"target": "optic:rest@0.1.0/route",
         |			"_type": "com.opticdev.arrow.graph.KnowledgeGraphImplicits.DirectTransformation"
@@ -582,7 +582,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
         |		  "_type": "com.opticdev.arrow.changes.location.AsChildOf"
         |		}],
         |		"_type": "com.opticdev.arrow.changes.RunTransformation",
-        |		"lensId": "optic:express-js/route",
+        |		"generatorId": "optic:express-js/route",
         |		"location": {
         |			"file": "test-examples/resources/tmp/test_project/nested/model.js",
         |		  "position": 173,

@@ -16,21 +16,21 @@ class RenderOptionsSpec extends FunSpec {
   //Map + Map1 = Map + Map1
   describe("merging") {
 
-    describe("lensIds") {
+    describe("generator IDs") {
 
       it("will not overwrite a value with None") {
-        val merged = RenderOptions(lensId = Some("ABC")).mergeWith(RenderOptions())
-        assert(merged.lensId.get == "ABC")
+        val merged = RenderOptions(generatorId = Some("ABC")).mergeWith(RenderOptions())
+        assert(merged.generatorId.get == "ABC")
       }
 
       it("will replace existing value with new value") {
-        val merged = RenderOptions(lensId = Some("ABC")).mergeWith(RenderOptions(lensId = Some("abc")))
-        assert(merged.lensId.get == "abc")
+        val merged = RenderOptions(generatorId = Some("ABC")).mergeWith(RenderOptions(generatorId = Some("abc")))
+        assert(merged.generatorId.get == "abc")
       }
 
       it("will replace None with new value") {
-        val merged = RenderOptions().mergeWith(RenderOptions(lensId = Some("abc")))
-        assert(merged.lensId.get == "abc")
+        val merged = RenderOptions().mergeWith(RenderOptions(generatorId = Some("abc")))
+        assert(merged.generatorId.get == "abc")
       }
 
     }

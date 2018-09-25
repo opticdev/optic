@@ -26,7 +26,7 @@ sealed trait OpticChange {
 
 /* Inserts model somewhere in code */
 case class InsertModel(schema: OMSchema,
-                       lensId: Option[String] = None,
+                       generatorId: Option[String] = None,
                        value: JsObject,
                        atLocation: Option[InsertLocation]
                       ) extends OpticChange {
@@ -39,7 +39,7 @@ case class RunTransformation(transformationChanges: TransformationChanges,
                              askSchema: JsObject,
 
                              lensOptions: Seq[LensOption],
-                             lensId: Option[String],
+                             generatorId: Option[String],
 
                              locationOptions: Seq[InsertLocation],
                              location: Option[InsertLocation],
