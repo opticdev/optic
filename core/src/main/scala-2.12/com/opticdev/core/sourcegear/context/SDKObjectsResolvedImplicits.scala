@@ -19,9 +19,9 @@ object SDKObjectsResolvedImplicits {
         transformation.packageId.packageId
       }
 
-      val a = resolveSchema(pId, transformation.input.id)
+      val a = resolveSchema(pId, transformation.input.id, transformation.input.packageRef.map(_.packageId))
 
-      Try(resolveSchema(pId, transformation.input.id).get.asInstanceOf[OMSchema].schemaRef)
+      Try(resolveSchema(pId, transformation.input.id, transformation.input.packageRef.map(_.packageId)).get.asInstanceOf[OMSchema].schemaRef)
         .getOrElse(throw new Exception(s"Schema '${transformation.input}' not found"))
     }
 
@@ -34,7 +34,7 @@ object SDKObjectsResolvedImplicits {
           transformation.packageId.packageId
         }
 
-        Try(resolveSchema(pId, output.id).get.asInstanceOf[OMSchema].schemaRef)
+        Try(resolveSchema(pId, output.id, output.packageRef.map(_.packageId)).get.asInstanceOf[OMSchema].schemaRef)
           .getOrElse(throw new Exception(s"Schema '${transformation.output}' not found"))
       }
     }
@@ -52,7 +52,7 @@ object SDKObjectsResolvedImplicits {
       if (compiledLens.schema.isRight) {
         compiledLens.schemaRef
       } else {
-        Try(resolveSchema(pId, compiledLens.schemaRef.id).get.asInstanceOf[OMSchema].schemaRef)
+        Try(resolveSchema(pId, compiledLens.schemaRef.id, compiledLens.schemaRef.packageRef.map(_.packageId)).get.asInstanceOf[OMSchema].schemaRef)
           .getOrElse(throw new Exception(s"Schema '${compiledLens.schemaRef}' not found"))
       }
     }
@@ -67,14 +67,23 @@ object SDKObjectsResolvedImplicits {
         packageId
       }
 
-      Try(resolveSchema(pId, schemaComponent.schemaRef.id).get.asInstanceOf[OMSchema].schemaRef)
+      Try(resolveSchema(pId, schemaComponent.schemaRef.id, Some(packageId)).get.asInstanceOf[OMSchema].schemaRef)
         .getOrElse(throw new Exception(s"Schema '${schemaComponent.schemaRef}' not found"))
 
     }
   }
 
-  private def resolveSchema(packageId: String, item: String)(implicit sourceGear: SourceGear): Option[SGExportable] = {
-    sourceGear.flatContext.prefix(packageId).resolve(item).collect {
+  private def resolveSchema(packageId: String, item: String, parentPackageId: Option[String])(implicit sourceGear: SourceGear): Option[SGExportable] = {
+
+    val baseContext = {
+      if (parentPackageId.isDefined && !parentPackageId.contains(packageId)) {
+        sourceGear.flatContext.prefix(parentPackageId.get).prefix(packageId)
+      } else {
+        sourceGear.flatContext.prefix(packageId)
+      }
+    }
+
+    baseContext.resolve(item).collect {
       case x: OMSchema => x
       case l: CompiledLens if l.schema.isRight => l.schema.right.get
       case l: CompiledMultiNodeLens if l.schema.isRight => l.schema.right.get

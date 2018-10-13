@@ -7,6 +7,7 @@ import akka.http.scaladsl.unmarshalling.Unmarshal
 import scala.concurrent.ExecutionContext
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Route, StandardRoute}
+import com.opticdev.common.storage.DataDirectory
 import com.opticdev.common.{BuildInfo, SchemaRef}
 import com.opticdev.server.http.HTTPResponse
 import com.opticdev.server.state.ProjectsManager
@@ -45,6 +46,15 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
           )))
         }
         }
+      }
+    } ~
+    post {
+      path("trigger-refresh") {
+        //clear all cached sourcegears
+        DataDirectory.sourcegear.list.foreach(_.delete(true))
+        //trigger a rebuild all of active projects
+        projectsManager.activeProjects.foreach(_.fullRefresh)
+        complete("Done")
       }
     }
 

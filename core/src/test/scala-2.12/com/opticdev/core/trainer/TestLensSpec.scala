@@ -10,7 +10,6 @@ class TestLensSpec extends TestBase {
   val importExample = Json.parse(File(
     "test-examples/resources/example_packages/optic:ImportExample@0.1.0.json").contentAsString).as[JsObject]
 
-
   describe("parsing") {
     it("works when valid input and sourcegear") {
       val results = TestLens.testLensParse(importExample, "using-require", "let definedAs = require('pathTo')", "es7")

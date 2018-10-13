@@ -49,7 +49,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
     it("if set in options") {
       LensRef.fromString(a.id, Some(a.packageRef))
-      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(lensId = Some(LensRef.fromString(a.id, Some(a.packageRef)).get.full))))
+      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(generatorId = Some(LensRef.fromString(a.id, Some(a.packageRef)).get.full))))
       val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
       assert(result.contains(a))
     }
@@ -61,7 +61,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
     }
 
     it("will return none if gear is not found") {
-      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(lensId = Some("FAKE"))))
+      val stagedNode = StagedNode(testSchemaRef, JsObject.empty, Some(RenderOptions(generatorId = Some("FAKE"))))
       val result = Render invokePrivate resolveLens(stagedNode, sourceGear, sourceGear.flatContext)
       assert(result.isEmpty)
     }

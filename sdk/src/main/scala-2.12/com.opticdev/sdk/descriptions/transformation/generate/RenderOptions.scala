@@ -4,7 +4,7 @@ import com.opticdev.sdk.opticmarkdown2.LensRef
 import com.opticdev.sdk.{ContainersContent, VariableMapping}
 
 
-case class RenderOptions(lensId: Option[String] = None,
+case class RenderOptions(generatorId: Option[String] = None,
                          containers: Option[ContainersContent] = None,
                          variables: Option[VariableMapping] = None,
                          tag: Option[String] = None,
@@ -12,13 +12,13 @@ case class RenderOptions(lensId: Option[String] = None,
                         ) {
 
   def mergeWith(other: RenderOptions): RenderOptions = RenderOptions(
-    lensId = {
-      if (this.lensId.isEmpty) {
-        other.lensId
-      } else if (this.lensId.isDefined && other.lensId.isEmpty) {
-        this.lensId
+    generatorId = {
+      if (this.generatorId.isEmpty) {
+        other.generatorId
+      } else if (this.generatorId.isDefined && other.generatorId.isEmpty) {
+        this.generatorId
       } else {
-        other.lensId
+        other.generatorId
       }
     },
     containers = {
@@ -63,6 +63,6 @@ case class RenderOptions(lensId: Option[String] = None,
     }
   )
 
-  def lensRef : Option[LensRef] = lensId.flatMap(i=> LensRef.fromString(i).toOption)
+  def lensRef : Option[LensRef] = generatorId.flatMap(i=> LensRef.fromString(i).toOption)
 
 }

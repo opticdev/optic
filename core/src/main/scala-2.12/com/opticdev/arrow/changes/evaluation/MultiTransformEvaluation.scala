@@ -30,7 +30,7 @@ object MultiTransformEvaluation {
     val generations = multiTransform.transforms.collect {
       case generate: GenerateResult => {
         val stagedNode = generate.toStagedNode()
-        generateEval(generate, sourcegear.findSchema(stagedNode.schema).orNull, stagedNode.options.flatMap(_.lensId), false)
+        generateEval(generate, sourcegear.findSchema(stagedNode.schema).orNull, stagedNode.options.flatMap(_.generatorId), false)
       }
     }
 

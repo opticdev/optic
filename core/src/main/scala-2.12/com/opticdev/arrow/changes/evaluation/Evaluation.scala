@@ -29,7 +29,7 @@ object Evaluation {
     case im: InsertModel => {
 
       val stagedNode = StagedNode(im.schema.schemaRef, im.value, Some(RenderOptions(
-        lensId = im.lensId
+        generatorId = im.generatorId
       )))
 
       val renderedTry = Render.fromStagedNode(stagedNode)(sourcegear, sourcegear.flatContext)
@@ -70,7 +70,7 @@ object Evaluation {
       def generateNode(generateResult: GenerateResult, schema: OMSchema, lensIdOption: Option[String], topLevel: Boolean = false) : IntermediateTransformPatch = {
 
         val stagedNode = generateResult.toStagedNode(Some(RenderOptions(
-            lensId = lensIdOption
+            generatorId = lensIdOption
         )))
 
         require(Try(schema.validate(stagedNode.value)).getOrElse(true), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
@@ -108,7 +108,7 @@ object Evaluation {
 
       transformationTry.get match {
         case x if x.yieldsGeneration => {
-          val intermediateTransformPatch = generateNode(transformationTry.get.asInstanceOf[GenerateResult], schema, rt.lensId, topLevel = true)
+          val intermediateTransformPatch = generateNode(transformationTry.get.asInstanceOf[GenerateResult], schema, rt.generatorId, topLevel = true)
           val fileContents = filesStateMonitor.contentsForFile(intermediateTransformPatch.file).get
           val changes = FileChanged(intermediateTransformPatch.file, StringUtils.insertAtIndex(fileContents, intermediateTransformPatch.range.start, intermediateTransformPatch.newContents))
           changes.stageContentsIn(filesStateMonitor)

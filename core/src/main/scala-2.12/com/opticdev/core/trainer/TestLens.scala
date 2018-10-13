@@ -14,12 +14,10 @@ import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
-import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.{AstGraph, ParserBase, SourceParserManager}
 import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
-import com.opticdev.sdk.markdown.MarkdownParser
-import com.opticdev.sdk.markdown.MarkdownParser.MDParseOutput
 import com.opticdev.sdk.opticmarkdown2.LensRef
 import com.opticdev.sdk.opticmarkdown2.lens.OMLens
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
@@ -31,17 +29,16 @@ import scala.util.Try
 
 object TestLens {
 
-  implicit lazy val actorCluster = new ActorCluster(ActorSystem("trainer"))
-
   def testLensParse(description: JsObject, lensId: String, testInput: String, language: String) : Try[JsObject] = Try {
 
     implicit val (sgBuilt, project, testPackageRef) = sgAndParser(description)
 
     val parseResults = sgBuilt.parseString(testInput)(project, language).get
 
-    assert(parseResults.modelNodes.nonEmpty, s"No model nodes from lens '${lensId}' found.")
+    val filteredModelNodes = parseResults.modelNodes.filter(_.lensRef == LensRef(Some(testPackageRef), lensId))
+    require(filteredModelNodes.nonEmpty, s"No model nodes from lens '${lensId}' found.")
 
-    val mn: FlatModelNode = parseResults.modelNodes.minBy {
+    val mn: FlatModelNode = filteredModelNodes.minBy {
       case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
       case mmn: MultiModelNode => mmn.modelNodes.head.resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
     }
@@ -54,19 +51,34 @@ object TestLens {
       sgBuilt,
       null
     )
-    mn.expandedValue(true)
+
+    val expandedValue = mn.expandedValue(true)
+
+
+    if (!mn.matchesSchema()) {
+      throw new SchemaDoesNotMatchException(mn.matchesSchemaErrors().get)
+    }
+
+    expandedValue
   }
 
   def testLensGenerate(description: JsObject, lensId: String, input: JsObject) : Try[String] = Try {
     implicit val (sgBuilt, project, testPackageRef) = sgAndParser(description)
-    sgBuilt.findLens(LensRef(Some(testPackageRef), lensId)).get.renderer.render(input)
+    val variableMapping: VariableMapping = Try(input.value.get("_variables").map(i=> {
+      Json.fromJson[VariableMapping](i).get
+    }).get).getOrElse(Map())
+
+    sgBuilt.findLens(LensRef(Some(testPackageRef), lensId)).get.renderer.render(input, Map(), variableMapping)
   }
 
   def testLensMutate(description: JsObject, lensId: String, testInput: String, language: String, newValue: JsObject) : Try[String] = Try {
     implicit val (sgBuilt, project, testPackageRef) = sgAndParser(description)
     val parseResults = sgBuilt.parseString(testInput)(project, language).get
 
-    val mn: FlatModelNode = parseResults.modelNodes.minBy {
+    val filteredModelNodes = parseResults.modelNodes.filter(_.lensRef == LensRef(Some(testPackageRef), lensId))
+    require(filteredModelNodes.nonEmpty, s"No model nodes from lens '${lensId}' found.")
+
+    val mn: FlatModelNode = filteredModelNodes.minBy {
       case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
       case mmn: MultiModelNode => mmn.modelNodes.head.resolveInGraph[CommonAstNode](parseResults.astGraph).root.graphDepth(parseResults.astGraph)
     }
@@ -87,24 +99,6 @@ object TestLens {
       case mn: ModelNode => mn.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parseResults.astGraph).update(newValue)
       case mmn: MultiModelNode => mmn.modelNodes.head.resolveInGraph[CommonAstNode](parseResults.astGraph).update(newValue)
     }
-  }
-
-  private def sgAndParser(description: JsObject): (SourceGear, StaticSGProject, PackageRef) = {
-    val testPackage = OpticMDPackage(description, Map())
-    val testPackageRef = testPackage.packageRef
-
-    implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
-    val dependencyTree = PackageManager.collectPackages(testPackage.dependencies).getOrElse(Tree())
-
-    val dependencyTreeResolved = Tree(Leaf(testPackage, dependencyTree))
-
-    val sg = SGConstructor.fromDependencies(dependencyTreeResolved, SourceParserManager.installedParsers.map(_.parserRef), Set()).map(_.inflate)
-    sg.onComplete(i=> i.failed.foreach(_.printStackTrace()))
-    val sgBuilt = Await.result(sg, 10 seconds)
-
-    implicit val project = new StaticSGProject("trainer_project", DataDirectory.trainerScratch, sgBuilt)
-
-    (sgBuilt, project, testPackageRef)
   }
 
 }

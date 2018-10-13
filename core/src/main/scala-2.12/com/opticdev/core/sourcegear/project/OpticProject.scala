@@ -18,7 +18,6 @@ import com.opticdev.core.sourcegear.project.status.ProjectStatus
 import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.core.sourcegear.sync.{DiffSyncGraph, SyncPatch}
 import com.opticdev.core.utils.ScheduledTask
-import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import net.jcazevedo.moultingyaml.YamlString
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -95,8 +94,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       implicit val sourceGear = projectSourcegear
       projectStatusInstance.touch
       filesStateMonitor.markUpdated(file)
-      if (shouldWatchFile(file)) projectActor ! FileCreated(file, this) else
-      if (inProjectKnowledgeSearchPaths(file)) regenerateSourceGear(projectFile)
+      if (shouldWatchFile(file)) projectActor ! FileCreated(file, this)
     }
     case (EventType.ENTRY_MODIFY, file) => {
       implicit val sourceGear = projectSourcegear
@@ -105,16 +103,14 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       if (file.isSameFileAs(projectFile.file)) {
         projectFile.reload
       } else {
-        if (shouldWatchFile(file)) projectActor ! FileUpdated(file, this) else
-        if (inProjectKnowledgeSearchPaths(file)) regenerateSourceGear(projectFile)
+        if (shouldWatchFile(file)) projectActor ! FileUpdated(file, this)
       }
     }
     case (EventType.ENTRY_DELETE, file) => {
       implicit val sourceGear = projectSourcegear
       filesStateMonitor.markUpdated(file)
       projectStatusInstance.touch
-      if (shouldWatchFile(file)) projectActor ! FileDeleted(file, this) else
-      if (inProjectKnowledgeSearchPaths(file)) regenerateSourceGear(projectFile)
+      if (shouldWatchFile(file)) projectActor ! FileDeleted(file, this)
     }
   }
 
@@ -172,8 +168,5 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     implicit val timeout: akka.util.Timeout = Timeout(1 minute)
     snapshot.map(snapshot=> DiffSyncGraph.calculateDiff(snapshot)(this))
   }
-
-  def inProjectKnowledgeSearchPaths(file: File) =
-    file.extension(false).contains("md") && projectFile.projectKnowledgeSearchPaths.dirs.exists(searchPath=> file.isChildOf(searchPath))
 
 }

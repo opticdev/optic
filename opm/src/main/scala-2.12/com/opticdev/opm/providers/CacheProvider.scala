@@ -11,10 +11,9 @@ import scala.util.{Failure, Success, Try}
 
 class CacheProvider extends Provider {
 
-  override def resolvePackages(packageRefs: PackageRef*)(implicit projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths, excludeFromCache: Seq[PackageRef]): Future[opm.BatchPackageResult] = Future {
+  override def resolvePackages(packageRefs: PackageRef*): Future[opm.BatchPackageResult] = Future {
 
     val collection = packageRefs.map(pr => {
-      if (excludeFromCache.contains(pr)) throw new Exception("'"+pr.full+"' can not be loaded with this provider")
       (pr, PackageStorage.loadFromStorage(pr))
     })
 

@@ -5,7 +5,6 @@ import java.nio.file.NoSuchFileException
 import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.core.sourcegear.InvalidProjectFileException
-import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.utils.Crypto
 import org.yaml.snakeyaml.parser.ParserException
 
@@ -84,7 +83,6 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
       YamlString("name") -> interface.get.name.yamlValue,
       YamlString("parsers") -> interface.get.parsers.yamlValue,
       YamlString("knowledge") -> interface.get.skills.yamlValue,
-      YamlString("knowledge_paths") -> interface.get.knowledgePaths.yamlValue,
       YamlString("exclude") -> interface.get.exclude.yamlValue
 //      YamlString("relationships") -> relationships.yamlValue
     )
@@ -121,22 +119,6 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
 
   }
 
-  def projectKnowledgeSearchPaths : ProjectKnowledgeSearchPaths = {
-    val searchPaths = interface
-      .map(_.knowledgePaths.value.toVector)
-      .getOrElse(Vector())
-      .collect {
-        case s: YamlString => {
-          val b = new java.io.File(file.parent.pathAsString, s.value)
-          val absolute = b.getCanonicalPath
-          File(absolute)
-        }
-      }
-      .filter(f=> f.exists && f.isDirectory)
-
-    ProjectKnowledgeSearchPaths(searchPaths:_*)
-  }
-
   def connectedProjects: Set[String] = Try {
     interface.get.connectedProjects.value.map(_.value).toSet
   }.getOrElse(Set.empty[String])
@@ -144,8 +126,7 @@ class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChang
   def hash: String = Integer.toHexString({
     MurmurHash3.stringHash(file.parent.pathAsString) ^
     MurmurHash3.setHash(dependencies.get.map(_.full).toSet) ^
-    MurmurHash3.setHash(interfaceForFile.get.parsers.value.map(_.value).toSet) ^
-    MurmurHash3.setHash(projectKnowledgeSearchPaths.dirs.filter(_.exists).map(_.sha1).toSet)
+    MurmurHash3.setHash(interfaceForFile.get.parsers.value.map(_.value).toSet)
   })
 
 }

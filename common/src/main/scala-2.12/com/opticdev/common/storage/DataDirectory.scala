@@ -6,7 +6,6 @@ import com.opticdev.common.PlatformConstants
 object DataDirectory {
   val root = PlatformConstants.dataDirectory
 
-  val markdownCache = PlatformConstants.dataDirectory / "markdown-cache"
   val packages = PlatformConstants.dataDirectory / "packages"
   val parsers = PlatformConstants.dataDirectory / "parsers"
   val compiled = PlatformConstants.dataDirectory / "compiled"
@@ -16,7 +15,6 @@ object DataDirectory {
 
   def hasValidStructure = {
     root.isDirectory &&
-      markdownCache.isDirectory &&
       parsers.isDirectory &&
       packages.isDirectory &&
       compiled.isDirectory &&
@@ -27,7 +25,6 @@ object DataDirectory {
 
   def buildDirectoryStructure = {
     root.createIfNotExists(asDirectory = true)
-    markdownCache.createIfNotExists(asDirectory = true)
     parsers.createIfNotExists(asDirectory = true)
     packages.createIfNotExists(asDirectory = true)
     compiled.createIfNotExists(asDirectory = true)
@@ -59,7 +56,6 @@ object DataDirectory {
   def clearCaches = {
     emptyFolder(packages)
     emptyFolder(sourcegear)
-    emptyFolder(markdownCache)
   }
 
 }

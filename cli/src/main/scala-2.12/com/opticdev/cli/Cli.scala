@@ -3,8 +3,6 @@ package com.opticdev.cli
 import better.files.File
 import com.opticdev.cli.commands.{DumpGraph, Publish, StartServer}
 import com.opticdev.common.BuildInfo
-import com.opticdev.sdk.markdown.CallOpticMarkdown
-
 
 object Cli extends App  {
 

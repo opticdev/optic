@@ -122,6 +122,12 @@ abstract class SourceGear {
 
   def renderStagedNode(stagedNode: StagedNode) : Try[(NewAstNode, String, SGExportableLens)] = Render.fromStagedNode(stagedNode)(this, flatContext)
 
+  def includedPackages = {
+    lensSet.listLenses.map(_.packageRef) ++
+    schemas.collect { case a if a.schemaRef.packageRef.isDefined => a.schemaRef.packageRef.get} ++
+    transformations.map(_.packageId)
+  }
+
 }
 
 case object UnloadedSourceGear extends SourceGear {

@@ -9,7 +9,7 @@ class BindCLISpec extends FunSpec {
   System.setProperty("opticmdbinary", omd)
 
   it("can bind a jar") {
-    BindCLI.toNativeBash(null, "/Users/aidancunniffe/Developer/knack/optic-core/server/src/main/resources/opticmarkdown")
+    BindCLI.toNativeBash(null)
     assert("which optic".!! == "/usr/local/bin/optic\n")
     assert("optic".!! == "Hello World\n")
   }
