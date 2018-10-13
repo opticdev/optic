@@ -6,8 +6,8 @@ import play.api.libs.json.Json
 import scala.util.Try
 
 object DataDirectoryConfig {
-  case class ConfigStatus(opticMDVersion: String, knownProjects: Seq[String])
-  private val defaultStatus = ConfigStatus(BuildInfo.opticMDVersion, Seq())
+  case class ConfigStatus(opticSkillsSDKVersion: String, knownProjects: Seq[String])
+  private val defaultStatus = ConfigStatus(BuildInfo.skillsSDKVersion, Seq())
 
   private implicit val configStatusFormats = Json.format[ConfigStatus]
 
@@ -38,7 +38,7 @@ object DataDirectoryConfig {
   def triggerMigration : Unit = {
     if (readConfigStatus == defaultStatus) return
 
-    if (readConfigStatus.opticMDVersion != defaultStatus.opticMDVersion) {
+    if (readConfigStatus.opticSkillsSDKVersion != defaultStatus.opticSkillsSDKVersion) {
       //clear the markdown, package & sg cache
       println("MIGRATING OPTIC MARKDOWN")
       DataDirectory.reset

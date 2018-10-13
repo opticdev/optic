@@ -4,7 +4,7 @@ name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "1.0.6"
+val appVersion = "1.1.0"
 
 version := appVersion
 
@@ -28,7 +28,7 @@ lazy val common = (project in file("common")).
  .settings(
    libraryDependencies ++= Dependencies.commonDependencies,
    buildInfoKeys := Seq[BuildInfoKey](
-     "opticMDVersion" -> Constants.opticMDVersion,
+     "skillsSDKVersion" -> Constants.supportedSdks.last,
      "currentOpticVersion" -> appVersion,
      "supportedSdks" -> Constants.supportedSdks,
    ),
@@ -41,7 +41,7 @@ lazy val sdk = (project in file("sdk")).
   .settings(
     libraryDependencies ++= Dependencies.sdkDependencies,
     buildInfoKeys := Seq[BuildInfoKey](
-      "opticMDVersion" -> Constants.opticMDVersion,
+      "skillsSDKVersion" -> Constants.supportedSdks.last,
     ),
     buildInfoPackage := "com.opticdev.sdk"
   )

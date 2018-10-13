@@ -35,7 +35,11 @@ object Render {
     }
 
     val gearOption = resolveLens(stagedNode)(sourceGear, flatContext)
-    require(gearOption.isDefined, "No gear found that can render this node.")
+    if (gearOption.isEmpty) {
+      println("ERROR "+ stagedNode)
+    }
+
+    require(gearOption.isDefined, "No generator found that can render this node.")
 
     val gear = gearOption.get
     val declaredVariables = gear.variableManager.variables

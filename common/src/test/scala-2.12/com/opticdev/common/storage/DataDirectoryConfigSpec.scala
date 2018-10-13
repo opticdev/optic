@@ -12,7 +12,7 @@ class DataDirectoryConfigSpec extends FunSpec with BeforeAndAfterAll {
 
   it("can read config status from data directory when doesn't exist") {
     DataDirectoryConfig.configLocation.delete(true)
-    DataDirectoryConfig.readConfigStatus == DataDirectoryConfig.ConfigStatus(BuildInfo.opticMDVersion, Seq())
+    DataDirectoryConfig.readConfigStatus == DataDirectoryConfig.ConfigStatus(BuildInfo.skillsSDKVersion, Seq())
   }
 
   it("can write new config status to data directory") {
