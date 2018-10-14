@@ -26,6 +26,8 @@ package object project {
     val filesStateMonitor : FileStateMonitor
     val actorCluster: ActorCluster
 
+    def projectDirectory: String = baseDirectory.pathAsString
+
     implicit val nodeKeyStore: NodeKeyStore = new NodeKeyStore
 
     def projectSourcegear : SourceGear

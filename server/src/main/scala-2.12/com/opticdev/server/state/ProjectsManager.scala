@@ -27,7 +27,7 @@ class ProjectsManager {
   private var projectsStore: Vector[OpticProject] = Vector()
 
   private def addProject(project: OpticProject) : Unit =  {
-
+    implicit val projectDirectory = project.projectDirectory
     //attach a sourcegear changed callback
     project.onSourcegearChanged((sg)=> {
       //overwrite old sg instance with the new one
@@ -145,8 +145,10 @@ class ProjectsManager {
   private var _lastProjectName : Option[String] = None
   def lastProjectName = _lastProjectName
 
+
   def sendMostRecentUpdate = Try {
     val project = lookupProject(_lastProjectName.get).get
+    implicit val projectDirectory = project.projectDirectory
     AgentConnection.broadcastUpdate(StatusUpdate(_lastProjectName.get, project.projectStatus))
   }
 

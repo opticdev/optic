@@ -14,11 +14,11 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
-class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) extends Actor {
+class AgentConnectionActor(implicit projectDirectory: String, projectsManager: ProjectsManager) extends Actor {
 
   private var connection : ActorRef = null
 
-  private var name : String = slug
+  private var name : String = projectDirectory
   private var version : String = ""
 
   override def receive: Receive = {
@@ -30,7 +30,7 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     }
     case Terminated => {
       Status.Success(Unit)
-      AgentConnection.killAgent(slug)
+      AgentConnection.killAgent(projectDirectory)
     }
 
     //message to client routing

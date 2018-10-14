@@ -7,7 +7,7 @@ import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
 import better.files.File
 import com.opticdev.arrow.changes.ChangeGroup
-import com.opticdev.server.http.routes.socket.{Connection, ConnectionManager, OpticEvent, SocketRouteOptions}
+import com.opticdev.server.http.routes.socket._
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.http.routes.socket.editors.EditorConnection._
@@ -17,9 +17,9 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.Try
 
-class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsManager: ProjectsManager) extends Connection {
+class AgentConnection(projectDirectory: String, actorSystem: ActorSystem)(implicit projectsManager: ProjectsManager) extends Connection {
 
-  private[this] val connectionActor = actorSystem.actorOf(Props(classOf[AgentConnectionActor], slug, projectsManager))
+  private[this] val connectionActor = actorSystem.actorOf(Props(classOf[AgentConnectionActor], projectDirectory, projectsManager))
 
   def chatInSink(sender: String) = Sink.actorRef[AgentEvents](connectionActor, Terminated)
 
@@ -97,7 +97,7 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
 
           message
         })
-        .to(chatInSink(slug))
+        .to(chatInSink(projectDirectory))
 
     val out =
       Source.actorRef[OpticEvent](1, OverflowStrategy.fail)
@@ -110,13 +110,17 @@ class AgentConnection(slug: String, actorSystem: ActorSystem)(implicit projectsM
 
 }
 
-object AgentConnection extends ConnectionManager[AgentConnection] {
-  override def apply(slug: String, socketRouteOptions: SocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
-    println(slug+" agent connected")
-    new AgentConnection(slug, actorSystem)
+object AgentConnection extends ConnectionManager[AgentConnection, AgentSocketRouteOptions] {
+  override def apply(projectDirectory: String, socketRouteOptions: AgentSocketRouteOptions)(implicit actorSystem: ActorSystem, projectsManager: ProjectsManager) = {
+    println("Agent connected for: "+ projectDirectory)
+    new AgentConnection(projectDirectory, actorSystem)
   }
 
-  def broadcastUpdate(update: UpdateAgentEvent) = listConnections.foreach(i=> i._2.sendUpdate(update))
+  //only sends to CLI clients that are monitoring the correct project
+  def broadcastUpdate(update: UpdateAgentEvent) = {
+    val listening = listConnections.get(update.projectDirectory)
+    listening.foreach(_.sendUpdate(update))
+  }
 
   def killAgent(slug: String) = {
     val connectionOption = connections.get(slug)

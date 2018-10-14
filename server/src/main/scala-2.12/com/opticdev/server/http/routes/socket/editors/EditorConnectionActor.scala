@@ -33,7 +33,10 @@ class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManage
       val results = new ContextQuery(asFile, range, contentsOption, slug)(projectsManager).execute
         results.foreach(i => {
           import com.opticdev.server.data.ModelNodeJsonImplicits._
-          val contextFound = Try(ContextFound(file, range, i.projectName, i.editorSlug, JsObject(Seq(
+
+          implicit val projectDirectory = i.project.projectDirectory
+
+          val contextFound = Try(ContextFound(file, range, i.project.name, i.editorSlug, JsObject(Seq(
             "models" -> JsArray(i.modelNodes.map(_.asJson()(projectsManager))),
             "transformations" -> JsArray(i.availableTransformations.map(_.asJson))
           ))))
@@ -45,17 +48,17 @@ class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManage
 //      })
     }
 
-    case search: EditorSearch => {
-      ArrowQuery(search, search.editorSlug)(projectsManager).executeToApiResponse.map(i=> {
-        println("SEARCH RESULTS "+ i.data)
-        AgentConnection.broadcastUpdate( SearchResults(search.query, i.data) )
-      }).recover {
-        case a: Throwable => {
-          a.printStackTrace()
-          AgentConnection.broadcastUpdate( SearchResults(search.query) )
-        }
-      }
-    }
+//    case search: EditorSearch => {
+//      ArrowQuery(search, search.editorSlug)(projectsManager).executeToApiResponse.map(i=> {
+//        println("SEARCH RESULTS "+ i.data)
+//        AgentConnection.broadcastUpdate( SearchResults(search.query, i.data) )
+//      }).recover {
+//        case a: Throwable => {
+//          a.printStackTrace()
+//          AgentConnection.broadcastUpdate( SearchResults(search.query) )
+//        }
+//      }
+//    }
 
     case event: UpdateEditorEvent => {
       connection ! event
