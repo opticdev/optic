@@ -7,6 +7,8 @@ import akka.stream.scaladsl.{Flow, Sink, Source}
 import akka.util.Timeout
 import better.files.File
 import com.opticdev.arrow.changes.ChangeGroup
+import com.opticdev.common.SchemaRef
+import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import com.opticdev.server.http.routes.socket._
 import play.api.libs.json.{JsNumber, JsObject, JsString, Json}
 import com.opticdev.server.http.routes.socket.agents.Protocol._
@@ -59,21 +61,10 @@ class AgentConnection(projectDirectory: String, actorSystem: ActorSystem)(implic
                 }
               }
 
-              case "search" => {
-
-                val queryTry  = Try(parsedTry.get.value("query").as[JsString].value)
-                val editorSlugTry = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value )
-                val contentsOption  = Try(parsedTry.get.value("contents").as[JsString].value).toOption
-
-                val fileOption = Try(File(parsedTry.get.value("file").as[JsString].value)).toOption
-                val rangeOption = Try {
-                  val start = parsedTry.get.value("start").as[JsNumber].value.toInt
-                  val end = parsedTry.get.value("end").as[JsNumber].value.toInt
-                  Range(start, end)
-                }.toOption
-
-                if (queryTry.isSuccess && editorSlugTry.isSuccess) {
-                  AgentSearch(queryTry.get, None, fileOption, rangeOption, contentsOption, editorSlugTry.get)
+              case "transformation-options" => {
+                val transformationRef = Try( TransformationRef.fromString( (parsedTry.get \ "transformationRef").get.as[JsString].value) ).flatten
+                if (transformationRef.isSuccess) {
+                  TransformationOptions(transformationRef.get)
                 } else {
                   UnknownEvent(i)
                 }

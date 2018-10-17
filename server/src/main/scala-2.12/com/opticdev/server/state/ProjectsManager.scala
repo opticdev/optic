@@ -149,6 +149,8 @@ class ProjectsManager {
   private var _lastProjectName : Option[String] = None
   def lastProjectName = _lastProjectName
 
+  def projectForDirectory(string: String) =
+    activeProjects.find(_.projectDirectory == string).getOrElse(throw new Error("Project not found "+ string))
 
   def sendMostRecentUpdate = Try {
     //@todo last project name is not going to work w/ new CLI approach

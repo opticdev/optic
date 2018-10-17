@@ -3,7 +3,7 @@ package com.opticdev.server.http.routes.socket.agents
 import akka.actor.{Actor, ActorRef, Status}
 import com.opticdev.arrow.changes.evaluation.BatchedChanges
 import com.opticdev.core.sourcegear.sync.SyncPatch
-import com.opticdev.server.http.controllers.{ArrowPostChanges, PutUpdateRequest}
+import com.opticdev.server.http.controllers.{ArrowPostChanges, ArrowTransformationOptions, ArrowTransformationOptionsQuery, PutUpdateRequest}
 import com.opticdev.server.http.routes.socket.ErrorResponse
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.http.routes.socket.editors.EditorConnection
@@ -38,7 +38,6 @@ class AgentConnectionActor(implicit projectDirectory: String, projectsManager: P
       connection ! ErrorResponse("Invalid Request")
     }
 
-
     case postChanges: PostChanges => {
       implicit val autorefreshes = EditorConnection.listConnections.get(postChanges.editorSlug).map(_.autorefreshes).getOrElse(false)
       val future = new ArrowPostChanges(postChanges.projectName, postChanges.changes)(projectsManager).execute
@@ -52,6 +51,20 @@ class AgentConnectionActor(implicit projectDirectory: String, projectsManager: P
         if (i.isFailure) {
           i.failed.foreach(_.printStackTrace())
           AgentConnection.broadcastUpdate( PostChangesResults(success = false, Set(), Some(i.failed.get.getMessage)) )
+        }
+      })
+
+    }
+
+    case transformationOptionsRequest: TransformationOptions => {
+      val project = projectsManager.projectForDirectory(projectDirectory)
+      val future = new ArrowTransformationOptionsQuery(transformationOptionsRequest.transformation, project).execute()
+
+      future.onComplete(i => {
+        if (i.isSuccess) {
+          AgentConnection.broadcastUpdate(TransformationOptionsFound(i.get))
+        } else {
+          AgentConnection.broadcastUpdate(TransformationOptionsError())
         }
       })
 

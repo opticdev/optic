@@ -2,12 +2,15 @@ package com.opticdev.server.http.routes.socket
 
 import akka.actor.ActorRef
 import better.files.{File, Files}
-import com.opticdev.arrow.changes.ChangeGroup
+import com.opticdev.arrow.changes.{ChangeGroup, JsonImplicits}
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.{NamedFile, NamedModel}
 import com.opticdev.core.sourcegear.project.status.ImmutableProjectStatus
 import com.opticdev.core.sourcegear.sync.SyncPatch
+import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import play.api.libs.json._
 import com.opticdev.server.data.ToJsonImplicits._
+import com.opticdev.server.http.controllers.ArrowTransformationOptions
 import com.opticdev.server.http.routes.socket.agents.Protocol.UpdateAgentEvent
 import com.opticdev.server.http.routes.socket.editors.Protocol.EditorEvents
 package object agents {
@@ -22,6 +25,7 @@ package object agents {
 
     case class PutUpdate(id: String, newValue: JsObject, editorSlug: String, projectName: String) extends AgentEvents
     case class PostChanges(projectName: String, changes: ChangeGroup, editorSlug: String) extends AgentEvents
+    case class TransformationOptions(transformation: TransformationRef) extends AgentEvents
     case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range], contents: Option[String], editorSlug: String) extends AgentEvents
 
     case class StageSync(projectName: String, editorSlug: String) extends AgentEvents
@@ -42,6 +46,24 @@ package object agents {
         (if (isError) "errors" else "results") -> results)
       )
     }
+
+    case class TransformationOptionsFound(transformationOptions: ArrowTransformationOptions)(implicit val projectDirectory: String) extends OpticEvent with UpdateAgentEvent {
+      import JsonImplicits.modelOptionsFormat
+      def asJson = JsObject(Seq(
+        "event"-> JsString("transformation-options-found"),
+        "options" -> JsArray(transformationOptions.modelOptions.map((i) => Json.toJson(i))),
+        "transformationRef" -> JsString(transformationOptions.transformationRef.full),
+        "error" -> JsBoolean(false),
+      ))
+    }
+
+    case class TransformationOptionsError()(implicit val projectDirectory: String) extends OpticEvent with UpdateAgentEvent {
+      def asJson = JsObject(Seq(
+        "event"-> JsString("transformation-options-found"),
+        "error" -> JsBoolean(true)
+      ))
+    }
+
 
     case class NoContextFound(filePath: String, range: Range, isError: Boolean = false)(implicit val projectDirectory: String) extends OpticEvent with UpdateAgentEvent {
       def asJson = JsObject(Seq(
