@@ -2,7 +2,7 @@ package com.opticdev.server.http.routes.socket.editors
 
 import akka.actor.{Actor, ActorRef, Status}
 import better.files.File
-import com.opticdev.server.http.controllers.{ArrowQuery, ContextQuery}
+import com.opticdev.server.http.controllers.{ContextQuery}
 import com.opticdev.server.http.helpers.IsMarkdown
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.agents.Protocol.{ContextFound, NoContextFound, SearchResults}
@@ -31,34 +31,19 @@ class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManage
       val asFile = File(file)
 
       val results = new ContextQuery(asFile, range, contentsOption, slug)(projectsManager).execute
-        results.foreach(i => {
-          import com.opticdev.server.data.ModelNodeJsonImplicits._
+      results.foreach(i => {
+        import com.opticdev.server.data.ModelNodeJsonImplicits._
 
-          implicit val projectDirectory = i.project.projectDirectory
+        implicit val projectDirectory = i.project.projectDirectory
 
-          val contextFound = Try(ContextFound(file, range, i.project.name, i.editorSlug, JsObject(Seq(
-            "models" -> JsArray(i.modelNodes.map(_.asJson()(projectsManager))),
-            "transformations" -> JsArray(i.availableTransformations.map(_.asJson))
-          ))))
-          AgentConnection.broadcastUpdate(contextFound.get)
-        })
-
-//      results.onComplete(i=> {
-//        i.failed.foreach(_.printStackTrace())
-//      })
+        val contextFound = Try(ContextFound(i.project.trimAbsoluteFilePath(file), range, i.project.name, i.editorSlug, JsObject(Seq(
+          "models" -> JsArray(i.modelNodes.map(_.asJson()(projectsManager))),
+          "transformations" -> JsArray(i.availableTransformations.map(_.asJson))
+        ))))
+        AgentConnection.broadcastUpdate(contextFound.get)
+      })
     }
 
-//    case search: EditorSearch => {
-//      ArrowQuery(search, search.editorSlug)(projectsManager).executeToApiResponse.map(i=> {
-//        println("SEARCH RESULTS "+ i.data)
-//        AgentConnection.broadcastUpdate( SearchResults(search.query, i.data) )
-//      }).recover {
-//        case a: Throwable => {
-//          a.printStackTrace()
-//          AgentConnection.broadcastUpdate( SearchResults(search.query) )
-//        }
-//      }
-//    }
 
     case event: UpdateEditorEvent => {
       connection ! event

@@ -3,7 +3,7 @@ package com.opticdev.server.http.routes.socket.agents
 import akka.actor.{Actor, ActorRef, Status}
 import com.opticdev.arrow.changes.evaluation.BatchedChanges
 import com.opticdev.core.sourcegear.sync.SyncPatch
-import com.opticdev.server.http.controllers.{ArrowPostChanges, ArrowQuery, PutUpdateRequest}
+import com.opticdev.server.http.controllers.{ArrowPostChanges, PutUpdateRequest}
 import com.opticdev.server.http.routes.socket.ErrorResponse
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.http.routes.socket.editors.EditorConnection
@@ -38,11 +38,6 @@ class AgentConnectionActor(implicit projectDirectory: String, projectsManager: P
       connection ! ErrorResponse("Invalid Request")
     }
 
-    case search: AgentSearch => {
-      ArrowQuery(search, projectsManager.lastProjectName, search.editorSlug)(projectsManager).executeToApiResponse.foreach(i=> {
-        AgentConnection.broadcastUpdate( SearchResults(search.query, i.data, ignoreQueryUpdate = true) )
-      })
-    }
 
     case postChanges: PostChanges => {
       implicit val autorefreshes = EditorConnection.listConnections.get(postChanges.editorSlug).map(_.autorefreshes).getOrElse(false)

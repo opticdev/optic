@@ -5,13 +5,13 @@ import com.opticdev.arrow.changes._
 import com.opticdev.arrow.context.{ArrowContextBase, ModelContext}
 import com.opticdev.arrow.graph.KnowledgeGraph
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
-import com.opticdev.core.sourcegear.SourceGear
+import com.opticdev.core.sourcegear.{SGContext, SourceGear}
 import play.api.libs.json.{JsNull, JsObject, JsString, JsValue}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits._
-import com.opticdev.arrow.search.TransformationSearch
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.common.SchemaRef
+import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.sdk.descriptions.transformation.Transformation
 
 import scala.util.Try
@@ -34,7 +34,11 @@ case class TransformationResult(score: Int, transformationChange: Transformation
           }
         }).map {
             case mn: BaseModelNode => {
-              implicit val sourceGearContext = TransformationSearch.sourceGearContext(mn)
+              implicit val sourceGearContext: SGContext = {
+                implicit val actorCluster = project.actorCluster
+                val fileNode = mn.fileNode
+                ParseSupervisorSyncAccess.getContext(fileNode.get.toFile)(actorCluster, project.projectSourcegear, project).get
+              }
               val expandedValue = mn.expandedValue(withVariables = true)
               ModelOption(mn.id, expandedValue, mn.objectRef.get.name)
             }
