@@ -72,10 +72,9 @@ class AgentConnection(projectDirectory: String, actorSystem: ActorSystem)(implic
               }
 
               case "get-sync-patch" => {
-                val projectName = Try( (parsedTry.get \ "projectName").get.as[JsString].value)
                 val editorSlugTry = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value )
-                if (projectName.isSuccess && editorSlugTry.isSuccess) {
-                  StageSync(projectName.get, editorSlugTry.get)
+                if (editorSlugTry.isSuccess) {
+                  StageSync(editorSlugTry.get)
                 } else {
                   UnknownEvent(i)
                 }

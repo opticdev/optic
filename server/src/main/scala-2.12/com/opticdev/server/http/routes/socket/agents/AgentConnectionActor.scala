@@ -39,7 +39,7 @@ class AgentConnectionActor(implicit projectDirectory: String, projectsManager: P
     }
 
     case postChanges: PostChanges => {
-      implicit val autorefreshes = EditorConnection.listConnections.get(postChanges.editorSlug).map(_.autorefreshes).getOrElse(false)
+      implicit val autorefreshes = EditorConnection.listConnections.get(postChanges.editorSlug).exists(_.autorefreshes)
       val future = new ArrowPostChanges(postChanges.projectName, postChanges.changes)(projectsManager).execute
 
       future.foreach(i=> {
@@ -83,19 +83,19 @@ class AgentConnectionActor(implicit projectDirectory: String, projectsManager: P
 
     }
 
-    case StageSync(projectName, editorSlug) => {
+    case StageSync(editorSlug) => {
+      val project = projectsManager.projectForDirectory(projectDirectory)
 
-      val projectLookup = projectsManager.lookupProject(projectName)
-
-      if (projectLookup.isSuccess) {
-        val future = projectLookup.get.syncPatch
-        future.foreach {
-          case patch: SyncPatch => AgentConnection.broadcastUpdate(StagedSyncResults(patch, editorSlug))
+        val future = project.syncPatch
+        future.onComplete { i=> {
+          if (i.isSuccess) {
+             AgentConnection.broadcastUpdate(StagedSyncResults(i.get, editorSlug))
+          } else {
+             AgentConnection.broadcastUpdate(StagedSyncResults(SyncPatch.empty, editorSlug))
+          }
         }
-      } else {
-        AgentConnection.broadcastUpdate(StagedSyncResults(SyncPatch.empty, editorSlug))
-      }
 
+        }
     }
 
     case updateAgentEvent: UpdateAgentEvent => {

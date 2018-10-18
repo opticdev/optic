@@ -28,7 +28,7 @@ package object agents {
     case class TransformationOptions(transformation: TransformationRef) extends AgentEvents
     case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range], contents: Option[String], editorSlug: String) extends AgentEvents
 
-    case class StageSync(projectName: String, editorSlug: String) extends AgentEvents
+    case class StageSync(editorSlug: String) extends AgentEvents
 
 
     //Sends
