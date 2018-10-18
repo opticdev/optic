@@ -1,7 +1,10 @@
 package com.opticdev.server.http.routes.socket
 
+import java.net.URLEncoder
+
 import akka.http.scaladsl.testkit.WSProbe
 import akka.testkit.TestKit
+import better.files.File
 import com.opticdev.core.Fixture.SocketTestFixture
 import com.opticdev.server.http.routes.socket.agents.AgentConnection
 import com.opticdev.server.http.routes.socket.agents.Protocol
@@ -17,9 +20,10 @@ class AgentConnectionSocketSpec extends SocketTestFixture {
 
   val socketRoute = new SocketRoute()
 
-  WS("/socket/agent/optic-agent", wsClient.flow) ~> socketRoute.route ~>
-    check {
+  val absolutePath = File("test-examples/resources/test_project/nested/firstFile.js").pathAsString
 
+  WS("/socket/agent/optic-agent?projectDirectory="+URLEncoder.encode(absolutePath, "UTF-8"), wsClient.flow) ~> socketRoute.route ~>
+    check {
       it("Connects properly") {
         assert(AgentConnection.listConnections.size == 1)
       }

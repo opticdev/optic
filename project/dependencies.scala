@@ -72,7 +72,7 @@ object Dependencies {
 
     "ch.megard" %% "akka-http-cors" % "0.2.2",
 
-    "com.opticdev" %% "optic-plugins-installer" % "0.1.0"
+    "com.opticdev" %% "optic-plugins-installer" % "0.2.0"
   )
 
   val coreDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
@@ -94,8 +94,7 @@ object Dependencies {
 
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
     "com.opticdev" %% "marvin-runtime" % marvinVersion,
-    "com.opticdev" %% "marvin-common" % marvinVersion,
-    "me.xdrop" % "fuzzywuzzy" % "1.1.9"
+    "com.opticdev" %% "marvin-common" % marvinVersion
   )
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(

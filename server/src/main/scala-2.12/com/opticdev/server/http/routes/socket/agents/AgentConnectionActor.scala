@@ -3,7 +3,7 @@ package com.opticdev.server.http.routes.socket.agents
 import akka.actor.{Actor, ActorRef, Status}
 import com.opticdev.arrow.changes.evaluation.BatchedChanges
 import com.opticdev.core.sourcegear.sync.SyncPatch
-import com.opticdev.server.http.controllers.{ArrowPostChanges, ArrowQuery, PutUpdateRequest}
+import com.opticdev.server.http.controllers.{ArrowPostChanges, ArrowTransformationOptions, ArrowTransformationOptionsQuery, PutUpdateRequest}
 import com.opticdev.server.http.routes.socket.ErrorResponse
 import com.opticdev.server.http.routes.socket.agents.Protocol._
 import com.opticdev.server.http.routes.socket.editors.EditorConnection
@@ -14,11 +14,11 @@ import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
-class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) extends Actor {
+class AgentConnectionActor(implicit projectDirectory: String, projectsManager: ProjectsManager) extends Actor {
 
   private var connection : ActorRef = null
 
-  private var name : String = slug
+  private var name : String = projectDirectory
   private var version : String = ""
 
   override def receive: Receive = {
@@ -30,7 +30,7 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
     }
     case Terminated => {
       Status.Success(Unit)
-      AgentConnection.killAgent(slug)
+      AgentConnection.killAgent(projectDirectory)
     }
 
     //message to client routing
@@ -38,14 +38,8 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
       connection ! ErrorResponse("Invalid Request")
     }
 
-    case search: AgentSearch => {
-      ArrowQuery(search, projectsManager.lastProjectName, search.editorSlug)(projectsManager).executeToApiResponse.foreach(i=> {
-        AgentConnection.broadcastUpdate( SearchResults(search.query, i.data, ignoreQueryUpdate = true) )
-      })
-    }
-
     case postChanges: PostChanges => {
-      implicit val autorefreshes = EditorConnection.listConnections.get(postChanges.editorSlug).map(_.autorefreshes).getOrElse(false)
+      implicit val autorefreshes = EditorConnection.listConnections.get(postChanges.editorSlug).exists(_.autorefreshes)
       val future = new ArrowPostChanges(postChanges.projectName, postChanges.changes)(projectsManager).execute
 
       future.foreach(i=> {
@@ -57,6 +51,20 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
         if (i.isFailure) {
           i.failed.foreach(_.printStackTrace())
           AgentConnection.broadcastUpdate( PostChangesResults(success = false, Set(), Some(i.failed.get.getMessage)) )
+        }
+      })
+
+    }
+
+    case transformationOptionsRequest: TransformationOptions => {
+      val project = projectsManager.projectForDirectory(projectDirectory)
+      val future = new ArrowTransformationOptionsQuery(transformationOptionsRequest.transformation, project).execute()
+
+      future.onComplete(i => {
+        if (i.isSuccess) {
+          AgentConnection.broadcastUpdate(TransformationOptionsFound(i.get))
+        } else {
+          AgentConnection.broadcastUpdate(TransformationOptionsError())
         }
       })
 
@@ -75,19 +83,19 @@ class AgentConnectionActor(slug: String, projectsManager: ProjectsManager) exten
 
     }
 
-    case StageSync(projectName, editorSlug) => {
+    case StageSync(editorSlug) => {
+      val project = projectsManager.projectForDirectory(projectDirectory)
 
-      val projectLookup = projectsManager.lookupProject(projectName)
-
-      if (projectLookup.isSuccess) {
-        val future = projectLookup.get.syncPatch
-        future.foreach {
-          case patch: SyncPatch => AgentConnection.broadcastUpdate(StagedSyncResults(patch, editorSlug))
+        val future = project.syncPatch
+        future.onComplete { i=> {
+          if (i.isSuccess) {
+             AgentConnection.broadcastUpdate(StagedSyncResults(i.get, editorSlug))
+          } else {
+             AgentConnection.broadcastUpdate(StagedSyncResults(SyncPatch.empty, editorSlug))
+          }
         }
-      } else {
-        AgentConnection.broadcastUpdate(StagedSyncResults(SyncPatch.empty, editorSlug))
-      }
 
+        }
     }
 
     case updateAgentEvent: UpdateAgentEvent => {

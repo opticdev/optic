@@ -3,7 +3,6 @@ package com.opticdev.server.http
 import java.io.{BufferedReader, InputStreamReader}
 
 import better.files.File
-import com.opticdev.cli.binder.BindCLI
 import com.opticdev.common.storage.{DataDirectory, DataDirectoryConfig}
 import com.opticdev.core.sourcegear.project.Project
 import com.opticdev.core.sourcegear.project.config.ProjectFile
@@ -31,14 +30,8 @@ object Lifecycle extends App {
 
   startup
   def startup = {
-
-    Try(BindCLI.toNativeBash(
-      new JFile(this.getClass.getProtectionDomain.getCodeSource.getLocation.toURI).getPath))
-
     Server.start()
-
     DataDirectoryConfig.triggerMigration
-
   }
 
 

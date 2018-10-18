@@ -9,6 +9,7 @@ import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.graph.model._
+import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.server.data._
 import com.opticdev.server.state.ProjectsManager
@@ -21,7 +22,7 @@ import scala.util.{Failure, Success, Try}
 
 class ContextQuery(file: File, range: Range, contentsOption: Option[String], editorSlug: String)(implicit projectsManager: ProjectsManager) {
 
-  case class ContextQueryResults(modelNodes: Vector[ExpandedModelNode], availableTransformations: Vector[Result], projectName: String, editorSlug: String)
+  case class ContextQueryResults(modelNodes: Vector[ExpandedModelNode], availableTransformations: Vector[Result], project: OpticProject, editorSlug: String)
 
   def execute : Future[ContextQueryResults] = {
 
@@ -46,7 +47,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String], edi
 
         import com.opticdev.core.sourcegear.graph.GraphImplicits._
 
-        println(fileGraph.get.modelNodes())
+//        println(fileGraph.get.modelNodes())
 
         val allModelNodes = fileGraph.get.modelNodes().filter(_.matchesSchema())
 
@@ -75,7 +76,7 @@ class ContextQuery(file: File, range: Range, contentsOption: Option[String], edi
     def addTransformationsAndFinalize(modelResults: Vector[ExpandedModelNode]): Future[ContextQueryResults] = Future {
       val modelContext = ModelContext(file, range, modelResults.map(_.flatten))
       val arrow = projectsManager.lookupArrow(projectOption.get).get
-      ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext, editorSlug), projectOption.get.name, editorSlug)
+      ContextQueryResults(modelResults, arrow.transformationsForContext(modelContext, editorSlug), projectOption.get, editorSlug)
     }
 
     if (contentsOption.isDefined && projectOption.isSuccess) {

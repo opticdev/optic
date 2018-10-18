@@ -48,6 +48,7 @@ object ModelNodeJsonImplicits {
       JsObject(Seq(
         "id" -> JsString(project.nodeKeyStore.leaseId(fileNode.get.toFile, modelNode)),
         "schema" -> schemaOption.definition,
+        "schemaRef" -> JsString(schemaOption.schemaRef.internalFull),
         "astLocation" -> JsObject(Seq(
           "type" -> JsString(modelNode.root.nodeType.asString),
           "start" -> JsNumber(modelNode.root.range.start),
@@ -81,6 +82,7 @@ object ModelNodeJsonImplicits {
       JsObject(Seq(
         "id" -> JsString(project.nodeKeyStore.leaseId(fileNode.get.toFile, multiModelNode)),
         "schema" -> schemaOption.get.definition,
+        "schemaRef" -> JsString(schemaOption.get.schemaRef.internalFull),
         "astLocation" -> JsObject(Seq(
           "start" -> JsNumber(range.start),
           "end" -> JsNumber(range.end)

@@ -13,9 +13,13 @@ import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, ProjectStatus}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
 import com.opticdev.server.http.routes.socket.agents.{AgentConnection, KnowledgeGraphUpdate, ModelNodeOptionsUpdate, StatusUpdate}
-
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable
 import scala.util.{Success, Try}
+import akka.pattern.after
+
+import scala.concurrent.Future
+import scala.concurrent.duration._
 
 class ProjectsManager {
 
@@ -27,7 +31,7 @@ class ProjectsManager {
   private var projectsStore: Vector[OpticProject] = Vector()
 
   private def addProject(project: OpticProject) : Unit =  {
-
+    implicit val projectDirectory = project.projectDirectory
     //attach a sourcegear changed callback
     project.onSourcegearChanged((sg)=> {
       //overwrite old sg instance with the new one
@@ -145,9 +149,19 @@ class ProjectsManager {
   private var _lastProjectName : Option[String] = None
   def lastProjectName = _lastProjectName
 
+  def projectForDirectory(string: String) =
+    activeProjects.find(_.projectDirectory == string).getOrElse(throw new Error("Project not found "+ string))
+
   def sendMostRecentUpdate = Try {
+    //@todo last project name is not going to work w/ new CLI approach
     val project = lookupProject(_lastProjectName.get).get
+    val arrow = lookupArrow(_lastProjectName.get).get
+    implicit val projectDirectory = project.projectDirectory
     AgentConnection.broadcastUpdate(StatusUpdate(_lastProjectName.get, project.projectStatus))
+
+    after(300 millis, actorSystem.scheduler)(Future(
+      AgentConnection.broadcastUpdate(KnowledgeGraphUpdate(_lastProjectName.get, arrow.knowledgeGraphAsJson))
+    ))
   }
 
 }

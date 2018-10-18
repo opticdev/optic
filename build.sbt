@@ -53,19 +53,6 @@ lazy val opm = (project in file("opm")).
  .dependsOn(common)
  .dependsOn(sdk)
 
-lazy val cli = (project in file("cli")).
-  settings(commonSettings: _*)
-  .settings(
-    libraryDependencies ++= Dependencies.cliDependencies,
-    buildInfoKeys := Seq[BuildInfoKey](
-      "opticVersion" -> appVersion,
-    ),
-    buildInfoPackage := "com.opticdev.cli"
-  )
-  .dependsOn(common)
-  .dependsOn(core)
-  .dependsOn(core % "compile->compile;test->test")
-
 lazy val core = (project in file("core")).
   settings(commonSettings: _*)
   .settings(libraryDependencies ++= Dependencies.coreDependencies)
@@ -81,7 +68,6 @@ lazy val server = (project in file("server")).
  .dependsOn(sdk)
  .dependsOn(common)
  .dependsOn(core)
- .dependsOn(cli)
  .dependsOn(core % "compile->compile;test->test")
  .settings(
    test in assembly := {},
