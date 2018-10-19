@@ -4,13 +4,15 @@ import better.files.File
 import com.opticdev.arrow.changes.evaluation.ChangeResult
 import com.opticdev.arrow.changes.location.{InsertLocation, RawPosition}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.TransformationChanges
-import com.opticdev.core.sourcegear.CompiledLens
+import com.opticdev.core.sourcegear.{CompiledLens, SourceGear}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import JsonImplicits.opticChangeFormat
 import com.opticdev.arrow.results.ModelOption
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import com.opticdev.core.sourcegear.sync.{FilePatch, FilePatchTrait, SyncPatch}
 import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 sealed trait OpticChange {
@@ -18,38 +20,28 @@ sealed trait OpticChange {
   def schemaOption : Option[OMSchema] = None
 }
 
-/* Updates an existing model found in the code by an ID  */
-//case class UpdateModel(modelNodeId: String, newValue: JsObject) extends OpticChange {
-//  def asJson : JsValue = ???
-//
-//}
-
 /* Inserts model somewhere in code */
-case class InsertModel(schema: OMSchema,
+case class InsertModel(schemaRef: SchemaRef,
                        generatorId: Option[String] = None,
                        value: JsObject,
-                       atLocation: Option[InsertLocation]
+                       atLocation: InsertLocation
                       ) extends OpticChange {
-  override def schemaOption = Some(schema)
+  def schemaFromSG(implicit sourceGear: SourceGear) = {
+    sourceGear.findSchema(schemaRef)
+  }
 }
 
-case class RunTransformation(transformationChanges: TransformationChanges,
-                             inputValue: Option[JsObject],
-                             inputModelId: Option[String],
-                             askSchema: JsObject,
-
-                             lensOptions: Seq[LensOption],
+case class RunTransformation(transformationRef: TransformationRef,
+                             inputValue: JsObject,
+                             inputModelId: String,
+                             inputModelName: String,
                              generatorId: Option[String],
-
-                             locationOptions: Seq[InsertLocation],
-                             location: Option[InsertLocation],
-
-                             answers: Option[JsObject],
-
-                             objectSelection: Option[String],
-                             objectOptions: Option[Seq[ModelOption]]
-                            ) extends OpticChange {
+                             location: InsertLocation,
+                             answers: Option[JsObject]) extends OpticChange {
   override def asJson = Json.toJson[OpticChange](this)
+  def transformationFromSG(implicit sourceGear: SourceGear) = {
+    sourceGear.findTransformation(transformationRef)
+  }
 }
 
 

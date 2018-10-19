@@ -33,7 +33,6 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
       val results = changeGroup.evaluate(sourcegear)
 
       assert(results.isSuccess)
-
       assert(results.stagedFiles.head._2.text === expectedChange)
     }
 
@@ -51,68 +50,62 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
       val (changeGroup, sourcegear, expectedChange) = transformModelToRoute
       val results = changeGroup.evaluateAndWrite(sourcegear)
 
-      assert(results.get.stagedFiles.head._2.text == expectedChange)
-
-    }
-
-    it("Runs Nested Transformation") {
-      val (changeGroup, sourcegear, expectedChange) = nestedTransformModelToRoute
-      val results = changeGroup.evaluateAndWrite(sourcegear)
+      val actual = results.get.stagedFiles.head._2.text
 
       assert(results.get.stagedFiles.head._2.text == expectedChange)
     }
-//
-//    it("Runs transformation from search") {
-//      val (changeGroup, sourcegear, expectedChange) = transformationFromSearch
-//
+
+    //Not longer needed for the current use cases.
+//    it("Runs Nested Transformation") {
+//      val (changeGroup, sourcegear, expectedChange) = nestedTransformModelToRoute
 //      val results = changeGroup.evaluateAndWrite(sourcegear)
+//
 //      assert(results.get.stagedFiles.head._2.text == expectedChange)
 //    }
-
-    it("Runs mutation transformation") {
-      val (changeGroup, sourcegear, project, expectedChange) = mutationTransformationAnyRouteToPostRoute
-      val file = File("test-examples/resources/tmp/test_project/nested/testMutationTransform.js")
-      val parsed = project.projectSourcegear.parseFile(file)(project).get
-      project.projectGraphWrapper.addFile(parsed.astGraph, file)
-      val graph = project.projectGraphWrapper.subgraphForFile(file)
-
-      val inputLinkedModelNode = parsed.modelNodes.find(_.lensRef.id == "route").get.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parsed.astGraph)
-
-      nodeKeyStore.assignId(file, "test123", inputLinkedModelNode)
-
-      val results = changeGroup.evaluateAndWrite(sourcegear, Some(project))
-
-      val a = results.get.stagedFiles.head._2.text
-
-      assert(results.get.stagedFiles.head._2.text == expectedChange)
-    }
-
-    it("Runs a multi transformation") {
-      val (changeGroup, sourcegear, project, expectedChange) = multiTransformation
-      val file = File("test-examples/resources/tmp/test_project/nested/testMutationTransform.js")
-      val parsed = project.projectSourcegear.parseFile(file)(project).get
-      project.projectGraphWrapper.addFile(parsed.astGraph, file)
-      val graph = project.projectGraphWrapper.subgraphForFile(file)
-
-      val inputLinkedModelNode = parsed.modelNodes.find(_.lensRef.id == "route").get.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parsed.astGraph)
-
-      nodeKeyStore.assignId(file, "test123", inputLinkedModelNode)
-
-      val results = changeGroup.evaluateAndWrite(sourcegear, Some(project))
-
-      assert(results.get.stagedFiles.head._2.text == expectedChange)
-    }
-
-    it("RunsTransformation and adds to another file which does not exist") {
-      val (changeGroup, sourcegear, project, expectedChange) = transformAndAddToAnotherFile
-      val results = changeGroup.evaluateAndWrite(sourcegear, Some(project))
-
-      assert(results.isSuccess)
-      assert(results.get.stagedFiles.head._1.exists)
-      assert(results.get.stagedFiles.head._2.text == expectedChange)
-
-    }
-
+//
+//    it("Runs mutation transformation") {
+//      val (changeGroup, sourcegear, project, expectedChange) = mutationTransformationAnyRouteToPostRoute
+//      val file = File("test-examples/resources/tmp/test_project/nested/testMutationTransform.js")
+//      val parsed = project.projectSourcegear.parseFile(file)(project).get
+//      project.projectGraphWrapper.addFile(parsed.astGraph, file)
+//      val graph = project.projectGraphWrapper.subgraphForFile(file)
+//
+//      val inputLinkedModelNode = parsed.modelNodes.find(_.lensRef.id == "route").get.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parsed.astGraph)
+//
+//      nodeKeyStore.assignId(file, "test123", inputLinkedModelNode)
+//
+//      val results = changeGroup.evaluateAndWrite(sourcegear, Some(project))
+//
+//      val a = results.get.stagedFiles.head._2.text
+//
+//      assert(results.get.stagedFiles.head._2.text == expectedChange)
+//    }
+//
+//    it("Runs a multi transformation") {
+//      val (changeGroup, sourcegear, project, expectedChange) = multiTransformation
+//      val file = File("test-examples/resources/tmp/test_project/nested/testMutationTransform.js")
+//      val parsed = project.projectSourcegear.parseFile(file)(project).get
+//      project.projectGraphWrapper.addFile(parsed.astGraph, file)
+//      val graph = project.projectGraphWrapper.subgraphForFile(file)
+//
+//      val inputLinkedModelNode = parsed.modelNodes.find(_.lensRef.id == "route").get.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](parsed.astGraph)
+//
+//      nodeKeyStore.assignId(file, "test123", inputLinkedModelNode)
+//
+//      val results = changeGroup.evaluateAndWrite(sourcegear, Some(project))
+//
+//      assert(results.get.stagedFiles.head._2.text == expectedChange)
+//    }
+//
+//    it("RunsTransformation and adds to another file which does not exist") {
+//      val (changeGroup, sourcegear, project, expectedChange) = transformAndAddToAnotherFile
+//      val results = changeGroup.evaluateAndWrite(sourcegear, Some(project))
+//
+//      assert(results.isSuccess)
+//      assert(results.get.stagedFiles.head._1.exists)
+//      assert(results.get.stagedFiles.head._2.text == expectedChange)
+//
+//    }
 
   }
 

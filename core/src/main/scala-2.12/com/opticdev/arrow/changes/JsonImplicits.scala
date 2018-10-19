@@ -14,6 +14,7 @@ import scala.util.{Failure, Success, Try}
 object JsonImplicits {
 
   //SDK Objects refs
+  import com.opticdev.sdk.descriptions.transformation.TransformationRef.transformationRefJsonFormats
   import PackageRef.packageRefJsonFormat
   import SchemaRef.schemaRefFormats
   import com.opticdev.sdk.opticmarkdown2.Serialization.omschemaFormat
