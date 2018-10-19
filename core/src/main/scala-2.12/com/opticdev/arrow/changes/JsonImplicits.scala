@@ -1,6 +1,6 @@
 package com.opticdev.arrow.changes
 import better.files.File
-import com.opticdev.arrow.changes.location.{AsChildOf, InsertLocation, RawPosition}
+import com.opticdev.arrow.changes.location.{AsChildOf, Clipboard, InsertLocation, RawPosition}
 import com.opticdev.arrow.graph.KnowledgeGraphImplicits.{DirectTransformation, TransformationChanges}
 import com.opticdev.arrow.results.ModelOption
 import com.opticdev.common.{PackageRef, SchemaRef, fileFormat}
@@ -28,7 +28,20 @@ object JsonImplicits {
   implicit val asChildOfFormat = Json.format[AsChildOf]
   implicit val rawPosition = Json.format[RawPosition]
 
-  implicit val insertLocationFormat = Json.format[InsertLocation]
+  implicit val insertLocationFormat =  new Format[InsertLocation] {
+    override def reads(json: JsValue): JsResult[InsertLocation] = {
+      val fieldType = Try((json.as[JsObject] \ "type").get.as[JsString].value).getOrElse("")
+      fieldType match {
+        case "AsChildOf" => Json.fromJson[AsChildOf](json)
+        case "RawPosition" => Json.fromJson[RawPosition](json)
+        case "Clipboard" => JsSuccess(Clipboard)
+        case other => JsError(s"""Location type '${fieldType}' not accepted""")
+      }
+    }
+    override def writes(o: InsertLocation): JsValue = {
+      o.asJson.as[JsObject] + ("type" -> JsString(o.getTypeField))
+    }
+  }
 
   //Insert Model
   implicit val insertModelFormat = Json.format[InsertModel]
@@ -62,7 +75,7 @@ object JsonImplicits {
         case "ClearSearchLines" => Json.fromJson[ClearSearchLines](json)
         case "PutUpdate" => Json.fromJson[PutUpdate](json)
         case "FileContentsUpdate" => Json.fromJson[FileContentsUpdate](json)
-        case other => JsError(s"""Field type '${fieldType}' not accepted""")
+        case other => JsError(s"""Change type '${fieldType}' not accepted""")
       }
 
     }
