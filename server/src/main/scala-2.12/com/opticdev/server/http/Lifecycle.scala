@@ -22,7 +22,6 @@ object Lifecycle extends App {
 
   //init the data directory if missing
   DataDirectory.init
-
   SupportedParsers.initialize
 
   implicit val projectsManager: ProjectsManager = new ProjectsManager()

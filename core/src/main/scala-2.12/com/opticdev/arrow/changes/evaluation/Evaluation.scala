@@ -27,8 +27,7 @@ object Evaluation {
 
   def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore): ChangeResult = opticChange match {
     case im: InsertModel => {
-
-      val stagedNode = StagedNode(im.schema.schemaRef, im.value, Some(RenderOptions(
+      val stagedNode = StagedNode(im.schemaRef, im.value, Some(RenderOptions(
         generatorId = im.generatorId
       )))
 
@@ -36,7 +35,7 @@ object Evaluation {
       renderedTry.failed.foreach(_.printStackTrace)
       require(renderedTry.isSuccess, "Could not render model "+ renderedTry.failed.get.toString)
       val generatedNode = (renderedTry.get._1, renderedTry.get._2)
-      val resolvedLocation = im.atLocation.get.resolveToLocation(sourcegear).get
+      val resolvedLocation = im.atLocation.resolveToLocation(sourcegear).get
       val changeResult = InsertCode.atLocation(generatedNode, resolvedLocation)
       if (changeResult.isSuccess) {
         changeResult.asFileChanged.stageContentsIn(filesStateMonitor)
@@ -46,26 +45,25 @@ object Evaluation {
     }
     case rt: RunTransformation => {
 
+      val transformationOption = rt.transformationFromSG(sourcegear)
+      require(transformationOption.isDefined, "Transformation not found "+  rt.transformationRef.full)
+
+      val transformation = transformationOption.get
+
       val schema = {
-        if (rt.transformationChanges.transformation.isGenerateTransform) {
-          sourcegear.findSchema(rt.transformationChanges.transformation.resolvedOutput(sourcegear).get).get
+        if (transformation.isGenerateTransform) {
+          sourcegear.findSchema(transformation.resolvedOutput(sourcegear).get).get
         } else {
-          sourcegear.findSchema(rt.transformationChanges.transformation.resolvedInput(sourcegear)).get
+          sourcegear.findSchema(transformation.resolvedInput(sourcegear)).get
         }
       }
 
-      require(rt.inputValue.isDefined, "Transformation must have an input value specified")
+      val inputValue = rt.inputValue + ("_name" -> JsString(rt.inputModelName))
 
-      val inputValue = {
-        if (rt.objectSelection.isDefined) {
-          rt.inputValue.get + ("_name" -> JsString(rt.objectSelection.get))
-        } else rt.inputValue.get
-      }
-
-      val transformationTry = rt.transformationChanges.transformation.transformFunction.transform(inputValue, rt.answers.getOrElse(JsObject.empty), sourcegear.transformationCaller, rt.inputModelId)
+      val transformationTry = transformation.transformFunction.transform(inputValue, rt.answers.getOrElse(JsObject.empty), sourcegear.transformationCaller, Some(rt.inputModelId))
       require(transformationTry.isSuccess, "Transformation script encountered error "+ transformationTry.failed)
 
-      val prefixedFlatContent = sourcegear.flatContext.prefix(rt.transformationChanges.transformation.packageId.packageId)
+      val prefixedFlatContent = sourcegear.flatContext.prefix(transformation.packageId.packageId)
 
       def generateNode(generateResult: GenerateResult, schema: OMSchema, lensIdOption: Option[String], topLevel: Boolean = false) : IntermediateTransformPatch = {
 
@@ -75,26 +73,28 @@ object Evaluation {
 
         require(Try(schema.validate(stagedNode.value)).getOrElse(true), "Result of transformation did not conform to schema "+ schema.schemaRef.full)
 
-        val inputVariableMapping = Try((rt.inputValue.get \ "_variables").toOption.map(Json.fromJson[VariableMapping]).map(_.get).get)
+        val inputVariableMapping = Try((rt.inputValue \ "_variables").toOption.map(Json.fromJson[VariableMapping]).map(_.get).get)
           .getOrElse(Map.empty)
 
         val generatedNode = Render.fromStagedNode(stagedNode, inputVariableMapping)(sourcegear, prefixedFlatContent).get
 
-        val updatedString = if (rt.objectSelection.isDefined) {
-          val objName = rt.objectSelection.get
+
+
+        val updatedString = {
+          val objName = rt.inputModelName
           AnnotationRenderer.renderToFirstLine(
             generatedNode._3.renderer.parser.inlineCommentPrefix,
-            Vector(SourceAnnotation(objName, rt.transformationChanges.transformation.transformationRef, rt.answers)),
+            Vector(SourceAnnotation(objName, transformation.transformationRef, rt.answers)),
             generatedNode._2)
-        } else generatedNode._2
+        }
 
-        val resolvedLocation = rt.location.get.resolveToLocation(sourcegear, Some(stagedNode)).get
+        val resolvedLocation = rt.location.resolveToLocation(sourcegear, Some(stagedNode)).get
         val changeResult = InsertCode.atLocation((generatedNode._1, updatedString), resolvedLocation).asFileChanged
         IntermediateTransformPatch(changeResult.file, changeResult.patchInfo.get.range, changeResult.patchInfo.get.updated, isGeneration = true)
       }
 
       def mutateNode(mutateResult: MutateResult) : IntermediateTransformPatch = {
-        implicit val context = sourcegear.flatContext.prefix(rt.transformationChanges.transformation.packageId.packageId)
+        implicit val context = sourcegear.flatContext.prefix(transformation.packageId.packageId)
         val stagedMutation = mutateResult.toStagedMutation
         val mutated = Mutate.fromStagedMutationWithoutSGContext(stagedMutation)(projectOption.get.asInstanceOf[OpticProject], nodeKeyStore, context)
         require(mutated.isSuccess, s"Failed to mutate node "+mutated.failed.get.getMessage)
@@ -123,7 +123,7 @@ object Evaluation {
         }
 
         case multiTransform:MultiTransform => {
-          val changes = MultiTransformEvaluation.apply(multiTransform, rt.location.get, mutateNode, generateNode, sourcegear)
+          val changes = MultiTransformEvaluation.apply(multiTransform, rt.location, mutateNode, generateNode, sourcegear)
           changes.fileChanges.foreach(_.stageContentsIn(filesStateMonitor))
           changes
         }

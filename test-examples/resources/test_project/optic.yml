@@ -1,7 +1,7 @@
 name: Unnamed Project
 parsers:
   - es7
-knowledge:
-  - optic:express-js@0.1.0
-  - optic:rest@0.1.0
-  - optic:mongoose@0.1.0
+skills:
+- optic:express@0.4.1
+- optic:rest@0.4.0
+- optic:mongoose@0.4.0

@@ -59,7 +59,20 @@ class TestProvider extends Provider {
   val opticExpress = OpticPackage.fromJson(Json.parse(File(
     "test-examples/resources/example_packages/express/optic:express-js@0.1.0.json").contentAsString)).get
 
-  val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticMongoose, opticExpress)
+
+
+  val opticRest4 = OpticPackage.fromJson(Json.parse(File(
+    "test-examples/resources/example_packages/optic/rest/0.4.0").contentAsString)).get
+
+  val opticMongoose4 = OpticPackage.fromJson(Json.parse(File(
+    "test-examples/resources/example_packages/optic/mongoose/0.4.0").contentAsString)).get
+
+  val opticExpress4 = OpticPackage.fromJson(Json.parse(File(
+    "test-examples/resources/example_packages/optic/express/0.4.1").contentAsString)).get
+
+
+
+  val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticMongoose, opticExpress, opticRest4, opticMongoose4, opticExpress4)
 
   override def resolvePackages(packageRefs: PackageRef*): Future[BatchPackageResult] = Future {
     val foundPackages = allPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))

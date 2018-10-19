@@ -29,18 +29,6 @@ class JsonImplicitsSpec extends FunSpec {
 
   describe("Optic Change format") {
     import JsonImplicits.opticChangeFormat
-    
-    it("Insert model toJSON & back again") {
-      val testSchema = Json.parse(
-        """
-          |{ "title": "hello", "properties": {}, "type": "object" }
-        """.stripMargin)
-      val o = InsertModel(OMSchema(SchemaRef(Some(PackageRef("optic:test")), "name"), testSchema.as[JsObject]),
-        Some("hash"), JsObject.empty, Some(RawPosition(File("path/To/file"), 12)))
-
-      val json = Json.toJson[OpticChange](o)
-      assert(Json.fromJson[OpticChange](json).get == o)
-    }
 
     it("Raw Insert toJSON & back again") {
       val o = RawInsert("Value", RawPosition(File("a/b/c"), 145))
