@@ -52,7 +52,24 @@ object JsonImplicits {
   //File Contents Update
   implicit val fileContentsUpdateFormat = Json.format[FileContentsUpdate]
 
-  implicit val opticChangeFormat = Json.format[OpticChange]
+  implicit val opticChangeFormat = new Format[OpticChange] {
+    override def reads(json: JsValue): JsResult[OpticChange] = {
+      val fieldType = Try((json.as[JsObject] \ "type").get.as[JsString].value).getOrElse("")
+      fieldType match {
+        case "InsertModel" => Json.fromJson[InsertModel](json)
+        case "RunTransformation" => Json.fromJson[RunTransformation](json)
+        case "RawInsert" => Json.fromJson[RawInsert](json)
+        case "ClearSearchLines" => Json.fromJson[ClearSearchLines](json)
+        case "PutUpdate" => Json.fromJson[PutUpdate](json)
+        case "FileContentsUpdate" => Json.fromJson[FileContentsUpdate](json)
+        case other => JsError(s"""Field type '${fieldType}' not accepted""")
+      }
+
+    }
+    override def writes(o: OpticChange): JsValue = {
+      o.asJson.as[JsObject] + ("type" -> JsString(o.getTypeField))
+    }
+  }
 
   implicit val changeGroupFormat = new Format[ChangeGroup] {
     override def reads(json: JsValue) = {
