@@ -37,11 +37,13 @@ class EditorConnectionActor(slug: String, autorefreshes: Boolean, projectsManage
 
         implicit val projectDirectory = i.project.projectDirectory
 
-        val contextFound = Try(ContextFound(i.project.trimAbsoluteFilePath(file), range, i.project.name, i.editorSlug, JsObject(Seq(
+        val contextFound = ContextFound(file, i.project.trimAbsoluteFilePath(file), range, i.project.name, i.editorSlug, JsObject(Seq(
           "models" -> JsArray(i.modelNodes.map(_.asJson()(projectsManager))),
           "transformations" -> JsArray(i.availableTransformations.map(_.asJson))
-        ))))
-        AgentConnection.broadcastUpdate(contextFound.get)
+        )))
+
+        AgentConnection.broadcastUpdate(contextFound)
+        projectsManager.setLastContext(i.project, contextFound)
       })
     }
 

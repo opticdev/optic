@@ -44,7 +44,6 @@ package object project {
       }
     }
 
-
     //callbacks on main thread
     private var _updatedModelNodeOptionsCallbacks = Set[(Set[NamedModel], Set[NamedFile])=> Unit]()
     def hasUpdatedModelNodeOptionsCallbacks = _updatedModelNodeOptionsCallbacks.nonEmpty

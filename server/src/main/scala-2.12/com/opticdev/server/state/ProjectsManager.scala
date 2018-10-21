@@ -13,10 +13,12 @@ import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, ProjectStatus}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
 import com.opticdev.server.http.routes.socket.agents.{AgentConnection, KnowledgeGraphUpdate, ModelNodeOptionsUpdate, StatusUpdate}
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable
 import scala.util.{Success, Try}
 import akka.pattern.after
+import com.opticdev.server.http.routes.socket.agents.Protocol.ContextFound
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -159,9 +161,21 @@ class ProjectsManager {
     implicit val projectDirectory = project.projectDirectory
     AgentConnection.broadcastUpdate(StatusUpdate(_lastProjectName.get, project.projectStatus))
 
-    after(300 millis, actorSystem.scheduler)(Future(
+    after(150 millis, actorSystem.scheduler)(Future(
       AgentConnection.broadcastUpdate(KnowledgeGraphUpdate(_lastProjectName.get, arrow.knowledgeGraphAsJson))
     ))
+
+    val lastContext = getLastContext(project)
+    if (lastContext.isDefined) {
+      after(150 millis, actorSystem.scheduler)(Future(
+        AgentConnection.broadcastUpdate(lastContext.get)
+      ))
+    }
   }
+
+  //last context
+  private var lastContextStore = scala.collection.mutable.HashMap[OpticProject, ContextFound]()
+  def setLastContext(project: OpticProject, context: ContextFound): Unit = lastContextStore.put(project, context)
+  def getLastContext(project: OpticProject): Option[ContextFound] = lastContextStore.get(project)
 
 }

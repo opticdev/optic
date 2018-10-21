@@ -8,9 +8,11 @@ import scala.util.Try
 
 package object evaluation {
 
-  case class BatchedChanges(changes: Seq[ChangeResult], stagedFiles: Map[File, StagedContent]) {
+  case class BatchedChanges(changes: Seq[ChangeResult], stagedFiles: Map[File, StagedContent], clipboardBuffer: ClipboardBuffer) {
     val isSuccess = changes.forall(_.isSuccess)
     val isFailure = !isSuccess
+
+    def errors = changes.filter(_.isFailure).flatMap(_.errors)
 
     def flushToDisk = Try {
       stagedFiles.par.foreach {
@@ -29,6 +31,18 @@ package object evaluation {
 
   }
 
-  case class IntermediateTransformPatch(file: File, range: Range, newContents: String, isGeneration: Boolean)
+
+  sealed trait TransformPatch {
+    def fileOption: Option[File]  = None
+    def rangeOption: Option[Range] = None
+    def isGeneration: Boolean
+    def isClipboard = this.isInstanceOf[ClipboardTransform]
+  }
+  case class IntermediateTransformPatch(file: File, range: Range, newContents: String, isGeneration: Boolean) extends TransformPatch {
+    override def fileOption: Option[File] = Some(file)
+    override def rangeOption: Option[Range] = Some(range)
+  }
+
+  case class ClipboardTransform(newContents: String, isGeneration: Boolean) extends TransformPatch
 
 }

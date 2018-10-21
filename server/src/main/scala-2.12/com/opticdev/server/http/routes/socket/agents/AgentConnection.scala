@@ -41,21 +41,19 @@ class AgentConnection(projectDirectory: String, actorSystem: ActorSystem)(implic
             eventTry.get match {
               case "put-update" => {
                 val idTry = Try( (parsedTry.get \ "id").get.as[JsString].value )
-                val editorSlugTry = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value )
+                val editorSlugOption = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value ).toOption
                 val newValueTry = Try( (parsedTry.get \ "newValue").get.as[JsObject] )
-                val projectNameTry = Try( (parsedTry.get \ "projectName").get.as[JsString].value)
-                if (idTry.isSuccess && newValueTry.isSuccess && editorSlugTry.isSuccess && projectNameTry.isSuccess) {
-                  PutUpdate(idTry.get, newValueTry.get, editorSlugTry.get, projectNameTry.get)
+                if (idTry.isSuccess && newValueTry.isSuccess) {
+                  PutUpdate(idTry.get, newValueTry.get, editorSlugOption)
                 } else UnknownEvent(i)
               }
 
               case "post-changes" => {
                 import com.opticdev.arrow.changes.JsonImplicits._
-                val projectName = Try( (parsedTry.get \ "projectName").get.as[JsString].value)
-                val editorSlugTry = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value )
+                val editorSlugOption = Try( (parsedTry.get \ "editorSlug").get.as[JsString].value ).toOption
                 val changes = Try(Json.fromJson[ChangeGroup]((parsedTry.get \ "changes").get).get)
-                if (projectName.isSuccess && changes.isSuccess && editorSlugTry.isSuccess) {
-                  PostChanges(projectName.get, changes.get, editorSlugTry.get)
+                if (changes.isSuccess) {
+                  PostChanges(changes.get, editorSlugOption)
                 } else {
                   UnknownEvent(i)
                 }

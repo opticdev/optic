@@ -39,12 +39,19 @@ class AgentConnectionActor(implicit projectDirectory: String, projectsManager: P
     }
 
     case postChanges: PostChanges => {
-      implicit val autorefreshes = EditorConnection.listConnections.get(postChanges.editorSlug).exists(_.autorefreshes)
-      val future = new ArrowPostChanges(postChanges.projectName, postChanges.changes)(projectsManager).execute
+      val project = projectsManager.projectForDirectory(projectDirectory)
+      implicit val autorefreshes = AgentConnectionActorHelpers.autorefreshes(postChanges.editorSlug)
+
+      val future = new ArrowPostChanges(Some(project), postChanges.changes)(projectsManager).execute
 
       future.foreach(i=> {
         AgentConnection.broadcastUpdate( PostChangesResults(true, i.stagedFiles.keys.toSet) )
-        EditorConnection.broadcastUpdateTo(postChanges.editorSlug, FilesUpdated(i.stagedFiles) )
+        if (postChanges.editorSlug.isDefined) {
+          EditorConnection.broadcastUpdateTo(postChanges.editorSlug.get, FilesUpdated(i.stagedFiles))
+        }
+        if (i.clipboardBuffer.nonEmpty) {
+          AgentConnection.broadcastUpdate(CopyToClipboard(i.clipboardBuffer.contents))
+        }
       })
 
       future.onComplete(i=> {
@@ -72,12 +79,13 @@ class AgentConnectionActor(implicit projectDirectory: String, projectsManager: P
 
     case update : PutUpdate => {
       //@todo handle error states
-      implicit val autorefreshes = EditorConnection.listConnections.get(update.editorSlug).map(_.autorefreshes).getOrElse(false)
-      new PutUpdateRequest(update.id, update.newValue, update.editorSlug, update.projectName)(projectsManager)
+      val project = projectsManager.projectForDirectory(projectDirectory)
+      implicit val autorefreshes = AgentConnectionActorHelpers.autorefreshes(update.editorSlug)
+      new PutUpdateRequest(update.id, update.newValue, update.editorSlug, project)(projectsManager)
         .execute.foreach {
         case bc:BatchedChanges => {
-          AgentConnection.broadcastUpdate( PostChangesResults(bc.isSuccess, bc.stagedFiles.keys.toSet) )
-          EditorConnection.broadcastUpdateTo( update.editorSlug, FilesUpdated(bc.stagedFiles) )
+          AgentConnection.broadcastUpdate( PostChangesResults(bc.isSuccess, bc.stagedFiles.keys.toSet))
+          update.editorSlug.foreach( editor => EditorConnection.broadcastUpdateTo( editor, FilesUpdated(bc.stagedFiles) ))
         }
       }
 
@@ -106,3 +114,6 @@ class AgentConnectionActor(implicit projectDirectory: String, projectsManager: P
 
 }
 
+object AgentConnectionActorHelpers {
+  def autorefreshes(editorSlugOption: Option[String]) = editorSlugOption.flatMap(editor => EditorConnection.listConnections.get(editor).map(_.autorefreshes)).getOrElse(false)
+}

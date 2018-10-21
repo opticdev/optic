@@ -59,6 +59,7 @@ object GraphSerialization {
   def jsonFromNode(sGNode: SGNode) : JsObject = sGNode match {
     case g: LensNode => JsObject(Seq(
       "id" -> JsString(g.id),
+      "schemaRef" -> JsString(g.gear.schemaRef.full),
       "name" -> g.gear.name.map(JsString).getOrElse(JsString(g.gear.lensRef.id)),
       "packageFull" -> JsString(g.gear.lensRef.packageRef.get.full),
       "internal" -> JsBoolean(g.gear.internal),

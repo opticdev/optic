@@ -17,6 +17,7 @@ sealed trait InsertLocation {
   def resolveToLocation(sourceGear: SourceGear, stagedNodeOption: Option[StagedNode] = None)(implicit filesStateMonitor: FileStateMonitor) : Try[ResolvedLocation]
   def getTypeField: String = this.getClass.getSimpleName
   def asJson :JsValue
+  def isClipboard = this == Clipboard
 }
 
 case class AsChildOf(file: File, position: Int) extends InsertLocation {

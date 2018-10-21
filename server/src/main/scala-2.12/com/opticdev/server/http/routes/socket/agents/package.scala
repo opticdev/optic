@@ -23,8 +23,8 @@ package object agents {
     case object Terminated extends AgentEvents
     case class UnknownEvent(raw: String) extends AgentEvents
 
-    case class PutUpdate(id: String, newValue: JsObject, editorSlug: String, projectName: String) extends AgentEvents
-    case class PostChanges(projectName: String, changes: ChangeGroup, editorSlug: String) extends AgentEvents
+    case class PutUpdate(id: String, newValue: JsObject, editorSlug: Option[String]) extends AgentEvents
+    case class PostChanges(changes: ChangeGroup, editorSlug: Option[String]) extends AgentEvents
     case class TransformationOptions(transformation: TransformationRef) extends AgentEvents
     case class AgentSearch(query: String, lastProjectName: Option[String], file: Option[File], range: Option[Range], contents: Option[String], editorSlug: String) extends AgentEvents
 
@@ -36,12 +36,13 @@ package object agents {
       val projectDirectory: String
     }
 
-    case class ContextFound(filePath: String, range: Range, projectName: String, editorSlug: String, results: JsValue, isError: Boolean = false)(implicit val projectDirectory: String) extends OpticEvent with UpdateAgentEvent {
+    case class ContextFound(filePath: String, relativeFilePath: String, range: Range, projectName: String, editorSlug: String, results: JsValue, isError: Boolean = false)(implicit val projectDirectory: String) extends OpticEvent with UpdateAgentEvent {
       def asJson = JsObject(Seq(
         "event"-> JsString("context-found"),
         "projectName"-> JsString(projectName),
         "editorSlug"-> JsString(editorSlug),
         "filePath" -> JsString(filePath),
+        "relativeFilePath" -> JsString(relativeFilePath),
         "range" -> range.toJson,
         (if (isError) "errors" else "results") -> results)
       )
@@ -89,6 +90,13 @@ package object agents {
         "success"-> JsBoolean(success),
         "filesChanges" -> JsArray(filesUpdated.map(i=> JsString(i.pathAsString)).toSeq),
         "error" -> error.map(JsString).getOrElse(JsNull)
+      ))
+    }
+
+    case class CopyToClipboard(text: String)(implicit val projectDirectory: String) extends OpticEvent with UpdateAgentEvent {
+      def asJson = JsObject(Seq(
+        "event"-> JsString("copy-to-clipboard"),
+        "text"-> JsString(text)
       ))
     }
 

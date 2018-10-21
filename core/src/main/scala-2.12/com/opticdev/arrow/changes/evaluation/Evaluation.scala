@@ -25,7 +25,7 @@ import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 object Evaluation {
 
-  def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore): ChangeResult = opticChange match {
+  def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore, clipboardBuffer: ClipboardBuffer): ChangeResult = opticChange match {
     case im: InsertModel => {
       val stagedNode = StagedNode(im.schemaRef, im.value, Some(RenderOptions(
         generatorId = im.generatorId
@@ -35,13 +35,18 @@ object Evaluation {
       renderedTry.failed.foreach(_.printStackTrace)
       require(renderedTry.isSuccess, "Could not render model "+ renderedTry.failed.get.toString)
       val generatedNode = (renderedTry.get._1, renderedTry.get._2)
-      val resolvedLocation = im.atLocation.resolveToLocation(sourcegear).get
-      val changeResult = InsertCode.atLocation(generatedNode, resolvedLocation)
-      if (changeResult.isSuccess) {
-        changeResult.asFileChanged.stageContentsIn(filesStateMonitor)
-      }
 
-      changeResult
+      if (im.atLocation.isClipboard) {
+        clipboardBuffer.append(generatedNode._2)
+        ToClipboard(generatedNode._2)
+      } else {
+        val resolvedLocation = im.atLocation.resolveToLocation(sourcegear).get
+        val changeResult = InsertCode.atLocation(generatedNode, resolvedLocation)
+        if (changeResult.isSuccess) {
+          changeResult.asFileChanged.stageContentsIn(filesStateMonitor)
+        }
+        changeResult
+      }
     }
     case rt: RunTransformation => {
 
@@ -65,7 +70,7 @@ object Evaluation {
 
       val prefixedFlatContent = sourcegear.flatContext.prefix(transformation.packageId.packageId)
 
-      def generateNode(generateResult: GenerateResult, schema: OMSchema, lensIdOption: Option[String], topLevel: Boolean = false) : IntermediateTransformPatch = {
+      def generateNode(generateResult: GenerateResult, schema: OMSchema, lensIdOption: Option[String], topLevel: Boolean = false) : TransformPatch = {
 
         val stagedNode = generateResult.toStagedNode(Some(RenderOptions(
             generatorId = lensIdOption
@@ -88,12 +93,16 @@ object Evaluation {
             generatedNode._2)
         }
 
-        val resolvedLocation = rt.location.resolveToLocation(sourcegear, Some(stagedNode)).get
-        val changeResult = InsertCode.atLocation((generatedNode._1, updatedString), resolvedLocation).asFileChanged
-        IntermediateTransformPatch(changeResult.file, changeResult.patchInfo.get.range, changeResult.patchInfo.get.updated, isGeneration = true)
+        if (rt.location.isClipboard) {
+          ClipboardTransform(generatedNode._2, true)
+        } else {
+          val resolvedLocation = rt.location.resolveToLocation(sourcegear, Some(stagedNode)).get
+          val changeResult = InsertCode.atLocation((generatedNode._1, updatedString), resolvedLocation).asFileChanged
+          IntermediateTransformPatch(changeResult.file, changeResult.patchInfo.get.range, changeResult.patchInfo.get.updated, isGeneration = true)
+        }
       }
 
-      def mutateNode(mutateResult: MutateResult) : IntermediateTransformPatch = {
+      def mutateNode(mutateResult: MutateResult) : TransformPatch = {
         implicit val context = sourcegear.flatContext.prefix(transformation.packageId.packageId)
         val stagedMutation = mutateResult.toStagedMutation
         val mutated = Mutate.fromStagedMutationWithoutSGContext(stagedMutation)(projectOption.get.asInstanceOf[OpticProject], nodeKeyStore, context)
@@ -109,17 +118,32 @@ object Evaluation {
       transformationTry.get match {
         case x if x.yieldsGeneration => {
           val intermediateTransformPatch = generateNode(transformationTry.get.asInstanceOf[GenerateResult], schema, rt.generatorId, topLevel = true)
-          val fileContents = filesStateMonitor.contentsForFile(intermediateTransformPatch.file).get
-          val changes = FileChanged(intermediateTransformPatch.file, StringUtils.insertAtIndex(fileContents, intermediateTransformPatch.range.start, intermediateTransformPatch.newContents))
-          changes.stageContentsIn(filesStateMonitor)
-          changes
+
+         intermediateTransformPatch match {
+           case ClipboardTransform(newContents, isGeneration) => {
+             clipboardBuffer.append(newContents)
+             ToClipboard(newContents)
+           }
+           case IntermediateTransformPatch(file, range, newContents, isGeneration) => {
+             val fileContents = filesStateMonitor.contentsForFile(file).get
+             val changes = FileChanged(file, StringUtils.insertAtIndex(fileContents, range.start, newContents))
+             changes.stageContentsIn(filesStateMonitor)
+             changes
+           }
+         }
         }
         case x if x.yieldsMutation => {
           val intermediateTransformPatch = mutateNode(transformationTry.get.asInstanceOf[MutateResult])
-          val fileContents = filesStateMonitor.contentsForFile(intermediateTransformPatch.file).get
-          val changes = FileChanged(intermediateTransformPatch.file, StringUtils.replaceRange(fileContents, intermediateTransformPatch.range, intermediateTransformPatch.newContents))
-          changes.stageContentsIn(filesStateMonitor)
-          changes
+
+          intermediateTransformPatch match {
+            case IntermediateTransformPatch(file, range, newContents, isGeneration) => {
+              val fileContents = filesStateMonitor.contentsForFile(file).get
+              val changes = FileChanged(file, StringUtils.replaceRange(fileContents, range, newContents))
+              changes.stageContentsIn(filesStateMonitor)
+              changes
+            }
+            case a => NoChanges //won't allow clipboard for mutations
+          }
         }
 
         case multiTransform:MultiTransform => {
@@ -210,9 +234,11 @@ object Evaluation {
       if (project.isDefined) new FileStateMonitor(project.get.filesStateMonitor) else new FileStateMonitor
     }
 
+    implicit val clipboardBuffer = new ClipboardBuffer()
+
     val results = changeGroup.changes.map(c=> forChange(c, sourcegear, project))
 
-    BatchedChanges(results, filesStateMonitor.allStaged)
+    BatchedChanges(results, filesStateMonitor.allStaged, clipboardBuffer)
   }
 
 }
