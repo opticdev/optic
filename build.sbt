@@ -4,7 +4,7 @@ name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "1.1.0"
+val appVersion = Constants.cliVersion
 
 version := appVersion
 
