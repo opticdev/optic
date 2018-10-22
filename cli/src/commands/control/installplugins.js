@@ -7,7 +7,7 @@ import inquirer from 'inquirer'
 
 export const installPluginsCmd = {
 	name: 'installplugins',
-	action: () => {
+	action: (callback) => {
 		const agent = agentConnection()
 		const timeoutEventTrigger = enforceTimeout(8000, 'Could not connect to Optic server')
 
@@ -38,7 +38,12 @@ export const installPluginsCmd = {
 							console.log(`${i[0]}: ${i[1] ? colors.green('Success') : colors.red('Failed')}`))
 					}
 
-					process.exit(0)
+
+					if (typeof callback === 'function') {
+						callback()
+					} else {
+						process.exit(0)
+					}
 
 				});
 		})

@@ -29,7 +29,10 @@ object Lifecycle extends App {
 
   startup
   def startup = {
-    Server.start()
+    val didStart = Try(Server.start()).isSuccess
+    if (!didStart) {
+      System.exit(1)
+    }
     DataDirectoryConfig.triggerMigration
   }
 

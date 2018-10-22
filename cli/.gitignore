@@ -3,3 +3,4 @@ lib/
 .idea
 jars/*
 *.log
+.node-persist/

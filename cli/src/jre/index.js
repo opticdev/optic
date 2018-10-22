@@ -93,10 +93,8 @@
       return
     }
 
-    console.log(jreName())
-
     var urlStr = url();
-    console.log("Downloading from: ", urlStr);
+    // console.log("Downloading from: ", urlStr);
     callback = callback || (() => {});
     rmdir(jreDir());
     request
@@ -111,7 +109,7 @@
       })
       .on('response', res => {
         var len = parseInt(res.headers['content-length'], 10);
-        var bar = new ProgressBar('  downloading and preparing JRE [:bar] :percent :etas', {
+        var bar = new ProgressBar('downloading and preparing JRE + Optic Server [:bar] :percent :etas', {
           complete: '=',
           incomplete: ' ',
           width: 80,

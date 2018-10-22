@@ -14,6 +14,9 @@ import {syncCmd} from "./commands/optic/sync";
 import {serverStatus} from "./optic/IsRunning";
 import {startInteractive} from "./interactive/Interactive";
 import {searchCmd} from "./commands/optic/search";
+import storage from 'node-persist'
+import "regenerator-runtime/runtime";
+import {setupFlow} from "./commands/SetupFlow";
 
 const commands = attachCommandHelper(program)
 
@@ -34,12 +37,26 @@ commands.attachCommand(adduserCmd)
 commands.attachCommand(searchCmd)
 commands.attachCommand(syncCmd)
 
+async function processInput() {
 
-if (!process.argv.slice(2).length) {
-	//start interactive CLI if just 'optic' is passed
-	startCmd.action(false, false)
-	const {startInteractive} = require( './interactive/Interactive' )
-	startInteractive({})
+	await storage.init()
+	const firstRun = !(await storage.getItem('firstRun'))
+	if (firstRun || process.argv[2] === 'force-first-time') {
+		await storage.setItem('firstRun', true)
+		setupFlow()
+	} else {
+		if (!process.argv.slice(2).length) {
+			//start interactive CLI if just 'optic' is passed
+			await startCmd.action(false, false)
+			const {startInteractive} = require('./interactive/Interactive')
+			startInteractive({})
+		} else {
+			program.parse(process.argv)
+		}
+	}
 }
 
-program.parse(process.argv)
+// const m = require('./jre/index')
+// console.log(m.driver())
+
+processInput()
