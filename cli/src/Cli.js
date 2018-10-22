@@ -42,7 +42,6 @@ async function processInput() {
 	await storage.init()
 	const firstRun = !(await storage.getItem('firstRun'))
 	if (firstRun || process.argv[2] === 'force-first-time') {
-		await storage.setItem('firstRun', true)
 		setupFlow()
 	} else {
 		if (!process.argv.slice(2).length) {

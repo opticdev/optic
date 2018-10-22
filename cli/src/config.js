@@ -1,7 +1,7 @@
 import {driver} from './jre/index'
 import "regenerator-runtime/runtime";
 
-const isDev = false
+export const isDev = false
 
 export default (() => {
 
@@ -23,7 +23,7 @@ export default (() => {
 				binary: driver,
 				options: ['-jar', `${process.cwd()}/jars/server-assembly.jar`]
 			},
-			projectDirectory: '/Users/aidancunniffe/Desktop/optic-demo-project-master'
+			projectDirectory: '/Users/aidancunniffe/'
 		}
 	}
 

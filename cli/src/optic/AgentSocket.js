@@ -1,5 +1,6 @@
 import {AgentConnection} from "optic-editor-sdk";
 import config from '../config'
+import colors from 'colors'
 let _agentConnection = null
 
 export function agentConnection(connectCallback) {

@@ -5,6 +5,9 @@ import {validate as emailValidate} from 'email-validator'
 import {install} from '../jre/index'
 import {installPluginsCmd} from "./control/installplugins";
 import {startCmd} from "./control/start";
+import storage from "node-persist";
+import {isDev} from "../config";
+import request from 'request'
 
 export async function setupFlow() {
 	console.log('Welcome to Optic '+colors.yellow(p.version))
@@ -13,7 +16,9 @@ export async function setupFlow() {
 			{
 				type: 'input',
 				message: 'Please enter your email: ',
-				// validate: (email) => (emailValidate(email)) ? true : 'Invalid email address',
+				validate: (email) => {
+					return (emailValidate(email) || isDev) ? true : 'Invalid email address'
+				},
 				name: 'email',
 			},
 			{
@@ -24,6 +29,15 @@ export async function setupFlow() {
 	])
 
 	if (answers.confirm) {
+		storage.setItem('firstRun', true)
+		storage.setItem('email', answers.email)
+
+		if (!isDev) {
+			request.post('https://d1tzgrv7wi.execute-api.us-east-2.amazonaws.com/production/analytics/add-entry',
+				{body: JSON.stringify({email: answers.email})},
+				(error, response, body) => {})
+		}
+
 		console.log(colors.yellow('Installing local Optic server...'))
 		install((err) => {
 			if (!err) {

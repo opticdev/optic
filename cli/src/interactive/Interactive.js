@@ -17,6 +17,7 @@ import {BlurTextBox} from "./blessed-extensions/BlurTextBox";
 import {setStatus} from "./actions/StateMutations";
 import {ModifyIntent} from "./intent/ModifyIntent";
 import clipboardy from 'clipboardy'
+import colors from "colors";
 
 global.destructiveLogger = (log) => {
 	if(global.currentScreen) {
@@ -40,7 +41,22 @@ const defaultState = {
 	intent: null
 }
 
+export function shouldStart() {
+	return new Promise((resolve, reject) => {
+		const agentC = agentConnection(() => {
+			resolve()
+		})
+
+		agentC.onError(() => {
+			console.error(colors.red(`directory does not include Optic project. Run 'optic init' to create one`))
+			process.exit(0)
+		})
+	})
+}
+
 export function startInteractive(initialState = {}) {
+
+	shouldStart().then(() => {
 
 	global.currentScreen = new Screen(
 		//children
@@ -137,6 +153,7 @@ export function startInteractive(initialState = {}) {
 	const input = global.currentScreen.getRawNodeById('bottomInput')
 	input.inputFocus()
 
+	})
 }
 
 //override for testing
