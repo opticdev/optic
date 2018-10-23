@@ -27,18 +27,20 @@ program
 	.name('optic')
 	.version(pJson.version)
 
-//Control Commands
-commands.attachCommand(startCmd)
-commands.attachCommand(stopCmd)
-commands.attachCommand(installPluginsCmd, true)
-commands.attachCommand(initCmd)
-commands.attachCommand(refreshCmd)
-// commands.attachCommand(createuserCmd)
-// commands.attachCommand(adduserCmd)
 
 //Optic Commands
 commands.attachCommand(searchCmd)
 commands.attachCommand(syncCmd)
+
+//Control Commands
+commands.attachCommand(initCmd)
+commands.attachCommand(startCmd)
+commands.attachCommand(stopCmd)
+commands.attachCommand(installPluginsCmd, true)
+commands.attachCommand(refreshCmd)
+// commands.attachCommand(createuserCmd)
+// commands.attachCommand(adduserCmd)
+
 
 async function processInput() {
 

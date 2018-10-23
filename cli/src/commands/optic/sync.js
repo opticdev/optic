@@ -5,6 +5,7 @@ import {track} from "../../Analytics";
 
 export const syncCmd = {
 	name: 'sync',
+	description: 'triggers sync',
 	action: () => {
 		startCmd.action(false, false)
 		const {startInteractive} = require( '../../interactive/Interactive' )

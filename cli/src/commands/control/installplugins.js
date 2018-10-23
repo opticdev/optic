@@ -6,6 +6,7 @@ import {track} from "../../Analytics";
 
 export const installPluginsCmd = {
 	name: 'installplugins',
+	description: 'starts plugin installer',
 	action: (callback) => {
 
 		startCmd.action(false, false).then((started) => {

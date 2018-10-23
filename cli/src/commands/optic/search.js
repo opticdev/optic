@@ -3,6 +3,7 @@ import {track} from "../../Analytics";
 
 export const searchCmd = {
 	name: 'search',
+	description: 'search for [input]',
 	action: (cmd) => {
 		const searchIndex = cmd.rawArgs.indexOf('search')
 		const remaining = cmd.rawArgs.slice(searchIndex+1).join(' ')

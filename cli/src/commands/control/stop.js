@@ -5,6 +5,7 @@ const failureText = 'Optic server is not running'
 
 export const stopCmd = {
 	name: 'stop',
+	description: 'stops local Optic server',
 	action: () => {
 		kill('30333')
 			.then(i=> console.log(successText))

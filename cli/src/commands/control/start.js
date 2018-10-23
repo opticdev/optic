@@ -7,6 +7,7 @@ const appRootPath = require('app-root-path').toString()
 
 export const startCmd = {
 	name: 'start',
+	description: 'starts local Optic server',
 	action: (logAlreadyStarted = true, killProcessAfterStarting = true) => {
 
 		return new Promise(async (resolve, reject) => {
