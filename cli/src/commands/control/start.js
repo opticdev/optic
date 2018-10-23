@@ -10,7 +10,9 @@ export const startCmd = {
 
 		return new Promise(async (resolve, reject) => {
 
-			if (serverStatus().isRunning) {
+
+			const status = await serverStatus()
+			if (status.isRunning) {
 				if (logAlreadyStarted) {
 					console.log('Optic server already running')
 				}
@@ -49,7 +51,7 @@ export const startCmd = {
 			}, 10000)
 
 			//hold thread until started.
-			while (!serverStatus().isRunning && !failedToStart) {
+			while ((await serverStatus()).isRunning && !failedToStart) {
 			}
 
 			if (!failedToStart) {

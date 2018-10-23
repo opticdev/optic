@@ -5,7 +5,7 @@ import {contentModesEnum} from "../constants/ContentModes";
 import {contextHelpText} from "../constants/ContextText";
 
 //Help Messages
-const defaultStyle =  'type a query, {bold}sync{/bold}, {bold}status{/bold}, or {bold}help{/bold}'
+const defaultStyle =  'type a query, {bold}sync{/bold}, or {bold}help{/bold}'
 
 //UI Logic
 const isEmpty = (state) => !!state.inputValue
@@ -14,7 +14,7 @@ const isEmpty = (state) => !!state.inputValue
 const chooseStyle = (state) => {
 
 	if (state.indicator) {
-		return state.indicator.bottomHelp
+		return state.indicator.bottomHelp || ''
 	}
 
 	if (isEmpty(state)) {

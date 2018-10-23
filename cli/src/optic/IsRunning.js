@@ -1,10 +1,21 @@
 import exec from 'sync-exec'
 import niceTry from 'nice-try'
+import request from "request";
 export function serverStatus(versionVerify) {
-	const result = exec(`curl localhost:30333/sdk-version?v=${versionVerify}`)
 
-	return {
-		isRunning: result.status === 0,
-		support: niceTry(()=> JSON.parse(result.stdout))
-	}
+	return new Promise((resolve, reject) => {
+		request.get('http://localhost:30333/sdk-version', {qs: {'v': versionVerify}}, (err, response, body) => {
+			if (!err && body) {
+				resolve({
+					isRunning: true,
+					support: niceTry(()=> JSON.parse(body))
+				})
+			} else {
+				resolve({
+					isRunning: false,
+				})
+			}
+		})
+	})
+
 }

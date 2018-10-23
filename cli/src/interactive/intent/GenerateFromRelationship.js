@@ -33,7 +33,9 @@ export class GenerateFromRelationship extends IntentBase {
 				const selectStage = this._stages[0].result()
 				const hasContext = !!global.currentScreen.currentState().context
 
-				return {text: finalizeText(this._item, selectStage.name), keyBindings: {
+				return {
+					text: finalizeText(this._item, selectStage.name),
+					keyBindings: {
 					'escape': () => this.finish(),
 					'return': () => this.finish(true, !hasContext),
 					'c': () => this.finish(true, true)
@@ -101,8 +103,7 @@ const finalizeText = (item, sourceName) => {
 	const {context} = global.currentScreen.currentState()
 
 	if (context) {
-return `
-Ready to generate new {bold} ${item.toName}{/bold} from {bold}${sourceName}{/bold}
+return `Ready to generate new {bold} ${item.toName}{/bold} from {bold}${sourceName}{/bold}
 
 Insert location: {yellow-fg}${context.relativeFilePath} ${context.range.start}{/yellow-fg}
 Press {green-fg}{bold}(return){/bold}{/green-fg} to insert
@@ -112,8 +113,7 @@ Press {red-fg}{bold}(escape){/bold}{/red-fg} to cancel
 
 `
 	} else {
-		return `
-Ready to generate new {bold} ${item.toName}{/bold} from {bold}${sourceName}{/bold}
+		return `Ready to generate new {bold} ${item.toName}{/bold} from {bold}${sourceName}{/bold}
 
 Insert location: {yellow-fg}Clipboard. No file opened in a connected IDE {/yellow-fg}
 Press {green-fg}{bold}(c){/bold}{/green-fg} to copy to clipboard

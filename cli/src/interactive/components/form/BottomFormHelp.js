@@ -28,7 +28,7 @@ export const bottomFormHelp = () => new Child((initialState, setState) => {
 
 }, (node, newState) => {
 	node.setContent(chooseStyle(newState))
-	toggleNoneOnAssertion(newState.contentMode === contentModesEnum.JSON_INPUT, node)
+	toggleNoneOnAssertion(newState.contentMode === contentModesEnum.JSON_INPUT && !newState.indicator, node)
 }, [],
 	'bottomFormHelp')
 

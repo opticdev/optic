@@ -60,7 +60,7 @@ const {context} = global.currentScreen.currentState()
 
 if (context) {
 return `
-{bold} Ready to generate new ${title}{/bold}
+{bold}Ready to generate new ${title}{/bold}
 
 Insert location: {yellow-fg}${context.relativeFilePath} ${context.range.start}{/yellow-fg}
 Press {green-fg}{bold}(return){/bold}{/green-fg} to insert
@@ -73,7 +73,7 @@ ${JSON.stringify(json.value, null, 2)}
 `
 } else {
 return `
-{bold} Ready to generate new ${title}{/bold}
+{bold}Ready to generate new ${title}{/bold}
 
 Insert location: {yellow-fg}Clipboard. No file opened in a connected IDE {/yellow-fg}
 Press {green-fg}{bold}(c){/bold}{/green-fg} to copy to clipboard
