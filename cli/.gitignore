@@ -4,3 +4,4 @@ lib/
 jars/*
 *.log
 .node-persist/
+package-lock.json
