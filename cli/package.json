@@ -1,15 +1,19 @@
 {
-  "name": "cli",
+  "name": "optic-cli",
   "version": "0.0.0-alpha",
   "description": "",
   "main": "./lib/Cli.js",
   "scripts": {
     "build": "rm -rf ./lib && babel src --out-dir lib",
+    "build-server": "cd ../ && sh ./build.sh",
     "test": "npm run build && find ./lib -name '*.test.js' | xargs mocha -R spec",
     "interactive-test": "npm run build && node ./lib/interactive/Interactive.js interactive-test-protocol",
     "jre-install": "npm run build && node ./lib/jre/install.js",
     "cli-test": "npm run build && node ./lib/Cli.js",
     "first-run-test": "npm run build && node lib/Cli.js force-first-time"
+  },
+  "bin": {
+    "optic": "lib/Cli.js"
   },
   "license": "MIT",
   "devDependencies": {
