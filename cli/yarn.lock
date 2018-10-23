@@ -648,6 +648,10 @@ anymatch@^2.0.0:
     micromatch "^3.1.4"
     normalize-path "^2.1.1"
 
+app-root-path@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/app-root-path/-/app-root-path-2.1.0.tgz#98bf6599327ecea199309866e8140368fd2e646a"
+
 aproba@^1.0.3:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-1.2.0.tgz#6802e6264efd18c790a1b0d517f0f2627bf2c94a"
@@ -1923,10 +1927,6 @@ lodash.isarray@^3.0.0:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/lodash.isarray/-/lodash.isarray-3.0.4.tgz#79e4eb88c36a8122af86f844aa9bcd851b5fbb55"
 
-lodash.isarray@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/lodash.isarray/-/lodash.isarray-4.0.0.tgz#2aca496b28c4ca6d726715313590c02e6ea34403"
-
 lodash.isnumber@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/lodash.isnumber/-/lodash.isnumber-3.0.3.tgz#3ce76810c5928d03352301ac287317f11c0b1ffc"
@@ -2277,9 +2277,9 @@ opn@^5.4.0:
   dependencies:
     is-wsl "^1.1.0"
 
-optic-editor-sdk@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/optic-editor-sdk/-/optic-editor-sdk-0.2.1.tgz#86739042994cbdbd49ad91dfbffae5887b3833f3"
+optic-editor-sdk@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/optic-editor-sdk/-/optic-editor-sdk-0.3.0.tgz#e470b0ee7f10f3d49bd37fdbf841ec8640f2d6fd"
   dependencies:
     reconnecting-websocket "^3.2.2"
     ws "^4.0.0"

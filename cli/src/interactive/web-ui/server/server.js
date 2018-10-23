@@ -3,6 +3,8 @@ import path from 'path';
 import opn from 'opn'
 import {json as jsonBodyParser} from 'body-parser'
 
+const appRootPath = require('app-root-path').toString()
+
 let currentServer = null
 
 export function startServer(withPatch, applyCallback) {
@@ -18,7 +20,7 @@ export function startServer(withPatch, applyCallback) {
 
 	app.use(jsonBodyParser())
 
-	app.use(express.static( path.resolve( './react-diff-view' ) ) );
+	app.use(express.static( path.resolve( `${appRootPath}/react-diff-view` ) ) );
 
 	app.get( "/get-patch", ( req, res ) => {
 		res.json(withPatch)

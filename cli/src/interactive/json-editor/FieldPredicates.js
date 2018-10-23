@@ -1,9 +1,7 @@
-import isArray from 'lodash.isarray'
-
 export function fieldPredicates(fieldSchema) {
 	return {
 		isString: () => fieldSchema.type === 'string',
-		hasEnum: () => isArray(fieldSchema.enum),
+		hasEnum: () => Array.isArray(fieldSchema.enum),
 
 		isArray: () => fieldSchema.type === 'array'
 	}

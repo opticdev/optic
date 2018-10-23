@@ -1,6 +1,5 @@
 import deepFreeze from 'deep-freeze'
 import equals from 'equals'
-import isArray from 'lodash.isarray'
 import Ajv from 'ajv'
 const ajv = Ajv()
 ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
@@ -47,7 +46,7 @@ export function typesForSchema(schema) {
 	const hasAnyOf = !!schema.anyOf
 
 	if (hasType) {
-		if (isArray(schema.type)) {
+		if (Array.isArray(schema.type)) {
 			return schema.type
 		} else {
 			return [schema.type]

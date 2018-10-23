@@ -7,11 +7,16 @@ import {JSONStage} from "./stages/JSONStage";
 import {routeSchema} from "../json-editor/test/ExampleSchemas";
 import {PostModifyRequest} from "../../optic/PostChanges";
 import {track} from "../../Analytics";
+import equals from 'equals'
+let lastContextItem = null
 
 export class ModifyIntent extends IntentBase {
 	constructor(contextItem) {
 
-		track('Modify Intent')
+		if (!equals(lastContextItem, contextItem)) {
+			track('Context found', {schema: contextItem.schema})
+			lastContextItem = contextItem
+		}
 
 		super({stages: [
 			new IndicatorStage(() => {
@@ -19,7 +24,10 @@ export class ModifyIntent extends IntentBase {
 					text: contextText(global.currentScreen.currentState().context, contextItem),
 					keyBindings: {
 						'escape': () => this.finish(),
-						'm': () => this.next()
+						'm': () => {
+							track('Modify Intent')
+							this.next()
+						}
 					},
 					bottomHelp: contextHelpText
 				}

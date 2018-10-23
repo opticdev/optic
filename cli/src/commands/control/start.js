@@ -3,6 +3,7 @@ import config from '../../config'
 import {serverStatus} from "../../optic/IsRunning";
 import fs from 'fs'
 import {track} from "../../Analytics";
+const appRootPath = require('app-root-path').toString()
 
 export const startCmd = {
 	name: 'start',
@@ -19,13 +20,14 @@ export const startCmd = {
 				return resolve(true)
 			}
 
-			const out = fs.openSync('./out.log', 'a');
-			const err = fs.openSync('./out.log', 'a');
+			const out = fs.openSync(appRootPath+'/out.log', 'a');
+			const err = fs.openSync(appRootPath+'/out.log', 'a');
 
 			const binary = await config.runServerCmd.binary()
 
 			const child = spawn(binary, config.runServerCmd.options, {
-				detached: true, stdio: ['ignore', out, err] //keep it alive after process ends
+				detached: true,
+				stdio: ['ignore', out, err] //keep it alive after process ends
 			})
 
 			console.log('Starting Optic Server...')
@@ -51,18 +53,17 @@ export const startCmd = {
 			}, 10000)
 
 			//hold thread until started.
-			while ((await serverStatus()).isRunning && !failedToStart) {
+			while (!((await serverStatus()).isRunning) && !failedToStart) {
 			}
 
 			if (!failedToStart) {
 				console.log('Server Started')
 				track('Server Started')
+				resolve(true)
 				if (killProcessAfterStarting) {
-					reject('could not start')
 					process.exit(0)
 				}
 			} else {
-				console.error()
 				return reject('could not start')
 			}
 		})

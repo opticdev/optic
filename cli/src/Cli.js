@@ -19,6 +19,7 @@ import "regenerator-runtime/runtime";
 import {setupFlow} from "./commands/SetupFlow";
 import {track} from "./Analytics";
 import platform from 'platform'
+import config from "./config";
 
 const commands = attachCommandHelper(program)
 
@@ -41,7 +42,7 @@ commands.attachCommand(syncCmd)
 
 async function processInput() {
 
-	await storage.init()
+	await storage.init({dir: config.storageDirectory})
 	const firstRun = !(await storage.getItem('firstRun'))
 
 	if (firstRun || process.argv[2] === 'force-first-time') {
@@ -58,8 +59,5 @@ async function processInput() {
 		}
 	}
 }
-
-// const m = require('./jre/index')
-// console.log(m.driver())
 
 processInput()

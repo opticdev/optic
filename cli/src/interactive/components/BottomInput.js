@@ -30,6 +30,7 @@ export const bottomInput = () => new Child((initialState, setState, actionHandle
 
 	AddBlurToTextBox(input, () => {
 		input.on('keypress', (ch, key) => {
+
 			if (key.name === 'enter') {
 				input.focus()
 				actionHandler.onInputEnter()

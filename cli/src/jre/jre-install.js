@@ -13,6 +13,8 @@
   const ProgressBar = require('progress');
   const child_process = require('child_process');
 
+  const appRootPath = require('app-root-path')
+
   const {major_version, update_number, build_number, hash} = require('../../package').jreConfig
 
   const version = major_version + 'u' + update_number;
@@ -77,7 +79,7 @@
       child_process.spawnSync(driver(), getArgs(classpath, classname, args), options);
 
   const smoketest = exports.smoketest = () =>
-    spawnSync(['resources'], 'Smoketest', [], { encoding: 'utf8' })
+    spawnSync(['resources'], 'Smoketest', [], { encoding: 'utf8', cwd: appRootPath.toString() })
     .stdout.trim() === 'No smoke!';
 
   const url = exports.url = () =>

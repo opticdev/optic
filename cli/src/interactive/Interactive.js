@@ -18,6 +18,10 @@ import {setStatus} from "./actions/StateMutations";
 import {ModifyIntent} from "./intent/ModifyIntent";
 import clipboardy from 'clipboardy'
 import colors from "colors";
+import storage from 'node-persist'
+import config from "../config";
+
+storage.init({dir: config.storageDirectory})
 
 global.destructiveLogger = (log) => {
 	if(global.currentScreen) {
@@ -48,7 +52,7 @@ export function shouldStart() {
 		})
 
 		agentC.onError(() => {
-			console.error(colors.red(`directory does not include Optic project. Run 'optic init' to create one`))
+			console.error(colors.red(`Current directory does not include Optic project. Run 'optic init' to create one`))
 			process.exit(0)
 		})
 	})

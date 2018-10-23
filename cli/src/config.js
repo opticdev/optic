@@ -1,7 +1,7 @@
-import {driver} from './jre/index'
+import {driver} from './jre/jre-install'
 import "regenerator-runtime/runtime";
 
-export const isDev = true
+export const isDev = false
 
 export default (() => {
 
@@ -15,15 +15,19 @@ export default (() => {
 				},
 				options: ['-jar', `${process.cwd()}/jars/server-assembly.jar`]
 			},
+			storageDirectory: process.cwd(),
 			projectDirectory: '/Users/aidancunniffe/Desktop/optic-demo-project-master'
 		}
 	} else {
+		const appRootPath = require('app-root-path').toString()
+
 		return {
 			runServerCmd: {
 				binary: driver,
-				options: ['-jar', `${process.cwd()}/jars/server-assembly.jar`]
+				options: ['-jar', `${appRootPath}/jars/server-assembly.jar`]
 			},
-			projectDirectory: '/Users/aidancunniffe/'
+			storageDirectory: require('os').homedir()+'/.optic-storage',
+			projectDirectory: process.cwd()
 		}
 	}
 

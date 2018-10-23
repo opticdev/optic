@@ -1,13 +1,12 @@
 import {JSONValueStack} from "./JSONValueStack";
 import assert from 'assert'
-import isArray from 'lodash.isarray'
 import deepcopy from 'deepcopy'
 import {impliedTypesForSchema, typesForSchema} from "../util/SchemaHelpers";
 
 export class JSONArrayStack extends JSONValueStack {
 
 	constructor(initialValue = [], schema, parentInfo = {absolutePath: ''}) {
-		assert(isArray(initialValue), 'Initial value must be an array')
+		assert(Array.isArray(initialValue), 'Initial value must be an array')
 		assert(schema.type === 'array', 'Schema must be of type "array"')
 		super(initialValue, schema, parentInfo)
 

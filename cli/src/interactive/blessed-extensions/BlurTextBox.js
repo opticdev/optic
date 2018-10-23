@@ -9,7 +9,9 @@ export function AddBlurToTextBox(textBox, handlers) {
 		textBox.focus()
 	}
 
-	textBox.addHandlers = () => handlers()
+	textBox.addHandlers = () => {
+		handlers()
+	}
 
 	textBox.inputBlur = () => {
 		textBox.removeListener('keypress', textBox.__listener);

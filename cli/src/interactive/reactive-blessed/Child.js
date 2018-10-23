@@ -51,6 +51,11 @@ export class Child {
 		}
 
 		const node = this.initializer(screen.currentState(), screen.setState, screen._actionHandler)
+
+		node.key(['C-c'], (ch, key) => {
+			return process.exit(0);
+		});
+
 		this._blessedInstance = node
 		this.addChildren(this._children, screen)
 		screen.registerChild(this)

@@ -2,7 +2,7 @@ import inquirer from 'inquirer'
 import p from '../../package'
 import colors from 'colors'
 import {validate as emailValidate} from 'email-validator'
-import {install} from '../jre/index'
+import {install} from '../jre/jre-install'
 import {installPluginsCmd} from "./control/installplugins";
 import {startCmd} from "./control/start";
 import storage from "node-persist";
@@ -54,8 +54,8 @@ export async function setupFlow() {
 
 
 			} else {
-				track('Could not install Optic server')
-				console.log(colors.red('Optic server could not be installed.'))
+				track('Could not install Optic server ')
+				console.log(colors.red('Optic server could not be installed.' + err))
 				process.exit(1)
 			}
 		})
