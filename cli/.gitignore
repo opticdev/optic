@@ -1,0 +1,7 @@
+node_modules
+lib/
+.idea
+jars/*
+*.log
+.node-persist/
+package-lock.json

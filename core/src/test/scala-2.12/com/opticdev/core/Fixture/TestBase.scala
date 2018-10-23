@@ -10,7 +10,6 @@ import com.opticdev.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FunSpec, FunSpecLike}
 import play.api.libs.json.{JsObject, JsValue}
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.markdown.MarkdownCache
 import org.yaml.snakeyaml.Yaml
 
 import scala.util.{Random, Try}
@@ -34,7 +33,6 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
     DataDirectory.clearCaches
     PreTest.run
     SourceParserManager.clearParsers
-    MarkdownCache.clear
 
     val jsParser = new com.opticdev.parsers.es7.OpticParser()
 

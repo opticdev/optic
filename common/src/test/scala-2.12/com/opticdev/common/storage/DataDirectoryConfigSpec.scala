@@ -12,7 +12,7 @@ class DataDirectoryConfigSpec extends FunSpec with BeforeAndAfterAll {
 
   it("can read config status from data directory when doesn't exist") {
     DataDirectoryConfig.configLocation.delete(true)
-    DataDirectoryConfig.readConfigStatus == DataDirectoryConfig.ConfigStatus(BuildInfo.opticMDVersion, Seq())
+    DataDirectoryConfig.readConfigStatus == DataDirectoryConfig.ConfigStatus(BuildInfo.skillsSDKVersion, Seq())
   }
 
   it("can write new config status to data directory") {
@@ -42,21 +42,6 @@ class DataDirectoryConfigSpec extends FunSpec with BeforeAndAfterAll {
       DataDirectoryConfig.addKnownProject("6.yml")
       DataDirectoryConfig.addKnownProject("7.yml")
       assert(DataDirectoryConfig.readConfigStatus.knownProjects == Seq("7.yml", "6.yml", "5.yml", "4.yml", "3.yml", "2.yml"))
-    }
-  }
-
-  describe("can migrate data directory") {
-
-    def stagedMigration =  {
-      DataDirectory.init
-      DataDirectoryConfig.saveConfigStatus(DataDirectoryConfig.ConfigStatus("0.1.0", Seq()))
-      (DataDirectory.markdownCache / "testFile").createIfNotExists()
-    }
-
-    it("when optic markdown version changes") {
-      stagedMigration
-      DataDirectoryConfig.triggerMigration
-      assert(DataDirectory.markdownCache.list.isEmpty)
     }
   }
 

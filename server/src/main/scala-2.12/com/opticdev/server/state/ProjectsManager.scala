@@ -14,8 +14,14 @@ import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, Proj
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectInfo}
 import com.opticdev.server.http.routes.socket.agents.{AgentConnection, KnowledgeGraphUpdate, ModelNodeOptionsUpdate, StatusUpdate}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.collection.mutable
 import scala.util.{Success, Try}
+import akka.pattern.after
+import com.opticdev.server.http.routes.socket.agents.Protocol.ContextFound
+
+import scala.concurrent.Future
+import scala.concurrent.duration._
 
 class ProjectsManager {
 
@@ -27,7 +33,7 @@ class ProjectsManager {
   private var projectsStore: Vector[OpticProject] = Vector()
 
   private def addProject(project: OpticProject) : Unit =  {
-
+    implicit val projectDirectory = project.projectDirectory
     //attach a sourcegear changed callback
     project.onSourcegearChanged((sg)=> {
       //overwrite old sg instance with the new one
@@ -145,9 +151,31 @@ class ProjectsManager {
   private var _lastProjectName : Option[String] = None
   def lastProjectName = _lastProjectName
 
+  def projectForDirectory(string: String) =
+    activeProjects.find(_.projectDirectory == string).getOrElse(throw new Error("Project not found "+ string))
+
   def sendMostRecentUpdate = Try {
+    //@todo last project name is not going to work w/ new CLI approach
     val project = lookupProject(_lastProjectName.get).get
+    val arrow = lookupArrow(_lastProjectName.get).get
+    implicit val projectDirectory = project.projectDirectory
     AgentConnection.broadcastUpdate(StatusUpdate(_lastProjectName.get, project.projectStatus))
+
+    after(150 millis, actorSystem.scheduler)(Future(
+      AgentConnection.broadcastUpdate(KnowledgeGraphUpdate(_lastProjectName.get, arrow.knowledgeGraphAsJson))
+    ))
+
+    val lastContext = getLastContext(project)
+    if (lastContext.isDefined) {
+      after(150 millis, actorSystem.scheduler)(Future(
+        AgentConnection.broadcastUpdate(lastContext.get)
+      ))
+    }
   }
+
+  //last context
+  private var lastContextStore = scala.collection.mutable.HashMap[OpticProject, ContextFound]()
+  def setLastContext(project: OpticProject, context: ContextFound): Unit = lastContextStore.put(project, context)
+  def getLastContext(project: OpticProject): Option[ContextFound] = lastContextStore.get(project)
 
 }

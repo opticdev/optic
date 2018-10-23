@@ -16,7 +16,7 @@ case class ChangeGroup(changes: OpticChange*) {
   }
 
   def evaluateAndWrite(sourcegear: SourceGear, project: Option[OpticProject] = None)(implicit nodeKeyStore: NodeKeyStore, autorefreshes: Boolean) : Try[BatchedChanges] = Try {
-    val evaluated = evaluate(sourcegear, project)
+    val evaluated: BatchedChanges = evaluate(sourcegear, project)
 
     //create files if they do not exist
     evaluated.stagedFiles.keys.foreach(file => {
@@ -30,9 +30,10 @@ case class ChangeGroup(changes: OpticChange*) {
       if (!autorefreshes) {
         evaluated.flushToDisk
       }
+
       evaluated
     } else {
-      throw new Exception("Changes could not be applied.")
+      throw new Exception("Changes could not be applied: "+ evaluated.errors.map(_.getMessage).mkString(", "))
     }
   }
 

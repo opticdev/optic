@@ -1,13 +1,10 @@
 import sbtbuildinfo.BuildInfoPlugin.autoImport.buildInfoPackage
 
-import scala.io.Source
-import scala.util.Try
-
 name := "optic-core"
 
 organization := "com.opticdev"
 
-val appVersion = "1.0.5"
+val appVersion = Constants.cliVersion
 
 version := appVersion
 
@@ -31,8 +28,9 @@ lazy val common = (project in file("common")).
  .settings(
    libraryDependencies ++= Dependencies.commonDependencies,
    buildInfoKeys := Seq[BuildInfoKey](
-     "opticMDVersion" -> Constants.opticMDVersion,
+     "skillsSDKVersion" -> Constants.supportedSdks.last,
      "currentOpticVersion" -> appVersion,
+     "supportedSdks" -> Constants.supportedSdks,
    ),
    buildInfoPackage := "com.opticdev.common"
  )
@@ -43,7 +41,7 @@ lazy val sdk = (project in file("sdk")).
   .settings(
     libraryDependencies ++= Dependencies.sdkDependencies,
     buildInfoKeys := Seq[BuildInfoKey](
-      "opticMDVersion" -> Constants.opticMDVersion,
+      "skillsSDKVersion" -> Constants.supportedSdks.last,
     ),
     buildInfoPackage := "com.opticdev.sdk"
   )
@@ -54,19 +52,6 @@ lazy val opm = (project in file("opm")).
  .settings(libraryDependencies ++= Dependencies.opmDependencies)
  .dependsOn(common)
  .dependsOn(sdk)
-
-lazy val cli = (project in file("cli")).
-  settings(commonSettings: _*)
-  .settings(
-    libraryDependencies ++= Dependencies.cliDependencies,
-    buildInfoKeys := Seq[BuildInfoKey](
-      "opticVersion" -> appVersion,
-    ),
-    buildInfoPackage := "com.opticdev.cli"
-  )
-  .dependsOn(common)
-  .dependsOn(core)
-  .dependsOn(core % "compile->compile;test->test")
 
 lazy val core = (project in file("core")).
   settings(commonSettings: _*)
@@ -83,7 +68,6 @@ lazy val server = (project in file("server")).
  .dependsOn(sdk)
  .dependsOn(common)
  .dependsOn(core)
- .dependsOn(cli)
  .dependsOn(core % "compile->compile;test->test")
  .settings(
    test in assembly := {},

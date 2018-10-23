@@ -1,7 +1,6 @@
 package com.opticdev.opm.context
 
 import com.opticdev.common.PackageRef
-import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.{PackageManager, TestPackageProviders, TestProvider}
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.opticmarkdown2.lens.OMLens
@@ -9,9 +8,6 @@ import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import org.scalatest.{BeforeAndAfter, FunSpec}
 
 class PackageContextSpec extends FunSpec with TestPackageProviders {
-
-  implicit val projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
-
 
   describe("Package Context") {
 

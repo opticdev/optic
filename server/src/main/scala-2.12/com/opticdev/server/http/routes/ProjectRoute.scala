@@ -5,12 +5,16 @@ import akka.http.scaladsl.model.{StatusCode, StatusCodes}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 
 import scala.concurrent.ExecutionContext
-import akka.http.scaladsl.server.Directives._
+import akka.http.scaladsl.server.Directives.{path, _}
 import akka.http.scaladsl.server.{Route, StandardRoute}
+import better.files.File
+import com.opticdev.common.storage.DataDirectory
 import com.opticdev.common.{BuildInfo, SchemaRef}
+import com.opticdev.core.sourcegear.project.ProjectInfo
+import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, NotLoaded, ProjectStatus}
 import com.opticdev.server.http.HTTPResponse
 import com.opticdev.server.state.ProjectsManager
-import play.api.libs.json.{JsArray, JsValue}
+import play.api.libs.json._
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
 import scala.util.Try
@@ -19,6 +23,20 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
 
   val route: Route =
     pathPrefix("projects") {
+      path("lookup") {
+        parameters('path) { path =>
+          import com.opticdev.core.utils.FileInPath._
+          val result = File(path).projectFileOption
+          if (result.isDefined) {
+            val pf = result.get
+            val name = pf.interface.get.name.initialValue.value
+            val directory = pf.file.pathAsString
+            complete(ProjectInfo(name, directory).asJson)
+          } else {
+            complete(StatusCodes.NotFound)
+          }
+        }
+      } ~
       pathEnd {
         complete(JsArray(projectsManager.allProjects.map(_.asJson)))
       } ~
@@ -35,9 +53,25 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
         }
       }
     } ~
-    path("build-version") {
+    path("sdk-version") {
       get {
-        complete(BuildInfo.currentOpticVersion)
+        parameters('v) { (sdkVersion) => {
+          complete(JsObject(Seq(
+            "opticVersion" -> JsString(BuildInfo.currentOpticVersion),
+            "isSupported" -> JsBoolean(BuildInfo.supportedSdks.contains(sdkVersion)),
+            "supportedSdks" -> JsArray(BuildInfo.supportedSdks.map(JsString))
+          )))
+        }
+        }
+      }
+    } ~
+    post {
+      path("trigger-refresh") {
+        //clear all cached sourcegears
+        DataDirectory.sourcegear.list.foreach(_.delete(true))
+        //trigger a rebuild all of active projects
+        projectsManager.activeProjects.foreach(_.fullRefresh)
+        complete("Done")
       }
     }
 

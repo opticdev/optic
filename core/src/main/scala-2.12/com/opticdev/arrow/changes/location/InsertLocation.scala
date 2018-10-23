@@ -1,21 +1,28 @@
 package com.opticdev.arrow.changes.location
 
 import better.files.File
+import com.opticdev.arrow.changes.InsertModel
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.parsers.{AstGraph, ParserBase, SourceParserManager}
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
+import play.api.libs.json.{JsObject, JsValue, Json}
 
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 sealed trait InsertLocation {
   val file: File
   def resolveToLocation(sourceGear: SourceGear, stagedNodeOption: Option[StagedNode] = None)(implicit filesStateMonitor: FileStateMonitor) : Try[ResolvedLocation]
+  def getTypeField: String = this.getClass.getSimpleName
+  def asJson :JsValue
+  def isClipboard = this == Clipboard
 }
 
 case class AsChildOf(file: File, position: Int) extends InsertLocation {
+  import com.opticdev.arrow.changes.JsonImplicits.asChildOfFormat
+  def asJson = Json.toJson[AsChildOf](this)
   override def resolveToLocation(sourceGear: SourceGear, stagedNodeOption: Option[StagedNode] = None)(implicit filesStateMonitor: FileStateMonitor) : Try[ResolvedLocation] = Try {
 
     val renderInOtherFile = stagedNodeOption.flatMap(_.options.flatMap(_.inFile))
@@ -66,6 +73,8 @@ case class AsChildOf(file: File, position: Int) extends InsertLocation {
 }
 
 case class RawPosition(file: File, position: Int) extends InsertLocation {
+  import com.opticdev.arrow.changes.JsonImplicits.rawPosition
+  def asJson = Json.toJson[RawPosition](this)
   override def resolveToLocation(sourceGear: SourceGear, stagedNodeOption: Option[StagedNode] = None)(implicit filesStateMonitor: FileStateMonitor) : Try[ResolvedLocation] = Try {
 
     val renderInOtherFile = stagedNodeOption.flatMap(_.options.flatMap(_.inFile))
@@ -80,6 +89,12 @@ case class RawPosition(file: File, position: Int) extends InsertLocation {
     val parser = parsed.get.parser
     ResolvedRawLocation(file, position, parser)
   }
+}
+
+case object Clipboard extends InsertLocation {
+  override val file: File = null
+  override def resolveToLocation(sourceGear: SourceGear, stagedNodeOption: Option[StagedNode])(implicit filesStateMonitor: FileStateMonitor): Try[ResolvedLocation] = Failure(null)
+  override def asJson: JsValue = JsObject.empty
 }
 
 //case class InContainer(container: CommonAstNode, atIndex: RelativeIndex = Last) extends InsertLocation

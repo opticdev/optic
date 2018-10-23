@@ -11,7 +11,6 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
-import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
@@ -109,7 +108,6 @@ trait GearUtils {
   //for debug only
   def fromDependenciesList(dependencies: String*): SourceGear = {
     val packages = dependencies.map(d=> PackageRef.fromString(d).get)
-    implicit val projectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
     val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef), Set())
     import scala.concurrent.duration._
     Await.result(sgFuture, 20 seconds).inflate

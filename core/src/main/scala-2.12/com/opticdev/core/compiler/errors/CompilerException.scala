@@ -13,7 +13,7 @@ trait CompilerException extends Exception {
 
 //Validation Stage
 case class SchemaNotFound(schemaId: SchemaRef)(implicit val lens: OMLens) extends CompilerException {
-  override def toString = "The schema "+schemaId.id+" was not found in description"
+  override def toString = "The schema '"+schemaId.id+"' was not found in description"
 }
 
 //Snippet Exception

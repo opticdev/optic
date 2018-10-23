@@ -6,7 +6,7 @@ import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.actors.ActorCluster
 import com.opticdev.core.sourcegear.graph.{FileNode, NamedFile, NamedModel, ProjectGraph, SerializeProjectGraph}
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
-import com.opticdev.core.sourcegear.project.status.ImmutableProjectStatus
+import com.opticdev.core.sourcegear.project.status.{ImmutableProjectStatus, ProjectStatus}
 import com.opticdev.core.sourcegear.storage.ConnectedProjectGraphStorage
 import com.opticdev.core.sourcegear.sync.SyncPatch
 import play.api.libs.json.{JsObject, JsString}
@@ -14,7 +14,7 @@ import play.api.libs.json.{JsObject, JsString}
 import scala.concurrent.Future
 
 package object project {
-  case class ProjectInfo(name: String, baseDir: String, status: ImmutableProjectStatus) {
+  case class ProjectInfo(name: String, baseDir: String, status: ImmutableProjectStatus = new ImmutableProjectStatus(new ProjectStatus())) {
     def asJson : JsObject = JsObject(Seq("name" -> JsString(name), "directory" -> JsString(baseDir), "status" -> status.asJson))
   }
 
@@ -25,6 +25,8 @@ package object project {
     val projectStatus: ImmutableProjectStatus
     val filesStateMonitor : FileStateMonitor
     val actorCluster: ActorCluster
+
+    def projectDirectory: String = baseDirectory.pathAsString
 
     implicit val nodeKeyStore: NodeKeyStore = new NodeKeyStore
 
@@ -41,7 +43,6 @@ package object project {
         filePath
       }
     }
-
 
     //callbacks on main thread
     private var _updatedModelNodeOptionsCallbacks = Set[(Set[NamedModel], Set[NamedFile])=> Unit]()

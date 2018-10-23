@@ -168,11 +168,6 @@ class ProjectFileSpec extends TestBase {
       assert(f.defined.hash == f.defined.hash)
     }
 
-    it("knowledge paths are part of hash") {
-      val f = fixture
-      assert(f.defined5.hash != f.defined6.hash)
-    }
-
   }
 
 }

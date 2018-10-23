@@ -35,7 +35,11 @@ object Render {
     }
 
     val gearOption = resolveLens(stagedNode)(sourceGear, flatContext)
-    require(gearOption.isDefined, "No gear found that can render this node.")
+    if (gearOption.isEmpty) {
+      println("ERROR "+ stagedNode)
+    }
+
+    require(gearOption.isDefined, "No generator found that can render this node.")
 
     val gear = gearOption.get
     val declaredVariables = gear.variableManager.variables
@@ -59,7 +63,7 @@ object Render {
   }
 
   def resolveLens(stagedNode: StagedNode)(implicit sourceGear: SourceGear, context: FlatContextBase) : Option[SGExportableLens] = {
-    val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.lensId.get).get)
+    val lensRefTry = Try(LensRef.fromString(stagedNode.options.get.generatorId.get).get)
     if (lensRefTry.isSuccess) {
       val lensRef = lensRefTry.get
       val localOption = Try(context.resolve(lensRef.internalFull).get.asInstanceOf[CompiledLens])
@@ -123,7 +127,7 @@ object Render {
     implicit val flatContext = sourceGear.flatContext
     fromStagedNode(StagedNode(schemaRef, value, Some(
       RenderOptions(
-        lensId = gearIdOption
+        generatorId = gearIdOption
       )
     )), variableMapping)
   }

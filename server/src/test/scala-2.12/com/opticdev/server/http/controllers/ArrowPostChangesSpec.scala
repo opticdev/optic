@@ -22,7 +22,7 @@ class ArrowPostChangesSpec extends AkkaTestFixture("ArrowPostChangesSpec") with 
   def runChangeQuery(projectName: String, changes: ChangeGroup, otherOperation: (OpticProject) => Unit = (p)=> {}) = {
     instanceWatchingTestProject.flatMap(pm => {
       implicit val projectsManager: ProjectsManager = pm
-      val aq = new ArrowPostChanges(projectName, changes)
+      val aq = new ArrowPostChanges(projectsManager.lookupProject(projectName).toOption, changes)
       val project = pm.lookupProject(projectName).get
       otherOperation(project)
       aq.execute

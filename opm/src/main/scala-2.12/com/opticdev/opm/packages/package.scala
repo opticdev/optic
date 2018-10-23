@@ -2,8 +2,7 @@ package com.opticdev.opm.packages
 
 import better.files.File
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.markdown.MarkdownParser
-import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
+import play.api.libs.json._
 
 import scala.util.{Success, Try}
 
@@ -37,25 +36,9 @@ object OpticPackage {
     StagedPackage(jsObject)
   }
 
-  def fromMarkdown(file: File) : Try[StagedPackage] = Try {
-    //@todo cleanup errors
-    val parsedOption = MarkdownParser.parseMarkdownFile(file)
-    if (parsedOption.isSuccess /* && parsedOption.get.noErrors */) {
-      StagedPackage(parsedOption.get.description)
-    } else {
-      throw new Error("Invalid Optic Markdown" + parsedOption.failed.get.toString)
-    }
+  def fromString(string: String) : Try[StagedPackage] = Try {
+    val jsObject = Json.parse(string).as[JsObject]
+    StagedPackage(jsObject)
   }
-
-  def fromString(contents: String) : Try[StagedPackage] = Try {
-    //@todo cleanup errors
-    val parsedOption = MarkdownParser.parseMarkdownString(contents)
-    if (parsedOption.isSuccess /* && parsedOption.get.noErrors */) {
-      StagedPackage(parsedOption.get.description)
-    } else {
-      throw new Error("Invalid Optic Markdown" + parsedOption.failed.get.toString)
-    }
-  }
-
 
 }

@@ -22,7 +22,7 @@ import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
-
+import collection.JavaConverters._
 
 sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends AstProjection {
   def schemaId : SchemaRef
@@ -38,6 +38,12 @@ sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends A
   def matchesSchema()(implicit sourceGearContext: SGContext): Boolean = {
     val schema = sourceGearContext.sourceGear.findSchema(schemaId).getOrElse(OMSchema(schemaId, JsObject.empty))
     schema.validate(JsonUtils.removeReservedFields(expandedValue()))
+  }
+
+  def matchesSchemaErrors()(implicit sourceGearContext: SGContext): Try[String] = Try {
+    val schema = sourceGearContext.sourceGear.findSchema(schemaId).getOrElse(OMSchema(schemaId, JsObject.empty))
+    val report = schema.validationReport(JsonUtils.removeReservedFields(expandedValue()))
+    report.iterator().asScala.map(i=> i.getMessage).mkString(", ")
   }
 
   def internal: Boolean

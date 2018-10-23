@@ -39,7 +39,6 @@ class TransformFunction(code: String, askSchema: JsObject = Transformation.empty
     askSchema + ("properties" -> (properties ++ JsObject(dynamicAsk)))
   }
 
-
   def transform(jsObject: JsObject, answers: JsObject, transformationCaller: TransformationCaller, inputModelId: Option[String]): Try[TransformationResult] = inflated.flatMap(transformFunction => Try {
 
     val askSchemaInflated = OMSchema.schemaObjectFromJson(combinedAskSchema(jsObject))

@@ -15,5 +15,5 @@ package object results {
     def asJson : JsValue
   }
 
-  case class ModelOption(id: String, value: JsObject, name: String)
+  case class ModelOption(id: String, value: JsObject, name: String, combinedAsk: JsObject)
 }

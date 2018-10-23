@@ -5,6 +5,7 @@ import com.opticdev.arrow.changes.ChangeGroup
 import com.opticdev.arrow.changes.evaluation.BatchedChanges
 import com.opticdev.arrow.results.Result
 import com.opticdev.arrow.state.NodeKeyStore
+import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.server.data.{APIResponse, ServerExceptions}
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString}
@@ -13,14 +14,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-class ArrowPostChanges(projectName: String, changeGroup: ChangeGroup)(implicit projectsManager: ProjectsManager) {
+class ArrowPostChanges(project: Option[OpticProject], changeGroup: ChangeGroup)(implicit projectsManager: ProjectsManager) {
 
   def execute()(implicit autorefreshes: Boolean) : Future[BatchedChanges] = Future {
-    val project = projectsManager.lookupProject(projectName).toOption
 
     implicit val nodeKeyStore = project.map(_.nodeKeyStore).getOrElse(new NodeKeyStore)
 
-    val arrow = projectsManager.lookupArrow(projectName).get
+    val arrow = projectsManager.lookupArrow(project.get).get
 
     changeGroup.evaluateAndWrite(arrow.sourcegear, project).get
   }
@@ -47,9 +47,8 @@ class ArrowPostChanges(projectName: String, changeGroup: ChangeGroup)(implicit p
   //Run the request but don't push changes to disk. Return a preview for the client
 
   def stage : Future[BatchedChanges] = Future {
-    val project = projectsManager.lookupProject(projectName).toOption
     implicit val nodeKeyStore = project.map(_.nodeKeyStore).getOrElse(new NodeKeyStore)
-    val arrow = projectsManager.lookupArrow(projectName).get
+    val arrow = projectsManager.lookupArrow(project.get).get
 
     changeGroup.evaluate(arrow.sourcegear, project)
   }

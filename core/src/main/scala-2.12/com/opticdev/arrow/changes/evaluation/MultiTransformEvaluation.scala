@@ -1,5 +1,6 @@
 package com.opticdev.arrow.changes.evaluation
 
+import better.files.File
 import com.opticdev.arrow.changes.location.{EndOfFile, InsertLocation, ResolvedChildInsertLocation}
 import com.opticdev.core.sourcegear.SourceGear
 import com.opticdev.core.sourcegear.graph.model.{ContainerMapping, NodeMapping}
@@ -16,8 +17,8 @@ import scala.collection.immutable
 
 object MultiTransformEvaluation {
 
-  type GenerateEval = (GenerateResult, OMSchema, Option[String], Boolean) => IntermediateTransformPatch
-  type MutateEval = (MutateResult) => IntermediateTransformPatch
+  type GenerateEval = (GenerateResult, OMSchema, Option[String], Boolean) => TransformPatch
+  type MutateEval = (MutateResult) => TransformPatch
 
   def apply(multiTransform: MultiTransform, insertLocation: InsertLocation, mutateEval: MutateEval, generateEval: GenerateEval, sourcegear: SourceGear)(implicit fileStateMonitor: FileStateMonitor): FilesChanged = {
 
@@ -30,20 +31,22 @@ object MultiTransformEvaluation {
     val generations = multiTransform.transforms.collect {
       case generate: GenerateResult => {
         val stagedNode = generate.toStagedNode()
-        generateEval(generate, sourcegear.findSchema(stagedNode.schema).orNull, stagedNode.options.flatMap(_.lensId), false)
+        generateEval(generate, sourcegear.findSchema(stagedNode.schema).orNull, stagedNode.options.flatMap(_.generatorId), false)
       }
     }
 
 
-    val groupedByFile = (mutations ++ generations)
-      .groupBy(_.file)
+    val groupedByFile: Map[Option[File], Seq[IntermediateTransformPatch]] = (mutations ++ generations)
+      .filterNot(_.isClipboard)
+      .map(_.asInstanceOf[IntermediateTransformPatch])
+      .groupBy(_.fileOption)
       .mapValues(_.sortBy(_.range.end))
 
     FilesChanged(groupedByFile.map {
       case (file, patches)=> {
         import com.opticdev.core.utils.StringBuilderImplicits._
 
-        val fileContents = fileStateMonitor.contentsForFile(file).getOrElse("")
+        val fileContents = fileStateMonitor.contentsForFile(file.get).getOrElse("")
         val result = patches.reverse.foldLeft ( new StringBuilder(fileContents) ) {
           case (contents, patch) => {
             if (patch.isGeneration) {
@@ -53,7 +56,7 @@ object MultiTransformEvaluation {
             }
           }
         }
-        FileChanged(file, result.toString())
+        FileChanged(file.get, result.toString())
       }
     }.toSeq:_*)
 

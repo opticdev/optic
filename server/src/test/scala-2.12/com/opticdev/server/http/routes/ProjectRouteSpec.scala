@@ -1,5 +1,7 @@
 package com.opticdev.server.http.routes
 
+import java.net.URLEncoder
+
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.testkit.ScalatestRouteTest
@@ -12,7 +14,7 @@ import com.opticdev.server.http.routes.ProjectRoute
 import com.opticdev.server.state.ProjectsManager
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 import org.scalatest.{FunSpec, Matchers}
-import play.api.libs.json.{JsArray, JsObject}
+import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 
 class ProjectRouteSpec extends FunSpec with Matchers with ScalatestRouteTest with TestBase {
 
@@ -48,6 +50,32 @@ class ProjectRouteSpec extends FunSpec with Matchers with ScalatestRouteTest wit
     Get("/projects/"+name+"/knowledge-graph") ~> projectRoute.route ~> check {
       assert(responseAs[JsObject] == projectsManager.lookupArrow(name).get.knowledgeGraphAsJson)
     }
+  }
+
+  describe("project lookup") {
+
+    it("can lookup a project by the path") {
+
+      val absolutePath = File("test-examples/resources/test_project/nested/firstFile.js").pathAsString
+
+      Get("/projects/lookup?path="+URLEncoder.encode(absolutePath, "UTF-8")) ~> projectRoute.route ~> check {
+        val response = responseAs[JsObject]
+        val name = response.value("name").as[JsString].value
+        assert(name == "Unnamed Project")
+      }
+
+    }
+
+    it("returns 404 if project does not exist") {
+
+      val absolutePath = File("core").pathAsString
+
+      Get("/projects/lookup?path="+URLEncoder.encode(absolutePath, "UTF-8")) ~> projectRoute.route ~> check {
+        assert(status.value == "404 Not Found")
+      }
+
+    }
+
   }
 
 }

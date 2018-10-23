@@ -19,6 +19,10 @@ case class FileChanged(file: File, newContents: String, patchInfo: Option[PatchI
   }
 }
 
+case class ToClipboard(newContent: String) extends ChangeResult {
+  override def isSuccess = true
+}
+
 case class FilesChanged(fileChanges: FileChanged*) extends ChangeResult {
   override def isSuccess = true
 }

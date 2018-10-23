@@ -2,7 +2,6 @@ package com.opticdev.core.sourcegear.context
 
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.{CompiledLens, SGConfig, SGConstructor, SourceGear}
-import com.opticdev.opm.providers.ProjectKnowledgeSearchPaths
 import com.opticdev.opm.{PackageManager, TestPackageProviders}
 import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
 import org.scalatest.FunSpec
@@ -12,7 +11,6 @@ import scala.concurrent.Await
 
 class FlatContextSpec extends TestBase with TestPackageProviders {
 
-  implicit val projectKnowledgeSearchPaths: ProjectKnowledgeSearchPaths = ProjectKnowledgeSearchPaths()
   lazy val dt = PackageManager.collectPackages(Seq(t.opticExpress.packageRef, t.a.packageRef)).get
   implicit lazy val config: SGConfig = Await.result(SGConstructor.fromDependencies(dt, Set(), Set()), 10 seconds)
   implicit lazy val schemas = config.inflatedSchemas

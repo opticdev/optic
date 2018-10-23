@@ -33,6 +33,8 @@ package object sourcegear {
     def variableManager: VariableManager
     def enterOn: Set[AstType]
     def renderer: Renderer
+    def internal: Boolean
+    def priority: Int
 
 
     def usesExternalSchema = schema.isLeft

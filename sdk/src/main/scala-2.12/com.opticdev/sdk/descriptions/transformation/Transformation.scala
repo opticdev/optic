@@ -41,6 +41,13 @@ case class TransformationRef(packageRef: Option[PackageRef], id: String) {
 }
 
 object TransformationRef {
+
+  implicit val transformationRefJsonFormats = new Format[TransformationRef] {
+    override def writes(o: TransformationRef) = JsString(o.full)
+
+    override def reads(json: JsValue) = JsSuccess(TransformationRef.fromString(json.as[JsString].value).get)
+  }
+
   def fromString(string: String, parentRef: Option[PackageRef] = None): Try[TransformationRef] = Try {
     val components = string.split("/")
 
