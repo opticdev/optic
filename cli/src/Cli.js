@@ -20,6 +20,16 @@ import {setupFlow} from "./commands/SetupFlow";
 import {track} from "./Analytics";
 import platform from 'platform'
 import config from "./config";
+import updateNotifier from 'update-notifier'
+
+const notifier = updateNotifier({pkg: pJson});
+if (!notifier.update) { //let's force updates
+	processInput()
+} else {
+	notifier.notify();
+	process.exit(0)
+}
+
 
 const commands = attachCommandHelper(program)
 
@@ -61,5 +71,3 @@ async function processInput() {
 		}
 	}
 }
-
-processInput()

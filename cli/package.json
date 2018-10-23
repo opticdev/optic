@@ -59,7 +59,8 @@
     "regenerator-runtime": "^0.12.1",
     "request": "^2.75.0",
     "rmdir": "^1.2.0",
-    "tar-fs": "^1.13.2"
+    "tar-fs": "^1.13.2",
+    "update-notifier": "^2.5.0"
   },
   "files": [
     "jars/server-assembly.jar",
