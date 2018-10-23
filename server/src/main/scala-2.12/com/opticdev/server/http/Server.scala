@@ -25,8 +25,7 @@ object Server {
 
     val future = Http().bindAndHandle(httpService.routes, "localhost", 30333)
 
-    Await.result(future, 10 seconds)
-
+    val a = Await.result(future, 10 seconds)
     println("Server Started on localhost:30333")
   }
 
