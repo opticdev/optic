@@ -17,6 +17,8 @@ import {searchCmd} from "./commands/optic/search";
 import storage from 'node-persist'
 import "regenerator-runtime/runtime";
 import {setupFlow} from "./commands/SetupFlow";
+import {track} from "./Analytics";
+import platform from 'platform'
 
 const commands = attachCommandHelper(program)
 
@@ -30,8 +32,8 @@ commands.attachCommand(stopCmd)
 commands.attachCommand(installPluginsCmd, true)
 commands.attachCommand(initCmd)
 commands.attachCommand(refreshCmd)
-commands.attachCommand(createuserCmd)
-commands.attachCommand(adduserCmd)
+// commands.attachCommand(createuserCmd)
+// commands.attachCommand(adduserCmd)
 
 //Optic Commands
 commands.attachCommand(searchCmd)
@@ -41,7 +43,9 @@ async function processInput() {
 
 	await storage.init()
 	const firstRun = !(await storage.getItem('firstRun'))
+
 	if (firstRun || process.argv[2] === 'force-first-time') {
+		track('First Time', {os: platform.os, nodeVersion: platform.version})
 		setupFlow()
 	} else {
 		if (!process.argv.slice(2).length) {

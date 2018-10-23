@@ -8,6 +8,7 @@ import {startCmd} from "./control/start";
 import storage from "node-persist";
 import {isDev} from "../config";
 import request from 'request'
+import {track} from "../Analytics";
 
 export async function setupFlow() {
 	console.log('Welcome to Optic '+colors.yellow(p.version))
@@ -45,21 +46,21 @@ export async function setupFlow() {
 
 				console.log(colors.yellow('Installing IDE Plugins...'))
 
-				startCmd.action(false, false).then(() => {
-					installPluginsCmd.action(() => {
-						console.log('\n\n')
-						console.log(colors.green('Setup Complete!\n\n')+`You can check out our docs at ${colors.blue('https://useoptic.com/docs')} \nor run 'optic --help'`)
-						process.exit(0)
-					})
+				installPluginsCmd.action(() => {
+					console.log('\n\n')
+					console.log(colors.green('Setup Complete!\n\n')+`You can check out our docs at ${colors.blue('https://useoptic.com/docs')} \nor run 'optic --help'`)
+					process.exit(0)
 				})
 
 
 			} else {
+				track('Could not install Optic server')
 				console.log(colors.red('Optic server could not be installed.'))
 				process.exit(1)
 			}
 		})
 	} else {
+		track('Canceled Install')
 		console.log(colors.red(`Installation cancelled. Run 'optic' anytime to restart.`))
 	}
 

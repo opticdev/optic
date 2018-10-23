@@ -1,4 +1,3 @@
-import exec from 'sync-exec'
 import kill from 'kill-port'
 
 const successText = 'Optic server stopped'

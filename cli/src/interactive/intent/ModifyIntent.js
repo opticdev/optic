@@ -6,9 +6,13 @@ import {contextHelpText, contextName, contextText} from "../constants/ContextTex
 import {JSONStage} from "./stages/JSONStage";
 import {routeSchema} from "../json-editor/test/ExampleSchemas";
 import {PostModifyRequest} from "../../optic/PostChanges";
+import {track} from "../../Analytics";
 
 export class ModifyIntent extends IntentBase {
 	constructor(contextItem) {
+
+		track('Modify Intent')
+
 		super({stages: [
 			new IndicatorStage(() => {
 				return {

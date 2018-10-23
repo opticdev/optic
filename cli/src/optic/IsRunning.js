@@ -1,4 +1,3 @@
-import exec from 'sync-exec'
 import niceTry from 'nice-try'
 import request from "request";
 export function serverStatus(versionVerify) {

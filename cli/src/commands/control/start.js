@@ -1,8 +1,8 @@
-import exec from 'sync-exec'
 import {spawn} from 'child_process'
 import config from '../../config'
 import {serverStatus} from "../../optic/IsRunning";
 import fs from 'fs'
+import {track} from "../../Analytics";
 
 export const startCmd = {
 	name: 'start',
@@ -56,6 +56,7 @@ export const startCmd = {
 
 			if (!failedToStart) {
 				console.log('Server Started')
+				track('Server Started')
 				if (killProcessAfterStarting) {
 					reject('could not start')
 					process.exit(0)

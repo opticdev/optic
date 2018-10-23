@@ -9,9 +9,13 @@ import {emptyAsk} from "../json-editor/FieldPredicates";
 import {DynamicJSONStage} from "./stages/DynamicJSONStage";
 import {AsChildOf, Clipboard} from "../../optic/PostChangesInterfaces";
 import {PostGenerateFromRelationshipRequest} from "../../optic/PostChanges";
+import {track} from "../../Analytics";
 
 export class GenerateFromRelationship extends IntentBase {
 	constructor(transformation) {
+
+		track('Generate from relationship Intent', {transformation})
+
 		//listen + ask for transformation options
 		agentConnection().onTransformationOptions((results) => {
 			if (!results.error) {

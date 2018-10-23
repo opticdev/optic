@@ -1,11 +1,8 @@
-import {agentConnection} from "../../optic/AgentSocket";
-import {enforceTimeout} from "../../optic/EnforceTimeout";
-import exec from "sync-exec";
-import niceTry from "nice-try";
 import colors from 'colors'
 import inquirer from 'inquirer'
 import {startCmd} from "./start";
 import request from 'request'
+import {track} from "../../Analytics";
 
 export const installPluginsCmd = {
 	name: 'installplugins',
@@ -20,6 +17,8 @@ export const installPluginsCmd = {
 					const choices = ides.map((i) => {
 						return {name: i, checked: true}
 					})
+
+					track('IDEs found', choices)
 
 					inquirer
 						.prompt([
@@ -37,6 +36,8 @@ export const installPluginsCmd = {
 									const results = JSON.parse(body)
 									Object.entries(results).forEach((i) =>
 										console.log(`${i[0]}: ${i[1] ? colors.green('Success') : colors.red('Failed')}`))
+
+									track('IDEs installed', results)
 
 									if (typeof callback === 'function') {
 										callback()

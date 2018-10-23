@@ -5,9 +5,12 @@ import {IndicatorStage} from "./stages/IndicatorStage";
 import {resetToMain} from "../actions/StateMutations";
 import {AsChildOf, Clipboard} from "../../optic/PostChangesInterfaces";
 import {PostGenerateRequest} from "../../optic/PostChanges";
+import {track} from "../../Analytics";
 
 export class GenerateIntent extends IntentBase {
 	constructor(searchItem) {
+
+		track('Generate Intent', {item: searchItem})
 
 		super({stages: [
 			new JSONStage({

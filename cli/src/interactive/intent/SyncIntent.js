@@ -6,9 +6,12 @@ import {agentConnection} from "../../optic/AgentSocket";
 import {startServer} from "../web-ui/server/server";
 import {contextHelpText} from "../constants/ContextText";
 import {PostSyncChangesRequest} from "../../optic/PostChanges";
+import {track} from "../../Analytics";
 
 export class SyncIntent extends IntentBase {
 	constructor() {
+
+		track('Sync Intent')
 
 		const context = global.currentScreen.currentState().context
 

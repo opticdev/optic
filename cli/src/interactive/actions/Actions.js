@@ -6,6 +6,7 @@ import {GenerateIntent} from "../intent/GenerateIntent";
 import {printState, printVisibleElements} from "../debuggers/commands";
 import {GenerateFromRelationship} from "../intent/GenerateFromRelationship";
 import {SyncIntent} from "../intent/SyncIntent";
+import {track} from "../../Analytics";
 
 export const actionHandler = (setState, getCurrentState) => {
 	return {
@@ -21,22 +22,15 @@ export const actionHandler = (setState, getCurrentState) => {
 			// destructiveLogger(getCurrentState().contentMode)
 			const {inputValue} = getCurrentState()
 			switch (inputValue.trim().toLowerCase()) {
-				case 'clear':
-					setState({contentMode: contentModesEnum.EMPTY})
-					break;
 				case 'help':
+					track('Help selected')
 					setState({contentMode: contentModesEnum.HELP, inputValue: ''})
 					break;
 				case 'sync':
+					track('Sync selected')
 					const sync = new SyncIntent()
 					setState({contentMode: contentModesEnum.SYNC, inputValue: '', intent: sync})
 					sync.start()
-					break;
-				case 'debug-cli-state':
-					printState()
-					break;
-				case 'debug-visible-elements-state':
-					printVisibleElements()
 					break;
 				default:
 					if (getCurrentState().contentMode === contentModesEnum.EMPTY) {
