@@ -1,7 +1,7 @@
 import {driver} from './jre/jre-install'
 import "regenerator-runtime/runtime";
 
-export const isDev = true
+export const isDev = false
 
 export default (() => {
 
