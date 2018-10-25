@@ -3,5 +3,6 @@ lib/
 .idea
 jars/*
 *.log
-.node-persist/
+.optic-storage/
 package-lock.json
+

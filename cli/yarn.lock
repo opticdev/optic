@@ -2291,12 +2291,13 @@ nice-try@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
 
-node-persist@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/node-persist/-/node-persist-3.0.1.tgz#e80d36ad7bf93e75ffaccd407ac1c6e4ade935c6"
+node-persist@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/node-persist/-/node-persist-2.1.0.tgz#e652bbf3885a04dad6a353d74176177c83914707"
   dependencies:
     is-absolute "^0.2.6"
     mkdirp "~0.5.1"
+    q "~1.1.1"
 
 node-pre-gyp@^0.10.0:
   version "0.10.3"
@@ -2584,6 +2585,10 @@ pump@^1.0.0:
 punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
+
+q@~1.1.1:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/q/-/q-1.1.2.tgz#6357e291206701d99f197ab84e57e8ad196f2a89"
 
 qs@6.5.2, qs@~6.5.2:
   version "6.5.2"

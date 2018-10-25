@@ -20,7 +20,7 @@
   const version = major_version + 'u' + update_number;
 
   const jreDir = exports.jreDir = () => path.join(__dirname, 'jre');
-  const jreName = () => jreDir()+`/jre1.${major_version}.0_${update_number}.jre`
+  const jreName = exports.jreName = () => jreDir()+`/jre1.${major_version}.0_${update_number}.jre`
 
   const fail = reason => {
     console.error(reason);

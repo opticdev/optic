@@ -1,7 +1,7 @@
 import {driver} from './jre/jre-install'
 import "regenerator-runtime/runtime";
 
-export const isDev = false
+export const isDev = true
 
 export default (() => {
 
@@ -15,7 +15,7 @@ export default (() => {
 				},
 				options: ['-jar', `${process.cwd()}/jars/server-assembly.jar`]
 			},
-			storageDirectory: process.cwd(),
+			storageDirectory: process.cwd()+'/.optic-storage',
 			projectDirectory: '/Users/aidancunniffe/Desktop/optic-demo-project-master'
 		}
 	} else {

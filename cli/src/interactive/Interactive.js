@@ -18,10 +18,10 @@ import {setStatus} from "./actions/StateMutations";
 import {ModifyIntent} from "./intent/ModifyIntent";
 import clipboardy from 'clipboardy'
 import colors from "colors";
-import storage from 'node-persist'
 import config from "../config";
+import {initStorage} from "../Storage";
 
-storage.init({dir: config.storageDirectory})
+const storage = initStorage()
 
 global.destructiveLogger = (log) => {
 	if(global.currentScreen) {

@@ -14,29 +14,25 @@ import {syncCmd} from "./commands/optic/sync";
 import {serverStatus} from "./optic/IsRunning";
 import {startInteractive} from "./interactive/Interactive";
 import {searchCmd} from "./commands/optic/search";
-import storage from 'node-persist'
 import "regenerator-runtime/runtime";
 import {setupFlow} from "./commands/SetupFlow";
 import {track} from "./Analytics";
 import platform from 'platform'
-import config from "./config";
+import config, {isDev} from "./config";
 import updateNotifier from 'update-notifier'
+import {jreName} from './jre/jre-install'
+import fs from 'fs'
+import {initStorage} from "./Storage";
+
+const storage = initStorage()
 
 const notifier = updateNotifier({pkg: pJson});
-if (!notifier.update) { //let's force updates
-	processInput()
-} else {
-	notifier.notify();
-	process.exit(0)
-}
-
 
 const commands = attachCommandHelper(program)
 
 program
 	.name('optic')
 	.version(pJson.version)
-
 
 //Optic Commands
 commands.attachCommand(searchCmd)
@@ -51,15 +47,28 @@ commands.attachCommand(refreshCmd)
 // commands.attachCommand(createuserCmd)
 // commands.attachCommand(adduserCmd)
 
+export const standardHelp = program.helpInformation()
+
+if (!notifier.update || isDev) { //let's force updates
+	processInput()
+} else {
+	notifier.notify();
+	process.exit(0)
+}
+
+
 
 async function processInput() {
 
-	await storage.init({dir: config.storageDirectory})
-	const firstRun = !(await storage.getItem('firstRun'))
+	const firstRun = !(storage.getItemSync('firstRun'))
+
+	const jreInstalled = fs.existsSync(jreName())
 
 	if (firstRun || process.argv[2] === 'force-first-time') {
 		track('First Time', {os: platform.os, nodeVersion: platform.version})
 		setupFlow()
+	} else if (!jreInstalled && !isDev) {
+		setupFlow(true)
 	} else {
 		if (!process.argv.slice(2).length) {
 			//start interactive CLI if just 'optic' is passed
