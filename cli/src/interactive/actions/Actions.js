@@ -32,6 +32,12 @@ export const actionHandler = (setState, getCurrentState) => {
 					setState({contentMode: contentModesEnum.SYNC, inputValue: '', intent: sync})
 					sync.start()
 					break;
+				case 'inspect':
+					setState({inspectMode: true, inputValue: ''})
+					break;
+				case 'no inspect':
+					setState({inspectMode: false, inputValue: ''})
+					break;
 				default:
 					if (getCurrentState().contentMode === contentModesEnum.EMPTY) {
 						const searchItem = getCurrentState().selectedSearchItem

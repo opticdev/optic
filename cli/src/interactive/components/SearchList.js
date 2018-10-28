@@ -85,10 +85,7 @@ export const searchList = () => new Child((initialState, setState, actionHandler
 
 const knowledgeGraphToSearchResults = (inputValue, knowledgeGraph) => {
 
-	if (!inputValue) {
-		return []
-	}
-	const nodes = knowledgeGraph.nodes.filter((i) => !i.internal)
+	const nodes = knowledgeGraph.nodes.filter((i) => !i.internal && i.name.includes(' '))
 	const relationships = knowledgeGraph.edges.filter((i) => i.isTransformation)
 
 	const array = nodes.map((i) => {

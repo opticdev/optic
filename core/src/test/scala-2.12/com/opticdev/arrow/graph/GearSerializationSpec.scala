@@ -17,12 +17,12 @@ class GearSerializationSpec extends TestBase with TestPackageProviders {
   lazy val exampleProjectSG = ExampleSourcegears.exampleProjectSG.sourceGear
 
   it("can turn a gear node into json") {
-    val json = GraphSerialization.jsonFromNode(LensNode(exampleProjectSG.lensSet.listLenses.find(_.id == "parameter").get))
+    val json = GraphSerialization.jsonFromNode(LensNode(exampleProjectSG.lensSet.listLenses.find(_.id == "parameter").get))(exampleProjectSG)
     assert(json == Json.parse("""{"id":"optic:express-js@0.1.0/parameter","name":"Parameter","packageFull":"optic:express-js@0.1.0","internal":false,"priority":1,"type":"lens"}"""))
   }
 
   it("can turn a schema node into json") {
-    val json = GraphSerialization.jsonFromNode(SchemaNode(exampleProjectSG.schemas.find(_.name.contains("Parameter")).get))
+    val json = GraphSerialization.jsonFromNode(SchemaNode(exampleProjectSG.schemas.find(_.name.contains("Parameter")).get))(exampleProjectSG)
     assert(json == Json.parse("""{"id":"optic:rest@0.1.0/parameter","name":"Parameter","packageFull":"optic:rest@0.1.0","type":"schema"}"""))
   }
 

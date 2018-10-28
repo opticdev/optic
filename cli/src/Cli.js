@@ -47,7 +47,7 @@ commands.attachCommand(refreshCmd)
 // commands.attachCommand(createuserCmd)
 // commands.attachCommand(adduserCmd)
 
-export const standardHelp = program.helpInformation()
+export const standardHelp = () => program.helpInformation()
 
 if (!notifier.update || isDev) { //let's force updates
 	processInput()

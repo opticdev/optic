@@ -22,6 +22,7 @@ package object agents {
     case class Registered(actor: ActorRef) extends AgentEvents
     case object Terminated extends AgentEvents
     case class UnknownEvent(raw: String) extends AgentEvents
+    case class Pong() extends AgentEvents
 
     case class PutUpdate(id: String, newValue: JsObject, editorSlug: Option[String]) extends AgentEvents
     case class PostChanges(changes: ChangeGroup, editorSlug: Option[String]) extends AgentEvents

@@ -1,6 +1,5 @@
 import {IntentBase} from "./base/IntentBase";
 import {JSONStage} from "./stages/JSONStage";
-import {routeSchema} from "../json-editor/test/ExampleSchemas";
 import {IndicatorStage} from "./stages/IndicatorStage";
 import {resetToMain} from "../actions/StateMutations";
 import {AsChildOf, Clipboard} from "../../optic/PostChangesInterfaces";
@@ -15,7 +14,7 @@ export class GenerateIntent extends IntentBase {
 		super({stages: [
 			new JSONStage({
 				initialValue: {},
-				schema: routeSchema
+				schema: searchItem.schema
 			}),
 			new IndicatorStage(() => {
 				const jsonStage = this.stages[0]

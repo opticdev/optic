@@ -81,7 +81,13 @@ class AgentConnection(projectDirectory: String, actorSystem: ActorSystem)(implic
               //does not receive anything from agent...yet
               case _ => UnknownEvent(i)
             }
-          } else UnknownEvent(i)
+          } else {
+            if (i == "ping") {
+              Pong()
+            } else {
+              UnknownEvent(i)
+            }
+          }
 
           message
         })
