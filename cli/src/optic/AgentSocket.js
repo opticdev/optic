@@ -6,6 +6,10 @@ let _agentConnection = null
 export function agentConnection(connectCallback) {
 	if (!_agentConnection) {
 		_agentConnection = AgentConnection({name: config.projectDirectory})
+
+		setInterval(() => {
+			_agentConnection.socket.send('ping')
+		}, 30000)
 	}
 
 	if (typeof connectCallback === 'function') {

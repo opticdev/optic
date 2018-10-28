@@ -1,12 +1,12 @@
 import blessed from "blessed";
 import {Child} from "../reactive-blessed/Child";
 import {contentModesEnum} from "../constants/ContentModes";
-import {helpText} from "../constants/Help";
 import {searchList} from "./SearchList";
 import {atBottomAndDown, jsonForm} from "./form/JSONForm";
 import {toggleOnAssertion} from "../util/ToggleOnAssertion";
 import {topFormHelp} from "./form/TopFormHelp";
 import {indicatorContent} from "./IndicatorContent";
+import {standardHelp} from "../../Cli";
 
 let lastState = {}
 let lastIsConfirm = false
@@ -75,7 +75,7 @@ export const content = () => new Child((initialState, setState, actionHandler) =
 function contentForMode(state) {
 	switch (state.contentMode) {
 		case contentModesEnum.HELP:
-			return helpText
+			return standardHelp()
 			break;
 		default:
 			return ''

@@ -56,6 +56,13 @@ export class Child {
 			return process.exit(0);
 		});
 
+		node.key(['escape'], (ch, key) => {
+			const intent = screen.currentState().intent
+			if (intent) {
+				intent.finish()
+			}
+		});
+
 		this._blessedInstance = node
 		this.addChildren(this._children, screen)
 		screen.registerChild(this)

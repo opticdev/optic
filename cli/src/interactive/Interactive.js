@@ -34,6 +34,7 @@ global.destructiveLogger = (log) => {
 const editorDisplayManager = new EditorDisplayManager()
 
 const defaultState = {
+	inspectMode: false,
 	inputValue: '',
 	ide: '',
 	context: null,
@@ -51,7 +52,7 @@ export function shouldStart() {
 			resolve()
 		})
 
-		agentC.onError(() => {
+		agentC.onError((e) => {
 			console.error(colors.red(`Current directory does not include Optic project. Run 'optic init' to create one`))
 			process.exit(0)
 		})
@@ -110,6 +111,11 @@ export function startInteractive(initialState = {}) {
 		})
 
 		agentConnection().onContextFound((data) => {
+
+			if (!getState().inspectMode) {
+				return
+			}
+
 			if (data.results.models.length) {
 
 				const currentIntent = getState().intent

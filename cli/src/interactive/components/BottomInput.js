@@ -11,7 +11,6 @@ export const bottomInput = () => new Child((initialState, setState, actionHandle
 	const input =  blessed.textbox({
 		style: {
 			fg: 'default',
-			bg: '#e2e2e2',
 			bar: {
 				bg: 'default',
 				fg: 'blue'
