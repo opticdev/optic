@@ -12,6 +12,7 @@
   const request = require('request');
   const ProgressBar = require('progress');
   const child_process = require('child_process');
+  const isDev = require('../config').isDev
 
   const appRootPath = require('app-root-path')
 
@@ -78,9 +79,15 @@
     (classpath, classname, args, options) =>
       child_process.spawnSync(driver(), getArgs(classpath, classname, args), options);
 
-  const smoketest = exports.smoketest = () =>
-    spawnSync(['resources'], 'Smoketest', [], { encoding: 'utf8', cwd: appRootPath.toString() })
-    .stdout.trim() === 'No smoke!';
+  const smoketest = exports.smoketest = () => {
+	  const cwd = appRootPath.toString()
+
+      const path = [(cwd.endsWith('/lib')) ? '../resources' : 'resources']
+
+	  return spawnSync(path, 'Smoketest', [], {encoding: 'utf8', cwd})
+		  .stdout.trim() === 'No smoke!';
+
+  }
 
   const url = exports.url = () =>
     'https://download.oracle.com/otn-pub/java/jdk/' +

@@ -21,10 +21,12 @@ export default (() => {
 	} else {
 		const appRootPath = require('app-root-path').toString()
 
+		const path = [(appRootPath.endsWith('/lib')) ? '../jars/server-assembly.jar' : 'jars/server-assembly.jar']
+
 		return {
 			runServerCmd: {
 				binary: driver,
-				options: ['-jar', `${appRootPath}/jars/server-assembly.jar`]
+				options: ['-jar', `${appRootPath}/${path}`]
 			},
 			storageDirectory: require('os').homedir()+'/.optic-storage',
 			projectDirectory: process.cwd()

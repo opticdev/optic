@@ -1,8 +1,8 @@
 {
   "name": "optic-cli",
-  "version": "2.0.0rc3",
+  "version": "2.0.5",
   "description": "",
-  "main": "./lib/Cli.js",
+  "main": "lib/Cli.js",
   "scripts": {
     "build": "rm -rf ./lib && babel src --out-dir lib",
     "build-server": "cd ../ && sh ./build.sh",
@@ -64,9 +64,10 @@
   },
   "files": [
     "jars/server-assembly.jar",
-    "resources/Smoketest.class",
-    "resources/Smoketest.java",
-    "react-diff-view/*"
+    "resources/*",
+    "lib",
+    "react-diff-view/*",
+    "features.json"
   ],
   "jreConfig": {
     "major_version": "8",
