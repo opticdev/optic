@@ -20,6 +20,7 @@ import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEvaluation
 import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.VariableRuleWithEvaluation
 import com.opticdev.core.sourcegear.variables.VariableManager
+import com.opticdev.experimental_features.ImplicitObjectRefs
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.LineOperations
@@ -176,7 +177,7 @@ case class ParseAsModel(description: NodeDescription,
     val (objectRefOption, sourceAnnotationOption, tagAnnotation) = {
       val raw = AnnotationParser.contentsToCheck(matchResults.baseNode.get)
       val annotations = AnnotationParser.extract(raw, schema)(sourceGearContext.parser)
-      ( annotations.collectFirst { case na: NameAnnotation => na }.map(_.objectRef),
+      ( annotations.collectFirst { case na: NameAnnotation => na.objectRef },
         annotations.collectFirst { case sa: SourceAnnotation => sa },
         annotations.collectFirst { case ta: TagAnnotation => ta },
       )
@@ -192,7 +193,7 @@ case class ParseAsModel(description: NodeDescription,
       containerMapping,
       this,
       variableMapping,
-      objectRefOption,
+      if (objectRefOption.isEmpty) ImplicitObjectRefs.objectRefForModelNode(schema, model) else objectRefOption, //override with implicit naming function
       sourceAnnotationOption,
       tagAnnotation,
       internal)
