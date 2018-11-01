@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import config, {isDev} from "./config";
 import program from 'commander'
 import pJson from '../package'
 import colors from 'colors'
@@ -18,7 +19,6 @@ import "regenerator-runtime/runtime";
 import {setupFlow} from "./commands/SetupFlow";
 import {track} from "./Analytics";
 import platform from 'platform'
-import config, {isDev} from "./config";
 import updateNotifier from 'update-notifier'
 import {jreName} from './jre/jre-install'
 import fs from 'fs'

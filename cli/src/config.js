@@ -1,18 +1,11 @@
-import {driver} from './jre/jre-install'
 import "regenerator-runtime/runtime";
 
-export const isDev = false
+const isDev = false
 
-export default (() => {
-
+module.exports = (() => {
 	if (isDev) {
 		return {
 			runServerCmd: {
-				binary: async () => {
-					return new Promise(resolve => {
-						resolve('/usr/bin/java')
-					})
-				},
 				options: ['-jar', `${process.cwd()}/jars/server-assembly.jar`]
 			},
 			storageDirectory: process.cwd()+'/.optic-storage',
@@ -25,7 +18,6 @@ export default (() => {
 
 		return {
 			runServerCmd: {
-				binary: driver,
 				options: ['-jar', `${appRootPath}/${path}`]
 			},
 			storageDirectory: require('os').homedir()+'/.optic-storage',
@@ -35,3 +27,4 @@ export default (() => {
 
 })()
 
+module.exports.isDev = isDev

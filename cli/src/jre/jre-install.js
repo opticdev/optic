@@ -1,5 +1,4 @@
 "use strict";
-
 (function(){
 
   const os = require('os');
@@ -12,7 +11,7 @@
   const request = require('request');
   const ProgressBar = require('progress');
   const child_process = require('child_process');
-  const isDev = require('../config').isDev
+  const {storageDirectory} = require('../config')
 
   const appRootPath = require('app-root-path')
 
