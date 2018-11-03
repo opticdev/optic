@@ -5,6 +5,7 @@ import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.graph.GraphOperations
 import com.opticdev.core.sourcegear.graph.model.{ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 
@@ -84,7 +85,17 @@ class LensSet(initialGears: SGExportableLens*) {
     fileAccumulator.run(astGraph, results)
 
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
-    FileParseResults(astGraph, astGraph.modelNodes.asInstanceOf[Vector[ModelNode]], sourceGearContext.parser, sourceGearContext.fileContents, fileNameAnnotationOption)
+
+    val modelNodes = astGraph.modelNodes.asInstanceOf[Vector[ModelNode]]
+
+    FileParseResults(
+      astGraph,
+      modelNodes,
+      sourceGearContext.parser,
+      sourceGearContext.fileContents,
+      fileNameAnnotationOption,
+      FileTokenRegistry.fromModelNodes(modelNodes, astGraph, sourceGearContext.parser)
+    )
   }
 
   def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase, fileNameAnnotationOption: Option[FileNameAnnotation]): FileParseResults = {

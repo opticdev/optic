@@ -9,6 +9,7 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.actors._
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import scalax.collection.mutable.Graph
 
 class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest") {
@@ -36,7 +37,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
 
     it("for file in cache") {
       val file = File(getCurrentDirectory+"/test-examples/resources/tmp/test_project/app.js")
-      f.actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), SourceParserManager.installedParsers.head, "Contents", None)
+      f.actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), SourceParserManager.installedParsers.head, "Contents", None, FileTokenRegistry())
       f.actorCluster.parserSupervisorRef ! GetContext(file)(sourceGear, project)
       expectMsg(Option(SGContext(sourceGear.fileAccumulator, Graph(), SourceParserManager.installedParsers.head, "Contents", null, file)))
     }
@@ -88,7 +89,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
 
   describe("caches") {
     val f = fixture
-    val dummyRecord = CacheRecord(Graph(), null, "contents", None)
+    val dummyRecord = CacheRecord(Graph(), null, "contents", None, FileTokenRegistry())
     val file = File("/test-examples/resources/tmp/test_project/app.js")
     val parseCache = new ParseCache
     parseCache.add(file, dummyRecord)
@@ -105,7 +106,7 @@ class ParseSupervisorActorSpec extends AkkaTestFixture("ParseSupervisorActorTest
 
     it("can add records") {
       f.actorCluster.parserSupervisorRef ! ClearCache
-      f.actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), null, "contents", None)
+      f.actorCluster.parserSupervisorRef ! AddToCache(file, Graph(), null, "contents", None, FileTokenRegistry())
       assert(ParseSupervisorSyncAccess.cacheSize()(f.actorCluster) == 1)
     }
 

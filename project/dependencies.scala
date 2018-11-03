@@ -6,7 +6,7 @@ object Dependencies {
   object Versions {
     val betterFilesVersion = "2.17.1"
     val scalaTestVersion = "3.0.1"
-    val parserFoundationVersion = "0.1.5"
+    val parserFoundationVersion = "0.2.0"
     val akkaHttpVersion = "10.1.1"
     val marvinVersion = "0.1.4"
   }

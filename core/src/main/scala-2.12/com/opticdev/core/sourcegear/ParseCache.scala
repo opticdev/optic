@@ -4,11 +4,12 @@ import better.files.File
 import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.graph.FileNode
 import com.opticdev.core.sourcegear.graph.model.ModelNode
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import com.opticdev.parsers.{AstGraph, ParserBase}
 
 import scala.collection.mutable
 
-case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String, fileNameAnnotationOption: Option[FileNameAnnotation]) {
+case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String, fileNameAnnotationOption: Option[FileNameAnnotation], fileTokenRegistry: FileTokenRegistry) {
   //WARNING: Negating this does not determine equality
   def differentFrom(other: String) : Boolean = {
     other.size != fileContents.size ||
@@ -17,7 +18,7 @@ case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String
 
   def asFileParseResults = {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
-    FileParseResults(graph, graph.modelNodes.asInstanceOf[Vector[ModelNode]], parser, fileContents, fileNameAnnotationOption)
+    FileParseResults(graph, graph.modelNodes.asInstanceOf[Vector[ModelNode]], parser, fileContents, fileNameAnnotationOption, fileTokenRegistry)
   }
 }
 

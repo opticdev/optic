@@ -19,7 +19,7 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
       val requestingActor = parseRequest.requestingActor
       val result: Try[FileParseResults] = parseRequest.sourceGear.parseFile(parseRequest.file)
       if (result.isSuccess) {
-        actorCluster.parserSupervisorRef ! AddToCache(parseRequest.file, result.get.astGraph, result.get.parser, result.get.fileContents, result.get.fileNameAnnotationOption)
+        actorCluster.parserSupervisorRef ! AddToCache(parseRequest.file, result.get.astGraph, result.get.parser, result.get.fileContents, result.get.fileNameAnnotationOption, result.get.fileTokenRegistry)
         sender() tell(ParseSuccessful(result.get, parseRequest.file), requestingActor)
       } else {
         sender() tell(ParseFailed(parseRequest.file, result.failed.get.getMessage), requestingActor)
@@ -34,7 +34,7 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
 
       val result: Try[FileParseResults] = parseWithContentsRequest.sourceGear.parseString(parseWithContentsRequest.contents)
       if (result.isSuccess) {
-        actorCluster.parserSupervisorRef ! AddToCache(parseWithContentsRequest.file, result.get.astGraph, result.get.parser, parseWithContentsRequest.contents, result.get.fileNameAnnotationOption)
+        actorCluster.parserSupervisorRef ! AddToCache(parseWithContentsRequest.file, result.get.astGraph, result.get.parser, parseWithContentsRequest.contents, result.get.fileNameAnnotationOption, result.get.fileTokenRegistry)
         sender() tell(ParseSuccessful(result.get, parseWithContentsRequest.file), requestingActor)
       } else {
         sender() tell(ParseFailed(parseWithContentsRequest.file, result.failed.get.getMessage), requestingActor)
@@ -50,7 +50,7 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
 
       val result: Try[FileParseResults] = ctxRequest.sourceGear.parseString(fileContents)
       if (result.isSuccess) {
-        actorCluster.parserSupervisorRef ! AddToCache(file, result.get.astGraph, result.get.parser, result.get.fileContents, result.get.fileNameAnnotationOption)
+        actorCluster.parserSupervisorRef ! AddToCache(file, result.get.astGraph, result.get.parser, result.get.fileContents, result.get.fileNameAnnotationOption, result.get.fileTokenRegistry)
         sender() ! Option(SGContext(
           ctxRequest.sourceGear.fileAccumulator,
           result.get.astGraph,

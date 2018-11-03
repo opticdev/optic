@@ -10,7 +10,8 @@ import com.opticdev.core.sourcegear.{SGContext, _}
 import concurrent.duration._
 import akka.pattern.ask
 import better.files.File
-import com.opticdev.core.sourcegear.project.{ProjectBase, Project}
+import com.opticdev.core.sourcegear.project.{Project, ProjectBase}
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import com.opticdev.parsers.AstGraph
 
 import scala.concurrent.{Await, Future}
@@ -75,7 +76,8 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
     }
 
     //cache events
-    case AddToCache(file, graph, parser, fileContents, fileNameAnnotationOption) => context.become(handler(parseCache.add(file, CacheRecord(graph, parser, fileContents, fileNameAnnotationOption))))
+    case AddToCache(file, graph, parser, fileContents, fileNameAnnotationOption, fileTokenRegistry) =>
+      context.become(handler(parseCache.add(file, CacheRecord(graph, parser, fileContents, fileNameAnnotationOption, fileTokenRegistry))))
     case SetCache(newCache) => context.become(handler(newCache))
     case CacheSize => sender() ! parseCache.cache.size
     case ClearCache => context.become(handler(parseCache.clear))
