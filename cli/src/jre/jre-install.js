@@ -11,7 +11,11 @@
   const request = require('request');
   const ProgressBar = require('progress');
   const child_process = require('child_process');
-  const {storageDirectory} = require('../config')
+  const {jreDirectory} = require('../config')
+
+  if (!fs.existsSync(jreDirectory)){ //create jre directory if it does not exist
+      fs.mkdirSync(jreDirectory);
+  }
 
   const appRootPath = require('app-root-path')
 
@@ -19,8 +23,10 @@
 
   const version = major_version + 'u' + update_number;
 
-  const jreDir = exports.jreDir = () => path.join(__dirname, 'jre');
-  const jreName = exports.jreName = () => jreDir()+`/jre1.${major_version}.0_${update_number}.jre`
+  const name = `jre1.${major_version}.0_${update_number}`
+
+  const jreDir = exports.jreDir = () => path.join(jreDirectory, 'jre');
+  const jreName = exports.jreName = () => jreDir()+`/${name}`
 
   const fail = reason => {
     console.error(reason);
@@ -137,7 +143,12 @@
         }
       })
       .pipe(zlib.createUnzip())
-      .pipe(tar.extract(jreDir()));
+      .pipe(tar.extract(jreDir(), {
+		  map: function(header) {
+			  header.name = header.name.replace(`${name}.jre/`, `${name}/`)
+			  return header
+		  }
+      }));
   };
 
 })();

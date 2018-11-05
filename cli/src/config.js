@@ -2,6 +2,8 @@ import "regenerator-runtime/runtime";
 
 const isDev = false
 
+const jreDirectory = require('os').homedir()+'/.optic-jre'
+
 module.exports = (() => {
 	if (isDev) {
 		return {
@@ -9,6 +11,7 @@ module.exports = (() => {
 				options: ['-jar', `${process.cwd()}/jars/server-assembly.jar`]
 			},
 			storageDirectory: process.cwd()+'/.optic-storage',
+			jreDirectory,
 			projectDirectory: '/Users/aidancunniffe/Desktop/optic-demo-project-master'
 		}
 	} else {
@@ -21,6 +24,7 @@ module.exports = (() => {
 				options: ['-jar', `${appRootPath}/${path}`]
 			},
 			storageDirectory: require('os').homedir()+'/.optic-storage',
+			jreDirectory,
 			projectDirectory: process.cwd()
 		}
 	}

@@ -9,11 +9,14 @@ export const installPluginsCmd = {
 	description: 'starts plugin installer',
 	action: (callback) => {
 
-		startCmd.action(false, false).then((started) => {
+		const p = startCmd.action(false, false)
+
+		p.then((started) => {
 			if (started) {
 				console.log('Searching for IDEs...')
 
 				request.get('http://localhost:30333/installer/ide-plugins', {}, (err, response, body) => {
+					console.log(body)
 					const ides = JSON.parse(body)
 					const choices = ides.map((i) => {
 						return {name: i, checked: true}
@@ -62,5 +65,7 @@ export const installPluginsCmd = {
 				console.error('Could not connect to Optic server')
 			}
 		})
+
+		p.catch(() => console.log(colors.red('Could not start server, unknown error')))
 	}
 }

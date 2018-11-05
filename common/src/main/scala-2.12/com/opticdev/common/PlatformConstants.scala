@@ -23,24 +23,10 @@ object PlatformConstants {
   val dataDirectory : File = platform match {
     case Mac => File(SystemUtils.USER_HOME+"/Library/Application Support/Optic")
       .createIfNotExists(asDirectory = true, createParents = false)
-  }
-
-
-
-
-
-
-  //Exec paths
-  val bashPath: String = platform match {
-    case Mac => "/bin/bash"
-  }
-
-  val nodePath: String = platform match {
-    case Mac => Try { Seq(bashPath, "-l", "-c", "which node").!!.trim }.get
-  }
-
-  val npmPath: String = platform match {
-    case Mac => Try { Seq(bashPath, "-l", "-c", "which npm").!!.trim }.get
+    case Linux => File(SystemUtils.USER_HOME+"/optic")
+      .createIfNotExists(asDirectory = true, createParents = false)
+    case Windows => File(SystemUtils.USER_HOME+"/optic")
+      .createIfNotExists(asDirectory = true, createParents = false)
   }
 
 }
