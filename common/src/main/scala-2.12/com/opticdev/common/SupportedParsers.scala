@@ -11,7 +11,7 @@ object SupportedParsers {
     new scala.OpticParser,
   )
 
-  def initialize = {
+  def init = {
     parsers.foreach(lang=> SourceParserManager.enableParser(lang))
   }
 
