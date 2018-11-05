@@ -3,6 +3,7 @@ import inquirer from 'inquirer'
 import {startCmd} from "./start";
 import request from 'request'
 import {track} from "../../Analytics";
+import niceTry from 'nice-try'
 
 export const installPluginsCmd = {
 	name: 'installplugins',
@@ -37,7 +38,7 @@ export const installPluginsCmd = {
 								console.log('Starting install (this will take a minute)...')
 
 								request.post('http://localhost:30333/installer/ide-plugins', {qs: {install: selectedIdes.join(',')}}, (err, response, body) => {
-									const results = JSON.parse(body)
+									const results = niceTry(() => JSON.parse(body)) || []
 									Object.entries(results).forEach((i) =>
 										console.log(`${i[0]}: ${i[1] ? colors.green('Success') : colors.red('Failed')}`))
 
