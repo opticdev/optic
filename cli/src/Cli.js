@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import config, {isDev} from "./config";
 import program from 'commander'
 import pJson from '../package'
 import colors from 'colors'
@@ -18,7 +19,6 @@ import "regenerator-runtime/runtime";
 import {setupFlow} from "./commands/SetupFlow";
 import {track} from "./Analytics";
 import platform from 'platform'
-import config, {isDev} from "./config";
 import updateNotifier from 'update-notifier'
 import {jreName} from './jre/jre-install'
 import fs from 'fs'
@@ -72,9 +72,15 @@ async function processInput() {
 	} else {
 		if (!process.argv.slice(2).length) {
 			//start interactive CLI if just 'optic' is passed
-			await startCmd.action(false, false)
-			const {startInteractive} = require('./interactive/Interactive')
-			startInteractive({})
+			const p = startCmd.action(false, false)
+			p.then(() => {
+				const {startInteractive} = require('./interactive/Interactive')
+				startInteractive({})
+			})
+
+			p.catch(() => {
+				console.log(colors.red('Could not start server, unknown error'))
+			})
 		} else {
 			program.parse(process.argv)
 		}

@@ -30,14 +30,14 @@ class AnnotationParserSpec extends TestBase {
       assert(map == Map("name" -> StringValue("Test Name")))
     }
 
-    it("works for multiple keys") {
-      val map = AnnotationParser.extractRawAnnotationsFromLine("name: Test Name, source: Other")
-      assert(map == Map("name" -> StringValue("Test Name"), "source" -> StringValue("Other")))
+    it("works for single key with special chars") {
+      val map = AnnotationParser.extractRawAnnotationsFromLine("name: POST /test-route/:id")
+      assert(map == Map("name" -> StringValue("POST /test-route/:id")))
     }
 
     it("last assignment wins") {
-      val map = AnnotationParser.extractRawAnnotationsFromLine("name: Test Name, source: Other, name: second")
-      assert(map == Map("name" -> StringValue("second"), "source" -> StringValue("Other")))
+      val map = AnnotationParser.extractRawAnnotationsFromLine("name: Test Name, name: second")
+      assert(map == Map("name" -> StringValue("second")))
     }
 
     it("invalid annotation returns empty map") {

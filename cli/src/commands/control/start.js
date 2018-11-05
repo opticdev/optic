@@ -3,6 +3,7 @@ import config from '../../config'
 import {serverStatus} from "../../optic/IsRunning";
 import fs from 'fs'
 import {track} from "../../Analytics";
+import {javabinary} from "../../jre/javabinary";
 const appRootPath = require('app-root-path').toString()
 
 export const startCmd = {
@@ -24,7 +25,7 @@ export const startCmd = {
 			const out = fs.openSync(appRootPath+'/out.log', 'a');
 			const err = fs.openSync(appRootPath+'/out.log', 'a');
 
-			const binary = await config.runServerCmd.binary()
+			const binary = await javabinary()
 
 			const child = spawn(binary, config.runServerCmd.options, {
 				detached: true,
@@ -39,7 +40,7 @@ export const startCmd = {
 
 			let failedToStart = false
 
-			child.on('error', function (data) {
+			child.on('error', function (err) {
 				failedToStart = true
 			});
 

@@ -58,11 +58,20 @@ export async function setupFlow(justJre) {
 
 				console.log(colors.yellow('Installing IDE Plugins...'))
 
-				installPluginsCmd.action(() => {
+
+				const done = () => {
 					console.log('\n\n')
-					console.log(colors.green('Setup Complete!\n\n')+`You can check out our docs at ${colors.blue('https://useoptic.com/docs')} \nor run 'optic --help'`)
+					console.log(colors.green('Setup Complete!\n\n') + `You can check out our docs at ${colors.blue('https://useoptic.com/docs')} \nor run 'optic --help'`)
 					process.exit(0)
-				})
+				}
+
+				if (process.platform === 'darwin') {
+					installPluginsCmd.action(() => {
+						done()
+					})
+				} else {
+					done()
+				}
 
 
 			} else {
