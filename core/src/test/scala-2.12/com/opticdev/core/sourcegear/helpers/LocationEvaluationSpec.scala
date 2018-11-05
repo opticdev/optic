@@ -10,8 +10,8 @@ import com.opticdev.sdk.descriptions.helpers.AstLocation
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.gears.helpers.LocationEvaluation
 import com.opticdev.sdk.descriptions.Location
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMStringFinder}
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMStringFinder}
 import play.api.libs.json.JsObject
 
 class LocationEvaluationSpec extends TestBase {

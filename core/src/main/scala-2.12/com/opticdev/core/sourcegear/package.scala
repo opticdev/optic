@@ -9,8 +9,8 @@ import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.Json
 
 package object sourcegear {

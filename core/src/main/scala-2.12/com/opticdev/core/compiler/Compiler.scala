@@ -11,7 +11,7 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Context, PackageContext}
 import com.opticdev.opm.DependencyTree
 import com.opticdev.opm.packages.OpticMDPackage
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.sdk.skills_sdk.lens.OMLens
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Try

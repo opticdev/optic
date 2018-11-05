@@ -1,4 +1,4 @@
-package com.opticdev.sdk.opticmarkdown2.lens
+package com.opticdev.sdk.skills_sdk.lens
 
 sealed trait OMLensVariableScopeEnum
 

@@ -1,4 +1,4 @@
-package com.opticdev.sdk.opticmarkdown2.utils
+package com.opticdev.sdk.skills_sdk.utils
 
 import play.api.libs.json._
 

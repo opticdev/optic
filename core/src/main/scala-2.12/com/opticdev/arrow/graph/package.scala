@@ -3,7 +3,7 @@ package com.opticdev.arrow
 import com.opticdev.arrow.changes.location.AsChildOf
 import com.opticdev.core.sourcegear.{CompiledLens, SGExportableLens}
 import com.opticdev.parsers.graph.BaseNode
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json._
 import scalax.collection.GraphEdge.{EdgeLike, UnDiEdge}
 import scalax.collection.edge.LkDiEdge

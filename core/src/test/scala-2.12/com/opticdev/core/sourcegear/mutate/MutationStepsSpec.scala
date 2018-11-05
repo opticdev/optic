@@ -14,7 +14,7 @@ import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.RenderOptions
-import com.opticdev.sdk.opticmarkdown2.lens.{Literal, OMComponentWithPropertyPath, OMLensCodeComponent}
+import com.opticdev.sdk.skills_sdk.lens.{Literal, OMComponentWithPropertyPath, OMLensCodeComponent}
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import scalax.collection.mutable.Graph
 

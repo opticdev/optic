@@ -7,9 +7,9 @@ import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 
 import scala.util.Try
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.opticmarkdown2.OMParser
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.OMParser
+import com.opticdev.sdk.skills_sdk.lens.OMLens
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMapping) extends OpticPackage {
 
   lazy val schemas: Vector[OMSchema] = (description \ "schemas").getOrElse(JsArray.empty).as[JsArray].value.map(i=> {

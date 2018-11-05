@@ -11,8 +11,8 @@ import com.opticdev.opm.context.TreeContext
 import com.opticdev.opm.storage.ParserStorage
 import com.opticdev.parsers.{ParserRef, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.opticmarkdown2.OMParser
-import com.opticdev.sdk.opticmarkdown2.schema.{OMSchema, OMSchemaColdStorage}
+import com.opticdev.sdk.skills_sdk.OMParser
+import com.opticdev.sdk.skills_sdk.schema.{OMSchema, OMSchemaColdStorage}
 import play.api.libs.json.{JsObject, JsString, Json}
 
 case class SGConfig(hashInt: Int,

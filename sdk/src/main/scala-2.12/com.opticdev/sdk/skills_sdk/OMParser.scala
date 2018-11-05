@@ -1,12 +1,12 @@
-package com.opticdev.sdk.opticmarkdown2
+package com.opticdev.sdk.skills_sdk
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.github.fge.jsonschema.main.{JsonSchema, JsonSchemaFactory}
 import com.opticdev.common.{PackageRef, SchemaRef}
 import play.api.libs.json._
 import com.opticdev.common.PackageRef.packageRefJsonFormat
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.lens.OMLens
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.Try
 

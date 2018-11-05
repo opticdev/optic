@@ -1,7 +1,7 @@
-package com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers
+package com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers
 
-import com.opticdev.sdk.opticmarkdown2.OMChildrenRuleType
-import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLensSchemaComponent}
+import com.opticdev.sdk.skills_sdk.OMChildrenRuleType
+import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensSchemaComponent}
 
 case class OMSubContainer(name: String,
                           childrenRule: OMChildrenRuleType,

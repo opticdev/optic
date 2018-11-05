@@ -1,7 +1,7 @@
-package com.opticdev.sdk.opticmarkdown2
+package com.opticdev.sdk.skills_sdk
 
 import com.opticdev.common.PackageRef
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.sdk.skills_sdk.lens.OMLens
 import play.api.libs.json.{Format, JsString, JsSuccess, JsValue}
 
 import scala.util.Try

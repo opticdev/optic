@@ -11,8 +11,8 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.parsers.rules._
-import com.opticdev.sdk.opticmarkdown2.lens._
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.lens._
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.JsObject
 
 object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtils {

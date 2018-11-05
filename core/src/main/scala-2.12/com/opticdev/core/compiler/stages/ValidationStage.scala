@@ -6,8 +6,8 @@ import com.opticdev.opm.DependencyTree
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import com.opticdev.core.compiler.helpers.SchemaIdImplicits._
 import com.opticdev.opm.context.{Context, PackageContext}
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.lens.OMLens
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 class ValidationStage()(implicit val lens: OMLens, packageContext: Context, errorAccumulator: ErrorAccumulator = new ErrorAccumulator) extends CompilerStage[ValidationStageOutput] {
   override def run: ValidationStageOutput = {

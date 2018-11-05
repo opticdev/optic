@@ -10,8 +10,8 @@ import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.opticmarkdown2.{OMChildrenRuleType, OMSnippet}
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensComponent, OMLensVariableScopeEnum}
+import com.opticdev.sdk.skills_sdk.{OMChildrenRuleType, OMSnippet}
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMLensComponent, OMLensVariableScopeEnum}
 import play.api.libs.json.JsObject
 
 trait ParserUtils {

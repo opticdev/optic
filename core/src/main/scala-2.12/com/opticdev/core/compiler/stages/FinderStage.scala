@@ -7,7 +7,7 @@ import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.sdk.descriptions.RuleWithFinder
 import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
-import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMFinder, OMLens, OMLensCodeComponent}
+import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMFinder, OMLens, OMLensCodeComponent}
 
 import scala.collection.immutable
 import scala.util.{Failure, Success, Try}

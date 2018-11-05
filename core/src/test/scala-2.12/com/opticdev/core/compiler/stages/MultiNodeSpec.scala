@@ -13,9 +13,9 @@ import com.opticdev.parsers.rules.Any
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Containing
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens._
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens._
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.JsObject
 
 object MultiNodeFixture extends GearUtils {

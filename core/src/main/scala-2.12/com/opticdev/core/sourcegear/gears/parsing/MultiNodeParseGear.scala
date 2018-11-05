@@ -8,7 +8,7 @@ import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.utils.VectorDistinctBy._
-import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.skills_sdk.LensRef
 
 import scala.collection.immutable
 

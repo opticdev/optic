@@ -2,8 +2,8 @@ package com.opticdev.core.sourcegear
 
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserBase}
 import com.opticdev.sdk.VariableMapping
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
-import com.opticdev.sdk.opticmarkdown2.lens.Self
+import com.opticdev.sdk.skills_sdk.compilerInputs.variables.OMVariable
+import com.opticdev.sdk.skills_sdk.lens.Self
 
 package object variables {
   case class SetVariable(variable: OMVariable, value: String)

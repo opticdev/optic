@@ -1,4 +1,4 @@
-package com.opticdev.sdk.opticmarkdown2.schema
+package com.opticdev.sdk.skills_sdk.schema
 
 import com.github.fge.jsonschema.main.JsonSchema
 import com.opticdev.common.{SGExportable, SchemaRef}

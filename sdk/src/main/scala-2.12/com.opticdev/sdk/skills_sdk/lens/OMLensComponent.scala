@@ -1,11 +1,11 @@
-package com.opticdev.sdk.opticmarkdown2.lens
+package com.opticdev.sdk.skills_sdk.lens
 
 import com.opticdev.common.SchemaRef
 import com.opticdev.parsers.rules.{Any, Rule}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.StringEnums
 import com.opticdev.sdk.descriptions.{ChildrenRule, Location, RawRule}
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, LocationEnums}
-import com.opticdev.sdk.opticmarkdown2.OMRange
+import com.opticdev.sdk.skills_sdk.OMRange
 
 trait OMLensComponent {
   def rules: Vector[Rule]
@@ -39,32 +39,4 @@ case class OMStringFinder(rule: StringEnums, string: String, occurrence: Int = 0
 //for debug only
 case class OMRangeFinder(start: Int, end: Int) extends OMFinder {
   def toDebugString : String = s"Node at [${start}, ${end}]"
-}
-
-case class OMLensSchemaComponent(schemaRef: SchemaRef,
-                                 unique: Boolean = false,
-                                 toMap: Option[String] = None, //key property. when defined mapping will be applied to an object keyed by this string
-                                 inContainer: Option[String] = None //only will search a container if defined, global if empty
-                                ) extends OMLensComponent {
-  override def rules: Vector[Rule] = Vector()
-  def `type`: OMLensComponentType = NotSupported
-
-  def locationForCompiler: Option[Location] = {
-    if (inContainer.isDefined) {
-      Some(Location(LocationEnums.InContainer(inContainer.get)))
-    } else {
-      Some(Location(LocationEnums.InCurrentLens))
-    }
-  }
-
-  def yieldsArray : Boolean = toMap.isEmpty
-  def yieldsObject : Boolean = toMap.isDefined
-
-}
-
-case class OMComponentWithPropertyPath[T <: OMLensComponent](propertyPath: Seq[String], component: T) {
-  def range: OMRange = component match {
-      case f: OMLensNodeFinder => f.range
-      case _ => OMRange(0,0)
-  }
 }

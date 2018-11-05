@@ -7,8 +7,8 @@ import org.scalatest.{FunSpec, PrivateMethodTester}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.containers.ContainerHook
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.OMLens
 import play.api.libs.json.JsObject
 
 import scala.util.Try

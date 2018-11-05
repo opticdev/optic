@@ -7,7 +7,7 @@ import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserRef}
 import com.opticdev.parsers.graph.AstType
-import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.skills_sdk.LensRef
 import play.api.libs.json.JsObject
 
 

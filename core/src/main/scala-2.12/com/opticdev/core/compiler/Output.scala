@@ -13,9 +13,9 @@ import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.rules.Rule
 import com.opticdev.sdk.descriptions._
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLens, OMLensCodeComponent, OMLensComponent}
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLens, OMLensCodeComponent, OMLensComponent}
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.Try
 import scalax.collection.edge.LkDiEdge

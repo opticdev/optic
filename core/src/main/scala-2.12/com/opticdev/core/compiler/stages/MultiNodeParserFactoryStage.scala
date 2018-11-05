@@ -14,7 +14,7 @@ import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.graph.path.FlatWalkablePath
 import com.opticdev.sdk.descriptions.RuleWithFinder
-import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLens, OMLensCodeComponent, OMLensComponent}
+import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLens, OMLensCodeComponent, OMLensComponent}
 import play.api.libs.json.JsObject
 
 import scala.util.Try

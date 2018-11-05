@@ -11,7 +11,7 @@ import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 import gnieh.diffson.playJson._
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.parsers.graph.path.PropertyPathWalker
-import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.skills_sdk.lens._
 import com.opticdev.core.sourcegear.gears.helpers.ParseGearImplicits._
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InContainer
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._

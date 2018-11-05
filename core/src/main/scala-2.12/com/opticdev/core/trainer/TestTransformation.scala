@@ -17,7 +17,7 @@ import com.opticdev.sdk.descriptions.transformation
 import com.opticdev.sdk.descriptions.transformation.MultiTransform
 import com.opticdev.sdk.descriptions.transformation.generate.GenerateResult
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
-import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.skills_sdk.LensRef
 import play.api.libs.json.{JsObject, JsValue}
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global

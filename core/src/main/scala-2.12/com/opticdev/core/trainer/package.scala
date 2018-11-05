@@ -13,7 +13,7 @@ import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.sdk.descriptions.enums.BasicComponentType
 import com.opticdev.sdk.descriptions.enums.FinderEnums.StringEnums
-import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.skills_sdk.lens._
 import play.api.libs.json._
 
 import scala.concurrent.Await
@@ -24,7 +24,7 @@ import scala.concurrent.Await
 
 package object trainer {
 
-  import com.opticdev.sdk.opticmarkdown2.Serialization._
+  import com.opticdev.sdk.skills_sdk.Serialization._
 
   case class ValueCandidate(value: JsValue, previewString: String, stagedComponent: OMComponentWithPropertyPath[OMLensCodeComponent], schemaField: JsObject) {
     def propertyPath = stagedComponent.propertyPath

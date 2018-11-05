@@ -9,8 +9,8 @@ import com.opticdev.sdk.descriptions.enums.FinderEnums.Entire
 import scala.util.{Failure, Try}
 import com.opticdev.core._
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensCodeComponent, OMStringFinder, Token}
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMLensCodeComponent, OMStringFinder, Token}
 import play.api.libs.json.JsObject
 class FinderStageSpec extends TestBase {
 

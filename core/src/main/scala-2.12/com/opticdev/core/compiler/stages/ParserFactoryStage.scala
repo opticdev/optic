@@ -15,7 +15,7 @@ import play.api.libs.json.JsObject
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.common.{PackageRef, SchemaRef}
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.sdk.skills_sdk.lens.OMLens
 
 
 class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, internal: Boolean = false)(implicit lens: OMLens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {

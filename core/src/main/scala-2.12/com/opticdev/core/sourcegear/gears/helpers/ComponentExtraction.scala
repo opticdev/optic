@@ -5,7 +5,7 @@ import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, NoMapping, NodeMapping}
 import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.skills_sdk.lens._
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

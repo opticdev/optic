@@ -18,9 +18,9 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.parsers.graph.AstType
 import com.opticdev.parsers.rules._
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
-import com.opticdev.sdk.opticmarkdown2.lens
-import com.opticdev.sdk.opticmarkdown2.lens._
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.lens
+import com.opticdev.sdk.skills_sdk.lens._
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 class RendererFactoryStageSpec extends AkkaTestFixture("RendererFactoryStageSpec") with ParserUtils with GearUtils {
 

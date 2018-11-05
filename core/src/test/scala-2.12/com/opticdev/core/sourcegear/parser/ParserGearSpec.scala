@@ -13,7 +13,7 @@ import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
 import com.opticdev.parsers.rules.Any
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
-import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.skills_sdk.lens._
 import play.api.libs.json.{JsArray, JsNumber, JsObject, JsString}
 
 class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {

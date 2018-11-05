@@ -6,8 +6,8 @@ import com.opticdev.core.compiler.stages.SnippetStage
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.sdk.descriptions.enums.FinderEnums._
 import com.opticdev.core._
-import com.opticdev.sdk.opticmarkdown2.{OMRange, OMSnippet}
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensNodeFinder, OMRangeFinder, OMStringFinder}
+import com.opticdev.sdk.skills_sdk.{OMRange, OMSnippet}
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMLensNodeFinder, OMRangeFinder, OMStringFinder}
 import play.api.libs.json.JsObject
 class FinderEvaluationSpec extends TestBase {
 

@@ -10,7 +10,7 @@ import com.opticdev.core.utils.StringUtils
 import com.opticdev.sdk.descriptions.transformation.MultiTransform
 import com.opticdev.sdk.descriptions.transformation.generate.GenerateResult
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.JsString
 
 import scala.collection.immutable

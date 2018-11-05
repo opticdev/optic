@@ -2,7 +2,7 @@ package com.opticdev.opm.context
 
 import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.hashing.MurmurHash3
 

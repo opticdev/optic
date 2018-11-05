@@ -22,7 +22,7 @@ import com.opticdev.core.utils.StringUtils
 import com.opticdev.parsers.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.transformation.generate.{GenerateResult, RenderOptions, StagedNode}
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 object Evaluation {
 
   def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore, clipboardBuffer: ClipboardBuffer): ChangeResult = opticChange match {

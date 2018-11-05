@@ -11,8 +11,8 @@ import com.opticdev.parsers.SourceParserManager
 import com.opticdev.parsers.graph.path.PathFinder
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
 import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.OMLens
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 

@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{LensSet, SGConstructor, SourceGear}
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.JsObject
 
 import scala.concurrent.duration._

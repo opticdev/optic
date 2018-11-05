@@ -1,4 +1,4 @@
-package com.opticdev.sdk.opticmarkdown2
+package com.opticdev.sdk.skills_sdk
 
 import com.opticdev.parsers.ParserRef
 

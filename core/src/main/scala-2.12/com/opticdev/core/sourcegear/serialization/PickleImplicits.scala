@@ -17,9 +17,9 @@ import com.opticdev.sdk.descriptions.enums.{BasicComponentType, Literal, NotSupp
 import com.opticdev.sdk.{BoolProperty, _}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.{OMContainerBase, OMSubContainer}
-import com.opticdev.sdk.opticmarkdown2.lens._
-import com.opticdev.sdk.opticmarkdown2.schema.{OMSchema, OMSchemaColdStorage}
+import com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers.{OMContainerBase, OMSubContainer}
+import com.opticdev.sdk.skills_sdk.lens._
+import com.opticdev.sdk.skills_sdk.schema.{OMSchema, OMSchemaColdStorage}
 import org.mozilla.javascript.ast.ArrayLiteral
 import play.api.libs.json.{Format, JsObject, JsValue, Json}
 
@@ -57,11 +57,11 @@ object PickleImplicits extends PicklerHelper {
 
   implicit object OMSchemaPickler extends P[OMSchema] {
     @inline override def pickle(value: OMSchema)(implicit state: PickleState) = {
-      import com.opticdev.sdk.opticmarkdown2.Serialization.omschemaFormat
+      import com.opticdev.sdk.skills_sdk.Serialization.omschemaFormat
       state.enc.writeString(Json.toJson[OMSchema](value).toString())
     }
     @inline override def unpickle(implicit state: UnpickleState): OMSchema = {
-      import com.opticdev.sdk.opticmarkdown2.Serialization.omschemaFormat
+      import com.opticdev.sdk.skills_sdk.Serialization.omschemaFormat
       val input = state.dec.readString
       Json.fromJson[OMSchema](Json.parse(input).as[JsObject]).get
     }

@@ -7,8 +7,8 @@ import com.opticdev.parsers.graph.AstType
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{ParserRef, SourceParserManager}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.hashing.MurmurHash3
 

@@ -24,10 +24,10 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers.rules.{AllChildrenRule, ParserChildrenRule, Rule}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
-import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLensCodeComponent, OMLensComponent}
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers.OMSubContainer
+import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensCodeComponent, OMLensComponent}
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 sealed abstract class ParseGear() {
 

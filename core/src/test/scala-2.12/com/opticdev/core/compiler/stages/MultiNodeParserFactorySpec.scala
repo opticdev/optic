@@ -19,7 +19,7 @@ import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Containing
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.util.Try

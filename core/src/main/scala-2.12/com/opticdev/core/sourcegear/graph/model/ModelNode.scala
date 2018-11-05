@@ -17,8 +17,8 @@ import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, WithinFile}
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.core.utils.UUID
 import com.opticdev.sdk.VariableMapping
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3

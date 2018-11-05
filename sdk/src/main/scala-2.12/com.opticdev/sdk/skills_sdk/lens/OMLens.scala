@@ -1,12 +1,12 @@
-package com.opticdev.sdk.opticmarkdown2.lens
+package com.opticdev.sdk.skills_sdk.lens
 
 import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.parsers.rules.ChildrenRuleTypeEnum
 import com.opticdev.sdk.descriptions.PackageExportable
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
-import com.opticdev.sdk.opticmarkdown2.{LensRef, OMChildrenRuleType, OMSnippet}
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers.OMSubContainer
+import com.opticdev.sdk.skills_sdk.compilerInputs.variables.OMVariable
+import com.opticdev.sdk.skills_sdk.{LensRef, OMChildrenRuleType, OMSnippet}
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.JsObject
 
 case class OMLens(name: Option[String],

@@ -3,7 +3,7 @@ package com.opticdev.core.compiler.errors
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.opm.packages.OpticMDPackage
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensCodeComponent, OMLensComponent, OMLensNodeFinder}
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMLensCodeComponent, OMLensComponent, OMLensNodeFinder}
 
 import scala.util.control.NonFatal
 

@@ -8,8 +8,8 @@ import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.core.utils.UUID
 import com.opticdev.parsers.{AstGraph, ParserBase}
 import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.{Format, JsString, JsSuccess, JsValue}
 
 import scala.util.hashing.MurmurHash3

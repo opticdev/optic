@@ -1,11 +1,11 @@
-package com.opticdev.sdk.opticmarkdown2
+package com.opticdev.sdk.skills_sdk
 
 import com.opticdev.common.SchemaRef
 import com.opticdev.parsers.rules._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting, StringEnums}
-import com.opticdev.sdk.opticmarkdown2.lens._
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
-import com.opticdev.sdk.opticmarkdown2.utils.EnumFormatsFromTypes
+import com.opticdev.sdk.skills_sdk.lens._
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.utils.EnumFormatsFromTypes
 import play.api.libs.json._
 
 object Serialization {

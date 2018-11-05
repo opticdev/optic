@@ -16,8 +16,8 @@ import com.opticdev.parsers.SourceParserManager.parserByLanguageName
 import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.{Transformation, TransformationRef}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge

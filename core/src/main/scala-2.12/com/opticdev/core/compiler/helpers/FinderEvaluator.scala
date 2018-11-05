@@ -7,7 +7,7 @@ import com.opticdev.parsers.AstGraph
 import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
 import com.opticdev.parsers.graph.path.{PathFinder, WalkablePath}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.skills_sdk.lens._
 
 import scala.util.matching.Regex
 
