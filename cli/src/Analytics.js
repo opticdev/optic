@@ -12,6 +12,7 @@ export async function track(event, data = {}) {
 	if (!isDev) {
 		tracker.track(event, {
 			distinct_id: await getEmail(),
+			os: process.platform,
 			optic_version: p.version,
 			...data
 		});

@@ -40,7 +40,7 @@ export const startCmd = {
 
 			let failedToStart = false
 
-			child.on('error', function (data) {
+			child.on('error', function (err) {
 				failedToStart = true
 			});
 

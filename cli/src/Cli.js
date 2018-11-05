@@ -72,9 +72,15 @@ async function processInput() {
 	} else {
 		if (!process.argv.slice(2).length) {
 			//start interactive CLI if just 'optic' is passed
-			await startCmd.action(false, false)
-			const {startInteractive} = require('./interactive/Interactive')
-			startInteractive({})
+			const p = startCmd.action(false, false)
+			p.then(() => {
+				const {startInteractive} = require('./interactive/Interactive')
+				startInteractive({})
+			})
+
+			p.catch(() => {
+				console.log(colors.red('Could not start server, unknown error'))
+			})
 		} else {
 			program.parse(process.argv)
 		}
