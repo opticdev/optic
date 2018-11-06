@@ -374,7 +374,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
 
       implicit val astGraph = results.astGraph
 
-      val sgContext = SGContext(sourcegear.fileAccumulator, astGraph, sourcegear.parsers.head, fileContents, sourcegear, null)
+      val sgContext = SGContext(sourcegear.fileAccumulator, astGraph, sourcegear.parsers.head, fileContents, sourcegear, null, null)
 
       val mutationResult = combinedNode.update(Json.parse("""{"greeting": "UPDATED_GREETING", "to": "UPDATED_NAME"}""").as[JsObject])(sgContext, fileContents)
 

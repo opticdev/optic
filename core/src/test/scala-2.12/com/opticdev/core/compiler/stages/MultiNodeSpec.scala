@@ -33,7 +33,7 @@ object MultiNodeFixture extends GearUtils {
       Map(
         "callback" -> Any,
       ),
-      Left(BlankSchema),
+      Left(BlankSchema()),
       JsObject.empty,
       "es7",
       PackageRef("test:example", "0.1.1"))

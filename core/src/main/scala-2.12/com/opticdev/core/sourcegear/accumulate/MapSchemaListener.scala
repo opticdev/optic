@@ -15,16 +15,13 @@ import com.opticdev.sdk.descriptions.enums.LocationEnums.InCurrentLens
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.parsers.graph.path.PropertyPathWalker
 import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensSchemaComponent}
-sealed trait Listener {
-  def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext) : ModelField
-  val schema: SchemaRef
-  val mapToSchema: SchemaRef
-}
+
+import scala.util.Try
 
 case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLensSchemaComponent], mapToSchema: SchemaRef, packageId: String) extends Listener {
 
-  override val schema = schemaComponent.component.schemaRef
-  override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): ModelField = {
+  override val schema = Some(schemaComponent.component.schemaRef)
+  override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): Option[ModelField] = Try {
 
     val resolvedSchema = schemaComponent.component.resolvedSchema(packageId)(sourceGearContext.sourceGear)
 
@@ -75,5 +72,5 @@ case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLens
     } else {
       ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.expandedValue())), ModelVectorMapping(addToNodes.map(i=> i.asInstanceOf[ModelNode])))
     }
-  }
+  }.toOption
 }

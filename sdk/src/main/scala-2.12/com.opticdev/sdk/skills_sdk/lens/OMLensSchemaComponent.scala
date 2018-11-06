@@ -14,6 +14,8 @@ case class OMLensSchemaComponent(schemaRef: SchemaRef,
   override def rules: Vector[Rule] = Vector()
   def `type`: OMLensComponentType = NotSupported
 
+  override def capabilities: OpticCapabilities = OpticCapabilities(generate = true, mutate = false, parse = true)
+
   def locationForCompiler: Option[Location] = {
     if (inContainer.isDefined) {
       Some(Location(LocationEnums.InContainer(inContainer.get)))
@@ -32,4 +34,7 @@ case class OMComponentWithPropertyPath[T <: OMLensComponent](propertyPath: Seq[S
     case f: OMLensNodeFinder => f.range
     case _ => OMRange(0,0)
   }
+
+  def containsCodeComponent = component.isInstanceOf[OMLensCodeComponent]
+  def containsAssignmentComponent = component.isInstanceOf[OMLensAssignmentComponent]
 }

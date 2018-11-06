@@ -18,7 +18,6 @@ import play.api.libs.json.{JsArray, JsNumber, JsObject, JsString}
 
 class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {
 
-
   implicit val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
     override val lensSet = new LensSet()
@@ -244,5 +243,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     }
 
   }
+
+
 
 }

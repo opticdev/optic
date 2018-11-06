@@ -54,6 +54,14 @@ case class OMLens(name: Option[String],
     }.toVector
   }
 
+  def assignmentComponentsCompilerInput: Vector[OMComponentWithPropertyPath[OMLensAssignmentComponent]] = {
+    value.collect {
+      case (k:String, v: OMLensAssignmentComponent) => {
+        OMComponentWithPropertyPath(Seq(k), v)
+      }
+    }.toVector
+  }
+
 }
 
 

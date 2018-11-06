@@ -3,7 +3,7 @@ package com.opticdev.core.compiler.stages
 import com.opticdev.core.compiler.errors.AstPathNotFound
 import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.{FinderStageOutput, ParserFactoryOutput, SnippetStageOutput}
-import com.opticdev.core.sourcegear.accumulate.MapSchemaListener
+import com.opticdev.core.sourcegear.accumulate.{AssignmentListener, MapSchemaListener}
 import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.parsing.{AdditionalParserInformation, NodeDescription, ParseAsModel}
@@ -30,13 +30,15 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
 
     val nodeDescription = ParserFactoryStage.nodeToDescription(enterOn)
 
-    val listeners = lens.valueSchemaComponentsCompilerInput.map(watchForSchema => {
-      MapSchemaListener(
-        watchForSchema,
-        lens.schemaRef,
-        lens.packageRef.packageId
+    val listeners = {
+      lens.valueSchemaComponentsCompilerInput.map(collectSchemaComponent =>
+        MapSchemaListener(collectSchemaComponent, lens.schemaRef, lens.packageRef.packageId)) ++
+      lens.assignmentComponentsCompilerInput.map(assignmentComponent => {
+          val pathOption = finderStageOutput.componentFinders.find(_._2.exists(_ == assignmentComponent)).map(i=> finderPathToFlatPath(i._1, enterOn))
+          AssignmentListener(assignmentComponent, pathOption, lens.schemaRef, lens.packageRef.packageId)
+        }
       )
-    })
+    }
 
     if (lens.schemaRef.packageRef.isDefined && lens.schemaRef.packageRef.get != lens.packageRef) {
       //external schema

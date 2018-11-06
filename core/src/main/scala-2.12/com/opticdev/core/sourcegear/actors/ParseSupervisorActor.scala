@@ -67,7 +67,8 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
             record.parser,
             record.fileContents,
             ctxRequest.sourceGear,
-            ctxRequest.file
+            ctxRequest.file,
+            record.fileTokenRegistry
           )
         )
       } else {

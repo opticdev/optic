@@ -15,7 +15,7 @@ import scala.util.Try
 
 class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
-  implicit val lens : OMLens = OMLens(Some("Example"), "example", null, Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", null)
+  implicit val lens : OMLens = OMLens(Some("Example"), "example", null, Map(), Map(), Map(), Left(BlankSchema()), JsObject.empty, "es7", null)
 
   describe("Finds the correct parser") {
     it("when it exists") {

@@ -4,14 +4,17 @@ import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import boopickle.PicklerHelper
 import com.opticdev.common.{PackageRef, SGExportable, SchemaRef}
+import com.opticdev.core.sourcegear.accumulate.{AssignmentListener, Listener, MapSchemaListener}
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
+import com.opticdev.core.sourcegear.serialization.PickleImplicits.SGExportableLensPickler.sgExportablePickler
 import com.opticdev.core.sourcegear.{CompiledLens, CompiledMultiNodeLens, SGConfig, SGExportableLens}
 import com.opticdev.opm.context.{Leaf, TreeContext}
 import com.opticdev.parsers.ParserRef
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.parsers.graph.path.FlatWalkablePath
+import com.opticdev.parsers.graph.{AstType, Child}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, Literal, NotSupported, Token}
 import com.opticdev.sdk.{BoolProperty, _}
@@ -140,6 +143,9 @@ object PickleImplicits extends PicklerHelper {
       .addConcreteType[OMLensNodeFinder]
   }
 
+  implicit val childEdgePickler = PicklerGenerator.generatePickler[Child]
+  implicit val flatWalkablePathPickler = PicklerGenerator.generatePickler[FlatWalkablePath]
+
   import com.opticdev.sdk.{PropertyValue, StringProperty, NumberProperty, BoolProperty, ObjectProperty, ArrayProperty}
 
   implicit val propertyValuePickler = compositePickler[PropertyValue]
@@ -153,6 +159,14 @@ object PickleImplicits extends PicklerHelper {
     .addConcreteType[ArrayProperty]
     .addConcreteType[ObjectProperty]
 
+  object ListenerPickler {
+    implicit val listenerPickler = compositePickler[Listener]
+    listenerPickler.addConcreteType[Listener]
+      .addConcreteType[MapSchemaListener]
+      .addConcreteType[AssignmentListener]
+  }
+
+  import ListenerPickler.listenerPickler
 
   implicit object ConmpiledLensPickler extends Pickler[CompiledLens] {
     override def pickle(value: CompiledLens)(implicit state: PickleState): Unit = {

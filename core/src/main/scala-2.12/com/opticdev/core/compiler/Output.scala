@@ -94,4 +94,4 @@ case class CompilerOutput(opticPackage: OpticMDPackage, lensOutputs: Set[LensCom
 }
 
 //Other Errors
-case class FinderError(codeComponent: OMComponentWithPropertyPath[OMLensCodeComponent], error: String)
+case class FinderError(codeComponent: OMComponentWithPropertyPath[OMLensComponent], error: String)

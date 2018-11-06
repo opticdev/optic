@@ -96,7 +96,7 @@ trait SingleModelNode extends BaseModelNode {
   def mapSchemaFields()(implicit sourceGearContext: SGContext) : Set[ModelField] = {
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
-      listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
+      listenersOption.get.flatMap(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
     } else {
       Set.empty
     }
@@ -115,7 +115,7 @@ trait SingleModelNode extends BaseModelNode {
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
       val modelFields = listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
-      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields, value))
+      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields.collect{case i if i.isDefined => i.get}, value))
     } else {
       expandedValueStore = Option(value)
     }

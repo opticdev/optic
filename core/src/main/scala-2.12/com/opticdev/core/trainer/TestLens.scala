@@ -49,7 +49,8 @@ object TestLens {
       parseResults.parser,
       testInput,
       sgBuilt,
-      null
+      null,
+      parseResults.fileTokenRegistry
     )
 
     val expandedValue = mn.expandedValue(true)
@@ -89,7 +90,8 @@ object TestLens {
       parseResults.parser,
       testInput,
       sgBuilt,
-      null
+      null,
+      parseResults.fileTokenRegistry
     )
 
     import com.opticdev.core.sourcegear.mutate.MutationImplicits._

@@ -6,14 +6,6 @@ import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.GraphOperations
 import com.opticdev.parsers.graph.CommonAstNode
 
-trait Accumulator {
-
-  val listeners : Map[SchemaRef, Set[Listener]]
-
-  def run(implicit astGraph: AstGraph, parseResults: Vector[ParseResult[CommonAstNode]]) : Unit
-
-}
-
 case class FileAccumulator(listeners: Map[SchemaRef, Set[Listener]] = Map()) extends Accumulator {
   override def run(implicit astGraph: AstGraph, parseResults: Vector[ParseResult[CommonAstNode]]): Unit = {
     //after this graph will contain all Model Nodes from the file.

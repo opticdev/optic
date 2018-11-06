@@ -7,7 +7,7 @@ import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.sdk.descriptions.RuleWithFinder
 import com.opticdev.sdk.descriptions.enums.{Literal, ObjectLiteral, Token}
-import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMFinder, OMLens, OMLensCodeComponent}
+import com.opticdev.sdk.skills_sdk.lens._
 
 import scala.collection.immutable
 import scala.util.{Failure, Success, Try}
@@ -19,12 +19,22 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: OML
 
     implicit val evaluatedFinderPaths = scala.collection.mutable.Map[OMFinder, FinderPath]()
 
-    val codeComponents: Seq[OMComponentWithPropertyPath[OMLensCodeComponent]] = lens.valueComponentsCompilerInput.collect{ case p if p.component.isInstanceOf[OMLensCodeComponent] =>
-      p.asInstanceOf[OMComponentWithPropertyPath[OMLensCodeComponent]]}
+    val components: Vector[OMComponentWithPropertyPath[OMLensComponent]] = lens.valueComponentsCompilerInput.collect{
+      case p if p.containsCodeComponent => p
+      case p if p.containsAssignmentComponent && p.component.asInstanceOf[OMLensAssignmentComponent].fromToken => p
+    }
+
+    val evaluated = components.map(c=> {
+      val at = {
+        if (c.containsCodeComponent) {
+          c.component.asInstanceOf[OMLensCodeComponent].at
+        } else {
+          c.component.asInstanceOf[OMLensAssignmentComponent].tokenAt.get
+        }
+      }
 
 
-    val evaluated = codeComponents.map(c=> {
-      val finderPathTry = pathForFinder(c.component.at)
+      val finderPathTry = pathForFinder(at)
       if (finderPathTry.isFailure) {
         errorAccumulator.add(finderPathTry.asInstanceOf[Failure[Exception]].exception)
         val errorString = finderPathTry.asInstanceOf[Failure[Exception]].exception.toString
@@ -47,7 +57,7 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: OML
 
     //do not interrupt when in debug mode
     if (invalidComponents.nonEmpty && !debug) {
-      throw new InvalidComponents(invalidComponents.map(_.codeComponent).map(_.component).toVector)
+      throw new InvalidComponents(invalidComponents.collect{case m if m.codeComponent.containsCodeComponent => m.codeComponent.component.asInstanceOf[OMLensCodeComponent]}.toVector)
     }
 
     val variableRules = variableManager.rules(snippetStageOutput)

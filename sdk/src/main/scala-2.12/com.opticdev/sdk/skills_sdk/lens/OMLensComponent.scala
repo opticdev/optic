@@ -10,10 +10,17 @@ import com.opticdev.sdk.skills_sdk.OMRange
 trait OMLensComponent {
   def rules: Vector[Rule]
   def `type`: OMLensComponentType
+  def capabilities: OpticCapabilities
+
+  def canGenerate: Boolean = capabilities.generate
+  def canMutate: Boolean = capabilities.mutate
+  def canParse: Boolean = capabilities.parse
+
 }
 
 case class OMLensCodeComponent(`type`: OMLensComponentType, at: OMFinder) extends OMLensComponent {
     override def rules: Vector[Rule] = Vector(RawRule(at, "ANY"), ChildrenRule(at, Any))
+  override def capabilities: OpticCapabilities = OpticCapabilities(generate = true, mutate = true, parse = true)
 }
 
 sealed trait OMLensComponentType

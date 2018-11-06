@@ -20,7 +20,7 @@ class VariablesSpec extends TestBase with GearUtils with ParserUtils {
   val block = "function test () { \n let definedAs = require('pathTo') \n definedAs() \n definedAs + definedAs \n }"
   implicit val lens : OMLens = OMLens(Some("Example"), "example", OMSnippet("es7", block), Map(), Map(
     "definedAs" -> Self
-  ), Map(), Left(BlankSchema), JsObject.empty, "es7", PackageRef("example:testing"))
+  ), Map(), Left(BlankSchema()), JsObject.empty, "es7", PackageRef("example:testing"))
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run
