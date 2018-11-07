@@ -17,7 +17,7 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
 import com.opticdev.sdk.skills_sdk.SetValue
 import com.opticdev.sdk.skills_sdk.lens.{Literal, OMLensAssignmentComponent, OMLensCodeComponent, OMStringFinder}
-import play.api.libs.json.{JsObject, JsString}
+import play.api.libs.json.{JsObject, JsString, Json}
 
 class OMLensAssignmentComponentParsingSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {
 
@@ -130,25 +130,43 @@ class OMLensAssignmentComponentParsingSpec extends AkkaTestFixture("ParserGearTe
         override val connectedProjectGraphs: Set[ProjectGraph] = Set()
       }
 
+      def test(block: String) = {
+        val parseResults = sourceGear.parseString(block)(project, "es7")
+
+
+        implicit val sourceGearContext = SGContext(sourceGear.fileAccumulator, parseResults.get.astGraph, SourceParserManager.installedParsers.head, null, sourceGear, null, parseResults.get.fileTokenRegistry)
+        val mn = parseResults.get.modelNodes
+        val callModel = mn.find(_.schemaId.id == "call-it").get
+        callModel.expandedValue()(sourceGearContext)
+      }
+
     }
 
     it("can parse the expanded value of the component") {
 
       val f = fixture
-
-      val parseResults = f.sourceGear.parseString(
+      val expandedValue = f.test(
         """
           |const handler2 = assign('abcdefg')
           |doThing('at-url', handler2)
-        """.stripMargin)(project, "es7")
+        """.stripMargin)
 
+      assert(expandedValue == Json.parse("""{"string":"at-url","value":"abcdefg"}"""))
+    }
 
-      implicit val sourceGearContext = SGContext(f.sourceGear.fileAccumulator, parseResults.get.astGraph, SourceParserManager.installedParsers.head, null, f.sourceGear, null, parseResults.get.fileTokenRegistry)
-      val mn = parseResults.get.modelNodes
-      val callModel = mn.find(_.schemaId.id == "call-it").get
-      val expandedValue = callModel.expandedValue()(sourceGearContext)
-      println(expandedValue)
+    it("will not include if it's out of scope") {
 
+      val f = fixture
+      val expandedValue = f.test(
+        """
+          |function test() {
+          |   const handler2 = assign('abcdefg')
+          |}
+          |
+          |doThing('at-url', handler2)
+        """.stripMargin)
+
+      assert(expandedValue == Json.parse("""{"string":"at-url"}"""))
     }
 
   }

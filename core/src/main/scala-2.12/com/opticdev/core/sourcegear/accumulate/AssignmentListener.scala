@@ -40,7 +40,7 @@ case class AssignmentListener(assignmentComponent: OMComponentWithPropertyPath[O
 
       if (entryOption.isDefined) {
         val rootNode = entryOption.get.model.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph).root
-        if (entryOption.get.inScope(astRoot, rootNode, astGraph)) { // in scope
+        if (entryOption.get.inScope(astRoot, rootNode, astGraph, sourceGearContext.parser)) { // in scope
 
           val tokenValue = {
             val value = entryOption.get.model.asInstanceOf[ModelNode].expandedValue()(sourceGearContext)
