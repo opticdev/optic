@@ -58,30 +58,37 @@ object AnnotationParser {
       val extracts = propertiesCapture.findAllIn(string).matchData.map {
         i =>
           Try {
+            val fullString = i.source
+
             val key = i.group("key").trim
             val name = i.group("name").trim
-            val transform  = i.group("transformRef")
-            val askOption = Option(i.group("askJson"))
 
-            val value = if (transform != null) {
+            val value: AnnotationValues = key match {
+              case "source" => {
+                transformationCapture.findFirstMatchIn(fullString).map { case m =>
+                  val name = m.group("name").trim
+                  val namespace = m.group("namespace")
+                  val packageName = m.group("packageName")
+                  val askOption = Option(m.group("askJson"))
+                  val version = Option(m.group("version")).getOrElse("latest")
+                  val id = m.group("id")
 
-              val namespace = i.group("namespace")
-              val packageName = i.group("packageName")
-              val version = Option(i.group("version")).getOrElse("latest")
-              val id = i.group("id")
+                  require(!Set(namespace, packageName, version, id).contains(null))
 
-              require(!Set(namespace, packageName, version, id).contains(null))
+                  val transformationRef = TransformationRef(Some(PackageRef(namespace + ":" + packageName, version)), id)
 
-              val transformationRef = TransformationRef(Some(PackageRef(namespace + ":" + packageName, version)), id)
-
-              ExpressionValue(name, transformationRef, askOption)
-            } else {
-              StringValue(name)
+                  ExpressionValue(name, transformationRef, askOption)
+                }.get
+              }
+              case "name" => StringValue(name)
+              case "tag" => StringValue(name)
+              case "filename" => StringValue(name)
             }
 
             (key, value)
           }
       }
+
       extracts.collect {case Success(a) => a} .toMap
     } else Map.empty
   }

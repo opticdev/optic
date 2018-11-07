@@ -49,7 +49,8 @@ package object annotations {
 
   //Regexes
   def topLevelCapture = "^(\\s*([a-z]+)\\s*:\\s*[a-zA-z \\-\\>\\{\\}\\.\\d\\@\\/\\:\\'\\\"]+)(,\\s*([a-z]+)\\s*:\\s*[a-zA-z \\-\\>\\{\\}\\.\\d\\@\\/\\:\\'\\\"]+)*".r
-  def propertiesCapture = s"\\s*([a-z]+)\\s*:\\s*([a-zA-z ]+)(?:\\s*->\\s*($packages)\\s*(\\{.*\\}){0,1}){0,1}"
-    .r("key", "name", "transformRef", "namespace", "packageName", "version", "id", "askJson")
+  def propertiesCapture = s"\\s*([a-z]+)\\s*:\\s*([a-zA-z/\\-:> ]+)".r("key", "name")
 
+  def transformationCapture = s"\\s*([a-z]+)\\s*:\\s*([a-zA-z/\\?:-:?:> ]+)(?:\\s*->\\s*($packages)\\s*(\\{.*\\}){0,1}){0,1}"
+    .r("key", "name", "transformRef", "namespace", "packageName", "version", "id", "askJson")
 }
