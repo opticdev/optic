@@ -13,8 +13,8 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.graph.model.MultiModelNode
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.parsers.rules.{Any, ChildrenRuleTypeEnum}
+import com.opticdev.common.graph.CommonAstNode
+import com.opticdev.sdk.rules.{Any, ChildrenRuleTypeEnum}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Containing
 import com.opticdev.sdk.descriptions.transformation.Transformation

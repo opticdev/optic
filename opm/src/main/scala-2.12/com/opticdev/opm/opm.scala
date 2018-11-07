@@ -8,7 +8,8 @@ import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.Tree
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage, StagedPackage}
 import com.opticdev.opm.providers.OpticRegistryProvider
-import com.opticdev.parsers.{ParserBase, ParserRef}
+import com.opticdev.common.ParserRef
+import com.opticdev.parsers.ParserBase
 import play.api.libs.json.{JsObject, JsString}
 import play.api.libs.ws.ahc.StandaloneAhcWSClient
 

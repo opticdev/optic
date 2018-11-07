@@ -3,9 +3,8 @@ package com.opticdev.core.compiler.helpers
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.compiler.errors._
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
-import com.opticdev.parsers.graph.path.{PathFinder, WalkablePath}
+import com.opticdev.common.graph.{AstGraph, BaseNode, CommonAstNode}
+import com.opticdev.common.graph.path.{PathFinder, WalkablePath}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.sdk.skills_sdk.lens._
 

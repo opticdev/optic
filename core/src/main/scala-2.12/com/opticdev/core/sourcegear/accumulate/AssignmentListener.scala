@@ -6,10 +6,9 @@ import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode, NoMapping}
 import com.opticdev.marvin.runtime.mutators.array.AstMapping
-import com.opticdev.parsers.AstGraph
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.parsers.graph.path.{FlatWalkablePath, WalkablePath}
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
+import com.opticdev.common.graph.path.{FlatWalkablePath, WalkablePath}
 import com.opticdev.parsers.tokenvalues.External
 import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensAssignmentComponent}
 import play.api.libs.json.JsString

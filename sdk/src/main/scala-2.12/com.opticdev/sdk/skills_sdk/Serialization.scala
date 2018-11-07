@@ -1,7 +1,7 @@
 package com.opticdev.sdk.skills_sdk
 
 import com.opticdev.common.SchemaRef
-import com.opticdev.parsers.rules._
+import com.opticdev.sdk.rules._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting, StringEnums}
 import com.opticdev.sdk.skills_sdk.lens._
 import com.opticdev.sdk.skills_sdk.schema.OMSchema
@@ -21,7 +21,7 @@ object Serialization {
   ))
 
   implicit lazy val omchildrenruletypeFormat = EnumFormatsFromTypes.newFormats[OMChildrenRuleType](Map(
-    "any" -> com.opticdev.parsers.rules.Any,
+    "any" -> com.opticdev.sdk.rules.Any,
     "exact" -> Exact,
     "same-any-order" -> SameAnyOrder,
     "same-plus" -> SamePlus,

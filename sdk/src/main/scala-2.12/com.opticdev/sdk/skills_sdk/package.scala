@@ -1,6 +1,6 @@
 package com.opticdev.sdk
 
-import com.opticdev.parsers.rules.ChildrenRuleTypeEnum
+import com.opticdev.sdk.rules.ChildrenRuleTypeEnum
 import play.api.libs.json.{Format, JsString}
 
 package object skills_sdk {

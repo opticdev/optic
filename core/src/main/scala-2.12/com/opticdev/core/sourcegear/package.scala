@@ -7,8 +7,8 @@ import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, FlatModelNode, M
 import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.parsers.graph.AstType
-import com.opticdev.parsers.{AstGraph, ParserBase}
+import com.opticdev.common.graph.{AstGraph, AstType}
+import com.opticdev.parsers.ParserBase
 import com.opticdev.sdk.skills_sdk.LensRef
 import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.Json

@@ -1,12 +1,14 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
+import com.opticdev.common.ParserRef
+import com.opticdev.common.graph.AstGraph
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
 import com.opticdev.core.sourcegear.actors.{ActorCluster, ParseSupervisorSyncAccess}
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
-import com.opticdev.parsers.{AstGraph, ParserBase, ParserRef}
+import com.opticdev.parsers.ParserBase
 
 case class SGContext(fileAccumulator: FileAccumulator,
                      astGraph: AstGraph,

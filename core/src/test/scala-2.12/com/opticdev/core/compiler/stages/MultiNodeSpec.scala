@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
-import com.opticdev.parsers.rules.Any
+import com.opticdev.sdk.rules.Any
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Containing
 import com.opticdev.sdk.descriptions.transformation.Transformation

@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.common.SchemaRef
+import com.opticdev.common.{ParserRef, SchemaRef}
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, SerializeProjectGraph}
 
@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.serialization.PickleImplicits._
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.TreeContext
 import com.opticdev.opm.storage.ParserStorage
-import com.opticdev.parsers.{ParserRef, SourceParserManager}
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.skills_sdk.OMParser
 import com.opticdev.sdk.skills_sdk.schema.{OMSchema, OMSchemaColdStorage}

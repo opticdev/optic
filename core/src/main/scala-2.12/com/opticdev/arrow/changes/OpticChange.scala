@@ -10,7 +10,7 @@ import com.opticdev.arrow.results.ModelOption
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
 import com.opticdev.core.sourcegear.sync.{FilePatch, FilePatchTrait, SyncPatch}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import com.opticdev.sdk.skills_sdk.schema.OMSchema
 

@@ -2,6 +2,7 @@ package com.opticdev.core.sourcegear
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import better.files.File
+import com.opticdev.common.graph.AstGraph
 import com.opticdev.core.sourcegear.actors.ParseSupervisorActor
 import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.annotations.FileNameAnnotation

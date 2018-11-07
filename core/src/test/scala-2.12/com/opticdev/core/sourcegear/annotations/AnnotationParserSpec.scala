@@ -2,8 +2,8 @@ package com.opticdev.core.sourcegear.annotations
 
 import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.parsers.{ParserRef, SourceParserManager}
+import com.opticdev.common.graph.CommonAstNode
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import org.scalatest.FunSpec

@@ -1,6 +1,6 @@
 package com.opticdev.sdk.descriptions.helpers
 
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.sdk.skills_sdk.lens.OMFinder
 
 //@todo this shouldn't live here. All compiler code should be in core.

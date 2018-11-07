@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
-import com.opticdev.common.{PackageRef, SchemaRef}
+import com.opticdev.common.{PackageRef, ParserRef, SchemaRef}
 import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.annotations.AnnotationParser
 import com.opticdev.core.sourcegear.context.FlatContext
@@ -13,7 +13,7 @@ import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers
 import com.opticdev.parsers.SourceParserManager.parserByLanguageName
-import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.{Transformation, TransformationRef}
 import com.opticdev.sdk.skills_sdk.LensRef

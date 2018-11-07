@@ -10,7 +10,7 @@ import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 import com.opticdev.sdk.descriptions.enums.BasicComponentType
 import com.opticdev.sdk.descriptions.enums.FinderEnums.StringEnums
 import com.opticdev.sdk.skills_sdk.lens._

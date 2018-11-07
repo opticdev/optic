@@ -12,7 +12,7 @@ import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.transformation
 import com.opticdev.sdk.descriptions.transformation.MultiTransform
 import com.opticdev.sdk.descriptions.transformation.generate.GenerateResult

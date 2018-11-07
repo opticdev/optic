@@ -1,8 +1,7 @@
 package com.opticdev.core.compiler.helpers
 
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.parsers.graph.path.WalkablePath
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
+import com.opticdev.common.graph.path.WalkablePath
 
 abstract class FinderPath {
   val targetNode: CommonAstNode

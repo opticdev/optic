@@ -5,7 +5,7 @@ import com.opticdev.core.sourcegear.containers.{SubContainerManager, SubContaine
 import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.parsers._
-import com.opticdev.parsers.graph.{AstType, Child, CommonAstNode}
+import com.opticdev.common.graph.{AstGraph, AstType, Child, CommonAstNode}
 import com.opticdev.sdk.PropertyValue
 import com.opticdev.sdk.descriptions.PropertyRule
 import com.opticdev.sdk.skills_sdk.LensRef

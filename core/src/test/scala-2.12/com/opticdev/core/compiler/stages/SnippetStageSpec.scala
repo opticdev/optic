@@ -1,7 +1,7 @@
 package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 import com.opticdev.core.compiler.errors._
 import org.scalatest.{FunSpec, PrivateMethodTester}
 import com.opticdev.parsers.SourceParserManager

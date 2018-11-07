@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.actors
 import akka.actor.{Actor, ActorRef, Props}
 import akka.actor.Actor.Receive
 import com.opticdev.core.sourcegear.graph.{AstProjection, ProjectGraph, ProjectGraphWrapper}
-import com.opticdev.parsers.AstGraph
+
 
 import scala.concurrent.Await
 import akka.pattern.ask

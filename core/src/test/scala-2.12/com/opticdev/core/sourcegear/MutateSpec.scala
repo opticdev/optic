@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.mutate.{MutationOptions, StagedMutation, StagedTagMutation}

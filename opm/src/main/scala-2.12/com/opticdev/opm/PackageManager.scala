@@ -5,10 +5,11 @@ import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.StagedPackage
 import com.opticdev.opm.providers.Provider
 import com.opticdev.opm.storage.PackageStorage
-import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
+import com.opticdev.common.ParserRef
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import com.opticdev.opm.packages.OpticPackage
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{Await, Future}

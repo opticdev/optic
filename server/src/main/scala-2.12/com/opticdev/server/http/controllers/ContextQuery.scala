@@ -10,7 +10,7 @@ import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraphWrapper}
 import com.opticdev.core.sourcegear.graph.model._
 import com.opticdev.core.sourcegear.project.OpticProject
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.server.data._
 import com.opticdev.server.state.ProjectsManager
 import play.api.libs.json.{JsArray, JsObject}

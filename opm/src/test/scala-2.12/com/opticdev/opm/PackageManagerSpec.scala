@@ -4,7 +4,7 @@ import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
-import com.opticdev.parsers.ParserRef
+import com.opticdev.common.ParserRef
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll, FunSpec}
 
 import scala.concurrent.Await

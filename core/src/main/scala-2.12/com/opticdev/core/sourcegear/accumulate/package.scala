@@ -4,8 +4,7 @@ import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 
 package object accumulate {
 

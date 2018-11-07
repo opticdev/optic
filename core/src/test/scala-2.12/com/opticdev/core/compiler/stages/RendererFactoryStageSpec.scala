@@ -15,8 +15,8 @@ import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.graph.ProjectGraph
-import com.opticdev.parsers.graph.AstType
-import com.opticdev.parsers.rules._
+import com.opticdev.common.graph.AstType
+import com.opticdev.sdk.rules._
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.skills_sdk.lens
 import com.opticdev.sdk.skills_sdk.lens._

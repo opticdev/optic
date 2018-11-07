@@ -12,8 +12,7 @@ import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, Yie
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraph}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, WithinFile}
+import com.opticdev.common.graph.{AstGraph, BaseNode, CommonAstNode, WithinFile}
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.core.utils.UUID
 import com.opticdev.sdk.VariableMapping

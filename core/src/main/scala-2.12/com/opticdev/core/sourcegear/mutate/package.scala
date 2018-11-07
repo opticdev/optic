@@ -2,8 +2,8 @@ package com.opticdev.core.sourcegear
 
 import com.opticdev.core.sourcegear.graph.model.AstMapping
 import com.opticdev.marvin.common.ast.NewAstNode
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.CommonAstNode
+
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensCodeComponent, OMLensComponent, OMLensSchemaComponent}
 import gnieh.diffson.playJson.Operation
 import play.api.libs.json.JsValue

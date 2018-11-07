@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear
 
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.graph.objects.ObjectNode
-import com.opticdev.parsers.graph.BaseNode
+import com.opticdev.common.graph.BaseNode
 import play.api.libs.json.{JsValue, Json}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

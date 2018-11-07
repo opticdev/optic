@@ -1,14 +1,13 @@
 package com.opticdev.core.sourcegear.gears.helpers
 
 import com.opticdev.core.sourcegear.gears.RuleProvider
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{Child, CommonAstNode}
-import com.opticdev.parsers.graph.path.FlatWalkablePath
+import com.opticdev.common.graph.{AstGraph, Child, CommonAstNode}
+import com.opticdev.common.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 import com.opticdev.sdk.descriptions.{ChildrenRule, PropertyRule, RawRule, VariableRule}
 import com.opticdev.core.sourcegear.gears.parsing.{MatchResults, NodeDescription}
 import com.opticdev.core.sourcegear.variables.VariableLookupTable
-import com.opticdev.parsers.rules._
+import com.opticdev.sdk.rules._
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 

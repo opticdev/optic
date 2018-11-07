@@ -6,8 +6,7 @@ import com.opticdev.core.sourcegear.graph.GraphOperations
 import com.opticdev.core.sourcegear.graph.model.{ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
+import com.opticdev.common.graph.{AstGraph, AstType, CommonAstNode}
 
 //@todo make this class immutable
 class LensSet(initialGears: SGExportableLens*) {

@@ -5,7 +5,7 @@ import akka.dispatch.RequiresMessageQueue
 import better.files.File
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
-import com.opticdev.parsers.{AstGraph, SourceParserManager}
+import com.opticdev.parsers.{SourceParserManager}
 import com.opticdev.core.sourcegear.FileParseResults
 import com.opticdev.core.sourcegear.annotations.AnnotationParser
 import com.opticdev.scala.akka.FaddishUnboundedMessageQueueSemantics

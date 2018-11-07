@@ -11,7 +11,7 @@ import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.RenderOptions
 import com.opticdev.sdk.skills_sdk.lens.{Literal, OMComponentWithPropertyPath, OMLensCodeComponent}

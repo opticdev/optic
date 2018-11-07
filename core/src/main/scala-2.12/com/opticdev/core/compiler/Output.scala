@@ -9,9 +9,9 @@ import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.packages.OpticMDPackage
-import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.parsers.rules.Rule
+import com.opticdev.parsers.ParserBase
+import com.opticdev.common.graph.{AstGraph, AstType, CommonAstNode}
+import com.opticdev.sdk.rules.Rule
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.skills_sdk.OMSnippet
 import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLens, OMLensCodeComponent, OMLensComponent}

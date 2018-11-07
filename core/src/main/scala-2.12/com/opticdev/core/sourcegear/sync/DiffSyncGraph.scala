@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.ProjectBase
-import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
+import com.opticdev.common.graph.{BaseNode, CommonAstNode}
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import play.api.libs.json.{JsObject, JsString}
 import scalax.collection.edge.LkDiEdge

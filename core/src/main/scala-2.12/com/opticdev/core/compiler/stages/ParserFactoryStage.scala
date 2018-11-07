@@ -8,9 +8,8 @@ import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.parsing.{AdditionalParserInformation, NodeDescription, ParseAsModel}
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{Child, CommonAstNode}
-import com.opticdev.parsers.graph.path.FlatWalkablePath
+import com.opticdev.common.graph.{AstGraph, Child, CommonAstNode}
+import com.opticdev.common.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph

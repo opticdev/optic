@@ -1,7 +1,7 @@
 package com.opticdev.sdk.skills_sdk.lens
 
 import com.opticdev.common.{PackageRef, SchemaRef}
-import com.opticdev.parsers.rules.ChildrenRuleTypeEnum
+import com.opticdev.sdk.rules.ChildrenRuleTypeEnum
 import com.opticdev.sdk.descriptions.PackageExportable
 import com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers.OMSubContainer
 import com.opticdev.sdk.skills_sdk.compilerInputs.variables.OMVariable

@@ -4,8 +4,8 @@ import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.{AstProjection, ProjectGraph, ProjectGraphWrapper, SyncGraph}
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.BaseNode
+
+import com.opticdev.common.graph.BaseNode
 import scalax.collection.edge.Implicits._
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.constrained._

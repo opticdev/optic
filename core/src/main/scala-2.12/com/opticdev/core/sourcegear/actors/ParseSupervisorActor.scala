@@ -10,9 +10,9 @@ import com.opticdev.core.sourcegear.{SGContext, _}
 import concurrent.duration._
 import akka.pattern.ask
 import better.files.File
+import com.opticdev.common.graph.AstGraph
 import com.opticdev.core.sourcegear.project.{Project, ProjectBase}
 import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
-import com.opticdev.parsers.AstGraph
 
 import scala.concurrent.{Await, Future}
 import com.opticdev.scala.akka.HashDispatchedRoutingLogic

@@ -1,7 +1,7 @@
 package com.opticdev.core.trainer
 
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 import com.opticdev.sdk.skills_sdk.OMRange
 import com.opticdev.sdk.skills_sdk.lens._
 import play.api.libs.json._

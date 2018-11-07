@@ -3,7 +3,7 @@ package com.opticdev.core.compiler.helpers
 import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.compiler.stages.SnippetStage
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
+import com.opticdev.common.graph.{AstType, CommonAstNode}
 import com.opticdev.sdk.descriptions.enums.FinderEnums._
 import com.opticdev.core._
 import com.opticdev.sdk.skills_sdk.{OMRange, OMSnippet}

@@ -14,8 +14,8 @@ import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
-import com.opticdev.parsers.{AstGraph, ParserBase, SourceParserManager}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
 import com.opticdev.sdk.skills_sdk.LensRef

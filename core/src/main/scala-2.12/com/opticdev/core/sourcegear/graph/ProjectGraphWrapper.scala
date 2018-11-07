@@ -8,8 +8,7 @@ import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.sync.SyncGraph
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{CommonAstNode, CustomEdge, WithinFile}
+import com.opticdev.common.graph.{AstGraph, CommonAstNode, CustomEdge, WithinFile}
 import com.opticdev.parsers.utils.Crypto
 import com.opticdev.sdk.descriptions.PackageExportable
 

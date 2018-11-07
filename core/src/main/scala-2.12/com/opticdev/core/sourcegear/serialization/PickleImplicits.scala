@@ -12,14 +12,15 @@ import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.serialization.PickleImplicits.SGExportableLensPickler.sgExportablePickler
 import com.opticdev.core.sourcegear.{CompiledLens, CompiledMultiNodeLens, SGConfig, SGExportableLens}
 import com.opticdev.opm.context.{Leaf, TreeContext}
-import com.opticdev.parsers.ParserRef
-import com.opticdev.parsers.graph.path.FlatWalkablePath
-import com.opticdev.parsers.graph.{AstType, Child}
+import com.opticdev.common.ParserRef
+import com.opticdev.common.graph.path.FlatWalkablePath
+import com.opticdev.common.graph.{AstType, Child}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, Literal, NotSupported, Token}
 import com.opticdev.sdk.{BoolProperty, _}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.LocationTypeEnums
 import com.opticdev.sdk.descriptions.transformation.Transformation
+import com.opticdev.sdk.rules.ChildrenRuleTypeEnum
 import com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers.{OMContainerBase, OMSubContainer}
 import com.opticdev.sdk.skills_sdk.lens._
 import com.opticdev.sdk.skills_sdk.schema.{OMSchema, OMSchemaColdStorage}
@@ -85,7 +86,7 @@ object PickleImplicits extends PicklerHelper {
 //  }
 
   implicit val childrenRuleTypeEnumPickler = {
-    import com.opticdev.parsers.rules._
+    import com.opticdev.sdk.rules._
     compositePickler[ChildrenRuleTypeEnum]
       .addConcreteType[Any.type]
       .addConcreteType[Exact.type]

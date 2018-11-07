@@ -3,17 +3,16 @@ package com.opticdev.core.sourcegear.accumulate
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, LocationEvaluation, ModelField}
-import com.opticdev.parsers.AstGraph
 import play.api.libs.json._
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode, ModelVectorMapping}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InCurrentLens
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
-import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.common.graph.path.PropertyPathWalker
 import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensSchemaComponent}
 
 import scala.util.Try

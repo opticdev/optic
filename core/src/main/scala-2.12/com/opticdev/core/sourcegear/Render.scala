@@ -7,7 +7,7 @@ import com.opticdev.core.sourcegear.builtins.OpticLenses
 import com.opticdev.core.sourcegear.context.FlatContextBase
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.marvin.common.ast.NewAstNode
-import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.common.graph.path.PropertyPathWalker
 import com.opticdev.parsers.sourcegear.basic.ObjectLiteralValueFormat
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}

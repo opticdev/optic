@@ -1,11 +1,12 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
+import com.opticdev.common.graph.AstGraph
 import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.graph.FileNode
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
-import com.opticdev.parsers.{AstGraph, ParserBase}
+import com.opticdev.parsers.{ParserBase}
 
 import scala.collection.mutable
 

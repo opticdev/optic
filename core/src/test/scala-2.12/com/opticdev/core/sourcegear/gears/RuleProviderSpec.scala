@@ -1,8 +1,8 @@
 package com.opticdev.core.sourcegear.gears
 
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.parsers.graph.AstType
-import com.opticdev.parsers.rules._
+import com.opticdev.common.graph.AstType
+import com.opticdev.sdk.rules._
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.ChildrenRule
 import org.scalatest.FunSpec

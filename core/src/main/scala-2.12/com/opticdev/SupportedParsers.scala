@@ -1,14 +1,12 @@
-package com.opticdev.common
+package com.opticdev
 
-import com.opticdev.parsers.SourceParserManager
-import com.opticdev.parsers.es7
-import com.opticdev.parsers.scala
+import com.opticdev.parsers.{SourceParserManager, es7}
 
 object SupportedParsers {
 
   lazy val parsers = Seq(
     new es7.OpticParser,
-    new scala.OpticParser,
+//    new scala.OpticParser,
   )
 
   def init = {

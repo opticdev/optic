@@ -6,11 +6,11 @@ import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model._
 import com.opticdev.core.sourcegear.mutate.errors.{AstMappingNotFound, ComponentNotFound}
 import com.opticdev.core.sourcegear.variables.{SetVariable, VariableChanges}
-import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.common.graph.path.PropertyPathWalker
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
 import gnieh.diffson.playJson._
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.common.graph.CommonAstNode
+import com.opticdev.common.graph.path.PropertyPathWalker
 import com.opticdev.sdk.skills_sdk.lens._
 import com.opticdev.core.sourcegear.gears.helpers.ParseGearImplicits._
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InContainer

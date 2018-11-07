@@ -1,12 +1,11 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.common.{PackageRef, SGExportable}
+import com.opticdev.common.{PackageRef, ParserRef, SGExportable, SchemaRef}
 import com.opticdev.core.sourcegear.gears.parsing.{MultiNodeParseGear, ParseAsModel}
 import com.opticdev.core.sourcegear.gears.rendering.{MultiNodeRenderGear, RenderGear}
-import com.opticdev.parsers.graph.AstType
-import com.opticdev.common.SchemaRef
+import com.opticdev.common.graph.AstType
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.parsers.{ParserRef, SourceParserManager}
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.skills_sdk.LensRef
 import com.opticdev.sdk.skills_sdk.schema.OMSchema
 

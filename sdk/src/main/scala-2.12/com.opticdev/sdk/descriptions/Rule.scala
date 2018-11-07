@@ -1,6 +1,6 @@
 package com.opticdev.sdk.descriptions
 
-import com.opticdev.parsers.rules.{AllChildrenRule, ChildrenRuleTypeEnum, ParserChildrenRule, Rule}
+import com.opticdev.sdk.rules.{AllChildrenRule, ChildrenRuleTypeEnum, ParserChildrenRule, Rule}
 import com.opticdev.sdk.PropertyValue
 import com.opticdev.sdk.skills_sdk.lens.{OMFinder, OMLensNodeFinder}
 import play.api.libs.json.{JsError, JsSuccess, _}

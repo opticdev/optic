@@ -1,12 +1,12 @@
 package com.opticdev.core.sourcegear
 import com.opticdev.core.compiler.{Compiler, CompilerOutput}
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, ParserRef}
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, SomePackagesFailedToCompile}
 import com.opticdev.core.sourcegear.context.{FlatContext, FlatContextBuilder}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.storage.SGConfigStorage
 import com.opticdev.opm.{DependencyTree, PackageManager}
-import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future

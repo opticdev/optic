@@ -1,12 +1,11 @@
 package com.opticdev.core.sourcegear.graph
 
 import better.files.File
-import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, CustomEdge}
+import com.opticdev.common.graph.{AstGraph, BaseNode, CommonAstNode, CustomEdge}
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.InFile
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, FlatModelNode, LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.graph.objects.ObjectNode
-import com.opticdev.parsers.AstGraph
 
 import scala.collection.mutable
 import scalax.collection.edge.LkDiEdge

@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.graph
 
 import com.opticdev.core.sourcegear.graph.edges.YieldsModel
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.sdk.skills_sdk.lens.{Literal, ObjectLiteral, Token, ArrayLiteral}
 import com.opticdev.sdk.skills_sdk.lens.OMLensComponent
 

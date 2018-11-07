@@ -1,7 +1,7 @@
 package com.opticdev.sdk.skills_sdk.lens
 
 import com.opticdev.common.SchemaRef
-import com.opticdev.parsers.rules.{Any, Rule}
+import com.opticdev.sdk.rules.{Any, Rule}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.StringEnums
 import com.opticdev.sdk.descriptions.{ChildrenRule, Location, RawRule}
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, LocationEnums}

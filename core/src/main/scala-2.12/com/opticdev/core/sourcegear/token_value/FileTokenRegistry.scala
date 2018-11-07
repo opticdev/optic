@@ -1,8 +1,8 @@
 package com.opticdev.core.sourcegear.token_value
 
 import com.opticdev.core.sourcegear.graph.model.ModelNode
-import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.parsers.ParserBase
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 import com.opticdev.parsers.tokenvalues.TokenRegistryEntry
 
 case class FileTokenRegistry(entries: Set[TokenRegistryEntry] = Set()) {

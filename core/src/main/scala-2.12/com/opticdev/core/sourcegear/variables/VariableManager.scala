@@ -3,9 +3,9 @@ package com.opticdev.core.sourcegear.variables
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.sourcegear.gears.parsing.NodeDescription
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserBase}
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.parsers.graph.path.PropertyPathWalker
-import com.opticdev.parsers.rules.Rule
+import com.opticdev.common.graph.{AstType, CommonAstNode}
+import com.opticdev.common.graph.path.PropertyPathWalker
+import com.opticdev.sdk.rules.Rule
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.{PropertyRule, VariableRule}
 import com.opticdev.sdk.skills_sdk.OMRange

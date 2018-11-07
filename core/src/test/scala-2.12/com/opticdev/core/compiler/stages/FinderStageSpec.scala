@@ -1,7 +1,7 @@
 package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 import com.opticdev.core.compiler.errors.InvalidComponents
 import com.opticdev.sdk.descriptions.enums.ComponentEnums._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Entire
