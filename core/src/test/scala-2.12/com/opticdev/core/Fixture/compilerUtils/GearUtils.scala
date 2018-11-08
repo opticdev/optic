@@ -68,7 +68,7 @@ trait GearUtils {
 
   }
 
-  def sourceGearFromPackage(description: OpticMDPackage) : SourceGear = {
+  def sourceGearFromPackage(description: OpticPackage) : SourceGear = {
 
     val outerLensSet = new LensSet()
 

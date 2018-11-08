@@ -12,7 +12,7 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import com.opticdev.common.graph.AstType
-import com.opticdev.parsers.tokenvalues.{Internal, TokenRegistryEntry}
+import com.opticdev.parsers.token_values.{Internal, TokenRegistryEntry}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire}
 import com.opticdev.sdk.skills_sdk.SetValue

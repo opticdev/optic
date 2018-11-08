@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping}
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.opm.packages.OpticMDPackage
+import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.parsers.ParserBase
 import com.opticdev.common.graph.{AstGraph, AstType, CommonAstNode}
 import com.opticdev.sdk.rules.Rule
@@ -78,7 +78,7 @@ case class Failure(lens: OMLens, errorAccumulator: ErrorAccumulator, debug: Opti
   override def printErrors = errorAccumulator.printAll
 }
 
-case class CompilerOutput(opticPackage: OpticMDPackage, lensOutputs: Set[LensCompilerOutput], schemas: Set[OMSchema]) extends Output {
+case class CompilerOutput(opticPackage: OpticPackage, lensOutputs: Set[LensCompilerOutput], schemas: Set[OMSchema]) extends Output {
   lazy val isSuccess = lensOutputs.forall(_.isSuccess)
   lazy val isFailure = !isSuccess
 

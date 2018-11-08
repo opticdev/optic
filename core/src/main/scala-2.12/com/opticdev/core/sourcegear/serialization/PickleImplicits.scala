@@ -3,6 +3,7 @@ package com.opticdev.core.sourcegear.serialization
 import boopickle.Default._
 import boopickle.DefaultBasic.PicklerGenerator
 import boopickle.PicklerHelper
+import com.opticdev.ParserSkillsColdStorage
 import com.opticdev.common.{PackageRef, SGExportable, SchemaRef}
 import com.opticdev.core.sourcegear.accumulate.{AssignmentListener, Listener, MapSchemaListener}
 import com.opticdev.core.sourcegear.context.FlatContext
@@ -142,6 +143,7 @@ object PickleImplicits extends PicklerHelper {
   implicit val finderPickler = {
     compositePickler[OMFinder]
       .addConcreteType[OMLensNodeFinder]
+      .addConcreteType[OMStringFinder]
   }
 
   implicit val childEdgePickler = PicklerGenerator.generatePickler[Child]
@@ -261,5 +263,7 @@ object PickleImplicits extends PicklerHelper {
       )
     }
   }
+
+  implicit val parserSkillsColdStoragePickler = PicklerGenerator.generatePickler[ParserSkillsColdStorage]
 
 }

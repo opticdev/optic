@@ -9,7 +9,7 @@ import com.opticdev.marvin.runtime.mutators.array.AstMapping
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 import com.opticdev.common.graph.path.{FlatWalkablePath, WalkablePath}
-import com.opticdev.parsers.tokenvalues.External
+import com.opticdev.parsers.token_values.External
 import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensAssignmentComponent}
 import play.api.libs.json.JsString
 

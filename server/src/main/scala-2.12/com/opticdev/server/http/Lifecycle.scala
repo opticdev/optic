@@ -20,7 +20,7 @@ object Lifecycle extends App {
 
   //init the data directory if missing
   DataDirectory.init
-  SupportedParsers.init
+  SupportedParsers.init(withSkills = true)
 
   implicit val projectsManager: ProjectsManager = new ProjectsManager()
   implicit val actorCluster = projectsManager.actorCluster

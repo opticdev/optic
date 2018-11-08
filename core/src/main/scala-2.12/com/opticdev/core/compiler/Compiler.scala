@@ -8,16 +8,16 @@ import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.context.{FlatContext, FlatContextBuilder, SDKObjectsResolvedImplicits}
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.opm.context.{Context, PackageContext}
+import com.opticdev.opm.context.{Context, PackageContext, Tree}
 import com.opticdev.opm.DependencyTree
-import com.opticdev.opm.packages.OpticMDPackage
+import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.sdk.skills_sdk.lens.OMLens
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Try
 
 object Compiler {
-  def setup(opticPackage: OpticMDPackage)(implicit logToCli: Boolean = false, dependencyTree: DependencyTree) : CompilerPool = {
+  def setup(opticPackage: OpticPackage)(implicit logToCli: Boolean = false, dependencyTree: DependencyTree = Tree()) : CompilerPool = {
 
     implicit val packageContext = dependencyTree.treeContext(opticPackage.packageFull).get
 
@@ -26,7 +26,7 @@ object Compiler {
     new CompilerPool(opticPackage, opticPackage.lenses.map(l=> new CompileWorker(l)).toSet)
   }
 
-  class CompilerPool(opticPackage: OpticMDPackage, val compilers: Set[CompileWorker])(implicit packageContext: Context, dependencyTree: DependencyTree, errorAccumulator: ErrorAccumulator, logToCli: Boolean = false) {
+  class CompilerPool(opticPackage: OpticPackage, val compilers: Set[CompileWorker])(implicit packageContext: Context, dependencyTree: DependencyTree, errorAccumulator: ErrorAccumulator, logToCli: Boolean = false) {
 
     private implicit var completed: ListBuffer[Output] = new scala.collection.mutable.ListBuffer[Output]()
 

@@ -10,7 +10,7 @@ import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.skills_sdk.OMParser
 import com.opticdev.sdk.skills_sdk.lens.OMLens
 import com.opticdev.sdk.skills_sdk.schema.OMSchema
-case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMapping) extends OpticPackage {
+case class OpticMDPackage(description: JsObject, dependencyMapping: DependencyMapping) extends OpticPackage with OpticPackageFromJson {
 
   lazy val schemas: Vector[OMSchema] = (description \ "schemas").getOrElse(JsArray.empty).as[JsArray].value.map(i=> {
     val schemaObject = i.as[JsObject]

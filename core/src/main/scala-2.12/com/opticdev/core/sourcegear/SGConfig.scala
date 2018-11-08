@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear
 
+import com.opticdev.SupportedParsers
 import com.opticdev.common.{ParserRef, SchemaRef}
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, SerializeProjectGraph}
@@ -43,10 +44,19 @@ case class SGConfig(hashInt: Int,
       SerializeProjectGraph.loadProjectGraphFor(projectName)
     }).collect{case n if n.isSuccess => n.get}
 
+
+    //from parsers
+    val (parserGenerators, parserAbstractions) = {
+      val allSkills = parserCollections.found.map(SupportedParsers.getSkills)
+      val generators = allSkills.flatMap(_.generators)
+      val abstractions = allSkills.flatMap(_.abstractions)
+      (generators, abstractions)
+    }
+
     new SourceGear {
       override val parsers = parserCollections.found
-      override val lensSet = new LensSet(compiledLenses.toSeq: _*)
-      override val schemas = inflatedSchemas
+      override val lensSet = new LensSet((compiledLenses ++ parserGenerators).toSeq: _*)
+      override val schemas = inflatedSchemas ++ parserAbstractions
       override val transformations = inflatedTransformations
       override val flatContext: FlatContext = _flatContext
       override val connectedProjectGraphs: Set[ProjectGraph] = connectedGraphs

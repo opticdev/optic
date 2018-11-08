@@ -2,7 +2,7 @@ package com.opticdev.core.compiler.errors
 
 import com.opticdev.common.SchemaRef
 import com.opticdev.core.compiler.helpers.FinderPath
-import com.opticdev.opm.packages.OpticMDPackage
+import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMLensCodeComponent, OMLensComponent, OMLensNodeFinder}
 
 import scala.util.control.NonFatal
@@ -58,4 +58,4 @@ case class AstPathNotFound(finderPath: FinderPath)(implicit val lens: OMLens) ex
   override def toString = "AstPathNotFound to target node. Internal Error. "+finderPath
 }
 
-case class SomePackagesFailedToCompile(errors: Map[OpticMDPackage, Map[OMLens, ErrorAccumulator]]) extends Exception
+case class SomePackagesFailedToCompile(errors: Map[OpticPackage, Map[OMLens, ErrorAccumulator]]) extends Exception
