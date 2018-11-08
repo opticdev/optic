@@ -132,7 +132,7 @@ class OMLensAssignmentComponentParsingSpec extends AkkaTestFixture("ParserGearTe
         val parseResults = sourceGear.parseString(block)(project, "es7")
 
 
-        implicit val sourceGearContext = SGContext(sourceGear.fileAccumulator, parseResults.get.astGraph, SourceParserManager.installedParsers.head, null, sourceGear, null, parseResults.get.fileTokenRegistry)
+        implicit val sourceGearContext = SGContext(sourceGear.fileAccumulator, parseResults.get.astGraph, SourceParserManager.installedParsers.head, null, sourceGear, null, parseResults.get.fileTokenRegistry, parseResults.get.fileImportsRegistry)
         val mn = parseResults.get.modelNodes
         val callModel = mn.find(_.schemaId.id == "call-it").get
         callModel.expandedValue()(sourceGearContext)

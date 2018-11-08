@@ -68,7 +68,8 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
             record.fileContents,
             ctxRequest.sourceGear,
             ctxRequest.file,
-            record.fileTokenRegistry
+            record.fileTokenRegistry,
+            record.fileImportsRegistry
           )
         )
       } else {
@@ -77,8 +78,8 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
     }
 
     //cache events
-    case AddToCache(file, graph, parser, fileContents, fileNameAnnotationOption, fileTokenRegistry) =>
-      context.become(handler(parseCache.add(file, CacheRecord(graph, parser, fileContents, fileNameAnnotationOption, fileTokenRegistry))))
+    case AddToCache(file, graph, parser, fileContents, fileNameAnnotationOption, fileTokenRegistry, fileImportsRegistry) =>
+      context.become(handler(parseCache.add(file, CacheRecord(graph, parser, fileContents, fileNameAnnotationOption, fileTokenRegistry, fileImportsRegistry))))
     case SetCache(newCache) => context.become(handler(newCache))
     case CacheSize => sender() ! parseCache.cache.size
     case ClearCache => context.become(handler(parseCache.clear))

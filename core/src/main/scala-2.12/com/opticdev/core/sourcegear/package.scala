@@ -8,6 +8,7 @@ import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.common.graph.{AstGraph, AstType}
+import com.opticdev.core.sourcegear.imports.FileImportsRegistry
 import com.opticdev.parsers.ParserBase
 import com.opticdev.sdk.skills_sdk.LensRef
 import com.opticdev.sdk.skills_sdk.schema.OMSchema
@@ -22,7 +23,9 @@ package object sourcegear {
                               parser: ParserBase,
                               fileContents: String,
                               fileNameAnnotationOption: Option[FileNameAnnotation],
-                              fileTokenRegistry: FileTokenRegistry)
+                              fileTokenRegistry: FileTokenRegistry,
+                              fileImportsRegistry: FileImportsRegistry
+                             )
 
   case class AstDebugLocation(filePath: String, range: Range)(implicit project: ProjectBase) {
     override def toString: String = s"${range.start}, ${range.end} in ${project.trimAbsoluteFilePath(filePath)}"

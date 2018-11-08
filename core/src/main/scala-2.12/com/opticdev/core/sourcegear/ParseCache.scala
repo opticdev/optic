@@ -5,12 +5,19 @@ import com.opticdev.common.graph.AstGraph
 import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.graph.FileNode
 import com.opticdev.core.sourcegear.graph.model.ModelNode
+import com.opticdev.core.sourcegear.imports.FileImportsRegistry
 import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
-import com.opticdev.parsers.{ParserBase}
+import com.opticdev.parsers.ParserBase
 
 import scala.collection.mutable
 
-case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String, fileNameAnnotationOption: Option[FileNameAnnotation], fileTokenRegistry: FileTokenRegistry) {
+case class CacheRecord(graph: AstGraph,
+                       parser: ParserBase,
+                       fileContents: String,
+                       fileNameAnnotationOption: Option[FileNameAnnotation],
+                       fileTokenRegistry: FileTokenRegistry,
+                       fileImportsRegistry: FileImportsRegistry
+                      ) {
   //WARNING: Negating this does not determine equality
   def differentFrom(other: String) : Boolean = {
     other.size != fileContents.size ||
@@ -19,7 +26,7 @@ case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String
 
   def asFileParseResults = {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
-    FileParseResults(graph, graph.modelNodes.asInstanceOf[Vector[ModelNode]], parser, fileContents, fileNameAnnotationOption, fileTokenRegistry)
+    FileParseResults(graph, graph.modelNodes.asInstanceOf[Vector[ModelNode]], parser, fileContents, fileNameAnnotationOption, fileTokenRegistry, fileImportsRegistry)
   }
 }
 
