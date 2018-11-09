@@ -38,7 +38,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
     lazy val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
 
     lazy val importResults = sourceGear.parseFile(File(testFilePath))
-    pgW.addFile(importResults.get.astGraph, File(testFilePath))
+    pgW.addFile(importResults.get.astGraph, File(testFilePath), importResults.get.fileTokenRegistry.exports)
 
     lazy val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get.asInstanceOf[ModelNode]
     lazy val resolved: LinkedModelNode[CommonAstNode] = helloWorldImport.resolve[CommonAstNode]
@@ -114,7 +114,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
       val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress_non_distinct_params@0.1.0.json")
       implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)
       val result = sourceGear.parseFile(file)
-      project.projectGraphWrapper.addFile(result.get.astGraph, file)
+      project.projectGraphWrapper.addFile(result.get.astGraph, file, result.get.fileTokenRegistry.exports)
 
       implicit val sourceGearContext = ParseSupervisorSyncAccess.getContext(file)(project.actorCluster, sourceGear, project).get
       val route = result.get.modelNodes.find(_.lensRef.id == "route").get.asInstanceOf[ModelNode]

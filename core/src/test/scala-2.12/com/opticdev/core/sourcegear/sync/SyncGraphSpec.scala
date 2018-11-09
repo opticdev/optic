@@ -27,7 +27,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
     val results = {
       val astResults = syncTestSourceGear.parseFile(file).get
       val pgw = ProjectGraphWrapper.empty()
-      pgw.addFile(astResults.astGraph, file)
+      pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
       project.stageProjectGraph(pgw.projectGraph)
       astResults
     }
@@ -75,13 +75,13 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
     val resultsA = {
       val file = File("test-examples/resources/example_source/sync/multi_file/A.js")
       val astResults = syncTestSourceGear.parseFile(file).get
-      pgw.addFile(astResults.astGraph, file)
+      pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
     }
 
     val resultsB = {
       val file = File("test-examples/resources/example_source/sync/multi_file/B.js")
       val astResults = syncTestSourceGear.parseFile(file).get
-      pgw.addFile(astResults.astGraph, file)
+      pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
     }
 
     project.stageProjectGraph(pgw.projectGraph)

@@ -43,7 +43,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
       sourceGear.parseFile(File(testFilePath))
     }
 
-    pgW.addFile(importResults.get.astGraph, File(testFilePath))
+    pgW.addFile(importResults.get.astGraph, File(testFilePath), importResults.get.fileTokenRegistry.exports)
 
   }
 

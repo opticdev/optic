@@ -102,8 +102,6 @@ class LensSet(initialGears: SGExportableLens*) {
       FileImportsRegistry(importRecords)
     }
 
-    println(importRegistry)
-
     FileParseResults(
       astGraph,
       modelNodes,

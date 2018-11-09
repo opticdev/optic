@@ -24,7 +24,8 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     //handle consequences of parsings
     case parsed: ParseSuccessful => {
       if (!parsed.fromCache) {
-        graph.updateFile(parsed.parseResults.astGraph, parsed.file, parsed.parseResults.fileNameAnnotationOption)
+        val exports = parsed.parseResults.fileTokenRegistry.exports
+        graph.updateFile(parsed.parseResults.astGraph, parsed.file, exports, parsed.parseResults.fileNameAnnotationOption)
       }
       context.become(active(graph))
       sender() ! graph
