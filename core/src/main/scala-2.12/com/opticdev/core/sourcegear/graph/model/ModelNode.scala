@@ -147,7 +147,11 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef,
 
   def variableManager: VariableManager = parseGear.variableManager
 
-  def hash = Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMapping.toString + sourceAnnotation.toString + objectRef.toString + containerMappingStore.toString))
+  def hash = {
+    val modelMappingHashString = modelMapping.toSeq.sortBy(_._1.toString).toString()
+    val containerAstMappingString = containerMappingStore.toSeq.sortBy(_._1).toString()
+    Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMappingHashString + sourceAnnotation.toString + objectRef.toString + containerAstMappingString))
+  }
 
   override def flatten : ModelNode = {
     ModelNode(schemaId, value, lensRef, priority, variableMapping, objectRef, sourceAnnotation, tag, hash, internal)

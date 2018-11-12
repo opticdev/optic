@@ -41,7 +41,6 @@ class ParseCache {
   def cachedFiles: Vector[File] = lastNFiles.toVector
 
   def add(file: File, record: CacheRecord) : ParseCache = {
-
     fileStore --= fileStore.keys.filter(_.pathAsString == file.pathAsString)
     //add new file record to map
     fileStore += file -> record

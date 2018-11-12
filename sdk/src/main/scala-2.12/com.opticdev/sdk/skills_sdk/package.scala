@@ -9,7 +9,9 @@ package object skills_sdk {
 
   sealed trait AssignmentOperations
   case object SetValue extends AssignmentOperations
-  case class AppendItems(unique: Boolean = false) extends AssignmentOperations
-  case class PrependItems(unique: Boolean = false) extends AssignmentOperations
+  case object AppendItems extends AssignmentOperations
+  case object AppendItemsUnique extends AssignmentOperations
+  case object PrependItems extends AssignmentOperations
+  case object PrependItemsUnique extends AssignmentOperations
 
 }

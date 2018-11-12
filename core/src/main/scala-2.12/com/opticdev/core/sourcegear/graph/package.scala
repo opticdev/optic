@@ -29,4 +29,6 @@ package object graph {
     def toJson : JsValue = Json.toJson[NamedFile](this)
   }
 
+  case class FoundExport(local: String, modelNode: BaseModelNode)
+
 }

@@ -19,6 +19,7 @@ case class SGContext(fileAccumulator: FileAccumulator,
                      file: File,
                      fileTokenRegistry: FileTokenRegistry,
                      fileImportsRegistry: FileImportsRegistry,
+                     project: ProjectBase,
                      forRender: Boolean = false,
                     )
 
@@ -36,7 +37,7 @@ object SGContext {
   }
 
   def forRender(sourceGear: SourceGear, astGraph: AstGraph, parserRef: ParserRef): SGContext = {
-    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear, null, null, null, true)
+    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear, null, null, null, null, true)
   }
 
 }

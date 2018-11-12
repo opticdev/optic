@@ -5,6 +5,7 @@ import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.common.graph.{AstGraph, CommonAstNode}
+import com.opticdev.core.sourcegear.project.OpticProject
 
 package object accumulate {
 

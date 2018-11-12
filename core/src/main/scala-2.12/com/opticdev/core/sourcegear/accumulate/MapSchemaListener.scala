@@ -13,6 +13,7 @@ import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 import com.opticdev.sdk.descriptions.enums.LocationEnums.InCurrentLens
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.common.graph.path.PropertyPathWalker
+import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensSchemaComponent}
 
 import scala.util.Try

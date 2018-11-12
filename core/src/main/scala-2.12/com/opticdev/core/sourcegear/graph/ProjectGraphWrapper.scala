@@ -35,9 +35,6 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
       val newGraph = astGraphToProjectGraph(astGraph, forFile, exports, fileNameAnnotationOption)
       projectGraph ++= newGraph
       checkForUpdatedNamedModelNodes
-      if (exports.nonEmpty) {
-        println(newGraph)
-      }
     }
   }
 

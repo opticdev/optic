@@ -103,7 +103,7 @@ abstract class SourceGear {
 
       val fileNameAnnotation = AnnotationParser.extractFromFileContents(fileContents, parsed.parserBase.inlineCommentPrefix).headOption
       
-      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, parserByLanguageName(languageName).get, fileContents, this, file, null, null)
+      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, parserByLanguageName(languageName).get, fileContents, this, file, null, null, project)
       lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project, fileNameAnnotation)
     } else {
       throw parsedOption.failed.get

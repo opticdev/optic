@@ -41,7 +41,7 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
 
   start
 
-  implicit def sourceGearContext = SGContext(null, null, SourceParserManager.installedParsers.head, null, null, null, null, null)
+  implicit def sourceGearContext = SGContext(null, null, SourceParserManager.installedParsers.head, null, null, null, null, null, null)
 
   def resetScratch = PreTest.resetScratch
 

@@ -6,7 +6,7 @@ import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Star
 import com.opticdev.sdk.skills_sdk.lens._
 import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import com.opticdev.sdk.skills_sdk.utils.EnumFormatsFromTypes
-import play.api.libs.json._
+import play.api.libs.json.{Json, _}
 
 object Serialization {
   import com.opticdev.common.PackageRef.packageRefJsonFormat
@@ -19,6 +19,15 @@ object Serialization {
   implicit lazy val omlenscomponenttypeFormat = EnumFormatsFromTypes.newFormats[OMLensComponentType](Map(
     "token" -> Token, "literal" -> Literal, "object-literal" -> ObjectLiteral, "array-literal" -> ArrayLiteral
   ))
+
+  implicit lazy val omassignmentOperationsFormat = EnumFormatsFromTypes.newFormats[AssignmentOperations](Map(
+    "set-value" -> SetValue,
+    "append-items" -> AppendItems,
+    "append-items-unique" -> AppendItemsUnique,
+    "prepend-items" -> PrependItems,
+    "prepend-items-unique" -> PrependItemsUnique,
+  ))
+
 
   implicit lazy val omchildrenruletypeFormat = EnumFormatsFromTypes.newFormats[OMChildrenRuleType](Map(
     "any" -> com.opticdev.sdk.rules.Any,
@@ -58,6 +67,7 @@ object Serialization {
   }
 
   implicit lazy val omlenscodecomponentFormat = Json.format[OMLensCodeComponent]
+  implicit lazy val omlensassignmentcomponentFormats = Json.using[Json.WithDefaultValues].format[OMLensAssignmentComponent]
   implicit lazy val omlensschemacomponentFormat = Json.using[Json.WithDefaultValues].format[OMLensSchemaComponent]
 
   implicit lazy val omlenscomponentFormat = new Format[OMLensComponent] {
@@ -65,6 +75,7 @@ object Serialization {
       json.as[JsObject].value.keySet match {
         case x if x == Set("type", "at") => Json.fromJson[OMLensCodeComponent](json)
         case x if x.contains("schemaRef") => Json.fromJson[OMLensSchemaComponent](json)
+        case x if x.contains("tokenAt") && x.contains("keyPath") => Json.fromJson[OMLensAssignmentComponent](json)
       }
     }
     override def writes(o: OMLensComponent): JsValue = {

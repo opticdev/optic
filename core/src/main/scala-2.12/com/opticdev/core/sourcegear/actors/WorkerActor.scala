@@ -32,7 +32,7 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
 
       implicit val languageName = SourceParserManager.selectParserForFileName(parseWithContentsRequest.file.name).get.languageName
 
-      val result: Try[FileParseResults] = parseWithContentsRequest.sourceGear.parseString(parseWithContentsRequest.contents)
+      val result: Try[FileParseResults] = parseWithContentsRequest.sourceGear.parseString(parseWithContentsRequest.contents, parseWithContentsRequest.file)
       if (result.isSuccess) {
         actorCluster.parserSupervisorRef ! AddToCache(parseWithContentsRequest.file, result.get.astGraph, result.get.parser, parseWithContentsRequest.contents, result.get.fileNameAnnotationOption, result.get.fileTokenRegistry, result.get.fileImportsRegistry)
         sender() tell(ParseSuccessful(result.get, parseWithContentsRequest.file), requestingActor)
@@ -59,7 +59,8 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
           ctxRequest.sourceGear,
           ctxRequest.file,
           result.get.fileTokenRegistry,
-          result.get.fileImportsRegistry
+          result.get.fileImportsRegistry,
+          ctxRequest.project
         ))
         ctxRequest.project.projectActor ! ParseSuccessful(result.get, file)
       } else {

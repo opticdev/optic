@@ -38,6 +38,7 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
           sourceGear.print
           if (projectStatus.monitoringStatus == Watching) rereadAll
         } else {
+          i.failed.get.printStackTrace()
           projectStatusInstance.sourceGearStatus = Invalid(i.failed.get.getMessage)
         }
       })
