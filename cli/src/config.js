@@ -1,5 +1,5 @@
 import "regenerator-runtime/runtime";
-
+import path from 'path'
 const isDev = false
 
 const jreDirectory = require('os').homedir()+'/.optic-jre'
@@ -15,13 +15,12 @@ module.exports = (() => {
 			projectDirectory: '/Users/aidancunniffe/Desktop/optic-demo-project-master'
 		}
 	} else {
-		const appRootPath = require('app-root-path').toString()
 
-		const path = [(appRootPath.endsWith('/lib')) ? '../jars/server-assembly.jar' : 'jars/server-assembly.jar']
+		const jarPath = path.join(__dirname, '../jars/server-assembly.jar')
 
 		return {
 			runServerCmd: {
-				options: ['-jar', `${appRootPath}/${path}`]
+				options: ['-jar', jarPath]
 			},
 			storageDirectory: require('os').homedir()+'/.optic-storage',
 			jreDirectory,

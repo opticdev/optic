@@ -1,6 +1,6 @@
 {
   "name": "optic-cli",
-  "version": "2.0.7",
+  "version": "2.0.9",
   "description": "",
   "main": "lib/Cli.js",
   "scripts": {
@@ -64,7 +64,8 @@
   },
   "files": [
     "jars/server-assembly.jar",
-    "resources/*",
+    "resources/Smoketest.java",
+    "resources/Smoketest.class",
     "lib",
     "react-diff-view/*",
     "features.json"

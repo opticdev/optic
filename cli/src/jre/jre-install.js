@@ -85,13 +85,10 @@
       child_process.spawnSync(driver(), getArgs(classpath, classname, args), options);
 
   const smoketest = exports.smoketest = () => {
-	  const cwd = appRootPath.toString()
-
-      const path = [(cwd.endsWith('/lib')) ? '../resources' : 'resources']
-
-	  return spawnSync(path, 'Smoketest', [], {encoding: 'utf8', cwd})
+      const p = path.join(__dirname, '../../resources')
+      console.log(p)
+	  return spawnSync([p], 'Smoketest', [], {encoding: 'utf8'})
 		  .stdout.trim() === 'No smoke!';
-
   }
 
   const url = exports.url = () =>
