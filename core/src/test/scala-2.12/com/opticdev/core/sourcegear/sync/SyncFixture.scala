@@ -25,7 +25,7 @@ trait SyncFixture extends TestBase with GearUtils {
 
     project.projectGraphWrapper.addProjectSubGraph(connectedGraph)
 
-    project.projectGraphWrapper.addFile(results.astGraph, file)
+    project.projectGraphWrapper.addFile(results.astGraph, file, results.fileTokenRegistry.exports)
     val snapshot = {
       Await.result(Snapshot.forSourceGearAndProjectGraph(syncTestSourceGear, project.projectGraphWrapper.projectGraph, actorCluster.parserSupervisorRef, project), 30 seconds)
     }
@@ -38,7 +38,7 @@ trait SyncFixture extends TestBase with GearUtils {
     implicit val actorCluster: ActorCluster = new ActorCluster(ActorSystem())
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/"), sourceGear)
     val results = sourceGear.parseFile(file).get
-    project.projectGraphWrapper.addFile(results.astGraph, file)
+    project.projectGraphWrapper.addFile(results.astGraph, file, results.fileTokenRegistry.exports)
     val snapshot = {
       Await.result(Snapshot.forSourceGearAndProjectGraph(sourceGear, project.projectGraphWrapper.projectGraph, actorCluster.parserSupervisorRef, project), 30 seconds)
     }

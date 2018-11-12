@@ -1,11 +1,11 @@
 package com.opticdev.opm
 
 import better.files.File
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, ParserRef}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage, StagedPackage}
-import com.opticdev.opm.providers.{Provider}
+import com.opticdev.opm.providers.Provider
 import com.opticdev.opm.storage.ParserStorage
-import com.opticdev.parsers.{ParserRef, SourceParserManager}
+import com.opticdev.parsers.SourceParserManager
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import net.jcazevedo.moultingyaml.YamlString

@@ -9,9 +9,9 @@ import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.descriptions._
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, Self}
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.compilerInputs.variables.OMVariable
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, Self}
 import play.api.libs.json.JsObject
 
 class VariablesSpec extends TestBase with GearUtils with ParserUtils {
@@ -20,7 +20,7 @@ class VariablesSpec extends TestBase with GearUtils with ParserUtils {
   val block = "function test () { \n let definedAs = require('pathTo') \n definedAs() \n definedAs + definedAs \n }"
   implicit val lens : OMLens = OMLens(Some("Example"), "example", OMSnippet("es7", block), Map(), Map(
     "definedAs" -> Self
-  ), Map(), Left(BlankSchema), JsObject.empty, "es7", PackageRef("example:testing"))
+  ), Map(), Left(BlankSchema()), JsObject.empty, "es7", PackageRef("example:testing"))
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run

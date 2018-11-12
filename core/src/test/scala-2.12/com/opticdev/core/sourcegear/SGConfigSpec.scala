@@ -12,7 +12,7 @@ import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
 import com.opticdev.core.sourcegear.storage.GearStorage
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 import scala.concurrent.duration._
 import scala.concurrent.Await
 class SGConfigSpec extends TestBase with TestPackageProviders {

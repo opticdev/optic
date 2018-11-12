@@ -4,8 +4,8 @@ import better.files.File
 import com.opticdev.common.storage.DataDirectory
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.model.ModelNode
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph._
+
+import com.opticdev.common.graph._
 import com.opticdev.parsers.utils.Crypto
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, FunSpec, FunSpecLike}
 import play.api.libs.json.{JsObject, JsValue}
@@ -41,7 +41,7 @@ trait TestBase extends FunSpecLike with BeforeAndAfterAll {
 
   start
 
-  implicit def sourceGearContext = SGContext(null, null, SourceParserManager.installedParsers.head, null, null, null)
+  implicit def sourceGearContext = SGContext(null, null, SourceParserManager.installedParsers.head, null, null, null, null, null, null)
 
   def resetScratch = PreTest.resetScratch
 

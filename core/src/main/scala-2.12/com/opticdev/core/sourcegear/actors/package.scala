@@ -2,17 +2,20 @@ package com.opticdev.core.sourcegear
 
 import akka.actor.{ActorRef, ActorSystem, Props}
 import better.files.File
+import com.opticdev.common.graph.AstGraph
 import com.opticdev.core.sourcegear.actors.ParseSupervisorActor
 import com.opticdev.core.actorSystem
 import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraph}
+import com.opticdev.core.sourcegear.imports.FileImportsRegistry
 import com.opticdev.core.sourcegear.project.{Project, ProjectBase}
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import com.opticdev.parsers._
 
 package object actors {
 
   //Parser Supervisor Recieve
-  case class AddToCache(file: File, astGraph: AstGraph, parser: ParserBase, fileContents: String, fileNameAnnotationOption: Option[FileNameAnnotation])
+  case class AddToCache(file: File, astGraph: AstGraph, parser: ParserBase, fileContents: String, fileNameAnnotationOption: Option[FileNameAnnotation], fileTokenRegistry: FileTokenRegistry, fileImportsRegistry: FileImportsRegistry)
   case class CheckCacheFor(file: File)
   case object CacheSize
   case object ClearCache

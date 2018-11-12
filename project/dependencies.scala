@@ -6,9 +6,9 @@ object Dependencies {
   object Versions {
     val betterFilesVersion = "2.17.1"
     val scalaTestVersion = "3.0.1"
-    val parserFoundationVersion = "0.1.5"
     val akkaHttpVersion = "10.1.1"
-    val marvinVersion = "0.1.4"
+    val marvinVersion = "0.2.1"
+    val parserFoundationVersion = "0.2.1"
   }
 
   import Versions._
@@ -17,8 +17,6 @@ object Dependencies {
     //tests
     "org.scalactic" %% "scalactic" % scalaTestVersion,
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
-
-    "com.opticdev" %% "parser-foundation" % parserFoundationVersion,
 
     //file library
     "com.github.pathikrit" % "better-files_2.12" % betterFilesVersion,
@@ -39,8 +37,8 @@ object Dependencies {
     "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
     "com.vdurmont" % "semver4j" % "2.2.0",
     "org.slf4j" % "slf4j-simple" % "1.7.25" % "test",
-    "com.opticdev" %% "parser-foundation" % parserFoundationVersion
-  ) ++ Parsers.list
+    "org.scala-graph" %% "graph-core" % "1.12.3"
+  )
 
   val sdkDependencies: Seq[ModuleID] = sharedDependencies ++ Seq(
     "com.typesafe.play" %% "play-json" % "2.6.2",
@@ -94,8 +92,10 @@ object Dependencies {
 
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
     "com.opticdev" %% "marvin-runtime" % marvinVersion,
-    "com.opticdev" %% "marvin-common" % marvinVersion
-  )
+    "com.opticdev" %% "marvin-common" % marvinVersion,
+
+    "com.opticdev" %% "parser-foundation" % parserFoundationVersion
+  ) ++ Parsers.list
 
   val opmDependencies : Seq[ModuleID] = sharedDependencies ++ Seq(
     "net.jcazevedo" %% "moultingyaml" % "0.4.0",
@@ -103,8 +103,6 @@ object Dependencies {
     "com.typesafe.play" %% "play-ws-standalone" % "1.1.3",
     "com.typesafe.play" %% "play-ahc-ws-standalone" % "1.1.2",
     "com.typesafe.play" %% "play-ws-standalone-json" % "1.1.2",
-    "com.opticdev" %% "marvin-runtime" % marvinVersion,
-    "com.opticdev" %% "marvin-common" % marvinVersion,
     "com.vdurmont" % "semver4j" % "2.1.0",
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion,
     "com.typesafe.akka" %% "akka-http-testkit" % akkaHttpVersion

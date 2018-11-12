@@ -6,7 +6,7 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.Fixture.compilerUtils.GearUtils
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.marvin.common.ast.NewAstNode
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 
 class InsertCodeSpec extends TestBase with GearUtils {
 

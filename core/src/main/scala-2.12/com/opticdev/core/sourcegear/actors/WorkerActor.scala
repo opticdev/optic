@@ -5,7 +5,7 @@ import akka.dispatch.RequiresMessageQueue
 import better.files.File
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.{FileNode, ProjectGraphWrapper}
-import com.opticdev.parsers.{AstGraph, SourceParserManager}
+import com.opticdev.parsers.{SourceParserManager}
 import com.opticdev.core.sourcegear.FileParseResults
 import com.opticdev.core.sourcegear.annotations.AnnotationParser
 import com.opticdev.scala.akka.FaddishUnboundedMessageQueueSemantics
@@ -19,7 +19,7 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
       val requestingActor = parseRequest.requestingActor
       val result: Try[FileParseResults] = parseRequest.sourceGear.parseFile(parseRequest.file)
       if (result.isSuccess) {
-        actorCluster.parserSupervisorRef ! AddToCache(parseRequest.file, result.get.astGraph, result.get.parser, result.get.fileContents, result.get.fileNameAnnotationOption)
+        actorCluster.parserSupervisorRef ! AddToCache(parseRequest.file, result.get.astGraph, result.get.parser, result.get.fileContents, result.get.fileNameAnnotationOption, result.get.fileTokenRegistry, result.get.fileImportsRegistry)
         sender() tell(ParseSuccessful(result.get, parseRequest.file), requestingActor)
       } else {
         sender() tell(ParseFailed(parseRequest.file, result.failed.get.getMessage), requestingActor)
@@ -32,9 +32,9 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
 
       implicit val languageName = SourceParserManager.selectParserForFileName(parseWithContentsRequest.file.name).get.languageName
 
-      val result: Try[FileParseResults] = parseWithContentsRequest.sourceGear.parseString(parseWithContentsRequest.contents)
+      val result: Try[FileParseResults] = parseWithContentsRequest.sourceGear.parseString(parseWithContentsRequest.contents, parseWithContentsRequest.file)
       if (result.isSuccess) {
-        actorCluster.parserSupervisorRef ! AddToCache(parseWithContentsRequest.file, result.get.astGraph, result.get.parser, parseWithContentsRequest.contents, result.get.fileNameAnnotationOption)
+        actorCluster.parserSupervisorRef ! AddToCache(parseWithContentsRequest.file, result.get.astGraph, result.get.parser, parseWithContentsRequest.contents, result.get.fileNameAnnotationOption, result.get.fileTokenRegistry, result.get.fileImportsRegistry)
         sender() tell(ParseSuccessful(result.get, parseWithContentsRequest.file), requestingActor)
       } else {
         sender() tell(ParseFailed(parseWithContentsRequest.file, result.failed.get.getMessage), requestingActor)
@@ -50,14 +50,17 @@ class WorkerActor()(implicit actorCluster: ActorCluster) extends Actor with Requ
 
       val result: Try[FileParseResults] = ctxRequest.sourceGear.parseString(fileContents)
       if (result.isSuccess) {
-        actorCluster.parserSupervisorRef ! AddToCache(file, result.get.astGraph, result.get.parser, result.get.fileContents, result.get.fileNameAnnotationOption)
+        actorCluster.parserSupervisorRef ! AddToCache(file, result.get.astGraph, result.get.parser, result.get.fileContents, result.get.fileNameAnnotationOption, result.get.fileTokenRegistry, result.get.fileImportsRegistry)
         sender() ! Option(SGContext(
           ctxRequest.sourceGear.fileAccumulator,
           result.get.astGraph,
           result.get.parser,
           result.get.fileContents,
           ctxRequest.sourceGear,
-          ctxRequest.file
+          ctxRequest.file,
+          result.get.fileTokenRegistry,
+          result.get.fileImportsRegistry,
+          ctxRequest.project
         ))
         ctxRequest.project.projectActor ! ParseSuccessful(result.get, file)
       } else {

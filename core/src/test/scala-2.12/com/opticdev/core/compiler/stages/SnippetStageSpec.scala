@@ -1,21 +1,21 @@
 package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 import com.opticdev.core.compiler.errors._
 import org.scalatest.{FunSpec, PrivateMethodTester}
 import com.opticdev.parsers.SourceParserManager
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.containers.ContainerHook
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.OMLens
 import play.api.libs.json.JsObject
 
 import scala.util.Try
 
 class SnippetStageSpec extends TestBase with PrivateMethodTester {
 
-  implicit val lens : OMLens = OMLens(Some("Example"), "example", null, Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", null)
+  implicit val lens : OMLens = OMLens(Some("Example"), "example", null, Map(), Map(), Map(), Left(BlankSchema()), JsObject.empty, "es7", null)
 
   describe("Finds the correct parser") {
     it("when it exists") {

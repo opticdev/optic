@@ -7,6 +7,7 @@ object DataDirectory {
   val root = PlatformConstants.dataDirectory
 
   val packages = PlatformConstants.dataDirectory / "packages"
+  val parserSkills = PlatformConstants.dataDirectory / "parser-skills"
   val parsers = PlatformConstants.dataDirectory / "parsers"
   val compiled = PlatformConstants.dataDirectory / "compiled"
   val sourcegear = PlatformConstants.dataDirectory / "sourcegear"
@@ -17,6 +18,7 @@ object DataDirectory {
     root.isDirectory &&
       parsers.isDirectory &&
       packages.isDirectory &&
+      parserSkills.isDirectory &&
       compiled.isDirectory &&
       sourcegear.isDirectory &&
       trainerScratch.isDirectory &&
@@ -26,6 +28,7 @@ object DataDirectory {
   def buildDirectoryStructure = {
     root.createIfNotExists(asDirectory = true)
     parsers.createIfNotExists(asDirectory = true)
+    parserSkills.createIfNotExists(asDirectory = true)
     packages.createIfNotExists(asDirectory = true)
     compiled.createIfNotExists(asDirectory = true)
     sourcegear.createIfNotExists(asDirectory = true)

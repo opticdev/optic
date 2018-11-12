@@ -11,9 +11,9 @@ import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
-import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.parsers.graph.{AstType, Child, CommonAstNode}
-import com.opticdev.parsers.graph.path.FlatWalkablePath
+import com.opticdev.parsers.{ParserBase}
+import com.opticdev.common.graph.{AstGraph, AstType, Child, CommonAstNode}
+import com.opticdev.common.graph.path.FlatWalkablePath
 import play.api.libs.json.{JsObject, JsValue}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -24,11 +24,11 @@ import com.opticdev.experimental_features.ImplicitObjectRefs
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.LineOperations
-import com.opticdev.parsers.rules.{AllChildrenRule, ParserChildrenRule, Rule}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
-import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLensCodeComponent, OMLensComponent}
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.rules.{AllChildrenRule, ParserChildrenRule, Rule}
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers.OMSubContainer
+import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensCodeComponent, OMLensComponent}
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 sealed abstract class ParseGear() {
 

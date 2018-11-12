@@ -1,11 +1,11 @@
 package com.opticdev.core.sourcegear.containers
 
-import com.opticdev.parsers.graph.path.FlatWalkablePath
-import com.opticdev.parsers.rules.Rule
+import com.opticdev.common.graph.path.FlatWalkablePath
+import com.opticdev.sdk.rules.Rule
 import com.opticdev.sdk.descriptions.ChildrenRule
-import com.opticdev.sdk.opticmarkdown2.OMRange
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
-import com.opticdev.sdk.opticmarkdown2.lens.OMLensNodeFinder
+import com.opticdev.sdk.skills_sdk.OMRange
+import com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers.OMSubContainer
+import com.opticdev.sdk.skills_sdk.lens.OMLensNodeFinder
 
 class SubContainerManager(subcontainers: Vector[OMSubContainer], containerMapping: ContainerMapping) {
 

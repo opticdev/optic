@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.StaticSGProject
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.mutate.{MutationOptions, StagedMutation, StagedTagMutation}
@@ -25,7 +25,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
     val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress_non_distinct_params@0.1.0.json")
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)
     val result = sourceGear.parseFile(file)
-    project.projectGraphWrapper.addFile(result.get.astGraph, file)
+    project.projectGraphWrapper.addFile(result.get.astGraph, file, result.get.fileTokenRegistry.exports)
 
     implicit val sourceGearContext = ParseSupervisorSyncAccess.getContext(file)(project.actorCluster, sourceGear, project).get
     val route = result.get.modelNodes.filter(_.lensRef.id == "route").minBy(_.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](result.get.astGraph).root.graphDepth(result.get.astGraph)).asInstanceOf[ModelNode].resolved()

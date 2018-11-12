@@ -3,9 +3,9 @@ package com.opticdev.opm
 import java.net.URL
 
 import better.files.File
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, ParserRef}
 import com.opticdev.opm.packages.{OpticPackage, StagedPackage}
-import com.opticdev.parsers.{ParserBase, ParserRef}
+import com.opticdev.parsers.{ParserBase}
 
 import scala.concurrent.Future
 

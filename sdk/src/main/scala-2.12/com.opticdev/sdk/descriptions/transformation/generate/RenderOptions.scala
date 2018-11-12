@@ -1,6 +1,6 @@
 package com.opticdev.sdk.descriptions.transformation.generate
 
-import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.sdk.skills_sdk.LensRef
 import com.opticdev.sdk.{ContainersContent, VariableMapping}
 
 

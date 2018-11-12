@@ -27,7 +27,7 @@ class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest")
   it("can add models from AstGraph") {
     val projectGraphWrapper = ProjectGraphWrapper.empty
 
-    projectGraphWrapper.addFile(importResults.get.astGraph, file)
+    projectGraphWrapper.addFile(importResults.get.astGraph, file, importResults.get.fileTokenRegistry.exports)
 
     assert(projectGraphWrapper.projectGraph.nodes.size == 3)
     assert(projectGraphWrapper.projectGraph.edges.size == 2)
@@ -35,7 +35,7 @@ class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest")
 
   it("can apply queries to the project graph") {
     val projectGraphWrapper = ProjectGraphWrapper.empty
-    projectGraphWrapper.addFile(importResults.get.astGraph, file)
+    projectGraphWrapper.addFile(importResults.get.astGraph, file, importResults.get.fileTokenRegistry.exports)
     val results = projectGraphWrapper.query((node)=> {
       node.value match {
         case mn: BaseModelNode => mn.schemaId == SchemaRef.fromString("optic:importexample@0.1.0/js-import").get
@@ -48,7 +48,7 @@ class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest")
 
   it("gets the subgraph for a file") {
     val projectGraphWrapper = ProjectGraphWrapper.empty
-    projectGraphWrapper.addFile(importResults.get.astGraph, file)
+    projectGraphWrapper.addFile(importResults.get.astGraph, file, importResults.get.fileTokenRegistry.exports)
 
     assert( projectGraphWrapper.subgraphForFile(file).get == projectGraphWrapper.projectGraph)
   }
@@ -56,7 +56,7 @@ class ProjectGraphWrapperSpec extends AkkaTestFixture("ProjectGraphWrapperTest")
   it("can remove file from AstGraph ") {
 
     val projectGraphWrapper = ProjectGraphWrapper.empty
-    projectGraphWrapper.addFile(importResults.get.astGraph, file)
+    projectGraphWrapper.addFile(importResults.get.astGraph, file, importResults.get.fileTokenRegistry.exports)
 
     projectGraphWrapper.removeFile(file)
 

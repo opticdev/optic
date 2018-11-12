@@ -2,9 +2,7 @@ package com.opticdev.core.sourcegear.gears.helpers
 
 import com.opticdev.core.sourcegear.containers.{ContainerAstMapping, ContainerMapping}
 import com.opticdev.sdk.descriptions.Location
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.CommonAstNode
-
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.core.sourcegear.graph.GraphImplicits._

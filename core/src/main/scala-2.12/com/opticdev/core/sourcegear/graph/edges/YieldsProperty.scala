@@ -2,7 +2,7 @@ package com.opticdev.core.sourcegear.graph.edges
 
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.Path
-import com.opticdev.parsers.graph.CustomEdge
+import com.opticdev.common.graph.CustomEdge
 
 trait YieldsModelProperty extends CustomEdge {
   val path: Path

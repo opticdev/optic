@@ -3,7 +3,7 @@ package com.opticdev.arrow.state
 import better.files.File
 import com.opticdev.core.sourcegear.graph.model.{ExpandedModelNode, LinkedModelNode}
 import com.opticdev.core.utils.UUID
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 
 import scala.collection.mutable
 

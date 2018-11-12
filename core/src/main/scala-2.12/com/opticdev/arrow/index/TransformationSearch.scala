@@ -9,7 +9,7 @@ import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.core.sourcegear.{SGContext, SourceGear}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import play.api.libs.json.JsString
 
 import scala.util.Try

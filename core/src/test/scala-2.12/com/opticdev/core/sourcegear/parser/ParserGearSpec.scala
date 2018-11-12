@@ -10,14 +10,13 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
-import com.opticdev.parsers.rules.Any
+import com.opticdev.sdk.rules.Any
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
-import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.skills_sdk.lens._
 import play.api.libs.json.{JsArray, JsNumber, JsObject, JsString}
 
 class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {
-
 
   implicit val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
@@ -244,5 +243,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     }
 
   }
+
+
 
 }

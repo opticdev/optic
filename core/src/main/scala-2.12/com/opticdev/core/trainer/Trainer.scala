@@ -4,13 +4,13 @@ import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.common.utils.JsonUtils
 import com.opticdev.core.compiler.stages.SnippetStage
 import com.opticdev.core.sourcegear.{SGContext, SourceGear}
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.parsers.{AstGraph, SourceParserManager}
+import com.opticdev.common.graph.{AstType, CommonAstNode}
+import com.opticdev.parsers.{SourceParserManager}
 import com.opticdev.parsers.sourcegear.basic.TokenInterfaces
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
-import com.opticdev.sdk.opticmarkdown2.{OMRange, OMSnippet}
-import com.opticdev.sdk.opticmarkdown2.lens._
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.{OMRange, OMSnippet}
+import com.opticdev.sdk.skills_sdk.lens._
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json._
 
 import scala.collection.mutable

@@ -3,16 +3,16 @@ package com.opticdev.core.compiler.helpers
 import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.compiler.stages.SnippetStage
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
+import com.opticdev.common.graph.{AstType, CommonAstNode}
 import com.opticdev.sdk.descriptions.enums.FinderEnums._
 import com.opticdev.core._
-import com.opticdev.sdk.opticmarkdown2.{OMRange, OMSnippet}
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensNodeFinder, OMRangeFinder, OMStringFinder}
+import com.opticdev.sdk.skills_sdk.{OMRange, OMSnippet}
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMLensNodeFinder, OMRangeFinder, OMStringFinder}
 import play.api.libs.json.JsObject
 class FinderEvaluationSpec extends TestBase {
 
   val block = "var hello = require('world'); var next = hello+1"
-  implicit val lens : OMLens = OMLens(Some("Example"), "example", OMSnippet("es7", block), Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", PackageRef("test:test"))
+  implicit val lens : OMLens = OMLens(Some("Example"), "example", OMSnippet("es7", block), Map(), Map(), Map(), Left(BlankSchema()), JsObject.empty, "es7", PackageRef("test:test"))
 
   val snippetBuilder = new SnippetStage(lens.snippet)
   val snippetStageOutput = snippetBuilder.run

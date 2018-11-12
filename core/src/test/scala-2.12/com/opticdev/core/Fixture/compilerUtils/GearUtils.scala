@@ -12,7 +12,7 @@ import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
@@ -68,7 +68,7 @@ trait GearUtils {
 
   }
 
-  def sourceGearFromPackage(description: OpticMDPackage) : SourceGear = {
+  def sourceGearFromPackage(description: OpticPackage) : SourceGear = {
 
     val outerLensSet = new LensSet()
 

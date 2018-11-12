@@ -3,11 +3,11 @@ package com.opticdev.opm.storage
 import java.io.FileNotFoundException
 
 import better.files.File
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, ParserRef}
 import com.opticdev.common.storage.DataDirectory
 import com.opticdev.common.utils.SemverHelper
 import com.opticdev.common.utils.SemverHelper.VersionWrapper
-import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 

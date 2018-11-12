@@ -34,7 +34,7 @@ object PackageRef {
     }
 
     val packageId = components.head
-    require(packageId.matches(Regexes.packageId))
+    require(packageId.matches(Regexes.packageId), s"""'${packageId}' is not a valid package id""")
     val versionOption = components.lift(1)
 
     PackageRef(packageId, versionOption.getOrElse("latest"))

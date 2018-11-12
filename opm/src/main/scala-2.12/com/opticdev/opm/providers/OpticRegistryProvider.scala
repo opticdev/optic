@@ -11,11 +11,11 @@ import akka.stream.ActorMaterializer
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
-import com.opticdev.common.{PackageRef, PackageResult, PackageVersion}
+import com.opticdev.common.{PackageRef, PackageResult, PackageVersion, ParserRef}
 import com.opticdev.opm
 import com.opticdev.opm.{BatchPackageResult, BatchParserResult, opmActorSystem}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
-import com.opticdev.parsers.{ParserBase, ParserRef}
+import com.opticdev.parsers.ParserBase
 import play.api.libs.json.{JsArray, JsObject, JsValue, Json}
 
 import scala.concurrent.Future

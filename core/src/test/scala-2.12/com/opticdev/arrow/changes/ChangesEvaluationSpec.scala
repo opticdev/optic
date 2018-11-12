@@ -9,7 +9,7 @@ import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{SGConfig, SGConstructor}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 import scala.concurrent.duration._

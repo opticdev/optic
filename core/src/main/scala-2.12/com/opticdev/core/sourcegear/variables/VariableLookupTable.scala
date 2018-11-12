@@ -1,9 +1,9 @@
 package com.opticdev.core.sourcegear.variables
 
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
+import com.opticdev.common.graph.{AstType, CommonAstNode}
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.VariableRule
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
+import com.opticdev.sdk.skills_sdk.compilerInputs.variables.OMVariable
 import com.sun.org.apache.xpath.internal.operations.Variable
 import play.api.libs.json.{JsObject, JsString}
 

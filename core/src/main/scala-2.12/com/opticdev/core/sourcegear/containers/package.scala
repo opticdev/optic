@@ -1,8 +1,8 @@
 package com.opticdev.core.sourcegear
 
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.parsers.graph.path.{FlatWalkablePath, WalkablePath}
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.subcontainers.OMSubContainer
+import com.opticdev.common.graph.CommonAstNode
+import com.opticdev.common.graph.path.{FlatWalkablePath, WalkablePath}
+import com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers.OMSubContainer
 
 package object containers {
 

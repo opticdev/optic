@@ -12,8 +12,8 @@ import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.RuleEnums
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsObject, JsString}
 

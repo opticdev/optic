@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.context
 import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.{CompiledLens, SGConfig, SGConstructor, SourceGear}
 import com.opticdev.opm.{PackageManager, TestPackageProviders}
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import org.scalatest.FunSpec
 
 import scala.concurrent.duration._

@@ -12,13 +12,12 @@ import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, Yie
 import com.opticdev.core.sourcegear.graph.{AstProjection, FileNode, ProjectGraph}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, WithinFile}
+import com.opticdev.common.graph.{AstGraph, BaseNode, CommonAstNode, WithinFile}
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.core.utils.UUID
 import com.opticdev.sdk.VariableMapping
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
@@ -96,7 +95,7 @@ trait SingleModelNode extends BaseModelNode {
   def mapSchemaFields()(implicit sourceGearContext: SGContext) : Set[ModelField] = {
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
-      listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
+      listenersOption.get.flatMap(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
     } else {
       Set.empty
     }
@@ -115,7 +114,7 @@ trait SingleModelNode extends BaseModelNode {
     val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
     if (listenersOption.isDefined) {
       val modelFields = listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
-      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields, value))
+      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields.collect{case i if i.isDefined => i.get}, value))
     } else {
       expandedValueStore = Option(value)
     }
@@ -148,7 +147,11 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef,
 
   def variableManager: VariableManager = parseGear.variableManager
 
-  def hash = Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMapping.toString + sourceAnnotation.toString + objectRef.toString + containerMappingStore.toString))
+  def hash = {
+    val modelMappingHashString = modelMapping.toSeq.sortBy(_._1.toString).toString()
+    val containerAstMappingString = containerMappingStore.toSeq.sortBy(_._1).toString()
+    Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMappingHashString + sourceAnnotation.toString + objectRef.toString + containerAstMappingString))
+  }
 
   override def flatten : ModelNode = {
     ModelNode(schemaId, value, lensRef, priority, variableMapping, objectRef, sourceAnnotation, tag, hash, internal)

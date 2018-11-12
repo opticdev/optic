@@ -10,8 +10,9 @@ import com.opticdev.core.sourcegear.{SGContext, _}
 import concurrent.duration._
 import akka.pattern.ask
 import better.files.File
-import com.opticdev.core.sourcegear.project.{ProjectBase, Project}
-import com.opticdev.parsers.AstGraph
+import com.opticdev.common.graph.AstGraph
+import com.opticdev.core.sourcegear.project.{Project, ProjectBase}
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 
 import scala.concurrent.{Await, Future}
 import com.opticdev.scala.akka.HashDispatchedRoutingLogic
@@ -66,7 +67,10 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
             record.parser,
             record.fileContents,
             ctxRequest.sourceGear,
-            ctxRequest.file
+            ctxRequest.file,
+            record.fileTokenRegistry,
+            record.fileImportsRegistry,
+            ctxRequest.project
           )
         )
       } else {
@@ -75,7 +79,8 @@ class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor 
     }
 
     //cache events
-    case AddToCache(file, graph, parser, fileContents, fileNameAnnotationOption) => context.become(handler(parseCache.add(file, CacheRecord(graph, parser, fileContents, fileNameAnnotationOption))))
+    case AddToCache(file, graph, parser, fileContents, fileNameAnnotationOption, fileTokenRegistry, fileImportsRegistry) =>
+      context.become(handler(parseCache.add(file, CacheRecord(graph, parser, fileContents, fileNameAnnotationOption, fileTokenRegistry, fileImportsRegistry))))
     case SetCache(newCache) => context.become(handler(newCache))
     case CacheSize => sender() ! parseCache.cache.size
     case ClearCache => context.become(handler(parseCache.clear))

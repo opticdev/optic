@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.annotations
 import com.opticdev.common.PackageRef
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers.ParserBase
-import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
+import com.opticdev.common.graph.{BaseNode, CommonAstNode}
 import com.opticdev.common.SchemaRef
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.sdk.descriptions.transformation.TransformationRef

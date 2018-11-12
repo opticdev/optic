@@ -79,13 +79,13 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val resultsA = {
       val file = File("test-examples/resources/example_source/sync/multi_file/A.js")
       val astResults = syncTestSourceGear.parseFile(file).get
-      pgw.addFile(astResults.astGraph, file)
+      pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
     }
 
     val resultsB = {
       val file = File("test-examples/resources/example_source/sync/multi_file/B.js")
       val astResults = syncTestSourceGear.parseFile(file).get
-      pgw.addFile(astResults.astGraph, file)
+      pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
     }
 
     project.stageProjectGraph(pgw.projectGraph)
@@ -104,7 +104,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val pgw = ProjectGraphWrapper.empty()
     val file = File("test-examples/resources/example_source/sync/Tagged.js")
     val astResults = sourceGear.parseFile(file).get
-    pgw.addFile(astResults.astGraph, file)
+    pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
 
     project.stageProjectGraph(pgw.projectGraph)
 

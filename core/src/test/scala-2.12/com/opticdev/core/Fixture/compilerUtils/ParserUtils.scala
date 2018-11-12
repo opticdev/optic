@@ -10,22 +10,22 @@ import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.opticmarkdown2.{OMChildrenRuleType, OMSnippet}
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensComponent, OMLensVariableScopeEnum}
+import com.opticdev.sdk.skills_sdk.{OMChildrenRuleType, OMSnippet}
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMLensComponent, OMLensVariableScopeEnum}
 import play.api.libs.json.JsObject
 
 trait ParserUtils {
 
-  def parseGearFromSnippetWithComponents(block: String, value: Map[String, OMLensComponent], subContainers: Map[String, OMChildrenRuleType] = Map(), variables: Map[String, OMLensVariableScopeEnum] = Map()) : (ParseAsModel, OMLens) = {
+  def parseGearFromSnippetWithComponents(block: String, value: Map[String, OMLensComponent], subContainers: Map[String, OMChildrenRuleType] = Map(), variables: Map[String, OMLensVariableScopeEnum] = Map(), id: String = "example", schemaId: String = "BLANK") : (ParseAsModel, OMLens) = {
     val snippet = OMSnippet("es7", block)
     implicit val lens : OMLens = OMLens(
       Some("Example"),
-      "example",
+      id,
       snippet,
       value,
       variables,
       subContainers,
-      Left(BlankSchema),
+      Left(BlankSchema(schemaId)),
       JsObject.empty,
       snippet.language,
       PackageRef("test:example", "0.1.1"))
@@ -48,7 +48,7 @@ trait ParserUtils {
 
   def sample(block: String) : SnippetStageOutput = {
     val snippet = OMSnippet("es7", block)
-    implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", PackageRef("test:example", "0.1.1"))
+    implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(), Map(), Map(), Left(BlankSchema()), JsObject.empty, "es7", PackageRef("test:example", "0.1.1"))
     val snippetBuilder = new SnippetStage(snippet)
     snippetBuilder.run
   }

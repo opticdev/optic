@@ -1,11 +1,15 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
+import com.opticdev.common.ParserRef
+import com.opticdev.common.graph.AstGraph
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
 import com.opticdev.core.sourcegear.actors.{ActorCluster, ParseSupervisorSyncAccess}
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
+import com.opticdev.core.sourcegear.imports.FileImportsRegistry
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
-import com.opticdev.parsers.{AstGraph, ParserBase, ParserRef}
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
+import com.opticdev.parsers.ParserBase
 
 case class SGContext(fileAccumulator: FileAccumulator,
                      astGraph: AstGraph,
@@ -13,7 +17,10 @@ case class SGContext(fileAccumulator: FileAccumulator,
                      fileContents: String,
                      sourceGear: SourceGear,
                      file: File,
-                     forRender: Boolean = false
+                     fileTokenRegistry: FileTokenRegistry,
+                     fileImportsRegistry: FileImportsRegistry,
+                     project: ProjectBase,
+                     forRender: Boolean = false,
                     )
 
 
@@ -30,7 +37,7 @@ object SGContext {
   }
 
   def forRender(sourceGear: SourceGear, astGraph: AstGraph, parserRef: ParserRef): SGContext = {
-    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear, null, true)
+    SGContext(sourceGear.fileAccumulator, astGraph, sourceGear.findParser(parserRef).get, null, sourceGear, null, null, null, null, true)
   }
 
 }

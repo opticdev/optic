@@ -6,7 +6,7 @@ import com.opticdev.arrow.results.ModelOption
 import com.opticdev.common.{PackageRef, SchemaRef, fileFormat}
 import com.opticdev.core.sourcegear.sync.FilePatch
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json._
 
 import scala.util.{Failure, Success, Try}
@@ -17,9 +17,9 @@ object JsonImplicits {
   import com.opticdev.sdk.descriptions.transformation.TransformationRef.transformationRefJsonFormats
   import PackageRef.packageRefJsonFormat
   import SchemaRef.schemaRefFormats
-  import com.opticdev.sdk.opticmarkdown2.Serialization.omschemaFormat
+  import com.opticdev.sdk.skills_sdk.Serialization.omschemaFormat
 
-  import com.opticdev.sdk.opticmarkdown2.Serialization._
+  import com.opticdev.sdk.skills_sdk.Serialization._
 
   implicit val modelOptionsFormat = Json.format[ModelOption]
 

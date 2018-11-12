@@ -6,8 +6,8 @@ import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Entire
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensCodeComponent, OMStringFinder, Token}
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMLensCodeComponent, OMStringFinder, Token}
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 class ValidationStageSpec extends FunSpec {
 

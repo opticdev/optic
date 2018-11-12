@@ -4,7 +4,7 @@ import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.actors.ParseSupervisorSyncAccess
 import com.opticdev.core.sourcegear.graph.model.{ExpandedModelNode, LinkedModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.OpticProject
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.server.state.ProjectsManager
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType

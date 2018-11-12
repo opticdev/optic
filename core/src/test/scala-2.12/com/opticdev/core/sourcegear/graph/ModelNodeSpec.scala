@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{ModelNode, Path}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import play.api.libs.json.{JsObject, JsString}
 import scalax.collection.mutable.Graph
@@ -43,7 +43,7 @@ class ModelNodeSpec extends AkkaTestFixture("ModelNodeTest") with GearUtils {
       sourceGear.parseFile(File(testFilePath))
     }
 
-    pgW.addFile(importResults.get.astGraph, File(testFilePath))
+    pgW.addFile(importResults.get.astGraph, File(testFilePath), importResults.get.fileTokenRegistry.exports)
 
   }
 

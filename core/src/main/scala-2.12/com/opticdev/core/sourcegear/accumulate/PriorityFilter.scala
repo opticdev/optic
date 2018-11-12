@@ -1,8 +1,8 @@
 package com.opticdev.core.sourcegear.accumulate
 
+import com.opticdev.common.graph.AstGraph
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
-import com.opticdev.parsers.AstGraph
 
 case class PriorityFilterSubject[T](range: Range, priority: Int, item: T)
 object PriorityFilter extends {

@@ -14,12 +14,12 @@ import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
-import com.opticdev.parsers.{AstGraph, ParserBase, SourceParserManager}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.transformation.mutate.StagedMutation
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.lens.OMLens
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 
 import scala.concurrent.duration._
@@ -49,7 +49,10 @@ object TestLens {
       parseResults.parser,
       testInput,
       sgBuilt,
-      null
+      null,
+      parseResults.fileTokenRegistry,
+      parseResults.fileImportsRegistry,
+      project
     )
 
     val expandedValue = mn.expandedValue(true)
@@ -89,7 +92,10 @@ object TestLens {
       parseResults.parser,
       testInput,
       sgBuilt,
-      null
+      null,
+      parseResults.fileTokenRegistry,
+      parseResults.fileImportsRegistry,
+      project
     )
 
     import com.opticdev.core.sourcegear.mutate.MutationImplicits._

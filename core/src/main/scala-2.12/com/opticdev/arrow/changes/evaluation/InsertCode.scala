@@ -12,6 +12,7 @@ import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
 import play.api.libs.json.JsString
 import java.util
 import name.fraser.neil.plaintext.diff_match_patch
+import com.opticdev.common.graph.GraphImplicits._
 
 import scala.util.{Failure, Success, Try}
 import name.fraser.neil.plaintext.diff_match_patch

@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
-import com.opticdev.common.{PackageRef, SchemaRef}
+import com.opticdev.common.{PackageRef, ParserRef, SchemaRef}
 import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.annotations.AnnotationParser
 import com.opticdev.core.sourcegear.context.FlatContext
@@ -13,11 +13,11 @@ import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers
 import com.opticdev.parsers.SourceParserManager.parserByLanguageName
-import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.{Transformation, TransformationRef}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge
@@ -103,7 +103,7 @@ abstract class SourceGear {
 
       val fileNameAnnotation = AnnotationParser.extractFromFileContents(fileContents, parsed.parserBase.inlineCommentPrefix).headOption
       
-      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, parserByLanguageName(languageName).get, fileContents, this, file)
+      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, parserByLanguageName(languageName).get, fileContents, this, file, null, null, project)
       lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project, fileNameAnnotation)
     } else {
       throw parsedOption.failed.get

@@ -5,8 +5,10 @@ import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.graph.GraphOperations
 import com.opticdev.core.sourcegear.graph.model.{ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
+import com.opticdev.common.graph.{AstGraph, AstType, CommonAstNode}
+import com.opticdev.core.sourcegear.imports.FileImportsRegistry
+import com.opticdev.parsers.imports.ImportModel
 
 //@todo make this class immutable
 class LensSet(initialGears: SGExportableLens*) {
@@ -84,7 +86,30 @@ class LensSet(initialGears: SGExportableLens*) {
     fileAccumulator.run(astGraph, results)
 
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
-    FileParseResults(astGraph, astGraph.modelNodes.asInstanceOf[Vector[ModelNode]], sourceGearContext.parser, sourceGearContext.fileContents, fileNameAnnotationOption)
+
+    val modelNodes = astGraph.modelNodes.asInstanceOf[Vector[ModelNode]]
+
+    val importRegistry = {
+      val importHandler = sourceGearContext.parser.importHandler
+      val internalPackageRef = sourceGearContext.parser.internalSDKPackageRef
+
+      val importModels = modelNodes.collect {
+        case mn if mn.schemaId.packageRef.contains(internalPackageRef) && importHandler.internalAbstractions.contains(mn.schemaId.id) =>
+          ImportModel(mn.schemaId.id, mn.value)
+      }
+      val importRecords = importHandler.importsFromModels(importModels.toSet)(sourceGearContext.file, project.projectDirectory, debug = true)
+      FileImportsRegistry(importRecords)
+    }
+
+    FileParseResults(
+      astGraph,
+      modelNodes,
+      sourceGearContext.parser,
+      sourceGearContext.fileContents,
+      fileNameAnnotationOption,
+      FileTokenRegistry.fromModelNodes(modelNodes, astGraph, sourceGearContext.parser),
+      importRegistry
+    )
   }
 
   def parseFromGraph(implicit fileContents: String, astGraph: AstGraph, sourceGearContext: SGContext, project: ProjectBase, fileNameAnnotationOption: Option[FileNameAnnotation]): FileParseResults = {
