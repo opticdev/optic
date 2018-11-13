@@ -3,7 +3,9 @@ import com.opticdev.core.compiler.{Compiler, CompilerOutput}
 import com.opticdev.common.{PackageRef, ParserRef}
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, SomePackagesFailedToCompile}
 import com.opticdev.core.sourcegear.context.{FlatContext, FlatContextBuilder}
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.core.sourcegear.project.config.ProjectFile
+import com.opticdev.core.sourcegear.project.config.options.ConstantObject
 import com.opticdev.core.sourcegear.storage.SGConfigStorage
 import com.opticdev.opm.{DependencyTree, PackageManager}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
@@ -24,7 +26,7 @@ object SGConstructor {
 
       val parsersRefs = parsersForProjectFile(projectFile).get
 
-      val config = fromDependencies(dependencies, parsersRefs, projectFile.connected_projects)
+      val config = fromDependencies(dependencies, parsersRefs, projectFile.connected_projects, projectFile.objects.getOrElse(Vector()))
 
       //save to cache on complete to make next time easier
       if (useCache) {
@@ -39,7 +41,7 @@ object SGConstructor {
 
   def loadFromCache(projectFile: ProjectFile) = SGConfigStorage.loadFromStorage(projectFile.hash)
 
-  def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef], connectedProjects: Set[String])  : Future[SGConfig] = Future {
+  def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef], connectedProjects: Set[String], constantObjects: Vector[ObjectNode])  : Future[SGConfig] = Future {
 
     val compiled = compileDependencyTree(dependencies).get
 
@@ -50,7 +52,7 @@ object SGConstructor {
 
     val flatContext = FlatContextBuilder.fromDependencyTree(dependencies)
 
-    SGConfig(dependencies.hash, flatContext, parserRefs, compiledLenses, schemaSetColdStorage, transformationSet, connectedProjects)
+    SGConfig(dependencies.hash, flatContext, parserRefs, compiledLenses, schemaSetColdStorage, transformationSet, connectedProjects, constantObjects)
   }
 
   def dependenciesForProjectFile(projectFile: ProjectFile): Try[DependencyTree] =

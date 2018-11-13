@@ -99,7 +99,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       implicit val sourceGear = projectSourcegear
       projectStatusInstance.touch
       filesStateMonitor.markUpdated(file)
-      if (file.isSameFileAs(projectFile.file)) {
+      if (projectFile.fileUpdateTriggersReload(file)) {
         projectFile.reload
       } else {
         if (shouldWatchFile(file)) projectActor ! FileUpdated(file, this)

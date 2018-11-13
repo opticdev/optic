@@ -3,9 +3,10 @@ package com.opticdev.core.sourcegear.project.config
 import java.nio.file.NoSuchFileException
 
 import better.files.File
-import com.opticdev.common.{PackageRef, ParserRef}
+import com.opticdev.common.{PackageRef, ParserRef, SchemaRef}
 import com.opticdev.core.sourcegear.InvalidProjectFileException
-import com.opticdev.core.sourcegear.project.config.options.{CombinedInterface, ConfigYamlProtocol, ProjectFileInterface}
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
+import com.opticdev.core.sourcegear.project.config.options.{CombinedInterface, ConfigYamlProtocol, DefaultSettings, ProjectFileInterface}
 import com.opticdev.parsers.utils.Crypto
 import org.yaml.snakeyaml.parser.ParserException
 
@@ -17,11 +18,9 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
 
   private var interfaceStore : Try[CombinedInterface] = interfaceForFile
 
-  private var lastHash : String = null
   private def interfaceForFile: Try[CombinedInterface] = Try {
     val contents = file.contentAsString
     val parsed = ConfigYamlProtocol.parsePrimary(contents)
-    lastHash = Crypto.createSha1(contents)
 
     val secondaryProjectFiles = parsed.get.use.getOrElse(List()).map{
       case f => file.parent / f
@@ -38,7 +37,7 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
   def interface = interfaceStore
 
   def reload = {
-    if (file.exists && Crypto.createSha1(file.contentAsString) != lastHash) {
+    if (file.exists) {
       interfaceStore = interfaceForFile
       onChanged(this)
     }
@@ -67,13 +66,29 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
   }.getOrElse(Set.empty[String])
 
 
-  def objects = interface.map(_.objects)
-  def defaults = interface.map(_.defaults)
+  def objects: Try[Vector[ObjectNode]] = interface.map(_.objects)
+  def defaults: Try[Map[SchemaRef, DefaultSettings]] = interface.map(_.defaults)
 
   def hash: String = Integer.toHexString({
+    MurmurHash3.stringHash(name.getOrElse("")) ^
     MurmurHash3.stringHash(file.parent.pathAsString) ^
       MurmurHash3.setHash(dependencies.getOrElse(Vector.empty).map(_.full).toSet) ^
-      MurmurHash3.setHash(parsers.map(_.full).toSet)
+      MurmurHash3.setHash(parsers.map(_.full).toSet) ^
+      MurmurHash3.setHash( //hashed contents of secondary config files
+        interface.map(_.primary.use.getOrElse(List())).getOrElse(List())
+            .map(file.parent / _)
+            .collect{case f if f.exists => f.md5}
+            .toSet)
   })
+
+  def fileUpdateTriggersReload(targetFile: File): Boolean = {
+    val isProjectFile = targetFile.isSameFileAs(file)
+
+    val isSecondaryProjectFile = interface.map(_.primary.use.getOrElse(List())).getOrElse(List())
+      .map(file.parent / _)
+      .exists(_.isSameFileAs(targetFile))
+
+    isProjectFile || isSecondaryProjectFile
+  }
 
 }

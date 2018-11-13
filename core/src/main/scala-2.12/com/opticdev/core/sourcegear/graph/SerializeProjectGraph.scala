@@ -6,6 +6,7 @@ import com.opticdev.core.sourcegear.graph.edges.InProject
 import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.core.sourcegear.graph.projects.ProjectNode
 import com.opticdev.core.sourcegear.project.ProjectBase
+import com.opticdev.core.sourcegear.project.config.options.ConstantObject
 import com.opticdev.core.sourcegear.snapshot.Snapshot
 import com.opticdev.core.sourcegear.storage.ConnectedProjectGraphStorage
 import play.api.libs.json.{JsArray, JsObject, Json}
@@ -45,6 +46,16 @@ object SerializeProjectGraph {
       val savedObjects = i.value.map(item=> Json.fromJson[SavedObject](item).get)
       projectGraphFrom(savedObjects.toSet, projectName)
     })
+  }
+
+  def generateFromConstants(constants: Vector[ObjectNode], projectName: String): ProjectGraph = {
+    val projectNode = ProjectNode(projectName, null, new java.util.Date())
+    val projectGraph : ProjectGraph = Graph()
+    projectGraph.add(projectNode)
+
+    constants.foreach(obj => projectGraph add (projectNode ~+#> obj) (InProject()))
+
+    projectGraph
   }
 
   def projectGraphFrom(set: Set[SavedObject], projectName: String): ProjectGraph = {

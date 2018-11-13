@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.project.config
 
 import com.opticdev.common.{PackageRef, SchemaRef}
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.core.utils.VectorDistinctBy
 import net.jcazevedo.moultingyaml.YamlString
 
@@ -29,8 +30,8 @@ package object options {
 
   case class CombinedInterface(primary: ProjectFileInterface, secondary: Seq[SecondaryProjectFileInterface]) {
     //last declared name wins
-    lazy val objects: Vector[ConstantObject] = {
-      val o = (primary.objects.getOrElse(List()) ++ secondary.flatMap(_.objects).flatten).toVector
+    lazy val objects: Vector[ObjectNode] = {
+      val o = (primary.objects.getOrElse(List()) ++ secondary.flatMap(_.objects).flatten).map(_.toObjectNode).toVector
       VectorDistinctBy.distinctBy(o)(i => i.name)
     }
 

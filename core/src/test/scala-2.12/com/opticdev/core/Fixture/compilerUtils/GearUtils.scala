@@ -108,7 +108,7 @@ trait GearUtils {
   //for debug only
   def fromDependenciesList(dependencies: String*): SourceGear = {
     val packages = dependencies.map(d=> PackageRef.fromString(d).get)
-    val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef), Set())
+    val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef), Set(), Vector())
     import scala.concurrent.duration._
     Await.result(sgFuture, 20 seconds).inflate
   }

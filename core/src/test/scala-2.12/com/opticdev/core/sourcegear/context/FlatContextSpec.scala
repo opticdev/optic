@@ -12,7 +12,7 @@ import scala.concurrent.Await
 class FlatContextSpec extends TestBase with TestPackageProviders {
 
   lazy val dt = PackageManager.collectPackages(Seq(t.opticExpress.packageRef, t.a.packageRef)).get
-  implicit lazy val config: SGConfig = Await.result(SGConstructor.fromDependencies(dt, Set(), Set()), 10 seconds)
+  implicit lazy val config: SGConfig = Await.result(SGConstructor.fromDependencies(dt, Set(), Set(), Vector()), 10 seconds)
   implicit lazy val schemas = config.inflatedSchemas
   implicit lazy val lenses = config.compiledLenses
   it("can construct flat context from dependency tree") {
