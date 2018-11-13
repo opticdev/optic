@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.project.config
 
-import com.opticdev.common.SchemaRef
+import com.opticdev.common.{PackageRef, SchemaRef}
+import com.opticdev.core.utils.VectorDistinctBy
 import net.jcazevedo.moultingyaml.YamlString
 
 package object options {
@@ -9,8 +10,8 @@ package object options {
   //core settings
   name: String,
   parsers: Option[List[String]],
-  skills: Option[List[String]],
-  connectedProjects: Option[List[String]],
+  skills: Option[List[PackageRef]],
+  connected_projects: Option[List[String]],
   exclude: Option[List[String]],
 
   //configuration
@@ -24,6 +25,21 @@ package object options {
   case class SecondaryProjectFileInterface(
   objects: Option[List[ConstantObject]],
   defaults: Option[Map[SchemaRef, DefaultSettings]])
+
+
+  case class CombinedInterface(primary: ProjectFileInterface, secondary: Seq[SecondaryProjectFileInterface]) {
+    //last declared name wins
+    lazy val objects: Vector[ConstantObject] = {
+      val o = (primary.objects.getOrElse(List()) ++ secondary.flatMap(_.objects).flatten).toVector
+      VectorDistinctBy.distinctBy(o)(i => i.name)
+    }
+
+    //last declared schema ref wins
+    lazy val defaults: Map[SchemaRef, DefaultSettings] = {
+      primary.defaults.getOrElse(Map.empty) ++ secondary.flatMap(_.defaults).flatten.toMap
+    }
+
+  }
 
 }
 

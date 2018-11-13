@@ -1,0 +1,5 @@
+objects:
+- type: optic:test/id-of-thing
+  value:
+    key1: 1
+    key2: 2

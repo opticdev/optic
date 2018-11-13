@@ -1,10 +1,10 @@
 package com.opticdev.core.sourcegear.project.config.options
 
+import better.files.File
 import com.opticdev.common.{PackageRef, SchemaRef}
 import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlArray, YamlBoolean, YamlFormat, YamlNumber, YamlObject, YamlReader, YamlString, YamlValue}
 import net.jcazevedo.moultingyaml._
 
-import scala.reflect.ClassTag
 import scala.util.Try
 
 object ConfigYamlProtocol extends DefaultYamlProtocol {
@@ -48,6 +48,21 @@ object ConfigYamlProtocol extends DefaultYamlProtocol {
     override def write(obj: SchemaRef): YamlValue = ???
   }
 
+  implicit object PackageRefFormat extends YamlFormat[PackageRef] {
+    override def read(yaml: YamlValue): PackageRef = {
+      Try {
+        val pr = PackageRef.fromString(yaml.asInstanceOf[YamlString].value)
+        require(pr.isSuccess, s"Invalid Skill package reference '${yaml.prettyPrint
+        .trim}'")
+        pr
+      } match {
+        case s if s.isSuccess => s.get.get
+        case f if f.isFailure => deserializationError(f.failed.get.getMessage)
+      }
+    }
+    override def write(obj: PackageRef): YamlValue = ???
+  }
+
 
   implicit object BaseYamlValueFormat extends YamlFormat[OpticConfigValue] {
     override def read(yaml: YamlValue): OpticConfigValue = yaml match {
@@ -67,11 +82,8 @@ object ConfigYamlProtocol extends DefaultYamlProtocol {
     override def write(obj: OpticConfigValue): YamlValue = ???
   }
 
-
-
-  lazy implicit val packageRefFormat = yamlFormat2(PackageRef.apply)
   lazy implicit val OCObjectRefFormat = yamlFormat2(OCObjectRef)
-  lazy implicit val constantObjectFormat = yamlFormat2(ConstantObject)
+  lazy implicit val constantObjectFormat = yamlFormat3(ConstantObject)
   lazy implicit val defaultSettingsFormat = yamlFormat1(DefaultSettings)
   lazy implicit val pfFormat = yamlFormat8(ProjectFileInterface)
   lazy implicit val secondaryPfFormat = yamlFormat2(SecondaryProjectFileInterface)

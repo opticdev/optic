@@ -57,7 +57,6 @@ class Project(name: String, baseDirectory: File)(implicit logToCli: Boolean = fa
 
 object Project {
   def fromProjectFile(pf: ProjectFile)(implicit actorCluster: ActorCluster) : Try[OpticProject] = Try {
-    val name = pf.interface.get.name
-    new Project(name.yamlValue.value, pf.file.parent)
+    new Project(pf.name.get, pf.file.parent)
   }
 }
