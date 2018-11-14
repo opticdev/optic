@@ -8,8 +8,6 @@ package object core {
 
     def BlankSchema(id: String = "BLANK") = SchemaRef(Some(PackageRef("none:none", "0.1.0")), id)
 
-//    private class MarvinRef extends BaseAstNode {
-//
-//    }
+    val namedObjectRegex = "[a-zA-Z][a-zA-Z0-9-_ ]*".r
 
 }
