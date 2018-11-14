@@ -4,8 +4,9 @@ import better.files.File
 import com.opticdev.common.{PackageRef, SchemaRef}
 import net.jcazevedo.moultingyaml.{DefaultYamlProtocol, YamlArray, YamlBoolean, YamlFormat, YamlNumber, YamlObject, YamlReader, YamlString, YamlValue}
 import net.jcazevedo.moultingyaml._
+import org.yaml.snakeyaml.scanner.ScannerException
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 object ConfigYamlProtocol extends DefaultYamlProtocol {
 
@@ -98,14 +99,39 @@ object ConfigYamlProtocol extends DefaultYamlProtocol {
   lazy implicit val pfFormat = yamlFormat8(ProjectFileInterface)
   lazy implicit val secondaryPfFormat = yamlFormat2(SecondaryProjectFileInterface)
 
-  def parsePrimary(string: String): Try[ProjectFileInterface] = Try {
-    val yaml = string.parseYaml
-    yaml.convertTo[ProjectFileInterface](pfFormat)
+
+  def parsePrimary(string: String): Try[ProjectFileInterface] = {
+    val parse = for {
+      yaml <- Try(string.parseYaml)
+      pfInterface <- Try(yaml.convertTo[ProjectFileInterface](pfFormat))
+    } yield pfInterface
+
+    if (parse.isFailure) {
+      Failure(parse.failed.get match {
+        case de: DeserializationException => ProjectFileException(de.fieldNames.map(i=> s"""'${i}'""").mkString(",")+" "+de.msg)
+        case se: ScannerException => ProjectFileException(se.getMessage)
+        case _ => ProjectFileException("Parse Error")
+      })
+    } else {
+      parse
+    }
   }
 
-  def parseSecondary(string: String): Try[SecondaryProjectFileInterface] = Try {
-    val yaml = string.parseYaml
-    yaml.convertTo[SecondaryProjectFileInterface](secondaryPfFormat)
+  def parseSecondary(string: String): Try[SecondaryProjectFileInterface] = {
+    val parse = for {
+      yaml <- Try(string.parseYaml)
+      pfInterface <- Try(yaml.convertTo[SecondaryProjectFileInterface](secondaryPfFormat))
+    } yield pfInterface
+
+    if (parse.isFailure) {
+      Failure(parse.failed.get match {
+        case de: DeserializationException => ProjectFileException(de.fieldNames.map(i=> s"""'${i}'""").mkString(",")+" "+de.msg)
+        case se: ScannerException => ProjectFileException(se.getMessage)
+        case _ => ProjectFileException("Parse Error")
+      })
+    } else {
+      parse
+    }
   }
 
 }

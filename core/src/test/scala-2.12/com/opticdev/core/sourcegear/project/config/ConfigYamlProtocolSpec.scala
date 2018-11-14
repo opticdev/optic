@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.project.config
 import com.opticdev.core.sourcegear.project.config.options.ConfigYamlProtocol._
+import net.jcazevedo.moultingyaml.DeserializationException
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
 
@@ -110,6 +111,26 @@ class ConfigYamlProtocolSpec extends FunSpec {
       assert(result.isFailure)
 
     }
+  }
+
+  describe("error handling") {
+
+    it("will provide nice errors for parse error") {
+
+      val result = parsePrimary(
+        """
+          |name: false
+          |objects:
+          |  - type: optic:test/id-of-thing
+          |    value:
+          |      key1: 1
+          |      key2: 2
+        """.stripMargin)
+
+      println(result.failed)
+
+    }
+
   }
 
 }

@@ -7,6 +7,8 @@ import net.jcazevedo.moultingyaml.YamlString
 
 package object options {
 
+  //Project File Interfaces
+
   case class ProjectFileInterface(
   //core settings
   name: String,
@@ -40,6 +42,11 @@ package object options {
       primary.defaults.getOrElse(Map.empty) ++ secondary.flatMap(_.defaults).flatten.toMap
     }
 
+  }
+
+  //Exceptions
+  case class ProjectFileException(err: String) extends Exception {
+    override def getMessage: String = "Error Parsing Project File: "+ err
   }
 
 }
