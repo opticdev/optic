@@ -26,12 +26,12 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
       case f => file.parent / f
     }.collect {
       case f if f.exists => {
-        ConfigYamlProtocol.parseSecondary(f.contentAsString).get
+        ConfigYamlProtocol.parseSecondary(f.contentAsString)
       }
       case f => throw new InvalidProjectFileException("Failed to load secondary project file: "+f)
     }
 
-    CombinedInterface(parsed.get, secondaryProjectFiles)
+    CombinedInterface(parsed.get, secondaryProjectFiles.collect{case spf if spf.isSuccess => spf.get })
   }
 
   def interface = interfaceStore

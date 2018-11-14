@@ -1,11 +1,11 @@
 package com.opticdev.core.sourcegear
 import com.opticdev.core.compiler.{Compiler, CompilerOutput}
-import com.opticdev.common.{PackageRef, ParserRef}
+import com.opticdev.common.{PackageRef, ParserRef, SchemaRef}
 import com.opticdev.core.compiler.errors.{ErrorAccumulator, SomePackagesFailedToCompile}
 import com.opticdev.core.sourcegear.context.{FlatContext, FlatContextBuilder}
 import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.core.sourcegear.project.config.ProjectFile
-import com.opticdev.core.sourcegear.project.config.options.ConstantObject
+import com.opticdev.core.sourcegear.project.config.options.{ConstantObject, DefaultSettings}
 import com.opticdev.core.sourcegear.storage.SGConfigStorage
 import com.opticdev.opm.{DependencyTree, PackageManager}
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
@@ -26,7 +26,13 @@ object SGConstructor {
 
       val parsersRefs = parsersForProjectFile(projectFile).get
 
-      val config = fromDependencies(dependencies, parsersRefs, projectFile.connected_projects, projectFile.objects.getOrElse(Vector()))
+      val config = fromDependencies(
+        dependencies,
+        parsersRefs,
+        projectFile.connected_projects,
+        projectFile.objects.getOrElse(Vector()),
+        projectFile.defaults.getOrElse(Map())
+      )
 
       //save to cache on complete to make next time easier
       if (useCache) {
@@ -41,9 +47,9 @@ object SGConstructor {
 
   def loadFromCache(projectFile: ProjectFile) = SGConfigStorage.loadFromStorage(projectFile.hash)
 
-  def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef], connectedProjects: Set[String], constantObjects: Vector[ObjectNode])  : Future[SGConfig] = Future {
+  def fromDependencies(dependencies: DependencyTree, parserRefs: Set[ParserRef], connectedProjects: Set[String], constantObjects: Vector[ObjectNode], parserDefaults: Map[SchemaRef, DefaultSettings])  : Future[SGConfig] = Future {
 
-    val compiled = compileDependencyTree(dependencies).get
+    val compiled = compileDependencyTree(dependencies, parserDefaults).get
 
     implicit val schemas = dependencies.flattenSchemas
     val schemaSetColdStorage = schemas.map(_.toColdStorage)
@@ -62,9 +68,7 @@ object SGConstructor {
     projectFile.parsers.toSet
   }
 
-  def compileDependencyTree(dT: DependencyTree): Try[Seq[CompilerOutput]] = Try {
-
-    implicit val dependencyTree = dT
+  def compileDependencyTree(implicit dependencyTree: DependencyTree, parserDefaults: Map[SchemaRef, DefaultSettings] = Map()): Try[Seq[CompilerOutput]] = Try {
 
     val compiledPackages = dependencyTree.flatten.map(p=> {
       val compiler = Compiler.setup(p)

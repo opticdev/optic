@@ -40,7 +40,7 @@ trait ParserUtils {
     val finderStage = new FinderStage(snippetOutput)
     val finderStageOutput = finderStage.run
 
-    val parserFactoryStage = new ParserFactoryStage(snippetOutput, finderStageOutput)(lens, variableManager, subcontainersManager)
+    val parserFactoryStage = new ParserFactoryStage(snippetOutput, finderStageOutput, None)(lens, variableManager, subcontainersManager)
     val output = parserFactoryStage.run
 
     (output.parseGear.asInstanceOf[ParseAsModel], lens)

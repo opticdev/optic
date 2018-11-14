@@ -63,6 +63,17 @@ object ConfigYamlProtocol extends DefaultYamlProtocol {
     override def write(obj: PackageRef): YamlValue = ???
   }
 
+  implicit object DefaultSettingsFormat extends YamlFormat[DefaultSettings] {
+    override def read(yaml: YamlValue): DefaultSettings = {
+      Try {
+        OCObjectFormat.read(yaml)
+      } match {
+        case s if s.isSuccess => DefaultSettings(s.get)
+        case f if f.isFailure => deserializationError("Default values must be Objects")
+      }
+    }
+    override def write(obj: DefaultSettings): YamlValue = ???
+  }
 
   implicit object BaseYamlValueFormat extends YamlFormat[OpticConfigValue] {
     override def read(yaml: YamlValue): OpticConfigValue = yaml match {
@@ -84,7 +95,6 @@ object ConfigYamlProtocol extends DefaultYamlProtocol {
 
   lazy implicit val OCObjectRefFormat = yamlFormat2(OCObjectRef)
   lazy implicit val constantObjectFormat = yamlFormat3(ConstantObject)
-  lazy implicit val defaultSettingsFormat = yamlFormat1(DefaultSettings)
   lazy implicit val pfFormat = yamlFormat8(ProjectFileInterface)
   lazy implicit val secondaryPfFormat = yamlFormat2(SecondaryProjectFileInterface)
 
