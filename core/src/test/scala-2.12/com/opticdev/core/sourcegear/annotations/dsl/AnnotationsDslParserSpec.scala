@@ -77,6 +77,18 @@ class AnnotationsDslParserSpec extends FunSpec {
       }
     }
 
+    describe("source operation") {
+      it("can extract") {
+        val input = "optic.source \"Project Name\" : \"Object ID\" -> aidan:optic/idll {\"one\": true} "
+        val parseResult = AnnotationsDslParser.parseSingleLine(input)
+        assert(parseResult.isSuccess)
+        assert(parseResult.get.asInstanceOf[SourceOperationNode].name == "Object ID")
+        assert(parseResult.get.asInstanceOf[SourceOperationNode].project.contains("Project Name"))
+        assert(parseResult.get.asInstanceOf[SourceOperationNode].relationshipId.get.full =="aidan:optic@latest/idll")
+        assert(parseResult.get.asInstanceOf[SourceOperationNode].answers.get == Json.parse("""{"one": true}"""))
+      }
+    }
+
 
   }
 
@@ -142,9 +154,10 @@ class AnnotationsDslParserSpec extends FunSpec {
 
     describe("JSON values") {
       it("matches string literals") {
-        assert(doubleQuotesString.matches("\"Hello World\""))
-        assert(singleQuotesString.matches("'Hello World'"))
-        assert(!singleQuotesString.matches("RAW"))
+        assert(doubleQuotesString("(.*)*").matches("\"Hello World\""))
+        assert(doubleQuotesString("(.*)*").extract("\"Hello World\"")("value").get == "Hello World")
+        assert(singleQuotesString("(.*)*").matches("'Hello World'"))
+        assert(!singleQuotesString("(.*)*").matches("RAW"))
       }
       it("matches boolean literals") {
         assert(boolean.matches("true"))
@@ -172,6 +185,29 @@ class AnnotationsDslParserSpec extends FunSpec {
           KeyValuePair(Seq("key", "value"), JsString("you")),
           KeyValuePair(Seq("not", "e"), JsString("value")
         )))
+      }
+    }
+
+    describe("source declarations") {
+      it("parses full example") {
+        val i = source.extract("\"Project Name\" : \"Object ID\" -> aidan:optic/idll {one: true}")(_)
+        assert(i("projectName").get == "Project Name")
+        assert(i("objectId").get == "Object ID")
+        assert(i("relationshipId").get == "aidan:optic/idll")
+        assert(i("answers").get == "{one: true}")
+      }
+
+      it("parses w/o answers") {
+        val i = source.extract("\"Project Name\" : \"Object ID\" -> aidan:optic/idll")(_)
+        assert(i("projectName").get == "Project Name")
+        assert(i("objectId").get == "Object ID")
+        assert(i("relationshipId").get == "aidan:optic/idll")
+      }
+
+      it("parses w/o transformation ID") {
+        val i = source.extract("\"Project Name\" : \"Object ID\"")(_)
+        assert(i("projectName").get == "Project Name")
+        assert(i("objectId").get == "Object ID")
       }
     }
 

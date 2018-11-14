@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.annotations.dsl
 
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -9,6 +9,7 @@ import scala.util.matching.Regex
 import RegexHelper._
 import com.opticdev.core.utils.TryWithErrors
 import com.opticdev.core.namedObjectRegex
+import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
 object AnnotationsDslParser {
 
@@ -37,6 +38,18 @@ object AnnotationsDslParser {
               assignments
               .collect{case kvp: KeyValuePair => AssignmentNode(kvp.keyPath, kvp.value)})
           }
+          case "source" => {
+            val parsed = Regexes.source.extract(expression)(_)
+
+            val projectName = parsed("projectName")
+            val objectId = parsed("objectId")
+            val relationshipId = parsed("relationshipId").flatMap(i=> TransformationRef.fromString(i).toOption)
+            val answers = Try(parsed("answers").map(Json.parse).map(_.as[JsObject])).toOption.flatten
+
+            require(relationshipId.isDefined, "Relationship ID invalid")
+
+            SourceOperationNode(projectName, objectId.get, relationshipId, answers)
+          }
           case "name" => {
             val name = handleNameOrTag(expression).get
             NameOperationNode(name)
@@ -64,8 +77,8 @@ object AnnotationsDslParser {
     val dotNotation = "^(^(?!\\.)(?:[\\.]{0,1}[a-zA-Z0-9]+)+)".r("keyPath")
 
     //JSON Values
-    val doubleQuotesString = """["]{1}(.*)*["]{1}""".r("raw", "value")
-    val singleQuotesString = """[']{1}(.*)*[']{1}""".r("raw", "value")
+    def doubleQuotesString(inner: String) = s"""["]{1}($inner)["]{1}""".r("value")
+    def singleQuotesString(inner: String) = s"""[']{1}($inner)[']{1}""".r("value")
     val boolean = """(true|false){1}""".r("value")
     val number = """([0-9]+)""".r("value")
 
@@ -78,7 +91,17 @@ object AnnotationsDslParser {
       s"""($dotNotation$W=$W($values))""".r("entire", "keyPath", "value")
     }
 
-    //list in v2
+    val source = {
+      val name = s"(${doubleQuotesString(namedObjectRegex.toString())}|${singleQuotesString(namedObjectRegex.toString())})"
+
+      import com.opticdev.common.Regexes.packages
+
+      val id = s"(${W}->${W}($packages)){0,1}([ ]+(\\{.*\\})){0,1}".r
+
+      s"""($name$w:){0,1}$w$name$id""".r(
+        "1", "2", "projectName", "4", "5", "objectId", "7", "8", "relationshipId", "10", "11", "12", "13", "14", "answers"
+      )
+    }
 
     val op = s"optic$w.$w${oneOf(availableOps)}".r("operation")
     val singleLine = s"$op$W($any)$tW".r("operation", "expression")
