@@ -13,6 +13,11 @@ import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
 object AnnotationsDslParser {
 
+  def parseMultipleLines(lines: Vector[String], excludeFailures: Boolean = true)(implicit parseContext: ParseContext) : Vector[TryWithErrors[OperationNode, AnnotationParseError, ParseContext]] = {
+    val linesParsed = lines.map(parseSingleLine)
+    if (excludeFailures) linesParsed.filter(i => !i.isFailure) else linesParsed
+  }
+
   def parseSingleLine(input: String)(implicit parseContext: ParseContext) : TryWithErrors[OperationNode, AnnotationParseError, ParseContext] = {
     val errors = scala.collection.mutable.ListBuffer[AnnotationParseError]()
 
