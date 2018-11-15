@@ -11,9 +11,10 @@ import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
-import com.opticdev.parsers.{ParserBase}
+import com.opticdev.parsers.ParserBase
 import com.opticdev.common.graph.{AstGraph, AstType, Child, CommonAstNode}
 import com.opticdev.common.graph.path.FlatWalkablePath
+import com.opticdev.core.sourcegear.annotations.dsl.ParseContext
 import play.api.libs.json.{JsObject, JsValue}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
@@ -176,7 +177,7 @@ case class ParseAsModel(description: NodeDescription,
 
     val (objectRefOption, sourceAnnotationOption, tagAnnotation) = {
       val raw = AnnotationParser.contentsToCheck(matchResults.baseNode.get)
-      val annotations = AnnotationParser.extract(raw, schema)(sourceGearContext.parser)
+      val annotations = AnnotationParser.extract(raw, schema)(sourceGearContext.parser, ParseContext(sourceGearContext.file, matchResults.baseNode.get.range))
       ( annotations.collectFirst { case na: NameAnnotation => na.objectRef },
         annotations.collectFirst { case sa: SourceAnnotation => sa },
         annotations.collectFirst { case ta: TagAnnotation => ta },
