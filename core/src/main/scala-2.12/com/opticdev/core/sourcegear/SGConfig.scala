@@ -3,7 +3,9 @@ package com.opticdev.core.sourcegear
 import com.opticdev.SupportedParsers
 import com.opticdev.common.{ParserRef, SchemaRef}
 import com.opticdev.core.sourcegear.context.FlatContext
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.core.sourcegear.graph.{ProjectGraph, SerializeProjectGraph}
+import com.opticdev.core.sourcegear.project.config.options.ConstantObject
 
 import scala.util.hashing.MurmurHash3
 import com.opticdev.core.sourcegear.serialization.PickleImplicits._
@@ -22,7 +24,8 @@ case class SGConfig(hashInt: Int,
                     compiledLenses : Set[SGExportableLens],
                     schemas : Set[OMSchemaColdStorage],
                     transformations: Set[Transformation],
-                    connectedProjects: Set[String]) {
+                    connectedProjects: Set[String],
+                    constantObjects: Vector[ObjectNode]) {
 
   def hashString : String = Integer.toHexString(hashInt)
 
@@ -44,6 +47,9 @@ case class SGConfig(hashInt: Int,
       SerializeProjectGraph.loadProjectGraphFor(projectName)
     }).collect{case n if n.isSuccess => n.get}
 
+    val simulatedGraph = {
+      SerializeProjectGraph.generateFromConstants(constantObjects, "constants_")
+    }
 
     //from parsers
     val (parserGenerators, parserAbstractions) = {
@@ -59,7 +65,7 @@ case class SGConfig(hashInt: Int,
       override val schemas = inflatedSchemas ++ parserAbstractions
       override val transformations = inflatedTransformations
       override val flatContext: FlatContext = _flatContext
-      override val connectedProjectGraphs: Set[ProjectGraph] = connectedGraphs
+      override val connectedProjectGraphs: Set[ProjectGraph] = connectedGraphs + simulatedGraph
     }
   }
 

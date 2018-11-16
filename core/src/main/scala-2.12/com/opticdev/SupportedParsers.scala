@@ -63,7 +63,7 @@ object SupportedParsers {
       override def resolved(map: Map[PackageRef, PackageRef]): OpticPackage = this
     }
 
-    val result = Compiler.setup(opticPackage)(false, Tree(Leaf(opticPackage, Tree()))).execute
+    val result = Compiler.setup(opticPackage)(false, Tree(Leaf(opticPackage, Tree())), Map()).execute
     val skills = ParserSkillsColdStorage(parser.parserRef, result.gears.map(_.asInstanceOf[CompiledLens]), result.schemas)
 
     if (saveOnComplete) {

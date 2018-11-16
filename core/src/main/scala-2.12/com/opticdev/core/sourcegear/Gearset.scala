@@ -1,12 +1,14 @@
 package com.opticdev.core.sourcegear
+import better.files.File
 import com.opticdev.core.sourcegear.accumulate.FileAccumulator
-import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
+import com.opticdev.core.sourcegear.annotations.{AnnotationParser, AnnotationSorting, FileNameAnnotation}
 import com.opticdev.core.sourcegear.gears.parsing.ParseAsModel
 import com.opticdev.core.sourcegear.graph.GraphOperations
-import com.opticdev.core.sourcegear.graph.model.{ModelNode, MultiModelNode}
+import com.opticdev.core.sourcegear.graph.model.{ModelAnnotations, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
 import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import com.opticdev.common.graph.{AstGraph, AstType, CommonAstNode}
+import com.opticdev.core.sourcegear.annotations.dsl.ParseContext
 import com.opticdev.core.sourcegear.imports.FileImportsRegistry
 import com.opticdev.parsers.imports.ImportModel
 
@@ -100,6 +102,20 @@ class LensSet(initialGears: SGExportableLens*) {
       val importRecords = importHandler.importsFromModels(importModels.toSet)(sourceGearContext.file, project.projectDirectory, debug = true)
       FileImportsRegistry(importRecords)
     }
+
+    val fileAnnotations = {
+      val parsedAnnotations = AnnotationParser.annotationsFromFile(fileContents)(sourceGearContext.parser, sourceGearContext.file)
+      val modelAstPairs = modelNodes.map(i => (i, i.resolveInGraph[CommonAstNode](astGraph)))
+      val rangePair = modelAstPairs.map(i => (i._2.root.lineRange(fileContents), i._1.asInstanceOf[ModelNode]))
+      AnnotationSorting.sortAnnotations(rangePair, parsedAnnotations)
+    }
+
+    //attach the annotations to the model nodes
+    modelNodes.foreach{
+      case mn if fileAnnotations.contains(mn) => mn.attachAnnotations(ModelAnnotations.fromVector(fileAnnotations(mn)))
+      case _ =>
+    }
+
 
     FileParseResults(
       astGraph,

@@ -108,6 +108,11 @@ case class CommonAstNode(nodeType: AstType, range: Range, properties: JsObject, 
       })
   }
 
+  def lineRange(fileContents: String): Range = {
+    import com.opticdev.common.utils.RangeToLine._
+    range.toLineRange(fileContents)
+  }
+
   def childrenOfType(edgeType: String)(implicit graph: Graph[BaseNode, LkDiEdge]) = {
     graph
       .get(this)

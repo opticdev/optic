@@ -16,6 +16,8 @@ import com.opticdev.opm.context.{Leaf, TreeContext}
 import com.opticdev.common.ParserRef
 import com.opticdev.common.graph.path.FlatWalkablePath
 import com.opticdev.common.graph.{AstType, Child}
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
+import com.opticdev.core.sourcegear.project.config.options.ConstantObject
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.{BasicComponentType, Literal, NotSupported, Token}
 import com.opticdev.sdk.{BoolProperty, _}
@@ -149,6 +151,8 @@ object PickleImplicits extends PicklerHelper {
   implicit val childEdgePickler = PicklerGenerator.generatePickler[Child]
   implicit val flatWalkablePathPickler = PicklerGenerator.generatePickler[FlatWalkablePath]
 
+  implicit val objectNodePickler = PicklerGenerator.generatePickler[ObjectNode]
+
   import com.opticdev.sdk.{PropertyValue, StringProperty, NumberProperty, BoolProperty, ObjectProperty, ArrayProperty}
 
   implicit val propertyValuePickler = compositePickler[PropertyValue]
@@ -250,6 +254,7 @@ object PickleImplicits extends PicklerHelper {
       state.pickle(value.schemas)
       state.pickle(value.transformations)
       state.pickle(value.connectedProjects)
+      state.pickle(value.constantObjects)
     }
     override def unpickle(implicit state: UnpickleState): SGConfig = {
       SGConfig(
@@ -259,7 +264,8 @@ object PickleImplicits extends PicklerHelper {
         state.unpickle[Set[SGExportableLens]],
         state.unpickle[Set[OMSchemaColdStorage]],
         state.unpickle[Set[Transformation]],
-        state.unpickle[Set[String]]
+        state.unpickle[Set[String]],
+        state.unpickle[Vector[ObjectNode]]
       )
     }
   }

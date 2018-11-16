@@ -14,7 +14,7 @@ class AnnotationRendererSpec extends FunSpec {
     val target = Vector(NameAnnotation("test", testSchema))
 
     val result = AnnotationRenderer.render(prefix, target)
-    val parsed = AnnotationParser.extract(result, testSchema, prefix)
+    val parsed = AnnotationParser.extract(result, testSchema, prefix)(null)
 
     assert(parsed == target.toSet)
   }
@@ -23,7 +23,7 @@ class AnnotationRendererSpec extends FunSpec {
     val target = Vector(NameAnnotation("test", testSchema), SourceAnnotation("other", TransformationRef(Some(PackageRef("optic:test")), "transform"), None))
 
     val result = AnnotationRenderer.render(prefix, target)
-    val parsed = AnnotationParser.extract(result, testSchema, prefix)
+    val parsed = AnnotationParser.extract(result, testSchema, prefix)(null)
 
     assert(parsed == target.toSet)
   }

@@ -37,7 +37,7 @@ trait GearUtils {
     val packageContext = dependencyTree.treeContext(description.packageFull).get
 
     val worker = new CompileWorker(description.lenses.head)
-    val result = worker.compile()(packageContext, ListBuffer())
+    val result = worker.compile()(packageContext, ListBuffer(), Map())
 
     result.get.asInstanceOf[CompiledLens]
   }
@@ -52,7 +52,7 @@ trait GearUtils {
 
     descriptions.lenses.map(i=> {
       val worker = new CompileWorker(i)
-      val compileResult = worker.compile()(packageContext, ListBuffer())
+      val compileResult = worker.compile()(packageContext, ListBuffer(), Map())
       compileResult.get.asInstanceOf[CompiledLens]
     })
   }
@@ -75,7 +75,7 @@ trait GearUtils {
     implicit val dependencyTree = Tree(Leaf(description))
     implicit val packageContext = PackageContextFixture.fromSchemas(description.schemas)
 
-    val compiled = Compiler.setup(description).execute
+    val compiled = Compiler.setup(description)(false, dependencyTree, Map()).execute
     val compiledGears = compiled.gears.map(i=> {
       i.asInstanceOf[CompiledLens].copy(schema = Left(SchemaRef(Some(description.packageRef), i.schemaRef.id)))
     })
@@ -108,7 +108,7 @@ trait GearUtils {
   //for debug only
   def fromDependenciesList(dependencies: String*): SourceGear = {
     val packages = dependencies.map(d=> PackageRef.fromString(d).get)
-    val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef), Set())
+    val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef), Set(), Vector(), Map())
     import scala.concurrent.duration._
     Await.result(sgFuture, 20 seconds).inflate
   }

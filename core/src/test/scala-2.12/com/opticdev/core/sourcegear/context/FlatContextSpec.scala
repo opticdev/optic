@@ -1,6 +1,8 @@
 package com.opticdev.core.sourcegear.context
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.Fixture.TestBase
+import com.opticdev.core.sourcegear.project.config.options.DefaultSettings
 import com.opticdev.core.sourcegear.{CompiledLens, SGConfig, SGConstructor, SourceGear}
 import com.opticdev.opm.{PackageManager, TestPackageProviders}
 import com.opticdev.sdk.skills_sdk.schema.OMSchema
@@ -10,9 +12,9 @@ import scala.concurrent.duration._
 import scala.concurrent.Await
 
 class FlatContextSpec extends TestBase with TestPackageProviders {
-
+  implicit val parserDefaults = Map.empty[SchemaRef, DefaultSettings]
   lazy val dt = PackageManager.collectPackages(Seq(t.opticExpress.packageRef, t.a.packageRef)).get
-  implicit lazy val config: SGConfig = Await.result(SGConstructor.fromDependencies(dt, Set(), Set()), 10 seconds)
+  implicit lazy val config: SGConfig = Await.result(SGConstructor.fromDependencies(dt, Set(), Set(), Vector(), Map()), 10 seconds)
   implicit lazy val schemas = config.inflatedSchemas
   implicit lazy val lenses = config.compiledLenses
   it("can construct flat context from dependency tree") {

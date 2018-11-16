@@ -44,11 +44,11 @@ abstract class SourceGear {
   def isEmpty = parsers.isEmpty && lensSet.listLenses.isEmpty && schemas.isEmpty && schemas.isEmpty
 
   def findSchema(schemaRef: SchemaRef) : Option[OMSchema] = {
-    val availible = schemas.filter(s=>
+    val available = schemas.filter(s=>
       s.schemaRef.packageRef.map(_.packageId) == schemaRef.packageRef.map(_.packageId)
       && s.schemaRef.id == schemaRef.id
     )
-    val schemaVersion = SemverHelper.findVersion(availible, (s: OMSchema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))
+    val schemaVersion = SemverHelper.findVersion(available, (s: OMSchema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))
     val result = schemaVersion.map(_._2)
 
     if (result.isDefined) {
@@ -101,8 +101,9 @@ abstract class SourceGear {
       val parsed = parsedOption.get
       val astGraph = parsed.graph
 
-      val fileNameAnnotation = AnnotationParser.extractFromFileContents(fileContents, parsed.parserBase.inlineCommentPrefix).headOption
-      
+//      val fileNameAnnotation = AnnotationParser.extractFromFileContents(fileContents, parsed.parserBase.inlineCommentPrefix).headOption
+      val fileNameAnnotation = None
+
       implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, parserByLanguageName(languageName).get, fileContents, this, file, null, null, project)
       lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project, fileNameAnnotation)
     } else {

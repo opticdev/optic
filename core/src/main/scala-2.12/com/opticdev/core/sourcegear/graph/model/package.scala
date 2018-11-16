@@ -3,7 +3,9 @@ package com.opticdev.core.sourcegear.graph
 import com.opticdev.core.sourcegear.graph.edges.YieldsModel
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.common.graph.CommonAstNode
-import com.opticdev.sdk.skills_sdk.lens.{Literal, ObjectLiteral, Token, ArrayLiteral}
+import com.opticdev.core.sourcegear.annotations.dsl.SetOperationNode
+import com.opticdev.core.sourcegear.annotations.{NameAnnotation, SourceAnnotation, TagAnnotation}
+import com.opticdev.sdk.skills_sdk.lens.{ArrayLiteral, Literal, ObjectLiteral, Token}
 import com.opticdev.sdk.skills_sdk.lens.OMLensComponent
 
 package object model {
@@ -33,8 +35,18 @@ package object model {
       }
     }
   }
+
   case class NodeMapping(node: CommonAstNode, relationship : AstPropertyRelationship.Value) extends AstMapping
   case class ModelVectorMapping(models: Vector[ModelNode]) extends AstMapping {override val relationship = AstPropertyRelationship.Model}
   case class ContainerMapping(containerRoot: CommonAstNode) extends AstMapping {override val relationship = AstPropertyRelationship.NoRelationship}
   case object NoMapping extends AstMapping {override val relationship = AstPropertyRelationship.NoRelationship}
+
+
+  trait HasAnnotations {
+    private var _annotations: ModelAnnotations = ModelAnnotations.empty
+    def attachAnnotations(annotations: ModelAnnotations) = {
+      _annotations = annotations
+    }
+    def annotations: ModelAnnotations = _annotations
+  }
 }

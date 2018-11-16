@@ -14,10 +14,11 @@ import play.api.libs.json.JsObject
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.common.{PackageRef, SchemaRef}
+import com.opticdev.core.sourcegear.project.config.options.DefaultSettings
 import com.opticdev.sdk.skills_sdk.lens.OMLens
 
 
-class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, internal: Boolean = false)(implicit lens: OMLens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {
+class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, schemaDefaultsOption: Option[DefaultSettings], internal: Boolean = false)(implicit lens: OMLens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {
   implicit val snippetStageOutput = snippetStage
   override def run: ParserFactoryOutput = {
 
@@ -62,7 +63,7 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       lens.packageRef.packageId,
       lens.lensRef,
       lens.priority,
-      lens.initialValue,
+      if (schemaDefaultsOption.isDefined) lens.initialValue ++ schemaDefaultsOption.get.value.toJson.as[JsObject] else lens.initialValue,
       internal
     ))
   }
