@@ -1,35 +1,26 @@
 package com.opticdev.core.sourcegear.gears.parsing
 
 import com.opticdev.common.SchemaRef
-import com.opticdev.sdk.{PropertyValue, VariableMapping}
-import com.opticdev.sdk.descriptions._
-import com.opticdev.core.sourcegear.{SGContext, SourceGear}
+import com.opticdev.common.graph.path.FlatWalkablePath
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.accumulate.Listener
-import com.opticdev.core.sourcegear.annotations.{AnnotationParser, NameAnnotation, SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.containers.SubContainerMatch
 import com.opticdev.core.sourcegear.gears.RuleProvider
-import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
-import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
-import com.opticdev.core.sourcegear.project.{OpticProject, Project, ProjectBase}
-import com.opticdev.parsers.ParserBase
-import com.opticdev.common.graph.{AstGraph, AstType, Child, CommonAstNode}
-import com.opticdev.common.graph.path.FlatWalkablePath
-import com.opticdev.core.sourcegear.annotations.dsl.ParseContext
-import play.api.libs.json.{JsObject, JsValue}
-import scalax.collection.edge.LkDiEdge
-import scalax.collection.mutable.Graph
-import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.RawRuleWithEvaluation
-import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.VariableRuleWithEvaluation
+import com.opticdev.core.sourcegear.gears.helpers.FlattenModelFields
+import com.opticdev.core.sourcegear.gears.helpers.RuleEvaluation.{RawRuleWithEvaluation, VariableRuleWithEvaluation}
+import com.opticdev.core.sourcegear.graph.model.LinkedModelNode
+import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.experimental_features.ImplicitObjectRefs
-
-import scala.util.hashing.MurmurHash3
-import com.opticdev.marvin.common.helpers.LineOperations
-import com.opticdev.sdk.rules.{AllChildrenRule, ParserChildrenRule, Rule}
+import com.opticdev.sdk.VariableMapping
+import com.opticdev.sdk.descriptions._
+import com.opticdev.sdk.rules.{ParserChildrenRule, Rule}
 import com.opticdev.sdk.skills_sdk.LensRef
 import com.opticdev.sdk.skills_sdk.compilerInputs.subcontainers.OMSubContainer
-import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensCodeComponent, OMLensComponent}
-import com.opticdev.sdk.skills_sdk.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensCodeComponent}
+import play.api.libs.json.JsObject
+
+import scala.util.hashing.MurmurHash3
 
 sealed abstract class ParseGear() {
 
@@ -175,15 +166,6 @@ case class ParseAsModel(description: NodeDescription,
     import com.opticdev.core.sourcegear.containers.ContainerMappingImplicits._
     val containerMapping = matchResults.containers.getOrElse(Set()).toMapping
 
-    val (objectRefOption, sourceAnnotationOption, tagAnnotation) = {
-      val raw = AnnotationParser.contentsToCheck(matchResults.baseNode.get)
-      val annotations = AnnotationParser.extract(raw, schema)(sourceGearContext.parser, ParseContext(sourceGearContext.file, matchResults.baseNode.get.range))
-      ( annotations.collectFirst { case na: NameAnnotation => na.objectRef },
-        annotations.collectFirst { case sa: SourceAnnotation => sa },
-        annotations.collectFirst { case ta: TagAnnotation => ta },
-      )
-    }
-
     val linkedModelNode = LinkedModelNode(
       schema,
       model,
@@ -194,9 +176,6 @@ case class ParseAsModel(description: NodeDescription,
       containerMapping,
       this,
       variableMapping,
-      if (objectRefOption.isEmpty) ImplicitObjectRefs.objectRefForModelNode(schema, model) else objectRefOption, //override with implicit naming function
-      sourceAnnotationOption,
-      tagAnnotation,
       internal)
 
     //@todo have schema validate

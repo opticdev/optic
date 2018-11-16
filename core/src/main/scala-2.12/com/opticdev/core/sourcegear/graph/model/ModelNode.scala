@@ -23,16 +23,17 @@ import scala.util.Try
 import scala.util.hashing.MurmurHash3
 import collection.JavaConverters._
 
-sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends AstProjection {
+sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends AstProjection with HasAnnotations {
   def schemaId : SchemaRef
   def value : JsObject
   def expandedValue(withVariables: Boolean = false)(implicit sourceGearContext: SGContext) : JsObject
-  def objectRef: Option[ObjectRef]
-  def sourceAnnotation: Option[SourceAnnotation]
-  def tag: Option[TagAnnotation]
   def lensRef: LensRef
   def variableMapping: VariableMapping
   def priority: Int
+
+  def objectRef: Option[ObjectRef] = annotations.name.map(_.objectRef)
+  def sourceAnnotation: Option[SourceAnnotation] = annotations.source
+  def tag: Option[TagAnnotation] = annotations.tag
 
   def matchesSchema()(implicit sourceGearContext: SGContext): Boolean = {
     val schema = sourceGearContext.sourceGear.findSchema(schemaId).getOrElse(OMSchema(schemaId, JsObject.empty))
@@ -138,9 +139,6 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef,
                                             containerMappingStore: ContainerAstMapping,
                                             parseGear: ParseGear,
                                             variableMapping: VariableMapping,
-                                            objectRef: Option[ObjectRef],
-                                            sourceAnnotation: Option[SourceAnnotation],
-                                            tag: Option[TagAnnotation],
                                             internal: Boolean = false)(implicit override val project: ProjectBase) extends BaseModelNode with SingleModelNode with ExpandedModelNode {
 
   def containerMapping(implicit astGraph: AstGraph): ContainerAstMapping = containerMappingStore
@@ -150,11 +148,13 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef,
   def hash = {
     val modelMappingHashString = modelMapping.toSeq.sortBy(_._1.toString).toString()
     val containerAstMappingString = containerMappingStore.toSeq.sortBy(_._1).toString()
-    Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMappingHashString + sourceAnnotation.toString + objectRef.toString + containerAstMappingString))
+    Integer.toHexString(MurmurHash3.stringHash(root.toString + modelMappingHashString + containerAstMappingString))
   }
 
   override def flatten : ModelNode = {
-    ModelNode(schemaId, value, lensRef, priority, variableMapping, objectRef, sourceAnnotation, tag, hash, internal)
+    val mn = ModelNode(schemaId, value, lensRef, priority, variableMapping, hash, internal)
+    mn.attachAnnotations(annotations)
+    mn
   }
   override lazy val fileNode: Option[FileNode] = flatten.fileNode
 
@@ -166,9 +166,6 @@ case class ModelNode(schemaId: SchemaRef,
                      lensRef: LensRef,
                      priority: Int,
                      variableMapping: VariableMapping,
-                     objectRef: Option[ObjectRef],
-                     sourceAnnotation: Option[SourceAnnotation],
-                     tag: Option[TagAnnotation],
                      hash: String,
                      internal: Boolean = false)(implicit override val project: ProjectBase) extends BaseModelNode with SingleModelNode with FlatModelNode {
 
@@ -181,7 +178,9 @@ case class ModelNode(schemaId: SchemaRef,
     val root : T = labeledDependencies.find(i=> i._1.isInstanceOf[YieldsModel] && i._1.asInstanceOf[YieldsModel].root)
       .get._2.asInstanceOf[T]
     val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
-    LinkedModelNode(schemaId, value, lensRef, priority, root, modelMapping, containerMapping, parseGear, variableMapping, objectRef, sourceAnnotation, tag, internal)
+    val mn = LinkedModelNode(schemaId, value, lensRef, priority, root, modelMapping, containerMapping, parseGear, variableMapping, internal)
+    mn.attachAnnotations(annotations)
+    mn
   }
 
   def resolve[T <: WithinFile]()(implicit actorCluster: ActorCluster) : LinkedModelNode[T] = {
@@ -252,9 +251,9 @@ case class MultiModelNode(schemaId: SchemaRef,
 
   def variableManager: VariableManager = parseGear.variableManager
 
-  def objectRef: Option[ObjectRef] = modelNodes.find(_.objectRef.isDefined).flatMap(_.objectRef) //uses the first instance found
-  def sourceAnnotation: Option[SourceAnnotation] = modelNodes.find(_.sourceAnnotation.isDefined).flatMap(_.sourceAnnotation) //uses the first instance found
-  def tag: Option[TagAnnotation] = modelNodes.find(_.tag.isDefined).flatMap(_.tag) //uses the first instance found
+  override def objectRef: Option[ObjectRef] = modelNodes.find(_.objectRef.isDefined).flatMap(_.objectRef) //uses the first instance found
+  override def sourceAnnotation: Option[SourceAnnotation] = modelNodes.find(_.sourceAnnotation.isDefined).flatMap(_.sourceAnnotation) //uses the first instance found
+  override def tag: Option[TagAnnotation] = modelNodes.find(_.tag.isDefined).flatMap(_.tag) //uses the first instance found
 
   def expandedValue(withVariables: Boolean)(implicit sourceGearContext: SGContext): JsObject = {
     val results = modelNodes.foldLeft((JsObject.empty, JsObject.empty)) {

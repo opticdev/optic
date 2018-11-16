@@ -11,7 +11,7 @@ class AnnotationsDslParserSpec extends FunSpec {
 
   describe("single line") {
 
-    implicit val parseContext = ParseContext(File("test"), Range(1, 35))
+    implicit val parseContext = ParseContext(File("test"), 0)
 
     describe("set operation") {
 

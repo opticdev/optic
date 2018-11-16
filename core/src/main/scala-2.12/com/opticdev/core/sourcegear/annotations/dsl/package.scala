@@ -7,7 +7,7 @@ import scala.util.Try
 
 package object dsl {
 
-  case class ParseContext(file: File, range: Range)
+  case class ParseContext(file: File, line: Int)
 
   val availableOps = Seq("set", "name", "source", "tag")
 

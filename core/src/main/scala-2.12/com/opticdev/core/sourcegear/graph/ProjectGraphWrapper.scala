@@ -60,7 +60,7 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
 
   private def astGraphToProjectGraph(astGraph: AstGraph, forFile: File, exports: Set[External], fileNameAnnotationOption: Option[FileNameAnnotation]): ProjectGraph = {
     val newProjectGraph = Graph[AstProjection, LkDiEdge]()
-    val fileNode = FileNode(forFile.pathAsString, fileNameAnnotationOption)
+    val fileNode = FileNode(forFile.pathAsString, fileNameAnnotationOption)(newProjectGraph)
     astGraph.edges.toVector.foreach(edge => {
       val fromNode = edge._1.value
       val toNode = edge._2.value

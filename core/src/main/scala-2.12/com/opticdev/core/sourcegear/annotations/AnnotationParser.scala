@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.annotations
 
+import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers.ParserBase
@@ -35,6 +36,17 @@ object AnnotationParser {
     if (found.isDefined) Set(found.get) else Set()
   }
 
+  def annotationsFromFile(contents: String)(implicit parserBase: ParserBase, file: File): Vector[(Int, ObjectAnnotation)] = {
+    val allAnnotationLines = findAllAnnotationComments(parserBase.inlineCommentPrefix, contents)
+    allAnnotationLines.map{ case (lineNumber, line) =>
+      val innerContents = line.substring(parserBase.inlineCommentPrefix.length)
+      (lineNumber, AnnotationsDslParser.parseSingleLine(innerContents)(ParseContext(file, lineNumber)))
+    }.collect {
+      case (line, n) if n.isSuccess && n.get.nodeType == "NameOperationNode" =>
+        (line, NameAnnotation(n.get.asInstanceOf[NameOperationNode].name, null))
+    }
+  }
+
   def contentsToCheck(node: CommonAstNode)(implicit fileContents: String) = {
     val range = node.range
     val startLine = LineOperations.lineOf(range.start, fileContents)
@@ -53,10 +65,12 @@ object AnnotationParser {
     if (result == -1) None else Some(contents.substring(result))
   }
 
-  def findAllAnnotationComments(inlineCommentPrefix: String, contents: String) : Vector[String] = {
+  def findAllAnnotationComments(inlineCommentPrefix: String, contents: String) : Vector[(Int, String)] = {
     contents
-      .lines
-      .map(findAnnotationComment(inlineCommentPrefix, _))
+      .lines.zipWithIndex
+      .map{ case(line, index) =>
+        findAnnotationComment(inlineCommentPrefix, line).map((index, _))
+      }
       .collect{case a if a.isDefined => a.get}
       .toVector
   }
