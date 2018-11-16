@@ -90,7 +90,7 @@ class ProjectFileSpec extends TestBase {
 
     it("will fail if any packages are not valid ") {
       val dependencies = f.defined4.dependencies
-      assert(dependencies.failed.get.getLocalizedMessage == "requirement failed: Invalid Skill package reference 'optic:react-js@@@1.0.0'")
+      assert(dependencies.failed.get.getLocalizedMessage == "Error Parsing Project File: 'skills' requirement failed: Invalid Skill package reference 'optic:react-js@@@1.0.0'")
     }
 
   }

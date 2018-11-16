@@ -6,7 +6,8 @@ import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers.ParserBase
 import com.opticdev.common.graph.{BaseNode, CommonAstNode}
 import com.opticdev.common.SchemaRef
-import com.opticdev.core.sourcegear.annotations.dsl.{AnnotationsDslParser, NameOperationNode, ParseContext}
+import com.opticdev.core.sourcegear.annotations.dsl._
+import com.opticdev.core.utils.TryWithErrors
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
@@ -15,35 +16,20 @@ import scala.util.matching.Regex
 
 object AnnotationParser {
 
-  def extract(string: String, schemaRef: SchemaRef)(implicit parserBase: ParserBase, parseContext: ParseContext) : Set[ObjectAnnotation]  =
-    extract(string, schemaRef, parserBase.inlineCommentPrefix)
-
-  def extract(string: String, schemaRef: SchemaRef, inlineCommentPrefix: String)(implicit parseContext: ParseContext) : Set[ObjectAnnotation] = {
-    if (string.isEmpty) return Set()
-
-    val found = {
-      val lineContents = string.lines.next()
-      val comment = findAnnotationComment(inlineCommentPrefix, lineContents)
-      comment.map(i => {
-        val innerContents = i.substring(inlineCommentPrefix.length)
-        AnnotationsDslParser.parseSingleLine(innerContents)
-      })
-    }.collect {
-      case na if na.isSuccess && na.get.nodeType == "NameOperationNode" =>
-        NameAnnotation(na.get.asInstanceOf[NameOperationNode].name, schemaRef)
+  def annotationsFromFile(contents: String)(implicit parserBase: ParserBase, file: File): Vector[(Int, ObjectAnnotation)] = {
+    def isType(operationNode: TryWithErrors[OperationNode, AnnotationParseError, ParseContext], t: String) = {
+      operationNode.isSuccess && t == operationNode.get.nodeType
     }
 
-    if (found.isDefined) Set(found.get) else Set()
-  }
-
-  def annotationsFromFile(contents: String)(implicit parserBase: ParserBase, file: File): Vector[(Int, ObjectAnnotation)] = {
     val allAnnotationLines = findAllAnnotationComments(parserBase.inlineCommentPrefix, contents)
     allAnnotationLines.map{ case (lineNumber, line) =>
       val innerContents = line.substring(parserBase.inlineCommentPrefix.length)
       (lineNumber, AnnotationsDslParser.parseSingleLine(innerContents)(ParseContext(file, lineNumber)))
     }.collect {
-      case (line, n) if n.isSuccess && n.get.nodeType == "NameOperationNode" =>
+      case (line, n) if isType(n, "NameOperationNode") =>
         (line, NameAnnotation(n.get.asInstanceOf[NameOperationNode].name, null))
+      case (line, n) if isType(n, "TagOperationNode") =>
+        (line, TagAnnotation(n.get.asInstanceOf[TagOperationNode].name, null))
     }
   }
 
@@ -53,7 +39,7 @@ object AnnotationParser {
     val endLine = LineOperations.lineOf(range.end, fileContents)
 
     if (startLine == endLine) {
-      val lines = fileContents.substring(range.start).lines
+      val lines = fileContents.substring(range.start).linesWithSeparators
       if (lines.nonEmpty) lines.next() else ""
     } else {
       fileContents.substring(node)
@@ -67,9 +53,9 @@ object AnnotationParser {
 
   def findAllAnnotationComments(inlineCommentPrefix: String, contents: String) : Vector[(Int, String)] = {
     contents
-      .lines.zipWithIndex
+      .linesWithSeparators.zipWithIndex
       .map{ case(line, index) =>
-        findAnnotationComment(inlineCommentPrefix, line).map((index, _))
+        findAnnotationComment(inlineCommentPrefix, line).map((index+1, _))
       }
       .collect{case a if a.isDefined => a.get}
       .toVector

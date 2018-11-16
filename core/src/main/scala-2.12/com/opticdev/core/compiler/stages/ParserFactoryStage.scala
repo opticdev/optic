@@ -51,7 +51,7 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       nodeDescription,
       lens.schemaRef,
       finderStageOutput.componentFinders.map {
-        case (finderPath, components)=> (finderPathToFlatPath(finderPath, enterOn), components)
+        case (finderPath, components)=> (finderPathToFlatPath(finderPath, enterOn), components.filter(_.containsCodeComponent))
       },
       subcontainersManager.containerPaths,
       finderStageOutput.ruleFinders.map {

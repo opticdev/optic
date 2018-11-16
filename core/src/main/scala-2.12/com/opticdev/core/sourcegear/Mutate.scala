@@ -128,6 +128,9 @@ object Mutate {
         n.value.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph)
     }
 
+    import com.opticdev.core.sourcegear.graph.GraphImplicits._
+    val m = astGraph.modelNodes
+
     require(modelNode.isDefined, s"Tag ${tag} not found")
     val modelId = nodeKeyStore.leaseId(sourceGearContext.file, modelNode.get)
     val stagedMutation = stagedTagMutation.toStagedMutation(modelId)

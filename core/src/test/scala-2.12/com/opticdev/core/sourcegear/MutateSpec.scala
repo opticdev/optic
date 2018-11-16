@@ -59,13 +59,13 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
     )))
 
     assert(results.isSuccess)
-    assert(results.get._2 == "app.get('changed', function (req, res) {\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('suburl', function (req, res) { //tag: sub\n\n        })\n        app.get('suburl2', function (req, res) { //tag: subTwo\n\n        })\n    }\n})")
+    assert(results.get._2 == "app.get('changed', function (req, res) {\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('suburl', function (req, res) { //optic.tag = \"sub\"\n\n        })\n        app.get('suburl2', function (req, res) { //optic.tag = \"subTwo\"\n\n        })\n    }\n})")
 
   }
 
   describe("tag mutations") {
 
-    val expected = """app.get('changed', function (req, res) { //tag: sub
+    val expected = """app.get('changed', function (req, res) { //optic.tag = "sub"
                      |
                      |        })""".stripMargin
 
@@ -74,6 +74,8 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
       implicit val nodeKeyStore = new NodeKeyStore
       implicit val project = f.project
       implicit val sourceGearContext = f.sourceGearContext
+      import com.opticdev.core.sourcegear.graph.GraphImplicits._
+
       val modelId = nodeKeyStore.leaseId(f.file, f.route)
 
       val mutateTagResults = Mutate.mutateTag(Seq(f.route.root), "sub", StagedTagMutation(Some(
@@ -98,7 +100,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
         )))))
       ))
 
-      assert(Mutate.fromStagedMutation(stagedMutation).get._2 == "app.get('url', function (req, res) {\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('changed', function (req, res) { //tag: sub\n\n        })\n        app.get('suburl2', function (req, res) { //tag: subTwo\n\n        })\n    }\n})")
+      assert(Mutate.fromStagedMutation(stagedMutation).get._2 == "app.get('url', function (req, res) {\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('changed', function (req, res) { //optic.tag = \"sub\"\n\n        })\n        app.get('suburl2', function (req, res) { //optic.tag = \"subTwo\"\n\n        })\n    }\n})")
     }
 
     it("work when multiple multiple tags are mutated & value updated") {
@@ -120,7 +122,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
           )))
       ))
 
-      assert(Mutate.fromStagedMutation(stagedMutation).get._2 == "app.head('url', function (req, res) {\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('first', function (req, res) { //tag: sub\n\n        })\n        app.get('second', function (req, res) { //tag: subTwo\n\n        })\n    }\n})")
+      assert(Mutate.fromStagedMutation(stagedMutation).get._2 == "app.head('url', function (req, res) {\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('first', function (req, res) { //optic.tag = \"sub\"\n\n        })\n        app.get('second', function (req, res) { //optic.tag = \"subTwo\"\n\n        })\n    }\n})")
     }
 
   }
@@ -169,7 +171,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
         )))
       )))
 
-      assert(results.get._2 == "{\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('suburl', function (req, res) { //tag: sub\n\n        })\n        app.get('suburl2', function (req, res) { //tag: subTwo\n\n        })\n    }\n    req.query.justAdded\n}")
+      assert(results.get._2 == "{\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('suburl', function (req, res) { //optic.tag = \"sub\"\n\n        })\n        app.get('suburl2', function (req, res) { //optic.tag = \"subTwo\"\n\n        })\n    }\n    req.query.justAdded\n}")
     }
 
     it("work when its a sub mutation") {
@@ -214,7 +216,7 @@ class MutateSpec extends AkkaTestFixture("MutateSpec") with PrivateMethodTester 
         ))
       )))
 
-      assert(Mutate.fromStagedMutation(stagedMutation).get._2 == "app.head('url', function (req, res) {\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('first', function (req, res) { //tag: sub\n\n        })\n        app.get('suburl2', function (req, res) { //tag: subTwo\n\n        })\n    }\n    req.query.justAdded\n})")
+      assert(Mutate.fromStagedMutation(stagedMutation).get._2 == "app.head('url', function (req, res) {\n    req.query.firstLevel\n    if (true) {\n        req.body.nested\n        req.body.nested\n        req.header.bob\n        app.get('first', function (req, res) { //optic.tag = \"sub\"\n\n        })\n        app.get('suburl2', function (req, res) { //optic.tag = \"subTwo\"\n\n        })\n    }\n    req.query.justAdded\n})")
 
     }
 

@@ -24,7 +24,8 @@ package object sourcegear {
                               fileContents: String,
                               fileNameAnnotationOption: Option[FileNameAnnotation],
                               fileTokenRegistry: FileTokenRegistry,
-                              fileImportsRegistry: FileImportsRegistry
+                              fileImportsRegistry: FileImportsRegistry,
+                              fileAnnotations: Map[ModelNode, Vector[annotations.ObjectAnnotation]] = Map()
                              )
 
   case class AstDebugLocation(filePath: String, range: Range)(implicit project: ProjectBase) {

@@ -28,7 +28,6 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear) {
       pgW = new ProjectGraphWrapper(Graph())(project = this)
       override def projectGraph: ProjectGraph = {
-        println(pgW.projectGraph)
         pgW.projectGraph
       }
       override def projectSourcegear: SourceGear = sourceGear

@@ -219,31 +219,4 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
 
   }
 
-  describe("Sync annotation extraction") {
-
-    it("can get name from comment on first line") {
-      val block = "var hello = require('world') //name: Test"
-
-      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map())
-      val parsedSample = sample(block)
-      val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
-      assert(result.isDefined)
-      assert(result.get.modelNode.objectRef.contains(ObjectRef("Test")))
-
-    }
-
-    it("can get source from comment on first line") {
-      val block = "var hello = require('world') //source: Test -> optic:test/transform"
-
-      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map())
-      val parsedSample = sample(block)
-      val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
-      assert(result.isDefined)
-      assert(result.get.modelNode.sourceAnnotation.contains(SourceAnnotation("Test", TransformationRef(Some(PackageRef("optic:test")), "transform"), None)))
-    }
-
-  }
-
-
-
 }

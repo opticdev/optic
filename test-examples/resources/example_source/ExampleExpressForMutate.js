@@ -4,10 +4,10 @@ app.get('url', function (req, res) {
         req.body.nested
         req.body.nested
         req.header.bob
-        app.get('suburl', function (req, res) { //tag: sub
+        app.get('suburl', function (req, res) { //optic.tag = "sub"
 
         })
-        app.get('suburl2', function (req, res) { //tag: subTwo
+        app.get('suburl2', function (req, res) { //optic.tag = "subTwo"
 
         })
     }

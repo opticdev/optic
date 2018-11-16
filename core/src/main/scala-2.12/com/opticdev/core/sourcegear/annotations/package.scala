@@ -26,14 +26,14 @@ package object annotations {
   }
   case class NameAnnotation(name: String, schemaRef: SchemaRef) extends ObjectAnnotation {
     def objectRef = ObjectRef(name)
-    def asString = s"name: $name"
+    def asString = s"""optic.name = "$name""""
   }
-  case class SourceAnnotation(sourceName: String, transformationRef: TransformationRef, askObject: Option[JsObject]) extends ObjectAnnotation {
-    def asString = s"source: $sourceName -> ${transformationRef.internalFull} ${askObject.map(_.toString()).getOrElse("")}"
+  case class SourceAnnotation(projectName: Option[String], sourceName: String, transformationRef: TransformationRef, askObject: Option[JsObject]) extends ObjectAnnotation {
+    def asString = s"""optic.source = ${projectName.map("\""+_+"\"").getOrElse("")} "$sourceName" -> ${transformationRef.internalFull} ${askObject.map(_.toString()).getOrElse("")}"""
     def asJson: JsValue = JsString(s"$sourceName")
   }
   case class TagAnnotation(tag: String, schemaRef: SchemaRef) extends ObjectAnnotation {
-    def asString = s"tag: $tag"
+    def asString = s"""optic.tag = "$tag""""
   }
 
 

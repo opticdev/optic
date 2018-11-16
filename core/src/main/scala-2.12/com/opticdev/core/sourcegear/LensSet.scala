@@ -103,11 +103,13 @@ class LensSet(initialGears: SGExportableLens*) {
       FileImportsRegistry(importRecords)
     }
 
-    val fileAnnotations = {
+    val fileAnnotations: Map[ModelNode, Vector[annotations.ObjectAnnotation]] = {
       val parsedAnnotations = AnnotationParser.annotationsFromFile(fileContents)(sourceGearContext.parser, sourceGearContext.file)
-      val modelAstPairs = modelNodes.map(i => (i, i.resolveInGraph[CommonAstNode](astGraph)))
-      val rangePair = modelAstPairs.map(i => (i._2.root.lineRange(fileContents), i._1.asInstanceOf[ModelNode]))
-      AnnotationSorting.sortAnnotations(rangePair, parsedAnnotations)
+      if (parsedAnnotations.nonEmpty) {
+        val modelAstPairs = modelNodes.map(i => (i, i.resolveInGraph[CommonAstNode](astGraph)))
+        val rangePair = modelAstPairs.map(i => (i._2.root.lineRange(fileContents), i._1.asInstanceOf[ModelNode]))
+        AnnotationSorting.sortAnnotations(rangePair, parsedAnnotations)
+      } else Map.empty
     }
 
     //attach the annotations to the model nodes
@@ -124,7 +126,8 @@ class LensSet(initialGears: SGExportableLens*) {
       sourceGearContext.fileContents,
       fileNameAnnotationOption,
       FileTokenRegistry.fromModelNodes(modelNodes, astGraph, sourceGearContext.parser),
-      importRegistry
+      importRegistry,
+      fileAnnotations
     )
   }
 

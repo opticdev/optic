@@ -1,5 +1,7 @@
 package com.opticdev.core.sourcegear.annotations
 
+import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, ModelNode}
+
 object AnnotationSorting {
 /*
   Rules:

@@ -20,6 +20,8 @@ object PackageStorage {
     opticPackage match {
       case dPackage: OpticMDPackage =>
         writeToStorage(opticPackage.packageRef, dPackage.description.toString())
+      case sp: StagedPackage =>
+        writeToStorage(opticPackage.packageRef, sp.description.toString())
       case _ => null
     }
   }

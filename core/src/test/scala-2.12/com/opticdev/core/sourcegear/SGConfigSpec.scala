@@ -34,15 +34,17 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
     }
 
     it("can generate a hexadecimal from hash") {
-      assert(sgConfig.hashString == "12f0cc1")
+      assert(sgConfig.hashString == "cef62b0a")
     }
 
     it("can inflate to a sourcegear instance") {
       val sourceGear = sgConfig.inflate
-      assert(sourceGear.lensSet.size == 6)
-      assert(sourceGear.schemas.size == 6)
+
+
+      assert(sourceGear.lensSet.size == 13)
+      assert(sourceGear.schemas.size == 8)
       assert(sourceGear.parsers.size == 1)
-      assert(sourceGear.transformations.size == 1)
+      assert(sourceGear.transformations.size == 3)
     }
 
   }

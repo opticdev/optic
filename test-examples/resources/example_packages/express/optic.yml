@@ -1,5 +1,5 @@
 name: Test Project
 parsers:
   - es7
-knowledge:
-  - optic:express-js
+skills:
+  - apiatlas:flat-express-js@0.0.1

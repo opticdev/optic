@@ -53,7 +53,7 @@ class ParserFactoryStageSpec extends TestBase with ParserUtils {
 
       assert(parseGear.listeners.size == 1)
       val listener = parseGear.listeners.head
-      assert(listener.schema == schemaComponent.schemaRef)
+      assert(listener.schema.get == schemaComponent.schemaRef)
     }
 
   }
