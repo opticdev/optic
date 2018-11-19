@@ -1,7 +1,11 @@
 //valid path
-source('hello') //name: Hello Model
-target('world') //name: World, source: Hello Model -> optic:synctest/passthrough-transform
+source('hello') //optic.name = "Hello Model"
+/*
+optic.name = "World"
+optic.source = "Hello Model" -> optic:synctest/passthrough-transform
+*/
+target('world')
 
 //invalid path
-source('good morning') //name: Good Morning
-target('vietnam') //source: Good Morning -> optic:synctest/errrrrrrorrrrrrrr
+source('good morning') //optic.name = "Good Morning"
+target('vietnam') //optic.source = "Good Morning" -> optic:synctest/errrrrrrorrrrrrrr

@@ -1,12 +1,24 @@
 package com.opticdev.core.sourcegear.graph.model
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.annotations.{NameAnnotation, ObjectAnnotation, SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.annotations.dsl.SetOperationNode
 
 case class ModelAnnotations(name: Option[NameAnnotation],
                             tag: Option[TagAnnotation],
                             source: Option[SourceAnnotation],
-                            set: Vector[SetOperationNode])
+                            set: Vector[SetOperationNode]) {
+
+  def withSchema(schemaRef: SchemaRef): ModelAnnotations = {
+    ModelAnnotations(
+      name.map(i => NameAnnotation(i.name, schemaRef)),
+      tag.map(i => TagAnnotation(i.tag, schemaRef)),
+      source,
+      set
+    )
+  }
+
+}
 
 object ModelAnnotations {
   def fromVector(vector: Vector[ObjectAnnotation]): ModelAnnotations = {

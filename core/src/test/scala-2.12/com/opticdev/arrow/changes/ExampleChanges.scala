@@ -147,7 +147,7 @@ object ExampleChanges extends TestBase with TestPackageProviders {
 
     val sourcegear = Await.result(future, 10 seconds)
 
-    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst model = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/user', (req, res) => {  //source: abcdefg -> optic:mongoose/create-route-from-schema \n  new ModelName({ firstName: req.body['firstName'], lastName: req.body['lastName'], email: req.body['email'] }).save((err, item) => {  //tag: query\n    if (!err) {\n        res.status(200).send(item)\n    } else {\n        res.status(400).send(err)\n    }\n  })\n})")
+    (changeGroup, sourcegear, "import mongoose from 'mongoose'\n\nconst model = mongoose.model('user', new mongoose.Schema({\n    'firstName': 'string',\n    'lastName': 'string',\n    'email': 'string',\n}))\n\napp.post('/user', (req, res) => {  //optic.source =  \"abcdefg\" -> optic:mongoose/create-route-from-schema \n  new ModelName({ firstName: req.body['firstName'], lastName: req.body['lastName'], email: req.body['email'] }).save((err, item) => {  //optic.tag = \"query\"\n    if (!err) {\n        res.status(200).send(item)\n    } else {\n        res.status(400).send(err)\n    }\n  })\n})")
 
   }
 

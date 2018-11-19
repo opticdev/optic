@@ -13,10 +13,10 @@ object AnnotationSorting {
   def sortAnnotations[M, A](modelLineRanges: Vector[(Range, M)], annotations: Seq[(Int, A)]): Map[M, Vector[A]] = {
 
     val sortedModelLineRanges = modelLineRanges.sortBy(_._1.start)
-
-    println(sortedModelLineRanges.map(i => s"""${i._1.start}, ${i._1.end}   ${i._2}""").mkString("\n"))
-    println("  ")
-    println(annotations.mkString("\n"))
+//
+//    println(sortedModelLineRanges.map(i => s"""${i._1.start}, ${i._1.end}   ${i._2}""").mkString("\n"))
+//    println("  ")
+//    println(annotations.mkString("\n"))
 
     annotations.map{ case (line, annotation) =>
         val possibleLines = sortedModelLineRanges.filter(_._1.inclusive.contains(line))

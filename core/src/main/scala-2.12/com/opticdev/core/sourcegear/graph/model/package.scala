@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.graph
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.YieldsModel
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.common.graph.CommonAstNode
@@ -43,9 +44,10 @@ package object model {
 
 
   trait HasAnnotations {
+    def schemaId : SchemaRef
     private var _annotations: ModelAnnotations = ModelAnnotations.empty
     def attachAnnotations(annotations: ModelAnnotations) = {
-      _annotations = annotations
+      _annotations = annotations.withSchema(schemaId)
     }
     def annotations: ModelAnnotations = _annotations
   }

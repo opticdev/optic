@@ -41,6 +41,7 @@ class ConfigYamlProtocolSpec extends FunSpec {
           |name: Example
           |objects:
           |  - type: optic:test/id-of-thing
+          |    name: Custom
           |    value:
           |      key1: 1
           |      key2: 2
@@ -61,7 +62,7 @@ class ConfigYamlProtocolSpec extends FunSpec {
           |    value: STRING
         """.stripMargin)
 
-      assert(result.failed.get.getMessage == "requirement failed: Invalid abstraction reference 'optic:dd'")
+      assert(result.failed.get.getMessage == "Error Parsing Project File: 'objects','name' YamlObject is missing required member 'name'")
       assert(result.isFailure)
     }
 
@@ -75,7 +76,7 @@ class ConfigYamlProtocolSpec extends FunSpec {
         """.stripMargin)
 
       assert(result.isFailure)
-      assert(result.failed.get.getMessage == "Invalid Object Yaml: STRING")
+      assert(result.failed.get.getMessage == "Error Parsing Project File: 'objects','name' YamlObject is missing required member 'name'")
     }
   }
 
@@ -87,7 +88,6 @@ class ConfigYamlProtocolSpec extends FunSpec {
           |name: Example
           |defaults:
           |  optic:test/id-of-thing:
-          |     value:
           |      key1: 1
           |      key2: 2
         """.stripMargin)
@@ -113,24 +113,21 @@ class ConfigYamlProtocolSpec extends FunSpec {
     }
   }
 
-  describe("error handling") {
-
-    it("will provide nice errors for parse error") {
-
-      val result = parsePrimary(
-        """
-          |name: false
-          |objects:
-          |  - type: optic:test/id-of-thing
-          |    value:
-          |      key1: 1
-          |      key2: 2
-        """.stripMargin)
-
-      println(result.failed)
-
-    }
-
-  }
+//  describe("error handling") {
+//
+//    it("will provide nice errors for parse error") {
+//
+//      val result = parsePrimary(
+//        """
+//          |name: false
+//          |objects:
+//          |  - type: optic:test/id-of-thing
+//          |    value:
+//          |      key1: 1
+//          |      key2: 2
+//        """.stripMargin)
+//    }
+//
+//  }
 
 }

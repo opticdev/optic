@@ -1,4 +1,4 @@
-function greeting() { //name: TestMulti
+function greeting() { //optic.name = "TestMulti"
  return "Whats UP"
 }
 
@@ -11,7 +11,7 @@ function helloWorld() {
 
 
 
-function greeting() { //source: TestMulti -> optic:synctest/passthrough-transform
+function greeting() { //optic.source = "TestMulti" -> optic:synctest/passthrough-transform
  return "Hey There"
 }
 

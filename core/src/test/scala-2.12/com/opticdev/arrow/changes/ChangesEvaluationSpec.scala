@@ -52,6 +52,9 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
 
       val actual = results.get.stagedFiles.head._2.text
 
+      println(results.get.stagedFiles.head._2.text)
+
+
       assert(results.get.stagedFiles.head._2.text == expectedChange)
     }
 

@@ -12,6 +12,8 @@ import com.opticdev.core.sourcegear.annotations.dsl.ParseContext
 import com.opticdev.core.sourcegear.imports.FileImportsRegistry
 import com.opticdev.parsers.imports.ImportModel
 
+import scala.util.Try
+
 //@todo make this class immutable
 class LensSet(initialGears: SGExportableLens*) {
 
@@ -99,7 +101,7 @@ class LensSet(initialGears: SGExportableLens*) {
         case mn if mn.schemaId.packageRef.contains(internalPackageRef) && importHandler.internalAbstractions.contains(mn.schemaId.id) =>
           ImportModel(mn.schemaId.id, mn.value)
       }
-      val importRecords = importHandler.importsFromModels(importModels.toSet)(sourceGearContext.file, project.projectDirectory, debug = true)
+      val importRecords = Try(importHandler.importsFromModels(importModels.toSet)(sourceGearContext.file, project.projectDirectory, debug = true)).getOrElse(Set.empty)
       FileImportsRegistry(importRecords)
     }
 

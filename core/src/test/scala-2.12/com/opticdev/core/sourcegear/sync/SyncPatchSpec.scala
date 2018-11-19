@@ -35,14 +35,16 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     val filePatches = diff.filePatches
 
-    assert(filePatches.head.newFileContents === """source('hello') //name: Hello Model
-                                                  |source('good morning') //name: Good Morning
-                                                  |source('welcome to') //name: Welcome To
-                                                  |source('welcome to') //name: Welcome To
+    println(filePatches.head.newFileContents)
+
+    assert(filePatches.head.newFileContents === """source('hello') //optic.name = "Hello Model"
+                                                  |source('good morning') //optic.name = "Good Morning"
+                                                  |source('welcome to') //optic.name = "Welcome To"
+                                                  |source('welcome to') //optic.name = "Welcome To"
                                                   |
-                                                  |target('hello') //source: Hello Model -> optic:synctest/passthrough-transform
-                                                  |target('good morning') //source: Good Morning -> optic:synctest/passthrough-transform
-                                                  |target('not_real') //source: Not Real -> optic:synctest/passthrough-transform""".stripMargin)
+                                                  |target('hello') //optic.source = "Hello Model" -> optic:synctest/passthrough-transform
+                                                  |target('good morning') //optic.source = "Good Morning" -> optic:synctest/passthrough-transform
+                                                  |target('not_real') //optic.source = "Not Real" -> optic:synctest/passthrough-transform""".stripMargin)
 
   }
 

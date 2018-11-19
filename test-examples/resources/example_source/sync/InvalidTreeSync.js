@@ -1,5 +1,24 @@
-source('a') //name: a
-source('b') //name: b, source: a -> optic:synctest/passthrough-transform
-source('c') //name: c, source: b -> optic:synctest/errrrrorrrrrrrr
-target('d') //name: d, source: c -> optic:synctest/passthrough-transform
-target('e') //name: e, source: d -> optic:synctest/passthrough-transform
+source('a') //optic.name = "a"
+/*
+optic.name = "b"
+optic.source = "a" -> optic:synctest/passthrough-transform
+*/
+source('b')
+
+/*
+optic.name = "c"
+optic.source = "b" -> optic:synctest/perrrrrorrrrrrrr
+*/
+source('c')
+
+/*
+optic.name = "d"
+optic.source = "c" -> optic:synctest/passthrough-transform
+*/
+target('d')
+
+/*
+optic.name = "e"
+optic.source = "d" -> optic:synctest/passthrough-transform
+*/
+target('e')
