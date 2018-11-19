@@ -118,7 +118,6 @@ class LensSet(initialGears: SGExportableLens*) {
       case _ =>
     }
 
-
     FileParseResults(
       astGraph,
       modelNodes,

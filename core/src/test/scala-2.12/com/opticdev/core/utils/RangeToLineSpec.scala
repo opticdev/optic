@@ -27,15 +27,33 @@ val testBody =
 
   it("gets range from chars on same line") {
     val helloWorldRange = Range(testBody.indexOf("H"), testBody.indexOf("d"))
-    assert(helloWorldRange.toLineRange(testBody) == Range(3,3))
+    val r = helloWorldRange.toLineRange(testBody)
+    assert((r.start, r.end) == (4,4))
   }
 
   it("handles multi line range ") {
     val helloWorldRange = Range(testBody.indexOf("H"), testBody.indexOf("c"))
-    assert(helloWorldRange.toLineRange(testBody) == Range(3,5))
+    val r = helloWorldRange.toLineRange(testBody)
+    assert((r.start, r.end) == (4,6))
   }
 
-  def fixture = new {
+
+  def fixture1 = new {
+    val file = File("test-examples/resources/example_source/BunchOfParameters.js")
+    implicit val fileContents = file.contentAsString
+    val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress_non_distinct_params@0.1.0.json")
+    implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)
+    val parseResult = sourceGear.parseFile(file)
+  }
+
+  it("handles multiple lines properly") {
+    val f = fixture1
+    val fileAnnotations = f.parseResult.get.fileAnnotations
+
+    assert(fileAnnotations.size == 5)
+  }
+
+  def fixture2 = new {
     val file = File("test-examples/resources/example_source/ExampleExpressForMutate.js")
     implicit val fileContents = file.contentAsString
     val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress_non_distinct_params@0.1.0.json")
@@ -44,7 +62,7 @@ val testBody =
   }
 
   it("handles a real world example") {
-    val f = fixture
+    val f = fixture2
     val modelNodes = f.parseResult.get.modelNodes
     val fileAnnotations = f.parseResult.get.fileAnnotations
 
@@ -57,7 +75,6 @@ val testBody =
 
     assert(fileAnnotations(innerRoute1.get._1.asInstanceOf[ModelNode]).head.asInstanceOf[TagAnnotation].tag == "sub")
     assert(fileAnnotations(innerRoute2.get._1.asInstanceOf[ModelNode]).head.asInstanceOf[TagAnnotation].tag == "subTwo")
-
   }
 
 }

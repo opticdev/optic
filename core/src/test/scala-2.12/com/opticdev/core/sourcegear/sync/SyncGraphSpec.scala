@@ -45,8 +45,8 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
   it("parsed models in ast graph will contain name and source annotations") {
     val f = fixture("test-examples/resources/example_source/sync/Sync.js")
 
-    assert(f.results.modelNodes.exists(_.objectRef.isDefined))
-    assert(f.results.modelNodes.exists(_.sourceAnnotation.isDefined))
+    assert(f.results.modelNodes.count(_.objectRef.isDefined) == 4)
+    assert(f.results.modelNodes.count(_.sourceAnnotation.isDefined) == 3)
   }
 
   def testEdgeForSourceName(syncSubgraph: SyncSubGraph, sourceName: String) = {
@@ -100,7 +100,7 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
     it("warning raised for orphaned target") {
       val code =
         """
-          |source('test') //source: find A Fake One -> optic:test/passthrough-transform
+          |source('test') //optic.source = "find A Fake One" -> optic:test/passthrough-transform
         """.stripMargin
 
       val f = stringFixture(code)
@@ -114,8 +114,8 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
     it("warning raised for duplicate sources") {
       val code =
         """
-          |source('test') //name: THIS ONE
-          |source('test2') //name: THIS ONE
+          |source('test') //optic.name = "THIS ONE"
+          |source('test2') //optic.name = "THIS ONE"
         """.stripMargin
       val f = stringFixture(code)
       implicit val project = f.project
@@ -132,7 +132,9 @@ class SyncGraphSpec extends AkkaTestFixture("SyncGraphSpec") with GearUtils {
       implicit val project = f.project
       val syncSubgraph = SyncGraph.getSyncGraph(f.snapshot)
       assert(syncSubgraph.warnings.head.isInstanceOf[CircularDependency])
-      assert(syncSubgraph.warnings.head.asInstanceOf[CircularDependency].location.range == Range(85, 100))
+
+      val r = syncSubgraph.warnings.head.asInstanceOf[CircularDependency].location.range
+      assert(syncSubgraph.warnings.head.asInstanceOf[CircularDependency].location.range == Range(198, 213))
     }
   }
 

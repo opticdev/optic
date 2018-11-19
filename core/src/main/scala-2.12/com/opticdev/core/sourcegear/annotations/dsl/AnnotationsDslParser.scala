@@ -46,7 +46,11 @@ object AnnotationsDslParser {
           case "source" => {
             val parsed = Regexes.source.extract(expression)(_)
 
-            val projectName = parsed("projectName")
+            val projectName = {
+              val pn = parsed("projectName")
+              if (pn.contains(null)) None else pn
+            }
+
             val objectId = parsed("objectId")
             val relationshipId = parsed("relationshipId").flatMap(i=> TransformationRef.fromString(i).toOption)
             val answers = Try(parsed("answers").map(Json.parse).map(_.as[JsObject])).toOption.flatten
@@ -103,14 +107,13 @@ object AnnotationsDslParser {
 
       val id = s"(${W}->${W}($packages)){0,1}([ ]+(\\{.*\\})){0,1}".r
 
-      s"""($name$w:){0,1}$w$name$id""".r(
+      s"""=${W}($name$w:){0,1}$w$name$id""".r(
         "1", "2", "projectName", "4", "5", "objectId", "7", "8", "relationshipId", "10", "11", "12", "13", "14", "answers"
       )
     }
 
     val op = s"optic$w.$w${oneOf(availableOps)}".r("operation")
     val singleLine = s"$op$W($any)$tW".r("operation", "expression")
-
 
     def assignmentListParser(list: String): Vector[KVPair] = {
       var results = scala.collection.mutable.ListBuffer[KVPair]()

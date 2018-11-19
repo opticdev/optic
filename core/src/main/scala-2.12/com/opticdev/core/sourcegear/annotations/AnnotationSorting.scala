@@ -11,8 +11,15 @@ object AnnotationSorting {
   4. It is ok for some annotations not to be used
  */
   def sortAnnotations[M, A](modelLineRanges: Vector[(Range, M)], annotations: Seq[(Int, A)]): Map[M, Vector[A]] = {
+
+    val sortedModelLineRanges = modelLineRanges.sortBy(_._1.start)
+
+    println(sortedModelLineRanges.map(i => s"""${i._1.start}, ${i._1.end}   ${i._2}""").mkString("\n"))
+    println("  ")
+    println(annotations.mkString("\n"))
+
     annotations.map{ case (line, annotation) =>
-        val possibleLines = modelLineRanges.filter(_._1.inclusive.contains(line))
+        val possibleLines = sortedModelLineRanges.filter(_._1.inclusive.contains(line))
 
         possibleLines.sortBy(_._1.size).headOption.map(i=> (i._2, annotation))
     }.collect{case a if a.isDefined => a.get}

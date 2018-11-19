@@ -1,6 +1,7 @@
 package com.opticdev.core.sourcegear.annotations.dsl
 
 import better.files.File
+import com.opticdev.core.sourcegear.annotations.dsl.AnnotationsDslParser.Regexes
 import joptsimple.util.KeyValuePair
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsBoolean, JsNumber, JsString, Json}
@@ -78,12 +79,22 @@ class AnnotationsDslParserSpec extends FunSpec {
     }
 
     describe("source operation") {
-      it("can extract") {
-        val input = "optic.source \"Project Name\" : \"Object ID\" -> aidan:optic/idll {\"one\": true} "
+      it("can extract with project name") {
+        val input = "optic.source = \"Project Name\" : \"Object ID\" -> aidan:optic/idll {\"one\": true} "
         val parseResult = AnnotationsDslParser.parseSingleLine(input)
         assert(parseResult.isSuccess)
         assert(parseResult.get.asInstanceOf[SourceOperationNode].name == "Object ID")
         assert(parseResult.get.asInstanceOf[SourceOperationNode].project.contains("Project Name"))
+        assert(parseResult.get.asInstanceOf[SourceOperationNode].relationshipId.get.full =="aidan:optic@latest/idll")
+        assert(parseResult.get.asInstanceOf[SourceOperationNode].answers.get == Json.parse("""{"one": true}"""))
+      }
+
+      it("can extract without project name") {
+        val input = "optic.source = \"Object ID\" -> aidan:optic/idll {\"one\": true} "
+        val parseResult = AnnotationsDslParser.parseSingleLine(input)
+        assert(parseResult.isSuccess)
+        assert(parseResult.get.asInstanceOf[SourceOperationNode].name == "Object ID")
+        assert(parseResult.get.asInstanceOf[SourceOperationNode].project.isEmpty)
         assert(parseResult.get.asInstanceOf[SourceOperationNode].relationshipId.get.full =="aidan:optic@latest/idll")
         assert(parseResult.get.asInstanceOf[SourceOperationNode].answers.get == Json.parse("""{"one": true}"""))
       }
@@ -189,7 +200,7 @@ class AnnotationsDslParserSpec extends FunSpec {
 
     describe("source declarations") {
       it("parses full example") {
-        val i = source.extract("\"Project Name\" : \"Object ID\" -> aidan:optic/idll {one: true}")(_)
+        val i = source.extract(" = \"Project Name\" : \"Object ID\" -> aidan:optic/idll {one: true}")(_)
         assert(i("projectName").get == "Project Name")
         assert(i("objectId").get == "Object ID")
         assert(i("relationshipId").get == "aidan:optic/idll")
@@ -197,18 +208,19 @@ class AnnotationsDslParserSpec extends FunSpec {
       }
 
       it("parses w/o answers") {
-        val i = source.extract("\"Project Name\" : \"Object ID\" -> aidan:optic/idll")(_)
+        val i = source.extract("= \"Project Name\" : \"Object ID\" -> aidan:optic/idll")(_)
         assert(i("projectName").get == "Project Name")
         assert(i("objectId").get == "Object ID")
         assert(i("relationshipId").get == "aidan:optic/idll")
       }
 
       it("parses w/o transformation ID") {
-        val i = source.extract("\"Project Name\" : \"Object ID\"")(_)
+        val i = source.extract("= \"Project Name\" : \"Object ID\"")(_)
         assert(i("projectName").get == "Project Name")
         assert(i("objectId").get == "Object ID")
       }
     }
+
 
     it("can read name and tag assignments") {
       assert(nameAndTagAssignment.extract(" = 'My Name'")("quoted").get == "'My Name'")
@@ -223,4 +235,5 @@ class AnnotationsDslParserSpec extends FunSpec {
     }
 
   }
+
 }
