@@ -49,7 +49,7 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
 
   def dependencies: Try[Vector[PackageRef]] = Try {
 
-    val skills = interface.get.primary.skills.get
+    val skills = interface.get.primary.skills.getOrElse(List.empty)
 
     val duplicates = skills.groupBy(_.packageId).filter(_._2.size > 1)
     require(duplicates.isEmpty, "Duplicate packages not allowed: "+duplicates.keys.mkString(", "))

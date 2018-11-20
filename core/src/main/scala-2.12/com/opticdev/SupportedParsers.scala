@@ -29,7 +29,10 @@ object SupportedParsers {
     parsers.foreach(parser => {
       SourceParserManager.enableParser(parser)
       if (withSkills) {
-        initIncludedSkills(parser)
+        val skillCompile = initIncludedSkills(parser)
+        if (skillCompile.isFailure) {
+          println(Console.RED+ "Failed to compile language skills:" + skillCompile.failed.get.getMessage()+ Console.RESET)
+        }
       }
     })
 
@@ -46,7 +49,7 @@ object SupportedParsers {
       }
     }
 
-    println("building")
+    println(s"Building ${parser.languageName} language skills")
 
     val abstractions = parser.defaultSDKItems.abstractions.map(_.toInternal(parser))
     val generators = parser.defaultSDKItems.generators.map(_.toInternal(parser))

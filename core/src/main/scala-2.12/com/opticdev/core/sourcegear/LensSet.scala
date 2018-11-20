@@ -101,7 +101,9 @@ class LensSet(initialGears: SGExportableLens*) {
         case mn if mn.schemaId.packageRef.contains(internalPackageRef) && importHandler.internalAbstractions.contains(mn.schemaId.id) =>
           ImportModel(mn.schemaId.id, mn.value)
       }
+
       val importRecords = Try(importHandler.importsFromModels(importModels.toSet)(sourceGearContext.file, project.projectDirectory, debug = true)).getOrElse(Set.empty)
+
       FileImportsRegistry(importRecords)
     }
 
