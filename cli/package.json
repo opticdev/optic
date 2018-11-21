@@ -1,6 +1,6 @@
 {
   "name": "optic-cli",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "",
   "main": "lib/Cli.js",
   "scripts": {
