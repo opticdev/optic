@@ -4,6 +4,7 @@ import com.opticdev.common.ObjectRef
 import com.opticdev.common.SchemaRef
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import com.opticdev.common.Regexes.packages
+import com.opticdev.core.sourcegear.annotations.dsl.AssignmentNode
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
 import scala.util.Try
@@ -34,6 +35,10 @@ package object annotations {
   }
   case class TagAnnotation(tag: String, schemaRef: SchemaRef) extends ObjectAnnotation {
     def asString = s"""optic.tag = "$tag""""
+  }
+
+  case class OverrideAnnotation(assignments: Vector[AssignmentNode]) extends ObjectAnnotation {
+    override def asString: String = ""
   }
 
 

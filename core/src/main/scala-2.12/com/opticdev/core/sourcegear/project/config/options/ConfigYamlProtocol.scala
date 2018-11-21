@@ -120,7 +120,11 @@ object ConfigYamlProtocol extends DefaultYamlProtocol {
   def parseSecondary(string: String): Try[SecondaryProjectFileInterface] = {
     val parse = for {
       yaml <- Try(string.parseYaml)
-      pfInterface <- Try(yaml.convertTo[SecondaryProjectFileInterface](secondaryPfFormat))
+      pfInterface <- {
+        if (yaml.isInstanceOf[YamlObject]) {
+          Try(yaml.convertTo[SecondaryProjectFileInterface](secondaryPfFormat))
+        } else Success(SecondaryProjectFileInterface(None, None))
+      }
     } yield pfInterface
 
     if (parse.isFailure) {

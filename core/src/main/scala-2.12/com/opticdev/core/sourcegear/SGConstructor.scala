@@ -30,8 +30,8 @@ object SGConstructor {
         dependencies,
         parsersRefs,
         projectFile.connected_projects,
-        projectFile.objects.getOrElse(Vector()),
-        projectFile.defaults.getOrElse(Map())
+        projectFile.objects,
+        projectFile.defaults
       )
 
       //save to cache on complete to make next time easier

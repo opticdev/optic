@@ -29,6 +29,8 @@ object AnnotationParser {
         (line, NameAnnotation(n.get.asInstanceOf[NameOperationNode].name, null))
       case (line, n) if isType(n, "TagOperationNode") =>
         (line, TagAnnotation(n.get.asInstanceOf[TagOperationNode].name, null))
+      case (line, n) if isType(n, "SetOperationNode") =>
+        (line, OverrideAnnotation(n.get.asInstanceOf[SetOperationNode].assignments))
       case (line, n) if isType(n, "SourceOperationNode") => {
         val sourceOperationNode = n.get.asInstanceOf[SourceOperationNode]
         (line, SourceAnnotation(

@@ -102,7 +102,7 @@ class LensSet(initialGears: SGExportableLens*) {
           ImportModel(mn.schemaId.id, mn.value)
       }
 
-      val importRecords = Try(importHandler.importsFromModels(importModels.toSet)(sourceGearContext.file, project.projectDirectory, debug = true)).getOrElse(Set.empty)
+      val importRecords = Try(importHandler.importsFromModels(importModels.toSet)(sourceGearContext.file, project.projectDirectory)).getOrElse(Set.empty)
 
       FileImportsRegistry(importRecords)
     }

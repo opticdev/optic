@@ -47,7 +47,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     if (newPf.interface.isSuccess) {
       projectStatusInstance.configStatus = ValidConfig
     } else {
-      projectStatusInstance.configStatus = InvalidConfig(newPf.interface.failed.get.getMessage)
+      projectStatusInstance.configStatus = InvalidConfig(newPf.interface.errors.mkString("\n"))
     }
   }
 
@@ -144,7 +144,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     if (projectSourcegear.isEmpty) return false
     ShouldWatch.file(file,
       projectSourcegear.validExtensions,
-      projectFile.interface.get.primary.exclude.getOrElse(List()).map(i => File(baseDirectory.pathAsString +"/"+ i)) ++ projectSourcegear.excludedPaths.map(i => File(i)))
+      projectFile.interface.primary.exclude.getOrElse(List()).map(i => File(baseDirectory.pathAsString +"/"+ i)) ++ projectSourcegear.excludedPaths.map(i => File(i)))
   }
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet

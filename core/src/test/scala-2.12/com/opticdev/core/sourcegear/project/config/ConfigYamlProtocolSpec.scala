@@ -20,6 +20,13 @@ class ConfigYamlProtocolSpec extends FunSpec {
     assert(result.get.parsers.contains(List("es7", "scala")))
   }
 
+  it("can parse empty pf yaml") {
+    val result = parsePrimary(
+      """""".stripMargin)
+
+    assert(result.isFailure)
+  }
+
   it("will throw errors for invalid types") {
     val result = parsePrimary(
       """
@@ -62,7 +69,7 @@ class ConfigYamlProtocolSpec extends FunSpec {
           |    value: STRING
         """.stripMargin)
 
-      assert(result.failed.get.getMessage == "Error Parsing Project File: 'objects','name' YamlObject is missing required member 'name'")
+      assert(result.failed.get.getMessage == "'objects','name' YamlObject is missing required member 'name'")
       assert(result.isFailure)
     }
 
@@ -76,7 +83,7 @@ class ConfigYamlProtocolSpec extends FunSpec {
         """.stripMargin)
 
       assert(result.isFailure)
-      assert(result.failed.get.getMessage == "Error Parsing Project File: 'objects','name' YamlObject is missing required member 'name'")
+      assert(result.failed.get.getMessage == "'objects','name' YamlObject is missing required member 'name'")
     }
   }
 
@@ -111,6 +118,13 @@ class ConfigYamlProtocolSpec extends FunSpec {
       assert(result.isFailure)
 
     }
+  }
+
+  it("can parse empty secondary pf yaml") {
+    val result = parseSecondary(
+      """""".stripMargin)
+
+    assert(result.isSuccess)
   }
 
 //  describe("error handling") {

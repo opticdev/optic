@@ -42,7 +42,7 @@ class SGConfigSpec extends TestBase with TestPackageProviders {
 
 
       assert(sourceGear.lensSet.size == 13)
-      assert(sourceGear.schemas.size == 8)
+      assert(sourceGear.schemas.size == 9)
       assert(sourceGear.parsers.size == 1)
       assert(sourceGear.transformations.size == 3)
     }

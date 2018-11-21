@@ -147,7 +147,13 @@ export function startInteractive(initialState = {}) {
 			}
 		})
 
-		agentConnection().onStatusChange(({status}) => setStatus(setState, getState, status))
+		agentConnection().onStatusChange(({status}) => {
+			if (status.hasErrors) {
+				destructiveLogger(colors.red("Project Errors: \n\n" +status.errors.join("\n")))
+			} else {
+				setStatus(setState, getState, status)
+			}
+		})
 
 		agentConnection().onKnowledgeGraphUpdate(({knowledgeGraph}) => {
 			setState({knowledgeGraph})

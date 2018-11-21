@@ -6,6 +6,7 @@ import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.core.sourcegear.annotations.dsl.SetOperationNode
 import com.opticdev.core.sourcegear.annotations.{NameAnnotation, SourceAnnotation, TagAnnotation}
+import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.sdk.skills_sdk.lens.{ArrayLiteral, Literal, ObjectLiteral, Token}
 import com.opticdev.sdk.skills_sdk.lens.OMLensComponent
 
@@ -50,5 +51,10 @@ package object model {
       _annotations = annotations.withSchema(schemaId)
     }
     def annotations: ModelAnnotations = _annotations
+
+    def valueOverrides: Vector[ModelField] = {
+      val assignments = annotations.set.flatMap(_.assignments)
+      assignments.map(i => ModelField(i.keyPath, i.value))
+    }
   }
 }

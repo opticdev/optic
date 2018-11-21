@@ -16,22 +16,24 @@ import scala.util.hashing.MurmurHash3
 class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
   import net.jcazevedo.moultingyaml._
 
-  private var interfaceStore : Try[CombinedInterface] = interfaceForFile
+  private var interfaceStore : CombinedInterface = interfaceForFile
 
-  private def interfaceForFile: Try[CombinedInterface] = Try {
-    val contents = file.contentAsString
+  private def interfaceForFile: CombinedInterface = {
+    val contents = Try(file.contentAsString).getOrElse("")
     val parsed = ConfigYamlProtocol.parsePrimary(contents)
 
-    val secondaryProjectFiles = parsed.get.use.getOrElse(List()).map{
+    val secondaryProjectFiles = parsed.map(_.use.getOrElse(List.empty)).getOrElse(List.empty).map{
       case f => file.parent / f
-    }.collect {
-      case f if f.exists => {
-        ConfigYamlProtocol.parseSecondary(f.contentAsString)
-      }
-      case f => throw new InvalidProjectFileException("Failed to load secondary project file: "+f)
     }
 
-    CombinedInterface(parsed.get, secondaryProjectFiles.collect{case spf if spf.isSuccess => spf.get })
+    val validSecondaryProjectFiles = secondaryProjectFiles
+      .collect {case f if f.exists => ConfigYamlProtocol.parseSecondary(f.contentAsString)}
+
+    val errors = secondaryProjectFiles
+      .collect{case f if f.notExists => "Failed to load secondary project file: " +f}
+
+
+    CombinedInterface(parsed, validSecondaryProjectFiles, errors)
   }
 
   def interface = interfaceStore
@@ -45,11 +47,13 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
 
   //interface
 
-  def name = Try(interface.get.primary.name).toOption
+  def name = Try(interface.primary.name).toOption
 
   def dependencies: Try[Vector[PackageRef]] = Try {
 
-    val skills = interface.get.primary.skills.getOrElse(List.empty)
+    require(interface.primaryTry.isSuccess, interface.primaryTry.failed.get.getMessage)
+
+    val skills = interface.primary.skills.getOrElse(List.empty)
 
     val duplicates = skills.groupBy(_.packageId).filter(_._2.size > 1)
     require(duplicates.isEmpty, "Duplicate packages not allowed: "+duplicates.keys.mkString(", "))
@@ -58,16 +62,14 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
   }
 
   def parsers: Vector[ParserRef] = Try {
-    interface.get.primary.parsers.get.map(i=> ParserRef(i)).toVector
+    require(interface.primaryTry.isSuccess, interface.primaryTry.failed.get.getMessage)
+    interface.primary.parsers.get.map(i=> ParserRef(i)).toVector
   }.getOrElse(Vector.empty)
 
-  def connected_projects: Set[String] = Try {
-    interface.get.primary.connected_projects.get.toSet
-  }.getOrElse(Set.empty[String])
+  def connected_projects: Set[String] = Try(interface.primary.connected_projects.get.toSet).getOrElse(Set())
 
-
-  def objects: Try[Vector[ObjectNode]] = interface.map(_.objects)
-  def defaults: Try[Map[SchemaRef, DefaultSettings]] = interface.map(_.defaults)
+  def objects: Vector[ObjectNode] = interface.objects
+  def defaults: Map[SchemaRef, DefaultSettings] = interface.defaults
 
   def hash: String = Integer.toHexString({
     MurmurHash3.stringHash(name.getOrElse("")) ^
@@ -75,7 +77,7 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
       MurmurHash3.setHash(dependencies.getOrElse(Vector.empty).map(_.full).toSet) ^
       MurmurHash3.setHash(parsers.map(_.full).toSet) ^
       MurmurHash3.setHash( //hashed contents of secondary config files
-        interface.map(_.primary.use.getOrElse(List())).getOrElse(List())
+        interface.primary.use.getOrElse(List())
             .map(file.parent / _)
             .collect{case f if f.exists => f.md5}
             .toSet)
@@ -84,7 +86,7 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
   def fileUpdateTriggersReload(targetFile: File): Boolean = {
     val isProjectFile = targetFile.isSameFileAs(file)
 
-    val isSecondaryProjectFile = interface.map(_.primary.use.getOrElse(List())).getOrElse(List())
+    val isSecondaryProjectFile = interface.primary.use.getOrElse(List())
       .map(file.parent / _)
       .exists(_.isSameFileAs(targetFile))
 

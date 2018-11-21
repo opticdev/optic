@@ -28,15 +28,15 @@ class ProjectFileSpec extends TestBase {
 
 
   def fixture = new {
-    val invalidConnectedFile = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/invalidConnectedFile.yml"))
-    val connectedFile = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/connectedFile.yml"))
-    val defined6 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project6.yml"))
-    val defined5 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project5.yml"))
-    val defined4 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project4.yml"))
-    val defined3 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project3.yml"))
-    val defined2 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project2.yml"))
-    val defined = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.yml"))
-    val empty = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/empty.yml"))
+    lazy val invalidConnectedFile = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/invalidConnectedFile.yml"))
+    lazy val connectedFile = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/connectedFile.yml"))
+    lazy val defined6 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project6.yml"))
+    lazy val defined5 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project5.yml"))
+    lazy val defined4 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project4.yml"))
+    lazy val defined3 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project3.yml"))
+    lazy val defined2 = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project2.yml"))
+    lazy val defined = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/project.yml"))
+    lazy val empty = new ProjectFile(File(getCurrentDirectory + "/test-examples/resources/tmp/example_project_files/empty.yml"))
   }
 
 
@@ -44,8 +44,8 @@ class ProjectFileSpec extends TestBase {
 
     it("includes name") {
       val f = fixture
+      println(f.defined.interface.errors)
       assert(f.defined.name.get == "Test project")
-      assert(f.empty.name.isEmpty)
     }
 
     it("includes parsers") {
@@ -67,7 +67,7 @@ class ProjectFileSpec extends TestBase {
 
     it("includes excluded files") {
       val f = fixture
-      assert(f.defined.interface.get.primary.exclude.get.size == 1)
+      assert(f.defined.interface.primary.exclude.get.size == 1)
     }
   }
 
@@ -90,7 +90,7 @@ class ProjectFileSpec extends TestBase {
 
     it("will fail if any packages are not valid ") {
       val dependencies = f.defined4.dependencies
-      assert(dependencies.failed.get.getLocalizedMessage == "Error Parsing Project File: 'skills' requirement failed: Invalid Skill package reference 'optic:react-js@@@1.0.0'")
+      assert(dependencies.failed.get.getLocalizedMessage == "requirement failed: 'skills' requirement failed: Invalid Skill package reference 'optic:react-js@@@1.0.0'")
     }
 
   }
@@ -106,14 +106,13 @@ class ProjectFileSpec extends TestBase {
 
     it("can find other file refs") {
       val f = fixture
-      assert(f.connectedFile.interface.get.secondary.size == 1)
-      assert(f.connectedFile.interface.get.secondary.head.objects.get.size == 1)
+      assert(f.connectedFile.interface.secondary.size == 1)
+      assert(f.connectedFile.interface.secondary.head.objects.get.size == 1)
     }
 
     it("will fail if referenced file does not exist") {
       val f = fixture
-      assert(f.invalidConnectedFile.interface.isFailure)
-      assert(f.invalidConnectedFile.interface.failed.get.getMessage.contains("Failed to load secondary project file:"))
+      assert(f.invalidConnectedFile.interface.errors.head == "Failed to load secondary project file: /Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/tmp/example_project_files/booooo.yml")
     }
 
 
