@@ -89,7 +89,7 @@ object Evaluation {
           val objName = rt.inputModelName
           AnnotationRenderer.renderToFirstLine(
             generatedNode._3.renderer.parser.inlineCommentPrefix,
-            Vector(SourceAnnotation(None, objName, transformation.transformationRef, rt.answers)),
+            Vector(SourceAnnotation(None, objName, transformation.transformationRef, rt.answers, false)),
             generatedNode._2)
         }
 

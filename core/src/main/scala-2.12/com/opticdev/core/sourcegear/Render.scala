@@ -54,7 +54,7 @@ object Render {
     val result = gear.renderer.renderWithNewAstNode(processedValue, containerContents, variableMapping)
 
     val stringResult = if (options.tag.isDefined) {
-      AnnotationRenderer.renderToFirstLine(gear.renderer.parser.inlineCommentPrefix, Vector(TagAnnotation(options.tag.get, gear.schemaRef)), result._2)
+      AnnotationRenderer.renderToFirstLine(gear.renderer.parser.inlineCommentPrefix, Vector(TagAnnotation(options.tag.get, gear.schemaRef, false)), result._2)
     } else {
       result._2
     }

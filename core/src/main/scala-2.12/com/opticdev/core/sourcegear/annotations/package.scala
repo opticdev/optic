@@ -4,6 +4,7 @@ import com.opticdev.common.ObjectRef
 import com.opticdev.common.SchemaRef
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import com.opticdev.common.Regexes.packages
+import com.opticdev.core.sourcegear.annotations.AnnotationSorting.SortableAnnotation
 import com.opticdev.core.sourcegear.annotations.dsl.AssignmentNode
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
@@ -22,22 +23,23 @@ package object annotations {
   }
 
   //Processed Object Annotation Classes
-  sealed trait ObjectAnnotation extends Annotation {
+  sealed trait ObjectAnnotation extends Annotation with SortableAnnotation {
     def asString: String
+
   }
-  case class NameAnnotation(name: String, schemaRef: SchemaRef) extends ObjectAnnotation {
+  case class NameAnnotation(name: String, schemaRef: SchemaRef, isBlock: Boolean) extends ObjectAnnotation {
     def objectRef = ObjectRef(name)
     def asString = s"""optic.name = "$name""""
   }
-  case class SourceAnnotation(projectName: Option[String], sourceName: String, transformationRef: TransformationRef, askObject: Option[JsObject]) extends ObjectAnnotation {
+  case class SourceAnnotation(projectName: Option[String], sourceName: String, transformationRef: TransformationRef, askObject: Option[JsObject], isBlock: Boolean) extends ObjectAnnotation {
     def asString = s"""optic.source = ${projectName.map("\""+_+"\"").getOrElse("")} "$sourceName" -> ${transformationRef.internalFull} ${askObject.map(_.toString()).getOrElse("")}"""
     def asJson: JsValue = JsString(s"$sourceName")
   }
-  case class TagAnnotation(tag: String, schemaRef: SchemaRef) extends ObjectAnnotation {
+  case class TagAnnotation(tag: String, schemaRef: SchemaRef, isBlock: Boolean) extends ObjectAnnotation {
     def asString = s"""optic.tag = "$tag""""
   }
 
-  case class OverrideAnnotation(assignments: Vector[AssignmentNode]) extends ObjectAnnotation {
+  case class OverrideAnnotation(assignments: Vector[AssignmentNode], isBlock: Boolean) extends ObjectAnnotation {
     override def asString: String = ""
   }
 
