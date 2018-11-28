@@ -34,7 +34,7 @@ class ProjectActor(initialGraph: ProjectGraphWrapper)(implicit logToCli: Boolean
     case i: ParseFailed => {
       graph.removeFile(i.file, ignoreExceptions = true)
       context.become(active(graph))
-      println("Failed to parse file "+ i.file)
+      println(Console.RED+ s"Failed to parse file: ${i.file} ${i.error}" +Console.RESET)
       sender() ! graph
     }
     case deleted: FileDeleted => {

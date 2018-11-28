@@ -39,7 +39,11 @@ case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLens
 
       val found = {
         val allFound = targetNodes
-          .filter(n => LocationEvaluation.matches(schemaComponent.component.locationForCompiler.get, n.astRoot, astRoot, containerMapping))
+          .filter(n => {
+            val correctLocation = LocationEvaluation.matches(schemaComponent.component.locationForCompiler.get, n.astRoot, astRoot, containerMapping)
+            val validSchema = n.matchesSchema()(sourceGearContext)
+            correctLocation && validSchema
+          })
           .sortBy(_.astRoot.range.start)
 
         PriorityFilter.apply(allFound:_*)
