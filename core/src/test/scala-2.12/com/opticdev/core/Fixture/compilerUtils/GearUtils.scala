@@ -12,7 +12,7 @@ import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, PackageContext, PackageContextFixture, Tree}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.collection.immutable
 import scala.collection.mutable.ListBuffer
@@ -37,7 +37,7 @@ trait GearUtils {
     val packageContext = dependencyTree.treeContext(description.packageFull).get
 
     val worker = new CompileWorker(description.lenses.head)
-    val result = worker.compile()(packageContext, ListBuffer())
+    val result = worker.compile()(packageContext, ListBuffer(), Map())
 
     result.get.asInstanceOf[CompiledLens]
   }
@@ -52,7 +52,7 @@ trait GearUtils {
 
     descriptions.lenses.map(i=> {
       val worker = new CompileWorker(i)
-      val compileResult = worker.compile()(packageContext, ListBuffer())
+      val compileResult = worker.compile()(packageContext, ListBuffer(), Map())
       compileResult.get.asInstanceOf[CompiledLens]
     })
   }
@@ -68,14 +68,14 @@ trait GearUtils {
 
   }
 
-  def sourceGearFromPackage(description: OpticMDPackage) : SourceGear = {
+  def sourceGearFromPackage(description: OpticPackage) : SourceGear = {
 
     val outerLensSet = new LensSet()
 
     implicit val dependencyTree = Tree(Leaf(description))
     implicit val packageContext = PackageContextFixture.fromSchemas(description.schemas)
 
-    val compiled = Compiler.setup(description).execute
+    val compiled = Compiler.setup(description)(false, dependencyTree, Map()).execute
     val compiledGears = compiled.gears.map(i=> {
       i.asInstanceOf[CompiledLens].copy(schema = Left(SchemaRef(Some(description.packageRef), i.schemaRef.id)))
     })
@@ -108,7 +108,7 @@ trait GearUtils {
   //for debug only
   def fromDependenciesList(dependencies: String*): SourceGear = {
     val packages = dependencies.map(d=> PackageRef.fromString(d).get)
-    val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef), Set())
+    val sgFuture = SGConstructor.fromDependencies(PackageManager.collectPackages(packages).get, SourceParserManager.installedParsers.map(_.parserRef), Set(), Vector(), Map())
     import scala.concurrent.duration._
     Await.result(sgFuture, 20 seconds).inflate
   }

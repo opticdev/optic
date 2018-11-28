@@ -9,7 +9,7 @@ import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.graph.model.ModelNode
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.core.sourcegear.{SGConfig, SGConstructor}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 
 import scala.concurrent.duration._
@@ -51,6 +51,9 @@ class ChangesEvaluationSpec extends TestBase with TestPackageProviders with Befo
       val results = changeGroup.evaluateAndWrite(sourcegear)
 
       val actual = results.get.stagedFiles.head._2.text
+
+      println(results.get.stagedFiles.head._2.text)
+
 
       assert(results.get.stagedFiles.head._2.text == expectedChange)
     }

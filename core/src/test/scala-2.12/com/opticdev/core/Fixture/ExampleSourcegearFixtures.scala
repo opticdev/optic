@@ -6,13 +6,13 @@ import com.opticdev.core.compiler.stages.RenderFactoryStage
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.{CompiledLens, LensSet, SourceGear}
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
-import com.opticdev.parsers.rules._
-import com.opticdev.sdk.opticmarkdown2.lens._
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.rules._
+import com.opticdev.sdk.skills_sdk.lens._
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.JsObject
 
 object ExampleSourcegearFixtures extends TestBase with GearUtils with ParserUtils {

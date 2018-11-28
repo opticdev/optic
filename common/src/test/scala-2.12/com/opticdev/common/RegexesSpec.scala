@@ -15,7 +15,6 @@ class RegexesSpec extends FunSpec {
     it("rejects invalid namespaces") {
       assert(!test("a"))
       assert(!test("1force"))
-      assert(!test("hello-company"))
       assert(!test("  fdsfjhk   jhksdhjf"))
     }
   }

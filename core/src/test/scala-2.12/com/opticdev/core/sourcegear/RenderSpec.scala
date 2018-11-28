@@ -12,8 +12,8 @@ import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.RuleEnums
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import org.scalatest.PrivateMethodTester
 import play.api.libs.json.{JsObject, JsString}
 
@@ -134,7 +134,7 @@ class RenderSpec extends TestBase with PrivateMethodTester with GearUtils with P
 
     val result = Render.fromStagedNode(stagedNode)(f.sourceGear, f.sourceGear.flatContext)
 
-    val expected = "call(\"value\", function (req, res) {\n  \n  query({ fieldA: req.query.fieldA }, function (err, item) {  //tag: query\n    if (!err) {\n        res.send(thing)\n    } else {\n    \n    }\n  })\n})"
+    val expected = "call(\"value\", function (req, res) {\n  \n  query({ fieldA: req.query.fieldA }, function (err, item) {  //optic.tag = \"query\"\n    if (!err) {\n        res.send(thing)\n    } else {\n    \n    }\n  })\n})"
     assert(result.get._2 == expected)
 
   }

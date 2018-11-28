@@ -1,9 +1,10 @@
 package com.opticdev.core.sourcegear.gears
 
 import com.opticdev.parsers.ParserBase
-import com.opticdev.sdk.descriptions.{ChildrenRule}
-import com.opticdev.parsers.graph.AstType
-import com.opticdev.parsers.rules.{AllChildrenRule, Exact, ParserChildrenRule, Rule}
+import com.opticdev.sdk.descriptions.ChildrenRule
+import com.opticdev.common.graph.AstType
+import com.opticdev.sdk.rules._
+import com.opticdev.sdk.rules.{AllChildrenRule, Exact, Rule}
 
 
 object RuleProvider {

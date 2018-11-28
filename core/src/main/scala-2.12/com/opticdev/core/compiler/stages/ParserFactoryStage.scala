@@ -3,22 +3,22 @@ package com.opticdev.core.compiler.stages
 import com.opticdev.core.compiler.errors.AstPathNotFound
 import com.opticdev.core.compiler.helpers.FinderPath
 import com.opticdev.core.compiler.{FinderStageOutput, ParserFactoryOutput, SnippetStageOutput}
-import com.opticdev.core.sourcegear.accumulate.MapSchemaListener
+import com.opticdev.core.sourcegear.accumulate.{AssignmentListener, MapSchemaListener}
 import com.opticdev.core.sourcegear.containers.SubContainerManager
 import com.opticdev.core.sourcegear.gears.RuleProvider
 import com.opticdev.core.sourcegear.gears.parsing.{AdditionalParserInformation, NodeDescription, ParseAsModel}
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{Child, CommonAstNode}
-import com.opticdev.parsers.graph.path.FlatWalkablePath
+import com.opticdev.common.graph.{AstGraph, Child, CommonAstNode}
+import com.opticdev.common.graph.path.FlatWalkablePath
 import play.api.libs.json.JsObject
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.common.{PackageRef, SchemaRef}
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.core.sourcegear.project.config.options.DefaultSettings
+import com.opticdev.sdk.skills_sdk.lens.OMLens
 
 
-class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, internal: Boolean = false)(implicit lens: OMLens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {
+class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: FinderStageOutput, schemaDefaultsOption: Option[DefaultSettings], internal: Boolean = false)(implicit lens: OMLens, variableManager: VariableManager = VariableManager.empty, subcontainersManager: SubContainerManager = SubContainerManager.empty) extends CompilerStage[ParserFactoryOutput] {
   implicit val snippetStageOutput = snippetStage
   override def run: ParserFactoryOutput = {
 
@@ -30,13 +30,15 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
 
     val nodeDescription = ParserFactoryStage.nodeToDescription(enterOn)
 
-    val listeners = lens.valueSchemaComponentsCompilerInput.map(watchForSchema => {
-      MapSchemaListener(
-        watchForSchema,
-        lens.schemaRef,
-        lens.packageRef.packageId
+    val listeners = {
+      lens.valueSchemaComponentsCompilerInput.map(collectSchemaComponent =>
+        MapSchemaListener(collectSchemaComponent, lens.schemaRef, lens.packageRef.packageId)) ++
+      lens.assignmentComponentsCompilerInput.map(assignmentComponent => {
+          val pathOption = finderStageOutput.componentFinders.find(_._2.exists(_ == assignmentComponent)).map(i=> finderPathToFlatPath(i._1, enterOn))
+          AssignmentListener(assignmentComponent, pathOption, lens.schemaRef, lens.packageRef.packageId)
+        }
       )
-    })
+    }
 
     if (lens.schemaRef.packageRef.isDefined && lens.schemaRef.packageRef.get != lens.packageRef) {
       //external schema
@@ -49,7 +51,7 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       nodeDescription,
       lens.schemaRef,
       finderStageOutput.componentFinders.map {
-        case (finderPath, components)=> (finderPathToFlatPath(finderPath, enterOn), components)
+        case (finderPath, components)=> (finderPathToFlatPath(finderPath, enterOn), components.filter(_.containsCodeComponent))
       },
       subcontainersManager.containerPaths,
       finderStageOutput.ruleFinders.map {
@@ -61,7 +63,7 @@ class ParserFactoryStage(snippetStage: SnippetStageOutput, finderStageOutput: Fi
       lens.packageRef.packageId,
       lens.lensRef,
       lens.priority,
-      lens.initialValue,
+      if (schemaDefaultsOption.isDefined) lens.initialValue ++ schemaDefaultsOption.get.value.toJson.as[JsObject] else lens.initialValue,
       internal
     ))
   }

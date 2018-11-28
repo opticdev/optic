@@ -3,130 +3,94 @@ package com.opticdev.core.sourcegear.project.config
 import java.nio.file.NoSuchFileException
 
 import better.files.File
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, ParserRef, SchemaRef}
 import com.opticdev.core.sourcegear.InvalidProjectFileException
+import com.opticdev.core.sourcegear.graph.objects.ObjectNode
+import com.opticdev.core.sourcegear.project.config.options.{CombinedInterface, ConfigYamlProtocol, DefaultSettings, ProjectFileInterface}
 import com.opticdev.parsers.utils.Crypto
 import org.yaml.snakeyaml.parser.ParserException
 
 import scala.util.Try
 import scala.util.hashing.MurmurHash3
 
-class ProjectFile(val file: File, createIfDoesNotExist : Boolean = true, onChanged: (ProjectFile)=> Unit = (pf)=> {}) extends PFInterface {
+class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
   import net.jcazevedo.moultingyaml._
 
-  private var interfaceStore : Try[PFRootInterface] = interfaceForFile
+  private var interfaceStore : CombinedInterface = interfaceForFile
 
-  //create a blank one if it does not exist
-  if (createIfDoesNotExist && !file.exists) {
-    save
-  }
+  private def interfaceForFile: CombinedInterface = {
+    val contents = Try(file.contentAsString).getOrElse("")
+    val parsed = ConfigYamlProtocol.parsePrimary(contents)
 
-  private var lastHash : String = null
-  private def interfaceForFile: Try[PFRootInterface] = Try {
-    val (yaml, contents) = {
-      val tryParse = Try({
-        val contents = file.contentAsString
-        (contents.parseYaml.asYamlObject, contents)
-      })
-      if (tryParse.isSuccess) tryParse.get
-      else {
-        tryParse.failed.get match {
-          case e:NoSuchFileException => if (createIfDoesNotExist) (YamlObject(), "") else throw InvalidProjectFileException("Project file not found")
-          case e:ParserException => throw InvalidProjectFileException("syntax error in YAML")
-          case _ => throw InvalidProjectFileException("unknown error")
-        }
-      }
+    val secondaryProjectFiles = parsed.map(_.use.getOrElse(List.empty)).getOrElse(List.empty).map{
+      case f => file.parent / f
     }
 
-    val name = PFFieldInterface.forKey[YamlString]("name", YamlString("Unnamed Project"), yaml)
+    val validSecondaryProjectFiles = secondaryProjectFiles
+      .collect {case f if f.exists => ConfigYamlProtocol.parseSecondary(f.contentAsString)}
 
-    val parsers = PFListInterface.forKey[YamlString]("parsers", YamlArray(Vector()), yaml)
+    val errors = secondaryProjectFiles
+      .collect{case f if f.notExists => "Failed to load secondary project file: " +f}
 
-    val skills = {
-      val skills = PFListInterface.forKey[YamlString]("skills", YamlArray(Vector()), yaml)
-      val knowledge = PFListInterface.forKey[YamlString]("knowledge", YamlArray(Vector()), yaml)
-      if (skills.value.nonEmpty) {
-        skills
-      } else {
-        knowledge
-      }
-    }
 
-    def knowledgePaths =PFListInterface.forKey[YamlString]("knowledge_paths", YamlArray(Vector()), yaml)
-
-    val connectedProjects = PFListInterface.forKey[YamlString]("connected_projects", YamlArray(Vector()), yaml)
-
-    val exclude =PFListInterface.forKey[YamlString]("exclude", YamlArray(Vector()), yaml)
-
-    lastHash = Crypto.createSha1(contents)
-    //      val relationships =PFListInterface.forKey[YamlString]("relationships", YamlArray(Vector()), yaml)
-    PFRootInterface(name, parsers, skills, knowledgePaths, connectedProjects, exclude)
+    CombinedInterface(parsed, validSecondaryProjectFiles, errors)
   }
 
   def interface = interfaceStore
+
   def reload = {
-    if (file.exists && Crypto.createSha1(file.contentAsString) != lastHash) {
+    if (file.exists) {
       interfaceStore = interfaceForFile
-    } else if (file.notExists && createIfDoesNotExist) {
-      interfaceStore = interface
-      save
+      onChanged(this)
     }
-
-    onChanged(this)
   }
 
+  //interface
 
-  override def yamlValue: YamlValue = {
-    if (interface.isFailure) return null
-
-    val obj : Map[YamlValue, YamlValue] = Map(
-      YamlString("name") -> interface.get.name.yamlValue,
-      YamlString("parsers") -> interface.get.parsers.yamlValue,
-      YamlString("knowledge") -> interface.get.skills.yamlValue,
-      YamlString("exclude") -> interface.get.exclude.yamlValue
-//      YamlString("relationships") -> relationships.yamlValue
-    )
-
-    YamlObject(obj)
-  }
-
-  def save = file.createIfNotExists(asDirectory = false).write(yamlValue.prettyPrint)
+  def name = Try(interface.primary.name).toOption
 
   def dependencies: Try[Vector[PackageRef]] = Try {
-    if (interface.isFailure) return null
 
-    val dependencies = interface.get.skills.value.map(i=> (PackageRef.fromString(i.value), i))
+    require(interface.primaryTry.isSuccess, interface.primaryTry.failed.get.getMessage)
 
-    val allValid = dependencies.forall(_._1.isSuccess)
+    val skills = interface.primary.skills.getOrElse(List.empty)
 
-    if (allValid) {
+    val duplicates = skills.groupBy(_.packageId).filter(_._2.size > 1)
+    require(duplicates.isEmpty, "Duplicate packages not allowed: "+duplicates.keys.mkString(", "))
 
-      val unwrappedDependencies = dependencies.map(i=> (i._1.get, i._2.value))
-
-      //guaranteed success
-      val groupedByPackageId = unwrappedDependencies.groupBy(_._1.packageId)
-      val duplicates = groupedByPackageId.filter(_._2.size > 1)
-
-      if (duplicates.nonEmpty) {
-        throw new Error("Some packages are defined multiple times: ["+ duplicates.keys.mkString(", ")+"]")
-      }
-
-      unwrappedDependencies.map(_._1).toVector.sortBy(_.full)
-
-    } else {
-      throw new Error("Some packages are not valid: ["+dependencies.filter(_._1.isFailure).map(_._2.value).mkString(", ")+"]")
-    }
-
+    skills.toVector
   }
 
-  def connectedProjects: Set[String] = Try {
-    interface.get.connectedProjects.value.map(_.value).toSet
-  }.getOrElse(Set.empty[String])
+  def parsers: Vector[ParserRef] = Try {
+    require(interface.primaryTry.isSuccess, interface.primaryTry.failed.get.getMessage)
+    interface.primary.parsers.get.map(i=> ParserRef(i)).toVector
+  }.getOrElse(Vector.empty)
+
+  def connected_projects: Set[String] = Try(interface.primary.connected_projects.get.toSet).getOrElse(Set())
+
+  def objects: Vector[ObjectNode] = interface.objects
+  def defaults: Map[SchemaRef, DefaultSettings] = interface.defaults
 
   def hash: String = Integer.toHexString({
+    MurmurHash3.stringHash(name.getOrElse("")) ^
     MurmurHash3.stringHash(file.parent.pathAsString) ^
-    MurmurHash3.setHash(dependencies.get.map(_.full).toSet) ^
-    MurmurHash3.setHash(interfaceForFile.get.parsers.value.map(_.value).toSet)
+      MurmurHash3.setHash(dependencies.getOrElse(Vector.empty).map(_.full).toSet) ^
+      MurmurHash3.setHash(parsers.map(_.full).toSet) ^
+      MurmurHash3.setHash( //hashed contents of secondary config files
+        interface.primary.use.getOrElse(List())
+            .map(file.parent / _)
+            .collect{case f if f.exists => f.md5}
+            .toSet)
   })
+
+  def fileUpdateTriggersReload(targetFile: File): Boolean = {
+    val isProjectFile = targetFile.isSameFileAs(file)
+
+    val isSecondaryProjectFile = interface.primary.use.getOrElse(List())
+      .map(file.parent / _)
+      .exists(_.isSameFileAs(targetFile))
+
+    isProjectFile || isSecondaryProjectFile
+  }
 
 }

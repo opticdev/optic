@@ -1,14 +1,23 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
+import com.opticdev.common.graph.AstGraph
 import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.graph.FileNode
 import com.opticdev.core.sourcegear.graph.model.ModelNode
-import com.opticdev.parsers.{AstGraph, ParserBase}
+import com.opticdev.core.sourcegear.imports.FileImportsRegistry
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
+import com.opticdev.parsers.ParserBase
 
 import scala.collection.mutable
 
-case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String, fileNameAnnotationOption: Option[FileNameAnnotation]) {
+case class CacheRecord(graph: AstGraph,
+                       parser: ParserBase,
+                       fileContents: String,
+                       fileNameAnnotationOption: Option[FileNameAnnotation],
+                       fileTokenRegistry: FileTokenRegistry,
+                       fileImportsRegistry: FileImportsRegistry
+                      ) {
   //WARNING: Negating this does not determine equality
   def differentFrom(other: String) : Boolean = {
     other.size != fileContents.size ||
@@ -17,7 +26,7 @@ case class CacheRecord(graph: AstGraph, parser: ParserBase, fileContents: String
 
   def asFileParseResults = {
     import com.opticdev.core.sourcegear.graph.GraphImplicits._
-    FileParseResults(graph, graph.modelNodes.asInstanceOf[Vector[ModelNode]], parser, fileContents, fileNameAnnotationOption)
+    FileParseResults(graph, graph.modelNodes.asInstanceOf[Vector[ModelNode]], parser, fileContents, fileNameAnnotationOption, fileTokenRegistry, fileImportsRegistry)
   }
 }
 
@@ -32,7 +41,6 @@ class ParseCache {
   def cachedFiles: Vector[File] = lastNFiles.toVector
 
   def add(file: File, record: CacheRecord) : ParseCache = {
-
     fileStore --= fileStore.keys.filter(_.pathAsString == file.pathAsString)
     //add new file record to map
     fileStore += file -> record

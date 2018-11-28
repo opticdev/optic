@@ -1,7 +1,5 @@
 package com.opticdev
 import better.files.File
-import com.opticdev.common.SchemaRef
-import com.opticdev.parsers.graph.AstType
 import play.api.libs.json._
 import scala.util.Try
 

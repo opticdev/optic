@@ -3,6 +3,8 @@ package com.opticdev.core.sourcegear
 import better.files.File
 import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
 import com.opticdev.core.sourcegear.graph.FileNode
+import com.opticdev.core.sourcegear.imports.FileImportsRegistry
+import com.opticdev.core.sourcegear.token_value.FileTokenRegistry
 import org.scalatest.{BeforeAndAfterEach, FunSpec}
 import scalax.collection.mutable.Graph
 
@@ -24,7 +26,7 @@ class ParseCacheTest extends FunSpec with BeforeAndAfterEach {
     describe("Cache record equality") {
 
       it("can determine if contents have changed") {
-        assert(CacheRecord(Graph(), null, "testContents", None) differentFrom "otherContents")
+        assert(CacheRecord(Graph(), null, "testContents", None, FileTokenRegistry(), FileImportsRegistry()) differentFrom "otherContents")
       }
 
     }
@@ -32,13 +34,13 @@ class ParseCacheTest extends FunSpec with BeforeAndAfterEach {
     describe("additions") {
 
       it("work when empty or below limit") {
-        parseCache.add(file1, CacheRecord(Graph(), null, "a", None))
+        parseCache.add(file1, CacheRecord(Graph(), null, "a", None, FileTokenRegistry(), FileImportsRegistry()))
         assert(parseCache.cache.contains(file1))
         assert(parseCache.cachedFiles.head == file1)
       }
 
       it("bump file to the top if already in buffer") {
-        val record = CacheRecord(Graph(), null, "otherContents", None)
+        val record = CacheRecord(Graph(), null, "otherContents", None, FileTokenRegistry(), FileImportsRegistry())
 
         parseCache.add(file1, record)
         parseCache.add(File("test-examples/resources/tmp/test_project/2"), record)
@@ -48,15 +50,15 @@ class ParseCacheTest extends FunSpec with BeforeAndAfterEach {
       }
 
       it("does not duplicate file when hash is different, just replaces/bumps") {
-        parseCache.add(File("test-examples/resources/tmp/test_project/2"), CacheRecord(Graph(), null, "a", None))
-        parseCache.add(File("test-examples/resources/tmp/test_project/2"), CacheRecord(Graph(), null, "b", None))
+        parseCache.add(File("test-examples/resources/tmp/test_project/2"), CacheRecord(Graph(), null, "a", None, FileTokenRegistry(), FileImportsRegistry()))
+        parseCache.add(File("test-examples/resources/tmp/test_project/2"), CacheRecord(Graph(), null, "b", None, FileTokenRegistry(), FileImportsRegistry()))
 
         assert(parseCache.cache.size == 1)
         assert(parseCache.cachedFiles.head == File("test-examples/resources/tmp/test_project/2"))
       }
 
       it("will remove oldest cache when exceeds size limit") {
-        val record = CacheRecord(Graph(), null, "otherContents", None)
+        val record = CacheRecord(Graph(), null, "otherContents", None, FileTokenRegistry(), FileImportsRegistry())
         parseCache.add(file1, record)
         parseCache.add(File("test-examples/resources/tmp/test_project/2"), record)
         parseCache.add(File("test-examples/resources/tmp/test_project/3"), record)
@@ -69,13 +71,13 @@ class ParseCacheTest extends FunSpec with BeforeAndAfterEach {
     }
 
     it("can lookup a record by file"){
-      parseCache.add(file1, CacheRecord(Graph(), null, "otherContents", None))
+      parseCache.add(file1, CacheRecord(Graph(), null, "otherContents", None, FileTokenRegistry(), FileImportsRegistry()))
       val cacheOption = parseCache.get(file1)
       assert(cacheOption.isDefined)
     }
 
     it("can preserves filenames through caching"){
-      parseCache.add(file1, CacheRecord(Graph(), null, "otherContents", Some(FileNameAnnotation("TEST"))))
+      parseCache.add(file1, CacheRecord(Graph(), null, "otherContents", Some(FileNameAnnotation("TEST")), FileTokenRegistry(), FileImportsRegistry()))
       val cacheOption = parseCache.get(file1)
       assert(cacheOption.isDefined)
       assert(cacheOption.get.fileNameAnnotationOption.contains(FileNameAnnotation("TEST")))
@@ -88,12 +90,12 @@ class ParseCacheTest extends FunSpec with BeforeAndAfterEach {
       }
 
       it("returns true when file is in cache & contents are the same") {
-        parseCache.add(File("test-examples/resources/tmp/test_project/2"), CacheRecord(Graph(), null, "contents", None))
+        parseCache.add(File("test-examples/resources/tmp/test_project/2"), CacheRecord(Graph(), null, "contents", None, FileTokenRegistry(), FileImportsRegistry()))
         assert(parseCache.isCurrentForFile(File("test-examples/resources/tmp/test_project/2"), "contents"))
       }
 
       it("returns false when file is in cache & contents are the different") {
-        parseCache.add(File("test-examples/resources/tmp/test_project/2"), CacheRecord(Graph(), null, "abc", None))
+        parseCache.add(File("test-examples/resources/tmp/test_project/2"), CacheRecord(Graph(), null, "abc", None, FileTokenRegistry(), FileImportsRegistry()))
         assert(!parseCache.isCurrentForFile(File("test-examples/resources/tmp/test_project/2"), "contents"))
       }
 

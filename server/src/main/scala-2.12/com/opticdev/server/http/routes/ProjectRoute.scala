@@ -29,7 +29,7 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
           val result = File(path).projectFileOption
           if (result.isDefined) {
             val pf = result.get
-            val name = pf.interface.get.name.initialValue.value
+            val name = pf.name.get
             val directory = pf.file.pathAsString
             complete(ProjectInfo(name, directory).asJson)
           } else {
@@ -98,7 +98,7 @@ class ProjectRoute(implicit executionContext: ExecutionContext, projectsManager:
     if (projectOption.isSuccess) {
       projectOption.get.publishProjectGraph
       projectsManager.activeProjects.foreach{
-        case project if project.projectFile.connectedProjects.contains(projectName) => project.fullRefresh
+        case project if project.projectFile.connected_projects.contains(projectName) => project.fullRefresh
       }
       StatusCodes.OK
 

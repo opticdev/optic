@@ -10,8 +10,8 @@ import com.opticdev.sdk.descriptions.helpers.AstLocation
 import com.opticdev.core._
 import com.opticdev.core.sourcegear.gears.helpers.LocationEvaluation
 import com.opticdev.sdk.descriptions.Location
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMStringFinder}
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMStringFinder}
 import play.api.libs.json.JsObject
 
 class LocationEvaluationSpec extends TestBase {
@@ -19,7 +19,7 @@ class LocationEvaluationSpec extends TestBase {
   val snippetBlock = File("test-examples/resources/example_source/LocationPlayground.js").contentAsString
   val snippet = OMSnippet("es7", snippetBlock)
 
-  implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", null)
+  implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(), Map(), Map(), Left(BlankSchema()), JsObject.empty, "es7", null)
 
   val snippetOutput = new SnippetStage(snippet).run
 

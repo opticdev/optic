@@ -3,13 +3,13 @@ package com.opticdev.core.sourcegear.graph
 import better.files.File
 import com.opticdev.common.ObjectRef
 import com.opticdev.core.sourcegear.annotations.FileNameAnnotation
-import com.opticdev.core.sourcegear.graph.edges.{InFile, YieldsModel}
+import com.opticdev.core.sourcegear.graph.edges.{Exports, InFile, YieldsModel}
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.core.sourcegear.graph.objects.ObjectNode
 import com.opticdev.core.sourcegear.project.{OpticProject, ProjectBase}
 import com.opticdev.core.sourcegear.sync.SyncGraph
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.{CommonAstNode, CustomEdge, WithinFile}
+import com.opticdev.common.graph.{AstGraph, CommonAstNode, CustomEdge, WithinFile}
+import com.opticdev.parsers.token_values.External
 import com.opticdev.parsers.utils.Crypto
 import com.opticdev.sdk.descriptions.PackageExportable
 
@@ -30,17 +30,18 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
 
   import GraphImplicits._
 
-  def addFile(astGraph: AstGraph, forFile: File, fileNameAnnotationOption: Option[FileNameAnnotation] = None) = {
+  def addFile(astGraph: AstGraph, forFile: File, exports: Set[External], fileNameAnnotationOption: Option[FileNameAnnotation] = None) = {
     if (forFile.exists) {
-      projectGraph ++= astGraphToProjectGraph(astGraph, forFile, fileNameAnnotationOption)
+      val newGraph = astGraphToProjectGraph(astGraph, forFile, exports, fileNameAnnotationOption)
+      projectGraph ++= newGraph
       checkForUpdatedNamedModelNodes
     }
   }
 
-  def updateFile(astGraph: AstGraph, forFile: File, fileNameAnnotationOption: Option[FileNameAnnotation] = None) = {
+  def updateFile(astGraph: AstGraph, forFile: File, exports: Set[External], fileNameAnnotationOption: Option[FileNameAnnotation] = None) = {
     if (forFile.exists) {
       removeFile(forFile, ignoreExceptions = true)
-      addFile(astGraph, forFile, fileNameAnnotationOption)
+      addFile(astGraph, forFile, exports, fileNameAnnotationOption)
     }
   }
 
@@ -57,9 +58,9 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
 
   def nodeForId(id: String) = projectGraph.nodes.toVector.find(_.value.id == id)
 
-  private def astGraphToProjectGraph(astGraph: AstGraph, forFile: File, fileNameAnnotationOption: Option[FileNameAnnotation]): ProjectGraph = {
+  private def astGraphToProjectGraph(astGraph: AstGraph, forFile: File, exports: Set[External], fileNameAnnotationOption: Option[FileNameAnnotation]): ProjectGraph = {
     val newProjectGraph = Graph[AstProjection, LkDiEdge]()
-    val fileNode = FileNode(forFile.pathAsString, fileNameAnnotationOption)
+    val fileNode = FileNode(forFile.pathAsString, fileNameAnnotationOption)(newProjectGraph)
     astGraph.edges.toVector.foreach(edge => {
       val fromNode = edge._1.value
       val toNode = edge._2.value
@@ -69,6 +70,10 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
       } else if ( fromNode.isAstNode() && toNode.isModel && edge.label.isInstanceOf[YieldsModel]) {
         newProjectGraph add (fileNode ~+#> toNode.asInstanceOf[BaseModelNode]) (InFile(fromNode.asInstanceOf[WithinFile].range))
       }
+
+      //add exports
+      exports.foreach(e => newProjectGraph add(fileNode ~+#> e.model.asInstanceOf[BaseModelNode]) (Exports(e.key)) )
+
     })
     newProjectGraph
   }

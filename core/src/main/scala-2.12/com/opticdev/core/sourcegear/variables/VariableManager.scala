@@ -3,14 +3,14 @@ package com.opticdev.core.sourcegear.variables
 import com.opticdev.core.compiler.SnippetStageOutput
 import com.opticdev.core.sourcegear.gears.parsing.NodeDescription
 import com.opticdev.parsers.{IdentifierNodeDesc, ParserBase}
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.parsers.graph.path.PropertyPathWalker
-import com.opticdev.parsers.rules.Rule
+import com.opticdev.common.graph.{AstType, CommonAstNode}
+import com.opticdev.common.graph.path.PropertyPathWalker
+import com.opticdev.sdk.rules.Rule
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.{PropertyRule, VariableRule}
-import com.opticdev.sdk.opticmarkdown2.OMRange
-import com.opticdev.sdk.opticmarkdown2.compilerInputs.variables.OMVariable
-import com.opticdev.sdk.opticmarkdown2.lens.OMLensNodeFinder
+import com.opticdev.sdk.skills_sdk.OMRange
+import com.opticdev.sdk.skills_sdk.compilerInputs.variables.OMVariable
+import com.opticdev.sdk.skills_sdk.lens.OMLensNodeFinder
 import play.api.libs.json.{JsObject, JsString}
 
 import scala.collection.immutable

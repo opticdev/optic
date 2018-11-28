@@ -8,14 +8,14 @@ import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping}
 import com.opticdev.core.sourcegear.gears.rendering.RenderGear
 import com.opticdev.core.sourcegear.gears.parsing.ParseGear
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.opm.packages.OpticMDPackage
-import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.parsers.rules.Rule
+import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage}
+import com.opticdev.parsers.ParserBase
+import com.opticdev.common.graph.{AstGraph, AstType, CommonAstNode}
+import com.opticdev.sdk.rules.Rule
 import com.opticdev.sdk.descriptions._
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLens, OMLensCodeComponent, OMLensComponent}
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLens, OMLensCodeComponent, OMLensComponent}
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.Try
 import scalax.collection.edge.LkDiEdge
@@ -78,7 +78,7 @@ case class Failure(lens: OMLens, errorAccumulator: ErrorAccumulator, debug: Opti
   override def printErrors = errorAccumulator.printAll
 }
 
-case class CompilerOutput(opticPackage: OpticMDPackage, lensOutputs: Set[LensCompilerOutput], schemas: Set[OMSchema]) extends Output {
+case class CompilerOutput(opticPackage: OpticPackage, lensOutputs: Set[LensCompilerOutput], schemas: Set[OMSchema]) extends Output {
   lazy val isSuccess = lensOutputs.forall(_.isSuccess)
   lazy val isFailure = !isSuccess
 
@@ -94,4 +94,4 @@ case class CompilerOutput(opticPackage: OpticMDPackage, lensOutputs: Set[LensCom
 }
 
 //Other Errors
-case class FinderError(codeComponent: OMComponentWithPropertyPath[OMLensCodeComponent], error: String)
+case class FinderError(codeComponent: OMComponentWithPropertyPath[OMLensComponent], error: String)

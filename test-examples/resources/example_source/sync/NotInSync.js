@@ -1,5 +1,5 @@
-source('first') //name: Hello Model
-source('second') //name: Good Morning
+source('first') //optic.name = "Hello Model"
+source('second') //optic.name = "Good Morning"
 
-target('hello') //source: Hello Model -> optic:synctest/passthrough-transform
-target('good morning') //source: Good Morning -> optic:synctest/passthrough-transform
+target('hello') //optic.source = "Hello Model" -> optic:synctest/passthrough-transform
+target('good morning') //optic.source = "Good Morning" -> optic:synctest/passthrough-transform

@@ -4,7 +4,7 @@ import com.opticdev.arrow.state.NodeKeyStore
 import com.opticdev.core.sourcegear.graph.model._
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.marvin.common.ast.NewAstNode
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 import com.opticdev.sdk.descriptions.transformation.mutate._
 import com.opticdev.core.sourcegear.mutate.MutationImplicits._
 import com.opticdev.core.sourcegear.variables.VariableChanges
@@ -19,7 +19,7 @@ import com.opticdev.core.sourcegear.context.FlatContextBase
 import scala.util.Try
 import com.opticdev.core.utils.StringUtils._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
-import com.opticdev.parsers.{AstGraph, SourceParserManager}
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import play.api.libs.json.JsObject
 
@@ -127,6 +127,9 @@ object Mutate {
                 parents.exists(parent=> parent.hasChild(n.value.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph).root)) =>
         n.value.asInstanceOf[ModelNode].resolveInGraph[CommonAstNode](astGraph)
     }
+
+    import com.opticdev.core.sourcegear.graph.GraphImplicits._
+    val m = astGraph.modelNodes
 
     require(modelNode.isDefined, s"Tag ${tag} not found")
     val modelId = nodeKeyStore.leaseId(sourceGearContext.file, modelNode.get)

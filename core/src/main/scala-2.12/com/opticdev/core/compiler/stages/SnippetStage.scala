@@ -8,11 +8,11 @@ import com.opticdev.core.compiler.helpers.FinderEvaluator.RangeFinderEvaluate
 import com.opticdev.core.sourcegear.containers.{ContainerHook, ContainerMapping, ContainerNodeMapping}
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.parsers.graph.path.PathFinder
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
-import com.opticdev.parsers.{AstGraph, ParserBase}
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
+import com.opticdev.common.graph.path.PathFinder
+import com.opticdev.common.graph.{AstGraph, AstType, CommonAstNode}
+import com.opticdev.parsers.{ParserBase}
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.OMLens
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 

@@ -1,7 +1,7 @@
 package com.opticdev.core.sourcegear
 
 import better.files.File
-import com.opticdev.common.{PackageRef, SchemaRef}
+import com.opticdev.common.{PackageRef, ParserRef, SchemaRef}
 import com.opticdev.common.utils.SemverHelper
 import com.opticdev.core.sourcegear.annotations.AnnotationParser
 import com.opticdev.core.sourcegear.context.FlatContext
@@ -13,11 +13,11 @@ import com.opticdev.marvin.common.ast.NewAstNode
 import com.opticdev.opm.context.{Tree, TreeContext}
 import com.opticdev.parsers
 import com.opticdev.parsers.SourceParserManager.parserByLanguageName
-import com.opticdev.parsers.{ParserBase, ParserRef, SourceParserManager}
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
 import com.opticdev.sdk.descriptions.transformation.{Transformation, TransformationRef}
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.{Failure, Success, Try}
 import scalax.collection.edge.LkDiEdge
@@ -44,11 +44,11 @@ abstract class SourceGear {
   def isEmpty = parsers.isEmpty && lensSet.listLenses.isEmpty && schemas.isEmpty && schemas.isEmpty
 
   def findSchema(schemaRef: SchemaRef) : Option[OMSchema] = {
-    val availible = schemas.filter(s=>
+    val available = schemas.filter(s=>
       s.schemaRef.packageRef.map(_.packageId) == schemaRef.packageRef.map(_.packageId)
       && s.schemaRef.id == schemaRef.id
     )
-    val schemaVersion = SemverHelper.findVersion(availible, (s: OMSchema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))
+    val schemaVersion = SemverHelper.findVersion(available, (s: OMSchema) => s.schemaRef.packageRef.get, schemaRef.packageRef.map(_.version).getOrElse("latest"))
     val result = schemaVersion.map(_._2)
 
     if (result.isDefined) {
@@ -101,9 +101,10 @@ abstract class SourceGear {
       val parsed = parsedOption.get
       val astGraph = parsed.graph
 
-      val fileNameAnnotation = AnnotationParser.extractFromFileContents(fileContents, parsed.parserBase.inlineCommentPrefix).headOption
-      
-      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, parserByLanguageName(languageName).get, fileContents, this, file)
+//      val fileNameAnnotation = AnnotationParser.extractFromFileContents(fileContents, parsed.parserBase.inlineCommentPrefix).headOption
+      val fileNameAnnotation = None
+
+      implicit val sourceGearContext = SGContext(lensSet.fileAccumulator, astGraph, parserByLanguageName(languageName).get, fileContents, this, file, null, null, project)
       lensSet.parseFromGraph(fileContents, astGraph, sourceGearContext, project, fileNameAnnotation)
     } else {
       throw parsedOption.failed.get

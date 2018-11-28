@@ -4,6 +4,7 @@ import com.opticdev.common.ObjectRef
 import com.opticdev.common.SchemaRef
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import com.opticdev.common.Regexes.packages
+import com.opticdev.core.sourcegear.annotations.dsl.AssignmentNode
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
 import scala.util.Try
@@ -26,14 +27,18 @@ package object annotations {
   }
   case class NameAnnotation(name: String, schemaRef: SchemaRef) extends ObjectAnnotation {
     def objectRef = ObjectRef(name)
-    def asString = s"name: $name"
+    def asString = s"""optic.name = "$name""""
   }
-  case class SourceAnnotation(sourceName: String, transformationRef: TransformationRef, askObject: Option[JsObject]) extends ObjectAnnotation {
-    def asString = s"source: $sourceName -> ${transformationRef.internalFull} ${askObject.map(_.toString()).getOrElse("")}"
+  case class SourceAnnotation(projectName: Option[String], sourceName: String, transformationRef: TransformationRef, askObject: Option[JsObject]) extends ObjectAnnotation {
+    def asString = s"""optic.source = ${projectName.map("\""+_+"\"").getOrElse("")} "$sourceName" -> ${transformationRef.internalFull} ${askObject.map(_.toString()).getOrElse("")}"""
     def asJson: JsValue = JsString(s"$sourceName")
   }
   case class TagAnnotation(tag: String, schemaRef: SchemaRef) extends ObjectAnnotation {
-    def asString = s"tag: $tag"
+    def asString = s"""optic.tag = "$tag""""
+  }
+
+  case class OverrideAnnotation(assignments: Vector[AssignmentNode]) extends ObjectAnnotation {
+    override def asString: String = ""
   }
 
 

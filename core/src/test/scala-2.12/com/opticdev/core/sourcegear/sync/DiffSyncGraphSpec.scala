@@ -33,8 +33,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     assert(!diff.containsErrors)
     assert(diff.changes.size == 2)
-    checkReplace(diff.changes(0), """{"value":"world"}""", """{"value":"hello"}""")
-    checkReplace(diff.changes(1), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(0), """{"value":"vietnam"}""", """{"value":"good morning"}""")
+    checkReplace(diff.changes(1), """{"value":"world"}""", """{"value":"hello"}""")
   }
 
   it("can calculate a valid diff when no changes") {
@@ -54,10 +54,11 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     assert(!diff.containsErrors)
-    assert(diff.changes.size == 3)
+    assert(diff.changes.size == 4)
     checkReplace(diff.changes(0), """{"value":"b"}""", """{"value":"a"}""")
     checkReplace(diff.changes(1), """{"value":"c"}""", """{"value":"a"}""")
     checkReplace(diff.changes(2), """{"value":"d"}""", """{"value":"a"}""")
+    checkReplace(diff.changes(3), """{"value":"e"}""", """{"value":"a"}""")
   }
 
   it("can calculate a valid diff for branched dependency tree") {
@@ -79,13 +80,13 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val resultsA = {
       val file = File("test-examples/resources/example_source/sync/multi_file/A.js")
       val astResults = syncTestSourceGear.parseFile(file).get
-      pgw.addFile(astResults.astGraph, file)
+      pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
     }
 
     val resultsB = {
       val file = File("test-examples/resources/example_source/sync/multi_file/B.js")
       val astResults = syncTestSourceGear.parseFile(file).get
-      pgw.addFile(astResults.astGraph, file)
+      pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
     }
 
     project.stageProjectGraph(pgw.projectGraph)
@@ -104,7 +105,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     val pgw = ProjectGraphWrapper.empty()
     val file = File("test-examples/resources/example_source/sync/Tagged.js")
     val astResults = sourceGear.parseFile(file).get
-    pgw.addFile(astResults.astGraph, file)
+    pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
 
     project.stageProjectGraph(pgw.projectGraph)
 
@@ -114,21 +115,24 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     assert(diff.noErrors)
     assert(diff.filePatches.size == 1)
-    assert(diff.filePatches.head.newFileContents === """const user = mongoose.model('peoples', new mongoose.Schema({ //name: User Model
+    assert(diff.filePatches.head.newFileContents === """const user = mongoose.model('peoples', new mongoose.Schema({ //optic.name = "User Model"
                                                        |    'firstName': 'string',
                                                        |    'lastName': 'string',
                                                        |    'isAdmin': 'boolean',
                                                        |    'newField': 'string',
                                                        |}))
                                                        |
-                                                       |app.post('/peoples', function (req, res) { //source: User Model -> optic:mongoose@0.1.0/createroutefromschema {"queryProvider": "optic:mongoose/insert-record"}
+                                                       |app.post('/peoples', function (req, res) { //optic.source = "User Model" -> optic:mongoose@0.1.0/createroutefromschema {"queryProvider": "optic:mongoose/insert-record"}
                                                        |
                                                        |  otherCode.weWantToKeep()
                                                        |
-                                                       |  new Model({ firstName: req.body.firstName, //tag: query
-                                                       |  lastName: req.body.lastName,
-                                                       |  isAdmin: req.body.isAdmin,
-                                                       |  newField: req.body.newField }).save((err, item) => {
+                                                       |  /*
+                                                       |    optic.tag = "query"
+                                                       |  */
+                                                       |  new Model({ firstName: req.body.firstName,
+                                                       |	lastName: req.body.lastName,
+                                                       |	isAdmin: req.body.isAdmin,
+                                                       |	newField: req.body.newField }).save((err, item) => {
                                                        |    if (!err) {
                                                        |        res.send(200, item)
                                                        |    } else {
@@ -151,7 +155,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
 
     assert(diff.noErrors)
     assert(diff.filePatches.size == 1)
-    assert(diff.filePatches.head.newFileContents === """function greeting() { //name: TestMulti
+    assert(diff.filePatches.head.newFileContents === """function greeting() { //optic.name = "TestMulti"
                                                        | return "Whats UP"
                                                        |}
                                                        |
@@ -164,7 +168,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
                                                        |
                                                        |
                                                        |
-                                                       |function greeting() { //source: TestMulti -> optic:synctest/passthrough-transform
+                                                       |function greeting() { //optic.source = "TestMulti" -> optic:synctest/passthrough-transform
                                                        | return "Whats UP"
                                                        |}
                                                        |
@@ -241,8 +245,8 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
       assert(allTriggers.size == 2)
       assert(allTriggers ==
         Vector(
-          Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello")))),
-          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning"))))
+          Trigger("Good Morning", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("good morning")))),
+          Trigger("Hello Model", SchemaRef(Some(PackageRef("optic:synctest", "0.1.0")), "source-schema"), JsObject(Seq("value" -> JsString("hello"))))
         ))
     }
 
@@ -261,7 +265,7 @@ class DiffSyncGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") with SyncFi
     implicit val project = f.project
 
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
-    assert(diff.asJson("atom") == Json.parse("""{"projectName":"test","editorSlug":"atom","warnings":[],"errors":[],"changes":[{"file":"/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/example_source/sync/TreeSync.js","originalFileContents":"source('a') //name: a\nsource('b') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('c') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('d') //name: d, source: c -> optic:synctest/passthrough-transform","newFileContents":"source('a') //name: a\nsource('a') //name: b, source: a -> optic:synctest/passthrough-transform\nsource('a') //name: c, source: b -> optic:synctest/passthrough-transform\ntarget('a') //name: d, source: c -> optic:synctest/passthrough-transform","relativePath":"/resources/example_source/sync/TreeSync.js"}],"triggers":[{"name":"a","schemaRef":"optic:synctest@0.1.0/source-schema","newValue":{"value":"a"},"changes":["3 instances of optic:synctest/source-schema"]}]}"""))
+    assert(diff.asJson("atom") == Json.parse("""{"projectName":"test","editorSlug":"atom","warnings":[],"errors":[],"changes":[{"file":"/Users/aidancunniffe/Developer/knack/optic-core/test-examples/resources/example_source/sync/TreeSync.js","originalFileContents":"source('a') //optic.name = \"a\"\n\n/*\noptic.name = \"b\"\noptic.source = \"a\" -> optic:synctest/passthrough-transform\n*/\nsource('b')\n\n/*\noptic.name = \"c\"\noptic.source = \"b\" -> optic:synctest/passthrough-transform\n*/\nsource('c')\n\n/*\noptic.name = \"d\"\noptic.source = \"c\" -> optic:synctest/passthrough-transform\n*/\ntarget('d')\n\n/*\noptic.name = \"e\"\noptic.source = \"d\" -> optic:synctest/passthrough-transform\n*/\ntarget('e')","newFileContents":"source('a') //optic.name = \"a\"\n\n/*\noptic.name = \"b\"\noptic.source = \"a\" -> optic:synctest/passthrough-transform\n*/\nsource('a')\n\n/*\noptic.name = \"c\"\noptic.source = \"b\" -> optic:synctest/passthrough-transform\n*/\nsource('a')\n\n/*\noptic.name = \"d\"\noptic.source = \"c\" -> optic:synctest/passthrough-transform\n*/\ntarget('a')\n\n/*\noptic.name = \"e\"\noptic.source = \"d\" -> optic:synctest/passthrough-transform\n*/\ntarget('a')","relativePath":"/resources/example_source/sync/TreeSync.js"}],"triggers":[{"name":"a","schemaRef":"optic:synctest@0.1.0/source-schema","newValue":{"value":"a"},"changes":["4 instances of optic:synctest/source-schema"]}]}"""))
   }
 
 }

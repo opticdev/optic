@@ -6,10 +6,8 @@ import com.opticdev.common.SchemaRef
 package object core {
     implicit val actorSystem = ActorSystem("opticActors")
 
-    val BlankSchema = SchemaRef(Some(PackageRef("none:none", "0.1.0")), "BLANK")
+    def BlankSchema(id: String = "BLANK") = SchemaRef(Some(PackageRef("none:none", "0.1.0")), id)
 
-//    private class MarvinRef extends BaseAstNode {
-//
-//    }
+    val namedObjectRegex = "[a-zA-Z][a-zA-Z0-9-_ ]*".r
 
 }

@@ -19,10 +19,10 @@ import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, MultiModelNode
 import com.opticdev.core.sourcegear.mutate.MutationSteps.{collectFieldChanges, combineChanges, handleChanges}
 import com.opticdev.core.sourcegear.mutate.MutationImplicits._
 import com.opticdev.core.utils.StringUtils
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.sdk.descriptions.transformation.generate.{GenerateResult, RenderOptions, StagedNode}
 import com.opticdev.sdk.descriptions.transformation.mutate.MutateResult
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 object Evaluation {
 
   def forChange(opticChange: OpticChange, sourcegear: SourceGear, projectOption: Option[ProjectBase] = None)(implicit filesStateMonitor: FileStateMonitor, nodeKeyStore: NodeKeyStore, clipboardBuffer: ClipboardBuffer): ChangeResult = opticChange match {
@@ -89,7 +89,7 @@ object Evaluation {
           val objName = rt.inputModelName
           AnnotationRenderer.renderToFirstLine(
             generatedNode._3.renderer.parser.inlineCommentPrefix,
-            Vector(SourceAnnotation(objName, transformation.transformationRef, rt.answers)),
+            Vector(SourceAnnotation(None, objName, transformation.transformationRef, rt.answers)),
             generatedNode._2)
         }
 

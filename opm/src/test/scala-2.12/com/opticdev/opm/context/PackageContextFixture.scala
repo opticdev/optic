@@ -1,7 +1,7 @@
 package com.opticdev.opm.context
 
 import com.opticdev.sdk.descriptions.PackageExportable
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 case class PackageContextFixture(map: Map[String, PackageExportable]) extends Context {
 

@@ -1,1 +1,1 @@
-source('hello') //source: TestA -> optic:synctest/passthrough-transform
+source('hello') //optic.source = "TestA" -> optic:synctest/passthrough-transform

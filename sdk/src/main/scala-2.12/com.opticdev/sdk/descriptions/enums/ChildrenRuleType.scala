@@ -1,6 +1,6 @@
 package com.opticdev.sdk.descriptions.enums
 
-import com.opticdev.parsers.rules._
+import com.opticdev.sdk.rules._
 import play.api.libs.json.{JsError, _}
 
 import scala.util.Try

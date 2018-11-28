@@ -27,8 +27,8 @@ class KnowledgeGraphImplicitsSpec extends TestBase with TestPackageProviders {
 
   it("can find gears for schemas") {
     val f = fixture
-    val gears = f.simpleKnowledgeGraph.gearsForSchema(SchemaRef(Some(PackageRef("optic:rest", "0.1.0")), "parameter"))
-    assert(gears.size == 1)
+    val gears = f.simpleKnowledgeGraph.gearsForSchema(SchemaRef(Some(PackageRef("apiatlas:flat-express-js", "0.0.1")), "endpoint"))
+    assert(gears.size == 2)
   }
 
   it("can find direct transformations for a schema") {

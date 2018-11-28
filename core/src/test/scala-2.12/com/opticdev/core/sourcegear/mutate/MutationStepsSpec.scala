@@ -11,10 +11,10 @@ import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.mutate.MutationSteps._
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.generate.RenderOptions
-import com.opticdev.sdk.opticmarkdown2.lens.{Literal, OMComponentWithPropertyPath, OMLensCodeComponent}
+import com.opticdev.sdk.skills_sdk.lens.{Literal, OMComponentWithPropertyPath, OMLensCodeComponent}
 import play.api.libs.json.{JsArray, JsObject, JsString}
 import scalax.collection.mutable.Graph
 
@@ -28,7 +28,6 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), sourceGear) {
       pgW = new ProjectGraphWrapper(Graph())(project = this)
       override def projectGraph: ProjectGraph = {
-        println(pgW.projectGraph)
         pgW.projectGraph
       }
       override def projectSourcegear: SourceGear = sourceGear
@@ -38,7 +37,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
     lazy val testFilePath = getCurrentDirectory + "/test-examples/resources/example_source/ImportSource.js"
 
     lazy val importResults = sourceGear.parseFile(File(testFilePath))
-    pgW.addFile(importResults.get.astGraph, File(testFilePath))
+    pgW.addFile(importResults.get.astGraph, File(testFilePath), importResults.get.fileTokenRegistry.exports)
 
     lazy val helloWorldImport = importResults.get.modelNodes.find(i=> (i.value \ "pathTo").get == JsString("world")).get.asInstanceOf[ModelNode]
     lazy val resolved: LinkedModelNode[CommonAstNode] = helloWorldImport.resolve[CommonAstNode]
@@ -114,7 +113,7 @@ class MutationStepsSpec extends AkkaTestFixture("MutationStepsTest") with GearUt
       val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress_non_distinct_params@0.1.0.json")
       implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)
       val result = sourceGear.parseFile(file)
-      project.projectGraphWrapper.addFile(result.get.astGraph, file)
+      project.projectGraphWrapper.addFile(result.get.astGraph, file, result.get.fileTokenRegistry.exports)
 
       implicit val sourceGearContext = ParseSupervisorSyncAccess.getContext(file)(project.actorCluster, sourceGear, project).get
       val route = result.get.modelNodes.find(_.lensRef.id == "route").get.asInstanceOf[ModelNode]

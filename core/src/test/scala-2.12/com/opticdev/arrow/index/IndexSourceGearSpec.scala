@@ -7,7 +7,7 @@ import com.opticdev.core.Fixture.TestBase
 import com.opticdev.core.sourcegear.{LensSet, SGConstructor, SourceGear}
 import com.opticdev.core.sourcegear.project.config.ProjectFile
 import com.opticdev.opm.TestPackageProviders
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.JsObject
 
 import scala.concurrent.duration._
@@ -17,8 +17,8 @@ class IndexSourceGearSpec extends TestBase with TestPackageProviders {
 
   it("can map schema and gear connections") {
     val knowledgeGraph = ExampleSourcegears.exampleProjectSG.knowledgeGraph
-    assert(knowledgeGraph.nodes.size == 6)
-    assert(knowledgeGraph.size == 9)
+    assert(knowledgeGraph.nodes.size == 16)
+    assert(knowledgeGraph.size == 26)
   }
 
   val schemaModel = OMSchema(SchemaRef(Some(PackageRef("optic:test")), "model"), JsObject.empty)

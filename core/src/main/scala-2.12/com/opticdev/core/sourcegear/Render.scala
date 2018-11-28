@@ -7,7 +7,7 @@ import com.opticdev.core.sourcegear.builtins.OpticLenses
 import com.opticdev.core.sourcegear.context.FlatContextBase
 import com.opticdev.core.sourcegear.gears.helpers.{FlattenModelFields, ModelField}
 import com.opticdev.marvin.common.ast.NewAstNode
-import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.common.graph.path.PropertyPathWalker
 import com.opticdev.parsers.sourcegear.basic.ObjectLiteralValueFormat
 import com.opticdev.sdk.VariableMapping
 import com.opticdev.sdk.descriptions.transformation.generate.{RenderOptions, StagedNode}
@@ -17,8 +17,8 @@ import play.api.libs.json._
 import scala.util.{Failure, Success, Try}
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.marvin.common.helpers.LineOperations
-import com.opticdev.sdk.opticmarkdown2.LensRef
-import com.opticdev.sdk.opticmarkdown2.lens.Self
+import com.opticdev.sdk.skills_sdk.LensRef
+import com.opticdev.sdk.skills_sdk.lens.Self
 object Render {
 
   def fromStagedNode(stagedNode: StagedNode, parentVariableMapping: VariableMapping = Map.empty)(implicit sourceGear: SourceGear, context: FlatContextBase) : Try[(NewAstNode, String, SGExportableLens)] = Try {

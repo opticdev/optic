@@ -10,16 +10,16 @@ import com.opticdev.core.sourcegear.containers.{ContainerMapping, SubContainerMa
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits
 import com.opticdev.core.sourcegear.gears.parsing.{AdditionalParserInformation, ParseAsModel}
 import com.opticdev.core.sourcegear.variables.VariableManager
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.parsers.graph.path.FlatWalkablePath
+import com.opticdev.common.graph.CommonAstNode
+import com.opticdev.common.graph.path.FlatWalkablePath
+import com.opticdev.core.sourcegear.project.config.options.DefaultSettings
 import com.opticdev.sdk.descriptions.RuleWithFinder
-import com.opticdev.sdk.opticmarkdown2.lens.{OMComponentWithPropertyPath, OMLens, OMLensCodeComponent, OMLensComponent}
+import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLens, OMLensCodeComponent, OMLensComponent}
 import play.api.libs.json.JsObject
 
 import scala.util.Try
 
-class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput)(implicit val lens: OMLens) extends CompilerStage[MultiNodeLensOutput] {
+class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput, schemaDefaultsOption: Option[DefaultSettings] = None)(implicit val lens: OMLens) extends CompilerStage[MultiNodeLensOutput] {
   implicit val snippetStageOutput = snippetStage
 
   override def run: MultiNodeLensOutput = {
@@ -75,7 +75,7 @@ class MultiNodeParserFactoryStage(snippetStage: SnippetStageOutput)(implicit val
 
             val finderStage = new FinderStage(snippet)(childLens, errorAccumulator, variableManager, subcontainersManager).run
 
-            val parser = new ParserFactoryStage(snippet, finderStage, internal = true)(childLens, variableManager, subcontainersManager).run
+            val parser = new ParserFactoryStage(snippet, finderStage, schemaDefaultsOption, internal = true)(childLens, variableManager, subcontainersManager).run
             val renderer = new RenderFactoryStage(snippet, parser.parseGear)(childLens).run
 
             CompiledLens(

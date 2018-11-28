@@ -40,6 +40,7 @@ class SocketRoute(implicit executionContext: ExecutionContext, projectsManager: 
           val couldLoadProject = projectsManager.lookupProject(File(projectDirectory))
 
           if (couldLoadProject.isSuccess) {
+            couldLoadProject.get.projectFile.reload //force reread each call
             handleWebSocketMessages(AgentConnection.websocketChatFlow(AgentConnection.findOrCreate(projectDirectory, AgentSocketRouteOptions())))
           } else {
             complete(StatusCodes.NotFound)

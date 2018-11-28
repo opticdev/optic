@@ -20,7 +20,7 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     implicit val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/tmp/test_project/"), syncTestSourceGear)
     val results = syncTestSourceGear.parseFile(file).get
     val updatedGraphResults = {
-      project.projectGraphWrapper.addFile(results.astGraph, file)
+      project.projectGraphWrapper.addFile(results.astGraph, file, results.fileTokenRegistry.exports)
       SyncGraph.getSyncGraph(snapshot)
     }
 
@@ -35,14 +35,16 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     val diff = DiffSyncGraph.calculateDiff(f.snapshot)
     val filePatches = diff.filePatches
 
-    assert(filePatches.head.newFileContents === """source('hello') //name: Hello Model
-                                                  |source('good morning') //name: Good Morning
-                                                  |source('welcome to') //name: Welcome To
-                                                  |source('welcome to') //name: Welcome To
+    println(filePatches.head.newFileContents)
+
+    assert(filePatches.head.newFileContents === """source('hello') //optic.name = "Hello Model"
+                                                  |source('good morning') //optic.name = "Good Morning"
+                                                  |source('welcome to') //optic.name = "Welcome To"
+                                                  |source('welcome to') //optic.name = "Welcome To"
                                                   |
-                                                  |target('hello') //source: Hello Model -> optic:synctest/passthrough-transform
-                                                  |target('good morning') //source: Good Morning -> optic:synctest/passthrough-transform
-                                                  |target('not_real') //source: Not Real -> optic:synctest/passthrough-transform""".stripMargin)
+                                                  |target('hello') //optic.source = "Hello Model" -> optic:synctest/passthrough-transform
+                                                  |target('good morning') //optic.source = "Good Morning" -> optic:synctest/passthrough-transform
+                                                  |target('not_real') //optic.source = "Not Real" -> optic:synctest/passthrough-transform""".stripMargin)
 
   }
 
@@ -52,13 +54,13 @@ class SyncPatchSpec extends AkkaTestFixture("SyncPatchSpec") with GearUtils {
     val resultsA = {
       val file = File("test-examples/resources/example_source/sync/multi_file/A.js")
       val astResults = syncTestSourceGear.parseFile(file).get
-      pgw.addFile(astResults.astGraph, file)
+      pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
     }
 
     val resultsB = {
       val file = File("test-examples/resources/example_source/sync/multi_file/B.js")
       val astResults = syncTestSourceGear.parseFile(file).get
-      pgw.addFile(astResults.astGraph, file)
+      pgw.addFile(astResults.astGraph, file, astResults.fileTokenRegistry.exports)
     }
 
     project.stageProjectGraph(pgw.projectGraph)

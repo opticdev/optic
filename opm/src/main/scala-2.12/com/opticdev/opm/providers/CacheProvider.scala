@@ -1,10 +1,11 @@
 package com.opticdev.opm.providers
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, ParserRef}
 import com.opticdev.opm
 import com.opticdev.opm.BatchPackageResult
 import com.opticdev.opm.packages.OpticPackage
 import com.opticdev.opm.storage.PackageStorage
-import com.opticdev.parsers.{ParserBase, ParserRef}
+import com.opticdev.parsers.ParserBase
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}

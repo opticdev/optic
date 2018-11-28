@@ -47,11 +47,11 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     if (newPf.interface.isSuccess) {
       projectStatusInstance.configStatus = ValidConfig
     } else {
-      projectStatusInstance.configStatus = InvalidConfig(newPf.interface.failed.get.getMessage)
+      projectStatusInstance.configStatus = InvalidConfig(newPf.interface.errors.mkString("\n"))
     }
   }
 
-  val projectFile = new ProjectFile(baseDirectory / "optic.yml", createIfDoesNotExist = true, onChanged = projectFileChanged)
+  val projectFile = new ProjectFile(baseDirectory / "optic.yml", onChanged = projectFileChanged)
 
   def projectSourcegear : SourceGear
 
@@ -99,7 +99,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
       implicit val sourceGear = projectSourcegear
       projectStatusInstance.touch
       filesStateMonitor.markUpdated(file)
-      if (file.isSameFileAs(projectFile.file)) {
+      if (projectFile.fileUpdateTriggersReload(file)) {
         projectFile.reload
       } else {
         if (shouldWatchFile(file)) projectActor ! FileUpdated(file, this)
@@ -144,7 +144,7 @@ abstract class OpticProject(val name: String, val baseDirectory: File)(implicit 
     if (projectSourcegear.isEmpty) return false
     ShouldWatch.file(file,
       projectSourcegear.validExtensions,
-      projectFile.interface.get.exclude.value.map(i => File(baseDirectory.pathAsString +"/"+ i.value)) ++ projectSourcegear.excludedPaths.map(i => File(i)))
+      projectFile.interface.primary.exclude.getOrElse(List()).map(i => File(baseDirectory.pathAsString +"/"+ i)) ++ projectSourcegear.excludedPaths.map(i => File(i)))
   }
 
   def filesToWatch : Set[File] = baseDirectory.listRecursively.toVector.filter(shouldWatchFile).toSet

@@ -1,11 +1,11 @@
 package com.opticdev.opm
 
 import better.files.File
-import com.opticdev.common.PackageRef
+import com.opticdev.common.{PackageRef, ParserRef}
 import com.opticdev.opm.packages.{OpticMDPackage, OpticPackage, StagedPackage}
-import com.opticdev.opm.providers.{Provider}
-import com.opticdev.opm.storage.ParserStorage
-import com.opticdev.parsers.{ParserRef, SourceParserManager}
+import com.opticdev.opm.providers.Provider
+import com.opticdev.opm.storage.{PackageStorage, ParserStorage}
+import com.opticdev.parsers.SourceParserManager
 import com.vdurmont.semver4j.Semver
 import com.vdurmont.semver4j.Semver.SemverType
 import net.jcazevedo.moultingyaml.YamlString
@@ -71,10 +71,16 @@ class TestProvider extends Provider {
     "test-examples/resources/example_packages/optic/express/0.4.1").contentAsString)).get
 
 
+  val apiatlas = OpticPackage.fromJson(Json.parse(File(
+    "test-examples/resources/example_packages/express/apiatlas:flat-express-js@0.0.1.json").contentAsString)).get
 
-  val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticMongoose, opticExpress, opticRest4, opticMongoose4, opticExpress4)
+  val allPackages = Set(a, b, b1, c, c1, d, e, opticImport, opticRest, opticMongoose, opticExpress, opticRest4, opticMongoose4, opticExpress4, apiatlas)
+
 
   override def resolvePackages(packageRefs: PackageRef*): Future[BatchPackageResult] = Future {
+
+    allPackages.foreach(PackageStorage.writeToStorage)
+
     val foundPackages = allPackages.filter(i=> packageRefs.exists(_.packageId == i.packageId))
 
     val foundVersions = packageRefs.map(i=> {

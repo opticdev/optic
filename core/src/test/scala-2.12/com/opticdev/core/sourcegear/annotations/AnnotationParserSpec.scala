@@ -2,8 +2,8 @@ package com.opticdev.core.sourcegear.annotations
 
 import com.opticdev.common.PackageRef
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.parsers.{ParserRef, SourceParserManager}
+import com.opticdev.common.graph.CommonAstNode
+import com.opticdev.parsers.SourceParserManager
 import com.opticdev.common.SchemaRef
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import org.scalatest.FunSpec
@@ -21,97 +21,61 @@ class AnnotationParserSpec extends TestBase {
     it("returns the last comment when found") {
       assert(AnnotationParser.findAnnotationComment("//", "hello.code('//hello') //realone").contains("//realone"))
     }
-  }
 
-  describe("extract annotation values") {
+    it("can find all inline comments in multiple lines") {
 
-    it("works for single key") {
-      val map = AnnotationParser.extractRawAnnotationsFromLine("name: Test Name")
-      assert(map == Map("name" -> StringValue("Test Name")))
-    }
-
-    it("works for single key with special chars") {
-      val map = AnnotationParser.extractRawAnnotationsFromLine("name: POST /test-route/:id")
-      assert(map == Map("name" -> StringValue("POST /test-route/:id")))
-    }
-
-    it("last assignment wins") {
-      val map = AnnotationParser.extractRawAnnotationsFromLine("name: Test Name, name: second")
-      assert(map == Map("name" -> StringValue("second")))
-    }
-
-    it("invalid annotation returns empty map") {
-      val map = AnnotationParser.extractRawAnnotationsFromLine("NA  ME: Test Name, source: Other")
-      assert(map.isEmpty)
-    }
-
-    it("can extract expressions") {
-      val map = AnnotationParser.extractRawAnnotationsFromLine("source: TEST IDEA -> optic:test/transform")
-      assert(map == Map("source" -> ExpressionValue("TEST IDEA", TransformationRef(Some(PackageRef("optic:test")), "transform"), None)))
-    }
-
-  }
+      val a =
+        """"
+          |
+          | codeThing() //optic.name = "HELLO"
+          |
+          | otherThing() //optic.name = "GOODBYE"
+          |
+          |
+          |"""".stripMargin
 
 
-  describe("extracting from model") {
+      val results = AnnotationParser.inlineAnnotationComments("//", a)
 
-    val testSchema = SchemaRef(Some(PackageRef("test:package")), "test")
-
-    it("will extract name annotations on the first line of a model") {
-      val a = AnnotationParser.extract("test.code('thing') //name: Model", testSchema, "//")
-      assert(a.size == 1)
-      assert(a.head == NameAnnotation("Model", testSchema))
-    }
-
-    it("will extract source from a model") {
-      val a = AnnotationParser.extract("test.code('thing') //source: User Model -> optic:mongoose@0.1.0/createroutefromschema {\"queryProvider\": \"optic:mongoose/insert-record\"}", testSchema, "//")
-      assert(a.size == 1)
-      assert(a.head == SourceAnnotation("User Model", TransformationRef(Some(PackageRef("optic:mongoose", "0.1.0")), "createroutefromschema"), Some(JsObject(Seq("queryProvider" -> JsString("optic:mongoose/insert-record"))))))
-    }
-
-
-    it("will extract tags from a model") {
-      val a = AnnotationParser.extract("test.code('thing') //tag: query", testSchema, "//")
-      assert(a.size == 1)
-      assert(a.head == TagAnnotation("query", testSchema))
-    }
-
-  }
-
-  describe("choosing contents to check") {
-    it("works for one liner") {
-      val test = "thing.model() //name: Here"
-      val contentsToCheck = AnnotationParser.contentsToCheck(CommonAstNode(null, Range(0, 13), null))(test)
-      assert(contentsToCheck == test)
-    }
-
-    it("works for multi liner") {
-      val test = "thing.model() //name: Here \n\n otherLine() \n line()"
-      val contentsToCheck = AnnotationParser.contentsToCheck(CommonAstNode(null, Range(0, 50), null))(test)
-      assert(contentsToCheck == test)
-    }
-  }
-
-  describe("file annotation extraction") {
-
-    it("can extract a file name annotation when exists") {
-      val example =
-        """//filename: Test File
-          |class Define() {
-        """.stripMargin
-
-
-      assert(AnnotationParser.extractFromFileContents(example, "//") == Set(FileNameAnnotation("Test File")))
+      assert(results == Vector(
+        (3, """optic.name = "HELLO""""),
+        (5, """optic.name = "GOODBYE"""")
+      ))
 
     }
 
-    it("will not find a filename if one  does not ecist") {
-      val example =
-        """class Define() {
-        """.stripMargin
+    val blockRegex = "(?:\\/\\*)([\\s\\S]*?)(?:\\*\\/)".r
 
-      assert(AnnotationParser.extractFromFileContents(example, "//") == Set())
+    val a =
+      """"
+        |
+        | /* Hello World
+        |    optic.name = "Hello"
+        | */
+        |
+        | /* Goodbye World
+        |    optic.name = "Goodbye"
+        | */
+        |
+        |
+        |
+        |"""".stripMargin
 
+    it("can find all block comments and assign to the last line + 1") {
+
+      val candidateLines = AnnotationParser.findBlockAnnotationComments(blockRegex, a)
+      assert(candidateLines == Vector(
+        (6, "Hello World"),
+        (6, """optic.name = "Hello""""),
+        (10, "Goodbye World"),
+        (10, """optic.name = "Goodbye""""),
+      ))
+
+    }
+
+    it("can find all valid annotations from blocks") {
+      val annotations = AnnotationParser.annotationsFromFile(a)(SourceParserManager.installedParsers.head, null)
+      assert(annotations == Vector((6, NameAnnotation("Hello", null)), (10, NameAnnotation("Goodbye", null))))
     }
 
   }

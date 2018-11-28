@@ -3,15 +3,18 @@ package com.opticdev.core.sourcegear.gears.helpers
 import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.core.sourcegear.graph.model.{AstMapping, NoMapping, NodeMapping}
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
+import com.opticdev.sdk.skills_sdk.{AssignmentOperations, SetValue}
+import com.opticdev.sdk.skills_sdk.lens._
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 
 
-case class ModelField(propertyPath: Seq[String], value: JsValue, astMapping: AstMapping = NoMapping)
+case class ModelField(propertyPath: Seq[String],
+                      value: JsValue,
+                      astMapping: AstMapping = NoMapping,
+                      operation: AssignmentOperations = SetValue)
 
 object ComponentExtraction {
   implicit class ComponentWithExtractors(component: OMComponentWithPropertyPath[OMLensCodeComponent]) {

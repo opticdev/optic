@@ -13,13 +13,13 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.graph.model.MultiModelNode
 import com.opticdev.core.sourcegear.variables.VariableManager
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.parsers.rules.{Any, ChildrenRuleTypeEnum}
+import com.opticdev.common.graph.CommonAstNode
+import com.opticdev.sdk.rules.{Any, ChildrenRuleTypeEnum}
 import com.opticdev.sdk.descriptions._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Containing
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.util.Try
@@ -374,7 +374,7 @@ class MultiNodeParserFactorySpec extends TestBase with ParserUtils with GearUtil
 
       implicit val astGraph = results.astGraph
 
-      val sgContext = SGContext(sourcegear.fileAccumulator, astGraph, sourcegear.parsers.head, fileContents, sourcegear, null)
+      val sgContext = SGContext(sourcegear.fileAccumulator, astGraph, sourcegear.parsers.head, fileContents, sourcegear, null, null, null, null)
 
       val mutationResult = combinedNode.update(Json.parse("""{"greeting": "UPDATED_GREETING", "to": "UPDATED_NAME"}""").as[JsObject])(sgContext, fileContents)
 

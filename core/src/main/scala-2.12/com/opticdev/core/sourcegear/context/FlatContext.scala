@@ -3,7 +3,7 @@ package com.opticdev.core.sourcegear.context
 import com.opticdev.common.{PackageRef, SGExportable}
 import com.opticdev.core.sourcegear.{CompiledLens, SGConfig, SGExportableLens, SourceGear}
 import com.opticdev.opm.context.Tree
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 import scala.util.Try
 

@@ -1,6 +1,6 @@
 package com.opticdev.sdk.descriptions.helpers
 
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLensCodeComponent, OMLensComponent, OMLensSchemaComponent}
+import com.opticdev.sdk.skills_sdk.lens.{OMLensCodeComponent, OMLensComponent, OMLensSchemaComponent}
 
 object ComponentImplicits {
   implicit class ComponentVector(vector: Vector[OMLensComponent]) {

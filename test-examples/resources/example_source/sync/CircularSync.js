@@ -1,3 +1,17 @@
-source('start') //name: First, source: Third -> optic:synctest/passthrough-transform
-source('start') //source: First -> optic:synctest/passthrough-transform, name: Second
-source('start') //source: Second -> optic:synctest/passthrough-transform, name: Third
+/*
+optic.name = "First"
+optic.source = "Third" -> optic:synctest/passthrough-transform
+*/
+source('start')
+
+/*
+optic.name = "Second"
+optic.source = "Third" -> optic:synctest/passthrough-transform
+*/
+source('start')
+
+/*
+optic.name = "Third"
+optic.source = "Second" -> optic:synctest/passthrough-transform
+*/
+source('start')

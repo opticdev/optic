@@ -3,8 +3,8 @@ package com.opticdev.arrow.changes.location
 import better.files.File
 import com.opticdev.arrow.changes.InsertModel
 import com.opticdev.core.sourcegear.SourceGear
-import com.opticdev.parsers.{AstGraph, ParserBase, SourceParserManager}
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.parsers.{ParserBase, SourceParserManager}
+import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 import com.opticdev.core.sourcegear.graph.GraphImplicits._
 import com.opticdev.core.sourcegear.project.monitoring.FileStateMonitor
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode

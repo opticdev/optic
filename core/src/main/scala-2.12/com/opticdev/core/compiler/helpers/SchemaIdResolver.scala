@@ -3,7 +3,7 @@ package com.opticdev.core.compiler.helpers
 import com.opticdev.common.SchemaRef
 import com.opticdev.opm.DependencyTree
 import com.opticdev.opm.context.{Context, PackageContext}
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 
 object SchemaIdImplicits {
   implicit class SchemaIdResolver(schemaId: SchemaRef) {

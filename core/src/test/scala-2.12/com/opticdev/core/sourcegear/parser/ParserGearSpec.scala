@@ -10,14 +10,13 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.sdk.descriptions.enums.FinderEnums.{Containing, Entire, Starting}
 import com.opticdev.core.sourcegear.{LensSet, SourceGear}
 import com.opticdev.core.sourcegear.project.{Project, StaticSGProject}
-import com.opticdev.parsers.rules.Any
+import com.opticdev.sdk.rules.Any
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
-import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.skills_sdk.lens._
 import play.api.libs.json.{JsArray, JsNumber, JsObject, JsString}
 
 class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {
-
 
   implicit val sourceGear = new SourceGear {
     override val parsers: Set[ParserBase] = SourceParserManager.installedParsers
@@ -216,31 +215,6 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
         assert(result.get.modelNode.value == expected)
       }
 
-    }
-
-  }
-
-  describe("Sync annotation extraction") {
-
-    it("can get name from comment on first line") {
-      val block = "var hello = require('world') //name: Test"
-
-      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map())
-      val parsedSample = sample(block)
-      val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
-      assert(result.isDefined)
-      assert(result.get.modelNode.objectRef.contains(ObjectRef("Test")))
-
-    }
-
-    it("can get source from comment on first line") {
-      val block = "var hello = require('world') //source: Test -> optic:test/transform"
-
-      val (parseGear, lens) = parseGearFromSnippetWithComponents("var hello = require('world')", Map())
-      val parsedSample = sample(block)
-      val result = parseGear.matches(parsedSample.entryChildren.head)(parsedSample.astGraph, block, sourceGearContext, project)
-      assert(result.isDefined)
-      assert(result.get.modelNode.sourceAnnotation.contains(SourceAnnotation("Test", TransformationRef(Some(PackageRef("optic:test")), "transform"), None)))
     }
 
   }

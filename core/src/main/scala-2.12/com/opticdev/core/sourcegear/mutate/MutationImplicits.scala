@@ -4,11 +4,11 @@ import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.model._
 import com.opticdev.core.sourcegear.mutate.errors.{AstMappingNotFound, ComponentNotFound}
 import com.opticdev.core.sourcegear.variables.VariableChanges
-import com.opticdev.parsers.graph.CommonAstNode
+import com.opticdev.common.graph.CommonAstNode
 import play.api.libs.json.JsObject
 import com.opticdev.core.utils.StringBuilderImplicits._
 import gnieh.diffson.playJson._
-import com.opticdev.parsers.graph.path.PropertyPathWalker
+import com.opticdev.common.graph.path.PropertyPathWalker
 
 import scala.collection.immutable
 

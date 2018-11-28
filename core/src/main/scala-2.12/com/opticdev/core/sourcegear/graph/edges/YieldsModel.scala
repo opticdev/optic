@@ -1,8 +1,8 @@
 package com.opticdev.core.sourcegear.graph.edges
 
 import com.opticdev.core.sourcegear.gears.parsing.{MultiNodeParseGear, ParseGear}
-import com.opticdev.parsers.graph.CustomEdge
-import com.opticdev.sdk.opticmarkdown2.LensRef
+import com.opticdev.common.graph.CustomEdge
+import com.opticdev.sdk.skills_sdk.LensRef
 
 case class YieldsModel(withParseGear: ParseGear, root: Boolean = false) extends CustomEdge
 case class YieldsMultiNodeModel(lensRef: LensRef) extends CustomEdge

@@ -16,8 +16,15 @@ import scala.util.{Failure, Try}
 
 object PackageStorage {
 
-  def writeToStorage(opticPackage: OpticPackage): File =
-    writeToStorage(opticPackage.packageRef, opticPackage.description.toString())
+  def writeToStorage(opticPackage: OpticPackage): File = {
+    opticPackage match {
+      case dPackage: OpticMDPackage =>
+        writeToStorage(opticPackage.packageRef, dPackage.description.toString())
+      case sp: StagedPackage =>
+        writeToStorage(opticPackage.packageRef, sp.description.toString())
+      case _ => null
+    }
+  }
 
   def writeToStorage(packageRef: PackageRef, contents: String): File = {
     val packages = DataDirectory.packages / ""  createIfNotExists(asDirectory = true)

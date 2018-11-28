@@ -1,7 +1,7 @@
 package com.opticdev.core.compiler.stages
 
 import com.opticdev.core.Fixture.TestBase
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 import com.opticdev.core.compiler.errors.InvalidComponents
 import com.opticdev.sdk.descriptions.enums.ComponentEnums._
 import com.opticdev.sdk.descriptions.enums.FinderEnums.Entire
@@ -9,8 +9,8 @@ import com.opticdev.sdk.descriptions.enums.FinderEnums.Entire
 import scala.util.{Failure, Try}
 import com.opticdev.core._
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.sdk.opticmarkdown2.OMSnippet
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLens, OMLensCodeComponent, OMStringFinder, Token}
+import com.opticdev.sdk.skills_sdk.OMSnippet
+import com.opticdev.sdk.skills_sdk.lens.{OMLens, OMLensCodeComponent, OMStringFinder, Token}
 import play.api.libs.json.JsObject
 class FinderStageSpec extends TestBase {
 
@@ -19,7 +19,7 @@ class FinderStageSpec extends TestBase {
 
   implicit val lens : OMLens = OMLens(Some("Example"), "example", snippet, Map(
     "definedAs" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "hello"))
-  ), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", null)
+  ), Map(), Map(), Left(BlankSchema()), JsObject.empty, "es7", null)
   val snippetBuilder = new SnippetStage(snippet)
   val outputTry = Try(snippetBuilder.run)
 
@@ -48,7 +48,7 @@ class FinderStageSpec extends TestBase {
       "definedAs" ->  OMLensCodeComponent(Token, OMStringFinder(Entire, "hello")),
       "firstProblem" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "not-anywhere")),
       "nextProblem" -> OMLensCodeComponent(Token, OMStringFinder(Entire, "nowhere"))
-    ), Map(), Map(), Left(BlankSchema), JsObject.empty, "es7", null)
+    ), Map(), Map(), Left(BlankSchema()), JsObject.empty, "es7", null)
 
     val finderStage = new FinderStage(outputTry.get)
 

@@ -1,12 +1,11 @@
 package com.opticdev.core.sourcegear.graph
 
 import better.files.File
-import com.opticdev.parsers.graph.{BaseNode, CommonAstNode, CustomEdge}
+import com.opticdev.common.graph.{AstGraph, BaseNode, CommonAstNode, CustomEdge}
 import com.opticdev.common.SchemaRef
-import com.opticdev.core.sourcegear.graph.edges.InFile
+import com.opticdev.core.sourcegear.graph.edges.{Exports, InFile}
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, FlatModelNode, LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.graph.objects.ObjectNode
-import com.opticdev.parsers.AstGraph
 
 import scala.collection.mutable
 import scalax.collection.edge.LkDiEdge
@@ -77,9 +76,18 @@ object GraphImplicits {
   }
 
   implicit class ProjectGraphInstance(graph: ProjectGraph) {
+
     def fileNode(file: File) : Option[FileNode] = {
       val result = graph.nodes.filter(i=> i.isNode && i.value.isInstanceOf[FileNode] && i.value.asInstanceOf[FileNode].filePath == file.pathAsString)
       if (result.nonEmpty) Option(result.head.value.asInstanceOf[FileNode]) else None
+    }
+
+    def exportsForFile(file: File): collection.Set[_ <: FoundExport] = {
+      fileNode(file)
+        .map(fn => graph.edges.collect { case e if e.label.isInstanceOf[Exports] && e.value.from == fn =>
+          FoundExport(e.label.asInstanceOf[Exports].as, e.value.to.value.asInstanceOf[BaseModelNode])
+        })
+        .getOrElse(Set.empty)
     }
 
     def modelNodes() : Vector[FlatModelNode] = {

@@ -10,7 +10,7 @@ import com.opticdev.sdk.descriptions.enums.ComponentEnums._
 import com.opticdev.sdk.descriptions.enums.FinderEnums._
 import com.opticdev.sdk.descriptions.enums.LocationEnums
 import com.opticdev.sdk.descriptions.enums.RuleEnums._
-import com.opticdev.sdk.opticmarkdown2.lens.{OMLensCodeComponent, OMLensSchemaComponent, OMStringFinder, Token}
+import com.opticdev.sdk.skills_sdk.lens.{OMLensCodeComponent, OMLensSchemaComponent, OMStringFinder, Token}
 
 
 class ParserFactoryStageSpec extends TestBase with ParserUtils {
@@ -53,7 +53,7 @@ class ParserFactoryStageSpec extends TestBase with ParserUtils {
 
       assert(parseGear.listeners.size == 1)
       val listener = parseGear.listeners.head
-      assert(listener.schema == schemaComponent.schemaRef)
+      assert(listener.schema.get == schemaComponent.schemaRef)
     }
 
   }

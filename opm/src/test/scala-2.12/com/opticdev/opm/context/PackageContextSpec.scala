@@ -3,8 +3,8 @@ package com.opticdev.opm.context
 import com.opticdev.common.PackageRef
 import com.opticdev.opm.{PackageManager, TestPackageProviders, TestProvider}
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import com.opticdev.sdk.opticmarkdown2.lens.OMLens
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.lens.OMLens
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import org.scalatest.{BeforeAndAfter, FunSpec}
 
 class PackageContextSpec extends FunSpec with TestPackageProviders {

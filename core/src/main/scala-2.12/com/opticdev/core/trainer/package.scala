@@ -10,10 +10,10 @@ import com.opticdev.opm.PackageManager
 import com.opticdev.opm.context.{Leaf, Tree}
 import com.opticdev.opm.packages.OpticMDPackage
 import com.opticdev.parsers.SourceParserManager
-import com.opticdev.parsers.graph.AstType
+import com.opticdev.common.graph.AstType
 import com.opticdev.sdk.descriptions.enums.BasicComponentType
 import com.opticdev.sdk.descriptions.enums.FinderEnums.StringEnums
-import com.opticdev.sdk.opticmarkdown2.lens._
+import com.opticdev.sdk.skills_sdk.lens._
 import play.api.libs.json._
 
 import scala.concurrent.Await
@@ -24,7 +24,7 @@ import scala.concurrent.Await
 
 package object trainer {
 
-  import com.opticdev.sdk.opticmarkdown2.Serialization._
+  import com.opticdev.sdk.skills_sdk.Serialization._
 
   case class ValueCandidate(value: JsValue, previewString: String, stagedComponent: OMComponentWithPropertyPath[OMLensCodeComponent], schemaField: JsObject) {
     def propertyPath = stagedComponent.propertyPath
@@ -77,7 +77,7 @@ package object trainer {
 
     val dependencyTreeResolved = Tree(Leaf(testPackage, dependencyTree))
 
-    val sg = SGConstructor.fromDependencies(dependencyTreeResolved, SourceParserManager.installedParsers.map(_.parserRef), Set()).map(_.inflate)
+    val sg = SGConstructor.fromDependencies(dependencyTreeResolved, SourceParserManager.installedParsers.map(_.parserRef), Set(), Vector(), Map()).map(_.inflate)
     sg.onComplete(i=> i.failed.foreach(_.printStackTrace()))
     val sgBuilt = Await.result(sg, 10 seconds)
 

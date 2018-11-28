@@ -2,7 +2,7 @@ package com.opticdev.core.compiler.validation
 
 import com.opticdev.common.{PackageRef, SchemaRef}
 import com.opticdev.core.compiler.stages.SchemaValidation
-import com.opticdev.sdk.opticmarkdown2.schema.OMSchema
+import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, JsString, Json}
 

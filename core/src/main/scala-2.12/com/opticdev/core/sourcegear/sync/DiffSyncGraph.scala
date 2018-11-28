@@ -8,7 +8,7 @@ import com.opticdev.core.sourcegear.graph.ProjectGraph
 import com.opticdev.core.sourcegear.graph.edges.DerivedFrom
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.project.ProjectBase
-import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
+import com.opticdev.common.graph.{BaseNode, CommonAstNode}
 import com.opticdev.sdk.descriptions.transformation.Transformation
 import play.api.libs.json.{JsObject, JsString}
 import scalax.collection.edge.LkDiEdge
@@ -91,6 +91,7 @@ object DiffSyncGraph {
         )))
 
         implicit val sourceGearContext: SGContext = snapshot.contextForNode(targetNode.flatten)
+
         val tagVector = sourceGearContext.astGraph.nodes.filter(_.value match {
           case mn: BaseModelNode if mn.tag.isDefined &&
             stagedNode.tags.map(_._1).contains(mn.tag.get.tag) &&
@@ -100,6 +101,8 @@ object DiffSyncGraph {
         }).map(i=> (i.value.asInstanceOf[BaseModelNode].tag.get.tag, i.value.asInstanceOf[BaseModelNode]))
           .toVector
           .sortBy(t=> stagedNode.tags.indexWhere(_._1 == t))
+
+        println(tagVector)
 
         val tagPatches: Seq[SyncDiff] = tagVector.collect {
           case (tag, targetTagNode) => {
@@ -136,7 +139,7 @@ object DiffSyncGraph {
           RangePatch(linkedModel.range(snapshot.contextForNode(linkedModel.flatten).astGraph), expectedRaw, context.file, context.fileContents))
       }
     } else {
-//      println(extractValuesTry.failed.get.printStackTrace())
+      println(extractValuesTry.failed.get.printStackTrace())
       ErrorEvaluating(label, extractValuesTry.failed.get.getMessage, snapshot.linkedModelNodes(targetNode.flatten).toDebugLocation)
     }
 

@@ -3,8 +3,7 @@ package com.opticdev.core.sourcegear.graph
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.edges.{ContainerRoot, YieldsModel, YieldsMultiNodeModel, YieldsProperty}
 import com.opticdev.core.sourcegear.graph.model._
-import com.opticdev.parsers.AstGraph
-import com.opticdev.parsers.graph.WithinFile
+import com.opticdev.common.graph.{AstGraph, WithinFile}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import scalax.collection.edge.LkDiEdge

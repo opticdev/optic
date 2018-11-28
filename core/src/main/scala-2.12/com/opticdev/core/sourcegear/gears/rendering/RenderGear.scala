@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.gears.rendering
 
+import com.opticdev.common.ParserRef
 import com.opticdev.core.sourcegear.context.{FlatContextBase, FlatContextBuilder}
 import com.opticdev.core.sourcegear.{Render, SGContext, SourceGear}
 import com.opticdev.core.sourcegear.gears.parsing.{NodeDescription, ParseAsModel, ParseGear}
@@ -7,10 +8,9 @@ import com.opticdev.core.sourcegear.project.{OpticProject, Project}
 import com.opticdev.core.utils.StringUtils
 import com.opticdev.marvin.common.ast.{AstArray, AstProperties, NewAstNode}
 import com.opticdev.marvin.common.helpers.LineOperations
-import com.opticdev.parsers.graph.{AstType, CommonAstNode, GraphImplicits, WithinFile}
+import com.opticdev.common.graph._
 import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
-import com.opticdev.parsers.{AstGraph, ParserRef, ParserResult, SourceParserManager}
-import com.opticdev.parsers.graph.path.{PropertyPathWalker, WalkablePath}
+import com.opticdev.common.graph.path.{PropertyPathWalker, WalkablePath}
 import com.opticdev.marvin.runtime.mutators.MutatorImplicits._
 import com.opticdev.marvin.runtime.mutators.NodeMutatorMap
 import com.opticdev.sdk.descriptions.transformation.generate.StagedNode
@@ -21,6 +21,7 @@ import scala.util.hashing.MurmurHash3
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.core.sourcegear.graph.model.{FlatModelNode, ModelNode}
+import com.opticdev.parsers.{ParserResult, SourceParserManager}
 import scalax.collection.mutable.Graph
 case class RenderGear(block: String,
                       parserRef: ParserRef,

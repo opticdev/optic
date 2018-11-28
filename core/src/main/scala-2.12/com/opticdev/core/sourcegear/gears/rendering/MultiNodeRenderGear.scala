@@ -5,8 +5,8 @@ import com.opticdev.core.sourcegear.graph.GraphImplicits
 import com.opticdev.core.sourcegear.graph.model.{ExpandedModelNode, FlatModelNode, ModelNode, MultiModelNode}
 import com.opticdev.core.sourcegear.{CompiledLens, SGContext, SourceGear}
 import com.opticdev.marvin.common.ast.NewAstNode
-import com.opticdev.parsers.{AstGraph, ParserBase, ParserResult}
-import com.opticdev.parsers.graph.{AstType, CommonAstNode}
+import com.opticdev.parsers.{ParserBase, ParserResult}
+import com.opticdev.common.graph.{AstGraph, AstType, CommonAstNode}
 import com.opticdev.sdk.{ContainersContent, VariableMapping}
 import play.api.libs.json.JsObject
 

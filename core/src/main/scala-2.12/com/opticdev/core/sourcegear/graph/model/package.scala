@@ -1,10 +1,14 @@
 package com.opticdev.core.sourcegear.graph
 
+import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.YieldsModel
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
-import com.opticdev.parsers.graph.CommonAstNode
-import com.opticdev.sdk.opticmarkdown2.lens.{Literal, ObjectLiteral, Token, ArrayLiteral}
-import com.opticdev.sdk.opticmarkdown2.lens.OMLensComponent
+import com.opticdev.common.graph.CommonAstNode
+import com.opticdev.core.sourcegear.annotations.dsl.SetOperationNode
+import com.opticdev.core.sourcegear.annotations.{NameAnnotation, SourceAnnotation, TagAnnotation}
+import com.opticdev.core.sourcegear.gears.helpers.ModelField
+import com.opticdev.sdk.skills_sdk.lens.{ArrayLiteral, Literal, ObjectLiteral, Token}
+import com.opticdev.sdk.skills_sdk.lens.OMLensComponent
 
 package object model {
   type ModelAstMapping = Map[ModelKey, Set[AstMapping]]
@@ -33,8 +37,24 @@ package object model {
       }
     }
   }
+
   case class NodeMapping(node: CommonAstNode, relationship : AstPropertyRelationship.Value) extends AstMapping
   case class ModelVectorMapping(models: Vector[ModelNode]) extends AstMapping {override val relationship = AstPropertyRelationship.Model}
   case class ContainerMapping(containerRoot: CommonAstNode) extends AstMapping {override val relationship = AstPropertyRelationship.NoRelationship}
   case object NoMapping extends AstMapping {override val relationship = AstPropertyRelationship.NoRelationship}
+
+
+  trait HasAnnotations {
+    def schemaId : SchemaRef
+    private var _annotations: ModelAnnotations = ModelAnnotations.empty
+    def attachAnnotations(annotations: ModelAnnotations) = {
+      _annotations = annotations.withSchema(schemaId)
+    }
+    def annotations: ModelAnnotations = _annotations
+
+    def valueOverrides: Vector[ModelField] = {
+      val assignments = annotations.set.flatMap(_.assignments)
+      assignments.map(i => ModelField(i.keyPath, i.value))
+    }
+  }
 }

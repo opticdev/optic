@@ -82,7 +82,7 @@ class ContainerSpec extends AkkaTestFixture("ContainerSpec") with ParserUtils wi
       implicit lazy val project = new StaticSGProject("test", File(getCurrentDirectory + "/test-examples/resources/example_source/"), sourceGear)
       implicit lazy val sourceGear = sourceGearFromDescription("test-examples/resources/example_packages/optic:FlatExpress_container_mapping@0.1.0.json")
       lazy val result = sourceGear.parseString(test)
-      implicit lazy val sourceGearContext = SGContext(sourceGear.fileAccumulator, result.get.astGraph, SourceParserManager.installedParsers.head, null, sourceGear, null)
+      implicit lazy val sourceGearContext = SGContext(sourceGear.fileAccumulator, result.get.astGraph, SourceParserManager.installedParsers.head, null, sourceGear, null, null, null, null)
 
 
 

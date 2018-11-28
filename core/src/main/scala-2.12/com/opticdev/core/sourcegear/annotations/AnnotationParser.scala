@@ -1,10 +1,13 @@
 package com.opticdev.core.sourcegear.annotations
 
+import better.files.File
 import com.opticdev.common.PackageRef
 import com.opticdev.marvin.common.helpers.LineOperations
 import com.opticdev.parsers.ParserBase
-import com.opticdev.parsers.graph.{BaseNode, CommonAstNode}
+import com.opticdev.common.graph.{BaseNode, CommonAstNode}
 import com.opticdev.common.SchemaRef
+import com.opticdev.core.sourcegear.annotations.dsl._
+import com.opticdev.core.utils.TryWithErrors
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
@@ -13,84 +16,31 @@ import scala.util.matching.Regex
 
 object AnnotationParser {
 
-  def extract(string: String, schemaRef: SchemaRef)(implicit parserBase: ParserBase) : Set[ObjectAnnotation]  =
-    extract(string, schemaRef, parserBase.inlineCommentPrefix)
+  def annotationsFromFile(contents: String)(implicit parserBase: ParserBase, file: File): Vector[(Int, ObjectAnnotation)] = {
+    def isType(operationNode: TryWithErrors[OperationNode, AnnotationParseError, ParseContext], t: String) = {
+      operationNode.isSuccess && t == operationNode.get.nodeType
+    }
 
-  def extract(string: String, schemaRef: SchemaRef, inlineCommentPrefix: String) : Set[ObjectAnnotation] = {
-    if (string.isEmpty) return Set()
-
-    val found = {
-      val lineContents = string.lines.next()
-      val lastComment = findAnnotationComment(inlineCommentPrefix, lineContents)
-      lastComment.map(i=> extractRawAnnotationsFromLine(i.substring(inlineCommentPrefix.size)))
-    }.map(_.map(pair=> {
-      pair._1 match {
-        case "name" => Some(NameAnnotation(pair._2.name, schemaRef))
-        case "source" => pair._2 match {
-          case exp: ExpressionValue => {
-            Some(SourceAnnotation(exp.name, exp.transformationRef, exp.askJsObject))
-          }
-          case _ => None
-        }
-        case "tag" => Some(TagAnnotation(pair._2.name, schemaRef))
-        case _ => None
+    val allAnnotationLines = findAllAnnotationComments(parserBase.inlineCommentPrefix, parserBase.blockCommentRegex, contents)
+    allAnnotationLines.map{ case (lineNumber, line) =>
+      (lineNumber, AnnotationsDslParser.parseSingleLine(line)(ParseContext(file, lineNumber)))
+    }.collect {
+      case (line, n) if isType(n, "NameOperationNode") =>
+        (line, NameAnnotation(n.get.asInstanceOf[NameOperationNode].name, null))
+      case (line, n) if isType(n, "TagOperationNode") =>
+        (line, TagAnnotation(n.get.asInstanceOf[TagOperationNode].name, null))
+      case (line, n) if isType(n, "SetOperationNode") =>
+        (line, OverrideAnnotation(n.get.asInstanceOf[SetOperationNode].assignments))
+      case (line, n) if isType(n, "SourceOperationNode") => {
+        val sourceOperationNode = n.get.asInstanceOf[SourceOperationNode]
+        (line, SourceAnnotation(
+          sourceOperationNode.project,
+          sourceOperationNode.name,
+          sourceOperationNode.relationshipId.get, //@todo make implicit if not specified
+          sourceOperationNode.answers)
+        )
       }
-    }).collect {case Some(a)=> a}
-      .toSet.asInstanceOf[Set[ObjectAnnotation]])
-
-    found.getOrElse(Set())
-  }
-
-  def extractFromFileContents(fileContents: String, inlineCommentPrefix: String): Set[FileNameAnnotation] = {
-    val lineContents = fileContents.lines.toVector.headOption.getOrElse("")
-    val foundAnnotations = findAnnotationComment(inlineCommentPrefix, lineContents)
-                            .map(_.substring(inlineCommentPrefix.length))
-                            .map(extractRawAnnotationsFromLine).getOrElse(Map.empty)
-    foundAnnotations.map {
-      case (name, value) if name == "filename" => Some(FileNameAnnotation(value.name))
-      case _ => None
-    }.collect {case Some(a)=> a}
-      .toSet
-  }
-
-  def extractRawAnnotationsFromLine(string: String) : Map[String, AnnotationValues] = {
-    if (topLevelCapture.pattern.matcher(string).matches()) {
-      val extracts = propertiesCapture.findAllIn(string).matchData.map {
-        i =>
-          Try {
-            val fullString = i.source
-
-            val key = i.group("key").trim
-            val name = i.group("name").trim
-
-            val value: AnnotationValues = key match {
-              case "source" => {
-                transformationCapture.findFirstMatchIn(fullString).map { case m =>
-                  val name = m.group("name").trim
-                  val namespace = m.group("namespace")
-                  val packageName = m.group("packageName")
-                  val askOption = Option(m.group("askJson"))
-                  val version = Option(m.group("version")).getOrElse("latest")
-                  val id = m.group("id")
-
-                  require(!Set(namespace, packageName, version, id).contains(null))
-
-                  val transformationRef = TransformationRef(Some(PackageRef(namespace + ":" + packageName, version)), id)
-
-                  ExpressionValue(name, transformationRef, askOption)
-                }.get
-              }
-              case "name" => StringValue(name)
-              case "tag" => StringValue(name)
-              case "filename" => StringValue(name)
-            }
-
-            (key, value)
-          }
-      }
-
-      extracts.collect {case Success(a) => a} .toMap
-    } else Map.empty
+    }
   }
 
   def contentsToCheck(node: CommonAstNode)(implicit fileContents: String) = {
@@ -99,17 +49,41 @@ object AnnotationParser {
     val endLine = LineOperations.lineOf(range.end, fileContents)
 
     if (startLine == endLine) {
-      val lines = fileContents.substring(range.start).lines
+      val lines = fileContents.substring(range.start).linesWithSeparators
       if (lines.nonEmpty) lines.next() else ""
     } else {
       fileContents.substring(node)
     }
-
   }
 
   def findAnnotationComment(inlineCommentPrefix: String, contents: String) : Option[String] = {
     val result = contents.lastIndexOf(inlineCommentPrefix)
     if (result == -1) None else Some(contents.substring(result))
+  }
+
+  def inlineAnnotationComments(inlineCommentPrefix: String, contents: String) : Vector[(Int, String)] = {
+    contents
+      .lines.zipWithIndex
+      .map{ case(line, index) =>
+        findAnnotationComment(inlineCommentPrefix, line).map(l=> (index+1, l.trim.substring(inlineCommentPrefix.length)))
+      }
+      .collect{case a if a.isDefined => a.get}
+      .toVector
+  }
+
+  def findBlockAnnotationComments(blockCommentRegex: Regex, contents: String) : Vector[(Int, String)] = {
+    blockCommentRegex.findAllIn(contents).matchData.flatMap(i=> {
+      val innerContents = i.group(1)
+      import com.opticdev.common.utils.RangeToLine._
+      val lastLine = Range(i.start, i.end).toLineRange(contents).end
+
+      innerContents.lines.collect{ case line if line.trim.nonEmpty => (lastLine + 1, line.trim) } //all will share the same last line, end of block + 2, 0 offset, (start of new model)
+    })
+  }.toVector
+
+  def findAllAnnotationComments(inlineCommentPrefix: String, blockCommentRegex: Regex, contents: String) : Vector[(Int, String)] = {
+    (inlineAnnotationComments(inlineCommentPrefix, contents) ++
+    findBlockAnnotationComments(blockCommentRegex, contents)).sortBy(_._1)
   }
 
 }
