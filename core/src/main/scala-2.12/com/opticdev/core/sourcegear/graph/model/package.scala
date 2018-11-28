@@ -4,11 +4,14 @@ import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.graph.edges.YieldsModel
 import com.opticdev.core.sourcegear.graph.enums.AstPropertyRelationship
 import com.opticdev.common.graph.CommonAstNode
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.annotations.dsl.SetOperationNode
 import com.opticdev.core.sourcegear.annotations.{NameAnnotation, SourceAnnotation, TagAnnotation}
 import com.opticdev.core.sourcegear.gears.helpers.ModelField
 import com.opticdev.sdk.skills_sdk.lens.{ArrayLiteral, Literal, ObjectLiteral, Token}
 import com.opticdev.sdk.skills_sdk.lens.OMLensComponent
+
+import scala.util.Try
 
 package object model {
   type ModelAstMapping = Map[ModelKey, Set[AstMapping]]
@@ -52,9 +55,19 @@ package object model {
     }
     def annotations: ModelAnnotations = _annotations
 
-    def valueOverrides: Vector[ModelField] = {
+    def valueOverrides()(implicit sourceGearContext: SGContext): Vector[ModelField] = {
       val assignments = annotations.set.flatMap(_.assignments)
-      assignments.map(i => ModelField(i.keyPath, i.value))
+      import GraphImplicits._
+      assignments.map {
+        case i if i.isRef => Try {
+          val objectValue = sourceGearContext.project.projectGraph
+            .objectByName(i.ref.get)
+            .map(_._2.apply(sourceGearContext))
+
+          ModelField(i.keyPath, objectValue.get)
+        }
+        case i => Try(ModelField(i.keyPath, i.value.get))
+      }.collect({case i if i.isSuccess => i.get})
     }
   }
 }

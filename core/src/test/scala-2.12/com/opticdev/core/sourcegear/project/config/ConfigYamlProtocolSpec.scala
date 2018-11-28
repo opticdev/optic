@@ -1,5 +1,6 @@
 package com.opticdev.core.sourcegear.project.config
 import com.opticdev.core.sourcegear.project.config.options.ConfigYamlProtocol._
+import com.opticdev.core.sourcegear.project.config.options.OCString
 import net.jcazevedo.moultingyaml.DeserializationException
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
@@ -56,7 +57,24 @@ class ConfigYamlProtocolSpec extends FunSpec {
 
       assert(result.isSuccess)
       assert(result.get.objects.get.size == 1)
-      assert(result.get.objects.get.head.`type`.full == "optic:test@latest/id-of-thing")
+      assert(result.get.objects.get.head.`type`.get.full == "optic:test@latest/id-of-thing")
+      assert(result.get.objects.get.head.value.toJson.toString() == """{"key2":2,"key1":1}""")
+    }
+
+    it("can parse objects without types from config") {
+      val result = parsePrimary(
+        """
+          |name: Example
+          |objects:
+          |  - name: Custom
+          |    value:
+          |      key1: 1
+          |      key2: 2
+        """.stripMargin)
+
+      assert(result.isSuccess)
+      assert(result.get.objects.get.size == 1)
+      assert(result.get.objects.get.head.`type`.isEmpty)
       assert(result.get.objects.get.head.value.toJson.toString() == """{"key2":2,"key1":1}""")
     }
 
@@ -69,21 +87,21 @@ class ConfigYamlProtocolSpec extends FunSpec {
           |    value: STRING
         """.stripMargin)
 
-      assert(result.failed.get.getMessage == "'objects','name' YamlObject is missing required member 'name'")
+      assert(result.failed.get.getMessage == "'objects' key not found: YamlString(name)")
       assert(result.isFailure)
     }
 
-    it("will reject if invalid type") {
+    it("will accept any value type") {
       val result = parsePrimary(
         """
           |name: Example
           |objects:
-          |  - type: optic:test/id-of-thing
+          |  - name: has name
           |    value: STRING
         """.stripMargin)
 
-      assert(result.isFailure)
-      assert(result.failed.get.getMessage == "'objects','name' YamlObject is missing required member 'name'")
+      assert(result.isSuccess)
+      assert(result.get.objects.get.head.value == OCString("STRING"))
     }
   }
 

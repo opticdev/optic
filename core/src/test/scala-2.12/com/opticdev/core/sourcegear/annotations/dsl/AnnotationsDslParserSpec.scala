@@ -21,7 +21,16 @@ class AnnotationsDslParserSpec extends FunSpec {
         val parseResult = AnnotationsDslParser.parseSingleLine(input)
         assert(parseResult.isSuccess)
         assert(parseResult.get == SetOperationNode(Vector(
-          AssignmentNode(Seq("key"), JsBoolean(true))
+          AssignmentNode(Seq("key"), Some(JsBoolean(true)))
+        )))
+      }
+
+      it("can extract a ref") {
+        val input = "optic.set key = (Hello World)"
+        val parseResult = AnnotationsDslParser.parseSingleLine(input)
+        assert(parseResult.isSuccess)
+        assert(parseResult.get == SetOperationNode(Vector(
+          AssignmentNode(Seq("key"), None, Some("Hello World"))
         )))
       }
 
@@ -30,8 +39,8 @@ class AnnotationsDslParserSpec extends FunSpec {
         val parseResult = AnnotationsDslParser.parseSingleLine(input)
         assert(parseResult.isSuccess)
         assert(parseResult.get == SetOperationNode(Vector(
-          AssignmentNode(Seq("key"), JsBoolean(true)),
-          AssignmentNode(Seq("otherKey"), JsNumber(123))
+          AssignmentNode(Seq("key"), Some(JsBoolean(true))),
+          AssignmentNode(Seq("otherKey"), Some(JsNumber(123)))
         )))
       }
 
@@ -186,6 +195,15 @@ class AnnotationsDslParserSpec extends FunSpec {
       it("matches single item") {
         assignmentListItem.matches("key.value = 'ABC'")
         assignmentListItem.matches("key.value = true")
+        assignmentListItem.matches("key.value = (Ref to Object)")
+      }
+
+      it("matches a list of assignments with a ref") {
+        val list = "first = {\"token\": {}}, hello = (ref to thing)"
+        assert(assignmentListParser(list) == Vector(
+          KeyValuePair(Seq("first"), Json.parse("""{"token":{}}""")),
+          KeyValuePair(Seq("hello"), JsString("ref to thing"), true),
+        ))
       }
 
       it("matches a list of assignments") {

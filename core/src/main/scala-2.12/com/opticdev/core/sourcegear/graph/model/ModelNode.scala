@@ -120,7 +120,7 @@ trait SingleModelNode extends BaseModelNode {
       expandedValueStore = Option(value)
     }
 
-    val overrides = valueOverrides
+    val overrides = valueOverrides()
 
     if (overrides.nonEmpty) {
       expandedValueStore = Option(FlattenModelFields.flattenFields(overrides.toSet, expandedValueStore.get))

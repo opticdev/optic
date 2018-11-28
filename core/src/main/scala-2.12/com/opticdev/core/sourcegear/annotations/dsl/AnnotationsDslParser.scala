@@ -1,6 +1,6 @@
 package com.opticdev.core.sourcegear.annotations.dsl
 
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsString, Json}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -9,6 +9,7 @@ import scala.util.matching.Regex
 import RegexHelper._
 import com.opticdev.core.utils.TryWithErrors
 import com.opticdev.core.namedObjectRegex
+import com.opticdev.core.sourcegear.annotations.dsl.AnnotationsDslParser.Regexes.reference
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 
 object AnnotationsDslParser {
@@ -41,7 +42,10 @@ object AnnotationsDslParser {
             }
             SetOperationNode(
               assignments
-              .collect{case kvp: KeyValuePair => AssignmentNode(kvp.keyPath, kvp.value)})
+              .collect{
+                case kvp: KeyValuePair if !kvp.isRef => AssignmentNode(kvp.keyPath, Some(kvp.value))
+                case kvp: KeyValuePair if kvp.isRef => AssignmentNode(kvp.keyPath, None, Some(kvp.value.as[JsString].value))
+              })
           }
           case "source" => {
             val parsed = Regexes.source.extract(expression)(_)
@@ -91,12 +95,14 @@ object AnnotationsDslParser {
     val boolean = """(true|false){1}""".r("value")
     val number = """([0-9]+)""".r("value")
 
+    val reference = s"\\(\\s*(${namedObjectRegex.toString()})\\s*\\)".r("value")
+
     val nameAndTagAssignment = s"""=${W}([']{1}.*[']{1}|["]{1}.*["]{1})""".r("quoted")
 
     val assignmentListItem = {
       def e(c: String, c1: Option[String] = None, lazyTail: Boolean = false) = s"""[$c]{1}.*${if (lazyTail) "?" else ""}[${c1.getOrElse(c)}]{1}""".r
 
-      val values = Seq(e("\"", lazyTail = true), e("'", lazyTail = true), e("\\[", Some("\\]")), e("{", Some("}")), boolean, number).mkString("|")
+      val values = Seq(e("\"", lazyTail = true), e("'", lazyTail = true), e("\\[", Some("\\]")), e("{", Some("}")), boolean, number, reference).mkString("|")
       s"""($dotNotation$W=$W($values))""".r("entire", "keyPath", "value")
     }
 
@@ -124,23 +130,28 @@ object AnnotationsDslParser {
         firstMatch.nonEmpty
       }) {
         val m = firstMatch.get
-
-        val jsonValue = Try({
-          val v = m.group("value")
-          if (v.head == '\'' && v.last == '\'') { //make single quotes work
-            val updated = v.zipWithIndex.map{
-              case (c, i) => if (i == 0 || i == v.length - 1) '"' else c
+        val v = m.group("value")
+        val ref = reference.extract(v)("value")
+        if (ref.isDefined) {
+          results.append(KeyValuePair(m.group("keyPath").split("\\."), JsString(ref.get), isRef = true))
+        } else { //it's a JSON value
+          val jsonValue = Try({
+            if (v.head == '\'' && v.last == '\'') { //make single quotes work
+              val updated = v.zipWithIndex.map{
+                case (c, i) => if (i == 0 || i == v.length - 1) '"' else c
+              }
+              Json.parse(updated.mkString)
+            } else {
+              Json.parse(v)
             }
-            Json.parse(updated.mkString)
-          } else {
-            Json.parse(v)
-          }
 
-        })
-        results.append(
-          if (jsonValue.isSuccess) {
-           KeyValuePair(m.group("keyPath").split("\\."), jsonValue.get)}
-           else KeyValuePairError(m.toString(), jsonValue.failed.get.getMessage))
+          })
+          results.append(
+            if (jsonValue.isSuccess) {
+              KeyValuePair(m.group("keyPath").split("\\."), jsonValue.get)}
+            else KeyValuePairError(m.toString(), jsonValue.failed.get.getMessage))
+        }
+
         current = {
           val trimmed = current.substring(m.end)
           val i = trimmed.indexWhere(c => c.isLetter)

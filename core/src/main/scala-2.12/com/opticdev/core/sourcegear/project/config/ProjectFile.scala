@@ -76,6 +76,7 @@ class ProjectFile(val file: File, onChanged: (ProjectFile)=> Unit = (pf)=> {}) {
     MurmurHash3.stringHash(file.parent.pathAsString) ^
       MurmurHash3.setHash(dependencies.getOrElse(Vector.empty).map(_.full).toSet) ^
       MurmurHash3.setHash(parsers.map(_.full).toSet) ^
+      MurmurHash3.setHash(objects.toSet) ^
       MurmurHash3.setHash( //hashed contents of secondary config files
         interface.primary.use.getOrElse(List())
             .map(file.parent / _)

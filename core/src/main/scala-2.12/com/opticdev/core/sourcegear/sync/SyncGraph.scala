@@ -48,7 +48,7 @@ object SyncGraph {
   }
   case class NamedObjectNode(objectNode: ObjectNode) extends NamedSyncGraphNode {
     override def isObject: Boolean = true
-    def schema: SchemaRef = objectNode.schemaRef
+    def schema: SchemaRef = objectNode.schemaRef.get
     def name = Some(objectNode.name)
     def node: BaseNode = objectNode
   }
