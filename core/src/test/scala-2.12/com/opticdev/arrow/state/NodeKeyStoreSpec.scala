@@ -12,7 +12,7 @@ class NodeKeyStoreSpec extends TestBase {
   it("can lease an id and look it up") {
     val nodeKeyStore = new NodeKeyStore
     val testFile = File("hello/world")
-    val id = nodeKeyStore.leaseId(testFile, LinkedModelNode(null, null, null, 1, null, null, null, null, null))
+    val id = nodeKeyStore.leaseId(testFile, LinkedModelNode(null, null, null, null, 1, null, null, null, null, null))
     assert(id.nonEmpty)
     assert(nodeKeyStore.lookupId(id).isDefined)
     assert(nodeKeyStore.lookupIdInFile(id, testFile).isDefined)
@@ -21,7 +21,7 @@ class NodeKeyStoreSpec extends TestBase {
   it("can invalidate a file's ids") {
     val nodeKeyStore = new NodeKeyStore
     val testFile = File("hello/world")
-    val id = nodeKeyStore.leaseId(testFile, LinkedModelNode(null, null, null, 1, null, null, null, null, null))
+    val id = nodeKeyStore.leaseId(testFile, LinkedModelNode(null, null, null, null, 1, null, null, null, null, null))
 
     nodeKeyStore.invalidateFileIds(testFile)
     assert(nodeKeyStore.lookupId(id).isEmpty)

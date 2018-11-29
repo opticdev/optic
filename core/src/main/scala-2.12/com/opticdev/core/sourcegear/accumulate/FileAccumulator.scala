@@ -4,8 +4,9 @@ import com.opticdev.common.SchemaRef
 import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.GraphOperations
 import com.opticdev.common.graph.{AstGraph, CommonAstNode}
+import com.opticdev.sdk.skills_sdk.LensRef
 
-case class FileAccumulator(listeners: Map[SchemaRef, Set[Listener]] = Map()) extends Accumulator {
+case class FileAccumulator(listeners: Map[LensRef, Set[Listener]] = Map()) extends Accumulator {
   override def run(implicit astGraph: AstGraph, parseResults: Vector[ParseResult[CommonAstNode]]): Unit = {
     //after this graph will contain all Model Nodes from the file.
     GraphOperations.addModelsToGraph(parseResults)

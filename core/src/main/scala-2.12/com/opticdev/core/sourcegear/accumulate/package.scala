@@ -6,12 +6,13 @@ import com.opticdev.core.sourcegear.gears.parsing.ParseResult
 import com.opticdev.core.sourcegear.graph.model.BaseModelNode
 import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.sdk.skills_sdk.LensRef
 
 package object accumulate {
 
   trait Accumulator {
 
-    val listeners : Map[SchemaRef, Set[Listener]]
+    val listeners : Map[LensRef, Set[Listener]]
 
     def run(implicit astGraph: AstGraph, parseResults: Vector[ParseResult[CommonAstNode]]) : Unit
 
@@ -21,6 +22,7 @@ package object accumulate {
     def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext) : Option[ModelField]
     val schema: Option[SchemaRef]
     val mapToSchema: SchemaRef
+    def lensRef: LensRef
   }
 
 }

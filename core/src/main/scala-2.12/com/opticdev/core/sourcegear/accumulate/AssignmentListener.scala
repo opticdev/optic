@@ -11,13 +11,14 @@ import com.opticdev.common.graph.{AstGraph, CommonAstNode}
 import com.opticdev.common.graph.path.{FlatWalkablePath, WalkablePath}
 import com.opticdev.core.sourcegear.project.OpticProject
 import com.opticdev.parsers.token_values.{External, Imported}
+import com.opticdev.sdk.skills_sdk.LensRef
 import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensAssignmentComponent}
 import play.api.libs.json.JsString
 
 import scala.util.Try
 
 //@todo it's likely that multiple listeners will be created -- eventually combine them to reduce # of lookups.
-case class AssignmentListener(assignmentComponent: OMComponentWithPropertyPath[OMLensAssignmentComponent], walkablePath: Option[FlatWalkablePath], mapToSchema: SchemaRef, packageId: String) extends Listener {
+case class AssignmentListener(assignmentComponent: OMComponentWithPropertyPath[OMLensAssignmentComponent], walkablePath: Option[FlatWalkablePath], mapToSchema: SchemaRef, lensRef: LensRef) extends Listener {
 
   override val schema: Option[SchemaRef] = None
 

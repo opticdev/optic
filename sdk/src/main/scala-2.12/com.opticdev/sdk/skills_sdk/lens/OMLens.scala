@@ -9,6 +9,8 @@ import com.opticdev.sdk.skills_sdk.{LensRef, OMChildrenRuleType, OMSnippet}
 import com.opticdev.sdk.skills_sdk.schema.OMSchema
 import play.api.libs.json.JsObject
 
+import scala.collection.immutable
+
 case class OMLens(name: Option[String],
                   id: String,
                   snippet: OMSnippet,
@@ -26,8 +28,8 @@ case class OMLens(name: Option[String],
   def variablesCompilerInput: Vector[OMVariable] = variables.map(i=> OMVariable(i._1, i._2)).toVector
 
   def subcontainerCompilerInputs: Vector[OMSubContainer] = containers.map(i=> {
-    val schemaComponents = value.collect {
-      case (k: String, v: OMLensSchemaComponent) => OMComponentWithPropertyPath(Seq(k), v)
+    val schemaComponents: Vector[OMComponentWithPropertyPath[OMLensSchemaComponent]] = value.collect {
+      case (k: String, v: OMLensSchemaComponent) => OMComponentWithPropertyPath[OMLensSchemaComponent](Seq(k), v)
     }.toVector
 
     OMSubContainer(i._1, i._2, schemaComponents)
@@ -43,8 +45,14 @@ case class OMLens(name: Option[String],
 
   def lensRef: LensRef = LensRef(Some(packageRef), id)
 
-  def valueComponentsCompilerInput: Vector[OMComponentWithPropertyPath[OMLensComponent]] =
-    value.map(i=> OMComponentWithPropertyPath(Seq(i._1), i._2)).toVector
+  def valueComponentsCompilerInput: Vector[OMComponentWithPropertyPath[OMLensComponent]] = {
+    value.flatMap({
+      case i if i._2.isInstanceOf[OMLensComputedFieldComponent] =>
+        (i._2.asInstanceOf[OMLensComputedFieldComponent].codeComponents :+ OMComponentWithPropertyPath(Seq(i._1), i._2))
+          .asInstanceOf[Vector[OMComponentWithPropertyPath[OMLensComponent]]]
+      case i => Vector(OMComponentWithPropertyPath(Seq(i._1), i._2))
+    }).toVector
+  }
 
   def valueSchemaComponentsCompilerInput: Vector[OMComponentWithPropertyPath[OMLensSchemaComponent]] = {
     value.collect {
@@ -57,6 +65,14 @@ case class OMLens(name: Option[String],
   def assignmentComponentsCompilerInput: Vector[OMComponentWithPropertyPath[OMLensAssignmentComponent]] = {
     value.collect {
       case (k:String, v: OMLensAssignmentComponent) => {
+        OMComponentWithPropertyPath(Seq(k), v)
+      }
+    }.toVector
+  }
+
+  def computedFieldComponentsCompilerInput: Vector[OMComponentWithPropertyPath[OMLensComputedFieldComponent]] = {
+    value.collect {
+      case (k:String, v: OMLensComputedFieldComponent) => {
         OMComponentWithPropertyPath(Seq(k), v)
       }
     }.toVector

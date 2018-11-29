@@ -22,7 +22,7 @@ class SerializeProjectGraphSpec extends AkkaTestFixture("DiffSyncGraphSpec") wit
     val result = Await.result(serializeResult, 20 seconds)
 
     assert(result.size == 3)
-    assert(result.toJson == Json.parse("""[{"name":"Hello Model","expandedValue":{"value":"hello"},"schema":"optic:synctest@0.1.0/source-schema"},{"name":"Good Morning","expandedValue":{"value":"good morning"},"schema":"optic:synctest@0.1.0/source-schema"},{"name":"Welcome To","expandedValue":{"value":"welcome to"},"schema":"optic:synctest@0.1.0/source-schema"}]"""))
+    assert(result.toJson == Json.parse("""[{"name":"Good Morning","expandedValue":{"value":"good morning"},"schema":"optic:synctest@0.1.0/source-schema"},{"name":"Welcome To","expandedValue":{"value":"welcome to"},"schema":"optic:synctest@0.1.0/source-schema"},{"name":"Hello Model","expandedValue":{"value":"hello"},"schema":"optic:synctest@0.1.0/source-schema"}]"""))
   }
 
   it("can deserialize into object nodes") {
