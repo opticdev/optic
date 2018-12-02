@@ -22,7 +22,7 @@ import scala.util.Try
 case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLensSchemaComponent], mapToSchema: SchemaRef, lensRef: LensRef) extends Listener {
 
   override val schema = Some(schemaComponent.component.schemaRef)
-  override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): Option[ModelField] = Try {
+  override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): Try[ModelField] = Try {
 
     val resolvedSchema = schemaComponent.component.resolvedSchema(lensRef.packageRef.get.packageId)(sourceGearContext.sourceGear)
 
@@ -77,5 +77,5 @@ case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLens
     } else {
       ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.expandedValue())), ModelVectorMapping(addToNodes.map(i=> i.asInstanceOf[ModelNode])))
     }
-  }.toOption
+  }
 }

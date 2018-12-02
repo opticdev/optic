@@ -22,26 +22,26 @@ case class AssignmentListener(assignmentComponent: OMComponentWithPropertyPath[O
 
   override val schema: Option[SchemaRef] = None
 
-  override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): Option[ModelField] = {
-    val component = assignmentComponent.component
+  override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): Try[ModelField] = Try {
+    val assignmentOption: Option[ModelField] = {
+      val component = assignmentComponent.component
 
-    val asModelNode : ModelNode = modelNode match {
-      case l: LinkedModelNode[CommonAstNode] => l.flatten
-      case mN: ModelNode => mN
-    }
-
-    val astRoot = asModelNode.astRoot()
-
-    //from a token with a path
-    if (component.fromToken && walkablePath.isDefined) Try {
-      val variableNode = WalkablePath(astRoot, walkablePath.get.path, astGraph).walk()
-
-      val entryOption = {
-        val nodeIdentifier = sourceGearContext.parser.identifierNodeDesc.parse(variableNode)
-        sourceGearContext.fileTokenRegistry.getExpanded(nodeIdentifier.get)
+      val asModelNode: ModelNode = modelNode match {
+        case l: LinkedModelNode[CommonAstNode] => l.flatten
+        case mN: ModelNode => mN
       }
 
-      if (entryOption.isDefined) {
+      val astRoot = asModelNode.astRoot()
+
+      //from a token with a path
+      if (component.fromToken && walkablePath.isDefined) {
+        val variableNode = WalkablePath(astRoot, walkablePath.get.path, astGraph).walk()
+
+        val entryOption = {
+          val nodeIdentifier = sourceGearContext.parser.identifierNodeDesc.parse(variableNode)
+          println(sourceGearContext.fileTokenRegistry)
+          sourceGearContext.fileTokenRegistry.getExpanded(nodeIdentifier.get)
+        }
 
         val (inScope, value) = entryOption.get match {
           case imported: Imported[SGContext] => {
@@ -61,19 +61,16 @@ case class AssignmentListener(assignmentComponent: OMComponentWithPropertyPath[O
             value.walk(component.keyPath)
           }.get
 
-          return Some(ModelField(
+          Some(ModelField(
             component.keyPath.split("\\."),
             tokenValue,
             operation = component.operation
           ))
 
-        } else return None
-      } else {
-        //not tied to a specific token (like collect)
-        None
-      }
+        } else None
+      } else None
     }
-
-    None
+    assignmentOption.getOrElse(throw new Exception("Unable to resolve assignment"+ assignmentComponent.component))
   }
+
 }

@@ -11,9 +11,10 @@ case class OMLensComputedFieldComponent(subcomponents: Vector[OMLensComponent],
                                         identifier: String = Random.alphanumeric.take(9).mkString
                                        ) extends OMLensComponent {
 
-  def codeComponents: Vector[OMComponentWithPropertyPath[OMLensCodeComponent]] = subcomponents.zipWithIndex.collect {
+  def codeComponents= subcomponents.zipWithIndex.collect {
     case (codeComponent: OMLensCodeComponent, index: Int) => OMComponentWithPropertyPath(Seq(identifier, index.toString), codeComponent, isHidden = true)
-  }
+    case (assignmentComponent: OMLensAssignmentComponent, index: Int) => OMComponentWithPropertyPath(Seq(identifier, index.toString), assignmentComponent, isHidden = true)
+  }.asInstanceOf[Vector[OMComponentWithPropertyPath[OMLensComponent]]]
 
   def accumulatorInputComponents: Vector[OMComponentWithPropertyPath[OMLensComponent]] = subcomponents.zipWithIndex.collect {
     case (component: OMLensComponent, index: Int) if !component.isInstanceOf[OMLensCodeComponent] =>
