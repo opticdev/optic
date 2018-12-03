@@ -21,13 +21,13 @@ case class ComputedFieldListener(computedField: OMComponentWithPropertyPath[OMLe
     val hiddenValue = modelNode.hiddenValue
 
     val numberOfComponents = computedField.component.subcomponents.size
-    val arguments = scala.collection.mutable.HashMap[Int, Option[JsValue]](Range(0, numberOfComponents).map(i => (i, None)):_*)
+    val argumentsMap = scala.collection.mutable.HashMap[Int, Option[JsValue]](Range(0, numberOfComponents).map(i => (i, None)):_*)
 
     //get arguments for all basic components
     computedField.component.subcomponents.zipWithIndex.foreach{ case (component, i) =>
         component match {
           case code: OMLensCodeComponent => {
-            hiddenValue.walk(computedField.component.identifier, i.toString).foreach(value => arguments.put(i, Some(value)))
+            hiddenValue.walk(computedField.component.identifier, i.toString).foreach(value => argumentsMap.put(i, Some(value)))
           }
           case _ => None
         }
@@ -38,19 +38,25 @@ case class ComputedFieldListener(computedField: OMComponentWithPropertyPath[OMLe
       case schemaListener: MapSchemaListener => {
         val index = schemaListener.schemaComponent.propertyPath(1).toInt
         val evaluated = schemaListener.collect(astGraph, modelNode, sourceGearContext)
-        arguments.put(index,evaluated.map(_.value).toOption)
+        argumentsMap.put(index,evaluated.map(_.value).toOption)
       }
       case assignmentListener: AssignmentListener => {
         val index = assignmentListener.assignmentComponent.propertyPath(1).toInt
         val evaluated = assignmentListener.collect(astGraph, modelNode, sourceGearContext)
-        arguments.put(index, evaluated.map(_.value).toOption)
+        argumentsMap.put(index, evaluated.map(_.value).toOption)
       }
     })
 
-    require(arguments.forall(_._2.isDefined), "Computed Field can not be computed because required arguments could not be resolved")
+
+    require(argumentsMap.forall(_._2.isDefined), "Computed Field can not be computed because required arguments could not be resolved")
+
+    val argsVector = {
+      val vec = argumentsMap.toVector.sortBy(_._1).map(_._2.get)
+      if (computedField.component.enforceUniqueArguments) vec.distinct else vec
+    }
 
     computedField.component.fieldProcessor
-      .evaluate(arguments.toVector.sortBy(_._1).map(_._2.get))
+      .evaluate(argsVector)
       .map(i=> ModelField(computedField.propertyPath, i)).get
 
   }

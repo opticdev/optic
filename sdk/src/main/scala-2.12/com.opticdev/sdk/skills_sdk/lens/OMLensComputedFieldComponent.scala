@@ -8,6 +8,7 @@ import scala.util.{Random, Try}
 
 case class OMLensComputedFieldComponent(subcomponents: Vector[OMLensComponent],
                                         fieldProcessor: ComputedFieldFunction,
+                                        enforceUniqueArguments: Boolean,
                                         identifier: String = Random.alphanumeric.take(9).mkString
                                        ) extends OMLensComponent {
 

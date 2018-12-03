@@ -228,7 +228,7 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
         OMLensCodeComponent(Token, OMStringFinder(Entire, "abe")),
         OMLensCodeComponent(Token, OMStringFinder(Entire, "thing")),
         OMLensCodeComponent(Token, OMStringFinder(Entire, "token"))
-      ), ConcatStrings)
+      ), ConcatStrings, false)
     ))
 
     val block = "a.b.cdefg('value')"

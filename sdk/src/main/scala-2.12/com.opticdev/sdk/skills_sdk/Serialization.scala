@@ -81,6 +81,7 @@ object Serialization {
   implicit lazy val omlenscomputedfieldReads: Reads[OMLensComputedFieldComponent] = (
       (__ \ 'subcomponents).lazyRead[Seq[OMLensComponent]](Reads.seq[OMLensComponent](omlenscomponentFormat)).map(_.toVector) and
       ( __ \ 'fieldProcessor).read[ComputedFieldFunction](computedFieldFunctionFormat) and
+      ( __ \ 'enforceUniqueArguments).read[Boolean] and
       ( __ \ 'identifier).readWithDefault[String](Random.alphanumeric.take(9).mkString)
     )(OMLensComputedFieldComponent.apply _)
 
@@ -88,7 +89,7 @@ object Serialization {
     override def reads(json: JsValue): JsResult[OMLensComponent] = {
       json.as[JsObject].value.keySet match {
         case x if x == Set("type", "at") => Json.fromJson[OMLensCodeComponent](json)
-        case x if x == Set("fieldProcessor", "subcomponents") => Json.fromJson[OMLensComputedFieldComponent](json)
+        case x if x == Set("fieldProcessor", "subcomponents", "enforceUniqueArguments") => Json.fromJson[OMLensComputedFieldComponent](json)
         case x if x.contains("schemaRef") => Json.fromJson[OMLensSchemaComponent](json)
         case x if x.contains("tokenAt") && x.contains("keyPath") => Json.fromJson[OMLensAssignmentComponent](json)
       }

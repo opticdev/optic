@@ -19,9 +19,6 @@ class FinderStage(snippetStageOutput: SnippetStageOutput)(implicit val lens: OML
 
     implicit val evaluatedFinderPaths = scala.collection.mutable.Map[OMFinder, FinderPath]()
 
-    val a = (lens.valueComponentsCompilerInput)
-    println(a)
-
     val components: Vector[OMComponentWithPropertyPath[OMLensComponent]] = lens.valueComponentsCompilerInput.collect{
       case p if p.containsCodeComponent => p
       case p if p.containsAssignmentComponent && p.component.asInstanceOf[OMLensAssignmentComponent].fromToken => p

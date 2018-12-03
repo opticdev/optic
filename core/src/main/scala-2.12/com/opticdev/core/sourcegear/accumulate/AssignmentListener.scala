@@ -39,9 +39,10 @@ case class AssignmentListener(assignmentComponent: OMComponentWithPropertyPath[O
 
         val entryOption = {
           val nodeIdentifier = sourceGearContext.parser.identifierNodeDesc.parse(variableNode)
-          println(sourceGearContext.fileTokenRegistry)
           sourceGearContext.fileTokenRegistry.getExpanded(nodeIdentifier.get)
         }
+
+        println(entryOption)
 
         val (inScope, value) = entryOption.get match {
           case imported: Imported[SGContext] => {
