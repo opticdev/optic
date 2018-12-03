@@ -4,6 +4,7 @@ import better.files.File
 import com.opticdev.common.{ObjectRef, PackageRef}
 import com.opticdev.core.Fixture.AkkaTestFixture
 import com.opticdev.core.Fixture.compilerUtils.ParserUtils
+import com.opticdev.core.sourcegear.accumulate.FileAccumulator
 import com.opticdev.core.sourcegear.annotations.SourceAnnotation
 import com.opticdev.core.sourcegear.context.FlatContext
 import com.opticdev.core.sourcegear.graph.ProjectGraph
@@ -14,7 +15,7 @@ import com.opticdev.sdk.rules.Any
 import com.opticdev.parsers.{ParserBase, SourceParserManager}
 import com.opticdev.sdk.descriptions.transformation.TransformationRef
 import com.opticdev.sdk.skills_sdk.lens._
-import play.api.libs.json.{JsArray, JsNumber, JsObject, JsString}
+import play.api.libs.json._
 
 class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils {
 
@@ -218,5 +219,40 @@ class ParserGearSpec extends AkkaTestFixture("ParserGearTest") with ParserUtils 
     }
 
   }
+
+  describe("Hidden values") {
+
+    lazy val (parseGear, lens) = parseGearFromSnippetWithComponents("abe.thing.token('experiment')", Map(
+      "argone" -> OMLensCodeComponent(Literal, OMStringFinder(Containing, "experiment")),
+      "computed" -> OMLensComputedFieldComponent(Vector(
+        OMLensCodeComponent(Token, OMStringFinder(Entire, "abe")),
+        OMLensCodeComponent(Token, OMStringFinder(Entire, "thing")),
+        OMLensCodeComponent(Token, OMStringFinder(Entire, "token"))
+      ), ConcatStrings)
+    ))
+
+    val block = "a.b.cdefg('value')"
+
+    it("can pickup hidden values") {
+
+      val parsedSample = sample(block)
+      val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sourceGearContext, project)
+      assert(result.isDefined)
+      assert(result.get.modelNode.hiddenValue.value.head._2 == Json.parse("""{"0":"a","1":"b","2":"cdefg"}"""))
+    }
+
+    it("can will compute fields properly") {
+
+      val sgContext = sourceGearContext.copy(fileAccumulator = FileAccumulator(parseGear.listeners.toSet.groupBy(_.lensRef)))
+
+      val parsedSample = sample(block)
+      val result = parseGear.matches(parsedSample.entryChildren.head, true)(parsedSample.astGraph, block, sgContext, project)
+      assert(result.get.modelNode.expandedValue(false)(sgContext) == Json.parse("""{"argone":"value","computed":"abcdefg"}"""))
+    }
+
+  }
+
+
+
 
 }

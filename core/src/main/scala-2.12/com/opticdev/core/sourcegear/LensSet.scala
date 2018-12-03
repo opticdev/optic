@@ -63,7 +63,7 @@ class LensSet(initialGears: SGExportableLens*) {
 
     multiNodeLensStore = lenses.collect{case mn: CompiledMultiNodeLens => mn}.toSet
 
-    fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.mapToSchema))
+    fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.lensRef))
   }
 
   def grouped: Map[AstType, Set[CompiledLens]] = groupedStore
