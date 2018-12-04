@@ -63,7 +63,7 @@ class LensSet(initialGears: SGExportableLens*) {
 
     multiNodeLensStore = lenses.collect{case mn: CompiledMultiNodeLens => mn}.toSet
 
-    fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.mapToSchema))
+    fileAccumulator = FileAccumulator(allListeners.toSet.groupBy(_.lensRef))
   }
 
   def grouped: Map[AstType, Set[CompiledLens]] = groupedStore
@@ -111,7 +111,7 @@ class LensSet(initialGears: SGExportableLens*) {
       val parsedAnnotations = AnnotationParser.annotationsFromFile(fileContents)(sourceGearContext.parser, sourceGearContext.file)
       if (parsedAnnotations.nonEmpty) {
         val modelAstPairs = modelNodes.map(i => (i, i.resolveInGraph[CommonAstNode](astGraph)))
-        val rangePair = modelAstPairs.map(i => (i._2.root.lineRange(fileContents), i._1.asInstanceOf[ModelNode]))
+        val rangePair = modelAstPairs.map(i => (i._2.root.lineRange(fileContents), i._1.asInstanceOf[ModelNode], i._2.root.range))
         AnnotationSorting.sortAnnotations(rangePair, parsedAnnotations)
       } else Map.empty
     }

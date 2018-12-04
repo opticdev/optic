@@ -128,10 +128,10 @@ class ProjectGraphWrapper(val projectGraph: ProjectGraph)(implicit val project: 
     val newNamedModels: Set[NamedModel] = projectGraph.nodes.collect {
       case n if n.value.isModel && n.value.asInstanceOf[BaseModelNode].objectRef.isDefined =>
         val asBaseModelNode = n.value.asInstanceOf[BaseModelNode]
-        NamedModel(asBaseModelNode.objectRef.get.name, asBaseModelNode.schemaId.internalFull, asBaseModelNode.id)
+        NamedModel(asBaseModelNode.objectRef.get.name, Some(asBaseModelNode.schemaId.internalFull), asBaseModelNode.id)
       case n if n.value.isObject =>
         val objectNode = n.value.asInstanceOf[ObjectNode]
-        NamedModel(objectNode.name, objectNode.schemaRef.internalFull, objectNode.id)
+        NamedModel(objectNode.name, objectNode.schemaRef.map(_.internalFull), objectNode.id)
     }.toSet
 
 

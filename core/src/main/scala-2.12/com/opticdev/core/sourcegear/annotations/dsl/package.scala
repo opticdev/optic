@@ -19,6 +19,6 @@ package object dsl {
 
   sealed trait KVPair
 
-  case class KeyValuePair(keyPath: Seq[String], value: JsValue) extends KVPair
+  case class KeyValuePair(keyPath: Seq[String], value: JsValue, isRef: Boolean = false) extends KVPair
   case class KeyValuePairError(raw: String, jsonError: String) extends KVPair with AnnotationParseError
 }

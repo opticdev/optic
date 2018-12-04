@@ -60,7 +60,7 @@ object SerializeProjectGraph {
 
   def projectGraphFrom(set: Set[SavedObject], projectName: String): ProjectGraph = {
 
-    val allObjects = set.map(saved => ObjectNode(saved.name, saved.schema, saved.expandedValue))
+    val allObjects = set.map(saved => ObjectNode(saved.name, Some(saved.schema), saved.expandedValue))
 
     val projectNode = ProjectNode(projectName, null, new java.util.Date())
 

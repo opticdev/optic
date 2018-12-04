@@ -29,12 +29,13 @@ case class OMLensSchemaComponent(schemaRef: SchemaRef,
 
 }
 
-case class OMComponentWithPropertyPath[T <: OMLensComponent](propertyPath: Seq[String], component: T) {
+case class OMComponentWithPropertyPath[T <: OMLensComponent](propertyPath: Seq[String], component: T, isHidden: Boolean = false) {
   def range: OMRange = component match {
     case f: OMLensNodeFinder => f.range
     case _ => OMRange(0,0)
   }
-
   def containsCodeComponent = component.isInstanceOf[OMLensCodeComponent]
   def containsAssignmentComponent = component.isInstanceOf[OMLensAssignmentComponent]
+  def containsSchemaComponent = component.isInstanceOf[OMLensSchemaComponent]
+  def containsComputedComponent = component.isInstanceOf[OMLensComputedFieldComponent]
 }

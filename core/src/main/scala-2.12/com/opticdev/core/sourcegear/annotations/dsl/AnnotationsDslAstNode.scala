@@ -9,7 +9,9 @@ trait AnnotationsDslAstNode {val nodeType: String = this.getClass.getSimpleName}
 trait OperationNode extends AnnotationsDslAstNode
 
 case class SetOperationNode(assignments: Vector[AssignmentNode]) extends OperationNode
-case class AssignmentNode(keyPath: Seq[String], value: JsValue) extends AnnotationsDslAstNode
+case class AssignmentNode(keyPath: Seq[String], value: Option[JsValue] = None, ref: Option[String] = None) extends AnnotationsDslAstNode {
+  def isRef = ref.isDefined
+}
 
 case class NameOperationNode(name: String) extends OperationNode {
   require(namedObjectRegex.matches(name), s"'$name' is not a valid object name")

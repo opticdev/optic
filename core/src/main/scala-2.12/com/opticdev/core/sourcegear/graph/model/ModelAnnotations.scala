@@ -11,8 +11,8 @@ case class ModelAnnotations(name: Option[NameAnnotation],
 
   def withSchema(schemaRef: SchemaRef): ModelAnnotations = {
     ModelAnnotations(
-      name.map(i => NameAnnotation(i.name, schemaRef)),
-      tag.map(i => TagAnnotation(i.tag, schemaRef)),
+      name.map(i => NameAnnotation(i.name, schemaRef, i.isBlock)),
+      tag.map(i => TagAnnotation(i.tag, schemaRef, i.isBlock)),
       source,
       set
     )

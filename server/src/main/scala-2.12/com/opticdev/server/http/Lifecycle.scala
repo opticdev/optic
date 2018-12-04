@@ -18,6 +18,7 @@ import scala.util.Try
 
 object Lifecycle extends App {
 
+
   //init the data directory if missing
   DataDirectory.init
   SupportedParsers.init(withSkills = true)
@@ -33,6 +34,5 @@ object Lifecycle extends App {
     }
     DataDirectoryConfig.triggerMigration
   }
-
 
 }

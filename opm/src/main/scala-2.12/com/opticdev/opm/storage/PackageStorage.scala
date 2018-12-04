@@ -36,7 +36,7 @@ object PackageStorage {
     version.delete(true)
     version.touch()
 
-    version.write(contents)
+    version.overwrite(contents)
   }
 
   def loadFromStorage(packageRef: PackageRef) : Try[OpticPackage] = {

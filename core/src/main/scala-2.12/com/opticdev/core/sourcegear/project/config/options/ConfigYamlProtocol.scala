@@ -94,8 +94,23 @@ object ConfigYamlProtocol extends DefaultYamlProtocol {
     override def write(obj: OpticConfigValue): YamlValue = ???
   }
 
+  implicit object ConstantObjectFormat extends YamlFormat[ConstantObject] {
+    override def read(yaml: YamlValue): ConstantObject = {
+      Try {
+        val asObject = yaml.asYamlObject
+        val name = OCStringFormat.read(asObject.fields(YamlString("name"))).value
+        val typeOption = Try(SchemaRefFormat.read(asObject.fields(YamlString("type")))).toOption
+        val value =  BaseYamlValueFormat.read(asObject.fields(YamlString("value")))
+        ConstantObject(name, typeOption, value)
+      } match {
+        case s if s.isSuccess => s.get
+        case f if f.isFailure => deserializationError(f.failed.get.getMessage)
+      }
+    }
+    override def write(obj: ConstantObject): YamlValue = ???
+  }
+
   lazy implicit val OCObjectRefFormat = yamlFormat2(OCObjectRef)
-  lazy implicit val constantObjectFormat = yamlFormat3(ConstantObject)
   lazy implicit val pfFormat = yamlFormat8(ProjectFileInterface)
   lazy implicit val secondaryPfFormat = yamlFormat2(SecondaryProjectFileInterface)
 

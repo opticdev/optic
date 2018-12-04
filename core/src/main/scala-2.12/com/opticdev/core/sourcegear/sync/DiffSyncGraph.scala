@@ -10,7 +10,7 @@ import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, LinkedModelNode,
 import com.opticdev.core.sourcegear.project.ProjectBase
 import com.opticdev.common.graph.{BaseNode, CommonAstNode}
 import com.opticdev.sdk.descriptions.transformation.Transformation
-import play.api.libs.json.{JsObject, JsString}
+import play.api.libs.json.{JsObject, JsString, JsValue}
 import scalax.collection.edge.LkDiEdge
 import scalax.collection.mutable.Graph
 import com.opticdev.marvin.common.helpers.InRangeImplicits._
@@ -39,13 +39,13 @@ object DiffSyncGraph {
     val startingNodes= graph.nodes.collect { case n if n.dependencies.isEmpty => n.value.asInstanceOf[NamedSyncGraphNode] }.toVector
 
     def compareDiffAlongPath(sourceNode: NamedSyncGraphNode, predecessorDiff: Option[SyncDiff] = None) : Vector[SyncDiff] = {
-      val sourceValue = {
+      val sourceValue : JsObject = {
         if (predecessorDiff.exists(_.newValue.isDefined)) {
           predecessorDiff.get.newValue.get
         } else {
           sourceNode match {
             case mn: NamedModelNode => snapshot.expandedValues(mn.modelNode.flatten)
-            case on: NamedObjectNode => on.objectNode.value
+            case on: NamedObjectNode => on.objectNode.value.as[JsObject]
           }
         }
       }

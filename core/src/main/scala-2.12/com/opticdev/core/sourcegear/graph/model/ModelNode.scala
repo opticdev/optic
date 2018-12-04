@@ -26,6 +26,7 @@ import collection.JavaConverters._
 sealed abstract class BaseModelNode(implicit val project: ProjectBase) extends AstProjection with HasAnnotations {
   def schemaId : SchemaRef
   def value : JsObject
+  def hiddenValue : JsObject
   def expandedValue(withVariables: Boolean = false)(implicit sourceGearContext: SGContext) : JsObject
   def lensRef: LensRef
   def variableMapping: VariableMapping
@@ -94,9 +95,9 @@ trait ExpandedModelNode extends BaseModelNode {
 trait SingleModelNode extends BaseModelNode {
 
   def mapSchemaFields()(implicit sourceGearContext: SGContext) : Set[ModelField] = {
-    val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
+    val listenersOption = sourceGearContext.fileAccumulator.listeners.get(lensRef)
     if (listenersOption.isDefined) {
-      listenersOption.get.flatMap(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
+      listenersOption.get.flatMap(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext).toOption)
     } else {
       Set.empty
     }
@@ -112,15 +113,15 @@ trait SingleModelNode extends BaseModelNode {
   def expandedValue(withVariables: Boolean = false)(implicit sourceGearContext: SGContext) : JsObject = {
     if (expandedValueStore.isDefined) return expandedValueStore.get
 
-    val listenersOption = sourceGearContext.fileAccumulator.listeners.get(schemaId)
+    val listenersOption = sourceGearContext.fileAccumulator.listeners.get(lensRef)
     if (listenersOption.isDefined) {
       val modelFields = listenersOption.get.map(i => i.collect(sourceGearContext.astGraph, this, sourceGearContext))
-      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields.collect{case i if i.isDefined => i.get}, value))
+      expandedValueStore = Option(FlattenModelFields.flattenFields(modelFields.collect{case i if i.isSuccess => i.get}, value))
     } else {
       expandedValueStore = Option(value)
     }
 
-    val overrides = valueOverrides
+    val overrides = valueOverrides()
 
     if (overrides.nonEmpty) {
       expandedValueStore = Option(FlattenModelFields.flattenFields(overrides.toSet, expandedValueStore.get))
@@ -138,6 +139,7 @@ trait SingleModelNode extends BaseModelNode {
 
 case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef,
                                             value: JsObject,
+                                            hiddenValue: JsObject,
                                             lensRef: LensRef,
                                             priority: Int,
                                             root: N,
@@ -158,7 +160,7 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef,
   }
 
   override def flatten : ModelNode = {
-    val mn = ModelNode(schemaId, value, lensRef, priority, variableMapping, hash, internal)
+    val mn = ModelNode(schemaId, value, hiddenValue, lensRef, priority, variableMapping, hash, internal)
     mn.attachAnnotations(annotations)
     mn
   }
@@ -169,6 +171,7 @@ case class LinkedModelNode[N <: WithinFile](schemaId: SchemaRef,
 
 case class ModelNode(schemaId: SchemaRef,
                      value: JsObject,
+                     hiddenValue: JsObject,
                      lensRef: LensRef,
                      priority: Int,
                      variableMapping: VariableMapping,
@@ -184,7 +187,7 @@ case class ModelNode(schemaId: SchemaRef,
     val root : T = labeledDependencies.find(i=> i._1.isInstanceOf[YieldsModel] && i._1.asInstanceOf[YieldsModel].root)
       .get._2.asInstanceOf[T]
     val parseGear = astGraph.get(this).labeledDependencies.find(_._1.isInstanceOf[YieldsModel]).get._1.asInstanceOf[YieldsModel].withParseGear
-    val mn = LinkedModelNode(schemaId, value, lensRef, priority, root, modelMapping, containerMapping, parseGear, variableMapping, internal)
+    val mn = LinkedModelNode(schemaId, value, hiddenValue, lensRef, priority, root, modelMapping, containerMapping, parseGear, variableMapping, internal)
     mn.attachAnnotations(annotations)
     mn
   }
@@ -239,6 +242,10 @@ case class MultiModelNode(schemaId: SchemaRef,
 
   override def value: JsObject = modelNodes.foldLeft(JsObject.empty) {
     case (aggregate, modelNode) => aggregate ++ modelNode.value
+  }
+
+  override def hiddenValue: JsObject = modelNodes.foldLeft(JsObject.empty) {
+    case (aggregate, modelNode) => aggregate ++ modelNode.hiddenValue
   }
 
   lazy val hash: String = {

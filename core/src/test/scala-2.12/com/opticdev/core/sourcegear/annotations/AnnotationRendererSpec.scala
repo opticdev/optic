@@ -14,7 +14,7 @@ class AnnotationRendererSpec extends TestBase {
   val testSchema = SchemaRef(Some(PackageRef("test:package")), "test")
 
   it("can generate a single annotation") {
-    val target = Vector(NameAnnotation("test", null))
+    val target = Vector(NameAnnotation("test", null, false))
 
     val result = AnnotationRenderer.render(prefix, target)
     val parsed = AnnotationParser.annotationsFromFile(result)(SourceParserManager.installedParsers.head, File(""))
@@ -23,7 +23,7 @@ class AnnotationRendererSpec extends TestBase {
   }
 
   describe("rendering to existing string") {
-    val target = Vector(NameAnnotation("test", testSchema))
+    val target = Vector(NameAnnotation("test", testSchema, false))
     it("can render to the first line when only one line") {
       val testCode ="testCode()"
       val result = AnnotationRenderer.renderToFirstLine(prefix, target, testCode)

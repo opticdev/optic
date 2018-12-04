@@ -75,7 +75,7 @@ class AnnotationParserSpec extends TestBase {
 
     it("can find all valid annotations from blocks") {
       val annotations = AnnotationParser.annotationsFromFile(a)(SourceParserManager.installedParsers.head, null)
-      assert(annotations == Vector((6, NameAnnotation("Hello", null)), (10, NameAnnotation("Goodbye", null))))
+      assert(annotations == Vector((6, NameAnnotation("Hello", null, true)), (10, NameAnnotation("Goodbye", null, true))))
     }
 
   }

@@ -22,22 +22,23 @@ object AnnotationParser {
     }
 
     val allAnnotationLines = findAllAnnotationComments(parserBase.inlineCommentPrefix, parserBase.blockCommentRegex, contents)
-    allAnnotationLines.map{ case (lineNumber, line) =>
-      (lineNumber, AnnotationsDslParser.parseSingleLine(line)(ParseContext(file, lineNumber)))
+    allAnnotationLines.map{ case (lineNumber, line, isBlock) =>
+      (lineNumber, AnnotationsDslParser.parseSingleLine(line)(ParseContext(file, lineNumber)), isBlock)
     }.collect {
-      case (line, n) if isType(n, "NameOperationNode") =>
-        (line, NameAnnotation(n.get.asInstanceOf[NameOperationNode].name, null))
-      case (line, n) if isType(n, "TagOperationNode") =>
-        (line, TagAnnotation(n.get.asInstanceOf[TagOperationNode].name, null))
-      case (line, n) if isType(n, "SetOperationNode") =>
-        (line, OverrideAnnotation(n.get.asInstanceOf[SetOperationNode].assignments))
-      case (line, n) if isType(n, "SourceOperationNode") => {
+      case (line, n, isBlock) if isType(n, "NameOperationNode") =>
+        (line, NameAnnotation(n.get.asInstanceOf[NameOperationNode].name, null, isBlock))
+      case (line, n, isBlock) if isType(n, "TagOperationNode") =>
+        (line, TagAnnotation(n.get.asInstanceOf[TagOperationNode].name, null, isBlock))
+      case (line, n, isBlock) if isType(n, "SetOperationNode") =>
+        (line, OverrideAnnotation(n.get.asInstanceOf[SetOperationNode].assignments, isBlock))
+      case (line, n, isBlock) if isType(n, "SourceOperationNode") => {
         val sourceOperationNode = n.get.asInstanceOf[SourceOperationNode]
         (line, SourceAnnotation(
           sourceOperationNode.project,
           sourceOperationNode.name,
           sourceOperationNode.relationshipId.get, //@todo make implicit if not specified
-          sourceOperationNode.answers)
+          sourceOperationNode.answers,
+          isBlock)
         )
       }
     }
@@ -81,9 +82,9 @@ object AnnotationParser {
     })
   }.toVector
 
-  def findAllAnnotationComments(inlineCommentPrefix: String, blockCommentRegex: Regex, contents: String) : Vector[(Int, String)] = {
-    (inlineAnnotationComments(inlineCommentPrefix, contents) ++
-    findBlockAnnotationComments(blockCommentRegex, contents)).sortBy(_._1)
+  def findAllAnnotationComments(inlineCommentPrefix: String, blockCommentRegex: Regex, contents: String) : Vector[(Int, String, Boolean)] = {
+    inlineAnnotationComments(inlineCommentPrefix, contents).map(i=> (i._1, i._2, false)) ++
+    findBlockAnnotationComments(blockCommentRegex, contents).map(i=> (i._1, i._2, true)).sortBy(_._1)
   }
 
 }

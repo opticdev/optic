@@ -3,9 +3,11 @@ package com.opticdev.core.sourcegear.graph
 import better.files.File
 import com.opticdev.common.graph.{AstGraph, BaseNode, CommonAstNode, CustomEdge}
 import com.opticdev.common.SchemaRef
+import com.opticdev.core.sourcegear.SGContext
 import com.opticdev.core.sourcegear.graph.edges.{Exports, InFile}
 import com.opticdev.core.sourcegear.graph.model.{BaseModelNode, FlatModelNode, LinkedModelNode, ModelNode}
 import com.opticdev.core.sourcegear.graph.objects.ObjectNode
+import play.api.libs.json.JsValue
 
 import scala.collection.mutable
 import scalax.collection.edge.LkDiEdge
@@ -98,6 +100,18 @@ object GraphImplicits {
     def objectNodes() : Vector[ObjectNode] = {
       val result = graph.nodes.filter(i=> i.value.isInstanceOf[ObjectNode]).map(_.value.asInstanceOf[ObjectNode])
       result.toVector
+    }
+
+
+    def objectByName(name: String): Option[(AstProjection, SGContext => JsValue)] = {
+      graph.nodes.collectFirst { //@todo no good way to handle duplicate names with this approach
+        case i if i.value.isObject && i.value.asInstanceOf[ObjectNode].name == name => {
+          (i.value, (context: SGContext) => i.value.asInstanceOf[ObjectNode].value)
+        }
+        case i if i.value.isModel && i.value.asInstanceOf[BaseModelNode].objectRef.exists(_.name == name) => {
+          (i.value, (context: SGContext) => i.value.asInstanceOf[BaseModelNode].expandedValue()(context))
+        }
+      }
     }
 
     def fileNodes : Set[FileNode] = {

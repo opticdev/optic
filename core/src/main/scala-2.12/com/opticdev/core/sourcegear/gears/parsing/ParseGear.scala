@@ -159,7 +159,8 @@ case class ParseAsModel(description: NodeDescription,
 
     val fields = matchResults.extracted.getOrElse(Set())
 
-    val model = FlattenModelFields.flattenFields(fields, initialValue)
+    val model = FlattenModelFields.flattenFields(fields.filter(!_.isHidden), initialValue)
+    val hiddenValue = FlattenModelFields.flattenFields(fields.filter(_.isHidden), initialValue)
     import com.opticdev.core.sourcegear.graph.model.MappingImplicits._
     val modelMapping = fields.toMapping
 
@@ -169,6 +170,7 @@ case class ParseAsModel(description: NodeDescription,
     val linkedModelNode = LinkedModelNode(
       schema,
       model,
+      hiddenValue,
       parsingLensRef,
       priority,
       matchResults.baseNode.get,

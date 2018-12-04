@@ -14,16 +14,17 @@ import com.opticdev.sdk.descriptions.enums.LocationEnums.InCurrentLens
 import com.opticdev.core.sourcegear.context.SDKObjectsResolvedImplicits._
 import com.opticdev.common.graph.path.PropertyPathWalker
 import com.opticdev.core.sourcegear.project.OpticProject
+import com.opticdev.sdk.skills_sdk.LensRef
 import com.opticdev.sdk.skills_sdk.lens.{OMComponentWithPropertyPath, OMLensSchemaComponent}
 
 import scala.util.Try
 
-case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLensSchemaComponent], mapToSchema: SchemaRef, packageId: String) extends Listener {
+case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLensSchemaComponent], mapToSchema: SchemaRef, lensRef: LensRef) extends Listener {
 
   override val schema = Some(schemaComponent.component.schemaRef)
-  override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): Option[ModelField] = Try {
+  override def collect(implicit astGraph: AstGraph, modelNode: BaseModelNode, sourceGearContext: SGContext): Try[ModelField] = Try {
 
-    val resolvedSchema = schemaComponent.component.resolvedSchema(packageId)(sourceGearContext.sourceGear)
+    val resolvedSchema = schemaComponent.component.resolvedSchema(lensRef.packageRef.get.packageId)(sourceGearContext.sourceGear)
 
     val asModelNode : ModelNode = modelNode match {
       case l: LinkedModelNode[CommonAstNode] => l.flatten
@@ -39,7 +40,11 @@ case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLens
 
       val found = {
         val allFound = targetNodes
-          .filter(n => LocationEvaluation.matches(schemaComponent.component.locationForCompiler.get, n.astRoot, astRoot, containerMapping))
+          .filter(n => {
+            val correctLocation = LocationEvaluation.matches(schemaComponent.component.locationForCompiler.get, n.astRoot, astRoot, containerMapping)
+            val validSchema = n.matchesSchema()(sourceGearContext)
+            correctLocation && validSchema
+          })
           .sortBy(_.astRoot.range.start)
 
         PriorityFilter.apply(allFound:_*)
@@ -72,5 +77,5 @@ case class MapSchemaListener(schemaComponent: OMComponentWithPropertyPath[OMLens
     } else {
       ModelField(schemaComponent.propertyPath, JsArray(addToNodes.map(_.expandedValue())), ModelVectorMapping(addToNodes.map(i=> i.asInstanceOf[ModelNode])))
     }
-  }.toOption
+  }
 }

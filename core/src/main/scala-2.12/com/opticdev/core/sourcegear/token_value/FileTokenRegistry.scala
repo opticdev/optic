@@ -13,6 +13,7 @@ case class FileTokenRegistry(entries: Set[TokenRegistryEntry] = Set()) {
   def get(key: String): Option[TokenRegistryEntry] = entries.find(_.key == key)
   def getExpanded(key: String)(implicit sourceGearContext: SGContext): Option[TokenRegistryEntry] = {
     val localResult = get(key)
+    println(localResult)
     if (localResult.isEmpty) {
       val registry = expandedRegistry(sourceGearContext)
       val remoteResult = registry.find(_.key == key)

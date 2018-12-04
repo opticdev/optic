@@ -14,4 +14,5 @@ package object skills_sdk {
   case object PrependItems extends AssignmentOperations
   case object PrependItemsUnique extends AssignmentOperations
 
+
 }

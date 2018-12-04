@@ -44,7 +44,7 @@ class ArrowTransformationOptionsQuery(transformationRef: TransformationRef, proj
         ModelOption(mn.id, expandedValue, mn.objectRef.get.name, Try(transformation.combinedAsk(expandedValue)).getOrElse(transformation.ask))
       }
       case on: ObjectNode =>
-        ModelOption(on.id, on.value, on.name, Try(transformation.combinedAsk(on.value)).getOrElse(transformation.ask))
+        ModelOption(on.id, on.value.as[JsObject], on.name, Try(transformation.combinedAsk(on.value.as[JsObject])).getOrElse(transformation.ask))
     }.toSeq.sortBy(_.name)
 
 

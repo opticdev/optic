@@ -52,13 +52,13 @@ class OpticRegistryProviderSpec extends FunSpec with BeforeAndAfterAll {
   describe("works within the package manager") {
 
     it("can install a set of nested dependencies") {
-      val results = PackageManager.installPackages(PackageRef("apiatlas:express-js", "0.0.1"))
-      assert(results.get == Set("apiatlas:schemas@0.0.1", "apiatlas:express-js@0.0.1"))
+      val results = PackageManager.installPackages(PackageRef("apiatlas:express-js", "0.0.2"))
+      assert(results.get == Set("apiatlas:schemas@0.0.1", "apiatlas:express-js@0.0.2"))
     }
 
     it("can install a set of dependencies") {
       val results = PackageManager.installPackages(PackageRef("apiatlas:schemas", "latest"), PackageRef("apiatlas:express-js", "latest"))
-      assert(results.get == Set("apiatlas:schemas@0.0.1", "apiatlas:express-js@0.0.1"))
+      assert(results.get == Set("apiatlas:schemas@0.0.1", "apiatlas:express-js@0.0.2"))
     }
 
   }

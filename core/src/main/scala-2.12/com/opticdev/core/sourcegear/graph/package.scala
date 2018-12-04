@@ -20,7 +20,7 @@ package object graph {
 
 
   implicit val namedModelFormat = Json.format[NamedModel]
-  case class NamedModel(name: String, schemaFull: String, id: String) {
+  case class NamedModel(name: String, schemaFull: Option[String], id: String) {
     def toJson : JsValue = Json.toJson[NamedModel](this)
   }
 
