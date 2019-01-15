@@ -12,7 +12,7 @@ class ToSwaggerSpec extends FunSpec {
       Parameter("query", "filterB", true, JsObject.empty),
       Parameter("query", "filterC", true, JsObject.empty),
     ),
-      body = Some(RequestBody("application/json", Some(Json.parse(
+      body = Some(RequestBody("application/json", Json.parse(
         """
           |{
           |					"type": "object",
@@ -31,9 +31,9 @@ class ToSwaggerSpec extends FunSpec {
           |					"patterns": [],
           |					"required": ["username"]
           |				}
-        """.stripMargin).as[JsObject]))),
+        """.stripMargin).as[JsObject])),
       responses = Vector(
-        Response(200, None, Some(Json.parse("""{
+        Response(200, Vector(), None, Some(Json.parse("""{
                                               |					"$schema": "http://json-schema.org/draft-04/schema#",
                                               |					"title": "",
                                               |					"type": "object",
@@ -42,14 +42,14 @@ class ToSwaggerSpec extends FunSpec {
                                               |							"type": "string"
                                               |						}
                                               |					}}""".stripMargin).as[JsObject])),
-        Response(410, Some("application/json"), Some(Json.parse("""{
+        Response(410, Vector(), Some("application/json"), Some(Json.parse("""{
                                                                   |					"$schema": "http://json-schema.org/draft-04/schema#",
                                                                   |					"title": "",
                                                                   |					"type": "string"
                                                                   |					}""".stripMargin).as[JsObject])),
       ), authentication = Some("MyAuth")),
     Endpoint("post", "/url/:hello/", Vector(Parameter("header", "X-AUTH", true, JsObject.empty)), responses = Vector(
-      Response(200, Some("application/json"), Some(Json.parse("""{
+      Response(200, Vector(), Some("application/json"), Some(Json.parse("""{
                                                                 |					"$schema": "http://json-schema.org/draft-04/schema#",
                                                                 |					"title": "",
                                                                 |					"type": "string"

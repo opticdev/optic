@@ -13,7 +13,7 @@ class BodyParserSpec extends FunSpec {
     assert(result.isSuccess)
     val body = result.get
     assert(body.contentType == "application/json")
-    assert(body.schema.get.toString() == """{"$schema":"http://json-schema.org/draft-04/schema#","type":"object","properties":{"boolProperty":{"type":"boolean"},"numberProp":{"type":"number"}}}""")
+    assert(body.schema.toString() == """{"$schema":"http://json-schema.org/draft-04/schema#","type":"object","properties":{"boolProperty":{"type":"boolean"},"numberProp":{"type":"number"}}}""")
   }
 
   it("can parse valid text body") {
@@ -21,7 +21,7 @@ class BodyParserSpec extends FunSpec {
     assert(result.isSuccess)
     val body = result.get
     assert(body.contentType == "text/plain")
-    assert(body.schema.get.toString() == """{"$schema":"http://json-schema.org/draft-04/schema#","type":"string"}""")
+    assert(body.schema.toString() == """{"$schema":"http://json-schema.org/draft-04/schema#","type":"string"}""")
   }
 
   describe("exceptions") {

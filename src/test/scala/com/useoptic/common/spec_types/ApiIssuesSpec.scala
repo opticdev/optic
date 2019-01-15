@@ -5,7 +5,7 @@ import play.api.libs.json.JsObject
 
 class ApiIssuesSpec extends FunSpec {
 
-  val exampleResponse = Response(200, Some("application/json"), Some(JsObject.empty))
+  val exampleResponse = Response(200, Vector(), Some("application/json"), Some(JsObject.empty))
 
   it("error when no responses") {
     val endpoint = Endpoint("post", "/url/:me", Vector(), None, Vector())
@@ -15,7 +15,7 @@ class ApiIssuesSpec extends FunSpec {
   }
 
   it("warning when no body schema") {
-    val endpoint = Endpoint("post", "/url/:me", Vector(), Some(RequestBody("application/json", None)), Vector(exampleResponse))
+    val endpoint = Endpoint("post", "/url/:me", Vector(), Some(RequestBody("application/json", JsObject.empty)), Vector(exampleResponse))
     assert(endpoint.issues.size == 1)
     assert(endpoint.hasIssues)
     assert(endpoint.issues.head.isInstanceOf[RequestBodyWithoutSchema])
@@ -29,14 +29,14 @@ class ApiIssuesSpec extends FunSpec {
 //  }
 
   it("warning when no response body schema") {
-    val endpoint = Endpoint("post", "/url/:me", Vector(), None, Vector(Response(200, Some("application/json"), None)))
+    val endpoint = Endpoint("post", "/url/:me", Vector(), None, Vector(Response(200, Vector(), Some("application/json"), None)))
     assert(endpoint.issues.size == 1)
     assert(endpoint.hasIssues)
     assert(endpoint.issues.head.isInstanceOf[ResponseBodyWithoutSchema])
   }
 
   it("warning when no response body and ") {
-    val endpoint = Endpoint("post", "/url/:me", Vector(), None, Vector(Response(200, None, Some(JsObject.empty))))
+    val endpoint = Endpoint("post", "/url/:me", Vector(), None, Vector(Response(200, Vector(), None, Some(JsObject.empty))))
     assert(endpoint.issues.size == 1)
     assert(endpoint.hasIssues)
     assert(endpoint.issues.head.isInstanceOf[ResponseBodyWithoutContentType])

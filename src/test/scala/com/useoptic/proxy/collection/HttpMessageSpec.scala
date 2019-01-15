@@ -5,9 +5,9 @@ import org.scalatest.FunSpec
 class HttpMessageSpec extends FunSpec {
 
   describe("content type classification") {
-     it("can determine the content-type from headers") {
+     it("can determine the Content-Type from headers") {
        val message = new HTTPTransaction {
-         override def headers: Vector[(String, String)] = Vector("Content-type" -> "application/json")
+         override def headers: Vector[(String, String)] = Vector("Content-Type" -> "application/json")
          override def bodyBase64: Option[String] = None
        }
        assert(message.contentType.get == "application/json")

@@ -16,7 +16,7 @@ case class RequestBodyWithoutSchema(identifier: String,
 
 case class RequestBodyWithoutContentType(identifier: String,
                                          title: String = "Request Content Type is ambiguous",
-                                         message: String = "Request Body schema is defined, but without a content-type.",
+                                         message: String = "Request Body schema is defined, but without a Content-Type.",
                                          doctag: String = "issue-ambiguous-request-type") extends ApiIssue
 
 case class ResponseBodyWithoutSchema(identifier: String,
@@ -26,5 +26,5 @@ case class ResponseBodyWithoutSchema(identifier: String,
 
 case class ResponseBodyWithoutContentType(identifier: String,
                                           title: String = "Response Content Type is ambiguous",
-                                          message: String = "Response Body schema is defined, but without a content-type.",
+                                          message: String = "Response Body schema is defined, but without a Content-Type.",
                                           doctag: String = "issue-ambiguous-response-type") extends ApiIssue

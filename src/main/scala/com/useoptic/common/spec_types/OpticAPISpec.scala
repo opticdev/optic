@@ -61,10 +61,10 @@ object OpticAPISpec {
     SwaggerParam(parameter.name, parameter.in, parameter.required, parameter.schema)
 
   def bodyToSwagger(requestBody: RequestBody) =
-    SwaggerRequestBody(Map(requestBody.contentType -> requestBody.schema.getOrElse(JsObject.empty)))
+    SwaggerRequestBody(Map(requestBody.contentType -> requestBody.schema))
 
   def responseToSwagger(response: Response) =
-    SwaggerResponse(Map(response.`content-type`.getOrElse("application/json") -> response.schema.getOrElse(JsObject.empty)))
+    SwaggerResponse(Map(response.contentType.getOrElse("application/json") -> response.schema.getOrElse(JsObject.empty)))
 
   def authToSwagger(authenticationSchemes: Map[String, AuthenticationScheme]) = {
     authenticationSchemes.map {

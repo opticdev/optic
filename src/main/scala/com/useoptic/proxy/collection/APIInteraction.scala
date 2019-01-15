@@ -9,8 +9,8 @@ abstract class HTTPTransaction {
   def bodyBase64: Option[String]
 
   //computed fields
-  def contentType: Option[String] = headers.reverse.find(_._1 == "Content-type").map(_._2)
+  def contentType: Option[String] = headers.reverse.find(_._1 == "Content-Type").map(_._2)
 }
 
 case class RawRequest(fullPath: String, method: String, bodyBase64: Option[String], headers: Vector[(String, String)]) extends HTTPTransaction
-case class RawResponse(statusCode: String, headers: Vector[(String, String)], bodyBase64: Option[String]) extends HTTPTransaction
+case class RawResponse(statusCode: Int, headers: Vector[(String, String)], bodyBase64: Option[String]) extends HTTPTransaction

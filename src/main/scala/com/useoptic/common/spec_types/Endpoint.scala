@@ -17,6 +17,10 @@ case class Endpoint(method: String,
 
   def pathParameters: Vector[PathParameter] = Endpoint.pathParameters(url)
 
+  def headerParameters: Vector[Parameter] = parameters.filter(_.in == "header")
+  def cookieParameters: Vector[Parameter] = parameters.filter(_.in == "cookie")
+  def queryParameters: Vector[Parameter] = parameters.filter(_.in == "query")
+
   override def issues: Vector[ApiIssue] = {
     (if (responses.isEmpty) Vector(NoResponses(identifier)) else Vector()) ++
     (if (body.isDefined) body.get.issues else Vector()) ++
@@ -36,19 +40,21 @@ case class Parameter(in: String, name: String, required: Boolean = false, schema
   def schemaType = (schema \ "type").as[JsString].value
 }
 
-case class RequestBody(contentType: String, schema: Option[JsObject]) extends ApiSpecificationComponent {
+case class RequestBody(contentType: String, schema: JsObject) extends ApiSpecificationComponent {
   override def issues: Vector[ApiIssue] = Vector() //{
 //    (if (schema.isEmpty) Vector(RequestBodyWithoutSchema(identifier)) else Vector()) ++
-//    (if (schema.nonEmpty && `content-type`.isEmpty) Vector(RequestBodyWithoutContentType(identifier)) else Vector())
+//    (if (schema.nonEmpty && `Content-Type`.isEmpty) Vector(RequestBodyWithoutContentType(identifier)) else Vector())
 //  }
   def identifier: String = s"body"
 }
 
-case class Response(status: Int, `content-type`: Option[String], schema: Option[JsObject]) extends ApiSpecificationComponent {
+case class Response(status: Int, headers: Vector[Parameter], contentType: Option[String], schema: Option[JsObject]) extends ApiSpecificationComponent {
   override def issues: Vector[ApiIssue] = {
     (if (schema.isEmpty) Vector(ResponseBodyWithoutSchema(identifier)) else Vector()) ++
-    (if (schema.nonEmpty && `content-type`.isEmpty) Vector(ResponseBodyWithoutContentType(identifier)) else Vector())
+    (if (schema.nonEmpty && contentType.isEmpty) Vector(ResponseBodyWithoutContentType(identifier)) else Vector())
   }
+
+  def isSuccessResponse = status >= 200 && status < 300
 
   override def identifier: String = status.toString
 }
@@ -60,9 +66,8 @@ object EndpointValidation {
 }
 
 object Endpoint {
-  //do not remove. used for parsing from project graph
-  implicit val responsesFormats = Json.using[Json.WithDefaultValues].format[Response]
   implicit val parameterFormats = Json.using[Json.WithDefaultValues].format[Parameter]
+  implicit val responsesFormats = Json.using[Json.WithDefaultValues].format[Response]
   implicit val requestBodyFormats = Json.using[Json.WithDefaultValues].format[RequestBody]
   implicit val endpointFormats = Json.using[Json.WithDefaultValues].format[Endpoint]
 
