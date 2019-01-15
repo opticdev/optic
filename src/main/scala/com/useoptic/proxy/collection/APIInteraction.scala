@@ -5,12 +5,12 @@ case class APIInteraction(request: RawRequest, response: RawResponse)
 
 abstract class HTTPTransaction {
   //shared fields
-  def headers: Map[String, String]
+  def headers: Vector[(String, String)]
   def bodyBase64: Option[String]
 
   //computed fields
-  def contentType: Option[String] = headers.get("Content-type")
+  def contentType: Option[String] = headers.reverse.find(_._1 == "Content-type").map(_._2)
 }
 
-case class RawRequest(path: String, method: String, bodyBase64: Option[String], headers: Map[String, String]) extends HTTPTransaction
-case class RawResponse(statusCode: String, headers: Map[String, String], bodyBase64: Option[String]) extends HTTPTransaction
+case class RawRequest(fullPath: String, method: String, bodyBase64: Option[String], headers: Vector[(String, String)]) extends HTTPTransaction
+case class RawResponse(statusCode: String, headers: Vector[(String, String)], bodyBase64: Option[String]) extends HTTPTransaction

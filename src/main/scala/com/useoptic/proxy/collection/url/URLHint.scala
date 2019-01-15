@@ -2,7 +2,7 @@ package com.useoptic.proxy.collection.url
 
 import scala.util.Try
 
-case class URLHint(raw: String, regex: String, namedParameters: Vector[String]) {
+case class URLHint(path: String, regex: String, namedParameters: Vector[String]) {
   private val _compiled = regex.r
 
   def matches(fullPath: String): Option[Map[String, String]] = Try {

@@ -7,7 +7,7 @@ class URLParserSpec extends FunSpec {
   it("can find match") {
     val either = URLParser.parse("http://me.com/users/meabc123", Vector(TestHints.userById))
     val urlResult = either.right.get
-    assert(urlResult.raw == "/users/:userId")
+    assert(urlResult.path == "/users/:userId")
   }
 
   it("will fail if ambiguous") {
