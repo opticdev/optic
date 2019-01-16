@@ -1,0 +1,9 @@
+name: Optic Test Project
+
+host: localhost
+port: 3000
+
+paths:
+  - /login
+  - /users/:userId/profile
+
