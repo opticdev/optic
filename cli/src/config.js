@@ -1,6 +1,8 @@
 import "regenerator-runtime/runtime";
 import path from 'path'
 const isDev = false
+import fs from 'fs'
+import niceTry from 'nice-try'
 
 const jreDirectory = require('os').homedir()+'/.optic-jre'
 

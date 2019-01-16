@@ -17,6 +17,7 @@ import fs from 'fs'
 import {initStorage} from "./Storage";
 import {stageCmd} from "./commands/control/stage";
 import {publishCmd} from "./commands/control/publish";
+import {finishInstallCmd} from "./commands/control/finishInstall";
 
 const storage = initStorage()
 
@@ -31,6 +32,7 @@ program
 
 // Commands
 commands.attachCommand(adduserCmd)
+commands.attachCommand(finishInstallCmd)
 commands.attachCommand(stageCmd, true, true)
 commands.attachCommand(publishCmd, true, true)
 commands.attachCommand(startCmd)

@@ -2,10 +2,6 @@ import inquirer from 'inquirer'
 import p from '../../package'
 import colors from 'colors'
 import {install} from '../jre/jre-install'
-import {startCmd} from "./control/start";
-import storage from "node-persist";
-import {isDev} from "../config";
-import request from 'request'
 import {track} from "../Analytics";
 import {initStorage} from "../Storage";
 

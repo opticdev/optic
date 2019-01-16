@@ -19,7 +19,7 @@
 
   const appRootPath = require('app-root-path')
 
-  const {major_version, update_number, build_number, hash} = require('../../package').jreConfig
+  const {major_version, update_number, mac, linux, windows} = require('../../package').jreConfig
 
   const version = major_version + 'u' + update_number;
 
@@ -90,15 +90,21 @@
 		  .stdout.trim() === 'No smoke!';
   }
 
-  const url = exports.url = () =>
-    'https://download.oracle.com/otn-pub/java/jdk/' +
-    version + '-b' + build_number + '/' + hash +
-    '/jre-' + version + '-' + platform() + '-' + arch() + '.tar.gz';
+  const url = exports.url = () => {
+    const p = os.platform()
+    switch (p) {
+      case 'darwin': return mac;
+      case 'win32': return windows;
+      case 'linux': return linux;
+      default:
+        fail('unsupported platform: ' + p);
+    }
+  }
 
   const install = exports.install = (callback, clean = false) => {
 
     if (fs.existsSync(jreName()) && smoketest() && ! clean) {
-      console.log('Valid version of JRE already installed')
+      // console.log('Valid version of JRE already installed')
       callback()
       return
     }
@@ -107,6 +113,7 @@
     // console.log("Downloading from: ", urlStr);
     callback = callback || (() => {});
     rmdir(jreDir());
+
     request
       .get({
         url: url(),
