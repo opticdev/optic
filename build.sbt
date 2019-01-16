@@ -1,9 +1,7 @@
-name := "optic-proxy"
+name := "optic"
+organization := "com.useoptic"
 
-version := "0.1"
-
-scalaVersion := "2.12.8"
-
+val appVersion = "0.1"
 
 val scalaTestVersion = "3.0.1"
 val akkaHttpVersion = "10.1.1"
@@ -11,7 +9,6 @@ val akkaHttpVersion = "10.1.1"
 libraryDependencies += "org.scalactic" %% "scalactic" % scalaTestVersion
 libraryDependencies += "org.scalatest" %% "scalatest" % scalaTestVersion % "test"
 
-libraryDependencies +=  "org.scalaj" %% "scalaj-http" % "2.4.1"
 libraryDependencies +=  "io.lemonlabs" %% "scala-uri" % "1.3.1"
 
 libraryDependencies += "com.typesafe.akka" %% "akka-http" % akkaHttpVersion
@@ -21,4 +18,32 @@ libraryDependencies += "de.heikoseeberger" %% "akka-http-play-json" % "1.19.0-M2
 
 libraryDependencies += "com.typesafe.play" %% "play-json" % "2.6.11"
 libraryDependencies += "io.leonard" %% "play-json-traits" % "1.4.4"
+
+val commonSettings: Seq[Def.Setting[_]] = Seq(
+  version := appVersion,
+  scalaVersion := "2.12.8",
+  test in assembly := {},
+  javacOptions ++= Seq("-source", "1.8", "-target", "1.8"), //, "-Xmx2G"),
+  scalacOptions ++= Seq("-deprecation", "-unchecked"),
+  resolvers += Opts.resolver.mavenLocalFile,
+  resolvers ++= Seq(DefaultMavenRepository,
+    Resolver.defaultLocal,
+    Resolver.mavenLocal
+  )
+)
+
+lazy val common = (project in file("common")).
+  settings(commonSettings: _*)
+  .enablePlugins(BuildInfoPlugin)
+  .settings(
+    libraryDependencies ++= Dependencies.commonDependencies
+  )
+
+lazy val proxy = (project in file("proxy")).
+  settings(commonSettings: _*)
+  .enablePlugins(BuildInfoPlugin)
+  .dependsOn(common)
+  .settings(
+    libraryDependencies ++= Dependencies.proxyDependencies
+  )
 
