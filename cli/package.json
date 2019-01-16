@@ -56,7 +56,7 @@
     "update-notifier": "^2.5.0"
   },
   "files": [
-    "jars/server-assembly.jar",
+    "jars/optic-proxy.jar",
     "resources/Smoketest.java",
     "resources/Smoketest.class",
     "lib"
@@ -64,8 +64,8 @@
   "jreConfig": {
     "major_version": "8",
     "update_number": "201",
-    "mac": "https://s3.us-east-2.amazonaws.com/optic-jres/jre-8u201-macosx-x64.tar.gz",
-    "linux": "https://s3.us-east-2.amazonaws.com/optic-jres/jre-8u201-linux-x64.tar.gz",
-    "windows": "https://s3.us-east-2.amazonaws.com/optic-jres/jre-8u201-windows-x64.tar.gz"
+    "mac": "http://dyq6rn9yel7ma.cloudfront.net/jre-8u201-macosx-x64.tar.gz",
+    "linux": "http://dyq6rn9yel7ma.cloudfront.net/jre-8u201-linux-x64.tar.gz",
+    "windows": "http://dyq6rn9yel7ma.cloudfront.net/jre-8u201-windows-x64.tar.gz"
   }
 }

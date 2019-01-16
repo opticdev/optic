@@ -1,6 +1,8 @@
 import {startCmd} from "./commands/control/start";
 import colors from "colors";
-import {catchProjectErrors, shouldStart} from "./optic/AgentSocket";
+import {parseOpticYaml} from "./optic/configyaml";
+import path from 'path'
+import config from './config'
 
 export function attachCommandHelper(program) {
 	return {
@@ -12,10 +14,16 @@ export function attachCommandHelper(program) {
 						const p = startCmd.action(false, false)
 						p.then(() => {
 							if (requiresProject) {
-								shouldStart().then(() => {
-									catchProjectErrors()
-									command.action.apply(null, arguments)
-								})
+
+								const configFilePath = path.join(config.projectDirectory, 'optic.yml').toString()
+								const parseResults = parseOpticYaml(configFilePath)
+								if (parseResults.error) {
+									console.log(colors.red('Error reading configuration from optic.yml: '+parseResults.error))
+									process.exit(0)
+								} else {
+									command.action.call(null, arguments, parseResults.config)
+								}
+
 							} else {
 								command.action.apply(null, arguments)
 							}
@@ -28,7 +36,6 @@ export function attachCommandHelper(program) {
 				.description(command.description)
 
 			if (command.options && Array.isArray(command.options)) {
-
 				command.options.forEach((i) => cmd.option(i[0], i[1]))
 			}
 

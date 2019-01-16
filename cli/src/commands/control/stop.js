@@ -10,5 +10,7 @@ export const stopCmd = {
 		kill('30333')
 			.then(i=> console.log(successText))
 			.catch(i=> console.log(failureText))
+
+		kill('30334').then(i => {}).catch(i => {})
 	}
 }

@@ -6,6 +6,7 @@ import pathToRegexp from 'path-to-regexp'
 
 export const opticConfigType = Joi.object().keys({
 	name: Joi.string().min(3).max(30).required(),
+	test: Joi.string().min(1).required(),
 	host: Joi.string().alphanum().min(1).required(),
 	port: Joi.number().integer().required(),
 	paths: Joi.array().items(Joi.string()).required()

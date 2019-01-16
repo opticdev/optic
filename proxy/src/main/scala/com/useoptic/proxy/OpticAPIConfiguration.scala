@@ -3,9 +3,11 @@ package com.useoptic.proxy
 import com.useoptic.proxy.collection.url.URLHint
 
 case class OpticAPIConfiguration(name: String,
-                                 forwardTo: Option[ProxyConfig],
+                                 test: String,
+                                 host: String,
+                                 port: Int,
                                  paths: Vector[URLHint],
-                                 excludeHeaders: Vector[String],
-                                 includeHeaders: Vector[String])
-
-case class ProxyConfig(host: String, port: Int)
+//                                 excludeHeaders: Vector[String],
+//                                 includeHeaders: Vector[String]
+                                ) {
+}

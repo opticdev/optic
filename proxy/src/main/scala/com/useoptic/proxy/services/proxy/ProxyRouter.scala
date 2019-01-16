@@ -10,7 +10,6 @@ import akka.stream.ActorMaterializer
 import scala.io.StdIn
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.settings.{ClientConnectionSettings, ConnectionPoolSettings}
-import com.useoptic.proxy.ProxyConfig
 import com.useoptic.proxy.collection.{APIInteraction, CollectionSessionManager}
 import com.useoptic.proxy.services.control.collection.Protocol._
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
@@ -23,16 +22,15 @@ import scala.util.{Failure, Success}
 
 object ProxyRouter {
   val routes: Route = {
-    path(".*".r) { _ =>
+    pathPrefix("") {
       extractRequest {request => {
 
-        if (CollectionSessionManager.isRunning && CollectionSessionManager.session.configuration.forwardTo.isDefined) {
+        if (CollectionSessionManager.isRunning) {
 
           val session = CollectionSessionManager.session
+          val configuration = CollectionSessionManager.session.configuration
 
-          val forwardTo = CollectionSessionManager.session.configuration.forwardTo.get
-
-          val updated = request.updateHost(forwardTo.host, forwardTo.port)
+          val updated = request.updateHost(configuration.host, configuration.port)
 
           onComplete(Http().singleRequest(updated)) { responseTry =>
             if (responseTry.isSuccess) {
@@ -44,7 +42,7 @@ object ProxyRouter {
               //forward server response to clients
               complete(responseTry.get)
             } else {
-              complete(StatusCodes.ServiceUnavailable, s"Optic Proxy Failed. Service at ${forwardTo.host} ${forwardTo.port}")
+              complete(StatusCodes.ServiceUnavailable, s"Optic Proxy Failed. Service at ${configuration.host} ${configuration.port}")
             }
           }
 

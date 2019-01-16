@@ -1,16 +1,103 @@
 import colors from 'colors'
-import config from '../../config'
 import niceTry from 'nice-try'
 import {Spinner} from 'cli-spinner'
+import requestp from 'request-promise'
+import gitInfo from 'git-state'
+import inquirer from 'inquirer'
+import config from '../../config'
+import {exec} from "child_process";
 
 
 export const stageCmd = {
 	name: 'stage',
 	description: 'upload spec to useoptic.com',
-	action: (cmd) => {
-		console.log('stage')
-	}
+	action: (cmd, config) => watchTests(config, false)
 }
+
+
+export async function watchTests(projectConfig, shouldPublish) {
+
+	const spinner = new Spinner('Connecting to Optic... %s');
+	spinner.setSpinnerString(18);
+	spinner.start();
+
+	const repoInfo = await new Promise(((resolve, reject) => {
+		gitInfo.isGit(config.projectDirectory, (exists) => {
+			if (!exists) resolve({branch: 'master', commitName: 'HEAD', isDirty: false})
+			gitInfo.check(config.projectDirectory, (err, {dirty, branch}) =>  {
+				if (err) reject(err)
+				const message =  niceTry(() => gitInfo.messageSync(config.projectDirectory))
+				if (shouldPublish) {
+					resolve({branch, commitName: message || 'HEAD', isDirty: dirty !== 0})
+				} else {
+					resolve({branch, commitName: 'HEAD', isDirty: dirty !== 0})
+				}
+			})
+		})
+	}))
+
+	if (repoInfo.isDirty && shouldPublish) {
+		console.error(colors.red(`\nCan not publish spec because project repo is dirty. Please commit and try again. If you are debugging, prefer 'optic stage'`))
+		process.exit(0)
+	}
+
+	const validStart = await requestp.post({uri: 'http://localhost:30334/start', json: projectConfig})
+		.then((response) => true)
+		.catch((err) => {
+			if (err.statusCode === 405) {
+				console.log(colors.red('\nOptic is already watching a test session. Please wait for that to finish and try again.'))
+				return false
+			} else {
+				console.log(colors.red('\nUnable to connect to Optic Proxy. Please restart the server and try again'))
+				return false
+			}
+		})
+
+	if(!validStart) process.exit(0)
+	spinner.setSpinnerTitle('Starting test session... %s')
+
+	const testSuccess = await runTest(projectConfig.test, false)
+	spinner.stop()
+
+	const {continueUpload} = (testSuccess) ? await {continueUpload: true} : await inquirer.prompt([{type: 'confirm', name: 'continueUpload', message: 'Some tests failed, do you still want to proceed?'}])
+
+	spinner.setSpinnerTitle('Processing Observations...')
+	spinner.start()
+
+
+	const spec = await requestp.post({uri: 'http://localhost:30334/end'})
+		.then((response) => {
+			return response
+		})
+		.catch((err) => {
+			console.log(colors.red('\nUnable to process API Spec. '+ err.message))
+			return false
+		})
+		.finally()
+
+	spinner.stop(true)
+
+	console.log(spec)
+
+
+}
+
+export function runTest(testcmd, silent) {
+	return new Promise((resolve, reject) => {
+		exec(testcmd, {cwd: config.projectDirectory, stdio: "inherit", env: {...process.env, 'optic-watching': true}}, (err, stdout, stderr) => {
+			if (!silent) {
+				if (err) {
+					console.log(colors.red(stdout+err))
+					resolve(false)
+				} else {
+					console.log(stdout)
+					resolve(true)
+				}
+			}
+		})
+	})
+}
+
 
 //
 // export async function getStagedSpec(cmd, shouldPublish = false) {

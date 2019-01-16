@@ -2,7 +2,7 @@ package com.useoptic.proxy.services.proxy
 
 import akka.http.scaladsl.model.{ContentTypes, StatusCodes}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import com.useoptic.proxy.{OpticAPIConfiguration, ProxyConfig}
+import com.useoptic.proxy.{OpticAPIConfiguration}
 import com.useoptic.proxy.collection.CollectionSessionManager
 import com.useoptic.proxy.collection.url.TestHints
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterEach, FunSpec}
@@ -19,11 +19,12 @@ class ProxySpec extends FunSpec with ScalatestRouteTest with BeforeAndAfter with
     CollectionSessionManager.startSession(
       OpticAPIConfiguration(
         "Test",
-        Some(ProxyConfig("localhost", 3005)),
-        Vector(TestHints.login),
-        Vector(),
-        Vector())
+        "npm run test",
+        "localhost",
+        3005,
+        Vector(TestHints.login)
       )
+    )
   }
 
   override def beforeEach() {
@@ -33,6 +34,12 @@ class ProxySpec extends FunSpec with ScalatestRouteTest with BeforeAndAfter with
   it("returns an error if proxy is not running") {
     Post("/proxy-test").withEntity("Text Body") ~> route ~> check {
       assert(status == StatusCodes.ServiceUnavailable)
+    }
+  }
+
+  it("connects to paths of any length") {
+    Post("/proxy-test/otheritem/parameter/thing?query=them").withEntity("Text Body") ~> route ~> check {
+      assert(status != StatusCodes.NotFound)
     }
   }
 
@@ -47,6 +54,7 @@ class ProxySpec extends FunSpec with ScalatestRouteTest with BeforeAndAfter with
       }
 
     }
+
 
     it("even when failure status code") {
       requiresProxy

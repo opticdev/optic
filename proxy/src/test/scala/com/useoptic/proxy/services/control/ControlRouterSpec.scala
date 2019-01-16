@@ -2,7 +2,7 @@ package com.useoptic.proxy.services.control
 
 import akka.http.scaladsl.model.{ContentTypes, StatusCodes}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
-import com.useoptic.proxy.{OpticAPIConfiguration, ProxyConfig}
+import com.useoptic.proxy.{OpticAPIConfiguration}
 import com.useoptic.proxy.collection.CollectionSessionManager
 import com.useoptic.proxy.services.control.collection.Protocol._
 import org.scalatest.{BeforeAndAfter, FunSpec}
@@ -17,7 +17,7 @@ class ControlRouterSpec extends FunSpec with ScalatestRouteTest with BeforeAndAf
     CollectionSessionManager.reset
   }
 
-  val config = OpticAPIConfiguration("Test", Some(ProxyConfig("localhost", 20222)), Vector(), Vector(), Vector())
+  val config = OpticAPIConfiguration("Test", "npm run test", "localhost", 20222, Vector())
 
 //  it("can start a project with a forward address") {
 //    Post("/start").withEntity(ContentTypes.`application/json`, Json.toJson(config).toString()) ~> route ~> check {

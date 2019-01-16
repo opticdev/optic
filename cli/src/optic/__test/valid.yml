@@ -1,5 +1,5 @@
 name: Optic Test Project
-
+test: npm run test
 host: localhost
 port: 3000
 

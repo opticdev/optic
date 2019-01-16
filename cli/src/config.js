@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import path from 'path'
-const isDev = false
+const isDev = true
 import fs from 'fs'
 import niceTry from 'nice-try'
 
@@ -10,7 +10,7 @@ module.exports = (() => {
 	if (isDev) {
 		return {
 			runServerCmd: {
-				options: ['-jar', `${process.cwd()}/jars/server-assembly.jar`]
+				options: ['-jar', `${process.cwd()}/jars/optic-proxy.jar`]
 			},
 			storageDirectory: process.cwd()+'/.optic-storage',
 			jreDirectory,
@@ -18,7 +18,7 @@ module.exports = (() => {
 		}
 	} else {
 
-		const jarPath = path.join(__dirname, '../jars/server-assembly.jar')
+		const jarPath = path.join(__dirname, '../jars/optic-proxy.jar')
 
 		return {
 			runServerCmd: {

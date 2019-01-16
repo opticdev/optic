@@ -3,11 +3,10 @@ import request from "request";
 export function serverStatus(versionVerify) {
 
 	return new Promise((resolve, reject) => {
-		request.get('http://localhost:30333/sdk-version', {qs: {'v': versionVerify}}, (err, response, body) => {
+		request.get('http://localhost:30334/ping', (err, response, body) => {
 			if (!err && body) {
 				resolve({
 					isRunning: true,
-					support: niceTry(()=> JSON.parse(body))
 				})
 			} else {
 				resolve({

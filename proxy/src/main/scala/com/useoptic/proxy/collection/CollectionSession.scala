@@ -26,7 +26,6 @@ class CollectionSession(val configuration: OpticAPIConfiguration) {
     val failedEndpointParsing = endpoints.collect{case s if s.isFailure => s}
 
     val mergedEndpoints = BuildAPISpec.mergeEndpoints(endpoints.collect{case s if s.isSuccess => s.get})
-
     mergedEndpoints
   }
 }

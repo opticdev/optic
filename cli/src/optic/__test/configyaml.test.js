@@ -47,8 +47,8 @@ describe.only('optic yaml', () => {
 	})
 
 
-	const valid = 'src/optic/__test/valid.yaml'
-	const syntaxerror = 'src/optic/__test/syntaxerror.yaml'
+	const valid = 'src/optic/__test/valid.yml'
+	const syntaxerror = 'src/optic/__test/syntaxerror.yml'
 
 	it('can parse an example file', () => {
 		const result = parseOpticYaml(valid)

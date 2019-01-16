@@ -3,7 +3,7 @@ package com.useoptic.proxy.collection
 import java.nio.charset.StandardCharsets
 
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
-import com.useoptic.proxy.{OpticAPIConfiguration, ProxyConfig}
+import com.useoptic.proxy.{OpticAPIConfiguration}
 import com.useoptic.proxy.collection.url.TestHints
 import play.api.libs.json.{JsValue, Json}
 
@@ -33,7 +33,7 @@ object TestData {
 
   object Interactions {
 
-    val testConfig = OpticAPIConfiguration("My Backend", None, Vector(TestHints.login), Vector(), Vector())
+    val testConfig = OpticAPIConfiguration("My Backend", "npm run test", "localhost", 2000, Vector(TestHints.login))
 
     val loginSuccess = APIInteraction(
       RawRequest("/login", "post", Some(Body.simpleBody), Vector("Content-Type" -> "application/json")),
