@@ -1,7 +1,7 @@
 name := "optic"
 organization := "com.useoptic"
 
-val appVersion = "0.1"
+val appVersion = Constants.cliVersion
 
 val scalaTestVersion = "3.0.1"
 val akkaHttpVersion = "10.1.1"
@@ -34,16 +34,21 @@ val commonSettings: Seq[Def.Setting[_]] = Seq(
 
 lazy val common = (project in file("common")).
   settings(commonSettings: _*)
-  .enablePlugins(BuildInfoPlugin)
   .settings(
     libraryDependencies ++= Dependencies.commonDependencies
   )
 
 lazy val proxy = (project in file("proxy")).
   settings(commonSettings: _*)
-  .enablePlugins(BuildInfoPlugin)
   .dependsOn(common)
   .settings(
     libraryDependencies ++= Dependencies.proxyDependencies
   )
+  .settings(
+    test in assembly := {},
+    assemblyJarName in assembly := "optic-proxy.jar",
+    mainClass in assembly := Some("com.useoptic.proxy.Lifecycle"),
+    mainClass in packageBin := Some("com.useoptic.proxy.Lifecycle")
+  )
+  .enablePlugins(AssemblyPlugin)
 
