@@ -2,7 +2,8 @@ package com.useoptic.proxy.collection
 
 import java.nio.charset.StandardCharsets
 
-import com.useoptic.proxy.OpticAPIConfiguration
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
+import com.useoptic.proxy.{OpticAPIConfiguration, ProxyConfig}
 import com.useoptic.proxy.collection.url.TestHints
 import play.api.libs.json.{JsValue, Json}
 import scalaj.http.Base64
@@ -10,9 +11,10 @@ import scalaj.http.Base64
 object TestData {
 
   object Body {
-    def jsonBody(jsValue: JsValue): String = Base64.encodeString(jsValue.toString())
-    def simpleBody: String = jsonBody(Json.obj("username" -> "testuser", "password" -> "testpassword"))
-    def userBody: String = jsonBody(Json.obj("username" -> "testuser", "id" -> "myId", "email" -> "myemail", "friends" -> Vector("A", "B")))
+    def jsonBody(jsValue: JsValue): HttpEntity = HttpEntity(ContentTypes.`application/json`, jsValue.toString())
+
+    def simpleBody = jsonBody(Json.obj("username" -> "testuser", "password" -> "testpassword"))
+    def userBody = jsonBody(Json.obj("username" -> "testuser", "id" -> "myId", "email" -> "myemail", "friends" -> Vector("A", "B")))
   }
 
   object Headers {
@@ -32,7 +34,7 @@ object TestData {
 
   object Interactions {
 
-    val testConfig = OpticAPIConfiguration("My Backend", Vector(TestHints.login), Vector(), Vector())
+    val testConfig = OpticAPIConfiguration("My Backend", None, Vector(TestHints.login), Vector(), Vector())
 
     val loginSuccess = APIInteraction(
       RawRequest("/login", "post", Some(Body.simpleBody), Vector("Content-Type" -> "application/json")),

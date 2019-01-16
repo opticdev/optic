@@ -40,7 +40,7 @@ case class Parameter(in: String, name: String, required: Boolean = false, schema
   def schemaType = (schema \ "type").as[JsString].value
 }
 
-case class RequestBody(contentType: String, schema: JsObject) extends ApiSpecificationComponent {
+case class RequestBody(contentType: String, schema: Option[JsObject]) extends ApiSpecificationComponent {
   override def issues: Vector[ApiIssue] = Vector() //{
 //    (if (schema.isEmpty) Vector(RequestBodyWithoutSchema(identifier)) else Vector()) ++
 //    (if (schema.nonEmpty && `Content-Type`.isEmpty) Vector(RequestBodyWithoutContentType(identifier)) else Vector())

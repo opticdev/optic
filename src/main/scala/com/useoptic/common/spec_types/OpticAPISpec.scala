@@ -61,7 +61,7 @@ object OpticAPISpec {
     SwaggerParam(parameter.name, parameter.in, parameter.required, parameter.schema)
 
   def bodyToSwagger(requestBody: RequestBody) =
-    SwaggerRequestBody(Map(requestBody.contentType -> requestBody.schema))
+    SwaggerRequestBody(Map(requestBody.contentType -> requestBody.schema.getOrElse(JsObject.empty)))
 
   def responseToSwagger(response: Response) =
     SwaggerResponse(Map(response.contentType.getOrElse("application/json") -> response.schema.getOrElse(JsObject.empty)))

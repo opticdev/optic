@@ -1,5 +1,8 @@
 package com.useoptic.proxy.collection.body
 
+import akka.http.scaladsl.model.Multipart.FormData
+import akka.http.scaladsl.model.Multipart.General.{BodyPart, Strict}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, FormData => URLEncodedFD}
 import com.useoptic.proxy.collection.TestData
 import org.scalatest.FunSpec
 import play.api.libs.json.Json
@@ -7,28 +10,22 @@ import scalaj.http.Base64
 
 class BodyParserSpec extends FunSpec {
 
-  it("can parse valid JSON body") {
-    val bodyRaw = TestData.Body.jsonBody(Json.obj("boolProperty" -> true, "numberProp" -> 15))
-    val result = BodyParser.parse("application/json", bodyRaw)
-    assert(result.isSuccess)
-    val body = result.get
-    assert(body.contentType == "application/json")
-    assert(body.schema.toString() == """{"$schema":"http://json-schema.org/draft-04/schema#","type":"object","properties":{"boolProperty":{"type":"boolean"},"numberProp":{"type":"number"}}}""")
+  it("text/plain handler") {
+    val result = BodyParser.parse(HttpEntity("Basic String"))
+    assert(result.get.contentType == "text/plain")
+    assert(result.get.schema.get.toString() == """{"$schema":"http://json-schema.org/draft-04/schema#","type":"string"}""")
   }
 
-  it("can parse valid text body") {
-    val result = BodyParser.parse("text/plain", Base64.encodeString("Hello World"))
-    assert(result.isSuccess)
-    val body = result.get
-    assert(body.contentType == "text/plain")
-    assert(body.schema.toString() == """{"$schema":"http://json-schema.org/draft-04/schema#","type":"string"}""")
+  it("application/json handler") {
+    val result = BodyParser.parse(HttpEntity(ContentTypes.`application/json`, Json.obj("Hello" -> true).toString()))
+    assert(result.get.contentType == "application/json")
+    assert(result.get.schema.get.toString() == """{"$schema":"http://json-schema.org/draft-04/schema#","type":"object","properties":{"Hello":{"type":"boolean"}}}""")
   }
 
-  describe("exceptions") {
-    it("will throw if content is json but body is not valid json") {
-      val result = BodyParser.parse("application/json", Base64.encodeString("""{]"""))
-      assert(result.isFailure)
-      assert(result.failed.get.getMessage == "The body for this request is not valid json")
-    }
+  it("application/x-www-form-urlencoded handler") {
+    val result = BodyParser.parse(URLEncodedFD("hello" -> "there", "me" -> "true").toEntity)
+    assert(result.get.contentType == "application/x-www-form-urlencoded")
+    assert(result.get.schema.get.toString() == """{"$schema":"http://json-schema.org/draft-04/schema#","type":"object","properties":{"hello":{"type":"string"},"me":{"type":"boolean"}}}""")
   }
+
 }

@@ -9,6 +9,7 @@ import com.useoptic.proxy.collection.headers.HeaderParser
 import com.useoptic.proxy.collection.query.QueryParser
 import com.useoptic.proxy.collection.responses.MergeResponses
 import com.useoptic.proxy.collection.url.URLParser
+import play.api.libs.json.JsObject
 
 import scala.util.Try
 
@@ -25,15 +26,7 @@ object BuildAPISpec {
         //Handle Request
         val queryParameters = QueryParser.parseQuery(request.fullPath)
 
-        val requestBody = {
-          if (request.contentType.isDefined && request.bodyBase64.isDefined) {
-            val bodyParse = BodyParser.parse(request.contentType.get, request.bodyBase64.get)
-            if (bodyParse.isSuccess) bodyParse.toOption else {
-              pathIssues.append(bodyParse.failed.get.asInstanceOf[Exception])
-              None
-            }
-          } else None
-        }
+        val requestBody = request.entity.flatMap(BodyParser.parse)
 
         val requestCookies = CookieParser.parseHeadersIntoCookies(request.headers)
         val requestHeaders = HeaderParser.parseHeaders(request.headers)
@@ -41,15 +34,7 @@ object BuildAPISpec {
         //Handle Response
         val statusCode = response.statusCode
         val responseHeaders = HeaderParser.parseHeaders(response.headers)
-        val responseBody = {
-          if (response.contentType.isDefined && response.bodyBase64.isDefined) {
-            val bodyParse = BodyParser.parse(response.contentType.get, response.bodyBase64.get)
-            if (bodyParse.isSuccess) bodyParse.toOption else {
-              pathIssues.append(bodyParse.failed.get.asInstanceOf[Exception])
-              None
-            }
-          } else None
-        }
+        val responseBody = response.entity.flatMap(BodyParser.parse)
 
         Endpoint(
           request.method,
@@ -57,7 +42,7 @@ object BuildAPISpec {
           queryParameters ++ requestCookies ++ requestHeaders,
           requestBody,
           Vector(
-            Response(statusCode, responseHeaders, responseBody.map(_.contentType), responseBody.map(_.schema))
+            Response(statusCode, responseHeaders, responseBody.map(_.contentType), responseBody.map(_.schema.getOrElse(JsObject.empty)))
           )
         )
       }
@@ -78,7 +63,7 @@ object BuildAPISpec {
       val mergedHeaders = HeaderParser.mergeHeaders(with200s.flatMap(_.headerParameters))
 
 
-      val (requestContentType, requestSchema) = BodyParser.mergeBody(with200s.flatMap(_.body.map(i => (Some(i.contentType), Some(i.schema)))): _*)
+      val (requestContentType, requestSchema) = BodyParser.mergeBody(with200s.flatMap(_.body.map(i => (Some(i.contentType), i.schema))): _*)
 
       val mergedResponses = MergeResponses.mergeResponses(endpointSeq.flatMap(_.responses))
 
@@ -86,7 +71,7 @@ object BuildAPISpec {
         method,
         url,
         mergedQueryParameters ++ mergedCookieParameters ++ mergedHeaders,
-        if (requestContentType.isDefined && requestSchema.isDefined) Some(RequestBody(requestContentType.get, requestSchema.get)) else None,
+        if (requestContentType.isDefined && requestSchema.isDefined) Some(RequestBody(requestContentType.get, requestSchema)) else None,
         mergedResponses
       )
     }}

@@ -29,7 +29,7 @@ class BuildAPISpecSpec extends FunSpec {
 
     assert(endpoint.method == "post")
     assert(endpoint.url == "/login")
-    assert(endpoint.body.get.schema.toString() == "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"username\":{\"type\":\"string\"},\"password\":{\"type\":\"string\"}}}")
+    assert(endpoint.body.get.schema.get.toString() == "{\"$schema\":\"http://json-schema.org/draft-04/schema#\",\"type\":\"object\",\"properties\":{\"username\":{\"type\":\"string\"},\"password\":{\"type\":\"string\"}}}")
 
     assert(endpoint.responses.map(_.status) == Vector(200, 201, 401, 404))
 

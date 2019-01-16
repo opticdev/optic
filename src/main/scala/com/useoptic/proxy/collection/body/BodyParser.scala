@@ -1,33 +1,59 @@
 package com.useoptic.proxy.collection.body
 
+import akka.http.scaladsl.model.Multipart.FormData
+import akka.http.scaladsl.model.{HttpEntity, RequestEntity, FormData => URLEncodedFD}
+import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
+import akka.stream.{ActorMaterializer, Materializer}
 import com.useoptic.common.spec_types.RequestBody
 import com.useoptic.proxy.collection.jsonschema.JsonSchemaBuilderUtil
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json._
 import scalaj.http.Base64
+import com.useoptic.proxy.Lifecycle._
+import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 
+import scala.concurrent.Await
+import scala.concurrent.duration._
 import scala.util.Try
-
 object BodyParser {
+  private implicit val materializer: Materializer = ActorMaterializer()
 
-  def parse(contentType: String, base64Body: String): Try[RequestBody] = Try {
-    val decoded = Base64.decodeString(base64Body)
 
-    val asSchema: Try[JsObject] = contentType match {
+  def parse(entity: HttpEntity): Option[RequestBody] = Try {
+
+    val contentType = entity.contentType.mediaType.value
+
+    contentType match {
+      case "text/plain" => RequestBody(contentType, Some(JsonSchemaBuilderUtil.basicSchema("string")))
       case "application/json" => {
-        Try(SchemaInference.infer(Json.parse(decoded))).recoverWith {
-          case _ => throw InvalidBodyContents("json")
-        }
+        val json = Await.result(Unmarshal(entity).to[JsValue], 10 seconds)
+        RequestBody(contentType, Some(SchemaInference.infer(json)))
       }
-      case "text/plain" => Try(SchemaInference.infer(JsString("")))
-      case _ => Try(throw UnsupportedContentType(contentType))
-    }
+      case "application/x-www-form-urlencoded" => {
+        val form =  Await.result(Unmarshal(entity).to[URLEncodedFD], 10 seconds)
+        val fields = form.fields.map{ case (key, value) => key -> {
+          val tryNumber = Try(JsNumber(BigDecimal.apply(value)))
+          val tryBoolean = Try(JsBoolean(value.toBoolean))
+          if (tryNumber.isSuccess) {
+            tryNumber.get
+          } else if (tryBoolean.isSuccess) {
+            tryBoolean.get
+          } else {
+            JsString(value)
+          }
+        }}
 
-    if (asSchema.isFailure) {
-      throw asSchema.failed.get
+        RequestBody(contentType, Some(SchemaInference.infer(JsObject(fields))))
+      }
+//      case "multipart/form-data" => {
+//        val form =  Await.result(Unmarshal(entity).to[FormData], 20 seconds)
+//        form.parts.map(i => {
+//          //this is a tricky one
+//        })
+//        null
+//      }
+      case _ => RequestBody(contentType, None)
     }
-
-    RequestBody(contentType, asSchema.get)
-  }
+  }.toOption
 
 
   def mergeBody(bodies: (Option[String], Option[JsObject]) *): (Option[String], Option[JsObject]) = {

@@ -12,7 +12,7 @@ class ToSwaggerSpec extends FunSpec {
       Parameter("query", "filterB", true, JsObject.empty),
       Parameter("query", "filterC", true, JsObject.empty),
     ),
-      body = Some(RequestBody("application/json", Json.parse(
+      body = Some(RequestBody("application/json", Some(Json.parse(
         """
           |{
           |					"type": "object",
@@ -31,7 +31,7 @@ class ToSwaggerSpec extends FunSpec {
           |					"patterns": [],
           |					"required": ["username"]
           |				}
-        """.stripMargin).as[JsObject])),
+        """.stripMargin).as[JsObject]))),
       responses = Vector(
         Response(200, Vector(), None, Some(Json.parse("""{
                                               |					"$schema": "http://json-schema.org/draft-04/schema#",

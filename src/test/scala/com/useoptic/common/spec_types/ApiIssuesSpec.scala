@@ -15,7 +15,7 @@ class ApiIssuesSpec extends FunSpec {
   }
 
   it("warning when no body schema") {
-    val endpoint = Endpoint("post", "/url/:me", Vector(), Some(RequestBody("application/json", JsObject.empty)), Vector(exampleResponse))
+    val endpoint = Endpoint("post", "/url/:me", Vector(), Some(RequestBody("application/json", Some(JsObject.empty))), Vector(exampleResponse))
     assert(endpoint.issues.size == 1)
     assert(endpoint.hasIssues)
     assert(endpoint.issues.head.isInstanceOf[RequestBodyWithoutSchema])
