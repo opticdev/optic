@@ -4,12 +4,24 @@ import Joi from 'joi'
 import pathToRegexp from 'path-to-regexp'
 
 
+export const authConfigType = Joi.alternatives(
+	Joi.string().valid('basic', 'bearer'),
+	Joi.object().keys({
+		type: Joi.string().valid('apiKey').required(),
+		in: Joi.string().valid('cookie', 'query', 'header').required(),
+		name: Joi.string().required().min(1)
+}))
 export const opticConfigType = Joi.object().keys({
 	name: Joi.string().min(3).max(30).required(),
+
 	test: Joi.string().min(1).required(),
+
 	host: Joi.string().alphanum().min(1).required(),
 	port: Joi.number().integer().required(),
-	paths: Joi.array().items(Joi.string()).required()
+
+	authentication: authConfigType,
+
+	paths: Joi.array().items(Joi.string()).required(),
 })
 
 export function parseOpticYaml(file) {
@@ -22,6 +34,12 @@ export function parseOpticYaml(file) {
 		} else {
 
 			doc.paths = doc.paths.map(pathToHint)
+
+			if (doc.authentication) {
+				if (typeof doc.authentication === 'string') {
+					doc.authentication = {type: doc.authentication}
+				}
+			}
 
 			return {config: doc, error: null}
 		}

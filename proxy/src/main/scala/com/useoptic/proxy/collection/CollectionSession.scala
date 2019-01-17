@@ -22,10 +22,13 @@ class CollectionSession(val configuration: OpticAPIConfiguration) {
   def reset = _log.clear()
 
   def finish = {
+    implicit val errorAccumulator = new ErrorAccumulator()
+
     val endpoints = BuildAPISpec.endPointsFromInteractions(_log.toVector, configuration)
     val failedEndpointParsing = endpoints.collect{case s if s.isFailure => s}
 
     val mergedEndpoints = BuildAPISpec.mergeEndpoints(endpoints.collect{case s if s.isSuccess => s.get})
-    mergedEndpoints
+
+    BuildAPISpec.applyAuthentication(mergedEndpoints.toVector, configuration)
   }
 }

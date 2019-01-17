@@ -1,14 +1,19 @@
 package com.useoptic.common.spec_types
 
+import com.useoptic.common.spec_types.reporting.{EndpointIssue, EndpointReport}
 import play.api.libs.json._
+
+import scala.util.Try
 
 case class Endpoint(method: String,
                     url: String,
                     parameters: Vector[Parameter] = Vector(),
                     body: Option[RequestBody] = None,
                     responses: Vector[Response] = Vector(),
-                    name: Option[String] = None,
-                    authentication: Option[String] = None) extends ApiSpecificationComponent {
+                    authentication: Option[String] = None,
+
+                    issues: Vector[EndpointIssue] = Vector(),
+                    report: EndpointReport = EndpointReport(0, Map())) extends ApiSpecificationComponent {
 
   require(EndpointValidation.allowedMethods.contains(method),
     s"Invalid HTTP Method ${method} is not one of ${EndpointValidation.allowedMethods.mkString(", ")}")
@@ -20,43 +25,18 @@ case class Endpoint(method: String,
   def headerParameters: Vector[Parameter] = parameters.filter(_.in == "header")
   def cookieParameters: Vector[Parameter] = parameters.filter(_.in == "cookie")
   def queryParameters: Vector[Parameter] = parameters.filter(_.in == "query")
-
-  override def issues: Vector[ApiIssue] = {
-    (if (responses.isEmpty) Vector(NoResponses(identifier)) else Vector()) ++
-    (if (body.isDefined) body.get.issues else Vector()) ++
-    parameters.flatMap(_.issues) ++
-    responses.flatMap(_.issues)
-  }
 }
 
-case class PathParameter(name: String) extends ApiSpecificationComponent {
-  override def issues: Vector[ApiIssue] = Vector()
-  def identifier: String = s"path-parameter.${name}"
-}
+case class PathParameter(name: String) extends ApiSpecificationComponent
 
 case class Parameter(in: String, name: String, required: Boolean = false, schema: JsObject) extends ApiSpecificationComponent {
-  override def issues: Vector[ApiIssue] = Vector()
-  def identifier: String = s"${in}.${name}"
-  def schemaType = (schema \ "type").as[JsString].value
+  def schemaType: String = Try((schema \ "type").get.as[JsString].value).getOrElse("string")
 }
 
-case class RequestBody(contentType: String, schema: Option[JsObject]) extends ApiSpecificationComponent {
-  override def issues: Vector[ApiIssue] = Vector() //{
-//    (if (schema.isEmpty) Vector(RequestBodyWithoutSchema(identifier)) else Vector()) ++
-//    (if (schema.nonEmpty && `Content-Type`.isEmpty) Vector(RequestBodyWithoutContentType(identifier)) else Vector())
-//  }
-  def identifier: String = s"body"
-}
+case class RequestBody(contentType: String, schema: Option[JsObject]) extends ApiSpecificationComponent
 
 case class Response(status: Int, headers: Vector[Parameter], contentType: Option[String], schema: Option[JsObject]) extends ApiSpecificationComponent {
-  override def issues: Vector[ApiIssue] = {
-    (if (schema.isEmpty) Vector(ResponseBodyWithoutSchema(identifier)) else Vector()) ++
-    (if (schema.nonEmpty && contentType.isEmpty) Vector(ResponseBodyWithoutContentType(identifier)) else Vector())
-  }
-
   def isSuccessResponse = status >= 200 && status < 300
-
-  override def identifier: String = status.toString
 }
 
 
@@ -66,15 +46,6 @@ object EndpointValidation {
 }
 
 object Endpoint {
-  implicit val parameterFormats = Json.using[Json.WithDefaultValues].format[Parameter]
-  implicit val responsesFormats = Json.using[Json.WithDefaultValues].format[Response]
-  implicit val requestBodyFormats = Json.using[Json.WithDefaultValues].format[RequestBody]
-  implicit val endpointFormats = Json.using[Json.WithDefaultValues].format[Endpoint]
-
-  def fromJson(jsValue: JsValue, nameOption: Option[String]): JsResult[Endpoint] =
-    Json.fromJson[Endpoint](jsValue)
-        .map(_.copy(name = nameOption))
-
   def pathParameters(url: String) =
     EndpointValidation.pathRegex.findAllIn(url).matchData.toVector.map(i => {
       val paramName = i.group(1)
@@ -83,4 +54,5 @@ object Endpoint {
       PathParameter(paramName)
     })
 
+  def id(method: String, path: String) = s"${method} ${path}"
 }

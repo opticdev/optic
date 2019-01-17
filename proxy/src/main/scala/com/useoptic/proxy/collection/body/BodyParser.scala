@@ -5,6 +5,7 @@ import akka.http.scaladsl.model.{HttpEntity, RequestEntity, FormData => URLEncod
 import akka.http.scaladsl.unmarshalling.{Unmarshal, Unmarshaller}
 import akka.stream.{ActorMaterializer, Materializer}
 import com.useoptic.common.spec_types.RequestBody
+import com.useoptic.common.spec_types.reporting.{EndpointIssue, UnableToParseBody}
 import com.useoptic.proxy.collection.jsonschema.JsonSchemaBuilderUtil
 import play.api.libs.json._
 import com.useoptic.proxy.Lifecycle._
@@ -14,10 +15,10 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.Try
 object BodyParser {
+
   private implicit val materializer: Materializer = ActorMaterializer()
 
-
-  def parse(entity: HttpEntity): Option[RequestBody] = Try {
+  def parse(entity: HttpEntity)(implicit endpointErrorAccumulator: EndpointIssue => Unit): Option[RequestBody] = Try {
 
     val contentType = entity.contentType.mediaType.value
 
@@ -43,13 +44,15 @@ object BodyParser {
 
         RequestBody(contentType, Some(SchemaInference.infer(JsObject(fields))))
       }
-//      case "multipart/form-data" => {
-//        val form =  Await.result(Unmarshal(entity).to[FormData], 20 seconds)
-//        form.parts.map(i => {
-//          //this is a tricky one
-//        })
-//        null
-//      }
+      case "multipart/form-data" => {
+        endpointErrorAccumulator(UnableToParseBody(contentType))
+        throw new UnsupportedContentType(contentType)
+      }
+      case "application/xml" => {
+        endpointErrorAccumulator(UnableToParseBody(contentType))
+        throw new UnsupportedContentType(contentType)
+      }
+
       case _ => RequestBody(contentType, None)
     }
   }.toOption

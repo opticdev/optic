@@ -3,6 +3,8 @@ package com.useoptic.proxy.collection
 import org.scalatest.FunSpec
 
 class BuildAPISpecSpec extends FunSpec {
+  implicit val errorAccumulator = new ErrorAccumulator
+
   val testConfig = TestData.Interactions.testConfig
 
   it("can build an endpoint object from an interaction") {

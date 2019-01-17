@@ -17,7 +17,6 @@ object ControlRouter {
   val routes: Route = {
       path("start") {
         entity(as[OpticAPIConfiguration]) { configuration =>
-          println(configuration)
           post {
             if (CollectionSessionManager.isRunning) {
               complete(StatusCodes.MethodNotAllowed, "Collection already in progress. Send a request to '/end' before trying again")
@@ -31,9 +30,10 @@ object ControlRouter {
       path("end") {
         post {
           if (CollectionSessionManager.isRunning) {
-            val endpoints = CollectionSessionManager.session.finish.toVector
+            val authenticationSchemes = CollectionSessionManager.session.configuration.authenticationSchemes
+            val endpoints = CollectionSessionManager.session.finish
             CollectionSessionManager.reset
-            complete(OpticAPISpec(APIDescription(None, None, None), endpoints, Map()))
+            complete(OpticAPISpec(APIDescription(None, None, None), endpoints, authenticationSchemes))
           } else {
             complete(StatusCodes.MethodNotAllowed, "No collection in progress. Run /start and try again")
           }

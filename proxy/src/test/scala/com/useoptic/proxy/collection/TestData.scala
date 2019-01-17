@@ -33,7 +33,7 @@ object TestData {
 
   object Interactions {
 
-    val testConfig = OpticAPIConfiguration("My Backend", "npm run test", "localhost", 2000, Vector(TestHints.login))
+    val testConfig = OpticAPIConfiguration("My Backend", "npm run test", "localhost", 2000, Vector(TestHints.login), None)
 
     val loginSuccess = APIInteraction(
       RawRequest("/login", "post", Some(Body.simpleBody), Vector("Content-Type" -> "application/json")),

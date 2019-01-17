@@ -13,7 +13,7 @@ class URLParserSpec extends FunSpec {
   it("will fail if ambiguous") {
     val either = URLParser.parse("http://me.com/users/meabc123", Vector(TestHints.userById, TestHints.userById))
     val exception = either.left.get
-    assert(exception.getMessage == "Multiple path entries (/users/:userId || /users/:userId) satisfy observed url:  'users/meabc123'")
+    assert(exception.getMessage == "Observation ignored. Multiple path entries (/users/:userId || /users/:userId) satisfy observed url:  'users/meabc123'")
   }
 
   it("will fail if no match found") {

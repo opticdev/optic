@@ -1,5 +1,6 @@
 package com.useoptic.common.spec_types
 
+import com.useoptic.common.spec_types.reporting._
 import io.leonard.TraitFormat.{caseObjectFormat, traitFormat}
 import play.api.libs.json.Json.format
 import play.api.libs.json.{Json, _}
@@ -22,12 +23,13 @@ object SpecJSONSerialization {
   }
 
   //Api Spec
-  implicit val apiIssueFormats = traitFormat[ApiIssue] << format[NoResponses] << format[RequestBodyWithoutSchema] << format[RequestBodyWithoutContentType] << format[ResponseBodyWithoutSchema] << format[ResponseBodyWithoutContentType]
-  implicit val projectIssueFormats = traitFormat[ProjectIssue] << format[NoTestCommand] << format[IncompleteTestCoverage]
+  implicit val endpointIssueFormat = traitFormat[EndpointIssue] << caseObjectFormat(NoFailureCases) << caseObjectFormat(NoSuccessCases) << format[UnableToParseBody]
+  implicit val projectIssueFormat = traitFormat[ProjectIssue] << caseObjectFormat(NoAuthentication) << format[NoObservationsForPath]
   implicit val opticAPIParameterFormats = Json.format[Parameter]
   implicit val opticAPIResponseFormats = Json.format[Response]
   implicit val opticAPIRequestBodyFormats = Json.format[RequestBody]
   implicit val authenticationSchemaFormats = traitFormat[AuthenticationScheme] << caseObjectFormat(HTTPBasic) << caseObjectFormat(HTTPBearer) << format[APIKey]
+  implicit val endpointReportFormats = Json.format[EndpointReport]
   implicit val opticAPIEndpointFormats = Json.format[Endpoint]
   implicit val opticAPIServersFormats = Json.format[Servers]
   implicit val opticAPIDescriptionFormats = Json.format[APIDescription]

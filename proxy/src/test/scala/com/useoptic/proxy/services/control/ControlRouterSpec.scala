@@ -17,7 +17,7 @@ class ControlRouterSpec extends FunSpec with ScalatestRouteTest with BeforeAndAf
     CollectionSessionManager.reset
   }
 
-  val config = OpticAPIConfiguration("Test", "npm run test", "localhost", 20222, Vector())
+  val config = OpticAPIConfiguration("Test", "npm run test", "localhost", 20222, Vector(), None)
 
 //  it("can start a project with a forward address") {
 //    Post("/start").withEntity(ContentTypes.`application/json`, Json.toJson(config).toString()) ~> route ~> check {

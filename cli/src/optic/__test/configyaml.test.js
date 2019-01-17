@@ -1,5 +1,5 @@
 import assert from 'assert'
-import {opticConfigType, parseOpticYaml, pathToHint} from "../configyaml";
+import {authConfigType, opticConfigType, parseOpticYaml, pathToHint} from "../configyaml";
 import Joi from 'joi'
 describe.only('optic yaml', () => {
 
@@ -19,6 +19,25 @@ describe.only('optic yaml', () => {
 			const result = Joi.validate({name: 'Valid', host: 'localhost', port: 20222, paths: ['/login']}, opticConfigType)
 			assert(!result.error)
 		})
+	})
+
+	describe('authentication', () => {
+
+		it('matches bearer', () => {
+			const result = Joi.validate('bearer', authConfigType)
+			assert(!result.error)
+		})
+
+		it('matches basic', () => {
+			const result = Joi.validate('basic', authConfigType)
+			assert(!result.error)
+		})
+
+		it('matches apiKey', () => {
+			const result = Joi.validate({type: 'apiKey', in: 'query', name: 'abc'}, authConfigType)
+			assert(!result.error)
+		})
+
 	})
 
 	describe.only('path to url hint', () => {

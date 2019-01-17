@@ -22,7 +22,8 @@ class ProxySpec extends FunSpec with ScalatestRouteTest with BeforeAndAfter with
         "npm run test",
         "localhost",
         3005,
-        Vector(TestHints.login)
+        Vector(TestHints.login),
+        None
       )
     )
   }

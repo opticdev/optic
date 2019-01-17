@@ -19,7 +19,7 @@ object URLParser {
     } else if (matches.isEmpty) {
       Left(PathMatchException("No Path found in 'optic.yaml' for observed: ", rootless))
     } else {
-      Left(PathMatchException(s"Multiple path entries (${matches.map(_.path).mkString(" || ")}) satisfy observed url: ", rootless))
+      Left(PathMatchException(s"Observation ignored. Multiple path entries (${matches.map(_.path).mkString(" || ")}) satisfy observed url: ", rootless))
     }
   }
 
