@@ -9,6 +9,7 @@ case class OpticAPIConfiguration(name: String,
                                  port: Int,
                                  paths: Vector[URLHint],
                                  authentication: Option[AuthenticationScheme],
+
 //                                 excludeHeaders: Option[Vector[String]],
 //                                 includeHeaders: Option[Vector[String]]
                                 ) {

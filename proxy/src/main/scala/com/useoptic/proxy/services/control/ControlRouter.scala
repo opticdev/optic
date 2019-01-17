@@ -30,10 +30,9 @@ object ControlRouter {
       path("end") {
         post {
           if (CollectionSessionManager.isRunning) {
-            val authenticationSchemes = CollectionSessionManager.session.configuration.authenticationSchemes
-            val endpoints = CollectionSessionManager.session.finish
+            val apiSpec = CollectionSessionManager.session.finish
             CollectionSessionManager.reset
-            complete(OpticAPISpec(APIDescription(None, None, None), endpoints, authenticationSchemes))
+            complete(apiSpec)
           } else {
             complete(StatusCodes.MethodNotAllowed, "No collection in progress. Run /start and try again")
           }

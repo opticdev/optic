@@ -20,6 +20,8 @@ case class Endpoint(method: String,
 
   def identifier: String = s"${method} ${url}"
 
+  def id = Endpoint.id(method, url)
+
   def pathParameters: Vector[PathParameter] = Endpoint.pathParameters(url)
 
   def headerParameters: Vector[Parameter] = parameters.filter(_.in == "header")

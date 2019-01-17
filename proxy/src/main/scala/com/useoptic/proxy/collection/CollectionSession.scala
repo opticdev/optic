@@ -1,5 +1,7 @@
 package com.useoptic.proxy.collection
 
+import com.useoptic.common.spec_types.{APIDescription, OpticAPISpec}
+import com.useoptic.common.spec_types.reporting.AnalysisReport
 import com.useoptic.proxy.OpticAPIConfiguration
 
 object CollectionSessionManager {
@@ -16,12 +18,16 @@ object CollectionSessionManager {
 }
 
 class CollectionSession(val configuration: OpticAPIConfiguration) {
+
+  private val _startMillis = System.currentTimeMillis()
+
+
   private val _log = scala.collection.mutable.ListBuffer[APIInteraction]()
   def logInteraction(apiInteraction: APIInteraction) = _log.append(apiInteraction)
   def log = _log
   def reset = _log.clear()
 
-  def finish = {
+  def finish: OpticAPISpec = {
     implicit val errorAccumulator = new ErrorAccumulator()
 
     val endpoints = BuildAPISpec.endPointsFromInteractions(_log.toVector, configuration)
@@ -29,6 +35,19 @@ class CollectionSession(val configuration: OpticAPIConfiguration) {
 
     val mergedEndpoints = BuildAPISpec.mergeEndpoints(endpoints.collect{case s if s.isSuccess => s.get})
 
-    BuildAPISpec.applyAuthentication(mergedEndpoints.toVector, configuration)
+    val authenticationSchemes = configuration.authenticationSchemes
+
+    val report = AnalysisReport(
+      _log.size,
+      mergedEndpoints.groupBy(_.id).mapValues(_.size),
+      (configuration.paths.map(_.path).toSet diff mergedEndpoints.map(_.url).toSet).toVector,
+      System.currentTimeMillis() - _startMillis)
+
+    OpticAPISpec(
+      APIDescription(None, None, None),
+      BuildAPISpec.applyAuthentication(mergedEndpoints.toVector, configuration),
+      authenticationSchemes,
+      report
+    )
   }
 }

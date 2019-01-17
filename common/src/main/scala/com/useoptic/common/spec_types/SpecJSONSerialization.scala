@@ -33,6 +33,7 @@ object SpecJSONSerialization {
   implicit val opticAPIEndpointFormats = Json.format[Endpoint]
   implicit val opticAPIServersFormats = Json.format[Servers]
   implicit val opticAPIDescriptionFormats = Json.format[APIDescription]
+  implicit val analysisReportFormats = Json.format[AnalysisReport]
   implicit val opticAPISpecFormats = Json.format[OpticAPISpec]
   implicit val opticProjectSnapshotFormats = Json.format[OpticProjectSnapshot]
 

@@ -1,9 +1,13 @@
 package com.useoptic.common.spec_types
 
+import com.useoptic.common.spec_types.reporting.AnalysisReport
 import com.useoptic.utils.StringBuilderImplicits._
 import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 
-case class OpticAPISpec(description: APIDescription, endpoints: Vector[Endpoint], authenticationSchemes: Map[String, AuthenticationScheme]) {
+case class OpticAPISpec(description: APIDescription,
+                        endpoints: Vector[Endpoint],
+                        authenticationSchemes: Map[String, AuthenticationScheme],
+                        report: AnalysisReport) {
 
   def toSwagger: JsObject = OpticAPISpec.specToSwagger(this)
 
