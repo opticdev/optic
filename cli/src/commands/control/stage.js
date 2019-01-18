@@ -67,7 +67,7 @@ export async function watchTests(projectConfig, shouldPublish) {
 
 	const spec = await requestp.post({uri: 'http://localhost:30334/end'})
 		.then((response) => {
-			return response
+			return JSON.parse(response)
 		})
 		.catch((err) => {
 			console.log(colors.red('\nUnable to process API Spec. '+ err.message))
@@ -76,8 +76,7 @@ export async function watchTests(projectConfig, shouldPublish) {
 		.finally()
 
 	spinner.stop(true)
-
-	console.log(spec)
+	displayReport(spec)
 
 
 }
@@ -98,6 +97,25 @@ export function runTest(testcmd, silent) {
 	})
 }
 
+
+export function displayReport({report}) {
+	const byPathEntires = Object.entries(report.byPath)
+	console.log(colors.green('Analysis Complete!\n'))
+	console.log(colors.green(`Documented ${colors.bold(byPathEntires.length)} endpoints from ${colors.bold(report.observations)} tests`))
+
+	if (byPathEntires.length) {
+		console.log(colors.bold('------ Endpoints ------'))
+		byPathEntires.map(i => console.log(i[0]))
+	}
+
+	if (byPathEntires.unusedPaths) {
+		console.log('\n')
+		console.log(colors.bold.red('------ Untested Path ------'))
+		byPathEntires.map(i => console.log(i))
+	}
+
+	console.log('\n')
+}
 
 //
 // export async function getStagedSpec(cmd, shouldPublish = false) {

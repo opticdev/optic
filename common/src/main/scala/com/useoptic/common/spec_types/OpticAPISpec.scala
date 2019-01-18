@@ -7,7 +7,7 @@ import play.api.libs.json.{JsArray, JsObject, JsString, Json}
 case class OpticAPISpec(description: APIDescription,
                         endpoints: Vector[Endpoint],
                         authenticationSchemes: Map[String, AuthenticationScheme],
-                        report: AnalysisReport) {
+                        report: AnalysisReport = AnalysisReport.empty) {
 
   def toSwagger: JsObject = OpticAPISpec.specToSwagger(this)
 

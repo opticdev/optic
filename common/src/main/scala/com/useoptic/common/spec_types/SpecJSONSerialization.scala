@@ -30,6 +30,7 @@ object SpecJSONSerialization {
   implicit val opticAPIRequestBodyFormats = Json.format[RequestBody]
   implicit val authenticationSchemaFormats = traitFormat[AuthenticationScheme] << caseObjectFormat(HTTPBasic) << caseObjectFormat(HTTPBearer) << format[APIKey]
   implicit val endpointReportFormats = Json.format[EndpointReport]
+  implicit val pathParametersFormat = Json.format[PathParameter]
   implicit val opticAPIEndpointFormats = Json.format[Endpoint]
   implicit val opticAPIServersFormats = Json.format[Servers]
   implicit val opticAPIDescriptionFormats = Json.format[APIDescription]

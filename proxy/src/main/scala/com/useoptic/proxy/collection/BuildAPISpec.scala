@@ -41,6 +41,7 @@ object BuildAPISpec {
         Endpoint(
           request.method,
           urlhint.path,
+          urlhint.pathParameters,
           queryParameters ++ requestCookies ++ requestHeaders,
           requestBody,
           Vector(
@@ -48,6 +49,7 @@ object BuildAPISpec {
           )
         )
       }
+      case _ => null
     }
 
   }
@@ -79,6 +81,7 @@ object BuildAPISpec {
       Endpoint(
         method,
         url,
+        Endpoint.pathParameters(url),
         mergedQueryParameters ++ mergedCookieParameters ++ mergedHeaders,
         if (requestContentType.isDefined && requestSchema.isDefined) Some(RequestBody(requestContentType.get, requestSchema)) else None,
         mergedResponses,

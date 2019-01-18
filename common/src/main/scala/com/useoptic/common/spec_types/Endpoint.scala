@@ -7,6 +7,7 @@ import scala.util.Try
 
 case class Endpoint(method: String,
                     url: String,
+                    pathParameters: Vector[PathParameter],
                     parameters: Vector[Parameter] = Vector(),
                     body: Option[RequestBody] = None,
                     responses: Vector[Response] = Vector(),
@@ -21,8 +22,6 @@ case class Endpoint(method: String,
   def identifier: String = s"${method} ${url}"
 
   def id = Endpoint.id(method, url)
-
-  def pathParameters: Vector[PathParameter] = Endpoint.pathParameters(url)
 
   def headerParameters: Vector[Parameter] = parameters.filter(_.in == "header")
   def cookieParameters: Vector[Parameter] = parameters.filter(_.in == "cookie")
