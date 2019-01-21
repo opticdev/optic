@@ -30,7 +30,7 @@ class DiffersSpec extends FunSpec {
         Vector(Parameter("query", "a", true, string))
       )
       assert(diff.size == 2)
-      assert(diff == Set(RemovedParameter("header", "a"), UpdatedParameterRequire("query", "a", true)))
+      assert(diff == Set(RemovedParameter("header", "a", endpointId), UpdatedParameterRequire("query", "a", true, endpointId)))
     }
 
     it("can handle schema changes") {
@@ -39,7 +39,7 @@ class DiffersSpec extends FunSpec {
         Vector(queryABool)
       )
 
-      assert(diff.head == UpdatedParameterSchema("query", "queryA", boolean))
+      assert(diff.head == UpdatedParameterSchema("query", "queryA", boolean, endpointId))
     }
 
 

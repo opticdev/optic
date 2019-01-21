@@ -1,6 +1,6 @@
 package com.useoptic.proxy.collection
 
-import com.useoptic.common.spec_types.{APIDescription, OpticAPISpec}
+import com.useoptic.common.spec_types.{APIDescription, OpticAPISpec, OpticProjectSnapshot}
 import com.useoptic.common.spec_types.reporting.AnalysisReport
 import com.useoptic.proxy.OpticAPIConfiguration
 
@@ -27,7 +27,7 @@ class CollectionSession(val configuration: OpticAPIConfiguration) {
   def log = _log
   def reset = _log.clear()
 
-  def finish: OpticAPISpec = {
+  def finish: OpticProjectSnapshot = {
     implicit val errorAccumulator = new ErrorAccumulator()
 
     val endpoints = BuildAPISpec.endPointsFromInteractions(_log.toVector, configuration)
@@ -43,11 +43,12 @@ class CollectionSession(val configuration: OpticAPIConfiguration) {
       (configuration.paths.map(_.path).toSet diff mergedEndpoints.map(_.url).toSet).toVector,
       System.currentTimeMillis() - _startMillis)
 
-    OpticAPISpec(
+    val spec = OpticAPISpec(
       APIDescription(None, None, None),
       BuildAPISpec.applyAuthentication(mergedEndpoints.toVector, configuration),
       authenticationSchemes,
-      report
     )
+
+    OpticProjectSnapshot(spec, Vector(), Vector(), Map(), report)
   }
 }

@@ -35,7 +35,6 @@ val commonSettings: Seq[Def.Setting[_]] = Seq(
 lazy val common = (project in file("common")).
   settings(commonSettings: _*)
   .settings(
-    version := "0.3.0",
     libraryDependencies ++= Dependencies.commonDependencies
   )
 
@@ -52,4 +51,5 @@ lazy val proxy = (project in file("proxy")).
     mainClass in packageBin := Some("com.useoptic.proxy.Lifecycle")
   )
   .enablePlugins(AssemblyPlugin)
+
 

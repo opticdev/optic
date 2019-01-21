@@ -8,8 +8,8 @@ object Differs {
   def diffEndpoints(previous: Vector[Endpoint], current: Vector[Endpoint]) = {
     val diff = keyDiff(previous.toSet, current.toSet)(i => i.id)
 
-    val removed = diff.removed.map(RemovedEndpoint()(_))
-    val added = diff.added.map(AddedEndpoint()(_))
+    val removed = diff.removed.map(RemovedEndpoint)
+    val added = diff.added.map(AddedEndpoint)
     val same = diff.same.flatMap{ case id =>
         val p = previous.find(_.id == id).get
         val c = current.find(_.id == id).get
@@ -29,13 +29,13 @@ object Differs {
   def diffBody(previous: Option[RequestBody], current: Option[RequestBody])(implicit endpointId: String): Set[APISpecChanges] = {
     if (previous.isDefined && current.isDefined) {
       val set = collection.mutable.Set[APISpecChanges]()
-      if (previous.get.contentType != current.get.contentType) set.add(UpdatedRequestBodyContentType(current.get.contentType))
-      if (previous.get.schema != current.get.schema) set.add(UpdatedRequestBodySchema(current.get.schema))
+      if (previous.get.contentType != current.get.contentType) set.add(UpdatedRequestBodyContentType(current.get.contentType, endpointId))
+      if (previous.get.schema != current.get.schema) set.add(UpdatedRequestBodySchema(current.get.schema, endpointId))
       set.toSet
     } else if (previous.isEmpty && current.isDefined) {
-      Set(AddedRequestBody(current.get.contentType, current.get.schema))
+      Set(AddedRequestBody(current.get.contentType, current.get.schema, endpointId))
     } else if (previous.isDefined && current.isEmpty) {
-      Set(RemovedRequestBody())
+      Set(RemovedRequestBody(endpointId))
     } else Set()
   }
 
@@ -46,8 +46,8 @@ object Differs {
         previous.filter(_.in == in).toSet,
         current.filter(_.in == in).toSet)(i => i.name)
 
-      diff.added.map(name => AddedParameter(in, name)) ++
-      diff.removed.map(name => RemovedParameter(in, name)) ++
+      diff.added.map(name => AddedParameter(in, name, endpointId)) ++
+      diff.removed.map(name => RemovedParameter(in, name, endpointId)) ++
       diff.same.flatMap(name => compare(in, name))
     }
 
@@ -57,13 +57,13 @@ object Differs {
 
       if (prev.required != curr.required && prev.schema != curr.schema) {
         Vector(
-          UpdatedParameterRequire(in, name, curr.required),
-          UpdatedParameterSchema(in, name, curr.schema)
+          UpdatedParameterRequire(in, name, curr.required, endpointId),
+          UpdatedParameterSchema(in, name, curr.schema, endpointId)
         )
       } else if (prev.required != curr.required) {
-        Vector(UpdatedParameterRequire(in, name, curr.required))
+        Vector(UpdatedParameterRequire(in, name, curr.required, endpointId))
       } else if (prev.schema != curr.schema) {
-        Vector(UpdatedParameterSchema(in, name, curr.schema))
+        Vector(UpdatedParameterSchema(in, name, curr.schema, endpointId))
       } else {
         Vector()
       }
@@ -76,8 +76,8 @@ object Differs {
 
   def diffResponses(previous: Vector[Response], current: Vector[Response])(implicit endpointId: String) = {
     val diff = keyDiff(previous.toSet, current.toSet)(i => i.status)
-    val removed = diff.removed.map(RemovedResponse(_))
-    val added = diff.added.map(AddedResponse(_))
+    val removed = diff.removed.map(i => RemovedResponse(i, endpointId))
+    val added = diff.added.map(i => AddedResponse(i, endpointId))
 
     val sameDiffs = diff.same.flatMap { case status =>
         val p = previous.find(_.status == status).get
@@ -93,18 +93,18 @@ object Differs {
     val status = current.status
 
     val headerChanges = diffParameters(previous.headers, current.headers).collect {
-      case AddedParameter(in, name) => AddedResponseHeader(status, name)
-      case RemovedParameter(in, name) => RemovedResponseHeader(status, name)
-      case UpdatedParameterRequire(in, name, isRequired) => UpdatedResponseHeaderRequire(status, name, isRequired)
-      case UpdatedParameterSchema(in, name, schema) => UpdatedResponseHeaderSchema(status, name, schema)
+      case AddedParameter(in, name, endpointId) => AddedResponseHeader(status, name, endpointId)
+      case RemovedParameter(in, name, endpointId) => RemovedResponseHeader(status, name, endpointId)
+      case UpdatedParameterRequire(in, name, isRequired, endpointId) => UpdatedResponseHeaderRequire(status, name, isRequired, endpointId)
+      case UpdatedParameterSchema(in, name, schema, endpointId) => UpdatedResponseHeaderSchema(status, name, schema, endpointId)
     }.foreach(set.add)
 
     if (previous.schema != current.schema) {
-      set.add(UpdatedResponseSchema(status, current.schema))
+      set.add(UpdatedResponseSchema(status, current.schema, endpointId))
     }
 
     if (previous.contentType != current.contentType && current.contentType.isDefined) {
-      set.add(UpdatedResponseContentType(status, current.contentType.get))
+      set.add(UpdatedResponseContentType(status, current.contentType.get, endpointId))
     }
 
     set.toSet

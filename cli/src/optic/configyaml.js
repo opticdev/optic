@@ -13,6 +13,7 @@ export const authConfigType = Joi.alternatives(
 }))
 export const opticConfigType = Joi.object().keys({
 	name: Joi.string().min(3).max(30).required(),
+	team: Joi.string().min(3),
 
 	test: Joi.string().min(1).required(),
 

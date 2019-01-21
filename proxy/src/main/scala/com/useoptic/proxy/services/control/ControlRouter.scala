@@ -16,13 +16,18 @@ import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 object ControlRouter {
   val routes: Route = {
       path("start") {
-        entity(as[OpticAPIConfiguration]) { configuration =>
-          post {
-            if (CollectionSessionManager.isRunning) {
-              complete(StatusCodes.MethodNotAllowed, "Collection already in progress. Send a request to '/end' before trying again")
-            } else {
-              CollectionSessionManager.startSession(configuration)
-              complete(StatusCodes.OK)
+        parameter('reset.?) { reset =>
+          if (reset.isDefined) {
+            CollectionSessionManager.reset
+          }
+          entity(as[OpticAPIConfiguration]) { configuration =>
+            post {
+              if (CollectionSessionManager.isRunning) {
+                complete(StatusCodes.MethodNotAllowed, "Collection already in progress. Send a request to '/end' before trying again")
+              } else {
+                CollectionSessionManager.startSession(configuration)
+                complete(StatusCodes.OK)
+              }
             }
           }
         }

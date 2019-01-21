@@ -17,6 +17,7 @@ import fs from 'fs'
 import {stageCmd} from "./commands/control/stage";
 import {publishCmd} from "./commands/control/publish";
 import {finishInstallCmd} from "./commands/control/finishInstall";
+import {specCmd} from "./commands/control/spec";
 
 const notifier = updateNotifier({pkg: pJson});
 
@@ -32,6 +33,7 @@ commands.attachCommand(adduserCmd)
 commands.attachCommand(finishInstallCmd)
 commands.attachCommand(stageCmd, true, true)
 commands.attachCommand(publishCmd, true, true)
+commands.attachCommand(specCmd, true, true)
 commands.attachCommand(startCmd)
 commands.attachCommand(stopCmd)
 

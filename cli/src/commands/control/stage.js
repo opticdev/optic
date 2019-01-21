@@ -6,8 +6,9 @@ import gitInfo from 'git-state'
 import inquirer from 'inquirer'
 import config from '../../config'
 import {exec} from "child_process";
-
-
+import pJson from '../../../package'
+import {PostSnapshot} from "../../api/Requests";
+import prettyjson from 'prettyjson'
 export const stageCmd = {
 	name: 'stage',
 	description: 'upload spec to useoptic.com',
@@ -15,7 +16,7 @@ export const stageCmd = {
 }
 
 
-export async function watchTests(projectConfig, shouldPublish) {
+export async function watchTests(projectConfig, shouldPublish, justPrint) {
 
 	const spinner = new Spinner('Connecting to Optic... %s');
 	spinner.setSpinnerString(18);
@@ -41,7 +42,7 @@ export async function watchTests(projectConfig, shouldPublish) {
 		process.exit(0)
 	}
 
-	const validStart = await requestp.post({uri: 'http://localhost:30334/start', json: projectConfig})
+	const validStart = await requestp.post({uri: 'http://localhost:30334/start', json: projectConfig, qs: {reset: true}})
 		.then((response) => true)
 		.catch((err) => {
 			if (err.statusCode === 405) {
@@ -65,7 +66,7 @@ export async function watchTests(projectConfig, shouldPublish) {
 	spinner.start()
 
 
-	const spec = await requestp.post({uri: 'http://localhost:30334/end'})
+	const data = await requestp.post({uri: 'http://localhost:30334/end'})
 		.then((response) => {
 			return JSON.parse(response)
 		})
@@ -76,7 +77,42 @@ export async function watchTests(projectConfig, shouldPublish) {
 		.finally()
 
 	spinner.stop(true)
-	displayReport(spec)
+	displayReport(data)
+
+	if (justPrint) {
+		data.apiSpec.endpoints.forEach((endpoint) => {
+			delete endpoint.issues
+			console.log(colors.bold(`------ ${endpoint.method} ${endpoint.url} ------\n`))
+			console.log(prettyjson.render(endpoint))
+			console.log('\n\n')
+		})
+		return
+	}
+
+	PostSnapshot(projectConfig.name, {snapshot: data, opticVersion: pJson.version, branch: repoInfo.branch, commitName: repoInfo.commitName, published: shouldPublish}, projectConfig.team)
+			.then(({projectId, uuid, branch}) => {
+				if (shouldPublish) {
+					console.log(colors.green('Snapshot uploaded on useoptic.com'))
+				} else {
+					console.log(colors.green('Snapshot published to useoptic.com'))
+				}
+
+				console.log('Click here to open: ' + `http://localhost:3000/#/projects/${projectId}/?branch=${encodeURIComponent(branch)}&version=${uuid}`)
+			})
+			.catch((error) => {
+				if (!error.response) {
+					console.log(colors.red("\nCould not save project snapshot to server. Check internet connection"))
+				} else {
+					if (error.statusCode === 401 || error.statusCode === 403) {
+						console.log(colors.red(`\nCould not save project snapshot to server. Client is not authorized. Run 'optic adduser' authenticate this client.`))
+					} else if (error.statusCode === 404) {
+						console.log(colors.red(`\nProject not found. Make sure you've created a project named '${projectConfig.name}' on useoptic.com`))
+					} else {
+						console.log("\nCould not save project snapshot to server. " + colors.red(error.response.body))
+					}
+				}
+			})
+			.finally(() => process.exit(0))
 
 
 }
@@ -98,20 +134,20 @@ export function runTest(testcmd, silent) {
 }
 
 
-export function displayReport({report}) {
+export function displayReport({report, endpoints}) {
 	const byPathEntires = Object.entries(report.byPath)
 	console.log(colors.green('Analysis Complete!\n'))
-	console.log(colors.green(`Documented ${colors.bold(byPathEntires.length)} endpoints from ${colors.bold(report.observations)} tests`))
+	console.log(colors.green(`Documented ${colors.bold(byPathEntires.length)} endpoints from ${colors.bold(report.observations)} tests in ${report.durationMS/1000} seconds`))
 
 	if (byPathEntires.length) {
 		console.log(colors.bold('------ Endpoints ------'))
 		byPathEntires.map(i => console.log(i[0]))
 	}
 
-	if (byPathEntires.unusedPaths) {
+	if (report.unusedPaths.length) {
 		console.log('\n')
 		console.log(colors.bold.red('------ Untested Path ------'))
-		byPathEntires.map(i => console.log(i))
+		report.unusedPaths.map(i => console.log(i))
 	}
 
 	console.log('\n')
