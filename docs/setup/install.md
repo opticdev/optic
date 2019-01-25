@@ -14,9 +14,9 @@ You will need to authorize the CLI to interact with your Optic Account.
 
 1. First navigate to the **Account** page 
 2. Expand the **API Tokens** panel
-3. Click ** + Generate New Token**
+3. Click **+ Generate New Token**
 4. Add your new token to the CLI
-```
+```bash
 optic addtoken <yourtoken>
 ``` 
 
