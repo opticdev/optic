@@ -5,5 +5,5 @@ export const publishCmd = {
 	name: 'publish',
 	description: 'publish new version of spec to useoptic.com',
 	options: [],
-	action: (cmd) => (cmd, config) => watchTests(config, true)
+	action: (cmd, config) => watchTests(config, true)
 }

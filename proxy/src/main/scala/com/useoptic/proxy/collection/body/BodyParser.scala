@@ -24,6 +24,7 @@ object BodyParser {
 
     contentType match {
       case "text/plain" => RequestBody(contentType, Some(JsonSchemaBuilderUtil.basicSchema("string")))
+      case "text/html" => RequestBody(contentType, Some(JsonSchemaBuilderUtil.basicSchema("string")))
       case "application/json" => {
         val json = Await.result(Unmarshal(entity).to[JsValue], 10 seconds)
         RequestBody(contentType, Some(SchemaInference.infer(json)))

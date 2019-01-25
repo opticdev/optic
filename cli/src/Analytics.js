@@ -5,16 +5,16 @@ import p from '../package'
 import {isDev} from './config'
 
 export async function getEmail() {
-	return await storage.getItem('email')
+	// return await storage.getItem('email')
 }
 
 export async function track(event, data = {}) {
-	if (!isDev) {
-		tracker.track(event, {
-			distinct_id: await getEmail(),
-			os: process.platform,
-			optic_version: p.version,
-			...data
-		});
-	}
+	// if (!isDev) {
+	// 	tracker.track(event, {
+	// 		distinct_id: await getEmail(),
+	// 		os: process.platform,
+	// 		optic_version: p.version,
+	// 		...data
+	// 	});
+	// }
 }

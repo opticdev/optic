@@ -30,12 +30,12 @@ program
 
 // Commands
 commands.attachCommand(adduserCmd)
-commands.attachCommand(finishInstallCmd)
 commands.attachCommand(stageCmd, true, true)
 commands.attachCommand(publishCmd, true, true)
 commands.attachCommand(specCmd, true, true)
 commands.attachCommand(startCmd)
 commands.attachCommand(stopCmd)
+commands.attachCommand(finishInstallCmd)
 
 export const standardHelp = () => program.helpInformation()
 

@@ -86,7 +86,7 @@ export async function watchTests(projectConfig, shouldPublish, justPrint) {
 			console.log(prettyjson.render(endpoint))
 			console.log('\n\n')
 		})
-		return
+		process.exit(0)
 	}
 
 	PostSnapshot(projectConfig.name, {snapshot: data, opticVersion: pJson.version, branch: repoInfo.branch, commitName: repoInfo.commitName, published: shouldPublish}, projectConfig.team)
