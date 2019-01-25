@@ -41,6 +41,7 @@ paths:
 Setup: 
 - [Installing Optic](https://github.com/opticdev/optic/blob/master/docs/setup/install.md)
 - [Adding APIs on Optic's Website](https://github.com/opticdev/optic/blob/master/docs/setup/creating-projects.md)
+
 Generating Documentation: 
 - [Project Setup](https://github.com/opticdev/optic/blob/master/docs/using/project-setup.md)
 - [Testing Guidelines](https://github.com/opticdev/optic/blob/master/docs/using/testing-guidelines.md)
