@@ -1,6 +1,6 @@
 import "regenerator-runtime/runtime";
 import path from 'path'
-const isDev = true
+const isDev = false
 import fs from 'fs'
 import niceTry from 'nice-try'
 
@@ -12,6 +12,8 @@ module.exports = (() => {
 			runServerCmd: {
 				options: ['-jar', `${process.cwd()}/jars/optic-proxy.jar`]
 			},
+			webappHost: 'http://localhost:3000',
+			backendHost: 'http://localhost:8081',
 			storageDirectory: process.cwd()+'/.optic-storage',
 			jreDirectory,
 			projectDirectory: '/Users/aidancunniffe/Desktop/test-runtime-code'
@@ -24,6 +26,8 @@ module.exports = (() => {
 			runServerCmd: {
 				options: ['-jar', jarPath]
 			},
+			webappHost: 'https://app.useoptic.com',
+			backendHost: 'https://api.useoptic.com',
 			storageDirectory: require('os').homedir()+'/.optic-storage',
 			jreDirectory,
 			projectDirectory: process.cwd()

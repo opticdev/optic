@@ -1,6 +1,9 @@
 import rp from 'request-promise'
 import keytar from "keytar";
-export const backendRequest = rp.defaults({baseUrl: 'http://localhost:8081/'})
+import config from '../config'
+
+
+export const backendRequest = rp.defaults({baseUrl: config.backendHost})
 
 export const getAuth = () => keytar.findPassword('optic-cli')
 

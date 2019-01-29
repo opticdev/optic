@@ -52,4 +52,7 @@ lazy val proxy = (project in file("proxy")).
   )
   .enablePlugins(AssemblyPlugin)
 
+test in assembly := {}
+concurrentRestrictions in Global += Tags.limit(Tags.Test, 1)
 
+publishConfiguration := publishConfiguration.value.withOverwrite(true)

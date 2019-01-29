@@ -9,6 +9,7 @@ import {exec} from "child_process";
 import pJson from '../../../package'
 import {PostSnapshot} from "../../api/Requests";
 import prettyjson from 'prettyjson'
+import opn from 'opn'
 export const stageCmd = {
 	name: 'stage',
 	description: 'upload spec to useoptic.com',
@@ -97,7 +98,7 @@ export async function watchTests(projectConfig, shouldPublish, justPrint) {
 					console.log(colors.green('Snapshot published to useoptic.com'))
 				}
 
-				console.log('Click here to open: ' + `http://localhost:3000/#/projects/${projectId}/?branch=${encodeURIComponent(branch)}&version=${uuid}`)
+				opn(`${config.webappHost}/#/projects/${projectId}/?branch=${encodeURIComponent(branch)}&version=${uuid}`)
 			})
 			.catch((error) => {
 				if (!error.response) {
