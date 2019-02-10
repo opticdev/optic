@@ -52,4 +52,4 @@ Generating Documentation:
 MIT 
 
 ## About 
-Optic (YC S18) is on a mission to automate routine programming so developers can focus fully on the work that matters most. We've been open source since day 1 and are committed to always supporting an open source + free-forever version of Optic. In order to honor that commitment we are a business and we do [charge teams for advanced collaboration features](useoptic.com/pricing). Our core technology is open source so you are of course welcome to implement such features on your own, but we hope you'll come give ours a try first :) 
+Optic (YC S18) is on a mission to automate routine programming so developers can focus fully on the work that matters most. We've been open source since day 1 and are committed to always supporting an open source + free-forever version of Optic. In order to honor that commitment we are a business and we do [charge teams for advanced collaboration features](https://useoptic.com/pricing/). Our core technology is open source so you are of course welcome to implement such features on your own, but we hope you'll come give ours a try first :) 
