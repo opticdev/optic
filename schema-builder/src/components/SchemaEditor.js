@@ -1,0 +1,271 @@
+import React from 'react';
+import withStyles from '@material-ui/core/styles/withStyles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import KeyTypeRow from './KeyTypeRow';
+import TypeName from './TypeName';
+import ExpandButton from './ExpandButton';
+import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
+import Button from '@material-ui/core/Button';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import AddFieldButton from './AddFieldButton';
+import DeleteButton from './DeleteButton';
+import TypeMenu from './TypeMenu/TypeMenu';
+import classNames from 'classnames'
+import AddTypeButton from './AddTypeButton';
+import TypeRefModal from './TypeMenu/TypeRefModal';
+
+const styles = theme => ({
+	root: {
+		maxWidth: 680,
+		width: '100%',
+		paddingTop: 2,
+	},
+	row: {
+		height: 31,
+		'&:hover': {
+			backgroundColor: 'rgba(78,165,255,0.08)'
+		},
+		'&:hover $deleteContainer': {
+			display: 'inherit'
+		}
+	},
+	activeRow: {
+		borderBottom: '1px solid rgba(78,165,255,0.4)',
+		backgroundColor: 'rgba(78,165,255,0.08)'
+	},
+	deleteContainer: {
+		position: 'absolute',
+		right: 11,
+		display: 'none'
+	}
+});
+
+const Row = withStyles(styles)(({classes, indent = 0, children, expandButton, addButton, addTypeButton, id, deleteType}) => {
+
+	return <SchemaEditorContext.Consumer>
+		{({editorState, operations}) => {
+
+			if (editorState.typeMenu.id === id) {
+				let timer = null;
+				return <ListItem className={classNames(classes.row, classes.activeRow)}
+								 dense={true}
+								 onMouseEnter={() => {
+								 	if (timer !== null) {
+								 		clearTimeout(timer)
+									}
+								 }}
+								 onMouseLeave={() => {
+									 timer = setTimeout(() => {
+										operations.hideTypeMenu(id)
+									 }, 400)
+								 }}
+								 style={{paddingLeft: indent * 13 + 10, height: 31}}>
+					<TypeMenu id={id} />
+				</ListItem>
+			} else {
+				return <ListItem className={classes.row}
+								 dense={true}
+								 style={{paddingLeft: indent * 13 + 10, height: 31}}>
+					{expandButton}
+					{children}
+					{addButton}
+					{addTypeButton}
+					{id ? <div className={classes.deleteContainer}><DeleteButton id={id} deleteType={deleteType}/></div> : null}
+				</ListItem>
+			}
+
+		}}
+	</SchemaEditorContext.Consumer>
+});
+
+class SchemaEditor extends React.Component {
+
+	initialState = (conceptId) => {
+		return {
+			projection: this.props.service.currentShapeProjection('test-api', conceptId),
+			collapsed: [],
+			refModalTarget: null,
+			typeMenu: {
+				anchor: null,
+				id: null,
+				currentType: null
+			}
+		}
+	}
+
+	componentWillReceiveProps(nextProps, nextContext) {
+		if (nextProps.conceptId !== this.props.conceptId) {
+			this.setState(this.initialState(nextProps.conceptId))
+		}
+	}
+
+	constructor(props) {
+		super(props);
+
+		this.state = this.initialState(this.props.conceptId)
+	}
+
+	toggleCollapsed = (id, forceOpen) => () => {
+		if (this.state.collapsed.includes(id) || forceOpen) {
+			this.setState({collapsed: this.state.collapsed.filter(i => i !== id)});
+		} else {
+			this.setState({collapsed: [...this.state.collapsed, id]});
+		}
+	};
+
+	runCommand = (command) => {
+		try {
+			const id = this.props.service.handleCommand('test-api', command);
+			this.setState({projection: this.props.service.currentShapeProjection('test-api', this.props.conceptId)});
+			return id;
+		} catch (e) {
+			alert(e);
+		}
+	};
+
+	showTypeMenu = (id, currentType) => (event) => {
+		this.setState({
+			typeMenu: {
+				id, currentType
+			}
+		});
+	};
+
+	hideTypeMenu = (id) => {
+		if (id) {
+			if (this.state.typeMenu.id === id) {
+				this.setState({
+					typeMenu: {
+						id: null, currentType: null
+					}
+				});
+			}
+		} else {
+			this.setState({typeMenu: {
+				id: null, currentType: null
+			}});
+		}
+	};
+
+	showRefModal = (id) => () => {
+		this.setState({
+			refModalTarget: id
+		});
+	};
+
+	hideRefModal = () => {
+		this.setState({
+			refModalTarget: null
+		});
+	};
+
+	render() {
+		const {classes} = this.props;
+
+		const {root} = this.state.projection;
+
+		const context = {
+			operations: {
+				toggleCollapsed: this.toggleCollapsed,
+				runCommand: this.runCommand,
+				showTypeMenu: this.showTypeMenu,
+				hideTypeMenu: this.hideTypeMenu,
+				showRefModal: this.showRefModal,
+				hideRefModal: this.hideRefModal
+			},
+			editorState: this.state,
+			conceptId: this.props.conceptId
+		};
+
+		const tree = flattenTree(root, [], this.state.collapsed);
+
+		return <SchemaEditorContext.Provider value={context}>
+			<List className={classes.root} key={this.props.conceptId}>
+				{tree}
+			</List>
+			<TypeRefModal targetId={this.state.refModalTarget} conceptId={this.props.conceptId} service={this.props.service} />
+		</SchemaEditorContext.Provider>;
+	}
+}
+
+//mode can be 'view', 'editor'
+function flattenTree(node, array = [], collapsed = []) {
+
+	const buildNext = (node) => flattenTree(node, array, collapsed);
+
+	if (node.isObjectFieldList) {
+		const objectRow = (
+			<Row indent={node.depth}
+				 key={node.id}
+				 id={node.id}
+				 expandButton={<ExpandButton parentId={node.id}/>}
+				 addButton={<AddFieldButton parentId={node.id}/>}
+			>
+				<TypeName node={node} style={{marginLeft: 12}} id={node.id}/>
+			</Row>
+		);
+
+		if (node.depth === 0) {
+			array.push(objectRow);
+		}
+
+		if (!collapsed.includes(node.id)) {
+			node.fields.forEach(i => buildNext(i, array));
+		}
+
+	} else if (node.isField) {
+		array.push(<Row indent={node.depth}
+						id={node.shape.id}
+						deleteType={"field"}
+						key={node.id}
+						addButton={node.shape.type.hasFields ? <AddFieldButton parentId={node.shape.id}/> : null}
+						addTypeButton={node.shape.type.hasTypeParameters ? <AddTypeButton parentId={node.shape.id}/> : null}
+						expandButton={node.shape.type.hasFields || node.shape.type.hasTypeParameters ? <ExpandButton parentId={node.shape.id}/> : null}>
+			<KeyTypeRow
+				initialKey={node.key}
+				id={node.id}
+				node={node.shape}
+				type={node.shape.type}/>
+		</Row>);
+		buildNext(node.shape, array);
+
+	} else if (node.isTypeParametersList) {
+		const typeParameterRow = (
+			<Row indent={node.depth}
+				 key={node.id}
+				 id={node.id}
+				 addTypeButton={<AddTypeButton parentId={node.id}/>}
+				 expandButton={<ExpandButton parentId={node.id}/>}
+			>
+				<TypeName node={node} style={{marginLeft: 12}} id={node.id}/>
+			</Row>
+		);
+
+		if (node.depth === 0) {
+			array.push(typeParameterRow);
+		}
+
+		if (!collapsed.includes(node.id)) {
+			node.typeParameters.forEach(i => buildNext(i, array));
+		}
+
+	} else if (node.isTypeParameter) {
+		array.push(
+			<Row indent={node.depth}
+				 key={node.shape.id}
+				 deleteType={"type-parameter"}
+				 id={node.shape.id}
+				 addButton={node.shape.type.hasFields ? <AddFieldButton parentId={node.shape.id}/> : null}
+				 addTypeButton={node.shape.type.hasTypeParameters ? <AddTypeButton parentId={node.shape.id}/> : null}
+				 expandButton={node.shape.type.hasFields || node.shape.type.hasTypeParameters ? <ExpandButton parentId={node.shape.id}/> : null}>
+				<TypeName node={node.shape} style={{marginLeft: 12}} id={node.shape.id}/>
+			</Row>
+		)
+		buildNext(node.shape, array);
+	}
+
+	return array;
+}
+
+export default withStyles(styles)(SchemaEditor);
