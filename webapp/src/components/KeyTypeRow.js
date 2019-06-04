@@ -7,6 +7,8 @@ import ButtonBase from '@material-ui/core/ButtonBase/index';
 import TypeName from './TypeName';
 import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
 import {Commands} from '../engine/index'
+import {SchemaEditorModes} from './Constants';
+import classNames from 'classnames'
 
 const styles = theme => ({
 	root: {
@@ -29,6 +31,11 @@ const styles = theme => ({
 			// backgroundColor: '#e5e5e5',
 			borderBottom: '1px solid black',
 		}
+	},
+	disabled: {
+		borderBottom: 'none !important',
+		pointerEvents: 'none',
+		userSelect: 'none'
 	},
 	colon: {
 		fontWeight: 800,
@@ -62,11 +69,11 @@ class KeyTypeRow extends React.Component {
 		const {classes, id, node} = this.props
 
 		return <SchemaEditorContext.Consumer>
-			{({editorState, operations, conceptId}) => {
+			{({editorState, operations, conceptId, mode}) => {
 				return <div className={classes.root} key={id}>
 					<AutosizeInput
 						placeholder="field"
-						inputClassName={classes.fieldNameInput}
+						inputClassName={classNames(classes.fieldNameInput, {[classes.disabled]: mode !== SchemaEditorModes.EDIT})}
 						value={this.state.fieldName}
 						onChange={(event) => {
 							this.setState({fieldName: event.target.value})

@@ -2,7 +2,9 @@ package com.seamless.contexts.data_types
 
 import com.seamless.contexts.data_types.Primitives.PrimitiveType
 
-case class DataTypesState(components: Map[String, ShapeDescription], concepts: Map[String, ConceptDescription], creationOrder: Seq[String] = Seq("root")) {
+case class DataTypesState(components: Map[String, ShapeDescription],
+                          concepts: Map[String, ConceptDescription],
+                          creationOrder: Seq[String] = Seq("root")) {
 
   def putId(id: String, description: ShapeDescription) = {
     val created = !creationOrder.contains(id)
@@ -86,9 +88,8 @@ case class ShapeDescription(`type`: PrimitiveType,
   }
 
   def updateType(newType: PrimitiveType, pastFieldIds: Seq[String] = Seq()) = {
-    //change to an object from something else
     val newTypeParameters = if (newType.hasTypeParameters) Some(Seq()) else None
-    if (newType.hasFields && !`type`.hasFields) {
+    if (newType.hasFields) {
       this.copy(`type` = newType, fields = Some(pastFieldIds), typeParameters = newTypeParameters)
     } else {
       this.copy(`type` = newType, fields = None, typeParameters = newTypeParameters)
@@ -96,6 +97,10 @@ case class ShapeDescription(`type`: PrimitiveType,
   }
 }
 
-case class ConceptDescription(name: String,
+case class ConceptDescription(name: Option[String],
                               root: String,
-                              deprecated: Boolean = false)
+                              inline: Boolean,
+                              deprecated: Boolean = false) {
+
+  def shouldDisplay: Boolean = !inline && !deprecated
+}

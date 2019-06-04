@@ -1,7 +1,5 @@
 package com.seamless.ddd
 
-import com.seamless.ddd.ConceptAggregate
-
 class EventSourcedRepository[State, Event](aggregate: EventSourcedAggregate[State, _, Event], eventStore: EventStore[Event]) {
   def findById(id: AggregateId): State = {
     val events = eventStore.listEvents(id)

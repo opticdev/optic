@@ -7,6 +7,7 @@ import ButtonBase from '@material-ui/core/ButtonBase/index';
 import {primitiveColors, generateTypeName} from './Types';
 import LinkIcon from '@material-ui/icons/Link';
 import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
+import {SchemaEditorModes} from './Constants';
 
 const styles = theme => ({
 	root: {
@@ -67,10 +68,11 @@ class TypeName extends React.Component {
 		})()
 
 		return <SchemaEditorContext.Consumer>
-			{({editorState, operations}) => {
+			{({editorState, operations, mode}) => {
 				return <div className={classes.root} key={id}>
 					<ButtonBase className={classes.typeChangeButton}
 								disableRipple={true}
+								disabled={!(mode === SchemaEditorModes.EDIT)}
 								onClick={operations.showTypeMenu(id, type)}
 								style={{
 									color,

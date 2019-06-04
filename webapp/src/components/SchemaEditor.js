@@ -41,7 +41,7 @@ const styles = theme => ({
 	}
 });
 
-const Row = withStyles(styles)(({classes, indent = 0, children, expandButton, addButton, addTypeButton, id, deleteType}) => {
+const Row = withStyles(styles)(({classes, indent = 0, children, expandButton, addButton, addTypeButton, id, deleteType, depth}) => {
 
 	return <SchemaEditorContext.Consumer>
 		{({editorState, operations}) => {
@@ -71,7 +71,7 @@ const Row = withStyles(styles)(({classes, indent = 0, children, expandButton, ad
 					{children}
 					{addButton}
 					{addTypeButton}
-					{id ? <div className={classes.deleteContainer}><DeleteButton id={id} deleteType={deleteType}/></div> : null}
+					{id && depth ? <div className={classes.deleteContainer}><DeleteButton id={id} deleteType={deleteType}/></div> : null}
 				</ListItem>
 			}
 
@@ -175,6 +175,7 @@ class SchemaEditor extends React.Component {
 				hideRefModal: this.hideRefModal
 			},
 			editorState: this.state,
+			mode: this.props.mode,
 			conceptId: this.props.conceptId
 		};
 
@@ -199,6 +200,7 @@ function flattenTree(node, array = [], collapsed = []) {
 			<Row indent={node.depth}
 				 key={node.id}
 				 id={node.id}
+				 depth={node.depth}
 				 expandButton={<ExpandButton parentId={node.id}/>}
 				 addButton={<AddFieldButton parentId={node.id}/>}
 			>
@@ -219,6 +221,7 @@ function flattenTree(node, array = [], collapsed = []) {
 						id={node.shape.id}
 						deleteType={"field"}
 						key={node.id}
+						depth={node.depth}
 						addButton={node.shape.type.hasFields ? <AddFieldButton parentId={node.shape.id}/> : null}
 						addTypeButton={node.shape.type.hasTypeParameters ? <AddTypeButton parentId={node.shape.id}/> : null}
 						expandButton={node.shape.type.hasFields || node.shape.type.hasTypeParameters ? <ExpandButton parentId={node.shape.id}/> : null}>
@@ -235,6 +238,7 @@ function flattenTree(node, array = [], collapsed = []) {
 			<Row indent={node.depth}
 				 key={node.id}
 				 id={node.id}
+				 depth={node.depth}
 				 addTypeButton={<AddTypeButton parentId={node.id}/>}
 				 expandButton={<ExpandButton parentId={node.id}/>}
 			>
@@ -256,6 +260,7 @@ function flattenTree(node, array = [], collapsed = []) {
 				 key={node.shape.id}
 				 deleteType={"type-parameter"}
 				 id={node.shape.id}
+				 depth={node.depth}
 				 addButton={node.shape.type.hasFields ? <AddFieldButton parentId={node.shape.id}/> : null}
 				 addTypeButton={node.shape.type.hasTypeParameters ? <AddTypeButton parentId={node.shape.id}/> : null}
 				 expandButton={node.shape.type.hasFields || node.shape.type.hasTypeParameters ? <ExpandButton parentId={node.shape.id}/> : null}>
@@ -263,6 +268,14 @@ function flattenTree(node, array = [], collapsed = []) {
 			</Row>
 		)
 		buildNext(node.shape, array);
+	} else if (node.depth === 0 && node.isLeaf) {
+		array.push(<Row indent={node.depth}
+						key={node.id}
+						id={node.id}
+						depth={node.depth}
+		>
+			<TypeName node={node} style={{marginLeft: 12}} id={node.id}/>
+		</Row>)
 	}
 
 	return array;

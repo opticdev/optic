@@ -12,9 +12,10 @@ import SchemaEditor from '../components/SchemaEditor';
 import {newRfcService} from '../engine';
 import {seedExampleUserWriteModel, seedFriendModel} from '../engine/examples/ExampleData';
 import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
+import {SchemaEditorModes} from '../components/Constants';
 
 storiesOf('Schema Editor', module)
-	.add('basic', mui((() => {
+	.add('edit mode', mui((() => {
 		const service = newRfcService()
 		let name = 'test-schema'
 		const handler = service.commandHandlerForAggregate('test-api')
@@ -22,7 +23,17 @@ storiesOf('Schema Editor', module)
 		seedFriendModel(handler)
 		const conceptId = seedExampleUserWriteModel(handler, name)
 
-		return <SchemaEditor service={service} conceptId={conceptId} />
+		return <SchemaEditor service={service} conceptId={conceptId} mode={SchemaEditorModes.EDIT} />
+	})()))
+	.add('view mode', mui((() => {
+		const service = newRfcService()
+		let name = 'test-schema'
+		const handler = service.commandHandlerForAggregate('test-api')
+
+		seedFriendModel(handler)
+		const conceptId = seedExampleUserWriteModel(handler, name)
+
+		return <SchemaEditor service={service} conceptId={conceptId} mode={SchemaEditorModes.VIEW} />
 	})()));
 
 storiesOf('Type Modal', module)

@@ -4,6 +4,7 @@ import Cancel from '@material-ui/icons/Cancel';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
 import {Commands} from '../engine/index'
+import {SchemaEditorModes} from './Constants';
 
 const styles = theme => ({
 
@@ -12,7 +13,12 @@ const styles = theme => ({
 function DeleteButton({classes, id, deleteType}) {
 
 	return <SchemaEditorContext.Consumer>
-		{({editorState, operations, conceptId}) => {
+		{({editorState, operations, conceptId, mode}) => {
+
+			if (mode !== SchemaEditorModes.EDIT) {
+				return null
+			}
+
 			return <ButtonBase
 				disableRipple={true}
 			    onClick={() => {

@@ -6,6 +6,7 @@ import ExpandLess from '@material-ui/icons/ExpandMore'
 import ButtonBase from '@material-ui/core/ButtonBase';
 import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
 import {Commands, DataTypesHelper} from '../engine/index'
+import {SchemaEditorModes} from './Constants';
 
 const styles = theme => ({
 	addButton: {
@@ -18,7 +19,12 @@ const styles = theme => ({
 function AddTypeButton({classes, parentId}) {
 
 	return <SchemaEditorContext.Consumer>
-		{({editorState, operations, conceptId}) => {
+		{({editorState, operations, conceptId, mode}) => {
+
+			if (mode !== SchemaEditorModes.EDIT) {
+				return null
+			}
+
 			return <ButtonBase
 				className={classes.addButton}
 				disableRipple={true}

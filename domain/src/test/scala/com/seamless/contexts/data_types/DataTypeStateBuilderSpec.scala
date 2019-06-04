@@ -12,10 +12,10 @@ class DataTypeStateBuilderSpec extends FunSpec {
     val rootShapeId = DataTypesServiceHelper.newId
 
     def handle(command: DataTypesCommand) = service.handleCommand("test-api", command)
-    def addField(parent: String, name: String) = {
+    def addField(parent: String, name: String, concept: String = conceptId) = {
       val id = DataTypesServiceHelper.newId
-      handle(AddField(parent, id, conceptId))
-      handle(SetFieldName(id, name, conceptId))
+      handle(AddField(parent, id, concept))
+      handle(SetFieldName(id, name, concept))
       id
     }
 
@@ -141,6 +141,25 @@ class DataTypeStateBuilderSpec extends FunSpec {
 
     assert(currentState.components(param1Id).`type` == ObjectT)
     assert(currentState.components(param1Id).fields.get.size == 3)
+  }
+
+  it("supports inline shapes") {
+    val f = fixture; import f._
+    val conceptId = DataTypesServiceHelper.newConceptId
+    val rootShapeId = DataTypesServiceHelper.newId
+
+    handle(DefineInlineConcept(rootShapeId, conceptId))
+    addField(rootShapeId, "a", conceptId)
+    addField(rootShapeId, "b", conceptId)
+
+    val inlineConcept = currentState.concepts(conceptId)
+    assert(inlineConcept.inline)
+    assert(inlineConcept.name.isEmpty)
+
+    val shape = currentState.components(inlineConcept.root)
+    assert(shape.`type` == ObjectT)
+    assert(shape.fields.get.size == 2)
+
   }
 
 }

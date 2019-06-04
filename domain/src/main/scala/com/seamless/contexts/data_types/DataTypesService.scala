@@ -31,12 +31,12 @@ object DataTypesServiceHelper {
   def newId(): String = s"shape_${Random.alphanumeric take 10 mkString}"
   def newConceptId(): String = s"concept_${Random.alphanumeric take 10 mkString}"
 
-  val primitivesMap: js.Dictionary[PrimitiveType] = {
+  def primitivesMap: js.Dictionary[PrimitiveType] = {
     import js.JSConverters._
     Primitives.all.map(i => i.id -> i).toMap.toJSDictionary
   }
 
-  val primitiveArray: js.Array[PrimitiveType] = {
+  def primitiveArray: js.Array[PrimitiveType] = {
     import js.JSConverters._
     Primitives.all.toJSArray
   }

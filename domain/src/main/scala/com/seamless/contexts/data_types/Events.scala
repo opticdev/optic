@@ -9,11 +9,18 @@ object Events {
   case class ConceptDefined(name: String, root: String, id: ConceptId) extends DataTypesEvent
   case class ConceptNamed(newName: String, conceptId: ConceptId) extends DataTypesEvent
   case class ConceptDeprecated(conceptId: ConceptId) extends DataTypesEvent
+
+  case class InlineConceptDefined(root: String, conceptId: ConceptId) extends DataTypesEvent
+
   case class TypeAssigned(id: String, to: PrimitiveType, conceptId: ConceptId) extends DataTypesEvent
+
   case class FieldAdded(parentId: String, id: FieldId, conceptId: ConceptId) extends DataTypesEvent
   case class FieldRemoved(id: FieldId, conceptId: ConceptId) extends DataTypesEvent
+
   case class FieldNameChanged(id: FieldId, newName: String, conceptId: ConceptId) extends DataTypesEvent
+
   case class FieldOccurrenceSet(id: FieldId, optional: Boolean, conceptId: ConceptId) extends DataTypesEvent
+
   case class TypeParameterAdded(parentId: FieldId, id: TypeParameterId, conceptId: ConceptId) extends DataTypesEvent
   case class TypeParameterRemoved(id: TypeParameterId, conceptId: ConceptId) extends DataTypesEvent
 

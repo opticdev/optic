@@ -18,6 +18,12 @@ object DataTypesAggregate extends EventSourcedAggregate[DataTypesState, DataType
         persist(Events.ConceptDefined(name, root, conceptId))
       }
 
+      case DefineInlineConcept(root, conceptId) => {
+        Validators.idIsUnused(conceptId, "Concept ID")
+        Validators.idIsUnused(root, "Root Schema ID")
+        persist(Events.InlineConceptDefined(root, conceptId))
+      }
+
       case AddField(parentId, id, conceptId) => {
         Validators.idIsUnused(id, "Field ID")
         Validators.idExistsForSchema(parentId, conceptId)
@@ -58,7 +64,15 @@ object DataTypesAggregate extends EventSourcedAggregate[DataTypesState, DataType
   override def applyEvent(event: DataTypesEvent, state: DataTypesState): DataTypesState = event match {
     case Events.ConceptDefined(name, rootId, conceptId) => {
       state.update(
-        s => s.putConceptId(conceptId, ConceptDescription(name, rootId)),
+        s => s.putConceptId(conceptId, ConceptDescription(Some(name), rootId, inline = false)),
+        s => {
+          s.putId(rootId, ShapeDescription(ObjectT, null, conceptId, None, Some(Seq())))
+        }
+      )
+    }
+    case Events.InlineConceptDefined(rootId, conceptId) => {
+      state.update(
+        s => s.putConceptId(conceptId, ConceptDescription(None, rootId, inline = true)),
         s => {
           s.putId(rootId, ShapeDescription(ObjectT, null, conceptId, None, Some(Seq())))
         }

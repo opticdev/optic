@@ -32,7 +32,7 @@ class RfcService extends EventSourcedService[RfcCommand, RfcState] {
   //Queries
   @JSExport
   def currentShapeProjection(id: AggregateId, conceptId: ConceptId): ShapeProjection = {
-    ShapeProjection.fromState(currentState(id).dataTypes, conceptId)
+    ShapeProjection.fromState(currentState(id).restState.dataTypesState, conceptId)
   }
 
 }

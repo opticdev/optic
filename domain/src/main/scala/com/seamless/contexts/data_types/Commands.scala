@@ -8,11 +8,14 @@ object Commands {
   type ConceptId = String
   type FieldId = String
   type TypeParameterId = String
+  type ShapeId = String
 
   //Commands
   case class DefineConcept(name: String, root: String, conceptId: ConceptId) extends DataTypesCommand
   case class SetConceptName(newName: String, conceptId: ConceptId) extends DataTypesCommand
   case class DeprecateConcept(conceptId: ConceptId) extends DataTypesCommand
+
+  case class DefineInlineConcept(root: String, conceptId: ConceptId) extends DataTypesCommand
 
   case class AssignType(id: String, to: PrimitiveType, conceptId: ConceptId) extends DataTypesCommand
   case class AddField(parentId: String, id: FieldId, conceptId: ConceptId) extends DataTypesCommand

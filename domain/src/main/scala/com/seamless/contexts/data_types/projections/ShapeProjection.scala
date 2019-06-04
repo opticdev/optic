@@ -44,14 +44,14 @@ object ShapeProjection {
       }
     }
 
-    val allowedTypeReferences = state.concepts.collect {case (id, concept) if !concept.deprecated =>
+    val allowedTypeReferences = state.concepts.collect {case (id, concept) if !concept.deprecated && !concept.inline =>
 
       val dependentConcepts = state.components.collect{
         case (depId, dep) if dep.`type`.isRef && dep.`type`.asInstanceOf[RefT].conceptId == id =>
           dep.conceptId
       }.toSet
 
-      AllowedTypeReference(concept.name, id, dependentConcepts.toVector)
+      AllowedTypeReference(concept.name.get, id, dependentConcepts.toVector)
     }.toVector
       .sortBy(_.dependents.length)
       .reverse
