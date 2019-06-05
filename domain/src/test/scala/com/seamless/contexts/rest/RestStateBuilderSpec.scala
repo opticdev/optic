@@ -1,6 +1,6 @@
 package com.seamless.contexts.rest
 
-import com.seamless.contexts.rest.Commands.{AddContentType, AddRequestBody, AddResponse, CreateEndpoint, RemoveContentType, RemoveRequestBody, RestCommand, SetMethod, SetPath}
+import com.seamless.contexts.rest.Commands.{AddResponseBody, AddRequestBody, AddResponse, CreateEndpoint, RemoveResponseBody, RemoveRequestBody, RestCommand, SetMethod, SetPath}
 import com.seamless.contexts.rest.HttpMethods.{GET, POST}
 import org.scalatest.FunSpec
 
@@ -58,7 +58,7 @@ class RestStateBuilderSpec extends FunSpec {
     val f = fixture(true); import f._;
     val responseId = newId
     handle(AddResponse(responseId, 200, testEndpointId))
-    handle(AddContentType(newId, Some("root_shape"), ContentTypes.`application/json`, responseId, testEndpointId))
+    handle(AddResponseBody(newId, Some("root_shape"), ContentTypes.`application/json`, responseId, testEndpointId))
 
     val response = currentState.responses(responseId)
     assert(response.bodies.size == 1)
@@ -72,12 +72,12 @@ class RestStateBuilderSpec extends FunSpec {
     val responseId = newId
     handle(AddResponse(responseId, 200, testEndpointId))
     val bodyId = newId
-    handle(AddContentType(bodyId, Some("root_shape"), ContentTypes.`application/json`, responseId, testEndpointId))
+    handle(AddResponseBody(bodyId, Some("root_shape"), ContentTypes.`application/json`, responseId, testEndpointId))
 
     val response = currentState.responses(responseId)
     assert(response.bodies.size == 1)
 
-    handle(RemoveContentType(bodyId, responseId, testEndpointId))
+    handle(RemoveResponseBody(bodyId, responseId, testEndpointId))
 
     assert(currentState.responses(responseId).bodies.isEmpty)
   }

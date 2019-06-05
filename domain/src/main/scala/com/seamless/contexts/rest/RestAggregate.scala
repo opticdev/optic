@@ -26,14 +26,14 @@ object RestAggregate extends EventSourcedAggregate[RestState, RestCommand, RestE
       persist(ResponseStatusChanged(responseId, status, endpointId))
     }
 
-    case AddContentType(id, rootShapeId, contentType, responseId, endpointId) => {
+    case AddResponseBody(id, rootShapeId, contentType, responseId, endpointId) => {
       require(state.endpointExists(endpointId), s"Endpoint ${endpointId} does not exist")
-      persist(AddedContentType(id, rootShapeId, contentType, responseId, endpointId))
+      persist(AddedResponseBody(id, rootShapeId, contentType, responseId, endpointId))
     }
 
-    case RemoveContentType(id, responseId, endpointId) => {
+    case RemoveResponseBody(id, responseId, endpointId) => {
       require(state.endpointExists(endpointId), s"Endpoint ${endpointId} does not exist")
-      persist(RemovedContentType(id, responseId, endpointId))
+      persist(RemovedResponseBody(id, responseId, endpointId))
     }
 
     case AddRequestBody(requestBodyId, rootShapeId, contentType, endpointId) => {
@@ -81,7 +81,7 @@ object RestAggregate extends EventSourcedAggregate[RestState, RestCommand, RestE
         )
       }
 
-      case AddedContentType(id, rootShapeId, contentType, responseId, endpointId) => {
+      case AddedResponseBody(id, rootShapeId, contentType, responseId, endpointId) => {
         val body = Body(contentType, rootShapeId)
         val response = state.responses(responseId)
 
@@ -91,7 +91,7 @@ object RestAggregate extends EventSourcedAggregate[RestState, RestCommand, RestE
         )
       }
 
-      case RemovedContentType(id, responseId, endpointId) => {
+      case RemovedResponseBody(id, responseId, endpointId) => {
         val updated = state.responses(responseId)
             .removeBody(id)
         state.putResponse(responseId, updated)

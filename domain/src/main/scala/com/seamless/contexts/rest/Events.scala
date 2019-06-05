@@ -17,8 +17,8 @@ object Events {
   case class AddedRequestBody(requestBodyId: BodyId, rootShapeId: Option[String], contentType: ContentType, endpointId: EndpointId) extends RestEvent
   case class RemovedRequestBody(requestBodyId: BodyId, endpointId: EndpointId) extends RestEvent
 
-  case class AddedContentType(id: String, rootShapeId: Option[String], contentType: ContentType, responseId: ResponseId, endpointId: EndpointId) extends RestEvent
-  case class RemovedContentType(id: String, responseId: ResponseId, endpointId: EndpointId) extends RestEvent
+  case class AddedResponseBody(id: String, rootShapeId: Option[String], contentType: ContentType, responseId: ResponseId, endpointId: EndpointId) extends RestEvent
+  case class RemovedResponseBody(id: String, responseId: ResponseId, endpointId: EndpointId) extends RestEvent
 
   trait RestEvent
 }

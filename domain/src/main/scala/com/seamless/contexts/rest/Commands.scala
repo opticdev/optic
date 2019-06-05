@@ -22,10 +22,11 @@ object Commands {
   case class AddResponse(responseId: ResponseId, status: Int, endpointId: EndpointId) extends RestCommand
   case class SetResponseStatus(responseId: ResponseId, status: Int, endpointId: EndpointId) extends RestCommand
 
-  case class AddContentType(id: String, rootShapeId: Option[String], contentType: ContentType, responseId: ResponseId, endpointId: EndpointId) extends RestCommand
-  case class RemoveContentType(id: String, responseId: ResponseId, endpointId: EndpointId) extends RestCommand
+  case class AddResponseBody(id: String, rootShapeId: Option[String], contentType: ContentType, responseId: ResponseId, endpointId: EndpointId) extends RestCommand
+  case class RemoveResponseBody(id: String, responseId: ResponseId, endpointId: EndpointId) extends RestCommand
 
   @JSExportDescendentClasses
   @JSExportAll
   trait RestCommand extends ExportedCommand
+
 }
