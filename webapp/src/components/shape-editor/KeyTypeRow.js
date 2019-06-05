@@ -5,8 +5,8 @@ import InputBase from '@material-ui/core/InputBase/index';
 import AutosizeInput from 'react-input-autosize';
 import ButtonBase from '@material-ui/core/ButtonBase/index';
 import TypeName from './TypeName';
-import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
-import {Commands} from '../engine/index'
+import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
+import {Commands} from '../../engine'
 import {SchemaEditorModes} from './Constants';
 import classNames from 'classnames'
 

@@ -1,14 +1,14 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import Chip from '@material-ui/core/Chip';
+import Menu from '@material-ui/core/Menu/index';
+import MenuItem from '@material-ui/core/MenuItem/index';
+import Chip from '@material-ui/core/Chip/index';
 import {CollectionTypes, primitiveColors, PrimitiveTypes, typeOptionNames} from '../Types';
 import classNames from 'classnames';
-import Button from '@material-ui/core/Button';
-import ButtonBase from '@material-ui/core/ButtonBase';
-import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
-import {Commands, DataTypesHelper} from '../../engine/index'
+import Button from '@material-ui/core/Button/index';
+import ButtonBase from '@material-ui/core/ButtonBase/index';
+import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
+import {Commands, DataTypesHelper} from '../../../engine'
 
 const styles = theme => ({
 	chip: {

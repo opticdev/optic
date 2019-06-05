@@ -6,7 +6,7 @@ import AutosizeInput from 'react-input-autosize';
 import ButtonBase from '@material-ui/core/ButtonBase/index';
 import {primitiveColors, generateTypeName} from './Types';
 import LinkIcon from '@material-ui/icons/Link';
-import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
+import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
 import {SchemaEditorModes} from './Constants';
 
 const styles = theme => ({

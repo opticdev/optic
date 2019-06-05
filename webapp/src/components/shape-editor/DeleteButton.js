@@ -1,9 +1,9 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import Cancel from '@material-ui/icons/Cancel';
-import ButtonBase from '@material-ui/core/ButtonBase';
-import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
-import {Commands} from '../engine/index'
+import ButtonBase from '@material-ui/core/ButtonBase/index';
+import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
+import {Commands} from '../../engine'
 import {SchemaEditorModes} from './Constants';
 
 const styles = theme => ({

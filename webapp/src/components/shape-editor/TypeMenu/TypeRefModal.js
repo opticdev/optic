@@ -1,19 +1,19 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
-import Modal from '@material-ui/core/Modal';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import List from '@material-ui/core/List';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import DialogContent from '@material-ui/core/DialogContent';
-import {Button} from '@material-ui/core';
-import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
+import Modal from '@material-ui/core/Modal/index';
+import Dialog from '@material-ui/core/Dialog/index';
+import DialogTitle from '@material-ui/core/DialogTitle/index';
+import Grid from '@material-ui/core/Grid/index';
+import TextField from '@material-ui/core/TextField/index';
+import List from '@material-ui/core/List/index';
+import ListItemText from '@material-ui/core/ListItemText/index';
+import ListItem from '@material-ui/core/ListItem/index';
+import DialogContent from '@material-ui/core/DialogContent/index';
+import {Button} from '@material-ui/core/index';
+import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
 import SchemaEditor from '../SchemaEditor';
-import {Commands, DataTypesHelper} from '../../engine/index'
-import ButtonBase from '@material-ui/core/ButtonBase';
+import {Commands, DataTypesHelper} from '../../../engine'
+import ButtonBase from '@material-ui/core/ButtonBase/index';
 
 const styles = theme => ({
 	root: {

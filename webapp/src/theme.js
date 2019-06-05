@@ -3,7 +3,7 @@ import lightBlue from '@material-ui/core/colors/lightBlue';
 import yellow from '@material-ui/core/colors/yellow';
 
 export const primary = '#31366f'
-export const secondary = '#f57f17'
+export const secondary = '#ea4a61'
 
 export const appTheme = createMuiTheme({
 	palette: {
