@@ -109,6 +109,7 @@ class TopBar extends React.Component {
 							edge="start"
 							className={classes.menuButton}
 							color="inherit"
+							onClick={this.props.toggleSuperMenu}
 							size="small"
 						>
 							<KeyboardDown/>

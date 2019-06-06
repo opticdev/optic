@@ -3,6 +3,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import TopBar from './TopBar';
 import Paper from '@material-ui/core/Paper';
 import keydown from 'react-keydown'
+import SuperMenu from './SuperMenu';
 
 const styles = theme => ({
 	pageContainer: {
@@ -56,9 +57,30 @@ const Margin = withStyles(styles)(({classes, children, className}) => {
 
 class MasterView extends React.Component {
 
+	state = {
+		superMenuOpen: false
+	}
+
 	@keydown('ctrl+f', 'cmd+f' )
-	searchShortcut() {
+	searchShortcut(e) {
+		e.preventDefault()
+		e.stopPropagation()
+	}
+
+	@keydown('escape' )
+	searchShortcut(e) {
+		e.preventDefault()
+		e.stopPropagation()
 		debugger
+		this.closeAll()
+	}
+
+	closeAll = () => {
+		this.toggleSuperMenu(null,true)
+	}
+
+	toggleSuperMenu = (e, forceClose) => {
+		this.setState({superMenuOpen: (forceClose) ? false : !this.state.superMenuOpen})
 	}
 
 	render() {
@@ -67,12 +89,15 @@ class MasterView extends React.Component {
 
 		return (
 			<div className={classes.pageContainer}>
-				<div className={classes.navWrapper}><TopBar /></div>
+				<div className={classes.navWrapper}>
+					<TopBar toggleSuperMenu={this.toggleSuperMenu} />
+				</div>
 				<div className={classes.contentWrapper}>
 					<Margin className={classes.leftMargin} />
 					<Sheet />
 					<Margin />
 				</div>
+				<SuperMenu open={this.state.superMenuOpen} />
 			</div>)
 	}
 }
