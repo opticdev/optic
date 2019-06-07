@@ -15,7 +15,9 @@ class MutableCommandStream {
   def toImmutable = ImmutableCommandStream(init.toVector, describe.toVector)
 }
 
-case class ImmutableCommandStream(init: Vector[RfcCommand], describe: Vector[RfcCommand])
+case class ImmutableCommandStream(init: Vector[RfcCommand], describe: Vector[RfcCommand]) {
+  def flatten: Vector[RfcCommand] = init ++ describe
+}
 
 object CommandStream {
   def empty = ImmutableCommandStream(Vector(), Vector())

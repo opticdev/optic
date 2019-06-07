@@ -7,12 +7,11 @@ import com.seamless.oas.oas_to_commands.slugify
 
 import scala.util.Random
 
-abstract class OASResolver(root: JsObject) {
+abstract class OASResolver(root: JsObject, val oas_version: String) {
 
   protected def buildContext(root: JsValue) = Context(this, root)
 
   //Top Level OAS Resolvers
-
   def paths: Vector[Path]
   def operationsForPath(path: Path)(implicit ctx: Context): Vector[Operation]
   def parametersForPath(path: Path)(implicit ctx: Context): Vector[PathParameter]

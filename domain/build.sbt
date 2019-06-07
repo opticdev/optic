@@ -17,7 +17,6 @@ enablePlugins(ScalaJSPlugin)
 scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
 
 
-
 //generateTypescript := {
 //  PlatformTokenizerCache.megaCache.clear()
 //  val outputFile = outputDir.value / (jsOutputName.value + ".d.ts")

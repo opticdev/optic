@@ -1,10 +1,32 @@
 package com.seamless.ddd
 
 class EventSourcedRepository[State, Event](aggregate: EventSourcedAggregate[State, _, Event], eventStore: EventStore[Event]) {
+
+  private val _snapshotStore = scala.collection.mutable.HashMap[String, Snapshot[State]]()
+
   def findById(id: AggregateId): State = {
     val events = eventStore.listEvents(id)
-    events.foldLeft(aggregate.initialState) {
-      case (state, event) => aggregate.applyEvent(event, state)
+
+    val snapshotOption = _snapshotStore.get(id)
+
+    if (snapshotOption.isDefined) {
+      val snapshot = snapshotOption.get
+
+      val state = events.slice(snapshot.offset, events.size).foldLeft(snapshot.lastState) {
+        case (state, event) => aggregate.applyEvent(event, state)
+      }
+
+      _snapshotStore.put(id, Snapshot(state, events.size))
+      state
+
+    } else {
+
+      val state = events.foldLeft(aggregate.initialState) {
+        case (state, event) => aggregate.applyEvent(event, state)
+      }
+
+      _snapshotStore.put(id, Snapshot(state, events.size))
+      state
     }
   }
 
@@ -34,11 +56,4 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
   }
 }
 
-
-object T {
-
-  def main(args: Array[String]): Unit = {
-
-  }
-
-}
+case class Snapshot[State](lastState: State, offset: Int)

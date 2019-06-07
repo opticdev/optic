@@ -7,7 +7,7 @@ import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString, JsValue}
 
 import scala.util.Try
 
-class OAS2Resolver(root: JsObject) extends OASResolver(root) {
+class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
 
   override def paths: Vector[Schemas.Path] = {
     (root \ "paths").get.as[JsObject].value.toVector.map {
