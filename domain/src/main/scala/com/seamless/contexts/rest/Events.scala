@@ -1,8 +1,7 @@
 package com.seamless.contexts.rest
 
-import com.seamless.contexts.rest.Commands.{EndpointId, BodyId, ResponseId, RestCommand}
+import com.seamless.contexts.rest.Commands.{EndpointId, BodyId, ResponseId}
 import com.seamless.contexts.rest.HttpMethods.HttpMethod
-import com.seamless.ddd.AggregateId
 
 
 object Events {
