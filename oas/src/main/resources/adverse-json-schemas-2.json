@@ -1,0 +1,53 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "There is also a work-in-progress [Postman API reference](https://documenter.getpostman.com/view/4508214/RW8FERUn).\n",
+    "version": "4.0.0",
+    "title": "Adverse JSON Schemas for test cases"
+  },
+  "basePath": "/api/v4",
+  "host": "your-mattermost-url.com",
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "JustAPrimitive": {
+      "type": "string"
+    },
+    "JustARef": {
+      "$ref": "#/definitions/NestedObject"
+    },
+    "OneOfExample": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "one": {"type":  "boolean"}
+          }
+        },
+        {"type":  "string"}
+      ]
+    },
+    "NestedObject": {
+      "type": "object",
+      "properties": {
+        "object-field": {
+          "type": "object",
+          "properties": {
+            "string-field": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

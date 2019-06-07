@@ -45,6 +45,12 @@ package object data_types {
       override def hasTypeParameters: Boolean = true
     }
 
+    case object EitherT extends PrimitiveType {
+      override def id: String = "either"
+
+      override def hasTypeParameters: Boolean = true
+    }
+
     //Reference Types
     case class RefT(conceptId: String) extends PrimitiveType {
       override def id: String = conceptId
