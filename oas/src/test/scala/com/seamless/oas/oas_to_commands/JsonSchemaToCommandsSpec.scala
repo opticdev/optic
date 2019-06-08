@@ -2,7 +2,7 @@ package com.seamless.oas.oas_to_commands
 
 import org.scalatest.FunSpec
 import JsonSchemaToCommandsImplicits._
-import com.seamless.contexts.data_types.Commands.{AddField, AssignType, DefineConcept, SetConceptName, SetFieldName}
+import com.seamless.contexts.data_types.Commands.{AddField, AddTypeParameter, AssignType, DefineConcept, SetConceptName, SetFieldName}
 import com.seamless.contexts.data_types.Primitives.{RefT, StringT}
 import com.seamless.contexts.rfc.RfcService
 import com.seamless.oas.QueryImplicits._
@@ -80,5 +80,31 @@ class JsonSchemaToCommandsSpec extends ResolverTestFixture("2") {
     val commands = adverseSchemasResolver.definitions.~#("OneOfExample").toCommandStream
     println(commands.describe.map(_.toString).mkString("\n"))
   }
+
+  it("can turn array of string into commands") {
+    val commands = adverseSchemasResolver.definitions.~#("ArrayOfSingleType").toCommandStream
+
+    val sliced = commands.describe.slice(4, 6)
+
+    assert(sliced(0).isInstanceOf[AddTypeParameter])
+    assert(sliced(1).asInstanceOf[AssignType].to == StringT)
+  }
+
+  it("can turn array of string and ref into commands") {
+    val commands = adverseSchemasResolver.definitions.~#("ArrayOfStringAndRef").toCommandStream
+
+    val sliced = commands.describe.slice(4, 8)
+    assert(sliced(0).isInstanceOf[AddTypeParameter])
+    assert(sliced(1).asInstanceOf[AssignType].to == StringT)
+
+    assert(sliced(2).isInstanceOf[AddTypeParameter])
+    assert(sliced(3).asInstanceOf[AssignType].to.isRef)
+  }
+
+  it("can turn array of inline objects into commands") {
+    val commands = adverseSchemasResolver.definitions.~#("ArrayOfInlineObject").toCommandStream
+    null
+  }
+
 
 }

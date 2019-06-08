@@ -3,9 +3,10 @@ package com.seamless.oas.oas_to_commands
 import com.seamless.contexts.data_types.Commands.{AddField, AddTypeParameter, AssignType, DefineConcept, SetConceptName, SetFieldName}
 import com.seamless.contexts.data_types.Primitives._
 import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.oas.Context
+import com.seamless.oas.{Context, JsonSchemaType}
 import com.seamless.oas.JsonSchemaType.{EitherType, JsonSchemaType, Ref, SingleType}
-import com.seamless.oas.Schemas.{JsonSchemaSchema, NamedDefinition, PropertyDefinition}
+import com.seamless.oas.Schemas.{Definition, JsonSchemaSchema, NamedDefinition, PropertyDefinition}
+import play.api.libs.json.{JsArray, JsObject}
 
 import scala.util.{Either, Random, Try}
 
@@ -29,6 +30,18 @@ object JsonSchemaToCommandsImplicits {
         case SingleType(t) => {
           val typeEquiv = mapping(t)
           commandStream.appendDescribe(AssignType(id, typeEquiv, conceptId))
+
+          if (typeEquiv.hasTypeParameters) {
+            val items = (cxt.root \ "items").getOrElse(JsArray.empty).as[JsArray].value.toSeq
+                .map(i => (i, JsonSchemaType.fromDefinition(i)))
+
+            items.foreach{ case (itemCtx, typeParam) => {
+              val typeParamId = newId()
+              commandStream.appendDescribe(AddTypeParameter(id, typeParamId, conceptId))
+              typeParam.addAssignTypeCommands(typeParamId, conceptId)
+            }}
+          }
+
         }
         case Ref(resourceUrl) => {
           val resource = cxt.resolver.resolveDefinition(resourceUrl)
@@ -37,7 +50,6 @@ object JsonSchemaToCommandsImplicits {
         }
         case EitherType(allowedTypes) => {
           //will create a different type param for each possibility
-
           commandStream.appendDescribe(AssignType(id, EitherT, conceptId))
           allowedTypes.foreach{ typeParam => {
             val typeParamId = newId()

@@ -30,10 +30,14 @@
         {
           "type": "object",
           "properties": {
-            "one": {"type":  "boolean"}
+            "one": {
+              "type": "boolean"
+            }
           }
         },
-        {"type":  "string"}
+        {
+          "type": "string"
+        }
       ]
     },
     "NestedObject": {
@@ -46,6 +50,53 @@
               "type": "string"
             }
           }
+        }
+      }
+    },
+    "ArrayOfSingleType": {
+      "type": "object",
+      "properties": {
+        "arrayField": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            }
+          ]
+        }
+      }
+    },
+    "ArrayOfStringAndRef": {
+      "type": "object",
+      "properties": {
+        "arrayField": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "$ref": "#/definitions/NestedObject"
+            }
+          ]
+        }
+      }
+    },
+    "ArrayOfInlineObject": {
+      "type": "object",
+      "properties": {
+        "arrayField": {
+          "type": "array",
+          "items": [
+            {
+              "type": "object",
+              "properties": {
+                "hello": {
+                  "type": "string"
+                }
+              }
+            }
+          ]
         }
       }
     }
