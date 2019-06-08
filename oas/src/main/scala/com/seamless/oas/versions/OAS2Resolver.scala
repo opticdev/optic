@@ -9,20 +9,6 @@ import scala.util.Try
 
 class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
 
-  override def paths: Vector[Schemas.Path] = {
-    (root \ "paths").get.as[JsObject].value.toVector.map {
-      case (path, value) => {
-        Path(path)(buildContext(value))
-      }
-    }
-  }
-
-  override def operationsForPath(path: Schemas.Path)(implicit ctx: Context): Vector[Schemas.Operation] = {
-    path.cxt.root.as[JsObject].value.collect {
-      case (op, value) if oas.supportedOperations.contains(op) => Operation(op, path)(buildContext(value))
-    }.toVector
-  }
-
   //Get produces, walk graph from nearest to root
   def getProduces(operation: Operation)(implicit ctx: Context): Vector[String] = {
     getProduces(operation.cxt.root, operation.path.cxt.root, root)
@@ -38,7 +24,7 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
   }
 
   override def responsesForOperation(operation: Operation)(implicit ctx: Context): Vector[Response] = {
-    val responseObject = (operation.cxt.root.as[JsObject] \ "responses").as[JsObject]
+    val responseObject = (operation.cxt.root.as[JsObject] \ "responses").getOrElse(JsObject.empty).as[JsObject]
 
     responseObject.value.toVector.map { case (status, description) => {
       val statusAsInt = status.toInt

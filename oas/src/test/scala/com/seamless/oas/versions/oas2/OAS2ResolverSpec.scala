@@ -2,6 +2,7 @@ package com.seamless.oas.versions.oas2
 import com.seamless.oas
 import com.seamless.oas.JsonSchemaType.{Ref, SingleType}
 import com.seamless.oas.QueryImplicits._
+import com.seamless.oas.ResolverTestFixture
 import com.seamless.oas.Schemas.Definition
 import com.seamless.oas.Schemas.PathParameter
 

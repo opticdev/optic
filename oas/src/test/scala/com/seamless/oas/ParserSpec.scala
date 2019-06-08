@@ -1,6 +1,5 @@
 package com.seamless.oas
 
-import com.seamless.oas.versions.oas2.ResolverTestFixture
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 

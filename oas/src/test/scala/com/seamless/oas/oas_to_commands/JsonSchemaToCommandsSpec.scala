@@ -1,12 +1,12 @@
 package com.seamless.oas.oas_to_commands
 
-import com.seamless.oas.versions.oas2.ResolverTestFixture
 import org.scalatest.FunSpec
 import JsonSchemaToCommandsImplicits._
 import com.seamless.contexts.data_types.Commands.{AddField, AssignType, DefineConcept, SetConceptName, SetFieldName}
 import com.seamless.contexts.data_types.Primitives.{RefT, StringT}
 import com.seamless.contexts.rfc.RfcService
 import com.seamless.oas.QueryImplicits._
+import com.seamless.oas.ResolverTestFixture
 
 class JsonSchemaToCommandsSpec extends ResolverTestFixture("2") {
 

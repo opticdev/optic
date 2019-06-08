@@ -32,6 +32,10 @@ package object data_types {
       override def id: String = "boolean"
     }
 
+    case object AnyT extends PrimitiveType {
+      override def id: String = "any"
+    }
+
     //Collection Types
     case object ObjectT extends PrimitiveType {
       override def id: String = "object"
@@ -65,6 +69,7 @@ package object data_types {
       BooleanT,
       ObjectT,
       ListT,
+      AnyT,
     )
 
   }

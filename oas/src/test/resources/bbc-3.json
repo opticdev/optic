@@ -3130,18 +3130,21 @@
       }
     },
     "/v1/brands/{pid}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "pid",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "get": {
         "description": "Get raw brand",
         "operationId": "Get_Raw_brand",
         "parameters": [
-          {
-            "in": "path",
-            "name": "pid",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
+
         ],
         "responses": {
           "200": {
