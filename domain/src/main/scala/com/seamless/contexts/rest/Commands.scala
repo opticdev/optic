@@ -1,8 +1,7 @@
 package com.seamless.contexts.rest
 
-import com.seamless.contexts.rest.Events.RestEvent
 import com.seamless.contexts.rest.HttpMethods.HttpMethod
-import com.seamless.ddd.{AggregateId, ExportedCommand}
+import com.seamless.ddd.{ExportedCommand}
 
 import scala.scalajs.js.annotation.{JSExportAll, JSExportDescendentClasses}
 
