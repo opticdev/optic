@@ -8,7 +8,7 @@ import com.seamless.oas.oas_to_commands.slugify
 
 import scala.util.Random
 
-abstract class OASResolver(root: JsObject, val oas_version: String) {
+abstract class OASResolver(val root: JsObject, val oas_version: String) {
 
   protected def buildContext(root: JsValue) = Context(this, root)
 
