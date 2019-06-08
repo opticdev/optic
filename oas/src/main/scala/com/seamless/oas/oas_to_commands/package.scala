@@ -6,4 +6,6 @@ package object oas_to_commands {
     import java.text.Normalizer
     Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\w ]", "").replace(" ", "-").toLowerCase
   }
+
 }
+

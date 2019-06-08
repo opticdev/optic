@@ -14,16 +14,12 @@ class ParserSpec extends ResolverTestFixture("2") {
   }
 
   it("will throw if invalid json") {
-    assertThrows[java.lang.Error] {
-      Parser.parseOAS("NOT JSON")
-    }
+    assert(Parser.parseOAS("NOT JSON").isFailure)
   }
 
   it("works when valid") {
     val mattermost = Parser.parseOAS(pathToContents("src/main/resources/mattermost-2.json"))
-
-    println(mattermost.get.executionTime.toString)
-
+    assert(mattermost.isSuccess)
   }
 
 }
