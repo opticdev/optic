@@ -5,7 +5,7 @@ import com.seamless.oas.api_guru_interface.{All, AskFilter, AskTrait, OAS3}
 import play.api.libs.json.{JsArray, Json}
 
 case class CompositionUsage(api: String, allOfCount: Int, anyOfCount: Int, oneOfCount: Int)
-object CompositionFeatures extends AskTrait[CompositionUsage] {
+object CompositionFeatures extends AskTrait[CompositionUsage, Unit] {
 
   override def question: String = "How many Swagger/OpenAPI use allOf?"
 

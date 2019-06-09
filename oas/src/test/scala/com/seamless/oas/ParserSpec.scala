@@ -3,6 +3,8 @@ package com.seamless.oas
 import org.scalatest.FunSpec
 import play.api.libs.json.{JsObject, Json}
 
+import scala.util.Try
+
 class ParserSpec extends ResolverTestFixture("2") {
 
   def pathToContents(file: String): String = {
@@ -13,12 +15,17 @@ class ParserSpec extends ResolverTestFixture("2") {
   }
 
   it("will throw if invalid json") {
-    assert(Parser.parseOAS("NOT JSON").isFailure)
+    assert(Try(Parser.parseOAS("NOT JSON")).isFailure)
   }
 
-  it("works when valid") {
-    val mattermost = Parser.parseOAS(pathToContents("src/main/resources/mattermost-2.json"))
-    assert(mattermost.isSuccess)
+  it("works on a version 2 when valid") {
+    val mattermost = Parser.parseOAS(pathToContents("src/test/resources/mattermost-2.json"))
+    println(mattermost)
+  }
+
+  it("works on a version 3 when valid") {
+    val bbc = Parser.parseOAS(pathToContents("src/test/resources/bbc-3.json"))
+    println(bbc)
   }
 
 }

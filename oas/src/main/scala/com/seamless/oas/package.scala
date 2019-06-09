@@ -39,6 +39,7 @@ package object oas {
     }
 
 
+    //@todo add a the concept of a type with parameters so we can move the logic this one central place
     def fromDefinition(json: JsValue): JsonSchemaType = {
 
       if (json.isInstanceOf[JsString]) {
@@ -48,6 +49,8 @@ package object oas {
       val refKvP = json \ "$ref"
       val typeKvP = json \ "type"
       val oneOfKvP = json \ "oneOf"
+
+
       if (refKvP.isDefined && refKvP.get.isInstanceOf[JsString]) {
         Ref(refKvP.get.as[JsString].value)
       } else if (typeKvP.isDefined && typeKvP.get.isInstanceOf[JsString]) {

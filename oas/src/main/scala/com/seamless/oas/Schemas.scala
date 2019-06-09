@@ -6,7 +6,7 @@ import play.api.libs.json.JsObject
 object Schemas {
   abstract class OASSchema(implicit val cxt: Context)
 
-  case class Path(uri: String)(implicit cxt: Context) extends OASSchema {
+  case class Path(uri: String, id: String)(implicit cxt: Context) extends OASSchema {
     def operations: Vector[Operation] = cxt.resolver.operationsForPath(this)
     def pathParameters: Vector[PathParameter] = cxt.resolver.parametersForPath(this)
   }
@@ -17,6 +17,7 @@ object Schemas {
     def supportsBody = !Set("get", "head", "options", "connect").contains(method)
     def requestBody: Option[RequestBody] = cxt.resolver.requestBodyForOperation(this)
     def queryParameters: Vector[QueryParameter] = cxt.resolver.queryParametersForOperation(this)
+    def id = path.id+"_"+method
   }
 
   case class Response(status: Int, contentType: Option[String], schema: Option[JsonSchemaSchema])(implicit cxt: Context) extends OASSchema

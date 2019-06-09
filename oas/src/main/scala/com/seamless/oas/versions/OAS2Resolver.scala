@@ -2,7 +2,7 @@ package com.seamless.oas.versions
 
 import com.seamless.oas
 import com.seamless.oas.Schemas.{Definition, NamedDefinition, Operation, Path, PathParameter, QueryParameter, RequestBody, Response, SharedResponse}
-import com.seamless.oas.{Context, OASResolver, Schemas}
+import com.seamless.oas.{Context, JSONReference, OASResolver, Schemas}
 import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString, JsValue}
 
 import scala.util.Try
@@ -24,9 +24,13 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
   }
 
   override def responsesForOperation(operation: Operation)(implicit ctx: Context): Vector[Response] = {
-    val responseObject = (operation.cxt.root.as[JsObject] \ "responses").getOrElse(JsObject.empty).as[JsObject]
 
-    responseObject.value.toVector.map { case (status, description) => {
+    val responseObject = (operation.cxt.root.as[JsObject] \ "responses")
+      .getOrElse(JsObject.empty).as[JsObject].value.toVector
+      .filter(i => Try(i._1.toInt).isSuccess)
+
+
+    responseObject.map { case (status, description) => {
       val statusAsInt = status.toInt
       val schema = description.as[JsObject] \ "schema"
 
@@ -139,15 +143,25 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
 
   private object Helpers {
     case class OAS2Param(jsObject: JsObject) {
-      def in = (jsObject \ "in").get.as[JsString].value
-      def name = (jsObject \ "name").get.as[JsString].value
-      def required = (jsObject \ "required").getOrElse(JsBoolean(true)).as[JsBoolean].value
+
+      private val parameterDefinition = {
+        if ((jsObject \ "$ref").isDefined) {
+          val ref = (jsObject \ "$ref").get.as[JsString].value
+          JSONReference.walk(ref, root).get
+        } else {
+          jsObject
+        }
+      }
+
+      def in = (parameterDefinition \ "in").get.as[JsString].value
+      def name = (parameterDefinition \ "name").get.as[JsString].value
+      def required = (parameterDefinition \ "required").getOrElse(JsBoolean(true)).as[JsBoolean].value
 
       def isPathParameter = in == "path"
       def isBodyParameter = in == "body"
       def isQueryParameter = in == "query"
 
-      def schema = (jsObject \ "schema").getOrElse(JsObject.empty).as[JsObject]
+      def schema = (parameterDefinition \ "schema").getOrElse(JsObject.empty).as[JsObject]
     }
 
     def distinctBy[A, B](xs: List[A])(f: A => B): List[A] =

@@ -7,7 +7,7 @@ import play.api.libs.json.JsArray
 
 case class Usage(api: String, number: Int, array: JsArray)
 
-object OA3RequestBodyComponents extends AskTrait[Option[Usage]] {
+object OA3RequestBodyComponents extends AskTrait[Option[Usage], Unit] {
   override def question: String = "How many OA3 APIs use components for request bodies?"
 
   override def filter: AskFilter = OAS3

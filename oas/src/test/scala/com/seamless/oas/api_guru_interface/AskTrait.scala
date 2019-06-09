@@ -20,10 +20,11 @@ case object OAS2 extends AskFilter {
 }
 
 
-abstract class AskTrait[IntermediateResult] {
+abstract class AskTrait[IntermediateResult, Result] {
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit = run
 
+  def run: Result = {
     AskAPIGuruAnything.prepareSpecs
 
     println(question+"\n\n")
@@ -34,9 +35,9 @@ abstract class AskTrait[IntermediateResult] {
 
     println(s"Sampling ${specs.length} APIs")
 
-    val results = specs.map { case (name, api) => Try {
+    val results = specs.par.map { case (name, api) => Try {
       processAPI(api, name)
-    }}
+    }}.toVector
 
     results.foreach {
       case i if i.isFailure => println(i.failed.get.getMessage)
@@ -51,5 +52,5 @@ abstract class AskTrait[IntermediateResult] {
   def filter: AskFilter = All
 
   def processAPI(resolver: OASResolver, apiName: String): IntermediateResult
-  def report(results: IntermediateResult*)
+  def report(results: IntermediateResult*): Result
 }

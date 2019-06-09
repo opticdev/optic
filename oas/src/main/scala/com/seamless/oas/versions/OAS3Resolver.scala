@@ -2,7 +2,7 @@ package com.seamless.oas.versions
 
 import com.seamless.oas
 import com.seamless.oas.Schemas.{Definition, NamedDefinition, Operation, PathParameter, QueryParameter, RequestBody, Response}
-import com.seamless.oas.{Context, OASResolver, Schemas}
+import com.seamless.oas.{Context, JSONReference, OASResolver, Schemas}
 import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString}
 
 import scala.util.Try
@@ -110,15 +110,25 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
 
   private object Helpers {
     case class OAS3Param(jsObject: JsObject) {
-      def in = (jsObject \ "in").get.as[JsString].value
-      def name = (jsObject \ "name").get.as[JsString].value
-      def required = (jsObject \ "required").getOrElse(JsBoolean(true)).as[JsBoolean].value
+
+      private val parameterDefinition = {
+        if ((jsObject \ "$ref").isDefined) {
+          val ref = (jsObject \ "$ref").get.as[JsString].value
+          JSONReference.walk(ref, root).get
+        } else {
+          jsObject
+        }
+      }
+
+      def in = (parameterDefinition \ "in").get.as[JsString].value
+      def name = (parameterDefinition \ "name").get.as[JsString].value
+      def required = (parameterDefinition \ "required").getOrElse(JsBoolean(true)).as[JsBoolean].value
 
       def isPathParameter = in == "path"
       def isBodyParameter = in == "body"
       def isQueryParameter = in == "query"
 
-      def schema = (jsObject \ "schema").getOrElse(JsObject.empty).as[JsObject]
+      def schema = (parameterDefinition \ "schema").getOrElse(JsObject.empty).as[JsObject]
     }
 
     def distinctBy[A, B](xs: List[A])(f: A => B): List[A] =
