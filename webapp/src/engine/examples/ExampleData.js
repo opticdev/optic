@@ -55,3 +55,15 @@ export function seedFriendModel(handler, aggregateId = 'test-api') {
 
 	return conceptId
 }
+
+export function seedString(handler, name, aggregateId = 'test-api') {
+
+	const conceptId = `concept_${name}`
+	const conceptRootShapeId = DataTypesHelper.newId()
+	handler(Commands.DefineInlineConcept(conceptRootShapeId, conceptId))
+
+
+	handler(Commands.AssignType(conceptRootShapeId, Primitives.StringT(), conceptId))
+
+	return conceptId
+}

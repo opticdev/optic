@@ -44,14 +44,14 @@ class TypeName extends React.Component {
 		if (this.props.id !== nextProps.id) {
 			this.state = {
 				fieldName: nextProps.initialKey || ''
-			}
+			};
 		}
 	}
 
 	render() {
 
 		const {classes, node, inField, style, id} = this.props;
-		const {type} = node
+		const {type} = node;
 
 		if (inField && type.hasFields) {
 			return null;
@@ -60,12 +60,12 @@ class TypeName extends React.Component {
 		const color = (() => {
 
 			if (type.isRef) {
-				return '#8a558e'
+				return '#8a558e';
 			} else {
-				return primitiveColors[type.id] || '#49525f'
+				return primitiveColors[type.id] || '#49525f';
 			}
 
-		})()
+		})();
 
 		return <SchemaEditorContext.Consumer>
 			{({editorState, operations, mode}) => {
@@ -84,15 +84,46 @@ class TypeName extends React.Component {
 						{type.isRef ? <div
 							className={classes.goTo}
 							onClick={(e) => {
-								e.stopPropagation()
+								e.stopPropagation();
 
 							}}
 						>(view)</div> : null}
 					</ButtonBase>
-				</div>
+				</div>;
 			}}
 		</SchemaEditorContext.Consumer>;
 	}
 }
 
 export default withStyles(styles)(TypeName);
+
+export const DisplayRootTypeName = withStyles(styles)(({shape, classes, style}) => {
+
+	const {type} = shape;
+
+	const color = (() => {
+
+		if (type.isRef) {
+			return '#8a558e';
+		} else {
+			return primitiveColors[type.id] || '#49525f';
+		}
+
+	})();
+
+	return <div className={classes.root}>
+		<ButtonBase className={classes.typeChangeButton}
+					disableRipple={true}
+					disabled={true}
+					style={{
+						color,
+						fontWeight: (type.hasFields || type.hasTypeParameters) ? 700 : 200,
+						...style,
+					}}>
+			{generateTypeName(type, shape)}
+			{type.isRef ? <div
+				className={classes.goTo}
+			>(view)</div> : null}
+		</ButtonBase>
+	</div>
+})

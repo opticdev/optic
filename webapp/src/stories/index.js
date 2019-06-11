@@ -16,6 +16,8 @@ import {SchemaEditorModes} from '../components/shape-editor/Constants';
 import TopBar from '../components/navigation/TopBar';
 import MasterView from '../components/navigation/MasterView';
 import FloatingAddButton from '../components/navigation/FloatingAddButton';
+import BodyEditor from '../components/body-editor'
+import ParametersEditor from '../components/parameters-editor'
 
 storiesOf('Schema Editor', module)
 	.add('edit mode', mui((() => {
@@ -51,6 +53,25 @@ storiesOf('Navigation', module)
 storiesOf('Context Fab', module)
 	.add('example', mui((() => {
 		return <FloatingAddButton />
+	})()))
+
+storiesOf('Parameters Editor', module)
+	.add('view example', mui((() => {
+		return <ParametersEditor mode={SchemaEditorModes.VIEW}/>
+	})()))
+	.add('edit example', mui((() => {
+		return <ParametersEditor mode={SchemaEditorModes.EDIT} />
+	})()))
+
+storiesOf('Body Editor', module)
+	.add('view example no body', mui((() => {
+		return <BodyEditor mode={SchemaEditorModes.VIEW}/>
+	})()))
+	.add('view example with body', mui((() => {
+		return <BodyEditor hasBody={true} mode={SchemaEditorModes.VIEW}/>
+	})()))
+	.add('edit example', mui((() => {
+		return <BodyEditor mode={SchemaEditorModes.EDIT} />
 	})()))
 
 
