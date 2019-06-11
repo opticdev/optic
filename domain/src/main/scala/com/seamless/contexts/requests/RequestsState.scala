@@ -1,53 +1,82 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId}
+import com.seamless.contexts.requests.Commands.{BodyDescriptor, ParameterId, PathComponentId, RequestId, ResponseId, UnsetBodyDescriptor}
 
-case class PathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String, isParameter: Boolean, isRemoved: Boolean)
+sealed trait RequestsGraph
 
-case class HttpRequestDefinition(requestId: RequestId, pathId: PathComponentId, method: String)
+trait Removable {
+  val isRemoved: Boolean
+}
 
-case class HttpResponseDefinition(responseId: ResponseId, requestId: RequestId, httpStatusCode: Integer)
+case class PathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String, isParameter: Boolean, override val isRemoved: Boolean) extends RequestsGraph with Removable
+
+case class HttpRequestParameter(parameterId: ParameterId, name: String, override val isRemoved: Boolean) extends RequestsGraph with Removable
+
+case class RequestDescriptor(pathComponentId: PathComponentId, httpMethod: String, bodyDescriptor: BodyDescriptor)
+case class HttpRequest(requestId: RequestId, requestDescriptor: RequestDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
+
+case class ResponseDescriptor(requestId: RequestId, httpStatusCode: Int, bodyDescriptor: BodyDescriptor)
+case class HttpResponse(responseId: ResponseId, responseDescriptor: ResponseDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
+
+case class HttpResponseBody(bodyDescriptor: BodyDescriptor)
 
 case class RequestsState(
                           pathComponents: Map[PathComponentId, PathComponent],
-                          requests: Map[PathComponentId, Map[RequestId, HttpRequestDefinition]],
-                          responses: Map[RequestId, Map[ResponseId, HttpResponseDefinition]]
+                          requests: Map[RequestId, HttpRequest],
+                          requestParameters: Map[ParameterId, HttpRequestParameter],
+                          responses: Map[ResponseId, HttpResponse],
+                          parentPath: Map[PathComponentId, PathComponentId],
+                          requestsByPath: Map[PathComponentId, Set[RequestId]],
+                          responsesByRequest: Map[RequestId, Set[ResponseId]]
                         ) {
+  ////////////////////////////////////////////////////////////////////////////////
 
-  def addPathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String) = {
-    val pathComponent = PathComponent(pathId = pathId, parentPathId = parentPathId, name = name, isParameter = false, isRemoved = false)
-
-    RequestsState(
-      pathComponents + (pathId -> pathComponent),
-      requests,
-      responses
+  def withPathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String) = {
+    this.copy(
+      pathComponents = pathComponents + (pathId -> PathComponent(pathId, parentPathId, name, isParameter = false, isRemoved = false)),
+      parentPath = parentPath + (pathId -> parentPathId),
+      requestsByPath = requestsByPath + (pathId -> Set.empty),
     )
   }
 
-  def addRequestDefinition(pathId: PathComponentId, requestId: RequestId, method: String) = {
-    require(pathComponents.contains(pathId))
-    val requestDefinitions = requests.getOrElse(pathId, Map.empty)
-    require(!requestDefinitions.contains(requestId))
-    val requestDefinition = HttpRequestDefinition(requestId, pathId, method)
-    RequestsState(
-      pathComponents,
-      requests + (pathId -> (requestDefinitions + (requestId -> requestDefinition))),
-      responses
+  def withPathComponentNamed(pathId: PathComponentId, name: String) = {
+    parentPath.get(pathId) match {
+      case Some(parentPathId) => {
+        withPathComponent(pathId, parentPathId, name)
+      }
+    }
+  }
+
+  def withoutPathComponent(pathIdToRemove: PathComponentId) = {
+    val path = pathComponents.get(pathIdToRemove)
+    path match {
+      case Some(PathComponent(pathId, parentPathId, name, isParameter, _)) => {
+        this.copy(
+          pathComponents = pathComponents + (pathId -> PathComponent(pathId, parentPathId, name, isParameter = isParameter, isRemoved = true)),
+        )
+      }
+    }
+  }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
+  def withRequest(requestId: RequestId, pathId: PathComponentId, httpMethod: String) = {
+    this.copy(
+      requests = requests + (requestId -> HttpRequest(requestId, RequestDescriptor(pathId, httpMethod, UnsetBodyDescriptor()), isRemoved = false)),
+      requestsByPath = requestsByPath + (pathId -> (requestsByPath.getOrElse(pathId, Set.empty) + requestId))
     )
   }
 
-  def addResponseDefinition(responseId: ResponseId, requestId: RequestId, httpStatusCode: Integer) = {
-    val requestIdExists = requests.exists(entry => {
-      entry._2.contains(requestId)
-    })
-    require(requestIdExists)
-    val responseDefinitions = responses.getOrElse(requestId, Map.empty)
-    require(!responseDefinitions.contains(responseId))
-    val responseDefinition = HttpResponseDefinition(responseId, requestId, httpStatusCode)
-    RequestsState(
-      pathComponents,
-      requests,
-      responses + (requestId -> (responseDefinitions + (responseId -> responseDefinition)))
-    )
+  def withoutRequest(requestIdToRemove: RequestId) = {
+    match requests.get(requestIdToRemove) {
+      case Some(HttpRequest(requestId, requestDescriptor, isRemoved)) => {
+        this.copy(
+          requests = requests + (requestId -> HttpRequest(requestId, requestDescriptor, isRemoved = true))
+        )
+      }
+    }
   }
+
+  ////////////////////////////////////////////////////////////////////////////////
+
 }

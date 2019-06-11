@@ -6,17 +6,14 @@ import com.seamless.ddd.ExportedCommand
 
 import scala.scalajs.js.annotation.{JSExportAll, JSExportDescendentClasses}
 
-/*
-By default, we'll add a root PathId
-Paths represent the Resource Hierarchy
-A PathComponent should have at most one PathParameter child
-
- */
 object Commands {
   type PathComponentId = String
-  type EndpointId = String
   type RequestId = String
+  type ParameterId = String
   type ResponseId = String
+  trait BodyDescriptor
+  case class UnsetBodyDescriptor() extends BodyDescriptor
+  case class ShapedBodyDescriptor(httpContentType: String, bodyShapeId: ShapeId) extends BodyDescriptor
 
   case class AddPathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String) extends RequestsCommand
   case class RenamePathComponent(pathId: PathComponentId, name: String)
@@ -28,25 +25,25 @@ object Commands {
   case class RemovePathParameter(pathId: PathComponentId) extends RequestsCommand
 
 
-  case class AddQueryParameter(requestId: RequestId, name: String) extends RequestsCommand
-  case class SetQueryParameterShape(requestId: RequestId, shapeId: ShapeId) extends RequestsCommand
-  case class RemoveQueryParameter(requestId: RequestId) extends RequestsCommand
-
-
-  case class AddHeaderParameter(requestId: RequestId, name: String) extends RequestsCommand
-  case class SetHeaderParameterShape(requestId: RequestId, shapeId: ShapeId) extends RequestsCommand
-  case class RemoveHeaderParameter(requestId: RequestId) extends RequestsCommand
-
-
   case class AddRequest(requestId: RequestId, pathId: PathComponentId, httpMethod: String) extends RequestsCommand
-  case class SetRequestBodyShape(requestId: RequestId, shapeId: ShapeId) extends RequestsCommand
+  case class SetRequestBodyShape(requestId: RequestId, bodyDescriptor: BodyDescriptor) extends RequestsCommand
   case class RemoveRequest(requestId: RequestId) extends RequestsCommand
+
+
+  case class AddQueryParameter(parameterId: ParameterId, requestId: RequestId, name: String) extends RequestsCommand
+  case class SetQueryParameterShape(parameterId: ParameterId, shapeId: ShapeId) extends RequestsCommand
+  case class RemoveQueryParameter(parameterId: ParameterId) extends RequestsCommand
+
+
+  case class AddHeaderParameter(parameterId: ParameterId, requestId: RequestId, name: String) extends RequestsCommand
+  case class SetHeaderParameterShape(parameterId: ParameterId, shapeId: ShapeId) extends RequestsCommand
+  case class RemoveHeaderParameter(parameterId: ParameterId) extends RequestsCommand
 
 
   case class AddResponse(responseId: ResponseId, requestId: RequestId, httpStatusCode: Int) extends RequestsCommand
   case class SetResponseStatusCode(responseId: ResponseId, httpStatusCode: Int) extends RequestsCommand
-  case class SetResponseBodyShape(responseId: ResponseId, shapeId: ShapeId) extends RequestsCommand
-  case class RemoveResponse(responseId: ResponseId)
+  case class SetResponseBodyShape(responseId: ResponseId, bodyDescriptor: BodyDescriptor) extends RequestsCommand
+  case class RemoveResponse(responseId: ResponseId) extends RequestsCommand
 
   @JSExportDescendentClasses
   @JSExportAll
