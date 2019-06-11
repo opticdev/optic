@@ -15,6 +15,7 @@ import {SchemaEditorContext} from '../contexts/SchemaEditorContext';
 import {SchemaEditorModes} from '../components/shape-editor/Constants';
 import TopBar from '../components/navigation/TopBar';
 import MasterView from '../components/navigation/MasterView';
+import FloatingAddButton from '../components/navigation/FloatingAddButton';
 
 storiesOf('Schema Editor', module)
 	.add('edit mode', mui((() => {
@@ -45,6 +46,13 @@ storiesOf('Navigation', module)
 	.add('master-view', mui((() => {
 		return <MasterView />
 	})(), 0))
+
+
+storiesOf('Context Fab', module)
+	.add('example', mui((() => {
+		return <FloatingAddButton />
+	})()))
+
 
 // storiesOf('Type Modal', module)
 // 	.add('to Storybook', mui(<TypeMenu />));

@@ -55,6 +55,7 @@
     "react-dom": "^16.8.6",
     "react-input-autosize": "^2.2.1",
     "react-keydown": "^1.9.10",
+    "react-router-dom": "^5.0.1",
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",
     "semver": "6.0.0",
@@ -146,8 +147,18 @@
       "react-app"
     ],
     "plugins": [
-      ["@babel/plugin-proposal-decorators", {"legacy":  true}],
-      ["@babel/plugin-proposal-class-properties", { "loose" : true }]
+      [
+        "@babel/plugin-proposal-decorators",
+        {
+          "legacy": true
+        }
+      ],
+      [
+        "@babel/plugin-proposal-class-properties",
+        {
+          "loose": true
+        }
+      ]
     ]
   }
 }

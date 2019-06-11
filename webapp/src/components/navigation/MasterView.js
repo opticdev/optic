@@ -4,6 +4,7 @@ import TopBar from './TopBar';
 import Paper from '@material-ui/core/Paper';
 import keydown from 'react-keydown'
 import SuperMenu from './SuperMenu';
+import FloatingAddButton from './FloatingAddButton';
 
 const styles = theme => ({
 	pageContainer: {
@@ -39,7 +40,7 @@ const styles = theme => ({
 		flex: 6.5,
 		height: 1000,
 		marginBottom: 80,
-		minWidth: 800,
+		width: 850,
 		[theme.breakpoints.down('md')]: {
 			marginLeft: 22,
 			maxWidth: 900
@@ -47,8 +48,11 @@ const styles = theme => ({
 	}
 });
 
-const Sheet = withStyles(styles)(({classes, style}) => {
-	return <Paper className={classes.sheet} style={style}>Hello</Paper>
+const Sheet = withStyles(styles)(({classes, style, children}) => {
+	return <Paper className={classes.sheet} style={style} id="center-sheet">
+		{children}
+		{/*<FloatingAddButton />*/}
+	</Paper>
 })
 
 const Margin = withStyles(styles)(({classes, children, className}) => {
@@ -71,7 +75,6 @@ class MasterView extends React.Component {
 	searchShortcut(e) {
 		e.preventDefault()
 		e.stopPropagation()
-		debugger
 		this.closeAll()
 	}
 
@@ -97,7 +100,7 @@ class MasterView extends React.Component {
 					<Sheet />
 					<Margin />
 				</div>
-				<SuperMenu open={this.state.superMenuOpen} />
+				<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu} />
 			</div>)
 	}
 }
