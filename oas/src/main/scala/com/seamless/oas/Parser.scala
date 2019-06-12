@@ -35,7 +35,10 @@ object Parser {
       definitionsCommandStream.flatten
     }
 
+
+
     val (allEndpointsCommands, endpointsCommandStreamTime) = time {
+      implicit val pathContext = resolver.paths.toCommandStream
       val endpointsCommandStream = CommandStream.merge(resolver.paths.flatMap(_.operations).map(_.toCommandStream))
       endpointsCommandStream.flatten
     }

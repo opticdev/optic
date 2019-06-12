@@ -25,5 +25,26 @@ class UtilitiesSpec extends FunSpec {
       )
       assert(result == expected)
     }
+
+    it("can branch properly after a path parameter") {
+      val result = Utilities.oasPathsToPathComponentInfoSeq(
+        Vector(
+          "/wordlist/{source_lang}/{filters_advanced}",
+          "/wordlist/{source_lang}/{filters_basic}"
+        ),
+        Vector("p1", "p2", "p3", "p4", "p5").toIterator
+      )
+
+      assert(result.map(_.absolutePath).toSet ==
+        Set("/wordlist", "/wordlist/{}", "/wordlist/{source_lang}/{filters_basic}", "/wordlist/{source_lang}/{filters_advanced}"))
+    }
+
+    it("should not break if root '/' path is used in API") {
+      val result = Utilities.oasPathsToPathComponentInfoSeq(
+        Vector("/"),
+        Vector("p1").toIterator
+      )
+      assert(result.isEmpty)
+    }
   }
 }

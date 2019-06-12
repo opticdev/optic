@@ -13,10 +13,20 @@ object Utilities {
       })
   }
 
-  case class PathComponentInfo(absolutePath: String, name: String, pathId: String, parentPathId: String)
+  private val pathParameterRegex = "^\\{(.*)\\}$".r
+
+  case class PathComponentInfo(absolutePath: String, name: String, pathId: String, parentPathId: String) {
+    def isPathParameter: Boolean = name.matches(pathParameterRegex.pattern.toString)
+    def pathParameterName: String = name match { case pathParameterRegex(givenName) => givenName }
+  }
+
+  def isRootPath(string: String) = string.trim == "/"
 
   def oasPathsToPathComponentInfoSeq(oasPaths: Vector[String], idGenerator: Iterator[String]): Seq[PathComponentInfo] = {
-    val sanitizedPaths = oasPaths
+
+    val pathsSample = oasPaths.filterNot(isRootPath)
+
+    val sanitizedPaths = pathsSample
       .sorted
       .map(oasPath => {
         oasPath
@@ -29,7 +39,7 @@ object Utilities {
       })
 
     // mapping from sanitized paths to original paths
-    val pathMap = sanitizedPaths.zip(oasPaths.sorted).toMap
+    val pathMap = sanitizedPaths.zip(pathsSample.sorted).toMap
 
     // put each component in order
     val sortedComponents = sanitizedPaths
