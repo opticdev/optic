@@ -29,7 +29,7 @@ object Commands {
   case class ShapedBodyDescriptor(httpContentType: String, shapeId: ShapeId) extends BodyDescriptor
 
   case class AddPathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String) extends RequestsCommand
-  case class RenamePathComponent(pathId: PathComponentId, name: String)
+  case class RenamePathComponent(pathId: PathComponentId, name: String) extends RequestsCommand
   case class RemovePathComponent(pathId: PathComponentId) extends RequestsCommand
 
 

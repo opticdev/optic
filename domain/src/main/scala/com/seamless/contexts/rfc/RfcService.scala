@@ -16,7 +16,8 @@ class RfcService extends EventSourcedService[RfcCommand, RfcState] {
 
   def handleCommand(id: AggregateId, command: RfcCommand): Unit = {
     val state = repository.findById(id)
-    val effects = RfcAggregate.handleCommand(state)(command)
+    val context = RfcCommandContext()
+    val effects = RfcAggregate.handleCommand(state)((context, command))
     repository.save(id, effects.eventsToPersist)
   }
 
@@ -32,7 +33,7 @@ class RfcService extends EventSourcedService[RfcCommand, RfcState] {
   //Queries
   @JSExport
   def currentShapeProjection(id: AggregateId, conceptId: ConceptId): ShapeProjection = {
-    ShapeProjection.fromState(currentState(id).restState.dataTypesState, conceptId)
+    ShapeProjection.fromState(currentState(id).dataTypesState, conceptId)
   }
 
 }

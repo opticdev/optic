@@ -3,7 +3,7 @@ package com.seamless.ddd
 case class Effects[Event](eventsToPersist: Vector[Event])
 
 trait EventSourcedAggregate[State, Command, CommandContext, Event] {
-  def handleCommand(state: State, commandContext: CommandContext): PartialFunction[Command, Effects[Event]]
+  def handleCommand(state: State): PartialFunction[(CommandContext, Command), Effects[Event]]
   def applyEvent(event: Event, state: State): State
   def initialState: State
 

@@ -1,10 +1,10 @@
 package com.seamless.contexts.rfc
 
-import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesState}
-import com.seamless.contexts.rest.{RestAggregate, RestState}
+import com.seamless.contexts.data_types.{DataTypesState}
+import com.seamless.contexts.requests.RequestsState
 
-case class RfcState(restState: RestState = RestAggregate.initialState) {
+case class RfcState(requestsState: RequestsState, dataTypesState: DataTypesState) {
   def updateDataTypes(dataTypesState: DataTypesState) = {
-    this.copy(restState = restState.copy(dataTypesState = dataTypesState))
+    this.copy(dataTypesState = dataTypesState)
   }
 }

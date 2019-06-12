@@ -5,14 +5,15 @@ import org.scalatest.FunSpec
 class EventSourcedRepositorySpec extends FunSpec {
   type TestEvent = String
   type TestState = Int
+  type TestCommandContext = String
   type TestCommand = String
 
-  object TestAggregate extends EventSourcedAggregate[TestState, TestCommand, TestEvent] {
+  object TestAggregate extends EventSourcedAggregate[TestState, TestCommand, TestCommandContext, TestEvent] {
     override def applyEvent(event: TestEvent, state: TestState): TestState = {
       state + 1
     }
 
-    override def handleCommand(state: TestState): PartialFunction[TestCommand, Effects[TestEvent]] = ???
+    override def handleCommand(state: TestState): PartialFunction[(TestCommandContext, TestCommand), Effects[TestEvent]] = ???
 
     override def initialState: TestState = {
       0

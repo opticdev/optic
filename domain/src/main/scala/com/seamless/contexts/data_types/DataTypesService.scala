@@ -9,14 +9,15 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportNamed}
 import scala.util.Random
 
-//STRICTLY FOR TESTING
+//STRICTLY FOR TESTING (because everything should go through the root (RfcService))
 class DataTypesService {
   private val eventStore = new InMemoryEventStore[DataTypesEvent]
   private val repository = new EventSourcedRepository[DataTypesState, DataTypesEvent](DataTypesAggregate, eventStore)
 
   def handleCommand(id: AggregateId, command: DataTypesCommand): Unit = {
     val state = repository.findById(id)
-    val effects = DataTypesAggregate.handleCommand(state)(command)
+    val context = DataTypesCommandContext()
+    val effects = DataTypesAggregate.handleCommand(state)((context, command))
     repository.save(id, effects.eventsToPersist)
   }
 

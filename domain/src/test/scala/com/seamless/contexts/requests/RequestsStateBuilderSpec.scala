@@ -1,11 +1,12 @@
 package com.seamless.contexts.requests
 
+import com.seamless.contexts.data_types.DataTypesService
 import com.seamless.contexts.requests.Commands.AddPathComponent
 import org.scalatest.FunSpec
 
 class RequestsStateBuilderSpec extends FunSpec {
   def fixture = new {
-    val service = new RequestsService
+    val service = new RequestsService(new DataTypesService())
     val aggregateId1 = "a1"
 
   }

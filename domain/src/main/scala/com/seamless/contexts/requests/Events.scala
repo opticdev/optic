@@ -1,6 +1,5 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.data_types.Commands.ShapeId
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor}
 
 object Events {

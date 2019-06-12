@@ -1,62 +1,68 @@
 package com.seamless.contexts.data_types
 
 import Events.DataTypesEvent
+import com.seamless.contexts.base.BaseCommandContext
 import com.seamless.contexts.data_types.Commands._
 import com.seamless.contexts.data_types.Primitives._
-import com.seamless.ddd.{AggregateId, Effects, EventSourcedAggregate}
+import com.seamless.ddd.{Effects, EventSourcedAggregate}
 
-object DataTypesAggregate extends EventSourcedAggregate[DataTypesState, DataTypesCommand, DataTypesEvent] {
+case class DataTypesCommandContext() extends BaseCommandContext
 
-  override def handleCommand(_state: DataTypesState): PartialFunction[DataTypesCommand, Effects[DataTypesEvent]] = {
+object DataTypesAggregate extends EventSourcedAggregate[DataTypesState, DataTypesCommand, DataTypesCommandContext, DataTypesEvent] {
 
-    implicit val state = _state
+  override def handleCommand(_state: DataTypesState): PartialFunction[(DataTypesCommandContext, DataTypesCommand), Effects[DataTypesEvent]] = {
 
-    {
-      case DefineConcept(name, root, conceptId) => {
-        Validators.idIsUnused(conceptId, "Concept ID")
-        Validators.idIsUnused(root, "Root Schema ID")
-        persist(Events.ConceptDefined(name, root, conceptId))
-      }
+    case (_: DataTypesCommandContext, command: DataTypesCommand) => {
+      implicit val state = _state
 
-      case DefineInlineConcept(root, conceptId) => {
-        Validators.idIsUnused(conceptId, "Concept ID")
-        Validators.idIsUnused(root, "Root Schema ID")
-        persist(Events.InlineConceptDefined(root, conceptId))
-      }
+      command match {
 
-      case AddField(parentId, id, conceptId) => {
-        Validators.idIsUnused(id, "Field ID")
-        Validators.idExistsForSchema(parentId, conceptId)
-        Validators.requireIdType(parentId, ObjectT, "to create a field")
-        persist(Events.FieldAdded(parentId, id, conceptId))
-      }
-      case RemoveField(fieldId, conceptId) => {
-        Validators.isValidField(fieldId)
-        Validators.idExistsForSchema(fieldId, conceptId)
-        persist(Events.FieldRemoved(fieldId, conceptId))
-      }
-      case SetFieldName(id, newName, conceptId) => {
-        Validators.idExistsForSchema(id, conceptId)
-        persist(Events.FieldNameChanged(id, newName, conceptId))
-      }
-      case AssignType(id, newType, conceptId) => {
-        Validators.idExistsForSchema(id, conceptId)
-        Validators.refTypeExists(newType)
-        persist(Events.TypeAssigned(id, newType, conceptId))
-      }
+        case DefineConcept(name, root, conceptId) => {
+          Validators.idIsUnused(conceptId, "Concept ID")
+          Validators.idIsUnused(root, "Root Schema ID")
+          persist(Events.ConceptDefined(name, root, conceptId))
+        }
 
-      case AddTypeParameter(parentId, id, conceptId) => {
-        Validators.idIsUnused(id, "Concept ID")
-        Validators.requireIdTakesTypeParameters(parentId, "add a new type parameter")
-        Validators.idExistsForSchema(parentId, conceptId)
-        persist(Events.TypeParameterAdded(parentId, id, conceptId))
+        case DefineInlineConcept(root, conceptId) => {
+          Validators.idIsUnused(conceptId, "Concept ID")
+          Validators.idIsUnused(root, "Root Schema ID")
+          persist(Events.InlineConceptDefined(root, conceptId))
+        }
+
+        case AddField(parentId, id, conceptId) => {
+          Validators.idIsUnused(id, "Field ID")
+          Validators.idExistsForSchema(parentId, conceptId)
+          Validators.requireIdType(parentId, ObjectT, "to create a field")
+          persist(Events.FieldAdded(parentId, id, conceptId))
+        }
+        case RemoveField(fieldId, conceptId) => {
+          Validators.isValidField(fieldId)
+          Validators.idExistsForSchema(fieldId, conceptId)
+          persist(Events.FieldRemoved(fieldId, conceptId))
+        }
+        case SetFieldName(id, newName, conceptId) => {
+          Validators.idExistsForSchema(id, conceptId)
+          persist(Events.FieldNameChanged(id, newName, conceptId))
+        }
+        case AssignType(id, newType, conceptId) => {
+          Validators.idExistsForSchema(id, conceptId)
+          Validators.refTypeExists(newType)
+          persist(Events.TypeAssigned(id, newType, conceptId))
+        }
+
+        case AddTypeParameter(parentId, id, conceptId) => {
+          Validators.idIsUnused(id, "Concept ID")
+          Validators.requireIdTakesTypeParameters(parentId, "add a new type parameter")
+          Validators.idExistsForSchema(parentId, conceptId)
+          persist(Events.TypeParameterAdded(parentId, id, conceptId))
+        }
+        case RemoveTypeParameter(id, conceptId) => {
+          Validators.isValidTypeParameter(id)
+          Validators.idExistsForSchema(id, conceptId)
+          persist(Events.TypeParameterRemoved(id, conceptId))
+        }
+        case _ => noEffect()
       }
-      case RemoveTypeParameter(id, conceptId) => {
-        Validators.isValidTypeParameter(id)
-        Validators.idExistsForSchema(id, conceptId)
-        persist(Events.TypeParameterRemoved(id, conceptId))
-      }
-      case _ => noEffect()
     }
   }
 
