@@ -52,7 +52,7 @@ object RequestsToCommandsImplicits {
             import com.seamless.contexts.requests.Commands.{rootPathId}
             rootPathId
           } else {
-            pathInfo.find(_.absolutePath == uri).map(_.pathId).get
+            pathInfo.find(_.originalPaths contains uri).map(_.pathId).get
           }
         }
       )

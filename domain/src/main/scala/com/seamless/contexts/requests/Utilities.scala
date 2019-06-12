@@ -15,7 +15,7 @@ object Utilities {
 
   private val pathParameterRegex = "^\\{(.*)\\}$".r
 
-  case class PathComponentInfo(absolutePath: String, name: String, pathId: String, parentPathId: String) {
+  case class PathComponentInfo(originalPaths: Vector[String], name: String, pathId: String, parentPathId: String) {
     def isPathParameter: Boolean = name.matches(pathParameterRegex.pattern.toString)
     def pathParameterName: String = name match { case pathParameterRegex(givenName) => givenName }
   }
@@ -39,7 +39,9 @@ object Utilities {
       })
 
     // mapping from sanitized paths to original paths
-    val pathMap = sanitizedPaths.zip(pathsSample.sorted).toMap
+
+    val mappedToOriginal: Map[String, Vector[String]] = sanitizedPaths.zip(pathsSample.sorted).groupBy(_._1).mapValues(_.map(_._2))
+    val pathMap: Map[String, String] = sanitizedPaths.zip(pathsSample.sorted).toMap
 
     // put each component in order
     val sortedComponents = sanitizedPaths
@@ -57,7 +59,7 @@ object Utilities {
         val originalPathComponents = originalPath.split("/")
         val id = idMap.getOrElse(p, "BAD")
 
-        PathComponentInfo(originalPath, originalPathComponents.last, id, parentId)
+        PathComponentInfo(mappedToOriginal.getOrElse(p, Vector.empty), originalPathComponents.last, id, parentId)
       })
   }
 }

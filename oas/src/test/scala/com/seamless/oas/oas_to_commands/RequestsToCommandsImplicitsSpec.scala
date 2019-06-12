@@ -12,19 +12,15 @@ class RequestsToCommandsImplicitsSpec extends ResolverTestFixture("2") {
   val oxfordResolver = resolverFor(oxfordDictionary)
 
 
-  it("can create path component commands from all paths") {
-    {
-//      val pathContext = mattermostResolver.paths.toCommandStream
-//      assert(pathContext.commands.init.size == 243)
-//      assert(pathContext.pathToId(mattermostResolver.paths.~#("/users")).endsWith("path_175"))
-    }
-    ///wordlist/{source_lang}/{filters_advanced}
+  it("can create path component commands from valid paths") {
 
-    {
+      val pathContext = mattermostResolver.paths.toCommandStream
+      assert(pathContext.commands.init.size == 243)
+      assert(pathContext.pathToId(mattermostResolver.paths.~#("/users")).endsWith("path_175"))
+  }
+  it("can create path component commands even when users rely on conflicting paths") {
       val pathContext = oxfordResolver.paths.toCommandStream
-      println(pathContext.uriToId("/wordlist/{source_lang}/{filters_advanced}"))
-    }
-
+      assert(pathContext.uriToId("/wordlist/{source_lang}/{filters_advanced}").endsWith("_path_44") )
   }
 
   it("can form commands from operations with multiple responses and a request body") {

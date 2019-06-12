@@ -16,6 +16,8 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 enablePlugins(ScalaJSPlugin)
 scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
 
+libraryDependencies += "com.lihaoyi" %%% "upickle" % "0.7.1"
+libraryDependencies += "com.lihaoyi" %% "upickle" % "0.7.1"
 
 //generateTypescript := {
 //  PlatformTokenizerCache.megaCache.clear()
