@@ -1,7 +1,7 @@
 package com.seamless.contexts.requests
 
 import com.seamless.contexts.data_types.Commands.ShapeId
-import com.seamless.contexts.requests.Commands.{BodyDescriptor, ParameterId, PathComponentId, RequestId, ResponseId, ShapedBodyDescriptor}
+import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor}
 
 object Events {
 
@@ -12,25 +12,18 @@ object Events {
   case class PathComponentRemoved(pathId: PathComponentId) extends RequestsEvent
 
 
-  case class PathParameterAdded(pathId: PathComponentId, name: String) extends RequestsEvent
+  case class PathParameterAdded(pathId: PathComponentId, parentPathId: PathComponentId, name: String) extends RequestsEvent
 
-  case class PathParameterShapeSet(pathId: PathComponentId, shapeId: ShapeId) extends RequestsEvent
+  case class PathParameterShapeSet(pathId: PathComponentId, shapeDescriptor: ShapedRequestParameterShapeDescriptor) extends RequestsEvent
 
   case class PathParameterRemoved(pathId: PathComponentId) extends RequestsEvent
 
 
-  case class QueryParameterAdded(parameterId: ParameterId, requestId: PathComponentId, name: String) extends RequestsEvent
+  case class RequestParameterAdded(parameterId: RequestParameterId, requestId: PathComponentId, parameterLocation: String, name: String) extends RequestsEvent
 
-  case class QueryParameterShapeSet(parameterId: ParameterId, shapeId: ShapeId) extends RequestsEvent
+  case class RequestParameterShapeSet(parameterId: RequestParameterId, parameterDescriptor: ShapedRequestParameterShapeDescriptor) extends RequestsEvent
 
-  case class QueryParameterRemoved(parameterId: ParameterId) extends RequestsEvent
-
-
-  case class HeaderParameterAdded(parameterId: ParameterId, requestId: PathComponentId, name: String) extends RequestsEvent
-
-  case class HeaderParameterShapeSet(parameterId: ParameterId, shapeId: ShapeId) extends RequestsEvent
-
-  case class HeaderParameterRemoved(parameterId: ParameterId) extends RequestsEvent
+  case class RequestParameterRemoved(parameterId: RequestParameterId) extends RequestsEvent
 
 
   case class RequestAdded(requestId: RequestId, pathId: PathComponentId, httpMethod: String) extends RequestsEvent

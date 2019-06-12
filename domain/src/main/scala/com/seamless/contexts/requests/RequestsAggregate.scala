@@ -40,14 +40,14 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
       case AddPathParameter(pathId, parentPathId, name) => {
         Validators.ensurePathComponentIdExists(parentPathId)
         Validators.ensurePathComponentIdAssignable(pathId)
-        persist(Events.PathParameterAdded(pathId, name))
+        persist(Events.PathParameterAdded(pathId, parentPathId, name))
       }
 
-      case SetPathParameterShape(pathId, shapeId) => {
+      case SetPathParameterShape(pathId, shapeDescriptor) => {
         Validators.ensurePathComponentIdIsNotRoot(pathId)
         Validators.ensurePathComponentIdExists(pathId)
-        requireId(shapeId)
-        persist(Events.PathParameterShapeSet(pathId, shapeId))
+        requireId(shapeDescriptor.shapeId)
+        persist(Events.PathParameterShapeSet(pathId, shapeDescriptor))
       }
 
       case RemovePathParameter(pathId) => {
@@ -67,7 +67,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
       case SetRequestBodyShape(requestId, bodyDescriptor) => {
         Validators.ensureRequestIdExists(requestId)
-        requireId(bodyDescriptor.bodyShapeId)
+        requireId(bodyDescriptor.shapeId)
         persist(Events.RequestBodySet(requestId, bodyDescriptor))
       }
 
@@ -86,7 +86,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
       case SetResponseBodyShape(responseId, bodyDescriptor) => {
         Validators.ensureResponseIdExists(responseId)
-        requireId(bodyDescriptor.bodyShapeId)
+        requireId(bodyDescriptor.shapeId)
         persist(Events.ResponseBodySet(responseId, bodyDescriptor))
       }
 
@@ -105,18 +105,18 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
       case AddQueryParameter(parameterId, requestId, name) => {
         Validators.ensureRequestIdExists(requestId)
         Validators.ensureParameterIdAssignable(parameterId)
-        persist(Events.QueryParameterAdded(parameterId, requestId, name))
+        persist(Events.RequestParameterAdded(parameterId, requestId, "query", name))
       }
 
-      case SetQueryParameterShape(parameterId, shapeId) => {
+      case SetQueryParameterShape(parameterId, parameterDescriptor) => {
         Validators.ensureParameterIdExists(parameterId)
-        requireId(shapeId)
-        persist(Events.QueryParameterShapeSet(parameterId, shapeId))
+        requireId(parameterDescriptor.shapeId)
+        persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
       }
 
       case RemoveQueryParameter(parameterId) => {
         Validators.ensureParameterIdExists(parameterId)
-        persist(Events.QueryParameterRemoved(parameterId))
+        persist(Events.RequestParameterRemoved(parameterId))
       }
 
       ////////////////////////////////////////////////////////////////////////////////
@@ -124,18 +124,18 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
       case AddHeaderParameter(parameterId, requestId, name) => {
         Validators.ensureRequestIdExists(requestId)
         Validators.ensureParameterIdAssignable(parameterId)
-        persist(Events.HeaderParameterAdded(parameterId, requestId, name))
+        persist(Events.RequestParameterAdded(parameterId, requestId, "header", name))
       }
 
-      case SetHeaderParameterShape(parameterId, shapeId) => {
+      case SetHeaderParameterShape(parameterId, parameterDescriptor) => {
         Validators.ensureParameterIdExists(parameterId)
-        requireId(shapeId)
-        persist(Events.HeaderParameterShapeSet(parameterId, shapeId))
+        requireId(parameterDescriptor.shapeId)
+        persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
       }
 
       case RemoveHeaderParameter(parameterId) => {
         Validators.ensureParameterIdExists(parameterId)
-        persist(Events.HeaderParameterRemoved(parameterId))
+        persist(Events.RequestParameterRemoved(parameterId))
       }
     }
   }
@@ -143,6 +143,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
   override def applyEvent(event: RequestsEvent, state: RequestsState): RequestsState = event match {
 
     ////////////////////////////////////////////////////////////////////////////////
+
     case PathComponentAdded(pathId, parentPathId, name) => {
       state.withPathComponent(pathId, parentPathId, name)
     }
@@ -154,16 +155,66 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
     case PathComponentRenamed(pathId, name) => {
       state.withPathComponentNamed(pathId, name)
     }
-    ////////////////////////////////////////////////////////////////////////////////
-    case RequestAdded(requestId, pathId, httpMethod) => {
 
+    ////////////////////////////////////////////////////////////////////////////////
+
+    case PathParameterAdded(pathId, parentPathId, name) => {
+      state.withPathParameter(pathId, parentPathId, name)
+    }
+
+    case PathParameterRemoved(pathId) => {
+      state.withoutPathParameter(pathId)
+    }
+
+    case PathParameterShapeSet(pathId, parameterShapeDescriptor) => {
+      state.withPathParameterShape(pathId, parameterShapeDescriptor)
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    case RequestAdded(requestId, pathId, httpMethod) => {
+      state.withRequest(requestId, pathId, httpMethod)
+    }
+
+    case RequestRemoved(requestId) => {
+      state.withoutRequest(requestId)
+    }
+
+    case RequestBodySet(requestId, bodyDescriptor) => {
+      state.withRequestBody(requestId, bodyDescriptor)
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    case ResponseAdded(responseId, requestId, httpStatusCode) => {
+      state.withResponse(responseId, requestId, httpStatusCode)
+    }
+
+    case ResponseStatusCodeSet(responseId, httpStatusCode) => {
+      state.withResponseStatusCode(responseId, httpStatusCode)
+    }
+
+    case ResponseBodySet(responseId, bodyDescriptor) => {
+      state.withResponseBody(responseId, bodyDescriptor)
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////
+
+    case RequestParameterAdded(parameterId, requestId, parameterLocation, name) => {
+      state.withRequestParameter(parameterId, requestId, parameterLocation, name)
+    }
+
+    case RequestParameterShapeSet(parameterId, parameterDescriptor) => {
+      state.withRequestParameterShape(parameterId, parameterDescriptor)
+    }
+
+    case RequestParameterRemoved(parameterId) => {
+      state.withoutRequestParameter(parameterId)
     }
   }
 
   override def initialState: RequestsState = RequestsState(
-    Map("root" -> PathComponent("root", null, "", isParameter = false, isRemoved = false)),
-    Map.empty,
-    Map.empty,
+    Map(rootPathId -> PathComponent(rootPathId, BasicPathComponentDescriptor(null, ""), isRemoved = false)),
     Map.empty,
     Map.empty,
     Map.empty,

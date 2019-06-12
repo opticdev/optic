@@ -1,13 +1,13 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.requests.Commands.{ParameterId, PathComponentId, RequestId, ResponseId}
+import com.seamless.contexts.requests.Commands.{rootPathId, RequestParameterId, PathComponentId, RequestId, ResponseId}
 
 object Validators {
-  def ensureParameterIdExists(parameterId: ParameterId)(implicit state: RequestsState) = {
+  def ensureParameterIdExists(parameterId: RequestParameterId)(implicit state: RequestsState) = {
     require(state.requestParameters.contains(parameterId))
   }
 
-  def ensureParameterIdAssignable(parameterId: ParameterId)(implicit state: RequestsState) = {
+  def ensureParameterIdAssignable(parameterId: RequestParameterId)(implicit state: RequestsState) = {
     require(!state.requestParameters.contains(parameterId))
   }
 
@@ -36,6 +36,6 @@ object Validators {
   }
 
   def ensurePathComponentIdIsNotRoot(id: PathComponentId)(implicit state: RequestsState) = {
-    require(id != "root")
+    require(id != rootPathId)
   }
 }

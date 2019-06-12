@@ -1,5 +1,7 @@
 package com.seamless.contexts.requests
 
+import com.seamless.contexts.requests.Commands.{rootPathId}
+
 object Utilities {
 
   def prefixes(path: String): Vector[String] = {
@@ -40,7 +42,7 @@ object Utilities {
       .map(p => {
         val pathComponents = p.split("/").tail
         val parentPath = pathComponents.init.fold("")(_ + "/" + _)
-        val parentId = idMap.getOrElse(parentPath, "root")
+        val parentId = idMap.getOrElse(parentPath, rootPathId)
         val originalPath = pathMap.getOrElse(p, p)
         val originalPathComponents = originalPath.split("/")
         val id = idMap.getOrElse(p, "BAD")
