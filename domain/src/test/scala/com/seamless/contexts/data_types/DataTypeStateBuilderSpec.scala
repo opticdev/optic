@@ -1,7 +1,7 @@
 package com.seamless.contexts.data_types
 
 import com.seamless.contexts.data_types.Commands._
-import com.seamless.contexts.data_types.Primitives.{ListT, NumberT, ObjectT, StringT}
+import com.seamless.contexts.data_types.Primitives.{ListT, NumberT, ObjectT, RefT, StringT}
 import org.scalatest.FunSpec
 
 class DataTypeStateBuilderSpec extends FunSpec {
@@ -160,6 +160,38 @@ class DataTypeStateBuilderSpec extends FunSpec {
     assert(shape.`type` == ObjectT)
     assert(shape.fields.get.size == 2)
 
+  }
+
+  it("can make a field optional / required in the context of its parent shape") {
+    val f = fixture; import f._
+
+    val id = addField(rootShapeId, "fieldName")
+    handle(AssignType(id, NumberT, f.conceptId))
+    handle(UpdateChildOccurrence(id, rootShapeId, true, f.conceptId))
+
+    //made optional
+    val fieldIds = currentState.components(rootShapeId).fields.get.toSet
+    val optional = currentState.components(rootShapeId).optionalChildren
+    assert(fieldIds == optional)
+
+    //made required
+    handle(UpdateChildOccurrence(id, rootShapeId, false, f.conceptId))
+    assert(currentState.components(rootShapeId).optionalChildren.isEmpty)
+  }
+
+  it("can set a field in a ref to optional") {
+    val f = fixture; import f._
+    //make another concept
+    handle(Commands.DefineConcept("other-concept", "other-rootId", "other-concept"))
+    val fieldInRefId = addField("other-rootId", "fieldName", "other-concept")
+
+    val id = addField(rootShapeId, "refField")
+    handle(AssignType(id, RefT("other-concept"), f.conceptId))
+
+    handle(UpdateChildOccurrence(fieldInRefId, rootShapeId, true, f.conceptId))
+
+    val optional = currentState.components(rootShapeId).optionalChildren
+    assert(optional == Set(fieldInRefId))
   }
 
 }

@@ -1,7 +1,7 @@
 package com.seamless.contexts.data_types
 
-import com.seamless.contexts.data_types.Commands.{AddField, AssignType, DataTypesCommand, SetFieldName}
-import com.seamless.contexts.data_types.Primitives.ObjectT
+import com.seamless.contexts.data_types.Commands.{AddField, AssignType, DataTypesCommand, SetFieldName, UpdateChildOccurrence}
+import com.seamless.contexts.data_types.Primitives.{ObjectT, RefT}
 import com.seamless.contexts.data_types.projections.{Field, ObjectShape, ShapeProjection}
 import org.scalatest.FunSpec
 
@@ -13,10 +13,10 @@ class ShapeProjectionSpec extends FunSpec {
     val rootShapeId = DataTypesServiceHelper.newId()
 
     def handle(command: DataTypesCommand) = service.handleCommand("test-api", command)
-    def addField(parent: String, name: String) = {
+    def addField(parent: String, name: String, concept: String = conceptId) = {
       val id = DataTypesServiceHelper.newId
-      handle(AddField(parent, id, conceptId))
-      handle(SetFieldName(id, name, conceptId))
+      handle(AddField(parent, id, concept))
+      handle(SetFieldName(id, name, concept))
       id
     }
 
@@ -47,5 +47,22 @@ class ShapeProjectionSpec extends FunSpec {
     assert(subField.key == "deep-field")
 
   }
+
+
+/*  it("can set a field in a ref to optional") {
+    val f = fixture; import f._
+    //make another concept
+    handle(Commands.DefineConcept("other-concept", "other-rootId", "other-concept"))
+    val fieldInRefId = addField("other-rootId", "fieldName", "other-concept")
+
+    val id = addField(rootShapeId, "refField")
+    handle(AssignType(id, RefT("other-concept"), f.conceptId))
+    handle(UpdateChildOccurrence(fieldInRefId, rootShapeId, true, f.conceptId))
+
+
+    val shapeProjection = ShapeProjection.fromState(currentState, conceptId)
+
+    null
+  }*/
 
 }

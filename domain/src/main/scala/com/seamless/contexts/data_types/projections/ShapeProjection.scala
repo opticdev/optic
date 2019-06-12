@@ -1,5 +1,6 @@
 package com.seamless.contexts.data_types.projections
 
+import com.seamless.contexts.data_types.Commands.ShapeId
 import com.seamless.contexts.data_types.Primitives.{ObjectT, PrimitiveType, RefT}
 import com.seamless.contexts.data_types.{DataTypesState, ShapeDescription}
 
@@ -17,13 +18,17 @@ object ShapeProjection {
     val concept = state.concepts(conceptId)
     val rootComponent = state.conceptComponents(conceptId)(concept.root)
 
+    def isOptionalInContext(id: ShapeId) = {
+      rootComponent.optionalChildren.contains(id)
+    }
+
     def fromComponent(description: ShapeDescription, id: String, lastDepth: Int = -1): Shape = {
       val depth = lastDepth + 1
       description.`type` match {
         case ObjectT => {
           val fields = description.fields.get.map(i => {
             val (fieldId, fDesc) = state.components.find(c => c._1 == i).get
-            Field(fDesc.key.get, fromComponent(fDesc, fieldId, depth), fieldId, depth + 1)
+            Field(fDesc.key.get, fromComponent(fDesc, fieldId, depth), fieldId, isOptionalInContext(fieldId), depth + 1)
           })
           .sortBy(f => state.creationOrder.indexOf(f))
           .toVector
@@ -53,7 +58,7 @@ object ShapeProjection {
 
       AllowedTypeReference(concept.name.get, id, dependentConcepts.toVector)
     }.toVector
-      .sortBy(_.dependents.length)
+      .sortBy(_._dependents.length)
       .reverse
 
     ShapeProjection(fromComponent(rootComponent, concept.root), allowedTypeReferences)
@@ -75,7 +80,7 @@ sealed trait Shape {
 }
 
 @JSExportAll
-case class Field(key: String, shape: Shape, id: String, depth: Int) extends Shape { override def isField = true }
+case class Field(key: String, shape: Shape, id: String, optional: Boolean, depth: Int) extends Shape { override def isField = true }
 
 @JSExportAll
 case class ObjectShape(`type`: PrimitiveType, _fields: Vector[Field], id: String, depth: Int) extends Shape {

@@ -1,5 +1,6 @@
 package com.seamless.contexts.data_types
 import Primitives.{ObjectT, PrimitiveType, RefT}
+import com.seamless.contexts.data_types.Commands.ShapeId
 
 object Validators {
   /*
@@ -12,6 +13,10 @@ object Validators {
 
   def idExistsForSchema(id: String, schemaId: String)(implicit state: DataTypesState) = {
     require(state.components.exists(i => i._2.conceptId == schemaId && i._1 == id), s"Id ${id} does not exist in schema ${schemaId}")
+  }
+
+  def shapeExists(id: ShapeId)(implicit state: DataTypesState) = {
+    require(state.components.contains(id), s"ShapeId ${id} does not exist")
   }
 
   def refTypeExists(newType: PrimitiveType)(implicit state: DataTypesState) = {

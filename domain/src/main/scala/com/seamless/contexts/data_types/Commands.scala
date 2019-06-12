@@ -21,7 +21,8 @@ object Commands {
   case class AddField(parentId: String, id: FieldId, conceptId: ConceptId) extends DataTypesCommand
   case class RemoveField(id: FieldId, conceptId: ConceptId) extends DataTypesCommand
   case class SetFieldName(id: FieldId, newName: String, conceptId: ConceptId) extends DataTypesCommand
-  case class SetFieldOccurrence(id: FieldId, optional: Boolean, conceptId: ConceptId) extends DataTypesCommand
+
+  case class UpdateChildOccurrence(id: FieldId, parentId: ShapeId, to: Boolean, conceptId: ConceptId) extends DataTypesCommand
 
   case class AddTypeParameter(parentId: String, id: TypeParameterId, conceptId: ConceptId) extends DataTypesCommand
   case class RemoveTypeParameter(id: TypeParameterId, conceptId: ConceptId) extends DataTypesCommand

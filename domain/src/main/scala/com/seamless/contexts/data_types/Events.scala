@@ -1,6 +1,6 @@
 package com.seamless.contexts.data_types
 import Primitives.PrimitiveType
-import com.seamless.contexts.data_types.Commands.{ConceptId, FieldId, TypeParameterId}
+import com.seamless.contexts.data_types.Commands.{ConceptId, FieldId, ShapeId, TypeParameterId}
 import com.seamless.contexts.rfc.Events.RfcEvent
 object Events {
 
@@ -19,7 +19,7 @@ object Events {
 
   case class FieldNameChanged(id: FieldId, newName: String, conceptId: ConceptId) extends DataTypesEvent
 
-  case class FieldOccurrenceSet(id: FieldId, optional: Boolean, conceptId: ConceptId) extends DataTypesEvent
+  case class ChildOccurrenceUpdated(id: FieldId, parentId: ShapeId, to: Boolean, conceptId: ConceptId) extends DataTypesEvent
 
   case class TypeParameterAdded(parentId: FieldId, id: TypeParameterId, conceptId: ConceptId) extends DataTypesEvent
   case class TypeParameterRemoved(id: TypeParameterId, conceptId: ConceptId) extends DataTypesEvent

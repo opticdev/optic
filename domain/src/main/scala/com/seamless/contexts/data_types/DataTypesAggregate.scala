@@ -56,6 +56,13 @@ object DataTypesAggregate extends EventSourcedAggregate[DataTypesState, DataType
         Validators.idExistsForSchema(id, conceptId)
         persist(Events.TypeParameterRemoved(id, conceptId))
       }
+
+      case UpdateChildOccurrence(id, parentId, to, conceptId) => {
+        Validators.shapeExists(parentId)
+        Validators.shapeExists(id)
+        persist(Events.ChildOccurrenceUpdated(id, parentId, to, conceptId))
+      }
+
       case _ => noEffect()
     }
   }
@@ -127,6 +134,13 @@ object DataTypesAggregate extends EventSourcedAggregate[DataTypesState, DataType
         }
       )
     }
+
+    case Events.ChildOccurrenceUpdated(id, parentId, to, conceptId) => {
+      val updatedParent = state.components(parentId)
+        .updateOptionalChildren(id, to)
+      state.putId(parentId, updatedParent)
+    }
+
   }
 
   override def initialState: DataTypesState = DataTypesState(Map(), Map())
