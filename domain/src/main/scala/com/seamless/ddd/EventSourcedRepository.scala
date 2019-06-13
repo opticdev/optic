@@ -1,6 +1,6 @@
 package com.seamless.ddd
 
-class EventSourcedRepository[State, Event](aggregate: EventSourcedAggregate[State, _, Event], eventStore: EventStore[Event]) {
+class EventSourcedRepository[State, Event](aggregate: EventSourcedAggregate[State, _, _, Event], eventStore: EventStore[Event]) {
 
   private val _snapshotStore = scala.collection.mutable.HashMap[String, Snapshot[State]]()
 

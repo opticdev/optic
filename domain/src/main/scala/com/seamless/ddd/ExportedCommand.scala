@@ -4,4 +4,6 @@ import scala.scalajs.js.annotation.{JSExportAll, JSExportDescendentClasses}
 
 @JSExportDescendentClasses
 @JSExportAll
-trait ExportedCommand
+trait ExportedCommand {
+
+}

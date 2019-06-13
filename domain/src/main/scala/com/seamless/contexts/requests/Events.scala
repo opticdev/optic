@@ -1,11 +1,8 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.data_types.Commands.ShapeId
-import com.seamless.contexts.requests.Commands.{EndpointId, PathComponentId, RequestId, ResponseId}
+import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor}
+import com.seamless.contexts.rfc.Events.RfcEvent
 
-/*
-  These are DomainEvents. They should include EventMessage metadata
- */
 object Events {
 
   case class PathComponentAdded(pathId: PathComponentId, parentPathId: PathComponentId, name: String) extends RequestsEvent
@@ -15,43 +12,36 @@ object Events {
   case class PathComponentRemoved(pathId: PathComponentId) extends RequestsEvent
 
 
-  case class PathParameterAdded(pathId: PathComponentId, name: String) extends RequestsEvent
+  case class PathParameterAdded(pathId: PathComponentId, parentPathId: PathComponentId, name: String) extends RequestsEvent
 
-  case class PathParameterShapeSet(pathId: PathComponentId, shapeId: ShapeId) extends RequestsEvent
+  case class PathParameterShapeSet(pathId: PathComponentId, shapeDescriptor: ShapedRequestParameterShapeDescriptor) extends RequestsEvent
 
   case class PathParameterRemoved(pathId: PathComponentId) extends RequestsEvent
 
 
-  case class QueryParameterAdded(pathId: PathComponentId, name: String) extends RequestsEvent
+  case class RequestParameterAdded(parameterId: RequestParameterId, requestId: PathComponentId, parameterLocation: String, name: String) extends RequestsEvent
 
-  case class QueryParameterShapeSet(pathId: PathComponentId, shapeId: ShapeId) extends RequestsEvent
+  case class RequestParameterShapeSet(parameterId: RequestParameterId, parameterDescriptor: ShapedRequestParameterShapeDescriptor) extends RequestsEvent
 
-  case class QueryParameterRemoved(pathId: PathComponentId) extends RequestsEvent
-
-
-  case class HeaderParameterAdded(pathId: PathComponentId, name: String) extends RequestsEvent
-
-  case class HeaderParameterShapeSet(pathId: PathComponentId, shapeId: ShapeId) extends RequestsEvent
-
-  case class HeaderParameterRemoved(pathId: PathComponentId) extends RequestsEvent
+  case class RequestParameterRemoved(parameterId: RequestParameterId) extends RequestsEvent
 
 
-  case class RequestAdded(requestId: RequestId, pathId: PathComponentId, httpMethod: String, httpContentType: String) extends RequestsEvent
+  case class RequestAdded(requestId: RequestId, pathId: PathComponentId, httpMethod: String) extends RequestsEvent
 
-  case class RequestBodySet(requestId: RequestId, bodyShapeId: ShapeId) extends RequestsEvent
+  case class RequestBodySet(requestId: RequestId, bodyDescriptor: ShapedBodyDescriptor) extends RequestsEvent
 
   case class RequestRemoved(requestId: RequestId) extends RequestsEvent
 
 
-  case class ResponseAdded(responseId: ResponseId, requestId: RequestId, httpStatusCode: Int, httpContentType: String) extends RequestsEvent
+  case class ResponseAdded(responseId: ResponseId, requestId: RequestId, httpStatusCode: Int) extends RequestsEvent
 
   case class ResponseStatusCodeSet(responseId: ResponseId, httpStatusCode: Int) extends RequestsEvent
 
-  case class ResponseBodySet(responseId: ResponseId, bodyShapeId: ShapeId) extends RequestsEvent
+  case class ResponseBodySet(responseId: ResponseId, bodyDescriptor: ShapedBodyDescriptor) extends RequestsEvent
 
-  case class ResponseBodyRemoved(responseId: ResponseId) extends RequestsEvent
+  case class ResponseRemoved(responseId: ResponseId) extends RequestsEvent
 
 
-  trait RequestsEvent
+  sealed trait RequestsEvent extends RfcEvent
 
 }

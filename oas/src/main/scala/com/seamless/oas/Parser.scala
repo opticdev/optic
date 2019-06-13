@@ -36,6 +36,7 @@ object Parser {
     }
 
     val (allEndpointsCommands, endpointsCommandStreamTime) = time {
+      implicit val pathContext = resolver.paths.toCommandStream
       val endpointsCommandStream = CommandStream.merge(resolver.paths.flatMap(_.operations).map(_.toCommandStream))
       endpointsCommandStream.flatten
     }
@@ -45,7 +46,6 @@ object Parser {
       val service = new RfcService
 
       (allDefinitionsCommands).foreach(command => service.handleCommand("test", command))
-//      (allDefinitionsCommands ++ allEndpointsCommands).foreach(command => service.handleCommand("test", command))
       service
     }
 
@@ -54,7 +54,7 @@ object Parser {
     ParseResult(resolver.oas_version, executionsTime, allDefinitionsCommands, service.currentState("test"))
   }
 
-  case class ParseResult(oas_version: String, executionTime: ExecutionsTime, events: Vector[RfcCommand], snapshot: RfcState)
+  case class ParseResult(oas_version: String, executionTime: ExecutionsTime, commands: Vector[RfcCommand], snapshot: RfcState)
   case class ExecutionsTime(jsonParseTime: Long, definitionsCommandStream: Long, endpointsCommandStream: Long, buildSnapshot: Long) {
     def total: Long = jsonParseTime + definitionsCommandStream + endpointsCommandStream + buildSnapshot
 

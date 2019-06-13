@@ -10,6 +10,7 @@ class ResolverTestFixture(version: String) extends FunSpec {
   //oas2
   val mattermost = pathToJSON("src/test/resources/mattermost-2.json")
   val adverseSchemas = pathToJSON("src/test/resources/adverse-json-schemas-2.json")
+  val oxfordDictionary = pathToJSON("src/test/resources/oxforddictionaries.com.json")
   //oas3
   val bbc = pathToJSON("src/test/resources/bbc-3.json")
   val box = pathToJSON("src/test/resources/box-3.json")
