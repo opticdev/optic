@@ -1,6 +1,4 @@
-import scalajs from './domain.js'
-
-console.log(scalajs)
+const scalajs = require('./domain.js')
 
 export function newRfcService() {
 	return new scalajs.com.seamless.contexts.rfc.RfcService()

@@ -16,7 +16,6 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 enablePlugins(ScalaJSPlugin)
 scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
 
-
 val circeVersion = "0.10.0"
 
 libraryDependencies ++= Seq(
