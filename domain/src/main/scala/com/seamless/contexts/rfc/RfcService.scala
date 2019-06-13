@@ -6,9 +6,11 @@ import com.seamless.contexts.data_types.projections.ShapeProjection
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.ddd.{AggregateId, EventSourcedRepository, EventSourcedService, InMemoryEventStore}
+import com.seamless.serialization.CommandSerialization
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.JSExport
+import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+import scala.util.Try
 
 class RfcService extends EventSourcedService[RfcCommand, RfcState] {
   private val eventStore = new InMemoryEventStore[RfcEvent]
@@ -37,3 +39,30 @@ class RfcService extends EventSourcedService[RfcCommand, RfcState] {
   }
 
 }
+
+@JSExport
+@JSExportAll
+object RfcServiceJSFacade {
+
+  def fromCommands(commands: Vector[RfcCommand], id: AggregateId): RfcService = {
+    val service = new RfcService
+    commands.foreach(service.handleCommand(id, _))
+    service
+  }
+
+
+  def fromCommands(jsonString: String, id: AggregateId): RfcService = {
+    import io.circe._, io.circe.parser._
+
+    val commandsVector =
+    for {
+      json <- Try(parse(jsonString).right.get)
+      commandsVector <- CommandSerialization.fromJson(json)
+    } yield commandsVector
+
+    require(commandsVector.isSuccess, "failed to parse commands")
+
+    fromCommands(commandsVector.get, id)
+  }
+}
+

@@ -13,3 +13,11 @@ libraryDependencies += "com.github.pathikrit" %% "better-files" % "3.8.0" % "tes
 libraryDependencies += "io.circe" %% "circe-yaml" % "0.9.0" % "test"
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+
+val circeVersion = "0.10.0"
+
+libraryDependencies ++= Seq(
+  "io.circe" %% "circe-core",
+  "io.circe" %% "circe-generic",
+  "io.circe" %% "circe-parser"
+).map(_ % circeVersion)

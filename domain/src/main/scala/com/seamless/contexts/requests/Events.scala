@@ -1,6 +1,7 @@
 package com.seamless.contexts.requests
 
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, RequestParameterId, ResponseId, ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor}
+import com.seamless.contexts.rfc.Events.RfcEvent
 
 object Events {
 
@@ -41,6 +42,6 @@ object Events {
   case class ResponseRemoved(responseId: ResponseId) extends RequestsEvent
 
 
-  trait RequestsEvent
+  sealed trait RequestsEvent extends RfcEvent
 
 }

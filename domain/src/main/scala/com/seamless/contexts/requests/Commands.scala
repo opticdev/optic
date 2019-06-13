@@ -20,11 +20,11 @@ object Commands {
   case class ParameterizedPathComponentDescriptor(override val parentPathId: PathComponentId, override val name: String, requestParameterDescriptor: RequestParameterShapeDescriptor) extends PathComponentDescriptor
   case class BasicPathComponentDescriptor(override val parentPathId: PathComponentId, override val name: String) extends PathComponentDescriptor
 
-  trait RequestParameterShapeDescriptor
+  sealed trait RequestParameterShapeDescriptor
   case class UnsetRequestParameterShapeDescriptor() extends RequestParameterShapeDescriptor
   case class ShapedRequestParameterShapeDescriptor(shapeId: ShapeId) extends RequestParameterShapeDescriptor
 
-  trait BodyDescriptor
+  sealed trait BodyDescriptor
   case class UnsetBodyDescriptor() extends BodyDescriptor
   case class ShapedBodyDescriptor(httpContentType: String, shapeId: ShapeId) extends BodyDescriptor
 
@@ -60,6 +60,6 @@ object Commands {
 
   @JSExportDescendentClasses
   @JSExportAll
-  trait RequestsCommand extends RfcCommand with ExportedCommand
+  sealed trait RequestsCommand extends RfcCommand with ExportedCommand
 
 }
