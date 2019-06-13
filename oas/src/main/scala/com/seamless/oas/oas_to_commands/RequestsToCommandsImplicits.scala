@@ -38,7 +38,7 @@ object RequestsToCommandsImplicits {
 
       val commands = pathInfo.map {
         case param if param.isPathParameter =>
-          AddPathParameter(param.pathId, param.pathId, param.pathParameterName)
+          AddPathParameter(param.pathId, param.parentPathId, param.pathParameterName)
         case comp =>
           AddPathComponent(comp.pathId, comp.parentPathId, comp.name)
       }.toVector

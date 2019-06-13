@@ -6,18 +6,34 @@ import RequestsToCommandsImplicits._
 import com.seamless.contexts.data_types.Commands.AssignType
 import com.seamless.contexts.requests.Commands.SetResponseBodyShape
 import com.seamless.contexts.requests.Commands._
+import com.seamless.contexts.rfc.RfcService
+
+import scala.util.Try
 class RequestsToCommandsImplicitsSpec extends ResolverTestFixture("2") {
 
   val mattermostResolver = resolverFor(mattermost)
   val oxfordResolver = resolverFor(oxfordDictionary)
 
-
   it("can create path component commands from valid paths") {
-
       val pathContext = mattermostResolver.paths.toCommandStream
       assert(pathContext.commands.init.size == 243)
       assert(pathContext.pathToId(mattermostResolver.paths.~#("/users")).endsWith("path_175"))
   }
+
+  it("can build path graph in RFC service") {
+    val pathContext = mattermostResolver.paths.toCommandStream
+    val service = new RfcService
+
+    pathContext.commands.init.foreach(i => {
+      val result = Try(service.handleCommand("test", i))
+      if (result.isFailure) {
+        result.failed.get.printStackTrace()
+        throw new Error("STOP EVERYTHING")
+      }
+    })
+
+  }
+
   it("can create path component commands even when users rely on conflicting paths") {
       val pathContext = oxfordResolver.paths.toCommandStream
       assert(pathContext.uriToId("/wordlist/{source_lang}/{filters_advanced}").endsWith("_path_44") )

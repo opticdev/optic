@@ -9,6 +9,7 @@ import com.seamless.contexts.base.BaseCommandContext
 import com.seamless.contexts.data_types.Commands.DataTypesCommand
 import com.seamless.contexts.data_types.Events.DataTypesEvent
 import com.seamless.contexts.requests.Commands.RequestsCommand
+import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.requests.{RequestsAggregate, RequestsCommandContext}
 
 case class RfcCommandContext() extends BaseCommandContext
@@ -27,6 +28,8 @@ object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcComma
     event match {
       case dataTypesEvent: DataTypesEvent =>
         state.updateDataTypes(DataTypesAggregate.applyEvent(dataTypesEvent, state.dataTypesState))
+      case requestsEvent: RequestsEvent =>
+        state.updateRequests(RequestsAggregate.applyEvent(requestsEvent, state.requestsState))
       case _ => state
     }
   }

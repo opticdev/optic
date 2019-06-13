@@ -70,7 +70,7 @@ class FloatingAddButton extends React.Component {
 							<ListItem>
 								<Button color="primary" className={classes.button}>
 									<ArrowRightAlt className={classes.leftIcon} />
-									Resource
+									Path
 								</Button>
 							</ListItem>
 

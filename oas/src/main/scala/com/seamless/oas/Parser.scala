@@ -41,17 +41,18 @@ object Parser {
       endpointsCommandStream.flatten
     }
 
+    val allCommands = allDefinitionsCommands ++ allEndpointsCommands
 
     val (service, buildSnapshotTime) = time {
       val service = new RfcService
 
-      (allDefinitionsCommands).foreach(command => service.handleCommand("test", command))
+      allCommands.foreach(command => service.handleCommand("test", command))
       service
     }
 
     val executionsTime = ExecutionsTime(jsonParseTime, definitionsCommandStreamTime, endpointsCommandStreamTime, buildSnapshotTime)
 
-    ParseResult(resolver.oas_version, executionsTime, allDefinitionsCommands, service.currentState("test"))
+    ParseResult(resolver.oas_version, executionsTime, allCommands, service.currentState("test"))
   }
 
   case class ParseResult(oas_version: String, executionTime: ExecutionsTime, commands: Vector[RfcCommand], snapshot: RfcState)

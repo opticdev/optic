@@ -7,4 +7,7 @@ case class RfcState(requestsState: RequestsState, dataTypesState: DataTypesState
   def updateDataTypes(dataTypesState: DataTypesState) = {
     this.copy(dataTypesState = dataTypesState)
   }
+  def updateRequests(requestsState: RequestsState) = {
+    this.copy(requestsState = requestsState)
+  }
 }
