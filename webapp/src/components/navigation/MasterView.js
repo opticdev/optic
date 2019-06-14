@@ -97,7 +97,7 @@ class MasterView extends React.Component {
 				</div>
 				<div className={classes.contentWrapper}>
 					<Margin className={classes.leftMargin} />
-					<Sheet />
+					<Sheet>{this.props.content}</Sheet>
 					<Margin />
 				</div>
 				<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu} />

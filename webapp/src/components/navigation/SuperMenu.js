@@ -59,8 +59,8 @@ class SuperMenu extends React.Component {
 		return (
 			<Popover
 				classes={{paper: classes.root}}
-				open={true}
-				// open={this.props.open}
+				// open={true}
+				open={this.props.open}
 				onClose={() => this.props.toggle(null, true)}
 				anchorOrigin={{
 					vertical: 52,
