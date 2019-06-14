@@ -9,10 +9,10 @@ const {
 class InitialRfcCommandsStore extends React.Component {
 
     render() {
-        const {rfcId, initialCommandsString} = this.props
+        const {rfcId, basePath, initialCommandsString} = this.props
 
         return (
-            <InitialRfcCommandsContext.Provider value={{rfcId, initialCommandsString}}>
+            <InitialRfcCommandsContext.Provider value={{rfcId, basePath, initialCommandsString}}>
                 {this.props.children}
             </InitialRfcCommandsContext.Provider>
         )

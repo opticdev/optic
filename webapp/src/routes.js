@@ -3,6 +3,7 @@ import {Redirect, Switch, Route} from 'react-router-dom';
 import MasterView from './components/navigation/MasterView';
 import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
 import {RfcStore, withRfcContext} from './contexts/RfcContext.js';
+import RequestPage from './components/RequestPage';
 
 const paths = {
 	newRoot: () => '/new',
@@ -37,14 +38,12 @@ class ExampleLoader extends React.Component {
 	};
 
 	componentDidMount() {
-		fetch('/example-commands/mattermost-commands.json')
+		fetch(`/example-commands/${this.props.match.params.exampleId}-commands.json`)
 			.then(response => {
 				if (response.ok) {
 					return response.text()
 						.then(jsonString => {
-							console.log(jsonString)
 							this.setState({
-
 								example: jsonString
 							});
 						});
@@ -54,13 +53,16 @@ class ExampleLoader extends React.Component {
 
 	render() {
 		const {example} = this.state;
+
+		const basePath = this.props.match.url
+
 		if (example === null) {
 			return <div>Loading...</div>;
 		}
 		return (
-			<InitialRfcCommandsStore initialCommandsString={example} rfcId="testRfcId">
+			<InitialRfcCommandsStore initialCommandsString={example} rfcId="testRfcId" basePath={basePath}>
 				<RfcStore>
-					<X/>
+					<APIEditorRoutes {...this.props} />
 				</RfcStore>
 			</InitialRfcCommandsStore>
 		);
@@ -73,7 +75,6 @@ class APIEditorRoutes extends React.Component {
 		const {url, path, params} = this.props.match;
 		const isNew = path === paths.newRoot();
 
-
 		//@todo get examples showing
 		return (
 			<div>
@@ -81,9 +82,10 @@ class APIEditorRoutes extends React.Component {
 					<Switch>
 						<Route exact path={paths.newRoot(url)} component={() => <>NEW</>}/>
 						<Route path={paths.requestPage(url)}
-							   component={({match}) => <>Request Page for {match.params.requestId}</>}/>
+							   component={({match}) => <RequestPage requestId={match.params.requestId} />}/>
 						<Route path={paths.conceptPage(url)}
 							   component={({match}) => <>Concept Page for {match.params.conceptId}</>}/>
+						<Route component={() => <>ROOT</>}/>
 						<Redirect to={paths.apiRoot(url)}/>
 					</Switch>
 				}/>

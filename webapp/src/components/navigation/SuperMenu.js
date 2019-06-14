@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Menu from '@material-ui/core/Menu';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -13,7 +13,9 @@ import Typography from '@material-ui/core/Typography';
 import {Button} from '@material-ui/core';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import {primary} from '../../theme';
-import sortBy from 'lodash.sortby'
+import sortBy from 'lodash.sortby';
+import {withRfcContext} from '../../contexts/RfcContext';
+import {Link} from 'react-router-dom';
 
 const styles = theme => ({
 	root: {
@@ -36,69 +38,69 @@ const styles = theme => ({
 		fontSize: 10,
 		marginLeft: 15,
 		marginTop: 4
+	},
+	bareLink: {
+		textDecoration: 'none',
+		color: 'inherit',
+		cursor: 'pointer'
 	}
 });
 
-function createPath(url, name) {
-	return {url, name}
-}
-const paths = [
-	createPath('/user/:userId', 'User by Id'),
-	createPath('/user/:userId/profile', 'User Profile'),
-	createPath('/user/:userId/friends', 'Friends'),
-	createPath('/user/:userId/friends/:friendId/history')
-]
-
 class SuperMenu extends React.Component {
 
-	render() {
-		const {classes} = this.props
+render() {
+	const {classes} = this.props;
 
-		const sortedPaths = sortBy(paths, ['name', 'url'])
-
-		return (
-			<Popover
-				classes={{paper: classes.root}}
-				// open={true}
-				open={this.props.open}
-				onClose={() => this.props.toggle(null, true)}
-				anchorOrigin={{
-					vertical: 52,
-					horizontal: 5,
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'left',
-				}}
-			>
-				<div>
-
-					<Grid container>
-
-						<Grid xs={6} item className={classes.gridItem}>
-							<Typography variant="h5" color="primary">Paths</Typography>
-							<List>
-								{sortedPaths.map(path => {
-									return (
-										<div>
-											<ButtonBase disableRipple={true} className={classes.pathButton}>{path.url}</ButtonBase>
-										</div>
-									)
-								})}
-							</List>
-						</Grid>
-						<Grid xs={6} item>
-						</Grid>
+	const {queries, rfcId, basePath} = this.props;
+	const paths = queries.paths(rfcId);
+	const sortedPaths = sortBy(paths, ['absolutePath']);
 
 
-
+	return (
+		<Popover
+			classes={{paper: classes.root}}
+			// open={true}
+			open={this.props.open}
+			onClose={() => this.props.toggle(null, true)}
+			anchorOrigin={{
+				vertical: 52,
+				horizontal: 5,
+			}}
+			transformOrigin={{
+				vertical: 'top',
+				horizontal: 'left',
+			}}
+		>
+			<div>
+				<Grid container>
+					<Grid xs={6} item className={classes.gridItem}>
+						<Typography variant="h5" color="primary">Paths</Typography>
+						<List>
+							{sortedPaths.map(({pathId, absolutePath}) => {
+								const to = `${basePath}/requests/${pathId}`
+								return (
+									<div>
+										<Link to={to} className={classes.bareLink}>
+										<ButtonBase disableRipple={true}
+													onClick={() => this.props.toggle(null, true)}
+													className={classes.pathButton}>{absolutePath}</ButtonBase>
+										</Link>
+									</div>
+								);
+							})}
+						</List>
+					</Grid>
+					<Grid xs={6} item>
 					</Grid>
 
 
-				</div>
-			</Popover>
-		)
+				</Grid>
+
+
+			</div>
+		</Popover>
+	);
 	}
 }
 
-export default withStyles(styles)(SuperMenu)
+export default withRfcContext(withStyles(styles)(SuperMenu));
