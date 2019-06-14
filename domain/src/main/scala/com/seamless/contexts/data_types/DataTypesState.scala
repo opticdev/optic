@@ -112,5 +112,5 @@ case class ConceptDescription(name: Option[String],
                               inline: Boolean,
                               deprecated: Boolean = false) {
 
-  def shouldDisplay: Boolean = !inline && !deprecated
+  def canBeReferenced: Boolean = !inline && !deprecated
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {facade, queries, eventStore} from '../engine';
+import {Facade, Queries} from '../engine';
 import {GenericContextFactory} from './GenericContextFactory.js';
 import {withInitialRfcCommandsContext} from './InitialRfcCommandsContext.js';
 
@@ -9,9 +9,17 @@ const {
 } = GenericContextFactory(null)
 
 class RfcStoreWithoutContext extends React.Component {
-    state = {
-        rfcService: facade.fromJsonCommands(eventStore, this.props.initialCommandsString, this.props.rfcId),
-        queries
+
+    constructor(props) {
+        super(props)
+
+        const eventStore = Facade.makeEventStore()
+        const queries = Queries(eventStore, this.props.rfcId)
+
+        this.state = {
+            rfcService: Facade.fromJsonCommands(eventStore, this.props.initialCommandsString, this.props.rfcId),
+            queries
+        }
     }
 
     handleCommand = (command) => {

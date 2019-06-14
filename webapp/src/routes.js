@@ -4,6 +4,7 @@ import MasterView from './components/navigation/MasterView';
 import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
 import {RfcStore, withRfcContext} from './contexts/RfcContext.js';
 import RequestPage from './components/RequestPage';
+import ConceptsPage from './components/ConceptsPage';
 
 const paths = {
 	newRoot: () => '/new',
@@ -82,9 +83,12 @@ class APIEditorRoutes extends React.Component {
 					<Switch>
 						<Route exact path={paths.newRoot(url)} component={() => <>NEW</>}/>
 						<Route path={paths.requestPage(url)}
-							   component={({match}) => <RequestPage requestId={match.params.requestId} />}/>
+							   component={({match}) =>
+								   <RequestPage requestId={match.params.requestId} />}/>
 						<Route path={paths.conceptPage(url)}
-							   component={({match}) => <>Concept Page for {match.params.conceptId}</>}/>
+							   component={({match}) =>
+								   <ConceptsPage conceptId={match.params.conceptId} />
+							   }/>
 						<Route component={() => <>ROOT</>}/>
 						<Redirect to={paths.apiRoot(url)}/>
 					</Switch>

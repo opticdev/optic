@@ -61,7 +61,9 @@ object ShapeProjection {
       .sortBy(_._dependents.length)
       .reverse
 
-    ShapeProjection(fromComponent(rootComponent, concept.root), allowedTypeReferences)
+    val namedConceptOption = if (!concept.inline) Some(NamedConcept(concept.name.get, concept.deprecated, conceptId)) else None
+
+    ShapeProjection(fromComponent(rootComponent, concept.root), allowedTypeReferences, namedConceptOption)
 
   }
 
@@ -118,9 +120,14 @@ case class AllowedTypeReference(name: String, id: String, _dependents: Vector[St
 }
 
 @JSExportAll
-case class ShapeProjection(root: Shape, _allowedTypeReferences: Vector[AllowedTypeReference]) {
+case class ShapeProjection(root: Shape, _allowedTypeReferences: Vector[AllowedTypeReference], _namedConcept: Option[NamedConcept]) {
   def allowedTypeReferences: js.Array[AllowedTypeReference] = {
     import js.JSConverters._
     _allowedTypeReferences.toJSArray
+  }
+
+  def namedConcept: js.UndefOr[NamedConcept] = {
+    import js.JSConverters._
+    _namedConcept.orUndefined
   }
 }

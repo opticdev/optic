@@ -52,9 +52,11 @@ render() {
 	const {classes} = this.props;
 
 	const {queries, rfcId, basePath} = this.props;
-	const paths = queries.paths(rfcId);
+	const paths = queries.paths();
 	const sortedPaths = sortBy(paths, ['absolutePath']);
 
+	const concepts = queries.concepts().filter(i => !i.deprecated)
+	const sortedConcepts = sortBy(concepts, ['name']);
 
 	return (
 		<Popover
@@ -90,7 +92,22 @@ render() {
 							})}
 						</List>
 					</Grid>
-					<Grid xs={6} item>
+					<Grid xs={6} item className={classes.gridItem}>
+						<Typography variant="h5" color="primary">Concepts</Typography>
+						<List>
+							{sortedConcepts.map(({name, id}) => {
+								const to = `${basePath}/concepts/${id}`
+								return (
+									<div>
+										<Link to={to} className={classes.bareLink}>
+											<ButtonBase disableRipple={true}
+														onClick={() => this.props.toggle(null, true)}
+														className={classes.pathButton}>{name}</ButtonBase>
+										</Link>
+									</div>
+								);
+							})}
+						</List>
 					</Grid>
 
 
