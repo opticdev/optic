@@ -1,19 +1,17 @@
 package com.seamless.contexts.rfc
 
-import com.seamless.contexts.data_types.Commands.{ConceptId, DataTypesCommand}
-import com.seamless.contexts.data_types.DataTypesState
+import com.seamless.contexts.data_types.Commands.{ConceptId}
 import com.seamless.contexts.data_types.projections.ShapeProjection
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.ddd.{AggregateId, EventSourcedRepository, EventSourcedService, InMemoryEventStore}
+import com.seamless.ddd.{AggregateId, EventSourcedRepository, EventSourcedService, EventStore, InMemoryEventStore}
 import com.seamless.serialization.CommandSerialization
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Try
 
-class RfcService extends EventSourcedService[RfcCommand, RfcState] {
-  private val eventStore = new InMemoryEventStore[RfcEvent]
+class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[RfcCommand, RfcState] {
   private val repository = new EventSourcedRepository[RfcState, RfcEvent](RfcAggregate, eventStore)
 
   def handleCommand(id: AggregateId, command: RfcCommand): Unit = {
@@ -44,25 +42,28 @@ class RfcService extends EventSourcedService[RfcCommand, RfcState] {
 @JSExportAll
 object RfcServiceJSFacade {
 
-  def fromCommands(commands: Vector[RfcCommand], id: AggregateId): RfcService = {
-    val service = new RfcService
+  def makeEventStore() = {
+    new InMemoryEventStore[RfcEvent]
+  }
+
+  def fromCommands(eventStore: EventStore[RfcEvent], commands: Vector[RfcCommand], id: AggregateId): RfcService = {
+    val service = new RfcService(eventStore)
     commands.foreach(service.handleCommand(id, _))
     service
   }
 
-
-  def fromCommands(jsonString: String, id: AggregateId): RfcService = {
-    import io.circe._, io.circe.parser._
+  def fromJsonCommands(eventStore: EventStore[RfcEvent], jsonString: String, id: AggregateId): RfcService = {
+    import io.circe.parser._
 
     val commandsVector =
-    for {
-      json <- Try(parse(jsonString).right.get)
-      commandsVector <- CommandSerialization.fromJson(json)
-    } yield commandsVector
+      for {
+        json <- Try(parse(jsonString).right.get)
+        commandsVector <- CommandSerialization.fromJson(json)
+      } yield commandsVector
 
     require(commandsVector.isSuccess, "failed to parse commands")
 
-    fromCommands(commandsVector.get, id)
+    fromCommands(eventStore, commandsVector.get, id)
   }
 }
 

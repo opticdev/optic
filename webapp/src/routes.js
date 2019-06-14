@@ -1,6 +1,7 @@
 import React from 'react'
 import {Redirect, Switch, Route} from 'react-router-dom';
-import path from 'path'
+import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
+import {RfcStore, withRfcContext} from './contexts/RfcContext.js';
 
 const paths = {
 	newRoot: () => '/new',
@@ -10,6 +11,16 @@ const paths = {
 	conceptPage: (base) => `${base}/concepts/:conceptId`,
 }
 
+class XWithoutContext extends React.Component {
+	render() {
+		const {queries} = this.props;
+		console.log(queries.paths('abc'))
+		return (
+			<div>asdf</div>
+		)
+	}
+}
+const X = withRfcContext(XWithoutContext)
 
 class APIEditorRoutes extends React.Component {
 	render() {
@@ -20,6 +31,11 @@ class APIEditorRoutes extends React.Component {
 
 		return (
 			<div>
+				<InitialRfcCommandsStore>
+					<RfcStore>
+						<X />
+					</RfcStore>
+				</InitialRfcCommandsStore>
 				<Switch>
 					<Route exact path={paths.apiRoot(url)} component={() => <>Welcome to the editor for API {(isNew) ? 'new api' : `existing api ${params.exampleId}`} </>}/>
 					<Route path={paths.requestPage(url)} component={({match}) => <>Request Page for {match.params.requestId}</>}/>

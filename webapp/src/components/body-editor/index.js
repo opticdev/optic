@@ -1,8 +1,6 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import FormControl from '@material-ui/core/FormControl';
 import Switch from '@material-ui/core/Switch';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -10,7 +8,6 @@ import {ContentTypesHelper, newRfcService} from '../../engine';
 import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Zoom from '@material-ui/core/Zoom';
-import Fade from '@material-ui/core/Fade';
 import {seedExampleUserWriteModel, seedFriendModel} from '../../engine/examples/ExampleData';
 import {SchemaEditorModes} from '../shape-editor/Constants';
 import SchemaEditor from '../shape-editor/SchemaEditor';
