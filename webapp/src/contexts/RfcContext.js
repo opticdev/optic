@@ -1,26 +1,29 @@
 import * as React from 'react';
-import {newRfcService} from '../engine';
+import {facade, queries, eventStore} from '../engine';
 import {GenericContextFactory} from './GenericContextFactory.js';
+import {withInitialRfcCommandsContext} from './InitialRfcCommandsContext.js';
 
 const {
     Context: RfcContext,
     withContext: withRfcContext
 } = GenericContextFactory(null)
 
-class RfcStore extends React.Component {
+class RfcStoreWithoutContext extends React.Component {
     state = {
-        rfcService: newRfcService()
+        rfcService: facade.fromJsonCommands(eventStore, this.props.initialCommandsString, this.props.rfcId),
+        queries
     }
 
     handleCommand = (command) => {
         debugger;
-        this.state.rfcService.handleCommand('abc', command)
+        this.state.rfcService.handleCommand(this.props.rfcId, command)
         this.forceUpdate()
     }
 
     render() {
-        const {rfcService} = this.state;
-        const value = {...rfcService, handleCommand: this.handleCommand}
+        const {queries} = this.state;
+        const {rfcId} = this.props;
+        const value = {rfcId, queries, handleCommand: this.handleCommand}
         return (
             <RfcContext.Provider value={value}>
                 {this.props.children}
@@ -28,6 +31,8 @@ class RfcStore extends React.Component {
         )
     }
 }
+
+const RfcStore = withInitialRfcCommandsContext(RfcStoreWithoutContext)
 
 export {
     RfcStore,
