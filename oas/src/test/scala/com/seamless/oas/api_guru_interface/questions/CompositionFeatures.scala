@@ -9,7 +9,7 @@ object CompositionFeatures extends AskTrait[CompositionUsage, Unit] {
 
   override def question: String = "How many Swagger/OpenAPI use allOf?"
 
-  override def filter: AskFilter = All
+  override def filter: AskFilter = All()
 
   override def processAPI(resolver: OASResolver, apiName: String): CompositionUsage = {
 

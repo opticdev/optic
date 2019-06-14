@@ -9,16 +9,15 @@ import scala.util.Try
 sealed trait AskFilter {
   def apply(tuple: (String, OASResolver)): Boolean
 }
-case object All extends AskFilter {
+case class All(additionalFilter: (String, OASResolver) => Boolean = (a, b) => true) extends AskFilter {
   def apply(tuple: (String, OASResolver)): Boolean = tuple._2 != null
 }
-case object OAS3 extends AskFilter {
+case class OAS3(additionalFilter: (String, OASResolver) => Boolean = (a, b) => true) extends AskFilter {
   def apply(tuple: (String, OASResolver)): Boolean = tuple._2 != null && tuple._2.oas_version == "3"
 }
-case object OAS2 extends AskFilter {
+case class OAS2(additionalFilter: (String, OASResolver) => Boolean = (a, b) => true) extends AskFilter {
   def apply(tuple: (String, OASResolver)): Boolean = tuple._2 != null && tuple._2.oas_version == "2"
 }
-
 
 abstract class AskTrait[IntermediateResult, Result] {
 
@@ -49,7 +48,7 @@ abstract class AskTrait[IntermediateResult, Result] {
 
   def question: String
 
-  def filter: AskFilter = All
+  def filter: AskFilter = All()
 
   def processAPI(resolver: OASResolver, apiName: String): IntermediateResult
   def report(results: IntermediateResult*): Result

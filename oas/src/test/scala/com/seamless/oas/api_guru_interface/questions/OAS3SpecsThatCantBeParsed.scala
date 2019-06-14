@@ -10,7 +10,7 @@ import scala.util.Try
 object OAS3SpecsThatCantBeParsed extends AskTrait[ParseAttempt, TotalResult] {
   override def question: String = "Which OAS 3 Specs throw when we try to parse them?"
 
-  override def filter: AskFilter = OAS3
+  override def filter: AskFilter = OAS3()
 
   override def processAPI(resolver: OASResolver, apiName: String): ParseAttempt = {
     ParseAttempt(apiName, Try(Parser.parseOAS(resolver.root.toString())))
@@ -19,13 +19,8 @@ object OAS3SpecsThatCantBeParsed extends AskTrait[ParseAttempt, TotalResult] {
   override def report(results: ParseAttempt*): TotalResult = {
     val all = (results.size)
     val success = (results.collect {case i if i.tryResult.isSuccess => i}.size)
-    val failures = (results.collect {case i if i.tryResult.isFailure => i}.size)
-//
-    results.collect {case i if i.tryResult.isFailure => i}.foreach(i => {
-      println(i.apiName)
-      i.tryResult.failed.get.printStackTrace()
-    })
+    val failures = (results.collect {case i if i.tryResult.isFailure => i})
 
-    TotalResult(all, failures)
+    TotalResult(all, failures.size, failures.toVector)
   }
 }

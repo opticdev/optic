@@ -8,9 +8,11 @@ import scala.util.Try
 import com.seamless.oas.oas_to_commands.RequestsToCommandsImplicits._
 import com.seamless.oas.QueryImplicits._
 import JsonSchemaToCommandsImplicits._
+import com.seamless.contexts.data_types.Commands.{DefineConcept, DefineInlineConcept}
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.{RfcService, RfcState}
+import com.seamless.serialization.{CommandSerialization, EventSerialization}
 
 object Parser {
 
@@ -38,7 +40,7 @@ object Parser {
     val (allEndpointsCommands, endpointsCommandStreamTime) = time {
       implicit val pathContext = resolver.paths.toCommandStream
       val endpointsCommandStream = CommandStream.merge(resolver.paths.flatMap(_.operations).map(_.toCommandStream))
-      endpointsCommandStream.flatten
+      CommandStream.merge(Vector(pathContext.commands, endpointsCommandStream)).flatten
     }
 
     val allCommands = allDefinitionsCommands ++ allEndpointsCommands

@@ -1,6 +1,6 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.data_types.Commands.ShapeId
+import com.seamless.contexts.data_types.Commands.ConceptId
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.ddd.ExportedCommand
 
@@ -22,11 +22,11 @@ object Commands {
 
   sealed trait RequestParameterShapeDescriptor
   case class UnsetRequestParameterShapeDescriptor() extends RequestParameterShapeDescriptor
-  case class ShapedRequestParameterShapeDescriptor(shapeId: ShapeId) extends RequestParameterShapeDescriptor
+  case class ShapedRequestParameterShapeDescriptor(conceptId: ConceptId) extends RequestParameterShapeDescriptor
 
   sealed trait BodyDescriptor
   case class UnsetBodyDescriptor() extends BodyDescriptor
-  case class ShapedBodyDescriptor(httpContentType: String, shapeId: ShapeId) extends BodyDescriptor
+  case class ShapedBodyDescriptor(httpContentType: String, conceptId: ConceptId) extends BodyDescriptor
 
   case class AddPathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String) extends RequestsCommand
   case class RenamePathComponent(pathId: PathComponentId, name: String) extends RequestsCommand

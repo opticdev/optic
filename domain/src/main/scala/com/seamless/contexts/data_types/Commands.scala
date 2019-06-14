@@ -17,7 +17,7 @@ object Commands {
 
   case class DefineInlineConcept(root: String, conceptId: ConceptId) extends DataTypesCommand
 
-  case class AssignType(id: String, to: PrimitiveType, conceptId: ConceptId) extends DataTypesCommand
+  case class AssignType(id: ShapeId, to: PrimitiveType, conceptId: ConceptId) extends DataTypesCommand
   case class AddField(parentId: String, id: FieldId, conceptId: ConceptId) extends DataTypesCommand
   case class RemoveField(id: FieldId, conceptId: ConceptId) extends DataTypesCommand
   case class SetFieldName(id: FieldId, newName: String, conceptId: ConceptId) extends DataTypesCommand

@@ -46,7 +46,9 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
         val ref = description.as[JsObject].value("$ref").as[JsString].value
         val resolved = resolveSharedResponse(ref)
         require(resolved.isDefined, s"Could not resolve shared response ${ref}")
-        Response(statusAsInt, resolved.get.contentType, resolved.get.schema)
+        //give inline shape a custom id so there aren't conflicts
+        val newSchema = resolved.get.schema.map(s => s.asInstanceOf[Definition].copy(id = IdGenerator.inlineDefinition))
+        Response(statusAsInt, resolved.get.contentType, newSchema)
       } else {
         val inlineSchema = schema.toOption
           .map(i => Definition(i.as[JsObject], IdGenerator.inlineDefinition)(buildContext(i.as[JsObject])))

@@ -9,7 +9,7 @@ object NullableUsage extends AskTrait[NullableUsage, Unit] {
 
   override def question: String = "How many Swagger/OpenAPI use nullable?"
 
-  override def filter: AskFilter = All
+  override def filter: AskFilter = All()
 
   override def processAPI(resolver: OASResolver, apiName: String): NullableUsage = {
     val nullableCount = Json.prettyPrint(resolver.root).lines.count(i => i.contains("\"nullable\""))

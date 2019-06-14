@@ -10,7 +10,7 @@ case class Size(api: String, asMB: Float)
 object SpecSize extends AskTrait[Size, Unit] {
   override def question: String = "What's the mean / std deviation of spec sizes?"
 
-  override def filter: AskFilter = All
+  override def filter: AskFilter = All()
 
   override def processAPI(resolver: OASResolver, apiName: String): Size = {
     val asMB = Json.prettyPrint(resolver.root).getBytes.length.toFloat / 1000000f

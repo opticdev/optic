@@ -103,7 +103,6 @@ object JsonSchemaToCommandsImplicits {
           processSchema(f, Some(fieldId))
         })
       }
-
       case inlineDefinition: Definition => {
         implicit val conceptId = inlineDefinition.id
         val rootId = newId()

@@ -1,6 +1,6 @@
 package com.seamless.contexts.data_types.projections
 
-import com.seamless.contexts.data_types.Commands.ShapeId
+import com.seamless.contexts.data_types.Commands.ConceptId
 import com.seamless.contexts.data_types.Primitives.{ObjectT, PrimitiveType, RefT}
 import com.seamless.contexts.data_types.{DataTypesState, ShapeDescription}
 
@@ -18,7 +18,7 @@ object ShapeProjection {
     val concept = state.concepts(conceptId)
     val rootComponent = state.conceptComponents(conceptId)(concept.root)
 
-    def isOptionalInContext(id: ShapeId) = {
+    def isOptionalInContext(id: ConceptId) = {
       rootComponent.optionalChildren.contains(id)
     }
 

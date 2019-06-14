@@ -1,6 +1,6 @@
 package com.seamless.contexts.data_types
 import Primitives.{ObjectT, PrimitiveType, RefT}
-import com.seamless.contexts.data_types.Commands.ShapeId
+import com.seamless.contexts.data_types.Commands.ConceptId
 
 object Validators {
   /*
@@ -15,7 +15,7 @@ object Validators {
     require(state.components.exists(i => i._2.conceptId == schemaId && i._1 == id), s"Id ${id} does not exist in schema ${schemaId}")
   }
 
-  def shapeExists(id: ShapeId)(implicit state: DataTypesState) = {
+  def shapeExists(id: ConceptId)(implicit state: DataTypesState) = {
     require(state.components.contains(id), s"ShapeId ${id} does not exist")
   }
 
@@ -32,14 +32,14 @@ object Validators {
     require(isValid, s"${id} must support type parameters to ${reason}")
   }
 
-  def requireId(id: String)(implicit state: DataTypesState) = {
-    val isValid = state.components.contains(id)
-    require(isValid, s"${id} does not exist")
+  def requireConceptId(id: String)(implicit state: DataTypesState) = {
+    val isValid = state.concepts.contains(id)
+    require(isValid, s"Concept ${id} does not exist")
   }
 
   def idIsUnused(id: String, idType: String = "Id")(implicit state: DataTypesState) = {
     val isValid = !state.components.isDefinedAt(id) && !state.concepts.exists(_._1  == id)
-    require(isValid, "${idType} ${id} is not unique")
+    require(isValid, s"${idType} ${id} is not unique")
   }
 
   def isValidField(field: ShapeDescription)(implicit state: DataTypesState) = {

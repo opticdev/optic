@@ -1,6 +1,6 @@
 package com.seamless.contexts.data_types
 
-import com.seamless.contexts.data_types.Commands.ShapeId
+import com.seamless.contexts.data_types.Commands.ConceptId
 import com.seamless.contexts.data_types.Primitives.PrimitiveType
 
 case class DataTypesState(components: Map[String, ShapeDescription],
@@ -53,7 +53,7 @@ case class ShapeDescription(`type`: PrimitiveType,
                             key: Option[String] = None,
                             fields: Option[Seq[String]] = None,
                             typeParameters: Option[Seq[String]] = None,
-                            optionalChildren: Set[ShapeId] = Set.empty) {
+                            optionalChildren: Set[ConceptId] = Set.empty) {
 
   //validation
   if (`type`.hasFields) {
@@ -98,7 +98,7 @@ case class ShapeDescription(`type`: PrimitiveType,
     }
   }
 
-  def updateOptionalChildren(shapeId: ShapeId, isOptional: Boolean): ShapeDescription = {
+  def updateOptionalChildren(shapeId: ConceptId, isOptional: Boolean): ShapeDescription = {
     if (isOptional) {
       this.copy(optionalChildren = optionalChildren + shapeId)
     } else {

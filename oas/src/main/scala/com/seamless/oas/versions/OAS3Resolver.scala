@@ -1,7 +1,7 @@
 package com.seamless.oas.versions
 
 import com.seamless.oas
-import com.seamless.oas.Schemas.{Definition, NamedDefinition, Operation, PathParameter, QueryParameter, RequestBody, Response}
+import com.seamless.oas.Schemas.{Definition, NamedDefinition, Operation, PathParameter, QueryParameter, RequestBody, Response, SharedResponse}
 import com.seamless.oas.{Context, JSONReference, OASResolver, Schemas}
 import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString}
 
@@ -82,7 +82,9 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
           val ref = description.as[JsObject].value("$ref").as[JsString].value
           val resolved = resolveSharedResponse(ref)
           require(resolved.isDefined, s"Could not resolve shared response ${ref}")
-          Response(statusAsInt, resolved.get.contentType, resolved.get.schema)
+          //give inline shape a custom id so there aren't conflicts
+          val newSchema = resolved.get.schema.map(s => s.asInstanceOf[Definition].copy(id = IdGenerator.inlineDefinition))
+          Response(statusAsInt, resolved.get.contentType, newSchema)
         } else {
           val bodyOption = new Helpers.OAS3Content(content).reduceToFirstBody
 
@@ -104,9 +106,6 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
       }
     }
   }
-
-  override def sharedResponses: Vector[Schemas.SharedResponse] = ???
-
 
   private object Helpers {
     case class OAS3Param(jsObject: JsObject) {
@@ -150,4 +149,5 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
 
   }
 
+  override def sharedResponses: Vector[SharedResponse] = ???
 }

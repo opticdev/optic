@@ -67,7 +67,6 @@ object RequestsToCommandsImplicits {
       schema.isDefined && schema.get.isInstanceOf[Definition]
 
     def toCommandStream: ImmutableCommandStream = {
-
       val stream = CommandStream.emptyMutable
 
       stream.appendInit(
@@ -75,13 +74,12 @@ object RequestsToCommandsImplicits {
       )
 
       if (operation.requestBody.isDefined && isInlineSchema(operation.requestBody.get.schema)) {
-        val requestBodyId = newRequestBodyId()
+
         val schema = operation.requestBody.get.schema.get.asInstanceOf[Definition]
         val contentType = operation.requestBody.get.contentType.getOrElse("application/json")
         val inlineRequestSchemaCommands = schema.toCommandStream
         //add init events for the inline schema
         stream appendInit inlineRequestSchemaCommands.flatten
-
         stream appendDescribe SetRequestBodyShape(operation.id, ShapedBodyDescriptor(contentType, schema.id))
 
       }
@@ -92,7 +90,7 @@ object RequestsToCommandsImplicits {
         if (isInlineSchema(response.schema)) {
           val inlineSchemaCommands = response.schema.get.toCommandStream
           val contentType = response.contentType.getOrElse("application/json")
-          //add init events for the inline schema
+//          add init events for the inline schema
           stream appendInit inlineSchemaCommands.flatten
           stream appendDescribe SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, response.schema.get.asInstanceOf[Definition].id))
         }

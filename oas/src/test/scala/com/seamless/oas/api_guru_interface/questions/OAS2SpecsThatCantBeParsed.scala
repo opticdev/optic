@@ -9,13 +9,17 @@ import scala.util.Try
 
 
 case class ParseAttempt(apiName: String, tryResult: Try[ParseResult])
-case class TotalResult(all: Int, failures: Int)
+case class TotalResult(all: Int, failuresCount: Int, failures: Vector[ParseAttempt])
 
 
 object OAS2SpecsThatCantBeParsed extends AskTrait[ParseAttempt, TotalResult] {
   override def question: String = "Which OAS 2 Specs throw when we try to parse them?"
 
-  override def filter: AskFilter = OAS2
+  val filterOut = Seq("gamesparks.net.json")
+
+  override def filter: AskFilter = OAS2((a, b) => {
+    !filterOut.contains(a)
+  })
 
   override def processAPI(resolver: OASResolver, apiName: String): ParseAttempt = {
     ParseAttempt(apiName, Try(Parser.parseOAS(resolver.root.toString())))
@@ -24,13 +28,8 @@ object OAS2SpecsThatCantBeParsed extends AskTrait[ParseAttempt, TotalResult] {
   override def report(results: ParseAttempt*): TotalResult = {
     val all = (results.size)
     val success = (results.collect {case i if i.tryResult.isSuccess => i}.size)
-    val failures = (results.collect {case i if i.tryResult.isFailure => i}.size)
-//
-//    results.collect {case i if i.tryResult.isFailure => i}.foreach(i => {
-//      println(i.apiName)
-//      i.tryResult.failed.get.printStackTrace()
-//    })
+    val failures = (results.collect {case i if i.tryResult.isFailure => i})
 
-    TotalResult(all, failures)
+    TotalResult(all, failures.size, failures.toVector)
   }
 }

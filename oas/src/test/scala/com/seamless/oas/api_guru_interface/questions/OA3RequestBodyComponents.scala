@@ -10,7 +10,7 @@ case class Usage(api: String, number: Int, array: JsArray)
 object OA3RequestBodyComponents extends AskTrait[Option[Usage], Unit] {
   override def question: String = "How many OA3 APIs use components for request bodies?"
 
-  override def filter: AskFilter = OAS3
+  override def filter: AskFilter = OAS3()
 
   override def processAPI(resolver: OASResolver, apiName: String): Option[Usage] = {
     val array = (resolver.root \ "components" \ "requestBodies").getOrElse(JsArray.empty).as[JsArray]
