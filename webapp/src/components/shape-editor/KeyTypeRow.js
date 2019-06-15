@@ -3,12 +3,11 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import TextField from '@material-ui/core/TextField/index';
 import InputBase from '@material-ui/core/InputBase/index';
 import AutosizeInput from 'react-input-autosize';
-import ButtonBase from '@material-ui/core/ButtonBase/index';
 import TypeName from './TypeName';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
 import {Commands} from '../../engine'
-import {SchemaEditorModes} from './Constants';
 import classNames from 'classnames'
+import {EditorModes} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 	root: {
@@ -19,7 +18,7 @@ const styles = theme => ({
 		...theme.typography.caption,
 		fontSize: 12,
 		padding: 2,
-		fontWeight: 200,
+		fontWeight: 400,
 		backgroundColor: 'transparent',
 		border: 'none',
 		outline: 'none',
@@ -73,7 +72,7 @@ class KeyTypeRow extends React.Component {
 				return <div className={classes.root} key={id}>
 					<AutosizeInput
 						placeholder="field"
-						inputClassName={classNames(classes.fieldNameInput, {[classes.disabled]: mode !== SchemaEditorModes.EDIT})}
+						inputClassName={classNames(classes.fieldNameInput, {[classes.disabled]: mode !== EditorModes.DESIGN})}
 						value={this.state.fieldName}
 						onChange={(event) => {
 							this.setState({fieldName: event.target.value})

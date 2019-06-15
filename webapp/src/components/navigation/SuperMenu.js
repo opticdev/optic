@@ -11,11 +11,12 @@ import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
 import ListItemText from '@material-ui/core/ListItemText';
 import Typography from '@material-ui/core/Typography';
 import {Button} from '@material-ui/core';
-import ButtonBase from '@material-ui/core/ButtonBase';
 import {primary} from '../../theme';
 import sortBy from 'lodash.sortby';
 import {withRfcContext} from '../../contexts/RfcContext';
 import {Link} from 'react-router-dom';
+import BasicButton from '../shape-editor/BasicButton';
+import {withEditorContext} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 	root: {
@@ -64,6 +65,7 @@ render() {
 			// open={true}
 			open={this.props.open}
 			onClose={() => this.props.toggle(null, true)}
+			transitionDuration={200}
 			anchorOrigin={{
 				vertical: 52,
 				horizontal: 5,
@@ -83,9 +85,10 @@ render() {
 								return (
 									<div>
 										<Link to={to} className={classes.bareLink}>
-										<ButtonBase disableRipple={true}
+										<BasicButton
 													onClick={() => this.props.toggle(null, true)}
-													className={classes.pathButton}>{absolutePath}</ButtonBase>
+													className={classes.pathButton}>{absolutePath}
+										</BasicButton>
 										</Link>
 									</div>
 								);
@@ -100,9 +103,11 @@ render() {
 								return (
 									<div>
 										<Link to={to} className={classes.bareLink}>
-											<ButtonBase disableRipple={true}
-														onClick={() => this.props.toggle(null, true)}
-														className={classes.pathButton}>{name}</ButtonBase>
+											<BasicButton
+												className={classes.pathButton}
+												onClick={() => this.props.toggle(null, true)} className={classes.pathButton}
+											>
+												{name}</BasicButton>
 										</Link>
 									</div>
 								);
@@ -120,4 +125,4 @@ render() {
 	}
 }
 
-export default withRfcContext(withStyles(styles)(SuperMenu));
+export default withEditorContext(withRfcContext(withStyles(styles)(SuperMenu)));

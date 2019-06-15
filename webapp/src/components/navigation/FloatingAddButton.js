@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
@@ -18,6 +18,8 @@ import QuestionAnswer from '@material-ui/icons/QuestionAnswerOutlined';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import KeyboardVoiceIcon from '@material-ui/icons/KeyboardVoice';
 import Icon from '@material-ui/core/Icon';
+import Zoom from '@material-ui/core/Zoom';
+import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 	fab: {
@@ -29,8 +31,7 @@ const styles = theme => ({
 		display: 'flex',
 		flexDirection: 'row'
 	},
-	button: {
-	},
+	button: {},
 	leftIcon: {
 		marginRight: theme.spacing.unit,
 	},
@@ -46,85 +47,87 @@ class FloatingAddButton extends React.Component {
 
 	state = {
 		anchorEl: false,
-	}
+	};
 
 	handleOpen = (event) => {
-		this.setState({anchorEl: event.target})
-	}
+		this.setState({anchorEl: event.target});
+	};
 
 	handleClose = (event) => {
-		this.setState({anchorEl: false})
-	}
+		this.setState({anchorEl: false});
+	};
 
 	render() {
-		const {classes} = this.props
-		return (
-			<>
-			<Fab className={classes.fab} color="secondary" onClick={this.handleOpen}>
-				<AddIcon />
-			</Fab>
+		const {classes, mode} = this.props;
+		return (<div >
+				<Zoom in={mode === EditorModes.DESIGN}>
+					<Fab className={classes.fab} color="secondary" onClick={this.handleOpen}>
+						<AddIcon/>
+					</Fab>
+				</Zoom>
 
-				<Menu open={Boolean(this.state.anchorEl)} anchorEl={this.state.anchorEl} onClose={this.handleClose}>
-					<div className={classes.wrapper}>
-						<List dense subheader={<ListSubheader>API</ListSubheader>}>
-							<ListItem>
-								<Button color="primary" className={classes.button}>
-									<ArrowRightAlt className={classes.leftIcon} />
-									Path
-								</Button>
-							</ListItem>
+					<Menu open={Boolean(this.state.anchorEl)} anchorEl={this.state.anchorEl} onClose={this.handleClose}>
+						<div className={classes.wrapper}>
+							<List dense subheader={<ListSubheader>API</ListSubheader>}>
+								<ListItem>
+									<Button color="primary" className={classes.button}>
+										<ArrowRightAlt className={classes.leftIcon}/>
+										Path
+									</Button>
+								</ListItem>
 
-							<ListItem>
-								<Button color="primary" className={classes.button}>
-									<Code className={classes.leftIcon} />
-									Operation
-								</Button>
-							</ListItem>
+								<ListItem>
+									<Button color="primary" className={classes.button}>
+										<Code className={classes.leftIcon}/>
+										Operation
+									</Button>
+								</ListItem>
 
-							<ListItem>
-								<Button color="primary" className={classes.button}>
-									<Description className={classes.leftIcon} />
-									Concept
-								</Button>
-							</ListItem>
+								<ListItem>
+									<Button color="primary" className={classes.button}>
+										<Description className={classes.leftIcon}/>
+										Concept
+									</Button>
+								</ListItem>
 
-						</List>
+							</List>
 
-						<List dense subheader={<ListSubheader>POST</ListSubheader>}>
-							<ListItem>
-								<Button color="primary" className={classes.button}>
-									<Search className={classes.leftIcon} />
-									Query Parameter
-								</Button>
-							</ListItem>
+							<List dense subheader={<ListSubheader>POST</ListSubheader>}>
+								<ListItem>
+									<Button color="primary" className={classes.button}>
+										<Search className={classes.leftIcon}/>
+										Query Parameter
+									</Button>
+								</ListItem>
 
-							<ListItem>
-								<Button color="primary" className={classes.button}>
-									<Label className={classes.leftIcon} />
-									Header Parameter
-								</Button>
-							</ListItem>
+								<ListItem>
+									<Button color="primary" className={classes.button}>
+										<Label className={classes.leftIcon}/>
+										Header Parameter
+									</Button>
+								</ListItem>
 
-							<ListItem>
-								<Button color="primary" className={classes.button}>
-									<Message className={classes.leftIcon} />
-									Request Body
-								</Button>
-							</ListItem>
+								<ListItem>
+									<Button color="primary" className={classes.button}>
+										<Message className={classes.leftIcon}/>
+										Request Body
+									</Button>
+								</ListItem>
 
-							<ListItem>
-								<Button color="primary" className={classes.button}>
-									<QuestionAnswer className={classes.leftIcon} />
-									Response
-								</Button>
-							</ListItem>
+								<ListItem>
+									<Button color="primary" className={classes.button}>
+										<QuestionAnswer className={classes.leftIcon}/>
+										Response
+									</Button>
+								</ListItem>
 
-						</List>
-					</div>
-				</Menu>
-			</>
-		)
+							</List>
+						</div>
+					</Menu>
+				{/*</Zoom>*/}
+			</div>
+		);
 	}
 }
 
-export default withStyles(styles)(FloatingAddButton)
+export default withEditorContext(withStyles(styles)(FloatingAddButton));

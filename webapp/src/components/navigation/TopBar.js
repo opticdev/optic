@@ -17,6 +17,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import {primary} from '../../theme';
 import Divider from '@material-ui/core/Divider';
+import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 	root: {
@@ -96,7 +97,8 @@ class TopBar extends React.Component {
 	// }
 
 	render() {
-		const {classes} = this.props;
+		const {classes, mode, switchEditorMode} = this.props;
+
 		return (
 			<div className={classes.root}>
 				<AppBar position="static" style={{backgroundColor: 'white'}} elevation={0} className={classes.appBar}>
@@ -117,13 +119,15 @@ class TopBar extends React.Component {
 
 						<div className={classes.spacer}/>
 
-						<ToggleButtonGroup value={'documentation'} exclusive size="small" style={{marginRight: 22}}
-										   className={classes.toggleGroup}>
-							<ToggleButton value="documentation" className={classes.toggleButton}
+						<ToggleButtonGroup value={mode}
+										   exclusive size="small"
+										   style={{marginRight: 22}}
+										   onChange={(e, value) => switchEditorMode(value)}>
+							<ToggleButton value={EditorModes.DOCUMENTATION} className={classes.toggleButton}
 										  classes={{selected: classes.toggleButtonSelected}}>
 								Documentation
 							</ToggleButton>
-							<ToggleButton value="design" className={classes.toggleButton}
+							<ToggleButton value={EditorModes.DESIGN} className={classes.toggleButton}
 										  classes={{selected: classes.toggleButtonSelected}}>
 								Design
 							</ToggleButton>
@@ -159,4 +163,4 @@ class TopBar extends React.Component {
 }
 
 
-export default withStyles(styles)(TopBar);
+export default withEditorContext(withStyles(styles)(TopBar));

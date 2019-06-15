@@ -5,9 +5,9 @@
   "dependencies": {
     "@babel/core": "7.4.3",
     "@babel/plugin-proposal-decorators": "^7.4.4",
-    "@material-ui/core": "4.0.0",
-    "@material-ui/icons": "^4.0.1",
-    "@material-ui/lab": "^4.0.0-alpha.15",
+    "@material-ui/core": "4.1.1",
+    "@material-ui/icons": "4.1.1",
+    "@material-ui/lab": "^4.0.0-alpha.116",
     "@svgr/webpack": "4.1.0",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",

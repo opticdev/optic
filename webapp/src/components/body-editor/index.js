@@ -9,9 +9,9 @@ import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Zoom from '@material-ui/core/Zoom';
 import {seedExampleUserWriteModel, seedFriendModel} from '../../engine/examples/ExampleData';
-import {SchemaEditorModes} from '../shape-editor/Constants';
 import SchemaEditor from '../shape-editor/SchemaEditor';
 import {primary} from '../../theme';
+import {EditorModes} from '../../contexts/EditorContext';
 
 const service = newRfcService();
 let name = 'test-schema';
@@ -59,11 +59,11 @@ class BodyEditor extends React.Component {
 	render() {
 		const {classes, mode} = this.props;
 
-		if (mode === SchemaEditorModes.VIEW && !this.state.hasBody) {
+		if (mode === EditorModes.DOCUMENTATION && !this.state.hasBody) {
 			return null;
 		}
 
-		const isViewMode = mode === SchemaEditorModes.VIEW;
+		const isViewMode = mode === EditorModes.DOCUMENTATION;
 
 		return (
 			<>

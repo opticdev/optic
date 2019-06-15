@@ -11,5 +11,8 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportDescendentCla
 @JSExportAll
 trait EventSourcedService[Command, State] {
   def handleCommand(id: AggregateId, command: Command): Unit
+  def handleCommands(id: AggregateId, commands: Command*): Unit = {
+    commands.foreach(cmd => handleCommand(id, cmd))
+  }
   def currentState(id: AggregateId): State
 }

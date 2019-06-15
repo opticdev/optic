@@ -1,6 +1,6 @@
 import React from 'react';
 import {Redirect, Switch, Route} from 'react-router-dom';
-import MasterView from './components/navigation/MasterView';
+import Editor from './components/navigation/Editor';
 import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
 import {RfcStore, withRfcContext} from './contexts/RfcContext.js';
 import RequestPage from './components/RequestPage';
@@ -55,13 +55,11 @@ class ExampleLoader extends React.Component {
 	render() {
 		const {example} = this.state;
 
-		const basePath = this.props.match.url
-
 		if (example === null) {
 			return <div>Loading...</div>;
 		}
 		return (
-			<InitialRfcCommandsStore initialCommandsString={example} rfcId="testRfcId" basePath={basePath}>
+			<InitialRfcCommandsStore initialCommandsString={example} rfcId="testRfcId">
 				<RfcStore>
 					<APIEditorRoutes {...this.props} />
 				</RfcStore>
@@ -76,10 +74,12 @@ class APIEditorRoutes extends React.Component {
 		const {url, path, params} = this.props.match;
 		const isNew = path === paths.newRoot();
 
+		const basePath = url
+
 		//@todo get examples showing
 		return (
 			<div>
-				<MasterView content={
+				<Editor basePath={basePath} content={
 					<Switch>
 						<Route exact path={paths.newRoot(url)} component={() => <>NEW</>}/>
 						<Route path={paths.requestPage(url)}

@@ -6,8 +6,6 @@ import KeyTypeRow from './KeyTypeRow';
 import TypeName from './TypeName';
 import ExpandButton from './ExpandButton';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
-import Button from '@material-ui/core/Button/index';
-import ButtonBase from '@material-ui/core/ButtonBase/index';
 import AddFieldButton from './AddFieldButton';
 import DeleteButton from './DeleteButton';
 import TypeMenu from './TypeMenu/TypeMenu';
@@ -83,7 +81,6 @@ class SchemaEditor extends React.Component {
 
 	initialState = (conceptId) => {
 		return {
-			projection: this.props.service.currentShapeProjection('test-api', conceptId),
 			collapsed: [],
 			refModalTarget: null,
 			typeMenu: {
@@ -102,7 +99,6 @@ class SchemaEditor extends React.Component {
 
 	constructor(props) {
 		super(props);
-
 		this.state = this.initialState(this.props.conceptId)
 	}
 
@@ -115,13 +111,7 @@ class SchemaEditor extends React.Component {
 	};
 
 	runCommand = (command) => {
-		try {
-			const id = this.props.service.handleCommand('test-api', command);
-			this.setState({projection: this.props.service.currentShapeProjection('test-api', this.props.conceptId)});
-			return id;
-		} catch (e) {
-			alert(e);
-		}
+		this.props.handleCommand(command)
 	};
 
 	showTypeMenu = (id, currentType) => (event) => {
@@ -163,7 +153,7 @@ class SchemaEditor extends React.Component {
 	render() {
 		const {classes} = this.props;
 
-		const {root} = this.state.projection;
+		const {root} = this.props.currentShape;
 
 		const context = {
 			operations: {
@@ -174,6 +164,7 @@ class SchemaEditor extends React.Component {
 				showRefModal: this.showRefModal,
 				hideRefModal: this.hideRefModal
 			},
+			currentShape: this.props.currentShape,
 			editorState: this.state,
 			mode: this.props.mode,
 			conceptId: this.props.conceptId
@@ -190,7 +181,6 @@ class SchemaEditor extends React.Component {
 	}
 }
 
-//mode can be 'view', 'editor'
 function flattenTree(node, array = [], collapsed = []) {
 
 	const buildNext = (node) => flattenTree(node, array, collapsed);

@@ -13,7 +13,6 @@ import {Button} from '@material-ui/core/index';
 import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
 import SchemaEditor from '../SchemaEditor';
 import {Commands, DataTypesHelper} from '../../../engine'
-import ButtonBase from '@material-ui/core/ButtonBase/index';
 
 const styles = theme => ({
 	root: {
@@ -75,11 +74,9 @@ class TypeRefModal extends React.Component {
 		const {classes, targetId} = this.props
 
 		return <SchemaEditorContext.Consumer>
-			{({editorState, conceptId, operations}) => {
+			{({editorState, currentShape, conceptId, operations}) => {
 
-				const {projection} = editorState
-
-				const {allowedTypeReferences} = projection
+				const {allowedTypeReferences} = currentShape
 
 				const selected = allowedTypeReferences.find(i => i.id === this.state.selected)
 

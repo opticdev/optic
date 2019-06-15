@@ -6,9 +6,9 @@ import Chip from '@material-ui/core/Chip/index';
 import {CollectionTypes, primitiveColors, PrimitiveTypes, typeOptionNames} from '../Types';
 import classNames from 'classnames';
 import Button from '@material-ui/core/Button/index';
-import ButtonBase from '@material-ui/core/ButtonBase/index';
 import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
 import {Commands, DataTypesHelper} from '../../../engine'
+import BasicButton from '../BasicButton';
 
 const styles = theme => ({
 	chip: {
@@ -39,11 +39,10 @@ const TypeChip = withStyles(styles)(({name, id, color, handleClick, classes, sty
 	};
 
 	return <div className={classes.buttonWrapper}>
-		<ButtonBase
+		<BasicButton
 			className={classes.button}
 			style={style}
-			disableRipple={true}
-			onClick={() => handleClick(id)}>{name}</ButtonBase>
+			onClick={() => handleClick(id)}>{name}</BasicButton>
 	</div>;
 });
 
