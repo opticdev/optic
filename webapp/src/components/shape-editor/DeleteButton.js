@@ -2,7 +2,7 @@ import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import Cancel from '@material-ui/icons/Cancel';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
-import {Commands} from '../../engine'
+import {ShapeCommands} from '../../engine'
 import BasicButton from './BasicButton';
 import {EditorModes} from '../../contexts/EditorContext';
 
@@ -22,9 +22,9 @@ function DeleteButton({classes, id, deleteType}) {
 			return <BasicButton
 			    onClick={() => {
 			    	if (deleteType === 'field') {
-						operations.runCommand(Commands.RemoveField(id, conceptId))
+						operations.runCommand(ShapeCommands.RemoveField(id, conceptId))
 					} else if (deleteType === 'type-parameter') {
-						operations.runCommand(Commands.RemoveTypeParameter(id, conceptId))
+						operations.runCommand(ShapeCommands.RemoveTypeParameter(id, conceptId))
 					}
 				}}>
 				<Cancel style={{width: 15, color: '#a6a6a6'}} />

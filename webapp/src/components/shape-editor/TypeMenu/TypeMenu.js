@@ -7,7 +7,7 @@ import {CollectionTypes, primitiveColors, PrimitiveTypes, typeOptionNames} from 
 import classNames from 'classnames';
 import Button from '@material-ui/core/Button/index';
 import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
-import {Commands, DataTypesHelper} from '../../../engine'
+import {ShapeCommands, DataTypesHelper} from '../../../engine'
 import BasicButton from '../BasicButton';
 
 const styles = theme => ({
@@ -64,7 +64,7 @@ class TypeMenu extends React.Component {
 			{({editorState, operations, conceptId}) => {
 
 				const handleTypeClick = (type) => () => {
-					operations.runCommand(Commands.AssignType(id, DataTypesHelper.primitivesMap[type.id], conceptId))
+					operations.runCommand(ShapeCommands.AssignType(id, DataTypesHelper.primitivesMap[type.id], conceptId))
 					operations.hideTypeMenu()
 				};
 

@@ -30,7 +30,7 @@ const styles = theme => ({
 class ContributionTextField extends React.Component {
 
 	state = {
-		value: this.props.value
+		value: this.props.value || ''
 	}
 
 	onChange = (e) => {
@@ -39,7 +39,7 @@ class ContributionTextField extends React.Component {
 
 	render() {
 
-		const {mode, classes, variant = 'heading', inputStyle = {}, textStyle = {}, placeholder} = this.props;
+		const {mode, classes, variant = 'heading', inputStyle = {}, textStyle = {}, placeholder, onBlur} = this.props;
 		const {value} = this.state
 
 		const classToApply = classes[variant]
@@ -55,6 +55,11 @@ class ContributionTextField extends React.Component {
 				} else if (mode === EditorModes.DESIGN) {
 					return <TextField
 						value={value}
+						onBlur={() => {
+							if (onBlur) {
+								onBlur(this.state.value)
+							}
+						}}
 						fullWidth={variant !== 'headline'}
 						onChange={this.onChange}
 						multiline={variant === 'multi'}

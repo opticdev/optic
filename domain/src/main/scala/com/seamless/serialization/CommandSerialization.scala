@@ -4,7 +4,7 @@ import com.seamless.contexts.data_types.Commands.DataTypesCommand
 import com.seamless.contexts.data_types.Events.DataTypesEvent
 import com.seamless.contexts.requests.Commands.RequestsCommand
 import com.seamless.contexts.requests.Events.RequestsEvent
-import com.seamless.contexts.rfc.Commands.RfcCommand
+import com.seamless.contexts.rfc.Commands.{ContributionCommand, RfcCommand}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import io.circe.Decoder.Result
 import io.circe._
@@ -18,6 +18,7 @@ object CommandSerialization {
     vector.map {
       case dataTypesCommand: DataTypesCommand => dataTypesCommand.asJson
       case requestCommand: RequestsCommand =>requestCommand.asJson
+      case contributionCommand: ContributionCommand => contributionCommand.asJson
       case _ => throw new java.lang.Error("Unhandled command Type")
     }.asJson
   }
@@ -25,12 +26,14 @@ object CommandSerialization {
 
   private def decodeDataTypesCommand(item: Json): Result[DataTypesCommand] = item.as[DataTypesCommand]
   private def decodeRequestCommand(item: Json): Result[RequestsCommand] = item.as[RequestsCommand]
+  private def decodeRfcCommand(item: Json): Result[ContributionCommand] = item.as[ContributionCommand]
 
   def fromJson(json: Json): Try[Vector[RfcCommand]] = Try {
     val parseResults = json.asArray.get.map {
       case i =>  TryChainUtil.firstSuccessIn(i,
         (j: Json) => Try(decodeDataTypesCommand(j).right.get),
-        (j: Json) => Try(decodeRequestCommand(j).right.get))
+        (j: Json) => Try(decodeRequestCommand(j).right.get),
+        (j: Json) => Try(decodeRfcCommand(j).right.get))
     }
     require(parseResults.forall(_.isDefined), "Some commands could not be decoded")
     parseResults.collect{ case i if i.isDefined => i.get }

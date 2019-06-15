@@ -6,6 +6,7 @@ import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesState}
 import com.seamless.contexts.data_types.projections.{ConceptListProjection, NamedConcept, ShapeProjection}
 import com.seamless.contexts.requests.projections.{Path, PathListProjection}
 import com.seamless.contexts.rfc.Events.RfcEvent
+import com.seamless.contexts.rfc.projections.{ContributionWrapper, ContributionsProjection}
 import com.seamless.ddd.{AggregateId, EventStore}
 
 import scala.scalajs.js
@@ -23,6 +24,10 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) 
 
   def concepts(): js.Array[NamedConcept] = {
     q.concepts.toJSArray
+  }
+
+  def contributions(): ContributionWrapper = {
+    q.contributions
   }
 
   def conceptsById(conceptId: ConceptId): ShapeProjection = {
@@ -43,6 +48,10 @@ class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
 
   def concepts: Vector[NamedConcept] = {
     ConceptListProjection.fromEvents(events)
+  }
+
+  def contributions: ContributionWrapper = {
+    ContributionsProjection.fromEvents(events)
   }
 
   def conceptsById(conceptId: ConceptId): ShapeProjection = {

@@ -4,7 +4,7 @@ import IconButton from '@material-ui/core/IconButton/index';
 import ExpandMore from '@material-ui/icons/KeyboardArrowRight'
 import ExpandLess from '@material-ui/icons/ExpandMore'
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
-import {Commands, DataTypesHelper} from '../../engine'
+import {ShapeCommands, DataTypesHelper} from '../../engine'
 import BasicButton from './BasicButton';
 import {EditorModes} from '../../contexts/EditorContext';
 
@@ -29,7 +29,7 @@ function AddTypeButton({classes, parentId}) {
 				className={classes.addButton}
 				onClick={() => {
 					operations.toggleCollapsed(parentId, true)()
-					operations.runCommand(Commands.AddTypeParameter(parentId, DataTypesHelper.newId(), conceptId))
+					operations.runCommand(ShapeCommands.AddTypeParameter(parentId, DataTypesHelper.newId(), conceptId))
 				}}
 			> + Add Type Parameter</BasicButton>
 		}}

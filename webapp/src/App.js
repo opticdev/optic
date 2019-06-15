@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {Commands, newRfcService} from './engine/index'
+import {ShapeCommands, newRfcService} from './engine/index'
 
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';

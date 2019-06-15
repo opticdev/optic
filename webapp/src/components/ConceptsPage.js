@@ -6,6 +6,7 @@ import SchemaEditor from './shape-editor/SchemaEditor';
 import {EditorModes, withEditorContext} from '../contexts/EditorContext';
 import ContributionTextField from './contributions/ContributionTextField';
 import Divider from '@material-ui/core/Divider';
+import {updateContribution} from '../engine/routines';
 
 const styles = theme => ({
 	root: {
@@ -23,18 +24,26 @@ class ConceptsPage extends React.Component {
 	render() {
 		const {queries, rfcId, classes, conceptId, mode, handleCommand} = this.props;
 		const currentShape = queries.conceptsById(conceptId);
+		const contributions = queries.contributions()
 
 		return <div className={classes.root}>
 
 			<ContributionTextField value={currentShape.namedConcept.name}
 								   variant={'heading'}
 								   placeholder={'Concept Name'}
-								   mode={mode}/>
+								   mode={mode}
+								   onBlur={() => {
+								   }}
+			/>
 
-			<ContributionTextField value={''}
+			<ContributionTextField value={contributions.getOrUndefined(conceptId, 'description')}
 								   variant={'multi'}
 								   placeholder={'Description'}
-								   mode={mode}/>
+								   mode={mode}
+								   onBlur={(value) => {
+									   handleCommand(updateContribution(conceptId, 'description', value))
+								   }}
+			/>
 
 			<Typography variant="h6" color="primary">Shape</Typography>
 

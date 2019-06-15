@@ -12,7 +12,7 @@ import DialogContent from '@material-ui/core/DialogContent/index';
 import {Button} from '@material-ui/core/index';
 import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
 import SchemaEditor from '../SchemaEditor';
-import {Commands, DataTypesHelper} from '../../../engine'
+import {ShapeCommands, DataTypesHelper} from '../../../engine'
 
 const styles = theme => ({
 	root: {
@@ -87,7 +87,7 @@ class TypeRefModal extends React.Component {
 							<Button
 								disabled={!selected}
 								onClick={() => {
-									operations.runCommand(Commands.AssignType(targetId, DataTypesHelper.refTo(selected.id), conceptId ))
+									operations.runCommand(ShapeCommands.AssignType(targetId, DataTypesHelper.refTo(selected.id), conceptId ))
 									operations.hideRefModal()
 								}}
 							>

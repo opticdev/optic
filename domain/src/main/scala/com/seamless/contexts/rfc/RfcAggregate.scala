@@ -1,8 +1,8 @@
 package com.seamless.contexts.rfc
 
 import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesCommandContext}
-import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.rfc.Events.RfcEvent
+import com.seamless.contexts.rfc.Commands.{AddContribution, ContributionCommand, RfcCommand}
+import com.seamless.contexts.rfc.Events.{ContributionAdded, RfcEvent}
 import com.seamless.ddd.{Effects, EventSourcedAggregate}
 import Composition.forwardTo
 import com.seamless.contexts.base.BaseCommandContext
@@ -21,6 +21,11 @@ object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcComma
       forwardTo(DataTypesAggregate)((DataTypesCommandContext(), command), state.dataTypesState).asInstanceOf[Effects[RfcEvent]]
     case (_: RfcCommandContext, command: RequestsCommand) =>
       forwardTo(RequestsAggregate)((RequestsCommandContext(state.dataTypesState), command), state.requestsState).asInstanceOf[Effects[RfcEvent]]
+
+    case (_: RfcCommandContext, contributionCommand: ContributionCommand) => contributionCommand match {
+      case AddContribution(id, key, value) => persist(ContributionAdded(id, key, value))
+      case _ => noEffect()
+    }
     case _ => noEffect()
   }
 
