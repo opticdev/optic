@@ -23,6 +23,8 @@ const styles = theme => ({
 	},
 	pre: {
 		fontFamily: 'Ubuntu',
+		wordWrap: 'break-word',
+		whiteSpace: 'pre-wrap'
 
 	}
 });

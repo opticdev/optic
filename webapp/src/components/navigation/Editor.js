@@ -39,7 +39,8 @@ const styles = theme => ({
 		marginTop: 80,
 		maxWidth: 1000,
 		flex: 6.5,
-		height: 1000,
+		height: 'fit-content',
+		paddingBottom: 80,
 		marginBottom: 80,
 		width: 850,
 		paddingLeft: 15,
@@ -72,10 +73,11 @@ class Editor extends React.Component {
 	searchShortcut(e) {
 		e.preventDefault();
 		e.stopPropagation();
+		this.toggleSuperMenu(null)
 	}
 
 	@keydown('escape')
-	searchShortcut(e) {
+	escape(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		this.closeAll();

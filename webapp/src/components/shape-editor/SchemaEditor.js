@@ -12,10 +12,11 @@ import TypeMenu from './TypeMenu/TypeMenu';
 import classNames from 'classnames'
 import AddTypeButton from './AddTypeButton';
 import TypeRefModal from './TypeMenu/TypeRefModal';
+import {Primitives} from '../../engine';
 
 const styles = theme => ({
 	root: {
-		maxWidth: 680,
+		maxWidth: '1000',
 		width: '100%',
 		paddingTop: 2,
 	},
@@ -80,8 +81,19 @@ const Row = withStyles(styles)(({classes, indent = 0, children, expandButton, ad
 class SchemaEditor extends React.Component {
 
 	initialState = (conceptId) => {
+
+		const {root} = this.props.currentShape
+
+		let collapsed = []
+
+		if (root.type.hasFields) { //collapse nested objects by default
+			collapsed = root.fields
+				.filter(f => f.shape.type.hasFields)
+				.map(f => f.id)
+		}
+
 		return {
-			collapsed: [],
+			collapsed,
 			refModalTarget: null,
 			typeMenu: {
 				anchor: null,

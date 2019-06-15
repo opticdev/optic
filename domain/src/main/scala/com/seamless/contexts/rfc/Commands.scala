@@ -15,4 +15,5 @@ object Commands {
   @JSExportDescendentClasses
   @JSExportAll
   trait RfcCommand extends ExportedCommand
+  
 }

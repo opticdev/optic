@@ -91,10 +91,6 @@ const styles = theme => ({
 
 class TopBar extends React.Component {
 
-	// @keydown('ctrl+f')
-	// searchKeys() {
-	// 	debugger
-	// }
 
 	render() {
 		const {classes, mode, switchEditorMode} = this.props;

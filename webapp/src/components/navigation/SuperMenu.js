@@ -17,6 +17,11 @@ import {withRfcContext} from '../../contexts/RfcContext';
 import {Link} from 'react-router-dom';
 import BasicButton from '../shape-editor/BasicButton';
 import {withEditorContext} from '../../contexts/EditorContext';
+import SearchBar, {fuzzyConceptFilter, fuzzyPathsFilter} from './Search';
+import keydown, {Keys} from 'react-keydown';
+import classNames from 'classnames'
+
+const {RIGHT, DOWN, UP, LEFT, ENTER} = Keys
 
 const styles = theme => ({
 	root: {
@@ -25,6 +30,7 @@ const styles = theme => ({
 	},
 	gridItem: {
 		padding: 15
+
 	},
 	pathButton: {
 		padding: 5,
@@ -35,6 +41,13 @@ const styles = theme => ({
 			fontWeight: 400
 		}
 	},
+	listItemSelected: {
+		backgroundColor: 'rgba(78,165,255,0.08) !important',
+	},
+	buttonSelected: {
+		color: primary,
+		fontWeight: 400
+	},
 	operations: {
 		fontSize: 10,
 		marginLeft: 15,
@@ -44,84 +57,252 @@ const styles = theme => ({
 		textDecoration: 'none',
 		color: 'inherit',
 		cursor: 'pointer'
+	},
+	searchWrapper: {
+		padding: 22
 	}
 });
 
+const initialFocus = {
+		col: 0,
+		row: 0
+}
+
 class SuperMenu extends React.Component {
 
-render() {
-	const {classes} = this.props;
+	constructor(props) {
+		super(props)
 
-	const {queries, rfcId, basePath} = this.props;
-	const paths = queries.paths();
-	const sortedPaths = sortBy(paths, ['absolutePath']);
+		this.up = this.up.bind(this)
+		this.down = this.down.bind(this)
+		this.left = this.left.bind(this)
+		this.right = this.right.bind(this)
+		this.enter = this.enter.bind(this)
+		this.focusFirst = this.focusFirst.bind(this)
 
-	const concepts = queries.concepts().filter(i => !i.deprecated)
-	const sortedConcepts = sortBy(concepts, ['name']);
+		this.menuRef = React.createRef()
+		this.searchRef = React.createRef()
+		this.focusedButton = React.createRef()
+	}
 
-	return (
-		<Popover
-			classes={{paper: classes.root}}
-			// open={true}
-			open={this.props.open}
-			onClose={() => this.props.toggle(null, true)}
-			transitionDuration={200}
-			anchorOrigin={{
-				vertical: 52,
-				horizontal: 5,
-			}}
-			transformOrigin={{
-				vertical: 'top',
-				horizontal: 'left',
-			}}
-		>
-			<div>
-				<Grid container>
-					<Grid xs={6} item className={classes.gridItem}>
-						<Typography variant="h5" color="primary">Paths</Typography>
-						<List>
-							{sortedPaths.map(({pathId, absolutePath}) => {
-								const to = `${basePath}/requests/${pathId}`
-								return (
-									<div>
-										<Link to={to} className={classes.bareLink}>
-										<BasicButton
+	componentWillReceiveProps(nextProps, nextContext) {
+		if (nextProps.open && this.props.open !== nextProps.open) {
+			this.setState({searchQuery: '', focus: null})
+		}
+	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		if (this.state.focus && this.focusedButton && this.focusedButton.current) {
+			this.focusedButton.current.focus()
+		}
+	}
+
+	state = {
+		searchQuery: '',
+		focus: null
+	}
+
+	focusFirst() {
+		this.setState({focus: initialFocus})
+		if (this.menuRef) {
+			const a = this.searchRef
+			this.searchRef.current.blur()
+			this.menuRef.current.focus()
+		}
+	}
+
+	@keydown(DOWN)
+	down(e) {
+		const {focus} = this.state
+		if (!focus) {
+			this.focusFirst()
+		}
+		e.preventDefault()
+		this.setState({focus: {...focus, row: focus.row + 1}})
+	}
+
+	@keydown(UP)
+	up(e) {
+		const {focus} = this.state
+		if (!focus) {
+			this.focusFirst()
+		}
+		e.preventDefault()
+		const decremented = focus.row - 1
+		if (decremented < 0) {
+			this.searchRef.current.focus()
+			this.setState({focus: null})
+		} else {
+			this.setState({focus: {...focus, row: (decremented < 0) ? 0 : decremented}})
+		}
+	}
+
+	@keydown(RIGHT)
+	right(e) {
+		const {focus} = this.state
+
+		if (!this.state.focus) {
+			this.focusFirst()
+		}
+
+		const incremented = focus.col + 1
+		this.setState({focus: {...focus, col: (incremented > 1) ? 1 : incremented}})
+
+		e.preventDefault()
+	}
+
+	@keydown(LEFT)
+	left(e) {
+		const {focus} = this.state
+
+		if (!this.state.focus) {
+			this.focusFirst()
+		}
+
+		const decremented = focus.col - 1
+		this.setState({focus: {...focus, col: (decremented < 0) ? 0 : decremented}})
+
+		e.preventDefault()
+	}
+
+	@keydown(ENTER)
+	enter(e) {
+		const link = this.focusedButton.current
+		if (link) {
+			link.click()
+			setTimeout(() => this.props.toggle(null, true), 50)
+		}
+	}
+
+	render() {
+		const {classes} = this.props;
+
+		const {queries, rfcId, basePath} = this.props;
+		const paths = queries.paths();
+		const sortedPaths = sortBy(paths, ['absolutePath']);
+
+		const concepts = queries.concepts().filter(i => !i.deprecated);
+		const sortedConcepts = sortBy(concepts, ['name']);
+
+
+		const pathsFiltered = fuzzyPathsFilter(sortedPaths, this.state.searchQuery)
+		const conceptsFiltered = fuzzyConceptFilter(sortedConcepts, this.state.searchQuery)
+
+		//keyboard nav
+		const {focus} = this.state;
+		function isFocused(col, row, rowLength) {
+
+			let _focus = {...focus}
+
+			if (_focus === null) {
+				return false
+			}
+
+			if (pathsFiltered.length === 0) {
+				_focus.col = 1
+			}
+
+			if (conceptsFiltered.length === 0) {
+				_focus.col = 0
+			}
+
+			if (col !== _focus.col) {
+				return false
+			}
+
+			if (col === _focus.col && row === _focus.row) {
+				return true
+			}
+
+
+			if (col === _focus.col && _focus.row > rowLength - 1) {
+				return (rowLength) -1 === row
+			}
+		}
+
+		return (
+			<Popover
+				classes={{paper: classes.root}}
+				// open={true}
+				open={this.props.open}
+				onClose={() => this.props.toggle(null, true)}
+				transitionDuration={this.props.open ? 0 : 200}
+				anchorOrigin={{
+					vertical: 52,
+					horizontal: 5,
+				}}
+				transformOrigin={{
+					vertical: 'top',
+					horizontal: 'left',
+				}}
+			>
+				<div>
+					<Grid container ref={this.menuRef}>
+						<Grid xs={12} item className={classes.searchWrapper}>
+							<SearchBar searchQuery={this.state.searchQuery}
+									   onChange={(e) => this.setState({searchQuery: e.target.value})}
+									   focusFirst={this.focusFirst}
+									   inputRef={this.searchRef}
+							/>
+						</Grid>
+						<Grid xs={6} item className={classes.gridItem} style={{paddingLeft: 35}}>
+							<Typography variant="h5" color="primary">Paths</Typography>
+							<List>
+								{pathsFiltered.map(({pathId, absolutePath}, index) => {
+									const to = `${basePath}/requests/${pathId}`;
+									const isSelected = isFocused(0, index, pathsFiltered.length)
+									return (
+										<ListItem style={{height: 27}}
+												  classes={{selected: classes.listItemSelected}}
+												  selected={isSelected}
+												  onMouseOver={() => this.setState({focus: null})}
+										>
+											<Link to={to} className={classes.bareLink} innerRef={(isSelected) ? this.focusedButton : undefined}>
+												<BasicButton
+													className={classNames(classes.pathButton, {[classes.buttonSelected]: isSelected})}
+													onClick={() => this.props.toggle(null, true)}>{absolutePath}
+												</BasicButton>
+											</Link>
+										</ListItem>
+									);
+								})}
+								{!pathsFiltered.length && this.state.searchQuery ? <Typography variant="caption" color="error">No Paths Found for '{this.state.searchQuery}'</Typography> : null}
+							</List>
+						</Grid>
+						<Grid xs={6} item className={classes.gridItem}>
+							<Typography variant="h5" color="primary">Concepts</Typography>
+							<List>
+								{conceptsFiltered.map(({name, id}, index) => {
+									const to = `${basePath}/concepts/${id}`;
+
+									const isSelected = isFocused(1, index, conceptsFiltered.length)
+									return (
+										<ListItem classes={{selected: classes.listItemSelected}}
+												  style={{height: 27}}
+												  selected={isSelected}
+												  onMouseOver={() => this.setState({focus: null})}
+										>
+											<Link to={to} className={classes.bareLink} innerRef={(isSelected) ? this.focusedButton : undefined}>
+												<BasicButton
+													className={classNames(classes.pathButton, {[classes.buttonSelected]: isSelected})}
 													onClick={() => this.props.toggle(null, true)}
-													className={classes.pathButton}>{absolutePath}
-										</BasicButton>
-										</Link>
-									</div>
-								);
-							})}
-						</List>
-					</Grid>
-					<Grid xs={6} item className={classes.gridItem}>
-						<Typography variant="h5" color="primary">Concepts</Typography>
-						<List>
-							{sortedConcepts.map(({name, id}) => {
-								const to = `${basePath}/concepts/${id}`
-								return (
-									<div>
-										<Link to={to} className={classes.bareLink}>
-											<BasicButton
-												className={classes.pathButton}
-												onClick={() => this.props.toggle(null, true)} className={classes.pathButton}
-											>
-												{name}</BasicButton>
-										</Link>
-									</div>
-								);
-							})}
-						</List>
+												>
+													{name}</BasicButton>
+											</Link>
+										</ListItem>
+									);
+								})}
+								{!conceptsFiltered.length && this.state.searchQuery ? <Typography variant="caption" color="error">No Concepts Found for '{this.state.searchQuery}'</Typography> : null}
+							</List>
+						</Grid>
+
+
 					</Grid>
 
 
-				</Grid>
-
-
-			</div>
-		</Popover>
-	);
+				</div>
+			</Popover>
+		);
 	}
 }
 

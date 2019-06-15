@@ -2,6 +2,9 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {primary, secondary} from '../../theme';
 import classNames from 'classnames'
+import keydown, {Keys} from 'react-keydown';
+
+const {ENTER} = Keys
 
 const styles = theme => ({
 	root: {
@@ -26,6 +29,11 @@ class BasicButton extends React.Component {
 		return <button
 			onClick={(e) => {
 				if (!disabled) {
+					onClick(e)
+				}
+			}}
+			onKeyPress={(e) => {
+				if (!disabled && e.keyCode === ENTER) {
 					onClick(e)
 				}
 			}}
