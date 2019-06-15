@@ -1,7 +1,7 @@
 package com.seamless.oas
 
 import com.seamless.oas.Schemas.{Definition, JsonSchemaSchema, NamedDefinition, OASSchema, Operation, Path, PathParameter, PropertyDefinition, QueryParameter, RequestBody, Response, SharedResponse}
-import play.api.libs.json.{JsObject, JsValue}
+import play.api.libs.json.{JsObject, JsString, JsValue}
 import QueryImplicits._
 import com.seamless.oas
 import com.seamless.oas.oas_to_commands.slugify
@@ -9,7 +9,6 @@ import com.seamless.oas.oas_to_commands.slugify
 import scala.util.Random
 
 abstract class OASResolver(val root: JsObject, val oas_version: String) {
-
   def buildContext(root: JsValue) = Context(this, root)
 
   //Top Level OAS Resolvers
@@ -72,4 +71,9 @@ abstract class OASResolver(val root: JsObject, val oas_version: String) {
     .method)}_body"
   }
 
+  //descriptions
+  def descriptionFromContext(ctx: Context): Option[String] = {
+    (ctx.root \ "description").toOption.map(_.as[JsString].value)
+  }
 }
+

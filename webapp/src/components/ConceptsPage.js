@@ -26,6 +26,8 @@ class ConceptsPage extends React.Component {
 		const currentShape = queries.conceptsById(conceptId);
 		const contributions = queries.contributions()
 
+		console.log(contributions.asJsDictionary)
+
 		return <div className={classes.root}>
 
 			<ContributionTextField value={currentShape.namedConcept.name}

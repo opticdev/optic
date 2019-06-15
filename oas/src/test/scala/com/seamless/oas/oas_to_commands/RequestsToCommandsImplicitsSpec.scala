@@ -6,7 +6,9 @@ import RequestsToCommandsImplicits._
 import com.seamless.contexts.data_types.Commands.AssignType
 import com.seamless.contexts.requests.Commands.SetResponseBodyShape
 import com.seamless.contexts.requests.Commands._
+import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.RfcService
+import com.seamless.ddd.InMemoryEventStore
 
 import scala.util.Try
 class RequestsToCommandsImplicitsSpec extends ResolverTestFixture("2") {
@@ -22,7 +24,7 @@ class RequestsToCommandsImplicitsSpec extends ResolverTestFixture("2") {
 
   it("can build path graph in RFC service") {
     val pathContext = mattermostResolver.paths.toCommandStream
-    val service = new RfcService
+    val service = new RfcService(new InMemoryEventStore[RfcEvent])
 
     pathContext.commands.init.foreach(i => {
       val result = Try(service.handleCommand("test", i))

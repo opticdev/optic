@@ -1,0 +1,3900 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "There is also a work-in-progress [Postman API reference](https://documenter.getpostman.com/view/4508214/RW8FERUn).\n",
+    "version": "4.0.0",
+    "title": "Mattermost API Reference",
+    "termsOfService": "https://about.mattermost.com/default-terms/",
+    "contact": {
+      "email": "feedback@mattermost.com"
+    },
+    "x-logo": {
+      "url": "https://www.mattermost.org/wp-content/uploads/2016/03/logoHorizontal_WS.png",
+      "backgroundColor": "#FFFFFF"
+    }
+  },
+  "basePath": "/api/v4",
+  "host": "your-mattermost-url.com",
+  "tags": [
+    {
+      "name": "introduction",
+      "description": "The Mattermost Web Services API is used by Mattermost clients and third party applications to interact with the server. [JavaScript and Golang drivers for](/#tag/drivers) connecting to the APIs are also available.\n\n\nMattermost core committers work with the community to keep the API documentation up-to-date.\n\nIf you have questions on API routes not listed in this reference, please [join the Mattermost community server](https://pre-release.mattermost.com/signup_user_complete/?id=f1924a8db44ff3bb41c96424cdc20676) to ask questions in the Developers channel, [or post questions to our Developer Discussion forum](http://forum.mattermost.org/c/dev).\n\n[Bug reports](https://github.com/mattermost/mattermost-api-reference/issues) in the documentation or the API are also welcome, as are pull requests to fix the issues.\n\n\nWhen you have answers to API questions not addressed in our documentation we ask you to consider making a pull request to improve our reference. [Small changes](https://github.com/mattermost/mattermost-api-reference/commit/d574c0c1e95dc2228dc96663afd562f1305e3ece) and [larger changes](https://github.com/mattermost/mattermost-api-reference/commit/1ae3314f0935eebba8c885d8969dcad72f801501) are all welcome.\n\nWe also have [Help Wanted tickets](https://github.com/mattermost/mattermost-api-reference/issues) available for community members who would like to help others more easily use the APIs. We acknowledge everyone's contribution in the [release notes of our next version](https://docs.mattermost.com/administration/changelog.html#contributors).\n\nThe source code for this API reference is hosted at https://github.com/mattermost/mattermost-api-reference.\n"
+    },
+    {
+      "name": "schema",
+      "description": "All API access is through HTTP(S) requests at `your-mattermost-url.com/api/v4`. All request and response bodies are `application/json`.\n\nWhen using endpoints that require a user id, the string `me` can be used in place of the user id to indicate the action is to be taken for the logged in user.\n"
+    },
+    {
+      "name": "drivers",
+      "description": "The easiest way to interact with the Mattermost Web Service API is through a language specific driver.\n\n* [Mattermost JavaScript Driver](https://github.com/mattermost/mattermost-redux/blob/master/src/client/client4.js)\n* [Mattermost Golang Driver](https://github.com/mattermost/mattermost-server/blob/master/model/client4.go)\n\n* [PHP Driver](https://github.com/gnello/php-mattermost-driver) - built by [@gnello](https://github.com/gnello) and [@prixone](https://github.com/prixone)\n* [Python Driver](https://github.com/Vaelor/python-mattermost-driver) - built by [@Vaelor](https://github.com/Vaelor)\n\nFor other community-built drivers and API wrappers, see [our app directory](https://about.mattermost.com/community-applications/#privateApps).\n"
+    },
+    {
+      "name": "authentication",
+      "description": "There are multiple ways to authenticate against the Mattermost API.\n\nAll examples assume there is a Mattermost instance running at http://localhost:8065.\n\n\nMake an HTTP POST to `your-mattermost-url.com/api/v4/users/login` with a JSON body indicating the user’s `login_id`, `password` and optionally the MFA `token`. The `login_id` can be an email, username or an AD/LDAP ID depending on the system's configuration.\n\n```\ncurl -i -d '{\"login_id\":\"someone@nowhere.com\",\"password\":\"thisisabadpassword\"}' http://localhost:8065/api/v4/users/login\n```\n\nNOTE: If you're running cURL on windows, you will have to change the single quotes to double quotes, and escape the inner double quotes with backslash, like below:\n\n```\ncurl -i -d \"{\\\"login_id\\\":\\\"someone@nowhere.com\\\",\\\"password\\\":\\\"thisisabadpassword\\\"}\" http://localhost:8065/api/v4/users/login\n```\n\nIf successful, the response will contain a `Token` header and a user object in the body.\n\n```\nHTTP/1.1 200 OK\nSet-Cookie: MMSID=hyr5dmb1mbb49c44qmx4whniso; Path=/; Max-Age=2592000; HttpOnly\nToken: hyr5dmb1mbb49c44qmx4whniso\nX-Ratelimit-Limit: 10\nX-Ratelimit-Remaining: 9\nX-Ratelimit-Reset: 1\nX-Request-Id: smda55ckcfy89b6tia58shk5fh\nX-Version-Id: developer\nDate: Fri, 11 Sep 2015 13:21:14 GMT\nContent-Length: 657\nContent-Type: application/json; charset=utf-8\n\n{{user object as json}}\n```\n\nInclude the `Token` as part of the `Authorization` header on your future API requests with the `Bearer` method.\n\n```\ncurl -i -H 'Authorization: Bearer hyr5dmb1mbb49c44qmx4whniso' http://localhost:8065/api/v4/users/me\n```\n\nYou should now be able to access the API as the user you logged in as.\n\n\nUsing [personal access tokens](https://docs.mattermost.com/developer/personal-access-tokens.html) is very similar to using a session token. The only real difference is that session tokens will expire, while personal access tokens will live until they are manually revoked by the user or an admin.\n\nJust like session tokens, include the personal access token as part of the `Authorization` header in your requests using the `Bearer` method. Assuming our personal access token is `9xuqwrwgstrb3mzrxb83nb357a`, we could use it as shown below.\n\n```\ncurl -i -H 'Authorization: Bearer 9xuqwrwgstrb3mzrxb83nb357a' http://localhost:8065/api/v4/users/me\n```\n\n\nMattermost has the ability to act as an [OAuth 2.0](https://tools.ietf.org/html/rfc6749) service provider.\n\nThe official documentation for [using your Mattermost server as an OAuth 2.0 service provider can be found here.](https://docs.mattermost.com/developer/oauth-2-0-applications.html)\n\nFor an example on how to register an OAuth 2.0 app with your Mattermost instance, please see the [Mattermost-Zapier integration documentation](https://docs.mattermost.com/integrations/zapier.html#register-zapier-as-an-oauth-2-0-application).\n"
+    },
+    {
+      "name": "errors",
+      "description": "All errors will return an appropriate HTTP response code along with the following JSON body:\n```\n{\n    \"id\": \"the.error.id\",\n    \"message\": \"Something went wrong\", // the reason for the error\n    \"request_id\": \"\", // the ID of the request\n    \"status_code\": 0, // the HTTP status code\n    \"is_oauth\": false // whether the error is OAuth specific\n}\n```\n"
+    },
+    {
+      "name": "rate limiting",
+      "description": "Whenever you make an HTTP request to the Mattermost API you might notice the following headers included in the response:\n```\nX-Ratelimit-Limit: 10\nX-Ratelimit-Remaining: 9\nX-Ratelimit-Reset: 1441983590\n```\n\nThese headers are telling you your current rate limit status.\n\n| Header | Description |\n| ------ | ----------- |\n| X-Ratelimit-Limit | The maximum number of requests you can make per second. |\n| X-Ratelimit-Remaining | The number of requests remaining in the current window. |\n| X-Ratelimit-Reset | The remaining UTC epoch seconds before the rate limit resets. |\n\nIf you exceed your rate limit for a window you will receive the following error in the body of the response:\n\n```\nHTTP/1.1 429 Too Many Requests\nDate: Tue, 10 Sep 2015 11:20:28 GMT\nX-RateLimit-Limit: 10\nX-RateLimit-Remaining: 0\nX-RateLimit-Reset: 1\n\nlimit exceeded\n```\n"
+    },
+    {
+      "name": "WebSocket",
+      "description": "In addition to the HTTP RESTful web service, Mattermost also offers a WebSocket event delivery system and some API functionality.\n\nTo connect to the WebSocket follow the standard opening handshake as [defined by the RFC specification](https://tools.ietf.org/html/rfc6455#section-1.3) to the `/api/v4/websocket` endpoint of Mattermost.\n\n\nThe Mattermost WebSocket can be authenticated by cookie or through an authentication challenge. If you're authenticating from a browser and have logged in with the Mattermost API, your authentication cookie should already be set, this is how the Mattermost webapp authenticates with the WebSocket.\n\nTo authenticate with an authentication challenge, first connect the WebSocket and then send the following JSON over the connection:\n\n```\n{\n  \"seq\": 1,\n  \"action\": \"authentication_challenge\",\n  \"data\": {\n    \"token\": \"mattermosttokengoeshere\"\n  }\n}\n```\n\nIf successful, you will receive a standard OK response from the webhook:\n\n```\n{\n  \"status\": \"OK\",\n  \"seq_reply\": 1\n}\n```\n\nOnce successfully authenticated, the server will pass a `hello` WebSocket event containing server version over the connection.\n\n\nWebSocket events are primarily used to alert the client to changes in Mattermost, such as delivering new posts or alerting the client that another user is typing in a channel.\n\nEvents on the WebSocket will have the form:\n\n```\n{\n  \"event\": \"hello\",\n  \"data\": {\n    \"server_version\": \"3.6.0.1451.1c38da627ebb4e3635677db6939e9195\"\n  },\n  \"broadcast\":{\n    \"omit_users\": null,\n    \"user_id\": \"ay5sq51sebfh58ktrce5ijtcwy\",\n    \"channel_id\": \"\",\n    \"team_id\": \"\"\n  }\n}\n```\n\nThe `event` field indicates the event type, `data` contains any data relevant to the event and `broadcast` contains information about who the event was sent to. For example, the above example has `user_id` set to \"ay5sq51sebfh58ktrce5ijtcwy\" meaning that only the user with that ID received this event broadcast. The `omit_users` field can contain an array of user IDs that were specifically omitted from receiving the event.\n\nThe list of Mattermost WebSocket events are:\n- added_to_team\n- authentication_challenge\n- channel_converted\n- channel_created\n- channel_deleted\n- channel_member_updated\n- channel_updated\n- channel_viewed\n- config_changed\n- delete_team\n- direct_added\n- emoji_added\n- ephemeral_message\n- group_added\n- hello\n- leave_team\n- license_changed\n- memberrole_updated\n- new_user\n- plugin_disabled\n- plugin_enabled\n- plugin_statuses_changed\n- post_deleted\n- post_edited\n- posted\n- preference_changed\n- preferences_changed\n- preferences_deleted\n- reaction_added\n- reaction_removed\n- response\n- role_updated\n- status_change\n- typing\n- update_team\n- user_added\n- user_removed\n- user_role_updated\n- user_updated\n- dialog_opened\n\n\nMattermost has some basic support for WebSocket APIs. A connected WebSocket can make requests by sending the following over the connection:\n\n```\n{\n  \"action\": \"user_typing\",\n  \"seq\": 2,\n  \"data\": {\n    \"channel_id\": \"nhze199c4j87ped4wannrjdt9c\",\n    \"parent_id\": \"\"\n  }\n}\n```\n\nThis is an example of making a `user_typing` request, with the purpose of alerting the server that the connected client has begun typing in a channel or thread. The `action` field indicates what is being requested, and performs a similar duty as the route in a HTTP API.\n\nThe `seq` or sequence number is set by the client and should be incremented with every use. It is used to distinguish responses to requests that come down the WebSocket. For example, a standard response to the above request would be:\n\n```\n{\n  \"status\": \"OK\",\n  \"seq_reply\": 2\n}\n```\n\nNotice `seq_reply` is 2, matching the `seq` of the original request. Using this a client can distinguish which request the response is meant for.\n\nIf there was any information to respond with, it would be encapsulated in a `data` field.\n\nIn the case of an error, the response would be:\n\n```\n{\n  \"status\": \"FAIL\",\n  \"seq_reply\": 2,\n  \"error\": {\n    \"id\": \"some.error.id.here\",\n    \"message\": \"Some error message here\"\n  }\n}\n```\n\nThe list of WebSocket API actions is:\n- user_typing\n- get_statuses\n- get_statuses_by_ids\n\nTo see how these actions work, please refer to either the [Golang WebSocket driver](https://github.com/mattermost/mattermost-server/blob/master/model/websocket_client.go) or our [JavaScript WebSocket driver](https://github.com/mattermost/mattermost-redux/blob/master/src/client/websocket_client.js).\n"
+    },
+    {
+      "name": "APIv3 Deprecation",
+      "description": "Since Mattermost 4.6 released on January 16, 2018, API v3 has no longer been supported and it will be removed in Mattermost Server v5.0 on June 16, 2018. Follow these simple steps to migrate your integrations and apps to API v4. Otherwise your integrations may break once you upgrade to Mattermost 5.0\n\n1. Set your server's log level to `DEBUG` in **System Console > General > Logging > File Log Level** to print detailed logs for API requests.\n2. In **System Console > Logs**, search for requests hitting `/api/v3/` endpoints. Any requests hitting these endpoints are from integrations that should be migrated to API v4.\n  - For in-house or self-built integrations, update them to use v4 with the help of [this API reference](https://api.mattermost.com). Most v3 endpoints have direct counterparts in v4 and should be migrated easily.\n  - For third-party integrations, visit their homepage (on GitHub, GitLab, etc.). Check if they already have a version that uses the Mattermost v4 API. If they do not, consider opening an issue asking them if support is planned.\n3. Once all integrations have been migrated to API v4, review the server logs with log level set to `DEBUG`. Confirm no requests hit `/api/v3/` endpoints.\n4. Set **Allow use of API v3 endpoints** to `false` in **System Console > General > Configuration**, or set `EnableAPIv3` to `false` in `config.json`. This setting disables API v3 on your server. Any time a v3 endpoint is used, an error is logged in **System Console > Logs**.\n5. Set your server's log level back to `ERROR`. Use the error logs to help track down any remaining uses of API v3.\n\nBelow are the major changes made between v3 and v4:\n\n1. Endpoint URLs only require team IDs when necessary. For example, getting a channel by ID no longer requires a team ID in v4.\n2. Collection endpoints now generally return lists and include paging as part of the query string.\n3. User ID is now included in most user endpoints. This allows admins to modify other users through v4 endpoints.\n\nIf you have any questions about the API v3 deprecation, or about migrating from v3 to v4, [join our daily build server at pre-release.mattermost.com](https://pre-release.mattermost.com/signup_user_complete/?id=f1924a8db44ff3bb41c96424cdc20676) and ask questions in the [APIv4 channel](https://pre-release.mattermost.com/core/channels/apiv4).\n"
+    },
+    {
+      "name": "users",
+      "description": "Endpoints for creating, getting and interacting with users.\n\nWhen using endpoints that require a user id, the string `me` can be used in place of the user id to indicate the action is to be taken for the logged in user.\n"
+    },
+    {
+      "name": "teams",
+      "description": "Endpoints for creating, getting and interacting with teams."
+    },
+    {
+      "name": "channels",
+      "description": "Endpoints for creating, getting and interacting with channels."
+    },
+    {
+      "name": "posts",
+      "description": "Endpoints for creating, getting and interacting with posts."
+    },
+    {
+      "name": "files",
+      "description": "Endpoints for uploading and interacting with files."
+    },
+    {
+      "name": "preferences",
+      "description": "Endpoints for saving and modifying user preferences."
+    },
+    {
+      "name": "status",
+      "description": "Endpoints for getting and updating user statuses."
+    },
+    {
+      "name": "emoji",
+      "description": "Endpoints for creating, getting and interacting with emojis."
+    },
+    {
+      "name": "reactions",
+      "description": "Endpoints for creating, getting and removing emoji reactions."
+    },
+    {
+      "name": "webhooks",
+      "description": "Endpoints for creating, getting and updating webhooks."
+    },
+    {
+      "name": "commands",
+      "description": "Endpoints for creating, getting and updating slash commands."
+    },
+    {
+      "name": "OpenGraph",
+      "description": "Endpoint for getting Open Graph metadata."
+    },
+    {
+      "name": "system",
+      "description": "General endpoints for interating with the server, such as configuration and logging."
+    },
+    {
+      "name": "brand",
+      "description": "Endpoints related to custom branding and white-labeling. See [our branding documentation](https://docs.mattermost.com/administration/branding.html) for more information."
+    },
+    {
+      "name": "OAuth",
+      "description": "Endpoints for configuring and interacting with Mattermost as an OAuth 2.0 service provider."
+    },
+    {
+      "name": "SAML",
+      "description": "Endpoints for configuring and interacting with SAML."
+    },
+    {
+      "name": "LDAP",
+      "description": "Endpoints for configuring and interacting with LDAP."
+    },
+    {
+      "name": "groups",
+      "description": "Endpoints related to LDAP groups."
+    },
+    {
+      "name": "compliance",
+      "description": "Endpoints for creating, getting and downloading compliance reports."
+    },
+    {
+      "name": "cluster",
+      "description": "Endpoints for configuring and interacting with high availability clusters."
+    },
+    {
+      "name": "elasticsearch",
+      "description": "Endpoints for configuring and interacting with Elasticsearch."
+    },
+    {
+      "name": "dataretention",
+      "description": "Endpoint for getting data retention policy settings."
+    },
+    {
+      "name": "jobs",
+      "description": "Endpoints related to various background jobs that can be run by the server or separately by job servers."
+    },
+    {
+      "name": "plugins",
+      "description": "Endpoints related to uploading and managing plugins."
+    },
+    {
+      "name": "roles",
+      "description": "Endpoints for creating, getting and updating roles."
+    },
+    {
+      "name": "schemes",
+      "description": "Endpoints for creating, getting and updating and deleting schemes."
+    },
+    {
+      "name": "integration_actions",
+      "description": "Endpoints for interactive actions for use by integrations."
+    },
+    {
+      "name": "terms of service",
+      "description": "Endpoints for getting and updating custom terms of service."
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "Introduction",
+      "tags": [
+        "introduction",
+        "schema",
+        "APIv3 Deprecation"
+      ]
+    },
+    {
+      "name": "Standard Features",
+      "tags": [
+        "drivers",
+        "authentication",
+        "errors",
+        "rate limiting",
+        "WebSocket"
+      ]
+    },
+    {
+      "name": "Endpoints",
+      "tags": [
+        "users",
+        "teams",
+        "channels",
+        "posts",
+        "files",
+        "preferences",
+        "status",
+        "emoji",
+        "reactions",
+        "webhooks",
+        "commands",
+        "OpenGraph",
+        "system",
+        "brand",
+        "OAuth",
+        "SAML",
+        "LDAP",
+        "groups",
+        "compliance",
+        "cluster",
+        "elasticsearch",
+        "dataretention",
+        "jobs",
+        "plugins",
+        "roles",
+        "schemes",
+        "integration_actions",
+        "terms of service"
+      ]
+    }
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "responses": {
+    "Forbidden": {
+      "description": "Do not have appropriate permissions",
+      "schema": {
+        "$ref": "#/definitions/AppError"
+      }
+    },
+    "Unauthorized": {
+      "description": "No access token provided",
+      "schema": {
+        "$ref": "#/definitions/AppError"
+      }
+    },
+    "BadRequest": {
+      "description": "Invalid or missing parameters in URL or request body",
+      "schema": {
+        "$ref": "#/definitions/AppError"
+      }
+    },
+    "NotFound": {
+      "description": "Resource not found",
+      "schema": {
+        "$ref": "#/definitions/AppError"
+      }
+    },
+    "TooLarge": {
+      "description": "Content too large",
+      "schema": {
+        "$ref": "#/definitions/AppError"
+      }
+    },
+    "NotImplemented": {
+      "description": "Feature is disabled",
+      "schema": {
+        "$ref": "#/definitions/AppError"
+      }
+    },
+    "InternalServerError": {
+      "description": "Something went wrong with the server",
+      "schema": {
+        "$ref": "#/definitions/AppError"
+      }
+    }
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Create a user",
+        "description": "Create a new user on the system. Password is required for email login. For other authentication types such as LDAP or SAML, auth_data and auth_service fields are required.\nNo permission required but user creation can be controlled by server configuration.\n",
+        "parameters": [
+          {
+            "name": "t",
+            "in": "query",
+            "description": "Token id from an email invitation",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "iid",
+            "in": "query",
+            "description": "Token id from an invitation link",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User object to be created",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "username"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "username": {
+                  "type": "string"
+                },
+                "first_name": {
+                  "type": "string"
+                },
+                "last_name": {
+                  "type": "string"
+                },
+                "nickname": {
+                  "type": "string"
+                },
+                "auth_data": {
+                  "description": "Service-specific authentication data, such as email address.",
+                  "type": "string"
+                },
+                "auth_service": {
+                  "description": "The authentication service, one of \"email\", \"gitlab\", \"ldap\", \"saml\", \"office365\", \"google\", and \"\".",
+                  "type": "string"
+                },
+                "password": {
+                  "description": "The password used for email authentication.",
+                  "type": "string"
+                },
+                "locale": {
+                  "type": "string"
+                },
+                "props": {
+                  "type": "object"
+                },
+                "notify_props": {
+                  "$ref": "#/definitions/UserNotifyProps"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User creation successful",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Go",
+            "source": "import \"github.com/mattermost/mattermost-server/model\"\n\nClient := model.NewAPIv4Client(\"https://your-mattermost-url.com\")\n\nuser := &model.User{\n    Username: \"username\",\n    Email: \"email@domain.com\",\n    Password: \"Password1\",\n}\n\ncreatedUser, response := Client.CreateUser(user)\n"
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get users",
+        "description": "Get a page of a list of users. Based on query string parameters, select users from a team, channel, or select users not in a specific channel.\n\nSince server version 4.0, some basic sorting is available using the `sort` query parameter. Sorting is currently only supported when selecting users on a team.\nRequires an active session and (if specified) membership to the channel or team being selected from.\n",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "The page to select.",
+            "default": "0",
+            "type": "string"
+          },
+          {
+            "name": "per_page",
+            "in": "query",
+            "description": "The number of users per page. There is a maximum limit of 200 users per page.",
+            "default": "60",
+            "type": "string"
+          },
+          {
+            "name": "in_team",
+            "in": "query",
+            "description": "The ID of the team to get users for.",
+            "type": "string"
+          },
+          {
+            "name": "not_in_team",
+            "in": "query",
+            "description": "The ID of the team to exclude users for. Must not be used with \"in_team\" query parameter.",
+            "type": "string"
+          },
+          {
+            "name": "in_channel",
+            "in": "query",
+            "description": "The ID of the channel to get users for.",
+            "type": "string"
+          },
+          {
+            "name": "not_in_channel",
+            "in": "query",
+            "description": "The ID of the channel to exclude users for. Must be used with \"in_channel\" query parameter.",
+            "type": "string"
+          },
+          {
+            "name": "without_team",
+            "in": "query",
+            "description": "Whether or not to list users that are not on any team. This option takes precendence over `in_team`, `in_channel`, and `not_in_channel`.",
+            "type": "boolean"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sort is only available in conjunction with certain options below. The paging parameter is also always available.\n\nCan be \"\", \"last_activity_at\" or \"create_at\".\nWhen left blank, sorting is done by username.\n__Minimum server version__: 4.0\nCan be \"\", \"status\".\nWhen left blank, sorting is done by username. `status` will sort by User's current status (Online, Away, DND, Offline), then by Username.\n__Minimum server version__: 4.7\n",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User page retrieval successful",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/responses/Forbidden"
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Go",
+            "source": "import \"github.com/mattermost/mattermost-server/model\"\n\nClient := model.NewAPIv4Client(\"https://your-mattermost-url.com\")\nClient.Login(\"email@domain.com\", \"Password1\")\n\n\n// page, perPage, etag\nusers := Client.GetUsers(0, 60, \"\")\nusers = Client.GetUsersInChannel(\"channelid\", 0, 60, \"\")\nusers = Client.GetUsersNotInChannel(\"teamid\", \"channelid\", 0, 60, \"\")\nusers = Client.GetUsersInTeam(\"teamid\", 0, 60, \"\")\nusers = Client.GetUsersNotInTeam(\"teamid\", 0, 60, \"\")\nusers = Client.GetUsersWithoutTeam(0, 60, \"\")\n"
+          }
+        ]
+      }
+    },
+    "/users/ids": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get users by ids",
+        "description": "Get a list of users based on a provided list of user ids.\nRequires an active session but no other permissions.\n",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "List of user ids",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User list retrieval successful",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/users/usernames": {
+      "post": {
+        "tags": [
+          "users"
+        ],
+        "summary": "Get users by usernames",
+        "description": "Get a list of users based on a provided list of usernames.\nRequires an active session but no other permissions.\n",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "List of usernames",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User list retrieval successful",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/responses/Unauthorized"
+          }
+        },
+        "x-code-samples": [
+          {
+            "lang": "Go",
+            "source": "import \"github.com/mattermost/mattermost-server/model\"\n\nClient := model.NewAPIv4Client(\"https://your-mattermost-url.com\")\nClient.Login(\"email@domain.com\", \"Password1\")\n\nusers, resp := Client.GetUsersByUsernames([]string{\"username1\", \"username2\"})\n"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds a user was created",
+          "type": "integer",
+          "format": "int64"
+        },
+        "update_at": {
+          "description": "The time in milliseconds a user was last updated",
+          "type": "integer",
+          "format": "int64"
+        },
+        "delete_at": {
+          "description": "The time in milliseconds a user was deleted",
+          "type": "integer",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "nickname": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "email_verified": {
+          "type": "boolean"
+        },
+        "auth_service": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "notify_props": {
+          "description": "Field only visible to self and admins",
+          "$ref": "#/definitions/UserNotifyProps"
+        },
+        "props": {
+          "type": "object"
+        },
+        "last_password_update": {
+          "type": "integer"
+        },
+        "last_picture_update": {
+          "type": "integer"
+        },
+        "failed_attempts": {
+          "type": "integer"
+        },
+        "mfa_active": {
+          "type": "boolean"
+        },
+        "timezone": {
+          "$ref": "#/definitions/Timezone"
+        },
+        "terms_of_service_id": {
+          "description": "ID of accepted terms of service, if any. This field is not present if empty.",
+          "type": "string"
+        },
+        "terms_of_service_create_at": {
+          "description": "The time in milliseconds the user accepted the terms of service",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "UsersStats": {
+      "type": "object",
+      "properties": {
+        "total_users_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "Team": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds a team was created",
+          "type": "integer",
+          "format": "int64"
+        },
+        "update_at": {
+          "description": "The time in milliseconds a team was last updated",
+          "type": "integer",
+          "format": "int64"
+        },
+        "delete_at": {
+          "description": "The time in milliseconds a team was deleted",
+          "type": "integer",
+          "format": "int64"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "allowed_domains": {
+          "type": "string"
+        },
+        "invite_id": {
+          "type": "string"
+        },
+        "allow_open_invite": {
+          "type": "boolean"
+        }
+      }
+    },
+    "TeamStats": {
+      "type": "object",
+      "properties": {
+        "team_id": {
+          "type": "string"
+        },
+        "total_member_count": {
+          "type": "integer"
+        },
+        "active_member_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "TeamExists": {
+      "type": "object",
+      "properties": {
+        "exists": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Channel": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds a channel was created",
+          "type": "integer",
+          "format": "int64"
+        },
+        "update_at": {
+          "description": "The time in milliseconds a channel was last updated",
+          "type": "integer",
+          "format": "int64"
+        },
+        "delete_at": {
+          "description": "The time in milliseconds a channel was deleted",
+          "type": "integer",
+          "format": "int64"
+        },
+        "team_id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "header": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "last_post_at": {
+          "description": "The time in milliseconds of the last post of a channel",
+          "type": "integer"
+        },
+        "total_msg_count": {
+          "type": "integer"
+        },
+        "extra_update_at": {
+          "description": "Deprecated in Mattermost 5.0 release",
+          "type": "integer",
+          "format": "int64"
+        },
+        "creator_id": {
+          "type": "string"
+        }
+      }
+    },
+    "ChannelStats": {
+      "type": "object",
+      "properties": {
+        "channel_id": {
+          "type": "string"
+        },
+        "member_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "ChannelMember": {
+      "type": "object",
+      "properties": {
+        "channel_id": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "string"
+        },
+        "last_viewed_at": {
+          "description": "The time in milliseconds the channel was last viewed by the user",
+          "type": "integer",
+          "format": "int64"
+        },
+        "msg_count": {
+          "type": "integer"
+        },
+        "mention_count": {
+          "type": "integer"
+        },
+        "notify_props": {
+          "description": "Field only visible to self and admins",
+          "$ref": "#/definitions/ChannelNotifyProps"
+        },
+        "last_update_at": {
+          "description": "The time in milliseconds the channel member was last updated",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "ChannelData": {
+      "type": "object",
+      "properties": {
+        "channel": {
+          "$ref": "#/definitions/Channel"
+        },
+        "member": {
+          "$ref": "#/definitions/ChannelMember"
+        }
+      }
+    },
+    "Post": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds a post was created",
+          "type": "integer",
+          "format": "int64"
+        },
+        "update_at": {
+          "description": "The time in milliseconds a post was last updated",
+          "type": "integer",
+          "format": "int64"
+        },
+        "delete_at": {
+          "description": "The time in milliseconds a post was deleted",
+          "type": "integer",
+          "format": "int64"
+        },
+        "edit_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "channel_id": {
+          "type": "string"
+        },
+        "root_id": {
+          "type": "string"
+        },
+        "parent_id": {
+          "type": "string"
+        },
+        "original_id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "props": {
+          "type": "object"
+        },
+        "hashtag": {
+          "type": "string"
+        },
+        "filenames": {
+          "description": "This field will only appear on some posts created before Mattermost 3.5 and has since been deprecated.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "file_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "pending_post_id": {
+          "type": "string"
+        },
+        "metadata": {
+          "description": "Additional information used to display the post. This field is only used to send information from the server\nto the client, and the server will ignore it if it receives it from a client.\n\nThis field will only be returned by servers running Mattermost 5.6 or higher with the experimental\nEnablePostMetadata setting enabled.\n",
+          "$ref": "#/definitions/PostMetadata"
+        }
+      }
+    },
+    "PostList": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "post_id1",
+            "post_id12"
+          ]
+        },
+        "posts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Post"
+          }
+        }
+      }
+    },
+    "PostListWithSearchMatches": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "example": [
+            "post_id1",
+            "post_id12"
+          ]
+        },
+        "posts": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Post"
+          }
+        },
+        "matches": {
+          "description": "A mapping of post IDs to a list of matched terms within the post. This field will only be populated on servers running version 5.1 or greater with Elasticsearch enabled.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "example": {
+            "post_id1": [
+              "search match 1",
+              "search match 2"
+            ]
+          }
+        }
+      }
+    },
+    "PostMetadata": {
+      "type": "object",
+      "description": "Additional information used to display a post.",
+      "properties": {
+        "embeds": {
+          "type": "array",
+          "description": "Information about content embedded in the post including OpenGraph previews, image link previews, and\nmessage attachments. This field will be null if the post does not contain embedded content.\n",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The type of content that is embedded in this point.",
+                "enum": [
+                  "image",
+                  "message_attachment",
+                  "opengraph"
+                ]
+              },
+              "url": {
+                "type": "string",
+                "description": "The URL of the embedded content, if one exists."
+              },
+              "data": {
+                "type": "object",
+                "description": "Any additional information about the embedded content. Only used at this time to store OpenGraph metadata.\nThis field will be null for non-OpenGraph embeds.\n"
+              }
+            }
+          }
+        },
+        "emojis": {
+          "type": "array",
+          "description": "The custom emojis that appear in this point or have been used in reactions to this post. This field will be\nnull if the post does not contain custom emojis.\n",
+          "items": {
+            "$ref": "#/definitions/Emoji"
+          }
+        },
+        "files": {
+          "type": "array",
+          "description": "The FileInfo objects for any files attached to the post. This field will be null if the post does not have\nany file attachments.\n",
+          "items": {
+            "$ref": "#/definitions/FileInfo"
+          }
+        },
+        "images": {
+          "type": "object",
+          "description": "An object mapping the URL of an external image to an object containing the dimensions of that image. This\nfield will be null if the post or its embedded content does not reference any external images.\n",
+          "items": {
+            "type": "object",
+            "properties": {
+              "height": {
+                "type": "integer"
+              },
+              "width": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "reactions": {
+          "type": "array",
+          "description": "Any reactions made to this point. This field will be null if no reactions have been made to this post.\n",
+          "items": {
+            "$ref": "#/definitions/Reaction"
+          }
+        }
+      }
+    },
+    "TeamMap": {
+      "type": "object",
+      "description": "A mapping of teamIds to teams.",
+      "properties": {
+        "team_id": {
+          "$ref": "#/definitions/Team"
+        }
+      }
+    },
+    "TeamMember": {
+      "type": "object",
+      "properties": {
+        "team_id": {
+          "description": "The ID of the team this member belongs to.",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "The ID of the user this member relates to.",
+          "type": "string"
+        },
+        "roles": {
+          "description": "The complete list of roles assigned to this team member, as a space-separated list of role names, including any roles granted implicitly through permissions schemes.",
+          "type": "string"
+        },
+        "delete_at": {
+          "description": "The time in milliseconds that this team member was deleted.",
+          "type": "integer"
+        },
+        "scheme_user": {
+          "description": "Whether this team member holds the default user role defined by the team's permissions scheme.",
+          "type": "boolean"
+        },
+        "scheme_admin": {
+          "description": "Whether this team member holds the default admin role defined by the team's permissions scheme.",
+          "type": "boolean"
+        },
+        "explicit_roles": {
+          "description": "The list of roles explicitly assigned to this team member, as a space separated list of role names. This list does *not* include any roles granted implicitly through permissions schemes.",
+          "type": "string"
+        }
+      }
+    },
+    "TeamUnread": {
+      "type": "object",
+      "properties": {
+        "team_id": {
+          "type": "string"
+        },
+        "msg_count": {
+          "type": "integer"
+        },
+        "mention_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "ChannelUnread": {
+      "type": "object",
+      "properties": {
+        "team_id": {
+          "type": "string"
+        },
+        "channel_id": {
+          "type": "string"
+        },
+        "msg_count": {
+          "type": "integer"
+        },
+        "mention_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "Session": {
+      "type": "object",
+      "properties": {
+        "create_at": {
+          "description": "The time in milliseconds a session was created",
+          "type": "integer",
+          "format": "int64"
+        },
+        "device_id": {
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "The time in milliseconds a session will expire",
+          "type": "integer",
+          "format": "int64"
+        },
+        "id": {
+          "type": "string"
+        },
+        "is_oauth": {
+          "type": "boolean"
+        },
+        "last_activity_at": {
+          "description": "The time in milliseconds of the last activity of a session",
+          "type": "integer",
+          "format": "int64"
+        },
+        "props": {
+          "type": "object"
+        },
+        "roles": {
+          "type": "string"
+        },
+        "team_members": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TeamMember"
+          }
+        },
+        "token": {
+          "type": "string"
+        },
+        "user_id": {
+          "type": "string"
+        }
+      }
+    },
+    "FileInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The unique identifier for this file",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "The ID of the user that uploaded this file",
+          "type": "string"
+        },
+        "post_id": {
+          "description": "If this file is attached to a post, the ID of that post",
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds a file was created",
+          "type": "integer",
+          "format": "int64"
+        },
+        "update_at": {
+          "description": "The time in milliseconds a file was last updated",
+          "type": "integer",
+          "format": "int64"
+        },
+        "delete_at": {
+          "description": "The time in milliseconds a file was deleted",
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "description": "The name of the file",
+          "type": "string"
+        },
+        "extension": {
+          "description": "The extension at the end of the file name",
+          "type": "string"
+        },
+        "size": {
+          "description": "The size of the file in bytes",
+          "type": "integer"
+        },
+        "mime_type": {
+          "description": "The MIME type of the file",
+          "type": "string"
+        },
+        "width": {
+          "description": "If this file is an image, the width of the file",
+          "type": "integer"
+        },
+        "height": {
+          "description": "If this file is an image, the height of the file",
+          "type": "integer"
+        },
+        "has_preview_image": {
+          "description": "If this file is an image, whether or not it has a preview-sized version",
+          "type": "boolean"
+        }
+      }
+    },
+    "Preference": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "description": "The ID of the user that owns this preference",
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "UserAuthData": {
+      "type": "object",
+      "properties": {
+        "auth_data": {
+          "description": "Service-specific authentication data",
+          "type": "string"
+        },
+        "auth_service": {
+          "description": "The authentication service such as \"email\", \"gitlab\", or \"ldap\"",
+          "type": "string"
+        },
+        "password": {
+          "description": "The password used for email authentication",
+          "type": "string"
+        }
+      }
+    },
+    "UserAutocomplete": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "description": "A list of users that are the main result of the query",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "out_of_channel": {
+          "description": "A special case list of users returned when autocompleting in a specific channel. Omitted when empty or not relevant",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      }
+    },
+    "UserAutocompleteInTeam": {
+      "type": "object",
+      "properties": {
+        "in_team": {
+          "description": "A list of user objects in the team",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      }
+    },
+    "UserAutocompleteInChannel": {
+      "type": "object",
+      "properties": {
+        "in_channel": {
+          "description": "A list of user objects in the channel",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        },
+        "out_of_channel": {
+          "description": "A list of user objects not in the channel",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      }
+    },
+    "IncomingWebhook": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The unique identifier for this incoming webhook",
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds a incoming webhook was created",
+          "type": "integer",
+          "format": "int64"
+        },
+        "update_at": {
+          "description": "The time in milliseconds a incoming webhook was last updated",
+          "type": "integer",
+          "format": "int64"
+        },
+        "delete_at": {
+          "description": "The time in milliseconds a incoming webhook was deleted",
+          "type": "integer",
+          "format": "int64"
+        },
+        "channel_id": {
+          "description": "The ID of a public channel or private group that receives the webhook payloads",
+          "type": "string"
+        },
+        "description": {
+          "description": "The description for this incoming webhook",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "The display name for this incoming webhook",
+          "type": "string"
+        }
+      }
+    },
+    "OutgoingWebhook": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The unique identifier for this outgoing webhook",
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds a outgoing webhook was created",
+          "type": "integer",
+          "format": "int64"
+        },
+        "update_at": {
+          "description": "The time in milliseconds a outgoing webhook was last updated",
+          "type": "integer",
+          "format": "int64"
+        },
+        "delete_at": {
+          "description": "The time in milliseconds a outgoing webhook was deleted",
+          "type": "integer",
+          "format": "int64"
+        },
+        "creator_id": {
+          "description": "The Id of the user who created the webhook",
+          "type": "string"
+        },
+        "team_id": {
+          "description": "The ID of the team that the webhook watchs",
+          "type": "string"
+        },
+        "channel_id": {
+          "description": "The ID of a public channel that the webhook watchs",
+          "type": "string"
+        },
+        "description": {
+          "description": "The description for this outgoing webhook",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "The display name for this outgoing webhook",
+          "type": "string"
+        },
+        "trigger_words": {
+          "description": "List of words for the webhook to trigger on",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "trigger_when": {
+          "description": "When to trigger the webhook, `0` when a trigger word is present at all and `1` if the message starts with a trigger word",
+          "type": "integer"
+        },
+        "callback_urls": {
+          "description": "The URLs to POST the payloads to when the webhook is triggered",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "content_type": {
+          "description": "The format to POST the data in, either `application/json` or `application/x-www-form-urlencoded`",
+          "default": "application/x-www-form-urlencoded",
+          "type": "string"
+        }
+      }
+    },
+    "Reaction": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "description": "The ID of the user that made this reaction",
+          "type": "string"
+        },
+        "post_id": {
+          "description": "The ID of the post to which this reaction was made",
+          "type": "string"
+        },
+        "emoji_name": {
+          "description": "The name of the emoji that was used for this reaction",
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds this reaction was made",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "Emoji": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The ID of the emoji",
+          "type": "string"
+        },
+        "creator_id": {
+          "description": "The ID of the user that made the emoji",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the emoji",
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds the emoji was made",
+          "type": "integer",
+          "format": "int64"
+        },
+        "update_at": {
+          "description": "The time in milliseconds the emoji was last updated",
+          "type": "integer",
+          "format": "int64"
+        },
+        "delete_at": {
+          "description": "The time in milliseconds the emoji was deleted",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "Command": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The ID of the slash command",
+          "type": "string"
+        },
+        "token": {
+          "description": "The token which is used to verify the source of the payload",
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds the command was created",
+          "type": "integer"
+        },
+        "update_at": {
+          "description": "The time in milliseconds the command was last updated",
+          "type": "integer",
+          "format": "int64"
+        },
+        "deleted_at": {
+          "description": "The time in milliseconds the command was deleted, 0 if never deleted",
+          "type": "integer",
+          "format": "int64"
+        },
+        "creator_id": {
+          "description": "The user id for the commands creator",
+          "type": "string"
+        },
+        "team_id": {
+          "description": "The team id for which this command is configured",
+          "type": "string"
+        },
+        "trigger": {
+          "description": "The string that triggers this command",
+          "type": "string"
+        },
+        "method": {
+          "description": "Is the trigger done with HTTP Get ('G') or HTTP Post ('P')",
+          "type": "string"
+        },
+        "username": {
+          "description": "What is the username for the response post",
+          "type": "string"
+        },
+        "icon_url": {
+          "description": "The url to find the icon for this users avatar",
+          "type": "string"
+        },
+        "auto_complete": {
+          "description": "Use auto complete for this command",
+          "type": "boolean"
+        },
+        "auto_complete_desc": {
+          "description": "The description for this command shown when selecting the command",
+          "type": "string"
+        },
+        "auto_complete_hint": {
+          "description": "The hint for this command",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "Display name for the command",
+          "type": "string"
+        },
+        "description": {
+          "description": "Description for this command",
+          "type": "string"
+        },
+        "url": {
+          "description": "The URL that is triggered",
+          "type": "string"
+        }
+      }
+    },
+    "CommandResponse": {
+      "type": "object",
+      "properties": {
+        "ResponseType": {
+          "description": "The response type either in_channel or ephemeral",
+          "type": "string"
+        },
+        "Text": {
+          "type": "string"
+        },
+        "Username": {
+          "type": "string"
+        },
+        "IconURL": {
+          "type": "string"
+        },
+        "GotoLocation": {
+          "type": "string"
+        },
+        "Attachments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SlackAttachment"
+          }
+        }
+      }
+    },
+    "SlackAttachment": {
+      "type": "object",
+      "properties": {
+        "Id": {
+          "type": "string"
+        },
+        "Fallback": {
+          "type": "string"
+        },
+        "Color": {
+          "type": "string"
+        },
+        "Pretext": {
+          "type": "string"
+        },
+        "AuthorName": {
+          "type": "string"
+        },
+        "AuthorLink": {
+          "type": "string"
+        },
+        "AuthorIcon": {
+          "type": "string"
+        },
+        "Title": {
+          "type": "string"
+        },
+        "TitleLink": {
+          "type": "string"
+        },
+        "Text": {
+          "type": "string"
+        },
+        "Fields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SlackAttachmentField"
+          }
+        },
+        "ImageURL": {
+          "type": "string"
+        },
+        "ThumbURL": {
+          "type": "string"
+        },
+        "Footer": {
+          "type": "string"
+        },
+        "FooterIcon": {
+          "type": "string"
+        },
+        "Timestamp": {
+          "description": "The timestamp of the slack attachment, either type of string or integer",
+          "type": "string"
+        }
+      }
+    },
+    "SlackAttachmentField": {
+      "type": "object",
+      "properties": {
+        "Title": {
+          "type": "string"
+        },
+        "Value": {
+          "description": "The value of the attachment, set as string but capable with golang interface",
+          "type": "string"
+        },
+        "Short": {
+          "type": "boolean"
+        }
+      }
+    },
+    "StatusOK": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "description": "Will contain \"ok\" if the request was successful and there was nothing else to return",
+          "type": "string"
+        }
+      }
+    },
+    "OpenGraph": {
+      "type": "object",
+      "description": "OpenGraph metadata of a webpage",
+      "properties": {
+        "type": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "determiner": {
+          "type": "string"
+        },
+        "site_name": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "locales_alternate": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "Image object used in OpenGraph metadata of a webpage",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "secure_url": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "width": {
+                "type": "integer"
+              },
+              "height": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "videos": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "Video object used in OpenGraph metadata of a webpage",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "secure_url": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "width": {
+                "type": "integer"
+              },
+              "height": {
+                "type": "integer"
+              }
+            }
+          }
+        },
+        "audios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "description": "Audio object used in OpenGraph metadata of a webpage",
+            "properties": {
+              "url": {
+                "type": "string"
+              },
+              "secure_url": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "article": {
+          "type": "object",
+          "description": "Article object used in OpenGraph metadata of a webpage, if type is article",
+          "properties": {
+            "published_time": {
+              "type": "string"
+            },
+            "modified_time": {
+              "type": "string"
+            },
+            "expiration_time": {
+              "type": "string"
+            },
+            "section": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "authors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "book": {
+          "type": "object",
+          "description": "Book object used in OpenGraph metadata of a webpage, if type is book",
+          "properties": {
+            "isbn": {
+              "type": "string"
+            },
+            "release_date": {
+              "type": "string"
+            },
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "authors": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "first_name": {
+                    "type": "string"
+                  },
+                  "last_name": {
+                    "type": "string"
+                  },
+                  "username": {
+                    "type": "string"
+                  },
+                  "gender": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "profile": {
+          "type": "object",
+          "properties": {
+            "first_name": {
+              "type": "string"
+            },
+            "last_name": {
+              "type": "string"
+            },
+            "username": {
+              "type": "string"
+            },
+            "gender": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "Audit": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "create_at": {
+          "description": "The time in milliseconds a audit was created",
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "extra_info": {
+          "type": "string"
+        },
+        "ip_address": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": "string"
+        }
+      }
+    },
+    "Config": {
+      "type": "object",
+      "properties": {
+        "ServiceSettings": {
+          "type": "object",
+          "properties": {
+            "SiteURL": {
+              "type": "string"
+            },
+            "ListenAddress": {
+              "type": "string"
+            },
+            "ConnectionSecurity": {
+              "type": "string"
+            },
+            "TLSCertFile": {
+              "type": "string"
+            },
+            "TLSKeyFile": {
+              "type": "string"
+            },
+            "UseLetsEncrypt": {
+              "type": "boolean"
+            },
+            "LetsEncryptCertificateCacheFile": {
+              "type": "string"
+            },
+            "Forward80To443": {
+              "type": "boolean"
+            },
+            "ReadTimeout": {
+              "type": "integer"
+            },
+            "WriteTimeout": {
+              "type": "integer"
+            },
+            "MaximumLoginAttempts": {
+              "type": "integer"
+            },
+            "SegmentDeveloperKey": {
+              "type": "string"
+            },
+            "GoogleDeveloperKey": {
+              "type": "string"
+            },
+            "EnableOAuthServiceProvider": {
+              "type": "boolean"
+            },
+            "EnableIncomingWebhooks": {
+              "type": "boolean"
+            },
+            "EnableOutgoingWebhooks": {
+              "type": "boolean"
+            },
+            "EnableCommands": {
+              "type": "boolean"
+            },
+            "EnableOnlyAdminIntegrations": {
+              "type": "boolean"
+            },
+            "EnablePostUsernameOverride": {
+              "type": "boolean"
+            },
+            "EnablePostIconOverride": {
+              "type": "boolean"
+            },
+            "EnableTesting": {
+              "type": "boolean"
+            },
+            "EnableDeveloper": {
+              "type": "boolean"
+            },
+            "EnableSecurityFixAlert": {
+              "type": "boolean"
+            },
+            "EnableInsecureOutgoingConnections": {
+              "type": "boolean"
+            },
+            "EnableMultifactorAuthentication": {
+              "type": "boolean"
+            },
+            "EnforceMultifactorAuthentication": {
+              "type": "boolean"
+            },
+            "AllowCorsFrom": {
+              "type": "string"
+            },
+            "SessionLengthWebInDays": {
+              "type": "integer"
+            },
+            "SessionLengthMobileInDays": {
+              "type": "integer"
+            },
+            "SessionLengthSSOInDays": {
+              "type": "integer"
+            },
+            "SessionCacheInMinutes": {
+              "type": "integer"
+            },
+            "WebsocketSecurePort": {
+              "type": "integer"
+            },
+            "WebsocketPort": {
+              "type": "integer"
+            },
+            "WebserverMode": {
+              "type": "string"
+            },
+            "EnableCustomEmoji": {
+              "type": "boolean"
+            },
+            "RestrictCustomEmojiCreation": {
+              "type": "string"
+            }
+          }
+        },
+        "TeamSettings": {
+          "type": "object",
+          "properties": {
+            "SiteName": {
+              "type": "string"
+            },
+            "MaxUsersPerTeam": {
+              "type": "integer"
+            },
+            "EnableTeamCreation": {
+              "type": "boolean"
+            },
+            "EnableUserCreation": {
+              "type": "boolean"
+            },
+            "EnableOpenServer": {
+              "type": "boolean"
+            },
+            "RestrictCreationToDomains": {
+              "type": "string"
+            },
+            "EnableCustomBrand": {
+              "type": "boolean"
+            },
+            "CustomBrandText": {
+              "type": "string"
+            },
+            "CustomDescriptionText": {
+              "type": "string"
+            },
+            "RestrictDirectMessage": {
+              "type": "string"
+            },
+            "RestrictTeamInvite": {
+              "type": "string"
+            },
+            "RestrictPublicChannelManagement": {
+              "type": "string"
+            },
+            "RestrictPrivateChannelManagement": {
+              "type": "string"
+            },
+            "RestrictPublicChannelCreation": {
+              "type": "string"
+            },
+            "RestrictPrivateChannelCreation": {
+              "type": "string"
+            },
+            "RestrictPublicChannelDeletion": {
+              "type": "string"
+            },
+            "RestrictPrivateChannelDeletion": {
+              "type": "string"
+            },
+            "UserStatusAwayTimeout": {
+              "type": "integer"
+            },
+            "MaxChannelsPerTeam": {
+              "type": "integer"
+            },
+            "MaxNotificationsPerChannel": {
+              "type": "integer"
+            }
+          }
+        },
+        "SqlSettings": {
+          "type": "object",
+          "properties": {
+            "DriverName": {
+              "type": "string"
+            },
+            "DataSource": {
+              "type": "string"
+            },
+            "DataSourceReplicas": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "MaxIdleConns": {
+              "type": "integer"
+            },
+            "MaxOpenConns": {
+              "type": "integer"
+            },
+            "Trace": {
+              "type": "boolean"
+            },
+            "AtRestEncryptKey": {
+              "type": "string"
+            }
+          }
+        },
+        "LogSettings": {
+          "type": "object",
+          "properties": {
+            "EnableConsole": {
+              "type": "boolean"
+            },
+            "ConsoleLevel": {
+              "type": "string"
+            },
+            "EnableFile": {
+              "type": "boolean"
+            },
+            "FileLevel": {
+              "type": "string"
+            },
+            "FileLocation": {
+              "type": "string"
+            },
+            "EnableWebhookDebugging": {
+              "type": "boolean"
+            },
+            "EnableDiagnostics": {
+              "type": "boolean"
+            }
+          }
+        },
+        "PasswordSettings": {
+          "type": "object",
+          "properties": {
+            "MinimumLength": {
+              "type": "integer"
+            },
+            "Lowercase": {
+              "type": "boolean"
+            },
+            "Number": {
+              "type": "boolean"
+            },
+            "Uppercase": {
+              "type": "boolean"
+            },
+            "Symbol": {
+              "type": "boolean"
+            }
+          }
+        },
+        "FileSettings": {
+          "type": "object",
+          "properties": {
+            "MaxFileSize": {
+              "type": "integer"
+            },
+            "DriverName": {
+              "type": "string"
+            },
+            "Directory": {
+              "type": "string"
+            },
+            "EnablePublicLink": {
+              "type": "boolean"
+            },
+            "PublicLinkSalt": {
+              "type": "string"
+            },
+            "ThumbnailWidth": {
+              "type": "integer"
+            },
+            "ThumbnailHeight": {
+              "type": "integer"
+            },
+            "PreviewWidth": {
+              "type": "integer"
+            },
+            "PreviewHeight": {
+              "type": "integer"
+            },
+            "ProfileWidth": {
+              "type": "integer"
+            },
+            "ProfileHeight": {
+              "type": "integer"
+            },
+            "InitialFont": {
+              "type": "string"
+            },
+            "AmazonS3AccessKeyId": {
+              "type": "string"
+            },
+            "AmazonS3SecretAccessKey": {
+              "type": "string"
+            },
+            "AmazonS3Bucket": {
+              "type": "string"
+            },
+            "AmazonS3Region": {
+              "type": "string"
+            },
+            "AmazonS3Endpoint": {
+              "type": "string"
+            },
+            "AmazonS3SSL": {
+              "type": "boolean"
+            }
+          }
+        },
+        "EmailSettings": {
+          "type": "object",
+          "properties": {
+            "EnableSignUpWithEmail": {
+              "type": "boolean"
+            },
+            "EnableSignInWithEmail": {
+              "type": "boolean"
+            },
+            "EnableSignInWithUsername": {
+              "type": "boolean"
+            },
+            "SendEmailNotifications": {
+              "type": "boolean"
+            },
+            "RequireEmailVerification": {
+              "type": "boolean"
+            },
+            "FeedbackName": {
+              "type": "string"
+            },
+            "FeedbackEmail": {
+              "type": "string"
+            },
+            "FeedbackOrganization": {
+              "type": "string"
+            },
+            "SMTPUsername": {
+              "type": "string"
+            },
+            "SMTPPassword": {
+              "type": "string"
+            },
+            "SMTPServer": {
+              "type": "string"
+            },
+            "SMTPPort": {
+              "type": "string"
+            },
+            "ConnectionSecurity": {
+              "type": "string"
+            },
+            "InviteSalt": {
+              "type": "string"
+            },
+            "PasswordResetSalt": {
+              "type": "string"
+            },
+            "SendPushNotifications": {
+              "type": "boolean"
+            },
+            "PushNotificationServer": {
+              "type": "string"
+            },
+            "PushNotificationContents": {
+              "type": "string"
+            },
+            "EnableEmailBatching": {
+              "type": "boolean"
+            },
+            "EmailBatchingBufferSize": {
+              "type": "integer"
+            },
+            "EmailBatchingInterval": {
+              "type": "integer"
+            }
+          }
+        },
+        "RateLimitSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "PerSec": {
+              "type": "integer"
+            },
+            "MaxBurst": {
+              "type": "integer"
+            },
+            "MemoryStoreSize": {
+              "type": "integer"
+            },
+            "VaryByRemoteAddr": {
+              "type": "boolean"
+            },
+            "VaryByHeader": {
+              "type": "string"
+            }
+          }
+        },
+        "PrivacySettings": {
+          "type": "object",
+          "properties": {
+            "ShowEmailAddress": {
+              "type": "boolean"
+            },
+            "ShowFullName": {
+              "type": "boolean"
+            }
+          }
+        },
+        "SupportSettings": {
+          "type": "object",
+          "properties": {
+            "TermsOfServiceLink": {
+              "type": "string"
+            },
+            "PrivacyPolicyLink": {
+              "type": "string"
+            },
+            "AboutLink": {
+              "type": "string"
+            },
+            "HelpLink": {
+              "type": "string"
+            },
+            "ReportAProblemLink": {
+              "type": "string"
+            },
+            "SupportEmail": {
+              "type": "string"
+            }
+          }
+        },
+        "GitLabSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Secret": {
+              "type": "string"
+            },
+            "Id": {
+              "type": "string"
+            },
+            "Scope": {
+              "type": "string"
+            },
+            "AuthEndpoint": {
+              "type": "string"
+            },
+            "TokenEndpoint": {
+              "type": "string"
+            },
+            "UserApiEndpoint": {
+              "type": "string"
+            }
+          }
+        },
+        "GoogleSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Secret": {
+              "type": "string"
+            },
+            "Id": {
+              "type": "string"
+            },
+            "Scope": {
+              "type": "string"
+            },
+            "AuthEndpoint": {
+              "type": "string"
+            },
+            "TokenEndpoint": {
+              "type": "string"
+            },
+            "UserApiEndpoint": {
+              "type": "string"
+            }
+          }
+        },
+        "Office365Settings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Secret": {
+              "type": "string"
+            },
+            "Id": {
+              "type": "string"
+            },
+            "Scope": {
+              "type": "string"
+            },
+            "AuthEndpoint": {
+              "type": "string"
+            },
+            "TokenEndpoint": {
+              "type": "string"
+            },
+            "UserApiEndpoint": {
+              "type": "string"
+            }
+          }
+        },
+        "LdapSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "LdapServer": {
+              "type": "string"
+            },
+            "LdapPort": {
+              "type": "integer"
+            },
+            "ConnectionSecurity": {
+              "type": "string"
+            },
+            "BaseDN": {
+              "type": "string"
+            },
+            "BindUsername": {
+              "type": "string"
+            },
+            "BindPassword": {
+              "type": "string"
+            },
+            "UserFilter": {
+              "type": "string"
+            },
+            "FirstNameAttribute": {
+              "type": "string"
+            },
+            "LastNameAttribute": {
+              "type": "string"
+            },
+            "EmailAttribute": {
+              "type": "string"
+            },
+            "UsernameAttribute": {
+              "type": "string"
+            },
+            "NicknameAttribute": {
+              "type": "string"
+            },
+            "IdAttribute": {
+              "type": "string"
+            },
+            "PositionAttribute": {
+              "type": "string"
+            },
+            "SyncIntervalMinutes": {
+              "type": "integer"
+            },
+            "SkipCertificateVerification": {
+              "type": "boolean"
+            },
+            "QueryTimeout": {
+              "type": "integer"
+            },
+            "MaxPageSize": {
+              "type": "integer"
+            },
+            "LoginFieldName": {
+              "type": "string"
+            }
+          }
+        },
+        "ComplianceSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Directory": {
+              "type": "string"
+            },
+            "EnableDaily": {
+              "type": "boolean"
+            }
+          }
+        },
+        "LocalizationSettings": {
+          "type": "object",
+          "properties": {
+            "DefaultServerLocale": {
+              "type": "string"
+            },
+            "DefaultClientLocale": {
+              "type": "string"
+            },
+            "AvailableLocales": {
+              "type": "string"
+            }
+          }
+        },
+        "SamlSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Verify": {
+              "type": "boolean"
+            },
+            "Encrypt": {
+              "type": "boolean"
+            },
+            "IdpUrl": {
+              "type": "string"
+            },
+            "IdpDescriptorUrl": {
+              "type": "string"
+            },
+            "AssertionConsumerServiceURL": {
+              "type": "string"
+            },
+            "IdpCertificateFile": {
+              "type": "string"
+            },
+            "PublicCertificateFile": {
+              "type": "string"
+            },
+            "PrivateKeyFile": {
+              "type": "string"
+            },
+            "FirstNameAttribute": {
+              "type": "string"
+            },
+            "LastNameAttribute": {
+              "type": "string"
+            },
+            "EmailAttribute": {
+              "type": "string"
+            },
+            "UsernameAttribute": {
+              "type": "string"
+            },
+            "NicknameAttribute": {
+              "type": "string"
+            },
+            "LocaleAttribute": {
+              "type": "string"
+            },
+            "PositionAttribute": {
+              "type": "string"
+            },
+            "LoginButtonText": {
+              "type": "string"
+            }
+          }
+        },
+        "NativeAppSettings": {
+          "type": "object",
+          "properties": {
+            "AppDownloadLink": {
+              "type": "string"
+            },
+            "AndroidAppDownloadLink": {
+              "type": "string"
+            },
+            "IosAppDownloadLink": {
+              "type": "string"
+            }
+          }
+        },
+        "ClusterSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "InterNodeListenAddress": {
+              "type": "string"
+            },
+            "InterNodeUrls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "MetricsSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "BlockProfileRate": {
+              "type": "integer"
+            },
+            "ListenAddress": {
+              "type": "string"
+            }
+          }
+        },
+        "AnalyticsSettings": {
+          "type": "object",
+          "properties": {
+            "MaxUsersForStatistics": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    },
+    "EnvironmentConfig": {
+      "type": "object",
+      "properties": {
+        "ServiceSettings": {
+          "type": "object",
+          "properties": {
+            "SiteURL": {
+              "type": "boolean"
+            },
+            "ListenAddress": {
+              "type": "boolean"
+            },
+            "ConnectionSecurity": {
+              "type": "boolean"
+            },
+            "TLSCertFile": {
+              "type": "boolean"
+            },
+            "TLSKeyFile": {
+              "type": "boolean"
+            },
+            "UseLetsEncrypt": {
+              "type": "boolean"
+            },
+            "LetsEncryptCertificateCacheFile": {
+              "type": "boolean"
+            },
+            "Forward80To443": {
+              "type": "boolean"
+            },
+            "ReadTimeout": {
+              "type": "boolean"
+            },
+            "WriteTimeout": {
+              "type": "boolean"
+            },
+            "MaximumLoginAttempts": {
+              "type": "boolean"
+            },
+            "SegmentDeveloperKey": {
+              "type": "boolean"
+            },
+            "GoogleDeveloperKey": {
+              "type": "boolean"
+            },
+            "EnableOAuthServiceProvider": {
+              "type": "boolean"
+            },
+            "EnableIncomingWebhooks": {
+              "type": "boolean"
+            },
+            "EnableOutgoingWebhooks": {
+              "type": "boolean"
+            },
+            "EnableCommands": {
+              "type": "boolean"
+            },
+            "EnableOnlyAdminIntegrations": {
+              "type": "boolean"
+            },
+            "EnablePostUsernameOverride": {
+              "type": "boolean"
+            },
+            "EnablePostIconOverride": {
+              "type": "boolean"
+            },
+            "EnableTesting": {
+              "type": "boolean"
+            },
+            "EnableDeveloper": {
+              "type": "boolean"
+            },
+            "EnableSecurityFixAlert": {
+              "type": "boolean"
+            },
+            "EnableInsecureOutgoingConnections": {
+              "type": "boolean"
+            },
+            "EnableMultifactorAuthentication": {
+              "type": "boolean"
+            },
+            "EnforceMultifactorAuthentication": {
+              "type": "boolean"
+            },
+            "AllowCorsFrom": {
+              "type": "boolean"
+            },
+            "SessionLengthWebInDays": {
+              "type": "boolean"
+            },
+            "SessionLengthMobileInDays": {
+              "type": "boolean"
+            },
+            "SessionLengthSSOInDays": {
+              "type": "boolean"
+            },
+            "SessionCacheInMinutes": {
+              "type": "boolean"
+            },
+            "WebsocketSecurePort": {
+              "type": "boolean"
+            },
+            "WebsocketPort": {
+              "type": "boolean"
+            },
+            "WebserverMode": {
+              "type": "boolean"
+            },
+            "EnableCustomEmoji": {
+              "type": "boolean"
+            },
+            "RestrictCustomEmojiCreation": {
+              "type": "boolean"
+            }
+          }
+        },
+        "TeamSettings": {
+          "type": "object",
+          "properties": {
+            "SiteName": {
+              "type": "boolean"
+            },
+            "MaxUsersPerTeam": {
+              "type": "boolean"
+            },
+            "EnableTeamCreation": {
+              "type": "boolean"
+            },
+            "EnableUserCreation": {
+              "type": "boolean"
+            },
+            "EnableOpenServer": {
+              "type": "boolean"
+            },
+            "RestrictCreationToDomains": {
+              "type": "boolean"
+            },
+            "EnableCustomBrand": {
+              "type": "boolean"
+            },
+            "CustomBrandText": {
+              "type": "boolean"
+            },
+            "CustomDescriptionText": {
+              "type": "boolean"
+            },
+            "RestrictDirectMessage": {
+              "type": "boolean"
+            },
+            "RestrictTeamInvite": {
+              "type": "boolean"
+            },
+            "RestrictPublicChannelManagement": {
+              "type": "boolean"
+            },
+            "RestrictPrivateChannelManagement": {
+              "type": "boolean"
+            },
+            "RestrictPublicChannelCreation": {
+              "type": "boolean"
+            },
+            "RestrictPrivateChannelCreation": {
+              "type": "boolean"
+            },
+            "RestrictPublicChannelDeletion": {
+              "type": "boolean"
+            },
+            "RestrictPrivateChannelDeletion": {
+              "type": "boolean"
+            },
+            "UserStatusAwayTimeout": {
+              "type": "boolean"
+            },
+            "MaxChannelsPerTeam": {
+              "type": "boolean"
+            },
+            "MaxNotificationsPerChannel": {
+              "type": "boolean"
+            }
+          }
+        },
+        "SqlSettings": {
+          "type": "object",
+          "properties": {
+            "DriverName": {
+              "type": "boolean"
+            },
+            "DataSource": {
+              "type": "boolean"
+            },
+            "DataSourceReplicas": {
+              "type": "boolean"
+            },
+            "MaxIdleConns": {
+              "type": "boolean"
+            },
+            "MaxOpenConns": {
+              "type": "boolean"
+            },
+            "Trace": {
+              "type": "boolean"
+            },
+            "AtRestEncryptKey": {
+              "type": "boolean"
+            }
+          }
+        },
+        "LogSettings": {
+          "type": "object",
+          "properties": {
+            "EnableConsole": {
+              "type": "boolean"
+            },
+            "ConsoleLevel": {
+              "type": "boolean"
+            },
+            "EnableFile": {
+              "type": "boolean"
+            },
+            "FileLevel": {
+              "type": "boolean"
+            },
+            "FileLocation": {
+              "type": "boolean"
+            },
+            "EnableWebhookDebugging": {
+              "type": "boolean"
+            },
+            "EnableDiagnostics": {
+              "type": "boolean"
+            }
+          }
+        },
+        "PasswordSettings": {
+          "type": "object",
+          "properties": {
+            "MinimumLength": {
+              "type": "boolean"
+            },
+            "Lowercase": {
+              "type": "boolean"
+            },
+            "Number": {
+              "type": "boolean"
+            },
+            "Uppercase": {
+              "type": "boolean"
+            },
+            "Symbol": {
+              "type": "boolean"
+            }
+          }
+        },
+        "FileSettings": {
+          "type": "object",
+          "properties": {
+            "MaxFileSize": {
+              "type": "boolean"
+            },
+            "DriverName": {
+              "type": "boolean"
+            },
+            "Directory": {
+              "type": "boolean"
+            },
+            "EnablePublicLink": {
+              "type": "boolean"
+            },
+            "PublicLinkSalt": {
+              "type": "boolean"
+            },
+            "ThumbnailWidth": {
+              "type": "boolean"
+            },
+            "ThumbnailHeight": {
+              "type": "boolean"
+            },
+            "PreviewWidth": {
+              "type": "boolean"
+            },
+            "PreviewHeight": {
+              "type": "boolean"
+            },
+            "ProfileWidth": {
+              "type": "boolean"
+            },
+            "ProfileHeight": {
+              "type": "boolean"
+            },
+            "InitialFont": {
+              "type": "boolean"
+            },
+            "AmazonS3AccessKeyId": {
+              "type": "boolean"
+            },
+            "AmazonS3SecretAccessKey": {
+              "type": "boolean"
+            },
+            "AmazonS3Bucket": {
+              "type": "boolean"
+            },
+            "AmazonS3Region": {
+              "type": "boolean"
+            },
+            "AmazonS3Endpoint": {
+              "type": "boolean"
+            },
+            "AmazonS3SSL": {
+              "type": "boolean"
+            }
+          }
+        },
+        "EmailSettings": {
+          "type": "object",
+          "properties": {
+            "EnableSignUpWithEmail": {
+              "type": "boolean"
+            },
+            "EnableSignInWithEmail": {
+              "type": "boolean"
+            },
+            "EnableSignInWithUsername": {
+              "type": "boolean"
+            },
+            "SendEmailNotifications": {
+              "type": "boolean"
+            },
+            "RequireEmailVerification": {
+              "type": "boolean"
+            },
+            "FeedbackName": {
+              "type": "boolean"
+            },
+            "FeedbackEmail": {
+              "type": "boolean"
+            },
+            "FeedbackOrganization": {
+              "type": "boolean"
+            },
+            "SMTPUsername": {
+              "type": "boolean"
+            },
+            "SMTPPassword": {
+              "type": "boolean"
+            },
+            "SMTPServer": {
+              "type": "boolean"
+            },
+            "SMTPPort": {
+              "type": "boolean"
+            },
+            "ConnectionSecurity": {
+              "type": "boolean"
+            },
+            "InviteSalt": {
+              "type": "boolean"
+            },
+            "PasswordResetSalt": {
+              "type": "boolean"
+            },
+            "SendPushNotifications": {
+              "type": "boolean"
+            },
+            "PushNotificationServer": {
+              "type": "boolean"
+            },
+            "PushNotificationContents": {
+              "type": "boolean"
+            },
+            "EnableEmailBatching": {
+              "type": "boolean"
+            },
+            "EmailBatchingBufferSize": {
+              "type": "boolean"
+            },
+            "EmailBatchingInterval": {
+              "type": "boolean"
+            }
+          }
+        },
+        "RateLimitSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "PerSec": {
+              "type": "boolean"
+            },
+            "MaxBurst": {
+              "type": "boolean"
+            },
+            "MemoryStoreSize": {
+              "type": "boolean"
+            },
+            "VaryByRemoteAddr": {
+              "type": "boolean"
+            },
+            "VaryByHeader": {
+              "type": "boolean"
+            }
+          }
+        },
+        "PrivacySettings": {
+          "type": "object",
+          "properties": {
+            "ShowEmailAddress": {
+              "type": "boolean"
+            },
+            "ShowFullName": {
+              "type": "boolean"
+            }
+          }
+        },
+        "SupportSettings": {
+          "type": "object",
+          "properties": {
+            "TermsOfServiceLink": {
+              "type": "boolean"
+            },
+            "PrivacyPolicyLink": {
+              "type": "boolean"
+            },
+            "AboutLink": {
+              "type": "boolean"
+            },
+            "HelpLink": {
+              "type": "boolean"
+            },
+            "ReportAProblemLink": {
+              "type": "boolean"
+            },
+            "SupportEmail": {
+              "type": "boolean"
+            }
+          }
+        },
+        "GitLabSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Secret": {
+              "type": "boolean"
+            },
+            "Id": {
+              "type": "boolean"
+            },
+            "Scope": {
+              "type": "boolean"
+            },
+            "AuthEndpoint": {
+              "type": "boolean"
+            },
+            "TokenEndpoint": {
+              "type": "boolean"
+            },
+            "UserApiEndpoint": {
+              "type": "boolean"
+            }
+          }
+        },
+        "GoogleSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Secret": {
+              "type": "boolean"
+            },
+            "Id": {
+              "type": "boolean"
+            },
+            "Scope": {
+              "type": "boolean"
+            },
+            "AuthEndpoint": {
+              "type": "boolean"
+            },
+            "TokenEndpoint": {
+              "type": "boolean"
+            },
+            "UserApiEndpoint": {
+              "type": "boolean"
+            }
+          }
+        },
+        "Office365Settings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Secret": {
+              "type": "boolean"
+            },
+            "Id": {
+              "type": "boolean"
+            },
+            "Scope": {
+              "type": "boolean"
+            },
+            "AuthEndpoint": {
+              "type": "boolean"
+            },
+            "TokenEndpoint": {
+              "type": "boolean"
+            },
+            "UserApiEndpoint": {
+              "type": "boolean"
+            }
+          }
+        },
+        "LdapSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "LdapServer": {
+              "type": "boolean"
+            },
+            "LdapPort": {
+              "type": "boolean"
+            },
+            "ConnectionSecurity": {
+              "type": "boolean"
+            },
+            "BaseDN": {
+              "type": "boolean"
+            },
+            "BindUsername": {
+              "type": "boolean"
+            },
+            "BindPassword": {
+              "type": "boolean"
+            },
+            "UserFilter": {
+              "type": "boolean"
+            },
+            "FirstNameAttribute": {
+              "type": "boolean"
+            },
+            "LastNameAttribute": {
+              "type": "boolean"
+            },
+            "EmailAttribute": {
+              "type": "boolean"
+            },
+            "UsernameAttribute": {
+              "type": "boolean"
+            },
+            "NicknameAttribute": {
+              "type": "boolean"
+            },
+            "IdAttribute": {
+              "type": "boolean"
+            },
+            "PositionAttribute": {
+              "type": "boolean"
+            },
+            "SyncIntervalMinutes": {
+              "type": "boolean"
+            },
+            "SkipCertificateVerification": {
+              "type": "boolean"
+            },
+            "QueryTimeout": {
+              "type": "boolean"
+            },
+            "MaxPageSize": {
+              "type": "boolean"
+            },
+            "LoginFieldName": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ComplianceSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Directory": {
+              "type": "boolean"
+            },
+            "EnableDaily": {
+              "type": "boolean"
+            }
+          }
+        },
+        "LocalizationSettings": {
+          "type": "object",
+          "properties": {
+            "DefaultServerLocale": {
+              "type": "boolean"
+            },
+            "DefaultClientLocale": {
+              "type": "boolean"
+            },
+            "AvailableLocales": {
+              "type": "boolean"
+            }
+          }
+        },
+        "SamlSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "Verify": {
+              "type": "boolean"
+            },
+            "Encrypt": {
+              "type": "boolean"
+            },
+            "IdpUrl": {
+              "type": "boolean"
+            },
+            "IdpDescriptorUrl": {
+              "type": "boolean"
+            },
+            "AssertionConsumerServiceURL": {
+              "type": "boolean"
+            },
+            "IdpCertificateFile": {
+              "type": "boolean"
+            },
+            "PublicCertificateFile": {
+              "type": "boolean"
+            },
+            "PrivateKeyFile": {
+              "type": "boolean"
+            },
+            "FirstNameAttribute": {
+              "type": "boolean"
+            },
+            "LastNameAttribute": {
+              "type": "boolean"
+            },
+            "EmailAttribute": {
+              "type": "boolean"
+            },
+            "UsernameAttribute": {
+              "type": "boolean"
+            },
+            "NicknameAttribute": {
+              "type": "boolean"
+            },
+            "LocaleAttribute": {
+              "type": "boolean"
+            },
+            "PositionAttribute": {
+              "type": "boolean"
+            },
+            "LoginButtonText": {
+              "type": "boolean"
+            }
+          }
+        },
+        "NativeAppSettings": {
+          "type": "object",
+          "properties": {
+            "AppDownloadLink": {
+              "type": "boolean"
+            },
+            "AndroidAppDownloadLink": {
+              "type": "boolean"
+            },
+            "IosAppDownloadLink": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ClusterSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "InterNodeListenAddress": {
+              "type": "boolean"
+            },
+            "InterNodeUrls": {
+              "type": "boolean"
+            }
+          }
+        },
+        "MetricsSettings": {
+          "type": "object",
+          "properties": {
+            "Enable": {
+              "type": "boolean"
+            },
+            "BlockProfileRate": {
+              "type": "boolean"
+            },
+            "ListenAddress": {
+              "type": "boolean"
+            }
+          }
+        },
+        "AnalyticsSettings": {
+          "type": "object",
+          "properties": {
+            "MaxUsersForStatistics": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "SamlCertificateStatus": {
+      "type": "object",
+      "properties": {
+        "idp_certificate_file": {
+          "description": "Status is good when `true`",
+          "type": "boolean"
+        },
+        "public_certificate_file": {
+          "description": "Status is good when `true`",
+          "type": "boolean"
+        },
+        "private_key_file": {
+          "description": "Status is good when `true`",
+          "type": "boolean"
+        }
+      }
+    },
+    "Compliance": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "start_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "end_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "emails": {
+          "type": "string"
+        }
+      }
+    },
+    "ClusterInfo": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "The unique ID for the node",
+          "type": "string"
+        },
+        "version": {
+          "description": "The server version the node is on",
+          "type": "string"
+        },
+        "config_hash": {
+          "description": "The hash of the configuartion file the node is using",
+          "type": "string"
+        },
+        "internode_url": {
+          "description": "The URL used to communicate with those node from other nodes",
+          "type": "string"
+        },
+        "hostname": {
+          "description": "The hostname for this node",
+          "type": "string"
+        },
+        "last_ping": {
+          "description": "The time of the last ping to this node",
+          "type": "integer"
+        },
+        "is_alive": {
+          "description": "Whether or not the node is alive and well",
+          "type": "boolean"
+        }
+      }
+    },
+    "AppError": {
+      "type": "object",
+      "properties": {
+        "status_code": {
+          "type": "integer"
+        },
+        "id": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "request_id": {
+          "type": "string"
+        }
+      }
+    },
+    "Status": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "manual": {
+          "type": "boolean"
+        },
+        "last_activity_at": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "OAuthApp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The client id of the application"
+        },
+        "client_secret": {
+          "type": "string",
+          "description": "The client secret of the application"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the client application"
+        },
+        "description": {
+          "type": "string",
+          "description": "A short description of the application"
+        },
+        "icon_url": {
+          "type": "string",
+          "description": "A URL to an icon to display with the application"
+        },
+        "callback_urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of callback URLs for the appliation"
+        },
+        "homepage": {
+          "type": "string",
+          "description": "A link to the website of the application"
+        },
+        "is_trusted": {
+          "type": "boolean",
+          "description": "Set this to `true` to skip asking users for permission"
+        },
+        "create_at": {
+          "type": "integer",
+          "description": "The time of registration for the application",
+          "format": "int64"
+        },
+        "update_at": {
+          "type": "integer",
+          "description": "The last time of update for the application",
+          "format": "int64"
+        }
+      }
+    },
+    "Job": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique id of the job"
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of job"
+        },
+        "create_at": {
+          "type": "integer",
+          "description": "The time at which the job was created",
+          "format": "int64"
+        },
+        "start_at": {
+          "type": "integer",
+          "description": "The time at which the job was started",
+          "format": "int64"
+        },
+        "last_activity_at": {
+          "type": "integer",
+          "description": "The last time at which the job had activity",
+          "format": "int64"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the job"
+        },
+        "progress": {
+          "type": "integer",
+          "description": "The progress (as a percentage) of the job"
+        },
+        "data": {
+          "type": "object",
+          "description": "A freeform data field containing additional information about the job"
+        }
+      }
+    },
+    "UserAccessToken": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the token"
+        },
+        "token": {
+          "type": "string",
+          "description": "The token used for authentication"
+        },
+        "user_id": {
+          "type": "string",
+          "description": "The user the token authenticates for"
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the token usage"
+        }
+      }
+    },
+    "UserAccessTokenSanitized": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the token"
+        },
+        "user_id": {
+          "type": "string",
+          "description": "The user the token authenticates for"
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the token usage"
+        },
+        "is_active": {
+          "type": "boolean",
+          "description": "Indicates whether the token is active"
+        }
+      }
+    },
+    "DataRetentionPolicy": {
+      "type": "object",
+      "properties": {
+        "message_deletion_enabled": {
+          "type": "boolean",
+          "description": "Indicates whether data retention policy deletion of messages is enabled."
+        },
+        "file_deletion_enabled": {
+          "type": "boolean",
+          "description": "Indicates whether data retention policy deletion of file attachments is enabled."
+        },
+        "message_retention_cutoff": {
+          "type": "integer",
+          "description": "The current server timestamp before which messages should be deleted."
+        },
+        "file_retention_cutoff": {
+          "type": "integer",
+          "description": "The current server timestamp before which files should be deleted."
+        }
+      }
+    },
+    "UserNotifyProps": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Set to \"true\" to enable email notifications, \"false\" to disable. Defaults to \"true\"."
+        },
+        "push": {
+          "type": "string",
+          "description": "Set to \"all\" to receive push notifications for all activity, \"mention\" for mentions and direct messages only, and \"none\" to disable. Defaults to \"mention\"."
+        },
+        "desktop": {
+          "type": "string",
+          "description": "Set to \"all\" to receive desktop notifications for all activity, \"mention\" for mentions and direct messages only, and \"none\" to disable. Defaults to \"all\"."
+        },
+        "desktop_sound": {
+          "type": "string",
+          "description": "Set to \"true\" to enable sound on desktop notifications, \"false\" to disable. Defaults to \"true\"."
+        },
+        "mention_keys": {
+          "type": "string",
+          "description": "A comma-separated list of words to count as mentions. Defaults to username and @username."
+        },
+        "channel": {
+          "type": "string",
+          "description": "Set to \"true\" to enable channel-wide notifications (@channel, @all, etc.), \"false\" to disable. Defaults to \"true\"."
+        },
+        "first_name": {
+          "type": "string",
+          "description": "Set to \"true\" to enable mentions for first name. Defaults to \"true\" if a first name is set, \"false\" otherwise."
+        }
+      }
+    },
+    "Timezone": {
+      "type": "object",
+      "properties": {
+        "useAutomaticTimezone": {
+          "type": "string",
+          "description": "Set to \"true\" to use the browser/system timezone, \"false\" to set manually. Defaults to \"true\"."
+        },
+        "manualTimezone": {
+          "type": "string",
+          "description": "Value when setting manually the timezone, i.e. \"Europe/Berlin\"."
+        },
+        "automaticTimezone": {
+          "type": "string",
+          "description": "This value is set automatically when the \"useAutomaticTimezone\" is set to \"true\"."
+        }
+      }
+    },
+    "ChannelNotifyProps": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "Set to \"true\" to enable email notifications, \"false\" to disable, or \"default\" to use the global user notification setting."
+        },
+        "push": {
+          "type": "string",
+          "description": "Set to \"all\" to receive push notifications for all activity, \"mention\" for mentions and direct messages only, \"none\" to disable, or \"default\" to use the global user notification setting."
+        },
+        "desktop": {
+          "type": "string",
+          "description": "Set to \"all\" to receive desktop notifications for all activity, \"mention\" for mentions and direct messages only, \"none\" to disable, or \"default\" to use the global user notification setting."
+        },
+        "mark_unread": {
+          "type": "string",
+          "description": "Set to \"all\" to mark the channel unread for any new message, \"mention\" to mark unread for new mentions only. Defaults to \"all\"."
+        }
+      }
+    },
+    "PluginManifest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Globally unique identifier that represents the plugin."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the plugin."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of what the plugin is and does."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version number of the plugin."
+        },
+        "min_server_version": {
+          "type": "string",
+          "description": "The minimum Mattermost server version required for the plugin.\n\nAvailable as server version 5.6.\n"
+        },
+        "backend": {
+          "type": "object",
+          "description": "Deprecated in Mattermost 5.2 release.",
+          "properties": {
+            "executable": {
+              "type": "string",
+              "description": "Path to the executable binary."
+            }
+          }
+        },
+        "server": {
+          "type": "object",
+          "properties": {
+            "executables": {
+              "type": "object",
+              "description": "Paths to executable binaries, specifying multiple entry points for different platforms when bundled together in a single plugin.",
+              "properties": {
+                "linux-amd64": {
+                  "type": "string"
+                },
+                "darwin-amd64": {
+                  "type": "string"
+                },
+                "windows-amd64": {
+                  "type": "string"
+                }
+              }
+            },
+            "executable": {
+              "type": "string",
+              "description": "Path to the executable binary."
+            }
+          }
+        },
+        "webapp": {
+          "type": "object",
+          "properties": {
+            "bundle_path": {
+              "type": "string",
+              "description": "Path to the webapp JavaScript bundle."
+            }
+          }
+        },
+        "settings_schema": {
+          "type": "object",
+          "description": "Settings schema used to define the System Console UI for the plugin."
+        }
+      }
+    },
+    "PluginManifestWebapp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Globally unique identifier that represents the plugin."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version number of the plugin."
+        },
+        "webapp": {
+          "type": "object",
+          "properties": {
+            "bundle_path": {
+              "type": "string",
+              "description": "Path to the webapp JavaScript bundle."
+            }
+          }
+        }
+      }
+    },
+    "Role": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the role."
+        },
+        "name": {
+          "type": "string",
+          "description": "The unique name of the role, used when assigning roles to users/groups in contexts."
+        },
+        "display_name": {
+          "type": "string",
+          "description": "The human readable name for the role."
+        },
+        "description": {
+          "type": "string",
+          "description": "A human readable description of the role."
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of the unique names of the permissions this role grants."
+        },
+        "scheme_managed": {
+          "type": "boolean",
+          "description": "indicates if this role is managed by a scheme (true), or is a custom stand-alone role (false)."
+        }
+      }
+    },
+    "Scheme": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the scheme."
+        },
+        "name": {
+          "type": "string",
+          "description": "The human readable name for the scheme."
+        },
+        "description": {
+          "type": "string",
+          "description": "A human readable description of the scheme."
+        },
+        "create_at": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The time at which the scheme was created."
+        },
+        "update_at": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The time at which the scheme was last updated."
+        },
+        "delete_at": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The time at which the scheme was deleted."
+        },
+        "scope": {
+          "type": "string",
+          "description": "The scope to which this scheme can be applied, either \"team\" or \"channel\"."
+        },
+        "default_team_admin_role": {
+          "type": "string",
+          "description": "The id of the default team admin role for this scheme."
+        },
+        "default_team_user_role": {
+          "type": "string",
+          "description": "The id of the default team user role for this scheme."
+        },
+        "default_channel_admin_role": {
+          "type": "string",
+          "description": "The id of the default channel admin role for this scheme."
+        },
+        "default_channel_user_role": {
+          "type": "string",
+          "description": "The id of the default channel user role for this scheme."
+        }
+      }
+    },
+    "TermsOfService": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The unique identifier of the terms of service."
+        },
+        "create_at": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The time at which the terms of service was created."
+        },
+        "user_id": {
+          "type": "string",
+          "description": "The unique identifier of the user who created these terms of service."
+        },
+        "text": {
+          "type": "string",
+          "description": "The text of terms of service. Supports Markdown."
+        }
+      }
+    },
+    "UserTermsOfService": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "description": "The unique identifier of the user who performed this terms of service action."
+        },
+        "terms_of_service_id": {
+          "type": "string",
+          "description": "The unique identifier of the terms of service the action was performed on."
+        },
+        "create_at": {
+          "description": "The time in milliseconds that this action was performed.",
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "PostIdToReactionsMap": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/definitions/Reaction"
+        }
+      }
+    },
+    "Group": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "remote_id": {
+          "type": "string"
+        },
+        "create_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "update_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "delete_at": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "has_syncables": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Mattermost",
+    "url": "https://about.mattermost.com"
+  }
+}

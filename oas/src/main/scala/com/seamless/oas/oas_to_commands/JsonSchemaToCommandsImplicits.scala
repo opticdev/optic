@@ -2,7 +2,7 @@ package com.seamless.oas.oas_to_commands
 
 import com.seamless.contexts.data_types.Commands.{AddField, AddTypeParameter, AssignType, DefineConcept, DefineInlineConcept, SetConceptName, SetFieldName}
 import com.seamless.contexts.data_types.Primitives._
-import com.seamless.contexts.rfc.Commands.RfcCommand
+import com.seamless.contexts.rfc.Commands.{AddContribution, RfcCommand}
 import com.seamless.oas.{Context, JsonSchemaType}
 import com.seamless.oas.JsonSchemaType.{EitherType, JsonSchemaType, Ref, SingleType, Skipped}
 import com.seamless.oas.Schemas.{Definition, JsonSchemaSchema, NamedDefinition, PropertyDefinition}
@@ -85,6 +85,10 @@ object JsonSchemaToCommandsImplicits {
         //describe
         namedDef.`type`.addAssignTypeCommands(rootId, conceptId)(namedDef.cxt, commandStream)
 
+        if (namedDef.description.isDefined) {
+          commandStream appendDescribe AddContribution(conceptId, "description", namedDef.description.get)
+        }
+
         schema.properties.foreach(f => {
           processSchema(f, Some(rootId))
         })
@@ -99,6 +103,10 @@ object JsonSchemaToCommandsImplicits {
         //Set the type
         propertyDef.`type`.addAssignTypeCommands(fieldId, conceptId)(propertyDef.cxt, commandStream)
 
+        if (propertyDef.description.isDefined) {
+          commandStream appendDescribe AddContribution(fieldId, "description", propertyDef.description.get)
+        }
+
         schema.properties.foreach(f => {
           processSchema(f, Some(fieldId))
         })
@@ -110,6 +118,10 @@ object JsonSchemaToCommandsImplicits {
         commandStream.appendInit(DefineInlineConcept(rootId, conceptId))
         //describe
         inlineDefinition.`type`.addAssignTypeCommands(rootId, conceptId)(inlineDefinition.cxt, commandStream)
+
+        if (inlineDefinition.description.isDefined) {
+          commandStream appendDescribe AddContribution(conceptId, "description", inlineDefinition.description.get)
+        }
 
         //process fields if any
         schema.properties.foreach(f => {

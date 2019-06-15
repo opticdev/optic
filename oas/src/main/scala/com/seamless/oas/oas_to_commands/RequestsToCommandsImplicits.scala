@@ -3,7 +3,7 @@ package com.seamless.oas.oas_to_commands
 import com.seamless.contexts.data_types.Commands._
 import com.seamless.contexts.data_types.Primitives._
 import com.seamless.contexts.requests.Commands._
-import com.seamless.contexts.rfc.Commands.RfcCommand
+import com.seamless.contexts.rfc.Commands.{AddContribution, RfcCommand}
 import com.seamless.oas.JsonSchemaType.{EitherType, JsonSchemaType, Ref, SingleType}
 import com.seamless.oas.Schemas.{Definition, JsonSchemaSchema, NamedDefinition, Operation, Path, PropertyDefinition}
 import com.seamless.oas.{Context, JsonSchemaType}
@@ -74,7 +74,6 @@ object RequestsToCommandsImplicits {
       )
 
       if (operation.requestBody.isDefined && isInlineSchema(operation.requestBody.get.schema)) {
-
         val schema = operation.requestBody.get.schema.get.asInstanceOf[Definition]
         val contentType = operation.requestBody.get.contentType.getOrElse("application/json")
         val inlineRequestSchemaCommands = schema.toCommandStream
@@ -82,6 +81,9 @@ object RequestsToCommandsImplicits {
         stream appendInit inlineRequestSchemaCommands.flatten
         stream appendDescribe SetRequestBodyShape(operation.id, ShapedBodyDescriptor(contentType, schema.id))
 
+        if (operation.requestBody.get.description.isDefined) {
+          stream appendDescribe AddContribution(operation.id, "body-description", operation.requestBody.get.description.get)
+        }
       }
 
       operation.responses.foreach { response => {
@@ -93,8 +95,16 @@ object RequestsToCommandsImplicits {
 //          add init events for the inline schema
           stream appendInit inlineSchemaCommands.flatten
           stream appendDescribe SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, response.schema.get.asInstanceOf[Definition].id))
+
+          if (response.description.isDefined) {
+            stream appendDescribe AddContribution(responseId, "description", response.description.get)
+          }
         }
       }}
+
+      if (operation.description.isDefined) {
+        stream appendDescribe AddContribution(operation.id, "description", operation.description.get)
+      }
 
       stream.toImmutable
     }

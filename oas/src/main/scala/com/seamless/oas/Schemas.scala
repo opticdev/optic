@@ -13,6 +13,7 @@ object Schemas {
   case class PathParameter(name: String, index: Int)
   case class QueryParameter(name: String, required: Boolean)
   case class Operation(method: String, path: Path)(implicit cxt: Context) extends OASSchema {
+    def description: Option[String] = cxt.resolver.descriptionFromContext(cxt)
     def responses: Vector[Response] = cxt.resolver.responsesForOperation(this)
     def supportsBody = !Set("get", "head", "options", "connect").contains(method)
     def requestBody: Option[RequestBody] = cxt.resolver.requestBodyForOperation(this)
@@ -20,17 +21,23 @@ object Schemas {
     def id = path.id+"_"+method
   }
 
-  case class Response(status: Int, contentType: Option[String], schema: Option[JsonSchemaSchema])(implicit cxt: Context) extends OASSchema
-  case class SharedResponse(id: String, contentType: Option[String], schema: Option[JsonSchemaSchema])(implicit cxt: Context) extends OASSchema
+  case class Response(status: Int, contentType: Option[String], schema: Option[JsonSchemaSchema])(implicit cxt: Context) extends OASSchema {
+    def description: Option[String] = cxt.resolver.descriptionFromContext(cxt)
+  }
+  case class SharedResponse(id: String, contentType: Option[String], schema: Option[JsonSchemaSchema])(implicit cxt: Context) extends OASSchema {
+    def description: Option[String] = cxt.resolver.descriptionFromContext(cxt)
+  }
 
-  case class RequestBody(contentType: Option[String], schema: Option[JsonSchemaSchema])(implicit cxt: Context) extends OASSchema
-
+  case class RequestBody(contentType: Option[String], schema: Option[JsonSchemaSchema])(implicit cxt: Context) extends OASSchema {
+    def description: Option[String] = cxt.resolver.descriptionFromContext(cxt)
+  }
 
   //Json Schema
   trait JsonSchemaSchema extends OASSchema {
     def definition: JsObject
     def properties: Vector[PropertyDefinition] = cxt.resolver.propertiesForDefinition(definition)
     def `type`: JsonSchemaType = JsonSchemaType.fromDefinition(definition)
+    def description: Option[String] = cxt.resolver.descriptionFromContext(cxt)
   }
 
   case class NamedDefinition(name: String, definition: JsObject, id: String)(implicit cxt: Context) extends JsonSchemaSchema

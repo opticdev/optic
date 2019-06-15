@@ -12,6 +12,7 @@ import com.seamless.contexts.data_types.Commands.{DefineConcept, DefineInlineCon
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.{RfcService, RfcState}
+import com.seamless.ddd.InMemoryEventStore
 import com.seamless.serialization.{CommandSerialization, EventSerialization}
 
 object Parser {
@@ -46,7 +47,7 @@ object Parser {
     val allCommands = allDefinitionsCommands ++ allEndpointsCommands
 
     val (service, buildSnapshotTime) = time {
-      val service = new RfcService
+      val service = new RfcService(new InMemoryEventStore[RfcEvent])
 
       allCommands.foreach(command => service.handleCommand("test", command))
       service
