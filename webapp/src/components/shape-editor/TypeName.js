@@ -56,7 +56,7 @@ class TypeName extends React.Component {
 		})();
 
 		return <SchemaEditorContext.Consumer>
-			{({editorState, currentShape, operations, mode}) => {
+			{({currentShape, operations, mode}) => {
 				return <div className={classes.root} key={id}>
 					<BasicButton className={classes.typeChangeButton}
 								 disableRipple={true}
@@ -74,9 +74,7 @@ class TypeName extends React.Component {
 							<Link to={`${basePath}/concepts/${type.conceptId}`} style={{textDecoration: 'none'}}>
 								<div
 									className={classes.goTo}
-									onClick={(e) => {
-										e.stopPropagation();
-									}}
+									style={{pointerEvents: 'none'}}
 								>(view)
 								</div>
 							</Link> : null}
