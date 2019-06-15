@@ -42,6 +42,8 @@ const styles = theme => ({
 		height: 1000,
 		marginBottom: 80,
 		width: 850,
+		paddingLeft: 15,
+		paddingRight: 15,
 		[theme.breakpoints.down('md')]: {
 			marginLeft: 22,
 			maxWidth: 900

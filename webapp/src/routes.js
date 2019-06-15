@@ -14,24 +14,6 @@ const paths = {
 	conceptPage: (base) => `${base}/concepts/:conceptId`,
 };
 
-class XWithoutContext extends React.Component {
-	render() {
-		const {queries, rfcId} = this.props;
-		const paths = queries.paths(rfcId);
-		return (
-			<div>{
-				paths.sort().map(x => {
-					return (
-						<div>{x.absolutePath}</div>
-					)
-				})
-			}</div>
-		);
-	}
-}
-
-const X = withRfcContext(XWithoutContext);
-
 class ExampleLoader extends React.Component {
 
 	state = {

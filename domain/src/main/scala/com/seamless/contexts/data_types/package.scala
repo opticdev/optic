@@ -56,6 +56,7 @@ package object data_types {
     }
 
     //Reference Types
+    @JSExportAll
     case class RefT(conceptId: String) extends PrimitiveType {
       override def id: String = conceptId
 

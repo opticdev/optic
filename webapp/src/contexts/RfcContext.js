@@ -22,12 +22,12 @@ class RfcStoreWithoutContext extends React.Component {
         }
     }
 
-    handleCommand(command) {
+    handleCommand = (command) => {
         this.state.rfcService.handleCommands(this.props.rfcId, command)
         this.forceUpdate()
     }
 
-    handleCommands(commands) {
+    handleCommands = (commands) => {
         this.state.rfcService.handleCommands.apply(this, [this.props.rfcId, ...commands])
         this.forceUpdate()
     }

@@ -3,7 +3,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import {primitiveColors, generateTypeName} from './Types';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
 import BasicButton from './BasicButton';
-import {EditorModes} from '../../contexts/EditorContext';
+import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
+import {Link} from 'react-router-dom';
 
 const styles = theme => ({
 	root: {
@@ -37,7 +38,7 @@ class TypeName extends React.Component {
 
 	render() {
 
-		const {classes, node, inField, style, id} = this.props;
+		const {classes, node, inField, style, id, basePath} = this.props;
 		const {type} = node;
 
 		if (inField && type.hasFields) {
@@ -58,24 +59,27 @@ class TypeName extends React.Component {
 			{({editorState, currentShape, operations, mode}) => {
 				return <div className={classes.root} key={id}>
 					<BasicButton className={classes.typeChangeButton}
-								disableRipple={true}
-								disabled={!(mode === EditorModes.DESIGN)}
-								onClick={operations.showTypeMenu(id, type)}
-								style={{
-									color,
-									display: 'flex',
-									fontWeight: (type.hasFields || type.hasTypeParameters) ? 700 : 200,
-									...style,
-								}}>
+								 disableRipple={true}
+								 disabled={!(mode === EditorModes.DESIGN)}
+								 onClick={operations.showTypeMenu(id, type)}
+								 style={{
+									 color,
+									 display: 'flex',
+									 fontWeight: (type.hasFields || type.hasTypeParameters) ? 700 : 200,
+									 ...style,
+								 }}>
 						{generateTypeName(type, node, currentShape.allowedTypeReferences)}
 
-						{type.isRef ? <div
-							className={classes.goTo}
-							onClick={(e) => {
-								e.stopPropagation();
-
-							}}
-						>(view)</div> : null}
+						{type.isRef ?
+							<Link to={`${basePath}/concepts/${type.conceptId}`} style={{textDecoration: 'none'}}>
+								<div
+									className={classes.goTo}
+									onClick={(e) => {
+										e.stopPropagation();
+									}}
+								>(view)
+								</div>
+							</Link> : null}
 					</BasicButton>
 				</div>;
 			}}
@@ -83,7 +87,7 @@ class TypeName extends React.Component {
 	}
 }
 
-export default withStyles(styles)(TypeName);
+export default withEditorContext(withStyles(styles)(TypeName));
 
 export const DisplayRootTypeName = withStyles(styles)(({shape, classes, style}) => {
 
@@ -101,16 +105,16 @@ export const DisplayRootTypeName = withStyles(styles)(({shape, classes, style}) 
 
 	return <div className={classes.root}>
 		<BasicButton className={classes.typeChangeButton}
-					disabled={true}
-					style={{
-						color,
-						fontWeight: (type.hasFields || type.hasTypeParameters) ? 700 : 200,
-						...style,
-					}}>
+					 disabled={true}
+					 style={{
+						 color,
+						 fontWeight: (type.hasFields || type.hasTypeParameters) ? 700 : 200,
+						 ...style,
+					 }}>
 			{generateTypeName(type, shape)}
 			{type.isRef ? <div
 				className={classes.goTo}
 			>(view)</div> : null}
 		</BasicButton>
-	</div>
-})
+	</div>;
+});
