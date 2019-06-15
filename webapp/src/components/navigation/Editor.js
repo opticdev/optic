@@ -1,10 +1,11 @@
-import React from 'react'
+import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import TopBar from './TopBar';
 import Paper from '@material-ui/core/Paper';
-import keydown from 'react-keydown'
+import keydown from 'react-keydown';
 import SuperMenu from './SuperMenu';
 import FloatingAddButton from './FloatingAddButton';
+import {EditorStore} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 	pageContainer: {
@@ -52,57 +53,60 @@ const Sheet = withStyles(styles)(({classes, style, children}) => {
 	return <Paper className={classes.sheet} style={style} id="center-sheet">
 		{children}
 		{/*<FloatingAddButton />*/}
-	</Paper>
-})
+	</Paper>;
+});
 
 const Margin = withStyles(styles)(({classes, children, className}) => {
-	return <div className={className || classes.margin}>{children}</div>
-})
+	return <div className={className || classes.margin}>{children}</div>;
+});
 
-class MasterView extends React.Component {
+class Editor extends React.Component {
 
 	state = {
 		superMenuOpen: false
+	};
+
+	@keydown('ctrl+f', 'cmd+f')
+	searchShortcut(e) {
+		e.preventDefault();
+		e.stopPropagation();
 	}
 
-	@keydown('ctrl+f', 'cmd+f' )
+	@keydown('escape')
 	searchShortcut(e) {
-		e.preventDefault()
-		e.stopPropagation()
-	}
-
-	@keydown('escape' )
-	searchShortcut(e) {
-		e.preventDefault()
-		e.stopPropagation()
-		this.closeAll()
+		e.preventDefault();
+		e.stopPropagation();
+		this.closeAll();
 	}
 
 	closeAll = () => {
-		this.toggleSuperMenu(null,true)
-	}
+		this.toggleSuperMenu(null, true);
+	};
 
 	toggleSuperMenu = (e, forceClose) => {
-		this.setState({superMenuOpen: (forceClose) ? false : !this.state.superMenuOpen})
-	}
+		this.setState({superMenuOpen: (forceClose) ? false : !this.state.superMenuOpen});
+	};
 
 	render() {
 
-		const {classes} = this.props
+		const {classes, basePath} = this.props;
 
 		return (
-			<div className={classes.pageContainer}>
-				<div className={classes.navWrapper}>
-					<TopBar toggleSuperMenu={this.toggleSuperMenu} />
+			<EditorStore basePath={basePath}>
+				<div className={classes.pageContainer}>
+					<div className={classes.navWrapper}>
+						<TopBar toggleSuperMenu={this.toggleSuperMenu}/>
+					</div>
+					<div className={classes.contentWrapper}>
+						<Margin className={classes.leftMargin}/>
+						<Sheet>{this.props.content}</Sheet>
+						<Margin/>
+					</div>
+					<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
+					<FloatingAddButton />
 				</div>
-				<div className={classes.contentWrapper}>
-					<Margin className={classes.leftMargin} />
-					<Sheet>{this.props.content}</Sheet>
-					<Margin />
-				</div>
-				<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu} />
-			</div>)
+			</EditorStore>);
 	}
 }
 
-export default withStyles(styles)(MasterView)
+export default withStyles(styles)(Editor);

@@ -1,13 +1,9 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import TextField from '@material-ui/core/TextField/index';
-import InputBase from '@material-ui/core/InputBase/index';
-import AutosizeInput from 'react-input-autosize';
-import ButtonBase from '@material-ui/core/ButtonBase/index';
 import {primitiveColors, generateTypeName} from './Types';
-import LinkIcon from '@material-ui/icons/Link';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
-import {SchemaEditorModes} from './Constants';
+import BasicButton from './BasicButton';
+import {EditorModes} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 	root: {
@@ -15,17 +11,8 @@ const styles = theme => ({
 	},
 	typeChangeButton: {
 		fontSize: 13,
+		fontWeight: 400,
 		marginTop: -2,
-		'&:hover $linkIcon': {
-			display: 'inherit'
-		}
-	},
-	linkIcon: {
-		width: 12,
-		marginLeft: 2,
-		marginTop: 2,
-		display: 'none',
-		cursor: 'pointer'
 	},
 	goTo: {
 		marginLeft: 10,
@@ -68,18 +55,19 @@ class TypeName extends React.Component {
 		})();
 
 		return <SchemaEditorContext.Consumer>
-			{({editorState, operations, mode}) => {
+			{({editorState, currentShape, operations, mode}) => {
 				return <div className={classes.root} key={id}>
-					<ButtonBase className={classes.typeChangeButton}
+					<BasicButton className={classes.typeChangeButton}
 								disableRipple={true}
-								disabled={!(mode === SchemaEditorModes.EDIT)}
+								disabled={!(mode === EditorModes.DESIGN)}
 								onClick={operations.showTypeMenu(id, type)}
 								style={{
 									color,
+									display: 'flex',
 									fontWeight: (type.hasFields || type.hasTypeParameters) ? 700 : 200,
 									...style,
 								}}>
-						{generateTypeName(type, node, editorState.projection.allowedTypeReferences)}
+						{generateTypeName(type, node, currentShape.allowedTypeReferences)}
 
 						{type.isRef ? <div
 							className={classes.goTo}
@@ -88,7 +76,7 @@ class TypeName extends React.Component {
 
 							}}
 						>(view)</div> : null}
-					</ButtonBase>
+					</BasicButton>
 				</div>;
 			}}
 		</SchemaEditorContext.Consumer>;
@@ -112,8 +100,7 @@ export const DisplayRootTypeName = withStyles(styles)(({shape, classes, style}) 
 	})();
 
 	return <div className={classes.root}>
-		<ButtonBase className={classes.typeChangeButton}
-					disableRipple={true}
+		<BasicButton className={classes.typeChangeButton}
 					disabled={true}
 					style={{
 						color,
@@ -124,6 +111,6 @@ export const DisplayRootTypeName = withStyles(styles)(({shape, classes, style}) 
 			{type.isRef ? <div
 				className={classes.goTo}
 			>(view)</div> : null}
-		</ButtonBase>
+		</BasicButton>
 	</div>
 })

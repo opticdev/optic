@@ -1,10 +1,10 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import Cancel from '@material-ui/icons/Cancel';
-import ButtonBase from '@material-ui/core/ButtonBase/index';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
 import {Commands} from '../../engine'
-import {SchemaEditorModes} from './Constants';
+import BasicButton from './BasicButton';
+import {EditorModes} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 
@@ -15,12 +15,11 @@ function DeleteButton({classes, id, deleteType}) {
 	return <SchemaEditorContext.Consumer>
 		{({editorState, operations, conceptId, mode}) => {
 
-			if (mode !== SchemaEditorModes.EDIT) {
+			if (mode !== EditorModes.DESIGN) {
 				return null
 			}
 
-			return <ButtonBase
-				disableRipple={true}
+			return <BasicButton
 			    onClick={() => {
 			    	if (deleteType === 'field') {
 						operations.runCommand(Commands.RemoveField(id, conceptId))
@@ -29,7 +28,7 @@ function DeleteButton({classes, id, deleteType}) {
 					}
 				}}>
 				<Cancel style={{width: 15, color: '#a6a6a6'}} />
-			</ButtonBase>
+			</BasicButton>
 		}}
 	</SchemaEditorContext.Consumer>
 }

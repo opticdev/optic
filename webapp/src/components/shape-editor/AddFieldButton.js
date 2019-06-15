@@ -3,10 +3,10 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton/index';
 import ExpandMore from '@material-ui/icons/KeyboardArrowRight'
 import ExpandLess from '@material-ui/icons/ExpandMore'
-import ButtonBase from '@material-ui/core/ButtonBase/index';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
 import {Commands, DataTypesHelper} from '../../engine'
-import {SchemaEditorModes} from './Constants';
+import BasicButton from './BasicButton';
+import {EditorModes} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 	addButton: {
@@ -20,17 +20,16 @@ function AddFieldButton({classes, parentId}) {
 
 	return <SchemaEditorContext.Consumer>
 		{({editorState, operations, conceptId, mode}) => {
-			if (mode !== SchemaEditorModes.EDIT) {
+			if (mode !== EditorModes.DESIGN) {
 				return null
 			}
-			return <ButtonBase
+			return <BasicButton
 				className={classes.addButton}
-				disableRipple={true}
 				onClick={() => {
 					operations.toggleCollapsed(parentId, true)()
 					operations.runCommand(Commands.AddField(parentId, DataTypesHelper.newId(), conceptId))
 				}}
-			> + Add Field</ButtonBase>
+			> + Add Field</BasicButton>
 		}}
 	</SchemaEditorContext.Consumer>
 }

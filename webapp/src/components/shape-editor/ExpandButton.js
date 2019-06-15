@@ -3,9 +3,9 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import IconButton from '@material-ui/core/IconButton/index';
 import ExpandMore from '@material-ui/icons/KeyboardArrowRight'
 import ExpandLess from '@material-ui/icons/ExpandMore'
-import ButtonBase from '@material-ui/core/ButtonBase/index';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
 import {Commands} from '../../engine'
+import BasicButton from './BasicButton';
 
 const styles = theme => ({
 	expandButton: {
@@ -21,13 +21,12 @@ function ExpandButton({classes, parentId}) {
 
 			const isCollapsed = editorState.collapsed.includes(parentId)
 
-			return <ButtonBase
+			return <BasicButton
 				className={classes.expandButton}
-				disableRipple={true}
 				onClick={operations.toggleCollapsed(parentId)}
 			>
 			{isCollapsed ? <ExpandMore style={{width: 15}}/> : <ExpandLess style={{width: 15}}/> }
-			</ButtonBase>
+			</BasicButton>
 		}}
 	</SchemaEditorContext.Consumer>
 }
