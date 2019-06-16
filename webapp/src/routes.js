@@ -5,6 +5,12 @@ import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
 import {RfcStore, withRfcContext} from './contexts/RfcContext.js';
 import RequestPage from './components/RequestPage';
 import ConceptsPage from './components/ConceptsPage';
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import {Button} from '@material-ui/core';
+import Loading from './components/navigation/Loading';
 
 const paths = {
 	newRoot: () => '/new',
@@ -17,7 +23,8 @@ const paths = {
 class ExampleLoader extends React.Component {
 
 	state = {
-		example: null
+		example: null,
+		error: null
 	};
 
 	componentDidMount() {
@@ -25,23 +32,54 @@ class ExampleLoader extends React.Component {
 			.then(response => {
 				if (response.ok) {
 					return response.text()
-						.then(jsonString => {
-							this.setState({
-								example: jsonString
-							});
+						.then(rawString => {
+							if (rawString.startsWith('<!DOCTYPE html>')) {
+								this.setState({error: true});
+							} else {
+								this.setState({
+									example: rawString
+								});
+							}
 						});
 				}
 			});
 	}
 
 	render() {
-		const {example} = this.state;
+		const {example, error} = this.state;
+
+		if (error) {
+			return (
+				<Dialog open={true}>
+					<DialogTitle>Example not found</DialogTitle>
+					<DialogContent>The example API you are trying to load could not be found.</DialogContent>
+					<DialogActions>
+						<Button onClick={() => window.location.reload()}>Reload</Button>
+						<Button onClick={() => window.location.href = '/new'} color="secondary">Start New API</Button>
+					</DialogActions>
+				</Dialog>
+			);
+		}
 
 		if (example === null) {
-			return <div>Loading...</div>;
+			return <Loading />;
 		}
 		return (
 			<InitialRfcCommandsStore initialCommandsString={example} rfcId="testRfcId">
+				<RfcStore>
+					<APIEditorRoutes {...this.props} />
+				</RfcStore>
+			</InitialRfcCommandsStore>
+		);
+	}
+}
+
+class NewApiLoader extends React.Component {
+
+	render() {
+
+		return (
+			<InitialRfcCommandsStore initialCommandsString={'[]'} rfcId="testRfcId">
 				<RfcStore>
 					<APIEditorRoutes {...this.props} />
 				</RfcStore>
@@ -56,7 +94,7 @@ class APIEditorRoutes extends React.Component {
 		const {url, path, params} = this.props.match;
 		const isNew = path === paths.newRoot();
 
-		const basePath = url
+		const basePath = url;
 
 		//@todo get examples showing
 		return (
@@ -66,10 +104,10 @@ class APIEditorRoutes extends React.Component {
 						<Route exact path={paths.newRoot(url)} component={() => <>NEW</>}/>
 						<Route path={paths.requestPage(url)}
 							   component={({match}) =>
-								   <RequestPage requestId={match.params.requestId} />}/>
+								   <RequestPage requestId={match.params.requestId}/>}/>
 						<Route path={paths.conceptPage(url)}
 							   component={({match}) =>
-								   <ConceptsPage conceptId={match.params.conceptId} />
+								   <ConceptsPage conceptId={match.params.conceptId}/>
 							   }/>
 						<Route component={() => <>ROOT</>}/>
 						<Redirect to={paths.apiRoot(url)}/>
@@ -85,8 +123,9 @@ class AppRoutes extends React.Component {
 		return (
 			<div>
 				<Switch>
-					<Route path={paths.newRoot()} component={APIEditorRoutes}/>
+					<Route path={paths.newRoot()} component={NewApiLoader}/>
 					<Route path={paths.example()} component={ExampleLoader}/>
+					{/*<Route path={'/loading'} exact component={Loading}/>*/}
 					<Redirect to={paths.newRoot()}/>
 				</Switch>
 			</div>

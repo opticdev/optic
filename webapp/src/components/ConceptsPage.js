@@ -7,6 +7,7 @@ import {EditorModes, withEditorContext} from '../contexts/EditorContext';
 import ContributionTextField from './contributions/ContributionTextField';
 import Divider from '@material-ui/core/Divider';
 import {updateContribution} from '../engine/routines';
+import {Redirect} from 'react-router-dom';
 
 const styles = theme => ({
 	root: {
@@ -22,8 +23,14 @@ const styles = theme => ({
 
 class ConceptsPage extends React.Component {
 	render() {
-		const {queries, rfcId, classes, conceptId, mode, handleCommand} = this.props;
+		const {queries, rfcId, classes, conceptId, mode, handleCommand, basePath} = this.props;
+
 		const currentShape = queries.conceptsById(conceptId);
+		if (!currentShape) {
+			return <Redirect to={basePath} />
+		}
+
+
 		const contributions = queries.contributions()
 
 		console.log(contributions.asJsDictionary)

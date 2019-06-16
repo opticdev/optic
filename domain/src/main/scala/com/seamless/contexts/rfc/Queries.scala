@@ -11,6 +11,7 @@ import com.seamless.ddd.{AggregateId, EventStore}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
+import scala.util.Try
 
 @JSExportTopLevel("com.seamless.contexts.rfc.Queries")
 @JSExportAll
@@ -30,8 +31,8 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) 
     q.contributions
   }
 
-  def conceptsById(conceptId: ConceptId): ShapeProjection = {
-    q.conceptsById(conceptId)
+  def conceptsById(conceptId: ConceptId): js.UndefOr[ShapeProjection] = {
+    q.conceptsById(conceptId).orUndefined
   }
 
 }
@@ -54,14 +55,14 @@ class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
     ContributionsProjection.fromEvents(events)
   }
 
-  def conceptsById(conceptId: ConceptId): ShapeProjection = {
+  def conceptsById(conceptId: ConceptId): Option[ShapeProjection] = {
     val filteredEvents = events.collect{ case dataTypesEvent: DataTypesEvent => dataTypesEvent }
 
     val state = filteredEvents.foldLeft(DataTypesState(Map.empty, Map.empty)) { case (state, event) =>
       DataTypesAggregate.applyEvent(event, state)
     }
 
-    ShapeProjection.fromState(state, conceptId)
+    Try(ShapeProjection.fromState(state, conceptId)).toOption
   }
 
 }
