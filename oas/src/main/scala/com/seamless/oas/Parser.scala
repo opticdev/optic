@@ -17,8 +17,8 @@ import com.seamless.serialization.{CommandSerialization, EventSerialization}
 
 object Parser {
 
-  def parseOAS(contents: String) = {
-    val (root, jsonParseTime) = time(orNiceError( _ => Json.parse(contents).as[JsObject], "JSON could not be parsed"))
+  def parseOAS(contents: String): ParseResult = {
+    val (root, jsonParseTime) = time(orNiceError( _ => YamlJsonNormalize.jsonFrom(contents).as[JsObject], "JSON or YAML could not be parsed"))
 
     val resolver = orNiceError( _ => {
       val checkSwagger2 = Try(root.as[JsObject].value("swagger").as[JsString].value.startsWith("2"))

@@ -11,6 +11,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
 import {Button} from '@material-ui/core';
 import Loading from './components/navigation/Loading';
+import Welcome from './components/onboarding/Welcome';
 
 const paths = {
 	newRoot: () => '/new',
@@ -125,7 +126,7 @@ class AppRoutes extends React.Component {
 				<Switch>
 					<Route path={paths.newRoot()} component={NewApiLoader}/>
 					<Route path={paths.example()} component={ExampleLoader}/>
-					{/*<Route path={'/loading'} exact component={Loading}/>*/}
+					<Route path={'/'} exact component={Welcome}/>
 					<Redirect to={paths.newRoot()}/>
 				</Switch>
 			</div>

@@ -30,10 +30,7 @@ class ConceptsPage extends React.Component {
 			return <Redirect to={basePath} />
 		}
 
-
 		const contributions = queries.contributions()
-
-		console.log(contributions.asJsDictionary)
 
 		return <div className={classes.root}>
 
