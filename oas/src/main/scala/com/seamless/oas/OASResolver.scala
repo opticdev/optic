@@ -20,6 +20,8 @@ abstract class OASResolver(val root: JsObject, val oas_version: String) {
     }
   }
 
+  def title: Option[String] = (root \ "info" \ "title").toOption.map(_.as[JsString].value)
+
   def operationsForPath(path: Path)(implicit ctx: Context): Vector[Operation] = {
     path.cxt.root.as[JsObject].value.collect {
       case (op, value) if oas.supportedOperations.contains(op) => Operation(op, path)(buildContext(value))

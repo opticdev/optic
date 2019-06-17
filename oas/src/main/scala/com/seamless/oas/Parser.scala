@@ -9,7 +9,7 @@ import com.seamless.oas.oas_to_commands.RequestsToCommandsImplicits._
 import com.seamless.oas.QueryImplicits._
 import JsonSchemaToCommandsImplicits._
 import com.seamless.contexts.data_types.Commands.{DefineConcept, DefineInlineConcept}
-import com.seamless.contexts.rfc.Commands.RfcCommand
+import com.seamless.contexts.rfc.Commands.{RfcCommand, SetAPIName}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.{RfcService, RfcState}
 import com.seamless.ddd.InMemoryEventStore
@@ -33,6 +33,8 @@ object Parser {
     }, "OAS Version is not supported")
 
 
+    val nameCommand = resolver.title.map( title => SetAPIName(title))
+
     val (allDefinitionsCommands, definitionsCommandStreamTime) = time {
       val definitionsCommandStream = CommandStream.merge(resolver.definitions.map(_.toCommandStream))
       definitionsCommandStream.flatten
@@ -44,7 +46,10 @@ object Parser {
       CommandStream.merge(Vector(pathContext.commands, endpointsCommandStream)).flatten
     }
 
-    val allCommands = allDefinitionsCommands ++ allEndpointsCommands
+    val allCommands = {
+      (if (nameCommand.isDefined) Vector(nameCommand.get) else Vector.empty) ++
+      allDefinitionsCommands ++ allEndpointsCommands
+    }
 
     val (service, buildSnapshotTime) = time {
       val service = new RfcService(new InMemoryEventStore[RfcEvent])

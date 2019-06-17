@@ -7,6 +7,7 @@ import scala.scalajs.js.annotation.{JSExportAll, JSExportDescendentClasses}
 object Commands {
 
   case class AddContribution(id: String, key: String, value: String) extends ContributionCommand
+  case class SetAPIName(newName: String) extends ContributionCommand
 
   @JSExportDescendentClasses
   @JSExportAll

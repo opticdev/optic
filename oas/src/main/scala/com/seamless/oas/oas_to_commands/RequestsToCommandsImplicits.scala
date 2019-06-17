@@ -20,6 +20,7 @@ object RequestsToCommandsImplicits {
   case class APIPathsContext(commands: ImmutableCommandStream, uriToId: String => String) {
     def pathToId(path: Path): String = uriToId(path.uri)
   }
+
   implicit class PathsToCommands(pathVector: Vector[Path]) {
 
     def toCommandStream: APIPathsContext = {

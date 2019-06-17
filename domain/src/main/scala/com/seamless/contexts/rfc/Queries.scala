@@ -6,7 +6,7 @@ import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesState}
 import com.seamless.contexts.data_types.projections.{ConceptListProjection, NamedConcept, ShapeProjection}
 import com.seamless.contexts.requests.projections.{Path, PathListProjection}
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.projections.{ContributionWrapper, ContributionsProjection}
+import com.seamless.contexts.rfc.projections.{APINameProjection, ContributionWrapper, ContributionsProjection}
 import com.seamless.ddd.{AggregateId, EventStore}
 
 import scala.scalajs.js
@@ -33,6 +33,10 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) 
 
   def conceptsById(conceptId: ConceptId): js.UndefOr[ShapeProjection] = {
     q.conceptsById(conceptId).orUndefined
+  }
+
+  def apiName(): String = {
+    q.apiName()
   }
 
 }
@@ -63,6 +67,10 @@ class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
     }
 
     Try(ShapeProjection.fromState(state, conceptId)).toOption
+  }
+
+  def apiName(): String = {
+    APINameProjection.fromEvents(events)
   }
 
 }

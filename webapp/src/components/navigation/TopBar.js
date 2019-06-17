@@ -18,6 +18,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import {primary} from '../../theme';
 import Divider from '@material-ui/core/Divider';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
+import {withRfcContext} from '../../contexts/RfcContext';
 
 const styles = theme => ({
 	root: {
@@ -93,14 +94,14 @@ class TopBar extends React.Component {
 
 
 	render() {
-		const {classes, mode, switchEditorMode} = this.props;
+		const {classes, mode, switchEditorMode, apiName} = this.props;
 
 		return (
 			<div className={classes.root}>
 				<AppBar position="static" style={{backgroundColor: 'white'}} elevation={0} className={classes.appBar}>
 					<Toolbar variant="dense">
 						<Typography className={classes.title} variant="h6" noWrap>
-							Stripe Checkout API
+							{apiName}
 						</Typography>
 
 						<IconButton
@@ -158,5 +159,4 @@ class TopBar extends React.Component {
 	}
 }
 
-
-export default withEditorContext(withStyles(styles)(TopBar));
+export default withRfcContext(withEditorContext(withStyles(styles)(TopBar)));

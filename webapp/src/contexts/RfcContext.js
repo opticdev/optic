@@ -35,7 +35,10 @@ class RfcStoreWithoutContext extends React.Component {
     render() {
         const {queries} = this.state;
         const {rfcId} = this.props;
-        const value = {rfcId, queries, handleCommand: this.handleCommand}
+        const apiName = queries.apiName()
+
+        const value = {rfcId, queries, apiName, handleCommand: this.handleCommand}
+
         return (
             <RfcContext.Provider value={value}>
                 {this.props.children}
