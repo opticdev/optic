@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -19,6 +19,8 @@ import {primary} from '../../theme';
 import Divider from '@material-ui/core/Divider';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 import {withRfcContext} from '../../contexts/RfcContext';
+import TextField from '@material-ui/core/TextField';
+import {renameAPI} from '../../engine/routines';
 
 const styles = theme => ({
 	root: {
@@ -87,22 +89,49 @@ const styles = theme => ({
 	toggleButtonSelected: {
 		backgroundColor: `${primary} !important`,
 		color: `white !important`
+	},
+	titleInput: {
+		width: 280,
+		color: NavTextColor
 	}
 });
+
+const APITitle = ({mode, apiName, classes, onRenamed}) => {
+
+	const [stagedName, setStagedName] = useState(apiName)
+
+	return (
+		<>
+		{mode === EditorModes.DOCUMENTATION ? (
+			<Typography className={classes.title} variant="h6" noWrap>
+				{apiName}
+			</Typography>
+		): (
+			<TextField value={stagedName}
+					   onBlur={() => onRenamed(stagedName)}
+					   className={classes.titleInput}
+					   onChange={(e) => setStagedName(e.target.value)}
+			/>
+		)}
+		</>
+	)
+}
 
 class TopBar extends React.Component {
 
 
 	render() {
-		const {classes, mode, switchEditorMode, apiName} = this.props;
+		const {classes, mode, switchEditorMode, apiName, handleCommand} = this.props;
 
 		return (
 			<div className={classes.root}>
 				<AppBar position="static" style={{backgroundColor: 'white'}} elevation={0} className={classes.appBar}>
 					<Toolbar variant="dense">
-						<Typography className={classes.title} variant="h6" noWrap>
-							{apiName}
-						</Typography>
+
+						<APITitle mode={mode}
+								  apiName={apiName}
+								  classes={classes}
+								  onRenamed={(name) => handleCommand(renameAPI(name))}/>
 
 						<IconButton
 							edge="start"
@@ -158,5 +187,6 @@ class TopBar extends React.Component {
 		);
 	}
 }
+
 
 export default withRfcContext(withEditorContext(withStyles(styles)(TopBar)));
