@@ -1247,14 +1247,14 @@
     react-transition-group "^4.0.0"
     warning "^4.0.1"
 
-"@material-ui/icons@4.1.1":
+"@material-ui/icons@4.2.0":
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/@material-ui/icons/-/icons-4.2.0.tgz#cd0b6521288c5e6c0b084d6defec37a4491e0c51"
   integrity sha512-v+rz61KzH+qR8x17BrfOF73f75x+wUNiBhv9tsKnEed+ElROMK2dqfMAlsdgEP+wgGl4VOcxzUQqWHcaApZ+CA==
   dependencies:
     "@babel/runtime" "^7.2.0"
 
-"@material-ui/lab@^4.0.0-alpha.116":
+"@material-ui/lab@^4.0.0-alpha.16":
   version "4.0.0-alpha.16"
   resolved "https://registry.yarnpkg.com/@material-ui/lab/-/lab-4.0.0-alpha.16.tgz#0d5f4e7e7eda057b732d26fe603b38cce6adf3b2"
   integrity sha512-NKaIMQd9bUI+Iny6AduYA0KBkVq5XAVWspNtem4qmPTr4aFbh90IZ1a8twN77hHHJm35MRBy4Sq+Y7I07JGw0g==

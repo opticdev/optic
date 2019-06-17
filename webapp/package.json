@@ -6,8 +6,8 @@
     "@babel/core": "7.4.3",
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@material-ui/core": "4.1.1",
-    "@material-ui/icons": "4.1.1",
-    "@material-ui/lab": "^4.0.0-alpha.116",
+    "@material-ui/icons": "4.2.0",
+    "@material-ui/lab": "^4.0.0-alpha.16",
     "@svgr/webpack": "4.1.0",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
@@ -97,7 +97,8 @@
     "@storybook/addon-actions": "^5.0.11",
     "@storybook/addon-links": "^5.0.11",
     "@storybook/addons": "^5.0.11",
-    "@storybook/react": "^5.0.11"
+    "@storybook/react": "^5.0.11",
+    "react-dev-utils": "9.0.1"
   },
   "jest": {
     "collectCoverageFrom": [
