@@ -13,3 +13,11 @@ webapp:
 	cd ./webapp && npm run build
 
 .PHONY: webapp
+
+all:
+	@echo "building webapp"
+	make domain
+	make domain-js
+	make webapp
+
+.PHONY: all
