@@ -19,14 +19,14 @@ oas:
 webapp:
 	@echo "building webapp"
 	make domain-js
-	cd ./webapp && npm run build
+	yarn install
+	cd ./webapp && yarn build
 
 .PHONY: webapp
 
 all:
 	@echo "building webapp"
 	make domain
-	make domain-js
 	make oas
 	make webapp
 
