@@ -12,6 +12,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import {Button} from '@material-ui/core';
 import Loading from './components/navigation/Loading';
 import Welcome from './components/onboarding/Welcome';
+import UploadOAS from './components/onboarding/upload-oas';
+import {ImportedOASContext, ImportedOASStore} from './contexts/ImportedOASContext';
 
 const paths = {
 	newRoot: () => '/new',
@@ -63,7 +65,7 @@ class ExampleLoader extends React.Component {
 		}
 
 		if (example === null) {
-			return <Loading />;
+			return <Loading/>;
 		}
 		return (
 			<InitialRfcCommandsStore initialCommandsString={example} rfcId="testRfcId">
@@ -76,15 +78,17 @@ class ExampleLoader extends React.Component {
 }
 
 class NewApiLoader extends React.Component {
-
 	render() {
-
 		return (
-			<InitialRfcCommandsStore initialCommandsString={'[]'} rfcId="testRfcId">
-				<RfcStore>
-					<APIEditorRoutes {...this.props} />
-				</RfcStore>
-			</InitialRfcCommandsStore>
+			<ImportedOASContext.Consumer>
+				{({providedCommands}) => (
+					<InitialRfcCommandsStore initialCommandsString={providedCommands || '[]'} rfcId="testRfcId">
+						<RfcStore>
+							<APIEditorRoutes {...this.props} />
+						</RfcStore>
+					</InitialRfcCommandsStore>
+				)}
+			</ImportedOASContext.Consumer>
 		);
 	}
 }
@@ -123,12 +127,15 @@ class AppRoutes extends React.Component {
 	render() {
 		return (
 			<div>
-				<Switch>
-					<Route path={paths.newRoot()} component={NewApiLoader}/>
-					<Route path={paths.example()} component={ExampleLoader}/>
-					<Route path={'/'} exact component={Welcome}/>
-					<Redirect to={paths.newRoot()}/>
-				</Switch>
+				<ImportedOASStore>
+					<Switch>
+						<Route path={paths.newRoot()} component={NewApiLoader}/>
+						<Route path={'/upload-oas'} exact component={UploadOAS}/>
+						<Route path={paths.example()} component={ExampleLoader}/>
+						<Route path={'/'} exact component={Welcome}/>
+						<Redirect to={paths.newRoot()}/>
+					</Switch>
+				</ImportedOASStore>
 			</div>
 		);
 	}

@@ -130,17 +130,20 @@ class Welcome extends React.Component {
 
 				<Grid container>
 					<Grid item xs={6} style={{textAlign: 'center'}}>
+						<Link to={'/upload-oas'} style={{textDecoration: 'none'}}>
 						<Button variant="contained" color="secondary" className={classes.button}>
 							<CloudUploadIcon className={classes.leftIcon} />
 							Upload OpenAPI/Swagger Spec
 						</Button>
-
+						</Link>
 					</Grid>
 					<Grid item xs={6} style={{textAlign: 'center'}}>
-						<Button variant="contained" color="secondary" className={classes.button}>
-							<Launch className={classes.leftIcon} />
-							Start New API
-						</Button>
+						<Link to={'/new'} style={{textDecoration: 'none'}}>
+							<Button variant="contained" color="secondary" className={classes.button}>
+								<Launch className={classes.leftIcon} />
+								Start New API
+							</Button>
+						</Link>
 					</Grid>
 
 					<Grid item xs={12} style={{textAlign: 'center', paddingTop: 30}}>
