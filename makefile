@@ -19,7 +19,7 @@ oas:
 webapp:
 	@echo "building webapp"
 	make domain-js
-	yarn install
+	cd ./webapp && yarn install
 	cd ./webapp && yarn build
 
 .PHONY: webapp
