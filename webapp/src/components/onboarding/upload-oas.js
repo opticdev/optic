@@ -38,7 +38,7 @@ class UploadOAS extends React.Component {
 
 	state = {
 		fileUploaded: false,
-
+		error: null
 	}
 
 	fileSelected = (event) => {
@@ -51,7 +51,7 @@ class UploadOAS extends React.Component {
 			reader.readAsText(file, "UTF-8");
 			reader.onload = function (evt) {
 				const contents = evt.target.result;
-				c.setState({fileUploaded: true})
+				c.setState({fileUploaded: true, error: null})
 				c.processSpec(contents)
 			}
 			reader.onerror = function (evt) {
@@ -61,17 +61,31 @@ class UploadOAS extends React.Component {
 
 	}
 
-	processSpec = (contents) => {
+	processSpec = async (contents) => {
 		const {history, setProvidedCommands} = this.props
-		setTimeout(() => {
-			setProvidedCommands(contents, () => history.push('/new'))
-		}, 600)
+
+		const response = await fetch('https://hfsop9qif1.execute-api.us-east-2.amazonaws.com/dev/oas/coversion', {
+			method: 'POST',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({fileContents: contents})
+		});
+
+		if (response.status === 200) {
+			const commands = await response.text()
+			setProvidedCommands(commands, () => history.push('/new'))
+		} else {
+			console.error('OAS parse error '+ await response.text())
+			this.setState({fileUploaded: false, error: 'Error parsing OAS file. Please make sure it is valid and try again'})
+		}
 	}
 
 	render() {
 
 		const {classes} = this.props
-		const {fileUploaded} = this.state
+		const {fileUploaded, error} = this.state
 
 		return <div className={classes.root}>
 
@@ -91,6 +105,7 @@ class UploadOAS extends React.Component {
 					onChange={this.fileSelected}
 					type="file"
 				/>
+				{error ? <Typography variant="overline" color="error"></Typography> : null}
 				<label htmlFor="raised-button-file">
 					<Button variant="contained" component="span" color="secondary" className={classes.uploadButton}>
 						<CloudUploadIcon className={classes.leftIcon} color="default" />

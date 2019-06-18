@@ -77,16 +77,16 @@ const RoadMapItems = [
 ];
 
 const Examples = [
-	{logo: 'aws.png', link: ''},
-	{logo: 'stripe.svg', link: ''},
-	{logo: 'github.png', link: ''},
-	{logo: 'circleci.png', link: ''},
-	{logo: 'jira.svg', link: ''},
+	{logo: 'aws.png', link: 'aws'},
+	{logo: 'stripe.svg', link: 'stripe'},
+	{logo: 'github.png', link: 'github'},
+	{logo: 'circleci.png', link: 'circle-ci'},
+	{logo: 'jira.svg', link: 'jira'},
 	// {logo: 'launchdarkly.png', link: ''},
-	{logo: 'azure.png', link: ''},
-	{logo: 'netlify.svg', link: ''},
-	{logo: 'gitlab.svg', link: ''},
-	{logo: 'kubernetes.png', link: ''},
+	{logo: 'azure.png', link: 'azure'},
+	{logo: 'netlify.svg', link: 'netlify'},
+	{logo: 'gitlab.svg', link: 'gitlab'},
+	{logo: 'kubernetes.png', link: 'kubernetes'},
 	// {logo: 'anchore.png', link: ''},
 ]
 
@@ -152,7 +152,7 @@ class Welcome extends React.Component {
 
 						<div>
 							{Examples.map(i => (
-								<Link>
+								<Link to={`/examples/${i.link}`}>
 								<img className={classes.exampleImage} src={'/example-logos/'+i.logo} />
 								</Link>))}
 						</div>
@@ -163,30 +163,30 @@ class Welcome extends React.Component {
 
 
 
-				<Divider style={{marginTop: 50}}/>
+				{/*<Divider style={{marginTop: 50}}/>*/}
 
-				<Typography variant="overline" color="primary"
-							style={{textAlign: 'center', fontSize: 30, marginTop: 30}}>{roadmapHeading}</Typography>
+				{/*<Typography variant="overline" color="primary"*/}
+				{/*			style={{textAlign: 'center', fontSize: 30, marginTop: 30}}>{roadmapHeading}</Typography>*/}
 
-				<ul>
-					{RoadMapItems.map((roadmapItem, index) => (
-						<li key={index} className={classes.roadmapItem}>
-							<Typography variant="body1" color="primary"
-										style={{lineHeight: 1.4, fontSize: 20}}>{roadmapItem.title}</Typography>
+				{/*<ul>*/}
+				{/*	{RoadMapItems.map((roadmapItem, index) => (*/}
+				{/*		<li key={index} className={classes.roadmapItem}>*/}
+				{/*			<Typography variant="body1" color="primary"*/}
+				{/*						style={{lineHeight: 1.4, fontSize: 20}}>{roadmapItem.title}</Typography>*/}
 
-							<div style={{marginTop: -2, marginLeft: 23}}>
-								<Button className={classes.upvote}>
-									(view Issue)
-								</Button>
+				{/*			<div style={{marginTop: -2, marginLeft: 23}}>*/}
+				{/*				<Button className={classes.upvote}>*/}
+				{/*					(view Issue)*/}
+				{/*				</Button>*/}
 
 
-								<Button className={classes.upvote} color="secondary">
-									Upvote ({roadmapItem.upvotes})
-								</Button>
-							</div>
-						</li>
-					))}
-				</ul>
+				{/*				<Button className={classes.upvote} color="secondary">*/}
+				{/*					Upvote ({roadmapItem.upvotes})*/}
+				{/*				</Button>*/}
+				{/*			</div>*/}
+				{/*		</li>*/}
+				{/*	))}*/}
+				{/*</ul>*/}
 
 			</Paper>
 

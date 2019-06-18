@@ -1,7 +1,8 @@
 package com.seamless.oas
 
+import com.seamless.oas.InvokeParser.pathToContents
 import com.seamless.serialization.CommandSerialization
-
+import play.api.libs.json.{JsObject, JsString}
 object InvokeParser {
 
   def pathToContents(file: String): String = {
