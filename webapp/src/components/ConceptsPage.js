@@ -61,9 +61,9 @@ class ConceptsPage extends React.Component {
 				/>
 			</div>
 
-			<Divider style={{marginTop: 15, marginBottom: 15}} />
+			{/*<Divider style={{marginTop: 15, marginBottom: 15}} />*/}
 
-			<Typography variant="h6" color="primary">Usages</Typography>
+			{/*<Typography variant="h6" color="primary">Usages</Typography>*/}
 
 		</div>
 	}

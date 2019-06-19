@@ -14,6 +14,7 @@ import Loading from './components/navigation/Loading';
 import Welcome from './components/onboarding/Welcome';
 import UploadOAS from './components/onboarding/upload-oas';
 import {ImportedOASContext, ImportedOASStore} from './contexts/ImportedOASContext';
+import OverView from './components/onboarding/Overview'
 
 const paths = {
 	newRoot: () => '/new',
@@ -114,7 +115,7 @@ class APIEditorRoutes extends React.Component {
 							   component={({match}) =>
 								   <ConceptsPage conceptId={match.params.conceptId}/>
 							   }/>
-						<Route component={() => <>ROOT</>}/>
+						<Route component={() => <OverView />}/>
 						<Redirect to={paths.apiRoot(url)}/>
 					</Switch>
 				}/>

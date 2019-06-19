@@ -39,6 +39,7 @@ const styles = theme => ({
 		marginTop: 80,
 		maxWidth: 1000,
 		flex: 6.5,
+		minHeight: 1200,
 		height: 'fit-content',
 		paddingBottom: 80,
 		marginBottom: 80,
