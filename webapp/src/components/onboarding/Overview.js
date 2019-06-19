@@ -79,9 +79,9 @@ class OverView extends React.Component {
 
 
 			<Typography variant="h4" color="primary" style={{marginBottom: 20, marginTop: 28}}>Need Help?</Typography>
-			<Typography variant="body1">We're happy to help. Reach out at email@email.com or on Intercom.</Typography>
-			<Button href="google.com" color="secondary">Explore Docs</Button>
-			<Button href="github.com" color="secondary">Report Issue on GitHub</Button>
+			<Typography variant="body1">We spend every week speaking with users and improving these tools. If you're having any issues we're happy to get on a video call and help you out. You can react us at email@email.com or on Intercom.</Typography>
+			<Button href="google.com" color="secondary" target="_blank">Explore Docs</Button>
+			<Button href="github.com" color="secondary" target="_blank">Report Issue on GitHub</Button>
 
 		</div>
 	}

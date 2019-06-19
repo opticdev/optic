@@ -58,8 +58,7 @@ object ShapeProjection {
 
       AllowedTypeReference(concept.name.get, id, dependentConcepts.toVector)
     }.toVector
-      .sortBy(_._dependents.length)
-      .reverse
+      .sortBy(_.name)
 
     val namedConceptOption = if (!concept.inline) Some(NamedConcept(concept.name.get, concept.deprecated, conceptId)) else None
 

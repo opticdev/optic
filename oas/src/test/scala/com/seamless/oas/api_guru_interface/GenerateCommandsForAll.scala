@@ -7,10 +7,6 @@ import com.seamless.serialization.CommandSerialization
 
 import scala.util.Try
 
-class GenerateCommandsForAll {
-
-}
-
 object GenerateCommandsForAll extends AskTrait[ParseAttempt, Unit] {
   override def question: String = "[hijaked for other use] we're printing all the commands"
 

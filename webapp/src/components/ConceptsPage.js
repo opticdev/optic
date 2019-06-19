@@ -23,7 +23,8 @@ const styles = theme => ({
 
 class ConceptsPage extends React.Component {
 	render() {
-		const {queries, rfcId, classes, conceptId, mode, handleCommand, basePath} = this.props;
+		const {queries, rfcId, classes, conceptId, handleCommand, basePath, modeOverride} = this.props;
+		let mode = modeOverride || this.props.mode
 
 		const currentShape = queries.conceptsById(conceptId);
 		if (!currentShape) {

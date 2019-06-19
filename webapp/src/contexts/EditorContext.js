@@ -9,7 +9,7 @@ const {
 class EditorStore extends React.Component {
 
 	state = {
-		mode: EditorModes.DOCUMENTATION
+		mode: EditorModes.DESIGN
 	}
 
 	switchEditorMode = (mode) => {
