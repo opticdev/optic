@@ -2,8 +2,8 @@ import React from 'react';
 import {Redirect, Switch, Route} from 'react-router-dom';
 import Editor from './components/navigation/Editor';
 import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
-import {RfcStore, withRfcContext} from './contexts/RfcContext.js';
-import RequestPage from './components/RequestPage';
+import {RfcStore} from './contexts/RfcContext.js';
+import PathPage from './components/PathPage.js';
 import ConceptsPage from './components/ConceptsPage';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -16,13 +16,17 @@ import UploadOAS from './components/onboarding/upload-oas';
 import {ImportedOASContext, ImportedOASStore} from './contexts/ImportedOASContext';
 import OverView from './components/onboarding/Overview'
 
-const paths = {
+export const routerPaths = {
 	newRoot: () => '/new',
 	example: () => '/examples/:exampleId',
 	apiRoot: (base) => base,
-	requestPage: (base) => `${base}/requests/:requestId`,
+	pathPage: (base) => `${base}/paths/:pathId`,
 	conceptPage: (base) => `${base}/concepts/:conceptId`,
 };
+
+export const routerUrls = {
+    pathPage: (base, pathId) => `${base}/paths/${pathId}`
+}
 
 class ExampleLoader extends React.Component {
 
@@ -97,26 +101,24 @@ class NewApiLoader extends React.Component {
 class APIEditorRoutes extends React.Component {
 	render() {
 
-		const {url, path, params} = this.props.match;
-		const isNew = path === paths.newRoot();
+		const {url} = this.props.match;
 
 		const basePath = url;
 
-		//@todo get examples showing
 		return (
 			<div>
 				<Editor basePath={basePath} content={
 					<Switch>
-						<Route exact path={paths.newRoot(url)} component={() => <>NEW</>}/>
-						<Route path={paths.requestPage(url)}
+						<Route exact path={routerPaths.newRoot(url)} component={() => <>NEW</>}/>
+						<Route path={routerPaths.pathPage(url)}
 							   component={({match}) =>
-								   <RequestPage requestId={match.params.requestId}/>}/>
-						<Route path={paths.conceptPage(url)}
+								   <PathPage pathId={match.params.pathId}/>}/>
+						<Route path={routerPaths.conceptPage(url)}
 							   component={({match}) =>
 								   <ConceptsPage conceptId={match.params.conceptId}/>
 							   }/>
 						<Route component={() => <OverView />}/>
-						<Redirect to={paths.apiRoot(url)}/>
+						<Redirect to={routerPaths.apiRoot(url)}/>
 					</Switch>
 				}/>
 			</div>
@@ -130,11 +132,11 @@ class AppRoutes extends React.Component {
 			<div>
 				<ImportedOASStore>
 					<Switch>
-						<Route path={paths.newRoot()} component={NewApiLoader}/>
+						<Route path={routerPaths.newRoot()} component={NewApiLoader}/>
 						<Route path={'/upload-oas'} exact component={UploadOAS}/>
-						<Route path={paths.example()} component={ExampleLoader}/>
+						<Route path={routerPaths.example()} component={ExampleLoader}/>
 						<Route path={'/'} exact component={Welcome}/>
-						<Redirect to={paths.newRoot()}/>
+						<Redirect to={routerPaths.newRoot()}/>
 					</Switch>
 				</ImportedOASStore>
 			</div>

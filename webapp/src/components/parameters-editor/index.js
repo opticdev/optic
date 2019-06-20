@@ -1,6 +1,5 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
-import { makeStyles } from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -8,27 +7,14 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {primary} from '../../theme';
 import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
 import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import TableBody from '@material-ui/core/TableBody';
 import classNames from 'classnames'
-import {newRfcService} from '../../engine';
-import {seedExampleUserWriteModel, seedFriendModel, seedString} from '../../engine/examples/ExampleData';
+import {seedString} from '../../engine/examples/ExampleData';
 import SchemaEditor from '../shape-editor/SchemaEditor';
-import {SchemaEditorModes} from '../shape-editor/Constants';
 import {DisplayRootTypeName} from '../shape-editor/TypeName';
 import ParameterNameInput from './ParameterNameInput';
-
-
-const service = newRfcService()
-let name = 'test-schema'
-const handler = service.commandHandlerForAggregate('test-api')
-
-// const conceptId = seedExampleUserWriteModel(handler, name)
-
- // <SchemaEditor service={service} conceptId={conceptId} mode={SchemaEditorModes.EDIT} />
-
 
 
 const styles = theme => ({
@@ -164,7 +150,7 @@ class ParametersEditor extends React.Component {
 										</ExpansionPanelSummary>
 										<ExpansionPanelDetails classes={{root: classes.detailRoot}}>
 											<Typography variant="overline" style={{marginTop: 2, paddingRight: 8, color: primary}}>Shape</Typography>
-											<SchemaEditor service={service} conceptId={row.inlineConceptId} mode={mode} />
+											<SchemaEditor conceptId={row.inlineConceptId} mode={mode} />
 										</ExpansionPanelDetails>
 									</ExpansionPanel>
 								</>

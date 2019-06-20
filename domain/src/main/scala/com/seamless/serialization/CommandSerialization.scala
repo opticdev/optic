@@ -17,7 +17,7 @@ object CommandSerialization {
   def toJson(vector: Vector[RfcCommand]): Json = {
     vector.map {
       case dataTypesCommand: DataTypesCommand => dataTypesCommand.asJson
-      case requestCommand: RequestsCommand =>requestCommand.asJson
+      case requestCommand: RequestsCommand => requestCommand.asJson
       case contributionCommand: ContributionCommand => contributionCommand.asJson
       case _ => throw new java.lang.Error("Unhandled command Type")
     }.asJson
@@ -33,7 +33,12 @@ object CommandSerialization {
       case i =>  TryChainUtil.firstSuccessIn(i,
         (j: Json) => Try(decodeDataTypesCommand(j).right.get),
         (j: Json) => Try(decodeRequestCommand(j).right.get),
-        (j: Json) => Try(decodeRfcCommand(j).right.get))
+        (j: Json) => Try(decodeRfcCommand(j).right.get),
+        (j: Json) => {
+          println(j)
+          Try(j.as[ContributionCommand].right.get)
+        }
+      )
     }
     require(parseResults.forall(_.isDefined), "Some commands could not be decoded")
     parseResults.collect{ case i if i.isDefined => i.get }

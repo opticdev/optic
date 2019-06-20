@@ -1,4 +1,4 @@
-import {ShapeCommands, newRfcService, Primitives, DataTypesHelper} from '../index'
+import {ShapeCommands, Primitives, DataTypesHelper} from '../index'
 
 export function seedExampleUserWriteModel(handler, schemaName, aggregateId = 'test-api') {
 

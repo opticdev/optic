@@ -1,7 +1,5 @@
 package com.seamless.contexts.rfc.projections
 
-import com.seamless.contexts.requests.Commands.PathComponentId
-import com.seamless.contexts.requests.Events.{PathComponentAdded, PathComponentRemoved, PathComponentRenamed, PathParameterAdded, PathParameterRemoved}
 import com.seamless.contexts.rfc.Events.{ContributionAdded, RfcEvent}
 import com.seamless.ddd.Projection
 

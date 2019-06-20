@@ -13,9 +13,10 @@ object CompositionFeatures extends AskTrait[CompositionUsage, Unit] {
 
   override def processAPI(resolver: OASResolver, apiName: String): CompositionUsage = {
 
-    val allOfCount = Json.prettyPrint(resolver.root).lines.count(i => i.contains("\"allOf\""))
-    val anyOfCount = Json.prettyPrint(resolver.root).lines.count(i => i.contains("\"anyOf\""))
-    val oneOfCount = Json.prettyPrint(resolver.root).lines.count(i => i.contains("\"oneOf\""))
+
+    val allOfCount = Json.prettyPrint(resolver.root).linesIterator.count(i => i.contains("\"allOf\""))
+    val anyOfCount = Json.prettyPrint(resolver.root).linesIterator.count(i => i.contains("\"anyOf\""))
+    val oneOfCount = Json.prettyPrint(resolver.root).linesIterator.count(i => i.contains("\"oneOf\""))
 
 
     CompositionUsage(apiName, allOfCount, anyOfCount, oneOfCount)

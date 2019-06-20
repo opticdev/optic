@@ -48,7 +48,14 @@ object RfcServiceJSFacade {
 
   def fromCommands(eventStore: EventStore[RfcEvent], commands: Vector[RfcCommand], id: AggregateId): RfcService = {
     val service = new RfcService(eventStore)
-    commands.foreach(service.handleCommand(id, _))
+    commands.foreach(command => {
+      val result = Try(service.handleCommand(id, command))
+      if (result.isFailure) {
+        println(command)
+        println(result)
+        throw result.failed.get
+      }
+    })
     service
   }
 
@@ -60,8 +67,10 @@ object RfcServiceJSFacade {
         json <- Try(parse(jsonString).right.get)
         commandsVector <- CommandSerialization.fromJson(json)
       } yield commandsVector
-
-    require(commandsVector.isSuccess, "failed to parse commands")
+    if (commandsVector.isFailure) {
+      println(commandsVector.failed.get)
+    }
+    require(commandsVector.isSuccess, "failed to parse and handle commands")
 
     fromCommands(eventStore, commandsVector.get, id)
   }

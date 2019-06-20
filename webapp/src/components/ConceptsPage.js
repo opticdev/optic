@@ -10,64 +10,70 @@ import {updateContribution} from '../engine/routines';
 import {Redirect} from 'react-router-dom';
 
 const styles = theme => ({
-	root: {
-		paddingLeft: 12,
-		paddingRight: 12,
-		paddingTop: 15
-	},
-	schemaEditorContainer: {
-		marginTop: 5,
-		// backgroundColor: '#fafafa'
-	}
+    root: {
+        paddingLeft: 12,
+        paddingRight: 12,
+        paddingTop: 15
+    },
+    schemaEditorContainer: {
+        marginTop: 5,
+        // backgroundColor: '#fafafa'
+    }
 });
 
 class ConceptsPage extends React.Component {
-	render() {
-		const {queries, rfcId, classes, conceptId, handleCommand, basePath, modeOverride} = this.props;
-		let mode = modeOverride || this.props.mode
+    render() {
+        const {queries, classes, conceptId, handleCommand, basePath, modeOverride} = this.props;
+        let mode = modeOverride || this.props.mode
 
-		const currentShape = queries.conceptsById(conceptId);
-		if (!currentShape) {
-			return <Redirect to={basePath} />
-		}
+        const currentShape = queries.conceptsById(conceptId);
+        if (!currentShape) {
+            return <Redirect to={basePath}/>
+        }
 
-		const contributions = queries.contributions()
+        const contributions = queries.contributions()
 
-		return <div className={classes.root}>
+        return (
+            <div className={classes.root}>
 
-			<ContributionTextField value={currentShape.namedConcept.name}
-								   variant={'heading'}
-								   placeholder={'Concept Name'}
-								   mode={mode}
-								   onBlur={() => {
-								   }}
-			/>
+                {/*@Aidan what's the plan here?*/}
+                <ContributionTextField
+                    value={currentShape.namedConcept.name}
+                    variant={'heading'}
+                    placeholder={'Concept Name'}
+                    mode={mode}
+                    onBlur={() => {
+                    }}
+                />
 
-			<ContributionTextField value={contributions.getOrUndefined(conceptId, 'description')}
-								   variant={'multi'}
-								   placeholder={'Description'}
-								   mode={mode}
-								   onBlur={(value) => {
-									   handleCommand(updateContribution(conceptId, 'description', value))
-								   }}
-			/>
+                <ContributionTextField
+                    value={contributions.getOrUndefined(conceptId, 'description')}
+                    variant={'multi'}
+                    placeholder={'Description'}
+                    mode={mode}
+                    onBlur={(value) => {
+                        handleCommand(updateContribution(conceptId, 'description', value))
+                    }}
+                />
 
-			<Typography variant="h6" color="primary">Shape</Typography>
+                <Typography variant="h6" color="primary">Shape</Typography>
 
-			<div className={classes.schemaEditorContainer}>
-				<SchemaEditor conceptId={conceptId}
-							  currentShape={currentShape}
-							  mode={mode}
-							  handleCommand={handleCommand}
-				/>
-			</div>
+                <div className={classes.schemaEditorContainer}>
+                    <SchemaEditor
+                        conceptId={conceptId}
+                        currentShape={currentShape}
+                        mode={mode}
+                        handleCommand={handleCommand}
+                    />
+                </div>
 
-			{/*<Divider style={{marginTop: 15, marginBottom: 15}} />*/}
+                {/*<Divider style={{marginTop: 15, marginBottom: 15}} />*/}
 
-			{/*<Typography variant="h6" color="primary">Usages</Typography>*/}
+                {/*<Typography variant="h6" color="primary">Usages</Typography>*/}
 
-		</div>
-	}
+            </div>
+        )
+    }
 }
 
 export default withEditorContext(withRfcContext(withStyles(styles)(ConceptsPage)))

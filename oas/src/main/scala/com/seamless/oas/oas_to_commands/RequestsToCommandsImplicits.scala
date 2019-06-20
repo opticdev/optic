@@ -80,7 +80,7 @@ object RequestsToCommandsImplicits {
         val inlineRequestSchemaCommands = schema.toCommandStream
         //add init events for the inline schema
         stream appendInit inlineRequestSchemaCommands.flatten
-        stream appendDescribe SetRequestBodyShape(operation.id, ShapedBodyDescriptor(contentType, schema.id))
+        stream appendDescribe SetRequestBodyShape(operation.id, ShapedBodyDescriptor(contentType, schema.id, isRemoved = false))
 
         if (operation.requestBody.get.description.isDefined) {
           stream appendDescribe AddContribution(operation.id, "body-description", operation.requestBody.get.description.get)
@@ -95,7 +95,7 @@ object RequestsToCommandsImplicits {
           val contentType = response.contentType.getOrElse("application/json")
 //          add init events for the inline schema
           stream appendInit inlineSchemaCommands.flatten
-          stream appendDescribe SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, response.schema.get.asInstanceOf[Definition].id))
+          stream appendDescribe SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, response.schema.get.asInstanceOf[Definition].id, isRemoved = false))
 
           if (response.description.isDefined) {
             stream appendDescribe AddContribution(responseId, "description", response.description.get)

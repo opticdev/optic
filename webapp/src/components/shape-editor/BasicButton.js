@@ -1,8 +1,7 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {primary, secondary} from '../../theme';
 import classNames from 'classnames'
-import keydown, {Keys} from 'react-keydown';
+import {Keys} from 'react-keydown';
 
 const {ENTER} = Keys
 

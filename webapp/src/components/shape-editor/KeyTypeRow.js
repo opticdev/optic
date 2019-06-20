@@ -1,7 +1,5 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
-import TextField from '@material-ui/core/TextField/index';
-import InputBase from '@material-ui/core/InputBase/index';
 import AutosizeInput from 'react-input-autosize';
 import TypeName from './TypeName';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';

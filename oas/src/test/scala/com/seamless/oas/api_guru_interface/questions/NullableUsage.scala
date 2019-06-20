@@ -12,7 +12,7 @@ object NullableUsage extends AskTrait[NullableUsage, Unit] {
   override def filter: AskFilter = All()
 
   override def processAPI(resolver: OASResolver, apiName: String): NullableUsage = {
-    val nullableCount = Json.prettyPrint(resolver.root).lines.count(i => i.contains("\"nullable\""))
+    val nullableCount = Json.prettyPrint(resolver.root).linesIterator.count(i => i.contains("\"nullable\""))
     NullableUsage(apiName, nullableCount)
   }
 

@@ -18,7 +18,7 @@ class RfcStoreWithoutContext extends React.Component {
 
         this.state = {
             rfcService: Facade.fromJsonCommands(eventStore, this.props.initialCommandsString, this.props.rfcId),
-            queries
+            queries,
         }
     }
 
@@ -35,9 +35,11 @@ class RfcStoreWithoutContext extends React.Component {
     render() {
         const {queries} = this.state;
         const {rfcId} = this.props;
+        const contributions = queries.contributions()
+
         const apiName = queries.apiName()
 
-        const value = {rfcId, queries, apiName, handleCommand: this.handleCommand}
+        const value = {rfcId, queries, apiName, handleCommand: this.handleCommand, contributions}
 
         return (
             <RfcContext.Provider value={value}>

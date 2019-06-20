@@ -9,7 +9,7 @@ import {EditorModes} from '../contexts/EditorContext';
 import {mui} from './MUI';
 
 storiesOf('HTTP Requests')
-    .add('Path Input (no existing paths)', () => {
+    .add('Path Input (no existing routerPaths)', () => {
         return <PathInput/>
     })
 

@@ -2,25 +2,36 @@ package com.seamless.contexts.requests
 
 import com.seamless.contexts.requests.Commands.{BasicPathComponentDescriptor, BodyDescriptor, ParameterizedPathComponentDescriptor, PathComponentDescriptor, PathComponentId, RequestId, RequestParameterId, RequestParameterShapeDescriptor, ResponseId, ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor, UnsetBodyDescriptor, UnsetRequestParameterShapeDescriptor}
 
+import scala.scalajs.js.annotation.JSExportAll
+
 sealed trait RequestsGraph
 
 trait Removable {
   val isRemoved: Boolean
 }
 
+@JSExportAll
 case class PathComponent(pathId: PathComponentId, descriptor: PathComponentDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
 
+@JSExportAll
 case class RequestParameterDescriptor(requestId: RequestId, location: String, name: String, shapeDescriptor: RequestParameterShapeDescriptor)
+
+@JSExportAll
 case class HttpRequestParameter(parameterId: RequestParameterId, requestParameterDescriptor: RequestParameterDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
 
+@JSExportAll
 case class RequestDescriptor(pathComponentId: PathComponentId, httpMethod: String, bodyDescriptor: BodyDescriptor)
+
+@JSExportAll
 case class HttpRequest(requestId: RequestId, requestDescriptor: RequestDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
 
+@JSExportAll
 case class ResponseDescriptor(requestId: RequestId, httpStatusCode: Int, bodyDescriptor: BodyDescriptor)
+
+@JSExportAll
 case class HttpResponse(responseId: ResponseId, responseDescriptor: ResponseDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
 
-case class HttpResponseBody(bodyDescriptor: BodyDescriptor)
-
+@JSExportAll
 case class RequestsState(
                           pathComponents: Map[PathComponentId, PathComponent],
                           requests: Map[RequestId, HttpRequest],
@@ -39,21 +50,15 @@ case class RequestsState(
   }
 
   def withPathComponentNamed(pathId: PathComponentId, name: String) = {
-    parentPath.get(pathId) match {
-      case Some(parentPathId) => {
-        withPathComponent(pathId, parentPathId, name)
-      }
-    }
+    val parentPathId = parentPath(pathId)
+    withPathComponent(pathId, parentPathId, name)
   }
 
   def withoutPathComponent(pathId: PathComponentId) = {
-    pathComponents.get(pathId) match {
-      case Some(p) => {
-        this.copy(
-          pathComponents = pathComponents + (pathId -> p.copy(isRemoved = true)),
-        )
-      }
-    }
+    val p = pathComponents(pathId)
+    this.copy(
+      pathComponents = pathComponents + (pathId -> p.copy(isRemoved = true)),
+    )
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -66,23 +71,17 @@ case class RequestsState(
   }
 
   def withPathParameterShape(pathId: PathComponentId, parameterShapeDescriptor: ShapedRequestParameterShapeDescriptor) = {
-    pathComponents.get(pathId) match {
-      case Some(p) => {
-        this.copy(
-          pathComponents = pathComponents + (pathId -> p.copy(descriptor = ParameterizedPathComponentDescriptor(p.descriptor.parentPathId, p.descriptor.name, parameterShapeDescriptor)))
-        )
-      }
-    }
+    val p = pathComponents(pathId)
+    this.copy(
+      pathComponents = pathComponents + (pathId -> p.copy(descriptor = ParameterizedPathComponentDescriptor(p.descriptor.parentPathId, p.descriptor.name, parameterShapeDescriptor)))
+    )
   }
 
   def withoutPathParameter(pathId: PathComponentId) = {
-    pathComponents.get(pathId) match {
-      case Some(p) => {
-        this.copy(
-          pathComponents = pathComponents + (pathId -> p.copy(isRemoved = true)),
-        )
-      }
-    }
+    val p = pathComponents(pathId)
+    this.copy(
+      pathComponents = pathComponents + (pathId -> p.copy(isRemoved = true)),
+    )
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -94,23 +93,17 @@ case class RequestsState(
   }
 
   def withoutRequest(requestId: RequestId) = {
-    requests.get(requestId) match {
-      case Some(r) => {
-        this.copy(
-          requests = requests + (requestId -> r.copy(isRemoved = true))
-        )
-      }
-    }
+    val r = requests(requestId)
+    this.copy(
+      requests = requests + (requestId -> r.copy(isRemoved = true))
+    )
   }
 
   def withRequestBody(requestId: RequestId, bodyDescriptor: ShapedBodyDescriptor) = {
-    requests.get(requestId) match {
-      case Some(r) => {
-        this.copy(
-          requests = requests + (requestId -> r.copy(requestDescriptor = r.requestDescriptor.copy(bodyDescriptor = bodyDescriptor)))
-        )
-      }
-    }
+    val r = requests(requestId)
+    this.copy(
+      requests = requests + (requestId -> r.copy(requestDescriptor = r.requestDescriptor.copy(bodyDescriptor = bodyDescriptor)))
+    )
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -121,24 +114,27 @@ case class RequestsState(
     )
   }
 
+  def withoutResponse(responseId: ResponseId) = {
+    val r = responses(responseId)
+
+    this.copy(
+      responses = responses + (responseId -> r.copy(isRemoved = true))
+    )
+  }
+
   def withResponseStatusCode(responseId: ResponseId, httpStatusCode: Int) = {
-    responses.get(responseId) match {
-      case Some(r) => {
-        this.copy(
-          responses = responses + (responseId -> r.copy(responseDescriptor = r.responseDescriptor.copy(httpStatusCode = httpStatusCode)))
-        )
-      }
-    }
+    val r = responses(responseId)
+    this.copy(
+      responses = responses + (responseId -> r.copy(responseDescriptor = r.responseDescriptor.copy(httpStatusCode = httpStatusCode)))
+    )
   }
 
   def withResponseBody(responseId: ResponseId, bodyDescriptor: ShapedBodyDescriptor) = {
-    responses.get(responseId) match {
-      case Some(r) => {
-        this.copy(
-          responses = responses + (responseId -> r.copy(responseDescriptor = r.responseDescriptor.copy(bodyDescriptor = bodyDescriptor)))
-        )
-      }
-    }
+    val r = responses(responseId)
+    this.copy(
+      responses = responses + (responseId -> r.copy(responseDescriptor = r.responseDescriptor.copy(bodyDescriptor = bodyDescriptor)))
+    )
+
   }
 
   ////////////////////////////////////////////////////////////////////////////////
@@ -150,23 +146,18 @@ case class RequestsState(
   }
 
   def withRequestParameterShape(parameterId: RequestParameterId, parameterDescriptor: ShapedRequestParameterShapeDescriptor) = {
-    requestParameters.get(parameterId) match {
-      case Some(p) => {
-        this.copy(
-          requestParameters = requestParameters + (parameterId -> p.copy(requestParameterDescriptor = p.requestParameterDescriptor.copy(shapeDescriptor = parameterDescriptor)))
-        )
-      }
-    }
+    val p = requestParameters(parameterId)
+
+    this.copy(
+      requestParameters = requestParameters + (parameterId -> p.copy(requestParameterDescriptor = p.requestParameterDescriptor.copy(shapeDescriptor = parameterDescriptor)))
+    )
   }
 
   def withoutRequestParameter(parameterId: RequestParameterId) = {
-    requestParameters.get(parameterId) match {
-      case Some(p) => {
-        this.copy(
-          requestParameters = requestParameters + (parameterId -> p.copy(isRemoved = true))
-        )
-      }
-    }
+    val p = requestParameters(parameterId)
+    this.copy(
+      requestParameters = requestParameters + (parameterId -> p.copy(isRemoved = true))
+    )
   }
 
 }

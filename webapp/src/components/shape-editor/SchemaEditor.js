@@ -1,7 +1,7 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import List from '@material-ui/core/List/index';
-import ListItem from '@material-ui/core/ListItem/index';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 import KeyTypeRow from './KeyTypeRow';
 import TypeName from './TypeName';
 import ExpandButton from './ExpandButton';
@@ -12,275 +12,285 @@ import TypeMenu from './TypeMenu/TypeMenu';
 import classNames from 'classnames'
 import AddTypeButton from './AddTypeButton';
 import TypeRefModal from './TypeMenu/TypeRefModal';
-import {Primitives} from '../../engine';
 
 const styles = theme => ({
-	root: {
-		maxWidth: '1000',
-		width: '100%',
-		paddingTop: 2,
-	},
-	row: {
-		height: 31,
-		'&:hover': {
-			backgroundColor: 'rgba(78,165,255,0.08)'
-		},
-		'&:hover $deleteContainer': {
-			display: 'inherit'
-		}
-	},
-	activeRow: {
-		borderBottom: '1px solid rgba(78,165,255,0.4)',
-		backgroundColor: 'rgba(78,165,255,0.08)'
-	},
-	deleteContainer: {
-		position: 'absolute',
-		right: 11,
-		display: 'none'
-	}
+    root: {
+        maxWidth: '1000',
+        width: '100%',
+        paddingTop: 2,
+    },
+    row: {
+        height: 31,
+        '&:hover': {
+            backgroundColor: 'rgba(78,165,255,0.08)'
+        },
+        '&:hover $deleteContainer': {
+            display: 'inherit'
+        }
+    },
+    activeRow: {
+        borderBottom: '1px solid rgba(78,165,255,0.4)',
+        backgroundColor: 'rgba(78,165,255,0.08)'
+    },
+    deleteContainer: {
+        position: 'absolute',
+        right: 11,
+        display: 'none'
+    }
 });
 
 const Row = withStyles(styles)(({classes, indent = 0, children, expandButton, addButton, addTypeButton, id, deleteType, depth}) => {
 
-	return <SchemaEditorContext.Consumer>
-		{({editorState, operations}) => {
+    return <SchemaEditorContext.Consumer>
+        {({editorState, operations}) => {
 
-			if (editorState.typeMenu.id === id) {
-				let timer = null;
-				return <ListItem className={classNames(classes.row, classes.activeRow)}
-								 dense={true}
-								 onMouseEnter={() => {
-								 	if (timer !== null) {
-								 		clearTimeout(timer)
-									}
-								 }}
-								 onMouseLeave={() => {
-									 timer = setTimeout(() => {
-										operations.hideTypeMenu(id)
-									 }, 400)
-								 }}
-								 style={{paddingLeft: indent * 13 + 10, height: 31}}>
-					<TypeMenu id={id} />
-				</ListItem>
-			} else {
-				return <ListItem className={classes.row}
-								 dense={true}
-								 style={{paddingLeft: indent * 13 + 10, height: 31}}>
-					{expandButton}
-					{children}
-					{addButton}
-					{addTypeButton}
-					{id && depth ? <div className={classes.deleteContainer}><DeleteButton id={id} deleteType={deleteType}/></div> : null}
-				</ListItem>
-			}
+            if (editorState.typeMenu.id === id) {
+                let timer = null;
+                return <ListItem className={classNames(classes.row, classes.activeRow)}
+                                 dense={true}
+                                 onMouseEnter={() => {
+                                     if (timer !== null) {
+                                         clearTimeout(timer)
+                                     }
+                                 }}
+                                 onMouseLeave={() => {
+                                     timer = setTimeout(() => {
+                                         operations.hideTypeMenu(id)
+                                     }, 400)
+                                 }}
+                                 style={{paddingLeft: indent * 13 + 10, height: 31}}>
+                    <TypeMenu id={id}/>
+                </ListItem>
+            } else {
+                return <ListItem className={classes.row}
+                                 dense={true}
+                                 style={{paddingLeft: indent * 13 + 10, height: 31}}>
+                    {expandButton}
+                    {children}
+                    {addButton}
+                    {addTypeButton}
+                    {id && depth ?
+                        <div className={classes.deleteContainer}><DeleteButton id={id} deleteType={deleteType}/>
+                        </div> : null}
+                </ListItem>
+            }
 
-		}}
-	</SchemaEditorContext.Consumer>
+        }}
+    </SchemaEditorContext.Consumer>
 });
 
 class SchemaEditor extends React.Component {
 
-	initialState = (conceptId) => {
+    initialState = (shapeId) => {
 
-		const {root} = this.props.currentShape
+        const {root} = this.props.currentShape
 
-		let collapsed = []
+        let collapsed = []
 
-		if (root.type.hasFields) { //collapse nested objects by default
-			collapsed = root.fields
-				.filter(f => f.shape.type.hasFields)
-				.map(f => f.id)
-		}
+        if (root.type.hasFields) { //collapse nested objects by default
+            collapsed = root.fields
+                .filter(f => f.shape.type.hasFields)
+                .map(f => f.id)
+        }
 
-		return {
-			collapsed,
-			refModalTarget: null,
-			typeMenu: {
-				anchor: null,
-				id: null,
-				currentType: null
-			}
-		}
-	}
+        return {
+            collapsed,
+            refModalTarget: null,
+            typeMenu: {
+                anchor: null,
+                id: null,
+                currentType: null
+            }
+        }
+    }
 
-	componentWillReceiveProps(nextProps, nextContext) {
-		if (nextProps.conceptId !== this.props.conceptId) {
-			this.setState(this.initialState(nextProps.conceptId))
-		}
-	}
+    componentWillReceiveProps(nextProps, nextContext) {
+        if (nextProps.shapeId !== this.props.shapeId) {
+            this.setState(this.initialState(nextProps.shapeId))
+        }
+    }
 
-	constructor(props) {
-		super(props);
-		this.state = this.initialState(this.props.conceptId)
-	}
+    constructor(props) {
+        super(props);
+        this.state = this.initialState(this.props.shapeId)
+    }
 
-	toggleCollapsed = (id, forceOpen) => () => {
-		if (this.state.collapsed.includes(id) || forceOpen) {
-			this.setState({collapsed: this.state.collapsed.filter(i => i !== id)});
-		} else {
-			this.setState({collapsed: [...this.state.collapsed, id]});
-		}
-	};
+    toggleCollapsed = (id, forceOpen) => () => {
+        if (this.state.collapsed.includes(id) || forceOpen) {
+            this.setState({collapsed: this.state.collapsed.filter(i => i !== id)});
+        } else {
+            this.setState({collapsed: [...this.state.collapsed, id]});
+        }
+    };
 
-	runCommand = (command) => {
-		this.props.handleCommand(command)
-	};
+    runCommand = (command) => {
+        this.props.handleCommand(command)
+    };
 
-	showTypeMenu = (id, currentType) => (event) => {
-		this.setState({
-			typeMenu: {
-				id, currentType
-			}
-		});
-	};
+    showTypeMenu = (id, currentType) => (event) => {
+        this.setState({
+            typeMenu: {
+                id, currentType
+            }
+        });
+    };
 
-	hideTypeMenu = (id) => {
-		if (id) {
-			if (this.state.typeMenu.id === id) {
-				this.setState({
-					typeMenu: {
-						id: null, currentType: null
-					}
-				});
-			}
-		} else {
-			this.setState({typeMenu: {
-				id: null, currentType: null
-			}});
-		}
-	};
+    hideTypeMenu = (id) => {
+        if (id) {
+            if (this.state.typeMenu.id === id) {
+                this.setState({
+                    typeMenu: {
+                        id: null, currentType: null
+                    }
+                });
+            }
+        } else {
+            this.setState({
+                typeMenu: {
+                    id: null, currentType: null
+                }
+            });
+        }
+    };
 
-	showRefModal = (id) => () => {
-		this.setState({
-			refModalTarget: id
-		});
-	};
+    showRefModal = (id) => () => {
+        this.setState({
+            refModalTarget: id
+        });
+    };
 
-	hideRefModal = () => {
-		this.setState({
-			refModalTarget: null
-		});
-	};
+    hideRefModal = () => {
+        this.setState({
+            refModalTarget: null
+        });
+    };
 
-	render() {
-		const {classes} = this.props;
+    render() {
+        const {classes} = this.props;
 
-		const {root} = this.props.currentShape;
+        const {root} = this.props.currentShape;
 
-		const context = {
-			operations: {
-				toggleCollapsed: this.toggleCollapsed,
-				runCommand: this.runCommand,
-				showTypeMenu: this.showTypeMenu,
-				hideTypeMenu: this.hideTypeMenu,
-				showRefModal: this.showRefModal,
-				hideRefModal: this.hideRefModal
-			},
-			currentShape: this.props.currentShape,
-			editorState: this.state,
-			mode: this.props.mode,
-			conceptId: this.props.conceptId
-		};
+        const context = {
+            operations: {
+                toggleCollapsed: this.toggleCollapsed,
+                runCommand: this.runCommand,
+                showTypeMenu: this.showTypeMenu,
+                hideTypeMenu: this.hideTypeMenu,
+                showRefModal: this.showRefModal,
+                hideRefModal: this.hideRefModal
+            },
+            currentShape: this.props.currentShape,
+            editorState: this.state,
+            mode: this.props.mode,
+            shapeId: this.props.shapeId
+        };
 
-		const tree = flattenTree(root, [], this.state.collapsed);
+        const tree = flattenTree(root, [], this.state.collapsed);
 
-		return <SchemaEditorContext.Provider value={context}>
-			<List className={classes.root} key={this.props.conceptId}>
-				{tree}
-			</List>
-			<TypeRefModal targetId={this.state.refModalTarget} conceptId={this.props.conceptId} service={this.props.service} />
-		</SchemaEditorContext.Provider>;
-	}
+        return (
+            <SchemaEditorContext.Provider value={context}>
+                <List className={classes.root} key={this.props.shapeId}>
+                    {tree}
+                </List>
+                <TypeRefModal targetId={this.state.refModalTarget} shapeId={this.props.shapeId}/>
+            </SchemaEditorContext.Provider>
+        );
+    }
 }
 
 function flattenTree(node, array = [], collapsed = []) {
 
-	const buildNext = (node) => flattenTree(node, array, collapsed);
+    const buildNext = (node) => flattenTree(node, array, collapsed);
 
-	if (node.isObjectFieldList) {
-		const objectRow = (
-			<Row indent={node.depth}
-				 key={node.id}
-				 id={node.id}
-				 depth={node.depth}
-				 expandButton={<ExpandButton parentId={node.id}/>}
-				 addButton={<AddFieldButton parentId={node.id}/>}
-			>
-				<TypeName node={node} style={{marginLeft: 12}} id={node.id}/>
-			</Row>
-		);
+    if (node.isObjectFieldList) {
+        const objectRow = (
+            <Row indent={node.depth}
+                 key={node.id}
+                 id={node.id}
+                 depth={node.depth}
+                 expandButton={<ExpandButton parentId={node.id}/>}
+                 addButton={<AddFieldButton parentId={node.id}/>}
+            >
+                <TypeName node={node} style={{marginLeft: 12}} id={node.id}/>
+            </Row>
+        );
 
-		if (node.depth === 0) {
-			array.push(objectRow);
-		}
+        if (node.depth === 0) {
+            array.push(objectRow);
+        }
 
-		if (!collapsed.includes(node.id)) {
-			node.fields.forEach(i => buildNext(i, array));
-		}
+        if (!collapsed.includes(node.id)) {
+            node.fields.forEach(i => buildNext(i, array));
+        }
 
-	} else if (node.isField) {
-		array.push(<Row indent={node.depth}
-						id={node.shape.id}
-						deleteType={"field"}
-						key={node.id}
-						depth={node.depth}
-						addButton={node.shape.type.hasFields ? <AddFieldButton parentId={node.shape.id}/> : null}
-						addTypeButton={node.shape.type.hasTypeParameters ? <AddTypeButton parentId={node.shape.id}/> : null}
-						expandButton={node.shape.type.hasFields || node.shape.type.hasTypeParameters ? <ExpandButton parentId={node.shape.id}/> : null}>
-			<KeyTypeRow
-				initialKey={node.key}
-				id={node.id}
-				node={node.shape}
-				type={node.shape.type}/>
-		</Row>);
-		buildNext(node.shape, array);
+    } else if (node.isField) {
+        array.push(
+            <Row indent={node.depth}
+                 id={node.shape.id}
+                 deleteType={'field'}
+                 key={node.id}
+                 depth={node.depth}
+                 addButton={node.shape.type.hasFields ? <AddFieldButton parentId={node.shape.id}/> : null}
+                 addTypeButton={node.shape.type.hasTypeParameters ?
+                     <AddTypeButton parentId={node.shape.id}/> : null}
+                 expandButton={node.shape.type.hasFields || node.shape.type.hasTypeParameters ?
+                     <ExpandButton parentId={node.shape.id}/> : null}>
+                <KeyTypeRow
+                    initialKey={node.key}
+                    id={node.id}
+                    node={node.shape}
+                    type={node.shape.type}/>
+            </Row>
+        );
+        buildNext(node.shape, array);
 
-	} else if (node.isTypeParametersList) {
-		const typeParameterRow = (
-			<Row indent={node.depth}
-				 key={node.id}
-				 id={node.id}
-				 depth={node.depth}
-				 addTypeButton={<AddTypeButton parentId={node.id}/>}
-				 expandButton={<ExpandButton parentId={node.id}/>}
-			>
-				<TypeName node={node} style={{marginLeft: 12}} id={node.id}/>
-			</Row>
-		);
+    } else if (node.isTypeParametersList) {
+        const typeParameterRow = (
+            <Row indent={node.depth}
+                 key={node.id}
+                 id={node.id}
+                 depth={node.depth}
+                 addTypeButton={<AddTypeButton parentId={node.id}/>}
+                 expandButton={<ExpandButton parentId={node.id}/>}
+            >
+                <TypeName node={node} style={{marginLeft: 12}} id={node.id}/>
+            </Row>
+        );
 
-		if (node.depth === 0) {
-			array.push(typeParameterRow);
-		}
+        if (node.depth === 0) {
+            array.push(typeParameterRow);
+        }
 
-		if (!collapsed.includes(node.id)) {
-			node.typeParameters.forEach(i => buildNext(i, array));
-		}
+        if (!collapsed.includes(node.id)) {
+            node.typeParameters.forEach(i => buildNext(i, array));
+        }
 
-	} else if (node.isTypeParameter) {
-		array.push(
-			<Row indent={node.depth}
-				 key={node.shape.id}
-				 deleteType={"type-parameter"}
-				 id={node.shape.id}
-				 depth={node.depth}
-				 addButton={node.shape.type.hasFields ? <AddFieldButton parentId={node.shape.id}/> : null}
-				 addTypeButton={node.shape.type.hasTypeParameters ? <AddTypeButton parentId={node.shape.id}/> : null}
-				 expandButton={node.shape.type.hasFields || node.shape.type.hasTypeParameters ? <ExpandButton parentId={node.shape.id}/> : null}>
-				<TypeName node={node.shape} style={{marginLeft: 12}} id={node.shape.id}/>
-			</Row>
-		)
-		buildNext(node.shape, array);
-	} else if (node.depth === 0 && node.isLeaf) {
-		array.push(<Row indent={node.depth}
-						key={node.id}
-						id={node.id}
-						depth={node.depth}
-		>
-			<TypeName node={node} style={{marginLeft: 12}} id={node.id}/>
-		</Row>)
-	}
+    } else if (node.isTypeParameter) {
+        array.push(
+            <Row indent={node.depth}
+                 key={node.shape.id}
+                 deleteType={'type-parameter'}
+                 id={node.shape.id}
+                 depth={node.depth}
+                 addButton={node.shape.type.hasFields ? <AddFieldButton parentId={node.shape.id}/> : null}
+                 addTypeButton={node.shape.type.hasTypeParameters ? <AddTypeButton parentId={node.shape.id}/> : null}
+                 expandButton={node.shape.type.hasFields || node.shape.type.hasTypeParameters ?
+                     <ExpandButton parentId={node.shape.id}/> : null}>
+                <TypeName node={node.shape} style={{marginLeft: 12}} id={node.shape.id}/>
+            </Row>
+        )
+        buildNext(node.shape, array);
+    } else if (node.depth === 0 && node.isLeaf) {
+        array.push(<Row indent={node.depth}
+                        key={node.id}
+                        id={node.id}
+                        depth={node.depth}
+        >
+            <TypeName node={node} style={{marginLeft: 12}} id={node.id}/>
+        </Row>)
+    }
 
-	return array;
+    return array;
 }
 
 export default withStyles(styles)(SchemaEditor);

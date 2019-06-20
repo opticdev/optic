@@ -68,7 +68,7 @@ const styles = theme => ({
 		justifyContent: 'center',
 	},
 	inputRoot: {
-		color: 'NavTextColor',
+		color: NavTextColor,
 	},
 	inputInput: {
 		padding: theme.spacing(1, 1, 1, 7),
