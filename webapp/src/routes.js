@@ -14,7 +14,7 @@ import Loading from './components/navigation/Loading';
 import Welcome from './components/onboarding/Welcome';
 import UploadOAS from './components/onboarding/upload-oas';
 import {ImportedOASContext, ImportedOASStore} from './contexts/ImportedOASContext';
-import OverView from './components/onboarding/Overview'
+import OverView from './components/onboarding/Overview';
 
 const paths = {
 	newRoot: () => '/new',
@@ -22,6 +22,7 @@ const paths = {
 	apiRoot: (base) => base,
 	requestPage: (base) => `${base}/requests/:requestId`,
 	conceptPage: (base) => `${base}/concepts/:conceptId`,
+	localRoot: () => '/saved',
 };
 
 class ExampleLoader extends React.Component {
@@ -78,6 +79,60 @@ class ExampleLoader extends React.Component {
 	}
 }
 
+class LocalLoader extends React.Component {
+
+	state = {
+		loadedEvents: null,
+		error: null
+	};
+
+	componentDidMount() {
+		fetch(`/events.json`)
+			.then(response => {
+				if (response.ok) {
+					return response.text()
+						.then(rawString => {
+							if (rawString.startsWith('<!DOCTYPE html>')) {
+								this.setState({error: true});
+							} else {
+								this.setState({
+									loadedEvents: rawString
+								});
+							}
+						});
+				}
+			});
+	}
+
+	render() {
+		const {loadedEvents, error} = this.state;
+
+		if (error) {
+			return (
+				<Dialog open={true}>
+					<DialogTitle>Error Loading Saved Spec</DialogTitle>
+					<DialogContent>Please reload and if that does not work, open an issue.</DialogContent>
+					<DialogActions>
+						<Button onClick={() => window.location.reload()}>Reload</Button>
+						<Button onClick={() => window.location.reload()} color="secondary">Open an issue</Button>
+					</DialogActions>
+				</Dialog>
+			);
+		}
+
+		if (loadedEvents === null) {
+			return <Loading/>;
+		}
+		return (
+			<InitialRfcCommandsStore initialEventsString={loadedEvents} rfcId="testRfcId">
+				<RfcStore>
+					<APIEditorRoutes {...this.props} />
+				</RfcStore>
+			</InitialRfcCommandsStore>
+		);
+	}
+}
+
 class NewApiLoader extends React.Component {
 	render() {
 		return (
@@ -98,7 +153,6 @@ class APIEditorRoutes extends React.Component {
 	render() {
 
 		const {url, path, params} = this.props.match;
-		const isNew = path === paths.newRoot();
 
 		const basePath = url;
 
@@ -115,7 +169,7 @@ class APIEditorRoutes extends React.Component {
 							   component={({match}) =>
 								   <ConceptsPage conceptId={match.params.conceptId}/>
 							   }/>
-						<Route component={() => <OverView />}/>
+						<Route component={() => <OverView/>}/>
 						<Redirect to={paths.apiRoot(url)}/>
 					</Switch>
 				}/>
@@ -126,6 +180,22 @@ class APIEditorRoutes extends React.Component {
 
 class AppRoutes extends React.Component {
 	render() {
+
+		//in local mode
+		if (process.env.REACT_APP_CLI_MODE) {
+			return (
+				<div>
+					<ImportedOASStore>
+						<Switch>
+							<Route path={paths.localRoot()} component={LocalLoader}/>
+							<Redirect to={paths.localRoot()}/>
+						</Switch>
+					</ImportedOASStore>
+				</div>
+			)
+		}
+
+		//running on website
 		return (
 			<div>
 				<ImportedOASStore>
@@ -139,6 +209,7 @@ class AppRoutes extends React.Component {
 				</ImportedOASStore>
 			</div>
 		);
+
 	}
 }
 

@@ -8,6 +8,7 @@ import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import {appTheme} from './theme';
 import AppRoutes from './routes';
 import {BrowserRouter, Route} from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 
 class App extends React.Component {
 
@@ -16,11 +17,13 @@ class App extends React.Component {
         <React.Fragment>
           <CssBaseline/>
           <MuiThemeProvider theme={appTheme}>
-              <BrowserRouter>
-                  <>
-                    <Route path="/" component={AppRoutes}/>
-                  </>
-              </BrowserRouter>
+              <SnackbarProvider>
+                  <BrowserRouter>
+                      <>
+                        <Route path="/" component={AppRoutes}/>
+                      </>
+                  </BrowserRouter>
+              </SnackbarProvider>
           </MuiThemeProvider>
         </React.Fragment>
     );

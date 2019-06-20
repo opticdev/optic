@@ -6,6 +6,7 @@ import keydown from 'react-keydown';
 import SuperMenu from './SuperMenu';
 import FloatingAddButton from './FloatingAddButton';
 import {EditorStore} from '../../contexts/EditorContext';
+import ShareDialog from './ShareDialog';
 
 const styles = theme => ({
 	pageContainer: {
@@ -67,7 +68,8 @@ const Margin = withStyles(styles)(({classes, children, className}) => {
 class Editor extends React.Component {
 
 	state = {
-		superMenuOpen: false
+		superMenuOpen: false,
+		shareOpen: false
 	};
 
 	@keydown('ctrl+f', 'cmd+f')
@@ -92,6 +94,14 @@ class Editor extends React.Component {
 		this.setState({superMenuOpen: (forceClose) ? false : !this.state.superMenuOpen});
 	};
 
+	showShare = () => {
+		this.setState({shareOpen: true})
+	}
+
+	hideShare = () => {
+		this.setState({shareOpen: false})
+	}
+
 	render() {
 
 		const {classes, basePath} = this.props;
@@ -100,7 +110,7 @@ class Editor extends React.Component {
 			<EditorStore basePath={basePath}>
 				<div className={classes.pageContainer}>
 					<div className={classes.navWrapper}>
-						<TopBar toggleSuperMenu={this.toggleSuperMenu}/>
+						<TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>
 					</div>
 					<div className={classes.contentWrapper}>
 						<Margin className={classes.leftMargin}/>
@@ -108,7 +118,8 @@ class Editor extends React.Component {
 						<Margin/>
 					</div>
 					<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
-					<FloatingAddButton />
+					<FloatingAddButton open={this.state.shareOpen} />
+					<ShareDialog close={this.hideShare} open={this.state.shareOpen} />
 				</div>
 			</EditorStore>);
 	}

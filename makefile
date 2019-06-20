@@ -10,6 +10,14 @@ domain-js:
 
 .PHONY: domain-js
 
+editor-local:
+	@echo "building local editor..."
+	cd ./webapp && yarn build-local
+	rm -rf ./api-cli/resources/react
+	cp -R ./webapp/build ./api-cli/resources/react
+
+.PHONY: editor-local
+
 oas:
 	@echo "building oas..."
 	cd ./oas && sbt publishLocal
@@ -29,5 +37,6 @@ all:
 	make domain
 	make oas
 	make webapp
+	make editor-local
 
 .PHONY: all

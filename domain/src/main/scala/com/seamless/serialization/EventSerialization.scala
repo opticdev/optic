@@ -26,6 +26,8 @@ object EventSerialization {
   private def decodeContributionEvent(item: Json): Result[ContributionEvent] = item.as[ContributionEvent]
 
   def fromJson(json: Json): Try[Vector[RfcEvent]] = Try {
+    println(json)
+
     val parseResults = json.asArray.get.map {
       case i =>  TryChainUtil.firstSuccessIn(i,
         (j: Json) => Try(decodeDataTypesEvent(j).right.get),

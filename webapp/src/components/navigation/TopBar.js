@@ -121,7 +121,7 @@ class TopBar extends React.Component {
 
 
 	render() {
-		const {classes, mode, switchEditorMode, apiName, handleCommand} = this.props;
+		const {classes, mode, switchEditorMode, apiName, handleCommand, hasUnsavedChanges} = this.props;
 
 		return (
 			<div className={classes.root}>
@@ -143,6 +143,12 @@ class TopBar extends React.Component {
 							<KeyboardDown/>
 						</IconButton>
 
+						{(hasUnsavedChanges && process.env.REACT_APP_CLI_MODE) ? (
+							<Typography variant="caption" style={{color: '#8e8e8e', marginLeft: 20}}>
+								Saving...
+							</Typography>
+						): null}
+
 						<div className={classes.spacer}/>
 
 						<ToggleButtonGroup value={mode}
@@ -160,14 +166,13 @@ class TopBar extends React.Component {
 						</ToggleButtonGroup>
 
 						<Button color="primary">
-							Proposals (2)
-						</Button>
-						<Button color="primary">
 							Help
 						</Button>
-						<Button color="secondary">
-							Share
-						</Button>
+						{!process.env.REACT_APP_CLI_MODE ? (
+							<Button color="secondary" onClick={this.props.showShare}>
+								Share
+							</Button>
+						) : null}
 						{/*<div className={classes.search}>*/}
 						{/*	<div className={classes.searchIcon}>*/}
 						{/*		<SearchIcon />*/}

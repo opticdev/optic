@@ -2,6 +2,8 @@ package com.seamless.ddd
 
 import org.scalatest.FunSpec
 
+import scala.scalajs.js.JSON
+
 class InMemoryEventStoreSpec extends FunSpec {
   type TestEvent = String
 
