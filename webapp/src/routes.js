@@ -190,8 +190,8 @@ class AppRoutes extends React.Component {
                 <div>
                     <ImportedOASStore>
                         <Switch>
-                            <Route path={paths.localRoot()} component={LocalLoader}/>
-                            <Redirect to={paths.localRoot()}/>
+                            <Route path={routerPaths.localRoot()} component={LocalLoader}/>
+                            <Redirect to={routerPaths.localRoot()}/>
                         </Switch>
                     </ImportedOASStore>
                 </div>
