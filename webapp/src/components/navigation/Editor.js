@@ -6,6 +6,7 @@ import keydown from 'react-keydown';
 import SuperMenu from './SuperMenu';
 import FloatingAddButton from './FloatingAddButton';
 import {EditorStore} from '../../contexts/EditorContext';
+import ShareDialog from './ShareDialog';
 
 const styles = theme => ({
     pageContainer: {
@@ -67,7 +68,8 @@ const Margin = withStyles(styles)(({classes, children, className}) => {
 class Editor extends React.Component {
 
     state = {
-        superMenuOpen: false
+        superMenuOpen: false,
+        shareOpen: false
     };
 
     @keydown('ctrl+f', 'cmd+f')
@@ -89,18 +91,27 @@ class Editor extends React.Component {
     };
 
     toggleSuperMenu = (e, forceClose) => {
-        this.setState({superMenuOpen: (forceClose) ? false : !this.state.superMenuOpen});
+        this.setState({superMenuOpen: (forceClose) ? false : !this.state.superMenuOpen})
     };
+
+    showShare = () => {
+        this.setState({shareOpen: true})
+    }
+
+    hideShare = () => {
+        this.setState({shareOpen: false})
+    }
 
     render() {
 
-        const {classes, basePath} = this.props;
+        const {classes, basePath} = this.props
+
 
         return (
             <EditorStore basePath={basePath}>
                 <div className={classes.pageContainer}>
                     <div className={classes.navWrapper}>
-                        <TopBar toggleSuperMenu={this.toggleSuperMenu}/>
+                        <TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>
                     </div>
                     <div className={classes.contentWrapper}>
                         <Margin className={classes.leftMargin}/>
@@ -109,9 +120,10 @@ class Editor extends React.Component {
                     </div>
                     <SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
                     <FloatingAddButton/>
+                    <ShareDialog close={this.hideShare} open={this.state.shareOpen}/>
                 </div>
             </EditorStore>
-        );
+        )
     }
 }
 

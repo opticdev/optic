@@ -1,0 +1,86 @@
+{
+  "name": "@seamless/cli",
+  "description": "Make API Design Seamless",
+  "version": "3.2.8",
+  "author": "@seamless",
+  "bin": {
+    "api": "./bin/run"
+  },
+  "bugs": "https://github.com/opticdev/optic-cli/issues",
+  "dependencies": {
+    "@oclif/command": "^1.5.10",
+    "@oclif/config": "^1.12.6",
+    "@oclif/plugin-help": "^2.1.6",
+    "assert": "^2.0.0",
+    "body-parser": "^1.19.0",
+    "cli-ux": "^5.2.1",
+    "clipboardy": "^2.1.0",
+    "express": "^4.17.1",
+    "fs-extra": "^7.0.1",
+    "get-port": "^5.0.0",
+    "json-stable-stringify": "^1.0.1",
+    "nice-try": "^2.0.0",
+    "open": "^6.3.0",
+    "tslib": "^1.9.3"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.21.0",
+    "@oclif/test": "^1.2.4",
+    "@oclif/tslint": "^3.1.1",
+    "@types/archy": "0.0.31",
+    "@types/chai": "^4.1.7",
+    "@types/debug": "^4.1.1",
+    "@types/express": "^4.16.1",
+    "@types/fs-extra": "^5.0.5",
+    "@types/har-format": "^1.2.4",
+    "@types/joi": "^14.3.1",
+    "@types/js-yaml": "^3.12.0",
+    "@types/mocha": "^5.2.6",
+    "@types/node": "^10.12.26",
+    "@types/react": "^16.8.6",
+    "chai": "^4.2.0",
+    "globby": "^8.0.2",
+    "mocha": "^5.2.0",
+    "nyc": "^13.3.0",
+    "ts-node": "^8.0.2",
+    "tslint": "^5.12.1",
+    "typescript": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/opticdev/optic-cli",
+  "keywords": [
+    "oclif",
+    "cli",
+    "optic",
+    "api",
+    "oas",
+    "swagger"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "optic",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "opticdev/optic-cli",
+  "scripts": {
+    "get-version": "mkdir -p ./src/static && cp package.json ./src/static/package.json",
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "tslint -p test -t stylish",
+    "prepack": "rm tsconfig.tsbuildinfo || true && npm run get-version && rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "test": "ANALYTICS_IMPL=null nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif-dev readme && git add README.md"
+  },
+  "types": "lib/index.d.ts"
+}
