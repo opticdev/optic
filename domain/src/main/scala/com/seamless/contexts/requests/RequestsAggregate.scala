@@ -51,6 +51,12 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           persist(Events.PathParameterShapeSet(pathId, shapeDescriptor))
         }
 
+        case RenamePathParameter(pathId, name) => {
+          Validators.ensurePathComponentIdIsNotRoot(pathId)
+          Validators.ensurePathComponentIdExists(pathId)
+          persist(Events.PathComponentRenamed(pathId, name))
+        }
+
         case RemovePathParameter(pathId) => {
           Validators.ensurePathComponentIdIsNotRoot(pathId)
           Validators.ensurePathComponentIdExists(pathId)
@@ -71,6 +77,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           persist(Events.RequestBodySet(requestId, bodyDescriptor))
         }
 
+        case UnsetRequestBodyShape(requestId) => {
+          Validators.ensureRequestIdExists(requestId)
+          persist(Events.RequestBodyUnset(requestId))
+        }
+
         case RemoveRequest(requestId) => {
           Validators.ensureRequestIdExists(requestId)
           persist(Events.RequestRemoved(requestId))
@@ -88,6 +99,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           Validators.ensureResponseIdExists(responseId)
           requireConceptId(bodyDescriptor.conceptId)
           persist(Events.ResponseBodySet(responseId, bodyDescriptor))
+        }
+
+        case UnsetResponseBodyShape(responseId) => {
+          Validators.ensureResponseIdExists(responseId)
+          persist(Events.ResponseBodyUnset(responseId))
         }
 
         case SetResponseStatusCode(responseId, httpStatusCode) => {
@@ -114,6 +130,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
         }
 
+        case UnsetQueryParameterShape(parameterId) => {
+          Validators.ensureParameterIdExists(parameterId)
+          persist(Events.RequestParameterShapeUnset(parameterId))
+        }
+
         case RemoveQueryParameter(parameterId) => {
           Validators.ensureParameterIdExists(parameterId)
           persist(Events.RequestParameterRemoved(parameterId))
@@ -131,6 +152,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           Validators.ensureParameterIdExists(parameterId)
           requireConceptId(parameterDescriptor.conceptId)
           persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
+        }
+
+        case UnsetHeaderParameterShape(parameterId) => {
+          Validators.ensureParameterIdExists(parameterId)
+          persist(Events.RequestParameterShapeUnset(parameterId))
         }
 
         case RemoveHeaderParameter(parameterId) => {
@@ -185,6 +211,16 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
       state.withRequestBody(requestId, bodyDescriptor)
     }
 
+    case RequestBodyUnset(requestId) => {
+      val r = state.requests(requestId)
+      r.requestDescriptor.bodyDescriptor match {
+        case ShapedBodyDescriptor(httpContentType, conceptId, _) => {
+          state.withRequestBody(requestId, ShapedBodyDescriptor(httpContentType, conceptId, isRemoved = true))
+        }
+        case UnsetBodyDescriptor() => state
+      }
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
 
     case ResponseAdded(responseId, requestId, httpStatusCode) => {
@@ -199,6 +235,21 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
       state.withResponseBody(responseId, bodyDescriptor)
     }
 
+    case ResponseBodyUnset(responseId) => {
+      val r = state.responses(responseId)
+      r.responseDescriptor.bodyDescriptor match {
+        case ShapedBodyDescriptor(httpContentType, conceptId, _) => {
+          state.withResponseBody(responseId, ShapedBodyDescriptor(httpContentType, conceptId, isRemoved = true))
+
+        }
+        case UnsetBodyDescriptor() => state
+      }
+    }
+
+    case ResponseRemoved(responseId) => {
+      state.withoutResponse(responseId)
+    }
+
     ////////////////////////////////////////////////////////////////////////////////
 
     case RequestParameterAdded(parameterId, requestId, parameterLocation, name) => {
@@ -207,6 +258,17 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
     case RequestParameterShapeSet(parameterId, parameterDescriptor) => {
       state.withRequestParameterShape(parameterId, parameterDescriptor)
+    }
+
+    case RequestParameterShapeUnset(parameterId) => {
+      val s = state.requestParameters(parameterId)
+      s.requestParameterDescriptor.shapeDescriptor match {
+        case ShapedRequestParameterShapeDescriptor(conceptId, _) => {
+          state.withRequestParameterShape(parameterId, ShapedRequestParameterShapeDescriptor(conceptId, isRemoved = true))
+        }
+
+        case UnsetRequestParameterShapeDescriptor() => state
+      }
     }
 
     case RequestParameterRemoved(parameterId) => {

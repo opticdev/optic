@@ -8,14 +8,14 @@ import com.seamless.ddd.Projection
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 @JSExportAll
-case class Path(pathId: PathComponentId, parentPathId: PathComponentId, name: String, absolutePath: String)
+case class Path(pathId: PathComponentId, parentPathIds: Vector[PathComponentId], name: String, absolutePath: String, normalizedAbsolutePath: String)
 
 @JSExport
 @JSExportAll
 object PathListProjection extends Projection[RfcEvent, Vector[Path]] {
 
   override def fromEvents(events: Vector[RfcEvent]): Vector[Path] = {
-    val pathMap: Map[PathComponentId, Path] = Map.empty
+    val pathMap: Map[PathComponentId, Path] = Map("root" -> Path("root", Vector.empty, "", "/", "/"))
     withMap(pathMap, events)
   }
 
@@ -24,15 +24,16 @@ object PathListProjection extends Projection[RfcEvent, Vector[Path]] {
     withMap(pathMap, events)
   }
 
+  def joinPath(parentPath: String, pathComponent: String)  = {
+    if (parentPath == "/") parentPath + pathComponent else parentPath + "/" + pathComponent
+  }
+
   def withMap(pathMap: Map[PathComponentId, Path], events: Vector[RfcEvent]): Vector[Path] = {
     val results = events.foldLeft(pathMap)((acc, e) => {
       e match {
         case PathComponentAdded(pathId, parentPathId, name) => {
-          val parentName = acc.get(parentPathId) match {
-            case Some(p) => p.absolutePath
-            case None => ""
-          }
-          acc + (pathId -> Path(pathId, parentPathId, name, parentName + "/" + name))
+          val parent = acc(parentPathId)
+          acc + (pathId -> Path(pathId, parentPathId +: parent.parentPathIds, name, joinPath(parent.absolutePath, name), joinPath(parent.normalizedAbsolutePath, name)))
         }
         case PathComponentRenamed(pathId, name) => {
           val p = acc(pathId)
@@ -44,12 +45,8 @@ object PathListProjection extends Projection[RfcEvent, Vector[Path]] {
         }
 
         case PathParameterAdded(pathId, parentPathId, name) => {
-          val parentName = acc.get(parentPathId) match {
-            case Some(p) => p.absolutePath
-            case None => ""
-          }
-
-          acc + (pathId -> Path(pathId, parentPathId, name, parentName + "/" + "{" + name + "}"))
+          val parent = acc(parentPathId)
+          acc + (pathId -> Path(pathId, parentPathId +: parent.parentPathIds, name, joinPath(parent.absolutePath, "{" + name + "}"), joinPath(parent.normalizedAbsolutePath, "{" + name + "}")))
         }
 
         case PathParameterRemoved(pathId) => {

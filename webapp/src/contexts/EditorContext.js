@@ -2,44 +2,47 @@ import {GenericContextFactory} from './GenericContextFactory';
 import * as React from 'react';
 
 const {
-	Context: EditorContext,
-	withContext: withEditorContext
+    Context: EditorContext,
+    withContext: withEditorContext
 } = GenericContextFactory(null)
+
+
+const EditorModes = {
+    DOCUMENTATION: 'documentation',
+    DESIGN: 'design',
+}
 
 class EditorStore extends React.Component {
 
-	state = {
-		mode: EditorModes.DOCUMENTATION
-	}
+    state = {
+        mode: EditorModes.DESIGN
+    }
 
-	switchEditorMode = (mode) => {
-		if (Object.values(EditorModes).includes(mode)) {
-			this.setState({mode})
-		}
-	}
+    switchEditorMode = (mode) => {
+        if (Object.values(EditorModes).includes(mode)) {
+            this.setState({mode})
+        }
+    }
 
-	render() {
+    render() {
 
-		const {mode} = this.state
-		const {basePath} = this.props
+        const {mode} = this.state
+        const {basePath} = this.props
 
-		return (
-			<EditorContext.Provider value={{mode, switchEditorMode: this.switchEditorMode, basePath}}>
-				{this.props.children}
-			</EditorContext.Provider>
-		)
-	}
-}
+        const context = {mode, switchEditorMode: this.switchEditorMode, basePath}
 
-const EditorModes = {
-	DOCUMENTATION: 'documentation',
-	DESIGN: 'design',
+        return (
+            <EditorContext.Provider value={context}>
+                {this.props.children}
+            </EditorContext.Provider>
+        )
+    }
 }
 
 export {
-	EditorStore,
-	EditorContext,
-	withEditorContext,
-	EditorModes
+    EditorStore,
+    EditorContext,
+    withEditorContext,
+    EditorModes
 }
 

@@ -4,7 +4,10 @@ import com.seamless.contexts.data_types.Commands.ConceptId
 import com.seamless.contexts.data_types.Events.DataTypesEvent
 import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesState}
 import com.seamless.contexts.data_types.projections.{ConceptListProjection, NamedConcept, ShapeProjection}
-import com.seamless.contexts.requests.projections.{Path, PathListProjection}
+import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId}
+import com.seamless.contexts.requests.Events.RequestsEvent
+import com.seamless.contexts.requests.{HttpRequest, HttpResponse, RequestsAggregate, RequestsState}
+import com.seamless.contexts.requests.projections.{Path, PathListProjection, PathsWithRequestsProjection}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.projections.{APINameProjection, ContributionWrapper, ContributionsProjection}
 import com.seamless.ddd.{AggregateId, EventStore}
@@ -21,6 +24,18 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) 
 
   def paths(): js.Array[Path] = {
     q.paths.toJSArray
+  }
+
+  def pathsWithRequests(): js.Dictionary[PathComponentId] = {
+    q.pathsWithRequests.toJSDictionary
+  }
+
+  def requests(): js.Dictionary[HttpRequest] = {
+    q.requests.toJSDictionary
+  }
+
+  def responses(): js.Dictionary[HttpResponse] = {
+    q.responses.toJSDictionary
   }
 
   def concepts(): js.Array[NamedConcept] = {
@@ -51,12 +66,32 @@ class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
     PathListProjection.fromEvents(events)
   }
 
+  def pathsWithRequests: Map[RequestId, PathComponentId] = {
+    PathsWithRequestsProjection.fromEvents(events)
+  }
+
   def concepts: Vector[NamedConcept] = {
     ConceptListProjection.fromEvents(events)
   }
 
   def contributions: ContributionWrapper = {
     ContributionsProjection.fromEvents(events)
+  }
+
+  def requestsState: RequestsState = {
+    val filteredEvents = events.collect{ case requestsEvent: RequestsEvent => requestsEvent }
+
+    filteredEvents.foldLeft(RequestsAggregate.initialState) {
+      case (state, event) => RequestsAggregate.applyEvent(event, state)
+    }
+  }
+
+  def requests: Map[RequestId, HttpRequest] = {
+    requestsState.requests
+  }
+
+  def responses: Map[ResponseId, HttpResponse] = {
+    requestsState.responses
   }
 
   def conceptsById(conceptId: ConceptId): Option[ShapeProjection] = {

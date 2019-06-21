@@ -1,11 +1,6 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import Menu from '@material-ui/core/Menu/index';
-import MenuItem from '@material-ui/core/MenuItem/index';
-import Chip from '@material-ui/core/Chip/index';
-import {CollectionTypes, primitiveColors, PrimitiveTypes, typeOptionNames} from '../Types';
-import classNames from 'classnames';
-import Button from '@material-ui/core/Button/index';
+import { primitiveColors, typeOptionNames} from '../Types';
 import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
 import {ShapeCommands, DataTypesHelper} from '../../../engine'
 import BasicButton from '../BasicButton';

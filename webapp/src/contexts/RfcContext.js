@@ -6,100 +6,103 @@ import debounce from 'lodash.debounce';
 import {withSnackbar} from 'notistack';
 
 const {
-	Context: RfcContext,
-	withContext: withRfcContext
+    Context: RfcContext,
+    withContext: withRfcContext
 } = GenericContextFactory(null);
 
 class RfcStoreWithoutContext extends React.Component {
 
-	constructor(props) {
-		super(props);
 
-		const eventStore = Facade.makeEventStore();
+    constructor(props) {
+        super(props);
 
-		const queries = Queries(eventStore, this.props.rfcId);
+        const eventStore = Facade.makeEventStore();
 
-		if (this.props.initialEventsString) {
-			eventStore.bulkAdd(this.props.rfcId, this.props.initialEventsString)
-		}
+        const queries = Queries(eventStore, this.props.rfcId);
 
-		this.state = {
-			eventStore,
-			rfcService: Facade.fromJsonCommands(eventStore, this.props.initialCommandsString || '[]', this.props.rfcId),
-			queries,
-			hasUnsavedChanges: false
-		};
-	}
+        if (this.props.initialEventsString) {
+            eventStore.bulkAdd(this.props.rfcId, this.props.initialEventsString)
+        }
 
-	handleCommand = (command) => {
-		this.state.rfcService.handleCommands(this.props.rfcId, command);
-		this.forceUpdate();
-		if (process.env.REACT_APP_CLI_MODE) {
-			this.setState({hasUnsavedChanges: true})
-			this.persistLocal()
-		}
-	};
+        this.state = {
+            eventStore,
+            rfcService: Facade.fromJsonCommands(eventStore, this.props.initialCommandsString || '[]', this.props.rfcId),
+            queries,
+            hasUnsavedChanges: false
+        };
+    }
 
-	handleCommands = (commands) => {
-		this.state.rfcService.handleCommands.apply(this, [this.props.rfcId, ...commands]);
-		this.forceUpdate();
-		if (process.env.REACT_APP_CLI_MODE) {
-			this.setState({hasUnsavedChanges: true})
-			this.persistLocal()
-		}
-	};
+    handleCommand = (command) => {
+        this.state.rfcService.handleCommands(this.props.rfcId, command);
+        this.forceUpdate();
+        if (process.env.REACT_APP_CLI_MODE) {
+            this.setState({hasUnsavedChanges: true})
+            this.persistLocal()
+        }
+    };
 
-	persistLocal = debounce(async () => {
-		const eventString = this.serializeEvents()
+    handleCommands = (commands) => {
+        this.state.rfcService.handleCommands.apply(this, [this.props.rfcId, ...commands]);
+        this.forceUpdate();
+        if (process.env.REACT_APP_CLI_MODE) {
+            this.setState({hasUnsavedChanges: true})
+            this.persistLocal()
+        }
+    };
 
-		const response = await fetch('/save', {
-			method: 'POST',
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'text/html'
-			},
-			body: eventString
-		});
+    persistLocal = debounce(async () => {
+        const eventString = this.serializeEvents()
 
-		if (response.status === 200) {
-			this.props.enqueueSnackbar('Saved', {'variant': 'success'})
-			this.setState({hasUnsavedChanges: false})
-		} else {
-			this.props.enqueueSnackbar('Unable to save changes. Make sure the CLI is still running.', {'variant': 'error'})
-		}
+        const response = await fetch('/save', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'text/html'
+            },
+            body: eventString
+        });
 
-	}, 4000, {trailing: true})
+        if (response.status === 200) {
+            this.props.enqueueSnackbar('Saved', {'variant': 'success'})
+            this.setState({hasUnsavedChanges: false})
+        } else {
+            this.props.enqueueSnackbar('Unable to save changes. Make sure the CLI is still running.', {'variant': 'error'})
+        }
 
-	serializeEvents = () => {
-		return this.state.eventStore.serializeEvents(this.props.rfcId);
-	};
+    }, 4000, {trailing: true})
 
-	render() {
-		const {queries, hasUnsavedChanges} = this.state;
-		const {rfcId} = this.props;
-		const apiName = queries.apiName();
+    serializeEvents = () => {
+        return this.state.eventStore.serializeEvents(this.props.rfcId);
+    };
 
-		const value = {
-			rfcId,
-			queries,
-			apiName,
-			handleCommand: this.handleCommand,
-			serializeEvents: this.serializeEvents,
-			hasUnsavedChanges
-		};
+    render() {
+        const {queries, hasUnsavedChanges} = this.state;
+        const {rfcId} = this.props;
+        const apiName = queries.apiName();
+        const contributions = queries.contributions()
 
-		return (
-			<RfcContext.Provider value={value}>
-				{this.props.children}
-			</RfcContext.Provider>
-		);
-	}
+        const value = {
+            rfcId,
+            queries,
+            contributions,
+            apiName,
+            handleCommand: this.handleCommand,
+            serializeEvents: this.serializeEvents,
+            hasUnsavedChanges
+        };
+
+        return (
+            <RfcContext.Provider value={value}>
+                {this.props.children}
+            </RfcContext.Provider>
+        );
+    }
 }
 
 const RfcStore = withSnackbar(withInitialRfcCommandsContext(RfcStoreWithoutContext));
 
 export {
-	RfcStore,
-	RfcContext,
-	withRfcContext
+    RfcStore,
+    RfcContext,
+    withRfcContext
 };
