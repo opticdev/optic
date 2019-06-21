@@ -29,13 +29,6 @@ class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[R
   def commandHandlerForAggregate(id: AggregateId): js.Function1[RfcCommand, Unit] = (command: RfcCommand) => {
     handleCommand(id, command)
   }
-
-  //Queries
-  @JSExport
-  def currentShapeProjection(id: AggregateId, conceptId: ConceptId): ShapeProjection = {
-    ShapeProjection.fromState(currentState(id).dataTypesState, conceptId)
-  }
-
 }
 
 @JSExport

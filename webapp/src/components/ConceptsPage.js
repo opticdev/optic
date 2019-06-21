@@ -8,6 +8,7 @@ import ContributionTextField from './contributions/ContributionTextField';
 import Divider from '@material-ui/core/Divider';
 import {updateContribution} from '../engine/routines';
 import {Redirect} from 'react-router-dom';
+import {unwrap} from './shape-editor/Helpers';
 
 const styles = theme => ({
     root: {
@@ -23,11 +24,15 @@ const styles = theme => ({
 
 class ConceptsPage extends React.Component {
     render() {
-        const {queries, cachedQueryResults, classes, conceptId, handleCommand, basePath, modeOverride} = this.props;
-        const {conceptsById, contributions} = cachedQueryResults
+        const {classes, conceptId, handleCommand, basePath, modeOverride, cachedQueryResults, queries} = this.props;
         let mode = modeOverride || this.props.mode
+        const {contributions} = cachedQueryResults
 
-        const currentShape = queries.conceptsById(conceptId)
+
+        const {allowedReferences, concept} = queries.conceptById(conceptId)
+        const currentShape = concept
+
+
         if (!currentShape) {
             return <Redirect to={basePath}/>
         }
@@ -61,6 +66,7 @@ class ConceptsPage extends React.Component {
                     <SchemaEditor
                         conceptId={conceptId}
                         currentShape={currentShape}
+                        allowedReferences={allowedReferences}
                         mode={mode}
                         handleCommand={handleCommand}
                     />

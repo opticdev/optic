@@ -3,6 +3,8 @@ package com.seamless.contexts.data_types
 import com.seamless.contexts.data_types.Commands.{AddField, AssignType, DataTypesCommand, SetFieldName, UpdateChildOccurrence}
 import com.seamless.contexts.data_types.Primitives.{ObjectT, RefT}
 import com.seamless.contexts.data_types.projections.{Field, ObjectShape, ShapeProjection}
+import com.seamless.serialization.CommandSerialization
+import io.circe.Json
 import org.scalatest.FunSpec
 
 class ShapeProjectionSpec extends FunSpec {
@@ -35,19 +37,25 @@ class ShapeProjectionSpec extends FunSpec {
     val nestedField = addField(obj, conceptId)
     handle(SetFieldName(nestedField, "deep-field", conceptId))
 
-    val shapeProjection = ShapeProjection.fromState(currentState, conceptId)
+    val shapeProjection = ShapeProjection.all(currentState).concepts(conceptId)
 
     assert(shapeProjection.root.isObjectFieldList)
-
-    val fields = shapeProjection.root.asInstanceOf[ObjectShape]._fields
+//
+    val fields = shapeProjection.root.asInstanceOf[ObjectShape].fields
     assert(fields.size == 1)
     assert(fields.head.shape.isObjectFieldList)
 
-    val subField = fields.head.shape.asInstanceOf[ObjectShape]._fields.head
+    val subField = fields.head.shape.asInstanceOf[ObjectShape].fields.head
     assert(subField.key == "deep-field")
 
   }
 
+  def pathToContents(file: String): String = {
+    val loaded = scala.io.Source.fromFile(file)
+    val source = loaded.getLines mkString "\n"
+    loaded.close()
+    source
+  }
 
 /*  it("can set a field in a ref to optional") {
     val f = fixture; import f._

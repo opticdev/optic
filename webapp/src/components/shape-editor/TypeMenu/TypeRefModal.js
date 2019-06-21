@@ -73,11 +73,9 @@ class TypeRefModal extends React.Component {
         const {classes, targetId} = this.props
 
         return <SchemaEditorContext.Consumer>
-            {({currentShape, conceptId, operations}) => {
+            {({currentShape, allowedReferences, conceptId, operations}) => {
 
-                const {allowedTypeReferences} = currentShape
-
-                const selected = allowedTypeReferences.find(i => i.id === this.state.selected)
+                const selected = allowedReferences.find(i => i.id === this.state.selected)
 
                 return <Dialog open={Boolean(targetId)} maxWidth="lg" fullWidth={true}
                                onClose={operations.hideRefModal}>
@@ -98,7 +96,7 @@ class TypeRefModal extends React.Component {
                     <div className={classes.container}>
                         <div className={classes.left}>
                             <List dense={true}>
-                                {allowedTypeReferences.map(ref => {
+                                {allowedReferences.map(ref => {
                                     return (
                                         <ListItem
                                             button

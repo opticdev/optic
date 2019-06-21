@@ -123,7 +123,7 @@ class ParametersEditor extends React.Component {
                 <Typography variant="h5" className={classes.tableTitle}>{title}</Typography>
 
                 {rows.map(row => {
-                    const shape = queries.conceptsById(row.inlineConceptId)
+                    const {allowedReferences, concept: shape} = queries.conceptById(row.inlineConceptId)
 
                     const isExpanded = this.state.expandedParameterIds.includes(row.id)
 
@@ -168,7 +168,11 @@ class ParametersEditor extends React.Component {
                                         paddingRight: 8,
                                         color: primary
                                     }}>Shape</Typography>
-                                    <SchemaEditor conceptId={row.inlineConceptId} currentShape={shape} mode={mode}/>
+                                    <SchemaEditor
+                                        conceptId={row.inlineConceptId}
+                                        allowedReferences={allowedReferences}
+                                        currentShape={shape} mode={mode}/>
+
                                 </ExpansionPanelDetails>
                             </ExpansionPanel>
                         </>

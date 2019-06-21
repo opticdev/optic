@@ -53,7 +53,7 @@ const BodySwitch = withStyles(styles)(BodySwitchWithoutStyles)
 class BodyViewerWithoutContext extends React.Component {
     render() {
         const {conceptId, mode, queries} = this.props;
-        const currentShape = queries.conceptsById(conceptId);
+        const {allowedReferences, concept: currentShape} = queries.conceptById(conceptId);
 
         return (
             <div>
@@ -66,7 +66,11 @@ class BodyViewerWithoutContext extends React.Component {
                             color: primary
                         }}>Shape</Typography>
                 </div>
-                <SchemaEditor conceptId={conceptId} currentShape={currentShape} mode={mode}/>
+                <SchemaEditor
+                    conceptId={conceptId}
+                    allowedReferences={allowedReferences}
+                    currentShape={currentShape}
+                    mode={mode}/>
             </div>
         )
     }

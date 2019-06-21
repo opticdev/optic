@@ -11,10 +11,31 @@ import scala.scalajs.js.annotation.JSExportAll
 Converts graph into tree for simpler nested rendering
  */
 
+case class AllConcepts(allowedReferences: Vector[AllowedTypeReference], concepts: Map[ConceptId, ShapeProjection])
+case class SingleConcept(allowedReferences: Vector[AllowedTypeReference], concept: ShapeProjection)
+
 object ShapeProjection {
 
-  def fromState(state: DataTypesState, conceptId: String): ShapeProjection = {
+  def byId(state: DataTypesState, conceptId: ConceptId): SingleConcept = {
+    SingleConcept(allowedRefsFromState(state), shapeProjectionById(state, conceptId)._2)
+  }
 
+  def all(state: DataTypesState): AllConcepts = {
+
+    val allConcepts = state.concepts.map { case (conceptId, concept) =>
+      shapeProjectionById(state, conceptId)
+    }
+
+    AllConcepts(allowedRefsFromState(state), allConcepts)
+  }
+
+  def allowedRefsFromState(state: DataTypesState): Vector[AllowedTypeReference] = {
+    state.concepts.collect {
+      case (id, concept) if concept.canBeReferenced => AllowedTypeReference(concept.name.get, id)
+    }.toVector
+  }
+
+  private def shapeProjectionById(state: DataTypesState, conceptId: ConceptId): (ConceptId, ShapeProjection) = {
     val concept = state.concepts(conceptId)
     val rootComponent = state.conceptComponents(conceptId)(concept.rootId)
 
@@ -24,14 +45,15 @@ object ShapeProjection {
 
     def fromComponent(description: ShapeDescription, id: String, lastDepth: Int = -1): Shape = {
       val depth = lastDepth + 1
+
       description.`type` match {
         case ObjectT => {
           val fields = description.fields.get.map(i => {
             val (fieldId, fDesc) = state.components.find(c => c._1 == i).get
             Field(fDesc.key.get, fromComponent(fDesc, fieldId, depth), fieldId, isOptionalInContext(fieldId), depth + 1)
           })
-          .sortBy(f => state.creationOrder.indexOf(f))
-          .toVector
+            .sortBy(f => state.creationOrder.indexOf(f))
+            .toVector
 
           ObjectShape(description.`type`, fields, id, depth)
         }
@@ -49,22 +71,10 @@ object ShapeProjection {
       }
     }
 
-    val allowedTypeReferences = state.concepts.collect {case (id, concept) if !concept.deprecated && !concept.inline =>
-
-      val dependentConcepts = state.components.collect{
-        case (depId, dep) if dep.`type`.isRef && dep.`type`.asInstanceOf[RefT].conceptId == id =>
-          dep.conceptId
-      }.toSet
-
-      AllowedTypeReference(concept.name.get, id, dependentConcepts.toVector)
-    }.toVector
-      .sortBy(_.name)
-
     val namedConceptOption = if (!concept.inline) Some(NamedConcept(concept.name.get, concept.deprecated, conceptId)) else None
-
-    ShapeProjection(fromComponent(rootComponent, concept.rootId), allowedTypeReferences, namedConceptOption)
-
+    (conceptId, ShapeProjection(fromComponent(rootComponent, concept.rootId), namedConceptOption))
   }
+
 
 }
 
@@ -81,52 +91,44 @@ sealed trait Shape {
 }
 
 @JSExportAll
-case class Field(key: String, shape: Shape, id: String, optional: Boolean, depth: Int) extends Shape { override def isField = true }
+case class Field(key: String,
+                 shape: Shape,
+                 id: String,
+                 optional: Boolean,
+                 depth: Int,
+                 override val isField: Boolean = true) extends Shape
 
 @JSExportAll
-case class ObjectShape(`type`: PrimitiveType, _fields: Vector[Field], id: String, depth: Int) extends Shape {
-  override def isObjectFieldList = true
-  def fields: js.Array[Field] = {
-    import js.JSConverters._
-    _fields.toJSArray
-  }
-}
+case class ObjectShape(`type`: PrimitiveType,
+                       fields: Vector[Field],
+                       id: String,
+                       depth: Int,
+                       override val isObjectFieldList: Boolean = true
+                      ) extends Shape
 
 @JSExportAll
-case class TypeParameterShape(`type`: PrimitiveType, _typeParameters: Vector[TypeParameter], id: String, depth: Int) extends Shape {
-  override def isTypeParametersList = true
-  def typeParameters: js.Array[TypeParameter] = {
-    import js.JSConverters._
-    _typeParameters.toJSArray
-  }
-}
+case class TypeParameterShape(
+                 `type`: PrimitiveType,
+                  typeParameters: Vector[TypeParameter],
+                  id: String,
+                  depth: Int,
+                  override val isTypeParametersList: Boolean = true) extends Shape
 
 @JSExportAll
-case class LeafShape(`type`: PrimitiveType, id: String, depth: Int) extends Shape { override def isLeaf: Boolean = true }
+case class LeafShape(`type`: PrimitiveType,
+                     id: String,
+                     depth: Int,
+                     override val isLeaf: Boolean = true) extends Shape
 
 @JSExportAll
-case class TypeParameter(shape: Shape, id: String, depth: Int) extends Shape {
-  override def isLeaf: Boolean = true
-  override def isTypeParameter: Boolean = true
-}
+case class TypeParameter(shape: Shape,
+                         id: String,
+                         depth: Int,
+                         override val isLeaf: Boolean = true,
+                         override val isTypeParameter: Boolean = true) extends Shape
 
 @JSExportAll
-case class AllowedTypeReference(name: String, id: String, _dependents: Vector[String]) {
-  def dependents: js.Array[String] = {
-    import js.JSConverters._
-    _dependents.toJSArray
-  }
-}
+case class AllowedTypeReference(name: String, id: String)
 
 @JSExportAll
-case class ShapeProjection(root: Shape, _allowedTypeReferences: Vector[AllowedTypeReference], _namedConcept: Option[NamedConcept]) {
-  def allowedTypeReferences: js.Array[AllowedTypeReference] = {
-    import js.JSConverters._
-    _allowedTypeReferences.toJSArray
-  }
-
-  def namedConcept: js.UndefOr[NamedConcept] = {
-    import js.JSConverters._
-    _namedConcept.orUndefined
-  }
-}
+case class ShapeProjection(root: Shape, namedConcept: Option[NamedConcept])

@@ -13,6 +13,7 @@ import TypeMenu from './TypeMenu/TypeMenu';
 import classNames from 'classnames'
 import AddTypeButton from './AddTypeButton';
 import TypeRefModal from './TypeMenu/TypeRefModal';
+import {unwrap} from './Helpers';
 
 const styles = theme => ({
     root: {
@@ -83,13 +84,14 @@ const Row = withStyles(styles)(({classes, indent = 0, children, expandButton, ad
 class SchemaEditor extends React.Component {
 
     initialState = () => {
-        const {root} = this.props.currentShape
+
+        const root = unwrap(this.props.currentShape.root)
 
         let collapsed = []
 
         if (root.type.hasFields) { //collapse nested objects by default
             collapsed = root.fields
-                .filter(f => f.shape.type.hasFields)
+                .filter(f => unwrap(f.shape).type.hasFields)
                 .map(f => f.id)
         }
 
@@ -180,6 +182,7 @@ class SchemaEditor extends React.Component {
                 hideRefModal: this.hideRefModal
             },
             currentShape: this.props.currentShape,
+            allowedReferences: this.props.allowedReferences,
             editorState: this.state,
             mode: this.props.mode,
             conceptId: this.props.conceptId
@@ -198,7 +201,9 @@ class SchemaEditor extends React.Component {
     }
 }
 
-function flattenTree(node, array = [], collapsed = []) {
+function flattenTree(_node, array = [], collapsed = []) {
+
+    const node = (_node.isUnwrapped) ? _node : unwrap(_node)
 
     const buildNext = (node) => flattenTree(node, array, collapsed);
 

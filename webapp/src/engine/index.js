@@ -10,4 +10,4 @@ export const RfcCommands = scalajs.com.seamless.contexts.rfc.Commands
 export const RequestsCommands = scalajs.com.seamless.contexts.requests.Commands
 
 export const Facade = scalajs.com.seamless.contexts.rfc.RfcServiceJSFacade()
-export const Queries = (eventStore, aggregateId) => new scalajs.com.seamless.contexts.rfc.Queries(eventStore, aggregateId)
+export const Queries = (eventStore, service, aggregateId) => new scalajs.com.seamless.contexts.rfc.Queries(eventStore, service, aggregateId)
