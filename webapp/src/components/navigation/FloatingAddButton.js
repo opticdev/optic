@@ -8,14 +8,12 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Button from '@material-ui/core/Button';
-import Code from '@material-ui/icons/Code';
-import Description from '@material-ui/icons/Description';
-import Search from '@material-ui/icons/Search';
-import Label from '@material-ui/icons/Label';
-import Message from '@material-ui/icons/Message';
-import QuestionAnswer from '@material-ui/icons/QuestionAnswerOutlined';
+import CodeIcon from '@material-ui/icons/Code';
+import DescriptionIcon from '@material-ui/icons/Description';
 import Zoom from '@material-ui/core/Zoom';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
+import {withFocusedRequestContext} from '../../contexts/FocusedRequestContext.js';
+import RequestContextMenu from '../context-menus/RequestContextMenu.js';
 import PathEditor from '../path-editor/PathEditor.js';
 
 const styles = theme => ({
@@ -63,6 +61,16 @@ class FloatingAddButton extends React.Component {
         this.setState({isPathModalOpen: false})
     }
 
+    renderRequestContextMenuItems() {
+        const {focusedRequestId} = this.props;
+        if (!focusedRequestId) {
+            return null
+        }
+        return (
+            <RequestContextMenu requestId={focusedRequestId}/>
+        )
+    }
+
     render() {
         const {classes, mode} = this.props;
         return (
@@ -80,50 +88,21 @@ class FloatingAddButton extends React.Component {
                             <ListItem>
                                 <Button color="primary" className={classes.button}
                                         onClick={this.openPathModal}>
-                                    <Code className={classes.leftIcon}/>
+                                    <CodeIcon className={classes.leftIcon}/>
                                     Request
                                 </Button>
                             </ListItem>
 
                             <ListItem>
                                 <Button color="primary" className={classes.button}>
-                                    <Description className={classes.leftIcon}/>
+                                    <DescriptionIcon className={classes.leftIcon}/>
                                     Concept
                                 </Button>
                             </ListItem>
 
                         </List>
 
-                        <List dense subheader={<ListSubheader>REQUEST</ListSubheader>}>
-                            <ListItem>
-                                <Button color="primary" className={classes.button}>
-                                    <Search className={classes.leftIcon}/>
-                                    Query Parameter
-                                </Button>
-                            </ListItem>
-
-                            <ListItem>
-                                <Button color="primary" className={classes.button}>
-                                    <Label className={classes.leftIcon}/>
-                                    Header Parameter
-                                </Button>
-                            </ListItem>
-
-                            <ListItem>
-                                <Button color="primary" className={classes.button}>
-                                    <Message className={classes.leftIcon}/>
-                                    Request Body
-                                </Button>
-                            </ListItem>
-
-                            <ListItem>
-                                <Button color="primary" className={classes.button}>
-                                    <QuestionAnswer className={classes.leftIcon}/>
-                                    Response
-                                </Button>
-                            </ListItem>
-
-                        </List>
+                        {this.renderRequestContextMenuItems()}
                     </div>
                 </Menu>
                 {/*</Zoom>*/}
@@ -138,4 +117,4 @@ class FloatingAddButton extends React.Component {
     }
 }
 
-export default withEditorContext(withStyles(styles)(FloatingAddButton));
+export default withFocusedRequestContext(withEditorContext(withStyles(styles)(FloatingAddButton)));

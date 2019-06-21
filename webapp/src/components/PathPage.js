@@ -4,9 +4,11 @@ import Link from '@material-ui/core/Link';
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import {withEditorContext} from '../contexts/EditorContext.js';
+import {withFocusedRequestContext} from '../contexts/FocusedRequestContext.js';
 import {withRfcContext} from '../contexts/RfcContext.js';
 import {RequestsCommands} from '../engine';
 import {routerUrls} from '../routes.js';
+import {primary} from '../theme.js';
 import BodyEditor from './body-editor';
 import ParametersEditor from './parameters-editor';
 import ContributionWrapper from './contributions/ContributionWrapper.js';
@@ -14,6 +16,17 @@ import {Link as RouterLink} from 'react-router-dom'
 
 const styles = theme => ({
     root: {},
+    request: {
+        border: '1px solid transparent',
+        padding: 10,
+        transition: 'background-color 0.5s ease-in-out'
+    },
+    // maybe raise the elevation instead?
+    focusedRequest: {
+        border: `1px solid ${primary}`,
+        backgroundColor: '#c0c0c0',
+        padding: 10
+    }
 });
 
 class ResponseListWithoutContext extends React.Component {
@@ -22,7 +35,7 @@ class ResponseListWithoutContext extends React.Component {
         return responses.map((response) => {
             const {responseId, responseDescriptor} = response;
             const {httpStatusCode, bodyDescriptor} = responseDescriptor
-            const {conceptId, httpContentType, isRemoved} = getBodyDescriptor(bodyDescriptor)
+            const {httpContentType} = getNormalizedBodyDescriptor(bodyDescriptor)
 
             const responseBodyHandlers = {
                 onBodyAdded({conceptId, contentType}) {
@@ -45,9 +58,7 @@ class ResponseListWithoutContext extends React.Component {
                     {httpStatusCode}
                     <BodyEditor
                         rootId={responseId}
-                        conceptId={conceptId}
-                        contentType={httpContentType}
-                        isRemoved={isRemoved}
+                        bodyDescriptor={bodyDescriptor}
                         {...responseBodyHandlers}
                     />
                 </div>
@@ -81,27 +92,46 @@ class PathTrailWithoutContext extends React.Component {
 
 const PathTrail = withEditorContext(PathTrailWithoutContext)
 
-export function getBodyDescriptor(value) {
+export function getNormalizedBodyDescriptor(value) {
     console.log({value})
-    if (value.ShapedBodyDescriptor) {
+    if (value && value.ShapedBodyDescriptor) {
         return value.ShapedBodyDescriptor
     }
     return {}
 }
 
 class PathPage extends React.Component {
+    renderPlaceholder() {
+        return (
+            <div>There aren't any requests at this path. Add one!</div>
+        )
+    }
+
+    renderMissing() {
+        return (
+            <div>There is no matching path</div>
+        )
+    }
+
+
+    setRequestFocus = (requestId) => () => {
+        this.props.setFocusedRequestId(requestId)
+    }
+
     render() {
-        const {handleCommand, pathId, queries, cachedQueryResults} = this.props;
+        const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults} = this.props;
+
+        const {requests, responses, requestParameters, paths, pathIdsByRequestId} = cachedQueryResults
+
         const requestIdsForPath = Object
-            .entries(queries.pathsWithRequests())
+            .entries(pathIdsByRequestId)
             .filter(([, v]) => v === pathId)
-
-        const {requests, responses, requestParameters} = cachedQueryResults
-
         const requestsForPath = requestIdsForPath
             .map(([requestId]) => requests[requestId])
-        const paths = queries.paths()
         const path = paths.find(x => x.pathId === pathId)
+        if (!path) {
+            return this.renderMissing()
+        }
         const pathTrail = [...path.parentPathIds().reverse(), pathId]
         const pathTrailWithNames = path.normalizedAbsolutePath
             .split('/')
@@ -121,19 +151,23 @@ class PathPage extends React.Component {
                 )
             })
 
-        const requestItems = requestsForPath
+        const requestItems = requestsForPath.length === 0 ? this.renderPlaceholder() : requestsForPath
             .map((request) => {
-                const {requestId, requestDescriptor} = request;
+                const {requestId, requestDescriptor} = request
                 const {httpMethod, bodyDescriptor} = requestDescriptor
-                const {conceptId, httpContentType, isRemoved} = getBodyDescriptor(bodyDescriptor)
+                const {httpContentType} = getNormalizedBodyDescriptor(bodyDescriptor)
+
+                const isFocused = requestId === focusedRequestId
+
                 const responsesForRequest = Object.values(responses)
                     .filter((response) => response.responseDescriptor.requestId === requestId)
 
                 const parametersForRequest = Object.values(requestParameters)
-                    .filter((requestParameter) => requestParameter.parameterDescriptor.requestId === requestId)
+                    .filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId)
 
-                const headerParameters = parametersForRequest.filter(x => x.location === 'header')
-                const queryParameters = parametersForRequest.filter(x => x.location === 'query')
+                const headerParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'header')
+                const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query')
+                const pathParameters = []
 
                 const requestBodyHandlers = {
                     onBodyAdded({conceptId, contentType}) {
@@ -154,13 +188,18 @@ class PathPage extends React.Component {
 
 
                 return (
-                    <div key={requestId} id={requestId}>
+                    <div
+                        className={isFocused ? classes.focusedRequest : classes.request}
+                        key={requestId} id={requestId}
+                        onClickCapture={this.setRequestFocus(requestId)}
+                        onKeyDownCapture={this.setRequestFocus(requestId)}
+                    >
                         <Typography variant="h5">{httpMethod} {path.normalizedAbsolutePath}</Typography>
                         <ContributionWrapper
                             contributionParentId={requestId}
                             contributionKey={'name'}
                             variant={'heading'}
-                            placeholder={`${httpMethod} ${path.normalizedAbsolutePath}`}
+                            placeholder="Summary"
                         />
                         <ContributionWrapper
                             contributionParentId={requestId}
@@ -169,21 +208,26 @@ class PathPage extends React.Component {
                             placeholder={`Description`}
                         />
                         {headerParameters.length === 0 ? null : (
-                            <ParametersEditor parameters={headerParameters}/>
+                            <div>
+                                <Typography variant="caption">Headers</Typography>
+                                <ParametersEditor parameters={headerParameters}/>
+                            </div>
                         )}
 
                         {queryParameters.length === 0 ? null : (
-                            <ParametersEditor parameters={queryParameters}/>
+                            <div>
+                                <Typography variant="caption">Query Parameters</Typography>
+                                <ParametersEditor parameters={queryParameters}/>
+                            </div>
                         )}
 
                         <BodyEditor
                             rootId={requestId}
-                            conceptId={conceptId}
-                            contentType={httpContentType}
-                            isRemoved={isRemoved}
+                            bodyDescriptor={bodyDescriptor}
                             {...requestBodyHandlers}
                         />
                         <Divider style={{marginTop: 15, marginBottom: 15}}/>
+                        <Typography variant="h5">Responses</Typography>
                         <ResponseList responses={responsesForRequest}/>
                     </div>
                 )
@@ -192,9 +236,9 @@ class PathPage extends React.Component {
             <div>
                 <ContributionWrapper
                     contributionParentId={pathId}
-                    contributionKey={'summary'}
+                    contributionKey={'name'}
                     variant={'heading'}
-                    placeholder={path.normalizedAbsolutePath}
+                    placeholder="Resource Name"
                 />
                 <PathTrail pathTrail={pathTrailWithNames}/>
                 {methodLinks}
@@ -205,4 +249,4 @@ class PathPage extends React.Component {
     }
 }
 
-export default withEditorContext(withRfcContext(withStyles(styles)(PathPage)))
+export default withFocusedRequestContext(withEditorContext(withRfcContext(withStyles(styles)(PathPage))))

@@ -42,7 +42,7 @@ class RfcStoreWithoutContext extends React.Component {
         }
     };
 
-    handleCommands = (commands) => {
+    handleCommands = (...commands) => {
         console.log({commands})
         this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
         this.forceUpdate();
@@ -83,10 +83,6 @@ class RfcStoreWithoutContext extends React.Component {
         const apiName = queries.apiName();
         const contributions = queries.contributions()
 
-
-        /*const requests = queries.requests()
-        const responses = queries.responses()
-        const requestParameters = queries.requestParameters()*/
         const {requests, responses, requestParameters} = queries.requestsState()
         const pathIdsByRequestId = queries.pathsWithRequests();
         const paths = queries.paths();
@@ -95,6 +91,14 @@ class RfcStoreWithoutContext extends React.Component {
             acc[item.id] = item
             return acc
         }, {})
+        const original = queries.conceptsById.bind(queries)
+        queries.conceptsById = (id) => {
+            if (!id) {
+                debugger
+            }
+            return original(id)
+        }
+
 
         const cachedQueryResults = {
             contributions,
@@ -113,6 +117,7 @@ class RfcStoreWithoutContext extends React.Component {
             cachedQueryResults,
             apiName,
             handleCommand: this.handleCommand,
+            handleCommands: this.handleCommands,
             serializeEvents: this.serializeEvents,
             hasUnsavedChanges
         };

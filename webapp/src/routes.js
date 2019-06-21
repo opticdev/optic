@@ -1,6 +1,7 @@
 import React from 'react';
 import {Redirect, Switch, Route} from 'react-router-dom';
 import Editor from './components/navigation/Editor';
+import {FocusedRequestStore} from './contexts/FocusedRequestContext.js';
 import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
 import {RfcStore} from './contexts/RfcContext.js';
 import PathPage from './components/PathPage.js';
@@ -153,6 +154,13 @@ class NewApiLoader extends React.Component {
     }
 }
 
+function PathRoot({match}) {
+    const {pathId} = match.params;
+    return (
+        <PathPage pathId={pathId}/>
+    )
+}
+
 class APIEditorRoutes extends React.Component {
     render() {
 
@@ -162,20 +170,20 @@ class APIEditorRoutes extends React.Component {
 
         return (
             <div>
-                <Editor basePath={basePath} content={
-                    <Switch>
-                        <Route exact path={routerPaths.newRoot(url)} component={() => <>NEW</>}/>
-                        <Route path={routerPaths.pathPage(url)}
-                               component={({match}) =>
-                                   <PathPage pathId={match.params.pathId}/>}/>
-                        <Route path={routerPaths.conceptPage(url)}
-                               component={({match}) =>
-                                   <ConceptsPage conceptId={match.params.conceptId}/>
-                               }/>
-                        <Route component={() => <OverView/>}/>
-                        <Redirect to={routerPaths.apiRoot(url)}/>
-                    </Switch>
-                }/>
+                <FocusedRequestStore>
+                    <Editor basePath={basePath} content={
+                        <Switch>
+                            <Route exact path={routerPaths.newRoot(url)} component={() => <>NEW</>}/>
+                            <Route path={routerPaths.pathPage(url)} component={PathRoot}/>
+                            <Route path={routerPaths.conceptPage(url)}
+                                   component={({match}) =>
+                                       <ConceptsPage conceptId={match.params.conceptId}/>
+                                   }/>
+                            <Route component={() => <OverView/>}/>
+                            <Redirect to={routerPaths.apiRoot(url)}/>
+                        </Switch>
+                    }/>
+                </FocusedRequestStore>
             </div>
         );
     }

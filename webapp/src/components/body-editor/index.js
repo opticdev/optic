@@ -11,6 +11,8 @@ import {ContentTypesHelper, DataTypesHelper, ShapeCommands} from '../../engine';
 import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Zoom from '@material-ui/core/Zoom';
+import {RequestUtilities} from '../../utilities/RequestUtilities.js';
+import {getNormalizedBodyDescriptor} from '../PathPage.js';
 import SchemaEditor from '../shape-editor/SchemaEditor';
 import {primary} from '../../theme';
 import {EditorModes} from '../../contexts/EditorContext';
@@ -50,8 +52,7 @@ const BodySwitch = withStyles(styles)(BodySwitchWithoutStyles)
 
 class BodyViewerWithoutContext extends React.Component {
     render() {
-        const {conceptId, mode, queries, cachedQueryResults} = this.props;
-        const {conceptsById} = cachedQueryResults
+        const {conceptId, mode, queries} = this.props;
         const currentShape = queries.conceptsById(conceptId);
 
         return (
@@ -93,8 +94,9 @@ class BodyEditor extends React.Component {
     constructor(props) {
         super(props);
 
+        const {contentType} = getNormalizedBodyDescriptor(props.bodyDescriptor)
         this.state = {
-            contentTypeInfo: ContentTypesHelper.fromString(this.props.contentType || 'application/json')
+            contentTypeInfo: ContentTypesHelper.fromString(contentType || 'application/json')
         };
 
     }
@@ -121,11 +123,7 @@ class BodyEditor extends React.Component {
         this.setState({contentTypeInfo: ContentTypesHelper.fromString(newContentType)});
     };
 
-    renderForViewing() {
-        const {conceptId, isRemoved, contentType} = this.props;
-        if (!conceptId) {
-            return null
-        }
+    renderForViewing({conceptId, contentType}) {
 
         return (
             <LayoutWrapper>
@@ -144,14 +142,20 @@ class BodyEditor extends React.Component {
     }
 
     render() {
-        const {classes, mode, conceptId, isRemoved} = this.props;
+        const {classes, mode, bodyDescriptor} = this.props;
         const isViewMode = mode === EditorModes.DOCUMENTATION;
-
+        const normalizedBodyDescriptor = getNormalizedBodyDescriptor(bodyDescriptor)
+        const hasBody = RequestUtilities.hasNormalizedBody(normalizedBodyDescriptor);
+        const {conceptId} = normalizedBodyDescriptor
+        console.log({bodyDescriptor, normalizedBodyDescriptor, hasBody})
         if (isViewMode) {
+            if (!hasBody) {
+                return null
+            }
             return this.renderForViewing()
         }
 
-        const hasBody = !!conceptId && !isRemoved;
+
         const body = hasBody ? (
             <Zoom in={hasBody}>
                 <LayoutWrapper>
@@ -161,14 +165,17 @@ class BodyEditor extends React.Component {
                         className={classNames(classes.value, classes.select)}
                         onChange={this.changeContentType}>
                         {ContentTypesHelper.supportedContentTypesArray
-                            .map(({value}) => (
-                                <MenuItem value={value} key={value} button
-                                          style={{fontSize: 14}}>{value}</MenuItem>
-                            ))}
+                            .map(({value}) => {
+                                return (
+                                    <MenuItem value={value} key={value} button
+                                              style={{fontSize: 14}}>{value}</MenuItem>
+                                )
+                            })
+                        }
                     </Select>
 
                     {this.state.contentTypeInfo.supportsShape ? (
-                        <BodyViewer conceptId={conceptId} />
+                        <BodyViewer conceptId={conceptId}/>
                     ) : null}
                 </LayoutWrapper>
             </Zoom>
@@ -185,9 +192,8 @@ class BodyEditor extends React.Component {
 
 BodyEditor.propTypes = {
     rootId: PropTypes.string.isRequired,
-    conceptId: PropTypes.string,
-    contentType: PropTypes.string,
-    isRemoved: PropTypes.bool
+    bodyDescriptor: PropTypes.object,
+    currentShape: PropTypes.object
 }
 
 export default withEditorContext(withRfcContext(withStyles(styles)(BodyEditor)));
