@@ -16,7 +16,7 @@ object ShapeProjection {
   def fromState(state: DataTypesState, conceptId: String): ShapeProjection = {
 
     val concept = state.concepts(conceptId)
-    val rootComponent = state.conceptComponents(conceptId)(concept.root)
+    val rootComponent = state.conceptComponents(conceptId)(concept.rootId)
 
     def isOptionalInContext(id: ConceptId) = {
       rootComponent.optionalChildren.contains(id)
@@ -62,7 +62,7 @@ object ShapeProjection {
 
     val namedConceptOption = if (!concept.inline) Some(NamedConcept(concept.name.get, concept.deprecated, conceptId)) else None
 
-    ShapeProjection(fromComponent(rootComponent, concept.root), allowedTypeReferences, namedConceptOption)
+    ShapeProjection(fromComponent(rootComponent, concept.rootId), allowedTypeReferences, namedConceptOption)
 
   }
 

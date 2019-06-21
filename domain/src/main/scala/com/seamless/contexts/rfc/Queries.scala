@@ -1,5 +1,6 @@
 package com.seamless.contexts.rfc
-
+import io.circe.generic.auto._
+import io.circe.syntax._
 import com.seamless.contexts.data_types.Commands.ConceptId
 import com.seamless.contexts.data_types.Events.DataTypesEvent
 import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesState}
@@ -30,12 +31,14 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) 
     q.pathsWithRequests.toJSDictionary
   }
 
-  def requests(): js.Dictionary[HttpRequest] = {
-    q.requests.toJSDictionary
+  def requests(): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(q.requests.asJson)
   }
 
-  def responses(): js.Dictionary[HttpResponse] = {
-    q.responses.toJSDictionary
+  def responses(): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(q.responses.asJson)
   }
 
   def concepts(): js.Array[NamedConcept] = {

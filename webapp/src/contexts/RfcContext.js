@@ -33,6 +33,7 @@ class RfcStoreWithoutContext extends React.Component {
     }
 
     handleCommand = (command) => {
+        console.log({command})
         this.state.rfcService.handleCommands(this.props.rfcId, command);
         this.forceUpdate();
         if (process.env.REACT_APP_CLI_MODE) {
@@ -42,7 +43,8 @@ class RfcStoreWithoutContext extends React.Component {
     };
 
     handleCommands = (commands) => {
-        this.state.rfcService.handleCommands.apply(this, [this.props.rfcId, ...commands]);
+        console.log({commands})
+        this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
         this.forceUpdate();
         if (process.env.REACT_APP_CLI_MODE) {
             this.setState({hasUnsavedChanges: true})

@@ -108,7 +108,7 @@ case class ShapeDescription(`type`: PrimitiveType,
 }
 
 case class ConceptDescription(name: Option[String],
-                              root: String,
+                              rootId: String,
                               inline: Boolean,
                               deprecated: Boolean = false) {
 

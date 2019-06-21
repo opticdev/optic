@@ -156,7 +156,7 @@ class DataTypeStateBuilderSpec extends FunSpec {
     assert(inlineConcept.inline)
     assert(inlineConcept.name.isEmpty)
 
-    val shape = currentState.components(inlineConcept.root)
+    val shape = currentState.components(inlineConcept.rootId)
     assert(shape.`type` == ObjectT)
     assert(shape.fields.get.size == 2)
 

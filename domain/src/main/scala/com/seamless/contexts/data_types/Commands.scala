@@ -11,11 +11,11 @@ object Commands {
   type ShapeId = String
 
   //Commands
-  case class DefineConcept(name: String, root: String, conceptId: ConceptId) extends DataTypesCommand
+  case class DefineConcept(name: String, rootId: String, conceptId: ConceptId) extends DataTypesCommand
   case class SetConceptName(newName: String, conceptId: ConceptId) extends DataTypesCommand
   case class DeprecateConcept(conceptId: ConceptId) extends DataTypesCommand
 
-  case class DefineInlineConcept(root: String, conceptId: ConceptId) extends DataTypesCommand
+  case class DefineInlineConcept(rootId: String, conceptId: ConceptId) extends DataTypesCommand
 
   case class AssignType(id: ShapeId, to: PrimitiveType, conceptId: ConceptId) extends DataTypesCommand
   case class AddField(parentId: String, id: FieldId, conceptId: ConceptId) extends DataTypesCommand

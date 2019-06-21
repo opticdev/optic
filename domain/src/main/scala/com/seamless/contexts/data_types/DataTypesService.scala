@@ -6,7 +6,7 @@ import com.seamless.contexts.data_types.Primitives.{PrimitiveType, RefT}
 import com.seamless.ddd.{AggregateId, EventSourcedRepository, InMemoryEventStore}
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportNamed}
+import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Random
 
 //STRICTLY FOR TESTING (because everything should go through the root (RfcService))

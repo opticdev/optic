@@ -22,7 +22,7 @@ class CommandSerializationSpec extends FunSpec {
     val asJson = CommandSerialization.toJson(exampleCommands)
 
     assert(asJson.noSpaces
-      === """[{"DefineConcept":{"name":"abc","root":"def","conceptId":"hij"}},{"AssignType":{"id":"123","to":{"StringT":{}},"conceptId":"789"}}]""")
+      === """[{"DefineConcept":{"name":"abc","rootId":"def","conceptId":"hij"}},{"AssignType":{"id":"123","to":{"StringT":{}},"conceptId":"789"}}]""")
 
     val decoded = CommandSerialization.fromJson(asJson)
     assert(decoded.isSuccess)

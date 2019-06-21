@@ -5,10 +5,16 @@ import com.seamless.contexts.requests.Events.{PathComponentAdded, PathComponentR
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.ddd.Projection
 
+import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 @JSExportAll
-case class Path(pathId: PathComponentId, parentPathIds: Vector[PathComponentId], name: String, absolutePath: String, normalizedAbsolutePath: String)
+case class Path(pathId: PathComponentId, _parentPathIds: Vector[PathComponentId], name: String, absolutePath: String, normalizedAbsolutePath: String) {
+  def parentPathIds(): js.Array[PathComponentId] = {
+    import js.JSConverters._
+    _parentPathIds.toJSArray
+  }
+}
 
 @JSExport
 @JSExportAll
@@ -33,7 +39,7 @@ object PathListProjection extends Projection[RfcEvent, Vector[Path]] {
       e match {
         case PathComponentAdded(pathId, parentPathId, name) => {
           val parent = acc(parentPathId)
-          acc + (pathId -> Path(pathId, parentPathId +: parent.parentPathIds, name, joinPath(parent.absolutePath, name), joinPath(parent.normalizedAbsolutePath, name)))
+          acc + (pathId -> Path(pathId, parentPathId +: parent._parentPathIds, name, joinPath(parent.absolutePath, name), joinPath(parent.normalizedAbsolutePath, name)))
         }
         case PathComponentRenamed(pathId, name) => {
           val p = acc(pathId)
@@ -46,7 +52,7 @@ object PathListProjection extends Projection[RfcEvent, Vector[Path]] {
 
         case PathParameterAdded(pathId, parentPathId, name) => {
           val parent = acc(parentPathId)
-          acc + (pathId -> Path(pathId, parentPathId +: parent.parentPathIds, name, joinPath(parent.absolutePath, "{" + name + "}"), joinPath(parent.normalizedAbsolutePath, "{" + name + "}")))
+          acc + (pathId -> Path(pathId, parentPathId +: parent._parentPathIds, name, joinPath(parent.absolutePath, "{" + name + "}"), joinPath(parent.normalizedAbsolutePath, "{" + name + "}")))
         }
 
         case PathParameterRemoved(pathId) => {

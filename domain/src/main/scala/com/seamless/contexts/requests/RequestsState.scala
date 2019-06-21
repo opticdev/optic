@@ -2,7 +2,6 @@ package com.seamless.contexts.requests
 
 import com.seamless.contexts.requests.Commands.{BasicPathComponentDescriptor, BodyDescriptor, ParameterizedPathComponentDescriptor, PathComponentDescriptor, PathComponentId, RequestId, RequestParameterId, RequestParameterShapeDescriptor, ResponseId, ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor, UnsetBodyDescriptor, UnsetRequestParameterShapeDescriptor}
 
-import scala.scalajs.js.annotation.JSExportAll
 
 sealed trait RequestsGraph
 
@@ -10,28 +9,20 @@ trait Removable {
   val isRemoved: Boolean
 }
 
-@JSExportAll
 case class PathComponent(pathId: PathComponentId, descriptor: PathComponentDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
 
-@JSExportAll
 case class RequestParameterDescriptor(requestId: RequestId, location: String, name: String, shapeDescriptor: RequestParameterShapeDescriptor)
 
-@JSExportAll
 case class HttpRequestParameter(parameterId: RequestParameterId, requestParameterDescriptor: RequestParameterDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
 
-@JSExportAll
 case class RequestDescriptor(pathComponentId: PathComponentId, httpMethod: String, bodyDescriptor: BodyDescriptor)
 
-@JSExportAll
 case class HttpRequest(requestId: RequestId, requestDescriptor: RequestDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
 
-@JSExportAll
 case class ResponseDescriptor(requestId: RequestId, httpStatusCode: Int, bodyDescriptor: BodyDescriptor)
 
-@JSExportAll
 case class HttpResponse(responseId: ResponseId, responseDescriptor: ResponseDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
 
-@JSExportAll
 case class RequestsState(
                           pathComponents: Map[PathComponentId, PathComponent],
                           requests: Map[RequestId, HttpRequest],

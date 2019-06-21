@@ -5,7 +5,9 @@ import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import {ContentTypesHelper} from '../../engine';
+import {withEditorContext} from '../../contexts/EditorContext.js';
+import {withRfcContext} from '../../contexts/RfcContext.js';
+import {ContentTypesHelper, DataTypesHelper, ShapeCommands} from '../../engine';
 import classNames from 'classnames';
 import Paper from '@material-ui/core/Paper';
 import Zoom from '@material-ui/core/Zoom';
@@ -28,99 +30,163 @@ const styles = theme => ({
 
 });
 
+class BodySwitchWithoutStyles extends React.Component {
+    render() {
+        const {onChange, checked, classes} = this.props;
+        return (
+            <div>
+                <Typography variant="caption" style={{fontSize: 13, left: 0}}>Has Body:</Typography>
+                <Switch
+                    checked={checked}
+                    size="small" color="primary"
+                    className={classes.value}
+                    onChange={onChange}/>
+            </div>
+        )
+    }
+}
+
+const BodySwitch = withStyles(styles)(BodySwitchWithoutStyles)
+
+class BodyViewerWithoutContext extends React.Component {
+    render() {
+        const {conceptId, mode, queries} = this.props;
+        const currentShape = queries.conceptsById(conceptId);
+
+        return (
+            <div>
+                <div>
+                    <Typography
+                        variant="overline"
+                        style={{
+                            marginTop: 2,
+                            paddingRight: 8,
+                            color: primary
+                        }}>Shape</Typography>
+                </div>
+                <SchemaEditor conceptId={conceptId} currentShape={currentShape} mode={mode}/>
+            </div>
+        )
+    }
+}
+
+const BodyViewer = withEditorContext(withRfcContext(BodyViewerWithoutContext))
+
+class LayoutWrapperWithoutStyles extends React.Component {
+    render() {
+        const {classes} = this.props;
+        return (
+            <Paper elevation={1} className={classes.bodyPaper}>
+                <div style={{flexDirection: 'row'}}>
+                    {this.props.children}
+                </div>
+            </Paper>
+        )
+    }
+}
+
+const LayoutWrapper = withStyles(styles)(LayoutWrapperWithoutStyles)
+
 class BodyEditor extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            hasBody: !!this.props.shapeId,
-            contentType: ContentTypesHelper.fromString('application/json')
+            contentTypeInfo: ContentTypesHelper.fromString(this.props.contentType || 'application/json')
         };
 
     }
 
-    toggleHasBody = (event) => {
-        const checked = event.target.checked;
-        this.setState({hasBody: checked});
-    };
+    removeBody = () => {
+        const {conceptId} = this.props;
+        this.props.onBodyRemoved({conceptId})
+    }
+
+    addOrRestoreBody = () => {
+        const {handleCommand, rootId, conceptId} = this.props;
+        if (conceptId) {
+            this.props.onBodyRestored({conceptId})
+        } else {
+            const newConceptId = DataTypesHelper.newId()
+            const command = ShapeCommands.DefineInlineConcept(rootId, newConceptId)
+            handleCommand(command)
+            this.props.onBodyAdded({conceptId: newConceptId, contentType: this.state.contentTypeInfo.value})
+        }
+    }
 
     changeContentType = (event) => {
         const newContentType = event.target.value;
-        this.setState({contentType: ContentTypesHelper.fromString(newContentType)});
+        this.setState({contentTypeInfo: ContentTypesHelper.fromString(newContentType)});
     };
 
-    render() {
-        const {classes, mode, shapeId} = this.props;
-
-        const switcher = (
-            <div style={{display: isViewMode ? 'none' : 'inherit'}}>
-                <Typography variant="caption" style={{fontSize: 13, left: 0}}>Has Body:</Typography>
-                <Switch checked={this.state.hasBody}
-                        size="small" color="primary"
-                        className={classes.value}
-                        onChange={this.toggleHasBody}/>
-            </div>
-        )
-
-        if (mode === EditorModes.DOCUMENTATION && !this.state.hasBody) {
-            return null;
+    renderForViewing() {
+        const {conceptId, isRemoved, contentType} = this.props;
+        if (!conceptId) {
+            return null
         }
 
+        return (
+            <LayoutWrapper>
+
+                <Typography variant="caption" style={{fontSize: 13, left: 0}}>Content Type:</Typography>
+                <Typography
+                    variant="caption"
+                    style={{
+                        fontSize: 13,
+                        marginLeft: 6
+                    }}>{contentType}</Typography>
+
+                <BodyViewer conceptId={conceptId}/>
+            </LayoutWrapper>
+        )
+    }
+
+    render() {
+        const {classes, mode, conceptId, isRemoved} = this.props;
         const isViewMode = mode === EditorModes.DOCUMENTATION;
+
+        if (isViewMode) {
+            return this.renderForViewing()
+        }
+
+        const hasBody = !!conceptId && !isRemoved;
+        const body = hasBody ? (
+            <Zoom in={hasBody}>
+                <LayoutWrapper>
+                    <Typography variant="caption" style={{fontSize: 13, left: 0}}>Content Type:</Typography>
+                    <Select
+                        value={this.state.contentTypeInfo.value}
+                        className={classNames(classes.value, classes.select)}
+                        onChange={this.changeContentType}>
+                        {ContentTypesHelper.supportedContentTypesArray
+                            .map(({value}) => (
+                                <MenuItem value={value} key={value} button
+                                          style={{fontSize: 14}}>{value}</MenuItem>
+                            ))}
+                    </Select>
+
+                    {this.state.contentTypeInfo.supportsShape ? (
+                        <BodyViewer conceptId={conceptId} />
+                    ) : null}
+                </LayoutWrapper>
+            </Zoom>
+        ) : null
 
         return (
             <>
-                {switcher}
-                <Zoom in={this.state.hasBody}>
-                    <Paper elevation={1} className={classes.bodyPaper}>
-                        <div style={{flexDirection: 'row'}}>
-                            <Typography variant="caption" style={{fontSize: 13, left: 0}}>Content Type:</Typography>
-
-                            {isViewMode ? (
-                                <Typography variant="caption"
-                                            style={{
-                                                fontSize: 13,
-                                                marginLeft: 6
-                                            }}>{this.state.contentType.value}</Typography>
-                            ) : (
-                                <Select
-                                    value={this.state.contentType.value}
-                                    className={classNames(classes.value, classes.select)}
-                                    onChange={this.changeContentType}>
-                                    {ContentTypesHelper.supportedContentTypesArray.map(({value}) => (
-                                        <MenuItem value={value} key={value} button
-                                                  style={{fontSize: 14}}>{value}</MenuItem>
-                                    ))}
-                                </Select>
-                            )}
-
-                            {this.state.contentType.supportsShape ? (
-                                <>
-                                    <div>
-                                        <Typography variant="overline"
-                                                    style={{
-                                                        marginTop: 2,
-                                                        paddingRight: 8,
-                                                        color: primary
-                                                    }}>Shape</Typography>
-                                    </div>
-
-                                    <SchemaEditor shapeId={shapeId} mode={mode}/>
-                                </>
-                            ) : null}
-
-                        </div>
-
-                    </Paper>
-                </Zoom>
+                <BodySwitch checked={hasBody} onChange={hasBody ? this.removeBody : this.addOrRestoreBody}/>
+                {body}
             </>
         );
     }
 }
 
 BodyEditor.propTypes = {
-    shapeId: PropTypes.string
+    rootId: PropTypes.string.isRequired,
+    conceptId: PropTypes.string,
+    contentType: PropTypes.string,
+    isRemoved: PropTypes.bool
 }
 
-export default withStyles(styles)(BodyEditor);
+export default withEditorContext(withRfcContext(withStyles(styles)(BodyEditor)));

@@ -34,13 +34,13 @@ class EventSerializationSpec extends FunSpec {
     val exampleEvents = Vector(
       ConceptDefined("abc", "def", "hij"),
       PathParameterAdded("123", "456", "789"),
-      ResponseBodySet("Abc", ShapedBodyDescriptor("text/html", "id"))
+      ResponseBodySet("Abc", ShapedBodyDescriptor("text/html", "id", isRemoved = false))
     )
 
     val asJson = EventSerialization.toJson(exampleEvents)
 
     assert(asJson.noSpaces
-      === """[{"ConceptDefined":{"name":"abc","root":"def","id":"hij"}},{"PathParameterAdded":{"pathId":"123","parentPathId":"456","name":"789"}},{"ResponseBodySet":{"responseId":"Abc","bodyDescriptor":{"httpContentType":"text/html","shapeId":"id"}}}]""")
+      === """[{"ConceptDefined":{"name":"abc","root":"def","id":"hij"}},{"PathParameterAdded":{"pathId":"123","parentPathId":"456","name":"789"}},{"ResponseBodySet":{"responseId":"Abc","bodyDescriptor":{"httpContentType":"text/html","conceptId":"id","isRemoved":false}}}]""")
 
 
     val decoded = EventSerialization.fromJson(asJson)

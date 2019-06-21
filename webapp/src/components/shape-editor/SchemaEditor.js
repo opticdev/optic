@@ -2,6 +2,7 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import {withRfcContext} from '../../contexts/RfcContext.js';
 import KeyTypeRow from './KeyTypeRow';
 import TypeName from './TypeName';
 import ExpandButton from './ExpandButton';
@@ -81,7 +82,7 @@ const Row = withStyles(styles)(({classes, indent = 0, children, expandButton, ad
 
 class SchemaEditor extends React.Component {
 
-    initialState = (shapeId) => {
+    initialState = () => {
 
         const {root} = this.props.currentShape
 
@@ -105,14 +106,14 @@ class SchemaEditor extends React.Component {
     }
 
     componentWillReceiveProps(nextProps, nextContext) {
-        if (nextProps.shapeId !== this.props.shapeId) {
-            this.setState(this.initialState(nextProps.shapeId))
+        if (nextProps.conceptId !== this.props.conceptId) {
+            this.setState(this.initialState())
         }
     }
 
     constructor(props) {
         super(props);
-        this.state = this.initialState(this.props.shapeId)
+        this.state = this.initialState()
     }
 
     toggleCollapsed = (id, forceOpen) => () => {
@@ -182,17 +183,17 @@ class SchemaEditor extends React.Component {
             currentShape: this.props.currentShape,
             editorState: this.state,
             mode: this.props.mode,
-            shapeId: this.props.shapeId
+            conceptId: this.props.conceptId
         };
 
         const tree = flattenTree(root, [], this.state.collapsed);
 
         return (
             <SchemaEditorContext.Provider value={context}>
-                <List className={classes.root} key={this.props.shapeId}>
+                <List className={classes.root} key={this.props.conceptId}>
                     {tree}
                 </List>
-                <TypeRefModal targetId={this.state.refModalTarget} shapeId={this.props.shapeId}/>
+                <TypeRefModal targetId={this.state.refModalTarget} conceptId={this.props.conceptId}/>
             </SchemaEditorContext.Provider>
         );
     }
@@ -293,4 +294,4 @@ function flattenTree(node, array = [], collapsed = []) {
     return array;
 }
 
-export default withStyles(styles)(SchemaEditor);
+export default withRfcContext(withStyles(styles)(SchemaEditor));
