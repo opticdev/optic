@@ -5,6 +5,7 @@ import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
 import BasicButton from './BasicButton';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 import {Link} from 'react-router-dom';
+import {unwrap} from './Helpers';
 
 const styles = theme => ({
     root: {
@@ -52,7 +53,7 @@ class TypeName extends React.Component {
         })();
 
         return <SchemaEditorContext.Consumer>
-            {({currentShape, operations, mode}) => {
+            {({currentShape, allowedReferences, operations, mode}) => {
                 return (
                     <div className={classes.root} key={id}>
                         <BasicButton
@@ -66,7 +67,7 @@ class TypeName extends React.Component {
                                 fontWeight: (type.hasFields || type.hasTypeParameters) ? 700 : 200,
                                 ...style,
                             }}>
-                            {generateTypeName(type, node, currentShape.allowedTypeReferences)}
+                            {generateTypeName(type, node, allowedReferences)}
 
                             {type.isRef ? (
                                 <Link to={`${basePath}/concepts/${type.conceptId}`} style={{textDecoration: 'none'}}>
@@ -89,7 +90,7 @@ export default withEditorContext(withStyles(styles)(TypeName));
 
 export const DisplayRootTypeName = withStyles(styles)(({shape, classes, style}) => {
 
-    const {type} = shape;
+    const {type} = unwrap(shape);
 
     const color = (() => {
 

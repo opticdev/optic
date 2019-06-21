@@ -4,7 +4,7 @@ import io.circe.syntax._
 import com.seamless.contexts.data_types.Commands.ConceptId
 import com.seamless.contexts.data_types.Events.DataTypesEvent
 import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesState}
-import com.seamless.contexts.data_types.projections.{ConceptListProjection, NamedConcept, ShapeProjection}
+import com.seamless.contexts.data_types.projections.{AllConcepts, ConceptListProjection, NamedConcept, ShapeProjection}
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId}
 import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.requests.{HttpRequest, HttpResponse, RequestsAggregate, RequestsState}
@@ -49,8 +49,9 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) 
     q.contributions
   }
 
-  def conceptsById(conceptId: ConceptId): js.UndefOr[ShapeProjection] = {
-    q.conceptsById(conceptId).orUndefined
+  def allConcepts(): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(q.allConcepts.asJson)
   }
 
   def apiName(): String = {
@@ -97,14 +98,14 @@ class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
     requestsState.responses
   }
 
-  def conceptsById(conceptId: ConceptId): Option[ShapeProjection] = {
+  def allConcepts: AllConcepts = {
     val filteredEvents = events.collect{ case dataTypesEvent: DataTypesEvent => dataTypesEvent }
 
     val state = filteredEvents.foldLeft(DataTypesState(Map.empty, Map.empty)) { case (state, event) =>
       DataTypesAggregate.applyEvent(event, state)
     }
 
-    Try(ShapeProjection.fromState(state, conceptId)).toOption
+    ShapeProjection.fromState(state)
   }
 
   def apiName(): String = {

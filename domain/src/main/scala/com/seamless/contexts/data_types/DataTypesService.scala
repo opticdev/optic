@@ -4,8 +4,12 @@ import Events.DataTypesEvent
 import com.seamless.contexts.data_types.Commands.{ConceptId, DataTypesCommand}
 import com.seamless.contexts.data_types.Primitives.{PrimitiveType, RefT}
 import com.seamless.ddd.{AggregateId, EventSourcedRepository, InMemoryEventStore}
+import io.circe.scalajs._
+import io.circe.generic.auto._
+import io.circe.syntax._
 
 import scala.scalajs.js
+import scala.scalajs.js.UndefOr
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Random
 
@@ -43,4 +47,10 @@ object DataTypesServiceHelper {
   }
 
   def refTo(string: ConceptId): RefT = RefT(string)
+
+  def decodeType(jsonInput: js.Any): UndefOr[PrimitiveType] = {
+    import js.JSConverters._
+    decodeJs[PrimitiveType](jsonInput).toOption.orUndefined
+  }
+
 }

@@ -82,12 +82,14 @@ class RfcStoreWithoutContext extends React.Component {
         const {rfcId} = this.props;
         const apiName = queries.apiName();
         const contributions = queries.contributions()
-
+        const {allowedReferences, concepts} = queries.allConcepts()
         const value = {
             rfcId,
             queries,
             contributions,
             apiName,
+            allowedReferences,
+            concepts,
             handleCommand: this.handleCommand,
             serializeEvents: this.serializeEvents,
             hasUnsavedChanges

@@ -1,3 +1,5 @@
+import {unwrap} from './Helpers';
+
 export const primitiveColors = {
 	string: '#29447b',
 	number: '#e4508f',
@@ -24,14 +26,18 @@ export function generateTypeName(type, node, otherTypes = []) {
 
 		if (typeParameters.length > 1) {
 			const types = typeParameters
-				.map(i => generateTypeName(i.shape.type, i.shape, otherTypes))
+				.map(i => {
+					const unwrapped = unwrap(i.shape)
+					return generateTypeName(unwrapped.type, unwrapped, otherTypes)
+				})
 				.filter(onlyUnique)
 				.join(', ')
 			return `${types}`
 		}
 
 		if (typeParameters.length === 1) {
-			return ` ${generateTypeName(typeParameters[0].shape.type, typeParameters[0].shape, otherTypes)} `
+			const unwrapped = unwrap(typeParameters[0].shape)
+			return ` ${generateTypeName(unwrapped.type, unwrapped, otherTypes)} `
 		}
 
 		return ` Any `
