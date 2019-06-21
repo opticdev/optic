@@ -50,7 +50,8 @@ const BodySwitch = withStyles(styles)(BodySwitchWithoutStyles)
 
 class BodyViewerWithoutContext extends React.Component {
     render() {
-        const {conceptId, mode, queries} = this.props;
+        const {conceptId, mode, queries, cachedQueryResults} = this.props;
+        const {conceptsById} = cachedQueryResults
         const currentShape = queries.conceptsById(conceptId);
 
         return (

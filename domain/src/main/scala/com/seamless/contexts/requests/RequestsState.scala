@@ -5,23 +5,23 @@ import com.seamless.contexts.requests.Commands.{BasicPathComponentDescriptor, Bo
 
 sealed trait RequestsGraph
 
-trait Removable {
+sealed trait Removable {
   val isRemoved: Boolean
 }
 
-case class PathComponent(pathId: PathComponentId, descriptor: PathComponentDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
+case class PathComponent(pathId: PathComponentId, descriptor: PathComponentDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
 case class RequestParameterDescriptor(requestId: RequestId, location: String, name: String, shapeDescriptor: RequestParameterShapeDescriptor)
 
-case class HttpRequestParameter(parameterId: RequestParameterId, requestParameterDescriptor: RequestParameterDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
+case class HttpRequestParameter(parameterId: RequestParameterId, requestParameterDescriptor: RequestParameterDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
 case class RequestDescriptor(pathComponentId: PathComponentId, httpMethod: String, bodyDescriptor: BodyDescriptor)
 
-case class HttpRequest(requestId: RequestId, requestDescriptor: RequestDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
+case class HttpRequest(requestId: RequestId, requestDescriptor: RequestDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
 case class ResponseDescriptor(requestId: RequestId, httpStatusCode: Int, bodyDescriptor: BodyDescriptor)
 
-case class HttpResponse(responseId: ResponseId, responseDescriptor: ResponseDescriptor, override val isRemoved: Boolean) extends RequestsGraph with Removable
+case class HttpResponse(responseId: ResponseId, responseDescriptor: ResponseDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
 case class RequestsState(
                           pathComponents: Map[PathComponentId, PathComponent],

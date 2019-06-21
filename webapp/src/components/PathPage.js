@@ -8,6 +8,7 @@ import {withRfcContext} from '../contexts/RfcContext.js';
 import {RequestsCommands} from '../engine';
 import {routerUrls} from '../routes.js';
 import BodyEditor from './body-editor';
+import ParametersEditor from './parameters-editor';
 import ContributionWrapper from './contributions/ContributionWrapper.js';
 import {Link as RouterLink} from 'react-router-dom'
 
@@ -90,11 +91,13 @@ export function getBodyDescriptor(value) {
 
 class PathPage extends React.Component {
     render() {
-        const {handleCommand, pathId, queries} = this.props;
+        const {handleCommand, pathId, queries, cachedQueryResults} = this.props;
         const requestIdsForPath = Object
             .entries(queries.pathsWithRequests())
             .filter(([, v]) => v === pathId)
-        const requests = queries.requests()
+
+        const {requests, responses, requestParameters} = cachedQueryResults
+
         const requestsForPath = requestIdsForPath
             .map(([requestId]) => requests[requestId])
         const paths = queries.paths()
@@ -118,16 +121,19 @@ class PathPage extends React.Component {
                 )
             })
 
-        const responses = queries.responses()
         const requestItems = requestsForPath
             .map((request) => {
                 const {requestId, requestDescriptor} = request;
                 const {httpMethod, bodyDescriptor} = requestDescriptor
                 const {conceptId, httpContentType, isRemoved} = getBodyDescriptor(bodyDescriptor)
-                const responsesForRequest = Object
-                    .values(responses)
+                const responsesForRequest = Object.values(responses)
                     .filter((response) => response.responseDescriptor.requestId === requestId)
 
+                const parametersForRequest = Object.values(requestParameters)
+                    .filter((requestParameter) => requestParameter.parameterDescriptor.requestId === requestId)
+
+                const headerParameters = parametersForRequest.filter(x => x.location === 'header')
+                const queryParameters = parametersForRequest.filter(x => x.location === 'query')
 
                 const requestBodyHandlers = {
                     onBodyAdded({conceptId, contentType}) {
@@ -146,6 +152,7 @@ class PathPage extends React.Component {
                     }
                 }
 
+
                 return (
                     <div key={requestId} id={requestId}>
                         <Typography variant="h5">{httpMethod} {path.normalizedAbsolutePath}</Typography>
@@ -161,6 +168,14 @@ class PathPage extends React.Component {
                             variant={'multi'}
                             placeholder={`Description`}
                         />
+                        {headerParameters.length === 0 ? null : (
+                            <ParametersEditor parameters={headerParameters}/>
+                        )}
+
+                        {queryParameters.length === 0 ? null : (
+                            <ParametersEditor parameters={queryParameters}/>
+                        )}
+
                         <BodyEditor
                             rootId={requestId}
                             conceptId={conceptId}

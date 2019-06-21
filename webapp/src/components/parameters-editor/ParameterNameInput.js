@@ -1,7 +1,7 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import Input from '@material-ui/core/Input';
-import {SchemaEditorModes} from '../shape-editor/Constants';
+import {EditorModes} from '../../contexts/EditorContext.js';
 
 const styles = theme => ({
     input: {
@@ -32,7 +32,7 @@ class ParameterNameInput extends React.Component {
 
         const {classes, mode} = this.props
 
-        if (mode === SchemaEditorModes.EDIT) {
+        if (mode === EditorModes.DESIGN) {
             return (
                 <Input
                     disableUnderline={true}

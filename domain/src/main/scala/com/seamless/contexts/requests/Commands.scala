@@ -15,7 +15,7 @@ object Commands {
 
   @JSExportDescendentClasses
   @JSExportAll
-  trait PathComponentDescriptor {
+  sealed trait PathComponentDescriptor {
     val parentPathId: PathComponentId
     val name: String
   }
@@ -26,14 +26,14 @@ object Commands {
   @JSExportAll
   sealed trait RequestParameterShapeDescriptor
   case class UnsetRequestParameterShapeDescriptor() extends RequestParameterShapeDescriptor
-  case class ShapedRequestParameterShapeDescriptor(conceptId: ConceptId, override val isRemoved: Boolean) extends RequestParameterShapeDescriptor with Removable
+  case class ShapedRequestParameterShapeDescriptor(conceptId: ConceptId, isRemoved: Boolean) extends RequestParameterShapeDescriptor
 
 
   @JSExportDescendentClasses
   @JSExportAll
   sealed trait BodyDescriptor
   case class UnsetBodyDescriptor() extends BodyDescriptor
-  case class ShapedBodyDescriptor(httpContentType: String, conceptId: ConceptId, override val isRemoved: Boolean) extends BodyDescriptor with Removable
+  case class ShapedBodyDescriptor(httpContentType: String, conceptId: ConceptId, isRemoved: Boolean) extends BodyDescriptor
 
   case class AddPathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String) extends RequestsCommand
   case class RenamePathComponent(pathId: PathComponentId, name: String) extends RequestsCommand
