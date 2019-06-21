@@ -6,7 +6,7 @@ domain:
 
 domain-js:
 	@echo "building domain..."
-	cd ./domain && sh package.sh
+	cd ./domain && sh package-optimized.sh
 
 .PHONY: domain-js
 
