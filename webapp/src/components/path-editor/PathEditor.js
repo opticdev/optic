@@ -79,7 +79,6 @@ class PathEditor extends React.Component {
             handleCommand(command)
             lastParentPathId = pathId
         })
-        debugger;
         methods.forEach((method) => {
             const requestId = RequestsHelper.newId()
             const command = RequestsCommands.AddRequest(requestId, lastParentPathId, method)

@@ -1,3 +1,4 @@
+import * as PropTypes from 'prop-types';
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -5,6 +6,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import {withEditorContext} from '../../contexts/EditorContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
 import {primary} from '../../theme';
 import Table from '@material-ui/core/Table';
@@ -78,18 +80,26 @@ const styles = theme => ({
     }
 });
 
-function createData(name, description, type, required) {
-    return {name, description, type, required, inlineConceptId: seedString(handler, name)};
+
+function getParameterShapeDescriptor(parameter) {
+    if (parameter.ShapedRequestParameterShapeDescriptor) {
+        return parameter.ShapedRequestParameterShapeDescriptor
+    }
+    return {}
 }
 
-const rows = [
-    createData('sort', 'the key we should sort the data by, the key we should sort the data by, the key we should sort the data bythe key we should sort the data bythe key we should sort the data bythe key we should sort the data by', 'String', true),
-    createData('filter', 'JSON filter using our query', 'Object (4 fields)', false),
-    createData('latitude', 'the latitude of the object', 'Number'),
-    createData('longitude', 'The longitude of the object', 'Number', true),
-    createData('hello', '356, 16.0, 49, 3.9'),
-];
-
+function parametersToRows(parameters, contributions) {
+    return parameters.map((parameter) => {
+        const descriptor = getParameterShapeDescriptor(parameter)
+        return {
+            id: parameter.parameterId,
+            name: parameter.name,
+            description: contributions.getOrUndefined(parameter.id, 'description'),
+            inlineConceptId: descriptor.conceptId,
+            isRemoved: descriptor.isRemoved
+        }
+    })
+}
 
 class ParametersEditor extends React.Component {
 
@@ -108,11 +118,11 @@ class ParametersEditor extends React.Component {
 
     render() {
 
-        const {classes, mode, queries} = this.props
-
+        const {classes, mode, title, contributions, queries, parameters} = this.props
+        const rows = parametersToRows(parameters, contributions)
         return (
             <div className={classes.root}>
-                <Typography variant="h5" className={classes.tableTitle}>Query Parameters</Typography>
+                <Typography variant="h5" className={classes.tableTitle}>{title}</Typography>
                 <Table className={classes.table} size="small">
                     <TableBody>
                         {rows.map(row => {
@@ -134,8 +144,9 @@ class ParametersEditor extends React.Component {
                                             id="panel1a-header"
                                         >
                                             <TableRow key={row.name}>
-                                                <TableCell component="th" scope="row"
-                                                           className={classNames(classes.cell, classes.nameCell)}>
+                                                <TableCell
+                                                    component="th" scope="row"
+                                                    className={classNames(classes.cell, classes.nameCell)}>
                                                     <div className={classes.nameCol}>
                                                         <ParameterNameInput defaultName={row.name} mode={mode}/>
                                                         {row.required ? <> <br/><i
@@ -172,4 +183,9 @@ class ParametersEditor extends React.Component {
     }
 }
 
-export default withRfcContext(withStyles(styles)(ParametersEditor))
+ParametersEditor.propTypes = {
+    title: PropTypes.string.isRequired,
+    parameters: PropTypes.array.isRequired
+}
+
+export default withEditorContext(withRfcContext(withStyles(styles)(ParametersEditor)))

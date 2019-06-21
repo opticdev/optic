@@ -175,13 +175,12 @@ class SuperMenu extends React.Component {
     render() {
         const {classes} = this.props;
 
-        const {queries, basePath} = this.props;
-        const pathIdsByRequestId = queries.pathsWithRequests();
-        const paths = queries.paths();
-        const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId))
+        const {queries, cachedQueryResults, basePath} = this.props;
+        const {conceptsById, paths, pathIdsByRequestId, pathIdsWithRequests} = cachedQueryResults
+
         const sortedPaths = sortBy(paths.filter(p => pathIdsWithRequests.has(p.pathId)), ['absolutePath']);
 
-        const concepts = queries.concepts().filter(i => !i.deprecated);
+        const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
         const sortedConcepts = sortBy(concepts, ['name']);
 
 

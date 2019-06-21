@@ -83,10 +83,34 @@ class RfcStoreWithoutContext extends React.Component {
         const apiName = queries.apiName();
         const contributions = queries.contributions()
 
+
+        /*const requests = queries.requests()
+        const responses = queries.responses()
+        const requestParameters = queries.requestParameters()*/
+        const {requests, responses, requestParameters} = queries.requestsState()
+        const pathIdsByRequestId = queries.pathsWithRequests();
+        const paths = queries.paths();
+        const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId))
+        const conceptsById = queries.concepts().reduce((acc, item) => {
+            acc[item.id] = item
+            return acc
+        }, {})
+
+        const cachedQueryResults = {
+            contributions,
+            requests,
+            requestParameters,
+            responses,
+            conceptsById,
+            pathIdsByRequestId,
+            paths,
+            pathIdsWithRequests,
+        }
+
         const value = {
             rfcId,
             queries,
-            contributions,
+            cachedQueryResults,
             apiName,
             handleCommand: this.handleCommand,
             serializeEvents: this.serializeEvents,

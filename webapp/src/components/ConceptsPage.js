@@ -23,15 +23,14 @@ const styles = theme => ({
 
 class ConceptsPage extends React.Component {
     render() {
-        const {queries, classes, conceptId, handleCommand, basePath, modeOverride} = this.props;
+        const {queries, cachedQueryResults, classes, conceptId, handleCommand, basePath, modeOverride} = this.props;
+        const {conceptsById, contributions} = cachedQueryResults
         let mode = modeOverride || this.props.mode
 
-        const currentShape = queries.conceptsById(conceptId);
+        const currentShape = queries.conceptsById(conceptId)
         if (!currentShape) {
             return <Redirect to={basePath}/>
         }
-
-        const contributions = queries.contributions()
 
         return (
             <div className={classes.root}>

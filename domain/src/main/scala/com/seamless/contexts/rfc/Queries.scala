@@ -1,13 +1,14 @@
 package com.seamless.contexts.rfc
+
 import io.circe.generic.auto._
 import io.circe.syntax._
 import com.seamless.contexts.data_types.Commands.ConceptId
 import com.seamless.contexts.data_types.Events.DataTypesEvent
 import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesState}
 import com.seamless.contexts.data_types.projections.{ConceptListProjection, NamedConcept, ShapeProjection}
-import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId}
+import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, RequestParameterId, ResponseId}
 import com.seamless.contexts.requests.Events.RequestsEvent
-import com.seamless.contexts.requests.{HttpRequest, HttpResponse, RequestsAggregate, RequestsState}
+import com.seamless.contexts.requests.{HttpRequest, HttpRequestParameter, HttpResponse, RequestsAggregate, RequestsState}
 import com.seamless.contexts.requests.projections.{Path, PathListProjection, PathsWithRequestsProjection}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.projections.{APINameProjection, ContributionWrapper, ContributionsProjection}
@@ -21,6 +22,7 @@ import scala.util.Try
 @JSExportAll
 class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
   private val q = new Queries(eventStore, aggregateId)
+
   import js.JSConverters._
 
   def paths(): js.Array[Path] = {
@@ -31,9 +33,19 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) 
     q.pathsWithRequests.toJSDictionary
   }
 
+  def requestsState(): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(q.requestsState.asJson)
+  }
+
   def requests(): js.Any = {
     import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.requests.asJson)
+  }
+
+  def requestParameters(): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(q.requestParameters.asJson)
   }
 
   def responses(): js.Any = {
@@ -62,6 +74,7 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) 
 class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
 
   private def events = {
+    println("full event scan")
     eventStore.listEvents(aggregateId)
   }
 
@@ -82,7 +95,7 @@ class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
   }
 
   def requestsState: RequestsState = {
-    val filteredEvents = events.collect{ case requestsEvent: RequestsEvent => requestsEvent }
+    val filteredEvents = events.collect { case requestsEvent: RequestsEvent => requestsEvent }
 
     filteredEvents.foldLeft(RequestsAggregate.initialState) {
       case (state, event) => RequestsAggregate.applyEvent(event, state)
@@ -93,12 +106,16 @@ class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
     requestsState.requests
   }
 
+  def requestParameters: Map[RequestParameterId, HttpRequestParameter] = {
+    requestsState.requestParameters
+  }
+
   def responses: Map[ResponseId, HttpResponse] = {
     requestsState.responses
   }
 
   def conceptsById(conceptId: ConceptId): Option[ShapeProjection] = {
-    val filteredEvents = events.collect{ case dataTypesEvent: DataTypesEvent => dataTypesEvent }
+    val filteredEvents = events.collect { case dataTypesEvent: DataTypesEvent => dataTypesEvent }
 
     val state = filteredEvents.foldLeft(DataTypesState(Map.empty, Map.empty)) { case (state, event) =>
       DataTypesAggregate.applyEvent(event, state)

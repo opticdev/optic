@@ -83,7 +83,6 @@ const Row = withStyles(styles)(({classes, indent = 0, children, expandButton, ad
 class SchemaEditor extends React.Component {
 
     initialState = () => {
-
         const {root} = this.props.currentShape
 
         let collapsed = []

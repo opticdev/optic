@@ -11,7 +11,8 @@ class ContributionWrapper extends React.Component {
     }
 
     render() {
-        const {contributions, contributionParentId, contributionKey, ...rest} = this.props;
+        const {cachedQueryResults, contributionParentId, contributionKey, ...rest} = this.props;
+        const {contributions} = cachedQueryResults
         const value = contributions.getOrUndefined(contributionParentId, contributionKey)
 
         return (
