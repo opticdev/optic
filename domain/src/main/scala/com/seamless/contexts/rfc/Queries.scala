@@ -5,16 +5,15 @@ import io.circe.syntax._
 import com.seamless.contexts.data_types.Commands.ConceptId
 import com.seamless.contexts.data_types.Events.DataTypesEvent
 import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesState}
-import com.seamless.contexts.data_types.projections.{AllConcepts, ConceptListProjection, NamedConcept, ShapeProjection}
+import com.seamless.contexts.data_types.projections.{AllConcepts, ConceptListProjection, NamedConcept, ShapeProjection, SingleConcept}
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId}
-import com.seamless.contexts.data_types.projections.{ConceptListProjection, NamedConcept, ShapeProjection}
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, RequestParameterId, ResponseId}
 import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.requests.{HttpRequest, HttpRequestParameter, HttpResponse, RequestsAggregate, RequestsState}
 import com.seamless.contexts.requests.projections.{Path, PathListProjection, PathsWithRequestsProjection}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.projections.{APINameProjection, ContributionWrapper, ContributionsProjection}
-import com.seamless.ddd.{AggregateId, EventStore}
+import com.seamless.ddd.{AggregateId, CachedProjection, EventStore}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
@@ -22,8 +21,8 @@ import scala.util.Try
 
 @JSExportTopLevel("com.seamless.contexts.rfc.Queries")
 @JSExportAll
-class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
-  private val q = new Queries(eventStore, aggregateId)
+class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
+  private val q = new Queries(eventStore, service, aggregateId)
 
   import js.JSConverters._
 
@@ -68,41 +67,45 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) 
     convertJsonToJs(q.allConcepts.asJson)
   }
 
+  def conceptById(conceptId: ConceptId): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(q.conceptById(conceptId).asJson)
+  }
+
   def apiName(): String = {
     q.apiName()
   }
 
 }
 
-class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
+class Queries(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
 
   private def events = {
-    println("full event scan")
     eventStore.listEvents(aggregateId)
   }
 
+  private val pathsProjectionCache = new CachedProjection(PathListProjection, events)
   def paths: Vector[Path] = {
-    PathListProjection.fromEvents(events)
+    pathsProjectionCache.updateProjection(events)
   }
 
+  private val pathsWithRequestsCache = new CachedProjection(PathsWithRequestsProjection, events)
   def pathsWithRequests: Map[RequestId, PathComponentId] = {
-    PathsWithRequestsProjection.fromEvents(events)
+    pathsWithRequestsCache.updateProjection(events)
   }
 
+  private val conceptListCache = new CachedProjection(ConceptListProjection, events)
   def concepts: Vector[NamedConcept] = {
-    ConceptListProjection.fromEvents(events)
+    conceptListCache.updateProjection(events)
   }
 
+  private val contributionsCache = new CachedProjection(ContributionsProjection, events)
   def contributions: ContributionWrapper = {
-    ContributionsProjection.fromEvents(events)
+    contributionsCache.updateProjection(events)
   }
 
   def requestsState: RequestsState = {
-    val filteredEvents = events.collect { case requestsEvent: RequestsEvent => requestsEvent }
-
-    filteredEvents.foldLeft(RequestsAggregate.initialState) {
-      case (state, event) => RequestsAggregate.applyEvent(event, state)
-    }
+    service.currentState(aggregateId).requestsState
   }
 
   def requests: Map[RequestId, HttpRequest] = {
@@ -118,17 +121,16 @@ class Queries(eventStore: EventStore[RfcEvent], aggregateId: AggregateId) {
   }
 
   def allConcepts: AllConcepts = {
-    val filteredEvents = events.collect{ case dataTypesEvent: DataTypesEvent => dataTypesEvent }
-
-    val state = filteredEvents.foldLeft(DataTypesState(Map.empty, Map.empty)) { case (state, event) =>
-      DataTypesAggregate.applyEvent(event, state)
-    }
-
-    ShapeProjection.fromState(state)
+    ShapeProjection.all(service.currentState(aggregateId).dataTypesState)
   }
 
+  def conceptById(conceptId: ConceptId): SingleConcept = {
+    ShapeProjection.byId(service.currentState(aggregateId).dataTypesState, conceptId)
+  }
+
+  private val apiNameCache = new CachedProjection(APINameProjection, events)
   def apiName(): String = {
-    APINameProjection.fromEvents(events)
+    apiNameCache.updateProjection(events)
   }
 
 }

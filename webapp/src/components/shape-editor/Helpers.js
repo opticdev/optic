@@ -4,8 +4,6 @@ export function unwrap(obj) {
 
 	const keys = Object.keys(obj)
 
-	console.log(obj)
-
 	if (keys.length > 1 && obj.shape) {
 		return {...obj, shape: unwrap(obj.shape)}
 	}

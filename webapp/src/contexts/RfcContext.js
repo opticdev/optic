@@ -17,8 +17,9 @@ class RfcStoreWithoutContext extends React.Component {
         super(props);
 
         const eventStore = Facade.makeEventStore();
+        const rfcService = Facade.fromJsonCommands(eventStore, this.props.initialCommandsString || '[]', this.props.rfcId)
 
-        const queries = Queries(eventStore, this.props.rfcId);
+        const queries = Queries(eventStore, rfcService, this.props.rfcId);
 
         if (this.props.initialEventsString) {
             eventStore.bulkAdd(this.props.rfcId, this.props.initialEventsString)
@@ -26,7 +27,7 @@ class RfcStoreWithoutContext extends React.Component {
 
         this.state = {
             eventStore,
-            rfcService: Facade.fromJsonCommands(eventStore, this.props.initialCommandsString || '[]', this.props.rfcId),
+            rfcService,
             queries,
             hasUnsavedChanges: false
         };
@@ -82,7 +83,6 @@ class RfcStoreWithoutContext extends React.Component {
         const {rfcId} = this.props;
         const apiName = queries.apiName();
         const contributions = queries.contributions()
-        const {allowedReferences, concepts} = queries.allConcepts()
 
         /*const requests = queries.requests()
         const responses = queries.responses()
@@ -105,8 +105,6 @@ class RfcStoreWithoutContext extends React.Component {
             pathIdsByRequestId,
             paths,
             pathIdsWithRequests,
-            allowedReferences,
-            concepts,
         }
 
         const value = {

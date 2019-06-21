@@ -37,7 +37,7 @@ class ShapeProjectionSpec extends FunSpec {
     val nestedField = addField(obj, conceptId)
     handle(SetFieldName(nestedField, "deep-field", conceptId))
 
-    val shapeProjection = ShapeProjection.fromState(currentState).concepts(conceptId)
+    val shapeProjection = ShapeProjection.all(currentState).concepts(conceptId)
 
     assert(shapeProjection.root.isObjectFieldList)
 //
