@@ -54,7 +54,7 @@ class OverView extends React.Component {
 
 		const {classes, basePath} = this.props;
 
-		return <Editor basePath={basePath}>
+		return <Editor>
 			<div className={classes.root}>
 				<Typography variant="h3" color="primary" style={{marginBottom: 28}}>Using the API Designer</Typography>
 				<ParagraphSplit
@@ -70,7 +70,6 @@ class OverView extends React.Component {
 					</Typography>}
 					right={<img width={180} src={'/show-api.png'}/>}
 				/>
-
 
 				<Typography variant="h4" color="primary" style={{marginBottom: 20, marginTop: 28}}>Editing
 					Concepts</Typography>

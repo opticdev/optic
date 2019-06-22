@@ -19,7 +19,11 @@ const styles = theme => ({
     root: {
         maxWidth: '1000',
         width: '100%',
-        paddingTop: 2,
+        backgroundColor: '#f8f8f8',
+        padding: 11,
+        paddingLeft: 10,
+        paddingTop: 9,
+
     },
     row: {
         height: 31,

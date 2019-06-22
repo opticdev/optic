@@ -38,7 +38,7 @@ class ConceptsPage extends React.Component {
 		}
 
 		return (
-			<Editor basePath={basePath}>
+			<Editor>
 				<div className={classes.root}>
 					{/*@Aidan what's the plan here?*/}
 					<ContributionTextField

@@ -31,19 +31,35 @@ const styles = theme => ({
 	},
 	// maybe raise the elevation instead?
 	focusedRequest: {
-		border: `1px solid ${primary}`,
-		backgroundColor: '#c0c0c0',
+		// border: `1px solid ${primary}`,
+		// backgroundColor: '#c0c0c0',
 		padding: theme.spacing.unit
 	},
 	margin: {
 		minWidth: 30,
 		flex: 1,
 	},
+	responseCard: {
+		display: 'flex',
+		flexDirection: 'row',
+		marginBottom: 50
+	},
+	responseStatus: {
+		width: 120,
+		borderRight: '1px solid #e2e2e2',
+		paddingTop: 33,
+		paddingBottom: 33
+	},
+	responseDetail: {
+		flex: 1,
+		padding: 11,
+		paddingLeft: 20,
+	}
 });
 
 class ResponseListWithoutContext extends React.Component {
 	render() {
-		const {responses, handleCommand} = this.props;
+		const {responses, handleCommand, classes} = this.props;
 		const sortedResponses = sortBy(responses, ['responseDescriptor.httpStatusCode']);
 		return sortedResponses.map((response) => {
 			const {responseId, responseDescriptor} = response;
@@ -67,13 +83,27 @@ class ResponseListWithoutContext extends React.Component {
 				}
 			};
 			return (
-				<div key={responseId}>
-					<StatusCode statusCode={httpStatusCode}/>
-					<BodyEditor
-						rootId={responseId}
-						bodyDescriptor={bodyDescriptor}
-						{...responseBodyHandlers}
-					/>
+				<div key={responseId} className={classes.responseCard}>
+					<div className={classes.responseStatus}>
+						<StatusCode statusCode={httpStatusCode}/>
+					</div>
+					<div className={classes.responseDetail}>
+						<ContributionWrapper
+							style={{marginTop: -20}}
+							contributionParentId={responseId}
+							defaultText={'No Description'}
+							contributionKey={'description'}
+							variant={'multi'}
+							placeholder={`Response Description`}
+						/>
+						<div style={{marginLeft: 5}}>
+						<BodyEditor
+							rootId={responseId}
+							bodyDescriptor={bodyDescriptor}
+							{...responseBodyHandlers}
+						/>
+						</div>
+					</div>
 				</div>
 			);
 		});
@@ -81,13 +111,13 @@ class ResponseListWithoutContext extends React.Component {
 	}
 }
 
-const ResponseList = withRfcContext(ResponseListWithoutContext);
+const ResponseList = withRfcContext(withStyles(styles)(ResponseListWithoutContext));
 
 
 const pathTrailStyles = theme => {
 	return {
 		paper: {
-			backgroundColor: '#f0f0f0',
+			backgroundColor: '#f8f8f8',
 			padding: theme.spacing(1),
 		},
 	};
@@ -202,7 +232,7 @@ class PathPage extends React.Component {
 						<Button
 							size="small"
 							className={classes.margin}
-							color={(focusedRequestId === requestId ? 'secondary' : 'default')}>
+							style={{fontWeight: (focusedRequestId === requestId ? '400' : '200')}}>
 							{httpMethod}
 						</Button>
 					</Link>
@@ -251,14 +281,10 @@ class PathPage extends React.Component {
 						onClickCapture={this.setRequestFocus(requestId)}
 						onKeyDownCapture={this.setRequestFocus(requestId)}
 					>
-						<Typography variant="h5">{httpMethod} {path.normalizedAbsolutePath}</Typography>
+						<Typography variant="overline" style={{fontSize: 28, marginBottom: 5}}
+									color="primary">{httpMethod}</Typography>
 						<ContributionWrapper
-							contributionParentId={requestId}
-							contributionKey={'name'}
-							variant={'heading'}
-							placeholder="Summary"
-						/>
-						<ContributionWrapper
+							style={{marginTop: -20}}
 							contributionParentId={requestId}
 							contributionKey={'description'}
 							variant={'multi'}
@@ -277,14 +303,13 @@ class PathPage extends React.Component {
 								<ParametersEditor parameters={queryParameters}/>
 							</div>
 						)}
-
+						<Typography variant="h6" color="primary" style={{marginTop: 75}}>Request Body</Typography>
 						<BodyEditor
 							rootId={requestId}
 							bodyDescriptor={bodyDescriptor}
 							{...requestBodyHandlers}
 						/>
-						<Divider style={{marginTop: 15, marginBottom: 15}}/>
-						<Typography variant="h5">Responses</Typography>
+						<Typography variant="h6" style={{marginTop: 75, marginBottom: 44}} color="primary">Responses</Typography>
 						<ResponseList responses={responsesForRequest}/>
 					</div>
 				);
@@ -300,15 +325,16 @@ class PathPage extends React.Component {
 
 
 		return (
-			<Editor basePath={this.props.basePath} leftMargin={MethodsTOC}>
+			<Editor leftMargin={MethodsTOC}>
 				<div className={classes.root}>
-					<PathTrail pathTrail={pathTrailWithNames}/>
 					<ContributionWrapper
 						contributionParentId={pathId}
 						contributionKey={'name'}
 						variant={'heading'}
 						placeholder="Resource Name"
 					/>
+					<Typography variant="h6" color="primary" style={{marginBottom: 11}}>Path</Typography>
+					<PathTrail pathTrail={pathTrailWithNames}/>
 					<Divider style={{marginTop: 15, marginBottom: 15}}/>
 					{requestItems}
 				</div>

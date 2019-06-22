@@ -126,28 +126,26 @@ class Editor extends React.Component {
 
 	render() {
 
-		const {classes, basePath} = this.props;
+		const {classes} = this.props;
 
 		return (
-			<EditorStore basePath={basePath}>
-				<div className={classes.pageContainer}>
-					<div className={classes.navWrapper}>
-						<TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>
-					</div>
-					<div className={classes.contentWrapper}>
-						<Margin className={classes.leftMargin}>
-							{this.props.leftMargin ? <TOC children={this.props.leftMargin}/>: null}
-						</Margin>
-						<Sheet>{this.props.children}</Sheet>
-						<Margin/>
-					</div>
-					<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
-					<FloatingAddButton/>
-					<ShareDialog close={this.hideShare} open={this.state.shareOpen}/>
+			<div className={classes.pageContainer}>
+				<div className={classes.navWrapper}>
+					<TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>
 				</div>
-			</EditorStore>
+				<div className={classes.contentWrapper}>
+					<Margin className={classes.leftMargin}>
+						{this.props.leftMargin ? <TOC children={this.props.leftMargin}/>: null}
+					</Margin>
+					<Sheet>{this.props.children}</Sheet>
+					<Margin/>
+				</div>
+				<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
+				<FloatingAddButton/>
+				<ShareDialog close={this.hideShare} open={this.state.shareOpen}/>
+			</div>
 		);
 	}
 }
 
-export default withFocusedRequestContext(withStyles(styles)(Editor));
+export default withStyles(styles)(Editor);

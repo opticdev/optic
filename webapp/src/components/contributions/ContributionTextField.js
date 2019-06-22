@@ -40,23 +40,23 @@ class ContributionTextField extends React.Component {
 
     render() {
 
-        const {mode, classes, variant = 'heading', inputStyle = {}, textStyle = {}, placeholder, onBlur} = this.props;
+        const {mode, defaultText, classes, variant = 'heading', inputStyle = {}, textStyle = {}, placeholder, onBlur} = this.props;
         const {value} = this.state
 
         const classToApply = classes[variant]
-
         const inputColor = variant === 'heading' ? 'primary' : 'default'
 
         return (
             <div style={{marginBottom: 12}}>
                 {(() => {
                     if (mode === EditorModes.DOCUMENTATION) {
+                        const valueOrDefault = value || defaultText
                         return (
                             <div
                                 className={classToApply}
                                 color={inputColor}
                                 style={textStyle}>{(variant === 'multi') ?
-                                <pre className={classes.pre}>{value}</pre> : value}
+                                <pre className={classes.pre}>{valueOrDefault}</pre> : valueOrDefault}
                             </div>
                         );
                     } else if (mode === EditorModes.DESIGN) {
@@ -71,12 +71,13 @@ class ContributionTextField extends React.Component {
                                 fullWidth={variant !== 'headline'}
                                 onChange={this.onChange}
                                 multiline={variant === 'multi'}
-                                placeholder={placeholder}
+                                placeholder={(variant === 'heading') ? placeholder : undefined}
                                 inputProps={{
                                     className: classToApply,
                                     style: {...inputStyle}
                                 }}
                                 margin="dense"
+                                label={(variant !== 'heading') ? placeholder : null}
                                 variant="outlined"
                             />
                         );
