@@ -26,8 +26,7 @@ const styles = theme => ({
     select: {
         fontSize: 14
     },
-    bodyPaper: {
-        padding: theme.spacing(2)
+    wrapper: {
     }
 
 });
@@ -52,19 +51,28 @@ const BodySwitch = withStyles(styles)(BodySwitchWithoutStyles)
 
 class BodyViewerWithoutContext extends React.Component {
     render() {
-        const {conceptId, mode, queries} = this.props;
+        const {conceptId, mode, queries, contentType} = this.props;
         const {allowedReferences, concept: currentShape} = queries.conceptById(conceptId);
 
         return (
             <div>
-                <div>
+                <div style={{display: 'flex'}}>
                     <Typography
                         variant="overline"
                         style={{
                             marginTop: 2,
                             paddingRight: 8,
+                            flex: 1,
                             color: primary
                         }}>Shape</Typography>
+                    <Typography
+                        variant="overline"
+                        style={{
+                            textTransform: 'none',
+                            marginTop: 2,
+                            paddingRight: 8,
+                            color: primary
+                        }}>{contentType}</Typography>
                 </div>
                 <SchemaEditor
                     conceptId={conceptId}
@@ -82,11 +90,11 @@ class LayoutWrapperWithoutStyles extends React.Component {
     render() {
         const {classes} = this.props;
         return (
-            <Paper elevation={1} className={classes.bodyPaper}>
+            <div className={classes.wrapper}>
                 <div style={{flexDirection: 'row'}}>
                     {this.props.children}
                 </div>
-            </Paper>
+            </div>
         )
     }
 }
@@ -132,16 +140,7 @@ class BodyEditor extends React.Component {
 
         return (
             <LayoutWrapper>
-
-                <Typography variant="caption" style={{fontSize: 13, left: 0}}>Content Type:</Typography>
-                <Typography
-                    variant="caption"
-                    style={{
-                        fontSize: 13,
-                        marginLeft: 6
-                    }}>{contentType}</Typography>
-
-                <BodyViewer conceptId={conceptId}/>
+                <BodyViewer conceptId={conceptId} contentType={contentType}/>
             </LayoutWrapper>
         )
     }

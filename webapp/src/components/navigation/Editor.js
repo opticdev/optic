@@ -5,16 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import keydown from 'react-keydown';
 import SuperMenu from './SuperMenu';
 import FloatingAddButton from './FloatingAddButton';
-import {EditorStore} from '../../contexts/EditorContext';
 import ShareDialog from './ShareDialog';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import {withFocusedRequestContext} from '../../contexts/FocusedRequestContext';
-import {withRouter} from 'react-router-dom';
 
 const styles = theme => ({
 	pageContainer: {
@@ -126,28 +117,26 @@ class Editor extends React.Component {
 
 	render() {
 
-		const {classes, basePath} = this.props;
+		const {classes} = this.props;
 
 		return (
-			<EditorStore basePath={basePath}>
-				<div className={classes.pageContainer}>
-					<div className={classes.navWrapper}>
-						<TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>
-					</div>
-					<div className={classes.contentWrapper}>
-						<Margin className={classes.leftMargin}>
-							{this.props.leftMargin ? <TOC children={this.props.leftMargin}/>: null}
-						</Margin>
-						<Sheet>{this.props.children}</Sheet>
-						<Margin/>
-					</div>
-					<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
-					<FloatingAddButton/>
-					<ShareDialog close={this.hideShare} open={this.state.shareOpen}/>
+			<div className={classes.pageContainer}>
+				<div className={classes.navWrapper}>
+					<TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>
 				</div>
-			</EditorStore>
+				<div className={classes.contentWrapper}>
+					<Margin className={classes.leftMargin}>
+						{this.props.leftMargin ? <TOC children={this.props.leftMargin}/>: null}
+					</Margin>
+					<Sheet>{this.props.children}</Sheet>
+					<Margin/>
+				</div>
+				<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
+				<FloatingAddButton/>
+				<ShareDialog close={this.hideShare} open={this.state.shareOpen}/>
+			</div>
 		);
 	}
 }
 
-export default withFocusedRequestContext(withStyles(styles)(Editor));
+export default withStyles(styles)(Editor);

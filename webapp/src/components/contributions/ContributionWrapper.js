@@ -11,13 +11,14 @@ class ContributionWrapper extends React.Component {
     }
 
     render() {
-        const {cachedQueryResults, contributionParentId, contributionKey, ...rest} = this.props;
+        const {cachedQueryResults, contributionParentId, contributionKey, defaultText, ...rest} = this.props;
         const {contributions} = cachedQueryResults
+
         const value = contributions.getOrUndefined(contributionParentId, contributionKey)
 
         return (
             <div>
-                <ContributionTextField {...rest} value={value} onBlur={this.handleSubmit}/>
+                <ContributionTextField {...rest} value={value} defaultText={defaultText} onBlur={this.handleSubmit}/>
             </div>
         );
     }
