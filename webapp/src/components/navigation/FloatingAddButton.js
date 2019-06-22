@@ -1,4 +1,6 @@
 import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Fab from '@material-ui/core/Fab';
@@ -112,7 +114,8 @@ class FloatingAddButton extends React.Component {
                 </Menu>
 
                 <Dialog open={this.state.isPathModalOpen} onClose={this.closePathModal} maxWidth="md" fullWidth>
-                    <div style={{padding: 10}}>
+                    <DialogTitle>Add Request(s)</DialogTitle>
+                    <DialogContent>
                         <PathContext.Consumer>
                             {(pathId) => {
                                 const path = pathId === null ? '' : RequestUtilities.absolutePath(pathId, pathsById)
@@ -122,7 +125,7 @@ class FloatingAddButton extends React.Component {
                                 )
                             }}
                         </PathContext.Consumer>
-                    </div>
+                    </DialogContent>
                 </Dialog>
             </div>
         );
