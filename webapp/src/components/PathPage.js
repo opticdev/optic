@@ -82,6 +82,7 @@ class ResponseListWithoutContext extends React.Component {
 					handleCommand(command);
 				}
 			};
+
 			return (
 				<div key={responseId} className={classes.responseCard}>
 					<div className={classes.responseStatus}>
