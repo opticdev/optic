@@ -16,6 +16,7 @@ import TableBody from '@material-ui/core/TableBody';
 import classNames from 'classnames'
 import SchemaEditor from '../shape-editor/SchemaEditor';
 import {DisplayRootTypeName} from '../shape-editor/TypeName';
+import {getName} from '../utilities/PathUtilities.js';
 import ParameterNameInput from './ParameterNameInput';
 
 
@@ -75,8 +76,19 @@ const styles = theme => ({
     }
 });
 
+export function pathParametersToRows(pathParameters, contributions) {
+    return pathParameters.map((pathParameter) => {
+        return {
+            id: pathParameter.pathId,
+            name: getName(pathParameter),
+            description: contributions.getOrUndefined(pathParameter.pathId, 'description'),
+            inlineConceptId: null,
+            isRemoved: false
+        }
+    })
+}
 
-function getParameterShapeDescriptor(parameter) {
+export function getRequestParameterShapeDescriptor(parameter) {
     const base = parameter.requestParameterDescriptor.shapeDescriptor;
     if (base && base.ShapedRequestParameterShapeDescriptor) {
         return base.ShapedRequestParameterShapeDescriptor
@@ -84,9 +96,9 @@ function getParameterShapeDescriptor(parameter) {
     return {}
 }
 
-function parametersToRows(parameters, contributions) {
+export function requestParametersToRows(parameters, contributions) {
     return parameters.map((parameter) => {
-        const descriptor = getParameterShapeDescriptor(parameter)
+        const descriptor = getRequestParameterShapeDescriptor(parameter)
         return {
             id: parameter.parameterId,
             name: parameter.requestParameterDescriptor.name,
@@ -103,6 +115,10 @@ class ParametersEditor extends React.Component {
         expandedParameterIds: []
     }
 
+    handleRename = (id) => (name) => {
+        this.props.onRename({id, name})
+    }
+
     updateExpandedParameterIds = (id) => (e, opened) => {
         const inArray = this.state.expandedParameterIds.includes(id)
         if (inArray && !opened) {
@@ -116,70 +132,89 @@ class ParametersEditor extends React.Component {
 
         const {classes, mode, title, parameters, cachedQueryResults, queries} = this.props
         const {contributions} = cachedQueryResults
-        const rows = parametersToRows(parameters, contributions)
+        const rows = this.props.rowMapper(parameters, contributions)
 
         return (
             <div className={classes.root}>
                 <Typography variant="h5" className={classes.tableTitle}>{title}</Typography>
 
-                {rows.map(row => {
-                    const {allowedReferences, concept: shape} = queries.conceptById(row.inlineConceptId)
+                {rows
+                    .map(row => {
+                        const isExpanded = this.state.expandedParameterIds.includes(row.id)
 
-                    const isExpanded = this.state.expandedParameterIds.includes(row.id)
+                        let typeCell = null;
+                        let schemaEditor = null
+                        if (row.inlineConceptId !== null) {
+                            const {allowedReferences, concept: shape} = queries.conceptById(row.inlineConceptId)
+                            typeCell = (
+                                <TableCell align="left" className={classes.cell}>
+                                    <DisplayRootTypeName
+                                        shape={shape.root}
+                                        style={{marginBottom: -17}}
+                                    />
+                                    <br/>
+                                    <div
+                                        className={(isExpanded) ? classes.multiline : classes.singleLine}>{row.description}</div>
+                                </TableCell>
+                            )
 
-                    return (
-                        <>
-                            <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)}>
-                                <ExpansionPanelSummary
-                                    expandIcon={<ExpandMoreIcon/>}
-                                    classes={{
-                                        content: classes.expandContent,
-                                        expanded: classes.expandedSummary,
-                                        focused: classes.focusedSummary
-                                    }}
-                                    style={{width: '100%'}}
-                                >
-                                    <Table>
-                                        <TableBody>
-                                            <TableRow key={row.name}>
-                                                <TableCell
-                                                    component="th" scope="row"
-                                                    className={classNames(classes.cell, classes.nameCell)}>
-                                                    <div className={classes.nameCol}>
-                                                        <ParameterNameInput defaultName={row.name} mode={mode}/>
-                                                        {row.required ? <> <br/><i
-                                                            className={classes.required}>required</i> </> : null}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell align="left" className={classes.cell}>
-                                                    <DisplayRootTypeName
-                                                        shape={shape.root}
-                                                        style={{marginBottom: -17}}
-                                                    />
-                                                    <br/>
-                                                    <div
-                                                        className={(isExpanded) ? classes.multiline : classes.singleLine}>{row.description}</div>
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-                                </ExpansionPanelSummary>
-                                <ExpansionPanelDetails classes={{root: classes.detailRoot}}>
-                                    <Typography variant="overline" style={{
-                                        marginTop: 2,
-                                        paddingRight: 8,
-                                        color: primary
-                                    }}>Shape</Typography>
-                                    <SchemaEditor
-                                        conceptId={row.inlineConceptId}
-                                        allowedReferences={allowedReferences}
-                                        currentShape={shape} mode={mode}/>
+                            schemaEditor = (
+                                <SchemaEditor
+                                    conceptId={row.inlineConceptId}
+                                    allowedReferences={allowedReferences}
+                                    currentShape={shape}
+                                    mode={mode}
+                                />
+                            )
+                        }
 
-                                </ExpansionPanelDetails>
-                            </ExpansionPanel>
-                        </>
-                    )
-                })}
+
+                        return (
+                            <>
+                                <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)}>
+                                    <ExpansionPanelSummary
+                                        expandIcon={<ExpandMoreIcon/>}
+                                        classes={{
+                                            content: classes.expandContent,
+                                            expanded: classes.expandedSummary,
+                                            focused: classes.focusedSummary
+                                        }}
+                                        style={{width: '100%'}}
+                                    >
+                                        <Table>
+                                            <TableBody>
+                                                <TableRow key={row.name}>
+                                                    <TableCell
+                                                        component="th" scope="row"
+                                                        className={classNames(classes.cell, classes.nameCell)}>
+                                                        <div className={classes.nameCol}>
+                                                            <ParameterNameInput
+                                                                defaultName={row.name}
+                                                                mode={mode}
+                                                                onBlur={this.handleRename(row.id)}
+                                                            />
+                                                            {row.required ? <> <br/><i
+                                                                className={classes.required}>required</i> </> : null}
+                                                        </div>
+                                                    </TableCell>
+                                                    {typeCell}
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </ExpansionPanelSummary>
+                                    <ExpansionPanelDetails classes={{root: classes.detailRoot}}>
+                                        <Typography variant="overline" style={{
+                                            marginTop: 2,
+                                            paddingRight: 8,
+                                            color: primary
+                                        }}>Shape</Typography>
+                                        {schemaEditor}
+
+                                    </ExpansionPanelDetails>
+                                </ExpansionPanel>
+                            </>
+                        )
+                    })}
             </div>
         )
     }
@@ -187,7 +222,9 @@ class ParametersEditor extends React.Component {
 
 ParametersEditor.propTypes = {
     title: PropTypes.string.isRequired,
-    parameters: PropTypes.array.isRequired
+    parameters: PropTypes.array.isRequired,
+    parameterMapper: PropTypes.func.isRequired,
+    onRename: PropTypes.func.isRequired
 }
 
 export default withEditorContext(withRfcContext(withStyles(styles)(ParametersEditor)))

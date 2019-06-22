@@ -12,7 +12,10 @@ import CodeIcon from '@material-ui/icons/Code';
 import DescriptionIcon from '@material-ui/icons/Description';
 import Zoom from '@material-ui/core/Zoom';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
+import {PathContext} from '../../contexts/PathContext.js';
 import {withFocusedRequestContext} from '../../contexts/FocusedRequestContext.js';
+import {withRfcContext} from '../../contexts/RfcContext.js';
+import {RequestUtilities} from '../../utilities/RequestUtilities.js';
 import RequestContextMenu from '../context-menus/RequestContextMenu.js';
 import PathEditor from '../path-editor/PathEditor.js';
 
@@ -72,7 +75,9 @@ class FloatingAddButton extends React.Component {
     }
 
     render() {
-        const {classes, mode} = this.props;
+        const {classes, mode, cachedQueryResults} = this.props;
+        const {pathsById} = cachedQueryResults
+
         return (
             <div>
                 <Zoom in={mode === EditorModes.DESIGN}>
@@ -105,11 +110,17 @@ class FloatingAddButton extends React.Component {
                         {this.renderRequestContextMenuItems()}
                     </div>
                 </Menu>
-                {/*</Zoom>*/}
 
                 <Dialog open={this.state.isPathModalOpen} onClose={this.closePathModal} maxWidth="md" fullWidth>
                     <div style={{padding: 10}}>
-                        <PathEditor onSubmit={this.closePathModal}/>
+                        <PathContext.Consumer>
+                            {(pathId) => {
+                                const path = pathId === null ? '' : RequestUtilities.absolutePath(pathId, pathsById)
+                                return (
+                                    <PathEditor onSubmit={this.closePathModal} initialPathString={path}/>
+                                )
+                            }}
+                        </PathContext.Consumer>
                     </div>
                 </Dialog>
             </div>
@@ -117,4 +128,4 @@ class FloatingAddButton extends React.Component {
     }
 }
 
-export default withFocusedRequestContext(withEditorContext(withStyles(styles)(FloatingAddButton)));
+export default withFocusedRequestContext(withRfcContext(withEditorContext(withStyles(styles)(FloatingAddButton))));

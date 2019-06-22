@@ -19,8 +19,8 @@ object Commands {
     val parentPathId: PathComponentId
     val name: String
   }
-  case class ParameterizedPathComponentDescriptor(override val parentPathId: PathComponentId, override val name: String, requestParameterDescriptor: RequestParameterShapeDescriptor) extends PathComponentDescriptor
-  case class BasicPathComponentDescriptor(override val parentPathId: PathComponentId, override val name: String) extends PathComponentDescriptor
+  case class ParameterizedPathComponentDescriptor(parentPathId: PathComponentId, name: String, requestParameterDescriptor: RequestParameterShapeDescriptor) extends PathComponentDescriptor
+  case class BasicPathComponentDescriptor(parentPathId: PathComponentId, name: String) extends PathComponentDescriptor
 
   @JSExportDescendentClasses
   @JSExportAll
@@ -51,11 +51,13 @@ object Commands {
 
   case class AddQueryParameter(parameterId: RequestParameterId, requestId: RequestId, name: String) extends RequestsCommand
   case class SetQueryParameterShape(parameterId: RequestParameterId, parameterDescriptor: ShapedRequestParameterShapeDescriptor) extends RequestsCommand
+  case class RenameQueryParameter(parameterId: RequestParameterId, name: String) extends RequestsCommand
   case class UnsetQueryParameterShape(parameterId: RequestParameterId) extends RequestsCommand
   case class RemoveQueryParameter(parameterId: RequestParameterId) extends RequestsCommand
 
   case class AddHeaderParameter(parameterId: RequestParameterId, requestId: RequestId, name: String) extends RequestsCommand
   case class SetHeaderParameterShape(parameterId: RequestParameterId, parameterDescriptor: ShapedRequestParameterShapeDescriptor) extends RequestsCommand
+  case class RenameHeaderParameter(parameterId: RequestParameterId, name: String) extends RequestsCommand
   case class UnsetHeaderParameterShape(parameterId: RequestParameterId) extends RequestsCommand
   case class RemoveHeaderParameter(parameterId: RequestParameterId) extends RequestsCommand
 

@@ -106,12 +106,13 @@ class BodyEditor extends React.Component {
     }
 
     removeBody = () => {
-        const {conceptId} = this.props;
+        const {conceptId} = getNormalizedBodyDescriptor(this.props.bodyDescriptor)
         this.props.onBodyRemoved({conceptId})
     }
 
     addOrRestoreBody = () => {
-        const {handleCommand, rootId, conceptId} = this.props;
+        const {handleCommand, rootId, bodyDescriptor} = this.props;
+        const {conceptId} = getNormalizedBodyDescriptor(bodyDescriptor)
         if (conceptId) {
             this.props.onBodyRestored({conceptId})
         } else {
@@ -151,7 +152,6 @@ class BodyEditor extends React.Component {
         const normalizedBodyDescriptor = getNormalizedBodyDescriptor(bodyDescriptor)
         const hasBody = RequestUtilities.hasNormalizedBody(normalizedBodyDescriptor);
         const {conceptId, httpContentType: contentType} = normalizedBodyDescriptor
-        console.log({bodyDescriptor, normalizedBodyDescriptor, hasBody})
         if (isViewMode) {
             if (!hasBody) {
                 return null

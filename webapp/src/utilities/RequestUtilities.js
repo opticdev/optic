@@ -1,4 +1,5 @@
 import {getNormalizedBodyDescriptor} from '../components/PathPage.js';
+import {asAbsolutePath, asPathTrailComponents} from '../components/utilities/PathUtilities.js';
 
 class RequestUtilities {
     static hasBody(bodyDescriptor) {
@@ -22,11 +23,14 @@ class RequestUtilities {
         return !hasBody && httpAllowsBodyForMethod
     }
 
-    static requestName(request, paths) {
+    static absolutePath(pathId, pathsById) {
+        return asAbsolutePath(asPathTrailComponents(pathId, pathsById))
+    }
+
+    static requestName(request, pathsById) {
         const {requestDescriptor} = request;
         const {httpMethod, pathComponentId} = requestDescriptor
-        const path = paths.find(x => x.pathId === pathComponentId)
-        return `${httpMethod} ${path.absolutePath}`
+        return `${httpMethod} ${RequestUtilities.absolutePath(pathComponentId, pathsById)}`
     }
 }
 

@@ -1,9 +1,9 @@
 import React from 'react';
 import {Redirect, Switch, Route} from 'react-router-dom';
-import Editor from './components/navigation/Editor';
 import {FocusedRequestStore} from './contexts/FocusedRequestContext.js';
 import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
 import {RfcStore} from './contexts/RfcContext.js';
+import {PathContext} from './contexts/PathContext.js';
 import PathPage from './components/PathPage.js';
 import ConceptsPage from './components/ConceptsPage';
 import Dialog from '@material-ui/core/Dialog';
@@ -156,7 +156,11 @@ class NewApiLoader extends React.Component {
 
 function PathRoot({match, basePath}) {
     const {pathId} = match.params;
-    return <PathPage pathId={pathId} basePath={basePath}/>
+    return (
+        <PathContext.Provider value={pathId}>
+            <PathPage pathId={pathId} basePath={basePath}/>
+        </PathContext.Provider>
+    )
 }
 
 class APIEditorRoutes extends React.Component {

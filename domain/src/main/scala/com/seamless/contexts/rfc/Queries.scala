@@ -3,21 +3,16 @@ package com.seamless.contexts.rfc
 import io.circe.generic.auto._
 import io.circe.syntax._
 import com.seamless.contexts.data_types.Commands.ConceptId
-import com.seamless.contexts.data_types.Events.DataTypesEvent
-import com.seamless.contexts.data_types.{DataTypesAggregate, DataTypesState}
 import com.seamless.contexts.data_types.projections.{AllConcepts, ConceptListProjection, NamedConcept, ShapeProjection, SingleConcept}
-import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId}
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, RequestParameterId, ResponseId}
-import com.seamless.contexts.requests.Events.RequestsEvent
-import com.seamless.contexts.requests.{HttpRequest, HttpRequestParameter, HttpResponse, RequestsAggregate, RequestsState}
-import com.seamless.contexts.requests.projections.{Path, PathListProjection, PathsWithRequestsProjection}
+import com.seamless.contexts.requests.{HttpRequest, HttpRequestParameter, HttpResponse, RequestsState}
+import com.seamless.contexts.requests.projections.{PathsWithRequestsProjection}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.projections.{APINameProjection, ContributionWrapper, ContributionsProjection}
 import com.seamless.ddd.{AggregateId, CachedProjection, EventStore}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
-import scala.util.Try
 
 @JSExportTopLevel("com.seamless.contexts.rfc.Queries")
 @JSExportAll
@@ -26,12 +21,9 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
 
   import js.JSConverters._
 
-  def paths(): js.Array[Path] = {
-    q.paths.toJSArray
-  }
-
-  def pathsWithRequests(): js.Dictionary[PathComponentId] = {
-    q.pathsWithRequests.toJSDictionary
+  def pathsWithRequests(): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(q.pathsWithRequests.asJson)
   }
 
   def requestsState(): js.Any = {
@@ -82,11 +74,6 @@ class Queries(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId
 
   private def events = {
     eventStore.listEvents(aggregateId)
-  }
-
-  private val pathsProjectionCache = new CachedProjection(PathListProjection, events)
-  def paths: Vector[Path] = {
-    pathsProjectionCache.updateProjection(events)
   }
 
   private val pathsWithRequestsCache = new CachedProjection(PathsWithRequestsProjection, events)

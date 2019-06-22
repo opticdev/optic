@@ -1,12 +1,7 @@
 package com.seamless.contexts.data_types.projections
 
 import com.seamless.contexts.data_types.Commands.ConceptId
-import com.seamless.contexts.data_types.DataTypesState
-import com.seamless.contexts.data_types.Events.{ConceptDefined, ConceptDeprecated, ConceptNamed, TypeAssigned}
-import com.seamless.contexts.data_types.Primitives.RefT
-import com.seamless.contexts.requests.Commands.PathComponentId
-import com.seamless.contexts.requests.projections.Path
-import com.seamless.contexts.requests.projections.PathListProjection.withMap
+import com.seamless.contexts.data_types.Events.{ConceptDefined, ConceptDeprecated, ConceptNamed}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.ddd.Projection
 

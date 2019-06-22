@@ -54,7 +54,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
         case RenamePathParameter(pathId, name) => {
           Validators.ensurePathComponentIdIsNotRoot(pathId)
           Validators.ensurePathComponentIdExists(pathId)
-          persist(Events.PathComponentRenamed(pathId, name))
+          persist(Events.PathParameterRenamed(pathId, name))
         }
 
         case RemovePathParameter(pathId) => {
@@ -130,6 +130,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
         }
 
+        case RenameQueryParameter(parameterId, name) => {
+          Validators.ensureParameterIdExists(parameterId)
+          persist(Events.RequestParameterRenamed(parameterId, name))
+        }
+
         case UnsetQueryParameterShape(parameterId) => {
           Validators.ensureParameterIdExists(parameterId)
           persist(Events.RequestParameterShapeUnset(parameterId))
@@ -152,6 +157,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           Validators.ensureParameterIdExists(parameterId)
           requireConceptId(parameterDescriptor.conceptId)
           persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
+        }
+
+        case RenameHeaderParameter(parameterId, name) => {
+          Validators.ensureParameterIdExists(parameterId)
+          persist(Events.RequestParameterRenamed(parameterId, name))
         }
 
         case UnsetHeaderParameterShape(parameterId) => {
@@ -191,6 +201,10 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
     case PathParameterRemoved(pathId) => {
       state.withoutPathParameter(pathId)
+    }
+
+    case PathParameterRenamed(pathId, name) => {
+      state.withPathParameterNamed(pathId, name)
     }
 
     case PathParameterShapeSet(pathId, parameterShapeDescriptor) => {
@@ -258,6 +272,10 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
     case RequestParameterShapeSet(parameterId, parameterDescriptor) => {
       state.withRequestParameterShape(parameterId, parameterDescriptor)
+    }
+
+    case RequestParameterRenamed(parameterId, name) => {
+      state.withRequestParameterName(parameterId, name)
     }
 
     case RequestParameterShapeUnset(parameterId) => {

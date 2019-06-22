@@ -1,7 +1,7 @@
 import {Facade, Queries} from '../engine';
 import fs from 'fs'
 
-describe('Example loading', function () {
+xdescribe('Example loading', function () {
     const examples = [
         './public/example-commands/mattermost-commands.json'
     ]

@@ -75,13 +75,13 @@ class RequestContextMenu extends React.Component {
 
     render() {
         const {classes, requestId, cachedQueryResults} = this.props;
-        const {requests, paths} = cachedQueryResults;
+        const {requests, pathsById} = cachedQueryResults;
 
         const request = requests[requestId]
 
         const canAddBody = RequestUtilities.canAddBody(request)
 
-        const requestName = RequestUtilities.requestName(request, paths);
+        const requestName = RequestUtilities.requestName(request, pathsById);
 
         return (
             <List dense subheader={<ListSubheader>{requestName}</ListSubheader>}>

@@ -61,6 +61,11 @@ case class RequestsState(
     )
   }
 
+  def withPathParameterNamed(pathId: PathComponentId, name: String) = {
+    val parentPathId = parentPath(pathId)
+    withPathParameter(pathId, parentPathId, name)
+  }
+
   def withPathParameterShape(pathId: PathComponentId, parameterShapeDescriptor: ShapedRequestParameterShapeDescriptor) = {
     val p = pathComponents(pathId)
     this.copy(
@@ -141,6 +146,14 @@ case class RequestsState(
 
     this.copy(
       requestParameters = requestParameters + (parameterId -> p.copy(requestParameterDescriptor = p.requestParameterDescriptor.copy(shapeDescriptor = parameterDescriptor)))
+    )
+  }
+
+  def withRequestParameterName(parameterId: RequestParameterId, name: String) = {
+    val p = requestParameters(parameterId)
+
+    this.copy(
+      requestParameters = requestParameters + (parameterId -> p.copy(requestParameterDescriptor = p.requestParameterDescriptor.copy(name = name)))
     )
   }
 

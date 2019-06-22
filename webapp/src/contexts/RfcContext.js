@@ -36,21 +36,26 @@ class RfcStoreWithoutContext extends React.Component {
     handleCommand = (command) => {
         console.log({command})
         this.state.rfcService.handleCommands(this.props.rfcId, command);
-        this.forceUpdate();
-        if (process.env.REACT_APP_CLI_MODE) {
-            this.setState({hasUnsavedChanges: true})
-            this.persistLocal()
-        }
+        setTimeout(() => {
+            this.forceUpdate();
+            if (process.env.REACT_APP_CLI_MODE) {
+                this.setState({hasUnsavedChanges: true})
+                this.persistLocal()
+            }
+        }, 1)
     };
 
     handleCommands = (...commands) => {
         console.log({commands})
         this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
-        this.forceUpdate();
-        if (process.env.REACT_APP_CLI_MODE) {
-            this.setState({hasUnsavedChanges: true})
-            this.persistLocal()
-        }
+        setTimeout(() => {
+
+            this.forceUpdate();
+            if (process.env.REACT_APP_CLI_MODE) {
+                this.setState({hasUnsavedChanges: true})
+                this.persistLocal()
+            }
+        }, 1)
     };
 
     persistLocal = debounce(async () => {
@@ -84,27 +89,27 @@ class RfcStoreWithoutContext extends React.Component {
         const apiName = queries.apiName();
         const contributions = queries.contributions()
 
-        const {requests, responses, requestParameters} = queries.requestsState()
+        const {requests, pathComponents, responses, requestParameters} = queries.requestsState()
         const pathIdsByRequestId = queries.pathsWithRequests();
-        const paths = queries.paths();
+        const pathsById = pathComponents;
         const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId))
-        const conceptsById = queries.concepts().reduce((acc, item) => {
-            acc[item.id] = item
-            return acc
-        }, {})
 
-        const pathsById = paths.reduce((acc, path) => {
-            acc[path.pathId] = path
-            return acc
-        }, {})
+        const conceptsById = queries.concepts()
+            .reduce((acc, item) => {
+                acc[item.id] = item
+                return acc
+            }, {})
 
-        const requestIdsByPathId = Object.entries(pathIdsByRequestId).reduce((acc, entry) => {
-            const [requestId, pathId] = entry;
-            const value = acc[pathId] || []
-            value.push(requestId)
-            acc[pathId] = value;
-            return acc
-        }, {})
+
+        const requestIdsByPathId = Object
+            .entries(pathIdsByRequestId)
+            .reduce((acc, entry) => {
+                const [requestId, pathId] = entry;
+                const value = acc[pathId] || []
+                value.push(requestId)
+                acc[pathId] = value;
+                return acc
+            }, {})
 
 
         const cachedQueryResults = {
@@ -115,7 +120,6 @@ class RfcStoreWithoutContext extends React.Component {
             conceptsById,
             pathIdsByRequestId,
             requestIdsByPathId,
-            paths,
             pathsById,
             pathIdsWithRequests,
         }

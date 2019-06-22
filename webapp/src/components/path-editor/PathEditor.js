@@ -7,6 +7,7 @@ import {withEditorContext} from '../../contexts/EditorContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
 import {RequestsHelper, RequestsCommands} from '../../engine';
 import {routerUrls} from '../../routes.js';
+import {asNormalizedAbsolutePath, asPathTrailComponents} from '../utilities/PathUtilities.js';
 import PathInput, {cleanupPathComponentName} from './PathInput.js';
 
 const rootPathComponent = [];
@@ -25,10 +26,11 @@ export function prefixes(pathComponents) {
         }, [rootPathComponent])
 }
 
-export function resolvePath(pathComponents, pathsList) {
-    const normalizedPathMap = pathsList
-        .reduce((acc, path) => {
-            acc[path.normalizedAbsolutePath] = path
+export function resolvePath(pathComponents, pathsById) {
+    const normalizedPathMap = Object.entries(pathsById)
+        .reduce((acc, [pathId, pathComponent]) => {
+            const normalizedAbsolutePath = asNormalizedAbsolutePath(asPathTrailComponents(pathId, pathsById))
+            acc[normalizedAbsolutePath] = pathComponent
             return acc
         }, {})
     const pathPrefixes = prefixes(pathComponents).reverse()
@@ -64,9 +66,10 @@ class PathEditor extends React.Component {
     }
     handleSubmit = () => {
         const {pathComponents, methods} = this.state;
-        const {onSubmit, basePath, history, queries, handleCommand} = this.props;
-        const pathsList = queries.paths()
-        const {toAdd, lastMatch} = resolvePath(pathComponents, pathsList)
+        const {onSubmit, basePath, history, handleCommand, cachedQueryResults} = this.props;
+        const {pathsById} = cachedQueryResults
+        const {toAdd, lastMatch} = resolvePath(pathComponents, pathsById)
+        debugger
         // emit commands to add any necessary paths then go to the final path
         let lastParentPathId = lastMatch.pathId
         toAdd.forEach((addition) => {
@@ -107,10 +110,10 @@ class PathEditor extends React.Component {
     }
 
     render() {
-
+        const {initialPathString} = this.props
         return (
             <div>
-                <PathInput onSubmit={this.handleSubmitPath}/>
+                <PathInput onSubmit={this.handleSubmitPath} initialPathString={initialPathString}/>
                 {this.state.pathComponents ? (
                     <div>
                         <Select multiple onChange={this.handleMethodsChange} value={this.state.methods}>

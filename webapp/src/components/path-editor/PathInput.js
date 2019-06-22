@@ -31,27 +31,27 @@ class PathInput extends React.Component {
     constructor(props) {
         super(props)
 
-        this.state = {
-            pathComponents: [],
-            currentComponent: newComponent()
-        }
+        this.state = this.processValue({pathComponents: [], currentComponent: ''}, this.props.initialPathString)
 
         this.handleBackspace = this.handleBackspace.bind(this)
     }
 
-    handleChange = (e) => {
-        const value = e.target.value
+    processValue = (state, value) => {
         const components = value.split('/').map(name => {
             const isParameter = name.charAt(0) === ':' || name.charAt(0) === '{'
             return {name, isParameter}
         })
         const currentComponent = components.length === 0 ? newComponent() : components.pop()
         console.log({components, currentComponent})
-        this.setState({
-            pathComponents: [...this.state.pathComponents, ...components].filter(x => !!x.name),
+        return {
+            pathComponents: [...state.pathComponents, ...components].filter(x => !!x.name),
             currentComponent
-        })
-        return false
+        }
+    }
+
+    handleChange = (e) => {
+        const value = e.target.value
+        this.setState(this.processValue(this.state, value))
     }
 
     handleSubmit = (e) => {
@@ -98,7 +98,13 @@ class PathInput extends React.Component {
                     {pathComponents.map((x, i) => {
                         return (<PathComponent key={i} value={x} onClick={this.toggleIsParameter(i)}/>);
                     })}
-                    <TextField multiline={false} onKeyDown={this.handleBackspace} onChange={this.handleChange} value={currentComponent.name} autoFocus/>
+                    <TextField
+                        multiline={false}
+                        onKeyDown={this.handleBackspace}
+                        onChange={this.handleChange}
+                        value={currentComponent.name}
+                        autoFocus
+                    />
                 </div>
                 <Button onClick={this.handleSubmit}>continue</Button>
             </div>

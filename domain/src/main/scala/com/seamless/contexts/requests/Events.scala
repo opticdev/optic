@@ -11,9 +11,11 @@ object Events {
 
   case class PathParameterAdded(pathId: PathComponentId, parentPathId: PathComponentId, name: String) extends RequestsEvent
   case class PathParameterShapeSet(pathId: PathComponentId, shapeDescriptor: ShapedRequestParameterShapeDescriptor) extends RequestsEvent
+  case class PathParameterRenamed(pathId: PathComponentId, name: String) extends RequestsEvent
   case class PathParameterRemoved(pathId: PathComponentId) extends RequestsEvent
 
   case class RequestParameterAdded(parameterId: RequestParameterId, requestId: PathComponentId, parameterLocation: String, name: String) extends RequestsEvent
+  case class RequestParameterRenamed(parameterId: RequestParameterId, name: String) extends RequestsEvent
   case class RequestParameterShapeSet(parameterId: RequestParameterId, parameterDescriptor: ShapedRequestParameterShapeDescriptor) extends RequestsEvent
   case class RequestParameterShapeUnset(parameterId: RequestParameterId) extends RequestsEvent
   case class RequestParameterRemoved(parameterId: RequestParameterId) extends RequestsEvent

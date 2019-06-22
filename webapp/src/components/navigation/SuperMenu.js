@@ -10,6 +10,7 @@ import {primary} from '../../theme';
 import sortBy from 'lodash.sortby';
 import {withRfcContext} from '../../contexts/RfcContext';
 import {Link} from 'react-router-dom';
+import {addAbsolutePath} from '../utilities/PathUtilities.js';
 import BasicButton from '../shape-editor/BasicButton';
 import {withEditorContext} from '../../contexts/EditorContext';
 import SearchBar, {fuzzyConceptFilter, fuzzyPathsFilter} from './Search';
@@ -175,10 +176,12 @@ class SuperMenu extends React.Component {
     render() {
         const {classes} = this.props;
 
-        const {queries, cachedQueryResults, basePath} = this.props;
-        const {conceptsById, paths, pathIdsWithRequests} = cachedQueryResults
+        const {cachedQueryResults, basePath} = this.props;
+        const {conceptsById, pathsById, pathIdsWithRequests} = cachedQueryResults
 
-        const sortedPaths = sortBy(paths.filter(p => pathIdsWithRequests.has(p.pathId)), ['absolutePath']);
+        const paths = [...pathIdsWithRequests].map(pathId => addAbsolutePath(pathId, pathsById))
+
+        const sortedPaths = sortBy(paths, ['absolutePath']);
 
         const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
         const sortedConcepts = sortBy(concepts, ['name']);
@@ -243,7 +246,8 @@ class SuperMenu extends React.Component {
                         <Grid xs={6} item className={classes.gridItem} style={{paddingLeft: 35}}>
                             <Typography variant="h5" color="primary">Paths</Typography>
                             <List>
-                                {pathsFiltered.map(({pathId, absolutePath}, index) => {
+                                {pathsFiltered
+                                    .map(({pathId, absolutePath}, index) => {
                                     const to = routerUrls.pathPage(basePath, pathId);
                                     const isSelected = isFocused(0, index, pathsFiltered.length)
                                     return (

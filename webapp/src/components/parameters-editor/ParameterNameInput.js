@@ -28,6 +28,17 @@ class ParameterNameInput extends React.Component {
         }
     }
 
+    handleChange= (e) => {
+        const {value} = e.target;
+        this.setState({
+            name: value
+        })
+    }
+
+    handleBlur = (e) => {
+        this.props.onBlur(this.state.name)
+    }
+
     render() {
 
         const {classes, mode} = this.props
@@ -50,6 +61,8 @@ class ParameterNameInput extends React.Component {
                     onClick={(e) => {
                         e.stopPropagation()
                     }}
+                    onChange={this.handleChange}
+                    onBlur={this.handleBlur}
                     value={this.state.name}
                 />
             )
