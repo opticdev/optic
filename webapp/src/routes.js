@@ -154,35 +154,31 @@ class NewApiLoader extends React.Component {
     }
 }
 
-function PathRoot({match}) {
+function PathRoot({match, basePath}) {
     const {pathId} = match.params;
-    return (
-        <PathPage pathId={pathId}/>
-    )
+    return <PathPage pathId={pathId} basePath={basePath}/>
 }
 
 class APIEditorRoutes extends React.Component {
     render() {
 
-        const {url, path, params} = this.props.match;
+        const {url, params} = this.props.match;
 
         const basePath = url;
 
         return (
             <div>
                 <FocusedRequestStore>
-                    <Editor basePath={basePath} content={
-                        <Switch>
-                            <Route exact path={routerPaths.newRoot(url)} component={() => <>NEW</>}/>
-                            <Route path={routerPaths.pathPage(url)} component={PathRoot}/>
-                            <Route path={routerPaths.conceptPage(url)}
-                                   component={({match}) =>
-                                       <ConceptsPage conceptId={match.params.conceptId}/>
-                                   }/>
-                            <Route component={() => <OverView/>}/>
-                            <Redirect to={routerPaths.apiRoot(url)}/>
-                        </Switch>
-                    }/>
+                    <Switch>
+                        <Route exact path={routerPaths.newRoot(url)} component={(props) => <OverView {...props} basePath={basePath} />}/>
+                        <Route path={routerPaths.pathPage(url)} component={(props) => <PathRoot {...props} basePath={basePath} />}/>
+                        <Route path={routerPaths.conceptPage(url)}
+                               component={(props) =>
+                                   <ConceptsPage {...props} conceptId={props.match.params.conceptId} basePath={basePath}/>
+                               }/>
+                        <Route component={(props) => <OverView  {...props} basePath={basePath} />}/>
+                        <Redirect to={routerPaths.apiRoot(url)}/>
+                    </Switch>
                 </FocusedRequestStore>
             </div>
         );
