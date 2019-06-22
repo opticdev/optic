@@ -38,8 +38,8 @@ const styles = theme => ({
 class ResponseListWithoutContext extends React.Component {
     render() {
         const {responses, handleCommand} = this.props;
-        sortBy(responses, ['responseDescriptor.httpStatusCode'])
-        return responses.map((response) => {
+        const sortedResponses = sortBy(responses, ['responseDescriptor.httpStatusCode'])
+        return sortedResponses.map((response) => {
             const {responseId, responseDescriptor} = response;
             const {httpStatusCode, bodyDescriptor} = responseDescriptor
             const {httpContentType} = getNormalizedBodyDescriptor(bodyDescriptor)
@@ -95,7 +95,7 @@ class PathTrailBase extends React.Component {
                 const {pathComponentId, pathComponentName} = trailItem;
                 const url = routerUrls.pathPage(basePath, pathComponentId)
                 return (
-                    <RouterLink key={pathComponentId} to={url}>{pathComponentName}</RouterLink>
+                    <Link key={pathComponentId} component={RouterLink} to={url}>{pathComponentName}</Link>
                 )
             })
         return (
