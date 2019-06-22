@@ -10,6 +10,7 @@ import {RequestsCommands} from '../engine';
 import {routerUrls} from '../routes.js';
 import {primary} from '../theme.js';
 import BodyEditor from './body-editor';
+import StatusCode from './http/StatusCode.js';
 import ParametersEditor from './parameters-editor';
 import ContributionWrapper from './contributions/ContributionWrapper.js';
 import {Link as RouterLink} from 'react-router-dom'
@@ -55,7 +56,7 @@ class ResponseListWithoutContext extends React.Component {
             }
             return (
                 <div key={responseId}>
-                    {httpStatusCode}
+                    <StatusCode statusCode={httpStatusCode} />
                     <BodyEditor
                         rootId={responseId}
                         bodyDescriptor={bodyDescriptor}
@@ -121,17 +122,14 @@ class PathPage extends React.Component {
     render() {
         const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults} = this.props;
 
-        const {requests, responses, requestParameters, paths, pathIdsByRequestId} = cachedQueryResults
+        const {requests, responses, requestParameters, pathsById, pathIdsByRequestId} = cachedQueryResults
 
-        const requestIdsForPath = Object
-            .entries(pathIdsByRequestId)
-            .filter(([, v]) => v === pathId)
-        const requestsForPath = requestIdsForPath
-            .map(([requestId]) => requests[requestId])
-        const path = paths.find(x => x.pathId === pathId)
+        const path = pathsById[pathId]
+
         if (!path) {
             return this.renderMissing()
         }
+
         const pathTrail = [...path.parentPathIds().reverse(), pathId]
         const pathTrailWithNames = path.normalizedAbsolutePath
             .split('/')
@@ -142,6 +140,16 @@ class PathPage extends React.Component {
                     pathComponentName
                 }
             })
+
+        const pathParameters = pathTrail
+            .map(pathId => pathsById[pathId])
+            .filter(x => x.isParameter)
+
+        const requestIdsForPath = Object
+            .entries(pathIdsByRequestId)
+            .filter(([, v]) => v === pathId)
+        const requestsForPath = requestIdsForPath
+            .map(([requestId]) => requests[requestId])
         const methodLinks = requestsForPath
             .map((request) => {
                 const {requestId, requestDescriptor} = request;

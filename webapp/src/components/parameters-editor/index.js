@@ -132,35 +132,37 @@ class ParametersEditor extends React.Component {
                             <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)}>
                                 <ExpansionPanelSummary
                                     expandIcon={<ExpandMoreIcon/>}
-                                    aria-controls="panel1a-content"
                                     classes={{
                                         content: classes.expandContent,
                                         expanded: classes.expandedSummary,
                                         focused: classes.focusedSummary
                                     }}
                                     style={{width: '100%'}}
-                                    id="panel1a-header"
                                 >
-                                    <TableRow key={row.name}>
-                                        <TableCell
-                                            component="th" scope="row"
-                                            className={classNames(classes.cell, classes.nameCell)}>
-                                            <div className={classes.nameCol}>
-                                                <ParameterNameInput defaultName={row.name} mode={mode}/>
-                                                {row.required ? <> <br/><i
-                                                    className={classes.required}>required</i> </> : null}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell align="left" className={classes.cell}>
-                                            <DisplayRootTypeName
-                                                shape={shape.root}
-                                                style={{marginBottom: -17}}
-                                            />
-                                            <br/>
-                                            <div
-                                                className={(isExpanded) ? classes.multiline : classes.singleLine}>{row.description}</div>
-                                        </TableCell>
-                                    </TableRow>
+                                    <Table>
+                                        <TableBody>
+                                            <TableRow key={row.name}>
+                                                <TableCell
+                                                    component="th" scope="row"
+                                                    className={classNames(classes.cell, classes.nameCell)}>
+                                                    <div className={classes.nameCol}>
+                                                        <ParameterNameInput defaultName={row.name} mode={mode}/>
+                                                        {row.required ? <> <br/><i
+                                                            className={classes.required}>required</i> </> : null}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell align="left" className={classes.cell}>
+                                                    <DisplayRootTypeName
+                                                        shape={shape.root}
+                                                        style={{marginBottom: -17}}
+                                                    />
+                                                    <br/>
+                                                    <div
+                                                        className={(isExpanded) ? classes.multiline : classes.singleLine}>{row.description}</div>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
                                 </ExpansionPanelSummary>
                                 <ExpansionPanelDetails classes={{root: classes.detailRoot}}>
                                     <Typography variant="overline" style={{

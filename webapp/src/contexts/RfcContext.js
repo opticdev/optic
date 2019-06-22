@@ -93,6 +93,11 @@ class RfcStoreWithoutContext extends React.Component {
             return acc
         }, {})
 
+        const pathsById = paths.reduce((acc, path) => {
+            acc[path.pathId] = path
+            return acc
+        }, {})
+
 
         const cachedQueryResults = {
             contributions,
@@ -102,6 +107,7 @@ class RfcStoreWithoutContext extends React.Component {
             conceptsById,
             pathIdsByRequestId,
             paths,
+            pathsById,
             pathIdsWithRequests,
         }
 

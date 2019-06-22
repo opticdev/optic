@@ -150,13 +150,13 @@ class BodyEditor extends React.Component {
         const isViewMode = mode === EditorModes.DOCUMENTATION;
         const normalizedBodyDescriptor = getNormalizedBodyDescriptor(bodyDescriptor)
         const hasBody = RequestUtilities.hasNormalizedBody(normalizedBodyDescriptor);
-        const {conceptId} = normalizedBodyDescriptor
+        const {conceptId, httpContentType: contentType} = normalizedBodyDescriptor
         console.log({bodyDescriptor, normalizedBodyDescriptor, hasBody})
         if (isViewMode) {
             if (!hasBody) {
                 return null
             }
-            return this.renderForViewing()
+            return this.renderForViewing({conceptId, contentType})
         }
 
 
