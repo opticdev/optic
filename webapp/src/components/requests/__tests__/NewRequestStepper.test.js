@@ -1,6 +1,6 @@
-import {prefixes, resolvePath} from '../PathEditor.js';
+import {prefixes, resolvePath} from '../NewRequestStepper.js';
 
-describe('PathEditorUtilities', function () {
+describe('utilities', function () {
     describe('prefixes', function () {
         it('should be empty for empty', function () {
             const result = prefixes([])

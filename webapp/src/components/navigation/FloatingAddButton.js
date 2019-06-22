@@ -17,7 +17,7 @@ import {withFocusedRequestContext} from '../../contexts/FocusedRequestContext.js
 import {withRfcContext} from '../../contexts/RfcContext.js';
 import {RequestUtilities} from '../../utilities/RequestUtilities.js';
 import RequestContextMenu from '../context-menus/RequestContextMenu.js';
-import PathEditor from '../path-editor/PathEditor.js';
+import NewRequestStepper from '../requests/NewRequestStepper.js';
 
 const styles = theme => ({
     fab: {
@@ -116,8 +116,9 @@ class FloatingAddButton extends React.Component {
                         <PathContext.Consumer>
                             {(pathId) => {
                                 const path = pathId === null ? '' : RequestUtilities.absolutePath(pathId, pathsById)
+
                                 return (
-                                    <PathEditor onSubmit={this.closePathModal} initialPathString={path}/>
+                                    <NewRequestStepper onComplete={this.closePathModal} initialPathString={path}/>
                                 )
                             }}
                         </PathContext.Consumer>

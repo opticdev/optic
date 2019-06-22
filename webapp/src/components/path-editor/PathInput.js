@@ -32,8 +32,11 @@ class PathInput extends React.Component {
         super(props)
 
         this.state = this.processValue({pathComponents: [], currentComponent: ''}, this.props.initialPathString)
-
         this.handleBackspace = this.handleBackspace.bind(this)
+    }
+
+    componentDidMount() {
+        this.emitChange(this.state)
     }
 
     processValue = (state, value) => {
@@ -51,16 +54,18 @@ class PathInput extends React.Component {
 
     handleChange = (e) => {
         const value = e.target.value
-        this.setState(this.processValue(this.state, value))
+        const newState = this.processValue(this.state, value)
+        this.setState(newState)
+        this.emitChange(newState)
     }
 
-    handleSubmit = (e) => {
-        e.preventDefault()
-        const {pathComponents, currentComponent} = this.state;
+    emitChange = (state) => {
+        const {pathComponents, currentComponent} = state;
         const components = currentComponent.name ? [...pathComponents, currentComponent] : pathComponents
-        this.props.onSubmit({pathComponents: components})
-        return false
+
+        this.props.onChange(components)
     }
+
 
     toggleIsParameter = (i) => () => {
         const {pathComponents} = this.state;
@@ -92,7 +97,6 @@ class PathInput extends React.Component {
         const {pathComponents, currentComponent} = this.state;
         return (
             <div>
-                <Typography variant="body1">What is the request path?</Typography>
                 <div style={{display: 'flex'}}>
                     <Typography variant="h5">/</Typography>
                     {pathComponents.map((x, i) => {
@@ -106,7 +110,6 @@ class PathInput extends React.Component {
                         autoFocus
                     />
                 </div>
-                <Button onClick={this.handleSubmit}>continue</Button>
             </div>
         );
     }
