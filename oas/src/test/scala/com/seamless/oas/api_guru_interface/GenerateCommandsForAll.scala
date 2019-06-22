@@ -33,6 +33,6 @@ object GenerateCommandsForAll extends AskTrait[ParseAttempt, Unit] {
       }
       case i => println(i.apiName)
     }
-
   }
+
 }

@@ -32,7 +32,6 @@ class ConceptsPage extends React.Component {
         const {allowedReferences, concept} = queries.conceptById(conceptId)
         const currentShape = concept
 
-
         if (!currentShape) {
             return <Redirect to={basePath}/>
         }

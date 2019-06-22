@@ -43,7 +43,8 @@ class ParameterNameInput extends React.Component {
                             padding: 0,
                             paddingBottom: 3,
                             marginTop: 4,
-                        }
+                        },
+                        autocomplete: 'off'
                     }}
                     className={classes.input}
                     onClick={(e) => {

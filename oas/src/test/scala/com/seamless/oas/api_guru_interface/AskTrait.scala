@@ -10,13 +10,13 @@ sealed trait AskFilter {
   def apply(tuple: (String, OASResolver)): Boolean
 }
 case class All(additionalFilter: (String, OASResolver) => Boolean = (a, b) => true) extends AskFilter {
-  def apply(tuple: (String, OASResolver)): Boolean = tuple._2 != null
+  def apply(tuple: (String, OASResolver)): Boolean = tuple._2 != null && additionalFilter(tuple._1, tuple._2)
 }
 case class OAS3(additionalFilter: (String, OASResolver) => Boolean = (a, b) => true) extends AskFilter {
-  def apply(tuple: (String, OASResolver)): Boolean = tuple._2 != null && tuple._2.oas_version == "3"
+  def apply(tuple: (String, OASResolver)): Boolean = tuple._2 != null && tuple._2.oas_version == "3" && additionalFilter(tuple._1, tuple._2)
 }
 case class OAS2(additionalFilter: (String, OASResolver) => Boolean = (a, b) => true) extends AskFilter {
-  def apply(tuple: (String, OASResolver)): Boolean = tuple._2 != null && tuple._2.oas_version == "2"
+  def apply(tuple: (String, OASResolver)): Boolean = tuple._2 != null && tuple._2.oas_version == "2" && additionalFilter(tuple._1, tuple._2)
 }
 
 abstract class AskTrait[IntermediateResult, Result] {

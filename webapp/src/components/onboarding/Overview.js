@@ -52,15 +52,15 @@ class OverView extends React.Component {
 			<ParagraphSplit
 				left={<Typography variant="body1">{leadin}</Typography>}
 				right={<div style={{marginTop: 65}}>
-					<img width={250} src={"/doc_mode.png"} />
-					<img width={250} style={{marginTop: 20}} src={"/design_mode.png"} />
+					<img width={200} src={"/doc_mode.png"} />
+					<img width={200} style={{marginTop: 20}} src={"/design_mode.png"} />
 				</div>}
 			/>
 			<ParagraphSplit
 				left={<Typography variant="body1">
 					{navCopy}
 				</Typography>}
-				right={<img width={250} src={"/show-api.png"} />}
+				right={<img width={180} src={"/show-api.png"} />}
 			/>
 
 
