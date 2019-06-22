@@ -1,8 +1,10 @@
-import {Typography} from '@material-ui/core';
-import Divider from '@material-ui/core/Divider';
-import Link from '@material-ui/core/Link';
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
+import {Typography} from '@material-ui/core';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import Divider from '@material-ui/core/Divider';
+import Link from '@material-ui/core/Link';
+import Paper from '@material-ui/core/Paper';
 import {withEditorContext} from '../contexts/EditorContext.js';
 import {withFocusedRequestContext} from '../contexts/FocusedRequestContext.js';
 import {withRfcContext} from '../contexts/RfcContext.js';
@@ -14,22 +16,24 @@ import StatusCode from './http/StatusCode.js';
 import ParametersEditor from './parameters-editor';
 import ContributionWrapper from './contributions/ContributionWrapper.js';
 import {Link as RouterLink} from 'react-router-dom';
-import Chip from '@material-ui/core/Chip';
+import sortBy from 'lodash.sortby';
 import Editor from './navigation/Editor';
 import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
-	root: {},
+	root: {
+		paddingTop: theme.spacing(2)
+	},
 	request: {
 		border: '1px solid transparent',
-		padding: 10,
+		padding: theme.spacing.unit,
 		transition: 'background-color 0.5s ease-in-out'
 	},
 	// maybe raise the elevation instead?
 	focusedRequest: {
 		border: `1px solid ${primary}`,
 		backgroundColor: '#c0c0c0',
-		padding: 10
+		padding: theme.spacing.unit
 	},
 	margin: {
 		minWidth: 30,
@@ -40,7 +44,8 @@ const styles = theme => ({
 class ResponseListWithoutContext extends React.Component {
 	render() {
 		const {responses, handleCommand} = this.props;
-		return responses.map((response) => {
+		const sortedResponses = sortBy(responses, ['responseDescriptor.httpStatusCode']);
+		return sortedResponses.map((response) => {
 			const {responseId, responseDescriptor} = response;
 			const {httpStatusCode, bodyDescriptor} = responseDescriptor;
 			const {httpContentType} = getNormalizedBodyDescriptor(bodyDescriptor);
@@ -78,27 +83,36 @@ class ResponseListWithoutContext extends React.Component {
 
 const ResponseList = withRfcContext(ResponseListWithoutContext);
 
-class PathTrailWithoutContext extends React.Component {
+
+const pathTrailStyles = theme => {
+	return {
+		paper: {
+			backgroundColor: '#f0f0f0',
+			padding: theme.spacing(1),
+		},
+	};
+};
+
+class PathTrailBase extends React.Component {
 	render() {
-		const {basePath, pathTrail} = this.props;
-		const maxIndex = pathTrail.length - 1;
-		const items = pathTrail.map((trailItem, index) => {
-			const {pathComponentId, pathComponentName} = trailItem;
-			return (
-				<>
-					<RouterLink to={routerUrls.pathPage(basePath, pathComponentId)}><Typography
-						variant="h4">{pathComponentName}</Typography></RouterLink>
-					{index < maxIndex ? <Typography variant="h4">/</Typography> : null}
-				</>
-			);
-		});
+		const {classes, basePath, pathTrail} = this.props;
+		const items = pathTrail
+			.map((trailItem) => {
+				const {pathComponentId, pathComponentName} = trailItem;
+				const url = routerUrls.pathPage(basePath, pathComponentId);
+				return (
+					<Link key={pathComponentId} component={RouterLink} to={url}>{pathComponentName}</Link>
+				);
+			});
 		return (
-			<div style={{display: 'flex'}}>{items}</div>
+			<Paper elevation={0} className={classes.paper}>
+				<Breadcrumbs>{items}</Breadcrumbs>
+			</Paper>
 		);
 	}
 }
 
-const PathTrail = withEditorContext(PathTrailWithoutContext);
+const PathTrail = withEditorContext(withStyles(pathTrailStyles)(PathTrailBase));
 
 export function getNormalizedBodyDescriptor(value) {
 	console.log({value});
@@ -109,6 +123,31 @@ export function getNormalizedBodyDescriptor(value) {
 }
 
 class PathPage extends React.Component {
+
+	componentDidMount() {
+		console.log('xxx dm');
+		this.ensureRequestFocused();
+	}
+
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		console.log('xxx du');
+		this.ensureRequestFocused();
+	}
+
+	ensureRequestFocused() {
+		const {focusedRequestId, cachedQueryResults, pathId} = this.props;
+		const {requestIdsByPathId} = cachedQueryResults;
+		const requestIdsForPath = requestIdsByPathId[pathId];
+		const focusedRequestExistsInThisPath = requestIdsForPath.indexOf(focusedRequestId) >= 0;
+		if (focusedRequestExistsInThisPath) {
+			return;
+		}
+		const targetId = requestIdsForPath[0] || null;
+
+		this.props.setFocusedRequestId(targetId);
+
+	}
+
 	renderPlaceholder() {
 		return (
 			<div>There aren't any requests at this path. Add one!</div>
@@ -129,7 +168,7 @@ class PathPage extends React.Component {
 	render() {
 		const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults} = this.props;
 
-		const {requests, responses, requestParameters, pathsById, pathIdsByRequestId} = cachedQueryResults;
+		const {requests, responses, requestParameters, pathsById, requestIdsByPathId} = cachedQueryResults;
 
 		const path = pathsById[pathId];
 
@@ -152,11 +191,8 @@ class PathPage extends React.Component {
 			.map(pathId => pathsById[pathId])
 			.filter(x => x.isParameter);
 
-		const requestIdsForPath = Object
-			.entries(pathIdsByRequestId)
-			.filter(([, v]) => v === pathId);
-		const requestsForPath = requestIdsForPath
-			.map(([requestId]) => requests[requestId]);
+		const requestIdsForPath = requestIdsByPathId[pathId];
+		const requestsForPath = requestIdsForPath.map((requestId) => requests[requestId]);
 		const methodLinks = requestsForPath
 			.map((request) => {
 				const {requestId, requestDescriptor} = request;
@@ -189,7 +225,6 @@ class PathPage extends React.Component {
 
 				const headerParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'header');
 				const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query');
-				const pathParameters = [];
 
 				const requestBodyHandlers = {
 					onBodyAdded({conceptId, contentType}) {
@@ -255,7 +290,6 @@ class PathPage extends React.Component {
 				);
 			});
 
-
 		const MethodsTOC = (<>
 			<Typography variant="h5" color="primary">Methods</Typography>
 			<Divider/>
@@ -264,16 +298,17 @@ class PathPage extends React.Component {
 			</div>
 		</>);
 
+
 		return (
 			<Editor basePath={this.props.basePath} leftMargin={MethodsTOC}>
-				<div>
+				<div className={classes.root}>
+					<PathTrail pathTrail={pathTrailWithNames}/>
 					<ContributionWrapper
 						contributionParentId={pathId}
 						contributionKey={'name'}
 						variant={'heading'}
 						placeholder="Resource Name"
 					/>
-					<PathTrail pathTrail={pathTrailWithNames}/>
 					<Divider style={{marginTop: 15, marginBottom: 15}}/>
 					{requestItems}
 				</div>
