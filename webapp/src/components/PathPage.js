@@ -239,9 +239,20 @@ class PathPage extends React.Component {
             .map(pathId => pathsById[pathId])
             .filter((p) => isPathParameter(p));
 
+        const methodChoices = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options']
+        const lowestRank = methodChoices.length;
+        const ordering = methodChoices.reduce((acc, item, index) => {
+            acc[item] = index + 1
+            return acc
+        }, {})
         const requestIdsForPath = requestIdsByPathId[pathId] || [];
         const requestsForPath = requestIdsForPath.map((requestId) => requests[requestId]);
         const methodLinks = requestsForPath
+            .sort((requestA, requestB) => {
+                const {httpMethod: methodA} = requestA.requestDescriptor
+                const {httpMethod: methodB} = requestB.requestDescriptor
+                return (ordering[methodA] || lowestRank) - (ordering[methodB] || lowestRank)
+            })
             .map((request) => {
                 const {requestId, requestDescriptor} = request;
                 const {httpMethod} = requestDescriptor;
@@ -257,7 +268,7 @@ class PathPage extends React.Component {
                         </Button>
                     </Link>
                 );
-            });
+            })
 
         const requestItems = requestsForPath.length === 0 ? this.renderPlaceholder() : requestsForPath
             .map((request) => {
