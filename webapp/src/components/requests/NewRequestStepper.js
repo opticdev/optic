@@ -47,16 +47,20 @@ function getStepContent(step, combinedState) {
 
     switch (step) {
         case 0:
+            const s = selectedPathComponents ? toAbsolutePath(selectedPathComponents) : initialPathString
             return [(
                 <div>
-                    <PathInput onChange={setSelectedPathComponents} initialPathString={initialPathString}/>
+                    <PathInput onChange={setSelectedPathComponents} initialPathString={s}/>
                 </div>
             ), selectedPathComponents !== null]
         case 1:
             return [(
                 <div>
                     <Typography>What HTTP methods do you want to use?</Typography>
-                    <HttpRequestMethodInput onChange={setSelectedHttpMethods} choices={[
+                    <HttpRequestMethodInput
+                        onChange={setSelectedHttpMethods}
+                        selectedValues={selectedHttpMethods}
+                        choices={[
                         {name: 'get'},
                         {name: 'post'},
                         {name: 'put'},
@@ -74,6 +78,10 @@ const rootPathComponent = [];
 
 export function normalizePath(pathComponents) {
     return '/' + pathComponents.map(x => x.isParameter ? '{}' : x.name).join('/')
+}
+
+export function toAbsolutePath(pathComponents) {
+    return '/' + pathComponents.map(x => x.isParameter ? `{${x.name}}` : x.name).join('/')
 }
 
 export function prefixes(pathComponents) {

@@ -15,9 +15,9 @@ const useStyles = makeStyles(theme => ({
     },
 }));
 
-function HttpRequestMethodInput({choices, onChange}) {
+function HttpRequestMethodInput({selectedValues, choices, onChange}) {
     const classes = useStyles();
-    const [state, setState] = React.useState(new Set());
+    const [state, setState] = React.useState(new Set(selectedValues));
     const handleChange = name => event => {
         const checked = event.target.checked
         const newState = new Set(state)

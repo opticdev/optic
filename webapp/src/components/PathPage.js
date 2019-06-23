@@ -28,14 +28,9 @@ const styles = theme => ({
         paddingTop: theme.spacing(2)
     },
     request: {
-        border: '1px solid transparent',
         padding: theme.spacing.unit,
-        transition: 'background-color 0.5s ease-in-out'
     },
-    // maybe raise the elevation instead?
     focusedRequest: {
-        // border: `1px solid ${primary}`,
-        // backgroundColor: '#c0c0c0',
         padding: theme.spacing.unit
     },
     margin: {
@@ -233,7 +228,7 @@ class PathPage extends React.Component {
             .map(pathId => pathsById[pathId])
             .filter((p) => isPathParameter(p));
 
-        const requestIdsForPath = requestIdsByPathId[pathId];
+        const requestIdsForPath = requestIdsByPathId[pathId] || [];
         const requestsForPath = requestIdsForPath.map((requestId) => requests[requestId]);
         const methodLinks = requestsForPath
             .map((request) => {
