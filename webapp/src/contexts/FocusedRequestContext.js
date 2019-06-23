@@ -11,7 +11,11 @@ function FocusedRequestStore({children}) {
     console.log({focusedRequestId})
     const value = {
         focusedRequestId,
-        setFocusedRequestId
+        setFocusedRequestId(id) {
+            if (id !== focusedRequestId) {
+                setFocusedRequestId(id)
+            }
+        }
     }
 
     return (

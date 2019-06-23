@@ -1,5 +1,6 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
+import {routerUrls} from '../../routes.js';
 import {primitiveColors, generateTypeName} from './Types';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
 import BasicButton from './BasicButton';
@@ -70,7 +71,7 @@ class TypeName extends React.Component {
                             {generateTypeName(type, node, allowedReferences)}
 
                             {type.isRef ? (
-                                <Link to={`${basePath}/concepts/${type.conceptId}`} style={{textDecoration: 'none'}}>
+                                <Link to={routerUrls.conceptPage(basePath,type.conceptId)} style={{textDecoration: 'none'}}>
                                     <div
                                         className={classes.goTo}
                                         style={{pointerEvents: 'none'}}

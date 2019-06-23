@@ -279,7 +279,7 @@ class SuperMenu extends React.Component {
                             <Typography variant="h5" color="primary">Concepts</Typography>
                             <List>
                                 {conceptsFiltered.map(({name, id}, index) => {
-                                    const to = `${basePath}/concepts/${id}`;
+                                    const to = routerUrls.conceptPage(basePath, id);
 
                                     const isSelected = isFocused(1, index, conceptsFiltered.length)
                                     return (

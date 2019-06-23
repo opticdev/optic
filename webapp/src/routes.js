@@ -28,7 +28,8 @@ export const routerPaths = {
 };
 
 export const routerUrls = {
-	pathPage: (base, pathId) => `${base}/paths/${pathId}`
+	pathPage: (base, pathId) => `${base}/paths/${pathId}`,
+	conceptPage: (base, conceptId) => `${base}/concepts/${conceptId}`
 };
 
 class ExampleLoader extends React.Component {
