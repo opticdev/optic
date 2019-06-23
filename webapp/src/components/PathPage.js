@@ -20,6 +20,8 @@ import sortBy from 'lodash.sortby';
 import Editor from './navigation/Editor';
 import Button from '@material-ui/core/Button';
 import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from './utilities/PathUtilities.js';
+import {RequestUtilities} from '../utilities/RequestUtilities';
+import {EditorModes} from '../contexts/EditorContext';
 
 const styles = theme => ({
 	root: {
@@ -198,7 +200,7 @@ class PathPage extends React.Component {
     };
 
     render() {
-        const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults} = this.props;
+        const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults, mode} = this.props;
 
         const {requests, responses, requestParameters, pathsById, requestIdsByPathId} = cachedQueryResults;
 
@@ -248,8 +250,9 @@ class PathPage extends React.Component {
                 const {requestId, requestDescriptor} = request;
                 const {httpMethod, bodyDescriptor} = requestDescriptor;
                 const {httpContentType} = getNormalizedBodyDescriptor(bodyDescriptor);
+				const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || mode === EditorModes.DESIGN
 
-                const isFocused = requestId === focusedRequestId;
+				const isFocused = requestId === focusedRequestId;
 
                 const responsesForRequest = Object.values(responses)
                     .filter((response) => response.responseDescriptor.requestId === requestId);
@@ -277,7 +280,6 @@ class PathPage extends React.Component {
                     }
                 };
 
-
                 return (
                     <div
                         className={isFocused ? classes.focusedRequest : classes.request}
@@ -285,7 +287,6 @@ class PathPage extends React.Component {
                         onClickCapture={this.setRequestFocus(requestId)}
                         onKeyDownCapture={this.setRequestFocus(requestId)}
                     >
-                        <Typography variant="h5">{httpMethod} {path.normalizedAbsolutePath}</Typography>
                         <Typography variant="overline" style={{fontSize: 28, marginBottom: 5}}
                                     color="primary">{httpMethod}</Typography>
                         <ContributionWrapper
@@ -322,12 +323,17 @@ class PathPage extends React.Component {
                             </div>
                         )}
 
-                        <Typography variant="h6" color="primary" style={{marginTop: 75}}>Request Body</Typography>
-                        <BodyEditor
-                            rootId={requestId}
-                            bodyDescriptor={bodyDescriptor}
-                            {...requestBodyHandlers}
-                        />
+						{shouldShowRequestBody ? (
+							<>
+								<Typography variant="h6" color="primary" style={{marginTop: 75}}>Request Body</Typography>
+								<BodyEditor
+									rootId={requestId}
+									bodyDescriptor={bodyDescriptor}
+									{...requestBodyHandlers}
+								/>
+							</>
+						): null}
+
 
                         <Typography variant="h6" style={{marginTop: 75, marginBottom: 44}} color="primary">Responses</Typography>
                         <ResponseList responses={responsesForRequest}/>
@@ -357,10 +363,8 @@ class PathPage extends React.Component {
                     <Typography variant="h6" color="primary" style={{marginBottom: 11}}>Path</Typography>
                     <PathTrail pathTrail={pathTrailWithNames}/>
 
-                    <Divider style={{marginTop: 15, marginBottom: 15}}/>
                     {pathParameters.length === 0 ? null : (
                         <div>
-                            <Typography variant="caption">Path Parameters</Typography>
                             <ParametersEditor
                                 parameters={pathParameters}
                                 rowMapper={pathParametersToRows}

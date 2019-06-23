@@ -1,9 +1,10 @@
 package com.seamless.oas.versions
 
 import com.seamless.oas
-import com.seamless.oas.Schemas.{Definition, NamedDefinition, Operation, Path, PathParameter, QueryParameter, RequestBody, Response, SharedResponse}
+import com.seamless.oas.Schemas.{Definition, HeaderParameter, NamedDefinition, Operation, Path, PathParameter, QueryParameter, RequestBody, Response, SharedResponse}
 import com.seamless.oas.{Context, JSONReference, OASResolver, Schemas}
 import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString, JsValue}
+import sun.jvm.hotspot.memory.HeapBlock.Header
 
 import scala.util.Try
 
@@ -102,6 +103,13 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
       }}
   }
 
+  def headerParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[HeaderParameter] = {
+    parametersForOperation(operation)
+      .collect{ case param if param.isHeaderParameter => {
+        HeaderParameter(param.name, param.required)
+      }}
+  }
+
 
   override def parametersForPath(path: Schemas.Path)(implicit ctx: Context): Vector[Schemas.PathParameter] = {
     import Helpers.distinctBy
@@ -161,6 +169,7 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
 
       def isPathParameter = in == "path"
       def isBodyParameter = in == "body"
+      def isHeaderParameter = in == "header"
       def isQueryParameter = in == "query"
 
       def schema = (parameterDefinition \ "schema").getOrElse(JsObject.empty).as[JsObject]

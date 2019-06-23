@@ -15,6 +15,7 @@ import scala.util.Random
 
 object RequestsToCommandsImplicits {
   private def newResponseId(): String = s"response_${Random.alphanumeric take 10 mkString}"
+  private def newParameterId(): String = s"parameter_${Random.alphanumeric take 10 mkString}"
   private def newRequestBodyId(): String = s"request_body_${Random.alphanumeric take 10 mkString}"
 
   case class APIPathsContext(commands: ImmutableCommandStream, uriToId: String => String) {
@@ -102,6 +103,14 @@ object RequestsToCommandsImplicits {
           }
         }
       }}
+
+      operation.queryParameters.foreach(i => {
+        stream appendDescribe AddQueryParameter(newParameterId(), operation.id, i.name)
+      })
+
+      operation.headerParameters.foreach(i => {
+        stream appendDescribe AddHeaderParameter(newParameterId(), operation.id, i.name)
+      })
 
       if (operation.description.isDefined) {
         stream appendDescribe AddContribution(operation.id, "description", operation.description.get)

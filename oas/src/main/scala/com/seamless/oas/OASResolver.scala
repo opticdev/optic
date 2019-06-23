@@ -1,6 +1,6 @@
 package com.seamless.oas
 
-import com.seamless.oas.Schemas.{Definition, JsonSchemaSchema, NamedDefinition, OASSchema, Operation, Path, PathParameter, PropertyDefinition, QueryParameter, RequestBody, Response, SharedResponse}
+import com.seamless.oas.Schemas.{Definition, HeaderParameter, JsonSchemaSchema, NamedDefinition, OASSchema, Operation, Path, PathParameter, PropertyDefinition, QueryParameter, RequestBody, Response, SharedResponse}
 import play.api.libs.json.{JsObject, JsString, JsValue}
 import QueryImplicits._
 import com.seamless.oas
@@ -31,6 +31,7 @@ abstract class OASResolver(val root: JsObject, val oas_version: String) {
   def parametersForPath(path: Path)(implicit ctx: Context): Vector[PathParameter]
 
   def queryParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[QueryParameter]
+  def headerParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[HeaderParameter]
   def requestBodyForOperation(operation: Operation)(implicit ctx: Context): Option[RequestBody]
   def responsesForOperation(operation: Operation)(implicit ctx: Context): Vector[Response]
 
@@ -75,7 +76,7 @@ abstract class OASResolver(val root: JsObject, val oas_version: String) {
 
   //descriptions
   def descriptionFromContext(ctx: Context): Option[String] = {
-    (ctx.root \ "description").toOption.map(_.as[JsString].value)
+    (ctx.root \ "description").toOption.map(_.as[JsString].value.trim)
   }
 }
 

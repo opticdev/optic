@@ -4,7 +4,6 @@ import {asAbsolutePath, asPathTrailComponents} from '../components/utilities/Pat
 class RequestUtilities {
     static hasBody(bodyDescriptor) {
         return RequestUtilities.hasNormalizedBody(getNormalizedBodyDescriptor(bodyDescriptor))
-
     }
 
     static hasNormalizedBody(normalizedBodyDescriptor) {

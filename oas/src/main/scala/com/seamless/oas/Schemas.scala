@@ -12,12 +12,14 @@ object Schemas {
   }
   case class PathParameter(name: String, index: Int)
   case class QueryParameter(name: String, required: Boolean)
+  case class HeaderParameter(name: String, required: Boolean)
   case class Operation(method: String, path: Path)(implicit cxt: Context) extends OASSchema {
     def description: Option[String] = cxt.resolver.descriptionFromContext(cxt)
     def responses: Vector[Response] = cxt.resolver.responsesForOperation(this)
     def supportsBody = !Set("get", "head", "options", "connect").contains(method)
     def requestBody: Option[RequestBody] = cxt.resolver.requestBodyForOperation(this)
     def queryParameters: Vector[QueryParameter] = cxt.resolver.queryParametersForOperation(this)
+    def headerParameters: Vector[HeaderParameter] = cxt.resolver.headerParametersForOperation(this)
     def id = path.id+"_"+method
   }
 

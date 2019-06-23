@@ -60,7 +60,7 @@ class ConceptsPage extends React.Component {
 						}}
 					/>
 
-					<Typography variant="h6" color="primary">Shape</Typography>
+
 
 					<div className={classes.schemaEditorContainer}>
 						<SchemaEditor

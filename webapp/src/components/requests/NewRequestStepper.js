@@ -49,7 +49,6 @@ function getStepContent(step, combinedState) {
         case 0:
             return [(
                 <div>
-                    <Typography>What is the request path?</Typography>
                     <PathInput onChange={setSelectedPathComponents} initialPathString={initialPathString}/>
                 </div>
             ), selectedPathComponents !== null]
@@ -183,7 +182,7 @@ function NewRequestStepper(props) {
             <Stepper activeStep={activeStep} orientation="vertical">
                 {steps.map((label, index) => {
                     const isLastStep = activeStep === steps.length - 1
-                    const nextButtonLabel = isLastStep ? 'Finish' : 'Next'
+                    const nextButtonLabel = isLastStep ? 'Create Requests' : 'Next'
                     const nextButtonAction = isLastStep ? handleFinish : handleNext
                     const [content, nextButtonEnabled] = getStepContent(index, combinedState)
                     return (
