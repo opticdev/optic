@@ -144,7 +144,7 @@ class ParametersEditor extends React.Component {
 
                         let typeCell = null;
                         let schemaEditor = null
-                        if (row.inlineConceptId !== null) {
+                        if (row.inlineConceptId) {
                             const {allowedReferences, concept: shape} = queries.conceptById(row.inlineConceptId)
                             typeCell = (
                                 <TableCell align="left" className={classes.cell}>
