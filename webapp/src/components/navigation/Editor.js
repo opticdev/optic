@@ -124,7 +124,7 @@ class Editor extends React.Component {
 				<div className={classes.navWrapper}>
 					<TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>
 				</div>
-				<div className={classes.contentWrapper}>
+				<div className={classes.contentWrapper} ref={this.props.scrollContainerRef}>
 					<Margin className={classes.leftMargin}>
 						{this.props.leftMargin ? <TOC children={this.props.leftMargin}/>: null}
 					</Margin>

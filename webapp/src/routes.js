@@ -218,8 +218,9 @@ class AppRoutes extends React.Component {
 					<Switch>
 						<Route path={routerPaths.newRoot()} component={NewApiLoader}/>
 						<Route path={'/upload-oas'} exact component={UploadOAS}/>
-						<Route path={routerPaths.example()} component={ExampleLoader}/>
+						<Route exact strict path={routerPaths.example()} component={ExampleLoader}/>
 						<Route path={'/'} exact component={Welcome}/>
+						<Redirect from={routerPaths.example()} to={routerPaths.example()}/>
 						<Redirect to={routerPaths.newRoot()}/>
 					</Switch>
 				</ImportedOASStore>

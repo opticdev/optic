@@ -1,3 +1,4 @@
+import Zoom from '@material-ui/core/Zoom';
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {Typography} from '@material-ui/core';
@@ -87,31 +88,33 @@ class ResponseListWithoutContext extends React.Component {
             };
 
             return (
-                <div key={responseId} className={classes.responseCard}>
-                    <div className={classes.responseStatus}>
-                        <StatusCode statusCode={httpStatusCode} onChange={(statusCode) => {
-                            const command = RequestsCommands.SetResponseStatusCode(responseId, statusCode)
-                            handleCommand(command)
-                        }}/>
-                    </div>
-                    <div className={classes.responseDetail}>
-                        <ContributionWrapper
-                            style={{marginTop: -20}}
-                            contributionParentId={responseId}
-                            defaultText={'No Description'}
-                            contributionKey={'description'}
-                            variant={'multi'}
-                            placeholder={`Response Description`}
-                        />
-                        <div style={{marginLeft: 5}}>
-                            <BodyEditor
-                                rootId={responseId}
-                                bodyDescriptor={bodyDescriptor}
-                                {...responseBodyHandlers}
+                <Zoom in={true} key={responseId}>
+                    <div className={classes.responseCard}>
+                        <div className={classes.responseStatus}>
+                            <StatusCode statusCode={httpStatusCode} onChange={(statusCode) => {
+                                const command = RequestsCommands.SetResponseStatusCode(responseId, statusCode)
+                                handleCommand(command)
+                            }}/>
+                        </div>
+                        <div className={classes.responseDetail}>
+                            <ContributionWrapper
+                                style={{marginTop: -20}}
+                                contributionParentId={responseId}
+                                defaultText={'No Description'}
+                                contributionKey={'description'}
+                                variant={'multi'}
+                                placeholder={`Response Description`}
                             />
+                            <div style={{marginLeft: 5}}>
+                                <BodyEditor
+                                    rootId={responseId}
+                                    bodyDescriptor={bodyDescriptor}
+                                    {...responseBodyHandlers}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
+                </Zoom>
             );
         });
 
@@ -160,6 +163,11 @@ export function getNormalizedBodyDescriptor(value) {
 }
 
 class PathPage extends React.Component {
+    constructor(props) {
+        super(props)
+        this.scrollContainer = React.createRef()
+    }
+
 
     componentDidMount() {
         console.log('xxx dm');
@@ -168,6 +176,9 @@ class PathPage extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         console.log('xxx du');
+        if (prevProps.pathId !== this.props.pathId) {
+            this.scrollContainer.current.scrollTo(0, 0)
+        }
         this.ensureRequestFocused();
     }
 
@@ -366,7 +377,7 @@ class PathPage extends React.Component {
 
 
         return (
-            <Editor basePath={this.props.basePath} leftMargin={MethodsTOC}>
+            <Editor basePath={this.props.basePath} leftMargin={MethodsTOC} scrollContainerRef={this.scrollContainer}>
                 <div className={classes.root}>
                     <ContributionWrapper
                         contributionParentId={pathId}
