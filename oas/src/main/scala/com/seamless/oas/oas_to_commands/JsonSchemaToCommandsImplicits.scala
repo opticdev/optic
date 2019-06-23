@@ -12,7 +12,7 @@ import scala.util.{Either, Random, Try}
 
 object JsonSchemaToCommandsImplicits {
 
-  private def newId(): String = s"shape_${Random.alphanumeric take 10 mkString}"
+  def newId(): String = s"shape_${Random.alphanumeric take 10 mkString}"
 
   val mapping: Map[String, PrimitiveType] = Map(
     "string" -> StringT,

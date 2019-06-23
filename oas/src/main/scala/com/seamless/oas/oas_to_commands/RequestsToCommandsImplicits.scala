@@ -104,12 +104,30 @@ object RequestsToCommandsImplicits {
         }
       }}
 
+      import JsonSchemaToCommandsImplicits.newId
       operation.queryParameters.foreach(i => {
-        stream appendDescribe AddQueryParameter(newParameterId(), operation.id, i.name)
+        val conceptId = newId()
+        val rootShapeId = newId()
+        val queryParameterId = newParameterId()
+
+        stream appendInit DefineInlineConcept(rootShapeId, conceptId)
+        stream appendInit AssignType(rootShapeId, StringT, conceptId)
+
+        stream appendDescribe AddQueryParameter(queryParameterId, operation.id, i.name)
+        stream appendDescribe SetQueryParameterShape(queryParameterId, ShapedRequestParameterShapeDescriptor(conceptId, false))
       })
 
       operation.headerParameters.foreach(i => {
-        stream appendDescribe AddHeaderParameter(newParameterId(), operation.id, i.name)
+
+        val conceptId = newId()
+        val rootShapeId = newId()
+        val headerParameterId = newParameterId()
+
+        stream appendInit DefineInlineConcept(rootShapeId, conceptId)
+        stream appendInit AssignType(rootShapeId, StringT, conceptId)
+
+        stream appendDescribe AddHeaderParameter(headerParameterId, operation.id, i.name)
+        stream appendDescribe SetHeaderParameterShape(headerParameterId, ShapedRequestParameterShapeDescriptor(conceptId, false))
       })
 
       if (operation.description.isDefined) {
