@@ -1,6 +1,7 @@
 package com.seamless.contexts.data_types
 import Primitives.PrimitiveType
 import com.seamless.contexts.data_types.Commands.{ConceptId, FieldId, TypeParameterId}
+import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.rfc.Events.RfcEvent
 object Events {
 

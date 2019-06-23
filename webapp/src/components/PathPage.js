@@ -304,7 +304,7 @@ class PathPage extends React.Component {
 
 							{headerParameters.length === 0 ? null : (
 								<div>
-									<Typography variant="caption">Headers</Typography>
+									<Typography variant="h6" color="primary">Headers</Typography>
 									<ParametersEditor
 										parameters={headerParameters}
 										rowMapper={requestParametersToRows}
@@ -317,7 +317,7 @@ class PathPage extends React.Component {
 
 							{queryParameters.length === 0 ? null : (
 								<div>
-									<Typography variant="caption">Query Parameters</Typography>
+									<Typography variant="h6" color="primary">Query Parameters</Typography>
 									<ParametersEditor
 										parameters={queryParameters}
 										rowMapper={requestParametersToRows}

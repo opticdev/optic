@@ -73,6 +73,11 @@ const styles = theme => ({
     },
     focusedSummary: {
         backgroundColor: 'white !important'
+    },
+    rootOverride: {
+        '&:before': {
+            backgroundColor: 'transparent !important'
+        }
     }
 });
 
@@ -171,7 +176,7 @@ class ParametersEditor extends React.Component {
 
                         return (
                             <>
-                                <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)}>
+                                <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)} square={true} classes={{root: classes.rootOverride}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon/>}
                                         classes={{

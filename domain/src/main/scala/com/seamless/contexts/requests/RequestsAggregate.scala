@@ -1,7 +1,7 @@
 package com.seamless.contexts.requests
 
 import com.seamless.contexts.base.BaseCommandContext
-import com.seamless.contexts.data_types.DataTypesState
+import com.seamless.contexts.data_types.{DataTypesState, ShapeHelpers}
 import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.requests.Events._
 import com.seamless.ddd.{Effects, EventSourcedAggregate}
@@ -41,7 +41,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
         case AddPathParameter(pathId, parentPathId, name) => {
           Validators.ensurePathComponentIdExists(parentPathId)
           Validators.ensurePathComponentIdAssignable(pathId)
-          persist(Events.PathParameterAdded(pathId, parentPathId, name))
+          persist(
+            ShapeHelpers.appendDefaultStringTypeEvents(
+              Events.PathParameterAdded(pathId, parentPathId, name)
+            ):_*
+          )
         }
 
         case SetPathParameterShape(pathId, shapeDescriptor) => {
@@ -121,7 +125,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
         case AddQueryParameter(parameterId, requestId, name) => {
           Validators.ensureRequestIdExists(requestId)
           Validators.ensureParameterIdAssignable(parameterId)
-          persist(Events.RequestParameterAdded(parameterId, requestId, "query", name))
+          persist(
+            ShapeHelpers.appendDefaultStringTypeEvents(
+              Events.RequestParameterAdded(parameterId, requestId, "query", name)
+            ):_*
+          )
         }
 
         case SetQueryParameterShape(parameterId, parameterDescriptor) => {
@@ -150,7 +158,12 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
         case AddHeaderParameter(parameterId, requestId, name) => {
           Validators.ensureRequestIdExists(requestId)
           Validators.ensureParameterIdAssignable(parameterId)
-          persist(Events.RequestParameterAdded(parameterId, requestId, "header", name))
+
+          persist(
+            ShapeHelpers.appendDefaultStringTypeEvents(
+              Events.RequestParameterAdded(parameterId, requestId, "header", name)
+            ):_*
+          )
         }
 
         case SetHeaderParameterShape(parameterId, parameterDescriptor) => {
