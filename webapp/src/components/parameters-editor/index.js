@@ -18,6 +18,9 @@ import SchemaEditor from '../shape-editor/SchemaEditor';
 import {DisplayRootTypeName} from '../shape-editor/TypeName';
 import {getName} from '../utilities/PathUtilities.js';
 import ParameterNameInput from './ParameterNameInput';
+import ContributionTextField from '../contributions/ContributionTextField';
+import ContributionWrapper from '../contributions/ContributionWrapper';
+import {EditorModes} from '../../contexts/EditorContext';
 
 
 const styles = theme => ({
@@ -58,7 +61,7 @@ const styles = theme => ({
     multiLine: {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        width: 500
+        width: 642,
     },
     nameCell: {
         paddingLeft: 0,
@@ -152,14 +155,24 @@ class ParametersEditor extends React.Component {
                         if (row.inlineConceptId) {
                             const {allowedReferences, concept: shape} = queries.conceptById(row.inlineConceptId)
                             typeCell = (
-                                <TableCell align="left" className={classes.cell}>
+                                <TableCell align="left" className={classes.cell} style={{width: (isExpanded) ? 642 : 'inherit'}}>
                                     <DisplayRootTypeName
                                         shape={shape.root}
                                         style={{marginBottom: -17}}
                                     />
                                     <br/>
                                     <div
-                                        className={(isExpanded) ? classes.multiline : classes.singleLine}>{row.description || 'hello world use me to do the thing you always wanted to do'}</div>
+                                        className={(isExpanded) ? classes.multiline : classes.singleLine}>
+                                        {(mode === EditorModes.DOCUMENTATION) ? row.description : (
+                                            <ContributionWrapper
+                                                style={{marginTop: -20}}
+                                                contributionParentId={row.id}
+                                                contributionKey={'description'}
+                                                variant={'multi'}
+                                                placeholder={`Description`}
+                                            />
+                                        )}
+                                    </div>
                                 </TableCell>
                             )
 
