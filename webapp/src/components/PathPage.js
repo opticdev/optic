@@ -22,6 +22,7 @@ import Button from '@material-ui/core/Button';
 import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from './utilities/PathUtilities.js';
 import {RequestUtilities} from '../utilities/RequestUtilities';
 import {EditorModes} from '../contexts/EditorContext';
+import {Waypoint} from 'react-waypoint';
 
 const styles = theme => ({
 	root: {
@@ -101,11 +102,11 @@ class ResponseListWithoutContext extends React.Component {
 							placeholder={`Response Description`}
 						/>
 						<div style={{marginLeft: 5}}>
-						<BodyEditor
-							rootId={responseId}
-							bodyDescriptor={bodyDescriptor}
-							{...responseBodyHandlers}
-						/>
+							<BodyEditor
+								rootId={responseId}
+								bodyDescriptor={bodyDescriptor}
+								{...responseBodyHandlers}
+							/>
 						</div>
 					</div>
 				</div>
@@ -128,259 +129,266 @@ const pathTrailStyles = theme => {
 };
 
 class PathTrailBase extends React.Component {
-    render() {
-        const {classes, basePath, pathTrail} = this.props;
-        console.log({pathTrail})
-        const items = pathTrail
-            .map((trailItem) => {
-                const {pathComponentId, pathComponentName} = trailItem;
-                const url = routerUrls.pathPage(basePath, pathComponentId);
-                return (
-                    <Link key={pathComponentId} component={RouterLink} to={url}>{pathComponentName}</Link>
-                );
-            });
-        return (
-            <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs>{items}</Breadcrumbs>
-            </Paper>
-        );
-    }
+	render() {
+		const {classes, basePath, pathTrail} = this.props;
+		console.log({pathTrail});
+		const items = pathTrail
+			.map((trailItem) => {
+				const {pathComponentId, pathComponentName} = trailItem;
+				const url = routerUrls.pathPage(basePath, pathComponentId);
+				return (
+					<Link key={pathComponentId} component={RouterLink} to={url}>{pathComponentName}</Link>
+				);
+			});
+		return (
+			<Paper elevation={0} className={classes.paper}>
+				<Breadcrumbs>{items}</Breadcrumbs>
+			</Paper>
+		);
+	}
 }
 
 const PathTrail = withEditorContext(withStyles(pathTrailStyles)(PathTrailBase));
 
 export function getNormalizedBodyDescriptor(value) {
-    if (value && value.ShapedBodyDescriptor) {
-        return value.ShapedBodyDescriptor;
-    }
-    return {};
+	if (value && value.ShapedBodyDescriptor) {
+		return value.ShapedBodyDescriptor;
+	}
+	return {};
 }
 
 class PathPage extends React.Component {
 
-    componentDidMount() {
-        console.log('xxx dm');
-        this.ensureRequestFocused();
-    }
+	componentDidMount() {
+		console.log('xxx dm');
+		this.ensureRequestFocused();
+	}
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('xxx du');
-        this.ensureRequestFocused();
-    }
+	componentDidUpdate(prevProps, prevState, snapshot) {
+		console.log('xxx du');
+		this.ensureRequestFocused();
+	}
 
-    ensureRequestFocused() {
-        const {focusedRequestId, cachedQueryResults, pathId} = this.props;
-        const {requestIdsByPathId} = cachedQueryResults;
-        const requestIdsForPath = requestIdsByPathId[pathId] || []
-        const focusedRequestExistsInThisPath = requestIdsForPath.indexOf(focusedRequestId) >= 0;
-        if (focusedRequestExistsInThisPath) {
-            return;
-        }
-        const targetId = requestIdsForPath[0] || null;
+	ensureRequestFocused() {
+		const {focusedRequestId, cachedQueryResults, pathId} = this.props;
+		const {requestIdsByPathId} = cachedQueryResults;
+		const requestIdsForPath = requestIdsByPathId[pathId] || [];
+		const focusedRequestExistsInThisPath = requestIdsForPath.indexOf(focusedRequestId) >= 0;
+		if (focusedRequestExistsInThisPath) {
+			return;
+		}
+		const targetId = requestIdsForPath[0] || null;
 
-        this.props.setFocusedRequestId(targetId);
+		this.props.setFocusedRequestId(targetId);
 
-    }
+	}
 
-    renderPlaceholder() {
-        return (
-            <div>There aren't any requests at this path. Add one!</div>
-        );
-    }
+	renderPlaceholder() {
+		return (
+			<div>There aren't any requests at this path. Add one!</div>
+		);
+	}
 
-    renderNotFound() {
-        return (
-            <div>There is no matching path</div>
-        );
-    }
+	renderNotFound() {
+		return (
+			<div>There is no matching path</div>
+		);
+	}
 
 
-    setRequestFocus = (requestId) => () => {
-        this.props.setFocusedRequestId(requestId);
-    };
+	setRequestFocus = (requestId) => () => {
+		this.props.setFocusedRequestId(requestId);
+	};
 
-    render() {
-        const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults, mode} = this.props;
+	render() {
+		const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults, mode} = this.props;
 
-        const {requests, responses, requestParameters, pathsById, requestIdsByPathId} = cachedQueryResults;
+		const {requests, responses, requestParameters, pathsById, requestIdsByPathId} = cachedQueryResults;
 
-        const path = pathsById[pathId];
+		const path = pathsById[pathId];
 
-        if (!path) {
-            return this.renderNotFound();
-        }
+		if (!path) {
+			return this.renderNotFound();
+		}
 
-        const pathTrail = asPathTrail(pathId, pathsById)
-        const pathTrailComponents = pathTrail.map(pathId => pathsById[pathId])
-        const pathTrailWithNames = pathTrailComponents.map((pathComponent) => {
-            const pathComponentName = getNameWithFormattedParameters(pathComponent)
-            const pathComponentId = pathComponent.pathId
-            return {
-                pathComponentName,
-                pathComponentId
-            }
-        })
+		const pathTrail = asPathTrail(pathId, pathsById);
+		const pathTrailComponents = pathTrail.map(pathId => pathsById[pathId]);
+		const pathTrailWithNames = pathTrailComponents.map((pathComponent) => {
+			const pathComponentName = getNameWithFormattedParameters(pathComponent);
+			const pathComponentId = pathComponent.pathId;
+			return {
+				pathComponentName,
+				pathComponentId
+			};
+		});
 
-        const pathParameters = pathTrail
-            .map(pathId => pathsById[pathId])
-            .filter((p) => isPathParameter(p));
+		const pathParameters = pathTrail
+			.map(pathId => pathsById[pathId])
+			.filter((p) => isPathParameter(p));
 
-        const requestIdsForPath = requestIdsByPathId[pathId];
-        const requestsForPath = requestIdsForPath.map((requestId) => requests[requestId]);
-        const methodLinks = requestsForPath
-            .map((request) => {
-                const {requestId, requestDescriptor} = request;
-                const {httpMethod} = requestDescriptor;
-                return (
-                    <Link key={requestId} href={`#${requestId}`} style={{textDecoration: 'none'}}>
-                        <Button
-                            size="small"
-                            className={classes.margin}
-                            style={{fontWeight: (focusedRequestId === requestId ? '400' : '200')}}
-                            onClick={this.setRequestFocus(requestId)}
-                        >
-                            {httpMethod}
-                        </Button>
-                    </Link>
-                );
-            });
+		const requestIdsForPath = requestIdsByPathId[pathId];
+		const requestsForPath = requestIdsForPath.map((requestId) => requests[requestId]);
+		const methodLinks = requestsForPath
+			.map((request) => {
+				const {requestId, requestDescriptor} = request;
+				const {httpMethod} = requestDescriptor;
+				return (
+					<Link key={requestId} href={`#${requestId}`} style={{textDecoration: 'none'}}>
+						<Button
+							size="small"
+							className={classes.margin}
+							style={{fontWeight: (focusedRequestId === requestId ? '400' : '200')}}
+							onClick={this.setRequestFocus(requestId)}
+						>
+							{httpMethod}
+						</Button>
+					</Link>
+				);
+			});
 
-        const requestItems = requestsForPath.length === 0 ? this.renderPlaceholder() : requestsForPath
-            .map((request) => {
-                const {requestId, requestDescriptor} = request;
-                const {httpMethod, bodyDescriptor} = requestDescriptor;
-                const {httpContentType} = getNormalizedBodyDescriptor(bodyDescriptor);
-				const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || mode === EditorModes.DESIGN
+		const requestItems = requestsForPath.length === 0 ? this.renderPlaceholder() : requestsForPath
+			.map((request) => {
+				const {requestId, requestDescriptor} = request;
+				const {httpMethod, bodyDescriptor} = requestDescriptor;
+				const {httpContentType} = getNormalizedBodyDescriptor(bodyDescriptor);
+				const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || mode === EditorModes.DESIGN;
 
 				const isFocused = requestId === focusedRequestId;
 
-                const responsesForRequest = Object.values(responses)
-                    .filter((response) => response.responseDescriptor.requestId === requestId);
+				const responsesForRequest = Object.values(responses)
+					.filter((response) => response.responseDescriptor.requestId === requestId);
 
-                const parametersForRequest = Object.values(requestParameters)
-                    .filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId);
+				const parametersForRequest = Object.values(requestParameters)
+					.filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId);
 
-                const headerParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'header');
-                const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query');
+				const headerParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'header');
+				const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query');
 
-                const requestBodyHandlers = {
-                    onBodyAdded({conceptId, contentType}) {
-                        const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, conceptId, false);
-                        const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
-                        handleCommand(command);
-                    },
-                    onBodyRemoved({conceptId}) {
-                        const command = RequestsCommands.UnsetRequestBodyShape(requestId, bodyDescriptor);
-                        handleCommand(command);
-                    },
-                    onBodyRestored({conceptId}) {
-                        const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, conceptId, false);
-                        const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
-                        handleCommand(command);
-                    }
-                };
+				const requestBodyHandlers = {
+					onBodyAdded({conceptId, contentType}) {
+						const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, conceptId, false);
+						const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
+						handleCommand(command);
+					},
+					onBodyRemoved({conceptId}) {
+						const command = RequestsCommands.UnsetRequestBodyShape(requestId, bodyDescriptor);
+						handleCommand(command);
+					},
+					onBodyRestored({conceptId}) {
+						const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, conceptId, false);
+						const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
+						handleCommand(command);
+					}
+				};
 
-                return (
-                    <div
-                        className={isFocused ? classes.focusedRequest : classes.request}
-                        key={requestId} id={requestId}
-                        onClickCapture={this.setRequestFocus(requestId)}
-                        onKeyDownCapture={this.setRequestFocus(requestId)}
-                    >
-                        <Typography variant="overline" style={{fontSize: 28, marginBottom: 5}}
-                                    color="primary">{httpMethod}</Typography>
-                        <ContributionWrapper
-                            style={{marginTop: -20}}
-                            contributionParentId={requestId}
-                            contributionKey={'description'}
-                            variant={'multi'}
-                            placeholder={`Description`}
-                        />
+				return (
+					<Waypoint
+						onEnter={this.setRequestFocus(requestId)}
+						topOffset={'20%'}
+					>
+						<div
+							className={isFocused ? classes.focusedRequest : classes.request}
+							key={requestId} id={requestId}
+							onClickCapture={this.setRequestFocus(requestId)}
+							onKeyDownCapture={this.setRequestFocus(requestId)}
+						>
+							<Typography variant="overline" style={{fontSize: 28, marginBottom: 5}}
+										color="primary">{httpMethod}</Typography>
+							<ContributionWrapper
+								style={{marginTop: -20}}
+								contributionParentId={requestId}
+								contributionKey={'description'}
+								variant={'multi'}
+								placeholder={`Description`}
+							/>
 
-                        {headerParameters.length === 0 ? null : (
-                            <div>
-                                <Typography variant="caption">Headers</Typography>
-                                <ParametersEditor
-                                    parameters={headerParameters}
-                                    rowMapper={requestParametersToRows}
-                                    onRename={({id, name}) => {
-                                        handleCommand(RequestsCommands.RenameHeaderParameter(id, name))
-                                    }}
-                                />
-                            </div>
-                        )}
+							{headerParameters.length === 0 ? null : (
+								<div>
+									<Typography variant="caption">Headers</Typography>
+									<ParametersEditor
+										parameters={headerParameters}
+										rowMapper={requestParametersToRows}
+										onRename={({id, name}) => {
+											handleCommand(RequestsCommands.RenameHeaderParameter(id, name));
+										}}
+									/>
+								</div>
+							)}
 
-                        {queryParameters.length === 0 ? null : (
-                            <div>
-                                <Typography variant="caption">Query Parameters</Typography>
-                                <ParametersEditor
-                                    parameters={queryParameters}
-                                    rowMapper={requestParametersToRows}
-                                    onRename={({id, name}) => {
-                                        handleCommand(RequestsCommands.RenameHeaderParameter(id, name))
-                                    }}
-                                />
-                            </div>
-                        )}
+							{queryParameters.length === 0 ? null : (
+								<div>
+									<Typography variant="caption">Query Parameters</Typography>
+									<ParametersEditor
+										parameters={queryParameters}
+										rowMapper={requestParametersToRows}
+										onRename={({id, name}) => {
+											handleCommand(RequestsCommands.RenameHeaderParameter(id, name));
+										}}
+									/>
+								</div>
+							)}
 
-						{shouldShowRequestBody ? (
-							<>
-								<Typography variant="h6" color="primary" style={{marginTop: 75}}>Request Body</Typography>
-								<BodyEditor
-									rootId={requestId}
-									bodyDescriptor={bodyDescriptor}
-									{...requestBodyHandlers}
-								/>
-							</>
-						): null}
-
-
-                        <Typography variant="h6" style={{marginTop: 75, marginBottom: 44}} color="primary">Responses</Typography>
-                        <ResponseList responses={responsesForRequest}/>
-                    </div>
-                );
-            });
-
-        const MethodsTOC = (<>
-            <Typography variant="h5" color="primary">Methods</Typography>
-            <Divider/>
-            <div style={{maxWidth: 200, marginTop: 5}}>
-                {methodLinks}
-            </div>
-        </>);
+							{shouldShowRequestBody ? (
+								<>
+									<Typography variant="h6" color="primary" style={{marginTop: 75}}>Request
+										Body</Typography>
+									<BodyEditor
+										rootId={requestId}
+										bodyDescriptor={bodyDescriptor}
+										{...requestBodyHandlers}
+									/>
+								</>
+							) : null}
 
 
-        return (
-            <Editor basePath={this.props.basePath} leftMargin={MethodsTOC}>
-                <div className={classes.root}>
-                    <ContributionWrapper
-                        contributionParentId={pathId}
-                        contributionKey={'name'}
-                        variant={'heading'}
-                        placeholder="Resource Name"
-                    />
+							<Typography variant="h6" style={{marginTop: 75, marginBottom: 44}}
+										color="primary">Responses</Typography>
+							<ResponseList responses={responsesForRequest}/>
+						</div>
+					</Waypoint>
+				);
+			});
 
-                    <Typography variant="h6" color="primary" style={{marginBottom: 11}}>Path</Typography>
-                    <PathTrail pathTrail={pathTrailWithNames}/>
+		const MethodsTOC = (<>
+			<Typography variant="h5" color="primary">Methods</Typography>
+			<Divider/>
+			<div style={{maxWidth: 200, marginTop: 5, display: 'flex', flexDirection: 'column'}}>
+				{methodLinks}
+			</div>
+		</>);
 
-                    {pathParameters.length === 0 ? null : (
-                        <div>
-                            <ParametersEditor
-                                parameters={pathParameters}
-                                rowMapper={pathParametersToRows}
-                                onRename={({id, name}) => {
-                                    handleCommand(RequestsCommands.RenamePathParameter(id, name))
-                                }}
-                            />
-                        </div>
-                    )}
 
-                    <Divider style={{marginTop: 15, marginBottom: 15}}/>
-                    {requestItems}
-                </div>
-            </Editor>
-        );
-    }
+		return (
+			<Editor basePath={this.props.basePath} leftMargin={MethodsTOC}>
+				<div className={classes.root}>
+					<ContributionWrapper
+						contributionParentId={pathId}
+						contributionKey={'name'}
+						variant={'heading'}
+						placeholder="Resource Name"
+					/>
+
+					<Typography variant="h6" color="primary" style={{marginBottom: 11}}>Path</Typography>
+					<PathTrail pathTrail={pathTrailWithNames}/>
+
+					{pathParameters.length === 0 ? null : (
+						<div>
+							<ParametersEditor
+								parameters={pathParameters}
+								rowMapper={pathParametersToRows}
+								onRename={({id, name}) => {
+									handleCommand(RequestsCommands.RenamePathParameter(id, name));
+								}}
+							/>
+						</div>
+					)}
+
+					<Divider style={{marginTop: 15, marginBottom: 15}}/>
+					{requestItems}
+				</div>
+			</Editor>
+		);
+	}
 }
 
 export default withFocusedRequestContext(withEditorContext(withRfcContext(withStyles(styles)(PathPage))));
