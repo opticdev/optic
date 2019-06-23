@@ -129,7 +129,7 @@ function lastOrElse(array, defaultValue) {
 
 function handleSubmit(state, props) {
     const {selectedPathComponents, selectedHttpMethods} = state;
-    const {onComplete, basePath, history, handleCommand, cachedQueryResults} = props;
+    const {onComplete, baseUrl, history, handleCommand, cachedQueryResults} = props;
     const {pathsById} = cachedQueryResults
     debugger;
     const {toAdd, lastMatch} = resolvePath(selectedPathComponents, pathsById)
@@ -153,7 +153,7 @@ function handleSubmit(state, props) {
     })
     onComplete()
     // maybe this should happen in the consumer
-    history.push(routerUrls.pathPage(basePath, lastParentPathId))
+    history.push(routerUrls.pathPage(baseUrl, lastParentPathId))
 }
 
 function NewRequestStepper(props) {

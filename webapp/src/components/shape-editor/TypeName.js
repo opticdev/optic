@@ -36,7 +36,7 @@ class TypeName extends React.Component {
 
     render() {
 
-        const {classes, node, inField, style, id, basePath} = this.props;
+        const {classes, node, inField, style, id, baseUrl} = this.props;
         const {type} = node;
 
         if (inField && type.hasFields) {
@@ -71,7 +71,7 @@ class TypeName extends React.Component {
                             {generateTypeName(type, node, allowedReferences)}
 
                             {type.isRef ? (
-                                <Link to={routerUrls.conceptPage(basePath,type.conceptId)} style={{textDecoration: 'none'}}>
+                                <Link to={routerUrls.conceptPage(baseUrl,type.conceptId)} style={{textDecoration: 'none'}}>
                                     <div
                                         className={classes.goTo}
                                         style={{pointerEvents: 'none'}}

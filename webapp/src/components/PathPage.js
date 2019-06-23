@@ -135,12 +135,12 @@ const pathTrailStyles = theme => {
 
 class PathTrailBase extends React.Component {
     render() {
-        const {classes, basePath, pathTrail} = this.props;
+        const {classes, baseUrl, pathTrail} = this.props;
         console.log({pathTrail});
         const items = pathTrail
             .map((trailItem) => {
                 const {pathComponentId, pathComponentName} = trailItem;
-                const url = routerUrls.pathPage(basePath, pathComponentId);
+                const url = routerUrls.pathPage(baseUrl, pathComponentId);
                 return (
                     <Link key={pathComponentId} component={RouterLink} to={url}>{pathComponentName}</Link>
                 );
@@ -388,7 +388,7 @@ class PathPage extends React.Component {
 
 
         return (
-            <Editor basePath={this.props.basePath} leftMargin={MethodsTOC} scrollContainerRef={this.scrollContainer}>
+            <Editor baseUrl={this.props.baseUrl} leftMargin={MethodsTOC} scrollContainerRef={this.scrollContainer}>
                 <div className={classes.root}>
                     <ContributionWrapper
                         contributionParentId={pathId}

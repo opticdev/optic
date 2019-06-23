@@ -176,7 +176,7 @@ class SuperMenu extends React.Component {
     render() {
         const {classes} = this.props;
 
-        const {cachedQueryResults, basePath} = this.props;
+        const {cachedQueryResults, baseUrl} = this.props;
         const {conceptsById, pathsById, pathIdsWithRequests} = cachedQueryResults
 
         const paths = [...pathIdsWithRequests].map(pathId => addAbsolutePath(pathId, pathsById))
@@ -248,7 +248,7 @@ class SuperMenu extends React.Component {
                             <List>
                                 {pathsFiltered
                                     .map(({pathId, absolutePath}, index) => {
-                                    const to = routerUrls.pathPage(basePath, pathId);
+                                    const to = routerUrls.pathPage(baseUrl, pathId);
                                     const isSelected = isFocused(0, index, pathsFiltered.length)
                                     return (
                                         <ListItem
@@ -279,7 +279,7 @@ class SuperMenu extends React.Component {
                             <Typography variant="h5" color="primary">Concepts</Typography>
                             <List>
                                 {conceptsFiltered.map(({name, id}, index) => {
-                                    const to = routerUrls.conceptPage(basePath, id);
+                                    const to = routerUrls.conceptPage(baseUrl, id);
 
                                     const isSelected = isFocused(1, index, conceptsFiltered.length)
                                     return (

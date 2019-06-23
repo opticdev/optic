@@ -80,11 +80,11 @@ class FloatingAddButton extends React.Component {
     }
 
     addConcept = () => {
-        const {handleCommand, basePath, history} = this.props
+        const {handleCommand, baseUrl, history} = this.props
         const conceptId = DataTypesHelper.newConceptId()
         const conceptRootShapeId = DataTypesHelper.newId()
         handleCommand(ShapeCommands.DefineConcept('???', conceptRootShapeId, conceptId))
-        history.push(routerUrls.conceptPage(basePath, conceptId))
+        history.push(routerUrls.conceptPage(baseUrl, conceptId))
     }
 
     render() {

@@ -27,9 +27,9 @@ class EditorStore extends React.Component {
     render() {
 
         const {mode} = this.state
-        const {basePath} = this.props
+        const {baseUrl} = this.props
 
-        const context = {mode, switchEditorMode: this.switchEditorMode, basePath}
+        const context = {mode, switchEditorMode: this.switchEditorMode, baseUrl}
 
         return (
             <EditorContext.Provider value={context}>

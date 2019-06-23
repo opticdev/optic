@@ -52,7 +52,7 @@ function ParagraphSplit({left, right, style}) {
 class OverView extends React.Component {
 	render() {
 
-		const {classes, basePath} = this.props;
+		const {classes, baseUrl} = this.props;
 
 		return <Editor>
 			<div className={classes.root}>

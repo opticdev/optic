@@ -22,6 +22,10 @@ object DataTypesAggregate extends EventSourcedAggregate[DataTypesState, DataType
           Validators.idIsUnused(root, "Root Schema ID")
           persist(Events.ConceptDefined(name, root, conceptId))
         }
+        case SetConceptName(name, conceptId) => {
+          Validators.requireConceptId(conceptId)
+          persist(Events.ConceptNamed(name, conceptId))
+        }
 
         case DefineInlineConcept(root, conceptId) => {
           Validators.idIsUnused(conceptId, "Concept ID")
@@ -132,6 +136,11 @@ object DataTypesAggregate extends EventSourcedAggregate[DataTypesState, DataType
           s.putId(description.parentId, parentObj)
         }
       )
+    }
+
+    case Events.ConceptNamed(name, conceptId) => {
+      val description = state.concepts(conceptId)
+      state.putConceptId(conceptId, description.copy(name = Some(name)))
     }
   }
 

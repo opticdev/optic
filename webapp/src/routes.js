@@ -156,11 +156,11 @@ class NewApiLoader extends React.Component {
 	}
 }
 
-function PathRoot({match, basePath}) {
+function PathRoot({match, baseUrl}) {
     const {pathId} = match.params;
     return (
         <PathContext.Provider value={pathId}>
-            <PathPage pathId={pathId} basePath={basePath}/>
+            <PathPage pathId={pathId} baseUrl={baseUrl}/>
         </PathContext.Provider>
     )
 }
@@ -170,11 +170,11 @@ class APIEditorRoutes extends React.Component {
 
 		const {url, params} = this.props.match;
 
-		const basePath = url;
+		const baseUrl = url;
 
 		return (
 			<div>
-				<EditorStore basePath={basePath}>
+				<EditorStore baseUrl={baseUrl}>
 					<FocusedRequestStore>
 						<Switch>
 							<Route exact path={routerPaths.newRoot(url)}
