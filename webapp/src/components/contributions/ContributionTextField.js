@@ -40,14 +40,14 @@ class ContributionTextField extends React.Component {
 
     render() {
 
-        const {mode, defaultText, classes, variant = 'heading', inputStyle = {}, textStyle = {}, placeholder, onBlur} = this.props;
+        const {mode, defaultText, classes, variant = 'heading', inputStyle = {}, textStyle = {}, placeholder, onClick, onBlur} = this.props;
         const {value} = this.state
 
         const classToApply = classes[variant]
         const inputColor = variant === 'heading' ? 'primary' : 'default'
 
         return (
-            <div style={{marginBottom: 12}}>
+            <div style={{marginBottom: 12}} onClick={onClick}>
                 {(() => {
                     if (mode === EditorModes.DOCUMENTATION) {
                         const valueOrDefault = value || defaultText

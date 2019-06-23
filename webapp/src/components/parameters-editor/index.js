@@ -163,9 +163,10 @@ class ParametersEditor extends React.Component {
                                     <br/>
                                     <div
                                         className={(isExpanded) ? classes.multiline : classes.singleLine}>
-                                        {(mode === EditorModes.DOCUMENTATION) ? row.description : (
+                                        {(mode === EditorModes.DOCUMENTATION || !isExpanded) ? row.description : (
                                             <ContributionWrapper
                                                 style={{marginTop: -20}}
+                                                onClick={(e) => e.stopPropagation()}
                                                 contributionParentId={row.id}
                                                 contributionKey={'description'}
                                                 variant={'multi'}
