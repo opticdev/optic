@@ -13,7 +13,7 @@ object InvokeParser {
   }
 
   def main(args: Array[String]): Unit = {
-    val parserResult = Parser.parseOAS(pathToContents("src/test/resources/mattermost-slim.json"))
+    val parserResult = Parser.parseOAS(pathToContents("src/test/resources/api-guru/flat/github.com.json"))
     println(parserResult.commands.size)
     println(CommandSerialization.toJson(parserResult.commands).noSpaces)
   }

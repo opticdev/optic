@@ -77,15 +77,13 @@ const roadmapHeading = 'On the Roadmap';
 // ];
 
 const Examples = [
-	{logo: 'stripe.svg', link: 'stripe'},
 	{logo: 'github.png', link: 'github'},
-	{logo: 'circleci.png', link: 'circle-ci'},
+	{logo: 'circleci.png', link: 'circleci'},
 	{logo: 'jira.svg', link: 'jira'},
-	// {logo: 'launchdarkly.png', link: ''},
-	{logo: 'azure.png', link: 'azure'},
+	{logo: 'stripe.svg', link: 'stripe'},
+	{logo: 'launchdarkly.png', link: 'launchdarkly'},
 	{logo: 'netlify.svg', link: 'netlify'},
 	{logo: 'gitlab.svg', link: 'gitlab'},
-	// {logo: 'anchore.png', link: ''},
 ]
 
 const tryItOut = 'Try Seamless';

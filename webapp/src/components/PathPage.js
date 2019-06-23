@@ -147,7 +147,7 @@ class PathTrailBase extends React.Component {
             });
         return (
             <Paper elevation={0} className={classes.paper}>
-                <Breadcrumbs>{items}</Breadcrumbs>
+                <Breadcrumbs maxItems={12}>{items}</Breadcrumbs>
             </Paper>
         );
     }
