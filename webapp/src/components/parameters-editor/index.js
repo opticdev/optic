@@ -83,33 +83,33 @@ const styles = theme => ({
 
 export function pathParametersToRows(pathParameters, contributions) {
     return pathParameters.map((pathParameter) => {
+        const shapeDescriptor = getRequestParameterShapeDescriptor(pathParameter.descriptor.ParameterizedPathComponentDescriptor.requestParameterDescriptor)
         return {
             id: pathParameter.pathId,
             name: getName(pathParameter),
             description: contributions.getOrUndefined(pathParameter.pathId, 'description'),
-            inlineConceptId: null,
-            isRemoved: false
+            inlineConceptId: shapeDescriptor.conceptId,
+            isRemoved: shapeDescriptor.isRemoved
         }
     })
 }
 
-export function getRequestParameterShapeDescriptor(parameter) {
-    const base = parameter.requestParameterDescriptor.shapeDescriptor;
-    if (base && base.ShapedRequestParameterShapeDescriptor) {
-        return base.ShapedRequestParameterShapeDescriptor
+export function getRequestParameterShapeDescriptor(descriptor) {
+    if (descriptor && descriptor.ShapedRequestParameterShapeDescriptor) {
+        return descriptor.ShapedRequestParameterShapeDescriptor
     }
     return {}
 }
 
 export function requestParametersToRows(parameters, contributions) {
     return parameters.map((parameter) => {
-        const descriptor = getRequestParameterShapeDescriptor(parameter)
+        const shapeDescriptor = getRequestParameterShapeDescriptor(parameter.requestParameterDescriptor.shapeDescriptor)
         return {
             id: parameter.parameterId,
             name: parameter.requestParameterDescriptor.name,
             description: contributions.getOrUndefined(parameter.parameterId, 'description'),
-            inlineConceptId: descriptor.conceptId,
-            isRemoved: descriptor.isRemoved
+            inlineConceptId: shapeDescriptor.conceptId,
+            isRemoved: shapeDescriptor.isRemoved
         }
     })
 }
@@ -176,7 +176,8 @@ class ParametersEditor extends React.Component {
 
                         return (
                             <>
-                                <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)} square={true} classes={{root: classes.rootOverride}}>
+                                <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)} square={true}
+                                                classes={{root: classes.rootOverride}}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon/>}
                                         classes={{

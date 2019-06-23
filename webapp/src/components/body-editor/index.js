@@ -106,9 +106,9 @@ class BodyEditor extends React.Component {
     constructor(props) {
         super(props);
 
-        const {contentType} = getNormalizedBodyDescriptor(props.bodyDescriptor)
+        const {httpContentType} = getNormalizedBodyDescriptor(props.bodyDescriptor)
         this.state = {
-            contentTypeInfo: ContentTypesHelper.fromString(contentType || 'application/json')
+            contentTypeInfo: ContentTypesHelper.fromString(httpContentType || 'application/json')
         };
 
     }
@@ -133,7 +133,9 @@ class BodyEditor extends React.Component {
 
     changeContentType = (event) => {
         const newContentType = event.target.value;
-        this.setState({contentTypeInfo: ContentTypesHelper.fromString(newContentType)});
+        const contentTypeInfo = ContentTypesHelper.fromString(newContentType)
+        this.setState({contentTypeInfo});
+        this.props.onContentTypeChanged({contentType: contentTypeInfo.value})
     };
 
     renderForViewing({conceptId, contentType}) {
