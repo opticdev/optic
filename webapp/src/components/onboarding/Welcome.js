@@ -69,15 +69,14 @@ const valueProps = [
 
 const roadmapHeading = 'On the Roadmap';
 
-const RoadMapItems = [
-	{title: 'API Linting ', githubIssue: '', id: 0, upvotes: 212},
-	{title: 'Suggest / Review / Approve Changes Workflow', githubIssue: '', id: 0, upvotes: 112},
-	{title: 'Integrated Code Generators', githubIssue: '', id: 0, upvotes: 94},
-	{title: 'Contract Testing Tools', githubIssue: '', id: 0, upvotes: 45},
-];
+// const RoadMapItems = [
+// 	{title: 'API Linting ', githubIssue: '', id: 0, upvotes: 212},
+// 	{title: 'Suggest / Review / Approve Changes Workflow', githubIssue: '', id: 0, upvotes: 112},
+// 	{title: 'Integrated Code Generators', githubIssue: '', id: 0, upvotes: 94},
+// 	{title: 'Contract Testing Tools', githubIssue: '', id: 0, upvotes: 45},
+// ];
 
 const Examples = [
-	{logo: 'aws.png', link: 'aws'},
 	{logo: 'stripe.svg', link: 'stripe'},
 	{logo: 'github.png', link: 'github'},
 	{logo: 'circleci.png', link: 'circle-ci'},
@@ -86,7 +85,6 @@ const Examples = [
 	{logo: 'azure.png', link: 'azure'},
 	{logo: 'netlify.svg', link: 'netlify'},
 	{logo: 'gitlab.svg', link: 'gitlab'},
-	{logo: 'kubernetes.png', link: 'kubernetes'},
 	// {logo: 'anchore.png', link: ''},
 ]
 

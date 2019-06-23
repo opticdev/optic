@@ -17,10 +17,8 @@ object GenerateExampleCommands extends AskTrait[ParseAttempt, Unit] {
     "github" -> "github.com.json",
     "gitlab" -> "gitlab.com.json",
     "circleci" -> "circleci.com.json",
-//    "jira" -> "jira.local.json",
     "azure" -> "azure.local.json",
     "netlify" -> "netlify.com.json",
-    "kubernetes" -> "kubernetes.io.json",
   )
 
   override def filter: AskFilter = All((a, b) => {

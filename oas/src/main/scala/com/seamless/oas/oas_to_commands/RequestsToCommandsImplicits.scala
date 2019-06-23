@@ -59,9 +59,6 @@ object RequestsToCommandsImplicits {
 
       stream appendInit commands
 
-      println(commands.filter(_.isInstanceOf[AddContribution]))
-
-
       APIPathsContext(
         stream.toImmutable,
         (uri: String) => {
