@@ -90,7 +90,7 @@ const Examples = [
 	// {logo: 'anchore.png', link: ''},
 ]
 
-const tryItOut = 'Try Optic';
+const tryItOut = 'Try Seamless';
 
 class Welcome extends React.Component {
 	render() {
@@ -101,13 +101,13 @@ class Welcome extends React.Component {
 
 			<Paper elevation={2} className={classes.welcomeCenter}>
 				<Typography variant="h1" color="primary"
-							style={{fontWeight: 900, textAlign: 'center', marginTop: 12}}>LOGO</Typography>
+							style={{fontWeight: 500, textAlign: 'center', marginTop: 12}}>{'{seamless}'}</Typography>
 				<Typography variant="overline" color="primary"
 							style={{textAlign: 'center', fontSize: 30, marginTop: 25}}>{tagline}</Typography>
 
 				<Grid container>
 					<Grid item xs={6}>
-						<div style={{width: 340, height: 250, backgroundColor: primary, margin: '0 auto'}}/>
+						<img style={{width: 400,  margin: '0 auto'}} src="/app-screenshot.png"/>
 					</Grid>
 
 					<Grid item xs={6}>
@@ -148,7 +148,7 @@ class Welcome extends React.Component {
 
 					<Grid item xs={12} style={{textAlign: 'center', paddingTop: 30}}>
 
-						<Typography variant="overline" color="primary" style={{fontSize: 15, }}>OR Explore one of these API in Optic</Typography>
+						<Typography variant="overline" color="primary" style={{fontSize: 15, }}>OR try it with one of these Popular APIs</Typography>
 
 						<div>
 							{Examples.map(i => (

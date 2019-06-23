@@ -45,7 +45,7 @@ class RequestContextMenu extends React.Component {
         const {handleCommands, requestId} = this.props;
         const parameterId = RequestsHelper.newId()
         const {conceptId, commands} = this.getCommandsToCreateString(parameterId)
-        const name = '???'
+        const name = ''
         const addQueryParameter = RequestsCommands.AddQueryParameter(parameterId, requestId, name)
         const parameterDescriptor = RequestsCommands.ShapedRequestParameterShapeDescriptor(conceptId, false)
         const setQueryParameterShape = RequestsCommands.SetQueryParameterShape(parameterId, parameterDescriptor)
@@ -56,7 +56,7 @@ class RequestContextMenu extends React.Component {
         const {handleCommands, requestId} = this.props;
         const parameterId = RequestsHelper.newId()
         const {conceptId, commands} = this.getCommandsToCreateString(parameterId)
-        const name = '???'
+        const name = ''
         const addHeaderParameter = RequestsCommands.AddHeaderParameter(parameterId, requestId, name)
         const parameterDescriptor = RequestsCommands.ShapedRequestParameterShapeDescriptor(conceptId, false)
         const setHeaderParameterShape = RequestsCommands.SetHeaderParameterShape(parameterId, parameterDescriptor)

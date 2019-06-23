@@ -21,6 +21,7 @@ import ParameterNameInput from './ParameterNameInput';
 import ContributionTextField from '../contributions/ContributionTextField';
 import ContributionWrapper from '../contributions/ContributionWrapper';
 import {EditorModes} from '../../contexts/EditorContext';
+import Divider from '@material-ui/core/Divider';
 
 
 const styles = theme => ({
@@ -80,7 +81,10 @@ const styles = theme => ({
     rootOverride: {
         '&:before': {
             backgroundColor: 'transparent !important'
-        }
+        },
+        // '&:hover': {
+        //     borderLeft: '1px solid red'
+        // }
     }
 });
 
@@ -190,8 +194,10 @@ class ParametersEditor extends React.Component {
 
                         return (
                             <>
-                                <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)} square={true}
-                                                classes={{root: classes.rootOverride}}>
+                                <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)}
+                                                square={true}
+                                                classes={{root: classes.rootOverride}}
+                                                elevation={0}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon/>}
                                         classes={{
@@ -229,7 +235,7 @@ class ParametersEditor extends React.Component {
                                             color: primary
                                         }}>Shape</Typography>
                                         {schemaEditor}
-
+                                        <Divider style={{marginTop: 22}} />
                                     </ExpansionPanelDetails>
                                 </ExpansionPanel>
                             </>
