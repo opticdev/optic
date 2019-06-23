@@ -38,14 +38,29 @@ object RequestsToCommandsImplicits {
         }
       })
 
-      val commands = pathInfo.map {
-        case param if param.isPathParameter =>
-          AddPathParameter(param.pathId, param.parentPathId, param.pathParameterName)
+      val pathParamDescriptions = pathVector.flatMap(_.pathParameters).distinct.collect {
+        case p if p.description.isDefined => p.name -> p.description.get
+      }.toMap
+
+
+      val commands = pathInfo.flatMap {
+        case param if param.isPathParameter => {
+          val addCommand = AddPathParameter(param.pathId, param.parentPathId, param.pathParameterName)
+          val paramDesc = pathParamDescriptions.get(param.pathParameterName).map(desc => AddContribution(param.pathId, "description", desc))
+          if (paramDesc.isDefined) {
+            Vector(addCommand, paramDesc.get)
+          } else {
+            Vector(addCommand)
+          }
+        }
         case comp =>
-          AddPathComponent(comp.pathId, comp.parentPathId, comp.name)
+          Vector(AddPathComponent(comp.pathId, comp.parentPathId, comp.name))
       }.toVector
 
       stream appendInit commands
+
+      println(commands.filter(_.isInstanceOf[AddContribution]))
+
 
       APIPathsContext(
         stream.toImmutable,
@@ -107,11 +122,13 @@ object RequestsToCommandsImplicits {
       operation.queryParameters.foreach(i => {
         val queryParameterId = newParameterId()
         stream appendDescribe AddQueryParameter(queryParameterId, operation.id, i.name)
+        i.description.foreach(desc => stream appendDescribe AddContribution(queryParameterId, "description", desc))
       })
 
       operation.headerParameters.foreach(i => {
         val headerParameterId = newParameterId()
         stream appendDescribe AddHeaderParameter(headerParameterId, operation.id, i.name)
+        i.description.foreach(desc => stream appendDescribe AddContribution(headerParameterId, "description", desc))
       })
 
       if (operation.description.isDefined) {

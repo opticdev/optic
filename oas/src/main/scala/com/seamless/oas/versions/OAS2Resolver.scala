@@ -99,14 +99,14 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
   def queryParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[QueryParameter] = {
     parametersForOperation(operation)
       .collect{ case param if param.isQueryParameter => {
-        QueryParameter(param.name, param.required)
+        QueryParameter(param.name, param.required)(buildContext(param.jsObject))
       }}
   }
 
   def headerParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[HeaderParameter] = {
     parametersForOperation(operation)
       .collect{ case param if param.isHeaderParameter => {
-        HeaderParameter(param.name, param.required)
+        HeaderParameter(param.name, param.required)(buildContext(param.jsObject))
       }}
   }
 
@@ -129,7 +129,7 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
       .filter(_.isPathParameter)
       .sortBy(param => path.uri.indexOf(s"{${param.name}"))
 
-    sorted.zipWithIndex.map { case (param, index) => PathParameter(param.name, index)}
+    sorted.zipWithIndex.map { case (param, index) => PathParameter(param.name, index)(buildContext(param.jsObject))}
   }
 
   lazy val definitions: Vector[NamedDefinition] = {

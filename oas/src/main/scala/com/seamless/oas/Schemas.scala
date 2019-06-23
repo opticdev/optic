@@ -4,15 +4,18 @@ import com.seamless.oas.JsonSchemaType.JsonSchemaType
 import play.api.libs.json.JsObject
 
 object Schemas {
+  //traits
   abstract class OASSchema(implicit val cxt: Context)
+  trait Parameter extends OASSchema {def description: Option[String] = cxt.resolver.descriptionFromContext(cxt)}
 
+  //schemas
   case class Path(uri: String, id: String)(implicit cxt: Context) extends OASSchema {
     def operations: Vector[Operation] = cxt.resolver.operationsForPath(this)
     def pathParameters: Vector[PathParameter] = cxt.resolver.parametersForPath(this)
   }
-  case class PathParameter(name: String, index: Int)
-  case class QueryParameter(name: String, required: Boolean)
-  case class HeaderParameter(name: String, required: Boolean)
+  case class PathParameter(name: String, index: Int)(implicit cxt: Context) extends Parameter
+  case class QueryParameter(name: String, required: Boolean)(implicit cxt: Context) extends Parameter
+  case class HeaderParameter(name: String, required: Boolean)(implicit cxt: Context) extends Parameter
   case class Operation(method: String, path: Path)(implicit cxt: Context) extends OASSchema {
     def description: Option[String] = cxt.resolver.descriptionFromContext(cxt)
     def responses: Vector[Response] = cxt.resolver.responsesForOperation(this)

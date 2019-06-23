@@ -159,7 +159,7 @@ class ParametersEditor extends React.Component {
                                     />
                                     <br/>
                                     <div
-                                        className={(isExpanded) ? classes.multiline : classes.singleLine}>{row.description}</div>
+                                        className={(isExpanded) ? classes.multiline : classes.singleLine}>{row.description || 'hello world use me to do the thing you always wanted to do'}</div>
                                 </TableCell>
                             )
 

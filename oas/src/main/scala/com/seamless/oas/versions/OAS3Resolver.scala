@@ -33,7 +33,7 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
       .filter(_.isPathParameter)
       .sortBy(param => path.uri.indexOf(s"{${param.name}"))
 
-    sorted.zipWithIndex.map { case (param, index) => PathParameter(param.name, index)}
+    sorted.zipWithIndex.map { case (param, index) => PathParameter(param.name, index)(buildContext(param.jsObject))}
   }
 
   private def parametersForOperation(operation: Operation)(implicit ctx: Context): Vector[Helpers.OAS3Param] = {
@@ -47,14 +47,14 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
   def queryParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[QueryParameter] = {
     parametersForOperation(operation)
       .collect{ case param if param.isQueryParameter => {
-        QueryParameter(param.name, param.required)
+        QueryParameter(param.name, param.required)(buildContext(param.jsObject))
       }}
   }
 
   def headerParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[HeaderParameter] = {
     parametersForOperation(operation)
       .collect{ case param if param.isHeaderParameter => {
-        HeaderParameter(param.name, param.required)
+        HeaderParameter(param.name, param.required)(buildContext(param.jsObject))
       }}
   }
 

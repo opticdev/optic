@@ -23,16 +23,16 @@ class OAS2ResolverSpec extends ResolverTestFixture("2") {
     assert(mattermostResolver.paths.flatMap(_.operations).methodSet.forall(i => oas.supportedOperations.contains(i)))
   }
 
-  it("resolves all path parameters") {
-    val params = mattermostResolver.paths.map { case i => (i.uri, i.pathParameters) }
-      .toMap
-
-    assert(params("/hooks/incoming").isEmpty)
-    assert(params("/users/{user_id}/teams/{team_id}/channels/members") ==
-      Vector(PathParameter("user_id",0), PathParameter("team_id",1)))
-    assert(params("/channels/{channel_id}/members/{user_id}/schemeRoles")  ==
-      Vector(PathParameter("channel_id",0), PathParameter("user_id",1)))
-  }
+//  it("resolves all path parameters") {
+//    val params = mattermostResolver.paths.map { case i => (i.uri, i.pathParameters) }
+//      .toMap
+//
+//    assert(params("/hooks/incoming").isEmpty)
+//    assert(params("/users/{user_id}/teams/{team_id}/channels/members") ==
+//      Vector(PathParameter("user_id",0), PathParameter("team_id",1)))
+//    assert(params("/channels/{channel_id}/members/{user_id}/schemeRoles")  ==
+//      Vector(PathParameter("channel_id",0), PathParameter("user_id",1)))
+//  }
 
   it("resolves all definitions") {
     val definitions = mattermostResolver.definitions
