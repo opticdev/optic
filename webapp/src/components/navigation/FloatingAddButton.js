@@ -13,10 +13,13 @@ import Button from '@material-ui/core/Button';
 import CodeIcon from '@material-ui/icons/Code';
 import DescriptionIcon from '@material-ui/icons/Description';
 import Zoom from '@material-ui/core/Zoom';
+import {withRouter} from 'react-router-dom';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 import {PathContext} from '../../contexts/PathContext.js';
 import {withFocusedRequestContext} from '../../contexts/FocusedRequestContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
+import {DataTypesHelper, ShapeCommands} from '../../engine';
+import {routerUrls} from '../../routes.js';
 import {RequestUtilities} from '../../utilities/RequestUtilities.js';
 import RequestContextMenu from '../context-menus/RequestContextMenu.js';
 import NewRequestStepper from '../requests/NewRequestStepper.js';
@@ -76,6 +79,14 @@ class FloatingAddButton extends React.Component {
         )
     }
 
+    addConcept = () => {
+        const {handleCommand, basePath, history} = this.props
+        const conceptId = DataTypesHelper.newConceptId()
+        const conceptRootShapeId = DataTypesHelper.newId()
+        handleCommand(ShapeCommands.DefineConcept('???', conceptRootShapeId, conceptId))
+        history.push(routerUrls.conceptPage(basePath, conceptId))
+    }
+
     render() {
         const {classes, mode, cachedQueryResults} = this.props;
         const {pathsById} = cachedQueryResults
@@ -93,15 +104,18 @@ class FloatingAddButton extends React.Component {
                         <List dense subheader={<ListSubheader>API</ListSubheader>}>
 
                             <ListItem>
-                                <Button color="primary" className={classes.button}
-                                        onClick={this.openPathModal}>
+                                <Button
+                                    color="primary" className={classes.button}
+                                    onClick={this.openPathModal}>
                                     <CodeIcon className={classes.leftIcon}/>
                                     Request
                                 </Button>
                             </ListItem>
 
                             <ListItem>
-                                <Button color="primary" className={classes.button}>
+                                <Button
+                                    color="primary" className={classes.button}
+                                    onClick={this.addConcept}>
                                     <DescriptionIcon className={classes.leftIcon}/>
                                     Concept
                                 </Button>
@@ -132,4 +146,4 @@ class FloatingAddButton extends React.Component {
     }
 }
 
-export default withFocusedRequestContext(withRfcContext(withEditorContext(withStyles(styles)(FloatingAddButton))));
+export default withRouter(withFocusedRequestContext(withRfcContext(withEditorContext(withStyles(styles)(FloatingAddButton)))));

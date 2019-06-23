@@ -18,7 +18,6 @@ import SchemaEditor from '../shape-editor/SchemaEditor';
 import {DisplayRootTypeName} from '../shape-editor/TypeName';
 import {getName} from '../utilities/PathUtilities.js';
 import ParameterNameInput from './ParameterNameInput';
-import ContributionTextField from '../contributions/ContributionTextField';
 import ContributionWrapper from '../contributions/ContributionWrapper';
 import {EditorModes} from '../../contexts/EditorContext';
 

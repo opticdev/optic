@@ -18,7 +18,7 @@ class ContributionWrapper extends React.Component {
 
         return (
             <div>
-                <ContributionTextField {...rest} value={value} defaultText={defaultText} onClick={onClick} onBlur={this.handleSubmit}/>
+                <ContributionTextField key={`${contributionParentId}-${contributionKey}`} {...rest} value={value} defaultText={defaultText} onClick={onClick} onBlur={this.handleSubmit}/>
             </div>
         );
     }
