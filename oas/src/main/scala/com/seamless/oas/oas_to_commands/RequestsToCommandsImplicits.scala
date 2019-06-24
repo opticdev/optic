@@ -38,10 +38,6 @@ object RequestsToCommandsImplicits {
         }
       })
 
-      val emptyPathParameters = pathInfo.filter(i => i.isPathParameter && i.pathParameterName.isEmpty).toVector
-      println(emptyPathParameters)
-      require(emptyPathParameters.isEmpty)
-
       val pathParamDescriptions = pathVector.flatMap(_.pathParameters).distinct.collect {
         case p if p.description.isDefined => p.name -> p.description.get
       }.toMap

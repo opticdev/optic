@@ -17,7 +17,10 @@ object Utilities {
 
   case class PathComponentInfo(originalPaths: Vector[String], name: String, pathId: String, parentPathId: String) {
     def isPathParameter: Boolean = name.matches(pathParameterRegex.pattern.toString)
-    def pathParameterName: String = name match { case pathParameterRegex(givenName) => givenName }
+
+    def pathParameterName: String = name match {
+      case pathParameterRegex(givenName) => givenName
+    }
   }
 
   def isRootPath(string: String) = string.trim == "/"
@@ -25,6 +28,17 @@ object Utilities {
   def oasPathsToPathComponentInfoSeq(oasPaths: Vector[String], idGenerator: Iterator[String]): Seq[PathComponentInfo] = {
 
     val pathsSample = oasPaths.filterNot(isRootPath)
+    val normalizedPathToComponentName = pathsSample
+      .flatMap(prefixes).toSet
+      .map((prefix: String) => {
+        val split = prefix.split("/")
+        val normalized = split.tail
+          .map(pathComponent => {
+            if (pathComponent.startsWith("{")) "{}" else pathComponent
+          })
+          .fold("")(_ + "/" + _)
+        (normalized -> split.last)
+      }).toMap
 
     val sanitizedPaths = pathsSample
       .sorted
@@ -41,7 +55,6 @@ object Utilities {
     // mapping from sanitized paths to original paths
 
     val mappedToOriginal: Map[String, Vector[String]] = sanitizedPaths.zip(pathsSample.sorted).groupBy(_._1).mapValues(_.map(_._2))
-    val pathMap: Map[String, String] = sanitizedPaths.zip(pathsSample.sorted).toMap
 
     // put each component in order
     val sortedComponents = sanitizedPaths
@@ -55,11 +68,10 @@ object Utilities {
         val pathComponents = p.split("/").tail
         val parentPath = pathComponents.init.fold("")(_ + "/" + _)
         val parentId = idMap.getOrElse(parentPath, rootPathId)
-        val originalPath = pathMap.getOrElse(p, p)
-        val originalPathComponents = originalPath.split("/")
-        val id = idMap.getOrElse(p, "BAD")
+        val id = idMap(p)
+        val name = normalizedPathToComponentName(p)
 
-        PathComponentInfo(mappedToOriginal.getOrElse(p, Vector.empty), originalPathComponents.last, id, parentId)
+        PathComponentInfo(mappedToOriginal.getOrElse(p, Vector.empty), name, id, parentId)
       })
   }
 }

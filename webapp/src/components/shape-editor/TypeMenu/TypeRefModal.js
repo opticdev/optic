@@ -33,6 +33,7 @@ const styles = theme => ({
     right: {
         flex: 1,
         paddingLeft: 30,
+        paddingRight: 30,
         overflow: 'scroll'
     },
     title: {
@@ -70,10 +71,10 @@ class TypeRefModal extends React.Component {
     }
 
     render() {
-        const {classes, targetId} = this.props
+        const {classes, targetId, queries} = this.props
 
         return <SchemaEditorContext.Consumer>
-            {({currentShape, allowedReferences, conceptId, operations}) => {
+            {({allowedReferences, conceptId, operations}) => {
 
                 const selected = allowedReferences.find(i => i.id === this.state.selected)
 
@@ -116,15 +117,13 @@ class TypeRefModal extends React.Component {
                         <div className={classes.right}>
                             {this.state.selected ? (() => {
                                 const conceptId = this.state.selected
-                                // const currentShape = queries.conceptsById(conceptId);
-                                // return <SchemaEditor
-                                // 	conceptId={conceptId}
-                                // 	currentShape={currentShape}
-                                // 	mode={EditorModes.DOCUMENTATION}
-                                // 	handleCommand={handleCommand}
-                                // />
-
-                                return <ConceptsPage conceptId={conceptId} modeOverride={EditorModes.DOCUMENTATION}/>
+                                const {allowedReferences, concept}  = queries.conceptById(conceptId);
+                                return <SchemaEditor
+                                	conceptId={conceptId}
+                                	currentShape={concept}
+                                    allowedReferences={allowedReferences}
+                                	mode={EditorModes.DOCUMENTATION}
+                                />
                             })() : null}
                         </div>
                     </div>

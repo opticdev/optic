@@ -14,7 +14,7 @@ const styles = theme => ({
 });
 
 //Copy
-const leadin = <>We built Optic to make it easier to design and document all of your team's internal APIs.
+const leadin = <>We built Seamless to make it easier to design and document all of your team's internal APIs.
 	<p>In <b>Documentation</b> mode the API specification is read-only and the layout of each reference page is
 		optimized for API consumers.</p>
 	<p>When you switch into <b>Design</b> mode, editors are revealed throughout the interface that let you update the
@@ -28,7 +28,7 @@ const navCopy = <>You can navigate the API by clicking on the down-arrow in the 
 const conceptsCopy = 'APIs expose the important concepts from your domain to consumers. If you imported your OpenAPI/Swagger specification, we mapped each schema to a concept. You can edit a concept by entering Design mode and using the shape editor. ';
 
 const requestsCopy = <>
-	<p>In Optic, requests are grouped by path so it's easy to determine all the operations a resource supports.</p>
+	<p>In Seamless, requests are grouped by path so it's easy to determine all the operations a resource supports.</p>
 	<p>You can add responses types, request bodies, and parameters using the Add menu in the bottom right of the editor
 		that appears when you are in Design mode. After they're created, each of these components can be edited
 		inline.</p>
@@ -83,8 +83,6 @@ class OverView extends React.Component {
 					left={<Typography variant="body1">{requestsCopy}</Typography>}
 					right={<div><img width={250} src={'/add_menu.gif'}/></div>}
 				/>
-
-				will add more here once I can play with it and know which parts are difficult...
 
 
 				<Typography variant="h4" color="primary" style={{marginBottom: 20, marginTop: 28}}>Need
