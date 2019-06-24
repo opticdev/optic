@@ -36,7 +36,6 @@ all:
 	@echo "building webapp"
 	make domain
 	make oas
-	cd ./oas && sh create-examples.sh
 	make webapp
 
 .PHONY: all
