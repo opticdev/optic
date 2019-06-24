@@ -64,7 +64,7 @@ class UploadOAS extends React.Component {
 	processSpec = async (contents) => {
 		const {history, setProvidedCommands} = this.props
 
-		const response = await fetch('https://hfsop9qif1.execute-api.us-east-2.amazonaws.com/dev/oas/coversion', {
+		const response = await fetch('https://ayiz1s0f8f.execute-api.us-east-2.amazonaws.com/production/oas/coversion', {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',

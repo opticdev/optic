@@ -45,7 +45,7 @@ class ShareDialog extends React.Component {
 							1. Install the CLI using npm
 						</Typography>
 						<Highlight className='bash'>
-							{"npm install @seamless/cli -g"}
+							{"npm install @seamlessapis/cli -g"}
 						</Highlight>
 
 						<Typography variant="button">
