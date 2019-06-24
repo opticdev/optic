@@ -10,7 +10,7 @@ import {prepareEvents} from '../PersistUtils'
 
 export default class Init extends Command {
 
-  static description = 'start an optic API Spec in your repo'
+  static description = 'start a Seamless API Spec in your repo'
 
   static flags = {
     // can pass either --force or -f
