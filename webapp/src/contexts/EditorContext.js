@@ -19,6 +19,7 @@ class EditorStore extends React.Component {
     }
 
     switchEditorMode = (mode) => {
+        window.mixpanel.track("Switched Editor Mode", {mode});
         if (Object.values(EditorModes).includes(mode)) {
             this.setState({mode})
         }

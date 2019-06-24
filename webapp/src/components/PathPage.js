@@ -170,13 +170,12 @@ class PathPage extends React.Component {
 
 
     componentDidMount() {
-        console.log('xxx dm');
         this.ensureRequestFocused();
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        console.log('xxx du');
         if (prevProps.pathId !== this.props.pathId) {
+            window.mixpanel.track("Loaded Concept")
             this.scrollContainer.current.scrollTo(0, 0)
         }
         this.ensureRequestFocused();

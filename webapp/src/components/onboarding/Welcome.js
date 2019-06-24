@@ -89,6 +89,11 @@ const Examples = [
 const tryItOut = 'Try Seamless';
 
 class Welcome extends React.Component {
+
+	componentDidMount() {
+		window.mixpanel.track("Loaded Welcome");
+	}
+
 	render() {
 
 		const {classes} = this.props;
@@ -148,8 +153,10 @@ class Welcome extends React.Component {
 
 						<div>
 							{Examples.map(i => (
-								<Link to={`/examples/${i.link}`}>
-								<img className={classes.exampleImage} src={'/example-logos/'+i.logo} />
+								<Link to={`/examples/${i.link}`} onClick={() => {
+									window.mixpanel.track("Loaded Example", {name: i.link});
+								}}>
+									<img className={classes.exampleImage} src={'/example-logos/'+i.logo} />
 								</Link>))}
 						</div>
 

@@ -32,6 +32,12 @@ class ConceptsPage extends React.Component {
         )
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.conceptId !== this.props.conceptId) {
+            window.mixpanel.track('Loaded Concept')
+        }
+    }
+
     render() {
         const {classes, conceptId, handleCommand, modeOverride, cachedQueryResults, queries} = this.props;
         let mode = modeOverride || this.props.mode;
@@ -44,6 +50,8 @@ class ConceptsPage extends React.Component {
             console.error(e)
             return this.renderMissing()
         }
+
+        window.mixpanel.track("Loaded Concept")
 
         const {allowedReferences, concept} = conceptResult
         const currentShape = concept;

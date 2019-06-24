@@ -44,6 +44,7 @@ class UploadOAS extends React.Component {
 		const file = event.target.files[event.target.files.length - 1]
 		const c = this
 
+		window.mixpanel.track("Uploaded OAS");
 
 		if (file) {
 			let reader = new FileReader();
@@ -74,9 +75,11 @@ class UploadOAS extends React.Component {
 
 		if (response.status === 200) {
 			const commands = await response.text()
+			window.mixpanel.track("OAS Import Success", {status: response.status, bodySize: commands.length*8});
 			setProvidedCommands(commands, () => history.push('/new'))
 		} else {
 			console.error('OAS parse error '+ await response.text())
+			window.mixpanel.track("OAS Import Error", {status: response.status, error: await response.text()});
 			this.setState({fileUploaded: false, error: 'Error parsing OAS file. Please make sure it is valid and try again'})
 		}
 	}

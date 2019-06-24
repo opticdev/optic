@@ -34,7 +34,7 @@ class RfcStoreWithoutContext extends React.Component {
     }
 
     handleCommand = (command) => {
-        console.log({command})
+        // console.log({command})
         this.state.rfcService.handleCommands(this.props.rfcId, command);
         setTimeout(() => {
             this.forceUpdate();
@@ -43,10 +43,12 @@ class RfcStoreWithoutContext extends React.Component {
                 this.persistLocal()
             }
         }, 1)
+
+        window.mixpanel.track('Command', {commandType: commandNameFor(command)})
     };
 
     handleCommands = (...commands) => {
-        console.log({commands})
+        // console.log({commands})
         this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
         setTimeout(() => {
 
@@ -56,6 +58,8 @@ class RfcStoreWithoutContext extends React.Component {
                 this.persistLocal()
             }
         }, 1)
+
+        commands.forEach(command => window.mixpanel.track('Command', {commandType: commandNameFor(command)}))
     };
 
     persistLocal = debounce(async () => {
@@ -150,3 +154,10 @@ export {
     RfcContext,
     withRfcContext
 };
+
+
+function commandNameFor(command) {
+    const name = command.$classData.name
+    const split = name.split('$')
+    return split[1]
+}
