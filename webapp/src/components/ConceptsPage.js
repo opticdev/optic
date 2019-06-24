@@ -12,6 +12,7 @@ import {updateContribution} from '../engine/routines';
 import {Redirect} from 'react-router-dom';
 import {unwrap} from './shape-editor/Helpers';
 import Editor from './navigation/Editor';
+import {track} from '../Analytics';
 
 const styles = theme => ({
     root: {
@@ -34,7 +35,7 @@ class ConceptsPage extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.conceptId !== this.props.conceptId) {
-            window.mixpanel.track('Loaded Concept')
+            track('Loaded Concept')
         }
     }
 
@@ -50,8 +51,6 @@ class ConceptsPage extends React.Component {
             console.error(e)
             return this.renderMissing()
         }
-
-        window.mixpanel.track("Loaded Concept")
 
         const {allowedReferences, concept} = conceptResult
         const currentShape = concept;

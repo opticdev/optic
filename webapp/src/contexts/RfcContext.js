@@ -4,6 +4,7 @@ import {GenericContextFactory} from './GenericContextFactory.js';
 import {withInitialRfcCommandsContext} from './InitialRfcCommandsContext.js';
 import debounce from 'lodash.debounce';
 import {withSnackbar} from 'notistack';
+import {track} from '../Analytics';
 
 const {
     Context: RfcContext,
@@ -44,7 +45,7 @@ class RfcStoreWithoutContext extends React.Component {
             }
         }, 1)
 
-        window.mixpanel.track('Command', {commandType: commandNameFor(command)})
+        track('Command', {commandType: commandNameFor(command)})
     };
 
     handleCommands = (...commands) => {
@@ -59,7 +60,7 @@ class RfcStoreWithoutContext extends React.Component {
             }
         }, 1)
 
-        commands.forEach(command => window.mixpanel.track('Command', {commandType: commandNameFor(command)}))
+        commands.forEach(command => track('Command', {commandType: commandNameFor(command)}))
     };
 
     persistLocal = debounce(async () => {

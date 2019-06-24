@@ -1,5 +1,6 @@
 import {GenericContextFactory} from './GenericContextFactory';
 import * as React from 'react';
+import {track} from '../Analytics';
 
 const {
     Context: EditorContext,
@@ -19,7 +20,7 @@ class EditorStore extends React.Component {
     }
 
     switchEditorMode = (mode) => {
-        window.mixpanel.track("Switched Editor Mode", {mode});
+        track("Switched Editor Mode", {mode});
         if (Object.values(EditorModes).includes(mode)) {
             this.setState({mode})
         }

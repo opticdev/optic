@@ -23,6 +23,7 @@ import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from './ut
 import {RequestUtilities} from '../utilities/RequestUtilities';
 import {EditorModes} from '../contexts/EditorContext';
 import {Waypoint} from 'react-waypoint';
+import {track} from '../Analytics';
 
 const styles = theme => ({
     root: {
@@ -175,7 +176,7 @@ class PathPage extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.pathId !== this.props.pathId) {
-            window.mixpanel.track("Loaded Concept")
+            track("Loaded Concept")
             this.scrollContainer.current.scrollTo(0, 0)
         }
         this.ensureRequestFocused();
