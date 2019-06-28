@@ -2,26 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Document</title>
+  <title>Seamless</title>
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify-themeable@0/dist/css/theme-simple.css">
+  <style>
+    :root {
+      --base-font-family: 'Ubuntu';
+      --theme-color: #31366f;
+      /*--cover-button-background: #31366f;*/
+    }
+
+    @media screen and (min-width: 0px) and (max-width: 800px) {
+      .sidebar-toggle-button { display: block; }
+    }
+
+    @media screen and (min-width: 801px) {
+      .sidebar-toggle-button { display: none; }
+    }
+
+    .markdown-section blockquote {
+      padding: .7em
+    }
+
+    .sidebar-nav li>a[href^="#/"]:not([href*="?id="]):only-child {
+      background-image: none;
+    }
+
+    .cover-main > blockquote {
+      padding-top: 0;
+      margin-top: -20px;
+    }
+
+  </style>
 </head>
-<style>
-  :root {
-    --base-font-family: 'Ubuntu'
-  }
-
-  @media screen and (min-width: 0px) and (max-width: 800px) {
-    .sidebar-toggle-button { display: block; }
-  }
-
-  @media screen and (min-width: 801px) {
-    .sidebar-toggle-button { display: none; }
-  }
-
-</style>
 <body>
   <div id="app"></div>
   <script>
@@ -29,6 +44,8 @@
       name: '',
       repo: '',
       coverpage: true,
+      loadSidebar: true,
+      auto2top: true,
       // docsify-copy-code (defaults)
       copyCode: {
         buttonText : 'Copy',

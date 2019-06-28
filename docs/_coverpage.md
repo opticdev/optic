@@ -1,8 +1,6 @@
 <!-- _coverpage.md -->
 
-<!-- ![logo](_media/icon.svg) -->
-
-# {seamless} <small>0.7.0</small>
+<img src="/images/logo.svg" data-origin="images/logo.svg" alt="logo" style="width: 300px;">
 
 > open source toolkit for API design
 
@@ -11,5 +9,5 @@
 - Compadible with OpenAPI
 - Beautiful Docs built-in
 
-[GitHub](https://github.com/docsifyjs/docsify/)
-[Get Started](#docsify)
+[Try Seamless](https://editor.seamlessapis.com)
+[Read Docs](#what-is-seamless)
