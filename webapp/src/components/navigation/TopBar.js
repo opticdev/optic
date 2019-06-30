@@ -24,7 +24,7 @@ import {renameAPI} from '../../engine/routines';
 import CodeIcon from '@material-ui/icons/Code';
 import DescriptionIcon from '@material-ui/icons/Description';
 import List from '@material-ui/core/List';
-import CreateNewToolbar from './CreateNewToolbar'
+import CreateNew from './CreateNew'
 
 const styles = theme => ({
 	root: {
@@ -186,7 +186,23 @@ class TopBar extends React.Component {
 				{mode === EditorModes.DESIGN ? (
 					<AppBar position="static" style={{backgroundColor: 'white'}} elevation={0}
 							className={classes.appBar}>
-						<CreateNewToolbar />
+						<CreateNew render={({addConcept, addRequest, classes}) => {
+							return <Toolbar variant="dense" style={{paddingLeft: 30}}>
+								<Button
+									color="secondary" className={classes.button}
+									onClick={addRequest}>
+									<CodeIcon className={classes.leftIcon}/>
+									New Request
+								</Button>
+
+								<Button
+									color="secondary" className={classes.button}
+									onClick={addConcept}>
+									<DescriptionIcon className={classes.leftIcon}/>
+									New Concept
+								</Button>
+							</Toolbar>
+						}} />
 					</AppBar>) : null}
 			</div>
 		);

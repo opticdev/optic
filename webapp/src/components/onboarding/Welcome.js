@@ -15,7 +15,6 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import {Link} from 'react-router-dom';
 import {track} from '../../Analytics';
 
-
 const styles = theme => ({
 	root: {
 		backgroundColor: '#fafafa',
@@ -102,8 +101,7 @@ class Welcome extends React.Component {
 		return <div className={classes.root}>
 
 			<Paper elevation={2} className={classes.welcomeCenter}>
-				<Typography variant="h1" color="primary"
-							style={{fontWeight: 500, textAlign: 'center', marginTop: 12}}>{'{seamless}'}</Typography>
+				<div style={{textAlign: 'center'}}><img src="/blue-logo.svg" width={400}/></div>
 				<Typography variant="overline" color="primary"
 							style={{textAlign: 'center', fontSize: 30, marginTop: 25}}>{tagline}</Typography>
 

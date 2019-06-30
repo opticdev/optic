@@ -98,7 +98,9 @@ class Editor extends React.Component {
 			e.stopPropagation();
 			this.toggleSuperMenu(null);
 		}
-		lastShift = now
+		if (isShift) {
+			lastShift = now
+		}
 	}
 
 	@keydown('escape')
