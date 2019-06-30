@@ -4,8 +4,8 @@ import TopBar from './TopBar';
 import Paper from '@material-ui/core/Paper';
 import keydown from 'react-keydown';
 import SuperMenu from './SuperMenu';
-import FloatingAddButton from './FloatingAddButton';
 import ShareDialog from './ShareDialog';
+import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 	pageContainer: {
@@ -16,6 +16,9 @@ const styles = theme => ({
 	},
 	navWrapper: {
 		height: 50
+	},
+	navExpandedWrapper: {
+		height: 100
 	},
 	contentWrapper: {
 		flex: 1,
@@ -77,7 +80,6 @@ const TOC = withStyles(styles)(({classes, children}) => {
 	</div>;
 });
 
-
 class Editor extends React.Component {
 
 	state = {
@@ -117,11 +119,11 @@ class Editor extends React.Component {
 
 	render() {
 
-		const {classes} = this.props;
+		const {classes, mode} = this.props;
 
 		return (
 			<div className={classes.pageContainer}>
-				<div className={classes.navWrapper}>
+				<div className={(mode === EditorModes.DOCUMENTATION) ? classes.navWrapper : classes.navExpandedWrapper}>
 					<TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>
 				</div>
 				<div className={classes.contentWrapper} ref={this.props.scrollContainerRef}>
@@ -132,11 +134,10 @@ class Editor extends React.Component {
 					<Margin/>
 				</div>
 				<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
-				<FloatingAddButton/>
 				<ShareDialog close={this.hideShare} open={this.state.shareOpen}/>
 			</div>
 		);
 	}
 }
 
-export default withStyles(styles)(Editor);
+export default withEditorContext(withStyles(styles)(Editor));

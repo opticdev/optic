@@ -23,6 +23,7 @@ import {routerUrls} from '../../routes.js';
 import {RequestUtilities} from '../../utilities/RequestUtilities.js';
 import RequestContextMenu from '../context-menus/RequestContextMenu.js';
 import NewRequestStepper from '../requests/NewRequestStepper.js';
+import Toolbar from '@material-ui/core/Toolbar';
 
 const styles = theme => ({
     fab: {
@@ -46,7 +47,7 @@ const styles = theme => ({
     },
 });
 
-class FloatingAddButton extends React.Component {
+class CreateNewToolbar extends React.Component {
 
     state = {
         anchorEl: false,
@@ -83,7 +84,7 @@ class FloatingAddButton extends React.Component {
         const {handleCommand, baseUrl, history} = this.props
         const conceptId = DataTypesHelper.newConceptId()
         const conceptRootShapeId = DataTypesHelper.newId()
-        handleCommand(ShapeCommands.DefineConcept('???', conceptRootShapeId, conceptId))
+        handleCommand(ShapeCommands.DefineConcept('Unnamed Concept', conceptRootShapeId, conceptId))
         history.push(routerUrls.conceptPage(baseUrl, conceptId))
     }
 
@@ -93,11 +94,23 @@ class FloatingAddButton extends React.Component {
 
         return (
             <div>
-                <Zoom in={mode === EditorModes.DESIGN}>
-                    <Fab className={classes.fab} color="secondary" onClick={this.handleOpen}>
-                        <AddIcon/>
-                    </Fab>
-                </Zoom>
+                <Toolbar variant="dense" style={{paddingLeft: 30}}>
+
+                    <Button
+                        color="secondary" className={classes.button}
+                        onClick={this.openPathModal}>
+                        <CodeIcon className={classes.leftIcon}/>
+                        New Request
+                    </Button>
+
+                    <Button
+                        color="secondary" className={classes.button}
+                        onClick={this.addConcept}>
+                        <DescriptionIcon className={classes.leftIcon}/>
+                        New Concept
+                    </Button>
+
+                </Toolbar>
 
                 <Menu open={Boolean(this.state.anchorEl)} anchorEl={this.state.anchorEl} onClose={this.handleClose}>
                     <div className={classes.wrapper}>
@@ -146,4 +159,4 @@ class FloatingAddButton extends React.Component {
     }
 }
 
-export default withRouter(withFocusedRequestContext(withRfcContext(withEditorContext(withStyles(styles)(FloatingAddButton)))));
+export default withRouter(withFocusedRequestContext(withRfcContext(withEditorContext(withStyles(styles)(CreateNewToolbar)))));
