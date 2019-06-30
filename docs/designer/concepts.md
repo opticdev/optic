@@ -1,10 +1,10 @@
 # Concepts
-APIs expose the important concepts from your domain to consumers. These concepts are probably things like User, Account, Threads, Orders, etc. If you imported your OpenAPI/Swagger specification, we mapped each schema to a concept. 
+APIs expose the important concepts from your domain to your consumers. These concepts are probably things like User, Account, Threads, Orders, etc. If you import your OpenAPI/Swagger specification, we will map each schema to a concept. 
 
 All concepts are named, and they define the shape of the data representing the concept.   
 
 ## Creating new Concepts
-New concepts can be created by entering design mode, and clicking `+ Add Concept` in the navigation bar. This brings you to a blank concept page where you can add the name and a description for the concept. Once you've named the concept, begin filling in its shape. 
+New concepts can be created by entering design mode, and clicking `+ Add Concept` in the navigation bar. This brings you to a blank concept page where you can add the name and a description for the concept. Once you have named the concept, you can begin filling in its shape. 
 
 ## Editing Shapes
 Seamless includes a powerful shape editor that makes it easy to create and modify the shape of your concepts. It looks like this: 
@@ -22,9 +22,9 @@ The shape editor supports the following primitives, where `T` is a generic type 
 - `Map[String, T]`
 - `Any`
 
-You can also reference any other concept by pressing `Select Concept`. In the editor you'll see the typename as the concept you reference. 
+You can also reference any other concept by pressing `Select Concept`. In the editor you will see the typename as the concept you reference. 
 
-There is also an `OR` union type that allow you to assign a type
+There is also an `OR` union type that will allow you to assign a type
 ...add details here 
 
 ## Objects
