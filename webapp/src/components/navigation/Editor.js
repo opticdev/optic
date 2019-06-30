@@ -2,7 +2,7 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import TopBar from './TopBar';
 import Paper from '@material-ui/core/Paper';
-import keydown from 'react-keydown';
+import keydown, {Keys, ALL_KEYS} from 'react-keydown';
 import SuperMenu from './SuperMenu';
 import ShareDialog from './ShareDialog';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
@@ -80,6 +80,8 @@ const TOC = withStyles(styles)(({classes, children}) => {
 	</div>;
 });
 
+let lastShift = null
+
 class Editor extends React.Component {
 
 	state = {
@@ -87,11 +89,16 @@ class Editor extends React.Component {
 		shareOpen: false
 	};
 
-	@keydown('ctrl+f', 'cmd+f')
+	@keydown( ALL_KEYS )
 	searchShortcut(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		this.toggleSuperMenu(null);
+		const isShift = e.key === 'Shift'
+		const now = new Date().getTime()
+		if (lastShift && now - lastShift < 150) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.toggleSuperMenu(null);
+		}
+		lastShift = now
 	}
 
 	@keydown('escape')
