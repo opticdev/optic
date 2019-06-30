@@ -174,7 +174,7 @@ class TopBar extends React.Component {
 						</ToggleButtonGroup>
 
 						<Button color="primary">
-							Help
+							Docs
 						</Button>
 						{!process.env.REACT_APP_CLI_MODE ? (
 							<Button color="secondary" onClick={this.props.showShare}>

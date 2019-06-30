@@ -27,7 +27,7 @@ class BasicButton extends React.Component {
 
 		return <button
 			onClick={(e) => {
-				if (!disabled) {
+				if (!disabled && onClick) {
 					onClick(e)
 				}
 			}}
