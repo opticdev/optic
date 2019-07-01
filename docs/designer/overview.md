@@ -30,4 +30,4 @@ When you switch into Design mode, editors are revealed throughout the interface 
 - [Importing OpenAPI](designer/oas-import.md)
 - [Saving API Specifications](designer/cli.md)
 - [Concept Editor](designer/concepts.md)
-- Request Editor
+- [Request Editor](designer/requests.md)
