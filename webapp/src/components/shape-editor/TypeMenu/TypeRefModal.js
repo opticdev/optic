@@ -10,7 +10,6 @@ import SchemaEditor from '../SchemaEditor';
 import {ShapeCommands, DataTypesHelper} from '../../../engine'
 import {withRfcContext} from '../../../contexts/RfcContext';
 import {EditorModes} from '../../../contexts/EditorContext';
-import ConceptsPage from '../../ConceptsPage';
 
 const styles = theme => ({
     root: {
@@ -73,63 +72,71 @@ class TypeRefModal extends React.Component {
     render() {
         const {classes, targetId, queries} = this.props
 
-        return <SchemaEditorContext.Consumer>
-            {({allowedReferences, conceptId, operations}) => {
+        return (
+            <SchemaEditorContext.Consumer>
+                {({allowedReferences, conceptId, operations}) => {
 
-                const selected = allowedReferences.find(i => i.id === this.state.selected)
+                    const selected = allowedReferences.find(i => i.id === this.state.selected)
 
-                return <Dialog open={Boolean(targetId)} maxWidth="lg" fullWidth={true}
-                               onClose={operations.hideRefModal}>
-                    <div className={classes.title}>
-                        <div style={{flex: 1}}>Choose Concept</div>
-                        <div style={{textAlign: 'right', display: (selected) ? 'inherit' : 'none'}}>
-                            <Button
-                                disabled={!selected}
-                                color="secondary"
-                                style={{textTransform: 'none'}}
-                                onClick={() => {
-                                    operations.runCommand(ShapeCommands.AssignType(targetId, DataTypesHelper.refTo(selected.id), conceptId))
-                                    operations.hideRefModal()
-                                }}
-                            >Set Type to {selected ? selected.name : ''}</Button>
-                        </div>
-                    </div>
-                    <div className={classes.container}>
-                        <div className={classes.left}>
-                            <List dense={true}>
-                                {allowedReferences.map(ref => {
-                                    return (
-                                        <ListItem
-                                            button
-                                            dense={true}
-                                            key={ref.id}
-                                            className={classes.option}
-                                            selected={ref.id === this.state.selected}
-                                            onClick={this.select(ref.id)}>
-                                            <ListItemText
-                                                primary={ref.name}
-                                                primaryTypographyProps={{style: {fontWeight: 200}}}/>
-                                        </ListItem>
-                                    )
-                                })}
-                            </List>
-                        </div>
-                        <div className={classes.right}>
-                            {this.state.selected ? (() => {
-                                const conceptId = this.state.selected
-                                const {allowedReferences, concept}  = queries.conceptById(conceptId);
-                                return <SchemaEditor
-                                	conceptId={conceptId}
-                                	currentShape={concept}
-                                    allowedReferences={allowedReferences}
-                                	mode={EditorModes.DOCUMENTATION}
-                                />
-                            })() : null}
-                        </div>
-                    </div>
-                </Dialog>
-            }}
-        </SchemaEditorContext.Consumer>
+                    return (
+                        <Dialog
+                            open={Boolean(targetId)} maxWidth="lg" fullWidth={true}
+                            onClose={operations.hideRefModal}
+                        >
+                            <div className={classes.title}>
+                                <div style={{flex: 1}}>Choose Concept</div>
+                                <div style={{textAlign: 'right', display: (selected) ? 'inherit' : 'none'}}>
+                                    <Button
+                                        disabled={!selected}
+                                        color="secondary"
+                                        style={{textTransform: 'none'}}
+                                        onClick={() => {
+                                            operations.runCommand(ShapeCommands.AssignType(targetId, DataTypesHelper.refTo(selected.id), conceptId))
+                                            operations.hideRefModal()
+                                        }}
+                                    >Set Type to {selected ? selected.name : ''}</Button>
+                                </div>
+                            </div>
+                            <div className={classes.container}>
+                                <div className={classes.left}>
+                                    <List dense={true}>
+                                        {allowedReferences.map(ref => {
+                                            return (
+                                                <ListItem
+                                                    button
+                                                    dense={true}
+                                                    key={ref.id}
+                                                    className={classes.option}
+                                                    selected={ref.id === this.state.selected}
+                                                    onClick={this.select(ref.id)}>
+                                                    <ListItemText
+                                                        primary={ref.name}
+                                                        primaryTypographyProps={{style: {fontWeight: 200}}}/>
+                                                </ListItem>
+                                            )
+                                        })}
+                                    </List>
+                                </div>
+                                <div className={classes.right}>
+                                    {this.state.selected ? (() => {
+                                        const conceptId = this.state.selected
+                                        const {allowedReferences, concept} = queries.conceptById(conceptId);
+                                        return (
+                                            <SchemaEditor
+                                                conceptId={conceptId}
+                                                currentShape={concept}
+                                                allowedReferences={allowedReferences}
+                                                mode={EditorModes.DOCUMENTATION}
+                                            />
+                                        )
+                                    })() : null}
+                                </div>
+                            </div>
+                        </Dialog>
+                    )
+                }}
+            </SchemaEditorContext.Consumer>
+        )
     }
 }
 

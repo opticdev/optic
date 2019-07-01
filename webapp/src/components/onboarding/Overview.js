@@ -2,15 +2,10 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import {primary} from '../../theme';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Editor from '../navigation/Editor';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
-import {ShapeCommands} from '../../engine';
-import ContributionTextField from '../contributions/ContributionTextField';
-import {renameAPI} from '../../engine/routines';
 import {withRfcContext} from '../../contexts/RfcContext';
-import Paper from '@material-ui/core/Paper';
 import {addAbsolutePath} from '../utilities/PathUtilities';
 import sortBy from 'lodash.sortby';
 import classNames from 'classnames';
@@ -63,16 +58,14 @@ class OverView extends React.Component {
 	}
 
 	render() {
-		const {classes, baseUrl, handleCommand, mode, apiName, cachedQueryResults, switchEditorMode} = this.props;
+		const {classes, baseUrl, apiName, cachedQueryResults} = this.props;
 
-		const {conceptsById, pathsById, pathIdsWithRequests} = cachedQueryResults;
+		const {pathsById, pathIdsWithRequests} = cachedQueryResults;
 
 		const paths = [...pathIdsWithRequests].map(pathId => addAbsolutePath(pathId, pathsById));
 
 		const sortedPaths = sortBy(paths, ['absolutePath']);
 
-		const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
-		const sortedConcepts = sortBy(concepts, ['name']);
 
 		const isEmpty = paths.length === 0
 
