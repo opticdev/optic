@@ -13,7 +13,7 @@ We are not there yet, and we know we will not get there overnight. It is also cl
 
 ## What's Next?
 
-Seamless just launched by shipping [a new kind of API spec](./seamless-spec.md) and the [Seamless Designer](https://editor.seamlessapis.com). There is a lot of work to be done across the plane of API workflows, but we are starting at the beginning: API design and quality/governance.
+Seamless just launched by shipping [a new kind of API spec](./seamless-spec.md) and the [Seamless Designer](https://design.seamlessapis.com). There is a lot of work to be done across the plane of API workflows, but we are starting at the beginning: API design and quality/governance.
 
 ### On Design
 We think API design today can be greatly improved in these key areas:

@@ -7,7 +7,7 @@ Seamless makes it easy to import your existing OpenAPI/Swagger specifications. T
 - External file/url references are not currently supported. You can use internal references, but everything must live in the same file. You probably have a build script to combine multiple specs -- **upload the artifact**. 
 
 ## Steps to Import
-1. Go to https://editor.seamlessapis.com/upload-oas.
+1. Go to https://design.seamlessapis.com/upload-oas.
 2. Upload your OAS spec file.
 3. Wait a few seconds, and you will be redirected to the API Designer with your API loaded in. 
 

@@ -9,5 +9,5 @@
 - Compatible with OpenAPI
 - Beautiful API Docs built-in
 
-[Try Seamless](https://editor.seamlessapis.com)
+[Try Seamless](https://design.seamlessapis.com)
 [Read Docs](#what-is-seamless)
