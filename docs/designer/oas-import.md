@@ -11,7 +11,7 @@ Seamless makes it easy to import your existing OpenAPI/Swagger specifications. T
 2. Upload your OAS spec file.
 3. Wait a few seconds, and you will be redirected to the API Designer with your API loaded in. 
 
-There are some known limitations to the [importer detailed here](). We used the dataset of OAS specs on API Guru to prioritize the most used features of OAS. If your spec did not import correctly, please [open an issue]() (it should not be hard to fix).
+There are some known limitations to the [importer detailed here](https://github.com/seamlessapis/seamless/blob/master/oas/Limitations.md). We used the dataset of OAS specs on API Guru to prioritize the most used features of OAS. If your spec did not import correctly, please [open an issue]() (it should not be hard to fix).
 
 
 ### Saving the Seamless Spec

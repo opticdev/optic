@@ -5,97 +5,124 @@ import {primary} from '../../theme';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Editor from '../navigation/Editor';
+import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
+import {ShapeCommands} from '../../engine';
+import ContributionTextField from '../contributions/ContributionTextField';
+import {renameAPI} from '../../engine/routines';
+import {withRfcContext} from '../../contexts/RfcContext';
+import Paper from '@material-ui/core/Paper';
+import {addAbsolutePath} from '../utilities/PathUtilities';
+import sortBy from 'lodash.sortby';
+import classNames from 'classnames';
+import BasicButton from '../shape-editor/BasicButton';
+import {routerUrls} from '../../routes';
+import {Link} from 'react-router-dom';
+import CreateNew from '../navigation/CreateNew';
 
 const styles = theme => ({
 	root: {
 		padding: 22,
 		paddingTop: 35
 	},
+	pathButton: {
+		padding: 5,
+		fontSize: 15,
+		fontWeight: 200,
+		'&:hover': {
+			color: primary,
+			fontWeight: 400
+		}
+	},
+	actions: {
+		padding: 15,
+		marginLeft: -35,
+		marginTop: 15,
+		border: '1px solid #e2e2e2',
+		borderRadius: 8
+	},
+	actionButton: {
+		float: 'right',
+		marginTop: -22
+	}
 });
 
-//Copy
-const leadin = <>We built Seamless to make it easier to design and document all of your team's internal APIs.
-	<p>In <b>Documentation</b> mode the API specification is read-only and the layout of each reference page is
-		optimized for API consumers.</p>
-	<p>When you switch into <b>Design</b> mode, editors are revealed throughout the interface that let you update the
-		API specification visually. Soon we'll be adding commenting, and a new mode for suggestions (like Google-Drive)
-		where changes require approval from your team before being finalized.</p>
-</>;
-
-const navCopy = <>You can navigate the API by clicking on the down-arrow in the top-left of the screen next to your
-	API's name. You can also start a search using <b>Ctrl-F or Cmd-F</b>.</>;
-
-const conceptsCopy = 'APIs expose the important concepts from your domain to consumers. If you imported your OpenAPI/Swagger specification, we mapped each schema to a concept. You can edit a concept by entering Design mode and using the shape editor. ';
-
-const requestsCopy = <>
-	<p>In Seamless, requests are grouped by path so it's easy to determine all the operations a resource supports.</p>
-	<p>You can add responses types, request bodies, and parameters using the Add menu in the bottom right of the editor
-		that appears when you are in Design mode. After they're created, each of these components can be edited
-		inline.</p>
-</>;
-
-function ParagraphSplit({left, right, style}) {
-
-	return <Grid container style={style}>
-		<Grid item xs={7}>
-			{left}
-		</Grid>
-
-		<Grid item xs={5} style={{textAlign: 'center'}}>
-			{right}
-		</Grid>
-
-	</Grid>;
-
-}
 
 class OverView extends React.Component {
 
+	componentDidMount() {
+
+		const {switchEditorMode} = this.props
+		const {pathIdsWithRequests} = this.props.cachedQueryResults
+
+		if (pathIdsWithRequests.size === 0) {
+			setTimeout(() => {
+				switchEditorMode(EditorModes.DESIGN)
+			}, 1)
+		}
+
+	}
+
 	render() {
-		const {classes, baseUrl} = this.props;
+		const {classes, baseUrl, handleCommand, mode, apiName, cachedQueryResults, switchEditorMode} = this.props;
+
+		const {conceptsById, pathsById, pathIdsWithRequests} = cachedQueryResults;
+
+		const paths = [...pathIdsWithRequests].map(pathId => addAbsolutePath(pathId, pathsById));
+
+		const sortedPaths = sortBy(paths, ['absolutePath']);
+
+		const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
+		const sortedConcepts = sortBy(concepts, ['name']);
+
+		const isEmpty = paths.length === 0
 
 		return <Editor>
 			<div className={classes.root}>
-				<Typography variant="h3" color="primary" style={{marginBottom: 28}}>Using the API Designer</Typography>
-				<ParagraphSplit
-					left={<Typography variant="body1">{leadin}</Typography>}
-					right={<div style={{marginTop: 65}}>
-						<img width={200} src={'/doc_mode.png'}/>
-						<img width={200} style={{marginTop: 20}} src={'/design_mode.png'}/>
-					</div>}
-				/>
-				<ParagraphSplit
-					left={<Typography variant="body1">
-						{navCopy}
-					</Typography>}
-					right={<img width={180} src={'/show-api.png'}/>}
-				/>
+				<Typography variant="h2" color="primary">{apiName}</Typography>
 
-				<Typography variant="h4" color="primary" style={{marginBottom: 20, marginTop: 28}}>Editing
-					Concepts</Typography>
-				<Typography variant="body1">{conceptsCopy}</Typography>
-				<img width={'90%'} src={'/shape_editor.gif'} style={{marginTop: 11}}/>
-
-
-				<Typography variant="h4" color="primary" style={{marginBottom: 20, marginTop: 28}}>Editing
-					Endpoints</Typography>
-				<ParagraphSplit
-					left={<Typography variant="body1">{requestsCopy}</Typography>}
-					right={<div><img width={250} src={'/add_menu.gif'}/></div>}
-				/>
-
-
-				<Typography variant="h4" color="primary" style={{marginBottom: 20, marginTop: 28}}>Need
-					Help?</Typography>
-				<Typography variant="body1">We spend every week speaking with users and improving these tools. If you're
-					having any issues we're happy to get on a video call and help you out. You can react us at
-					email@email.com or on Intercom.</Typography>
-				<Button href="https://www.google.com" color="secondary" target="_blank">Explore Docs</Button>
-				<Button href="https://github.com" color="secondary" target="_blank">Report Issue on GitHub</Button>
+				{isEmpty ? (
+					<ul style={{marginTop: 50}}>
+						<div className={classes.actions}>
+							<Typography variant="subtitle1" color="primary">Create your first API Request</Typography>
+							<Typography variant="caption">Define your API's paths, methods, and responses</Typography>
+							<CreateNew render={({addRequest}) => (
+								<Button color="secondary" variant="contained" className={classes.actionButton} onClick={addRequest}>New Request</Button>
+							)}/>
+						</div>
+						<div className={classes.actions}>
+							<Typography variant="subtitle1" color="primary">Create your first Concept</Typography>
+							<Typography variant="caption">Define the shape of all the concepts in your API</Typography>
+							<CreateNew render={({addConcept}) => (
+								<Button color="secondary" variant="contained" className={classes.actionButton} onClick={addConcept}>New Concept</Button>
+							)}/>
+						</div>
+						<div className={classes.actions}>
+							<Typography variant="subtitle1" color="primary">Read the Docs</Typography>
+							<Typography variant="caption">Learn about Seamless, our roadmap, and how to use the API designer </Typography>
+							<Button href="https://seamlessapis.com" color="secondary" variant="contained" className={classes.actionButton}>Open Docs</Button>
+						</div>
+					</ul>
+				) : (
+				<>
+					<Typography variant="h5" color="primary" style={{marginTop: 35}}>Paths</Typography>
+					<ul style={{paddingLeft: 5}}>
+						{sortedPaths.map(({absolutePath, pathId}) => {
+							const to = routerUrls.pathPage(baseUrl, pathId);
+							return (
+								<Link to={to}>
+									<li style={{listStyle: 'none'}}><BasicButton
+										className={classNames(classes.pathButton)}
+									>
+										{absolutePath}</BasicButton></li>
+								</Link>);
+						})}
+					</ul>
+				</>
+				)}
 
 			</div>
 		</Editor>;
 	}
 }
 
-export default withStyles(styles)(OverView);
+export default withRfcContext(withEditorContext(withStyles(styles)(OverView)));

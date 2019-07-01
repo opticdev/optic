@@ -2,10 +2,10 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import TopBar from './TopBar';
 import Paper from '@material-ui/core/Paper';
-import keydown from 'react-keydown';
+import keydown, {Keys, ALL_KEYS} from 'react-keydown';
 import SuperMenu from './SuperMenu';
-import FloatingAddButton from './FloatingAddButton';
 import ShareDialog from './ShareDialog';
+import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 
 const styles = theme => ({
 	pageContainer: {
@@ -16,6 +16,9 @@ const styles = theme => ({
 	},
 	navWrapper: {
 		height: 50
+	},
+	navExpandedWrapper: {
+		height: 100
 	},
 	contentWrapper: {
 		flex: 1,
@@ -77,6 +80,7 @@ const TOC = withStyles(styles)(({classes, children}) => {
 	</div>;
 });
 
+let lastShift = null
 
 class Editor extends React.Component {
 
@@ -85,11 +89,18 @@ class Editor extends React.Component {
 		shareOpen: false
 	};
 
-	@keydown('ctrl+f', 'cmd+f')
+	@keydown( ALL_KEYS )
 	searchShortcut(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		this.toggleSuperMenu(null);
+		const isShift = e.key === 'Shift'
+		const now = new Date().getTime()
+		if (lastShift && now - lastShift < 150) {
+			e.preventDefault();
+			e.stopPropagation();
+			this.toggleSuperMenu(null);
+		}
+		if (isShift) {
+			lastShift = now
+		}
 	}
 
 	@keydown('escape')
@@ -117,11 +128,11 @@ class Editor extends React.Component {
 
 	render() {
 
-		const {classes} = this.props;
+		const {classes, mode} = this.props;
 
 		return (
 			<div className={classes.pageContainer}>
-				<div className={classes.navWrapper}>
+				<div className={(mode === EditorModes.DOCUMENTATION) ? classes.navWrapper : classes.navExpandedWrapper}>
 					<TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>
 				</div>
 				<div className={classes.contentWrapper} ref={this.props.scrollContainerRef}>
@@ -132,11 +143,10 @@ class Editor extends React.Component {
 					<Margin/>
 				</div>
 				<SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
-				<FloatingAddButton/>
 				<ShareDialog close={this.hideShare} open={this.state.shareOpen}/>
 			</div>
 		);
 	}
 }
 
-export default withStyles(styles)(Editor);
+export default withEditorContext(withStyles(styles)(Editor));

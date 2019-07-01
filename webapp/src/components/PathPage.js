@@ -24,6 +24,8 @@ import {RequestUtilities} from '../utilities/RequestUtilities';
 import {EditorModes} from '../contexts/EditorContext';
 import {Waypoint} from 'react-waypoint';
 import {track} from '../Analytics';
+import {RequestCommandHelper} from './requests/RequestCommandHelper';
+import RequestPageHeader from './requests/RequestPageHeader';
 
 const styles = theme => ({
     root: {
@@ -279,6 +281,8 @@ class PathPage extends React.Component {
 
                 const isFocused = requestId === focusedRequestId;
 
+                const requestCommandsHelper = new RequestCommandHelper(handleCommand, requestId)
+
                 const responsesForRequest = Object.values(responses)
                     .filter((response) => response.responseDescriptor.requestId === requestId);
 
@@ -313,7 +317,7 @@ class PathPage extends React.Component {
                 return (
                     <Waypoint
                         onEnter={this.setRequestFocus(requestId)}
-                        topOffset={'20%'}
+                        topOffset={'0%'}
                     >
                         <div
                             className={isFocused ? classes.focusedRequest : classes.request}
@@ -331,9 +335,9 @@ class PathPage extends React.Component {
                                 placeholder={`Description`}
                             />
 
-                            {headerParameters.length === 0 ? null : (
+                            {headerParameters.length === 0 && mode === EditorModes.DOCUMENTATION  ? null : (
                                 <div>
-                                    <Typography variant="h6" color="primary">Headers</Typography>
+                                    <RequestPageHeader forType="Header" addAction={requestCommandsHelper.addHeaderParameter} />
                                     <ParametersEditor
                                         parameters={headerParameters}
                                         rowMapper={requestParametersToRows}
@@ -344,9 +348,9 @@ class PathPage extends React.Component {
                                 </div>
                             )}
 
-                            {queryParameters.length === 0 ? null : (
+                            {queryParameters.length === 0 && mode === EditorModes.DOCUMENTATION  ? null : (
                                 <div>
-                                    <Typography variant="h6" color="primary">Query Parameters</Typography>
+                                    <RequestPageHeader forType="Query Parameter" addAction={requestCommandsHelper.addQueryParameter} />
                                     <ParametersEditor
                                         parameters={queryParameters}
                                         rowMapper={requestParametersToRows}
@@ -370,8 +374,9 @@ class PathPage extends React.Component {
                             ) : null}
 
 
-                            <Typography variant="h6" style={{marginTop: 75, marginBottom: 44}}
-                                        color="primary">Responses</Typography>
+                            <div style={{marginTop: 75, marginBottom: 44}}>
+                                <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse} />
+                            </div>
                             <ResponseList responses={responsesForRequest}/>
                         </div>
                     </Waypoint>

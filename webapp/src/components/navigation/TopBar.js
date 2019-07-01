@@ -21,6 +21,10 @@ import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 import {withRfcContext} from '../../contexts/RfcContext';
 import TextField from '@material-ui/core/TextField';
 import {renameAPI} from '../../engine/routines';
+import CodeIcon from '@material-ui/icons/Code';
+import DescriptionIcon from '@material-ui/icons/Description';
+import List from '@material-ui/core/List';
+import CreateNew from './CreateNew'
 
 const styles = theme => ({
 	root: {
@@ -30,8 +34,8 @@ const styles = theme => ({
 		borderBottom: '1px solid #e2e2e2'
 	},
 	menuButton: {
-		left: 8,
-		color: NavTextColor,
+		left: 20,
+		// color: NavTextColor,
 	},
 	title: {
 		display: 'none',
@@ -57,6 +61,10 @@ const styles = theme => ({
 			width: 'auto',
 		},
 	},
+	rightIcon: {
+		marginLeft: theme.spacing(1),
+		color: NavTextColor
+	},
 	searchIcon: {
 		width: theme.spacing(7),
 		color: NavTextColor,
@@ -69,6 +77,7 @@ const styles = theme => ({
 	},
 	inputRoot: {
 		color: NavTextColor,
+		cursor: 'pointer'
 	},
 	inputInput: {
 		padding: theme.spacing(1, 1, 1, 7),
@@ -76,9 +85,6 @@ const styles = theme => ({
 		width: '100%',
 		[theme.breakpoints.up('sm')]: {
 			width: 120,
-			'&:focus': {
-				width: 200,
-			},
 		},
 	},
 	toggleButton: {
@@ -93,29 +99,35 @@ const styles = theme => ({
 	titleInput: {
 		width: 280,
 		color: NavTextColor
-	}
+	},
+	button: {},
+	leftIcon: {
+		width: 15,
+		marginRight: theme.spacing.unit,
+	},
 });
 
-const APITitle = ({mode, apiName, classes, onRenamed}) => {
+const APITitle = ({mode, apiName, classes, onRenamed, style}) => {
 
-	const [stagedName, setStagedName] = useState(apiName)
+	const [stagedName, setStagedName] = useState(apiName);
 
 	return (
 		<>
-		{mode === EditorModes.DOCUMENTATION ? (
-			<Typography className={classes.title} variant="h6" noWrap>
-				{apiName}
-			</Typography>
-		): (
-			<TextField value={stagedName}
-					   onBlur={() => onRenamed(stagedName)}
-					   className={classes.titleInput}
-					   onChange={(e) => setStagedName(e.target.value)}
-			/>
-		)}
+			{mode === EditorModes.DOCUMENTATION ? (
+				<Typography className={classes.title} variant="h6" noWrap style={style}>
+					{apiName}
+				</Typography>
+			) : (
+				<TextField value={stagedName}
+						   style={style}
+						   onBlur={() => onRenamed(stagedName)}
+						   className={classes.titleInput}
+						   onChange={(e) => setStagedName(e.target.value)}
+				/>
+			)}
 		</>
-	)
-}
+	);
+};
 
 class TopBar extends React.Component {
 
@@ -127,27 +139,23 @@ class TopBar extends React.Component {
 			<div className={classes.root}>
 				<AppBar position="static" style={{backgroundColor: 'white'}} elevation={0} className={classes.appBar}>
 					<Toolbar variant="dense">
-
 						<APITitle mode={mode}
 								  apiName={apiName}
 								  classes={classes}
 								  onRenamed={(name) => handleCommand(renameAPI(name))}/>
 
-						<IconButton
-							edge="start"
-							className={classes.menuButton}
-							color="inherit"
-							onClick={this.props.toggleSuperMenu}
-							size="small"
-						>
-							<KeyboardDown/>
-						</IconButton>
+
+						<Button variant="text" color="primary" className={classes.menuButton}
+								onClick={this.props.toggleSuperMenu}>
+							Explore API
+							<KeyboardDown className={classes.rightIcon}/>
+						</Button>
 
 						{(hasUnsavedChanges && process.env.REACT_APP_CLI_MODE) ? (
 							<Typography variant="caption" style={{color: '#8e8e8e', marginLeft: 20}}>
 								Saving...
 							</Typography>
-						): null}
+						) : null}
 
 						<div className={classes.spacer}/>
 
@@ -166,28 +174,36 @@ class TopBar extends React.Component {
 						</ToggleButtonGroup>
 
 						<Button color="primary">
-							Help
+							Docs
 						</Button>
 						{!process.env.REACT_APP_CLI_MODE ? (
 							<Button color="secondary" onClick={this.props.showShare}>
 								Share
 							</Button>
 						) : null}
-						{/*<div className={classes.search}>*/}
-						{/*	<div className={classes.searchIcon}>*/}
-						{/*		<SearchIcon />*/}
-						{/*	</div>*/}
-						{/*	<InputBase*/}
-						{/*		placeholder="Search…"*/}
-						{/*		classes={{*/}
-						{/*			root: classes.inputRoot,*/}
-						{/*			input: classes.inputInput,*/}
-						{/*		}}*/}
-						{/*		inputProps={{ 'aria-label': 'Search' }}*/}
-						{/*	/>*/}
-						{/*</div>*/}
 					</Toolbar>
 				</AppBar>
+				{mode === EditorModes.DESIGN ? (
+					<AppBar position="static" style={{backgroundColor: 'white'}} elevation={0}
+							className={classes.appBar}>
+						<CreateNew render={({addConcept, addRequest, classes}) => {
+							return <Toolbar variant="dense" style={{paddingLeft: 30}}>
+								<Button
+									color="secondary" className={classes.button}
+									onClick={addRequest}>
+									<CodeIcon className={classes.leftIcon}/>
+									New Request
+								</Button>
+
+								<Button
+									color="secondary" className={classes.button}
+									onClick={addConcept}>
+									<DescriptionIcon className={classes.leftIcon}/>
+									New Concept
+								</Button>
+							</Toolbar>
+						}} />
+					</AppBar>) : null}
 			</div>
 		);
 	}
