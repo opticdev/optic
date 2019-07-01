@@ -110,11 +110,12 @@ const APITitle = ({mode, apiName, classes, onRenamed, style}) => {
                     {apiName}
                 </Typography>
             ) : (
-                <TextField value={stagedName}
-                           style={style}
-                           onBlur={() => onRenamed(stagedName)}
-                           className={classes.titleInput}
-                           onChange={(e) => setStagedName(e.target.value)}
+                <TextField
+                    value={stagedName}
+                    style={style}
+                    onBlur={() => onRenamed(stagedName)}
+                    className={classes.titleInput}
+                    onChange={(e) => setStagedName(e.target.value)}
                 />
             )}
         </>
@@ -168,7 +169,7 @@ class TopBar extends React.Component {
                             </ToggleButton>
                         </ToggleButtonGroup>
 
-                        <Button color="primary">
+                        <Button color="primary" href="https://docs.seamlessapis.com">
                             Docs
                         </Button>
                         {!process.env.REACT_APP_CLI_MODE ? (
