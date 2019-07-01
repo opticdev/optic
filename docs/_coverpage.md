@@ -6,8 +6,8 @@
 
 - Simple + Powerful API Designer
 - Runs locally in your repo
-- Compadible with OpenAPI
-- Beautiful Docs built-in
+- Compatible with OpenAPI
+- Beautiful API Docs built-in
 
 [Try Seamless](https://editor.seamlessapis.com)
 [Read Docs](#what-is-seamless)
