@@ -51,7 +51,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
         case SetPathParameterShape(pathId, shapeDescriptor) => {
           Validators.ensurePathComponentIdIsNotRoot(pathId)
           Validators.ensurePathComponentIdExists(pathId)
-          requireConceptId(shapeDescriptor.conceptId)
+          requireConceptId(shapeDescriptor.shapeId)
           persist(Events.PathParameterShapeSet(pathId, shapeDescriptor))
         }
 
@@ -77,7 +77,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         case SetRequestBodyShape(requestId, bodyDescriptor) => {
           Validators.ensureRequestIdExists(requestId)
-          requireConceptId(bodyDescriptor.conceptId)
+          requireConceptId(bodyDescriptor.shapeId)
           persist(Events.RequestBodySet(requestId, bodyDescriptor))
         }
 
@@ -101,7 +101,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         case SetResponseBodyShape(responseId, bodyDescriptor) => {
           Validators.ensureResponseIdExists(responseId)
-          requireConceptId(bodyDescriptor.conceptId)
+          requireConceptId(bodyDescriptor.shapeId)
           persist(Events.ResponseBodySet(responseId, bodyDescriptor))
         }
 
@@ -134,7 +134,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         case SetQueryParameterShape(parameterId, parameterDescriptor) => {
           Validators.ensureParameterIdExists(parameterId)
-          requireConceptId(parameterDescriptor.conceptId)
+          requireConceptId(parameterDescriptor.shapeId)
           persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
         }
 
@@ -168,7 +168,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         case SetHeaderParameterShape(parameterId, parameterDescriptor) => {
           Validators.ensureParameterIdExists(parameterId)
-          requireConceptId(parameterDescriptor.conceptId)
+          requireConceptId(parameterDescriptor.shapeId)
           persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
         }
 
