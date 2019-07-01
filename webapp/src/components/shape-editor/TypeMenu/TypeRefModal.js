@@ -10,6 +10,7 @@ import SchemaEditor from '../SchemaEditor';
 import {ShapeCommands, DataTypesHelper} from '../../../engine'
 import {withRfcContext} from '../../../contexts/RfcContext';
 import {EditorModes} from '../../../contexts/EditorContext';
+import sortBy from 'lodash.sortby'
 
 const styles = theme => ({
     root: {
@@ -77,7 +78,7 @@ class TypeRefModal extends React.Component {
                 {({allowedReferences, conceptId, operations}) => {
 
                     const selected = allowedReferences.find(i => i.id === this.state.selected)
-
+                    const sortedAllowedReferences = sortBy(allowedReferences, 'name')
                     return (
                         <Dialog
                             open={Boolean(targetId)} maxWidth="lg" fullWidth={true}
@@ -100,7 +101,7 @@ class TypeRefModal extends React.Component {
                             <div className={classes.container}>
                                 <div className={classes.left}>
                                     <List dense={true}>
-                                        {allowedReferences.map(ref => {
+                                        {sortedAllowedReferences.map(ref => {
                                             return (
                                                 <ListItem
                                                     button
