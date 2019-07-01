@@ -38,6 +38,7 @@ function HttpRequestMethodInput({selectedValues, choices, onChange}) {
                     {choices.map(({name}) => {
                         return (
                             <FormControlLabel
+                                key={name}
                                 control={<Checkbox checked={state.has(name)} onChange={handleChange(name)} value={name}/>}
                                 label={name}
                             />

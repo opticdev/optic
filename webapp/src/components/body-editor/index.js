@@ -9,7 +9,6 @@ import {withEditorContext} from '../../contexts/EditorContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
 import {ContentTypesHelper, DataTypesHelper, ShapeCommands} from '../../engine';
 import classNames from 'classnames';
-import Paper from '@material-ui/core/Paper';
 import Zoom from '@material-ui/core/Zoom';
 import {RequestUtilities} from '../../utilities/RequestUtilities.js';
 import {getNormalizedBodyDescriptor} from '../PathPage.js';
