@@ -4,6 +4,19 @@ Seamless is a toolchain for building consumable APIs. It is open source and back
 
 We plan to support workflow across the API lifecycle from design and testing, to code generation and governance. You can help set the course of the project by sharing your insights and challenges on [GitHub](https://github.com/seamlessapis/seamless/issues/18). 
 
+<a href="https://designer.seamlessapis.com"><img src="/images/try_designer.svg" /><a/>
+
+
+<span>Try Seamless with an Example API:</span>
+
+<div class="example-image-wrapper">
+<a href="https://designer.seamlessapis.com/examples/github" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/github.png" /><a/>
+<a href="https://designer.seamlessapis.com/examples/netlify" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/netlify.svg" /><a/>
+<a href="https://designer.seamlessapis.com/examples/stripe" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/stripe.svg" /><a/>
+<a href="https://designer.seamlessapis.com/examples/circleci" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/circleci.png" /><a/>
+<a href="https://designer.seamlessapis.com/examples/gitlab" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/gitlab.svg" /><a/>
+</div>
+
 ## Why do I need Seamless, and what can it do today?
 
 In July we launched the the Seamless Designer, a visual tool for designing and documenting RESTful APIs. We set out to build the simplest and most powerful editor for API specifications. The Designer is independently useful, and serves as the front-door to the Seamless ecosystem. 
