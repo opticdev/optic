@@ -40,13 +40,12 @@ const styles = theme => ({
         },
     },
     sheet: {
-        marginTop: 80,
+        marginTop: 40,
         maxWidth: 1000,
         flex: 6.5,
-        minHeight: 1200,
         height: 'fit-content',
-        paddingBottom: 80,
-        marginBottom: 80,
+        paddingBottom: 20,
+        marginBottom: 40,
         width: 850,
         paddingLeft: 15,
         paddingRight: 15,
@@ -54,6 +53,9 @@ const styles = theme => ({
             marginLeft: 22,
             maxWidth: 900
         },
+    },
+    fullSheet: {
+        minHeight: 1200
     },
     toc: {
         marginTop: 120,
@@ -64,11 +66,19 @@ const styles = theme => ({
     }
 });
 
-const Sheet = withStyles(styles)(({classes, style, children}) => {
-    return <Paper className={classes.sheet} style={style} id="center-sheet">
-        {children}
-        {/*<FloatingAddButton />*/}
-    </Paper>;
+export const Sheet = withStyles(styles)(({classes, style, children}) => {
+    return (
+        <Paper className={classes.sheet} style={style} id="center-sheet">
+            {children}
+        </Paper>
+    );
+});
+export const FullSheet = withStyles(styles)(({classes, style, children}) => {
+    return (
+        <Paper className={`${classes.sheet} ${classes.fullSheet}`} style={style} id="center-sheet">
+            {children}
+        </Paper>
+    );
 });
 
 const Margin = withStyles(styles)(({classes, children, className}) => {
@@ -141,7 +151,7 @@ class Editor extends React.Component {
                     <Margin className={classes.leftMargin}>
                         {this.props.leftMargin ? <TOC children={this.props.leftMargin}/> : null}
                     </Margin>
-                    <Sheet>{this.props.children}</Sheet>
+                    {this.props.children}
                     <Margin/>
                 </div>
                 <SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>

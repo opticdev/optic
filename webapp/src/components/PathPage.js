@@ -13,6 +13,7 @@ import {RequestsCommands} from '../engine';
 import {routerUrls} from '../routes.js';
 import BodyEditor from './body-editor';
 import StatusCode from './http/StatusCode.js';
+import {Sheet} from './navigation/Editor.js';
 import ParametersEditor, {pathParametersToRows, requestParametersToRows} from './parameters-editor';
 import ContributionWrapper from './contributions/ContributionWrapper.js';
 import {Link as RouterLink} from 'react-router-dom';
@@ -22,7 +23,6 @@ import Button from '@material-ui/core/Button';
 import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from './utilities/PathUtilities.js';
 import {RequestUtilities} from '../utilities/RequestUtilities';
 import {EditorModes} from '../contexts/EditorContext';
-import {Waypoint} from 'react-waypoint';
 import {track} from '../Analytics';
 import {RequestCommandHelper} from './requests/RequestCommandHelper';
 import RequestPageHeader from './requests/RequestPageHeader';
@@ -178,7 +178,7 @@ class PathPage extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.pathId !== this.props.pathId) {
-            track("Loaded Concept")
+            track('Loaded Path')
             this.scrollContainer.current.scrollTo(0, 0)
         }
         this.ensureRequestFocused();
@@ -315,18 +315,16 @@ class PathPage extends React.Component {
                 };
 
                 return (
-                    <Waypoint
-                        onEnter={this.setRequestFocus(requestId)}
-                        topOffset={'0%'}
-                    >
+                    <Sheet>
                         <div
                             className={isFocused ? classes.focusedRequest : classes.request}
                             key={requestId} id={requestId}
                             onClickCapture={this.setRequestFocus(requestId)}
                             onKeyDownCapture={this.setRequestFocus(requestId)}
                         >
-                            <Typography variant="overline" style={{fontSize: 28, marginBottom: 5}}
-                                        color="primary">{httpMethod}</Typography>
+                            <Typography
+                                variant="overline" style={{fontSize: 28, marginBottom: 5}}
+                                color="primary">{httpMethod}</Typography>
                             <ContributionWrapper
                                 style={{marginTop: -20}}
                                 contributionParentId={requestId}
@@ -335,9 +333,10 @@ class PathPage extends React.Component {
                                 placeholder={`Description`}
                             />
 
-                            {headerParameters.length === 0 && mode === EditorModes.DOCUMENTATION  ? null : (
+                            {headerParameters.length === 0 && mode === EditorModes.DOCUMENTATION ? null : (
                                 <div>
-                                    <RequestPageHeader forType="Header" addAction={requestCommandsHelper.addHeaderParameter} />
+                                    <RequestPageHeader forType="Header"
+                                                       addAction={requestCommandsHelper.addHeaderParameter}/>
                                     <ParametersEditor
                                         parameters={headerParameters}
                                         rowMapper={requestParametersToRows}
@@ -348,9 +347,10 @@ class PathPage extends React.Component {
                                 </div>
                             )}
 
-                            {queryParameters.length === 0 && mode === EditorModes.DOCUMENTATION  ? null : (
+                            {queryParameters.length === 0 && mode === EditorModes.DOCUMENTATION ? null : (
                                 <div>
-                                    <RequestPageHeader forType="Query Parameter" addAction={requestCommandsHelper.addQueryParameter} />
+                                    <RequestPageHeader forType="Query Parameter"
+                                                       addAction={requestCommandsHelper.addQueryParameter}/>
                                     <ParametersEditor
                                         parameters={queryParameters}
                                         rowMapper={requestParametersToRows}
@@ -375,11 +375,11 @@ class PathPage extends React.Component {
 
 
                             <div style={{marginTop: 75, marginBottom: 44}}>
-                                <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse} />
+                                <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse}/>
                             </div>
                             <ResponseList responses={responsesForRequest}/>
                         </div>
-                    </Waypoint>
+                    </Sheet>
                 );
             });
 
@@ -395,29 +395,29 @@ class PathPage extends React.Component {
         return (
             <Editor baseUrl={this.props.baseUrl} leftMargin={MethodsTOC} scrollContainerRef={this.scrollContainer}>
                 <div className={classes.root}>
-                    <ContributionWrapper
-                        contributionParentId={pathId}
-                        contributionKey={'name'}
-                        variant={'heading'}
-                        placeholder="Resource Name"
-                    />
+                    <Sheet>
+                        <ContributionWrapper
+                            contributionParentId={pathId}
+                            contributionKey={'name'}
+                            variant={'heading'}
+                            placeholder="Resource Name"
+                        />
 
-                    <Typography variant="h6" color="primary" style={{marginBottom: 11}}>Path</Typography>
-                    <PathTrail pathTrail={pathTrailWithNames}/>
+                        <Typography variant="overline" color="primary" style={{marginBottom: 11}}>Path</Typography>
+                        <PathTrail pathTrail={pathTrailWithNames}/>
 
-                    {pathParameters.length === 0 ? null : (
-                        <div>
-                            <ParametersEditor
-                                parameters={pathParameters}
-                                rowMapper={pathParametersToRows}
-                                onRename={({id, name}) => {
-                                    handleCommand(RequestsCommands.RenamePathParameter(id, name));
-                                }}
-                            />
-                        </div>
-                    )}
-
-                    <Divider style={{marginTop: 15, marginBottom: 15}}/>
+                        {pathParameters.length === 0 ? null : (
+                            <div>
+                                <ParametersEditor
+                                    parameters={pathParameters}
+                                    rowMapper={pathParametersToRows}
+                                    onRename={({id, name}) => {
+                                        handleCommand(RequestsCommands.RenamePathParameter(id, name));
+                                    }}
+                                />
+                            </div>
+                        )}
+                    </Sheet>
                     {requestItems}
                 </div>
             </Editor>
