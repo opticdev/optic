@@ -7,9 +7,9 @@ We are not there yet, and we know we will not get there overnight. It is also cl
 #### Design Values
 - **Think from first principles**    
 - **Focus on finding the right problems to solve** -- problems are usually solved during the process of defining them 
-- **Quality of feature > depth of features** -- It is called Seamless, it better work 
+- **Quality (features) over quantity** -- It is called Seamless, it better work 
 - **Everyone comes along** -- too often technologists build tools that will only assist developers on greenfield projects, but only a fraction of the world's developer manhours are spent on greenfield work. If you really care about improving the lives of developers your solutions must work with greenfield and brownfield applications.
-- **Put the difficult technology in the core project** users and tools based on Seamless should get to focus on solving their problems instead of solving ours. 
+- **Be in the background** -- The important paths need to just work. Using Seamless should help users and toolmakers get back to solving their own problems.  
 
 
 ## What's Next?

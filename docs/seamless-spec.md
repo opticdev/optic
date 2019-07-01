@@ -17,7 +17,7 @@ Specifications or 'specs' describe the behavior of a piece of software specifica
 API specifications describe the interface of a program that can be accessed over the wire. Contemporary examples include an OpenAPI file, a protobuf definition, or graphQL schemas. They should ideally be:
 
 - Simple for humans to work with and provide a great developer experience.
-- Faithfully representative of the behavior of the interface they describe.
+- Faithfully encode the interface of the API they describe.
 - Representative of the domain with rich abstractions that are useful for the task at hand (design, code generation, doc gen).
 - Stable. Breaking changes in complex specification are expensive for users and toolmakers to work with.
 - Easy for tooling built on the spec to query the data they need. The interface should be stable for many years and the domain logic should not have to be replicated in tooling itself.
