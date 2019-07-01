@@ -31,8 +31,8 @@ Finding a healthy intersection of these three competing concerns is difficult to
 - **Human** **Readability tradeoff:** APIs are naturally represented as graphs. Don't believe us? Control-f and count how many times "$ref" occurs in your spec. It is difficult for humans to read a graph in linear text form, so API spec standards use trees to better communicate structure and relationships.
     - **Impact on machine readability:** This puts a huge burden on each toolmaker to resolve the $refs and rebuild a graph before anything interesting can be done with your spec.
 - **Human** **Writability tradeoff:** There are shorthands throughout spec standards today that try to make them easier to author. Examples include keywords that define authentication patterns and the use of $refs to aid in DRY (don't repeat yourself).
-    - **Impact on machine readability:** When the specification is not explicit and contains shorthands like 'bearer' for auth. or other semantics that are defined by the spec standards themselves, tools need to stay and current and re-implement the domain logic one their own.
-    - **Impact on human readability:** API specs today are hard to read because the very features that make them more writable. Seeing that a response is $ref: OrderType means I have to find OrderType, the three other types referenced there, and then build the flattened schema in my head.
+    - **Impact on machine readability:** When the specification is not explicit and contains shorthands like 'oath' for auth or other semantics that are defined by the spec standards themselves, tools need to stay and current and re-implement the domain logic on their own.
+    - **Impact on human readability:** API specs today are hard to read because of the very features that make them more writable. Seeing that a response is $ref: OrderType means I have to find OrderType, the three other types referenced there, and then build the flattened schema in my head.
 - **Machine Readability tradeoff:** To make an API specification readable by machines, they must use a strict syntax (JSON or YAML) and conform to a tightly specified schema.
     - **Impact on human readability:** JSON is not easy to read, especially when it is 10k + lines.
     - **Impact on human writability:** Nobody is born writing YAML or with perfect intuition about an API spec standard. Even experts spend a lot of time fighting the tooling.
@@ -51,7 +51,7 @@ We need models optimized for:
 
 But how can we get all 3 of those at once? 
 
-Enter CQRS (command-query-responsibility-segregation). Microsoft's docs explain that CQRS "separates reads and writes into separate models, using commands to update data, and queries to read data." 
+Enter CQRS (command-query-responsibility-segregation). [Microsoft's docs explain that CQRS](https://docs.microsoft.com/en-us/azure/architecture/patterns/cqrs) "separates reads and writes into separate models, using commands to update data, and queries to read data." 
 
 Once we sketched out an API spec built around the principles of CQRS and Event Sourcing, things quickly fell into place. Separating concerns allowed us to optimize each use case without introducing tradeoffs. 
 
@@ -59,7 +59,7 @@ New designs and rethinking old norms change the shape of a problem space in a wa
 
 ## Making it concrete
 
-At the center of our implementation is the open source [Seamless domain engine]. It can run on the JVM or in Node making it portable just about everywhere. At a high level, the domain engine interprets commands and handles queries. You can think of this as sort of a living specification. Instead of being a flat file, it is an actual program that answers your queries and modifies the internal API specification in response to your commands. This internal API specification is an event stream of every change you have made to your API since you started using Seamless. These events are played back every time you start the domain engine to build the current specification for your API. Each of these events are immutable facts about the API like RequestAdded, RequestBodyContentTypeSet, etc. We do not have to argue over syntax, semantics, or structure or even concern ourselves with humans reading or writing these directly. Events are pure descriptions of the API domain. 
+At the center of our implementation is the open source [Seamless domain engine](https://github.com/seamlessapis/seamless). It can run on the JVM or in Node making it portable just about everywhere. At a high level, the domain engine interprets commands and handles queries. You can think of this as sort of a living specification. Instead of being a flat file, it is an actual program that answers your queries and modifies the internal API specification in response to your commands. This internal API specification is an event stream of every change you have made to your API since you started using Seamless. These events are played back every time you start the domain engine to build the current specification for your API. Each of these events are immutable facts about the API like RequestAdded, RequestBodyContentTypeSet, etc. We do not have to argue over syntax, semantics, or structure or even concern ourselves with humans reading or writing these directly. Events are pure descriptions of the API domain. 
 
 Commands for the API spec domain might be things like AddQueryParameter, CreatePath, ChangeMethod, UseSchema, AddResponse, etc. It would not be very human-friendly to make a programmer write all the commands in sequence, so we have also shipped an open source API Design tool similar to Stoplight or RedHat's Apicurio. The Seamless API designer sends commands to the domain engine in response to actions taken in the UI. Visual OpenAPI designers are exploding right now. It seems inevitable that most teams will adopt one, especially as the OpenAPI format becomes more complex.
 
@@ -72,7 +72,7 @@ Commands for the API spec domain might be things like AddQueryParameter, CreateP
 In CQRS, queries return projections (custom read models that are highly optimized for a specific use case). Some example projections might be:
 
 - A list of endpoints 
-    — That is all you get. There nothing you do not need.
+    — That is all you get. There is nothing you do not need.
 - A list of schemas / types
     - Represented as a list of rules (great for building a test suite).
     - with all their references flattened.
@@ -93,23 +93,23 @@ Because these queries are based on the event stream used for persistence, they a
 
 ## Benefits
 
-We just unpacked a lot about the architecture, now let us discuss the practical, bread-on-the-table value of representing our APIs in this way. 
+We just unpacked a lot about the architecture, now let us discuss the practical value of representing our APIs in this way. 
 
 ### Developer Experience
 
 Seamless both enables and requires better API design tools because nobody is running the commands manually. The market is already moving towards structured API editors, and the battle is on to improve developer experience. Once you strip away the complexity of parsing and mutating a traditional API spec, your team can focus on building a great UX (see our editor and its source as an example).
 
-Seamless also makes it possible to imagine an explosion of specialized tooling built around the API design experience. Because of the way projections and commands work, a bunch of really awesome Schema Editors could be built that only concern themselves with the relevant schema events/commands. Tooling for generating tests could built around their own set of specialized events/commands. It is fine if tools only implement queries and commands relevant to their domain.
+Seamless also makes it possible to imagine an explosion of specialized tooling built around the API design experience. Because of the way projections and commands work, a bunch of really awesome Schema Editors could be built that only concern themselves with relevant events/commands. Tooling for generating tests could built around their own set of specialized events/commands. With this architecture, it is fine if tools only concern themselves queries and commands relevant to their domain.
 
 ### Richer Abstractions
 
-With concerns separated properly, it is easier to implement richer abstractions to represent APIs. Many API architects want to define reusable standards for things like pagination, but this is not easily supported by JSON Schema. In Seamless, it is easy for us to support generics. Now our schemas can take other schemas as type parameters InfiniteScrollPagination[UserType] or PageBasedPagination[UserType]. Generics make API standards sharable between a team's APIs and will one day support sharing popular standards and components on GitHub.
+With concerns separated properly, it is easier to implement richer abstractions to represent APIs. Many API architects want to define reusable standards for things like pagination, but this is not easily supported by JSON Schema. In Seamless, it is easy for us to support generics. Now our schemas can take other schemas as type parameters like `InfiniteScrollPagination[UserType]` or `PageBasedPagination[UserType]`. Generics make API standards sharable between a team's APIs.
 
 A major unsolved challenge in OpenAPI-land is diffing a spec. Proper diffs would help prevent breaking changes, generate semantic change-logs, and provide safety for teams that use code-first workflows. One of the main challenges here, besides the complex data structure, is that changes to a flat JSON/YAML file lose their intent. How can you know a query parameter was renamed 'foo' → 'bar'? A normal diff of the JSON would show 'foo' being deleted and 'bar' being added. 
 
 In Seamless, every change is an event that captures intent, so you can easily build a semantic diff as a projection. In fact, there is an open feature request that displays changes to the API spec whenever you pull the repo. 
 
-Finally, in the real world, teams are using a combination of REST, graphQL, Websockets, and RPCs, often times within the same APIs. A traditional spec combining all these paradigms would collapse under the weight of its own complexity, but it is possible for Seamless to support multiple paradigms and share schemas between them. We suspect this kind of interoperability will become more important in the next few years, especially in enterprise settings. 
+Finally, in the real world, teams are using a combination of REST, graphQL, Websockets, and RPCs, often times within the same APIs. A traditional spec combining all these paradigms would collapse under the weight of its own complexity, but it is possible for Seamless to support multiple paradigms and common components between them. We suspect this kind of interoperability will become more important in the next few years, especially in enterprise settings. 
 
 ### Governance
 
