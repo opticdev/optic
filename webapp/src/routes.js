@@ -118,10 +118,10 @@ class LocalLoader extends React.Component {
 			return (
 				<Dialog open={true}>
 					<DialogTitle>Error Loading Saved Spec</DialogTitle>
-					<DialogContent>Please reload and if that does not work, open an issue.</DialogContent>
+					<DialogContent>Please reload and, if that does not work, open an issue.</DialogContent>
 					<DialogActions>
 						<Button onClick={() => window.location.reload()}>Reload</Button>
-						<Button onClick={() => window.location.reload()} color="secondary">Open an issue</Button>
+						<Button href="https://github.com/seamlessapis/seamless/issues/new/choose" color="secondary">Open an issue</Button>
 					</DialogActions>
 				</Dialog>
 			);
@@ -168,7 +168,7 @@ function PathRoot({match, baseUrl}) {
 class APIEditorRoutes extends React.Component {
 	render() {
 
-		const {url, params} = this.props.match;
+		const {url} = this.props.match;
 
 		const baseUrl = url;
 
@@ -197,7 +197,6 @@ class APIEditorRoutes extends React.Component {
 
 class AppRoutes extends React.Component {
 	render() {
-
 		//in local mode
 		if (process.env.REACT_APP_CLI_MODE) {
 			return (
