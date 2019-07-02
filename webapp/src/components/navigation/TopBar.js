@@ -169,7 +169,7 @@ class TopBar extends React.Component {
                             </ToggleButton>
                         </ToggleButtonGroup>
 
-                        <Button color="primary" href="https://docs.seamlessapis.com">
+                        <Button color="primary" href="https://seamlessapis.com">
                             Docs
                         </Button>
                         {!process.env.REACT_APP_CLI_MODE ? (
