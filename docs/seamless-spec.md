@@ -63,7 +63,9 @@ At the center of our implementation is the open source [Seamless domain engine](
 
 Commands for the API spec domain might be things like AddQueryParameter, CreatePath, ChangeMethod, UseSchema, AddResponse, etc. It would not be very human-friendly to make a programmer write all the commands in sequence, so we have also shipped an open source API Design tool similar to Stoplight or RedHat's Apicurio. The Seamless API designer sends commands to the domain engine in response to actions taken in the UI. Visual OpenAPI designers are exploding right now. It seems inevitable that most teams will adopt one, especially as the OpenAPI format becomes more complex.
 
-[ DESIGN TOOL GIF ]
+![](./images/seamless.png)
+
+### [Try Designer](https://design.seamlessapis.com)
 
 > See that API Designer? It is damn polished and is more stable than any MVP tool of this complexity we have used. It took 3 weeks to build the domain engine and API Designer app. You can see just how productive CQRS is when it is backed by a good domain design.
 

@@ -49,7 +49,7 @@ const styles = theme => ({
 const tagline = 'Open Source Toolkit for API Design';
 const valueProps = [
     <><b>The visual API designer</b> improves productivity and helps your team build higher quality APIs</>,
-    <><b>Let Optic deal with OpenAPI</b>, you get to focus on designing great APIs.</>,
+    <><b>Let Seamless deal with OpenAPI</b>, you get to focus on designing great APIs.</>,
     <><b>Documentation mode</b> makes specifications more accessible to team members</>,
     <><b>Import an existing Swagger/OpenAPI</b> specification or start from scratch</>,
     <><b>Open Source</b> and developed by Optic (YCombinator S18)</>

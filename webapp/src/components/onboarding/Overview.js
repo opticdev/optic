@@ -99,10 +99,16 @@ class OverView extends React.Component {
                                     )}/>
                                 </div>
                                 <div className={classes.actions}>
+                                    <Typography variant="subtitle1" color="primary">Upload OpenAPI spec</Typography>
+                                    <Typography variant="caption">Already have an OpenAPI spec? Upload it to Seamless to get started</Typography>
+                                    <Button href="/upload-oas" color="secondary" variant="contained"
+                                            className={classes.actionButton}>Upload OAS</Button>
+                                </div>
+                                <div className={classes.actions}>
                                     <Typography variant="subtitle1" color="primary">Read the Docs</Typography>
                                     <Typography variant="caption">Learn about Seamless, our roadmap, and how to use the
                                         API designer </Typography>
-                                    <Button href="https://docs.seamlessapis.com" color="secondary" variant="contained"
+                                    <Button href="https://seamlessapis.com" color="secondary" variant="contained"
                                             className={classes.actionButton}>Open Docs</Button>
                                 </div>
                             </ul>
