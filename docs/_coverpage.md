@@ -1,6 +1,6 @@
 <!-- _coverpage.md -->
 
-<img src="/images/logo.svg" data-origin="images/logo.svg" alt="logo" style="width: 300px;">
+<img src="/images/blue-logo.svg" data-origin="images/logo.svg" alt="logo" style="width: 300px;">
 
 > open source toolkit for API design
 

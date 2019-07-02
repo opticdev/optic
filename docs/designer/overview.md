@@ -2,16 +2,16 @@
 
 The API Designer is a visual tool for designing and documenting RESTful APIs. We set out to build the simplest and most powerful editor for API specifications — [let us know if we did](https://github.com/seamlessapis/seamless/issues/8).
 
-<a href="https://designer.seamlessapis.com"><img src="/images/try_designer.svg" /><a/>
+<a href="https://design.seamlessapis.com"><img src="/images/try_designer.svg" /><a/>
 
 <span>Try Seamless with an Example API:</span>
 
 <div class="example-image-wrapper">
-<a href="https://designer.seamlessapis.com/examples/github" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/github.png" /><a/>
-<a href="https://designer.seamlessapis.com/examples/netlify" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/netlify.svg" /><a/>
-<a href="https://designer.seamlessapis.com/examples/stripe" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/stripe.svg" /><a/>
-<a href="https://designer.seamlessapis.com/examples/circleci" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/circleci.png" /><a/>
-<a href="https://designer.seamlessapis.com/examples/gitlab" target="_blank" class="example-image" href="https://designer.seamlessapis.com"><img src="/images/gitlab.svg" /><a/>
+<a href="https://design.seamlessapis.com/examples/github" target="_blank" class="example-image"><img src="/images/github.png" /><a/>
+<a href="https://design.seamlessapis.com/examples/netlify" target="_blank" class="example-image"><img src="/images/netlify.svg" /><a/>
+<a href="https://design.seamlessapis.com/examples/stripe" target="_blank" class="example-image"><img src="/images/stripe.svg" /><a/>
+<a href="https://design.seamlessapis.com/examples/circleci" target="_blank" class="example-image"><img src="/images/circleci.png" /><a/>
+<a href="https://design.seamlessapis.com/examples/gitlab" target="_blank" class="example-image"><img src="/images/gitlab.svg" /><a/>
 </div>
 
 ## Navigation
