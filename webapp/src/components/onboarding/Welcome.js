@@ -22,8 +22,10 @@ const styles = theme => ({
         margin: '0 auto'
     },
     logoWrapper: {
-        margin: '2em',
-        textAlign: 'center'
+        margin: '0 auto',
+        marginTop: '2em',
+        textAlign: 'center',
+        maxWidth: 500
     },
     paper: {
         margin: '2em',
@@ -84,7 +86,7 @@ class Welcome extends React.Component {
                         <Grid item sm={12} lg={6}>
                             <div className={classes.logoWrapper}>
                                 <img alt="Seamless Logo" src="/blue-logo.svg"/>
-                                <Typography variant="caption" color="primary">{tagline}</Typography>
+                                <Typography variant="h5" color="primary">{tagline}</Typography>
                             </div>
                         </Grid>
                     </Grid>
