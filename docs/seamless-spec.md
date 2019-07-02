@@ -157,6 +157,5 @@ We think a better API spec that enables a whole new ecosystem of tooling is a cr
 
 We look forward to hearing your comments, ideas, and concerns and working on ways to incorporate them into the project.
 
-- GitHub
-- Issues
-- Docs
+- [GitHub](https://github.com/seamlessapis/seamless)
+- [Issues](https://github.com/seamlessapis/seamless/issues)

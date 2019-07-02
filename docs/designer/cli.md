@@ -1,11 +1,11 @@
 # Running Seamless Locally
 
-We believe that it is important for you to control your API specification, so we do not require you to save them in our cloud. We built a lightweight CLI that lets anyone on your team view and edit the spec by running 'api spec.' Like everything else we have built, it is open source and free to use. All the data and computation is checked into your git repo.
+We believe that it is important for you to control your API specification, so we do not require you to save them in our cloud. We built a lightweight CLI that lets anyone on your team view and edit the spec by running 'api spec.' Like everything else we have built, it is open source and free to use. All the data is checked into your git repo and the computation done locally.
 
 
 > If you have the API Designer open in your browser click 'Share' and follow these instructions.
 
-1. Install the CLI from NMP
+1. Install the CLI from NPM
 ```bash
 npm install @seamlessapis/cli -g
 ```

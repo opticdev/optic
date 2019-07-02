@@ -11,9 +11,7 @@
     - [Requests](designer/requests.md)
     - [Saving your spec](designer/cli.md)
 
-
-
 - **Links**
-- [![Medium](https://icongr.am/entypo/medium.svg?color=808080&size=16)Blog](https://github.com/jhildenbiddle/docsify-themeable)
-- [![Github](https://icongram.jgog.in/simple/github.svg?color=808080&size=16)Github](https://github.com/jhildenbiddle/docsify-themeable)
+- [![Medium](https://icongr.am/entypo/medium.svg?color=808080&size=16)Blog](https://medium.com)
+- [![Github](https://icongram.jgog.in/simple/github.svg?color=808080&size=16)Github](https://github.com/seamlessapis)
 - [![Twitter](https://icongram.jgog.in/simple/twitter.svg?colored&size=16)@seamlessapis](http://twitter.com/seamlessapis)

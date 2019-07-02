@@ -10,8 +10,6 @@ DELETE /repos/:owner/:repo
 
 ![](../images/grouping-examlpe.png)
 
-You can check out this example live in [GitHub's Seamless Docs](https://editor.seamlessapis.com/examples/github/paths/EeweRC_path_54#path_nSD4MILoql}_get). 
-
 ## Adding a new Request
 To add a new request, enter Design mode then click `+Add Request` in the navigation bar.  
 
