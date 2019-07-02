@@ -42,7 +42,8 @@ function getStepContent(step, combinedState) {
         selectedHttpMethods,
         setSelectedHttpMethods,
         selectedPathComponents,
-        setSelectedPathComponents
+        setSelectedPathComponents,
+        handleNext
     } = combinedState
 
     switch (step) {
@@ -50,7 +51,7 @@ function getStepContent(step, combinedState) {
             const s = selectedPathComponents ? toAbsolutePath(selectedPathComponents) : initialPathString
             return [(
                 <div>
-                    <PathInput onChange={setSelectedPathComponents} initialPathString={s}/>
+                    <PathInput onChange={setSelectedPathComponents} onSubmit={handleNext} initialPathString={s}/>
                 </div>
             ), selectedPathComponents !== null]
         case 1:
@@ -61,11 +62,11 @@ function getStepContent(step, combinedState) {
                         onChange={setSelectedHttpMethods}
                         selectedValues={selectedHttpMethods}
                         choices={[
-                        {name: 'get'},
-                        {name: 'post'},
-                        {name: 'put'},
-                        {name: 'patch'},
-                        {name: 'delete'},
+                        {name: 'GET'},
+                        {name: 'POST'},
+                        {name: 'PUT'},
+                        {name: 'PATCH'},
+                        {name: 'DELETE'},
                     ]}/>
                 </div>
             ), selectedHttpMethods.length > 0]
@@ -165,13 +166,6 @@ function NewRequestStepper(props) {
 
     const steps = getSteps()
 
-    const combinedState = {
-        initialPathString,
-        selectedHttpMethods,
-        setSelectedHttpMethods,
-        selectedPathComponents,
-        setSelectedPathComponents
-    }
 
     function handleNext() {
         setActiveStep(prevActiveStep => prevActiveStep + 1)
@@ -179,6 +173,15 @@ function NewRequestStepper(props) {
 
     function handleBack() {
         setActiveStep(prevActiveStep => prevActiveStep - 1)
+    }
+
+    const combinedState = {
+        initialPathString,
+        selectedHttpMethods,
+        setSelectedHttpMethods,
+        selectedPathComponents,
+        setSelectedPathComponents,
+        handleNext,
     }
 
     function handleFinish() {

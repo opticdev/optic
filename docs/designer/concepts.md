@@ -1,5 +1,5 @@
 # Concepts
-APIs expose the important concepts from your domain to your consumers. These concepts are probably things like User, Account, Threads, Orders, etc. If you import your OpenAPI/Swagger specification, we will map each schema to a concept. 
+APIs expose the important concepts from your domain to your consumers. These concepts are often things like User, Account, Threads, Orders, etc. If you import your OpenAPI/Swagger specification, we will map each schema to a concept. 
 
 All concepts are named, and they define the shape of the data representing the concept.   
 
@@ -24,7 +24,7 @@ The shape editor supports the following primitives, where `T` is a generic type 
 
 You can also reference any other concept by pressing `Select Concept`. In the editor you will see the typename as the concept you reference. 
 
-There is also an `OR` union type that will allow you to assign a type
+<!-- There is also an `OR` union type that will allow you to assign a type
 ...add details here 
 
 ## Objects
@@ -52,3 +52,4 @@ As in JSON, objects are represented as Maps with keys of `String` to values of `
 
 ## Unions
 
+!--> 

@@ -42,7 +42,7 @@ We knew we would spend at least some of our time writing the glue code that hold
 
 Developers are playing the role of human type systems caught in a never-ending cycle of writing docs, reading them, and writing glue code. We are building Seamless to handle that complexity for your team, so you can get the freedom to focus on your most important work. 
 
-[Read about our Roadmap Here]
+[Read our Roadmap Here](/roadmap.md)
 
 ## About Us
 

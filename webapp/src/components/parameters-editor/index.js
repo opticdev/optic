@@ -143,7 +143,14 @@ class ParametersEditor extends React.Component {
 
         const {classes, mode, title, parameters, cachedQueryResults, queries} = this.props
         const {contributions} = cachedQueryResults
-        const rows = this.props.rowMapper(parameters, contributions)
+        const allRows = this.props.rowMapper(parameters, contributions)
+        const rows = mode === EditorModes.DESIGN ? allRows : allRows.filter((row) => {
+            return !!row.name
+        })
+
+        if (mode === EditorModes.DOCUMENTATION && rows.length === 0) {
+            return null
+        }
 
         return (
             <div className={classes.root}>
@@ -158,7 +165,9 @@ class ParametersEditor extends React.Component {
                         if (row.inlineConceptId) {
                             const {allowedReferences, concept: shape} = queries.conceptById(row.inlineConceptId)
                             typeCell = (
-                                <TableCell align="left" className={classes.cell} style={{width: (isExpanded) ? 642 : 'inherit'}}>
+                                <TableCell
+                                    align="left" className={classes.cell}
+                                    style={{width: (isExpanded) ? 642 : 'inherit'}}>
                                     <DisplayRootTypeName
                                         shape={shape.root}
                                         style={{marginBottom: -17}}
@@ -193,10 +202,11 @@ class ParametersEditor extends React.Component {
 
                         return (
                             <>
-                                <ExpansionPanel onChange={this.updateExpandedParameterIds(row.id)}
-                                                square={true}
-                                                classes={{root: classes.rootOverride}}
-                                                elevation={0}>
+                                <ExpansionPanel
+                                    onChange={this.updateExpandedParameterIds(row.id)}
+                                    square={true}
+                                    classes={{root: classes.rootOverride}}
+                                    elevation={0}>
                                     <ExpansionPanelSummary
                                         expandIcon={<ExpandMoreIcon/>}
                                         classes={{
@@ -234,7 +244,7 @@ class ParametersEditor extends React.Component {
                                             color: primary
                                         }}>Shape</Typography>
                                         {schemaEditor}
-                                        <Divider style={{marginTop: 22}} />
+                                        <Divider style={{marginTop: 22}}/>
                                     </ExpansionPanelDetails>
                                 </ExpansionPanel>
                             </>
