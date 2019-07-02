@@ -26,7 +26,7 @@ const styles = theme => ({
         textAlign: 'center'
     },
     paper: {
-        margin: '2em'
+        margin: '2em',
     },
     tryButton: {
         width: '100%',
@@ -80,76 +80,87 @@ class Welcome extends React.Component {
         return (
             <div className={classes.pageWrapper}>
                 <div className={classes.contentWrapper}>
-                    <div className={classes.logoWrapper}>
-                        <img alt="Seamless Logo" src="/blue-logo.svg"/>
-                        <Typography variant="caption" color="primary">{tagline}</Typography>
-                    </div>
-                    <Paper className={classes.paper}>
-                        <Grid container>
-                            <Grid item sm={6} xs={12}>
-                                <div style={{
-                                    display: 'flex',
-                                    height: '100%',
-                                    padding: '2em',
-                                    justifyContent: 'center',
-                                    alignItems: 'center'
-                                }}>
-                                    <img style={{width: '100%'}} alt="Seamless screenshot"
-                                         src="/app-screenshot.png"/>
-                                </div>
-                            </Grid>
-                            <Grid item sm={6} xs={12}>
-                                <div style={{padding: '.5em'}}>
-                                    <ul>
-                                        {valueProps.map((text, index) => (
-                                            <li key={index} style={{marginBottom: '.5em'}}>
-                                                <Typography variant="body1" color="primary"
-                                                            style={{lineHeight: 1.4}}>{text}</Typography>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </Grid>
+                    <Grid container justify="center">
+                        <Grid item sm={12} lg={6}>
+                            <div className={classes.logoWrapper}>
+                                <img alt="Seamless Logo" src="/blue-logo.svg"/>
+                                <Typography variant="caption" color="primary">{tagline}</Typography>
+                            </div>
                         </Grid>
-                        <Divider/>
-                        <div style={{display: 'flex', justifyContent: 'center', padding: '1em'}}>
-                            <Typography variant="h4" color="primary">{tryItOut}</Typography>
-                        </div>
-                        <Grid container justify="center" style={{padding: '.5em'}}>
-                            <Grid item sm={6} xs={12}>
-                                <div style={{display: 'flex', padding: '.5em'}}>
-                                    <Link to={'/upload-oas'} style={{flex: 1, textDecoration: 'none'}}>
-                                        <Button variant="contained" color="secondary" className={classes.tryButton}>
-                                            <CloudUploadIcon className={classes.leftIcon}/>
-                                            Upload OpenAPI/Swagger Spec
-                                        </Button>
-                                    </Link>
+                    </Grid>
+
+                    <Grid container justify="center">
+                        <Grid item sm={12} lg={6}>
+                            <Paper className={classes.paper}>
+                                <Grid container>
+                                    <Grid item sm={6} xs={12}>
+                                        <div style={{
+                                            display: 'flex',
+                                            height: '100%',
+                                            padding: '2em',
+                                            justifyContent: 'center',
+                                            alignItems: 'center'
+                                        }}>
+                                            <img style={{width: '100%'}} alt="Seamless screenshot"
+                                                 src="/app-screenshot.png"/>
+                                        </div>
+                                    </Grid>
+                                    <Grid item sm={6} xs={12}>
+                                        <div style={{padding: '.5em'}}>
+                                            <ul>
+                                                {valueProps.map((text, index) => (
+                                                    <li key={index} style={{marginBottom: '.5em'}}>
+                                                        <Typography variant="body1" color="primary"
+                                                                    style={{lineHeight: 1.4}}>{text}</Typography>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </Grid>
+                                </Grid>
+                                <Divider/>
+                                <div style={{display: 'flex', justifyContent: 'center', padding: '1em'}}>
+                                    <Typography variant="h4" color="primary">{tryItOut}</Typography>
                                 </div>
-                            </Grid>
-                            <Grid item sm={6} xs={12}>
-                                <div style={{display: 'flex', padding: '.5em'}}>
-                                    <Link to={'/new'} style={{flex: 1, textDecoration: 'none'}}>
-                                        <Button variant="contained" color="secondary" className={classes.tryButton}>
-                                            <Launch className={classes.leftIcon}/>
-                                            Start New API
-                                        </Button>
-                                    </Link>
+                                <Grid container justify="center" style={{padding: '.5em'}}>
+                                    <Grid item sm={6} xs={12}>
+                                        <div style={{display: 'flex', padding: '.5em'}}>
+                                            <Link to={'/upload-oas'} style={{flex: 1, textDecoration: 'none'}}>
+                                                <Button variant="contained" color="secondary"
+                                                        className={classes.tryButton}>
+                                                    <CloudUploadIcon className={classes.leftIcon}/>
+                                                    Upload OpenAPI/Swagger Spec
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </Grid>
+                                    <Grid item sm={6} xs={12}>
+                                        <div style={{display: 'flex', padding: '.5em'}}>
+                                            <Link to={'/new'} style={{flex: 1, textDecoration: 'none'}}>
+                                                <Button variant="contained" color="secondary"
+                                                        className={classes.tryButton}>
+                                                    <Launch className={classes.leftIcon}/>
+                                                    Start New API
+                                                </Button>
+                                            </Link>
+                                        </div>
+                                    </Grid>
+                                </Grid>
+                                <div style={{display: 'flex', justifyContent: 'center', padding: '1em'}}>
+                                    <Typography variant="overline" color="primary">OR try it with one of these Popular
+                                        APIs</Typography>
                                 </div>
-                            </Grid>
+                                <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center'}}>
+                                    {Examples.map(i => (
+                                        <Link to={`/examples/${i.link}`} onClick={() => {
+                                            track('Loaded Example', {name: i.link});
+                                        }}>
+                                            <img className={classes.exampleImage} src={'/example-logos/' + i.logo}/>
+                                        </Link>))}
+                                </div>
+                            </Paper>
                         </Grid>
-                        <div style={{display: 'flex', justifyContent: 'center', padding: '1em'}}>
-                            <Typography variant="overline" color="primary">OR try it with one of these Popular
-                                APIs</Typography>
-                        </div>
-                        <div style={{display: 'flex', flexWrap: 'wrap', justifyContent: 'center'}}>
-                            {Examples.map(i => (
-                                <Link to={`/examples/${i.link}`} onClick={() => {
-                                    track('Loaded Example', {name: i.link});
-                                }}>
-                                    <img className={classes.exampleImage} src={'/example-logos/' + i.logo}/>
-                                </Link>))}
-                        </div>
-                    </Paper>
+                    </Grid>
                 </div>
 
             </div>
