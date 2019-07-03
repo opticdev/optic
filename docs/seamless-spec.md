@@ -143,7 +143,7 @@ We have used OpenAPI for many years and believe it will remain a going-concern f
 
 There is also a projection in progress that outputs valid OpenAPI 3 that should play well with your existing tools. 
 
-Cool aside: The architecture for the importer is inspired by GraphQL and allows us to query the information we need from the spec directly. The resolvers manage the differences between versions 2 and 3. Check out the source here.
+Cool aside: The architecture for the importer is inspired by GraphQL and allows us to query the information we need from the spec directly. The resolvers manage the differences between versions 2 and 3. [Check out the source here](https://github.com/seamlessapis/seamless/blob/master/oas/src/main/scala/com/seamless/oas/Schemas.scala).
 
 # Closing
 
