@@ -123,7 +123,7 @@ If each request can have query parameters, then we need an event for QueryParame
 
 If each query parameter can have a shape, then we need ParameterShapeSet.
 
-Do we need to support generics? That's just 2 new events and 1 query, [see pr].
+Do we need to support generics? That's just 2 new events and 1 query. 
 
 Keeping the domain simple, representative, and pure is the most important task for us, and that is much easier for a group of contributors to manage compared to a traditional spec standard.
 
@@ -139,7 +139,7 @@ There are some clear tradeoffs to this design as well.
 
 ## OpenAPI Support
 
-We have used OpenAPI for many years and believe it will remain a going-concern for a long time. To make it easier to get started with Seamless, we built an OpenAPI importer with support for version 2 and 3. You can [upload your spec here to try out Seamless]. 
+We have used OpenAPI for many years and believe it will remain a going-concern for a long time. To make it easier to get started with Seamless, we built an OpenAPI importer with support for version 2 and 3. You can [upload your spec here to try out Seamless](https://design.seamlessapis.com/upload-oas). 
 
 There is also a projection in progress that outputs valid OpenAPI 3 that should play well with your existing tools. 
 

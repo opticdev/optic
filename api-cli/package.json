@@ -1,7 +1,7 @@
 {
   "name": "@seamlessapis/cli",
   "description": "Make API Design Seamless",
-  "version": "0.1.101",
+  "version": "0.1.102",
   "author": "@seamlessapis",
   "bin": {
     "api": "./bin/run"
