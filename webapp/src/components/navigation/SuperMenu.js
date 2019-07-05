@@ -140,6 +140,7 @@ class SuperMenu extends React.Component {
                                                 to={to}
                                                 onClick={this.handleClose}
                                                 button
+                                                disableRipple={true}
                                             >
                                                 <ListItemText primary={absolutePath} primaryTypographyProps={{
                                                     style: {fontSize: 15, fontWeight: 200}

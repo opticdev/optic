@@ -55,9 +55,9 @@ class ParameterNameInput extends React.Component {
                             paddingBottom: 3,
                             marginTop: 4,
                         },
-                        autocomplete: 'off'
                     }}
                     className={classes.input}
+                    autoComplete={'off'}
                     onClick={(e) => {
                         e.stopPropagation()
                     }}

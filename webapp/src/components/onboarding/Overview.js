@@ -67,7 +67,6 @@ class OverView extends React.Component {
 
         const sortedPaths = sortBy(paths, ['absolutePath']);
 
-
         const isEmpty = paths.length === 0
 
         return (

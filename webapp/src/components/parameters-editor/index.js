@@ -56,12 +56,14 @@ const styles = theme => ({
         whiteSpace: 'nowrap',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
-        width: 500
+        width: 500,
+        fontWeight: 200
     },
     multiLine: {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         width: 642,
+        fontWeight: 200
     },
     nameCell: {
         paddingLeft: 0,

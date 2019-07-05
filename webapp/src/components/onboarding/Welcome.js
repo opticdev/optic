@@ -21,17 +21,19 @@ const styles = theme => ({
     contentWrapper: {
         margin: '0 auto'
     },
+    tagline: {
+        textAlign: 'center'
+    },
     logoWrapper: {
         margin: '0 auto',
         marginTop: '2em',
         textAlign: 'center',
-        maxWidth: 500
+        maxWidth: 400
     },
     paper: {
         margin: '2em',
     },
     tryButton: {
-        width: '100%',
     },
     leftIcon: {
         marginRight: theme.spacing(1),
@@ -49,13 +51,6 @@ const styles = theme => ({
 });
 
 const tagline = 'Open Source Toolkit for API Design';
-const valueProps = [
-    <><b>The visual API designer</b> improves productivity and helps your team build higher quality APIs</>,
-    <><b>Let Seamless deal with OpenAPI</b>, you get to focus on designing great APIs.</>,
-    <><b>Documentation mode</b> makes specifications more accessible to team members</>,
-    <><b>Import an existing Swagger/OpenAPI</b> specification or start from scratch</>,
-    <><b>Open Source</b> and developed by Optic (YCombinator S18)</>
-];
 
 const Examples = [
     {logo: 'github.png', link: 'github'},
@@ -82,50 +77,23 @@ class Welcome extends React.Component {
         return (
             <div className={classes.pageWrapper}>
                 <div className={classes.contentWrapper}>
-                    <Grid container justify="center">
-                        <Grid item sm={12} lg={6}>
-                            <div className={classes.logoWrapper}>
-                                <img alt="Seamless Logo" src="/blue-logo.svg"/>
-                                <Typography variant="h5" color="primary">{tagline}</Typography>
-                            </div>
-                        </Grid>
-                    </Grid>
 
                     <Grid container justify="center">
                         <Grid item sm={12} lg={6}>
                             <Paper className={classes.paper}>
-                                <Grid container>
-                                    <Grid item sm={6} xs={12}>
-                                        <div style={{
-                                            display: 'flex',
-                                            height: '100%',
-                                            padding: '2em',
-                                            justifyContent: 'center',
-                                            alignItems: 'center'
-                                        }}>
-                                            <img style={{width: '100%'}} alt="Seamless screenshot"
-                                                 src="/app-screenshot.png"/>
+                                <Grid container justify="center">
+                                    <Grid item sm={12} lg={12}>
+                                        <div className={classes.logoWrapper}>
+                                            <img alt="Seamless Logo" src="/blue-logo.svg"/>
                                         </div>
-                                    </Grid>
-                                    <Grid item sm={6} xs={12}>
-                                        <div style={{padding: '.5em'}}>
-                                            <ul>
-                                                {valueProps.map((text, index) => (
-                                                    <li key={index} style={{marginBottom: '.5em'}}>
-                                                        <Typography variant="body1" color="primary"
-                                                                    style={{lineHeight: 1.4}}>{text}</Typography>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
+                                        <Typography variant="h5" color="primary" className={classes.tagline}>{tagline}</Typography>
                                     </Grid>
                                 </Grid>
-                                <Divider/>
-                                <div style={{display: 'flex', justifyContent: 'center', padding: '1em'}}>
-                                    <Typography variant="h4" color="primary">{tryItOut}</Typography>
-                                </div>
-                                <Grid container justify="center" style={{padding: '.5em'}}>
-                                    <Grid item sm={6} xs={12}>
+                                <Grid container justify="center" style={{ textAlign: 'center', marginTop: 50 }}>
+                                    <Grid item sm={12} xs={12} style={{marginBottom: 20}}>
+                                        <Typography variant="h4" color="primary">Get Started</Typography>
+                                    </Grid>
+                                    <Grid item sm={12} xs={12}>
                                         <div style={{display: 'flex', padding: '.5em'}}>
                                             <Link to={'/upload-oas'} style={{flex: 1, textDecoration: 'none'}}>
                                                 <Button variant="contained" color="secondary"
@@ -136,7 +104,7 @@ class Welcome extends React.Component {
                                             </Link>
                                         </div>
                                     </Grid>
-                                    <Grid item sm={6} xs={12}>
+                                    <Grid item sm={12} xs={12}>
                                         <div style={{display: 'flex', padding: '.5em'}}>
                                             <Link to={'/new'} style={{flex: 1, textDecoration: 'none'}}>
                                                 <Button variant="contained" color="secondary"

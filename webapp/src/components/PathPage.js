@@ -26,6 +26,8 @@ import {EditorModes} from '../contexts/EditorContext';
 import {track} from '../Analytics';
 import {RequestCommandHelper} from './requests/RequestCommandHelper';
 import RequestPageHeader from './requests/RequestPageHeader';
+import Helmet from 'react-helmet';
+import CreateNew from './navigation/CreateNew';
 
 const styles = theme => ({
     root: {
@@ -139,7 +141,6 @@ const pathTrailStyles = theme => {
 class PathTrailBase extends React.Component {
     render() {
         const {classes, baseUrl, pathTrail} = this.props;
-        console.log({pathTrail});
         const items = pathTrail
             .map((trailItem) => {
                 const {pathComponentId, pathComponentName} = trailItem;
@@ -200,7 +201,14 @@ class PathPage extends React.Component {
 
     renderPlaceholder() {
         return (
-            <div>There aren't any requests at this path. Add one!</div>
+            <div>
+                <CreateNew render={({addRequest, classes}) => {
+                    return <>There are no requests for this path. <Button color="secondary" onClick={() => {
+                        this.props.switchEditorMode(EditorModes.DESIGN)
+                        addRequest()
+                    }}>Add Request</Button></>
+                }}/>
+            </div>
         );
     }
 
@@ -216,7 +224,7 @@ class PathPage extends React.Component {
     };
 
     render() {
-        const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults, mode} = this.props;
+        const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults, mode, apiName, switchEditorMode} = this.props;
 
         const {requests, responses, requestParameters, pathsById, requestIdsByPathId} = cachedQueryResults;
 
@@ -262,8 +270,9 @@ class PathPage extends React.Component {
                     <Link key={requestId} href={`#${requestId}`} style={{textDecoration: 'none'}}>
                         <Button
                             size="small"
+                            disableRipple={true}
                             className={classes.margin}
-                            style={{fontWeight: (focusedRequestId === requestId ? '400' : '200')}}
+                            style={{fontWeight: 200}}
                             onClick={this.setRequestFocus(requestId)}
                         >
                             {httpMethod}
@@ -277,7 +286,7 @@ class PathPage extends React.Component {
                 const {requestId, requestDescriptor} = request;
                 const {httpMethod, bodyDescriptor} = requestDescriptor;
                 const {httpContentType, conceptId, isRemoved} = getNormalizedBodyDescriptor(bodyDescriptor);
-                const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || mode === EditorModes.DESIGN;
+                const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || (mode === EditorModes.DESIGN && RequestUtilities.canAddBody(request))
 
                 const isFocused = requestId === focusedRequestId;
 
@@ -363,7 +372,7 @@ class PathPage extends React.Component {
 
                             {shouldShowRequestBody ? (
                                 <>
-                                    <Typography variant="h6" color="primary" style={{marginTop: 75}}>Request
+                                    <Typography variant="h6" color="primary" style={{marginTop: 15}}>Request
                                         Body</Typography>
                                     <BodyEditor
                                         rootId={requestId}
@@ -374,7 +383,7 @@ class PathPage extends React.Component {
                             ) : null}
 
 
-                            <div style={{marginTop: 75, marginBottom: 44}}>
+                            <div style={{marginBottom: 44}}>
                                 <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse}/>
                             </div>
                             <ResponseList responses={responsesForRequest}/>
@@ -392,10 +401,24 @@ class PathPage extends React.Component {
         </>);
 
 
+        const {contributions} = cachedQueryResults
+        const resourceName = contributions.getOrUndefined(pathId, 'name')
+
+        const absolutePath = pathTrailWithNames
+            .map((trailItem) => {
+                const {pathComponentName} = trailItem;
+                return (
+                    pathComponentName
+                );
+            }).join('/')
+
+        const pageName = `${resourceName || absolutePath} ${apiName}`
+
         return (
             <Editor baseUrl={this.props.baseUrl} leftMargin={MethodsTOC} scrollContainerRef={this.scrollContainer}>
+                <Helmet><title>{pageName}</title></Helmet>
                 <div className={classes.root}>
-                    <Sheet>
+                    <Sheet style={{paddingTop: 2}}>
                         <ContributionWrapper
                             contributionParentId={pathId}
                             contributionKey={'name'}
@@ -403,7 +426,7 @@ class PathPage extends React.Component {
                             placeholder="Resource Name"
                         />
 
-                        <Typography variant="overline" color="primary" style={{marginBottom: 11}}>Path</Typography>
+                        <Typography variant="h6" color="primary" style={{marginBottom: 11}}>Path</Typography>
                         <PathTrail pathTrail={pathTrailWithNames}/>
 
                         {pathParameters.length === 0 ? null : (

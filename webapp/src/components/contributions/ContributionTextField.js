@@ -12,12 +12,12 @@ const styles = theme => ({
     },
     inline: {
         fontSize: 16,
-        fontWeight: 400,
+        fontWeight: 200,
         fontFamily: 'Ubuntu'
     },
     multi: {
         fontSize: 16,
-        fontWeight: 400,
+        fontWeight: 200,
         fontFamily: 'Ubuntu'
     },
     pre: {

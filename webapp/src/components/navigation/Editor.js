@@ -107,7 +107,7 @@ class Editor extends React.Component {
             return
         }
         const now = new Date().getTime()
-        if (lastShift && now - lastShift < 150) {
+        if (lastShift && now - lastShift < 250) {
             e.preventDefault();
             e.stopPropagation();
             this.toggleSuperMenu(null);

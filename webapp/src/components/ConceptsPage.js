@@ -10,6 +10,7 @@ import ContributionTextField from './contributions/ContributionTextField';
 import {updateContribution} from '../engine/routines';
 import Editor from './navigation/Editor';
 import {track} from '../Analytics';
+import Helmet from 'react-helmet';
 
 const styles = theme => ({
     root: {
@@ -37,7 +38,7 @@ class ConceptsPage extends React.Component {
     }
 
     render() {
-        const {classes, conceptId, handleCommand, modeOverride, cachedQueryResults, queries} = this.props;
+        const {classes, conceptId, handleCommand, modeOverride, cachedQueryResults, queries, apiName} = this.props;
         let mode = modeOverride || this.props.mode;
         const {contributions} = cachedQueryResults;
 
@@ -54,6 +55,7 @@ class ConceptsPage extends React.Component {
 
         return (
             <Editor>
+                <Helmet><title>{currentShape.namedConcept.name} -- {apiName}</title></Helmet>
                 <FullSheet>
                     <div className={classes.root}>
                         <ContributionTextField
