@@ -1,7 +1,11 @@
 {
   "name": "@seamlessapis/cli",
   "description": "Make API Design Seamless",
+<<<<<<< Updated upstream
   "version": "0.1.101",
+=======
+  "version": "0.1.103",
+>>>>>>> Stashed changes
   "author": "@seamlessapis",
   "bin": {
     "api": "./bin/run"
@@ -53,7 +57,8 @@
     "/bin",
     "/lib",
     "/npm-shrinkwrap.json",
-    "/oclif.manifest.json"
+    "/oclif.manifest.json",
+    "/resources"
   ],
   "homepage": "https://github.com/seamlessapis/seamless",
   "keywords": [
