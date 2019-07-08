@@ -25,6 +25,9 @@ libraryDependencies ++= Seq(
   "io.circe" %%% "circe-parser"
 ).map(_ % circeVersion)
 
+//for tests only
+libraryDependencies += "org.scalameta" %% "scalameta" % "4.1.9" % "test"
+
 //generateTypescript := {
 //  PlatformTokenizerCache.megaCache.clear()
 //  val outputFile = outputDir.value / (jsOutputName.value + ".d.ts")
