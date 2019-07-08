@@ -42,11 +42,6 @@ const styles = theme => ({
     }
 });
 
-function ifNotLocalHost(component) {
-    return (window.location.host.startsWith( 'localhost' )) ? null : component
-}
-
-
 class OverView extends React.Component {
 
     componentDidMount() {
@@ -71,13 +66,14 @@ class OverView extends React.Component {
                     <div className={classes.root}>
                         <Typography variant="h2" color="primary">{apiName}</Typography>
 
-                        {ifNotLocalHost(<>
+                        <div style={{textAlign: 'center'}}>
                         <Typography variant="h5" color="primary" style={{ marginTop: 22}}>Getting Started</Typography>
-                            <iframe src="https://www.loom.com/embed/f22363d617b140e5ba682348a6c767e9"
+                            <iframe width="560" height="315" src="https://www.youtube.com/embed/jsz1Wo9rC00"
                                     frameBorder="0"
-                                    style={{width: '100%', height: 500, marginTop: 22}}
-                                    webkitallowfullscreen mozallowfullscreen allowFullScreen></iframe>
-                        </>)}
+                                    style={{marginTop: 22}}
+                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen></iframe>
+                        </div>
 
                         <ul style={{marginTop: 50}}>
                             <div className={classes.actions}>
@@ -116,13 +112,13 @@ class OverView extends React.Component {
                         </ul>
 
 
-                        {ifNotLocalHost(<>
-                        <Typography variant="h5" color="primary" style={{ marginTop: 22}}>Using Seamless with Your API</Typography>
-                        <iframe src="https://www.loom.com/embed/9b419421c5354ac7aac7bc640f4e7726"
-                                frameBorder="0"
-                                style={{width: '100%', height: 500, marginTop: 22}}
-                                webkitallowfullscreen mozallowfullscreen allowFullScreen></iframe>
-                        </>)}
+                        {/*{ifNotLocalHost(<>*/}
+                        {/*<Typography variant="h5" color="primary" style={{ marginTop: 22}}>Using Seamless with Your API</Typography>*/}
+                        {/*<iframe src="https://www.loom.com/embed/9b419421c5354ac7aac7bc640f4e7726"*/}
+                        {/*        frameBorder="0"*/}
+                        {/*        style={{width: '100%', height: 500, marginTop: 22}}*/}
+                        {/*        webkitallowfullscreen mozallowfullscreen allowFullScreen></iframe>*/}
+                        {/*</>)}*/}
                     </div>
                 </FullSheet>
             </Editor>
