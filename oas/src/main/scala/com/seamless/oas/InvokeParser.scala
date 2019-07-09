@@ -2,7 +2,8 @@ package com.seamless.oas
 
 import com.seamless.oas.InvokeParser.pathToContents
 import com.seamless.serialization.CommandSerialization
-import play.api.libs.json.{JsObject, JsString}
+import java.io.{File, PrintWriter}
+
 object InvokeParser {
 
   def pathToContents(file: String): String = {
@@ -13,9 +14,13 @@ object InvokeParser {
   }
 
   def main(args: Array[String]): Unit = {
-    val parserResult = Parser.parseOAS(pathToContents("src/test/resources/api-guru/flat/github.com.json"))
+    val parserResult = Parser.parseOAS(pathToContents("src/test/resources/eventbrite.json"))
     println(parserResult.commands.size)
     println(CommandSerialization.toJson(parserResult.commands).noSpaces)
+
+    val pw = new PrintWriter(new File("commands.json" ))
+    pw.write(CommandSerialization.toJson(parserResult.commands).noSpaces)
+    pw.close
   }
 
 }
