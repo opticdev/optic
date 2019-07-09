@@ -3,24 +3,35 @@ import scala.meta._
 
 object ReadCaseClasses {
 
-  def parseCaseClassesExtending(code: String, traitName: String): Unit = {
-    val tree = code.parse[Source].get
-    null
-  }
+  case class CaseClassDef(name: String, args: List[(String, Option[Type])], extendsString: String)
 
 
   def fileContents(fileName: String): String = {
     import scala.io.Source
     val s = Source.fromFile(fileName)
-    val contents = s.getLines.mkString
+    val contents = s.getLines.mkString("\n")
     s.close()
     contents
   }
 
 
-  def main(args: Array[String]): Unit = {
-    val file = fileContents("src/main/scala/com/seamless/contexts/rfc/Events.scala")
-
+  def parseCaseClassesExtending(file: String, traitName: String) = {
+    val tree: Source = fileContents(file).parse[Source].get
+    tree.collect {
+      case caseClass: Defn.Class if caseClass.mods.exists(_.toString == "case") &&
+        caseClass.templ.inits.head.toString() == traitName => {
+        val name = caseClass.name.value
+        val args = caseClass.ctor.paramss.head.map(i => (i.name.value, i.decltpe))
+        CaseClassDef(name, args, traitName)
+      }
+    }
   }
+
+
+  def main(args: Array[String]): Unit = {
+    println(dataTypesEvents)
+  }
+
+
 
 }
