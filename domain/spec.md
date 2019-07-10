@@ -1,18 +1,15 @@
 # Seamless API Specifications 
-The Seamless API Specification describes the behaviors and evolution of Restful APIs. 
+The Seamless API Specification describes the evolution of HTTP APIs. The spec relies on the Command Query Responsibility Segregation (CQRS) pattern. 
 
-**Persistence**: An immutable event stream is used to store a sequence of every change made to an API throughout its history. These events can be stored in a database or saved as a JSON array in a single file.   
+Typically specs try to achieve the goals of human and machine readability and writability in one representation. These representations rarely service any of these concerns optimally leading to a sub-par experience for developers.   
 
-**Domain Engine**: This project contains the domain engine that powers the Seamless Spec. The domain is responsible for handling commands, persisting events, and responding to queries. It is fully open source, and can run in Node or the JVM.    
+By separating these concerns, CQRS enables the Seamless spec to provide optimized experiences across the board. The spec provides commands that encapsulate the ways in which we intend for the specification to change, and queries encapsulate the questions we wish to answer about the specification. 
 
+**How does the Seamless persist an API's spec?**: An immutable event stream is used to store a sequence of every change made to an API throughout its history. These events can be stored in a database or saved as a JSON array in a single file.   
 
-The spec relies on the CQRS pattern to separate the read models from write models. By separating the concerns of making a spec human readable, human writable and machine readable, CQRS enables the Seamless spec to provide optimised experiences across the board.  
+**Domain Engine**: This repository contains the domain engine that powers the Seamless Spec. The domain is responsible for handling commands, persisting events, and responding to queries. It is fully open source, and can run in Node or the JVM.    
 
-Further Reading:
-- Domain driven design
-- Command Query Responsibility Segregation (CQRS)
-- Event Sourcing
-
+> If some of these concepts are new to you, consider reading more about the following topics: Domain driven design, Command Query Responsibility Segregation (CQRS), Event Sourcing
 
 ### Reading From the Spec
 The events can be played back to build a projection of the API's current defined behavior. 
@@ -33,136 +30,136 @@ Today the Seamless Spec concerns itself with two domains:
 **Requests** - The behaviors of Restful APIs. This domain concerns itself with paths, methods, parameters, request bodies, responses, and response bodies. 
 
 ## Events
-Because the spec does not concern itself with any usability concerns (those live in commands and queries), contributors just have to answer one question "What can we say about a REST API?". For example, maybe we can add query parameters, or change the content type of a response body. 
+Because the spec does not concern itself with any use cases (those live in commands and queries), contributors just have to answer one question "What can we say about an HTTP API?". For example, maybe there can be query parameters, or response bodies with content types. 
 
-The following events are our answers to that question, and they represent what is currently supported by the Domain Engine. If there are more things you'd like the spec to "say about a REST API", propose new events in this repo's issues. 
+The following events are our answers to that question, and they represent what is currently supported by the Domain Engine. If there are more things you'd like the spec to "say about an HTTP API", propose new events in this repo's issues. 
 
 
 ### Requests Domain
 
 #### PathComponentAdded
 
-Adds a new component to path tree
+A path component has been added
 
 pathId: `PathComponentId`, parentPathId: `PathComponentId`, name: `String`
 
 #### PathComponentRemoved
 
-Removes a path component
+A path component has been removed
 
 pathId: `PathComponentId`
 
 #### PathComponentRenamed
 
-Renames a path component
+A path component has been renamed
 
 pathId: `PathComponentId`, name: `String`
 
 #### PathParameterAdded
 
-Adds a path parameter component to path tree
+A path parameter has been added
 
 pathId: `PathComponentId`, parentPathId: `PathComponentId`, name: `String`
 
 #### PathParameterRemoved
 
-Removes a path parameter
+A path parameter was removed
 
 pathId: `PathComponentId`
 
 #### PathParameterRenamed
 
-Renames a path parameter
+A path parameter was renamed
 
 pathId: `PathComponentId`, name: `String`
 
 #### PathParameterShapeSet
 
-Changes the shape of a path parameter
+A path parameter shape has been changed
 
 pathId: `PathComponentId`, shapeDescriptor: `ShapedRequestParameterShapeDescriptor`
 
 #### RequestAdded
 
-Adds a new request to a path
+A request was added
 
 requestId: `RequestId`, pathId: `PathComponentId`, httpMethod: `String`
 
 #### RequestBodySet
 
-Adds a request body to a request
+A request body was specified
 
 requestId: `RequestId`, bodyDescriptor: `ShapedBodyDescriptor`
 
 #### RequestBodyUnset
 
-Removes a request body from a path
+A request body was removed
 
 requestId: `RequestId`
 
 #### RequestParameterAdded
 
-Adds a parameter to a request
+A request parameter was added
 
 parameterId: `RequestParameterId`, requestId: `PathComponentId`, parameterLocation: `String`, name: `String`
 
 #### RequestParameterRemoved
 
-Removes a parameter from its request
+A request parameter has been removed
 
 parameterId: `RequestParameterId`
 
 #### RequestParameterRenamed
 
-Renames a parameter
+A request parameter has been renamed
 
 parameterId: `RequestParameterId`, name: `String`
 
 #### RequestParameterShapeSet
 
-Changes the shape of a parameter
+A request parameter shape has been changed
 
 parameterId: `RequestParameterId`, parameterDescriptor: `ShapedRequestParameterShapeDescriptor`
 
 #### RequestParameterShapeUnset
 
-Unsets the shape of the parameter
+A request parameter shape was removed
 
 parameterId: `RequestParameterId`
 
 #### RequestRemoved
 
-Removes a request
+A request was removed
 
 requestId: `RequestId`
 
 #### ResponseAdded
 
-Adds a response to a request
+A response was added to a request
 
 responseId: `ResponseId`, requestId: `RequestId`, httpStatusCode: `Int`
 
 #### ResponseBodySet
 
-Adds a response body
+A response body was specified
 
 responseId: `ResponseId`, bodyDescriptor: `ShapedBodyDescriptor`
 
 #### ResponseBodyUnset
 
-Removes a response's body
+A response body was removed
 
 responseId: `ResponseId`
 
 #### ResponseRemoved
 
-Removes a response from a request
+A response was removed
 
 responseId: `ResponseId`
 
 #### ResponseStatusCodeSet
 
-Changes the status code of a response
+A response's status code was changed
 
 responseId: `ResponseId`, httpStatusCode: `Int`
 
@@ -170,73 +167,73 @@ responseId: `ResponseId`, httpStatusCode: `Int`
 
 #### ChildOccurrenceUpdated
 
-Marks a shape is optional in the context of its parent
+A shape is optional in the context of its parent
 
 id: `FieldId`, parentId: `ConceptId`, to: `Boolean`, conceptId: `ConceptId`
 
 #### ConceptDefined
 
-Adds a new concept with the specified name
+There is a concept with $name
 
 name: `String`, root: `String`, id: `ConceptId`
 
 #### ConceptDeprecated
 
-Tags a concept as deprecated.
+A concept has been deprecated
 
 conceptId: `ConceptId`
 
 #### ConceptNamed
 
-Changes the name of a concept
+A concept has been renamed to $newName
 
 newName: `String`, conceptId: `ConceptId`
 
 #### FieldAdded
 
-Adds a field to an object shape
+A field has been added to object
 
 parentId: `String`, id: `FieldId`, conceptId: `ConceptId`
 
 #### FieldNameChanged
 
-Changes the name of a field
+A field has been renamed
 
 id: `FieldId`, newName: `String`, conceptId: `ConceptId`
 
 #### FieldRemoved
 
-Removes a field
+A field has been removed
 
 id: `FieldId`, conceptId: `ConceptId`
 
 #### InlineConceptDefined
 
-Defines an inline concept (concepts without names that can't be referenced)
+An inline concept has been defined
 
 root: `String`, conceptId: `ConceptId`
 
 #### TypeAssigned
 
-Changes the type to the assigned type
+A shape's type has been changed
 
 id: `String`, to: `PrimitiveType`, conceptId: `ConceptId`
 
 #### TypeParameterAdded
 
-Adds a type parameter
+A type parameter has been added
 
 parentId: `FieldId`, id: `TypeParameterId`, conceptId: `ConceptId`
 
 #### TypeParameterRemoved
 
-Removes a type parameter
+A type parameter has been removed
 
 id: `TypeParameterId`, conceptId: `ConceptId`
 
 
 ## Commands
-If you're building tools on the Seamless Spec, you directly interface with the Domain Engine using commands. While events are derived by answering the question "What can we say about a REST API?", commands are derived by asking the question "What do we want to do with our API spec?". Maybe we want to delete an entire set of requests, or change every query parameter named 'foo' -> 'bar'. The Domain Engine is then responsible for translating that intent into the events that codify the intent.
+If you're building tools on the Seamless Spec, you directly interface with the Domain Engine using commands. While events are derived by answering the question "What can we say about an HTTP API?", commands are derived by asking the question "What do we want to do with our API spec?". Maybe we want to delete an entire set of requests, or change every query parameter named 'foo' -> 'bar'. The Domain Engine is then responsible for translating that intent into the events that codify the changes.
 
 
 ### Requests Domain
