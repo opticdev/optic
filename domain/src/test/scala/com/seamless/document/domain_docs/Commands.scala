@@ -2,7 +2,7 @@ package com.seamless.document.domain_docs
 
 import com.seamless.document.{DocBuilder, _}
 
-class Commands extends DocBuilder("commands.md") {
+class Commands extends DocBuilder {
 
   def getCommandDesc(key: String) = {
     Map(
@@ -11,32 +11,28 @@ class Commands extends DocBuilder("commands.md") {
   }
 
 
-  h1("Commands")
-  p("")
-
-
-  h2("Requests Domain")
+  h3("Requests Domain")
   requestCommands.sortBy(_.name).foreach { case event =>
-    h3(event.name)
+    h4(event.name)
 //    p(getCommandDesc(event.name).get)
     argsFrom(event.args)
   }
 
 
-  h2("Data Types Domain")
+  h3("Data Types Domain")
   dataTypesCommands.sortBy(_.name).foreach { case event =>
-    h3(event.name)
+    h4(event.name)
 //    p(getCommandDesc(event.name).get)
     argsFrom(event.args)
   }
 
 
-  h2("API Domain")
-  rfcCommands.sortBy(_.name).foreach { case event =>
-    h3(event.name)
-//    p(getCommandDesc(event.name).get)
-    argsFrom(event.args)
-  }
+//  h2("API Domain")
+//  rfcCommands.sortBy(_.name).foreach { case event =>
+//    h3(event.name)
+////    p(getCommandDesc(event.name).get)
+//    argsFrom(event.args)
+//  }
 }
 
 

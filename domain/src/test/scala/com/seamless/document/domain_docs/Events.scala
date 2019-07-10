@@ -3,7 +3,7 @@ package com.seamless.document.domain_docs
 import com.seamless.document._
 import com.seamless.document.DocBuilder
 
-class Events extends DocBuilder("events.md") {
+class Events extends DocBuilder {
 
   def getEventDesc(key: String) = {
     Map(
@@ -46,33 +46,28 @@ class Events extends DocBuilder("events.md") {
     ).get(key)
   }
 
-
-  h1("Events")
-  p("")
-
-
-  h2("Requests Domain")
+  h3("Requests Domain")
   requestEvents.sortBy(_.name).foreach { case event =>
-    h3(event.name)
+    h4(event.name)
     p(getEventDesc(event.name).get)
     argsFrom(event.args)
   }
 
 
-  h2("Data Types Domain")
+  h3("Data Types Domain")
   dataTypesEvents.sortBy(_.name).foreach { case event =>
-    h3(event.name)
+    h4(event.name)
     p(getEventDesc(event.name).get)
     argsFrom(event.args)
   }
 
 
-  h2("API Domain")
-  rfcEvents.sortBy(_.name).foreach { case event =>
-    h3(event.name)
-    p(getEventDesc(event.name).get)
-    argsFrom(event.args)
-  }
+//  h2("API Domain")
+//  rfcEvents.sortBy(_.name).foreach { case event =>
+//    h3(event.name)
+//    p(getEventDesc(event.name).get)
+//    argsFrom(event.args)
+//  }
 }
 
 

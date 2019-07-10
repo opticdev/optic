@@ -5,7 +5,6 @@ object ReadCaseClasses {
 
   case class CaseClassDef(name: String, args: List[(String, Option[Type])], extendsString: String)
 
-
   def fileContents(fileName: String): String = {
     import scala.io.Source
     val s = Source.fromFile(fileName)
