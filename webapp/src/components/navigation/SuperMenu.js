@@ -12,13 +12,8 @@ import sortBy from 'lodash.sortby';
 import {withRfcContext} from '../../contexts/RfcContext';
 import {Link} from 'react-router-dom';
 import {addAbsolutePath} from '../utilities/PathUtilities.js';
-import BasicButton from '../shape-editor/BasicButton';
 import {withEditorContext} from '../../contexts/EditorContext';
 import SearchBar, {fuzzyConceptFilter, fuzzyPathsFilter} from './Search';
-import keydown, {Keys} from 'react-keydown';
-import classNames from 'classnames'
-
-const {RIGHT, DOWN, UP, LEFT, ENTER} = Keys
 
 const styles = theme => ({
     root: {
@@ -141,9 +136,17 @@ class SuperMenu extends React.Component {
                                                 onClick={this.handleClose}
                                                 button
                                             >
-                                                <ListItemText primary={absolutePath} primaryTypographyProps={{
-                                                    style: {fontSize: 15, fontWeight: 200}
-                                                }}/>
+                                                <ListItemText primary={(
+                                                    <Typography
+                                                        title={absolutePath}
+                                                        style={{
+                                                            fontSize: 15,
+                                                            fontWeight: 200,
+                                                            textOverflow: 'ellipsis',
+                                                            overflow: 'hidden',
+                                                            whiteSpace: 'nowrap'
+                                                        }}>{absolutePath}</Typography>
+                                                )}/>
                                             </ListItem>
                                         );
                                     })}
@@ -168,9 +171,17 @@ class SuperMenu extends React.Component {
                                             onClick={this.handleClose}
                                             button
                                         >
-                                            <ListItemText primary={name} primaryTypographyProps={{
-                                                style: {fontSize: 15, fontWeight: 200}
-                                            }}/>
+                                            <ListItemText primary={(
+                                                <Typography
+                                                    title={name}
+                                                    style={{
+                                                        fontSize: 15,
+                                                        fontWeight: 200,
+                                                        textOverflow: 'ellipsis',
+                                                        overflow: 'hidden',
+                                                        whiteSpace: 'nowrap'
+                                                    }}>{name}</Typography>
+                                            )}/>
                                         </ListItem>
                                     );
                                 })}

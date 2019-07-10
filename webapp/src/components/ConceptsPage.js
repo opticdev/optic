@@ -25,8 +25,16 @@ const styles = theme => ({
 
 class ConceptsPage extends React.Component {
     renderMissing() {
+        const {classes} = this.props
         return (
-            <Typography>This Concept does not exist</Typography>
+
+            <Editor>
+                <FullSheet>
+                    <div className={classes.root}>
+                        <Typography>This Concept does not exist</Typography>
+                    </div>
+                </FullSheet>
+            </Editor>
         )
     }
 
