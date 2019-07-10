@@ -13,7 +13,7 @@ import {RequestsCommands} from '../engine';
 import {routerUrls} from '../routes.js';
 import BodyEditor from './body-editor';
 import StatusCode from './http/StatusCode.js';
-import {Sheet} from './navigation/Editor.js';
+import {FullSheet, Sheet} from './navigation/Editor.js';
 import ParametersEditor, {pathParametersToRows, requestParametersToRows} from './parameters-editor';
 import ContributionWrapper from './contributions/ContributionWrapper.js';
 import {Link as RouterLink} from 'react-router-dom';
@@ -213,9 +213,17 @@ class PathPage extends React.Component {
     }
 
     renderNotFound() {
+        const {classes} = this.props
         return (
-            <div>There is no matching path</div>
-        );
+
+            <Editor>
+                <FullSheet>
+                    <div className={classes.root}>
+                        <Typography>This Path does not exist</Typography>
+                    </div>
+                </FullSheet>
+            </Editor>
+        )
     }
 
 
