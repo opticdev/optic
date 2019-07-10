@@ -15,10 +15,10 @@ What is instead they offered:
 - Stability (no breaking changes...ever)
 - Easy ways for other API tools to query them for the data they need
 
-CQRS and Event Sourcing enables us to break free of using a single file, with a complicated schema to represent our APIs and domains. With the Seamless spec you can optimize for each concern independently, making the spec great for API designers, API consumers, and API tooling. 
+CQRS and Event Sourcing enables us to break free of using a single file, with a complicated schema, to represent our APIs and domains. With the Seamless spec you can optimize for each concern independently, making the spec great for API designers, API consumers, and API tooling. 
 
 ## [Read the Spec](spec.md)
-## <a href="https://design.seamlessapis.com" target="_blank">Try the API Designer</a>
+## [Try the Spec in our API Designer](https://design.seamlessapis.com)
 
 ## Motivation
 Specifications or 'specs' describe the behavior of a piece of software specifically and with precision. The most useful specs for programmers are the ones that can be read by both a machine and a human. 
