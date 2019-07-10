@@ -1,6 +1,5 @@
 import React from 'react';
 import {Redirect, Switch, Route} from 'react-router-dom';
-import NewConceptEditor from './components/concept-editor/NewConceptEditor.js';
 import {FocusedRequestStore} from './contexts/FocusedRequestContext.js';
 import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
 import {RfcStore} from './contexts/RfcContext.js';
@@ -24,7 +23,6 @@ export const routerPaths = {
     example: () => '/examples/:exampleId',
     apiRoot: (base) => base,
     pathPage: (base) => `${base}/paths/:pathId`,
-    newConcept: (base) => `${base}/concepts/new`,
     conceptPage: (base) => `${base}/concepts/:conceptId`,
     localRoot: () => '/saved',
 };
@@ -32,7 +30,6 @@ export const routerPaths = {
 export const routerUrls = {
     apiRoot: (base) => base,
     pathPage: (base, pathId) => `${base}/paths/${pathId}`,
-    newConcept: (base) => `${base}/concepts/new`,
     conceptPage: (base, conceptId) => `${base}/concepts/${conceptId}`
 };
 
@@ -184,7 +181,6 @@ class APIEditorRoutes extends React.Component {
                         <Switch>
                             <Route exact path={routerPaths.newRoot(url)} component={OverView}/>
                             <Route path={routerPaths.pathPage(url)} component={PathRoot}/>
-                            <Route path={routerPaths.newConcept(url)} component={NewConceptEditor}/>
                             <Route path={routerPaths.conceptPage(url)}
                                    component={(props) =>
                                        <ConceptsPage {...props} conceptId={props.match.params.conceptId}/>

@@ -18,14 +18,6 @@ class NewConceptEditor extends React.Component {
     state = {
         conceptName: ''
     }
-    handleClose = () => {
-        const {history, baseUrl} = this.props
-        if (history.length > 0) {
-            history.goBack()
-        } else {
-            history.push(routerUrls.apiRoot(baseUrl))
-        }
-    }
     handleSubmit = () => {
         const {handleCommand, baseUrl, history, switchEditorMode} = this.props;
         const {conceptName} = this.state;
@@ -45,7 +37,7 @@ class NewConceptEditor extends React.Component {
     render() {
         return (
             <div>
-                <Dialog open={true} onClose={this.handleClose} maxWidth="md" fullWidth>
+                <Dialog open={this.props.open} onClose={this.props.onClose} maxWidth="md" fullWidth>
                     <DialogTitle>Add a Concept</DialogTitle>
                     <DialogContent>
                         <DialogContentText>What is the Concept called?</DialogContentText>

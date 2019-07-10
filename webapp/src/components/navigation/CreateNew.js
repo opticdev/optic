@@ -17,6 +17,7 @@ import {withFocusedRequestContext} from '../../contexts/FocusedRequestContext.js
 import {withRfcContext} from '../../contexts/RfcContext.js';
 import {routerUrls} from '../../routes.js';
 import {RequestUtilities} from '../../utilities/RequestUtilities.js';
+import NewConceptEditor from '../concept-editor/NewConceptEditor.js';
 import RequestContextMenu from '../context-menus/RequestContextMenu.js';
 import NewRequestStepper from '../requests/NewRequestStepper.js';
 
@@ -46,23 +47,28 @@ class CreateNew extends React.Component {
 
     state = {
         anchorEl: false,
-        isPathModalOpen: false,
-    };
-
-    handleOpen = (event) => {
-        this.setState({anchorEl: event.target});
+        isRequestModalOpen: false,
+        isConceptModalOpen: false
     };
 
     handleClose = (event) => {
         this.setState({anchorEl: false});
     };
 
-    openPathModal = () => {
-        this.setState({isPathModalOpen: true});
+    openRequestModal = () => {
+        this.setState({isRequestModalOpen: true});
     };
 
-    closePathModal = () => {
-        this.setState({isPathModalOpen: false});
+    handleCloseRequestModal = () => {
+        this.setState({isRequestModalOpen: false});
+    };
+
+    openConceptModal = () => {
+        this.setState({isConceptModalOpen: true});
+    };
+
+    handleCloseConceptModal = () => {
+        this.setState({isConceptModalOpen: false});
     };
 
     renderRequestContextMenuItems() {
@@ -75,18 +81,13 @@ class CreateNew extends React.Component {
         );
     }
 
-    addConcept = () => {
-        const {history, baseUrl} = this.props;
-        history.push(routerUrls.newConcept(baseUrl))
-    }
-
     render() {
         const {classes, cachedQueryResults, render} = this.props;
         const {pathsById} = cachedQueryResults;
 
         return (
             <span>
-				{(render) ? render({addRequest: this.openPathModal, addConcept: this.addConcept, classes}) : null}
+				{(render) ? render({addRequest: this.openRequestModal, addConcept: this.openConceptModal, classes}) : null}
 
                 <Menu open={Boolean(this.state.anchorEl)} anchorEl={this.state.anchorEl} onClose={this.handleClose}>
 					<div className={classes.wrapper}>
@@ -95,7 +96,7 @@ class CreateNew extends React.Component {
 							<ListItem>
 								<Button
                                     color="primary" className={classes.button}
-                                    onClick={this.openPathModal}>
+                                    onClick={this.openRequestModal}>
 									<CodeIcon className={classes.leftIcon}/>
 									Request
 								</Button>
@@ -104,7 +105,7 @@ class CreateNew extends React.Component {
 							<ListItem>
 								<Button
                                     color="primary" className={classes.button}
-                                    onClick={this.addConcept}>
+                                    onClick={this.openConceptModal}>
 									<DescriptionIcon className={classes.leftIcon}/>
 									Concept
 								</Button>
@@ -116,7 +117,7 @@ class CreateNew extends React.Component {
 					</div>
 				</Menu>
 
-				<Dialog open={this.state.isPathModalOpen} onClose={this.closePathModal} maxWidth="md" fullWidth>
+				<Dialog open={this.state.isRequestModalOpen} onClose={this.handleCloseRequestModal} maxWidth="md" fullWidth>
 					<DialogTitle>Add Request(s)</DialogTitle>
 					<DialogContent>
 						<PathContext.Consumer>
@@ -124,12 +125,14 @@ class CreateNew extends React.Component {
                                 const path = pathId === null ? '' : RequestUtilities.absolutePath(pathId, pathsById);
 
                                 return (
-                                    <NewRequestStepper onComplete={this.closePathModal} initialPathString={path}/>
+                                    <NewRequestStepper onComplete={this.handleCloseRequestModal} initialPathString={path}/>
                                 );
                             }}
 						</PathContext.Consumer>
 					</DialogContent>
 				</Dialog>
+
+                <NewConceptEditor open={this.state.isConceptModalOpen} onClose={this.handleCloseConceptModal}/>
 			</span>
         );
     }
