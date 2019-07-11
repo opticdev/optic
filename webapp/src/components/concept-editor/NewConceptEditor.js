@@ -44,7 +44,7 @@ class NewConceptEditor extends React.Component {
                         <TextField autoFocus value={this.state.conceptName} onChange={this.handleNameChange}/>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.handleClose}>Cancel</Button>
+                        <Button onClick={this.props.onClose}>Cancel</Button>
                         <Button onClick={this.handleSubmit} color="primary">Continue</Button>
                     </DialogActions>
                 </Dialog>
