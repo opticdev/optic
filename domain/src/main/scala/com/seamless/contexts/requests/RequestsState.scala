@@ -9,7 +9,16 @@ sealed trait Removable {
   val isRemoved: Boolean
 }
 
-case class PathComponent(pathId: PathComponentId, descriptor: PathComponentDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
+case class PathComponent(pathId: PathComponentId, descriptor: PathComponentDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable {
+  def withName(name: String) = {
+    this.copy(
+      descriptor = descriptor match {
+        case d: BasicPathComponentDescriptor => d.copy(name = name)
+        case d: ParameterizedPathComponentDescriptor => d.copy(name = name)
+      }
+    )
+  }
+}
 
 case class RequestParameterDescriptor(requestId: RequestId, location: String, name: String, shapeDescriptor: RequestParameterShapeDescriptor)
 
@@ -41,8 +50,10 @@ case class RequestsState(
   }
 
   def withPathComponentNamed(pathId: PathComponentId, name: String) = {
-    val parentPathId = parentPath(pathId)
-    withPathComponent(pathId, parentPathId, name)
+    val p = pathComponents(pathId)
+    this.copy(
+      pathComponents = pathComponents + (pathId -> p.withName(name))
+    )
   }
 
   def withoutPathComponent(pathId: PathComponentId) = {
