@@ -1,3 +1,4 @@
+import {Edit} from '@material-ui/icons';
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import Stepper from '@material-ui/core/Stepper'
@@ -7,7 +8,7 @@ import StepContent from '@material-ui/core/StepContent'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import {withRouter} from 'react-router-dom'
-import {withEditorContext} from '../../contexts/EditorContext.js'
+import {EditorModes, withEditorContext} from '../../contexts/EditorContext.js'
 import {withRfcContext} from '../../contexts/RfcContext.js'
 import {RequestsCommands, RequestsHelper} from '../../engine'
 import {routerUrls} from '../../routes.js'
@@ -154,6 +155,8 @@ function handleSubmit(state, props) {
     })
     onComplete()
     // maybe this should happen in the consumer
+    const {switchEditorMode} = props
+    switchEditorMode(EditorModes.DESIGN)
     history.push(routerUrls.pathPage(baseUrl, lastParentPathId))
 }
 
