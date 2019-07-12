@@ -25,7 +25,7 @@ class StatusCode extends React.Component {
         return (
             <div>
                 <Typography variant="h5" style={{color}}>{statusCode} {editor}</Typography>
-                <Typography variant="subtitle1" style={{fontWeight: 200}}>{STATUS_CODES[statusCode]}</Typography>
+                <Typography variant="subtitle1" style={{fontWeight: 400}}>{STATUS_CODES[statusCode]}</Typography>
             </div>
         );
     }

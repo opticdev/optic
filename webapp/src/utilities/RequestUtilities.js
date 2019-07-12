@@ -18,7 +18,7 @@ class RequestUtilities {
         const {requestDescriptor} = request
         const {httpMethod, bodyDescriptor} = requestDescriptor
         const hasBody = RequestUtilities.hasBody(bodyDescriptor)
-        const httpAllowsBodyForMethod = httpMethod !== 'get'
+        const httpAllowsBodyForMethod = httpMethod.toLowerCase() !== 'get'
         return !hasBody && httpAllowsBodyForMethod
     }
 

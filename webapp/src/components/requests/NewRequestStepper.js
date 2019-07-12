@@ -1,3 +1,4 @@
+import {Edit} from '@material-ui/icons';
 import React from 'react'
 import {makeStyles} from '@material-ui/core/styles'
 import Stepper from '@material-ui/core/Stepper'
@@ -7,7 +8,7 @@ import StepContent from '@material-ui/core/StepContent'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import {withRouter} from 'react-router-dom'
-import {withEditorContext} from '../../contexts/EditorContext.js'
+import {EditorModes, withEditorContext} from '../../contexts/EditorContext.js'
 import {withRfcContext} from '../../contexts/RfcContext.js'
 import {RequestsCommands, RequestsHelper} from '../../engine'
 import {routerUrls} from '../../routes.js'
@@ -42,7 +43,8 @@ function getStepContent(step, combinedState) {
         selectedHttpMethods,
         setSelectedHttpMethods,
         selectedPathComponents,
-        setSelectedPathComponents
+        setSelectedPathComponents,
+        handleNext
     } = combinedState
 
     switch (step) {
@@ -50,7 +52,7 @@ function getStepContent(step, combinedState) {
             const s = selectedPathComponents ? toAbsolutePath(selectedPathComponents) : initialPathString
             return [(
                 <div>
-                    <PathInput onChange={setSelectedPathComponents} initialPathString={s}/>
+                    <PathInput onChange={setSelectedPathComponents} onSubmit={handleNext} initialPathString={s}/>
                 </div>
             ), selectedPathComponents !== null]
         case 1:
@@ -61,11 +63,11 @@ function getStepContent(step, combinedState) {
                         onChange={setSelectedHttpMethods}
                         selectedValues={selectedHttpMethods}
                         choices={[
-                        {name: 'get'},
-                        {name: 'post'},
-                        {name: 'put'},
-                        {name: 'patch'},
-                        {name: 'delete'},
+                        {name: 'GET'},
+                        {name: 'POST'},
+                        {name: 'PUT'},
+                        {name: 'PATCH'},
+                        {name: 'DELETE'},
                     ]}/>
                 </div>
             ), selectedHttpMethods.length > 0]
@@ -153,6 +155,8 @@ function handleSubmit(state, props) {
     })
     onComplete()
     // maybe this should happen in the consumer
+    const {switchEditorMode} = props
+    switchEditorMode(EditorModes.DESIGN)
     history.push(routerUrls.pathPage(baseUrl, lastParentPathId))
 }
 
@@ -165,13 +169,6 @@ function NewRequestStepper(props) {
 
     const steps = getSteps()
 
-    const combinedState = {
-        initialPathString,
-        selectedHttpMethods,
-        setSelectedHttpMethods,
-        selectedPathComponents,
-        setSelectedPathComponents
-    }
 
     function handleNext() {
         setActiveStep(prevActiveStep => prevActiveStep + 1)
@@ -179,6 +176,15 @@ function NewRequestStepper(props) {
 
     function handleBack() {
         setActiveStep(prevActiveStep => prevActiveStep - 1)
+    }
+
+    const combinedState = {
+        initialPathString,
+        selectedHttpMethods,
+        setSelectedHttpMethods,
+        selectedPathComponents,
+        setSelectedPathComponents,
+        handleNext,
     }
 
     function handleFinish() {

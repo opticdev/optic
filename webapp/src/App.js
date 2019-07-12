@@ -1,6 +1,12 @@
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Typography from '@material-ui/core/Typography';
 import React from 'react';
 import './App.css';
-
+import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
+import {Hidden} from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import {appTheme} from './theme';
@@ -15,6 +21,19 @@ class App extends React.Component {
         <React.Fragment>
           <CssBaseline/>
           <MuiThemeProvider theme={appTheme}>
+              <Hidden smUp>
+                  <Dialog open fullScreen>
+                      <DialogTitle>Mobile Coming Soon!</DialogTitle>
+                      <DialogContent>
+                          <div style={{textAlign: 'center', padding: '1em'}}><ImportantDevicesIcon style={{width: '4em', height: '4em'}}/></div>
+                          <DialogContentText>
+                              <Typography>We're still working on making our mobile experience great.</Typography>
+                              <br/>
+                              <Typography>Please visit <a href="https://design.seamlessapis.com">design.seamlessapis.com</a> on a device with a larger screen.</Typography>
+                          </DialogContentText>
+                      </DialogContent>
+                  </Dialog>
+              </Hidden>
               <SnackbarProvider>
                   <BrowserRouter>
                       <>

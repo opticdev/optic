@@ -1,5 +1,5 @@
 {
-  "name": "schema-builder",
+  "name": "seamless-designer",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -71,6 +71,7 @@
     "terser-webpack-plugin": "1.2.3",
     "ts-pnp": "1.1.2",
     "url-loader": "1.1.2",
+    "react-helmet": "5.2.1",
     "webpack": "4.29.6",
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "2.0.4",

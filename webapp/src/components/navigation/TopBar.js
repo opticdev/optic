@@ -2,25 +2,21 @@ import React, {useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import InputBase from '@material-ui/core/InputBase';
 import {fade} from '@material-ui/core/styles';
 import {NavTextColor, SearchBackground} from './constants';
 import {Button} from '@material-ui/core';
-import Badge from '@material-ui/core/Badge';
 import KeyboardDown from '@material-ui/icons/KeyboardArrowDown';
-// import keydown from 'react-keydown';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import {primary} from '../../theme';
-import Divider from '@material-ui/core/Divider';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 import {withRfcContext} from '../../contexts/RfcContext';
 import TextField from '@material-ui/core/TextField';
 import {renameAPI} from '../../engine/routines';
+import CodeIcon from '@material-ui/icons/Code';
+import DescriptionIcon from '@material-ui/icons/Description';
+import CreateNew from './CreateNew';
 
 const styles = theme => ({
 	root: {
@@ -30,8 +26,7 @@ const styles = theme => ({
 		borderBottom: '1px solid #e2e2e2'
 	},
 	menuButton: {
-		left: 8,
-		color: NavTextColor,
+		// color: NavTextColor,
 	},
 	title: {
 		display: 'none',
@@ -40,8 +35,12 @@ const styles = theme => ({
 			display: 'block',
 		},
 	},
-	spacer: {
-		flexGrow: 1,
+	sideSpacer: {
+		flex: 1
+	},
+	centerSpacer: {
+		flexBasis: 1,
+		textAlign: 'center'
 	},
 	search: {
 		position: 'relative',
@@ -57,6 +56,10 @@ const styles = theme => ({
 			width: 'auto',
 		},
 	},
+	rightIcon: {
+		marginLeft: theme.spacing(1),
+		color: NavTextColor
+	},
 	searchIcon: {
 		width: theme.spacing(7),
 		color: NavTextColor,
@@ -69,6 +72,7 @@ const styles = theme => ({
 	},
 	inputRoot: {
 		color: NavTextColor,
+		cursor: 'pointer'
 	},
 	inputInput: {
 		padding: theme.spacing(1, 1, 1, 7),
@@ -76,9 +80,6 @@ const styles = theme => ({
 		width: '100%',
 		[theme.breakpoints.up('sm')]: {
 			width: 120,
-			'&:focus': {
-				width: 200,
-			},
 		},
 	},
 	toggleButton: {
@@ -93,29 +94,36 @@ const styles = theme => ({
 	titleInput: {
 		width: 280,
 		color: NavTextColor
-	}
+	},
+	button: {},
+	leftIcon: {
+		width: 15,
+		marginRight: theme.spacing.unit,
+	},
 });
 
-const APITitle = ({mode, apiName, classes, onRenamed}) => {
+const APITitle = ({mode, apiName, classes, onRenamed, style}) => {
 
-	const [stagedName, setStagedName] = useState(apiName)
+	const [stagedName, setStagedName] = useState(apiName);
 
 	return (
 		<>
-		{mode === EditorModes.DOCUMENTATION ? (
-			<Typography className={classes.title} variant="h6" noWrap>
-				{apiName}
-			</Typography>
-		): (
-			<TextField value={stagedName}
-					   onBlur={() => onRenamed(stagedName)}
-					   className={classes.titleInput}
-					   onChange={(e) => setStagedName(e.target.value)}
-			/>
-		)}
+			{mode === EditorModes.DOCUMENTATION ? (
+				<Typography className={classes.title} variant="h6" noWrap style={style}>
+					{apiName}
+				</Typography>
+			) : (
+				<TextField
+					value={stagedName}
+					style={style}
+					onBlur={() => onRenamed(stagedName)}
+					className={classes.titleInput}
+					onChange={(e) => setStagedName(e.target.value)}
+				/>
+			)}
 		</>
-	)
-}
+	);
+};
 
 class TopBar extends React.Component {
 
@@ -128,66 +136,89 @@ class TopBar extends React.Component {
 				<AppBar position="static" style={{backgroundColor: 'white'}} elevation={0} className={classes.appBar}>
 					<Toolbar variant="dense">
 
-						<APITitle mode={mode}
-								  apiName={apiName}
-								  classes={classes}
-								  onRenamed={(name) => handleCommand(renameAPI(name))}/>
+						<div className={classes.sideSpacer}>
 
-						<IconButton
-							edge="start"
-							className={classes.menuButton}
-							color="inherit"
-							onClick={this.props.toggleSuperMenu}
-							size="small"
-						>
-							<KeyboardDown/>
-						</IconButton>
-
-						{(hasUnsavedChanges && process.env.REACT_APP_CLI_MODE) ? (
-							<Typography variant="caption" style={{color: '#8e8e8e', marginLeft: 20}}>
-								Saving...
-							</Typography>
-						): null}
-
-						<div className={classes.spacer}/>
-
-						<ToggleButtonGroup value={mode}
-										   exclusive size="small"
-										   style={{marginRight: 22}}
-										   onChange={(e, value) => switchEditorMode(value)}>
-							<ToggleButton value={EditorModes.DOCUMENTATION} className={classes.toggleButton}
-										  classes={{selected: classes.toggleButtonSelected}}>
-								Documentation
-							</ToggleButton>
-							<ToggleButton value={EditorModes.DESIGN} className={classes.toggleButton}
-										  classes={{selected: classes.toggleButtonSelected}}>
-								Design
-							</ToggleButton>
-						</ToggleButtonGroup>
-
-						<Button color="primary">
-							Help
-						</Button>
-						{!process.env.REACT_APP_CLI_MODE ? (
-							<Button color="secondary" onClick={this.props.showShare}>
-								Share
+							<Button
+								disableRipple={true}
+								variant="text" color="primary"
+								className={classes.menuButton}
+								onClick={this.props.toggleSuperMenu}
+							>Explore API
+								<KeyboardDown className={classes.rightIcon}/>
 							</Button>
-						) : null}
-						{/*<div className={classes.search}>*/}
-						{/*	<div className={classes.searchIcon}>*/}
-						{/*		<SearchIcon />*/}
-						{/*	</div>*/}
-						{/*	<InputBase*/}
-						{/*		placeholder="Search…"*/}
-						{/*		classes={{*/}
-						{/*			root: classes.inputRoot,*/}
-						{/*			input: classes.inputInput,*/}
-						{/*		}}*/}
-						{/*		inputProps={{ 'aria-label': 'Search' }}*/}
-						{/*	/>*/}
-						{/*</div>*/}
+
+						</div>
+
+						<div className={classes.centerSpacer}>
+							<APITitle
+								mode={mode}
+								apiName={apiName}
+								classes={classes}
+								onRenamed={(name) => handleCommand(renameAPI(name))}/>
+
+							{(hasUnsavedChanges && process.env.REACT_APP_CLI_MODE) ? (
+								<Typography variant="caption" style={{color: '#8e8e8e', marginLeft: 20}}>
+									Saving...
+								</Typography>
+							) : null}
+						</div>
+
+
+						<div className={classes.sideSpacer} style={{textAlign: 'right'}}>
+
+							<ToggleButtonGroup value={mode}
+											   disableRipple={true}
+											   exclusive size="small"
+											   style={{marginRight: 22}}
+											   onChange={(e, value) => switchEditorMode(value)}>
+								<ToggleButton value={EditorModes.DOCUMENTATION}
+											  className={classes.toggleButton}
+											  classes={{selected: classes.toggleButtonSelected}}>
+									Documentation
+								</ToggleButton>
+								<ToggleButton value={EditorModes.DESIGN}
+											  className={classes.toggleButton}
+											  classes={{selected: classes.toggleButtonSelected}}>
+									Design
+								</ToggleButton>
+							</ToggleButtonGroup>
+
+							<Button color="primary" href="https://seamlessapis.com" target="_blank"
+									disableRipple={true}>
+								Docs
+							</Button>
+							{!process.env.REACT_APP_CLI_MODE ? (
+								<Button color="secondary" onClick={this.props.showShare} disableRipple={true}>
+									Share
+								</Button>
+							) : null}
+
+						</div>
 					</Toolbar>
 				</AppBar>
+				{mode === EditorModes.DESIGN ? (
+					<AppBar position="static" style={{backgroundColor: 'white'}} elevation={0}
+							className={classes.appBar}>
+						<CreateNew render={({addConcept, addRequest, classes}) => {
+							return <Toolbar variant="dense" style={{paddingLeft: 30}}>
+								<Button
+									disableRipple={true}
+									color="secondary" className={classes.button}
+									onClick={addRequest}>
+									<CodeIcon className={classes.leftIcon}/>
+									New Request
+								</Button>
+
+								<Button
+									disableRipple={true}
+									color="secondary" className={classes.button}
+									onClick={addConcept}>
+									<DescriptionIcon className={classes.leftIcon}/>
+									New Concept
+								</Button>
+							</Toolbar>;
+						}}/>
+					</AppBar>) : null}
 			</div>
 		);
 	}

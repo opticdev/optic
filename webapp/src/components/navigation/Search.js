@@ -5,9 +5,7 @@ import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import FuzzySearch from 'fuzzy-search';
-import {Keys} from 'react-keydown';
 
-const {DOWN} = Keys
 const styles = theme => ({
 	root: {
 		padding: '2px 4px',
@@ -32,7 +30,7 @@ const styles = theme => ({
 class SearchBar extends React.Component {
 	render() {
 
-		const {classes, onChange, focusFirst, inputRef} = this.props
+		const {classes, onChange, inputRef} = this.props
 
 		return (
 			<Paper className={classes.root} elevation={2}>
@@ -43,12 +41,6 @@ class SearchBar extends React.Component {
 					className={classes.input}
 					autoFocus={true}
 					onChange={onChange}
-					onKeyDown={(e) => {
-						if (e.keyCode === DOWN) {
-							e.preventDefault()
-							focusFirst()
-						}
-					}}
 					inputProps={{
 						ref: inputRef
 					}}

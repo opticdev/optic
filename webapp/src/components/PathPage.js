@@ -13,6 +13,7 @@ import {RequestsCommands} from '../engine';
 import {routerUrls} from '../routes.js';
 import BodyEditor from './body-editor';
 import StatusCode from './http/StatusCode.js';
+import {FullSheet, Sheet} from './navigation/Editor.js';
 import ParametersEditor, {pathParametersToRows, requestParametersToRows} from './parameters-editor';
 import ContributionWrapper from './contributions/ContributionWrapper.js';
 import {Link as RouterLink} from 'react-router-dom';
@@ -22,8 +23,11 @@ import Button from '@material-ui/core/Button';
 import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from './utilities/PathUtilities.js';
 import {RequestUtilities} from '../utilities/RequestUtilities';
 import {EditorModes} from '../contexts/EditorContext';
-import {Waypoint} from 'react-waypoint';
 import {track} from '../Analytics';
+import {RequestCommandHelper} from './requests/RequestCommandHelper';
+import RequestPageHeader from './requests/RequestPageHeader';
+import Helmet from 'react-helmet';
+import CreateNew from './navigation/CreateNew';
 
 const styles = theme => ({
     root: {
@@ -137,7 +141,6 @@ const pathTrailStyles = theme => {
 class PathTrailBase extends React.Component {
     render() {
         const {classes, baseUrl, pathTrail} = this.props;
-        console.log({pathTrail});
         const items = pathTrail
             .map((trailItem) => {
                 const {pathComponentId, pathComponentName} = trailItem;
@@ -176,7 +179,7 @@ class PathPage extends React.Component {
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (prevProps.pathId !== this.props.pathId) {
-            track("Loaded Concept")
+            track('Loaded Path')
             this.scrollContainer.current.scrollTo(0, 0)
         }
         this.ensureRequestFocused();
@@ -198,14 +201,29 @@ class PathPage extends React.Component {
 
     renderPlaceholder() {
         return (
-            <div>There aren't any requests at this path. Add one!</div>
+            <div>
+                <CreateNew render={({addRequest, classes}) => {
+                    return <>There are no requests for this path. <Button color="secondary" onClick={() => {
+                        this.props.switchEditorMode(EditorModes.DESIGN)
+                        addRequest()
+                    }}>Add Request</Button></>
+                }}/>
+            </div>
         );
     }
 
     renderNotFound() {
+        const {classes} = this.props
         return (
-            <div>There is no matching path</div>
-        );
+
+            <Editor>
+                <FullSheet>
+                    <div className={classes.root}>
+                        <Typography>This Path does not exist</Typography>
+                    </div>
+                </FullSheet>
+            </Editor>
+        )
     }
 
 
@@ -214,7 +232,7 @@ class PathPage extends React.Component {
     };
 
     render() {
-        const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults, mode} = this.props;
+        const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults, mode, apiName, switchEditorMode} = this.props;
 
         const {requests, responses, requestParameters, pathsById, requestIdsByPathId} = cachedQueryResults;
 
@@ -260,8 +278,9 @@ class PathPage extends React.Component {
                     <Link key={requestId} href={`#${requestId}`} style={{textDecoration: 'none'}}>
                         <Button
                             size="small"
+                            disableRipple={true}
                             className={classes.margin}
-                            style={{fontWeight: (focusedRequestId === requestId ? '400' : '200')}}
+                            style={{fontWeight: 200}}
                             onClick={this.setRequestFocus(requestId)}
                         >
                             {httpMethod}
@@ -275,9 +294,11 @@ class PathPage extends React.Component {
                 const {requestId, requestDescriptor} = request;
                 const {httpMethod, bodyDescriptor} = requestDescriptor;
                 const {httpContentType, conceptId, isRemoved} = getNormalizedBodyDescriptor(bodyDescriptor);
-                const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || mode === EditorModes.DESIGN;
+                const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || (mode === EditorModes.DESIGN && RequestUtilities.canAddBody(request))
 
                 const isFocused = requestId === focusedRequestId;
+
+                const requestCommandsHelper = new RequestCommandHelper(handleCommand, requestId)
 
                 const responsesForRequest = Object.values(responses)
                     .filter((response) => response.responseDescriptor.requestId === requestId);
@@ -311,18 +332,16 @@ class PathPage extends React.Component {
                 };
 
                 return (
-                    <Waypoint
-                        onEnter={this.setRequestFocus(requestId)}
-                        topOffset={'20%'}
-                    >
+                    <Sheet>
                         <div
                             className={isFocused ? classes.focusedRequest : classes.request}
                             key={requestId} id={requestId}
                             onClickCapture={this.setRequestFocus(requestId)}
                             onKeyDownCapture={this.setRequestFocus(requestId)}
                         >
-                            <Typography variant="overline" style={{fontSize: 28, marginBottom: 5}}
-                                        color="primary">{httpMethod}</Typography>
+                            <Typography
+                                variant="overline" style={{fontSize: 28, marginBottom: 5}}
+                                color="primary">{httpMethod}</Typography>
                             <ContributionWrapper
                                 style={{marginTop: -20}}
                                 contributionParentId={requestId}
@@ -331,9 +350,10 @@ class PathPage extends React.Component {
                                 placeholder={`Description`}
                             />
 
-                            {headerParameters.length === 0 ? null : (
+                            {headerParameters.length === 0 && mode === EditorModes.DOCUMENTATION ? null : (
                                 <div>
-                                    <Typography variant="h6" color="primary">Headers</Typography>
+                                    <RequestPageHeader forType="Header"
+                                                       addAction={requestCommandsHelper.addHeaderParameter}/>
                                     <ParametersEditor
                                         parameters={headerParameters}
                                         rowMapper={requestParametersToRows}
@@ -344,9 +364,10 @@ class PathPage extends React.Component {
                                 </div>
                             )}
 
-                            {queryParameters.length === 0 ? null : (
+                            {queryParameters.length === 0 && mode === EditorModes.DOCUMENTATION ? null : (
                                 <div>
-                                    <Typography variant="h6" color="primary">Query Parameters</Typography>
+                                    <RequestPageHeader forType="Query Parameter"
+                                                       addAction={requestCommandsHelper.addQueryParameter}/>
                                     <ParametersEditor
                                         parameters={queryParameters}
                                         rowMapper={requestParametersToRows}
@@ -359,7 +380,7 @@ class PathPage extends React.Component {
 
                             {shouldShowRequestBody ? (
                                 <>
-                                    <Typography variant="h6" color="primary" style={{marginTop: 75}}>Request
+                                    <Typography variant="h6" color="primary" style={{marginTop: 15}}>Request
                                         Body</Typography>
                                     <BodyEditor
                                         rootId={requestId}
@@ -370,11 +391,12 @@ class PathPage extends React.Component {
                             ) : null}
 
 
-                            <Typography variant="h6" style={{marginTop: 75, marginBottom: 44}}
-                                        color="primary">Responses</Typography>
+                            <div style={{marginBottom: 44}}>
+                                <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse}/>
+                            </div>
                             <ResponseList responses={responsesForRequest}/>
                         </div>
-                    </Waypoint>
+                    </Sheet>
                 );
             });
 
@@ -387,32 +409,46 @@ class PathPage extends React.Component {
         </>);
 
 
+        const {contributions} = cachedQueryResults
+        const resourceName = contributions.getOrUndefined(pathId, 'name')
+
+        const absolutePath = pathTrailWithNames
+            .map((trailItem) => {
+                const {pathComponentName} = trailItem;
+                return (
+                    pathComponentName
+                );
+            }).join('/')
+
+        const pageName = `${resourceName || absolutePath} ${apiName}`
+
         return (
             <Editor baseUrl={this.props.baseUrl} leftMargin={MethodsTOC} scrollContainerRef={this.scrollContainer}>
+                <Helmet><title>{pageName}</title></Helmet>
                 <div className={classes.root}>
-                    <ContributionWrapper
-                        contributionParentId={pathId}
-                        contributionKey={'name'}
-                        variant={'heading'}
-                        placeholder="Resource Name"
-                    />
+                    <Sheet style={{paddingTop: 2}}>
+                        <ContributionWrapper
+                            contributionParentId={pathId}
+                            contributionKey={'name'}
+                            variant={'heading'}
+                            placeholder="Resource Name"
+                        />
 
-                    <Typography variant="h6" color="primary" style={{marginBottom: 11}}>Path</Typography>
-                    <PathTrail pathTrail={pathTrailWithNames}/>
+                        <Typography variant="h6" color="primary" style={{marginBottom: 11}}>Path</Typography>
+                        <PathTrail pathTrail={pathTrailWithNames}/>
 
-                    {pathParameters.length === 0 ? null : (
-                        <div>
-                            <ParametersEditor
-                                parameters={pathParameters}
-                                rowMapper={pathParametersToRows}
-                                onRename={({id, name}) => {
-                                    handleCommand(RequestsCommands.RenamePathParameter(id, name));
-                                }}
-                            />
-                        </div>
-                    )}
-
-                    <Divider style={{marginTop: 15, marginBottom: 15}}/>
+                        {pathParameters.length === 0 ? null : (
+                            <div>
+                                <ParametersEditor
+                                    parameters={pathParameters}
+                                    rowMapper={pathParametersToRows}
+                                    onRename={({id, name}) => {
+                                        handleCommand(RequestsCommands.RenamePathParameter(id, name));
+                                    }}
+                                />
+                            </div>
+                        )}
+                    </Sheet>
                     {requestItems}
                 </div>
             </Editor>

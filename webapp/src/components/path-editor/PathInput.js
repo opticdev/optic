@@ -1,13 +1,12 @@
 import React from 'react';
 
-import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import {TextField} from '@material-ui/core';
 
 import PathComponent from './PathComponent.js';
 import keydown, {Keys} from 'react-keydown';
 
-const {BACKSPACE, DELETE} = Keys;
+const {BACKSPACE, DELETE, ENTER} = Keys;
 
 /*
 This component should
@@ -32,7 +31,7 @@ class PathInput extends React.Component {
         super(props)
 
         this.state = this.processValue({pathComponents: [], currentComponent: ''}, this.props.initialPathString)
-        this.handleBackspace = this.handleBackspace.bind(this)
+        this.handleBackspaceOrEnter = this.handleBackspaceOrEnter.bind(this)
     }
 
     componentDidMount() {
@@ -82,8 +81,12 @@ class PathInput extends React.Component {
         })
     }
 
-    @keydown(BACKSPACE, DELETE)
-    handleBackspace() {
+    @keydown(BACKSPACE, DELETE, ENTER)
+    handleBackspaceOrEnter(e) {
+        if (e.which === ENTER) {
+            this.props.onSubmit()
+            return
+        }
         console.log('backspace')
         const {currentComponent, pathComponents} = this.state;
         if (currentComponent.name === '') {
@@ -104,7 +107,7 @@ class PathInput extends React.Component {
                     })}
                     <TextField
                         multiline={false}
-                        onKeyDown={this.handleBackspace}
+                        onKeyDown={this.handleBackspaceOrEnter}
                         onChange={this.handleChange}
                         value={currentComponent.name}
                         autoFocus
