@@ -151,7 +151,6 @@ class TutorialDialog extends React.Component {
 		return <TutorialContext.Consumer>
 			{({tutorialCompleted, showTutorial, isNew}) => {
 
-
 				const isLastStep = !steps[step+1]
 
 				return <Dialog open={showTutorial} onClose={tutorialCompleted} maxWidth="lg" fullWidth>
