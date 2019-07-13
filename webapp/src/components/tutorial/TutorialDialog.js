@@ -16,20 +16,27 @@ import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
 	root: {},
+	stepperWrapper: {
+		position: 'absolute',
+		bottom: 33,
+		width: '93%',
+		textAlign: 'center'
+	},
 	stepper: {
 		height: 50,
-		width: 280,
+		width: 180,
 		margin: '0 auto',
-		backgroundColor: 'white'
+		backgroundColor: 'white',
+		transform: 'scale(.5)'
 	},
 	content: {
-		height: 400
+		height: 460
 	},
 	paperImg: {
-		width: 380,
+		width: '95%',
+		maxWidth: 500,
 		height: 'fit-content',
-		maxHeight: 215,
-		marginTop: 40,
+		marginTop: 15,
 		margin: '0 auto',
 	},
 	img: {
@@ -39,7 +46,7 @@ const styles = theme => ({
 		position: 'absolute',
 		bottom: 33,
 		right: 50,
-	}
+	},
 });
 
 class TutorialDialog extends React.Component {
@@ -62,11 +69,11 @@ class TutorialDialog extends React.Component {
 
 	render() {
 
-		const {classes, isNew} = this.props;
+		const {classes} = this.props;
 		const {step} = this.state;
 
 		const steps = [
-			['', <ReactTypeformEmbed url="https://adc2019.typeform.com/to/I9houZ" style={{height: 545}}/>],
+			//['', <ReactTypeformEmbed url="https://adc2019.typeform.com/to/I9houZ" style={{height: 545}}/>],
 			['API Designer + Documentation', <>
 				<Grid container>
 					<Grid item xs={12}>
@@ -121,21 +128,33 @@ class TutorialDialog extends React.Component {
 																 width="100%"/></Paper>
 					</Grid>
 				</Grid>
+			</>],
+			['Need Help?', <>
+				<Grid container>
+					<Grid item xs={12}>
+						<Typography variant="h6" style={{textAlign: 'center'}}>
+							We're always here to help
+						</Typography>
+					</Grid>
+					<Grid item xs={12} style={{textAlign: 'center', marginTop: 35}}>
+						<Button color="secondary" variant="outlined" size="large" href="https://seamlessapis.com" target="_blank" style={{margin: 10}}>Read the Docs</Button>
+						<Button color="secondary" variant="outlined" size="large" onClick={() =>
+							window.Intercom('show')
+						} style={{margin: 10}}>Call us on Intercom</Button>
+					</Grid>
+				</Grid>
 			</>]
 		];
-
-		if (!isNew) {
-			steps.shift();
-		}
 
 		const [StepTitle, StepContent] = steps[step];
 
 		return <TutorialContext.Consumer>
-			{({tutorialCompleted, showTutorial}) => {
+			{({tutorialCompleted, showTutorial, isNew}) => {
+
 
 				const isLastStep = !steps[step+1]
 
-				return <Dialog open={showTutorial} onClose={tutorialCompleted} maxWidth="md" fullWidth>
+				return <Dialog open={showTutorial} onClose={tutorialCompleted} maxWidth="lg" fullWidth>
 					<DialogTitle>
 						<Typography variant="h4" color="primary" style={{textAlign: 'center'}}>
 							{StepTitle}
@@ -145,10 +164,11 @@ class TutorialDialog extends React.Component {
 					<DialogContent>
 
 						<div className={classes.content}>
-							<div style={{height: 320}}>
+							<div>
 								{StepContent}
 							</div>
 
+							<div className={classes.stepperWrapper}>
 							<Stepper alternativeLabel nonLinear activeStep={step} className={classes.stepper}>
 								{steps.map((step, index) => {
 									const stepProps = {};
@@ -161,12 +181,13 @@ class TutorialDialog extends React.Component {
 												// completed={isStepComplete(index)}
 												{...buttonProps}
 												icon={' '}
-											>
-											</StepButton>
+												classes={{root: classes.small}}
+											/>
 										</Step>
 									);
 								})}
 							</Stepper>
+							</div>
 							<Button color='secondary' className={classes.nextButton} onClick={() => {
 								if (isLastStep) {
 									tutorialCompleted()
