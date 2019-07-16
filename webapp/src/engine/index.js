@@ -1,8 +1,7 @@
-const scalajs = require('./domain.js')
+import * as scalajs from 'seamless-domain'
 
-export const ShapeCommands = scalajs.com.seamless.contexts.data_types.Commands
-export const Primitives = scalajs.com.seamless.contexts.data_types.Primitives
-export const DataTypesHelper = scalajs.com.seamless.contexts.data_types.DataTypesServiceHelper()
+export const ShapesCommands = scalajs.com.seamless.contexts.shapes.Commands
+export const ShapesHelper = scalajs.com.seamless.contexts.shapes.ShapesHelper()
 export const RequestsHelper = scalajs.com.seamless.contexts.requests.RequestsServiceHelper()
 export const ContentTypesHelper = scalajs.com.seamless.contexts.requests.ContentTypes()
 

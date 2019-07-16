@@ -89,7 +89,7 @@ class SuperMenu extends React.Component {
 
         const sortedPaths = sortBy(paths, ['absolutePath']);
 
-        const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
+        const concepts = Object.values(conceptsById).filter(i => !i.isRemoved);
         const sortedConcepts = sortBy(concepts, ['name']);
 
 
@@ -160,12 +160,12 @@ class SuperMenu extends React.Component {
                         <Grid xs={6} item className={classes.gridItem}>
                             <Typography variant="h5" color="primary">Concepts</Typography>
                             <List>
-                                {conceptsFiltered.map(({name, id}) => {
-                                    const to = routerUrls.conceptPage(baseUrl, id);
+                                {conceptsFiltered.map(({name, shapeId}) => {
+                                    const to = routerUrls.conceptPage(baseUrl, shapeId);
 
                                     return (
                                         <ListItem
-                                            key={id}
+                                            key={shapeId}
                                             style={{height: 27}}
                                             component={Link}
                                             to={to}

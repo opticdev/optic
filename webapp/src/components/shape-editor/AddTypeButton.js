@@ -1,7 +1,7 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
-import {ShapeCommands, DataTypesHelper} from '../../engine'
+import {ShapesCommands, ShapesHelper} from '../../engine'
 import BasicButton from './BasicButton';
 import {EditorModes} from '../../contexts/EditorContext';
 
@@ -26,7 +26,7 @@ function AddTypeButton({classes, parentId}) {
 				className={classes.addButton}
 				onClick={() => {
 					operations.toggleCollapsed(parentId, true)()
-					operations.runCommand(ShapeCommands.AddTypeParameter(parentId, DataTypesHelper.newId(), conceptId))
+					operations.runCommand(ShapesCommands.AddTypeParameter(parentId, ShapesHelper.newId(), conceptId))
 				}}
 			> + Add Type Parameter</BasicButton>
 		}}

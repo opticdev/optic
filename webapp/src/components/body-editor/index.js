@@ -7,7 +7,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import {withEditorContext} from '../../contexts/EditorContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
-import {ContentTypesHelper, DataTypesHelper, ShapeCommands} from '../../engine';
+import {ContentTypesHelper, ShapesHelper, ShapesCommands} from '../../engine';
 import classNames from 'classnames';
 import Zoom from '@material-ui/core/Zoom';
 import {RequestUtilities} from '../../utilities/RequestUtilities.js';
@@ -123,8 +123,8 @@ class BodyEditor extends React.Component {
         if (conceptId) {
             this.props.onBodyRestored({conceptId})
         } else {
-            const newConceptId = DataTypesHelper.newId()
-            const command = ShapeCommands.DefineInlineConcept(rootId, newConceptId)
+            const newConceptId = ShapesHelper.newId()
+            const command = ShapesCommands.DefineInlineConcept(rootId, newConceptId)
             handleCommand(command)
             this.props.onBodyAdded({conceptId: newConceptId, contentType: this.state.contentTypeInfo.value})
         }

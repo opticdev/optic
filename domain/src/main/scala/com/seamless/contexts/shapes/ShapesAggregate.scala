@@ -8,70 +8,141 @@ import com.seamless.ddd.{Effects, EventSourcedAggregate}
 case class ShapesCommandContext() extends BaseCommandContext
 
 object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand, ShapesCommandContext, ShapesEvent] {
-  override def handleCommand(state: ShapesState): PartialFunction[(ShapesCommandContext, ShapesCommand), Effects[ShapesEvent]] = {
+  override def handleCommand(_state: ShapesState): PartialFunction[(ShapesCommandContext, ShapesCommand), Effects[ShapesEvent]] = {
     case (context: ShapesCommandContext, command: ShapesCommand) => {
 
-      implicit val state: ShapesState = state
+      implicit val state: ShapesState = _state
 
       command match {
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        case DefineShape(shapeId, assignedShapeId, parameters, name) => {
-          Validators.ensureShapeIdAssignable(shapeId)
-          Validators.ensureShapeIdExists(assignedShapeId)
-          persist(Events.ShapeDefined(shapeId, assignedShapeId, parameters, name))
+        case c: AddShape => {
+          Validators.ensureShapeIdAssignable(c.shapeId)
+          Validators.ensureShapeIdExists(c.baseShapeId)
+          persist(Events.ShapeAdded(c.shapeId, c.baseShapeId, DynamicParameterList(Seq.empty), c.name))
         }
 
-        case AssignShape(shapeId, assignedShapeId) => {
-          Validators.ensureShapeIdExists(shapeId)
-          Validators.ensureShapeIdExists(assignedShapeId)
-          persist(Events.ShapeAssigned(shapeId, assignedShapeId))
+        case c: SetBaseShape => {
+          Validators.ensureShapeIdExists(c.shapeId)
+          Validators.ensureShapeIdExists(c.baseShapeId)
+          persist(Events.BaseShapeSet(c.shapeId, c.baseShapeId))
         }
 
-        case NameShape(shapeId, name) => {
-          Validators.ensureShapeIdExists(shapeId)
-          persist(Events.ShapeNamed(shapeId, name))
+        case c: RenameShape => {
+          Validators.ensureShapeIdExists(c.shapeId)
+          persist(Events.ShapeRenamed(c.shapeId, c.name))
         }
 
-        case RemoveShape(shapeId) => {
-          Validators.ensureShapeIdExists(shapeId)
-          persist(Events.ShapeRemoved(shapeId))
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////
-
-        case AddShapeParameter(shapeParameterId, shapeId, name) => {
-          Validators.ensureShapeIdExists(shapeId)
-          Validators.ensureShapeParameterIdAssignable(shapeParameterId)
-          Validators.ensureParametersCanBeChanged(shapeId)
-          persist(Events.ShapeParameterAdded(shapeParameterId, shapeId, name))
-        }
-
-        case RemoveShapeParameter(shapeParameterId) => {
-          Validators.ensureShapeParameterIdExists(shapeParameterId)
-          Validators.ensureParameterCanBeRemoved(shapeParameterId)
-          persist(Events.ShapeParameterRemoved(shapeParameterId))
-        }
-
-        case RenameShapeParameter(shapeParameterId, name) => {
-          Validators.ensureShapeParameterIdExists(shapeParameterId)
-          persist(Events.ShapeParameterRenamed(shapeParameterId, name))
+        case c: RemoveShape => {
+          Validators.ensureShapeIdExists(c.shapeId)
+          persist(Events.ShapeRemoved(c.shapeId))
         }
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        case BindShapeParameter(bindingId, shapeParameterId, shapeId, boundShapeId) => {
-          Validators.ensureBindingIdAssignable(bindingId)
-          Validators.ensureShapeIdExists(shapeId)
-          Validators.ensureShapeIdExists(boundShapeId)
-          persist(Events.ShapeParameterBound(bindingId, shapeParameterId, shapeId, boundShapeId))
+        case c: AddField => {
+          Validators.ensureFieldIdAssignable(c.fieldId)
+          Validators.ensureShapeIdExists(c.shapeId)
+          Validators.ensureShapeIdCanAddField(c.shapeId)
+
+          c.shapeDescriptor match {
+            case s: FieldShapeFromParameter => {
+              Validators.ensureShapeParameterIdExists(s.shapeParameterId)
+              Validators.ensureShapeIdIsParentOfParameterId(c.shapeId, s.shapeParameterId)
+            }
+            case s: FieldShapeFromShape => {
+              Validators.ensureShapeIdExists(s.shapeId)
+            }
+          }
+
+          persist(Events.FieldAdded(c.fieldId, c.shapeId, c.name, c.shapeDescriptor))
         }
 
-        case AssignUsage(usageTrail, usageDescriptor) => {
-          Validators.ensureUsageTrailIsValid(usageTrail)
-          persist(Events.UsageAssigned(usageTrail, usageDescriptor))
+        case c: RemoveField => {
+          Validators.ensureFieldIdExists(c.fieldId)
+          persist(Events.FieldRemoved(c.fieldId))
         }
+
+        case c: RenameField => {
+          Validators.ensureFieldIdExists(c.fieldId)
+          persist(Events.FieldRenamed(c.fieldId, c.name))
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        case c: SetFieldShape => {
+
+          c.shapeDescriptor match {
+            case s: FieldShapeFromParameter => {
+              Validators.ensureFieldIdExists(s.fieldId)
+              Validators.ensureShapeParameterIdExists(s.shapeParameterId)
+              val f = state.fields(s.fieldId)
+              Validators.ensureShapeIdIsParentOfParameterId(f.descriptor.shapeId, s.shapeParameterId)
+            }
+            case s: FieldShapeFromShape => {
+              Validators.ensureFieldIdExists(s.fieldId)
+              Validators.ensureShapeIdExists(s.shapeId)
+            }
+          }
+          persist(Events.FieldShapeSet(c.shapeDescriptor))
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        case c: AddShapeParameter => {
+          Validators.ensureShapeIdExists(c.shapeId)
+          Validators.ensureShapeParameterIdAssignable(c.shapeParameterId)
+          Validators.ensureParametersCanBeChanged(c.shapeId)
+          persist(Events.ShapeParameterAdded(c.shapeParameterId, c.shapeId, c.name, ProviderInShape(c.shapeId, NoProvider(), c.shapeParameterId)))
+        }
+
+        case c: RemoveShapeParameter => {
+          Validators.ensureShapeParameterIdExists(c.shapeParameterId)
+          Validators.ensureParameterCanBeRemoved(c.shapeParameterId)
+          persist(Events.ShapeParameterRemoved(c.shapeParameterId))
+        }
+
+        case c: RenameShapeParameter => {
+          Validators.ensureShapeParameterIdExists(c.shapeParameterId)
+          persist(Events.ShapeParameterRenamed(c.shapeParameterId, c.name))
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////
+
+        case c: SetParameterShape => {
+          c.shapeDescriptor match {
+            case s: NoProvider => {}
+            case s: ProviderInShape => {
+              Validators.ensureShapeIdExists(s.shapeId)
+              Validators.ensureShapeParameterIdExists(s.consumingParameterId)
+              s.providerDescriptor match {
+                case p: ShapeProvider => {
+                  Validators.ensureShapeIdExists(p.shapeId)
+                }
+                case p: ParameterProvider => {
+                  Validators.ensureShapeParameterIdExistsForShapeId(s.shapeId, p.shapeParameterId)
+                }
+              }
+            }
+            case s: ProviderInField => {
+              Validators.ensureFieldIdExists(s.fieldId)
+              Validators.ensureShapeParameterIdExists(s.consumingParameterId)
+              s.providerDescriptor match {
+                case p: ShapeProvider => {
+                  Validators.ensureShapeIdExists(p.shapeId)
+                }
+                case p: ParameterProvider => {
+                  val f = state.fields(s.fieldId)
+                  Validators.ensureShapeIdIsParentOfParameterId(f.descriptor.shapeId, p.shapeParameterId)
+                }
+              }
+            }
+          }
+
+          persist(Events.ShapeParameterShapeSet(c.shapeDescriptor))
+        }
+        ////////////////////////////////////////////////////////////////////////////////
 
       }
     }
@@ -82,78 +153,99 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
 
       ////////////////////////////////////////////////////////////////////////////////
 
-      case ShapeDefined(shapeId, assignedShapeId, parameters, name) => {
-        state.withShape(shapeId, assignedShapeId, parameters, name)
+      case e: ShapeAdded => {
+        state.withShape(e.shapeId, e.baseShapeId, e.parameters, e.name)
       }
 
-      case ShapeNamed(shapeId, name) => {
-        state.withShapeName(shapeId, name)
+      case e: ShapeRenamed => {
+        state.withShapeName(e.shapeId, e.name)
       }
 
-      case ShapeAssigned(shapeId, assignedShapeId) => {
-        state.withBaseShape(shapeId, assignedShapeId)
+      case e: BaseShapeSet => {
+        state.withBaseShape(e.shapeId, e.baseShapeId)
       }
 
-      case ShapeRemoved(shapeId) => {
-        state.withoutShape(shapeId)
-      }
-
-      ////////////////////////////////////////////////////////////////////////////////
-
-      case ShapeParameterAdded(shapeParameterId, shapeId, name) => {
-        state.withShapeParameter(shapeParameterId, shapeId, name)
-      }
-
-      case ShapeParameterRenamed(shapeParameterId, name) => {
-        state.withShapeParameterName(shapeParameterId, name)
-      }
-
-      case ShapeParameterRemoved(shapeParameterId) => {
-        state.withoutShapeParameter(shapeParameterId)
+      case e: ShapeRemoved => {
+        state.withoutShape(e.shapeId)
       }
 
       ////////////////////////////////////////////////////////////////////////////////
 
-
-      case ShapeParameterBound(bindingId, shapeParameterId, shapeId, boundShapeId) => {
-        state.withBinding(bindingId, shapeParameterId, shapeId, boundShapeId)
+      case e: FieldAdded => {
+        state.withField(e.fieldId, e.shapeId, e.name, e.shapeDescriptor)
       }
 
-      case UsageAssigned(usageTrail, usageDescriptor) => {
-        state.withUsage(usageTrail, usageDescriptor)
+      case e: FieldRenamed => {
+        state.withFieldName(e.fieldId, e.name)
       }
+
+      case e: FieldRemoved => {
+        state.withoutField(e.fieldId)
+      }
+
+      case e: FieldShapeSet => {
+        state.withFieldShape(e.shapeDescriptor)
+      }
+      ////////////////////////////////////////////////////////////////////////////////
+
+
+      ////////////////////////////////////////////////////////////////////////////////
+
+      case e: ShapeParameterAdded => {
+        state.withShapeParameter(e.shapeParameterId, e.shapeId, e.shapeDescriptor, e.name)
+      }
+
+      case e: ShapeParameterRenamed => {
+        state.withShapeParameterName(e.shapeParameterId, e.name)
+      }
+
+      case e: ShapeParameterRemoved => {
+        state.withoutShapeParameter(e.shapeParameterId)
+      }
+
+      case e: ShapeParameterShapeSet => {
+        state.withShapeParameterShape(e.shapeDescriptor)
+      }
+
+      ////////////////////////////////////////////////////////////////////////////////
     }
   }
 
+  def CoreShape(shapeId: String, shapeParametersDescriptor: ShapeParametersDescriptor, name: String) = {
+    ShapeEntity(shapeId, ShapeValue(isUserDefined = false, shapeId, shapeParametersDescriptor, name), isRemoved = false)
+  }
+
   override def initialState: ShapesState = {
-    val stringShape = CoreShape("string", Primitive(), "string")
-    val booleanShape = CoreShape("boolean", Primitive(), "bool")
-    val numberShape = CoreShape("number", Primitive(), "number")
+    val anyShape = CoreShape("$any", NoParameterList(), "Any")
+    val stringShape = CoreShape("$string", NoParameterList(), "string")
+    val booleanShape = CoreShape("$boolean", NoParameterList(), "bool")
+    val numberShape = CoreShape("$number", NoParameterList(), "number")
 
-    val listShapeId = "list"
-    val listItemParameter = ShapeParameter("listItem", ShapeParameterDescriptor(listShapeId, "T"), isRemoved = false)
-    val listShape = CoreShape(listShapeId, StaticParameterList(listItemParameter.shapeParameterId), "List")
+    val listShapeId = "$list"
+    val listItemParameter = ShapeParameterEntity("$listItem", ShapeParameterValue(listShapeId, ProviderInShape(listShapeId, NoProvider(), "$listItem"), "T"), isRemoved = false)
+    val listShape = CoreShape(listShapeId, StaticParameterList(Seq(listItemParameter.shapeParameterId)), "List")
 
-    val mapShapeId = "map"
-    val mapKeyParameter = ShapeParameter("mapKey", ShapeParameterDescriptor(mapShapeId, "K"), isRemoved = false)
-    val mapValueParameter = ShapeParameter("mapValue", ShapeParameterDescriptor(mapShapeId, "V"), isRemoved = false)
-    val mapShape = CoreShape(mapShapeId, StaticParameterList(mapKeyParameter.shapeParameterId, mapValueParameter.shapeParameterId), "Map")
+    val mapShapeId = "$map"
+    val mapKeyParameter = ShapeParameterEntity("$mapKey", ShapeParameterValue(mapShapeId, ProviderInShape(mapShapeId, NoProvider(), "$mapKey"), "K"), isRemoved = false)
+    val mapValueParameter = ShapeParameterEntity("$mapValue", ShapeParameterValue(mapShapeId, ProviderInShape(mapShapeId, NoProvider(), "$mapValue"), "V"), isRemoved = false)
+    val mapShape = CoreShape(mapShapeId, StaticParameterList(Seq(mapKeyParameter.shapeParameterId, mapValueParameter.shapeParameterId)), "Map")
 
-    val entityIdentifierShapeId = "identifier"
-    val entityIdentifierParameter = ShapeParameter("identifierInner", ShapeParameterDescriptor(entityIdentifierShapeId, "T"), isRemoved = false)
-    val entityIdentifierShape = CoreShape(entityIdentifierShapeId, StaticParameterList(entityIdentifierParameter.shapeParameterId), "Identifier")
+    val entityIdentifierShapeId = "$identifier"
+    val entityIdentifierParameter = ShapeParameterEntity("$identifierInner", ShapeParameterValue(entityIdentifierShapeId, ProviderInShape(entityIdentifierShapeId, NoProvider(), "$identifierInner"), "T"), isRemoved = false)
+    val entityIdentifierShape = CoreShape(entityIdentifierShapeId, StaticParameterList(Seq(entityIdentifierParameter.shapeParameterId)), "Identifier")
 
-    val entityReferenceShapeId = "reference"
-    val entityReferenceParameter = ShapeParameter("referenceInner", ShapeParameterDescriptor(entityReferenceShapeId, "T"), isRemoved = false)
-    val entityReferenceShape = CoreShape(entityReferenceShapeId, StaticParameterList(entityReferenceParameter.shapeParameterId), "Identifier")
+    val entityReferenceShapeId = "$reference"
+    val entityReferenceParameter = ShapeParameterEntity("$referenceInner", ShapeParameterValue(entityReferenceShapeId, ProviderInShape(entityReferenceShapeId, NoProvider(), "$referenceInner"), "T"), isRemoved = false)
+    val entityReferenceShape = CoreShape(entityReferenceShapeId, StaticParameterList(Seq(entityReferenceParameter.shapeParameterId)), "Reference")
 
-    val valueObjectShapeId = "valueObject"
-    val valueObjectShape = CoreShape(valueObjectShapeId, DynamicParameterList(), "Object")
+    val valueObjectShapeId = "$object"
+    val valueObjectShape = CoreShape(valueObjectShapeId, DynamicParameterList(Seq.empty), "Object")
 
-    val oneOfShapeId = "oneOf"
-    val oneOfShape = CoreShape(oneOfShapeId, DynamicParameterList(), "OneOf")
+    val oneOfShapeId = "$oneOf"
+    val oneOfShape = CoreShape(oneOfShapeId, DynamicParameterList(Seq.empty), "OneOf")
 
     val shapes = Map(
+      anyShape.shapeId -> anyShape,
       stringShape.shapeId -> stringShape,
       numberShape.shapeId -> numberShape,
       booleanShape.shapeId -> booleanShape,
@@ -173,11 +265,16 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
       entityReferenceParameter.shapeParameterId -> entityReferenceParameter,
     )
 
+    val fields = Map.empty[FieldId, FieldEntity]
+    val fieldBindings = Map.empty[FieldId, Map[ShapeParameterId, ProviderDescriptor]]
+    val parameterBindings = Map.empty[ShapeParameterId, Map[ShapeParameterId, ProviderDescriptor]]
+
     ShapesState(
       shapes,
+      parameterBindings,
       shapeParameters,
-      Map.empty,
-      Map.empty
+      fields,
+      fieldBindings
     )
   }
 }

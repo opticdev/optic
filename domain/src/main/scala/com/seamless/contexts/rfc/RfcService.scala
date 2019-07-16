@@ -1,7 +1,5 @@
 package com.seamless.contexts.rfc
 
-import com.seamless.contexts.data_types.Commands.{ConceptId}
-import com.seamless.contexts.data_types.projections.ShapeProjection
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.ddd.{AggregateId, EventSourcedRepository, EventSourcedService, EventStore, InMemoryEventStore}

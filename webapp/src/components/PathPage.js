@@ -24,7 +24,7 @@ import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from './ut
 import {RequestUtilities} from '../utilities/RequestUtilities';
 import {EditorModes} from '../contexts/EditorContext';
 import {track} from '../Analytics';
-import {RequestCommandHelper} from './requests/RequestCommandHelper';
+import {RequestsCommandHelper} from './requests/RequestsCommandHelper.js';
 import RequestPageHeader from './requests/RequestPageHeader';
 import Helmet from 'react-helmet';
 import CreateNew from './navigation/CreateNew';
@@ -298,7 +298,7 @@ class PathPage extends React.Component {
 
                 const isFocused = requestId === focusedRequestId;
 
-                const requestCommandsHelper = new RequestCommandHelper(handleCommand, requestId)
+                const requestCommandsHelper = new RequestsCommandHelper(handleCommand, requestId)
 
                 const responsesForRequest = Object.values(responses)
                     .filter((response) => response.responseDescriptor.requestId === requestId);

@@ -1,13 +1,13 @@
 package com.seamless.contexts.requests
 
 import com.seamless.contexts.base.BaseCommandContext
-import com.seamless.contexts.data_types.{DataTypesState, ShapeHelpers}
 import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.requests.Events._
+import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
+import com.seamless.contexts.shapes.Validators.ensureShapeIdExists
 import com.seamless.ddd.{Effects, EventSourcedAggregate}
-import com.seamless.contexts.data_types.Validators.requireConceptId
 
-case class RequestsCommandContext(dataTypesState: DataTypesState) extends BaseCommandContext
+case class RequestsCommandContext(shapesState: ShapesState) extends BaseCommandContext
 
 object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCommand, RequestsCommandContext, RequestsEvent] {
   override def handleCommand(_state: RequestsState): PartialFunction[(RequestsCommandContext, RequestsCommand), Effects[RequestsEvent]] = {
@@ -15,7 +15,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
     case (context: RequestsCommandContext, command: RequestsCommand) => {
       implicit val state = _state
-      implicit val dataTypesState = context.dataTypesState
+      implicit val shapesState = context.shapesState
       ////////////////////////////////////////////////////////////////////////////////
       command match {
         case AddPathComponent(pathId, parentPathId, name) => {
@@ -42,7 +42,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           Validators.ensurePathComponentIdExists(parentPathId)
           Validators.ensurePathComponentIdAssignable(pathId)
           persist(
-            ShapeHelpers.appendDefaultStringTypeEvents(
+            ShapesHelper.appendDefaultStringTypeEvents(
               Events.PathParameterAdded(pathId, parentPathId, name)
             ):_*
           )
@@ -51,7 +51,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
         case SetPathParameterShape(pathId, shapeDescriptor) => {
           Validators.ensurePathComponentIdIsNotRoot(pathId)
           Validators.ensurePathComponentIdExists(pathId)
-          requireConceptId(shapeDescriptor.shapeId)
+          ensureShapeIdExists(shapeDescriptor.shapeId)
           persist(Events.PathParameterShapeSet(pathId, shapeDescriptor))
         }
 
@@ -77,7 +77,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         case SetRequestBodyShape(requestId, bodyDescriptor) => {
           Validators.ensureRequestIdExists(requestId)
-          requireConceptId(bodyDescriptor.shapeId)
+          ensureShapeIdExists(bodyDescriptor.shapeId)
           persist(Events.RequestBodySet(requestId, bodyDescriptor))
         }
 
@@ -101,7 +101,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         case SetResponseBodyShape(responseId, bodyDescriptor) => {
           Validators.ensureResponseIdExists(responseId)
-          requireConceptId(bodyDescriptor.shapeId)
+          ensureShapeIdExists(bodyDescriptor.shapeId)
           persist(Events.ResponseBodySet(responseId, bodyDescriptor))
         }
 
@@ -126,7 +126,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           Validators.ensureRequestIdExists(requestId)
           Validators.ensureParameterIdAssignable(parameterId)
           persist(
-            ShapeHelpers.appendDefaultStringTypeEvents(
+            ShapesHelper.appendDefaultStringTypeEvents(
               Events.RequestParameterAdded(parameterId, requestId, "query", name)
             ):_*
           )
@@ -134,7 +134,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         case SetQueryParameterShape(parameterId, parameterDescriptor) => {
           Validators.ensureParameterIdExists(parameterId)
-          requireConceptId(parameterDescriptor.shapeId)
+          ensureShapeIdExists(parameterDescriptor.shapeId)
           persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
         }
 
@@ -160,7 +160,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           Validators.ensureParameterIdAssignable(parameterId)
 
           persist(
-            ShapeHelpers.appendDefaultStringTypeEvents(
+            ShapesHelper.appendDefaultStringTypeEvents(
               Events.RequestParameterAdded(parameterId, requestId, "header", name)
             ):_*
           )
@@ -168,7 +168,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         case SetHeaderParameterShape(parameterId, parameterDescriptor) => {
           Validators.ensureParameterIdExists(parameterId)
-          requireConceptId(parameterDescriptor.shapeId)
+          ensureShapeIdExists(parameterDescriptor.shapeId)
           persist(Events.RequestParameterShapeSet(parameterId, parameterDescriptor))
         }
 

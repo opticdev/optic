@@ -7,7 +7,7 @@ import ListItem from '@material-ui/core/ListItem';
 import {Button} from '@material-ui/core';
 import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
 import SchemaEditor from '../SchemaEditor';
-import {ShapeCommands, DataTypesHelper} from '../../../engine'
+import {ShapesCommands, ShapesHelper} from '../../../engine'
 import {withRfcContext} from '../../../contexts/RfcContext';
 import {EditorModes} from '../../../contexts/EditorContext';
 import sortBy from 'lodash.sortby'
@@ -92,7 +92,7 @@ class TypeRefModal extends React.Component {
                                         color="secondary"
                                         style={{textTransform: 'none'}}
                                         onClick={() => {
-                                            operations.runCommand(ShapeCommands.AssignType(targetId, DataTypesHelper.refTo(selected.id), conceptId))
+                                            operations.runCommand(ShapesCommands.AssignType(targetId, ShapesHelper.refTo(selected.id), conceptId))
                                             operations.hideRefModal()
                                         }}
                                     >Set Type to {selected ? selected.name : ''}</Button>

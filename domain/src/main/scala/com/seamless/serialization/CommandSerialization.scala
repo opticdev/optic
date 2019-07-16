@@ -1,11 +1,8 @@
 package com.seamless.serialization
 
-import com.seamless.contexts.data_types.Commands.DataTypesCommand
-import com.seamless.contexts.data_types.Events.DataTypesEvent
 import com.seamless.contexts.requests.Commands.RequestsCommand
-import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.rfc.Commands.{ContributionCommand, RfcCommand}
-import com.seamless.contexts.rfc.Events.RfcEvent
+import com.seamless.contexts.shapes.Commands.ShapesCommand
 import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.auto._
@@ -16,7 +13,7 @@ import scala.util.Try
 object CommandSerialization {
   def toJson(vector: Vector[RfcCommand]): Json = {
     vector.map {
-      case dataTypesCommand: DataTypesCommand => dataTypesCommand.asJson
+      case shapesCommand: ShapesCommand => shapesCommand.asJson
       case requestCommand: RequestsCommand => requestCommand.asJson
       case contributionCommand: ContributionCommand => contributionCommand.asJson
       case _ => throw new java.lang.Error("Unhandled command Type")
@@ -24,14 +21,14 @@ object CommandSerialization {
   }
 
 
-  private def decodeDataTypesCommand(item: Json): Result[DataTypesCommand] = item.as[DataTypesCommand]
+  private def decodeShapesCommand(item: Json): Result[ShapesCommand] = item.as[ShapesCommand]
   private def decodeRequestCommand(item: Json): Result[RequestsCommand] = item.as[RequestsCommand]
   private def decodeRfcCommand(item: Json): Result[ContributionCommand] = item.as[ContributionCommand]
 
   def fromJson(json: Json): Try[Vector[RfcCommand]] = Try {
     val parseResults = json.asArray.get.map {
       case i =>  TryChainUtil.firstSuccessIn(i,
-        (j: Json) => Try(decodeDataTypesCommand(j).right.get),
+        (j: Json) => Try(decodeShapesCommand(j).right.get),
         (j: Json) => Try(decodeRequestCommand(j).right.get),
         (j: Json) => Try(decodeRfcCommand(j).right.get),
         (j: Json) => {

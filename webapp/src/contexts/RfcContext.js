@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Facade, Queries} from '../engine';
+import {Facade, Queries, ShapesCommands} from '../engine';
 import {GenericContextFactory} from './GenericContextFactory.js';
 import {withInitialRfcCommandsContext} from './InitialRfcCommandsContext.js';
 import debounce from 'lodash.debounce';
@@ -88,6 +88,48 @@ class RfcStoreWithoutContext extends React.Component {
         return this.state.eventStore.serializeEvents(this.props.rfcId);
     };
 
+    componentDidMount() {
+        const commands = [
+            ShapesCommands.AddShape('$Id', '$identifier', 'ID'),
+            ShapesCommands.SetParameterShape(ShapesCommands.ProviderInShape('$Id', ShapesCommands.ShapeProvider('$string'), '$identifierInner')),
+
+            ShapesCommands.AddShape('$Account', '$object', 'Account'),
+            ShapesCommands.AddShape('$AccountId', '$reference', 'Account ID'),
+            ShapesCommands.SetParameterShape(ShapesCommands.ProviderInShape('$AccountId', ShapesCommands.ShapeProvider('$Account'), '$referenceInner')),
+
+            ShapesCommands.AddShape('$User', '$object', 'User'),
+            ShapesCommands.AddShape('$UserId', '$reference', 'User ID'),
+            ShapesCommands.SetParameterShape(ShapesCommands.ProviderInShape('$UserId', ShapesCommands.ShapeProvider('$User'), '$referenceInner')),
+
+            ShapesCommands.AddField('$Account.id', '$Account', 'id', ShapesCommands.FieldShapeFromShape('$Account.id', '$AccountId')),
+            ShapesCommands.AddField('$Account.userIds', '$Account', 'userIds', ShapesCommands.FieldShapeFromShape('$Account.userIds', '$list')),
+            ShapesCommands.SetParameterShape(ShapesCommands.ProviderInField('$Account.userIds', ShapesCommands.ShapeProvider('$UserId'), '$listItem')),
+
+            ShapesCommands.AddField('$User.id', '$User', 'id', ShapesCommands.FieldShapeFromShape('$User.id', '$string')),
+            ShapesCommands.AddField('$User.name', '$User', 'name', ShapesCommands.FieldShapeFromShape('$User.name', '$string')),
+            ShapesCommands.AddField('$User.accountId', '$User', 'accountId', ShapesCommands.FieldShapeFromShape('$User.accountId', '$AccountId')),
+
+            ShapesCommands.AddShape('$PaginationWrapper', '$object', 'PaginationWrapper'),
+            ShapesCommands.AddShapeParameter('$PaginationWrapper.T', '$PaginationWrapper', 'T'),
+            ShapesCommands.AddField('$PaginationWrapper.offset', '$PaginationWrapper', 'offset', ShapesCommands.FieldShapeFromShape('$PaginationWrapper.offset', '$number')),
+            ShapesCommands.AddField('$PaginationWrapper.items', '$PaginationWrapper', 'items', ShapesCommands.FieldShapeFromShape('$PaginationWrapper.items', '$list')),
+            ShapesCommands.SetParameterShape(ShapesCommands.ProviderInField('$PaginationWrapper.items', ShapesCommands.ParameterProvider('$PaginationWrapper.T'), '$listItem')),
+
+            ShapesCommands.AddShape('$UserListResponse1', '$PaginationWrapper', 'User List Response 1'),
+            ShapesCommands.SetParameterShape(ShapesCommands.ProviderInShape('$UserListResponse1', ShapesCommands.ShapeProvider('$User'), '$PaginationWrapper.T')),
+
+            ShapesCommands.AddShape('$UserListResponse2', '$PaginationWrapper', 'User List Response 2'),
+
+            ShapesCommands.AddShape('$UserListResponse3', '$PaginationWrapper', 'User List Response 3'),
+            ShapesCommands.AddShapeParameter('$UserListResponse3.X', '$UserListResponse3', 'X'),
+            ShapesCommands.AddShapeParameter('$UserListResponse3.Y', '$UserListResponse3', 'Y'),
+            ShapesCommands.SetParameterShape(ShapesCommands.ProviderInShape('$UserListResponse3', ShapesCommands.ParameterProvider('$UserListResponse3.X'), '$PaginationWrapper.T')),
+            ShapesCommands.AddField('$UserListResponse3.item', '$UserListResponse3', 'item', ShapesCommands.FieldShapeFromParameter('$UserListResponse3.item', '$UserListResponse3.Y'))
+        ]
+        commands.forEach(command => console.log(command.toString()))
+        this.handleCommands(...commands)
+    }
+
     render() {
         const {queries, hasUnsavedChanges} = this.state;
         const {rfcId} = this.props;
@@ -99,11 +141,8 @@ class RfcStoreWithoutContext extends React.Component {
         const pathsById = pathComponents;
         const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId))
 
-        const conceptsById = queries.concepts()
-            .reduce((acc, item) => {
-                acc[item.id] = item
-                return acc
-            }, {})
+        const conceptsById = queries.namedShapes()
+        const shapesState = queries.shapesState()
 
 
         const requestIdsByPathId = Object
@@ -127,6 +166,7 @@ class RfcStoreWithoutContext extends React.Component {
             requestIdsByPathId,
             pathsById,
             pathIdsWithRequests,
+            shapesState
         }
 
         const value = {

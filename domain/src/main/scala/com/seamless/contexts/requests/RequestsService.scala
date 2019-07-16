@@ -1,22 +1,22 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.data_types.{DataTypesService, DataTypesState}
 import com.seamless.contexts.requests.Commands.RequestsCommand
 import com.seamless.contexts.requests.Events.RequestsEvent
+import com.seamless.contexts.shapes.{ShapesService, ShapesState}
 import com.seamless.ddd.{AggregateId, EventSourcedRepository, InMemoryEventStore}
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Random
 
 //STRICTLY FOR TESTING (because everything should go through the root (RfcService))
-class RequestsService(dataTypesService: DataTypesService) {
+class RequestsService(shapesService: ShapesService) {
   private val eventStore = new InMemoryEventStore[RequestsEvent]
   private val repository = new EventSourcedRepository[RequestsState, RequestsEvent](RequestsAggregate, eventStore)
 
   def handleCommand(id: AggregateId, command: RequestsCommand): Unit = {
-    val dataTypesState: DataTypesState = dataTypesService.currentState(id)
+    val shapesState: ShapesState = shapesService.currentState(id)
     val state = repository.findById(id)
-    val effects = RequestsAggregate.handleCommand(state)((RequestsCommandContext(dataTypesState), command))
+    val effects = RequestsAggregate.handleCommand(state)((RequestsCommandContext(shapesState), command))
     repository.save(id, effects.eventsToPersist)
   }
 
@@ -27,5 +27,5 @@ class RequestsService(dataTypesService: DataTypesService) {
 @JSExport
 @JSExportAll
 object RequestsServiceHelper {
-  def newId(): String = s"something_${Random.alphanumeric take 10 mkString}"
+  def newId(): String = s"request_${Random.alphanumeric take 10 mkString}"
 }

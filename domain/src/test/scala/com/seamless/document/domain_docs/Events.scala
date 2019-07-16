@@ -55,7 +55,7 @@ class Events extends DocBuilder {
 
 
   h3("Data Types Domain")
-  dataTypesEvents.sortBy(_.name).foreach { case event =>
+  shapesEvents.sortBy(_.name).foreach { case event =>
     h4(event.name)
     p(getEventDesc(event.name).get)
     argsFrom(event.args)

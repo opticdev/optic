@@ -2,7 +2,7 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {withRfcContext} from '../contexts/RfcContext';
 import Typography from '@material-ui/core/Typography';
-import {ShapeCommands} from '../engine';
+import {ShapesCommands} from '../engine';
 import {FullSheet} from './navigation/Editor.js';
 import SchemaEditor from './shape-editor/SchemaEditor';
 import {withEditorContext} from '../contexts/EditorContext';
@@ -11,6 +11,8 @@ import {updateContribution} from '../engine/routines';
 import Editor from './navigation/Editor';
 import {track} from '../Analytics';
 import Helmet from 'react-helmet';
+import ShapeSelectionDialog from './shape-editor/ShapeSelectionDialog.js';
+import ShapeViewer from './shape-editor/ShapeViewer.js';
 
 const styles = theme => ({
     root: {
@@ -25,10 +27,12 @@ const styles = theme => ({
 });
 
 class ConceptsPage extends React.Component {
+    state = {
+        isShapeSelectionModalOpen: false
+    }
     renderMissing() {
         const {classes} = this.props
         return (
-
             <Editor>
                 <FullSheet>
                     <div className={classes.root}>
@@ -45,41 +49,44 @@ class ConceptsPage extends React.Component {
         }
     }
 
+    openShapeSelectionModal = () => {
+        this.setState({isShapeSelectionModalOpen: true})
+    }
+    closeShapeSelectionModal = () => {
+        this.setState({isShapeSelectionModalOpen: false})
+    }
+
     render() {
-        const {classes, conceptId, handleCommand, modeOverride, cachedQueryResults, queries, apiName} = this.props;
-        let mode = modeOverride || this.props.mode;
+        const {classes, conceptId, handleCommand, mode, cachedQueryResults, queries, apiName} = this.props;
         const {contributions} = cachedQueryResults;
 
-        let conceptResult = null;
+        let shape = null;
         try {
-            conceptResult = queries.conceptById(conceptId);
+            shape = queries.shapeById(conceptId);
         } catch (e) {
             console.error(e)
             return this.renderMissing()
         }
 
-        const {allowedReferences, concept} = conceptResult
-        const currentShape = concept;
-
         return (
             <Editor>
-                <Helmet><title>{currentShape.namedConcept.name} -- {apiName}</title></Helmet>
+                <Helmet><title>{shape.name} -- {apiName}</title></Helmet>
                 <FullSheet>
                     <div className={classes.root}>
                         <ContributionTextField
                             key={`${conceptId}-name`}
-                            value={currentShape.namedConcept.name}
+                            value={shape.name}
                             variant={'heading'}
                             placeholder={'Concept Name'}
                             mode={mode}
                             onBlur={(value) => {
-                                const command = ShapeCommands.SetConceptName(value, conceptId)
+                                const command = ShapesCommands.RenameShape(conceptId, value)
                                 handleCommand(command)
                             }}
                         />
 
                         <ContributionTextField
-                            key={conceptId}
+                            key={`${conceptId}-description`}
                             value={contributions.getOrUndefined(conceptId, 'description')}
                             variant={'multi'}
                             placeholder={'Description'}
@@ -88,24 +95,13 @@ class ConceptsPage extends React.Component {
                                 handleCommand(updateContribution(conceptId, 'description', value));
                             }}
                         />
-
-
-                        <div className={classes.schemaEditorContainer}>
-                            <SchemaEditor
-                                conceptId={conceptId}
-                                currentShape={currentShape}
-                                allowedReferences={allowedReferences}
-                                mode={mode}
-                                handleCommand={handleCommand}
-                            />
-                        </div>
-
-                        {/*<Divider style={{marginTop: 15, marginBottom: 15}} />*/}
-
-                        {/*<Typography variant="h6" color="primary">Usages</Typography>*/}
-
+                        <ShapeViewer shape={shape} />
                     </div>
                 </FullSheet>
+                <ShapeSelectionDialog
+                    open={this.state.isShapeSelectionModalOpen}
+                    onClose={this.closeShapeSelectionModal}
+                />
             </Editor>
         );
     }

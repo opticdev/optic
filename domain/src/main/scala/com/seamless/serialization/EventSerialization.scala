@@ -1,11 +1,10 @@
 package com.seamless.serialization
-import com.seamless.contexts.data_types.Events.DataTypesEvent
 import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.rfc.Events.{ContributionEvent, RfcEvent}
+import com.seamless.contexts.shapes.Events.ShapesEvent
 import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.auto._
-import io.circe.parser._
 import io.circe.syntax._
 
 import scala.util.Try
@@ -13,7 +12,7 @@ import scala.util.Try
 object EventSerialization {
   def toJson(vector: Vector[RfcEvent]): Json = {
     vector.map {
-      case dataTypesEvent: DataTypesEvent => dataTypesEvent.asJson
+      case shapesEvent: ShapesEvent => shapesEvent.asJson
       case requestEvent: RequestsEvent =>requestEvent.asJson
       case contributionEvent: ContributionEvent =>contributionEvent.asJson
       case _ => throw new java.lang.Error("Unhandled Event Type")
@@ -21,7 +20,7 @@ object EventSerialization {
   }
 
 
-  private def decodeDataTypesEvent(item: Json): Result[DataTypesEvent] = item.as[DataTypesEvent]
+  private def decodeShapesEvent(item: Json): Result[ShapesEvent] = item.as[ShapesEvent]
   private def decodeRequestEvent(item: Json): Result[RequestsEvent] = item.as[RequestsEvent]
   private def decodeContributionEvent(item: Json): Result[ContributionEvent] = item.as[ContributionEvent]
 
@@ -30,7 +29,7 @@ object EventSerialization {
 
     val parseResults = json.asArray.get.map {
       case i =>  TryChainUtil.firstSuccessIn(i,
-        (j: Json) => Try(decodeDataTypesEvent(j).right.get),
+        (j: Json) => Try(decodeShapesEvent(j).right.get),
         (j: Json) => Try(decodeRequestEvent(j).right.get),
         (j: Json) => Try(decodeContributionEvent(j).right.get))
     }

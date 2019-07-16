@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 sbt fullOptJS
-OUTPUT_FILE=../webapp/src/engine/domain.js
+OUTPUT_FILE=../domain-js/domain.js
 rm -rf $OUTPUT_FILE
 
 touch $OUTPUT_FILE
