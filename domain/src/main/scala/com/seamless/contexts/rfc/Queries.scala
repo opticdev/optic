@@ -6,9 +6,9 @@ import com.seamless.contexts.data_types.Commands.ConceptId
 import com.seamless.contexts.data_types.projections.{AllConcepts, ConceptListProjection, NamedConcept, ShapeProjection, SingleConcept}
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, RequestParameterId, ResponseId}
 import com.seamless.contexts.requests.{HttpRequest, HttpRequestParameter, HttpResponse, RequestsState}
-import com.seamless.contexts.requests.projections.{PathsWithRequestsProjection}
+import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.projections.{APINameProjection, ContributionWrapper, ContributionsProjection}
+import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection}
 import com.seamless.ddd.{AggregateId, CachedProjection, EventStore}
 
 import scala.scalajs.js
@@ -64,6 +64,10 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     convertJsonToJs(q.conceptById(conceptId).asJson)
   }
 
+  def complexityScore(): String = {
+    q.complexityScore
+  }
+
   def apiName(): String = {
     q.apiName()
   }
@@ -113,6 +117,10 @@ class Queries(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId
 
   def conceptById(conceptId: ConceptId): SingleConcept = {
     ShapeProjection.byId(service.currentState(aggregateId).dataTypesState, conceptId)
+  }
+
+  def complexityScore: String = {
+    ComplexityScoreProjection.calculate(requests, allConcepts)
   }
 
   private val apiNameCache = new CachedProjection(APINameProjection, events)
