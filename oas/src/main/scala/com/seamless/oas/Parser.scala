@@ -2,18 +2,15 @@ package com.seamless.oas
 
 import com.seamless.oas.oas_to_commands.{CommandStream, JsonSchemaToCommandsImplicits}
 import com.seamless.oas.versions.{OAS2Resolver, OAS3Resolver}
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, JsString}
 
 import scala.util.Try
 import com.seamless.oas.oas_to_commands.RequestsToCommandsImplicits._
-import com.seamless.oas.QueryImplicits._
 import JsonSchemaToCommandsImplicits._
-import com.seamless.contexts.data_types.Commands.{DefineConcept, DefineInlineConcept}
 import com.seamless.contexts.rfc.Commands.{RfcCommand, SetAPIName}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.{RfcService, RfcState}
 import com.seamless.ddd.InMemoryEventStore
-import com.seamless.serialization.{CommandSerialization, EventSerialization}
 
 object Parser {
 

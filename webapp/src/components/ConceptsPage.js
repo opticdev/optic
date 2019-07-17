@@ -27,9 +27,6 @@ const styles = theme => ({
 });
 
 class ConceptsPage extends React.Component {
-    state = {
-        isShapeSelectionModalOpen: false
-    }
     renderMissing() {
         const {classes} = this.props
         return (
@@ -49,12 +46,6 @@ class ConceptsPage extends React.Component {
         }
     }
 
-    openShapeSelectionModal = () => {
-        this.setState({isShapeSelectionModalOpen: true})
-    }
-    closeShapeSelectionModal = () => {
-        this.setState({isShapeSelectionModalOpen: false})
-    }
 
     render() {
         const {classes, conceptId, handleCommand, mode, cachedQueryResults, queries, apiName} = this.props;
@@ -98,10 +89,6 @@ class ConceptsPage extends React.Component {
                         <ShapeViewer shape={shape} />
                     </div>
                 </FullSheet>
-                <ShapeSelectionDialog
-                    open={this.state.isShapeSelectionModalOpen}
-                    onClose={this.closeShapeSelectionModal}
-                />
             </Editor>
         );
     }

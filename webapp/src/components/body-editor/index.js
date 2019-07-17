@@ -15,6 +15,7 @@ import {getNormalizedBodyDescriptor} from '../PathPage.js';
 import SchemaEditor from '../shape-editor/SchemaEditor';
 import {primary} from '../../theme';
 import {EditorModes} from '../../contexts/EditorContext';
+import ShapeViewer from '../shape-editor/ShapeViewer.js';
 
 
 const styles = theme => ({
@@ -25,8 +26,7 @@ const styles = theme => ({
     select: {
         fontSize: 14
     },
-    wrapper: {
-    }
+    wrapper: {}
 
 });
 
@@ -50,8 +50,8 @@ const BodySwitch = withStyles(styles)(BodySwitchWithoutStyles)
 
 class BodyViewerWithoutContext extends React.Component {
     render() {
-        const {conceptId, mode, queries, contentType} = this.props;
-        const {allowedReferences, concept: currentShape} = queries.conceptById(conceptId);
+        const {shapeId, queries, contentType} = this.props;
+        const shape = queries.shapeById(shapeId);
 
         return (
             <div>
@@ -73,11 +73,7 @@ class BodyViewerWithoutContext extends React.Component {
                             color: primary
                         }}>{contentType}</Typography>
                 </div>
-                <SchemaEditor
-                    conceptId={conceptId}
-                    allowedReferences={allowedReferences}
-                    currentShape={currentShape}
-                    mode={mode}/>
+                <ShapeViewer shape={shape}/>
             </div>
         )
     }
@@ -113,20 +109,20 @@ class BodyEditor extends React.Component {
     }
 
     removeBody = () => {
-        const {conceptId} = getNormalizedBodyDescriptor(this.props.bodyDescriptor)
-        this.props.onBodyRemoved({conceptId})
+        const {shapeId} = getNormalizedBodyDescriptor(this.props.bodyDescriptor)
+        this.props.onBodyRemoved({shapeId})
     }
 
     addOrRestoreBody = () => {
         const {handleCommand, rootId, bodyDescriptor} = this.props;
-        const {conceptId} = getNormalizedBodyDescriptor(bodyDescriptor)
-        if (conceptId) {
-            this.props.onBodyRestored({conceptId})
+        const {shapeId} = getNormalizedBodyDescriptor(bodyDescriptor)
+        if (shapeId) {
+            this.props.onBodyRestored({shapeId})
         } else {
-            const newConceptId = ShapesHelper.newId()
-            const command = ShapesCommands.DefineInlineConcept(rootId, newConceptId)
+            const newShapeId = ShapesHelper.newShapeId()
+            const command = ShapesCommands.AddShape(newShapeId, '$object', '')
             handleCommand(command)
-            this.props.onBodyAdded({conceptId: newConceptId, contentType: this.state.contentTypeInfo.value})
+            this.props.onBodyAdded({shapeId: newShapeId, contentType: this.state.contentTypeInfo.value})
         }
     }
 
@@ -137,11 +133,11 @@ class BodyEditor extends React.Component {
         this.props.onContentTypeChanged({contentType: contentTypeInfo.value})
     };
 
-    renderForViewing({conceptId, contentType}) {
+    renderForViewing({shapeId, contentType}) {
 
         return (
             <LayoutWrapper>
-                <BodyViewer conceptId={conceptId} contentType={contentType}/>
+                <BodyViewer shapeId={shapeId} contentType={contentType}/>
             </LayoutWrapper>
         )
     }
@@ -151,12 +147,12 @@ class BodyEditor extends React.Component {
         const isViewMode = mode === EditorModes.DOCUMENTATION;
         const normalizedBodyDescriptor = getNormalizedBodyDescriptor(bodyDescriptor)
         const hasBody = RequestUtilities.hasNormalizedBody(normalizedBodyDescriptor);
-        const {conceptId, httpContentType: contentType} = normalizedBodyDescriptor
+        const {shapeId, httpContentType: contentType} = normalizedBodyDescriptor
         if (isViewMode) {
             if (!hasBody) {
                 return null
             }
-            return this.renderForViewing({conceptId, contentType})
+            return this.renderForViewing({shapeId, contentType})
         }
 
 
@@ -179,7 +175,7 @@ class BodyEditor extends React.Component {
                     </Select>
 
                     {this.state.contentTypeInfo.supportsShape ? (
-                        <BodyViewer conceptId={conceptId}/>
+                        <BodyViewer shapeId={shapeId}/>
                     ) : null}
                 </LayoutWrapper>
             </Zoom>

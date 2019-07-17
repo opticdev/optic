@@ -14,8 +14,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableRow from '@material-ui/core/TableRow';
 import TableBody from '@material-ui/core/TableBody';
 import classNames from 'classnames'
-import SchemaEditor from '../shape-editor/SchemaEditor';
-import {DisplayRootTypeName} from '../shape-editor/TypeName';
+import ShapeViewer from '../shape-editor/ShapeViewer.js';
 import {getName} from '../utilities/PathUtilities.js';
 import ParameterNameInput from './ParameterNameInput';
 import ContributionWrapper from '../contributions/ContributionWrapper';
@@ -96,7 +95,7 @@ export function pathParametersToRows(pathParameters, contributions) {
             id: pathParameter.pathId,
             name: getName(pathParameter),
             description: contributions.getOrUndefined(pathParameter.pathId, 'description'),
-            inlineConceptId: shapeDescriptor.conceptId,
+            shapeId: shapeDescriptor.shapeId,
             isRemoved: shapeDescriptor.isRemoved
         }
     })
@@ -116,7 +115,7 @@ export function requestParametersToRows(parameters, contributions) {
             id: parameter.parameterId,
             name: parameter.requestParameterDescriptor.name,
             description: contributions.getOrUndefined(parameter.parameterId, 'description'),
-            inlineConceptId: shapeDescriptor.conceptId,
+            shapeId: shapeDescriptor.shapeId,
             isRemoved: shapeDescriptor.isRemoved
         }
     })
@@ -164,16 +163,13 @@ class ParametersEditor extends React.Component {
 
                         let typeCell = null;
                         let schemaEditor = null
-                        if (row.inlineConceptId) {
-                            const {allowedReferences, concept: shape} = queries.conceptById(row.inlineConceptId)
+                        if (row.shapeId) {
+                            const shape = queries.shapeById(row.shapeId)
                             typeCell = (
                                 <TableCell
-                                    align="left" className={classes.cell}
+                                    className={classes.cell}
                                     style={{width: (isExpanded) ? 642 : 'inherit'}}>
-                                    <DisplayRootTypeName
-                                        shape={shape.root}
-                                        style={{marginBottom: -17}}
-                                    />
+                                    <Typography>{shape.name || queries.shapeById(shape.baseShapeId).name}</Typography>
                                     <br/>
                                     <div
                                         className={(isExpanded) ? classes.multiline : classes.singleLine}>
@@ -192,12 +188,7 @@ class ParametersEditor extends React.Component {
                             )
 
                             schemaEditor = (
-                                <SchemaEditor
-                                    conceptId={row.inlineConceptId}
-                                    allowedReferences={allowedReferences}
-                                    currentShape={shape}
-                                    mode={mode}
-                                />
+                                <ShapeViewer shape={shape}/>
                             )
                         }
 

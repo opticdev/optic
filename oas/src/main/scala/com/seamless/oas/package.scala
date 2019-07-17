@@ -1,6 +1,6 @@
 package com.seamless
 
-import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
+import play.api.libs.json.{JsArray, JsString, JsValue}
 
 package object oas {
   case class Context(resolver: OASResolver, root: JsValue)

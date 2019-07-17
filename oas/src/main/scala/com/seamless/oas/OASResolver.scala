@@ -69,8 +69,8 @@ abstract class OASResolver(val root: JsObject, val oas_version: String) {
   object IdGenerator {
     def path = s"path_${Random.alphanumeric take 10 mkString}}"
     def definition(name: String) = s"concept_${Random.alphanumeric take 6 mkString}_${slugify(name)}"
-    def inlineDefinition = s"concept_${Random.alphanumeric take 12 mkString}"
-    def stableInlineRequestBodyDefinition(operation: Operation) = s"concept_${slugify(operation.path.uri)}_${slugify(operation
+    def inlineDefinition = s"inline-shape_${Random.alphanumeric take 12 mkString}"
+    def stableInlineRequestBodyDefinition(operation: Operation) = s"shape_${slugify(operation.path.uri)}_${slugify(operation
     .method)}_body"
   }
 

@@ -1,36 +1,45 @@
 package com.seamless.oas.oas_to_commands
 
-import com.seamless.contexts.data_types.Commands.{AddField, AddTypeParameter, AssignType, DefineConcept, DefineInlineConcept, SetConceptName, SetFieldName}
-import com.seamless.contexts.data_types.Primitives._
-import com.seamless.contexts.rfc.Commands.{AddContribution, RfcCommand}
+import com.seamless.contexts.shapes.Commands._
+import com.seamless.contexts.rfc.Commands.AddContribution
+import com.seamless.contexts.shapes.Commands.ShapeId
+import com.seamless.contexts.shapes.ShapesHelper
 import com.seamless.oas.{Context, JsonSchemaType}
 import com.seamless.oas.JsonSchemaType.{EitherType, JsonSchemaType, Ref, SingleType, Skipped}
 import com.seamless.oas.Schemas.{Definition, JsonSchemaSchema, NamedDefinition, PropertyDefinition}
 import play.api.libs.json.{JsArray, JsObject}
 
-import scala.util.{Either, Random, Try}
-
 object JsonSchemaToCommandsImplicits {
 
-  def newId(): String = s"shape_${Random.alphanumeric take 10 mkString}"
-
-  val mapping: Map[String, PrimitiveType] = Map(
-    "string" -> StringT,
-    "number" -> NumberT,
-    "integer" -> IntegerT,
-    "boolean" -> BooleanT,
-    "object" -> ObjectT,
-    "array" -> ListT
+  val mapping: Map[String, ShapeId] = Map(
+    "string" -> "$string",
+    "number" -> "$number",
+    "integer" -> "$number",
+    "boolean" -> "$boolean",
+    "object" -> "$object",
+    "array" -> "$list"
   )
 
   implicit class JsonSchemaTypeToCommand(t: JsonSchemaType) {
-    def addAssignTypeCommands(id: String, conceptId: String)(implicit cxt: Context, commandStream: MutableCommandStream): Unit = {
+    def addCommandsForField(shapeId: ShapeId, fieldId: FieldId)(implicit cxt: Context, commandStream: MutableCommandStream) = {
+      val fieldShapeId = ShapesHelper.newShapeId()
+      t.addCommandsForShape(fieldShapeId)
+    }
+
+    def addCommandsForParameter(shapeId: ShapeId, parameterId: ShapeParameterId)(implicit cxt: Context, commandStream: MutableCommandStream) = {
+      val parameterShapeId = ShapesHelper.newShapeId()
+      t.addCommandsForShape(parameterShapeId)
+      commandStream.appendDescribe(AddShapeParameter(parameterId, shapeId, ""))
+      commandStream.appendDescribe(SetParameterShape(ProviderInShape(shapeId, ShapeProvider(parameterShapeId), parameterId)))
+    }
+
+    def addCommandsForShape(shapeId: ShapeId)(implicit cxt: Context, commandStream: MutableCommandStream): Unit = {
       t match {
         case SingleType(t) => {
-          val typeEquiv = mapping.getOrElse(t, AnyT) //default to any if type is not supported (file, null)
-          commandStream.appendDescribe(AssignType(id, typeEquiv, conceptId))
+          val typeEquiv = mapping.getOrElse(t, "$any") //default to any if type is not supported (file, null)
+          commandStream.appendDescribe(SetBaseShape(shapeId, typeEquiv))
 
-          if (typeEquiv.hasTypeParameters) {
+          if (typeEquiv == "$list") {
             val items: Vector[JsObject] = (cxt.root \ "items").getOrElse(JsArray.empty) match {
               case a: JsArray => a.value.toVector.asInstanceOf[Vector[JsObject]]
               case obj: JsObject => Vector(obj)
@@ -40,32 +49,30 @@ object JsonSchemaToCommandsImplicits {
             items
               .map(i => (i, JsonSchemaType.fromDefinition(i)))
               .foreach { case (itemCtx, typeParam) => {
-                val typeParamId = newId()
-                commandStream.appendDescribe(AddTypeParameter(id, typeParamId, conceptId))
-                typeParam.addAssignTypeCommands(typeParamId, conceptId)(cxt.resolver.buildContext(itemCtx), commandStream)
-              }}
+                typeParam.addCommandsForShape(shapeId)(cxt.resolver.buildContext(itemCtx), commandStream)
+              }
+              }
           }
 
         }
         case Skipped => {
-//          println("Skipped an unsupported type at" + cxt.root)
-          commandStream.appendDescribe(AssignType(id, AnyT, conceptId))
+          //          println("Skipped an unsupported type at" + cxt.root)
+          commandStream.appendDescribe(SetBaseShape(shapeId, "$any"))
         }
         case Ref(resourceUrl) => {
           val resource = cxt.resolver.resolveDefinition(resourceUrl)
           if (resource.isEmpty) {
-            commandStream.appendDescribe(AssignType(id, AnyT, conceptId))
+            commandStream.appendDescribe(SetBaseShape(shapeId, "$any"))
           } else {
-            commandStream.appendDescribe(AssignType(id, RefT(resource.get.id), conceptId))
+            commandStream.appendDescribe(SetBaseShape(shapeId, resource.get.id))
           }
         }
         case EitherType(allowedTypes) => {
           //will create a different type param for each possibility
-          commandStream.appendDescribe(AssignType(id, EitherT, conceptId))
+          commandStream.appendDescribe(SetBaseShape(shapeId, "$oneOf"))
           allowedTypes.foreach { typeParam => {
-            val typeParamId = newId()
-            commandStream.appendDescribe(AddTypeParameter(id, typeParamId, conceptId))
-            typeParam.addAssignTypeCommands(typeParamId, conceptId)
+            val parameterId = ShapesHelper.newShapeParameterId()
+            typeParam.addCommandsForParameter(shapeId, parameterId)
           }
           }
         }
@@ -77,31 +84,27 @@ object JsonSchemaToCommandsImplicits {
 
     schema match {
       case namedDef: NamedDefinition => {
-        implicit val conceptId = namedDef.id
-        val rootId = newId()
+        val shapeId = namedDef.id
         //init
-        commandStream.appendInit(DefineConcept(namedDef.name, rootId, conceptId))
-        commandStream.appendInit(SetConceptName(namedDef.name, conceptId))
+        commandStream.appendInit(AddShape(shapeId, "$any", namedDef.name))
         //describe
-        namedDef.`type`.addAssignTypeCommands(rootId, conceptId)(namedDef.cxt, commandStream)
+        namedDef.`type`.addCommandsForShape(shapeId)(namedDef.cxt, commandStream)
 
         if (namedDef.description.isDefined) {
-          commandStream appendDescribe AddContribution(conceptId, "description", namedDef.description.get)
+          commandStream appendDescribe AddContribution(shapeId, "description", namedDef.description.get)
         }
 
         schema.properties.foreach(f => {
-          processSchema(f, Some(rootId))
+          processSchema(f, Some(shapeId))
         })
       }
 
       case propertyDef: PropertyDefinition => {
-        val fieldId = newId()
+        val fieldId = ShapesHelper.newFieldId()
         //Add the field
-        commandStream.appendDescribe(AddField(parentShapeId.get, fieldId, conceptId))
-        //Name it
-        commandStream.appendDescribe(SetFieldName(fieldId, propertyDef.key, conceptId))
+        commandStream.appendDescribe(AddField(fieldId, parentShapeId.get, propertyDef.key, FieldShapeFromShape(fieldId, "$any")))
         //Set the type
-        propertyDef.`type`.addAssignTypeCommands(fieldId, conceptId)(propertyDef.cxt, commandStream)
+        propertyDef.`type`.addCommandsForField(parentShapeId.get, fieldId)(propertyDef.cxt, commandStream)
 
         if (propertyDef.description.isDefined) {
           commandStream appendDescribe AddContribution(fieldId, "description", propertyDef.description.get)
@@ -112,20 +115,19 @@ object JsonSchemaToCommandsImplicits {
         })
       }
       case inlineDefinition: Definition => {
-        implicit val conceptId = inlineDefinition.id
-        val rootId = newId()
+        val shapeId = inlineDefinition.id
 
-        commandStream.appendInit(DefineInlineConcept(rootId, conceptId))
+        commandStream.appendInit(AddShape(shapeId, "$any", ""))
         //describe
-        inlineDefinition.`type`.addAssignTypeCommands(rootId, conceptId)(inlineDefinition.cxt, commandStream)
+        inlineDefinition.`type`.addCommandsForShape(shapeId)(inlineDefinition.cxt, commandStream)
 
         if (inlineDefinition.description.isDefined) {
-          commandStream appendDescribe AddContribution(conceptId, "description", inlineDefinition.description.get)
+          commandStream appendDescribe AddContribution(shapeId, "description", inlineDefinition.description.get)
         }
 
         //process fields if any
         schema.properties.foreach(f => {
-          processSchema(f, Some(rootId))
+          processSchema(f, Some(shapeId))
         })
       }
     }

@@ -1,50 +1,149 @@
-import {Typography} from '@material-ui/core';
-import Tooltip from '@material-ui/core/Tooltip';
+import {Dialog} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
-import {withEditorContext} from '../../contexts/EditorContext.js';
-import {withRfcContext} from '../../contexts/RfcContext.js';
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import Typography from '@material-ui/core/Typography';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Tooltip from '@material-ui/core/Tooltip';
+import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
+import {withRfcContext} from '../../contexts/RfcContext';
 import {ShapesCommands, ShapesHelper} from '../../engine';
 import {routerUrls} from '../../routes.js';
+import ContributionWrapper from '../contributions/ContributionWrapper.js';
+import RequestPageHeader from '../requests/RequestPageHeader.js';
 import CoreShapeViewer from './CoreShapeViewer.js';
 
-const coreShapeIds = ['$string', '$number', '$object', '$list', '$map', '$oneOf', '$identifier', '$reference', '$any']
+const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', '$oneOf', '$identifier', '$reference', '$any']
 
-function ShapeChanger({queries, cachedQueryResults, blacklist, shapeId, onChange}) {
-    coreShapeIds.forEach((id) => console.log(cachedQueryResults.shapesState.shapes[id]))
-    const {conceptsById} = cachedQueryResults
+function listChoicesForShape(cachedQueryResults, shapeId, blacklist) {
+    const {conceptsById, shapesState} = cachedQueryResults
+    const coreShapeChoices = coreShapeIds.map(coreShapeId => {
+        return {
+            displayName: shapesState.shapes[coreShapeId].descriptor.name,
+            value: coreShapeId,
+            id: coreShapeId,
+            valueForSetting: coreShapeId,
+        }
+    })
     const blacklistedShapeIds = new Set(blacklist);
-    const conceptComponents = Object.entries(conceptsById)
+    const conceptChoices = Object.entries(conceptsById)
         .filter(([conceptShapeId, shape]) => {
             const isBlacklisted = blacklistedShapeIds.has(conceptShapeId)
             return !isBlacklisted
         })
         .map(([conceptShapeId, shape]) => {
-            const isDisabled = conceptShapeId === shapeId
-            return (
-                <button
-                    key={conceptShapeId}
-                    disabled={isDisabled}
-                    onClick={() => onChange(conceptShapeId)}>{shape.name}</button>
-            )
+            return {
+                displayName: shape.name,
+                value: conceptShapeId,
+                id: conceptShapeId,
+                valueForSetting: conceptShapeId,
+            }
         })
+    return [
+        ...coreShapeChoices,
+        ...conceptChoices,
+    ]
+}
+
+function listChoicesForParameter(cachedQueryResults, parametersAvailableForUse) {
+    const {shapesState, conceptsById} = cachedQueryResults
+    const coreShapeChoices = coreShapeIds.map(coreShapeId => {
+        return {
+            displayName: shapesState.shapes[coreShapeId].descriptor.name,
+            id: coreShapeId,
+            value: {ShapeProvider: {shapeId: coreShapeId}},
+            valueForSetting: ShapesCommands.ShapeProvider(coreShapeId)
+        }
+    })
+    const parameterChoices = parametersAvailableForUse.map(availableParameter => {
+        const parameter = shapesState.shapeParameters[availableParameter.shapeParameterId]
+        const shape = shapesState.shapes[parameter.descriptor.shapeId]
+        return {
+            displayName: `${shape.descriptor.name}.${availableParameter.name}`,
+            id: availableParameter.shapeParameterId,
+            value: {ParameterProvider: {shapeParameterId: availableParameter.shapeParameterId}},
+            valueForSetting: ShapesCommands.ParameterProvider(availableParameter.shapeParameterId)
+        }
+    })
+    const conceptChoices = Object.entries(conceptsById)
+        .map(([conceptShapeId, shape]) => {
+            return {
+                displayName: shape.name,
+                id: conceptShapeId,
+                value: {ShapeProvider: {shapeId: conceptShapeId}},
+                valueForSetting: ShapesCommands.ShapeProvider(conceptShapeId)
+            }
+        })
+    return [
+        ...coreShapeChoices,
+        ...parameterChoices,
+        ...conceptChoices
+    ]
+}
+
+function listChoicesForField(cachedQueryResults, fieldId, parametersAvailableForUse) {
+    const {shapesState, conceptsById} = cachedQueryResults
+    const coreShapeChoices = coreShapeIds.map(coreShapeId => {
+        return {
+            displayName: shapesState.shapes[coreShapeId].descriptor.name,
+            id: coreShapeId,
+            value: {FieldShapeFromShape: {fieldId, shapeId: coreShapeId}},
+            valueForSetting: ShapesCommands.FieldShapeFromShape(fieldId, coreShapeId)
+        }
+    })
+    const parameterChoices = parametersAvailableForUse.map(availableParameter => {
+        const parameter = shapesState.shapeParameters[availableParameter.shapeParameterId]
+        const shape = shapesState.shapes[parameter.descriptor.shapeId]
+        return {
+            displayName: `${shape.descriptor.name}.${availableParameter.name}`,
+            id: availableParameter.shapeParameterId,
+            value: {FieldShapeFromParameter: {fieldId, shapeParameterId: availableParameter.shapeParameterId}},
+            valueForSetting: ShapesCommands.FieldShapeFromParameter(fieldId, availableParameter.shapeParameterId)
+        }
+    })
+    const conceptChoices = Object.entries(conceptsById)
+        .map(([conceptShapeId, shape]) => {
+            return {
+                displayName: shape.name,
+                id: conceptShapeId,
+                value: {FieldShapeFromShape: {fieldId, shapeId: conceptShapeId}},
+                valueForSetting: ShapesCommands.FieldShapeFromShape(fieldId, conceptShapeId)
+            }
+        })
+    return [
+        ...coreShapeChoices,
+        ...parameterChoices,
+        ...conceptChoices
+    ]
+}
+
+function ShapeChanger({onOpenSelectionModal, cachedQueryResults, blacklist, shapeId, baseShapeId, onChange}) {
+    const choices = listChoicesForShape(cachedQueryResults, shapeId, blacklist)
     return (
         <div>
             Change to:
-            {coreShapeIds
-                .map(coreShapeId => {
-                    const coreShape = queries.shapeById(coreShapeId)
-                    const isDisabled = coreShape.shapeId === shapeId
+            {choices
+                .map(({id, displayName, value, valueForSetting}) => {
+                    const isDisabled = value === baseShapeId || value === shapeId
 
                     return (
                         <button
-                            key={coreShapeId}
+                            key={id}
                             disabled={isDisabled}
-                            onClick={() => onChange(coreShapeId)}>{coreShape.name}</button>
+                            onClick={() => onChange(valueForSetting)}>{displayName}</button>
                     )
                 })}
-            {conceptComponents}
+
+
+            <Button
+                onClick={() => onOpenSelectionModal(choices, (choice) => onChange(choice.valueForSetting))}
+            >&hellip;</Button>
         </div>
     )
 }
@@ -93,97 +192,72 @@ function getProviderDescription(shapesState, shapeProvider) {
     return null
 }
 
-function ParameterShapeChanger({cachedQueryResults, onChange, parameter, parametersAvailableForUse, shapeProvider}) {
-    const {shapesState, conceptsById} = cachedQueryResults
-    const providerDescription = getProviderDescription(shapesState, shapeProvider)
-    const conceptComponents = Object.entries(conceptsById)
-        .map(([conceptShapeId, shape]) => {
+function doShapeProvidersMatch(descriptor1, descriptor2) {
+    if (!descriptor1 || !descriptor2) {
+        return false
+    }
+    if (descriptor1.ShapeProvider && descriptor2.ShapeProvider) {
+        return descriptor1.ShapeProvider.shapeId === descriptor2.ShapeProvider.shapeId
+    } else if (descriptor1.ParameterProvider && descriptor2.ParameterProvider) {
+        return descriptor1.ParameterProvider.shapeParameterId === descriptor2.ParameterProvider.shapeParameterId
+    }
+    return false
+}
 
-            return (
-                <button
-                    key={conceptShapeId}
-                    onClick={() => onChange(ShapesCommands.ShapeProvider(conceptShapeId))}>{shape.name}</button>
-            )
-        })
+function ParameterShapeChanger({onOpenSelectionModal, cachedQueryResults, onChange, parameter, parametersAvailableForUse, shapeProvider}) {
+    const {shapesState} = cachedQueryResults
+    const providerDescription = getProviderDescription(shapesState, shapeProvider)
+    const choices = listChoicesForParameter(cachedQueryResults, parametersAvailableForUse)
 
     return (
         <div>
-            <Tooltip interactive title={
-                <React.Fragment>
-                    {coreShapeIds.map(coreShapeId => {
+            <TooltipWrapper widget={
+                <div>
+                    {choices.map(choice => {
+                        const isDisabled = doShapeProvidersMatch(shapeProvider, choice.value)
                         return (
-                            <button
-                                key={coreShapeId}
-                                onClick={() => onChange(ShapesCommands.ShapeProvider(coreShapeId))}
-                            >{shapesState.shapes[coreShapeId].descriptor.name}</button>
+                            <Button
+                                key={choice.id}
+                                disabled={isDisabled}
+                                onClick={() => onChange(choice.valueForSetting)}
+                            >{choice.displayName}</Button>
                         )
                     })}
-                    {parametersAvailableForUse.map(availableParameter => {
-                        return (
-                            <button
-                                key={availableParameter.shapeParameterId}
-                                onClick={() => onChange(ShapesCommands.ParameterProvider(availableParameter.shapeParameterId))}
-                            >set parameter type to {availableParameter.name}
-                            </button>
-                        )
-                    })}
-                    {conceptComponents}
-                </React.Fragment>
-            } placement="top-start">
+                    <Button
+                        onClick={() => onOpenSelectionModal(choices, (choice) => onChange(choice.valueForSetting))}
+                    >&hellip;</Button>
+                </div>
+            }>
                 <Typography>{parameter.name} ({providerDescription})</Typography>
-            </Tooltip>
+            </TooltipWrapper>
         </div>
     )
 }
 
-function FieldShapeChanger({queries, fieldId, parentParameters, cachedQueryResults, fieldShapeDescriptor, onChange}) {
-    const {conceptsById} = cachedQueryResults
-    const conceptComponents = Object.entries(conceptsById)
-        .map(([conceptShapeId, shape]) => {
-            const isDisabled = doShapeDescriptorsMatch({
-                FieldShapeFromShape: {fieldId, shapeId: conceptShapeId}
-            }, fieldShapeDescriptor)
-            return (
-                <button
-                    key={conceptShapeId}
-                    disabled={isDisabled}
-                    onClick={() => onChange(ShapesCommands.FieldShapeFromShape(fieldId, conceptShapeId))}>{shape.name}</button>
-            )
-        })
-    const parentParameterComponents = parentParameters
-        .map(parentParameter => {
-            const isDisabled = doShapeDescriptorsMatch({
-                FieldShapeFromParameter: {
-                    fieldId,
-                    shapeParameterId: parentParameter.shapeParameterId
-                }
-            }, fieldShapeDescriptor)
-            return (
-                <button
-                    key={parentParameter.shapeParameterId}
-                    disabled={isDisabled}
-                    onClick={() => onChange(ShapesCommands.FieldShapeFromParameter(fieldId, parentParameter.shapeParameterId))}
-                >{parentParameter.name}</button>
-            )
-        })
+function FieldShapeChanger({fieldId, parentParameters, onOpenSelectionModal, cachedQueryResults, fieldShapeDescriptor, onChange, onRemove}) {
+
+    const choices = listChoicesForField(cachedQueryResults, fieldId, parentParameters)
     return (
         <div>
-            Change to:
-            {coreShapeIds.map(coreShapeId => {
-                const coreShape = queries.shapeById(coreShapeId)
-                const isDisabled = doShapeDescriptorsMatch({
-                    FieldShapeFromShape: {fieldId, shapeId: coreShapeId}
-                }, fieldShapeDescriptor)
-                return (
-                    <button
-                        key={coreShapeId}
-                        disabled={isDisabled}
-                        onClick={() => onChange(ShapesCommands.FieldShapeFromShape(fieldId, coreShapeId))}
-                    >{coreShape.name}</button>
-                )
-            })}
-            {conceptComponents}
-            {parentParameterComponents}
+            <div>
+                Change to:
+                {choices.map(choice => {
+                    const isDisabled = doShapeDescriptorsMatch(fieldShapeDescriptor, choice.value)
+                    return (
+                        <Button
+                            key={choice.id}
+                            disabled={isDisabled}
+                            onClick={() => onChange(choice.valueForSetting)}
+                        >{choice.displayName}</Button>
+                    )
+                })}
+            </div>
+            <div>
+                <Button
+                    onClick={() => onOpenSelectionModal(choices, (choice) => onChange(choice.valueForSetting))}
+                >&hellip;</Button>
+                <Button onClick={() => onRemove(fieldId)}>&times;</Button>
+            </div>
         </div>
     )
 }
@@ -199,10 +273,71 @@ function getFieldDescription(shapesState, fieldShapeDescriptor) {
     }
 }
 
-function ObjectFieldsViewer({queries, parentShapeId, setFieldShape, setShapeParameterInField, fields, cachedQueryResults}) {
+function WriteOnlyBase({mode, children}) {
+    if (mode === EditorModes.DESIGN) {
+        return children
+    }
+    return null
+}
+
+export const WriteOnly = withEditorContext(WriteOnlyBase)
+const useStyles = makeStyles(theme => ({
+    maxWidth: {
+        maxWidth: '100%',
+        margin: 0
+    },
+    // this is to make the popover sit on top of its anchor
+    noTransform: {
+        transform: 'none !important',
+        zIndex: 999
+    }
+}));
+
+function TooltipWrapper({children, widget}) {
+    const [open, setOpen] = React.useState(false);
+    const classes = useStyles();
+
+
+    function handleTooltipClose() {
+        setOpen(false);
+    }
+
+    function handleTooltipOpen() {
+        setOpen(true);
+    }
+
+    return (
+        <ClickAwayListener onClickAway={handleTooltipClose}>
+            <div style={{position: 'relative'}}>
+                <Tooltip
+                    classes={{
+                        tooltip: classes.maxWidth
+                    }}
+                    PopperProps={{
+                        disablePortal: true,
+                        className: classes.noTransform
+                    }}
+                    onClose={handleTooltipClose}
+                    open={open}
+                    disableFocusListener
+                    disableHoverListener
+                    disableTouchListener
+                    interactive
+                    title={widget}
+                    placement="left-start"
+                >
+                    <div onClick={handleTooltipOpen}>{children}</div>
+                </Tooltip>
+            </div>
+        </ClickAwayListener>
+    )
+}
+
+function ObjectFieldsViewer({onOpenSelectionModal, queries, parentShapeId, removeField, setFieldShape, setShapeParameterInField, fields, cachedQueryResults}) {
     const parent = queries.shapeById(parentShapeId)
     const {shapesState} = cachedQueryResults
     const fieldComponents = fields
+        .filter(field => !field.isRemoved)
         .map(field => {
             const {fieldId, name, bindings, fieldShapeDescriptor} = field;
             const fieldDescription = getFieldDescription(shapesState, fieldShapeDescriptor)
@@ -212,29 +347,32 @@ function ObjectFieldsViewer({queries, parentShapeId, setFieldShape, setShapePara
                     const shapeProvider = bindings[parameter.shapeParameterId]
                     return (
                         <ParameterShapeChanger
+                            key={parameter.shapeParameterId}
                             cachedQueryResults={cachedQueryResults}
                             parameter={parameter}
                             shapeProvider={shapeProvider}
                             parametersAvailableForUse={parent.parameters}
+                            onOpenSelectionModal={onOpenSelectionModal}
                             onChange={(shapeProvider) => setShapeParameterInField(fieldId, shapeProvider, parameter.shapeParameterId)}/>
                     )
                 })
             return (
                 <div key={fieldId}>
-                    <Tooltip disableHoverListener interactive title={
+                    <TooltipWrapper widget={
                         <FieldShapeChanger
                             fieldId={fieldId}
                             onChange={(fieldShapeDescriptor) => setFieldShape(fieldShapeDescriptor)}
+                            onRemove={(fieldId) => removeField(fieldId)}
                             queries={queries}
+                            onOpenSelectionModal={onOpenSelectionModal}
                             fieldShapeDescriptor={fieldShapeDescriptor}
                             parentParameters={parent.parameters}
                             cachedQueryResults={cachedQueryResults}
                         />
-                    } placement="top-start">
+                    }>
                         <Typography><FieldName name={name}/> : {fieldDescription}</Typography>
-                    </Tooltip>
+                    </TooltipWrapper>
                     {parameterComponents}
-
                 </div>
             )
         })
@@ -246,21 +384,67 @@ function ObjectFieldsViewer({queries, parentShapeId, setFieldShape, setShapePara
     )
 }
 
-class ParameterListViewer extends React.Component {
-    render() {
-        const {parameters} = this.props;
-        const parameterComponents = parameters
-            .map(parameter => {
-                return (
-                    <span>{parameter.name}</span>
-                )
-            })
-        return (
-            <div>
-                [{parameterComponents}]
-            </div>
-        )
+function Join({children, delimiter}) {
+    return React.Children.toArray(children).reduce((acc, child) => {
+        return acc.length === 0 ? [child] : [...acc, delimiter, child]
+    }, [])
+}
+
+function ParameterListViewerBase({cachedQueryResults, parameters}) {
+    if (parameters.length === 0) {
+        return null
     }
+    const parameterComponents = parameters
+        .filter(parameter => !parameter.isRemoved)
+        .map(parameter => {
+            return (
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                    <Typography>{parameter.name}</Typography>
+                    <ContributionWrapper
+                        value={parameter.name}
+                        defaultText={''}
+                        variant="inline"
+                        cachedQueryResults={cachedQueryResults}
+                        contributionKey="description"
+                        contributionParentId={parameter.shapeParameterId}
+                    />
+                </div>
+            )
+        })
+    return (
+        <div>
+            {parameterComponents}
+        </div>
+    )
+}
+
+const ParameterListViewer = withRfcContext(ParameterListViewerBase)
+
+function ParameterListManager({cachedQueryResults, parameters, onAdd, onRemove}) {
+    const parameterComponents = parameters
+        .filter(parameter => !parameter.isRemoved)
+        .map(parameter => {
+            return (
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                    <div>{parameter.name}</div>
+                    <ContributionWrapper
+                        value={parameter.name}
+                        defaultText={''}
+                        variant="inline"
+                        cachedQueryResults={cachedQueryResults}
+                        contributionKey="description"
+                        contributionParentId={parameter.shapeParameterId}
+                    />
+                    <WriteOnly><Button onClick={() => onRemove(parameter.shapeParameterId)}>&times;</Button></WriteOnly>
+                </div>
+            )
+        })
+    return (
+        <div>
+            <RequestPageHeader forType={'Parameter'} addAction={onAdd}/>
+            {parameterComponents.length === 0 ? <Typography>No Parameters</Typography> : parameterComponents}
+        </div>
+    )
 }
 
 let i = 1;
@@ -268,13 +452,19 @@ let t = 1;
 
 function ShapeLinkBase({baseUrl, shape}) {
     return (
-        <Link to={routerUrls.conceptPage(baseUrl, shape.shapeId)}>{shape.name}</Link>
+        <Link style={{textDecoration: 'none'}} to={routerUrls.conceptPage(baseUrl, shape.shapeId)}>{shape.name}</Link>
     )
 }
 
 const ShapeLink = withEditorContext(ShapeLinkBase)
 
-class ShapeViewer extends React.Component {
+class ShapeViewerBase extends React.Component {
+
+    state = {
+        selectionModal: {
+            open: false
+        }
+    }
     addField = () => {
         const {handleCommand, shape} = this.props;
         const fieldId = ShapesHelper.newFieldId()
@@ -332,26 +522,62 @@ class ShapeViewer extends React.Component {
         handleCommand(command)
     }
 
+    handleOpenSelectionModal = (choices, onSelect) => {
+        this.setState({
+            selectionModal: {
+                open: true,
+                choices,
+                onSelect
+            }
+        })
+    }
+
+    handleCloseSelectionModal = () => {
+        this.setState({
+            selectionModal: {
+                open: false
+            }
+        })
+    }
+
     render() {
-        const {baseUrl, shape, queries, cachedQueryResults} = this.props;
+        const {shape, queries, cachedQueryResults} = this.props;
         const {shapeId, baseShapeId, name, coreShapeId, parameters, bindings, fields, isRemoved} = shape;
+
         if (shapeId === coreShapeId) {
             return <CoreShapeViewer coreShapeId={coreShapeId}/>
         }
+        const canAddParameters = baseShapeId === '$object'
+        const canAddFields = baseShapeId === '$object'
+        console.log({baseShapeId})
         const baseShape = queries.shapeById(baseShapeId)
         return (
             <div>
-                <Tooltip interactive title={
+                {canAddParameters ? (
+                    <React.Fragment>
+                        <ParameterListManager
+                            parameters={parameters}
+                            onAdd={this.addParameter}
+                            onRemove={this.removeShapeParameter}
+                        />
+                    </React.Fragment>
+                ) : null}
+                <TooltipWrapper widget={
                     <ShapeChanger
-                        onChange={(newShapeId) => this.setBaseShape(shapeId, newShapeId)}
                         cachedQueryResults={cachedQueryResults}
-                        queries={queries}
                         blacklist={[shapeId, baseShapeId]}
                         shapeId={shapeId}
+                        baseShapeId={baseShapeId}
+                        onOpenSelectionModal={this.handleOpenSelectionModal}
+                        onChange={(newShapeId) => this.setBaseShape(shapeId, newShapeId)}
                     />
-                } placement="top-start">
-                    <Typography>{name}: <ShapeLink shape={baseShape}/></Typography>
-                </Tooltip>
+                }>
+                    {name ? (
+                        <Typography>{name}: <ShapeLink shape={baseShape}/></Typography>
+                    ) : (
+                        <Typography><ShapeLink shape={baseShape}/></Typography>
+                    )}
+                </TooltipWrapper>
                 <ParameterListViewer parameters={baseShape.parameters}/>
                 {baseShape.parameters.map(parentParameter => {
                     const boundShapeId = bindings[parentParameter.shapeParameterId];
@@ -362,32 +588,82 @@ class ShapeViewer extends React.Component {
                             parameter={parentParameter}
                             shapeProvider={shapeProvider}
                             parametersAvailableForUse={parameters}
+                            onOpenSelectionModal={this.handleOpenSelectionModal}
                             onChange={(shapeProvider) => this.setShapeParameterInShape(shapeId, shapeProvider, parentParameter.shapeParameterId)}
                         />
                     )
                 })}
-                {baseShapeId === '$object' ? (
+                {canAddFields ? (
                     <div>
-                        <button onClick={this.addParameter}> + add parameter</button>
-                        <ParameterListViewer parameters={parameters}/>
-
-
-                        <button onClick={this.addField}> + add field</button>
+                        <RequestPageHeader forType="Field" addAction={this.addField}/>
 
                         <ObjectFieldsViewer
                             parentShapeId={shapeId}
                             cachedQueryResults={cachedQueryResults}
                             queries={queries}
                             fields={fields}
+                            removeField={this.removeField}
+                            onOpenSelectionModal={this.handleOpenSelectionModal}
                             setShapeParameterInField={(fieldId, shapeProvider, shapeParameterId) => this.setShapeParameterInField(fieldId, shapeProvider, shapeParameterId)}
                             setFieldShape={this.setFieldShape}/>
                     </div>
                 ) : null}
+
+                {this.renderSelectionModal()}
             </div>
         );
     }
+
+    setSelectedItem(choice) {
+        this.setState({
+            selectionModal: {
+                ...this.state.selectionModal,
+                selectedItem: choice
+            },
+        })
+    }
+
+    renderSelectionModal() {
+        const {selectionModal} = this.state;
+        const {
+            choices = [],
+            onSelect = () => {
+            },
+            selectedItem = null
+        } = selectionModal
+
+        const {cachedQueryResults, queries} = this.props
+        const {shapesState} = cachedQueryResults
+        const selectedShape = selectedItem && shapesState.shapes[selectedItem.id] ? queries.shapeById(selectedItem.id) : null
+        return (
+            <Dialog open={selectionModal.open} onClose={this.handleCloseSelectionModal}>
+                <DialogTitle>Choose a Shape</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>{
+                        choices
+                            .map(choice => {
+                                return (
+                                    <Button
+                                        disabled={selectedItem && (choice.id === selectedItem.id)}
+                                        onClick={() => this.setSelectedItem(choice)}
+                                    >{choice.displayName}</Button>
+                                )
+                            })
+                    }</DialogContentText>
+                    {selectedShape && <ShapeViewer shape={selectedShape}/>}
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={this.handleCloseSelectionModal}>Cancel</Button>
+                    <Button disabled={!selectedItem} onClick={() => {
+                        onSelect(selectedItem)
+                        this.handleCloseSelectionModal()
+                    }}>Select</Button>
+                </DialogActions>
+            </Dialog>
+        )
+    }
 }
 
-ShapeViewer.propTypes = {};
-
-export default withEditorContext(withRfcContext(ShapeViewer));
+ShapeViewerBase.propTypes = {};
+const ShapeViewer = withEditorContext(withRfcContext(ShapeViewerBase));
+export default ShapeViewer

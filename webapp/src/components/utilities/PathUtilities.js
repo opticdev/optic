@@ -50,6 +50,9 @@ export function getNormalizedName(path) {
 }
 
 export function getParentPathId(path) {
+    if (!path || !path.descriptor) {
+        return null
+    }
     if (path.descriptor.ParameterizedPathComponentDescriptor) {
         return path.descriptor.ParameterizedPathComponentDescriptor.parentPathId
     }

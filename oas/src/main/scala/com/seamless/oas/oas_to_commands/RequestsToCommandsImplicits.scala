@@ -1,13 +1,8 @@
 package com.seamless.oas.oas_to_commands
 
-import com.seamless.contexts.data_types.Commands._
-import com.seamless.contexts.data_types.Primitives._
 import com.seamless.contexts.requests.Commands._
-import com.seamless.contexts.rfc.Commands.{AddContribution, RfcCommand}
-import com.seamless.oas.JsonSchemaType.{EitherType, JsonSchemaType, Ref, SingleType}
-import com.seamless.oas.Schemas.{Definition, JsonSchemaSchema, NamedDefinition, Operation, Path, PropertyDefinition}
-import com.seamless.oas.{Context, JsonSchemaType}
-import play.api.libs.json.JsArray
+import com.seamless.contexts.rfc.Commands.{AddContribution}
+import com.seamless.oas.Schemas.{Definition, JsonSchemaSchema, Operation, Path}
 import JsonSchemaToCommandsImplicits._
 import com.seamless.contexts.requests.Utilities
 

@@ -7,8 +7,8 @@ class RequestUtilities {
     }
 
     static hasNormalizedBody(normalizedBodyDescriptor) {
-        const {conceptId, isRemoved} = normalizedBodyDescriptor
-        if (conceptId && !isRemoved) {
+        const {shapeId, isRemoved} = normalizedBodyDescriptor
+        if (shapeId && !isRemoved) {
             return true
         }
         return false
