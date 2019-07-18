@@ -2,16 +2,15 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {withRfcContext} from '../contexts/RfcContext';
 import Typography from '@material-ui/core/Typography';
+import {ShapeEditorStore} from '../contexts/ShapeEditorContext.js';
 import {ShapesCommands} from '../engine';
 import {FullSheet} from './navigation/Editor.js';
-import SchemaEditor from './shape-editor/SchemaEditor';
 import {withEditorContext} from '../contexts/EditorContext';
 import ContributionTextField from './contributions/ContributionTextField';
 import {updateContribution} from '../engine/routines';
 import Editor from './navigation/Editor';
 import {track} from '../Analytics';
 import Helmet from 'react-helmet';
-import ShapeSelectionDialog from './shape-editor/ShapeSelectionDialog.js';
 import ShapeViewer from './shape-editor/ShapeViewer.js';
 
 const styles = theme => ({
@@ -86,7 +85,9 @@ class ConceptsPage extends React.Component {
                                 handleCommand(updateContribution(conceptId, 'description', value));
                             }}
                         />
-                        <ShapeViewer shape={shape} />
+                        <ShapeEditorStore>
+                            <ShapeViewer shape={shape}/>
+                        </ShapeEditorStore>
                     </div>
                 </FullSheet>
             </Editor>

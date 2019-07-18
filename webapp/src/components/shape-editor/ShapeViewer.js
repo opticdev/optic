@@ -1,127 +1,26 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import {Link} from 'react-router-dom';
 import {Dialog} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import React from 'react';
-import PropTypes from 'prop-types';
-import {Link} from 'react-router-dom';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Typography from '@material-ui/core/Typography';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Tooltip from '@material-ui/core/Tooltip';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
+import {GenericContextFactory} from '../../contexts/GenericContextFactory.js';
 import {withRfcContext} from '../../contexts/RfcContext';
-import {ShapesCommands, ShapesHelper} from '../../engine';
+import {withShapeEditorContext} from '../../contexts/ShapeEditorContext.js';
 import {routerUrls} from '../../routes.js';
 import ContributionWrapper from '../contributions/ContributionWrapper.js';
 import RequestPageHeader from '../requests/RequestPageHeader.js';
+import {listChoicesForField, listChoicesForParameter, listChoicesForShape} from './Choices.js';
 import CoreShapeViewer from './CoreShapeViewer.js';
-
-const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', '$oneOf', '$identifier', '$reference', '$any']
-
-function listChoicesForShape(cachedQueryResults, shapeId, blacklist) {
-    const {conceptsById, shapesState} = cachedQueryResults
-    const coreShapeChoices = coreShapeIds.map(coreShapeId => {
-        return {
-            displayName: shapesState.shapes[coreShapeId].descriptor.name,
-            value: coreShapeId,
-            id: coreShapeId,
-            valueForSetting: coreShapeId,
-        }
-    })
-    const blacklistedShapeIds = new Set(blacklist);
-    const conceptChoices = Object.entries(conceptsById)
-        .filter(([conceptShapeId, shape]) => {
-            const isBlacklisted = blacklistedShapeIds.has(conceptShapeId)
-            return !isBlacklisted
-        })
-        .map(([conceptShapeId, shape]) => {
-            return {
-                displayName: shape.name,
-                value: conceptShapeId,
-                id: conceptShapeId,
-                valueForSetting: conceptShapeId,
-            }
-        })
-    return [
-        ...coreShapeChoices,
-        ...conceptChoices,
-    ]
-}
-
-function listChoicesForParameter(cachedQueryResults, parametersAvailableForUse) {
-    const {shapesState, conceptsById} = cachedQueryResults
-    const coreShapeChoices = coreShapeIds.map(coreShapeId => {
-        return {
-            displayName: shapesState.shapes[coreShapeId].descriptor.name,
-            id: coreShapeId,
-            value: {ShapeProvider: {shapeId: coreShapeId}},
-            valueForSetting: ShapesCommands.ShapeProvider(coreShapeId)
-        }
-    })
-    const parameterChoices = parametersAvailableForUse.map(availableParameter => {
-        const parameter = shapesState.shapeParameters[availableParameter.shapeParameterId]
-        const shape = shapesState.shapes[parameter.descriptor.shapeId]
-        return {
-            displayName: `${shape.descriptor.name}.${availableParameter.name}`,
-            id: availableParameter.shapeParameterId,
-            value: {ParameterProvider: {shapeParameterId: availableParameter.shapeParameterId}},
-            valueForSetting: ShapesCommands.ParameterProvider(availableParameter.shapeParameterId)
-        }
-    })
-    const conceptChoices = Object.entries(conceptsById)
-        .map(([conceptShapeId, shape]) => {
-            return {
-                displayName: shape.name,
-                id: conceptShapeId,
-                value: {ShapeProvider: {shapeId: conceptShapeId}},
-                valueForSetting: ShapesCommands.ShapeProvider(conceptShapeId)
-            }
-        })
-    return [
-        ...coreShapeChoices,
-        ...parameterChoices,
-        ...conceptChoices
-    ]
-}
-
-function listChoicesForField(cachedQueryResults, fieldId, parametersAvailableForUse) {
-    const {shapesState, conceptsById} = cachedQueryResults
-    const coreShapeChoices = coreShapeIds.map(coreShapeId => {
-        return {
-            displayName: shapesState.shapes[coreShapeId].descriptor.name,
-            id: coreShapeId,
-            value: {FieldShapeFromShape: {fieldId, shapeId: coreShapeId}},
-            valueForSetting: ShapesCommands.FieldShapeFromShape(fieldId, coreShapeId)
-        }
-    })
-    const parameterChoices = parametersAvailableForUse.map(availableParameter => {
-        const parameter = shapesState.shapeParameters[availableParameter.shapeParameterId]
-        const shape = shapesState.shapes[parameter.descriptor.shapeId]
-        return {
-            displayName: `${shape.descriptor.name}.${availableParameter.name}`,
-            id: availableParameter.shapeParameterId,
-            value: {FieldShapeFromParameter: {fieldId, shapeParameterId: availableParameter.shapeParameterId}},
-            valueForSetting: ShapesCommands.FieldShapeFromParameter(fieldId, availableParameter.shapeParameterId)
-        }
-    })
-    const conceptChoices = Object.entries(conceptsById)
-        .map(([conceptShapeId, shape]) => {
-            return {
-                displayName: shape.name,
-                id: conceptShapeId,
-                value: {FieldShapeFromShape: {fieldId, shapeId: conceptShapeId}},
-                valueForSetting: ShapesCommands.FieldShapeFromShape(fieldId, conceptShapeId)
-            }
-        })
-    return [
-        ...coreShapeChoices,
-        ...parameterChoices,
-        ...conceptChoices
-    ]
-}
+import {ShapeUtilities} from './ShapeUtilities.js';
 
 function ShapeChanger({onOpenSelectionModal, cachedQueryResults, blacklist, shapeId, baseShapeId, onChange}) {
     const choices = listChoicesForShape(cachedQueryResults, shapeId, blacklist)
@@ -206,7 +105,7 @@ function doShapeProvidersMatch(descriptor1, descriptor2) {
 
 function ParameterShapeChanger({onOpenSelectionModal, cachedQueryResults, onChange, parameter, parametersAvailableForUse, shapeProvider}) {
     const {shapesState} = cachedQueryResults
-    const providerDescription = getProviderDescription(shapesState, shapeProvider)
+    const providerDescription = '';//getProviderDescription(shapesState, shapeProvider)
     const choices = listChoicesForParameter(cachedQueryResults, parametersAvailableForUse)
 
     return (
@@ -262,12 +161,18 @@ function FieldShapeChanger({fieldId, parentParameters, onOpenSelectionModal, cac
     )
 }
 
-function getFieldDescription(shapesState, fieldShapeDescriptor) {
+function getFieldDescription(queries, shapesState, fieldShapeDescriptor) {
+    console.log({fieldShapeDescriptor})
     if (!fieldShapeDescriptor) {
         return null
     }
     if (fieldShapeDescriptor.FieldShapeFromShape) {
-        return shapesState.shapes[fieldShapeDescriptor.FieldShapeFromShape.shapeId].descriptor.name
+        const shape = queries.shapeById(fieldShapeDescriptor.FieldShapeFromShape.shapeId)
+        const name = shape.name
+        if (!name) {
+            return queries.shapeById(shape.baseShapeId).name
+        }
+        return name
     } else if (fieldShapeDescriptor.FieldShapeFromParameter) {
         return shapesState.shapeParameters[fieldShapeDescriptor.FieldShapeFromParameter.shapeParameterId].descriptor.name
     }
@@ -333,14 +238,31 @@ function TooltipWrapper({children, widget}) {
     )
 }
 
-function ObjectFieldsViewer({onOpenSelectionModal, queries, parentShapeId, removeField, setFieldShape, setShapeParameterInField, fields, cachedQueryResults}) {
+function FieldLinkBase({queries, baseUrl, field, children}) {
+    if (field.fieldShapeDescriptor.FieldShapeFromShape) {
+        const shapeId = field.fieldShapeDescriptor.FieldShapeFromShape.shapeId
+        const shape = queries.shapeById(shapeId)
+        return <Link to={routerUrls.conceptPage(baseUrl, shape.name ? shapeId : shape.baseShapeId)}>{children}</Link>
+    }
+    return children
+}
+
+const FieldLink = withRfcContext(withEditorContext(FieldLinkBase))
+
+const {
+    Context: DepthContext,
+    withContext: withDepthContext
+} = GenericContextFactory({depth: 0})
+
+function ObjectFieldsViewerBase({onOpenSelectionModal, queries, parentShapeId, removeField, renameField, setFieldShape, setShapeParameterInField, fields, cachedQueryResults}) {
+
     const parent = queries.shapeById(parentShapeId)
     const {shapesState} = cachedQueryResults
     const fieldComponents = fields
         .filter(field => !field.isRemoved)
         .map(field => {
             const {fieldId, name, bindings, fieldShapeDescriptor} = field;
-            const fieldDescription = getFieldDescription(shapesState, fieldShapeDescriptor)
+            const fieldDescription = getFieldDescription(queries, shapesState, fieldShapeDescriptor)
             const availableParameters = getFieldParameters(queries, fieldShapeDescriptor)
             const parameterComponents = availableParameters
                 .map(parameter => {
@@ -370,7 +292,10 @@ function ObjectFieldsViewer({onOpenSelectionModal, queries, parentShapeId, remov
                             cachedQueryResults={cachedQueryResults}
                         />
                     }>
-                        <Typography><FieldName name={name}/> : {fieldDescription}</Typography>
+                        <Typography>
+                            <FieldName name={name} onChange={(name) => renameField(fieldId, name)}/> :
+                            <FieldLink field={field}>{fieldDescription}</FieldLink>
+                        </Typography>
                     </TooltipWrapper>
                     {parameterComponents}
                 </div>
@@ -383,6 +308,8 @@ function ObjectFieldsViewer({onOpenSelectionModal, queries, parentShapeId, remov
         </div>
     )
 }
+
+const ObjectFieldsViewer = withShapeEditorContext(ObjectFieldsViewerBase);
 
 function Join({children, delimiter}) {
     return React.Children.toArray(children).reduce((acc, child) => {
@@ -447,8 +374,6 @@ function ParameterListManager({cachedQueryResults, parameters, onAdd, onRemove})
     )
 }
 
-let i = 1;
-let t = 1;
 
 function ShapeLinkBase({baseUrl, shape}) {
     return (
@@ -458,6 +383,7 @@ function ShapeLinkBase({baseUrl, shape}) {
 
 const ShapeLink = withEditorContext(ShapeLinkBase)
 
+
 class ShapeViewerBase extends React.Component {
 
     state = {
@@ -465,62 +391,7 @@ class ShapeViewerBase extends React.Component {
             open: false
         }
     }
-    addField = () => {
-        const {handleCommand, shape} = this.props;
-        const fieldId = ShapesHelper.newFieldId()
-        const fieldShapeDescriptor = ShapesCommands.FieldShapeFromShape(fieldId, '$string')
-        const command = ShapesCommands.AddField(fieldId, shape.shapeId, `f${i++}`, fieldShapeDescriptor)
-        handleCommand(command)
-    }
 
-    addParameter = () => {
-        const {handleCommand, shape} = this.props;
-        const shapeParameterId = ShapesHelper.newShapeParameterId()
-        const command = ShapesCommands.AddShapeParameter(shapeParameterId, shape.shapeId, `T${t++}`)
-        handleCommand(command)
-    }
-
-    setFieldShape = (fieldShapeDescriptor) => {
-        const {handleCommand} = this.props;
-        const command = ShapesCommands.SetFieldShape(fieldShapeDescriptor)
-        handleCommand(command)
-    }
-
-    setShapeParameterInField = (fieldId, shapeProvider, shapeParameterId) => {
-        const {handleCommand} = this.props;
-        const command = ShapesCommands.SetParameterShape(ShapesCommands.ProviderInField(fieldId, shapeProvider, shapeParameterId))
-        handleCommand(command)
-    }
-
-    setShapeParameterInShape = (shapeId, shapeProvider, shapeParameterId) => {
-        const {handleCommand} = this.props;
-        const command = ShapesCommands.SetParameterShape(ShapesCommands.ProviderInShape(shapeId, shapeProvider, shapeParameterId))
-        handleCommand(command)
-    }
-
-    setBaseShape = (shapeId, baseShapeId) => {
-        const {handleCommand} = this.props;
-        const command = ShapesCommands.SetBaseShape(shapeId, baseShapeId)
-        handleCommand(command)
-    }
-
-    removeShape = (shapeId) => {
-        const {handleCommand} = this.props;
-        const command = ShapesCommands.RemoveShape(shapeId)
-        handleCommand(command)
-    }
-
-    removeField = (fieldId) => {
-        const {handleCommand} = this.props;
-        const command = ShapesCommands.RemoveField(fieldId)
-        handleCommand(command)
-    }
-
-    removeShapeParameter = (shapeParameterId) => {
-        const {handleCommand} = this.props;
-        const command = ShapesCommands.RemoveShapeParameter(shapeParameterId)
-        handleCommand(command)
-    }
 
     handleOpenSelectionModal = (choices, onSelect) => {
         this.setState({
@@ -543,7 +414,9 @@ class ShapeViewerBase extends React.Component {
     render() {
         const {shape, queries, cachedQueryResults} = this.props;
         const {shapeId, baseShapeId, name, coreShapeId, parameters, bindings, fields, isRemoved} = shape;
-
+        const output = []
+        ShapeUtilities.flatten(cachedQueryResults, queries, shapeId, 0, output)
+        console.log(output);
         if (shapeId === coreShapeId) {
             return <CoreShapeViewer coreShapeId={coreShapeId}/>
         }
@@ -557,8 +430,8 @@ class ShapeViewerBase extends React.Component {
                     <React.Fragment>
                         <ParameterListManager
                             parameters={parameters}
-                            onAdd={this.addParameter}
-                            onRemove={this.removeShapeParameter}
+                            onAdd={() => this.props.addParameter(shapeId)}
+                            onRemove={this.props.removeShapeParameter}
                         />
                     </React.Fragment>
                 ) : null}
@@ -589,23 +462,19 @@ class ShapeViewerBase extends React.Component {
                             shapeProvider={shapeProvider}
                             parametersAvailableForUse={parameters}
                             onOpenSelectionModal={this.handleOpenSelectionModal}
-                            onChange={(shapeProvider) => this.setShapeParameterInShape(shapeId, shapeProvider, parentParameter.shapeParameterId)}
+                            onChange={(shapeProvider) => this.props.setShapeParameterInShape(shapeId, shapeProvider, parentParameter.shapeParameterId)}
                         />
                     )
                 })}
                 {canAddFields ? (
                     <div>
-                        <RequestPageHeader forType="Field" addAction={this.addField}/>
+                        <RequestPageHeader forType="Field" addAction={() => this.props.addField(shapeId)}/>
 
                         <ObjectFieldsViewer
                             parentShapeId={shapeId}
-                            cachedQueryResults={cachedQueryResults}
-                            queries={queries}
                             fields={fields}
-                            removeField={this.removeField}
                             onOpenSelectionModal={this.handleOpenSelectionModal}
-                            setShapeParameterInField={(fieldId, shapeProvider, shapeParameterId) => this.setShapeParameterInField(fieldId, shapeProvider, shapeParameterId)}
-                            setFieldShape={this.setFieldShape}/>
+                        />
                     </div>
                 ) : null}
 
@@ -665,5 +534,5 @@ class ShapeViewerBase extends React.Component {
 }
 
 ShapeViewerBase.propTypes = {};
-const ShapeViewer = withEditorContext(withRfcContext(ShapeViewerBase));
+const ShapeViewer = withShapeEditorContext(withEditorContext(withRfcContext(ShapeViewerBase)));
 export default ShapeViewer

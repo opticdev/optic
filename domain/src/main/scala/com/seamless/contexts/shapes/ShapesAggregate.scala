@@ -5,6 +5,8 @@ import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.Events._
 import com.seamless.ddd.{Effects, EventSourcedAggregate}
 
+import scala.collection.immutable.ListMap
+
 case class ShapesCommandContext() extends BaseCommandContext
 
 object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand, ShapesCommandContext, ShapesEvent] {
@@ -265,7 +267,7 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
       entityReferenceParameter.shapeParameterId -> entityReferenceParameter,
     )
 
-    val fields = Map.empty[FieldId, FieldEntity]
+    val fields = ListMap.empty[FieldId, FieldEntity]
     val fieldBindings = Map.empty[FieldId, Map[ShapeParameterId, ProviderDescriptor]]
     val parameterBindings = Map.empty[ShapeParameterId, Map[ShapeParameterId, ProviderDescriptor]]
 

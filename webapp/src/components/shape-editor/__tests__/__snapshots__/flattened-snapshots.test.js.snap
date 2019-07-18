@@ -1,0 +1,161 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flattened shapes pagination example should render $Account 1`] = `
+Array [
+  Object {
+    "actions": Array [],
+    "depth": 0,
+    "id": "$Account",
+    "name": "Account",
+    "parameters": Array [],
+    "shapeName": Object {
+      "baseShapeName": "Object",
+      "bindingInfo": Array [],
+    },
+    "trail": Array [
+      "$Account",
+    ],
+    "type": "shape",
+  },
+  Object {
+    "actions": Array [],
+    "depth": 1,
+    "id": "$Account.id",
+    "name": "id",
+    "parameters": Array [],
+    "shapeName": Object {
+      "baseShapeName": "Account ID",
+      "bindingInfo": Array [],
+    },
+    "trail": Array [
+      "$Account",
+      "$Account.id",
+    ],
+    "type": "field",
+  },
+  Object {
+    "actions": Array [],
+    "depth": 1,
+    "id": "$Account.userIds",
+    "name": "userIds",
+    "parameters": Array [],
+    "shapeName": Object {
+      "baseShapeName": "List",
+      "bindingInfo": Array [
+        Object {
+          "binding": Object {
+            "ShapeProvider": Object {
+              "shapeId": "$UserId",
+            },
+          },
+          "boundName": "User ID",
+          "parameterName": "T",
+        },
+      ],
+    },
+    "trail": Array [
+      "$Account",
+      "$Account.userIds",
+    ],
+    "type": "field",
+  },
+]
+`;
+
+exports[`flattened shapes pagination example should render $PaginationWrapper 1`] = `
+Array [
+  Object {
+    "actions": Array [],
+    "depth": 0,
+    "id": "$PaginationWrapper",
+    "name": "PaginationWrapper",
+    "parameters": Array [
+      Object {
+        "isRemoved": false,
+        "name": "T",
+        "shapeParameterId": "$PaginationWrapper.T",
+      },
+    ],
+    "shapeName": Object {
+      "baseShapeName": "Object",
+      "bindingInfo": Array [],
+    },
+    "trail": Array [
+      "$PaginationWrapper",
+    ],
+    "type": "shape",
+  },
+  Object {
+    "actions": Array [],
+    "depth": 1,
+    "id": "$PaginationWrapper.offset",
+    "name": "offset",
+    "parameters": Array [],
+    "shapeName": Object {
+      "baseShapeName": "number",
+      "bindingInfo": Array [],
+    },
+    "trail": Array [
+      "$PaginationWrapper",
+      "$PaginationWrapper.offset",
+    ],
+    "type": "field",
+  },
+  Object {
+    "actions": Array [],
+    "depth": 1,
+    "id": "$PaginationWrapper.items",
+    "name": "items",
+    "parameters": Array [],
+    "shapeName": Object {
+      "baseShapeName": "List",
+      "bindingInfo": Array [
+        Object {
+          "binding": Object {
+            "ParameterProvider": Object {
+              "shapeParameterId": "$PaginationWrapper.T",
+            },
+          },
+          "boundName": "T",
+          "parameterName": "T",
+        },
+      ],
+    },
+    "trail": Array [
+      "$PaginationWrapper",
+      "$PaginationWrapper.items",
+    ],
+    "type": "field",
+  },
+]
+`;
+
+exports[`flattened shapes pagination example should render $UserListResponse1 1`] = `
+Array [
+  Object {
+    "actions": Array [],
+    "depth": 0,
+    "id": "$UserListResponse1",
+    "name": "User List Response 1",
+    "parameters": Array [],
+    "shapeName": Object {
+      "baseShapeName": "PaginationWrapper",
+      "bindingInfo": Array [
+        Object {
+          "binding": Object {
+            "ShapeProvider": Object {
+              "shapeId": "$User",
+            },
+          },
+          "boundName": "User",
+          "parameterName": "T",
+        },
+      ],
+    },
+    "trail": Array [
+      "$UserListResponse1",
+    ],
+    "type": "shape",
+  },
+]
+`;

@@ -2,6 +2,7 @@ package com.seamless.contexts.shapes
 
 import com.seamless.contexts.shapes.Commands._
 
+import scala.collection.immutable.ListMap
 import scala.scalajs.js.annotation.JSExportAll
 
 case class ShapeValue(isUserDefined: Boolean, baseShapeId: ShapeId, parameters: ShapeParametersDescriptor, name: String)
@@ -46,21 +47,20 @@ case class Parameter(shapeParameterId: ShapeParameterId, name: String, isRemoved
 @JSExportAll
 case class FlattenedField(fieldId: FieldId, name: String, fieldShapeDescriptor: FieldShapeDescriptor, bindings: Map[ShapeParameterId, Option[ProviderDescriptor]], isRemoved: Boolean)
 @JSExportAll
-case class FlattenedShape(shapeId: ShapeId, name: String, baseShapeId: ShapeId, coreShapeId: ShapeId, parameters: Seq[Parameter], bindings: Map[ShapeParameterId, Option[ShapeId]], fields: Seq[FlattenedField], isRemoved: Boolean)
+case class FlattenedShape(shapeId: ShapeId, name: String, baseShapeId: ShapeId, coreShapeId: ShapeId, parameters: Seq[Parameter], bindings: Map[ShapeParameterId, Option[ProviderDescriptor]], fields: Seq[FlattenedField], isRemoved: Boolean)
 
 
 case class ShapesState(
                         shapes: Map[ShapeId, ShapeEntity],
                         bindingsByShapeId: Map[ShapeId, Map[ShapeParameterId, ProviderDescriptor]],
                         shapeParameters: Map[ShapeParameterId, ShapeParameterEntity],
-                        fields: Map[FieldId, FieldEntity],
+                        fields: ListMap[FieldId, FieldEntity],
                         bindingsByFieldId: Map[FieldId, Map[ShapeParameterId, ProviderDescriptor]]
                       ) {
 
   ////////////////////////////////////////////////////////////////////////////////
 
   def withShape(shapeId: ShapeId, assignedShapeId: ShapeId, parameters: ShapeParametersDescriptor, name: String) = {
-    println(s"added shapeId ${shapeId}")
     this.copy(
       shapes = shapes + (shapeId -> ShapeEntity(shapeId, ShapeValue(isUserDefined = true, assignedShapeId, parameters, name)))
     )
@@ -264,7 +264,7 @@ case class ShapesState(
     }).toMap
   }
 
-  def resolveParameterBindings(shapeId: ShapeId): Map[ShapeParameterId, Option[ShapeId]] = {
+  def resolveParameterBindings(shapeId: ShapeId): Map[ShapeParameterId, Option[ProviderDescriptor]] = {
     val shape = shapes(shapeId)
 
     val bindingsForShapeId = bindingsByShapeId.getOrElse(shapeId, Map.empty)
@@ -277,11 +277,11 @@ case class ShapesState(
     }
 
     parameterIds.map(parameterId => {
-      val boundShapeId: Option[ShapeId] = mapping.get(parameterId) match {
+      val boundShapeId: Option[ProviderDescriptor] = mapping.get(parameterId) match {
         case Some(p) => {
           p match {
             case ParameterProvider(shapeParameterId) => None
-            case ShapeProvider(shapeId) => Some(shapeId)
+            case ShapeProvider(shapeId) => Some(ShapeProvider(shapeId))
             case NoProvider() => None
           }
         }
