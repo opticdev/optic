@@ -1,5 +1,6 @@
 export const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', '$oneOf', '$identifier', '$reference', '$any']
 export const coreShapeIdsSet = new Set(coreShapeIds)
+
 class ShapeUtilities {
     static flatten(queries, rootShapeId, depth, trail = [], acc = []) {
         // if baseShapeId is a coreShapeId, stop traversing
@@ -10,17 +11,18 @@ class ShapeUtilities {
             return;
         }
         const baseShape = queries.shapeById(baseShapeId)
-
-        acc.push({
-            id: shape.shapeId,
-            type: 'shape',
-            name: name,
-            shapeName: ShapeUtilities.shapeName(queries, baseShape, shape, bindings),
-            parameters: parameters,
-            actions: [],
-            trail: [...trail, rootShapeId],
-            depth
-        })
+        if (name !== '') {
+            acc.push({
+                id: shape.shapeId,
+                type: 'shape',
+                name: name,
+                shapeName: ShapeUtilities.shapeName(queries, baseShape, shape, bindings),
+                parameters: parameters,
+                actions: [],
+                trail: [...trail, rootShapeId],
+                depth
+            })
+        }
 
         const shouldTraverseFields = ShapeUtilities.shouldTraverseFields(shape)
         if (shouldTraverseFields) {
@@ -28,6 +30,7 @@ class ShapeUtilities {
                 if (field.isRemoved) {
                     return
                 }
+                const fieldTrail = [...trail, rootShapeId, field.fieldId]
                 acc.push({
                     id: field.fieldId,
                     type: 'field',
@@ -35,12 +38,12 @@ class ShapeUtilities {
                     shapeName: ShapeUtilities.fieldShapeName(queries, shape, field),
                     parameters: [],
                     actions: [],
-                    trail: [...trail, rootShapeId, field.fieldId],
+                    trail: fieldTrail,
                     depth: depth + 1
                 })
                 const [isInlineObject, fieldShape] = ShapeUtilities.isInlineObject(queries, field)
                 if (isInlineObject) {
-                    ShapeUtilities.flatten(queries, fieldShape.shapeId, depth + 2, acc)
+                    ShapeUtilities.flatten(queries, fieldShape.shapeId, depth + 1, fieldTrail, acc)
                 }
             })
 
@@ -89,7 +92,8 @@ class ShapeUtilities {
     static shapeName(queries, baseShape, bindingContextShape, bindings) {
         if (baseShape.parameters.length === 0) {
             return {
-                baseShapeName: baseShape.name,
+                id: baseShape.shapeId,
+                baseShapeName: baseShape.name || queries.shapeById(baseShape.baseShapeId).name,
                 bindingInfo: []
             }
         }
@@ -106,9 +110,10 @@ class ShapeUtilities {
                     }
 
                     if (binding.ParameterProvider) {
-                        const provider = bindingContextShape.parameters.find(x => x.shapeParameterId === binding.ParameterProvider.shapeParameterId)
+                        const parameterId = binding.ParameterProvider.shapeParameterId
+                        const provider = bindingContextShape.parameters.find(x => x.shapeParameterId === parameterId)
                         if (!provider) {
-                            debugger
+                            console.warn(`expected parameter ${parameterId} to be in parent shape ${bindingContextShape.shapeId}`)
                         }
                         return {
                             binding,
@@ -122,7 +127,8 @@ class ShapeUtilities {
                 }
             })
         return {
-            baseShapeName: baseShape.name,
+            id: baseShape.shapeId,
+            baseShapeName: baseShape.name || queries.shapeById(baseShape.baseShapeId).name,
             bindingInfo: bindingNames
         }
     }

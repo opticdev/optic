@@ -1,9 +1,11 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
+import {withRouter} from 'react-router-dom';
 import {withRfcContext} from '../contexts/RfcContext';
 import Typography from '@material-ui/core/Typography';
 import {ShapeEditorStore} from '../contexts/ShapeEditorContext.js';
 import {ShapesCommands} from '../engine';
+import {routerUrls} from '../routes.js';
 import {FullSheet} from './navigation/Editor.js';
 import {withEditorContext} from '../contexts/EditorContext';
 import ContributionTextField from './contributions/ContributionTextField';
@@ -19,9 +21,10 @@ const styles = theme => ({
         paddingRight: 12,
         paddingTop: 15
     },
-    schemaEditorContainer: {
-        marginTop: 5,
-        // backgroundColor: '#fafafa'
+    shapeEditorContainer: {
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: '#f8f8f8'
     }
 });
 
@@ -47,7 +50,7 @@ class ConceptsPage extends React.Component {
 
 
     render() {
-        const {classes, conceptId, handleCommand, mode, cachedQueryResults, queries, apiName} = this.props;
+        const {history, baseUrl, classes, conceptId, handleCommand, mode, cachedQueryResults, queries, apiName} = this.props;
         const {contributions} = cachedQueryResults;
 
         let shape = null;
@@ -85,9 +88,13 @@ class ConceptsPage extends React.Component {
                                 handleCommand(updateContribution(conceptId, 'description', value));
                             }}
                         />
-                        <ShapeEditorStore>
-                            <ShapeViewer shape={shape}/>
-                        </ShapeEditorStore>
+                        <div className={classes.shapeEditorContainer}>
+                            <ShapeEditorStore onShapeSelected={(shapeId) => {
+                                history.push(routerUrls.conceptPage(baseUrl, shapeId))
+                            }}>
+                                <ShapeViewer shape={shape}/>
+                            </ShapeEditorStore>
+                        </div>
                     </div>
                 </FullSheet>
             </Editor>
@@ -95,4 +102,4 @@ class ConceptsPage extends React.Component {
     }
 }
 
-export default withEditorContext(withRfcContext(withStyles(styles)(ConceptsPage)));
+export default withRouter(withEditorContext(withRfcContext(withStyles(styles)(ConceptsPage))));

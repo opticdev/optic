@@ -231,7 +231,7 @@ class ShapesEndToEndSpec extends FunSpec {
         "$Id", "ID",
         "$identifier", "$identifier",
         Seq.empty,
-        Map("$identifierInner" -> Some("$string")),
+        Map("$identifierInner" -> Some(ShapeProvider("$string"))),
         Seq.empty,
         isRemoved = false)
       )
@@ -263,7 +263,7 @@ class ShapesEndToEndSpec extends FunSpec {
         "$UserListResponse1", "User List Response 1",
         "$PaginationWrapper", "$object",
         Seq.empty,
-        Map("$PaginationWrapper.T" -> Some("$User")),
+        Map("$PaginationWrapper.T" -> Some(ShapeProvider("$User"))),
         Seq.empty,
         isRemoved = false
       ))

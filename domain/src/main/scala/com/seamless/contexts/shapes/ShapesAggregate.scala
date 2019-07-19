@@ -214,7 +214,7 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
   }
 
   def CoreShape(shapeId: String, shapeParametersDescriptor: ShapeParametersDescriptor, name: String) = {
-    ShapeEntity(shapeId, ShapeValue(isUserDefined = false, shapeId, shapeParametersDescriptor, name), isRemoved = false)
+    ShapeEntity(shapeId, ShapeValue(isUserDefined = false, shapeId, shapeParametersDescriptor, Seq.empty, name), isRemoved = false)
   }
 
   override def initialState: ShapesState = {

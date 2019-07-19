@@ -1,7 +1,7 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {routerUrls} from '../../routes.js';
-import {primitiveColors, generateTypeName} from './Types';
+import {primitiveColors} from './Types';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
 import BasicButton from './BasicButton';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
@@ -68,7 +68,7 @@ class TypeName extends React.Component {
                                 fontWeight: (type.hasFields || type.hasTypeParameters) ? 700 : 200,
                                 ...style,
                             }}>
-                            {generateTypeName(type, node, allowedReferences)}
+
 
                             {type.isRef ? (
                                 <Link to={routerUrls.conceptPage(baseUrl,type.conceptId)} style={{textDecoration: 'none'}}>
@@ -113,7 +113,7 @@ export const DisplayRootTypeName = withStyles(styles)(({shape, classes, style}) 
                     fontWeight: (type.hasFields || type.hasTypeParameters) ? 700 : 200,
                     ...style,
                 }}>
-                {generateTypeName(type, shape)}
+
                 {type.isRef ? <div
                     className={classes.goTo}
                 >(view)</div> : null}

@@ -1,6 +1,6 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { primitiveColors, typeOptionNames} from '../Types';
+import { primitiveColors} from '../Types';
 import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
 import {ShapesCommands, ShapesHelper} from '../../../engine'
 import BasicButton from '../BasicButton';
@@ -47,7 +47,7 @@ class TypeMenu extends React.Component {
 		return <TypeChip id={type.id}
 						 key={type.id}
 						 color={primitiveColors[type.id]}
-						 name={typeOptionNames[type.id] || type.id}
+						 name={type.id}
 						 handleClick={handleTypeClick(type)}
 		/>
 	};

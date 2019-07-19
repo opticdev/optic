@@ -5,7 +5,7 @@ import com.seamless.contexts.shapes.Commands._
 import scala.collection.immutable.ListMap
 import scala.scalajs.js.annotation.JSExportAll
 
-case class ShapeValue(isUserDefined: Boolean, baseShapeId: ShapeId, parameters: ShapeParametersDescriptor, name: String)
+case class ShapeValue(isUserDefined: Boolean, baseShapeId: ShapeId, parameters: ShapeParametersDescriptor, fieldOrdering: Seq[FieldId], name: String)
 case class ShapeEntity(shapeId: ShapeId, descriptor: ShapeValue, isRemoved: Boolean = false) {
   def withShapeDescriptor(shapeId: ShapeId) = {
     this.copy(descriptor = descriptor.copy(baseShapeId = shapeId))
@@ -17,6 +17,10 @@ case class ShapeEntity(shapeId: ShapeId, descriptor: ShapeValue, isRemoved: Bool
 
   def withParameters(parameters: ShapeParametersDescriptor) = {
     this.copy(descriptor = descriptor.copy(parameters = parameters))
+  }
+
+  def withAppendedFieldId(fieldId: FieldId) = {
+    this.copy(descriptor = descriptor.copy(fieldOrdering = descriptor.fieldOrdering :+ fieldId))
   }
 }
 
@@ -62,7 +66,7 @@ case class ShapesState(
 
   def withShape(shapeId: ShapeId, assignedShapeId: ShapeId, parameters: ShapeParametersDescriptor, name: String) = {
     this.copy(
-      shapes = shapes + (shapeId -> ShapeEntity(shapeId, ShapeValue(isUserDefined = true, assignedShapeId, parameters, name)))
+      shapes = shapes + (shapeId -> ShapeEntity(shapeId, ShapeValue(isUserDefined = true, assignedShapeId, parameters, Seq.empty, name)))
     )
   }
 
@@ -113,7 +117,9 @@ case class ShapesState(
   ////////////////////////////////////////////////////////////////////////////////
 
   def withField(fieldId: FieldId, shapeId: ShapeId, name: String, shapeDescriptor: FieldShapeDescriptor) = {
+    val shape = shapes(shapeId)
     this.copy(
+      shapes = shapes + (shapeId -> shape.withAppendedFieldId(fieldId)),
       fields = fields + (fieldId -> FieldEntity(fieldId, FieldValue(shapeId, shapeDescriptor, name), isRemoved = false))
     )
   }
@@ -308,13 +314,8 @@ case class ShapesState(
     })
 
     val fieldsOfShape = if (shape.descriptor.baseShapeId == "$object") {
-      fields.keys
-        .filter(fieldId => {
-          val f = fields(fieldId)
-          f.descriptor.shapeId == shapeId
-        })
+      shape.descriptor.fieldOrdering
         .map(flattenedField)
-        .toSeq
     } else {
       Seq.empty
     }

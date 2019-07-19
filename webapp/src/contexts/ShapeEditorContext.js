@@ -87,7 +87,8 @@ class ShapeEditorStoreBase extends React.Component {
             removeField: this.removeField,
             removeShapeParameter: this.removeShapeParameter,
             queries: this.props.queries,
-            cachedQueryResults: this.props.cachedQueryResults
+            cachedQueryResults: this.props.cachedQueryResults,
+            onShapeSelected: this.props.onShapeSelected,
         }
         return (
             <ShapeEditorContext.Provider value={context}>
