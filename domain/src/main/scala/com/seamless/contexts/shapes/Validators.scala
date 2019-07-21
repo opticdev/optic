@@ -49,12 +49,6 @@ object Validators {
     }
   }
 
-  def ensureParameterCanBeRemoved(shapeParameterId: ShapeParameterId)(implicit state: ShapesState) = {
-    val parameter = state.shapeParameters(shapeParameterId)
-    val shape = state.shapes(parameter.descriptor.shapeId)
-    require(shape.isInstanceOf[ShapeEntity])
-  }
-
   ////////////////////////////////////////////////////////////////////////////////
 
   def ensureShapeIdExists(shapeId: ShapeId)(implicit state: ShapesState) = {
@@ -77,6 +71,12 @@ object Validators {
 
   def ensureParametersCanBeChanged(shapeId: ShapeId)(implicit state: ShapesState) = {
     val shape = state.shapes(shapeId)
+    require(shape.descriptor.parameters.isInstanceOf[DynamicParameterList])
+  }
+
+  def ensureParameterCanBeRemoved(shapeParameterId: ShapeParameterId)(implicit state: ShapesState) = {
+    val parameter = state.shapeParameters(shapeParameterId)
+    val shape = state.shapes(parameter.descriptor.shapeId)
     require(shape.descriptor.parameters.isInstanceOf[DynamicParameterList])
   }
 

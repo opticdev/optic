@@ -1,5 +1,4 @@
-import {starterCommands} from '../../../contexts/RfcContext.js';
-import {Facade, Queries} from '../../../engine';
+import {Facade, Queries, starterCommands} from '../../../engine';
 import {ShapeUtilities} from '../ShapeUtilities.js';
 
 describe('flattened shapes', function () {

@@ -5,18 +5,22 @@ import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import {withRouter} from 'react-router-dom';
 import {withEditorContext} from '../../contexts/EditorContext.js';
+import {ExpansionStore} from '../../contexts/ExpansionContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
+import {ShapeEditorStore} from '../../contexts/ShapeEditorContext.js';
 import {ContentTypesHelper, ShapesHelper, ShapesCommands} from '../../engine';
 import classNames from 'classnames';
 import Zoom from '@material-ui/core/Zoom';
+import {routerUrls} from '../../routes.js';
 import {RequestUtilities} from '../../utilities/RequestUtilities.js';
 import {getNormalizedBodyDescriptor} from '../PathPage.js';
-import SchemaEditor from '../shape-editor/SchemaEditor';
 import {primary} from '../../theme';
 import {EditorModes} from '../../contexts/EditorContext';
 import ShapeViewer from '../shape-editor/ShapeViewer.js';
 
+import {styles as shapeViewerStyles} from '../ConceptsPage.js';
 
 const styles = theme => ({
     root: {},
@@ -50,7 +54,9 @@ const BodySwitch = withStyles(styles)(BodySwitchWithoutStyles)
 
 class BodyViewerWithoutContext extends React.Component {
     render() {
-        const {shapeId, queries, contentType} = this.props;
+        const {history} = this.props;
+        const {classes} = this.props;
+        const {baseUrl, shapeId, queries, contentType} = this.props;
         const shape = queries.shapeById(shapeId);
 
         return (
@@ -73,13 +79,22 @@ class BodyViewerWithoutContext extends React.Component {
                             color: primary
                         }}>{contentType}</Typography>
                 </div>
-                <ShapeViewer shape={shape}/>
+                <ShapeEditorStore onShapeSelected={(shapeId) => {
+                    debugger
+                    history.push(routerUrls.conceptPage(baseUrl, shapeId))
+                }}>
+                    <ExpansionStore>
+                        <div className={classes.shapeEditorContainer}>
+                            <ShapeViewer shape={shape}/>
+                        </div>
+                    </ExpansionStore>
+                </ShapeEditorStore>
             </div>
         )
     }
 }
 
-const BodyViewer = withEditorContext(withRfcContext(BodyViewerWithoutContext))
+const BodyViewer = withRouter(withEditorContext(withRfcContext(withStyles(shapeViewerStyles)(BodyViewerWithoutContext))))
 
 class LayoutWrapperWithoutStyles extends React.Component {
     render() {

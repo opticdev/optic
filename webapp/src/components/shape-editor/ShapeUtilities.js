@@ -1,47 +1,47 @@
+import {primitiveColors} from './Types.js';
+
 export const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', '$oneOf', '$identifier', '$reference', '$any']
 export const coreShapeIdsSet = new Set(coreShapeIds)
 
 class ShapeUtilities {
     static flatten(queries, rootShapeId, depth, trail = [], acc = []) {
-        // if baseShapeId is a coreShapeId, stop traversing
-        // if baseShapeId is an inline shape (empty name), continue traversing
         const shape = queries.shapeById(rootShapeId)
-        const {name, baseShapeId, bindings, fields, parameters} = shape;
+        const {name, baseShapeId, bindings, fields} = shape;
         if (coreShapeIdsSet.has(rootShapeId)) {
             return;
         }
         const baseShape = queries.shapeById(baseShapeId)
-        if (name !== '') {
+        const shouldTraverseFields = ShapeUtilities.shouldTraverseFields(shape)
+        if (trail.length === 0 || name !== '') {
             acc.push({
                 id: shape.shapeId,
                 type: 'shape',
                 name: name,
                 shapeName: ShapeUtilities.shapeName(queries, baseShape, shape, bindings),
-                parameters: parameters,
-                actions: [],
+                isExpandable: shouldTraverseFields,
                 trail: [...trail, rootShapeId],
                 depth
             })
         }
 
-        const shouldTraverseFields = ShapeUtilities.shouldTraverseFields(shape)
         if (shouldTraverseFields) {
             fields.forEach(field => {
                 if (field.isRemoved) {
                     return
                 }
                 const fieldTrail = [...trail, rootShapeId, field.fieldId]
+                const [isInlineObject, fieldShape] = ShapeUtilities.isInlineObject(queries, field)
                 acc.push({
                     id: field.fieldId,
+                    parentShapeId: rootShapeId,
+                    fieldShapeId: fieldShape ? fieldShape.shapeId : null,
                     type: 'field',
                     name: field.name,
                     shapeName: ShapeUtilities.fieldShapeName(queries, shape, field),
-                    parameters: [],
-                    actions: [],
                     trail: fieldTrail,
+                    isExpandable: isInlineObject,
                     depth: depth + 1
                 })
-                const [isInlineObject, fieldShape] = ShapeUtilities.isInlineObject(queries, field)
                 if (isInlineObject) {
                     ShapeUtilities.flatten(queries, fieldShape.shapeId, depth + 1, fieldTrail, acc)
                 }
@@ -55,15 +55,15 @@ class ShapeUtilities {
     }
 
     static isInlineObject(queries, field) {
-        const {fieldShapeDescriptor, name} = field
+        const {fieldShapeDescriptor} = field
 
         if (fieldShapeDescriptor.FieldShapeFromShape) {
             const shape = queries.shapeById(fieldShapeDescriptor.FieldShapeFromShape.shapeId)
             const name = shape.name
-            if (!name && shape.baseShapeId === '$object') {
+            if (shape.baseShapeId === '$object' && name === '') {
                 return [true, shape]
             }
-            return [false]
+            return [false, shape]
         } else if (fieldShapeDescriptor.FieldShapeFromParameter) {
             return [false]
         }
@@ -84,16 +84,21 @@ class ShapeUtilities {
             }
             return {
                 parameterName: parameter.name,
-                bindingInfo: []
+                parameterId: parameter.shapeParameterId,
+                bindingInfo: [],
             }
         }
     }
 
     static shapeName(queries, baseShape, bindingContextShape, bindings) {
+        const base = {
+            id: baseShape.shapeId,
+            color: primitiveColors[baseShape.baseShapeId],
+            baseShapeName: baseShape.name || queries.shapeById(baseShape.baseShapeId).name,
+        }
         if (baseShape.parameters.length === 0) {
             return {
-                id: baseShape.shapeId,
-                baseShapeName: baseShape.name || queries.shapeById(baseShape.baseShapeId).name,
+                ...base,
                 bindingInfo: []
             }
         }
@@ -104,8 +109,9 @@ class ShapeUtilities {
                     if (binding.ShapeProvider) {
                         return {
                             binding,
-                            boundName: queries.shapeById(binding.ShapeProvider.shapeId).name,
+                            boundName: queries.shapeById(binding.ShapeProvider.shapeId).name || '(blank)',
                             parameterName: parameter.name,
+                            parameterId: parameter.shapeParameterId,
                         }
                     }
 
@@ -117,18 +123,19 @@ class ShapeUtilities {
                         }
                         return {
                             binding,
-                            boundName: provider.name,
-                            parameterName: parameter.name
+                            boundName: provider.name || '(blank)',
+                            parameterName: parameter.name,
+                            parameterId: parameter.shapeParameterId,
                         }
                     }
                 }
                 return {
-                    parameterName: parameter.name
+                    parameterName: parameter.name,
+                    parameterId: parameter.shapeParameterId,
                 }
             })
         return {
-            id: baseShape.shapeId,
-            baseShapeName: baseShape.name || queries.shapeById(baseShape.baseShapeId).name,
+            ...base,
             bindingInfo: bindingNames
         }
     }

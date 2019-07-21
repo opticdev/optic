@@ -3,14 +3,15 @@
 exports[`flattened shapes pagination example should render $Account 1`] = `
 Array [
   Object {
-    "actions": Array [],
     "depth": 0,
     "id": "$Account",
+    "isExpandable": true,
     "name": "Account",
-    "parameters": Array [],
     "shapeName": Object {
       "baseShapeName": "Object",
       "bindingInfo": Array [],
+      "color": "#32417d",
+      "id": "$object",
     },
     "trail": Array [
       "$Account",
@@ -18,14 +19,17 @@ Array [
     "type": "shape",
   },
   Object {
-    "actions": Array [],
     "depth": 1,
+    "fieldShapeId": "$AccountId",
     "id": "$Account.id",
+    "isExpandable": false,
     "name": "id",
-    "parameters": Array [],
+    "parentShapeId": "$Account",
     "shapeName": Object {
       "baseShapeName": "Account ID",
       "bindingInfo": Array [],
+      "color": undefined,
+      "id": "$AccountId",
     },
     "trail": Array [
       "$Account",
@@ -34,11 +38,12 @@ Array [
     "type": "field",
   },
   Object {
-    "actions": Array [],
     "depth": 1,
+    "fieldShapeId": "$list",
     "id": "$Account.userIds",
+    "isExpandable": false,
     "name": "userIds",
-    "parameters": Array [],
+    "parentShapeId": "$Account",
     "shapeName": Object {
       "baseShapeName": "List",
       "bindingInfo": Array [
@@ -49,9 +54,12 @@ Array [
             },
           },
           "boundName": "User ID",
+          "parameterId": "$listItem",
           "parameterName": "T",
         },
       ],
+      "color": "#7d1e34",
+      "id": "$list",
     },
     "trail": Array [
       "$Account",
@@ -65,20 +73,15 @@ Array [
 exports[`flattened shapes pagination example should render $PaginationWrapper 1`] = `
 Array [
   Object {
-    "actions": Array [],
     "depth": 0,
     "id": "$PaginationWrapper",
+    "isExpandable": true,
     "name": "PaginationWrapper",
-    "parameters": Array [
-      Object {
-        "isRemoved": false,
-        "name": "T",
-        "shapeParameterId": "$PaginationWrapper.T",
-      },
-    ],
     "shapeName": Object {
       "baseShapeName": "Object",
       "bindingInfo": Array [],
+      "color": "#32417d",
+      "id": "$object",
     },
     "trail": Array [
       "$PaginationWrapper",
@@ -86,14 +89,17 @@ Array [
     "type": "shape",
   },
   Object {
-    "actions": Array [],
     "depth": 1,
+    "fieldShapeId": "$number",
     "id": "$PaginationWrapper.offset",
+    "isExpandable": false,
     "name": "offset",
-    "parameters": Array [],
+    "parentShapeId": "$PaginationWrapper",
     "shapeName": Object {
       "baseShapeName": "number",
       "bindingInfo": Array [],
+      "color": "#e4508f",
+      "id": "$number",
     },
     "trail": Array [
       "$PaginationWrapper",
@@ -102,11 +108,12 @@ Array [
     "type": "field",
   },
   Object {
-    "actions": Array [],
     "depth": 1,
+    "fieldShapeId": "$list",
     "id": "$PaginationWrapper.items",
+    "isExpandable": false,
     "name": "items",
-    "parameters": Array [],
+    "parentShapeId": "$PaginationWrapper",
     "shapeName": Object {
       "baseShapeName": "List",
       "bindingInfo": Array [
@@ -117,9 +124,12 @@ Array [
             },
           },
           "boundName": "T",
+          "parameterId": "$listItem",
           "parameterName": "T",
         },
       ],
+      "color": "#7d1e34",
+      "id": "$list",
     },
     "trail": Array [
       "$PaginationWrapper",
@@ -133,11 +143,10 @@ Array [
 exports[`flattened shapes pagination example should render $UserListResponse1 1`] = `
 Array [
   Object {
-    "actions": Array [],
     "depth": 0,
     "id": "$UserListResponse1",
+    "isExpandable": false,
     "name": "User List Response 1",
-    "parameters": Array [],
     "shapeName": Object {
       "baseShapeName": "PaginationWrapper",
       "bindingInfo": Array [
@@ -148,9 +157,12 @@ Array [
             },
           },
           "boundName": "User",
+          "parameterId": "$PaginationWrapper.T",
           "parameterName": "T",
         },
       ],
+      "color": "#32417d",
+      "id": "$PaginationWrapper",
     },
     "trail": Array [
       "$UserListResponse1",

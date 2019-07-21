@@ -42,11 +42,14 @@ object GenerateExampleCommands extends AskTrait[ParseAttempt, Unit] {
     results.foreach {
       case i if i.tryResult.isSuccess => {
         val jsonString = CommandSerialization.toJson(i.tryResult.get.commands).noSpaces
-        val outputFile = outputDir / (swapped(i.apiName)+"-commands.json")
+        val outputFile = outputDir / (swapped(i.apiName) + "-commands.json")
         outputFile.createIfNotExists()
         outputFile.write(jsonString)
       }
-      case i => println(i.apiName)
+      case i => {
+        println(s"${i.apiName} had an error")
+        i.tryResult.failed.get.printStackTrace()
+      }
     }
   }
 }

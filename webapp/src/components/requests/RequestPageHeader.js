@@ -13,16 +13,16 @@ const styles = theme => ({
 
 class RequestPageHeader extends React.Component {
     render() {
-        const {forType, classes, addAction} = this.props;
+        const {forType, classes, addAction, canAdd = true} = this.props;
 
         return (
             <div style={{marginTop: 22}}>
                 <div className={classes.root}>
                     <Typography variant="h6" color="primary" style={{width: 200}}>{forType}{'s'}</Typography>
                     <div style={{flex: 1}}/>
-                    <WriteOnly>
+                    {canAdd && <WriteOnly>
                         <Button color="secondary" onClick={addAction} className={classes.root}>+ {forType}</Button>
-                    </WriteOnly>
+                    </WriteOnly>}
                 </div>
             </div>
         )

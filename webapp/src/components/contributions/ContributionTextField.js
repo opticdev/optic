@@ -64,7 +64,7 @@ class ContributionTextField extends React.Component {
                             <TextField
                                 value={value}
                                 onBlur={() => {
-                                    if (onBlur) {
+                                    if (onBlur && this.state.value !== this.props.value) {
                                         onBlur(this.state.value)
                                     }
                                 }}

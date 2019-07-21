@@ -7,13 +7,15 @@ class MutableCommandStream {
   private val describe = collection.mutable.ListBuffer[RfcCommand]()
 
   def appendInit(rfcCommand: RfcCommand*) = {
-    //println(rfcCommand)
+    /*println("yyy")
+    rfcCommand.foreach(println)*/
     init.appendAll(rfcCommand)
   }
   def appendInit(rfcCommand: Vector[RfcCommand]) = init.appendAll(rfcCommand)
   
   def appendDescribe(rfcCommand: RfcCommand*) = {
-    //println(rfcCommand)
+   /* println("yyy")
+    rfcCommand.foreach(println)*/
     describe.appendAll(rfcCommand)
   }
   def appendDescribe(rfcCommand: Vector[RfcCommand]) = describe.appendAll(rfcCommand)

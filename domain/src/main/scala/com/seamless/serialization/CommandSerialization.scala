@@ -8,8 +8,11 @@ import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
 
+import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 import scala.util.Try
 
+@JSExportTopLevel("CommandSerialization")
+@JSExportAll
 object CommandSerialization {
   def toJson(vector: Vector[RfcCommand]): Json = {
     vector.map {
@@ -18,6 +21,15 @@ object CommandSerialization {
       case contributionCommand: ContributionCommand => contributionCommand.asJson
       case _ => throw new java.lang.Error("Unhandled command Type")
     }.asJson
+  }
+
+  def toJsonString(command: RfcCommand): String = {
+    command match {
+      case shapesCommand: ShapesCommand => shapesCommand.asJson.noSpaces
+      case requestCommand: RequestsCommand => requestCommand.asJson.noSpaces
+      case contributionCommand: ContributionCommand => contributionCommand.asJson.noSpaces
+      case _ => throw new java.lang.Error("Unhandled command Type")
+    }
   }
 
 

@@ -23,9 +23,9 @@ object JsonSchemaToCommandsImplicits {
   implicit class JsonSchemaTypeToCommand(t: JsonSchemaType) {
     def addCommandsForField(shapeId: ShapeId, fieldShapeId: ShapeId, fieldId: FieldId, name: String)(implicit cxt: Context, commandStream: MutableCommandStream) = {
       //println("addCommandsforField", shapeId, fieldId, t)
-      commandStream.appendInit(AddShape(fieldShapeId, "$any", ""))
+      commandStream.appendInit(AddField(fieldId, shapeId, name, FieldShapeFromShape(fieldId, "$any")))
       t.addCommandsForShape(fieldShapeId)
-      commandStream.appendInit(AddField(fieldId, shapeId, name, FieldShapeFromShape(fieldId, fieldShapeId)))
+      commandStream.appendDescribe(SetFieldShape(FieldShapeFromShape(fieldId, fieldShapeId)))
     }
 
     def addCommandsForParameter(shapeId: ShapeId, parameterId: ShapeParameterId)(implicit cxt: Context, commandStream: MutableCommandStream) = {
@@ -36,12 +36,12 @@ object JsonSchemaToCommandsImplicits {
       commandStream.appendDescribe(SetParameterShape(ProviderInShape(shapeId, ShapeProvider(parameterShapeId), parameterId)))
     }
 
-    def addCommandsForShape(shapeId: ShapeId)(implicit cxt: Context, commandStream: MutableCommandStream): Unit = {
+    def addCommandsForShape(shapeId: ShapeId, name: String = "")(implicit cxt: Context, commandStream: MutableCommandStream): Unit = {
       //println("addCommandsForShape", shapeId, t)
       t match {
         case SingleType(t) => {
           val typeEquiv = mapping.getOrElse(t, "$any") //default to any if type is not supported (file, null)
-          commandStream.appendInit(SetBaseShape(shapeId, typeEquiv))
+          commandStream.appendInit(AddShape(shapeId, typeEquiv, name))
 
           if (typeEquiv == "$list") {
             val items: Vector[JsObject] = (cxt.root \ "items").getOrElse(JsArray.empty) match {
@@ -68,7 +68,6 @@ object JsonSchemaToCommandsImplicits {
                     }
                     case _ => {
                       val itemShapeId = ShapesHelper.newShapeId()
-                      commandStream.appendInit(AddShape(itemShapeId, "$any", s"inline shape ${itemShapeId}"))
                       typeParam.addCommandsForShape(itemShapeId)(cxt.resolver.buildContext(itemCtx), commandStream)
                       commandStream.appendDescribe(SetParameterShape(ProviderInShape(shapeId, ShapeProvider(itemShapeId), "$listItem")))
 
@@ -81,19 +80,19 @@ object JsonSchemaToCommandsImplicits {
         }
         case Skipped => {
           ////          println("Skipped an unsupported type at" + cxt.root)
-          commandStream.appendDescribe(SetBaseShape(shapeId, "$any"))
+          commandStream.appendDescribe(AddShape(shapeId, "$any", ""))
         }
         case Ref(resourceUrl) => {
           val resource = cxt.resolver.resolveDefinition(resourceUrl)
           if (resource.isEmpty) {
-            commandStream.appendDescribe(SetBaseShape(shapeId, "$any"))
+            commandStream.appendDescribe(AddShape(shapeId, "$any", ""))
           } else {
-            commandStream.appendDescribe(SetBaseShape(shapeId, resource.get.id))
+            commandStream.appendDescribe(AddShape(shapeId, resource.get.id, ""))
           }
         }
         case EitherType(allowedTypes) => {
           //will create a different type param for each possibility
-          commandStream.appendDescribe(SetBaseShape(shapeId, "$oneOf"))
+          commandStream.appendDescribe(AddShape(shapeId, "$oneOf", ""))
           allowedTypes.foreach { typeParam => {
             val parameterId = ShapesHelper.newShapeParameterId()
             typeParam.addCommandsForParameter(shapeId, parameterId)
@@ -110,10 +109,7 @@ object JsonSchemaToCommandsImplicits {
       case namedDef: NamedDefinition => {
         val shapeId = namedDef.id
         //println(s"named definition ${shapeId}")
-        //init
-        commandStream.appendInit(AddShape(shapeId, "$any", namedDef.name))
-        //describe
-        namedDef.`type`.addCommandsForShape(shapeId)(namedDef.cxt, commandStream)
+        namedDef.`type`.addCommandsForShape(shapeId, namedDef.name)(namedDef.cxt, commandStream)
 
         if (namedDef.description.isDefined) {
           commandStream appendDescribe AddContribution(shapeId, "description", namedDef.description.get)
@@ -142,8 +138,6 @@ object JsonSchemaToCommandsImplicits {
       case inlineDefinition: Definition => {
         val shapeId = inlineDefinition.id
         //println(s"inline definition ${shapeId}")
-
-        commandStream.appendInit(AddShape(shapeId, "$any", ""))
         //describe
         inlineDefinition.`type`.addCommandsForShape(shapeId)(inlineDefinition.cxt, commandStream)
 

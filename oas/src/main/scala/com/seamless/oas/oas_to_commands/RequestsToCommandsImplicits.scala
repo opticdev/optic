@@ -10,7 +10,9 @@ import scala.util.Random
 
 object RequestsToCommandsImplicits {
   private def newResponseId(): String = s"response_${Random.alphanumeric take 10 mkString}"
+
   private def newParameterId(): String = s"parameter_${Random.alphanumeric take 10 mkString}"
+
   private def newRequestBodyId(): String = s"request_body_${Random.alphanumeric take 10 mkString}"
 
   case class APIPathsContext(commands: ImmutableCommandStream, uriToId: String => String) {
@@ -26,7 +28,9 @@ object RequestsToCommandsImplicits {
         //keep it stable, but add some entropy in case we ever merge graphs
         val seedString = s"${Random.alphanumeric take 6 mkString}"
         var index = -1
+
         override def hasNext: Boolean = true
+
         override def next(): String = {
           index = index + 1
           s"${seedString}_path_${index.toString}"
@@ -102,7 +106,7 @@ object RequestsToCommandsImplicits {
         if (isInlineSchema(response.schema)) {
           val inlineSchemaCommands = response.schema.get.toCommandStream
           val contentType = response.contentType.getOrElse("application/json")
-//          add init events for the inline schema
+          // add init events for the inline schema
           stream appendInit inlineSchemaCommands.flatten
           stream appendDescribe SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, response.schema.get.asInstanceOf[Definition].id, isRemoved = false))
 
@@ -110,7 +114,8 @@ object RequestsToCommandsImplicits {
             stream appendDescribe AddContribution(responseId, "description", response.description.get)
           }
         }
-      }}
+      }
+      }
 
       operation.queryParameters.foreach(i => {
         val queryParameterId = newParameterId()

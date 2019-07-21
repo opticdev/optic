@@ -8,28 +8,34 @@ const {
     withContext: withShapeEditorContext
 } = GenericContextFactory(null)
 
-let i = 1;
-let t = 1;
 class ShapeEditorStoreBase extends React.Component {
     addField = (shapeId) => {
         const {handleCommand} = this.props;
         const fieldId = ShapesHelper.newFieldId()
         const fieldShapeDescriptor = ShapesCommands.FieldShapeFromShape(fieldId, '$string')
-        const command = ShapesCommands.AddField(fieldId, shapeId, `f${i++}`, fieldShapeDescriptor)
+        const command = ShapesCommands.AddField(fieldId, shapeId, '', fieldShapeDescriptor)
         handleCommand(command)
     }
 
     addParameter = (shapeId) => {
         const {handleCommand} = this.props;
         const shapeParameterId = ShapesHelper.newShapeParameterId()
-        const command = ShapesCommands.AddShapeParameter(shapeParameterId, shapeId, `T${t++}`)
+        const command = ShapesCommands.AddShapeParameter(shapeParameterId, shapeId, ``)
         handleCommand(command)
     }
 
     setFieldShape = (fieldShapeDescriptor) => {
-        const {handleCommand} = this.props;
-        const command = ShapesCommands.SetFieldShape(fieldShapeDescriptor)
-        handleCommand(command)
+        const {fieldId, shapeId$1} = fieldShapeDescriptor
+        const {handleCommand, handleCommands} = this.props;
+        if (shapeId$1 === '$object') {
+            const inlineShapeId = ShapesHelper.newShapeId()
+            const addInlineShape = ShapesCommands.AddShape(inlineShapeId, shapeId$1, '')
+            const setFieldShape = ShapesCommands.SetFieldShape(ShapesCommands.FieldShapeFromShape(fieldId, inlineShapeId))
+            handleCommands(addInlineShape, setFieldShape)
+        } else {
+            const command = ShapesCommands.SetFieldShape(fieldShapeDescriptor)
+            handleCommand(command)
+        }
     }
 
     setShapeParameterInField = (fieldId, shapeProvider, shapeParameterId) => {
@@ -53,6 +59,12 @@ class ShapeEditorStoreBase extends React.Component {
     renameField = (fieldId, name) => {
         const {handleCommand} = this.props;
         const command = ShapesCommands.RenameField(fieldId, name)
+        handleCommand(command)
+    }
+
+    renameShapeParameter = (shapeParameterId, name) => {
+        const {handleCommand} = this.props;
+        const command = ShapesCommands.RenameShapeParameter(shapeParameterId, name)
         handleCommand(command)
     }
 
@@ -85,10 +97,12 @@ class ShapeEditorStoreBase extends React.Component {
             renameField: this.renameField,
             removeShape: this.removeShape,
             removeField: this.removeField,
+            renameShapeParameter: this.renameShapeParameter,
             removeShapeParameter: this.removeShapeParameter,
             queries: this.props.queries,
             cachedQueryResults: this.props.cachedQueryResults,
             onShapeSelected: this.props.onShapeSelected,
+            isShapeEditorReadOnly: this.props.readOnly || false,
         }
         return (
             <ShapeEditorContext.Provider value={context}>

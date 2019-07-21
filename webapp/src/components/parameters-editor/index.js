@@ -6,8 +6,12 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import {withRouter} from 'react-router-dom';
 import {withEditorContext} from '../../contexts/EditorContext.js';
+import {ExpansionStore} from '../../contexts/ExpansionContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
+import {ShapeEditorStore} from '../../contexts/ShapeEditorContext.js';
+import {routerUrls} from '../../routes.js';
 import {primary} from '../../theme';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
@@ -141,8 +145,10 @@ class ParametersEditor extends React.Component {
     }
 
     render() {
-
-        const {classes, mode, title, parameters, cachedQueryResults, queries} = this.props
+        const {classes} = this.props
+        const {history} = this.props;
+        const {baseUrl, mode} = this.props;
+        const {title, parameters, cachedQueryResults, queries} = this.props
         const {contributions} = cachedQueryResults
         const allRows = this.props.rowMapper(parameters, contributions)
         const rows = mode === EditorModes.DESIGN ? allRows : allRows.filter((row) => {
@@ -188,7 +194,16 @@ class ParametersEditor extends React.Component {
                             )
 
                             schemaEditor = (
-                                <ShapeViewer shape={shape}/>
+                                <ShapeEditorStore onShapeSelected={(shapeId) => {
+                                    debugger
+                                    history.push(routerUrls.conceptPage(baseUrl, shapeId))
+                                }}>
+                                    <ExpansionStore>
+                                        <div className={classes.shapeEditorContainer}>
+                                            <ShapeViewer shape={shape}/>
+                                        </div>
+                                    </ExpansionStore>
+                                </ShapeEditorStore>
                             )
                         }
 
@@ -255,4 +270,4 @@ ParametersEditor.propTypes = {
     onRename: PropTypes.func.isRequired
 }
 
-export default withEditorContext(withRfcContext(withStyles(styles)(ParametersEditor)))
+export default withRouter(withEditorContext(withRfcContext(withStyles(styles)(ParametersEditor))))

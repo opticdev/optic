@@ -1,65 +1,150 @@
 import {ShapesCommands} from '../../engine';
 import {coreShapeIds} from './ShapeUtilities.js';
+import {boundParameterColor, nonPrimitiveColor, primitiveColors} from './Types.js';
 
-export function listChoicesForShape(cachedQueryResults, shapeId, blacklist) {
-    const {conceptsById, shapesState} = cachedQueryResults
+
+function enhanceChoiceForShape(baseChoice) {
+    return {
+        ...baseChoice,
+        color: primitiveColors[baseChoice.id] || nonPrimitiveColor,
+        value: baseChoice.id,
+        valueForSetting: baseChoice.id
+    }
+}
+
+function enhanceShapeChoiceForParameter(baseChoice) {
+    return {
+        ...baseChoice,
+        color: primitiveColors[baseChoice.id] || nonPrimitiveColor,
+        value: {ShapeProvider: {shapeId: baseChoice.id}},
+        valueForSetting: ShapesCommands.ShapeProvider(baseChoice.id),
+    }
+}
+
+function enhanceParameterChoiceForParameter(baseChoice) {
+    return {
+        ...baseChoice,
+        color: boundParameterColor,
+        value: {ParameterProvider: {shapeParameterId: baseChoice.id}},
+        valueForSetting: ShapesCommands.ParameterProvider(baseChoice.id),
+    }
+}
+
+function enhanceShapeChoiceForField(fieldId) {
+    if (!fieldId) {
+        debugger
+    }
+    return function (baseChoice) {
+        if (!baseChoice.id) {
+            debugger
+        }
+        return {
+            ...baseChoice,
+            color: primitiveColors[baseChoice.id] || nonPrimitiveColor,
+            value: {FieldShapeFromShape: {fieldId, shapeId: baseChoice.id}},
+            valueForSetting: ShapesCommands.FieldShapeFromShape(fieldId, baseChoice.id)
+        }
+    }
+}
+
+function enhanceParameterChoiceForField(fieldId) {
+    return function (baseChoice) {
+        return {
+            ...baseChoice,
+            color: boundParameterColor,
+            value: {FieldShapeFromParameter: {fieldId, shapeParameterId: baseChoice.id}},
+            valueForSetting: ShapesCommands.FieldShapeFromParameter(fieldId, baseChoice.id)
+        }
+    }
+}
+
+function listCoreShapeChoices(shapesState) {
     const coreShapeChoices = coreShapeIds.map(coreShapeId => {
         return {
             displayName: shapesState.shapes[coreShapeId].descriptor.name,
-            value: coreShapeId,
             id: coreShapeId,
-            valueForSetting: coreShapeId,
         }
     })
-    const blacklistedShapeIds = new Set(blacklist);
+    return coreShapeChoices
+}
+
+export function listCoreShapeChoicesForParameter(shapesState) {
+    return listCoreShapeChoices(shapesState).map(enhanceShapeChoiceForParameter)
+}
+
+export function listCoreShapeChoicesForShape(shapesState) {
+    return listCoreShapeChoices(shapesState).map(enhanceChoiceForShape)
+}
+
+export function listCoreShapeChoicesForField(fieldId, shapesState) {
+    return listCoreShapeChoices(shapesState).map(enhanceShapeChoiceForField(fieldId))
+}
+
+export function listConceptChoices(conceptsById, blacklistedShapeIds) {
+    const blacklistedShapeIdsSet = new Set(blacklistedShapeIds)
     const conceptChoices = Object.entries(conceptsById)
         .filter(([conceptShapeId, shape]) => {
-            const isBlacklisted = blacklistedShapeIds.has(conceptShapeId)
+            const isBlacklisted = blacklistedShapeIdsSet.has(conceptShapeId)
             return !isBlacklisted
         })
         .map(([conceptShapeId, shape]) => {
             return {
+                id: conceptShapeId,
                 displayName: shape.name,
                 value: conceptShapeId,
-                id: conceptShapeId,
-                valueForSetting: conceptShapeId,
             }
         })
+    return conceptChoices
+}
+
+export function listConceptChoicesForShape(conceptsById, blacklistedShapeIds) {
+    return listConceptChoices(conceptsById, blacklistedShapeIds).map(enhanceChoiceForShape)
+}
+
+export function listConceptChoicesForParameter(conceptsById, blacklistedShapeIds) {
+    return listConceptChoices(conceptsById, blacklistedShapeIds).map(enhanceShapeChoiceForParameter)
+}
+
+export function listConceptChoicesForField(fieldId, conceptsById, blacklistedShapeIds) {
+    return listConceptChoices(conceptsById, blacklistedShapeIds).map(enhanceShapeChoiceForField(fieldId))
+}
+
+
+export function listParameterChoices(parentShape) {
+    return parentShape.parameters
+        .filter(x => !x.isRemoved)
+        .map(parameter => {
+            return {
+                displayName: `${parentShape.name}.${parameter.name}`,
+                id: parameter.shapeParameterId,
+            }
+        })
+}
+
+export function listParameterChoicesForParameter(parentShape) {
+    return listParameterChoices(parentShape).map(enhanceParameterChoiceForParameter)
+}
+
+export function listParameterChoicesForField(fieldId, parentShape) {
+    return listParameterChoices(parentShape).map(enhanceParameterChoiceForField(fieldId))
+}
+
+export function listChoicesForShape(cachedQueryResults, shapeId, blacklist) {
+    const {conceptsById, shapesState} = cachedQueryResults
+    const coreShapeChoices = listCoreShapeChoicesForShape(shapesState)
+    const blacklistedShapeIds = new Set(blacklist);
+    const conceptChoices = listConceptChoicesForShape(conceptsById, blacklistedShapeIds)
     return [
         ...coreShapeChoices,
         ...conceptChoices,
     ]
 }
 
-export function listChoicesForParameter(cachedQueryResults, parametersAvailableForUse) {
+export function listChoicesForParameter(cachedQueryResults, parentShape) {
     const {shapesState, conceptsById} = cachedQueryResults
-    const coreShapeChoices = coreShapeIds.map(coreShapeId => {
-        return {
-            displayName: shapesState.shapes[coreShapeId].descriptor.name,
-            id: coreShapeId,
-            value: {ShapeProvider: {shapeId: coreShapeId}},
-            valueForSetting: ShapesCommands.ShapeProvider(coreShapeId)
-        }
-    })
-    const parameterChoices = parametersAvailableForUse.map(availableParameter => {
-        const parameter = shapesState.shapeParameters[availableParameter.shapeParameterId]
-        const shape = shapesState.shapes[parameter.descriptor.shapeId]
-        return {
-            displayName: `${shape.descriptor.name}.${availableParameter.name}`,
-            id: availableParameter.shapeParameterId,
-            value: {ParameterProvider: {shapeParameterId: availableParameter.shapeParameterId}},
-            valueForSetting: ShapesCommands.ParameterProvider(availableParameter.shapeParameterId)
-        }
-    })
-    const conceptChoices = Object.entries(conceptsById)
-        .map(([conceptShapeId, shape]) => {
-            return {
-                displayName: shape.name,
-                id: conceptShapeId,
-                value: {ShapeProvider: {shapeId: conceptShapeId}},
-                valueForSetting: ShapesCommands.ShapeProvider(conceptShapeId)
-            }
-        })
+    const coreShapeChoices = listCoreShapeChoicesForParameter(shapesState)
+    const parameterChoices = listParameterChoicesForParameter(parentShape)
+    const conceptChoices = listConceptChoicesForParameter(conceptsById, new Set())
     return [
         ...coreShapeChoices,
         ...parameterChoices,
@@ -67,35 +152,11 @@ export function listChoicesForParameter(cachedQueryResults, parametersAvailableF
     ]
 }
 
-export function listChoicesForField(cachedQueryResults, fieldId, parametersAvailableForUse) {
+export function listChoicesForField(cachedQueryResults, fieldId, parentShape) {
     const {shapesState, conceptsById} = cachedQueryResults
-    const coreShapeChoices = coreShapeIds.map(coreShapeId => {
-        return {
-            displayName: shapesState.shapes[coreShapeId].descriptor.name,
-            id: coreShapeId,
-            value: {FieldShapeFromShape: {fieldId, shapeId: coreShapeId}},
-            valueForSetting: ShapesCommands.FieldShapeFromShape(fieldId, coreShapeId)
-        }
-    })
-    const parameterChoices = parametersAvailableForUse.map(availableParameter => {
-        const parameter = shapesState.shapeParameters[availableParameter.shapeParameterId]
-        const shape = shapesState.shapes[parameter.descriptor.shapeId]
-        return {
-            displayName: `${shape.descriptor.name}.${availableParameter.name}`,
-            id: availableParameter.shapeParameterId,
-            value: {FieldShapeFromParameter: {fieldId, shapeParameterId: availableParameter.shapeParameterId}},
-            valueForSetting: ShapesCommands.FieldShapeFromParameter(fieldId, availableParameter.shapeParameterId)
-        }
-    })
-    const conceptChoices = Object.entries(conceptsById)
-        .map(([conceptShapeId, shape]) => {
-            return {
-                displayName: shape.name,
-                id: conceptShapeId,
-                value: {FieldShapeFromShape: {fieldId, shapeId: conceptShapeId}},
-                valueForSetting: ShapesCommands.FieldShapeFromShape(fieldId, conceptShapeId)
-            }
-        })
+    const coreShapeChoices = listCoreShapeChoicesForField(fieldId, shapesState)
+    const parameterChoices = listParameterChoicesForField(fieldId, parentShape)
+    const conceptChoices = listConceptChoicesForField(conceptsById)
     return [
         ...coreShapeChoices,
         ...parameterChoices,
