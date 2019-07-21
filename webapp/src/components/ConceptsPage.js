@@ -1,3 +1,8 @@
+import {Card} from '@material-ui/core';
+import Button from '@material-ui/core/Button';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
+import CardHeader from '@material-ui/core/CardHeader';
 import CancelIcon from '@material-ui/icons/Cancel';
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -113,6 +118,7 @@ class ConceptsPage extends React.Component {
 }
 
 function ShapeParameterManagerBase({parameters, cachedQueryResults, shape, canManage, addParameter, removeShapeParameter}) {
+    const [shouldShowControls, setShouldShowControls] = React.useState(parameters.length > 0)
     const parameterComponents = parameters
         .map(parameter => {
             return (
@@ -134,6 +140,38 @@ function ShapeParameterManagerBase({parameters, cachedQueryResults, shape, canMa
                 </div>
             )
         })
+
+    if (!shouldShowControls) {
+        return (
+            <div style={{padding: '2em'}}>
+                <WriteOnly>
+                    <Card>
+                        <CardHeader title={"Composable Shapes"} />
+                        <CardContent>
+                            <Typography variant="body1">
+                                Composable Shapes have Parameters so you can reuse them more easily.
+                                For example, you might use pagination in your API and want to ensure that all endpoints
+                                follow a consistent Shape.
+                                However, each one will have a different Shape for the items returned in the list.
+                                Instead of replicating the same wrapper fields across all of these endpoints, add a
+                                Parameter and in each context pass in a different Shape for the items.
+                                Add a Concept called PaginatedList. Add a field called "items" and make it a List.
+                                You'll see that the List expects a Parameter T. We want to fill this T with a Parameter
+                                from PaginatedList so we should add one called Item.
+                                Now we can choose the Parameter "Items" and set "T". Now when we have an endpoint that
+                                returns a list of Pets, we can set that shape to be PaginatedList and pass in Pet for
+                                the "Items" Parameter
+                            </Typography>
+                        </CardContent>
+                        <CardActions>
+                            <Button color="secondary" onClick={() => setShouldShowControls(true)}>make this Shape
+                                composable</Button>
+                        </CardActions>
+                    </Card>
+                </WriteOnly>
+            </div>
+        )
+    }
     return (
         <div>
             <RequestPageHeader forType={'Parameter'} canAdd={canManage} addAction={() => addParameter(shape.shapeId)}/>

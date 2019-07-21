@@ -402,7 +402,7 @@ class ShapeViewerBase extends React.Component {
             }
             return (
                 <BasicButton
-                    style={{color: unboundParameterColor}}
+                    style={{color: unboundParameterColor, borderBottom: `1px solid ${unboundParameterColor}`}}
                     onClick={onClick}>{bindingInfo.parameterName}</BasicButton>
             )
         }
@@ -436,6 +436,10 @@ class ShapeViewerBase extends React.Component {
         const {shapeId, name, coreShapeId} = shape;
         const output = []
         ShapeUtilities.flatten(queries, shapeId, 0, [], output)
+        console.log({output})
+        function Colon() {
+            return <Typography variant="caption" style={{padding: '0 .25em'}}>:</Typography>
+        }
 
         const shapeDescription = output
             .filter(({trail}) => {
@@ -456,7 +460,8 @@ class ShapeViewerBase extends React.Component {
                                     <div style={{paddingLeft: `${trail.length - 1}em`}}>&nbsp;</div>
                                     {type === 'field' ? (
                                         <div className={classes.fieldRow}>
-                                            <FieldName name={name} fieldId={id}/> :
+                                            <FieldName name={name} fieldId={id}/>
+                                            <Colon/>
                                             <ShapeName
                                                 shapeName={shapeName}
                                                 onShapeSelected={() => handleTooltipOpen({
@@ -481,6 +486,7 @@ class ShapeViewerBase extends React.Component {
                                                 }}
                                             />
                                             <WriteOnly>
+                                                <div style={{padding: '.25em'}}>&nbsp;</div>
                                                 {isExpandable && (
                                                     <BasicButton
                                                         className={classes.addFieldButton}
@@ -526,6 +532,7 @@ class ShapeViewerBase extends React.Component {
                                                 }}
                                             />
                                             <WriteOnly>
+                                                <div style={{padding: '.25em'}}>&nbsp;</div>
                                                 {isExpandable && (
                                                     <BasicButton
                                                         className={classes.addFieldButton}

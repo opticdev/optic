@@ -123,7 +123,7 @@ class ShapeUtilities {
                         }
                         return {
                             binding,
-                            boundName: provider.name || '(blank)',
+                            boundName: provider ? provider.name || '(blank)' : null,
                             parameterName: parameter.name,
                             parameterId: parameter.shapeParameterId,
                         }
