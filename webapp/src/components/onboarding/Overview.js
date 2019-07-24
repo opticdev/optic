@@ -1,129 +1,219 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
-import {primary} from '../../theme';
-import Button from '@material-ui/core/Button';
-import Editor from '../navigation/Editor';
+import Editor, {FullSheetNoPaper} from '../navigation/Editor';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 import {withRfcContext} from '../../contexts/RfcContext';
-import {FullSheet} from '../navigation/Editor.js';
-import {addAbsolutePath} from '../utilities/PathUtilities';
+import {getNameWithFormattedParameters, getParentPathId} from '../utilities/PathUtilities';
 import sortBy from 'lodash.sortby';
-import classNames from 'classnames';
-import BasicButton from '../shape-editor/BasicButton';
-import {routerUrls} from '../../routes';
+import Paper from '@material-ui/core/Paper';
+import {RfcCommands} from '../../engine';
+import ContributionTextField from '../contributions/ContributionTextField';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import Collapse from '@material-ui/core/Collapse';
 import {Link} from 'react-router-dom';
+import {routerUrls} from '../../routes';
+import IconButton from '@material-ui/core/IconButton';
+import Chip from '@material-ui/core/Chip';
+import Button from '@material-ui/core/Button';
 import CreateNew from '../navigation/CreateNew';
 
 const styles = theme => ({
-    root: {
-        padding: 22,
-        paddingTop: 35
-    },
-    pathButton: {
-        padding: 5,
-        fontSize: 15,
-        fontWeight: 200,
-        '&:hover': {
-            color: primary,
-            fontWeight: 400
-        }
-    },
-    actions: {
-        padding: 15,
-        marginLeft: -35,
-        marginTop: 15,
-        border: '1px solid #e2e2e2',
-        borderRadius: 8
-    },
-    actionButton: {
-        float: 'right',
-        marginTop: -22
-    }
+	row: {
+		padding: 22,
+		display: 'flex',
+		flexDirection: 'row'
+	},
+	buttonRow: {
+		display: 'flex',
+		flexDirection: 'row',
+		marginTop: 22
+	},
+	subView: {
+		minHeight: 90,
+		flex: 1,
+		padding: 11
+	},
+	bareLink: {
+		textDecoration: 'none',
+		color: 'inherit',
+		cursor: 'pointer'
+	},
 });
+
+const PathListItem = withRfcContext(({path, baseUrl, cachedQueryResults}) => {
+	const {name, children, depth, toggled, pathId} = path;
+	const requests = cachedQueryResults.requestIdsByPathId[pathId] || [];
+	const [open, setOpen] = React.useState(toggled);
+
+	function handleClick() {
+		setOpen(!open);
+	}
+
+	const url = routerUrls.pathPage(baseUrl, pathId);
+
+	const requestsWithMethods = requests.map(id => {
+		return [id, cachedQueryResults.requests[id].requestDescriptor.httpMethod];
+	});
+
+	return <>
+		<ListItem style={{paddingLeft: 18 * depth}}>
+			<ListItemText primary={<Link to={url} style={{color: 'inherit', textDecoration: 'none'}}>{name}</Link>}/>
+			{requestsWithMethods.map(i => {
+				return <Link to={url + '#' + i[0]} style={{marginRight: 4, textDecoration: 'none'}}>
+					<Chip button color="primary" style={{cursor: 'pointer'}} label={i[1].toUpperCase()}
+						  size="small"/>
+				</Link>;
+			})}
+			{children.length ? <IconButton size={'small'}>{(open ? <ExpandLess onClick={handleClick}/> :
+				<ExpandMore onClick={handleClick}/>)}</IconButton> : null}
+		</ListItem>
+		{children.length ? (
+			<Collapse in={open} timeout="auto" unmountOnExit>
+				{children.map(i => <PathListItem path={i} baseUrl={baseUrl}/>)}
+			</Collapse>
+		) : null}
+	</>;
+
+});
+
 
 class OverView extends React.Component {
 
-    componentDidMount() {
+	componentDidMount() {
 
-        const {switchEditorMode} = this.props
-        const {pathIdsWithRequests} = this.props.cachedQueryResults
+		const {switchEditorMode} = this.props;
+		const {pathIdsWithRequests} = this.props.cachedQueryResults;
 
-        if (pathIdsWithRequests.size === 0) {
-            setTimeout(() => {
-                switchEditorMode(EditorModes.DESIGN)
-            }, 1)
-        }
+		if (pathIdsWithRequests.size === 0) {
+			setTimeout(() => {
+				switchEditorMode(EditorModes.DESIGN);
+			}, 1);
+		}
 
-    }
+	}
 
-    render() {
-        const {classes, apiName} = this.props;
+	render() {
+		const {classes, apiName, cachedQueryResults, mode, handleCommand, queries, baseUrl} = this.props;
+		const {contributions, conceptsById, pathsById} = cachedQueryResults;
 
-        return (
-            <Editor>
-                <FullSheet>
-                    <div className={classes.root}>
-                        <Typography variant="h2" color="primary">{apiName}</Typography>
-
-                        <div style={{textAlign: 'center'}}>
-                        <Typography variant="h5" color="primary" style={{ marginTop: 22}}>Getting Started</Typography>
-                            <iframe width="560" height="315" src="https://www.youtube.com/embed/jsz1Wo9rC00"
-                                    frameBorder="0"
-                                    style={{marginTop: 22}}
-                                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen></iframe>
-                        </div>
-
-                        <ul style={{marginTop: 50}}>
-                            <div className={classes.actions}>
-                                <Typography variant="subtitle1" color="primary">Add a
-                                    Request</Typography>
-                                <Typography variant="caption">Define your API's paths, methods, and
-                                    responses</Typography>
-                                <CreateNew render={({addRequest}) => (
-                                    <Button color="secondary" variant="contained" className={classes.actionButton}
-                                            onClick={addRequest}>New Request</Button>
-                                )}/>
-                            </div>
-                            <div className={classes.actions}>
-                                <Typography variant="subtitle1" color="primary">Add a
-                                    Concept</Typography>
-                                <Typography variant="caption">Define the shape of all the concepts in your
-                                    API</Typography>
-                                <CreateNew render={({addConcept}) => (
-                                    <Button color="secondary" variant="contained" className={classes.actionButton}
-                                            onClick={addConcept}>New Concept</Button>
-                                )}/>
-                            </div>
-                            <div className={classes.actions}>
-                                <Typography variant="subtitle1" color="primary">Upload OpenAPI spec</Typography>
-                                <Typography variant="caption">Already have an OpenAPI spec? Upload it to Seamless to get started</Typography>
-                                <Button href="/upload-oas" color="secondary" variant="contained"
-                                        className={classes.actionButton}>Upload OAS</Button>
-                            </div>
-                            <div className={classes.actions}>
-                                <Typography variant="subtitle1" color="primary">Read the Docs</Typography>
-                                <Typography variant="caption">Learn about Seamless, our roadmap, and how to use the
-                                    API designer </Typography>
-                                <Button href="https://seamlessapis.com" color="secondary" variant="contained"
-                                        className={classes.actionButton}>Open Docs</Button>
-                            </div>
-                        </ul>
+		const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
+		const sortedConcepts = sortBy(concepts, ['name']);
 
 
-                        {/*{ifNotLocalHost(<>*/}
-                        {/*<Typography variant="h5" color="primary" style={{ marginTop: 22}}>Using Seamless with Your API</Typography>*/}
-                        {/*<iframe src="https://www.loom.com/embed/9b419421c5354ac7aac7bc640f4e7726"*/}
-                        {/*        frameBorder="0"*/}
-                        {/*        style={{width: '100%', height: 500, marginTop: 22}}*/}
-                        {/*        webkitallowfullscreen mozallowfullscreen allowFullScreen></iframe>*/}
-                        {/*</>)}*/}
-                    </div>
-                </FullSheet>
-            </Editor>
-        );
-    }
+		const pathTree = flattenPaths('root', pathsById);
+
+		const desc = contributions.getOrUndefined('api', 'description');
+		const complexity = queries.complexityScore();
+
+		return (
+			<Editor>
+				<FullSheetNoPaper>
+					<Paper className={classes.row}>
+						<div style={{flex: 1, paddingBottom: 11}}>
+							<Typography variant="h3" color="primary">{apiName}</Typography>
+
+							<ContributionTextField
+								key={`api-desc`}
+								value={desc}
+								variant={'multi'}
+								placeholder={'API Description'}
+								mode={mode}
+								style={{marginTop: 22}}
+								onBlur={(value) => {
+									const command = RfcCommands.AddContribution('api', 'description', value);
+									handleCommand(command);
+								}}
+							/>
+						</div>
+
+						<div style={{width: 230, paddingLeft: 30, paddingTop: 11}}>
+							<Typography variant="overline" color="primary">
+								API Complexity: <b style={{fontSize: '1.1em'}}> {complexity}</b>
+							</Typography>
+						</div>
+
+					</Paper>
+
+					<div className={classes.buttonRow}>
+						<Paper className={classes.subView} style={{marginRight: 25}}>
+							<Typography variant="h5" color="primary">Paths</Typography>
+
+							<List dense>
+								{pathTree.children.map(i => <PathListItem path={i} baseUrl={baseUrl}/>)}
+							</List>
+
+							{pathTree.children.length === 0 ? (
+								<CreateNew render={({addRequest, classes}) => {
+									return <>There are no paths in your API <Button
+										color="secondary" onClick={() => {
+										this.props.switchEditorMode(EditorModes.DESIGN);
+										addRequest();
+									}}>Add Request</Button></>;
+								}}/>
+							) : null}
+
+						</Paper>
+						<Paper className={classes.subView}>
+							<Typography variant="h5" color="primary">Concepts</Typography>
+
+							<List dense>
+								{sortedConcepts.map(i => {
+									const to = routerUrls.conceptPage(baseUrl, i.shapeId);
+									return <Link to={to} style={{textDecoration: 'none', color: 'inherit'}}>
+										<ListItem button dense>
+											<ListItemText primary={i.name}/>
+										</ListItem>
+									</Link>;
+								})}
+							</List>
+
+							{sortedConcepts.length === 0 ? (
+								<CreateNew render={({addConcept, classes}) => {
+									return <>There are no concepts in your API.
+										<Button
+										color="secondary" onClick={() => {
+										this.props.switchEditorMode(EditorModes.DESIGN);
+										addConcept();
+									}}>Add Concept</Button></>;
+								}}/>
+							) : null}
+
+
+						</Paper>
+					</div>
+
+
+				</FullSheetNoPaper>
+			</Editor>
+		);
+	}
+}
+
+function flattenPaths(id, paths, depth = 0) {
+	const path = paths[id];
+	const name = '/' + getNameWithFormattedParameters(path);
+
+	const children = Object.entries(paths)
+		.filter(i => {
+			const [childId, childPath] = i;
+			return getParentPathId(childPath) === id;
+		}).map(i => {
+			const [childId, childPath] = i;
+			return flattenPaths(childId, paths, depth + 1);
+		});
+
+	return {
+		name,
+		toggled: depth < 2,
+		children: sortBy(children, 'name'),
+		depth,
+		pathId: id
+	};
 }
 
 export default withRfcContext(withEditorContext(withStyles(styles)(OverView)));

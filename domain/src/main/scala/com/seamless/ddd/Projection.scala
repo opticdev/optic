@@ -10,7 +10,7 @@ class CachedProjection[Event, T](projection: Projection[Event, T], events: Vecto
   private var lastEvent = 0
   private var lastSnapshot: Option[T] = None
 
-  def updateProjection(events: Vector[Event]): T = {
+  def withEvents(events: Vector[Event]): T = {
     lastSnapshot match {
       case None => {
         val result = projection.fromEvents(events)
@@ -31,6 +31,6 @@ class CachedProjection[Event, T](projection: Projection[Event, T], events: Vecto
 
 
   //Init
-  updateProjection(events)
+  withEvents(events)
 
 }

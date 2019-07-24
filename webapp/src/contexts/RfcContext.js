@@ -125,14 +125,7 @@ class RfcStoreWithoutContext extends React.Component {
 
         const value = {
             rfcId,
-            queries: {
-                ...queries,
-                shapeById: (...args) => {
-                    console.count('shapeById')
-                    console.count(`shapeById(${[...args]})`)
-                    return queries.shapeById(...args)
-                }
-            },
+            queries,
             cachedQueryResults,
             apiName,
             handleCommand: this.handleCommand,

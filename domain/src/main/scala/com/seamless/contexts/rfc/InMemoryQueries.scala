@@ -2,20 +2,20 @@ package com.seamless.contexts.rfc
 
 import io.circe.generic.auto._
 import io.circe.syntax._
-import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId}
-import com.seamless.contexts.requests.RequestsState
-import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
-import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.projections.{APINameProjection, ContributionWrapper, ContributionsProjection}
 import com.seamless.contexts.shapes.Commands.ShapeId
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.contexts.shapes.projections.{NamedShape, NamedShapes}
+import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId}
+import com.seamless.contexts.requests.{RequestsState}
+import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
+import com.seamless.contexts.rfc.Events.RfcEvent
+import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection}
 import com.seamless.ddd.{AggregateId, CachedProjection, EventStore}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 
-@JSExportTopLevel("com.seamless.contexts.rfc.Queries")
+@JSExportTopLevel("Queries")
 @JSExportAll
 class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
   private val q = new InMemoryQueries(eventStore, service, aggregateId)
@@ -52,6 +52,10 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     convertJsonToJs(q.shapesState.flattenedShape(shapeId).asJson)
   }
 
+  def complexityScore(): String = {
+    q.complexityScore
+  }
+
 }
 
 class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
@@ -62,12 +66,12 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
 
   private val pathsWithRequestsCache = new CachedProjection(PathsWithRequestsProjection, events)
   def pathsWithRequests: Map[RequestId, PathComponentId] = {
-    pathsWithRequestsCache.updateProjection(events)
+    pathsWithRequestsCache.withEvents(events)
   }
 
   private val contributionsCache = new CachedProjection(ContributionsProjection, events)
   def contributions: ContributionWrapper = {
-    contributionsCache.updateProjection(events)
+    contributionsCache.withEvents(events)
   }
 
   def requestsState: RequestsState = {
@@ -80,11 +84,15 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
 
   private val namedShapesCache = new CachedProjection(NamedShapes, events)
   def namedShapes: Map[ShapeId, NamedShape] = {
-    namedShapesCache.updateProjection(events)
+    namedShapesCache.withEvents(events)
+  }
+
+  def complexityScore: String = {
+    ComplexityScoreProjection.calculate(pathsWithRequests, namedShapes)
   }
 
   private val apiNameCache = new CachedProjection(APINameProjection, events)
   def apiName(): String = {
-    apiNameCache.updateProjection(events)
+    apiNameCache.withEvents(events)
   }
 }

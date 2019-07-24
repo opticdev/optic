@@ -73,11 +73,20 @@ export const Sheet = withStyles(styles)(({classes, style, children}) => {
         </Paper>
     );
 });
+
 export const FullSheet = withStyles(styles)(({classes, style, children}) => {
     return (
         <Paper className={`${classes.sheet} ${classes.fullSheet}`} style={style} id="center-sheet">
             {children}
         </Paper>
+    );
+});
+
+export const FullSheetNoPaper = withStyles(styles)(({classes, style, children}) => {
+    return (
+        <div className={`${classes.sheet} ${classes.fullSheet}`} style={style} id="center-sheet">
+            {children}
+        </div>
     );
 });
 
