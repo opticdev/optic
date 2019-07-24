@@ -12,11 +12,13 @@ export function track(event, props) {
     }
 }
 
-if (!window.localStorage.getItem('_known_user')) {
-    window.localStorage.setItem('_known_user', 'true')
-    fetch('https://hooks.slack.com/services/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', {
-        method: 'POST',
-        headers: {},
-        body: JSON.stringify({text: 'New User with mixpanel ID: ' + mixpanel.persistence.props.distinct_id})
-    })
+if (process.env.REACT_APP_ENABLE_ANALYTICS !== 'no') {
+    if (!window.localStorage.getItem('_known_user')) {
+        window.localStorage.setItem('_known_user', 'true')
+        fetch('https://hooks.slack.com/services/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', {
+            method: 'POST',
+            headers: {},
+            body: JSON.stringify({text: 'New User with mixpanel ID: ' + mixpanel.persistence.props.distinct_id})
+        })
+    }
 }

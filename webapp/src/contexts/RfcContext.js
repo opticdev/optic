@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Facade, Queries, starterCommands} from '../engine';
+import {commandsToJson, Facade, Queries} from '../engine';
 import {GenericContextFactory} from './GenericContextFactory.js';
 import {withInitialRfcCommandsContext} from './InitialRfcCommandsContext.js';
 import debounce from 'lodash.debounce';
@@ -11,7 +11,10 @@ const {
     withContext: withRfcContext
 } = GenericContextFactory(null);
 
-
+global.commands = []
+global.getCommandsAsJson = function () {
+    return commandsToJson(global.commands)
+}
 
 class RfcStoreWithoutContext extends React.Component {
 
@@ -37,21 +40,12 @@ class RfcStoreWithoutContext extends React.Component {
     }
 
     handleCommand = (command) => {
-        console.log({command})
-        this.state.rfcService.handleCommands(this.props.rfcId, command);
-        setTimeout(() => {
-            this.forceUpdate();
-            if (process.env.REACT_APP_CLI_MODE) {
-                this.setState({hasUnsavedChanges: true})
-                this.persistLocal()
-            }
-        }, 1)
-
-        track('Command', {commandType: commandNameFor(command)})
+        this.handleCommands(command)
     };
 
     handleCommands = (...commands) => {
         console.log({commands})
+        global.commands.push(...commands)
         this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
         setTimeout(() => {
 
@@ -89,12 +83,6 @@ class RfcStoreWithoutContext extends React.Component {
     serializeEvents = () => {
         return this.state.eventStore.serializeEvents(this.props.rfcId);
     };
-
-    componentDidMount() {
-
-        starterCommands.forEach(command => console.log(command.toString()))
-        this.handleCommands(...starterCommands)
-    }
 
     render() {
         const {queries, hasUnsavedChanges} = this.state;
