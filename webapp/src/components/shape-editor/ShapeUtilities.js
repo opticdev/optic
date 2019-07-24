@@ -1,4 +1,4 @@
-import {primitiveColors} from './Types.js';
+import {boundParameterColor, primitiveColors} from './Types.js';
 
 export const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', '$oneOf', '$identifier', '$reference', '$any']
 export const coreShapeIdsSet = new Set(coreShapeIds)
@@ -107,9 +107,12 @@ class ShapeUtilities {
                 const binding = bindings[parameter.shapeParameterId]
                 if (binding) {
                     if (binding.ShapeProvider) {
+                        const {shapeId} = binding.ShapeProvider;
+                        const shape = queries.shapeById(shapeId)
                         return {
                             binding,
-                            boundName: queries.shapeById(binding.ShapeProvider.shapeId).name || '(blank)',
+                            color: primitiveColors[shape.baseShapeId],
+                            boundName: queries.shapeById(shapeId).name || '(blank)',
                             parameterName: parameter.name,
                             parameterId: parameter.shapeParameterId,
                         }
@@ -123,6 +126,7 @@ class ShapeUtilities {
                         }
                         return {
                             binding,
+                            color: boundParameterColor,
                             boundName: provider ? provider.name || '(blank)' : null,
                             parameterName: parameter.name,
                             parameterId: parameter.shapeParameterId,

@@ -10,7 +10,6 @@ const styles = theme => ({
         margin: 0,
         fontFamily: 'Ubuntu',
         fontSize: 13,
-        outline: 'none',
         cursor: 'pointer',
         '&:disabled': {
             cursor: 'inherit'

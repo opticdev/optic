@@ -1,9 +1,12 @@
-import {Card} from '@material-ui/core';
+import Card from '@material-ui/core/Card';
 import Button from '@material-ui/core/Button';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import CancelIcon from '@material-ui/icons/Cancel';
+import HelpIcon from '@material-ui/icons/Help'
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {withRouter} from 'react-router-dom';
@@ -124,14 +127,16 @@ function ShapeParameterManagerBase({parameters, cachedQueryResults, shape, canMa
             return (
                 <div style={{display: 'flex', alignItems: 'center'}}>
                     <ShapeParameterName name={parameter.name} shapeParameterId={parameter.shapeParameterId}/>
-                    <ContributionWrapper
-                        value={parameter.name}
-                        defaultText={''}
-                        variant="inline"
-                        cachedQueryResults={cachedQueryResults}
-                        contributionKey="description"
-                        contributionParentId={parameter.shapeParameterId}
-                    />
+                    <div style={{flex: 1}}>
+                        <ContributionWrapper
+                            value={parameter.name}
+                            defaultText={''}
+                            variant="inline"
+                            cachedQueryResults={cachedQueryResults}
+                            contributionKey="description"
+                            contributionParentId={parameter.shapeParameterId}
+                        />
+                    </div>
                     {canManage && <WriteOnly>
                         <BasicButton onClick={() => removeShapeParameter(parameter.shapeParameterId)}>
                             <CancelIcon style={{width: 15, color: '#a6a6a6'}}/>
@@ -143,31 +148,23 @@ function ShapeParameterManagerBase({parameters, cachedQueryResults, shape, canMa
 
     if (!shouldShowControls) {
         return (
-            <div style={{padding: '2em'}}>
+            <div style={{padding: '1em'}}>
                 <WriteOnly>
-                    <Card>
-                        <CardHeader title={"Composable Shapes"} />
-                        <CardContent>
-                            <Typography variant="body1">
-                                Composable Shapes have Parameters so you can reuse them more easily.
-                                For example, you might use pagination in your API and want to ensure that all endpoints
-                                follow a consistent Shape.
-                                However, each one will have a different Shape for the items returned in the list.
-                                Instead of replicating the same wrapper fields across all of these endpoints, add a
-                                Parameter and in each context pass in a different Shape for the items.
-                                Add a Concept called PaginatedList. Add a field called "items" and make it a List.
-                                You'll see that the List expects a Parameter T. We want to fill this T with a Parameter
-                                from PaginatedList so we should add one called Item.
-                                Now we can choose the Parameter "Items" and set "T". Now when we have an endpoint that
-                                returns a list of Pets, we can set that shape to be PaginatedList and pass in Pet for
-                                the "Items" Parameter
-                            </Typography>
-                        </CardContent>
-                        <CardActions>
-                            <Button color="secondary" onClick={() => setShouldShowControls(true)}>make this Shape
-                                composable</Button>
-                        </CardActions>
-                    </Card>
+                    <Tooltip title={`Composable Shapes have Parameters so you can reuse them more easily.
+                                    For example, you might use pagination in your API and want to ensure that all endpoints follow a consistent Shape.
+                                    However, each one will have a different Shape for the items returned in the list.
+                                    Instead of replicating the same wrapper fields across all of these endpoints, add a Parameter and in each context pass in a different Shape for the items.
+                                    Add a Concept called PaginatedList. Add a field called "items" and make it a List.
+                                    You'll see that the List expects a Parameter T. We want to fill this T with a Parameter from PaginatedList so we should add one called Item.
+                                    Now we can choose the Parameter "Items" and set "T". Now when we have an endpoint that returns a list of Pets, we can set that shape to be PaginatedList and pass in Pet for the "Items" Parameter`}>
+                        <div>
+                            <Button size="small" color="secondary" onClick={() => setShouldShowControls(true)}>
+                                make this Shape composable</Button>
+                            <IconButton size="small">
+                                <HelpIcon fontSize="small"/>
+                            </IconButton>
+                        </div>
+                    </Tooltip>
                 </WriteOnly>
             </div>
         )
@@ -187,6 +184,9 @@ function ShapeParameterManagerWrapper({mode, shape}) {
     const parameters = shape.parameters.filter(parameter => !parameter.isRemoved)
 
     if (mode === EditorModes.DOCUMENTATION && parameters.length === 0) {
+        return null
+    }
+    if (parameters.length === 0 && shape.coreShapeId !== '$object') {
         return null
     }
     const canManage = !coreShapeIdsSet.has(shape.shapeId)

@@ -32,7 +32,7 @@ export function cheapEquals(item1, item2) {
     return JSON.stringify(item1) === JSON.stringify(item2)
 }
 
-const buttonStyle = {paddingLeft: '.5em', paddingRight: '.5em'}
+const buttonStyle = {paddingLeft: '.25em', paddingRight: '.25em'}
 
 function Chooser({choices, parameterChoices, setShouldShowConceptModal, onSelect}) {
     const [shouldShowParameterChoices, setShouldShowParameterChoices] = React.useState(false)
@@ -110,7 +110,7 @@ const useStyles = makeStyles(theme => ({
 
 function ShapeLinksBase({shapeId, contextString, switchEditorMode, isShapeEditorReadOnly, onShapeSelected}) {
     return (
-        <div style={{display: 'flex'}}>
+        <div style={{display: 'flex', height: '100%', alignItems: 'center'}}>
             {contextString}
             <BasicButton
                 onClick={() => onShapeSelected(shapeId)}
@@ -304,6 +304,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults}) {
                     interactive
                     title={widget}
                     placement="left-start"
+                    TransitionProps={{timeout: 0}}
                 >
                     <div>{children({handleTooltipClose, handleTooltipOpen})}</div>
                 </Tooltip>
@@ -390,13 +391,13 @@ class ShapeViewerBase extends React.Component {
                 if (bindingInfo.binding.ShapeProvider) {
                     return (
                         <BasicButton
-                            style={{color: boundParameterColor}}
+                            style={{color: bindingInfo.color}}
                             onClick={onClick}
                         >{bindingInfo.boundName}</BasicButton>)
                 }
                 return (
                     <BasicButton
-                        style={{fontWeight: 'bold', color: boundParameterColor}}
+                        style={{fontWeight: 'bold', color: bindingInfo.color}}
                         onClick={onClick}>{bindingInfo.boundName}</BasicButton>
                 )
             }
