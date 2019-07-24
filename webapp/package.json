@@ -64,6 +64,7 @@
     "react-input-autosize": "^2.2.1",
     "react-keydown": "^1.9.10",
     "react-router-dom": "^5.0.1",
+    "react-typeform-embed": "^0.2.0",
     "react-waypoint": "^9.0.2",
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",
