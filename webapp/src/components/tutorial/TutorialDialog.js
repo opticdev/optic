@@ -11,7 +11,6 @@ import Grid from '@material-ui/core/Grid';
 import {primary} from '../../theme';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import {ReactTypeformEmbed} from 'react-typeform-embed';
 import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
@@ -73,7 +72,6 @@ class TutorialDialog extends React.Component {
 		const {step} = this.state;
 
 		const steps = [
-			//['', <ReactTypeformEmbed url="https://adc2019.typeform.com/to/I9houZ" style={{height: 545}}/>],
 			['API Designer + Documentation', <>
 				<Grid container>
 					<Grid item xs={12}>

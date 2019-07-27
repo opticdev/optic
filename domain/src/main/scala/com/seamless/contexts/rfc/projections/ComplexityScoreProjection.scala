@@ -16,7 +16,7 @@ object ComplexityScoreProjection {
     }
 
 
-    if (pathsWithRequests < 10 && (pathsWithRequests * 2.5) > concepts ) {
+    if ( (pathsWithRequests < 10 && (pathsWithRequests * 2.5) > concepts) || pathsWithRequests == 0 ) {
       return "Simple"
     }
 
