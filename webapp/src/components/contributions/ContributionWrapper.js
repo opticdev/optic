@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import {withEditorContext} from '../../contexts/EditorContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
 import {updateContribution} from '../../engine/routines.js';
@@ -22,6 +23,13 @@ class ContributionWrapper extends React.Component {
             </div>
         );
     }
+}
+
+ContributionWrapper.propTypes = {
+    cachedQueryResults: PropTypes.object.isRequired,
+    contributionParentId: PropTypes.string.isRequired,
+    contributionKey: PropTypes.string.isRequired,
+    defaultText: PropTypes.string.isRequired,
 }
 
 export default withEditorContext(withRfcContext(ContributionWrapper));

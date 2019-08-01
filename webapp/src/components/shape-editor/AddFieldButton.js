@@ -1,7 +1,7 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
-import {ShapeCommands, DataTypesHelper} from '../../engine'
+import {ShapesCommands, ShapesHelper} from '../../engine'
 import BasicButton from './BasicButton';
 import {EditorModes} from '../../contexts/EditorContext';
 
@@ -25,7 +25,7 @@ function AddFieldButton({classes, parentId}) {
                     className={classes.addButton}
                     onClick={() => {
                         operations.toggleCollapsed(parentId, true)()
-                        operations.runCommand(ShapeCommands.AddField(parentId, DataTypesHelper.newId(), conceptId))
+                        operations.runCommand(ShapesCommands.AddField(parentId, ShapesHelper.newId(), conceptId))
                     }}
                 > + Add Field</BasicButton>
             }}

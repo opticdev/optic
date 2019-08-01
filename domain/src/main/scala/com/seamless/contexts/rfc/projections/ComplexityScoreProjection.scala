@@ -1,26 +1,24 @@
 package com.seamless.contexts.rfc.projections
 
-import com.seamless.contexts.data_types.projections.AllConcepts
-import com.seamless.contexts.requests.Commands.RequestId
-import com.seamless.contexts.requests.HttpRequest
+import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId}
+import com.seamless.contexts.shapes.Commands.ShapeId
+import com.seamless.contexts.shapes.projections.NamedShape
 
 object ComplexityScoreProjection {
+  def calculate(pathIdsByRequestId: Map[RequestId, PathComponentId], namedShapes: Map[ShapeId, NamedShape]): String = {
 
-  def calculate(requests: Map[RequestId, HttpRequest], allConcepts: AllConcepts): String = {
+    val requestCount = pathIdsByRequestId.keySet.size
+    val conceptsCount = namedShapes.size
 
-    val pathsWithRequests = requests.filter(!_._2.isRemoved).map(_._2.requestDescriptor.pathComponentId).toSet.size
-    val concepts = allConcepts.allowedReferences.size
-
-    if (pathsWithRequests == 0 && concepts == 0) {
+    if (requestCount == 0 && conceptsCount == 0) {
       return "Empty"
     }
 
-
-    if ( (pathsWithRequests < 10 && (pathsWithRequests * 2.5) > concepts) || pathsWithRequests == 0 ) {
+    if (requestCount < 10 && (requestCount * 2.5) > conceptsCount) {
       return "Simple"
     }
 
-    if (pathsWithRequests < 25 && (pathsWithRequests * 2.5) > concepts ) {
+    if (requestCount < 25 && (requestCount * 2.5) > conceptsCount) {
       return "Medium"
     }
 

@@ -25,7 +25,7 @@ Commands that are accepted will have the side effect of adding new facts to the 
 ## Domain Overview
 Today the Seamless Spec concerns itself with two domains:
 
-**Data Types** - Representations of the concepts in your (the API author's) domain. These might be concepts like `Users`, `Articles`, `Orders`, etc. Concepts have shapes, which describe the properties of each concept. The shape for `Users` may define fields for `email` and `password`.
+**Shapes** - Representations of the concepts in your (the API author's) domain. These might be concepts like `Users`, `Articles`, `Orders`, etc. Concepts have shapes, which describe the properties of each concept. The shape for `Users` may define fields for `email` and `password`.
 
 **Requests** - The behaviors of Restful APIs. This domain concerns itself with paths, methods, parameters, request bodies, responses, and response bodies. 
 
@@ -163,7 +163,7 @@ A response's status code was changed
 
 responseId: `ResponseId`, httpStatusCode: `Int`
 
-### Data Types Domain
+### Shapes Domain
 
 #### ChildOccurrenceUpdated
 
@@ -342,7 +342,7 @@ requestId: `RequestId`
 
 responseId: `ResponseId`
 
-### Data Types Domain
+### Shapes Domain
 
 #### AddField
 

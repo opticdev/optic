@@ -11,7 +11,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
-import {DataTypesHelper, ShapeCommands} from '../../engine';
+import {ShapesHelper, ShapesCommands} from '../../engine';
 import {routerUrls} from '../../routes.js';
 
 class NewConceptEditor extends React.Component {
@@ -21,11 +21,10 @@ class NewConceptEditor extends React.Component {
     handleSubmit = () => {
         const {handleCommand, baseUrl, history, switchEditorMode} = this.props;
         const {conceptName} = this.state;
-        const conceptId = DataTypesHelper.newConceptId();
-        const conceptRootShapeId = DataTypesHelper.newId();
+        const shapeId = ShapesHelper.newShapeId();
         switchEditorMode(EditorModes.DESIGN)
-        handleCommand(ShapeCommands.DefineConcept(conceptName || 'Unnamed Concept', conceptRootShapeId, conceptId));
-        history.push(routerUrls.conceptPage(baseUrl, conceptId));
+        handleCommand(ShapesCommands.AddShape(shapeId, '$object', conceptName || 'Unnamed Concept'));
+        history.push(routerUrls.conceptPage(baseUrl, shapeId));
     }
     handleNameChange = (e) => {
         const conceptName = e.target.value

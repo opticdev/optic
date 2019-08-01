@@ -1,0 +1,155 @@
+[
+  {
+    "AddShape": {
+      "shapeId": "$Pet",
+      "baseShapeId": "$object",
+      "name": "Pet"
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "$Pet.name",
+      "shapeId": "$Pet",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "$Pet.name",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "RenameField": {
+      "fieldId": "$Pet.name",
+      "name": "name"
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "$PaginatedList",
+      "baseShapeId": "$object",
+      "name": "PaginatedList"
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "$PaginatedList.items",
+      "shapeId": "$PaginatedList",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "$PaginatedList.items",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "RenameField": {
+      "fieldId": "$PaginatedList.items",
+      "name": "items"
+    }
+  },
+  {
+    "AddShapeParameter": {
+      "shapeParameterId": "$PaginatedList:Item",
+      "shapeId": "$PaginatedList",
+      "name": ""
+    }
+  },
+  {
+    "RenameShapeParameter": {
+      "shapeParameterId": "$PaginatedList:Item",
+      "name": "Items"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "$PaginatedList:Item",
+      "key": "description",
+      "value": "PaginatedList is a list of Item"
+    }
+  },
+  {
+    "RenameShapeParameter": {
+      "shapeParameterId": "$PaginatedList:Item",
+      "name": "Item"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "$PaginatedList:Item",
+      "key": "description",
+      "value": "PaginatedList is a list where each element of the list is an Item"
+    }
+  },
+  {
+    "SetFieldShape": {
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "$PaginatedList.items",
+          "shapeId": "$list"
+        }
+      }
+    }
+  },
+  {
+    "SetFieldShape": {
+      "shapeDescriptor": {
+        "FieldShapeFromParameter": {
+          "fieldId": "$PaginatedList.items",
+          "shapeParameterId": "$PaginatedList:Item"
+        }
+      }
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_FM0haXcnln",
+      "baseShapeId": "$object",
+      "name": "PetList"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "shape_FM0haXcnln",
+      "key": "description",
+      "value": "Paginated list of Pets"
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "field_vZcOAngct7",
+      "shapeId": "shape_FM0haXcnln",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_vZcOAngct7",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_FM0haXcnln",
+      "baseShapeId": "$PaginatedList"
+    }
+  },
+  {
+    "SetParameterShape": {
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "shapeId": "shape_FM0haXcnln",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "$Pet"
+            }
+          },
+          "consumingParameterId": "$PaginatedList:Item"
+        }
+      }
+    }
+  }
+]

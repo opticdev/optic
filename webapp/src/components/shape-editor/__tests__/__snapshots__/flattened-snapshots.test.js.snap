@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`flattened shapes pagination example should render $Account 1`] = `
+Array [
+  Object {
+    "depth": 0,
+    "id": "$Account",
+    "isExpandable": true,
+    "name": "Account",
+    "shapeName": Object {
+      "baseShapeName": "Object",
+      "bindingInfo": Array [],
+      "color": "#32417d",
+      "id": "$object",
+    },
+    "trail": Array [
+      "$Account",
+    ],
+    "type": "shape",
+  },
+  Object {
+    "depth": 1,
+    "fieldShapeId": "$AccountId",
+    "id": "$Account.id",
+    "isExpandable": false,
+    "name": "id",
+    "parentShapeId": "$Account",
+    "shapeName": Object {
+      "baseShapeName": "Account ID",
+      "bindingInfo": Array [],
+      "color": undefined,
+      "id": "$AccountId",
+    },
+    "trail": Array [
+      "$Account",
+      "$Account.id",
+    ],
+    "type": "field",
+  },
+  Object {
+    "depth": 1,
+    "fieldShapeId": "$list",
+    "id": "$Account.userIds",
+    "isExpandable": false,
+    "name": "userIds",
+    "parentShapeId": "$Account",
+    "shapeName": Object {
+      "baseShapeName": "List",
+      "bindingInfo": Array [
+        Object {
+          "binding": Object {
+            "ShapeProvider": Object {
+              "shapeId": "$UserId",
+            },
+          },
+          "boundName": "User ID",
+          "parameterId": "$listItem",
+          "parameterName": "T",
+        },
+      ],
+      "color": "#7d1e34",
+      "id": "$list",
+    },
+    "trail": Array [
+      "$Account",
+      "$Account.userIds",
+    ],
+    "type": "field",
+  },
+]
+`;
+
+exports[`flattened shapes pagination example should render $PaginationWrapper 1`] = `
+Array [
+  Object {
+    "depth": 0,
+    "id": "$PaginationWrapper",
+    "isExpandable": true,
+    "name": "PaginationWrapper",
+    "shapeName": Object {
+      "baseShapeName": "Object",
+      "bindingInfo": Array [],
+      "color": "#32417d",
+      "id": "$object",
+    },
+    "trail": Array [
+      "$PaginationWrapper",
+    ],
+    "type": "shape",
+  },
+  Object {
+    "depth": 1,
+    "fieldShapeId": "$number",
+    "id": "$PaginationWrapper.offset",
+    "isExpandable": false,
+    "name": "offset",
+    "parentShapeId": "$PaginationWrapper",
+    "shapeName": Object {
+      "baseShapeName": "number",
+      "bindingInfo": Array [],
+      "color": "#e4508f",
+      "id": "$number",
+    },
+    "trail": Array [
+      "$PaginationWrapper",
+      "$PaginationWrapper.offset",
+    ],
+    "type": "field",
+  },
+  Object {
+    "depth": 1,
+    "fieldShapeId": "$list",
+    "id": "$PaginationWrapper.items",
+    "isExpandable": false,
+    "name": "items",
+    "parentShapeId": "$PaginationWrapper",
+    "shapeName": Object {
+      "baseShapeName": "List",
+      "bindingInfo": Array [
+        Object {
+          "binding": Object {
+            "ParameterProvider": Object {
+              "shapeParameterId": "$PaginationWrapper.T",
+            },
+          },
+          "boundName": "T",
+          "parameterId": "$listItem",
+          "parameterName": "T",
+        },
+      ],
+      "color": "#7d1e34",
+      "id": "$list",
+    },
+    "trail": Array [
+      "$PaginationWrapper",
+      "$PaginationWrapper.items",
+    ],
+    "type": "field",
+  },
+]
+`;
+
+exports[`flattened shapes pagination example should render $UserListResponse1 1`] = `
+Array [
+  Object {
+    "depth": 0,
+    "id": "$UserListResponse1",
+    "isExpandable": false,
+    "name": "User List Response 1",
+    "shapeName": Object {
+      "baseShapeName": "PaginationWrapper",
+      "bindingInfo": Array [
+        Object {
+          "binding": Object {
+            "ShapeProvider": Object {
+              "shapeId": "$User",
+            },
+          },
+          "boundName": "User",
+          "parameterId": "$PaginationWrapper.T",
+          "parameterName": "T",
+        },
+      ],
+      "color": "#32417d",
+      "id": "$PaginationWrapper",
+    },
+    "trail": Array [
+      "$UserListResponse1",
+    ],
+    "type": "shape",
+  },
+]
+`;

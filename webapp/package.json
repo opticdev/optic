@@ -1,5 +1,5 @@
 {
-  "name": "seamless-designer",
+  "name": "optic-api-designer",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -67,6 +67,7 @@
     "react-waypoint": "^9.0.2",
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",
+    "seamless-domain": "../domain-js/",
     "semver": "6.0.0",
     "style-loader": "0.23.1",
     "terser-webpack-plugin": "1.2.3",

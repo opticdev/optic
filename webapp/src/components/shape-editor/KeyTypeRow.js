@@ -3,7 +3,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import AutosizeInput from 'react-input-autosize';
 import TypeName from './TypeName';
 import {SchemaEditorContext} from '../../contexts/SchemaEditorContext';
-import {ShapeCommands} from '../../engine'
+import {ShapesCommands} from '../../engine'
 import classNames from 'classnames'
 import {EditorModes} from '../../contexts/EditorContext';
 
@@ -77,7 +77,7 @@ class KeyTypeRow extends React.Component {
 						}}
 						spellCheck="false"
 						onBlur={(e) => {
-							operations.runCommand(ShapeCommands.SetFieldName(id, e.target.value, conceptId))
+							operations.runCommand(ShapesCommands.SetFieldName(id, e.target.value, conceptId))
 						}}
 					/>
 					<div className={classes.colon}>:</div>

@@ -4,7 +4,7 @@ import com.seamless.oas
 import com.seamless.oas.JsonSchemaType.{Ref, SingleType}
 import com.seamless.oas.QueryImplicits._
 import com.seamless.oas.ResolverTestFixture
-import com.seamless.oas.Schemas.{Definition, PathParameter}
+import com.seamless.oas.Schemas.{InlineDefinition, PathParameter}
 
 class OAS3ResolverSpec extends ResolverTestFixture("3") {
 
@@ -54,12 +54,12 @@ class OAS3ResolverSpec extends ResolverTestFixture("3") {
     }
 
     it("can get the type of a field") {
-      assert(contributorNameDefinition.properties.~#("name").properties.~#("family").`type` == SingleType("string"))
+      assert(contributorNameDefinition.properties.~#("name").properties.~#("family").schemaType == SingleType("string"))
     }
 
     it("can handle a ref field") {
       val refField = namedDefinitions.~#("episode").properties.~#("advertising_allowed")
-      assert(refField.`type` == Ref("#/components/schemas/advertising_allowed"))
+      assert(refField.schemaType == Ref("#/components/schemas/advertising_allowed"))
     }
 
     it("can lookup a ref") {

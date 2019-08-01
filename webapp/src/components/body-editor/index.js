@@ -5,17 +5,22 @@ import Switch from '@material-ui/core/Switch';
 import Typography from '@material-ui/core/Typography';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import {withRouter} from 'react-router-dom';
 import {withEditorContext} from '../../contexts/EditorContext.js';
+import {ExpansionStore} from '../../contexts/ExpansionContext.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
-import {ContentTypesHelper, DataTypesHelper, ShapeCommands} from '../../engine';
+import {ShapeEditorStore} from '../../contexts/ShapeEditorContext.js';
+import {ContentTypesHelper, ShapesHelper, ShapesCommands} from '../../engine';
 import classNames from 'classnames';
 import Zoom from '@material-ui/core/Zoom';
+import {routerUrls} from '../../routes.js';
 import {RequestUtilities} from '../../utilities/RequestUtilities.js';
 import {getNormalizedBodyDescriptor} from '../PathPage.js';
-import SchemaEditor from '../shape-editor/SchemaEditor';
 import {primary} from '../../theme';
 import {EditorModes} from '../../contexts/EditorContext';
+import ShapeViewer from '../shape-editor/ShapeViewer.js';
 
+import {styles as shapeViewerStyles} from '../ConceptsPage.js';
 
 const styles = theme => ({
     root: {},
@@ -25,8 +30,7 @@ const styles = theme => ({
     select: {
         fontSize: 14
     },
-    wrapper: {
-    }
+    wrapper: {}
 
 });
 
@@ -50,8 +54,10 @@ const BodySwitch = withStyles(styles)(BodySwitchWithoutStyles)
 
 class BodyViewerWithoutContext extends React.Component {
     render() {
-        const {conceptId, mode, queries, contentType} = this.props;
-        const {allowedReferences, concept: currentShape} = queries.conceptById(conceptId);
+        const {history} = this.props;
+        const {classes} = this.props;
+        const {baseUrl, shapeId, queries, contentType} = this.props;
+        const shape = queries.shapeById(shapeId);
 
         return (
             <div>
@@ -73,17 +79,22 @@ class BodyViewerWithoutContext extends React.Component {
                             color: primary
                         }}>{contentType}</Typography>
                 </div>
-                <SchemaEditor
-                    conceptId={conceptId}
-                    allowedReferences={allowedReferences}
-                    currentShape={currentShape}
-                    mode={mode}/>
+                <ShapeEditorStore onShapeSelected={(shapeId) => {
+                    debugger
+                    history.push(routerUrls.conceptPage(baseUrl, shapeId))
+                }}>
+                    <ExpansionStore>
+                        <div className={classes.shapeEditorContainer}>
+                            <ShapeViewer shape={shape}/>
+                        </div>
+                    </ExpansionStore>
+                </ShapeEditorStore>
             </div>
         )
     }
 }
 
-const BodyViewer = withEditorContext(withRfcContext(BodyViewerWithoutContext))
+const BodyViewer = withRouter(withEditorContext(withRfcContext(withStyles(shapeViewerStyles)(BodyViewerWithoutContext))))
 
 class LayoutWrapperWithoutStyles extends React.Component {
     render() {
@@ -113,20 +124,20 @@ class BodyEditor extends React.Component {
     }
 
     removeBody = () => {
-        const {conceptId} = getNormalizedBodyDescriptor(this.props.bodyDescriptor)
-        this.props.onBodyRemoved({conceptId})
+        const {shapeId} = getNormalizedBodyDescriptor(this.props.bodyDescriptor)
+        this.props.onBodyRemoved({shapeId})
     }
 
     addOrRestoreBody = () => {
         const {handleCommand, rootId, bodyDescriptor} = this.props;
-        const {conceptId} = getNormalizedBodyDescriptor(bodyDescriptor)
-        if (conceptId) {
-            this.props.onBodyRestored({conceptId})
+        const {shapeId} = getNormalizedBodyDescriptor(bodyDescriptor)
+        if (shapeId) {
+            this.props.onBodyRestored({shapeId})
         } else {
-            const newConceptId = DataTypesHelper.newId()
-            const command = ShapeCommands.DefineInlineConcept(rootId, newConceptId)
+            const newShapeId = ShapesHelper.newShapeId()
+            const command = ShapesCommands.AddShape(newShapeId, '$object', '')
             handleCommand(command)
-            this.props.onBodyAdded({conceptId: newConceptId, contentType: this.state.contentTypeInfo.value})
+            this.props.onBodyAdded({shapeId: newShapeId, contentType: this.state.contentTypeInfo.value})
         }
     }
 
@@ -137,11 +148,11 @@ class BodyEditor extends React.Component {
         this.props.onContentTypeChanged({contentType: contentTypeInfo.value})
     };
 
-    renderForViewing({conceptId, contentType}) {
+    renderForViewing({shapeId, contentType}) {
 
         return (
             <LayoutWrapper>
-                <BodyViewer conceptId={conceptId} contentType={contentType}/>
+                <BodyViewer shapeId={shapeId} contentType={contentType}/>
             </LayoutWrapper>
         )
     }
@@ -151,12 +162,12 @@ class BodyEditor extends React.Component {
         const isViewMode = mode === EditorModes.DOCUMENTATION;
         const normalizedBodyDescriptor = getNormalizedBodyDescriptor(bodyDescriptor)
         const hasBody = RequestUtilities.hasNormalizedBody(normalizedBodyDescriptor);
-        const {conceptId, httpContentType: contentType} = normalizedBodyDescriptor
+        const {shapeId, httpContentType: contentType} = normalizedBodyDescriptor
         if (isViewMode) {
             if (!hasBody) {
                 return null
             }
-            return this.renderForViewing({conceptId, contentType})
+            return this.renderForViewing({shapeId, contentType})
         }
 
 
@@ -165,7 +176,7 @@ class BodyEditor extends React.Component {
                 <LayoutWrapper>
                     <Typography variant="caption" style={{fontSize: 13, left: 0}}>Content Type:</Typography>
                     <Select
-                        value={this.state.contentTypeInfo.value}
+                        value={this.state.contentTypeInfo && this.state.contentTypeInfo.value}
                         className={classNames(classes.value, classes.select)}
                         onChange={this.changeContentType}>
                         {ContentTypesHelper.supportedContentTypesArray
@@ -178,8 +189,8 @@ class BodyEditor extends React.Component {
                         }
                     </Select>
 
-                    {this.state.contentTypeInfo.supportsShape ? (
-                        <BodyViewer conceptId={conceptId}/>
+                    {this.state.contentTypeInfo && this.state.contentTypeInfo.supportsShape ? (
+                        <BodyViewer shapeId={shapeId}/>
                     ) : null}
                 </LayoutWrapper>
             </Zoom>

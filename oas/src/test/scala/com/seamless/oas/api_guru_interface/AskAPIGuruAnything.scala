@@ -1,4 +1,5 @@
 package com.seamless.oas.api_guru_interface
+
 import java.net.URL
 
 import sys.process._
@@ -6,8 +7,6 @@ import better.files._
 import better.files.Dsl._
 import io.circe.{Json, ParsingFailure}
 import io.circe.yaml.parser
-import io.circe.yaml._
-import io.circe.yaml.syntax._
 import play.api.libs.json.JsObject
 
 import scala.util.Try
@@ -29,9 +28,11 @@ object AskAPIGuruAnything {
     Try(rm(output))
 
     println("Downloading... " + master)
-    new URL(master) #> downloadAs.toJava !!
+    //new URL(master) #> downloadAs.toJava !!
 
-    unzip(downloadAs)(clonedRepo)
+    println("Extracting... " + downloadAs)
+
+    Try(unzip(downloadAs)(clonedRepo))
   }
 
   def extractAPIs = {
@@ -39,15 +40,15 @@ object AskAPIGuruAnything {
     Try(mkdir(output))
     apis.list.toVector.map(i => {
       val apiName = i.name
-      println("added "+ apiName)
+      println("added " + apiName)
 
       val spec = i.collectChildren {
         case swagger if swagger.name == "swagger.yaml" => true
         case openapi if openapi.name == "openapi.yaml" => true
         case a => false
       }
-      .toVector
-      .headOption
+        .toVector
+        .headOption
 
 
       if (spec.isDefined) {
@@ -70,8 +71,8 @@ object AskAPIGuruAnything {
     if (!contentDownloaded) {
       cloneLocal
       extractAPIs
-      Try(rm(downloadAs))
-      Try(rm(clonedRepo))
+      //Try(rm(downloadAs))
+      //Try(rm(clonedRepo))
 
       println(s"\n\n Finished! You can now have ${output.list.size} APIs in your dataset")
     }
@@ -79,7 +80,7 @@ object AskAPIGuruAnything {
 
   def allSpecs: Vector[(String, JsObject)] = {
     import play.api.libs.json.Json
-    output.list.toVector.map( i => {
+    output.list.toVector.map(i => {
       (i.name, Json.parse(i.contentAsString).as[JsObject])
     })
   }

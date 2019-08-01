@@ -24,7 +24,7 @@ import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from './ut
 import {RequestUtilities} from '../utilities/RequestUtilities';
 import {EditorModes} from '../contexts/EditorContext';
 import {track} from '../Analytics';
-import {RequestCommandHelper} from './requests/RequestCommandHelper';
+import {RequestsCommandHelper} from './requests/RequestsCommandHelper.js';
 import RequestPageHeader from './requests/RequestPageHeader';
 import Helmet from 'react-helmet';
 import CreateNew from './navigation/CreateNew';
@@ -68,25 +68,25 @@ class ResponseListWithoutContext extends React.Component {
         return sortedResponses.map((response) => {
             const {responseId, responseDescriptor} = response;
             const {httpStatusCode, bodyDescriptor} = responseDescriptor;
-            const {httpContentType, conceptId, isRemoved} = getNormalizedBodyDescriptor(bodyDescriptor);
+            const {httpContentType, shapeId, isRemoved} = getNormalizedBodyDescriptor(bodyDescriptor);
 
             const responseBodyHandlers = {
-                onBodyAdded({conceptId, contentType}) {
-                    const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, conceptId, false);
+                onBodyAdded({shapeId, contentType}) {
+                    const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, false);
                     const command = RequestsCommands.SetResponseBodyShape(responseId, bodyDescriptor);
                     handleCommand(command);
                 },
-                onBodyRemoved({conceptId}) {
+                onBodyRemoved({shapeId}) {
                     const command = RequestsCommands.UnsetResponseBodyShape(responseId, bodyDescriptor);
                     handleCommand(command);
                 },
-                onBodyRestored({conceptId}) {
-                    const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, conceptId, false);
+                onBodyRestored({shapeId}) {
+                    const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, shapeId, false);
                     const command = RequestsCommands.SetResponseBodyShape(responseId, bodyDescriptor);
                     handleCommand(command);
                 },
                 onContentTypeChanged({contentType}) {
-                    const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, conceptId, isRemoved);
+                    const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, isRemoved);
                     const command = RequestsCommands.SetResponseBodyShape(responseId, bodyDescriptor);
                     handleCommand(command);
                 }
@@ -293,12 +293,12 @@ class PathPage extends React.Component {
             .map((request) => {
                 const {requestId, requestDescriptor} = request;
                 const {httpMethod, bodyDescriptor} = requestDescriptor;
-                const {httpContentType, conceptId, isRemoved} = getNormalizedBodyDescriptor(bodyDescriptor);
+                const {httpContentType, shapeId, isRemoved} = getNormalizedBodyDescriptor(bodyDescriptor);
                 const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || (mode === EditorModes.DESIGN && RequestUtilities.canAddBody(request))
 
                 const isFocused = requestId === focusedRequestId;
 
-                const requestCommandsHelper = new RequestCommandHelper(handleCommand, requestId)
+                const requestCommandsHelper = new RequestsCommandHelper(handleCommand, requestId)
 
                 const responsesForRequest = Object.values(responses)
                     .filter((response) => response.responseDescriptor.requestId === requestId);
@@ -310,22 +310,22 @@ class PathPage extends React.Component {
                 const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query');
 
                 const requestBodyHandlers = {
-                    onBodyAdded({conceptId, contentType}) {
-                        const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, conceptId, false);
+                    onBodyAdded({shapeId, contentType}) {
+                        const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, false);
                         const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
                         handleCommand(command);
                     },
-                    onBodyRemoved({conceptId}) {
+                    onBodyRemoved({shapeId}) {
                         const command = RequestsCommands.UnsetRequestBodyShape(requestId, bodyDescriptor);
                         handleCommand(command);
                     },
-                    onBodyRestored({conceptId}) {
-                        const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, conceptId, false);
+                    onBodyRestored({shapeId}) {
+                        const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, shapeId, false);
                         const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
                         handleCommand(command);
                     },
                     onContentTypeChanged({contentType}) {
-                        const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, conceptId, isRemoved);
+                        const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, isRemoved);
                         const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
                         handleCommand(command);
                     }

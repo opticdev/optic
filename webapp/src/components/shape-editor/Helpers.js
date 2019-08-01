@@ -1,4 +1,4 @@
-import {DataTypesHelper} from '../../engine';
+import {ShapesHelper} from '../../engine';
 
 export function unwrap(obj) {
 
@@ -18,7 +18,7 @@ export function unwrap(obj) {
 
 	const {isField, isTypeParameter, isObjectFieldList, isTypeParametersList, isLeaf} = value
 
-	const decodedType = DataTypesHelper.decodeType(value.type)
+	const decodedType = ShapesHelper.decodeType(value.type)
 
 	return {
 		isField, isTypeParameter, isObjectFieldList, isTypeParametersList, isLeaf,

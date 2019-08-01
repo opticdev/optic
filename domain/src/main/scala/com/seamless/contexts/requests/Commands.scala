@@ -1,6 +1,6 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.data_types.Commands.ConceptId
+import com.seamless.contexts.shapes.Commands.ShapeId
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.ddd.ExportedCommand
 
@@ -26,14 +26,14 @@ object Commands {
   @JSExportAll
   sealed trait RequestParameterShapeDescriptor
   case class UnsetRequestParameterShapeDescriptor() extends RequestParameterShapeDescriptor
-  case class ShapedRequestParameterShapeDescriptor(conceptId: ConceptId, isRemoved: Boolean) extends RequestParameterShapeDescriptor
+  case class ShapedRequestParameterShapeDescriptor(shapeId: ShapeId, isRemoved: Boolean) extends RequestParameterShapeDescriptor
 
 
   @JSExportDescendentClasses
   @JSExportAll
   sealed trait BodyDescriptor
   case class UnsetBodyDescriptor() extends BodyDescriptor
-  case class ShapedBodyDescriptor(httpContentType: String, conceptId: ConceptId, isRemoved: Boolean) extends BodyDescriptor
+  case class ShapedBodyDescriptor(httpContentType: String, shapeId: ShapeId, isRemoved: Boolean) extends BodyDescriptor
 
   case class AddPathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String) extends RequestsCommand
   case class RenamePathComponent(pathId: PathComponentId, name: String) extends RequestsCommand

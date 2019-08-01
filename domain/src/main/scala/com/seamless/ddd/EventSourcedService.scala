@@ -1,11 +1,6 @@
 package com.seamless.ddd
 
-import com.seamless.contexts.data_types.Commands.DataTypesCommand
-import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.rfc.RfcState
-import scala.scalajs.js
-
-import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportDescendentClasses}
+import scala.scalajs.js.annotation.{JSExportAll, JSExportDescendentClasses}
 
 @JSExportDescendentClasses
 @JSExportAll

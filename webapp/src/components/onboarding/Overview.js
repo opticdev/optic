@@ -165,7 +165,7 @@ class OverView extends React.Component {
 
 							<List dense>
 								{sortedConcepts.map(i => {
-									const to = routerUrls.conceptPage(baseUrl, i.id);
+									const to = routerUrls.conceptPage(baseUrl, i.shapeId);
 									return <Link to={to} style={{textDecoration: 'none', color: 'inherit'}}>
 										<ListItem button dense>
 											<ListItemText primary={i.name}/>

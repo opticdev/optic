@@ -133,9 +133,7 @@ function handleSubmit(state, props) {
     const {selectedPathComponents, selectedHttpMethods} = state;
     const {onComplete, baseUrl, history, handleCommand, cachedQueryResults} = props;
     const {pathsById} = cachedQueryResults
-    debugger;
     const {toAdd, lastMatch} = resolvePath(selectedPathComponents, pathsById)
-    debugger
     // emit commands to add any necessary paths then go to the final path
     let lastParentPathId = lastMatch.pathId
     toAdd.forEach((addition) => {

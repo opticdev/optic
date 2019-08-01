@@ -1,8 +1,8 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { primitiveColors, typeOptionNames} from '../Types';
+import { primitiveColors} from '../Types';
 import {SchemaEditorContext} from '../../../contexts/SchemaEditorContext';
-import {ShapeCommands, DataTypesHelper} from '../../../engine'
+import {ShapesCommands, ShapesHelper} from '../../../engine'
 import BasicButton from '../BasicButton';
 
 const styles = theme => ({
@@ -47,7 +47,7 @@ class TypeMenu extends React.Component {
 		return <TypeChip id={type.id}
 						 key={type.id}
 						 color={primitiveColors[type.id]}
-						 name={typeOptionNames[type.id] || type.id}
+						 name={type.id}
 						 handleClick={handleTypeClick(type)}
 		/>
 	};
@@ -59,13 +59,13 @@ class TypeMenu extends React.Component {
 			{({editorState, operations, conceptId}) => {
 
 				const handleTypeClick = (type) => () => {
-					operations.runCommand(ShapeCommands.AssignType(id, DataTypesHelper.primitivesMap[type.id], conceptId))
+					operations.runCommand(ShapesCommands.AssignType(id, ShapesHelper.primitivesMap[type.id], conceptId))
 					operations.hideTypeMenu()
 				};
 
 				return <>
 					<span className={classes.changeType}>Change Type:</span>
-					{DataTypesHelper.primitiveArray.map(i => this.renderType(i, handleTypeClick))}
+					{ShapesHelper.primitiveArray.map(i => this.renderType(i, handleTypeClick))}
 					<TypeChip name={'Select Concept'}
 							  style={{color: '#8a558e' }}
 							  handleClick={operations.showRefModal(id)}

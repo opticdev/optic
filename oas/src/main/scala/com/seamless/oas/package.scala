@@ -1,9 +1,9 @@
 package com.seamless
 
-import play.api.libs.json.{JsArray, JsObject, JsString, JsValue}
+import play.api.libs.json.{JsArray, JsString, JsValue}
 
 package object oas {
-  case class Context(resolver: OASResolver, root: JsValue)
+  case class ResolverContext(resolver: OASResolver, root: JsValue)
 
 
   val supportedOperations = Set(
@@ -27,6 +27,14 @@ package object oas {
       override def hasProperties: Boolean = t == "object"
     }
 
+    case class ObjectType() extends JsonSchemaType {
+      override def hasProperties = true
+    }
+
+    case class ArrayType() extends JsonSchemaType {
+      override def hasProperties = false
+    }
+
     case class EitherType(typeParameters: Vector[JsonSchemaType]) extends JsonSchemaType {
       override def hasProperties: Boolean = typeParameters.exists(_.hasProperties)
     }
@@ -43,7 +51,11 @@ package object oas {
     def fromDefinition(json: JsValue): JsonSchemaType = {
 
       if (json.isInstanceOf[JsString]) {
-        return SingleType(json.as[JsString].value)
+        return json.as[JsString].value match {
+          case "object" => ObjectType()
+          case "array" => ArrayType()
+          case x => SingleType(x)
+        }
       }
 
       val refKvP = json \ "$ref"
@@ -54,7 +66,11 @@ package object oas {
       if (refKvP.isDefined && refKvP.get.isInstanceOf[JsString]) {
         Ref(refKvP.get.as[JsString].value)
       } else if (typeKvP.isDefined && typeKvP.get.isInstanceOf[JsString]) {
-        SingleType(typeKvP.get.as[JsString].value)
+        typeKvP.get.as[JsString].value match {
+          case "object" => ObjectType()
+          case "array" => ArrayType()
+          case x => SingleType(x)
+        }
       } else if (oneOfKvP.isDefined && oneOfKvP.get.isInstanceOf[JsArray]) {
         val subTypes = oneOfKvP.get.asInstanceOf[JsArray].value.map(fromDefinition)
         EitherType(subTypes.toVector)

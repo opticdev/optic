@@ -127,7 +127,7 @@ class TutorialDialog extends React.Component {
 					</Grid>
 				</Grid>
 			</>],
-			['Need Help?', <>
+			['Anything Else?', <>
 				<Grid container>
 					<Grid item xs={12}>
 						<Typography variant="h6" style={{textAlign: 'center'}}>
@@ -191,7 +191,7 @@ class TutorialDialog extends React.Component {
 								} else {
 									this.handleNext()
 								}
-							}}>{ (isLastStep) ? 'Finish' : 'Next'} -></Button>
+							}}>{ (isLastStep) ? 'Finish' : 'Next'} &rarr;</Button>
 						</div>
 
 					</DialogContent>

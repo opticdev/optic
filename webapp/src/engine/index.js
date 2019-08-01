@@ -1,13 +1,17 @@
-const scalajs = require('./domain.js')
+import * as seamlessEngine from 'seamless-domain'
 
-export const ShapeCommands = scalajs.com.seamless.contexts.data_types.Commands
-export const Primitives = scalajs.com.seamless.contexts.data_types.Primitives
-export const DataTypesHelper = scalajs.com.seamless.contexts.data_types.DataTypesServiceHelper()
-export const RequestsHelper = scalajs.com.seamless.contexts.requests.RequestsServiceHelper()
-export const ContentTypesHelper = scalajs.com.seamless.contexts.requests.ContentTypes()
+export const ShapesCommands = seamlessEngine.com.seamless.contexts.shapes.Commands
+export const ShapesHelper = seamlessEngine.com.seamless.contexts.shapes.ShapesHelper()
+export const RequestsHelper = seamlessEngine.com.seamless.contexts.requests.RequestsServiceHelper()
+export const ContentTypesHelper = seamlessEngine.com.seamless.contexts.requests.ContentTypes()
 
-export const RfcCommands = scalajs.com.seamless.contexts.rfc.Commands
-export const RequestsCommands = scalajs.com.seamless.contexts.requests.Commands
+export const RfcCommands = seamlessEngine.com.seamless.contexts.rfc.Commands
+export const RequestsCommands = seamlessEngine.com.seamless.contexts.requests.Commands
 
-export const Facade = scalajs.com.seamless.contexts.rfc.RfcServiceJSFacade()
-export const Queries = (eventStore, service, aggregateId) => new scalajs.com.seamless.contexts.rfc.Queries(eventStore, service, aggregateId)
+export const Facade = seamlessEngine.com.seamless.contexts.rfc.RfcServiceJSFacade()
+export const Queries = (eventStore, service, aggregateId) => new seamlessEngine.Queries(eventStore, service, aggregateId)
+
+
+export function commandsToJson(commands) {
+    return commands.map(x => JSON.parse(seamlessEngine.CommandSerialization.toJsonString(x)))
+}
