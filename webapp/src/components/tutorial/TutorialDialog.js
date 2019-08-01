@@ -11,7 +11,6 @@ import Grid from '@material-ui/core/Grid';
 import {primary} from '../../theme';
 import Typography from '@material-ui/core/Typography';
 import Paper from '@material-ui/core/Paper';
-import {ReactTypeformEmbed} from 'react-typeform-embed';
 import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
@@ -78,7 +77,7 @@ class TutorialDialog extends React.Component {
 				<Grid container>
 					<Grid item xs={12}>
 						<Typography variant="h6" style={{textAlign: 'center'}}>
-							Seamless combines a powerful API Designer and beautiful API docs.
+							Optic combines a powerful API Designer and beautiful API docs.
 						</Typography>
 					</Grid>
 					<Grid item xs={6} style={{textAlign: 'center'}}>
@@ -107,7 +106,7 @@ class TutorialDialog extends React.Component {
 				<Grid container>
 					<Grid item xs={12}>
 						<Typography variant="h6" style={{textAlign: 'center'}}>
-							Model the important concepts in your domain with Seamless's shape builder
+							Model the important concepts in your domain with Optic's shape builder
 						</Typography>
 					</Grid>
 					<Grid item xs={12} style={{textAlign: 'center'}}>
