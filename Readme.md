@@ -1,12 +1,12 @@
-# Seamless 
+# Optic 
 
-> Open source toolkit for API development
+> Make APIs developer friendly
 
-[Roadmap](https://www.seamlessapis.com/#/roadmap)
+[Roadmap](https://docs.useoptic.com/#/roadmap)
 
 ## Get Started
 
-1. [Try Seamless in the browser](https://design.seamlessapis.com)
+1. [Try Seamless in the browser](https://design.useoptic.com)
 2. Add Seamless to your API Repo
 ```bash
 npm install @seamlessapis/cli -g
@@ -22,9 +22,9 @@ api spec
 ## Project Structure 
 
 ```
-├── api-cli   # The CLI to run Seamless locally
+├── api-cli   # The CLI to run Optic locally
 ├── docs      # Project documentation 
-├── domain    # The Seamless API Spec
+├── domain    # The Optic API Spec
 ├── oas       # The OpenAPI / Swagger Importer
 └── ui        # The API Designer 
 ```
