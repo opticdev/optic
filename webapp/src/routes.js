@@ -125,7 +125,7 @@ class LocalLoader extends React.Component {
 					<DialogContent>Please reload and, if that does not work, open an issue.</DialogContent>
 					<DialogActions>
 						<Button onClick={() => window.location.reload()}>Reload</Button>
-						<Button href="https://github.com/seamlessapis/seamless/issues/new/choose" color="secondary">Open
+						<Button href="https://github.com/opticdev/optic/issues/new/choose" color="secondary">Open
 							an issue</Button>
 					</DialogActions>
 				</Dialog>

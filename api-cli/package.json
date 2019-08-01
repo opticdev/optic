@@ -1,12 +1,12 @@
 {
-  "name": "@seamlessapis/cli",
-  "description": "Make API Design Seamless",
+  "name": "@useoptic/cli",
+  "description": "Make APIs Developer Friendly",
   "version": "4.0.100",
-  "author": "@seamlessapis",
+  "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
   },
-  "bugs": "https://github.com/seamlessapis/seamless",
+  "bugs": "https://github.com/opticdev/optic",
   "dependencies": {
     "@oclif/command": "^1.5.10",
     "@oclif/config": "^1.12.6",
@@ -56,11 +56,11 @@
     "/oclif.manifest.json",
     "/resources"
   ],
-  "homepage": "https://github.com/seamlessapis/seamless",
+  "homepage": "https://github.com/opticdev/optic",
   "keywords": [
     "oclif",
     "cli",
-    "seamless",
+    "optic",
     "api",
     "oas",
     "swagger"
@@ -74,7 +74,7 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "seamlessapis/seamless",
+  "repository": "opticdev/optic",
   "scripts": {
     "get-version": "mkdir -p ./src/static && cp package.json ./src/static/package.json",
     "postpack": "rm -f oclif.manifest.json",

@@ -1,16 +1,12 @@
 {
-  "name": "@seamlessapis/cli",
-  "description": "Make API Design Seamless",
-<<<<<<< Updated upstream
-  "version": "0.1.101",
-=======
-  "version": "0.1.103",
->>>>>>> Stashed changes
-  "author": "@seamlessapis",
+  "name": "@useoptic/cli",
+  "description": "Make APIs Developer Friendly",
+  "version": "4.0.100",
+  "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
   },
-  "bugs": "https://github.com/seamlessapis/seamless",
+  "bugs": "https://github.com/opticdev/optic",
   "dependencies": {
     "@oclif/command": "^1.5.10",
     "@oclif/config": "^1.12.6",
@@ -45,7 +41,7 @@
     "chai": "^4.2.0",
     "globby": "^8.0.2",
     "mocha": "^5.2.0",
-    "nyc": "^13.3.0",
+    "nyc": "^14.1.1",
     "ts-node": "^8.0.2",
     "tslint": "^5.12.1",
     "typescript": "^3.3.3"
@@ -60,11 +56,11 @@
     "/oclif.manifest.json",
     "/resources"
   ],
-  "homepage": "https://github.com/seamlessapis/seamless",
+  "homepage": "https://github.com/opticdev/optic",
   "keywords": [
     "oclif",
     "cli",
-    "seamless",
+    "optic",
     "api",
     "oas",
     "swagger"
@@ -78,7 +74,7 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "seamlessapis/seamless",
+  "repository": "opticdev/optic",
   "scripts": {
     "get-version": "mkdir -p ./src/static && cp package.json ./src/static/package.json",
     "postpack": "rm -f oclif.manifest.json",
