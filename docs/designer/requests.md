@@ -1,5 +1,5 @@
 # Requests
-In Seamless, API endpoints are grouped by their paths. For example, the following requests would show up on the same page within the designer:
+In Optic, API endpoints are grouped by their paths. For example, the following requests would show up on the same page within the designer:
 ```
 Repository by ID:
 
@@ -30,7 +30,7 @@ You can always come back later and add additional methods.
 
 **3. Click 'Create Requests':**
 
-Seamless will create the requests and redirect you to the page showing the resources you have created.
+Optic will create the requests and redirect you to the page showing the resources you have created.
 
 ## Editing Requests
-In Design mode, Seamless will display the editors for creating, modifying, and deleting a request's parameters, responses, and body.
+In Design mode, Optic will display the editors for creating, modifying, and deleting a request's parameters, responses, and body.

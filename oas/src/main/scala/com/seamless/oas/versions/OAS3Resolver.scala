@@ -157,5 +157,19 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
 
   }
 
-  override def sharedResponses: Vector[SharedResponse] = ???
+  lazy val sharedResponses: Vector[SharedResponse] = {
+    (root \ "components" \ "responses").getOrElse(JsObject.empty).as[JsObject].value.toVector.map {
+      case (key, value) => {
+
+        val content = (value.as[JsObject] \ "content").getOrElse(JsObject.empty).as[JsObject]
+        val firstBody = new Helpers.OAS3Content(content).reduceToFirstBody
+
+        if (firstBody.isDefined) {
+          val schema = firstBody.get.schema
+          val inlineSchema = Definition(schema, IdGenerator.inlineDefinition)(buildContext(schema))
+          Some(SharedResponse(key, Some(firstBody.get.contentType), Some(inlineSchema))(buildContext(value)))
+        } else None
+      }
+    }.collect{ case i if i.isDefined => i.get }
+  }
 }

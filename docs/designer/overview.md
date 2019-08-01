@@ -1,23 +1,23 @@
-# Seamless API Designer
+# Optic API Designer
 
-The API Designer is a visual tool for designing and documenting RESTful APIs. We set out to build the simplest and most powerful editor for API specifications — [let us know if we did](https://github.com/seamlessapis/seamless/issues/8).
+The API Designer is a visual tool for designing and documenting RESTful APIs. We set out to build the simplest and most powerful editor for API specifications — [let us know if we did](https://github.com/opticdev/optic/issues/8).
 
-<a href="https://design.seamlessapis.com"><img src="/images/try_designer.svg" /><a/>
+<a href="https://design.useoptic.com"><img src="/images/try_designer.svg" /><a/>
 
-<span>Try Seamless with an Example API:</span>
+<span>Try Optic with an Example API:</span>
 
 <div class="example-image-wrapper">
-<a href="https://design.seamlessapis.com/examples/github" target="_blank" class="example-image"><img src="/images/github.png" /><a/>
-<a href="https://design.seamlessapis.com/examples/netlify" target="_blank" class="example-image"><img src="/images/netlify.svg" /><a/>
-<a href="https://design.seamlessapis.com/examples/stripe" target="_blank" class="example-image"><img src="/images/stripe.svg" /><a/>
-<a href="https://design.seamlessapis.com/examples/circleci" target="_blank" class="example-image"><img src="/images/circleci.png" /><a/>
-<a href="https://design.seamlessapis.com/examples/gitlab" target="_blank" class="example-image"><img src="/images/gitlab.svg" /><a/>
+<a href="https://design.useoptic.com/examples/github" target="_blank" class="example-image"><img src="/images/github.png" /><a/>
+<a href="https://design.useoptic.com/examples/netlify" target="_blank" class="example-image"><img src="/images/netlify.svg" /><a/>
+<a href="https://design.useoptic.com/examples/stripe" target="_blank" class="example-image"><img src="/images/stripe.svg" /><a/>
+<a href="https://design.useoptic.com/examples/circleci" target="_blank" class="example-image"><img src="/images/circleci.png" /><a/>
+<a href="https://design.useoptic.com/examples/gitlab" target="_blank" class="example-image"><img src="/images/gitlab.svg" /><a/>
 </div>
 
 ## Navigation
 You can navigate to the specification for all the requests and concepts in your API by clicking on the down-arrow in the top-left corner of the screen (next to your API's name). You can also start a search by double-pressing the left-shift key.
 
-You can use Seamless in either Documentation or Design mode. These modes are activated by clicking the buttons in the top right of the screen
+You can use Optic in either Documentation or Design mode. These modes are activated by clicking the buttons in the top right of the screen
 
 In Documentation mode the API specification is read-only and the layout of each reference page is optimized for API consumers.
 
