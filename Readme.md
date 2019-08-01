@@ -9,7 +9,7 @@
 1. [Try Seamless in the browser](https://design.useoptic.com)
 2. Add Seamless to your API Repo
 ```bash
-npm install @seamlessapis/cli -g
+npm install @useoptic/cli -g
 
 cd /path/to/api/repo
 # Add Seamless to your repo. Make sure you check in the new files. 
