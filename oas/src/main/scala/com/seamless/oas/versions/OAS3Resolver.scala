@@ -1,25 +1,25 @@
 package com.seamless.oas.versions
 
 import com.seamless.oas
-import com.seamless.oas.Schemas.{Definition, HeaderParameter, NamedDefinition, Operation, PathParameter, QueryParameter, RequestBody, Response, SharedResponse}
-import com.seamless.oas.{Context, JSONReference, OASResolver, Schemas}
+import com.seamless.oas.Schemas.{HeaderParameter, InlineDefinition, NamedDefinition, Operation, PathParameter, QueryParameter, RequestBody, Response, SharedResponse}
+import com.seamless.oas.{IdGenerator, JSONReference, OASResolver, ResolverContext, Schemas}
 import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString}
 
 import scala.util.Try
 
 class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
 
-  override def parametersForPath(path: Schemas.Path)(implicit ctx: oas.Context): Vector[Schemas.PathParameter] = {
+  override def parametersForPath(path: Schemas.Path)(implicit ctx: oas.ResolverContext): Vector[Schemas.PathParameter] = {
     import Helpers.distinctBy
 
-    val sharedParameters = (path.cxt.root.as[JsObject] \ "parameters").getOrElse(JsArray.empty).as[JsArray].value
+    val sharedParameters = (path.ctx.root.as[JsObject] \ "parameters").getOrElse(JsArray.empty).as[JsArray].value
       .map(i => Helpers.OAS3Param(i.as[JsObject]))
       .toList
 
 
     val operationLevelParams = path.operations.flatMap {
       case op => {
-        (op.cxt.root.as[JsObject] \ "parameters")
+        (op.ctx.root.as[JsObject] \ "parameters")
           .getOrElse(JsArray.empty).as[JsArray]
           .value
           .map(i => Helpers.OAS3Param(i.as[JsObject]))
@@ -33,33 +33,35 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
       .filter(_.isPathParameter)
       .sortBy(param => path.uri.indexOf(s"{${param.name}"))
 
-    sorted.zipWithIndex.map { case (param, index) => PathParameter(param.name, index)(buildContext(param.jsObject))}
+    sorted.zipWithIndex.map { case (param, index) => PathParameter(param.name, index)(buildContext(param.jsObject)) }
   }
 
-  private def parametersForOperation(operation: Operation)(implicit ctx: Context): Vector[Helpers.OAS3Param] = {
-    (operation.cxt.root.as[JsObject] \ "parameters")
+  private def parametersForOperation(operation: Operation)(implicit ctx: ResolverContext): Vector[Helpers.OAS3Param] = {
+    (operation.ctx.root.as[JsObject] \ "parameters")
       .getOrElse(JsArray.empty).as[JsArray]
       .value
       .map(i => Helpers.OAS3Param(i.as[JsObject]))
       .toVector
   }
 
-  def queryParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[QueryParameter] = {
+  def queryParametersForOperation(operation: Operation)(implicit ctx: ResolverContext): Vector[QueryParameter] = {
     parametersForOperation(operation)
-      .collect{ case param if param.isQueryParameter => {
+      .collect { case param if param.isQueryParameter => {
         QueryParameter(param.name, param.required)(buildContext(param.jsObject))
-      }}
+      }
+      }
   }
 
-  def headerParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[HeaderParameter] = {
+  def headerParametersForOperation(operation: Operation)(implicit ctx: ResolverContext): Vector[HeaderParameter] = {
     parametersForOperation(operation)
-      .collect{ case param if param.isHeaderParameter => {
+      .collect { case param if param.isHeaderParameter => {
         HeaderParameter(param.name, param.required)(buildContext(param.jsObject))
-      }}
+      }
+      }
   }
 
-  override def requestBodyForOperation(operation: Schemas.Operation)(implicit ctx: oas.Context): Option[Schemas.RequestBody] = {
-    val requestBodyOptions = (operation.cxt.root \ "requestBody").toOption.map(_.as[JsObject])
+  override def requestBodyForOperation(operation: Schemas.Operation)(implicit ctx: oas.ResolverContext): Option[Schemas.RequestBody] = {
+    val requestBodyOptions = (operation.ctx.root \ "requestBody").toOption.map(_.as[JsObject])
 
     if (operation.supportsBody && requestBodyOptions.isDefined) {
       val content = (requestBodyOptions.get \ "content").getOrElse(JsObject.empty).as[JsObject]
@@ -67,43 +69,44 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
 
       if (firstBody.isDefined) {
         val schema = firstBody.get.schema
-        val inlineSchema = Definition(schema, IdGenerator.inlineDefinition)(buildContext(schema))
-        Some(RequestBody(Some(firstBody.get.contentType),Some(inlineSchema)))
+        val inlineSchema = InlineDefinition(schema, IdGenerator.inlineDefinition)(buildContext(schema))
+        Some(RequestBody(Some(firstBody.get.contentType), Some(inlineSchema)))
       } else None
     } else None
   }
 
-  override def responsesForOperation(operation: Schemas.Operation)(implicit ctx: oas.Context): Vector[Schemas.Response] = {
-    val responses = (operation.cxt.root.as[JsObject] \ "responses")
+  override def responsesForOperation(operation: Schemas.Operation)(implicit ctx: oas.ResolverContext): Vector[Schemas.Response] = {
+    val responses = (operation.ctx.root.as[JsObject] \ "responses")
       .getOrElse(JsObject.empty).as[JsObject].value.toVector
       .filter(i => Try(i._1.toInt).isSuccess)
 
 
     responses.map { case (status, description) => {
-        val statusAsInt = status.toInt
-        val content = (description.as[JsObject] \ "content").getOrElse(JsObject.empty).as[JsObject]
+      val statusAsInt = status.toInt
+      val content = (description.as[JsObject] \ "content").getOrElse(JsObject.empty).as[JsObject]
 
-        val isRef = description.isInstanceOf[JsObject] && description.as[JsObject].value.contains("$ref")
+      val isRef = description.isInstanceOf[JsObject] && description.as[JsObject].value.contains("$ref")
 
-        if (isRef) {
-          val ref = description.as[JsObject].value("$ref").as[JsString].value
-          val resolved = resolveSharedResponse(ref)
-          require(resolved.isDefined, s"Could not resolve shared response ${ref}")
-          //give inline shape a custom id so there aren't conflicts
-          val newSchema = resolved.get.schema.map(s => s.asInstanceOf[Definition].copy(id = IdGenerator.inlineDefinition))
-          Response(statusAsInt, resolved.get.contentType, newSchema)
+      if (isRef) {
+        val ref = description.as[JsObject].value("$ref").as[JsString].value
+        val resolved = resolveSharedResponse(ref)
+        require(resolved.isDefined, s"Could not resolve shared response ${ref}")
+        //give inline shape a custom id so there aren't conflicts
+        val newSchema = resolved.get.schema.map(s => s.asInstanceOf[InlineDefinition].copy(id = IdGenerator.inlineDefinition))
+        Response(statusAsInt, resolved.get.contentType, newSchema)
+      } else {
+        val bodyOption = new Helpers.OAS3Content(content).reduceToFirstBody
+
+        if (bodyOption.isDefined) {
+          val schema = bodyOption.get.schema
+          val inlineSchema = InlineDefinition(schema, IdGenerator.inlineDefinition)(buildContext(schema))
+          Response(statusAsInt, Some(bodyOption.get.contentType), Some(inlineSchema))
         } else {
-          val bodyOption = new Helpers.OAS3Content(content).reduceToFirstBody
-
-          if (bodyOption.isDefined) {
-            val schema = bodyOption.get.schema
-            val inlineSchema = Definition(schema, IdGenerator.inlineDefinition)(buildContext(schema))
-            Response(statusAsInt, Some(bodyOption.get.contentType), Some(inlineSchema))
-          } else {
-            Response(statusAsInt, None, None)
-          }
+          Response(statusAsInt, None, None)
         }
-      }}
+      }
+    }
+    }
   }
 
   lazy val definitions: Vector[NamedDefinition] = {
@@ -127,12 +130,17 @@ class OAS3Resolver(root: JsObject) extends OASResolver(root, "3") {
       }
 
       def in = (parameterDefinition \ "in").get.as[JsString].value
+
       def name = (parameterDefinition \ "name").get.as[JsString].value
+
       def required = (parameterDefinition \ "required").getOrElse(JsBoolean(true)).as[JsBoolean].value
 
       def isPathParameter = in == "path"
+
       def isBodyParameter = in == "body"
+
       def isHeaderParameter = in == "header"
+
       def isQueryParameter = in == "query"
 
       def schema = (parameterDefinition \ "schema").getOrElse(JsObject.empty).as[JsObject]

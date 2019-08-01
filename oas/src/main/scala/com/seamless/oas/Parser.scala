@@ -51,10 +51,12 @@ object Parser {
     val (service, buildSnapshotTime) = time {
       val service = new RfcService(new InMemoryEventStore[RfcEvent])
 
-      allCommands.foreach(command => {
+      println("[    BEFORE RUNNING    ]")
+      allCommands.foreach((command: RfcCommand) => {
         println(command)
         service.handleCommand("test", command)
       })
+      println("[    AFTER RUNNING    ]")
       service
     }
 

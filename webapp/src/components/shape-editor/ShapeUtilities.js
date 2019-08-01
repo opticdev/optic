@@ -112,7 +112,7 @@ class ShapeUtilities {
                         return {
                             binding,
                             color: primitiveColors[shape.baseShapeId],
-                            boundName: queries.shapeById(shapeId).name || '(blank)',
+                            boundName: queries.shapeById(shapeId).name || '(unnamed)',
                             parameterName: parameter.name,
                             parameterId: parameter.shapeParameterId,
                         }
@@ -127,7 +127,7 @@ class ShapeUtilities {
                         return {
                             binding,
                             color: boundParameterColor,
-                            boundName: provider ? provider.name || '(blank)' : null,
+                            boundName: provider ? provider.name || '(unnamed)' : null,
                             parameterName: parameter.name,
                             parameterId: parameter.shapeParameterId,
                         }

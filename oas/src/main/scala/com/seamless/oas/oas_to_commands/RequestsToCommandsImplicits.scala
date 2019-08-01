@@ -2,7 +2,7 @@ package com.seamless.oas.oas_to_commands
 
 import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.rfc.Commands.{AddContribution}
-import com.seamless.oas.Schemas.{Definition, JsonSchemaSchema, Operation, Path}
+import com.seamless.oas.Schemas.{InlineDefinition, JsonSchemaSchema, Operation, Path}
 import JsonSchemaToCommandsImplicits._
 import com.seamless.contexts.requests.Utilities
 
@@ -78,7 +78,7 @@ object RequestsToCommandsImplicits {
   implicit class OperationToRequest(operation: Operation)(implicit pathContext: APIPathsContext) {
 
     private def isInlineSchema(schema: Option[JsonSchemaSchema]): Boolean =
-      schema.isDefined && schema.get.isInstanceOf[Definition]
+      schema.isDefined && schema.get.isInstanceOf[InlineDefinition]
 
     def toCommandStream: ImmutableCommandStream = {
       val stream = CommandStream.emptyMutable
@@ -88,7 +88,7 @@ object RequestsToCommandsImplicits {
       )
 
       if (operation.requestBody.isDefined && isInlineSchema(operation.requestBody.get.schema)) {
-        val schema = operation.requestBody.get.schema.get.asInstanceOf[Definition]
+        val schema = operation.requestBody.get.schema.get.asInstanceOf[InlineDefinition]
         val contentType = operation.requestBody.get.contentType.getOrElse("application/json")
         val inlineRequestSchemaCommands = schema.toCommandStream
         //add init events for the inline schema
@@ -108,7 +108,7 @@ object RequestsToCommandsImplicits {
           val contentType = response.contentType.getOrElse("application/json")
           // add init events for the inline schema
           stream appendInit inlineSchemaCommands.flatten
-          stream appendDescribe SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, response.schema.get.asInstanceOf[Definition].id, isRemoved = false))
+          stream appendDescribe SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, response.schema.get.asInstanceOf[InlineDefinition].id, isRemoved = false))
 
           if (response.description.isDefined) {
             stream appendDescribe AddContribution(responseId, "description", response.description.get)

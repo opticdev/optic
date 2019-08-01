@@ -1,8 +1,8 @@
 package com.seamless.oas.versions
 
 import com.seamless.oas
-import com.seamless.oas.Schemas.{Definition, HeaderParameter, NamedDefinition, Operation, Path, PathParameter, QueryParameter, RequestBody, Response, SharedResponse}
-import com.seamless.oas.{Context, JSONReference, OASResolver, Schemas}
+import com.seamless.oas.Schemas.{HeaderParameter, InlineDefinition, NamedDefinition, Operation, Path, PathParameter, QueryParameter, RequestBody, Response, SharedResponse}
+import com.seamless.oas.{IdGenerator, JSONReference, OASResolver, ResolverContext, Schemas}
 import play.api.libs.json.{JsArray, JsBoolean, JsObject, JsString, JsValue}
 import sun.jvm.hotspot.memory.HeapBlock.Header
 
@@ -11,22 +11,22 @@ import scala.util.Try
 class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
 
   //Get produces, walk graph from nearest to root
-  def getProduces(operation: Operation)(implicit ctx: Context): Vector[String] = {
-    getProduces(operation.cxt.root, operation.path.cxt.root, root)
+  def getProduces(operation: Operation)(implicit ctx: ResolverContext): Vector[String] = {
+    getProduces(operation.ctx.root, operation.path.ctx.root, root)
   }
 
-  def getProduces(priority: JsValue*)(implicit ctx: Context): Vector[String] = {
+  def getProduces(priority: JsValue*)(implicit ctx: ResolverContext): Vector[String] = {
     def extractProduces(jsonRoot: JsValue): Try[Vector[String]] = Try {
       (jsonRoot \ "produces").as[JsArray].value.map(_.as[JsString].value).toVector
     }
 
-    priority.collectFirst{ case jsonRoot if extractProduces(jsonRoot).isSuccess => extractProduces(jsonRoot).get }
+    priority.collectFirst { case jsonRoot if extractProduces(jsonRoot).isSuccess => extractProduces(jsonRoot).get }
       .getOrElse(Vector.empty[String])
   }
 
-  override def responsesForOperation(operation: Operation)(implicit ctx: Context): Vector[Response] = {
+  override def responsesForOperation(operation: Operation)(implicit ctx: ResolverContext): Vector[Response] = {
 
-    val responseObject = (operation.cxt.root.as[JsObject] \ "responses")
+    val responseObject = (operation.ctx.root.as[JsObject] \ "responses")
       .getOrElse(JsObject.empty).as[JsObject].value.toVector
       .filter(i => Try(i._1.toInt).isSuccess)
 
@@ -48,74 +48,78 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
         val resolved = resolveSharedResponse(ref)
         require(resolved.isDefined, s"Could not resolve shared response ${ref}")
         //give inline shape a custom id so there aren't conflicts
-        val newSchema = resolved.get.schema.map(s => s.asInstanceOf[Definition].copy(id = IdGenerator.inlineDefinition))
-        Response(statusAsInt, resolved.get.contentType, newSchema)(buildContext(resolved.get.cxt.root))
+        val newSchema = resolved.get.schema.map(s => s.asInstanceOf[InlineDefinition].copy(id = IdGenerator.inlineDefinition))
+        Response(statusAsInt, resolved.get.contentType, newSchema)(buildContext(resolved.get.ctx.root))
       } else {
         val inlineSchema = schema.toOption
-          .map(i => Definition(i.as[JsObject], IdGenerator.inlineDefinition)(buildContext(i.as[JsObject])))
+          .map(i => InlineDefinition(i.as[JsObject], IdGenerator.inlineDefinition)(buildContext(i.as[JsObject])))
         Response(statusAsInt, produces, inlineSchema)(buildContext(description))
       }
-    }}
+    }
+    }
 
   }
 
 
   //Get consumes, walk graph from nearest to root
-  def getConsumes(operation: Operation)(implicit ctx: Context): Vector[String] = {
-    getConsumes(operation.cxt.root, operation.path.cxt.root, root)
+  def getConsumes(operation: Operation)(implicit ctx: ResolverContext): Vector[String] = {
+    getConsumes(operation.ctx.root, operation.path.ctx.root, root)
   }
 
-  def getConsumes(priority: JsValue*)(implicit ctx: Context): Vector[String] = {
+  def getConsumes(priority: JsValue*)(implicit ctx: ResolverContext): Vector[String] = {
     def extractProduces(jsonRoot: JsValue): Try[Vector[String]] = Try {
       (jsonRoot \ "consumes").as[JsArray].value.map(_.as[JsString].value).toVector
     }
-    priority.collectFirst{ case jsonRoot if extractProduces(jsonRoot).isSuccess => extractProduces(jsonRoot).get }
+
+    priority.collectFirst { case jsonRoot if extractProduces(jsonRoot).isSuccess => extractProduces(jsonRoot).get }
       .getOrElse(Vector.empty[String])
   }
 
 
-  override def requestBodyForOperation(operation: Operation)(implicit ctx: Context): Option[RequestBody] = {
+  override def requestBodyForOperation(operation: Operation)(implicit ctx: ResolverContext): Option[RequestBody] = {
     if (operation.supportsBody) {
       val consumes = getConsumes(operation).headOption
       parametersForOperation(operation)
-        .collectFirst{ case p if p.isBodyParameter => p }
+        .collectFirst { case p if p.isBodyParameter => p }
         .map { bodyParam =>
-          val definition = Definition(bodyParam.schema, IdGenerator.stableInlineRequestBodyDefinition(operation))
+          val definition = InlineDefinition(bodyParam.schema, IdGenerator.stableInlineRequestBodyDefinition(operation))
           RequestBody(consumes, Some(definition))
-      }
+        }
     } else {
       None
     }
   }
 
-  private def parametersForOperation(operation: Operation)(implicit ctx: Context): Vector[Helpers.OAS2Param] = {
-    (operation.cxt.root.as[JsObject] \ "parameters")
+  private def parametersForOperation(operation: Operation)(implicit ctx: ResolverContext): Vector[Helpers.OAS2Param] = {
+    (operation.ctx.root.as[JsObject] \ "parameters")
       .getOrElse(JsArray.empty).as[JsArray]
       .value
       .map(i => Helpers.OAS2Param(i.as[JsObject]))
       .toVector
   }
 
-  def queryParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[QueryParameter] = {
+  def queryParametersForOperation(operation: Operation)(implicit ctx: ResolverContext): Vector[QueryParameter] = {
     parametersForOperation(operation)
-      .collect{ case param if param.isQueryParameter => {
+      .collect { case param if param.isQueryParameter => {
         QueryParameter(param.name, param.required)(buildContext(param.jsObject))
-      }}
+      }
+      }
   }
 
-  def headerParametersForOperation(operation: Operation)(implicit ctx: Context): Vector[HeaderParameter] = {
+  def headerParametersForOperation(operation: Operation)(implicit ctx: ResolverContext): Vector[HeaderParameter] = {
     parametersForOperation(operation)
-      .collect{ case param if param.isHeaderParameter => {
+      .collect { case param if param.isHeaderParameter => {
         HeaderParameter(param.name, param.required)(buildContext(param.jsObject))
-      }}
+      }
+      }
   }
 
 
-  override def parametersForPath(path: Schemas.Path)(implicit ctx: Context): Vector[Schemas.PathParameter] = {
+  override def parametersForPath(path: Schemas.Path)(implicit ctx: ResolverContext): Vector[Schemas.PathParameter] = {
     import Helpers.distinctBy
     val allParams = path.operations.flatMap {
       case op => {
-        (op.cxt.root.as[JsObject] \ "parameters")
+        (op.ctx.root.as[JsObject] \ "parameters")
           .getOrElse(JsArray.empty).as[JsArray]
           .value
           .map(i => Helpers.OAS2Param(i.as[JsObject]))
@@ -129,7 +133,7 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
       .filter(_.isPathParameter)
       .sortBy(param => path.uri.indexOf(s"{${param.name}"))
 
-    sorted.zipWithIndex.map { case (param, index) => PathParameter(param.name, index)(buildContext(param.jsObject))}
+    sorted.zipWithIndex.map { case (param, index) => PathParameter(param.name, index)(buildContext(param.jsObject)) }
   }
 
   lazy val definitions: Vector[NamedDefinition] = {
@@ -145,7 +149,7 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
       case (key, value) => {
         val produces = getProduces(value, root)(buildContext(value)).headOption
         val schema = (value.as[JsObject] \ "schema").toOption
-            .map(i => Definition(i.as[JsObject], IdGenerator.inlineDefinition)(buildContext(i.as[JsObject])))
+          .map(i => InlineDefinition(i.as[JsObject], IdGenerator.inlineDefinition)(buildContext(i.as[JsObject])))
         SharedResponse(key, if (schema.isDefined) produces else None, schema)(buildContext(value))
       }
     }
@@ -164,12 +168,17 @@ class OAS2Resolver(root: JsObject) extends OASResolver(root, "2") {
       }
 
       def in = (parameterDefinition \ "in").get.as[JsString].value
+
       def name = (parameterDefinition \ "name").get.as[JsString].value
+
       def required = (parameterDefinition \ "required").getOrElse(JsBoolean(true)).as[JsBoolean].value
 
       def isPathParameter = in == "path"
+
       def isBodyParameter = in == "body"
+
       def isHeaderParameter = in == "header"
+
       def isQueryParameter = in == "query"
 
       def schema = (parameterDefinition \ "schema").getOrElse(JsObject.empty).as[JsObject]

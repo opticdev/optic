@@ -1,0 +1,2058 @@
+[
+    {
+        "SetAPIName": {
+            "newName": "Swagger Petstore"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_3",
+            "baseShapeId": "$object",
+            "name": ""
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "concept_2_pet",
+            "baseShapeId": "$object",
+            "name": "Pet"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_17",
+            "baseShapeId": "$object",
+            "name": ""
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "concept_6_category",
+            "baseShapeId": "$object",
+            "name": "Category"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_21",
+            "baseShapeId": "$object",
+            "name": ""
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "concept_7_tag",
+            "baseShapeId": "$object",
+            "name": "Tag"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_28",
+            "baseShapeId": "$object",
+            "name": ""
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "concept_8_user",
+            "baseShapeId": "$object",
+            "name": "User"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_37",
+            "baseShapeId": "$object",
+            "name": ""
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "concept_9_order",
+            "baseShapeId": "$object",
+            "name": "Order"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_44",
+            "baseShapeId": "$object",
+            "name": ""
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "concept_11_apiresponse",
+            "baseShapeId": "$object",
+            "name": "ApiResponse"
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_2",
+            "shapeId": "inline-shape_3",
+            "name": "name",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_2",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_4",
+            "shapeId": "inline-shape_3",
+            "name": "tags",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_4",
+                    "shapeId": "$list"
+                }
+            }
+        }
+    },
+    {
+        "SetParameterShape": {
+            "shapeDescriptor": {
+                "ProviderInField": {
+                    "fieldId": "field_4",
+                    "providerDescriptor": {
+                        "ShapeProvider": {
+                            "shapeId": "concept_7_tag"
+                        }
+                    },
+                    "consumingParameterId": "$listItem"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_5",
+            "shapeId": "inline-shape_3",
+            "name": "photoUrls",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_5",
+                    "shapeId": "$list"
+                }
+            }
+        }
+    },
+    {
+        "SetParameterShape": {
+            "shapeDescriptor": {
+                "ProviderInField": {
+                    "fieldId": "field_5",
+                    "providerDescriptor": {
+                        "ShapeProvider": {
+                            "shapeId": "$string"
+                        }
+                    },
+                    "consumingParameterId": "$listItem"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_6",
+            "shapeId": "inline-shape_3",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_6",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_7",
+            "shapeId": "inline-shape_3",
+            "name": "status",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_7",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "field_7",
+            "key": "description",
+            "value": "pet status in the store"
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_8",
+            "shapeId": "inline-shape_3",
+            "name": "category",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_8",
+                    "shapeId": "concept_6_category"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_65",
+            "shapeId": "concept_2_pet",
+            "name": "name",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_65",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_66",
+            "shapeId": "concept_2_pet",
+            "name": "tags",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_66",
+                    "shapeId": "$list"
+                }
+            }
+        }
+    },
+    {
+        "SetParameterShape": {
+            "shapeDescriptor": {
+                "ProviderInField": {
+                    "fieldId": "field_66",
+                    "providerDescriptor": {
+                        "ShapeProvider": {
+                            "shapeId": "concept_7_tag"
+                        }
+                    },
+                    "consumingParameterId": "$listItem"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_67",
+            "shapeId": "concept_2_pet",
+            "name": "photoUrls",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_67",
+                    "shapeId": "$list"
+                }
+            }
+        }
+    },
+    {
+        "SetParameterShape": {
+            "shapeDescriptor": {
+                "ProviderInField": {
+                    "fieldId": "field_67",
+                    "providerDescriptor": {
+                        "ShapeProvider": {
+                            "shapeId": "$string"
+                        }
+                    },
+                    "consumingParameterId": "$listItem"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_68",
+            "shapeId": "concept_2_pet",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_68",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_69",
+            "shapeId": "concept_2_pet",
+            "name": "status",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_69",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "field_69",
+            "key": "description",
+            "value": "pet status in the store"
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_70",
+            "shapeId": "concept_2_pet",
+            "name": "category",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_70",
+                    "shapeId": "concept_6_category"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_133",
+            "shapeId": "inline-shape_17",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_133",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_134",
+            "shapeId": "inline-shape_17",
+            "name": "name",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_134",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_136",
+            "shapeId": "concept_6_category",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_136",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_137",
+            "shapeId": "concept_6_category",
+            "name": "name",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_137",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_144",
+            "shapeId": "inline-shape_21",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_144",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_145",
+            "shapeId": "inline-shape_21",
+            "name": "name",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_145",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_157",
+            "shapeId": "concept_7_tag",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_157",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_161",
+            "shapeId": "concept_7_tag",
+            "name": "name",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_161",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_211",
+            "shapeId": "inline-shape_28",
+            "name": "email",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_211",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_212",
+            "shapeId": "inline-shape_28",
+            "name": "username",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_212",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_213",
+            "shapeId": "inline-shape_28",
+            "name": "userStatus",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_213",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "field_213",
+            "key": "description",
+            "value": "User Status"
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_214",
+            "shapeId": "inline-shape_28",
+            "name": "lastName",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_214",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_215",
+            "shapeId": "inline-shape_28",
+            "name": "firstName",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_215",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_216",
+            "shapeId": "inline-shape_28",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_216",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_217",
+            "shapeId": "inline-shape_28",
+            "name": "phone",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_217",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_218",
+            "shapeId": "inline-shape_28",
+            "name": "password",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_218",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_245",
+            "shapeId": "concept_8_user",
+            "name": "email",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_245",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_246",
+            "shapeId": "concept_8_user",
+            "name": "username",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_246",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_247",
+            "shapeId": "concept_8_user",
+            "name": "userStatus",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_247",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "field_247",
+            "key": "description",
+            "value": "User Status"
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_248",
+            "shapeId": "concept_8_user",
+            "name": "lastName",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_248",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_249",
+            "shapeId": "concept_8_user",
+            "name": "firstName",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_249",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_250",
+            "shapeId": "concept_8_user",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_250",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_251",
+            "shapeId": "concept_8_user",
+            "name": "phone",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_251",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_252",
+            "shapeId": "concept_8_user",
+            "name": "password",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_252",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_275",
+            "shapeId": "inline-shape_37",
+            "name": "shipDate",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_275",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_276",
+            "shapeId": "inline-shape_37",
+            "name": "quantity",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_276",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_278",
+            "shapeId": "inline-shape_37",
+            "name": "petId",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_278",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_280",
+            "shapeId": "inline-shape_37",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_280",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_281",
+            "shapeId": "inline-shape_37",
+            "name": "complete",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_281",
+                    "shapeId": "$boolean"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_282",
+            "shapeId": "inline-shape_37",
+            "name": "status",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_282",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "field_282",
+            "key": "description",
+            "value": "Order Status"
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_307",
+            "shapeId": "concept_9_order",
+            "name": "shipDate",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_307",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_308",
+            "shapeId": "concept_9_order",
+            "name": "quantity",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_308",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_309",
+            "shapeId": "concept_9_order",
+            "name": "petId",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_309",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_310",
+            "shapeId": "concept_9_order",
+            "name": "id",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_310",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_314",
+            "shapeId": "concept_9_order",
+            "name": "complete",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_314",
+                    "shapeId": "$boolean"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_315",
+            "shapeId": "concept_9_order",
+            "name": "status",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_315",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "field_315",
+            "key": "description",
+            "value": "Order Status"
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_346",
+            "shapeId": "inline-shape_44",
+            "name": "code",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_346",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_349",
+            "shapeId": "inline-shape_44",
+            "name": "type",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_349",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_350",
+            "shapeId": "inline-shape_44",
+            "name": "message",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_350",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_369",
+            "shapeId": "concept_11_apiresponse",
+            "name": "code",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_369",
+                    "shapeId": "$number"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_370",
+            "shapeId": "concept_11_apiresponse",
+            "name": "type",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_370",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddField": {
+            "fieldId": "field_371",
+            "shapeId": "concept_11_apiresponse",
+            "name": "message",
+            "shapeDescriptor": {
+                "FieldShapeFromShape": {
+                    "fieldId": "field_371",
+                    "shapeId": "$string"
+                }
+            }
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_0",
+            "parentPathId": "root",
+            "name": "pet"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_1",
+            "parentPathId": "bV8qqO_path_0",
+            "name": "findByStatus"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_2",
+            "parentPathId": "bV8qqO_path_0",
+            "name": "findByTags"
+        }
+    },
+    {
+        "AddPathParameter": {
+            "pathId": "bV8qqO_path_3",
+            "parentPathId": "bV8qqO_path_0",
+            "name": "petId"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "bV8qqO_path_3",
+            "key": "description",
+            "value": "ID of pet to return"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_4",
+            "parentPathId": "bV8qqO_path_3",
+            "name": "uploadImage"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_5",
+            "parentPathId": "root",
+            "name": "store"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_6",
+            "parentPathId": "bV8qqO_path_5",
+            "name": "inventory"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_7",
+            "parentPathId": "bV8qqO_path_5",
+            "name": "order"
+        }
+    },
+    {
+        "AddPathParameter": {
+            "pathId": "bV8qqO_path_8",
+            "parentPathId": "bV8qqO_path_7",
+            "name": "orderId"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "bV8qqO_path_8",
+            "key": "description",
+            "value": "ID of pet that needs to be fetched"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_9",
+            "parentPathId": "root",
+            "name": "user"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_10",
+            "parentPathId": "bV8qqO_path_9",
+            "name": "createWithArray"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_11",
+            "parentPathId": "bV8qqO_path_9",
+            "name": "createWithList"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_12",
+            "parentPathId": "bV8qqO_path_9",
+            "name": "login"
+        }
+    },
+    {
+        "AddPathComponent": {
+            "pathId": "bV8qqO_path_13",
+            "parentPathId": "bV8qqO_path_9",
+            "name": "logout"
+        }
+    },
+    {
+        "AddPathParameter": {
+            "pathId": "bV8qqO_path_14",
+            "parentPathId": "bV8qqO_path_9",
+            "name": "username"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "bV8qqO_path_14",
+            "key": "description",
+            "value": "The name that needs to be fetched. Use user1 for testing."
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12050_post",
+            "pathId": "bV8qqO_path_7",
+            "httpMethod": "post"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "body-shape_storeorder_post_body",
+            "baseShapeId": "concept_9_order",
+            "name": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "body-shape_storeorder_post_body",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_kx7w2HIATz",
+            "requestId": "path_12050_post",
+            "httpStatusCode": 200
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_179",
+            "baseShapeId": "concept_9_order",
+            "name": ""
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_McbCdf5gPS",
+            "requestId": "path_12050_post",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12051_get",
+            "pathId": "bV8qqO_path_2",
+            "httpMethod": "get"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_Ony7h8jWpQ",
+            "requestId": "path_12051_get",
+            "httpStatusCode": 200
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_181",
+            "baseShapeId": "$list",
+            "name": ""
+        }
+    },
+    {
+        "SetParameterShape": {
+            "shapeDescriptor": {
+                "ProviderInShape": {
+                    "shapeId": "inline-shape_181",
+                    "providerDescriptor": {
+                        "ShapeProvider": {
+                            "shapeId": "concept_2_pet"
+                        }
+                    },
+                    "consumingParameterId": "$listItem"
+                }
+            }
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_8qpmZv4oX8",
+            "requestId": "path_12051_get",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12052_post",
+            "pathId": "bV8qqO_path_0",
+            "httpMethod": "post"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "body-shape_pet_post_body",
+            "baseShapeId": "concept_2_pet",
+            "name": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "body-shape_pet_post_body",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_xEpC0FAdUf",
+            "requestId": "path_12052_post",
+            "httpStatusCode": 405
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12052_put",
+            "pathId": "bV8qqO_path_0",
+            "httpMethod": "put"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "body-shape_pet_put_body",
+            "baseShapeId": "concept_2_pet",
+            "name": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "body-shape_pet_put_body",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_Z1CKC9QAXY",
+            "requestId": "path_12052_put",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_pXAj4JhLgZ",
+            "requestId": "path_12052_put",
+            "httpStatusCode": 404
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_bLSyL6TvRp",
+            "requestId": "path_12052_put",
+            "httpStatusCode": 405
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12053_get",
+            "pathId": "bV8qqO_path_8",
+            "httpMethod": "get"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_7qW5oncqBo",
+            "requestId": "path_12053_get",
+            "httpStatusCode": 200
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_190",
+            "baseShapeId": "concept_9_order",
+            "name": ""
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_3KVelmcbzb",
+            "requestId": "path_12053_get",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_komq2pZAMb",
+            "requestId": "path_12053_get",
+            "httpStatusCode": 404
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12053_delete",
+            "pathId": "bV8qqO_path_8",
+            "httpMethod": "delete"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_madux9kqHT",
+            "requestId": "path_12053_delete",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_sW5vgrShOg",
+            "requestId": "path_12053_delete",
+            "httpStatusCode": 404
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12054_get",
+            "pathId": "bV8qqO_path_13",
+            "httpMethod": "get"
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12055_get",
+            "pathId": "bV8qqO_path_6",
+            "httpMethod": "get"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_vQaDRFGvtx",
+            "requestId": "path_12055_get",
+            "httpStatusCode": 200
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_195",
+            "baseShapeId": "$object",
+            "name": ""
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_194",
+            "baseShapeId": "$object",
+            "name": ""
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12056_post",
+            "pathId": "bV8qqO_path_11",
+            "httpMethod": "post"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "body-shape_usercreatewithlist_post_body",
+            "baseShapeId": "$list",
+            "name": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "body-shape_usercreatewithlist_post_body",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12057_get",
+            "pathId": "bV8qqO_path_14",
+            "httpMethod": "get"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_gfwVru7otB",
+            "requestId": "path_12057_get",
+            "httpStatusCode": 200
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_209",
+            "baseShapeId": "concept_8_user",
+            "name": ""
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_47cav9ZcTz",
+            "requestId": "path_12057_get",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_lLdAHcaJ9p",
+            "requestId": "path_12057_get",
+            "httpStatusCode": 404
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12057_put",
+            "pathId": "bV8qqO_path_14",
+            "httpMethod": "put"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "body-shape_userusername_put_body",
+            "baseShapeId": "concept_8_user",
+            "name": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "body-shape_userusername_put_body",
+            "key": "description",
+            "value": "This can only be done by the logged in user."
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_kwELjSGvjg",
+            "requestId": "path_12057_put",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_oFr9rIvG4G",
+            "requestId": "path_12057_put",
+            "httpStatusCode": 404
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12057_delete",
+            "pathId": "bV8qqO_path_14",
+            "httpMethod": "delete"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_4r1mhUTP0D",
+            "requestId": "path_12057_delete",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_UVKAir7jSQ",
+            "requestId": "path_12057_delete",
+            "httpStatusCode": 404
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12058_get",
+            "pathId": "bV8qqO_path_12",
+            "httpMethod": "get"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_r23Tlh12Gg",
+            "requestId": "path_12058_get",
+            "httpStatusCode": 200
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_217",
+            "baseShapeId": "$string",
+            "name": ""
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_e47FwC8MMf",
+            "requestId": "path_12058_get",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12059_post",
+            "pathId": "bV8qqO_path_9",
+            "httpMethod": "post"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "body-shape_user_post_body",
+            "baseShapeId": "concept_8_user",
+            "name": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "body-shape_user_post_body",
+            "key": "description",
+            "value": "This can only be done by the logged in user."
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12060_get",
+            "pathId": "bV8qqO_path_3",
+            "httpMethod": "get"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_zjsLW84m4T",
+            "requestId": "path_12060_get",
+            "httpStatusCode": 200
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_230",
+            "baseShapeId": "concept_2_pet",
+            "name": ""
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_RnSyDWYUez",
+            "requestId": "path_12060_get",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_lLGgPeXl7Y",
+            "requestId": "path_12060_get",
+            "httpStatusCode": 404
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12060_post",
+            "pathId": "bV8qqO_path_3",
+            "httpMethod": "post"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_oZrxyr54qt",
+            "requestId": "path_12060_post",
+            "httpStatusCode": 405
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12060_delete",
+            "pathId": "bV8qqO_path_3",
+            "httpMethod": "delete"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_s62RCv6zZs",
+            "requestId": "path_12060_delete",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_dMHPO15egk",
+            "requestId": "path_12060_delete",
+            "httpStatusCode": 404
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12061_post",
+            "pathId": "bV8qqO_path_4",
+            "httpMethod": "post"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_2IuF7cijLB",
+            "requestId": "path_12061_post",
+            "httpStatusCode": 200
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_237",
+            "baseShapeId": "concept_11_apiresponse",
+            "name": ""
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12062_post",
+            "pathId": "bV8qqO_path_10",
+            "httpMethod": "post"
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "body-shape_usercreatewitharray_post_body",
+            "baseShapeId": "$list",
+            "name": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "body-shape_usercreatewitharray_post_body",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "AddRequest": {
+            "requestId": "path_12063_get",
+            "pathId": "bV8qqO_path_1",
+            "httpMethod": "get"
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_6VZOC6VyHm",
+            "requestId": "path_12063_get",
+            "httpStatusCode": 200
+        }
+    },
+    {
+        "AddShape": {
+            "shapeId": "inline-shape_241",
+            "baseShapeId": "$list",
+            "name": ""
+        }
+    },
+    {
+        "SetParameterShape": {
+            "shapeDescriptor": {
+                "ProviderInShape": {
+                    "shapeId": "inline-shape_241",
+                    "providerDescriptor": {
+                        "ShapeProvider": {
+                            "shapeId": "concept_2_pet"
+                        }
+                    },
+                    "consumingParameterId": "$listItem"
+                }
+            }
+        }
+    },
+    {
+        "AddResponse": {
+            "responseId": "response_IP7NjTWUNk",
+            "requestId": "path_12063_get",
+            "httpStatusCode": 400
+        }
+    },
+    {
+        "SetRequestBodyShape": {
+            "requestId": "path_12050_post",
+            "bodyDescriptor": {
+                "httpContentType": "application/json",
+                "shapeId": "body-shape_storeorder_post_body",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12050_post",
+            "key": "body-description",
+            "value": ""
+        }
+    },
+    {
+        "SetResponseBodyShape": {
+            "responseId": "response_kx7w2HIATz",
+            "bodyDescriptor": {
+                "httpContentType": "application/xml",
+                "shapeId": "inline-shape_179",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "response_kx7w2HIATz",
+            "key": "description",
+            "value": "successful operation"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12050_post",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetResponseBodyShape": {
+            "responseId": "response_Ony7h8jWpQ",
+            "bodyDescriptor": {
+                "httpContentType": "application/xml",
+                "shapeId": "inline-shape_181",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "response_Ony7h8jWpQ",
+            "key": "description",
+            "value": "successful operation"
+        }
+    },
+    {
+        "AddQueryParameter": {
+            "parameterId": "parameter_ApR4R23pfl",
+            "requestId": "path_12051_get",
+            "name": "tags"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "parameter_ApR4R23pfl",
+            "key": "description",
+            "value": "Tags to filter by"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12051_get",
+            "key": "description",
+            "value": "Muliple tags can be provided with comma separated strings. Use         tag1, tag2, tag3 for testing."
+        }
+    },
+    {
+        "SetRequestBodyShape": {
+            "requestId": "path_12052_post",
+            "bodyDescriptor": {
+                "httpContentType": "application/json",
+                "shapeId": "body-shape_pet_post_body",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12052_post",
+            "key": "body-description",
+            "value": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12052_post",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetRequestBodyShape": {
+            "requestId": "path_12052_put",
+            "bodyDescriptor": {
+                "httpContentType": "application/json",
+                "shapeId": "body-shape_pet_put_body",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12052_put",
+            "key": "body-description",
+            "value": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12052_put",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetResponseBodyShape": {
+            "responseId": "response_7qW5oncqBo",
+            "bodyDescriptor": {
+                "httpContentType": "application/xml",
+                "shapeId": "inline-shape_190",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "response_7qW5oncqBo",
+            "key": "description",
+            "value": "successful operation"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12053_get",
+            "key": "description",
+            "value": "For valid response try integer IDs with value >= 1 and <= 10.         Other values will generated exceptions"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12053_delete",
+            "key": "description",
+            "value": "For valid response try integer IDs with positive integer value.         Negative or non-integer values will generate API errors"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12054_get",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetResponseBodyShape": {
+            "responseId": "response_vQaDRFGvtx",
+            "bodyDescriptor": {
+                "httpContentType": "application/json",
+                "shapeId": "inline-shape_194",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "response_vQaDRFGvtx",
+            "key": "description",
+            "value": "successful operation"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12055_get",
+            "key": "description",
+            "value": "Returns a map of status codes to quantities"
+        }
+    },
+    {
+        "SetRequestBodyShape": {
+            "requestId": "path_12056_post",
+            "bodyDescriptor": {
+                "httpContentType": "application/json",
+                "shapeId": "body-shape_usercreatewithlist_post_body",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12056_post",
+            "key": "body-description",
+            "value": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12056_post",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetResponseBodyShape": {
+            "responseId": "response_gfwVru7otB",
+            "bodyDescriptor": {
+                "httpContentType": "application/xml",
+                "shapeId": "inline-shape_209",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "response_gfwVru7otB",
+            "key": "description",
+            "value": "successful operation"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12057_get",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetRequestBodyShape": {
+            "requestId": "path_12057_put",
+            "bodyDescriptor": {
+                "httpContentType": "application/json",
+                "shapeId": "body-shape_userusername_put_body",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12057_put",
+            "key": "body-description",
+            "value": "This can only be done by the logged in user."
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12057_put",
+            "key": "description",
+            "value": "This can only be done by the logged in user."
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12057_delete",
+            "key": "description",
+            "value": "This can only be done by the logged in user."
+        }
+    },
+    {
+        "SetResponseBodyShape": {
+            "responseId": "response_r23Tlh12Gg",
+            "bodyDescriptor": {
+                "httpContentType": "application/xml",
+                "shapeId": "inline-shape_217",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "response_r23Tlh12Gg",
+            "key": "description",
+            "value": "successful operation"
+        }
+    },
+    {
+        "AddQueryParameter": {
+            "parameterId": "parameter_igIRV7CiOY",
+            "requestId": "path_12058_get",
+            "name": "username"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "parameter_igIRV7CiOY",
+            "key": "description",
+            "value": "The user name for login"
+        }
+    },
+    {
+        "AddQueryParameter": {
+            "parameterId": "parameter_gkH9VMLX6m",
+            "requestId": "path_12058_get",
+            "name": "password"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "parameter_gkH9VMLX6m",
+            "key": "description",
+            "value": "The password for login in clear text"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12058_get",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetRequestBodyShape": {
+            "requestId": "path_12059_post",
+            "bodyDescriptor": {
+                "httpContentType": "application/json",
+                "shapeId": "body-shape_user_post_body",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12059_post",
+            "key": "body-description",
+            "value": "This can only be done by the logged in user."
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12059_post",
+            "key": "description",
+            "value": "This can only be done by the logged in user."
+        }
+    },
+    {
+        "SetResponseBodyShape": {
+            "responseId": "response_zjsLW84m4T",
+            "bodyDescriptor": {
+                "httpContentType": "application/xml",
+                "shapeId": "inline-shape_230",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "response_zjsLW84m4T",
+            "key": "description",
+            "value": "successful operation"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12060_get",
+            "key": "description",
+            "value": "Returns a single pet"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12060_post",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "AddHeaderParameter": {
+            "parameterId": "parameter_HeJXOFPF1q",
+            "requestId": "path_12060_delete",
+            "name": "api_key"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12060_delete",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetResponseBodyShape": {
+            "responseId": "response_2IuF7cijLB",
+            "bodyDescriptor": {
+                "httpContentType": "application/json",
+                "shapeId": "inline-shape_237",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "response_2IuF7cijLB",
+            "key": "description",
+            "value": "successful operation"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12061_post",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetRequestBodyShape": {
+            "requestId": "path_12062_post",
+            "bodyDescriptor": {
+                "httpContentType": "application/json",
+                "shapeId": "body-shape_usercreatewitharray_post_body",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12062_post",
+            "key": "body-description",
+            "value": ""
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12062_post",
+            "key": "description",
+            "value": ""
+        }
+    },
+    {
+        "SetResponseBodyShape": {
+            "responseId": "response_6VZOC6VyHm",
+            "bodyDescriptor": {
+                "httpContentType": "application/xml",
+                "shapeId": "inline-shape_241",
+                "isRemoved": false
+            }
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "response_6VZOC6VyHm",
+            "key": "description",
+            "value": "successful operation"
+        }
+    },
+    {
+        "AddQueryParameter": {
+            "parameterId": "parameter_M0RC8Ba04g",
+            "requestId": "path_12063_get",
+            "name": "status"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "parameter_M0RC8Ba04g",
+            "key": "description",
+            "value": "Status values that need to be considered for filter"
+        }
+    },
+    {
+        "AddContribution": {
+            "id": "path_12063_get",
+            "key": "description",
+            "value": "Multiple status values can be provided with comma separated strings"
+        }
+    }
+]

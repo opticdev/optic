@@ -23,7 +23,7 @@ object QueryImplicits {
   }
 
   implicit class DefinitionsVector(defs: Vector[NamedDefinition]) {
-    def withRoot(rootNode: JsValue) = defs.find(_.cxt.root == rootNode)
+    def withRoot(rootNode: JsValue) = defs.find(_.ctx.root == rootNode)
     def ~#(name: String) = defs.find(_.name == name).get
 
     def stringify: String = {
@@ -32,7 +32,7 @@ object QueryImplicits {
   }
 
   implicit class SharedResponseVector(sharedResponses: Vector[SharedResponse]) {
-    def withRoot(rootNode: JsValue) = sharedResponses.find(_.cxt.root == rootNode)
+    def withRoot(rootNode: JsValue) = sharedResponses.find(_.ctx.root == rootNode)
   }
 
   implicit class PropertyDefinitionVector(props: Vector[PropertyDefinition]) {

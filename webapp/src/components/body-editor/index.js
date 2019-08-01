@@ -176,7 +176,7 @@ class BodyEditor extends React.Component {
                 <LayoutWrapper>
                     <Typography variant="caption" style={{fontSize: 13, left: 0}}>Content Type:</Typography>
                     <Select
-                        value={this.state.contentTypeInfo.value}
+                        value={this.state.contentTypeInfo && this.state.contentTypeInfo.value}
                         className={classNames(classes.value, classes.select)}
                         onChange={this.changeContentType}>
                         {ContentTypesHelper.supportedContentTypesArray
@@ -189,7 +189,7 @@ class BodyEditor extends React.Component {
                         }
                     </Select>
 
-                    {this.state.contentTypeInfo.supportsShape ? (
+                    {this.state.contentTypeInfo && this.state.contentTypeInfo.supportsShape ? (
                         <BodyViewer shapeId={shapeId}/>
                     ) : null}
                 </LayoutWrapper>

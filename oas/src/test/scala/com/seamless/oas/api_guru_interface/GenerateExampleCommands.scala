@@ -12,10 +12,11 @@ object GenerateExampleCommands extends AskTrait[ParseAttempt, Unit] {
   override def question: String = "doing commands we need"
 
   val usedAsExample = Map(
+    "github" -> "github.com.json",
     "stripe" -> "stripe.com.json",
     "aws" -> "amazonaws.com.json",
-    "github" -> "github.com.json",
     "gitlab" -> "gitlab.com.json",
+    "github" -> "github.com.json",
     "circleci" -> "circleci.com.json",
     "azure" -> "azure.com.json",
     "netlify" -> "netlify.com.json",

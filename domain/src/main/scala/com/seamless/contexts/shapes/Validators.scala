@@ -8,11 +8,11 @@ object Validators {
   ////////////////////////////////////////////////////////////////////////////////
 
   def ensureFieldIdExists(fieldId: FieldId)(implicit state: ShapesState) = {
-    require(state.fields.contains(fieldId))
+    require(state.fields.contains(fieldId), s"Field ${fieldId} must exist")
   }
 
   def ensureFieldIdAssignable(fieldId: FieldId)(implicit state: ShapesState) = {
-    require(!state.fields.contains(fieldId))
+    require(!state.fields.contains(fieldId), s"Field ${fieldId} must not exist")
   }
 
   def ensureShapeIdCanAddField(shapeId: ShapeId)(implicit state: ShapesState) = {
@@ -52,11 +52,11 @@ object Validators {
   ////////////////////////////////////////////////////////////////////////////////
 
   def ensureShapeIdExists(shapeId: ShapeId)(implicit state: ShapesState) = {
-    require(state.shapes.contains(shapeId), s"Shape ID ${shapeId} must exist")
+    require(state.shapes.contains(shapeId), s"Shape ${shapeId} must exist")
   }
 
   def ensureShapeIdAssignable(shapeId: ShapeId)(implicit state: ShapesState) = {
-    require(!state.shapes.contains(shapeId))
+    require(!state.shapes.contains(shapeId), s"Shape ${shapeId} must not exist")
   }
 
   ////////////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@ import com.seamless.oas
 import com.seamless.oas.JsonSchemaType.{Ref, SingleType}
 import com.seamless.oas.QueryImplicits._
 import com.seamless.oas.ResolverTestFixture
-import com.seamless.oas.Schemas.Definition
+import com.seamless.oas.Schemas.InlineDefinition
 import com.seamless.oas.Schemas.PathParameter
 
 class OAS2ResolverSpec extends ResolverTestFixture("2") {
@@ -55,12 +55,12 @@ class OAS2ResolverSpec extends ResolverTestFixture("2") {
     }
 
     it("can get the type of a field") {
-      assert(roleDefinition.properties.~#("scheme_managed").`type` == SingleType("boolean"))
+      assert(roleDefinition.properties.~#("scheme_managed").schemaType == SingleType("boolean"))
     }
 
     it("can handle a ref field") {
       val refField = namedDefinitions.~#("TeamMap").properties.~#("team_id")
-      assert(refField.`type` == Ref("#/definitions/Team"))
+      assert(refField.schemaType == Ref("#/definitions/Team"))
     }
 
   }
@@ -82,7 +82,7 @@ class OAS2ResolverSpec extends ResolverTestFixture("2") {
 
     it("can resolve shared response refs using inline definitions") {
       val responses = getJobsById.responses
-      assert(responses.forall(s => s.schema.isDefined && s.schema.get.isInstanceOf[Definition]))
+      assert(responses.forall(s => s.schema.isDefined && s.schema.get.isInstanceOf[InlineDefinition]))
     }
 
   }
