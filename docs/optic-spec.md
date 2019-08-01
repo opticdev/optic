@@ -1,10 +1,10 @@
 # Problems with API Specifications
 
-### and how Seamless built a better one...
+### and how Optic built a better one...
 
 When we set out to build better tooling for APIs, one of the first questions we had to ask ourselves was whether we should create our own API specification format or choose to interoperate with an existing standard. 
 
-OpenAPI/Swagger has a lot of momentum and choosing it as the backing representation for Seamless seemed to be the de facto "right move." There was also comic wisdom pushing us towards an existing standard like OpenAPI, RAML, API Builder, or API Blueprint.
+OpenAPI/Swagger has a lot of momentum and choosing it as the backing representation for Optic seemed to be the de facto "right move." There was also comic wisdom pushing us towards an existing standard like OpenAPI, RAML, API Builder, or API Blueprint.
 
 ![](images/comic.png) 
 
@@ -59,13 +59,13 @@ New designs and rethinking old norms change the shape of a problem space in a wa
 
 ## Making it concrete
 
-At the center of our implementation is the open source [Seamless domain engine](https://github.com/seamlessapis/seamless). It can run on the JVM or in Node making it portable just about everywhere. At a high level, the domain engine interprets commands and handles queries. You can think of this as sort of a living specification. Instead of being a flat file, it is an actual program that answers your queries and modifies the internal API specification in response to your commands. This internal API specification is an event stream of every change you have made to your API since you started using Seamless. These events are played back every time you start the domain engine to build the current specification for your API. Each of these events are immutable facts about the API like RequestAdded, RequestBodyContentTypeSet, etc. We do not have to argue over syntax, semantics, or structure or even concern ourselves with humans reading or writing these directly. Events are pure descriptions of the API domain. 
+At the center of our implementation is the open source [Optic domain engine](https://github.com/opticdev/optic). It can run on the JVM or in Node making it portable just about everywhere. At a high level, the domain engine interprets commands and handles queries. You can think of this as sort of a living specification. Instead of being a flat file, it is an actual program that answers your queries and modifies the internal API specification in response to your commands. This internal API specification is an event stream of every change you have made to your API since you started using Optic. These events are played back every time you start the domain engine to build the current specification for your API. Each of these events are immutable facts about the API like RequestAdded, RequestBodyContentTypeSet, etc. We do not have to argue over syntax, semantics, or structure or even concern ourselves with humans reading or writing these directly. Events are pure descriptions of the API domain. 
 
-Commands for the API spec domain might be things like AddQueryParameter, CreatePath, ChangeMethod, UseSchema, AddResponse, etc. It would not be very human-friendly to make a programmer write all the commands in sequence, so we have also shipped an open source API Design tool similar to Stoplight or RedHat's Apicurio. The Seamless API designer sends commands to the domain engine in response to actions taken in the UI. Visual OpenAPI designers are exploding right now. It seems inevitable that most teams will adopt one, especially as the OpenAPI format becomes more complex.
+Commands for the API spec domain might be things like AddQueryParameter, CreatePath, ChangeMethod, UseSchema, AddResponse, etc. It would not be very human-friendly to make a programmer write all the commands in sequence, so we have also shipped an open source API Design tool similar to Stoplight or RedHat's Apicurio. The Optic API designer sends commands to the domain engine in response to actions taken in the UI. Visual OpenAPI designers are exploding right now. It seems inevitable that most teams will adopt one, especially as the OpenAPI format becomes more complex.
 
 ![](./images/seamless.png)
 
-### [Try Designer](https://design.seamlessapis.com)
+### [Try Designer](https://design.useoptic.com)
 
 > See that API Designer? It is damn polished and is more stable than any MVP tool of this complexity we have used. It took 3 weeks to build the domain engine and API Designer app. You can see just how productive CQRS is when it is backed by a good domain design.
 
@@ -80,7 +80,7 @@ In CQRS, queries return projections (custom read models that are highly optimize
     - with all their references flattened.
     - as JSON schema.
 - Your API represented in OpenAPI 
-    — A traditional spec format is just another projection of the core data model. Even some of Seamless's more advanced features, such as support for Generics, can be projected onto OpenAPI.
+    — A traditional spec format is just another projection of the core data model. Even some of Optic's more advanced features, such as support for Generics, can be projected onto OpenAPI.
 - the changes made since the last version of the API.
 - a projection optimized for generating
     - clients.
@@ -99,23 +99,23 @@ We just unpacked a lot about the architecture, now let us discuss the practical 
 
 ### Developer Experience
 
-Seamless both enables and requires better API design tools because nobody is running the commands manually. The market is already moving towards structured API editors, and the battle is on to improve developer experience. Once you strip away the complexity of parsing and mutating a traditional API spec, your team can focus on building a great UX (see our editor and its source as an example).
+Optic both enables and requires better API design tools because nobody is running the commands manually. The market is already moving towards structured API editors, and the battle is on to improve developer experience. Once you strip away the complexity of parsing and mutating a traditional API spec, your team can focus on building a great UX (see our editor and its source as an example).
 
-Seamless also makes it possible to imagine an explosion of specialized tooling built around the API design experience. Because of the way projections and commands work, a bunch of really awesome Schema Editors could be built that only concern themselves with relevant events/commands. Tooling for generating tests could built around their own set of specialized events/commands. With this architecture, it is fine if tools only concern themselves queries and commands relevant to their domain.
+Optic also makes it possible to imagine an explosion of specialized tooling built around the API design experience. Because of the way projections and commands work, a bunch of really awesome Schema Editors could be built that only concern themselves with relevant events/commands. Tooling for generating tests could built around their own set of specialized events/commands. With this architecture, it is fine if tools only concern themselves queries and commands relevant to their domain.
 
 ### Richer Abstractions
 
-With concerns separated properly, it is easier to implement richer abstractions to represent APIs. Many API architects want to define reusable standards for things like pagination, but this is not easily supported by JSON Schema. In Seamless, it is easy for us to support generics. Now our schemas can take other schemas as type parameters like `InfiniteScrollPagination[UserType]` or `PageBasedPagination[UserType]`. Generics make API standards sharable between a team's APIs.
+With concerns separated properly, it is easier to implement richer abstractions to represent APIs. Many API architects want to define reusable standards for things like pagination, but this is not easily supported by JSON Schema. In Optic, it is easy for us to support generics. Now our schemas can take other schemas as type parameters like `InfiniteScrollPagination[UserType]` or `PageBasedPagination[UserType]`. Generics make API standards sharable between a team's APIs.
 
 A major unsolved challenge in OpenAPI-land is diffing a spec. Proper diffs would help prevent breaking changes, generate semantic change-logs, and provide safety for teams that use code-first workflows. One of the main challenges here, besides the complex data structure, is that changes to a flat JSON/YAML file lose their intent. How can you know a query parameter was renamed 'foo' → 'bar'? A normal diff of the JSON would show 'foo' being deleted and 'bar' being added. 
 
-In Seamless, every change is an event that captures intent, so you can easily build a semantic diff as a projection. In fact, there is an open feature request that displays changes to the API spec whenever you pull the repo. 
+In Optic, every change is an event that captures intent, so you can easily build a semantic diff as a projection. In fact, there is an open feature request that displays changes to the API spec whenever you pull the repo. 
 
-Finally, in the real world, teams are using a combination of REST, graphQL, Websockets, and RPCs, often times within the same APIs. A traditional spec combining all these paradigms would collapse under the weight of its own complexity, but it is possible for Seamless to support multiple paradigms and common components between them. We suspect this kind of interoperability will become more important in the next few years, especially in enterprise settings. 
+Finally, in the real world, teams are using a combination of REST, graphQL, Websockets, and RPCs, often times within the same APIs. A traditional spec combining all these paradigms would collapse under the weight of its own complexity, but it is possible for Optic to support multiple paradigms and common components between them. We suspect this kind of interoperability will become more important in the next few years, especially in enterprise settings. 
 
 ### Governance
 
-The way Seamless' domain is set up means that contributors just have to answer one question "What can we say about a REST API?"
+The way Optic' domain is set up means that contributors just have to answer one question "What can we say about a REST API?"
 
 If it can have requests, then we need an event for RequestAdded.
 
@@ -133,17 +133,17 @@ Once the domain modeling is taken care of, the needs of toolmakers will direct t
 
 There are some clear tradeoffs to this design as well. 
 
-- Seamless relies on GUI API Designers to be built around it. We have shipped an awesome open-source one to get things started, but we need more competitive solutions to grow and evolve in parallel.
+- Optic relies on GUI API Designers to be built around it. We have shipped an awesome open-source one to get things started, but we need more competitive solutions to grow and evolve in parallel.
 - Thinking in CQRS is hard. Contributors who are unfamiliar with the concepts will have to invest their time and mental energy in learning. However, thinking in OpenAPI, RAML, or API Blueprint is also difficult. We think it is easier to ask a small group of contributors to learn CQRS so that the millions of developers who need to design their APIs can benefit from better tooling.
 - While CQRS naturally supports collaborative editing, the infrastructure needed to distribute events across clients is complex and relies on eventual consistency. Microsoft does a good job of explaining the tradeoffs of using [CQRS to represent your data here](https://docs.microsoft.com/en-us/azure/architecture/patterns/cqrs).
 
 ## OpenAPI Support
 
-We have used OpenAPI for many years and believe it will remain a going-concern for a long time. To make it easier to get started with Seamless, we built an OpenAPI importer with support for version 2 and 3. You can [upload your spec here to try out Seamless](https://design.seamlessapis.com/upload-oas). 
+We have used OpenAPI for many years and believe it will remain a going-concern for a long time. To make it easier to get started with Optic, we built an OpenAPI importer with support for version 2 and 3. You can [upload your spec here to try out Optic](https://design.useoptic.com/upload-oas). 
 
 There is also a projection in progress that outputs valid OpenAPI 3 that should play well with your existing tools. 
 
-Cool aside: The architecture for the importer is inspired by GraphQL and allows us to query the information we need from the spec directly. The resolvers manage the differences between versions 2 and 3. [Check out the source here](https://github.com/seamlessapis/seamless/blob/master/oas/src/main/scala/com/seamless/oas/Schemas.scala).
+Cool aside: The architecture for the importer is inspired by GraphQL and allows us to query the information we need from the spec directly. The resolvers manage the differences between versions 2 and 3. [Check out the source here](https://github.com/opticdev/optic/blob/master/oas/src/main/scala/com/seamless/oas/Schemas.scala).
 
 # Closing
 
@@ -151,7 +151,7 @@ Cool aside: The architecture for the importer is inspired by GraphQL and allows 
 
 Nobody wakes up thinking, "today we are going to build another way to spec APIs." We certainly did not.
 
-We believe every API should interoperate Seamlessly. This is not going to be the case until consuming APIs is as easy as installing node modules and designing them is a fluid experience. 
+We believe every API should interoperate seamlessly. This is not going to be the case until consuming APIs is as easy as installing node modules and designing them is a fluid experience. 
 
 Despite server generators, SDK generators, and spec standards existing for over a decade, connecting APIs and clients is not effortless for most teams. Do not get us wrong, there are many teams who have a good end-to-end process and reap enormous benefits. There is so a lot of cool work out there. As they say, "the future is here, it is just not evenly distributed." 
 
@@ -159,5 +159,5 @@ We think a better API spec that enables a whole new ecosystem of tooling is a cr
 
 We look forward to hearing your comments, ideas, and concerns and working on ways to incorporate them into the project.
 
-- [GitHub](https://github.com/seamlessapis/seamless)
-- [Issues](https://github.com/seamlessapis/seamless/issues)
+- [GitHub](https://github.com/opticdev/optic)
+- [Issues](https://github.com/opticdev/optic/issues)

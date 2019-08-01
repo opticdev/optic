@@ -78,5 +78,9 @@ abstract class OASResolver(val root: JsObject, val oas_version: String) {
   def descriptionFromContext(ctx: Context): Option[String] = {
     (ctx.root \ "description").toOption.map(_.as[JsString].value.trim)
   }
+
+  def license: Option[String] = {
+    (root \ "info" \ "license" \ "name").toOption.map(_.as[JsString].value)
+  }
 }
 

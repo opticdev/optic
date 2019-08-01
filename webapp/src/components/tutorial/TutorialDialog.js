@@ -76,7 +76,7 @@ class TutorialDialog extends React.Component {
 				<Grid container>
 					<Grid item xs={12}>
 						<Typography variant="h6" style={{textAlign: 'center'}}>
-							Seamless combines a powerful API Designer and beautiful API docs.
+							Optic combines a powerful API Designer and beautiful API docs.
 						</Typography>
 					</Grid>
 					<Grid item xs={6} style={{textAlign: 'center'}}>
@@ -105,7 +105,7 @@ class TutorialDialog extends React.Component {
 				<Grid container>
 					<Grid item xs={12}>
 						<Typography variant="h6" style={{textAlign: 'center'}}>
-							Model the important concepts in your domain with Seamless's shape builder
+							Model the important concepts in your domain with Optic's shape builder
 						</Typography>
 					</Grid>
 					<Grid item xs={12} style={{textAlign: 'center'}}>
@@ -135,7 +135,7 @@ class TutorialDialog extends React.Component {
 						</Typography>
 					</Grid>
 					<Grid item xs={12} style={{textAlign: 'center', marginTop: 35}}>
-						<Button color="secondary" variant="outlined" size="large" href="https://seamlessapis.com" target="_blank" style={{margin: 10}}>Read the Docs</Button>
+						<Button color="secondary" variant="outlined" size="large" href="https://useoptic.com" target="_blank" style={{margin: 10}}>Read the Docs</Button>
 						<Button color="secondary" variant="outlined" size="large" onClick={() =>
 							window.Intercom('show')
 						} style={{margin: 10}}>Call us on Intercom</Button>

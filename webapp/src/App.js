@@ -29,7 +29,7 @@ class App extends React.Component {
                           <DialogContentText>
                               <Typography>We're still working on making our mobile experience great.</Typography>
                               <br/>
-                              <Typography>Please visit <a href="https://design.seamlessapis.com">design.seamlessapis.com</a> on a device with a larger screen.</Typography>
+                              <Typography>Please visit <a href="https://design.useoptic.com">design.useoptic.com</a> on a device with a larger screen.</Typography>
                           </DialogContentText>
                       </DialogContent>
                   </Dialog>

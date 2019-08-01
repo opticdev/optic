@@ -7,7 +7,7 @@ All concepts are named, and they define the shape of the data representing the c
 New concepts can be created by entering design mode, and clicking `+ Add Concept` in the navigation bar. This brings you to a blank concept page where you can add the name and a description for the concept. Once you have named the concept, you can begin filling in its shape. 
 
 ## Editing Shapes
-Seamless includes a powerful shape editor that makes it easy to create and modify the shape of your concepts. It looks like this: 
+Optic includes a powerful shape editor that makes it easy to create and modify the shape of your concepts. It looks like this: 
 
 ![gif](../images/shape-editor.gif)
 

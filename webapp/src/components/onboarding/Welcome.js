@@ -50,7 +50,7 @@ const styles = theme => ({
     }
 });
 
-const tagline = 'Open Source Toolkit for API Design';
+const tagline = 'API Designer';
 
 const Examples = [
     {logo: 'github.png', link: 'github'},
@@ -62,7 +62,7 @@ const Examples = [
     {logo: 'gitlab.svg', link: 'gitlab'},
 ]
 
-const tryItOut = 'Try Seamless';
+const tryItOut = 'Try Optic';
 
 class Welcome extends React.Component {
 
@@ -84,15 +84,12 @@ class Welcome extends React.Component {
                                 <Grid container justify="center">
                                     <Grid item sm={12} lg={12}>
                                         <div className={classes.logoWrapper}>
-                                            <img alt="Seamless Logo" src="/blue-logo.svg"/>
+                                            <img alt="Seamless Logo" src="/optic-logo-new.svg"/>
                                         </div>
                                         <Typography variant="h5" color="primary" className={classes.tagline}>{tagline}</Typography>
                                     </Grid>
                                 </Grid>
-                                <Grid container justify="center" style={{ textAlign: 'center', marginTop: 50 }}>
-                                    <Grid item sm={12} xs={12} style={{marginBottom: 20}}>
-                                        <Typography variant="h4" color="primary">Get Started</Typography>
-                                    </Grid>
+                                <Grid container justify="center" style={{ textAlign: 'center', marginTop: 25 }}>
                                     <Grid item sm={12} xs={12}>
                                         <div style={{display: 'flex', padding: '.5em'}}>
                                             <Link to={'/upload-oas'} style={{flex: 1, textDecoration: 'none'}}>

@@ -45,7 +45,7 @@ class ShareDialog extends React.Component {
 							1. Install the CLI using npm
 						</Typography>
 						<Highlight className='bash'>
-							{"npm install @seamlessapis/cli -g"}
+							{"npm install @useoptic/cli -g"}
 						</Highlight>
 
 						<Typography variant="button">
@@ -61,10 +61,10 @@ class ShareDialog extends React.Component {
 
 
 						<Typography variant="button">
-							3. Init Seamless in your Repo
+							3. Init Optic in your Repo
 						</Typography>
 						<Typography variant="body1">
-							Now we need to initialize Seamless in your repo. We'll pass the '--web-import' flag so Seamless knows to read-in the initial spec from the clipboard. Sorry, you can't copy and paste this command or you'll overwrite the state we just copied.
+							Now we need to initialize Optic in your repo. We'll pass the '--web-import' flag so Optic knows to read-in the initial spec from the clipboard. Sorry, you can't copy and paste this command or you'll overwrite the state we just copied.
 						</Typography>
 						<div style={{userSelect: 'none', pointerEvents: 'none'}}>
 						<Highlight className='bash'>
@@ -72,7 +72,7 @@ class ShareDialog extends React.Component {
 						</Highlight>
 						</div>
 						<Typography variant="body1">
-							You'll see a folder called '.api', this stores a changelog of all the changes made to your API. There's also a ReadMe to help your teammates get setup -- you might want to add a few lines at the top explaining what you liked and dislike about Seamless.
+							You'll see a folder called '.api', this stores a changelog of all the changes made to your API. There's also a ReadMe to help your teammates get setup -- you might want to add a few lines at the top explaining what you liked and dislike about Optic.
 						</Typography>
 
 						<Typography variant="button" style={{marginTop: 11}}>
@@ -83,7 +83,7 @@ class ShareDialog extends React.Component {
 						</Highlight>
 
 						<Typography variant="body1">
-							That's it! Your team can use Seamless to design and document your internal APIs and more [coming soon...]
+							That's it! Your team can use Optic to design and document your internal APIs and more [coming soon...]
 						</Typography>
 					</div>
 				</Grid>

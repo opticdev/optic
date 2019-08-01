@@ -14,7 +14,7 @@ object InvokeParser {
   }
 
   def main(args: Array[String]): Unit = {
-    val parserResult = Parser.parseOAS(pathToContents("src/test/resources/eventbrite.json"))
+    val parserResult = Parser.parseOAS(pathToContents("openapi.yml"))
     println(parserResult.commands.size)
     println(CommandSerialization.toJson(parserResult.commands).noSpaces)
 
