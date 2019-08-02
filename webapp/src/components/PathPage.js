@@ -63,7 +63,7 @@ const styles = theme => ({
 
 class ResponseListWithoutContext extends React.Component {
     render() {
-        const {responses, handleCommand, classes} = this.props;
+        const {responses, handleCommands, classes} = this.props;
         const sortedResponses = sortBy(responses, ['responseDescriptor.httpStatusCode']);
         return sortedResponses.map((response) => {
             const {responseId, responseDescriptor} = response;
@@ -74,21 +74,21 @@ class ResponseListWithoutContext extends React.Component {
                 onBodyAdded({shapeId, contentType}) {
                     const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, false);
                     const command = RequestsCommands.SetResponseBodyShape(responseId, bodyDescriptor);
-                    handleCommand(command);
+                    handleCommands(command);
                 },
                 onBodyRemoved({shapeId}) {
                     const command = RequestsCommands.UnsetResponseBodyShape(responseId, bodyDescriptor);
-                    handleCommand(command);
+                    handleCommands(command);
                 },
                 onBodyRestored({shapeId}) {
                     const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, shapeId, false);
                     const command = RequestsCommands.SetResponseBodyShape(responseId, bodyDescriptor);
-                    handleCommand(command);
+                    handleCommands(command);
                 },
                 onContentTypeChanged({contentType}) {
                     const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, isRemoved);
                     const command = RequestsCommands.SetResponseBodyShape(responseId, bodyDescriptor);
-                    handleCommand(command);
+                    handleCommands(command);
                 }
             };
 
@@ -98,7 +98,7 @@ class ResponseListWithoutContext extends React.Component {
                         <div className={classes.responseStatus}>
                             <StatusCode statusCode={httpStatusCode} onChange={(statusCode) => {
                                 const command = RequestsCommands.SetResponseStatusCode(responseId, statusCode)
-                                handleCommand(command)
+                                handleCommands(command)
                             }}/>
                         </div>
                         <div className={classes.responseDetail}>
@@ -232,7 +232,7 @@ class PathPage extends React.Component {
     };
 
     render() {
-        const {classes, handleCommand, pathId, focusedRequestId, cachedQueryResults, mode, apiName, switchEditorMode} = this.props;
+        const {classes, handleCommands, pathId, focusedRequestId, cachedQueryResults, mode, apiName, switchEditorMode} = this.props;
 
         const {requests, responses, requestParameters, pathsById, requestIdsByPathId} = cachedQueryResults;
 
@@ -298,7 +298,7 @@ class PathPage extends React.Component {
 
                 const isFocused = requestId === focusedRequestId;
 
-                const requestCommandsHelper = new RequestsCommandHelper(handleCommand, requestId)
+                const requestCommandsHelper = new RequestsCommandHelper(handleCommands, requestId)
 
                 const responsesForRequest = Object.values(responses)
                     .filter((response) => response.responseDescriptor.requestId === requestId);
@@ -313,21 +313,21 @@ class PathPage extends React.Component {
                     onBodyAdded({shapeId, contentType}) {
                         const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, false);
                         const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
-                        handleCommand(command);
+                        handleCommands(command);
                     },
                     onBodyRemoved({shapeId}) {
                         const command = RequestsCommands.UnsetRequestBodyShape(requestId, bodyDescriptor);
-                        handleCommand(command);
+                        handleCommands(command);
                     },
                     onBodyRestored({shapeId}) {
                         const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, shapeId, false);
                         const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
-                        handleCommand(command);
+                        handleCommands(command);
                     },
                     onContentTypeChanged({contentType}) {
                         const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, isRemoved);
                         const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
-                        handleCommand(command);
+                        handleCommands(command);
                     }
                 };
 
@@ -358,7 +358,7 @@ class PathPage extends React.Component {
                                         parameters={headerParameters}
                                         rowMapper={requestParametersToRows}
                                         onRename={({id, name}) => {
-                                            handleCommand(RequestsCommands.RenameHeaderParameter(id, name));
+                                            handleCommands(RequestsCommands.RenameHeaderParameter(id, name));
                                         }}
                                     />
                                 </div>
@@ -372,7 +372,7 @@ class PathPage extends React.Component {
                                         parameters={queryParameters}
                                         rowMapper={requestParametersToRows}
                                         onRename={({id, name}) => {
-                                            handleCommand(RequestsCommands.RenameHeaderParameter(id, name));
+                                            handleCommands(RequestsCommands.RenameQueryParameter(id, name));
                                         }}
                                     />
                                 </div>
@@ -443,7 +443,7 @@ class PathPage extends React.Component {
                                     parameters={pathParameters}
                                     rowMapper={pathParametersToRows}
                                     onRename={({id, name}) => {
-                                        handleCommand(RequestsCommands.RenamePathParameter(id, name));
+                                        handleCommands(RequestsCommands.RenamePathParameter(id, name));
                                     }}
                                 />
                             </div>
