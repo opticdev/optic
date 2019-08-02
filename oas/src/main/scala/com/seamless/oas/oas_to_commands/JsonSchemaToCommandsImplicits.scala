@@ -272,7 +272,7 @@ object JsonSchemaToCommandsImplicits {
       //println("\n[    BEFORE    ]")
       processSchema(_schema, RootContext())
       //println("[    AFTER     ]\n")
-      commandStream.toImmutable.flatten.foreach(//println)
+//      commandStream.toImmutable.flatten.foreach(println)
       commandStream.toImmutable
     }
 
