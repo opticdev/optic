@@ -27,7 +27,7 @@ class ShapeEditorStoreBase extends React.Component {
     setFieldShape = (fieldShapeDescriptor) => {
         const {fieldId, shapeId$1} = fieldShapeDescriptor
         const {handleCommand, handleCommands} = this.props;
-        if (shapeId$1 === '$object') {
+        if (shapeId$1 === '$object' || shapeId$1 === '$oneOf') {
             const inlineShapeId = ShapesHelper.newShapeId()
             const addInlineShape = ShapesCommands.AddShape(inlineShapeId, shapeId$1, '')
             const setFieldShape = ShapesCommands.SetFieldShape(ShapesCommands.FieldShapeFromShape(fieldId, inlineShapeId))
