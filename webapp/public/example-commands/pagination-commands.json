@@ -151,5 +151,628 @@
         }
       }
     }
+  },
+  {
+    "AddPathComponent": {
+      "pathId": "request_rGLxpNgYVs",
+      "parentPathId": "root",
+      "name": "pets"
+    }
+  },
+  {
+    "AddRequest": {
+      "requestId": "request_fWhN94kA3S",
+      "pathId": "request_rGLxpNgYVs",
+      "httpMethod": "GET"
+    }
+  },
+  {
+    "AddResponse": {
+      "responseId": "request_oCC9XR0qg5",
+      "requestId": "request_fWhN94kA3S",
+      "httpStatusCode": 200
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_xjFPHStBl6",
+      "baseShapeId": "$object",
+      "name": ""
+    }
+  },
+  {
+    "SetResponseBodyShape": {
+      "responseId": "request_oCC9XR0qg5",
+      "bodyDescriptor": {
+        "httpContentType": "application/json",
+        "shapeId": "shape_xjFPHStBl6",
+        "isRemoved": false
+      }
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_xjFPHStBl6",
+      "baseShapeId": "shape_FM0haXcnln"
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_tUBNMqrbH8",
+      "baseShapeId": "$object",
+      "name": "Owner"
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "field_qSncdIVmi9",
+      "shapeId": "shape_tUBNMqrbH8",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_qSncdIVmi9",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "RenameField": {
+      "fieldId": "field_qSncdIVmi9",
+      "name": "name"
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "field_SWppoWn6kT",
+      "shapeId": "shape_tUBNMqrbH8",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_SWppoWn6kT",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "RenameField": {
+      "fieldId": "field_SWppoWn6kT",
+      "name": "pets"
+    }
+  },
+  {
+    "SetFieldShape": {
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_SWppoWn6kT",
+          "shapeId": "$list"
+        }
+      }
+    }
+  },
+  {
+    "SetParameterShape": {
+      "shapeDescriptor": {
+        "ProviderInField": {
+          "fieldId": "field_SWppoWn6kT",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "$reference"
+            }
+          },
+          "consumingParameterId": "$listItem"
+        }
+      }
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_qTpcQSuB5x",
+      "baseShapeId": "$object",
+      "name": "PetId"
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_qTpcQSuB5x",
+      "baseShapeId": "$reference"
+    }
+  },
+  {
+    "SetParameterShape": {
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "shapeId": "shape_qTpcQSuB5x",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "$Pet"
+            }
+          },
+          "consumingParameterId": "$referenceInner"
+        }
+      }
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "field_f1gEaf509l",
+      "shapeId": "$Pet",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_f1gEaf509l",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "RenameField": {
+      "fieldId": "field_f1gEaf509l",
+      "name": "id"
+    }
+  },
+  {
+    "SetFieldShape": {
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_f1gEaf509l",
+          "shapeId": "$identifier"
+        }
+      }
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_dY7mlARAzR",
+      "baseShapeId": "$object",
+      "name": "GUID"
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_dY7mlARAzR",
+      "baseShapeId": "$string"
+    }
+  },
+  {
+    "SetFieldShape": {
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_f1gEaf509l",
+          "shapeId": "shape_qTpcQSuB5x"
+        }
+      }
+    }
+  },
+  {
+    "SetFieldShape": {
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_f1gEaf509l",
+          "shapeId": "shape_dY7mlARAzR"
+        }
+      }
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_dY7mlARAzR",
+      "baseShapeId": "$identifier"
+    }
+  },
+  {
+    "SetParameterShape": {
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "shapeId": "shape_dY7mlARAzR",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "$string"
+            }
+          },
+          "consumingParameterId": "$identifierInner"
+        }
+      }
+    }
+  },
+  {
+    "SetAPIName": {
+      "newName": "Pagination Example API"
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "field_Ig1yS3mEqY",
+      "shapeId": "$PaginatedList",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_Ig1yS3mEqY",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "RenameField": {
+      "fieldId": "field_Ig1yS3mEqY",
+      "name": "cursor"
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_0GmD1BY23d",
+      "baseShapeId": "$object",
+      "name": "PaginationCursor"
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_0GmD1BY23d",
+      "baseShapeId": "$string"
+    }
+  },
+  {
+    "SetParameterShape": {
+      "shapeDescriptor": {
+        "ProviderInField": {
+          "fieldId": "field_SWppoWn6kT",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "shape_qTpcQSuB5x"
+            }
+          },
+          "consumingParameterId": "$listItem"
+        }
+      }
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_8TVVNNgpwu",
+      "baseShapeId": "$object",
+      "name": "OwnerList"
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_8TVVNNgpwu",
+      "baseShapeId": "$PaginatedList"
+    }
+  },
+  {
+    "SetParameterShape": {
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "shapeId": "shape_8TVVNNgpwu",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "shape_tUBNMqrbH8"
+            }
+          },
+          "consumingParameterId": "$PaginatedList:Item"
+        }
+      }
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "field_qkv5nIoEN5",
+      "shapeId": "shape_tUBNMqrbH8",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_qkv5nIoEN5",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "RenameField": {
+      "fieldId": "field_qkv5nIoEN5",
+      "name": "id"
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_K1mHwJPVd3",
+      "baseShapeId": "$object",
+      "name": "OwnerId"
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "field_TPN9cLD6hu",
+      "shapeId": "shape_K1mHwJPVd3",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_TPN9cLD6hu",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_K1mHwJPVd3",
+      "baseShapeId": "$reference"
+    }
+  },
+  {
+    "SetParameterShape": {
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "shapeId": "shape_K1mHwJPVd3",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "shape_tUBNMqrbH8"
+            }
+          },
+          "consumingParameterId": "$referenceInner"
+        }
+      }
+    }
+  },
+  {
+    "SetFieldShape": {
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_qkv5nIoEN5",
+          "shapeId": "shape_dY7mlARAzR"
+        }
+      }
+    }
+  },
+  {
+    "AddPathComponent": {
+      "pathId": "request_SCaG2kjzg6",
+      "parentPathId": "root",
+      "name": "owners"
+    }
+  },
+  {
+    "AddRequest": {
+      "requestId": "request_BhmawMJu8m",
+      "pathId": "request_SCaG2kjzg6",
+      "httpMethod": "GET"
+    }
+  },
+  {
+    "AddResponse": {
+      "responseId": "request_C1EeiMI7SK",
+      "requestId": "request_BhmawMJu8m",
+      "httpStatusCode": 200
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_YPyuORdmZ7",
+      "baseShapeId": "$object",
+      "name": ""
+    }
+  },
+  {
+    "SetResponseBodyShape": {
+      "responseId": "request_C1EeiMI7SK",
+      "bodyDescriptor": {
+        "httpContentType": "application/json",
+        "shapeId": "shape_YPyuORdmZ7",
+        "isRemoved": false
+      }
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "field_NRmpjnQnlJ",
+      "shapeId": "shape_YPyuORdmZ7",
+      "name": "",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "field_NRmpjnQnlJ",
+          "shapeId": "$string"
+        }
+      }
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_YPyuORdmZ7",
+      "baseShapeId": "shape_8TVVNNgpwu"
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_YPyuORdmZ7",
+      "baseShapeId": "$PaginatedList"
+    }
+  },
+  {
+    "SetParameterShape": {
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "shapeId": "shape_YPyuORdmZ7",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "shape_tUBNMqrbH8"
+            }
+          },
+          "consumingParameterId": "$PaginatedList:Item"
+        }
+      }
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "shape_dY7mlARAzR",
+      "key": "description",
+      "value": "All of the Identifiers in our domain are GUIDs"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "shape_0GmD1BY23d",
+      "key": "description",
+      "value": ""
+    }
+  },
+  {
+    "AddQueryParameter": {
+      "parameterId": "request_CE2cRK6xKK",
+      "requestId": "request_fWhN94kA3S",
+      "name": ""
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_XLPHnDKXXo",
+      "baseShapeId": "$string",
+      "name": ""
+    }
+  },
+  {
+    "SetQueryParameterShape": {
+      "parameterId": "request_CE2cRK6xKK",
+      "parameterDescriptor": {
+        "shapeId": "shape_XLPHnDKXXo",
+        "isRemoved": false
+      }
+    }
+  },
+  {
+    "RenameQueryParameter": {
+      "parameterId": "request_CE2cRK6xKK",
+      "name": "cursor"
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_XLPHnDKXXo",
+      "baseShapeId": "shape_0GmD1BY23d"
+    }
+  },
+  {
+    "AddQueryParameter": {
+      "parameterId": "request_dX8sdgiZyz",
+      "requestId": "request_BhmawMJu8m",
+      "name": ""
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_QtFmCKNWpz",
+      "baseShapeId": "$string",
+      "name": ""
+    }
+  },
+  {
+    "SetQueryParameterShape": {
+      "parameterId": "request_dX8sdgiZyz",
+      "parameterDescriptor": {
+        "shapeId": "shape_QtFmCKNWpz",
+        "isRemoved": false
+      }
+    }
+  },
+  {
+    "RenameQueryParameter": {
+      "parameterId": "request_dX8sdgiZyz",
+      "name": "cursor"
+    }
+  },
+  {
+    "SetBaseShape": {
+      "shapeId": "shape_QtFmCKNWpz",
+      "baseShapeId": "shape_0GmD1BY23d"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "request_SCaG2kjzg6",
+      "key": "name",
+      "value": "Owners"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "request_rGLxpNgYVs",
+      "key": "name",
+      "value": "Pets Collection"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "request_SCaG2kjzg6",
+      "key": "name",
+      "value": "Owners Collection"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "request_BhmawMJu8m",
+      "key": "description",
+      "value": "a paginated list of Owners"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "request_fWhN94kA3S",
+      "key": "description",
+      "value": "a paginated list of Pets"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "$PaginatedList",
+      "key": "description",
+      "value": "PaginatedList is a composable shape that takes a parameter (named Item) indicating what shape "
+    }
+  },
+  {
+    "SetFieldShape": {
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "$PaginatedList.items",
+          "shapeId": "$list"
+        }
+      }
+    }
+  },
+  {
+    "SetParameterShape": {
+      "shapeDescriptor": {
+        "ProviderInField": {
+          "fieldId": "$PaginatedList.items",
+          "providerDescriptor": {
+            "ParameterProvider": {
+              "shapeParameterId": "$PaginatedList:Item"
+            }
+          },
+          "consumingParameterId": "$listItem"
+        }
+      }
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "$PaginatedList",
+      "key": "description",
+      "value": "PaginatedList is a composable shape that takes a parameter (named Item) indicating the shape of each member of the list"
+    }
+  },
+  {
+    "SetAPIName": {
+      "newName": "Pagination Example"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "$PaginatedList",
+      "key": "description",
+      "value": "PaginatedList is a composable shape that takes a parameter (named Item) indicating the shape of each member of the list. This API uses a PaginationCursor to support infinite-scroll pagination. \n\nA PaginatedList response will provide the cursor for the next page of items."
+    }
   }
 ]
