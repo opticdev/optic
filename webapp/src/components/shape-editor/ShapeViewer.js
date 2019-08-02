@@ -32,7 +32,7 @@ export function cheapEquals(item1, item2) {
     return JSON.stringify(item1) === JSON.stringify(item2)
 }
 
-const buttonStyle = { paddingLeft: '.25em', paddingRight: '.25em' }
+const buttonStyle = { paddingLeft: '.35em', paddingRight: '.35em' }
 
 function Chooser({ choices, parameterChoices, setShouldShowConceptModal, onSelect }) {
     const [shouldShowParameterChoices, setShouldShowParameterChoices] = React.useState(false)
@@ -41,7 +41,8 @@ function Chooser({ choices, parameterChoices, setShouldShowConceptModal, onSelec
     return (
         <div>
             <div style={{ display: 'flex' }}>
-                <div>Change to:</div>
+                <Typography variant="subtitle1" style={{marginTop: 4, paddingRight: 5, fontSize: 11}}>Change to:</Typography>
+                <div style={{marginTop: -2, display: 'flex'}}>
                 {list
                     .map(choice => {
                         const { id, displayName, color } = choice
@@ -58,6 +59,7 @@ function Chooser({ choices, parameterChoices, setShouldShowConceptModal, onSelec
                         )
                     })
                 }
+                </div>
                 <div style={{ flex: 1 }}>&nbsp;</div>
                 <div>
                     {!shouldShowParameterChoices && parameterChoices.length > 0 ? (

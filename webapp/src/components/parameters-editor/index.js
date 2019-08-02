@@ -89,6 +89,11 @@ const styles = theme => ({
         // '&:hover': {
         //     borderLeft: '1px solid red'
         // }
+    },
+    shapeEditorContainer: {
+        padding: 10,
+        borderRadius: 5,
+        backgroundColor: '#f8f8f8'
     }
 });
 
