@@ -13,7 +13,8 @@ const styles = theme => ({
         cursor: 'pointer',
         '&:disabled': {
             cursor: 'inherit'
-        }
+        },
+        outline: 'none'
     },
 });
 
