@@ -44,7 +44,7 @@ object CommandSerialization {
         (j: Json) => Try(decodeRequestCommand(j).right.get),
         (j: Json) => Try(decodeRfcCommand(j).right.get),
         (j: Json) => {
-          println(j)
+//          println(j)
           Try(j.as[ContributionCommand].right.get)
         }
       )

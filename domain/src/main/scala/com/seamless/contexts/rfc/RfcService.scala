@@ -23,6 +23,8 @@ class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[R
     repository.findById(id)
   }
 
+  def listEvents(id: AggregateId) = eventStore.listEvents(id)
+
   @JSExport
   def commandHandlerForAggregate(id: AggregateId): js.Function1[RfcCommand, Unit] = (command: RfcCommand) => {
     handleCommand(id, command)
@@ -42,8 +44,8 @@ object RfcServiceJSFacade {
     commands.foreach(command => {
       val result = Try(service.handleCommand(id, command))
       if (result.isFailure) {
-        println(command)
-        println(result)
+//        println(command)
+//        println(result)
         throw result.failed.get
       }
     })

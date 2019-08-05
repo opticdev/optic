@@ -15,6 +15,8 @@ case class ContributionWrapper(all: Map[String, Map[String, String]]) {
     all.get(id).flatMap(_.get(key)).orUndefined
   }
 
+  def get(id: String, key: String): Option[String] = all.get(id).flatMap(_.get(key))
+
   def asJsDictionary: Dictionary[Dictionary[String]] = {
     import js.JSConverters._
     all.mapValues(_.toJSDictionary).toJSDictionary

@@ -11,7 +11,7 @@ abstract class ProjectionLogic[Event, InternalState <: InternalProjectionState] 
   //Internal routing logic
   final def dependsOn[InternalDep <: InternalProjectionState](slug: String, projectionLogic: ProjectionLogic[Event, InternalDep]): Unit = {
     require(projectionLogic.getClass != this.getClass, "projections can't depend on themselves")
-    println(_dependencies.map(_._1))
+//    println(_dependencies.map(_._1))
     _dependencies append ((slug, projectionLogic.asInstanceOf[ProjectionLogic[Event, InternalProjectionState]]))
   }
 

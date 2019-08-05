@@ -183,7 +183,6 @@ case class ShapesState(
   }
 
   def withShapeParameterShape(shapeDescriptor: ParameterShapeDescriptor) = {
-    println(shapeDescriptor)
     shapeDescriptor match {
       case p: NoProvider => this
       case p: ProviderInField => {
