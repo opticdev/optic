@@ -1,6 +1,6 @@
 package com.seamless.oas.export
 
-import com.seamless.contexts.requests.Commands.{BodyDescriptor, ShapedBodyDescriptor}
+import com.seamless.contexts.requests.Commands.{BodyDescriptor, ParameterizedPathComponentDescriptor, PathComponentDescriptor, ShapedBodyDescriptor}
 import com.seamless.contexts.requests.{HttpRequest, HttpResponse}
 import com.seamless.contexts.rfc.{InMemoryQueries, RfcService}
 import com.seamless.oas.export.WriteSchemas._
@@ -50,18 +50,29 @@ class OASExport(queries: InMemoryQueries, rfcService: RfcService, options: OASEx
       }
     }
 
-    Operation(operationId, summary, description, requestBody, responses, Map())
+    Operation(operationId, summary, description, requestBody, responses)
   }
 
 
   def oasOperations = {
+
+    def pathParametersForLeaf(id: String) = {
+      val searchPaths = pathMapping.find(_.pathId == id).get._parentPathIds :+ id
+      searchPaths.map(i => {
+        queries.requestsState.pathComponents(i).descriptor
+      }).collect {
+        //hardcoding string for now
+        case param: ParameterizedPathComponentDescriptor => PathParameter(param.name, Json.obj("type" -> Json.fromString("string")))
+      }
+    }
+
     val pathIdsWithRequests = queries.pathsWithRequests.values.toSet
     pathIdsWithRequests.map(pathId => Path( pathMapping.find(_.pathId == pathId).get.absolutePath , {
       queries.pathsWithRequests.collect { case i if i._2 == pathId && !requestForId(i._1).isRemoved =>
           val request = requestForId(i._1)
           request.requestDescriptor.httpMethod.toLowerCase -> operationFromRequest(request)
       }.toVector.sortBy(_._1).toMap
-    }))
+    }, pathParametersForLeaf(pathId)))
   }
 
   def fullOASDescription = {
@@ -74,7 +85,7 @@ class OASExport(queries: InMemoryQueries, rfcService: RfcService, options: OASEx
       "paths" -> Json.obj(
         oasOperations.toVector.sortBy(_.absolutePath).map(path => {
           path.absolutePath -> Json.obj(
-            path.operations.toVector.sortBy(_._1).map { case (k, v) => k -> v.toJson }:_*
+            (path.operations.toVector.sortBy(_._1).map { case (k, v) => k -> v.toJson } :+ path.pathParametersToJson ):_*
           )
         }):_*
       ),

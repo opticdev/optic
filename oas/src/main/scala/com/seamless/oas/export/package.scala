@@ -50,8 +50,7 @@ package object export {
                          summary: Option[String],
                          description: Option[String],
                          requestBody: Option[Body],
-                         responses: Vector[(String, Response)],
-                         parameters: Map[String, String]) {
+                         responses: Vector[(String, Response)]) {
 
       def toJson = {
         var json = Json.obj().asObject.get
@@ -77,7 +76,28 @@ package object export {
 
     }
 
-    case class Path(absolutePath: String, operations: Map[String, Operation])
+
+    case class PathParameter(name: String, asJsonSchema: Json) {
+      def toJson = {
+        Json.obj(
+          "in" -> Json.fromString("path"),
+          "name" -> Json.fromString(name),
+          "required" -> Json.fromBoolean(true),
+          "schema" -> asJsonSchema
+        )
+      }
+    }
+
+    case class Path(absolutePath: String, operations: Map[String, Operation], pathParameters: Vector[PathParameter]) {
+      def pathParametersToJson = {
+        println(
+          absolutePath+" "+
+          pathParameters.length
+        )
+        "parameters" -> Json.arr( pathParameters.sortBy(p => absolutePath.indexOf("{"+p+"}")).map(_.toJson):_*)
+      }
+
+    }
 
   }
 

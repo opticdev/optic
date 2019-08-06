@@ -47,7 +47,9 @@ class JsonSchemaBuilder(shapesState: ShapesState, namedShapes: Map[ShapeId, Name
 
     val shape = shapesState.flattenedShape(id)
 
-    if (shape.renderedInline && !shape.baseShapeId.isIDType) {
+    if (shape.coreShapeId.isAnyType) {
+      return schema
+    } else if (shape.renderedInline && !shape.baseShapeId.isIDType) {
 
       schema.assignType(shape.jsonSchemaType)
 
@@ -163,7 +165,7 @@ class JsonSchemaBuilder(shapesState: ShapesState, namedShapes: Map[ShapeId, Name
 
   def referenceFromListTypeParameter(shapeId: ShapeId): Json = {
     val schema = new JsonSchemaWrite
-    if (shapeId.isCoreShape) {
+    if (shapeId.isCoreShape && !shapeId.isAnyType) {
       schema.assignType(shapeId.jsonSchemaType)
     } else if (definitionsURIs.contains(shapeId)) {
       schema.addRef(Json.fromString(definitionsURIs(shapeId)))
@@ -223,6 +225,7 @@ object FlattenedShapeHelpers {
     ).contains(shapeId)
 
     def isIDType = Set("$identifier", "$reference").contains(shapeId)
+    def isAnyType = Set("$any").contains(shapeId)
     def jsonSchemaType: Json = {
       //'$string', '$number', '$boolean', '$object', '$list', '$map', /*'$oneOf',*/ '$identifier', '$reference', '$any'
       shapeId match {
