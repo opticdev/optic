@@ -6,7 +6,7 @@ import * as niceTry from 'nice-try'
 import * as path from 'path'
 // @ts-ignore
 import cli from 'cli-ux'
-import { readmePath, specStorePath, basePath, configPath, gitignorePath } from '../Paths'
+import { getPaths } from '../Paths'
 import { prepareEvents } from '../PersistUtils'
 import * as yaml from 'js-yaml'
 import analytics from '../lib/analytics'
@@ -43,6 +43,7 @@ export default class Init extends Command {
       analytics.track('init blank')
       await this.blankWithName()
     }
+    const {basePath} = await getPaths()
 
     this.log('\n')
     this.log(`API Spec successfully added to ${basePath} !`)
@@ -87,6 +88,7 @@ export default class Init extends Command {
   }
 
   async createFileTree(events: any[], config?: IApiCliConfig) {
+    const {readmePath, specStorePath, configPath, gitignorePath} = await getPaths()
     const readmeContents = await fs.readFile(path.join(__dirname, '../../resources/docs-readme.md'))
     const files = [
       {

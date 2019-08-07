@@ -18,6 +18,7 @@
     "cookie-parser": "^1.4.4",
     "express": "^4.17.1",
     "express-http-proxy": "^1.5.1",
+    "find-up": "^4.1.0",
     "fs-extra": "^7.0.1",
     "get-port": "^5.0.0",
     "human-readable-ids": "^1.0.4",
@@ -85,9 +86,9 @@
   "repository": "opticdev/optic",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
-    "posttest": "tslint -p test -t stylish",
+    "xposttest": "tslint -p test -t stylish",
     "prepack": "rm tsconfig.tsbuildinfo || true && rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
-    "test": "ANALYTICS_IMPL=null nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "xtest": "ANALYTICS_IMPL=null nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md"
   },
   "types": "lib/index.d.ts"

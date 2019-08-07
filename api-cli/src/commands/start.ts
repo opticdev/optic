@@ -5,11 +5,12 @@ import { ProxyCaptureSession, ICaptureSessionResult } from '../lib/proxy-capture
 import { CommandSession } from '../lib/command-session';
 import * as fs from 'fs-extra'
 import * as path from 'path'
-import { sessionsPath, configPath } from '../Paths';
+import { getPaths } from '../Paths';
 import analytics from '../lib/analytics'
 import * as yaml from 'js-yaml'
 
 async function readApiConfig(): Promise<IApiCliConfig> {
+  const { configPath } = await getPaths()
   const rawFile = await fs.readFile(configPath)
   const parsed = yaml.safeLoad(rawFile.toString())
   return parsed
@@ -55,6 +56,7 @@ export default class Start extends Command {
     }
     const fileName = `${result.session.start.toISOString()}-${result.session.end.toISOString()}.optic_session.json`
     this.log(`Logging ${result.samples.length} API interaction(s)`)
+    const { sessionsPath } = await getPaths()
     const filePath = path.join(sessionsPath, fileName)
     await fs.ensureFile(filePath)
     await fs.writeJSON(filePath, result)
