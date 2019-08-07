@@ -76,6 +76,10 @@ export default class Start extends Command {
 
     this.log(`[optic] Starting command: ${config.commands.start}`)
     const anyKeyPromise = cli.anykey('Press any key to stop API server')
+      .catch((e) => {
+        // if we don't catch ctrl+c here then .anykey() throws an error
+        // console.error(e)
+      })
     this.log(`\n`)
 
     await commandSession.start({
@@ -83,7 +87,9 @@ export default class Start extends Command {
       environmentVariables: {}
     })
 
-    const commandStoppedPromise = new Promise((resolve) => commandSession.events.on('stopped', resolve))
+    const commandStoppedPromise = new Promise((resolve) => {
+      commandSession.events.on('stopped', () => resolve())
+    })
 
     await Promise.race([anyKeyPromise, commandStoppedPromise])
 

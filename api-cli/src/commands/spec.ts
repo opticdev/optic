@@ -55,7 +55,7 @@ export default class Spec extends Command {
     })
 
     await app.listen(port)
-    const url = 'http://localhost:3200'
+    const url = `http://localhost:${port}`
     this.log('opening api spec on ' + url)
     this.log('keep this process running...')
     await open(url)

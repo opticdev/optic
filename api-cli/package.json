@@ -26,7 +26,6 @@
     "mixpanel": "^0.10.2",
     "nice-try": "^2.0.0",
     "open": "^6.3.0",
-    "tree-kill": "^1.2.1",
     "tslib": "^1.9.3"
   },
   "devDependencies": {

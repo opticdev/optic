@@ -1,5 +1,4 @@
 import { ChildProcess, spawn, SpawnOptions } from 'child_process';
-import * as kill from 'tree-kill';
 import { EventEmitter } from 'events';
 
 export interface ICommandSessionConfig {
@@ -25,7 +24,7 @@ class CommandSession {
         this.isRunning = true;
 
         this.child = spawn(config.command, taskOptions);
-
+        
         this.events.once('stopped', (e) => {
             this.isRunning = false
         })
@@ -38,7 +37,7 @@ class CommandSession {
 
     stop() {
         if (this.isRunning && this.child) {
-            kill(this.child.pid);
+            this.child.kill()
             this.events.emit('stopped', { state: 'terminated' })
         }
     }
