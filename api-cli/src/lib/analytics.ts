@@ -32,10 +32,10 @@ class MixpanelAnalytics implements IAnalytics {
 }
 
 const providers: { [key: string]: any } = {
-    mixpanel: () => new MixpanelAnalytics(process.env.MIXPANEL_TOKEN as string),
+    mixpanel: () => new MixpanelAnalytics(process.env.MIXPANEL_TOKEN as string || '78a42ccba0e9a55de00c30b454c5da8e'),
     null: () => new NullAnalytics()
 }
-const analyticsProviderFactory = providers[process.env.ANALYTICS_IMPL || 'null'] || providers.null
+const analyticsProviderFactory = providers[process.env.ANALYTICS_IMPL || 'mixpanel'] || providers.null
 const analytics = analyticsProviderFactory()
 
 export default analytics

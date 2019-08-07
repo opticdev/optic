@@ -3,7 +3,7 @@ import * as fs from 'fs-extra'
 // @ts-ignore
 import * as niceTry from 'nice-try'
 import * as path from 'path'
-import {specStorePath} from '../Paths'
+import {getPaths} from '../Paths'
 import {prepareEvents} from '../PersistUtils'
 import * as express from 'express'
 import * as getPort from 'get-port'
@@ -17,6 +17,7 @@ export default class Spec extends Command {
   static args = []
 
   async run() {
+    const {specStorePath} = await getPaths()
     if (fs.existsSync(specStorePath)) {
       const events = niceTry(() => {
         const savedEvents = fs.readFileSync(specStorePath).toString()
@@ -35,6 +36,7 @@ export default class Spec extends Command {
   }
 
   async startServer(events: any[]) {
+    const {specStorePath} = await getPaths()
     let updatedEvents = events
 
     const app = express()
