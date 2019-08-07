@@ -12,7 +12,7 @@ import * as open from 'open'
 
 export default class Spec extends Command {
 
-  static description = 'Read the docs and design the spec for this API'
+  static description = 'Read the docs and design the API'
 
   static args = []
 

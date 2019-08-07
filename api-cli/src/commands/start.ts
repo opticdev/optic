@@ -26,7 +26,7 @@ async function readApiConfig(): Promise<IApiCliConfig> {
 }
 
 export default class Start extends Command {
-  static description = 'captures traffic flowing through your API server'
+  static description = 'documents your API by monitoring local traffic'
 
   static flags = {}
 
@@ -38,13 +38,13 @@ export default class Start extends Command {
       config = await readApiConfig()
     } catch (e) {
       analytics.track('api start missing config')
-      this.log(`Optic needs some more information to continue.`)
+      this.log(`[incomplete setup] Optic needs some more information to continue.`)
       await Init.run([])
       return
     }
     analytics.track('api start', { name: config.name })
     const result = await this.runProxySession(config)
-    analytics.track('api start session complete', { name: config.name, sampleCount: result.samples.length })
+    analytics.track('api server stopped. ', { name: config.name, sampleCount: result.samples.length })
     await this.flushSession(result)
   }
 
@@ -54,7 +54,7 @@ export default class Start extends Command {
       return null
     }
     const fileName = `${result.session.start.toISOString()}-${result.session.end.toISOString()}.optic_session.json`
-    this.log(`Writing ${result.samples.length} API interaction(s) to ${fileName}`)
+    this.log(`Logging ${result.samples.length} API interaction(s)`)
     const filePath = path.join(sessionsPath, fileName)
     await fs.ensureFile(filePath)
     await fs.writeJSON(filePath, result)
@@ -75,7 +75,7 @@ export default class Start extends Command {
     this.log(`[optic] Forwarding requests to ${config.proxy.target}`)
 
     this.log(`[optic] Starting command: ${config.commands.start}`)
-    const anyKeyPromise = cli.anykey('Press any key to stop listening')
+    const anyKeyPromise = cli.anykey('Press any key to stop API server')
     this.log(`\n`)
 
     await commandSession.start({

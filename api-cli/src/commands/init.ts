@@ -26,7 +26,7 @@ export interface IApiCliConfig {
 
 export default class Init extends Command {
 
-  static description = 'start a Seamless API Spec in your repo'
+  static description = 'add Optic to your API'
 
   static flags = {
     paste: flags.boolean({}),
@@ -46,16 +46,16 @@ export default class Init extends Command {
 
     this.log('\n')
     this.log(`API Spec successfully added to ${basePath} !`)
-    this.log(` - Run 'api start' to document your API`)
+    this.log(` - Run 'api start' to run your API.`)
     this.log(` - Run 'api spec' to view and edit the specification`)
   }
 
   async blankWithName() {
-    const name = await cli.prompt('API name')
-    const command = await cli.prompt('command to start API')
+    const name = await cli.prompt('What is the name of this API?')
+    const command = await cli.prompt('What command is used to start the API? (e.g. npm start)')
     const proxyTarget = await cli.prompt('API server location (e.g. http://localhost:3000)')
-    const proxyPort = 55555
-    this.log('Thanks!')
+    const proxyPort = 30333
+    this.log('Optic is setup!')
     const config: IApiCliConfig = {
       name,
       commands: {
