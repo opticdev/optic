@@ -1,11 +1,9 @@
-import {Command, flags} from '@oclif/command'
+import {Command} from '@oclif/command'
 import * as fs from 'fs-extra'
-import * as clipboardy from 'clipboardy'
 // @ts-ignore
 import * as niceTry from 'nice-try'
 import * as path from 'path'
-import cli from 'cli-ux'
-import {readmePath, specStorePath} from '../Paths'
+import {specStorePath} from '../Paths'
 import {prepareEvents} from '../PersistUtils'
 import * as express from 'express'
 import * as getPort from 'get-port'
