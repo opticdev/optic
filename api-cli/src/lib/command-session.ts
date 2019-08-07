@@ -1,5 +1,6 @@
 import { ChildProcess, spawn, SpawnOptions } from 'child_process';
 import { EventEmitter } from 'events';
+import * as treeKill from 'tree-kill'
 
 export interface ICommandSessionConfig {
     command: string
@@ -37,7 +38,7 @@ class CommandSession {
 
     stop() {
         if (this.isRunning && this.child) {
-            this.child.kill()
+            treeKill(this.child.pid)
             this.events.emit('stopped', { state: 'terminated' })
         }
     }
