@@ -54,7 +54,7 @@ export default class Start extends Command {
       return null
     }
     const fileName = `${result.session.start.toISOString()}-${result.session.end.toISOString()}.optic_session.json`
-    this.log(`Logging ${result.samples.length} API interaction(s)`)
+    this.log(`[optic] Observed ${result.samples.length} API interaction(s)`)
     const filePath = path.join(sessionsPath, fileName)
     await fs.ensureFile(filePath)
     await fs.writeJSON(filePath, result)
