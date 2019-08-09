@@ -6,10 +6,12 @@ import * as niceTry from 'nice-try'
 import * as path from 'path'
 // @ts-ignore
 import cli from 'cli-ux'
+import * as fetch from 'node-fetch'
 import { getPaths } from '../Paths'
 import { prepareEvents } from '../PersistUtils'
 import * as yaml from 'js-yaml'
 import analytics from '../lib/analytics'
+import Spec from './spec'
 
 export interface IApiCliProxyConfig {
   target: string
@@ -30,6 +32,7 @@ export default class Init extends Command {
 
   static flags = {
     paste: flags.boolean({}),
+    import: flags.string(),
   }
 
   static args = []
@@ -39,6 +42,9 @@ export default class Init extends Command {
     if (flags.paste) {
       analytics.track('init from web')
       await this.webImport()
+    } else if (flags.import) {
+      analytics.track('init from local oas')
+      await this.importOas(flags.import)
     } else {
       analytics.track('init blank')
       await this.blankWithName()
@@ -116,5 +122,36 @@ sessions/
       await fs.ensureFile(file.path)
       await fs.writeFile(file.path, file.contents)
     })
+  }
+
+  async importOas(oasFilePath: string) {
+
+    const absolutePath = path.resolve(oasFilePath)
+    const fileContents = niceTry(() => fs.readFileSync(absolutePath).toString())
+    if (!fileContents) {
+      return this.error(`No OpenAPI file found at ${absolutePath}`)
+    }
+
+    cli.action.start('Parsing OpenAPI file (this takes a few seconds)')
+
+    // @ts-ignore
+    const response = await fetch('https://ayiz1s0f8f.execute-api.us-east-2.amazonaws.com/production/oas/coversion/events', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({fileContents})
+    });
+
+    cli.action.stop()
+
+    if (response.status === 200) {
+      const events = await response.json()
+      return await this.createFileTree(events)
+    } else {
+      return this.error(`OAS parse error` + await response.text())
+    }
+
   }
 }

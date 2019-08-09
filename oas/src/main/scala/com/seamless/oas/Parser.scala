@@ -60,12 +60,13 @@ object Parser {
       service
     }
 
+    val events = service.listEvents("test")
     val executionsTime = ExecutionsTime(jsonParseTime, definitionsCommandStreamTime, endpointsCommandStreamTime, buildSnapshotTime)
 
-    ParseResult(resolver.oas_version, executionsTime, allCommands, service.currentState("test"), resolver)
+    ParseResult(resolver.oas_version, executionsTime, allCommands, events, service.currentState("test"), resolver)
   }
 
-  case class ParseResult(oas_version: String, executionTime: ExecutionsTime, commands: Vector[RfcCommand], snapshot: RfcState, resolver: OASResolver)
+  case class ParseResult(oas_version: String, executionTime: ExecutionsTime, commands: Vector[RfcCommand], events: Vector[RfcEvent], snapshot: RfcState, resolver: OASResolver)
   case class ExecutionsTime(jsonParseTime: Long, definitionsCommandStream: Long, endpointsCommandStream: Long, buildSnapshot: Long) {
     def total: Long = jsonParseTime + definitionsCommandStream + endpointsCommandStream + buildSnapshot
 
