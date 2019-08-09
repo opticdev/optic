@@ -20,6 +20,7 @@ export async function getPaths() {
     const readmePath = path.join(basePath, 'readme-docs.md')
     const gitignorePath = path.join(basePath, '.gitignore')
     const sessionsPath = path.join(basePath, 'sessions')
+    const outputPath = path.join(basePath, 'output')
 
     return {
         cwd,
@@ -29,5 +30,6 @@ export async function getPaths() {
         readmePath,
         gitignorePath,
         sessionsPath,
+        outputPath
     }
 }
