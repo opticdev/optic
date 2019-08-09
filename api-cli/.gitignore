@@ -9,3 +9,4 @@ node_modules/
 .idea/
 .npmrc
 resources/react
+.api/
