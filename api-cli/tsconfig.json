@@ -12,8 +12,5 @@
   },
   "include": [
     "src/**/*"
-  ],
-  "files": [
-    "src/static/package.json"
   ]
 }

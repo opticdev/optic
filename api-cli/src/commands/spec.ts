@@ -1,11 +1,9 @@
-import {Command, flags} from '@oclif/command'
+import {Command} from '@oclif/command'
 import * as fs from 'fs-extra'
-import * as clipboardy from 'clipboardy'
 // @ts-ignore
 import * as niceTry from 'nice-try'
 import * as path from 'path'
-import cli from 'cli-ux'
-import {readmePath, specStorePath} from '../Paths'
+import {getPaths} from '../Paths'
 import {prepareEvents} from '../PersistUtils'
 import * as express from 'express'
 import * as getPort from 'get-port'
@@ -14,11 +12,12 @@ import * as open from 'open'
 
 export default class Spec extends Command {
 
-  static description = 'Read the docs and design the spec for this API'
+  static description = 'Read the docs and design the API'
 
   static args = []
 
   async run() {
+    const {specStorePath} = await getPaths()
     if (fs.existsSync(specStorePath)) {
       const events = niceTry(() => {
         const savedEvents = fs.readFileSync(specStorePath).toString()
@@ -37,6 +36,7 @@ export default class Spec extends Command {
   }
 
   async startServer(events: any[]) {
+    const {specStorePath} = await getPaths()
     let updatedEvents = events
 
     const app = express()
@@ -57,7 +57,7 @@ export default class Spec extends Command {
     })
 
     await app.listen(port)
-    const url = 'http://localhost:3200'
+    const url = `http://localhost:${port}`
     this.log('opening api spec on ' + url)
     this.log('keep this process running...')
     await open(url)
