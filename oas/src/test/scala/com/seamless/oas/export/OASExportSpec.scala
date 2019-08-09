@@ -26,12 +26,12 @@ class OASExportSpec extends FunSpec {
 
   it("can export example as OAS") {
     val exporter = new OASExport(a.queries, a.service)
-    println(exporter.fullOASDescription)
+//    println(exporter.fullOASDescription)
   }
 
   it("can export example as OAS with complex features") {
     val exporter = new OASExport(p.queries, p.service)
-    println(exporter.fullOASDescription)
+//    println(exporter.fullOASDescription)
   }
 
   it("can create a json schema from a simple shape") {
