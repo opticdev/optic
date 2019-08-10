@@ -1,5 +1,4 @@
-import { Command } from '@oclif/command'
-import { cli } from 'cli-ux'
+import { Command, flags } from '@oclif/command'
 import Init, { IApiCliConfig } from './init';
 import { ProxyCaptureSession, ICaptureSessionResult } from '../lib/proxy-capture-session';
 import { CommandSession } from '../lib/command-session';
@@ -29,11 +28,14 @@ async function readApiConfig(): Promise<IApiCliConfig> {
 export default class Start extends Command {
   static description = 'documents your API by monitoring local traffic'
 
-  static flags = {}
+  static flags = {
+    'keep-alive': flags.boolean({ description: 'use this when your command terminates before the server terminates' })
+  }
 
   static args = []
 
   async run() {
+
     let config;
     try {
       config = await readApiConfig()
@@ -51,7 +53,7 @@ export default class Start extends Command {
 
   async flushSession(result: ICaptureSessionResult) {
     if (result.samples.length === 0) {
-      this.log('No API interactions were observed.')
+      this.log('[optic] No API interactions were observed.')
       return null
     }
     const fileName = `${result.session.start.toISOString()}-${result.session.end.toISOString()}.optic_session.json`
@@ -63,6 +65,7 @@ export default class Start extends Command {
   }
 
   async runProxySession(config: IApiCliConfig): Promise<ICaptureSessionResult> {
+    const { flags } = this.parse(Start)
     const proxySession = new ProxyCaptureSession()
     const commandSession = new CommandSession()
 
@@ -77,23 +80,29 @@ export default class Start extends Command {
     this.log(`[optic] Forwarding requests to ${config.proxy.target}`)
 
     this.log(`[optic] Starting command: ${config.commands.start}`)
-    const anyKeyPromise = cli.anykey('Press any key to stop API server')
-      .catch((e) => {
-        // if we don't catch ctrl+c here then .anykey() throws an error
-        // console.error(e)
-      })
     this.log(`\n`)
 
-    await commandSession.start({
-      command: config.commands.start,
-      environmentVariables: {}
-    })
-
+    if (config.commands.start) {
+      await commandSession.start({
+        command: config.commands.start,
+        environmentVariables: {}
+      })
+    }
+    
     const commandStoppedPromise = new Promise((resolve) => {
-      commandSession.events.on('stopped', () => resolve())
+      const { 'keep-alive': keepAlive } = flags
+      if (!keepAlive) {
+        commandSession.events.on('stopped', () => resolve())
+      }
     })
 
-    await Promise.race([anyKeyPromise, commandStoppedPromise])
+    const processInterruptedPromise = new Promise((resolve) => {
+      process.on('SIGINT', () => {
+        resolve()
+      })
+    })
+
+    await Promise.race([commandStoppedPromise, processInterruptedPromise])
 
     commandSession.stop()
     proxySession.stop()

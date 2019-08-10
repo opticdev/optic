@@ -11,7 +11,6 @@ import { getPaths } from '../Paths'
 import { prepareEvents } from '../PersistUtils'
 import * as yaml from 'js-yaml'
 import analytics from '../lib/analytics'
-import Spec from './spec'
 
 export interface IApiCliProxyConfig {
   target: string
@@ -59,8 +58,11 @@ export default class Init extends Command {
 
   async blankWithName() {
     const name = await cli.prompt('What is the name of this API?')
-    const command = await cli.prompt('What command is used to start the API? (e.g. npm start)')
-    const proxyTarget = await cli.prompt('API server location (e.g. http://localhost:3000)')
+    analytics.track('init setup name', {name})
+    const command = await cli.prompt('What command is used to start the API? (e.g. npm start)', {default: 'npm start'})
+    analytics.track('init setup command', {command})
+    const proxyTarget = await cli.prompt('API server location (e.g. http://localhost:3000)', {default: 'http://localhost:3000'})
+    analytics.track('init setup proxyTarget', {proxyTarget})
     const proxyPort = 30333
     this.log('Optic is setup!')
     const config: IApiCliConfig = {
