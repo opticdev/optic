@@ -4,6 +4,7 @@ import * as clipboardy from 'clipboardy'
 // @ts-ignore
 import * as niceTry from 'nice-try'
 import * as path from 'path'
+import * as colors from 'colors'
 // @ts-ignore
 import cli from 'cli-ux'
 import * as fetch from 'node-fetch'
@@ -57,13 +58,25 @@ export default class Init extends Command {
   }
 
   async blankWithName() {
+
+    this.log(colors.bold(colors.blue(' \nSetup continuous documentation for your API:\n')))
+
     const name = await cli.prompt('What is the name of this API?')
     analytics.track('init setup name', {name})
-    const command = await cli.prompt('What command is used to start the API? (e.g. npm start)', {default: 'npm start'})
-    analytics.track('init setup command', {command})
-    const proxyTarget = await cli.prompt('API server location (e.g. http://localhost:3000)', {default: 'http://localhost:3000'})
-    analytics.track('init setup proxyTarget', {proxyTarget})
-    const proxyPort = 30333
+    const port = await cli.prompt('What port does your API run on locally? (e.g. 3000)')
+    analytics.track('runs on', 3000)
+    const command = await cli.prompt('What command is used to start the API? (e.g npm start)')
+    analytics.track('uses command', command)
+    this.log(colors.bold(colors.blue(' \nAlmost there! You need to make one small code change:')))
+    this.log(`Now you have to change the port your API listens on to the one Optic assigns it.`)
+    this.log(`Your API will still be accessible on port ${port} through Optic's proxy`)
+    this.log(`${colors.bgRed(`app.listen(${port})`)} -> ${colors.black(colors.bgGreen(`app.listen(process.env.OPTIC_API_PORT)`))}\n`)
+
+    this.log(colors.yellow('Need help? Click here to chat with one of our developers: ' + 'https://www.useoptic.com/docs?utm_medium=api-cli'))
+
+    await cli.wait(1000)
+    await cli.anykey('Press any key to continue')
+
     this.log('Optic is setup!')
     const config: IApiCliConfig = {
       name,
@@ -71,8 +84,9 @@ export default class Init extends Command {
         start: command
       },
       proxy: {
-        target: proxyTarget,
-        port: proxyPort
+        // tslint:disable-next-line:no-invalid-template-strings
+        target: 'http://localhost:{{ENV.OPTIC_API_PORT}}',
+        port
       }
     }
     const events = [

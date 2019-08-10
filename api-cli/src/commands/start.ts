@@ -4,8 +4,11 @@ import { ProxyCaptureSession, ICaptureSessionResult } from '../lib/proxy-capture
 import { CommandSession } from '../lib/command-session';
 import * as fs from 'fs-extra'
 import * as path from 'path'
+import * as getPort from 'get-port'
 import { getPaths } from '../Paths';
 import analytics from '../lib/analytics'
+// @ts-ignore
+import * as Mustache from 'mustache'
 import * as yaml from 'js-yaml'
 
 async function readApiConfig(): Promise<IApiCliConfig> {
@@ -71,13 +74,24 @@ export default class Start extends Command {
 
     const start = new Date()
 
+    const port = await getPort({port: getPort.makeRange(3300, 3900)})
+    const inputs = {
+      ENV: {
+        OPTIC_API_PORT: port
+      }
+    }
+
+    const processSetting = (value: string) => Mustache.render(value, inputs)
+
+    const target = processSetting(config.proxy.target)
+
     await proxySession.start({
-      target: config.proxy.target,
+      target,
       port: config.proxy.port
     })
 
     this.log(`[optic] Started proxy server listening on http://localhost:${config.proxy.port}`)
-    this.log(`[optic] Forwarding requests to ${config.proxy.target}`)
+    this.log(`[optic] Forwarding requests to ${target}`)
 
     this.log(`[optic] Starting command: ${config.commands.start}`)
     this.log(`\n`)
@@ -85,10 +99,13 @@ export default class Start extends Command {
     if (config.commands.start) {
       await commandSession.start({
         command: config.commands.start,
-        environmentVariables: {}
+        environmentVariables: {
+          ...process.env,
+          OPTIC_API_PORT: inputs.ENV.OPTIC_API_PORT
+        }
       })
     }
-    
+
     const commandStoppedPromise = new Promise((resolve) => {
       const { 'keep-alive': keepAlive } = flags
       if (!keepAlive) {
