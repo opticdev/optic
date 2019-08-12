@@ -182,7 +182,7 @@ class TopBar extends React.Component {
                                 </ToggleButton>
                             </ToggleButtonGroup>
 
-                            <Button color="primary" href="https://docs.useoptic.com" target="_blank"
+                            <Button color="primary" href="https://useoptic.com/docs" target="_blank"
                                     disableRipple={true}>
                                 Docs
                             </Button>
