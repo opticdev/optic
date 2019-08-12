@@ -101,6 +101,7 @@ export default class Start extends Command {
         command: config.commands.start,
         environmentVariables: {
           ...process.env,
+          //@ts-ignore
           OPTIC_API_PORT: inputs.ENV.OPTIC_API_PORT
         }
       })
