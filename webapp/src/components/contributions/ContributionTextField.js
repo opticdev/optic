@@ -8,7 +8,10 @@ const styles = theme => ({
     heading: {
         fontSize: 48,
         color: primary,
-        fontFamily: 'Ubuntu'
+        fontFamily: 'Ubuntu',
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
     },
     inline: {
         fontSize: 16,

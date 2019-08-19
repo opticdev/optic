@@ -37,7 +37,8 @@ const styles = theme => ({
 	subView: {
 		minHeight: 90,
 		flex: 1,
-		padding: 11
+		padding: 11,
+		overflow: 'hidden'
 	},
 	bareLink: {
 		textDecoration: 'none',
@@ -167,7 +168,11 @@ class OverView extends React.Component {
 								{sortedConcepts.map(i => {
 									const to = routerUrls.conceptPage(baseUrl, i.shapeId);
 									return <Link to={to} style={{textDecoration: 'none', color: 'inherit'}}>
-										<ListItem button dense>
+										<ListItem button dense style={{
+											whiteSpace: 'nowrap',
+											overflow: 'hidden',
+											textOverflow: 'ellipsis'
+										}}>
 											<ListItemText primary={i.name}/>
 										</ListItem>
 									</Link>;
