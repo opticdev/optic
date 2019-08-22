@@ -537,6 +537,14 @@
         "version": "a6742e25ac12860727c22a379707e050a126c48c4dd98ddd795a3a33dd0a63c7",
         "signature": "a6742e25ac12860727c22a379707e050a126c48c4dd98ddd795a3a33dd0a63c7"
       },
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts": {
+        "version": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703",
+        "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
+      },
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/login.ts": {
+        "version": "6bea12f4be74617e8921405fb7cd6943908a95cdc2f9abb118fe0d23f4293c23",
+        "signature": "751a14ee7856d28831490414e15d3de3bd49216e8c4f44112d2509c0383d4042"
+      },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/type-fest/source/package-json.d.ts": {
         "version": "194c880a791931344ff527830c3bf7fd37ad5c39ee8682c875e40bb0b8b39ada",
         "signature": "194c880a791931344ff527830c3bf7fd37ad5c39ee8682c875e40bb0b8b39ada"
@@ -548,10 +556,6 @@
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/get-port/index.d.ts": {
         "version": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac",
         "signature": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac"
-      },
-      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts": {
-        "version": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703",
-        "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/spec.ts": {
         "version": "7ea2221c5218ec9d30628524af58d6a94f726bc46713690446d10f4e147917e2",
@@ -1442,6 +1446,21 @@
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts": [
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/child_process.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/login.ts": [
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/express/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/cli-ux/lib/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/type-fest/source/package-json.d.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/type-fest/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
@@ -1455,12 +1474,6 @@
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/get-port/index.d.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/type-fest/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/net.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/index.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts": [
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/child_process.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
@@ -2040,18 +2053,21 @@
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts": [
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/child_process.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/index.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/get-port/index.d.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/type-fest/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/net.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts": [
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/child_process.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/login.ts": [
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts"
       ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/body-parser/index.d.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/connect/index.d.ts",
@@ -2978,10 +2994,11 @@
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/connect/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/body-parser/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/express/index.d.ts",
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts",
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/login.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/type-fest/source/package-json.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/type-fest/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/get-port/index.d.ts",
-      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/spec.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/cookie-parser/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/common.ts",

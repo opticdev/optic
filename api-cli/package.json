@@ -95,7 +95,8 @@
     "xposttest": "tslint -p test -t stylish",
     "prepack": "rm tsconfig.tsbuildinfo || true && rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "xtest": "ANALYTICS_IMPL=null nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif-dev readme && git add README.md"
+    "version": "oclif-dev readme && git add README.md",
+    "postinstall": "api login"
   },
   "types": "lib/index.d.ts"
 }

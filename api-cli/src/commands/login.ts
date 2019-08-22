@@ -1,8 +1,10 @@
 import { Command, flags } from '@oclif/command'
+// @ts-ignore
 import * as fp from 'find-free-port'
 import * as express from 'express'
 import cli from 'cli-ux'
 import * as open from 'open'
+// @ts-ignore
 import * as cors from 'cors'
 import * as colors from 'colors'
 
