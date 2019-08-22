@@ -1,6 +1,6 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.requests.Commands.{BasicPathComponentDescriptor, BodyDescriptor, ParameterizedPathComponentDescriptor, PathComponentDescriptor, PathComponentId, RequestId, RequestParameterId, RequestParameterShapeDescriptor, ResponseId, ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor, UnsetBodyDescriptor, UnsetRequestParameterShapeDescriptor}
+import com.seamless.contexts.requests.Commands._
 
 
 sealed trait RequestsGraph
@@ -175,4 +175,26 @@ case class RequestsState(
     )
   }
 
+  ////////////////////////////////////////////////////////////////////////////////
+
+  def toAbsolutePath(pathId: PathComponentId): String = {
+    if (pathId == rootPathId) {
+      "/"
+    } else {
+      val pathComponent = pathComponents(pathId)
+      val (parentAbsolutePath, name) = pathComponent.descriptor match {
+        case p: BasicPathComponentDescriptor => {
+          (toAbsolutePath(p.parentPathId), p.name)
+        }
+        case p: ParameterizedPathComponentDescriptor => {
+          (toAbsolutePath(p.parentPathId), s"{${p.name}}")
+        }
+      }
+      if (parentAbsolutePath == "/") {
+        "/" + name
+      } else {
+        parentAbsolutePath + "/" + name
+      }
+    }
+  }
 }

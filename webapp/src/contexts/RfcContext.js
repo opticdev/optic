@@ -17,8 +17,6 @@ global.getCommandsAsJson = function () {
 }
 
 class RfcStoreWithoutContext extends React.Component {
-
-
     constructor(props) {
         super(props);
 
@@ -62,11 +60,10 @@ class RfcStoreWithoutContext extends React.Component {
     persistLocal = debounce(async () => {
         const eventString = this.serializeEvents()
 
-        const response = await fetch('/save', {
-            method: 'POST',
+        const response = await fetch('/cli-api/events', {
+            method: 'PUT',
             headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'text/html'
+                'Content-Type': 'application/json'
             },
             body: eventString
         });
@@ -85,14 +82,16 @@ class RfcStoreWithoutContext extends React.Component {
     };
 
     render() {
-        const {queries, hasUnsavedChanges} = this.state;
+        const {queries, hasUnsavedChanges, rfcService, eventStore} = this.state;
         const {rfcId} = this.props;
         const apiName = queries.apiName();
         const contributions = queries.contributions()
 
         const {requests, pathComponents, responses, requestParameters} = queries.requestsState()
+        console.log({pathComponents})
         const pathIdsByRequestId = queries.pathsWithRequests();
         const pathsById = pathComponents;
+        const absolutePaths = Object.keys(pathsById).map(pathId => queries.absolutePath(pathId))
         const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId))
 
         const conceptsById = queries.namedShapes()
@@ -125,6 +124,7 @@ class RfcStoreWithoutContext extends React.Component {
 
         const value = {
             rfcId,
+            rfcService,
             queries,
             cachedQueryResults,
             apiName,

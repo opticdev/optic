@@ -29,6 +29,7 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.requestsState.asJson)
   }
+
   def shapesState(): js.Any = {
     import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.shapesState.asJson)
@@ -56,6 +57,9 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     q.complexityScore
   }
 
+  def absolutePath(pathComponentId: PathComponentId): String = {
+    q.absolutePath(pathComponentId)
+  }
 }
 
 class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
@@ -65,11 +69,13 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
   }
 
   private val pathsWithRequestsCache = new CachedProjection(PathsWithRequestsProjection, events)
+
   def pathsWithRequests: Map[RequestId, PathComponentId] = {
     pathsWithRequestsCache.withEvents(events)
   }
 
   private val contributionsCache = new CachedProjection(ContributionsProjection, events)
+
   def contributions: ContributionWrapper = {
     contributionsCache.withEvents(events)
   }
@@ -82,7 +88,12 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
     service.currentState(aggregateId).shapesState
   }
 
+  def absolutePath(pathId: PathComponentId): String = {
+    service.currentState(aggregateId).requestsState.toAbsolutePath(pathId)
+  }
+
   private val namedShapesCache = new CachedProjection(NamedShapes, events)
+
   def namedShapes: Map[ShapeId, NamedShape] = {
     namedShapesCache.withEvents(events)
   }
@@ -92,6 +103,7 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
   }
 
   private val apiNameCache = new CachedProjection(APINameProjection, events)
+
   def apiName(): String = {
     apiNameCache.withEvents(events)
   }

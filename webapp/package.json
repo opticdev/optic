@@ -49,6 +49,7 @@
     "nice-try": "^2.0.0",
     "notistack": "^0.8.6",
     "optimize-css-assets-webpack-plugin": "5.0.1",
+    "path-to-regexp": "^3.0.0",
     "pnp-webpack-plugin": "1.2.1",
     "postcss-flexbugs-fixes": "4.1.0",
     "postcss-loader": "3.0.0",
@@ -155,6 +156,7 @@
       "jest-watch-typeahead/testname"
     ]
   },
+  "proxy": "http://localhost:3200",
   "babel": {
     "presets": [
       "react-app"
