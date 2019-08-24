@@ -9,7 +9,7 @@ import { getPaths } from '../Paths';
 import analytics from '../lib/analytics'
 import * as yaml from 'js-yaml'
 
-async function readApiConfig(): Promise<IApiCliConfig> {
+export async function readApiConfig(): Promise<IApiCliConfig> {
   const { configPath } = await getPaths()
   const rawFile = await fs.readFile(configPath)
   const parsed = yaml.safeLoad(rawFile.toString())

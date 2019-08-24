@@ -14,7 +14,7 @@ import scala.util.Try
 @JSExportTopLevel("CommandSerialization")
 @JSExportAll
 object CommandSerialization {
-  def toJson(vector: Vector[RfcCommand]): Json = {
+  def toJson(vector: Seq[RfcCommand]): Json = {
     vector.map {
       case shapesCommand: ShapesCommand => shapesCommand.asJson
       case requestCommand: RequestsCommand => requestCommand.asJson
@@ -34,12 +34,14 @@ object CommandSerialization {
 
 
   private def decodeShapesCommand(item: Json): Result[ShapesCommand] = item.as[ShapesCommand]
+
   private def decodeRequestCommand(item: Json): Result[RequestsCommand] = item.as[RequestsCommand]
+
   private def decodeRfcCommand(item: Json): Result[ContributionCommand] = item.as[ContributionCommand]
 
   def fromJson(json: Json): Try[Vector[RfcCommand]] = Try {
     val parseResults = json.asArray.get.map {
-      case i =>  TryChainUtil.firstSuccessIn(i,
+      case i => TryChainUtil.firstSuccessIn(i,
         (j: Json) => Try(decodeShapesCommand(j).right.get),
         (j: Json) => Try(decodeRequestCommand(j).right.get),
         (j: Json) => Try(decodeRfcCommand(j).right.get),
@@ -50,7 +52,21 @@ object CommandSerialization {
       )
     }
     require(parseResults.forall(_.isDefined), "Some commands could not be decoded")
-    parseResults.collect{ case i if i.isDefined => i.get }
+    parseResults.collect { case i if i.isDefined => i.get }
   }
 
+  def fromJsonString(jsonString: String) = {
+    import io.circe.parser._
+
+    val commandsVector =
+      for {
+        json <- Try(parse(jsonString).right.get)
+        commandsVector <- CommandSerialization.fromJson(json)
+      } yield commandsVector
+    if (commandsVector.isFailure) {
+      println(commandsVector.failed.get)
+    }
+    require(commandsVector.isSuccess, "failed to parse and handle commands")
+    commandsVector
+  }
 }

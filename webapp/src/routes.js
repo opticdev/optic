@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect, Switch, Route } from 'react-router-dom';
 import { FocusedRequestStore } from './contexts/FocusedRequestContext.js';
 import { InitialRfcCommandsStore } from './contexts/InitialRfcCommandsContext.js';
-import { RfcStore } from './contexts/RfcContext.js';
+import { RfcStore, LocalRfcStore, LocalDiffRfcStore } from './contexts/RfcContext.js';
 import { PathContext } from './contexts/PathContext.js';
 import PathPage from './components/PathPage.js';
 import ConceptsPage from './components/ConceptsPage';
@@ -17,13 +17,9 @@ import { ImportedOASContext, ImportedOASStore } from './contexts/ImportedOASCont
 import OverView from './components/onboarding/Overview';
 import { EditorStore } from './contexts/EditorContext';
 import { TutorialStore } from './contexts/TutorialContext';
-import { SessionStore, SessionContext } from './contexts/SessionContext';
-
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
+import { SessionStore } from './contexts/SessionContext';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
+import LocalDiffManager from './components/diff/LocalDiffManager'
 
 export const routerPaths = {
 	newRoot: () => '/new',
@@ -144,73 +140,33 @@ class LocalLoader extends React.Component {
 		}
 		return (
 			<InitialRfcCommandsStore initialEventsString={loadedEvents} rfcId="testRfcId">
-				<RfcStore>
-					<Switch>
-						<Route path={routerPaths.localDiff()} component={LocalDiff} />
-						<Route render={() => (
+				<Switch>
+					<Route path={routerPaths.localDiff()} component={LocalDiff} />
+					<Route render={() => (
+						<LocalRfcStore>
 							<TutorialStore>
 								<APIEditorRoutes {...this.props} />
 							</TutorialStore>
-						)} />
-					</Switch>
+						</LocalRfcStore>
+					)} />
+				</Switch>
 
-				</RfcStore>
 			</InitialRfcCommandsStore>
 		);
 	}
 }
 
-const useStyles = makeStyles(theme => ({
-	root: {
-		flexGrow: 1,
-	},
-	title: {
-		flexGrow: 1,
-	},
-}));
-
-function CustomAppBar({ title }) {
-	const classes = useStyles();
-
-	return (
-		<div className={classes.root}>
-			<AppBar position="static">
-				<Toolbar>
-					<Typography variant="h6" className={classes.title}>
-						{title}
-					</Typography>
-				</Toolbar>
-			</AppBar>
-		</div>
-	);
-}
-class LocalDiffManager extends React.Component {
-	render() {
-		return (
-			<SessionContext.Consumer>
-				{(sessionContext) => {
-					// measure progress from sessionContext.diffState and .sessions
-					return (
-						<div>
-							<CustomAppBar title="Review Proposed Changes" />
-							<div>{JSON.stringify(sessionContext.session, null, 2)}</div>
-							<div>{sessionContext.session.samples.length} samples</div>
-						</div>
-					)
-				}}
-			</SessionContext.Consumer>
-		)
-	}
-}
 
 class LocalDiff extends React.Component {
 	render() {
 		const { sessionId } = this.props.match.params
 
 		return (
-			<SessionStore sessionId={sessionId}>
-				<LocalDiffManager />
-			</SessionStore>
+			<LocalDiffRfcStore>
+				<SessionStore sessionId={sessionId}>
+					<LocalDiffManager />
+				</SessionStore>
+			</LocalDiffRfcStore>
 		)
 	}
 }

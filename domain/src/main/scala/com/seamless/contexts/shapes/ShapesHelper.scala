@@ -37,6 +37,52 @@ object ShapesHelper {
     ).asInstanceOf[Vector[RequestsEvent]]
   }
 
+  sealed trait CoreShapeKind
+  case class ObjectKind() extends CoreShapeKind
+  case class ListKind() extends CoreShapeKind
+  case class MapKind() extends CoreShapeKind
+  case class OneOfKind() extends CoreShapeKind
+  case class AnyKind() extends CoreShapeKind
+  case class StringKind() extends CoreShapeKind
+  case class NumberKind() extends CoreShapeKind
+  case class BooleanKind() extends CoreShapeKind
+
+
+  def toCoreShape(shapeEntity: ShapeEntity): CoreShapeKind = {
+    if (shapeEntity.descriptor.baseShapeId == "$object") {
+      return ObjectKind()
+    }
+    if (shapeEntity.descriptor.baseShapeId == "$list") {
+      return ListKind()
+    }
+    if (shapeEntity.descriptor.baseShapeId == "$map") {
+      return MapKind()
+    }
+    if (shapeEntity.descriptor.baseShapeId == "$oneOf") {
+      return OneOfKind()
+    }
+    if (shapeEntity.descriptor.baseShapeId == "$reference") {
+      // need to resolve the parameter
+      return AnyKind()
+    }
+    if (shapeEntity.descriptor.baseShapeId == "$identifier") {
+      // need to resolve the parameter
+      return AnyKind()
+    }
+    if (shapeEntity.descriptor.baseShapeId == "$string") {
+      return StringKind()
+    }
+    if (shapeEntity.descriptor.baseShapeId == "$boolean") {
+      return BooleanKind()
+    }
+    if (shapeEntity.descriptor.baseShapeId == "$number") {
+      return NumberKind()
+    }
+    if (shapeEntity.descriptor.baseShapeId == "$any") {
+      return AnyKind()
+    }
+    AnyKind()
+  }
 }
 
 //STRICTLY FOR TESTING (because everything should go through the root (RfcService))

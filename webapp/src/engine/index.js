@@ -15,3 +15,22 @@ export const Queries = (eventStore, service, aggregateId) => new seamlessEngine.
 export function commandsToJson(commands) {
     return commands.map(x => JSON.parse(seamlessEngine.CommandSerialization.toJsonString(x)))
 }
+export function commandsFromJson(commands) {
+    return seamlessEngine.CommandSerialization.fromJsonString(JSON.stringify(commands))
+}
+
+const { ApiInteraction, ApiRequest, ApiResponse } = seamlessEngine.com.seamless.diff;
+export const JsonHelper = seamlessEngine.com.seamless.diff.JsonHelper()
+function fromJs(x) {
+    return JsonHelper.fromString(JSON.stringify(x))
+}
+
+export function toInteraction(sample) {
+    return ApiInteraction(
+        ApiRequest(sample.request.url, sample.request.method, fromJs(sample.request.body)),
+        ApiResponse(sample.response.statusCode, fromJs(sample.response.body))
+    )
+}
+export const RequestDiffer = seamlessEngine.com.seamless.diff.RequestDiffer()
+export const DiffToCommands = seamlessEngine.com.seamless.diff.DiffToCommands()
+console.log(seamlessEngine)

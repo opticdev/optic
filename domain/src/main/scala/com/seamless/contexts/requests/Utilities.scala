@@ -1,7 +1,11 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.requests.Commands.{rootPathId}
+import com.seamless.contexts.requests.Commands._
 
+import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+
+@JSExport
+@JSExportAll
 object Utilities {
 
   def prefixes(path: String): Vector[String] = {
@@ -73,5 +77,75 @@ object Utilities {
 
         PathComponentInfo(mappedToOriginal.getOrElse(p, Vector.empty), name, id, parentId)
       })
+  }
+
+  def toAbsolutePath(pathId: PathComponentId)(implicit pathComponents: Map[PathComponentId, PathComponent]): String = {
+    if (pathId == rootPathId) {
+      "/"
+    } else {
+      val pathComponent = pathComponents(pathId)
+      val (parentAbsolutePath, name) = pathComponent.descriptor match {
+        case p: BasicPathComponentDescriptor => {
+          (toAbsolutePath(p.parentPathId), p.name)
+        }
+        case p: ParameterizedPathComponentDescriptor => {
+          (toAbsolutePath(p.parentPathId), s":${p.name}")
+        }
+      }
+      if (parentAbsolutePath == "/") {
+        "/" + name
+      } else {
+        parentAbsolutePath + "/" + name
+      }
+    }
+  }
+
+
+  def resolvePath(url: String, pathMap: Map[PathComponentId, PathComponent]): Option[PathComponentId] = {
+    val children = pathMap.toSeq
+      .groupBy((entry) => {
+        val (_, pathComponent) = entry
+        pathComponent.descriptor.parentPathId
+      })
+    val urlComponents = url.split("/").filterNot(_ == "")
+    if (urlComponents.isEmpty) {
+      Some(rootPathId)
+    } else {
+      val lastParent = rootPathId
+      resolveHelper(lastParent, urlComponents, children)
+    }
+  }
+
+  def resolveHelper(lastParent: PathComponentId, urlComponents: Seq[String], children: Map[PathComponentId, Seq[(String, PathComponent)]]): Option[PathComponentId] = {
+    if (urlComponents.isEmpty) {
+      Some(lastParent)
+    } else {
+      val component = urlComponents.head
+      children.get(lastParent) match {
+        case Some(pathComponents) => {
+          //@GOTCHA: might need to group/sort pathComponents to prioritize BasicPathComponentDescriptors
+          val matchingComponent = pathComponents.find(p => p._2.descriptor match {
+            case d: BasicPathComponentDescriptor => {
+              d.name == component
+            }
+            case d: ParameterizedPathComponentDescriptor => {
+              true
+            }
+          })
+          matchingComponent match {
+            case Some(p) => {
+              val remainingComponents = urlComponents.tail
+              resolveHelper(p._1, remainingComponents, children)
+            }
+            case None => {
+              None
+            }
+          }
+        }
+        case None => {
+          None
+        }
+      }
+    }
   }
 }

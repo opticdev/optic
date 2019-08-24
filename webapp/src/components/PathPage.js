@@ -172,7 +172,7 @@ class OperationBase extends React.Component {
     }
 }
 
-const Operation = withRfcContext(withEditorContext(withStyles(styles)(OperationBase)))
+export const Operation = withRfcContext(withEditorContext(withStyles(styles)(OperationBase)))
 
 class ResponseListWithoutContext extends React.Component {
     render() {
@@ -270,7 +270,7 @@ class PathTrailBase extends React.Component {
     }
 }
 
-const PathTrail = withEditorContext(withStyles(pathTrailStyles)(PathTrailBase));
+export const PathTrail = withEditorContext(withStyles(pathTrailStyles)(PathTrailBase));
 
 export function getNormalizedBodyDescriptor(value) {
     if (value && value.ShapedBodyDescriptor) {
@@ -328,7 +328,6 @@ class PathPage extends React.Component {
     renderNotFound() {
         const { classes } = this.props
         return (
-
             <Editor>
                 <FullSheet>
                     <div className={classes.root}>
@@ -345,9 +344,9 @@ class PathPage extends React.Component {
     };
 
     render() {
-        const { classes, handleCommands, pathId, focusedRequestId, cachedQueryResults, mode, apiName, switchEditorMode } = this.props;
+        const { classes, handleCommands, pathId, focusedRequestId, cachedQueryResults, mode, switchEditorMode } = this.props;
 
-        const { requests, responses, requestParameters, pathsById, requestIdsByPathId } = cachedQueryResults;
+        const { apiName, requests, responses, requestParameters, pathsById, requestIdsByPathId } = cachedQueryResults;
 
         const path = pathsById[pathId];
 

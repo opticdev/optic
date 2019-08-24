@@ -3,6 +3,7 @@ package com.seamless.contexts.rfc
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.ddd.{AggregateId, EventSourcedRepository, EventSourcedService, EventStore, InMemoryEventStore}
+import com.seamless.diff.JsonHelper
 import com.seamless.serialization.CommandSerialization
 
 import scala.scalajs.js
@@ -51,17 +52,7 @@ object RfcServiceJSFacade {
   }
 
   def fromJsonCommands(eventStore: EventStore[RfcEvent], jsonString: String, id: AggregateId): RfcService = {
-    import io.circe.parser._
-
-    val commandsVector =
-      for {
-        json <- Try(parse(jsonString).right.get)
-        commandsVector <- CommandSerialization.fromJson(json)
-      } yield commandsVector
-    if (commandsVector.isFailure) {
-      println(commandsVector.failed.get)
-    }
-    require(commandsVector.isSuccess, "failed to parse and handle commands")
+    val commandsVector = CommandSerialization.fromJsonString(jsonString)
 
     fromCommands(eventStore, commandsVector.get, id)
   }

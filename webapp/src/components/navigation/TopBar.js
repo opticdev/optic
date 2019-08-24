@@ -1,19 +1,19 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import {fade} from '@material-ui/core/styles';
-import {NavTextColor, SearchBackground} from './constants';
-import {Button} from '@material-ui/core';
+import { fade } from '@material-ui/core/styles';
+import { NavTextColor, SearchBackground } from './constants';
+import { Button } from '@material-ui/core';
 import KeyboardDown from '@material-ui/icons/KeyboardArrowDown';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import {primary} from '../../theme';
-import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
-import {withRfcContext} from '../../contexts/RfcContext';
+import { primary } from '../../theme';
+import { EditorModes, withEditorContext } from '../../contexts/EditorContext';
+import { withRfcContext } from '../../contexts/RfcContext';
 import TextField from '@material-ui/core/TextField';
-import {renameAPI} from '../../engine/routines';
+import { renameAPI } from '../../engine/routines';
 import CodeIcon from '@material-ui/icons/Code';
 import DescriptionIcon from '@material-ui/icons/Description';
 import CreateNew from './CreateNew';
@@ -102,7 +102,7 @@ const styles = theme => ({
     },
 });
 
-const APITitle = ({mode, apiName, classes, onRenamed, style}) => {
+const APITitle = ({ mode, apiName, classes, onRenamed, style }) => {
 
     const [stagedName, setStagedName] = useState(apiName);
 
@@ -113,14 +113,14 @@ const APITitle = ({mode, apiName, classes, onRenamed, style}) => {
                     {apiName}
                 </Typography>
             ) : (
-                <TextField
-                    value={stagedName}
-                    style={style}
-                    onBlur={() => onRenamed(stagedName)}
-                    className={classes.titleInput}
-                    onChange={(e) => setStagedName(e.target.value)}
-                />
-            )}
+                    <TextField
+                        value={stagedName}
+                        style={style}
+                        onBlur={() => onRenamed(stagedName)}
+                        className={classes.titleInput}
+                        onChange={(e) => setStagedName(e.target.value)}
+                    />
+                )}
         </>
     );
 };
@@ -128,11 +128,11 @@ const APITitle = ({mode, apiName, classes, onRenamed, style}) => {
 class TopBar extends React.Component {
 
     render() {
-        const {classes, mode, switchEditorMode, apiName, handleCommand, hasUnsavedChanges} = this.props;
-
+        const { classes, mode, switchEditorMode, cachedQueryResults, handleCommand, hasUnsavedChanges } = this.props;
+        const { apiName } = cachedQueryResults
         return (
             <div className={classes.root}>
-                <AppBar position="static" style={{backgroundColor: 'white'}} elevation={0} className={classes.appBar}>
+                <AppBar position="static" style={{ backgroundColor: 'white' }} elevation={0} className={classes.appBar}>
                     <Toolbar variant="dense">
 
                         <div className={classes.sideSpacer}>
@@ -143,7 +143,7 @@ class TopBar extends React.Component {
                                 className={classes.menuButton}
                                 onClick={this.props.toggleSuperMenu}
                             >Explore API
-                                <KeyboardDown className={classes.rightIcon}/>
+                                <KeyboardDown className={classes.rightIcon} />
                             </Button>
 
                         </div>
@@ -153,37 +153,37 @@ class TopBar extends React.Component {
                                 mode={mode}
                                 apiName={apiName}
                                 classes={classes}
-                                onRenamed={(name) => handleCommand(renameAPI(name))}/>
+                                onRenamed={(name) => handleCommand(renameAPI(name))} />
 
                             {(hasUnsavedChanges && process.env.REACT_APP_CLI_MODE) ? (
-                                <Typography variant="caption" style={{color: '#8e8e8e', marginLeft: 20}}>
+                                <Typography variant="caption" style={{ color: '#8e8e8e', marginLeft: 20 }}>
                                     Saving...
                                 </Typography>
                             ) : null}
                         </div>
 
 
-                        <div className={classes.sideSpacer} style={{textAlign: 'right'}}>
+                        <div className={classes.sideSpacer} style={{ textAlign: 'right' }}>
 
                             <ToggleButtonGroup value={mode}
-                                               disableRipple={true}
-                                               exclusive size="small"
-                                               style={{marginRight: 22}}
-                                               onChange={(e, value) => switchEditorMode(value)}>
+                                disableRipple={true}
+                                exclusive size="small"
+                                style={{ marginRight: 22 }}
+                                onChange={(e, value) => switchEditorMode(value)}>
                                 <ToggleButton value={EditorModes.DOCUMENTATION}
-                                              className={classes.toggleButton}
-                                              classes={{selected: classes.toggleButtonSelected}}>
+                                    className={classes.toggleButton}
+                                    classes={{ selected: classes.toggleButtonSelected }}>
                                     Documentation
                                 </ToggleButton>
                                 <ToggleButton value={EditorModes.DESIGN}
-                                              className={classes.toggleButton}
-                                              classes={{selected: classes.toggleButtonSelected}}>
+                                    className={classes.toggleButton}
+                                    classes={{ selected: classes.toggleButtonSelected }}>
                                     Design
                                 </ToggleButton>
                             </ToggleButtonGroup>
 
                             <Button color="primary" href="https://docs.useoptic.com" target="_blank"
-                                    disableRipple={true}>
+                                disableRipple={true}>
                                 Docs
                             </Button>
                             {!process.env.REACT_APP_CLI_MODE ? (
@@ -196,30 +196,30 @@ class TopBar extends React.Component {
                     </Toolbar>
                 </AppBar>
                 {mode === EditorModes.DESIGN ? (
-                    <AppBar position="static" style={{backgroundColor: 'white'}} elevation={0}
-                            className={classes.appBar}>
-                        <CreateNew render={({addConcept, addRequest, classes}) => {
+                    <AppBar position="static" style={{ backgroundColor: 'white' }} elevation={0}
+                        className={classes.appBar}>
+                        <CreateNew render={({ addConcept, addRequest, classes }) => {
                             return (
-                                <Toolbar variant="dense" style={{paddingLeft: 30}}>
-                                <ActionButton onClick={addRequest}>
-                                    <CodeIcon className={classes.leftIcon}/>
-                                    New Request
+                                <Toolbar variant="dense" style={{ paddingLeft: 30 }}>
+                                    <ActionButton onClick={addRequest}>
+                                        <CodeIcon className={classes.leftIcon} />
+                                        New Request
                                 </ActionButton>
 
-                                <ActionButton onClick={addConcept}>
-                                    <DescriptionIcon className={classes.leftIcon}/>
-                                    New Concept
+                                    <ActionButton onClick={addConcept}>
+                                        <DescriptionIcon className={classes.leftIcon} />
+                                        New Concept
                                 </ActionButton>
-                            </Toolbar>
+                                </Toolbar>
                             );
-                        }}/>
+                        }} />
                     </AppBar>) : null}
             </div>
         );
     }
 }
 
-export const ActionButton = withStyles(styles)(function ActionButton({classes, onClick, children}) {
+export const ActionButton = withStyles(styles)(function ActionButton({ classes, onClick, children }) {
     return (
         <Button
             disableRipple={true}

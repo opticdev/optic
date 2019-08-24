@@ -1,7 +1,6 @@
 import React from 'react';
 import { GenericContextFactory } from './GenericContextFactory.js';
 import { RfcContext } from './RfcContext.js';
-import { Facade, Queries } from '../engine';
 
 const {
     Context: SessionContext,
@@ -78,10 +77,6 @@ class SessionStore extends React.Component {
             })
     }
 
-    saveCommands(...commands) {
-        // debounced mutate diffstate, adding commands via PUT
-    }
-
     render() {
         const { sessionId } = this.props;
         const { isLoading, error, session, diffState } = this.state;
@@ -94,32 +89,47 @@ class SessionStore extends React.Component {
         return (
             <RfcContext.Consumer>
                 {(rfcContext) => {
-                    const { rfcId } = rfcContext
+                    const { handleCommands, rfcId, rfcService, queries, cachedQueryResults } = rfcContext
+                    const { requests, pathsById } = cachedQueryResults
+                    const diffStateProjections = (function (session, diffState) {
+                        const urls = new Set(session.samples.map(x => x.request.url))
+                        const samplesAndResolvedPaths = session.samples
+                            .map(sample => {
+                                const pathId = queries.resolvePath(sample.request.url)
+                                return { pathId, sample }
+                            })
+                        const samplesWithResolvedPaths = samplesAndResolvedPaths.filter(x => !!x.pathId)
+                        const samplesWithoutResolvedPaths = samplesAndResolvedPaths.filter(x => !x.pathId)
+                        const samplesGroupedByPath = samplesWithResolvedPaths
+                            .reduce((acc, value) => {
+                                const { pathId, sample } = value;
+                                const group = acc[pathId] || []
+                                group.push(sample)
+                                acc[pathId] = group
+                                return acc
+                            }, {})
+                        // @TODO: calculate progress
+                        
+                        return {
+                            urls,
+                            samplesWithResolvedPaths,
+                            samplesWithoutResolvedPaths,
+                            samplesGroupedByPath
+                        }
+                    })(session, diffState)
+                    
+
+
                     const sessionContext = {
+                        rfcContext,
                         sessionId,
                         session,
-                        diffState
-                    }
-                    const eventStore = Facade.makeEventStore();
-                    const rfcService = Facade.fromJsonCommands(eventStore, JSON.stringify(diffState.commands), rfcId)
-
-                    const queries = Queries(eventStore, rfcService, this.props.rfcId);
-                    const handleCommands = (...commands) => {
-                        this.saveCommands(...commands)
-                        global.commands.push(...commands)
-                        rfcService.handleCommands(this.props.rfcId, ...commands);
-                    }
-                    const newRfcContext = {
-                        ...rfcContext,
-                        handleCommands,
-                        handleCommand: handleCommands
+                        diffState,
+                        diffStateProjections,
                     }
                     return (
-
                         <SessionContext.Provider value={sessionContext}>
-                            <RfcContext.Provider value={newRfcContext}>
-                                {this.props.children}
-                            </RfcContext.Provider>
+                            {this.props.children}
                         </SessionContext.Provider>
                     )
                 }}

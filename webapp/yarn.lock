@@ -10534,7 +10534,7 @@ schema-utils@^1.0.0:
     ajv-errors "^1.0.0"
     ajv-keywords "^3.1.0"
 
-seamless-domain@../domain-js/:
+seamless-domain@../domain-js:
   version "0.1.0"
 
 select-hose@^2.0.0:
