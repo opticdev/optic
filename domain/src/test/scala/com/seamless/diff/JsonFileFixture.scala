@@ -1,19 +1,12 @@
 package com.seamless.diff
 
-import io.circe._
-import io.circe.literal._
-
+import io.circe.Json
+import io.circe.jawn.parseFile
+import java.io.File
 
 trait JsonFileFixture {
   def fromFile(slug: String): Json = {
-    val loaded = scala.io.Source.fromFile("src/test/resources/diff-scenarios/" + slug + ".json")
-    val source = loaded.getLines mkString "\n"
-    println(source)
-    loaded.close()
-
-    val parsed = new JsonStringContext(new StringContext("[]")).json()
-    println(parsed)
-    println(parsed.isArray)
-    parsed
+    val filePath = "src/test/resources/diff-scenarios/" + slug + ".json"
+    parseFile(new File(filePath)).right.get
   }
 }
