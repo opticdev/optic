@@ -115,6 +115,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           persist(Events.ResponseStatusCodeSet(responseId, httpStatusCode))
         }
 
+        case SetResponseContentType(responseId, httpContentType) => {
+          Validators.ensureResponseIdExists(responseId)
+          persist(Events.ResponseContentTypeSet(responseId, httpContentType))
+        }
+
         case RemoveResponse(responseId) => {
           Validators.ensureResponseIdExists(responseId)
           persist(Events.ResponseRemoved(responseId))
@@ -252,6 +257,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
     case ResponseAdded(responseId, requestId, httpStatusCode) => {
       state.withResponse(responseId, requestId, httpStatusCode)
+    }
+
+    case ResponseContentTypeSet(responseId, httpContentType) => {
+      val r = state.responses(responseId)
+      state.withResponseContentType(responseId, httpContentType)
     }
 
     case ResponseStatusCodeSet(responseId, httpStatusCode) => {

@@ -1,0 +1,112 @@
+import React from 'react';
+import PathMatcher from './PathMatcher';
+import Button from '@material-ui/core/Button';
+import { resolvePath } from '../requests/NewRequestStepper';
+import { cleanupPathComponentName, pathStringToPathComponents } from '../path-editor/PathInput';
+import pathToRegexp from 'path-to-regexp';
+import { RequestsHelper, RequestsCommands } from '../../engine';
+import Typography from '@material-ui/core/Typography'
+import { Sheet } from '../navigation/Editor'
+import { withEditorContext } from '../../contexts/EditorContext';
+import { withStyles } from '@material-ui/styles';
+import { withRfcContext } from '../../contexts/RfcContext';
+
+function completePathMatcherRegex(pathComponents) {
+    const pathString = pathComponentsToString(pathComponents)
+    const regex = pathToRegexp(pathString, [], { start: true, end: true })
+    return regex;
+}
+
+export function pathComponentsToString(pathComponents) {
+    console.log({pathComponents})
+    if (pathComponents.length === 0) {
+        return '/';
+    }
+    const s = '/' + pathComponents
+        .map(({ name, isParameter }) => {
+            if (isParameter) {
+                const stripped = name
+                    .replace('{', '')
+                    .replace('}', '')
+                    .replace(':', '');
+                return `:${stripped}`;
+            } else {
+                return name;
+            }
+        }).join('/');
+    console.log({ s })
+    return s
+}
+
+const styles = theme => ({
+    root: {
+        //padding: 17
+    }
+});
+class UnrecognizedPathWizard extends React.Component {
+    state = {
+        pathExpression: ''
+    }
+    handleChange = ({ pathExpression }) => {
+        console.log('handleChange', { pathExpression })
+        this.setState({
+            pathExpression
+        })
+    }
+    handleIgnore = () => {
+        //@TODO: mark this interaction as ignored
+    }
+    handleSubmit = () => {
+        const { handleCommands, cachedQueryResults } = this.props;
+        const { pathsById } = cachedQueryResults;
+        const { pathExpression } = this.state;
+        const pathComponents = pathStringToPathComponents(pathExpression)
+        const { toAdd, lastMatch } = resolvePath(pathComponents, pathsById)
+        let lastParentPathId = lastMatch.pathId
+        const commands = [];
+        toAdd.forEach((addition) => {
+            const pathId = RequestsHelper.newPathId()
+            const command = (addition.isParameter ? RequestsCommands.AddPathParameter : RequestsCommands.AddPathComponent)(
+                pathId,
+                lastParentPathId,
+                cleanupPathComponentName(addition.name)
+            )
+            commands.push(command)
+            lastParentPathId = pathId
+        })
+        handleCommands(...commands)
+    }
+    render() {
+        const { url, classes } = this.props;
+        const { pathExpression } = this.state;
+        console.log({ url, pathExpression })
+        const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression))
+        const isCompleteMatch = regex.exec(url)
+        console.log({ regex, match: url.match(regex), isCompleteMatch })
+
+        return (
+            <Sheet>
+                <div className={classes.root}>
+                    <Typography variant="h5">Unrecognized Path Observed</Typography>
+                    <Typography variant="subtitle2" style={{ paddingTop: 11, paddingBottom: 11 }}>Optic observed a new path. Before Optic can document the requests you need to add the path to your API specification.</Typography>
+
+                    <PathMatcher
+                        initialPathString={pathExpression}
+                        url={url}
+                        onChange={this.handleChange}
+                    />
+
+                    <div style={{ marginTop: 17, paddingTop: 4, textAlign: 'right' }}>
+                        <Button onClick={this.handleIgnore}>Skip</Button>
+                        <Button
+                            onClick={this.handleSubmit}
+                            color="secondary"
+                            disabled={!isCompleteMatch}>Add Path</Button>
+                    </div>
+                </div>
+            </Sheet>
+        )
+    }
+}
+
+export default withEditorContext(withRfcContext(withStyles(styles)(UnrecognizedPathWizard)))

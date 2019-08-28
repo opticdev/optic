@@ -3,6 +3,7 @@ package com.seamless.diff
 import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.requests._
 import com.seamless.contexts.rfc.RfcState
+import com.seamless.diff.ShapeDiffer.ShapeDiffResult
 import io.circe.Json
 
 import scala.scalajs.js
@@ -10,10 +11,10 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.{Failure, Success, Try}
 
 @JSExport
-case class ApiRequest(url: String, method: String, body: Json = null)
+case class ApiRequest(url: String, method: String, contentType: String, body: Json = null)
 
 @JSExport
-case class ApiResponse(statusCode: Int, body: Json = null)
+case class ApiResponse(statusCode: Int, contentType: String, body: Json = null)
 
 @JSExport
 case class ApiInteraction(apiRequest: ApiRequest, apiResponse: ApiResponse)
@@ -21,6 +22,8 @@ case class ApiInteraction(apiRequest: ApiRequest, apiResponse: ApiResponse)
 @JSExport
 @JSExportAll
 object JsonHelper {
+  import js.JSConverters._
+
   def fromString(s: String): Json = {
     import io.circe.parser._
     Try {
@@ -34,9 +37,9 @@ object JsonHelper {
     }
   }
 
-  def seqToJsArray(x: Seq[AnyVal]): js.Array[AnyVal] = {
-    import js.JSConverters._
+  //def fromAny(any: js.Any) = any.asJson
 
+  def seqToJsArray(x: Seq[AnyVal]): js.Array[AnyVal] = {
     x.toJSArray
   }
 }
@@ -50,6 +53,8 @@ object RequestDiffer {
   case class UnmatchedUrl(url: String) extends RequestDiffResult
   case class UnmatchedHttpMethod(pathId: PathComponentId, method: String) extends RequestDiffResult
   case class UnmatchedHttpStatusCode(requestId: RequestId, statusCode: Int) extends RequestDiffResult
+  case class UnmatchedResponseContentType(responseId: ResponseId, contentType: String) extends RequestDiffResult
+  case class UnmatchedResponseBodyShape(responseId: ResponseId, contentType: String, shapeDiff: ShapeDiffResult) extends RequestDiffResult
 
   def compare(interaction: ApiInteraction, spec: RfcState): RequestDiffResult = {
     println(interaction)
@@ -80,14 +85,30 @@ object RequestDiffer {
 
     ///val requestBodyDiff: RequestBodyDiff =
 
-    /*val responseBodyDiff: ResponseBodyDiff = matchedResponse.get.responseDescriptor.bodyDescriptor match {
+    val responseId = matchedResponse.get.responseId;
+    val responseDiff: Option[RequestDiffResult] = matchedResponse.get.responseDescriptor.bodyDescriptor match {
       case d: UnsetBodyDescriptor => {
-
+        Some(UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, ShapeDiffer.NoDiff()))
       }
       case d: ShapedBodyDescriptor => {
         //@TODO: check content type
+        if (d.httpContentType == interaction.apiResponse.contentType) {
+          val shape = spec.shapesState.shapes(d.shapeId)
+          val shapeDiff = ShapeDiffer.diff(shape, interaction.apiResponse.body)(spec.shapesState)
+          if (shapeDiff.isInstanceOf[ShapeDiffer.NoDiff]) {
+            None
+          } else {
+            Some(UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, shapeDiff))
+          }
+        } else {
+          Some(UnmatchedResponseContentType(matchedResponse.get.responseId, interaction.apiResponse.contentType))
+        }
       }
-    }*/
+    }
+
+    if (responseDiff.isDefined) {
+      return responseDiff.get
+    }
 
     // accumulate diffs for request (headers, query params, body) and response (headers, body)
 

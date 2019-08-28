@@ -9,7 +9,7 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 @JSExportTopLevel("CommandSerialization")
 @JSExportAll
@@ -40,6 +40,9 @@ object CommandSerialization {
   private def decodeRfcCommand(item: Json): Result[ContributionCommand] = item.as[ContributionCommand]
 
   def fromJson(json: Json): Try[Vector[RfcCommand]] = Try {
+    if (!json.isArray) {
+      return Failure(new Exception("not an array"))
+    }
     val parseResults = json.asArray.get.map {
       case i => TryChainUtil.firstSuccessIn(i,
         (j: Json) => Try(decodeShapesCommand(j).right.get),

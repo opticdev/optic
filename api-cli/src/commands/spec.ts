@@ -116,7 +116,7 @@ export default class Spec extends Command {
       const diffStateExists = await fs.pathExists(diffStateFilePath)
 
       try {
-        const diffState = diffStateExists ? await fs.readJson(diffStateFilePath) : {interactionResults: {}, commands: []}
+        const diffState = diffStateExists ? await fs.readJson(diffStateFilePath) : {interactionResults: {}, currentInteractionIndex: 0}
         const session = await fs.readJson(path.join(sessionsPath, sessionFileName))
         req.optic = {
           session,

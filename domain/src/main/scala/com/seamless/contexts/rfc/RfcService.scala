@@ -3,7 +3,6 @@ package com.seamless.contexts.rfc
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.ddd.{AggregateId, EventSourcedRepository, EventSourcedService, EventStore, InMemoryEventStore}
-import com.seamless.diff.JsonHelper
 import com.seamless.serialization.CommandSerialization
 
 import scala.scalajs.js
@@ -18,6 +17,10 @@ class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[R
     val context = RfcCommandContext()
     val effects = RfcAggregate.handleCommand(state)((context, command))
     repository.save(id, effects.eventsToPersist)
+  }
+
+  def handleCommandSequence(id: AggregateId, commands: Seq[RfcCommand]): Unit = {
+    commands.foreach(handleCommand(id, _))
   }
 
   def currentState(id: AggregateId): RfcState = {

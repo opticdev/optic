@@ -7,41 +7,46 @@ import io.circe._
 
 object ShapeDiffer {
   sealed trait ShapeDiffResult {}
+  case class NoDiff() extends ShapeDiffResult
   case class ShapeMismatch(expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   case class MissingObjectKey(key: String) extends ShapeDiffResult
   case class ExtraObjectKey(key: String) extends ShapeDiffResult
   case class KeyShapeMismatch(key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   case class MultipleInterpretations(s: ShapeDiffResult*) extends ShapeDiffResult
 
-  def diff(expectedShape: ShapeEntity, actualShape: Json)(implicit shapesState: ShapesState): Seq[ShapeDiffResult] = {
+  def diff(expectedShape: ShapeEntity, actualShape: Json)(implicit shapesState: ShapesState): ShapeDiffResult = {
     val coreShape = toCoreShape(expectedShape)
     coreShape match {
       case AnyKind() => {
-        Seq.empty
+        NoDiff()
       }
       case StringKind() => {
         if (actualShape.isString) {
-          Seq.empty
+          NoDiff()
         } else {
-          Seq(ShapeMismatch(expectedShape, actualShape))
+          ShapeMismatch(expectedShape, actualShape)
         }
       }
       case BooleanKind() => {
         if (actualShape.isBoolean) {
-          Seq.empty
+          NoDiff()
         } else {
-          Seq(ShapeMismatch(expectedShape, actualShape))
+          ShapeMismatch(expectedShape, actualShape)
         }
       }
       case NumberKind() => {
         if (actualShape.isNumber) {
-          Seq.empty
+          NoDiff()
         } else {
-          Seq(ShapeMismatch(expectedShape, actualShape))
+          ShapeMismatch(expectedShape, actualShape)
         }
       }
       case ListKind() => {
-        Seq.empty
+        if (actualShape.isArray) {
+          NoDiff()
+        } else {
+          ShapeMismatch(expectedShape, actualShape)
+        }
       }
       case ObjectKind() => {
         if (actualShape.isObject) {
@@ -63,17 +68,19 @@ object ShapeDiffer {
           println(missingKeys)
           println(extraKeys)
           missingKeys.toSeq.map(x => MissingObjectKey(x)) ++ extraKeys.toSeq.map(x => ExtraObjectKey(x))
+          NoDiff()
         } else {
-          Seq(ShapeMismatch(expectedShape, actualShape))
+          ShapeMismatch(expectedShape, actualShape)
         }
       }
       case OneOfKind() => {
-        Seq.empty
+        MultipleInterpretations()
       }
       case MapKind() => {
         // check all values
-        Seq.empty
+        NoDiff()
       }
+
     }
   }
 }

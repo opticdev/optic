@@ -8,12 +8,71 @@ const {
 } = GenericContextFactory(null)
 
 class DiffSessionManager {
-    async getSession(sessionId) {
-
+    constructor(sessionId, session, diffState) {
+        this.sessionId = sessionId;
+        this.session = session;
+        this.diffState = diffState;
+        //@TODO: one-at-a-time bottleneck for this._persistChanges()
     }
 
-    getDiff(shapesState, interaction) {
+    currentInteraction() {
+        const { currentInteractionIndex } = this.diffState
+        const interaction = this.session.samples[currentInteractionIndex];
+        return interaction || null
+    }
 
+    skipInteraction() {
+        const { currentInteractionIndex } = this.diffState
+        const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
+
+        this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
+            currentInteraction,
+            { status: 'skipped' }
+        )
+        this._incrementInteractionCursor()
+        this._persistChanges()
+    }
+
+    finishInteraction() {
+        const { currentInteractionIndex } = this.diffState
+        const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
+
+        this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
+            currentInteraction,
+            { status: 'completed' },
+        )
+        this._incrementInteractionCursor()
+        this._persistChanges()
+    }
+
+    _incrementInteractionCursor() {
+        this.diffState.currentInteractionIndex++
+    }
+
+    acceptInterpretation(interpretation) {
+
+        const { currentInteractionIndex } = this.diffState
+        const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
+
+        this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
+            currentInteraction,
+            { acceptedInterpretations: [...(currentInteraction.acceptedInterpretations || []), interpretation] },
+        )
+        this._persistChanges()
+    }
+
+    applyAllChanges() {
+        // persist events to event stream, as opposed to persisting diff state
+    }
+
+    _persistChanges = async () => {
+        fetch(`/cli-api/sessions/${this.sessionId}/diff`, {
+            method: 'PUT',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify(this.diffState)
+        })
     }
 }
 
@@ -22,8 +81,9 @@ class SessionStore extends React.Component {
         isLoading: true,
         error: null,
         session: null,
-        diffState: null
+        diffSessionManager: null,
     }
+
     componentDidMount() {
         const { sessionId } = this.props
         this.loadSession(sessionId)
@@ -34,7 +94,7 @@ class SessionStore extends React.Component {
             isLoading: true,
             error: null,
             session: null,
-            diffState: null
+            diffSessionManager: null,
         })
         const promises = [
             fetch(`/cli-api/sessions/${sessionId}`)
@@ -64,7 +124,7 @@ class SessionStore extends React.Component {
                     isLoading: false,
                     error: null,
                     session: sessionResponse.session,
-                    diffState: diffStateResponse.diffState
+                    diffSessionManager: new DiffSessionManager(sessionId, sessionResponse.session, diffStateResponse.diffState)
                 })
             })
             .catch((e) => {
@@ -72,14 +132,14 @@ class SessionStore extends React.Component {
                     isLoading: false,
                     error: e,
                     session: null,
-                    diffState: null
+                    diffSessionManager: null
                 })
             })
     }
 
     render() {
         const { sessionId } = this.props;
-        const { isLoading, error, session, diffState } = this.state;
+        const { isLoading, error, diffSessionManager } = this.state;
         if (isLoading) {
             return null
         }
@@ -89,14 +149,14 @@ class SessionStore extends React.Component {
         return (
             <RfcContext.Consumer>
                 {(rfcContext) => {
-                    const { handleCommands, rfcId, rfcService, queries, cachedQueryResults } = rfcContext
-                    const { requests, pathsById } = cachedQueryResults
-                    const diffStateProjections = (function (session, diffState) {
+                    const { queries } = rfcContext
+                    const diffStateProjections = (function (diffSessionManager) {
+                        const { session } = diffSessionManager
                         const urls = new Set(session.samples.map(x => x.request.url))
                         const samplesAndResolvedPaths = session.samples
-                            .map(sample => {
+                            .map((sample, index) => {
                                 const pathId = queries.resolvePath(sample.request.url)
-                                return { pathId, sample }
+                                return { pathId, sample, index }
                             })
                         const samplesWithResolvedPaths = samplesAndResolvedPaths.filter(x => !!x.pathId)
                         const samplesWithoutResolvedPaths = samplesAndResolvedPaths.filter(x => !x.pathId)
@@ -109,22 +169,19 @@ class SessionStore extends React.Component {
                                 return acc
                             }, {})
                         // @TODO: calculate progress
-                        
+
                         return {
                             urls,
                             samplesWithResolvedPaths,
                             samplesWithoutResolvedPaths,
                             samplesGroupedByPath
                         }
-                    })(session, diffState)
-                    
-
+                    })(diffSessionManager)
 
                     const sessionContext = {
                         rfcContext,
                         sessionId,
-                        session,
-                        diffState,
+                        diffSessionManager,
                         diffStateProjections,
                     }
                     return (

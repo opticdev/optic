@@ -160,8 +160,6 @@ const LocalRfcStore = withSnackbar(withInitialRfcCommandsContext(LocalRfcStoreWi
 class LocalDiffRfcStoreWithoutContext extends RfcStoreWithoutContext {
     handleCommands = (...commands) => {
         super.handleCommands(...commands)
-        this.setState({ hasUnsavedChanges: true })
-        debugger;
     }
 }
 const LocalDiffRfcStore =withSnackbar(withInitialRfcCommandsContext(LocalDiffRfcStoreWithoutContext))

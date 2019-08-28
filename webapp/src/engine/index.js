@@ -27,8 +27,8 @@ function fromJs(x) {
 
 export function toInteraction(sample) {
     return ApiInteraction(
-        ApiRequest(sample.request.url, sample.request.method, fromJs(sample.request.body)),
-        ApiResponse(sample.response.statusCode, fromJs(sample.response.body))
+        ApiRequest(sample.request.url, sample.request.method, sample.request.headers['content-type'] || '*/*', fromJs(sample.request.body)),
+        ApiResponse(sample.response.statusCode, sample.response.headers['content-type'] || '*/*', fromJs(sample.response.body))
     )
 }
 export const RequestDiffer = seamlessEngine.com.seamless.diff.RequestDiffer()

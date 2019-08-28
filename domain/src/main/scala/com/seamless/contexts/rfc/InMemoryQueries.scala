@@ -1,22 +1,19 @@
 package com.seamless.contexts.rfc
 
-import io.circe.generic.auto._
-import io.circe.syntax._
+import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId}
+import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
+import com.seamless.contexts.requests.{PathComponent, RequestsState, Utilities}
+import com.seamless.contexts.rfc.Events.RfcEvent
+import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection}
 import com.seamless.contexts.shapes.Commands.ShapeId
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.contexts.shapes.projections.{NamedShape, NamedShapes}
-import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId}
-import com.seamless.contexts.requests.{PathComponent, RequestsState, Utilities}
-import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
-import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection}
 import com.seamless.ddd.{AggregateId, CachedProjection, EventStore}
 import com.seamless.diff.DiffToCommands
 import com.seamless.diff.RequestDiffer.RequestDiffResult
 import com.seamless.serialization.CommandSerialization
-import io.circe.Json
-import io.circe.Json.JArray
+import io.circe.generic.auto._
+import io.circe.syntax._
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
@@ -74,7 +71,8 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
 
   def diffToCommands(diff: RequestDiffResult): js.Any = {
     import io.circe.scalajs.convertJsonToJs
-    convertJsonToJs(CommandSerialization.toJson(DiffToCommands.generateCommands(diff)))
+
+    convertJsonToJs(CommandSerialization.toJson(DiffToCommands.generateCommands(diff).commands))
   }
 }
 

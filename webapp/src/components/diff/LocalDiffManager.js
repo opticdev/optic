@@ -10,6 +10,8 @@ import { getNameWithFormattedParameters, asPathTrail } from '../utilities/PathUt
 import { SessionContext } from '../../contexts/SessionContext';
 import { makeStyles } from '@material-ui/core/styles';
 import { PathTrail } from '../PathPage'
+import PathMatcher from './PathMatcher';
+import UnrecognizedPathWizard from './UnrecognizedPathWizard';
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
@@ -38,23 +40,29 @@ class LocalDiffManager extends React.Component {
         return (
             <SessionContext.Consumer>
                 {(sessionContext) => {
-                    const { diffState, session, rfcContext } = sessionContext
+                    const { diffSessionManager, rfcContext } = sessionContext
                     const { handleCommands, rfcId, rfcService, queries, cachedQueryResults } = rfcContext
-                    const { requests, pathsById } = cachedQueryResults
-                    //@TODO: measure progress from sessionContext.diffState and .sessions
-                    const currentInteractionIndex = diffState.currentInteractionIndex || 0;
-                    const sample = session.samples[currentInteractionIndex]
+                    const { requests, requestIdsByPathId, pathsById } = cachedQueryResults
+                    //@TODO: measure progress from sessionContext.diffSessionManager and .sessions
+                    const sample = diffSessionManager.currentInteraction()
                     const pathId = queries.resolvePath(sample.request.url)
                     if (pathId) {
-                        // show the diff:
-                        // const interaction = toInteraction(sample)
-                        // const diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
-                        // const commandsSeq = DiffToCommands.generateCommands(diff)
-                        // const commands = JsonHelper.seqToJsArray(commandsSeq)
-                        // handleCommands(...commands)
-                        debugger
-                        const request = queries.resolveMethod()
-                        const pathId = request.requestDescriptor.pathComponentId;
+                        const interaction = toInteraction(sample)
+                        const diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
+                        const interpretation = DiffToCommands.generateCommands(diff)
+                        const commands = JsonHelper.seqToJsArray(interpretation.commands)
+                        const hasDiff = commands.length > 0
+                        const applyChange = () => {
+                            console.log({ commands })
+                            handleCommands(...commands)
+                            diffSessionManager.acceptInterpretation(interpretation)
+                        }
+                        const requestsForPathId = requestIdsByPathId[pathId] || []
+                        const request = requestsForPathId
+                            .map(requestId => requests[requestId])
+                            .find(request => {
+                                return request.requestDescriptor.httpMethod === sample.request.method
+                            }) || null
                         const pathTrail = asPathTrail(pathId, pathsById);
                         const pathTrailComponents = pathTrail.map(pathId => pathsById[pathId]);
                         const pathTrailWithNames = pathTrailComponents.map((pathComponent) => {
@@ -71,15 +79,23 @@ class LocalDiffManager extends React.Component {
                                 <Editor>
                                     <FullSheet>
                                         <PathTrail pathTrail={pathTrailWithNames} />
-                                        <div>{JSON.stringify(session, null, 2)}</div>
-                                        <div>{session.samples.length} samples</div>
-                                        <Operation request={request} />
+                                        <div>{diffSessionManager.session.samples.length} samples</div>
+                                        {request && <Operation request={request} />}
+                                        {hasDiff ? (
+                                            <button onClick={applyChange}>apply change</button>
+                                        ) : (
+                                            <div>This request is in sync with the spec!
+                                                <button onClick={() => diffSessionManager.finishInteraction()}>continue</button>
+                                            </div>
+                                        )}
                                     </FullSheet>
                                 </Editor>
                             </div>
                         )
                     } else {
-                        return (<div>path matcher</div>)
+                        return (
+                            <UnrecognizedPathWizard url={sample.request.url} />
+                        )
                     }
                 }}
             </SessionContext.Consumer>

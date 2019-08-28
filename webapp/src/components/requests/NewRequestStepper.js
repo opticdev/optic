@@ -137,7 +137,7 @@ function handleSubmit(state, props) {
     // emit commands to add any necessary paths then go to the final path
     let lastParentPathId = lastMatch.pathId
     toAdd.forEach((addition) => {
-        const pathId = RequestsHelper.newId()
+        const pathId = RequestsHelper.newPathId()
         const command = (addition.isParameter ? RequestsCommands.AddPathParameter : RequestsCommands.AddPathComponent)(
             pathId,
             lastParentPathId,
@@ -147,7 +147,7 @@ function handleSubmit(state, props) {
         lastParentPathId = pathId
     })
     selectedHttpMethods.forEach((method) => {
-        const requestId = RequestsHelper.newId()
+        const requestId = RequestsHelper.newRequestId()
         const command = RequestsCommands.AddRequest(requestId, lastParentPathId, method)
         handleCommand(command)
     })
