@@ -1,0 +1,6 @@
+name: ABC
+commands:
+  start: npm start
+proxy:
+  target: 'http://localhost:{{ENV.OPTIC_API_PORT}}'
+  port: '3004'
