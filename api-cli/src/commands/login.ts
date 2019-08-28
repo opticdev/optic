@@ -1,4 +1,4 @@
-import { Command, flags } from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 // @ts-ignore
 import * as fp from 'find-free-port'
 import * as express from 'express'
@@ -7,21 +7,29 @@ import * as open from 'open'
 // @ts-ignore
 import * as cors from 'cors'
 import * as colors from 'colors'
+import {getUser, saveUser} from '../lib/credentials'
 
 export default class Login extends Command {
-  static description = 'documents your API by monitoring local traffic'
+  static description = 'authenticates the Optic CLI'
 
   static flags = {
-    // 'add-token': flags.boolean({ description: 'uses this jwt token to authorize the cli' })
+    'login-flow': flags.boolean()
   }
 
   static args = []
 
   async run() {
+    const {flags} = this.parse(Login)
+    const loginFlow = flags['login-flow']
+
+    if (loginFlow && await getUser()) {
+      return //kill it if we're already authenticated and in the login flow
+    }
     const tokenService = new TokenListenerService()
     cli.action.start('waiting for login')
     const pending = await tokenService.waitForToken(this)
     const token = await pending.tokenPromise
+    await saveUser(token)
     cli.action.stop(colors.green('CLI Authenticated'))
     tokenService.stop()
     process.exit(0)
@@ -45,8 +53,11 @@ export class TokenListenerService {
           this.app.get('/token/:token', cors(), (req: express.Request, res: express.Response) => {
             res.send(`<!DOCTYPE html>
 <html lang="en">
+<script type="application/javascript">
+window.location.href = 'https://dashboard.useoptic.com';
+</script>
 <body>
-Logged into Optic CLI -- you can close this page at any time
+Logged into Optic CLI -- redirecting you to <a href="https://dashboard.useoptic.com">https://dashboard.useoptic.com</a>
 </body>
 </html>
 `)
@@ -54,7 +65,7 @@ Logged into Optic CLI -- you can close this page at any time
           })
 
           this.server = this.app.listen(responsePort, () => {
-            open('http://localhost:3000/login?cli_port=' + responsePort.toString())
+            open('https://dashboard.useoptic.com/login?cli_port=' + responsePort.toString())
           })
         })
       }))
