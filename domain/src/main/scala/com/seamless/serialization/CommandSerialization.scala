@@ -8,19 +8,34 @@ import io.circe._
 import io.circe.generic.auto._
 import io.circe.syntax._
 
+import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 import scala.util.{Failure, Try}
 
 @JSExportTopLevel("CommandSerialization")
 @JSExportAll
 object CommandSerialization {
-  def toJson(vector: Seq[RfcCommand]): Json = {
-    vector.map {
+  def toJson(commands: Seq[RfcCommand]): Json = {
+    commands.map(x => toJson(x)).asJson
+  }
+
+  def toJs(vector: Seq[RfcCommand]): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(toJson(vector))
+  }
+
+  def toJson(command: RfcCommand): Json = {
+    command match {
       case shapesCommand: ShapesCommand => shapesCommand.asJson
       case requestCommand: RequestsCommand => requestCommand.asJson
       case contributionCommand: ContributionCommand => contributionCommand.asJson
       case _ => throw new java.lang.Error("Unhandled command Type")
-    }.asJson
+    }
+  }
+
+  def toJs(command: RfcCommand): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(toJson(command))
   }
 
   def toJsonString(command: RfcCommand): String = {
@@ -70,6 +85,6 @@ object CommandSerialization {
       println(commandsVector.failed.get)
     }
     require(commandsVector.isSuccess, "failed to parse and handle commands")
-    commandsVector
+    commandsVector.get
   }
 }

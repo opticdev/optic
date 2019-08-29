@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.requests._
 import com.seamless.contexts.rfc.RfcState
 import com.seamless.diff.ShapeDiffer.ShapeDiffResult
-import io.circe.Json
+import io.circe._
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -22,6 +22,7 @@ case class ApiInteraction(apiRequest: ApiRequest, apiResponse: ApiResponse)
 @JSExport
 @JSExportAll
 object JsonHelper {
+
   import js.JSConverters._
 
   def fromString(s: String): Json = {
@@ -37,7 +38,7 @@ object JsonHelper {
     }
   }
 
-  //def fromAny(any: js.Any) = any.asJson
+  //def fromAny(any: js.Any): Json = any.asJson
 
   def seqToJsArray(x: Seq[AnyVal]): js.Array[AnyVal] = {
     x.toJSArray
@@ -57,7 +58,6 @@ object RequestDiffer {
   case class UnmatchedResponseBodyShape(responseId: ResponseId, contentType: String, shapeDiff: ShapeDiffResult) extends RequestDiffResult
 
   def compare(interaction: ApiInteraction, spec: RfcState): RequestDiffResult = {
-    println(interaction)
     // check for matching path
     val matchedPath = Utilities.resolvePath(interaction.apiRequest.url, spec.requestsState.pathComponents)
 

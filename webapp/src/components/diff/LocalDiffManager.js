@@ -10,8 +10,8 @@ import { getNameWithFormattedParameters, asPathTrail } from '../utilities/PathUt
 import { SessionContext } from '../../contexts/SessionContext';
 import { makeStyles } from '@material-ui/core/styles';
 import { PathTrail } from '../PathPage'
-import PathMatcher from './PathMatcher';
 import UnrecognizedPathWizard from './UnrecognizedPathWizard';
+import { withRfcContext } from '../../contexts/RfcContext';
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
@@ -40,23 +40,29 @@ class LocalDiffManager extends React.Component {
         return (
             <SessionContext.Consumer>
                 {(sessionContext) => {
-                    const { diffSessionManager, rfcContext } = sessionContext
-                    const { handleCommands, rfcId, rfcService, queries, cachedQueryResults } = rfcContext
+                    const { diffSessionManager } = sessionContext
+                    const { handleCommands, eventStore, rfcId, rfcService, queries, cachedQueryResults } = this.props
                     const { requests, requestIdsByPathId, pathsById } = cachedQueryResults
                     //@TODO: measure progress from sessionContext.diffSessionManager and .sessions
                     const sample = diffSessionManager.currentInteraction()
+                    if (!sample) {
+                        return (
+                            <div>
+                                done! <button onClick={() => diffSessionManager.applyAllChanges(eventStore, rfcId)}>apply changes?</button>
+                            </div>
+                        )
+                    }
                     const pathId = queries.resolvePath(sample.request.url)
                     if (pathId) {
                         const interaction = toInteraction(sample)
-                        const diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
-                        const interpretation = DiffToCommands.generateCommands(diff)
+                        const rfcState = rfcService.currentState(rfcId)
+                        const diff = RequestDiffer.compare(interaction, rfcState)
+                        console.log({ diff })
+                        const interpretation = new DiffToCommands(rfcState.shapesState).interpret(diff)
+                        console.log({ interpretation })
                         const commands = JsonHelper.seqToJsArray(interpretation.commands)
                         const hasDiff = commands.length > 0
-                        const applyChange = () => {
-                            console.log({ commands })
-                            handleCommands(...commands)
-                            diffSessionManager.acceptInterpretation(interpretation)
-                        }
+
                         const requestsForPathId = requestIdsByPathId[pathId] || []
                         const request = requestsForPathId
                             .map(requestId => requests[requestId])
@@ -82,19 +88,26 @@ class LocalDiffManager extends React.Component {
                                         <div>{diffSessionManager.session.samples.length} samples</div>
                                         {request && <Operation request={request} />}
                                         {hasDiff ? (
-                                            <button onClick={applyChange}>apply change</button>
-                                        ) : (
-                                            <div>This request is in sync with the spec!
-                                                <button onClick={() => diffSessionManager.finishInteraction()}>continue</button>
+                                            <div>{interpretation.description}
+                                                <button onClick={() => handleCommands(...commands)}>apply change</button>
                                             </div>
-                                        )}
+                                        ) : (
+                                                <div>This request is in sync with the spec!
+                                                <button onClick={() => diffSessionManager.finishInteraction()}>continue</button>
+                                                </div>
+                                            )}
                                     </FullSheet>
                                 </Editor>
                             </div>
                         )
                     } else {
                         return (
-                            <UnrecognizedPathWizard url={sample.request.url} />
+                            <UnrecognizedPathWizard
+                                onSubmit={({ commands }) => {
+                                    handleCommands(...commands)
+                                }}
+                                url={sample.request.url}
+                            />
                         )
                     }
                 }}
@@ -102,4 +115,4 @@ class LocalDiffManager extends React.Component {
         )
     }
 }
-export default LocalDiffManager
+export default withRfcContext(LocalDiffManager)

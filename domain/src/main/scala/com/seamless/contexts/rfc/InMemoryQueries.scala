@@ -71,8 +71,7 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
 
   def diffToCommands(diff: RequestDiffResult): js.Any = {
     import io.circe.scalajs.convertJsonToJs
-
-    convertJsonToJs(CommandSerialization.toJson(DiffToCommands.generateCommands(diff).commands))
+    convertJsonToJs(CommandSerialization.toJson(new DiffToCommands(q.shapesState).interpret(diff).commands))
   }
 }
 

@@ -18,6 +18,12 @@ export function commandsToJson(commands) {
 export function commandsFromJson(commands) {
     return opticEngine.CommandSerialization.fromJsonString(JSON.stringify(commands))
 }
+export function commandsToJs(commandSequence) {
+    return opticEngine.CommandSerialization.toJs(commandSequence)
+}
+export function commandToJs(command) {
+    return opticEngine.CommandSerialization.toJs(command)
+}
 
 const { ApiInteraction, ApiRequest, ApiResponse } = opticEngine.com.seamless.diff;
 export const JsonHelper = opticEngine.com.seamless.diff.JsonHelper()
@@ -32,5 +38,5 @@ export function toInteraction(sample) {
     )
 }
 export const RequestDiffer = opticEngine.com.seamless.diff.RequestDiffer()
-export const DiffToCommands = opticEngine.com.seamless.diff.DiffToCommands()
+export const DiffToCommands = opticEngine.com.seamless.diff.DiffToCommands
 console.log(opticEngine)

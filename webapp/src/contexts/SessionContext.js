@@ -1,6 +1,7 @@
 import React from 'react';
 import { GenericContextFactory } from './GenericContextFactory.js';
-import { RfcContext } from './RfcContext.js';
+import { RfcContext, saveEvents, withRfcContext } from './RfcContext.js';
+import { commandsToJs, commandsFromJson, JsonHelper, commandToJs } from '../engine/index.js';
 
 const {
     Context: SessionContext,
@@ -49,20 +50,23 @@ class DiffSessionManager {
         this.diffState.currentInteractionIndex++
     }
 
-    acceptInterpretation(interpretation) {
-
-        const { currentInteractionIndex } = this.diffState
-        const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
-
-        this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
-            currentInteraction,
-            { acceptedInterpretations: [...(currentInteraction.acceptedInterpretations || []), interpretation] },
-        )
+    acceptCommands(commandArray) {
+        this.diffState.acceptedInterpretations = this.diffState.acceptedInterpretations || [];
+        this.diffState.acceptedInterpretations.push(commandArray.map(x => commandToJs(x)))
         this._persistChanges()
     }
 
-    applyAllChanges() {
+    applyAllChanges(eventStore, rfcId) {
         // persist events to event stream, as opposed to persisting diff state
+        return saveEvents(eventStore, rfcId)
+    }
+
+    restoreState(handleCommands) {
+        (this.diffState.acceptedInterpretations || []).forEach((jsonCommands) => {
+            const commandSequence = commandsFromJson(jsonCommands);
+            const commandArray = JsonHelper.seqToJsArray(commandSequence)
+            handleCommands(...commandArray)
+        })
     }
 
     _persistChanges = async () => {
@@ -76,7 +80,7 @@ class DiffSessionManager {
     }
 }
 
-class SessionStore extends React.Component {
+class SessionStoreBase extends React.Component {
     state = {
         isLoading: true,
         error: null,
@@ -120,14 +124,17 @@ class SessionStore extends React.Component {
         ]
         Promise.all(promises)
             .then(([sessionResponse, diffStateResponse]) => {
+                const diffSessionManager = new DiffSessionManager(sessionId, sessionResponse.session, diffStateResponse.diffState)
+                diffSessionManager.restoreState(this.props.handleCommands)
                 this.setState({
                     isLoading: false,
                     error: null,
                     session: sessionResponse.session,
-                    diffSessionManager: new DiffSessionManager(sessionId, sessionResponse.session, diffStateResponse.diffState)
+                    diffSessionManager
                 })
             })
             .catch((e) => {
+                console.error(e)
                 this.setState({
                     isLoading: false,
                     error: e,
@@ -144,56 +151,63 @@ class SessionStore extends React.Component {
             return null
         }
         if (error) {
+            console.error(error)
             return <div>something went wrong :(</div>
         }
+        const { queries } = this.props
+        const diffStateProjections = (function (diffSessionManager) {
+            const { session } = diffSessionManager
+            const urls = new Set(session.samples.map(x => x.request.url))
+            const samplesAndResolvedPaths = session.samples
+                .map((sample, index) => {
+                    const pathId = queries.resolvePath(sample.request.url)
+                    return { pathId, sample, index }
+                })
+            const samplesWithResolvedPaths = samplesAndResolvedPaths.filter(x => !!x.pathId)
+            const samplesWithoutResolvedPaths = samplesAndResolvedPaths.filter(x => !x.pathId)
+            const samplesGroupedByPath = samplesWithResolvedPaths
+                .reduce((acc, value) => {
+                    const { pathId, sample } = value;
+                    const group = acc[pathId] || []
+                    group.push(sample)
+                    acc[pathId] = group
+                    return acc
+                }, {})
+            // @TODO: calculate progress
+
+            return {
+                urls,
+                samplesWithResolvedPaths,
+                samplesWithoutResolvedPaths,
+                samplesGroupedByPath
+            }
+        })(diffSessionManager)
+        const handleCommands = (...commands) => {
+            this.props.handleCommands(...commands)
+            diffSessionManager.acceptCommands(commands)
+        }
+        const rfcContext = {
+            ...this.props,
+            handleCommands,
+            handleCommand: handleCommands
+        }
+        const sessionContext = {
+            rfcContext,
+            sessionId,
+            diffSessionManager,
+            diffStateProjections,
+        }
         return (
-            <RfcContext.Consumer>
-                {(rfcContext) => {
-                    const { queries } = rfcContext
-                    const diffStateProjections = (function (diffSessionManager) {
-                        const { session } = diffSessionManager
-                        const urls = new Set(session.samples.map(x => x.request.url))
-                        const samplesAndResolvedPaths = session.samples
-                            .map((sample, index) => {
-                                const pathId = queries.resolvePath(sample.request.url)
-                                return { pathId, sample, index }
-                            })
-                        const samplesWithResolvedPaths = samplesAndResolvedPaths.filter(x => !!x.pathId)
-                        const samplesWithoutResolvedPaths = samplesAndResolvedPaths.filter(x => !x.pathId)
-                        const samplesGroupedByPath = samplesWithResolvedPaths
-                            .reduce((acc, value) => {
-                                const { pathId, sample } = value;
-                                const group = acc[pathId] || []
-                                group.push(sample)
-                                acc[pathId] = group
-                                return acc
-                            }, {})
-                        // @TODO: calculate progress
-
-                        return {
-                            urls,
-                            samplesWithResolvedPaths,
-                            samplesWithoutResolvedPaths,
-                            samplesGroupedByPath
-                        }
-                    })(diffSessionManager)
-
-                    const sessionContext = {
-                        rfcContext,
-                        sessionId,
-                        diffSessionManager,
-                        diffStateProjections,
-                    }
-                    return (
-                        <SessionContext.Provider value={sessionContext}>
-                            {this.props.children}
-                        </SessionContext.Provider>
-                    )
-                }}
-            </RfcContext.Consumer>
+            <SessionContext.Provider value={sessionContext}>
+                <RfcContext.Provider value={rfcContext}>
+                    {this.props.children}
+                </RfcContext.Provider>
+            </SessionContext.Provider>
         )
     }
 }
+
+const SessionStore = withRfcContext(SessionStoreBase)
 
 export {
     SessionContext,

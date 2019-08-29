@@ -1,5 +1,6 @@
 package com.seamless.diff
 
+import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.ShapesHelper._
 import com.seamless.contexts.shapes.{ShapeEntity, ShapesState}
 import io.circe._
@@ -9,9 +10,9 @@ object ShapeDiffer {
   sealed trait ShapeDiffResult {}
   case class NoDiff() extends ShapeDiffResult
   case class ShapeMismatch(expected: ShapeEntity, actual: Json) extends ShapeDiffResult
-  case class MissingObjectKey(key: String) extends ShapeDiffResult
-  case class ExtraObjectKey(key: String) extends ShapeDiffResult
-  case class KeyShapeMismatch(key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
+  case class MissingObjectKey(parentObjectShapeId: ShapeId, key: String) extends ShapeDiffResult
+  case class ExtraObjectKey(parentObjectShapeId: ShapeId, key: String) extends ShapeDiffResult
+  case class KeyShapeMismatch(fieldId: FieldId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   case class MultipleInterpretations(s: ShapeDiffResult*) extends ShapeDiffResult
 
   def diff(expectedShape: ShapeEntity, actualShape: Json)(implicit shapesState: ShapesState): ShapeDiffResult = {
@@ -59,15 +60,54 @@ object ShapeDiffer {
             })
           val actualFields = o.toIterable
           val expectedKeys = expectedFields.map(_._1).toSet
-          println(expectedFields.map(_._1))
           val actualKeys = actualFields.map(_._1).toSet
-          println(expectedFields.map(_._1))
+
+          // detect keys that should be present but are not
           val missingKeys = expectedKeys -- actualKeys
-          val extraKeys = actualKeys -- expectedKeys
+          if (missingKeys.nonEmpty) {
+            return MissingObjectKey(expectedShape.shapeId, missingKeys.head)
+          }
+
+          // make sure all expected keys match the spec
           val commonKeys = expectedKeys.intersect(actualKeys)
-          println(missingKeys)
-          println(extraKeys)
-          missingKeys.toSeq.map(x => MissingObjectKey(x)) ++ extraKeys.toSeq.map(x => ExtraObjectKey(x))
+          println(commonKeys)
+          val fieldMap = expectedFields.toMap
+          commonKeys.foreach(key => {
+            val field = fieldMap(key)
+            println(key, field)
+            val flattenedField = shapesState.flattenedField(field.fieldId)
+            val expectedShape = flattenedField.fieldShapeDescriptor match {
+              case fsd: FieldShapeFromShape => {
+                Some(shapesState.shapes(fsd.shapeId))
+              }
+              case fsd: FieldShapeFromParameter => {
+                flattenedField.bindings(fsd.shapeParameterId) match {
+                  case Some(value) => value match {
+                    case p: ParameterProvider => None
+                    case p: ShapeProvider => Some(shapesState.shapes(p.shapeId))
+                    case p: NoProvider => None
+                  }
+                  case None => None
+                }
+              }
+            }
+            if (expectedShape.isDefined) {
+              val actualFieldValue = o(key).get
+              val diff = ShapeDiffer.diff(expectedShape.get, actualFieldValue)
+              println(diff)
+              diff match {
+                case d: ShapeMismatch => return KeyShapeMismatch(field.fieldId, key, expectedShape.get, actualFieldValue)
+                case _ =>
+              }
+            }
+          })
+
+          // detect keys that should not be present
+          val extraKeys = actualKeys -- expectedKeys
+          if (extraKeys.nonEmpty) {
+            return ExtraObjectKey(expectedShape.shapeId, extraKeys.head)
+          }
+
           NoDiff()
         } else {
           ShapeMismatch(expectedShape, actualShape)
@@ -82,6 +122,19 @@ object ShapeDiffer {
       }
 
     }
+  }
+
+  def resolveJsonToShapeId(x: Json)(implicit shapesState: ShapesState): ShapeId = {
+    if (x.isString) {
+      return "$string"
+    }
+    if (x.isNumber) {
+      return "$number"
+    }
+    if (x.isBoolean) {
+      return "$boolean"
+    }
+    "$any"
   }
 }
 

@@ -57,7 +57,7 @@ class UnrecognizedPathWizard extends React.Component {
         //@TODO: mark this interaction as ignored
     }
     handleSubmit = () => {
-        const { handleCommands, cachedQueryResults } = this.props;
+        const { cachedQueryResults } = this.props;
         const { pathsById } = cachedQueryResults;
         const { pathExpression } = this.state;
         const pathComponents = pathStringToPathComponents(pathExpression)
@@ -74,7 +74,7 @@ class UnrecognizedPathWizard extends React.Component {
             commands.push(command)
             lastParentPathId = pathId
         })
-        handleCommands(...commands)
+        this.props.onSubmit({commands})
     }
     render() {
         const { url, classes } = this.props;
