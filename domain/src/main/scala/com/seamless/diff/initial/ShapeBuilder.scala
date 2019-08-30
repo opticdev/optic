@@ -1,7 +1,7 @@
 package com.seamless.diff.initial
 
 import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInField, RenameShape, SetParameterShape, ShapeProvider}
+import com.seamless.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInField, ProviderInShape, RenameShape, SetParameterShape, ShapeProvider}
 import com.seamless.contexts.shapes.ShapesHelper.{BooleanKind, ListKind, NumberKind, ObjectKind, StringKind}
 import com.seamless.diff.MutableCommandStream
 import io.circe.Json
@@ -25,6 +25,7 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
   var commands = new MutableCommandStream
 
   def run = {
+    println("trying to infer a shape from "+ r.noSpaces)
     commands = new MutableCommandStream
     val rootShapeId = idGenerator
     fromJson(r)(IsRoot(rootShapeId)) // has the side effect of appending commands
@@ -52,7 +53,12 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
       fromJsonObject(json, id)
     } else if (json.isArray) {
       commands.appendInit(AddShape(id, ListKind.baseShapeId, ""))
-      fromArray(json, id, Try(cxt.asInstanceOf[ValueShapeWithId].andFieldId.get).toOption)
+      cxt match {
+        case id1: ValueShapeWithId if id1.andFieldId.isDefined =>
+          fromArray(json, id, id1.andFieldId)
+        case _ =>
+          fromArray(json, id)
+      }
     } else if (json.isBoolean) {
       commands.appendInit(AddShape(id, BooleanKind.baseShapeId, ""))
     } else if (json.isString) {
@@ -83,15 +89,29 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
 
     val innerId = fieldId.getOrElse(id)
     if (array.isEmpty) {
-      commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider("$any"), "$listItem")))
+
+      if (fieldId.isDefined) {
+        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider("$any"), "$listItem")))
+      } else {
+        commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider("$any"), "$listItem")))
+      }
+
     } else {
       //for now no oneOf...we'll support that later once we have shape hashing
       if (isPrimitive(array.head)) {
-        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(primitiveShapeProvider(array.head).baseShapeId), "$listItem")))
+        if (fieldId.isDefined) {
+          commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(primitiveShapeProvider(array.head).baseShapeId), "$listItem")))
+        } else {
+          commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(primitiveShapeProvider(array.head).baseShapeId), "$listItem")))
+        }
       } else {
         val assignedItemShapeId = idGenerator
         fromJson(array.head)(ValueShapeWithId(assignedItemShapeId))
-        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(assignedItemShapeId), "$listItem")))
+        if (fieldId.isDefined) {
+          commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(assignedItemShapeId), "$listItem")))
+        } else {
+          commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(assignedItemShapeId), "$listItem")))
+        }
       }
     }
   }

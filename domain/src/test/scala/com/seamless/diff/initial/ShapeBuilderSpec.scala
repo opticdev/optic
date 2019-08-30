@@ -1,5 +1,6 @@
 package com.seamless.diff.initial
 
+import com.seamless.contexts.rfc.{RfcService, RfcServiceJSFacade}
 import com.seamless.diff.JsonFileFixture
 import com.seamless.serialization.CommandSerialization
 import org.scalatest.FunSpec
@@ -22,6 +23,16 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     val basic = fromFile("primitive-array")
     val result = new ShapeBuilder(basic, "pa").run.asConceptNamed("Array")
     assert(result.commands == commandsFrom("primitive-array"))
+  }
+
+  it("works with todo example") {
+    val basic = fromFile("todo-body")
+    val result = new ShapeBuilder(basic, "pa").run
+
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    val rfcService: RfcService = new RfcService(eventStore)
+    println(CommandSerialization.toJson(result.commands))
+    rfcService.handleCommandSequence("id", result.commands)
   }
 
 }
