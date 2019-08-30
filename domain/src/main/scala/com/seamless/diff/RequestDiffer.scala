@@ -88,7 +88,8 @@ object RequestDiffer {
     val responseId = matchedResponse.get.responseId;
     val responseDiff: Option[RequestDiffResult] = matchedResponse.get.responseDescriptor.bodyDescriptor match {
       case d: UnsetBodyDescriptor => {
-        Some(UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, ShapeDiffer.NoDiff()))
+        Some(UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, ShapeDiffer.UnsetShape(interaction
+        .apiResponse.body)))
       }
       case d: ShapedBodyDescriptor => {
         //@TODO: check content type

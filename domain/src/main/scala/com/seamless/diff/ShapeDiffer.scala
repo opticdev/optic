@@ -9,6 +9,7 @@ import io.circe._
 object ShapeDiffer {
   sealed trait ShapeDiffResult {}
   case class NoDiff() extends ShapeDiffResult
+  case class UnsetShape(actual: Json) extends ShapeDiffResult
   case class ShapeMismatch(expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   case class MissingObjectKey(parentObjectShapeId: ShapeId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   case class ExtraObjectKey(parentObjectShapeId: ShapeId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult

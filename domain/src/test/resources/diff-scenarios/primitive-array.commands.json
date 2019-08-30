@@ -29,8 +29,8 @@
   {
     "SetParameterShape" : {
       "shapeDescriptor" : {
-        "ProviderInField" : {
-          "fieldId" : "pa_1",
+        "ProviderInShape" : {
+          "shapeId" : "pa_2",
           "providerDescriptor" : {
             "ShapeProvider" : {
               "shapeId" : "$string"

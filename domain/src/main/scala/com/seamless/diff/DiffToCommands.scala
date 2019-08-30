@@ -7,6 +7,8 @@ import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer.ShapeDiffResult
+import com.seamless.diff.initial.ShapeBuilder
+import io.circe.{Json, JsonObject}
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
@@ -15,22 +17,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExportAll
 class DiffToCommands(_shapesState: ShapesState) {
   @JSExportAll
-  case class DiffInterpretation(description: String, commands: Seq[RfcCommand])
-  def generateCommands(diff: ShapeDiffResult) = {
-    // discard interaction is always an option
-    // mismatch => oneOf, at root or at exact point?
-    // key missing => add, optional, or remove
-    // key extra => add, optional, or remove
-    // key mismatch => oneOf
-    diff match {
-      case sd: ShapeDiffer.NoDiff =>
-      case sd: ShapeDiffer.ShapeMismatch =>
-      case sd: ShapeDiffer.MissingObjectKey =>
-      case sd: ShapeDiffer.ExtraObjectKey =>
-      case sd: ShapeDiffer.KeyShapeMismatch =>
-      case sd: ShapeDiffer.MultipleInterpretations =>
-    }
-  }
+  case class DiffInterpretation(description: String, commands: Seq[RfcCommand], metadata: Json = null)
 
   val placeHolder = DiffInterpretation("", Seq.empty)
 
@@ -66,13 +53,17 @@ class DiffToCommands(_shapesState: ShapesState) {
       case d: UnmatchedResponseBodyShape => {
         val inlineShapeId = ShapesHelper.newShapeId()
         d.shapeDiff match {
-          case sd: ShapeDiffer.NoDiff => DiffInterpretation(
-            s"Change the response body shape",
-            Seq(
-              AddShape(inlineShapeId, "$object", ""),
-              SetResponseBodyShape(d.responseId, ShapedBodyDescriptor(d.contentType, inlineShapeId, isRemoved = false))
+          case sd: ShapeDiffer.UnsetShape => {
+            val shape = new ShapeBuilder(sd.actual).run
+            val inlineShapeId = shape.rootShapeId
+            DiffInterpretation(
+              s"Change the response body shape",
+              shape.commands ++ Seq (
+                  SetResponseBodyShape(d.responseId, ShapedBodyDescriptor(d.contentType, inlineShapeId, isRemoved = false))
+              ),
+              Json.fromJsonObject(JsonObject("shapeIdToName" -> Json.fromString(inlineShapeId)))
             )
-          )
+          }
 
           case sd: ShapeDiffer.ShapeMismatch => placeHolder
           case sd: ShapeDiffer.MissingObjectKey => placeHolder
