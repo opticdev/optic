@@ -67,6 +67,7 @@ class RfcStoreWithoutContext extends React.Component {
         const queries = Queries(eventStore, rfcService, this.props.rfcId);
 
         if (this.props.initialEventsString) {
+            console.log({bulkAdd: this.props.initialEventsString})
             eventStore.bulkAdd(this.props.rfcId, this.props.initialEventsString)
         }
 
@@ -96,18 +97,18 @@ class RfcStoreWithoutContext extends React.Component {
     }
 
     render() {
-        const { queries, hasUnsavedChanges, rfcService } = this.state;
+        const { queries, eventStore, hasUnsavedChanges, rfcService } = this.state;
         const { rfcId } = this.props;
         const cachedQueryResults = stuffFromQueries(queries)
 
         const value = {
             rfcId,
             rfcService,
+            eventStore, 
             queries,
             cachedQueryResults,
             handleCommand: this.handleCommand,
             handleCommands: this.handleCommands,
-            serializeEvents: this.serializeEvents,
             hasUnsavedChanges
         };
 
@@ -123,7 +124,7 @@ const RfcStore = withInitialRfcCommandsContext(RfcStoreWithoutContext);
 
 
 class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
-    
+
     handleCommands = (...commands) => {
         super.handleCommands(...commands)
         this.setState({ hasUnsavedChanges: true })
@@ -131,15 +132,7 @@ class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
     }
 
     persistEvents = debounce(async () => {
-        const serializedEvents = this.serializeEvents()
-
-        const response = await fetch('/cli-api/events', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: serializedEvents
-        });
+        const response = await saveEvents(this.state.eventStore, this.props.rfcId)
 
         if (response.ok) {
             this.props.enqueueSnackbar('Saved', { 'variant': 'success' })
@@ -149,10 +142,17 @@ class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
         }
 
     }, 4000, { leading: true, trailing: true })
+}
 
-    serializeEvents = () => {
-        return this.state.eventStore.serializeEvents(this.props.rfcId);
-    };
+export async function saveEvents(eventStore, rfcId) {
+    const serializedEvents = eventStore.serializeEvents(rfcId);
+    return fetch(`/cli-api/events`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: serializedEvents
+    });
 }
 
 const LocalRfcStore = withSnackbar(withInitialRfcCommandsContext(LocalRfcStoreWithoutContext))
@@ -162,7 +162,7 @@ class LocalDiffRfcStoreWithoutContext extends RfcStoreWithoutContext {
         super.handleCommands(...commands)
     }
 }
-const LocalDiffRfcStore =withSnackbar(withInitialRfcCommandsContext(LocalDiffRfcStoreWithoutContext))
+const LocalDiffRfcStore = withSnackbar(withInitialRfcCommandsContext(LocalDiffRfcStoreWithoutContext))
 
 export {
     RfcStore,

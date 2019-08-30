@@ -13,6 +13,7 @@ class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[R
   private val repository = new EventSourcedRepository[RfcState, RfcEvent](RfcAggregate, eventStore)
 
   def handleCommand(id: AggregateId, command: RfcCommand): Unit = {
+    println(command)
     val state = repository.findById(id)
     val context = RfcCommandContext()
     val effects = RfcAggregate.handleCommand(state)((context, command))
@@ -57,7 +58,7 @@ object RfcServiceJSFacade {
   def fromJsonCommands(eventStore: EventStore[RfcEvent], jsonString: String, id: AggregateId): RfcService = {
     val commandsVector = CommandSerialization.fromJsonString(jsonString)
 
-    fromCommands(eventStore, commandsVector.get, id)
+    fromCommands(eventStore, commandsVector, id)
   }
 }
 

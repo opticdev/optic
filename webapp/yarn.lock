@@ -8330,6 +8330,9 @@ opn@^5.1.0:
   dependencies:
     is-wsl "^1.1.0"
 
+optic-domain@../domain/:
+  version "0.1.0"
+
 optimist@^0.6.1:
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/optimist/-/optimist-0.6.1.tgz#da3ea74686fa21a19a111c326e90eb15a0196686"

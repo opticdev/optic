@@ -18,7 +18,6 @@ function completePathMatcherRegex(pathComponents) {
 }
 
 export function pathComponentsToString(pathComponents) {
-    console.log({pathComponents})
     if (pathComponents.length === 0) {
         return '/';
     }
@@ -34,7 +33,6 @@ export function pathComponentsToString(pathComponents) {
                 return name;
             }
         }).join('/');
-    console.log({ s })
     return s
 }
 
@@ -48,7 +46,6 @@ class UnrecognizedPathWizard extends React.Component {
         pathExpression: ''
     }
     handleChange = ({ pathExpression }) => {
-        console.log('handleChange', { pathExpression })
         this.setState({
             pathExpression
         })
@@ -57,7 +54,7 @@ class UnrecognizedPathWizard extends React.Component {
         //@TODO: mark this interaction as ignored
     }
     handleSubmit = () => {
-        const { handleCommands, cachedQueryResults } = this.props;
+        const { cachedQueryResults } = this.props;
         const { pathsById } = cachedQueryResults;
         const { pathExpression } = this.state;
         const pathComponents = pathStringToPathComponents(pathExpression)
@@ -74,15 +71,13 @@ class UnrecognizedPathWizard extends React.Component {
             commands.push(command)
             lastParentPathId = pathId
         })
-        handleCommands(...commands)
+        this.props.onSubmit({commands})
     }
     render() {
         const { url, classes } = this.props;
         const { pathExpression } = this.state;
-        console.log({ url, pathExpression })
         const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression))
         const isCompleteMatch = regex.exec(url)
-        console.log({ regex, match: url.match(regex), isCompleteMatch })
 
         return (
             <Sheet>

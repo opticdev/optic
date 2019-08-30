@@ -271,7 +271,6 @@ class ParametersEditor extends React.Component {
 ParametersEditor.propTypes = {
     title: PropTypes.string.isRequired,
     parameters: PropTypes.array.isRequired,
-    parameterMapper: PropTypes.func.isRequired,
     onRename: PropTypes.func.isRequired
 }
 
