@@ -1,3 +1,19 @@
 [
-{"APINamed":{"name":"ABC"}}
+{"APINamed":{"name":"ABC"}},
+{"PathComponentAdded":{"name":"todos","parentPathId":"root","pathId":"path_eqvum5s74Q"}},
+{"RequestAdded":{"httpMethod":"GET","pathId":"path_eqvum5s74Q","requestId":"request_l4UjMECKyq"}},
+{"ResponseAdded":{"httpStatusCode":200,"requestId":"request_l4UjMECKyq","responseId":"response_alit818qfX"}},
+{"ShapeAdded":{"baseShapeId":"$object","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_CgdqVbjkJQ"}},
+{"ResponseBodySet":{"bodyDescriptor":{"httpContentType":"application/json; charset=utf-8","isRemoved":false,"shapeId":"shape_CgdqVbjkJQ"},"responseId":"response_alit818qfX"}},
+{"PathComponentAdded":{"name":"todo","parentPathId":"root","pathId":"path_7XP7XMWdPs"}},
+{"RequestAdded":{"httpMethod":"PUT","pathId":"path_7XP7XMWdPs","requestId":"request_JnI1AASjgT"}},
+{"ResponseAdded":{"httpStatusCode":200,"requestId":"request_JnI1AASjgT","responseId":"response_KRTb8Zs4S5"}},
+{"ShapeAdded":{"baseShapeId":"$object","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_oXVZZmD6c3"}},
+{"ResponseBodySet":{"bodyDescriptor":{"httpContentType":"application/json; charset=utf-8","isRemoved":false,"shapeId":"shape_oXVZZmD6c3"},"responseId":"response_KRTb8Zs4S5"}},
+{"FieldAdded":{"fieldId":"field_Dcnx5l82SR","name":"_id","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_Dcnx5l82SR","shapeId":"$string"}},"shapeId":"shape_oXVZZmD6c3"}},
+{"FieldAdded":{"fieldId":"field_gkhZOXAJz4","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_gkhZOXAJz4","shapeId":"$string"}},"shapeId":"shape_oXVZZmD6c3"}},
+{"FieldAdded":{"fieldId":"field_5OYPuBWQf0","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_5OYPuBWQf0","shapeId":"$string"}},"shapeId":"shape_oXVZZmD6c3"}},
+{"FieldShapeSet":{"shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_5OYPuBWQf0","shapeId":"$boolean"}}}},
+{"FieldAdded":{"fieldId":"field_tiEdFNE7UR","name":"__v","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_tiEdFNE7UR","shapeId":"$string"}},"shapeId":"shape_oXVZZmD6c3"}},
+{"FieldShapeSet":{"shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_tiEdFNE7UR","shapeId":"$number"}}}}
 ]

@@ -3,12 +3,12 @@
     "AddShape" : {
       "shapeId" : "pa_0",
       "baseShapeId" : "$object",
-      "name" : "Learned Concept"
+      "name" : ""
     }
   },
   {
     "AddShape" : {
-      "shapeId" : "pa_3",
+      "shapeId" : "pa_2",
       "baseShapeId" : "$list",
       "name" : ""
     }
@@ -39,6 +39,12 @@
           "consumingParameterId" : "$listItem"
         }
       }
+    }
+  },
+  {
+    "RenameShape" : {
+      "shapeId" : "pa_0",
+      "name" : "Array"
     }
   }
 ]

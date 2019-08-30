@@ -3,67 +3,73 @@
     "AddShape" : {
       "shapeId" : "basic_0",
       "baseShapeId" : "$object",
-      "name" : "Learned Concept"
+      "name" : ""
     }
   },
   {
     "AddShape" : {
-      "shapeId" : "basic_1",
+      "shapeId" : "basic_2",
       "baseShapeId" : "$string",
       "name" : ""
     }
   },
   {
     "AddField" : {
-      "fieldId" : "basic_2",
+      "fieldId" : "basic_1",
       "shapeId" : "basic_0",
       "name" : "a",
       "shapeDescriptor" : {
         "FieldShapeFromShape" : {
-          "fieldId" : "basic_2",
-          "shapeId" : "basic_1"
+          "fieldId" : "basic_1",
+          "shapeId" : "basic_2"
         }
       }
     }
   },
   {
     "AddShape" : {
-      "shapeId" : "basic_3",
+      "shapeId" : "basic_4",
       "baseShapeId" : "$string",
       "name" : ""
     }
   },
   {
     "AddField" : {
-      "fieldId" : "basic_4",
+      "fieldId" : "basic_3",
       "shapeId" : "basic_0",
       "name" : "b",
       "shapeDescriptor" : {
         "FieldShapeFromShape" : {
-          "fieldId" : "basic_4",
-          "shapeId" : "basic_3"
+          "fieldId" : "basic_3",
+          "shapeId" : "basic_4"
         }
       }
     }
   },
   {
     "AddShape" : {
-      "shapeId" : "basic_5",
+      "shapeId" : "basic_6",
       "baseShapeId" : "$string",
       "name" : ""
     }
   },
   {
     "AddField" : {
-      "fieldId" : "basic_6",
+      "fieldId" : "basic_5",
       "shapeId" : "basic_0",
       "name" : "c",
       "shapeDescriptor" : {
         "FieldShapeFromShape" : {
-          "fieldId" : "basic_6",
-          "shapeId" : "basic_5"
+          "fieldId" : "basic_5",
+          "shapeId" : "basic_6"
         }
       }
+    }
+  },
+  {
+    "RenameShape" : {
+      "shapeId" : "basic_0",
+      "name" : "Basic"
     }
   }
 ]

@@ -1,7 +1,7 @@
 package com.seamless.diff.initial
 
 import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInField, SetParameterShape, ShapeProvider}
+import com.seamless.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInField, RenameShape, SetParameterShape, ShapeProvider}
 import com.seamless.contexts.shapes.ShapesHelper.{BooleanKind, ListKind, NumberKind, ObjectKind, StringKind}
 import com.seamless.diff.MutableCommandStream
 import io.circe.Json
@@ -12,7 +12,13 @@ sealed trait ShapeBuilderContext
 case class IsField(named: String, parentId: String) extends ShapeBuilderContext
 case class IsInArray(index: Int) extends ShapeBuilderContext
 case class ValueShapeWithId(id: String, andFieldId: Option[String] = None) extends ShapeBuilderContext
-case object IsRoot extends ShapeBuilderContext
+case class IsRoot(forceId: String) extends ShapeBuilderContext
+
+
+case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand]) {
+  def asConceptNamed(name: String): ShapeBuilderResult =
+    ShapeBuilderResult(rootShapeId, commands :+ RenameShape(rootShapeId, name))
+}
 
 class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkString}") {
 
@@ -20,11 +26,9 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
 
   def run = {
     commands = new MutableCommandStream
-    if (!r.isObject) {
-      throw new Error("Concepts learned from an example must have an object at their root")
-    }
-    fromJson(r)(IsRoot) // has the side effect of appending commands
-    commands.toImmutable.flatten
+    val rootShapeId = idGenerator
+    fromJson(r)(IsRoot(rootShapeId)) // has the side effect of appending commands
+    ShapeBuilderResult(rootShapeId, commands.toImmutable.flatten)
   }
 
   private var count = 0
@@ -35,14 +39,16 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     id
   }
 
-  private def fromJson(json: Json)(implicit cxt: ShapeBuilderContext = IsRoot): Unit = {
+  private def fromJson(json: Json)(implicit cxt: ShapeBuilderContext): Unit = {
+
     val id = cxt match {
       case ValueShapeWithId(id, _) => id
+      case IsRoot(forceId) => forceId
       case _ => idGenerator
     }
 
     if (json.isObject) {
-      commands.appendInit(AddShape(id, ObjectKind.baseShapeId, if (cxt == IsRoot) "Learned Concept" else ""))
+      commands.appendInit(AddShape(id, ObjectKind.baseShapeId, ""))
       fromJsonObject(json, id)
     } else if (json.isArray) {
       commands.appendInit(AddShape(id, ListKind.baseShapeId, ""))
