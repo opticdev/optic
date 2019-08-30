@@ -110,3 +110,13 @@ class DiffToCommands(_shapesState: ShapesState) {
     }
   }
 }
+
+/*
+Plan of Attack
+ - what should happen when there is a missing key? (i.e. fix placeholders above)
+ - request body, headers, etc. diffing
+ - ignoring stuff? (cache in interactionResult / diffState)
+ - launch spec with latest session
+ - clean up pathmatcher
+
+ */

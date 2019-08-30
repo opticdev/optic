@@ -77,7 +77,7 @@ object RequestDiffer {
 
     // check for matching response status
     val matchedResponse = spec.requestsState.responses.values
-      .find(r => r.responseDescriptor.httpStatusCode == interaction.apiResponse.statusCode)
+      .find(r => r.responseDescriptor.requestId == matchedOperation.get.requestId && r.responseDescriptor.httpStatusCode == interaction.apiResponse.statusCode)
 
     if (matchedResponse.isEmpty) {
       return UnmatchedHttpStatusCode(matchedOperation.get.requestId, interaction.apiResponse.statusCode)

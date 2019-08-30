@@ -2,6 +2,8 @@ import React from 'react';
 import { GenericContextFactory } from './GenericContextFactory.js';
 import { RfcContext, saveEvents, withRfcContext } from './RfcContext.js';
 import { commandsToJs, commandsFromJson, JsonHelper, commandToJs } from '../engine/index.js';
+import { EventEmitter } from 'events';
+import debounce from 'lodash.debounce';
 
 const {
     Context: SessionContext,
@@ -13,64 +15,63 @@ class DiffSessionManager {
         this.sessionId = sessionId;
         this.session = session;
         this.diffState = diffState;
-        //@TODO: one-at-a-time bottleneck for this._persistChanges()
+        this.events = new EventEmitter()
+        this.events.on('change', debounce(() => this.events.emit('updated'), 10, { leading: true, trailing: true, maxWait: 100 }))
+        this.events.on('updated', () => this.persistState())
     }
 
-    currentInteraction() {
-        const { currentInteractionIndex } = this.diffState
-        const interaction = this.session.samples[currentInteractionIndex];
-        return interaction || null
-    }
-
-    skipInteraction() {
-        const { currentInteractionIndex } = this.diffState
+    skipInteraction(currentInteractionIndex) {
+        this.diffState.status = 'started'
         const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
 
         this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
             currentInteraction,
             { status: 'skipped' }
         )
-        this._incrementInteractionCursor()
-        this._persistChanges()
+        this.events.emit('change')
     }
 
-    finishInteraction() {
-        const { currentInteractionIndex } = this.diffState
+    finishInteraction(currentInteractionIndex) {
+        this.diffState.status = 'started'
         const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
 
         this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
             currentInteraction,
             { status: 'completed' },
         )
-        this._incrementInteractionCursor()
-        this._persistChanges()
-    }
-
-    _incrementInteractionCursor() {
-        this.diffState.currentInteractionIndex++
+        this.events.emit('change')
     }
 
     acceptCommands(commandArray) {
-        this.diffState.acceptedInterpretations = this.diffState.acceptedInterpretations || [];
+        this.diffState.status = 'started'
         this.diffState.acceptedInterpretations.push(commandArray.map(x => commandToJs(x)))
-        this._persistChanges()
+        this.events.emit('change')
     }
 
-    applyAllChanges(eventStore, rfcId) {
-        // persist events to event stream, as opposed to persisting diff state
-        return saveEvents(eventStore, rfcId)
+    async applyDiffToSpec(eventStore, rfcId) {
+        await this.persistState()
+        console.log('begin transaction')
+        await saveEvents(eventStore, rfcId, this.diffState.baseSpecVersion)
+        this.diffState.status = 'persisted'
+        await this.persistState()
+        console.log('end transaction')
+        this.events.emit('updated')
     }
 
     restoreState(handleCommands) {
-        (this.diffState.acceptedInterpretations || []).forEach((jsonCommands) => {
-            const commandSequence = commandsFromJson(jsonCommands);
+        if (this.diffState.status === 'started') {
+            const allCommands = this.diffState.acceptedInterpretations.reduce((acc, value) => [...acc, ...value], [])
+            console.log({ allCommands })
+            const commandSequence = commandsFromJson(allCommands)
             const commandArray = JsonHelper.seqToJsArray(commandSequence)
             handleCommands(...commandArray)
-        })
+            console.log('done restoring')
+        }
     }
 
-    _persistChanges = async () => {
-        fetch(`/cli-api/sessions/${this.sessionId}/diff`, {
+    persistState(){
+        console.count('persisting')
+        return fetch(`/cli-api/sessions/${this.sessionId}/diff`, {
             method: 'PUT',
             headers: {
                 'content-type': 'application/json'
@@ -97,7 +98,6 @@ class SessionStoreBase extends React.Component {
         this.setState({
             isLoading: true,
             error: null,
-            session: null,
             diffSessionManager: null,
         })
         const promises = [
@@ -125,11 +125,11 @@ class SessionStoreBase extends React.Component {
         Promise.all(promises)
             .then(([sessionResponse, diffStateResponse]) => {
                 const diffSessionManager = new DiffSessionManager(sessionId, sessionResponse.session, diffStateResponse.diffState)
+                diffSessionManager.events.on('updated', () => this.forceUpdate())
                 diffSessionManager.restoreState(this.props.handleCommands)
                 this.setState({
                     isLoading: false,
                     error: null,
-                    session: sessionResponse.session,
                     diffSessionManager
                 })
             })
@@ -138,7 +138,6 @@ class SessionStoreBase extends React.Component {
                 this.setState({
                     isLoading: false,
                     error: e,
-                    session: null,
                     diffSessionManager: null
                 })
             })
@@ -148,7 +147,7 @@ class SessionStoreBase extends React.Component {
         const { sessionId } = this.props;
         const { isLoading, error, diffSessionManager } = this.state;
         if (isLoading) {
-            return null
+            return <div>loading...</div>
         }
         if (error) {
             console.error(error)
@@ -167,9 +166,9 @@ class SessionStoreBase extends React.Component {
             const samplesWithoutResolvedPaths = samplesAndResolvedPaths.filter(x => !x.pathId)
             const samplesGroupedByPath = samplesWithResolvedPaths
                 .reduce((acc, value) => {
-                    const { pathId, sample } = value;
+                    const { pathId } = value;
                     const group = acc[pathId] || []
-                    group.push(sample)
+                    group.push(value)
                     acc[pathId] = group
                     return acc
                 }, {})
@@ -186,8 +185,9 @@ class SessionStoreBase extends React.Component {
             this.props.handleCommands(...commands)
             diffSessionManager.acceptCommands(commands)
         }
+        const { children, ...rest } = this.props
         const rfcContext = {
-            ...this.props,
+            ...rest,
             handleCommands,
             handleCommand: handleCommands
         }

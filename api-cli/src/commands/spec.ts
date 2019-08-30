@@ -12,15 +12,28 @@ import * as open from 'open'
 import { readApiConfig } from './start';
 import analytics from '../lib/analytics';
 import Init, { IApiCliConfig } from './init';
+interface IOpticDiffState {
+  status: 'started' | 'persisted'
+  interactionResults: Object
+  acceptedInterpretations: any[]
+}
 interface IOpticRequestAdditions {
   session: Object
-  diffState: Object
+  diffState: IOpticDiffState
 }
 declare global {
   namespace Express {
     export interface Request {
       optic: IOpticRequestAdditions
     }
+  }
+}
+
+function makeInitialDiffState(events: any[]): IOpticDiffState {
+  return {
+    status: 'started',
+    interactionResults: {},
+    acceptedInterpretations: [],
   }
 }
 export default class Spec extends Command {
@@ -56,7 +69,7 @@ export default class Spec extends Command {
 
   }
 
-  async startServer(events: any[]) {
+  async startServer(initialEvents: any[]) {
     let config: IApiCliConfig;
     try {
       config = await readApiConfig()
@@ -68,21 +81,21 @@ export default class Spec extends Command {
     }
 
     const { specStorePath, sessionsPath } = await getPaths()
-    let updatedEvents = events
+    let events = initialEvents
     const sessionFileSuffix = '.optic_session.json';
     const diffStateFileSuffix = '.optic_diff-state.json'
     const app = express()
     app.use(bodyParser.text({ type: 'text/html', limit: '100MB' }))
-    const port = await getPort({ port: getPort.makeRange(3200, 3299) })
+    const port = await getPort({ port: getPort.makeRange(3201, 3299) })
 
     app.get('/cli-api/events', (req, res) => {
       console.log('get events')
-      res.json(updatedEvents)
+      res.json(events)
     })
-    app.put('/cli-api/events', bodyParser.json(), (req, res) => {
+    app.put('/cli-api/events', bodyParser.json(), async (req, res) => {
       const newEvents = req.body
-      updatedEvents = newEvents
-      fs.writeFileSync(specStorePath, prepareEvents(newEvents))
+      await fs.writeFile(specStorePath, prepareEvents(newEvents))
+      events = newEvents
       res.sendStatus(204)
     })
 
@@ -101,7 +114,7 @@ export default class Spec extends Command {
     })
 
     async function validateSessionId(req: express.Request, res: express.Response, next: express.NextFunction) {
-      
+
       const entries = await fs.readdir(sessionsPath)
       const { sessionId } = req.params;
       const sessionFileName = `${sessionId}${sessionFileSuffix}`
@@ -116,7 +129,7 @@ export default class Spec extends Command {
       const diffStateExists = await fs.pathExists(diffStateFilePath)
 
       try {
-        const diffState = diffStateExists ? await fs.readJson(diffStateFilePath) : {interactionResults: {}, currentInteractionIndex: 0}
+        const diffState = diffStateExists ? await fs.readJson(diffStateFilePath) : makeInitialDiffState(events)
         const session = await fs.readJson(path.join(sessionsPath, sessionFileName))
         req.optic = {
           session,

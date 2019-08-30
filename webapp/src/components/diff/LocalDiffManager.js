@@ -1,7 +1,6 @@
 import React from 'react';
 import { Operation } from '../PathPage'
 import Editor, { FullSheet, Sheet } from '../navigation/Editor.js';
-
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -12,6 +11,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import { PathTrail } from '../PathPage'
 import UnrecognizedPathWizard from './UnrecognizedPathWizard';
 import { withRfcContext } from '../../contexts/RfcContext';
+import { EditorStore, EditorModes } from '../../contexts/EditorContext';
+
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
@@ -40,19 +41,47 @@ class LocalDiffManager extends React.Component {
         return (
             <SessionContext.Consumer>
                 {(sessionContext) => {
-                    const { diffSessionManager } = sessionContext
+                    const { diffSessionManager, diffStateProjections } = sessionContext
+                    const { diffState } = diffSessionManager
+                    const { status } = diffState
+                    if (status === 'persisted') {
+                        return (
+                            <div>Saved! <a href="/saved">View updated Documentation</a></div>
+                        )
+                    }
                     const { handleCommands, eventStore, rfcId, rfcService, queries, cachedQueryResults } = this.props
                     const { requests, requestIdsByPathId, pathsById } = cachedQueryResults
                     //@TODO: measure progress from sessionContext.diffSessionManager and .sessions
-                    const sample = diffSessionManager.currentInteraction()
+                    const { pathId, sample, index: currentInteractionIndex } = (function (diffStateProjections) {
+                        function isStartable(item) {
+                            const { index } = item;
+                            const results = diffState.interactionResults[index] || {}
+                            return results.status !== 'skipped' && results.status !== 'completed'
+                        }
+                        const { samplesGroupedByPath } = diffStateProjections
+                        for (const entry of Object.entries(samplesGroupedByPath)) {
+                            const [pathId, items] = entry;
+                            const firstStartableValue = items.find(x => isStartable(x))
+                            if (firstStartableValue) {
+                                return firstStartableValue
+                            }
+                        }
+                        const { samplesWithoutResolvedPaths } = diffStateProjections
+                        for (let value of samplesWithoutResolvedPaths) {
+                            if (isStartable(value)) {
+                                return value
+                            }
+                        }
+
+                        return {}
+                    })(diffStateProjections)
                     if (!sample) {
                         return (
                             <div>
-                                done! <button onClick={() => diffSessionManager.applyAllChanges(eventStore, rfcId)}>apply changes?</button>
+                                done! <button onClick={() => diffSessionManager.applyDiffToSpec(eventStore, rfcId)}>apply changes?</button>
                             </div>
                         )
                     }
-                    const pathId = queries.resolvePath(sample.request.url)
                     if (pathId) {
                         const interaction = toInteraction(sample)
                         const rfcState = rfcService.currentState(rfcId)
@@ -82,8 +111,9 @@ class LocalDiffManager extends React.Component {
                         return (
                             <div>
                                 <CustomAppBar title="Review Proposed Changes" />
-                                <Editor>
+                                <EditorStore mode={EditorModes.DOCUMENTATION}>
                                     <FullSheet>
+
                                         <PathTrail pathTrail={pathTrailWithNames} />
                                         <div>{diffSessionManager.session.samples.length} samples</div>
                                         {request && <Operation request={request} />}
@@ -93,11 +123,11 @@ class LocalDiffManager extends React.Component {
                                             </div>
                                         ) : (
                                                 <div>This request is in sync with the spec!
-                                                <button onClick={() => diffSessionManager.finishInteraction()}>continue</button>
+                                                <button onClick={() => diffSessionManager.finishInteraction(currentInteractionIndex)}>continue</button>
                                                 </div>
                                             )}
                                     </FullSheet>
-                                </Editor>
+                                </EditorStore>
                             </div>
                         )
                     } else {

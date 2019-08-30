@@ -146,7 +146,7 @@ class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
 
 export async function saveEvents(eventStore, rfcId) {
     const serializedEvents = eventStore.serializeEvents(rfcId);
-    return fetch('/cli-api/events', {
+    return fetch(`/cli-api/events`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'

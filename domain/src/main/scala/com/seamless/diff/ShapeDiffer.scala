@@ -10,8 +10,8 @@ object ShapeDiffer {
   sealed trait ShapeDiffResult {}
   case class NoDiff() extends ShapeDiffResult
   case class ShapeMismatch(expected: ShapeEntity, actual: Json) extends ShapeDiffResult
-  case class MissingObjectKey(parentObjectShapeId: ShapeId, key: String) extends ShapeDiffResult
-  case class ExtraObjectKey(parentObjectShapeId: ShapeId, key: String) extends ShapeDiffResult
+  case class MissingObjectKey(parentObjectShapeId: ShapeId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
+  case class ExtraObjectKey(parentObjectShapeId: ShapeId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   case class KeyShapeMismatch(fieldId: FieldId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   case class MultipleInterpretations(s: ShapeDiffResult*) extends ShapeDiffResult
 
@@ -65,7 +65,7 @@ object ShapeDiffer {
           // detect keys that should be present but are not
           val missingKeys = expectedKeys -- actualKeys
           if (missingKeys.nonEmpty) {
-            return MissingObjectKey(expectedShape.shapeId, missingKeys.head)
+            return MissingObjectKey(expectedShape.shapeId, missingKeys.head, expectedShape, actualShape)
           }
 
           // make sure all expected keys match the spec
@@ -105,7 +105,7 @@ object ShapeDiffer {
           // detect keys that should not be present
           val extraKeys = actualKeys -- expectedKeys
           if (extraKeys.nonEmpty) {
-            return ExtraObjectKey(expectedShape.shapeId, extraKeys.head)
+            return ExtraObjectKey(expectedShape.shapeId, extraKeys.head, expectedShape, actualShape)
           }
 
           NoDiff()
