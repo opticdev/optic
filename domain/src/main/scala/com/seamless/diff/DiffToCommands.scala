@@ -16,54 +16,23 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExport
 @JSExportAll
 class DiffToCommands(_shapesState: ShapesState) {
-  @JSExportAll
-  case class DiffInterpretation(description: String, commands: Seq[RfcCommand], metadata: Json = null)
 
-  val placeHolder = DiffInterpretation("", Seq.empty)
+  val placeHolder = DiffInterpretation("placeholder", "", Seq.empty)
 
   def interpret(diff: RequestDiffResult): DiffInterpretation = {
     implicit val shapesState: ShapesState = _shapesState
     diff match {
-      case d: NoDiff => DiffInterpretation("", Seq.empty)
-      case d: UnmatchedUrl => DiffInterpretation("", Seq.empty)
-      case d: UnmatchedHttpMethod => {
-        DiffInterpretation(
-          s"Add a ${d.method} request",
-          Seq(
-            AddRequest(RequestsServiceHelper.newRequestId(), d.pathId, d.method)
-          )
-        )
-      }
-      case d: UnmatchedHttpStatusCode => {
-        DiffInterpretation(
-          s"Add a ${d.statusCode} response",
-          Seq(
-            AddResponse(RequestsServiceHelper.newResponseId(), d.requestId, d.statusCode)
-          )
-        )
-      }
-      case d: UnmatchedResponseContentType => {
-        DiffInterpretation(
-          s"Change the response content type",
-          Seq(
-            SetResponseContentType(d.responseId, d.contentType)
-          )
-        )
-      }
+      case d: NoDiff => placeHolder
+      case d: UnmatchedUrl => placeHolder
+      case d: UnmatchedHttpMethod => Interpretations.AddRequest(d.method, d.pathId)
+      case d: UnmatchedHttpStatusCode => Interpretations.AddResponse(d.statusCode, d.requestId)
+      case d: UnmatchedResponseContentType => Interpretations.ChangeResponseContentType(d.inStatusCode, d.responseId, d.contentType, d.previousContentType)
+
       case d: UnmatchedResponseBodyShape => {
         val inlineShapeId = ShapesHelper.newShapeId()
         d.shapeDiff match {
-          case sd: ShapeDiffer.UnsetShape => {
-            val shape = new ShapeBuilder(sd.actual).run
-            val inlineShapeId = shape.rootShapeId
-            DiffInterpretation(
-              s"Change the response body shape",
-              shape.commands ++ Seq (
-                  SetResponseBodyShape(d.responseId, ShapedBodyDescriptor(d.contentType, inlineShapeId, isRemoved = false))
-              ),
-              Json.fromJsonObject(JsonObject("shapeIdToName" -> Json.fromString(inlineShapeId)))
-            )
-          }
+          case sd: ShapeDiffer.UnsetShape =>
+            Interpretations.AddInitialBodyShape(sd.actual, d.responseStatusCode, d.responseId, d.contentType)
 
           case sd: ShapeDiffer.ShapeMismatch => placeHolder
           case sd: ShapeDiffer.MissingObjectKey => placeHolder
@@ -91,11 +60,11 @@ class DiffToCommands(_shapesState: ShapesState) {
 
       }
       case d: NoDiff => {
-        DiffInterpretation("", Seq.empty)
+        placeHolder
       }
       case _ => {
         println("unhandled")
-        DiffInterpretation("", Seq.empty)
+        placeHolder
 
       }
     }

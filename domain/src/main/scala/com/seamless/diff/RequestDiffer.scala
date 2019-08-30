@@ -54,8 +54,8 @@ object RequestDiffer {
   case class UnmatchedUrl(url: String) extends RequestDiffResult
   case class UnmatchedHttpMethod(pathId: PathComponentId, method: String) extends RequestDiffResult
   case class UnmatchedHttpStatusCode(requestId: RequestId, statusCode: Int) extends RequestDiffResult
-  case class UnmatchedResponseContentType(responseId: ResponseId, contentType: String) extends RequestDiffResult
-  case class UnmatchedResponseBodyShape(responseId: ResponseId, contentType: String, shapeDiff: ShapeDiffResult) extends RequestDiffResult
+  case class UnmatchedResponseContentType(responseId: ResponseId, contentType: String, previousContentType: String, inStatusCode: Int) extends RequestDiffResult
+  case class UnmatchedResponseBodyShape(responseId: ResponseId, contentType: String, responseStatusCode: Int, shapeDiff: ShapeDiffResult) extends RequestDiffResult
 
   def compare(interaction: ApiInteraction, spec: RfcState): RequestDiffResult = {
     // check for matching path
@@ -88,7 +88,7 @@ object RequestDiffer {
     val responseId = matchedResponse.get.responseId;
     val responseDiff: Option[RequestDiffResult] = matchedResponse.get.responseDescriptor.bodyDescriptor match {
       case d: UnsetBodyDescriptor => {
-        Some(UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, ShapeDiffer.UnsetShape(interaction
+        Some(UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, interaction.apiResponse.statusCode, ShapeDiffer.UnsetShape(interaction
         .apiResponse.body)))
       }
       case d: ShapedBodyDescriptor => {
@@ -99,10 +99,10 @@ object RequestDiffer {
           if (shapeDiff.isInstanceOf[ShapeDiffer.NoDiff]) {
             None
           } else {
-            Some(UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, shapeDiff))
+            Some(UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, interaction.apiResponse.statusCode, shapeDiff))
           }
         } else {
-          Some(UnmatchedResponseContentType(matchedResponse.get.responseId, interaction.apiResponse.contentType))
+          Some(UnmatchedResponseContentType(matchedResponse.get.responseId, interaction.apiResponse.contentType, d.httpContentType, interaction.apiResponse.statusCode))
         }
       }
     }
