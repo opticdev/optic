@@ -1,0 +1,69 @@
+[
+  {
+    "AddShape" : {
+      "shapeId" : "basic_0",
+      "baseShapeId" : "$object",
+      "name" : "Learned Concept"
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "basic_1",
+      "baseShapeId" : "$string",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "basic_2",
+      "shapeId" : "basic_0",
+      "name" : "a",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "basic_2",
+          "shapeId" : "basic_1"
+        }
+      }
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "basic_3",
+      "baseShapeId" : "$string",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "basic_4",
+      "shapeId" : "basic_0",
+      "name" : "b",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "basic_4",
+          "shapeId" : "basic_3"
+        }
+      }
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "basic_5",
+      "baseShapeId" : "$string",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "basic_6",
+      "shapeId" : "basic_0",
+      "name" : "c",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "basic_6",
+          "shapeId" : "basic_5"
+        }
+      }
+    }
+  }
+]

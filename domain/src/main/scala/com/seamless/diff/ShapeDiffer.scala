@@ -17,38 +17,38 @@ object ShapeDiffer {
   def diff(expectedShape: ShapeEntity, actualShape: Json)(implicit shapesState: ShapesState): ShapeDiffResult = {
     val coreShape = toCoreShape(expectedShape)
     coreShape match {
-      case AnyKind() => {
+      case AnyKind => {
         NoDiff()
       }
-      case StringKind() => {
+      case StringKind => {
         if (actualShape.isString) {
           NoDiff()
         } else {
           ShapeMismatch(expectedShape, actualShape)
         }
       }
-      case BooleanKind() => {
+      case BooleanKind => {
         if (actualShape.isBoolean) {
           NoDiff()
         } else {
           ShapeMismatch(expectedShape, actualShape)
         }
       }
-      case NumberKind() => {
+      case NumberKind => {
         if (actualShape.isNumber) {
           NoDiff()
         } else {
           ShapeMismatch(expectedShape, actualShape)
         }
       }
-      case ListKind() => {
+      case ListKind => {
         if (actualShape.isArray) {
           NoDiff()
         } else {
           ShapeMismatch(expectedShape, actualShape)
         }
       }
-      case ObjectKind() => {
+      case ObjectKind => {
         if (actualShape.isObject) {
           val o = actualShape.asObject.get
           // need to capture fields that are in expected but not actual AND vice-versa
@@ -73,10 +73,10 @@ object ShapeDiffer {
           ShapeMismatch(expectedShape, actualShape)
         }
       }
-      case OneOfKind() => {
+      case OneOfKind => {
         MultipleInterpretations()
       }
-      case MapKind() => {
+      case MapKind => {
         // check all values
         NoDiff()
       }

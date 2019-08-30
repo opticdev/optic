@@ -37,51 +37,26 @@ object ShapesHelper {
     ).asInstanceOf[Vector[RequestsEvent]]
   }
 
-  sealed trait CoreShapeKind
-  case class ObjectKind() extends CoreShapeKind
-  case class ListKind() extends CoreShapeKind
-  case class MapKind() extends CoreShapeKind
-  case class OneOfKind() extends CoreShapeKind
-  case class AnyKind() extends CoreShapeKind
-  case class StringKind() extends CoreShapeKind
-  case class NumberKind() extends CoreShapeKind
-  case class BooleanKind() extends CoreShapeKind
+  sealed class CoreShapeKind(val baseShapeId: String)
+  case object ObjectKind extends CoreShapeKind("$object")
+  case object ListKind extends CoreShapeKind("$list")
+  case object MapKind extends CoreShapeKind("$map")
+  case object OneOfKind extends CoreShapeKind("$oneOf")
+  case object AnyKind extends CoreShapeKind("$any")
+  case object StringKind extends CoreShapeKind("$string")
+  case object NumberKind extends CoreShapeKind("$number")
+  case object BooleanKind extends CoreShapeKind("$boolean")
 
+  val allCoreShapes = Set(ObjectKind, ListKind, MapKind, OneOfKind, AnyKind, StringKind, NumberKind, BooleanKind)
 
   def toCoreShape(shapeEntity: ShapeEntity): CoreShapeKind = {
-    if (shapeEntity.descriptor.baseShapeId == "$object") {
-      return ObjectKind()
+    allCoreShapes.find(_.baseShapeId == shapeEntity.descriptor.baseShapeId) match {
+      case Some(shape) => shape
+      case _ => {
+        println(s"Unrecognized base type ${shapeEntity.descriptor.baseShapeId}")
+        AnyKind
+      }
     }
-    if (shapeEntity.descriptor.baseShapeId == "$list") {
-      return ListKind()
-    }
-    if (shapeEntity.descriptor.baseShapeId == "$map") {
-      return MapKind()
-    }
-    if (shapeEntity.descriptor.baseShapeId == "$oneOf") {
-      return OneOfKind()
-    }
-    if (shapeEntity.descriptor.baseShapeId == "$reference") {
-      // need to resolve the parameter
-      return AnyKind()
-    }
-    if (shapeEntity.descriptor.baseShapeId == "$identifier") {
-      // need to resolve the parameter
-      return AnyKind()
-    }
-    if (shapeEntity.descriptor.baseShapeId == "$string") {
-      return StringKind()
-    }
-    if (shapeEntity.descriptor.baseShapeId == "$boolean") {
-      return BooleanKind()
-    }
-    if (shapeEntity.descriptor.baseShapeId == "$number") {
-      return NumberKind()
-    }
-    if (shapeEntity.descriptor.baseShapeId == "$any") {
-      return AnyKind()
-    }
-    AnyKind()
   }
 }
 

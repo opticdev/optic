@@ -1,0 +1,109 @@
+[
+  {
+    "AddShape" : {
+      "shapeId" : "nested_0",
+      "baseShapeId" : "$object",
+      "name" : "Learned Concept"
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_1",
+      "baseShapeId" : "$object",
+      "name" : ""
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_2",
+      "baseShapeId" : "$boolean",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_3",
+      "shapeId" : "nested_1",
+      "name" : "bool-key",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_3",
+          "shapeId" : "nested_2"
+        }
+      }
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_4",
+      "baseShapeId" : "$object",
+      "name" : ""
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_5",
+      "baseShapeId" : "$string",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_6",
+      "shapeId" : "nested_4",
+      "name" : "desc",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_6",
+          "shapeId" : "nested_5"
+        }
+      }
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_7",
+      "shapeId" : "nested_1",
+      "name" : "nested",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_7",
+          "shapeId" : "nested_4"
+        }
+      }
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_8",
+      "baseShapeId" : "$number",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_9",
+      "shapeId" : "nested_1",
+      "name" : "number-key",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_9",
+          "shapeId" : "nested_8"
+        }
+      }
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_10",
+      "shapeId" : "nested_0",
+      "name" : "c",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_10",
+          "shapeId" : "nested_1"
+        }
+      }
+    }
+  }
+]
