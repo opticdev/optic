@@ -253,7 +253,7 @@ const pathTrailStyles = theme => {
 
 class PathTrailBase extends React.Component {
     render() {
-        const { classes, baseUrl, pathTrail } = this.props;
+        const { classes, baseUrl, pathTrail, style } = this.props;
         const items = pathTrail
             .map((trailItem) => {
                 const { pathComponentId, pathComponentName } = trailItem;
@@ -263,7 +263,7 @@ class PathTrailBase extends React.Component {
                 );
             });
         return (
-            <Paper elevation={0} className={classes.paper}>
+            <Paper elevation={0} className={classes.paper} style={style}>
                 <Breadcrumbs maxItems={12}>{items}</Breadcrumbs>
             </Paper>
         );
