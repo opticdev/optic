@@ -105,7 +105,7 @@ class RequestDifferSpec extends FunSpec with JsonFileFixture {
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
-      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", ShapeDiffer.NoDiff()))
+      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", 200, ShapeDiffer.NoDiff()))
       interpretation = diffToCommands.interpret(diff)
       println(diff, interpretation.description)
       val objectId = interpretation.commands.head.asInstanceOf[AddShape].shapeId
@@ -119,26 +119,26 @@ class RequestDifferSpec extends FunSpec with JsonFileFixture {
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
-      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", ShapeDiffer.KeyShapeMismatch(idFieldId, "id", BuiltinString, json"""2""")))
+      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", 200, ShapeDiffer.KeyShapeMismatch(idFieldId, "id", BuiltinString, json"""2""")))
       interpretation = diffToCommands.interpret(diff)
       println(diff, interpretation.description)
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
-//      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", ShapeDiffer.ExtraObjectKey(objectId, "title")))
+//      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", 200, ShapeDiffer.ExtraObjectKey(objectId, "title")))
       interpretation = diffToCommands.interpret(diff)
       println(diff, interpretation.description)
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
-//      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", ShapeDiffer.ExtraObjectKey(objectId, "deleted")))
+//      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", 200, ShapeDiffer.ExtraObjectKey(objectId, "deleted")))
       interpretation = diffToCommands.interpret(diff)
       val deletedFieldId = interpretation.commands.head.asInstanceOf[AddField].fieldId
       println(diff, interpretation.description)
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
-      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", ShapeDiffer.KeyShapeMismatch(deletedFieldId, "deleted", BuiltinString, json"""false""")))
+      assert(diff == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", 200, ShapeDiffer.KeyShapeMismatch(deletedFieldId, "deleted", BuiltinString, json"""false""")))
       interpretation = diffToCommands.interpret(diff)
       println(diff, interpretation.description)
 

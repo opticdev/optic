@@ -36,24 +36,12 @@ class DiffToCommands(_shapesState: ShapesState) {
 
           case sd: ShapeDiffer.ShapeMismatch => placeHolder
           case sd: ShapeDiffer.MissingObjectKey => placeHolder
-          case sd: ShapeDiffer.ExtraObjectKey => {
-            val fieldId = ShapesHelper.newFieldId()
-            DiffInterpretation(
-              s"Add a field to the response",
-              Seq(
-                AddField(fieldId, sd.parentObjectShapeId, sd.key, FieldShapeFromShape(fieldId, "$string"))
-              )
-            )
-          }
+          case sd: ShapeDiffer.ExtraObjectKey =>
+            Interpretations.AddFieldToShape(sd.key, sd.parentObjectShapeId, d.responseStatusCode, d.responseId)
           case sd: ShapeDiffer.KeyShapeMismatch => {
             //@TODO: factor this out into an injected shapeResolver so we can match concepts, etc.
             val newShapeId = ShapeDiffer.resolveJsonToShapeId(sd.actual)
-            DiffInterpretation(
-              s"Change the shape of the field",
-              Seq(
-                SetFieldShape(FieldShapeFromShape(sd.fieldId, newShapeId))
-              )
-            )
+            Interpretations.ChangeFieldShape(sd.key, sd.fieldId, newShapeId, d.responseStatusCode)
           }
           case sd: ShapeDiffer.MultipleInterpretations => placeHolder
         }

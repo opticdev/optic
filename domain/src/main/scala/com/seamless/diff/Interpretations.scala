@@ -4,6 +4,8 @@ import com.seamless.contexts.requests.Commands
 import com.seamless.contexts.requests.Commands.{SetResponseBodyShape, ShapedBodyDescriptor}
 import com.seamless.contexts.requests.RequestsServiceHelper
 import com.seamless.contexts.rfc.Commands.RfcCommand
+import com.seamless.contexts.shapes.Commands.{AddField, FieldShapeFromShape, SetFieldShape}
+import com.seamless.contexts.shapes.ShapesHelper
 import com.seamless.diff.initial.ShapeBuilder
 import io.circe.{Json, JsonObject}
 
@@ -67,6 +69,34 @@ object Interpretations {
       metadata = Json.fromJsonObject(JsonObject("shapeIdToName" -> Json.fromString(inlineShapeId))),
       example = actual
     )
+  }
+
+  def AddFieldToShape(key: String, parentShapeId: String, responseStatusCode: Int, responseId: String) = {
+    val fieldId = ShapesHelper.newFieldId()
+    val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, "$string")))
+
+    DiffInterpretation(
+      s"A Field was Added",
+      //@todo change copy based on if it's a concept or not
+      s"A new field '${key}' was observed in the ${responseStatusCode} response.",
+      commands
+    )
+
+  }
+
+  def ChangeFieldShape(key: String, fieldId: String, newShapeId: String, responseStatusCode: Int) = {
+
+    val commands = Seq(
+      SetFieldShape(FieldShapeFromShape(fieldId, newShapeId))
+    )
+
+    DiffInterpretation(
+      s"A Field was Added",
+      //@todo change copy based on if it's a concept or not
+      s"A new field '${key}' was observed in the ${responseStatusCode} response.",
+      commands
+    )
+
   }
 
 }
