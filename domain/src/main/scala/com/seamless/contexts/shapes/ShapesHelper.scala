@@ -46,15 +46,16 @@ object ShapesHelper {
   case object StringKind extends CoreShapeKind("$string")
   case object NumberKind extends CoreShapeKind("$number")
   case object BooleanKind extends CoreShapeKind("$boolean")
+  case object IdentifierKind extends CoreShapeKind("$identifier")
+  case object ReferenceKind extends CoreShapeKind("$reference")
 
-  val allCoreShapes = Set(ObjectKind, ListKind, MapKind, OneOfKind, AnyKind, StringKind, NumberKind, BooleanKind)
+  val allCoreShapes = Set(ObjectKind, ListKind, MapKind, OneOfKind, AnyKind, StringKind, NumberKind, BooleanKind, IdentifierKind, ReferenceKind)
 
-  def toCoreShape(shapeEntity: ShapeEntity): CoreShapeKind = {
+  def toCoreShape(shapeEntity: ShapeEntity, shapesState: ShapesState): CoreShapeKind = {
     allCoreShapes.find(_.baseShapeId == shapeEntity.descriptor.baseShapeId) match {
       case Some(shape) => shape
-      case _ => {
-        println(s"Unrecognized base type ${shapeEntity.descriptor.baseShapeId}")
-        AnyKind
+      case None => {
+        toCoreShape(shapesState.shapes(shapeEntity.descriptor.baseShapeId), shapesState)
       }
     }
   }

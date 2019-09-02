@@ -38,8 +38,12 @@ class CommandSession {
 
     stop() {
         if (this.isRunning && this.child) {
-            treeKill(this.child.pid)
-            this.events.emit('stopped', { state: 'terminated' })
+            treeKill(this.child.pid, (e) => {
+                if (e) {
+                    console.error(e)
+                }
+                this.events.emit('stopped', { state: 'terminated' })
+            })
         }
     }
 }
