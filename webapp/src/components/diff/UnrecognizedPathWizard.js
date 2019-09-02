@@ -38,7 +38,7 @@ export function pathComponentsToString(pathComponents) {
 
 const styles = theme => ({
     root: {
-        paddingTop: 22
+        paddingTop: 22,
     }
 });
 class UnrecognizedPathWizard extends React.Component {

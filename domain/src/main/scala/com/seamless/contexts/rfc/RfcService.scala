@@ -13,7 +13,6 @@ class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[R
   private val repository = new EventSourcedRepository[RfcState, RfcEvent](RfcAggregate, eventStore)
 
   def handleCommand(id: AggregateId, command: RfcCommand): Unit = {
-    println(command)
     val state = repository.findById(id)
     val context = RfcCommandContext()
     val effects = RfcAggregate.handleCommand(state)((context, command))
@@ -32,6 +31,7 @@ class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[R
   def commandHandlerForAggregate(id: AggregateId): js.Function1[RfcCommand, Unit] = (command: RfcCommand) => {
     handleCommand(id, command)
   }
+
 }
 
 @JSExport

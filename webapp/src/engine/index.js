@@ -4,6 +4,7 @@ export const ShapesCommands = opticEngine.com.seamless.contexts.shapes.Commands
 export const ShapesHelper = opticEngine.com.seamless.contexts.shapes.ShapesHelper()
 export const RequestsHelper = opticEngine.com.seamless.contexts.requests.RequestsServiceHelper()
 export const ContentTypesHelper = opticEngine.com.seamless.contexts.requests.ContentTypes()
+export const SemanticApplyEffect = opticEngine.com.seamless.diff.SemanticApplyEffect()
 
 export const RfcCommands = opticEngine.com.seamless.contexts.rfc.Commands
 export const RequestsCommands = opticEngine.com.seamless.contexts.requests.Commands

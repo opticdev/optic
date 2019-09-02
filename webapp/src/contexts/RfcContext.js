@@ -20,7 +20,6 @@ export function stuffFromQueries(queries) {
     const contributions = queries.contributions()
 
     const { requests, pathComponents, responses, requestParameters } = queries.requestsState()
-    console.log({ pathComponents })
     const pathIdsByRequestId = queries.pathsWithRequests();
     const pathsById = pathComponents;
     // const absolutePaths = Object.keys(pathsById).map(pathId => ({ [pathId]: queries.absolutePath(pathId) })).reduce((acc, value) => Object.assign(acc, value), {})
@@ -104,7 +103,7 @@ class RfcStoreWithoutContext extends React.Component {
         const value = {
             rfcId,
             rfcService,
-            eventStore, 
+            eventStore,
             queries,
             cachedQueryResults,
             handleCommand: this.handleCommand,

@@ -117,7 +117,7 @@ class DiffCard extends React.Component {
         } className={classes.header}/>
         <CardContent style={{padding: 0}}>
           <div className={classes.description}>
-            <Typography variant="paragraph">{description}</Typography>
+            <Typography variant="paragraph" dangerouslySetInnerHTML={{__html: description}}/>
             {bodyExample && <ExampleToolTip example={bodyExample}>
               <Typography variant="overline" color="primary" style={{cursor: 'pointer', marginLeft: 7}}>View
                 Example</Typography>

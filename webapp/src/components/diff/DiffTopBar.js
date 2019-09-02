@@ -92,7 +92,7 @@ class DiffTopBar extends React.Component {
       if (!progress) {
         return 0
       }
-      if (progress > 90) {
+      if (progress > 90 && progress !== 100) {
         return 90
       } else {
         return progress
@@ -110,13 +110,10 @@ class DiffTopBar extends React.Component {
             <Typography variant="h6" style={{color: '#202020', marginLeft: 10}}>
               Review Proposed Changes
             </Typography>
-
-
-
             <div className={classes.spacer} />
 
             <Typography variant="overline" style={{color: '#424242', marginRight: 11}}>
-              Progress
+              {progress !== 100 ? 'Progress' : ''}
             </Typography>
 
             {/*

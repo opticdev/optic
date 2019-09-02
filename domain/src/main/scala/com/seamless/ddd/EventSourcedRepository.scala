@@ -10,6 +10,8 @@ class EventSourcedRepository[State, Event](aggregate: EventSourcedAggregate[Stat
 
   private val _snapshotStore = scala.collection.mutable.HashMap[String, Snapshot[State]]()
 
+  def hasId(id: AggregateId) = eventStore.hasId(id)
+
   def findById(id: AggregateId): State = {
     val events = eventStore.listEvents(id)
 
@@ -39,9 +41,18 @@ class EventSourcedRepository[State, Event](aggregate: EventSourcedAggregate[Stat
   def save(id: AggregateId, events: Vector[Event]): Unit = {
     eventStore.append(id, events)
   }
+
+  def clearId(id: String) = {
+    eventStore.remove(id)
+  }
+
 }
 
 abstract class EventStore[Event] {
+  def remove(id: AggregateId): Unit
+
+  def hasId(id: AggregateId): Boolean
+
   def listEvents(id: AggregateId): Vector[Event]
 
   def append(id: AggregateId, events: Vector[Event]): Unit
@@ -84,6 +95,10 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
 
   @JSExport
   def serializeEvents(id: AggregateId) = EventSerialization.toJson(listEvents(id).asInstanceOf[Vector[RfcEvent]]).noSpaces
+
+  override def hasId(id: AggregateId): Boolean = _store.isDefinedAt(id)
+
+  override def remove(id: AggregateId): Unit = _store.remove(id)
 }
 
 
