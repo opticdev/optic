@@ -3,6 +3,7 @@ package com.seamless.diff.initial
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInField, ProviderInShape, RenameShape, SetParameterShape, ShapeProvider}
 import com.seamless.contexts.shapes.ShapesHelper.{BooleanKind, ListKind, NumberKind, ObjectKind, StringKind}
+import com.seamless.contexts.shapes.{ShapesAggregate, ShapesState}
 import com.seamless.diff.MutableCommandStream
 import io.circe.Json
 
@@ -28,14 +29,20 @@ case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand],
     ShapeBuilderResult(rootShapeId, commands :+ RenameShape(rootShapeId, name), nameRequests)
 }
 
-class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkString}") {
+class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkString}")(implicit shapesState: ShapesState = ShapesAggregate.initialState) {
 
   val commands = new MutableCommandStream
   val nameRequests = scala.collection.mutable.ListBuffer[NameShapeRequest]()
 
-  def run = {
+  def run: ShapeBuilderResult = {
     commands.clear
     nameRequests.clear()
+
+    val matchedConcept = ShapeResolver.handleObject(r)
+    //match to an existing concept if possible
+    if (r.isObject && matchedConcept.isDefined) {
+      return ShapeBuilderResult(matchedConcept.get, Vector.empty, Vector.empty)
+    }
 
     val rootShapeId = idGenerator
     fromJson(r)(IsRoot(rootShapeId), Seq.empty) // has the side effect of appending commands
@@ -63,7 +70,7 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
 
       cxt match {
         case IsRoot(_) => nameRequests.append(NameShapeRequest(true, id, "Choose Concept name:", json))
-        case _ => nameRequests.append(NameShapeRequest(false, id, s"Do you want to name the shape at '${path.mkString(".")}'", json))
+        case _ => nameRequests.append(NameShapeRequest(required = false, id, s"Do you want to name the shape at '${path.mkString(".")}'", json))
       }
 
       fromJsonObject(json, id)
@@ -105,7 +112,6 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
 
     val innerId = fieldId.getOrElse(id)
     if (array.isEmpty) {
-
       if (fieldId.isDefined) {
         commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider("$any"), "$listItem")))
       } else {
@@ -121,8 +127,16 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
           commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(primitiveShapeProvider(array.head).baseShapeId), "$listItem")))
         }
       } else {
-        val assignedItemShapeId = idGenerator
-        fromJson(array.head)(ValueShapeWithId(assignedItemShapeId), path :+ "[List Items]")
+
+        val matchedConcept = ShapeResolver.handleObject(array.head)
+        val didMatch = array.head.isObject && matchedConcept.isDefined
+
+        val assignedItemShapeId = if (didMatch) matchedConcept.get else idGenerator
+
+        if (!didMatch) { // if no concept is matched inline it
+          fromJson(array.head)(ValueShapeWithId(assignedItemShapeId), path :+ "[List Items]")
+        }
+
         if (fieldId.isDefined) {
           commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(assignedItemShapeId), "$listItem")))
         } else {

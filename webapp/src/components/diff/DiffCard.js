@@ -21,7 +21,7 @@ import TextField from '@material-ui/core/TextField';
 import Fade from '@material-ui/core/Fade';
 import {everyScala, lengthScala, mapScala, ShapesCommands} from '../../engine';
 import Divider from '@material-ui/core/Divider';
-import ReactJson from 'react-json-view'
+import ReactJson from 'react-json-view';
 
 
 const styles = theme => ({
@@ -62,49 +62,50 @@ const LightTooltip = withStyles(theme => ({
 }))(Tooltip);
 
 function ExampleToolTip({children, example}) {
-  const inner = <div>
+  const inner = <div style={{maxHeight: 400, overflow: 'scroll'}}>
     <ReactJson src={example}
-       enableClipboard={false}
-       displayDataTypes={false}
+               enableClipboard={false}
+               name={false}
+               displayDataTypes={false}
     />
-  </div>
+  </div>;
   return <LightTooltip title={inner} interactive={true} placement="bottom-start">
     {children}
-  </LightTooltip>
+  </LightTooltip>;
 }
 
 class DiffCard extends React.Component {
 
   state = {
     names: {}
-  }
+  };
 
   setName = (shapeId, name) => {
-    this.setState({names: {...this.state.names, [shapeId]: name}})
-  }
+    this.setState({names: {...this.state.names, [shapeId]: name}});
+  };
 
   componentWillReceiveProps = (nextProps, nextContext) => {
     if (nextProps.interpretation !== this.props.interpretation) {
-      this.setState({names: {}})
+      this.setState({names: {}});
     }
-   }
+  };
 
-   acceptWithNames = () => {
+  acceptWithNames = () => {
     const renameCommands = Object.entries(this.state.names).map(([shapeId, name]) =>
-      ShapesCommands.RenameShape(shapeId, name))
-    this.props.accept(renameCommands)
-   }
+      ShapesCommands.RenameShape(shapeId, name));
+    this.props.accept(renameCommands);
+  };
 
   render() {
     const {classes, interpretation} = this.props;
-    const {title, description, nameRequests} = interpretation
+    const {title, description, nameRequests, exampleJs: bodyExample} = interpretation;
 
     const canApprove = everyScala(nameRequests)(({shapeId, required}) => {
       if (required && !this.state.names[shapeId]) {
-        return false
+        return false;
       }
-      return true
-     })
+      return true;
+    });
 
     return (
       <Card className={classes.root} elevation={1}>
@@ -117,9 +118,13 @@ class DiffCard extends React.Component {
         <CardContent style={{padding: 0}}>
           <div className={classes.description}>
             <Typography variant="paragraph">{description}</Typography>
+            {bodyExample && <ExampleToolTip example={bodyExample}>
+              <Typography variant="overline" color="primary" style={{cursor: 'pointer', marginLeft: 7}}>View
+                Example</Typography>
+            </ExampleToolTip>}
 
             <div className={classes.questions} style={{display: lengthScala(nameRequests) > 0 ? 'inherit' : 'none'}}>
-              <Divider style={{marginTop: 11, marginBottom: 11}} />
+              <Divider style={{marginTop: 11, marginBottom: 11}}/>
               {mapScala(nameRequests)(({shapeId, required, description, exampleJs}) => {
                 return <>
                   <Typography variant="caption">{description}</Typography>
@@ -129,11 +134,12 @@ class DiffCard extends React.Component {
                                error={required && !this.state.names[shapeId]}
                                onChange={(e) => this.setName(shapeId, e.target.value)}/>
                     <div style={{width: 30}}/>
-                   <ExampleToolTip example={exampleJs}>
-                    <Typography variant="overline" color="primary" style={{cursor: 'pointer'}}>View Example</Typography>
-                   </ExampleToolTip>
+                    <ExampleToolTip example={exampleJs}>
+                      <Typography variant="overline" color="primary" style={{cursor: 'pointer', marginLeft: -12}}>View
+                        Example</Typography>
+                    </ExampleToolTip>
                   </div>
-                </>
+                </>;
               })}
             </div>
           </div>

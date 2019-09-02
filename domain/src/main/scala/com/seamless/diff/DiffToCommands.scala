@@ -4,10 +4,11 @@ import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.requests.RequestsServiceHelper
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.shapes.Commands._
+import com.seamless.contexts.shapes.ShapesHelper.AnyKind
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer.ShapeDiffResult
-import com.seamless.diff.initial.ShapeBuilder
+import com.seamless.diff.initial.{ShapeBuilder, ShapeResolver}
 import io.circe.{Json, JsonObject}
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -22,7 +23,7 @@ class DiffToCommands(_shapesState: ShapesState) {
   def interpret(diff: RequestDiffResult): DiffInterpretation = {
     implicit val shapesState: ShapesState = _shapesState
     diff match {
-      case d: NoDiff => placeHolder
+      case NoDiff() => placeHolder
       case d: UnmatchedUrl => placeHolder
       case d: UnmatchedHttpMethod => Interpretations.AddRequest(d.method, d.pathId)
       case d: UnmatchedHttpStatusCode => Interpretations.AddResponse(d.statusCode, d.requestId)
@@ -39,15 +40,14 @@ class DiffToCommands(_shapesState: ShapesState) {
           case sd: ShapeDiffer.ExtraObjectKey =>
             Interpretations.AddFieldToShape(sd.key, sd.parentObjectShapeId, d.responseStatusCode, d.responseId)
           case sd: ShapeDiffer.KeyShapeMismatch => {
-            //@TODO: factor this out into an injected shapeResolver so we can match concepts, etc.
-            val newShapeId = ShapeDiffer.resolveJsonToShapeId(sd.actual)
+            val newShapeId = ShapeResolver.resolveJsonToShapeId(sd.actual).getOrElse(AnyKind.baseShapeId)
             Interpretations.ChangeFieldShape(sd.key, sd.fieldId, newShapeId, d.responseStatusCode)
           }
           case sd: ShapeDiffer.MultipleInterpretations => placeHolder
         }
 
       }
-      case d: NoDiff => {
+      case NoDiff() => {
         placeHolder
       }
       case _ => {

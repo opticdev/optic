@@ -145,7 +145,7 @@ class RequestDifferSpec extends FunSpec with JsonFileFixture {
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
-      assert(diff == RequestDiffer.NoDiff())
+      assert(diff == RequestDiffer.NoDiff)
     }
   }
 }

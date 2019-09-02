@@ -5,7 +5,7 @@ import com.seamless.contexts.requests.Commands.{SetResponseBodyShape, ShapedBody
 import com.seamless.contexts.requests.RequestsServiceHelper
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.shapes.Commands.{AddField, FieldShapeFromShape, SetFieldShape}
-import com.seamless.contexts.shapes.ShapesHelper
+import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.diff.initial.{NameShapeRequest, ShapeBuilder}
 import io.circe.{Json, JsonObject}
 
@@ -15,30 +15,40 @@ import scala.scalajs.js.annotation.JSExportAll
 case class DiffInterpretation(title: String,
                               description: String,
                               commands: Seq[RfcCommand],
+                              affectedIds: Seq[String],
                               nameRequests: Seq[NameShapeRequest] = Seq.empty,
-                              example: Json = null)
+                              example: Json = null) {
+  def exampleJs = {
+    import io.circe.scalajs.convertJsonToJs
+    if (example != null) convertJsonToJs(example) else null
+  }
+}
 
 object Interpretations {
 
   def AddRequest(method: String, pathId: String) = {
+    val id = RequestsServiceHelper.newRequestId()
     val commands = Seq(
-      Commands.AddRequest(RequestsServiceHelper.newRequestId(), pathId, method)
+      Commands.AddRequest(id, pathId, method)
     )
     DiffInterpretation(
       "New Operation",
       s"Optic observed a ${method.toUpperCase} operation for this path",
-      commands
+      commands,
+      affectedIds = Seq(id)
     )
   }
 
   def AddResponse(statusCode: Int, requestId: String) = {
+    val id = RequestsServiceHelper.newResponseId()
     val commands = Seq(
-      Commands.AddResponse(RequestsServiceHelper.newResponseId(), requestId, statusCode)
+      Commands.AddResponse(id, requestId, statusCode)
     )
     DiffInterpretation(
       s"New Response",
       s"A ${statusCode} response was observed.",
-      commands
+      commands,
+      affectedIds = Seq(id)
     )
   }
 
@@ -49,13 +59,14 @@ object Interpretations {
 
     DiffInterpretation(
       s"Response Content-Type Changed",
-      s"The content type of your ${responseStatusCode} response was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
-      commands
+      s"The content type of the ${responseStatusCode} response was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
+      commands,
+      affectedIds = Seq(responseId, responseId+".content_type")
     )
   }
 
 
-  def AddInitialBodyShape(actual: Json, responseStatusCode: Int, responseId: String, contentType: String) = {
+  def AddInitialBodyShape(actual: Json, responseStatusCode: Int, responseId: String, contentType: String)(implicit shapesState: ShapesState) = {
     val shape = new ShapeBuilder(actual).run
     val inlineShapeId = shape.rootShapeId
     val commands = shape.commands ++ Seq (
@@ -64,8 +75,9 @@ object Interpretations {
 
     DiffInterpretation(
       s"Response Body Observed",
-      s"Optic observed a response body for your ${responseStatusCode} response.\nChoose a name for the concept.",
+      s"Optic observed a response body for the ${responseStatusCode} response.",
       commands,
+      affectedIds = Seq(inlineShapeId),
       shape.nameRequests,
       example = actual
     )
@@ -79,7 +91,8 @@ object Interpretations {
       s"A Field was Added",
       //@todo change copy based on if it's a concept or not
       s"A new field '${key}' was observed in the ${responseStatusCode} response.",
-      commands
+      commands,
+      affectedIds = Seq(fieldId)
     )
 
   }
@@ -91,10 +104,11 @@ object Interpretations {
     )
 
     DiffInterpretation(
-      s"A Field was Added",
+      s"A field's type was changed",
       //@todo change copy based on if it's a concept or not
-      s"A new field '${key}' was observed in the ${responseStatusCode} response.",
-      commands
+      s"The type of '${key}' was changed in the ${responseStatusCode} response.",
+      commands,
+      affectedIds = Seq(fieldId)
     )
 
   }

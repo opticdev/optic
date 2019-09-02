@@ -47,8 +47,8 @@ object RfcServiceJSFacade {
     commands.foreach(command => {
       val result = Try(service.handleCommand(id, command))
       if (result.isFailure) {
-        println(command)
-        println(result)
+//        println(command)
+//        println(result)
         throw result.failed.get
       }
     })

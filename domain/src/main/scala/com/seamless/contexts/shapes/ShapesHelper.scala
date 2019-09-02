@@ -37,7 +37,7 @@ object ShapesHelper {
     ).asInstanceOf[Vector[RequestsEvent]]
   }
 
-  sealed class CoreShapeKind(val baseShapeId: String)
+  sealed class CoreShapeKind(val baseShapeId: ShapeId)
   case object ObjectKind extends CoreShapeKind("$object")
   case object ListKind extends CoreShapeKind("$list")
   case object MapKind extends CoreShapeKind("$map")

@@ -68,10 +68,8 @@ object ShapeDiffer {
           if (missingKeys.nonEmpty) {
             return MissingObjectKey(expectedShape.shapeId, missingKeys.head, expectedShape, actualShape)
           }
-
           // make sure all expected keys match the spec
           val commonKeys = expectedKeys.intersect(actualKeys)
-          println(commonKeys)
           val fieldMap = expectedFields.toMap
           commonKeys.foreach(key => {
             val field = fieldMap(key)
@@ -95,7 +93,6 @@ object ShapeDiffer {
             if (expectedShape.isDefined) {
               val actualFieldValue = o(key).get
               val diff = ShapeDiffer.diff(expectedShape.get, actualFieldValue)
-              println(diff)
               diff match {
                 case d: ShapeMismatch => return KeyShapeMismatch(field.fieldId, key, expectedShape.get, actualFieldValue)
                 case _ =>
@@ -121,7 +118,7 @@ object ShapeDiffer {
         // check all values
         NoDiff()
       }
-
+      case _ => NoDiff()
     }
   }
 

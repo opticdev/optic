@@ -127,7 +127,11 @@ class LocalDiffManager extends React.Component {
                         interpretation={hasDiff && interpretation}
                         readyToFinish={readyToFinish}
                         finish={() => diffSessionManager.finishInteraction(currentInteractionIndex)}
-                        accept={(appendCommands = []) => handleCommands(...[...commands, ...appendCommands])}
+                        accept={(appendCommands = []) => {
+                          const concat = [...commands, ...appendCommands]
+                          debugger
+                          handleCommands(...concat)
+                        }}
               >
                 <EditorStore mode={readyToFinish ? EditorModes.DESIGN : EditorModes.DOCUMENTATION}>
                   <Paper style={{flex: 1, width: '100%'}}>
