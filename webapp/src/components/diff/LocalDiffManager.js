@@ -151,6 +151,7 @@ class LocalDiffManager extends React.Component {
             });
 
             const readyToFinish = !hasDiff;
+
             return (
               <DiffPage collapseLeftMargin={true}
                         progress={progress}
@@ -165,7 +166,7 @@ class LocalDiffManager extends React.Component {
               >
                 <EditorStore mode={readyToFinish ? EditorModes.DESIGN : EditorModes.DOCUMENTATION}>
                   <Paper style={{flex: 1, width: 850, maxWidth: 1000}}>
-                    <Typography variant="subtitle2" color="primary" style={{
+                    <Typography variant="subtitle2" color="primary" styleJ={{
                       fontSize: 17,
                       padding: 12
                     }}>Path ({diffSessionManager.session.samples.length} samples)</Typography>

@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands
 import com.seamless.contexts.requests.Commands.{SetResponseBodyShape, ShapedBodyDescriptor}
 import com.seamless.contexts.requests.RequestsServiceHelper
 import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.shapes.Commands.{AddField, FieldShapeFromShape, SetFieldShape}
+import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldShapeFromShape, SetFieldShape}
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.diff.initial.{NameShapeRequest, ShapeBuilder}
 import io.circe.{Json, JsonObject}
@@ -73,8 +73,11 @@ object Interpretations {
   def AddInitialBodyShape(actual: Json, responseStatusCode: Int, responseId: String, contentType: String)(implicit shapesState: ShapesState) = {
     val shape = new ShapeBuilder(actual).run
     val inlineShapeId = shape.rootShapeId
+    val wrapperId = ShapesHelper.newShapeId()
+
     val commands = shape.commands ++ Seq (
-      SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, inlineShapeId, isRemoved = false))
+      AddShape(wrapperId, inlineShapeId, ""),
+      SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, wrapperId, isRemoved = false))
     )
 
     val effects = if (shape.nameRequests.exists(_.required)) {

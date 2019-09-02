@@ -55,8 +55,10 @@ class BodyViewerWithoutContext extends React.Component {
         const { history } = this.props;
         const { classes } = this.props;
         const { baseUrl, shapeId, queries, contentType } = this.props;
-        
+
         const shape = queries.shapeById(shapeId);
+        console.log(queries)
+      console.log(shape)
         return (
             <div>
                 <div style={{ display: 'flex' }}>
