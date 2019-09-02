@@ -64,6 +64,7 @@
     "react-helmet": "5.2.1",
     "react-highlight": "^0.12.0",
     "react-input-autosize": "^2.2.1",
+    "react-json-view": "^1.19.1",
     "react-keydown": "^1.9.10",
     "react-router-dom": "^5.0.1",
     "react-waypoint": "^9.0.2",

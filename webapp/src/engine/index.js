@@ -7,6 +7,7 @@ export const ContentTypesHelper = opticEngine.com.seamless.contexts.requests.Con
 
 export const RfcCommands = opticEngine.com.seamless.contexts.rfc.Commands
 export const RequestsCommands = opticEngine.com.seamless.contexts.requests.Commands
+export const ScalaJSHelpers = opticEngine.ScalaJSHelpers
 
 export const Facade = opticEngine.com.seamless.contexts.rfc.RfcServiceJSFacade()
 export const Queries = (eventStore, service, aggregateId) => new opticEngine.Queries(eventStore, service, aggregateId)
@@ -29,6 +30,17 @@ const { ApiInteraction, ApiRequest, ApiResponse } = opticEngine.com.seamless.dif
 export const JsonHelper = opticEngine.com.seamless.diff.JsonHelper()
 function fromJs(x) {
     return JsonHelper.fromString(JSON.stringify(x))
+}
+
+export const mapScala = (collection) => (handler) => {
+  return ScalaJSHelpers.toJsArray(collection).map(handler)
+}
+
+export const everyScala = (collection) => (handler) => {
+  return ScalaJSHelpers.toJsArray(collection).every(handler)
+}
+export const lengthScala = (collection) => {
+  return ScalaJSHelpers.toJsArray(collection).length
 }
 
 export function toInteraction(sample) {

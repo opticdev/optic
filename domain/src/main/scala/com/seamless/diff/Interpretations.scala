@@ -6,7 +6,7 @@ import com.seamless.contexts.requests.RequestsServiceHelper
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.shapes.Commands.{AddField, FieldShapeFromShape, SetFieldShape}
 import com.seamless.contexts.shapes.ShapesHelper
-import com.seamless.diff.initial.ShapeBuilder
+import com.seamless.diff.initial.{NameShapeRequest, ShapeBuilder}
 import io.circe.{Json, JsonObject}
 
 import scala.scalajs.js.annotation.JSExportAll
@@ -15,7 +15,7 @@ import scala.scalajs.js.annotation.JSExportAll
 case class DiffInterpretation(title: String,
                               description: String,
                               commands: Seq[RfcCommand],
-                              metadata: Json = null,
+                              nameRequests: Seq[NameShapeRequest] = Seq.empty,
                               example: Json = null)
 
 object Interpretations {
@@ -36,7 +36,7 @@ object Interpretations {
       Commands.AddResponse(RequestsServiceHelper.newResponseId(), requestId, statusCode)
     )
     DiffInterpretation(
-      s"Added ${statusCode} Response",
+      s"New Response",
       s"A ${statusCode} response was observed.",
       commands
     )
@@ -64,9 +64,9 @@ object Interpretations {
 
     DiffInterpretation(
       s"Response Body Observed",
-      s"Optic observed a new response body for your ${responseStatusCode}.\nChoose a name and Optic will create a new concept in your specification.",
+      s"Optic observed a response body for your ${responseStatusCode} response.\nChoose a name for the concept.",
       commands,
-      metadata = Json.fromJsonObject(JsonObject("shapeIdToName" -> Json.fromString(inlineShapeId))),
+      shape.nameRequests,
       example = actual
     )
   }

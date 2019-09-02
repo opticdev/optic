@@ -14,6 +14,7 @@ import {withRfcContext} from '../../contexts/RfcContext';
 import {EditorStore, EditorModes} from '../../contexts/EditorContext';
 import DiffPage from './DiffPage';
 import Paper from '@material-ui/core/Paper';
+import {primary} from '../../theme';
 
 const styles = (theme => ({
   root: {
@@ -29,10 +30,12 @@ const styles = (theme => ({
   },
   methodDisplay: {
     padding: 6,
-    paddingTop: 12,
+    paddingTop: 10,
     paddingLeft: 15,
     fontWeight: 500,
-    fontSize: 13
+    fontSize: 15,
+    fontFamily:'Ubuntu',
+    color: primary
   }
 }));
 
@@ -79,6 +82,9 @@ class LocalDiffManager extends React.Component {
 
             return {};
           })(diffStateProjections);
+
+          const progress = (diffState.acceptedInterpretations.length / diffSessionManager.session.samples.length) * 100
+
           if (!sample) {
             return (
               <div>
@@ -87,13 +93,12 @@ class LocalDiffManager extends React.Component {
               </div>
             );
           }
+
           if (pathId) {
             const interaction = toInteraction(sample);
             const rfcState = rfcService.currentState(rfcId);
             const diff = RequestDiffer.compare(interaction, rfcState);
-            console.log({diff});
             const interpretation = new DiffToCommands(rfcState.shapesState).interpret(diff);
-            console.log({interpretation});
             const commands = JsonHelper.seqToJsArray(interpretation.commands);
             const hasDiff = commands.length > 0;
 
@@ -114,15 +119,17 @@ class LocalDiffManager extends React.Component {
               };
             });
 
-
+            const readyToFinish = !hasDiff
 
             return (
               <DiffPage collapseLeftMargin={true}
+                        progress={progress}
                         interpretation={hasDiff && interpretation}
+                        readyToFinish={readyToFinish}
                         finish={() => diffSessionManager.finishInteraction(currentInteractionIndex)}
-                        accept={() => handleCommands(...commands)}
+                        accept={(appendCommands = []) => handleCommands(...[...commands, ...appendCommands])}
               >
-                <EditorStore mode={EditorModes.DOCUMENTATION}>
+                <EditorStore mode={readyToFinish ? EditorModes.DESIGN : EditorModes.DOCUMENTATION}>
                   <Paper style={{flex: 1, width: '100%'}}>
                       <Typography variant="subtitle2" color="primary" style={{
                         fontSize: 17,

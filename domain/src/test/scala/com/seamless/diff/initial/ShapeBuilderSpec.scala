@@ -16,12 +16,14 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
   it("can learn a nested concept") {
     val basic = fromFile("nested-concept")
     val result = new ShapeBuilder(basic, "nested").run.asConceptNamed("Nested")
+    assert(result.nameRequests.size == 3)
     assert(result.commands == commandsFrom("nested-concept"))
   }
 
   it("can learn with array of primitives") {
     val basic = fromFile("primitive-array")
     val result = new ShapeBuilder(basic, "pa").run.asConceptNamed("Array")
+    assert(result.nameRequests.size == 1)
     assert(result.commands == commandsFrom("primitive-array"))
   }
 

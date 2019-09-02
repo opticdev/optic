@@ -86,7 +86,18 @@ const styles = theme => ({
 class DiffTopBar extends React.Component {
 
   render() {
-    const {classes, mode} = this.props;
+    const {classes, progress} = this.props;
+
+    const progressCalc = (() => {
+      if (!progress) {
+        return 0
+      }
+      if (progress > 90) {
+        return 90
+      } else {
+        return progress
+      }
+    })()
 
     return (
       <div className={classes.root}>
@@ -104,7 +115,6 @@ class DiffTopBar extends React.Component {
 
             <div className={classes.spacer} />
 
-
             <Typography variant="overline" style={{color: '#424242', marginRight: 11}}>
               Progress
             </Typography>
@@ -113,7 +123,7 @@ class DiffTopBar extends React.Component {
                         Progress = (Handled Interactions + No Change Interactions) / Total Number of Interactions
                         Will jump around a bit but should be the most helpful measure of progress for a person working through the flow
                         */}
-            <LinearProgress value={70}
+            <LinearProgress value={progressCalc}
                             variant="determinate"
                             className={classes.progress} />
             {/*<Button color="primary">Hello</Button>*/}

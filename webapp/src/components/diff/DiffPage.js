@@ -5,12 +5,13 @@ import Editor, {Sheet} from '../navigation/Editor';
 import {withEditorContext} from '../../contexts/EditorContext';
 import DiffTopBar from './DiffTopBar'
 import DiffCard from './DiffCard';
+import ConfirmCard from './ConfirmCard';
 import {Button} from '@material-ui/core';
 
 
 const styles = theme => ({
   root: {
-    paddingTop: theme.spacing(2),
+    paddingTop: theme.spacing(5),
     flex: 1
   },
   cardViewRoot: {
@@ -19,9 +20,11 @@ const styles = theme => ({
     paddingRight: 22
   },
   diffCardMargin: {
-    paddingLeft: 35,
+    paddingLeft: 25,
     paddingRight: 20,
-    maxWidth: 480
+    maxWidth: 480,
+    overflow: 'hidden',
+    height: '100vh !important',
   }
 });
 
@@ -29,17 +32,27 @@ const styles = theme => ({
 
 class DiffPage extends React.Component {
   render() {
+    const {classes, children, collapseLeftMargin, interpretation, accept, readyToFinish, finish, progress} = this.props
 
-    const {classes, children, collapseLeftMargin, interpretation, accept, finish} = this.props
+    const card = (() => {
+      if (readyToFinish) {
+        return <ConfirmCard finish={finish} />
+      }
+
+      if (interpretation) {
+        return <DiffCard interpretation={interpretation} accept={accept} />
+      }
+    })()
+
     return <Editor
       baseUrl={this.props.baseUrl}
-      topBar={<DiffTopBar />}
+      topBar={<DiffTopBar progress={progress} />}
       collapseLeftMargin={collapseLeftMargin}
-      rightMargin={<div className={classes.diffCardMargin}>{interpretation && <DiffCard interpretation={interpretation} accept={accept} />}</div>}
+      rightMargin={<div className={classes.diffCardMargin}>{card}</div>}
     >
       <Helmet><title>{"Review Proposed Changes"}</title></Helmet>
       <div className={classes.root}>
-        <div style={{paddingTop: 20}}>
+        <div>
           {children}
         </div>
       </div>

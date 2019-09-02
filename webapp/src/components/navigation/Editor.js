@@ -156,7 +156,7 @@ class Editor extends React.Component {
 
     return (
       <div className={classes.pageContainer}>
-        <div className={(mode === EditorModes.DOCUMENTATION) ? classes.navWrapper : classes.navExpandedWrapper}>
+        <div className={(mode === EditorModes.DOCUMENTATION || topBar) ? classes.navWrapper : classes.navExpandedWrapper}>
           {(topBar ? topBar : <TopBar toggleSuperMenu={this.toggleSuperMenu} showShare={this.showShare}/>)}
         </div>
         <div className={classes.contentWrapper} ref={scrollContainerRef}>
