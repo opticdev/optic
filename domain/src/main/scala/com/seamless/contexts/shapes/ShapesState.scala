@@ -70,6 +70,13 @@ case class ShapesState(
     )
   }
 
+  def concepts: Map[ShapeId, ShapeEntity] = {
+    shapes.collect {
+      case (shapeId, entity) if !entity.isRemoved && entity.descriptor.name != "" && entity.descriptor.isUserDefined =>
+        (shapeId, entity)
+    }
+  }
+
   def withShapeName(shapeId: ShapeId, name: String) = {
     val shape = shapes(shapeId)
     shape match {

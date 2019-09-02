@@ -4,6 +4,9 @@ import { RfcContext, saveEvents, withRfcContext } from './RfcContext.js';
 import { commandsToJs, commandsFromJson, JsonHelper, commandToJs } from '../engine/index.js';
 import { EventEmitter } from 'events';
 import debounce from 'lodash.debounce';
+import LoadingDiff from '../components/diff/LoadingDiff';
+import {cheapEquals} from '../components/shape-editor/ShapeViewer';
+import {mapScala} from '../engine/index';
 
 const {
     Context: SessionContext,
@@ -15,9 +18,15 @@ class DiffSessionManager {
         this.sessionId = sessionId;
         this.session = session;
         this.diffState = diffState;
+        this.diffState.semanticDiff = diffState.semanticDiff || [];
         this.events = new EventEmitter()
         this.events.on('change', debounce(() => this.events.emit('updated'), 10, { leading: true, trailing: true, maxWait: 100 }))
         this.events.on('updated', () => this.persistState())
+    }
+
+    logSemanticDiff = (semanticDiff) => {
+        this.diffState.semanticDiff = [...this.diffState.semanticDiff, ...mapScala(semanticDiff)(i => i.toString())]
+        this.events.emit('change')
     }
 
     skipInteraction(currentInteractionIndex) {
@@ -147,7 +156,7 @@ class SessionStoreBase extends React.Component {
         const { sessionId } = this.props;
         const { isLoading, error, diffSessionManager } = this.state;
         if (isLoading) {
-            return <div>loading...</div>
+            return <LoadingDiff />
         }
         if (error) {
             console.error(error)
@@ -196,6 +205,8 @@ class SessionStoreBase extends React.Component {
             sessionId,
             diffSessionManager,
             diffStateProjections,
+            logSemanticDiff: diffSessionManager.logSemanticDiff,
+            semanticDiff: diffSessionManager.diffState.semanticDiff
         }
         return (
             <SessionContext.Provider value={sessionContext}>

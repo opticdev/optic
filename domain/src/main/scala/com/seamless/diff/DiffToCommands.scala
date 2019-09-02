@@ -1,7 +1,9 @@
 package com.seamless.diff
 
-import com.seamless.contexts.shapes.ShapesState
+import com.seamless.contexts.shapes.ShapesHelper._
+import com.seamless.contexts.shapes._
 import com.seamless.diff.RequestDiffer._
+import com.seamless.diff.initial._
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
@@ -9,7 +11,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExportAll
 class DiffToCommands(_shapesState: ShapesState) {
 
-  val placeHolder = DiffInterpretation("placeholder", "", Seq.empty)
+  val placeHolder = DiffInterpretation("placeholder", "", Seq.empty, Seq.empty)
 
   def interpret(diff: RequestDiffResult): DiffInterpretation = {
     implicit val shapesState: ShapesState = _shapesState
@@ -32,7 +34,7 @@ class DiffToCommands(_shapesState: ShapesState) {
           case sd: ShapeDiffer.ExtraObjectKey =>
             Interpretations.AddFieldToShape(sd.key, sd.parentObjectShapeId, d.responseStatusCode, d.responseId)
           case sd: ShapeDiffer.KeyShapeMismatch => {
-            val newShapeId = ShapeDiffer.resolveJsonToShapeId(sd.actual)
+            val newShapeId = ShapeResolver.resolveJsonToShapeId(sd.actual).getOrElse(AnyKind.baseShapeId)
             Interpretations.ChangeFieldShape(sd.key, sd.fieldId, newShapeId, d.responseStatusCode)
           }
           case sd: ShapeDiffer.MultipleInterpretations => placeHolder

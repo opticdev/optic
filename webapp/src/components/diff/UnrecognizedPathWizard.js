@@ -38,7 +38,7 @@ export function pathComponentsToString(pathComponents) {
 
 const styles = theme => ({
     root: {
-        paddingTop: 22
+        paddingTop: 22,
     }
 });
 class UnrecognizedPathWizard extends React.Component {
@@ -92,10 +92,12 @@ class UnrecognizedPathWizard extends React.Component {
                     />
 
                     <div style={{ marginTop: 17, paddingTop: 4, textAlign: 'right' }}>
-                        <Button onClick={this.handleIgnore}>Skip</Button>
+                        <Button
+                          onClick={this.handleIgnore}
+                          color="secondary">Skip</Button>
                         <Button
                             onClick={this.handleSubmit}
-                            color="secondary"
+                            color="primary"
                             disabled={!isCompleteMatch}>Add Path</Button>
                     </div>
                 </div>

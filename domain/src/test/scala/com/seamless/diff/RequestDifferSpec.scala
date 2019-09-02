@@ -86,7 +86,7 @@ class RequestDifferSpec extends FunSpec {
 """
 
       it("should notice mismatched fields in the Pet shape") {
-        val request = ApiRequest("/generics", "GET", "*/*", null)
+        val request = ApiRequest("/generics", "GET", "*/*", Json.Null)
         val response = ApiResponse(200, "application/json",
           json"""{
 "items": [
@@ -108,7 +108,7 @@ class RequestDifferSpec extends FunSpec {
   }
 
   describe("json array response body") {
-    val request = ApiRequest("/todos", "GET", "*/*", null)
+    val request = ApiRequest("/todos", "GET", "*/*", Json.Null)
     val rawEvents =
       json"""
         [
@@ -178,7 +178,7 @@ class RequestDifferSpec extends FunSpec {
 
   }
   describe("json object response body") {
-    val request = ApiRequest("/", "GET", "*/*", null)
+    val request = ApiRequest("/", "GET", "*/*", Json.Null)
 
     val events = EventSerialization.fromJson(json"""[]""")
     val rfcId: String = "rfc-1"
