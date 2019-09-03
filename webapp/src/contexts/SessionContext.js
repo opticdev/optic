@@ -169,6 +169,7 @@ class SessionStoreBase extends React.Component {
             const samplesAndResolvedPaths = session.samples
                 .map((sample, index) => {
                     const pathId = queries.resolvePath(sample.request.url)
+                    console.log({pathId, sample, index})
                     return { pathId, sample, index }
                 })
             const samplesWithResolvedPaths = samplesAndResolvedPaths.filter(x => !!x.pathId)
@@ -181,7 +182,6 @@ class SessionStoreBase extends React.Component {
                     acc[pathId] = group
                     return acc
                 }, {})
-            // @TODO: calculate progress
 
             return {
                 urls,

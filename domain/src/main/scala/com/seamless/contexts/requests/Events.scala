@@ -21,6 +21,7 @@ object Events {
   case class RequestParameterRemoved(parameterId: RequestParameterId) extends RequestsEvent
 
   case class RequestAdded(requestId: RequestId, pathId: PathComponentId, httpMethod: String) extends RequestsEvent
+  case class RequestContentTypeSet(requestId: RequestId, httpContentType: String) extends RequestsEvent
   case class RequestBodySet(requestId: RequestId, bodyDescriptor: ShapedBodyDescriptor) extends RequestsEvent
   case class RequestBodyUnset(requestId: RequestId) extends RequestsEvent
   case class RequestRemoved(requestId: RequestId) extends RequestsEvent

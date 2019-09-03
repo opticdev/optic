@@ -11,7 +11,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExportAll
 class DiffToCommands(_shapesState: ShapesState) {
 
-  val placeHolder = DiffInterpretation("placeholder", "", Seq.empty, Seq.empty)
+  val placeHolder = DiffInterpretation("You found a bug!", "We're looking into it :)", Seq.empty, Seq.empty)
 
   def interpret(diff: RequestDiffResult): DiffInterpretation = {
     implicit val shapesState: ShapesState = _shapesState
@@ -20,24 +20,36 @@ class DiffToCommands(_shapesState: ShapesState) {
       case d: UnmatchedUrl => placeHolder
       case d: UnmatchedHttpMethod => Interpretations.AddRequest(d.method, d.pathId)
       case d: UnmatchedHttpStatusCode => Interpretations.AddResponse(d.statusCode, d.requestId)
-      case d: UnmatchedRequestContentType => placeHolder
-      case d: UnmatchedRequestBodyShape => placeHolder
-      case d: UnmatchedResponseContentType => Interpretations.ChangeResponseContentType(d.inStatusCode, d.responseId, d.contentType, d.previousContentType)
+      case d: UnmatchedRequestContentType => Interpretations.ChangeRequestContentType(d.requestId, d.contentType, d.previousContentType)
+      case d: UnmatchedRequestBodyShape => {
+        d.shapeDiff match {
+          case sd: ShapeDiffer.UnsetShape => Interpretations.AddInitialRequestBodyShape(sd.actual, d.requestId, d.contentType)
+          case sd: ShapeDiffer.ShapeMismatch => Interpretations.RequireManualIntervention(s"Make sure the shapes match", Seq(d.requestId))
+          case sd: ShapeDiffer.MissingObjectKey => Interpretations.RequireManualIntervention(s"Make sure you intended for the key ${sd.key} to be missing in the request", Seq(d.requestId))
+          case sd: ShapeDiffer.ExtraObjectKey => Interpretations.AddFieldToRequestShape(sd.key, sd.parentObjectShapeId, d.requestId)
+          case sd: ShapeDiffer.KeyShapeMismatch => {
+            val newShapeId = ShapeResolver.resolveJsonToShapeId(sd.actual).getOrElse(AnyKind.baseShapeId)
+            Interpretations.ChangeFieldInRequestShape(sd.key, sd.fieldId, newShapeId, d.requestId)
+          }
+          case _ => placeHolder
+        }
+      }
+      case d: UnmatchedResponseContentType => Interpretations.ChangeResponseContentType(d.statusCode, d.responseId, d.contentType, d.previousContentType)
 
       case d: UnmatchedResponseBodyShape => {
         d.shapeDiff match {
           case sd: ShapeDiffer.UnsetShape =>
-            Interpretations.AddInitialBodyShape(sd.actual, d.responseStatusCode, d.responseId, d.contentType)
+            Interpretations.AddInitialResponseBodyShape(sd.actual, d.responseStatusCode, d.responseId, d.contentType)
 
-          case sd: ShapeDiffer.ShapeMismatch => placeHolder
-          case sd: ShapeDiffer.MissingObjectKey => placeHolder
+          case sd: ShapeDiffer.ShapeMismatch => Interpretations.RequireManualIntervention(s"Make sure the shapes match", Seq(d.responseId))
+          case sd: ShapeDiffer.MissingObjectKey => Interpretations.RequireManualIntervention(s"Make sure you intended for the key ${sd.key} to be missing in the response", Seq(d.responseId, sd.parentObjectShapeId))
           case sd: ShapeDiffer.ExtraObjectKey =>
-            Interpretations.AddFieldToShape(sd.key, sd.parentObjectShapeId, d.responseStatusCode, d.responseId)
+            Interpretations.AddFieldToResponseShape(sd.key, sd.parentObjectShapeId, d.responseStatusCode, d.responseId)
           case sd: ShapeDiffer.KeyShapeMismatch => {
             val newShapeId = ShapeResolver.resolveJsonToShapeId(sd.actual).getOrElse(AnyKind.baseShapeId)
-            Interpretations.ChangeFieldShape(sd.key, sd.fieldId, newShapeId, d.responseStatusCode)
+            Interpretations.ChangeFieldInResponseShape(sd.key, sd.fieldId, newShapeId, d.responseStatusCode)
           }
-          case sd: ShapeDiffer.MultipleInterpretations => placeHolder
+          case _ => placeHolder
         }
 
       }

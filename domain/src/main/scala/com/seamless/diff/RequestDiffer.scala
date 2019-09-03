@@ -54,7 +54,7 @@ object RequestDiffer {
   case class UnmatchedUrl(url: String) extends RequestDiffResult
   case class UnmatchedHttpMethod(pathId: PathComponentId, method: String) extends RequestDiffResult
   case class UnmatchedHttpStatusCode(requestId: RequestId, statusCode: Int) extends RequestDiffResult
-  case class UnmatchedResponseContentType(responseId: ResponseId, contentType: String, previousContentType: String, inStatusCode: Int) extends RequestDiffResult
+  case class UnmatchedResponseContentType(responseId: ResponseId, contentType: String, previousContentType: String, statusCode: Int) extends RequestDiffResult
   case class UnmatchedResponseBodyShape(responseId: ResponseId, contentType: String, responseStatusCode: Int, shapeDiff: ShapeDiffResult) extends RequestDiffResult
   case class UnmatchedRequestBodyShape(requestId: RequestId, contentType: String, shapeDiff: ShapeDiffResult) extends RequestDiffResult
   case class UnmatchedRequestContentType(requestId: RequestId, contentType: String, previousContentType: String) extends RequestDiffResult

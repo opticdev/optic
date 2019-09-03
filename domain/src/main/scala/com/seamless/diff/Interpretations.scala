@@ -1,13 +1,12 @@
 package com.seamless.diff
 
-import com.seamless.contexts.requests.Commands
-import com.seamless.contexts.requests.Commands.{SetResponseBodyShape, ShapedBodyDescriptor}
-import com.seamless.contexts.requests.RequestsServiceHelper
+import com.seamless.contexts.requests.Commands.{RequestId, SetRequestBodyShape, SetResponseBodyShape, ShapedBodyDescriptor}
+import com.seamless.contexts.requests.{Commands, RequestsServiceHelper}
 import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldShapeFromShape, SetFieldShape}
+import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldId, FieldShapeFromShape, SetFieldShape}
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.diff.initial.{NameShapeRequest, ShapeBuilder}
-import io.circe.{Json, JsonObject}
+import io.circe.Json
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
@@ -55,6 +54,29 @@ object Interpretations {
     )
   }
 
+  def RequireManualIntervention(message: String, affectedIds: Seq[String]) = {
+    DiffInterpretation(
+      "Manual Intervention Required",
+      message,
+      Seq.empty,
+      affectedIds
+    )
+  }
+
+  def ChangeRequestContentType(requestId: RequestId, newContentType: String, oldContentType: String)(implicit shapesState: ShapesState) = {
+    val commands = Seq(
+      Commands.SetRequestContentType(requestId, newContentType)
+    )
+
+    DiffInterpretation(
+      s"Request Content-Type Changed",
+      s"The content type of the request was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
+      commands,
+      semanticEffect = Seq(RequestUpdated, OperationUpdated),
+      affectedIds = Seq(requestId, requestId + ".content_type")
+    )
+  }
+
   def ChangeResponseContentType(responseStatusCode: Int, responseId: String, newContentType: String, oldContentType: String) = {
     val commands = Seq(
       Commands.SetResponseContentType(responseId, newContentType)
@@ -65,17 +87,72 @@ object Interpretations {
       s"The content type of the ${responseStatusCode} response was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
       commands,
       semanticEffect = Seq(ResponseUpdated, OperationUpdated),
-      affectedIds = Seq(responseId, responseId+".content_type")
+      affectedIds = Seq(responseId, responseId + ".content_type")
     )
   }
 
-
-  def AddInitialBodyShape(actual: Json, responseStatusCode: Int, responseId: String, contentType: String)(implicit shapesState: ShapesState) = {
+  def AddInitialRequestBodyShape(actual: Json, requestId: RequestId, contentType: String)(implicit shapesState: ShapesState) = {
     val shape = new ShapeBuilder(actual).run
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
 
-    val commands = shape.commands ++ Seq (
+    val commands = shape.commands ++ Seq(
+      AddShape(wrapperId, inlineShapeId, ""),
+      SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, wrapperId, isRemoved = false))
+    )
+
+    val effects = if (shape.nameRequests.exists(_.required)) {
+      Seq(ConceptAdded, RequestUpdated, OperationUpdated)
+    } else {
+      Seq(RequestUpdated, OperationUpdated)
+    }
+
+    DiffInterpretation(
+      s"Request Body Observed",
+      s"Optic observed a request body.",
+      commands,
+      affectedIds = Seq(inlineShapeId),
+      shape.nameRequests,
+      semanticEffect = effects,
+      example = actual
+    )
+  }
+
+  def AddFieldToRequestShape(key: String, parentShapeId: String, requestId: RequestId) = {
+    val fieldId = ShapesHelper.newFieldId()
+    val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, "$string")))
+
+    DiffInterpretation(
+      s"A Field was Added",
+      //@todo change copy based on if it's a concept or not
+      s"A new field '${key}' was observed in the request.",
+      commands,
+      semanticEffect = Seq(RequestUpdated, OperationUpdated),
+      affectedIds = Seq(fieldId)
+    )
+  }
+
+  def ChangeFieldInRequestShape(key: String, fieldId: FieldId, newShapeId: String, requestId: RequestId) = {
+    val commands = Seq(
+      SetFieldShape(FieldShapeFromShape(fieldId, newShapeId))
+    )
+
+    DiffInterpretation(
+      s"A field's type was changed",
+      //@todo change copy based on if it's a concept or not
+      s"The type of '${key}' was changed in the request.",
+      commands,
+      semanticEffect = Seq(ResponseUpdated, OperationUpdated),
+      affectedIds = Seq(fieldId)
+    )
+  }
+
+  def AddInitialResponseBodyShape(actual: Json, responseStatusCode: Int, responseId: String, contentType: String)(implicit shapesState: ShapesState) = {
+    val shape = new ShapeBuilder(actual).run
+    val inlineShapeId = shape.rootShapeId
+    val wrapperId = ShapesHelper.newShapeId()
+
+    val commands = shape.commands ++ Seq(
       AddShape(wrapperId, inlineShapeId, ""),
       SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, wrapperId, isRemoved = false))
     )
@@ -97,7 +174,7 @@ object Interpretations {
     )
   }
 
-  def AddFieldToShape(key: String, parentShapeId: String, responseStatusCode: Int, responseId: String) = {
+  def AddFieldToResponseShape(key: String, parentShapeId: String, responseStatusCode: Int, responseId: String) = {
     val fieldId = ShapesHelper.newFieldId()
     val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, "$string")))
 
@@ -112,7 +189,7 @@ object Interpretations {
 
   }
 
-  def ChangeFieldShape(key: String, fieldId: String, newShapeId: String, responseStatusCode: Int) = {
+  def ChangeFieldInResponseShape(key: String, fieldId: String, newShapeId: String, responseStatusCode: Int) = {
 
     val commands = Seq(
       SetFieldShape(FieldShapeFromShape(fieldId, newShapeId))
@@ -131,13 +208,16 @@ object Interpretations {
 
 }
 
-sealed trait SemanticApplyEffect {override def toString: String = this.getClass.getSimpleName}
+sealed trait SemanticApplyEffect {
+  override def toString: String = this.getClass.getSimpleName
+}
 case object ConceptAdded extends SemanticApplyEffect
 case object PathAdded extends SemanticApplyEffect
 case object OperationAdded extends SemanticApplyEffect
 case object OperationUpdated extends SemanticApplyEffect
 case object ResponseAdded extends SemanticApplyEffect
 case object ResponseUpdated extends SemanticApplyEffect
+case object RequestUpdated extends SemanticApplyEffect
 
 @JSExport
 @JSExportAll

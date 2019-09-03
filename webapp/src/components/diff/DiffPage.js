@@ -1,7 +1,7 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import Helmet from 'react-helmet';
-import Editor, {Sheet} from '../navigation/Editor';
+import Editor from '../navigation/Editor';
 import {withEditorContext} from '../../contexts/EditorContext';
 import DiffTopBar from './DiffTopBar'
 import DiffCard from './DiffCard';

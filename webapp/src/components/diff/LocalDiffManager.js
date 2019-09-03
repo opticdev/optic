@@ -15,7 +15,7 @@ import {primary} from '../../theme';
 import Card from '@material-ui/core/Card';
 import {CardActions, CardContent, CardHeader} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import groupBy from 'lodash.groupby'
+import groupBy from 'lodash.groupby';
 import {SemanticApplyEffect} from '../../engine/index';
 
 const styles = (theme => ({
@@ -53,17 +53,18 @@ class LocalDiffManager extends React.Component {
           const {diffState} = diffSessionManager;
           const {status} = diffState;
           if (status === 'persisted') {
-            return window.location.href = '/saved'
+            return window.location.href = '/saved';
           }
-          const {handleCommands, eventStore, rfcId, rfcService, queries, cachedQueryResults} = this.props;
+          const {handleCommands, eventStore, rfcId, rfcService, cachedQueryResults} = this.props;
           const {requests, requestIdsByPathId, pathsById} = cachedQueryResults;
-          //@TODO: measure progress from sessionContext.diffSessionManager and .sessions
+
+          function isStartable(item) {
+            const {index} = item;
+            const results = diffState.interactionResults[index] || {};
+            return results.status !== 'skipped' && results.status !== 'completed';
+          }
+
           const {pathId, sample, index: currentInteractionIndex} = (function (diffStateProjections) {
-            function isStartable(item) {
-              const {index} = item;
-              const results = diffState.interactionResults[index] || {};
-              return results.status !== 'skipped' && results.status !== 'completed';
-            }
 
             const {samplesGroupedByPath} = diffStateProjections;
             for (const entry of Object.entries(samplesGroupedByPath)) {
@@ -84,9 +85,9 @@ class LocalDiffManager extends React.Component {
           })(diffStateProjections);
 
           const progress = (diffState.acceptedInterpretations.length / diffSessionManager.session.samples.length) * 100;
-
+          console.log({currentInteractionIndex, sample, pathId});
           if (!sample) {
-            const changes = groupBy(semanticDiff, i => i)
+            const changes = groupBy(semanticDiff, i => i);
             return (
               <DiffPage progress={100}>
                 <Card>
@@ -111,7 +112,8 @@ class LocalDiffManager extends React.Component {
                       <Button size="large" color="default">
                         Cancel
                       </Button>
-                      <Button size="large" color="primary" onClick={() => diffSessionManager.applyDiffToSpec(eventStore, rfcId)}>
+                      <Button size="large" color="primary"
+                              onClick={() => diffSessionManager.applyDiffToSpec(eventStore, rfcId)}>
                         Merge
                       </Button>
                     </div>
@@ -128,6 +130,8 @@ class LocalDiffManager extends React.Component {
             const interpretation = new DiffToCommands(rfcState.shapesState).interpret(diff);
             const commands = JsonHelper.seqToJsArray(interpretation.commands);
             const hasDiff = commands.length > 0;
+
+            console.log({diff, interpretation});
 
             const requestsForPathId = requestIdsByPathId[pathId] || [];
             const request = requestsForPathId
@@ -154,11 +158,26 @@ class LocalDiffManager extends React.Component {
                         path={pathId}
                         interpretation={hasDiff && interpretation}
                         readyToFinish={readyToFinish}
-                        finish={() => diffSessionManager.finishInteraction(currentInteractionIndex)}
+                        finish={() => {
+                          diffSessionManager.finishInteraction(currentInteractionIndex);
+                          const startableInteractionsForPath = diffStateProjections.samplesGroupedByPath[pathId].filter(x => isStartable(x));
+                          const startableInteractionsWithNoDiff = startableInteractionsForPath.filter(x => {
+                            const {sample} = x;
+                            const interaction = toInteraction(sample);
+                            const rfcState = rfcService.currentState(rfcId);
+                            const diff = RequestDiffer.compare(interaction, rfcState);
+                            const interpretation = new DiffToCommands(rfcState.shapesState).interpret(diff);
+                            const commands = JsonHelper.seqToJsArray(interpretation.commands);
+                            const hasDiff = commands.length > 0;
+                            return !hasDiff;
+                          });
+                          console.log({startableInteractionsForPath, startableInteractionsWithNoDiff});
+                          startableInteractionsWithNoDiff.forEach(x => diffSessionManager.finishInteraction(x.index));
+                        }}
                         accept={(appendCommands = []) => {
                           const concat = [...commands, ...appendCommands];
                           handleCommands(...concat);
-                          logSemanticDiff(interpretation.semanticEffect)
+                          logSemanticDiff(interpretation.semanticEffect);
                         }}
               >
                 <EditorStore mode={readyToFinish ? EditorModes.DESIGN : EditorModes.DOCUMENTATION}>
@@ -182,7 +201,7 @@ class LocalDiffManager extends React.Component {
                 <UnrecognizedPathWizard
                   onSubmit={({commands}) => {
                     handleCommands(...commands);
-                    logSemanticDiff(SemanticApplyEffect.seqForPathAdded)
+                    logSemanticDiff(SemanticApplyEffect.seqForPathAdded);
                   }}
                   url={sample.request.url}
                 />
