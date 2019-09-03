@@ -1,18 +1,11 @@
 package com.seamless.diff
 
-import com.seamless.contexts.requests.Commands._
-import com.seamless.contexts.requests.RequestsServiceHelper
-import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.shapes.Commands._
-import com.seamless.contexts.shapes.ShapesHelper.AnyKind
-import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
+import com.seamless.contexts.shapes.ShapesHelper._
+import com.seamless.contexts.shapes._
 import com.seamless.diff.RequestDiffer._
-import com.seamless.diff.ShapeDiffer.ShapeDiffResult
-import com.seamless.diff.initial.{ShapeBuilder, ShapeResolver}
-import io.circe.{Json, JsonObject}
+import com.seamless.diff.initial._
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
-
 
 @JSExport
 @JSExportAll
@@ -23,14 +16,15 @@ class DiffToCommands(_shapesState: ShapesState) {
   def interpret(diff: RequestDiffResult): DiffInterpretation = {
     implicit val shapesState: ShapesState = _shapesState
     diff match {
-      case NoDiff() => placeHolder
+      case d: NoDiff => placeHolder
       case d: UnmatchedUrl => placeHolder
       case d: UnmatchedHttpMethod => Interpretations.AddRequest(d.method, d.pathId)
       case d: UnmatchedHttpStatusCode => Interpretations.AddResponse(d.statusCode, d.requestId)
+      case d: UnmatchedRequestContentType => placeHolder
+      case d: UnmatchedRequestBodyShape => placeHolder
       case d: UnmatchedResponseContentType => Interpretations.ChangeResponseContentType(d.inStatusCode, d.responseId, d.contentType, d.previousContentType)
 
       case d: UnmatchedResponseBodyShape => {
-        val inlineShapeId = ShapesHelper.newShapeId()
         d.shapeDiff match {
           case sd: ShapeDiffer.UnsetShape =>
             Interpretations.AddInitialBodyShape(sd.actual, d.responseStatusCode, d.responseId, d.contentType)
@@ -47,14 +41,6 @@ class DiffToCommands(_shapesState: ShapesState) {
         }
 
       }
-      case NoDiff() => {
-        placeHolder
-      }
-      case _ => {
-        println("unhandled")
-        placeHolder
-
-      }
     }
   }
 }
@@ -66,5 +52,5 @@ Plan of Attack
  - ignoring stuff? (cache in interactionResult / diffState)
  - launch spec with latest session
  - clean up pathmatcher
-
+ - api start should check diff when finishing
  */

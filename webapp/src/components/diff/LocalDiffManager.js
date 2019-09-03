@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import {toInteraction, RequestDiffer, DiffToCommands, JsonHelper} from '../../engine/index.js';
 import {getNameWithFormattedParameters, asPathTrail} from '../utilities/PathUtilities.js';
 import {SessionContext} from '../../contexts/SessionContext';
-import {makeStyles, withStyles} from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import {PathTrail} from '../PathPage';
 import UnrecognizedPathWizard from './UnrecognizedPathWizard';
 import {withRfcContext} from '../../contexts/RfcContext';

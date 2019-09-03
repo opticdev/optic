@@ -12,9 +12,14 @@ export function addBodyParsers(app: Express) {
 }
 
 export function packageRequest(req: Request) {
+    let body = req.body
+    if (!req.headers['transfer-encoding'] || !req.headers['content-length']) {
+        //@HACK: 
+        body = null
+    }
     const request: IRequestMetadata = {
         queryParameters: req.query,
-        body: req.body,
+        body,
         headers: req.headers,
         cookies: req.cookies,
         method: req.method,

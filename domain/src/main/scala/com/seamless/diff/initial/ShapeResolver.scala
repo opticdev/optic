@@ -1,7 +1,7 @@
 package com.seamless.diff.initial
 
 import com.seamless.contexts.shapes.Commands.ShapeId
-import com.seamless.contexts.shapes.ShapesHelper.{AnyKind, BooleanKind, NumberKind, StringKind}
+import com.seamless.contexts.shapes.ShapesHelper.{BooleanKind, NumberKind, StringKind}
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.diff.ShapeDiffer
 import com.seamless.diff.ShapeDiffer.NoDiff

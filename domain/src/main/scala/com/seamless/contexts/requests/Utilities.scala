@@ -100,8 +100,8 @@ object Utilities {
     }
   }
 
-
-  def resolvePath(url: String, pathMap: Map[PathComponentId, PathComponent]): Option[PathComponentId] = {
+  type PathMap = Map[PathComponentId, PathComponent]
+  def resolvePath(url: String, pathMap: PathMap): Option[PathComponentId] = {
     val children = pathMap.toSeq
       .groupBy((entry) => {
         val (_, pathComponent) = entry

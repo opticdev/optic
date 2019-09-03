@@ -11,10 +11,10 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.{Failure, Success, Try}
 
 @JSExport
-case class ApiRequest(url: String, method: String, contentType: String, body: Json = null)
+case class ApiRequest(url: String, method: String, contentType: String, body: Json = Json.Null)
 
 @JSExport
-case class ApiResponse(statusCode: Int, contentType: String, body: Json = null)
+case class ApiResponse(statusCode: Int, contentType: String, body: Json = Json.Null)
 
 @JSExport
 case class ApiInteraction(apiRequest: ApiRequest, apiResponse: ApiResponse)
@@ -56,6 +56,8 @@ object RequestDiffer {
   case class UnmatchedHttpStatusCode(requestId: RequestId, statusCode: Int) extends RequestDiffResult
   case class UnmatchedResponseContentType(responseId: ResponseId, contentType: String, previousContentType: String, inStatusCode: Int) extends RequestDiffResult
   case class UnmatchedResponseBodyShape(responseId: ResponseId, contentType: String, responseStatusCode: Int, shapeDiff: ShapeDiffResult) extends RequestDiffResult
+  case class UnmatchedRequestBodyShape(requestId: RequestId, contentType: String, shapeDiff: ShapeDiffResult) extends RequestDiffResult
+  case class UnmatchedRequestContentType(requestId: RequestId, contentType: String, previousContentType: String) extends RequestDiffResult
 
   def compare(interaction: ApiInteraction, spec: RfcState): RequestDiffResult = {
     // check for matching path
@@ -71,9 +73,35 @@ object RequestDiffer {
     if (matchedOperation.isEmpty) {
       return UnmatchedHttpMethod(pathId, interaction.apiRequest.method)
     }
-
-    //@TODO: only diff request body/etc. on 2xx/3xx
-    //@TODO: always diff response by status code and content-type
+    val request = matchedOperation.get
+    if ((200 until 400) contains interaction.apiResponse.statusCode) {
+      println(request.requestDescriptor.bodyDescriptor, interaction.apiRequest.body)
+      val requestDiff: Option[RequestDiffResult] = request.requestDescriptor.bodyDescriptor match {
+        case d: UnsetBodyDescriptor => {
+          if (interaction.apiRequest.body == Json.Null) {
+            None
+          } else {
+            Some(UnmatchedRequestBodyShape(request.requestId, interaction.apiRequest.contentType, ShapeDiffer.UnsetShape(interaction.apiRequest.body)))
+          }
+        }
+        case d: ShapedBodyDescriptor => {
+          if (d.httpContentType == interaction.apiRequest.contentType) {
+            val shape = spec.shapesState.shapes(d.shapeId)
+            val shapeDiff = ShapeDiffer.diff(shape, interaction.apiRequest.body)(spec.shapesState)
+            if (shapeDiff.isInstanceOf[NoDiff]) {
+              None
+            } else {
+              Some(UnmatchedRequestBodyShape(request.requestId, interaction.apiRequest.contentType, shapeDiff))
+            }
+          } else {
+            Some(UnmatchedRequestContentType(request.requestId, interaction.apiRequest.contentType, d.httpContentType))
+          }
+        }
+      }
+      if (requestDiff.isDefined) {
+        return requestDiff.get
+      }
+    }
 
     // check for matching response status
     val matchedResponse = spec.requestsState.responses.values
@@ -88,8 +116,14 @@ object RequestDiffer {
     val responseId = matchedResponse.get.responseId;
     val responseDiff: Option[RequestDiffResult] = matchedResponse.get.responseDescriptor.bodyDescriptor match {
       case d: UnsetBodyDescriptor => {
-        Some(UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, interaction.apiResponse.statusCode, ShapeDiffer.UnsetShape(interaction
-        .apiResponse.body)))
+        if (interaction.apiResponse.body == Json.Null) {
+          None
+        } else {
+          Some(
+            UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, interaction.apiResponse.statusCode,
+              ShapeDiffer.UnsetShape(interaction.apiResponse.body))
+          )
+        }
       }
       case d: ShapedBodyDescriptor => {
         //@TODO: check content type
