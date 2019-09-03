@@ -1,8 +1,5 @@
 import React from 'react';
 import {Operation} from '../PathPage';
-import Editor, {FullSheet, Sheet} from '../navigation/Editor.js';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import {toInteraction, RequestDiffer, DiffToCommands, JsonHelper} from '../../engine/index.js';
 import {getNameWithFormattedParameters, asPathTrail} from '../utilities/PathUtilities.js';
@@ -19,7 +16,6 @@ import Card from '@material-ui/core/Card';
 import {CardActions, CardContent, CardHeader} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import groupBy from 'lodash.groupby'
-import sortBy from 'lodash.sortby'
 import {SemanticApplyEffect} from '../../engine/index';
 
 const styles = (theme => ({
@@ -155,6 +151,7 @@ class LocalDiffManager extends React.Component {
             return (
               <DiffPage collapseLeftMargin={true}
                         progress={progress}
+                        path={pathId}
                         interpretation={hasDiff && interpretation}
                         readyToFinish={readyToFinish}
                         finish={() => diffSessionManager.finishInteraction(currentInteractionIndex)}
@@ -165,10 +162,10 @@ class LocalDiffManager extends React.Component {
                         }}
               >
                 <EditorStore mode={readyToFinish ? EditorModes.DESIGN : EditorModes.DOCUMENTATION}>
-                  <Paper style={{flex: 1, width: 850, maxWidth: 1000}}>
-                    <Typography variant="subtitle2" color="primary" styleJ={{
+                  <Paper style={{flex: 1, width: 850, maxWidth: 1000, overflow: 'hidden'}}>
+                    <Typography variant="subtitle2" component="div" color="primary" style={{
                       fontSize: 17,
-                      padding: 12
+                      padding: 11
                     }}>Path ({diffSessionManager.session.samples.length} samples)</Typography>
                     <div className={classes.pathDisplay}>
                       <div className={classes.methodDisplay}>{sample.request.method}</div>

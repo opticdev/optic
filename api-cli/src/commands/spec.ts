@@ -3,6 +3,7 @@ import * as fs from 'fs-extra'
 // @ts-ignore
 import * as niceTry from 'nice-try'
 import * as path from 'path'
+import {getUser} from '../lib/credentials'
 import { getPaths } from '../Paths'
 import { prepareEvents } from '../PersistUtils'
 import * as express from 'express'
@@ -91,6 +92,9 @@ export default class Spec extends Command {
     app.get('/cli-api/events', (req, res) => {
       console.log('get events')
       res.json(events)
+    })
+    app.get('/cli-api/identity', async (req, res) => {
+      res.json({distinctId: await getUser() || 'anon'})
     })
     app.put('/cli-api/events', bodyParser.json(), async (req, res) => {
       const newEvents = req.body

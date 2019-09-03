@@ -1,24 +1,3 @@
 [
-{"PathComponentAdded":{"name":"todo","parentPathId":"root","pathId":"path_BPwW1pcUqJ"}},
-{"RequestAdded":{"httpMethod":"PUT","pathId":"path_BPwW1pcUqJ","requestId":"request_ysUngWJ97n"}},
-{"ResponseAdded":{"httpStatusCode":200,"requestId":"request_ysUngWJ97n","responseId":"response_FDnweyPd5x"}},
-{"ShapeAdded":{"baseShapeId":"$object","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"OUkErB_0"}},
-{"ShapeAdded":{"baseShapeId":"$number","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"OUkErB_2"}},
-{"FieldAdded":{"fieldId":"OUkErB_1","name":"__v","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"OUkErB_1","shapeId":"OUkErB_2"}},"shapeId":"OUkErB_0"}},
-{"ShapeAdded":{"baseShapeId":"$string","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"OUkErB_4"}},
-{"FieldAdded":{"fieldId":"OUkErB_3","name":"_id","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"OUkErB_3","shapeId":"OUkErB_4"}},"shapeId":"OUkErB_0"}},
-{"ShapeAdded":{"baseShapeId":"$boolean","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"OUkErB_6"}},
-{"FieldAdded":{"fieldId":"OUkErB_5","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"OUkErB_5","shapeId":"OUkErB_6"}},"shapeId":"OUkErB_0"}},
-{"ShapeAdded":{"baseShapeId":"$string","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"OUkErB_8"}},
-{"FieldAdded":{"fieldId":"OUkErB_7","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"OUkErB_7","shapeId":"OUkErB_8"}},"shapeId":"OUkErB_0"}},
-{"ShapeAdded":{"baseShapeId":"OUkErB_0","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_9KKfvzyVAd"}},
-{"ResponseBodySet":{"bodyDescriptor":{"httpContentType":"application/json; charset=utf-8","isRemoved":false,"shapeId":"shape_9KKfvzyVAd"},"responseId":"response_FDnweyPd5x"}},
-{"ShapeRenamed":{"name":"ToDOOOO","shapeId":"OUkErB_0"}},
-{"PathComponentAdded":{"name":"todos","parentPathId":"root","pathId":"path_oxfqjkUJuR"}},
-{"RequestAdded":{"httpMethod":"GET","pathId":"path_oxfqjkUJuR","requestId":"request_CI5zQdjyvg"}},
-{"ResponseAdded":{"httpStatusCode":200,"requestId":"request_CI5zQdjyvg","responseId":"response_IDwdUhmCpy"}},
-{"ShapeAdded":{"baseShapeId":"$list","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"1pdWuR_0"}},
-{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"consumingParameterId":"$listItem","providerDescriptor":{"ShapeProvider":{"shapeId":"OUkErB_0"}},"shapeId":"1pdWuR_0"}}}},
-{"ShapeAdded":{"baseShapeId":"1pdWuR_0","name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_VsPMt683yT"}},
-{"ResponseBodySet":{"bodyDescriptor":{"httpContentType":"application/json; charset=utf-8","isRemoved":false,"shapeId":"shape_VsPMt683yT"},"responseId":"response_IDwdUhmCpy"}}
+
 ]

@@ -12,6 +12,19 @@ export function track(event, props) {
     }
 }
 
+if (window.location.hostname === 'localhost') {
+  fetch(`/cli-api/identity`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }).then((res) => res.json())
+    .then(({distinctId}) => {
+      mixpanel.identify(distinctId)
+      debugger
+    });
+}
+
 if (process.env.REACT_APP_ENABLE_ANALYTICS !== 'no') {
     if (!window.localStorage.getItem('_known_user')) {
         window.localStorage.setItem('_known_user', 'true')
