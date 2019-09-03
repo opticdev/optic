@@ -6,14 +6,14 @@ import keydown, {ALL_KEYS} from 'react-keydown';
 import SuperMenu from './SuperMenu';
 import ShareDialog from './ShareDialog';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
-
+import classNames from 'classnames'
 
 const styles = theme => ({
   pageContainer: {
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
-    height: '100vh !important'
+    height: '100vh'
   },
   navWrapper: {
     height: 50

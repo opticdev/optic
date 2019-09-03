@@ -1,26 +1,30 @@
-import { Command } from '@oclif/command'
+import {Command} from '@oclif/command'
 import * as fs from 'fs-extra'
 // @ts-ignore
 import * as niceTry from 'nice-try'
 import * as path from 'path'
-import { getPaths } from '../Paths'
-import { prepareEvents } from '../PersistUtils'
+import {getUser} from '../lib/credentials'
+import {getPaths} from '../Paths'
+import {prepareEvents} from '../PersistUtils'
 import * as express from 'express'
 import * as getPort from 'get-port'
 import bodyParser = require('body-parser')
 import * as open from 'open'
-import { readApiConfig } from './start';
-import analytics from '../lib/analytics';
-import Init, { IApiCliConfig } from './init';
+import {readApiConfig} from './start'
+import analytics from '../lib/analytics'
+import Init, {IApiCliConfig} from './init'
+
 interface IOpticDiffState {
   status: 'started' | 'persisted'
   interactionResults: Object
   acceptedInterpretations: any[]
 }
+
 interface IOpticRequestAdditions {
   session: Object
   diffState: IOpticDiffState
 }
+
 declare global {
   namespace Express {
     export interface Request {
@@ -29,13 +33,16 @@ declare global {
   }
 }
 
-const sessionFileSuffix = '.optic_session.json';
+const sessionFileSuffix = '.optic_session.json'
 const diffStateFileSuffix = '.optic_diff-state.json'
+
 class SessionUtilities {
-  sessionsPath: string;
+  sessionsPath: string
+
   constructor(sessionsPath: string) {
     this.sessionsPath = sessionsPath
   }
+
   async getSessions() {
     const entries = await fs.readdir(this.sessionsPath)
     const sessions = entries
@@ -44,8 +51,9 @@ class SessionUtilities {
       .sort((a, b) => {
         return b.localeCompare(a)
       })
-    return sessions;
+    return sessions
   }
+
   async doesSessionIdExist(sessionId: string) {
     const entries = await fs.readdir(this.sessionsPath)
     const sessionFileName = this.getSessionFileName(sessionId)
@@ -54,19 +62,23 @@ class SessionUtilities {
     }
     return true
   }
+
   getSessionFileName(sessionId: string) {
     return `${sessionId}${sessionFileSuffix}`
   }
+
   getSessionFilePath(sessionId: string) {
     const sessionFileName = this.getSessionFileName(sessionId)
     const sessionFilePath = path.join(this.sessionsPath, sessionFileName)
     return sessionFilePath
   }
+
   getDiffStateFilePath(sessionId: string) {
     const diffStateFileName = `${sessionId}${diffStateFileSuffix}`
     const diffStateFilePath = path.join(this.sessionsPath, diffStateFileName)
     return diffStateFilePath
   }
+
   async isSessionStartable(sessionId: string) {
     const diffStateFilePath = this.getDiffStateFilePath(sessionId)
     const diffStateExists = await fs.pathExists(diffStateFilePath)
@@ -88,6 +100,7 @@ function makeInitialDiffState(): IOpticDiffState {
     acceptedInterpretations: [],
   }
 }
+
 export default class Spec extends Command {
 
   static description = 'Read the docs and design the API'
@@ -95,7 +108,7 @@ export default class Spec extends Command {
   static args = []
 
   async run() {
-    let config: IApiCliConfig;
+    let config: IApiCliConfig
     try {
       config = await readApiConfig()
     } catch (e) {
@@ -104,7 +117,7 @@ export default class Spec extends Command {
       await Init.run([])
       return
     }
-    const { specStorePath, sessionsPath } = await getPaths()
+    const {specStorePath, sessionsPath} = await getPaths()
     const specFileExists = await fs.pathExists(specStorePath)
 
     if (specFileExists) {
@@ -117,14 +130,14 @@ export default class Spec extends Command {
         return this.error(`It looks like there is something wrong with your API spec file. Please make sure it is a valid JSON array.`)
       }
 
-      const port = await getPort({ port: getPort.makeRange(3201, 3299) })
+      const port = await getPort({port: getPort.makeRange(3201, 3299)})
 
       await this.startServer(port, config)
 
       const sessionUtilities = new SessionUtilities(sessionsPath)
       const sessions = await sessionUtilities.getSessions()
       if (sessions.length > 0) {
-        const [sessionId] = sessions;
+        const [sessionId] = sessions
         const isSessionStartable = await sessionUtilities.isSessionStartable(sessionId)
         if (isSessionStartable) {
           const url = `http://localhost:${port}/saved/diff/${sessionId}`
@@ -144,10 +157,10 @@ export default class Spec extends Command {
   }
 
   async startServer(port: number, config: IApiCliConfig) {
-    const { specStorePath, sessionsPath } = await getPaths()
+    const {specStorePath, sessionsPath} = await getPaths()
     const sessionUtilities = new SessionUtilities(sessionsPath)
     const app = express()
-    app.use(bodyParser.text({ type: 'text/html', limit: '100MB' }))
+    app.use(bodyParser.text({type: 'text/html', limit: '100MB'}))
 
     app.get('/cli-api/events', async (req, res) => {
       const events = await fs.readJson(specStorePath)
@@ -168,7 +181,7 @@ export default class Spec extends Command {
     })
 
     async function validateSessionId(req: express.Request, res: express.Response, next: express.NextFunction) {
-      const { sessionId } = req.params;
+      const {sessionId} = req.params
       const isSessionIdValid = sessionUtilities.doesSessionIdExist(sessionId)
       if (!isSessionIdValid) {
         return res.status(400).json({
@@ -187,14 +200,14 @@ export default class Spec extends Command {
         }
         next()
       } catch (e) {
-        console.error(e);
+        console.error(e)
         next(e)
       }
     }
 
     app.get('/cli-api/sessions/:sessionId', validateSessionId, async (req, res) => {
-      const { optic } = req;
-      const { session } = optic;
+      const {optic} = req
+      const {session} = optic
       const hostname = require('url').parse(config.proxy.target).hostname
       res.json({
         hostname,
@@ -203,7 +216,7 @@ export default class Spec extends Command {
     })
 
     app.put('/cli-api/sessions/:sessionId/diff', bodyParser.json(), validateSessionId, async (req, res) => {
-      const { sessionId } = req.params;
+      const {sessionId} = req.params
       const diffStateFileName = `${sessionId}${diffStateFileSuffix}`
       const diffStateFilePath = path.join(sessionsPath, diffStateFileName)
       await fs.writeJson(diffStateFilePath, req.body)
@@ -211,13 +224,15 @@ export default class Spec extends Command {
     })
 
     app.get('/cli-api/sessions/:sessionId/diff', validateSessionId, (req, res) => {
-      const { optic } = req;
-      const { diffState } = optic;
+      const {optic} = req
+      const {diffState} = optic
       res.json({
         diffState
       })
     })
-
+    app.get('/cli-api/identity', async (req, res) => {
+      res.json({distinctId: await getUser() || 'anon'})
+    })
     app.use(express.static(path.join(__dirname, '../../resources/react')))
     app.get('*', (req, res) => {
       res.sendFile(path.join(__dirname, '../../resources/react/', 'index.html'))

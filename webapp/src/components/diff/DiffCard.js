@@ -26,7 +26,7 @@ import ReactJson from 'react-json-view';
 
 const styles = theme => ({
   header: {
-    backgroundColor: '#17c8a3',
+    backgroundColor: '#3ec580',
     color: 'white',
     padding: 2,
     paddingLeft: 12,

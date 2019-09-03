@@ -11,7 +11,7 @@ import ConfirmCard from './ConfirmCard';
 const styles = theme => ({
   root: {
     paddingTop: theme.spacing(5),
-    flex: 1
+    flex: 1,
   },
   cardViewRoot: {
     paddingLeft: 22,
@@ -30,6 +30,21 @@ const styles = theme => ({
 
 
 class DiffPage extends React.Component {
+
+  constructor(props) {
+    super(props)
+    this.scrollContainerRef = React.createRef()
+  }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (nextProps.path !== this.props.path) {
+      setTimeout(() => {
+        this.scrollContainerRef.current.scrollTo(0, 0)
+        debugger
+      })
+    }
+  }
+
   render() {
     const {classes, children, collapseLeftMargin, interpretation, accept, readyToFinish, finish, progress} = this.props
 
@@ -48,12 +63,11 @@ class DiffPage extends React.Component {
       topBar={<DiffTopBar progress={progress} />}
       collapseLeftMargin={collapseLeftMargin}
       rightMargin={<div className={classes.diffCardMargin}>{card}</div>}
+      scrollContainerRef={this.scrollContainerRef}
     >
       <Helmet><title>{"Review Proposed Changes"}</title></Helmet>
       <div className={classes.root}>
-        <div>
           {children}
-        </div>
       </div>
       {/*<CommitChangesModal open={false} />*/}
     </Editor>
