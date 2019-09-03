@@ -71,7 +71,7 @@ class SessionUtilities {
     const diffStateFilePath = this.getDiffStateFilePath(sessionId)
     const diffStateExists = await fs.pathExists(diffStateFilePath)
     if (!diffStateExists) {
-      return false
+      return true
     }
     const diffState = await fs.readJson(diffStateFilePath)
     if (diffState.status === 'persisted') {

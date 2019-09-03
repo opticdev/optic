@@ -88,7 +88,7 @@ object RequestDiffer {
           if (d.httpContentType == interaction.apiRequest.contentType) {
             val shape = spec.shapesState.shapes(d.shapeId)
             val shapeDiff = ShapeDiffer.diff(shape, interaction.apiRequest.body)(spec.shapesState)
-            if (shapeDiff.isInstanceOf[NoDiff]) {
+            if (shapeDiff == ShapeDiffer.NoDiff()) {
               None
             } else {
               Some(UnmatchedRequestBodyShape(request.requestId, interaction.apiRequest.contentType, shapeDiff))
