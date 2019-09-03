@@ -2,8 +2,6 @@ package com.seamless.contexts.requests
 
 import com.seamless.contexts.requests.Commands._
 
-import scala.scalajs.js.annotation.{JSExport, JSExportAll}
-
 
 sealed trait RequestsGraph
 
@@ -26,7 +24,18 @@ case class RequestParameterDescriptor(requestId: RequestId, location: String, na
 
 case class HttpRequestParameter(parameterId: RequestParameterId, requestParameterDescriptor: RequestParameterDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
-case class RequestDescriptor(pathComponentId: PathComponentId, httpMethod: String, bodyDescriptor: BodyDescriptor)
+case class RequestDescriptor(pathComponentId: PathComponentId, httpMethod: String, bodyDescriptor: BodyDescriptor) {
+  def withContentType(httpContentType: String): RequestDescriptor = {
+    this.copy(
+      bodyDescriptor = this.bodyDescriptor match {
+        case UnsetBodyDescriptor() => UnsetBodyDescriptor() //@TODO: should probably fail in validation?
+        case d: ShapedBodyDescriptor => {
+          d.copy(httpContentType = httpContentType)
+        }
+      }
+    )
+  }
+}
 
 case class HttpRequest(requestId: RequestId, requestDescriptor: RequestDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
@@ -109,6 +118,13 @@ case class RequestsState(
   def withRequest(requestId: RequestId, pathId: PathComponentId, httpMethod: String) = {
     this.copy(
       requests = requests + (requestId -> HttpRequest(requestId, RequestDescriptor(pathId, httpMethod, UnsetBodyDescriptor()), isRemoved = false)),
+    )
+  }
+
+  def withRequestContentType(requestId: RequestId, httpContentType: String) = {
+    val r = requests(requestId)
+    this.copy(
+      requests = requests + (requestId -> r.copy(requestDescriptor = r.requestDescriptor.withContentType(httpContentType)))
     )
   }
 

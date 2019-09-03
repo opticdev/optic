@@ -45,6 +45,7 @@ object Commands {
   case class RemovePathParameter(pathId: PathComponentId) extends RequestsCommand
 
   case class AddRequest(requestId: RequestId, pathId: PathComponentId, httpMethod: String) extends RequestsCommand
+  case class SetRequestContentType(requestId: RequestId, httpContentType: String) extends RequestsCommand
   case class SetRequestBodyShape(requestId: RequestId, bodyDescriptor: ShapedBodyDescriptor) extends RequestsCommand
   case class UnsetRequestBodyShape(requestId: RequestId) extends RequestsCommand
   case class RemoveRequest(requestId: RequestId) extends RequestsCommand

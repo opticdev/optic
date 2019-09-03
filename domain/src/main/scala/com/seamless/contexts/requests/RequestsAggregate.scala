@@ -75,6 +75,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           persist(Events.RequestAdded(requestId, pathId, httpMethod))
         }
 
+        case SetRequestContentType(requestId, contentType) => {
+          Validators.ensureRequestIdExists(requestId)
+          persist(Events.RequestContentTypeSet(requestId, contentType))
+        }
+
         case SetRequestBodyShape(requestId, bodyDescriptor) => {
           Validators.ensureRequestIdExists(requestId)
           ensureShapeIdExists(bodyDescriptor.shapeId)
@@ -235,6 +240,10 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
       state.withRequest(requestId, pathId, httpMethod)
     }
 
+    case RequestContentTypeSet(requestId, httpContentType) => {
+      state.withRequestContentType(requestId, httpContentType)
+    }
+
     case RequestRemoved(requestId) => {
       state.withoutRequest(requestId)
     }
@@ -260,7 +269,6 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
     }
 
     case ResponseContentTypeSet(responseId, httpContentType) => {
-      val r = state.responses(responseId)
       state.withResponseContentType(responseId, httpContentType)
     }
 
