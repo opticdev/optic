@@ -40,7 +40,7 @@ export function toInteraction(sample: IApiInteraction) {
   )
 }
 
-async function checkDiffOrUnrecognizedPath(result: ICaptureSessionResult) {
+export async function checkDiffOrUnrecognizedPath(result: ICaptureSessionResult) {
   const { specStorePath } = await getPaths()
   const specStoreExists = await fs.pathExists(specStorePath)
   if (!specStoreExists) { return Promise.resolve(false) }
@@ -93,7 +93,9 @@ export default class Start extends Command {
       return null
     }
     this.log(`[optic] Observed ${result.samples.length} API interaction(s)`)
+    
     await checkDiffOrUnrecognizedPath(result)
+    
     const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`;
     const fileName = `${sessionId}.optic_session.json`
     const { sessionsPath } = await getPaths()
