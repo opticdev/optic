@@ -54,7 +54,7 @@ class PathInput extends React.Component {
     processValue = (state, value) => {
         const components = pathStringToPathComponents(value)
         const currentComponent = components.length === 0 ? newComponent() : components.pop()
-        console.log({ components, currentComponent })
+
         return {
             pathComponents: [...state.pathComponents, ...components].filter(x => !!x.name),
             currentComponent

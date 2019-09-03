@@ -21,7 +21,6 @@ class PathMatcher extends React.Component {
     };
 
     handlePathComponentsChange = (pathComponents) => {
-        console.log({ pathComponents })
         const pathExpression = pathComponentsToString(pathComponents)
         this.setState({ pathExpression });
         this.props.onChange({
@@ -39,15 +38,12 @@ class PathMatcher extends React.Component {
         let matched = '';
         let remaining = url;
 
-        console.log({ regex, url, pathExpression, found })
         if (found && found[0].length) {
             const startString = found[0];
             const start = url.substring(0, startString.length);
             matched = start;
             remaining = url.substring(startString.length);
         }
-
-        console.log({matched, remaining, url, pathExpression})
 
         return (
             <div>
