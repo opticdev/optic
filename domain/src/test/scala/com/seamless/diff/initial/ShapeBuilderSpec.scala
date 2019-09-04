@@ -1,5 +1,6 @@
 package com.seamless.diff.initial
 
+import com.seamless.Analytics
 import com.seamless.contexts.rfc.{RfcService, RfcServiceJSFacade}
 import com.seamless.contexts.shapes.Commands.{ProviderInShape, RenameShape, SetParameterShape, ShapeProvider}
 import com.seamless.diff.JsonFileFixture

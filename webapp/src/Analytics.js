@@ -32,3 +32,9 @@ export function track(event, props) {
     mixpanel.track(event, props)
   }
 }
+
+window.AnalyticsJsStub = {
+  track: (event, props) => {
+    track(event, props)
+  }
+}

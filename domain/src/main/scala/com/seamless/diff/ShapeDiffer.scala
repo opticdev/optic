@@ -1,5 +1,6 @@
 package com.seamless.diff
 
+import com.seamless.Analytics
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.ShapesHelper._
 import com.seamless.contexts.shapes.{ShapeEntity, ShapesState}
@@ -20,6 +21,7 @@ object ShapeDiffer {
   //@TODO change bindings to UsageTrail
   def diff(expectedShape: ShapeEntity, actualShape: Json)(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty): ShapeDiffResult = {
 //    println(expectedShape, actualShape, bindings)
+    Analytics.track("Doing it", Map("hello" -> "world"))
     val coreShape = toCoreShape(expectedShape, shapesState)
     coreShape match {
       case AnyKind => {
@@ -65,6 +67,7 @@ object ShapeDiffer {
         }
       }
       case ObjectKind => {
+        Analytics.track("Example", Map("hello" -> "world"))
         if (actualShape.isObject) {
           val o = actualShape.asObject.get
           val baseObject = resolveBaseObject(expectedShape.shapeId)
