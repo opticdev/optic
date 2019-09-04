@@ -34,7 +34,7 @@ class App extends React.Component {
                       </DialogContent>
                   </Dialog>
               </Hidden>
-              <SnackbarProvider>
+              <SnackbarProvider maxSnack={1}>
                   <BrowserRouter>
                       <>
                         <Route path="/" component={AppRoutes}/>

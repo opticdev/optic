@@ -2,7 +2,7 @@ import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import Helmet from 'react-helmet';
 import Editor from '../navigation/Editor';
-import {withEditorContext} from '../../contexts/EditorContext';
+import { withEditorContext } from '../../contexts/EditorContext';
 import DiffTopBar from './DiffTopBar'
 import DiffCard from './DiffCard';
 import ConfirmCard from './ConfirmCard';
@@ -46,7 +46,7 @@ class DiffPage extends React.Component {
   }
 
   render() {
-    const {classes, children, collapseLeftMargin, interpretation, accept, readyToFinish, finish, progress} = this.props
+    const { classes, children, collapseLeftMargin, interpretation, accept, readyToFinish, finish, progress } = this.props
 
     const card = (() => {
       if (readyToFinish) {
@@ -58,19 +58,21 @@ class DiffPage extends React.Component {
       }
     })()
 
-    return <Editor
-      baseUrl={this.props.baseUrl}
-      topBar={<DiffTopBar progress={progress} />}
-      collapseLeftMargin={collapseLeftMargin}
-      rightMargin={<div className={classes.diffCardMargin}>{card}</div>}
-      scrollContainerRef={this.scrollContainerRef}
-    >
-      <Helmet><title>{"Review Proposed Changes"}</title></Helmet>
-      <div className={classes.root}>
+    return (
+      <Editor
+        baseUrl={this.props.baseUrl}
+        topBar={<DiffTopBar progress={progress} />}
+        collapseLeftMargin={collapseLeftMargin}
+        rightMargin={<div className={classes.diffCardMargin}>{card}</div>}
+        scrollContainerRef={this.scrollContainerRef}
+      >
+        <Helmet><title>{"Review Proposed Changes"}</title></Helmet>
+        <div className={classes.root}>
           {children}
-      </div>
-      {/*<CommitChangesModal open={false} />*/}
-    </Editor>
+        </div>
+        {/*<CommitChangesModal open={false} />*/}
+      </Editor>
+    )
   }
 }
 export default withEditorContext(withStyles(styles)(DiffPage))

@@ -64,7 +64,7 @@ const styles = theme => ({
 class OperationBase extends React.Component {
     render() {
         const { classes, request, handleCommands, mode, cachedQueryResults } = this.props;
-        const { requests, responses, requestParameters, pathsById, requestIdsByPathId } = cachedQueryResults;
+        const { responses, requestParameters } = cachedQueryResults;
 
         const { requestId, requestDescriptor } = request;
         const { httpMethod, bodyDescriptor } = requestDescriptor;
@@ -270,6 +270,24 @@ class PathTrailBase extends React.Component {
     }
 }
 
+class PathTrailBaseWithoutLinks extends React.Component {
+    render() {
+        const { classes, pathTrail, style } = this.props;
+        const items = pathTrail
+            .map((trailItem) => {
+                const { pathComponentId, pathComponentName } = trailItem;
+                return (
+                    <Typography key={pathComponentId}>{pathComponentName}</Typography>
+                );
+            });
+        return (
+            <Paper elevation={0} className={classes.paper} style={style}>
+                <Breadcrumbs maxItems={12}>{items}</Breadcrumbs>
+            </Paper>
+        );
+    }
+}
+export const PathTrailWithoutLinks = withStyles(pathTrailStyles)(PathTrailBaseWithoutLinks);
 export const PathTrail = withEditorContext(withStyles(pathTrailStyles)(PathTrailBase));
 
 export function getNormalizedBodyDescriptor(value) {

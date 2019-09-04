@@ -5,8 +5,8 @@ import { commandsToJs, commandsFromJson, JsonHelper, commandToJs } from '../engi
 import { EventEmitter } from 'events';
 import debounce from 'lodash.debounce';
 import LoadingDiff from '../components/diff/LoadingDiff';
-import {cheapEquals} from '../components/shape-editor/ShapeViewer';
-import {mapScala} from '../engine/index';
+import { cheapEquals } from '../components/shape-editor/ShapeViewer';
+import { mapScala } from '../engine/index';
 
 const {
     Context: SessionContext,
@@ -18,14 +18,18 @@ class DiffSessionManager {
         this.sessionId = sessionId;
         this.session = session;
         this.diffState = diffState;
-        this.diffState.semanticDiff = diffState.semanticDiff || [];
         this.events = new EventEmitter()
         this.events.on('change', debounce(() => this.events.emit('updated'), 10, { leading: true, trailing: true, maxWait: 100 }))
         this.events.on('updated', () => this.persistState())
     }
 
-    logSemanticDiff = (semanticDiff) => {
-        this.diffState.semanticDiff = [...this.diffState.semanticDiff, ...mapScala(semanticDiff)(i => i.toString())]
+    markAsManuallyIntervened(currentInteractionIndex) {
+        this.diffState.status = 'started'
+        const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
+        this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
+            currentInteraction,
+            { status: 'manual' }
+        )
         this.events.emit('change')
     }
 
@@ -78,7 +82,7 @@ class DiffSessionManager {
         }
     }
 
-    persistState(){
+    persistState() {
         console.count('persisting')
         return fetch(`/cli-api/sessions/${this.sessionId}/diff`, {
             method: 'PUT',
@@ -169,11 +173,14 @@ class SessionStoreBase extends React.Component {
             const samplesAndResolvedPaths = session.samples
                 .map((sample, index) => {
                     const pathId = queries.resolvePath(sample.request.url)
-                    console.log({pathId, sample, index})
+                    console.log({ pathId, sample, index })
                     return { pathId, sample, index }
                 })
             const samplesWithResolvedPaths = samplesAndResolvedPaths.filter(x => !!x.pathId)
-            const samplesWithoutResolvedPaths = samplesAndResolvedPaths.filter(x => !x.pathId)
+            const samplesWithoutResolvedPaths = samplesAndResolvedPaths
+                .filter(x => !x.pathId)
+                .sort((a, b) => a.sample.request.url.localeCompare(b.sample.request.url))
+
             const samplesGroupedByPath = samplesWithResolvedPaths
                 .reduce((acc, value) => {
                     const { pathId } = value;
@@ -194,6 +201,10 @@ class SessionStoreBase extends React.Component {
             this.props.handleCommands(...commands)
             diffSessionManager.acceptCommands(commands)
         }
+        const applyCommands = (...commands) => {
+            this.props.handleCommands(...commands)
+            diffSessionManager.acceptCommands(commands)
+        }
         const { children, ...rest } = this.props
         const rfcContext = {
             ...rest,
@@ -205,8 +216,7 @@ class SessionStoreBase extends React.Component {
             sessionId,
             diffSessionManager,
             diffStateProjections,
-            logSemanticDiff: diffSessionManager.logSemanticDiff,
-            semanticDiff: diffSessionManager.diffState.semanticDiff
+            applyCommands
         }
         return (
             <SessionContext.Provider value={sessionContext}>
