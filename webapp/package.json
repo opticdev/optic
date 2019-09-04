@@ -43,12 +43,14 @@
     "jest-watch-typeahead": "0.3.0",
     "keymirror": "^0.1.1",
     "lodash.debounce": "^4.0.8",
-    "lodash.sortby": "^4.7.0",
+    "lodash.groupby": "^4.6.0",
     "mini-css-extract-plugin": "0.5.0",
     "mixpanel-browser": "2.15.0",
     "nice-try": "^2.0.0",
     "notistack": "^0.8.6",
+    "optic-domain": "../domain/",
     "optimize-css-assets-webpack-plugin": "5.0.1",
+    "path-to-regexp": "^3.0.0",
     "pnp-webpack-plugin": "1.2.1",
     "postcss-flexbugs-fixes": "4.1.0",
     "postcss-loader": "3.0.0",
@@ -62,12 +64,12 @@
     "react-helmet": "5.2.1",
     "react-highlight": "^0.12.0",
     "react-input-autosize": "^2.2.1",
+    "react-json-view": "^1.19.1",
     "react-keydown": "^1.9.10",
     "react-router-dom": "^5.0.1",
     "react-waypoint": "^9.0.2",
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",
-    "seamless-domain": "../domain-js/",
     "semver": "6.0.0",
     "style-loader": "0.23.1",
     "terser-webpack-plugin": "1.2.3",
@@ -85,6 +87,7 @@
     "build-local": "node scripts/build-local.js",
     "test": "node scripts/test.js",
     "storybook": "start-storybook -p 9009 -s public",
+    "preinstall": "yarn link optic-domain",
     "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
@@ -155,6 +158,7 @@
       "jest-watch-typeahead/testname"
     ]
   },
+  "proxy": "http://localhost:3201",
   "babel": {
     "presets": [
       "react-app"

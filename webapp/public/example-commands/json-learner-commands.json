@@ -1,0 +1,44 @@
+[
+  {
+    "AddShape" : {
+      "shapeId" : "pa_0",
+      "baseShapeId" : "$object",
+      "name" : "Learned Concept"
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "pa_2",
+      "baseShapeId" : "$list",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "pa_1",
+      "shapeId" : "pa_0",
+      "name" : "primitives",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "pa_1",
+          "shapeId" : "pa_2"
+        }
+      }
+    }
+  },
+  {
+    "SetParameterShape" : {
+      "shapeDescriptor" : {
+        "ProviderInField" : {
+          "fieldId" : "pa_1",
+          "providerDescriptor" : {
+            "ShapeProvider" : {
+              "shapeId" : "$string"
+            }
+          },
+          "consumingParameterId" : "$listItem"
+        }
+      }
+    }
+  }
+]

@@ -1,0 +1,115 @@
+[
+  {
+    "AddShape" : {
+      "shapeId" : "nested_0",
+      "baseShapeId" : "$object",
+      "name" : ""
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_2",
+      "baseShapeId" : "$object",
+      "name" : ""
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_4",
+      "baseShapeId" : "$boolean",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_3",
+      "shapeId" : "nested_2",
+      "name" : "bool-key",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_3",
+          "shapeId" : "nested_4"
+        }
+      }
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_6",
+      "baseShapeId" : "$object",
+      "name" : ""
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_8",
+      "baseShapeId" : "$string",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_7",
+      "shapeId" : "nested_6",
+      "name" : "desc",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_7",
+          "shapeId" : "nested_8"
+        }
+      }
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_5",
+      "shapeId" : "nested_2",
+      "name" : "nested",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_5",
+          "shapeId" : "nested_6"
+        }
+      }
+    }
+  },
+  {
+    "AddShape" : {
+      "shapeId" : "nested_10",
+      "baseShapeId" : "$number",
+      "name" : ""
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_9",
+      "shapeId" : "nested_2",
+      "name" : "number-key",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_9",
+          "shapeId" : "nested_10"
+        }
+      }
+    }
+  },
+  {
+    "AddField" : {
+      "fieldId" : "nested_1",
+      "shapeId" : "nested_0",
+      "name" : "c",
+      "shapeDescriptor" : {
+        "FieldShapeFromShape" : {
+          "fieldId" : "nested_1",
+          "shapeId" : "nested_2"
+        }
+      }
+    }
+  },
+  {
+    "RenameShape" : {
+      "shapeId" : "nested_0",
+      "name" : "Nested"
+    }
+  }
+]

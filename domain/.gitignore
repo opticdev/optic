@@ -1,3 +1,5 @@
 target/
 project/target
 .idea/
+node_modules/
+optic-domain-1.0.0-snapshot.tgz

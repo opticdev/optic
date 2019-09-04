@@ -26,7 +26,7 @@ class RequestContextMenu extends React.Component {
     addResponse = () => {
 
         const {handleCommands, requestId} = this.props;
-        const responseId = RequestsHelper.newId()
+        const responseId = RequestsHelper.newResponseId()
         const statusCode = 200
         const addResponse = RequestsCommands.AddResponse(responseId, requestId, statusCode)
 

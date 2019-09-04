@@ -19,6 +19,10 @@ class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[R
     repository.save(id, effects.eventsToPersist)
   }
 
+  def handleCommandSequence(id: AggregateId, commands: Seq[RfcCommand]): Unit = {
+    commands.foreach(handleCommand(id, _))
+  }
+
   def currentState(id: AggregateId): RfcState = {
     repository.findById(id)
   }
@@ -29,6 +33,7 @@ class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[R
   def commandHandlerForAggregate(id: AggregateId): js.Function1[RfcCommand, Unit] = (command: RfcCommand) => {
     handleCommand(id, command)
   }
+
 }
 
 @JSExport
@@ -53,19 +58,9 @@ object RfcServiceJSFacade {
   }
 
   def fromJsonCommands(eventStore: EventStore[RfcEvent], jsonString: String, id: AggregateId): RfcService = {
-    import io.circe.parser._
+    val commandsVector = CommandSerialization.fromJsonString(jsonString)
 
-    val commandsVector =
-      for {
-        json <- Try(parse(jsonString).right.get)
-        commandsVector <- CommandSerialization.fromJson(json)
-      } yield commandsVector
-    if (commandsVector.isFailure) {
-      println(commandsVector.failed.get)
-    }
-    require(commandsVector.isSuccess, "failed to parse and handle commands")
-
-    fromCommands(eventStore, commandsVector.get, id)
+    fromCommands(eventStore, commandsVector, id)
   }
 }
 

@@ -75,6 +75,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
           persist(Events.RequestAdded(requestId, pathId, httpMethod))
         }
 
+        case SetRequestContentType(requestId, contentType) => {
+          Validators.ensureRequestIdExists(requestId)
+          persist(Events.RequestContentTypeSet(requestId, contentType))
+        }
+
         case SetRequestBodyShape(requestId, bodyDescriptor) => {
           Validators.ensureRequestIdExists(requestId)
           ensureShapeIdExists(bodyDescriptor.shapeId)
@@ -113,6 +118,11 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
         case SetResponseStatusCode(responseId, httpStatusCode) => {
           Validators.ensureResponseIdExists(responseId)
           persist(Events.ResponseStatusCodeSet(responseId, httpStatusCode))
+        }
+
+        case SetResponseContentType(responseId, httpContentType) => {
+          Validators.ensureResponseIdExists(responseId)
+          persist(Events.ResponseContentTypeSet(responseId, httpContentType))
         }
 
         case RemoveResponse(responseId) => {
@@ -230,6 +240,10 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
       state.withRequest(requestId, pathId, httpMethod)
     }
 
+    case RequestContentTypeSet(requestId, httpContentType) => {
+      state.withRequestContentType(requestId, httpContentType)
+    }
+
     case RequestRemoved(requestId) => {
       state.withoutRequest(requestId)
     }
@@ -252,6 +266,10 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
     case ResponseAdded(responseId, requestId, httpStatusCode) => {
       state.withResponse(responseId, requestId, httpStatusCode)
+    }
+
+    case ResponseContentTypeSet(responseId, httpContentType) => {
+      state.withResponseContentType(responseId, httpContentType)
     }
 
     case ResponseStatusCodeSet(responseId, httpStatusCode) => {

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import {commandsToJson, Facade, Queries} from '../engine';
-import {GenericContextFactory} from './GenericContextFactory.js';
-import {withInitialRfcCommandsContext} from './InitialRfcCommandsContext.js';
+import { commandsToJson, Facade, Queries } from '../engine';
+import { GenericContextFactory } from './GenericContextFactory.js';
+import { withInitialRfcCommandsContext } from './InitialRfcCommandsContext.js';
 import debounce from 'lodash.debounce';
-import {withSnackbar} from 'notistack';
-import {track} from '../Analytics';
+import { withSnackbar } from 'notistack';
+import { track } from '../Analytics';
 
 const {
     Context: RfcContext,
@@ -15,21 +15,60 @@ global.commands = []
 global.getCommandsAsJson = function () {
     return commandsToJson(global.commands)
 }
+export function stuffFromQueries(queries) {
+    const apiName = queries.apiName();
+    const contributions = queries.contributions()
 
+    const { requests, pathComponents, responses, requestParameters } = queries.requestsState()
+    const pathIdsByRequestId = queries.pathsWithRequests();
+    const pathsById = pathComponents;
+    // const absolutePaths = Object.keys(pathsById).map(pathId => ({ [pathId]: queries.absolutePath(pathId) })).reduce((acc, value) => Object.assign(acc, value), {})
+    // console.log({ absolutePaths })
+    const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId))
+
+    const conceptsById = queries.namedShapes()
+    const shapesState = queries.shapesState()
+
+    const requestIdsByPathId = Object
+        .entries(pathIdsByRequestId)
+        .reduce((acc, entry) => {
+            const [requestId, pathId] = entry;
+            const value = acc[pathId] || []
+            value.push(requestId)
+            acc[pathId] = value;
+            return acc
+        }, {})
+
+    const cachedQueryResults = {
+        apiName,
+        contributions,
+        requests,
+        requestParameters,
+        responses,
+        conceptsById,
+        pathIdsByRequestId,
+        requestIdsByPathId,
+        pathsById,
+        pathIdsWithRequests,
+        shapesState
+    }
+    return cachedQueryResults
+}
 class RfcStoreWithoutContext extends React.Component {
-
 
     constructor(props) {
         super(props);
 
+        this.handleCommands = this.handleCommands.bind(this)
+        const { initialCommandsString, initialEventsString, rfcId } = this.props;
         const eventStore = Facade.makeEventStore();
-        const rfcService = Facade.fromJsonCommands(eventStore, this.props.initialCommandsString || '[]', this.props.rfcId)
 
-        const queries = Queries(eventStore, rfcService, this.props.rfcId);
-
-        if (this.props.initialEventsString) {
-            eventStore.bulkAdd(this.props.rfcId, this.props.initialEventsString)
+        if (initialEventsString) {
+            // console.log({ bulkAdd: initialEventsString })
+            eventStore.bulkAdd(rfcId, initialEventsString)
         }
+        const rfcService = Facade.fromJsonCommands(eventStore, initialCommandsString || '[]', rfcId)
+        const queries = Queries(eventStore, rfcService, rfcId);
 
         this.state = {
             eventStore,
@@ -43,94 +82,30 @@ class RfcStoreWithoutContext extends React.Component {
         this.handleCommands(command)
     };
 
-    handleCommands = (...commands) => {
-        console.log({commands})
+    handleChange = debounce(() => {
+        this.forceUpdate()
+    }, 10, { leading: true })
+
+    handleCommands(...commands) {
         global.commands.push(...commands)
         this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
-        setTimeout(() => {
+        this.handleChange()
 
-            this.forceUpdate();
-            if (process.env.REACT_APP_CLI_MODE) {
-                this.setState({hasUnsavedChanges: true})
-                this.persistLocal()
-            }
-        }, 1)
-
-        commands.forEach(command => track('Command', {commandType: commandNameFor(command)}))
-    };
-
-    persistLocal = debounce(async () => {
-        const eventString = this.serializeEvents()
-
-        const response = await fetch('/save', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'text/html'
-            },
-            body: eventString
-        });
-
-        if (response.status === 200) {
-            this.props.enqueueSnackbar('Saved', {'variant': 'success'})
-            this.setState({hasUnsavedChanges: false})
-        } else {
-            this.props.enqueueSnackbar('Unable to save changes. Make sure the CLI is still running.', {'variant': 'error'})
-        }
-
-    }, 4000, {trailing: true})
-
-    serializeEvents = () => {
-        return this.state.eventStore.serializeEvents(this.props.rfcId);
-    };
+        commands.forEach(command => track('Command', { commandType: commandNameFor(command) }))
+    }
 
     render() {
-        const {queries, hasUnsavedChanges} = this.state;
-        const {rfcId} = this.props;
-        const apiName = queries.apiName();
-        const contributions = queries.contributions()
-
-        const {requests, pathComponents, responses, requestParameters} = queries.requestsState()
-        const pathIdsByRequestId = queries.pathsWithRequests();
-        const pathsById = pathComponents;
-        const pathIdsWithRequests = new Set(Object.values(pathIdsByRequestId))
-
-        const conceptsById = queries.namedShapes()
-        const shapesState = queries.shapesState()
-
-
-        const requestIdsByPathId = Object
-            .entries(pathIdsByRequestId)
-            .reduce((acc, entry) => {
-                const [requestId, pathId] = entry;
-                const value = acc[pathId] || []
-                value.push(requestId)
-                acc[pathId] = value;
-                return acc
-            }, {})
-
-
-        const cachedQueryResults = {
-            contributions,
-            requests,
-            requestParameters,
-            responses,
-            conceptsById,
-            pathIdsByRequestId,
-            requestIdsByPathId,
-            pathsById,
-            pathIdsWithRequests,
-            shapesState
-        }
-
+        const { queries, eventStore, hasUnsavedChanges, rfcService } = this.state;
+        const { rfcId } = this.props;
+        const cachedQueryResults = stuffFromQueries(queries)
         const value = {
             rfcId,
+            rfcService,
+            eventStore,
             queries,
             cachedQueryResults,
-            apiName,
             handleCommand: this.handleCommand,
             handleCommands: this.handleCommands,
-            serializeEvents: this.serializeEvents,
             hasUnsavedChanges
         };
 
@@ -142,10 +117,54 @@ class RfcStoreWithoutContext extends React.Component {
     }
 }
 
-const RfcStore = withSnackbar(withInitialRfcCommandsContext(RfcStoreWithoutContext));
+const RfcStore = withInitialRfcCommandsContext(RfcStoreWithoutContext);
+
+
+class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
+
+    handleCommands = (...commands) => {
+        super.handleCommands(...commands)
+        this.setState({ hasUnsavedChanges: true })
+        this.persistEvents()
+    }
+
+    persistEvents = debounce(async () => {
+        const response = await saveEvents(this.state.eventStore, this.props.rfcId)
+
+        if (response.ok) {
+            // this.props.enqueueSnackbar('Saved', { 'variant': 'success' })
+            this.setState({ hasUnsavedChanges: false })
+        } else {
+            this.props.enqueueSnackbar('Unable to save changes. Make sure the CLI is still running.', { 'variant': 'error' })
+        }
+
+    }, 4000, { leading: true, trailing: true })
+}
+
+export async function saveEvents(eventStore, rfcId) {
+    const serializedEvents = eventStore.serializeEvents(rfcId);
+    return fetch(`/cli-api/events`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: serializedEvents
+    });
+}
+
+const LocalRfcStore = withSnackbar(withInitialRfcCommandsContext(LocalRfcStoreWithoutContext))
+
+class LocalDiffRfcStoreWithoutContext extends RfcStoreWithoutContext {
+    handleCommands = (...commands) => {
+        super.handleCommands(...commands)
+    }
+}
+const LocalDiffRfcStore = withInitialRfcCommandsContext(LocalDiffRfcStoreWithoutContext)
 
 export {
     RfcStore,
+    LocalRfcStore,
+    LocalDiffRfcStore,
     RfcContext,
     withRfcContext
 };

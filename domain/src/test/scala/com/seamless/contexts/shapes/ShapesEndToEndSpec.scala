@@ -1,29 +1,33 @@
 package com.seamless.contexts.shapes
 
+import com.seamless.contexts.requests.Commands.{AddPathComponent, AddRequest, SetRequestBodyShape, SetResponseBodyShape, ShapedBodyDescriptor}
+import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
+import com.seamless.contexts.rfc.{RfcAggregate, RfcCommandContext}
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.projections.NamedShapes
 import org.scalatest.FunSpec
 
 class ShapesEndToEndSpec extends FunSpec {
-  def fixture(commands: Seq[ShapesCommand]): (Vector[RfcEvent], ShapesState) = {
+  def fixture(commands: Seq[RfcCommand]): (Vector[RfcEvent], ShapesState) = {
     println("Steps:")
     commands.foreach(println)
 
     println("Running...")
-    commands.foldLeft((Vector.empty[RfcEvent], ShapesAggregate.initialState)) {
+    val (events, finalState) = commands.foldLeft((Vector.empty[RfcEvent], RfcAggregate.initialState)) {
       case (acc, command) => {
         val (events, state) = acc
 
-        val effects = ShapesAggregate.handleCommand(state)(ShapesCommandContext(), command)
+        val effects = RfcAggregate.handleCommand(state)((RfcCommandContext(), command))
 
         val newState = effects.eventsToPersist.foldLeft(state) {
-          case (s, event) => ShapesAggregate.applyEvent(event, s)
+          case (s, event) => RfcAggregate.applyEvent(event, s)
         }
 
         (events ++ effects.eventsToPersist, newState)
       }
     }
+    (events, finalState.shapesState)
   }
 
   describe("Shapes") {
@@ -43,7 +47,7 @@ class ShapesEndToEndSpec extends FunSpec {
         assert(finalState.resolveParameterBindings("$UnboundId")("$identifierInner").isEmpty)
 
         assert(finalState.resolveParameterBindings("$Id").size == 1)
-        assert(finalState.resolveParameterBindings("$Id")("$identifierInner").contains("$string"))
+        assert(finalState.resolveParameterBindings("$Id")("$identifierInner").contains(ShapeProvider("$string")))
 
       }
     }
@@ -60,7 +64,7 @@ class ShapesEndToEndSpec extends FunSpec {
         assert(finalState.resolveParameterBindings("$list")("$listItem").isEmpty)
 
         assert(finalState.resolveParameterBindings("$ListOfStrings").size == 1)
-        assert(finalState.resolveParameterBindings("$ListOfStrings")("$listItem").contains("$string"))
+        assert(finalState.resolveParameterBindings("$ListOfStrings")("$listItem").contains(ShapeProvider("$string")))
       }
     }
   }
@@ -202,8 +206,8 @@ class ShapesEndToEndSpec extends FunSpec {
       assert(finalState.resolveCoreShapeId("$Id") == "$identifier")
       assert(finalState.resolveCoreShapeId("$Account") == "$object")
 
-      assert(finalState.resolveParameterBindings("$AccountId")("$referenceInner").contains("$Account"))
-      assert(finalState.resolveParameterBindings("$UserId")("$referenceInner").contains("$User"))
+      assert(finalState.resolveParameterBindings("$AccountId")("$referenceInner").contains(ShapeProvider("$Account")))
+      assert(finalState.resolveParameterBindings("$UserId")("$referenceInner").contains(ShapeProvider("$User")))
       assert(finalState.resolveCoreShapeId("$User") == "$object")
 
       assert(finalState.resolveParameterBindingsForField("$Account.userIds")("$listItem").contains(ShapeProvider("$UserId")))
@@ -214,7 +218,7 @@ class ShapesEndToEndSpec extends FunSpec {
       assert(finalState.resolveParameterBindingsForField("$PaginationWrapper.items")("$listItem").contains(ParameterProvider("$PaginationWrapper.T")))
 
       assert(finalState.resolveParameterBindings("$UserListResponse1").size == 1)
-      assert(finalState.resolveParameterBindings("$UserListResponse1")("$PaginationWrapper.T").contains("$User"))
+      assert(finalState.resolveParameterBindings("$UserListResponse1")("$PaginationWrapper.T").contains(ShapeProvider("$User")))
 
       assert(finalState.resolveParameterBindings("$UserListResponse2").size == 1)
       assert(finalState.resolveParameterBindings("$UserListResponse2")("$PaginationWrapper.T").isEmpty)
@@ -253,8 +257,8 @@ class ShapesEndToEndSpec extends FunSpec {
         Seq(Parameter("$PaginationWrapper.T", "T", isRemoved = false)),
         Map("$PaginationWrapper.T" -> None),
         Seq(
+          FlattenedField("$PaginationWrapper.offset", "offset", FieldShapeFromShape("$PaginationWrapper.offset", "$number"), Map.empty, isRemoved = false),
           FlattenedField("$PaginationWrapper.items", "items", FieldShapeFromShape("$PaginationWrapper.items", "$list"), Map("$listItem" -> Some(ParameterProvider("$PaginationWrapper.T"))), isRemoved = false),
-          FlattenedField("$PaginationWrapper.offset", "offset", FieldShapeFromShape("$PaginationWrapper.offset", "$number"), Map.empty, isRemoved = false)
         ),
         isRemoved = false
       ))

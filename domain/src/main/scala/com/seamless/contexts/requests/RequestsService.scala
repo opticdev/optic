@@ -27,5 +27,9 @@ class RequestsService(shapesService: ShapesService) {
 @JSExport
 @JSExportAll
 object RequestsServiceHelper {
-  def newId(): String = s"request_${Random.alphanumeric take 10 mkString}"
+  def suffix(): String = Random.alphanumeric take 10 mkString
+  def newPathId(): String = s"path_${suffix}"
+  def newRequestId(): String = s"request_${suffix}"
+  def newResponseId(): String = s"response_${suffix}"
+  def newParameterId(): String = s"parameter_${suffix}"
 }

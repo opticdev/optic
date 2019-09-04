@@ -100,8 +100,8 @@ class OverView extends React.Component {
 	}
 
 	render() {
-		const {classes, apiName, cachedQueryResults, mode, handleCommand, queries, baseUrl} = this.props;
-		const {contributions, conceptsById, pathsById, pathIdsWithRequests} = cachedQueryResults;
+		const {classes, cachedQueryResults, mode, handleCommand, queries, baseUrl} = this.props;
+		const {apiName, contributions, conceptsById, pathsById, pathIdsWithRequests} = cachedQueryResults;
 
 		const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
 		const sortedConcepts = sortBy(concepts, ['name']);

@@ -8,7 +8,7 @@ const {
 
 function FocusedRequestStore({children}) {
     const [focusedRequestId, setFocusedRequestId] = useState(null);
-    console.log({focusedRequestId})
+    // console.log({focusedRequestId})
     const value = {
         focusedRequestId,
         setFocusedRequestId(id) {

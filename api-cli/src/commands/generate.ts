@@ -6,6 +6,7 @@ import * as niceTry from 'nice-try'
 import * as path from 'path'
 // @ts-ignore
 import cli from 'cli-ux'
+// @ts-ignore
 import * as fetch from 'node-fetch'
 import { getPaths } from '../Paths'
 import { prepareEvents } from '../PersistUtils'
@@ -55,7 +56,7 @@ export default class Generate extends Command {
         cli.action.stop('done')
         const oasPath = path.join(outputPath, 'oas.json')
         fs.writeFileSync(path.join(outputPath, 'oas.json'), JSON.stringify(oasJson, null, 2))
-        return this.log('Writing OAS file to: '+ oasPath)
+        return this.log('Writing OAS file to: ' + oasPath)
       } else {
         return this.error('OAS Export Error' + await response.text())
       }

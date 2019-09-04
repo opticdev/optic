@@ -26,7 +26,13 @@ class EditorStore extends React.Component {
         }
     }
 
-    render() {
+    componentWillReceiveProps(nextProps, nextContext) {
+      if (nextProps.mode !== this.state.mode) {
+        this.setState({mode: nextProps.mode || EditorModes.DOCUMENTATION})
+      }
+    }
+
+  render() {
 
         const {mode} = this.state
         const {baseUrl} = this.props
