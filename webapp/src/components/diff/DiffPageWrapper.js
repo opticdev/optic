@@ -6,7 +6,7 @@ import { asPathTrail, getNameWithFormattedParameters } from '../utilities/PathUt
 import { RfcContext } from '../../contexts/RfcContext';
 import Paper from '@material-ui/core/Paper';
 import { EditorStore, EditorModes } from '../../contexts/EditorContext';
-import { PathTrail } from '../PathPage';
+import { PathTrailWithoutLinks } from '../PathPage';
 import { Operation } from '../PathPage';
 import { isStartable } from './LocalDiffManager';
 import { toInteraction, RequestDiffer, DiffToCommands, JsonHelper } from '../../engine';
@@ -76,13 +76,13 @@ class DiffPageWrapper extends React.Component {
                                 }}>Path ({diffSessionManager.session.samples.length} samples)</Typography>
                                 <div className={classes.pathDisplay}>
                                     <div className={classes.methodDisplay}>{sample.request.method}</div>
-                                    <PathTrail pathTrail={pathTrailWithNames} style={{ flex: 1 }} />
+                                    <PathTrailWithoutLinks pathTrail={pathTrailWithNames} style={{ flex: 1 }} />
                                 </div>
                             </Paper>
                             <RfcContext.Consumer>
                                 {(rfcContext) => {
                                     const { cachedQueryResults } = rfcContext
-                                    const { requestIdsByPathId, requests, responses } = cachedQueryResults
+                                    const { requestIdsByPathId, requests } = cachedQueryResults
                                     const requestsForPathId = requestIdsByPathId[pathId] || [];
                                     const request = requestsForPathId
                                         .map(requestId => requests[requestId])

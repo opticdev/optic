@@ -9,16 +9,14 @@ class SimulatedCommandContext extends React.Component {
         const initialEventsString = eventStore.serializeEvents(rfcId)
         const initialCommandsString = shouldSimulate ? JSON.stringify(commandsToJson(commands)) : null
         return (
-            <div style={{ border: '10px solid pink' }}>
-                <InitialRfcCommandsStore
-                    rfcId={rfcId}
-                    initialEventsString={initialEventsString}
-                    initialCommandsString={initialCommandsString}>
-                    <LocalDiffRfcStore key={initialCommandsString}>
-                        {this.props.children}
-                    </LocalDiffRfcStore>
-                </InitialRfcCommandsStore>
-            </div>
+            <InitialRfcCommandsStore
+                rfcId={rfcId}
+                initialEventsString={initialEventsString}
+                initialCommandsString={initialCommandsString}>
+                <LocalDiffRfcStore key={initialCommandsString}>
+                    {this.props.children}
+                </LocalDiffRfcStore>
+            </InitialRfcCommandsStore>
         )
     }
 }
