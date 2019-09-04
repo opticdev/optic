@@ -68,7 +68,7 @@ class DiffPageWrapper extends React.Component {
                                 const hasDiff = commands.length > 0;
                                 return !hasDiff;
                             });
-                            console.log({ startableInteractionsForPath, startableInteractionsWithNoDiff });
+                            // console.log({ startableInteractionsForPath, startableInteractionsWithNoDiff });
                             startableInteractionsWithNoDiff.forEach(x => diffSessionManager.finishInteraction(x.index));
                         }}
                         accept={onAccept}

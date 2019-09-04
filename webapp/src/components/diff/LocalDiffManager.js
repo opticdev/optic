@@ -150,7 +150,7 @@ class LocalDiffManager extends React.Component {
                         const commands = JsonHelper.seqToJsArray(interpretation.commands);
                         const hasDiff = commands.length > 0;
 
-                        console.log({ diff, interpretation });
+                        // console.log({ diff, interpretation });
 
                         const readyToFinish = !hasDiff;
 

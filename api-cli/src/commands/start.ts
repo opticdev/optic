@@ -1,4 +1,5 @@
 import { Command, flags } from '@oclif/command'
+import {fromOptic} from '../lib/log-helper'
 import Init, { IApiCliConfig } from './init';
 import { ProxyCaptureSession, ICaptureSessionResult } from '../lib/proxy-capture-session';
 import { CommandSession } from '../lib/command-session';
@@ -13,6 +14,7 @@ import * as yaml from 'js-yaml'
 // @ts-ignore
 import * as opticEngine from 'optic-domain'
 import { IApiInteraction } from '../lib/common';
+import * as colors from 'colors'
 
 export async function readApiConfig(): Promise<IApiCliConfig> {
   const { configPath } = await getPaths()
@@ -52,11 +54,7 @@ export async function checkDiffOrUnrecognizedPath(result: ICaptureSessionResult)
     const differ = opticEngine.com.seamless.diff.SessionDiffer(specAsBuffer.toString())
     for (const sample of result.samples) {
       const interaction = toInteraction(sample)
-      if (differ.hasUnrecognizedPath(interaction)) {
-        console.log('unrecognized path')
-        return Promise.resolve(true)
-      } else if (differ.hasDiff(interaction)) {
-        console.log('diff observed')
+      if (differ.hasUnrecognizedPath(interaction) || differ.hasDiff(interaction)) {
         return Promise.resolve(true)
       }
     }
@@ -67,7 +65,7 @@ export async function checkDiffOrUnrecognizedPath(result: ICaptureSessionResult)
 }
 
 export default class Start extends Command {
-  static description = 'documents your API by monitoring local traffic'
+  static description = 'start your API and diff its behavior against the spec'
 
   static flags = {
     'keep-alive': flags.boolean({ description: 'use this when your command terminates before the server terminates' })
@@ -82,7 +80,7 @@ export default class Start extends Command {
       config = await readApiConfig()
     } catch (e) {
       analytics.track('api start missing config')
-      this.log(`[incomplete setup] Optic needs some more information to continue.`)
+      this.log(fromOptic('Optic needs more information about your API to continue.'))
       await Init.run([])
       return
     }
@@ -95,12 +93,15 @@ export default class Start extends Command {
 
   async flushSession(result: ICaptureSessionResult) {
     if (result.samples.length === 0) {
-      this.log('[optic] No API interactions were observed.')
+      // this.log(fromOptic('No API interactions were observed.'))
       return null
     }
-    this.log(`[optic] Observed ${result.samples.length} API interaction(s)`)
+    // this.log(`[optic] Observed ${result.samples.length} API interaction(s)`)
 
-    await checkDiffOrUnrecognizedPath(result)
+    const hasDiff = await checkDiffOrUnrecognizedPath(result)
+    if (hasDiff) {
+      this.log('`\n\n' + fromOptic(`New behavior was observed. Run ${colors.bold('api spec')} to review.`))
+    }
 
     const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`;
     const fileName = `${sessionId}.optic_session.json`
@@ -132,11 +133,7 @@ export default class Start extends Command {
       target,
       port: config.proxy.port
     })
-
-    this.log(`[optic] Started proxy server listening on http://localhost:${config.proxy.port}`)
-    this.log(`[optic] Forwarding requests to ${target}`)
-
-    this.log(`[optic] Starting command: ${config.commands.start}`)
+    this.log(fromOptic(`Starting ${colors.bold(config.name)} on Port: ${colors.bold(config.proxy.port.toString())}, with ${colors.bold(config.commands.start)}`))
     this.log(`\n`)
 
     if (config.commands.start) {

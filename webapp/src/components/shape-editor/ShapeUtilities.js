@@ -53,7 +53,7 @@ class ShapeUtilities {
     }
 
     static shouldTraverseFields(queries, shape) {
-        console.log({ shape })
+        // console.log({ shape })
         return shape.coreShapeId === '$object'
     }
 
@@ -86,13 +86,13 @@ class ShapeUtilities {
     
     static mergeBindings(parentObjectBindings, fieldBindings) {
         const keySet = new Set([parentObjectBindings, fieldBindings].map(x => Object.keys(x)).flatMap(x => x))
-        console.log({output: keySet})
+        // console.log({output: keySet})
         const merged = [...keySet.values()].map(x => [x, fieldBindings[x] || parentObjectBindings[x]]).reduce((acc, item) => {
             const [key, value] = item
             acc[key] = value
             return acc;
         }, {})
-        console.log({output: merged})
+        // console.log({output: merged})
         return merged
     }
     

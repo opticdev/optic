@@ -1,9 +1,11 @@
 import {Command} from '@oclif/command'
+import cli from 'cli-ux'
 import * as fs from 'fs-extra'
 // @ts-ignore
 import * as niceTry from 'nice-try'
 import * as path from 'path'
 import {getUser} from '../lib/credentials'
+import {fromOptic} from '../lib/log-helper'
 import {getPaths} from '../Paths'
 import {prepareEvents} from '../PersistUtils'
 import * as express from 'express'
@@ -127,7 +129,7 @@ export default class Spec extends Command {
           throw new Error(`not array`)
         }
       } catch (e) {
-        return this.error(`It looks like there is something wrong with your API spec file. Please make sure it is a valid JSON array.`)
+        return this.error(fromOptic(`It looks like there is something wrong with your API spec file. Please make sure it is a valid JSON array.`))
       }
 
       const port = await getPort({port: getPort.makeRange(3201, 3299)})
@@ -141,18 +143,21 @@ export default class Spec extends Command {
         const isSessionStartable = await sessionUtilities.isSessionStartable(sessionId)
         if (isSessionStartable) {
           const url = `http://localhost:${port}/saved/diff/${sessionId}`
-          this.log('diffing session against API spec on ' + url)
-          this.log('keep this process running...')
+          this.log(fromOptic('Review your API diff at ' + url))
           await open(url)
-          return
+          await cli.wait(1000)
+          await cli.anykey('Press any key to exit')
+          return process.exit()
         }
       }
       const url = `http://localhost:${port}/`
-      this.log('opening API spec on ' + url)
-      this.log('keep this process running...')
+      this.log(fromOptic('Displaying your API Spec at ' + url))
       await open(url)
+      await cli.wait(1000)
+      await cli.anykey('Press any key to exit')
+      return process.exit()
     } else {
-      return this.error("No API spec found in your working directory. Make sure you're in the directory with the .api folder.")
+      return this.error(fromOptic('No API spec found in your working directory. Run api init'))
     }
   }
 

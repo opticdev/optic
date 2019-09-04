@@ -64,7 +64,7 @@ class RfcStoreWithoutContext extends React.Component {
         const eventStore = Facade.makeEventStore();
 
         if (initialEventsString) {
-            console.log({ bulkAdd: initialEventsString })
+            // console.log({ bulkAdd: initialEventsString })
             eventStore.bulkAdd(rfcId, initialEventsString)
         }
         const rfcService = Facade.fromJsonCommands(eventStore, initialCommandsString || '[]', rfcId)

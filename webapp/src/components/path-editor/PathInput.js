@@ -97,7 +97,7 @@ class PathInput extends React.Component {
             this.props.onSubmit()
             return
         }
-        console.log('backspace')
+        // console.log('backspace')
         const { currentComponent, pathComponents } = this.state;
         if (currentComponent.name === '') {
             this.setState({

@@ -484,7 +484,7 @@ class ShapeViewerBase extends React.Component {
     const {shapeId, name, coreShapeId} = shape;
     const output = [];
     ShapeUtilities.flatten(queries, shapeId, 0, [], output);
-    console.log({output});
+    // console.log({output});
 
     function Colon() {
       return <Typography variant="caption" style={{padding: '0 .25em'}}>:</Typography>;

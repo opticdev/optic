@@ -52,4 +52,4 @@ export function toInteraction(sample) {
 }
 export const RequestDiffer = opticEngine.com.seamless.diff.RequestDiffer()
 export const DiffToCommands = opticEngine.com.seamless.diff.DiffToCommands
-console.log(opticEngine)
+// console.log(opticEngine)

@@ -1,8 +1,8 @@
 package com.seamless.diff.initial
 
 import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInField, ProviderInShape, RenameShape, SetParameterShape, ShapeProvider}
-import com.seamless.contexts.shapes.ShapesHelper.{BooleanKind, ListKind, NumberKind, ObjectKind, StringKind}
+import com.seamless.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInField, ProviderInShape, RenameShape, SetParameterShape, ShapeId, ShapeProvider}
+import com.seamless.contexts.shapes.ShapesHelper.{AnyKind, BooleanKind, ListKind, NumberKind, ObjectKind, StringKind}
 import com.seamless.contexts.shapes.{ShapesAggregate, ShapesState}
 import com.seamless.diff.MutableCommandStream
 import io.circe.Json
@@ -24,15 +24,16 @@ case class NameShapeRequest(required: Boolean, shapeId: String, description: Str
   }
 }
 
-case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand], nameRequests: Vector[NameShapeRequest]) {
+case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand], nameRequests: Vector[NameShapeRequest], allIds: Vector[ShapeId]) {
   def asConceptNamed(name: String): ShapeBuilderResult =
-    ShapeBuilderResult(rootShapeId, commands :+ RenameShape(rootShapeId, name), nameRequests)
+    ShapeBuilderResult(rootShapeId, commands :+ RenameShape(rootShapeId, name), nameRequests, allIds)
 }
 
 class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkString}")(implicit shapesState: ShapesState = ShapesAggregate.initialState) {
 
   val commands = new MutableCommandStream
   val nameRequests = scala.collection.mutable.ListBuffer[NameShapeRequest]()
+  val allIdsStore = scala.collection.mutable.ListBuffer[ShapeId]()
 
   def run: ShapeBuilderResult = {
     commands.clear
@@ -41,12 +42,12 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     val matchedConcept = ShapeResolver.handleObject(r)
     //match to an existing concept if possible
     if (r.isObject && matchedConcept.isDefined) {
-      return ShapeBuilderResult(matchedConcept.get, Vector.empty, Vector.empty)
+      return ShapeBuilderResult(matchedConcept.get, Vector.empty, Vector.empty, Vector.empty)
     }
 
     val rootShapeId = idGenerator
     fromJson(r)(IsRoot(rootShapeId), Seq.empty) // has the side effect of appending commands
-    ShapeBuilderResult(rootShapeId, commands.toImmutable.flatten, nameRequests.toVector)
+    ShapeBuilderResult(rootShapeId, commands.toImmutable.flatten, nameRequests.toVector, allIdsStore.toVector)
   }
 
   private var count = 0
@@ -54,6 +55,7 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
   private def idGenerator = {
     val id = s"${seed}_${count.toString}"
     count = count + 1
+    allIdsStore.append(id)
     id
   }
 
@@ -156,14 +158,22 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
   private def fromField(i: Json)(implicit cxt: IsField, path: Seq[String]) = {
 
     val fieldId = idGenerator
-    val valueShapeId = idGenerator
-    fromJson(i)(ValueShapeWithId(valueShapeId, Some(fieldId)), path)
+
+    val useThisShapeId = {
+      if (isPrimitive(i)) {
+        val valueShapeId = idGenerator
+        fromJson(i)(ValueShapeWithId(valueShapeId, Some(fieldId)), path)
+        valueShapeId
+      } else {
+        ShapeResolver.handlePrimitive(i).getOrElse(AnyKind.baseShapeId)
+      }
+    }
 
     commands.appendInit(AddField(
       fieldId,
       cxt.parentId,
       cxt.named,
-      FieldShapeFromShape(fieldId, valueShapeId)
+      FieldShapeFromShape(fieldId, useThisShapeId)
     ))
   }
 

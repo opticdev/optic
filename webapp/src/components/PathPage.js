@@ -29,7 +29,7 @@ import RequestPageHeader from './requests/RequestPageHeader';
 import Helmet from 'react-helmet';
 import CreateNew from './navigation/CreateNew';
 import {AddedGreen, AddedGreenBackground, AddedStyle, withColoredIdsContext} from '../contexts/ColorContext';
-import classNames from 'classnames'
+import classNames from 'classnames';
 
 const styles = theme => ({
   root: {
@@ -113,7 +113,7 @@ class OperationBase extends React.Component {
       }
     };
 
-    const isAdded = coloredIds.includes(requestId)
+    const isAdded = coloredIds.includes(requestId);
 
     return (
       <Sheet>
@@ -218,33 +218,31 @@ class ResponseListWithoutContext extends React.Component {
 
       const isAdded = coloredIds.includes(responseId);
       return (
-        <Zoom in={true} key={responseId}>
-          <div className={classNames(classes.responseCard, {[classes.addedResponse]: isAdded})}>
-            <div className={classes.responseStatus}>
-              <StatusCode statusCode={httpStatusCode} onChange={(statusCode) => {
-                const command = RequestsCommands.SetResponseStatusCode(responseId, statusCode);
-                handleCommands(command);
-              }}/>
-            </div>
-            <div className={classes.responseDetail}>
-              <ContributionWrapper
-                style={{marginTop: -20}}
-                contributionParentId={responseId}
-                defaultText={'No Description'}
-                contributionKey={'description'}
-                variant={'multi'}
-                placeholder={`Response Description`}
+        <div className={classNames(classes.responseCard, {[classes.addedResponse]: isAdded})}>
+          <div className={classes.responseStatus}>
+            <StatusCode statusCode={httpStatusCode} onChange={(statusCode) => {
+              const command = RequestsCommands.SetResponseStatusCode(responseId, statusCode);
+              handleCommands(command);
+            }}/>
+          </div>
+          <div className={classes.responseDetail}>
+            <ContributionWrapper
+              style={{marginTop: -20}}
+              contributionParentId={responseId}
+              defaultText={'No Description'}
+              contributionKey={'description'}
+              variant={'multi'}
+              placeholder={`Response Description`}
+            />
+            <div style={{marginLeft: 5}}>
+              <BodyEditor
+                rootId={responseId}
+                bodyDescriptor={bodyDescriptor}
+                {...responseBodyHandlers}
               />
-              <div style={{marginLeft: 5}}>
-                <BodyEditor
-                  rootId={responseId}
-                  bodyDescriptor={bodyDescriptor}
-                  {...responseBodyHandlers}
-                />
-              </div>
             </div>
           </div>
-        </Zoom>
+        </div>
       );
     });
 

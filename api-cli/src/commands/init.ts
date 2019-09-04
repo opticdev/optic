@@ -1,4 +1,4 @@
-import { Command, flags } from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 import * as fs from 'fs-extra'
 import * as clipboardy from 'clipboardy'
 // @ts-ignore
@@ -9,8 +9,8 @@ import * as colors from 'colors'
 import cli from 'cli-ux'
 // @ts-ignore
 import * as fetch from 'node-fetch'
-import { getPaths } from '../Paths'
-import { prepareEvents } from '../PersistUtils'
+import {getPaths} from '../Paths'
+import {prepareEvents} from '../PersistUtils'
 import * as yaml from 'js-yaml'
 import analytics from '../lib/analytics'
 
@@ -18,9 +18,11 @@ export interface IApiCliProxyConfig {
   target: string
   port: number
 }
+
 export interface IApiCliCommandsConfig {
   start: string
 }
+
 export interface IApiCliConfig {
   name: string
   proxy: IApiCliProxyConfig
@@ -39,7 +41,7 @@ export default class Init extends Command {
   static args = []
 
   async run() {
-    const { flags } = this.parse(Init)
+    const {flags} = this.parse(Init)
     if (flags.paste) {
       analytics.track('init from web')
       await this.webImport()
@@ -69,16 +71,16 @@ export default class Init extends Command {
     const command = await cli.prompt('What command is used to start the API? (e.g npm start)')
     analytics.track('uses command', command)
     this.log(colors.bold(colors.blue(' \nAlmost there! You need to make one small code change:')))
-    this.log(`Now you have to change the port your API listens on to the one Optic assigns it.`)
-    this.log(`Your API will still be accessible on port ${port} through Optic's proxy`)
-    this.log(`${colors.bgRed(`app.listen(${port})`)} -> ${colors.black(colors.bgGreen(`app.listen(process.env.OPTIC_API_PORT)`))}\n`)
+    this.log(`\nConfigure your API to start on the port Optic's proxy assigns it. Your API will still be made accessible on port ${port} through Optic's proxy`)
+    this.log(`Make your API start on the port Optic provides as an environment variable: \n${colors.bgRed(colors.black(port))} -> ${colors.bgGreen(colors.black('process.env.OPTIC_API_PORT'))}`)
 
-    this.log(colors.yellow('Need help? Click here to chat with one of our developers: ' + 'https://www.useoptic.com/docs?utm_medium=api-cli'))
+    this.log(colors.yellow('\nNeed help? \n  Visit https://dashboard.useoptic.com for\n   - Framework specific code examples\n   - Chat with Optic\'s creators\n  OR You can schedule a free on-boarding session here https://calendly.com/optic-onboarding/30-min-session'))
 
     await cli.wait(1000)
     await cli.anykey('Press any key to continue')
 
-    this.log('Optic is setup!')
+    this.log('\n\nOptic is setup!')
+    this.log(`Now start your API using ${colors.bold('api start')}`)
     const config: IApiCliConfig = {
       name,
       commands: {
@@ -91,7 +93,7 @@ export default class Init extends Command {
       }
     }
     const events = [
-      { APINamed: { name } }
+      {APINamed: {name}}
     ]
     this.createFileTree(events, config)
   }
@@ -159,7 +161,7 @@ sessions/
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({fileContents})
-    });
+    })
 
     cli.action.stop()
 

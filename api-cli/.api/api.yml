@@ -1,6 +1,6 @@
-name: ddoshi
+name: API
 commands:
-  start: echo "started" && sleep 60 && echo "done"
+  start: npm start
 proxy:
-  target: https://my-json-server.typicode.com
-  port: '3004'
+  target: 'http://localhost:{{ENV.OPTIC_API_PORT}}'
+  port: '3000'

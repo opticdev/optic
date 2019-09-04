@@ -75,7 +75,7 @@ object RequestDiffer {
     }
     val request = matchedOperation.get
     if ((200 until 400) contains interaction.apiResponse.statusCode) {
-      println(request.requestDescriptor.bodyDescriptor, interaction.apiRequest.body)
+//      println(request.requestDescriptor.bodyDescriptor, interaction.apiRequest.body)
       val requestDiff: Option[RequestDiffResult] = request.requestDescriptor.bodyDescriptor match {
         case d: UnsetBodyDescriptor => {
           if (interaction.apiRequest.body == Json.Null) {

@@ -19,7 +19,7 @@ object ShapeDiffer {
 
   //@TODO change bindings to UsageTrail
   def diff(expectedShape: ShapeEntity, actualShape: Json)(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty): ShapeDiffResult = {
-    println(expectedShape, actualShape, bindings)
+//    println(expectedShape, actualShape, bindings)
     val coreShape = toCoreShape(expectedShape, shapesState)
     coreShape match {
       case AnyKind => {
@@ -49,7 +49,7 @@ object ShapeDiffer {
       case ListKind => {
         if (actualShape.isArray) {
           val itemShape = resolveParameterShape(expectedShape.shapeId, "$listItem")
-          println(itemShape)
+//          println(itemShape)
           if (itemShape.isDefined) {
             actualShape.asArray.get.foreach(item => {
               val diff = ShapeDiffer.diff(itemShape.get, item)
@@ -68,7 +68,7 @@ object ShapeDiffer {
         if (actualShape.isObject) {
           val o = actualShape.asObject.get
           val baseObject = resolveBaseObject(expectedShape.shapeId)
-          println(baseObject, actualShape.asObject.get)
+//          println(baseObject, actualShape.asObject.get)
           // need to capture fields that are in expected but not actual AND vice-versa
           val expectedFields = baseObject.descriptor.fieldOrdering
             .map(fieldId => {
@@ -81,7 +81,7 @@ object ShapeDiffer {
 
           // detect keys that should be present but are not
           val missingKeys = expectedKeys -- actualKeys
-          println("missingKeys", missingKeys)
+//          println("missingKeys", missingKeys)
           if (missingKeys.nonEmpty) {
             return MissingObjectKey(baseObject.shapeId, missingKeys.head, baseObject, actualShape)
           }
@@ -89,7 +89,7 @@ object ShapeDiffer {
           val flattenedShape = shapesState.flattenedShape(expectedShape.shapeId)
           // make sure all expected keys match the spec
           val commonKeys = expectedKeys.intersect(actualKeys)
-          println("commonKeys", commonKeys)
+//          println("commonKeys", commonKeys)
           val fieldMap = expectedFields.toMap
           commonKeys.foreach(key => {
             val field = fieldMap(key)
@@ -102,7 +102,7 @@ object ShapeDiffer {
                 flattenedField.bindings(fsd.shapeParameterId) match {
                   case Some(value) => value match {
                     case p: ParameterProvider => {
-                      println("PP??")
+//                      println("PP??")
                       None
                     }
                     case p: ShapeProvider => Some(shapesState.shapes(p.shapeId))
@@ -112,7 +112,7 @@ object ShapeDiffer {
                 }
               }
             }
-            println(key, expectedFieldShape)
+//            println(key, expectedFieldShape)
             if (expectedFieldShape.isDefined) {
               val actualFieldValue = o(key).get
               implicit val bindings: ParameterBindings = flattenedField.bindings ++ flattenedShape.bindings
@@ -121,7 +121,7 @@ object ShapeDiffer {
                 case d: ShapeMismatch => return KeyShapeMismatch(field.fieldId, key, expectedFieldShape.get, actualFieldValue)
                 case x: NoDiff =>
                 case x => {
-                  println(x)
+//                  println(x)
                   return x
                 }
               }
@@ -130,7 +130,7 @@ object ShapeDiffer {
 
           // detect keys that should not be present
           val extraKeys = actualKeys -- expectedKeys
-          println("extraKeys", extraKeys)
+//          println("extraKeys", extraKeys)
           if (extraKeys.nonEmpty) {
             val actualFieldValue = o(extraKeys.head).get
             return ExtraObjectKey(baseObject.shapeId, extraKeys.head, baseObject, actualFieldValue)
@@ -168,7 +168,7 @@ object ShapeDiffer {
 
   def resolveParameterShape(shapeId: ShapeId, shapeParameterId: ShapeParameterId)(implicit shapesState: ShapesState, bindings: ParameterBindings): Option[ShapeEntity] = {
     val flattenedShape = shapesState.flattenedShape(shapeId)
-    println(bindings, flattenedShape.bindings)
+//    println(bindings, flattenedShape.bindings)
     val itemShape: Option[ShapeEntity] = bindings.getOrElse(shapeParameterId, flattenedShape.bindings(shapeParameterId)) match {
       case Some(value) => value match {
         case ParameterProvider(shapeParameterId) => {

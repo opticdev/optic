@@ -106,7 +106,7 @@ object Interpretations {
       s"Request Body Observed",
       desc,
       commands,
-      affectedIds = Seq(wrapperId),
+      affectedIds = wrapperId +: shape.allIds,
       shape.nameRequests,
       example = actual
     )
@@ -172,7 +172,7 @@ object Interpretations {
       s"Response Body Observed",
       desc,
       commands,
-      affectedIds = Seq(wrapperId),
+      affectedIds = wrapperId +: shape.allIds,
       shape.nameRequests,
       example = actual
     )
@@ -181,9 +181,7 @@ object Interpretations {
   def AddFieldToResponseShape(key: String, raw: Json, parentShapeId: String, responseStatusCode: Int, responseId: String)(implicit shapesState: ShapesState) = {
     val fieldId = ShapesHelper.newFieldId()
 
-    println("RESOLVING "+ raw.noSpaces)
     val shapeId = ShapeResolver.resolveJsonToShapeId(raw).getOrElse("$any")
-    println("RESULT "+ shapeId)
 
     val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, shapeId)))
 

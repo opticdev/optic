@@ -13,14 +13,14 @@ object ApiInteractionSerialization {
   }
 
   def fromJson(json: Json): Try[ApiInteraction] = Try {
-    println(json)
+//    println(json)
     json.as[ApiInteraction].right.get
   }
 
   // should only work from scala-js/browser context?
   def fromJsonString(json: String) = {
     import io.circe.parser._
-    println(json)
+//    println(json)
     parse(json)
   }
 }

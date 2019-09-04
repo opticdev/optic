@@ -63,22 +63,22 @@ class DiffSessionManager {
 
     async applyDiffToSpec(eventStore, rfcId) {
         await this.persistState()
-        console.log('begin transaction')
+        // console.log('begin transaction')
         await saveEvents(eventStore, rfcId, this.diffState.baseSpecVersion)
         this.diffState.status = 'persisted'
         await this.persistState()
-        console.log('end transaction')
+        // console.log('end transaction')
         this.events.emit('updated')
     }
 
     restoreState(handleCommands) {
         if (this.diffState.status === 'started') {
             const allCommands = this.diffState.acceptedInterpretations.reduce((acc, value) => [...acc, ...value], [])
-            console.log({ allCommands })
+            // console.log({ allCommands })
             const commandSequence = commandsFromJson(allCommands)
             const commandArray = JsonHelper.seqToJsArray(commandSequence)
             handleCommands(...commandArray)
-            console.log('done restoring')
+            // console.log('done restoring')
         }
     }
 
@@ -173,7 +173,7 @@ class SessionStoreBase extends React.Component {
             const samplesAndResolvedPaths = session.samples
                 .map((sample, index) => {
                     const pathId = queries.resolvePath(sample.request.url)
-                    console.log({ pathId, sample, index })
+                    // console.log({ pathId, sample, index })
                     return { pathId, sample, index }
                 })
             const samplesWithResolvedPaths = samplesAndResolvedPaths.filter(x => !!x.pathId)
