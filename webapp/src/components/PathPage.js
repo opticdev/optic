@@ -64,7 +64,7 @@ const styles = theme => ({
 class OperationBase extends React.Component {
     render() {
         const { classes, request, handleCommands, mode, cachedQueryResults } = this.props;
-        const { requests, responses, requestParameters, pathsById, requestIdsByPathId } = cachedQueryResults;
+        const { responses, requestParameters } = cachedQueryResults;
 
         const { requestId, requestDescriptor } = request;
         const { httpMethod, bodyDescriptor } = requestDescriptor;

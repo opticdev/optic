@@ -1,12 +1,12 @@
-import React, {createRef} from 'react';
+import React, { createRef } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {withEditorContext} from '../../contexts/EditorContext';
+import { withEditorContext } from '../../contexts/EditorContext';
 import Card from '@material-ui/core/Card';
-import {CardHeader, Tooltip} from '@material-ui/core';
+import { CardHeader, Tooltip } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
-import {primary, secondary} from '../../theme';
+import { primary, secondary } from '../../theme';
 import CardContent from '@material-ui/core/CardContent';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -16,10 +16,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import keydown, {Keys} from 'react-keydown';
+import keydown, { Keys } from 'react-keydown';
 import TextField from '@material-ui/core/TextField';
 import Fade from '@material-ui/core/Fade';
-import {everyScala, lengthScala, mapScala, ShapesCommands} from '../../engine';
+import { everyScala, lengthScala, mapScala, ShapesCommands } from '../../engine';
 import Divider from '@material-ui/core/Divider';
 import ReactJson from 'react-json-view';
 
@@ -61,12 +61,12 @@ const LightTooltip = withStyles(theme => ({
   },
 }))(Tooltip);
 
-function ExampleToolTip({children, example}) {
-  const inner = <div style={{maxHeight: 400, overflow: 'scroll'}}>
+function ExampleToolTip({ children, example }) {
+  const inner = <div style={{ maxHeight: 400, overflow: 'scroll' }}>
     <ReactJson src={example}
-               enableClipboard={false}
-               name={false}
-               displayDataTypes={false}
+      enableClipboard={false}
+      name={false}
+      displayDataTypes={false}
     />
   </div>;
   return <LightTooltip title={inner} interactive={true} placement="bottom-start">
@@ -81,12 +81,12 @@ class DiffCard extends React.Component {
   };
 
   setName = (shapeId, name) => {
-    this.setState({names: {...this.state.names, [shapeId]: name}});
+    this.setState({ names: { ...this.state.names, [shapeId]: name } });
   };
 
   componentWillReceiveProps = (nextProps, nextContext) => {
     if (nextProps.interpretation !== this.props.interpretation) {
-      this.setState({names: {}});
+      this.setState({ names: {} });
     }
   };
 
@@ -97,10 +97,10 @@ class DiffCard extends React.Component {
   };
 
   render() {
-    const {classes, interpretation} = this.props;
-    const {title, description, nameRequests, exampleJs: bodyExample} = interpretation;
+    const { classes, interpretation } = this.props;
+    const { title, description, nameRequests, exampleJs: bodyExample } = interpretation;
 
-    const canApprove = everyScala(nameRequests)(({shapeId, required}) => {
+    const canApprove = everyScala(nameRequests)(({ shapeId, required }) => {
       if (required && !this.state.names[shapeId]) {
         return false;
       }
@@ -110,36 +110,39 @@ class DiffCard extends React.Component {
     return (
       <Card className={classes.root} elevation={1}>
         <CardHeader title={
-          <div style={{display: 'flex'}}>
-            <Typography variant="subtitle1" style={{marginTop: 2}}>{title}</Typography>
-            <div style={{flex: 1}}/>
+          <div style={{ display: 'flex' }}>
+            <Typography variant="subtitle1" style={{ marginTop: 2 }}>{title}</Typography>
+            <div style={{ flex: 1 }} />
           </div>
-        } className={classes.header}/>
-        <CardContent style={{padding: 0}}>
+        } className={classes.header} />
+        <CardContent style={{ padding: 0 }}>
           <div className={classes.description}>
-            <Typography variant="paragraph" dangerouslySetInnerHTML={{__html: description}}/>
+            <Typography variant="paragraph" dangerouslySetInnerHTML={{ __html: description }} />
             {bodyExample && <ExampleToolTip example={bodyExample}>
-              <Typography variant="overline" color="primary" style={{cursor: 'pointer', marginLeft: 7}}>View
+              <Typography variant="overline" color="primary" style={{ cursor: 'pointer', marginLeft: 7 }}>View
                 Example</Typography>
             </ExampleToolTip>}
 
-            <div className={classes.questions} style={{display: lengthScala(nameRequests) > 0 ? 'inherit' : 'none'}}>
-              <Divider style={{marginTop: 11, marginBottom: 11}}/>
-              {mapScala(nameRequests)(({shapeId, required, description, exampleJs}) => {
-                return <>
-                  <Typography variant="caption">{description}</Typography>
-                  <div style={{display: 'flex'}}>
-                    <TextField placeholder={'Name Concept'}
-                               value={this.state.names[shapeId]}
-                               error={required && !this.state.names[shapeId]}
-                               onChange={(e) => this.setName(shapeId, e.target.value)}/>
-                    <div style={{width: 30}}/>
-                    <ExampleToolTip example={exampleJs}>
-                      <Typography variant="overline" color="primary" style={{cursor: 'pointer', marginLeft: -12}}>View
+            <div className={classes.questions} style={{ display: lengthScala(nameRequests) > 0 ? 'inherit' : 'none' }}>
+              <Divider style={{ marginTop: 11, marginBottom: 11 }} />
+              {mapScala(nameRequests)(({ shapeId, required, description, exampleJs }) => {
+                return (
+                  <React.Fragment key={shapeId}>
+                    <Typography variant="caption">{description}</Typography>
+                    <div style={{ display: 'flex' }}>
+                      <TextField
+                        placeholder={'Name Concept'}
+                        value={this.state.names[shapeId] || ''}
+                        error={required && !this.state.names[shapeId]}
+                        onChange={(e) => this.setName(shapeId, e.target.value)} />
+                      <div style={{ width: 30 }} />
+                      <ExampleToolTip example={exampleJs}>
+                        <Typography variant="overline" color="primary" style={{ cursor: 'pointer', marginLeft: -12 }}>View
                         Example</Typography>
-                    </ExampleToolTip>
-                  </div>
-                </>;
+                      </ExampleToolTip>
+                    </div>
+                  </React.Fragment>
+                );
               })}
             </div>
           </div>

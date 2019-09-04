@@ -55,20 +55,20 @@ export function stuffFromQueries(queries) {
     return cachedQueryResults
 }
 class RfcStoreWithoutContext extends React.Component {
+    
     constructor(props) {
         super(props);
 
         this.handleCommands = this.handleCommands.bind(this)
-
+        const { initialCommandsString, initialEventsString, rfcId } = this.props;
         const eventStore = Facade.makeEventStore();
-        const rfcService = Facade.fromJsonCommands(eventStore, this.props.initialCommandsString || '[]', this.props.rfcId)
 
-        const queries = Queries(eventStore, rfcService, this.props.rfcId);
-
-        if (this.props.initialEventsString) {
-            console.log({bulkAdd: this.props.initialEventsString})
-            eventStore.bulkAdd(this.props.rfcId, this.props.initialEventsString)
+        if (initialEventsString) {
+            console.log({ bulkAdd: initialEventsString })
+            eventStore.bulkAdd(rfcId, initialEventsString)
         }
+        const rfcService = Facade.fromJsonCommands(eventStore, initialCommandsString || '[]', rfcId)
+        const queries = Queries(eventStore, rfcService, rfcId);
 
         this.state = {
             eventStore,
@@ -87,7 +87,6 @@ class RfcStoreWithoutContext extends React.Component {
     }, 10, { leading: true })
 
     handleCommands(...commands) {
-        console.log({ commands })
         global.commands.push(...commands)
         this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
         this.handleChange()
@@ -99,7 +98,6 @@ class RfcStoreWithoutContext extends React.Component {
         const { queries, eventStore, hasUnsavedChanges, rfcService } = this.state;
         const { rfcId } = this.props;
         const cachedQueryResults = stuffFromQueries(queries)
-
         const value = {
             rfcId,
             rfcService,
@@ -161,7 +159,7 @@ class LocalDiffRfcStoreWithoutContext extends RfcStoreWithoutContext {
         super.handleCommands(...commands)
     }
 }
-const LocalDiffRfcStore = withSnackbar(withInitialRfcCommandsContext(LocalDiffRfcStoreWithoutContext))
+const LocalDiffRfcStore = withInitialRfcCommandsContext(LocalDiffRfcStoreWithoutContext)
 
 export {
     RfcStore,

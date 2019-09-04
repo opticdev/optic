@@ -19,6 +19,7 @@ import ShapeViewer from '../shape-editor/ShapeViewer.js';
 
 import { styles as shapeViewerStyles } from '../ConceptsPage.js';
 import TextField from '@material-ui/core/TextField';
+import { withNavigationContext } from '../../contexts/NavigationContext.js';
 
 const styles = theme => ({
     root: {},
@@ -54,6 +55,7 @@ class BodyViewerWithoutContext extends React.Component {
     render() {
         const { history } = this.props;
         const { classes } = this.props;
+        const { onShapeSelected } = this.props;
         const { baseUrl, shapeId, queries, contentType } = this.props;
 
         const shape = queries.shapeById(shapeId);
@@ -79,7 +81,10 @@ class BodyViewerWithoutContext extends React.Component {
                         }}>{contentType}</Typography>
                 </div>
                 <ShapeEditorStore onShapeSelected={(shapeId) => {
-                    debugger
+                    if (onShapeSelected) {
+                        onShapeSelected(shapeId)
+                        return
+                    }
                     history.push(routerUrls.conceptPage(baseUrl, shapeId))
                 }}>
                     <ExpansionStore>
@@ -93,7 +98,7 @@ class BodyViewerWithoutContext extends React.Component {
     }
 }
 
-const BodyViewer = withRouter(withEditorContext(withRfcContext(withStyles(shapeViewerStyles)(BodyViewerWithoutContext))))
+const BodyViewer = withNavigationContext(withRouter(withEditorContext(withRfcContext(withStyles(shapeViewerStyles)(BodyViewerWithoutContext)))))
 
 class LayoutWrapperWithoutStyles extends React.Component {
     render() {
