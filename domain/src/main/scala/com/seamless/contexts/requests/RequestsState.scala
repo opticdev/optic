@@ -1,6 +1,6 @@
 package com.seamless.contexts.requests
 
-import com.seamless.contexts.requests.Commands.{BasicPathComponentDescriptor, BodyDescriptor, ParameterizedPathComponentDescriptor, PathComponentDescriptor, PathComponentId, RequestId, RequestParameterId, RequestParameterShapeDescriptor, ResponseId, ShapedBodyDescriptor, ShapedRequestParameterShapeDescriptor, UnsetBodyDescriptor, UnsetRequestParameterShapeDescriptor}
+import com.seamless.contexts.requests.Commands._
 
 
 sealed trait RequestsGraph
@@ -24,11 +24,33 @@ case class RequestParameterDescriptor(requestId: RequestId, location: String, na
 
 case class HttpRequestParameter(parameterId: RequestParameterId, requestParameterDescriptor: RequestParameterDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
-case class RequestDescriptor(pathComponentId: PathComponentId, httpMethod: String, bodyDescriptor: BodyDescriptor)
+case class RequestDescriptor(pathComponentId: PathComponentId, httpMethod: String, bodyDescriptor: BodyDescriptor) {
+  def withContentType(httpContentType: String): RequestDescriptor = {
+    this.copy(
+      bodyDescriptor = this.bodyDescriptor match {
+        case UnsetBodyDescriptor() => UnsetBodyDescriptor() //@TODO: should probably fail in validation?
+        case d: ShapedBodyDescriptor => {
+          d.copy(httpContentType = httpContentType)
+        }
+      }
+    )
+  }
+}
 
 case class HttpRequest(requestId: RequestId, requestDescriptor: RequestDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
-case class ResponseDescriptor(requestId: RequestId, httpStatusCode: Int, bodyDescriptor: BodyDescriptor)
+case class ResponseDescriptor(requestId: RequestId, httpStatusCode: Int, bodyDescriptor: BodyDescriptor) {
+  def withContentType(httpContentType: String): ResponseDescriptor = {
+    this.copy(
+      bodyDescriptor = this.bodyDescriptor match {
+        case UnsetBodyDescriptor() => UnsetBodyDescriptor() //@TODO: should probably fail in validation?
+        case d: ShapedBodyDescriptor => {
+          d.copy(httpContentType = httpContentType)
+        }
+      }
+    )
+  }
+}
 
 case class HttpResponse(responseId: ResponseId, responseDescriptor: ResponseDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
@@ -99,6 +121,13 @@ case class RequestsState(
     )
   }
 
+  def withRequestContentType(requestId: RequestId, httpContentType: String) = {
+    val r = requests(requestId)
+    this.copy(
+      requests = requests + (requestId -> r.copy(requestDescriptor = r.requestDescriptor.withContentType(httpContentType)))
+    )
+  }
+
   def withoutRequest(requestId: RequestId) = {
     val r = requests(requestId)
     this.copy(
@@ -133,6 +162,13 @@ case class RequestsState(
     val r = responses(responseId)
     this.copy(
       responses = responses + (responseId -> r.copy(responseDescriptor = r.responseDescriptor.copy(httpStatusCode = httpStatusCode)))
+    )
+  }
+
+  def withResponseContentType(responseId: ResponseId, httpContentType: String) = {
+    val r = responses(responseId)
+    this.copy(
+      responses = responses + (responseId -> r.copy(responseDescriptor = r.responseDescriptor.withContentType(httpContentType)))
     )
   }
 
@@ -174,5 +210,7 @@ case class RequestsState(
       requestParameters = requestParameters + (parameterId -> p.copy(isRemoved = true))
     )
   }
+
+  ////////////////////////////////////////////////////////////////////////////////
 
 }

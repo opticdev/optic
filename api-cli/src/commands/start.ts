@@ -10,8 +10,10 @@ import analytics from '../lib/analytics'
 // @ts-ignore
 import * as Mustache from 'mustache'
 import * as yaml from 'js-yaml'
+import * as opticEngine from 'optic-domain'
+import { IApiInteraction } from '../lib/common';
 
-async function readApiConfig(): Promise<IApiCliConfig> {
+export async function readApiConfig(): Promise<IApiCliConfig> {
   const { configPath } = await getPaths()
   const rawFile = await fs.readFile(configPath)
   const parsed = yaml.safeLoad(rawFile.toString())
@@ -26,6 +28,41 @@ async function readApiConfig(): Promise<IApiCliConfig> {
   //   },
   //   name: 'ddoshi'
   // }
+}
+const { ApiInteraction, ApiRequest, ApiResponse } = opticEngine.com.seamless.diff;
+const JsonHelper = opticEngine.com.seamless.diff.JsonHelper()
+function fromJs(x: any) {
+  return JsonHelper.fromString(JSON.stringify(x))
+}
+
+export function toInteraction(sample: IApiInteraction) {
+  return ApiInteraction(
+    ApiRequest(sample.request.url, sample.request.method, sample.request.headers['content-type'] || '*/*', fromJs(sample.request.body)),
+    ApiResponse(sample.response.statusCode, sample.response.headers['content-type'] || '*/*', fromJs(sample.response.body))
+  )
+}
+
+export async function checkDiffOrUnrecognizedPath(result: ICaptureSessionResult) {
+  const { specStorePath } = await getPaths()
+  const specStoreExists = await fs.pathExists(specStorePath)
+  if (!specStoreExists) { return Promise.resolve(false) }
+  const specAsBuffer = await fs.readFile(specStorePath)
+  try {
+    const differ = opticEngine.com.seamless.diff.SessionDiffer(specAsBuffer.toString())
+    for (const sample of result.samples) {
+      const interaction = toInteraction(sample)
+      if (differ.hasUnrecognizedPath(interaction)) {
+        console.log('unrecognized path')
+        return Promise.resolve(true)
+      } else if (differ.hasDiff(interaction)) {
+        console.log('diff observed')
+        return Promise.resolve(true)
+      }
+    }
+  } catch (e) {
+    console.error(e)
+    return Promise.resolve(false)
+  }
 }
 
 export default class Start extends Command {
@@ -51,6 +88,7 @@ export default class Start extends Command {
     analytics.track('api start', { name: config.name })
     const result = await this.runProxySession(config)
     analytics.track('api server stopped. ', { name: config.name, sampleCount: result.samples.length })
+
     await this.flushSession(result)
   }
 
@@ -59,8 +97,12 @@ export default class Start extends Command {
       this.log('[optic] No API interactions were observed.')
       return null
     }
-    const fileName = `${result.session.start.toISOString()}-${result.session.end.toISOString()}.optic_session.json`
     this.log(`[optic] Observed ${result.samples.length} API interaction(s)`)
+    
+    await checkDiffOrUnrecognizedPath(result)
+    
+    const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`;
+    const fileName = `${sessionId}.optic_session.json`
     const { sessionsPath } = await getPaths()
     const filePath = path.join(sessionsPath, fileName)
     await fs.ensureFile(filePath)

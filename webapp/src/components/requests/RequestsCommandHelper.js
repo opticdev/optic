@@ -28,7 +28,7 @@ export class RequestsCommandHelper {
 
     addQueryParameter = () => {
         const {handleCommands, requestId} = this;
-        const parameterId = RequestsHelper.newId()
+        const parameterId = RequestsHelper.newParameterId()
         const {shapeId, commands} = this.getCommandsToCreateString()
         const name = ''
         const addQueryParameter = RequestsCommands.AddQueryParameter(parameterId, requestId, name)
@@ -39,7 +39,7 @@ export class RequestsCommandHelper {
 
     addHeaderParameter = () => {
         const {handleCommands, requestId} = this;
-        const parameterId = RequestsHelper.newId()
+        const parameterId = RequestsHelper.newParameterId()
         const {shapeId, commands} = this.getCommandsToCreateString()
         const name = ''
         const addHeaderParameter = RequestsCommands.AddHeaderParameter(parameterId, requestId, name)
@@ -51,7 +51,7 @@ export class RequestsCommandHelper {
     addResponse = () => {
 
         const {handleCommands, requestId} = this;
-        const responseId = RequestsHelper.newId()
+        const responseId = RequestsHelper.newResponseId()
         const statusCode = 200
         const addResponse = RequestsCommands.AddResponse(responseId, requestId, statusCode)
 

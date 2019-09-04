@@ -1,3 +1,4 @@
 target/
 project/target
 .idea/
+node_modules/

@@ -22,11 +22,13 @@ val circeVersion = "0.10.0"
 libraryDependencies ++= Seq(
   "io.circe" %%% "circe-core",
   "io.circe" %%% "circe-generic",
-  "io.circe" %%% "circe-parser"
+  "io.circe" %%% "circe-parser",
+  "io.circe" %%% "circe-literal",
 ).map(_ % circeVersion)
 
 //for tests only
 libraryDependencies += "org.scalameta" %% "scalameta" % "4.1.9" % "test"
+libraryDependencies += "io.circe" %% "circe-jawn" % "0.10.0" % "test"
 
 //generateTypescript := {
 //  PlatformTokenizerCache.megaCache.clear()

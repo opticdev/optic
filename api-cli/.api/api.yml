@@ -1,0 +1,6 @@
+name: ddoshi
+commands:
+  start: echo "started" && sleep 60 && echo "done"
+proxy:
+  target: https://my-json-server.typicode.com
+  port: '3004'

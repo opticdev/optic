@@ -1,23 +1,25 @@
 import React from 'react';
-import {Redirect, Switch, Route} from 'react-router-dom';
-import {FocusedRequestStore} from './contexts/FocusedRequestContext.js';
-import {InitialRfcCommandsStore} from './contexts/InitialRfcCommandsContext.js';
-import {RfcStore} from './contexts/RfcContext.js';
-import {PathContext} from './contexts/PathContext.js';
+import { Redirect, Switch, Route } from 'react-router-dom';
+import { FocusedRequestStore } from './contexts/FocusedRequestContext.js';
+import { InitialRfcCommandsStore } from './contexts/InitialRfcCommandsContext.js';
+import { RfcStore, LocalRfcStore, LocalDiffRfcStore } from './contexts/RfcContext.js';
+import { PathContext } from './contexts/PathContext.js';
 import PathPage from './components/PathPage.js';
 import ConceptsPage from './components/ConceptsPage';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogActions from '@material-ui/core/DialogActions';
-import {Button} from '@material-ui/core';
 import Loading from './components/navigation/Loading';
 import Welcome from './components/onboarding/Welcome';
 import UploadOAS from './components/onboarding/upload-oas';
-import {ImportedOASContext, ImportedOASStore} from './contexts/ImportedOASContext';
+import { ImportedOASContext, ImportedOASStore } from './contexts/ImportedOASContext';
 import OverView from './components/onboarding/Overview';
-import {EditorStore} from './contexts/EditorContext';
-import {TutorialStore} from './contexts/TutorialContext';
+import { EditorStore } from './contexts/EditorContext';
+import { TutorialStore } from './contexts/TutorialContext';
+import { SessionStore } from './contexts/SessionContext';
+import Button from '@material-ui/core/Button';
+import LocalDiffManager from './components/diff/LocalDiffManager'
 
 export const routerPaths = {
 	newRoot: () => '/new',
@@ -26,6 +28,7 @@ export const routerPaths = {
 	pathPage: (base) => `${base}/paths/:pathId`,
 	conceptPage: (base) => `${base}/concepts/:conceptId`,
 	localRoot: () => '/saved',
+	localDiff: () => '/saved/diff/:sessionId'
 };
 
 export const routerUrls = {
@@ -48,7 +51,7 @@ class ExampleLoader extends React.Component {
 					return response.text()
 						.then(rawString => {
 							if (rawString.startsWith('<!DOCTYPE html>')) {
-								this.setState({error: true});
+								this.setState({ error: true });
 							} else {
 								this.setState({
 									example: rawString
@@ -60,7 +63,7 @@ class ExampleLoader extends React.Component {
 	}
 
 	render() {
-		const {example, error} = this.state;
+		const { example, error } = this.state;
 
 		if (error) {
 			return (
@@ -76,7 +79,7 @@ class ExampleLoader extends React.Component {
 		}
 
 		if (example === null) {
-			return <Loading/>;
+			return <Loading />;
 		}
 		return (
 			<InitialRfcCommandsStore initialCommandsString={example} rfcId="testRfcId">
@@ -98,13 +101,13 @@ class LocalLoader extends React.Component {
 	};
 
 	componentDidMount() {
-		fetch(`/events.json`)
+		fetch(`/cli-api/events`)
 			.then(response => {
 				if (response.ok) {
 					return response.text()
 						.then(rawString => {
 							if (rawString.startsWith('<!DOCTYPE html>')) {
-								this.setState({error: true});
+								this.setState({ error: true });
 							} else {
 								this.setState({
 									loadedEvents: rawString
@@ -116,7 +119,7 @@ class LocalLoader extends React.Component {
 	}
 
 	render() {
-		const {loadedEvents, error} = this.state;
+		const { loadedEvents, error } = this.state;
 
 		if (error) {
 			return (
@@ -133,17 +136,38 @@ class LocalLoader extends React.Component {
 		}
 
 		if (loadedEvents === null) {
-			return <Loading/>;
+			return <Loading />;
 		}
 		return (
 			<InitialRfcCommandsStore initialEventsString={loadedEvents} rfcId="testRfcId">
-				<RfcStore>
-					<TutorialStore>
-						<APIEditorRoutes {...this.props} />
-					</TutorialStore>
-				</RfcStore>
+				<Switch>
+					<Route path={routerPaths.localDiff()} component={LocalDiff} />
+					<Route render={() => (
+						<LocalRfcStore>
+							<TutorialStore>
+								<APIEditorRoutes {...this.props} />
+							</TutorialStore>
+						</LocalRfcStore>
+					)} />
+				</Switch>
+
 			</InitialRfcCommandsStore>
 		);
+	}
+}
+
+
+class LocalDiff extends React.Component {
+	render() {
+		const { sessionId } = this.props.match.params
+
+		return (
+			<LocalDiffRfcStore>
+				<SessionStore sessionId={sessionId}>
+					<LocalDiffManager />
+				</SessionStore>
+			</LocalDiffRfcStore>
+		)
 	}
 }
 
@@ -151,7 +175,7 @@ class NewApiLoader extends React.Component {
 	render() {
 		return (
 			<ImportedOASContext.Consumer>
-				{({providedCommands}) => (
+				{({ providedCommands }) => (
 					<InitialRfcCommandsStore initialCommandsString={providedCommands || '[]'} rfcId="testRfcId">
 						<RfcStore>
 							<TutorialStore isNew={true}>
@@ -165,11 +189,11 @@ class NewApiLoader extends React.Component {
 	}
 }
 
-function PathRoot({match, baseUrl}) {
-	const {pathId} = match.params;
+function PathRoot({ match, baseUrl }) {
+	const { pathId } = match.params;
 	return (
 		<PathContext.Provider value={pathId}>
-			<PathPage pathId={pathId} baseUrl={baseUrl}/>
+			<PathPage pathId={pathId} baseUrl={baseUrl} />
 		</PathContext.Provider>
 	);
 }
@@ -177,7 +201,7 @@ function PathRoot({match, baseUrl}) {
 class APIEditorRoutes extends React.Component {
 	render() {
 
-		const {url} = this.props.match;
+		const { url } = this.props.match;
 
 		const baseUrl = url;
 
@@ -186,14 +210,14 @@ class APIEditorRoutes extends React.Component {
 				<EditorStore baseUrl={baseUrl}>
 					<FocusedRequestStore>
 						<Switch>
-							<Route exact path={routerPaths.newRoot(url)} component={OverView}/>
-							<Route path={routerPaths.pathPage(url)} component={PathRoot}/>
+							<Route exact path={routerPaths.newRoot(url)} component={OverView} />
+							<Route path={routerPaths.pathPage(url)} component={PathRoot} />
 							<Route path={routerPaths.conceptPage(url)}
-								   component={(props) =>
-									   <ConceptsPage {...props} conceptId={props.match.params.conceptId}/>
-								   }/>
-							<Route path={routerPaths.apiRoot(url)} component={OverView}/>
-							<Redirect to={routerPaths.apiRoot(url)}/>
+								component={(props) =>
+									<ConceptsPage {...props} conceptId={props.match.params.conceptId} />
+								} />
+							<Route path={routerPaths.apiRoot(url)} component={OverView} />
+							<Redirect to={routerPaths.apiRoot(url)} />
 						</Switch>
 					</FocusedRequestStore>
 				</EditorStore>
@@ -210,8 +234,8 @@ class AppRoutes extends React.Component {
 				<div>
 					<ImportedOASStore>
 						<Switch>
-							<Route path={routerPaths.localRoot()} component={LocalLoader}/>
-							<Redirect to={routerPaths.localRoot()}/>
+							<Route path={routerPaths.localRoot()} component={LocalLoader} />
+							<Redirect to={routerPaths.localRoot()} />
 						</Switch>
 					</ImportedOASStore>
 				</div>
@@ -223,12 +247,12 @@ class AppRoutes extends React.Component {
 			<div>
 				<ImportedOASStore>
 					<Switch>
-						<Route path={routerPaths.newRoot()} component={NewApiLoader}/>
-						<Route path={'/upload-oas'} exact component={UploadOAS}/>
-						<Route strict path={routerPaths.example()} component={ExampleLoader}/>
-						<Route path={'/'} exact component={Welcome}/>
-						<Redirect from={routerPaths.example()} to={routerPaths.example()}/>
-						<Redirect to={routerPaths.newRoot()}/>
+						<Route path={routerPaths.newRoot()} component={NewApiLoader} />
+						<Route path={'/upload-oas'} exact component={UploadOAS} />
+						<Route strict path={routerPaths.example()} component={ExampleLoader} />
+						<Route path={'/'} exact component={Welcome} />
+						<Redirect from={routerPaths.example()} to={routerPaths.example()} />
+						<Redirect to={routerPaths.newRoot()} />
 					</Switch>
 				</ImportedOASStore>
 			</div>

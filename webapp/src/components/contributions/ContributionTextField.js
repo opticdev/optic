@@ -22,6 +22,7 @@ const styles = theme => ({
     },
     pre: {
         fontFamily: 'Ubuntu',
+        fontWeight: 200,
         wordWrap: 'break-word',
         whiteSpace: 'pre-wrap'
 

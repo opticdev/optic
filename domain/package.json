@@ -1,0 +1,28 @@
+{
+  "name": "optic-domain",
+  "version": "0.1.0",
+  "description": "core functionality for seamless",
+  "main": "build/domain.js",
+  "scripts": {
+    "build-dev": "sh scripts/package.sh && yarn link",
+    "watch-dev": "node node_modules/npm-watch/cli.js build-dev",
+    "build": "sh scripts/package-optimized.sh"
+  },
+  "watch": {
+    "build-dev": {
+      "patterns": [
+        "src/main"
+      ],
+      "extensions": "scala",
+      "quiet": true,
+      "delay": 6000,
+      "runOnChangeOnly": false,
+      "clearBuffer": true
+    }
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "npm-watch": "^0.6.0"
+  }
+}

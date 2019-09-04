@@ -4,4 +4,5 @@
 process.env.BABEL_ENV = 'development';
 process.env.NODE_ENV = 'development';
 process.env.REACT_APP_CLI_MODE = 'true';
+process.env.REACT_APP_ENABLE_ANALYTICS = 'no'
 require('./start')

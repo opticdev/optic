@@ -37,6 +37,28 @@ object ShapesHelper {
     ).asInstanceOf[Vector[RequestsEvent]]
   }
 
+  sealed class CoreShapeKind(val baseShapeId: ShapeId)
+  case object ObjectKind extends CoreShapeKind("$object")
+  case object ListKind extends CoreShapeKind("$list")
+  case object MapKind extends CoreShapeKind("$map")
+  case object OneOfKind extends CoreShapeKind("$oneOf")
+  case object AnyKind extends CoreShapeKind("$any")
+  case object StringKind extends CoreShapeKind("$string")
+  case object NumberKind extends CoreShapeKind("$number")
+  case object BooleanKind extends CoreShapeKind("$boolean")
+  case object IdentifierKind extends CoreShapeKind("$identifier")
+  case object ReferenceKind extends CoreShapeKind("$reference")
+
+  val allCoreShapes = Set(ObjectKind, ListKind, MapKind, OneOfKind, AnyKind, StringKind, NumberKind, BooleanKind, IdentifierKind, ReferenceKind)
+
+  def toCoreShape(shapeEntity: ShapeEntity, shapesState: ShapesState): CoreShapeKind = {
+    allCoreShapes.find(_.baseShapeId == shapeEntity.descriptor.baseShapeId) match {
+      case Some(shape) => shape
+      case None => {
+        toCoreShape(shapesState.shapes(shapeEntity.descriptor.baseShapeId), shapesState)
+      }
+    }
+  }
 }
 
 //STRICTLY FOR TESTING (because everything should go through the root (RfcService))

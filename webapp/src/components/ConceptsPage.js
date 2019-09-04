@@ -59,8 +59,8 @@ class ConceptsPage extends React.Component {
 
 
 	render() {
-		const { history, baseUrl, classes, conceptId, handleCommand, mode, cachedQueryResults, queries, apiName } = this.props;
-		const { contributions } = cachedQueryResults;
+		const { history, baseUrl, classes, conceptId, handleCommand, mode, cachedQueryResults, queries } = this.props;
+		const { apiName, contributions } = cachedQueryResults;
 
 		let shape = null;
 		try {
