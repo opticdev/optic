@@ -27,7 +27,19 @@ Array [
     "parentShapeId": "$Account",
     "shapeName": Object {
       "baseShapeName": "Account ID",
-      "bindingInfo": Array [],
+      "bindingInfo": Array [
+        Object {
+          "binding": Object {
+            "ShapeProvider": Object {
+              "shapeId": "$Account",
+            },
+          },
+          "boundName": "Account",
+          "color": "#32417d",
+          "parameterId": "$referenceInner",
+          "parameterName": "T",
+        },
+      ],
       "color": undefined,
       "id": "$AccountId",
     },
@@ -54,6 +66,18 @@ Array [
             },
           },
           "boundName": "User ID",
+          "color": undefined,
+          "parameterId": "$listItem",
+          "parameterName": "T",
+        },
+        Object {
+          "binding": Object {
+            "ShapeProvider": Object {
+              "shapeId": "$UserId",
+            },
+          },
+          "boundName": "User ID",
+          "color": undefined,
           "parameterId": "$listItem",
           "parameterName": "T",
         },
@@ -124,6 +148,18 @@ Array [
             },
           },
           "boundName": "T",
+          "color": "#229922",
+          "parameterId": "$listItem",
+          "parameterName": "T",
+        },
+        Object {
+          "binding": Object {
+            "ParameterProvider": Object {
+              "shapeParameterId": "$PaginationWrapper.T",
+            },
+          },
+          "boundName": "T",
+          "color": "#229922",
           "parameterId": "$listItem",
           "parameterName": "T",
         },
@@ -145,7 +181,7 @@ Array [
   Object {
     "depth": 0,
     "id": "$UserListResponse1",
-    "isExpandable": false,
+    "isExpandable": true,
     "name": "User List Response 1",
     "shapeName": Object {
       "baseShapeName": "PaginationWrapper",
@@ -157,6 +193,7 @@ Array [
             },
           },
           "boundName": "User",
+          "color": "#32417d",
           "parameterId": "$PaginationWrapper.T",
           "parameterName": "T",
         },
@@ -166,6 +203,100 @@ Array [
     },
     "trail": Array [
       "$UserListResponse1",
+    ],
+    "type": "shape",
+  },
+  Object {
+    "depth": 1,
+    "fieldShapeId": "$number",
+    "id": "$PaginationWrapper.offset",
+    "isExpandable": false,
+    "name": "offset",
+    "parentShapeId": "$UserListResponse1",
+    "shapeName": Object {
+      "baseShapeName": "number",
+      "bindingInfo": Array [],
+      "color": "#e4508f",
+      "id": "$number",
+    },
+    "trail": Array [
+      "$UserListResponse1",
+      "$PaginationWrapper.offset",
+    ],
+    "type": "field",
+  },
+  Object {
+    "depth": 1,
+    "fieldShapeId": "$list",
+    "id": "$PaginationWrapper.items",
+    "isExpandable": false,
+    "name": "items",
+    "parentShapeId": "$UserListResponse1",
+    "shapeName": Object {
+      "baseShapeName": "List",
+      "bindingInfo": Array [
+        Object {
+          "binding": Object {
+            "ParameterProvider": Object {
+              "shapeParameterId": "$PaginationWrapper.T",
+            },
+          },
+          "boundName": null,
+          "color": "#229922",
+          "parameterId": "$listItem",
+          "parameterName": "T",
+        },
+        Object {
+          "binding": Object {
+            "ParameterProvider": Object {
+              "shapeParameterId": "$PaginationWrapper.T",
+            },
+          },
+          "boundName": null,
+          "color": "#229922",
+          "parameterId": "$listItem",
+          "parameterName": "T",
+        },
+      ],
+      "color": "#7d1e34",
+      "id": "$list",
+    },
+    "trail": Array [
+      "$UserListResponse1",
+      "$PaginationWrapper.items",
+    ],
+    "type": "field",
+  },
+]
+`;
+
+exports[`flattened shapes todo example should render ToDo 1`] = `
+Array [
+  Object {
+    "depth": 0,
+    "id": "_ResponseBody_0",
+    "isExpandable": false,
+    "name": "",
+    "shapeName": Object {
+      "baseShapeName": "List",
+      "bindingInfo": Array [
+        Object {
+          "binding": Object {
+            "ShapeProvider": Object {
+              "shapeId": "_Todo_0",
+            },
+          },
+          "boundName": "ToDo",
+          "color": "#32417d",
+          "parameterId": "$listItem",
+          "parameterName": "T",
+        },
+      ],
+      "color": "#7d1e34",
+      "id": "rG6Eyi_0",
+    },
+    "trail": Array [
+      "_ResponseBody_0",
     ],
     "type": "shape",
   },
