@@ -10,6 +10,7 @@ import analytics from '../lib/analytics'
 // @ts-ignore
 import * as Mustache from 'mustache'
 import * as yaml from 'js-yaml'
+// @ts-ignore
 import * as opticEngine from 'optic-domain'
 import { IApiInteraction } from '../lib/common';
 
@@ -98,9 +99,9 @@ export default class Start extends Command {
       return null
     }
     this.log(`[optic] Observed ${result.samples.length} API interaction(s)`)
-    
+
     await checkDiffOrUnrecognizedPath(result)
-    
+
     const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`;
     const fileName = `${sessionId}.optic_session.json`
     const { sessionsPath } = await getPaths()

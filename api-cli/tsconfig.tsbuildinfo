@@ -138,8 +138,8 @@
         "signature": "0b3126e16e55540a97ecf1bf3bafa53aa97159ef09ed14acc871d7d84fedcbf9"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/globals.d.ts": {
-        "version": "6062bf0c69f8a4bb7f5bb817634899e94fbe74822e59187584a50277215d6dfc",
-        "signature": "6062bf0c69f8a4bb7f5bb817634899e94fbe74822e59187584a50277215d6dfc"
+        "version": "b4cc3f267394f85076d04afc86df4d44c453cb6e0ab31504919dfb47d128bb6c",
+        "signature": "b4cc3f267394f85076d04afc86df4d44c453cb6e0ab31504919dfb47d128bb6c"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/assert.d.ts": {
         "version": "e37e4814461321ef67cbb2f4c9def6be18ff85670e6c665131b320e052905b75",
@@ -274,8 +274,8 @@
         "signature": "978aecd2e6bc2ac094e9a35eda98ff8586713857b3655e7c98ca5ed8f7d50662"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/tty.d.ts": {
-        "version": "49acf7313a000c386e140c9e898ddb5e1f508b9ac883c5c1481e7df685f2698e",
-        "signature": "49acf7313a000c386e140c9e898ddb5e1f508b9ac883c5c1481e7df685f2698e"
+        "version": "3a59044813b24482ad7a7963bbee6b62507561969e273fbdc992ed9bc948fe13",
+        "signature": "3a59044813b24482ad7a7963bbee6b62507561969e273fbdc992ed9bc948fe13"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/url.d.ts": {
         "version": "431151f55411c3f27cf539b987a7d1de453188ed58e54bc946183d280d3444a2",
@@ -322,11 +322,11 @@
         "signature": "aca36e2d27783f4bad7fc1786a532ff76024f0fc8575df48bcd9a5eb452fe7e7"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/paths.ts": {
-        "version": "89a4e945b22c8c08ce0345ac4b73fad5e8ee63c143d651a135db5bcdf75f4215",
-        "signature": "42f3aa706aed637d085c1cd9200389c3a7ba0205d60721614debda425a94476d"
+        "version": "beff868be4083ceadc751405000b5903e2a888882b036e5793e5251c91b82a78",
+        "signature": "e06ddaa1b045e7de4cb06f5442ca3e1ca6a076958674816e36ec7311488dbfb3"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/persistutils.ts": {
-        "version": "37f2bc527b1c727ebd3258a321f11d997e340fe220a654995102cdedc082a24c",
+        "version": "dfeba328d828ed3d706dc9ebd28a02f64375c6e2a582c5e4e9f6c6527e40aa2f",
         "signature": "25363b39cb1e78c9d76e1ba49b50b5d8dd1fe22b61000f3d0e226dbbd74df5a8"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/parser/lib/args.d.ts": {
@@ -501,45 +501,49 @@
         "version": "298c6f7f4ca8817c1e670ed90f7775728374d9f7f3541b6e1d8d4016e430a64a",
         "signature": "009fae1840390caea93142821517ff31319298ede41751cc4b8aa610154264e6"
       },
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/generate.ts": {
+        "version": "0b76ac978ae60c5b8aa20873d2b4e0d8f43a87906c04dbf3b227e78bedab44dd",
+        "signature": "baaae087f8cfe3e4931124e96436fb5da3103d39f4583ab40467b050a8538bed"
+      },
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts": {
+        "version": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f",
+        "signature": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f"
+      },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/init.ts": {
-        "version": "40262c18ae03f6401d96ebf2cfd83b21f2fbd6aa086bcb4e25bec5d36955cfbf",
-        "signature": "60b722877bc91ae26222f2f8eed828b41c6c2e14972109379dac8636053090f3"
+        "version": "c44f221a10190006390e4745da867492a86f998e6f1619cb027ddde705772ca9",
+        "signature": "28015ec41590be5f7327bfae4822ff5873e6cc9073841193629af5fcc1b98d8d"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
         "signature": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/express-serve-static-core/index.d.ts": {
-        "version": "d73f61d755e6f17b9dc315cbd8e6522a47c2153a07b67fd8295ef48b40ad6344",
-        "signature": "d73f61d755e6f17b9dc315cbd8e6522a47c2153a07b67fd8295ef48b40ad6344"
+        "version": "0e844fd1a3d13a837b300785b632ceb2cdced5797e189183ece36a0785a453e5",
+        "signature": "0e844fd1a3d13a837b300785b632ceb2cdced5797e189183ece36a0785a453e5"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/mime/index.d.ts": {
         "version": "be27a64e821a3e5af838650e4aa25805c60f057d0c37a9762c378d19d364b3e6",
         "signature": "be27a64e821a3e5af838650e4aa25805c60f057d0c37a9762c378d19d364b3e6"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/serve-static/index.d.ts": {
-        "version": "cdbae5083ef8f786069519405ca1f1e2ce72b9efebdf5e1931584fba747f3bc0",
-        "signature": "cdbae5083ef8f786069519405ca1f1e2ce72b9efebdf5e1931584fba747f3bc0"
+        "version": "b27dd918d8c3f10270cadea529c69e3a9b37ce59db0852945a39068cc5c10fff",
+        "signature": "b27dd918d8c3f10270cadea529c69e3a9b37ce59db0852945a39068cc5c10fff"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/connect/index.d.ts": {
         "version": "c3be42b83b5f57ae2f65280fa395f6d31f61304ac1a29b7b406b6a0e71da8c82",
         "signature": "c3be42b83b5f57ae2f65280fa395f6d31f61304ac1a29b7b406b6a0e71da8c82"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/body-parser/index.d.ts": {
-        "version": "599abfa56230d73afc30a3bde749c2efd90acb58301b446835d5e235b35e2768",
-        "signature": "599abfa56230d73afc30a3bde749c2efd90acb58301b446835d5e235b35e2768"
+        "version": "1b7919dbb6b43ff272f38f6f6522fb9f4e9e854356b2932a36aa4674f4a2fcf2",
+        "signature": "1b7919dbb6b43ff272f38f6f6522fb9f4e9e854356b2932a36aa4674f4a2fcf2"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/express/index.d.ts": {
-        "version": "1f92cdebe2b1e0e6309ccdb6e8700cfd2d3e7131c7842f91b38ed1e4ff2a7090",
-        "signature": "1f92cdebe2b1e0e6309ccdb6e8700cfd2d3e7131c7842f91b38ed1e4ff2a7090"
+        "version": "a6742e25ac12860727c22a379707e050a126c48c4dd98ddd795a3a33dd0a63c7",
+        "signature": "a6742e25ac12860727c22a379707e050a126c48c4dd98ddd795a3a33dd0a63c7"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts": {
         "version": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703",
         "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
-      },
-      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts": {
-        "version": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f",
-        "signature": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/login.ts": {
         "version": "f67347b4a76272067c1a5bbc88e6b7f91b6ac8599d1e27f218ce6b74d611c90c",
@@ -558,23 +562,23 @@
         "signature": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/cookie-parser/index.d.ts": {
-        "version": "8d77ed4e39114c32edc2e35b683b6f54a6b3292ecdf392e4bfc5f726734955d8",
-        "signature": "8d77ed4e39114c32edc2e35b683b6f54a6b3292ecdf392e4bfc5f726734955d8"
+        "version": "a1df8fab03cc0f18714669348226e0edf320cd0ac6771a8c2b23abe97f1867e2",
+        "signature": "a1df8fab03cc0f18714669348226e0edf320cd0ac6771a8c2b23abe97f1867e2"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/common.ts": {
-        "version": "5d585d0692a9736ef9bfcee3260ded1775b22bb2c4337a88ed96c8b863da1c33",
+        "version": "4570e775996ad57b8724ba5955c7403040e5136842a8a0c61607dce3af3f0dec",
         "signature": "f77bbb2c40f4584309482e32ebae570559df503d5b1881c632b74552925ab294"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/debug/index.d.ts": {
-        "version": "3cf5f191d75bbe7c92f921e5ae12004ac672266e2be2ece69f40b1d6b1b678f9",
-        "signature": "3cf5f191d75bbe7c92f921e5ae12004ac672266e2be2ece69f40b1d6b1b678f9"
+        "version": "5e36986c4fc3c242013026c0cffdf95f138c25edfd05e80c23d634e5dca4cfef",
+        "signature": "5e36986c4fc3c242013026c0cffdf95f138c25edfd05e80c23d634e5dca4cfef"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/express-http-proxy/index.d.ts": {
-        "version": "1ec725c03fdc8f75644a2750800ebb481440eb2bce63d8309e608bf5b41a726f",
-        "signature": "1ec725c03fdc8f75644a2750800ebb481440eb2bce63d8309e608bf5b41a726f"
+        "version": "d14a2eadddae143f6717012a08795fb11bdaa50c10f7f5560581af29bbc398aa",
+        "signature": "d14a2eadddae143f6717012a08795fb11bdaa50c10f7f5560581af29bbc398aa"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/proxy-server.ts": {
-        "version": "e860b407304558322f21fd261fd9ccce867727622d36cae4cb343c859c161099",
+        "version": "686234bebb8d38a07da2ab48d3f43cda1a9ef05f4f287be79812ff86b87cb9f4",
         "signature": "12ef76a2a9b3421d58d5011ee561dd11978fbdb8c4764e44831602ccea45391b"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/proxy-capture-session.ts": {
@@ -586,24 +590,24 @@
         "signature": "8323e3f5b91261ed250bd7c6b7aba2aa10f8e1c2ef348297c1f7752a403abebd"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/command-session.ts": {
-        "version": "6f2a3f5f239780b75494b32b483412ac627aa2edb0d002228477321f01a9b74e",
+        "version": "b308416840e6a4feab8ba04c7a2dbe1c8f48ac87cb879e121afaa8df65f3939e",
         "signature": "a07ac5407b236f3f7e7aa48129835cdd30e09c6ef8f473bca50337334ed14391"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/start.ts": {
-        "version": "cf7e009731e2773e4326536abc26c695980e7778e8013c8007c1046a0c92b919",
-        "signature": "41ac1709fd5bd22c5fb0c011e89301ce7fab4c9926a4f865bd0be7137d65368a"
+        "version": "69719fee9ce7b5e93e806b4a387226f463aa4a479ff95da2dfbe20bd7510dcfe",
+        "signature": "0d5346903a517a8c1ae5fb5a3221333211a785ddd219df8919f09b12dc16d176"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/spec.ts": {
-        "version": "5473dde8a724b441e0a554d2975b4cd0ef7fa4ea9bdb93ce096a3ab8c0ec29eb",
-        "signature": "4e05f3d39146203c2ccc1cdbe24656b811252dddd69272a936c466646aa5d203"
+        "version": "eef301c182273b6c3fc4c4e8356e857855a6b428de9c207064a4ed46559141c8",
+        "signature": "23c4ac0716a26e2d6237e9809623099970d82e0b30123ceb9421068d891748c5"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/archy/index.d.ts": {
         "version": "e625c82243c9406552768e9e3cff3f74745945bbef7e65d60c8904f6f544cf57",
         "signature": "e625c82243c9406552768e9e3cff3f74745945bbef7e65d60c8904f6f544cf57"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/chai/index.d.ts": {
-        "version": "b26b3829d52ebdc82a2b9f4fa8051890dc953003382b4411fe4ec6f05351dcf4",
-        "signature": "b26b3829d52ebdc82a2b9f4fa8051890dc953003382b4411fe4ec6f05351dcf4"
+        "version": "c465afa89ac28f74167a2ee7c3c6eb8dd1245c2b3bdaa4704d58d35b932de4b7",
+        "signature": "c465afa89ac28f74167a2ee7c3c6eb8dd1245c2b3bdaa4704d58d35b932de4b7"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/minimatch/index.d.ts": {
         "version": "1d1e6bd176eee5970968423d7e215bfd66828b6db8d54d17afec05a831322633",
@@ -626,8 +630,8 @@
         "signature": "4025cf62742c5bb3d383c8a62342481622c87e3397ea5e7b7baab18b9efd5798"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/lodash/ts3.1/common/array.d.ts": {
-        "version": "80bcf7af2e82d675144a547960b4fbc72d145af19a961fed3573323703d7d2ec",
-        "signature": "80bcf7af2e82d675144a547960b4fbc72d145af19a961fed3573323703d7d2ec"
+        "version": "73fb996a752650f39a705b3def90b6b999b630007f8680a5569c10e6b8aefe66",
+        "signature": "73fb996a752650f39a705b3def90b6b999b630007f8680a5569c10e6b8aefe66"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/lodash/ts3.1/common/collection.d.ts": {
         "version": "0c75b204aed9cf6ff1c7b4bed87a3ece0d9d6fc857a6350c0c95ed0c38c814e8",
@@ -694,8 +698,8 @@
         "signature": "599c67cf56a35a8a7bee5bcd877dece4cb71553efb763ebf1050c6987acfaefc"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/react/index.d.ts": {
-        "version": "c491e7f2d9261f84d648ef1096d577e4317ac3dff5df49acc055cd9196de3a88",
-        "signature": "c491e7f2d9261f84d648ef1096d577e4317ac3dff5df49acc055cd9196de3a88"
+        "version": "3b62b2451f021c4512691c57658e78cc72cf47bee60fddb41b17b5a492284bc5",
+        "signature": "3b62b2451f021c4512691c57658e78cc72cf47bee60fddb41b17b5a492284bc5"
       },
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/sinon/ts3.1/index.d.ts": {
         "version": "9e3da7edaee190a056237f7ec5104b021f3423df51daa00cd255200b0f3ac4d5",
@@ -1373,11 +1377,29 @@
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/generate.ts": [
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/fs-extra/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/clipboardy/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/path.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/cli-ux/lib/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/paths.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/persistutils.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/js-yaml/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/analytics.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts": [
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/init.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/fs-extra/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/clipboardy/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/path.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/cli-ux/lib/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/paths.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/persistutils.ts",
@@ -1431,10 +1453,6 @@
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/child_process.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/index.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -1517,15 +1535,16 @@
       ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/start.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/cli-ux/lib/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/init.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/proxy-capture-session.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/command-session.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/fs-extra/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/path.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/get-port/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/paths.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/analytics.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/js-yaml/index.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/common.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -1533,6 +1552,7 @@
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/fs-extra/index.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/path.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/credentials.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/paths.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/persistutils.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/express/index.d.ts",
@@ -1956,15 +1976,21 @@
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/spec.ts": [
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/init.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts"
       ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/start.ts": [
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/parser/lib/flags.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/init.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/common.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/proxy-capture-session.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts"
       ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/init.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/parser/lib/flags.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts"
+      ],
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/generate.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@oclif/command/lib/index.d.ts"
       ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/globals.d.ts": [
@@ -2590,15 +2616,15 @@
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts": [
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
-        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/mime/index.d.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/range-parser/index.d.ts": [
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
+        "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts": [
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/util.d.ts",
         "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -2968,6 +2994,8 @@
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/keytar/keytar.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/credentials.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/lib/analytics.ts",
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/generate.ts",
+      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/init.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/range-parser/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/express-serve-static-core/index.d.ts",
@@ -2977,7 +3005,6 @@
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/body-parser/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/@types/express/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/open/index.d.ts",
-      "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/colors/index.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/src/commands/login.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/type-fest/source/package-json.d.ts",
       "/users/aidancunniffe/developer/seamless/seamless/api-cli/node_modules/type-fest/index.d.ts",

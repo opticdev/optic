@@ -6,6 +6,7 @@ import * as niceTry from 'nice-try'
 import * as path from 'path'
 // @ts-ignore
 import cli from 'cli-ux'
+// @ts-ignore
 import * as fetch from 'node-fetch'
 import { getPaths } from '../Paths'
 import { prepareEvents } from '../PersistUtils'

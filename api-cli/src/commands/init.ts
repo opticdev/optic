@@ -7,6 +7,7 @@ import * as path from 'path'
 import * as colors from 'colors'
 // @ts-ignore
 import cli from 'cli-ux'
+// @ts-ignore
 import * as fetch from 'node-fetch'
 import { getPaths } from '../Paths'
 import { prepareEvents } from '../PersistUtils'

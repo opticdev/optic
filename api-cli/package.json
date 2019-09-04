@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "Make APIs Developer Friendly",
-  "version": "5.0.0-alpha.1",
+  "version": "5.0.0",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -31,9 +31,11 @@
     "jwt-decode": "^2.2.0",
     "keytar": "^5.0.0-beta.0",
     "mixpanel": "^0.10.2",
+    "mustache": "^3.0.3",
     "nice-try": "^2.0.0",
+    "node-fetch": "^2.6.0",
     "open": "^6.3.0",
-    "optic-domain": "file:../domain",
+    "optic-domain": "../domain/",
     "tree-kill": "^1.2.1",
     "tslib": "^1.9.3"
   },
