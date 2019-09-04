@@ -22,11 +22,12 @@ import Fade from '@material-ui/core/Fade';
 import { everyScala, lengthScala, mapScala, ShapesCommands } from '../../engine';
 import Divider from '@material-ui/core/Divider';
 import ReactJson from 'react-json-view';
+import {AddedGreen} from '../../contexts/ColorContext';
 
 
 const styles = theme => ({
   header: {
-    backgroundColor: '#3ec580',
+    backgroundColor: AddedGreen,
     color: 'white',
     padding: 2,
     paddingLeft: 12,

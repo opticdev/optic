@@ -132,7 +132,8 @@ object ShapeDiffer {
           val extraKeys = actualKeys -- expectedKeys
           println("extraKeys", extraKeys)
           if (extraKeys.nonEmpty) {
-            return ExtraObjectKey(baseObject.shapeId, extraKeys.head, baseObject, actualShape)
+            val actualFieldValue = o(extraKeys.head).get
+            return ExtraObjectKey(baseObject.shapeId, extraKeys.head, baseObject, actualFieldValue)
           }
 
           NoDiff()

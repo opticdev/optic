@@ -5,7 +5,7 @@ import com.seamless.contexts.requests.{Commands, RequestsServiceHelper}
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldId, FieldShapeFromShape, SetFieldShape}
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
-import com.seamless.diff.initial.{NameShapeRequest, ShapeBuilder}
+import com.seamless.diff.initial.{NameShapeRequest, ShapeBuilder, ShapeResolver}
 import io.circe.Json
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -91,6 +91,12 @@ object Interpretations {
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
 
+    val name = shapesState.concepts.collectFirst {
+      case (id, concept) if id == inlineShapeId => concept.descriptor.name
+    }
+
+    val desc = if (name.isDefined) s"Optic observed a request body of type <b>${name.get}</b>" else "Optic observed a request body."
+
     val commands = shape.commands ++ Seq(
       AddShape(wrapperId, inlineShapeId, ""),
       SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, wrapperId, isRemoved = false))
@@ -98,22 +104,35 @@ object Interpretations {
 
     DiffInterpretation(
       s"Request Body Observed",
-      s"Optic observed a request body.",
+      desc,
       commands,
-      affectedIds = Seq(inlineShapeId),
+      affectedIds = Seq(wrapperId),
       shape.nameRequests,
       example = actual
     )
   }
 
-  def AddFieldToRequestShape(key: String, parentShapeId: String, requestId: RequestId) = {
+  def AddFieldToRequestShape(key: String, raw: Json, parentShapeId: String, requestId: RequestId)(implicit shapesState: ShapesState) = {
     val fieldId = ShapesHelper.newFieldId()
-    val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, "$string")))
+
+    val shapeId = ShapeResolver.resolveJsonToShapeId(raw).getOrElse("$any")
+
+    val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, shapeId)))
+
+    val parentConceptName = shapesState.concepts.collectFirst {
+      case (id, concept) if id == parentShapeId => concept.descriptor.name
+    }
+
+    val desc = if (parentConceptName.isDefined) {
+      s"A new field '${key}' was observed in <b>${parentConceptName.get}</b>",
+    } else {
+      s"A new field '${key}' was observed in the request body.",
+    }
 
     DiffInterpretation(
       s"A Field was Added",
       //@todo change copy based on if it's a concept or not
-      s"A new field '${key}' was observed in the request.",
+      desc,
       commands,
       affectedIds = Seq(fieldId)
     )
@@ -138,6 +157,12 @@ object Interpretations {
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
 
+    val name = shapesState.concepts.collectFirst {
+      case (id, concept) if id == inlineShapeId => concept.descriptor.name
+    }
+
+    val desc = if (name.isDefined) s"Optic observed a ${responseStatusCode} response body of type <b>${name.get}</b>." else s"Optic observed a ${responseStatusCode} response body."
+
     val commands = shape.commands ++ Seq(
       AddShape(wrapperId, inlineShapeId, ""),
       SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, wrapperId, isRemoved = false))
@@ -145,22 +170,37 @@ object Interpretations {
 
     DiffInterpretation(
       s"Response Body Observed",
-      s"Optic observed a response body for the ${responseStatusCode} response.",
+      desc,
       commands,
-      affectedIds = Seq(inlineShapeId),
+      affectedIds = Seq(wrapperId),
       shape.nameRequests,
       example = actual
     )
   }
 
-  def AddFieldToResponseShape(key: String, parentShapeId: String, responseStatusCode: Int, responseId: String) = {
+  def AddFieldToResponseShape(key: String, raw: Json, parentShapeId: String, responseStatusCode: Int, responseId: String)(implicit shapesState: ShapesState) = {
     val fieldId = ShapesHelper.newFieldId()
-    val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, "$string")))
+
+    println("RESOLVING "+ raw.noSpaces)
+    val shapeId = ShapeResolver.resolveJsonToShapeId(raw).getOrElse("$any")
+    println("RESULT "+ shapeId)
+
+    val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, shapeId)))
+
+    val parentConceptName = shapesState.concepts.collectFirst {
+      case (id, concept) if id == parentShapeId => concept.descriptor.name
+    }
+
+    val desc = if (parentConceptName.isDefined) {
+      s"A new field '${key}' was observed in <b>${parentConceptName.get}</b>",
+    } else {
+      s"A new field '${key}' was observed in the ${responseStatusCode} response body.",
+    }
+
 
     DiffInterpretation(
       s"A Field was Added",
-      //@todo change copy based on if it's a concept or not
-      s"A new field '${key}' was observed in the ${responseStatusCode} response.",
+      desc,
       commands,
       affectedIds = Seq(fieldId)
     )
@@ -176,7 +216,7 @@ object Interpretations {
     DiffInterpretation(
       s"A field's type was changed",
       //@todo change copy based on if it's a concept or not
-      s"The type of '${key}' was changed in the ${responseStatusCode} response.",
+      s"The type of '${key}' was changed.",
       commands,
       affectedIds = Seq(fieldId)
     )

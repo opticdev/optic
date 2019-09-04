@@ -26,7 +26,7 @@ class DiffToCommands(_shapesState: ShapesState) {
           case sd: ShapeDiffer.UnsetShape => Interpretations.AddInitialRequestBodyShape(sd.actual, d.requestId, d.contentType)
           case sd: ShapeDiffer.ShapeMismatch => Interpretations.RequireManualIntervention(s"Make sure the shapes match", Seq(d.requestId))
           case sd: ShapeDiffer.MissingObjectKey => Interpretations.RequireManualIntervention(s"Make sure you intended for the key ${sd.key} to be missing in the request", Seq(d.requestId))
-          case sd: ShapeDiffer.ExtraObjectKey => Interpretations.AddFieldToRequestShape(sd.key, sd.parentObjectShapeId, d.requestId)
+          case sd: ShapeDiffer.ExtraObjectKey => Interpretations.AddFieldToRequestShape(sd.key, sd.actual, sd.parentObjectShapeId, d.requestId)
           case sd: ShapeDiffer.KeyShapeMismatch => {
             val newShapeId = ShapeResolver.resolveJsonToShapeId(sd.actual).getOrElse(AnyKind.baseShapeId)
             Interpretations.ChangeFieldInRequestShape(sd.key, sd.fieldId, newShapeId, d.requestId)
@@ -44,7 +44,7 @@ class DiffToCommands(_shapesState: ShapesState) {
           case sd: ShapeDiffer.ShapeMismatch => Interpretations.RequireManualIntervention(s"Make sure the shapes match", Seq(d.responseId))
           case sd: ShapeDiffer.MissingObjectKey => Interpretations.RequireManualIntervention(s"Make sure you intended for the key ${sd.key} to be missing in the response", Seq(d.responseId, sd.parentObjectShapeId))
           case sd: ShapeDiffer.ExtraObjectKey =>
-            Interpretations.AddFieldToResponseShape(sd.key, sd.parentObjectShapeId, d.responseStatusCode, d.responseId)
+            Interpretations.AddFieldToResponseShape(sd.key, sd.actual, sd.parentObjectShapeId, d.responseStatusCode, d.responseId)
           case sd: ShapeDiffer.KeyShapeMismatch => {
             val newShapeId = ShapeResolver.resolveJsonToShapeId(sd.actual).getOrElse(AnyKind.baseShapeId)
             Interpretations.ChangeFieldInResponseShape(sd.key, sd.fieldId, newShapeId, d.responseStatusCode)
