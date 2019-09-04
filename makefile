@@ -6,7 +6,7 @@ domain:
 
 domain-js:
 	@echo "building domain..."
-	cd ./domain && sh package-optimized.sh
+	cd ./domain && npm run build
 
 .PHONY: domain-js
 

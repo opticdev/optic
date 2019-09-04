@@ -442,7 +442,7 @@ class PathPage extends React.Component {
                             placeholder="Resource Name"
                         />
 
-                        <Typography variant="h6" color="primary" style={{ marginBottom: 11 }}>Path</Typography>
+                        <Typography variant="h6" color="primary" style={{ marginBottom: 11, marginTop: 6 }}>Path</Typography>
                         <PathTrail pathTrail={pathTrailWithNames} />
 
                         {pathParameters.length === 0 ? null : (

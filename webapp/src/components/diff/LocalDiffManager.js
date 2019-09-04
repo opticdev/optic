@@ -15,8 +15,7 @@ import {primary} from '../../theme';
 import Card from '@material-ui/core/Card';
 import {CardActions, CardContent, CardHeader} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import groupBy from 'lodash.groupby';
-import {SemanticApplyEffect} from '../../engine/index';
+import {commandsFromJson, NaiveSummary} from '../../engine';
 
 const styles = (theme => ({
   root: {
@@ -85,9 +84,10 @@ class LocalDiffManager extends React.Component {
           })(diffStateProjections);
 
           const progress = (diffState.acceptedInterpretations.length / diffSessionManager.session.samples.length) * 100;
-          console.log({currentInteractionIndex, sample, pathId});
           if (!sample) {
-            const changes = groupBy(semanticDiff, i => i);
+            const c = diffSessionManager.diffState.acceptedInterpretations.flatMap(i => i)
+            const summary = NaiveSummary.fromCommands(commandsFromJson(c))
+
             return (
               <DiffPage progress={100}>
                 <Card>
@@ -98,14 +98,11 @@ class LocalDiffManager extends React.Component {
                   }/>
                   <CardContent style={{marginTop: -14, paddingTop: 0}}>
                     <ul style={{fontFamily: 'Ubuntu', fontSize: 13, fontWeight: 11}}>
-                      {changes.PathAdded && <li>+{changes.PathAdded.length} Path(s) Added</li>}
-                      {changes.ConceptAdded && <li>+{changes.ConceptAdded.length} Concept(s) Added</li>}
-                      {changes.OperationAdded && <li>+{changes.OperationAdded.length} Operation(s) Added</li>}
-                      {changes.OperationUpdated && <li>+{changes.OperationUpdated.length} Operation(s) Updated</li>}
-                      {changes.ResponseAdded && <li>+{changes.ResponseAdded.length} Response(s) Added</li>}
-                      {changes.ResponseUpdated && <li>+{changes.ResponseUpdated.length} Response(s) Updated</li>}
+                      {summary['New Concepts'] && <li>+{summary['New Concepts']} Concept(s) Added</li>}
+                      {summary['New Operations'] && <li>+{summary['New Operations']} Operation(s) Added</li>}
+                      {summary['New Paths'] && <li>+{summary['New Paths']} Path(s) Added</li>}
+                      {summary['New Responses'] && <li>+{summary['New Responses']} Response(s) Added</li>}
                     </ul>
-                    {/*{semanticDiff.toString()}*/}
                   </CardContent>
                   <CardActions>
                     <div style={{textAlign: 'right', width: '100%'}}>
@@ -201,7 +198,6 @@ class LocalDiffManager extends React.Component {
                 <UnrecognizedPathWizard
                   onSubmit={({commands}) => {
                     handleCommands(...commands);
-                    logSemanticDiff(SemanticApplyEffect.seqForPathAdded);
                   }}
                   url={sample.request.url}
                 />

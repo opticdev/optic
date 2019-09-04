@@ -163,7 +163,7 @@ class BodyEditor extends React.Component {
                 <LayoutWrapper>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <Typography variant="caption" style={{ fontSize: 13, left: 0 }}>Content Type:</Typography>
-                        <TextField inputProps={{ style: { fontSize: 14 } }} value={contentType} onChange={this.changeContentType} />
+                        <TextField inputProps={{ style: { fontSize: 14, marginLeft: 6, width: 240 } }} value={contentType} onChange={this.changeContentType} />
                     </div>
                     <BodyViewer shapeId={shapeId} />
                 </LayoutWrapper>

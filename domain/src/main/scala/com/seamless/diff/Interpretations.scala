@@ -16,7 +16,6 @@ case class DiffInterpretation(title: String,
                               commands: Seq[RfcCommand],
                               affectedIds: Seq[String],
                               nameRequests: Seq[NameShapeRequest] = Seq.empty,
-                              semanticEffect: Seq[SemanticApplyEffect] = Seq.empty,
                               example: Json = null) {
   def exampleJs = {
     import io.circe.scalajs.convertJsonToJs
@@ -35,7 +34,6 @@ object Interpretations {
       "New Operation",
       s"Optic observed a ${method.toUpperCase} operation for this path",
       commands,
-      semanticEffect = Seq(OperationAdded),
       affectedIds = Seq(id)
     )
   }
@@ -49,7 +47,6 @@ object Interpretations {
       s"New Response",
       s"A ${statusCode} response was observed.",
       commands,
-      semanticEffect = Seq(ResponseAdded, OperationUpdated),
       affectedIds = Seq(id)
     )
   }
@@ -72,7 +69,6 @@ object Interpretations {
       s"Request Content-Type Changed",
       s"The content type of the request was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
       commands,
-      semanticEffect = Seq(RequestUpdated, OperationUpdated),
       affectedIds = Seq(requestId, requestId + ".content_type")
     )
   }
@@ -86,7 +82,6 @@ object Interpretations {
       s"Response Content-Type Changed",
       s"The content type of the ${responseStatusCode} response was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
       commands,
-      semanticEffect = Seq(ResponseUpdated, OperationUpdated),
       affectedIds = Seq(responseId, responseId + ".content_type")
     )
   }
@@ -101,19 +96,12 @@ object Interpretations {
       SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, wrapperId, isRemoved = false))
     )
 
-    val effects = if (shape.nameRequests.exists(_.required)) {
-      Seq(ConceptAdded, RequestUpdated, OperationUpdated)
-    } else {
-      Seq(RequestUpdated, OperationUpdated)
-    }
-
     DiffInterpretation(
       s"Request Body Observed",
       s"Optic observed a request body.",
       commands,
       affectedIds = Seq(inlineShapeId),
       shape.nameRequests,
-      semanticEffect = effects,
       example = actual
     )
   }
@@ -127,7 +115,6 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
       s"A new field '${key}' was observed in the request.",
       commands,
-      semanticEffect = Seq(RequestUpdated, OperationUpdated),
       affectedIds = Seq(fieldId)
     )
   }
@@ -142,7 +129,6 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
       s"The type of '${key}' was changed in the request.",
       commands,
-      semanticEffect = Seq(ResponseUpdated, OperationUpdated),
       affectedIds = Seq(fieldId)
     )
   }
@@ -157,19 +143,12 @@ object Interpretations {
       SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, wrapperId, isRemoved = false))
     )
 
-    val effects = if (shape.nameRequests.exists(_.required)) {
-      Seq(ConceptAdded, ResponseUpdated, OperationUpdated)
-    } else {
-      Seq(ResponseUpdated, OperationUpdated)
-    }
-
     DiffInterpretation(
       s"Response Body Observed",
       s"Optic observed a response body for the ${responseStatusCode} response.",
       commands,
       affectedIds = Seq(inlineShapeId),
       shape.nameRequests,
-      semanticEffect = effects,
       example = actual
     )
   }
@@ -183,7 +162,6 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
       s"A new field '${key}' was observed in the ${responseStatusCode} response.",
       commands,
-      semanticEffect = Seq(ResponseUpdated, OperationUpdated),
       affectedIds = Seq(fieldId)
     )
 
@@ -200,27 +178,9 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
       s"The type of '${key}' was changed in the ${responseStatusCode} response.",
       commands,
-      semanticEffect = Seq(ResponseUpdated, OperationUpdated),
       affectedIds = Seq(fieldId)
     )
 
   }
 
-}
-
-sealed trait SemanticApplyEffect {
-  override def toString: String = this.getClass.getSimpleName
-}
-case object ConceptAdded extends SemanticApplyEffect
-case object PathAdded extends SemanticApplyEffect
-case object OperationAdded extends SemanticApplyEffect
-case object OperationUpdated extends SemanticApplyEffect
-case object ResponseAdded extends SemanticApplyEffect
-case object ResponseUpdated extends SemanticApplyEffect
-case object RequestUpdated extends SemanticApplyEffect
-
-@JSExport
-@JSExportAll
-object SemanticApplyEffect {
-  def seqForPathAdded = Seq(PathAdded)
 }

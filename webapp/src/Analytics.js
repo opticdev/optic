@@ -21,7 +21,6 @@ if (window.location.hostname === 'localhost') {
   }).then((res) => res.json())
     .then(({distinctId}) => {
       mixpanel.identify(distinctId)
-      debugger
     });
 }
 
