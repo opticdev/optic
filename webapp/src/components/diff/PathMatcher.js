@@ -3,7 +3,7 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { withEditorContext } from '../../contexts/EditorContext';
 import PathInput from '../path-editor/PathInput';
 import pathToRegexp from 'path-to-regexp';
-import { pathComponentsToString } from './UnrecognizedPathWizard';
+import { pathComponentsToString } from './UnmatchedUrlWizard';
 import Typography from '@material-ui/core/Typography'
 
 const styles = theme => ({
@@ -47,7 +47,7 @@ class PathMatcher extends React.Component {
 
         return (
             <div>
-                <Typography variant="overline" style={{ paddingBottom: 0 }}>Path:</Typography>
+                <Typography variant="overline" style={{ paddingBottom: 0 }}>URL:</Typography>
                 <div className={classes.pathWrapper}><span
                     style={{ color: '#277a4e', fontWeight: 800 }}>{matched}</span><span>{remaining}</span></div>
 

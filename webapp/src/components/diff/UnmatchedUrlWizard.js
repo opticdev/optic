@@ -41,7 +41,7 @@ const styles = theme => ({
         paddingTop: 22,
     }
 });
-class UnrecognizedPathWizard extends React.Component {
+class UnmatchedUrlWizard extends React.Component {
     state = {
         pathExpression: ''
     }
@@ -51,7 +51,7 @@ class UnrecognizedPathWizard extends React.Component {
         })
     }
     handleIgnore = () => {
-        //@TODO: mark this interaction as ignored
+        this.props.onIgnore()
     }
     handleSubmit = () => {
         const { cachedQueryResults } = this.props;
@@ -82,8 +82,8 @@ class UnrecognizedPathWizard extends React.Component {
         return (
             <Sheet>
                 <div className={classes.root}>
-                    <Typography variant="h5">Unrecognized Path Observed</Typography>
-                    <Typography variant="subtitle2" style={{ paddingTop: 11, paddingBottom: 11 }}>Optic observed a new path. Before Optic can document the requests you need to add the path to your API specification.</Typography>
+                    <Typography variant="h5">Unrecognized URL Observed</Typography>
+                    <Typography variant="subtitle2" style={{ paddingTop: 11, paddingBottom: 11 }}>Optic observed a new URL. Before Optic can document the requests you need to add a matching path to your API specification.</Typography>
 
                     <PathMatcher
                         initialPathString={pathExpression}
@@ -106,4 +106,4 @@ class UnrecognizedPathWizard extends React.Component {
     }
 }
 
-export default withEditorContext(withRfcContext(withStyles(styles)(UnrecognizedPathWizard)))
+export default withEditorContext(withRfcContext(withStyles(styles)(UnmatchedUrlWizard)))

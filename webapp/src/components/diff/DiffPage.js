@@ -40,13 +40,18 @@ class DiffPage extends React.Component {
     if (nextProps.path !== this.props.path) {
       setTimeout(() => {
         this.scrollContainerRef.current.scrollTo(0, 0)
-        debugger
       })
     }
   }
 
   render() {
-    const { classes, children, collapseLeftMargin, interpretation, accept, readyToFinish, finish, progress } = this.props
+    const { 
+      classes, children, 
+      collapseLeftMargin, 
+      interpretation, accept, ignore, 
+      readyToFinish, finish, 
+      progress 
+    } = this.props
 
     const card = (() => {
       if (readyToFinish) {
@@ -54,7 +59,7 @@ class DiffPage extends React.Component {
       }
 
       if (interpretation) {
-        return <DiffCard interpretation={interpretation} accept={accept} />
+        return <DiffCard interpretation={interpretation} accept={accept} ignore={ignore} />
       }
     })()
 

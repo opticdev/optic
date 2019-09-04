@@ -98,7 +98,7 @@ class DiffCard extends React.Component {
   };
 
   render() {
-    const { classes, interpretation } = this.props;
+    const { classes, interpretation, ignore } = this.props;
     const { title, description, nameRequests, exampleJs: bodyExample } = interpretation;
 
     const canApprove = everyScala(nameRequests)(({ shapeId, required }) => {
@@ -151,7 +151,7 @@ class DiffCard extends React.Component {
             <Button size="small" color="primary" onClick={this.acceptWithNames} disabled={!canApprove}>
               Approve
             </Button>
-            <Button size="small" color="secondary">
+            <Button size="small" color="secondary" onClick={ignore}>
               Ignore
             </Button>
           </CardActions>
