@@ -1,0 +1,11 @@
+{
+  "name": "Ra",
+  "description": "Documents API interactions as you browse",
+  "version": "0.1",
+  "devtools_page": "devtools.html",
+  "permissions": [
+    "downloads"
+  ],
+  "manifest_version": 2
+}
+
