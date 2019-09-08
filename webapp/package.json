@@ -45,7 +45,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.groupby": "^4.6.0",
     "mini-css-extract-plugin": "0.5.0",
-    "mixpanel-browser": "^2.29.0",
+    "mixpanel-browser": "2.15.0",
     "nice-try": "^2.0.0",
     "notistack": "^0.8.6",
     "optic-domain": "../domain/",
