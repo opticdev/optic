@@ -7,9 +7,6 @@ domain:
 domain-js:
 	@echo "building domain..."
 	cd ./domain && npm run build
-	cd ./domain && npm pack
-	cd ./domain && cp -R optic-domain-1.0.0-snapshot.tgz ../api-cli/resources/
-
 .PHONY: domain-js
 
 editor-local:
@@ -37,7 +34,10 @@ webapp:
 all:
 	@echo "building webapp"
 	make domain
+	make domain-js
 	make oas
 	make webapp
+	make editor-local
+
 
 .PHONY: all

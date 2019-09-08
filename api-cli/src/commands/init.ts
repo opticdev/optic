@@ -12,7 +12,7 @@ import * as fetch from 'node-fetch'
 import {getPaths} from '../Paths'
 import {prepareEvents} from '../PersistUtils'
 import * as yaml from 'js-yaml'
-import analytics from '../lib/analytics'
+import analytics, {trackSlack} from '../lib/analytics'
 
 export interface IApiCliProxyConfig {
   target: string
@@ -44,8 +44,10 @@ export default class Init extends Command {
     const {flags} = this.parse(Init)
     if (flags.paste) {
       analytics.track('init from web')
+      trackSlack('init from web')
       await this.webImport()
     } else if (flags.import) {
+      trackSlack('init from oas')
       analytics.track('init from local oas')
       await this.importOas(flags.import)
     } else {
@@ -75,6 +77,8 @@ export default class Init extends Command {
     this.log(`Make your API start on the port Optic provides as an environment variable: \n${colors.bgRed(colors.black(port))} -> ${colors.bgGreen(colors.black('process.env.OPTIC_API_PORT'))}`)
 
     this.log(colors.yellow('\nNeed help? \n  Visit https://dashboard.useoptic.com for\n   - Framework specific code examples\n   - Chat with Optic\'s creators\n  OR You can schedule a free on-boarding session here https://calendly.com/optic-onboarding/30-min-session'))
+
+    trackSlack('init', {name, port, command})
 
     await cli.wait(1000)
     await cli.anykey('Press any key to continue')

@@ -2,6 +2,7 @@ import * as Mixpanel from 'mixpanel'
 //@ts-ignore
 import {hri} from 'human-readable-ids'
 import {getUser} from './credentials'
+import * as fetch from 'node-fetch'
 
 interface IAnalyticsProperties {
   [key: string]: any
@@ -38,6 +39,14 @@ class MixpanelAnalytics implements IAnalytics {
     this.client.track(_event, {..._properties, distinct_id: this.distinct_id})
     //console.log(_event, {..._properties, distinct_id: this.distinct_id})
   }
+}
+
+export function trackSlack(event: string, data: any = {}) {
+  fetch('https://ayiz1s0f8f.execute-api.us-east-2.amazonaws.com/production/log/slack', {
+    method: 'POST',
+    headers: {},
+    body: JSON.stringify({text: `${event} ${JSON.stringify(data)}`, distinct_id: analytics.distinct_id})
+  })
 }
 
 const providers: { [key: string]: any } = {

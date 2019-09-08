@@ -7,6 +7,7 @@ import * as open from 'open'
 // @ts-ignore
 import * as cors from 'cors'
 import * as colors from 'colors'
+import {trackSlack} from '../lib/analytics'
 import {getUser, saveUser} from '../lib/credentials'
 
 export default class Login extends Command {
@@ -22,6 +23,9 @@ export default class Login extends Command {
     const {flags} = this.parse(Login)
     const loginFlow = flags['login-flow']
 
+    if (loginFlow) {
+      trackSlack('first time install')
+    }
     if (loginFlow && await getUser()) {
       return //kill it if we're already authenticated and in the login flow
     }
@@ -31,6 +35,7 @@ export default class Login extends Command {
     const token = await pending.tokenPromise
     await saveUser(token)
     cli.action.stop(colors.green('CLI Authenticated'))
+    trackSlack('user authenticated')
     tokenService.stop()
     process.exit(0)
   }

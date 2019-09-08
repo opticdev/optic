@@ -25,6 +25,7 @@
     "find-up": "^4.1.0",
     "fs-extra": "^7.0.1",
     "get-port": "^5.0.0",
+    "globby": "^8.0.2",
     "human-readable-ids": "^1.0.4",
     "js-yaml": "^3.13.1",
     "json-stable-stringify": "^1.0.1",
@@ -35,7 +36,6 @@
     "nice-try": "^2.0.0",
     "node-fetch": "^2.6.0",
     "open": "^6.3.0",
-    "globby": "^8.0.2",
     "tree-kill": "^1.2.1",
     "tslib": "^1.9.3"
   },
