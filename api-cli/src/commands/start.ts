@@ -1,23 +1,23 @@
-import { Command, flags } from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 import {fromOptic} from '../lib/log-helper'
-import Init, { IApiCliConfig } from './init';
-import { ProxyCaptureSession, ICaptureSessionResult } from '../lib/proxy-capture-session';
-import { CommandSession } from '../lib/command-session';
+import Init, {IApiCliConfig} from './init'
+import {ProxyCaptureSession, ICaptureSessionResult} from '../lib/proxy-capture-session'
+import {CommandSession} from '../lib/command-session'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as getPort from 'get-port'
-import { getPaths } from '../Paths';
+import {getPaths} from '../Paths'
 import analytics from '../lib/analytics'
 // @ts-ignore
 import * as Mustache from 'mustache'
 import * as yaml from 'js-yaml'
 // @ts-ignore
-import * as opticEngine from 'optic-domain'
-import { IApiInteraction } from '../lib/common';
+import * as opticEngine from '../../provided/domain.js'
+import {IApiInteraction} from '../lib/common'
 import * as colors from 'colors'
 
 export async function readApiConfig(): Promise<IApiCliConfig> {
-  const { configPath } = await getPaths()
+  const {configPath} = await getPaths()
   const rawFile = await fs.readFile(configPath)
   const parsed = yaml.safeLoad(rawFile.toString())
   return parsed
@@ -32,8 +32,10 @@ export async function readApiConfig(): Promise<IApiCliConfig> {
   //   name: 'ddoshi'
   // }
 }
-const { ApiInteraction, ApiRequest, ApiResponse } = opticEngine.com.seamless.diff;
+
+const {ApiInteraction, ApiRequest, ApiResponse} = opticEngine.com.seamless.diff
 const JsonHelper = opticEngine.com.seamless.diff.JsonHelper()
+
 function fromJs(x: any) {
   return JsonHelper.fromString(JSON.stringify(x))
 }
@@ -46,9 +48,11 @@ export function toInteraction(sample: IApiInteraction) {
 }
 
 export async function checkDiffOrUnrecognizedPath(result: ICaptureSessionResult) {
-  const { specStorePath } = await getPaths()
+  const {specStorePath} = await getPaths()
   const specStoreExists = await fs.pathExists(specStorePath)
-  if (!specStoreExists) { return Promise.resolve(false) }
+  if (!specStoreExists) {
+    return Promise.resolve(false)
+  }
   const specAsBuffer = await fs.readFile(specStorePath)
   try {
     const differ = opticEngine.com.seamless.diff.SessionDiffer(specAsBuffer.toString())
@@ -68,14 +72,14 @@ export default class Start extends Command {
   static description = 'start your API and diff its behavior against the spec'
 
   static flags = {
-    'keep-alive': flags.boolean({ description: 'use this when your command terminates before the server terminates' })
+    'keep-alive': flags.boolean({description: 'use this when your command terminates before the server terminates'})
   }
 
   static args = []
 
   async run() {
 
-    let config;
+    let config
     try {
       config = await readApiConfig()
     } catch (e) {
@@ -84,9 +88,9 @@ export default class Start extends Command {
       await Init.run([])
       return
     }
-    analytics.track('api start', { name: config.name })
+    analytics.track('api start', {name: config.name})
     const result = await this.runProxySession(config)
-    analytics.track('api server stopped. ', { name: config.name, sampleCount: result.samples.length })
+    analytics.track('api server stopped. ', {name: config.name, sampleCount: result.samples.length})
 
     await this.flushSession(result)
   }
@@ -103,16 +107,16 @@ export default class Start extends Command {
       this.log('`\n\n' + fromOptic(`New behavior was observed. Run ${colors.bold('api spec')} to review.`))
     }
 
-    const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`;
+    const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`
     const fileName = `${sessionId}.optic_session.json`
-    const { sessionsPath } = await getPaths()
+    const {sessionsPath} = await getPaths()
     const filePath = path.join(sessionsPath, fileName)
     await fs.ensureFile(filePath)
     await fs.writeJSON(filePath, result)
   }
 
   async runProxySession(config: IApiCliConfig): Promise<ICaptureSessionResult> {
-    const { flags } = this.parse(Start)
+    const {flags} = this.parse(Start)
     const proxySession = new ProxyCaptureSession()
     const commandSession = new CommandSession()
 
@@ -148,7 +152,7 @@ export default class Start extends Command {
     }
 
     const commandStoppedPromise = new Promise((resolve) => {
-      const { 'keep-alive': keepAlive } = flags
+      const {'keep-alive': keepAlive} = flags
       if (!keepAlive) {
         commandSession.events.on('stopped', () => resolve())
       }

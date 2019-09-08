@@ -27,8 +27,8 @@ class RequestDifferSpec extends FunSpec {
       val diffToCommands = new DiffToCommands(rfcState.shapesState)
       val diff = RequestDiffer.compare(interaction, rfcState)
       val interpretation = diffToCommands.interpret(diff)
-      println(diff)
-      println(interpretation)
+//      println(diff)
+//      println(interpretation)
       DiffAndInterpretation(diff, interpretation)
     }
 
