@@ -87,7 +87,6 @@
     "build-local": "node scripts/build-local.js",
     "test": "node scripts/test.js",
     "storybook": "start-storybook -p 9009 -s public",
-    "preinstall": "yarn link optic-domain",
     "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {

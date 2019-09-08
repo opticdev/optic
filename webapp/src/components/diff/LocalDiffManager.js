@@ -103,10 +103,10 @@ class LocalDiffManager extends React.Component {
                   }/>
                   <CardContent style={{marginTop: -14, paddingTop: 0}}>
                     <ul style={{fontFamily: 'Ubuntu', fontSize: 13, fontWeight: 11}}>
-                      {summary['New Concepts'] & <li>+{summary['New Concepts']} Concept(s) Added</li>}
-                      {summary['New Operations'] & <li>+{summary['New Operations']} Operation(s) Added</li>}
-                      {summary['New Paths'] & <li>+{summary['New Paths']} Path(s) Added</li>}
-                      {summary['New Responses'] & <li>+{summary['New Responses']} Response(s) Added</li>}
+                      {summary['New Concepts'] ? <li>+{summary['New Concepts']} Concept(s) Added</li> : null}
+                      {summary['New Operations'] ? <li>+{summary['New Operations']} Operation(s) Added</li> : null}
+                      {summary['New Paths'] ? <li>+{summary['New Paths']} Path(s) Added</li> : null}
+                      {summary['New Responses'] ? <li>+{summary['New Responses']} Response(s) Added</li> : null}
                     </ul>
                   </CardContent>
                   <CardActions>

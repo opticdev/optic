@@ -2,6 +2,7 @@ import * as Mixpanel from 'mixpanel'
 //@ts-ignore
 import {hri} from 'human-readable-ids'
 import {getUser} from './credentials'
+//@ts-ignore
 import * as fetch from 'node-fetch'
 
 interface IAnalyticsProperties {
