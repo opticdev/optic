@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "Make APIs Developer Friendly",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -35,7 +35,7 @@
     "nice-try": "^2.0.0",
     "node-fetch": "^2.6.0",
     "open": "^6.3.0",
-    "optic-domain": "./resources/optic-domain-1.0.0-snapshot.tgz",
+    "globby": "^8.0.2",
     "tree-kill": "^1.2.1",
     "tslib": "^1.9.3"
   },
@@ -57,7 +57,6 @@
     "@types/node": "^10.12.26",
     "@types/react": "^16.8.6",
     "chai": "^4.2.0",
-    "globby": "^8.0.2",
     "mocha": "^5.2.0",
     "nyc": "^14.1.1",
     "ts-node": "^8.0.2",
@@ -70,7 +69,8 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json",
     "/resources",
-    "resources/optic-domain-1.0.0-snapshot.tgz"
+    "/provided/domain.js",
+    "/resources/optic-domain"
   ],
   "homepage": "https://github.com/opticdev/optic",
   "keywords": [

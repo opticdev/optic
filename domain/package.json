@@ -1,6 +1,6 @@
 {
-  "name": "optic-domain",
-  "version": "1.0.0-snapshot",
+  "name": "@useoptic/optic-domain",
+  "version": "1.0.0",
   "description": "core functionality for seamless",
   "main": "build/domain.js",
   "scripts": {
