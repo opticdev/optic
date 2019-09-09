@@ -1,19 +1,11 @@
 import React from 'react';
-import {Switch, Route, Link} from 'react-router-dom';
-import PropTypes from 'prop-types';
-import Typography from '@material-ui/core/Typography/index';
-import List from '@material-ui/core/List/index';
-import ListItem from '@material-ui/core/ListItem/index';
-import ListItemText from '@material-ui/core/ListItemText/index';
-import TextField from '@material-ui/core/TextField/index';
-import pathToRegexp from 'path-to-regexp/index';
+import url from 'url';
+import { Switch, Route, Link } from 'react-router-dom';
+
 import Button from '@material-ui/core/Button/index';
 import Paper from '@material-ui/core/Paper/index';
 import Chip from '@material-ui/core/Chip/index';
 import Zip from 'jszip';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import DeleteIcon from '@material-ui/icons/Delete';
 
 export function withChrome(f) {
 	if (global.chrome) {
@@ -40,124 +32,91 @@ function wrapHarEntries(entries) {
 		}
 	};
 }
+function nameAndValueListToObject(nameAndValueList) {
+	return nameAndValueList.reduce((acc, { name, value }) => {
+		acc[name] = value;
+		return acc;
+	}, {});
+}
+
+function decodeRequestBody(harRequest) {
+	const { postData = {} } = harRequest;
+	const { mimeType, text } = postData;
+	if (mimeType === 'application/json' || mimeType === 'text/plain') {
+		try {
+			return JSON.parse(text);
+		} catch {
+			return text;
+		}
+	}
+	return text;
+}
+
+function decodeResponseBody(harResponse) {
+	const { content } = harResponse;
+	const { size, mimeType, text } = content;
+	if (mimeType === 'application/json') {
+		return size === 0 ? null : JSON.parse(text);
+	}
+	return text;
+}
+
+export function toAPIInteractions(entry) {
+	const parsedUrl = url.parse(entry.request.url, true);
+	const cookies = nameAndValueListToObject(entry.request.cookies);
+	return {
+		request: {
+			url: parsedUrl.pathname,
+			method: entry.request.method,
+			headers: nameAndValueListToObject(entry.request.headers),
+			cookies,
+			queryParameters: parsedUrl.query,
+			body: (entry.request.postData) ? decodeRequestBody(entry.request) : null
+		},
+		response: {
+			statusCode: entry.response.status,
+			headers: nameAndValueListToObject(entry.response.headers),
+			body: (entry.response.content) ? decodeResponseBody(entry.response) : null
+		}
+	};
+}
 
 class PathsForHost extends React.Component {
-	state = {
-		path: '',
-		savedPaths: []
-	};
-	handlePathChange = (e) => {
-		const path = e.target.value;
-		this.setState({
-			path,
-		});
-	};
-	addPath = () => {
-		this.setState({
-			savedPaths: [...this.state.savedPaths, this.state.path].sort(),
-			path: ''
-		});
-	};
-
 	downloadStuff = () => {
-		const {groups, match} = this.props;
-		const {hostname} = match.params;
+		const { groups, match } = this.props;
+		const { hostname } = match.params;
+		const entries = groups.get(hostname)
+
 		const harFileName = 'har.json';
-		const harFileContents = JSON.stringify(wrapHarEntries(groups.get(hostname)), null, 2);
-
-		const ymlPaths = ['', ...this.state.savedPaths.map(x => `"${x}"`)].join('\n    - ');
-		const opticYmlContents = `document:
-  id: ${hostname.replace(/[^\w\d-]/g, '-')}
-  version: 0.1.0
-  har: ${harFileName}		
-  paths: ${ymlPaths}
-		`;
-		const opticYmlFileName = 'optic.yml';
-
+		const harFileContents = JSON.stringify(wrapHarEntries(entries), null, 2);
+		const sessionFileName = `${hostname}.optic_session.json`
+		const sessionFileContents = JSON.stringify({
+			session: {},
+			samples: entries.map(x => toAPIInteractions(x))
+		})
 		withChrome((chrome) => {
 			const zip = new Zip();
 			zip.file(harFileName, harFileContents);
-			zip.file(opticYmlFileName, opticYmlContents);
-			zip.generateAsync({type: 'blob'})
+			zip.file(sessionFileName, sessionFileContents);
+			zip.generateAsync({ type: 'blob' })
 				.then(function (blob) {
 					const url = window.URL.createObjectURL(blob);
-					console.log({url});
-					chrome.downloads.download({url, filename: 'optic.zip'});
+					console.log({ url });
+					chrome.downloads.download({ url, filename: `optic_${hostname}.zip` });
 				});
 		});
 	};
 
-	removeSavedPath = (pathname) => () => {
-		this.setState({
-			savedPaths: this.state.savedPaths.filter(x => x !== pathname)
-		});
-	};
-
 	render() {
-		const {match} = this.props;
-		const {path, savedPaths} = this.state;
-		const regex = pathToRegexp(path);
-		console.log({path, regex});
-		const {hostname} = match.params;
+		const { match } = this.props;
+		const { hostname } = match.params;
 		return (
 			<HarContext.Consumer>
-				{({groups}) => {
-					const entriesForHost = groups.get(hostname);
-					const regexes = this.state.savedPaths.map(x => pathToRegexp(x));
-					const urls = [...new Set(entriesForHost.map(x => new URL(x.request.url).pathname))]
-						.filter(path => !regexes.some(regex => regex.test(path)))
-						.sort();
+				{({ groups }) => {
 					return (
-						<div>
-							{urls.length === 0 ? null : (
-								<Paper style={{padding: 10, margin: 10}}>
-									<Typography variant="h4">Unsaved Paths</Typography>
-									<TextField
-										label="path expression" value={path} onChange={this.handlePathChange}
-										fullWidth/>
-									{path !== '' && <Button color="secondary" onClick={this.addPath}>Save</Button>}
-									<Typography variant="subheading">paths matching expression:</Typography>
-									<List>
-										{urls.map(pathname => {
-											const isMatch = regex.test(pathname);
-											return (
-												<ListItem
-													button
-													key={pathname} selected={isMatch}
-													onClick={() => this.setState({path: pathname})}>
-													<ListItemText>{pathname}</ListItemText>
-												</ListItem>
-											);
-										})}
-									</List>
-								</Paper>
-							)}
-							<Paper style={{padding: 10, margin: 10}}>
-								<Typography variant="h4">Saved Paths</Typography>
-								<List>
-									{savedPaths.map((pathname) => {
-										return (
-											<ListItem
-												button
-												key={pathname} onClick={() => this.setState({path: pathname})}>
-												<ListItemText>{pathname}</ListItemText>
-												<ListItemSecondaryAction>
-													<IconButton
-														aria-label="Delete" onClick={this.removeSavedPath(pathname)}>
-														<DeleteIcon/>
-													</IconButton>
-												</ListItemSecondaryAction>
-											</ListItem>
-										);
-									})}
-								</List>
-								{savedPaths.length === 0 ? (
-									<Typography variant="body1">save observed paths above to continue</Typography>
-								) : (
-									<Button color="secondary" onClick={this.downloadStuff}>Download optic.yml</Button>
-								)}
-							</Paper>
-						</div>
+						<Paper style={{ margin: 10, padding: 10 }}>
+							<Button color="secondary" onClick={this.downloadStuff}>Download log for {hostname}</Button>
+						</Paper>
 					);
 				}}
 			</HarContext.Consumer>
@@ -178,11 +137,11 @@ export class HarStore extends React.Component {
 	};
 
 	render() {
-		const {entries} = this.state;
-		const har = {log: {entries}};
+		const { entries } = this.state;
+		const har = { log: { entries } };
 		const groups = groupByDomain(entries);
 		return (
-			<HarContext.Provider value={{har, groups, setEntries: this.setEntries}}>
+			<HarContext.Provider value={{ har, groups, setEntries: this.setEntries }}>
 				{this.props.children}
 			</HarContext.Provider>
 		);
@@ -203,28 +162,28 @@ export const withHar = function (Wrapped) {
 
 class DevtoolsPanel extends React.Component {
 	render() {
-		const {match} = this.props;
+		const { match } = this.props;
 		return (
 			<HarContext.Consumer>
-				{({groups}) => {
+				{({ groups }) => {
 					return (
 						<div>
-							<Paper style={{margin: 10, padding: 10}}>
-								<Link to="/capture">back to capture</Link>
+							<Paper style={{ margin: 10, padding: 10 }}>
+								<Link to="/capture">&larr; back to capture</Link>
 							</Paper>
-							<Paper style={{margin: 10, padding: 10}}>{
+							<Paper style={{ margin: 10, padding: 10 }}>{
 								[...groups.entries()]
 									.map(([key, values]) => {
 										return (
 											<Chip component={Link} to={`${match.url}/${key}`}
-												  label={`${key}: ${values.length}`}/>
+												label={`${key}: ${values.length}`} />
 										);
 									})
 							}
 							</Paper>
 
 							<Switch>
-								<Route path={`${match.path}/:hostname`} component={withHar(PathsForHost)}/>
+								<Route path={`${match.path}/:hostname`} component={withHar(PathsForHost)} />
 							</Switch>
 						</div>
 					);
