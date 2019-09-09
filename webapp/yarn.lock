@@ -7887,10 +7887,10 @@ mixin-object@^2.0.1:
     for-in "^0.1.3"
     is-extendable "^0.1.1"
 
-mixpanel-browser@^2.29.0:
-  version "2.29.1"
-  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.29.1.tgz#0e5bda9d43aab5fb74c3bfc527651c4a90fc675d"
-  integrity sha512-RSBqVBznOkKBz3MkCXRrkTEEXqoNNYAbASpjaCxvhpT5pykWhjh7JY54fAmOvtG9XNL3GHYA6XiB7Yos4ngNYQ==
+mixpanel-browser@2.15.0:
+  version "2.15.0"
+  resolved "https://registry.yarnpkg.com/mixpanel-browser/-/mixpanel-browser-2.15.0.tgz#371946d3d9930f04a8358c70c5922ea7f3ec19aa"
+  integrity sha512-cZnnsSVWbYAJPig8cOboDyV5WdzKWPoWIUJXIteUfSeHTzvPg1TDrYms2IW4INpBzZl18wkWNn3vLDjhAxCZ1Q==
 
 mkdirp@0.5.1, mkdirp@0.5.x, mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.0, mkdirp@~0.5.1:
   version "0.5.1"
@@ -8366,7 +8366,7 @@ opn@^5.1.0:
     is-wsl "^1.1.0"
 
 optic-domain@../domain/:
-  version "0.1.0"
+  version "1.0.0"
 
 optimist@^0.6.1:
   version "0.6.1"
