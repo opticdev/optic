@@ -51,7 +51,7 @@ export async function checkDiffOrUnrecognizedPath(result: ICaptureSessionResult)
   const {specStorePath} = await getPaths()
   const specStoreExists = await fs.pathExists(specStorePath)
   if (!specStoreExists) {
-    return Promise.resolve(false)
+    return Promise.resolve(true)
   }
   const specAsBuffer = await fs.readFile(specStorePath)
   try {
@@ -107,7 +107,7 @@ export default class Start extends Command {
       this.log('`\n\n' + fromOptic(`New behavior was observed. Run ${colors.bold('api spec')} to review.`))
     }
 
-    const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`
+    const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`.replace(/:/g, '_')
     const fileName = `${sessionId}.optic_session.json`
     const {sessionsPath} = await getPaths()
     const filePath = path.join(sessionsPath, fileName)

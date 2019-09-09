@@ -165,15 +165,18 @@ export default class Spec extends Command {
     const {specStorePath, sessionsPath} = await getPaths()
     const sessionUtilities = new SessionUtilities(sessionsPath)
     const app = express()
-    app.use(bodyParser.text({type: 'text/html', limit: '100MB'}))
 
     app.get('/cli-api/events', async (req, res) => {
-      const events = await fs.readJson(specStorePath)
-      res.json(events)
+      try {
+        const events = await fs.readJson(specStorePath)
+        res.json(events)
+      } catch (e) {
+        res.json([])
+      }
     })
     app.put('/cli-api/events', bodyParser.json(), async (req, res) => {
-      const newEvents = req.body
-      await fs.writeFile(specStorePath, prepareEvents(newEvents))
+      const events = req.body
+      await fs.writeFile(specStorePath, prepareEvents(events))
       res.sendStatus(204)
     })
 
