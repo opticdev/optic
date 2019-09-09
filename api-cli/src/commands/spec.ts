@@ -131,7 +131,7 @@ export default class Spec extends Command {
       } catch (e) {
         return this.error(fromOptic(`It looks like there is something wrong with your API spec file. Please make sure it is a valid JSON array.`))
       }
-
+    }
       const port = await getPort({port: getPort.makeRange(3201, 3299)})
 
       await this.startServer(port, config)
@@ -156,9 +156,6 @@ export default class Spec extends Command {
       await cli.wait(1000)
       await cli.anykey('Press any key to exit')
       return process.exit()
-    } else {
-      return this.error(fromOptic('No API spec found in your working directory. Run api init'))
-    }
   }
 
   async startServer(port: number, config: IApiCliConfig) {
