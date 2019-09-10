@@ -181,11 +181,6 @@ class TopBar extends React.Component {
                   Design
                 </ToggleButton>
               </ToggleButtonGroup>
-
-              <Button color="primary" href="https://docs.useoptic.com" target="_blank"
-                      disableRipple={true}>
-                Docs
-              </Button>
               {!process.env.REACT_APP_CLI_MODE ? (
                 <Button color="secondary" onClick={this.props.showShare} disableRipple={true}>
                   Share
