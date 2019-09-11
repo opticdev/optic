@@ -56,7 +56,9 @@ export default class Generate extends Command {
         cli.action.stop('done')
         const oasPath = path.join(outputPath, 'oas.json')
         fs.writeFileSync(path.join(outputPath, 'oas.json'), JSON.stringify(oasJson, null, 2))
-        return this.log('Writing OAS file to: ' + oasPath)
+        this.log('Writing OAS file to: ' + oasPath)
+        return oasPath
+
       } else {
         return this.error('OAS Export Error' + await response.text())
       }

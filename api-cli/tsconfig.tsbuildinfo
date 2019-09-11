@@ -602,11 +602,11 @@
         "signature": "a07ac5407b236f3f7e7aa48129835cdd30e09c6ef8f473bca50337334ed14391"
       },
       "./src/commands/start.ts": {
-        "version": "7b43c36966fc91145fa139f7b6890a40454099bbb1fa37980d5df6baca7f5963",
+        "version": "95965bc8e44b524b12b84521afb1b55263dcd5d3f4bb5cb6ac254555db24ed09",
         "signature": "0d5346903a517a8c1ae5fb5a3221333211a785ddd219df8919f09b12dc16d176"
       },
       "./src/commands/spec.ts": {
-        "version": "2f75cc4addaad830c1e896b175c02afe9230efe7dfd8fd68298eb21030df6722",
+        "version": "4df098f5122a9fe6c721d9ecc257a79a8c50dedb32673f81710ec68233c4cabb",
         "signature": "23c4ac0716a26e2d6237e9809623099970d82e0b30123ceb9421068d891748c5"
       },
       "./node_modules/@types/archy/index.d.ts": {
