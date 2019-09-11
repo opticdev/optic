@@ -506,16 +506,16 @@
         "signature": "60b33bcb9810f8e80f30a186b41f25d05b97a7781cf8f03edb9315d17a7aeaf1"
       },
       "./src/commands/generate.ts": {
-        "version": "7f0fb42058c1ebdc5434bdd8155f388cdd599aca677719dda7e9382658568b9d",
-        "signature": "baaae087f8cfe3e4931124e96436fb5da3103d39f4583ab40467b050a8538bed"
+        "version": "e05536ed839ad2b531974ea41698d5dfe74ebd46826c89d239a777ba928c5503",
+        "signature": "f6be6a1f6937bf42d3b2190e690070d2721913b5f162a1a359c189175d932696"
       },
       "./node_modules/colors/index.d.ts": {
         "version": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f",
         "signature": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f"
       },
       "./src/commands/init.ts": {
-        "version": "a19d3748f62efadba39f11b8924f79e6603fb475bf723dffe80f58e0108892aa",
-        "signature": "28015ec41590be5f7327bfae4822ff5873e6cc9073841193629af5fcc1b98d8d"
+        "version": "cef600181c028822b61d8b5eac4d0e85f4a7380e373f12044fdb807c3fb417d5",
+        "signature": "df372297399584ee1d11ee85cc554a550a2ab2ad20428c15ec5e5f1135d92905"
       },
       "./node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
@@ -557,18 +557,6 @@
         "version": "0bf0a2716dbfd9d2c7392ee4bf2902a2623a90f50a3d5eaa63153c34049dcde4",
         "signature": "5a8ae80727e9d59e31bf36ad6440dea9345e390291791ed32e77cb4a6ebdd6d4"
       },
-      "./node_modules/type-fest/source/package-json.d.ts": {
-        "version": "194c880a791931344ff527830c3bf7fd37ad5c39ee8682c875e40bb0b8b39ada",
-        "signature": "194c880a791931344ff527830c3bf7fd37ad5c39ee8682c875e40bb0b8b39ada"
-      },
-      "./node_modules/type-fest/index.d.ts": {
-        "version": "9f11ccb462f5c529e8ee32b25fe93c395f6957a57687f07d8ff0236711ece6a7",
-        "signature": "9f11ccb462f5c529e8ee32b25fe93c395f6957a57687f07d8ff0236711ece6a7"
-      },
-      "./node_modules/get-port/index.d.ts": {
-        "version": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac",
-        "signature": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac"
-      },
       "./node_modules/@types/cookie-parser/index.d.ts": {
         "version": "8d77ed4e39114c32edc2e35b683b6f54a6b3292ecdf392e4bfc5f726734955d8",
         "signature": "8d77ed4e39114c32edc2e35b683b6f54a6b3292ecdf392e4bfc5f726734955d8"
@@ -601,12 +589,28 @@
         "version": "b308416840e6a4feab8ba04c7a2dbe1c8f48ac87cb879e121afaa8df65f3939e",
         "signature": "a07ac5407b236f3f7e7aa48129835cdd30e09c6ef8f473bca50337334ed14391"
       },
+      "./node_modules/type-fest/source/package-json.d.ts": {
+        "version": "194c880a791931344ff527830c3bf7fd37ad5c39ee8682c875e40bb0b8b39ada",
+        "signature": "194c880a791931344ff527830c3bf7fd37ad5c39ee8682c875e40bb0b8b39ada"
+      },
+      "./node_modules/type-fest/index.d.ts": {
+        "version": "9f11ccb462f5c529e8ee32b25fe93c395f6957a57687f07d8ff0236711ece6a7",
+        "signature": "9f11ccb462f5c529e8ee32b25fe93c395f6957a57687f07d8ff0236711ece6a7"
+      },
+      "./node_modules/get-port/index.d.ts": {
+        "version": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac",
+        "signature": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac"
+      },
       "./src/commands/start.ts": {
-        "version": "95965bc8e44b524b12b84521afb1b55263dcd5d3f4bb5cb6ac254555db24ed09",
-        "signature": "0d5346903a517a8c1ae5fb5a3221333211a785ddd219df8919f09b12dc16d176"
+        "version": "07b0beeb6c918c773b878ed4061aeb61d65f77cacfa93ee2091a9b79f4685daa",
+        "signature": "280d39fe463dea101824c3cbcc7c725553e87da245b945f82ead9ef11740d8f5"
+      },
+      "./src/commands/publish-oas.ts": {
+        "version": "f334103858999564b3d2cf5c64855f970401acfb14a93fef2e78caf4e6060e92",
+        "signature": "a5f91a172a7df9fb875aa8a83eee10175de0ff3ad2566ce4689b9ac27907615e"
       },
       "./src/commands/spec.ts": {
-        "version": "4df098f5122a9fe6c721d9ecc257a79a8c50dedb32673f81710ec68233c4cabb",
+        "version": "ad4010da9c31ff934bc53be4923cca9be08367a65562b4404bb0e6a559389c2e",
         "signature": "23c4ac0716a26e2d6237e9809623099970d82e0b30123ceb9421068d891748c5"
       },
       "./node_modules/@types/archy/index.d.ts": {
@@ -1484,23 +1488,6 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./node_modules/type-fest/source/package-json.d.ts": [
-        "./node_modules/type-fest/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/type-fest/index.d.ts": [
-        "./node_modules/type-fest/source/package-json.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/get-port/index.d.ts": [
-        "./node_modules/type-fest/index.d.ts",
-        "./node_modules/@types/node/net.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "./node_modules/@types/cookie-parser/index.d.ts": [
         "./node_modules/@types/express/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
@@ -1551,6 +1538,23 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./node_modules/type-fest/source/package-json.d.ts": [
+        "./node_modules/type-fest/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/type-fest/index.d.ts": [
+        "./node_modules/type-fest/source/package-json.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/get-port/index.d.ts": [
+        "./node_modules/type-fest/index.d.ts",
+        "./node_modules/@types/node/net.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./src/commands/start.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts",
         "./src/lib/log-helper.ts",
@@ -1565,6 +1569,21 @@
         "./node_modules/@types/js-yaml/index.d.ts",
         "./src/lib/common.ts",
         "./node_modules/colors/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/commands/publish-oas.ts": [
+        "./node_modules/@oclif/command/lib/index.d.ts",
+        "./node_modules/@types/fs-extra/index.d.ts",
+        "./node_modules/clipboardy/index.d.ts",
+        "./node_modules/@types/node/path.d.ts",
+        "./node_modules/cli-ux/lib/index.d.ts",
+        "./src/lib/log-helper.ts",
+        "./node_modules/colors/index.d.ts",
+        "./src/commands/generate.ts",
+        "./node_modules/@types/node/child_process.d.ts",
+        "./src/commands/init.ts",
+        "./src/commands/start.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -2010,6 +2029,9 @@
         "./src/commands/init.ts",
         "./src/lib/common.ts",
         "./src/lib/proxy-capture-session.ts",
+        "./node_modules/@oclif/command/lib/index.d.ts"
+      ],
+      "./src/commands/publish-oas.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts"
       ],
       "./src/commands/init.ts": [
@@ -2624,14 +2646,6 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./node_modules/tree-kill/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/debug/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "./node_modules/type-fest/index.d.ts": [
         "./node_modules/type-fest/source/package-json.d.ts",
         "./node_modules/@types/node/util.d.ts",
@@ -2639,6 +2653,14 @@
       ],
       "./node_modules/type-fest/source/package-json.d.ts": [
         "./node_modules/type-fest/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/tree-kill/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/debug/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -3002,9 +3024,6 @@
       "./node_modules/open/index.d.ts",
       "./src/commands/login.ts",
       "./src/lib/log-helper.ts",
-      "./node_modules/type-fest/source/package-json.d.ts",
-      "./node_modules/type-fest/index.d.ts",
-      "./node_modules/get-port/index.d.ts",
       "./node_modules/@types/cookie-parser/index.d.ts",
       "./src/lib/common.ts",
       "./node_modules/@types/debug/index.d.ts",
@@ -3013,7 +3032,11 @@
       "./src/lib/proxy-capture-session.ts",
       "./node_modules/tree-kill/index.d.ts",
       "./src/lib/command-session.ts",
+      "./node_modules/type-fest/source/package-json.d.ts",
+      "./node_modules/type-fest/index.d.ts",
+      "./node_modules/get-port/index.d.ts",
       "./src/commands/start.ts",
+      "./src/commands/publish-oas.ts",
       "./src/commands/spec.ts",
       "./node_modules/@types/archy/index.d.ts",
       "./node_modules/@types/chai/index.d.ts",

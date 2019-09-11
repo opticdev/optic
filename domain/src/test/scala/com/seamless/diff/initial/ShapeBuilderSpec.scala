@@ -74,4 +74,13 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     rfcService.handleCommandSequence("id", result.commands)
   }
 
+  it("works with Twitter example") {
+    val basic = fromFile("twitter-body")
+    val result = new ShapeBuilder(basic, "tw").run
+
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    val rfcService: RfcService = new RfcService(eventStore)
+    rfcService.handleCommandSequence("id", result.commands)
+  }
+
 }
