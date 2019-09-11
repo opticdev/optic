@@ -11,7 +11,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExportAll
 class DiffToCommands(_shapesState: ShapesState) {
 
-  val placeHolder = DiffInterpretation("You found a bug!", "We're looking into it :)", Seq.empty, Seq.empty)
+  val placeHolder = DiffInterpretation("You found a bug!", "We're looking into it :)", Seq.empty)
 
   def interpret(diff: RequestDiffResult): DiffInterpretation = {
     implicit val shapesState: ShapesState = _shapesState
