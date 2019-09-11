@@ -21,6 +21,7 @@ case class DiffInterpretation(title: String,
     import io.circe.scalajs.convertJsonToJs
     if (example != null) convertJsonToJs(example) else null
   }
+  
 }
 
 object Interpretations {
