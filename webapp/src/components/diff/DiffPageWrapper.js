@@ -38,8 +38,7 @@ class DiffPageWrapper extends React.Component {
         });
         const startableInteractionsForPath = diffStateProjections.samplesGroupedByPath[pathId].filter(x => isStartable(diffState, x));
 
-
-        const affectedIds = interpretation ? mapScala(interpretation.affectedIds)(i => i) : []
+        const affectedIds = interpretation ? interpretation.metadataJs.affectedIds : []
 
         return (
             <SimulatedCommandContext

@@ -165,7 +165,9 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
         fromJson(i)(ValueShapeWithId(valueShapeId, Some(fieldId)), path)
         valueShapeId
       } else {
-        ShapeResolver.handlePrimitive(i).getOrElse(AnyKind.baseShapeId)
+        val issuedId = idGenerator
+        fromJson(i)(ValueShapeWithId(issuedId, Some(fieldId)), path)
+        issuedId
       }
     }
 

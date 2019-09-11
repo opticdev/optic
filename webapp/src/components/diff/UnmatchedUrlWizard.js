@@ -10,6 +10,7 @@ import { Sheet } from '../navigation/Editor'
 import { withEditorContext } from '../../contexts/EditorContext';
 import { withStyles } from '@material-ui/styles';
 import { withRfcContext } from '../../contexts/RfcContext';
+import { Tooltip } from '@material-ui/core';
 
 
 function completePathMatcherRegex(pathComponents) {
@@ -81,12 +82,25 @@ class UnmatchedUrlWizard extends React.Component {
         const { url } = sample.request;
         const isCompleteMatch = regex.exec(url)
 
+
+        const nextButton = (
+            <Button
+                onClick={this.handleSubmit}
+                color="primary"
+                disabled={!isCompleteMatch}>Add Path</Button>
+        )
+        const withTooltip = (
+            <Tooltip title={'To continue the path you provide must be able to match the observed URL'}>
+                <span>{nextButton}</span>
+            </Tooltip>
+        )
+
         return (
             <Sheet>
                 <div className={classes.root}>
                     <Typography variant="h5">Unrecognized URL Observed</Typography>
                     <Typography variant="subtitle2" style={{ paddingTop: 11, paddingBottom: 11 }}>Optic observed a new URL. Before Optic can document the requests you need to add a matching path to your API specification.</Typography>
-                    
+
                     <PathMatcher
                         initialPathString={pathExpression}
                         url={url}
@@ -96,11 +110,8 @@ class UnmatchedUrlWizard extends React.Component {
                     <div style={{ marginTop: 17, paddingTop: 4, textAlign: 'right' }}>
                         <Button
                             onClick={this.handleIgnore}
-                            color="secondary">Skip</Button>
-                        <Button
-                            onClick={this.handleSubmit}
-                            color="primary"
-                            disabled={!isCompleteMatch}>Add Path</Button>
+                            color="secondary">Skip Path</Button>
+                        {!isCompleteMatch ? withTooltip : nextButton}
                     </div>
                 </div>
             </Sheet>

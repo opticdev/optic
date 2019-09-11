@@ -21,17 +21,9 @@ export async function readApiConfig(): Promise<IApiCliConfig> {
   const rawFile = await fs.readFile(configPath)
   const parsed = yaml.safeLoad(rawFile.toString())
   return parsed
-  // return {
-  //   proxy: {
-  //     target: 'https://my-json-server.typicode.com',
-  //     port: 3000
-  //   },
-  //   commands: {
-  //     start: 'echo "started" && sleep 5 && echo "stopped" && exit 1'
-  //   },
-  //   name: 'ddoshi'
-  // }
 }
+
+export const processSetting = (value: string, inputs: object) => Mustache.render(value, inputs)
 
 const {ApiInteraction, ApiRequest, ApiResponse} = opticEngine.com.seamless.diff
 const JsonHelper = opticEngine.com.seamless.diff.JsonHelper()
@@ -129,9 +121,7 @@ export default class Start extends Command {
       }
     }
 
-    const processSetting = (value: string) => Mustache.render(value, inputs)
-
-    const target = processSetting(config.proxy.target)
+    const target = processSetting(config.proxy.target, inputs)
 
     await proxySession.start({
       target,

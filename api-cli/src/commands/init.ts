@@ -20,7 +20,8 @@ export interface IApiCliProxyConfig {
 }
 
 export interface IApiCliCommandsConfig {
-  start: string
+  start: string,
+  'publish-oas'?: string
 }
 
 export interface IApiCliConfig {
@@ -58,8 +59,8 @@ export default class Init extends Command {
 
     this.log('\n')
     this.log(`API Spec successfully added to ${basePath} !`)
-    this.log(` - Run 'api start' to run your API.`)
-    this.log(` - Run 'api spec' to view and edit the specification`)
+    this.log(" - Run 'api start' to run your API.")
+    this.log(" - Run 'api spec' to view and edit the specification")
   }
 
   async blankWithName() {
@@ -141,7 +142,7 @@ sessions/
         contents: yaml.safeDump(config)
       })
     }
-    files.forEach(async (file) => {
+    files.forEach(async file => {
       await fs.ensureFile(file.path)
       await fs.writeFile(file.path, file.contents)
     })
@@ -171,9 +172,9 @@ sessions/
 
     if (response.status === 200) {
       const events = await response.json()
-      return await this.createFileTree(events)
+      return this.createFileTree(events)
     } else {
-      return this.error(`OAS parse error` + await response.text())
+      return this.error('OAS parse error' + await response.text())
     }
 
   }

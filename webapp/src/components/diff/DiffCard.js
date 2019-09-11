@@ -97,9 +97,10 @@ class DiffCard extends React.Component {
 
   render() {
     const { classes, interpretation, ignore } = this.props;
-    const { title, description, nameRequests, exampleJs: bodyExample } = interpretation;
+    const { title, description } = interpretation;
+    const { nameRequests, example } = interpretation.metadataJs;
 
-    const canApprove = everyScala(nameRequests)(({ shapeId, required }) => {
+    const canApprove = nameRequests.map(({ shapeId, required }) => {
       if (required && !this.state.names[shapeId]) {
         return false;
       }
@@ -117,16 +118,16 @@ class DiffCard extends React.Component {
         <CardContent style={{ padding: 0 }}>
           <div className={classes.description}>
             <Typography variant="paragraph" dangerouslySetInnerHTML={{ __html: description }} />
-            {bodyExample && <ExampleToolTip example={bodyExample}>
+            {example && <ExampleToolTip example={example}>
               <Typography variant="overline" color="primary" style={{ cursor: 'pointer', marginLeft: 7 }}>View
                 Example</Typography>
             </ExampleToolTip>}
 
-            <div className={classes.questions} style={{ display: lengthScala(nameRequests) > 0 ? 'inherit' : 'none' }}>
+            <div className={classes.questions} style={{ display: nameRequests.length > 0 ? 'inherit' : 'none' }}>
               <Divider style={{ marginTop: 11, marginBottom: 11 }} />
-              {mapScala(nameRequests)(({ shapeId, required, description, exampleJs }) => {
+              {nameRequests.map(({ shapeId, required, description, example }) => {
                 return (
-                  <React.Fragment key={shapeId}>
+                  <div key={shapeId} style={{marginBottom: 15}}>
                     <Typography variant="caption">{description}</Typography>
                     <div style={{ display: 'flex' }}>
                       <TextField
@@ -135,12 +136,12 @@ class DiffCard extends React.Component {
                         error={required && !this.state.names[shapeId]}
                         onChange={(e) => this.setName(shapeId, e.target.value)} />
                       <div style={{ width: 30 }} />
-                      <ExampleToolTip example={exampleJs}>
+                      <ExampleToolTip example={example}>
                         <Typography variant="overline" color="primary" style={{ cursor: 'pointer', marginLeft: -12 }}>View
                         Example</Typography>
                       </ExampleToolTip>
                     </div>
-                  </React.Fragment>
+                  </div>
                 );
               })}
             </div>
