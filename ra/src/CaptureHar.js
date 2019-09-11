@@ -19,6 +19,9 @@ class CaptureHar extends React.Component {
 	};
 
 	componentDidMount() {
+		console.log('here is the current window.shouldLogEntry function:')
+		console.log(global.shouldLogEntry.toString())
+		console.log('You can overwrite it to ensure you log the entries you care about')
 		withChrome((chrome) => {
 			chrome.devtools.network.onRequestFinished
 				.addListener((entry) => {

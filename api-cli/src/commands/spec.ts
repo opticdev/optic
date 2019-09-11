@@ -213,9 +213,7 @@ export default class Spec extends Command {
     app.get('/cli-api/sessions/:sessionId', validateSessionId, async (req, res) => {
       const {optic} = req
       const {session} = optic
-      const hostname = require('url').parse(config.proxy.target).hostname
       res.json({
-        hostname,
         session
       })
     })

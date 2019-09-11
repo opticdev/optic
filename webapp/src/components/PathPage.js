@@ -1,34 +1,34 @@
 import Zoom from '@material-ui/core/Zoom';
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {Typography} from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Divider from '@material-ui/core/Divider';
 import Link from '@material-ui/core/Link';
 import Paper from '@material-ui/core/Paper';
-import {withEditorContext} from '../contexts/EditorContext.js';
-import {withFocusedRequestContext} from '../contexts/FocusedRequestContext.js';
-import {withRfcContext} from '../contexts/RfcContext.js';
-import {RequestsCommands} from '../engine';
-import {routerUrls} from '../routes.js';
+import { withEditorContext } from '../contexts/EditorContext.js';
+import { withFocusedRequestContext } from '../contexts/FocusedRequestContext.js';
+import { withRfcContext } from '../contexts/RfcContext.js';
+import { RequestsCommands } from '../engine';
+import { routerUrls } from '../routes.js';
 import BodyEditor from './body-editor';
 import StatusCode from './http/StatusCode.js';
-import {FullSheet, Sheet} from './navigation/Editor.js';
-import ParametersEditor, {pathParametersToRows, requestParametersToRows} from './parameters-editor';
+import { FullSheet, Sheet } from './navigation/Editor.js';
+import ParametersEditor, { pathParametersToRows, requestParametersToRows } from './parameters-editor';
 import ContributionWrapper from './contributions/ContributionWrapper.js';
-import {Link as RouterLink} from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import sortBy from 'lodash.sortby';
 import Editor from './navigation/Editor';
 import Button from '@material-ui/core/Button';
-import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from './utilities/PathUtilities.js';
-import {RequestUtilities} from '../utilities/RequestUtilities';
-import {EditorModes} from '../contexts/EditorContext';
-import {track} from '../Analytics';
-import {RequestsCommandHelper} from './requests/RequestsCommandHelper.js';
+import { asPathTrail, getNameWithFormattedParameters, isPathParameter } from './utilities/PathUtilities.js';
+import { RequestUtilities } from '../utilities/RequestUtilities';
+import { EditorModes } from '../contexts/EditorContext';
+import { track } from '../Analytics';
+import { RequestsCommandHelper } from './requests/RequestsCommandHelper.js';
 import RequestPageHeader from './requests/RequestPageHeader';
 import Helmet from 'react-helmet';
 import CreateNew from './navigation/CreateNew';
-import {AddedGreen, AddedGreenBackground, AddedStyle, withColoredIdsContext} from '../contexts/ColorContext';
+import { AddedGreen, AddedGreenBackground, AddedStyle, withColoredIdsContext } from '../contexts/ColorContext';
 import classNames from 'classnames';
 
 const styles = theme => ({
@@ -72,12 +72,12 @@ const styles = theme => ({
 
 class OperationBase extends React.Component {
   render() {
-    const {classes, request, handleCommands, mode, cachedQueryResults, coloredIds = []} = this.props;
-    const {responses, requestParameters} = cachedQueryResults;
+    const { classes, request, handleCommands, mode, cachedQueryResults, coloredIds = [] } = this.props;
+    const { responses, requestParameters } = cachedQueryResults;
 
-    const {requestId, requestDescriptor} = request;
-    const {httpMethod, bodyDescriptor} = requestDescriptor;
-    const {httpContentType, shapeId, isRemoved} = getNormalizedBodyDescriptor(bodyDescriptor);
+    const { requestId, requestDescriptor } = request;
+    const { httpMethod, bodyDescriptor } = requestDescriptor;
+    const { httpContentType, shapeId, isRemoved } = getNormalizedBodyDescriptor(bodyDescriptor);
     const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || (mode === EditorModes.DESIGN && RequestUtilities.canAddBody(request));
 
     const requestCommandsHelper = new RequestsCommandHelper(handleCommands, requestId);
@@ -92,21 +92,21 @@ class OperationBase extends React.Component {
     const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query');
 
     const requestBodyHandlers = {
-      onBodyAdded({shapeId, contentType}) {
+      onBodyAdded({ shapeId, contentType }) {
         const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, false);
         const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
         handleCommands(command);
       },
-      onBodyRemoved({shapeId}) {
+      onBodyRemoved({ shapeId }) {
         const command = RequestsCommands.UnsetRequestBodyShape(requestId, bodyDescriptor);
         handleCommands(command);
       },
-      onBodyRestored({shapeId}) {
+      onBodyRestored({ shapeId }) {
         const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, shapeId, false);
         const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
         handleCommands(command);
       },
-      onContentTypeChanged({contentType}) {
+      onContentTypeChanged({ contentType }) {
         const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, isRemoved);
         const command = RequestsCommands.SetRequestBodyShape(requestId, bodyDescriptor);
         handleCommands(command);
@@ -118,14 +118,14 @@ class OperationBase extends React.Component {
     return (
       <Sheet>
         <div
-          className={classNames(classes.request, {[classes.requestAdded]: isAdded})}
+          className={classNames(classes.request, { [classes.requestAdded]: isAdded })}
           key={requestId} id={requestId}
         >
           <Typography
-            variant="overline" style={{fontSize: 28, marginBottom: 5}}
+            variant="overline" style={{ fontSize: 28, marginBottom: 5 }}
             color="primary">{httpMethod}</Typography>
           <ContributionWrapper
-            style={{marginTop: -20}}
+            style={{ marginTop: -20 }}
             contributionParentId={requestId}
             contributionKey={'description'}
             variant={'multi'}
@@ -135,11 +135,11 @@ class OperationBase extends React.Component {
           {headerParameters.length === 0 && mode === EditorModes.DOCUMENTATION ? null : (
             <div>
               <RequestPageHeader forType="Header"
-                                 addAction={requestCommandsHelper.addHeaderParameter}/>
+                addAction={requestCommandsHelper.addHeaderParameter} />
               <ParametersEditor
                 parameters={headerParameters}
                 rowMapper={requestParametersToRows}
-                onRename={({id, name}) => {
+                onRename={({ id, name }) => {
                   handleCommands(RequestsCommands.RenameHeaderParameter(id, name));
                 }}
               />
@@ -149,11 +149,11 @@ class OperationBase extends React.Component {
           {queryParameters.length === 0 && mode === EditorModes.DOCUMENTATION ? null : (
             <div>
               <RequestPageHeader forType="Query Parameter"
-                                 addAction={requestCommandsHelper.addQueryParameter}/>
+                addAction={requestCommandsHelper.addQueryParameter} />
               <ParametersEditor
                 parameters={queryParameters}
                 rowMapper={requestParametersToRows}
-                onRename={({id, name}) => {
+                onRename={({ id, name }) => {
                   handleCommands(RequestsCommands.RenameQueryParameter(id, name));
                 }}
               />
@@ -162,7 +162,7 @@ class OperationBase extends React.Component {
 
           {shouldShowRequestBody ? (
             <>
-              <Typography variant="h6" color="primary" style={{marginTop: 15}}>Request
+              <Typography variant="h6" color="primary" style={{ marginTop: 15 }}>Request
                 Body</Typography>
               <BodyEditor
                 rootId={requestId}
@@ -173,10 +173,10 @@ class OperationBase extends React.Component {
           ) : null}
 
 
-          <div style={{marginBottom: 44}}>
-            <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse}/>
+          <div style={{ marginBottom: 44 }}>
+            <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse} />
           </div>
-          <ResponseList responses={responsesForRequest}/>
+          <ResponseList responses={responsesForRequest} />
         </div>
       </Sheet>
     );
@@ -187,29 +187,29 @@ export const Operation = withColoredIdsContext(withRfcContext(withEditorContext(
 
 class ResponseListWithoutContext extends React.Component {
   render() {
-    const {responses, handleCommands, classes, coloredIds = []} = this.props;
+    const { responses, handleCommands, classes, coloredIds = [] } = this.props;
     const sortedResponses = sortBy(responses, ['responseDescriptor.httpStatusCode']);
     return sortedResponses.map((response) => {
-      const {responseId, responseDescriptor} = response;
-      const {httpStatusCode, bodyDescriptor} = responseDescriptor;
-      const {httpContentType, shapeId, isRemoved} = getNormalizedBodyDescriptor(bodyDescriptor);
+      const { responseId, responseDescriptor } = response;
+      const { httpStatusCode, bodyDescriptor } = responseDescriptor;
+      const { httpContentType, shapeId, isRemoved } = getNormalizedBodyDescriptor(bodyDescriptor);
 
       const responseBodyHandlers = {
-        onBodyAdded({shapeId, contentType}) {
+        onBodyAdded({ shapeId, contentType }) {
           const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, false);
           const command = RequestsCommands.SetResponseBodyShape(responseId, bodyDescriptor);
           handleCommands(command);
         },
-        onBodyRemoved({shapeId}) {
+        onBodyRemoved({ shapeId }) {
           const command = RequestsCommands.UnsetResponseBodyShape(responseId, bodyDescriptor);
           handleCommands(command);
         },
-        onBodyRestored({shapeId}) {
+        onBodyRestored({ shapeId }) {
           const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(httpContentType, shapeId, false);
           const command = RequestsCommands.SetResponseBodyShape(responseId, bodyDescriptor);
           handleCommands(command);
         },
-        onContentTypeChanged({contentType}) {
+        onContentTypeChanged({ contentType }) {
           const bodyDescriptor = RequestsCommands.ShapedBodyDescriptor(contentType, shapeId, isRemoved);
           const command = RequestsCommands.SetResponseBodyShape(responseId, bodyDescriptor);
           handleCommands(command);
@@ -218,23 +218,23 @@ class ResponseListWithoutContext extends React.Component {
 
       const isAdded = coloredIds.includes(responseId);
       return (
-        <div className={classNames(classes.responseCard, {[classes.addedResponse]: isAdded})}>
+        <div className={classNames(classes.responseCard, { [classes.addedResponse]: isAdded })}>
           <div className={classes.responseStatus}>
             <StatusCode statusCode={httpStatusCode} onChange={(statusCode) => {
               const command = RequestsCommands.SetResponseStatusCode(responseId, statusCode);
               handleCommands(command);
-            }}/>
+            }} />
           </div>
           <div className={classes.responseDetail}>
             <ContributionWrapper
-              style={{marginTop: -20}}
+              style={{ marginTop: -20 }}
               contributionParentId={responseId}
               defaultText={'No Description'}
               contributionKey={'description'}
               variant={'multi'}
               placeholder={`Response Description`}
             />
-            <div style={{marginLeft: 5}}>
+            <div style={{ marginLeft: 5 }}>
               <BodyEditor
                 rootId={responseId}
                 bodyDescriptor={bodyDescriptor}
@@ -263,10 +263,10 @@ const pathTrailStyles = theme => {
 
 class PathTrailBase extends React.Component {
   render() {
-    const {classes, baseUrl, pathTrail, style} = this.props;
+    const { classes, baseUrl, pathTrail, style } = this.props;
     const items = pathTrail
       .map((trailItem) => {
-        const {pathComponentId, pathComponentName} = trailItem;
+        const { pathComponentId, pathComponentName } = trailItem;
         const url = routerUrls.pathPage(baseUrl, pathComponentId);
         return (
           <Link key={pathComponentId} component={RouterLink} to={url}>{pathComponentName}</Link>
@@ -282,17 +282,20 @@ class PathTrailBase extends React.Component {
 
 class PathTrailBaseWithoutLinks extends React.Component {
   render() {
-    const {classes, pathTrail, style} = this.props;
-    const items = pathTrail
+    const { classes, pathTrail, style } = this.props;
+    const modifiedPathTrail = (pathTrail.length === 1 ? [...pathTrail, { pathComponentId: 'fake', pathComponentName: '' }] : pathTrail)
+    const items = modifiedPathTrail
       .map((trailItem) => {
-        const {pathComponentId, pathComponentName} = trailItem;
+        const { pathComponentId, pathComponentName } = trailItem;
         return (
           <Typography key={pathComponentId}>{pathComponentName}</Typography>
         );
       });
     return (
       <Paper elevation={0} className={classes.paper} style={style}>
-        <Breadcrumbs maxItems={12}>{items}</Breadcrumbs>
+        <Breadcrumbs maxItems={12}>
+          {items}
+        </Breadcrumbs>
       </Paper>
     );
   }
@@ -328,8 +331,8 @@ class PathPage extends React.Component {
   }
 
   ensureRequestFocused() {
-    const {focusedRequestId, cachedQueryResults, pathId} = this.props;
-    const {requestIdsByPathId} = cachedQueryResults;
+    const { focusedRequestId, cachedQueryResults, pathId } = this.props;
+    const { requestIdsByPathId } = cachedQueryResults;
     const requestIdsForPath = requestIdsByPathId[pathId] || [];
     const focusedRequestExistsInThisPath = requestIdsForPath.indexOf(focusedRequestId) >= 0;
     if (focusedRequestExistsInThisPath) {
@@ -344,18 +347,18 @@ class PathPage extends React.Component {
   renderPlaceholder() {
     return (
       <div>
-        <CreateNew render={({addRequest, classes}) => {
+        <CreateNew render={({ addRequest, classes }) => {
           return <>There are no requests for this path. <Button color="secondary" onClick={() => {
             this.props.switchEditorMode(EditorModes.DESIGN);
             addRequest();
           }}>Add Request</Button></>;
-        }}/>
+        }} />
       </div>
     );
   }
 
   renderNotFound() {
-    const {classes} = this.props;
+    const { classes } = this.props;
     return (
       <Editor>
         <FullSheet>
@@ -373,9 +376,9 @@ class PathPage extends React.Component {
   };
 
   render() {
-    const {classes, handleCommands, pathId, focusedRequestId, cachedQueryResults, mode, switchEditorMode} = this.props;
+    const { classes, handleCommands, pathId, focusedRequestId, cachedQueryResults, mode, switchEditorMode } = this.props;
 
-    const {apiName, requests, responses, requestParameters, pathsById, requestIdsByPathId} = cachedQueryResults;
+    const { apiName, requests, responses, requestParameters, pathsById, requestIdsByPathId } = cachedQueryResults;
 
     const path = pathsById[pathId];
 
@@ -408,20 +411,20 @@ class PathPage extends React.Component {
     const requestsForPath = requestIdsForPath.map((requestId) => requests[requestId]);
     const methodLinks = requestsForPath
       .sort((requestA, requestB) => {
-        const {httpMethod: methodA} = requestA.requestDescriptor;
-        const {httpMethod: methodB} = requestB.requestDescriptor;
+        const { httpMethod: methodA } = requestA.requestDescriptor;
+        const { httpMethod: methodB } = requestB.requestDescriptor;
         return (ordering[methodA] || lowestRank) - (ordering[methodB] || lowestRank);
       })
       .map((request) => {
-        const {requestId, requestDescriptor} = request;
-        const {httpMethod} = requestDescriptor;
+        const { requestId, requestDescriptor } = request;
+        const { httpMethod } = requestDescriptor;
         return (
-          <Link key={requestId} href={`#${requestId}`} style={{textDecoration: 'none'}}>
+          <Link key={requestId} href={`#${requestId}`} style={{ textDecoration: 'none' }}>
             <Button
               size="small"
               disableRipple={true}
               className={classes.margin}
-              style={{fontWeight: 200}}
+              style={{ fontWeight: 200 }}
               onClick={this.setRequestFocus(requestId)}
             >
               {httpMethod}
@@ -433,25 +436,25 @@ class PathPage extends React.Component {
     const requestItems = requestsForPath.length === 0 ? this.renderPlaceholder() : requestsForPath
       .map((request) => {
         return (
-          <Operation request={request} key={request.requestId}/>
+          <Operation request={request} key={request.requestId} />
         );
       });
 
     const MethodsTOC = (<>
       <Typography variant="h5" color="primary">Methods</Typography>
-      <Divider/>
-      <div style={{maxWidth: 200, marginTop: 5, display: 'flex', flexDirection: 'column'}}>
+      <Divider />
+      <div style={{ maxWidth: 200, marginTop: 5, display: 'flex', flexDirection: 'column' }}>
         {methodLinks}
       </div>
     </>);
 
 
-    const {contributions} = cachedQueryResults;
+    const { contributions } = cachedQueryResults;
     const resourceName = contributions.getOrUndefined(pathId, 'name');
 
     const absolutePath = pathTrailWithNames
       .map((trailItem) => {
-        const {pathComponentName} = trailItem;
+        const { pathComponentName } = trailItem;
         return (
           pathComponentName
         );
@@ -463,7 +466,7 @@ class PathPage extends React.Component {
       <Editor baseUrl={this.props.baseUrl} leftMargin={MethodsTOC} scrollContainerRef={this.scrollContainer}>
         <Helmet><title>{pageName}</title></Helmet>
         <div className={classes.root}>
-          <Sheet style={{paddingTop: 2}}>
+          <Sheet style={{ paddingTop: 2 }}>
             <ContributionWrapper
               contributionParentId={pathId}
               contributionKey={'name'}
@@ -471,15 +474,15 @@ class PathPage extends React.Component {
               placeholder="Resource Name"
             />
 
-            <Typography variant="h6" color="primary" style={{marginBottom: 11, marginTop: 6}}>Path</Typography>
-            <PathTrail pathTrail={pathTrailWithNames}/>
+            <Typography variant="h6" color="primary" style={{ marginBottom: 11, marginTop: 6 }}>Path</Typography>
+            <PathTrail pathTrail={pathTrailWithNames} />
 
             {pathParameters.length === 0 ? null : (
               <div>
                 <ParametersEditor
                   parameters={pathParameters}
                   rowMapper={pathParametersToRows}
-                  onRename={({id, name}) => {
+                  onRename={({ id, name }) => {
                     handleCommands(RequestsCommands.RenamePathParameter(id, name));
                   }}
                 />

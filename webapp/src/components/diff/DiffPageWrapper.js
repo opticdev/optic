@@ -36,6 +36,7 @@ class DiffPageWrapper extends React.Component {
                 pathComponentId
             };
         });
+        const startableInteractionsForPath = diffStateProjections.samplesGroupedByPath[pathId].filter(x => isStartable(diffState, x));
 
 
         const affectedIds = interpretation ? mapScala(interpretation.affectedIds)(i => i) : []
@@ -82,7 +83,7 @@ class DiffPageWrapper extends React.Component {
                                     <Typography variant="subtitle2" component="div" color="primary" style={{
                                         fontSize: 17,
                                         padding: 11
-                                    }}>Path ({diffSessionManager.session.samples.length} samples)</Typography>
+                                    }}>Path ({startableInteractionsForPath.length} samples)</Typography>
                                     <div className={classes.pathDisplay}>
                                         <div className={classes.methodDisplay}>{sample.request.method}</div>
                                         <PathTrailWithoutLinks pathTrail={pathTrailWithNames} style={{ flex: 1 }} />
