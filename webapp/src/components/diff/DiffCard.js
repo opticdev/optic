@@ -115,7 +115,7 @@ class DiffCard extends React.Component {
             <div style={{ flex: 1 }} />
           </div>
         } className={classes.header} />
-        <CardContent style={{ padding: 0 }}>
+        <CardContent style={{ padding: 0, maxHeight: 400, overflow: 'auto'}}>
           <div className={classes.description}>
             <Typography variant="paragraph" dangerouslySetInnerHTML={{ __html: description }} />
             {example && <ExampleToolTip example={example}>
@@ -146,7 +146,8 @@ class DiffCard extends React.Component {
               })}
             </div>
           </div>
-          <CardActions>
+        </CardContent>
+        <CardActions>
             <Button size="small" color="primary" onClick={this.acceptWithNames} disabled={!canApprove}>
               Approve
             </Button>
@@ -154,7 +155,6 @@ class DiffCard extends React.Component {
               Ignore
             </Button>
           </CardActions>
-        </CardContent>
       </Card>);
   }
 }
