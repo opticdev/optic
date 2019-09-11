@@ -1,18 +1,18 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import {toInteraction, RequestDiffer, DiffToCommands, JsonHelper} from '../../engine/index.js';
-import {SessionContext} from '../../contexts/SessionContext';
-import {withStyles} from '@material-ui/core/styles';
+import { toInteraction, RequestDiffer, DiffToCommands, JsonHelper } from '../../engine/index.js';
+import { SessionContext } from '../../contexts/SessionContext';
+import { withStyles } from '@material-ui/core/styles';
 import UnmatchedUrlWizard from './UnmatchedUrlWizard';
-import {withRfcContext} from '../../contexts/RfcContext';
+import { withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
-import {primary} from '../../theme';
+import { primary } from '../../theme';
 import Card from '@material-ui/core/Card';
-import {CardActions, CardContent, CardHeader} from '@material-ui/core';
+import { CardActions, CardContent, CardHeader } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
-import {commandsFromJson, NaiveSummary} from '../../engine/index';
+import { commandsFromJson, NaiveSummary } from '../../engine/index';
 import DiffPageWrapper from './DiffPageWrapper';
-import {track} from '../../Analytics';
+import { track } from '../../Analytics';
 
 const styles = (theme => ({
   root: {
@@ -38,13 +38,13 @@ const styles = (theme => ({
 }));
 
 export function isStartable(diffState, item) {
-  const {index} = item;
+  const { index } = item;
   const results = diffState.interactionResults[index] || {};
   return results.status !== 'skipped' && results.status !== 'completed';
 }
 
 export function isManuallyIntervened(diffState, item) {
-  const {index} = item;
+  const { index } = item;
   const results = diffState.interactionResults[index] || {};
   return results.status === 'manual';
 }
@@ -52,25 +52,25 @@ export function isManuallyIntervened(diffState, item) {
 class LocalDiffManager extends React.Component {
   render() {
 
-    const {classes} = this.props;
+    const { classes } = this.props;
 
     return (
       <SessionContext.Consumer>
         {(sessionContext) => {
-          const {diffSessionManager, diffStateProjections, applyCommands} = sessionContext;
-          const {diffState} = diffSessionManager;
-          const {status} = diffState;
+          const { diffSessionManager, diffStateProjections, applyCommands } = sessionContext;
+          const { diffState } = diffSessionManager;
+          const { status } = diffState;
 
           if (status === 'persisted') {
             //@TODO this should render a page that allows you to restart or go to the saved spec
             return window.location.href = '/saved';
           }
 
-          const {eventStore, rfcId, rfcService, cachedQueryResults} = this.props;
+          const { eventStore, rfcId, rfcService, cachedQueryResults } = this.props;
 
           const item = (function (diffStateProjections) {
 
-            const {samplesGroupedByPath} = diffStateProjections;
+            const { samplesGroupedByPath } = diffStateProjections;
             for (const entry of Object.entries(samplesGroupedByPath)) {
               const [pathId, items] = entry;
               const firstStartableValue = items.find(x => isStartable(diffState, x));
@@ -78,7 +78,7 @@ class LocalDiffManager extends React.Component {
                 return firstStartableValue;
               }
             }
-            const {samplesWithoutResolvedPaths} = diffStateProjections;
+            const { samplesWithoutResolvedPaths } = diffStateProjections;
             for (let value of samplesWithoutResolvedPaths) {
               if (isStartable(diffState, value)) {
                 return value;
@@ -87,7 +87,7 @@ class LocalDiffManager extends React.Component {
 
             return {};
           })(diffStateProjections);
-          const {pathId, sample, index: currentInteractionIndex} = item;
+          const { pathId, sample, index: currentInteractionIndex } = item;
 
           if (!sample) {
             const c = diffSessionManager.diffState.acceptedInterpretations.flatMap(i => i);
@@ -100,9 +100,9 @@ class LocalDiffManager extends React.Component {
                     <Typography variant="h5" color="primary">
                       Your API Spec changes are ready to merge.
                     </Typography>
-                  }/>
-                  <CardContent style={{marginTop: -14, paddingTop: 0}}>
-                    <ul style={{fontFamily: 'Ubuntu', fontSize: 13, fontWeight: 11}}>
+                  } />
+                  <CardContent style={{ marginTop: -14, paddingTop: 0 }}>
+                    <ul style={{ fontFamily: 'Ubuntu', fontSize: 13, fontWeight: 11 }}>
                       {summary['New Concepts'] ? <li>+{summary['New Concepts']} Concept(s) Added</li> : null}
                       {summary['New Operations'] ? <li>+{summary['New Operations']} Operation(s) Added</li> : null}
                       {summary['New Paths'] ? <li>+{summary['New Paths']} Path(s) Added</li> : null}
@@ -110,12 +110,12 @@ class LocalDiffManager extends React.Component {
                     </ul>
                   </CardContent>
                   <CardActions>
-                    <div style={{textAlign: 'right', width: '100%'}}>
+                    <div style={{ textAlign: 'right', width: '100%' }}>
                       <Button size="large" color="primary"
-                              onClick={() => {
-                                track('Merged Diff', {summary});
-                                diffSessionManager.applyDiffToSpec(eventStore, rfcId)
-                              }}>
+                        onClick={() => {
+                          track('Merged Diff', { summary });
+                          diffSessionManager.applyDiffToSpec(eventStore, rfcId)
+                        }}>
                         Merge
                       </Button>
                     </div>
@@ -156,7 +156,7 @@ class LocalDiffManager extends React.Component {
             const commands = JsonHelper.seqToJsArray(interpretation.commands);
             const hasDiff = commands.length > 0;
 
-            track('New Interpretation', {title: interaction.title, description: interaction.description});
+            track('New Interpretation', { title: interaction.title, description: interaction.description });
             // console.log({ diff, interpretation });
 
             const readyToFinish = !hasDiff;
@@ -181,36 +181,36 @@ class LocalDiffManager extends React.Component {
                   track('Accepted Interaction');
                   applyCommands(...concat);
                 }}
-                  onIgnore={() => {
-                    track('Ignored Interaction');
-                    diffSessionManager.skipInteraction(currentInteractionIndex);
-                }}
-                  />
-                  );
-                } else {
-                return (
-                <DiffPage>
-                <UnmatchedUrlWizard
-                onSubmit={({commands}) => {
-                  track('Matched New Path');
-                  applyCommands(...commands);
-                }}
                 onIgnore={() => {
-                  track('Ignored Unmatched');
-                  const samplesMatchingUrl = diffStateProjections.samplesWithoutResolvedPaths.filter(x => x.sample.request.url === sample.request.url);
-                  samplesMatchingUrl.forEach((item) => {
-                    diffSessionManager.skipInteraction(item.index);
-                  });
+                  track('Ignored Interaction');
+                  diffSessionManager.skipInteraction(currentInteractionIndex);
                 }}
-                url={sample.request.url}
+              />
+            );
+          } else {
+            return (
+              <DiffPage>
+                <UnmatchedUrlWizard
+                  onSubmit={({ commands }) => {
+                    track('Matched New Path');
+                    applyCommands(...commands);
+                  }}
+                  onIgnore={() => {
+                    track('Ignored Unmatched');
+                    const samplesMatchingUrl = diffStateProjections.samplesWithoutResolvedPaths.filter(x => x.sample.request.url === sample.request.url);
+                    samplesMatchingUrl.forEach((item) => {
+                      diffSessionManager.skipInteraction(item.index);
+                    });
+                  }}
+                  sample={sample}
                 />
-                </DiffPage>
-                );
-              }
-                }}
-          </SessionContext.Consumer>
-          );
+              </DiffPage>
+            );
           }
-          }
+        }}
+      </SessionContext.Consumer>
+    );
+  }
+}
 
-        export default withStyles(styles)(withRfcContext(LocalDiffManager));
+export default withStyles(styles)(withRfcContext(LocalDiffManager));

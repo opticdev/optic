@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import { TextField } from '@material-ui/core';
 
 import PathComponent from './PathComponent.js';
-import keydown, { Keys } from 'react-keydown';
+import { Keys } from 'react-keydown';
 
 const { BACKSPACE, DELETE, ENTER } = Keys;
 
@@ -44,7 +44,6 @@ class PathInput extends React.Component {
         super(props)
 
         this.state = this.processValue({ pathComponents: [], currentComponent: '' }, this.props.initialPathString)
-        this.handleBackspaceOrEnter = this.handleBackspaceOrEnter.bind(this)
     }
 
     componentDidMount() {
@@ -91,18 +90,22 @@ class PathInput extends React.Component {
         })
     }
 
-    @keydown(BACKSPACE, DELETE, ENTER)
-    handleBackspaceOrEnter(e) {
+    handleBackspaceOrEnter = (e) => {
         if (e.which === ENTER) {
             this.props.onSubmit()
             return
         }
-        // console.log('backspace')
+        if (e.which !== DELETE && e.which !== BACKSPACE) {
+            return
+        }
         const { currentComponent, pathComponents } = this.state;
         if (currentComponent.name === '') {
-            this.setState({
+            const newState = {
+                ...this.state,
                 pathComponents: pathComponents.slice(0, -1)
-            })
+            }
+            this.setState(newState)
+            this.emitChange(newState)
         }
     }
 

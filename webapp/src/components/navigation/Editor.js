@@ -6,7 +6,6 @@ import keydown, {ALL_KEYS} from 'react-keydown';
 import SuperMenu from './SuperMenu';
 import ShareDialog from './ShareDialog';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
-import classNames from 'classnames'
 
 const styles = theme => ({
   pageContainer: {

@@ -6,23 +6,12 @@ import { CardHeader, Tooltip } from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
-import { primary, secondary } from '../../theme';
 import CardContent from '@material-ui/core/CardContent';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import CloseIcon from '@material-ui/icons/Close';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import keydown, { Keys } from 'react-keydown';
 import TextField from '@material-ui/core/TextField';
-import Fade from '@material-ui/core/Fade';
 import { everyScala, lengthScala, mapScala, ShapesCommands } from '../../engine';
 import Divider from '@material-ui/core/Divider';
 import ReactJson from 'react-json-view';
-import {AddedGreen} from '../../contexts/ColorContext';
+import { AddedGreen } from '../../contexts/ColorContext';
 
 
 const styles = theme => ({
@@ -62,17 +51,26 @@ const LightTooltip = withStyles(theme => ({
   },
 }))(Tooltip);
 
-function ExampleToolTip({ children, example }) {
-  const inner = <div style={{ maxHeight: 400, overflow: 'scroll' }}>
-    <ReactJson src={example}
+export function ExampleToolTip({ children, example }) {
+
+  const inner = typeof example === 'string' ? <pre>{example}</pre> : (
+    <ReactJson
+      src={example}
       enableClipboard={false}
       name={false}
       displayDataTypes={false}
     />
-  </div>;
-  return <LightTooltip title={inner} interactive={true} placement="bottom-start">
-    {children}
-  </LightTooltip>;
+  );
+  const title = (
+    <div style={{ maxHeight: 400, maxWidth: 400, overflow: 'scroll' }}>
+      {inner}
+    </div>
+  )
+  return (
+    <LightTooltip title={inner} interactive={true} placement="bottom-start">
+      {children}
+    </LightTooltip>
+  );
 }
 
 class DiffCard extends React.Component {

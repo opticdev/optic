@@ -11,6 +11,7 @@ import { withEditorContext } from '../../contexts/EditorContext';
 import { withStyles } from '@material-ui/styles';
 import { withRfcContext } from '../../contexts/RfcContext';
 
+
 function completePathMatcherRegex(pathComponents) {
     const pathString = pathComponentsToString(pathComponents)
     const regex = pathToRegexp(pathString, [], { start: true, end: true })
@@ -71,12 +72,13 @@ class UnmatchedUrlWizard extends React.Component {
             commands.push(command)
             lastParentPathId = pathId
         })
-        this.props.onSubmit({commands})
+        this.props.onSubmit({ commands })
     }
     render() {
-        const { url, classes } = this.props;
+        const { sample, classes } = this.props;
         const { pathExpression } = this.state;
         const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression))
+        const { url } = sample.request;
         const isCompleteMatch = regex.exec(url)
 
         return (
@@ -84,7 +86,7 @@ class UnmatchedUrlWizard extends React.Component {
                 <div className={classes.root}>
                     <Typography variant="h5">Unrecognized URL Observed</Typography>
                     <Typography variant="subtitle2" style={{ paddingTop: 11, paddingBottom: 11 }}>Optic observed a new URL. Before Optic can document the requests you need to add a matching path to your API specification.</Typography>
-
+                    
                     <PathMatcher
                         initialPathString={pathExpression}
                         url={url}
@@ -93,8 +95,8 @@ class UnmatchedUrlWizard extends React.Component {
 
                     <div style={{ marginTop: 17, paddingTop: 4, textAlign: 'right' }}>
                         <Button
-                          onClick={this.handleIgnore}
-                          color="secondary">Skip</Button>
+                            onClick={this.handleIgnore}
+                            color="secondary">Skip</Button>
                         <Button
                             onClick={this.handleSubmit}
                             color="primary"

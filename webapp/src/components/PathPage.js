@@ -1,4 +1,3 @@
-import Zoom from '@material-ui/core/Zoom';
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { Typography } from '@material-ui/core';
@@ -28,7 +27,7 @@ import { RequestsCommandHelper } from './requests/RequestsCommandHelper.js';
 import RequestPageHeader from './requests/RequestPageHeader';
 import Helmet from 'react-helmet';
 import CreateNew from './navigation/CreateNew';
-import { AddedGreen, AddedGreenBackground, AddedStyle, withColoredIdsContext } from '../contexts/ColorContext';
+import { AddedStyle, withColoredIdsContext } from '../contexts/ColorContext';
 import classNames from 'classnames';
 
 const styles = theme => ({
@@ -79,11 +78,11 @@ class OperationBase extends React.Component {
     const { httpMethod, bodyDescriptor } = requestDescriptor;
     const { httpContentType, shapeId, isRemoved } = getNormalizedBodyDescriptor(bodyDescriptor);
     const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || (mode === EditorModes.DESIGN && RequestUtilities.canAddBody(request));
-
     const requestCommandsHelper = new RequestsCommandHelper(handleCommands, requestId);
 
     const responsesForRequest = Object.values(responses)
       .filter((response) => response.responseDescriptor.requestId === requestId);
+    const shouldShowResponses = responsesForRequest.length > 0
 
     const parametersForRequest = Object.values(requestParameters)
       .filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId);
@@ -172,11 +171,14 @@ class OperationBase extends React.Component {
             </>
           ) : null}
 
-
-          <div style={{ marginBottom: 44 }}>
-            <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse} />
-          </div>
-          <ResponseList responses={responsesForRequest} />
+          {shouldShowResponses ? (
+            <>
+              <div style={{ marginBottom: 44 }}>
+                <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse} />
+              </div>
+              <ResponseList responses={responsesForRequest} />
+            </>
+          ) : null}
         </div>
       </Sheet>
     );
@@ -376,9 +378,9 @@ class PathPage extends React.Component {
   };
 
   render() {
-    const { classes, handleCommands, pathId, focusedRequestId, cachedQueryResults, mode, switchEditorMode } = this.props;
+    const { classes, handleCommands, pathId, cachedQueryResults } = this.props;
 
-    const { apiName, requests, responses, requestParameters, pathsById, requestIdsByPathId } = cachedQueryResults;
+    const { apiName, requests, pathsById, requestIdsByPathId } = cachedQueryResults;
 
     const path = pathsById[pathId];
 
