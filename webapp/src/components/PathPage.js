@@ -171,7 +171,7 @@ class OperationBase extends React.Component {
             </>
           ) : null}
 
-          {shouldShowResponses ? (
+          {shouldShowResponses || (mode === EditorModes.DESIGN) ? (
             <>
               <div style={{ marginBottom: 44 }}>
                 <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse} />
