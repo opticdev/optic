@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "Make APIs Developer Friendly",
-  "version": "6.1.4",
+  "version": "6.1.5",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
