@@ -246,6 +246,15 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
     val oneOfShapeId = "$oneOf"
     val oneOfShape = CoreShape(oneOfShapeId, DynamicParameterList(Seq.empty), "OneOf")
 
+    val optionalShapeId = "$optional"
+    val optionalParameter = ShapeParameterEntity("$optionalInner", ShapeParameterValue(optionalShapeId, ProviderInShape(optionalShapeId, NoProvider(), "$optionalInner"), "T"), isRemoved = false)
+    val optionalShape = CoreShape(optionalShapeId, StaticParameterList(Seq(optionalParameter.shapeParameterId)), "Optional")
+
+    val nullableShapeId = "$nullable"
+    val nullableParameter = ShapeParameterEntity("$nullableInner", ShapeParameterValue(nullableShapeId, ProviderInShape(nullableShapeId, NoProvider(), "$nullableInner"), "T"), isRemoved = false)
+    val nullableShape = CoreShape(nullableShapeId, StaticParameterList(Seq(nullableParameter.shapeParameterId)), "Nullable")
+
+
     val shapes = Map(
       anyShape.shapeId -> anyShape,
       stringShape.shapeId -> stringShape,
@@ -256,7 +265,9 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
       entityIdentifierShape.shapeId -> entityIdentifierShape,
       entityReferenceShape.shapeId -> entityReferenceShape,
       valueObjectShape.shapeId -> valueObjectShape,
-      oneOfShape.shapeId -> oneOfShape
+      oneOfShape.shapeId -> oneOfShape,
+      nullableShape.shapeId -> nullableShape,
+      optionalShape.shapeId -> optionalShape,
     )
 
     val shapeParameters = Map(

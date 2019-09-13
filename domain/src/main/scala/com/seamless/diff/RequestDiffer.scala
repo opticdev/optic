@@ -11,10 +11,10 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.{Failure, Success, Try}
 
 @JSExport
-case class ApiRequest(url: String, method: String, contentType: String, body: Json = Json.Null)
+case class ApiRequest(url: String, method: String, contentType: String, body: Option[Json] = None)
 
 @JSExport
-case class ApiResponse(statusCode: Int, contentType: String, body: Json = Json.Null)
+case class ApiResponse(statusCode: Int, contentType: String, body: Option[Json] = None)
 
 @JSExport
 case class ApiInteraction(apiRequest: ApiRequest, apiResponse: ApiResponse)
@@ -78,10 +78,10 @@ object RequestDiffer {
 //      println(request.requestDescriptor.bodyDescriptor, interaction.apiRequest.body)
       val requestDiff: Option[RequestDiffResult] = request.requestDescriptor.bodyDescriptor match {
         case d: UnsetBodyDescriptor => {
-          if (interaction.apiRequest.body == Json.Null) {
+          if (interaction.apiRequest.body.isEmpty) {
             None
           } else {
-            Some(UnmatchedRequestBodyShape(request.requestId, interaction.apiRequest.contentType, ShapeDiffer.UnsetShape(interaction.apiRequest.body)))
+            Some(UnmatchedRequestBodyShape(request.requestId, interaction.apiRequest.contentType, ShapeDiffer.UnsetShape(interaction.apiRequest.body.get)))
           }
         }
         case d: ShapedBodyDescriptor => {
@@ -116,12 +116,12 @@ object RequestDiffer {
     val responseId = matchedResponse.get.responseId;
     val responseDiff: Option[RequestDiffResult] = matchedResponse.get.responseDescriptor.bodyDescriptor match {
       case d: UnsetBodyDescriptor => {
-        if (interaction.apiResponse.body == Json.Null) {
+        if (interaction.apiResponse.body.isEmpty) {
           None
         } else {
           Some(
             UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, interaction.apiResponse.statusCode,
-              ShapeDiffer.UnsetShape(interaction.apiResponse.body))
+              ShapeDiffer.UnsetShape(interaction.apiResponse.body.get))
           )
         }
       }

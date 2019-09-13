@@ -9,9 +9,6 @@ import com.seamless.contexts.shapes.Commands.ShapeId
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.contexts.shapes.projections.{NamedShape, NamedShapes}
 import com.seamless.ddd.{AggregateId, CachedProjection, EventStore}
-import com.seamless.diff.DiffToCommands
-import com.seamless.diff.RequestDiffer.RequestDiffResult
-import com.seamless.serialization.CommandSerialization
 import io.circe.generic.auto._
 import io.circe.syntax._
 
@@ -67,11 +64,6 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   def resolvePath(url: String): js.Any = {
     import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.resolvePath(url).asJson)
-  }
-
-  def diffToCommands(diff: RequestDiffResult): js.Any = {
-    import io.circe.scalajs.convertJsonToJs
-    convertJsonToJs(CommandSerialization.toJson(new DiffToCommands(q.shapesState).interpret(diff).commands))
   }
 }
 

@@ -8,6 +8,7 @@ import com.seamless.contexts.shapes.ShapesState
 import com.seamless.ddd.EventStore
 import com.seamless.diff.RequestDiffer.{NoDiff, UnmatchedResponseBodyShape}
 import com.seamless.diff.ShapeDiffer.KeyShapeMismatch
+import com.seamless.diff.interpreters.BasicDiffInterpreter
 import com.seamless.serialization.EventSerialization
 import io.circe.Json
 import io.circe.literal._
@@ -24,12 +25,12 @@ class RequestDifferSpec extends FunSpec {
 
     def getDiff(interaction: ApiInteraction) = {
       val rfcState = rfcService.currentState(rfcId)
-      val diffToCommands = new DiffToCommands(rfcState.shapesState)
+      val diffToCommands = new BasicDiffInterpreter(rfcState.shapesState)
       val diff = RequestDiffer.compare(interaction, rfcState)
       val interpretation = diffToCommands.interpret(diff)
 //      println(diff)
 //      println(interpretation)
-      DiffAndInterpretation(diff, interpretation)
+      DiffAndInterpretation(diff, interpretation.head)
     }
 
     def events() = {
@@ -86,13 +87,13 @@ class RequestDifferSpec extends FunSpec {
 """
 
       it("should notice mismatched fields in the Pet shape") {
-        val request = ApiRequest("/generics", "GET", "*/*", Json.Null)
+        val request = ApiRequest("/generics", "GET", "*/*", None)
         val response = ApiResponse(200, "application/json",
-          json"""{
+          Some(json"""{
 "items": [
   {"name":"pet1","birthdate":1,"currentOwnerId":3}
 ]
-                }""")
+                }"""))
 
         val f = fixture(rawEvents)
         val interaction = ApiInteraction(request, response)
@@ -108,7 +109,7 @@ class RequestDifferSpec extends FunSpec {
   }
 
   describe("json array response body") {
-    val request = ApiRequest("/todos", "GET", "*/*", Json.Null)
+    val request = ApiRequest("/todos", "GET", "*/*", None)
     val rawEvents =
       json"""
         [
@@ -133,7 +134,7 @@ class RequestDifferSpec extends FunSpec {
 
     describe("empty array") {
       val f = fixture(rawEvents)
-      val response = ApiResponse(200, "application/json", json"""[]""")
+      val response = ApiResponse(200, "application/json", Some(json"""[]"""))
       val interaction = ApiInteraction(request, response)
 
       it("should not detect any difference") {
@@ -145,7 +146,7 @@ class RequestDifferSpec extends FunSpec {
       val f = fixture(rawEvents)
 
       val response = ApiResponse(200, "application/json",
-        json"""
+        Some(json"""
 [{
     "__v": 0,
     "_id": 1,
@@ -162,7 +163,7 @@ class RequestDifferSpec extends FunSpec {
     "task": "Post 3",
     "isDone": false
 }]
-          """)
+          """))
       val interaction = ApiInteraction(request, response)
 
       it("should detect mismatched fields") {
@@ -178,7 +179,7 @@ class RequestDifferSpec extends FunSpec {
 
   }
   describe("json object response body") {
-    val request = ApiRequest("/", "GET", "*/*", Json.Null)
+    val request = ApiRequest("/", "GET", "*/*", None)
 
     val events = EventSerialization.fromJson(json"""[]""")
     val rfcId: String = "rfc-1"
@@ -188,27 +189,26 @@ class RequestDifferSpec extends FunSpec {
 
     it("should yield a missing key diff") {
       val shapesState: ShapesState = rfcService.currentState(rfcId).shapesState
-      val diffToCommands = new DiffToCommands(shapesState)
-      val BuiltinString = shapesState.shapes("$string")
+      val diffToCommands = new BasicDiffInterpreter(shapesState)
       val response = ApiResponse(200, "application/json",
-        json"""
+        Some(json"""
 {
     "id": 2,
     "title": "Post 2",
     "deleted": false
 }
-          """)
+          """))
       val interaction = ApiInteraction(request, response)
       var diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
       assert(diff == RequestDiffer.UnmatchedHttpMethod("root", "GET"))
-      var interpretation = diffToCommands.interpret(diff)
+      var interpretation = diffToCommands.interpret(diff).head
       println(diff, interpretation.description)
       val requestId = interpretation.commands.head.asInstanceOf[AddRequest].requestId
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
       assert(diff == RequestDiffer.UnmatchedHttpStatusCode(requestId, 200))
-      interpretation = diffToCommands.interpret(diff)
+      interpretation = diffToCommands.interpret(diff).head
       println(diff, interpretation.description)
       val responseId = interpretation.commands.head.asInstanceOf[AddResponse].responseId
 
@@ -221,7 +221,7 @@ class RequestDifferSpec extends FunSpec {
            "title" : "Post 2",
            "deleted" : false
          }""")))
-      interpretation = diffToCommands.interpret(diff)
+      interpretation = diffToCommands.interpret(diff).head
       println(diff, interpretation.description)
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
