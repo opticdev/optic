@@ -3,7 +3,6 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import TopBar from './TopBar';
 import Paper from '@material-ui/core/Paper';
 import keydown, {ALL_KEYS} from 'react-keydown';
-import SuperMenu from './SuperMenu';
 import ShareDialog from './ShareDialog';
 import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
 
@@ -107,7 +106,6 @@ let lastShift = null
 class Editor extends React.Component {
 
   state = {
-    superMenuOpen: false,
     shareOpen: false
   };
 
@@ -166,7 +164,6 @@ class Editor extends React.Component {
           {children}
           <Margin>{rightMargin}</Margin>
         </div>
-        <SuperMenu open={this.state.superMenuOpen} toggle={this.toggleSuperMenu}/>
         <ShareDialog close={this.hideShare} open={this.state.shareOpen}/>
       </div>
     );

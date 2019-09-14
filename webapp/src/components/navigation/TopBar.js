@@ -17,6 +17,7 @@ import {renameAPI} from '../../engine/routines';
 import CodeIcon from '@material-ui/icons/Code';
 import DescriptionIcon from '@material-ui/icons/Description';
 import CreateNew from './CreateNew';
+import {Link} from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -128,7 +129,7 @@ const APITitle = ({mode, apiName, classes, onRenamed, style}) => {
 class TopBar extends React.Component {
 
   render() {
-    const {classes, mode, switchEditorMode, cachedQueryResults, handleCommand, hasUnsavedChanges} = this.props;
+    const {classes, mode, switchEditorMode, cachedQueryResults, handleCommand, hasUnsavedChanges, baseUrl} = this.props;
     const {apiName} = cachedQueryResults;
     return (
       <div className={classes.root}>
@@ -137,14 +138,15 @@ class TopBar extends React.Component {
 
             <div className={classes.sideSpacer}>
 
-              <Button
-                disableRipple={true}
-                variant="text" color="primary"
-                className={classes.menuButton}
-                onClick={this.props.toggleSuperMenu}
-              >Explore API
-                <KeyboardDown className={classes.rightIcon}/>
-              </Button>
+              <Link to={baseUrl} style={{textDecoration: 'none'}}>
+                <Button
+                  disableRipple={true}
+                  variant="text" color="primary"
+                  className={classes.menuButton}
+                  onClick={this.props.toggleSuperMenu}
+                >API Overview
+                </Button>
+              </Link>
 
               {(hasUnsavedChanges && process.env.REACT_APP_CLI_MODE) ? (
                 <Typography variant="caption" style={{color: '#8e8e8e', marginLeft: 20}}>
