@@ -22,10 +22,18 @@ import IconButton from '@material-ui/core/IconButton';
 import Chip from '@material-ui/core/Chip';
 import Button from '@material-ui/core/Button';
 import CreateNew from '../navigation/CreateNew';
-import {primary} from '../../theme';
+import {primary, secondary} from '../../theme';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import Divider from '@material-ui/core/Divider';
 import SearchBar, {fuzzyConceptFilter, fuzzyPathsFilter} from '../navigation/Search';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import Toolbar from '@material-ui/core/Toolbar';
+import DescriptionIcon from '@material-ui/icons/Description';
+import AppBar from '@material-ui/core/AppBar';
+import {ActionButton} from '../navigation/TopBar';
+import CodeIcon from '@material-ui/icons/Code';
+
 
 const styles = theme => ({
   overview: {
@@ -137,6 +145,21 @@ const PathListItem = withRfcContext(({path, baseUrl, cachedQueryResults}) => {
 });
 
 
+function SetupCall({open, onClose}) {
+  return (
+    <Dialog
+      maxWidth="lg"
+      onClose={onClose}
+      open={open}>
+      <DialogContent>
+        <iframe src="https://calendly.com/optic-onboarding/30-min-session" style={{width: 450, height: 700}}
+                frameBorder="0"/>
+      </DialogContent>
+    </Dialog>);
+
+}
+
+
 class OverView extends React.Component {
 
   componentDidMount() {
@@ -152,7 +175,14 @@ class OverView extends React.Component {
   }
 
   state = {
-    searchQuery: '',
+    callModalOpen: false
+  };
+
+  openCallModal = () => {
+    this.setState({callModalOpen: true});
+  };
+  closeModal = () => {
+    this.setState({callModalOpen: false});
   };
 
   render() {
@@ -181,7 +211,7 @@ class OverView extends React.Component {
                        inputRef={this.searchRef}/>
           </div>
 
-          {!hideComponents && (
+          {!hideComponents ? (
             <div className={classes.apiNavigation}>
               <Paper style={{flex: 1, marginRight: 33, padding: 22, height: 'fit-content'}}>
                 <Typography color="primary" variant="h5" style={{marginLeft: 6, marginBottom: 11}}>Paths</Typography>
@@ -229,8 +259,48 @@ class OverView extends React.Component {
 
                 </List>
               </Paper>
-            </div>)}
+            </div>) : (
+            <Paper className={classes.searchRegion} elevation={2}>
+              <ListItem alignItems="flex-start" button>
+                <div style={{marginRight: 20, marginLeft: 11, paddingTop: 16}}>
+                  <img src="chat.svg" width={50}/>
+                </div>
+                <ListItemText
+                  onClick={this.openCallModal}
+                  primary="Setup a free on-boarding session"
+                  secondary="Optic's creators will help you setup Optic, answer your questions, and send you some swag."
+                />
+              </ListItem>
+
+              <CreateNew render={({addConcept, addRequest, classes}) => {
+                return (
+                  <>
+                    <ListItem alignItems="flex-start" button onClick={addConcept}>
+                      <div style={{marginRight: 15, marginLeft: 10, paddingTop: 16}}>
+                        <DescriptionIcon className={classes.leftIcon} style={{width: 50, fontSize: 50, color: secondary}}/>
+                      </div>
+                      <ListItemText
+                        primary="Create a new Concept"
+                        secondary="Document a concept from your API"
+                      />
+                    </ListItem>
+                    <ListItem alignItems="flex-start" button onClick={addRequest}>
+                      <div style={{marginRight: 20, marginLeft: 11, paddingTop: 16}}>
+                        <CodeIcon style={{width: 50, fontSize: 45,  color: secondary}}/>
+                      </div>
+                      <ListItemText
+                        primary="New Request"
+                        secondary="Document one of your API Requests"
+                      />
+                    </ListItem>
+                  </>
+                );
+              }}/>
+
+            </Paper>
+          )}
         </div>
+        <SetupCall open={this.state.callModalOpen} onClose={this.closeModal}/>
       </Editor>
     );
   }
