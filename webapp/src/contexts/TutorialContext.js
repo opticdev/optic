@@ -33,7 +33,7 @@ class TutorialStore extends React.Component {
 
         return (
             <TutorialContext.Provider value={context}>
-                <TutorialDialog />
+                {/*<TutorialDialog />*/}
                 {this.props.children}
             </TutorialContext.Provider>
         )

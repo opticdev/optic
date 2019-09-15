@@ -6,13 +6,13 @@
 
 ## Get Started
 
-1. [Try Seamless in the browser](https://design.useoptic.com)
-2. Add Seamless to your API Repo
+1. [Try Optic in the browser](https://design.useoptic.com)
+2. Add Otic to your API Repo
 ```bash
 npm install @useoptic/cli -g
 
 cd /path/to/api/repo
-# Add Seamless to your repo. Make sure you check in the new files. 
+# Add Optic to your repo. Make sure you check in the new files. 
 api init
 
 # Then start the local editor by running
