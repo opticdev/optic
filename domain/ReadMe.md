@@ -1,9 +1,4 @@
-<p align="center">
-    <img src="./seamless-spec.svg"
-        height="130">
-</p>
-
-# Seamless API Specification
+# Optic API Specification
 > A CQRS inspired interface for OpenAPI/Swagger
 
 What if API specs weren't just giant YAML files? 
@@ -15,10 +10,10 @@ What is instead they offered:
 - Stability (no breaking changes...ever)
 - Easy ways for other API tools to query them for the data they need
 
-CQRS and Event Sourcing enables us to break free of using a single file, with a complicated schema, to represent our APIs and domains. With the Seamless spec you can optimize for each concern independently, making the spec great for API designers, API consumers, and API tooling. 
+CQRS and Event Sourcing enables us to break free of using a single file, with a complicated schema, to represent our APIs and domains. With the Optic spec you can optimize for each concern independently, making the spec great for API designers, API consumers, and API tooling. 
 
 ## [Read the Spec](spec.md)
-## [Try the Spec in our API Designer](https://design.seamlessapis.com)
+## [Try the Spec in our API Designer](https://design.useoptic.com)
 
 ## Motivation
 Specifications or 'specs' describe the behavior of a piece of software specifically and with precision. The most useful specs for programmers are the ones that can be read by both a machine and a human. 
@@ -68,11 +63,11 @@ New designs and rethinking old norms change the shape of a problem space in a wa
 
 ### Making it concrete
 
-At the center of our implementation is the open source Seamless domain engine. It can run on the JVM or in Node making it portable just about everywhere. At a high level, the domain engine interprets commands and handles queries. You can think of this as sort of a living specification. Instead of being a flat file, it is an actual program that answers your queries and modifies the internal API specification in response to your commands. This internal API specification is an event stream of every change you have made to your API since you started using Seamless. These events are played back every time you start the domain engine to build the current specification for your API. Each of these events are immutable facts about the API like RequestAdded, RequestBodyContentTypeSet, etc. We do not have to argue over syntax, semantics, or structure or even concern ourselves with humans reading or writing these directly. Events are pure descriptions of the API domain. 
+At the center of our implementation is the open source Optic domain engine. It can run on the JVM or in Node making it portable just about everywhere. At a high level, the domain engine interprets commands and handles queries. You can think of this as sort of a living specification. Instead of being a flat file, it is an actual program that answers your queries and modifies the internal API specification in response to your commands. This internal API specification is an event stream of every change you have made to your API since you started using Optic. These events are played back every time you start the domain engine to build the current specification for your API. Each of these events are immutable facts about the API like RequestAdded, RequestBodyContentTypeSet, etc. We do not have to argue over syntax, semantics, or structure or even concern ourselves with humans reading or writing these directly. Events are pure descriptions of the API domain. 
 
-Commands for the API spec domain might be things like AddQueryParameter, CreatePath, ChangeMethod, UseSchema, AddResponse, etc. It would not be very human-friendly to make a programmer write all the commands in sequence, so we have also shipped an open source API Design tool similar to Stoplight or RedHat's Apicurio. The Seamless API designer sends commands to the domain engine in response to actions taken in the UI. Visual OpenAPI designers are exploding right now. It seems inevitable that most teams will adopt one, especially as the OpenAPI format becomes more complex.
+Commands for the API spec domain might be things like AddQueryParameter, CreatePath, ChangeMethod, UseSchema, AddResponse, etc. It would not be very human-friendly to make a programmer write all the commands in sequence, so we have also shipped an open source API Design tool similar to Stoplight or RedHat's Apicurio. The Optic API designer sends commands to the domain engine in response to actions taken in the UI. Visual OpenAPI designers are exploding right now. It seems inevitable that most teams will adopt one, especially as the OpenAPI format becomes more complex.
 
-### [Try Designer](https://design.seamlessapis.com)
+### [Try Designer](https://design.useoptic.com)
 
 ### Query what you need
 
@@ -85,7 +80,7 @@ In CQRS, queries return projections (custom read models that are highly optimize
     - with all their references flattened.
     - as JSON schema.
 - Your API represented in OpenAPI 
-    — A traditional spec format is just another projection of the core data model. Even some of Seamless's more advanced features, such as support for Generics, can be projected onto OpenAPI.
+    — A traditional spec format is just another projection of the core data model. Even some of Optic's more advanced features, such as support for Generics, can be projected onto OpenAPI.
 - the changes made since the last version of the API.
 - a projection optimized for generating
     - clients.
@@ -104,23 +99,23 @@ We just unpacked a lot about the architecture, now let us discuss the practical 
 
 #### Developer Experience
 
-Seamless both enables and requires better API design tools because nobody is running the commands manually. The market is already moving towards structured API editors, and the battle is on to improve developer experience. Once you strip away the complexity of parsing and mutating a traditional API spec, your team can focus on building a great UX (see our editor and its source as an example).
+Optic both enables and requires better API design tools because nobody is running the commands manually. The market is already moving towards structured API editors, and the battle is on to improve developer experience. Once you strip away the complexity of parsing and mutating a traditional API spec, your team can focus on building a great UX (see our editor and its source as an example).
 
-Seamless also makes it possible to imagine an explosion of specialized tooling built around the API design experience. Because of the way projections and commands work, a bunch of really awesome Schema Editors could be built that only concern themselves with relevant events/commands. Tooling for generating tests could built around their own set of specialized events/commands. With this architecture, it is fine if tools only concern themselves queries and commands relevant to their domain.
+Optic also makes it possible to imagine an explosion of specialized tooling built around the API design experience. Because of the way projections and commands work, a bunch of really awesome Schema Editors could be built that only concern themselves with relevant events/commands. Tooling for generating tests could built around their own set of specialized events/commands. With this architecture, it is fine if tools only concern themselves queries and commands relevant to their domain.
 
 #### Richer Abstractions
 
-With concerns separated properly, it is easier to implement richer abstractions to represent APIs. Many API architects want to define reusable standards for things like pagination, but this is not easily supported by JSON Schema. In Seamless, it is easy for us to support generics. Now our schemas can take other schemas as type parameters like `InfiniteScrollPagination[UserType]` or `PageBasedPagination[UserType]`. Generics make API standards sharable between a team's APIs.
+With concerns separated properly, it is easier to implement richer abstractions to represent APIs. Many API architects want to define reusable standards for things like pagination, but this is not easily supported by JSON Schema. In Optic, it is easy for us to support generics. Now our schemas can take other schemas as type parameters like `InfiniteScrollPagination[UserType]` or `PageBasedPagination[UserType]`. Generics make API standards sharable between a team's APIs.
 
 A major unsolved challenge in OpenAPI-land is diffing a spec. Proper diffs would help prevent breaking changes, generate semantic change-logs, and provide safety for teams that use code-first workflows. One of the main challenges here, besides the complex data structure, is that changes to a flat JSON/YAML file lose their intent. How can you know a query parameter was renamed 'foo' → 'bar'? A normal diff of the JSON would show 'foo' being deleted and 'bar' being added. 
 
-In Seamless, every change is an event that captures intent, so you can easily build a semantic diff as a projection. In fact, there is an open feature request that displays changes to the API spec whenever you pull the repo. 
+In Optic, every change is an event that captures intent, so you can easily build a semantic diff as a projection. In fact, there is an open feature request that displays changes to the API spec whenever you pull the repo. 
 
-Finally, in the real world, teams are using a combination of REST, graphQL, Websockets, and RPCs, often times within the same APIs. A traditional spec combining all these paradigms would collapse under the weight of its own complexity, but it is possible for Seamless to support multiple paradigms and common components between them. We suspect this kind of interoperability will become more important in the next few years, especially in enterprise settings. 
+Finally, in the real world, teams are using a combination of REST, graphQL, Websockets, and RPCs, often times within the same APIs. A traditional spec combining all these paradigms would collapse under the weight of its own complexity, but it is possible for Optic to support multiple paradigms and common components between them. We suspect this kind of interoperability will become more important in the next few years, especially in enterprise settings. 
 
 #### Governance
 
-The way Seamless' domain is set up means that contributors just have to answer one question "What can we say about a REST API?"
+The way Optic' domain is set up means that contributors just have to answer one question "What can we say about a REST API?"
 
 If it can have requests, then we need an event for RequestAdded.
 
@@ -138,6 +133,6 @@ Once the domain modeling is taken care of, the needs of toolmakers will direct t
 
 There are some clear tradeoffs to this design as well. 
 
-- Seamless relies on GUI API Designers to be built around it. We have shipped an awesome open-source one to get things started, but we need more competitive solutions to grow and evolve in parallel.
+- Optic relies on GUI API Designers to be built around it. We have shipped an awesome open-source one to get things started, but we need more competitive solutions to grow and evolve in parallel.
 - Thinking in CQRS is hard. Contributors who are unfamiliar with the concepts will have to invest their time and mental energy in learning. However, thinking in OpenAPI, RAML, or API Blueprint is also difficult. We think it is easier to ask a small group of contributors to learn CQRS so that the millions of developers who need to design their APIs can benefit from better tooling.
 - While CQRS naturally supports collaborative editing, the infrastructure needed to distribute events across clients is complex and relies on eventual consistency. Microsoft does a good job of explaining the tradeoffs of using [CQRS to represent your data here](https://docs.microsoft.com/en-us/azure/architecture/patterns/cqrs).

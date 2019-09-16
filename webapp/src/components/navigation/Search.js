@@ -11,7 +11,7 @@ const styles = theme => ({
 		padding: '2px 4px',
 		display: 'flex',
 		alignItems: 'center',
-		maxWidth: 540,
+		width: '100%'
 	},
 	input: {
 		marginLeft: 8,
@@ -30,7 +30,7 @@ const styles = theme => ({
 class SearchBar extends React.Component {
 	render() {
 
-		const {classes, onChange, inputRef} = this.props
+		const {classes, onChange, inputRef, apiName} = this.props
 
 		return (
 			<Paper className={classes.root} elevation={2}>
@@ -44,7 +44,7 @@ class SearchBar extends React.Component {
 					inputProps={{
 						ref: inputRef
 					}}
-					placeholder="Search API"
+					placeholder={`Search ${apiName || 'API'}...`}
 				/>
 			</Paper>
 		)
@@ -55,11 +55,24 @@ export default withStyles(styles)(SearchBar)
 
 
 export function fuzzyPathsFilter(paths, query) {
-	const searcher = new FuzzySearch(paths, ['absolutePath', 'name'], {sort: true}, {
-		caseSensitive: false,
-	});
 
-	return searcher.search(query)
+  function flattenAll(all, a = []) {
+    all.forEach(i => {
+      a.push(i)
+      i.children.forEach(c => a.push(c))
+    })
+  }
+
+  const allPaths = []
+  flattenAll(paths.children, allPaths)
+
+  const searcher = new FuzzySearch(allPaths, ['searchString', 'name'], {sort: true}, {
+    caseSensitive: false,
+  });
+
+  const pathIds = searcher.search(query).map(i => i.pathId)
+
+  return pathIds
 }
 
 export function fuzzyConceptFilter(concepts, query) {

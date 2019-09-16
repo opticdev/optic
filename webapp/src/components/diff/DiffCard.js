@@ -125,7 +125,7 @@ class DiffCard extends React.Component {
 
             <div className={classes.questions} style={{ display: nameRequests.length > 0 ? 'inherit' : 'none' }}>
               <Divider style={{ marginTop: 11, marginBottom: 11 }} />
-              {nameRequests.map(({ shapeId, required, description, example }) => {
+              {nameRequests.filter(({required}) => required).map(({ shapeId, required, description, example }) => {
                 return (
                   <div key={shapeId} style={{marginBottom: 15}}>
                     <Typography variant="caption">{description}</Typography>

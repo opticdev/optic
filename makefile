@@ -37,7 +37,6 @@ all:
 	make domain-js
 	make oas
 	make webapp
-	make editor-local
 
 
 .PHONY: all
