@@ -1,7 +1,7 @@
 
 <h1 align="center">
   <br>
-  <a href="https://useoptic.com”><img src="https://raw.githubusercontent.com/opticdev/optic/develop/optic-png.png" alt="Optic" width="200"></a>
+  <a href="https://useoptic.com"><img src="https://raw.githubusercontent.com/opticdev/optic/develop/optic-png.png" alt="Optic" width="200"></a>
   <br>
   Optic
   <br>
@@ -20,13 +20,13 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](webapp/public/netlify.png)
+![screenshot](https://raw.githubusercontent.com/opticdev/optic/develop/webapp/public/netlify.png)
 
 ## Key Features
 📝**Easily Document any API** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a change log of its behavior over time.
 
 It’s kind of like Git, but instead of tracking files, Optic automatically diffs and tracks API endpoints. When new behavior is observed, Optic makes it easy to update the spec: 
-![screenshot](webapp/public/changes.png)
+![screenshot](https://raw.githubusercontent.com/opticdev/optic/develop/webapp/public/changes.png)
 
 🎨**A powerful API designer** - Optic ships with an open source API design tool that makes it easy to read and modify your API specification. 
 
