@@ -55,25 +55,7 @@ npm install @useoptic/cli -g
 # or using yarn
 yarn add global @useoptic/cli
 ```
-### Add Optic to your API
-
-```bash
-cd path/to/api
-api init
-```
-<img src="https://dashboard.useoptic.com/init.svg" alt="Optic" width="390">
-
-This command adds a folder called '.api' that tracks the evolution of your API. This is similar to how Git uses the '.git' folder to track your code.
-
-```bash
-.api/
-├── api.yml # The file that configures Optic
-├── readme-docs.md # A readme that explains how to use Optic (for your teammates)
-├── .gitignore # Optic's gitignore. We want to keep your repo clean :) 
-└── spec-store.json # The API spec Optic manages
-```
-
-The Optic proxy will make your API available on the port you use today and will assign your API another port to run on with an environment variable named: `OPTIC_API_PORT`. You should update your API code to start on `OPTIC_API_PORT` while in development so Optic can properly forward it traffic. There are [language / framework specific example of these code changes here.](https://dashboard.useoptic.com) 
+## [Guided Setup Tutorial](https://dashboard.useoptic.com)
 
 ## License 
 MIT
