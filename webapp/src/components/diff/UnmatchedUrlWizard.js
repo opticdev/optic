@@ -10,7 +10,11 @@ import { Sheet } from '../navigation/Editor'
 import { withEditorContext } from '../../contexts/EditorContext';
 import { withStyles } from '@material-ui/styles';
 import { withRfcContext } from '../../contexts/RfcContext';
-import { Tooltip } from '@material-ui/core';
+import Tooltip from '@material-ui/core/Tooltip';
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import MethodAndStatusCodeSelector from './MethodAndStatusCodeSelector';
 
 
 function completePathMatcherRegex(pathComponents) {
@@ -45,7 +49,8 @@ const styles = theme => ({
 });
 class UnmatchedUrlWizard extends React.Component {
     state = {
-        pathExpression: ''
+        pathExpression: '',
+        methodsAndStatusCodes: []
     }
     handleChange = ({ pathExpression }) => {
         this.setState({
@@ -58,7 +63,8 @@ class UnmatchedUrlWizard extends React.Component {
     handleSubmit = () => {
         const { cachedQueryResults } = this.props;
         const { pathsById } = cachedQueryResults;
-        const { pathExpression } = this.state;
+        const { pathExpression, methodsAndStatusCodes } = this.state;
+
         const pathComponents = pathStringToPathComponents(pathExpression)
         const { toAdd, lastMatch } = resolvePath(pathComponents, pathsById)
         let lastParentPathId = lastMatch.pathId
@@ -73,15 +79,52 @@ class UnmatchedUrlWizard extends React.Component {
             commands.push(command)
             lastParentPathId = pathId
         })
+
+        const methods = [...new Set(methodsAndStatusCodes.map(x => x.method))]
+        const requestIdsByMethod = methods
+            .map(method => { return { method, id: RequestsHelper.newRequestId() } })
+            .reduce((acc, item) => {
+                acc[item.method] = item.id
+                return acc;
+            }, {})
+        methods.forEach((method) => {
+            const requestId = requestIdsByMethod[method];
+            commands.push(RequestsCommands.AddRequest(requestId, lastParentPathId, method))
+        })
+        methodsAndStatusCodes.forEach((selection) => {
+            const { method, statusCode } = selection;
+            const requestId = requestIdsByMethod[method];
+            const responseId = RequestsHelper.newResponseId();
+            commands.push(RequestsCommands.AddResponse(responseId, requestId, statusCode))
+        })
         this.props.onSubmit({ commands })
     }
+    setMethodAndStatusCodeSelections = (methodsAndStatusCodes) => {
+        this.setState({
+            methodsAndStatusCodes
+        })
+    }
     render() {
-        const { sample, classes } = this.props;
+        const { sample, items, classes } = this.props;
         const { pathExpression } = this.state;
         const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression))
         const { url } = sample.request;
         const isCompleteMatch = regex.exec(url)
-
+        const urls = [...new Set(items.map(x => x.sample.request.url))]
+        const matchingUrls = new Set(urls.filter(url => regex.exec(url)))
+        const matchingItemsMethodsAndStatusCodes = [
+            ...items
+                .filter(x => matchingUrls.has(x.sample.request.url))
+                .reduce((acc, item) => {
+                    const selection = {
+                        method: item.sample.request.method,
+                        statusCode: item.sample.response.statusCode
+                    };
+                    acc.add(JSON.stringify(selection));
+                    return acc;
+                }, new Set())
+        ]
+            .map(x => JSON.parse(x))
 
         const nextButton = (
             <Button
@@ -114,6 +157,24 @@ class UnmatchedUrlWizard extends React.Component {
                         {!isCompleteMatch ? withTooltip : nextButton}
                     </div>
                 </div>
+                {!isCompleteMatch ? (
+                    <div className={classes.root}>
+                        <Typography variant="h5" style={{ paddingTop: 11, paddingBottom: 11 }}>Matching URLs</Typography>
+                        <List>
+                            {urls.map(url => {
+                                return (
+                                    <ListItem button disabled={!matchingUrls.has(url)}>
+                                        <ListItemText>{url}</ListItemText>
+                                    </ListItem>
+                                )
+                            })}
+
+                        </List>
+                    </div>
+                ) : (
+                        <MethodAndStatusCodeSelector initialSelections={matchingItemsMethodsAndStatusCodes} onChange={this.setMethodAndStatusCodeSelections} />
+                    )}
+
             </Sheet>
         )
     }

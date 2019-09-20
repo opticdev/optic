@@ -27,23 +27,26 @@ export function commandToJs(command) {
     return opticEngine.CommandSerialization.toJs(command)
 }
 
-const { ApiInteraction, ApiRequest, ApiResponse } = opticEngine.com.seamless.diff;
 export const JsonHelper = opticEngine.com.seamless.diff.JsonHelper()
 function fromJs(x) {
-    return JsonHelper.fromString(JSON.stringify(x))
+    if (typeof x === 'undefined') {
+        return JsonHelper.toNone()
+    }
+    return JsonHelper.toSome(JsonHelper.fromString(JSON.stringify(x)))
 }
 
 export const mapScala = (collection) => (handler) => {
-  return ScalaJSHelpers.toJsArray(collection).map(handler)
+    return ScalaJSHelpers.toJsArray(collection).map(handler)
 }
 
 export const everyScala = (collection) => (handler) => {
-  return ScalaJSHelpers.toJsArray(collection).every(handler)
+    return ScalaJSHelpers.toJsArray(collection).every(handler)
 }
 export const lengthScala = (collection) => {
-  return ScalaJSHelpers.toJsArray(collection).length
+    return ScalaJSHelpers.toJsArray(collection).length
 }
 
+const { ApiInteraction, ApiRequest, ApiResponse } = opticEngine.com.seamless.diff;
 export function toInteraction(sample) {
     return ApiInteraction(
         ApiRequest(sample.request.url, sample.request.method, sample.request.headers['content-type'] || '*/*', fromJs(sample.request.body)),
@@ -51,5 +54,5 @@ export function toInteraction(sample) {
     )
 }
 export const RequestDiffer = opticEngine.com.seamless.diff.RequestDiffer()
-export const DiffToCommands = opticEngine.com.seamless.diff.DiffToCommands
-// console.log(opticEngine)
+export const Interpreters = opticEngine.com.seamless.diff.interpreters
+console.log(opticEngine)

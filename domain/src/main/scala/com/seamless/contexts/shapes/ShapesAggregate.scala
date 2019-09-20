@@ -276,6 +276,8 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
       mapValueParameter.shapeParameterId -> mapValueParameter,
       entityIdentifierParameter.shapeParameterId -> entityIdentifierParameter,
       entityReferenceParameter.shapeParameterId -> entityReferenceParameter,
+      nullableParameter.shapeParameterId -> nullableParameter,
+      optionalParameter.shapeParameterId -> optionalParameter,
     )
 
     val fields = ListMap.empty[FieldId, FieldEntity]

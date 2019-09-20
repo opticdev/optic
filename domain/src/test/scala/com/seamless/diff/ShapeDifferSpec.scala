@@ -97,7 +97,7 @@ class ShapeDifferSpec extends FunSpec {
         it("should return a diff indicating a mismatch") {
           val actual: Json = json"""null"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.ShapeMismatch(shapesState.shapes("$string"), actual))
+          assert(diff == ShapeDiffer.UnsetValue(shapesState.shapes("$string")))
         }
       }
       describe("when given undefined") {

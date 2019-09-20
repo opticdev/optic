@@ -35,13 +35,12 @@ class ConfirmCard extends React.Component {
         <CardContent style={{padding: 12}}>
           <div style={{textAlign: 'center', flexDirection: 'column'}}>
             <DoneAll className={classes.done}/>
-            <Typography variant="overline" component="div" style={{cursor: 'pointer'}}>Finalize Changes to this
-              Endpoint</Typography>
+            <Typography variant="overline" component="div" style={{cursor: 'pointer'}}>This request is in line with the spec!</Typography>
           </div>
           <CardActions>
             <div style={{textAlign: 'center', width: '100%'}}>
               <Button size="small" color="primary" onClick={finish}>
-                Confirm
+                Continue
               </Button>
               {/* <Button size="small" color="secondary">
                 Revert

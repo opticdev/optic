@@ -6,6 +6,7 @@ import { withEditorContext } from '../../contexts/EditorContext';
 import DiffTopBar from './DiffTopBar'
 import DiffCard from './DiffCard';
 import ConfirmCard from './ConfirmCard';
+import { JsonHelper } from '../../engine';
 
 
 const styles = theme => ({
@@ -22,8 +23,7 @@ const styles = theme => ({
     paddingLeft: 25,
     paddingRight: 20,
     maxWidth: 480,
-    overflow: 'hidden',
-    height: '100vh !important',
+    position: 'fixed',
   }
 });
 
@@ -48,18 +48,20 @@ class DiffPage extends React.Component {
     const { 
       classes, children, 
       collapseLeftMargin, 
+      cardForm, cardNavigator = null,
       interpretation, accept, ignore, 
       readyToFinish, finish, 
       progress 
     } = this.props
-
+    
     const card = (() => {
       if (readyToFinish) {
         return <ConfirmCard finish={finish} />
       }
-
+      
       if (interpretation) {
-        return <DiffCard interpretation={interpretation} accept={accept} ignore={ignore} />
+        const commands = JsonHelper.seqToJsArray(interpretation.commands);
+        return <DiffCard cardForm={cardForm} interpretation={interpretation} accept={() => accept(commands)} ignore={ignore} />
       }
     })()
 
@@ -68,7 +70,7 @@ class DiffPage extends React.Component {
         baseUrl={this.props.baseUrl}
         topBar={<DiffTopBar progress={progress} />}
         collapseLeftMargin={collapseLeftMargin}
-        rightMargin={<div className={classes.diffCardMargin}>{card}</div>}
+        rightMargin={<div className={classes.diffCardMargin}>{cardNavigator}{card}</div>}
         scrollContainerRef={this.scrollContainerRef}
       >
         <Helmet><title>{"Review Proposed Changes"}</title></Helmet>

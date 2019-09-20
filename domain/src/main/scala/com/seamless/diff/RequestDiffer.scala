@@ -38,6 +38,9 @@ object JsonHelper {
     }
   }
 
+  def toSome(x: Json): Option[Json] = Some(x)
+  def toNone(): Option[Json] = None
+
   //def fromAny(any: js.Any): Json = any.asJson
 
   def seqToJsArray(x: Seq[AnyVal]): js.Array[AnyVal] = {
@@ -51,9 +54,9 @@ object RequestDiffer {
 
   sealed trait RequestDiffResult
   case class NoDiff() extends RequestDiffResult
-  case class UnmatchedUrl(url: String) extends RequestDiffResult
-  case class UnmatchedHttpMethod(pathId: PathComponentId, method: String) extends RequestDiffResult
-  case class UnmatchedHttpStatusCode(requestId: RequestId, statusCode: Int) extends RequestDiffResult
+  case class UnmatchedUrl(interaction: ApiInteraction) extends RequestDiffResult
+  case class UnmatchedHttpMethod(pathId: PathComponentId, interaction: ApiInteraction) extends RequestDiffResult
+  case class UnmatchedHttpStatusCode(requestId: RequestId, interaction: ApiInteraction) extends RequestDiffResult
   case class UnmatchedResponseContentType(responseId: ResponseId, contentType: String, previousContentType: String, statusCode: Int) extends RequestDiffResult
   case class UnmatchedResponseBodyShape(responseId: ResponseId, contentType: String, responseStatusCode: Int, shapeDiff: ShapeDiffResult) extends RequestDiffResult
   case class UnmatchedRequestBodyShape(requestId: RequestId, contentType: String, shapeDiff: ShapeDiffResult) extends RequestDiffResult
@@ -63,7 +66,7 @@ object RequestDiffer {
     // check for matching path
     val matchedPath = Utilities.resolvePath(interaction.apiRequest.url, spec.requestsState.pathComponents)
 
-    if (matchedPath.isEmpty) return UnmatchedUrl(interaction.apiRequest.url)
+    if (matchedPath.isEmpty) return UnmatchedUrl(interaction)
 
     // check for matching http method/verb
     val pathId = matchedPath.get
@@ -71,7 +74,7 @@ object RequestDiffer {
       .find(r => r.requestDescriptor.pathComponentId == pathId && r.requestDescriptor.httpMethod == interaction.apiRequest.method)
 
     if (matchedOperation.isEmpty) {
-      return UnmatchedHttpMethod(pathId, interaction.apiRequest.method)
+      return UnmatchedHttpMethod(pathId, interaction)
     }
     val request = matchedOperation.get
     if ((200 until 400) contains interaction.apiResponse.statusCode) {
@@ -108,7 +111,7 @@ object RequestDiffer {
       .find(r => r.responseDescriptor.requestId == matchedOperation.get.requestId && r.responseDescriptor.httpStatusCode == interaction.apiResponse.statusCode)
 
     if (matchedResponse.isEmpty) {
-      return UnmatchedHttpStatusCode(matchedOperation.get.requestId, interaction.apiResponse.statusCode)
+      return UnmatchedHttpStatusCode(matchedOperation.get.requestId, interaction)
     }
 
     ///val requestBodyDiff: RequestBodyDiff =

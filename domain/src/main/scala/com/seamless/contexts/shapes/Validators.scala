@@ -62,7 +62,7 @@ object Validators {
   ////////////////////////////////////////////////////////////////////////////////
 
   def ensureShapeParameterIdExists(shapeParameterId: ShapeParameterId)(implicit state: ShapesState) = {
-    require(state.shapeParameters.contains(shapeParameterId))
+    require(state.shapeParameters.contains(shapeParameterId), s"Shape Parameter ${shapeParameterId} must exist")
   }
 
   def ensureShapeParameterIdAssignable(shapeParameterId: ShapeParameterId)(implicit state: ShapesState) = {

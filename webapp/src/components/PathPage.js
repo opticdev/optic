@@ -306,6 +306,13 @@ class PathTrailBaseWithoutLinks extends React.Component {
 export const PathTrailWithoutLinks = withStyles(pathTrailStyles)(PathTrailBaseWithoutLinks);
 export const PathTrail = withEditorContext(withStyles(pathTrailStyles)(PathTrailBase));
 
+export const methodChoices = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'].map(x => x.toUpperCase());
+export const lowestMethodRank = methodChoices.length;
+export const methodOrdering = methodChoices.reduce((acc, item, index) => {
+  acc[item] = index + 1;
+  return acc;
+}, {});
+
 export function getNormalizedBodyDescriptor(value) {
   if (value && value.ShapedBodyDescriptor) {
     return value.ShapedBodyDescriptor;
@@ -403,19 +410,13 @@ class PathPage extends React.Component {
       .map(pathId => pathsById[pathId])
       .filter((p) => isPathParameter(p));
 
-    const methodChoices = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options'];
-    const lowestRank = methodChoices.length;
-    const ordering = methodChoices.reduce((acc, item, index) => {
-      acc[item] = index + 1;
-      return acc;
-    }, {});
     const requestIdsForPath = requestIdsByPathId[pathId] || [];
     const requestsForPath = requestIdsForPath.map((requestId) => requests[requestId]);
     const methodLinks = requestsForPath
       .sort((requestA, requestB) => {
         const { httpMethod: methodA } = requestA.requestDescriptor;
         const { httpMethod: methodB } = requestB.requestDescriptor;
-        return (ordering[methodA] || lowestRank) - (ordering[methodB] || lowestRank);
+        return (methodOrdering[methodA] || lowestMethodRank) - (methodOrdering[methodB] || lowestMethodRank);
       })
       .map((request) => {
         const { requestId, requestDescriptor } = request;

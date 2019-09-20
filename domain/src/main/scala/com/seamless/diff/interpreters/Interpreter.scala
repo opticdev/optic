@@ -1,8 +1,11 @@
 package com.seamless.diff.interpreters
 
 import com.seamless.diff.DiffInterpretation
-import com.seamless.diff.RequestDiffer.RequestDiffResult
 
-trait Interpreter {
-  def interpret(diff: RequestDiffResult): Seq[DiffInterpretation]
+import scala.scalajs.js.annotation.{ JSExportAll, JSExportDescendentClasses}
+
+@JSExportAll
+@JSExportDescendentClasses
+trait Interpreter[T] {
+  def interpret(diff: T): Seq[DiffInterpretation]
 }

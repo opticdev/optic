@@ -1,4 +1,4 @@
-import React, { createRef } from 'react';
+import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import { withEditorContext } from '../../contexts/EditorContext';
 import Card from '@material-ui/core/Card';
@@ -7,8 +7,6 @@ import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import CardContent from '@material-ui/core/CardContent';
-import TextField from '@material-ui/core/TextField';
-import { everyScala, lengthScala, mapScala, ShapesCommands } from '../../engine';
 import Divider from '@material-ui/core/Divider';
 import ReactJson from 'react-json-view';
 import { AddedGreen } from '../../contexts/ColorContext';
@@ -36,8 +34,8 @@ const styles = theme => ({
     flexDirection: 'column'
   },
   root: {
-    position: 'fixed',
-    top: 90,
+    // position: 'fixed',
+    // top: 90,
     width: 380
   }
 });
@@ -75,37 +73,11 @@ export function ExampleToolTip({ children, example }) {
 
 class DiffCard extends React.Component {
 
-  state = {
-    names: {}
-  };
-
-  setName = (shapeId, name) => {
-    this.setState({ names: { ...this.state.names, [shapeId]: name } });
-  };
-
-  componentWillReceiveProps = (nextProps, nextContext) => {
-    if (nextProps.interpretation !== this.props.interpretation) {
-      this.setState({ names: {} });
-    }
-  };
-
-  acceptWithNames = () => {
-    const renameCommands = Object.entries(this.state.names).map(([shapeId, name]) =>
-      ShapesCommands.RenameShape(shapeId, name));
-    this.props.accept(renameCommands);
-  };
-
   render() {
-    const { classes, interpretation, ignore } = this.props;
+    const { classes, interpretation, ignore, accept, cardForm } = this.props;
     const { title, description } = interpretation;
-    const { nameRequests, example } = interpretation.metadataJs;
 
-    const canApprove = nameRequests.map(({ shapeId, required }) => {
-      if (required && !this.state.names[shapeId]) {
-        return false;
-      }
-      return true;
-    });
+    const canApprove = true
 
     return (
       <Card className={classes.root} elevation={1}>
@@ -115,46 +87,26 @@ class DiffCard extends React.Component {
             <div style={{ flex: 1 }} />
           </div>
         } className={classes.header} />
-        <CardContent style={{ padding: 0, maxHeight: 400, overflow: 'auto'}}>
+        <CardContent style={{ padding: 0, maxHeight: 400, overflow: 'auto' }}>
           <div className={classes.description}>
             <Typography variant="paragraph" dangerouslySetInnerHTML={{ __html: description }} />
-            {example && <ExampleToolTip example={example}>
-              <Typography variant="overline" color="primary" style={{ cursor: 'pointer', marginLeft: 7 }}>View
-                Example</Typography>
-            </ExampleToolTip>}
 
-            <div className={classes.questions} style={{ display: nameRequests.length > 0 ? 'inherit' : 'none' }}>
-              <Divider style={{ marginTop: 11, marginBottom: 11 }} />
-              {nameRequests.filter(({required}) => required).map(({ shapeId, required, description, example }) => {
-                return (
-                  <div key={shapeId} style={{marginBottom: 15}}>
-                    <Typography variant="caption">{description}</Typography>
-                    <div style={{ display: 'flex' }}>
-                      <TextField
-                        placeholder={'Name Concept'}
-                        value={this.state.names[shapeId] || ''}
-                        error={required && !this.state.names[shapeId]}
-                        onChange={(e) => this.setName(shapeId, e.target.value)} />
-                      <div style={{ width: 30 }} />
-                      <ExampleToolTip example={example}>
-                        <Typography variant="overline" color="primary" style={{ cursor: 'pointer', marginLeft: -12 }}>View
-                        Example</Typography>
-                      </ExampleToolTip>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            {cardForm ? (
+              <div className={classes.questions}>
+                <Divider style={{ marginTop: 11, marginBottom: 11 }} />
+                {cardForm}
+              </div>
+            ) : null}
           </div>
         </CardContent>
         <CardActions>
-            <Button size="small" color="primary" onClick={this.acceptWithNames} disabled={!canApprove}>
-              Approve
+          <Button size="small" color="primary" onClick={accept} disabled={!canApprove}>
+            Approve
             </Button>
-            <Button size="small" color="secondary" onClick={ignore}>
-              Ignore
+          <Button size="small" color="secondary" onClick={ignore}>
+            Ignore
             </Button>
-          </CardActions>
+        </CardActions>
       </Card>);
   }
 }

@@ -9,19 +9,30 @@ import { EditorStore, EditorModes } from '../../contexts/EditorContext';
 import { PathTrailWithoutLinks } from '../PathPage';
 import { Operation } from '../PathPage';
 import { isStartable } from './LocalDiffManager';
-import { toInteraction, RequestDiffer, DiffToCommands, JsonHelper, mapScala } from '../../engine';
+import { toInteraction, RequestDiffer, JsonHelper, Interpreters } from '../../engine';
 import { NavigationStore } from '../../contexts/NavigationContext';
 import { ColoredIdsStore } from '../../contexts/ColorContext';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 class DiffPageWrapper extends React.Component {
+    state = {
+        selectedInterpretationIndex: 0
+    }
+    setSelectedInterpretationIndex = (selectedInterpretationIndex) => {
+        this.setState({
+            selectedInterpretationIndex
+        })
+    }
+
     render() {
         const {
             classes,
             rfcId,
-            rfcService, eventStore, commands,
+            rfcService, eventStore,
             cachedQueryResults, applyCommands,
             diffSessionManager, diffState, diffStateProjections,
-            onAccept, onIgnore, item, readyToFinish, interpretation
+            onAccept, onIgnore, item, readyToFinish, interpretations
         } = this.props;
         const progress = (diffState.acceptedInterpretations.length / diffSessionManager.session.samples.length) * 100;
         const { pathId, sample, index: currentInteractionIndex } = item;
@@ -36,8 +47,28 @@ class DiffPageWrapper extends React.Component {
                 pathComponentId
             };
         });
-        const startableInteractionsForPath = diffStateProjections.samplesGroupedByPath[pathId].filter(x => isStartable(diffState, x));
+        const startableInteractionsForPath = diffStateProjections.sampleItemsGroupedByPath[pathId].filter(x => isStartable(diffState, x));
 
+        const interpretation = interpretations.length === 0 ? null : interpretations[this.state.selectedInterpretationIndex];
+        const commands = interpretations.length === 0 ? [] : JsonHelper.seqToJsArray(interpretation.commands);
+        const cardNavigator = interpretations.length === 0 ? null : (
+            <div style={{ margin: '2em 0', width: 380 }}>
+                <Typography variant="overline">{interpretations.length} interpretations</Typography>
+                <Select
+                    value={this.state.selectedInterpretationIndex}
+                    onChange={(e) => this.setSelectedInterpretationIndex(e.target.value)}
+                    fullWidth
+                >
+                    {interpretations.map((interpretation, index) => {
+                        return (
+                            <MenuItem value={index}>
+                                {interpretation.title}
+                            </MenuItem>
+                        )
+                    })}
+                </Select>
+            </div>
+        )
         const affectedIds = interpretation ? interpretation.metadataJs.affectedIds : []
 
         return (
@@ -49,6 +80,7 @@ class DiffPageWrapper extends React.Component {
             >
                 <ColoredIdsStore ids={affectedIds}>
                     <DiffPage
+                        cardNavigator={cardNavigator}
                         collapseLeftMargin={true}
                         progress={progress}
                         path={pathId}
@@ -57,15 +89,14 @@ class DiffPageWrapper extends React.Component {
                         finish={() => {
                             diffSessionManager.finishInteraction(currentInteractionIndex);
                             // also finish any interaction we deem "equivalent" that doesn't have a diff
-                            const startableInteractionsForPath = diffStateProjections.samplesGroupedByPath[pathId].filter(x => isStartable(diffState, x));
+                            const startableInteractionsForPath = diffStateProjections.sampleItemsGroupedByPath[pathId].filter(x => isStartable(diffState, x));
                             const startableInteractionsWithNoDiff = startableInteractionsForPath.filter(x => {
                                 const { sample } = x;
                                 const interaction = toInteraction(sample);
                                 const rfcState = rfcService.currentState(rfcId);
                                 const diff = RequestDiffer.compare(interaction, rfcState);
-                                const interpretation = new DiffToCommands(rfcState.shapesState).interpret(diff);
-                                const commands = JsonHelper.seqToJsArray(interpretation.commands);
-                                const hasDiff = commands.length > 0;
+                                const interpretations = new Interpreters.CompoundInterpreter(rfcState.shapesState).interpret(diff);
+                                const hasDiff = interpretations.length > 0;
                                 return !hasDiff;
                             });
                             // console.log({ startableInteractionsForPath, startableInteractionsWithNoDiff });

@@ -1,14 +1,14 @@
 package com.seamless.diff.initial
 
 import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.shapes.Commands.{AddField, AddShape, AddShapeParameter, FieldShapeFromShape, ProviderInField, ProviderInShape, RenameShape, SetParameterShape, ShapeId, ShapeProvider}
-import com.seamless.contexts.shapes.ShapesHelper.{AnyKind, BooleanKind, ListKind, NumberKind, ObjectKind, StringKind}
+import com.seamless.contexts.shapes.Commands._
+import com.seamless.contexts.shapes.ShapesHelper._
 import com.seamless.contexts.shapes.{ShapesAggregate, ShapesState}
 import com.seamless.diff.MutableCommandStream
 import io.circe.Json
 
 import scala.scalajs.js.annotation.JSExportAll
-import scala.util.{Random, Try}
+import scala.util.Random
 
 sealed trait ShapeBuilderContext
 case class IsField(named: String, parentId: String) extends ShapeBuilderContext
@@ -71,8 +71,8 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
       commands.appendInit(AddShape(id, ObjectKind.baseShapeId, ""))
 
       cxt match {
-        case IsRoot(_) => nameRequests.append(NameShapeRequest(true, id, "Choose Concept name:", json))
-        case _ => nameRequests.append(NameShapeRequest(required = false, id, s"Do you want to name the shape at '${path.mkString(".")}'", json))
+        case IsRoot(_) => nameRequests.append(NameShapeRequest(required = false, id, "Name this shape:", json))
+        case _ => nameRequests.append(NameShapeRequest(required = false, id, s"Name the shape at '${path.mkString(".")}'", json))
       }
 
       fromJsonObject(json, id)

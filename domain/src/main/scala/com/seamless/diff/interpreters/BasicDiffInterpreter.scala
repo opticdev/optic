@@ -6,17 +6,13 @@ import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.initial._
 import com.seamless.diff.{DiffInterpretation, Interpretations, ShapeDiffer}
 
-import scala.scalajs.js.annotation.{JSExport, JSExportAll}
-
-@JSExport
-@JSExportAll
-class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter {
+class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDiffResult] {
 
   def interpret(diff: RequestDiffResult): Seq[DiffInterpretation] = {
     implicit val shapesState: ShapesState = _shapesState
     diff match {
-      case d: UnmatchedHttpMethod => Seq(Interpretations.AddRequest(d.method, d.pathId))
-      case d: UnmatchedHttpStatusCode => Seq(Interpretations.AddResponse(d.statusCode, d.requestId))
+      case d: UnmatchedHttpMethod => Seq(Interpretations.AddRequest(d.interaction.apiRequest.method, d.pathId))
+      case d: UnmatchedHttpStatusCode => Seq(Interpretations.AddResponse(d.interaction.apiResponse.statusCode, d.requestId))
       case d: UnmatchedRequestContentType => Seq(Interpretations.ChangeRequestContentType(d.requestId, d.contentType, d.previousContentType))
       case d: UnmatchedRequestBodyShape => {
         d.shapeDiff match {
@@ -46,6 +42,8 @@ class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter {
         }
 
       }
+
+      case _ => Seq.empty
     }
   }
 }

@@ -1,17 +1,20 @@
 import React from 'react';
 import { GenericContextFactory } from './GenericContextFactory.js';
 import { RfcContext, saveEvents, withRfcContext } from './RfcContext.js';
-import { commandsToJs, commandsFromJson, JsonHelper, commandToJs } from '../engine/index.js';
+import { commandsFromJson, JsonHelper, commandToJs } from '../engine/index.js';
 import { EventEmitter } from 'events';
 import debounce from 'lodash.debounce';
 import LoadingDiff from '../components/diff/LoadingDiff';
-import { cheapEquals } from '../components/shape-editor/ShapeViewer';
-import { mapScala } from '../engine/index';
 
 const {
     Context: SessionContext,
     withContext: withSessionContext
 } = GenericContextFactory(null)
+
+export const DiffStateStatus = {
+    persisted: 'persisted',
+    started: 'started',
+}
 
 class DiffSessionManager {
     constructor(sessionId, session, diffState) {
@@ -24,7 +27,7 @@ class DiffSessionManager {
     }
 
     markAsManuallyIntervened(currentInteractionIndex) {
-        this.diffState.status = 'started'
+        this.diffState.status = DiffStateStatus.started;
         const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
         this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
             currentInteraction,
@@ -34,7 +37,7 @@ class DiffSessionManager {
     }
 
     skipInteraction(currentInteractionIndex) {
-        this.diffState.status = 'started'
+        this.diffState.status = DiffStateStatus.started;
         const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
 
         this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
@@ -45,7 +48,7 @@ class DiffSessionManager {
     }
 
     finishInteraction(currentInteractionIndex) {
-        this.diffState.status = 'started'
+        this.diffState.status = DiffStateStatus.started;
         const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}
 
         this.diffState.interactionResults[currentInteractionIndex] = Object.assign(
@@ -56,7 +59,7 @@ class DiffSessionManager {
     }
 
     acceptCommands(commandArray) {
-        this.diffState.status = 'started'
+        this.diffState.status = DiffStateStatus.started;
         this.diffState.acceptedInterpretations.push(commandArray.map(x => commandToJs(x)))
         this.events.emit('change')
     }
@@ -65,7 +68,7 @@ class DiffSessionManager {
         await this.persistState()
         // console.log('begin transaction')
         await saveEvents(eventStore, rfcId, this.diffState.baseSpecVersion)
-        this.diffState.status = 'persisted'
+        this.diffState.status = DiffStateStatus.persisted;
         await this.persistState()
         // console.log('end transaction')
         this.events.emit('updated')
@@ -169,19 +172,31 @@ class SessionStoreBase extends React.Component {
         const { queries } = this.props
         const diffStateProjections = (function (diffSessionManager) {
             const { session } = diffSessionManager
-            const urls = new Set(session.samples.map(x => x.request.url))
-            const samplesAndResolvedPaths = session.samples
+            const sortedSampleItems = session.samples
                 .map((sample, index) => {
-                    const pathId = queries.resolvePath(sample.request.url)
-                    // console.log({ pathId, sample, index })
-                    return { pathId, sample, index }
+                    return {
+                        sample, index
+                    }
                 })
-            const samplesWithResolvedPaths = samplesAndResolvedPaths.filter(x => !!x.pathId)
-            const samplesWithoutResolvedPaths = samplesAndResolvedPaths
-                .filter(x => !x.pathId)
-                .sort((a, b) => a.sample.request.url.localeCompare(b.sample.request.url))
+                .sort((a, b) => {
+                    const urlComparison = a.sample.request.url.localeCompare(b.sample.request.url)
+                    if (urlComparison !== 0) {
+                        return urlComparison
+                    }
+                    const verbComparison = a.sample.request.method.localeCompare(b.sample.request.method)
+                    return verbComparison
+                })
+            const urls = new Set(sortedSampleItems.map(x => x.sample.request.url))
 
-            const samplesGroupedByPath = samplesWithResolvedPaths
+            const sampleItemsAndResolvedPaths = sortedSampleItems
+                .map((item) => {
+                    const pathId = queries.resolvePath(item.sample.request.url)
+                    return { ...item, pathId }
+                })
+            const sampleItemsWithResolvedPaths = sampleItemsAndResolvedPaths.filter(x => !!x.pathId)
+            const sampleItemsWithoutResolvedPaths = sampleItemsAndResolvedPaths.filter(x => !x.pathId)
+
+            const sampleItemsGroupedByPath = sampleItemsWithResolvedPaths
                 .reduce((acc, value) => {
                     const { pathId } = value;
                     const group = acc[pathId] || []
@@ -192,9 +207,10 @@ class SessionStoreBase extends React.Component {
 
             return {
                 urls,
-                samplesWithResolvedPaths,
-                samplesWithoutResolvedPaths,
-                samplesGroupedByPath
+                sortedSampleItems,
+                sampleItemsWithResolvedPaths,
+                sampleItemsWithoutResolvedPaths,
+                sampleItemsGroupedByPath
             }
         })(diffSessionManager)
         const handleCommands = (...commands) => {

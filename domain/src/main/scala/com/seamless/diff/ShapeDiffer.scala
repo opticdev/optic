@@ -12,8 +12,10 @@ object ShapeDiffer {
   case class WeakNoDiff() extends ShapeDiffResult
   case class UnsetShape(actual: Json) extends ShapeDiffResult
   case class UnsetValue(expected: ShapeEntity) extends ShapeDiffResult
+  case class NullValue(expected: ShapeEntity) extends ShapeDiffResult
   case class ShapeMismatch(expected: ShapeEntity, actual: Json) extends ShapeDiffResult
-  case class MissingObjectKey(parentObjectShapeId: ShapeId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
+  case class UnsetObjectKey(parentObjectShapeId: ShapeId, fieldId: FieldId, key: String, expected: ShapeEntity) extends ShapeDiffResult
+  case class NullObjectKey(parentObjectShapeId: ShapeId, fieldId: FieldId, key: String, expected: ShapeEntity) extends ShapeDiffResult
   case class UnexpectedObjectKey(parentObjectShapeId: ShapeId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   case class KeyShapeMismatch(fieldId: FieldId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   case class MapValueMismatch(key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
@@ -27,7 +29,7 @@ object ShapeDiffer {
     val coreShape = toCoreShape(expectedShape, shapesState)
     if (actualShapeOption.isEmpty) {
       val diff = coreShape match {
-        case AnyKind => NoDiff()
+        case AnyKind => WeakNoDiff()
         case OptionalKind => NoDiff()
         case _ => UnsetValue(expectedShape)
       }
@@ -43,21 +45,21 @@ object ShapeDiffer {
         if (actualShape.isString) {
           NoDiff()
         } else {
-          ShapeMismatch(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape)
         }
       }
       case BooleanKind => {
         if (actualShape.isBoolean) {
           NoDiff()
         } else {
-          ShapeMismatch(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape)
         }
       }
       case NumberKind => {
         if (actualShape.isNumber) {
           NoDiff()
         } else {
-          ShapeMismatch(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape)
         }
       }
       case ListKind => {
@@ -74,7 +76,7 @@ object ShapeDiffer {
           }
           NoDiff()
         } else {
-          ShapeMismatch(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape)
         }
       }
       case ObjectKind => {
@@ -121,7 +123,8 @@ object ShapeDiffer {
               val diff = ShapeDiffer.diff(expectedFieldShape.get, actualFieldValue)
               diff match {
                 case d: ShapeMismatch => return KeyShapeMismatch(field.fieldId, key, expectedFieldShape.get, actualFieldValue.get)
-                case d: UnsetValue => return MissingObjectKey(field.fieldId, key, expectedFieldShape.get, Json.Null)
+                case d: UnsetValue => return UnsetObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get)
+                case d: NullValue => return NullObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get)
                 case x: NoDiff =>
                 case x => {
                   return x
@@ -139,7 +142,7 @@ object ShapeDiffer {
 
           NoDiff()
         } else {
-          ShapeMismatch(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape)
         }
       }
       case NullableKind => {
@@ -205,7 +208,7 @@ object ShapeDiffer {
             WeakNoDiff()
           }
         } else {
-          ShapeMismatch(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape)
         }
       }
       case ReferenceKind => {
@@ -213,14 +216,14 @@ object ShapeDiffer {
         if (referencedShape.isDefined) {
           //@TODO: referencedShape should be an object. find the first field which is an Identifier<T>. Diff the actualShape against the resolved T
         }
-        NoDiff()
+        WeakNoDiff()
       }
       case IdentifierKind => {
         val identifierShape = resolveParameterShape(expectedShape.shapeId, "$identifierInner")
         if (identifierShape.isDefined) {
           //@TODO: identifierShape should be a string or number. Diff the actualShape against it.
         }
-        NoDiff()
+        WeakNoDiff()
       }
     }
   }
@@ -243,10 +246,18 @@ object ShapeDiffer {
 
   def resolveBaseObject(objectId: ShapeId)(implicit shapesState: ShapesState): ShapeEntity = {
     val o = shapesState.shapes(objectId)
-    if (o.descriptor.baseShapeId == "$object") {
+    if (o.descriptor.baseShapeId == ObjectKind.baseShapeId) {
       o
     } else {
       resolveBaseObject(o.descriptor.baseShapeId)
+    }
+  }
+
+  def shapeMismatchOrMissing(expectedShape: ShapeEntity, actualShape: Json): ShapeDiffResult = {
+    if (actualShape.isNull) {
+      NullValue(expectedShape)
+    } else {
+      ShapeMismatch(expectedShape, actualShape)
     }
   }
 }
