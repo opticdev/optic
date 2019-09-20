@@ -47,6 +47,12 @@ class DiffSessionManager {
         this.events.emit('change')
     }
 
+    markDiffAsIgnored(diffString) {
+        this.diffState.ignoredDiffs = this.diffState.ignoredDiffs || {};
+        this.diffState.ignoredDiffs[diffString] = true
+        this.events.emit('change')
+    }
+
     finishInteraction(currentInteractionIndex) {
         this.diffState.status = DiffStateStatus.started;
         const currentInteraction = this.diffState.interactionResults[currentInteractionIndex] || {}

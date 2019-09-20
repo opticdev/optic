@@ -38,7 +38,12 @@ const styles = (theme => ({
     color: primary
   }
 }));
-
+export function isIgnoredDiff(diffState, diff) {
+  if (!diffState.ignoredDiffs) {
+    return false
+  }
+  return !!diffState.ignoredDiffs[diff.toString()]
+}
 export function isStartable(diffState, item) {
   const { index } = item;
   const results = diffState.interactionResults[index] || {};
@@ -125,7 +130,7 @@ class LocalDiffManager extends React.Component {
     );
   }
 
-  renderUnrecognizedShapeWidget(item, interpretations) {
+  renderUnrecognizedShapeWidget(item, diff, interpretations) {
     const { applyCommands, diffSessionManager } = this.props
 
     const { Store: ConceptNameStore, Context: ConceptNameContext } = GenericSetterContextFactory({
@@ -143,6 +148,7 @@ class LocalDiffManager extends React.Component {
               placeholder={'Name Concept'}
               value={value.names[shapeId] || ''}
               onChange={(e) => setValue({
+                ...value,
                 names: {
                   ...value.names,
                   [shapeId]: e.target.value
@@ -173,15 +179,28 @@ class LocalDiffManager extends React.Component {
                 }
                 interpretation={interpretation}
                 accept={() => {
-                  debugger
-                  track('Accepted Interaction');
-                  applyCommands(...allCommands);
+                  track('Provided Concept Name');
+                  if (selectedInterpretationIndex === interpretations.length - 1) {
+                    applyCommands(...allCommands);
+                    diffSessionManager.markDiffAsIgnored(diff.toString())
+                  } else {
+                    setValue({
+                      ...value,
+                      selectedInterpretationIndex: selectedInterpretationIndex + 1
+                    })
+                  }
                 }}
                 ignore={() => {
-                  track('Ignored Interaction');
-                  debugger;
-                  diffSessionManager.skipInteraction(item.index);
-
+                  track('Ignored Concept Name');
+                  if (selectedInterpretationIndex === interpretations.length - 1) {
+                    applyCommands(...allCommands);
+                    diffSessionManager.markDiffAsIgnored(diff.toString())
+                  } else {
+                    setValue({
+                      ...value,
+                      selectedInterpretationIndex: selectedInterpretationIndex + 1
+                    })
+                  }
                 }}
               >
                 <Typography>{item.sample.request.method} {item.sample.request.url}</Typography>
@@ -251,17 +270,20 @@ class LocalDiffManager extends React.Component {
       }
     }
 
-    // const unsetBodyInterpreter = new Interpreters.UnsetBodyInterpreter(rfcState.shapesState)
-    // for (let item of startableSampleItems) {
-    //   const interaction = toInteraction(item.sample);
-    //   const diff = RequestDiffer.compare(interaction, rfcState);
-    //   const interpretations = JsonHelper.seqToJsArray(unsetBodyInterpreter.interpret(diff));
-    //   console.log({ diff, interpretations })
-    //   console.log('xxx2', diff.toString(), interpretations.toString())
-    //   if (interpretations.length > 0) {
-    //     return this.renderUnrecognizedShapeWidget(item, interpretations)
-    //   }
-    // }
+    const unsetBodyInterpreter = new Interpreters.UnsetBodyInterpreter(rfcState.shapesState)
+    for (let item of startableSampleItems) {
+      const interaction = toInteraction(item.sample);
+      const diff = RequestDiffer.compare(interaction, rfcState);
+      if (isIgnoredDiff(diffState, diff)) {
+        continue;
+      }
+      const interpretations = JsonHelper.seqToJsArray(unsetBodyInterpreter.interpret(diff));
+      console.log({ diff, interpretations })
+      console.log('xxx2', diff.toString(), interpretations.toString())
+      if (interpretations.length > 0) {
+        return this.renderUnrecognizedShapeWidget(item, diff, interpretations)
+      }
+    }
 
     const compoundInterpreter = new Interpreters.CompoundInterpreter(rfcState.shapesState)
     for (let item of startableSampleItems) {

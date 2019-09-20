@@ -53,7 +53,7 @@ class DiffPageWrapper extends React.Component {
         const commands = interpretations.length === 0 ? [] : JsonHelper.seqToJsArray(interpretation.commands);
         const cardNavigator = interpretations.length === 0 ? null : (
             <div style={{ margin: '2em 0', width: 380 }}>
-                <Typography variant="overline">{interpretations.length} interpretations</Typography>
+                <Typography variant="overline">{interpretations.length} diff interpretations</Typography>
                 <Select
                     value={this.state.selectedInterpretationIndex}
                     onChange={(e) => this.setSelectedInterpretationIndex(e.target.value)}

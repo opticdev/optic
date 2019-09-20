@@ -22,6 +22,7 @@ const styles = theme => ({
   diffCardMargin: {
     paddingLeft: 25,
     paddingRight: 20,
+    paddingTop: '1em',
     maxWidth: 480,
     position: 'fixed',
   }
