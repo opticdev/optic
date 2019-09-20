@@ -513,9 +513,13 @@
         "version": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f",
         "signature": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f"
       },
+      "./node_modules/open/index.d.ts": {
+        "version": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703",
+        "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
+      },
       "./src/commands/init.ts": {
-        "version": "cef600181c028822b61d8b5eac4d0e85f4a7380e373f12044fdb807c3fb417d5",
-        "signature": "df372297399584ee1d11ee85cc554a550a2ab2ad20428c15ec5e5f1135d92905"
+        "version": "47b61830eb01626e2e6dbbbedd015287f038125c7d1815bd7212f410d8f814ca",
+        "signature": "7330d90ccede82fffa028e03ffc2dbdb751d882b85577d1a3db76bb28226fa71"
       },
       "./node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
@@ -544,10 +548,6 @@
       "./node_modules/@types/express/index.d.ts": {
         "version": "1f92cdebe2b1e0e6309ccdb6e8700cfd2d3e7131c7842f91b38ed1e4ff2a7090",
         "signature": "1f92cdebe2b1e0e6309ccdb6e8700cfd2d3e7131c7842f91b38ed1e4ff2a7090"
-      },
-      "./node_modules/open/index.d.ts": {
-        "version": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703",
-        "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
       },
       "./src/commands/login.ts": {
         "version": "4a1fc6de368f768c092e707e0d695d9c2fe0795a1acc8704c98a2052cedb6a74",
@@ -1410,6 +1410,12 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./node_modules/open/index.d.ts": [
+        "./node_modules/@types/node/child_process.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./src/commands/init.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts",
         "./node_modules/@types/fs-extra/index.d.ts",
@@ -1421,6 +1427,7 @@
         "./src/persistutils.ts",
         "./node_modules/@types/js-yaml/index.d.ts",
         "./src/lib/analytics.ts",
+        "./node_modules/open/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -1463,12 +1470,6 @@
         "./node_modules/@types/body-parser/index.d.ts",
         "./node_modules/@types/serve-static/index.d.ts",
         "./node_modules/@types/express-serve-static-core/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/open/index.d.ts": [
-        "./node_modules/@types/node/child_process.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -2036,6 +2037,7 @@
       ],
       "./src/commands/init.ts": [
         "./node_modules/@oclif/parser/lib/flags.d.ts",
+        "./node_modules/@types/node/child_process.d.ts",
         "./node_modules/@oclif/command/lib/index.d.ts"
       ],
       "./src/commands/generate.ts": [
@@ -2120,16 +2122,6 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./node_modules/open/index.d.ts": [
-        "./node_modules/@types/node/child_process.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/commands/login.ts": [
-        "./node_modules/@oclif/parser/lib/flags.d.ts",
-        "./node_modules/@oclif/command/lib/index.d.ts"
-      ],
       "./node_modules/@types/body-parser/index.d.ts": [
         "./node_modules/@types/connect/index.d.ts",
         "./node_modules/@types/node/http.d.ts",
@@ -2165,6 +2157,10 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./src/commands/login.ts": [
+        "./node_modules/@oclif/parser/lib/flags.d.ts",
+        "./node_modules/@oclif/command/lib/index.d.ts"
+      ],
       "./node_modules/@types/connect/index.d.ts": [
         "./node_modules/@types/node/http.d.ts",
         "./node_modules/@types/node/ts3.2/index.d.ts",
@@ -2182,6 +2178,12 @@
       "./node_modules/@types/serve-static/index.d.ts": [
         "./node_modules/@types/express-serve-static-core/index.d.ts",
         "./node_modules/@types/mime/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/open/index.d.ts": [
+        "./node_modules/@types/node/child_process.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -3013,6 +3015,7 @@
       "./src/lib/analytics.ts",
       "./src/commands/generate.ts",
       "./node_modules/colors/index.d.ts",
+      "./node_modules/open/index.d.ts",
       "./src/commands/init.ts",
       "./node_modules/@types/range-parser/index.d.ts",
       "./node_modules/@types/express-serve-static-core/index.d.ts",
@@ -3021,7 +3024,6 @@
       "./node_modules/@types/connect/index.d.ts",
       "./node_modules/@types/body-parser/index.d.ts",
       "./node_modules/@types/express/index.d.ts",
-      "./node_modules/open/index.d.ts",
       "./src/commands/login.ts",
       "./src/lib/log-helper.ts",
       "./node_modules/@types/cookie-parser/index.d.ts",
