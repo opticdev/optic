@@ -61,6 +61,6 @@ yarn add global @useoptic/cli
 MIT
 
 ## Analytics 
-We're collecting basic analytics in the CLI to help us improve Optic. Data is collected under an anonymous Mixpanel ID unless you're using our team version and have authenticated in the tool. We track which actions are taken are taken in the API designer, but not the properties of those actions. So we know a user 'added a 200 response' but we know nothing about it.
+We're collecting basic analytics in the CLI to help us improve Optic. Data is collected under an anonymously. No HTTP traffic sessions are ever tracked or reported back. We track which actions are taken in the API designer, but not the properties of those actions. So we know a user 'added a 200 response' but we know nothing about it.
 
 We're working on adding an easy way to opt-out that will be documented here soon. 
