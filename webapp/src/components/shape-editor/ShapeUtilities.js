@@ -83,7 +83,7 @@ class ShapeUtilities {
         }
 
     }
-    
+
     static mergeBindings(parentObjectBindings, fieldBindings) {
         const keySet = new Set([parentObjectBindings, fieldBindings].map(x => Object.keys(x)).flatMap(x => x))
         // console.log({output: keySet})
@@ -95,7 +95,7 @@ class ShapeUtilities {
         // console.log({output: merged})
         return merged
     }
-    
+
     static fieldShapeName(queries, shape, field, parentBindings) {
         const { fieldShapeDescriptor } = field;
         if (fieldShapeDescriptor.FieldShapeFromShape) {
@@ -121,6 +121,8 @@ class ShapeUtilities {
         const base = {
             id: baseShape.shapeId,
             color: primitiveColors[baseShape.baseShapeId],
+            coreShapeId: baseShape.coreShapeId,
+            userDefinedName: baseShape.name,
             baseShapeName: baseShape.name || baseShapeOfBaseShape.name,
         }
         if (baseShape.parameters.length === 0 && baseShapeOfBaseShape.parameters.length === 0) {
