@@ -270,21 +270,6 @@ class LocalDiffManager extends React.Component {
       }
     }
 
-    const unsetBodyInterpreter = new Interpreters.UnsetBodyInterpreter(rfcState.shapesState)
-    for (let item of startableSampleItems) {
-      const interaction = toInteraction(item.sample);
-      const diff = RequestDiffer.compare(interaction, rfcState);
-      if (isIgnoredDiff(diffState, diff)) {
-        continue;
-      }
-      const interpretations = JsonHelper.seqToJsArray(unsetBodyInterpreter.interpret(diff));
-      console.log({ diff, interpretations })
-      console.log('xxx2', diff.toString(), interpretations.toString())
-      if (interpretations.length > 0) {
-        return this.renderUnrecognizedShapeWidget(item, diff, interpretations)
-      }
-    }
-
     const compoundInterpreter = new Interpreters.CompoundInterpreter(rfcState.shapesState)
     for (let item of startableSampleItems) {
       const pathId = queries.resolvePath(item.sample.request.url)

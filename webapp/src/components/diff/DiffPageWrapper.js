@@ -9,7 +9,7 @@ import { EditorStore, EditorModes } from '../../contexts/EditorContext';
 import { PathTrailWithoutLinks } from '../PathPage';
 import { Operation } from '../PathPage';
 import { isStartable } from './LocalDiffManager';
-import { toInteraction, RequestDiffer, JsonHelper, Interpreters } from '../../engine';
+import { toInteraction, RequestDiffer, JsonHelper, Interpreters, ShapesCommands } from '../../engine';
 import { NavigationStore } from '../../contexts/NavigationContext';
 import { ColoredIdsStore } from '../../contexts/ColorContext';
 import Select from '@material-ui/core/Select';
@@ -17,11 +17,20 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 class DiffPageWrapper extends React.Component {
     state = {
-        selectedInterpretationIndex: 0
+        selectedInterpretationIndex: 0,
+        additionalCommands: []
     }
+
     setSelectedInterpretationIndex = (selectedInterpretationIndex) => {
         this.setState({
-            selectedInterpretationIndex
+            selectedInterpretationIndex,
+            additionalCommands: []
+        })
+    }
+
+    addAdditionalCommands = (commands) => {
+        this.setState({
+            additionalCommands: [...this.state.additionalCommands, ...commands]
         })
     }
 
@@ -69,6 +78,7 @@ class DiffPageWrapper extends React.Component {
                 </Select>
             </div>
         )
+        commands.push(...this.state.additionalCommands)
         const affectedIds = interpretation ? interpretation.metadataJs.affectedIds : []
 
         return (
@@ -102,11 +112,17 @@ class DiffPageWrapper extends React.Component {
                             // console.log({ startableInteractionsForPath, startableInteractionsWithNoDiff });
                             startableInteractionsWithNoDiff.forEach(x => diffSessionManager.finishInteraction(x.index));
                         }}
-                        accept={onAccept}
+                        accept={(commands) => onAccept([...commands, ...this.state.additionalCommands])}
                         ignore={onIgnore}
                     >
-                        <NavigationStore onShapeSelected={() => {
-                            // nothing for now
+                        <NavigationStore onShapeSelected={(shapeId) => {
+                            if (affectedIds.includes(shapeId)) {
+                                debugger
+                                this.addAdditionalCommands([
+                                    ShapesCommands.RenameShape(shapeId, 'ddd')
+                                ])
+                                //@TODO: show ShapeNameSelector, and add the resulting commands via this.addAdditionalCommands(commands)
+                            }
                         }}>
                             <EditorStore mode={readyToFinish ? EditorModes.DESIGN : EditorModes.DOCUMENTATION}>
                                 <Paper style={{ flex: 1, width: 850, maxWidth: 1000, overflow: 'hidden' }}>

@@ -1,6 +1,6 @@
 import { boundParameterColor, primitiveColors } from './Types.js';
 
-export const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', /*'$oneOf',*/ '$identifier', '$reference', '$any']
+export const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', /*'$oneOf',*/ '$identifier', '$reference', '$any', '$nullable', '$optional']
 export const coreShapeIdsSet = new Set(coreShapeIds)
 
 class ShapeUtilities {
@@ -146,7 +146,7 @@ class ShapeUtilities {
                         return {
                             binding,
                             color: primitiveColors[shape.baseShapeId],
-                            boundName: queries.shapeById(shapeId).name || '(unnamed)',
+                            boundName: queries.shapeById(shapeId).name || queries.shapeById(shape.baseShapeId).name || '(unnamed)',
                             parameterName: parameter.name,
                             parameterId: parameter.shapeParameterId,
                         }
