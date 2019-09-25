@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "Make APIs Developer Friendly",
-  "version": "6.1.5",
+  "version": "6.1.8",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -94,7 +94,7 @@
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "xposttest": "tslint -p test -t stylish",
-    "prepack": "rm tsconfig.tsbuildinfo || true && rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "prepack": "cp ../Readme.md ./Readme.md && rm tsconfig.tsbuildinfo || true && rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "xtest": "ANALYTICS_IMPL=null nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md"
   },

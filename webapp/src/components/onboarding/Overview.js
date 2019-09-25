@@ -105,6 +105,10 @@ const PathListItem = withRfcContext(({path, baseUrl, cachedQueryResults}) => {
     return [id, cachedQueryResults.requests[id].requestDescriptor.httpMethod];
   });
 
+  if (name === '/audit') {
+    debugger
+  }
+
   if (!visible) {
     return null;
   }
@@ -192,7 +196,6 @@ class OverView extends React.Component {
     const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
     const sortedConcepts = sortBy(concepts, ['name']);
     const pathTree = flattenPaths('root', pathsById);
-
     const conceptsFiltered = fuzzyConceptFilter(sortedConcepts, this.state.searchQuery);
     const pathIdsFiltered = fuzzyPathsFilter(pathTree, this.state.searchQuery);
 
@@ -325,6 +328,9 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
       return flattenPaths(childId, paths, depth + 1, fullNew, filteredIds);
     });
 
+
+  const visible = filteredIds ? (filteredIds.includes(id) || (children.some((i => i.visible)))) : null
+
   return {
     name,
     full: full,
@@ -333,7 +339,7 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
     depth,
     searchString: `${full}${name}`.split('/').join(' '),
     pathId: id,
-    visible: filteredIds ? (filteredIds.includes(id) || children.some((i => i.visible))) : null
+    visible
   };
 }
 
