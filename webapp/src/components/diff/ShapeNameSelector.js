@@ -50,6 +50,9 @@ class ShapeNameSelector extends React.Component {
   }
 
   render() {
+
+    return null
+
     const {shapeId, actualShape, classes, userDefinedName} = this.props;
 
     const isNamed = !!userDefinedName;
