@@ -1,6 +1,6 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-
+import classNames from 'classnames'
 const shared = {
   padding: 0,
   margin: 0,
@@ -45,7 +45,7 @@ class ShadowInput extends React.Component {
   }
 
   render() {
-    const {classes, className, options = [], onChange} = this.props;
+    const {classes, className, options = [], onChange, style, onDelete, onEmptyNext, inputClass} = this.props;
     const {userInput} = this.state;
 
     const match = this.getMatch()
@@ -53,14 +53,30 @@ class ShadowInput extends React.Component {
 
     const displayInput = label ? label.substr(0, userInput.length) : userInput;
 
-    return <div className={className}>
+    return <div className={className} style={style}>
       <div className={classes.shadow}>{label}</div>
-      <input className={classes.input}
+      <input className={classNames(classes.input, inputClass)}
              value={displayInput}
+             autoFocus
+             fullWidth
              onKeyDown={(e) => {
-               if ( (e.which === 9 || e.which === 13) && match) {
-                 this.setState({userInput: label})
-                 this.onChange(match)
+               if (e.keyCode === 8 && e.target.value === '') {
+                 if (onDelete) {
+                   onDelete()
+                 }
+               }
+
+               const rightArrowAtEnd = (e.target.selectionStart === e.target.value.length && e.which === 39)
+
+               if (e.which === 9 || e.which === 13 || rightArrowAtEnd) {
+                 if (match) {
+                   this.setState({userInput: label})
+                   this.onChange(match)
+                 } else {
+                   if (onEmptyNext) {
+                     onEmptyNext()
+                   }
+                 }
                }
              }}
              onChange={(e) => this.setState({userInput: e.target.value})}/>
