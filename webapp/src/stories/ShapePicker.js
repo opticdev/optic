@@ -43,7 +43,8 @@ const textStyle = {
   fontSize: 14,
   marginTop: 1,
   fontWeight: 100,
-  fontFamily: 'Ubuntu'
+  fontFamily: 'Ubuntu',
+  whiteSpace: 'nowrap'
 };
 
 // const primitiveOptions = [
@@ -321,7 +322,7 @@ function ListChoice() {
       const listItem = parameters[parameter];
       return (
         <div style={{display: 'flex', flexDirection: 'row'}}>
-          <div style={{...textStyle, width: 40 }}>List of</div>
+          <div style={textStyle}>List of</div>
           <div style={{marginLeft: 3}}>{active ? parameterInput(parameter) : renderInactiveChoice(listItem)}</div>
         </div>);
     },
@@ -428,7 +429,7 @@ function IdentifierChoice() {
         return (
           <div style={{display: 'flex', flexDirection: 'row'}}>
             <div style={textStyle}>Identifier as </div>
-            <div style={{marginLeft: 0}}>{renderInactiveChoice(identifierType)}</div>
+            <div style={{marginLeft: 4}}>{renderInactiveChoice(identifierType)}</div>
           </div>);
       }
     },
@@ -516,7 +517,7 @@ function OneOfChoice() {
                 }
 
                 if (secondToLast) {
-                  return <div style={{ minWidth: 21}}>, or </div>;
+                  return ', or';
                 }
 
                 return ', ';
@@ -524,7 +525,7 @@ function OneOfChoice() {
               })();
 
               return <div style={{marginLeft: 6, display: 'flex'}}>
-                {renderInactiveChoice(parameters[key])}<div style={{...textStyle, flex: 1}}>{delineator}</div></div>;
+                {renderInactiveChoice(parameters[key])}<div style={textStyle}>{delineator}</div></div>;
             })}
           </div>
         );
@@ -532,7 +533,7 @@ function OneOfChoice() {
 
       return (
         <div style={{display: 'flex', flexDirection: 'row'}}>
-          <div style={{...textStyle, width: 47}}>One of</div>
+          <div style={textStyle}>One of</div>
           {selections}
           {/*<div>{active ? parameterInput(parameter) :*/}
           {/*  <div style={{marginLeft: 3}}>{parameters[parameter].label}</div>}</div>*/}
