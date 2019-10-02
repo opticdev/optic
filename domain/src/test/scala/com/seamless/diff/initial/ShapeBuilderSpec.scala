@@ -93,4 +93,13 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     rfcService.handleCommandSequence("id", result.commands)
   }
 
+  it("works with Readme example") {
+    val basic = fromFile("readme-example")
+    val result = new ShapeBuilder(basic, "rm").run
+
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    val rfcService: RfcService = new RfcService(eventStore)
+    println(CommandSerialization.toJson(result.commands))
+    rfcService.handleCommandSequence("id", result.commands)
+  }
 }

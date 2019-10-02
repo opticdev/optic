@@ -8,7 +8,6 @@ organization := "com.seamless"
 
 version := "0.1"
 
-enablePlugins(ScalaJSBundlerPlugin)
 
 scalaVersion := "2.12.8"
 
@@ -27,8 +26,9 @@ libraryDependencies ++= Seq(
   "io.circe" %%% "circe-literal",
 ).map(_ % circeVersion)
 
-scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
-webpackBundlingMode := BundlingMode.LibraryOnly()
+//enablePlugins(ScalaJSBundlerPlugin)
+//scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
+//webpackBundlingMode := BundlingMode.LibraryOnly()
 
 //for tests only
 libraryDependencies += "org.scalameta" %% "scalameta" % "4.1.9" % "test"

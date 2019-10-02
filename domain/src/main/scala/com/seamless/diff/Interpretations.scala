@@ -163,6 +163,7 @@ object Interpretations {
 
   def AddInitialResponseBodyShape(actual: Json, responseStatusCode: Int, responseId: String, contentType: String)(implicit shapesState: ShapesState) = {
     val shape = new ShapeBuilder(actual).run
+    println("GENERATING A SHAPE LOL")
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
 

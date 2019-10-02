@@ -97,7 +97,7 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
   }
 
   def isPrimitive(json: Json) = {
-    json.isString || json.isNumber || json.isBoolean
+    json.isString || json.isNumber || json.isBoolean || json.isNull
   }
 
   def primitiveShapeProvider(json: Json) = {

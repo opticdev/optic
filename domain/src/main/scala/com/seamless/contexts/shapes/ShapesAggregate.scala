@@ -222,6 +222,7 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
     val stringShape = CoreShape("$string", NoParameterList(), "string")
     val booleanShape = CoreShape("$boolean", NoParameterList(), "bool")
     val numberShape = CoreShape("$number", NoParameterList(), "number")
+    val unknownShape = CoreShape("$unknown", NoParameterList(), "unknown")
 
     val listShapeId = "$list"
     val listItemParameter = ShapeParameterEntity("$listItem", ShapeParameterValue(listShapeId, ProviderInShape(listShapeId, NoProvider(), "$listItem"), "T"), isRemoved = false)
@@ -268,6 +269,7 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
       oneOfShape.shapeId -> oneOfShape,
       nullableShape.shapeId -> nullableShape,
       optionalShape.shapeId -> optionalShape,
+      unknownShape.shapeId -> unknownShape
     )
 
     val shapeParameters = Map(
