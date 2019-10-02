@@ -50,8 +50,9 @@ object ShapesHelper {
   case object ReferenceKind extends CoreShapeKind("$reference")
   case object NullableKind extends CoreShapeKind("$nullable")
   case object OptionalKind extends CoreShapeKind("$optional")
+  case object UnknownKind extends CoreShapeKind("$unknown")
 
-  val allCoreShapes = Set(ObjectKind, ListKind, MapKind, OneOfKind, AnyKind, StringKind, NumberKind, BooleanKind, IdentifierKind, ReferenceKind, NullableKind, OptionalKind)
+  val allCoreShapes = Set(ObjectKind, ListKind, MapKind, OneOfKind, AnyKind, StringKind, NumberKind, BooleanKind, IdentifierKind, ReferenceKind, NullableKind, OptionalKind, UnknownKind)
 
   def toCoreShape(shapeEntity: ShapeEntity, shapesState: ShapesState): CoreShapeKind = {
     allCoreShapes.find(_.baseShapeId == shapeEntity.descriptor.baseShapeId) match {

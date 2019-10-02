@@ -91,7 +91,8 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     } else if (json.isNumber) {
       commands.appendInit(AddShape(id, NumberKind.baseShapeId, ""))
     } else if (json.isNull) {
-      commands.appendInit(AddShape(id, AnyKind.baseShapeId, ""))
+      commands.appendInit(AddShape(id, NullableKind.baseShapeId, ""))
+      SetParameterShape(ProviderInShape(id, ShapeProvider(UnknownKind.baseShapeId), "$nullableInner"))
     }
   }
 
