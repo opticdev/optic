@@ -32,6 +32,7 @@ webpackBundlingMode := BundlingMode.LibraryOnly()
 
 //for tests only
 libraryDependencies += "org.scalameta" %% "scalameta" % "4.1.9" % "test"
+libraryDependencies += "org.scala-lang.modules" %% "scala-async" % "0.10.0"
 libraryDependencies += "io.circe" %% "circe-jawn" % "0.10.0" % "test"
 
 //generateTypescript := {

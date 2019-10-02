@@ -1,6 +1,7 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import classNames from 'classnames'
+import classNames from 'classnames';
+
 const shared = {
   padding: 0,
   margin: 0,
@@ -35,20 +36,39 @@ class ShadowInput extends React.Component {
     const {userInput} = this.state;
     const match = userInput ? (options.filter(i => i.label.toLowerCase().startsWith(userInput.toLowerCase().trim()))[0]) : null;
 
-    return match
+    return match;
   };
 
   onChange = (match) => {
     if (this.props.onChange) {
-      this.props.onChange(match)
+      this.props.onChange(match);
+    }
+  };
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (nextProps.value === '') {
+      this.setState({userInput: ''})
     }
   }
 
   render() {
-    const {classes, className, options = [], onChange, style, onDelete, onEmptyNext, inputClass} = this.props;
+    const {
+      classes,
+      className,
+      options = [],
+      onChange,
+      onKeyDown,
+      value,
+      onValueChanged,
+      style,
+      onDelete,
+      onEmptyNext,
+      inputStyle,
+      inputClass
+    } = this.props;
     const {userInput} = this.state;
 
-    const match = this.getMatch()
+    const match = this.getMatch();
     const label = (match) ? match.label : null;
 
     const displayInput = label ? label.substr(0, userInput.length) : userInput;
@@ -59,27 +79,42 @@ class ShadowInput extends React.Component {
              value={displayInput}
              autoFocus
              fullWidth
+             style={inputStyle}
              onKeyDown={(e) => {
+               if (onKeyDown) {
+                 onKeyDown(e)
+               }
+
                if (e.keyCode === 8 && e.target.value === '') {
                  if (onDelete) {
-                   onDelete()
+                   onDelete();
                  }
                }
 
-               const rightArrowAtEnd = (e.target.selectionStart === e.target.value.length && e.which === 39)
+               const rightArrowAtEnd = (e.target.selectionStart === e.target.value.length && e.which === 39);
 
                if (e.which === 9 || e.which === 13 || rightArrowAtEnd) {
                  if (match) {
-                   this.setState({userInput: label})
-                   this.onChange(match)
+                   const setTo = match.trueValue ? match.trueValue : label
+                   this.setState({userInput: setTo});
+                   if (onValueChanged) {
+                     onValueChanged(setTo)
+                   }
+                   this.onChange(match);
                  } else {
                    if (onEmptyNext) {
-                     onEmptyNext()
+                     onEmptyNext();
                    }
                  }
                }
              }}
-             onChange={(e) => this.setState({userInput: e.target.value})}/>
+             onChange={(e) => {
+               const value = e.target.value;
+               this.setState({userInput: value});
+               if (onValueChanged) {
+                 onValueChanged(value)
+               }
+             }}/>
     </div>;
   }
 }

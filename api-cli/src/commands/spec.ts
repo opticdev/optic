@@ -171,7 +171,7 @@ export default class Spec extends Command {
         res.json([])
       }
     })
-    app.put('/cli-api/events', bodyParser.json(), async (req, res) => {
+    app.put('/cli-api/events', bodyParser.json({limit: '100mb'}), async (req, res) => {
       const events = req.body
       await fs.writeFile(specStorePath, prepareEvents(events))
       res.sendStatus(204)
