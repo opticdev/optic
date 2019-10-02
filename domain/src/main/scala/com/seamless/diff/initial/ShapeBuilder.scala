@@ -92,7 +92,7 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
       commands.appendInit(AddShape(id, NumberKind.baseShapeId, ""))
     } else if (json.isNull) {
       commands.appendInit(AddShape(id, NullableKind.baseShapeId, ""))
-      SetParameterShape(ProviderInShape(id, ShapeProvider(UnknownKind.baseShapeId), "$nullableInner"))
+      commands.appendDescribe(SetParameterShape(ProviderInShape(id, ShapeProvider(UnknownKind.baseShapeId), "$nullableInner")))
     }
   }
 
@@ -118,9 +118,9 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     val innerId = fieldId.getOrElse(id)
     if (array.isEmpty) {
       if (fieldId.isDefined) {
-        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider("$any"), "$listItem")))
+        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(UnknownKind.baseShapeId), "$listItem")))
       } else {
-        commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider("$any"), "$listItem")))
+        commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(UnknownKind.baseShapeId), "$listItem")))
       }
 
     } else {
