@@ -47,6 +47,10 @@ object JsonHelper {
   def seqToJsArray(x: Seq[AnyVal]): js.Array[AnyVal] = {
     x.toJSArray
   }
+
+  def iteratorToJsIterator(x: Iterator[AnyVal]): js.Iterator[AnyVal] = {
+    x.toJSIterator
+  }
 }
 
 @JSExport
