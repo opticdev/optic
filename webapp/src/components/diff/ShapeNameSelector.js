@@ -19,6 +19,7 @@ const styles = theme => ({
   modal: {
     padding: 6,
     paddingTop: 2,
+    paddingBottom: 0,
     minWidth: 230,
   }
 });
@@ -76,6 +77,7 @@ class ShapeNameSelector extends React.Component {
         onClose={this.close}
         anchorOrigin={{vertical: 'top', horizontal: 'bottom'}}
         transformOrigin={{vertical: 'top', horizontal: 'center'}}
+        style={{padding: 0}}
         open={Boolean(this.state.anchorEl)}>
 
         <div className={classes.modal}>
@@ -95,7 +97,7 @@ class ShapeNameSelector extends React.Component {
           />
 
           {this.state.userInput && (
-            <List dense={true} style={{padding: 9}}>
+            <List dense={true} style={{padding: 0}}>
               {(matchingShapes.length === 0 && this.state.userInput) && (
                 <ListItem dense={true} button onClick={this.newShape}>
                   <ListItemText primary={`Create new concept: "${this.state.userInput}"`} primaryTypographyProps={{

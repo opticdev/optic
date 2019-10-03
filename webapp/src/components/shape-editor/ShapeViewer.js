@@ -31,6 +31,9 @@ import {AddedStyle, withColoredIdsContext} from '../../contexts/ColorContext';
 import classNames from 'classnames';
 import ShapeNameSelector from '../diff/ShapeNameSelector';
 import {coreShapeIdsSet} from './ShapeUtilities';
+import ShapePicker from './ShapePicker';
+import {createStyles} from '@material-ui/core';
+import {commandsToJson} from '../../engine';
 
 export function cheapEquals(item1, item2) {
   return JSON.stringify(item1) === JSON.stringify(item2);
@@ -38,52 +41,77 @@ export function cheapEquals(item1, item2) {
 
 const buttonStyle = {paddingLeft: '.35em', paddingRight: '.35em'};
 
-function Chooser({choices, parameterChoices, setShouldShowConceptModal, onSelect}) {
-  const [shouldShowParameterChoices, setShouldShowParameterChoices] = React.useState(false);
+const useChooserStyles = makeStyles((theme) => createStyles({
+  row: {
+    display: 'flex',
+    flexDirection: 'row',
+    'scrollbarWidth': 'none',
+    '-ms-overflow-style': 'none',
+    '&::-webkit-scrollbar': {
+      display: 'none'
+    }
+  }
+}));
 
+function Chooser({shapeId, choices, parameterChoices, setShouldShowConceptModal, onSelect}) {
+  const [shouldShowParameterChoices, setShouldShowParameterChoices] = React.useState(false);
   const list = shouldShowParameterChoices ? parameterChoices : choices;
-  return (
-    <div>
-      <div style={{display: 'flex'}}>
-        <Typography variant="subtitle1" style={{marginTop: 4, paddingRight: 5, fontSize: 11}}>Change to:</Typography>
-        <div style={{marginTop: -2, display: 'flex'}}>
-          {list
-            .map(choice => {
-              const {id, displayName, color} = choice;
-              return (
-                <div key={id} style={buttonStyle}>
-                  <BasicButton
-                    style={{
-                      color
-                    }}
-                    onClick={() => {
-                      onSelect(choice);
-                    }}>{displayName}</BasicButton>
-                </div>
-              );
-            })
-          }
-        </div>
-        <div style={{flex: 1}}>&nbsp;</div>
-        <div>
-          {!shouldShowParameterChoices && parameterChoices.length > 0 ? (
-            <BasicButton
-              style={buttonStyle}
-              onClick={() => setShouldShowParameterChoices(true)}>Choose Parameter</BasicButton>
-          ) : null}
-          {shouldShowParameterChoices && parameterChoices.length > 0 ? (
-            <BasicButton
-              style={buttonStyle}
-              onClick={() => setShouldShowParameterChoices(false)}>Choose Shape</BasicButton>
-          ) : null}
-          <BasicButton
-            style={buttonStyle}
-            onClick={() => setShouldShowConceptModal(true)}
-          >Choose Concept</BasicButton>
-        </div>
-      </div>
+  const classes = useChooserStyles();
+
+  return (<div className={classes.row}>
+    <Typography variant="subtitle1" style={{marginTop: 4, paddingRight: 5, fontSize: 11}}>Change to:</Typography>
+    <div style={{marginTop: 2, flex: .7}}>
+      <ShapePicker
+        shapeId={shapeId}
+        onFinish={(commands) => {
+          console.clear()
+        console.log('commands', JSON.stringify(commandsToJson(commands), null, 4))
+      }} />
     </div>
-  );
+  </div>)
+  // return (
+    {/*<div>*/}
+    {/*  <ShapePicker />*/}
+      {/*<div style={{display: 'flex'}}>*/}
+        {/*<Typography variant="subtitle1" style={{marginTop: 4, paddingRight: 5, fontSize: 11}}>Change to:</Typography>*/}
+        {/*<div style={{marginTop: -2, display: 'flex'}}>*/}
+        {/*  {list*/}
+        {/*    .map(choice => {*/}
+        {/*      const {id, displayName, color} = choice;*/}
+        {/*      return (*/}
+        {/*        <div key={id} style={buttonStyle}>*/}
+        {/*          <BasicButton*/}
+        {/*            style={{*/}
+        {/*              color*/}
+        {/*            }}*/}
+        {/*            onClick={() => {*/}
+        {/*              onSelect(choice);*/}
+        {/*            }}>{displayName}</BasicButton>*/}
+        {/*        </div>*/}
+        {/*      );*/}
+        {/*    })*/}
+        {/*  }*/}
+        {/*</div>*/}
+        {/*<div style={{flex: 1}}>&nbsp;</div>*/}
+        {/*<div>*/}
+        {/*  {!shouldShowParameterChoices && parameterChoices.length > 0 ? (*/}
+        {/*    <BasicButton*/}
+        {/*      style={buttonStyle}*/}
+        {/*      onClick={() => setShouldShowParameterChoices(true)}>Choose Parameter</BasicButton>*/}
+        {/*  ) : null}*/}
+        {/*  {shouldShowParameterChoices && parameterChoices.length > 0 ? (*/}
+        {/*    <BasicButton*/}
+        {/*      style={buttonStyle}*/}
+        {/*      onClick={() => setShouldShowParameterChoices(false)}>Choose Shape</BasicButton>*/}
+        {/*  ) : null}*/}
+        {/*  <BasicButton*/}
+        {/*    style={buttonStyle}*/}
+        {/*    onClick={() => setShouldShowConceptModal(true)}*/}
+        {/*  >Choose Concept</BasicButton>*/}
+        {/*</div>*/}
+      {/*</div>*/}
+    // </div>
+  // );
 }
 
 function WriteOnlyBase({mode, children}) {
@@ -199,7 +227,6 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
   let onSelect = () => {
   };
   if (launchContext) {
-
     switch (launchContext.type) {
       case 'field':
         const {fieldId, parentShapeId, setFieldShape} = launchContext.data;
@@ -237,6 +264,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
           };
           widget = (
             <Chooser
+              shapeId={fieldId}
               setShouldShowConceptModal={setShouldShowConceptModal}
               choices={choices}
               parameterChoices={parameterChoices}
@@ -266,6 +294,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
           widget = (
             <Chooser
               setShouldShowConceptModal={setShouldShowConceptModal}
+              shapeId={shapeId}
               choices={choices}
               parameterChoices={parameterChoices}
               onSelect={onSelect}
@@ -323,6 +352,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
           widget = (
             <Chooser
               setShouldShowConceptModal={setShouldShowConceptModal}
+              shapeId={contextShapeId}
               choices={choices}
               parameterChoices={parameterChoices}
               onSelect={onSelect}
@@ -416,9 +446,9 @@ class ShapeViewerBase extends React.Component {
           color={shapeName.color || '#8a558e'}
           style={{fontWeight: 200}}
           onClick={() => {
-            if (shapeName.id === '$object' || !coreShapeIdsSet.has(shapeName.id)) {
+            // if (shapeName.id === '$object' || !coreShapeIdsSet.has(shapeName.id)) {
               onShapeSelected(shapeName.id);
-            }
+            // }
           }}
         >{children}</BasicButton>
       );

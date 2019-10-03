@@ -63,7 +63,7 @@ class ShadowInput extends React.Component {
       onDelete,
       onEmptyNext,
       inputStyle,
-      inputClass
+      inputClass,
     } = this.props;
     const {userInput} = this.state;
 

@@ -5,7 +5,7 @@ import {TextField} from '@material-ui/core';
 
 import PathComponent from './PathComponent.js';
 import {Keys} from 'react-keydown';
-import ShadowInput from '../../stories/ShadowInput';
+import ShadowInput from '../shape-editor/ShadowInput';
 
 const {BACKSPACE, DELETE, ENTER} = Keys;
 

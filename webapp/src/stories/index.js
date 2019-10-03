@@ -4,8 +4,8 @@ import {storiesOf} from '@storybook/react';
 import PathInput from '../components/path-editor/PathInput.js';
 import BasicButton from '../components/shape-editor/BasicButton';
 import {mui} from './MUI';
-import ShadowInput from './ShadowInput';
-import ShapePicker from './ShapePicker';
+import ShadowInput from '../components/shape-editor/ShadowInput';
+import ShapePicker from '../components/shape-editor/ShapePicker';
 
 
 storiesOf('Shadow Input')

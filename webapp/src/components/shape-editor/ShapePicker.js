@@ -3,13 +3,14 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
 import ShadowInput from './ShadowInput';
 import {Typography} from '@material-ui/core';
+import {ShapesCommands} from '../../engine';
 
 const styles = theme => ({
   root: {
     padding: 5,
     height: 18,
     overflow: 'hidden',
-    maxWidth: 500, //change this to fill the shape picker row
+    width: '95%' //change this to fill the shape picker row
   },
   horizontalWrapper: {
     display: 'flex',
@@ -22,6 +23,7 @@ const styles = theme => ({
     width: 100
   },
   activeInput: {
+    height: 32,
     '&:focus': {
       borderBottom: '1px solid #e2e2e2',
     }
@@ -44,6 +46,7 @@ const textStyle = {
   marginTop: 1,
   fontWeight: 100,
   fontFamily: 'Ubuntu',
+  color: 'black',
   whiteSpace: 'nowrap'
 };
 
@@ -91,8 +94,24 @@ class ShapePicker extends React.Component {
   state = defaultState;
 
   finish = () => {
-    const allCommands = this.state.steps.reduce((a, c) => a.concat(c.commands({shapeId: 'shape to change'})), []);
-    alert('finished ' + JSON.stringify(allCommands));
+    const iterator = Array.from(Array(this.state.steps.length).keys());
+    const allCommands = iterator.reduce((a, index) => {
+      const step = this.state.steps[index];
+      const parameters = this.state.parameters[index];
+      if (step.isParameter) {
+        return a;
+      } else {
+        return a.concat(step.commands({
+          shapeId: this.props.shapeId,
+          parameters,
+          paramsForChoice: (choice) => this.state.parameters[choice.index]
+        }));
+      }
+    }, []);
+    // alert('finished ' + JSON.stringify(allCommands));
+    if (this.props.onFinish) {
+      this.props.onFinish(allCommands);
+    }
     this.reset();
   };
 
@@ -112,8 +131,8 @@ class ShapePicker extends React.Component {
     });
   };
 
-  pushChoice = (choice, disableRender = false) => {
-    this.setState({steps: [...this.state.steps, {...choice, disableRender}]}, () => {
+  pushChoice = (choice, isParameter = false) => {
+    this.setState({steps: [...this.state.steps, {...choice, isParameter: isParameter}]}, () => {
       const canFinish = this.canFinish();
       if (canFinish) {
         this.finish();
@@ -197,7 +216,7 @@ class ShapePicker extends React.Component {
       return choice.component({active: false, parameters, renderInactiveChoice, parameterInput: () => null});
     };
     const renderPreviousSteps = steps.slice(0, currentStepIndex).map((i, index) => {
-      if (!i.disableRender) {
+      if (!i.isParameter) {
         const params = parameters[index] || {};
         return i.component({active: false, parameters: params, parameterInput: () => null, renderInactiveChoice});
       }
@@ -240,12 +259,12 @@ class ShapePicker extends React.Component {
 
     });
 
-    return <Paper className={classes.root}>
+    return <div className={classes.root}>
       <div className={classes.innerScroll}>
         {renderPreviousSteps}
         {currentComponent}
       </div>
-    </Paper>;
+    </div>;
   }
 }
 
@@ -259,11 +278,16 @@ export function TypeName({name, color}) {
   return <Typography variant="caption" component="div" style={{
     color: color,
     fontWeight: 600,
+    height: 19,
     fontSize: 14,
-    marginTop: -2
+    marginTop: 6
   }}>
     {name}
   </Typography>;
+}
+
+function newShapeId() {
+  return 'shape_' + Math.random().toString(36).substr(2, 9);
 }
 
 /*
@@ -286,13 +310,14 @@ function PrimitiveChoice(label, id) {
   return {
     label,
     id,
+    isPrimitive: true,
     component: () => {
       return <TypeName name={label} color={'#3682e3'}/>;
     },
     canFinish: (parameters) => true,
     optionsFilter: () => true,
     commands: ({parameters, shapeId}) => {
-      return [{change_shape_id: shapeId, to: id}];
+      return [ShapesCommands.SetBaseShape(shapeId, id)];
     },
   };
 }
@@ -327,21 +352,21 @@ function ListChoice() {
         </div>);
     },
     canFinish: (parameters) => !!parameters[parameter],
-    optionsFilter: ( choice ) => {
-      return true
+    optionsFilter: (choice) => {
+      return true;
       if (choice.id === '$optional' || choice.id === '$nullable') {
-        return false
+        return false;
       }
-      return true
+      return true;
     },
-    commands: (parameters) => {
-      return [];
+    commands: ({parameters, shapeId, paramsForChoice}) => {
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$list', parameter)
     },
   };
 }
 
 function OptionalChoice() {
-  const parameter = '$type';
+  const parameter = '$optionalInner';
   return {
     label: 'Optional',
     id: '$optional',
@@ -351,7 +376,7 @@ function OptionalChoice() {
       if (active) {
         return (
           <div style={{display: 'flex', flexDirection: 'row'}}>
-            <div style={textStyle}>Optional </div>
+            <div style={textStyle}>Optional</div>
             <div style={{marginLeft: 0}}>{parameterInput(parameter)}</div>
           </div>);
       } else {
@@ -371,13 +396,14 @@ function OptionalChoice() {
     },
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: () => true,
-    commands: (parameters) => {
-      return [];
+    commands: ({parameters, shapeId, paramsForChoice}) => {
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$optional', parameter)
     },
   };
 }
+
 function NullableChoice() {
-  const parameter = '$type';
+  const parameter = '$nullableInner';
   return {
     label: 'Nullable',
     id: '$nullable',
@@ -386,7 +412,7 @@ function NullableChoice() {
       if (active) {
         return (
           <div style={{display: 'flex', flexDirection: 'row'}}>
-            <div style={textStyle}>Nullable </div>
+            <div style={textStyle}>Nullable</div>
             <div style={{marginLeft: 0}}>{parameterInput(parameter)}</div>
           </div>);
       } else {
@@ -406,8 +432,8 @@ function NullableChoice() {
     },
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: () => true,
-    commands: (parameters) => {
-      return [];
+    commands: ({parameters, shapeId, paramsForChoice}) => {
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$nullable', parameter)
     },
   };
 }
@@ -416,19 +442,19 @@ function IdentifierChoice() {
   const parameter = '$type';
   return {
     label: 'Identifier',
-    id: '$identifier',
+    id: '$identifierInner',
     component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
       const identifierType = parameters[parameter];
       if (active) {
         return (
           <div style={{display: 'flex', flexDirection: 'row'}}>
-            <div style={textStyle}>Identifier as </div>
+            <div style={textStyle}>Identifier as</div>
             <div style={{marginLeft: 0}}>{parameterInput(parameter)}</div>
           </div>);
       } else {
         return (
           <div style={{display: 'flex', flexDirection: 'row'}}>
-            <div style={textStyle}>Identifier as </div>
+            <div style={textStyle}>Identifier as</div>
             <div style={{marginLeft: 4}}>{renderInactiveChoice(identifierType)}</div>
           </div>);
       }
@@ -436,11 +462,11 @@ function IdentifierChoice() {
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: (choice) => {
       if (choice.id === '$string' || choice.id === '$number') {
-        return true
+        return true;
       }
     },
-    commands: (parameters) => {
-      return [];
+    commands: ({parameters, shapeId, paramsForChoice}) => {
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$identifier', parameter)
     },
   };
 }
@@ -449,13 +475,13 @@ function ReferenceChoice() {
   const parameter = '$type';
   return {
     label: 'Reference',
-    id: '$reference',
+    id: '$referenceInner',
     component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
       const identifierType = parameters[parameter];
       if (active) {
         return (
           <div style={{display: 'flex', flexDirection: 'row'}}>
-            <div style={textStyle}>Reference to </div>
+            <div style={textStyle}>Reference to</div>
             <div style={{marginLeft: 0}}>{parameterInput(parameter)}</div>
           </div>);
       } else {
@@ -475,8 +501,8 @@ function ReferenceChoice() {
     },
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: (choice) => !!choice.isNamedShape,
-    commands: (parameters) => {
-      return [];
+    commands: ({parameters, shapeId, paramsForChoice}) => {
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$identifier', parameter)
     },
   };
 }
@@ -497,7 +523,8 @@ function OneOfChoice() {
           <div style={{display: 'flex', flexDirection: 'row'}}>
             {lastSelections.map(key => {
               return <div style={{marginLeft: 6, display: 'flex'}}>
-                {renderInactiveChoice(parameters[key])}{', '}
+                {renderInactiveChoice(parameters[key])}
+                <div style={textStyle}>{', '}</div>
               </div>;
             })}
             {parameterInput(activeParam, offset)}
@@ -525,7 +552,9 @@ function OneOfChoice() {
               })();
 
               return <div style={{marginLeft: 6, display: 'flex'}}>
-                {renderInactiveChoice(parameters[key])}<div style={textStyle}>{delineator}</div></div>;
+                {renderInactiveChoice(parameters[key])}
+                <div style={textStyle}>{delineator}</div>
+              </div>;
             })}
           </div>
         );
@@ -541,19 +570,30 @@ function OneOfChoice() {
       );
     },
     canFinish: (parameters, markedCompleted) => markedCompleted,
-    optionsFilter: ( choice ) => {
-      return true
+    optionsFilter: (choice) => {
       if (choice.id === '$optional' || choice.id === '$nullable') {
-        return false
+        return false;
       }
-      return true
+      return true;
     },
-    commands: (parameters) => {
-      return [];
+    commands: ({parameters, shapeId, paramsForChoice}) => {
+      const {SetBaseShape, SetParameterShape, ProviderInField, ShapeProvider} = ShapesCommands;
+      //@todo fill this out
+
+      const keysSorted = Object.keys(parameters).sort()
+      keysSorted.map(k => {
+        const param = parameters[k]
+        debugger
+      })
+      return [
+        SetBaseShape(shapeId, '$oneOf'),
+      ]
     },
   };
 }
 
+
+/* Helpers */
 
 function findLastIndex<T>(array, predicate) {
   let l = array.length;
@@ -562,4 +602,25 @@ function findLastIndex<T>(array, predicate) {
       return l;
   }
   return -1;
+}
+
+function singleParameterType({parameters, shapeId, paramsForChoice}, id, parameter) {
+  const {SetBaseShape, SetParameterShape, ProviderInField, ShapeProvider, AddShape} = ShapesCommands;
+  const ParentInner = parameters[parameter];
+
+  if (ParentInner.isPrimitive || ParentInner.isNamedShape) {
+    return [
+      SetBaseShape(shapeId, id),
+      SetParameterShape(ProviderInField(shapeId, ShapeProvider(ParentInner.id), parameter))
+    ];
+  } else {
+    const innerId = newShapeId()
+    const ParentInnerCommands = ParentInner.commands({shapeId: innerId, parameters: paramsForChoice(ParentInner)});
+    return [
+      SetBaseShape(shapeId, id),
+      AddShape(innerId, '$any', ""),
+      SetParameterShape(ProviderInField(shapeId, ShapeProvider(innerId), parameter)),
+      ...ParentInnerCommands
+    ];
+  }
 }

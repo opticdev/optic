@@ -99,13 +99,14 @@ class DiffCard extends React.Component {
             ) : null}
           </div>
 
-          <ExampleToolTip example={example}>
-            <Typography variant="overline"
-                        color="primary"
-                        style={{marginLeft: 14, cursor: 'pointer'}}>
-              See Example</Typography>
-          </ExampleToolTip>
-
+          {example && (
+            <ExampleToolTip example={example}>
+              <Typography variant="overline"
+                          color="primary"
+                          style={{marginLeft: 14, cursor: 'pointer'}}>
+                See Example</Typography>
+            </ExampleToolTip>
+          )}
         </CardContent>
         <CardActions>
           <Button size="small" color="primary" onClick={accept} disabled={!canApprove}>
