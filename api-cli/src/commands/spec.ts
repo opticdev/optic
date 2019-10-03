@@ -218,7 +218,7 @@ export default class Spec extends Command {
       })
     })
 
-    app.put('/cli-api/sessions/:sessionId/diff', bodyParser.json(), validateSessionId, async (req, res) => {
+    app.put('/cli-api/sessions/:sessionId/diff', bodyParser.json({limit: '100mb'}), validateSessionId, async (req, res) => {
       const {sessionId} = req.params
       const diffStateFileName = `${sessionId}${diffStateFileSuffix}`
       const diffStateFilePath = path.join(sessionsPath, diffStateFileName)
