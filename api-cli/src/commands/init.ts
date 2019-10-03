@@ -13,6 +13,7 @@ import {getPaths} from '../Paths'
 import {prepareEvents} from '../PersistUtils'
 import * as yaml from 'js-yaml'
 import analytics, {trackSlack} from '../lib/analytics'
+import * as open from 'open'
 
 export interface IApiCliProxyConfig {
   target: string
@@ -37,6 +38,9 @@ export default class Init extends Command {
   static flags = {
     paste: flags.boolean({}),
     import: flags.string(),
+    name: flags.string(),
+    port: flags.string(),
+    command: flags.string(),
   }
 
   static args = []
@@ -52,8 +56,15 @@ export default class Init extends Command {
       analytics.track('init from local oas')
       await this.importOas(flags.import)
     } else {
-      analytics.track('init blank')
-      await this.blankWithName()
+
+      const {name, port, command} = flags
+      if (name && port && command) {
+        analytics.track('init from on-boarding', {name, port, command})
+        await this.blankWithName(name, parseInt(port, 10), command)
+      } else {
+        analytics.track('init blank')
+        return open('https://dashboard.useoptic.com/setup')
+      }
     }
     const {basePath} = await getPaths()
 
@@ -63,29 +74,7 @@ export default class Init extends Command {
     this.log(" - Run 'api spec' to view and edit the specification")
   }
 
-  async blankWithName() {
-
-    this.log(colors.bold(colors.blue(' \nSetup continuous documentation for your API:\n')))
-
-    const name = await cli.prompt('What is the name of this API?')
-    analytics.track('init setup name', {name})
-    const port = await cli.prompt('What port does your API run on locally? (e.g. 3000)')
-    analytics.track('runs on', 3000)
-    const command = await cli.prompt('What command is used to start the API? (e.g npm start)')
-    analytics.track('uses command', command)
-    this.log(colors.bold(colors.blue(' \nAlmost there! You need to make one small code change:')))
-    this.log(`\nConfigure your API to start on the port Optic's proxy assigns it. Your API will still be made accessible on port ${port} through Optic's proxy`)
-    this.log(`Make your API start on the port Optic provides as an environment variable: \n${colors.bgRed(colors.black(port))} -> ${colors.bgGreen(colors.black('process.env.OPTIC_API_PORT'))}`)
-
-    this.log(colors.yellow('\nNeed help? \n  Visit https://dashboard.useoptic.com for\n   - Framework specific code examples\n   - Chat with Optic\'s creators\n  OR You can schedule a free on-boarding session here https://calendly.com/optic-onboarding/30-min-session'))
-
-    trackSlack('init', {name, port, command})
-
-    await cli.wait(1000)
-    await cli.anykey('Press any key to continue')
-
-    this.log('\n\nOptic is setup!')
-    this.log(`Now start your API using ${colors.bold('api start')}`)
+  async blankWithName(name: string, port: number, command: string) {
     const config: IApiCliConfig = {
       name,
       commands: {

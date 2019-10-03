@@ -59,7 +59,7 @@ export function fuzzyPathsFilter(paths, query) {
   function flattenAll(all, a = []) {
     all.forEach(i => {
       a.push(i)
-      i.children.forEach(c => a.push(c))
+      flattenAll(i.children, a)
     })
   }
 
@@ -71,7 +71,6 @@ export function fuzzyPathsFilter(paths, query) {
   });
 
   const pathIds = searcher.search(query).map(i => i.pathId)
-
   return pathIds
 }
 

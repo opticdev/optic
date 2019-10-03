@@ -12,3 +12,4 @@ resources/react
 .api/
 resources/optic-domain-1.0.0-snapshot.tgz
 provided/domain.js
+Readme.md

@@ -91,12 +91,13 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     } else if (json.isNumber) {
       commands.appendInit(AddShape(id, NumberKind.baseShapeId, ""))
     } else if (json.isNull) {
-      commands.appendInit(AddShape(id, AnyKind.baseShapeId, ""))
+      commands.appendInit(AddShape(id, NullableKind.baseShapeId, ""))
+      commands.appendDescribe(SetParameterShape(ProviderInShape(id, ShapeProvider(UnknownKind.baseShapeId), "$nullableInner")))
     }
   }
 
   def isPrimitive(json: Json) = {
-    json.isString || json.isNumber || json.isBoolean
+    json.isString || json.isNumber || json.isBoolean || json.isNull
   }
 
   def primitiveShapeProvider(json: Json) = {
@@ -117,9 +118,9 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     val innerId = fieldId.getOrElse(id)
     if (array.isEmpty) {
       if (fieldId.isDefined) {
-        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider("$any"), "$listItem")))
+        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(UnknownKind.baseShapeId), "$listItem")))
       } else {
-        commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider("$any"), "$listItem")))
+        commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(UnknownKind.baseShapeId), "$listItem")))
       }
 
     } else {

@@ -8,9 +8,10 @@ const {
 
 class NavigationStore extends React.Component{
     render() {
-        const {onShapeSelected} = this.props;
+        const {onShapeSelected, addAdditionalCommands} = this.props;
         const context = {
-            onShapeSelected
+            onShapeSelected,
+            addAdditionalCommands
         }
         return (
             <NavigationContext.Provider value={context}>

@@ -63,6 +63,16 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
       .providerDescriptor.asInstanceOf[ShapeProvider].shapeId == f.concepts.head._1)
   }
 
+  it("works with nullable ") {
+    val basic = fromFile("null-field")
+    val result = new ShapeBuilder(basic, "n").run
+
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    val rfcService: RfcService = new RfcService(eventStore)
+    println(CommandSerialization.toJson(result.commands))
+    rfcService.handleCommandSequence("id", result.commands)
+  }
+
 
   it("works with todo example") {
     val basic = fromFile("todo-body")
@@ -83,4 +93,13 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     rfcService.handleCommandSequence("id", result.commands)
   }
 
+  it("works with Readme example") {
+    val basic = fromFile("readme-example")
+    val result = new ShapeBuilder(basic, "rm").run
+
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    val rfcService: RfcService = new RfcService(eventStore)
+    println(CommandSerialization.toJson(result.commands))
+    rfcService.handleCommandSequence("id", result.commands)
+  }
 }

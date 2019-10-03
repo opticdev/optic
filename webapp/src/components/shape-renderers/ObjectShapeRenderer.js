@@ -1,4 +1,5 @@
 import React from 'react';
+import {withRfcContext} from '../../contexts/RfcContext';
 
 const ShapeRendererWrapper = withRfcContext(function (props) {
     const { shapeId, queries, bindings = {} } = props;
@@ -42,8 +43,10 @@ const ObjectFieldRenderer = withRfcContext(function () {
 
 const OneOfShapeRenderer = withRfcContext(function () {
 
+    const orList = shapes.slice(0, -1).join(',')+' or '+shapes.slice(-1);
+
     return (
-        <div>One of:</div>
+        <div>{orList}</div>
     )
 })
 
@@ -64,28 +67,27 @@ const ListShapeRenderer = withRfcContext(function () {
 const OptionalShapeRenderer = withRfcContext(function () {
 
     return (
-        <div>(optional)</div>
+        <div>{shapeName} (optional)</div>
     )
 })
 
 const NullableShapeRenderer = withRfcContext(function () {
 
     return (
-        <div> or null</div>
+        <div>{shapeName} or null</div>
     )
 })
 
 const IdentifierShapeRenderer = withRfcContext(function () {
     return (
-        <div>id as </div>
+        <div>id as {shapeName}</div>
     )
 })
 const ReferenceShapeRenderer = withRfcContext(function () {
     return (
-        <div>id of </div>
+        <div>A {shapeName} id </div>
     )
 })
-
 
 export {
     ShapeRendererWrapper,

@@ -29,6 +29,7 @@ import {ShapeUtilities} from './ShapeUtilities.js';
 import {unboundParameterColor} from './Types.js';
 import {AddedStyle, withColoredIdsContext} from '../../contexts/ColorContext';
 import classNames from 'classnames'
+import ShapeNameSelector from '../diff/ShapeNameSelector';
 
 export function cheapEquals(item1, item2) {
   return JSON.stringify(item1) === JSON.stringify(item2);
@@ -409,7 +410,10 @@ class ShapeViewerBase extends React.Component {
     const {onShapeSelected} = this.props;
 
     function ShapeNameButton({shapeName, onShapeSelected, children}) {
+      const isObject = shapeName.coreShapeId === '$object'
+      const isNamed = !!shapeName.userDefinedName
       return (
+        <>
         <BasicButton
           color={shapeName.color || '#8a558e'}
           style={{fontWeight: 200}}
@@ -419,6 +423,10 @@ class ShapeViewerBase extends React.Component {
             //}
           }}
         >{children}</BasicButton>
+          {isObject && <ShapeNameSelector
+            shapeId={shapeName.id}
+            userDefinedName={shapeName.userDefinedName} />}
+        </>
       );
     }
 
