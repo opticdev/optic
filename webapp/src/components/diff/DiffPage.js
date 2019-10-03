@@ -38,7 +38,7 @@ class DiffPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps, nextContext) {
-    if (nextProps.path !== this.props.path) {
+    if (nextProps.interpretation !== this.props.interpretation) {
       setTimeout(() => {
         this.scrollContainerRef.current.scrollTo(0, 0)
       })
