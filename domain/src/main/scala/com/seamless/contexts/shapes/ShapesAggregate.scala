@@ -74,7 +74,6 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
         ////////////////////////////////////////////////////////////////////////////////
 
         case c: SetFieldShape => {
-
           c.shapeDescriptor match {
             case s: FieldShapeFromParameter => {
               Validators.ensureFieldIdExists(s.fieldId)

@@ -40,13 +40,13 @@ class NullableInterpreterSpec extends FunSpec {
         val initialState = fromCommands(Seq.empty)
         val diff = RequestDiffer.compare(interaction, initialState)
         println(diff)
-        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff)
+        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff.next())
         assert(interpretations.length == 1)
         val interpretation = interpretations.head
         println(interpretation)
         val state = fromCommands(interpretation.commands)
         val updatedDiff = RequestDiffer.compare(interaction, state)
-        assert(updatedDiff == RequestDiffer.NoDiff())
+        assert(updatedDiff.isEmpty)
       }
     }
     describe("when given an incorrect shape") {
@@ -57,10 +57,11 @@ class NullableInterpreterSpec extends FunSpec {
       it("should have a diff but offer no interpretation") {
         val initialState = fromCommands(Seq.empty)
         val diff = RequestDiffer.compare(interaction, initialState)
-        println(diff)
-        assert(diff.isInstanceOf[UnmatchedRequestBodyShape])
-        assert(diff.asInstanceOf[UnmatchedRequestBodyShape].shapeDiff.isInstanceOf[ShapeMismatch])
-        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff)
+        assert(diff.hasNext)
+        val next = diff.next()
+        assert(next.isInstanceOf[UnmatchedRequestBodyShape])
+        assert(next.asInstanceOf[UnmatchedRequestBodyShape].shapeDiff.isInstanceOf[ShapeMismatch])
+        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(next)
         assert(interpretations.isEmpty)
       }
     }
@@ -72,9 +73,7 @@ class NullableInterpreterSpec extends FunSpec {
       it("should have no diff or interpretation") {
         val initialState = fromCommands(Seq.empty)
         val diff = RequestDiffer.compare(interaction, initialState)
-        assert(diff == RequestDiffer.NoDiff())
-        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff)
-        assert(interpretations.isEmpty)
+        assert(diff.isEmpty)
       }
     }
   }
@@ -93,13 +92,13 @@ class NullableInterpreterSpec extends FunSpec {
         val initialState = fromCommands(initialCommands)
         val diff = RequestDiffer.compare(interaction, initialState)
         println(diff)
-        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff)
+        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff.next())
         assert(interpretations.length == 1)
         val interpretation = interpretations.head
         println(interpretation)
         val state = fromCommands(initialCommands ++ interpretation.commands)
         val updatedDiff = RequestDiffer.compare(interaction, state)
-        assert(updatedDiff == RequestDiffer.NoDiff())
+        assert(updatedDiff.isEmpty)
       }
     }
     describe("when given an incorrect shape") {
@@ -110,10 +109,11 @@ class NullableInterpreterSpec extends FunSpec {
       it("should have a diff but offer no interpretation") {
         val initialState = fromCommands(initialCommands)
         val diff = RequestDiffer.compare(interaction, initialState)
-        println(diff)
-        assert(diff.isInstanceOf[UnmatchedRequestBodyShape])
-        assert(diff.asInstanceOf[UnmatchedRequestBodyShape].shapeDiff.isInstanceOf[KeyShapeMismatch])
-        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff)
+        assert(diff.hasNext)
+        val next = diff.next()
+        assert(next.isInstanceOf[UnmatchedRequestBodyShape])
+        assert(next.asInstanceOf[UnmatchedRequestBodyShape].shapeDiff.isInstanceOf[KeyShapeMismatch])
+        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(next)
         assert(interpretations.isEmpty)
       }
     }
@@ -125,9 +125,7 @@ class NullableInterpreterSpec extends FunSpec {
       it("should have no diff or interpretation") {
         val initialState = fromCommands(initialCommands)
         val diff = RequestDiffer.compare(interaction, initialState)
-        assert(diff == RequestDiffer.NoDiff())
-        val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff)
-        assert(interpretations.isEmpty)
+        assert(diff.isEmpty)
       }
     }
   }
