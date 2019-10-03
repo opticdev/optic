@@ -9,6 +9,7 @@ import io.circe._
 object ShapeDiffer {
   sealed trait ShapeDiffResult {}
   case class NoDiff() extends ShapeDiffResult
+  case class NoExpectedShape(expected: ShapeEntity, actual: Option[Json]) extends ShapeDiffResult
   case class WeakNoDiff(expected: ShapeEntity, actual: Option[Json]) extends ShapeDiffResult
   case class UnsetShape(actual: Json) extends ShapeDiffResult
   case class UnsetValue(expected: ShapeEntity) extends ShapeDiffResult
@@ -29,6 +30,7 @@ object ShapeDiffer {
     val coreShape = toCoreShape(expectedShape, shapesState)
     if (actualShapeOption.isEmpty) {
       val diff = coreShape match {
+        case UnknownKind => Iterator(NoExpectedShape(expectedShape, actualShapeOption))
         case AnyKind => Iterator(WeakNoDiff(expectedShape, actualShapeOption))
         case OptionalKind => Iterator.empty
         case _ => Iterator(UnsetValue(expectedShape))
@@ -40,6 +42,9 @@ object ShapeDiffer {
     coreShape match {
       case AnyKind => {
         Iterator(WeakNoDiff(expectedShape, actualShapeOption))
+      }
+      case UnknownKind => {
+        Iterator(NoExpectedShape(expectedShape, actualShapeOption))
       }
       case StringKind => {
         if (actualShape.isString) {
