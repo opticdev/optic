@@ -51,8 +51,7 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
 
   def ChangeFieldToOptional(shapeDiff: UnsetObjectKey): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
-    val parentObject = shapesState.flattenedShape(shapeDiff.parentObjectShapeId)
-    val field = parentObject.fields.find(x => x.name == shapeDiff.key).get
+    val field = shapesState.flattenedField(shapeDiff.fieldId)
     val commands = Seq(
       AddShape(wrapperShapeId, OptionalKind.baseShapeId, ""),
       SetParameterShape(

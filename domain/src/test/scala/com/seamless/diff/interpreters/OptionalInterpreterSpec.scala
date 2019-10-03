@@ -39,14 +39,14 @@ class OptionalInterpreterSpec extends FunSpec {
       it("should offer to make it optional") {
         val initialState = fromCommands(Seq.empty)
         val diff = RequestDiffer.compare(interaction, initialState)
-        println(diff)
-        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(diff)
+        assert(diff.hasNext)
+        val next = diff.next()
+        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(next)
         assert(interpretations.length == 1)
         val interpretation = interpretations.head
-        println(interpretation)
         val state = fromCommands(interpretation.commands)
         val updatedDiff = RequestDiffer.compare(interaction, state)
-        assert(updatedDiff == RequestDiffer.NoDiff())
+        assert(updatedDiff.isEmpty)
       }
     }
     describe("when given null") {
@@ -54,17 +54,13 @@ class OptionalInterpreterSpec extends FunSpec {
         ApiRequest("/", "POST", requestContentType, Some(json"""null""")),
         ApiResponse(200, requestContentType, None)
       )
-      it("should offer to make it optional") {
+      it("should not offer to make it optional") {
         val initialState = fromCommands(Seq.empty)
         val diff = RequestDiffer.compare(interaction, initialState)
-        println(diff)
-        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(diff)
-        assert(interpretations.length == 1)
-        val interpretation = interpretations.head
-        println(interpretation)
-        val state = fromCommands(interpretation.commands)
-        val updatedDiff = RequestDiffer.compare(interaction, state)
-        assert(updatedDiff == RequestDiffer.NoDiff())
+        assert(diff.hasNext)
+        val next = diff.next()
+        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(next)
+        assert(interpretations.isEmpty)
       }
     }
     describe("when given an incorrect shape") {
@@ -75,10 +71,11 @@ class OptionalInterpreterSpec extends FunSpec {
       it("should have a diff but offer no interpretation") {
         val initialState = fromCommands(Seq.empty)
         val diff = RequestDiffer.compare(interaction, initialState)
-        println(diff)
-        assert(diff.isInstanceOf[UnmatchedRequestBodyShape])
-        assert(diff.asInstanceOf[UnmatchedRequestBodyShape].shapeDiff.isInstanceOf[ShapeMismatch])
-        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(diff)
+        assert(diff.hasNext)
+        val next = diff.next()
+        assert(next.isInstanceOf[UnmatchedRequestBodyShape])
+        assert(next.asInstanceOf[UnmatchedRequestBodyShape].shapeDiff.isInstanceOf[ShapeMismatch])
+        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(next)
         assert(interpretations.isEmpty)
       }
     }
@@ -90,9 +87,7 @@ class OptionalInterpreterSpec extends FunSpec {
       it("should have no diff or interpretation") {
         val initialState = fromCommands(Seq.empty)
         val diff = RequestDiffer.compare(interaction, initialState)
-        assert(diff == RequestDiffer.NoDiff())
-        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(diff)
-        assert(interpretations.isEmpty)
+        assert(diff.isEmpty)
       }
     }
   }
@@ -102,22 +97,36 @@ class OptionalInterpreterSpec extends FunSpec {
       AddField("o.a", "o", "a", FieldShapeFromShape("o.a", StringKind.baseShapeId)),
       SetRequestBodyShape(requestId, ShapedBodyDescriptor(requestContentType, "o", isRemoved = false))
     )
+    describe("when given nothing") {
+      val interaction = ApiInteraction(
+        ApiRequest("/", "POST", requestContentType, Some(json"""{}""")),
+        ApiResponse(200, requestContentType, None)
+      )
+      it("should offer to make it optional") {
+        val initialState = fromCommands(initialCommands)
+        val diff = RequestDiffer.compare(interaction, initialState)
+        assert(diff.hasNext)
+        val next = diff.next()
+        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(next)
+        assert(interpretations.length == 1)
+        val interpretation = interpretations.head
+        val state = fromCommands(initialCommands ++ interpretation.commands)
+        val updatedDiff = RequestDiffer.compare(interaction, state)
+        assert(updatedDiff.isEmpty)
+      }
+    }
     describe("when given null") {
       val interaction = ApiInteraction(
         ApiRequest("/", "POST", requestContentType, Some(json"""{"a":null}""")),
         ApiResponse(200, requestContentType, None)
       )
-      it("should offer to make it nullable") {
+      it("should not offer to make it optional") {
         val initialState = fromCommands(initialCommands)
         val diff = RequestDiffer.compare(interaction, initialState)
-        println(diff)
-        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(diff)
-        assert(interpretations.length == 1)
-        val interpretation = interpretations.head
-        println(interpretation)
-        val state = fromCommands(initialCommands ++ interpretation.commands)
-        val updatedDiff = RequestDiffer.compare(interaction, state)
-        assert(updatedDiff == RequestDiffer.NoDiff())
+        assert(diff.hasNext)
+        val next = diff.next()
+        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(next)
+        assert(interpretations.isEmpty)
       }
     }
     describe("when given an incorrect shape") {
@@ -128,10 +137,11 @@ class OptionalInterpreterSpec extends FunSpec {
       it("should have a diff but offer no interpretation") {
         val initialState = fromCommands(initialCommands)
         val diff = RequestDiffer.compare(interaction, initialState)
-        println(diff)
-        assert(diff.isInstanceOf[UnmatchedRequestBodyShape])
-        assert(diff.asInstanceOf[UnmatchedRequestBodyShape].shapeDiff.isInstanceOf[KeyShapeMismatch])
-        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(diff)
+        assert(diff.hasNext)
+        val next = diff.next()
+        assert(next.isInstanceOf[UnmatchedRequestBodyShape])
+        assert(next.asInstanceOf[UnmatchedRequestBodyShape].shapeDiff.isInstanceOf[KeyShapeMismatch])
+        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(next)
         assert(interpretations.isEmpty)
       }
     }
@@ -143,9 +153,7 @@ class OptionalInterpreterSpec extends FunSpec {
       it("should have no diff or interpretation") {
         val initialState = fromCommands(initialCommands)
         val diff = RequestDiffer.compare(interaction, initialState)
-        assert(diff == RequestDiffer.NoDiff())
-        val interpretations = new OptionalInterpreter(initialState.shapesState).interpret(diff)
-        assert(interpretations.isEmpty)
+        assert(diff.isEmpty)
       }
     }
   }

@@ -19,28 +19,32 @@ class ShapeDifferSpec extends FunSpec {
         it("should return a diff indicating the key that is mismatched") {
           val actual: Json = json"""{"a":"b","c":1,"e":"f"}"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.MapValueMismatch("c", shapesState.shapes("$string"), json"""1"""))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == ShapeDiffer.MapValueMismatch("c", shapesState.shapes("$string"), json"""1"""))
         }
       }
       describe("when given no values") {
         it("should return an empty diff") {
           val actual: Json = json"""{}"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.NoDiff())
+          assert(diff.isEmpty)
         }
       }
       describe("when given only string values") {
         it("should return an empty diff") {
           val actual: Json = json"""{"a":"b","c":"d"}"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.NoDiff())
+          assert(diff.isEmpty)
         }
       }
       describe("when given a non-object") {
         it("should return a diff indicating a mismatch") {
           val actual: Json = json"""[["a","b"],["c","d"]]"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.ShapeMismatch(expected, actual))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == ShapeDiffer.ShapeMismatch(expected, actual))
         }
       }
     }
@@ -55,27 +59,31 @@ class ShapeDifferSpec extends FunSpec {
         it("should return an empty diff") {
           val actual: Json = json""""abc""""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.NoDiff())
+          assert(diff.isEmpty)
         }
       }
       describe("when given null") {
         it("should return an empty diff") {
           val actual: Json = json"""null"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.NoDiff())
+          assert(diff.isEmpty)
         }
       }
       describe("when given undefined") {
         it("should return a diff indicating a mismatch") {
           val diff = ShapeDiffer.diff(expected, None)
-          assert(diff == ShapeDiffer.UnsetValue(expected))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == ShapeDiffer.UnsetValue(expected))
         }
       }
       describe("when given a number") {
         it("should return a diff indicating a mismatch") {
           val actual: Json = json"""123"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.ShapeMismatch(shapesState.shapes("$string"), actual))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == ShapeDiffer.ShapeMismatch(shapesState.shapes("$string"), actual))
         }
       }
     }
@@ -90,27 +98,31 @@ class ShapeDifferSpec extends FunSpec {
         it("should return an empty diff") {
           val actual: Json = json""""abc""""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.NoDiff())
+          assert(diff.isEmpty)
         }
       }
       describe("when given null") {
         it("should return a diff indicating a mismatch") {
           val actual: Json = json"""null"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.UnsetValue(shapesState.shapes("$string")))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == ShapeDiffer.NullValue(shapesState.shapes("$string")))
         }
       }
       describe("when given undefined") {
         it("should return an empty diff") {
           val diff = ShapeDiffer.diff(expected, None)
-          assert(diff == ShapeDiffer.NoDiff())
+          assert(diff.isEmpty)
         }
       }
       describe("when given a number") {
         it("should return a diff indicating a mismatch") {
           val actual: Json = json"""123"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.ShapeMismatch(shapesState.shapes("$string"), actual))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == ShapeDiffer.ShapeMismatch(shapesState.shapes("$string"), actual))
         }
       }
     }
@@ -128,34 +140,40 @@ class ShapeDifferSpec extends FunSpec {
         it("should return an empty diff") {
           val actual: Json = json""""abc""""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.NoDiff())
+          assert(diff.isEmpty)
         }
       }
       describe("when given null") {
         it("should return a diff indicating a mismatch") {
           val actual: Json = json"""null"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.MultipleInterpretations(expected, actual))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == ShapeDiffer.MultipleInterpretations(expected, actual))
         }
       }
       describe("when given undefined") {
         it("should return an empty diff") {
           val diff = ShapeDiffer.diff(expected, None)
-          assert(diff == ShapeDiffer.UnsetValue(expected))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == ShapeDiffer.UnsetValue(expected))
         }
       }
       describe("when given a number") {
         it("should return a diff indicating a mismatch") {
           val actual: Json = json"""123"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.NoDiff())
+          assert(diff.isEmpty)
         }
       }
       describe("when given a boolean") {
         it("should return a diff indicating a mismatch") {
           val actual: Json = json"""false"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == MultipleInterpretations(expected, actual))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == MultipleInterpretations(expected, actual))
         }
       }
     }
@@ -168,7 +186,7 @@ class ShapeDifferSpec extends FunSpec {
 
           val actual: Json = json"""{}"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.NoDiff())
+          assert(diff.isEmpty)
         }
       }
       describe("when given a non-empty object") {
@@ -179,7 +197,9 @@ class ShapeDifferSpec extends FunSpec {
 
           val actual: Json = json"""{"abc":123}"""
           val diff = ShapeDiffer.diff(expected, Some(actual))
-          assert(diff == ShapeDiffer.UnexpectedObjectKey("$x", "abc", expected, json"""123"""))
+          assert(diff.hasNext)
+          val next = diff.next()
+          assert(next == ShapeDiffer.UnexpectedObjectKey("$x", "abc", expected, json"""123"""))
         }
       }
     }

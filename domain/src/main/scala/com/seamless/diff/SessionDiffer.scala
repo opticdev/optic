@@ -17,10 +17,7 @@ class SessionDiffer(rawEvents: String) {
   val rfcState = rfcService.currentState(rfcId)
 
   def hasDiff(interaction: ApiInteraction): Boolean = {
-    RequestDiffer.compare(interaction, rfcState) match {
-      case RequestDiffer.NoDiff() => false
-      case _ => true
-    }
+    RequestDiffer.compare(interaction, rfcState).hasNext
   }
 
   def hasUnrecognizedPath(interaction: ApiInteraction): Boolean = {
