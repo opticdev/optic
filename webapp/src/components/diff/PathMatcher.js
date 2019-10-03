@@ -23,6 +23,14 @@ class PathMatcher extends React.Component {
     pathExpression: this.props.initialPathString,
   };
 
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (nextProps.url !== this.props.url) {
+      this.setState({
+        pathExpression: nextProps.initialPathString,
+      })
+    }
+  }
+
   handlePathComponentsChange = (pathComponents) => {
     const pathExpression = pathComponentsToString(pathComponents);
     this.setState({pathExpression});

@@ -17,27 +17,27 @@ case class ValueShapeWithId(id: String, andFieldId: Option[String] = None) exten
 case class IsRoot(forceId: String) extends ShapeBuilderContext
 
 @JSExportAll
-case class NameShapeRequest(required: Boolean, shapeId: String, description: String, example: Json) {
+case class ShapeExample(shapeId: ShapeId, example: Json) {
   def exampleJs = {
     import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(example)
   }
 }
 
-case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand], nameRequests: Vector[NameShapeRequest], allIds: Vector[ShapeId]) {
+case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand], examples: Vector[ShapeExample], allIds: Vector[ShapeId]) {
   def asConceptNamed(name: String): ShapeBuilderResult =
-    ShapeBuilderResult(rootShapeId, commands :+ RenameShape(rootShapeId, name), nameRequests, allIds)
+    ShapeBuilderResult(rootShapeId, commands :+ RenameShape(rootShapeId, name), examples, allIds)
 }
 
 class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkString}")(implicit shapesState: ShapesState = ShapesAggregate.initialState) {
 
   val commands = new MutableCommandStream
-  val nameRequests = scala.collection.mutable.ListBuffer[NameShapeRequest]()
+  val shapeExample = scala.collection.mutable.ListBuffer[ShapeExample]()
   val allIdsStore = scala.collection.mutable.ListBuffer[ShapeId]()
 
   def run: ShapeBuilderResult = {
     commands.clear
-    nameRequests.clear()
+    shapeExample.clear()
 
     val matchedConcept = ShapeResolver.handleObject(r)
     //match to an existing concept if possible
@@ -47,7 +47,7 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
 
     val rootShapeId = idGenerator
     fromJson(r)(IsRoot(rootShapeId), Seq.empty) // has the side effect of appending commands
-    ShapeBuilderResult(rootShapeId, commands.toImmutable.flatten, nameRequests.toVector, allIdsStore.toVector)
+    ShapeBuilderResult(rootShapeId, commands.toImmutable.flatten, shapeExample.toVector, allIdsStore.toVector)
   }
 
   private var count = 0
@@ -68,14 +68,19 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     }
 
     if (json.isObject) {
-      commands.appendInit(AddShape(id, ObjectKind.baseShapeId, ""))
 
-      cxt match {
-        case IsRoot(_) => nameRequests.append(NameShapeRequest(required = false, id, "Name this shape:", json))
-        case _ => nameRequests.append(NameShapeRequest(required = false, id, s"Name the shape at '${path.mkString(".")}'", json))
+      val matchedConcept = ShapeResolver.handleObject(json)
+
+      //save the example
+      shapeExample append ShapeExample(id, json)
+
+      if (matchedConcept.isDefined) {
+        commands.appendInit(AddShape(id, matchedConcept.get, ""))
+      } else {
+        commands.appendInit(AddShape(id, ObjectKind.baseShapeId, ""))
+        fromJsonObject(json, id)
       }
 
-      fromJsonObject(json, id)
     } else if (json.isArray) {
       commands.appendInit(AddShape(id, ListKind.baseShapeId, ""))
       cxt match {
@@ -124,9 +129,11 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
       }
 
     } else {
-      //for now no oneOf...we'll support that later once we have shape hashing
+      //@todo let's add oneOf here
       if (isPrimitive(array.head)) {
+        shapeExample append ShapeExample(innerId, array.head)
         if (fieldId.isDefined) {
+          //save the example
           commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(primitiveShapeProvider(array.head).baseShapeId), "$listItem")))
         } else {
           commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(primitiveShapeProvider(array.head).baseShapeId), "$listItem")))
@@ -141,6 +148,8 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
         if (!didMatch) { // if no concept is matched inline it
           fromJson(array.head)(ValueShapeWithId(assignedItemShapeId), path :+ "[List Items]")
         }
+
+        shapeExample append ShapeExample(innerId, array.head)
 
         if (fieldId.isDefined) {
           commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(assignedItemShapeId), "$listItem")))

@@ -14,7 +14,7 @@ class UnsetBodyInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
       case d: RequestDiffer.UnmatchedRequestBodyShape => {
         d.shapeDiff match {
           case sd: UnsetShape => {
-            NameTheShapes(sd.actual)
+            Seq(NameTheShapes(sd.actual))
           }
           case _ => Seq.empty
         }
@@ -22,7 +22,7 @@ class UnsetBodyInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
       case d: RequestDiffer.UnmatchedResponseBodyShape => {
         d.shapeDiff match {
           case sd: ShapeDiffer.UnsetShape => {
-            NameTheShapes(sd.actual)
+            Seq(NameTheShapes(sd.actual))
           }
           case _ => Seq.empty
 
@@ -32,15 +32,14 @@ class UnsetBodyInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
     }
   }
 
+  //@todo is this still used?
   def NameTheShapes(actual: Json) = {
     val result = new ShapeBuilder(actual).run
-    result.nameRequests.map(shapeToName => {
       DiffInterpretation(
         "Unrecognized Shape Observed",
-        "Optic observed a new shape. Give it a name",
+        "Optic observed a new shape.",
         result.commands,
-        FrontEndMetadata(nameRequests = Seq(shapeToName), example = Some(shapeToName.example))
+        FrontEndMetadata(examples = result.examples, example = Some(actual))
       )
-    })
   }
 }

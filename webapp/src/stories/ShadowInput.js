@@ -58,7 +58,6 @@ class ShadowInput extends React.Component {
       options = [],
       onChange,
       onKeyDown,
-      value,
       onValueChanged,
       style,
       onDelete,
@@ -89,6 +88,10 @@ class ShadowInput extends React.Component {
                  if (onDelete) {
                    onDelete();
                  }
+               }
+
+               if (e.keyCode === 9) {
+                 e.preventDefault()
                }
 
                const rightArrowAtEnd = (e.target.selectionStart === e.target.value.length && e.which === 39);

@@ -28,8 +28,9 @@ import {FieldName} from './NameInputs.js';
 import {ShapeUtilities} from './ShapeUtilities.js';
 import {unboundParameterColor} from './Types.js';
 import {AddedStyle, withColoredIdsContext} from '../../contexts/ColorContext';
-import classNames from 'classnames'
+import classNames from 'classnames';
 import ShapeNameSelector from '../diff/ShapeNameSelector';
+import {coreShapeIdsSet} from './ShapeUtilities';
 
 export function cheapEquals(item1, item2) {
   return JSON.stringify(item1) === JSON.stringify(item2);
@@ -410,23 +411,16 @@ class ShapeViewerBase extends React.Component {
     const {onShapeSelected} = this.props;
 
     function ShapeNameButton({shapeName, onShapeSelected, children}) {
-      const isObject = shapeName.coreShapeId === '$object'
-      const isNamed = !!shapeName.userDefinedName
       return (
-        <>
         <BasicButton
           color={shapeName.color || '#8a558e'}
           style={{fontWeight: 200}}
           onClick={() => {
-            //if (!coreShapeIdsSet.has(shapeName.id)) {
-            onShapeSelected(shapeName.id);
-            //}
+            if (shapeName.id === '$object' || !coreShapeIdsSet.has(shapeName.id)) {
+              onShapeSelected(shapeName.id);
+            }
           }}
         >{children}</BasicButton>
-          {isObject && <ShapeNameSelector
-            shapeId={shapeName.id}
-            userDefinedName={shapeName.userDefinedName} />}
-        </>
       );
     }
 
@@ -492,6 +486,7 @@ class ShapeViewerBase extends React.Component {
     const {shapeId, name, coreShapeId} = shape;
     const output = [];
     ShapeUtilities.flatten(queries, shapeId, 0, [], output);
+
     // console.log({output});
 
     function Colon() {
@@ -505,7 +500,8 @@ class ShapeViewerBase extends React.Component {
       })
       .map(entry => {
         const {id, type, name, shapeName, trail, isExpandable} = entry;
-        const isAdded = coloredIds.includes(id)
+        const isAdded = coloredIds.includes(id);
+        const isObject = shapeName.coreShapeId === '$object';
         return (
           <TooltipWrapper>
             {({handleTooltipOpen, handleTooltipClose, ...rest}) => {
@@ -553,6 +549,9 @@ class ShapeViewerBase extends React.Component {
                         )}
                       </WriteOnly>
                       <div style={{flex: 1}}>&nbsp;</div>
+                      {isObject && <ShapeNameSelector
+                        shapeId={shapeName.id}
+                        userDefinedName={shapeName.userDefinedName}/>}
                       <WriteOnly>
                         <BasicButton
                           className={classes.hiddenByDefault}
@@ -598,6 +597,11 @@ class ShapeViewerBase extends React.Component {
                           </BasicButton>
                         )}
                       </WriteOnly>
+                      <>
+                        {isObject && <ShapeNameSelector
+                          shapeId={shapeName.id}
+                          userDefinedName={shapeName.userDefinedName}/>}
+                      </>
                     </div>
                   )}
                 </div>

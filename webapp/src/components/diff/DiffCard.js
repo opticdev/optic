@@ -1,16 +1,15 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { withEditorContext } from '../../contexts/EditorContext';
+import {withEditorContext} from '../../contexts/EditorContext';
 import Card from '@material-ui/core/Card';
-import { CardHeader, Tooltip } from '@material-ui/core';
+import {CardHeader, Tooltip} from '@material-ui/core';
 import Typography from '@material-ui/core/Typography';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import CardContent from '@material-ui/core/CardContent';
 import Divider from '@material-ui/core/Divider';
 import ReactJson from 'react-json-view';
-import { AddedGreen } from '../../contexts/ColorContext';
-
+import {AddedGreen} from '../../contexts/ColorContext';
 
 const styles = theme => ({
   header: {
@@ -45,25 +44,25 @@ const LightTooltip = withStyles(theme => ({
     backgroundColor: theme.palette.common.white,
     color: 'rgba(0, 0, 0, 0.87)',
     boxShadow: theme.shadows[1],
+    maxWidth: 600,
     fontSize: 11,
   },
 }))(Tooltip);
 
-export function ExampleToolTip({ children, example }) {
+export function ExampleToolTip({children, example}) {
 
   const inner = typeof example === 'string' ? <pre>{example}</pre> : (
-    <ReactJson
-      src={example}
-      enableClipboard={false}
-      name={false}
-      displayDataTypes={false}
-    />
-  );
-  const title = (
-    <div style={{ maxHeight: 400, maxWidth: 400, overflow: 'scroll' }}>
-      {inner}
+    <div style={{maxHeight: 690, width: '600px !important', overflowY: 'scroll'}}>
+      <ReactJson
+        src={example}
+        enableClipboard={false}
+        style={{width: 600}}
+        name={false}
+        displayDataTypes={false}
+      />
     </div>
-  )
+  );
+
   return (
     <LightTooltip title={inner} interactive={true} placement="bottom-start">
       {children}
@@ -74,38 +73,47 @@ export function ExampleToolTip({ children, example }) {
 class DiffCard extends React.Component {
 
   render() {
-    const { classes, interpretation, ignore, accept, cardForm } = this.props;
-    const { title, description } = interpretation;
+    const {classes, interpretation, ignore, accept, cardForm} = this.props;
+    const {title, description, metadataJs} = interpretation;
 
-    const canApprove = true
+    const {example} = metadataJs;
+
+    const canApprove = true;
 
     return (
       <Card className={classes.root} elevation={1}>
         <CardHeader title={
-          <div style={{ display: 'flex' }}>
-            <Typography variant="subtitle1" style={{ marginTop: 2 }}>{title}</Typography>
-            <div style={{ flex: 1 }} />
+          <div style={{display: 'flex'}}>
+            <Typography variant="subtitle1" style={{marginTop: 2}}>{title}</Typography>
+            <div style={{flex: 1}}/>
           </div>
-        } className={classes.header} />
-        <CardContent style={{ padding: 0, maxHeight: 400, overflow: 'auto' }}>
+        } className={classes.header}/>
+        <CardContent style={{padding: 0, maxHeight: 400, overflow: 'auto'}}>
           <div className={classes.description}>
-            <Typography variant="paragraph" dangerouslySetInnerHTML={{ __html: description }} />
-
+            <Typography variant="paragraph" dangerouslySetInnerHTML={{__html: description}}/>
             {cardForm ? (
               <div className={classes.questions}>
-                <Divider style={{ marginTop: 11, marginBottom: 11 }} />
+                <Divider style={{marginTop: 11, marginBottom: 11}}/>
                 {cardForm}
               </div>
             ) : null}
           </div>
+
+          <ExampleToolTip example={example}>
+            <Typography variant="overline"
+                        color="primary"
+                        style={{marginLeft: 14, cursor: 'pointer'}}>
+              See Example</Typography>
+          </ExampleToolTip>
+
         </CardContent>
         <CardActions>
           <Button size="small" color="primary" onClick={accept} disabled={!canApprove}>
             Approve
-            </Button>
+          </Button>
           <Button size="small" color="secondary" onClick={ignore}>
             Ignore
-            </Button>
+          </Button>
         </CardActions>
       </Card>);
   }

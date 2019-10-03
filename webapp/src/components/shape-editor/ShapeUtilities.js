@@ -1,6 +1,6 @@
 import { boundParameterColor, primitiveColors } from './Types.js';
 
-export const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', /*'$oneOf',*/ '$identifier', '$reference', '$any', '$nullable', '$optional']
+export const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', /*'$oneOf',*/ '$identifier', '$reference', '$any', '$nullable', '$optional', '$unknown']
 export const coreShapeIdsSet = new Set(coreShapeIds)
 
 class ShapeUtilities {

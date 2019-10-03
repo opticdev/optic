@@ -14,6 +14,8 @@ import {NavigationStore} from '../../contexts/NavigationContext';
 import {ColoredIdsStore} from '../../contexts/ColorContext';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import {ShapeDialogStore, withShapeDialogContext} from '../../contexts/ShapeDialogContext';
+import ShapeViewerStack from '../shape-editor/ShapeViewerStack';
 
 class DiffPageWrapper extends React.Component {
   state = {
@@ -41,7 +43,8 @@ class DiffPageWrapper extends React.Component {
       rfcService, eventStore,
       cachedQueryResults, applyCommands,
       diffSessionManager, diffState, diffStateProjections,
-      onAccept, onIgnore, item, readyToFinish, interpretations
+      onAccept, onIgnore, item, readyToFinish, interpretations,
+      shapeDialog
     } = this.props;
     const progress = (diffState.acceptedInterpretations.length / diffSessionManager.session.samples.length) * 100;
     const {pathId, sample, index: currentInteractionIndex} = item;
@@ -117,12 +120,8 @@ class DiffPageWrapper extends React.Component {
           >
             <NavigationStore addAdditionalCommands={this.addAdditionalCommands}
                              onShapeSelected={(shapeId) => {
-                               if (affectedIds.includes(shapeId)) {
-                                 this.addAdditionalCommands([
-                                   ShapesCommands.RenameShape(shapeId, 'ddd')
-                                 ]);
-                                 //@TODO: show ShapeNameSelector, and add the resulting commands via this.addAdditionalCommands(commands)
-                               }
+                               const examples = interpretation.metadataJs.examples
+                               shapeDialog.pushToStack(shapeId, examples)
                              }}>
               <EditorStore mode={readyToFinish ? EditorModes.DESIGN : EditorModes.DOCUMENTATION}>
                 <Paper style={{flex: 1, width: 850, maxWidth: 1000, overflow: 'hidden'}}>
@@ -159,6 +158,7 @@ class DiffPageWrapper extends React.Component {
                       return (
                         <RfcContext.Provider value={updatedRfcContext}>
                           <Operation request={request}/>
+                          <ShapeViewerStack handleCommands={this.addAdditionalCommands} />
                         </RfcContext.Provider>
                       );
                     }
@@ -173,4 +173,4 @@ class DiffPageWrapper extends React.Component {
   }
 }
 
-export default DiffPageWrapper;
+export default withShapeDialogContext(DiffPageWrapper);

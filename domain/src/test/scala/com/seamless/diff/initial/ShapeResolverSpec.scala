@@ -16,7 +16,7 @@ class ShapeResolverSpec extends FunSpec with JsonFileFixture {
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", result.commands :+
-      RenameShape(result.nameRequests.head.shapeId, "Todo"))
+      RenameShape(result.examples.head.shapeId, "Todo"))
     rfcService.currentState("id").shapesState
   }
 

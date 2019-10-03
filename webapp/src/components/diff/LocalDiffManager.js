@@ -166,17 +166,11 @@ class LocalDiffManager extends React.Component {
             const { names, selectedInterpretationIndex } = value;
             const interpretation = interpretations[selectedInterpretationIndex]
             const { commands, metadataJs } = interpretation
-            const { nameRequests } = metadataJs;
-            const [nameRequest] = nameRequests
-            const { shapeId } = nameRequest;
             const shapeNameCommands = Object.entries(names).map(([shapeId, name]) => ShapesCommands.RenameShape(shapeId, name || ''));
             const allCommands = [...JsonHelper.seqToJsArray(commands), ...shapeNameCommands];
             console.log(commands, allCommands)
             return (
               <DiffPage
-                cardForm={
-                  <ConceptNamer shapeId={shapeId} />
-                }
                 interpretation={interpretation}
                 accept={() => {
                   track('Provided Concept Name');

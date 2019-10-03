@@ -44,14 +44,14 @@ class ContributionTextField extends React.Component {
 
     render() {
 
-        const {mode, defaultText, classes, variant = 'heading', inputStyle = {}, textStyle = {}, placeholder, onClick, onBlur} = this.props;
+        const {mode, defaultText, classes, fullWidth, variant = 'heading', inputStyle = {}, textStyle = {}, placeholder, onClick, onBlur, style} = this.props;
         const {value} = this.state
 
         const classToApply = classes[variant]
         const inputColor = variant === 'heading' ? 'primary' : 'default'
 
         return (
-            <div onClick={onClick}>
+            <div onClick={onClick} style={style}>
                 {(() => {
                     if (mode === EditorModes.DOCUMENTATION) {
                         const valueOrDefault = value || defaultText
@@ -72,7 +72,7 @@ class ContributionTextField extends React.Component {
                                         onBlur(this.state.value)
                                     }
                                 }}
-                                fullWidth={variant !== 'headline'}
+                                fullWidth={fullWidth || variant !== 'headline'}
                                 onChange={this.onChange}
                                 multiline={variant === 'multi'}
                                 placeholder={(variant === 'heading') ? placeholder : undefined}

@@ -5,7 +5,7 @@ import com.seamless.contexts.requests.{Commands, RequestsServiceHelper}
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldId, FieldShapeFromShape, SetFieldShape}
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
-import com.seamless.diff.initial.{NameShapeRequest, ShapeBuilder, ShapeResolver}
+import com.seamless.diff.initial.{ShapeBuilder, ShapeExample, ShapeResolver}
 import io.circe.Json
 
 import scala.scalajs.js
@@ -20,7 +20,7 @@ case class DiffInterpretation(title: String,
 }
 
 case class FrontEndMetadata(affectedIds: Seq[String] = Seq.empty,
-                            nameRequests: Seq[NameShapeRequest] = Seq.empty,
+                            examples: Seq[ShapeExample] = Seq.empty,
                             example: Option[Json] = None,
                             affectedConceptIds: Seq[String] = Seq.empty) {
 
@@ -115,7 +115,7 @@ object Interpretations {
       s"Request Body Observed",
       desc,
       commands,
-      FrontEndMetadata( affectedIds =  wrapperId +: shape.allIds, nameRequests = shape.nameRequests, example = Some(actual) )
+      FrontEndMetadata( affectedIds =  wrapperId +: shape.allIds, examples = shape.examples, example = Some(actual) )
     )
   }
 
@@ -163,7 +163,6 @@ object Interpretations {
 
   def AddInitialResponseBodyShape(actual: Json, responseStatusCode: Int, responseId: String, contentType: String)(implicit shapesState: ShapesState) = {
     val shape = new ShapeBuilder(actual).run
-    println("GENERATING A SHAPE LOL")
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
 
@@ -182,7 +181,7 @@ object Interpretations {
       s"Response Body Observed",
       desc,
       commands,
-      FrontEndMetadata( affectedIds =  wrapperId +: shape.allIds, nameRequests = shape.nameRequests, example = Some(actual) )
+      FrontEndMetadata( affectedIds =  wrapperId +: shape.allIds, examples = shape.examples, example = Some(actual) )
     )
   }
 

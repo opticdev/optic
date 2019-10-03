@@ -1,12 +1,6 @@
 import React from 'react';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardActions from '@material-ui/core/CardActions';
-import FormControl from '@material-ui/core/FormControl';
 import {Button, ListItemText, Menu, TextField, Typography, withStyles} from '@material-ui/core';
 import {primary} from '../../theme';
-import TypeMenu from '../shape-editor/TypeMenu/TypeMenu';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import {withNavigationContext} from '../../contexts/NavigationContext';
@@ -14,11 +8,13 @@ import {ShapesCommands} from '../../engine';
 
 const styles = theme => ({
   dot: {
-    marginTop: 5,
     color: primary,
     fontSize: 18,
     cursor: 'pointer',
-    userSelect: 'none'
+    position: 'absolute',
+    right: -31,
+    top: 3,
+    userSelect: 'none',
   },
   modal: {
     padding: 6,
@@ -38,24 +34,26 @@ class ShapeNameSelector extends React.Component {
   close = () => this.setState({anchorEl: false});
   onEnter = (e) => {
     if (this.state.userInput) {
-      this.newShape()
+      this.newShape();
     }
   };
 
   newShape = () => {
-    console.log(this.props)
+    console.log(this.props);
     this.props.addAdditionalCommands([
       ShapesCommands.RenameShape(this.props.shapeId, this.state.userInput)
-    ])
-  }
+    ]);
+  };
 
   render() {
-
-    return null
 
     const {shapeId, actualShape, classes, userDefinedName} = this.props;
 
     const isNamed = !!userDefinedName;
+
+    if (isNamed) {
+      return null;
+    }
 
     const availableNames = [];
     const query = '';
@@ -96,16 +94,17 @@ class ShapeNameSelector extends React.Component {
             }}
           />
 
-          <List style={{padding: 0, paddingTop: 9}}>
-            {(matchingShapes.length === 0 && this.state.userInput) && (
-              <ListItem button onClick={this.newShape}>
-                <ListItemText primary={`Create new concept: "${this.state.userInput}"`} primaryTypographyProps={{
-                  color: 'secondary',
-                  style: {fontSize: 14, padding: 0, marginLeft: -8}
-                }}/>
-              </ListItem>
-            )}
-          </List>
+          {this.state.userInput && (
+            <List dense={true} style={{padding: 9}}>
+              {(matchingShapes.length === 0 && this.state.userInput) && (
+                <ListItem dense={true} button onClick={this.newShape}>
+                  <ListItemText primary={`Create new concept: "${this.state.userInput}"`} primaryTypographyProps={{
+                    color: 'secondary',
+                    style: {fontSize: 14, padding: 0, marginLeft: -8}
+                  }}/>
+                </ListItem>
+              )}
+            </List>)}
 
         </div>
         {/*<CardActions>*/}

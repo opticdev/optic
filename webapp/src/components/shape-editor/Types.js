@@ -5,6 +5,7 @@ export const primitiveColors = {
     $object: '#32417d',
     $list: '#7d1e34',
     $map: '#7d521f',
+    $unknown: '#027a7d',
 }
 export const nonPrimitiveColor = '#49525f'
 export const unboundParameterColor = '#996122'
