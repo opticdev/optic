@@ -305,7 +305,7 @@ function RootChoice() {
     commands: ({shapeId}) => {
       const {AddShape} = ShapesCommands;
       return [
-        [AddShape(shapeId, '$any')],
+        [AddShape(shapeId, '$any', '')],
         shapeId
       ];
     },

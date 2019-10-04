@@ -531,7 +531,7 @@ class ShapeViewerBase extends React.Component {
                   <div className={classes.expansionControlContainer}>
                     {isExpandable ? <ExpansionControl trail={trail}/> : null}
                   </div>
-                  <div style={{paddingLeft: `${trail.length - 1}em`}}>&nbsp;</div>
+                  <div style={{paddingLeft: `${ (trail.length - 1) * 4}px`}}>&nbsp;</div>
                   {type === 'field' ? (
                     <div className={classes.fieldRow}>
                       <FieldName name={name} fieldId={id}/>
