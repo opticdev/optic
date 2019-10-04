@@ -147,6 +147,7 @@ class ShapeUtilities {
             const shape = queries.shapeById(shapeId);
             return {
               binding,
+              shapeId: shapeId,
               color: primitiveColors[shape.baseShapeId],
               boundName: queries.shapeById(shapeId).name || queries.shapeById(shape.baseShapeId).name || '(unnamed)',
               parameterName: parameter.name,
@@ -162,6 +163,7 @@ class ShapeUtilities {
             }
             return {
               binding,
+              shapeId: parameter.shapeParameterId,
               color: boundParameterColor,
               boundName: provider ? provider.name || '(unnamed)' : parameter.name, //@TODO resolve parent bindings
               parameterName: parameter.name,

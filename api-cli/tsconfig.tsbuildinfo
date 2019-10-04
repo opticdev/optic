@@ -521,6 +521,14 @@
         "version": "47b61830eb01626e2e6dbbbedd015287f038125c7d1815bd7212f410d8f814ca",
         "signature": "7330d90ccede82fffa028e03ffc2dbdb751d882b85577d1a3db76bb28226fa71"
       },
+      "./src/commands/login.ts": {
+        "version": "7483dd853c2dac46e4a7c86df0cac343337481409f434bcb6db6e082132267c5",
+        "signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "./src/lib/log-helper.ts": {
+        "version": "0bf0a2716dbfd9d2c7392ee4bf2902a2623a90f50a3d5eaa63153c34049dcde4",
+        "signature": "5a8ae80727e9d59e31bf36ad6440dea9345e390291791ed32e77cb4a6ebdd6d4"
+      },
       "./node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
         "signature": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b"
@@ -548,14 +556,6 @@
       "./node_modules/@types/express/index.d.ts": {
         "version": "1f92cdebe2b1e0e6309ccdb6e8700cfd2d3e7131c7842f91b38ed1e4ff2a7090",
         "signature": "1f92cdebe2b1e0e6309ccdb6e8700cfd2d3e7131c7842f91b38ed1e4ff2a7090"
-      },
-      "./src/commands/login.ts": {
-        "version": "4a1fc6de368f768c092e707e0d695d9c2fe0795a1acc8704c98a2052cedb6a74",
-        "signature": "d5e62cab36073478f83e6d6366aabc1fb57dd0fd04ff4fedd9062ceb953a5b85"
-      },
-      "./src/lib/log-helper.ts": {
-        "version": "0bf0a2716dbfd9d2c7392ee4bf2902a2623a90f50a3d5eaa63153c34049dcde4",
-        "signature": "5a8ae80727e9d59e31bf36ad6440dea9345e390291791ed32e77cb4a6ebdd6d4"
       },
       "./node_modules/@types/cookie-parser/index.d.ts": {
         "version": "8d77ed4e39114c32edc2e35b683b6f54a6b3292ecdf392e4bfc5f726734955d8",
@@ -610,7 +610,7 @@
         "signature": "a5f91a172a7df9fb875aa8a83eee10175de0ff3ad2566ce4689b9ac27907615e"
       },
       "./src/commands/spec.ts": {
-        "version": "ad4010da9c31ff934bc53be4923cca9be08367a65562b4404bb0e6a559389c2e",
+        "version": "22c151a5dda9656cfbce6d27ed3560cd615859b1d05185fbf8e040c581dce5f5",
         "signature": "23c4ac0716a26e2d6237e9809623099970d82e0b30123ceb9421068d891748c5"
       },
       "./node_modules/@types/archy/index.d.ts": {
@@ -1431,6 +1431,15 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./src/commands/login.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/lib/log-helper.ts": [
+        "./node_modules/colors/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./node_modules/@types/range-parser/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
@@ -1470,22 +1479,6 @@
         "./node_modules/@types/body-parser/index.d.ts",
         "./node_modules/@types/serve-static/index.d.ts",
         "./node_modules/@types/express-serve-static-core/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/commands/login.ts": [
-        "./node_modules/@oclif/command/lib/index.d.ts",
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/cli-ux/lib/index.d.ts",
-        "./node_modules/open/index.d.ts",
-        "./node_modules/colors/index.d.ts",
-        "./src/lib/analytics.ts",
-        "./src/lib/credentials.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/lib/log-helper.ts": [
-        "./node_modules/colors/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -2156,10 +2149,6 @@
         "./node_modules/@types/express/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/commands/login.ts": [
-        "./node_modules/@oclif/parser/lib/flags.d.ts",
-        "./node_modules/@oclif/command/lib/index.d.ts"
       ],
       "./node_modules/@types/connect/index.d.ts": [
         "./node_modules/@types/node/http.d.ts",
@@ -3017,6 +3006,8 @@
       "./node_modules/colors/index.d.ts",
       "./node_modules/open/index.d.ts",
       "./src/commands/init.ts",
+      "./src/commands/login.ts",
+      "./src/lib/log-helper.ts",
       "./node_modules/@types/range-parser/index.d.ts",
       "./node_modules/@types/express-serve-static-core/index.d.ts",
       "./node_modules/@types/mime/index.d.ts",
@@ -3024,8 +3015,6 @@
       "./node_modules/@types/connect/index.d.ts",
       "./node_modules/@types/body-parser/index.d.ts",
       "./node_modules/@types/express/index.d.ts",
-      "./src/commands/login.ts",
-      "./src/lib/log-helper.ts",
       "./node_modules/@types/cookie-parser/index.d.ts",
       "./src/lib/common.ts",
       "./node_modules/@types/debug/index.d.ts",

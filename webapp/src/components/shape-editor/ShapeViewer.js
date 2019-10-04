@@ -34,6 +34,7 @@ import {coreShapeIdsSet} from './ShapeUtilities';
 import ShapePicker from './ShapePicker';
 import {createStyles} from '@material-ui/core';
 import {commandsToJson, ShapesCommands} from '../../engine';
+import {withShapeDialogContext} from '../../contexts/ShapeDialogContext';
 
 export function cheapEquals(item1, item2) {
   return JSON.stringify(item1) === JSON.stringify(item2);
@@ -400,7 +401,8 @@ const ExpansionControl = withExpansionContext(ExpansionControlBase);
 class ShapeViewerBase extends React.Component {
 
   render() {
-    const {classes, shape, coloredIds = []} = this.props;
+    const {classes, shape, coloredIds = [], shapeDialog = {}} = this.props;
+    const {pushToStack} = shapeDialog
     const {cachedQueryResults, queries} = this.props;
     const {
       addField, removeField,
@@ -527,15 +529,10 @@ class ShapeViewerBase extends React.Component {
                           }
                         })}
                         onParameterSelected={(bindingInfo) => {
-                          handleTooltipOpen({
-                            type: 'parameter',
-                            data: {
-                              handleOpenSelectionModal: this.handleOpenSelectionModal,
-                              contextShapeId: entry.parentShapeId,
-                              setParameterShape: (provider) => setShapeParameterInField(id, provider, bindingInfo.parameterId),
-                              bindingInfo: bindingInfo
-                            }
-                          });
+                          const shapeId = bindingInfo.shapeId
+                          if (pushToStack) {
+                            pushToStack(shapeId)
+                          }
                         }}
                       />
                       <WriteOnly>
@@ -686,5 +683,5 @@ const styles = (theme) => ({
 });
 ShapeViewerBase.propTypes = {};
 const ShapeViewer =
-  withColoredIdsContext(withExpansionContext(withShapeEditorContext(withEditorContext(withRfcContext(withStyles(styles)(ShapeViewerBase))))));
+  withColoredIdsContext(withShapeDialogContext(withExpansionContext(withShapeEditorContext(withEditorContext(withRfcContext(withStyles(styles)(ShapeViewerBase)))))));
 export default ShapeViewer;

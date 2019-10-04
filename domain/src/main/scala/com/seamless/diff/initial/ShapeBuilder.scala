@@ -70,7 +70,6 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     if (json.isObject) {
 
       val matchedConcept = ShapeResolver.handleObject(json)
-
       //save the example
       shapeExample append ShapeExample(id, json)
 
