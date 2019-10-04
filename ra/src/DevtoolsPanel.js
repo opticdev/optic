@@ -53,15 +53,8 @@ function decodeRequestBody(harRequest) {
 function decodeResponseBody(harResponse) {
 	const { content } = harResponse;
 	const { size, mimeType, text } = content;
-	if (mimeType === 'application/json') {
-		if (size === 0) {
-			return null;
-		}
-		try {
-			return JSON.parse(text);
-		} catch (e) {
-			return text
-		}
+	if (size > 0) {
+		return new BodyParser().parse(mimeType, text)
 	}
 	return text;
 }
