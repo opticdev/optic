@@ -272,9 +272,6 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
             <ShapeLinks shapeId={shape.baseShapeId} contextString={shape.name}/>
           );
         } else {
-          const choices = listCoreShapeChoicesForShape(cachedQueryResults.shapesState);
-          const parameterChoices = [];
-          conceptChoices = listConceptChoicesForShape(cachedQueryResults.conceptsById, [shapeId]);
           onSelect = (choice) => {
             if (!cheapEquals(shape.baseShapeId, choice.value)) {
               setBaseShape(shapeId, choice.valueForSetting);
@@ -284,11 +281,15 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
           };
           widget = (
             <Chooser
-              setShouldShowConceptModal={setShouldShowConceptModal}
               shapeId={shapeId}
-              choices={choices}
-              parameterChoices={parameterChoices}
-              onSelect={onSelect}
+              conceptChoices={listConceptChoicesForShape(cachedQueryResults.conceptsById, queries)}
+              onSelect={(commands, newShapeId) => {
+                const setBase = ShapesCommands.SetBaseShape(shapeId, newShapeId)
+                const allCommands = [...commands, setBase]
+                handleCommands(...allCommands)
+                handleTooltipClose();
+                setShouldShowConceptModal(false);
+              }}
             />
           );
 
@@ -327,28 +328,6 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
               );
             }
           }
-        } else {
-          const parentShape = queries.shapeById(contextShapeId);
-
-          const choices = listCoreShapeChoicesForParameter(cachedQueryResults.shapesState);
-          const parameterChoices = listParameterChoicesForParameter(parentShape);
-          conceptChoices = listConceptChoicesForParameter(cachedQueryResults.conceptsById, []);
-          onSelect = (choice) => {
-            if (!cheapEquals(bindingInfo.binding, choice.value)) {
-              setParameterShape(choice.valueForSetting);
-            }
-            handleTooltipClose();
-            setShouldShowConceptModal(false);
-          };
-          widget = (
-            <Chooser
-              setShouldShowConceptModal={setShouldShowConceptModal}
-              shapeId={contextShapeId}
-              choices={choices}
-              parameterChoices={parameterChoices}
-              onSelect={onSelect}
-            />
-          );
         }
         break;
     }

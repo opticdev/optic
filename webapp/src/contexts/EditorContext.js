@@ -16,7 +16,7 @@ const EditorModes = {
 class EditorStore extends React.Component {
 
     state = {
-        mode: this.props.mode || EditorModes.DESIGN
+        mode: this.props.mode || EditorModes.DOCUMENTATION
     }
 
     switchEditorMode = (mode) => {
