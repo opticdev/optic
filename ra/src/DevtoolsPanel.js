@@ -47,13 +47,23 @@ function decodeRequestBody(harRequest) {
 	const { postData = {} } = harRequest;
 	const { mimeType, text } = postData;
 	console.log(postData)
-	return new BodyParser().parse(mimeType, text)
+	try {
+		return new BodyParser().parse(mimeType, text)
+	} catch (e) {
+		console.log(harRequest)
+		console.error(e);
+	}
 }
 
 function decodeResponseBody(harResponse) {
 	const { content } = harResponse;
 	const { size, mimeType, text } = content;
-	return new BodyParser().parse(mimeType, text)
+	try {
+		return new BodyParser().parse(mimeType, text)
+	} catch (e) {
+		console.log(harResponse)
+		console.error(e);
+	}
 }
 
 export function toApiInteraction(entry) {
@@ -63,14 +73,14 @@ export function toApiInteraction(entry) {
 		request: {
 			url: parsedUrl.pathname,
 			method: entry.request.method,
-			headers: nameAndValueListToObject(entry.request.headers),
+			headers: nameAndValueListToObject(entry.request.headers.map(x => ({ ...x, name: x.name.toLocaleLowerCase() }))),
 			cookies,
 			queryParameters: parsedUrl.query,
 			body: (entry.request.postData) ? decodeRequestBody(entry.request) : undefined
 		},
 		response: {
 			statusCode: entry.response.status,
-			headers: nameAndValueListToObject(entry.response.headers),
+			headers: nameAndValueListToObject(entry.response.headers.map(x => ({ ...x, name: x.name.toLocaleLowerCase() }))),
 			body: (entry.response.content) ? decodeResponseBody(entry.response) : undefined
 		}
 	};
