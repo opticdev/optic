@@ -77,7 +77,9 @@ const options = (concepts) => [
   OptionalChoice(),
   NullableChoice(),
   IdentifierChoice(),
-  ReferenceChoice()
+  ReferenceChoice(),
+  MapChoice(),
+  PrimitiveChoice('unknown', '$unknown')
 ];
 
 const defaultState = {
@@ -449,7 +451,6 @@ function ListChoice() {
     },
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: (choice) => {
-      return true;
       if (choice.id === '$optional' || choice.id === '$nullable') {
         return false;
       }
@@ -457,6 +458,34 @@ function ListChoice() {
     },
     commands: ({parameters, shapeId, paramsForChoice}) => {
       return singleParameterType({parameters, shapeId, paramsForChoice}, '$list', parameter);
+    },
+  };
+}
+
+function MapChoice() {
+  //hardcoding string as keyValue
+  const keyParam = '$mapKey';
+  const valueParam = '$mapValue';
+  return {
+    label: 'Map',
+    id: '$map',
+    component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
+      const param = parameters[valueParam];
+      return (
+        <div style={{display: 'flex', flexDirection: 'row'}}>
+          <span style={{...textStyle, marginRight: 5}}>Map from </span>
+          <TypeName name={'string'} color={'#3682e3'}/>
+          <span style={{...textStyle, marginLeft: 5}}> to </span>
+          <span style={{marginLeft: 3}}>{active ? parameterInput(valueParam) : renderInactiveChoice(valueParam)}</span>
+        </div>);
+    },
+    canFinish: (parameters) => parameters[valueParam],
+    optionsFilter: (choice) => true,
+    commands: ({parameters, shapeId, paramsForChoice}) => {
+      const {SetParameterShape, ProviderInShape, ShapeProvider} = ShapesCommands
+      const [commands, id] = singleParameterType({parameters, shapeId, paramsForChoice}, '$map', valueParam);
+      const commandsWithKeySet = [...commands, SetParameterShape(ProviderInShape(shapeId, ShapeProvider('$string'), keyParam))]
+      return [commandsWithKeySet, id]
     },
   };
 }
