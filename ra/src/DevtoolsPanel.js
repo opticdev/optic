@@ -66,12 +66,12 @@ export function toApiInteraction(entry) {
 			headers: nameAndValueListToObject(entry.request.headers),
 			cookies,
 			queryParameters: parsedUrl.query,
-			body: (entry.request.postData) ? decodeRequestBody(entry.request) : null
+			body: (entry.request.postData) ? decodeRequestBody(entry.request) : undefined
 		},
 		response: {
 			statusCode: entry.response.status,
 			headers: nameAndValueListToObject(entry.response.headers),
-			body: (entry.response.content) ? decodeResponseBody(entry.response) : null
+			body: (entry.response.content) ? decodeResponseBody(entry.response) : undefined
 		}
 	};
 }
