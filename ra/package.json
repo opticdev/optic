@@ -32,7 +32,6 @@
     "html-webpack-plugin": "4.0.0-beta.5",
     "identity-obj-proxy": "3.0.0",
     "is-wsl": "^1.1.0",
-    "jest": "24.8.0",
     "jest-environment-jsdom-fourteen": "0.1.0",
     "jest-resolve": "24.8.0",
     "jest-watch-typeahead": "0.3.1",
@@ -58,6 +57,7 @@
     "style-loader": "1.0.0",
     "terser-webpack-plugin": "1.4.1",
     "ts-pnp": "1.1.2",
+    "type-is": "^1.6.18",
     "url-loader": "2.1.0",
     "webpack": "4.39.1",
     "webpack-dev-server": "3.2.1",
@@ -136,5 +136,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "jest": "^24.9.0"
   }
 }
