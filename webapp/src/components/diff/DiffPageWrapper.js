@@ -119,6 +119,7 @@ class DiffPageWrapper extends React.Component {
             ignore={onIgnore}
           >
             <NavigationStore addAdditionalCommands={this.addAdditionalCommands}
+                             inDiffMode={true}
                              onShapeSelected={(shapeId) => {
                                const examples = interpretation.metadataJs.examples
                                shapeDialog.pushToStack(shapeId, examples)

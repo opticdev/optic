@@ -34,8 +34,7 @@ class ShadowInput extends React.Component {
   getMatch = () => {
     const {options = []} = this.props;
     const {userInput} = this.state;
-    const match = userInput ? (options.filter(i => i.label.toLowerCase().startsWith(userInput.toLowerCase().trim()))[0]) : null;
-
+    const match = userInput ? (options.filter(i => (i.label || '').toLowerCase().startsWith(userInput.toLowerCase().trim()))[0]) : null;
     return match;
   };
 
