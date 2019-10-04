@@ -3,7 +3,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
 import ShadowInput from './ShadowInput';
 import {Typography} from '@material-ui/core';
-import {ShapesCommands} from '../../engine';
+import {commandsToJson, ShapesCommands} from '../../engine';
+import sortBy from 'lodash.sortby';
 
 const styles = theme => ({
   root: {
@@ -64,17 +65,13 @@ const textStyle = {
 //   $reference: ReferenceShapeRenderer,
 // ]
 
-const options = [
+const options = (concepts) => [
   PrimitiveChoice('anything', '$any'),
   PrimitiveChoice('string', '$string'),
   PrimitiveChoice('number', '$number'),
   PrimitiveChoice('boolean', '$boolean'),
   PrimitiveChoice('object', '$object'),
-
-  //examples
-  ConceptChoice('User', 'user_concept'),
-  ConceptChoice('EventSummary', 'event_summary_concept'),
-
+  ...(sortBy(concepts, ['label'])),
   ListChoice(),
   OneOfChoice(),
   OptionalChoice(),
@@ -94,23 +91,28 @@ class ShapePicker extends React.Component {
   state = defaultState;
 
   finish = () => {
-    const iterator = Array.from(Array(this.state.steps.length).keys());
-    const allCommands = iterator.reduce((a, index) => {
-      const step = this.state.steps[index];
+    let _shapeId = newShapeId();
+    const firstShapeId = _shapeId;
+    const allCommands = this.state.steps.flatMap((step, index) => {
       const parameters = this.state.parameters[index];
       if (step.isParameter) {
-        return a;
+        return [];
       } else {
-        return a.concat(step.commands({
-          shapeId: this.props.shapeId,
+        const result = step.commands({
+          shapeId: _shapeId,
           parameters,
           paramsForChoice: (choice) => this.state.parameters[choice.index]
-        }));
+        });
+
+        console.log(result);
+        const [commands, shapeId] = result;
+        _shapeId = shapeId;
+        return commands;
       }
-    }, []);
-    // alert('finished ' + JSON.stringify(allCommands));
+    });
+
     if (this.props.onFinish) {
-      this.props.onFinish(allCommands);
+      this.props.onFinish(allCommands, firstShapeId);
     }
     this.reset();
   };
@@ -198,8 +200,9 @@ class ShapePicker extends React.Component {
   };
 
   render() {
-    const {classes} = this.props;
+    const {classes, conceptChoices} = this.props;
     const {steps, parameters} = this.state;
+
 
     const currentStepIndex = this.getCurrentStep();
     if (currentStepIndex === -1) {
@@ -231,7 +234,7 @@ class ShapePicker extends React.Component {
       renderInactiveChoice,
       rootInput: (<div className={classes.inputOuter}>
         <ShadowInput
-          options={options.filter(currentStep.optionsFilter)}
+          options={options(conceptChoices).filter(currentStep.optionsFilter)}
           inputClass={classes.activeInput}
           onDelete={this.delete}
           onChange={(choice) => {
@@ -245,11 +248,10 @@ class ShapePicker extends React.Component {
             key={paramId + currentStepIndex}
             style={{marginLeft: 6, marginTop: 1}}
             inputClass={classes.activeInput}
-            options={options.filter(currentStep.optionsFilter)}
+            options={options(conceptChoices).filter(currentStep.optionsFilter)}
             onDelete={() => this.delete(paramId)}
             onEmptyNext={() => {
               this.markComplete(currentStepIndex);
-
             }}
             onChange={(choice) => {
               const newIndex = this.pushChoice(choice, true);
@@ -300,8 +302,12 @@ function RootChoice() {
     isRoot: true,
     canFinish: (parameters) => true,
     optionsFilter: () => true,
-    commands: (parameters) => {
-      return [];
+    commands: ({shapeId}) => {
+      const {AddShape} = ShapesCommands;
+      return [
+        [AddShape(shapeId, '$any')],
+        shapeId
+      ];
     },
   };
 }
@@ -317,12 +323,15 @@ function PrimitiveChoice(label, id) {
     canFinish: (parameters) => true,
     optionsFilter: () => true,
     commands: ({parameters, shapeId}) => {
-      return [ShapesCommands.SetBaseShape(shapeId, id)];
+      return [
+        [ShapesCommands.SetBaseShape(shapeId, id)],
+        shapeId
+      ];
     },
   };
 }
 
-function ConceptChoice(name, id) {
+export function ConceptChoice(name, id) {
   return {
     label: name,
     id,
@@ -333,7 +342,94 @@ function ConceptChoice(name, id) {
     canFinish: (parameters) => true,
     optionsFilter: () => true,
     commands: ({parameters, shapeId}) => {
-      return [{change_shape_id: shapeId, to: id}];
+      return [
+        [ShapesCommands.SetBaseShape(shapeId, id)],
+        shapeId
+      ];
+    },
+  };
+}
+
+export function GenericConceptChoice(name, id, genericParameters) {
+  return {
+    label: name,
+    id,
+    isNamedShape: true,
+    component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
+      //return <TypeName name={name} color={'#8a558e'}/>;
+      let unsetIndex;
+      const firstUnset = genericParameters.find((i, index) => {
+        if (!parameters[i.id]) {
+          unsetIndex = index;
+          return true;
+        }
+      });
+
+      const previous = genericParameters.slice(0, unsetIndex);
+
+      const previousChoices = previous.map(parameter => {
+        return (<>
+          <div style={{...textStyle, marginLeft: 5}}>{parameter.displayName.split('.')[1]}:</div>
+          <div style={{marginLeft: 5}}>{renderInactiveChoice(parameters[parameter.id])}</div>
+        </>);
+      });
+
+      if (active) {
+        return (
+          <div style={{display: 'flex', flexDirection: 'row'}}>
+            <TypeName name={name} color={'#8a558e'}/>
+            {previousChoices}
+            {firstUnset && (
+              <>
+                <div style={{...textStyle, marginLeft: 5}}>{firstUnset.displayName.split('.')[1]}:</div>
+                <div style={{marginLeft: 5}}>{parameterInput(firstUnset.id)}</div>
+              </>
+            )}
+          </div>);
+      } else {
+        return (
+          <div style={{display: 'flex', flexDirection: 'row'}}>
+            <TypeName name={name} color={'#8a558e'}/>
+            {previousChoices}
+            {firstUnset && (
+              <>
+                <div style={{...textStyle, marginLeft: 5}}>{firstUnset.displayName.split('.')[1]}:</div>
+              </>
+            )}
+          </div>);
+      }
+    },
+    canFinish: (parameters) => genericParameters.every(i => !!parameters[i.id]),
+    optionsFilter: () => true,
+    commands: ({parameters, shapeId, paramsForChoice}) => {
+
+      const {SetBaseShape, SetParameterShape, ProviderInShape, AddShape, ShapeProvider} = ShapesCommands;
+
+      const innerIds = [];
+
+      const innerCommands = genericParameters.flatMap(generic => {
+        const param = parameters[generic.id];
+        const innerParamId = newShapeId();
+        const [commands, shapeId] = param.commands({
+          shapeId: innerParamId,
+          parameters: paramsForChoice(param),
+          paramsForChoice
+        });
+        innerIds.push([generic.id, shapeId]);
+        return [AddShape(shapeId, '$any', ''), ...commands];
+      });
+
+      const assignParamsCommands = innerIds.flatMap(([genericId, innerId]) => [
+        SetParameterShape(ProviderInShape(shapeId, ShapeProvider(innerId), genericId)),
+      ]);
+      return [
+        [
+          ShapesCommands.SetBaseShape(shapeId, id),
+          ...innerCommands,
+          ...assignParamsCommands
+        ],
+        shapeId
+      ];
     },
   };
 }
@@ -360,7 +456,7 @@ function ListChoice() {
       return true;
     },
     commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$list', parameter)
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$list', parameter);
     },
   };
 }
@@ -372,7 +468,6 @@ function OptionalChoice() {
     id: '$optional',
     component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
       const optionalType = parameters[parameter];
-
       if (active) {
         return (
           <div style={{display: 'flex', flexDirection: 'row'}}>
@@ -397,7 +492,7 @@ function OptionalChoice() {
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: () => true,
     commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$optional', parameter)
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$optional', parameter);
     },
   };
 }
@@ -433,13 +528,13 @@ function NullableChoice() {
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: () => true,
     commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$nullable', parameter)
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$nullable', parameter);
     },
   };
 }
 
 function IdentifierChoice() {
-  const parameter = '$type';
+  const parameter = '$identifierInner';
   return {
     label: 'Identifier',
     id: '$identifierInner',
@@ -466,13 +561,13 @@ function IdentifierChoice() {
       }
     },
     commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$identifier', parameter)
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$identifier', parameter);
     },
   };
 }
 
 function ReferenceChoice() {
-  const parameter = '$type';
+  const parameter = '$referenceInner';
   return {
     label: 'Reference',
     id: '$referenceInner',
@@ -502,7 +597,7 @@ function ReferenceChoice() {
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: (choice) => !!choice.isNamedShape,
     commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$identifier', parameter)
+      return singleParameterType({parameters, shapeId, paramsForChoice}, '$identifier', parameter);
     },
   };
 }
@@ -576,18 +671,39 @@ function OneOfChoice() {
       }
       return true;
     },
-    commands: ({parameters, shapeId, paramsForChoice}) => {
-      const {SetBaseShape, SetParameterShape, ProviderInField, ShapeProvider} = ShapesCommands;
+    commands: ({parameters = {}, shapeId, paramsForChoice}) => {
+      const {SetBaseShape, SetParameterShape, ProviderInField, ShapeProvider, AddShapeParameter, AddShape, ProviderInShape} = ShapesCommands;
       //@todo fill this out
 
-      const keysSorted = Object.keys(parameters).sort()
-      keysSorted.map(k => {
-        const param = parameters[k]
-        debugger
-      })
+      const keysSorted = Object.keys(parameters).sort();
+
+      const innerIds = [];
+
+      const innerCommands = keysSorted.flatMap(k => {
+        const param = parameters[k];
+        const innerParamId = newShapeId();
+        const [commands, shapeId] = param.commands({
+          shapeId: innerParamId,
+          parameters: paramsForChoice(param),
+          paramsForChoice
+        });
+        innerIds.push(shapeId);
+        return [AddShape(shapeId, '$any', ''), ...commands];
+      });
+
+      const assignParamsCommands = innerIds.flatMap((id, index) => [
+        AddShapeParameter('dynamic' + index, shapeId, ''),
+        SetParameterShape(ProviderInShape(shapeId, ShapeProvider(id), 'dynamic' + index)),
+      ]);
+
       return [
-        SetBaseShape(shapeId, '$oneOf'),
-      ]
+        [
+          ...innerCommands,
+          SetBaseShape(shapeId, '$oneOf'),
+          ...assignParamsCommands
+        ],
+        shapeId
+      ];
     },
   };
 }
@@ -605,22 +721,32 @@ function findLastIndex<T>(array, predicate) {
 }
 
 function singleParameterType({parameters, shapeId, paramsForChoice}, id, parameter) {
-  const {SetBaseShape, SetParameterShape, ProviderInField, ShapeProvider, AddShape} = ShapesCommands;
+  const {SetBaseShape, SetParameterShape, ProviderInShape, ShapeProvider, AddShape} = ShapesCommands;
   const ParentInner = parameters[parameter];
 
   if (ParentInner.isPrimitive || ParentInner.isNamedShape) {
     return [
-      SetBaseShape(shapeId, id),
-      SetParameterShape(ProviderInField(shapeId, ShapeProvider(ParentInner.id), parameter))
+      [
+        SetBaseShape(shapeId, id),
+        SetParameterShape(ProviderInShape(shapeId, ShapeProvider(ParentInner.id), parameter))
+      ],
+      shapeId
     ];
   } else {
-    const innerId = newShapeId()
-    const ParentInnerCommands = ParentInner.commands({shapeId: innerId, parameters: paramsForChoice(ParentInner)});
+    const innerId = newShapeId();
+    const ParentInnerCommands = ParentInner.commands({
+      shapeId: innerId,
+      parameters: paramsForChoice(ParentInner),
+      paramsForChoice
+    });
     return [
-      SetBaseShape(shapeId, id),
-      AddShape(innerId, '$any', ""),
-      SetParameterShape(ProviderInField(shapeId, ShapeProvider(innerId), parameter)),
-      ...ParentInnerCommands
+      [
+        SetBaseShape(shapeId, id),
+        AddShape(innerId, '$any', ''),
+        SetParameterShape(ProviderInShape(shapeId, ShapeProvider(innerId), parameter)),
+        ...ParentInnerCommands
+      ],
+      shapeId
     ];
   }
 }

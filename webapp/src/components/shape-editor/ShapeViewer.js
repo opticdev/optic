@@ -33,7 +33,7 @@ import ShapeNameSelector from '../diff/ShapeNameSelector';
 import {coreShapeIdsSet} from './ShapeUtilities';
 import ShapePicker from './ShapePicker';
 import {createStyles} from '@material-ui/core';
-import {commandsToJson} from '../../engine';
+import {commandsToJson, ShapesCommands} from '../../engine';
 
 export function cheapEquals(item1, item2) {
   return JSON.stringify(item1) === JSON.stringify(item2);
@@ -53,20 +53,18 @@ const useChooserStyles = makeStyles((theme) => createStyles({
   }
 }));
 
-function Chooser({shapeId, choices, parameterChoices, setShouldShowConceptModal, onSelect}) {
-  const [shouldShowParameterChoices, setShouldShowParameterChoices] = React.useState(false);
-  const list = shouldShowParameterChoices ? parameterChoices : choices;
+function Chooser(props) {
+  const {conceptChoices, onSelect} = props
   const classes = useChooserStyles();
-
   return (<div className={classes.row}>
     <Typography variant="subtitle1" style={{marginTop: 4, paddingRight: 5, fontSize: 11}}>Change to:</Typography>
     <div style={{marginTop: 2, flex: .7}}>
       <ShapePicker
-        shapeId={shapeId}
-        onFinish={(commands) => {
+        conceptChoices={conceptChoices}
+        onFinish={(commands, shapeId) => {
           console.clear()
-        console.log('commands', JSON.stringify(commandsToJson(commands), null, 4))
-      }} />
+          onSelect(commands, shapeId)
+        }} />
     </div>
   </div>)
   // return (
@@ -162,7 +160,7 @@ function ShapeLinksBase({shapeId, contextString, switchEditorMode, isShapeEditor
 
 const ShapeLinks = withShapeEditorContext(withEditorContext(ShapeLinksBase));
 
-function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShapeSelected}) {
+function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShapeSelected, handleCommands}) {
   const [launchContext, setLaunchContext] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [shouldShowConceptModal, setShouldShowConceptModal] = React.useState(false);
@@ -244,7 +242,6 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
             const parameter = cachedQueryResults.shapesState.shapeParameters[shapeParameterId];
             const parentShapeId = parameter.descriptor.shapeId;
             const parentShape = cachedQueryResults.shapesState.shapes[parentShapeId];
-
             widget = (
               <ShapeLinks
                 shapeId={parentShapeId}
@@ -252,23 +249,17 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
             );
           }
         } else {
-          const choices = listCoreShapeChoicesForField(fieldId, cachedQueryResults.shapesState);
-          const parameterChoices = listParameterChoicesForField(fieldId, parentShape);
-          conceptChoices = listConceptChoicesForField(fieldId, cachedQueryResults.conceptsById, []);
-          onSelect = (choice) => {
-            if (!cheapEquals(field.fieldShapeDescriptor, choice.value)) {
-              setFieldShape(choice.valueForSetting);
-            }
-            handleTooltipClose();
-            setShouldShowConceptModal(false);
-          };
           widget = (
             <Chooser
               shapeId={fieldId}
-              setShouldShowConceptModal={setShouldShowConceptModal}
-              choices={choices}
-              parameterChoices={parameterChoices}
-              onSelect={onSelect}
+              conceptChoices={listConceptChoicesForShape(cachedQueryResults.conceptsById, queries)}
+              onSelect={(commands, shapeId) => {
+                const setFieldShape = ShapesCommands.SetFieldShape(ShapesCommands.FieldShapeFromShape(fieldId, shapeId))
+                const allCommands = [...commands, setFieldShape]
+                handleCommands(...allCommands)
+                handleTooltipClose();
+                setShouldShowConceptModal(false);
+              }}
             />
           );
         }
@@ -401,7 +392,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
   );
 }
 
-const TooltipWrapper = withEditorContext(withShapeEditorContext(TooltipWrapperBase));
+const TooltipWrapper = withRfcContext(withEditorContext(withShapeEditorContext(TooltipWrapperBase)));
 
 function Join({children, delimiter}) {
   return React.Children.toArray(children).reduce((acc, child) => {
