@@ -53,10 +53,7 @@ function decodeRequestBody(harRequest) {
 function decodeResponseBody(harResponse) {
 	const { content } = harResponse;
 	const { size, mimeType, text } = content;
-	if (size > 0) {
-		return new BodyParser().parse(mimeType, text)
-	}
-	return text;
+	return new BodyParser().parse(mimeType, text)
 }
 
 export function toApiInteraction(entry) {

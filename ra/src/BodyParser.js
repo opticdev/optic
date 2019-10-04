@@ -8,6 +8,9 @@ const formTypes = [ 'urlencoded' ];
 class BodyParser {
     parse(contentType, bodyText, bodyEncoding) {
         if (is(contentType, jsonTypes)) {
+            if (bodyText === '') {
+                return undefined
+            }
             return JSON.parse(bodyText)
         }
 
