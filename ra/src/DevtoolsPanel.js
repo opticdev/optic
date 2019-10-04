@@ -9,6 +9,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Zip from 'jszip';
+import { BodyParser } from './BodyParser';
 
 export function withChrome(f) {
 	if (global.chrome) {
@@ -45,28 +46,15 @@ function nameAndValueListToObject(nameAndValueList) {
 function decodeRequestBody(harRequest) {
 	const { postData = {} } = harRequest;
 	const { mimeType, text } = postData;
-	if (mimeType === 'application/json' || mimeType === 'text/plain') {
-		try {
-			return JSON.parse(text);
-		} catch {
-			return text;
-		}
-	}
-	return text;
+	console.log(postData)
+	return new BodyParser().parse(mimeType, text)
 }
 
 function decodeResponseBody(harResponse) {
 	const { content } = harResponse;
 	const { size, mimeType, text } = content;
-	if (mimeType === 'application/json') {
-		if (size === 0) {
-			return null;
-		}
-		try {
-			return JSON.parse(text);
-		} catch (e) {
-			return text
-		}
+	if (size > 0) {
+		return new BodyParser().parse(mimeType, text)
 	}
 	return text;
 }
