@@ -78,7 +78,8 @@ const options = (concepts) => [
   NullableChoice(),
   IdentifierChoice(),
   ReferenceChoice(),
-  MapChoice()
+  MapChoice(),
+  PrimitiveChoice('unknown', '$unknown')
 ];
 
 const defaultState = {
