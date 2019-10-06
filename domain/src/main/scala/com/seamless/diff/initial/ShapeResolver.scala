@@ -36,7 +36,7 @@ object ShapeResolver {
     val conceptsWithIds = shapesState.concepts
 
     conceptsWithIds.collectFirst {
-      case (shapeId, entity) if ShapeDiffer.diff(entity, Some(x)) == NoDiff() => shapeId
+      case (shapeId, entity) if ShapeDiffer.diff(entity, Some(x)).isEmpty => shapeId
     }
   }
 }

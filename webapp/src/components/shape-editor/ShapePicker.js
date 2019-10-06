@@ -754,10 +754,16 @@ function singleParameterType({parameters, shapeId, paramsForChoice}, id, paramet
   const ParentInner = parameters[parameter];
 
   if (ParentInner.isPrimitive || ParentInner.isNamedShape) {
+    const innerId = newShapeId();
     return [
       [
+        //set to Selected Type
         SetBaseShape(shapeId, id),
-        SetParameterShape(ProviderInShape(shapeId, ShapeProvider(ParentInner.id), parameter))
+        //create the shape to wrap parameter
+        AddShape(innerId, '$any', ''),
+        SetBaseShape(innerId, ParentInner.id),
+        //assign shape
+        SetParameterShape(ProviderInShape(shapeId, ShapeProvider(innerId), parameter))
       ],
       shapeId
     ];

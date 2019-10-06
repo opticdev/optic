@@ -65,6 +65,7 @@ function Chooser(props) {
         conceptChoices={conceptChoices}
         onFinish={(commands, shapeId) => {
           console.clear()
+          debugger
           onSelect(commands, shapeId)
         }} />
     </div>

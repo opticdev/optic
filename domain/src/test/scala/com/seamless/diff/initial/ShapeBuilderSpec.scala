@@ -2,7 +2,7 @@ package com.seamless.diff.initial
 
 import com.seamless.Analytics
 import com.seamless.contexts.rfc.{RfcService, RfcServiceJSFacade}
-import com.seamless.contexts.shapes.Commands.{ProviderInShape, RenameShape, SetParameterShape, ShapeProvider}
+import com.seamless.contexts.shapes.Commands.{AddShape, ProviderInShape, RenameShape, SetParameterShape, ShapeProvider}
 import com.seamless.diff.JsonFileFixture
 import com.seamless.serialization.CommandSerialization
 import org.scalatest.FunSpec
@@ -47,6 +47,13 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     val result = new ShapeBuilder(basic, "ABC")(f).run
     assert(result.rootShapeId == "Todo_0")
     assert(result.commands.isEmpty)
+  }
+
+  it("can match json to a string") {
+    val basic = fromFile("todo").asObject.get.toMap("task")
+    val f = fixture
+    val result = new ShapeBuilder(basic, "ABC")(f).run
+    assert(result.commands.head.asInstanceOf[AddShape].baseShapeId == "$string")
   }
 
   it("can match json in array") {

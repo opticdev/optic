@@ -9,19 +9,19 @@ import io.circe.jawn.parse
 
 class ShapeResolverSpec extends FunSpec with JsonFileFixture {
 
-  def fixture = {
-    val basic = fromFile("todo")
-    val result = new ShapeBuilder(basic, "Todo").run
+  def fixture(name: String) = {
+    val basic = fromFile(name)
+    val result = new ShapeBuilder(basic, name).run
 
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", result.commands :+
-      RenameShape(result.examples.head.shapeId, "Todo"))
+      RenameShape(result.examples.head.shapeId, name))
     rfcService.currentState("id").shapesState
   }
 
   it("can resolve primitives") {
-    val f = fixture
+    val f = fixture("todo")
     val string = ShapeResolver.resolveJsonToShapeId(parse("\"hello\"").right.get)(f)
     assert(string.contains(StringKind.baseShapeId))
 
@@ -32,12 +32,24 @@ class ShapeResolverSpec extends FunSpec with JsonFileFixture {
     assert(boolean.contains(BooleanKind.baseShapeId))
   }
 
+
   it("can match json to a concept") {
+
     val basic = fromFile("todo")
-    val f = fixture
+    val f = fixture("todo")
     val a = ShapeResolver.resolveJsonToShapeId(basic)(f)
     assert(a.contains("Todo_0"))
+
   }
+
+  it("can match json to a concept with unknown") {
+    //@todo will not work until shape differ understands unknown
+    val basic = fromFile("todowith-unknown")
+    val f = fixture("todowith-unknown")
+    val a = ShapeResolver.resolveJsonToShapeId(basic)(f)
+  }
+
+
 
 
 }
