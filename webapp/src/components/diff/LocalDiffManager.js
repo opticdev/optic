@@ -215,6 +215,7 @@ class LocalDiffManager extends React.Component {
     const readyToFinish = interpretations.length === 0;
     return (
       <DiffPageWrapper
+        key={interpretations.toString()}
         rfcService={rfcService}
         classes={classes}
         cachedQueryResults={cachedQueryResults}
@@ -252,14 +253,14 @@ class LocalDiffManager extends React.Component {
     const rfcState = rfcService.currentState(rfcId);
     const urlInterpreter = new Interpreters.UnmatchedUrlInterpreter()
     const compoundInterpreter = new Interpreters.CompoundInterpreter(rfcState.shapesState)
-    
+
     const { sortedSampleItems } = diffStateProjections;
     const startableSampleItems = sortedSampleItems.filter(x => isStartable(diffState, x))
     for (let item of startableSampleItems) {
       const interaction = toInteraction(item.sample);
       const diffIterator = JsonHelper.iteratorToJsIterator(RequestDiffer.compare(interaction, rfcState));
-      console.log({diffIterator})
-      const diff = {[Symbol.iterator]: () => diffIterator};
+      console.log({ diffIterator })
+      const diff = { [Symbol.iterator]: () => diffIterator };
       for (let diffItem of diff) {
         //@TODO: if(userHasSkipped(diffItem)) {continue}
         const interpretations = JsonHelper.seqToJsArray(urlInterpreter.interpret(diffItem));
