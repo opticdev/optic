@@ -67,7 +67,16 @@ class RfcStoreWithoutContext extends React.Component {
             // console.log({ bulkAdd: initialEventsString })
             eventStore.bulkAdd(rfcId, initialEventsString)
         }
-        const rfcService = Facade.fromJsonCommands(eventStore, initialCommandsString || '[]', rfcId)
+        const rfcService = (function () {
+            try {
+                return Facade.fromJsonCommands(eventStore, initialCommandsString || '[]', rfcId)
+            } catch (e) {
+                //@GOTCHA: eventStore is being mutated in the try{} so any commands that have succeeded will be part of eventStore here.
+                console.error(e);
+                debugger;
+                return Facade.fromJsonCommands(eventStore, '[]', rfcId)
+            }
+        })()
         const queries = Queries(eventStore, rfcService, rfcId);
 
         this.state = {
@@ -87,11 +96,19 @@ class RfcStoreWithoutContext extends React.Component {
     }, 10, { leading: true })
 
     handleCommands(...commands) {
-        global.commands.push(...commands)
-        this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
-        this.handleChange()
+        try {
+            //debugger
+            this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
+            global.commands.push(...commands)
+            this.handleChange()
+        } catch (e) {
+            debugger
+            console.error(e)
+            console.log(...commands)
+            console.log(commandsToJson(commands))
+        }
 
-        commands.forEach(command => track('Command', { commandType: commandNameFor(command) }))
+        //commands.forEach(command => track('Command', { commandType: commandNameFor(command) }))
     }
 
     render() {
@@ -123,10 +140,10 @@ const RfcStore = withInitialRfcCommandsContext(RfcStoreWithoutContext);
 class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
 
     handleCommands = (...commands) => {
-        super.handleCommands(...commands)
-        this.setState({ hasUnsavedChanges: true })
-        this.persistEvents()
-    }
+            super.handleCommands(...commands)
+            this.setState({ hasUnsavedChanges: true })
+            this.persistEvents()
+        }
 
     persistEvents = debounce(async () => {
         const response = await saveEvents(this.state.eventStore, this.props.rfcId)
