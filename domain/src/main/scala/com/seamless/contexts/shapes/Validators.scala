@@ -3,7 +3,10 @@ package com.seamless.contexts.shapes
 import com.seamless.contexts.shapes.Commands._
 
 object Validators {
-
+  def ensureBaseShapeIdCanBeSet(shapeId: ShapeId)(implicit state: ShapesState) = {
+    val shape = state.shapes(shapeId)
+    require(shape.descriptor.isUserDefined)
+  }
 
   ////////////////////////////////////////////////////////////////////////////////
 

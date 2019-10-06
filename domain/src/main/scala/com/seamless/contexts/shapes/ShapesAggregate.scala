@@ -26,6 +26,7 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
         }
 
         case c: SetBaseShape => {
+          Validators.ensureBaseShapeIdCanBeSet(c.shapeId)
           Validators.ensureShapeIdExists(c.shapeId)
           Validators.ensureShapeIdExists(c.baseShapeId)
           persist(Events.BaseShapeSet(c.shapeId, c.baseShapeId))
