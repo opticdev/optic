@@ -2,19 +2,19 @@ import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import SimulatedCommandContext from './SimulatedCommandContext';
 import DiffPage from './DiffPage';
-import {asPathTrail, getNameWithFormattedParameters} from '../utilities/PathUtilities';
-import {RfcContext} from '../../contexts/RfcContext';
+import { asPathTrail, getNameWithFormattedParameters } from '../utilities/PathUtilities';
+import { RfcContext } from '../../contexts/RfcContext';
 import Paper from '@material-ui/core/Paper';
-import {EditorStore, EditorModes} from '../../contexts/EditorContext';
-import {PathTrailWithoutLinks} from '../PathPage';
-import {Operation} from '../PathPage';
-import {isStartable} from './LocalDiffManager';
-import {toInteraction, RequestDiffer, JsonHelper, Interpreters, ShapesCommands} from '../../engine';
-import {NavigationStore} from '../../contexts/NavigationContext';
-import {ColoredIdsStore} from '../../contexts/ColorContext';
+import { EditorStore, EditorModes } from '../../contexts/EditorContext';
+import { PathTrailWithoutLinks } from '../PathPage';
+import { Operation } from '../PathPage';
+import { isStartable } from './LocalDiffManager';
+import { toInteraction, RequestDiffer, JsonHelper, Interpreters, ShapesCommands } from '../../engine';
+import { NavigationStore } from '../../contexts/NavigationContext';
+import { ColoredIdsStore } from '../../contexts/ColorContext';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import {ShapeDialogStore, withShapeDialogContext} from '../../contexts/ShapeDialogContext';
+import { ShapeDialogStore, withShapeDialogContext } from '../../contexts/ShapeDialogContext';
 import ShapeViewerStack from '../shape-editor/ShapeViewerStack';
 
 class DiffPageWrapper extends React.Component {
@@ -30,7 +30,7 @@ class DiffPageWrapper extends React.Component {
     });
   };
 
-  addAdditionalCommands = (commands) => {
+  addAdditionalCommands = (...commands) => {
     this.setState({
       additionalCommands: [...this.state.additionalCommands, ...commands]
     });
@@ -47,8 +47,8 @@ class DiffPageWrapper extends React.Component {
       shapeDialog
     } = this.props;
     const progress = (diffState.acceptedInterpretations.length / diffSessionManager.session.samples.length) * 100;
-    const {pathId, sample, index: currentInteractionIndex} = item;
-    const {pathsById} = cachedQueryResults;
+    const { pathId, sample, index: currentInteractionIndex } = item;
+    const { pathsById } = cachedQueryResults;
     const pathTrail = asPathTrail(pathId, pathsById);
     const pathTrailComponents = pathTrail.map(pathId => pathsById[pathId]);
     const pathTrailWithNames = pathTrailComponents.map((pathComponent) => {
@@ -64,7 +64,7 @@ class DiffPageWrapper extends React.Component {
     const interpretation = interpretations.length === 0 ? null : interpretations[this.state.selectedInterpretationIndex];
     const commands = interpretations.length === 0 ? [] : JsonHelper.seqToJsArray(interpretation.commands);
     const cardNavigator = interpretations.length === 0 ? null : (
-      <div style={{margin: '2em 0', width: 380}}>
+      <div style={{ margin: '2em 0', width: 380 }}>
         <Typography variant="overline">{interpretations.length} diff interpretations</Typography>
         <Select
           value={this.state.selectedInterpretationIndex}
@@ -104,7 +104,7 @@ class DiffPageWrapper extends React.Component {
               // also finish any interaction we deem "equivalent" that doesn't have a diff
               const startableInteractionsForPath = diffStateProjections.sampleItemsGroupedByPath[pathId].filter(x => isStartable(diffState, x));
               const startableInteractionsWithNoDiff = startableInteractionsForPath.filter(x => {
-                const {sample} = x;
+                const { sample } = x;
                 const interaction = toInteraction(sample);
                 const rfcState = rfcService.currentState(rfcId);
                 const diff = RequestDiffer.compare(interaction, rfcState);
@@ -115,40 +115,42 @@ class DiffPageWrapper extends React.Component {
               // console.log({ startableInteractionsForPath, startableInteractionsWithNoDiff });
               startableInteractionsWithNoDiff.forEach(x => diffSessionManager.finishInteraction(x.index));
             }}
-            accept={(commands) => onAccept([...commands, ...this.state.additionalCommands])}
+            accept={(commands) => {
+              onAccept([...commands, ...this.state.additionalCommands])
+            }}
             ignore={onIgnore}
           >
             <NavigationStore addAdditionalCommands={this.addAdditionalCommands}
-                             inDiffMode={true}
-                             onShapeSelected={(shapeId) => {
-                               const examples = interpretation.metadataJs.examples
-                               shapeDialog.pushToStack(shapeId, examples)
-                             }}>
-              <EditorStore mode={readyToFinish ? EditorModes.DESIGN : EditorModes.DOCUMENTATION}>
-                <Paper style={{flex: 1, width: 850, maxWidth: 1000, overflow: 'hidden'}}>
+              inDiffMode={true}
+              onShapeSelected={(shapeId) => {
+                const examples = interpretation.metadataJs.examples
+                shapeDialog.pushToStack(shapeId, examples)
+              }}>
+              <EditorStore mode={EditorModes.DESIGN}>
+                <Paper style={{ flex: 1, width: 850, maxWidth: 1000, overflow: 'hidden' }}>
                   <Typography variant="subtitle2" component="div" color="primary" style={{
                     fontSize: 17,
                     padding: 11
                   }}>Path ({startableInteractionsForPath.length} samples)</Typography>
                   <div className={classes.pathDisplay}>
                     <div className={classes.methodDisplay}>{sample.request.method}</div>
-                    <PathTrailWithoutLinks pathTrail={pathTrailWithNames} style={{flex: 1}}/>
+                    <PathTrailWithoutLinks pathTrail={pathTrailWithNames} style={{ flex: 1 }} />
                   </div>
                 </Paper>
                 <RfcContext.Consumer>
                   {(rfcContext) => {
-                    const {cachedQueryResults} = rfcContext;
-                    const {requestIdsByPathId, requests} = cachedQueryResults;
+                    const { cachedQueryResults } = rfcContext;
+                    const { requestIdsByPathId, requests } = cachedQueryResults;
                     const requestsForPathId = requestIdsByPathId[pathId] || [];
                     const request = requestsForPathId
                       .map(requestId => requests[requestId])
                       .find(request => {
                         return request.requestDescriptor.httpMethod === sample.request.method;
                       }) || null;
-                    const handleCommands = (commands) => {
+                    const handleCommands = (...commands) => {
                       diffSessionManager.markAsManuallyIntervened(currentInteractionIndex);
-                      applyCommands(commands);
-                      rfcContext.handleCommands(commands);
+                      applyCommands(...commands);
+                      rfcContext.handleCommands(...commands);
                     };
                     const updatedRfcContext = {
                       ...rfcContext,
@@ -158,7 +160,7 @@ class DiffPageWrapper extends React.Component {
                     if (request) {
                       return (
                         <RfcContext.Provider value={updatedRfcContext}>
-                          <Operation request={request}/>
+                          <Operation request={request} />
                           <ShapeViewerStack handleCommands={this.addAdditionalCommands} />
                         </RfcContext.Provider>
                       );

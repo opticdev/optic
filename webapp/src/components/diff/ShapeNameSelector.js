@@ -41,9 +41,9 @@ class ShapeNameSelector extends React.Component {
 
   newShape = () => {
     console.log(this.props);
-    this.props.addAdditionalCommands([
+    this.props.addAdditionalCommands(
       ShapesCommands.RenameShape(this.props.shapeId, this.state.userInput)
-    ]);
+    );
   };
 
   render() {
