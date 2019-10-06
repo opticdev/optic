@@ -124,7 +124,16 @@ object Utilities {
       children.get(lastParent) match {
         case Some(pathComponents) => {
           //@GOTCHA: might need to group/sort pathComponents to prioritize BasicPathComponentDescriptors
-          val matchingComponent = pathComponents.find(p => p._2.descriptor match {
+          val sortedPathComponents = pathComponents.sortBy((item) => {
+            val (_, p) = item
+
+            p.descriptor match {
+              case d: BasicPathComponentDescriptor => 0
+              case d: ParameterizedPathComponentDescriptor => 1
+            }
+          })
+          println(sortedPathComponents)
+          val matchingComponent = sortedPathComponents.find(p => p._2.descriptor match {
             case d: BasicPathComponentDescriptor => {
               d.name == component
             }
