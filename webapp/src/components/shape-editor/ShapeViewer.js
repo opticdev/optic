@@ -7,10 +7,10 @@ import CancelIcon from '@material-ui/icons/Cancel';
 import ExpandLessIcon from '@material-ui/icons/ExpandMore';
 import ExpandMoreIcon from '@material-ui/icons/KeyboardArrowRight';
 import React from 'react';
-import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
-import {withExpansionContext} from '../../contexts/ExpansionContext.js';
-import {withRfcContext} from '../../contexts/RfcContext';
-import {withShapeEditorContext} from '../../contexts/ShapeEditorContext.js';
+import { EditorModes, withEditorContext } from '../../contexts/EditorContext';
+import { withExpansionContext } from '../../contexts/ExpansionContext.js';
+import { withRfcContext } from '../../contexts/RfcContext';
+import { withShapeEditorContext } from '../../contexts/ShapeEditorContext.js';
 import BasicButton from './BasicButton.js';
 import {
   listConceptChoicesForField,
@@ -24,23 +24,24 @@ import {
 } from './Choices.js';
 import ConceptModal from './ConceptModal.js';
 import CoreShapeViewer from './CoreShapeViewer.js';
-import {FieldName} from './NameInputs.js';
-import {ShapeUtilities} from './ShapeUtilities.js';
-import {unboundParameterColor} from './Types.js';
-import {AddedStyle, withColoredIdsContext} from '../../contexts/ColorContext';
+import { FieldName } from './NameInputs.js';
+import { ShapeUtilities } from './ShapeUtilities.js';
+import { unboundParameterColor } from './Types.js';
+import { AddedStyle, withColoredIdsContext } from '../../contexts/ColorContext';
 import classNames from 'classnames';
 import ShapeNameSelector from '../diff/ShapeNameSelector';
-import {coreShapeIdsSet} from './ShapeUtilities';
+import { coreShapeIdsSet } from './ShapeUtilities';
 import ShapePicker from './ShapePicker';
-import {createStyles} from '@material-ui/core';
-import {commandsToJson, ShapesCommands} from '../../engine';
-import {withShapeDialogContext} from '../../contexts/ShapeDialogContext';
+import { createStyles } from '@material-ui/core';
+import { commandsToJson, ShapesCommands } from '../../engine';
+import { withShapeDialogContext } from '../../contexts/ShapeDialogContext';
+import { withNavigationContext } from '../../contexts/NavigationContext';
 
 export function cheapEquals(item1, item2) {
   return JSON.stringify(item1) === JSON.stringify(item2);
 }
 
-const buttonStyle = {paddingLeft: '.35em', paddingRight: '.35em'};
+const buttonStyle = { paddingLeft: '.35em', paddingRight: '.35em' };
 
 const useChooserStyles = makeStyles((theme) => createStyles({
   row: {
@@ -55,11 +56,11 @@ const useChooserStyles = makeStyles((theme) => createStyles({
 }));
 
 function Chooser(props) {
-  const {conceptChoices, onSelect} = props
+  const { conceptChoices, onSelect } = props
   const classes = useChooserStyles();
   return (<div className={classes.row}>
-    <Typography variant="subtitle1" style={{marginTop: 4, paddingRight: 5, fontSize: 11}}>Change to:</Typography>
-    <div style={{marginTop: 2, flex: .7}}>
+    <Typography variant="subtitle1" style={{ marginTop: 4, paddingRight: 5, fontSize: 11 }}>Change to:</Typography>
+    <div style={{ marginTop: 2, flex: .7 }}>
       <ShapePicker
         conceptChoices={conceptChoices}
         onFinish={(commands, shapeId) => {
@@ -69,51 +70,51 @@ function Chooser(props) {
     </div>
   </div>)
   // return (
-    {/*<div>*/}
-    {/*  <ShapePicker />*/}
-      {/*<div style={{display: 'flex'}}>*/}
-        {/*<Typography variant="subtitle1" style={{marginTop: 4, paddingRight: 5, fontSize: 11}}>Change to:</Typography>*/}
-        {/*<div style={{marginTop: -2, display: 'flex'}}>*/}
-        {/*  {list*/}
-        {/*    .map(choice => {*/}
-        {/*      const {id, displayName, color} = choice;*/}
-        {/*      return (*/}
-        {/*        <div key={id} style={buttonStyle}>*/}
-        {/*          <BasicButton*/}
-        {/*            style={{*/}
-        {/*              color*/}
-        {/*            }}*/}
-        {/*            onClick={() => {*/}
-        {/*              onSelect(choice);*/}
-        {/*            }}>{displayName}</BasicButton>*/}
-        {/*        </div>*/}
-        {/*      );*/}
-        {/*    })*/}
-        {/*  }*/}
-        {/*</div>*/}
-        {/*<div style={{flex: 1}}>&nbsp;</div>*/}
-        {/*<div>*/}
-        {/*  {!shouldShowParameterChoices && parameterChoices.length > 0 ? (*/}
-        {/*    <BasicButton*/}
-        {/*      style={buttonStyle}*/}
-        {/*      onClick={() => setShouldShowParameterChoices(true)}>Choose Parameter</BasicButton>*/}
-        {/*  ) : null}*/}
-        {/*  {shouldShowParameterChoices && parameterChoices.length > 0 ? (*/}
-        {/*    <BasicButton*/}
-        {/*      style={buttonStyle}*/}
-        {/*      onClick={() => setShouldShowParameterChoices(false)}>Choose Shape</BasicButton>*/}
-        {/*  ) : null}*/}
-        {/*  <BasicButton*/}
-        {/*    style={buttonStyle}*/}
-        {/*    onClick={() => setShouldShowConceptModal(true)}*/}
-        {/*  >Choose Concept</BasicButton>*/}
-        {/*</div>*/}
-      {/*</div>*/}
-    // </div>
+  {/*<div>*/ }
+  {/*  <ShapePicker />*/ }
+  {/*<div style={{display: 'flex'}}>*/ }
+  {/*<Typography variant="subtitle1" style={{marginTop: 4, paddingRight: 5, fontSize: 11}}>Change to:</Typography>*/ }
+  {/*<div style={{marginTop: -2, display: 'flex'}}>*/ }
+  {/*  {list*/ }
+  {/*    .map(choice => {*/ }
+  {/*      const {id, displayName, color} = choice;*/ }
+  {/*      return (*/ }
+  {/*        <div key={id} style={buttonStyle}>*/ }
+  {/*          <BasicButton*/ }
+  {/*            style={{*/ }
+  {/*              color*/ }
+  {/*            }}*/ }
+  {/*            onClick={() => {*/ }
+  {/*              onSelect(choice);*/ }
+  {/*            }}>{displayName}</BasicButton>*/ }
+  {/*        </div>*/ }
+  {/*      );*/ }
+  {/*    })*/ }
+  {/*  }*/ }
+  {/*</div>*/ }
+  {/*<div style={{flex: 1}}>&nbsp;</div>*/ }
+  {/*<div>*/ }
+  {/*  {!shouldShowParameterChoices && parameterChoices.length > 0 ? (*/ }
+  {/*    <BasicButton*/ }
+  {/*      style={buttonStyle}*/ }
+  {/*      onClick={() => setShouldShowParameterChoices(true)}>Choose Parameter</BasicButton>*/ }
+  {/*  ) : null}*/ }
+  {/*  {shouldShowParameterChoices && parameterChoices.length > 0 ? (*/ }
+  {/*    <BasicButton*/ }
+  {/*      style={buttonStyle}*/ }
+  {/*      onClick={() => setShouldShowParameterChoices(false)}>Choose Shape</BasicButton>*/ }
+  {/*  ) : null}*/ }
+  {/*  <BasicButton*/ }
+  {/*    style={buttonStyle}*/ }
+  {/*    onClick={() => setShouldShowConceptModal(true)}*/ }
+  {/*  >Choose Concept</BasicButton>*/ }
+  {/*</div>*/ }
+  {/*</div>*/ }
+  // </div>
   // );
 }
 
-function WriteOnlyBase({mode, children}) {
+function WriteOnlyBase({ mode, children }) {
   if (mode === EditorModes.DESIGN) {
     return children;
   }
@@ -141,9 +142,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function ShapeLinksBase({shapeId, contextString, switchEditorMode, isShapeEditorReadOnly, onShapeSelected}) {
+function ShapeLinksBase({ shapeId, contextString, switchEditorMode, isShapeEditorReadOnly, onShapeSelected }) {
   return (
-    <div style={{display: 'flex', height: '100%', alignItems: 'center'}}>
+    <div style={{ display: 'flex', height: '100%', alignItems: 'center' }}>
       {contextString}
       <BasicButton
         onClick={() => onShapeSelected(shapeId)}
@@ -161,7 +162,9 @@ function ShapeLinksBase({shapeId, contextString, switchEditorMode, isShapeEditor
 
 const ShapeLinks = withShapeEditorContext(withEditorContext(ShapeLinksBase));
 
-function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShapeSelected, handleCommands}) {
+function TooltipWrapperBase(props) {
+  const { children, mode, queries, cachedQueryResults, onShapeSelected, handleCommands } = props;
+  const { inDiffMode, addAdditionalCommands } = props;
   const [launchContext, setLaunchContext] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [shouldShowConceptModal, setShouldShowConceptModal] = React.useState(false);
@@ -177,7 +180,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
     if (mode === EditorModes.DOCUMENTATION) {
       switch (launchContext.type) {
         case 'field':
-          const {fieldId, parentShapeId} = launchContext.data;
+          const { fieldId, parentShapeId } = launchContext.data;
           const parentShape = queries.shapeById(parentShapeId);
           const field = parentShape.fields.find(x => x.fieldId === fieldId);
           if (field.fieldShapeDescriptor.FieldShapeFromShape) {
@@ -191,12 +194,12 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
           }
           break;
         case 'shape':
-          const {shapeId} = launchContext.data;
+          const { shapeId } = launchContext.data;
           const shape = queries.shapeById(shapeId);
           onShapeSelected(shape.baseShapeId);
           break;
         case 'parameter':
-          const {bindingInfo} = launchContext.data;
+          const { bindingInfo } = launchContext.data;
           if (!bindingInfo.binding) {
             const parameter = cachedQueryResults.shapesState.shapeParameters[bindingInfo.parameterId];
             const parentShape = cachedQueryResults.shapesState.shapes[parameter.descriptor.shapeId];
@@ -228,7 +231,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
   if (launchContext) {
     switch (launchContext.type) {
       case 'field':
-        const {fieldId, parentShapeId, setFieldShape} = launchContext.data;
+        const { fieldId, parentShapeId, setFieldShape } = launchContext.data;
         const parentShape = queries.shapeById(parentShapeId);
         const field = parentShape.fields.find(x => x.fieldId === fieldId);
         if (mode === EditorModes.DOCUMENTATION) {
@@ -236,7 +239,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
             const shapeId = field.fieldShapeDescriptor.FieldShapeFromShape.shapeId;
             const shape = cachedQueryResults.shapesState.shapes[shapeId];
             widget =
-              <ShapeLinks shapeId={shapeId} contextString={`${field.name}: ${shape.descriptor.name}`}/>;
+              <ShapeLinks shapeId={shapeId} contextString={`${field.name}: ${shape.descriptor.name}`} />;
 
           } else if (field.fieldShapeDescriptor.FieldShapeFromParameter) {
             const shapeParameterId = field.fieldShapeDescriptor.FieldShapeFromParameter.shapeParameterId;
@@ -246,7 +249,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
             widget = (
               <ShapeLinks
                 shapeId={parentShapeId}
-                contextString={`${field.name}: ${parentShape.descriptor.name}.${parameter.name}`}/>
+                contextString={`${field.name}: ${parentShape.descriptor.name}.${parameter.name}`} />
             );
           }
         } else {
@@ -257,7 +260,11 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
               onSelect={(commands, shapeId) => {
                 const setFieldShape = ShapesCommands.SetFieldShape(ShapesCommands.FieldShapeFromShape(fieldId, shapeId))
                 const allCommands = [...commands, setFieldShape]
-                handleCommands(...allCommands)
+                if (inDiffMode) {
+                  addAdditionalCommands(...allCommands)
+                } else {
+                  handleCommands(...allCommands)
+                }
                 handleTooltipClose();
                 setShouldShowConceptModal(false);
               }}
@@ -266,11 +273,11 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
         }
         break;
       case 'shape':
-        const {shapeId, setBaseShape} = launchContext.data;
+        const { shapeId, setBaseShape } = launchContext.data;
         const shape = queries.shapeById(shapeId);
         if (mode === EditorModes.DOCUMENTATION) {
           widget = (
-            <ShapeLinks shapeId={shape.baseShapeId} contextString={shape.name}/>
+            <ShapeLinks shapeId={shape.baseShapeId} contextString={shape.name} />
           );
         } else {
           onSelect = (choice) => {
@@ -287,7 +294,11 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
               onSelect={(commands, newShapeId) => {
                 const setBase = ShapesCommands.SetBaseShape(shapeId, newShapeId)
                 const allCommands = [...commands, setBase]
-                handleCommands(...allCommands)
+                if (inDiffMode) {
+                  addAdditionalCommands(...allCommands)
+                } else {
+                  handleCommands(...allCommands)
+                }
                 handleTooltipClose();
                 setShouldShowConceptModal(false);
               }}
@@ -297,7 +308,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
         }
         break;
       case 'parameter':
-        const {contextShapeId, bindingInfo, setParameterShape} = launchContext.data;
+        const { contextShapeId, bindingInfo, setParameterShape } = launchContext.data;
         if (mode === EditorModes.DOCUMENTATION) {
           if (!bindingInfo.binding) {
             const parameter = cachedQueryResults.shapesState.shapeParameters[bindingInfo.parameterId];
@@ -306,7 +317,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
             widget = (
               <ShapeLinks
                 shapeId={parentShape.shapeId}
-                contextString={`${parentShape.descriptor.name}.${bindingInfo.parameterName}`}/>
+                contextString={`${parentShape.descriptor.name}.${bindingInfo.parameterName}`} />
             );
           } else {
 
@@ -317,7 +328,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
               widget = (
                 <ShapeLinks
                   shapeId={parentShape.shapeId}
-                  contextString={`${parentShape.descriptor.name}.${parameter.descriptor.name}`}/>
+                  contextString={`${parentShape.descriptor.name}.${parameter.descriptor.name}`} />
               );
             } else if (bindingInfo.binding.ShapeProvider) {
               const shapeId = bindingInfo.binding.ShapeProvider.shapeId;
@@ -325,7 +336,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
               widget = (
                 <ShapeLinks
                   shapeId={shapeId}
-                  contextString={shape.descriptor.name}/>
+                  contextString={shape.descriptor.name} />
               );
             }
           }
@@ -337,7 +348,7 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
 
   return (
     <ClickAwayListener onClickAway={handleTooltipClose}>
-      <div style={{position: 'relative'}}>
+      <div style={{ position: 'relative' }}>
         <Tooltip
           classes={{
             tooltip: classes.maxWidth
@@ -354,9 +365,9 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
           interactive
           title={widget}
           placement="left-start"
-          TransitionProps={{timeout: 0}}
+          TransitionProps={{ timeout: 0 }}
         >
-          <div>{children({handleTooltipClose, handleTooltipOpen})}</div>
+          <div>{children({ handleTooltipClose, handleTooltipOpen })}</div>
         </Tooltip>
 
         <ConceptModal
@@ -372,25 +383,25 @@ function TooltipWrapperBase({children, mode, queries, cachedQueryResults, onShap
   );
 }
 
-const TooltipWrapper = withRfcContext(withEditorContext(withShapeEditorContext(TooltipWrapperBase)));
+const TooltipWrapper = withNavigationContext(withRfcContext(withEditorContext(withShapeEditorContext(TooltipWrapperBase))));
 
-function Join({children, delimiter}) {
+function Join({ children, delimiter }) {
   return React.Children.toArray(children).reduce((acc, child) => {
     return acc.length === 0 ? [child] : [...acc, delimiter, child];
   }, []);
 }
 
-function ExpansionControlBase({trail, isTrailCollapsed, expandTrail, collapseTrail}) {
+function ExpansionControlBase({ trail, isTrailCollapsed, expandTrail, collapseTrail }) {
   const isCollapsed = isTrailCollapsed(trail);
 
   return (
-    <div style={{display: 'flex', flex: 1, justifyContent: 'center'}}>
+    <div style={{ display: 'flex', flex: 1, justifyContent: 'center' }}>
       <BasicButton
         onClick={() => {
           isCollapsed ? expandTrail(trail) : collapseTrail(trail);
         }}
       >
-        {isCollapsed ? <ExpandMoreIcon style={{width: 15}}/> : <ExpandLessIcon style={{width: 15}}/>}
+        {isCollapsed ? <ExpandMoreIcon style={{ width: 15 }} /> : <ExpandLessIcon style={{ width: 15 }} />}
       </BasicButton>
     </div>
   );
@@ -401,25 +412,25 @@ const ExpansionControl = withExpansionContext(ExpansionControlBase);
 class ShapeViewerBase extends React.Component {
 
   render() {
-    const {classes, shape, coloredIds = [], shapeDialog = {}} = this.props;
-    const {pushToStack} = shapeDialog
-    const {cachedQueryResults, queries} = this.props;
+    const { classes, shape, coloredIds = [], shapeDialog = {} } = this.props;
+    const { pushToStack } = shapeDialog
+    const { cachedQueryResults, queries } = this.props;
     const {
       addField, removeField,
       setFieldShape, setBaseShape,
       setShapeParameterInField, setShapeParameterInShape
     } = this.props;
-    const {isTrailParentCollapsed} = this.props;
-    const {onShapeSelected} = this.props;
+    const { isTrailParentCollapsed } = this.props;
+    const { onShapeSelected } = this.props;
 
-    function ShapeNameButton({shapeName, onShapeSelected, children}) {
+    function ShapeNameButton({ shapeName, onShapeSelected, children }) {
       return (
         <BasicButton
           color={shapeName.color || '#8a558e'}
-          style={{fontWeight: 200}}
+          style={{ fontWeight: 200 }}
           onClick={() => {
             // if (shapeName.id === '$object' || !coreShapeIdsSet.has(shapeName.id)) {
-              onShapeSelected(shapeName.id);
+            onShapeSelected(shapeName.id);
             // }
           }}
         >{children}</BasicButton>
@@ -437,29 +448,29 @@ class ShapeViewerBase extends React.Component {
       };
     }
 
-    function BindingInfo({bindingInfo, onClick}) {
+    function BindingInfo({ bindingInfo, onClick }) {
       if (bindingInfo.binding) {
         if (bindingInfo.binding.ShapeProvider) {
           return (
             <BasicButton
-              style={{color: bindingInfo.color}}
+              style={{ color: bindingInfo.color }}
               onClick={onClick}
             >{bindingInfo.boundName}</BasicButton>);
         }
         return (
           <BasicButton
-            style={{fontWeight: 'bold', color: bindingInfo.color}}
+            style={{ fontWeight: 'bold', color: bindingInfo.color }}
             onClick={onClick}>{bindingInfo.boundName}</BasicButton>
         );
       }
       return (
         <BasicButton
-          style={{color: unboundParameterColor, borderBottom: `1px solid ${unboundParameterColor}`}}
+          style={{ color: unboundParameterColor, borderBottom: `1px solid ${unboundParameterColor}` }}
           onClick={onClick}>{bindingInfo.parameterName}</BasicButton>
       );
     }
 
-    function ShapeName({shapeName, onShapeSelected, onParameterSelected}) {
+    function ShapeName({ shapeName, onShapeSelected, onParameterSelected }) {
       if (shapeName.bindingInfo.length === 0) {
         return (
           <ShapeNameButton
@@ -472,51 +483,51 @@ class ShapeViewerBase extends React.Component {
           shapeName={shapeName}
           onShapeSelected={onShapeSelected}
         >{shapeName.baseShapeName}[{
-          <Join delimiter={<span>, </span>}>{
-            shapeName.bindingInfo
-              .map(bindingInfo => (
-                <BindingInfo
-                  bindingInfo={bindingInfo}
-                  onClick={withDefaultPrevented(() => onParameterSelected(bindingInfo))}/>
-              ))
-          }</Join>
-        }]</ShapeNameButton>
+            <Join delimiter={<span>, </span>}>{
+              shapeName.bindingInfo
+                .map(bindingInfo => (
+                  <BindingInfo
+                    bindingInfo={bindingInfo}
+                    onClick={withDefaultPrevented(() => onParameterSelected(bindingInfo))} />
+                ))
+            }</Join>
+          }]</ShapeNameButton>
       );
     }
 
 
-    const {shapeId, name, coreShapeId} = shape;
+    const { shapeId, name, coreShapeId } = shape;
     const output = [];
     ShapeUtilities.flatten(queries, shapeId, 0, [], output);
 
     // console.log({output});
 
     function Colon() {
-      return <Typography variant="caption" style={{padding: '0 .25em'}}>:</Typography>;
+      return <Typography variant="caption" style={{ padding: '0 .25em' }}>:</Typography>;
     }
 
     const shapeDescription = output
-      .filter(({trail}) => {
+      .filter(({ trail }) => {
         const shouldHideRow = isTrailParentCollapsed(trail);
         return !shouldHideRow;
       })
       .map(entry => {
-        const {id, type, name, shapeName, trail, isExpandable} = entry;
+        const { id, type, name, shapeName, trail, isExpandable } = entry;
         const isAdded = coloredIds.includes(id);
         const isObject = shapeName.coreShapeId === '$object';
         return (
           <TooltipWrapper>
-            {({handleTooltipOpen, handleTooltipClose, ...rest}) => {
+            {({ handleTooltipOpen, handleTooltipClose, ...rest }) => {
               return (
-                <div className={classNames(classes.row, {[classes.shapeAdded]: isAdded})} key={id} {...rest}>
+                <div className={classNames(classes.row, { [classes.shapeAdded]: isAdded })} key={id} {...rest}>
                   <div className={classes.expansionControlContainer}>
-                    {isExpandable ? <ExpansionControl trail={trail}/> : null}
+                    {isExpandable ? <ExpansionControl trail={trail} /> : null}
                   </div>
-                  <div style={{paddingLeft: `${ (trail.length - 1) * 4}px`}}>&nbsp;</div>
+                  <div style={{ paddingLeft: `${(trail.length - 1) * 4}px` }}>&nbsp;</div>
                   {type === 'field' ? (
                     <div className={classes.fieldRow}>
-                      <FieldName name={name} fieldId={id}/>
-                      <Colon/>
+                      <FieldName name={name} fieldId={id} />
+                      <Colon />
                       <ShapeName
                         shapeName={shapeName}
                         onShapeSelected={() => handleTooltipOpen({
@@ -536,7 +547,7 @@ class ShapeViewerBase extends React.Component {
                         }}
                       />
                       <WriteOnly>
-                        <div style={{padding: '.25em'}}>&nbsp;</div>
+                        <div style={{ padding: '.25em' }}>&nbsp;</div>
                         {isExpandable && (
                           <BasicButton
                             className={classes.addFieldButton}
@@ -545,62 +556,62 @@ class ShapeViewerBase extends React.Component {
                           </BasicButton>
                         )}
                       </WriteOnly>
-                      <div style={{flex: 1}}>&nbsp;</div>
+                      <div style={{ flex: 1 }}>&nbsp;</div>
                       {isObject && <ShapeNameSelector
                         shapeId={shapeName.id}
-                        userDefinedName={shapeName.userDefinedName}/>}
+                        userDefinedName={shapeName.userDefinedName} />}
                       <WriteOnly>
                         <BasicButton
                           className={classes.hiddenByDefault}
                           onClick={() => removeField(id)}>
-                          <CancelIcon style={{width: 15, color: '#a6a6a6'}}/>
+                          <CancelIcon style={{ width: 15, color: '#a6a6a6' }} />
                         </BasicButton>
                       </WriteOnly>
                     </div>
                   ) : (
-                    <div className={classes.shapeRow}>
-                      <ShapeName
-                        shapeName={shapeName}
-                        onShapeSelected={() => {
-                          handleTooltipOpen({
-                            type: 'shape',
-                            data: {
-                              handleOpenSelectionModal: this.handleOpenSelectionModal,
-                              shapeId: id,
-                              setBaseShape
-                            }
-                          });
-                        }}
+                      <div className={classes.shapeRow}>
+                        <ShapeName
+                          shapeName={shapeName}
+                          onShapeSelected={() => {
+                            handleTooltipOpen({
+                              type: 'shape',
+                              data: {
+                                handleOpenSelectionModal: this.handleOpenSelectionModal,
+                                shapeId: id,
+                                setBaseShape
+                              }
+                            });
+                          }}
 
-                        onParameterSelected={(bindingInfo) => {
-                          handleTooltipOpen({
-                            type: 'parameter',
-                            data: {
-                              handleOpenSelectionModal: this.handleOpenSelectionModal,
-                              contextShapeId: id,
-                              setParameterShape: (provider) => setShapeParameterInShape(id, provider, bindingInfo.parameterId),
-                              bindingInfo: bindingInfo
-                            }
-                          });
-                        }}
-                      />
-                      <WriteOnly>
-                        <div style={{padding: '.25em'}}>&nbsp;</div>
-                        {isExpandable && (
-                          <BasicButton
-                            className={classes.addFieldButton}
-                            onClick={() => addField(id)}>
-                            + Add Field
+                          onParameterSelected={(bindingInfo) => {
+                            handleTooltipOpen({
+                              type: 'parameter',
+                              data: {
+                                handleOpenSelectionModal: this.handleOpenSelectionModal,
+                                contextShapeId: id,
+                                setParameterShape: (provider) => setShapeParameterInShape(id, provider, bindingInfo.parameterId),
+                                bindingInfo: bindingInfo
+                              }
+                            });
+                          }}
+                        />
+                        <WriteOnly>
+                          <div style={{ padding: '.25em' }}>&nbsp;</div>
+                          {isExpandable && (
+                            <BasicButton
+                              className={classes.addFieldButton}
+                              onClick={() => addField(id)}>
+                              + Add Field
                           </BasicButton>
-                        )}
-                      </WriteOnly>
-                      <>
-                        {isObject && <ShapeNameSelector
-                          shapeId={shapeName.id}
-                          userDefinedName={shapeName.userDefinedName}/>}
-                      </>
-                    </div>
-                  )}
+                          )}
+                        </WriteOnly>
+                        <>
+                          {isObject && <ShapeNameSelector
+                            shapeId={shapeName.id}
+                            userDefinedName={shapeName.userDefinedName} />}
+                        </>
+                      </div>
+                    )}
                 </div>
               );
             }}
@@ -609,7 +620,7 @@ class ShapeViewerBase extends React.Component {
       });
 
     if (shapeId === coreShapeId) {
-      return <CoreShapeViewer coreShapeId={coreShapeId}/>;
+      return <CoreShapeViewer coreShapeId={coreShapeId} />;
     }
 
 
