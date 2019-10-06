@@ -96,7 +96,9 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
       commands.appendInit(AddShape(id, NumberKind.baseShapeId, ""))
     } else if (json.isNull) {
       commands.appendInit(AddShape(id, NullableKind.baseShapeId, ""))
-      commands.appendDescribe(SetParameterShape(ProviderInShape(id, ShapeProvider(UnknownKind.baseShapeId), "$nullableInner")))
+      val unknownWrapperId = idGenerator
+      commands.appendInit(AddShape(unknownWrapperId, UnknownKind.baseShapeId, ""))
+      commands.appendDescribe(SetParameterShape(ProviderInShape(id, ShapeProvider(unknownWrapperId), "$nullableInner")))
     }
   }
 
@@ -121,10 +123,12 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
 
     val innerId = fieldId.getOrElse(id)
     if (array.isEmpty) {
+      val unknownWrapperId = idGenerator
+      commands.appendInit(AddShape(unknownWrapperId, UnknownKind.baseShapeId, ""))
       if (fieldId.isDefined) {
-        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(UnknownKind.baseShapeId), "$listItem")))
+        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(unknownWrapperId), "$listItem")))
       } else {
-        commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(UnknownKind.baseShapeId), "$listItem")))
+        commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(unknownWrapperId), "$listItem")))
       }
 
     } else {
