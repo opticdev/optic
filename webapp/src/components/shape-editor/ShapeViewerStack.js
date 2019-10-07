@@ -63,7 +63,7 @@ class ShapeViewerStack extends React.Component {
                     mode={EditorModes.DESIGN}
                     onBlur={(value) => {
                       const command = ShapesCommands.RenameShape(shapeId, value);
-                      handleCommands([command]);
+                      handleCommands(command);
                       close();
                     }}
                   />
