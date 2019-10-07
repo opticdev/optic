@@ -43,7 +43,7 @@ object Interpretations {
       "New Operation",
       s"Optic observed a ${method.toUpperCase} operation for this path",
       commands,
-      FrontEndMetadata( affectedIds = Seq(id) )
+      FrontEndMetadata(affectedIds = Seq(id))
     )
   }
 
@@ -56,7 +56,7 @@ object Interpretations {
       s"New Response",
       s"A ${statusCode} response was observed.",
       commands,
-      FrontEndMetadata( affectedIds = Seq(id) )
+      FrontEndMetadata(affectedIds = Seq(id))
     )
   }
 
@@ -65,7 +65,7 @@ object Interpretations {
       "Manual Intervention Required",
       message,
       Seq.empty,
-      FrontEndMetadata( affectedIds = affectedIds )
+      FrontEndMetadata(affectedIds = affectedIds)
     )
   }
 
@@ -78,7 +78,7 @@ object Interpretations {
       s"Request Content-Type Changed",
       s"The content type of the request was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
       commands,
-      FrontEndMetadata( affectedIds = Seq(requestId, requestId + ".content_type") )
+      FrontEndMetadata(affectedIds = Seq(requestId, requestId + ".content_type"))
     )
   }
 
@@ -91,7 +91,7 @@ object Interpretations {
       s"Response Content-Type Changed",
       s"The content type of the ${responseStatusCode} response was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
       commands,
-      FrontEndMetadata( affectedIds = Seq(responseId, responseId + ".content_type") )
+      FrontEndMetadata(affectedIds = Seq(responseId, responseId + ".content_type"))
     )
   }
 
@@ -115,25 +115,26 @@ object Interpretations {
       s"Request Body Observed",
       desc,
       commands,
-      FrontEndMetadata( affectedIds =  wrapperId +: shape.allIds, examples = shape.examples, example = Some(actual) )
+      FrontEndMetadata(affectedIds = wrapperId +: shape.allIds, examples = shape.examples, example = Some(actual))
     )
   }
 
   def AddFieldToRequestShape(key: String, raw: Json, parentShapeId: String, requestId: RequestId)(implicit shapesState: ShapesState) = {
     val fieldId = ShapesHelper.newFieldId()
 
-    val shapeId = ShapeResolver.resolveJsonToShapeId(raw).getOrElse("$any")
-
-    val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, shapeId)))
+    val result = new ShapeBuilder(raw).run
+    val commands = result.commands ++ Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, result.rootShapeId)))
 
     val parentConcept = shapesState.concepts.collectFirst {
       case (id, concept) if id == parentShapeId => (id, concept.descriptor.name)
     }
 
     val desc = if (parentConcept.isDefined) {
-      s"A new field '${key}' was observed in <b>${parentConcept.get._2}</b>",
+      s"A new field '${key}' was observed in <b>${parentConcept.get._2}</b>"
+      ,
     } else {
-      s"A new field '${key}' was observed in the request body.",
+      s"A new field '${key}' was observed in the request body."
+      ,
     }
 
     val affectedConcepts = if (parentConcept.isDefined) Seq(parentConcept.get._1) else Seq.empty
@@ -143,13 +144,15 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
       desc,
       commands,
-      FrontEndMetadata( affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts )
+      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts)
     )
   }
 
-  def ChangeFieldInRequestShape(key: String, fieldId: FieldId, newShapeId: String, requestId: RequestId) = {
-    val commands = Seq(
-      SetFieldShape(FieldShapeFromShape(fieldId, newShapeId))
+  def ChangeFieldInRequestShape(key: String, fieldId: FieldId, raw: Json, requestId: RequestId) = {
+    val result = new ShapeBuilder(raw).run
+
+    val commands = result.commands ++ Seq(
+      SetFieldShape(FieldShapeFromShape(fieldId, result.rootShapeId))
     )
 
     DiffInterpretation(
@@ -157,7 +160,7 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
       s"The type of '${key}' was changed in the request.",
       commands,
-      FrontEndMetadata( affectedIds = Seq(fieldId) )
+      FrontEndMetadata(affectedIds = Seq(fieldId))
     )
   }
 
@@ -181,16 +184,16 @@ object Interpretations {
       s"Response Body Observed",
       desc,
       commands,
-      FrontEndMetadata( affectedIds =  wrapperId +: shape.allIds, examples = shape.examples, example = Some(actual) )
+      FrontEndMetadata(affectedIds = wrapperId +: shape.allIds, examples = shape.examples, example = Some(actual))
     )
   }
 
   def AddFieldToResponseShape(key: String, raw: Json, parentShapeId: String, responseStatusCode: Int, responseId: String)(implicit shapesState: ShapesState) = {
     val fieldId = ShapesHelper.newFieldId()
 
-    val shapeId = ShapeResolver.resolveJsonToShapeId(raw).getOrElse("$any")
 
-    val commands = Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, shapeId)))
+    val result = new ShapeBuilder(raw).run
+    val commands = result.commands ++ Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, result.rootShapeId)))
 
     val parentConcept = shapesState.concepts.collectFirst {
       case (id, concept) if id == parentShapeId => (id, concept.descriptor.name)
@@ -208,15 +211,16 @@ object Interpretations {
       s"A Field was Added",
       desc,
       commands,
-      FrontEndMetadata( affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts )
+      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts)
     )
 
   }
 
-  def ChangeFieldInResponseShape(key: String, fieldId: String, newShapeId: String, responseStatusCode: Int) = {
+  def ChangeFieldInResponseShape(key: String, fieldId: String, raw: Json, responseStatusCode: Int) = {
+    val result = new ShapeBuilder(raw).run
 
-    val commands = Seq(
-      SetFieldShape(FieldShapeFromShape(fieldId, newShapeId))
+    val commands = result.commands ++ Seq(
+      SetFieldShape(FieldShapeFromShape(fieldId, result.rootShapeId))
     )
 
     DiffInterpretation(
@@ -224,7 +228,7 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
       s"The type of '${key}' was changed.",
       commands,
-      FrontEndMetadata( affectedIds = Seq(fieldId) )
+      FrontEndMetadata(affectedIds = Seq(fieldId))
     )
 
   }

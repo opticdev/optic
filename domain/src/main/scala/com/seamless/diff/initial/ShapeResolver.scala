@@ -4,7 +4,6 @@ import com.seamless.contexts.shapes.Commands.ShapeId
 import com.seamless.contexts.shapes.ShapesHelper.{BooleanKind, NullableKind, NumberKind, StringKind}
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.diff.ShapeDiffer
-import com.seamless.diff.ShapeDiffer.NoDiff
 import io.circe.Json
 
 object ShapeResolver {

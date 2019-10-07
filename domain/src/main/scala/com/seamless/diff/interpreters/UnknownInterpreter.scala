@@ -66,7 +66,7 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
       "First value Observed",
       "Optic observed this shape for the first time. Is this the expected shape?",
       commands,
-      FrontEndMetadata(example = Some(raw))
+      FrontEndMetadata(example = Some(raw), affectedIds = Seq(expectedShapeId))
     )
   }
 }

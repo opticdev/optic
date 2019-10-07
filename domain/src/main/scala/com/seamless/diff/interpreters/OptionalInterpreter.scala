@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{SetRequestBodyShape, SetResponse
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
 import com.seamless.contexts.shapes.ShapesHelper._
-import com.seamless.diff.DiffInterpretation
+import com.seamless.diff.{DiffInterpretation, FrontEndMetadata}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer._
 
@@ -69,7 +69,8 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     DiffInterpretation(
       "No key Observed",
       s"Optic expected to see a value for the key ${shapeDiff.key}. If it is allowed to be omitted, make it Optional",
-      commands
+      commands,
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.parentObjectShapeId, shapeDiff.fieldId))
     )
   }
 
@@ -85,7 +86,8 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     DiffInterpretation(
       "No value Observed",
       s"Optic expected to see a value for the request but instead saw nothing. If it is allowed to be omitted, make it Optional",
-      commands
+      commands,
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 
@@ -101,7 +103,8 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     DiffInterpretation(
       "No value Observed",
       s"Optic expected to see a value for the response but instead saw nothing. If it is allowed to be omitted, make it Optional",
-      commands
+      commands,
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 }

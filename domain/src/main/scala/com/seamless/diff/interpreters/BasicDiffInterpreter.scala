@@ -19,8 +19,7 @@ class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
           case sd: ShapeDiffer.UnsetShape => Seq(Interpretations.AddInitialRequestBodyShape(sd.actual, d.requestId, d.contentType))
           case sd: ShapeDiffer.UnexpectedObjectKey => Seq(Interpretations.AddFieldToRequestShape(sd.key, sd.actual, sd.parentObjectShapeId, d.requestId))
           case sd: ShapeDiffer.KeyShapeMismatch => {
-            val newShapeId = ShapeResolver.resolveJsonToShapeId(sd.actual).getOrElse(AnyKind.baseShapeId)
-            Seq(Interpretations.ChangeFieldInRequestShape(sd.key, sd.fieldId, newShapeId, d.requestId))
+            Seq(Interpretations.ChangeFieldInRequestShape(sd.key, sd.fieldId, sd.actual, d.requestId))
           }
           case _ => Seq.empty
         }
@@ -36,7 +35,7 @@ class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
             Seq(Interpretations.AddFieldToResponseShape(sd.key, sd.actual, sd.parentObjectShapeId, d.responseStatusCode, d.responseId))
           case sd: ShapeDiffer.KeyShapeMismatch => {
             val newShapeId = ShapeResolver.resolveJsonToShapeId(sd.actual).getOrElse(AnyKind.baseShapeId)
-            Seq(Interpretations.ChangeFieldInResponseShape(sd.key, sd.fieldId, newShapeId, d.responseStatusCode))
+            Seq(Interpretations.ChangeFieldInResponseShape(sd.key, sd.fieldId, sd.actual, d.responseStatusCode))
           }
           case _ => Seq.empty
         }

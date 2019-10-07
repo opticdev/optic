@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{SetRequestBodyShape, SetResponse
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
 import com.seamless.contexts.shapes.ShapesHelper._
-import com.seamless.diff.DiffInterpretation
+import com.seamless.diff.{DiffInterpretation, FrontEndMetadata}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer._
 
@@ -65,7 +65,8 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     DiffInterpretation(
       "Null value Observed",
       s"Optic expected to see a value for the key ${shapeDiff.key} and instead saw null. If it is allowed to be null, make it Nullable",
-      commands
+      commands,
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.parentObjectShapeId, shapeDiff.fieldId))
     )
   }
 
@@ -81,7 +82,8 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     DiffInterpretation(
       "Null value Observed",
       s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
-      commands
+      commands,
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 
@@ -97,7 +99,8 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     DiffInterpretation(
       "Null value Observed",
       s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
-      commands
+      commands,
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 }
