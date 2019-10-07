@@ -57,7 +57,6 @@ function Chooser(props) {
       <ShapePicker
         conceptChoices={conceptChoices}
         onFinish={(commands, shapeId) => {
-          console.clear()
           debugger
           onSelect(commands, shapeId)
         }} />
@@ -616,15 +615,31 @@ class ShapeViewerBase extends React.Component {
                             }}
 
                             onParameterSelected={(bindingInfo) => {
-                              handleTooltipOpen({
-                                type: 'parameter',
-                                data: {
-                                  handleOpenSelectionModal: this.handleOpenSelectionModal,
-                                  contextShapeId: id,
-                                  setParameterShape: (provider) => setShapeParameterInShape(id, provider, bindingInfo.parameterId),
-                                  bindingInfo: bindingInfo
+                              const shapeId = bindingInfo.shapeId
+                              if (pushToStack) {
+                                pushToStack(shapeId)
+                              } else {
+                                if (mode === EditorModes.DOCUMENTATION) {
+                                  handleTooltipOpen({
+                                    type: 'parameter',
+                                    data: {
+                                      handleOpenSelectionModal: this.handleOpenSelectionModal,
+                                      contextShapeId: id,
+                                      setParameterShape: (provider) => setShapeParameterInShape(id, provider, bindingInfo.parameterId),
+                                      bindingInfo: bindingInfo
+                                    }
+                                  });
+                                } else {
+                                  handleTooltipOpen({
+                                    type: 'shape',
+                                    data: {
+                                      handleOpenSelectionModal: this.handleOpenSelectionModal,
+                                      shapeId: id,
+                                      setBaseShape
+                                    }
+                                  });
                                 }
-                              });
+                              }
                             }}
                           />
                           <WriteOnly>
