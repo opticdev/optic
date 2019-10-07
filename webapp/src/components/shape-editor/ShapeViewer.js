@@ -403,12 +403,101 @@ function ExpansionControlBase({ trail, isTrailCollapsed, expandTrail, collapseTr
 
 const ExpansionControl = withExpansionContext(ExpansionControlBase);
 
+////////////////////////////////////////////////////////////////////////////////
+
+function ShapeNameButton({ shapeName, onShapeSelected, children }) {
+  return (
+    <BasicButton
+      color={shapeName.color || '#8a558e'}
+      style={{ fontWeight: 200 }}
+      onClick={() => {
+        // if (shapeName.id === '$object' || !coreShapeIdsSet.has(shapeName.id)) {
+        onShapeSelected(shapeName.id);
+        // }
+      }}
+    >{children}</BasicButton>
+  );
+}
+
+function withPropagationStopped(f) {
+  if (!f) {
+    throw new Error(`f is required`);
+  }
+  return function (e) {
+    //e.preventDefault()
+    e.stopPropagation();
+    f(e);
+  };
+}
+
+function BindingInfoBase({ coloredIds = [], bindingInfo, onClick }) {
+
+  if (bindingInfo.binding) {
+    if (bindingInfo.binding.ShapeProvider) {
+      const isAdded = coloredIds.includes(bindingInfo.binding.ShapeProvider.shapeId);
+      return (
+        <ScrollIntoViewIfNeeded active={isAdded} elementType="span">
+          <BasicButton
+            style={{ color: bindingInfo.color, borderBottom: isAdded ? '2px solid rgb(30,192,146)' : undefined }}
+            onClick={onClick}
+          >{bindingInfo.boundName}</BasicButton>
+        </ScrollIntoViewIfNeeded>
+      );
+    }
+    return (
+      <BasicButton
+        style={{ fontWeight: 'bold', color: bindingInfo.color }}
+        onClick={onClick}>{bindingInfo.boundName}</BasicButton>
+    );
+  }
+  return (
+    <BasicButton
+      style={{ color: unboundParameterColor, borderBottom: `1px solid ${unboundParameterColor}` }}
+      onClick={onClick}>{bindingInfo.parameterName}</BasicButton>
+  );
+}
+
+const BindingInfo = withColoredIdsContext(BindingInfoBase)
+
+function ShapeName({ shapeName, onShapeSelected, onParameterSelected }) {
+  if (shapeName.bindingInfo.length === 0) {
+    return (
+      <ShapeNameButton
+        shapeName={shapeName}
+        onShapeSelected={onShapeSelected}>{shapeName.baseShapeName || shapeName.parameterName}</ShapeNameButton>
+    );
+  }
+  return (
+    <ShapeNameButton
+      shapeName={shapeName}
+      onShapeSelected={onShapeSelected}
+    >{shapeName.baseShapeName}[{
+        <Join delimiter={<span>, </span>}>{
+          shapeName.bindingInfo
+            .map(bindingInfo => (
+              <BindingInfo
+                bindingInfo={bindingInfo}
+                onClick={withPropagationStopped(() => {
+                  onParameterSelected(bindingInfo)
+                })} />
+            ))
+        }</Join>
+      }]</ShapeNameButton>
+  );
+}
+
+function Colon() {
+  return <Typography variant="caption" style={{ padding: '0 .25em' }}>:</Typography>;
+}
+////////////////////////////////////////////////////////////////////////////////
+
+
 class ShapeViewerBase extends React.Component {
 
   render() {
     const { classes, shape, coloredIds = [], shapeDialog = {} } = this.props;
     const { pushToStack } = shapeDialog
-    const { cachedQueryResults, queries } = this.props;
+    const { cachedQueryResults, queries, mode } = this.props;
     const {
       addField, removeField,
       setFieldShape, setBaseShape,
@@ -417,84 +506,6 @@ class ShapeViewerBase extends React.Component {
     const { isTrailParentCollapsed } = this.props;
     const { onShapeSelected } = this.props;
 
-    function ShapeNameButton({ shapeName, onShapeSelected, children }) {
-      return (
-        <BasicButton
-          color={shapeName.color || '#8a558e'}
-          style={{ fontWeight: 200 }}
-          onClick={() => {
-            // if (shapeName.id === '$object' || !coreShapeIdsSet.has(shapeName.id)) {
-            onShapeSelected(shapeName.id);
-            // }
-          }}
-        >{children}</BasicButton>
-      );
-    }
-
-    function withPropagationStopped(f) {
-      if (!f) {
-        throw new Error(`f is required`);
-      }
-      return function (e) {
-        //e.preventDefault()
-        e.stopPropagation();
-        f(e);
-      };
-    }
-
-    function BindingInfoBase({ coloredIds = [], bindingInfo, onClick }) {
-
-      if (bindingInfo.binding) {
-        if (bindingInfo.binding.ShapeProvider) {
-          const isAdded = coloredIds.includes(bindingInfo.binding.ShapeProvider.shapeId);
-          return (
-            <ScrollIntoViewIfNeeded active={isAdded} elementType="span">
-              <BasicButton
-                style={{ color: bindingInfo.color, borderBottom: isAdded ? '2px solid rgb(30,192,146)' : undefined }}
-                onClick={onClick}
-              >{bindingInfo.boundName}</BasicButton>
-            </ScrollIntoViewIfNeeded>
-          );
-        }
-        return (
-          <BasicButton
-            style={{ fontWeight: 'bold', color: bindingInfo.color }}
-            onClick={onClick}>{bindingInfo.boundName}</BasicButton>
-        );
-      }
-      return (
-        <BasicButton
-          style={{ color: unboundParameterColor, borderBottom: `1px solid ${unboundParameterColor}` }}
-          onClick={onClick}>{bindingInfo.parameterName}</BasicButton>
-      );
-    }
-
-    const BindingInfo = withColoredIdsContext(BindingInfoBase)
-
-    function ShapeName({ shapeName, onShapeSelected, onParameterSelected }) {
-      if (shapeName.bindingInfo.length === 0) {
-        return (
-          <ShapeNameButton
-            shapeName={shapeName}
-            onShapeSelected={onShapeSelected}>{shapeName.baseShapeName || shapeName.parameterName}</ShapeNameButton>
-        );
-      }
-      return (
-        <ShapeNameButton
-          shapeName={shapeName}
-          onShapeSelected={onShapeSelected}
-        >{shapeName.baseShapeName}[{
-            <Join delimiter={<span>, </span>}>{
-              shapeName.bindingInfo
-                .map(bindingInfo => (
-                  <BindingInfo
-                    bindingInfo={bindingInfo}
-                    onClick={withPropagationStopped(() => onParameterSelected(bindingInfo))} />
-                ))
-            }</Join>
-          }]</ShapeNameButton>
-      );
-    }
 
 
     const { shapeId, name, coreShapeId } = shape;
@@ -503,9 +514,6 @@ class ShapeViewerBase extends React.Component {
 
     // console.log({output});
 
-    function Colon() {
-      return <Typography variant="caption" style={{ padding: '0 .25em' }}>:</Typography>;
-    }
 
     const shapeDescription = output
       .filter(({ trail }) => {
@@ -545,6 +553,28 @@ class ShapeViewerBase extends React.Component {
                             const shapeId = bindingInfo.shapeId
                             if (pushToStack) {
                               pushToStack(shapeId)
+                            } else {
+                              if (mode === EditorModes.DOCUMENTATION) {
+                                handleTooltipOpen({
+                                  type: 'parameter',
+                                  data: {
+                                    handleOpenSelectionModal: this.handleOpenSelectionModal,
+                                    contextShapeId: entry.parentShapeId,
+                                    setParameterShape: (provider) => setShapeParameterInField(id, provider, bindingInfo.parameterId),
+                                    bindingInfo: bindingInfo
+                                  }
+                                })
+                              } else {
+                                handleTooltipOpen({
+                                  type: 'field',
+                                  data: {
+                                    handleOpenSelectionModal: this.handleOpenSelectionModal,
+                                    parentShapeId: entry.parentShapeId,
+                                    fieldId: id,
+                                    setFieldShape
+                                  }
+                                })
+                              }
                             }
                           }}
                         />

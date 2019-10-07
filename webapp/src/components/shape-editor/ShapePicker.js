@@ -2,8 +2,8 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Paper from '@material-ui/core/Paper';
 import ShadowInput from './ShadowInput';
-import {Typography} from '@material-ui/core';
-import {commandsToJson, ShapesCommands} from '../../engine';
+import { Typography } from '@material-ui/core';
+import { commandsToJson, ShapesCommands, ShapesHelper } from '../../engine';
 import sortBy from 'lodash.sortby';
 
 const styles = theme => ({
@@ -120,7 +120,7 @@ class ShapePicker extends React.Component {
   };
 
   reset = () => {
-    this.setState({...defaultState, markedComplete: []});
+    this.setState({ ...defaultState, markedComplete: [] });
   };
 
   canFinish = () => {
@@ -136,7 +136,7 @@ class ShapePicker extends React.Component {
   };
 
   pushChoice = (choice, isParameter = false) => {
-    this.setState({steps: [...this.state.steps, {...choice, isParameter: isParameter}]}, () => {
+    this.setState({ steps: [...this.state.steps, { ...choice, isParameter: isParameter }] }, () => {
       const canFinish = this.canFinish();
       if (canFinish) {
         this.finish();
@@ -148,11 +148,11 @@ class ShapePicker extends React.Component {
   setParameter = (currentStepIndex, index, parameter, choice) => {
 
     const params = this.state.parameters[currentStepIndex] || {};
-    params[parameter] = {...choice, index: index + 1};
+    params[parameter] = { ...choice, index: index + 1 };
 
     const replace = [...this.state.parameters];
     replace[currentStepIndex] = params;
-    this.setState({parameters: replace});
+    this.setState({ parameters: replace });
   };
 
   //return the last step that can't be finished.
@@ -187,13 +187,13 @@ class ShapePicker extends React.Component {
         markedComplete.length = currentStepIndex + 1;
       }
 
-      this.setState({steps, parameters});
+      this.setState({ steps, parameters });
     }
   };
 
   markComplete = (index) => {
     this.state.markedComplete[index] = true;
-    this.setState({markedComplete: this.state.markedComplete}, () => {
+    this.setState({ markedComplete: this.state.markedComplete }, () => {
       const canFinish = this.canFinish();
       if (canFinish) {
         this.finish();
@@ -202,8 +202,8 @@ class ShapePicker extends React.Component {
   };
 
   render() {
-    const {classes, conceptChoices} = this.props;
-    const {steps, parameters} = this.state;
+    const { classes, conceptChoices } = this.props;
+    const { steps, parameters } = this.state;
 
 
     const currentStepIndex = this.getCurrentStep();
@@ -218,12 +218,12 @@ class ShapePicker extends React.Component {
       if (!choice.canFinish(parameters)) {
         return null;
       }
-      return choice.component({active: false, parameters, renderInactiveChoice, parameterInput: () => null});
+      return choice.component({ active: false, parameters, renderInactiveChoice, parameterInput: () => null });
     };
     const renderPreviousSteps = steps.slice(0, currentStepIndex).map((i, index) => {
       if (!i.isParameter) {
         const params = parameters[index] || {};
-        return i.component({active: false, parameters: params, parameterInput: () => null, renderInactiveChoice});
+        return i.component({ active: false, parameters: params, parameterInput: () => null, renderInactiveChoice });
       }
     });
     // debugger
@@ -248,7 +248,7 @@ class ShapePicker extends React.Component {
         <div className={classes.inputOuter}>
           <ShadowInput
             key={paramId + currentStepIndex}
-            style={{marginLeft: 6, marginTop: 1}}
+            style={{ marginLeft: 6, marginTop: 1 }}
             inputClass={classes.activeInput}
             options={options(conceptChoices).filter(currentStep.optionsFilter)}
             onDelete={() => this.delete(paramId)}
@@ -259,7 +259,8 @@ class ShapePicker extends React.Component {
               const newIndex = this.pushChoice(choice, true);
               this.setParameter(currentStepIndex, newIndex, paramId, choice);
             }}
-          /></div>)
+          />
+        </div>)
 
     });
 
@@ -278,7 +279,7 @@ export default withStyles(styles)(ShapePicker);
 Styled Components
  */
 
-export function TypeName({name, color}) {
+export function TypeName({ name, color }) {
   return <Typography variant="caption" component="div" style={{
     color: color,
     fontWeight: 600,
@@ -291,7 +292,7 @@ export function TypeName({name, color}) {
 }
 
 function newShapeId() {
-  return 'shape_' + Math.random().toString(36).substr(2, 9);
+  return ShapesHelper.newShapeId()
 }
 
 /*
@@ -300,12 +301,12 @@ Choices
 
 function RootChoice() {
   return {
-    component: ({label, rootInput, active}) => active ? <span>{rootInput}</span> : null,
+    component: ({ label, rootInput, active }) => active ? <span>{rootInput}</span> : null,
     isRoot: true,
     canFinish: (parameters) => true,
     optionsFilter: () => true,
-    commands: ({shapeId}) => {
-      const {AddShape} = ShapesCommands;
+    commands: ({ shapeId }) => {
+      const { AddShape } = ShapesCommands;
       return [
         [AddShape(shapeId, '$any', '')],
         shapeId
@@ -320,11 +321,11 @@ function PrimitiveChoice(label, id) {
     id,
     isPrimitive: true,
     component: () => {
-      return <TypeName name={label} color={'#3682e3'}/>;
+      return <TypeName name={label} color={'#3682e3'} />;
     },
     canFinish: (parameters) => true,
     optionsFilter: () => true,
-    commands: ({parameters, shapeId}) => {
+    commands: ({ parameters, shapeId }) => {
       return [
         [ShapesCommands.SetBaseShape(shapeId, id)],
         shapeId
@@ -339,11 +340,11 @@ export function ConceptChoice(name, id) {
     id,
     isNamedShape: true,
     component: () => {
-      return <TypeName name={name} color={'#8a558e'}/>;
+      return <TypeName name={name} color={'#8a558e'} />;
     },
     canFinish: (parameters) => true,
     optionsFilter: () => true,
-    commands: ({parameters, shapeId}) => {
+    commands: ({ parameters, shapeId }) => {
       return [
         [ShapesCommands.SetBaseShape(shapeId, id)],
         shapeId
@@ -357,7 +358,7 @@ export function GenericConceptChoice(name, id, genericParameters) {
     label: name,
     id,
     isNamedShape: true,
-    component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
+    component: ({ label, parameterInput, active, parameters = {}, renderInactiveChoice }) => {
       //return <TypeName name={name} color={'#8a558e'}/>;
       let unsetIndex;
       const firstUnset = genericParameters.find((i, index) => {
@@ -371,31 +372,31 @@ export function GenericConceptChoice(name, id, genericParameters) {
 
       const previousChoices = previous.map(parameter => {
         return (<>
-          <div style={{...textStyle, marginLeft: 5}}>{parameter.displayName.split('.')[1]}:</div>
-          <div style={{marginLeft: 5}}>{renderInactiveChoice(parameters[parameter.id])}</div>
+          <div style={{ ...textStyle, marginLeft: 5 }}>{parameter.displayName.split('.')[1]}:</div>
+          <div style={{ marginLeft: 5 }}>{renderInactiveChoice(parameters[parameter.id])}</div>
         </>);
       });
 
       if (active) {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
-            <TypeName name={name} color={'#8a558e'}/>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <TypeName name={name} color={'#8a558e'} />
             {previousChoices}
             {firstUnset && (
               <>
-                <div style={{...textStyle, marginLeft: 5}}>{firstUnset.displayName.split('.')[1]}:</div>
-                <div style={{marginLeft: 5}}>{parameterInput(firstUnset.id)}</div>
+                <div style={{ ...textStyle, marginLeft: 5 }}>{firstUnset.displayName.split('.')[1]}:</div>
+                <div style={{ marginLeft: 5 }}>{parameterInput(firstUnset.id)}</div>
               </>
             )}
           </div>);
       } else {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
-            <TypeName name={name} color={'#8a558e'}/>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <TypeName name={name} color={'#8a558e'} />
             {previousChoices}
             {firstUnset && (
               <>
-                <div style={{...textStyle, marginLeft: 5}}>{firstUnset.displayName.split('.')[1]}:</div>
+                <div style={{ ...textStyle, marginLeft: 5 }}>{firstUnset.displayName.split('.')[1]}:</div>
               </>
             )}
           </div>);
@@ -403,9 +404,9 @@ export function GenericConceptChoice(name, id, genericParameters) {
     },
     canFinish: (parameters) => genericParameters.every(i => !!parameters[i.id]),
     optionsFilter: () => true,
-    commands: ({parameters, shapeId, paramsForChoice}) => {
+    commands: ({ parameters, shapeId, paramsForChoice }) => {
 
-      const {SetBaseShape, SetParameterShape, ProviderInShape, AddShape, ShapeProvider} = ShapesCommands;
+      const { SetBaseShape, SetParameterShape, ProviderInShape, AddShape, ShapeProvider } = ShapesCommands;
 
       const innerIds = [];
 
@@ -441,12 +442,12 @@ function ListChoice() {
   return {
     label: 'List',
     id: '$list',
-    component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
+    component: ({ label, parameterInput, active, parameters = {}, renderInactiveChoice }) => {
       const listItem = parameters[parameter];
       return (
-        <div style={{display: 'flex', flexDirection: 'row'}}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={textStyle}>List of</div>
-          <div style={{marginLeft: 3}}>{active ? parameterInput(parameter) : renderInactiveChoice(listItem)}</div>
+          <div style={{ marginLeft: 3 }}>{active ? parameterInput(parameter) : renderInactiveChoice(listItem)}</div>
         </div>);
     },
     canFinish: (parameters) => !!parameters[parameter],
@@ -456,8 +457,8 @@ function ListChoice() {
       }
       return true;
     },
-    commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$list', parameter);
+    commands: ({ parameters, shapeId, paramsForChoice }) => {
+      return singleParameterType({ parameters, shapeId, paramsForChoice }, '$list', parameter);
     },
   };
 }
@@ -469,21 +470,21 @@ function MapChoice() {
   return {
     label: 'Map',
     id: '$map',
-    component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
+    component: ({ label, parameterInput, active, parameters = {}, renderInactiveChoice }) => {
       const param = parameters[valueParam];
       return (
-        <div style={{display: 'flex', flexDirection: 'row'}}>
-          <span style={{...textStyle, marginRight: 5}}>Map from </span>
-          <TypeName name={'string'} color={'#3682e3'}/>
-          <span style={{...textStyle, marginLeft: 5}}> to </span>
-          <span style={{marginLeft: 3}}>{active ? parameterInput(valueParam) : renderInactiveChoice(valueParam)}</span>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <span style={{ ...textStyle, marginRight: 5 }}>Map from </span>
+          <TypeName name={'string'} color={'#3682e3'} />
+          <span style={{ ...textStyle, marginLeft: 5 }}> to </span>
+          <span style={{ marginLeft: 3 }}>{active ? parameterInput(valueParam) : renderInactiveChoice(valueParam)}</span>
         </div>);
     },
     canFinish: (parameters) => parameters[valueParam],
     optionsFilter: (choice) => true,
-    commands: ({parameters, shapeId, paramsForChoice}) => {
-      const {SetParameterShape, ProviderInShape, ShapeProvider} = ShapesCommands
-      const [commands, id] = singleParameterType({parameters, shapeId, paramsForChoice}, '$map', valueParam);
+    commands: ({ parameters, shapeId, paramsForChoice }) => {
+      const { SetParameterShape, ProviderInShape, ShapeProvider } = ShapesCommands
+      const [commands, id] = singleParameterType({ parameters, shapeId, paramsForChoice }, '$map', valueParam);
       const commandsWithKeySet = [...commands, SetParameterShape(ProviderInShape(shapeId, ShapeProvider('$string'), keyParam))]
       return [commandsWithKeySet, id]
     },
@@ -495,33 +496,33 @@ function OptionalChoice() {
   return {
     label: 'Optional',
     id: '$optional',
-    component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
+    component: ({ label, parameterInput, active, parameters = {}, renderInactiveChoice }) => {
       const optionalType = parameters[parameter];
       if (active) {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div style={textStyle}>Optional</div>
-            <div style={{marginLeft: 0}}>{parameterInput(parameter)}</div>
+            <div style={{ marginLeft: 0 }}>{parameterInput(parameter)}</div>
           </div>);
       } else {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
-            <div style={{marginLeft: 0}}>{renderInactiveChoice(optionalType)}</div>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ marginLeft: 0 }}>{renderInactiveChoice(optionalType)}</div>
             <Typography variant="caption"
-                        style={{
-                          fontSize: 14,
-                          marginTop: -2,
-                          marginLeft: 4,
-                          fontStyle: 'italic',
-                          color: '#828282'
-                        }}> (optional)</Typography>
+              style={{
+                fontSize: 14,
+                marginTop: -2,
+                marginLeft: 4,
+                fontStyle: 'italic',
+                color: '#828282'
+              }}> (optional)</Typography>
           </div>);
       }
     },
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: () => true,
-    commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$optional', parameter);
+    commands: ({ parameters, shapeId, paramsForChoice }) => {
+      return singleParameterType({ parameters, shapeId, paramsForChoice }, '$optional', parameter);
     },
   };
 }
@@ -531,33 +532,33 @@ function NullableChoice() {
   return {
     label: 'Nullable',
     id: '$nullable',
-    component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
+    component: ({ label, parameterInput, active, parameters = {}, renderInactiveChoice }) => {
       const nullableType = parameters[parameter];
       if (active) {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div style={textStyle}>Nullable</div>
-            <div style={{marginLeft: 0}}>{parameterInput(parameter)}</div>
+            <div style={{ marginLeft: 0 }}>{parameterInput(parameter)}</div>
           </div>);
       } else {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
-            <div style={{marginLeft: 0}}>{renderInactiveChoice(nullableType)}</div>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ marginLeft: 0 }}>{renderInactiveChoice(nullableType)}</div>
             <Typography variant="caption"
-                        style={{
-                          fontSize: 14,
-                          marginTop: -2,
-                          marginLeft: 4,
-                          fontStyle: 'italic',
-                          color: '#828282'
-                        }}> (nullable)</Typography>
+              style={{
+                fontSize: 14,
+                marginTop: -2,
+                marginLeft: 4,
+                fontStyle: 'italic',
+                color: '#828282'
+              }}> (nullable)</Typography>
           </div>);
       }
     },
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: () => true,
-    commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$nullable', parameter);
+    commands: ({ parameters, shapeId, paramsForChoice }) => {
+      return singleParameterType({ parameters, shapeId, paramsForChoice }, '$nullable', parameter);
     },
   };
 }
@@ -567,19 +568,19 @@ function IdentifierChoice() {
   return {
     label: 'Identifier',
     id: '$identifierInner',
-    component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
+    component: ({ label, parameterInput, active, parameters = {}, renderInactiveChoice }) => {
       const identifierType = parameters[parameter];
       if (active) {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div style={textStyle}>Identifier as</div>
-            <div style={{marginLeft: 0}}>{parameterInput(parameter)}</div>
+            <div style={{ marginLeft: 0 }}>{parameterInput(parameter)}</div>
           </div>);
       } else {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div style={textStyle}>Identifier as</div>
-            <div style={{marginLeft: 4}}>{renderInactiveChoice(identifierType)}</div>
+            <div style={{ marginLeft: 4 }}>{renderInactiveChoice(identifierType)}</div>
           </div>);
       }
     },
@@ -589,8 +590,8 @@ function IdentifierChoice() {
         return true;
       }
     },
-    commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$identifier', parameter);
+    commands: ({ parameters, shapeId, paramsForChoice }) => {
+      return singleParameterType({ parameters, shapeId, paramsForChoice }, '$identifier', parameter);
     },
   };
 }
@@ -600,33 +601,33 @@ function ReferenceChoice() {
   return {
     label: 'Reference',
     id: '$referenceInner',
-    component: ({label, parameterInput, active, parameters = {}, renderInactiveChoice}) => {
+    component: ({ label, parameterInput, active, parameters = {}, renderInactiveChoice }) => {
       const identifierType = parameters[parameter];
       if (active) {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             <div style={textStyle}>Reference to</div>
-            <div style={{marginLeft: 0}}>{parameterInput(parameter)}</div>
+            <div style={{ marginLeft: 0 }}>{parameterInput(parameter)}</div>
           </div>);
       } else {
         return (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
-            <div style={{marginLeft: 0}}>{renderInactiveChoice(identifierType)}</div>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
+            <div style={{ marginLeft: 0 }}>{renderInactiveChoice(identifierType)}</div>
             <Typography variant="caption"
-                        style={{
-                          fontSize: 14,
-                          marginTop: -2,
-                          marginLeft: 4,
-                          fontStyle: 'italic',
-                          color: '#828282'
-                        }}> (reference)</Typography>
+              style={{
+                fontSize: 14,
+                marginTop: -2,
+                marginLeft: 4,
+                fontStyle: 'italic',
+                color: '#828282'
+              }}> (reference)</Typography>
           </div>);
       }
     },
     canFinish: (parameters) => !!parameters[parameter],
     optionsFilter: (choice) => !!choice.isNamedShape,
-    commands: ({parameters, shapeId, paramsForChoice}) => {
-      return singleParameterType({parameters, shapeId, paramsForChoice}, '$identifier', parameter);
+    commands: ({ parameters, shapeId, paramsForChoice }) => {
+      return singleParameterType({ parameters, shapeId, paramsForChoice }, '$identifier', parameter);
     },
   };
 }
@@ -635,7 +636,7 @@ function OneOfChoice() {
   return {
     label: 'One of',
     id: '$oneof',
-    component: ({label, parameterInput, renderInactiveChoice, active, parameters = {}}) => {
+    component: ({ label, parameterInput, renderInactiveChoice, active, parameters = {} }) => {
       const currentLength = Object.keys(parameters).length;
       const activeParam = `$param${currentLength}`;
 
@@ -644,9 +645,9 @@ function OneOfChoice() {
       const offset = lastSelections.length;
       if (active) {
         selections = (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             {lastSelections.map(key => {
-              return <div style={{marginLeft: 6, display: 'flex'}}>
+              return <div style={{ marginLeft: 6, display: 'flex' }}>
                 {renderInactiveChoice(parameters[key])}
                 <div style={textStyle}>{', '}</div>
               </div>;
@@ -656,7 +657,7 @@ function OneOfChoice() {
         );
       } else {
         selections = (
-          <div style={{display: 'flex', flexDirection: 'row'}}>
+          <div style={{ display: 'flex', flexDirection: 'row' }}>
             {lastSelections.map((key, index) => {
               const only = lastSelections.length === 1;
               const secondToLast = lastSelections.length - 2 === index;
@@ -675,7 +676,7 @@ function OneOfChoice() {
 
               })();
 
-              return <div style={{marginLeft: 6, display: 'flex'}}>
+              return <div style={{ marginLeft: 6, display: 'flex' }}>
                 {renderInactiveChoice(parameters[key])}
                 <div style={textStyle}>{delineator}</div>
               </div>;
@@ -685,7 +686,7 @@ function OneOfChoice() {
       }
 
       return (
-        <div style={{display: 'flex', flexDirection: 'row'}}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={textStyle}>One of</div>
           {selections}
           {/*<div>{active ? parameterInput(parameter) :*/}
@@ -700,8 +701,8 @@ function OneOfChoice() {
       }
       return true;
     },
-    commands: ({parameters = {}, shapeId, paramsForChoice}) => {
-      const {SetBaseShape, SetParameterShape, ProviderInField, ShapeProvider, AddShapeParameter, AddShape, ProviderInShape} = ShapesCommands;
+    commands: ({ parameters = {}, shapeId, paramsForChoice }) => {
+      const { SetBaseShape, SetParameterShape, ProviderInField, ShapeProvider, AddShapeParameter, AddShape, ProviderInShape } = ShapesCommands;
       //@todo fill this out
 
       const keysSorted = Object.keys(parameters).sort();
@@ -749,8 +750,8 @@ function findLastIndex<T>(array, predicate) {
   return -1;
 }
 
-function singleParameterType({parameters, shapeId, paramsForChoice}, id, parameter) {
-  const {SetBaseShape, SetParameterShape, ProviderInShape, ShapeProvider, AddShape} = ShapesCommands;
+function singleParameterType({ parameters, shapeId, paramsForChoice }, id, parameter) {
+  const { SetBaseShape, SetParameterShape, ProviderInShape, ShapeProvider, AddShape } = ShapesCommands;
   const ParentInner = parameters[parameter];
 
   if (ParentInner.isPrimitive || ParentInner.isNamedShape) {
