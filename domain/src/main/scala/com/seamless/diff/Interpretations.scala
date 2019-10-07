@@ -115,7 +115,7 @@ object Interpretations {
       s"Request Body Observed",
       desc,
       commands,
-      FrontEndMetadata(affectedIds = wrapperId +: shape.allIds, examples = shape.examples, example = Some(actual))
+      FrontEndMetadata(affectedIds = Seq(wrapperId), examples = shape.examples, example = Some(actual))
     )
   }
 
@@ -184,7 +184,7 @@ object Interpretations {
       s"Response Body Observed",
       desc,
       commands,
-      FrontEndMetadata(affectedIds = wrapperId +: shape.allIds, examples = shape.examples, example = Some(actual))
+      FrontEndMetadata(affectedIds = Seq(wrapperId), examples = shape.examples, example = Some(actual))
     )
   }
 
