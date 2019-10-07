@@ -29,6 +29,8 @@ import Helmet from 'react-helmet';
 import CreateNew from './navigation/CreateNew';
 import { AddedStyle, withColoredIdsContext } from '../contexts/ColorContext';
 import classNames from 'classnames';
+import { withNavigationContext } from '../contexts/NavigationContext.js';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 const styles = theme => ({
   root: {
@@ -71,18 +73,19 @@ const styles = theme => ({
 
 class OperationBase extends React.Component {
   render() {
+    const { inDiffMode } = this.props;
     const { classes, request, handleCommands, mode, cachedQueryResults, coloredIds = [] } = this.props;
     const { responses, requestParameters } = cachedQueryResults;
 
     const { requestId, requestDescriptor } = request;
     const { httpMethod, bodyDescriptor } = requestDescriptor;
     const { httpContentType, shapeId, isRemoved } = getNormalizedBodyDescriptor(bodyDescriptor);
-    const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || (mode === EditorModes.DESIGN && RequestUtilities.canAddBody(request));
+    const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || (mode === EditorModes.DESIGN && !inDiffMode && RequestUtilities.canAddBody(request));
     const requestCommandsHelper = new RequestsCommandHelper(handleCommands, requestId);
 
     const responsesForRequest = Object.values(responses)
       .filter((response) => response.responseDescriptor.requestId === requestId);
-    const shouldShowResponses = responsesForRequest.length > 0
+    const shouldShowResponses = responsesForRequest.length > 0 || (mode === EditorModes.DESIGN && !inDiffMode)
 
     const parametersForRequest = Object.values(requestParameters)
       .filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId);
@@ -131,7 +134,7 @@ class OperationBase extends React.Component {
             placeholder={`Description`}
           />
 
-          {headerParameters.length === 0 && mode === EditorModes.DOCUMENTATION ? null : (
+          {headerParameters.length === 0 && mode === EditorModes.DOCUMENTATION || inDiffMode ? null : (
             <div>
               <RequestPageHeader forType="Header"
                 addAction={requestCommandsHelper.addHeaderParameter} />
@@ -145,7 +148,7 @@ class OperationBase extends React.Component {
             </div>
           )}
 
-          {queryParameters.length === 0 && mode === EditorModes.DOCUMENTATION ? null : (
+          {queryParameters.length === 0 && mode === EditorModes.DOCUMENTATION || inDiffMode ? null : (
             <div>
               <RequestPageHeader forType="Query Parameter"
                 addAction={requestCommandsHelper.addQueryParameter} />
@@ -171,7 +174,7 @@ class OperationBase extends React.Component {
             </>
           ) : null}
 
-          {shouldShowResponses || (mode === EditorModes.DESIGN) ? (
+          {shouldShowResponses ? (
             <>
               <div style={{ marginBottom: 44 }}>
                 <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse} />
@@ -185,7 +188,7 @@ class OperationBase extends React.Component {
   }
 }
 
-export const Operation = withColoredIdsContext(withRfcContext(withEditorContext(withStyles(styles)(OperationBase))));
+export const Operation = withNavigationContext(withColoredIdsContext(withRfcContext(withEditorContext(withStyles(styles)(OperationBase)))));
 
 class ResponseListWithoutContext extends React.Component {
   render() {
@@ -220,31 +223,33 @@ class ResponseListWithoutContext extends React.Component {
 
       const isAdded = coloredIds.includes(responseId);
       return (
-        <div className={classNames(classes.responseCard, { [classes.addedResponse]: isAdded })}>
-          <div className={classes.responseStatus}>
-            <StatusCode statusCode={httpStatusCode} onChange={(statusCode) => {
-              const command = RequestsCommands.SetResponseStatusCode(responseId, statusCode);
-              handleCommands(command);
-            }} />
-          </div>
-          <div className={classes.responseDetail}>
-            <ContributionWrapper
-              style={{ marginTop: -20 }}
-              contributionParentId={responseId}
-              defaultText={'No Description'}
-              contributionKey={'description'}
-              variant={'multi'}
-              placeholder={`Response Description`}
-            />
-            <div style={{ marginLeft: 5 }}>
-              <BodyEditor
-                rootId={responseId}
-                bodyDescriptor={bodyDescriptor}
-                {...responseBodyHandlers}
+        <ScrollIntoViewIfNeeded active={isAdded}>
+          <div className={classNames(classes.responseCard, { [classes.addedResponse]: isAdded })}>
+            <div className={classes.responseStatus}>
+              <StatusCode statusCode={httpStatusCode} onChange={(statusCode) => {
+                const command = RequestsCommands.SetResponseStatusCode(responseId, statusCode);
+                handleCommands(command);
+              }} />
+            </div>
+            <div className={classes.responseDetail}>
+              <ContributionWrapper
+                style={{ marginTop: -20 }}
+                contributionParentId={responseId}
+                defaultText={'No Description'}
+                contributionKey={'description'}
+                variant={'multi'}
+                placeholder={`Response Description`}
               />
+              <div style={{ marginLeft: 5 }}>
+                <BodyEditor
+                  rootId={responseId}
+                  bodyDescriptor={bodyDescriptor}
+                  {...responseBodyHandlers}
+                />
+              </div>
             </div>
           </div>
-        </div>
+        </ScrollIntoViewIfNeeded>
       );
     });
 

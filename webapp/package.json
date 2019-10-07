@@ -68,6 +68,7 @@
     "react-json-view": "^1.19.1",
     "react-keydown": "^1.9.10",
     "react-router-dom": "^5.0.1",
+    "react-scroll-into-view-if-needed": "^2.1.7",
     "react-waypoint": "^9.0.2",
     "resolve": "1.10.0",
     "sass-loader": "7.1.0",

@@ -1,3 +1,4 @@
+import React from 'react';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import withStyles from '@material-ui/core/styles/withStyles';
@@ -6,36 +7,28 @@ import Typography from '@material-ui/core/Typography';
 import CancelIcon from '@material-ui/icons/Cancel';
 import ExpandLessIcon from '@material-ui/icons/ExpandMore';
 import ExpandMoreIcon from '@material-ui/icons/KeyboardArrowRight';
-import React from 'react';
 import { EditorModes, withEditorContext } from '../../contexts/EditorContext';
 import { withExpansionContext } from '../../contexts/ExpansionContext.js';
 import { withRfcContext } from '../../contexts/RfcContext';
 import { withShapeEditorContext } from '../../contexts/ShapeEditorContext.js';
 import BasicButton from './BasicButton.js';
 import {
-  listConceptChoicesForField,
-  listConceptChoicesForParameter,
   listConceptChoicesForShape,
-  listCoreShapeChoicesForField,
-  listCoreShapeChoicesForParameter,
-  listCoreShapeChoicesForShape,
-  listParameterChoicesForField,
-  listParameterChoicesForParameter,
 } from './Choices.js';
 import ConceptModal from './ConceptModal.js';
 import CoreShapeViewer from './CoreShapeViewer.js';
 import { FieldName } from './NameInputs.js';
 import { ShapeUtilities } from './ShapeUtilities.js';
 import { unboundParameterColor } from './Types.js';
-import { AddedStyle, withColoredIdsContext } from '../../contexts/ColorContext';
+import { AddedStyle, withColoredIdsContext, AddedGreenBackground } from '../../contexts/ColorContext';
 import classNames from 'classnames';
 import ShapeNameSelector from '../diff/ShapeNameSelector';
-import { coreShapeIdsSet } from './ShapeUtilities';
 import ShapePicker from './ShapePicker';
 import { createStyles } from '@material-ui/core';
-import { commandsToJson, ShapesCommands } from '../../engine';
+import { ShapesCommands } from '../../engine';
 import { withShapeDialogContext } from '../../contexts/ShapeDialogContext';
 import { withNavigationContext } from '../../contexts/NavigationContext';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 export function cheapEquals(item1, item2) {
   return JSON.stringify(item1) === JSON.stringify(item2);
@@ -438,7 +431,7 @@ class ShapeViewerBase extends React.Component {
       );
     }
 
-    function withDefaultPrevented(f) {
+    function withPropagationStopped(f) {
       if (!f) {
         throw new Error(`f is required`);
       }
@@ -449,14 +442,19 @@ class ShapeViewerBase extends React.Component {
       };
     }
 
-    function BindingInfo({ bindingInfo, onClick }) {
+    function BindingInfoBase({ coloredIds = [], bindingInfo, onClick }) {
+
       if (bindingInfo.binding) {
         if (bindingInfo.binding.ShapeProvider) {
+          const isAdded = coloredIds.includes(bindingInfo.binding.ShapeProvider.shapeId);
           return (
-            <BasicButton
-              style={{ color: bindingInfo.color }}
-              onClick={onClick}
-            >{bindingInfo.boundName}</BasicButton>);
+            <ScrollIntoViewIfNeeded active={isAdded} elementType="span">
+              <BasicButton
+                style={{ color: bindingInfo.color, borderBottom: isAdded ? '2px solid rgb(30,192,146)' : undefined }}
+                onClick={onClick}
+              >{bindingInfo.boundName}</BasicButton>
+            </ScrollIntoViewIfNeeded>
+          );
         }
         return (
           <BasicButton
@@ -470,6 +468,8 @@ class ShapeViewerBase extends React.Component {
           onClick={onClick}>{bindingInfo.parameterName}</BasicButton>
       );
     }
+
+    const BindingInfo = withColoredIdsContext(BindingInfoBase)
 
     function ShapeName({ shapeName, onShapeSelected, onParameterSelected }) {
       if (shapeName.bindingInfo.length === 0) {
@@ -489,7 +489,7 @@ class ShapeViewerBase extends React.Component {
                 .map(bindingInfo => (
                   <BindingInfo
                     bindingInfo={bindingInfo}
-                    onClick={withDefaultPrevented(() => onParameterSelected(bindingInfo))} />
+                    onClick={withPropagationStopped(() => onParameterSelected(bindingInfo))} />
                 ))
             }</Join>
           }]</ShapeNameButton>
@@ -520,80 +520,32 @@ class ShapeViewerBase extends React.Component {
           <TooltipWrapper>
             {({ handleTooltipOpen, handleTooltipClose, ...rest }) => {
               return (
-                <div className={classNames(classes.row, { [classes.shapeAdded]: isAdded })} key={id} {...rest}>
-                  <div className={classes.expansionControlContainer}>
-                    {isExpandable ? <ExpansionControl trail={trail} /> : null}
-                  </div>
-                  <div style={{ paddingLeft: `${(trail.length - 1) * 4}px` }}>&nbsp;</div>
-                  {type === 'field' ? (
-                    <div className={classes.fieldRow}>
-                      <FieldName name={name} fieldId={id} />
-                      <Colon />
-                      <ShapeName
-                        shapeName={shapeName}
-                        onShapeSelected={() => handleTooltipOpen({
-                          type: 'field',
-                          data: {
-                            handleOpenSelectionModal: this.handleOpenSelectionModal,
-                            parentShapeId: entry.parentShapeId,
-                            fieldId: id,
-                            setFieldShape
-                          }
-                        })}
-                        onParameterSelected={(bindingInfo) => {
-                          const shapeId = bindingInfo.shapeId
-                          if (pushToStack) {
-                            pushToStack(shapeId)
-                          }
-                        }}
-                      />
-                      <WriteOnly>
-                        <div style={{ padding: '.25em' }}>&nbsp;</div>
-                        {isExpandable && (
-                          <BasicButton
-                            className={classes.addFieldButton}
-                            onClick={() => addField(entry.fieldShapeId)}>
-                            + Add Field
-                          </BasicButton>
-                        )}
-                      </WriteOnly>
-                      <div style={{ flex: 1 }}>&nbsp;</div>
-                      {isObject && <ShapeNameSelector
-                        shapeId={shapeName.id}
-                        userDefinedName={shapeName.userDefinedName} />}
-                      <WriteOnly>
-                        <BasicButton
-                          className={classes.hiddenByDefault}
-                          onClick={() => removeField(id)}>
-                          <CancelIcon style={{ width: 15, color: '#a6a6a6' }} />
-                        </BasicButton>
-                      </WriteOnly>
+                <ScrollIntoViewIfNeeded active={isAdded}>
+                  <div className={classNames(classes.row, { [classes.shapeAdded]: isAdded })} key={id} {...rest}>
+                    <div className={classes.expansionControlContainer}>
+                      {isExpandable ? <ExpansionControl trail={trail} /> : null}
                     </div>
-                  ) : (
-                      <div className={classes.shapeRow}>
+                    <div style={{ paddingLeft: `${(trail.length - 1) * 4}px` }}>&nbsp;</div>
+                    {type === 'field' ? (
+                      <div className={classes.fieldRow}>
+                        <FieldName name={name} fieldId={id} />
+                        <Colon />
                         <ShapeName
                           shapeName={shapeName}
-                          onShapeSelected={() => {
-                            handleTooltipOpen({
-                              type: 'shape',
-                              data: {
-                                handleOpenSelectionModal: this.handleOpenSelectionModal,
-                                shapeId: id,
-                                setBaseShape
-                              }
-                            });
-                          }}
-
+                          onShapeSelected={() => handleTooltipOpen({
+                            type: 'field',
+                            data: {
+                              handleOpenSelectionModal: this.handleOpenSelectionModal,
+                              parentShapeId: entry.parentShapeId,
+                              fieldId: id,
+                              setFieldShape
+                            }
+                          })}
                           onParameterSelected={(bindingInfo) => {
-                            handleTooltipOpen({
-                              type: 'parameter',
-                              data: {
-                                handleOpenSelectionModal: this.handleOpenSelectionModal,
-                                contextShapeId: id,
-                                setParameterShape: (provider) => setShapeParameterInShape(id, provider, bindingInfo.parameterId),
-                                bindingInfo: bindingInfo
-                              }
-                            });
+                            const shapeId = bindingInfo.shapeId
+                            if (pushToStack) {
+                              pushToStack(shapeId)
+                            }
                           }}
                         />
                         <WriteOnly>
@@ -601,19 +553,69 @@ class ShapeViewerBase extends React.Component {
                           {isExpandable && (
                             <BasicButton
                               className={classes.addFieldButton}
-                              onClick={() => addField(id)}>
+                              onClick={() => addField(entry.fieldShapeId)}>
                               + Add Field
                           </BasicButton>
                           )}
                         </WriteOnly>
-                        <>
-                          {isObject && <ShapeNameSelector
-                            shapeId={shapeName.id}
-                            userDefinedName={shapeName.userDefinedName} />}
-                        </>
+                        <div style={{ flex: 1 }}>&nbsp;</div>
+                        {isObject && <ShapeNameSelector
+                          shapeId={shapeName.id}
+                          userDefinedName={shapeName.userDefinedName} />}
+                        <WriteOnly>
+                          <BasicButton
+                            className={classes.hiddenByDefault}
+                            onClick={() => removeField(id)}>
+                            <CancelIcon style={{ width: 15, color: '#a6a6a6' }} />
+                          </BasicButton>
+                        </WriteOnly>
                       </div>
-                    )}
-                </div>
+                    ) : (
+                        <div className={classes.shapeRow}>
+                          <ShapeName
+                            shapeName={shapeName}
+                            onShapeSelected={() => {
+                              handleTooltipOpen({
+                                type: 'shape',
+                                data: {
+                                  handleOpenSelectionModal: this.handleOpenSelectionModal,
+                                  shapeId: id,
+                                  setBaseShape
+                                }
+                              });
+                            }}
+
+                            onParameterSelected={(bindingInfo) => {
+                              handleTooltipOpen({
+                                type: 'parameter',
+                                data: {
+                                  handleOpenSelectionModal: this.handleOpenSelectionModal,
+                                  contextShapeId: id,
+                                  setParameterShape: (provider) => setShapeParameterInShape(id, provider, bindingInfo.parameterId),
+                                  bindingInfo: bindingInfo
+                                }
+                              });
+                            }}
+                          />
+                          <WriteOnly>
+                            <div style={{ padding: '.25em' }}>&nbsp;</div>
+                            {isExpandable && (
+                              <BasicButton
+                                className={classes.addFieldButton}
+                                onClick={() => addField(id)}>
+                                + Add Field
+                          </BasicButton>
+                            )}
+                          </WriteOnly>
+                          <>
+                            {isObject && <ShapeNameSelector
+                              shapeId={shapeName.id}
+                              userDefinedName={shapeName.userDefinedName} />}
+                          </>
+                        </div>
+                      )}
+                  </div>
+                </ScrollIntoViewIfNeeded>
               );
             }}
           </TooltipWrapper>
