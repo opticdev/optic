@@ -47,8 +47,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
 
   def ChangeFieldToNullable(shapeDiff: NullObjectKey): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
-    val parentObject = shapesState.flattenedShape(shapeDiff.parentObjectShapeId)
-    val field = parentObject.fields.find(x => x.name == shapeDiff.key).get
+    val field = shapesState.flattenedField(shapeDiff.fieldId)
     val commands = Seq(
       AddShape(wrapperShapeId, NullableKind.baseShapeId, ""),
       SetParameterShape(
