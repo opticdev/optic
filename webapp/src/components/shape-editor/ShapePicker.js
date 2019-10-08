@@ -82,15 +82,15 @@ const options = (concepts) => [
   PrimitiveChoice('unknown', '$unknown')
 ];
 
-const defaultState = {
+const defaultState = () => ({
   steps: [RootChoice()],
   parameters: [],
   markedComplete: []
-};
+});
 
 class ShapePicker extends React.Component {
 
-  state = defaultState;
+  state = defaultState();
 
   finish = () => {
     let _shapeId = newShapeId();
@@ -106,7 +106,6 @@ class ShapePicker extends React.Component {
           paramsForChoice: (choice) => this.state.parameters[choice.index]
         });
 
-        console.log(result);
         const [commands, shapeId] = result;
         _shapeId = shapeId;
         return commands;
@@ -120,7 +119,7 @@ class ShapePicker extends React.Component {
   };
 
   reset = () => {
-    this.setState({ ...defaultState, markedComplete: [] });
+    this.setState(defaultState());
   };
 
   canFinish = () => {
@@ -458,7 +457,8 @@ function ListChoice() {
       return true;
     },
     commands: ({ parameters, shapeId, paramsForChoice }) => {
-      return singleParameterType({ parameters, shapeId, paramsForChoice }, '$list', parameter);
+      const [commands, _someShapeId] = singleParameterType({ parameters, shapeId, paramsForChoice }, '$list', parameter);
+      return [commands, shapeId]
     },
   };
 }
@@ -721,10 +721,13 @@ function OneOfChoice() {
         return [AddShape(shapeId, '$any', ''), ...commands];
       });
 
-      const assignParamsCommands = innerIds.flatMap((id, index) => [
-        AddShapeParameter('dynamic' + index, shapeId, ''),
-        SetParameterShape(ProviderInShape(shapeId, ShapeProvider(id), 'dynamic' + index)),
-      ]);
+      const assignParamsCommands = innerIds.flatMap((id) => {
+        const parameterId = ShapesHelper.newShapeParameterId()
+        return [
+          AddShapeParameter(parameterId, shapeId, ''),
+          SetParameterShape(ProviderInShape(shapeId, ShapeProvider(id), parameterId)),
+        ]
+      });
 
       return [
         [
@@ -753,7 +756,6 @@ function findLastIndex<T>(array, predicate) {
 function singleParameterType({ parameters, shapeId, paramsForChoice }, id, parameter) {
   const { SetBaseShape, SetParameterShape, ProviderInShape, ShapeProvider, AddShape } = ShapesCommands;
   const ParentInner = parameters[parameter];
-
   if (ParentInner.isPrimitive || ParentInner.isNamedShape) {
     const innerId = newShapeId();
     return [
@@ -770,7 +772,7 @@ function singleParameterType({ parameters, shapeId, paramsForChoice }, id, param
     ];
   } else {
     const innerId = newShapeId();
-    const ParentInnerCommands = ParentInner.commands({
+    const [ParentInnerCommands, parentInnerShapeId] = ParentInner.commands({
       shapeId: innerId,
       parameters: paramsForChoice(ParentInner),
       paramsForChoice
