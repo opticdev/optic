@@ -135,11 +135,14 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
       //@todo let's add oneOf here
       if (isPrimitive(array.head)) {
         shapeExample append ShapeExample(innerId, array.head)
+        val primitiveWrapperId = idGenerator
+        val primitiveId = primitiveShapeProvider(array.head).baseShapeId
+        commands.appendInit(AddShape(primitiveWrapperId, primitiveId, ""))
         if (fieldId.isDefined) {
           //save the example
-          commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(primitiveShapeProvider(array.head).baseShapeId), "$listItem")))
+          commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(primitiveWrapperId), "$listItem")))
         } else {
-          commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(primitiveShapeProvider(array.head).baseShapeId), "$listItem")))
+          commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(primitiveWrapperId), "$listItem")))
         }
       } else {
 
@@ -151,13 +154,15 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
         if (!didMatch) { // if no concept is matched inline it
           fromJson(array.head)(ValueShapeWithId(assignedItemShapeId), path :+ "[List Items]")
         }
+        val wrapperId = idGenerator
 
         shapeExample append ShapeExample(innerId, array.head)
+        commands.appendInit(AddShape(wrapperId, assignedItemShapeId, ""))
 
         if (fieldId.isDefined) {
-          commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(assignedItemShapeId), "$listItem")))
+          commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(wrapperId), "$listItem")))
         } else {
-          commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(assignedItemShapeId), "$listItem")))
+          commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(wrapperId), "$listItem")))
         }
       }
     }
