@@ -6,7 +6,6 @@ import com.seamless.diff.RequestDiffer._
 
 class CompoundInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDiffResult] {
   val unknownInterpreter = new UnknownInterpreter(_shapesState)
-  val oneOfInterpreter = new OneOfInterpreter(_shapesState)
   val nullableInterpreter = new NullableInterpreter(_shapesState)
   val optionalInterpreter = new OptionalInterpreter(_shapesState)
   val basicDiffInterpreter = new BasicDiffInterpreter(_shapesState)
@@ -15,7 +14,6 @@ class CompoundInterpreter(_shapesState: ShapesState) extends Interpreter[Request
     basicDiffInterpreter.interpret(diff) ++
       unknownInterpreter.interpret(diff) ++
       nullableInterpreter.interpret(diff) ++
-      optionalInterpreter.interpret(diff) ++
-      oneOfInterpreter.interpret(diff)
+      optionalInterpreter.interpret(diff)
   }
 }
