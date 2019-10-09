@@ -1,12 +1,12 @@
-import {boundParameterColor, primitiveColors} from './Types.js';
+import { boundParameterColor, primitiveColors } from './Types.js';
 
-export const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', /*'$oneOf',*/ '$identifier', '$reference', '$any', '$nullable', '$optional', '$unknown'];
+export const coreShapeIds = ['$string', '$number', '$boolean', '$object', '$list', '$map', '$oneOf', '$identifier', '$reference', '$any', '$nullable', '$optional', '$unknown'];
 export const coreShapeIdsSet = new Set(coreShapeIds);
 
 class ShapeUtilities {
   static flatten(queries, rootShapeId, depth, trail = [], acc = []) {
     const shape = queries.shapeById(rootShapeId);
-    const {name, baseShapeId, bindings, fields} = shape;
+    const { name, baseShapeId, bindings, fields } = shape;
     if (coreShapeIdsSet.has(rootShapeId)) {
       return;
     }
@@ -26,7 +26,7 @@ class ShapeUtilities {
 
     if (shouldTraverseFields) {
       const parentObject = ShapeUtilities.resolveObjectWithFields(queries, shape);
-      const {fields} = parentObject;
+      const { fields } = parentObject;
       fields.forEach(field => {
         if (field.isRemoved) {
           return;
@@ -69,7 +69,7 @@ class ShapeUtilities {
   }
 
   static isInlineObject(queries, field) {
-    const {fieldShapeDescriptor} = field;
+    const { fieldShapeDescriptor } = field;
 
     if (fieldShapeDescriptor.FieldShapeFromShape) {
       const shape = queries.shapeById(fieldShapeDescriptor.FieldShapeFromShape.shapeId);
@@ -97,7 +97,7 @@ class ShapeUtilities {
   }
 
   static fieldShapeName(queries, shape, field, parentBindings) {
-    const {fieldShapeDescriptor} = field;
+    const { fieldShapeDescriptor } = field;
     if (fieldShapeDescriptor.FieldShapeFromShape) {
       const fieldShapeId = fieldShapeDescriptor.FieldShapeFromShape.shapeId;
       const fieldShape = queries.shapeById(fieldShapeId);
@@ -117,6 +117,7 @@ class ShapeUtilities {
   }
 
   static shapeName(queries, baseShape, bindingContextShape, bindings) {
+    console.log('output', { bindingContextShape, bindings })
     const baseShapeOfBaseShape = queries.shapeById(baseShape.baseShapeId);
     const base = {
       id: baseShape.shapeId,
@@ -125,13 +126,18 @@ class ShapeUtilities {
       userDefinedName: baseShape.name,
       baseShapeName: baseShape.name || baseShapeOfBaseShape.name,
     };
-    if (baseShape.parameters.length === 0 && baseShapeOfBaseShape.parameters.length === 0) {
+    console.log('output', { baseShape, baseShapeOfBaseShape })
+    if (
+      bindingContextShape.parameters.length === 0
+      && baseShape.parameters.length === 0
+      && baseShapeOfBaseShape.parameters.length === 0
+    ) {
       return {
         ...base,
         bindingInfo: []
       };
     }
-    const parameters = [...baseShape.parameters];
+    const parameters = [...bindingContextShape.parameters, ...baseShape.parameters];
     const parameterIds = new Set(parameters.map(x => x.parameterId));
     baseShapeOfBaseShape.parameters.forEach((x => {
       if (!parameterIds.has(x.parameterId)) {
@@ -143,7 +149,7 @@ class ShapeUtilities {
         const binding = bindings[parameter.shapeParameterId];
         if (binding) {
           if (binding.ShapeProvider) {
-            const {shapeId} = binding.ShapeProvider;
+            const { shapeId } = binding.ShapeProvider;
             const shape = queries.shapeById(shapeId);
             return {
               binding,

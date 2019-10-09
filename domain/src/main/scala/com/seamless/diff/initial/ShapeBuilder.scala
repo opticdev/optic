@@ -125,12 +125,7 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     if (array.isEmpty) {
       val unknownWrapperId = idGenerator
       commands.appendInit(AddShape(unknownWrapperId, UnknownKind.baseShapeId, ""))
-      if (fieldId.isDefined) {
-        commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(unknownWrapperId), "$listItem")))
-      } else {
-        commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(unknownWrapperId), "$listItem")))
-      }
-
+      commands.appendDescribe(SetParameterShape(ProviderInShape(id, ShapeProvider(unknownWrapperId), "$listItem")))
     } else {
       //@todo let's add oneOf here
       if (isPrimitive(array.head)) {
@@ -138,12 +133,8 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
         val primitiveWrapperId = idGenerator
         val primitiveId = primitiveShapeProvider(array.head).baseShapeId
         commands.appendInit(AddShape(primitiveWrapperId, primitiveId, ""))
-        if (fieldId.isDefined) {
-          //save the example
-          commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(primitiveWrapperId), "$listItem")))
-        } else {
-          commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(primitiveWrapperId), "$listItem")))
-        }
+        commands.appendDescribe(SetParameterShape(ProviderInShape(id, ShapeProvider(primitiveWrapperId), "$listItem")))
+
       } else {
 
         val matchedConcept = ShapeResolver.handleObject(array.head)
@@ -158,12 +149,7 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
 
         shapeExample append ShapeExample(innerId, array.head)
         commands.appendInit(AddShape(wrapperId, assignedItemShapeId, ""))
-
-        if (fieldId.isDefined) {
-          commands.appendDescribe(SetParameterShape(ProviderInField(innerId, ShapeProvider(wrapperId), "$listItem")))
-        } else {
-          commands.appendDescribe(SetParameterShape(ProviderInShape(innerId, ShapeProvider(wrapperId), "$listItem")))
-        }
+        commands.appendDescribe(SetParameterShape(ProviderInShape(id, ShapeProvider(wrapperId), "$listItem")))
       }
     }
   }

@@ -15,6 +15,7 @@ object ShapeDiffer {
   case class UnsetValue(expected: ShapeEntity) extends ShapeDiffResult
   case class NullValue(expected: ShapeEntity) extends ShapeDiffResult
   case class ShapeMismatch(expected: ShapeEntity, actual: Json) extends ShapeDiffResult
+  case class ListItemShapeMismatch(expectedList: ShapeEntity, actualList: Json, expectedItem: ShapeEntity, actualItem: Json) extends ShapeDiffResult
   case class UnsetObjectKey(parentObjectShapeId: ShapeId, fieldId: FieldId, key: String, expected: ShapeEntity) extends ShapeDiffResult
   case class NullObjectKey(parentObjectShapeId: ShapeId, fieldId: FieldId, key: String, expected: ShapeEntity) extends ShapeDiffResult
   case class UnexpectedObjectKey(parentObjectShapeId: ShapeId, key: String, expected: ShapeEntity, actual: Json) extends ShapeDiffResult
@@ -25,8 +26,6 @@ object ShapeDiffer {
 
   //@TODO change bindings to UsageTrail
   def diff(expectedShape: ShapeEntity, actualShapeOption: Option[Json])(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty): Iterator[ShapeDiffResult] = {
-    // println(expectedShape, actualShape, bindings)
-
     val coreShape = toCoreShape(expectedShape, shapesState)
     if (actualShapeOption.isEmpty) {
       val diff = coreShape match {
@@ -75,7 +74,10 @@ object ShapeDiffer {
               val diff = ShapeDiffer.diff(itemShape.get, Some(item))
               diff.flatMap {
                 case sd: NoDiff => None
-                case x => Some(x)
+                case sd: ShapeMismatch => Some(ListItemShapeMismatch(expectedShape, actualShape, itemShape.get, item))
+                case x => {
+                  None
+                }
               }
             })
           } else {
