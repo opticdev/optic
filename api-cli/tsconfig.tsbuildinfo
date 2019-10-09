@@ -521,10 +521,6 @@
         "version": "47b61830eb01626e2e6dbbbedd015287f038125c7d1815bd7212f410d8f814ca",
         "signature": "7330d90ccede82fffa028e03ffc2dbdb751d882b85577d1a3db76bb28226fa71"
       },
-      "./src/commands/login.ts": {
-        "version": "7483dd853c2dac46e4a7c86df0cac343337481409f434bcb6db6e082132267c5",
-        "signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
-      },
       "./src/lib/log-helper.ts": {
         "version": "0bf0a2716dbfd9d2c7392ee4bf2902a2623a90f50a3d5eaa63153c34049dcde4",
         "signature": "5a8ae80727e9d59e31bf36ad6440dea9345e390291791ed32e77cb4a6ebdd6d4"
@@ -1428,10 +1424,6 @@
         "./node_modules/@types/js-yaml/index.d.ts",
         "./src/lib/analytics.ts",
         "./node_modules/open/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/commands/login.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -3006,7 +2998,6 @@
       "./node_modules/colors/index.d.ts",
       "./node_modules/open/index.d.ts",
       "./src/commands/init.ts",
-      "./src/commands/login.ts",
       "./src/lib/log-helper.ts",
       "./node_modules/@types/range-parser/index.d.ts",
       "./node_modules/@types/express-serve-static-core/index.d.ts",
