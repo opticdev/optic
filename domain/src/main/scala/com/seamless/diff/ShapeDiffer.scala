@@ -76,7 +76,8 @@ object ShapeDiffer {
                 case sd: NoDiff => None
                 case sd: ShapeMismatch => Some(ListItemShapeMismatch(expectedShape, actualShape, itemShape.get, item))
                 case x => {
-                  None
+                  println("diff within list")
+                  Some(x)
                 }
               }
             })
@@ -134,7 +135,10 @@ object ShapeDiffer {
                 case d: UnsetValue => Some(UnsetObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get))
                 case d: NullValue => Some(NullObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get))
                 case x: NoDiff => None
-                case x => Some(x)
+                case x => {
+                  println("diff within object key")
+                  Some(x)
+                }
               }
             } else {
               None
