@@ -138,26 +138,6 @@ class LocalDiffManager extends React.Component {
       selectedInterpretationIndex: 0
     })
 
-    const ConceptNamer = function ({ shapeId }) {
-      const { value, setValue } = React.useContext(ConceptNameContext)
-      return (
-        <div style={{ marginBottom: 15 }}>
-          <Typography variant="caption">{interpretations[value.selectedInterpretationIndex].metadataJs.nameRequests[0].description}</Typography>
-          <div>
-            <TextField
-              placeholder={'Name Concept'}
-              value={value.names[shapeId] || ''}
-              onChange={(e) => setValue({
-                ...value,
-                names: {
-                  ...value.names,
-                  [shapeId]: e.target.value
-                }
-              })} />
-          </div>
-        </div>
-      )
-    }
     return (
       <ConceptNameStore>
         <ConceptNameContext.Consumer>
@@ -165,7 +145,7 @@ class LocalDiffManager extends React.Component {
             const { value, setValue } = context
             const { names, selectedInterpretationIndex } = value;
             const interpretation = interpretations[selectedInterpretationIndex]
-            const { commands, metadataJs } = interpretation
+            const { commands } = interpretation
             const shapeNameCommands = Object.entries(names).map(([shapeId, name]) => ShapesCommands.RenameShape(shapeId, name || ''));
             const allCommands = [...JsonHelper.seqToJsArray(commands), ...shapeNameCommands];
             console.log(commands, allCommands)
