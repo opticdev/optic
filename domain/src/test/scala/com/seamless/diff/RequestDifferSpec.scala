@@ -118,7 +118,7 @@ class RequestDifferSpec extends FunSpec {
           val diffs = RequestDiffer.compare(interaction, f.rfcService.currentState(f.rfcId))
           val diff = diffs.next()
           println(diff)
-          assert(diff == RequestDiffer.UnmatchedHttpMethod("_GenericsPath", interaction))
+          assert(diff == RequestDiffer.UnmatchedHttpMethod("_GenericsPath", interaction.apiRequest.method, interaction))
           assert(diffs.isEmpty)
         }
         it("should notice mismatched fields in the Pet shape") {
@@ -244,18 +244,18 @@ class RequestDifferSpec extends FunSpec {
       var diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
       assert(diff.hasNext)
       var next = diff.next()
-      assert(next == RequestDiffer.UnmatchedHttpMethod("root", interaction))
+      assert(next == RequestDiffer.UnmatchedHttpMethod("root", interaction.apiRequest.method, interaction))
       var interpretation = interpreter.interpret(next).head
-      println(diff, interpretation.description)
+//      println(diff, interpretation.description)
       val requestId = interpretation.commands.head.asInstanceOf[AddRequest].requestId
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
       assert(diff.hasNext)
       next = diff.next()
-      assert(next == RequestDiffer.UnmatchedHttpStatusCode(requestId, interaction))
+      assert(next == RequestDiffer.UnmatchedHttpStatusCode(requestId, 200, interaction))
       interpretation = interpreter.interpret(next).head
-      println(diff, interpretation.description)
+//      println(diff, interpretation.description)
       val responseId = interpretation.commands.head.asInstanceOf[AddResponse].responseId
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
@@ -270,7 +270,7 @@ class RequestDifferSpec extends FunSpec {
            "deleted" : false
          }""")))
       interpretation = interpreter.interpret(next).head
-      println(diff, interpretation.description)
+//      println(diff, interpretation.description)
 
       rfcService.handleCommandSequence(rfcId, interpretation.commands)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))

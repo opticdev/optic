@@ -4,10 +4,21 @@ import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.ShapesHelper._
 import com.seamless.contexts.shapes.{ShapeEntity, ShapesState}
 import io.circe._
+import io.circe.generic.auto._
+import io.circe.syntax._
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportDescendentClasses}
 
 
 object ShapeDiffer {
-  sealed trait ShapeDiffResult {}
+
+  @JSExportDescendentClasses
+  @JSExportAll
+  sealed trait ShapeDiffResult {
+    def asJs = {
+      import io.circe.scalajs.convertJsonToJs
+      convertJsonToJs(this.asJson)
+    }
+  }
   case class NoDiff() extends ShapeDiffResult
   case class NoExpectedShape(expected: ShapeEntity, actual: Option[Json]) extends ShapeDiffResult
   case class WeakNoDiff(expected: ShapeEntity, actual: Option[Json]) extends ShapeDiffResult

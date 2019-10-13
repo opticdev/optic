@@ -1,8 +1,9 @@
 import React from 'react';
 import {GenericContextFactory} from './GenericContextFactory';
 
-const ColorTags = {
+export const ColorTags = {
   ADDED: 'added',
+  CHANGED: 'changed',
 }
 
 const {
@@ -34,10 +35,21 @@ export {
 export const AddedGreen = '#17c8a3'
 export const AddedGreenBackground = 'rgba(23,200,163,0.1)'
 
+export const ChangedYellow = '#c8b768'
+export const ChangedYellowBackground = 'rgba(200,183,104,0.1)'
+
 
 export const AddedStyle = (paddingLeft = 15, paddingTop = 9, paddingBottom = 9) => ({
   borderLeft: `3px solid ${AddedGreen}`,
   backgroundColor: AddedGreenBackground,
+  paddingLeft,
+  paddingTop,
+  paddingBottom
+})
+
+export const ChangedStyle = (paddingLeft = 15, paddingTop = 9, paddingBottom = 9) => ({
+  borderLeft: `3px solid ${ChangedYellow}`,
+  backgroundColor: ChangedYellowBackground,
   paddingLeft,
   paddingTop,
   paddingBottom

@@ -188,7 +188,7 @@ class LocalDiffManager extends React.Component {
     )
   }
 
-  renderStandardDiffWidget(item, interpretations) {
+  renderStandardDiffWidget(item, diff, interpretations) {
     const { rfcService, diffSessionManager, diffStateProjections, classes, cachedQueryResults, rfcId, eventStore } = this.props
     const { applyCommands } = this.props;
     const { diffState } = diffSessionManager
@@ -205,6 +205,7 @@ class LocalDiffManager extends React.Component {
         diffSessionManager={diffSessionManager}
         diffStateProjections={diffStateProjections}
         diffState={diffState}
+        diff={diff}
         item={item}
         readyToFinish={readyToFinish}
         interpretations={interpretations}
@@ -251,7 +252,7 @@ class LocalDiffManager extends React.Component {
         const pathId = queries.resolvePath(item.sample.request.url)
         console.log('xxx1', diffItem.toString(), interpretations.toString())
         const otherInterpretations = JsonHelper.seqToJsArray(compoundInterpreter.interpret(diffItem));
-        return this.renderStandardDiffWidget({ ...item, pathId }, otherInterpretations)
+        return this.renderStandardDiffWidget({ ...item, pathId }, diffItem, otherInterpretations)
       }
     }
 

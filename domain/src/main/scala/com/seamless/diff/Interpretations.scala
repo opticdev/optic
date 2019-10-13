@@ -12,8 +12,7 @@ import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 @JSExportAll
-case class DiffInterpretation(title: String,
-                              description: String,
+case class DiffInterpretation(actionTitle: String,
                               commands: Seq[RfcCommand],
                               metadata: FrontEndMetadata = FrontEndMetadata()) {
   def metadataJs = metadata.asJs
@@ -22,6 +21,8 @@ case class DiffInterpretation(title: String,
 case class FrontEndMetadata(affectedIds: Seq[String] = Seq.empty,
                             examples: Seq[ShapeExample] = Seq.empty,
                             example: Option[Json] = None,
+                            added: Boolean = false,
+                            changed: Boolean = false,
                             affectedConceptIds: Seq[String] = Seq.empty) {
 
   def asJs: js.Any = {
@@ -40,10 +41,10 @@ object Interpretations {
       Commands.AddRequest(id, pathId, method)
     )
     DiffInterpretation(
-      "New Operation",
-      s"Optic observed a ${method.toUpperCase} operation for this path",
+      s"Add ${method.toUpperCase} Request",
+//      s"Optic observed a ${method.toUpperCase} operation for this path",
       commands,
-      FrontEndMetadata(affectedIds = Seq(id))
+      FrontEndMetadata(affectedIds = Seq(id), added = true)
     )
   }
 
@@ -53,17 +54,18 @@ object Interpretations {
       Commands.AddResponse(id, requestId, statusCode)
     )
     DiffInterpretation(
-      s"New Response",
-      s"A ${statusCode} response was observed.",
+      s"Add ${statusCode} Response",
+//      s"A ${statusCode} response was observed.",
       commands,
-      FrontEndMetadata(affectedIds = Seq(id))
+      FrontEndMetadata(affectedIds = Seq(id), added = true)
     )
   }
 
+  //@todo check on this
   def RequireManualIntervention(message: String, affectedIds: Seq[String]) = {
     DiffInterpretation(
-      "Manual Intervention Required",
-      message,
+      "Continue",
+//      message,
       Seq.empty,
       FrontEndMetadata(affectedIds = affectedIds)
     )
@@ -75,8 +77,8 @@ object Interpretations {
     )
 
     DiffInterpretation(
-      s"Request Content-Type Changed",
-      s"The content type of the request was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
+      s"Set Request Content-Type to ${newContentType}",
+//      s"The content type of the request was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
       commands,
       FrontEndMetadata(affectedIds = Seq(requestId, requestId + ".content_type"))
     )
@@ -88,8 +90,8 @@ object Interpretations {
     )
 
     DiffInterpretation(
-      s"Response Content-Type Changed",
-      s"The content type of the ${responseStatusCode} response was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
+      s"Set ${responseStatusCode} Response Content-Type to ${newContentType}",
+//      s"The content type of the ${responseStatusCode} response was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
       commands,
       FrontEndMetadata(affectedIds = Seq(responseId, responseId + ".content_type"))
     )
@@ -112,10 +114,10 @@ object Interpretations {
     )
 
     DiffInterpretation(
-      s"Request Body Observed",
-      desc,
+      s"Add Request Body",
+//      desc,
       commands,
-      FrontEndMetadata(affectedIds = Seq(wrapperId), examples = shape.examples, example = Some(actual))
+      FrontEndMetadata(affectedIds = Seq(wrapperId), examples = shape.examples, example = Some(actual), added = true)
     )
   }
 
@@ -131,20 +133,18 @@ object Interpretations {
 
     val desc = if (parentConcept.isDefined) {
       s"A new field '${key}' was observed in <b>${parentConcept.get._2}</b>"
-      ,
     } else {
       s"A new field '${key}' was observed in the request body."
-      ,
     }
 
     val affectedConcepts = if (parentConcept.isDefined) Seq(parentConcept.get._1) else Seq.empty
 
     DiffInterpretation(
-      s"A Field was Added",
+      s"Add <b>${key}</b>",
       //@todo change copy based on if it's a concept or not
-      desc,
+//      desc,
       commands,
-      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts)
+      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts, added = true)
     )
   }
 
@@ -156,9 +156,9 @@ object Interpretations {
     )
 
     DiffInterpretation(
-      s"A field's type was changed",
+      s"Change <b>${key}</b> shape",
       //@todo change copy based on if it's a concept or not
-      s"The type of '${key}' was changed in the request.",
+//      s"The type of '${key}' was changed in the request.",
       commands,
       FrontEndMetadata(affectedIds = Seq(fieldId))
     )
@@ -181,10 +181,10 @@ object Interpretations {
     )
 
     DiffInterpretation(
-      s"Response Body Observed",
-      desc,
+      s"Add Response Body",
+//      desc,
       commands,
-      FrontEndMetadata(affectedIds = Seq(wrapperId), examples = shape.examples, example = Some(actual))
+      FrontEndMetadata(affectedIds = Seq(wrapperId), examples = shape.examples, example = Some(actual), added = true)
     )
   }
 
@@ -208,10 +208,10 @@ object Interpretations {
     val affectedConcepts = if (parentConcept.isDefined) Seq(parentConcept.get._1) else Seq.empty
 
     DiffInterpretation(
-      s"A Field was Added",
-      desc,
+      s"Add ${key}",
+//      desc,
       commands,
-      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts)
+      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts, added = true)
     )
 
   }
@@ -224,9 +224,9 @@ object Interpretations {
     )
 
     DiffInterpretation(
-      s"A field's type was changed",
+      s"Change <b>${key}</b> shape",
       //@todo change copy based on if it's a concept or not
-      s"The type of '${key}' was changed.",
+//      s"The type of '${key}' was changed.",
       commands,
       FrontEndMetadata(affectedIds = Seq(fieldId))
     )

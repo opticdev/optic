@@ -9,7 +9,7 @@ class UnmatchedUrlInterpreter extends Interpreter[RequestDiffResult] {
       case d: RequestDiffer.UnmatchedUrl => Seq(
         DiffInterpretation(
           "Unrecognized URL Observed",
-          "Optic saw a request to a url that does not match any paths",
+//          "Optic saw a request to a url that does not match any paths",
           Seq.empty
         )
       )

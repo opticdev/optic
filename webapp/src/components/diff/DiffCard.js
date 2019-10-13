@@ -75,7 +75,6 @@ class DiffCard extends React.Component {
   render() {
     const {classes, interpretation, ignore, accept, cardForm} = this.props;
     const {title, description, metadataJs} = interpretation;
-
     const {example} = metadataJs;
 
     const canApprove = true;

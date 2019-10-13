@@ -82,12 +82,13 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
       ) ++ f(wrapperShapeId)
 
     DiffInterpretation(
-      "Multiple Shapes Observed",
-      "Optic observed multiple different shapes. If it can be any of these shapes, make it a OneOf",
+      "Change to a One Of",
+//      "Optic observed multiple different shapes. If it can be any of these shapes, make it a OneOf",
       commands,
       FrontEndMetadata(
         example = Some(actual),
-        affectedIds = Seq(expectedShape.shapeId)
+        affectedIds = Seq(expectedShape.shapeId),
+        changed = true
       )
     )
   }
@@ -101,12 +102,13 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     )
 
     DiffInterpretation(
-      "Unmatched Shape Observed",
-      "Optic observed a shape that did not match any of the expected shapes. If it is expected, add it to the choices",
+      "Add to One Of",
+//      "Optic observed a shape that did not match any of the expected shapes. If it is expected, add it to the choices",
       commands,
       FrontEndMetadata(
         example = Some(actual),
-        affectedIds = Seq(expected.shapeId)
+        affectedIds = Seq(expected.shapeId),
+        changed = true
       )
     )
   }

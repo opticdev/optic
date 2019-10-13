@@ -11,11 +11,18 @@ import { Operation } from '../PathPage';
 import { isStartable } from './LocalDiffManager';
 import { toInteraction, RequestDiffer, JsonHelper, Interpreters, ShapesCommands } from '../../engine';
 import { NavigationStore } from '../../contexts/NavigationContext';
-import { ColoredIdsStore } from '../../contexts/ColorContext';
+import {
+  AddedGreen,
+  AddedGreenBackground,
+  ChangedYellow,
+  ChangedYellowBackground,
+  ColoredIdsStore, ColorTags
+} from '../../contexts/ColorContext';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { ShapeDialogStore, withShapeDialogContext } from '../../contexts/ShapeDialogContext';
 import ShapeViewerStack from '../shape-editor/ShapeViewerStack';
+import Interpreter from './Interpreter';
 
 class DiffPageWrapper extends React.Component {
   state = {
@@ -40,6 +47,7 @@ class DiffPageWrapper extends React.Component {
     const {
       classes,
       rfcId,
+      diff,
       rfcService, eventStore,
       cachedQueryResults, applyCommands,
       diffSessionManager, diffState, diffStateProjections,
@@ -61,28 +69,51 @@ class DiffPageWrapper extends React.Component {
     });
     const startableInteractionsForPath = diffStateProjections.sampleItemsGroupedByPath[pathId].filter(x => isStartable(diffState, x));
 
-    const interpretation = interpretations.length === 0 ? null : interpretations[this.state.selectedInterpretationIndex];
-    const commands = interpretations.length === 0 ? [] : JsonHelper.seqToJsArray(interpretation.commands);
-    const cardNavigator = interpretations.length === 0 ? null : (
-      <div style={{ margin: '2em 0', width: 380 }}>
-        <Typography variant="overline">{interpretations.length} diff interpretations</Typography>
-        <Select
-          value={this.state.selectedInterpretationIndex}
-          onChange={(e) => this.setSelectedInterpretationIndex(e.target.value)}
-          fullWidth
-        >
-          {interpretations.map((interpretation, index) => {
-            return (
-              <MenuItem value={index}>
-                {interpretation.title}
-              </MenuItem>
-            );
-          })}
-        </Select>
-      </div>
-    );
+    const interpretation = interpretations[this.state.selectedInterpretationIndex] || null;
+    const commands = interpretation ? JsonHelper.seqToJsArray(interpretation.commands) : [];
+
+    {/*<div style={{ margin: '2em 0', width: 380 }}>*/}
+    {/*  <Typography variant="overline">{interpretations.length} diff interpretations</Typography>*/}
+    {/*  <Select*/}
+    {/*    value={this.state.selectedInterpretationIndex}*/}
+    {/*    onChange={(e) => this.setSelectedInterpretationIndex(e.target.value)}*/}
+    {/*    fullWidth*/}
+    {/*  >*/}
+    {/*    {interpretations.map((interpretation, index) => {*/}
+    {/*      return (*/}
+    {/*        <MenuItem value={index}>*/}
+    {/*          {interpretation.title}*/}
+    {/*        </MenuItem>*/}
+    {/*      );*/}
+    {/*    })}*/}
+    {/*  </Select>*/}
+    {/*</div>*/}
+
+
+
     commands.push(...this.state.additionalCommands);
+
+    const accept = () => onAccept([...commands, ...this.state.additionalCommands])
+
     const affectedIds = interpretation ? interpretation.metadataJs.affectedIds : [];
+    const colors = interpretation && ((() => {
+      if (interpretation.metadataJs.added) {
+        return ColorTags.ADDED
+      } else if (interpretation.metadataJs.changed) {
+        return ColorTags.CHANGED
+      }
+    }))()
+
+    const cardNavigator = interpretations.length === 0 ? null : (
+      <Interpreter
+        diff={diff}
+        accept={accept}
+        ignore={onIgnore}
+        interpretations={interpretations}
+        selectedInterpretationIndex={this.state.selectedInterpretationIndex}
+        setInterpretation={this.setSelectedInterpretationIndex}
+      />
+    );
 
     return (
       <SimulatedCommandContext
@@ -91,7 +122,7 @@ class DiffPageWrapper extends React.Component {
         eventStore={eventStore}
         commands={commands}
       >
-        <ColoredIdsStore ids={affectedIds}>
+        <ColoredIdsStore ids={affectedIds} tag={colors}>
           <DiffPage
             cardNavigator={cardNavigator}
             collapseLeftMargin={true}
@@ -115,10 +146,6 @@ class DiffPageWrapper extends React.Component {
               // console.log({ startableInteractionsForPath, startableInteractionsWithNoDiff });
               startableInteractionsWithNoDiff.forEach(x => diffSessionManager.finishInteraction(x.index));
             }}
-            accept={(commands) => {
-              onAccept([...commands, ...this.state.additionalCommands])
-            }}
-            ignore={onIgnore}
           >
             <NavigationStore addAdditionalCommands={this.addAdditionalCommands}
               inDiffMode={true}

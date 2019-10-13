@@ -63,10 +63,10 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
     )
     println(commands)
     DiffInterpretation(
-      "First value Observed",
-      "Optic observed this shape for the first time. Is this the expected shape?",
+      "Replace Unknown with Shape",
+//      "Optic observed this shape for the first time. Is this the expected shape?",
       commands,
-      FrontEndMetadata(example = Some(raw), affectedIds = Seq(expectedShapeId))
+      FrontEndMetadata(example = Some(raw), affectedIds = Seq(expectedShapeId), added = true)
     )
   }
 }

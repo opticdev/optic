@@ -20,7 +20,13 @@ import CoreShapeViewer from './CoreShapeViewer.js';
 import { FieldName } from './NameInputs.js';
 import { ShapeUtilities } from './ShapeUtilities.js';
 import { unboundParameterColor } from './Types.js';
-import { AddedStyle, withColoredIdsContext, AddedGreenBackground } from '../../contexts/ColorContext';
+import {
+  AddedStyle,
+  withColoredIdsContext,
+  AddedGreenBackground,
+  ColorTags,
+  ChangedStyle, AddedGreen, ChangedYellow
+} from '../../contexts/ColorContext';
 import classNames from 'classnames';
 import ShapeNameSelector from '../diff/ShapeNameSelector';
 import ShapePicker from './ShapePicker';
@@ -429,15 +435,17 @@ function withPropagationStopped(f) {
   };
 }
 
-function BindingInfoBase({ coloredIds = [], bindingInfo, onClick }) {
+function BindingInfoBase({ coloredIds = [], coloredTag, bindingInfo, onClick }) {
 
   if (bindingInfo.binding) {
     if (bindingInfo.binding.ShapeProvider) {
-      const isAdded = coloredIds.includes(bindingInfo.binding.ShapeProvider.shapeId);
+      const shouldHighlight = coloredIds.includes(bindingInfo.binding.ShapeProvider.shapeId);
+      const highlightColor = coloredTag === ColorTags.ADDED ? AddedGreen : ChangedYellow
+
       return (
-        <ScrollIntoViewIfNeeded active={isAdded} elementType="span">
+        <ScrollIntoViewIfNeeded active={shouldHighlight} elementType="span">
           <BasicButton
-            style={{ color: bindingInfo.color, borderBottom: isAdded ? '2px solid rgb(30,192,146)' : undefined }}
+            style={{ color: bindingInfo.color, borderBottom: shouldHighlight ? `2px solid ${highlightColor}` : undefined }}
             onClick={onClick}
           >{bindingInfo.boundName}</BasicButton>
         </ScrollIntoViewIfNeeded>
@@ -494,7 +502,7 @@ function Colon() {
 class ShapeViewerBase extends React.Component {
 
   render() {
-    const { classes, shape, coloredIds = [], shapeDialog = {} } = this.props;
+    const { classes, shape, coloredIds = [], coloredTag, shapeDialog = {} } = this.props;
     const { pushToStack } = shapeDialog
     const { cachedQueryResults, queries, mode } = this.props;
     const {
@@ -521,14 +529,15 @@ class ShapeViewerBase extends React.Component {
       })
       .map(entry => {
         const { id, type, name, shapeName, trail, isExpandable } = entry;
-        const isAdded = coloredIds.includes(id);
+        const shouldHighlight = coloredIds.includes(id);
+        const highlightColor = coloredTag === ColorTags.ADDED ? classes.shapeAdded : classes.shapeChanged
         const isObject = shapeName.coreShapeId === '$object';
         return (
           <TooltipWrapper>
             {({ handleTooltipOpen, handleTooltipClose, ...rest }) => {
               return (
-                <ScrollIntoViewIfNeeded active={isAdded}>
-                  <div className={classNames(classes.row, { [classes.shapeAdded]: isAdded })} key={id} {...rest}>
+                <ScrollIntoViewIfNeeded active={shouldHighlight}>
+                  <div className={classNames(classes.row, { [highlightColor]: shouldHighlight })} key={id} {...rest}>
                     <div className={classes.expansionControlContainer}>
                       {isExpandable ? <ExpansionControl trail={trail} /> : null}
                     </div>
@@ -727,6 +736,9 @@ const styles = (theme) => ({
   },
   shapeAdded: {
     ...AddedStyle(0, 0, 0),
+  },
+  shapeChanged: {
+    ...ChangedStyle(0, 0, 0),
   },
   addFieldButton: {
     color: '#3682e3'

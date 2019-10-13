@@ -63,10 +63,10 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       SetFieldShape(FieldShapeFromShape(field.fieldId, wrapperShapeId)),
     )
     DiffInterpretation(
-      "Null value Observed",
-      s"Optic expected to see a value for the key ${shapeDiff.key} and instead saw null. If it is allowed to be null, make it Nullable",
+      s"Make ${shapeDiff.key} nullable",
+//      s"Optic expected to see a value for the key ${shapeDiff.key} and instead saw null. If it is allowed to be null, make it Nullable",
       commands,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.parentObjectShapeId, shapeDiff.fieldId))
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.parentObjectShapeId, shapeDiff.fieldId), changed = true)
     )
   }
 
@@ -80,10 +80,10 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       SetRequestBodyShape(requestDiffResult.requestId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )
     DiffInterpretation(
-      "Null value Observed",
-      s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
+      "Make Request Body nullable",
+//      s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
       commands,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId))
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
     )
   }
 
@@ -97,10 +97,10 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       SetResponseBodyShape(requestDiffResult.responseId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )
     DiffInterpretation(
-      "Null value Observed",
-      s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
+      "Makes Response Body nullable",
+//      s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
       commands,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId))
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
     )
   }
 }
