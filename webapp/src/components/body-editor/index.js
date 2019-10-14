@@ -173,7 +173,7 @@ class BodyEditor extends React.Component {
         <BodyViewer shapeId={shapeId}/>
         {nestedId && (nestedId !== shapeId) && (
           <div style={{paddingTop: 5, paddingLeft: 40, paddingRight: 0}}><BodyViewer shapeId={nestedId}
-                                                                                     shapeHeaderText="⮑ Nested Shape Under Reviewed"/>
+                                                                                     shapeHeaderText="⮑ Nested Shape Under Review"/>
           </div>
         )}
       </LayoutWrapper>

@@ -74,7 +74,7 @@ const styles = theme => ({
 class OperationBase extends React.Component {
   render() {
     const { inDiffMode } = this.props;
-    const { classes, request, handleCommands, mode, cachedQueryResults, coloredIds = [], highlightNestedShape } = this.props;
+    const { classes, request, handleCommands, mode, cachedQueryResults, coloredIds = [], highlightNestedShape = {} } = this.props;
     const { responses, requestParameters } = cachedQueryResults;
 
     const { requestId, requestDescriptor } = request;
