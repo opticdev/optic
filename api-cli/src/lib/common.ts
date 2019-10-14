@@ -15,7 +15,7 @@ export function packageRequest(req: Request) {
     let body = req.body
     if (!req.headers['transfer-encoding'] && !req.headers['content-length']) {
         //@HACK: 
-        body = null
+        body = undefined
     }
     const request: IRequestMetadata = {
         queryParameters: req.query,

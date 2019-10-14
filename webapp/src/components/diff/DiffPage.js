@@ -46,23 +46,18 @@ class DiffPage extends React.Component {
   }
 
   render() {
-    const { 
-      classes, children, 
-      collapseLeftMargin, 
+    const {
+      classes, children,
+      collapseLeftMargin,
       cardForm, cardNavigator = null,
-      interpretation, accept, ignore, 
-      readyToFinish, finish, 
-      progress 
+      interpretation, accept, ignore,
+      readyToFinish, finish,
+      progress
     } = this.props
-    
+
     const card = (() => {
       if (readyToFinish) {
         return <ConfirmCard finish={finish} />
-      }
-      
-      if (interpretation) {
-        const commands = JsonHelper.seqToJsArray(interpretation.commands);
-        return <DiffCard cardForm={cardForm} interpretation={interpretation} accept={() => accept(commands)} ignore={ignore} />
       }
     })()
 

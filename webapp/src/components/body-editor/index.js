@@ -56,7 +56,7 @@ class BodyViewerWithoutContext extends React.Component {
     const {history} = this.props;
     const {classes} = this.props;
     const {onShapeSelected} = this.props;
-    const {baseUrl, shapeId, queries, contentType} = this.props;
+    const {baseUrl, shapeId, shapeHeaderText = 'Shape', queries, contentType} = this.props;
 
     const shape = queries.shapeById(shapeId);
     // console.log(shape);
@@ -70,7 +70,7 @@ class BodyViewerWithoutContext extends React.Component {
               paddingRight: 8,
               flex: 1,
               color: primary
-            }}>Shape</Typography>
+            }}>{shapeHeaderText}</Typography>
           <Typography
             variant="overline"
             style={{
@@ -151,7 +151,7 @@ class BodyEditor extends React.Component {
   }
 
   render() {
-    const {classes, mode, bodyDescriptor} = this.props;
+    const {classes, mode, bodyDescriptor, nestedId} = this.props;
     const isViewMode = mode === EditorModes.DOCUMENTATION;
     const normalizedBodyDescriptor = getNormalizedBodyDescriptor(bodyDescriptor);
     const hasBody = RequestUtilities.hasNormalizedBody(normalizedBodyDescriptor);
@@ -163,7 +163,6 @@ class BodyEditor extends React.Component {
       return this.renderForViewing({shapeId, contentType});
     }
 
-
     const body = hasBody ? (
       <LayoutWrapper>
         <div style={{display: 'flex', alignItems: 'center'}}>
@@ -172,6 +171,11 @@ class BodyEditor extends React.Component {
                      onBlur={this.changeContentType}/>
         </div>
         <BodyViewer shapeId={shapeId}/>
+        {nestedId && (nestedId !== shapeId) && (
+          <div style={{paddingTop: 5, paddingLeft: 40, paddingRight: 0}}><BodyViewer shapeId={nestedId}
+                                                                                     shapeHeaderText="⮑ Nested Shape Under Review"/>
+          </div>
+        )}
       </LayoutWrapper>
     ) : null;
 

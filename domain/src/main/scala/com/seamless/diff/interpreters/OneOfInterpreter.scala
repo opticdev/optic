@@ -19,9 +19,21 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
         d.shapeDiff match {
           case sd: ListItemShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expectedItem, sd.actualItem, id => Seq(
+              ConvertToOneOf(sd.expectedItem, sd.actualItem, sd.expectedList.shapeId, id => Seq(
                 SetParameterShape(ProviderInShape(sd.expectedList.shapeId, ShapeProvider(id), "$listItem"))
               ))
+            )
+          }
+          case sd: KeyShapeMismatch => {
+            Seq(
+              ConvertToOneOf(sd.expected, sd.actual, sd.fieldId, id => Seq(
+                SetFieldShape(FieldShapeFromShape(sd.fieldId, id))
+              ))
+            )
+          }
+          case sd: MultipleInterpretations => {
+            Seq(
+              AddToOneOf(sd.expected, sd.actual)
             )
           }
           case _ => Seq.empty
@@ -31,9 +43,20 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
         d.shapeDiff match {
           case sd: ListItemShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expectedItem, sd.actualItem, id => Seq(
+              ConvertToOneOf(sd.expectedItem, sd.actualItem, sd.expectedList.shapeId, id => Seq(
                 SetParameterShape(ProviderInShape(sd.expectedList.shapeId, ShapeProvider(id), "$listItem"))
               ))
+            )
+          }
+          case sd: KeyShapeMismatch => {
+            Seq(
+              ConvertToOneOf(sd.expected, sd.actual, sd.fieldId, id => Seq(
+                SetFieldShape(FieldShapeFromShape(sd.fieldId, id))
+              )))
+          }
+          case sd: MultipleInterpretations => {
+            Seq(
+              AddToOneOf(sd.expected, sd.actual)
             )
           }
           case _ => Seq.empty
@@ -41,39 +64,9 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
       }
       case _ => Seq.empty
     }
-    //    val y = diff match {
-    //      case d: RequestDiffer.UnmatchedRequestBodyShape => {
-    //        d.shapeDiff match {
-    //          case sd: MultipleInterpretations => {
-    //            {
-    //              val shapeParameterIds = sd.expected.descriptor.parameters match {
-    //                case DynamicParameterList(shapeParameterIds) => shapeParameterIds
-    //              }
-    //              val x = shapeParameterIds.flatMap(shapeParameterId => {
-    //                val referencedShape = resolveParameterShape(sd.expected.shapeId, shapeParameterId)
-    //                if (referencedShape.isDefined) {
-    //                  Some(Interpretations.RequireManualIntervention("you're out of luck pal", Seq.empty))
-    //                } else {
-    //                  None
-    //                }
-    //              })
-    //              x
-    //            }
-    //          }
-    //          case sd: ShapeMismatch => {
-    //
-    //          }
-    //          case sd: KeyShapeMismatch => {
-    //
-    //          }
-    //          case _ => None
-    //        }
-    //      }
-    //      case _ => None
-    //    }
   }
 
-  def ConvertToOneOf(expectedShape: ShapeEntity, actual: Json, f: Function[ShapeId, Seq[RfcCommand]]) = {
+  def ConvertToOneOf(expectedShape: ShapeEntity, actual: Json, affectedId: ShapeId, f: Function[ShapeId, Seq[RfcCommand]]) = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val p1 = ShapesHelper.newShapeParameterId()
     val p2 = ShapesHelper.newShapeParameterId()
@@ -83,18 +76,39 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
       result.commands ++ Seq(
         AddShape(wrapperShapeId, OneOfKind.baseShapeId, ""),
         AddShapeParameter(p1, wrapperShapeId, ""),
-        AddShapeParameter(p2, wrapperShapeId, ""),
         SetParameterShape(ProviderInShape(wrapperShapeId, ShapeProvider(expectedShape.shapeId), p1)),
+        AddShapeParameter(p2, wrapperShapeId, ""),
         SetParameterShape(ProviderInShape(wrapperShapeId, ShapeProvider(result.rootShapeId), p2))
       ) ++ f(wrapperShapeId)
 
     DiffInterpretation(
-      "Multiple Shapes Observed",
-      "Optic observed multiple different shapes. If it can be any of these shapes, make it a OneOf",
+      "Change to a One Of",
+//      "Optic observed multiple different shapes. If it can be any of these shapes, make it a OneOf",
       commands,
       FrontEndMetadata(
         example = Some(actual),
-        affectedIds = Seq(expectedShape.shapeId)
+        affectedIds = Seq(affectedId, p1, p2),
+        changed = true
+      )
+    )
+  }
+
+  def AddToOneOf(expected: ShapeEntity, actual: Json) = {
+    val p1 = ShapesHelper.newShapeParameterId()
+    val result = new ShapeBuilder(actual).run
+    val commands = result.commands ++ Seq(
+      AddShapeParameter(p1, expected.shapeId, ""),
+      SetParameterShape(ProviderInShape(expected.shapeId, ShapeProvider(result.rootShapeId), p1))
+    )
+
+    DiffInterpretation(
+      "Add to One Of",
+//      "Optic observed a shape that did not match any of the expected shapes. If it is expected, add it to the choices",
+      commands,
+      FrontEndMetadata(
+        example = Some(actual),
+        affectedIds = Seq(expected.shapeId),
+        changed = true
       )
     )
   }

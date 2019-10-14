@@ -3,11 +3,16 @@ package com.seamless.diff
 import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.requests._
 import com.seamless.contexts.rfc.RfcState
+import com.seamless.ddd.ExportedCommand
 import com.seamless.diff.ShapeDiffer.ShapeDiffResult
 import io.circe._
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.syntax._
+import io.circe.export.Exported
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportDescendentClasses}
 import scala.util.{Failure, Success, Try}
 
 @JSExport
@@ -57,11 +62,17 @@ object JsonHelper {
 @JSExportAll
 object RequestDiffer {
 
-  sealed trait RequestDiffResult
+  @JSExportAll
+  sealed trait RequestDiffResult {
+    def asJs = {
+      import io.circe.scalajs.convertJsonToJs
+      convertJsonToJs(this.asJson)
+    }
+  }
   case class NoDiff() extends RequestDiffResult
   case class UnmatchedUrl(interaction: ApiInteraction) extends RequestDiffResult
-  case class UnmatchedHttpMethod(pathId: PathComponentId, interaction: ApiInteraction) extends RequestDiffResult
-  case class UnmatchedHttpStatusCode(requestId: RequestId, interaction: ApiInteraction) extends RequestDiffResult
+  case class UnmatchedHttpMethod(pathId: PathComponentId, method: String, interaction: ApiInteraction) extends RequestDiffResult
+  case class UnmatchedHttpStatusCode(requestId: RequestId, statusCode: Int, interaction: ApiInteraction) extends RequestDiffResult
   case class UnmatchedResponseContentType(responseId: ResponseId, contentType: String, previousContentType: String, statusCode: Int) extends RequestDiffResult
   case class UnmatchedResponseBodyShape(responseId: ResponseId, contentType: String, responseStatusCode: Int, shapeDiff: ShapeDiffResult) extends RequestDiffResult
   case class UnmatchedRequestBodyShape(requestId: RequestId, contentType: String, shapeDiff: ShapeDiffResult) extends RequestDiffResult
@@ -101,7 +112,7 @@ object RequestDiffer {
       .find(r => r.requestDescriptor.pathComponentId == pathId && r.requestDescriptor.httpMethod == interaction.apiRequest.method)
 
     if (matchedOperation.isEmpty) {
-      return PipelineItem(None, Iterator(UnmatchedHttpMethod(pathId, interaction)))
+      return PipelineItem(None, Iterator(UnmatchedHttpMethod(pathId, interaction.apiRequest.method, interaction)))
     }
 
     val request = matchedOperation.get
@@ -142,7 +153,7 @@ object RequestDiffer {
       .find(r => r.responseDescriptor.requestId == operation.requestId && r.responseDescriptor.httpStatusCode == interaction.apiResponse.statusCode)
 
     if (matchedResponse.isEmpty) {
-      return PipelineItem(None, Iterator(UnmatchedHttpStatusCode(operation.requestId, interaction)))
+      return PipelineItem(None, Iterator(UnmatchedHttpStatusCode(operation.requestId, interaction.apiResponse.statusCode, interaction)))
     }
 
     val responseId = matchedResponse.get.responseId;

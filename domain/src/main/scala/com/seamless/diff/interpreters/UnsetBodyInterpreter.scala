@@ -37,7 +37,7 @@ class UnsetBodyInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
     val result = new ShapeBuilder(actual).run
       DiffInterpretation(
         "Unrecognized Shape Observed",
-        "Optic observed a new shape.",
+//        "Optic observed a new shape.",
         result.commands,
         FrontEndMetadata(examples = result.examples, example = Some(actual))
       )

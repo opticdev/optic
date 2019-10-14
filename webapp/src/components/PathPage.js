@@ -74,7 +74,7 @@ const styles = theme => ({
 class OperationBase extends React.Component {
   render() {
     const { inDiffMode } = this.props;
-    const { classes, request, handleCommands, mode, cachedQueryResults, coloredIds = [] } = this.props;
+    const { classes, request, handleCommands, mode, cachedQueryResults, coloredIds = [], highlightNestedShape = {} } = this.props;
     const { responses, requestParameters } = cachedQueryResults;
 
     const { requestId, requestDescriptor } = request;
@@ -116,6 +116,16 @@ class OperationBase extends React.Component {
     };
 
     const isAdded = coloredIds.includes(requestId);
+
+    const highlightResponse = highlightNestedShape.HighlightNestedResponseShape
+    const highlightRequest = highlightNestedShape.HighlightNestedRequestShape
+
+
+    const requestNestedId = (() => {
+      if (highlightRequest) {
+        return highlightRequest.parentShape
+      }
+    })()
 
     return (
       <Sheet>
@@ -168,7 +178,9 @@ class OperationBase extends React.Component {
                 Body</Typography>
               <BodyEditor
                 rootId={requestId}
+                nestedId={requestNestedId || null}
                 bodyDescriptor={bodyDescriptor}
+                highlightRequest={highlightRequest}
                 {...requestBodyHandlers}
               />
             </>
@@ -179,7 +191,7 @@ class OperationBase extends React.Component {
               <div style={{ marginBottom: 44 }}>
                 <RequestPageHeader forType="Response" addAction={requestCommandsHelper.addResponse} />
               </div>
-              <ResponseList responses={responsesForRequest} />
+              <ResponseList responses={responsesForRequest} highlightResponse={highlightResponse} />
             </>
           ) : null}
         </div>
@@ -192,7 +204,7 @@ export const Operation = withNavigationContext(withColoredIdsContext(withRfcCont
 
 class ResponseListWithoutContext extends React.Component {
   render() {
-    const { responses, handleCommands, classes, coloredIds = [] } = this.props;
+    const { responses, handleCommands, classes, coloredIds = [], highlightResponse } = this.props;
     const sortedResponses = sortBy(responses, ['responseDescriptor.httpStatusCode']);
     return sortedResponses.map((response) => {
       const { responseId, responseDescriptor } = response;
@@ -221,10 +233,16 @@ class ResponseListWithoutContext extends React.Component {
         }
       };
 
-      const isAdded = coloredIds.includes(responseId);
+      const isHighlighted = coloredIds.includes(responseId);
+      const nestedId = (() => {
+        if (highlightResponse && highlightResponse.statusCode === httpStatusCode) {
+          return highlightResponse.parentShape
+        }
+      })()
+
       return (
-        <ScrollIntoViewIfNeeded active={isAdded}>
-          <div className={classNames(classes.responseCard, { [classes.addedResponse]: isAdded })}>
+        <ScrollIntoViewIfNeeded active={isHighlighted}>
+          <div className={classNames(classes.responseCard, { [classes.addedResponse]: isHighlighted })}>
             <div className={classes.responseStatus}>
               <StatusCode statusCode={httpStatusCode} onChange={(statusCode) => {
                 const command = RequestsCommands.SetResponseStatusCode(responseId, statusCode);
@@ -243,6 +261,7 @@ class ResponseListWithoutContext extends React.Component {
               <div style={{ marginLeft: 5 }}>
                 <BodyEditor
                   rootId={responseId}
+                  nestedId={nestedId || null}
                   bodyDescriptor={bodyDescriptor}
                   {...responseBodyHandlers}
                 />

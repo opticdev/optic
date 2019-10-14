@@ -51,7 +51,7 @@ const LightTooltip = withStyles(theme => ({
 
 export function ExampleToolTip({children, example}) {
 
-  const inner = typeof example === 'string' ? <pre>{example}</pre> : (
+  const inner = (typeof example === 'string' || typeof example === 'number' || typeof example === 'boolean') ? <pre>{JSON.stringify(example)}</pre> : (
     <div style={{maxHeight: 690, width: '600px !important', overflowY: 'scroll'}}>
       <ReactJson
         src={example}
@@ -75,7 +75,6 @@ class DiffCard extends React.Component {
   render() {
     const {classes, interpretation, ignore, accept, cardForm} = this.props;
     const {title, description, metadataJs} = interpretation;
-
     const {example} = metadataJs;
 
     const canApprove = true;

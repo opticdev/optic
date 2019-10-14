@@ -1,6 +1,5 @@
-{
-  "primitives": [
-    "hello",
-    "goodbye"
-  ]
-}
+[
+  "blue",
+  "red",
+  "yellow"
+]

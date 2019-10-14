@@ -8,7 +8,7 @@ import { withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
 import { primary } from '../../theme';
 import Card from '@material-ui/core/Card';
-import { CardActions, CardContent, CardHeader } from '@material-ui/core';
+import {CardActions, CardContent, CardHeader, LinearProgress} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { commandsFromJson, NaiveSummary } from '../../engine/index';
 import DiffPageWrapper from './DiffPageWrapper';
@@ -59,10 +59,11 @@ export function isManuallyIntervened(diffState, item) {
 class LocalDiffManager extends React.Component {
 
   renderDiffPersisted() {
+    setTimeout(() => {
+      window.location.href = '/saved'
+    }, 300)
     return (
-      <div>Your API Spec changes have been merged.
-        <a href="/saved">View Spec</a>
-      </div>
+      <LinearProgress />
     )
   }
 
@@ -138,26 +139,6 @@ class LocalDiffManager extends React.Component {
       selectedInterpretationIndex: 0
     })
 
-    const ConceptNamer = function ({ shapeId }) {
-      const { value, setValue } = React.useContext(ConceptNameContext)
-      return (
-        <div style={{ marginBottom: 15 }}>
-          <Typography variant="caption">{interpretations[value.selectedInterpretationIndex].metadataJs.nameRequests[0].description}</Typography>
-          <div>
-            <TextField
-              placeholder={'Name Concept'}
-              value={value.names[shapeId] || ''}
-              onChange={(e) => setValue({
-                ...value,
-                names: {
-                  ...value.names,
-                  [shapeId]: e.target.value
-                }
-              })} />
-          </div>
-        </div>
-      )
-    }
     return (
       <ConceptNameStore>
         <ConceptNameContext.Consumer>
@@ -165,7 +146,7 @@ class LocalDiffManager extends React.Component {
             const { value, setValue } = context
             const { names, selectedInterpretationIndex } = value;
             const interpretation = interpretations[selectedInterpretationIndex]
-            const { commands, metadataJs } = interpretation
+            const { commands } = interpretation
             const shapeNameCommands = Object.entries(names).map(([shapeId, name]) => ShapesCommands.RenameShape(shapeId, name || ''));
             const allCommands = [...JsonHelper.seqToJsArray(commands), ...shapeNameCommands];
             console.log(commands, allCommands)
@@ -208,8 +189,8 @@ class LocalDiffManager extends React.Component {
     )
   }
 
-  renderStandardDiffWidget(item, interpretations) {
-    const { rfcService, diffSessionManager, diffStateProjections, classes, cachedQueryResults, rfcId, eventStore } = this.props
+  renderStandardDiffWidget(item, diff, interpretations) {
+    const { rfcService, diffSessionManager, diffStateProjections, classes, cachedQueryResults, rfcId, eventStore, queries } = this.props
     const { applyCommands } = this.props;
     const { diffState } = diffSessionManager
     const readyToFinish = interpretations.length === 0;
@@ -221,10 +202,12 @@ class LocalDiffManager extends React.Component {
         cachedQueryResults={cachedQueryResults}
         rfcId={rfcId}
         eventStore={eventStore}
+        queries={queries}
         applyCommands={applyCommands}
         diffSessionManager={diffSessionManager}
         diffStateProjections={diffStateProjections}
         diffState={diffState}
+        diff={diff}
         item={item}
         readyToFinish={readyToFinish}
         interpretations={interpretations}
@@ -271,7 +254,7 @@ class LocalDiffManager extends React.Component {
         const pathId = queries.resolvePath(item.sample.request.url)
         console.log('xxx1', diffItem.toString(), interpretations.toString())
         const otherInterpretations = JsonHelper.seqToJsArray(compoundInterpreter.interpret(diffItem));
-        return this.renderStandardDiffWidget({ ...item, pathId }, otherInterpretations)
+        return this.renderStandardDiffWidget({ ...item, pathId }, diffItem, otherInterpretations)
       }
     }
 

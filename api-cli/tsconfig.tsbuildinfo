@@ -558,7 +558,7 @@
         "signature": "8d77ed4e39114c32edc2e35b683b6f54a6b3292ecdf392e4bfc5f726734955d8"
       },
       "./src/lib/common.ts": {
-        "version": "4570e775996ad57b8724ba5955c7403040e5136842a8a0c61607dce3af3f0dec",
+        "version": "923afd0c1e7d3184b4e6b7e3771ea5bea199c4d1e9b44db5a8e5ed9c124390c6",
         "signature": "f77bbb2c40f4584309482e32ebae570559df503d5b1881c632b74552925ab294"
       },
       "./node_modules/@types/debug/index.d.ts": {
@@ -598,7 +598,7 @@
         "signature": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac"
       },
       "./src/commands/start.ts": {
-        "version": "07b0beeb6c918c773b878ed4061aeb61d65f77cacfa93ee2091a9b79f4685daa",
+        "version": "6f7b12398204d61c16017630d7fea6ac3105ca543fbc25522aa17be120b02d08",
         "signature": "280d39fe463dea101824c3cbcc7c725553e87da245b945f82ead9ef11740d8f5"
       },
       "./src/commands/publish-oas.ts": {
