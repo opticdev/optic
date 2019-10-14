@@ -8,7 +8,7 @@ import { withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
 import { primary } from '../../theme';
 import Card from '@material-ui/core/Card';
-import { CardActions, CardContent, CardHeader } from '@material-ui/core';
+import {CardActions, CardContent, CardHeader, LinearProgress} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { commandsFromJson, NaiveSummary } from '../../engine/index';
 import DiffPageWrapper from './DiffPageWrapper';
@@ -59,10 +59,11 @@ export function isManuallyIntervened(diffState, item) {
 class LocalDiffManager extends React.Component {
 
   renderDiffPersisted() {
+    setTimeout(() => {
+      window.location.href = '/saved'
+    }, 300)
     return (
-      <div>Your API Spec changes have been merged.
-        <a href="/saved">View Spec</a>
-      </div>
+      <LinearProgress />
     )
   }
 
@@ -189,7 +190,7 @@ class LocalDiffManager extends React.Component {
   }
 
   renderStandardDiffWidget(item, diff, interpretations) {
-    const { rfcService, diffSessionManager, diffStateProjections, classes, cachedQueryResults, rfcId, eventStore } = this.props
+    const { rfcService, diffSessionManager, diffStateProjections, classes, cachedQueryResults, rfcId, eventStore, queries } = this.props
     const { applyCommands } = this.props;
     const { diffState } = diffSessionManager
     const readyToFinish = interpretations.length === 0;
@@ -201,6 +202,7 @@ class LocalDiffManager extends React.Component {
         cachedQueryResults={cachedQueryResults}
         rfcId={rfcId}
         eventStore={eventStore}
+        queries={queries}
         applyCommands={applyCommands}
         diffSessionManager={diffSessionManager}
         diffStateProjections={diffStateProjections}

@@ -3,13 +3,14 @@ package com.seamless.diff
 import com.seamless.contexts.requests.Commands.{RequestId, SetRequestBodyShape, SetResponseBodyShape, ShapedBodyDescriptor}
 import com.seamless.contexts.requests.{Commands, RequestsServiceHelper}
 import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldId, FieldShapeFromShape, SetFieldShape}
+import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldId, FieldShapeFromShape, SetFieldShape, ShapeId}
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.diff.initial.{ShapeBuilder, ShapeExample, ShapeResolver}
 import io.circe.Json
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+import scala.util.Try
 
 @JSExportAll
 case class DiffInterpretation(actionTitle: String,
@@ -23,6 +24,7 @@ case class FrontEndMetadata(affectedIds: Seq[String] = Seq.empty,
                             example: Option[Json] = None,
                             added: Boolean = false,
                             changed: Boolean = false,
+                            highlightNestedShape: Option[HighlightNestedShape] = None,
                             affectedConceptIds: Seq[String] = Seq.empty) {
 
   def asJs: js.Any = {
@@ -32,6 +34,10 @@ case class FrontEndMetadata(affectedIds: Seq[String] = Seq.empty,
     convertJsonToJs(this.asJson)
   }
 }
+
+sealed trait HighlightNestedShape
+case class HighlightNestedResponseShape(statusCode: Int, parentShape: ShapeId) extends HighlightNestedShape
+case class HighlightNestedRequestShape(parentShape: ShapeId) extends HighlightNestedShape
 
 object Interpretations {
 
@@ -106,8 +112,6 @@ object Interpretations {
       case (id, concept) if id == inlineShapeId => concept.descriptor.name
     }
 
-    val desc = if (name.isDefined) s"Optic observed a request body of type <b>${name.get}</b>" else "Optic observed a request body."
-
     val commands = shape.commands ++ Seq(
       AddShape(wrapperId, inlineShapeId, ""),
       SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, wrapperId, isRemoved = false))
@@ -131,36 +135,36 @@ object Interpretations {
       case (id, concept) if id == parentShapeId => (id, concept.descriptor.name)
     }
 
-    val desc = if (parentConcept.isDefined) {
-      s"A new field '${key}' was observed in <b>${parentConcept.get._2}</b>"
-    } else {
-      s"A new field '${key}' was observed in the request body."
-    }
-
     val affectedConcepts = if (parentConcept.isDefined) Seq(parentConcept.get._1) else Seq.empty
+
+    val highlight = HighlightNestedRequestShape(parentShapeId)
 
     DiffInterpretation(
       s"Add <b>${key}</b>",
       //@todo change copy based on if it's a concept or not
 //      desc,
       commands,
-      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts, added = true)
+      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts :+ parentShapeId, added = true, highlightNestedShape = Some(highlight))
     )
   }
 
-  def ChangeFieldInRequestShape(key: String, fieldId: FieldId, raw: Json, requestId: RequestId) = {
+  def ChangeFieldInRequestShape(key: String, fieldId: FieldId, raw: Json, requestId: RequestId)(implicit shapesState: ShapesState) = {
     val result = new ShapeBuilder(raw).run
 
     val commands = result.commands ++ Seq(
       SetFieldShape(FieldShapeFromShape(fieldId, result.rootShapeId))
     )
 
+    val highlightOption = Try(shapesState.flattenedField(fieldId).fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId).map(i => {
+      HighlightNestedRequestShape(i)
+    }).toOption
+
     DiffInterpretation(
       s"Change <b>${key}</b> shape",
       //@todo change copy based on if it's a concept or not
 //      s"The type of '${key}' was changed in the request.",
       commands,
-      FrontEndMetadata(affectedIds = Seq(fieldId))
+      FrontEndMetadata(affectedIds = Seq(fieldId), highlightNestedShape = highlightOption)
     )
   }
 
@@ -172,8 +176,6 @@ object Interpretations {
     val name = shapesState.concepts.collectFirst {
       case (id, concept) if id == inlineShapeId => concept.descriptor.name
     }
-
-    val desc = if (name.isDefined) s"Optic observed a ${responseStatusCode} response body of type <b>${name.get}</b>." else s"Optic observed a ${responseStatusCode} response body."
 
     val commands = shape.commands ++ Seq(
       AddShape(wrapperId, inlineShapeId, ""),
@@ -192,6 +194,7 @@ object Interpretations {
     val fieldId = ShapesHelper.newFieldId()
 
 
+
     val result = new ShapeBuilder(raw).run
     val commands = result.commands ++ Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, result.rootShapeId)))
 
@@ -199,25 +202,25 @@ object Interpretations {
       case (id, concept) if id == parentShapeId => (id, concept.descriptor.name)
     }
 
-    val desc = if (parentConcept.isDefined) {
-      s"A new field '${key}' was observed in <b>${parentConcept.get._2}</b>"
-    } else {
-      s"A new field '${key}' was observed in the ${responseStatusCode} response body."
-    }
-
     val affectedConcepts = if (parentConcept.isDefined) Seq(parentConcept.get._1) else Seq.empty
+
+    val highlight = HighlightNestedResponseShape(responseStatusCode, parentShapeId)
 
     DiffInterpretation(
       s"Add ${key}",
 //      desc,
       commands,
-      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts, added = true)
+      FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts :+ parentShapeId, added = true, highlightNestedShape = Some(highlight))
     )
 
   }
 
-  def ChangeFieldInResponseShape(key: String, fieldId: String, raw: Json, responseStatusCode: Int) = {
+  def ChangeFieldInResponseShape(key: String, fieldId: String, raw: Json, responseStatusCode: Int)(implicit shapesState: ShapesState) = {
     val result = new ShapeBuilder(raw).run
+
+    val highlightOption = Try(shapesState.flattenedField(fieldId).fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId).map(i => {
+      HighlightNestedResponseShape(responseStatusCode, i)
+    }).toOption
 
     val commands = result.commands ++ Seq(
       SetFieldShape(FieldShapeFromShape(fieldId, result.rootShapeId))
@@ -228,7 +231,7 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
 //      s"The type of '${key}' was changed.",
       commands,
-      FrontEndMetadata(affectedIds = Seq(fieldId))
+      FrontEndMetadata(affectedIds = Seq(fieldId), highlightNestedShape = highlightOption)
     )
 
   }

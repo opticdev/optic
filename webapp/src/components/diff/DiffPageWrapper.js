@@ -48,6 +48,7 @@ class DiffPageWrapper extends React.Component {
       classes,
       rfcId,
       diff,
+      queries,
       rfcService, eventStore,
       cachedQueryResults, applyCommands,
       diffSessionManager, diffState, diffStateProjections,
@@ -107,6 +108,7 @@ class DiffPageWrapper extends React.Component {
     const cardNavigator = interpretations.length === 0 ? null : (
       <Interpreter
         diff={diff}
+        queries={queries}
         accept={accept}
         ignore={onIgnore}
         interpretations={interpretations}
@@ -114,7 +116,6 @@ class DiffPageWrapper extends React.Component {
         setInterpretation={this.setSelectedInterpretationIndex}
       />
     );
-
     return (
       <SimulatedCommandContext
         shouldSimulate={true}
@@ -185,9 +186,10 @@ class DiffPageWrapper extends React.Component {
                       handleCommand: handleCommands
                     };
                     if (request) {
+                      const highlightNestedShape = interpretation.metadataJs.highlightNestedShape || {}
                       return (
                         <RfcContext.Provider value={updatedRfcContext}>
-                          <Operation request={request} />
+                          <Operation request={request} highlightNestedShape={highlightNestedShape} />
                           <ShapeViewerStack handleCommands={this.addAdditionalCommands} />
                         </RfcContext.Provider>
                       );

@@ -2,6 +2,7 @@ import React from 'react';
 import {Typography, withStyles} from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
 import {ExampleToolTip} from '../DiffCard';
+import ShapeDisplay from '../../shape-editor/ShapeDisplay';
 
 const styles = theme => ({
   labels: {
@@ -65,7 +66,7 @@ const DiffRender = withStyles(styles)(({locatedIn, expected, observed, example, 
   );
 });
 
-export function DiffToCopy(diff) {
+export function DiffToCopy(diff, queries) {
   const diffJs = diff.asJs;
   const [type, diffData] = Object.entries(diff.asJs)[0];
 
@@ -77,20 +78,20 @@ export function DiffToCopy(diff) {
       return <DiffRender observed={`${diffData.method} request`}/>;
     //content type diffs
     case 'UnmatchedResponseContentType':
-      return `Optic observed a new content-type for the ${diffData.statusCode} response body`;
+      return <DiffRender observed={`Optic observed a new content-type for the ${diffData.statusCode} response body`} />
     case 'UnmatchedRequestContentType':
-      return `Optic observed a new content-type for the request body`;
+      return <DiffRender observed={`Optic observed a new content-type for the request body`} />;
 
     //first time shapes observed
     case 'UnmatchedResponseBodyShape': {
-      const [expected, observed, example] = ShapeDiffToCopy(diffData.shapeDiff);
+      const [expected, observed, example] = ShapeDiffToCopy(diffData.shapeDiff, queries);
       return <DiffRender locatedIn={`${diffData.responseStatusCode} response body`}
                          expected={expected}
                          example={example}
                          observed={observed}/>;
     }
     case 'UnmatchedRequestBodyShape': {
-      const [expected, observed, example] = ShapeDiffToCopy(diffData.shapeDiff);
+      const [expected, observed, example] = ShapeDiffToCopy(diffData.shapeDiff, queries);
       return <DiffRender locatedIn={`request body`}
                          expected={expected}
                          example={example}
@@ -103,7 +104,7 @@ export function DiffToCopy(diff) {
 }
 
 
-export function ShapeDiffToCopy(diff) {
+export function ShapeDiffToCopy(diff, queries) {
   const [type, diffData] = Object.entries(diff)[0];
 
   switch (type) {
@@ -118,22 +119,25 @@ export function ShapeDiffToCopy(diff) {
       return [<>Expected Body</>, <>Key <b>{diffData.key}</b> as null</>];
     case 'ShapeMismatch':
       return [undefined, `The body shape has changed`, diffData.actual];
-    case 'ListItemShapeMismatch':
-      return ['List[???]', 'Items in the list that do not match', diffData.actualList]
+    case 'ListItemShapeMismatch': {
+      const shapeStructure = queries.nameForShapeId(diffData.expectedList.shapeId)
+      return [<ShapeDisplay shapeStructure={shapeStructure}/>, 'Items in the list that do not match', diffData.actualList]
+    }
     case 'UnsetObjectKey':
       return [<>Key <b>{diffData.key}</b> to be present</>, <>Key <b>{diffData.key}</b> missing</>];
-
     case 'NullObjectKey':
       return [<>Key <b>{diffData.key}</b> to be present</>, <>Key <b>{diffData.key}</b> as null</>];
-
     case 'UnexpectedObjectKey':
       return [undefined, <>New field <b>{diffData.key}</b></>, diffData.actual];
-    case 'KeyShapeMismatch':
-      return [<>Key <b>{diffData.key}</b> to be present</>, <>Key <b>{diffData.key}</b> missing</>, diffData.actual];
-    case 'MultipleInterpretations':
-      return [<>Key <b>{diffData.key}</b> to be present</>, <>Key <b>{diffData.key}</b> missing</>, diffData.actual];
-
+    case 'KeyShapeMismatch': {
+      const shapeStructure = queries.nameForShapeId(diffData.expected.shapeId)
+      return [<ShapeDisplay shapeStructure={shapeStructure}/>, <>A different shape</>, diffData.actual];
+    }
+    case 'MultipleInterpretations': {
+      const shapeStructure = queries.nameForShapeId(diffData.expected.shapeId)
+      return [<ShapeDisplay shapeStructure={shapeStructure}/>, <>Multiple possible shapes</>, diffData.actual];
+    }
     default:
-      return type;
+      return [undefined, undefined];
   }
 }

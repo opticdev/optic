@@ -7,7 +7,7 @@ import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection}
 import com.seamless.contexts.shapes.Commands.ShapeId
 import com.seamless.contexts.shapes.ShapesState
-import com.seamless.contexts.shapes.projections.{NamedShape, NamedShapes}
+import com.seamless.contexts.shapes.projections.{NameForShapeId, NamedShape, NamedShapes}
 import com.seamless.ddd.{AggregateId, CachedProjection, EventStore}
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -65,6 +65,10 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.resolvePath(url).asJson)
   }
+  def nameForShapeId(shapeId: ShapeId): js.Any = {
+    import io.circe.scalajs.convertJsonToJs
+    convertJsonToJs(q.nameForShapeId(shapeId).asJson)
+  }
 }
 
 class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
@@ -116,5 +120,9 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
 
   def resolvePath(url: String) = {
     Utilities.resolvePath(url, requestsState.pathComponents)
+  }
+
+  def nameForShapeId(shapeId: ShapeId): Seq[NameForShapeId.ColoredComponent] = {
+    NameForShapeId.getShapeName(shapeId)(service.currentState(aggregateId).shapesState)
   }
 }

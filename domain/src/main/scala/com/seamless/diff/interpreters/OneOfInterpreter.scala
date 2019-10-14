@@ -19,14 +19,14 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
         d.shapeDiff match {
           case sd: ListItemShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expectedItem, sd.actualItem, id => Seq(
+              ConvertToOneOf(sd.expectedItem, sd.actualItem, sd.expectedList.shapeId, id => Seq(
                 SetParameterShape(ProviderInShape(sd.expectedList.shapeId, ShapeProvider(id), "$listItem"))
               ))
             )
           }
           case sd: KeyShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expected, sd.actual, id => Seq(
+              ConvertToOneOf(sd.expected, sd.actual, sd.fieldId, id => Seq(
                 SetFieldShape(FieldShapeFromShape(sd.fieldId, id))
               ))
             )
@@ -43,14 +43,14 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
         d.shapeDiff match {
           case sd: ListItemShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expectedItem, sd.actualItem, id => Seq(
+              ConvertToOneOf(sd.expectedItem, sd.actualItem, sd.expectedList.shapeId, id => Seq(
                 SetParameterShape(ProviderInShape(sd.expectedList.shapeId, ShapeProvider(id), "$listItem"))
               ))
             )
           }
           case sd: KeyShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expected, sd.actual, id => Seq(
+              ConvertToOneOf(sd.expected, sd.actual, sd.fieldId, id => Seq(
                 SetFieldShape(FieldShapeFromShape(sd.fieldId, id))
               )))
           }
@@ -66,7 +66,7 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     }
   }
 
-  def ConvertToOneOf(expectedShape: ShapeEntity, actual: Json, f: Function[ShapeId, Seq[RfcCommand]]) = {
+  def ConvertToOneOf(expectedShape: ShapeEntity, actual: Json, affectedId: ShapeId, f: Function[ShapeId, Seq[RfcCommand]]) = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val p1 = ShapesHelper.newShapeParameterId()
     val p2 = ShapesHelper.newShapeParameterId()
@@ -87,7 +87,7 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
       commands,
       FrontEndMetadata(
         example = Some(actual),
-        affectedIds = Seq(expectedShape.shapeId),
+        affectedIds = Seq(affectedId, p1, p2),
         changed = true
       )
     )

@@ -58,6 +58,7 @@ class Interpreter extends React.Component {
       diff,
       interpretations,
       accept, ignore,
+      queries,
       selectedInterpretationIndex, setInterpretation,
       classes
     } = this.props;
@@ -66,7 +67,7 @@ class Interpreter extends React.Component {
     return (
       <Card className={classes.root} elevation={3}>
         <CardContent>
-          {DiffToCopy(diff)}
+          {DiffToCopy(diff, queries)}
           <List className={classes.interpretationRegion}>
 
             {interpretations.map((interpretation, index) => {

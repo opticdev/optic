@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{SetRequestBodyShape, SetResponse
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
 import com.seamless.contexts.shapes.ShapesHelper._
-import com.seamless.diff.{DiffInterpretation, FrontEndMetadata}
+import com.seamless.diff.{DiffInterpretation, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer._
 
@@ -20,7 +20,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
           }
           case sd: NullObjectKey => {
             Seq(
-              ChangeFieldToNullable(sd)
+              ChangeFieldToNullable(sd, HighlightNestedRequestShape(sd.parentObjectShapeId))
             )
           }
           case _ => Seq.empty
@@ -35,7 +35,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
           }
           case sd: NullObjectKey => {
             Seq(
-              ChangeFieldToNullable(sd)
+              ChangeFieldToNullable(sd, HighlightNestedResponseShape(d.responseStatusCode, sd.parentObjectShapeId))
             )
           }
           case _ => Seq.empty
@@ -45,7 +45,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     }
   }
 
-  def ChangeFieldToNullable(shapeDiff: NullObjectKey): DiffInterpretation = {
+  def ChangeFieldToNullable(shapeDiff: NullObjectKey, highlightNestedShape: HighlightNestedShape): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val field = shapesState.flattenedField(shapeDiff.fieldId)
     val commands = Seq(
@@ -66,7 +66,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       s"Make ${shapeDiff.key} nullable",
 //      s"Optic expected to see a value for the key ${shapeDiff.key} and instead saw null. If it is allowed to be null, make it Nullable",
       commands,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.parentObjectShapeId, shapeDiff.fieldId), changed = true)
+      FrontEndMetadata(affectedIds = Seq(shapeDiff.fieldId), changed = true, highlightNestedShape = Some(highlightNestedShape))
     )
   }
 

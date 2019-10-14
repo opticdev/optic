@@ -467,6 +467,7 @@ function BindingInfoBase({ coloredIds = [], coloredTag, bindingInfo, onClick }) 
 const BindingInfo = withColoredIdsContext(BindingInfoBase)
 
 function ShapeName({ shapeName, onShapeSelected, onParameterSelected }) {
+
   if (shapeName.bindingInfo.length === 0) {
     return (
       <ShapeNameButton
@@ -529,6 +530,8 @@ class ShapeViewerBase extends React.Component {
       })
       .map(entry => {
         const { id, type, name, shapeName, trail, isExpandable } = entry;
+        const shapeStructure = queries.nameForShapeId(shapeName.id)
+        console.log('shape s', shapeStructure)
         const shouldHighlight = coloredIds.includes(id);
         const highlightColor = coloredTag === ColorTags.ADDED ? classes.shapeAdded : classes.shapeChanged
         const isObject = shapeName.coreShapeId === '$object';
@@ -622,7 +625,6 @@ class ShapeViewerBase extends React.Component {
                                 }
                               });
                             }}
-
                             onParameterSelected={(bindingInfo) => {
                               const shapeId = bindingInfo.shapeId
                               if (pushToStack) {
