@@ -186,7 +186,7 @@ class DiffPageWrapper extends React.Component {
                       handleCommand: handleCommands
                     };
                     if (request) {
-                      const highlightNestedShape = interpretation.metadataJs.highlightNestedShape || {}
+                      const highlightNestedShape = (interpretation && interpretation.metadataJs.highlightNestedShape) || {}
                       return (
                         <RfcContext.Provider value={updatedRfcContext}>
                           <Operation request={request} highlightNestedShape={highlightNestedShape} />

@@ -530,8 +530,8 @@ class ShapeViewerBase extends React.Component {
       })
       .map(entry => {
         const { id, type, name, shapeName, trail, isExpandable } = entry;
-        const shapeStructure = queries.nameForShapeId(shapeName.id)
-        console.log('shape s', shapeStructure)
+        // const shapeStructure = queries.nameForShapeId(shapeName.id)
+        // console.log('shape s', shapeStructure)
         const shouldHighlight = coloredIds.includes(id);
         const highlightColor = coloredTag === ColorTags.ADDED ? classes.shapeAdded : classes.shapeChanged
         const isObject = shapeName.coreShapeId === '$object';
