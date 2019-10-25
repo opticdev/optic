@@ -88,6 +88,7 @@ export default class Start extends Command {
     analytics.track('api server stopped. ', {name: config.name, sampleCount: result.samples.length})
 
     await this.flushSession(result)
+    process.exit(0)
   }
 
   async flushSession(result: ICaptureSessionResult) {

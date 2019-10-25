@@ -518,8 +518,8 @@
         "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
       },
       "./src/commands/init.ts": {
-        "version": "47b61830eb01626e2e6dbbbedd015287f038125c7d1815bd7212f410d8f814ca",
-        "signature": "7330d90ccede82fffa028e03ffc2dbdb751d882b85577d1a3db76bb28226fa71"
+        "version": "fc0f23add44fd6119b3c41174c104e6b70381fb509127ef29e7d5aad79041eb5",
+        "signature": "60b067d04606d840453d16764a330b578c0e4a057e61661a2de42ca889d01094"
       },
       "./src/lib/log-helper.ts": {
         "version": "0bf0a2716dbfd9d2c7392ee4bf2902a2623a90f50a3d5eaa63153c34049dcde4",
@@ -598,7 +598,7 @@
         "signature": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac"
       },
       "./src/commands/start.ts": {
-        "version": "6f7b12398204d61c16017630d7fea6ac3105ca543fbc25522aa17be120b02d08",
+        "version": "805fcad431f72dabbedc964a81f7ef181de262642e88e55f0e1df260511f2f74",
         "signature": "280d39fe463dea101824c3cbcc7c725553e87da245b945f82ead9ef11740d8f5"
       },
       "./src/commands/publish-oas.ts": {
