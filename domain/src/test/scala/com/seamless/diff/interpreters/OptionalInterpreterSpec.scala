@@ -3,7 +3,7 @@ package com.seamless.diff.interpreters
 import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.RfcServiceJSFacade
+import com.seamless.contexts.rfc.{RfcCommandContext, RfcServiceJSFacade}
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.ShapesHelper._
 import com.seamless.ddd.InMemoryEventStore
@@ -18,6 +18,7 @@ class OptionalInterpreterSpec extends FunSpec {
   val requestId = "req1"
   val responseId = "res1"
   val requestContentType = "ccc"
+  val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
 
   def fromCommands(commands: Seq[RfcCommand]) = {
     val initialCommands = Seq(
@@ -26,8 +27,8 @@ class OptionalInterpreterSpec extends FunSpec {
       AddResponse(responseId, requestId, 200)
     )
     val eventStore = new InMemoryEventStore[RfcEvent]
-    RfcServiceJSFacade.fromCommands(eventStore, initialCommands.toVector, rfcId)
-    RfcServiceJSFacade.fromCommands(eventStore, commands.toVector, rfcId).currentState(rfcId)
+    RfcServiceJSFacade.fromCommands(eventStore, rfcId, initialCommands.toVector, commandContext)
+    RfcServiceJSFacade.fromCommands(eventStore, rfcId, commands.toVector, commandContext).currentState(rfcId)
   }
 
   describe("when expecting a shape") {

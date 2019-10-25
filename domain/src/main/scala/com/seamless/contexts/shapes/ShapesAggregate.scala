@@ -1,19 +1,25 @@
 package com.seamless.contexts.shapes
 
 import com.seamless.contexts.base.BaseCommandContext
+import com.seamless.contexts.rfc.Events.{EventContext, fromCommandContext}
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.Events._
 import com.seamless.ddd.{Effects, EventSourcedAggregate}
 
 import scala.collection.immutable.ListMap
 
-case class ShapesCommandContext() extends BaseCommandContext
+case class ShapesCommandContext(
+                                 override val clientId: String,
+                                 override val clientSessionId: String,
+                                 override val clientCommandBatchId: String
+                               ) extends BaseCommandContext
 
 object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand, ShapesCommandContext, ShapesEvent] {
   override def handleCommand(_state: ShapesState): PartialFunction[(ShapesCommandContext, ShapesCommand), Effects[ShapesEvent]] = {
-    case (context: ShapesCommandContext, command: ShapesCommand) => {
+    case (commandContext: ShapesCommandContext, command: ShapesCommand) => {
 
       implicit val state: ShapesState = _state
+      val eventContext: Option[EventContext] = Some(fromCommandContext(commandContext))
 
       command match {
 
@@ -22,24 +28,24 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
         case c: AddShape => {
           Validators.ensureShapeIdAssignable(c.shapeId)
           Validators.ensureShapeIdExists(c.baseShapeId)
-          persist(Events.ShapeAdded(c.shapeId, c.baseShapeId, DynamicParameterList(Seq.empty), c.name))
+          persist(Events.ShapeAdded(c.shapeId, c.baseShapeId, DynamicParameterList(Seq.empty), c.name, eventContext))
         }
 
         case c: SetBaseShape => {
           Validators.ensureBaseShapeIdCanBeSet(c.shapeId)
           Validators.ensureShapeIdExists(c.shapeId)
           Validators.ensureShapeIdExists(c.baseShapeId)
-          persist(Events.BaseShapeSet(c.shapeId, c.baseShapeId))
+          persist(Events.BaseShapeSet(c.shapeId, c.baseShapeId, eventContext))
         }
 
         case c: RenameShape => {
           Validators.ensureShapeIdExists(c.shapeId)
-          persist(Events.ShapeRenamed(c.shapeId, c.name))
+          persist(Events.ShapeRenamed(c.shapeId, c.name, eventContext))
         }
 
         case c: RemoveShape => {
           Validators.ensureShapeIdExists(c.shapeId)
-          persist(Events.ShapeRemoved(c.shapeId))
+          persist(Events.ShapeRemoved(c.shapeId, eventContext))
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -59,17 +65,17 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
             }
           }
 
-          persist(Events.FieldAdded(c.fieldId, c.shapeId, c.name, c.shapeDescriptor))
+          persist(Events.FieldAdded(c.fieldId, c.shapeId, c.name, c.shapeDescriptor, eventContext))
         }
 
         case c: RemoveField => {
           Validators.ensureFieldIdExists(c.fieldId)
-          persist(Events.FieldRemoved(c.fieldId))
+          persist(Events.FieldRemoved(c.fieldId, eventContext))
         }
 
         case c: RenameField => {
           Validators.ensureFieldIdExists(c.fieldId)
-          persist(Events.FieldRenamed(c.fieldId, c.name))
+          persist(Events.FieldRenamed(c.fieldId, c.name, eventContext))
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +93,7 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
               Validators.ensureShapeIdExists(s.shapeId)
             }
           }
-          persist(Events.FieldShapeSet(c.shapeDescriptor))
+          persist(Events.FieldShapeSet(c.shapeDescriptor, eventContext))
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -96,18 +102,18 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
           Validators.ensureShapeIdExists(c.shapeId)
           Validators.ensureShapeParameterIdAssignable(c.shapeParameterId)
           Validators.ensureParametersCanBeChanged(c.shapeId)
-          persist(Events.ShapeParameterAdded(c.shapeParameterId, c.shapeId, c.name, ProviderInShape(c.shapeId, NoProvider(), c.shapeParameterId)))
+          persist(Events.ShapeParameterAdded(c.shapeParameterId, c.shapeId, c.name, ProviderInShape(c.shapeId, NoProvider(), c.shapeParameterId), eventContext))
         }
 
         case c: RemoveShapeParameter => {
           Validators.ensureShapeParameterIdExists(c.shapeParameterId)
           Validators.ensureParameterCanBeRemoved(c.shapeParameterId)
-          persist(Events.ShapeParameterRemoved(c.shapeParameterId))
+          persist(Events.ShapeParameterRemoved(c.shapeParameterId, eventContext))
         }
 
         case c: RenameShapeParameter => {
           Validators.ensureShapeParameterIdExists(c.shapeParameterId)
-          persist(Events.ShapeParameterRenamed(c.shapeParameterId, c.name))
+          persist(Events.ShapeParameterRenamed(c.shapeParameterId, c.name, eventContext))
         }
 
         ////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +148,7 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
             }
           }
 
-          persist(Events.ShapeParameterShapeSet(c.shapeDescriptor))
+          persist(Events.ShapeParameterShapeSet(c.shapeDescriptor, eventContext))
         }
         ////////////////////////////////////////////////////////////////////////////////
 

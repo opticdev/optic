@@ -1,31 +1,56 @@
 package com.seamless.contexts.rfc
 
-import com.seamless.contexts.rfc.Commands.{AddContribution, ContributionCommand, RfcCommand, SetAPIName}
-import com.seamless.contexts.rfc.Events.{APINamed, ContributionAdded, RfcEvent}
-import com.seamless.ddd.{Effects, EventSourcedAggregate}
-import Composition.forwardTo
 import com.seamless.contexts.base.BaseCommandContext
 import com.seamless.contexts.requests.Commands.RequestsCommand
 import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.requests.{RequestsAggregate, RequestsCommandContext}
+import com.seamless.contexts.rfc.Commands.{AddContribution, ContributionCommand, RfcCommand, SetAPIName}
+import com.seamless.contexts.rfc.Composition.forwardTo
+import com.seamless.contexts.rfc.Events.{APINamed, ContributionAdded, EventContext, RfcEvent}
 import com.seamless.contexts.shapes.Commands.ShapesCommand
 import com.seamless.contexts.shapes.Events.ShapesEvent
-import com.seamless.contexts.shapes.{ShapesAggregate, ShapesCommandContext}
+import com.seamless.contexts.shapes.{ShapesAggregate, ShapesCommandContext, ShapesState}
+import com.seamless.ddd.{Effects, EventSourcedAggregate}
 
-case class RfcCommandContext() extends BaseCommandContext
+case class RfcCommandContext(
+                              override val clientId: String,
+                              override val clientSessionId: String,
+                              override val clientCommandBatchId: String
+                            ) extends BaseCommandContext {
+  def toShapesCommandContext() = {
+    ShapesCommandContext(
+      clientId = this.clientId,
+      clientSessionId = this.clientSessionId,
+      clientCommandBatchId = this.clientCommandBatchId
+    )
+  }
+
+  def toRequestsCommandContext(shapesState: ShapesState) = {
+    RequestsCommandContext(
+      clientId = this.clientId,
+      clientSessionId = this.clientSessionId,
+      clientCommandBatchId = this.clientCommandBatchId,
+      shapesState = shapesState
+    )
+  }
+}
 
 object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcCommandContext, RfcEvent] {
 
   override def handleCommand(state: RfcState): PartialFunction[(RfcCommandContext, RfcCommand), Effects[RfcEvent]] = {
-    case (_: RfcCommandContext, command: ShapesCommand) =>
-      forwardTo(ShapesAggregate)((ShapesCommandContext(), command), state.shapesState).asInstanceOf[Effects[RfcEvent]]
-    case (_: RfcCommandContext, command: RequestsCommand) =>
-      forwardTo(RequestsAggregate)((RequestsCommandContext(state.shapesState), command), state.requestsState).asInstanceOf[Effects[RfcEvent]]
 
-    case (_: RfcCommandContext, contributionCommand: ContributionCommand) => contributionCommand match {
-      case AddContribution(id, key, value) => persist(ContributionAdded(id, key, value))
-      case SetAPIName(name) => persist(APINamed(name))
-      case _ => noEffect()
+    case (cc: RfcCommandContext, command: ShapesCommand) =>
+      forwardTo(ShapesAggregate)((cc.toShapesCommandContext(), command), state.shapesState).asInstanceOf[Effects[RfcEvent]]
+    case (cc: RfcCommandContext, command: RequestsCommand) =>
+      forwardTo(RequestsAggregate)((cc.toRequestsCommandContext(state.shapesState), command), state.requestsState).asInstanceOf[Effects[RfcEvent]]
+
+    case (cc: RfcCommandContext, contributionCommand: ContributionCommand) => {
+      val eventContext: Option[EventContext] = Some(Events.fromCommandContext(cc))
+      contributionCommand match {
+        case AddContribution(id, key, value) => persist(ContributionAdded(id, key, value, eventContext))
+        case SetAPIName(name) => persist(APINamed(name, eventContext))
+        case _ => noEffect()
+      }
     }
     case _ => noEffect()
   }

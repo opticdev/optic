@@ -1,6 +1,5 @@
 package com.seamless.contexts.shapes
 
-import com.seamless.contexts.requests.Commands.{AddPathComponent, AddRequest, SetRequestBodyShape, SetResponseBodyShape, ShapedBodyDescriptor}
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.{RfcAggregate, RfcCommandContext}
@@ -18,7 +17,7 @@ class ShapesEndToEndSpec extends FunSpec {
       case (acc, command) => {
         val (events, state) = acc
 
-        val effects = RfcAggregate.handleCommand(state)((RfcCommandContext(), command))
+        val effects = RfcAggregate.handleCommand(state)((RfcCommandContext("a", "b", "c"), command))
 
         val newState = effects.eventsToPersist.foldLeft(state) {
           case (s, event) => RfcAggregate.applyEvent(event, s)

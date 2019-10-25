@@ -77,16 +77,17 @@
     "terser-webpack-plugin": "1.2.3",
     "ts-pnp": "1.1.2",
     "url-loader": "1.1.2",
+    "uuid": "^3.3.3",
     "webpack": "4.29.6",
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "2.0.4",
     "workbox-webpack-plugin": "4.2.0"
   },
   "scripts": {
-    "start": "node scripts/start.js",
-    "start-local": "node scripts/start-local.js",
-    "build": "node scripts/build.js",
-    "build-local": "node scripts/build-local.js",
+    "start": "node --max-old-space-size=8192 scripts/start.js",
+    "start-local": "node --max-old-space-size=8192 scripts/start-local.js",
+    "build": "node --max-old-space-size=8192 scripts/build.js",
+    "build-local": "node --max-old-space-size=8192 scripts/build-local.js",
     "test": "node scripts/test.js",
     "storybook": "start-storybook -p 9009 -s public",
     "build-storybook": "build-storybook -s public"

@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { commandsToJson, Facade, Queries } from '../engine';
+import { commandsToJson, Facade, Queries, RfcCommandContext } from '../engine';
 import { GenericContextFactory } from './GenericContextFactory.js';
 import { withInitialRfcCommandsContext } from './InitialRfcCommandsContext.js';
 import debounce from 'lodash.debounce';
 import { withSnackbar } from 'notistack';
-import { track } from '../Analytics';
+import uuidv4 from 'uuid/v4';
 
 const {
     Context: RfcContext,
@@ -62,19 +62,21 @@ class RfcStoreWithoutContext extends React.Component {
         this.handleCommands = this.handleCommands.bind(this)
         const { initialCommandsString, initialEventsString, rfcId } = this.props;
         const eventStore = Facade.makeEventStore();
-
+        global.eventStore = eventStore;
         if (initialEventsString) {
             // console.log({ bulkAdd: initialEventsString })
             eventStore.bulkAdd(rfcId, initialEventsString)
         }
         const rfcService = (function () {
+            const commandContext = new RfcCommandContext('anonymous', 'anonymous-sessionId', 'anonymous-batchId')
+
             try {
-                return Facade.fromJsonCommands(eventStore, initialCommandsString || '[]', rfcId)
+                return Facade.fromJsonCommands(eventStore, rfcId, initialCommandsString || '[]', commandContext)
             } catch (e) {
                 //@GOTCHA: eventStore is being mutated in the try{} so any commands that have succeeded will be part of eventStore here.
                 console.error(e);
                 debugger;
-                return Facade.fromJsonCommands(eventStore, '[]', rfcId)
+                return Facade.fromJsonCommands(eventStore, rfcId, '[]', commandContext)
             }
         })()
         const queries = Queries(eventStore, rfcService, rfcId);
@@ -96,9 +98,11 @@ class RfcStoreWithoutContext extends React.Component {
     }, 10, { leading: true })
 
     handleCommands(...commands) {
+        const commandContext = new RfcCommandContext('anonymous', uuidv4(), uuidv4())
+
         try {
             //debugger
-            this.state.rfcService.handleCommands(this.props.rfcId, ...commands);
+            this.state.rfcService.handleCommands(this.props.rfcId, commandContext, ...commands);
             global.commands.push(...commands)
             this.handleChange()
         } catch (e) {
@@ -140,10 +144,10 @@ const RfcStore = withInitialRfcCommandsContext(RfcStoreWithoutContext);
 class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
 
     handleCommands = (...commands) => {
-            super.handleCommands(...commands)
-            this.setState({ hasUnsavedChanges: true })
-            this.persistEvents()
-        }
+        super.handleCommands(...commands)
+        this.setState({ hasUnsavedChanges: true })
+        this.persistEvents()
+    }
 
     persistEvents = debounce(async () => {
         const response = await saveEvents(this.state.eventStore, this.props.rfcId)
