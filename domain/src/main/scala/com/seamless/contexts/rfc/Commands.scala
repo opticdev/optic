@@ -9,17 +9,11 @@ object Commands {
   case class AddContribution(id: String, key: String, value: String) extends ContributionCommand
   case class SetAPIName(newName: String) extends ContributionCommand
 
-  case class AddParticipant(id: String) extends ParticipantsCommand
-
-  case class SetGitState(commitId: String, branch: String) extends VersionControlCommand
+  case class SetGitState(commitId: String, branchName: String) extends VersionControlCommand
 
   @JSExportDescendentClasses
   @JSExportAll
   sealed trait ContributionCommand extends RfcCommand with ExportedCommand
-
-  @JSExportDescendentClasses
-  @JSExportAll
-  sealed trait ParticipantsCommand extends RfcCommand with ExportedCommand
 
   @JSExportDescendentClasses
   @JSExportAll

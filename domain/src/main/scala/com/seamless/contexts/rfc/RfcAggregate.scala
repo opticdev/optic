@@ -4,7 +4,7 @@ import com.seamless.contexts.base.BaseCommandContext
 import com.seamless.contexts.requests.Commands.RequestsCommand
 import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.requests.{RequestsAggregate, RequestsCommandContext}
-import com.seamless.contexts.rfc.Commands.{AddContribution, ContributionCommand, RfcCommand, SetAPIName}
+import com.seamless.contexts.rfc.Commands.{AddContribution, ContributionCommand, RfcCommand, SetAPIName, VersionControlCommand}
 import com.seamless.contexts.rfc.Composition.forwardTo
 import com.seamless.contexts.rfc.Events.{APINamed, ContributionAdded, EventContext, RfcEvent}
 import com.seamless.contexts.shapes.Commands.ShapesCommand
@@ -52,6 +52,17 @@ object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcComma
         case _ => noEffect()
       }
     }
+
+    case (cc: RfcCommandContext, versionControlCommand: VersionControlCommand) => {
+      val eventContext: Option[EventContext] = Some(Events.fromCommandContext(cc))
+      versionControlCommand match {
+        case c: Commands.SetGitState => {
+          persist(Events.GitStateSet(c.branchName, c.commitId, eventContext))
+        }
+        case _ => noEffect()
+      }
+    }
+
     case _ => noEffect()
   }
 

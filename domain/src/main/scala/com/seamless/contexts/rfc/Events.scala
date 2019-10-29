@@ -12,13 +12,9 @@ object Events {
 
   sealed trait ContributionEvent extends RfcEvent
 
-  case class GitStateSet(eventContext: Option[EventContext] = None) extends VersionControlEvent
+  case class GitStateSet(branchName: String, commitId: String, eventContext: Option[EventContext] = None) extends VersionControlEvent
 
   sealed trait VersionControlEvent extends RfcEvent
-
-  case class ParticipantAdded(id: String, eventContext: Option[EventContext] = None) extends ParticipantsEvent
-
-  sealed trait ParticipantsEvent extends RfcEvent
 
   case class EventContext(clientId: String, clientSessionId: String, clientCommandBatchId: String, createdAt: String)
 
