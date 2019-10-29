@@ -5,6 +5,7 @@ import { withInitialRfcCommandsContext } from './InitialRfcCommandsContext.js';
 import debounce from 'lodash.debounce';
 import { withSnackbar } from 'notistack';
 import uuidv4 from 'uuid/v4';
+import { withCommandContext } from './CommandContext';
 
 const {
     Context: RfcContext,
@@ -64,13 +65,16 @@ class RfcStoreWithoutContext extends React.Component {
         const eventStore = Facade.makeEventStore();
         global.eventStore = eventStore;
         if (initialEventsString) {
-            // console.log({ bulkAdd: initialEventsString })
+            //console.log({ bulkAdd: JSON.parse(initialEventsString) })
             eventStore.bulkAdd(rfcId, initialEventsString)
         }
-        const rfcService = (function () {
-            const commandContext = new RfcCommandContext('anonymous', 'anonymous-sessionId', 'anonymous-batchId')
+        const rfcService = (() => {
+            const batchId = 'initial-batch';
+            const { clientId, clientSessionId } = this.props;
+            const commandContext = new RfcCommandContext(clientId, clientSessionId, batchId)
 
             try {
+                //console.log(JSON.parse(initialCommandsString || '[]'))
                 return Facade.fromJsonCommands(eventStore, rfcId, initialCommandsString || '[]', commandContext)
             } catch (e) {
                 //@GOTCHA: eventStore is being mutated in the try{} so any commands that have succeeded will be part of eventStore here.
@@ -98,7 +102,9 @@ class RfcStoreWithoutContext extends React.Component {
     }, 10, { leading: true })
 
     handleCommands(...commands) {
-        const commandContext = new RfcCommandContext('anonymous', uuidv4(), uuidv4())
+        const { clientId, clientSessionId } = this.props;
+        const batchId = uuidv4();
+        const commandContext = new RfcCommandContext(clientId, clientSessionId, batchId)
 
         try {
             //debugger
@@ -138,7 +144,7 @@ class RfcStoreWithoutContext extends React.Component {
     }
 }
 
-const RfcStore = withInitialRfcCommandsContext(RfcStoreWithoutContext);
+const RfcStore = withCommandContext(withInitialRfcCommandsContext(RfcStoreWithoutContext));
 
 
 class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
@@ -173,14 +179,14 @@ export async function saveEvents(eventStore, rfcId) {
     });
 }
 
-const LocalRfcStore = withSnackbar(withInitialRfcCommandsContext(LocalRfcStoreWithoutContext))
+const LocalRfcStore = withSnackbar(withCommandContext(withInitialRfcCommandsContext(LocalRfcStoreWithoutContext)))
 
 class LocalDiffRfcStoreWithoutContext extends RfcStoreWithoutContext {
     handleCommands = (...commands) => {
         super.handleCommands(...commands)
     }
 }
-const LocalDiffRfcStore = withInitialRfcCommandsContext(LocalDiffRfcStoreWithoutContext)
+const LocalDiffRfcStore = withCommandContext(withInitialRfcCommandsContext(LocalDiffRfcStoreWithoutContext))
 
 export {
     RfcStore,

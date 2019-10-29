@@ -8,7 +8,7 @@ import { withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
 import { primary } from '../../theme';
 import Card from '@material-ui/core/Card';
-import {CardActions, CardContent, CardHeader, LinearProgress} from '@material-ui/core';
+import { CardActions, CardContent, CardHeader, LinearProgress } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import { commandsFromJson, NaiveSummary } from '../../engine/index';
 import DiffPageWrapper from './DiffPageWrapper';
@@ -56,15 +56,27 @@ export function isManuallyIntervened(diffState, item) {
   return results.status === 'manual';
 }
 
-class LocalDiffManager extends React.Component {
-
-  renderDiffPersisted() {
+class DefaultDiffPersisted extends React.Component {
+  componentDidMount() {
     setTimeout(() => {
       window.location.href = '/saved'
     }, 300)
+  }
+  render() {
+
     return (
       <LinearProgress />
     )
+  }
+}
+
+class LocalDiffManager extends React.Component {
+
+  renderDiffPersisted() {
+    if (!this.props.diffPersistedComponent) {
+      return <DefaultDiffPersisted />
+    }
+    return this.props.diffPersistedComponent;
   }
 
   renderUnrecognizedUrlWidget(item) {

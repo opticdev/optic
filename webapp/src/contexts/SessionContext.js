@@ -16,7 +16,7 @@ export const DiffStateStatus = {
     started: 'started',
 }
 
-class DiffSessionManager {
+export class DiffSessionManager {
     constructor(sessionId, session, diffState) {
         this.sessionId = sessionId;
         this.session = session;
@@ -103,6 +103,12 @@ class DiffSessionManager {
     }
 }
 
+export class LocalDiffSessionManager extends DiffSessionManager {
+    persistState() {
+        // do nothing
+    }
+}
+
 class SessionStoreBase extends React.Component {
     state = {
         isLoading: true,
@@ -122,33 +128,13 @@ class SessionStoreBase extends React.Component {
             error: null,
             diffSessionManager: null,
         })
-        const promises = [
-            fetch(`/cli-api/sessions/${sessionId}`)
-                .then((response) => {
-                    if (response.ok) {
-                        return response.json()
-                    }
-                    return response.text()
-                        .then((text) => {
-                            throw new Error(text)
-                        })
-                }),
-            fetch(`/cli-api/sessions/${sessionId}/diff`)
-                .then((response) => {
-                    if (response.ok) {
-                        return response.json()
-                    }
-                    return response.text()
-                        .then((text) => {
-                            throw new Error(text)
-                        })
-                })
-        ]
-        Promise.all(promises)
-            .then(([sessionResponse, diffStateResponse]) => {
-                const diffSessionManager = new DiffSessionManager(sessionId, sessionResponse.session, diffStateResponse.diffState)
+        this.props.loadSession(sessionId)
+            .then(result => {
+                const factory = this.props.diffSessionManagerFactory
+                const diffSessionManager = factory(sessionId, result.sessionResponse.session, result.diffStateResponse.diffState)
                 diffSessionManager.events.on('updated', () => this.forceUpdate())
                 diffSessionManager.restoreState(this.props.handleCommands)
+
                 this.setState({
                     isLoading: false,
                     error: null,
