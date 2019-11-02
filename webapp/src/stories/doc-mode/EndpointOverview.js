@@ -42,7 +42,7 @@ class EndpointOverview extends React.Component {
 
         {parameters.length ? (
           <DocSubGroup title="Path Parameters">
-            {parameters.map(i => <DocParameter title={i}/>)}
+            {parameters.map(i => <DocParameter title={i.name} id={i.pathId}/>)}
           </DocSubGroup>
         ) : null}
       </div>
@@ -51,7 +51,7 @@ class EndpointOverview extends React.Component {
 
     const right = (
       <>
-      <EndpointOverviewCodeBox method={method} url={url}/>
+      <EndpointOverviewCodeBox method={method.toUpperCase()} url={url}/>
       <DocButtonGroup style={{marginTop: 22}}>
         <DocButton label="View Documentation" />
       </DocButtonGroup>

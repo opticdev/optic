@@ -138,15 +138,15 @@ class TopBar extends React.Component {
 
             <div className={classes.sideSpacer}>
 
-              <Link to={baseUrl} style={{textDecoration: 'none'}}>
-                <Button
-                  disableRipple={true}
-                  variant="text" color="primary"
-                  className={classes.menuButton}
-                  onClick={this.props.toggleSuperMenu}
-                >API Overview
-                </Button>
-              </Link>
+              {/*<Link to={baseUrl} style={{textDecoration: 'none'}}>*/}
+              {/*  <Button*/}
+              {/*    disableRipple={true}*/}
+              {/*    variant="text" color="primary"*/}
+              {/*    className={classes.menuButton}*/}
+              {/*    onClick={this.props.toggleSuperMenu}*/}
+              {/*  >API Overview*/}
+              {/*  </Button>*/}
+              {/*</Link>*/}
 
               {(hasUnsavedChanges && process.env.REACT_APP_CLI_MODE) ? (
                 <Typography variant="caption" style={{color: '#8e8e8e', marginLeft: 20}}>
@@ -157,11 +157,7 @@ class TopBar extends React.Component {
             </div>
 
             <div className={classes.centerSpacer}>
-              <APITitle
-                mode={mode}
-                apiName={apiName}
-                classes={classes}
-                onRenamed={(name) => handleCommand(renameAPI(name))}/>
+
             </div>
 
 

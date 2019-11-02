@@ -2,9 +2,9 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {TextField, Typography} from '@material-ui/core';
 import ReactMarkdown from 'react-markdown';
-import {DocDarkGrey, DocGrey, DocSubHeading} from './DocConstants';
+import {DocDarkGrey, DocGrey, DocSubHeading, SubHeadingStyles} from './DocConstants';
 
-function MarkdownRender({source, noHeadings}) {
+export function MarkdownRender({source, noHeadings}) {
   return <ReactMarkdown
     source={source}
     renderers={{
@@ -46,7 +46,12 @@ class _MarkdownContribution extends React.Component {
   };
 
   handleChange = (e) => this.setState({inputValue: e.target.value});
-  setEditing = (b) => () => this.setState({editing: b});
+  setEditing = (b) => () => {
+    this.setState({editing: b})
+    if (!b && this.props.onChange) {
+      this.props.onChange(this.state.inputValue)
+    }
+  }
 
   render() {
     const {value, classes, label} = this.props;
@@ -95,7 +100,12 @@ class _HeadingContribution extends React.Component {
   };
 
   handleChange = (e) => this.setState({inputValue: e.target.value});
-  setEditing = (b) => () => this.setState({editing: b});
+  setEditing = (b) => () => {
+    this.setState({editing: b});
+    if (!b && this.props.onChange) {
+      this.props.onChange(this.state.inputValue)
+    }
+  }
 
   render() {
     const {value, classes, label} = this.props;
@@ -115,6 +125,15 @@ class _HeadingContribution extends React.Component {
         />
       );
     } else {
+
+      if (!inputValue) {
+        return (
+          <div className={classes.root} onClick={this.setEditing(true)}>
+            <Typography variant="caption" style={{...SubHeadingStyles, color: DocDarkGrey, textTransform: 'uppercase'}}> + {label}</Typography>
+          </div>
+        );
+      }
+
       return <DocSubHeading title={inputValue} onClick={this.setEditing(true)}/>;
     }
   }

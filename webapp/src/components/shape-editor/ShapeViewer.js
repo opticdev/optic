@@ -755,6 +755,7 @@ const styles = (theme) => ({
   }
 });
 ShapeViewerBase.propTypes = {};
-const ShapeViewer =
+const
+  ShapeViewer =
   withColoredIdsContext(withShapeDialogContext(withExpansionContext(withShapeEditorContext(withEditorContext(withRfcContext(withStyles(styles)(ShapeViewerBase)))))));
 export default ShapeViewer;

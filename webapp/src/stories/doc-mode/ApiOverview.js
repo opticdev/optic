@@ -22,6 +22,10 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
 import EndpointOverview from './EndpointOverview';
 import {ListSubheader} from '@material-ui/core';
+import {withRfcContext} from '../../contexts/RfcContext';
+import {routerUrls} from '../../routes';
+import {asPathTrail, isPathParameter} from '../../components/utilities/PathUtilities';
+import ConceptOverview from './ConceptOverview';
 
 const drawerWidth = 240;
 
@@ -58,16 +62,34 @@ const useStyles = makeStyles(theme => ({
   },
   nested: {
     paddingLeft: theme.spacing(4),
+    textTransform: 'none'
   },
   dense: {
     padding: 0,
     margin: 0,
+  },
+  subHeader: {
+    backgroundColor: 'white'
+  },
+  sectionHeader: {
+    padding: 20,
+    paddingTop: 140
   }
 }));
 
-function EndpointBasePath({basePath, requests}) {
+const EndpointBasePath = withRfcContext(({path, baseUrl, cachedQueryResults}) => {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+
+  const {name, children, depth, toggled, pathId, full, visible} = path;
+
+  const flatChildren = [path, ...children.flatMap(i => [i, ...i.children])]
+    .filter(({pathId}) => {
+      const requests = cachedQueryResults.requestIdsByPathId[pathId] || [];
+      return requests.length;
+    });
+
+  const [open, setOpen] = React.useState(false);
+
 
   const handleClick = () => {
     setOpen(!open);
@@ -78,7 +100,7 @@ function EndpointBasePath({basePath, requests}) {
       <ListItem button
                 dense
                 onClick={handleClick}>
-        <ListItemText primary={basePath}
+        <ListItemText primary={name.substr(1)}
                       classes={{dense: classes.dense}}
                       primaryTypographyProps={{variant: 'overline'}}/>
         {open ? <ExpandLess/> : <ExpandMore/>}
@@ -87,11 +109,12 @@ function EndpointBasePath({basePath, requests}) {
         <List component="div"
               dense
               disablePadding>
-          {requests.map(i => (
+          {flatChildren.map(i => (
             <ListItem button
+                      component="div"
                       dense
                       className={classes.nested}>
-              <ListItemText primary={i}
+              <ListItemText primary={i.pathId}
                             classes={{dense: classes.dense}}
                             primaryTypographyProps={{variant: 'overline'}}/>
             </ListItem>
@@ -100,27 +123,22 @@ function EndpointBasePath({basePath, requests}) {
       </Collapse>
     </>
   );
-}
+});
 
-export default function ApiOverview() {
+export default withRfcContext(({paths, concepts, baseUrl, cachedQueryResults}) => {
   const classes = useStyles();
 
-  const endpointsList = [
-    {
-      basePath: 'users', requests: [
-        'Create New User',
-        'Delete a User',
-        'Update a User\'s preferences',
-      ]
-    }
-  ];
-
-  const conceptsList = [
-    'Pet',
-    'Owner',
-    'Store',
-    'Breed'
-  ]
+  const operationsToRender = paths.children.flatMap(i => [i, ...i.children])
+    .flatMap(path => {
+      const requests = cachedQueryResults.requestIdsByPathId[path.pathId] || [];
+      return requests.map(id => {
+        return {
+          requestId: id,
+          request: cachedQueryResults.requests[id],
+          path
+        };
+      });
+    });
 
   return (
     <div className={classes.root}>
@@ -140,58 +158,67 @@ export default function ApiOverview() {
         <Divider/>
         <List
           component="nav"
-          subheader={<ListSubheader>{'Endpoints'}</ListSubheader>}
+          subheader={<ListSubheader className={classes.subHeader}>{'Endpoints'}</ListSubheader>}
           aria-labelledby="nested-list-subheader"
           dense={true}
         >
-          {endpointsList.map(i => <EndpointBasePath {...i} />)}
+          {paths.children.map(i => <EndpointBasePath path={i} baseUrl={baseUrl}/>)}
         </List>
 
         <Divider/>
         <List
           component="nav"
-          subheader={<ListSubheader>{'Concepts'}</ListSubheader>}
+          subheader={<ListSubheader className={classes.subHeader}>{'Concepts'}</ListSubheader>}
           aria-labelledby="nested-list-subheader"
           dense={true}
         >
-          {conceptsList.map(i => (
+          {concepts.map(i => (
             <ListItem button
-                      dense
-                      className={classes.nested}>
-              <ListItemText primary={i}
+                      dense>
+              <ListItemText primary={i.name}
+                            dense
                             classes={{dense: classes.dense}}
-                            primaryTypographyProps={{variant: 'overline'}}/>
+                            primaryTypographyProps={{variant: 'overline', style: {textTransform: 'none'}}}/>
             </ListItem>
           ))}
         </List>
 
       </Drawer>
       <main className={classes.content}>
-        <>
-          <EndpointOverview
-            endpointPurpose="Update a User's Preferences by ID"
-            endpointDescription=""
-            method="PATCH"
-            parameters={['userId']}
-            url="/users/:userId/preferences"
+        <Typography variant="h3" color="primary" className={classes.sectionHeader}
+                    style={{paddingTop: 20}}>Endpoints</Typography>
 
+        {operationsToRender.map(operation => {
+          const {pathsById} = cachedQueryResults;
+          const pathTrail = asPathTrail(operation.path.pathId, pathsById);
+          const pathParameters = pathTrail
+            .map(pathId => pathsById[pathId])
+            .filter((p) => isPathParameter(p))
+            .map(p => ({pathId: p.pathId, name: p.descriptor.ParameterizedPathComponentDescriptor.name}));
+
+          return (
+            <EndpointOverview
+              endpointPurpose={''}
+              endpointDescription=""
+              method={operation.request.requestDescriptor.httpMethod}
+              parameters={pathParameters}
+              url={operation.path.full + operation.path.name}
+            />
+          );
+        })}
+
+        <Typography variant="h3" color="primary" className={classes.sectionHeader}>Concepts</Typography>
+
+        {concepts.map(concept => (
+          <ConceptOverview
+            name={concept.name}
+            shapeId={concept.id}
+            example={{name: 'fizo', age: 15, breed: 'husky'}}
           />
-          <EndpointOverview
-            endpointPurpose="Create a new User"
-            endpointDescription=""
-            method="POST"
-            url="/users"
-          />
-          <EndpointOverview
-            endpointPurpose="Delete User by ID"
-            endpointDescription=""
-            method="POST"
-            parameters={['userId']}
-            url="/users/:userId"
-          />
-        </>
+        ))}
+
       </main>
     </div>
   );
-}
+});
 

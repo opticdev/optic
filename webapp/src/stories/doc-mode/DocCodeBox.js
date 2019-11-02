@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {Typography} from '@material-ui/core';
-import {DocGrey} from './DocConstants';
+import {DocGrey, methodColors} from './DocConstants';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {secondary} from '../../theme';
@@ -12,6 +12,7 @@ const styles = theme => ({
     borderRadius: 9,
     backgroundColor: '#4f5568',
     overflow: 'hidden',
+    marginTop: 11
   },
   header: {
     backgroundColor: '#3d4256',
@@ -58,12 +59,45 @@ class _DocCodeBox extends React.Component {
 
 export const DocCodeBox = withStyles(styles)(_DocCodeBox);
 
-export const EndpointOverviewCodeBox = ({method, url}) => (
-  <DocCodeBox title="Endpoint">
-    <Typography variant="body" component="span" style={{fontWeight: 600, color: '#52e2a3'}}>{method}</Typography>
-    <Typography variant="body" component="span" style={{marginLeft: 9, color: DocGrey}}>{url}</Typography>
-  </DocCodeBox>
-);
+export const EndpointOverviewCodeBox = ({title = 'Endpoint', method, url}) => {
+  return (
+    <DocCodeBox title={title}>
+      <Typography variant="body" component="span" style={{fontWeight: 600, color: methodColors[method.toUpperCase()]}}>{method.toUpperCase()}</Typography>
+      <Typography variant="body" component="span" style={{marginLeft: 9, color: DocGrey}}>{url}</Typography>
+    </DocCodeBox>
+  );
+};
+
+export const ShapeOverview =  withStyles(styles)(({shapeId, classes, contentType, title}) => {
+
+  return (
+    <DocCodeBox title={title}>
+      {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
+      <div>RENDER THE SHAPE HERE</div>
+    </DocCodeBox>
+  );
+});
+
+export const ExampleOnly =  withStyles(styles)(({classes, contentType, title, example}) => {
+  return (
+    <DocCodeBox title={title}>
+      {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
+      {(typeof example === 'string' || typeof example === 'number' || typeof example === 'boolean') ?
+        <pre>{JSON.stringify(example)}</pre> : (
+          <div>
+            <ReactJson
+              src={example}
+              theme="monokai"
+              style={{backgroundColor: 'transparent'}}
+              enableClipboard={false}
+              name={false}
+              displayDataTypes={false}
+            />
+          </div>
+        )}
+    </DocCodeBox>
+  );
+});
 
 export const ExampleShapeViewer = withStyles(styles)(({shapeId, classes, example, title, contentType}) => {
 
@@ -72,7 +106,7 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, classes, example
   const rightRegion = (
     <StyledTabs value={showExample ? 0 : 1}>
       <StyledTab label="Example" onClick={() => setShowExample(true)}/>
-      <StyledTab label="Schema" onClick={() => setShowExample(false)}/>
+      <StyledTab label="Shape" onClick={() => setShowExample(false)}/>
     </StyledTabs>
   );
 
@@ -83,16 +117,16 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, classes, example
 
         {(typeof example === 'string' || typeof example === 'number' || typeof example === 'boolean') ?
           <pre>{JSON.stringify(example)}</pre> : (
-          <div>
-          <ReactJson
-          src={example}
-          theme="monokai"
-          style={{backgroundColor: 'transparent'}}
-          enableClipboard={false}
-          name={false}
-          displayDataTypes={false}
-          />
-          </div>
+            <div>
+              <ReactJson
+                src={example}
+                theme="monokai"
+                style={{backgroundColor: 'transparent'}}
+                enableClipboard={false}
+                name={false}
+                displayDataTypes={false}
+              />
+            </div>
           )}
       </>
     );
@@ -106,7 +140,7 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, classes, example
 });
 
 /* Custom Tabs */
-const StyledTabs = withStyles({
+export const StyledTabs = withStyles({
   root: {
     height: 29,
     minHeight: 'inherit'
@@ -122,7 +156,7 @@ const StyledTabs = withStyles({
   },
 })(props => <Tabs {...props} TabIndicatorProps={{children: <div/>}}/>);
 
-const StyledTab = withStyles(theme => ({
+export const StyledTab = withStyles(theme => ({
   root: {
     textTransform: 'none',
     color: '#fff',

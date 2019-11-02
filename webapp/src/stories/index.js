@@ -12,6 +12,9 @@ import EndpointPage from './doc-mode/EndpointPage';
 import {Drawer} from '@material-ui/core';
 import APIOverview from './doc-mode/ApiOverview';
 import ConceptOverview from './doc-mode/ConceptOverview';
+import DiffPage from './doc-mode/DiffPage';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import ShapeViewer from './doc-mode/shape/ShapeViewer';
 
 storiesOf('Shadow Input')
   .add('basic', () => {
@@ -53,14 +56,6 @@ storiesOf('Doc mode component Library ')
       />
     </>
   ))
-  .add('example / schema viewer', mui(
-    <>
-      <ExampleShapeViewer
-        title="Request Body"
-        shapeId='shapeId'
-        example={{hello: 'world', favoriteNumber: 22, array: [1,2,3,4,5]}}/>
-    </>
-  ))
   .add('endpoint page', mui(
     <EndpointPage
       endpointPurpose="Delete User by ID"
@@ -72,4 +67,38 @@ storiesOf('Doc mode component Library ')
   ))
   .add('overview page', mui(
     <APIOverview />
+  ))
+  .add('diff page', mui(
+    (<div>
+      <CssBaseline/>
+      <DiffPage />
+    </div>),
+    0))
+
+
+
+
+
+function SHAPE(baseShapeId, typeName, fields = [], parameters = [], fieldName) {
+  return {baseShapeId, typeName, fields, parameters, fieldName}
+}
+
+function NAME(name, shapeLink) {
+  return {name, shapeLink}
+}
+
+const shapeValue =
+  SHAPE('object', [NAME('Object')], [
+    SHAPE('string', [NAME('String')], [], [], 'fieldA' ),
+    SHAPE('string', [NAME('String')], [], [], 'fieldB' ),
+    SHAPE('object', [NAME('Object')], [
+      SHAPE('optional', [NAME('Option'), NAME('['), NAME('String', 'linkabc'), NAME(']')], [], [SHAPE('number', 'Number')], 'currency' ),
+      SHAPE('optional', [NAME('Option'), NAME('['), NAME('String', 'linkabc'), NAME(']')], [], [SHAPE('string', 'String')], 'team' ),
+    ], [], 'subobject' ),
+  ])
+
+
+storiesOf('Shape Viewer ')
+  .add('normal', mui(
+    (<ShapeViewer shape={shapeValue}  /> )
   ))

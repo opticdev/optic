@@ -37,7 +37,7 @@ class ConceptOverview extends React.Component {
 
     const left = (
       <div>
-        <HeadingContribution value={name} label="What is this concept called?"/>
+        <HeadingContribution value={name} label="What is this concept called?" />
         <div style={{marginTop: -6, marginBottom: 6}}>
           <MarkdownContribution value={description} label="What is this concept used for?"/>
         </div>

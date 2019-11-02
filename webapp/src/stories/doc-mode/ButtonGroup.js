@@ -5,6 +5,8 @@ import {SubHeadingTitleColor} from './DocConstants';
 import {ListItemText} from '@material-ui/core';
 import ListItem from '@material-ui/core/ListItem';
 import {Link} from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+import Slide from '@material-ui/core/Slide';
 
 const styles = theme => ({
   list: {
@@ -44,7 +46,7 @@ class _DocButton extends React.Component {
     return (
       <ListItem
         button
-        onClick={onClick}
+        onClick={this.onClick}
         className={classes.button}
         style={{
           borderLeftColor: color,

@@ -3,7 +3,7 @@ import {Typography} from '@material-ui/core';
 import {DocDivider, DocSubGroupHeadingStyles, ParametersStyles, SubHeadingStyles} from './DocConstants';
 import {MarkdownContribution} from './DocContribution';
 
-export function DocParameter({title, description, children}) {
+export function DocParameter({title, description, children, paramId, updateContribution = () => {}}) {
   return (
     <div style={{maxWidth: 500}}>
       <div style={{paddingTop: 6, paddingBottom: 6, paddingLeft: 4}}>
@@ -11,7 +11,12 @@ export function DocParameter({title, description, children}) {
           <Typography variant="subtitle1" component="span" style={ParametersStyles}>{title}</Typography>
           <Typography component="span" style={{marginLeft: 6, fontSize: 12}}>String</Typography>
         </div>
-        <MarkdownContribution value={description} label="Description"/>
+        <MarkdownContribution value={description}
+                              label="Description"
+                              onChange={(value) => {
+                                updateContribution(paramId, 'description', value)
+                              }}
+        />
       </div>
       <DocDivider/>
     </div>

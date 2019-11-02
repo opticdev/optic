@@ -9,11 +9,18 @@ export function DocRequest({description,
                            fields = [],
                            contentType,
                            shapeId,
-                           example}) {
+                           example,
+                           requestId,
+                           updateContribution}) {
 
   const left = (
     <DocSubGroup title={"Request"}>
-      <MarkdownContribution value={description} label="What should be in the request?"/>
+      <MarkdownContribution
+        value={description}
+        label="What should be in the request?"
+        onChange={(value) => {
+          updateContribution(requestId, 'body', value)
+        }}/>
       {fields.length ? (
         <DocSubGroup title={'Fields'}>
           {fields.map(i => <DocParameter title={i.title} description={i.description}/>)}

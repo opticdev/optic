@@ -15,6 +15,7 @@ export const SubHeadingStyles = {
   fontSize: '16px',
   fontWeight: 600,
   letterSpacing: '.41px',
+  textTransform: 'none'
 }
 export const DocSubGroupHeadingStyles = {
   color : DocGrey,
@@ -22,6 +23,14 @@ export const DocSubGroupHeadingStyles = {
   fontWeight: 500,
   letterSpacing: '.41px',
 }
+
+export const methodColors = {
+  'GET': '#52e2a3',
+  'POST': '#5aaad1',
+  'PUT': '#ee7517',
+  'PATCH': '#c8a5dc',
+  'DELETE': '#cd8d8c',
+};
 
 export const DocDivider = ({style}) => <Divider style={{...style, backgroundColor: '#e3e8ee'}} />
 export const DocSubHeading = ({title, onClick}) => <Typography onClick={onClick} variant="overline" style={SubHeadingStyles}> {title} </Typography>

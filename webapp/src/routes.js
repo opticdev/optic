@@ -21,12 +21,13 @@ import {SessionStore} from './contexts/SessionContext';
 import Button from '@material-ui/core/Button';
 import LocalDiffManager from './components/diff/LocalDiffManager';
 import {ShapeDialogStore} from './contexts/ShapeDialogContext';
+import EndpointPage, {EndpointPageWithQuery} from './stories/doc-mode/EndpointPage';
 
 export const routerPaths = {
   newRoot: () => '/new',
   example: () => '/examples/:exampleId',
   apiRoot: (base) => base,
-  pathPage: (base) => `${base}/paths/:pathId`,
+  endpointPage: (base) => `${base}/endpoints/:requestId`,
   conceptPage: (base) => `${base}/concepts/:conceptId`,
   localRoot: () => '/saved',
   localDiff: () => '/saved/diff/:sessionId'
@@ -34,7 +35,7 @@ export const routerPaths = {
 
 export const routerUrls = {
   apiRoot: (base) => base,
-  pathPage: (base, pathId) => `${base}/paths/${pathId}`,
+  endpointPage: (base, pathId) => `${base}/paths/${pathId}`,
   conceptPage: (base, conceptId) => `${base}/concepts/${conceptId}`
 };
 
@@ -193,11 +194,9 @@ class NewApiLoader extends React.Component {
 }
 
 function PathRoot({match, baseUrl}) {
-  const {pathId} = match.params;
+  const {requestId} = match.params;
   return (
-    <PathContext.Provider value={pathId}>
-      <PathPage pathId={pathId} baseUrl={baseUrl}/>
-    </PathContext.Provider>
+      <EndpointPageWithQuery requestId={requestId} baseUrl={baseUrl} />
   );
 }
 
@@ -214,7 +213,7 @@ class APIEditorRoutes extends React.Component {
           <FocusedRequestStore>
             <Switch>
               <Route exact path={routerPaths.newRoot(url)} component={OverView}/>
-              <Route path={routerPaths.pathPage(url)} component={PathRoot}/>
+              <Route path={routerPaths.endpointPage(url)} component={PathRoot}/>
               <Route path={routerPaths.conceptPage(url)}
                      component={(props) =>
                        <ConceptsPage {...props} conceptId={props.match.params.conceptId}/>
