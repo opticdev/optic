@@ -8,11 +8,11 @@ import './App.css';
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
 import {Hidden} from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import {appTheme} from './theme';
 import AppRoutes from './routes';
 import {BrowserRouter, Route} from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
+import {ThemeProvider} from '@material-ui/core/styles'
 
 class App extends React.Component {
 
@@ -20,7 +20,7 @@ class App extends React.Component {
     return (
         <React.Fragment>
           <CssBaseline/>
-          <MuiThemeProvider theme={appTheme}>
+          <ThemeProvider theme={appTheme}>
               <Hidden smUp>
                   <Dialog open fullScreen>
                       <DialogTitle>Mobile Coming Soon!</DialogTitle>
@@ -41,7 +41,7 @@ class App extends React.Component {
                       </>
                   </BrowserRouter>
               </SnackbarProvider>
-          </MuiThemeProvider>
+          </ThemeProvider>
         </React.Fragment>
     );
   }

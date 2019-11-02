@@ -32,5 +32,15 @@ export const methodColors = {
   'DELETE': '#cd8d8c',
 };
 
+export const primitiveDocColors = {
+  $string: '#00f2ff',
+  $number: '#e4508f',
+  $boolean: '#ff9868',
+  $object: '#00ec57',
+  $list: '#d3c90a',
+  $map: '#7d521f',
+  $unknown: '#027a7d',
+};
+
 export const DocDivider = ({style}) => <Divider style={{...style, backgroundColor: '#e3e8ee'}} />
 export const DocSubHeading = ({title, onClick}) => <Typography onClick={onClick} variant="overline" style={SubHeadingStyles}> {title} </Typography>

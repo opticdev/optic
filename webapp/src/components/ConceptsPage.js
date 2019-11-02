@@ -23,6 +23,7 @@ import BasicButton from './shape-editor/BasicButton.js';
 import { ShapeParameterName } from './shape-editor/NameInputs.js';
 import { coreShapeIdsSet } from './shape-editor/ShapeUtilities.js';
 import ShapeViewer, { WriteOnly } from './shape-editor/ShapeViewer.js';
+import ShapeViewerNew, {ExampleViewer} from '../stories/doc-mode/shape/ShapeViewer';
 
 export const styles = theme => ({
 	root: {
@@ -62,7 +63,9 @@ class ConceptsPage extends React.Component {
 		const { history, baseUrl, classes, conceptId, handleCommand, mode, cachedQueryResults, queries } = this.props;
 		const { apiName, contributions } = cachedQueryResults;
 
-		let shape = null;
+    const shapeRender = queries.flatShapeForShapeId(conceptId)
+
+    let shape = null;
 		try {
 			shape = queries.shapeById(conceptId);
 		} catch (e) {
@@ -75,7 +78,14 @@ class ConceptsPage extends React.Component {
 				<Helmet><title>{shape.name} -- {apiName}</title></Helmet>
 				<FullSheet>
 					<div className={classes.root}>
-						<ContributionTextField
+
+            <div style={{marginBottom: 22}}>
+              <ExampleViewer example={{hello: 'world', array: [1, 2, 3, 5, "__america"]}}/>
+            </div>
+
+            <ShapeViewerNew shape={shapeRender.root} parameters={shapeRender.parametersMap}  />
+
+            <ContributionTextField
 							key={`${conceptId}-name`}
 							value={shape.name}
 							variant={'heading'}
@@ -173,7 +183,7 @@ const ShapeParameterManager = withEditorContext(withShapeEditorContext(ShapePara
 function ShapeParameterManagerWrapper({ mode, shape }) {
 	const parameters = shape.parameters.filter(parameter => !parameter.isRemoved);
 	const spacer = <div style={{ padding: '.5em' }}>&nbsp;</div>
-	
+
 	if (mode === EditorModes.DOCUMENTATION && parameters.length === 0) {
 		return spacer;
 	}

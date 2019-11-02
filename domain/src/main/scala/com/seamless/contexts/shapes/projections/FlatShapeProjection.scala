@@ -17,7 +17,7 @@ object FlatShapeProjection {
   case class FlatField(fieldName: String, shape: FlatShape)
   @JSExportAll
   case class FlatShape(baseShapeId: ShapeId, typeName: Seq[ColoredComponent], fields: Seq[FlatField] /* parameters */ )
-
+  @JSExportAll
   case class FlatShapeResult(root: FlatShape, parameterMap: Map[String, FlatShape])
 
   private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty))
@@ -101,7 +101,7 @@ object FlatShapeProjection {
         val baseObject = ShapeDiffer.resolveBaseObject(shapeId)(shapesState)
         val fields = baseObject.descriptor.fieldOrdering.map(fieldId => {
           val field = shapesState.fields(fieldId)
-          FlatField(field.descriptor.name, getFlatShape( field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId ))
+          FlatField(field.descriptor.name, getFlatShape( field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId )(shapesState, Some(fieldId), parametersByShapeId))
         })
 
         //handle generics

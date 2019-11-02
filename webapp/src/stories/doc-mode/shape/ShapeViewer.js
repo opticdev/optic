@@ -6,6 +6,9 @@ import {StyledTab, StyledTabs} from '../DocCodeBox';
 import IconButton from '@material-ui/core/IconButton';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import {Show} from '../Show';
+import {primitiveDocColors} from '../DocConstants';
+import {withRfcContext} from '../../../contexts/RfcContext';
 
 const styles = theme => ({
   row: {
@@ -14,18 +17,31 @@ const styles = theme => ({
     display: 'flex',
     flexDirection: 'row',
     color: 'rgb(249, 248, 245)',
-    fontSize: 11,
-    height: 23,
+    fontSize: 13,
+    height: 26,
+    userSelect: 'none',
     fontFamily: 'monospace',
     '&:hover': {
       backgroundColor: 'rgba(78,165,255,0.27)'
     },
   },
+  colon: {
+    marginLeft: 5,
+    marginRight: 5,
+  },
+  typeName: {
+    whiteSpace: 'pre',
+    userSelect: 'none',
+    fontWeight: 100
+  },
   arrow: {
-    fontSize: 13,
-    marginLeft: -13,
+    fontSize: 15,
+    marginLeft: -16,
     marginTop: 2,
     cursor: 'pointer'
+  },
+  link: {
+    textDecoration: 'underline'
   },
   innerParam: {
     paddingTop: 6,
@@ -34,6 +50,9 @@ const styles = theme => ({
     marginLeft: 10,
     borderTop: '1px solid #e2e2e2',
     borderBottom: '1px solid #e2e2e2'
+  },
+  fieldName: {
+    fontWeight: 800
   }
 });
 
@@ -55,11 +74,9 @@ export const ExpandableRow = withStyles(styles)(({classes, children, innerChildr
           <ArrowRightIcon className={classes.arrow}/>} </div>
         {children}
       </li>
-      <Fade in={expanded} timeout={100}>
-        <div>
-          {innerChildren}
-        </div>
-      </Fade>
+      <Show when={expanded}>
+        {innerChildren}
+      </Show>
     </>
   );
 });
@@ -68,11 +85,18 @@ export const Field = withStyles(styles)(({classes, typeName, fields, fieldName, 
 
   const [expandedParam, setExpandedParam] = useState(null);
 
-  if (baseShapeId === 'object') {
-    const fieldsRendered = fields.map(i => <Field {...i} depth={depth + 2}/>);
+
+  const shared = <>
+    {  typeName[0].colorKey !== 'index' ? (<> <span className={classes.fieldName}>{fieldName}</span> <span className={classes.colon}>:</span> </>) : <>-</>}
+    <span style={{marginLeft: 4}}> <TypeNameRender typeName={typeName}/> </span>
+  </>;
+
+  if (fields.length) {
+    const fieldsRendered = fields.map(i => <Field {...i.shape} fieldName={i.fieldName} depth={depth + 2}/>);
     //use expandable row
-    return <ExpandableRow depth={depth + 1} innerChildren={fieldsRendered}>{fieldName}: {<TypeNameRender
-      typeName={typeName}/>}</ExpandableRow>;
+    return <ExpandableRow depth={depth + 1} innerChildren={fieldsRendered}>
+      {shared}
+    </ExpandableRow>;
   }
 
   const setParam = (param) => {
@@ -85,7 +109,9 @@ export const Field = withStyles(styles)(({classes, typeName, fields, fieldName, 
 
   return (
     <>
-      <Row depth={depth + 1}>{fieldName}: {<TypeNameRender typeName={typeName} onLinkClick={setParam}/>}</Row>
+      <Row depth={depth + 1}>
+        {shared}
+      </Row>
       {expandedParam && (
         <div style={{paddingLeft: depth * 8}}>
           <div className={classes.innerParam}>
@@ -97,46 +123,66 @@ export const Field = withStyles(styles)(({classes, typeName, fields, fieldName, 
   );
 });
 
-export const TypeNameRender = withStyles(styles)(({classes, typeName, onLinkClick}) => {
-  return typeName.map(({name, shapeLink}) => {
+export const TypeNameRender = withStyles(styles)(({classes, typeName, onLinkClick, primitiveId}) => {
+  if (!typeName) {
+    return <>'something went wrong'</>;
+  }
+
+  const components = typeName.map(({name, shapeLink, primitiveId}) => {
+
+    const color = primitiveDocColors[primitiveId];
+
     if (shapeLink) {
-      return <span onClick={() => {
-        if (onLinkClick) {
-          onLinkClick(shapeLink);
-        }
-      }} style={{color: '#00BFFF'}}>{name}</span>;
+      return (<>
+        <span
+          onClick={() => {
+            if (onLinkClick) {
+              onLinkClick(shapeLink);
+            }
+          }}
+          className={classes.link}
+          style={{color: color || '#00BFFF'}}>{name}</span>
+        {' '}
+      </>);
     }
 
-    return <>{name}</>;
+    return <span style={{color}}>{name + ' '}</span>;
   });
+
+  return <span className={classes.typeName}>{components}</span>;
+
 });
 
 export const ObjectViewer = withStyles(styles)(({classes, typeName, fields, depth = 0}) => {
 
   return (<>
       <Row>{<TypeNameRender typeName={typeName}/>}</Row>
-      {fields.map(i => <Field {...i} depth={depth + 1}/>)}
+      {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} depth={depth + 1}/>)}
     </>
   );
 });
 
 function handleBaseShape(shape) {
   const {baseShapeId} = shape;
-  if (baseShapeId === 'object') {
+  if (baseShapeId === '$object') {
     return <ObjectViewer {...shape} />;
   }
 }
 
-class ShapeViewer extends React.Component {
+class _ShapeViewer extends React.Component {
   render() {
-    const {shape, depth} = this.props;
+    const {shape, depth = 0, parameters} = this.props;
     const {baseShapeId} = shape;
 
     const root = handleBaseShape(shape);
-
     return <div style={{backgroundColor: '#4f5568'}}>{root}</div>;
   }
 }
 
+const ShapeViewer = withStyles(styles)(_ShapeViewer);
+export default ShapeViewer
 
-export default withStyles(styles)(ShapeViewer);
+export const ExampleViewer = withRfcContext(({example, queries}) => {
+  const flatShape = queries.flatShapeForExample(example)
+  return <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} />
+})

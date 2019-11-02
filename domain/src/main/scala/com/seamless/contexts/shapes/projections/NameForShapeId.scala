@@ -49,7 +49,7 @@ object NameForShapeId {
         val (innerId, listItemComponent) = resolveInner("$listItem")
         Seq(
           ColoredComponent("List", "primitive", primitiveId = Some(ListKind.baseShapeId)),
-          ColoredComponent("of", "text", Some(innerId), None),
+          ColoredComponent("of", "text", None, None),
         ) ++ listItemComponent
       }
       case MapKind.baseShapeId => {
@@ -109,7 +109,7 @@ object NameForShapeId {
       //fallback to standard case
       case baseShapeId if ShapesHelper.allCoreShapes.exists(_.baseShapeId == baseShapeId) =>
         val name = ShapesHelper.allCoreShapes.find(_.baseShapeId == baseShapeId).map(_.name).get
-        Seq(ColoredComponent(name, "primitive", primitiveId = Some(baseShapeId)))
+        Seq(ColoredComponent(name, "primitive", None, primitiveId = Some(baseShapeId)))
       case _ => Seq()
     }
   }
