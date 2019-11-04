@@ -1,10 +1,10 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { toInteraction, RequestDiffer, JsonHelper, Interpreters, ShapesCommands } from '../../engine/index.js';
-import { withSessionContext, DiffStateStatus } from '../../contexts/SessionContext';
+import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
 import { withStyles } from '@material-ui/core/styles';
 import UnmatchedUrlWizard from './UnmatchedUrlWizard';
-import { withRfcContext } from '../../contexts/RfcContext';
+import { withRfcContext, RfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
 import { primary } from '../../theme';
 import Card from '@material-ui/core/Card';
@@ -14,7 +14,7 @@ import { commandsFromJson, NaiveSummary } from '../../engine/index';
 import DiffPageWrapper from './DiffPageWrapper';
 import { track } from '../../Analytics';
 import { GenericSetterContextFactory } from '../../contexts/GenericSetterContextFactory.js';
-import TextField from '@material-ui/core/TextField'
+import { DiffStateStatus } from '../diff-v2/BaseDiffSessionManager.js';
 
 const styles = (theme => ({
   root: {
@@ -80,15 +80,15 @@ class LocalDiffManager extends React.Component {
   }
 
   renderUnrecognizedUrlWidget(item) {
-    const { diffSessionManager, diffStateProjections, applyCommands } = this.props;
+    const { diffSessionManager, diffStateProjections } = this.props;
     const { sampleItemsWithoutResolvedPaths } = diffStateProjections;
-    return (
+    return (withRfcContext(({ handleCommands }) =>
       <DiffPage>
         <UnmatchedUrlWizard
           key={item.sample.request.url}
           onSubmit={({ commands }) => {
             track('Matched New Path');
-            applyCommands(...commands);
+            handleCommands(...commands);
           }}
           onIgnore={() => {
             track('Ignored Unmatched');
@@ -103,7 +103,7 @@ class LocalDiffManager extends React.Component {
           items={sampleItemsWithoutResolvedPaths}
         />
       </DiffPage>
-    )
+    ))()
   }
 
   renderDiffReadyToMerge() {
@@ -143,70 +143,11 @@ class LocalDiffManager extends React.Component {
     );
   }
 
-  renderUnrecognizedShapeWidget(item, diff, interpretations) {
-    const { applyCommands, diffSessionManager } = this.props
-
-    const { Store: ConceptNameStore, Context: ConceptNameContext } = GenericSetterContextFactory({
-      names: {},
-      selectedInterpretationIndex: 0
-    })
-
-    return (
-      <ConceptNameStore>
-        <ConceptNameContext.Consumer>
-          {(context) => {
-            const { value, setValue } = context
-            const { names, selectedInterpretationIndex } = value;
-            const interpretation = interpretations[selectedInterpretationIndex]
-            const { commands } = interpretation
-            const shapeNameCommands = Object.entries(names).map(([shapeId, name]) => ShapesCommands.RenameShape(shapeId, name || ''));
-            const allCommands = [...JsonHelper.seqToJsArray(commands), ...shapeNameCommands];
-            console.log(commands, allCommands)
-            return (
-              <DiffPage
-                interpretation={interpretation}
-                accept={() => {
-                  track('Provided Concept Name');
-                  if (selectedInterpretationIndex === interpretations.length - 1) {
-                    applyCommands(...allCommands);
-                    diffSessionManager.markDiffAsIgnored(diff.toString())
-                  } else {
-                    setValue({
-                      ...value,
-                      selectedInterpretationIndex: selectedInterpretationIndex + 1
-                    })
-                  }
-                }}
-                ignore={() => {
-                  track('Ignored Concept Name');
-                  if (selectedInterpretationIndex === interpretations.length - 1) {
-                    applyCommands(...allCommands);
-                    diffSessionManager.markDiffAsIgnored(diff.toString())
-                  } else {
-                    setValue({
-                      ...value,
-                      selectedInterpretationIndex: selectedInterpretationIndex + 1
-                    })
-                  }
-                }}
-              >
-                <Typography>{item.sample.request.method} {item.sample.request.url}</Typography>
-                <pre>{JSON.stringify(interpretation.metadataJs.example, null, 2)}</pre>
-              </DiffPage>
-            )
-          }}
-        </ConceptNameContext.Consumer>
-
-      </ConceptNameStore>
-    )
-  }
-
   renderStandardDiffWidget(item, diff, interpretations) {
     const { rfcService, diffSessionManager, diffStateProjections, classes, cachedQueryResults, rfcId, eventStore, queries } = this.props
-    const { applyCommands } = this.props;
     const { diffState } = diffSessionManager
     const readyToFinish = interpretations.length === 0;
-    return (
+    return (withRfcContext(({ handleCommands }) =>
       <DiffPageWrapper
         key={interpretations.toString()}
         rfcService={rfcService}
@@ -215,7 +156,7 @@ class LocalDiffManager extends React.Component {
         rfcId={rfcId}
         eventStore={eventStore}
         queries={queries}
-        applyCommands={applyCommands}
+        applyCommands={handleCommands}
         diffSessionManager={diffSessionManager}
         diffStateProjections={diffStateProjections}
         diffState={diffState}
@@ -225,14 +166,14 @@ class LocalDiffManager extends React.Component {
         interpretations={interpretations}
         onAccept={(commands) => {
           track('Accepted Interaction');
-          applyCommands(...commands);
+          handleCommands(...commands);
         }}
         onIgnore={() => {
           track('Ignored Interaction');
           diffSessionManager.skipInteraction(item.index);
         }}
       />
-    )
+    ))()
   }
 
   render() {
@@ -261,17 +202,42 @@ class LocalDiffManager extends React.Component {
         const interpretations = JsonHelper.seqToJsArray(urlInterpreter.interpret(diffItem));
         console.log({ diffItem, interpretations })
         if (interpretations.length > 0) {
-          return this.renderUnrecognizedUrlWidget(item)
+          return this.renderWrapped(item, this.renderUnrecognizedUrlWidget(item))
         }
         const pathId = queries.resolvePath(item.sample.request.url)
         console.log('xxx1', diffItem.toString(), interpretations.toString())
         const otherInterpretations = JsonHelper.seqToJsArray(compoundInterpreter.interpret(diffItem));
-        return this.renderStandardDiffWidget({ ...item, pathId }, diffItem, otherInterpretations)
+        const itemWithPathId = { ...item, pathId };
+        return this.renderWrapped(itemWithPathId, this.renderStandardDiffWidget(itemWithPathId, diffItem, otherInterpretations))
       }
     }
 
     return this.renderDiffReadyToMerge()
   }
+
+  renderWrapped(item, child) {
+    debugger
+    const { diffSessionManager } = this.props;
+
+    const handleCommands = (...commands) => {
+      this.props.handleCommands(...commands)
+      diffSessionManager.acceptCommands(commands)
+    }
+
+    const { children, ...rest } = this.props; // @GOTCHA assumes withRfcContext on parent component
+
+    const rfcContext = {
+      ...rest,
+      handleCommands,
+      handleCommand: handleCommands
+    }
+
+    return (
+      <RfcContext.Provider value={rfcContext}>
+        {child}
+      </RfcContext.Provider>
+    )
+  }
 }
 
-export default withSessionContext(withStyles(styles)(withRfcContext(LocalDiffManager)));
+export default withTrafficAndDiffSessionContext(withStyles(styles)(withRfcContext(LocalDiffManager)));

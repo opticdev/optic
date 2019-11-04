@@ -6,6 +6,7 @@ import debounce from 'lodash.debounce';
 import { withSnackbar } from 'notistack';
 import uuidv4 from 'uuid/v4';
 import { withCommandContext } from './CommandContext';
+import { specService } from '../services/SpecService';
 
 const {
     Context: RfcContext,
@@ -156,7 +157,7 @@ class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
     }
 
     persistEvents = debounce(async () => {
-        const response = await saveEvents(this.state.eventStore, this.props.rfcId)
+        const response = await specService.saveEvents(this.state.eventStore, this.props.rfcId)
 
         if (response.ok) {
             // this.props.enqueueSnackbar('Saved', { 'variant': 'success' })
@@ -166,17 +167,6 @@ class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
         }
 
     }, 4000, { leading: true, trailing: true })
-}
-
-export async function saveEvents(eventStore, rfcId) {
-    const serializedEvents = eventStore.serializeEvents(rfcId);
-    return fetch(`/cli-api/events`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: serializedEvents
-    });
 }
 
 const LocalRfcStore = withSnackbar(withCommandContext(withInitialRfcCommandsContext(LocalRfcStoreWithoutContext)))

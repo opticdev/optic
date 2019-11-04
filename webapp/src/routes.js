@@ -17,7 +17,7 @@ import { ImportedOASContext, ImportedOASStore } from './contexts/ImportedOASCont
 import OverView from './components/onboarding/Overview';
 import { EditorStore } from './contexts/EditorContext';
 import { TutorialStore } from './contexts/TutorialContext';
-import { SessionStore, DiffSessionManager } from './contexts/SessionContext';
+import { TrafficAndDiffSessionStore } from './contexts/TrafficAndDiffSessionContext';
 import Button from '@material-ui/core/Button';
 import LocalDiffManager from './components/diff/LocalDiffManager';
 import { ShapeDialogStore } from './contexts/ShapeDialogContext';
@@ -25,6 +25,7 @@ import uuidv4 from 'uuid/v4';
 import { CommandContextStore } from './contexts/CommandContext.js';
 import ExampleCommandsLoader from './components/loaders/ExampleCommandsLoader.js';
 import ExampleSessionsLoader from './components/loaders/ExampleSessionsLoader.js';
+import { specService } from './services/SpecService.js';
 
 export const routerPaths = {
   newRoot: () => '/new',
@@ -140,48 +141,13 @@ class LocalLoader extends React.Component {
 export class LocalDiff extends React.Component {
   render() {
     const { sessionId } = this.props.match.params;
-    const loadSession = function (sessionId) {
-      const promises = [
-        fetch(`/cli-api/sessions/${sessionId}`)
-          .then((response) => {
-            if (response.ok) {
-              return response.json()
-            }
-            return response.text()
-              .then((text) => {
-                throw new Error(text)
-              })
-          }),
-        fetch(`/cli-api/sessions/${sessionId}/diff`)
-          .then((response) => {
-            if (response.ok) {
-              return response.json()
-            }
-            return response.text()
-              .then((text) => {
-                throw new Error(text)
-              })
-          })
-      ]
-      return Promise.all(promises)
-        .then(([sessionResponse, diffStateResponse]) => {
-          return {
-            sessionResponse,
-            diffStateResponse
-          }
-        })
-    }
     return (
       <LocalDiffRfcStore>
-        <SessionStore
-          sessionId={sessionId}
-          loadSession={loadSession}
-          diffSessionManagerFactory={(...args) => new DiffSessionManager(...args)}
-        >
+        <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
           <ShapeDialogStore>
             <LocalDiffManager />
           </ShapeDialogStore>
-        </SessionStore>
+        </TrafficAndDiffSessionStore>
       </LocalDiffRfcStore>
     );
   }

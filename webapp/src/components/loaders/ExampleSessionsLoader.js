@@ -1,11 +1,12 @@
 import React from 'react';
 import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
-import { SessionStore, LocalDiffSessionManager } from '../../contexts/SessionContext';
+import { TrafficAndDiffSessionStore } from '../../contexts/TrafficAndDiffSessionContext';
 import { LocalDiffRfcStore } from '../../contexts/RfcContext';
 import LocalDiffManager from '../diff/LocalDiffManager';
 import { ShapeDialogStore } from '../../contexts/ShapeDialogContext';
 import Loading from '../navigation/Loading';
 import { Route, Switch, Link } from 'react-router-dom';
+import { DiffStateStatus } from '../diff-v2/BaseDiffSessionManager';
 
 class ExampleSessionsLoader extends React.Component {
 
@@ -36,33 +37,34 @@ class ExampleSessionsLoader extends React.Component {
         if (!this.state.isLoaded) {
             return <Loading />
         }
-        const loadSession = (sessionId) => {
-            return Promise.resolve({
-                diffStateResponse: {
-                    diffState: {
-                        status: 'started',
-                        interactionResults: {},
-                        acceptedInterpretations: [],
+
+        const specService = {
+            loadSession: (sessionId) => {
+                return Promise.resolve({
+                    diffStateResponse: {
+                        diffState: {
+                            status: DiffStateStatus.started,
+                            interactionResults: {},
+                            acceptedInterpretations: [],
+                        }
+                    },
+                    sessionResponse: {
+                        session: this.state.session
                     }
-                },
-                sessionResponse: {
-                    session: this.state.session
-                }
-            })
+                })
+            },
+            saveEvents: () => {},
+            saveDiffState: () => {}
         }
         
         return (
             <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
                 <LocalDiffRfcStore>
-                    <SessionStore
-                        sessionId={'fakeSessionId'}
-                        loadSession={loadSession}
-                        diffSessionManagerFactory={(...args) => new LocalDiffSessionManager(...args)}
-                    >
+                    <TrafficAndDiffSessionStore sessionId={'fakeSessionId'} specService={specService}>
                         <ShapeDialogStore>
                             <LocalDiffManager diffPersistedComponent={<After />} />
                         </ShapeDialogStore>
-                    </SessionStore>
+                    </TrafficAndDiffSessionStore>
                 </LocalDiffRfcStore>
             </InitialRfcCommandsStore>
         )
