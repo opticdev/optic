@@ -13,7 +13,7 @@ const styles = theme => ({
   pathWrapper: {
     padding: 7,
     fontWeight: 400,
-    backgroundColor: '#f6f6f6'
+    backgroundColor: '#eeeeee'
   }
 });
 
@@ -58,13 +58,13 @@ class PathMatcher extends React.Component {
 
     return (
       <div>
-        <Typography variant="overline" style={{paddingBottom: 0}}>URL:</Typography>
+        <Typography variant="overline" style={{paddingBottom: 0, marginTop: 11}}>Observed URL:</Typography>
         <div className={classes.pathWrapper}><span
           style={{color: '#277a4e', fontWeight: 800}}>{matched}</span><span>{remaining}</span></div>
 
 
         <div style={{display: 'flex', flexDirection: 'row'}}>
-          <Typography variant="overline" style={{marginBottom: 0}}>Provide Path Matcher:</Typography>
+          <Typography variant="overline" style={{marginBottom: 0}}>Path Matcher:</Typography>
         </div>
 
         <div className={classes.pathWrapper}>

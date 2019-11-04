@@ -6,7 +6,7 @@ import {DocDivider, DocSubHeading, SubHeadingStyles, SubHeadingTitleColor} from 
 import {DocSubGroup} from './DocSubGroup';
 import {DocParameter} from './DocParameter';
 import {HeadingContribution, MarkdownContribution} from './DocContribution';
-import DocCodeBox, {EndpointOverviewCodeBox, ExampleShapeViewer} from './DocCodeBox';
+import DocCodeBox, {EndpointOverviewCodeBox, ExampleShapeViewer, ShapeOnly} from './DocCodeBox';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
 import {DocButton, DocButtonGroup} from './ButtonGroup';
@@ -58,10 +58,11 @@ class ConceptOverview extends React.Component {
 
 
     const right = (
-      <ExampleShapeViewer
-        title={name}
-        shapeId={shapeId}
-        example={example}/>
+      <HighlightedIDsStore>
+        <ShapeOnly
+          title={name}
+          shapeId={shapeId}/>
+      </HighlightedIDsStore>
     );
 
     return (

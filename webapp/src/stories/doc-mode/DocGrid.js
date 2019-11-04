@@ -41,7 +41,6 @@ export function DocGrid({left, right, style}) {
   );
 }
 
-
 export function DiffDocGrid({left, leftColor, right, style}) {
 
   const classes = useStyles();

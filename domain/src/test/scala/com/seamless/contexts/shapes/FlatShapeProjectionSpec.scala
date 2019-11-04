@@ -95,6 +95,7 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
     val shapesState = circleExampleRfc.shapesState
 
     val flatShape = FlatShapeProjection.forShapeId("concept_19_builds")(shapesState)
+
     assert(flatShape.root.joinedTypeName == "List of Build")
   }
 

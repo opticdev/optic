@@ -18,6 +18,8 @@ import ConceptOverview from './ConceptOverview';
 import {DocGrey, methodColors} from './DocConstants';
 import {DocCodeBox} from './DocCodeBox';
 import {LightTooltip} from '../../components/diff/DiffCard';
+import {DisplayPath} from './DisplayPath';
+import {NewBehavior} from './NewBehavior';
 
 const drawerWidth = 240;
 
@@ -114,14 +116,7 @@ const EndpointBasePath = withRfcContext(({path, baseUrl, operationsToRender, cac
 
               const {httpMethod} = request.requestDescriptor;
               const purpose = contributions.getOrUndefined(requestId, 'purpose') || (
-                <span>
-                  <Typography variant="body" component="span" style={{
-                    fontWeight: 600,
-                    color: methodColors[httpMethod.toUpperCase()]
-                  }}>{httpMethod.toUpperCase()}</Typography>
-                  <Typography variant="body" component="span"
-                              style={{marginLeft: 9, color: DocGrey}}>{url}</Typography>
-                </span>
+                <DisplayPath method={httpMethod} url={url}/>
               );
 
               return (
@@ -207,6 +202,9 @@ export default withRfcContext(({paths, concepts, baseUrl, cachedQueryResults}) =
 
       </Drawer>
       <main className={classes.content}>
+
+        <NewBehavior />
+
         <Typography variant="h3" color="primary" className={classes.sectionHeader}
                     style={{paddingTop: 20}}>Endpoints</Typography>
 

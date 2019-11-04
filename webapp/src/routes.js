@@ -22,6 +22,8 @@ import Button from '@material-ui/core/Button';
 import LocalDiffManager from './components/diff/LocalDiffManager';
 import {ShapeDialogStore} from './contexts/ShapeDialogContext';
 import EndpointPage, {EndpointPageWithQuery} from './stories/doc-mode/EndpointPage';
+import {DocPageTesting} from './stories/doc-mode/DiffPageWrapper';
+import NewUnmatchedUrlWizard from './stories/doc-mode/NewUnmatchedUrlWizard';
 
 export const routerPaths = {
   newRoot: () => '/new',
@@ -30,7 +32,9 @@ export const routerPaths = {
   endpointPage: (base) => `${base}/endpoints/:requestId`,
   conceptPage: (base) => `${base}/concepts/:conceptId`,
   localRoot: () => '/saved',
-  localDiff: () => '/saved/diff/:sessionId'
+  localDiff: () => '/saved/diff/:sessionId',
+  localDiffRequest: (base) => `${base}/diff/requests/:requestId`,
+  localNewUrl: (base) => `${base}/diff/new-url`
 };
 
 export const routerUrls = {
@@ -213,6 +217,8 @@ class APIEditorRoutes extends React.Component {
           <FocusedRequestStore>
             <Switch>
               <Route exact path={routerPaths.newRoot(url)} component={OverView}/>
+              <Route exact path={routerPaths.localDiffRequest(url)} component={DocPageTesting}/>
+              <Route exact path={routerPaths.localNewUrl(url)} component={() => <NewUnmatchedUrlWizard url={'/users/aidan/profile'} />}/>
               <Route path={routerPaths.endpointPage(url)} component={PathRoot}/>
               <Route path={routerPaths.conceptPage(url)}
                      component={(props) =>

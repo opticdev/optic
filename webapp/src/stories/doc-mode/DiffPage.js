@@ -10,6 +10,7 @@ import {DocCodeBox, EndpointOverviewCodeBox, ExampleOnly, ShapeOverview} from '.
 import {DocSubGroup} from './DocSubGroup';
 import DiffInfo from './DiffInfo';
 import InterpretationCard from './InterpretationCard';
+import PropTypes from 'prop-types';
 import Drawer from '@material-ui/core/Drawer';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
@@ -22,6 +23,7 @@ import FastRewindIcon from '@material-ui/icons/FastRewind';
 import Tooltip from '@material-ui/core/Tooltip';
 import ClearIcon from '@material-ui/icons/Clear';
 import InterpretationInfo from './InterpretationInfo';
+import {HighlightedIDsStore} from './shape/HighlightedIDs';
 
 const styles = theme => ({
   root: {
@@ -58,9 +60,14 @@ const styles = theme => ({
   button: {
     margin: theme.spacing(1),
   },
+  appBar: {
+    borderBottom: '1px solid #e2e2e2',
+    backgroundColor: 'white'
+  },
   scroll: {
     overflow: 'scroll',
-    paddingBottom: 300
+    paddingBottom: 300,
+    paddingTop:  20,
   }
 });
 
@@ -95,18 +102,19 @@ const DiffPath = withStyles(styles)(({classes, path, method, url}) => {
   );
 });
 
-const DiffRequest = withStyles(styles)(({classes, observedBody, shapeId, diff, interpretation}) => {
+const DiffRequest = withStyles(styles)(({classes, observedRequestBody, shapeId}) => {
+
   return (
     <DiffDocGrid
       left={(
         <DocSubGroup title="Request Body">
           <DiffInfo color="green"
                     diffText={'##### New Field Observed\n`tags` was observed for the first time in this request.'}/>
-          <ExampleOnly title="Body" contentType="application/json" example={{
-            a: true,
-            b: false,
-            tags: ['aidan', 'dev']
-          }}/>
+
+
+          <HighlightedIDsStore>
+          <ExampleOnly title="Request" contentType="application/json" example={observedRequestBody}/>
+          </HighlightedIDsStore>
         </DocSubGroup>
       )}
       right={(
@@ -201,15 +209,15 @@ const DiffPanel = withStyles(styles)(({classes}) => {
 });
 
 class DiffPage extends React.Component {
+
   render() {
 
-    const {classes} = this.props;
+    const {classes, url, method, path, observed, expected, remainingInteractions} = this.props;
 
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="default">
+        <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
           <Toolbar variant="dense">
-
             <div style={{marginRight: 20}}>
               <Tooltip title="End Review">
                 <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple>
@@ -225,7 +233,7 @@ class DiffPage extends React.Component {
             </Tooltip>
 
             <Typography variant="overline" className={classes.remaining}>
-              3 remaining
+              {remainingInteractions} remaining
             </Typography>
 
             <Tooltip title="Skip Example">
@@ -243,12 +251,11 @@ class DiffPage extends React.Component {
           <DiffDocGrid left = {<Typography variant="h4" color="primary">Observed</Typography>}
                        right= {<Typography variant="h4" color="primary">Expected</Typography>}/>
 
-          <DiffPath path={'/users/:userId'} method="POST" url={<>/users/<b>aidanId</b></>}/>
+          <DiffPath path={path} method={method} url={url}/>
 
+          <DiffRequest observedRequestBody={observed.requestBody} />
 
-          <DiffRequest />
-
-          <DiffResponse statusCode={200}  />
+          <DiffResponse statusCode={observed.statusCode}  />
 
 
         </div>
@@ -258,5 +265,27 @@ class DiffPage extends React.Component {
     );
   }
 }
+
+
+DiffPage.propTypes = {
+  url: PropTypes.string,
+  path: PropTypes.string,
+  method: PropTypes.string,
+
+  //observation
+  observed: PropTypes.shape({
+    statusCode: PropTypes.number,
+    requestBody: PropTypes.any,
+    responseBody: PropTypes.any,
+  }),
+
+  //expected
+  expected: PropTypes.shape({
+    requestBodyShapeId: PropTypes.any,
+    responseBodyShapeId: PropTypes.any,
+  }),
+
+  remainingInteractions: PropTypes.number
+};
 
 export default withStyles(styles)(DiffPage);
