@@ -1,4 +1,4 @@
-import {Facade, Queries} from '../engine';
+import {Facade, Queries, RfcCommandContext} from '../engine';
 import fs from 'fs'
 
 xdescribe('Example loading', function () {
@@ -11,7 +11,8 @@ xdescribe('Example loading', function () {
             const rfcId = 'rrr'
             const eventStore = Facade.makeEventStore()
             const initialCommandsString = fs.readFileSync(exampleFileName)
-            const service = Facade.fromJsonCommands(eventStore, initialCommandsString, rfcId)
+            const commandContext = new RfcCommandContext('userId', 'sessionId', 'batchId')
+            const service = Facade.fromJsonCommands(eventStore, rfcId, commandContext, initialCommandsString)
         });
     })
 });

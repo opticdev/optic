@@ -19,6 +19,8 @@ scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
 
 val circeVersion = "0.10.0"
 
+libraryDependencies += "org.scala-js" %%% "scalajs-java-time" % "0.2.5"
+
 libraryDependencies ++= Seq(
   "io.circe" %%% "circe-core",
   "io.circe" %%% "circe-generic",

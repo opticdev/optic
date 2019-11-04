@@ -24,28 +24,28 @@ object PathListProjection extends Projection[RfcEvent, Vector[FullPath]] {
   }
 
   def withMap(pathMap: Map[PathComponentId, FullPath], events: Vector[RfcEvent]): Vector[FullPath] = {
-    val results = events.foldLeft(pathMap)((acc, e) => {
-      e match {
-        case PathComponentAdded(pathId, parentPathId, name) => {
-          val parent = acc(parentPathId)
-          acc + (pathId -> FullPath(pathId, isParameter = false, parentPathId +: parent._parentPathIds, name, joinPath(parent.absolutePath, name), joinPath(parent.normalizedAbsolutePath, name)))
+    val results = events.foldLeft(pathMap)((acc, event) => {
+      event match {
+        case e: PathComponentAdded => {
+          val parent = acc(e.parentPathId)
+          acc + (e.pathId -> FullPath(e.pathId, isParameter = false, e.parentPathId +: parent._parentPathIds, e.name, joinPath(parent.absolutePath, e.name), joinPath(parent.normalizedAbsolutePath, e.name)))
         }
-        case PathComponentRenamed(pathId, name) => {
-          val p = acc(pathId)
-          acc.updated(pathId, p.copy(name = name))
-        }
-
-        case PathComponentRemoved(pathId) => {
-          acc - pathId
+        case e: PathComponentRenamed => {
+          val p = acc(e.pathId)
+          acc.updated(e.pathId, p.copy(name = e.name))
         }
 
-        case PathParameterAdded(pathId, parentPathId, name) => {
-          val parent = acc(parentPathId)
-          acc + (pathId -> FullPath(pathId, isParameter = true, parentPathId +: parent._parentPathIds, name, joinPath(parent.absolutePath, "{" + name + "}"), joinPath(parent.normalizedAbsolutePath, "{" + name + "}")))
+        case e: PathComponentRemoved => {
+          acc - e.pathId
         }
 
-        case PathParameterRemoved(pathId) => {
-          acc - pathId
+        case e: PathParameterAdded => {
+          val parent = acc(e.parentPathId)
+          acc + (e.pathId -> FullPath(e.pathId, isParameter = true, e.parentPathId +: parent._parentPathIds, e.name, joinPath(parent.absolutePath, "{" + e.name + "}"), joinPath(parent.normalizedAbsolutePath, "{" + e.name + "}")))
+        }
+
+        case e: PathParameterRemoved => {
+          acc - e.pathId
         }
 
         case _ => acc

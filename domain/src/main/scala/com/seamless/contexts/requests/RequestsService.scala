@@ -16,7 +16,7 @@ class RequestsService(shapesService: ShapesService) {
   def handleCommand(id: AggregateId, command: RequestsCommand): Unit = {
     val shapesState: ShapesState = shapesService.currentState(id)
     val state = repository.findById(id)
-    val effects = RequestsAggregate.handleCommand(state)((RequestsCommandContext(shapesState), command))
+    val effects = RequestsAggregate.handleCommand(state)((RequestsCommandContext("a", "b", "c", shapesState), command))
     repository.save(id, effects.eventsToPersist)
   }
 

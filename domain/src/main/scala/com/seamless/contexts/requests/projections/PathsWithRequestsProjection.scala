@@ -20,13 +20,13 @@ object PathsWithRequestsProjection extends Projection[RfcEvent, Map[RequestId, P
 
   def withMap(pathsByRequestId: Map[RequestId, PathComponentId], events: Vector[RfcEvent]): Map[RequestId, PathComponentId] = {
     //@TODO handle PathRemoved etc.?...for now, let the ui deal with it
-    events.foldLeft(pathsByRequestId)((acc, e) => {
-      e match {
-        case RequestAdded(requestId, pathId, _) => {
-          acc + (requestId -> pathId)
+    events.foldLeft(pathsByRequestId)((acc, event) => {
+      event match {
+        case e: RequestAdded => {
+          acc + (e.requestId -> e.pathId)
         }
-        case RequestRemoved(requestId) => {
-          acc - requestId
+        case e: RequestRemoved => {
+          acc - e.requestId
         }
         case _ => acc
       }
