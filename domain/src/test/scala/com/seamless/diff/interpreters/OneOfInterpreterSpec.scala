@@ -3,7 +3,7 @@ package com.seamless.diff.interpreters
 import com.seamless.contexts.requests.Commands.{AddRequest, AddResponse, SetRequestBodyShape, ShapedBodyDescriptor}
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.RfcServiceJSFacade
+import com.seamless.contexts.rfc.{RfcCommandContext, RfcServiceJSFacade}
 import com.seamless.contexts.shapes.Commands.{AddShape, ProviderInShape, SetParameterShape, ShapeProvider}
 import com.seamless.contexts.shapes.ShapesHelper.StringKind
 import com.seamless.ddd.InMemoryEventStore
@@ -19,10 +19,11 @@ class OneOfInterpreterSpec extends FunSpec {
   val requestId = "req1"
   val responseId = "res1"
   val requestContentType = "ccc"
+  val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
 
   def fromCommands(commands: Seq[RfcCommand]) = {
     val eventStore = new InMemoryEventStore[RfcEvent]
-    RfcServiceJSFacade.fromCommands(eventStore, commands.toVector, rfcId).currentState(rfcId)
+    RfcServiceJSFacade.fromCommands(eventStore, rfcId, commands.toVector, commandContext).currentState(rfcId)
   }
 
   describe("Object with a field that is a list of strings and numbers") {

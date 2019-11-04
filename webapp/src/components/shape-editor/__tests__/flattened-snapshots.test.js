@@ -1,4 +1,4 @@
-import { Facade, Queries, ShapesCommands } from '../../../engine';
+import { Facade, Queries, ShapesCommands, RfcCommandContext } from '../../../engine';
 import { ShapeUtilities } from '../ShapeUtilities.js';
 
 const starterCommands = [
@@ -84,11 +84,13 @@ const todoEvents = [
 ]
 
 describe('flattened shapes', function () {
+    const commandContext = new RfcCommandContext('userId', 'sessionId', 'batchId')
+
     describe('todo example', function () {
         const rfcId = 'test-rfc'
         const eventStore = Facade.makeEventStore();
         eventStore.bulkAdd(rfcId, JSON.stringify(todoEvents));
-        const rfcService = Facade.fromJsonCommands(eventStore, '[]', rfcId);
+        const rfcService = Facade.fromJsonCommands(eventStore, rfcId, commandContext, '[]');
         const queries = Queries(eventStore, rfcService, rfcId);
         
         xit('should render ToDo', function () {
@@ -108,7 +110,7 @@ describe('flattened shapes', function () {
     describe('pagination example', function () {
         const rfcId = 'test-rfc'
         const eventStore = Facade.makeEventStore();
-        const rfcService = Facade.fromJsonCommands(eventStore, '[]', rfcId)
+        const rfcService = Facade.fromJsonCommands(eventStore, rfcId, commandContext, '[]')
         const queries = Queries(eventStore, rfcService, rfcId);
         rfcService.handleCommands(rfcId, ...starterCommands)
 

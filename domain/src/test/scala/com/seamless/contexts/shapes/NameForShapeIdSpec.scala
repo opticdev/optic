@@ -1,15 +1,14 @@
 package com.seamless.contexts.shapes
 
-import com.seamless.contexts.rfc.{RfcService, RfcServiceJSFacade}
+import com.seamless.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
 import com.seamless.contexts.shapes.Commands.FieldShapeFromShape
 import com.seamless.contexts.shapes.projections.NameForShapeId
-import com.seamless.diff.ShapeDiffer.resolveBaseObject
-import com.seamless.diff.{JsonFileFixture, ShapeDiffer}
+import com.seamless.diff._
 import com.seamless.diff.initial.ShapeBuilder
-import com.seamless.serialization.CommandSerialization
 import org.scalatest.FunSpec
 
-class NameForShapeIdSpec extends FunSpec  with JsonFileFixture {
+class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
+  val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
 
   def fixture(slug: String, nameConcept: String = null) = {
     val basic = fromFile(slug)
@@ -22,7 +21,7 @@ class NameForShapeIdSpec extends FunSpec  with JsonFileFixture {
     }
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", result.commands)
+    rfcService.handleCommandSequence("id", result.commands, commandContext)
     (result.rootShapeId, rfcService.currentState("id").shapesState)
   }
 
@@ -44,7 +43,7 @@ class NameForShapeIdSpec extends FunSpec  with JsonFileFixture {
     val commands = commandsFrom("shape-name-example")
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", commands)
+    rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
   }
 
@@ -66,7 +65,7 @@ class NameForShapeIdSpec extends FunSpec  with JsonFileFixture {
     val commands = commandsFrom("pagination")
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", commands)
+    rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
   }
 

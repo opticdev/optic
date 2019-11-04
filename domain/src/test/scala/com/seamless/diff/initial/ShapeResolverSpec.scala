@@ -1,6 +1,6 @@
 package com.seamless.diff.initial
 
-import com.seamless.contexts.rfc.{RfcService, RfcServiceJSFacade}
+import com.seamless.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
 import com.seamless.contexts.shapes.Commands.RenameShape
 import com.seamless.contexts.shapes.ShapesHelper.{BooleanKind, NumberKind, StringKind}
 import com.seamless.diff.JsonFileFixture
@@ -8,6 +8,7 @@ import org.scalatest.FunSpec
 import io.circe.jawn.parse
 
 class ShapeResolverSpec extends FunSpec with JsonFileFixture {
+  val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
 
   def fixture(name: String) = {
     val basic = fromFile(name)
@@ -16,7 +17,7 @@ class ShapeResolverSpec extends FunSpec with JsonFileFixture {
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", result.commands :+
-      RenameShape(result.examples.head.shapeId, name))
+      RenameShape(result.examples.head.shapeId, name), commandContext)
     rfcService.currentState("id").shapesState
   }
 
@@ -48,8 +49,6 @@ class ShapeResolverSpec extends FunSpec with JsonFileFixture {
     val f = fixture("todowith-unknown")
     val a = ShapeResolver.resolveJsonToShapeId(basic)(f)
   }
-
-
 
 
 }

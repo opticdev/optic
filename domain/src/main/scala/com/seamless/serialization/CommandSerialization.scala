@@ -1,7 +1,7 @@
 package com.seamless.serialization
 
 import com.seamless.contexts.requests.Commands.RequestsCommand
-import com.seamless.contexts.rfc.Commands.{ContributionCommand, RfcCommand}
+import com.seamless.contexts.rfc.Commands.{ContributionCommand, RfcCommand, VersionControlCommand}
 import com.seamless.contexts.shapes.Commands.ShapesCommand
 import io.circe.Decoder.Result
 import io.circe._
@@ -29,6 +29,7 @@ object CommandSerialization {
       case shapesCommand: ShapesCommand => shapesCommand.asJson
       case requestCommand: RequestsCommand => requestCommand.asJson
       case contributionCommand: ContributionCommand => contributionCommand.asJson
+      case versionControlCommand: VersionControlCommand => versionControlCommand.asJson
       case _ => throw new java.lang.Error("Unhandled command Type")
     }
   }
@@ -43,6 +44,7 @@ object CommandSerialization {
       case shapesCommand: ShapesCommand => shapesCommand.asJson.noSpaces
       case requestCommand: RequestsCommand => requestCommand.asJson.noSpaces
       case contributionCommand: ContributionCommand => contributionCommand.asJson.noSpaces
+      case versionControlCommand: VersionControlCommand => versionControlCommand.asJson.noSpaces
       case _ => throw new java.lang.Error("Unhandled command Type")
     }
   }
@@ -64,8 +66,10 @@ object CommandSerialization {
         (j: Json) => Try(decodeRequestCommand(j).right.get),
         (j: Json) => Try(decodeRfcCommand(j).right.get),
         (j: Json) => {
-//          println(j)
           Try(j.as[ContributionCommand].right.get)
+        },
+        (j: Json) => {
+          Try(j.as[VersionControlCommand].right.get)
         }
       )
     }
