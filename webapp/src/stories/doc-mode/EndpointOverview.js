@@ -10,6 +10,10 @@ import DocCodeBox, {EndpointOverviewCodeBox} from './DocCodeBox';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
 import {DocButton, DocButtonGroup} from './ButtonGroup';
+import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
+import SubjectIcon from '@material-ui/icons/Subject';
+import {Link} from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -25,12 +29,21 @@ const styles = theme => ({
     cursor: 'pointer',
     fontWeight: 500,
   },
+  viewButton: {
+    marginTop: theme.spacing(3),
+    [theme.breakpoints.up('md')]: {
+      textAlign: 'right'
+    },
+  },
+  link: {
+    textDecoration: 'none'
+  }
 });
 
 class EndpointOverview extends React.Component {
   render() {
 
-    const {classes, endpointPurpose, endpointDescription, method, url, parameters = []} = this.props;
+    const {classes, endpointPurpose, endpointDescription, method, url, parameters = [], baseUrl, requestId} = this.props;
 
     const left = (
       <div>
@@ -49,12 +62,19 @@ class EndpointOverview extends React.Component {
     );
 
 
+    const docsUrl = `${baseUrl}/endpoints/${requestId}`
+
     const right = (
       <>
-      <EndpointOverviewCodeBox method={method.toUpperCase()} url={url}/>
-      <DocButtonGroup style={{marginTop: 22}}>
-        <DocButton label="View Documentation" />
-      </DocButtonGroup>
+        <EndpointOverviewCodeBox method={method.toUpperCase()} url={url}/>
+        <div className={classes.viewButton}>
+          <Link to={docsUrl} className={classes.link}>
+            <Button variant="outlined" color="primary">
+              <SubjectIcon style={{marginRight: 6}}/>
+              View Documentation
+            </Button>
+          </Link>
+        </div>
       </>
     );
 

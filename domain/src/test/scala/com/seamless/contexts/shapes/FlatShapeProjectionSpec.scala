@@ -83,6 +83,21 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
 
   }
 
+  lazy val circleExampleRfc = {
+    val commands = commandsFrom("circle-ci")
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    val rfcService: RfcService = new RfcService(eventStore)
+    rfcService.handleCommandSequence("id", commands)
+    rfcService.currentState("id")
+  }
+
+  it("works on lists of concepts") {
+    val shapesState = circleExampleRfc.shapesState
+
+    val flatShape = FlatShapeProjection.forShapeId("concept_19_builds")(shapesState)
+    assert(flatShape.root.joinedTypeName == "List of Build")
+  }
+
 
 //  it("works for one of") {  //getting an infinite loop
 //    val shapesState = exampleRfc.shapesState

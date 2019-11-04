@@ -6,6 +6,9 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {secondary} from '../../theme';
 import ReactJson from 'react-json-view';
+import {HighlightedIDsStore} from './shape/HighlightedIDs';
+import {ExampleViewer, ShapeViewerWithQuery} from './shape/ShapeViewer';
+import {Show} from './Show';
 
 const styles = theme => ({
   container: {
@@ -113,28 +116,31 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, classes, example
   const exampleRender = (() => {
     return (
       <>
-        {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
-
-        {(typeof example === 'string' || typeof example === 'number' || typeof example === 'boolean') ?
-          <pre>{JSON.stringify(example)}</pre> : (
-            <div>
-              <ReactJson
-                src={example}
-                theme="monokai"
-                style={{backgroundColor: 'transparent'}}
-                enableClipboard={false}
-                name={false}
-                displayDataTypes={false}
-              />
-            </div>
-          )}
+        <HighlightedIDsStore>
+          <ExampleViewer example={{
+            path: '/path/to/file',
+            number: 126543,
+            id: 'first_file',
+            mime_type: 'image/gif',
+            sha: '26a86ahdh3'
+          }}/>
+        </HighlightedIDsStore>
       </>
     );
   })();
 
+  const shapeRender = (
+    <HighlightedIDsStore>
+      <ShapeViewerWithQuery shapeId={shapeId}/>
+    </HighlightedIDsStore>
+  )
+
   return (
     <DocCodeBox title={title} rightRegion={rightRegion}>
-      {showExample ? exampleRender : <div>RENDER THE SHAPE HERE</div>}
+      {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
+
+      <Show when={showExample} children={exampleRender}/>
+      <Show when={!showExample} children={shapeRender}/>
     </DocCodeBox>
   );
 });

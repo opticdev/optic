@@ -21,14 +21,14 @@ object NameForShapeId {
     getShapeName(shapeId).map(_.name).mkString(" ")
   }
 
-  def getShapeName(shapeId: ShapeId)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None, seenIds: Seq[ShapeId] = Seq()): Seq[ColoredComponent] = {
+  def getShapeName(shapeId: ShapeId, expand: Boolean = false)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None, seenIds: Seq[ShapeId] = Seq()): Seq[ColoredComponent] = {
     //prevent infinite loop
     if (seenIds.contains(shapeId)) {
       return returnAny
     }
 
     val conceptName = shapesState.concepts.get(shapeId).map(_.descriptor.name)
-    if (conceptName.isDefined) {
+    if (conceptName.isDefined && !expand) {
       return Seq(ColoredComponent(conceptName.get, "concept", Some(shapeId)))
     }
 

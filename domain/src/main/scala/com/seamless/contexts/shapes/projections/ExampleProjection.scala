@@ -21,7 +21,7 @@ object ExampleProjection {
 
   private def flatPrimitive(kind: CoreShapeKind, value: String): FlatShape = {
     val nameComponent = ColoredComponent(value, "primitive", None, primitiveId = Some(kind.baseShapeId))
-    FlatShape(kind.baseShapeId, Seq(nameComponent), Seq())
+    FlatShape(kind.baseShapeId, Seq(nameComponent), Seq(), kind.baseShapeId)
   }
 
   private def jsonToFlatRender(json: Json)(implicit path: Seq[String]): FlatShape = {
@@ -37,7 +37,10 @@ object ExampleProjection {
     } else if (json.isObject) {
       val fields = json.asObject.get.toList
       flatPrimitive(ObjectKind, "Object").copy(
-        fields = fields.map(i => FlatField(i._1, jsonToFlatRender(i._2)(path :+ i._1)))
+        fields = fields.map(i => {
+          val id = path :+ i._1
+          FlatField(i._1, jsonToFlatRender(i._2)(id), id.mkString("."))
+        })
       )
     } else if (json.isArray) {
       val items = json.asArray.get
@@ -45,7 +48,8 @@ object ExampleProjection {
       def transformItem(shape: FlatShape) = shape.copy(typeName = Seq(shape.typeName.head.copy(colorKey = "index")))
 
       val itemsAsFields = items.zipWithIndex.map { case (item, index) => {
-        FlatField(index.toString, transformItem(jsonToFlatRender(item)(path :+ s"[${index}]")))
+        val id = path :+ s"[${index}]"
+        FlatField(index.toString, transformItem(jsonToFlatRender(item)(path :+ s"[${index}]")), id.mkString("."))
       }}
 
       flatPrimitive(ListKind, "List").copy(

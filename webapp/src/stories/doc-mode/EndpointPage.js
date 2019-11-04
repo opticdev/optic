@@ -9,6 +9,7 @@ import {HeadingContribution, MarkdownContribution} from './DocContribution';
 import DocCodeBox, {EndpointOverviewCodeBox, ExampleShapeViewer} from './DocCodeBox';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {DocButton, DocButtonGroup} from './ButtonGroup';
 import {secondary} from '../../theme';
 import {DocResponse} from './DocResponse';
@@ -26,6 +27,9 @@ import Editor from '../../components/navigation/Editor';
 import EndpointOverview from './EndpointOverview';
 import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../../components/utilities/PathUtilities';
 import {updateContribution} from '../../engine/routines';
+import sortBy from 'lodash.sortby';
+import SubjectIcon from '@material-ui/core/SvgIcon/SvgIcon';
+import Button from '@material-ui/core/Button';
 
 const styles = theme => ({
   root: {
@@ -50,6 +54,9 @@ const styles = theme => ({
     cursor: 'pointer',
     fontWeight: 500,
   },
+  showMore: {
+    marginTop: 44
+  }
 });
 
 export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRfcContext(({requestId, classes, handleCommand, handleCommands, mode, baseUrl, cachedQueryResults, inDiffMode}) => {
@@ -58,8 +65,8 @@ export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRf
 
   const request = requests[requestId];
 
-  const {requestDescriptor, bodyDescriptor} = request;
-  const {httpMethod, pathComponentId} = requestDescriptor;
+  const {requestDescriptor} = request;
+  const {httpMethod, pathComponentId, bodyDescriptor} = requestDescriptor;
 
   //Path
   const path = pathsById[pathComponentId];
@@ -75,7 +82,7 @@ export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRf
   });
 
   const fullPath = pathTrailWithNames.map(({pathComponentName}) => pathComponentName)
-                                     .join('/')
+    .join('/');
 
   const pathParameters = pathTrail
     .map(pathId => pathsById[pathId])
@@ -83,14 +90,11 @@ export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRf
     .map(p => ({pathId: p.pathId, name: p.descriptor.ParameterizedPathComponentDescriptor.name}));
 
   // Request Body
-  const {httpContentType, shapeId, isRemoved} = getNormalizedBodyDescriptor(bodyDescriptor);
-  const shouldShowRequestBody = RequestUtilities.hasBody(bodyDescriptor) || (mode === EditorModes.DESIGN && !inDiffMode && RequestUtilities.canAddBody(request));
-  const requestCommandsHelper = new RequestsCommandHelper(handleCommands, requestId);
+  const requestBody = getNormalizedBodyDescriptor(bodyDescriptor);
 
   // Responses
   const responsesForRequest = Object.values(responses)
     .filter((response) => response.responseDescriptor.requestId === requestId);
-  const shouldShowResponses = responsesForRequest.length > 0 || (mode === EditorModes.DESIGN && !inDiffMode);
 
   const parametersForRequest = Object.values(requestParameters)
     .filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId);
@@ -106,9 +110,11 @@ export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRf
           endpointDescription={contributions.getOrUndefined(requestId, 'description')}
           requestId={requestId}
           updateContribution={(id, key, value) => {
-            handleCommand(updateContribution(id, key, value))
+            handleCommand(updateContribution(id, key, value));
           }}
           method={httpMethod}
+          requestBody={requestBody}
+          responses={sortBy(responsesForRequest, (res) => res.responseDescriptor.httpStatusCode)}
           url={fullPath}
           parameters={pathParameters}
         />
@@ -126,7 +132,18 @@ class _EndpointPage extends React.Component {
   toggleAllResponses = () => this.setState({showAllResponses: true});
 
   render() {
-    const {classes, endpointPurpose, endpointDescription, method, url, parameters = [], updateContribution, requestId} = this.props;
+    const {
+      classes,
+      endpointPurpose,
+      requestBody,
+      responses,
+      endpointDescription,
+      method,
+      url,
+      parameters = [],
+      updateContribution,
+      requestId
+    } = this.props;
 
     const endpointOverview = (() => {
       const left = (
@@ -135,7 +152,7 @@ class _EndpointPage extends React.Component {
             value={endpointPurpose}
             label="What does this endpoint do?"
             onChange={(value) => {
-              updateContribution(requestId, 'purpose', value)
+              updateContribution(requestId, 'purpose', value);
             }}
           />
           <div style={{marginTop: -6, marginBottom: 6}}>
@@ -143,7 +160,7 @@ class _EndpointPage extends React.Component {
               value={endpointDescription}
               label="Detailed Description"
               onChange={(value) => {
-                updateContribution(requestId, 'description', value)
+                updateContribution(requestId, 'description', value);
               }}/>
           </div>
 
@@ -170,56 +187,68 @@ class _EndpointPage extends React.Component {
     //                                         }}
     // />;
 
-    const requestBody = <DocRequest
-      description={'Pass along the body to do the thing'}
-      fields={[{title: 'fieldA', description: 'does something'}]}
-      contentType={'application/json'}
-      shapeId={'SHAPE ABC'}
-      requestId={requestId}
-      updateContribution={updateContribution}
-      example={{weAre: 'penn state', state: 'PA'}}
-    />;
 
-    const firstResponseBody = <DocResponse
-      statusCode={200}
-      description={'The thing got deleted'}
-      fields={[]}
-      contentType={'application/json'}
-      shapeId={'SHAPE ABC'}
-      example={{weAre: 'penn state', state: 'PA'}}
-    />;
+    const requestBodyRender = (() => {
+      const {httpContentType, shapeId, isRemoved} = requestBody;
+      if (Object.keys(requestBody).length && !isRemoved) {
+        return (
+          <DocRequest
+            description={'Pass along the body to do the thing'}
+            fields={[{title: 'fieldA', description: 'does something'}]}
+            contentType={httpContentType}
+            shapeId={shapeId}
+            requestId={requestId}
+            updateContribution={updateContribution}
+            example={{weAre: 'penn state', state: 'PA'}}
+          />
+        );
+      }
+    })();
+
+
+    const responsesRendered = (() => responses.map(response => {
+      const {isRemoved, responseId, responseDescriptor} = response;
+      const {httpStatusCode, bodyDescriptor} = responseDescriptor;
+      const {httpContentType, shapeId} = getNormalizedBodyDescriptor(bodyDescriptor);
+
+      return (
+        <DocResponse
+          statusCode={httpStatusCode}
+          description={'The thing got deleted'}
+          fields={[]}
+          contentType={httpContentType}
+          shapeId={shapeId}
+          example={{weAre: 'penn state', state: 'PA'}}
+        />
+      );
+    }))();
+
+    const firstResponse = responsesRendered[0];
+    const remainingResponses = responsesRendered.slice(1);
+
+    const showButton = !this.state.showAllResponses && remainingResponses.length > 0;
 
     return (
       <div className={classes.root}>
         {endpointOverview}
-        {/*{queryParameters}*/}
-        {requestBody}
-        {firstResponseBody}
 
-        {!this.state.showAllResponses && (
-          <DocButtonGroup style={{marginTop: 44}}>
-            <DocButton label=" ↓ Show Other Responses"
-                       color={secondary}
-                       onClick={this.toggleAllResponses}/>
-          </DocButtonGroup>)
-        }
+        <div style={{marginTop: 65, marginBottom: 65}}/>
+        {/*{queryParameters}*/}
+        {requestBodyRender}
+        <div style={{marginTop: 65, marginBottom: 65}}/>
+        {firstResponse}
+
+        {showButton && (
+          <Button variant="outlined"
+                  color="primary"
+                  onClick={this.toggleAllResponses}
+                  className={classes.showMore}>
+                  <ExpandMoreIcon style={{marginRight: 6}}/>
+                  Show ({remainingResponses.length}) Other Response{remainingResponses.length > 1 && 's'}
+          </Button>
+        )}
         <Collapse in={this.state.showAllResponses}>
-          <DocResponse
-            statusCode={403}
-            description={'The thing got deleted'}
-            fields={[]}
-            contentType={'application/json'}
-            shapeId={'SHAPE ABC'}
-            example={{weAre: 'penn state', state: 'PA'}}
-          />
-          <DocResponse
-            statusCode={404}
-            description={'The thing got deleted'}
-            fields={[]}
-            contentType={'application/json'}
-            shapeId={'SHAPE ABC'}
-            example={{weAre: 'penn state', state: 'PA'}}
-          />
+          {remainingResponses}
         </Collapse>
       </div>
     );

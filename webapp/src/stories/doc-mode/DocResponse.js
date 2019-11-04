@@ -4,32 +4,39 @@ import {MarkdownContribution} from './DocContribution';
 import {DocParameter} from './DocParameter';
 import {ExampleShapeViewer} from './DocCodeBox';
 import {DocGrid} from './DocGrid';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import {StickyRegion} from './StickyRegion';
 
 export function DocResponse({
                               statusCode,
                               description,
-                              fields = [],
                               contentType,
                               shapeId,
-                              example
+                              example,
+                              responseId,
+                              updateContribution
                             }) {
 
   const left = (
-    <DocSubGroup title={statusCode + ' Response'}>
-      <MarkdownContribution value={description} label="What does this response mean?"/>
-      {fields.length ? (
-        <DocSubGroup title={'Fields'}>
-          {fields.map(i => <DocParameter title={i.title} description={i.description}/>)}
-        </DocSubGroup>
-      ) : null}
-    </DocSubGroup>
+    <StickyRegion>
+      <DocSubGroup title={statusCode + ' Response'}>
+        <MarkdownContribution
+          value={description}
+          label="What does this response mean?"
+          onChange={(value) => {
+            updateContribution(responseId, 'body', value);
+          }}/>
+      </DocSubGroup>
+    </StickyRegion>
   );
 
-  const right = <ExampleShapeViewer
-    title={statusCode + ' Response Body'}
-    shapeId={shapeId}
-    contentType={contentType}
-    example={example}/>;
+  const right = (shapeId && contentType) ? (
+    <ExampleShapeViewer
+      title={statusCode + ' Response Body'}
+      shapeId={shapeId}
+      contentType={contentType}
+      example={example}/>
+  ) : <div>No Body</div>;
 
   return <DocGrid left={left} right={right} style={{marginTop: 40}}/>;
 }

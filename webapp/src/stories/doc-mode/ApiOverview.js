@@ -1,31 +1,23 @@
 import React from 'react';
-import withStyles from '@material-ui/core/styles/withStyles';
 import Drawer from '@material-ui/core/Drawer';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import makeStyles from '@material-ui/core/styles/makeStyles';
-import ApiSearch from './ApiSearch';
 import Collapse from '@material-ui/core/Collapse';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
-import StarBorder from '@material-ui/icons/StarBorder';
 import EndpointOverview from './EndpointOverview';
 import {ListSubheader} from '@material-ui/core';
 import {withRfcContext} from '../../contexts/RfcContext';
-import {routerUrls} from '../../routes';
 import {asPathTrail, isPathParameter} from '../../components/utilities/PathUtilities';
 import ConceptOverview from './ConceptOverview';
+import {DocGrey, methodColors} from './DocConstants';
+import {DocCodeBox} from './DocCodeBox';
+import {LightTooltip} from '../../components/diff/DiffCard';
 
 const drawerWidth = 240;
 
@@ -61,8 +53,9 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
   nested: {
-    paddingLeft: theme.spacing(4),
-    textTransform: 'none'
+    paddingLeft: 17,
+    paddingTop: 5,
+    overflow: 'hidden'
   },
   dense: {
     padding: 0,
@@ -77,10 +70,14 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const EndpointBasePath = withRfcContext(({path, baseUrl, cachedQueryResults}) => {
+const EndpointBasePath = withRfcContext(({path, baseUrl, operationsToRender, cachedQueryResults}) => {
+
   const classes = useStyles();
 
+  const {contributions} = cachedQueryResults;
   const {name, children, depth, toggled, pathId, full, visible} = path;
+
+  const url = full + name;
 
   const flatChildren = [path, ...children.flatMap(i => [i, ...i.children])]
     .filter(({pathId}) => {
@@ -102,23 +99,47 @@ const EndpointBasePath = withRfcContext(({path, baseUrl, cachedQueryResults}) =>
                 onClick={handleClick}>
         <ListItemText primary={name.substr(1)}
                       classes={{dense: classes.dense}}
-                      primaryTypographyProps={{variant: 'overline'}}/>
+                      primaryTypographyProps={{variant: 'overline', style: {textTransform: 'none'}}}/>
         {open ? <ExpandLess/> : <ExpandMore/>}
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div"
               dense
               disablePadding>
-          {flatChildren.map(i => (
-            <ListItem button
-                      component="div"
-                      dense
-                      className={classes.nested}>
-              <ListItemText primary={i.pathId}
-                            classes={{dense: classes.dense}}
-                            primaryTypographyProps={{variant: 'overline'}}/>
-            </ListItem>
-          ))}
+          {flatChildren.map(i => {
+            const url = i.full + i.name;
+            const requestsForPath = operationsToRender.filter(op => op.path.pathId === i.pathId);
+
+            return requestsForPath.map(({requestId, request}) => {
+
+              const {httpMethod} = request.requestDescriptor;
+              const purpose = contributions.getOrUndefined(requestId, 'purpose') || (
+                <span>
+                  <Typography variant="body" component="span" style={{
+                    fontWeight: 600,
+                    color: methodColors[httpMethod.toUpperCase()]
+                  }}>{httpMethod.toUpperCase()}</Typography>
+                  <Typography variant="body" component="span"
+                              style={{marginLeft: 9, color: DocGrey}}>{url}</Typography>
+                </span>
+              );
+
+              return (
+                <ListItem button
+                          component="div"
+                          dense
+                          className={classes.nested}>
+                  <ListItemText
+                    primary={purpose}
+                    classes={{dense: classes.dense}}
+                    primaryTypographyProps={{
+                      variant: 'overline',
+                      style: {textTransform: 'none', textOverflow: 'ellipsis'}
+                    }}/>
+                </ListItem>
+              );
+            });
+          })}
         </List>
       </Collapse>
     </>
@@ -162,7 +183,8 @@ export default withRfcContext(({paths, concepts, baseUrl, cachedQueryResults}) =
           aria-labelledby="nested-list-subheader"
           dense={true}
         >
-          {paths.children.map(i => <EndpointBasePath path={i} baseUrl={baseUrl}/>)}
+          {paths.children.map(i => <EndpointBasePath path={i} baseUrl={baseUrl}
+                                                     operationsToRender={operationsToRender}/>)}
         </List>
 
         <Divider/>
@@ -196,9 +218,12 @@ export default withRfcContext(({paths, concepts, baseUrl, cachedQueryResults}) =
             .filter((p) => isPathParameter(p))
             .map(p => ({pathId: p.pathId, name: p.descriptor.ParameterizedPathComponentDescriptor.name}));
 
+
           return (
             <EndpointOverview
               endpointPurpose={''}
+              requestId={operation.requestId}
+              baseUrl={baseUrl}
               endpointDescription=""
               method={operation.request.requestDescriptor.httpMethod}
               parameters={pathParameters}
@@ -212,7 +237,7 @@ export default withRfcContext(({paths, concepts, baseUrl, cachedQueryResults}) =
         {concepts.map(concept => (
           <ConceptOverview
             name={concept.name}
-            shapeId={concept.id}
+            shapeId={concept.shapeId}
             example={{name: 'fizo', age: 15, breed: 'husky'}}
           />
         ))}

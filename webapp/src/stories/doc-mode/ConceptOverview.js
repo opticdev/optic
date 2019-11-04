@@ -10,6 +10,9 @@ import DocCodeBox, {EndpointOverviewCodeBox, ExampleShapeViewer} from './DocCode
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
 import {DocButton, DocButtonGroup} from './ButtonGroup';
+import {HighlightedIDsStore} from './shape/HighlightedIDs';
+import ShapeViewerNew from './shape/ShapeViewer';
+import {StickyRegion} from './StickyRegion';
 
 const styles = theme => ({
   root: {
@@ -36,19 +39,21 @@ class ConceptOverview extends React.Component {
     const {classes, name, description, example, shapeId} = this.props;
 
     const left = (
-      <div>
-        <HeadingContribution value={name} label="What is this concept called?" />
-        <div style={{marginTop: -6, marginBottom: 6}}>
-          <MarkdownContribution value={description} label="What is this concept used for?"/>
+      <StickyRegion>
+        <div>
+          <HeadingContribution value={name} label="What is this concept called?"/>
+          <div style={{marginTop: -6, marginBottom: 6}}>
+            <MarkdownContribution value={description} label="What is this concept used for?"/>
+          </div>
+          <DocSubGroup title="Usages">
+            <ul className={classes.list}>
+              <li><Typography variant="overline">Create New Pet</Typography></li>
+              <li><Typography variant="overline">Lookup Pet</Typography></li>
+              <li><Typography variant="overline">Buy Pet</Typography></li>
+            </ul>
+          </DocSubGroup>
         </div>
-        <DocSubGroup title="Usages">
-          <ul className={classes.list}>
-            <li><Typography variant="overline">Create New Pet</Typography></li>
-            <li><Typography variant="overline">Lookup Pet</Typography></li>
-            <li><Typography variant="overline">Buy Pet</Typography></li>
-          </ul>
-        </DocSubGroup>
-      </div>
+      </StickyRegion>
     );
 
 
@@ -56,7 +61,7 @@ class ConceptOverview extends React.Component {
       <ExampleShapeViewer
         title={name}
         shapeId={shapeId}
-        example={example} />
+        example={example}/>
     );
 
     return (
