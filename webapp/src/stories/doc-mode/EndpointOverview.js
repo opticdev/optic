@@ -1,19 +1,20 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {DocGrid} from './DocGrid';
-import {ListItemText, Typography} from '@material-ui/core';
-import {DocDivider, DocSubHeading, SubHeadingStyles, SubHeadingTitleColor} from './DocConstants';
-import {DocSubGroup} from './DocSubGroup';
-import {DocParameter} from './DocParameter';
-import {HeadingContribution, MarkdownContribution} from './DocContribution';
-import DocCodeBox, {EndpointOverviewCodeBox} from './DocCodeBox';
+import { DocGrid } from './DocGrid';
+import { ListItemText, Typography } from '@material-ui/core';
+import { DocDivider, DocSubHeading, SubHeadingStyles, SubHeadingTitleColor } from './DocConstants';
+import { DocSubGroup } from './DocSubGroup';
+import { DocParameter } from './DocParameter';
+import { HeadingContribution, MarkdownContribution } from './DocContribution';
+import DocCodeBox, { EndpointOverviewCodeBox } from './DocCodeBox';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
-import {DocButton, DocButtonGroup} from './ButtonGroup';
+import { DocButton, DocButtonGroup } from './ButtonGroup';
 import Button from '@material-ui/core/Button';
 import Fab from '@material-ui/core/Fab';
 import SubjectIcon from '@material-ui/icons/Subject';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { withNavigationContext } from '../../contexts/NavigationContext';
 
 const styles = theme => ({
   root: {
@@ -43,11 +44,11 @@ const styles = theme => ({
 class EndpointOverview extends React.Component {
   render() {
 
-    const {classes, endpointPurpose, endpointDescription, method, url, parameters = [], baseUrl, requestId} = this.props;
+    const { classes, endpointPurpose, endpointDescription, method, url, parameters = [], baseUrl, requestId } = this.props;
 
     const left = (
       <div>
-        <HeadingContribution value={endpointPurpose} label="What does this endpoint do?"/>
+        <HeadingContribution value={endpointPurpose} label="What does this endpoint do?" />
 
         <div style={{marginTop: 10, paddingLeft: 2, marginBottom: 6}}>
           <MarkdownContribution value={endpointDescription} label="Detailed Description"/>
@@ -55,22 +56,20 @@ class EndpointOverview extends React.Component {
 
         {parameters.length ? (
           <DocSubGroup title="Path Parameters">
-            {parameters.map(i => <DocParameter title={i.name} id={i.pathId}/>)}
+            {parameters.map(i => <DocParameter title={i.name} id={i.pathId} />)}
           </DocSubGroup>
         ) : null}
       </div>
     );
-
-
-    const docsUrl = `${baseUrl}/endpoints/${requestId}`
+    const docsUrl = `${baseUrl}/requests/${requestId}`
 
     const right = (
       <>
-        <EndpointOverviewCodeBox method={method.toUpperCase()} url={url}/>
+        <EndpointOverviewCodeBox method={method.toUpperCase()} url={url} />
         <div className={classes.viewButton}>
           <Link to={docsUrl} className={classes.link}>
             <Button variant="outlined" color="primary">
-              <SubjectIcon style={{marginRight: 6}}/>
+              <SubjectIcon style={{ marginRight: 6 }} />
               View Documentation
             </Button>
           </Link>
@@ -81,12 +80,12 @@ class EndpointOverview extends React.Component {
     return (
       <>
         <div className={classes.root}>
-          <DocGrid left={left} right={right}/>
+          <DocGrid left={left} right={right} />
         </div>
-        <DocDivider/>
+        <DocDivider />
       </>
     );
   }
 }
 
-export default withStyles(styles)(EndpointOverview);
+export default withStyles(styles)(withNavigationContext(EndpointOverview));

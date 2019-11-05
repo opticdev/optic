@@ -6,13 +6,11 @@ const {
     withContext: withNavigationContext
 } = GenericContextFactory({})
 
-class NavigationStore extends React.Component{
+class NavigationStore extends React.Component {
     render() {
-        const {onShapeSelected, addAdditionalCommands, inDiffMode = false} = this.props;
+        const { baseUrl } = this.props;
         const context = {
-            onShapeSelected,
-            inDiffMode,
-            addAdditionalCommands
+            baseUrl
         }
         return (
             <NavigationContext.Provider value={context}>
