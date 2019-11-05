@@ -15,9 +15,8 @@ import { ListSubheader } from '@material-ui/core';
 import { withRfcContext } from '../../contexts/RfcContext';
 import { asPathTrail, isPathParameter } from '../../components/utilities/PathUtilities';
 import ConceptOverview from './ConceptOverview';
-import { DocGrey, methodColors } from './DocConstants';
-import { DocCodeBox } from './DocCodeBox';
-import { LightTooltip } from '../../components/diff/DiffCard';
+import { DisplayPath } from './DisplayPath';
+import { NewBehavior } from './NewBehavior';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 
 const drawerWidth = 240;
@@ -115,14 +114,7 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
 
               const { httpMethod } = request.requestDescriptor;
               const purpose = contributions.getOrUndefined(requestId, 'purpose') || (
-                <span>
-                  <Typography variant="body" component="span" style={{
-                    fontWeight: 600,
-                    color: methodColors[httpMethod.toUpperCase()]
-                  }}>{httpMethod.toUpperCase()}</Typography>
-                  <Typography variant="body" component="span"
-                    style={{ marginLeft: 9, color: DocGrey }}>{url}</Typography>
-                </span>
+                <DisplayPath method={httpMethod} url={url} />
               );
 
               return (
@@ -208,6 +200,9 @@ export default withRfcContext(withNavigationContext(({ paths, concepts, cachedQu
 
       </Drawer>
       <main className={classes.content}>
+
+        <NewBehavior />
+
         <Typography variant="h3" color="primary" className={classes.sectionHeader}
           style={{ paddingTop: 20 }}>Endpoints</Typography>
 

@@ -85,19 +85,19 @@ export const ExampleOnly =  withStyles(styles)(({classes, contentType, title, ex
   return (
     <DocCodeBox title={title}>
       {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
-      {(typeof example === 'string' || typeof example === 'number' || typeof example === 'boolean') ?
-        <pre>{JSON.stringify(example)}</pre> : (
-          <div>
-            <ReactJson
-              src={example}
-              theme="monokai"
-              style={{backgroundColor: 'transparent'}}
-              enableClipboard={false}
-              name={false}
-              displayDataTypes={false}
-            />
-          </div>
-        )}
+      <HighlightedIDsStore>
+        <ExampleViewer example={example}/>
+      </HighlightedIDsStore>
+    </DocCodeBox>
+  );
+});
+
+export const ShapeOnly =  withStyles(styles)(({classes, title, shapeId}) => {
+  return (
+    <DocCodeBox title={title}>
+      <HighlightedIDsStore>
+        <ShapeViewerWithQuery shapeId={shapeId}/>
+      </HighlightedIDsStore>
     </DocCodeBox>
   );
 });

@@ -9,7 +9,9 @@ export function DocSubGroup({title, children, style}) {
       <Typography variant="overline" style={DocSubGroupHeadingStyles}>{title}</Typography>
       <DocDivider />
       </div>
+      <div style={{maxWidth: 500}}>
       {children}
+      </div>
     </div>
   )
 }
