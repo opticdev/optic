@@ -141,13 +141,11 @@ class OverView extends React.Component {
     const hideComponents = (pathTree.children.length === 0 && concepts.length === 0);
 
     return (
-      <Editor>
         <div className={classes.overview}>
           <ApiOverview paths={pathTreeFiltered}
                        concepts={conceptsFiltered}
                        baseUrl={baseUrl} />
         </div>
-      </Editor>
     );
   }
 }

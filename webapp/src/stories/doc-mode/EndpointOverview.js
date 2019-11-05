@@ -49,7 +49,7 @@ class EndpointOverview extends React.Component {
       <div>
         <HeadingContribution value={endpointPurpose} label="What does this endpoint do?"/>
 
-        <div style={{marginTop: -6, marginBottom: 6}}>
+        <div style={{marginTop: 10, paddingLeft: 2, marginBottom: 6}}>
           <MarkdownContribution value={endpointDescription} label="Detailed Description"/>
         </div>
 

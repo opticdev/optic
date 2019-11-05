@@ -129,7 +129,7 @@ class _HeadingContribution extends React.Component {
       if (!inputValue) {
         return (
           <div className={classes.root} onClick={this.setEditing(true)}>
-            <Typography variant="caption" style={{...SubHeadingStyles, color: DocDarkGrey, textTransform: 'uppercase'}}> + {label}</Typography>
+            <Typography variant="h5" style={{...SubHeadingStyles, color: DocDarkGrey, textTransform: 'uppercase'}}> + {label}</Typography>
           </div>
         );
       }

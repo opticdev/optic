@@ -12,7 +12,6 @@ export const ParametersStyles = {
 }
 export const SubHeadingStyles = {
   color : SubHeadingTitleColor,
-  fontSize: '16px',
   fontWeight: 600,
   letterSpacing: '.41px',
   textTransform: 'none'
@@ -43,4 +42,4 @@ export const primitiveDocColors = {
 };
 
 export const DocDivider = ({style}) => <Divider style={{...style, backgroundColor: '#e3e8ee'}} />
-export const DocSubHeading = ({title, onClick}) => <Typography onClick={onClick} variant="overline" style={SubHeadingStyles}> {title} </Typography>
+export const DocSubHeading = ({title, onClick}) => <Typography onClick={onClick} variant="h5" style={SubHeadingStyles}> {title} </Typography>
