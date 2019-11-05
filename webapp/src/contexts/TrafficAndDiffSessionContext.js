@@ -10,7 +10,7 @@ const {
 } = GenericContextFactory(null)
 
 
-function computeDiffStateProjections(queries, diffSessionManager) {
+function computeDiffStateProjections(queries, cachedQueryResults, diffSessionManager) {
     const { session } = diffSessionManager
     const sortedSampleItems = session.samples
         .map((sample, index) => {
@@ -31,7 +31,19 @@ function computeDiffStateProjections(queries, diffSessionManager) {
     const sampleItemsAndResolvedPaths = sortedSampleItems
         .map((item) => {
             const pathId = queries.resolvePath(item.sample.request.url)
-            return { ...item, pathId }
+            const requestId = ((pathId) => {
+                if (!pathId) {
+                    return null;
+                }
+                const {requests, requestIdsByPathId} = cachedQueryResults;
+                const requestIds = requestIdsByPathId[pathId] || []
+                const requestId = requestIds.find(requestId => {
+                    const request = requests[requestId]
+                    return request.requestDescriptor.httpMethod === item.sample.request.method
+                })
+                return requestId || null;
+            })(pathId);
+            return { ...item, pathId, requestId }
         })
     const sampleItemsWithResolvedPaths = sampleItemsAndResolvedPaths.filter(x => !!x.pathId)
     const sampleItemsWithoutResolvedPaths = sampleItemsAndResolvedPaths.filter(x => !x.pathId)
@@ -102,7 +114,7 @@ class TrafficAndDiffSessionStoreBase extends React.Component {
 
     render() {
         const { sessionId } = this.props;
-        const { queries } = this.props
+        const { queries, cachedQueryResults } = this.props
         const { isLoading, error, diffSessionManager } = this.state;
         
         if (isLoading) {
@@ -114,7 +126,7 @@ class TrafficAndDiffSessionStoreBase extends React.Component {
             return <div>something went wrong :(</div>
         }
 
-        const diffStateProjections = computeDiffStateProjections(queries, diffSessionManager)
+        const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, diffSessionManager)
 
         const sessionContext = {
             sessionId,

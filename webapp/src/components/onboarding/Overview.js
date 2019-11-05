@@ -1,38 +1,10 @@
-import React, {useState} from 'react';
+import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import Typography from '@material-ui/core/Typography';
-import Editor, {FullSheetNoPaper} from '../navigation/Editor';
-import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
-import {withRfcContext} from '../../contexts/RfcContext';
-import {addAbsolutePath, getName, getNameWithFormattedParameters, getParentPathId} from '../utilities/PathUtilities';
+import Editor from '../navigation/Editor';
+import { withRfcContext } from '../../contexts/RfcContext';
+import { getNameWithFormattedParameters, getParentPathId } from '../utilities/PathUtilities';
 import sortBy from 'lodash.sortby';
-import Paper from '@material-ui/core/Paper';
-import {RfcCommands, ShapeCommands} from '../../engine';
-import ContributionTextField from '../contributions/ContributionTextField';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import StarBorder from '@material-ui/icons/StarBorder';
-import Collapse from '@material-ui/core/Collapse';
-import {Link} from 'react-router-dom';
-import {routerUrls} from '../../routes';
-import IconButton from '@material-ui/core/IconButton';
-import Chip from '@material-ui/core/Chip';
-import Button from '@material-ui/core/Button';
-import CreateNew from '../navigation/CreateNew';
-import {primary, secondary} from '../../theme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Divider from '@material-ui/core/Divider';
-import SearchBar, {fuzzyConceptFilter, fuzzyPathsFilter} from '../navigation/Search';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import Toolbar from '@material-ui/core/Toolbar';
-import DescriptionIcon from '@material-ui/icons/Description';
-import AppBar from '@material-ui/core/AppBar';
-import {ActionButton} from '../navigation/TopBar';
-import CodeIcon from '@material-ui/icons/Code';
+import { fuzzyConceptFilter, fuzzyPathsFilter } from '../navigation/Search';
 import ApiOverview from '../../stories/doc-mode/ApiOverview';
 
 
@@ -87,65 +59,27 @@ const styles = theme => ({
   }
 });
 
-function SetupCall({open, onClose}) {
-  return (
-    <Dialog
-      maxWidth="lg"
-      onClose={onClose}
-      open={open}>
-      <DialogContent>
-        <iframe src="https://calendly.com/optic-onboarding/30-min-session" style={{width: 450, height: 700}}
-                frameBorder="0"/>
-      </DialogContent>
-    </Dialog>);
-}
-
 
 class OverView extends React.Component {
-
-  componentDidMount() {
-    const {switchEditorMode} = this.props;
-    const {pathIdsWithRequests} = this.props.cachedQueryResults;
-
-    if (pathIdsWithRequests.size === 0) {
-      setTimeout(() => {
-        switchEditorMode(EditorModes.DESIGN);
-      }, 1);
-    }
-
-  }
-
-  state = {
-    callModalOpen: false
-  };
-
-  openCallModal = () => {
-    this.setState({callModalOpen: true});
-  };
-  closeModal = () => {
-    this.setState({callModalOpen: false});
-  };
-
   render() {
-    const {classes, cachedQueryResults, mode, handleCommand, queries, baseUrl} = this.props;
-    const {apiName, contributions, conceptsById, pathsById, pathIdsWithRequests} = cachedQueryResults;
+    const { classes, cachedQueryResults, mode, handleCommand, queries, baseUrl } = this.props;
+    const { apiName, contributions, conceptsById, pathsById, pathIdsWithRequests } = cachedQueryResults;
 
     const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
     const sortedConcepts = sortBy(concepts, ['name']);
     const pathTree = flattenPaths('root', pathsById);
 
-    const conceptsFiltered = fuzzyConceptFilter(sortedConcepts, this.state.searchQuery);
-    const pathIdsFiltered = fuzzyPathsFilter(pathTree, this.state.searchQuery);
+    const conceptsFiltered = fuzzyConceptFilter(sortedConcepts, '');
+    const pathIdsFiltered = fuzzyPathsFilter(pathTree, '');
     const pathTreeFiltered = flattenPaths('root', pathsById, 0, '', pathIdsFiltered)
 
-    const hideComponents = (pathTree.children.length === 0 && concepts.length === 0);
 
     return (
       <Editor>
         <div className={classes.overview}>
           <ApiOverview paths={pathTreeFiltered}
-                       concepts={conceptsFiltered}
-                       baseUrl={baseUrl} />
+            concepts={conceptsFiltered}
+            baseUrl={baseUrl} />
         </div>
       </Editor>
     );
@@ -186,4 +120,4 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
   };
 }
 
-export default withRfcContext(withEditorContext(withStyles(styles)(OverView)));
+export default withRfcContext(withStyles(styles)(OverView));
