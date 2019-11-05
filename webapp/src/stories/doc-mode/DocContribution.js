@@ -42,7 +42,7 @@ const styles = theme => ({
 class _MarkdownContribution extends React.Component {
   state = {
     inputValue: this.props.value,
-    editing: false,
+    editing: this.props.autoFocus,
   };
 
   handleChange = (e) => this.setState({inputValue: e.target.value});
@@ -96,7 +96,7 @@ class _HeadingContribution extends React.Component {
 
   state = {
     inputValue: this.props.value,
-    editing: false,
+    editing: this.props.autoFocus,
   };
 
   handleChange = (e) => this.setState({inputValue: e.target.value});

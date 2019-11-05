@@ -64,7 +64,7 @@ class PathMatcher extends React.Component {
 
 
         <div style={{display: 'flex', flexDirection: 'row'}}>
-          <Typography variant="overline" style={{marginBottom: 0}}>Path Matcher:</Typography>
+          <Typography variant="overline" style={{marginBottom: 0}}>Path:</Typography>
         </div>
 
         <div className={classes.pathWrapper}>

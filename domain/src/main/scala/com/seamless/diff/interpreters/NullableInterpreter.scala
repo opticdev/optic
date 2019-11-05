@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{SetRequestBodyShape, SetResponse
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
 import com.seamless.contexts.shapes.ShapesHelper._
-import com.seamless.diff.{DiffInterpretation, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape}
+import com.seamless.diff.{DiffInterpretation, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape, InterpretationContext}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer._
 
@@ -15,12 +15,12 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
         d.shapeDiff match {
           case sd: NullValue => {
             Seq(
-              ChangeShapeToNullable(d, sd)
+              ChangeShapeToNullable(d, InterpretationContext(None, true), sd)
             )
           }
           case sd: NullObjectKey => {
             Seq(
-              ChangeFieldToNullable(sd, HighlightNestedRequestShape(sd.parentObjectShapeId))
+              ChangeFieldToNullable(sd, InterpretationContext(None, true), HighlightNestedRequestShape(sd.parentObjectShapeId))
             )
           }
           case _ => Seq.empty
@@ -30,12 +30,12 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
         d.shapeDiff match {
           case sd: NullValue => {
             Seq(
-              ChangeShapeToNullable(d, sd)
+              ChangeShapeToNullable(d, InterpretationContext(Some(d.responseId), false), sd)
             )
           }
           case sd: NullObjectKey => {
             Seq(
-              ChangeFieldToNullable(sd, HighlightNestedResponseShape(d.responseStatusCode, sd.parentObjectShapeId))
+              ChangeFieldToNullable(sd, InterpretationContext(Some(d.responseId), false), HighlightNestedResponseShape(d.responseStatusCode, sd.parentObjectShapeId))
             )
           }
           case _ => Seq.empty
@@ -45,7 +45,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     }
   }
 
-  def ChangeFieldToNullable(shapeDiff: NullObjectKey, highlightNestedShape: HighlightNestedShape): DiffInterpretation = {
+  def ChangeFieldToNullable(shapeDiff: NullObjectKey, context: InterpretationContext, highlightNestedShape: HighlightNestedShape): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val field = shapesState.flattenedField(shapeDiff.fieldId)
     val commands = Seq(
@@ -62,15 +62,17 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       ),
       SetFieldShape(FieldShapeFromShape(field.fieldId, wrapperShapeId)),
     )
+
     DiffInterpretation(
       s"Make ${shapeDiff.key} nullable",
 //      s"Optic expected to see a value for the key ${shapeDiff.key} and instead saw null. If it is allowed to be null, make it Nullable",
       commands,
+      context,
       FrontEndMetadata(affectedIds = Seq(shapeDiff.fieldId), changed = true, highlightNestedShape = Some(highlightNestedShape))
     )
   }
 
-  def ChangeShapeToNullable(requestDiffResult: UnmatchedRequestBodyShape, shapeDiff: NullValue): DiffInterpretation = {
+  def ChangeShapeToNullable(requestDiffResult: UnmatchedRequestBodyShape, context: InterpretationContext, shapeDiff: NullValue): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val commands = Seq(
       AddShape(wrapperShapeId, NullableKind.baseShapeId, ""),
@@ -83,11 +85,12 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       "Make Request Body nullable",
 //      s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
       commands,
+      context,
       FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
     )
   }
 
-  def ChangeShapeToNullable(requestDiffResult: UnmatchedResponseBodyShape, shapeDiff: NullValue): DiffInterpretation = {
+  def ChangeShapeToNullable(requestDiffResult: UnmatchedResponseBodyShape, context: InterpretationContext, shapeDiff: NullValue): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val commands = Seq(
       AddShape(wrapperShapeId, NullableKind.baseShapeId, ""),
@@ -100,6 +103,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       "Makes Response Body nullable",
 //      s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
       commands,
+      context,
       FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
     )
   }

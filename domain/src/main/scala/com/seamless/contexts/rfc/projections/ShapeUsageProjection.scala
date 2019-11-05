@@ -32,5 +32,6 @@ object ShapeUsageProjection extends Projection[RfcEvent, Map[ShapeId, Set[Reques
 
       }
     }
+    null
   }
 }

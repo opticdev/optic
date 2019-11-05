@@ -34,7 +34,7 @@ class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
           case sd: ShapeDiffer.UnexpectedObjectKey =>
             Seq(Interpretations.AddFieldToResponseShape(sd.key, sd.actual, sd.parentObjectShapeId, d.responseStatusCode, d.responseId))
           case sd: ShapeDiffer.KeyShapeMismatch =>
-            Seq(Interpretations.ChangeFieldInResponseShape(sd.key, sd.fieldId, sd.actual, d.responseStatusCode))
+            Seq(Interpretations.ChangeFieldInResponseShape(sd.key, sd.fieldId, sd.actual, d.responseStatusCode, d.responseId))
           case _ => Seq.empty
         }
       }

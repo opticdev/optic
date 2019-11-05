@@ -18,45 +18,6 @@ const styles = theme => ({
     flexDirection: 'column',
     height: 'fit-content',
   },
-  innerPath: {
-    padding: 8,
-    border: '1px solid rgba(49,54,111,0.15)',
-    borderRadius: 11,
-    marginBottom: 16
-  },
-  chip: {
-    backgroundColor: '#31366f',
-    color: 'white',
-  },
-  innerContent: {
-    backgroundColor: 'rgba(49,54,111,0.08)',
-    padding: '5px 10px 5px 10px'
-  },
-  buttonRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: 22
-  },
-  subView: {
-    minHeight: 90,
-    flex: 1,
-    padding: 11
-  },
-  bareLink: {
-    textDecoration: 'none',
-    color: 'inherit',
-    cursor: 'pointer'
-  },
-  apiNavigation: {
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  searchRegion: {
-    width: 600,
-    textAlign: 'center',
-    margin: '0 auto',
-    marginBottom: 60
-  }
 });
 
 

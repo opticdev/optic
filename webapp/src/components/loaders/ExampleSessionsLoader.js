@@ -7,6 +7,9 @@ import Loading from '../navigation/Loading';
 import { Route, Switch, Link } from 'react-router-dom';
 import { DiffStateStatus } from '../diff-v2/BaseDiffSessionManager';
 import { TutorialStore } from '../../contexts/TutorialContext';
+import NewUnmatchedUrlWizard, {UrlsX} from '../../stories/doc-mode/NewUnmatchedUrlWizard';
+import DiffPage from '../../stories/doc-mode/DiffPage';
+import RequestDiffX from '../../stories/doc-mode/RequestDiffX';
 
 class ExampleSessionsLoader extends React.Component {
 
@@ -66,7 +69,11 @@ class ExampleSessionsLoader extends React.Component {
         <LocalDiffRfcStore>
             <TutorialStore>
               <TrafficAndDiffSessionStore sessionId={'fakeSessionId'} specService={specService}>
-                <LocalDiffManager diffPersistedComponent={<After />} />
+                <Switch>
+                  <Route exact path="/example-sessions/:exampleId/diff/urls" component={UrlsX} />
+                  <Route exact path="/example-sessions/:exampleId/diff/requests/:requestId" component={RequestDiffX} />
+                </Switch>
+                {/*<LocalDiffManager diffPersistedComponent={<After />} />*/}
               </TrafficAndDiffSessionStore>
             </TutorialStore>
         </LocalDiffRfcStore>
@@ -98,7 +105,7 @@ class ExampleSessionsLoaderRoutes extends React.Component {
     return (
       <Switch>
         <Route exact path="/example-sessions/:exampleId" component={Before} />
-        <Route path="/example-sessions/:exampleId/diff" component={ExampleSessionsLoader} />
+        <Route path="/example-sessions/:exampleId" component={ExampleSessionsLoader} />
       </Switch>
     )
   }

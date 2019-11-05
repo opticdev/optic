@@ -65,13 +65,24 @@ export const DocCodeBox = withStyles(styles)(_DocCodeBox);
 export const EndpointOverviewCodeBox = ({title = 'Endpoint', method, url}) => {
   return (
     <DocCodeBox title={title}>
-      <Typography variant="body" component="span" style={{fontWeight: 600, color: methodColors[method.toUpperCase()]}}>{method.toUpperCase()}</Typography>
-      <Typography variant="body" component="span" style={{marginLeft: 9, color: DocGrey}}>{url}</Typography>
+      <Typography variant="body" component="span" style={{
+        fontWeight: 600,
+        fontFamily: 'monospace',
+        fontSize: 16,
+        color: methodColors[method.toUpperCase()]
+      }}>{method.toUpperCase()}</Typography>
+      <Typography variant="body" component="span"
+                  style={{
+                    marginLeft: 9,
+                    fontFamily: 'monospace',
+                    fontSize: 16,
+                    color: DocGrey
+                  }}>{url}</Typography>
     </DocCodeBox>
   );
 };
 
-export const ShapeOverview =  withStyles(styles)(({shapeId, classes, contentType, title}) => {
+export const ShapeOverview = withStyles(styles)(({shapeId, classes, contentType, title}) => {
 
   return (
     <DocCodeBox title={title}>
@@ -81,7 +92,7 @@ export const ShapeOverview =  withStyles(styles)(({shapeId, classes, contentType
   );
 });
 
-export const ExampleOnly =  withStyles(styles)(({classes, contentType, title, example}) => {
+export const ExampleOnly = withStyles(styles)(({classes, contentType, title, example}) => {
   return (
     <DocCodeBox title={title}>
       {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
@@ -92,7 +103,7 @@ export const ExampleOnly =  withStyles(styles)(({classes, contentType, title, ex
   );
 });
 
-export const ShapeOnly =  withStyles(styles)(({classes, title, shapeId}) => {
+export const ShapeOnly = withStyles(styles)(({classes, title, shapeId}) => {
   return (
     <DocCodeBox title={title}>
       <HighlightedIDsStore>
@@ -133,7 +144,7 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, classes, example
     <HighlightedIDsStore>
       <ShapeViewerWithQuery shapeId={shapeId}/>
     </HighlightedIDsStore>
-  )
+  );
 
   return (
     <DocCodeBox title={title} rightRegion={rightRegion}>

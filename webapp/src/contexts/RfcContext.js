@@ -64,6 +64,7 @@ class RfcStoreWithoutContext extends React.Component {
         this.handleCommands = this.handleCommands.bind(this)
         const { initialCommandsString, initialEventsString, rfcId } = this.props;
         const eventStore = Facade.makeEventStore();
+        console.count('make event store')
         global.eventStore = eventStore;
         if (initialEventsString) {
             //console.log({ bulkAdd: JSON.parse(initialEventsString) })
@@ -111,6 +112,8 @@ class RfcStoreWithoutContext extends React.Component {
             //debugger
             this.state.rfcService.handleCommands(this.props.rfcId, commandContext, ...commands);
             global.commands.push(...commands)
+
+          console.log(this.state.eventStore.serializeEvents(this.props.rfcId))
             this.handleChange()
         } catch (e) {
             debugger

@@ -1,6 +1,6 @@
 package com.seamless.diff
 
-import com.seamless.contexts.requests.Commands.{RequestId, SetRequestBodyShape, SetResponseBodyShape, ShapedBodyDescriptor}
+import com.seamless.contexts.requests.Commands.{RequestId, ResponseId, SetRequestBodyShape, SetResponseBodyShape, ShapedBodyDescriptor}
 import com.seamless.contexts.requests.{Commands, RequestsServiceHelper}
 import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldId, FieldShapeFromShape, SetFieldShape, ShapeId}
@@ -15,9 +15,13 @@ import scala.util.Try
 @JSExportAll
 case class DiffInterpretation(actionTitle: String,
                               commands: Seq[RfcCommand],
+                              context: InterpretationContext,
                               metadata: FrontEndMetadata = FrontEndMetadata()) {
   def metadataJs = metadata.asJs
 }
+
+@JSExportAll
+case class InterpretationContext(responseId: Option[String], inRequestBody: Boolean)
 
 case class FrontEndMetadata(affectedIds: Seq[String] = Seq.empty,
                             examples: Seq[ShapeExample] = Seq.empty,
@@ -50,6 +54,7 @@ object Interpretations {
       s"Add ${method.toUpperCase} Request",
 //      s"Optic observed a ${method.toUpperCase} operation for this path",
       commands,
+      InterpretationContext(None, false),
       FrontEndMetadata(affectedIds = Seq(id), added = true)
     )
   }
@@ -63,17 +68,8 @@ object Interpretations {
       s"Add ${statusCode} Response",
 //      s"A ${statusCode} response was observed.",
       commands,
+      InterpretationContext(Some(id), false),
       FrontEndMetadata(affectedIds = Seq(id), added = true)
-    )
-  }
-
-  //@todo check on this
-  def RequireManualIntervention(message: String, affectedIds: Seq[String]) = {
-    DiffInterpretation(
-      "Continue",
-//      message,
-      Seq.empty,
-      FrontEndMetadata(affectedIds = affectedIds)
     )
   }
 
@@ -86,6 +82,7 @@ object Interpretations {
       s"Set Request Content-Type to ${newContentType}",
 //      s"The content type of the request was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
       commands,
+      InterpretationContext(None, true),
       FrontEndMetadata(affectedIds = Seq(requestId, requestId + ".content_type"))
     )
   }
@@ -99,6 +96,7 @@ object Interpretations {
       s"Set ${responseStatusCode} Response Content-Type to ${newContentType}",
 //      s"The content type of the ${responseStatusCode} response was changed from\n<b>${oldContentType}</b> -> <b>${newContentType}</b>",
       commands,
+      InterpretationContext(Some(responseId), false),
       FrontEndMetadata(affectedIds = Seq(responseId, responseId + ".content_type"))
     )
   }
@@ -121,6 +119,7 @@ object Interpretations {
       s"Add Request Body",
 //      desc,
       commands,
+      InterpretationContext(None, true),
       FrontEndMetadata(affectedIds = Seq(wrapperId), examples = shape.examples, example = Some(actual), added = true)
     )
   }
@@ -144,6 +143,7 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
 //      desc,
       commands,
+      InterpretationContext(None, true),
       FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts :+ parentShapeId, added = true, highlightNestedShape = Some(highlight))
     )
   }
@@ -164,6 +164,7 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
 //      s"The type of '${key}' was changed in the request.",
       commands,
+      InterpretationContext(None, true),
       FrontEndMetadata(affectedIds = Seq(fieldId), highlightNestedShape = highlightOption)
     )
   }
@@ -186,6 +187,7 @@ object Interpretations {
       s"Add Response Body",
 //      desc,
       commands,
+      InterpretationContext(Some(responseId), false),
       FrontEndMetadata(affectedIds = Seq(wrapperId), examples = shape.examples, example = Some(actual), added = true)
     )
   }
@@ -210,12 +212,13 @@ object Interpretations {
       s"Add ${key}",
 //      desc,
       commands,
+      InterpretationContext(Some(responseId), false),
       FrontEndMetadata(affectedIds = Seq(fieldId), affectedConceptIds = affectedConcepts :+ parentShapeId, added = true, highlightNestedShape = Some(highlight))
     )
 
   }
 
-  def ChangeFieldInResponseShape(key: String, fieldId: String, raw: Json, responseStatusCode: Int)(implicit shapesState: ShapesState) = {
+  def ChangeFieldInResponseShape(key: String, fieldId: String, raw: Json, responseStatusCode: Int, responseId: ResponseId)(implicit shapesState: ShapesState) = {
     val result = new ShapeBuilder(raw).run
 
     val highlightOption = Try(shapesState.flattenedField(fieldId).fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId).map(i => {
@@ -231,6 +234,7 @@ object Interpretations {
       //@todo change copy based on if it's a concept or not
 //      s"The type of '${key}' was changed.",
       commands,
+      InterpretationContext(Some(responseId), false),
       FrontEndMetadata(affectedIds = Seq(fieldId), highlightNestedShape = highlightOption)
     )
 
