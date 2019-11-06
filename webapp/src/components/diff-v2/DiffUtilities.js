@@ -1,8 +1,8 @@
 import {InteractionDiffer, toInteraction} from '../../engine';
 
 export function getUnrecognizedUrlCount(rfcState, diffStateProjections) {
-  const {sampleItemsWithoutResolvedPaths} = diffStateProjections;
-  return sampleItemsWithoutResolvedPaths.length;
+  const {sampleItemsWithoutResolvedPaths, sampleItemsWithResolvedPaths} = diffStateProjections;
+  return sampleItemsWithoutResolvedPaths.length + sampleItemsWithResolvedPaths.filter(x => !x.requestId).length;
 }
 
 export function getRequestIdsWithDiffs(rfcState, diffStateProjections) {

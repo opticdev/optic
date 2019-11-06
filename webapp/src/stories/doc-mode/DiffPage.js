@@ -30,6 +30,8 @@ import {getNormalizedBodyDescriptor} from '../../components/PathPage';
 import {DiffToDiffCard} from './DiffCopy';
 import {commandsToJs, JsonHelper} from '../../engine';
 import Mustache from 'mustache';
+import {Link} from 'react-router-dom';
+import {withNavigationContext} from '../../contexts/NavigationContext';
 
 const styles = theme => ({
   root: {
@@ -117,7 +119,7 @@ const DiffRequest = withStyles(styles)(({
                                         }) => {
 
   const {shapeId, httpContentType} = requestBody;
-  const opacity = (!diff && !interpretation) ? .6 : 1
+  const opacity = (!diff && !interpretation) ? .6 : 1;
 
   return (
     <DiffDocGrid
@@ -152,7 +154,7 @@ const DiffResponse = withStyles(styles)(({
 
   const {shapeId, httpContentType} = responseBody;
 
-  const opacity = (!diff && !interpretation) ? .6 : 1
+  const opacity = (!diff && !interpretation) ? .6 : 1;
 
   return (
     <DiffDocGrid
@@ -164,12 +166,13 @@ const DiffResponse = withStyles(styles)(({
         </DocSubGroup>
       )}
       right={response && (
-        <DocSubGroup title={<Highlight id={response.responseId} style={{color: AddedGreen}}>{`${statusCode} - ${STATUS_CODES[statusCode]} Response`}</Highlight>}>
-            {interpretation}
-            {shapeId && <ShapeOnly title="Response Body Shape" shapeId={shapeId}
-                                   contentType={httpContentType}/>
-            }
-          </DocSubGroup>
+        <DocSubGroup title={<Highlight id={response.responseId}
+                                       style={{color: AddedGreen}}>{`${statusCode} - ${STATUS_CODES[statusCode]} Response`}</Highlight>}>
+          {interpretation}
+          {shapeId && <ShapeOnly title="Response Body Shape" shapeId={shapeId}
+                                 contentType={httpContentType}/>
+          }
+        </DocSubGroup>
       )}
     />
   );
@@ -197,40 +200,6 @@ const SpecPanel = withStyles(styles)(({classes}) => {
   );
 });
 
-const DiffPanel = withStyles(styles)(({classes}) => {
-
-  return (
-    <div className={classes.requestContainer}>
-
-      <Typography variant="h4" color="primary">Observation</Typography>
-
-      <div>
-        <EndpointOverviewCodeBox method={'POST'} url={<>
-          {'/users/'}<span style={{color: '#dcfcff', fontWeight: 600}}>896gghr212</span>{'/pets'}
-        </>}/>
-      </div>
-
-      <DocSubGroup title="Request" style={{marginTop: 22}}>
-        <DiffInfo color="green"
-                  diffText={'##### New Field Observed\n`tags` was observed for the first time in this request.'}/>
-        <ExampleOnly title="Body" contentType="application/json" example={{
-          a: true,
-          b: false,
-          tags: ['aidan', 'dev']
-        }}/>
-      </DocSubGroup>
-
-      <DocSubGroup title="200 Response" style={{marginTop: 22}}>
-        <ExampleOnly title="Body" contentType="application/json" example={{
-          result: {userId: 'abc', name: 'Aidan'},
-          error: null
-        }}/>
-      </DocSubGroup>
-
-    </div>
-  );
-});
-
 class DiffPage extends React.Component {
 
   getSpecForRequest(observedStatusCode) {
@@ -240,7 +209,7 @@ class DiffPage extends React.Component {
     const {requestDescriptor} = request;
     const {httpMethod, pathComponentId, bodyDescriptor} = requestDescriptor;
 
-    const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, 'purpose')
+    const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, 'purpose');
 
     const requestBody = getNormalizedBodyDescriptor(bodyDescriptor);
 
@@ -282,7 +251,7 @@ class DiffPage extends React.Component {
       return Mustache.render(template, inputs);
     })();
 
-    const color = (metadataJs.addedIds.length > 0 && 'green') || (metadataJs.changedIds.length > 0 && 'yellow') || 'blue'
+    const color = (metadataJs.addedIds.length > 0 && 'green') || (metadataJs.changedIds.length > 0 && 'yellow') || 'blue';
 
     const card = (
       <InterpretationInfo
@@ -323,7 +292,7 @@ class DiffPage extends React.Component {
   }
 
   render() {
-    const {classes, url, method, path, requestId, observed, skip, remainingInteractions} = this.props;
+    const {classes, url, method, path, requestId, observed, skip, baseUrl, remainingInteractions} = this.props;
 
     const {requestBody, responseBody, response, purpose} = this.getSpecForRequest(observed.statusCode);
 
@@ -337,16 +306,19 @@ class DiffPage extends React.Component {
           <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
             <Toolbar variant="dense">
               <div style={{marginRight: 20}}>
-                <Tooltip title="End Review">
-                  <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple>
-                    <ClearIcon fontSize="small"/>
-                  </IconButton>
-                </Tooltip>
+                <Link to={baseUrl}>
+                  <Tooltip title="End Review">
+                    <IconButton size="small" aria-label="delete" className={classes.margin} color="primary"
+                                disableRipple>
+                      <ClearIcon fontSize="small"/>
+                    </IconButton>
+                  </Tooltip>
+                </Link>
               </div>
 
               <Tooltip title="Replay API Examples">
                 <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple>
-                  <FastRewindIcon fontSize="small"/>
+                  <ReplayIcon fontSize="small"/>
                 </IconButton>
               </Tooltip>
 
@@ -355,12 +327,16 @@ class DiffPage extends React.Component {
               </Typography>
 
               <Tooltip title="Skip Example">
-                <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple onClick={skip}>
+                <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple
+                            onClick={skip}>
                   <SkipNextIcon fontSize="small"/>
                 </IconButton>
               </Tooltip>
 
-              <Typography variant="overline" color="primary">{purpose}</Typography>
+              <div style={{flex: 6.6, textAlign: 'center'}}>
+                <Typography variant="h6" color="primary">{purpose}</Typography>
+              </div>
+              <div style={{flex: 1}}/>
 
             </Toolbar>
           </AppBar>
@@ -414,4 +390,4 @@ DiffPage.propTypes = {
   remainingInteractions: PropTypes.number
 };
 
-export default withRfcContext(withStyles(styles)(DiffPage));
+export default withNavigationContext(withRfcContext(withStyles(styles)(DiffPage)));

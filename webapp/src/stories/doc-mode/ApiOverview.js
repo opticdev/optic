@@ -18,6 +18,7 @@ import ConceptOverview from './ConceptOverview';
 import { DisplayPath } from './DisplayPath';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
+import {PathIdToPathString} from './PathIdToPathString';
 
 const drawerWidth = 240;
 
@@ -79,11 +80,6 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
 
   const url = full + name;
 
-  const flatChildren = [path, ...children.flatMap(i => [i, ...i.children])]
-    .filter(({ pathId }) => {
-      const requests = cachedQueryResults.requestIdsByPathId[pathId] || [];
-      return requests.length;
-    });
 
   const [open, setOpen] = React.useState(false);
 
@@ -105,15 +101,11 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
         <List component="div"
           dense
           disablePadding>
-          {flatChildren.map(i => {
-            const url = i.full + i.name;
-            const requestsForPath = operationsToRender.filter(op => op.path.pathId === i.pathId);
+            {operationsToRender.map(({ requestId, request }) => {
 
-            return requestsForPath.map(({ requestId, request }) => {
-
-              const { httpMethod } = request.requestDescriptor;
+              const { httpMethod, pathComponentId} = request.requestDescriptor;
               const purpose = contributions.getOrUndefined(requestId, 'purpose') || (
-                <DisplayPath method={httpMethod} url={url} />
+                <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>} />
               );
 
               return (
@@ -130,7 +122,6 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
                     }} />
                 </ListItem>
               );
-            });
           })}
         </List>
       </Collapse>
@@ -138,13 +129,17 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
   );
 }));
 
+
+
 export default compose(withRfcContext, withNavigationContext)(function ApiOverview(props) {
   const { paths, concepts, cachedQueryResults } = props;
   const { notificationAreaComponent = null } = props;
   const classes = useStyles();
 
-  const operationsToRender = paths.children.flatMap(i => [i, ...i.children])
-    .flatMap(path => {
+
+
+  function flatMapOperations(children) {
+    return children.flatMap(path => {
       const requests = cachedQueryResults.requestIdsByPathId[path.pathId] || [];
       return requests.map(id => {
         return {
@@ -152,8 +147,11 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           request: cachedQueryResults.requests[id],
           path
         };
-      });
-    });
+      }).concat(flatMapOperations(path.children))
+    })
+  }
+
+  const operationsToRender = flatMapOperations(paths.children)
 
   return (
     <div className={classes.root}>
@@ -178,7 +176,7 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           dense={true}
         >
           {paths.children.map(i => <EndpointBasePath path={i}
-            operationsToRender={operationsToRender} />)}
+            operationsToRender={flatMapOperations(i.children)} />)}
         </List>
 
         <Divider />
