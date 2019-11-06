@@ -21,7 +21,16 @@ class SpecService {
         return fetch(url, {
             method: 'PUT',
             headers: {
-                'accept': 'application/json',
+                'content-type': 'application/json'
+            },
+            body
+        })
+    }
+    
+    postJson(url, body) {
+        return fetch(url, {
+            method: 'POST',
+            headers: {
                 'content-type': 'application/json'
             },
             body
@@ -39,6 +48,14 @@ class SpecService {
     saveEvents(eventStore, rfcId) {
         const serializedEvents = eventStore.serializeEvents(rfcId);
         return this.putJson(`/cli-api/events`, serializedEvents);
+    }
+
+    saveExample(interaction, requestId) {
+        return this.postJson(`/cli-api/example-requests/${requestId}`, interaction)
+    }
+
+    listExamples(requestId) {
+        return this.getJson(`/cli-api/example-requests/${requestId}`)
     }
 
     saveDiffState(sessionId, diffState) {

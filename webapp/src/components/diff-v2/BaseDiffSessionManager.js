@@ -45,7 +45,7 @@ class BaseDiffSessionManager {
     }
 
     listExamplesToAdd() {
-        return this.exampleInteractions.entries()
+        return this.exampleInteractions.values()
     }
 }
 
