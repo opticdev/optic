@@ -16,8 +16,8 @@ import { withRfcContext } from '../../contexts/RfcContext';
 import { asPathTrail, isPathParameter } from '../../components/utilities/PathUtilities';
 import ConceptOverview from './ConceptOverview';
 import { DisplayPath } from './DisplayPath';
-import { NewBehavior } from './NewBehavior';
 import { withNavigationContext } from '../../contexts/NavigationContext';
+import compose from 'lodash.compose';
 
 const drawerWidth = 240;
 
@@ -71,7 +71,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
-  const { path, baseUrl, operationsToRender, cachedQueryResults } = props;
+  const { path, operationsToRender, cachedQueryResults } = props;
   const classes = useStyles();
 
   const { contributions } = cachedQueryResults;
@@ -86,7 +86,6 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
     });
 
   const [open, setOpen] = React.useState(false);
-
 
   const handleClick = () => {
     setOpen(!open);
@@ -139,7 +138,9 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
   );
 }));
 
-export default withRfcContext(withNavigationContext(({ paths, concepts, cachedQueryResults }) => {
+export default compose(withRfcContext, withNavigationContext)(function ApiOverview(props) {
+  const { paths, concepts, cachedQueryResults } = props;
+  const { notificationAreaComponent = null } = props;
   const classes = useStyles();
 
   const operationsToRender = paths.children.flatMap(i => [i, ...i.children])
@@ -201,7 +202,7 @@ export default withRfcContext(withNavigationContext(({ paths, concepts, cachedQu
       </Drawer>
       <main className={classes.content}>
 
-        <NewBehavior />
+        {notificationAreaComponent}
 
         <Typography variant="h3" color="primary" className={classes.sectionHeader}
           style={{ paddingTop: 20 }}>Endpoints</Typography>
@@ -240,5 +241,5 @@ export default withRfcContext(withNavigationContext(({ paths, concepts, cachedQu
       </main>
     </div>
   );
-}));
+});
 

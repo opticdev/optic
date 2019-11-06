@@ -19,6 +19,7 @@ import { CommandContextStore } from '../../../contexts/CommandContext.js';
 import { routerPaths } from '../../../routes.js';
 import Overview from '../../onboarding/Overview.js';
 import { NavigationStore, withNavigationContext } from '../../../contexts/NavigationContext.js';
+import NewBehavior from '../../../stories/doc-mode/NewBehavior.js';
 
 export class LocalLoader extends React.Component {
 
@@ -112,58 +113,18 @@ export function RequestViewer(props) {
 export class LocalSpecOverview extends React.Component {
   render() {
     return (
-      <SpecOverview specService={specService} />
+      <SpecOverview notificationAreaComponent={<NewBehavior specService={specService} />} />
     );
   }
 }
-export class SpecOverview extends React.Component {
-  state = {
-    isLoading: true,
-    lastSessionId: null,
-    error: null
-  }
-  componentDidMount() {
-    this.props.specService.listSessions()
-      .then(listSessionsResponse => {
-        debugger
-        const { sessions } = listSessionsResponse
-        if (sessions.length > 0) {
-          const [lastSessionId] = sessions;
-          //@TODO check diff state to make sure it's not persisted already
-          this.setState({
-            isLoading: false,
-            lastSessionId
-          })
-        } else {
-          this.setState({
-            isLoading: false
-          })
-        }
-      })
-      .catch(e => {
-        this.setState({
-          isLoading: false,
-          error: true
-        })
-      })
-  }
-  render() {
-    const { lastSessionId, isLoading, error } = this.state;
-    if (error) {
-      return (<div>something went wrong :(</div>)
-    }
 
-    if (isLoading) {
-      return <Loading />
-    }
-    return (
-      <div>
-        {lastSessionId ? <div>show diff state for {lastSessionId}</div> : null}
-        <Overview />
-      </div>
-    );
-  }
+export function SpecOverview(props) {
+  const { notificationAreaComponent } = props;
+  return (
+    <Overview notificationAreaComponent={notificationAreaComponent} />
+  )
 }
+
 class LocalSpecBase extends React.Component {
   render() {
     const { baseUrl } = this.props;

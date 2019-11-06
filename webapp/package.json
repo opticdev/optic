@@ -42,6 +42,7 @@
     "jest-resolve": "24.7.1",
     "jest-watch-typeahead": "0.3.0",
     "keymirror": "^0.1.1",
+    "lodash.compose": "^2.4.1",
     "lodash.debounce": "^4.0.8",
     "lodash.groupby": "^4.6.0",
     "lodash.sortby": "^4.7.0",

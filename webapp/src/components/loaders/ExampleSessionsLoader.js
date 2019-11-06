@@ -2,14 +2,17 @@ import React from 'react';
 import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
 import { TrafficAndDiffSessionStore } from '../../contexts/TrafficAndDiffSessionContext';
 import { LocalDiffRfcStore } from '../../contexts/RfcContext';
-import LocalDiffManager from '../diff/LocalDiffManager';
 import Loading from '../navigation/Loading';
 import { Route, Switch, Link } from 'react-router-dom';
-import { DiffStateStatus } from '../diff-v2/BaseDiffSessionManager';
 import { TutorialStore } from '../../contexts/TutorialContext';
-import NewUnmatchedUrlWizard, {UrlsX} from '../../stories/doc-mode/NewUnmatchedUrlWizard';
-import DiffPage from '../../stories/doc-mode/DiffPage';
+import { UrlsX } from '../../stories/doc-mode/NewUnmatchedUrlWizard';
 import RequestDiffX from '../../stories/doc-mode/RequestDiffX';
+import { NavigationStore } from '../../contexts/NavigationContext';
+import { routerPaths } from '../../routes';
+import { SpecOverview } from '../routes/local';
+import NewBehavior from '../../stories/doc-mode/NewBehavior';
+
+export const baseUrl = `/example-sessions/:exampleId`;
 
 class ExampleSessionsLoader extends React.Component {
 
@@ -44,15 +47,13 @@ class ExampleSessionsLoader extends React.Component {
     if (!this.state.isLoaded) {
       return <Loading />
     }
-
+    const sessionId = 'fakeSessionId';
     const specService = {
       loadSession: (sessionId) => {
         return Promise.resolve({
           diffStateResponse: {
             diffState: {
-              status: DiffStateStatus.started,
-              interactionResults: {},
-              acceptedInterpretations: [],
+
             }
           },
           sessionResponse: {
@@ -60,22 +61,31 @@ class ExampleSessionsLoader extends React.Component {
           }
         })
       },
+      listSessions() {
+        return Promise.resolve({ sessions: [sessionId] })
+      },
       saveEvents: () => { },
       saveDiffState: () => { }
+    }
+
+    function ExampleSessionsSpecOverview() {
+      return (
+        <SpecOverview notificationAreaComponent={<NewBehavior specService={specService} />} />
+      )
     }
 
     return (
       <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
         <LocalDiffRfcStore>
-            <TutorialStore>
-              <TrafficAndDiffSessionStore sessionId={'fakeSessionId'} specService={specService}>
-                <Switch>
-                  <Route exact path="/example-sessions/:exampleId/diff/urls" component={UrlsX} />
-                  <Route exact path="/example-sessions/:exampleId/diff/requests/:requestId" component={RequestDiffX} />
-                </Switch>
-                {/*<LocalDiffManager diffPersistedComponent={<After />} />*/}
-              </TrafficAndDiffSessionStore>
-            </TutorialStore>
+          <TutorialStore>
+            <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
+              <Switch>
+                <Route exact path={routerPaths.diffUrls(baseUrl)} component={UrlsX} />
+                <Route exact path={routerPaths.diffRequest(baseUrl)} component={RequestDiffX} />
+                <Route component={ExampleSessionsSpecOverview} />
+              </Switch>
+            </TrafficAndDiffSessionStore>
+          </TutorialStore>
         </LocalDiffRfcStore>
       </InitialRfcCommandsStore>
     )
@@ -103,10 +113,12 @@ function After(props) {
 class ExampleSessionsLoaderRoutes extends React.Component {
   render() {
     return (
-      <Switch>
-        <Route exact path="/example-sessions/:exampleId" component={Before} />
-        <Route path="/example-sessions/:exampleId" component={ExampleSessionsLoader} />
-      </Switch>
+      <NavigationStore baseUrl={baseUrl}>
+        <Switch>
+          <Route exact path={baseUrl} component={Before} />
+          <Route path={baseUrl} component={ExampleSessionsLoader} />
+        </Switch>
+      </NavigationStore>
     )
   }
 }

@@ -54,6 +54,7 @@ export function toInteraction(sample) {
         ApiResponse(sample.response.statusCode, sample.response.headers['content-type'] || '*/*', fromJs(sample.response.body))
     )
 }
+export const InteractionDiffer = opticEngine.com.seamless.diff.InteractionDiffer;
 export const RequestDiffer = opticEngine.com.seamless.diff.RequestDiffer()
 export const Interpreters = opticEngine.com.seamless.diff.interpreters
 console.log(opticEngine)

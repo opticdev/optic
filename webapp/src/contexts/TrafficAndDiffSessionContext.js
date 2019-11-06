@@ -10,7 +10,7 @@ const {
 } = GenericContextFactory(null)
 
 
-function computeDiffStateProjections(queries, cachedQueryResults, diffSessionManager) {
+export function computeDiffStateProjections(queries, cachedQueryResults, diffSessionManager) {
     const { session } = diffSessionManager
     const sortedSampleItems = session.samples
         .map((sample, index) => {
@@ -35,7 +35,7 @@ function computeDiffStateProjections(queries, cachedQueryResults, diffSessionMan
                 if (!pathId) {
                     return null;
                 }
-                const {requests, requestIdsByPathId} = cachedQueryResults;
+                const { requests, requestIdsByPathId } = cachedQueryResults;
                 const requestIds = requestIdsByPathId[pathId] || []
                 const requestId = requestIds.find(requestId => {
                     const request = requests[requestId]
@@ -85,7 +85,8 @@ class TrafficAndDiffSessionStoreBase extends React.Component {
             error: null,
             diffSessionManager: null,
         })
-        this.props.specService.loadSession(sessionId)
+        const { specService } = this.props;
+        specService.loadSession(sessionId)
             .then(result => {
                 const diffSessionManager = new BaseDiffSessionManager(
                     sessionId,
@@ -94,7 +95,6 @@ class TrafficAndDiffSessionStoreBase extends React.Component {
                     this.props.specService
                 )
                 diffSessionManager.events.on('updated', () => this.forceUpdate())
-                diffSessionManager.restoreState(this.props.handleCommands)
 
                 this.setState({
                     isLoading: false,
@@ -116,11 +116,11 @@ class TrafficAndDiffSessionStoreBase extends React.Component {
         const { sessionId } = this.props;
         const { queries, cachedQueryResults } = this.props
         const { isLoading, error, diffSessionManager } = this.state;
-        
+
         if (isLoading) {
             return <LoadingDiff />
         }
-        
+
         if (error) {
             console.error(error)
             return <div>something went wrong :(</div>

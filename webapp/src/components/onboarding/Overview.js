@@ -1,6 +1,5 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import Editor from '../navigation/Editor';
 import { withRfcContext } from '../../contexts/RfcContext';
 import { getNameWithFormattedParameters, getParentPathId } from '../utilities/PathUtilities';
 import sortBy from 'lodash.sortby';
@@ -25,7 +24,7 @@ class OverView extends React.Component {
   render() {
     const { classes, cachedQueryResults, mode, handleCommand, queries, baseUrl } = this.props;
     const { apiName, contributions, conceptsById, pathsById, pathIdsWithRequests } = cachedQueryResults;
-
+    const { notificationAreaComponent } = this.props
     const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
     const sortedConcepts = sortBy(concepts, ['name']);
     const pathTree = flattenPaths('root', pathsById);
@@ -36,11 +35,13 @@ class OverView extends React.Component {
 
 
     return (
-        <div className={classes.overview}>
-          <ApiOverview paths={pathTreeFiltered}
-            concepts={conceptsFiltered}
-            baseUrl={baseUrl} />
-        </div>
+      <div className={classes.overview}>
+        <ApiOverview
+          notificationAreaComponent={notificationAreaComponent}
+          paths={pathTreeFiltered}
+          concepts={conceptsFiltered}
+          baseUrl={baseUrl} />
+      </div>
     );
   }
 }

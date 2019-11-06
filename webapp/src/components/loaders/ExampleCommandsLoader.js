@@ -18,10 +18,7 @@ import { NavigationStore } from '../../contexts/NavigationContext';
 
 class ExampleCommandsSpecOverview extends React.Component {
   render() {
-    const dummySpecService = {
-      listSessions: () => Promise.resolve({ sessions: [] })
-    }
-    return <SpecOverview specService={dummySpecService} />
+    return <SpecOverview />
   }
 }
 
@@ -73,7 +70,6 @@ class ExampleCommandsLoader extends React.Component {
     if (example === null) {
       return <Loading />;
     }
-    debugger
     const baseUrl = match.url;
     return (
       <NavigationStore baseUrl={baseUrl}>
