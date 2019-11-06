@@ -104,6 +104,9 @@ class RfcStoreWithoutContext extends React.Component {
     }, 10, { leading: true })
 
     handleCommands(...commands) {
+        if (!Array.isArray(commands)) {
+          throw new Error('Spread the commands.')
+        }
         const { clientId, clientSessionId } = this.props;
         const batchId = uuidv4();
         const commandContext = new RfcCommandContext(clientId, clientSessionId, batchId)
@@ -113,7 +116,7 @@ class RfcStoreWithoutContext extends React.Component {
             this.state.rfcService.handleCommands(this.props.rfcId, commandContext, ...commands);
             global.commands.push(...commands)
 
-          console.log(this.state.eventStore.serializeEvents(this.props.rfcId))
+           console.log(this.state.eventStore.serializeEvents(this.props.rfcId))
             this.handleChange()
         } catch (e) {
             debugger

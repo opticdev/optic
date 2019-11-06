@@ -48,6 +48,7 @@
     "lodash.sortby": "^4.7.0",
     "mini-css-extract-plugin": "0.5.0",
     "mixpanel-browser": "2.15.0",
+    "mustache": "^3.0.3",
     "nice-try": "^2.0.0",
     "notistack": "^0.8.6",
     "optic-domain": "../domain/",

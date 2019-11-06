@@ -82,14 +82,13 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
       ) ++ f(wrapperShapeId)
 
     DiffInterpretation(
-      "Change to a One Of",
+      "Add One Of",
+      DynamicDescription("Change to {{shapeId__SHAPE}}", shapeId = Some(affectedId)),
 //      "Optic observed multiple different shapes. If it can be any of these shapes, make it a OneOf",
       commands,
       context,
       FrontEndMetadata(
-        example = Some(actual),
-        affectedIds = Seq(affectedId, p1, p2),
-        changed = true
+        addedIds = Seq(affectedId, p1, p2),
       )
     )
   }
@@ -103,14 +102,13 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     )
 
     DiffInterpretation(
-      "Add to One Of",
+      "Update One Of",
+      DynamicDescription("Add {{shapeId__SHAPE}} to One Of", shapeId = Some(expected.shapeId)),
 //      "Optic observed a shape that did not match any of the expected shapes. If it is expected, add it to the choices",
       commands,
       context,
       FrontEndMetadata(
-        example = Some(actual),
-        affectedIds = Seq(expected.shapeId),
-        changed = true
+        changedIds = Seq(expected.shapeId)
       )
     )
   }

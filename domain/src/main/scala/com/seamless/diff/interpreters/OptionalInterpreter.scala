@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{SetRequestBodyShape, SetResponse
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
 import com.seamless.contexts.shapes.ShapesHelper._
-import com.seamless.diff.{DiffInterpretation, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape, InterpretationContext}
+import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape, InterpretationContext}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer._
 
@@ -69,11 +69,12 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       SetFieldShape(FieldShapeFromShape(field.fieldId, wrapperShapeId)),
     )
     DiffInterpretation(
-      s"Make <b>${shapeDiff.key}</b> Optional",
+      s"Make Optional",
+      DynamicDescription(s"Make `${shapeDiff.key}` `optional`"),
 //      s"Optic expected to see a value for the key ${shapeDiff.key}. If it is allowed to be omitted, make it Optional",
       commands,
       context,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.fieldId), changed = true, highlightNestedShape = Some(highlightNested))
+      FrontEndMetadata(changedIds = Seq(shapeDiff.fieldId), highlightNestedShape = Some(highlightNested))
     )
   }
 
@@ -86,13 +87,13 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       ),
       SetRequestBodyShape(requestDiffResult.requestId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )
-
     DiffInterpretation(
       "Make Request Optional",
+      DynamicDescription(s"Make request `optional`"),
 //      s"Optic expected to see a value for the request but instead saw nothing. If it is allowed to be omitted, make it Optional",
       commands,
       context,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
+      FrontEndMetadata(changedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 
@@ -106,11 +107,12 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       SetResponseBodyShape(requestDiffResult.responseId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )
     DiffInterpretation(
-      "Make Response Optional",
+      "Make Request Optional",
+      DynamicDescription(s"Make response `optional`"),
 //      s"Optic expected to see a value for the response but instead saw nothing. If it is allowed to be omitted, make it Optional",
       commands,
       context,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
+      FrontEndMetadata(changedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 }

@@ -16,11 +16,15 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 15,
     display: 'flex',
     flexDirection: 'column',
+    paddingLeft: 15,
+    paddingRight: 15,
     borderRight: '1px solid #e2e2e2'
   },
   rightDiff: {
     display: 'flex',
     flexDirection: 'column',
+    paddingLeft: 15,
+    paddingRight: 15,
     paddingTop: 15,
   },
   maxWidth: {
@@ -47,10 +51,10 @@ export function DiffDocGrid({left, leftColor, right, style}) {
 
   return (
     <Grid container style={style}>
-      <Grid item md={6} className={classes.leftDiff} alignItems="center">
+      <Grid item xs={6} className={classes.leftDiff} alignItems="center">
         <div className={classes.maxWidth}>{left}</div>
       </Grid>
-      <Grid item md={6} className={classes.rightDiff} alignItems="center">
+      <Grid item xs={6} className={classes.rightDiff} alignItems="center">
         <div className={classes.maxWidth}>{right}</div>
       </Grid>
     </Grid>

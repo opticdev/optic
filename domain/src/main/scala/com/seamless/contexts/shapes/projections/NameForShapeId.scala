@@ -1,7 +1,8 @@
 package com.seamless.contexts.shapes.projections
 
-import com.seamless.contexts.shapes.Commands.{DynamicParameterList, NoProvider, ParameterProvider, ShapeId, ShapeProvider}
+import com.seamless.contexts.shapes.Commands.{DynamicParameterList, FieldShapeFromShape, NoProvider, ParameterProvider, ShapeId, ShapeProvider}
 import com.seamless.contexts.shapes.ShapesHelper.{AnyKind, IdentifierKind, ListKind, MapKind, NullableKind, ObjectKind, OneOfKind, OptionalKind, ReferenceKind, StringKind}
+import com.seamless.contexts.shapes.projections.FlatShapeProjection.{FlatField, getFlatShape}
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.diff.ShapeDiffer
 import com.seamless.diff.ShapeDiffer.resolveParameterShape
@@ -19,6 +20,12 @@ object NameForShapeId {
 
   def getFlatShapeName(shapeId: ShapeId)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None): String = {
     getShapeName(shapeId).map(_.name).mkString(" ")
+  }
+
+  def getFieldIdShapeName(fieldId: String)(implicit shapesState: ShapesState): Seq[ColoredComponent] = {
+    val field = shapesState.fields(fieldId)
+    val result = FlatShapeProjection.forShapeId( field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId, Some(fieldId))(shapesState, true)
+    result.root.typeName
   }
 
   def getShapeName(shapeId: ShapeId, expand: Boolean = false)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None, seenIds: Seq[ShapeId] = Seq()): Seq[ColoredComponent] = {

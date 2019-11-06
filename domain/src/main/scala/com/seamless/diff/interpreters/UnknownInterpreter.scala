@@ -2,7 +2,7 @@ package com.seamless.diff.interpreters
 
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
-import com.seamless.diff.{DiffInterpretation, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape, InterpretationContext}
+import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape, InterpretationContext}
 import com.seamless.diff.RequestDiffer.{RequestDiffResult, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.seamless.diff.ShapeDiffer.NoExpectedShape
 import com.seamless.diff.initial.ShapeBuilder
@@ -61,11 +61,11 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
     )
     println(commands)
     DiffInterpretation(
-      "Replace Unknown with Shape",
-//      "Optic observed this shape for the first time. Is this the expected shape?",
+      "Replace Unknown",
+      DynamicDescription(s"Replace Unknown with `{{shapeId_SHAPE}}`"),
       commands,
       context,
-      FrontEndMetadata(example = Some(raw), affectedIds = Seq(expectedShapeId), added = true, highlightNestedShape = Some(highlightNested))
+      FrontEndMetadata(changedIds = Seq(expectedShapeId), highlightNestedShape = Some(highlightNested))
     )
   }
 }

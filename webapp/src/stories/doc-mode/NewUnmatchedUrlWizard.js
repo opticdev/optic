@@ -37,7 +37,9 @@ import {EndpointOverviewCodeBox, ExampleOnly} from './DocCodeBox';
 import {DocSubGroup} from './DocSubGroup';
 import Chip from '@material-ui/core/Chip';
 import {asPathTrail, getNameWithFormattedParameters} from '../../components/utilities/PathUtilities';
-import {PathIdToName} from './PathIdToName';
+import {PathIdToPathString} from './PathIdToPathString';
+import {withRouter} from 'react-router-dom';
+import {withNavigationContext} from '../../contexts/NavigationContext';
 
 const styles = theme => ({
   root: {
@@ -101,6 +103,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
       this.state.pathId,
       this.state.previewSample.request.method
     );
+    return this.props.pushRelative(`/diff/requests/${requestId}`)
   };
 
   render() {
@@ -158,7 +161,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                 {!targetUrl && (
                   suggestedPaths.map(({method, url, sample, pathId}) => {
 
-                    const full = <PathIdToName pathId={pathId}/>;
+                    const full = <PathIdToPathString pathId={pathId}/>;
 
                     return (<UrlListItem url={url}
                                          method={method}
@@ -232,7 +235,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
               {previewSample && <EndpointOverviewCodeBox title={purpose || 'Send this request when you want to...'}
                                                          method={previewSample.request.method}
-                                                         url={<PathIdToName pathId={pathId}/>}/>}
+                                                         url={<PathIdToPathString pathId={pathId}/>}/>}
 
               <div style={{marginTop: 17, paddingTop: 4, textAlign: 'right'}}>
                 {addRequestButton}
@@ -330,7 +333,7 @@ const PreviewSample = ({sample}) => {
 
 };
 
-const UnmatchedUrlWizard = withEditorContext(withStyles(styles)(UnmatchedUrlWizardWithoutQuery));
+const UnmatchedUrlWizard = withStyles(styles)(withNavigationContext(UnmatchedUrlWizardWithoutQuery));
 
 function UrlListItem({
                        previewSample,

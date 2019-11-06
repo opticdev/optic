@@ -63,7 +63,7 @@ class Interpreter extends React.Component {
       classes
     } = this.props;
 
-    // return <div>Optic observed {DiffToCopy(diff)}</div>;
+    // return <div>Optic observed {DiffToDiffCard(diff)}</div>;
     return (
       <Card className={classes.root} elevation={3}>
         <CardContent>

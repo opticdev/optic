@@ -26,14 +26,15 @@ const styles = theme => ({
   }
 });
 
-function DiffInfo({classes, diffText, color}) {
+function DiffInfo({classes, title, description, color}) {
 
   const colorClass = color === 'green' ? classes.green : classes.yellow
 
-  const example = "##### New Field Observed\n\n`fieldA` was observed for the first time"
+  const source = `##### ${title}\n${description}`
+
   return (
     <div className={classNames(classes.card, colorClass)}>
-      <MarkdownRender source={example} />
+      <MarkdownRender source={source} />
     </div>
   )
 }
