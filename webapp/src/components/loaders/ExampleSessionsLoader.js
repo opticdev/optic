@@ -12,7 +12,7 @@ import { routerPaths } from '../../routes';
 import { SpecOverview } from '../routes/local';
 import NewBehavior from '../../stories/doc-mode/NewBehavior';
 
-export const baseUrl = `/example-sessions/:exampleId`;
+export const basePath = `/example-sessions/:exampleId`;
 
 class ExampleSessionsLoader extends React.Component {
 
@@ -75,7 +75,7 @@ class ExampleSessionsLoader extends React.Component {
       )
     }
 
-    const diffBaseUrl = `${baseUrl}/diff`
+    const diffBaseUrl = `${basePath}/diff`
 
     return (
       <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
@@ -95,31 +95,13 @@ class ExampleSessionsLoader extends React.Component {
   }
 }
 
-function Before(props) {
-  const { match } = props;
-
-  return (
-    <div>
-      <Link to={match.url + '/diff'}>start diff</Link>
-    </div>
-  )
-}
-
-function After(props) {
-  const { match } = props;
-
-  return (
-    <div>done!</div>
-  )
-}
-
 class ExampleSessionsLoaderRoutes extends React.Component {
   render() {
-    const {match} = this.props
+    const { match } = this.props
     return (
       <NavigationStore baseUrl={match.url}>
         <Switch>
-          <Route path={baseUrl} component={ExampleSessionsLoader} />
+          <Route path={basePath} component={ExampleSessionsLoader} />
         </Switch>
       </NavigationStore>
     )
