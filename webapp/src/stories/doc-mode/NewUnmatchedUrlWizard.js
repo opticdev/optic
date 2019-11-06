@@ -8,11 +8,12 @@ import {withEditorContext} from '../../contexts/EditorContext';
 import {withStyles} from '@material-ui/styles';
 import {withRfcContext} from '../../contexts/RfcContext';
 import Tooltip from '@material-ui/core/Tooltip';
+import {STATUS_CODES} from 'http'
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import {resolvePath} from '../../components/requests/NewRequestStepper';
 import PathMatcher from '../../components/diff/PathMatcher';
-import {AppBar, TextField} from '@material-ui/core';
+import {AppBar, ListItemAvatar, ListItemSecondaryAction, ListItemText, TextField} from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import ClearIcon from '@material-ui/core/SvgIcon/SvgIcon';
@@ -23,41 +24,20 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import Paper from '@material-ui/core/Paper';
-import {DocDarkGrey, DocGrey} from './DocConstants';
+import {DocDarkGrey, DocGrey, methodColors} from './DocConstants';
 import {LightTooltip} from '../../components/diff/DiffCard';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import {Show} from './Show';
+import sortby from 'lodash.sortby';
 import {HeadingContribution, MarkdownContribution} from './DocContribution';
 import {withTrafficAndDiffSessionContext} from '../../contexts/TrafficAndDiffSessionContext';
 import DiffInfo from './DiffInfo';
 import {HighlightedIDsStore} from './shape/HighlightedIDs';
 import {EndpointOverviewCodeBox, ExampleOnly} from './DocCodeBox';
 import {DocSubGroup} from './DocSubGroup';
-
-function completePathMatcherRegex(pathComponents) {
-  const pathString = pathComponentsToString(pathComponents);
-  const regex = pathToRegexp(pathString, [], {start: true, end: true});
-  return regex;
-}
-
-export function pathComponentsToString(pathComponents) {
-  if (pathComponents.length === 0) {
-    return '/';
-  }
-  const s = '/' + pathComponents
-    .map(({name, isParameter}) => {
-      if (isParameter) {
-        const stripped = name
-          .replace('{', '')
-          .replace('}', '')
-          .replace(':', '');
-        return `:${stripped}`;
-      } else {
-        return name;
-      }
-    }).join('/');
-  return s;
-}
+import Chip from '@material-ui/core/Chip';
+import {asPathTrail, getNameWithFormattedParameters} from '../../components/utilities/PathUtilities';
+import {PathIdToName} from './PathIdToName';
 
 const styles = theme => ({
   root: {
@@ -86,7 +66,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     pathExpression: '',
     purpose: '',
     pathId: null,
-    targetUrl: null,
+    targetUrl: '',
     previewSample: null,
   };
   handleChange = ({pathExpression}) => {
@@ -95,10 +75,21 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     });
   };
 
+  reset = () => {
+    this.setState({
+      pathExpression: '',
+      purpose: '',
+      pathId: null,
+      targetUrl: '',
+      previewSample: null,
+    });
+  };
+
   setPreviewSample = (previewSample) => () => this.setState({previewSample});
   setPurpose = (purpose) => this.setState({purpose});
 
   selectTarget = (targetUrl) => () => this.setState({targetUrl});
+  quickAdd = (pathId) => () => this.setState({pathId});
 
   handleAddPath = () => {
     const pathId = this.props.handleAddPath(this.state.pathExpression);
@@ -113,25 +104,16 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
   };
 
   render() {
-    const {classes, unmatchedPaths} = this.props;
+    const {classes, unmatchedPaths, matchedPaths} = this.props;
     const {pathExpression, targetUrl, previewSample, pathId, purpose} = this.state;
     const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression));
     const isCompleteMatch = regex.exec(targetUrl);
     // const urls = [...new Set(items.map(x => x.sample.request.url))]
     //              .filter(i => i !== url);
-    const pathsToRender = unmatchedPaths.reduce((acc, item) => {
-      if (acc.find(i => i.method === item.sample.request.method && i.url === item.sample.request.url)) {
-        return acc;
-      } else {
-        return acc.concat({
-          method: item.sample.request.method,
-          url: item.sample.request.url,
-          sample: item.sample
-        });
-      }
-    }, []);
+    const pathsToRender = sortby(unmatchedPaths.reduce(pathReducer, []), ['url', 'method']);
+    const suggestedPaths = sortby(matchedPaths.filter(i => !i.requestId).reduce(pathReducer, []), ['url', 'method']);
 
-    const matchingUrls = new Set(pathsToRender.filter(({url}) => regex.exec(url)));
+    const matchingUrls = new Set([...pathsToRender, ...suggestedPaths].filter(({url}) => regex.exec(url)));
 
     const addPathButton = (
       <Button
@@ -156,29 +138,60 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     );
 
 
-    function getSteps() {
+    const getSteps = () => {
       return [
-        <>Choose a url to document <span className={classes.displayTargetUrl}>{targetUrl}</span></>,
+        <span onClick={this.reset} style={{cursor: 'pointer'}}>Choose a url to document <span
+          className={classes.displayTargetUrl}>{targetUrl}</span></span>,
         'Add path to your API spec',
         'Document Request'];
-    }
+    };
 
     const getStepContent = (step) => {
       switch (step) {
         case 0:
           return (<>
             Optic observed traffic to the following URLs. Click a URL to begin documenting an API request.
+
+            {suggestedPaths && (
+              <List dense>
+                <ListSubheader>Suggested Paths to Document</ListSubheader>
+                {!targetUrl && (
+                  suggestedPaths.map(({method, url, sample, pathId}) => {
+
+                    const full = <PathIdToName pathId={pathId}/>;
+
+                    return (<UrlListItem url={url}
+                                         method={method}
+                                         sample={sample}
+                                         previewSample={previewSample}
+                                         pathId={pathId}
+                                         full={full}
+                                         quickAdd={this.quickAdd}
+                                         selectTarget={this.selectTarget}
+                                         setPreviewSample={this.setPreviewSample}
+                    />);
+                  })
+                )}
+              </List>
+            )}
+
             <List dense>
+              <ListSubheader>Observed Paths</ListSubheader>
               {!targetUrl && (
                 pathsToRender.map(({method, url, sample}) => (
-                  <ListItem button onClick={this.selectTarget(url)} onMouseEnter={this.setPreviewSample(sample)}>
-                    <DisplayPath method={method} url={url}/>
-                  </ListItem>
-                ))
+                  <UrlListItem url={url}
+                               method={method}
+                               sample={sample}
+                               previewSample={previewSample}
+                               selectTarget={this.selectTarget}
+                               setPreviewSample={this.setPreviewSample}
+                  />))
               )}
             </List>
           </>);
         case 1:
+          const matching = [...matchingUrls]
+            .filter(i => i.url !== previewSample.request.url && i.method !== previewSample.request.method);
           return (
             <>
               <PathMatcher
@@ -191,15 +204,16 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                 {!isCompleteMatch ? withTooltip : addPathButton}
               </div>
 
-              <Show when={matchingUrls.size}>
+              <Show when={matching.length}>
                 <List style={{marginTop: 11}}>
                   <ListSubheader> <Typography variant="body1">The path you provided also matches these
                     URLs:</Typography> </ListSubheader>
-                  {[...matchingUrls].map(({url, method}) => {
-                    return (
-                      <ListItem><DisplayPath method={method} url={url}/></ListItem>
-                    );
-                  })}
+                  {matching
+                    .map(({url, method}) => {
+                      return (
+                        <UrlListItem url={url} method={method} disableButton/>
+                      );
+                    })}
                 </List>
               </Show>
             </>
@@ -210,11 +224,15 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
               <TextField
                 autoFocus
                 fullWidth
-                placeholder="What does this request do?"
-                label="Send this request when you want to"
+                placeholder="Send this request when you want to"
+                label="What does this request do?"
                 value={purpose}
                 onChange={(e) => this.setPurpose(e.target.value)}
               />
+
+              {previewSample && <EndpointOverviewCodeBox title={purpose || 'Send this request when you want to...'}
+                                                         method={previewSample.request.method}
+                                                         url={<PathIdToName pathId={pathId}/>}/>}
 
               <div style={{marginTop: 17, paddingTop: 4, textAlign: 'right'}}>
                 {addRequestButton}
@@ -233,7 +251,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
       <>
         <Typography variant="h4" color="primary">Document a New Request</Typography>
 
-        <Stepper activeStep={activeStep} orientation="vertical">
+        <Stepper activeStep={activeStep} orientation="vertical" style={{backgroundColor: 'transparent'}}>
           {steps.map((label, index) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -252,12 +270,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
       </>
     );
 
-    const right = (
-      <>
-        <Typography variant="h4" color="primary">Observed</Typography>
-        <PreviewSample sample={previewSample}/>
-      </>
-    );
+    const right = <PreviewSample sample={previewSample}/>;
 
     return (
       <div className={classes.root}>
@@ -293,6 +306,7 @@ const PreviewSample = ({sample}) => {
   const {statusCode, body: responseBody} = sample.response;
   return (
     <>
+      <Typography variant="h4" color="primary">Observed</Typography>
       <DocSubGroup title="URL">
         <EndpointOverviewCodeBox method={method} url={url}/>
       </DocSubGroup>
@@ -305,7 +319,7 @@ const PreviewSample = ({sample}) => {
         </DocSubGroup>
       )}
       {responseBody && (
-        <DocSubGroup title={`${statusCode} Response`}>
+        <DocSubGroup title={`${statusCode} - ${STATUS_CODES[statusCode]}`}>
           <HighlightedIDsStore>
             <ExampleOnly title="Response Body" contentType="application/json" example={responseBody}/>
           </HighlightedIDsStore>
@@ -318,8 +332,95 @@ const PreviewSample = ({sample}) => {
 
 const UnmatchedUrlWizard = withEditorContext(withStyles(styles)(UnmatchedUrlWizardWithoutQuery));
 
+function UrlListItem({
+                       previewSample,
+                       method,
+                       url,
+                       sample,
+                       full,
+                       pathId,
+                       disableButton,
+                       quickAdd = () => () => {
+                       },
+                       selectTarget = () => () => {
+                       },
+                       setPreviewSample = () => () => {
+                       }
+                     }) {
+
+  const isSuggested = !!pathId;
+
+  return (
+    <ListItem button={!isSuggested && !disableButton}
+              onClick={!isSuggested && selectTarget(url)}
+              selected={previewSample && previewSample.request.url === url && previewSample.request.method === method}
+              onMouseEnter={setPreviewSample(sample)}>
+      <ListItemAvatar>
+        <Chip size="small" label={method} variant="outlined"
+              style={{
+                backgroundColor: '#3d4256',
+                width: 70,
+                textAlign: 'center',
+                color: methodColors[method.toUpperCase()],
+                fontWeight: 800
+              }}/>
+      </ListItemAvatar>
+      <ListItemText primary={full || url} primaryTypographyProps={{style: {marginLeft: 10}}}/>
+      {isSuggested && (
+        <ListItemSecondaryAction>
+          <Button color="primary"
+                  onMouseEnter={setPreviewSample(sample)}
+                  variant="contained" size="small"
+                  onClick={quickAdd(pathId)}>+ Quick Add</Button>
+        </ListItemSecondaryAction>
+      )}
+    </ListItem>
+  );
+}
+
+function completePathMatcherRegex(pathComponents) {
+  const pathString = pathComponentsToString(pathComponents);
+  const regex = pathToRegexp(pathString, [], {start: true, end: true});
+  return regex;
+}
+
+function pathReducer(acc, item) {
+  if (acc.find(i => i.method === item.sample.request.method && i.url === item.sample.request.url)) {
+    return acc;
+  } else {
+    return acc.concat({
+      method: item.sample.request.method,
+      url: item.sample.request.url,
+      pathId: item.pathId,
+      requestId: item.requestId,
+      sample: item.sample
+    });
+  }
+}
+
+export function pathComponentsToString(pathComponents) {
+  if (pathComponents.length === 0) {
+    return '/';
+  }
+  const s = '/' + pathComponents
+    .map(({name, isParameter}) => {
+      if (isParameter) {
+        const stripped = name
+          .replace('{', '')
+          .replace('}', '')
+          .replace(':', '');
+        return `:${stripped}`;
+      } else {
+        return name;
+      }
+    }).join('/');
+  return s;
+}
+
+
 export const UrlsX = withTrafficAndDiffSessionContext(withRfcContext((props) => {
   const {diffStateProjections, cachedQueryResults, handleCommands} = props;
+  const {pathsById} = cachedQueryResults;
   const {sampleItemsWithResolvedPaths, sampleItemsWithoutResolvedPaths} = diffStateProjections;
 
   const handleAddPath = (pathExpression) => {
@@ -357,6 +458,7 @@ export const UrlsX = withTrafficAndDiffSessionContext(withRfcContext((props) => 
   return (
     <UnmatchedUrlWizard
       unmatchedPaths={sampleItemsWithoutResolvedPaths}
+      matchedPaths={sampleItemsWithResolvedPaths}
       handleAddPath={handleAddPath}
       handleAddRequest={handleAddRequest}
     />

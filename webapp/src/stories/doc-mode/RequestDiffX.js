@@ -30,6 +30,20 @@ class RequestDiffX extends React.Component {
         return this.renderWrapped(item, <>HELLO</>)
       }
     }
+
+    /*
+     Approve button handleCommands
+     interpreation commands fed into
+
+     <SimulatedCommandContext
+        shouldSimulate={true}
+        rfcId={rfcId}
+        eventStore={eventStore}
+        commands={commands}
+      >
+
+
+     */
   }
 
   renderWrapped(item, child) {
