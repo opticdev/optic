@@ -10,7 +10,7 @@ import org.scalatest.FunSpec
 
 class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
 
-  def fixture(slug: String, nameConcept: String = null) = {
+  def fixture(slug: String, nameConcept: String = null): (String, ShapesState) = {
     val basic = fromFile(slug)
     val result = {
       if (nameConcept != null) {
@@ -21,7 +21,7 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
     }
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", result.commands)
+    rfcService.handleCommandSequence("id", result.commands, null)
     (result.rootShapeId, rfcService.currentState("id").shapesState)
   }
 
@@ -51,7 +51,7 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
     val commands = commandsFrom("shape-name-example")
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", commands)
+    rfcService.handleCommandSequence("id", commands, null)
     rfcService.currentState("id")
   }
 
@@ -87,7 +87,7 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
     val commands = commandsFrom("circle-ci")
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", commands)
+    rfcService.handleCommandSequence("id", commands, null)
     rfcService.currentState("id")
   }
 

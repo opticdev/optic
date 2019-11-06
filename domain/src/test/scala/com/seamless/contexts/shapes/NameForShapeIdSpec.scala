@@ -82,4 +82,11 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
     assert(name == "PaginatedList Item: Owner")
   }
 
+  it("can name a field's shape") {
+    val shapesState = paginationExampleRfc.shapesState
+    val name = NameForShapeId.getFieldIdShapeName("field_SWppoWn6kT")(shapesState).map(_.name).mkString(" ")
+
+    assert(name == "List of PetId")
+  }
+
 }

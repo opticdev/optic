@@ -5,7 +5,7 @@ import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
 import com.seamless.contexts.requests.{PathComponent, RequestsState, Utilities}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection}
-import com.seamless.contexts.shapes.Commands.ShapeId
+import com.seamless.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.contexts.shapes.projections.FlatShapeProjection.FlatShapeResult
 import com.seamless.contexts.shapes.projections.{ExampleProjection, FlatShapeProjection, NameForShapeId, NamedShape, NamedShapes}
@@ -64,6 +64,9 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   }
   def nameForShapeId(shapeId: ShapeId): js.Any = {
     convertJsonToJs(q.nameForShapeId(shapeId).asJson)
+  }
+  def nameForFieldId(fieldId: FieldId): js.Any = {
+    convertJsonToJs(q.nameForFieldId(fieldId).asJson)
   }
   def flatShapeForShapeId(shapeId: ShapeId): js.Any = {
     convertJsonToJs(q.flatShapeForShapeId(shapeId).asJson)
@@ -126,6 +129,9 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
 
   def nameForShapeId(shapeId: ShapeId): Seq[NameForShapeId.ColoredComponent] = {
     NameForShapeId.getShapeName(shapeId)(service.currentState(aggregateId).shapesState)
+  }
+  def nameForFieldId(fieldId: FieldId): Seq[NameForShapeId.ColoredComponent] = {
+    NameForShapeId.getFieldIdShapeName(fieldId)(service.currentState(aggregateId).shapesState)
   }
   def flatShapeForShapeId(shapeId: ShapeId): FlatShapeResult = {
     FlatShapeProjection.forShapeId(shapeId)(service.currentState(aggregateId).shapesState)

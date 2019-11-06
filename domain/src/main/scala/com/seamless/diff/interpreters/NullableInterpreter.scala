@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{SetRequestBodyShape, SetResponse
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
 import com.seamless.contexts.shapes.ShapesHelper._
-import com.seamless.diff.{DiffInterpretation, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape, InterpretationContext}
+import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape, InterpretationContext}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer._
 
@@ -64,11 +64,12 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     )
 
     DiffInterpretation(
-      s"Make ${shapeDiff.key} nullable",
+      s"Change to Nullable",
 //      s"Optic expected to see a value for the key ${shapeDiff.key} and instead saw null. If it is allowed to be null, make it Nullable",
+      DynamicDescription(s"Make `${shapeDiff.key}` `Nullable`"),
       commands,
       context,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.fieldId), changed = true, highlightNestedShape = Some(highlightNestedShape))
+      FrontEndMetadata(changedIds = Seq(shapeDiff.fieldId), highlightNestedShape = Some(highlightNestedShape))
     )
   }
 
@@ -82,11 +83,11 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       SetRequestBodyShape(requestDiffResult.requestId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )
     DiffInterpretation(
-      "Make Request Body nullable",
-//      s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
+      "Make Body Nullable",
+      DynamicDescription(s"Make Request Body `Nullable`"),
       commands,
       context,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
+      FrontEndMetadata(changedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 
@@ -100,11 +101,11 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       SetResponseBodyShape(requestDiffResult.responseId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )
     DiffInterpretation(
-      "Makes Response Body nullable",
-//      s"Optic expected to see a value for the request but instead saw null. If it is allowed to be null, make it Nullable",
+      "Make Body Nullable",
+      DynamicDescription(s"Make Response Body `Nullable`"),
       commands,
       context,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
+      FrontEndMetadata(changedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 }

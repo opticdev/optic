@@ -2,7 +2,7 @@ import React from 'react'
 import {asPathTrail, getNameWithFormattedParameters} from '../../components/utilities/PathUtilities';
 import {withRfcContext} from '../../contexts/RfcContext';
 
-export const PathIdToName = withRfcContext(({pathId: pathComponentId, cachedQueryResults}) => {
+export const PathIdToPathString = withRfcContext(({pathId: pathComponentId, cachedQueryResults}) => {
   const {pathsById} = cachedQueryResults;
   const path = pathsById[pathComponentId];
   const pathTrail = asPathTrail(pathComponentId, pathsById);

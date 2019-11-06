@@ -96,19 +96,16 @@ export const ExampleOnly = withStyles(styles)(({classes, contentType, title, exa
   return (
     <DocCodeBox title={title}>
       {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
-      <HighlightedIDsStore>
-        <ExampleViewer example={example}/>
-      </HighlightedIDsStore>
+      <ExampleViewer example={example}/>
     </DocCodeBox>
   );
 });
 
-export const ShapeOnly = withStyles(styles)(({classes, title, shapeId}) => {
+export const ShapeOnly = withStyles(styles)(({classes, title, contentType, shapeId}) => {
   return (
     <DocCodeBox title={title}>
-      <HighlightedIDsStore>
-        <ShapeViewerWithQuery shapeId={shapeId}/>
-      </HighlightedIDsStore>
+      {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
+      <ShapeViewerWithQuery shapeId={shapeId}/>
     </DocCodeBox>
   );
 });
