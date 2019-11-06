@@ -23,8 +23,8 @@ class BaseDiffSessionManager {
     }
 
 
-    isStartable(interactionIndex) {
-        return !this.skippedInteractions.has(interactionIndex)
+    isStartable(diffState, item) {
+        return !this.skippedInteractions.has(item.index)
     }
 
     skipInteraction(currentInteractionIndex) {

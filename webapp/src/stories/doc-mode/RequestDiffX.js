@@ -65,7 +65,7 @@ class RequestDiffX extends React.Component {
 
     const handleCommands = (...commands) => {
       this.props.handleCommands(...commands);
-      diffSessionManager.acceptCommands(commands);
+      diffSessionManager.acceptCommands(item, commands);
     };
 
     const {children, ...rest} = this.props; // @GOTCHA assumes withRfcContext on parent component
