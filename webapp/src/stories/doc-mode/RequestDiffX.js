@@ -101,8 +101,6 @@ const DiffPageStateManager = withRfcContext(({
 
   const diffCard = DiffToDiffCard(diff, queries)
 
-  debugger
-
   return (
     <SimulatedCommandContext
       shouldSimulate={true}

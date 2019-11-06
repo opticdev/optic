@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '@material-ui/core/Button';
 import {cleanupPathComponentName, pathStringToPathComponents} from '../../components/path-editor/PathInput';
 import pathToRegexp from 'path-to-regexp';
-import {RequestsHelper, RequestsCommands} from '../../engine';
+import {RequestsHelper, RequestsCommands, RfcCommands} from '../../engine';
 import Typography from '@material-ui/core/Typography';
 import {withEditorContext} from '../../contexts/EditorContext';
 import {withStyles} from '@material-ui/styles';
@@ -99,9 +99,12 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
   };
 
   handleAddRequest = () => {
+
+    const {pathId, purpose, previewSample} = this.state
     const requestId = this.props.handleAddRequest(
-      this.state.pathId,
-      this.state.previewSample.request.method
+      pathId,
+      previewSample.request.method,
+      purpose
     );
     return this.props.pushRelative(`/diff/requests/${requestId}`)
   };
@@ -448,10 +451,11 @@ export const UrlsX = withTrafficAndDiffSessionContext(withRfcContext((props) => 
     return lastParentPathId;
   };
 
-  const handleAddRequest = (parentPathId, httpMethod) => {
+  const handleAddRequest = (parentPathId, httpMethod, purpose) => {
     const requestId = RequestsHelper.newRequestId();
     const commands = [
-      RequestsCommands.AddRequest(requestId, parentPathId, httpMethod)
+      RequestsCommands.AddRequest(requestId, parentPathId, httpMethod),
+      RfcCommands.AddContribution(requestId, 'purpose', purpose),
     ];
 
     handleCommands(...commands);

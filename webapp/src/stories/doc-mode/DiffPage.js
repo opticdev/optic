@@ -240,6 +240,8 @@ class DiffPage extends React.Component {
     const {requestDescriptor} = request;
     const {httpMethod, pathComponentId, bodyDescriptor} = requestDescriptor;
 
+    const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, 'purpose')
+
     const requestBody = getNormalizedBodyDescriptor(bodyDescriptor);
 
     const response = Object.values(responses)
@@ -250,6 +252,7 @@ class DiffPage extends React.Component {
     const responseBody = response && getNormalizedBodyDescriptor(response.responseDescriptor.bodyDescriptor);
 
     return {
+      purpose,
       requestBody,
       response,
       responseBody
@@ -322,7 +325,7 @@ class DiffPage extends React.Component {
   render() {
     const {classes, url, method, path, requestId, observed, remainingInteractions} = this.props;
 
-    const {requestBody, responseBody, response} = this.getSpecForRequest(observed.statusCode);
+    const {requestBody, responseBody, response, purpose} = this.getSpecForRequest(observed.statusCode);
 
 
     const {metadataJs} = this.props.interpretation;
@@ -356,6 +359,8 @@ class DiffPage extends React.Component {
                   <SkipNextIcon fontSize="small"/>
                 </IconButton>
               </Tooltip>
+
+              <Typography variant="overline" color="primary">{purpose}</Typography>
 
             </Toolbar>
           </AppBar>
