@@ -93,6 +93,19 @@
           "createdAt": "2019-11-05T19:17:25.653Z"
         }
       }
+    },
+    {
+      "ContributionAdded": {
+        "id": "request_bju2jALmLQ",
+        "key": "purpose",
+        "value": "GET THE DEMO THING",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "29015f35-6403-45c2-a915-9c840210808b",
+          "clientCommandBatchId": "438e1289-4d6c-4f94-a821-1d1e9bab30c0",
+          "createdAt": "2019-11-06T21:09:49.039Z"
+        }
+      }
     }
   ],
   "session": {
