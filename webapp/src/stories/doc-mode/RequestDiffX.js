@@ -20,7 +20,7 @@ class RequestDiffX extends React.Component {
     const {sampleItemsWithResolvedPaths} = diffStateProjections;
     const matchingSampleItems = sampleItemsWithResolvedPaths.filter(i => i.requestId === requestId);
 
-    const startableSampleItems = matchingSampleItems.filter(x => isStartable(diffState, x));
+    const startableSampleItems = matchingSampleItems.filter(x => diffSessionManager.isStartable(diffState, x));
     //if the diff for this request is finished, show Approve/Discard Modal
 
     for (let item of startableSampleItems) {
@@ -35,6 +35,7 @@ class RequestDiffX extends React.Component {
           <DiffPageStateManager
             item={item}
             diff={diffItem}
+            diffSessionManager={diffSessionManager}
             interpretations={allInterpretations}/>
         ));
       }
@@ -90,6 +91,7 @@ const DiffPageStateManager = withRfcContext(({
                                                interpretations,
                                                handleCommands: applyCommands,
                                                rfcId,
+                                               diffSessionManager,
                                                eventStore,
                                                queries}) => {
 
@@ -97,7 +99,7 @@ const DiffPageStateManager = withRfcContext(({
 
   const interpretation = interpretations[interpretationIndex]
   const commands = interpretation ? JsonHelper.seqToJsArray(interpretation.commands) : [];
-  const {sample, pathId, requestId} = item;
+  const {sample, pathId, requestId, index} = item;
 
   const diffCard = DiffToDiffCard(diff, queries)
 
@@ -109,11 +111,13 @@ const DiffPageStateManager = withRfcContext(({
       commands={commands}
     >
       <DiffPage
+        //request context
         url={sample.request.url}
         path={<PathIdToPathString pathId={pathId}/>}
         method={sample.request.method}
         requestId={requestId}
 
+        //diff / interpretations
         diff={diffCard}
         interpretation={interpretation}
         interpretationsLength={interpretations.length}
@@ -121,6 +125,7 @@ const DiffPageStateManager = withRfcContext(({
         setInterpretationIndex={setInterpretationIndex}
         applyCommands={applyCommands}
 
+        //observation
         observed={{
           statusCode: sample.response.statusCode,
           requestContentType: sample.request.headers['content-type'],
@@ -128,6 +133,12 @@ const DiffPageStateManager = withRfcContext(({
           responseContentType: sample.response.headers['content-type'],
           responseBody: sample.response.body
         }}
+
+        //control
+        skip={() => {
+          diffSessionManager.skipInteraction(index)
+        }}
+
       />
     </SimulatedCommandContext>
   );

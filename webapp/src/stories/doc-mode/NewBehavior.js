@@ -14,6 +14,7 @@ import { withRfcContext } from '../../contexts/RfcContext';
 import { getRequestIdsWithDiffs, getUnrecognizedUrlCount } from '../../components/diff-v2/DiffUtilities';
 import { computeDiffStateProjections } from '../../contexts/TrafficAndDiffSessionContext';
 import { specService } from '../../services/SpecService';
+import {Link} from 'react-router-dom';
 
 const useStyles = makeStyles({
   section: {
@@ -24,6 +25,8 @@ const useStyles = makeStyles({
 
 function NewBehavior(props) {
   const classes = useStyles();
+
+  const {requestIdsWithDiffs} = props
 
   return (
     <Card elevation={1} className={classes.section}>
@@ -42,18 +45,19 @@ function NewBehavior(props) {
 
             <DocSubGroup title="Request Diffs">
               <List>
-                <ListItem button dense>
-                  <ListItemAvatar style={{ marginTop: 4 }}>
-                    <LabelImportantRoundedIcon color="secondary" />
-                  </ListItemAvatar>
-                  <ListItemText primary="Create New User" style={{ marginLeft: -15 }} />
-                </ListItem>
-                <ListItem button dense>
-                  <ListItemAvatar style={{ marginTop: 4 }}>
-                    <LabelImportantRoundedIcon color="secondary" />
-                  </ListItemAvatar>
-                  <ListItemText primary="Update a User's Password" style={{ marginLeft: -15 }} />
-                </ListItem>
+                {requestIdsWithDiffs.map(requestId => {
+
+                  return (
+                    <Link>
+                      <ListItem button dense>
+                        <ListItemAvatar style={{ marginTop: 4 }}>
+                          <LabelImportantRoundedIcon color="secondary" />
+                        </ListItemAvatar>
+                        <ListItemText primary={requestId} style={{ marginLeft: -15 }} />
+                      </ListItem>
+                    </Link>
+                  )
+                })}
 
               </List>
 

@@ -323,7 +323,7 @@ class DiffPage extends React.Component {
   }
 
   render() {
-    const {classes, url, method, path, requestId, observed, remainingInteractions} = this.props;
+    const {classes, url, method, path, requestId, observed, skip, remainingInteractions} = this.props;
 
     const {requestBody, responseBody, response, purpose} = this.getSpecForRequest(observed.statusCode);
 
@@ -355,7 +355,7 @@ class DiffPage extends React.Component {
               </Typography>
 
               <Tooltip title="Skip Example">
-                <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple>
+                <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple onClick={skip}>
                   <SkipNextIcon fontSize="small"/>
                 </IconButton>
               </Tooltip>

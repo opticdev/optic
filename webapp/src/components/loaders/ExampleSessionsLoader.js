@@ -68,11 +68,14 @@ class ExampleSessionsLoader extends React.Component {
       saveDiffState: () => { }
     }
 
+    //@todo add before modal here eventually
     function ExampleSessionsSpecOverview() {
       return (
         <SpecOverview notificationAreaComponent={<NewBehavior specService={specService} />} />
       )
     }
+
+    const diffBaseUrl = `${baseUrl}/diff`
 
     return (
       <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
@@ -80,8 +83,8 @@ class ExampleSessionsLoader extends React.Component {
           <TutorialStore>
             <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
               <Switch>
-                <Route exact path={routerPaths.diffUrls(baseUrl)} component={UrlsX} />
-                <Route exact path={routerPaths.diffRequest(baseUrl)} component={RequestDiffX} />
+                <Route exact path={routerPaths.diffUrls(diffBaseUrl)} component={UrlsX} />
+                <Route exact path={routerPaths.diffRequest(diffBaseUrl)} component={RequestDiffX} />
                 <Route component={ExampleSessionsSpecOverview} />
               </Switch>
             </TrafficAndDiffSessionStore>
@@ -112,10 +115,10 @@ function After(props) {
 
 class ExampleSessionsLoaderRoutes extends React.Component {
   render() {
+    const {match} = this.props
     return (
-      <NavigationStore baseUrl={baseUrl}>
+      <NavigationStore baseUrl={match.url}>
         <Switch>
-          <Route exact path={baseUrl} component={Before} />
           <Route path={baseUrl} component={ExampleSessionsLoader} />
         </Switch>
       </NavigationStore>

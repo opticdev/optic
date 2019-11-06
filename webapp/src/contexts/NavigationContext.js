@@ -23,8 +23,6 @@ class NavigationStoreBase extends React.Component {
       pushRelative: this.pushRelative
     };
 
-    debugger
-
     return (
       <NavigationContext.Provider value={context}>
         {this.props.children}
