@@ -7,11 +7,13 @@ import DiffPage from './DiffPage';
 import {PathIdToPathString} from './PathIdToPathString';
 import SimulatedCommandContext from '../../components/diff/SimulatedCommandContext';
 import {DiffToDiffCard} from './DiffCopy';
+import PreCommit from './PreCommit';
+import {withNavigationContext} from '../../contexts/NavigationContext';
 
 class RequestDiffX extends React.Component {
 
   render() {
-    const {match, diffStateProjections, diffSessionManager, rfcService, eventStore, rfcId, queries} = this.props;
+    const {match, diffStateProjections, diffSessionManager, rfcService, handleCommands, eventStore, rfcId, queries} = this.props;
     const {diffState} = diffSessionManager;
     const {requestId} = match.params;
     const rfcState = rfcService.currentState(rfcId);
@@ -42,7 +44,15 @@ class RequestDiffX extends React.Component {
     }
 
 
-    return <>YOU DONE BOY</>
+    return (
+      <PreCommit
+        taggedIds={diffSessionManager.getTaggedIds()}
+        finish={() => {
+          const commands = diffSessionManager.getAcceptedCommands().flatMap(i => i)
+          handleCommands(...commands)
+          debugger
+          this.props.pushRelative('/')
+        }}/>)
 
     /*
      Approve button handleCommands
@@ -65,7 +75,8 @@ class RequestDiffX extends React.Component {
 
     const handleCommands = (...commands) => {
       this.props.handleCommands(...commands);
-      diffSessionManager.acceptCommands(commands);
+      diffSessionManager.acceptCommands(item, commands);
+      return diffSessionManager.tagIds
     };
 
     const {children, ...rest} = this.props; // @GOTCHA assumes withRfcContext on parent component
@@ -73,7 +84,7 @@ class RequestDiffX extends React.Component {
     const rfcContext = {
       ...rest,
       handleCommands,
-      handleCommand: handleCommands
+      handleCommand: handleCommands,
     };
 
     return (
@@ -138,11 +149,10 @@ const DiffPageStateManager = withRfcContext(({
         skip={() => {
           diffSessionManager.skipInteraction(index)
         }}
-
       />
     </SimulatedCommandContext>
   );
 });
 
 
-export default withTrafficAndDiffSessionContext(withRfcContext(RequestDiffX));
+export default withTrafficAndDiffSessionContext(withNavigationContext(withRfcContext(RequestDiffX)));

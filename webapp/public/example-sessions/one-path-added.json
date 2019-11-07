@@ -123,50 +123,6 @@
           },
           "cookies": {},
           "method": "GET",
-          "url": "/typicode/demo/posts/2"
-        },
-        "response": {
-          "statusCode": 200,
-          "headers": {
-            "date": "Mon, 09 Sep 2019 17:28:14 GMT",
-            "content-type": "application/json; charset=utf-8",
-            "content-length": "34",
-            "connection": "close",
-            "set-cookie": [
-              "__cfduid=d27dc6c07118938723f2d2ca6ee3905fe1568050094; expires=Tue, 08-Sep-20 17:28:14 GMT; path=/; domain=.typicode.com; HttpOnly"
-            ],
-            "x-powered-by": "Express",
-            "vary": "Origin, Accept-Encoding",
-            "access-control-allow-credentials": "true",
-            "cache-control": "no-cache",
-            "pragma": "no-cache",
-            "expires": "-1",
-            "x-content-type-options": "nosniff",
-            "etag": "W/\"22-fNcn1x1Kwnq4hHMpV4hGAiQTGgw\"",
-            "via": "1.1 vegur",
-            "expect-ct": "max-age=604800, report-uri=\"https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct\"",
-            "server": "cloudflare",
-            "cf-ray": "513ae0a3ccdd71a7-ORD"
-          },
-          "body": {
-            "id": 2,
-            "title": "Post 2"
-          }
-        }
-      },
-      {
-        "request": {
-          "queryParameters": {},
-          "body": null,
-          "headers": {
-            "host": "localhost:3000",
-            "user-agent": "HTTPie/1.0.2",
-            "accept-encoding": "gzip, deflate",
-            "accept": "*/*",
-            "connection": "keep-alive"
-          },
-          "cookies": {},
-          "method": "GET",
           "url": "/typicode/demo/posts"
         },
         "response": {

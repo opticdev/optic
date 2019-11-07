@@ -21,9 +21,20 @@ export function DiffToDiffCard(diff, queries) {
 
     //first time shapes observed
     case 'UnmatchedResponseBodyShape': {
+      const isNewBody = Object.entries(diffData.shapeDiff)[0][0] === 'UnsetShape'
+
+      if (isNewBody) {
+        return <DiffInfo title="Body Included with Response" description={'A response body was observed for the first time'}/>;
+      }
       return <DiffInfo title="Shape Mismatch" description={ShapeDiffToCopy(diffData.shapeDiff, queries)}/>;
     }
     case 'UnmatchedRequestBodyShape': {
+      const isNewBody = Object.entries(diffData.shapeDiff)[0][0] === 'UnsetShape'
+
+      if (isNewBody) {
+        return <DiffInfo title="Request Body Included" description={'A request body was observed for the first time'}/>;
+      }
+
       return <DiffInfo title="Shape Mismatch" description={ShapeDiffToCopy(diffData.shapeDiff, queries)}/>;
     }
     default:

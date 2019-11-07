@@ -6,6 +6,8 @@ import {ExampleShapeViewer} from './DocCodeBox';
 import {DocGrid} from './DocGrid';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import {StickyRegion} from './StickyRegion';
+import {AddedGreen, Highlight} from './shape/HighlightedIDs';
+import {STATUS_CODES} from 'http';
 
 export function DocResponse({
                               statusCode,
@@ -14,12 +16,14 @@ export function DocResponse({
                               shapeId,
                               example,
                               responseId,
-                              updateContribution
+                              updateContribution,
+                              showShapesFirst
                             }) {
 
   const left = (
     <StickyRegion>
-      <DocSubGroup title={statusCode + ' Response'}>
+      <DocSubGroup title={<Highlight id={responseId}
+                                     style={{color: AddedGreen}}>{`${statusCode} - ${STATUS_CODES[statusCode]} Response`}</Highlight>}>
         <MarkdownContribution
           value={description}
           label="What does this response mean?"
@@ -35,6 +39,7 @@ export function DocResponse({
       title={statusCode + ' Response Body'}
       shapeId={shapeId}
       contentType={contentType}
+      showShapesFirst={showShapesFirst}
       example={example}/>
   ) : <div>No Body</div>;
 

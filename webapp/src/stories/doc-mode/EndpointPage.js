@@ -59,7 +59,7 @@ const styles = theme => ({
   }
 });
 
-export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRfcContext(({requestId, classes, handleCommand, handleCommands, mode, baseUrl, cachedQueryResults, inDiffMode}) => {
+export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRfcContext(({requestId, showShapesFirst, classes, handleCommand, handleCommands, mode, baseUrl, cachedQueryResults, inDiffMode}) => {
 
   const {apiName, requests, pathsById, responses, requestIdsByPathId, contributions, requestParameters} = cachedQueryResults;
 
@@ -103,23 +103,22 @@ export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRf
   const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query');
 
   return (
-    <Editor>
-      <div className={classes.wrapper}>
-        <EndpointPage
-          endpointPurpose={contributions.getOrUndefined(requestId, 'purpose')}
-          endpointDescription={contributions.getOrUndefined(requestId, 'description')}
-          requestId={requestId}
-          updateContribution={(id, key, value) => {
-            handleCommand(updateContribution(id, key, value));
-          }}
-          method={httpMethod}
-          requestBody={requestBody}
-          responses={sortBy(responsesForRequest, (res) => res.responseDescriptor.httpStatusCode)}
-          url={fullPath}
-          parameters={pathParameters}
-        />
-      </div>
-    </Editor>
+    <div className={classes.wrapper}>
+      <EndpointPage
+        endpointPurpose={contributions.getOrUndefined(requestId, 'purpose')}
+        endpointDescription={contributions.getOrUndefined(requestId, 'description')}
+        requestId={requestId}
+        updateContribution={(id, key, value) => {
+          handleCommand(updateContribution(id, key, value));
+        }}
+        showShapesFirst={showShapesFirst}
+        method={httpMethod}
+        requestBody={requestBody}
+        responses={sortBy(responsesForRequest, (res) => res.responseDescriptor.httpStatusCode)}
+        url={fullPath}
+        parameters={pathParameters}
+      />
+    </div>
   );
 })));
 
@@ -142,7 +141,8 @@ class _EndpointPage extends React.Component {
       url,
       parameters = [],
       updateContribution,
-      requestId
+      requestId,
+      showShapesFirst
     } = this.props;
 
     const endpointOverview = (() => {
@@ -199,6 +199,7 @@ class _EndpointPage extends React.Component {
             shapeId={shapeId}
             requestId={requestId}
             updateContribution={updateContribution}
+            showShapesFirst={showShapesFirst}
             example={{weAre: 'penn state', state: 'PA'}}
           />
         );
@@ -214,10 +215,12 @@ class _EndpointPage extends React.Component {
       return (
         <DocResponse
           statusCode={httpStatusCode}
+          responseId={responseId}
           description={'The thing got deleted'}
           fields={[]}
           contentType={httpContentType}
           shapeId={shapeId}
+          showShapesFirst={showShapesFirst}
           example={{weAre: 'penn state', state: 'PA'}}
         />
       );
@@ -243,8 +246,8 @@ class _EndpointPage extends React.Component {
                   color="primary"
                   onClick={this.toggleAllResponses}
                   className={classes.showMore}>
-                  <ExpandMoreIcon style={{marginRight: 6}}/>
-                  Show ({remainingResponses.length}) Other Response{remainingResponses.length > 1 && 's'}
+            <ExpandMoreIcon style={{marginRight: 6}}/>
+            Show ({remainingResponses.length}) Other Response{remainingResponses.length > 1 && 's'}
           </Button>
         )}
         <Collapse in={this.state.showAllResponses}>

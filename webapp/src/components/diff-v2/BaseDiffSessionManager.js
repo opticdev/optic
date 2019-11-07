@@ -18,13 +18,27 @@ class BaseDiffSessionManager {
         this.acceptedCommands = [];
         this.exampleInteractions = new Map();
 
+
+        this.addedIds = []
+        this.changedIds = []
+
         this.events = new EventEmitter()
         this.events.on('change', debounce(() => this.events.emit('updated'), 10, { leading: true, trailing: true, maxWait: 100 }))
     }
 
+    getAcceptedCommands() {
+      return this.acceptedCommands
+    }
 
-    isStartable(diffState, interactionIndex) {
-        return !this.skippedInteractions.has(interactionIndex)
+    getTaggedIds() {
+      return {
+        addedIds: this.addedIds,
+        changedIds: this.changedIds,
+      }
+    }
+
+    isStartable(diffState, item) {
+        return !this.skippedInteractions.has(item.index)
     }
 
     skipInteraction(currentInteractionIndex) {
@@ -36,6 +50,11 @@ class BaseDiffSessionManager {
         this.acceptedCommands.push(commandArray.map(x => commandToJs(x)));
         this.exampleInteractions.set(item.index, item)
         this.events.emit('change')
+    }
+
+    tagIds = (addedIds = [], changedIds = []) => {
+      this.addedIds.push(...addedIds)
+      this.changedIds.push(...changedIds)
     }
 
     // queries

@@ -12,7 +12,6 @@ class NavigationStoreBase extends React.Component {
   pushRelative = (url) => {
     const {baseUrl, history} = this.props;
     const goTo = `${baseUrl}${url}`
-    debugger
     history.push(goTo);
   }
 

@@ -13,7 +13,8 @@ export function DocRequest({
                              shapeId,
                              example,
                              requestId,
-                             updateContribution
+                             updateContribution,
+                             showShapesFirst
                            }) {
 
   const left = (
@@ -33,6 +34,7 @@ export function DocRequest({
     title={'Request Body'}
     shapeId={shapeId}
     contentType={contentType}
+    showShapesFirst={showShapesFirst}
     example={example}/>;
 
   return <DocGrid left={left} right={right} style={{marginTop: 40}}/>;

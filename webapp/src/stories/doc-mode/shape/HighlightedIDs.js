@@ -32,13 +32,14 @@ export {
 export const AddedGreen = '#008d69'
 export const ChangedYellow = '#8d7200'
 export const Highlight =  withHighlightedIDs(({addedIds, changedIds, id, children, style}) => {
-  if (addedIds.includes(id)) {
+
+  if (changedIds.includes(id)) {
+    return (<div style={{backgroundColor: ChangedYellow}}>{children}</div>)
+  } else if (addedIds.includes(id)) {
     if (style) {
       return (<div style={style}>{children}</div>)
     }
     return (<div style={{backgroundColor: AddedGreen}}>{children}</div>)
-  } else if (changedIds.includes(id)) {
-    return (<div style={{backgroundColor: ChangedYellow}}>{children}</div>)
   } else {
     return children
   }

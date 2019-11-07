@@ -261,7 +261,7 @@ class DiffPage extends React.Component {
         description={descriptionProcessed}
         {...{interpretationsLength, interpretationsIndex, setInterpretationIndex}}
         onAccept={() => {
-          applyCommands(...JsonHelper.seqToJsArray(commands));
+          applyCommands(...JsonHelper.seqToJsArray(commands))(metadataJs.addedIds, metadataJs.changedIds);
         }}
       />
 

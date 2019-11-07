@@ -110,9 +110,9 @@ export const ShapeOnly = withStyles(styles)(({classes, title, contentType, shape
   );
 });
 
-export const ExampleShapeViewer = withStyles(styles)(({shapeId, classes, example, title, contentType}) => {
+export const ExampleShapeViewer = withStyles(styles)(({shapeId, showShapesFirst, classes, example, title, contentType}) => {
 
-  const [showExample, setShowExample] = useState(true);
+  const [showExample, setShowExample] = useState(!showShapesFirst);
 
   const rightRegion = (
     <StyledTabs value={showExample ? 0 : 1}>
@@ -124,23 +124,19 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, classes, example
   const exampleRender = (() => {
     return (
       <>
-        <HighlightedIDsStore>
-          <ExampleViewer example={{
-            path: '/path/to/file',
-            number: 126543,
-            id: 'first_file',
-            mime_type: 'image/gif',
-            sha: '26a86ahdh3'
-          }}/>
-        </HighlightedIDsStore>
+        <ExampleViewer example={{
+          path: '/path/to/file',
+          number: 126543,
+          id: 'first_file',
+          mime_type: 'image/gif',
+          sha: '26a86ahdh3'
+        }}/>
       </>
     );
   })();
 
   const shapeRender = (
-    <HighlightedIDsStore>
-      <ShapeViewerWithQuery shapeId={shapeId}/>
-    </HighlightedIDsStore>
+    <ShapeViewerWithQuery shapeId={shapeId}/>
   );
 
   return (
