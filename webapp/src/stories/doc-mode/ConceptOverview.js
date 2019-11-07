@@ -66,12 +66,12 @@ class ConceptOverview extends React.Component {
     );
 
     return (
-      <>
-        <div className={classes.root}>
-          <DocGrid left={left} right={right}/>
-        </div>
-        <DocDivider/>
-      </>
+      <div id={shapeId}>
+          <div className={classes.root}>
+            <DocGrid left={left} right={right}/>
+          </div>
+          <DocDivider/>
+      </div>
     );
   }
 }

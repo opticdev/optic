@@ -21,6 +21,7 @@ import { routerPaths } from '../../../routes.js';
 import Overview from '../../onboarding/Overview.js';
 import { NavigationStore } from '../../../contexts/NavigationContext.js';
 import NewBehavior from '../../../stories/doc-mode/NewBehavior.js';
+import { RequestsDetailsPage } from '../../../stories/doc-mode/EndpointPage';
 
 export const basePath = '/saved'
 
@@ -110,6 +111,7 @@ export class LocalLoader extends React.Component {
           <LocalDiffRfcStore specService={specService}>
             <TutorialStore>
               <Switch>
+                <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage} />
                 <Route exact path={basePath} component={LocalSpecOverview} />
                 <Route path={diffBasePath} component={SessionWrapper} />
               </Switch>

@@ -1,7 +1,7 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {DocGrid} from './DocGrid';
-import {ListItemText, Typography} from '@material-ui/core';
+import {AppBar, ListItemText, Typography} from '@material-ui/core';
 import {DocDivider, DocSubHeading, SubHeadingStyles, SubHeadingTitleColor} from './DocConstants';
 import {DocSubGroup} from './DocSubGroup';
 import {DocParameter} from './DocParameter';
@@ -30,6 +30,13 @@ import {updateContribution} from '../../engine/routines';
 import sortBy from 'lodash.sortby';
 import SubjectIcon from '@material-ui/core/SvgIcon/SvgIcon';
 import Button from '@material-ui/core/Button';
+import {HighlightedIDsStore} from './shape/HighlightedIDs';
+import Toolbar from '@material-ui/core/Toolbar';
+import {Link} from 'react-router-dom';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import {withNavigationContext} from '../../contexts/NavigationContext';
+import {Helmet} from 'react-helmet';
 
 const styles = theme => ({
   root: {
@@ -56,7 +63,22 @@ const styles = theme => ({
   },
   showMore: {
     marginTop: 44
-  }
+  },
+  appBar: {
+    borderBottom: '1px solid #e2e2e2',
+    backgroundColor: 'white'
+  },
+  scroll: {
+    overflow: 'scroll',
+    paddingBottom: 300,
+    paddingTop: 20,
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    height: '100vh'
+  },
 });
 
 export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRfcContext(({requestId, showShapesFirst, classes, handleCommand, handleCommands, mode, baseUrl, cachedQueryResults, inDiffMode}) => {
@@ -87,7 +109,11 @@ export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRf
   const pathParameters = pathTrail
     .map(pathId => pathsById[pathId])
     .filter((p) => isPathParameter(p))
-    .map(p => ({pathId: p.pathId, name: p.descriptor.ParameterizedPathComponentDescriptor.name}));
+    .map(p => ({
+      pathId: p.pathId,
+      name: p.descriptor.ParameterizedPathComponentDescriptor.name,
+      description: contributions.getOrUndefined(p.pathId, 'description')
+    }));
 
   // Request Body
   const requestBody = getNormalizedBodyDescriptor(bodyDescriptor);
@@ -166,7 +192,10 @@ class _EndpointPage extends React.Component {
 
           {parameters.length ? (
             <DocSubGroup title="Path Parameters">
-              {parameters.map(i => <DocParameter title={i.name} paramId={i.pathId}/>)}
+              {parameters.map(i => <DocParameter title={i.name}
+                                                 paramId={i.pathId}
+                                                 updateContribution={updateContribution}
+                                                 description={i.description}/>)}
             </DocSubGroup>
           ) : null}
         </div>
@@ -259,3 +288,42 @@ class _EndpointPage extends React.Component {
 }
 
 export const EndpointPage = withStyles(styles)(_EndpointPage);
+
+export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyles(styles)(({classes, cachedQueryResults, baseUrl, match}) => {
+
+  const {requestId} = match.params
+
+  const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, 'purpose')
+
+  return (
+    <div className={classes.container}>
+
+      <Helmet>
+        <title>{purpose}</title>
+      </Helmet>
+
+      <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
+        <Toolbar variant="dense">
+
+          <Link to={baseUrl} style={{textDecoration: 'none'}}>
+          <Button color="primary">Back to API Overview</Button>
+          </Link>
+
+          <div style={{flex: 1, textAlign: 'center'}}>
+            <Typography variant="h6" color="primary">{purpose}</Typography>
+          </div>
+
+          <div style={{width: 175}}/>
+
+        </Toolbar>
+      </AppBar>
+
+      <div className={classes.scroll}>
+        <HighlightedIDsStore>
+          <EndpointPageWithQuery requestId={requestId}/>
+        </HighlightedIDsStore>
+      </div>
+
+    </div>
+  );
+})))

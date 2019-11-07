@@ -8,6 +8,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import {StickyRegion} from './StickyRegion';
 import {AddedGreen, Highlight} from './shape/HighlightedIDs';
 import {STATUS_CODES} from 'http';
+import {Typography} from '@material-ui/core';
 
 export function DocResponse({
                               statusCode,
@@ -41,7 +42,7 @@ export function DocResponse({
       contentType={contentType}
       showShapesFirst={showShapesFirst}
       example={example}/>
-  ) : <div>No Body</div>;
+  ) : null;
 
   return <DocGrid left={left} right={right} style={{marginTop: 40}}/>;
 }

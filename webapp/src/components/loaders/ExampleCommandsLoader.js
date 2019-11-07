@@ -14,6 +14,7 @@ import Loading from '../../components/navigation/Loading';
 import { RequestViewer, SpecOverview } from '../routes/local';
 import { routerPaths } from '../../routes';
 import { NavigationStore } from '../../contexts/NavigationContext';
+import {RequestsDetailsPage} from '../../stories/doc-mode/EndpointPage';
 
 
 class ExampleCommandsSpecOverview extends React.Component {
@@ -77,7 +78,7 @@ class ExampleCommandsLoader extends React.Component {
           <RfcStore>
             <TutorialStore>
               <Switch>
-                <Route path={routerPaths.request(baseUrl)} component={RequestViewer} />
+                <Route path={routerPaths.request(baseUrl)} component={RequestsDetailsPage} />
                 <Route path={baseUrl} component={ExampleCommandsSpecOverview} />
               </Switch>
             </TutorialStore>
