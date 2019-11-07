@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {Collapse} from '@material-ui/core';
+import {Collapse, TextField} from '@material-ui/core';
 import Fade from '@material-ui/core/Fade';
 import {StyledTab, StyledTabs} from '../DocCodeBox';
 import IconButton from '@material-ui/core/IconButton';
@@ -10,6 +10,9 @@ import {Show} from '../Show';
 import {primitiveDocColors} from '../DocConstants';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import {Highlight, HighlightedIDsStore} from './HighlightedIDs';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import Menu from '@material-ui/core/Menu';
+import {NamerStore, withNamer} from './Namer';
 
 const styles = theme => ({
   base: {
@@ -38,6 +41,15 @@ const styles = theme => ({
     userSelect: 'none',
     marginTop: 2,
     fontWeight: 100,
+  },
+  namer: {
+    width: 20,
+    paddingTop: 1,
+    cursor: 'pointer'
+  },
+  namerInner: {
+    padding: 8,
+    paddingTop: 4
   },
   arrow: {
     fontSize: 15,
@@ -191,10 +203,50 @@ export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLink
 
 });
 
-export const ObjectViewer = withStyles(styles)(({classes, typeName, id, fields, depth = 0}) => {
+export const Namer = withNamer(withStyles(styles)(({classes, nameShape, id}) => {
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [conceptName, setConceptName] = useState('');
+
+  const finish = () => {
+    nameShape(id, conceptName);
+    setAnchorEl(null);
+    setConceptName('');
+  };
+
+  const menu = (
+    <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+      <div className={classes.namerInner}>
+        <TextField value={conceptName}
+                   label="Name Concept"
+                   autoFocus
+                   onBlur={finish}
+                   onKeyPress={(e) => {
+                     if (e.which === 13) {
+                       finish();
+                     }
+                   }}
+                   onChange={(e) => setConceptName(e.target.value)}/>
+      </div>
+    </Menu>
+  );
 
   return (<>
-      <Row style={{paddingLeft: 6}}>{<TypeNameRender typeName={typeName} id={id}/>}</Row>
+    {menu}
+    <div style={{flex: 1}}/>
+    <div className={classes.namer} onClick={(e) => setAnchorEl(e.currentTarget)}>
+      ○
+    </div>
+  </>);
+}));
+
+export const ObjectViewer = withStyles(styles)(({classes, typeName, canName, id, fields, depth = 0}) => {
+
+  return (<>
+      <Row style={{paddingLeft: 6}}>
+        {<TypeNameRender typeName={typeName} id={id}/>}
+        {/*{canName && <Namer id={id} />}*/}
+      </Row>
       {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} depth={depth + 1}/>)}
     </>
   );
@@ -227,10 +279,16 @@ export default ShapeViewer;
 
 export const ExampleViewer = withRfcContext(({example, queries}) => {
   const flatShape = queries.flatShapeForExample(example);
-  return <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>;
+  return (
+    <NamerStore>
+      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
+    </NamerStore>
+  );
 });
 
 export const ShapeViewerWithQuery = withRfcContext(({shapeId, queries}) => {
   const flatShape = queries.flatShapeForShapeId(shapeId);
-  return <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>;
+  return (
+    <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
+  );
 });

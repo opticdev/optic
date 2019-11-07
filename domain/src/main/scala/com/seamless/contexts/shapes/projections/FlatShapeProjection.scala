@@ -16,13 +16,13 @@ object FlatShapeProjection {
   @JSExportAll
   case class FlatField(fieldName: String, shape: FlatShape, fieldId: FieldId)
   @JSExportAll
-  case class FlatShape(baseShapeId: ShapeId, typeName: Seq[ColoredComponent], fields: Seq[FlatField], id: ShapeId) {
+  case class FlatShape(baseShapeId: ShapeId, typeName: Seq[ColoredComponent], fields: Seq[FlatField], id: ShapeId, canName: Boolean) {
     def joinedTypeName = typeName.map(_.name).mkString(" ")
   }
   @JSExportAll
   case class FlatShapeResult(root: FlatShape, parameterMap: Map[String, FlatShape])
 
-  private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any"))
+  private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false))
 
   def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None)(implicit shapesState: ShapesState, expandedName: Boolean = true) = {
     implicit val parametersByShapeId: mutable.Map[String, FlatShape] = scala.collection.mutable.HashMap[String, FlatShape]()
@@ -49,8 +49,8 @@ object FlatShapeProjection {
       .map(i => (i.shapeId, getFlatShape(i.shapeId)(shapesState, None, false, parametersByShapeId)))
       .getOrElse(returnAny)
 
-    def returnWith( typeName: Seq[ColoredComponent], fields: Seq[FlatField] = Seq() ) = {
-      FlatShape(shape.baseShapeId, typeName, fields, shapeId)
+    def returnWith( typeName: Seq[ColoredComponent], fields: Seq[FlatField] = Seq(), canName: Boolean = false ) = {
+      FlatShape(shape.baseShapeId, typeName, fields, shapeId, canName)
     }
 
     shape.coreShapeId match {
@@ -108,6 +108,8 @@ object FlatShapeProjection {
           FlatField(field.descriptor.name, getFlatShape( field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId)(shapesState, Some(fieldId), false, parametersByShapeId), fieldId)
         })
 
+        val canName = baseObject.descriptor.name == ""
+
         //handle generics
 //        val genericParams = Try(baseObject.descriptor.parameters.asInstanceOf
 //          [DynamicParameterList].shapeParameterIds).getOrElse(Seq.empty)
@@ -117,7 +119,7 @@ object FlatShapeProjection {
 //          Seq(ColoredComponent(param.split(":").last+":", "text", None)) ++ seq
 //        })
 
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), fields)
+        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), fields, canName)
       }
 
       //fallback to primitives
