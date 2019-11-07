@@ -76,6 +76,8 @@ class ExampleSessionsLoader extends React.Component {
       saveDiffState: () => { }
     }
 
+    const diffBasePath = routerPaths.diff(basePath)
+
     //@todo add before modal here eventually
     function ExampleSessionsSpecOverview() {
       return (
@@ -83,19 +85,27 @@ class ExampleSessionsLoader extends React.Component {
       )
     }
 
-    const diffBaseUrl = `${basePath}/diff`
+    function SessionWrapper(props) {
+      const { match } = props;
+      const { sessionId } = match.params;
+      return (
+        <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
+          <Switch>
+            <Route exact path={routerPaths.diffUrls(diffBasePath)} component={UrlsX} />
+            <Route exact path={routerPaths.diffRequest(diffBasePath)} component={RequestDiffX} />
+          </Switch>
+        </TrafficAndDiffSessionStore>
+      )
+    }
 
     return (
       <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
         <LocalDiffRfcStore specService={specService}>
           <TutorialStore>
-            <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
-              <Switch>
-                <Route exact path={routerPaths.diffUrls(diffBaseUrl)} component={UrlsX} />
-                <Route exact path={routerPaths.diffRequest(diffBaseUrl)} component={RequestDiffX} />
-                <Route component={ExampleSessionsSpecOverview} />
-              </Switch>
-            </TrafficAndDiffSessionStore>
+            <Switch>
+              <Route exact path={basePath} component={ExampleSessionsSpecOverview} />
+              <Route path={diffBasePath} component={SessionWrapper} />
+            </Switch>
           </TutorialStore>
         </LocalDiffRfcStore>
       </InitialRfcCommandsStore>

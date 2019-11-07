@@ -1,7 +1,9 @@
 import React from 'react';
-import { Redirect, Switch, Route, Link } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import uuidv4 from 'uuid/v4';
 
+import { UrlsX } from '../../../stories/doc-mode/NewUnmatchedUrlWizard';
+import RequestDiffX from '../../../stories/doc-mode/RequestDiffX';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -10,16 +12,17 @@ import DialogActions from '@material-ui/core/DialogActions';
 
 import { specService } from '../../../services/SpecService.js';
 import Loading from '../../../components/navigation/Loading';
-import LocalDiffManager from '../../../components/diff/LocalDiffManager';
 import { InitialRfcCommandsStore } from '../../../contexts/InitialRfcCommandsContext.js';
-import { LocalRfcStore, LocalDiffRfcStore } from '../../../contexts/RfcContext.js';
+import { LocalDiffRfcStore } from '../../../contexts/RfcContext.js';
 import { TutorialStore } from '../../../contexts/TutorialContext';
 import { TrafficAndDiffSessionStore } from '../../../contexts/TrafficAndDiffSessionContext';
 import { CommandContextStore } from '../../../contexts/CommandContext.js';
 import { routerPaths } from '../../../routes.js';
 import Overview from '../../onboarding/Overview.js';
-import { NavigationStore, withNavigationContext } from '../../../contexts/NavigationContext.js';
+import { NavigationStore } from '../../../contexts/NavigationContext.js';
 import NewBehavior from '../../../stories/doc-mode/NewBehavior.js';
+
+export const basePath = '/saved'
 
 export class LocalLoader extends React.Component {
 
@@ -68,7 +71,6 @@ export class LocalLoader extends React.Component {
 
   render() {
     const { loadedEvents, error, clientId, clientSessionId } = this.state;
-    const { match } = this.props;
 
     if (error) {
       return (
@@ -87,17 +89,34 @@ export class LocalLoader extends React.Component {
     if (loadedEvents === null) {
       return <Loading />;
     }
+
+    function SessionWrapper(props) {
+      const { match } = props;
+      const { sessionId } = match.params;
+      return (
+        <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
+          <Switch>
+            <Route exact path={routerPaths.diffUrls(diffBasePath)} component={UrlsX} />
+            <Route exact path={routerPaths.diffRequest(diffBasePath)} component={RequestDiffX} />
+          </Switch>
+        </TrafficAndDiffSessionStore>
+      )
+    }
+
+    const diffBasePath = routerPaths.diff(basePath)
     return (
-      <NavigationStore baseUrl={match.url}>
-        <CommandContextStore clientSessionId={clientSessionId} clientId={clientId}>
-          <InitialRfcCommandsStore initialEventsString={loadedEvents} rfcId="testRfcId">
-            <Switch>
-              <Route path={routerPaths.diff(match.url)} component={LocalDiff} />
-              <Route path={match.url} component={LocalSpec} />
-            </Switch>
-          </InitialRfcCommandsStore>
-        </CommandContextStore>
-      </NavigationStore>
+      <CommandContextStore clientSessionId={clientSessionId} clientId={clientId}>
+        <InitialRfcCommandsStore initialEventsString={loadedEvents} rfcId="testRfcId">
+          <LocalDiffRfcStore specService={specService}>
+            <TutorialStore>
+              <Switch>
+                <Route exact path={basePath} component={LocalSpecOverview} />
+                <Route path={diffBasePath} component={SessionWrapper} />
+              </Switch>
+            </TutorialStore>
+          </LocalDiffRfcStore>
+        </InitialRfcCommandsStore>
+      </CommandContextStore>
     );
   }
 }
@@ -125,39 +144,16 @@ export function SpecOverview(props) {
   )
 }
 
-class LocalSpecBase extends React.Component {
+class LocalLoaderRoutes extends React.Component {
   render() {
-    const { baseUrl } = this.props;
+    const { match } = this.props
     return (
-      <LocalRfcStore>
-        <TutorialStore>
-          <Switch>
-            <Route exact path={routerPaths.request(baseUrl)} component={RequestViewer} />
-            <Route exact path={baseUrl} component={LocalSpecOverview} />
-            <Redirect to={baseUrl} />
-          </Switch>
-        </TutorialStore>
-      </LocalRfcStore>
+      <NavigationStore baseUrl={match.url}>
+        <Switch>
+          <Route path={basePath} component={LocalLoader} />
+        </Switch>
+      </NavigationStore>
     )
   }
 }
-export const LocalSpec = withNavigationContext(LocalSpecBase)
-
-export class LocalDiff extends React.Component {
-  render() {
-    const { match } = this.props;
-    const { sessionId } = match.params;
-    const baseUrl = match.url;
-    return (
-      <NavigationStore baseUrl={baseUrl}>
-        <LocalDiffRfcStore>
-          <TutorialStore>
-            <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
-              <LocalDiffManager />
-            </TrafficAndDiffSessionStore>
-          </TutorialStore>
-        </LocalDiffRfcStore>
-      </NavigationStore>
-    );
-  }
-}
+export default LocalLoaderRoutes
