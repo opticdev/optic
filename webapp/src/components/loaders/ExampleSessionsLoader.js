@@ -65,7 +65,15 @@ class ExampleSessionsLoader extends React.Component {
       listSessions() {
         return Promise.resolve({ sessions: [sessionId] })
       },
-      saveEvents: () => { },
+      saveEvents: (eventStore, rfcId) => {
+        const events = eventStore.serializeEvents(rfcId)
+        this.setState({
+          events
+        })
+      },
+      saveExample: () => {
+
+      },
       saveDiffState: () => { }
     }
 
@@ -80,7 +88,7 @@ class ExampleSessionsLoader extends React.Component {
 
     return (
       <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
-        <LocalDiffRfcStore>
+        <LocalDiffRfcStore specService={specService}>
           <TutorialStore>
             <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
               <Switch>
