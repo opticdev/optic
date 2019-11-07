@@ -3,7 +3,7 @@ import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContex
 import { TrafficAndDiffSessionStore } from '../../contexts/TrafficAndDiffSessionContext';
 import { LocalDiffRfcStore } from '../../contexts/RfcContext';
 import Loading from '../navigation/Loading';
-import { Route, Switch, Link } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 import { TutorialStore } from '../../contexts/TutorialContext';
 import { UrlsX } from '../../stories/doc-mode/NewUnmatchedUrlWizard';
 import RequestDiffX from '../../stories/doc-mode/RequestDiffX';
@@ -11,7 +11,7 @@ import { NavigationStore } from '../../contexts/NavigationContext';
 import { routerPaths } from '../../routes';
 import { SpecOverview } from '../routes/local';
 import NewBehavior from '../../stories/doc-mode/NewBehavior';
-import {RequestsDetailsPage} from '../../stories/doc-mode/EndpointPage';
+import { RequestsDetailsPage } from '../../stories/doc-mode/EndpointPage';
 
 export const basePath = `/example-sessions/:exampleId`;
 
@@ -77,6 +77,8 @@ class ExampleSessionsLoader extends React.Component {
       saveDiffState: () => { }
     }
 
+    const diffBasePath = routerPaths.diff(basePath)
+
     //@todo add before modal here eventually
     function ExampleSessionsSpecOverview() {
       return (
@@ -84,20 +86,28 @@ class ExampleSessionsLoader extends React.Component {
       )
     }
 
-    const diffBaseUrl = routerPaths.diff(basePath)
+    function SessionWrapper(props) {
+      const { match } = props;
+      const { sessionId } = match.params;
+      return (
+        <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
+          <Switch>
+            <Route exact path={routerPaths.diffUrls(diffBasePath)} component={UrlsX} />
+            <Route exact path={routerPaths.diffRequest(diffBasePath)} component={RequestDiffX} />
+          </Switch>
+        </TrafficAndDiffSessionStore>
+      )
+    }
 
     return (
       <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
         <LocalDiffRfcStore specService={specService}>
           <TutorialStore>
-            <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
-              <Switch>
-                <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage} />
-                <Route exact path={routerPaths.diffUrls(diffBaseUrl)} component={UrlsX} />
-                <Route exact path={routerPaths.diffRequest(diffBaseUrl)} component={RequestDiffX} />
-                <Route component={ExampleSessionsSpecOverview} />
-              </Switch>
-            </TrafficAndDiffSessionStore>
+            <Switch>
+              <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage} />
+              <Route exact path={basePath} component={ExampleSessionsSpecOverview} />
+              <Route path={diffBasePath} component={SessionWrapper} />
+            </Switch>
           </TutorialStore>
         </LocalDiffRfcStore>
       </InitialRfcCommandsStore>

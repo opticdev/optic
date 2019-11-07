@@ -3,12 +3,12 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 import Welcome from './components/onboarding/Welcome';
 import ExampleCommandsLoader from './components/loaders/ExampleCommandsLoader.js';
 import ExampleSessionsLoader, { basePath as exampleSessionsBasePath } from './components/loaders/ExampleSessionsLoader.js';
-import { LocalLoader } from './components/routes/local';
+import LocalLoader, { basePath as localBasePath } from './components/routes/local';
 
 export const routerPaths = {
   exampleCommandsRoot: () => '/examples/:exampleId',
   exampleSessionsRoot: () => exampleSessionsBasePath,
-  localRoot: () => '/saved',
+  localRoot: () => localBasePath,
   request: (base) => `${base}/requests/:requestId`,
   diff: (base) => `${base}/diff/:sessionId`,
   diffUrls: (base) => `${base}/urls`,
