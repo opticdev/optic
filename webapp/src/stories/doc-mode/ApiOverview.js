@@ -11,16 +11,18 @@ import Collapse from '@material-ui/core/Collapse';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import EndpointOverview from './EndpointOverview';
-import { ListSubheader } from '@material-ui/core';
-import { withRfcContext } from '../../contexts/RfcContext';
-import { asPathTrail, isPathParameter } from '../../components/utilities/PathUtilities';
+import {ListSubheader} from '@material-ui/core';
+import {withRfcContext} from '../../contexts/RfcContext';
+import {asPathTrail, isPathParameter} from '../../components/utilities/PathUtilities';
 import ConceptOverview from './ConceptOverview';
-import { DisplayPath } from './DisplayPath';
-import { withNavigationContext } from '../../contexts/NavigationContext';
+import {DisplayPath} from './DisplayPath';
+import {withNavigationContext} from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
 import {PathIdToPathString} from './PathIdToPathString';
+import {updateContribution} from '../../engine/routines';
+import { NavHashLink as NavLink } from 'react-router-hash-link';
 
-const drawerWidth = 240;
+const drawerWidth = 320;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(3),
   },
   nested: {
-    paddingLeft: 17,
+    paddingLeft: 25,
     paddingTop: 5,
     overflow: 'hidden'
   },
@@ -72,11 +74,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
-  const { path, operationsToRender, cachedQueryResults } = props;
+  const {path, operationsToRender, cachedQueryResults} = props;
   const classes = useStyles();
 
-  const { contributions } = cachedQueryResults;
-  const { name, children, depth, toggled, pathId, full, visible } = path;
+  const {contributions} = cachedQueryResults;
+  const {name, children, depth, toggled, pathId, full, visible} = path;
 
   const url = full + name;
 
@@ -90,38 +92,46 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
   return (
     <>
       <ListItem button
-        dense
-        onClick={handleClick}>
+                dense
+                disableRipple
+                onClick={handleClick}>
         <ListItemText primary={name.substr(1)}
-          classes={{ dense: classes.dense }}
-          primaryTypographyProps={{ variant: 'overline', style: { textTransform: 'none' } }} />
-        {open ? <ExpandLess /> : <ExpandMore />}
+                      classes={{dense: classes.dense}}
+                      primaryTypographyProps={{variant: 'overline', style: {textTransform: 'none'}}}/>
+        {open ? <ExpandLess/> : <ExpandMore/>}
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div"
-          dense
-          disablePadding>
-            {operationsToRender.map(({ requestId, request }) => {
+              dense
+              disablePadding>
+          {operationsToRender.map(({requestId, request}) => {
 
-              const { httpMethod, pathComponentId} = request.requestDescriptor;
-              const purpose = contributions.getOrUndefined(requestId, 'purpose') || (
-                <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>} />
-              );
+            const {httpMethod, pathComponentId} = request.requestDescriptor;
+            const purpose = contributions.getOrUndefined(requestId, 'purpose') || (
+              <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
+            );
 
-              return (
+            return (
+              <NavLink
+                to={`#${requestId}`}
+                activeClassName="selected"
+                style={{textDecoration: 'none', color: 'black'}}
+              >
                 <ListItem button
-                  component="div"
-                  dense
-                  className={classes.nested}>
+                          disableRipple
+                          component="div"
+                          dense
+                          className={classes.nested}>
                   <ListItemText
                     primary={purpose}
-                    classes={{ dense: classes.dense }}
+                    classes={{dense: classes.dense}}
                     primaryTypographyProps={{
                       variant: 'overline',
-                      style: { textTransform: 'none', textOverflow: 'ellipsis' }
-                    }} />
+                      style: {textTransform: 'none', textOverflow: 'ellipsis'}
+                    }}/>
                 </ListItem>
-              );
+              </NavLink>
+            );
           })}
         </List>
       </Collapse>
@@ -130,12 +140,10 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
 }));
 
 
-
 export default compose(withRfcContext, withNavigationContext)(function ApiOverview(props) {
-  const { paths, concepts, cachedQueryResults } = props;
-  const { notificationAreaComponent = null } = props;
+  const {paths, concepts, cachedQueryResults, handleCommand} = props;
+  const {notificationAreaComponent = null} = props;
   const classes = useStyles();
-
 
 
   function flatMapOperations(children) {
@@ -147,15 +155,15 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           request: cachedQueryResults.requests[id],
           path
         };
-      }).concat(flatMapOperations(path.children))
-    })
+      }).concat(flatMapOperations(path.children));
+    });
   }
 
-  const operationsToRender = flatMapOperations(paths.children)
+  const operationsToRender = flatMapOperations(paths.children);
 
   return (
     <div className={classes.root}>
-      <CssBaseline />
+      <CssBaseline/>
       <Drawer
         className={classes.drawer}
         variant="permanent"
@@ -168,7 +176,7 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           <Typography variant="subtitle1" className={classes.apiName}>{cachedQueryResults.apiName}</Typography>
           {/*<ApiSearch />*/}
         </div>
-        <Divider />
+        <Divider/>
         <List
           component="nav"
           subheader={<ListSubheader className={classes.subHeader}>{'Endpoints'}</ListSubheader>}
@@ -176,10 +184,10 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           dense={true}
         >
           {paths.children.map(i => <EndpointBasePath path={i}
-            operationsToRender={flatMapOperations(i.children)} />)}
+                                                     operationsToRender={flatMapOperations(i.children)}/>)}
         </List>
 
-        <Divider />
+        <Divider/>
         <List
           component="nav"
           subheader={<ListSubheader className={classes.subHeader}>{'Concepts'}</ListSubheader>}
@@ -187,13 +195,19 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           dense={true}
         >
           {concepts.map(i => (
-            <ListItem button dense>
+            <NavLink
+              to={`#${i.shapeId}`}
+              activeClassName="selected"
+              style={{textDecoration: 'none', color: 'black'}}
+            >
+            <ListItem button dense disableRipple>
               <ListItemText
                 primary={i.name}
                 dense
-                classes={{ dense: classes.dense }}
-                primaryTypographyProps={{ variant: 'overline', style: { textTransform: 'none' } }} />
+                classes={{dense: classes.dense}}
+                primaryTypographyProps={{variant: 'overline', style: {textTransform: 'none'}}}/>
             </ListItem>
+            </NavLink>
           ))}
         </List>
 
@@ -203,25 +217,31 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
         {notificationAreaComponent}
 
         <Typography variant="h3" color="primary" className={classes.sectionHeader}
-          style={{ paddingTop: 20 }}>Endpoints</Typography>
+                    style={{paddingTop: 20}}>Endpoints</Typography>
 
         {operationsToRender.map(operation => {
-          const { pathsById } = cachedQueryResults;
+          const {pathsById, contributions} = cachedQueryResults;
           const pathTrail = asPathTrail(operation.path.pathId, pathsById);
           const pathParameters = pathTrail
             .map(pathId => pathsById[pathId])
             .filter((p) => isPathParameter(p))
-            .map(p => ({ pathId: p.pathId, name: p.descriptor.ParameterizedPathComponentDescriptor.name }));
-
+            .map(p => ({
+              pathId: p.pathId,
+              name: p.descriptor.ParameterizedPathComponentDescriptor.name,
+              description: contributions.getOrUndefined(p.pathId, 'description')
+            }));
 
           return (
             <EndpointOverview
-              endpointPurpose={''}
+              endpointPurpose={contributions.getOrUndefined(operation.requestId, 'purpose')}
+              endpointDescription={contributions.getOrUndefined(operation.requestId, 'description')}
               requestId={operation.requestId}
-              endpointDescription=""
               method={operation.request.requestDescriptor.httpMethod}
               parameters={pathParameters}
               url={operation.path.full + operation.path.name}
+              updateContribution={(id, key, value) => {
+                handleCommand(updateContribution(id, key, value));
+              }}
             />
           );
         })}
@@ -232,7 +252,7 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           <ConceptOverview
             name={concept.name}
             shapeId={concept.shapeId}
-            example={{ name: 'fizo', age: 15, breed: 'husky' }}
+            example={{name: 'fizo', age: 15, breed: 'husky'}}
           />
         ))}
 

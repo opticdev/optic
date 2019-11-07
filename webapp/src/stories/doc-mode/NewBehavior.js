@@ -53,6 +53,9 @@ const useStyles = makeStyles({
   red: {
     borderLeft: `5px solid ${RemovedRed}`,
     backgroundColor: RemovedRedBackground,
+  },
+  container: {
+    marginBottom: 40
   }
 });
 
@@ -122,10 +125,10 @@ Click the button below to add these new URLs as paths in your specification`}>
 
 
   return (
-    <>
+    <div className={classes.container}>
       {requestIdsWithDiffs.length > 0 && undocumentedBehavior}
       {unrecognizedUrlCount > 0 && newUrls}
-    </>
+    </div>
   );
 }
 

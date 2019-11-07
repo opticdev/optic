@@ -11,6 +11,7 @@ import { NavigationStore } from '../../contexts/NavigationContext';
 import { routerPaths } from '../../routes';
 import { SpecOverview } from '../routes/local';
 import NewBehavior from '../../stories/doc-mode/NewBehavior';
+import {RequestsDetailsPage} from '../../stories/doc-mode/EndpointPage';
 
 export const basePath = `/example-sessions/:exampleId`;
 
@@ -75,7 +76,7 @@ class ExampleSessionsLoader extends React.Component {
       )
     }
 
-    const diffBaseUrl = `${basePath}/diff`
+    const diffBaseUrl = routerPaths.diff(basePath)
 
     return (
       <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
@@ -83,6 +84,7 @@ class ExampleSessionsLoader extends React.Component {
           <TutorialStore>
             <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
               <Switch>
+                <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage} />
                 <Route exact path={routerPaths.diffUrls(diffBaseUrl)} component={UrlsX} />
                 <Route exact path={routerPaths.diffRequest(diffBaseUrl)} component={RequestDiffX} />
                 <Route component={ExampleSessionsSpecOverview} />

@@ -22,7 +22,6 @@ class AppRoutes extends React.Component {
   render() {
     // in local mode
     if (process.env.REACT_APP_CLI_MODE) {
-      debugger
       return (
         <div>
           <Switch>
