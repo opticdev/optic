@@ -1,21 +1,14 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import {CardActions, Typography} from '@material-ui/core';
+import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import {commandsFromJson, NaiveSummary} from '../../engine';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogActions from '@material-ui/core/DialogActions';
-import {EndpointPageWithQuery} from './EndpointPage';
+import { EndpointPageWithQuery } from './EndpointPage';
 import Drawer from '@material-ui/core/Drawer';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import DiffInfo from './DiffInfo';
-import {HighlightedIDsStore} from './shape/HighlightedIDs';
+import { HighlightedIDsStore } from './shape/HighlightedIDs';
+import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
+import compose from 'lodash.compose';
 
 const drawerWidth = 340;
 
@@ -52,23 +45,16 @@ const styles = theme => ({
 
 class PreCommit extends React.Component {
 
-  discard() {
-
-  }
-
-  reset() {
-
-  }
-
   render() {
 
-    const {classes, taggedIds, finish} = this.props;
+    const { classes, requestId, taggedIds } = this.props;
+    const { onSave, onDiscard } = this.props;
 
 
     const numberAdded = new Set([...taggedIds.addedIds]).size;
     const numberChanged = new Set([...taggedIds.changedIds]).size;
 
-    const plurality =(n) => n === 1 ? '' : 's'
+    const plurality = (n) => n === 1 ? '' : 's'
 
     return (
       <div className={classes.right}>
@@ -76,38 +62,38 @@ class PreCommit extends React.Component {
         <div className={classes.content}>
           <HighlightedIDsStore {...taggedIds}>
             <EndpointPageWithQuery
-              requestId={'request_bju2jALmLQ'}
+              requestId={requestId}
               showShapesFirst={true}
             />
           </HighlightedIDsStore>
         </div>
 
         <Drawer anchor="right"
-                className={classes.drawer}
-                classes={{
-                  paper: classes.drawerPaper,
-                }}
-                variant="permanent"
-                open={true}>
+          className={classes.drawer}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          variant="permanent"
+          open={true}>
 
           <div className={classes.inner}>
 
-            <SaveAltIcon color="primary" style={{fontSize: 80}}/>
+            <SaveAltIcon color="primary" style={{ fontSize: 80 }} />
 
             <Typography variant="h4">
               Finalize Changes
             </Typography>
 
-            <div style={{flex: 1, width: '90%', marginTop: 25}}>
-              {numberAdded > 0 && <DiffInfo title={`${numberAdded} Addition${plurality(numberAdded)}`} color="green" description={""}/>}
-              {numberChanged > 0 && <DiffInfo title={`${numberChanged} Update${plurality(numberChanged)}`} color="yellow" description={""}/>}
+            <div style={{ flex: 1, width: '90%', marginTop: 25 }}>
+              {numberAdded > 0 && <DiffInfo title={`${numberAdded} Addition${plurality(numberAdded)}`} color="green" description={""} />}
+              {numberChanged > 0 && <DiffInfo title={`${numberChanged} Update${plurality(numberChanged)}`} color="yellow" description={""} />}
             </div>
 
-            <div style={{marginTop: 25}}>
-              <Button size="large" color="error" >
+            <div style={{ marginTop: 25 }}>
+              <Button size="large" color="error" onClick={onDiscard}>
                 Discard
               </Button>
-              <Button size="large" color="secondary" autoFocus onClick={finish}>
+              <Button size="large" color="secondary" autoFocus onClick={onSave}>
                 Apply Changes
               </Button>
             </div>
@@ -141,4 +127,4 @@ class PreCommit extends React.Component {
   }
 }
 
-export default withStyles(styles)(PreCommit);
+export default compose(withStyles(styles), withTrafficAndDiffSessionContext)(PreCommit);

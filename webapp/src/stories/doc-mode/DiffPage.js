@@ -1,15 +1,15 @@
-import React, {useRef} from 'react';
+import React, { useRef } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Editor from '../../components/navigation/Editor';
-import {DiffDocGrid, DocGrid} from './DocGrid';
-import {AppBar, Grid, Typography} from '@material-ui/core';
-import {DocDarkGrey, DocGrey, methodColors, SubHeadingStyles} from './DocConstants';
-import {HeadingContribution} from './DocContribution';
-import {DocCodeBox, EndpointOverviewCodeBox, ExampleOnly, ShapeOnly, ShapeOverview} from './DocCodeBox';
-import {DocSubGroup} from './DocSubGroup';
+import { DiffDocGrid, DocGrid } from './DocGrid';
+import { AppBar, Grid, Typography } from '@material-ui/core';
+import { DocDarkGrey, DocGrey, methodColors, SubHeadingStyles } from './DocConstants';
+import { HeadingContribution } from './DocContribution';
+import { DocCodeBox, EndpointOverviewCodeBox, ExampleOnly, ShapeOnly, ShapeOverview } from './DocCodeBox';
+import { DocSubGroup } from './DocSubGroup';
 import DiffInfo from './DiffInfo';
-import {STATUS_CODES} from 'http';
+import { STATUS_CODES } from 'http';
 import InterpretationCard from './InterpretationCard';
 import PropTypes from 'prop-types';
 import Drawer from '@material-ui/core/Drawer';
@@ -24,14 +24,14 @@ import FastRewindIcon from '@material-ui/icons/FastRewind';
 import Tooltip from '@material-ui/core/Tooltip';
 import ClearIcon from '@material-ui/icons/Clear';
 import InterpretationInfo from './InterpretationInfo';
-import {AddedGreen, Highlight, HighlightedIDsStore} from './shape/HighlightedIDs';
-import {withRfcContext} from '../../contexts/RfcContext';
-import {getNormalizedBodyDescriptor} from '../../components/PathPage';
-import {DiffToDiffCard} from './DiffCopy';
-import {commandsToJs, JsonHelper} from '../../engine';
+import { AddedGreen, Highlight, HighlightedIDsStore } from './shape/HighlightedIDs';
+import { withRfcContext } from '../../contexts/RfcContext';
+import { getNormalizedBodyDescriptor } from '../../components/PathPage';
+import { DiffToDiffCard } from './DiffCopy';
+import { commandsToJs, JsonHelper } from '../../engine';
 import Mustache from 'mustache';
-import {Link} from 'react-router-dom';
-import {withNavigationContext} from '../../contexts/NavigationContext';
+import { Link } from 'react-router-dom';
+import { withNavigationContext } from '../../contexts/NavigationContext';
 
 const styles = theme => ({
   root: {
@@ -79,7 +79,7 @@ const styles = theme => ({
   }
 });
 
-const DiffPath = withStyles(styles)(({classes, path, method, url}) => {
+const DiffPath = withStyles(styles)(({ classes, path, method, url }) => {
 
   return (
     <DiffDocGrid
@@ -90,7 +90,7 @@ const DiffPath = withStyles(styles)(({classes, path, method, url}) => {
               fontWeight: 600,
               color: methodColors[method.toUpperCase()]
             }}>{method.toUpperCase()}</Typography>
-            <Typography variant="body" component="span" style={{marginLeft: 9, color: DocGrey}}>{url}</Typography>
+            <Typography variant="body" component="span" style={{ marginLeft: 9, color: DocGrey }}>{url}</Typography>
           </div>
         </DocSubGroup>
       )}
@@ -101,7 +101,7 @@ const DiffPath = withStyles(styles)(({classes, path, method, url}) => {
               fontWeight: 600,
               color: methodColors[method.toUpperCase()]
             }}>{method.toUpperCase()}</Typography>
-            <Typography variant="body" component="span" style={{marginLeft: 9, color: DocGrey}}>{path}</Typography>
+            <Typography variant="body" component="span" style={{ marginLeft: 9, color: DocGrey }}>{path}</Typography>
           </div>
         </DocSubGroup>
       )}
@@ -110,30 +110,30 @@ const DiffPath = withStyles(styles)(({classes, path, method, url}) => {
 });
 
 const DiffRequest = withStyles(styles)(({
-                                          classes,
-                                          observedRequestBody,
-                                          observedContentType,
-                                          requestBody = {},
-                                          interpretation,
-                                          diff
-                                        }) => {
+  classes,
+  observedRequestBody,
+  observedContentType,
+  requestBody = {},
+  interpretation,
+  diff
+}) => {
 
-  const {shapeId, httpContentType} = requestBody;
+  const { shapeId, httpContentType } = requestBody;
   const opacity = (!diff && !interpretation) ? .6 : 1;
 
   return (
     <DiffDocGrid
-      style={{opacity}}
+      style={{ opacity }}
       left={(
         <DocSubGroup title="Observed Request Body">
           {diff}
-          <ExampleOnly title="Example" contentType={observedContentType} example={observedRequestBody}/>
+          <ExampleOnly title="Example" contentType={observedContentType} example={observedRequestBody} />
         </DocSubGroup>
       )}
       right={shapeId && (
         <DocSubGroup title="Request Body">
           {interpretation}
-          <ShapeOnly title="Shape" shapeId={shapeId} contentType={httpContentType}/>
+          <ShapeOnly title="Shape" shapeId={shapeId} contentType={httpContentType} />
         </DocSubGroup>
       )}
     />
@@ -142,35 +142,35 @@ const DiffRequest = withStyles(styles)(({
 
 
 const DiffResponse = withStyles(styles)(({
-                                           classes,
-                                           statusCode,
-                                           observedResponseBody,
-                                           observedContentType,
-                                           response,
-                                           responseBody = {},
-                                           diff,
-                                           interpretation
-                                         }) => {
+  classes,
+  statusCode,
+  observedResponseBody,
+  observedContentType,
+  response,
+  responseBody = {},
+  diff,
+  interpretation
+}) => {
 
-  const {shapeId, httpContentType} = responseBody;
+  const { shapeId, httpContentType } = responseBody;
 
   const opacity = (!diff && !interpretation) ? .6 : 1;
 
   return (
     <DiffDocGrid
-      style={{opacity}}
+      style={{ opacity }}
       left={(
         <DocSubGroup title={`Response Status: ${statusCode}`}>
           {diff}
-          <ExampleOnly title="Response Body" contentType={observedContentType} example={observedResponseBody}/>
+          <ExampleOnly title="Response Body" contentType={observedContentType} example={observedResponseBody} />
         </DocSubGroup>
       )}
       right={response && (
         <DocSubGroup title={<Highlight id={response.responseId}
-                                       style={{color: AddedGreen}}>{`${statusCode} - ${STATUS_CODES[statusCode]} Response`}</Highlight>}>
+          style={{ color: AddedGreen }}>{`${statusCode} - ${STATUS_CODES[statusCode]} Response`}</Highlight>}>
           {interpretation}
           {shapeId && <ShapeOnly title="Response Body Shape" shapeId={shapeId}
-                                 contentType={httpContentType}/>
+            contentType={httpContentType} />
           }
         </DocSubGroup>
       )}
@@ -178,22 +178,22 @@ const DiffResponse = withStyles(styles)(({
   );
 });
 
-const SpecPanel = withStyles(styles)(({classes}) => {
+const SpecPanel = withStyles(styles)(({ classes }) => {
 
   return (
     <div className={classes.specContainer}>
       <Typography variant="h4" color="primary">{'Add Pet to User'}</Typography>
 
       <div>
-        <EndpointOverviewCodeBox method={'POST'} url={'/users/:userId/pets'}/>
+        <EndpointOverviewCodeBox method={'POST'} url={'/users/:userId/pets'} />
       </div>
 
-      <DocSubGroup title="Request" style={{marginTop: 22}}>
-        <ShapeOverview title="Shape"/>
+      <DocSubGroup title="Request" style={{ marginTop: 22 }}>
+        <ShapeOverview title="Shape" />
       </DocSubGroup>
 
-      <DocSubGroup title="200 Response" style={{marginTop: 22}}>
-        <ShapeOverview title="Shape"/>
+      <DocSubGroup title="200 Response" style={{ marginTop: 22 }}>
+        <ShapeOverview title="Shape" />
       </DocSubGroup>
 
     </div>
@@ -203,18 +203,18 @@ const SpecPanel = withStyles(styles)(({classes}) => {
 class DiffPage extends React.Component {
 
   getSpecForRequest(observedStatusCode) {
-    const {cachedQueryResults, requestId} = this.props;
-    const {requests, responses} = cachedQueryResults;
+    const { cachedQueryResults, requestId } = this.props;
+    const { requests, responses } = cachedQueryResults;
     const request = requests[requestId];
-    const {requestDescriptor} = request;
-    const {httpMethod, pathComponentId, bodyDescriptor} = requestDescriptor;
+    const { requestDescriptor } = request;
+    const { httpMethod, pathComponentId, bodyDescriptor } = requestDescriptor;
 
     const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, 'purpose');
 
     const requestBody = getNormalizedBodyDescriptor(bodyDescriptor);
 
     const response = Object.values(responses)
-      .find(({responseDescriptor}) =>
+      .find(({ responseDescriptor }) =>
         responseDescriptor.requestId === requestId &&
         responseDescriptor.httpStatusCode === observedStatusCode);
 
@@ -230,22 +230,22 @@ class DiffPage extends React.Component {
   }
 
   getInterpretationCard(displayContext) {
-    const {interpretation, interpretationsLength, interpretationsIndex, setInterpretationIndex, applyCommands, queries} = this.props;
+    const { interpretation, interpretationsLength, interpretationsIndex, setInterpretationIndex, applyCommands, queries } = this.props;
 
-    const {contextJs: context, commands, actionTitle, descriptionJs: description, metadataJs} = interpretation;
+    const { contextJs: context, commands, actionTitle, descriptionJs: description, metadataJs } = interpretation;
 
     const descriptionProcessed = (() => {
-      const {template, fieldId, shapeId} = description;
+      const { template, fieldId, shapeId } = description;
 
       const inputs = {};
 
       if (fieldId) {
         const shapeStructure = queries.nameForFieldId(fieldId);
-        const name = shapeStructure.map(({name}) => name).join(' ');
+        const name = shapeStructure.map(({ name }) => name).join(' ');
         inputs['fieldId_SHAPE'] = name;
       } else if (shapeId) {
         const shapeStructure = queries.nameForShapeId(shapeId);
-        const name = shapeStructure.map(({name}) => name).join(' ');
+        const name = shapeStructure.map(({ name }) => name).join(' ');
         inputs['shapeId_SHAPE'] = name;
       }
       return Mustache.render(template, inputs);
@@ -259,7 +259,7 @@ class DiffPage extends React.Component {
         title={actionTitle}
         metadata={metadataJs}
         description={descriptionProcessed}
-        {...{interpretationsLength, interpretationsIndex, setInterpretationIndex}}
+        {...{ interpretationsLength, interpretationsIndex, setInterpretationIndex }}
         onAccept={() => {
           applyCommands(...JsonHelper.seqToJsArray(commands))(metadataJs.addedIds, metadataJs.changedIds);
         }}
@@ -277,9 +277,9 @@ class DiffPage extends React.Component {
   }
 
   getDiffCard(displayContext) {
-    const {interpretation, diff} = this.props;
+    const { interpretation, diff } = this.props;
 
-    const {contextJs: context} = interpretation;
+    const { contextJs: context } = interpretation;
 
     if (context.responseId && displayContext === 'response') {
       return diff;
@@ -292,35 +292,29 @@ class DiffPage extends React.Component {
   }
 
   render() {
-    const {classes, url, method, path, requestId, observed, skip, baseUrl, remainingInteractions} = this.props;
+    const { classes, url, method, path, observed, onSkip, baseUrl, remainingInteractions } = this.props;
 
-    const {requestBody, responseBody, response, purpose} = this.getSpecForRequest(observed.statusCode);
+    const { requestBody, responseBody, response, purpose } = this.getSpecForRequest(observed.statusCode);
 
 
-    const {metadataJs} = this.props.interpretation;
-    const {addedIds, changedIds} = metadataJs;
+    const { metadataJs } = this.props.interpretation;
+    const { addedIds, changedIds } = metadataJs;
 
     return (
       <div className={classes.root}>
         <HighlightedIDsStore addedIds={addedIds} changedIds={changedIds}>
           <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
             <Toolbar variant="dense">
-              <div style={{marginRight: 20}}>
+              <div style={{ marginRight: 20 }}>
                 <Link to={baseUrl}>
                   <Tooltip title="End Review">
                     <IconButton size="small" aria-label="delete" className={classes.margin} color="primary"
-                                disableRipple>
-                      <ClearIcon fontSize="small"/>
+                      disableRipple>
+                      <ClearIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 </Link>
               </div>
-
-              <Tooltip title="Replay API Examples">
-                <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple>
-                  <ReplayIcon fontSize="small"/>
-                </IconButton>
-              </Tooltip>
 
               <Typography variant="overline" className={classes.remaining}>
                 {remainingInteractions} remaining
@@ -328,15 +322,15 @@ class DiffPage extends React.Component {
 
               <Tooltip title="Skip Example">
                 <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple
-                            onClick={skip}>
-                  <SkipNextIcon fontSize="small"/>
+                  onClick={onSkip}>
+                  <SkipNextIcon fontSize="small" />
                 </IconButton>
               </Tooltip>
 
-              <div style={{flex: 6.6, textAlign: 'center'}}>
+              <div style={{ flex: 6.6, textAlign: 'center' }}>
                 <Typography variant="h6" color="primary">{purpose}</Typography>
               </div>
-              <div style={{flex: 1}}/>
+              <div style={{ flex: 1 }} />
 
             </Toolbar>
           </AppBar>
@@ -345,24 +339,24 @@ class DiffPage extends React.Component {
           <div className={classes.scroll}>
 
             <DiffDocGrid left={<Typography variant="h4" color="primary">Observed</Typography>}
-                         right={<Typography variant="h4" color="primary">Expected</Typography>}/>
+              right={<Typography variant="h4" color="primary">Expected</Typography>} />
 
-            <DiffPath path={path} method={method} url={url}/>
+            <DiffPath path={path} method={method} url={url} />
 
             <DiffRequest observedRequestBody={observed.requestBody}
-                         observedContentType={observed.requestContentType}
-                         requestBody={requestBody}
-                         diff={this.getDiffCard('request')}
-                         interpretation={this.getInterpretationCard('request')}
+              observedContentType={observed.requestContentType}
+              requestBody={requestBody}
+              diff={this.getDiffCard('request')}
+              interpretation={this.getInterpretationCard('request')}
             />
 
             <DiffResponse statusCode={observed.statusCode}
-                          observedResponseBody={observed.responseBody}
-                          observedContentType={observed.responseContentType}
-                          response={response}
-                          responseBody={responseBody}
-                          diff={this.getDiffCard('response')}
-                          interpretation={this.getInterpretationCard('response')}
+              observedResponseBody={observed.responseBody}
+              observedContentType={observed.responseContentType}
+              response={response}
+              responseBody={responseBody}
+              diff={this.getDiffCard('response')}
+              interpretation={this.getInterpretationCard('response')}
             />
 
 
