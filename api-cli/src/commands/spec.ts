@@ -198,7 +198,7 @@ export default class Spec extends Command {
   }
 
   async startServer(port: number, config: IApiCliConfig) {
-    const { specStorePath, sessionsPath, cwd } = await getPaths()
+    const { specStorePath, sessionsPath, exampleRequestsPath } = await getPaths()
     const sessionUtilities = new SessionUtilities(sessionsPath)
     const app = express()
 
@@ -214,6 +214,37 @@ export default class Spec extends Command {
       const events = req.body
       await fs.writeFile(specStorePath, prepareEvents(events))
       res.sendStatus(204)
+    })
+
+    app.post('/cli-api/example-requests/:requestId', bodyParser.json({ limit: '100mb' }), async (req, res) => {
+      const { requestId } = req.params;
+      const exampleFilePath = path.join(exampleRequestsPath, `${requestId}.json`)
+      const currentFileContents = await (async () => {
+        const exists = await fs.pathExists(exampleFilePath)
+        if (exists) {
+          return await fs.readJson(exampleFilePath)
+        }
+        return []
+      })()
+      currentFileContents.push(req.body);
+      await fs.ensureDir(exampleRequestsPath);
+      await fs.writeJson(exampleFilePath, currentFileContents, { spaces: 2 })
+      res.sendStatus(204)
+    })
+
+    app.get('/cli-api/example-requests/:requestId', async (req, res) => {
+      const { requestId } = req.params;
+      const exampleFilePath = path.join(exampleRequestsPath, `${requestId}.json`)
+      const currentFileContents = await (async () => {
+        const exists = await fs.pathExists(exampleFilePath)
+        if (exists) {
+          return await fs.readJson(exampleFilePath)
+        }
+        return []
+      })()
+      res.json({
+        examples: currentFileContents
+      })
     })
 
     app.get('/cli-api/sessions', async (req, res) => {
@@ -282,8 +313,8 @@ export default class Spec extends Command {
       }
     })
 
-    app.get('/cli-api/identity', async (req, res) => {      
-        res.json({ distinctId: await getUser() || 'anon' })
+    app.get('/cli-api/identity', async (req, res) => {
+      res.json({ distinctId: await getUser() || 'anon' })
     })
 
     app.use(express.static(path.join(__dirname, '../../resources/react')))
