@@ -15,6 +15,7 @@ import {ShapesCommands} from '../../engine';
 import {updateContribution} from '../../engine/routines.js';
 import ContributionTextField from '../contributions/ContributionTextField.js';
 import ShapeViewer from './ShapeViewer.js';
+import {DESCRIPTION} from '../../stories/doc-mode/ContributionKeys';
 
 
 class ConceptModalBase extends React.Component {
@@ -70,12 +71,12 @@ class ConceptModalBase extends React.Component {
 
                             <ContributionTextField
                                 key={`${shapeId}-description`}
-                                value={contributions.getOrUndefined(shapeId, 'description')}
+                                value={contributions.getOrUndefined(shapeId, DESCRIPTION)}
                                 variant={'multi'}
-                                placeholder={'Description'}
+                                placeholder={DESCRIPTION}
                                 mode={mode}
                                 onBlur={(value) => {
-                                    handleCommand(updateContribution(shapeId, 'description', value));
+                                    handleCommand(updateContribution(shapeId, DESCRIPTION, value));
                                 }}
                             />
                             <ShapeViewer shape={selectedShape}/>

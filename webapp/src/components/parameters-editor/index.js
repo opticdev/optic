@@ -24,6 +24,7 @@ import ParameterNameInput from './ParameterNameInput';
 import ContributionWrapper from '../contributions/ContributionWrapper';
 import {EditorModes} from '../../contexts/EditorContext';
 import Divider from '@material-ui/core/Divider';
+import {DESCRIPTION} from '../../stories/doc-mode/ContributionKeys';
 
 
 const styles = theme => ({
@@ -110,7 +111,7 @@ export function pathParametersToRows(pathParameters, contributions) {
     return {
       id: pathParameter.pathId,
       name: getName(pathParameter),
-      description: contributions.getOrUndefined(pathParameter.pathId, 'description'),
+      description: contributions.getOrUndefined(pathParameter.pathId, DESCRIPTION),
       shapeId: shapeDescriptor.shapeId,
       isRemoved: shapeDescriptor.isRemoved
     };
@@ -130,7 +131,7 @@ export function requestParametersToRows(parameters, contributions) {
     return {
       id: parameter.parameterId,
       name: parameter.requestParameterDescriptor.name,
-      description: contributions.getOrUndefined(parameter.parameterId, 'description'),
+      description: contributions.getOrUndefined(parameter.parameterId, DESCRIPTION),
       shapeId: shapeDescriptor.shapeId,
       isRemoved: shapeDescriptor.isRemoved
     };
@@ -198,7 +199,7 @@ class ParametersEditor extends React.Component {
                           style={{marginTop: -20}}
                           onClick={(e) => e.stopPropagation()}
                           contributionParentId={row.id}
-                          contributionKey={'description'}
+                          contributionKey={DESCRIPTION}
                           variant={'multi'}
                           placeholder={`Description`}
                         />

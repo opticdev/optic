@@ -32,6 +32,7 @@ import { commandsToJs, JsonHelper } from '../../engine';
 import Mustache from 'mustache';
 import { Link } from 'react-router-dom';
 import { withNavigationContext } from '../../contexts/NavigationContext';
+import {PURPOSE} from './ContributionKeys';
 
 const styles = theme => ({
   root: {
@@ -214,7 +215,7 @@ class DiffPage extends React.Component {
     const { requestDescriptor } = request;
     const { httpMethod, pathComponentId, bodyDescriptor } = requestDescriptor;
 
-    const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, 'purpose');
+    const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
 
     const requestBody = getNormalizedBodyDescriptor(bodyDescriptor);
 

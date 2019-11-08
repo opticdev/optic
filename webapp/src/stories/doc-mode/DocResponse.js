@@ -9,6 +9,7 @@ import {StickyRegion} from './StickyRegion';
 import {AddedGreen, Highlight} from './shape/HighlightedIDs';
 import {STATUS_CODES} from 'http';
 import {Typography} from '@material-ui/core';
+import {BODY_DESCRIPTION} from './ContributionKeys';
 
 export function DocResponse({
                               statusCode,
@@ -29,7 +30,7 @@ export function DocResponse({
           value={description}
           label="What does this response mean?"
           onChange={(value) => {
-            updateContribution(responseId, 'body', value);
+            updateContribution(responseId, BODY_DESCRIPTION, value);
           }}/>
       </DocSubGroup>
     </StickyRegion>

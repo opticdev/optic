@@ -31,6 +31,7 @@ import { AddedStyle, withColoredIdsContext } from '../contexts/ColorContext';
 import classNames from 'classnames';
 import { withNavigationContext } from '../contexts/NavigationContext.js';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
+import {DESCRIPTION} from '../stories/doc-mode/ContributionKeys';
 
 const styles = theme => ({
   root: {
@@ -139,7 +140,7 @@ class OperationBase extends React.Component {
           <ContributionWrapper
             style={{ marginTop: -20 }}
             contributionParentId={requestId}
-            contributionKey={'description'}
+            contributionKey={DESCRIPTION}
             variant={'multi'}
             placeholder={`Description`}
           />
@@ -254,7 +255,7 @@ class ResponseListWithoutContext extends React.Component {
                 style={{ marginTop: -20 }}
                 contributionParentId={responseId}
                 defaultText={'No Description'}
-                contributionKey={'description'}
+                contributionKey={DESCRIPTION}
                 variant={'multi'}
                 placeholder={`Response Description`}
               />

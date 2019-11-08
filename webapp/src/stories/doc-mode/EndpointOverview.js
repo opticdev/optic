@@ -15,6 +15,7 @@ import Fab from '@material-ui/core/Fab';
 import SubjectIcon from '@material-ui/icons/Subject';
 import {Link} from 'react-router-dom';
 import {withNavigationContext} from '../../contexts/NavigationContext';
+import {DESCRIPTION, PURPOSE} from './ContributionKeys';
 
 const styles = theme => ({
   root: {
@@ -52,7 +53,7 @@ class EndpointOverview extends React.Component {
           value={endpointPurpose}
           label="What does this endpoint do?"
           onChange={(newValue) => {
-            updateContribution(requestId, 'purpose', newValue);
+            updateContribution(requestId, PURPOSE, newValue);
           }}
         />
 
@@ -61,7 +62,7 @@ class EndpointOverview extends React.Component {
             value={endpointDescription}
             label="Detailed Description"
             onChange={(newValue) => {
-              updateContribution(requestId, 'description', newValue);
+              updateContribution(requestId, DESCRIPTION, newValue);
             }}
           />
         </div>

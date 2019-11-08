@@ -21,6 +21,7 @@ import compose from 'lodash.compose';
 import {PathIdToPathString} from './PathIdToPathString';
 import {updateContribution} from '../../engine/routines';
 import { NavHashLink as NavLink } from 'react-router-hash-link';
+import {DESCRIPTION, PURPOSE} from './ContributionKeys';
 
 const drawerWidth = 320;
 
@@ -107,7 +108,7 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
           {operationsToRender.map(({requestId, request}) => {
 
             const {httpMethod, pathComponentId} = request.requestDescriptor;
-            const purpose = contributions.getOrUndefined(requestId, 'purpose') || (
+            const purpose = contributions.getOrUndefined(requestId, PURPOSE) || (
               <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
             );
 
@@ -228,13 +229,13 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
             .map(p => ({
               pathId: p.pathId,
               name: p.descriptor.ParameterizedPathComponentDescriptor.name,
-              description: contributions.getOrUndefined(p.pathId, 'description')
+              description: contributions.getOrUndefined(p.pathId, DESCRIPTION)
             }));
 
           return (
             <EndpointOverview
-              endpointPurpose={contributions.getOrUndefined(operation.requestId, 'purpose')}
-              endpointDescription={contributions.getOrUndefined(operation.requestId, 'description')}
+              endpointPurpose={contributions.getOrUndefined(operation.requestId, PURPOSE)}
+              endpointDescription={contributions.getOrUndefined(operation.requestId, DESCRIPTION)}
               requestId={operation.requestId}
               method={operation.request.requestDescriptor.httpMethod}
               parameters={pathParameters}

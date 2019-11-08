@@ -24,6 +24,7 @@ import {Link} from 'react-router-dom';
 import {withNavigationContext} from '../../contexts/NavigationContext';
 import {Helmet} from 'react-helmet';
 import groupby from 'lodash.groupby'
+import {BODY_DESCRIPTION, DESCRIPTION, PURPOSE} from './ContributionKeys';
 
 const styles = theme => ({
   root: {
@@ -141,7 +142,7 @@ class EndpointPageDataLoader extends React.Component {
       .map(p => ({
         pathId: p.pathId,
         name: p.descriptor.ParameterizedPathComponentDescriptor.name,
-        description: contributions.getOrUndefined(p.pathId, 'description')
+        description: contributions.getOrUndefined(p.pathId, DESCRIPTION)
       }));
 
     // Request Body
@@ -160,12 +161,13 @@ class EndpointPageDataLoader extends React.Component {
     return (
       <div className={classes.wrapper}>
         <EndpointPage
-          endpointPurpose={contributions.getOrUndefined(requestId, 'purpose')}
-          endpointDescription={contributions.getOrUndefined(requestId, 'description')}
+          endpointPurpose={contributions.getOrUndefined(requestId, PURPOSE)}
+          endpointDescription={contributions.getOrUndefined(requestId, DESCRIPTION)}
           requestId={requestId}
           updateContribution={(id, key, value) => {
             handleCommand(updateContribution(id, key, value));
           }}
+          getContribution={contributions.getOrUndefined}
           showShapesFirst={showShapesFirst}
           method={httpMethod}
           requestBody={requestBody}
@@ -200,6 +202,7 @@ class _EndpointPage extends React.Component {
       method,
       url,
       parameters = [],
+      getContribution,
       updateContribution,
       requestId,
       requestBodyExample,
@@ -214,7 +217,7 @@ class _EndpointPage extends React.Component {
             value={endpointPurpose}
             label="What does this endpoint do?"
             onChange={(value) => {
-              updateContribution(requestId, 'purpose', value);
+              updateContribution(requestId, PURPOSE, value);
             }}
           />
           <div style={{marginTop: -6, marginBottom: 6}}>
@@ -222,7 +225,7 @@ class _EndpointPage extends React.Component {
               value={endpointDescription}
               label="Detailed Description"
               onChange={(value) => {
-                updateContribution(requestId, 'description', value);
+                updateContribution(requestId, DESCRIPTION, value);
               }}/>
           </div>
 
@@ -258,8 +261,7 @@ class _EndpointPage extends React.Component {
       if (Object.keys(requestBody).length && !isRemoved) {
         return (
           <DocRequest
-            description={'Pass along the body to do the thing'}
-            fields={[{title: 'fieldA', description: 'does something'}]}
+            description={getContribution(requestId, BODY_DESCRIPTION)}
             contentType={httpContentType}
             shapeId={shapeId}
             requestId={requestId}
@@ -281,7 +283,7 @@ class _EndpointPage extends React.Component {
         <DocResponse
           statusCode={httpStatusCode}
           responseId={responseId}
-          description={'The thing got deleted'}
+          description={getContribution(responseId, BODY_DESCRIPTION)}
           fields={[]}
           contentType={httpContentType}
           shapeId={shapeId}
@@ -329,7 +331,7 @@ export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyl
 
   const {requestId} = match.params
 
-  const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, 'purpose')
+  const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE)
 
   return (
     <div className={classes.container}>
