@@ -118,7 +118,7 @@ const DiffPageStateManager = withRfcContext((props) => {
     onDiscard
   } = props;
   const [interpretationIndex, setInterpretationIndex] = useState(0);
-
+  const [dependentCommands, setDependentCommands] = useState([]);
   const interpretation = interpretations[interpretationIndex]
   const commands = interpretation ? JsonHelper.seqToJsArray(interpretation.commands) : [];
   const { sample, pathId, requestId, index } = item;
@@ -130,11 +130,12 @@ const DiffPageStateManager = withRfcContext((props) => {
       shouldSimulate={true}
       rfcId={rfcId}
       eventStore={eventStore}
-      commands={commands}
+      commands={[...commands, ...dependentCommands]}
       specService={specService}
     >
       <NamerStore nameShape={(shapeId, name) => {
-        applyCommands(...[
+        setDependentCommands([
+          ...dependentCommands,
           ShapesCommands.RenameShape(shapeId, name)
         ])
       }}>
@@ -151,7 +152,7 @@ const DiffPageStateManager = withRfcContext((props) => {
           interpretationsLength={interpretations.length}
           interpretationsIndex={interpretationIndex}
           setInterpretationIndex={setInterpretationIndex}
-          applyCommands={applyCommands}
+          applyCommands={(...commands) => applyCommands(...commands, ...dependentCommands)}
 
           //observation
           observed={{
