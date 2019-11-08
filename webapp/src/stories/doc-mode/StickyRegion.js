@@ -1,5 +1,4 @@
 import React from 'react';
-import ListSubheader from '@material-ui/core/ListSubheader';
 
 export function StickyRegion({children}) {
   return (

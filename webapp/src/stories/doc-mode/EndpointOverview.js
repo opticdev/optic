@@ -86,12 +86,10 @@ class EndpointOverview extends React.Component {
       <>
         <EndpointOverviewCodeBox method={method.toUpperCase()} url={url}/>
         <div className={classes.viewButton}>
-          <Link to={docsUrl} className={classes.link}>
-            <Button variant="outlined" color="primary">
+            <Button variant="outlined" color="primary" to={docsUrl} className={classes.link} component={Link}>
               <SubjectIcon style={{marginRight: 6}}/>
               View Documentation
             </Button>
-          </Link>
         </div>
       </>
     );

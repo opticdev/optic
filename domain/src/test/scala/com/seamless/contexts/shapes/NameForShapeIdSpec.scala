@@ -1,8 +1,8 @@
 package com.seamless.contexts.shapes
 
 import com.seamless.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
-import com.seamless.contexts.shapes.Commands.FieldShapeFromShape
-import com.seamless.contexts.shapes.projections.NameForShapeId
+import com.seamless.contexts.shapes.Commands.{AddShape, FieldShapeFromShape}
+import com.seamless.contexts.shapes.projections.{FlatShapeProjection, NameForShapeId}
 import com.seamless.diff._
 import com.seamless.diff.initial.ShapeBuilder
 import org.scalatest.FunSpec
@@ -88,5 +88,36 @@ class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
 
     assert(name == "List of PetId")
   }
+
+  it("works for nested shapes") {
+    val commands = commandsFrom("nested-naming")
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    val rfcService: RfcService = new RfcService(eventStore)
+    rfcService.handleCommandSequence("id", commands, commandContext)
+    rfcService.currentState("id")
+    val shapesState = rfcService.currentState("id").shapesState
+
+    val a= FlatShapeProjection.forShapeId("shape_Me4aQ0D3VR")(shapesState)
+
+    assert(a.root.joinedTypeName == "abc")
+  }
+//
+//  it("works for nested shapes") {
+//
+//
+//
+//    val eventStore = RfcServiceJSFacade.makeEventStore()
+//    val rfcService: RfcService = new RfcService(eventStore)
+//
+//    val commands = Seq(
+//      AddShape("inner", "$object", "I have a names"),
+//      AddShape("outer", "inner", ""),
+//    )
+//    rfcService.handleCommandSequence("id", commands, commandContext)
+//    val shapesState = rfcService.currentState("id").shapesState
+//
+//    val name = NameForShapeId.getFlatShapeName("outer")(shapesState)
+//    println(name)
+//  }
 
 }

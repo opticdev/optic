@@ -40,16 +40,11 @@ export class LocalLoader extends React.Component {
   }
 
   loadEvents = () => {
-    return fetch(`/cli-api/events`, { headers: { 'accept': 'application/json' } })
-      .then(response => {
-        if (response.ok) {
-          return response.text()
-            .then(rawString => {
-              this.setState({
-                loadedEvents: rawString
-              });
-            });
-        }
+    return specService.listEvents()
+      .then(events => {
+        this.setState({
+          loadedEvents: events
+        })
       })
       .catch((e) => {
         console.error(e)
@@ -123,15 +118,7 @@ export class LocalLoader extends React.Component {
   }
 }
 
-export function RequestViewer(props) {
-  const { match } = props;
-  const { requestId } = match.params;
-  return (
-    <div>request {requestId}</div>
-  );
-}
-
-export class LocalSpecOverview extends React.Component {
+class LocalSpecOverview extends React.Component {
   render() {
     return (
       <SpecOverview notificationAreaComponent={<NewBehavior specService={specService} />} />

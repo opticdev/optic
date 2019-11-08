@@ -1,18 +1,15 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {Collapse, TextField} from '@material-ui/core';
-import Fade from '@material-ui/core/Fade';
-import {StyledTab, StyledTabs} from '../DocCodeBox';
-import IconButton from '@material-ui/core/IconButton';
+import { TextField } from '@material-ui/core';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import {Show} from '../Show';
-import {primitiveDocColors} from '../DocConstants';
-import {withRfcContext} from '../../../contexts/RfcContext';
-import {Highlight, HighlightedIDsStore, withHighlightedIDs} from './HighlightedIDs';
-import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { Show } from '../Show';
+import compose from 'lodash.compose';
+import { primitiveDocColors } from '../DocConstants';
+import { withRfcContext } from '../../../contexts/RfcContext';
+import { Highlight, HighlightedIDsStore, withHighlightedIDs } from './HighlightedIDs';
 import Menu from '@material-ui/core/Menu';
-import {NamerStore, withNamer} from './Namer';
+import { NamerStore, withNamer } from './Namer';
 
 const styles = theme => ({
   base: {
@@ -41,6 +38,7 @@ const styles = theme => ({
     userSelect: 'none',
     marginTop: 2,
     fontWeight: 100,
+    wordBreak: 'break-all'
   },
   namer: {
     width: 20,
@@ -76,21 +74,21 @@ const styles = theme => ({
   }
 });
 
-export const Row = withStyles(styles)(({classes, children, style, depth = 0}) => {
+export const Row = withStyles(styles)(({ classes, children, style, depth = 0 }) => {
   return (
-    <li className={classes.row} style={{paddingLeft: depth * 8, ...style}}>{children}</li>
+    <li className={classes.row} style={{ paddingLeft: depth * 8, ...style }}>{children}</li>
   );
 });
 
-export const ExpandableRow = withStyles(styles)(({classes, children, innerChildren, fields, depth}) => {
+export const ExpandableRow = withStyles(styles)(({ classes, children, innerChildren, fields, depth }) => {
   const [expanded, setExpanded] = useState(true);
   return (
     <>
-      <li className={classes.row} style={{paddingLeft: depth * 8, cursor: 'pointer'}}
-          onClick={() => setExpanded(!expanded)}>
-          {expanded ?
-            <ArrowDropDownIcon className={classes.arrow} onClick={() => setExpanded(!expanded)}/> :
-            <ArrowRightIcon className={classes.arrow} onClick={() => setExpanded(!expanded)}/>}
+      <li className={classes.row} style={{ paddingLeft: depth * 8, cursor: 'pointer' }}
+        onClick={() => setExpanded(!expanded)}>
+        {expanded ?
+          <ArrowDropDownIcon className={classes.arrow} onClick={() => setExpanded(!expanded)} /> :
+          <ArrowRightIcon className={classes.arrow} onClick={() => setExpanded(!expanded)} />}
         {children}
       </li>
       <Show when={expanded}>
@@ -100,7 +98,7 @@ export const ExpandableRow = withStyles(styles)(({classes, children, innerChildr
   );
 });
 
-export const RootRow = withHighlightedIDs(withStyles(styles)(({classes, expand, id, typeName, depth}) => {
+export const RootRow = withHighlightedIDs(withStyles(styles)(({ classes, expand, id, typeName, depth }) => {
 
   const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null
 
@@ -116,13 +114,13 @@ export const RootRow = withHighlightedIDs(withStyles(styles)(({classes, expand, 
 
   return (
     <>
-      <Row style={{paddingLeft: 6}}>
-        <TypeNameRender typeName={typeName} id={id} onLinkClick={setParam}/>
+      <Row style={{ paddingLeft: 6 }}>
+        <TypeNameRender typeName={typeName} id={id} onLinkClick={setParam} />
       </Row>
       {expandedParam && (
-        <div style={{paddingLeft: depth * 8}}>
+        <div style={{ paddingLeft: depth * 8 }}>
           <div className={classes.innerParam}>
-            <ShapeViewerWithQuery shapeId={expandedParam}/>
+            <ShapeViewerWithQuery shapeId={expandedParam} />
           </div>
         </div>
       )}
@@ -130,7 +128,7 @@ export const RootRow = withHighlightedIDs(withStyles(styles)(({classes, expand, 
   );
 }));
 
-export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, typeName, fields, fieldName, baseShapeId, parameters, depth, id, fieldId}) => {
+export const Field = withHighlightedIDs(withStyles(styles)(({ classes, expand, typeName, fields, fieldName, baseShapeId, parameters, depth, id, fieldId }) => {
 
   const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null
   const [expandedParam, setExpandedParam] = useState(defaultParam);
@@ -147,13 +145,13 @@ export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, ty
     {typeName[0].colorKey !== 'index' ? (<>
       <div className={classes.fieldName}>{fieldName}</div>
       <div className={classes.colon}>:</div>
-    </>) : <span style={{marginTop: 2}}>-</span>}
-    <div style={{marginLeft: 4}}><TypeNameRender typeName={typeName} id={id} onLinkClick={setParam}/></div>
+    </>) : <span style={{ marginTop: 2 }}>-</span>}
+    <div style={{ marginLeft: 4 }}><TypeNameRender typeName={typeName} id={id} onLinkClick={setParam} /></div>
   </>;
 
   if (fields.length) {
     const fieldsRendered = fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={fieldId}
-                                                  depth={depth + 2}/>);
+      depth={depth + 2} />);
     //use expandable row
     return <ExpandableRow depth={depth + 1} innerChildren={fieldsRendered}>
       {shared}
@@ -169,20 +167,20 @@ export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, ty
         </Row>
       </Highlight>
       {expandedParam && (
-        <div style={{paddingLeft: depth * 8}}>
+        <div style={{ paddingLeft: depth * 8 }}>
           <div className={classes.innerParam}>
-            <ShapeViewerWithQuery shapeId={expandedParam}/>
+            <ShapeViewerWithQuery shapeId={expandedParam} />
           </div>
-          <div style={{height: 10}}/>
+          <div style={{ height: 10 }} />
         </div>
       )}
     </>
   );
 }));
 
-export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLinkClick}) => {
+export const TypeNameRender = withStyles(styles)(({ classes, id, typeName, onLinkClick }) => {
 
-  const components = typeName.map(({name, shapeLink, primitiveId}) => {
+  const components = typeName.map(({ name, shapeLink, primitiveId }) => {
 
     const color = primitiveDocColors[primitiveId];
 
@@ -195,12 +193,12 @@ export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLink
             }
           }}
           className={classes.link}
-          style={{color: color || '#00BFFF'}}>{name}</span>
+          style={{ color: color || '#00BFFF' }}>{name}</span>
         {' '}
       </>);
     }
 
-    return <span style={{color}}>{name + ' '}</span>;
+    return <span style={{ color }}>{name + ' '}</span>;
   });
 
   return <Highlight id={id}>
@@ -209,8 +207,8 @@ export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLink
 
 });
 
-export const Namer = withNamer(withStyles(styles)(({classes, nameShape, id}) => {
-
+export const Namer = compose(withNamer, withStyles(styles))(props => {
+  const { classes, nameShape, id } = props;
   const [anchorEl, setAnchorEl] = useState(null);
   const [conceptName, setConceptName] = useState('');
 
@@ -224,54 +222,55 @@ export const Namer = withNamer(withStyles(styles)(({classes, nameShape, id}) => 
     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
       <div className={classes.namerInner}>
         <TextField value={conceptName}
-                   label="Name Concept"
-                   autoFocus
-                   onBlur={finish}
-                   onKeyPress={(e) => {
-                     if (e.which === 13) {
-                       finish();
-                     }
-                   }}
-                   onChange={(e) => setConceptName(e.target.value)}/>
+          label="Name Concept"
+          autoFocus
+          onBlur={finish}
+          onKeyPress={(e) => {
+            if (e.which === 13) {
+              finish();
+            }
+          }}
+          onChange={(e) => setConceptName(e.target.value)} />
       </div>
     </Menu>
   );
 
   return (<>
     {menu}
-    <div style={{flex: 1}}/>
+    <div style={{ flex: 1 }} />
     <div className={classes.namer} onClick={(e) => setAnchorEl(e.currentTarget)}>
       ○
     </div>
   </>);
-}));
+});
 
-export const ObjectViewer = withStyles(styles)(({classes, typeName, canName, id, fields, depth = 0}) => {
+export const ObjectViewer = withStyles(styles)(({ classes, typeName, canName, id, fields, depth = 0 }) => {
 
   return (<>
-      <Row style={{paddingLeft: 6}}>
-        {<TypeNameRender typeName={typeName} id={id}/>}
-        {/*{canName && <Namer id={id} />}*/}
-      </Row>
-      {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} depth={depth + 1}/>)}
-    </>
+    <Row style={{ paddingLeft: 6 }}>
+      {<TypeNameRender typeName={typeName} id={id} />}
+      {canName && <Namer id={id} />}
+    </Row>
+    {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} depth={depth + 1} />)}
+  </>
   );
 });
 
 function handleBaseShape(shape) {
-  const {baseShapeId, typeName, id, fields} = shape;
+  const { baseShapeId, typeName, id, fields } = shape;
+  console.log('xxx', { shape })
   if (baseShapeId === '$object' || fields.length) {
     return <ObjectViewer {...shape} />;
   } else {
-    return <RootRow typeName={typeName} id={id}/>;
+    return <RootRow typeName={typeName} id={id} />;
   }
 }
 
 class _ShapeViewerBase extends React.Component {
   render() {
-    const {shape, depth = 0, parameters, classes} = this.props;
+    const { shape, depth = 0, parameters, classes } = this.props;
 
-    const {baseShapeId} = shape;
+    const { baseShapeId } = shape;
 
     const root = handleBaseShape(shape);
     return (
@@ -283,23 +282,23 @@ class _ShapeViewerBase extends React.Component {
 const ShapeViewer = withStyles(styles)(_ShapeViewerBase);
 export default ShapeViewer;
 
-export const ExampleViewer = withRfcContext(({example, queries}) => {
+export const ExampleViewer = withRfcContext(({ example, queries }) => {
   const flatShape = queries.flatShapeForExample(example);
   return (
     <NamerStore>
-      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
+      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} />
     </NamerStore>
   );
 });
 
-export const ShapeViewerWithQuery = withHighlightedIDs(withRfcContext(({shapeId, addedIds, changedIds, queries}) => {
+export const ShapeViewerWithQuery = withHighlightedIDs(withRfcContext(({ shapeId, addedIds, changedIds, queries }) => {
   const affectedIds = [...addedIds, ...changedIds]
   const flatShape = queries.flatShapeForShapeId(shapeId, affectedIds);
   const expand = Array.from(new Set([...flatShape.pathsForAffectedIds.flatMap(x => x)]))
 
   return (
     <HighlightedIDsStore addedIds={addedIds} changedIds={changedIds} expand={expand}>
-      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
+      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} />
     </HighlightedIDsStore>
   );
 }));

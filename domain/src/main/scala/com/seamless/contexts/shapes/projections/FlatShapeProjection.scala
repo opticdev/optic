@@ -124,7 +124,8 @@ object FlatShapeProjection {
 //          Seq(ColoredComponent(param.split(":").last+":", "text", None)) ++ seq
 //        })
 
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), fields, canName)
+
+        FlatShape(baseObject.descriptor.baseShapeId, NameForShapeId.getShapeName(baseObject.shapeId), fields, baseObject.shapeId, canName)
       }
 
       //fallback to primitives

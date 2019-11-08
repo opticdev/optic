@@ -1,6 +1,7 @@
 import React from 'react';
-import {Grid, makeStyles} from '@material-ui/core';
+import { Grid, makeStyles } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
+import { StickyRegion } from './StickyRegion';
 
 const useStyles = makeStyles(theme => ({
   right: {
@@ -35,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export function DocGrid({left, right, style}) {
+export function DocGrid({ left, right, style }) {
 
   const classes = useStyles();
 
@@ -47,14 +48,18 @@ export function DocGrid({left, right, style}) {
   );
 }
 
-export function DiffDocGrid({left, leftColor, right, style}) {
+export function DiffDocGrid({ left, leftColor, right, style }) {
 
   const classes = useStyles();
 
   return (
     <Grid container style={style}>
       <Grid item xs={6} className={classes.leftDiff} alignItems="center">
-        <div className={classes.maxWidth}>{left}</div>
+        <StickyRegion>
+          <div className={classes.maxWidth}>
+            {left}
+          </div>
+        </StickyRegion>
       </Grid>
       <Grid item xs={6} className={classes.rightDiff} alignItems="center">
         <div className={classes.maxWidth}>{right}</div>

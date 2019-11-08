@@ -68,12 +68,12 @@ function InterpretationInfo({
         </div>
         <div className={classes.buttons}>
           <div>
-            <IconButton size="small" disabled={!leftEnabled}>
-              <ChevronLeftIcon fontSize="small"/>
-            </IconButton>
-            <IconButton size="small" disabled={!rightEnabled}>
-              <ChevronRightIcon fontSize="small"/>
-            </IconButton>
+            {/*<IconButton size="small" disabled={!leftEnabled}>*/}
+            {/*  <ChevronLeftIcon fontSize="small"/>*/}
+            {/*</IconButton>*/}
+            {/*<IconButton size="small" disabled={!rightEnabled}>*/}
+            {/*  <ChevronRightIcon fontSize="small"/>*/}
+            {/*</IconButton>*/}
             <IconButton size="small" color="primary" autoFocus onClick={onAccept
             }>
               <DoneIcon fontSize="small"/>

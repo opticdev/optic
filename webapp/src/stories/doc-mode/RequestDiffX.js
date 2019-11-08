@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
-import {Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction} from '../../engine';
+import { Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction } from '../../engine';
 import { RfcContext, withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
 import { PathIdToPathString } from './PathIdToPathString';
@@ -9,12 +9,19 @@ import { DiffToDiffCard } from './DiffCopy';
 import PreCommit from './PreCommit';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
-import {NamerStore} from './shape/Namer';
+import { NamerStore } from './shape/Namer';
 
 class RequestDiffX extends React.Component {
+  handleDiscard = async () => {
+    const { specService, eventStore, rfcId } = this.props;
+    const { pushRelative } = this.props;
 
+    const events = await specService.listEvents()
+    eventStore.remove(rfcId)
+    eventStore.bulkAdd(rfcId, events)
+    pushRelative('');
+  }
   render() {
-    const { baseUrl } = this.props;
     const { match } = this.props;
     const { specService } = this.props;
     const { diffStateProjections, diffSessionManager, rfcService, eventStore, rfcId } = this.props;
@@ -41,7 +48,9 @@ class RequestDiffX extends React.Component {
             item={item}
             diff={diffItem}
             diffSessionManager={diffSessionManager}
-            interpretations={allInterpretations} />
+            interpretations={allInterpretations}
+            onDiscard={this.handleDiscard}
+          />
         ));
       }
     }
@@ -63,24 +72,9 @@ class RequestDiffX extends React.Component {
 
           this.props.pushRelative('')
         }}
-        onDiscard={() => {
-          window.location.href = baseUrl;
-        }}
-      />)
-
-    /*
-     Approve button handleCommands
-     interpreation commands fed into
-
-     <SimulatedCommandContext
-        shouldSimulate={true}
-        rfcId={rfcId}
-        eventStore={eventStore}
-        commands={commands}
-      >
-
-
-     */
+        onDiscard={this.handleDiscard}
+      />
+    )
   }
 
   renderWrapped(item, child) {
@@ -118,11 +112,13 @@ const DiffPageStateManager = withRfcContext((props) => {
     handleCommands: applyCommands,
     rfcId,
     diffSessionManager,
+    specService,
     eventStore,
-    queries
+    queries,
+    onDiscard
   } = props;
   const [interpretationIndex, setInterpretationIndex] = useState(0);
-
+  const [dependentCommands, setDependentCommands] = useState([]);
   const interpretation = interpretations[interpretationIndex]
   const commands = interpretation ? JsonHelper.seqToJsArray(interpretation.commands) : [];
   const { sample, pathId, requestId, index } = item;
@@ -134,42 +130,45 @@ const DiffPageStateManager = withRfcContext((props) => {
       shouldSimulate={true}
       rfcId={rfcId}
       eventStore={eventStore}
-      commands={commands}
+      commands={[...commands, ...dependentCommands]}
+      specService={specService}
     >
       <NamerStore nameShape={(shapeId, name) => {
-        applyCommands(...[
+        setDependentCommands([
+          ...dependentCommands,
           ShapesCommands.RenameShape(shapeId, name)
         ])
       }}>
-      <DiffPage
-        //request context
-        url={sample.request.url}
-        path={<PathIdToPathString pathId={pathId} />}
-        method={sample.request.method}
-        requestId={requestId}
+        <DiffPage
+          //request context
+          url={sample.request.url}
+          path={<PathIdToPathString pathId={pathId} />}
+          method={sample.request.method}
+          requestId={requestId}
 
-        //diff / interpretations
-        diff={diffCard}
-        interpretation={interpretation}
-        interpretationsLength={interpretations.length}
-        interpretationsIndex={interpretationIndex}
-        setInterpretationIndex={setInterpretationIndex}
-        applyCommands={applyCommands}
+          //diff / interpretations
+          diff={diffCard}
+          interpretation={interpretation}
+          interpretationsLength={interpretations.length}
+          interpretationsIndex={interpretationIndex}
+          setInterpretationIndex={setInterpretationIndex}
+          applyCommands={(...commands) => applyCommands(...commands, ...dependentCommands)}
 
-        //observation
-        observed={{
-          statusCode: sample.response.statusCode,
-          requestContentType: sample.request.headers['content-type'],
-          requestBody: sample.request.body,
-          responseContentType: sample.response.headers['content-type'],
-          responseBody: sample.response.body
-        }}
+          //observation
+          observed={{
+            statusCode: sample.response.statusCode,
+            requestContentType: sample.request.headers['content-type'],
+            requestBody: sample.request.body,
+            responseContentType: sample.response.headers['content-type'],
+            responseBody: sample.response.body
+          }}
 
-        //control
-        onSkip={() => {
-          diffSessionManager.skipInteraction(index)
-        }}
-      />
+          //control
+          onSkip={() => {
+            diffSessionManager.skipInteraction(index)
+          }}
+          onDiscard={onDiscard}
+        />
       </NamerStore>
     </SimulatedCommandContext>
   );

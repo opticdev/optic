@@ -98,6 +98,7 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
 
   override def hasId(id: AggregateId): Boolean = _store.isDefinedAt(id)
 
+  @JSExport
   override def remove(id: AggregateId): Unit = _store.remove(id)
 }
 

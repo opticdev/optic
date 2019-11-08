@@ -84,7 +84,8 @@ class EndpointPageDataLoader extends React.Component {
     if (specService) {
       specService.listExamples(requestId)
         .then(({examples}) => {
-          this.setState({examples})
+          //take from the end
+          this.setState({examples: examples.reverse()})
         })
     }
   }
@@ -167,7 +168,7 @@ class EndpointPageDataLoader extends React.Component {
           updateContribution={(id, key, value) => {
             handleCommand(updateContribution(id, key, value));
           }}
-          getContribution={contributions.getOrUndefined}
+          getContribution={(id, key) => contributions.getOrUndefined(id, key)}
           showShapesFirst={showShapesFirst}
           method={httpMethod}
           requestBody={requestBody}
