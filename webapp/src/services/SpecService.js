@@ -16,6 +16,19 @@ class SpecService {
             })
     }
 
+    getJsonAsText(url) {
+        return fetch(url, {
+            headers: {
+                'accept': 'application/json',
+            }
+        })
+            .then((response) => {
+                if (response.ok) {
+                    return response.text()
+                }
+            })
+    }
+
 
     putJson(url, body) {
         return fetch(url, {
@@ -26,7 +39,7 @@ class SpecService {
             body
         })
     }
-    
+
     postJson(url, body) {
         return fetch(url, {
             method: 'POST',
@@ -36,7 +49,11 @@ class SpecService {
             body
         })
     }
-    
+
+    listEvents() {
+        return this.getJsonAsText(`/cli-api/events`)
+    }
+
     listSessions() {
         return this.getJson(`/cli-api/sessions`)
     }

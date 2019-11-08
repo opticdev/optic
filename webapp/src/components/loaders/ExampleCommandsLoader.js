@@ -11,10 +11,10 @@ import {
   Button
 } from '@material-ui/core'
 import Loading from '../../components/navigation/Loading';
-import { RequestViewer, SpecOverview } from '../routes/local';
+import { SpecOverview } from '../routes/local';
 import { routerPaths } from '../../routes';
 import { NavigationStore } from '../../contexts/NavigationContext';
-import {RequestsDetailsPage} from '../../stories/doc-mode/EndpointPage';
+import { RequestsDetailsPage } from '../../stories/doc-mode/EndpointPage';
 
 
 class ExampleCommandsSpecOverview extends React.Component {

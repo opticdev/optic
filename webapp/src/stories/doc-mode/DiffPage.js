@@ -1,37 +1,28 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Editor from '../../components/navigation/Editor';
-import { DiffDocGrid, DocGrid } from './DocGrid';
 import { AppBar, Grid, Typography } from '@material-ui/core';
 import { DocDarkGrey, DocGrey, methodColors, SubHeadingStyles } from './DocConstants';
-import { HeadingContribution } from './DocContribution';
 import { DocCodeBox, EndpointOverviewCodeBox, ExampleOnly, ShapeOnly, ShapeOverview } from './DocCodeBox';
 import { DocSubGroup } from './DocSubGroup';
-import DiffInfo from './DiffInfo';
 import { STATUS_CODES } from 'http';
-import InterpretationCard from './InterpretationCard';
 import PropTypes from 'prop-types';
-import Drawer from '@material-ui/core/Drawer';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
-import ReplayIcon from '@material-ui/icons/Replay';
-import Button from '@material-ui/core/Button';
-import FastRewindIcon from '@material-ui/icons/FastRewind';
 import Tooltip from '@material-ui/core/Tooltip';
 import ClearIcon from '@material-ui/icons/Clear';
 import InterpretationInfo from './InterpretationInfo';
 import { AddedGreen, Highlight, HighlightedIDsStore } from './shape/HighlightedIDs';
 import { withRfcContext } from '../../contexts/RfcContext';
 import { getNormalizedBodyDescriptor } from '../../components/PathPage';
-import { DiffToDiffCard } from './DiffCopy';
-import { commandsToJs, JsonHelper } from '../../engine';
+import { JsonHelper } from '../../engine';
 import Mustache from 'mustache';
 import { Link } from 'react-router-dom';
 import { withNavigationContext } from '../../contexts/NavigationContext';
+import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
+import compose from 'lodash.compose';
+import { DiffDocGrid } from './DocGrid';
 
 const styles = theme => ({
   root: {
@@ -183,28 +174,6 @@ const DiffResponse = withStyles(styles)(({
   );
 });
 
-const SpecPanel = withStyles(styles)(({ classes }) => {
-
-  return (
-    <div className={classes.specContainer}>
-      <Typography variant="h4" color="primary">{'Add Pet to User'}</Typography>
-
-      <div>
-        <EndpointOverviewCodeBox method={'POST'} url={'/users/:userId/pets'} />
-      </div>
-
-      <DocSubGroup title="Request" style={{ marginTop: 22 }}>
-        <ShapeOverview title="Shape" />
-      </DocSubGroup>
-
-      <DocSubGroup title="200 Response" style={{ marginTop: 22 }}>
-        <ShapeOverview title="Shape" />
-      </DocSubGroup>
-
-    </div>
-  );
-});
-
 class DiffPage extends React.Component {
 
   getSpecForRequest(observedStatusCode) {
@@ -298,6 +267,10 @@ class DiffPage extends React.Component {
     }
   }
 
+  handleDiscard = () => {
+    this.props.onDiscard()
+  }
+
   render() {
     const { classes, url, method, path, observed, onSkip, baseUrl, remainingInteractions } = this.props;
 
@@ -317,7 +290,8 @@ class DiffPage extends React.Component {
                 <Link to={baseUrl}>
                   <Tooltip title="End Review">
                     <IconButton size="small" aria-label="delete" className={classes.margin} color="primary"
-                      disableRipple>
+                      disableRipple
+                      onClick={this.handleDiscard}>
                       <ClearIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
@@ -392,4 +366,8 @@ DiffPage.propTypes = {
   remainingInteractions: PropTypes.number
 };
 
-export default withNavigationContext(withRfcContext(withStyles(styles)(DiffPage)));
+export default compose(
+  withNavigationContext,
+  withRfcContext,
+  withStyles(styles)
+)(DiffPage);

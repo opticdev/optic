@@ -12,7 +12,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { resolvePath } from '../../components/requests/NewRequestStepper';
 import PathMatcher from '../../components/diff/PathMatcher';
-import {AppBar, CssBaseline, ListItemAvatar, ListItemSecondaryAction, ListItemText, TextField} from '@material-ui/core';
+import { AppBar, CssBaseline, ListItemAvatar, ListItemSecondaryAction, ListItemText, TextField } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import ClearIcon from '@material-ui/core/SvgIcon/SvgIcon';
@@ -93,16 +93,19 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     this.setState({ pathId });
   };
 
-  handleAddRequest = () => {
+  handleAddRequest = async () => {
     const { sessionId } = this.props;
+    const { rfcId, eventStore, specService } = this.props;
     const { pathId, purpose, previewSample } = this.state
     const requestId = this.props.handleAddRequest(
       pathId,
       previewSample.request.method,
       purpose
     );
+    await specService.saveEvents(eventStore, rfcId)
     return this.props.pushRelative(`/diff/${sessionId}/requests/${requestId}`)
   };
+
 
   render() {
     const { classes, unmatchedPaths, matchedPaths } = this.props;
@@ -333,6 +336,8 @@ const PreviewSample = ({ sample }) => {
 const UnmatchedUrlWizard = compose(
   withStyles(styles),
   withNavigationContext,
+  withTrafficAndDiffSessionContext,
+  withRfcContext
 )(UnmatchedUrlWizardWithoutQuery);
 
 function UrlListItem(props) {

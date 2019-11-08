@@ -1,11 +1,11 @@
 import React from 'react';
-import { InitialRfcCommandsStore } from "../../contexts/InitialRfcCommandsContext";
-import { LocalDiffRfcStore } from "../../contexts/RfcContext";
+import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
+import { LocalDiffRfcStore } from '../../contexts/RfcContext';
 import { commandsToJson } from '../../engine';
 
 class SimulatedCommandContext extends React.Component {
     render() {
-        const { rfcId, eventStore, commands, shouldSimulate } = this.props;
+        const { rfcId, eventStore, commands, shouldSimulate, specService } = this.props;
         const initialEventsString = eventStore.serializeEvents(rfcId)
         const initialCommandsString = shouldSimulate ? JSON.stringify(commandsToJson(commands)) : null
         return (
@@ -13,7 +13,7 @@ class SimulatedCommandContext extends React.Component {
                 rfcId={rfcId}
                 initialEventsString={initialEventsString}
                 initialCommandsString={initialCommandsString}>
-                <LocalDiffRfcStore key={initialCommandsString}>
+                <LocalDiffRfcStore key={initialCommandsString} specService={specService}>
                     {this.props.children}
                 </LocalDiffRfcStore>
             </InitialRfcCommandsStore>
