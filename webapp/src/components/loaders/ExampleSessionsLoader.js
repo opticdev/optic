@@ -36,6 +36,7 @@ class ExampleSessionsLoader extends React.Component {
         this.setState({
           isLoaded: true,
           events: JSON.stringify(body.events),
+          examples: body.examples || {},
           session: body.session
         })
       })
@@ -71,8 +72,15 @@ class ExampleSessionsLoader extends React.Component {
           events
         })
       },
-      saveExample: () => {
-
+      listExamples: (requestId) => {
+        return Promise.resolve({examples: this.state.examples[requestId] || []})
+      },
+      saveExample: (interaction, requestId) => {
+        const examples = this.state.examples
+        const requestExamples = examples[requestId] || []
+        requestExamples.push(interaction)
+        examples[requestId] = requestExamples
+        this.setState({examples})
       },
       saveDiffState: () => { }
     }

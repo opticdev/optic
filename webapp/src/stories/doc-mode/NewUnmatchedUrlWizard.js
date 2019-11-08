@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/styles';
 import { withRfcContext } from '../../contexts/RfcContext';
 import Tooltip from '@material-ui/core/Tooltip';
-import { STATUS_CODES } from 'http'
+import { STATUS_CODES } from 'http';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { resolvePath } from '../../components/requests/NewRequestStepper';
@@ -46,6 +46,9 @@ const styles = theme => ({
   displayTargetUrl: {
     fontWeight: 100,
     color: DocDarkGrey
+  },
+  bgHeader: {
+    backgroundColor: 'rgb(250, 250, 250)'
   },
   appBar: {
     borderBottom: '1px solid #e2e2e2',
@@ -155,30 +158,32 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
             Optic observed traffic to the following URLs. Click a URL to begin documenting an API request.
 
             {suggestedPaths && (
-              <List dense>
-                <ListSubheader>Suggested Paths to Document</ListSubheader>
-                {!targetUrl && (
-                  suggestedPaths.map(({ method, url, sample, pathId }) => {
+              <>
+                <Typography variant="body1">Suggested Paths to Document</Typography>
+                <List dense>
+                  {!targetUrl && (
+                    suggestedPaths.map(({ method, url, sample, pathId }) => {
 
-                    const full = <PathIdToPathString pathId={pathId} />;
+                      const full = <PathIdToPathString pathId={pathId} />;
 
-                    return (<UrlListItem url={url}
-                      method={method}
-                      sample={sample}
-                      previewSample={previewSample}
-                      pathId={pathId}
-                      full={full}
-                      quickAdd={this.quickAdd}
-                      selectTarget={this.selectTarget}
-                      setPreviewSample={this.setPreviewSample}
-                    />);
-                  })
-                )}
-              </List>
+                      return (<UrlListItem url={url}
+                        method={method}
+                        sample={sample}
+                        previewSample={previewSample}
+                        pathId={pathId}
+                        full={full}
+                        quickAdd={this.quickAdd}
+                        selectTarget={this.selectTarget}
+                        setPreviewSample={this.setPreviewSample}
+                      />);
+                    })
+                  )}
+                </List>
+              </>
             )}
 
+            <Typography variant="body1">Observed Paths</Typography>
             <List dense>
-              <ListSubheader>Observed Paths</ListSubheader>
               {!targetUrl && (
                 pathsToRender.map(({ method, url, sample }) => (
                   <UrlListItem url={url}
@@ -192,8 +197,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
             </List>
           </>);
         case 1:
-          const matching = [...matchingUrls]
-            .filter(i => i.url !== previewSample.request.url && i.method !== previewSample.request.method);
+          const matching = [...matchingUrls];
           return (
             <>
               <PathMatcher
@@ -206,12 +210,17 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                 {!isCompleteMatch ? withTooltip : addPathButton}
               </div>
 
-              <Show when={matching.length}>
-                <List style={{ marginTop: 11 }}>
-                  <ListSubheader> <Typography variant="body1">The path you provided also matches these
+              <Show when={matching.length && isCompleteMatch}>
+                <List style={{ marginTop: 11, width: '100%' }}>
+                  <ListSubheader className={classes.bgHeader}> <Typography variant="body1">The path you provided also
+                    matches these
                     URLs:</Typography> </ListSubheader>
                   {matching
                     .map(({ url, method }) => {
+                      //don't show self
+                      if (url === previewSample.request.url && method === previewSample.request.method) {
+                        return null;
+                      }
                       return (
                         <UrlListItem url={url} method={method} disableButton />
                       );
@@ -355,7 +364,7 @@ function UrlListItem(props) {
     },
     setPreviewSample = () => () => {
     }
-  } = props
+  } = props;
 
   const isSuggested = !!pathId;
 
@@ -374,7 +383,7 @@ function UrlListItem(props) {
             fontWeight: 800
           }} />
       </ListItemAvatar>
-      <ListItemText primary={full || url} primaryTypographyProps={{ style: { marginLeft: 10 } }} />
+      <ListItemText primary={full || url} component="div" primaryTypographyProps={{ style: { paddingLeft: 10 } }} />
       {isSuggested && (
         <ListItemSecondaryAction>
           <Button color="primary"
