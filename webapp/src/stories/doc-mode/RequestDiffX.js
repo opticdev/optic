@@ -61,7 +61,7 @@ class RequestDiffX extends React.Component {
               })
           )
 
-          this.props.pushRelative('/')
+          this.props.pushRelative('')
         }}
         onDiscard={() => {
           window.location.href = baseUrl;
