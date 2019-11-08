@@ -1,6 +1,6 @@
 package com.seamless.contexts.shapes
 
-import com.seamless.contexts.rfc.{RfcService, RfcServiceJSFacade}
+import com.seamless.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
 import com.seamless.contexts.shapes.Commands.FieldShapeFromShape
 import com.seamless.contexts.shapes.ShapesHelper.ListKind
 import com.seamless.contexts.shapes.projections.{FlatShapeProjection, NameForShapeId}
@@ -10,6 +10,7 @@ import org.scalatest.FunSpec
 
 class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
 
+  val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
   def fixture(slug: String, nameConcept: String = null): (String, ShapesState) = {
     val basic = fromFile(slug)
     val result = {
@@ -21,7 +22,7 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
     }
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", result.commands, null)
+    rfcService.handleCommandSequence("id", result.commands, commandContext)
     (result.rootShapeId, rfcService.currentState("id").shapesState)
   }
 
@@ -51,7 +52,7 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
     val commands = commandsFrom("shape-name-example")
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", commands, null)
+    rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
   }
 
@@ -87,7 +88,7 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
     val commands = commandsFrom("circle-ci")
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", commands, null)
+    rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
   }
 

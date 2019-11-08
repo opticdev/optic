@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
-import { Interpreters, JsonHelper, RequestDiffer, toInteraction } from '../../engine';
+import {Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction} from '../../engine';
 import { RfcContext, withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
 import { PathIdToPathString } from './PathIdToPathString';
@@ -9,6 +9,7 @@ import { DiffToDiffCard } from './DiffCopy';
 import PreCommit from './PreCommit';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
+import {NamerStore} from './shape/Namer';
 
 class RequestDiffX extends React.Component {
 
@@ -44,7 +45,6 @@ class RequestDiffX extends React.Component {
         ));
       }
     }
-
 
     return (
       <PreCommit
@@ -137,6 +137,11 @@ const DiffPageStateManager = withRfcContext((props) => {
       eventStore={eventStore}
       commands={commands}
     >
+      <NamerStore nameShape={(shapeId, name) => {
+        applyCommands(...[
+          ShapesCommands.RenameShape(shapeId, name)
+        ])
+      }}>
       <DiffPage
         //request context
         url={sample.request.url}
@@ -166,6 +171,7 @@ const DiffPageStateManager = withRfcContext((props) => {
           diffSessionManager.skipInteraction(index)
         }}
       />
+      </NamerStore>
     </SimulatedCommandContext>
   );
 });

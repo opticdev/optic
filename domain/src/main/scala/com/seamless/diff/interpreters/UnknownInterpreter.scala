@@ -2,7 +2,7 @@ package com.seamless.diff.interpreters
 
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
-import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape, InterpretationContext}
+import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, InterpretationContext}
 import com.seamless.diff.RequestDiffer.{RequestDiffResult, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.seamless.diff.ShapeDiffer.NoExpectedShape
 import com.seamless.diff.initial.ShapeBuilder
@@ -22,7 +22,7 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
               }
               case Some(raw) => {
                 Seq(
-                  ChangeUnknownToSomething(sd.expected.shapeId, raw, shapesState, HighlightNestedRequestShape(sd.expected.shapeId), InterpretationContext(None, true))
+                  ChangeUnknownToSomething(sd.expected.shapeId, raw, shapesState, InterpretationContext(None, true))
                 )
               }
             }
@@ -40,7 +40,7 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
               }
               case Some(raw) => {
                 Seq(
-                  ChangeUnknownToSomething(sd.expected.shapeId, raw, shapesState, HighlightNestedResponseShape(d.responseStatusCode, sd.expected.shapeId), InterpretationContext(Some(d.responseId), false))
+                  ChangeUnknownToSomething(sd.expected.shapeId, raw, shapesState, InterpretationContext(Some(d.responseId), false))
                 )
               }
             }
@@ -53,7 +53,7 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
   }
 
 
-  def ChangeUnknownToSomething(expectedShapeId: ShapeId, raw: Json, shapesState: ShapesState,  highlightNested: HighlightNestedShape, context: InterpretationContext) = {
+  def ChangeUnknownToSomething(expectedShapeId: ShapeId, raw: Json, shapesState: ShapesState, context: InterpretationContext) = {
     val shapeBuilder = new ShapeBuilder(raw)
     val result = shapeBuilder.run
     val commands = result.commands ++ Seq(
@@ -65,7 +65,7 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
       DynamicDescription(s"Replace Unknown with `{{shapeId_SHAPE}}`"),
       commands,
       context,
-      FrontEndMetadata(changedIds = Seq(expectedShapeId), highlightNestedShape = Some(highlightNested))
+      FrontEndMetadata(changedIds = Seq(expectedShapeId))
     )
   }
 }

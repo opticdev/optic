@@ -12,7 +12,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { resolvePath } from '../../components/requests/NewRequestStepper';
 import PathMatcher from '../../components/diff/PathMatcher';
-import { AppBar, ListItemAvatar, ListItemSecondaryAction, ListItemText, TextField } from '@material-ui/core';
+import {AppBar, CssBaseline, ListItemAvatar, ListItemSecondaryAction, ListItemText, TextField} from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import ClearIcon from '@material-ui/core/SvgIcon/SvgIcon';
@@ -273,6 +273,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
     return (
       <div className={classes.root}>
+        <CssBaseline />
         <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
           <Toolbar variant="dense">
             <div style={{ marginRight: 20 }}>

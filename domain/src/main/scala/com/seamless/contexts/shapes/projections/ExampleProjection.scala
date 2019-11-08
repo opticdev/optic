@@ -16,12 +16,12 @@ object ExampleProjection {
 
   def fromJson(json: Json): FlatShapeResult = {
     val result = jsonToFlatRender(json)(Seq())
-    FlatShapeResult(result, Map())
+    FlatShapeResult(result, Map(), Vector())
   }
 
   private def flatPrimitive(kind: CoreShapeKind, value: String): FlatShape = {
     val nameComponent = ColoredComponent(value, "primitive", None, primitiveId = Some(kind.baseShapeId))
-    FlatShape(kind.baseShapeId, Seq(nameComponent), Seq(), kind.baseShapeId)
+    FlatShape(kind.baseShapeId, Seq(nameComponent), Seq(), kind.baseShapeId, canName = false)
   }
 
   private def jsonToFlatRender(json: Json)(implicit path: Seq[String]): FlatShape = {

@@ -184,7 +184,7 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           dense={true}
         >
           {paths.children.map(i => <EndpointBasePath path={i}
-                                                     operationsToRender={flatMapOperations(i.children)}/>)}
+                                                     operationsToRender={flatMapOperations([i])}/>)}
         </List>
 
         <Divider/>
