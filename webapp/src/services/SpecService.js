@@ -51,7 +51,7 @@ class SpecService {
     }
 
     saveExample(interaction, requestId) {
-        return this.postJson(`/cli-api/example-requests/${requestId}`, interaction)
+        return this.postJson(`/cli-api/example-requests/${requestId}`, JSON.stringify(interaction))
     }
 
     listExamples(requestId) {
