@@ -174,21 +174,7 @@ export default class Spec extends Command {
     const port = await getPort({ port: getPort.makeRange(3201, 3299) })
 
     await this.startServer(port, config)
-
-    const sessionUtilities = new SessionUtilities(sessionsPath)
-    const sessions = await sessionUtilities.getSessions()
-    if (sessions.length > 0) {
-      const [sessionId] = sessions
-      const isSessionStartable = await sessionUtilities.isSessionStartable(sessionId)
-      if (isSessionStartable) {
-        const url = `http://localhost:${port}/saved/diff/${sessionId}`
-        this.log(fromOptic('Review your API diff at ' + url))
-        await open(url)
-        await cli.wait(1000)
-        await cli.anykey('Press any key to exit')
-        return process.exit()
-      }
-    }
+    
     const url = `http://localhost:${port}/`
     this.log(fromOptic('Displaying your API Spec at ' + url))
     await open(url)
