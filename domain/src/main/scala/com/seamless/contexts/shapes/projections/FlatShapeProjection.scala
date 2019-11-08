@@ -147,7 +147,7 @@ class ShapeTrailLogger {
   }
 
   def pathsForAffectedIds(affectedIds: Seq[String]): Vector[Seq[String]] = {
-    _all.filter(i => affectedIds.contains(i.last.id)).map(i => i.map(_.id)).toVector
+    _all.filter(i => i.nonEmpty && affectedIds.contains(i.last.id)).map(i => i.map(_.id)).toVector
   }
 
   def add(s: Seq[ShapeTrail]) = _all.append(s)

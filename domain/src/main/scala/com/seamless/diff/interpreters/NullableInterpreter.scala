@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{SetRequestBodyShape, SetResponse
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
 import com.seamless.contexts.shapes.ShapesHelper._
-import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape, InterpretationContext}
+import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, InterpretationContext}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer._
 
@@ -20,7 +20,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
           }
           case sd: NullObjectKey => {
             Seq(
-              ChangeFieldToNullable(sd, InterpretationContext(None, true), HighlightNestedRequestShape(sd.parentObjectShapeId))
+              ChangeFieldToNullable(sd, InterpretationContext(None, true))
             )
           }
           case _ => Seq.empty
@@ -35,7 +35,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
           }
           case sd: NullObjectKey => {
             Seq(
-              ChangeFieldToNullable(sd, InterpretationContext(Some(d.responseId), false), HighlightNestedResponseShape(d.responseStatusCode, sd.parentObjectShapeId))
+              ChangeFieldToNullable(sd, InterpretationContext(Some(d.responseId), false))
             )
           }
           case _ => Seq.empty
@@ -45,7 +45,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     }
   }
 
-  def ChangeFieldToNullable(shapeDiff: NullObjectKey, context: InterpretationContext, highlightNestedShape: HighlightNestedShape): DiffInterpretation = {
+  def ChangeFieldToNullable(shapeDiff: NullObjectKey, context: InterpretationContext): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val field = shapesState.flattenedField(shapeDiff.fieldId)
     val commands = Seq(
@@ -69,7 +69,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       DynamicDescription(s"Make `${shapeDiff.key}` `Nullable`"),
       commands,
       context,
-      FrontEndMetadata(changedIds = Seq(shapeDiff.fieldId), highlightNestedShape = Some(highlightNestedShape))
+      FrontEndMetadata(changedIds = Seq(shapeDiff.fieldId))
     )
   }
 

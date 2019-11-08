@@ -45,8 +45,7 @@ case class InterpretationContext(responseId: Option[String], inRequestBody: Bool
 }
 
 case class FrontEndMetadata(addedIds: Seq[String] = Seq.empty,
-                            changedIds: Seq[String] = Seq.empty,
-                            highlightNestedShape: Option[HighlightNestedShape] = None) {
+                            changedIds: Seq[String] = Seq.empty) {
 
   def asJs: js.Any = {
     import io.circe.scalajs.convertJsonToJs
@@ -55,10 +54,6 @@ case class FrontEndMetadata(addedIds: Seq[String] = Seq.empty,
     convertJsonToJs(this.asJson)
   }
 }
-
-sealed trait HighlightNestedShape
-case class HighlightNestedResponseShape(statusCode: Int, parentShape: ShapeId) extends HighlightNestedShape
-case class HighlightNestedRequestShape(parentShape: ShapeId) extends HighlightNestedShape
 
 object Interpretations {
 
@@ -139,14 +134,12 @@ object Interpretations {
 
     val affectedConcepts = if (parentConcept.isDefined) Seq(parentConcept.get._1) else Seq.empty
 
-    val highlight = HighlightNestedRequestShape(parentShapeId)
-
     DiffInterpretation(
       s"Add Field",
       DynamicDescription(s"`${key}` as `{{fieldId_SHAPE}}`", fieldId = Some(fieldId)),
       commands,
       InterpretationContext(None, true),
-      FrontEndMetadata(addedIds = Seq(fieldId), highlightNestedShape = Some(highlight))
+      FrontEndMetadata(addedIds = Seq(fieldId))
     )
   }
 
@@ -157,16 +150,12 @@ object Interpretations {
       SetFieldShape(FieldShapeFromShape(fieldId, result.rootShapeId))
     )
 
-    val highlightOption = Try(shapesState.flattenedField(fieldId).fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId).map(i => {
-      HighlightNestedRequestShape(i)
-    }).toOption
-
     DiffInterpretation(
       s"Update Field",
       DynamicDescription(s"Change `${key}` to `{{fieldId_SHAPE}}`", fieldId = Some(fieldId)),
       commands,
       InterpretationContext(None, true),
-      FrontEndMetadata(changedIds = Seq(fieldId), highlightNestedShape = highlightOption)
+      FrontEndMetadata(changedIds = Seq(fieldId))
     )
   }
 
@@ -207,24 +196,18 @@ object Interpretations {
 
     val affectedConcepts = if (parentConcept.isDefined) Seq(parentConcept.get._1) else Seq.empty
 
-    val highlight = HighlightNestedResponseShape(responseStatusCode, parentShapeId)
-
     DiffInterpretation(
       s"Add Field",
       DynamicDescription(s"`${key}` as `{{fieldId_SHAPE}}`", fieldId = Some(fieldId)),
       commands,
       InterpretationContext(Some(responseId), false),
-      FrontEndMetadata(addedIds = Seq(fieldId), highlightNestedShape = Some(highlight))
+      FrontEndMetadata(addedIds = Seq(fieldId))
     )
 
   }
 
   def ChangeFieldInResponseShape(key: String, fieldId: String, raw: Json, responseStatusCode: Int, responseId: ResponseId)(implicit shapesState: ShapesState) = {
     val result = new ShapeBuilder(raw).run
-
-    val highlightOption = Try(shapesState.flattenedField(fieldId).fieldShapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId).map(i => {
-      HighlightNestedResponseShape(responseStatusCode, i)
-    }).toOption
 
     val commands = result.commands ++ Seq(
       SetFieldShape(FieldShapeFromShape(fieldId, result.rootShapeId))
@@ -236,7 +219,7 @@ object Interpretations {
       DynamicDescription(s"Change `${key}` to `{{fieldId_SHAPE}}`", fieldId = Some(fieldId)),
       commands,
       InterpretationContext(Some(responseId), false),
-      FrontEndMetadata(addedIds = Seq(fieldId), highlightNestedShape = highlightOption)
+      FrontEndMetadata(addedIds = Seq(fieldId))
     )
 
   }
