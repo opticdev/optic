@@ -16,7 +16,7 @@ object ExampleProjection {
 
   def fromJson(json: Json): FlatShapeResult = {
     val result = jsonToFlatRender(json)(Seq())
-    FlatShapeResult(result, Map())
+    FlatShapeResult(result, Map(), Vector())
   }
 
   private def flatPrimitive(kind: CoreShapeKind, value: String): FlatShape = {

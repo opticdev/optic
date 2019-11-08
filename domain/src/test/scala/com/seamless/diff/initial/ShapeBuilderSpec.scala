@@ -26,11 +26,9 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     assert(result.commands == commandsFrom("primitive-array"))
   }
 
-
   def fixture = {
     val basic = fromFile("todo")
     val result = new ShapeBuilder(basic, "Todo").run
-
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", result.commands :+

@@ -9,7 +9,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import {Show} from '../Show';
 import {primitiveDocColors} from '../DocConstants';
 import {withRfcContext} from '../../../contexts/RfcContext';
-import {Highlight, HighlightedIDsStore} from './HighlightedIDs';
+import {Highlight, HighlightedIDsStore, withHighlightedIDs} from './HighlightedIDs';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import Menu from '@material-ui/core/Menu';
 import {NamerStore, withNamer} from './Namer';
@@ -52,9 +52,10 @@ const styles = theme => ({
     paddingTop: 4
   },
   arrow: {
-    fontSize: 15,
+    height: '15px !important', //20 mins in, best solution. MUI applying base inconsist order
+    marginTop: 4,
+    overflow: 'hidden',
     marginLeft: -16,
-    marginTop: 5,
     cursor: 'pointer'
   },
   link: {
@@ -87,8 +88,9 @@ export const ExpandableRow = withStyles(styles)(({classes, children, innerChildr
     <>
       <li className={classes.row} style={{paddingLeft: depth * 8, cursor: 'pointer'}}
           onClick={() => setExpanded(!expanded)}>
-        <div onClick={() => setExpanded(!expanded)}> {expanded ? <ArrowDropDownIcon className={classes.arrow}/> :
-          <ArrowRightIcon className={classes.arrow}/>} </div>
+          {expanded ?
+            <ArrowDropDownIcon className={classes.arrow} onClick={() => setExpanded(!expanded)}/> :
+            <ArrowRightIcon className={classes.arrow} onClick={() => setExpanded(!expanded)}/>}
         {children}
       </li>
       <Show when={expanded}>
@@ -98,8 +100,11 @@ export const ExpandableRow = withStyles(styles)(({classes, children, innerChildr
   );
 });
 
-export const RootRow = withStyles(styles)(({classes, id, typeName, depth}) => {
-  const [expandedParam, setExpandedParam] = useState(null);
+export const RootRow = withHighlightedIDs(withStyles(styles)(({classes, expand, id, typeName, depth}) => {
+
+  const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null
+
+  const [expandedParam, setExpandedParam] = useState(defaultParam);
 
   const setParam = (param) => {
     if (expandedParam === param) {
@@ -123,11 +128,12 @@ export const RootRow = withStyles(styles)(({classes, id, typeName, depth}) => {
       )}
     </>
   );
-});
+}));
 
-export const Field = withStyles(styles)(({classes, typeName, fields, fieldName, baseShapeId, parameters, depth, id, fieldId}) => {
+export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, typeName, fields, fieldName, baseShapeId, parameters, depth, id, fieldId}) => {
 
-  const [expandedParam, setExpandedParam] = useState(null);
+  const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null
+  const [expandedParam, setExpandedParam] = useState(defaultParam);
 
   const setParam = (param) => {
     if (expandedParam === param) {
@@ -141,7 +147,7 @@ export const Field = withStyles(styles)(({classes, typeName, fields, fieldName, 
     {typeName[0].colorKey !== 'index' ? (<>
       <div className={classes.fieldName}>{fieldName}</div>
       <div className={classes.colon}>:</div>
-    </>) : <>-</>}
+    </>) : <span style={{marginTop: 2}}>-</span>}
     <div style={{marginLeft: 4}}><TypeNameRender typeName={typeName} id={id} onLinkClick={setParam}/></div>
   </>;
 
@@ -172,7 +178,7 @@ export const Field = withStyles(styles)(({classes, typeName, fields, fieldName, 
       )}
     </>
   );
-});
+}));
 
 export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLinkClick}) => {
 
@@ -286,9 +292,14 @@ export const ExampleViewer = withRfcContext(({example, queries}) => {
   );
 });
 
-export const ShapeViewerWithQuery = withRfcContext(({shapeId, queries}) => {
-  const flatShape = queries.flatShapeForShapeId(shapeId);
+export const ShapeViewerWithQuery = withHighlightedIDs(withRfcContext(({shapeId, addedIds, changedIds, queries}) => {
+  const affectedIds = [...addedIds, ...changedIds]
+  const flatShape = queries.flatShapeForShapeId(shapeId, affectedIds);
+  const expand = Array.from(new Set([...flatShape.pathsForAffectedIds.flatMap(x => x)]))
+
   return (
-    <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
+    <HighlightedIDsStore addedIds={addedIds} changedIds={changedIds} expand={expand}>
+      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
+    </HighlightedIDsStore>
   );
-});
+}));

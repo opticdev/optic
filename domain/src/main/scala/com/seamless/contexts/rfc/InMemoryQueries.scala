@@ -68,8 +68,9 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   def nameForFieldId(fieldId: FieldId): js.Any = {
     convertJsonToJs(q.nameForFieldId(fieldId).asJson)
   }
-  def flatShapeForShapeId(shapeId: ShapeId): js.Any = {
-    convertJsonToJs(q.flatShapeForShapeId(shapeId).asJson)
+  def flatShapeForShapeId(shapeId: ShapeId, affectedIds: js.Array[String] = js.Array()): js.Any = {
+    import js.JSConverters._
+    convertJsonToJs(q.flatShapeForShapeId(shapeId, affectedIds.toSeq).asJson)
   }
   def flatShapeForExample(example: js.Any): js.Any = {
     convertJsonToJs(q.flatShapeForExample(convertJsToJson(example).right.get).asJson)
@@ -133,8 +134,8 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
   def nameForFieldId(fieldId: FieldId): Seq[NameForShapeId.ColoredComponent] = {
     NameForShapeId.getFieldIdShapeName(fieldId)(service.currentState(aggregateId).shapesState)
   }
-  def flatShapeForShapeId(shapeId: ShapeId): FlatShapeResult = {
-    FlatShapeProjection.forShapeId(shapeId)(service.currentState(aggregateId).shapesState)
+  def flatShapeForShapeId(shapeId: ShapeId, affectedIds: Seq[String] = Seq.empty): FlatShapeResult = {
+    FlatShapeProjection.forShapeId(shapeId, affectedIds = affectedIds)(service.currentState(aggregateId).shapesState)
   }
   def flatShapeForExample(example: Json): FlatShapeResult = {
     ExampleProjection.fromJson(example)

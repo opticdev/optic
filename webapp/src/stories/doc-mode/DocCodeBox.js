@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {Typography} from '@material-ui/core';
+import {CssBaseline, Typography} from '@material-ui/core';
 import {DocGrey, methodColors} from './DocConstants';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {secondary} from '../../theme';
 import ReactJson from 'react-json-view';
-import {HighlightedIDsStore} from './shape/HighlightedIDs';
+import {HighlightedIDsStore, withHighlightedIDs} from './shape/HighlightedIDs';
 import {ExampleViewer, ShapeViewerWithQuery} from './shape/ShapeViewer';
 import {Show} from './Show';
 
@@ -103,6 +103,7 @@ export const ExampleOnly = withStyles(styles)(({classes, contentType, title, exa
 });
 
 export const ShapeOnly = withStyles(styles)(({classes, title, contentType, shapeId}) => {
+
   return (
     <DocCodeBox title={title}>
       {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}

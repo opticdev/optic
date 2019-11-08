@@ -13,6 +13,7 @@ class HighlightedIDsStore extends React.Component {
     const context = {
       addedIds: this.props.addedIds || [],
       changedIds: this.props.changedIds || [],
+      expand: this.props.expand || [],
     }
 
     return (

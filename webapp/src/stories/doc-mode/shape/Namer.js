@@ -1,8 +1,7 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
-
-
+  
 const {
   Context: NamerContext,
   withContext: withNamer

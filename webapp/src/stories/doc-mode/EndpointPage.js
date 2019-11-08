@@ -87,6 +87,10 @@ export const EndpointPageWithQuery = withStyles(styles)(withEditorContext(withRf
 
   const request = requests[requestId];
 
+  if (!request) {
+    return <div>Request not found</div>
+  }
+
   const {requestDescriptor} = request;
   const {httpMethod, pathComponentId, bodyDescriptor} = requestDescriptor;
 

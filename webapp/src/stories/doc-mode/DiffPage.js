@@ -49,9 +49,9 @@ const styles = theme => ({
     overflow: 'scroll'
   },
   requestContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100vh',
+    // display: 'flex',
+    // flexDirection: 'column',
+    // height: '100vh',
     paddingRight: 20,
     paddingBottom: 350,
     overflow: 'scroll'
@@ -119,6 +119,11 @@ const DiffRequest = withStyles(styles)(({
 }) => {
 
   const { shapeId, httpContentType } = requestBody;
+
+  if (typeof observedRequestBody === 'undefined' && !shapeId) {
+    return null
+  }
+
   const opacity = (!diff && !interpretation) ? .6 : 1;
 
   return (
@@ -261,7 +266,9 @@ class DiffPage extends React.Component {
         description={descriptionProcessed}
         {...{ interpretationsLength, interpretationsIndex, setInterpretationIndex }}
         onAccept={() => {
-          applyCommands(...JsonHelper.seqToJsArray(commands))(metadataJs.addedIds, metadataJs.changedIds);
+          const c = JsonHelper.seqToJsArray(commands)
+          console.log(c)
+          applyCommands(...c)(metadataJs.addedIds, metadataJs.changedIds);
         }}
       />
 
@@ -302,6 +309,7 @@ class DiffPage extends React.Component {
 
     return (
       <div className={classes.root}>
+        <CssBaseline />
         <HighlightedIDsStore addedIds={addedIds} changedIds={changedIds}>
           <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
             <Toolbar variant="dense">

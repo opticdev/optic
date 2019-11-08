@@ -46,7 +46,6 @@ class RequestDiffX extends React.Component {
       }
     }
 
-
     return (
       <PreCommit
         taggedIds={diffSessionManager.getTaggedIds()}
@@ -62,7 +61,7 @@ class RequestDiffX extends React.Component {
               })
           )
 
-          this.props.pushRelative('/')
+          this.props.pushRelative('')
         }}
         onDiscard={() => {
           window.location.href = baseUrl;
