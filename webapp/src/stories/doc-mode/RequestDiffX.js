@@ -89,7 +89,6 @@ class RequestDiffX extends React.Component {
 
     const handleCommands = (...commands) => {
       this.props.handleCommands(...commands);
-      console.log(diffSessionManager)
       diffSessionManager.acceptCommands(item, commands);
       return diffSessionManager.tagIds
     };

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {CssBaseline, Typography} from '@material-ui/core';
 import {DocGrey, methodColors} from './DocConstants';
@@ -114,25 +114,26 @@ export const ShapeOnly = withStyles(styles)(({classes, title, contentType, shape
 
 export const ExampleShapeViewer = withStyles(styles)(({shapeId, showShapesFirst, classes, example, title, contentType}) => {
 
+  const exampleProvided = typeof example !== 'undefined'
   const [showExample, setShowExample] = useState(!showShapesFirst);
+
+  useEffect(() => {
+    // Update the document title using the browser API
+    const exampleProvided = typeof example !== 'undefined'
+    setShowExample(showShapesFirst ? false : exampleProvided)
+  });
 
   const rightRegion = (
     <StyledTabs value={showExample ? 0 : 1}>
-      <StyledTab label="Example" onClick={() => setShowExample(true)}/>
-      <StyledTab label="Shape" onClick={() => setShowExample(false)}/>
+      {exampleProvided && <StyledTab label="Example" value={0} onClick={() => setShowExample(true)}/>}
+      <StyledTab label="Shape"  value={1} onClick={() => setShowExample(false)}/>
     </StyledTabs>
   );
 
   const exampleRender = (() => {
     return (
       <>
-        <ExampleViewer example={{
-          path: '/path/to/file',
-          number: 126543,
-          id: 'first_file',
-          mime_type: 'image/gif',
-          sha: '26a86ahdh3'
-        }}/>
+        <ExampleViewer example={example}/>
       </>
     );
   })();

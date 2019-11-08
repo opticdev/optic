@@ -18,7 +18,8 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     paddingLeft: 15,
     paddingRight: 15,
-    borderRight: '1px solid #e2e2e2'
+    borderRight: '1px solid #e2e2e2',
+    maxWidth: 'inherit'
   },
   rightDiff: {
     display: 'flex',
@@ -26,6 +27,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 15,
     paddingRight: 15,
     paddingTop: 15,
+    maxWidth: 'inherit'
   },
   maxWidth: {
     maxWidth: 600,

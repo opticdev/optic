@@ -25,3 +25,4 @@ yarn-error.log*
 
 # ide
 .idea/
+public/example-sessions/algorithmia.json
