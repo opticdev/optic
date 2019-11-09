@@ -367,11 +367,11 @@ function UrlListItem(props) {
   } = props;
 
   const isSuggested = !!pathId;
-
+  const isSelected = previewSample && previewSample.request.url === url && previewSample.request.method === method
   return (
     <ListItem button={!isSuggested && !disableButton}
       onClick={!isSuggested && selectTarget(url)}
-      selected={previewSample && previewSample.request.url === url && previewSample.request.method === method}
+      selected={isSelected}
       onMouseEnter={setPreviewSample(sample)}>
       <ListItemAvatar>
         <Chip size="small" label={method} variant="outlined"
@@ -384,14 +384,15 @@ function UrlListItem(props) {
           }} />
       </ListItemAvatar>
       <ListItemText primary={full || url} component="div" primaryTypographyProps={{ style: { paddingLeft: 10 } }} />
-      {isSuggested && (
+      {isSuggested ? (
         <ListItemSecondaryAction>
-          <Button color="primary"
+          <Button
+            color="primary"
             onMouseEnter={setPreviewSample(sample)}
             variant="contained" size="small"
             onClick={quickAdd(pathId)}>+ Quick Add</Button>
         </ListItemSecondaryAction>
-      )}
+      ) : null}
     </ListItem>
   );
 }
