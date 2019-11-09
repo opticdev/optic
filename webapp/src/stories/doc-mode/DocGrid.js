@@ -55,8 +55,8 @@ export function DiffDocGrid({ left, leftColor, right, style }) {
   return (
     <Grid container style={style}>
       <Grid item xs={6} className={classes.leftDiff} alignItems="center">
-        <StickyRegion>
-          <div className={classes.maxWidth}>
+        <StickyRegion className={classes.maxWidth}>
+          <div>
             {left}
           </div>
         </StickyRegion>
