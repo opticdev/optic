@@ -46,6 +46,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.groupby": "^4.6.0",
     "lodash.sortby": "^4.7.0",
+    "memoize-weak": "^1.0.2",
     "mini-css-extract-plugin": "0.5.0",
     "mixpanel-browser": "2.15.0",
     "mustache": "^3.0.3",

@@ -7,6 +7,7 @@ import { withSnackbar } from 'notistack';
 import uuidv4 from 'uuid/v4';
 import { withCommandContext } from './CommandContext';
 import { specService } from '../services/SpecService';
+import memoize from 'memoize-weak';
 
 const {
     Context: RfcContext,
@@ -40,7 +41,10 @@ export function stuffFromQueries(queries) {
             acc[pathId] = value;
             return acc
         }, {})
-
+    queries.memoizedFlatShapeForExample = memoize(x => {
+        console.count('memoizedFlatShapeForExample')
+        return queries.flatShapeForExample(x)
+    })
     const cachedQueryResults = {
         apiName,
         contributions,

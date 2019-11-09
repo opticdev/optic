@@ -281,15 +281,18 @@ class _ShapeViewerBase extends React.Component {
 
 const ShapeViewer = withStyles(styles)(_ShapeViewerBase);
 export default ShapeViewer;
-
-export const ExampleViewer = withRfcContext(({ example, queries }) => {
-  const flatShape = queries.flatShapeForExample(example);
-  return (
-    <NamerStore>
-      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} />
-    </NamerStore>
-  );
-});
+class ExampleViewerBase extends React.PureComponent {
+  render() {
+    const { queries, example } = this.props;
+    const flatShape = queries.memoizedFlatShapeForExample(example)
+    return (
+      <NamerStore>
+        <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} />
+      </NamerStore>
+    )
+  }
+}
+export const ExampleViewer = withRfcContext(ExampleViewerBase);
 
 export const ShapeViewerWithQuery = withHighlightedIDs(withRfcContext(({ shapeId, addedIds, changedIds, queries }) => {
   const affectedIds = [...addedIds, ...changedIds]
