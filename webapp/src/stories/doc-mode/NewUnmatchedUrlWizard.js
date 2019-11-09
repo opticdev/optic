@@ -15,12 +15,12 @@ import PathMatcher from '../../components/diff/PathMatcher';
 import { AppBar, CssBaseline, ListItemAvatar, ListItemSecondaryAction, ListItemText, TextField } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import ClearIcon from '@material-ui/core/SvgIcon/SvgIcon';
-import { DiffDocGrid } from './DocGrid';
+import {DiffDocGrid, DiffDocGridRightSticky} from './DocGrid';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
+import ClearIcon from '@material-ui/icons/Clear'
 import Paper from '@material-ui/core/Paper';
 import { DocDarkGrey, DocGrey, methodColors } from './DocConstants';
 import { LightTooltip } from '../../components/diff/DiffCard';
@@ -36,6 +36,7 @@ import { PathIdToPathString } from './PathIdToPathString';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
 import {PURPOSE} from './ContributionKeys';
+import {Link} from 'react-router-dom';
 
 const styles = theme => ({
   root: {
@@ -55,10 +56,8 @@ const styles = theme => ({
     borderBottom: '1px solid #e2e2e2',
     backgroundColor: 'white'
   },
-  scroll: {
-    overflow: 'scroll',
+  contentRegion: {
     paddingBottom: 300,
-    paddingTop: 20,
   }
 });
 
@@ -112,7 +111,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
 
   render() {
-    const { classes, unmatchedPaths, matchedPaths } = this.props;
+    const { classes, unmatchedPaths, matchedPaths, baseUrl } = this.props;
     const { pathExpression, targetUrl, previewSample, pathId, purpose } = this.state;
     const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression));
     const isCompleteMatch = regex.exec(targetUrl);
@@ -126,6 +125,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
         onClick={this.handleAddPath}
         variant="contained"
         color="primary"
+        autoFocus={isCompleteMatch}
         disabled={!isCompleteMatch}>Add Path</Button>
     );
 
@@ -204,6 +204,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
               <PathMatcher
                 initialPathString={pathExpression}
                 url={targetUrl}
+                autoFocus={!isCompleteMatch}
                 onChange={this.handleChange}
               />
 
@@ -239,6 +240,11 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                 placeholder="Send this request when you want to"
                 label="What does this request do?"
                 value={purpose}
+                onKeyPress={(e) => {
+                  if (e.which === 13) {
+                    this.handleAddRequest()
+                  }
+                }}
                 onChange={(e) => this.setPurpose(e.target.value)}
               />
 
@@ -260,7 +266,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     const activeStep = pathId ? 2 : targetUrl ? 1 : 0;
 
     const left = (
-      <>
+      <div style={{paddingTop: 22, paddingBottom: 150}}>
         <Typography variant="h4" color="primary">Document a New Request</Typography>
 
         <Stepper activeStep={activeStep} orientation="vertical" style={{ backgroundColor: 'transparent' }}>
@@ -279,7 +285,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
           </Paper>
         )}
-      </>
+      </div>
     );
 
     const right = <PreviewSample sample={previewSample} />;
@@ -291,16 +297,17 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
           <Toolbar variant="dense">
             <div style={{ marginRight: 20 }}>
               <Tooltip title="End Review">
-                <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple>
-                  <ClearIcon fontSize="small" />
+                <IconButton size="small" aria-label="delete" color="primary" disableRipple component={Link} to={baseUrl}>
+                  <ClearIcon fontSize="small" color="primary" style={{color: 'black'}}/>
                 </IconButton>
               </Tooltip>
             </div>
           </Toolbar>
         </AppBar>
-        <div className={classes.scroll}>
+        <div className={classes.contentRegion}>
 
-          <DiffDocGrid left={left}
+          <DiffDocGridRightSticky
+            left={left}
             right={right} />
 
         </div>
@@ -318,7 +325,7 @@ const PreviewSample = ({ sample }) => {
   const { url, method, body: requestBody } = sample.request;
   const { statusCode, body: responseBody } = sample.response;
   return (
-    <>
+    <div style={{paddingTop: 22, paddingBottom: 150}}>
       <Typography variant="h4" color="primary">Observed</Typography>
       <DocSubGroup title="URL">
         <EndpointOverviewCodeBox method={method} url={url} />
@@ -338,7 +345,7 @@ const PreviewSample = ({ sample }) => {
           </HighlightedIDsStore>
         </DocSubGroup>
       )}
-    </>
+    </div>
   );
 
 };

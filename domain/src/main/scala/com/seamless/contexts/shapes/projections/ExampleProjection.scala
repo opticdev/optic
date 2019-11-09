@@ -35,7 +35,7 @@ object ExampleProjection {
     } else if (json.isNull) {
       flatPrimitive(NullableKind, "null")
     } else if (json.isObject) {
-      val fields = json.asObject.get.toList
+      val fields = json.asObject.get.toList.sortBy(_._1)
       flatPrimitive(ObjectKind, "Object").copy(
         fields = fields.map(i => {
           val id = path :+ i._1

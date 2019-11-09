@@ -9,6 +9,7 @@ import DiffInfo from './DiffInfo';
 import { HighlightedIDsStore } from './shape/HighlightedIDs';
 import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
 import compose from 'lodash.compose';
+import {NamerStore} from './shape/Namer';
 
 const drawerWidth = 340;
 
@@ -59,6 +60,7 @@ class PreCommit extends React.Component {
     return (
       <div className={classes.right}>
 
+        <NamerStore disable={true}>
         <div className={classes.content}>
           <HighlightedIDsStore {...taggedIds}>
             <EndpointPageWithQuery
@@ -122,6 +124,7 @@ class PreCommit extends React.Component {
         {/*    </Button>*/}
         {/*  </DialogActions>*/}
         {/*</Dialog>*/}
+        </NamerStore>
       </div>
     );
   }

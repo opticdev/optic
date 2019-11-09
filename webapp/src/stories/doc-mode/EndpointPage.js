@@ -25,6 +25,7 @@ import {withNavigationContext} from '../../contexts/NavigationContext';
 import {Helmet} from 'react-helmet';
 import groupby from 'lodash.groupby'
 import {BODY_DESCRIPTION, DESCRIPTION, PURPOSE} from './ContributionKeys';
+import {NamerStore} from './shape/Namer';
 
 const styles = theme => ({
   root: {
@@ -161,6 +162,7 @@ class EndpointPageDataLoader extends React.Component {
 
     return (
       <div className={classes.wrapper}>
+        <NamerStore disable={true}>
         <EndpointPage
           endpointPurpose={contributions.getOrUndefined(requestId, PURPOSE)}
           endpointDescription={contributions.getOrUndefined(requestId, DESCRIPTION)}
@@ -178,6 +180,7 @@ class EndpointPageDataLoader extends React.Component {
           url={fullPath}
           parameters={pathParameters}
         />
+        </NamerStore>
       </div>
     );
   }

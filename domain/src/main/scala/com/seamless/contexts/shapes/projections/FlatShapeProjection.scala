@@ -111,7 +111,7 @@ object FlatShapeProjection {
           val fieldShapeId = field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
           val trailForFieldAndInnerShape = trail and InField(fieldId) and Leaf(fieldShapeId)
           FlatField(field.descriptor.name, getFlatShape( fieldShapeId, trailForFieldAndInnerShape)(shapesState, Some(fieldId), false, parametersByShapeId, trailLogger), fieldId)
-        })
+        }).sortBy(_.fieldName)
 
         val canName = baseObject.descriptor.name == ""
 

@@ -208,7 +208,10 @@ export const TypeNameRender = withStyles(styles)(({ classes, id, typeName, onLin
 });
 
 export const Namer = compose(withNamer, withStyles(styles))(props => {
-  const { classes, nameShape, id } = props;
+  const { classes, nameShape, id, disable } = props;
+  if (disable) {
+    return null
+  }
   const [anchorEl, setAnchorEl] = useState(null);
   const [conceptName, setConceptName] = useState('');
 
@@ -224,13 +227,19 @@ export const Namer = compose(withNamer, withStyles(styles))(props => {
         <TextField value={conceptName}
           label="Name Concept"
           autoFocus
+          value={conceptName}
           onBlur={finish}
           onKeyPress={(e) => {
             if (e.which === 13) {
               finish();
             }
           }}
-          onChange={(e) => setConceptName(e.target.value)} />
+          onChange={(e) => {
+            setConceptName(e.target.value)
+            //the interpretation card was stealing focus. not sure why everything re-rendered. -- this fixed it.
+            e.stopPropagation()
+            e.currentTarget.focus()
+          }} />
       </div>
     </Menu>
   );
