@@ -21,6 +21,7 @@ import {
 } from '../../contexts/ColorContext';
 import classNames from 'classnames';
 import { MarkdownRender } from './DocContribution';
+import {PURPOSE} from './ContributionKeys';
 
 const useStyles = makeStyles({
   section: {
@@ -82,7 +83,7 @@ Optic has observed several instances where your API does not follow the spec:
 
           const path = <DisplayPath url={<PathIdToPathString pathId={pathId} />} method={method} />
 
-          const name = cachedQueryResults.contributions.getOrUndefined(requestId, 'purpose');
+          const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
           return (
             <ListItem dense>
               <ListItemText primary={name || path}

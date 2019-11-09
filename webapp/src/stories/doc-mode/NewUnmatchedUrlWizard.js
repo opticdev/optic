@@ -35,6 +35,7 @@ import Chip from '@material-ui/core/Chip';
 import { PathIdToPathString } from './PathIdToPathString';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
+import {PURPOSE} from './ContributionKeys';
 
 const styles = theme => ({
   root: {
@@ -159,7 +160,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
             {suggestedPaths && (
               <>
-                <Typography variant="body1">Suggested Paths to Document</Typography>
+                <Typography variant="body1" color="primary" style={{marginTop: 12}}>Suggested Paths to Document</Typography>
                 <List dense>
                   {!targetUrl && (
                     suggestedPaths.map(({ method, url, sample, pathId }) => {
@@ -182,7 +183,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
               </>
             )}
 
-            <Typography variant="body1">Observed Paths</Typography>
+            <Typography variant="body1" color="primary">Observed Paths</Typography>
             <List dense>
               {!targetUrl && (
                 pathsToRender.map(({ method, url, sample }) => (
@@ -468,7 +469,7 @@ export const UrlsX = compose(withTrafficAndDiffSessionContext, withRfcContext)(p
     const requestId = RequestsHelper.newRequestId();
     const commands = [
       RequestsCommands.AddRequest(requestId, parentPathId, httpMethod),
-      RfcCommands.AddContribution(requestId, 'purpose', purpose),
+      RfcCommands.AddContribution(requestId, PURPOSE, purpose),
     ];
 
     handleCommands(...commands);

@@ -25,6 +25,7 @@ import {coreShapeIdsSet} from './shape-editor/ShapeUtilities.js';
 import ShapeViewer, {WriteOnly} from './shape-editor/ShapeViewer.js';
 import ShapeViewerNew, {ExampleViewer} from '../stories/doc-mode/shape/ShapeViewer';
 import {HighlightedIDsStore} from '../stories/doc-mode/shape/HighlightedIDs';
+import {DESCRIPTION} from '../stories/doc-mode/ContributionKeys';
 
 export const styles = theme => ({
   root: {
@@ -103,12 +104,12 @@ class ConceptsPage extends React.Component {
 
             <ContributionTextField
               key={`${conceptId}-description`}
-              value={contributions.getOrUndefined(conceptId, 'description')}
+              value={contributions.getOrUndefined(conceptId, DESCRIPTION)}
               variant={'multi'}
-              placeholder={'Description'}
-              mode={mode}
+              placeholder={DESCRIPTION}
+              mode={mode}s
               onBlur={(value) => {
-                handleCommand(updateContribution(conceptId, 'description', value));
+                handleCommand(updateContribution(conceptId, DESCRIPTION, value));
               }}
             />
             <ShapeEditorStore onShapeSelected={(shapeId) => {
@@ -142,7 +143,7 @@ function ShapeParameterManagerBase({parameters, cachedQueryResults, shape, canMa
               value={parameter.name}
               defaultText={''}
               variant="inline"
-              placeholder={'description'}
+              placeholder={DESCRIPTION}
               cachedQueryResults={cachedQueryResults}
               contributionKey="description"
               contributionParentId={parameter.shapeParameterId}

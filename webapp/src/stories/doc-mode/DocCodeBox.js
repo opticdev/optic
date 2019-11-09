@@ -119,8 +119,10 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, showShapesFirst,
 
   useEffect(() => {
     // Update the document title using the browser API
-    const exampleProvided = typeof example !== 'undefined'
-    setShowExample(showShapesFirst ? false : exampleProvided)
+    const _exampleProvided = typeof example !== 'undefined'
+    if (!exampleProvided && exampleProvided) {
+      setShowExample(true)
+    }
   });
 
   const rightRegion = (

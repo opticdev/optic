@@ -6,6 +6,7 @@ import {ExampleShapeViewer} from './DocCodeBox';
 import {DocGrid} from './DocGrid';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import {StickyRegion} from './StickyRegion';
+import {BODY_DESCRIPTION} from './ContributionKeys';
 
 export function DocRequest({
                              description,
@@ -24,7 +25,7 @@ export function DocRequest({
           value={description}
           label="What should be in the request?"
           onChange={(value) => {
-            updateContribution(requestId, 'body', value);
+            updateContribution(requestId, BODY_DESCRIPTION, value);
           }}/>
       </DocSubGroup>
     </StickyRegion>

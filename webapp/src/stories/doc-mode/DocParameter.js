@@ -2,6 +2,7 @@ import React from 'react';
 import {Typography} from '@material-ui/core';
 import {DocDivider, DocSubGroupHeadingStyles, ParametersStyles, SubHeadingStyles} from './DocConstants';
 import {MarkdownContribution} from './DocContribution';
+import {DESCRIPTION} from './ContributionKeys';
 
 export function DocParameter({title, description, children, paramId, updateContribution = () => {}}) {
   return (
@@ -14,7 +15,7 @@ export function DocParameter({title, description, children, paramId, updateContr
         <MarkdownContribution value={description}
                               label="Description"
                               onChange={(value) => {
-                                updateContribution(paramId, 'description', value)
+                                updateContribution(paramId, DESCRIPTION, value)
                               }}
         />
       </div>
