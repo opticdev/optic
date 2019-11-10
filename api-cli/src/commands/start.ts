@@ -29,7 +29,10 @@ const {ApiInteraction, ApiRequest, ApiResponse} = opticEngine.com.seamless.diff
 const JsonHelper = opticEngine.com.seamless.diff.JsonHelper()
 
 function fromJs(x: any) {
-  return JsonHelper.fromString(JSON.stringify(x))
+  if (x === undefined) {
+    return JsonHelper.toNone()
+  }
+  return JsonHelper.toSome(JsonHelper.fromString(JSON.stringify(x)))
 }
 
 export function toInteraction(sample: IApiInteraction) {
@@ -85,6 +88,7 @@ export default class Start extends Command {
     analytics.track('api server stopped. ', {name: config.name, sampleCount: result.samples.length})
 
     await this.flushSession(result)
+    process.exit(0)
   }
 
   async flushSession(result: ICaptureSessionResult) {

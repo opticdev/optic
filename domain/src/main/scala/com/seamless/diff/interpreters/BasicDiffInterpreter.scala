@@ -9,7 +9,7 @@ class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
   def interpret(diff: RequestDiffResult): Seq[DiffInterpretation] = {
     implicit val shapesState: ShapesState = _shapesState
     diff match {
-      case d: UnmatchedHttpMethod => Seq(Interpretations.AddRequest(d.interaction.apiRequest.method, d.pathId))
+//      case d: UnmatchedHttpMethod => Seq(Interpretations.AddRequest(d.interaction.apiRequest.method, d.pathId))
       case d: UnmatchedHttpStatusCode => Seq(Interpretations.AddResponse(d.interaction.apiResponse.statusCode, d.requestId))
       case d: UnmatchedRequestContentType => Seq(Interpretations.ChangeRequestContentType(d.requestId, d.contentType, d.previousContentType))
       case d: UnmatchedRequestBodyShape => {
@@ -34,7 +34,7 @@ class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
           case sd: ShapeDiffer.UnexpectedObjectKey =>
             Seq(Interpretations.AddFieldToResponseShape(sd.key, sd.actual, sd.parentObjectShapeId, d.responseStatusCode, d.responseId))
           case sd: ShapeDiffer.KeyShapeMismatch =>
-            Seq(Interpretations.ChangeFieldInResponseShape(sd.key, sd.fieldId, sd.actual, d.responseStatusCode))
+            Seq(Interpretations.ChangeFieldInResponseShape(sd.key, sd.fieldId, sd.actual, d.responseStatusCode, d.responseId))
           case _ => Seq.empty
         }
       }

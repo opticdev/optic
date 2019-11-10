@@ -2,6 +2,7 @@ package com.seamless.contexts.shapes
 
 import com.seamless.contexts.requests.Commands.ShapedRequestParameterShapeDescriptor
 import com.seamless.contexts.requests.Events._
+import com.seamless.contexts.rfc.Events.EventContext
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.Events._
 import com.seamless.ddd.{AggregateId, EventSourcedRepository, InMemoryEventStore}
@@ -18,12 +19,12 @@ object ShapesHelper {
 
   def newFieldId(): String = s"field_${Random.alphanumeric take 10 mkString}"
 
-  def appendDefaultStringTypeEvents(adder: RequestParameterAdded): Vector[RequestsEvent] = {
+  def appendDefaultStringTypeEvents(adder: RequestParameterAdded, eventContext: Option[EventContext]): Vector[RequestsEvent] = {
     val shapeId = newShapeId()
     Vector(
       adder,
-      ShapeAdded(shapeId, "$string", DynamicParameterList(Seq.empty), ""),
-      RequestParameterShapeSet(adder.parameterId, ShapedRequestParameterShapeDescriptor(shapeId, isRemoved = false))
+      ShapeAdded(shapeId, "$string", DynamicParameterList(Seq.empty), "", eventContext),
+      RequestParameterShapeSet(adder.parameterId, ShapedRequestParameterShapeDescriptor(shapeId, isRemoved = false), eventContext)
     ).asInstanceOf[Vector[RequestsEvent]]
   }
 
@@ -37,20 +38,20 @@ object ShapesHelper {
     ).asInstanceOf[Vector[RequestsEvent]]
   }
 
-  sealed class CoreShapeKind(val baseShapeId: ShapeId)
-  case object ObjectKind extends CoreShapeKind("$object")
-  case object ListKind extends CoreShapeKind("$list")
-  case object MapKind extends CoreShapeKind("$map")
-  case object OneOfKind extends CoreShapeKind("$oneOf")
-  case object AnyKind extends CoreShapeKind("$any")
-  case object StringKind extends CoreShapeKind("$string")
-  case object NumberKind extends CoreShapeKind("$number")
-  case object BooleanKind extends CoreShapeKind("$boolean")
-  case object IdentifierKind extends CoreShapeKind("$identifier")
-  case object ReferenceKind extends CoreShapeKind("$reference")
-  case object NullableKind extends CoreShapeKind("$nullable")
-  case object OptionalKind extends CoreShapeKind("$optional")
-  case object UnknownKind extends CoreShapeKind("$unknown")
+  sealed class CoreShapeKind(val baseShapeId: ShapeId, val name: String)
+  case object ObjectKind extends CoreShapeKind("$object", "Object")
+  case object ListKind extends CoreShapeKind("$list", "List")
+  case object MapKind extends CoreShapeKind("$map", "Map")
+  case object OneOfKind extends CoreShapeKind("$oneOf", "One of")
+  case object AnyKind extends CoreShapeKind("$any", "Any")
+  case object StringKind extends CoreShapeKind("$string", "String")
+  case object NumberKind extends CoreShapeKind("$number", "Number")
+  case object BooleanKind extends CoreShapeKind("$boolean", "Boolean")
+  case object IdentifierKind extends CoreShapeKind("$identifier", "Identifier")
+  case object ReferenceKind extends CoreShapeKind("$reference", "Reference")
+  case object NullableKind extends CoreShapeKind("$nullable", "Nullable")
+  case object OptionalKind extends CoreShapeKind("$optional", "Optional")
+  case object UnknownKind extends CoreShapeKind("$unknown", "Unknown")
 
   val allCoreShapes = Set(ObjectKind, ListKind, MapKind, OneOfKind, AnyKind, StringKind, NumberKind, BooleanKind, IdentifierKind, ReferenceKind, NullableKind, OptionalKind, UnknownKind)
 
@@ -71,7 +72,7 @@ class ShapesService() {
 
   def handleCommand(id: AggregateId, command: ShapesCommand): Unit = {
     val state = repository.findById(id)
-    val effects = ShapesAggregate.handleCommand(state)((ShapesCommandContext(), command))
+    val effects = ShapesAggregate.handleCommand(state)((ShapesCommandContext("a", "b", "c"), command))
     repository.save(id, effects.eventsToPersist)
   }
 

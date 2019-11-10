@@ -1,0 +1,6 @@
+name: '3000'
+commands:
+  start: npm run start
+proxy:
+  target: 'http://localhost:{{ENV.OPTIC_API_PORT}}'
+  port: 4000

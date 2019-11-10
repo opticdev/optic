@@ -4,10 +4,21 @@ import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.ShapesHelper._
 import com.seamless.contexts.shapes.{ShapeEntity, ShapesState}
 import io.circe._
+import io.circe.generic.auto._
+import io.circe.syntax._
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportDescendentClasses}
 
 
 object ShapeDiffer {
-  sealed trait ShapeDiffResult {}
+
+  @JSExportDescendentClasses
+  @JSExportAll
+  sealed trait ShapeDiffResult {
+    def asJs = {
+      import io.circe.scalajs.convertJsonToJs
+      convertJsonToJs(this.asJson)
+    }
+  }
   case class NoDiff() extends ShapeDiffResult
   case class NoExpectedShape(expected: ShapeEntity, actual: Option[Json]) extends ShapeDiffResult
   case class WeakNoDiff(expected: ShapeEntity, actual: Option[Json]) extends ShapeDiffResult
@@ -76,7 +87,8 @@ object ShapeDiffer {
                 case sd: NoDiff => None
                 case sd: ShapeMismatch => Some(ListItemShapeMismatch(expectedShape, actualShape, itemShape.get, item))
                 case x => {
-                  None
+//                  println("diff within list")
+                  Some(x)
                 }
               }
             })
@@ -134,7 +146,10 @@ object ShapeDiffer {
                 case d: UnsetValue => Some(UnsetObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get))
                 case d: NullValue => Some(NullObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get))
                 case x: NoDiff => None
-                case x => Some(x)
+                case x => {
+//                  println("diff within object key")
+                  Some(x)
+                }
               }
             } else {
               None
@@ -188,7 +203,7 @@ object ShapeDiffer {
             false
           }
         })
-        println(firstMatch)
+//        println(firstMatch)
         if (firstMatch.isDefined) {
           Iterator.empty
         } else {

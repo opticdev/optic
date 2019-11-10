@@ -40,6 +40,7 @@ export default class Init extends Command {
     import: flags.string(),
     name: flags.string(),
     port: flags.string(),
+    host: flags.string(),
     command: flags.string(),
   }
 
@@ -57,10 +58,10 @@ export default class Init extends Command {
       await this.importOas(flags.import)
     } else {
 
-      const {name, port, command} = flags
-      if (name && port && command) {
-        analytics.track('init from on-boarding', {name, port, command})
-        await this.blankWithName(name, parseInt(port, 10), command)
+      const {name, port, command, host} = flags
+      if (name && port && command && host) {
+        analytics.track('init from on-boarding', {name, port, command, host})
+        await this.blankWithName(name, parseInt(port, 10), command, host)
       } else {
         analytics.track('init blank')
         return open('https://dashboard.useoptic.com/setup')
@@ -74,7 +75,7 @@ export default class Init extends Command {
     this.log(" - Run 'api spec' to view and edit the specification")
   }
 
-  async blankWithName(name: string, port: number, command: string) {
+  async blankWithName(name: string, port: number, command: string, host: string) {
     const config: IApiCliConfig = {
       name,
       commands: {
@@ -82,7 +83,7 @@ export default class Init extends Command {
       },
       proxy: {
         // tslint:disable-next-line:no-invalid-template-strings
-        target: 'http://localhost:{{ENV.OPTIC_API_PORT}}',
+        target: `http://${host}:{{ENV.OPTIC_API_PORT}}`,
         port
       }
     }

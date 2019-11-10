@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "Make APIs Developer Friendly",
-  "version": "6.2.0",
+  "version": "6.3.0",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -11,6 +11,8 @@
     "@oclif/command": "^1.5.10",
     "@oclif/config": "^1.12.6",
     "@oclif/plugin-help": "^2.1.6",
+    "@types/nodegit": "^0.24.13",
+    "@types/uuid": "^3.4.5",
     "assert": "^2.0.0",
     "body-parser": "^1.19.0",
     "cli-ux": "^5.2.1",
@@ -35,9 +37,11 @@
     "mustache": "^3.0.3",
     "nice-try": "^2.0.0",
     "node-fetch": "^2.6.0",
+    "nodegit": "^0.26.2",
     "open": "^6.3.0",
     "tree-kill": "^1.2.1",
-    "tslib": "^1.9.3"
+    "tslib": "^1.9.3",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.21.0",

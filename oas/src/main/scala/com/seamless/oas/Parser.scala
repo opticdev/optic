@@ -9,7 +9,7 @@ import com.seamless.oas.oas_to_commands.RequestsToCommandsImplicits._
 import JsonSchemaToCommandsImplicits._
 import com.seamless.contexts.rfc.Commands.{RfcCommand, SetAPIName}
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.{RfcService, RfcState}
+import com.seamless.contexts.rfc.{RfcCommandContext, RfcService, RfcState}
 import com.seamless.ddd.InMemoryEventStore
 
 object Parser {
@@ -54,7 +54,7 @@ object Parser {
       println("[    BEFORE RUNNING    ]")
       allCommands.foreach((command: RfcCommand) => {
         println(command)
-        service.handleCommand("test", command)
+        service.handleCommand("test", command, RfcCommandContext("oas", "s1", "b1"))
       })
       println("[    AFTER RUNNING    ]")
       service

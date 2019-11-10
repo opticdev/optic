@@ -40,9 +40,9 @@ object ContributionsProjection extends Projection[RfcEvent, ContributionWrapper]
     val mutableMap = toMutable(contributionMap.mapValues(toMutable))
 
     val results = events.foreach {
-      case ContributionAdded(id, key, value) => {
-        val contributionsForId = mutableMap.getOrElseUpdate(id, toMutable(Map.empty[String, String]))
-        contributionsForId.put(key, value)
+      case e: ContributionAdded => {
+        val contributionsForId = mutableMap.getOrElseUpdate(e.id, toMutable(Map.empty[String, String]))
+        contributionsForId.put(e.key, e.value)
         mutableMap
       }
       case _ =>

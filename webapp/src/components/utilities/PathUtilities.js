@@ -87,3 +87,55 @@ export function addAbsolutePath(pathId, pathsById) {
         absolutePath: asAbsolutePath(pathTrailComponents)
     }
 }
+
+export function normalizePath(pathComponents) {
+  return '/' + pathComponents.map(x => x.isParameter ? '{}' : x.name).join('/')
+}
+
+export function toAbsolutePath(pathComponents) {
+  return '/' + pathComponents.map(x => x.isParameter ? `{${x.name}}` : x.name).join('/')
+}
+
+function lastOrElse(array, defaultValue) {
+  const length = array.length;
+  return length === 0 ? defaultValue : array[length - 1]
+}
+
+const rootPathComponent = [];
+export function prefixes(pathComponents) {
+  return pathComponents
+    .reduce((acc, pathComponent) => {
+      return [
+        ...acc,
+        [...(lastOrElse(acc, [])), pathComponent]
+      ]
+    }, [rootPathComponent])
+}
+
+export function resolvePath(pathComponents, pathsById) {
+  const normalizedPathMap = Object.entries(pathsById)
+    .reduce((acc, [pathId, pathComponent]) => {
+      const normalizedAbsolutePath = asNormalizedAbsolutePath(asPathTrailComponents(pathId, pathsById))
+      acc[normalizedAbsolutePath] = pathComponent
+      return acc
+    }, {})
+  const pathPrefixes = prefixes(pathComponents).reverse()
+  // should be guaranteed to have a match of at least [] => '/' (root)
+  const lastMatchComponents = pathPrefixes
+    .find((pathComponentPrefix) => {
+      const normalized = normalizePath(pathComponentPrefix)
+      const match = normalizedPathMap[normalized]
+      return !!match
+    })
+
+
+  const normalized = normalizePath(lastMatchComponents)
+  const lastMatch = normalizedPathMap[normalized]
+
+  const lengthDifference = pathComponents.length - lastMatchComponents.length;
+  const toAdd = lengthDifference <= 0 ? [] : pathComponents.slice(-1 * lengthDifference)
+  return {
+    lastMatch,
+    toAdd
+  }
+}

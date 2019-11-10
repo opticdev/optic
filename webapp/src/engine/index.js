@@ -8,6 +8,7 @@ export const NaiveSummary = opticEngine.com.seamless.diff.NaiveSummary()
 
 export const RfcCommands = opticEngine.com.seamless.contexts.rfc.Commands
 export const RequestsCommands = opticEngine.com.seamless.contexts.requests.Commands
+export const RfcCommandContext = opticEngine.com.seamless.contexts.rfc.RfcCommandContext
 export const ScalaJSHelpers = opticEngine.ScalaJSHelpers
 
 export const Facade = opticEngine.com.seamless.contexts.rfc.RfcServiceJSFacade()
@@ -53,6 +54,7 @@ export function toInteraction(sample) {
         ApiResponse(sample.response.statusCode, sample.response.headers['content-type'] || '*/*', fromJs(sample.response.body))
     )
 }
+export const InteractionDiffer = opticEngine.com.seamless.diff.InteractionDiffer;
 export const RequestDiffer = opticEngine.com.seamless.diff.RequestDiffer()
 export const Interpreters = opticEngine.com.seamless.diff.interpreters
 console.log(opticEngine)

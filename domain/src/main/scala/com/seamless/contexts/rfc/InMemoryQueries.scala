@@ -5,15 +5,18 @@ import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
 import com.seamless.contexts.requests.{PathComponent, RequestsState, Utilities}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection}
-import com.seamless.contexts.shapes.Commands.ShapeId
+import com.seamless.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.seamless.contexts.shapes.ShapesState
-import com.seamless.contexts.shapes.projections.{NamedShape, NamedShapes}
+import com.seamless.contexts.shapes.projections.FlatShapeProjection.FlatShapeResult
+import com.seamless.contexts.shapes.projections.{ExampleProjection, FlatShapeProjection, NameForShapeId, NamedShape, NamedShapes}
 import com.seamless.ddd.{AggregateId, CachedProjection, EventStore}
+import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
+import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 
 @JSExportTopLevel("Queries")
 @JSExportAll
@@ -21,22 +24,18 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   private val q = new InMemoryQueries(eventStore, service, aggregateId)
 
   def pathsWithRequests(): js.Any = {
-    import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.pathsWithRequests.asJson)
   }
 
   def requestsState(): js.Any = {
-    import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.requestsState.asJson)
   }
 
   def shapesState(): js.Any = {
-    import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.shapesState.asJson)
   }
 
   def namedShapes(): js.Any = {
-    import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.namedShapes.asJson)
   }
 
@@ -49,7 +48,6 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   }
 
   def shapeById(shapeId: ShapeId): js.Any = {
-    import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.shapesState.flattenedShape(shapeId).asJson)
   }
 
@@ -62,8 +60,20 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   }
 
   def resolvePath(url: String): js.Any = {
-    import io.circe.scalajs.convertJsonToJs
     convertJsonToJs(q.resolvePath(url).asJson)
+  }
+  def nameForShapeId(shapeId: ShapeId): js.Any = {
+    convertJsonToJs(q.nameForShapeId(shapeId).asJson)
+  }
+  def nameForFieldId(fieldId: FieldId): js.Any = {
+    convertJsonToJs(q.nameForFieldId(fieldId).asJson)
+  }
+  def flatShapeForShapeId(shapeId: ShapeId, affectedIds: js.Array[String] = js.Array()): js.Any = {
+    import js.JSConverters._
+    convertJsonToJs(q.flatShapeForShapeId(shapeId, affectedIds.toSeq).asJson)
+  }
+  def flatShapeForExample(example: js.Any): js.Any = {
+    convertJsonToJs(q.flatShapeForExample(convertJsToJson(example).right.get).asJson)
   }
 }
 
@@ -117,4 +127,18 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
   def resolvePath(url: String) = {
     Utilities.resolvePath(url, requestsState.pathComponents)
   }
+
+  def nameForShapeId(shapeId: ShapeId): Seq[NameForShapeId.ColoredComponent] = {
+    NameForShapeId.getShapeName(shapeId)(service.currentState(aggregateId).shapesState)
+  }
+  def nameForFieldId(fieldId: FieldId): Seq[NameForShapeId.ColoredComponent] = {
+    NameForShapeId.getFieldIdShapeName(fieldId)(service.currentState(aggregateId).shapesState)
+  }
+  def flatShapeForShapeId(shapeId: ShapeId, affectedIds: Seq[String] = Seq.empty): FlatShapeResult = {
+    FlatShapeProjection.forShapeId(shapeId, affectedIds = affectedIds)(service.currentState(aggregateId).shapesState)
+  }
+  def flatShapeForExample(example: Json): FlatShapeResult = {
+    ExampleProjection.fromJson(example)
+  }
+
 }

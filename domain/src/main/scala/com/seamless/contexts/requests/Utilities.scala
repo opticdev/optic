@@ -132,7 +132,6 @@ object Utilities {
               case d: ParameterizedPathComponentDescriptor => 1
             }
           })
-          println(sortedPathComponents)
           val matchingComponent = sortedPathComponents.find(p => p._2.descriptor match {
             case d: BasicPathComponentDescriptor => {
               d.name == component
