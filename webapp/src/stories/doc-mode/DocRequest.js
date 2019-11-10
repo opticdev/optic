@@ -1,10 +1,8 @@
 import React from 'react';
 import {DocSubGroup} from './DocSubGroup';
 import {MarkdownContribution} from './DocContribution';
-import {DocParameter} from './DocParameter';
 import {ExampleShapeViewer} from './DocCodeBox';
 import {DocGrid} from './DocGrid';
-import ListSubheader from '@material-ui/core/ListSubheader';
 import {StickyRegion} from './StickyRegion';
 import {BODY_DESCRIPTION} from './ContributionKeys';
 

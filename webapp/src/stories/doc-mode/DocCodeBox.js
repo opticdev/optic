@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {CssBaseline, Typography} from '@material-ui/core';
+import {Typography} from '@material-ui/core';
 import {DocGrey, methodColors} from './DocConstants';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {secondary} from '../../theme';
-import ReactJson from 'react-json-view';
-import {HighlightedIDsStore, withHighlightedIDs} from './shape/HighlightedIDs';
 import {ExampleViewer, ShapeViewerWithQuery} from './shape/ShapeViewer';
 import {Show} from './Show';
 
@@ -125,7 +123,7 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, showShapesFirst,
     } else if (!_exampleProvided) {
       setShowExample(false)
     }
-  });
+  }, [example, exampleProvided]);
 
   const rightRegion = (
     <StyledTabs value={showExample ? 0 : 1}>

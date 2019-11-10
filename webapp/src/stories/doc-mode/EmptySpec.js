@@ -1,11 +1,10 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
-import {AddedGreen, AddedGreenBackground, UpdatedBlue, UpdatedBlueBackground} from '../../contexts/ColorContext';
+import {AddedGreen, AddedGreenBackground} from '../../contexts/ColorContext';
 import classNames from 'classnames';
 import {MarkdownRender} from './DocContribution';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
-import IconButton from '@material-ui/core/IconButton';
 import BuildIcon from '@material-ui/icons/Build';
 import Button from '@material-ui/core/Button';
 import {Helmet} from 'react-helmet';

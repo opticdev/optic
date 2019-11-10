@@ -5,15 +5,13 @@ import {AppBar, Typography} from '@material-ui/core';
 import {DocSubGroup} from './DocSubGroup';
 import {DocParameter} from './DocParameter';
 import {HeadingContribution, MarkdownContribution} from './DocContribution';
-import DocCodeBox, {EndpointOverviewCodeBox, ExampleShapeViewer} from './DocCodeBox';
+import {EndpointOverviewCodeBox} from './DocCodeBox';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import compose from 'lodash.compose'
 import {DocResponse} from './DocResponse';
 import Collapse from '@material-ui/core/Collapse';
 import {DocRequest} from './DocRequest';
 import {withRfcContext} from '../../contexts/RfcContext';
-import {withEditorContext} from '../../contexts/EditorContext';
-import {getNormalizedBodyDescriptor} from '../../components/PathPage';
 import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../../components/utilities/PathUtilities';
 import {updateContribution} from '../../engine/routines';
 import sortBy from 'lodash.sortby';
@@ -26,6 +24,7 @@ import {Helmet} from 'react-helmet';
 import groupby from 'lodash.groupby'
 import {BODY_DESCRIPTION, DESCRIPTION, PURPOSE} from './ContributionKeys';
 import {NamerStore} from './shape/Namer';
+import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
 
 const styles = theme => ({
   root: {
@@ -76,10 +75,6 @@ class EndpointPageDataLoader extends React.Component {
     examples: []
   }
 
-  constructor(props) {
-    super(props)
-  }
-
   componentDidMount() {
     const {specService, requestId} = this.props
     if (specService) {
@@ -99,7 +94,6 @@ class EndpointPageDataLoader extends React.Component {
   }
 
   responseExamples() {
-    const statusCodes = new Set([...this.state.examples.map(i => i.response.statusCode)])
     const grouped = groupby(this.state.examples, (e) => e.response.statusCode)
     return (statusCode) => {
       return grouped[statusCode] && grouped[statusCode][0].response.body
@@ -108,10 +102,9 @@ class EndpointPageDataLoader extends React.Component {
 
   render() {
 
-    const {requestId, showShapesFirst, classes, handleCommand, handleCommands, mode, baseUrl, cachedQueryResults, inDiffMode} = this.props
+    const {requestId, showShapesFirst, classes, handleCommand, cachedQueryResults} = this.props
 
-    const {apiName, requests, pathsById, responses, requestIdsByPathId, contributions, requestParameters} = cachedQueryResults;
-
+    const {requests, pathsById, responses, contributions} = cachedQueryResults;
 
     const request = requests[requestId];
 
@@ -123,7 +116,6 @@ class EndpointPageDataLoader extends React.Component {
     const {httpMethod, pathComponentId, bodyDescriptor} = requestDescriptor;
 
     //Path
-    const path = pathsById[pathComponentId];
     const pathTrail = asPathTrail(pathComponentId, pathsById);
     const pathTrailComponents = pathTrail.map(pathId => pathsById[pathId]);
     const pathTrailWithNames = pathTrailComponents.map((pathComponent) => {
@@ -154,11 +146,11 @@ class EndpointPageDataLoader extends React.Component {
     const responsesForRequest = Object.values(responses)
       .filter((response) => response.responseDescriptor.requestId === requestId);
 
-    const parametersForRequest = Object.values(requestParameters)
-      .filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId);
+    // const parametersForRequest = Object.values(requestParameters)
+    //   .filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId);
 
-    const headerParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'header');
-    const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query');
+    // const headerParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'header');
+    // const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query');
 
     return (
       <div className={classes.wrapper}>
@@ -186,7 +178,7 @@ class EndpointPageDataLoader extends React.Component {
   }
 }
 
-export const EndpointPageWithQuery = compose(withStyles(styles), withEditorContext, withRfcContext)(EndpointPageDataLoader)
+export const EndpointPageWithQuery = compose(withStyles(styles), withRfcContext)(EndpointPageDataLoader)
 
 class _EndpointPage extends React.Component {
 
@@ -279,7 +271,7 @@ class _EndpointPage extends React.Component {
 
 
     const responsesRendered = (() => responses.map(response => {
-      const {isRemoved, responseId, responseDescriptor} = response;
+      const {responseId, responseDescriptor} = response;
       const {httpStatusCode, bodyDescriptor} = responseDescriptor;
       const {httpContentType, shapeId} = getNormalizedBodyDescriptor(bodyDescriptor);
 

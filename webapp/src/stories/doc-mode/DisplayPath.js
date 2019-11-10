@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import {DocDarkGrey, DocGrey, methodColors} from './DocConstants';
+import {DocDarkGrey, methodColors} from './DocConstants';
 import React from 'react';
 
 export function DisplayPath({ url, method }) {

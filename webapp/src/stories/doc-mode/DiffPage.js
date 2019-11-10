@@ -1,9 +1,9 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { AppBar, Grid, Typography } from '@material-ui/core';
-import { DocDarkGrey, DocGrey, methodColors, SubHeadingStyles } from './DocConstants';
-import { DocCodeBox, EndpointOverviewCodeBox, ExampleOnly, ShapeOnly, ShapeOverview } from './DocCodeBox';
+import { AppBar, Typography } from '@material-ui/core';
+import { DocDarkGrey, DocGrey, methodColors } from './DocConstants';
+import { ExampleOnly, ShapeOnly } from './DocCodeBox';
 import { DocSubGroup } from './DocSubGroup';
 import { STATUS_CODES } from 'http';
 import PropTypes from 'prop-types';
@@ -15,15 +15,14 @@ import ClearIcon from '@material-ui/icons/Clear';
 import InterpretationInfo from './InterpretationInfo';
 import { AddedGreen, Highlight, HighlightedIDsStore } from './shape/HighlightedIDs';
 import { withRfcContext } from '../../contexts/RfcContext';
-import { getNormalizedBodyDescriptor } from '../../components/PathPage';
 import { JsonHelper } from '../../engine';
 import Mustache from 'mustache';
 import { Link } from 'react-router-dom';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import {PURPOSE} from './ContributionKeys';
-import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
 import compose from 'lodash.compose';
 import { DiffDocGrid } from './DocGrid';
+import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
 
 const styles = theme => ({
   root: {
@@ -182,7 +181,7 @@ class DiffPage extends React.Component {
     const { requests, responses } = cachedQueryResults;
     const request = requests[requestId];
     const { requestDescriptor } = request;
-    const { httpMethod, pathComponentId, bodyDescriptor } = requestDescriptor;
+    const { bodyDescriptor } = requestDescriptor;
 
     const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
 

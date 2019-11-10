@@ -80,9 +80,7 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
   const classes = useStyles();
 
   const {contributions} = cachedQueryResults;
-  const {name, children, depth, toggled, pathId, full, visible} = path;
-
-  const url = full + name;
+  const {name} = path;
 
   const [open, setOpen] = React.useState(false);
 

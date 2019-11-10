@@ -1,8 +1,8 @@
 import React from 'react';
 import DiffInfo from './DiffInfo';
-import ShapeDisplay from '../../components/shape-editor/ShapeDisplay';
 
 export function DiffToDiffCard(diff, queries) {
+  // eslint-disable-next-line no-unused-vars
   const diffJs = diff.asJs;
   const [type, diffData] = Object.entries(diff.asJs)[0];
 

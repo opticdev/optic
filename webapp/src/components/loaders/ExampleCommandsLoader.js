@@ -2,7 +2,6 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
 import { RfcStore } from '../../contexts/RfcContext';
-import { TutorialStore } from '../../contexts/TutorialContext';
 import {
   Dialog,
   DialogActions,
@@ -76,12 +75,10 @@ class ExampleCommandsLoader extends React.Component {
       <NavigationStore baseUrl={baseUrl}>
         <InitialRfcCommandsStore initialCommandsString={example} rfcId="testRfcId">
           <RfcStore>
-            <TutorialStore>
               <Switch>
                 <Route path={routerPaths.request(baseUrl)} component={RequestsDetailsPage} />
                 <Route path={baseUrl} component={ExampleCommandsSpecOverview} />
               </Switch>
-            </TutorialStore>
           </RfcStore>
         </InitialRfcCommandsStore>
       </NavigationStore>

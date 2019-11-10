@@ -3,10 +3,9 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { withRfcContext } from '../../contexts/RfcContext';
 import { getNameWithFormattedParameters, getParentPathId } from '../utilities/PathUtilities';
 import sortBy from 'lodash.sortby';
-import { fuzzyConceptFilter, fuzzyPathsFilter } from '../navigation/Search';
 import ApiOverview from '../../stories/doc-mode/ApiOverview';
-import {specService} from '../../services/SpecService';
 import EmptySpec from '../../stories/doc-mode/EmptySpec';
+import FuzzySearch from 'fuzzy-search';
 
 
 const styles = theme => ({
@@ -38,8 +37,8 @@ class OverView extends React.Component {
   }
 
   render() {
-    const { classes, cachedQueryResults, mode, handleCommand, queries, baseUrl } = this.props;
-    const { apiName, contributions, conceptsById, pathsById, pathIdsWithRequests, requestIdsByPathId } = cachedQueryResults;
+    const { classes, cachedQueryResults, baseUrl } = this.props;
+    const { conceptsById, pathsById, requestIdsByPathId } = cachedQueryResults;
     const { specService, notificationAreaComponent } = this.props
     const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
     const sortedConcepts = sortBy(concepts, ['name']);
@@ -81,9 +80,11 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
 
   const children = Object.entries(paths)
     .filter(i => {
+      // eslint-disable-next-line no-unused-vars
       const [childId, childPath] = i;
       return getParentPathId(childPath) === id;
     }).map(i => {
+      // eslint-disable-next-line no-unused-vars
       const [childId, childPath] = i;
       return flattenPaths(childId, paths, depth + 1, fullNew, filteredIds);
     });
@@ -104,3 +105,32 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
 }
 
 export default withRfcContext(withStyles(styles)(OverView));
+
+
+function fuzzyPathsFilter(paths, query) {
+
+  function flattenAll(all, a = []) {
+    all.forEach(i => {
+      a.push(i)
+      flattenAll(i.children, a)
+    })
+  }
+
+  const allPaths = []
+  flattenAll(paths.children, allPaths)
+
+  const searcher = new FuzzySearch(allPaths, ['searchString', 'name'], {sort: true}, {
+    caseSensitive: false,
+  });
+
+  const pathIds = searcher.search(query).map(i => i.pathId)
+  return pathIds
+}
+
+function fuzzyConceptFilter(concepts, query) {
+  const searcher = new FuzzySearch(concepts, ['name'], {sort: true}, {
+    caseSensitive: false,
+  });
+
+  return searcher.search(query)
+}

@@ -32,7 +32,8 @@ export default withStyles(styles)(ShapeDisplayWithoutContext);
 
 
 /* Domain -> Style Mapping */
-const primitiveColors = {
+const
+  primitiveColors = {
   $string: '#29447b',
   $number: '#ffa1da',
   $boolean: '#ff502f',

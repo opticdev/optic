@@ -1,19 +1,15 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {withEditorContext} from '../../contexts/EditorContext';
 import PathInput from '../path-editor/PathInput';
 import pathToRegexp from 'path-to-regexp';
-import {pathComponentsToString} from './UnmatchedUrlWizard';
 import Typography from '@material-ui/core/Typography';
-import HelpIcon from '@material-ui/icons/HelpOutline';
-import {primary} from '../../theme';
-import {Tooltip} from '@material-ui/core';
+import {pathComponentsToString} from '../../stories/doc-mode/NewUnmatchedUrlWizard';
 
 const styles = theme => ({
   pathWrapper: {
     padding: 7,
     fontWeight: 400,
-    backgroundColor: '#eeeeee'
+    backgroundColor: '#f6f6f6'
   }
 });
 
@@ -58,13 +54,13 @@ class PathMatcher extends React.Component {
 
     return (
       <div>
-        <Typography variant="overline" style={{paddingBottom: 0, marginTop: 11}}>Observed URL:</Typography>
+        <Typography variant="overline" style={{paddingBottom: 0}}>URL:</Typography>
         <div className={classes.pathWrapper}><span
           style={{color: '#277a4e', fontWeight: 800}}>{matched}</span><span>{remaining}</span></div>
 
 
         <div style={{display: 'flex', flexDirection: 'row'}}>
-          <Typography variant="overline" style={{marginBottom: 0}}>Path:</Typography>
+          <Typography variant="overline" style={{marginBottom: 0}}>Provide Path Matcher:</Typography>
         </div>
 
         <div className={classes.pathWrapper}>
@@ -81,4 +77,4 @@ class PathMatcher extends React.Component {
   }
 }
 
-export default withEditorContext(withStyles(styles)(PathMatcher));
+export default withStyles(styles)(PathMatcher);

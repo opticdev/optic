@@ -37,7 +37,6 @@ class ShadowInput extends React.Component {
     const match = userInput ? (options.filter(i => (i.label || '').toLowerCase().startsWith(userInput.toLowerCase().trim()))[0]) : null;
     return match;
   };
-
   onChange = (match) => {
     if (this.props.onChange) {
       this.props.onChange(match);
@@ -54,8 +53,6 @@ class ShadowInput extends React.Component {
     const {
       classes,
       className,
-      options = [],
-      onChange,
       onKeyDown,
       onValueChanged,
       style,

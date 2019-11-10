@@ -1,17 +1,10 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {DocGrid} from './DocGrid';
-import {ListItemText, Typography} from '@material-ui/core';
-import {DocDivider, DocSubHeading, SubHeadingStyles, SubHeadingTitleColor} from './DocConstants';
-import {DocSubGroup} from './DocSubGroup';
-import {DocParameter} from './DocParameter';
+import {DocDivider} from './DocConstants';
 import {HeadingContribution, MarkdownContribution} from './DocContribution';
-import DocCodeBox, {EndpointOverviewCodeBox, ExampleShapeViewer, ShapeOnly} from './DocCodeBox';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import {DocButton, DocButtonGroup} from './ButtonGroup';
+import {ShapeOnly} from './DocCodeBox';
 import {HighlightedIDsStore} from './shape/HighlightedIDs';
-import ShapeViewerNew from './shape/ShapeViewer';
 import {StickyRegion} from './StickyRegion';
 
 const styles = theme => ({
@@ -36,7 +29,7 @@ const styles = theme => ({
 class ConceptOverview extends React.Component {
   render() {
 
-    const {classes, name, description, example, shapeId} = this.props;
+    const {classes, name, description, shapeId} = this.props;
 
     const left = (
       <StickyRegion>

@@ -196,8 +196,8 @@ export {
 };
 
 
-function commandNameFor(command) {
-    const name = command.$classData.name
-    const split = name.split('$')
-    return split[1]
-}
+// function commandNameFor(command) {
+//     const name = command.$classData.name
+//     const split = name.split('$')
+//     return split[1]
+// }

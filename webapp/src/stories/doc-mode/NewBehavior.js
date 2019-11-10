@@ -6,7 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 import compose from 'lodash.compose';
 import { withRfcContext } from '../../contexts/RfcContext';
-import { getRequestIdsWithDiffs, getUnrecognizedUrlCount } from '../../components/diff-v2/DiffUtilities';
+import { getRequestIdsWithDiffs, getUnrecognizedUrlCount } from '../../components/diff/DiffUtilities';
 import { computeDiffStateProjections } from '../../contexts/TrafficAndDiffSessionContext';
 import { Link } from 'react-router-dom';
 import { DisplayPath } from './DisplayPath';

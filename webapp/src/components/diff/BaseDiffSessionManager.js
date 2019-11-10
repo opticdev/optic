@@ -1,6 +1,5 @@
 import { EventEmitter } from 'events';
 import debounce from 'lodash.debounce';
-import { commandToJs } from '../../engine/index.js';
 
 export const DiffStateStatus = {
     persisted: 'persisted',

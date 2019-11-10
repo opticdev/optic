@@ -1,7 +1,6 @@
 import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import {AddedGreen, AddedGreenBackground, ChangedYellow, ChangedYellowBackground} from '../../contexts/ColorContext';
-import {Typography} from '@material-ui/core';
 import {MarkdownRender} from './DocContribution';
 import classNames from 'classnames'
 const styles = theme => ({

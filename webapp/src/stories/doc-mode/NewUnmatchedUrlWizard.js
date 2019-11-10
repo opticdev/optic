@@ -10,20 +10,17 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { STATUS_CODES } from 'http';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import { resolvePath } from '../../components/requests/NewRequestStepper';
-import PathMatcher from '../../components/diff/PathMatcher';
 import { AppBar, CssBaseline, ListItemAvatar, ListItemSecondaryAction, ListItemText, TextField } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import {DiffDocGrid, DiffDocGridRightSticky} from './DocGrid';
+import {DiffDocGridRightSticky} from './DocGrid';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import ClearIcon from '@material-ui/icons/Clear'
 import Paper from '@material-ui/core/Paper';
-import { DocDarkGrey, DocGrey, methodColors } from './DocConstants';
-import { LightTooltip } from '../../components/diff/DiffCard';
+import { DocDarkGrey, methodColors } from './DocConstants';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import { Show } from './Show';
 import sortby from 'lodash.sortby';
@@ -38,6 +35,9 @@ import compose from 'lodash.compose';
 import {PURPOSE} from './ContributionKeys';
 import {Link} from 'react-router-dom';
 import {Helmet} from 'react-helmet';
+import {LightTooltip} from '../../components/tooltipss/LightTooltip';
+import {resolvePath} from '../../components/utilities/PathUtilities';
+import PathMatcher from '../../components/diff/PathMatcher';
 
 const styles = theme => ({
   root: {

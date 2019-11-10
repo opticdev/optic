@@ -1,8 +1,8 @@
 import React from 'react';
 import { GenericContextFactory } from './GenericContextFactory.js';
 import { withRfcContext } from './RfcContext.js';
+import { BaseDiffSessionManager } from '../components/diff/BaseDiffSessionManager.js';
 import LoadingDiff from '../components/diff/LoadingDiff';
-import { BaseDiffSessionManager } from '../components/diff-v2/BaseDiffSessionManager.js';
 
 const {
     Context: TrafficAndDiffSessionContext,

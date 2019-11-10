@@ -7,10 +7,8 @@ import {
   ChangedYellowBackground,
   UpdatedBlue, UpdatedBlueBackground
 } from '../../contexts/ColorContext';
-import {Typography} from '@material-ui/core';
 import {MarkdownRender} from './DocContribution';
 import classNames from 'classnames';
-import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import IconButton from '@material-ui/core/IconButton';

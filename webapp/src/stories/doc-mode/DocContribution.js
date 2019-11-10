@@ -2,7 +2,7 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {TextField, Typography} from '@material-ui/core';
 import ReactMarkdown from 'react-markdown';
-import {DocDarkGrey, DocGrey, DocSubHeading, SubHeadingStyles} from './DocConstants';
+import {DocDarkGrey, DocSubHeading, SubHeadingStyles} from './DocConstants';
 
 export function MarkdownRender({source, noHeadings}) {
   return <ReactMarkdown
@@ -54,7 +54,7 @@ class _MarkdownContribution extends React.Component {
   }
 
   render() {
-    const {value, classes, label} = this.props;
+    const {classes, label} = this.props;
     const {inputValue, editing} = this.state;
     if (editing) {
       return (
@@ -108,7 +108,7 @@ class _HeadingContribution extends React.Component {
   }
 
   render() {
-    const {value, classes, label} = this.props;
+    const {classes, label} = this.props;
     const {inputValue, editing} = this.state;
 
     if (editing) {

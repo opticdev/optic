@@ -4,12 +4,12 @@ import { Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction 
 import { RfcContext, withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
 import { PathIdToPathString } from './PathIdToPathString';
-import SimulatedCommandContext from '../../components/diff/SimulatedCommandContext';
 import { DiffToDiffCard } from './DiffCopy';
 import PreCommit from './PreCommit';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
 import { NamerStore } from './shape/Namer';
+import SimulatedCommandContext from '../../components/diff/SimulatedCommandContext';
 
 class RequestDiffX extends React.Component {
   handleDiscard = async () => {

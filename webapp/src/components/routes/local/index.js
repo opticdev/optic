@@ -14,7 +14,6 @@ import { specService } from '../../../services/SpecService.js';
 import Loading from '../../../components/navigation/Loading';
 import { InitialRfcCommandsStore } from '../../../contexts/InitialRfcCommandsContext.js';
 import { LocalDiffRfcStore } from '../../../contexts/RfcContext.js';
-import { TutorialStore } from '../../../contexts/TutorialContext';
 import { TrafficAndDiffSessionStore } from '../../../contexts/TrafficAndDiffSessionContext';
 import { CommandContextStore } from '../../../contexts/CommandContext.js';
 import { routerPaths } from '../../../routes.js';
@@ -104,13 +103,11 @@ export class LocalLoader extends React.Component {
       <CommandContextStore clientSessionId={clientSessionId} clientId={clientId}>
         <InitialRfcCommandsStore initialEventsString={loadedEvents} rfcId="testRfcId">
           <LocalDiffRfcStore specService={specService}>
-            <TutorialStore>
               <Switch>
                 <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage} />
                 <Route exact path={basePath} component={LocalSpecOverview} />
                 <Route path={diffBasePath} component={SessionWrapper} />
               </Switch>
-            </TutorialStore>
           </LocalDiffRfcStore>
         </InitialRfcCommandsStore>
       </CommandContextStore>

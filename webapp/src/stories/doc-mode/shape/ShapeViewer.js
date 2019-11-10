@@ -225,7 +225,7 @@ export const Namer = compose(withNamer, withStyles(styles))(props => {
   const menu = (
     <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
       <div className={classes.namerInner}>
-        <TextField value={conceptName}
+        <TextField
           label="Name Concept"
           autoFocus
           value={conceptName}
@@ -279,9 +279,7 @@ function handleBaseShape(shape) {
 
 class _ShapeViewerBase extends React.Component {
   render() {
-    const { shape, depth = 0, parameters, classes } = this.props;
-
-    const { baseShapeId } = shape;
+    const { shape, classes } = this.props;
 
     const root = handleBaseShape(shape);
     return (

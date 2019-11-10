@@ -1,7 +1,6 @@
 import React from 'react'
 import {Typography} from '@material-ui/core';
-import {DocDivider, DocSubGroupHeadingStyles, SubHeadingStyles} from './DocConstants';
-import Divider from '@material-ui/core/Divider';
+import {DocDivider, DocSubGroupHeadingStyles} from './DocConstants';
 export function DocSubGroup({title, children, style}) {
   return (
     <div style={{marginTop: 11, ...style}}>

@@ -13,14 +13,12 @@ import AppRoutes from './routes';
 import { BrowserRouter, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/core/styles'
-import { ShapeDialogStore } from './contexts/ShapeDialogContext';
 
 class App extends React.Component {
 
   render() {
     return (
       <React.Fragment>
-        <ShapeDialogStore>
           <CssBaseline />
           <ThemeProvider theme={appTheme}>
             <Hidden smUp>
@@ -44,7 +42,6 @@ class App extends React.Component {
               </BrowserRouter>
             </SnackbarProvider>
           </ThemeProvider>
-        </ShapeDialogStore>
       </React.Fragment>
     );
   }

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Typography from '@material-ui/core/Typography';
-import {TextField} from '@material-ui/core';
 
 import PathComponent from './PathComponent.js';
 import {Keys} from 'react-keydown';
@@ -110,7 +109,7 @@ class PathInput extends React.Component {
 
   render() {
     const {pathComponents, currentComponent} = this.state;
-    const {targetUrl, classes} = this.props;
+    const {targetUrl} = this.props;
 
     //Figure out which component to suggest when a target URL is supplied.
     let options = []

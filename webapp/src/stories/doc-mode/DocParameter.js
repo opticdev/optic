@@ -1,6 +1,7 @@
+
 import React from 'react';
 import {Typography} from '@material-ui/core';
-import {DocDivider, DocSubGroupHeadingStyles, ParametersStyles, SubHeadingStyles} from './DocConstants';
+import {DocDivider, ParametersStyles} from './DocConstants';
 import {MarkdownContribution} from './DocContribution';
 import {DESCRIPTION} from './ContributionKeys';
 

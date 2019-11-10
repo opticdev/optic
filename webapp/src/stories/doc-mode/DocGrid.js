@@ -1,8 +1,6 @@
 import React from 'react';
 import {Grid, makeStyles} from '@material-ui/core';
-import Box from '@material-ui/core/Box';
 import {StickyRegion} from './StickyRegion';
-import classNames from 'classnames';
 
 const useStyles = makeStyles(theme => ({
   right: {

@@ -4,7 +4,6 @@ import { TrafficAndDiffSessionStore } from '../../contexts/TrafficAndDiffSession
 import { LocalDiffRfcStore } from '../../contexts/RfcContext';
 import Loading from '../navigation/Loading';
 import { Route, Switch } from 'react-router-dom';
-import { TutorialStore } from '../../contexts/TutorialContext';
 import { UrlsX } from '../../stories/doc-mode/NewUnmatchedUrlWizard';
 import RequestDiffX from '../../stories/doc-mode/RequestDiffX';
 import { NavigationStore } from '../../contexts/NavigationContext';
@@ -112,13 +111,11 @@ class ExampleSessionsLoader extends React.Component {
     return (
       <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
         <LocalDiffRfcStore specService={specService}>
-          <TutorialStore>
             <Switch>
               <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage} />
               <Route exact path={basePath} component={ExampleSessionsSpecOverview} />
               <Route path={diffBasePath} component={SessionWrapper} />
             </Switch>
-          </TutorialStore>
         </LocalDiffRfcStore>
       </InitialRfcCommandsStore>
     )
