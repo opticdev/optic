@@ -3,10 +3,10 @@ import {DocSubGroup} from './DocSubGroup';
 import {MarkdownContribution} from './DocContribution';
 import {ExampleShapeViewer} from './DocCodeBox';
 import {DocGrid} from './DocGrid';
-import {StickyRegion} from './StickyRegion';
-import {AddedGreen, Highlight} from './shape/HighlightedIDs';
+import {StickyRegion} from '../shared/StickyRegion';
+import {AddedGreen, Highlight} from '../shapes/HighlightedIDs';
 import {STATUS_CODES} from 'http';
-import {BODY_DESCRIPTION} from './ContributionKeys';
+import {BODY_DESCRIPTION} from '../../ContributionKeys';
 
 export function DocResponse({
                               statusCode,

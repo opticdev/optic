@@ -1,5 +1,5 @@
 import React from 'react'
-import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
+import {GenericContextFactory} from '../../contexts/GenericContextFactory';
 
 const {
   Context: NamerContext,

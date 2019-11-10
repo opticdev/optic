@@ -2,14 +2,14 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
-import { EndpointPageWithQuery } from './EndpointPage';
+import { EndpointPageWithQuery } from '../requests/EndpointPage';
 import Drawer from '@material-ui/core/Drawer';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import DiffInfo from './DiffInfo';
-import { HighlightedIDsStore } from './shape/HighlightedIDs';
+import DiffInfo from '../diff/DiffInfo';
+import { HighlightedIDsStore } from '../shapes/HighlightedIDs';
 import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
 import compose from 'lodash.compose';
-import {NamerStore} from './shape/Namer';
+import {NamerStore} from '../shapes/Namer';
 
 const drawerWidth = 340;
 

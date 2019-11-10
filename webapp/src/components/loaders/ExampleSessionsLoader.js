@@ -4,13 +4,13 @@ import { TrafficAndDiffSessionStore } from '../../contexts/TrafficAndDiffSession
 import { LocalDiffRfcStore } from '../../contexts/RfcContext';
 import Loading from '../navigation/Loading';
 import { Route, Switch } from 'react-router-dom';
-import { UrlsX } from '../../stories/doc-mode/NewUnmatchedUrlWizard';
-import RequestDiffX from '../../stories/doc-mode/RequestDiffX';
+import { UrlsX } from '../paths/NewUnmatchedUrlWizard';
+import RequestDiffX from '../diff/RequestDiffX';
 import { NavigationStore } from '../../contexts/NavigationContext';
 import { routerPaths } from '../../routes';
 import { SpecOverview } from '../routes/local';
-import NewBehavior from '../../stories/doc-mode/NewBehavior';
-import { RequestsDetailsPage } from '../../stories/doc-mode/EndpointPage';
+import NewBehavior from '../navigation/NewBehavior';
+import { RequestsDetailsPage } from '../requests/EndpointPage';
 
 export const basePath = `/example-sessions/:exampleId`;
 

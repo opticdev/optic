@@ -1,11 +1,11 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {DocGrid} from './DocGrid';
-import {DocDivider} from './DocConstants';
-import {HeadingContribution, MarkdownContribution} from './DocContribution';
-import {ShapeOnly} from './DocCodeBox';
-import {HighlightedIDsStore} from './shape/HighlightedIDs';
-import {StickyRegion} from './StickyRegion';
+import {DocGrid} from '../requests/DocGrid';
+import {DocDivider} from '../requests/DocConstants';
+import {HeadingContribution, MarkdownContribution} from '../requests/DocContribution';
+import {ShapeOnly} from '../requests/DocCodeBox';
+import {HighlightedIDsStore} from '../shapes/HighlightedIDs';
+import {StickyRegion} from '../shared/StickyRegion';
 
 const styles = theme => ({
   root: {

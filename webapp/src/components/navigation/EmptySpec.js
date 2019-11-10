@@ -2,7 +2,7 @@ import React from 'react'
 import withStyles from '@material-ui/core/styles/withStyles';
 import {AddedGreen, AddedGreenBackground} from '../../contexts/ColorContext';
 import classNames from 'classnames';
-import {MarkdownRender} from './DocContribution';
+import {MarkdownRender} from '../requests/DocContribution';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
 import BuildIcon from '@material-ui/icons/Build';

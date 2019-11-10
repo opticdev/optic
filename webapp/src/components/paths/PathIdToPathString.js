@@ -1,5 +1,5 @@
 import React from 'react'
-import {asPathTrail, getNameWithFormattedParameters} from '../../components/utilities/PathUtilities';
+import {asPathTrail, getNameWithFormattedParameters} from '../utilities/PathUtilities';
 import {withRfcContext} from '../../contexts/RfcContext';
 
 export const PathIdToPathString = withRfcContext(({pathId: pathComponentId, cachedQueryResults}) => {

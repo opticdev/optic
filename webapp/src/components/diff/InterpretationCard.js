@@ -5,7 +5,7 @@ import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
 import ReplayIcon from '@material-ui/icons/Replay';
 import SkipNextIcon from '@material-ui/icons/SkipNext';
-import {DocDarkGrey} from './DocConstants';
+import {DocDarkGrey} from '../requests/DocConstants';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import DoneIcon from '@material-ui/icons/Done';
 import DiffInfo from './DiffInfo';

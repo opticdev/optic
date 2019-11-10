@@ -3,7 +3,7 @@ import React from 'react';
 import {Typography} from '@material-ui/core';
 import {DocDivider, ParametersStyles} from './DocConstants';
 import {MarkdownContribution} from './DocContribution';
-import {DESCRIPTION} from './ContributionKeys';
+import {DESCRIPTION} from '../../ContributionKeys';
 
 export function DocParameter({title, description, children, paramId, updateContribution = () => {}}) {
   return (

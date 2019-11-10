@@ -10,7 +10,7 @@ import Button from '@material-ui/core/Button';
 import SubjectIcon from '@material-ui/icons/Subject';
 import {Link} from 'react-router-dom';
 import {withNavigationContext} from '../../contexts/NavigationContext';
-import {DESCRIPTION, PURPOSE} from './ContributionKeys';
+import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 
 const styles = theme => ({
   root: {

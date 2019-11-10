@@ -12,18 +12,18 @@ import {DocResponse} from './DocResponse';
 import Collapse from '@material-ui/core/Collapse';
 import {DocRequest} from './DocRequest';
 import {withRfcContext} from '../../contexts/RfcContext';
-import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../../components/utilities/PathUtilities';
+import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../utilities/PathUtilities';
 import {updateContribution} from '../../engine/routines';
 import sortBy from 'lodash.sortby';
 import Button from '@material-ui/core/Button';
-import {HighlightedIDsStore} from './shape/HighlightedIDs';
+import {HighlightedIDsStore} from '../shapes/HighlightedIDs';
 import Toolbar from '@material-ui/core/Toolbar';
 import {Link} from 'react-router-dom';
 import {withNavigationContext} from '../../contexts/NavigationContext';
 import {Helmet} from 'react-helmet';
 import groupby from 'lodash.groupby'
-import {BODY_DESCRIPTION, DESCRIPTION, PURPOSE} from './ContributionKeys';
-import {NamerStore} from './shape/Namer';
+import {BODY_DESCRIPTION, DESCRIPTION, PURPOSE} from '../../ContributionKeys';
+import {NamerStore} from '../shapes/Namer';
 import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
 
 const styles = theme => ({

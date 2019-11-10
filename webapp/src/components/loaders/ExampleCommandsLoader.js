@@ -13,7 +13,7 @@ import Loading from '../../components/navigation/Loading';
 import { SpecOverview } from '../routes/local';
 import { routerPaths } from '../../routes';
 import { NavigationStore } from '../../contexts/NavigationContext';
-import { RequestsDetailsPage } from '../../stories/doc-mode/EndpointPage';
+import { RequestsDetailsPage } from '../requests/EndpointPage';
 
 
 class ExampleCommandsSpecOverview extends React.Component {

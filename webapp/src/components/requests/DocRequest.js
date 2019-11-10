@@ -3,8 +3,8 @@ import {DocSubGroup} from './DocSubGroup';
 import {MarkdownContribution} from './DocContribution';
 import {ExampleShapeViewer} from './DocCodeBox';
 import {DocGrid} from './DocGrid';
-import {StickyRegion} from './StickyRegion';
-import {BODY_DESCRIPTION} from './ContributionKeys';
+import {StickyRegion} from '../shared/StickyRegion';
+import {BODY_DESCRIPTION} from '../../ContributionKeys';
 
 export function DocRequest({
                              description,

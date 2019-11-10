@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import { cleanupPathComponentName, pathStringToPathComponents } from '../../components/path-editor/PathInput';
+import { cleanupPathComponentName, pathStringToPathComponents } from './PathInput';
 import pathToRegexp from 'path-to-regexp';
 import { RequestsHelper, RequestsCommands, RfcCommands } from '../../engine';
 import Typography from '@material-ui/core/Typography';
@@ -13,31 +13,31 @@ import ListItem from '@material-ui/core/ListItem';
 import { AppBar, CssBaseline, ListItemAvatar, ListItemSecondaryAction, ListItemText, TextField } from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import {DiffDocGridRightSticky} from './DocGrid';
+import {DiffDocGridRightSticky} from '../requests/DocGrid';
 import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import StepContent from '@material-ui/core/StepContent';
 import ClearIcon from '@material-ui/icons/Clear'
 import Paper from '@material-ui/core/Paper';
-import { DocDarkGrey, methodColors } from './DocConstants';
+import { DocDarkGrey, methodColors } from '../requests/DocConstants';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import { Show } from './Show';
+import { Show } from '../shared/Show';
 import sortby from 'lodash.sortby';
 import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
-import { HighlightedIDsStore } from './shape/HighlightedIDs';
-import { EndpointOverviewCodeBox, ExampleOnly } from './DocCodeBox';
-import { DocSubGroup } from './DocSubGroup';
+import { HighlightedIDsStore } from '../shapes/HighlightedIDs';
+import { EndpointOverviewCodeBox, ExampleOnly } from '../requests/DocCodeBox';
+import { DocSubGroup } from '../requests/DocSubGroup';
 import Chip from '@material-ui/core/Chip';
 import { PathIdToPathString } from './PathIdToPathString';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
-import {PURPOSE} from './ContributionKeys';
+import {PURPOSE} from '../../ContributionKeys';
 import {Link} from 'react-router-dom';
 import {Helmet} from 'react-helmet';
-import {LightTooltip} from '../../components/tooltipss/LightTooltip';
-import {resolvePath} from '../../components/utilities/PathUtilities';
-import PathMatcher from '../../components/diff/PathMatcher';
+import {LightTooltip} from '../tooltips/LightTooltip';
+import {resolvePath} from '../utilities/PathUtilities';
+import PathMatcher from '../diff/PathMatcher';
 
 const styles = theme => ({
   root: {

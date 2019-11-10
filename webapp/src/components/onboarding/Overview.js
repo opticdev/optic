@@ -3,8 +3,8 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import { withRfcContext } from '../../contexts/RfcContext';
 import { getNameWithFormattedParameters, getParentPathId } from '../utilities/PathUtilities';
 import sortBy from 'lodash.sortby';
-import ApiOverview from '../../stories/doc-mode/ApiOverview';
-import EmptySpec from '../../stories/doc-mode/EmptySpec';
+import ApiOverview from '../navigation/ApiOverview';
+import EmptySpec from '../navigation/EmptySpec';
 import FuzzySearch from 'fuzzy-search';
 
 

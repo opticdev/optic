@@ -6,11 +6,11 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 import compose from 'lodash.compose';
 import { withRfcContext } from '../../contexts/RfcContext';
-import { getRequestIdsWithDiffs, getUnrecognizedUrlCount } from '../../components/diff/DiffUtilities';
+import { getRequestIdsWithDiffs, getUnrecognizedUrlCount } from '../diff/DiffUtilities';
 import { computeDiffStateProjections } from '../../contexts/TrafficAndDiffSessionContext';
 import { Link } from 'react-router-dom';
-import { DisplayPath } from './DisplayPath';
-import { PathIdToPathString } from './PathIdToPathString';
+import { DisplayPath } from '../paths/DisplayPath';
+import { PathIdToPathString } from '../paths/PathIdToPathString';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import {
   AddedGreen,
@@ -20,8 +20,8 @@ import {
   RemovedRedBackground
 } from '../../contexts/ColorContext';
 import classNames from 'classnames';
-import { MarkdownRender } from './DocContribution';
-import {PURPOSE} from './ContributionKeys';
+import { MarkdownRender } from '../requests/DocContribution';
+import {PURPOSE} from '../../ContributionKeys';
 
 const useStyles = makeStyles({
   section: {

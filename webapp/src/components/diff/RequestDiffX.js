@@ -3,13 +3,13 @@ import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffS
 import { Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction } from '../../engine';
 import { RfcContext, withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
-import { PathIdToPathString } from './PathIdToPathString';
+import { PathIdToPathString } from '../paths/PathIdToPathString';
 import { DiffToDiffCard } from './DiffCopy';
-import PreCommit from './PreCommit';
+import PreCommit from '../navigation/PreCommit';
 import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
-import { NamerStore } from './shape/Namer';
-import SimulatedCommandContext from '../../components/diff/SimulatedCommandContext';
+import { NamerStore } from '../shapes/Namer';
+import SimulatedCommandContext from './SimulatedCommandContext';
 
 class RequestDiffX extends React.Component {
   handleDiscard = async () => {

@@ -5,8 +5,8 @@ import {DocGrey, methodColors} from './DocConstants';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {secondary} from '../../theme';
-import {ExampleViewer, ShapeViewerWithQuery} from './shape/ShapeViewer';
-import {Show} from './Show';
+import {ExampleViewer, ShapeViewerWithQuery} from '../shapes/ShapeViewer';
+import {Show} from '../shared/Show';
 
 const styles = theme => ({
   container: {

@@ -2,8 +2,8 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import uuidv4 from 'uuid/v4';
 
-import { UrlsX } from '../../../stories/doc-mode/NewUnmatchedUrlWizard';
-import RequestDiffX from '../../../stories/doc-mode/RequestDiffX';
+import { UrlsX } from '../../paths/NewUnmatchedUrlWizard';
+import RequestDiffX from '../../diff/RequestDiffX';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -19,8 +19,8 @@ import { CommandContextStore } from '../../../contexts/CommandContext.js';
 import { routerPaths } from '../../../routes.js';
 import Overview from '../../onboarding/Overview.js';
 import { NavigationStore } from '../../../contexts/NavigationContext.js';
-import NewBehavior from '../../../stories/doc-mode/NewBehavior.js';
-import { RequestsDetailsPage } from '../../../stories/doc-mode/EndpointPage';
+import NewBehavior from '../../navigation/NewBehavior.js';
+import { RequestsDetailsPage } from '../../requests/EndpointPage';
 
 export const basePath = '/saved'
 

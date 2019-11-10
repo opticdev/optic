@@ -7,7 +7,7 @@ import {
   ChangedYellowBackground,
   UpdatedBlue, UpdatedBlueBackground
 } from '../../contexts/ColorContext';
-import {MarkdownRender} from './DocContribution';
+import {MarkdownRender} from '../requests/DocContribution';
 import classNames from 'classnames';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';

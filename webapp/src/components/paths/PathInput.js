@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 
 import PathComponent from './PathComponent.js';
 import {Keys} from 'react-keydown';
-import ShadowInput from '../shape-editor/ShadowInput';
+import ShadowInput from '../shapes/ShadowInput';
 
 const {BACKSPACE, DELETE, ENTER} = Keys;
 
