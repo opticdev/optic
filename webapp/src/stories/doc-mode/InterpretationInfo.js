@@ -60,6 +60,9 @@ function InterpretationInfo({
   const leftEnabled = interpretationsIndex > 0;
   const rightEnabled = interpretationsIndex < interpretationsLength - 1;
 
+  const back = () => setInterpretationIndex(interpretationsIndex - 1)
+  const next = () => setInterpretationIndex(interpretationsIndex + 1)
+
   return (
     <ScrollIntoViewIfNeeded active smooth>
       <div className={classNames(classes.card, 'pulse')} style={{backgroundColor: hexBGColor, borderLeftColor: hexBorderColor}}>
@@ -68,14 +71,22 @@ function InterpretationInfo({
         </div>
         <div className={classes.buttons}>
           <div>
-            {/*<IconButton size="small" disabled={!leftEnabled}>*/}
-            {/*  <ChevronLeftIcon fontSize="small"/>*/}
-            {/*</IconButton>*/}
-            {/*<IconButton size="small" disabled={!rightEnabled}>*/}
-            {/*  <ChevronRightIcon fontSize="small"/>*/}
-            {/*</IconButton>*/}
-            <IconButton size="small" color="primary" autoFocus onClick={onAccept
-            }>
+            <IconButton size="small" disabled={!leftEnabled} onClick={back}>
+              <ChevronLeftIcon fontSize="small"/>
+            </IconButton>
+            <IconButton size="small" disabled={!rightEnabled} onClick={next}>
+              <ChevronRightIcon fontSize="small"/>
+            </IconButton>
+            <IconButton size="small" color="primary"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.which === 37 && leftEnabled) {
+                            back()
+                          } else if (e.which === 39 && rightEnabled) {
+                            next()
+                          }
+                        }}
+                        onClick={onAccept}>
               <DoneIcon fontSize="small"/>
             </IconButton>
           </div>

@@ -128,7 +128,7 @@ export const RootRow = withHighlightedIDs(withStyles(styles)(({ classes, expand,
   );
 }));
 
-export const Field = withHighlightedIDs(withStyles(styles)(({ classes, expand, typeName, fields, fieldName, baseShapeId, parameters, depth, id, fieldId }) => {
+export const Field = withHighlightedIDs(withStyles(styles)(({ classes, expand, typeName, fields, fieldName, canName, baseShapeId, parameters, depth, id, fieldId }) => {
 
   const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null
   const [expandedParam, setExpandedParam] = useState(defaultParam);
@@ -147,6 +147,7 @@ export const Field = withHighlightedIDs(withStyles(styles)(({ classes, expand, t
       <div className={classes.colon}>:</div>
     </>) : <span style={{ marginTop: 2 }}>-</span>}
     <div style={{ marginLeft: 4 }}><TypeNameRender typeName={typeName} id={id} onLinkClick={setParam} /></div>
+    {canName && <Namer id={id} />}
   </>;
 
   if (fields.length) {
@@ -247,9 +248,10 @@ export const Namer = compose(withNamer, withStyles(styles))(props => {
   return (<>
     {menu}
     <div style={{ flex: 1 }} />
-    <div className={classes.namer} onClick={(e) => setAnchorEl(e.currentTarget)}>
-      ○
-    </div>
+    <div className={classes.namer} onClick={(e) => {
+      setAnchorEl(e.currentTarget)
+      e.stopPropagation()
+    }} children={'○'}/>
   </>);
 });
 

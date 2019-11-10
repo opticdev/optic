@@ -121,15 +121,17 @@ export class LocalLoader extends React.Component {
 class LocalSpecOverview extends React.Component {
   render() {
     return (
-      <SpecOverview notificationAreaComponent={<NewBehavior specService={specService} />} />
+      <SpecOverview
+        specService={specService}
+        notificationAreaComponent={<NewBehavior specService={specService} />} />
     );
   }
 }
 
 export function SpecOverview(props) {
-  const { notificationAreaComponent } = props;
+  const { specService, notificationAreaComponent } = props;
   return (
-    <Overview notificationAreaComponent={notificationAreaComponent} />
+    <Overview specService={specService} notificationAreaComponent={notificationAreaComponent} />
   )
 }
 

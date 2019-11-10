@@ -33,7 +33,7 @@ export const methodColors = {
 
 export const primitiveDocColors = {
   $string: '#00f2ff',
-  $number: '#e4508f',
+  $number: '#e48f91',
   $boolean: '#ff9868',
   $object: '#00ec57',
   $list: '#d3c90a',

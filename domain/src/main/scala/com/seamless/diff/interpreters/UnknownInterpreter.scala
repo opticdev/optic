@@ -62,7 +62,7 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
     println(commands)
     DiffInterpretation(
       "Replace Unknown",
-      DynamicDescription(s"Replace Unknown with `{{shapeId_SHAPE}}`"),
+      DynamicDescription(s"Replace Unknown with `{{shapeId_SHAPE}}`", shapeId = Some(result.rootShapeId)),
       commands,
       context,
       FrontEndMetadata(changedIds = Seq(expectedShapeId))

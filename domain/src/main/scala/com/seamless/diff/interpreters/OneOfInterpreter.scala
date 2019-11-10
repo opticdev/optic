@@ -83,7 +83,7 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
 
     DiffInterpretation(
       "Add One Of",
-      DynamicDescription("Change to {{shapeId__SHAPE}}", shapeId = Some(affectedId)),
+      DynamicDescription("Change to {{shapeId_SHAPE}}", shapeId = Some(wrapperShapeId)),
 //      "Optic observed multiple different shapes. If it can be any of these shapes, make it a OneOf",
       commands,
       context,
@@ -103,7 +103,7 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
 
     DiffInterpretation(
       "Update One Of",
-      DynamicDescription("Add {{shapeId__SHAPE}} to One Of", shapeId = Some(expected.shapeId)),
+      DynamicDescription("Add {{shapeId_SHAPE}} to One Of", shapeId = Some(expected.shapeId)),
 //      "Optic observed a shape that did not match any of the expected shapes. If it is expected, add it to the choices",
       commands,
       context,

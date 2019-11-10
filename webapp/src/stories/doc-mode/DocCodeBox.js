@@ -122,6 +122,8 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, showShapesFirst,
     const _exampleProvided = typeof example !== 'undefined'
     if (!exampleProvided && exampleProvided) {
       setShowExample(true)
+    } else if (!_exampleProvided) {
+      setShowExample(false)
     }
   });
 
@@ -134,9 +136,7 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, showShapesFirst,
 
   const exampleRender = (() => {
     return (
-      <>
         <ExampleViewer example={example}/>
-      </>
     );
   })();
 

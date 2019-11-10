@@ -22,6 +22,7 @@ import {PathIdToPathString} from './PathIdToPathString';
 import {updateContribution} from '../../engine/routines';
 import { NavHashLink as NavLink } from 'react-router-hash-link';
 import {DESCRIPTION, PURPOSE} from './ContributionKeys';
+import {Helmet} from 'react-helmet';
 
 const drawerWidth = 320;
 
@@ -82,7 +83,6 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
   const {name, children, depth, toggled, pathId, full, visible} = path;
 
   const url = full + name;
-
 
   const [open, setOpen] = React.useState(false);
 
@@ -174,6 +174,9 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
         anchor="left"
       >
         <div className={classes.toolbar}>
+          <Helmet>
+            <title>{cachedQueryResults.apiName} API Documentation</title>
+          </Helmet>
           <Typography variant="subtitle1" className={classes.apiName}>{cachedQueryResults.apiName}</Typography>
           {/*<ApiSearch />*/}
         </div>

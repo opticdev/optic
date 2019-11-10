@@ -5,6 +5,8 @@ import { getNameWithFormattedParameters, getParentPathId } from '../utilities/Pa
 import sortBy from 'lodash.sortby';
 import { fuzzyConceptFilter, fuzzyPathsFilter } from '../navigation/Search';
 import ApiOverview from '../../stories/doc-mode/ApiOverview';
+import {specService} from '../../services/SpecService';
+import EmptySpec from '../../stories/doc-mode/EmptySpec';
 
 
 const styles = theme => ({
@@ -21,10 +23,24 @@ const styles = theme => ({
 
 
 class OverView extends React.Component {
+
+  state = {
+    hasSession: true,
+  }
+
+  componentDidMount() {
+    const {specService} = this.props
+    if (specService) {
+      specService.listSessions().then( ({sessions}) => {
+        this.setState({hasSessions: sessions.length > 0})
+      })
+    }
+  }
+
   render() {
     const { classes, cachedQueryResults, mode, handleCommand, queries, baseUrl } = this.props;
-    const { apiName, contributions, conceptsById, pathsById, pathIdsWithRequests } = cachedQueryResults;
-    const { notificationAreaComponent } = this.props
+    const { apiName, contributions, conceptsById, pathsById, pathIdsWithRequests, requestIdsByPathId } = cachedQueryResults;
+    const { specService, notificationAreaComponent } = this.props
     const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
     const sortedConcepts = sortBy(concepts, ['name']);
     const pathTree = flattenPaths('root', pathsById);
@@ -33,11 +49,18 @@ class OverView extends React.Component {
     const pathIdsFiltered = fuzzyPathsFilter(pathTree, '');
     const pathTreeFiltered = flattenPaths('root', pathsById, 0, '', pathIdsFiltered)
 
+    const providesSpecService = !!specService
+    const isEmptySpec = Object.entries(conceptsById).length === 0 && Object.entries(requestIdsByPathId).length === 0
+
+    if (providesSpecService && isEmptySpec && !this.state.hasSession) {
+      return <EmptySpec />
+    }
 
     return (
       <div className={classes.overview}>
         <ApiOverview
           notificationAreaComponent={notificationAreaComponent}
+          isEmptySpec={isEmptySpec}
           paths={pathTreeFiltered}
           concepts={conceptsFiltered}
           baseUrl={baseUrl} />

@@ -34,7 +34,7 @@ export default withStyles(styles)(ShapeDisplayWithoutContext);
 /* Domain -> Style Mapping */
 const primitiveColors = {
   $string: '#29447b',
-  $number: '#ff4da5',
+  $number: '#ffa1da',
   $boolean: '#ff502f',
   $object: '#32417d',
   $list: '#7d1e34',

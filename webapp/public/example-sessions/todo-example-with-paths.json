@@ -516,7 +516,7 @@
           "body": {
             "task": "Install Optic",
             "dueDate": "Mon Sep 16 2019 03:24:00 GMT-0400 (Eastern Daylight Time)",
-            "isDone": false,
+            "isDone": 12345,
             "id": "92xdvtkd1"
           }
         }

@@ -90,7 +90,9 @@ class ExampleSessionsLoader extends React.Component {
     //@todo add before modal here eventually
     function ExampleSessionsSpecOverview() {
       return (
-        <SpecOverview notificationAreaComponent={<NewBehavior specService={specService} />} />
+        <SpecOverview
+          specService={specService}
+          notificationAreaComponent={<NewBehavior specService={specService} />} />
       )
     }
 

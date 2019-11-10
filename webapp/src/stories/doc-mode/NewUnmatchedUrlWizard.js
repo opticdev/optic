@@ -37,6 +37,7 @@ import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
 import {PURPOSE} from './ContributionKeys';
 import {Link} from 'react-router-dom';
+import {Helmet} from 'react-helmet';
 
 const styles = theme => ({
   root: {
@@ -125,7 +126,6 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
         onClick={this.handleAddPath}
         variant="contained"
         color="primary"
-        autoFocus={isCompleteMatch}
         disabled={!isCompleteMatch}>Add Path</Button>
     );
 
@@ -158,7 +158,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
           return (<>
             Optic observed traffic to the following URLs. Click a URL to begin documenting an API request.
 
-            {suggestedPaths && (
+            {suggestedPaths.length > 0   && (
               <>
                 <Typography variant="body1" color="primary" style={{marginTop: 12}}>Suggested Paths to Document</Typography>
                 <List dense>
@@ -212,7 +212,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                 {!isCompleteMatch ? withTooltip : addPathButton}
               </div>
 
-              <Show when={matching.length && isCompleteMatch}>
+              <Show when={matching.length > 1 && isCompleteMatch}>
                 <List style={{ marginTop: 11, width: '100%' }}>
                   <ListSubheader className={classes.bgHeader}> <Typography variant="body1">The path you provided also
                     matches these
@@ -293,6 +293,9 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     return (
       <div className={classes.root}>
         <CssBaseline />
+        <Helmet>
+          <title>Document New API Request</title>
+        </Helmet>
         <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
           <Toolbar variant="dense">
             <div style={{ marginRight: 20 }}>
@@ -391,7 +394,7 @@ function UrlListItem(props) {
             fontWeight: 800
           }} />
       </ListItemAvatar>
-      <ListItemText primary={full || url} component="div" primaryTypographyProps={{ style: { paddingLeft: 10 } }} />
+      <ListItemText primary={full || url} component="div" primaryTypographyProps={{ style: { paddingLeft: 10, whiteSpace: 'pre' } }} />
       {isSuggested ? (
         <ListItemSecondaryAction>
           <Button

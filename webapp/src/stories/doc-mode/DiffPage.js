@@ -237,7 +237,6 @@ class DiffPage extends React.Component {
         {...{ interpretationsLength, interpretationsIndex, setInterpretationIndex }}
         onAccept={() => {
           const c = JsonHelper.seqToJsArray(commands)
-          console.log(c)
           applyCommands(...c)(metadataJs.addedIds, metadataJs.changedIds);
         }}
       />
@@ -276,7 +275,6 @@ class DiffPage extends React.Component {
     const { classes, url, method, path, observed, onSkip, baseUrl, remainingInteractions } = this.props;
 
     const { requestBody, responseBody, response, purpose } = this.getSpecForRequest(observed.statusCode);
-
 
     const { metadataJs } = this.props.interpretation;
     const { addedIds, changedIds } = metadataJs;

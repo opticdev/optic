@@ -292,6 +292,7 @@ class _EndpointPage extends React.Component {
           contentType={httpContentType}
           shapeId={shapeId}
           showShapesFirst={showShapesFirst}
+          updateContribution={updateContribution}
           example={responseExamples(httpStatusCode)}
         />
       );

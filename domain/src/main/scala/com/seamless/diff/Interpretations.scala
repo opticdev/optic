@@ -203,7 +203,6 @@ object Interpretations {
       InterpretationContext(Some(responseId), false),
       FrontEndMetadata(addedIds = Seq(fieldId))
     )
-
   }
 
   def ChangeFieldInResponseShape(key: String, fieldId: String, raw: Json, responseStatusCode: Int, responseId: ResponseId)(implicit shapesState: ShapesState) = {

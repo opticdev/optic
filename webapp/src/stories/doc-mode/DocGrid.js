@@ -35,6 +35,9 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 600,
     width: '100%'
   },
+  largeMaxWidth: {
+    width: '90%'
+  },
   rightDiffSticky: {
     paddingLeft: 15,
     paddingRight: 15,
@@ -111,11 +114,11 @@ export function DiffDocGridRightSticky({left, leftColor, right, style}) {
   return (
     <Grid container style={style}>
       <Grid item xs={6} className={classes.leftDiffScroll} alignItems="center">
-        <div className={classes.maxWidth}>{left}</div>
+        <div className={classes.largeMaxWidth}>{left}</div>
       </Grid>
       <Grid item xs={6} className={classes.rightDiffSticky} alignItems="center">
-        <StickyRegion className={classes.maxWidth}>
-          <div className={classes.maxWidth}>{right}</div>
+        <StickyRegion className={classes.largeMaxWidth}>
+          <div>{right}</div>
         </StickyRegion>
       </Grid>
     </Grid>
