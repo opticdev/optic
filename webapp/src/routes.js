@@ -4,10 +4,12 @@ import Welcome from './components/onboarding/Welcome';
 import ExampleCommandsLoader from './components/loaders/ExampleCommandsLoader.js';
 import ExampleSessionsLoader, { basePath as exampleSessionsBasePath } from './components/loaders/ExampleSessionsLoader.js';
 import LocalLoader, { basePath as localBasePath } from './components/routes/local';
+import ExampleDrivenSpecLoader, { basePath as exampleDrivenSpecBasePath } from './components/loaders/ExampleDrivenSpecLoader.js';
 
 export const routerPaths = {
   exampleCommandsRoot: () => '/examples/:exampleId',
   exampleSessionsRoot: () => exampleSessionsBasePath,
+  exampleDrivenRoot: () => exampleDrivenSpecBasePath,
   localRoot: () => localBasePath,
   request: (base) => `${base}/requests/:requestId`,
   diff: (base) => `${base}/diff/:sessionId`,
@@ -36,6 +38,8 @@ class AppRoutes extends React.Component {
     return (
       <div>
         <Switch>
+          <Route strict path={routerPaths.exampleDrivenRoot()} component={ExampleDrivenSpecLoader} />
+          <Redirect from={routerPaths.exampleDrivenRoot()} to={routerPaths.exampleDrivenRoot()} />
           <Route strict path={routerPaths.exampleCommandsRoot()} component={ExampleCommandsLoader} />
           <Redirect from={routerPaths.exampleCommandsRoot()} to={routerPaths.exampleCommandsRoot()} />
           <Route strict path={routerPaths.exampleSessionsRoot()} component={ExampleSessionsLoader} />
