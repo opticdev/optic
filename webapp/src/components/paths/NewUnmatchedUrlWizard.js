@@ -119,6 +119,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     const pathsToRender = sortby(unmatchedPaths.reduce(pathReducer, []), ['url', 'method']);
     const suggestedPaths = sortby(matchedPaths.filter(i => !i.requestId).reduce(pathReducer, []), ['url', 'method']);
 
+
     const matchingUrls = new Set([...pathsToRender, ...suggestedPaths].filter(({ url }) => regex.exec(url)));
 
     const addPathButton = (
@@ -220,7 +221,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                   {matching
                     .map(({ url, method }) => {
                       //don't show self
-                      if (url === previewSample.request.url && method === previewSample.request.method) {
+                      if (previewSample && url === previewSample.request.url && method === previewSample.request.method) {
                         return null;
                       }
                       return (
