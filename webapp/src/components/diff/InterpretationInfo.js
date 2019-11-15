@@ -7,7 +7,7 @@ import {
   ChangedYellowBackground,
   UpdatedBlue, UpdatedBlueBackground
 } from '../../contexts/ColorContext';
-import {MarkdownRender} from '../requests/DocContribution';
+import { MarkdownRender } from '../requests/DocContribution';
 import classNames from 'classnames';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -39,15 +39,15 @@ const styles = theme => ({
 });
 
 function InterpretationInfo({
-                              classes,
-                              title,
-                              color,
-                              description,
-                              interpretationsLength,
-                              interpretationsIndex,
-                              setInterpretationIndex,
-                              onAccept
-                            }) {
+  classes,
+  title,
+  color,
+  description,
+  interpretationsLength,
+  interpretationsIndex,
+  setInterpretationIndex,
+  onAccept
+}) {
 
 
   const hexBGColor = (color === 'green' && AddedGreenBackground) || (color === 'yellow' && ChangedYellowBackground) || UpdatedBlueBackground
@@ -62,30 +62,30 @@ function InterpretationInfo({
   const next = () => setInterpretationIndex(interpretationsIndex + 1)
 
   return (
-    <ScrollIntoViewIfNeeded active smooth>
-      <div className={classNames(classes.card, 'pulse')} style={{backgroundColor: hexBGColor, borderLeftColor: hexBorderColor}}>
-        <div style={{flex: 1}}>
-          <MarkdownRender source={source}/>
+    <ScrollIntoViewIfNeeded active options={{ behavior: 'smooth' }}>
+      <div className={classNames(classes.card, 'pulse')} style={{ backgroundColor: hexBGColor, borderLeftColor: hexBorderColor }}>
+        <div style={{ flex: 1 }}>
+          <MarkdownRender source={source} />
         </div>
         <div className={classes.buttons}>
           <div>
             <IconButton size="small" disabled={!leftEnabled} onClick={back}>
-              <ChevronLeftIcon fontSize="small"/>
+              <ChevronLeftIcon fontSize="small" />
             </IconButton>
             <IconButton size="small" disabled={!rightEnabled} onClick={next}>
-              <ChevronRightIcon fontSize="small"/>
+              <ChevronRightIcon fontSize="small" />
             </IconButton>
             <IconButton size="small" color="primary"
-                        autoFocus
-                        onKeyDown={(e) => {
-                          if (e.which === 37 && leftEnabled) {
-                            back()
-                          } else if (e.which === 39 && rightEnabled) {
-                            next()
-                          }
-                        }}
-                        onClick={onAccept}>
-              <DoneIcon fontSize="small"/>
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.which === 37 && leftEnabled) {
+                  back()
+                } else if (e.which === 39 && rightEnabled) {
+                  next()
+                }
+              }}
+              onClick={onAccept}>
+              <DoneIcon fontSize="small" />
             </IconButton>
           </div>
         </div>
