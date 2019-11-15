@@ -16,7 +16,6 @@ function TypeModal({value, onChange}) {
       tabSize={2}
       showPrintMargin={false}
       width={'90%'}
-      height={365}
       onChange={onChange}
       value={value}
       editorProps={{$blockScrolling: true}}
