@@ -88,17 +88,17 @@ export function DocGrid({left, right, style}) {
   );
 }
 
-export function DiffDocGrid({left, leftColor, right, style}) {
+export function DiffDocGrid({left, leftColor, right, style, colMaxWidth}) {
 
   const classes = useStyles();
 
   return (
     <Grid container style={style}>
       <Grid item xs={6} className={classes.leftDiff} alignItems="center">
-        <div className={classes.maxWidth}>{left}</div>
+        <div className={classes.maxWidth} style={{maxWidth: colMaxWidth}}>{left}</div>
       </Grid>
       <Grid item xs={6} className={classes.rightDiff} alignItems="center">
-        <div className={classes.maxWidth}>{right}</div>
+        <div className={classes.maxWidth} style={{maxWidth: colMaxWidth}}>{right}</div>
       </Grid>
     </Grid>
   );

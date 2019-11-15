@@ -55,6 +55,7 @@
     "postcss-safe-parser": "4.0.1",
     "prop-types": "latest",
     "react": "^16.8.6",
+    "react-ace": "^8.0.0",
     "react-dom": "^16.8.6",
     "react-helmet": "5.2.1",
     "react-hook-form": "^3.27.0",
