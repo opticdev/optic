@@ -9,6 +9,8 @@ import {NavigationStore} from '../../contexts/NavigationContext';
 import {routerPaths} from '../../routes';
 import {SpecOverview} from '../routes/local';
 import NewBehavior from '../navigation/NewBehavior';
+import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import FiberNewIcon from '@material-ui/icons/FiberNew';
 import {RequestsDetailsPage} from '../requests/EndpointPage';
 import {
   TextField,
@@ -29,6 +31,8 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import {DiffDocGrid} from '../requests/DocGrid';
 import {DocSubGroup} from '../requests/DocSubGroup';
 import JsonTextarea from '../shared/JsonTextarea';
+import {DocDivider} from '../requests/DocConstants';
+import Chip from '@material-ui/core/Chip';
 
 export const basePath = `/spec-by-example`;
 
@@ -167,7 +171,6 @@ function ExampleBuilderBase(props) {
 
                       <TextField fullWidth label="URL" name="request.url" inputRef={register} autoFocus
                                  autoComplete="off" style={{marginLeft: 25}}/>
-                      {hasUnrecognizedPath ? <div>this is a new URL</div> : null}
 
                     </div>
                   </DocSubGroup>
@@ -176,7 +179,6 @@ function ExampleBuilderBase(props) {
                     <JsonTextarea
                       onChange={(value) => setValue('request.body', value)}
                       value={formValues.request.body}
-                      name="request.body"
                     />
                   </DocSubGroup>
                 </>
@@ -186,29 +188,50 @@ function ExampleBuilderBase(props) {
                   <Typography variant="h4" color="primary">Response</Typography>
                   <DocSubGroup title="Status Code">
                     <div style={{marginTop: 22}}>
-                    <Select native label="Status Code" name="response.statusCode" inputRef={register}>
-                      {Object.entries(STATUS_CODES).map(entry => {
-                        const [code, message] = entry;
-                        return (
-                          <option value={code}>{code}: {message}</option>
-                        );
-                      })}
-                    </Select>
+                      <Select native label="Status Code" name="response.statusCode" inputRef={register}>
+                        {Object.entries(STATUS_CODES).map(entry => {
+                          const [code, message] = entry;
+                          return (
+                            <option value={code}>{code}: {message}</option>
+                          );
+                        })}
+                      </Select>
                     </div>
                   </DocSubGroup>
                   <DocSubGroup title="Response Body">
                     <JsonTextarea
-                      onChange={(value) => setValue('response.body', value)}
+                      onChange={(value) => setValue('response', 'body', value)}
                       value={formValues.response.body}
                     />
                   </DocSubGroup>
                 </>
               )}
             />
-            <DialogActions>
-              <Button type="submit" disabled={!parsedRequestBodySuccess || !parsedResponseBodySuccess}>Add
-                Example</Button>
-              {hasDiff ? <div>this request does not match the spec</div> : null}
+            <DocDivider style={{marginTop: 22}}/>
+            <DialogActions style={{marginTop: 22, display: 'flex', flexDirection: 'row'}}>
+
+              <div>
+                {hasUnrecognizedPath ? <Chip
+                  style={{margin: 6}}
+                  color="secondary"
+                  icon={<FiberNewIcon />}
+                  label="This URL Path is new."
+                /> : null}
+                {hasDiff ? <Chip
+                  style={{margin: 6}}
+                  color="secondary"
+                  icon={<CompareArrowsIcon />}
+                  label="This example produces a diff"
+                /> : null}
+
+              </div>
+
+              <div style={{flex: 1}} />
+                <Button color="primary"
+                        variant="contained"
+                        type="submit"
+                        disabled={!parsedRequestBodySuccess || !parsedResponseBodySuccess}>Add
+                  Example</Button>
             </DialogActions>
           </DialogContent>
         </form>

@@ -9,7 +9,6 @@ const styles = theme => ({
 });
 
 function TypeModal({value, onChange}) {
-
   return (
     <AceEditor
       mode="json"
@@ -17,7 +16,7 @@ function TypeModal({value, onChange}) {
       tabSize={2}
       showPrintMargin={false}
       width={'90%'}
-      onChange={onChange}
+      onChange={this.onChange}
       value={value}
       editorProps={{$blockScrolling: true}}
     />
