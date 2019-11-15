@@ -128,6 +128,7 @@ function ExampleBuilderBase(props) {
     const {sample} = parseFormState(data);
 
     onSampleAdded(sample);
+    setShowExampleBuilder(false);
   };
   const {specService} = props;
   const {
@@ -136,13 +137,17 @@ function ExampleBuilderBase(props) {
 
   return (
     <div>
-      <Button onClick={() => setShowExampleBuilder(true)}>Add Example</Button>
+      <div style={{textAlign: 'right'}}>
+        <Button
+          color="primary"
+          onClick={() => setShowExampleBuilder(true)}>Add Example</Button>
+      </div>
       <Dialog
         fullWidth={true}
         maxWidth={'xl'}
         fullScreen={true}
-        // open={showExampleBuilder}
-        open={true}
+        open={showExampleBuilder}
+        // open={true}
         onClose={() => setShowExampleBuilder(false)}
       >
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -200,7 +205,7 @@ function ExampleBuilderBase(props) {
                   </DocSubGroup>
                   <DocSubGroup title="Response Body">
                     <JsonTextarea
-                      onChange={(value) => setValue('response', 'body', value)}
+                      onChange={(value) => setValue('response', value)}
                       value={formValues.response.body}
                     />
                   </DocSubGroup>
@@ -214,24 +219,24 @@ function ExampleBuilderBase(props) {
                 {hasUnrecognizedPath ? <Chip
                   style={{margin: 6}}
                   color="secondary"
-                  icon={<FiberNewIcon />}
-                  label="This URL Path is new."
+                  icon={<FiberNewIcon/>}
+                  label="This URL path is new"
                 /> : null}
                 {hasDiff ? <Chip
                   style={{margin: 6}}
                   color="secondary"
-                  icon={<CompareArrowsIcon />}
+                  icon={<CompareArrowsIcon/>}
                   label="This example produces a diff"
                 /> : null}
 
               </div>
 
-              <div style={{flex: 1}} />
-                <Button color="primary"
-                        variant="contained"
-                        type="submit"
-                        disabled={!parsedRequestBodySuccess || !parsedResponseBodySuccess}>Add
-                  Example</Button>
+              <div style={{flex: 1}}/>
+              <Button color="primary"
+                      variant="contained"
+                      type="submit"
+                      disabled={!parsedRequestBodySuccess || !parsedResponseBodySuccess}>Add
+                Example</Button>
             </DialogActions>
           </DialogContent>
         </form>
