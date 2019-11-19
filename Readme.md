@@ -15,7 +15,7 @@
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
-  <a href="#installing-optic">Getting Started</a> •
+  <a href="#installing-optic">Documentation</a> •
   <a href="#license">License</a>
 </p>
 
@@ -32,7 +32,7 @@ It’s kind of like Git, but instead of tracking files, Optic automatically diff
 
 👋**100% Open Source, Runs locally, data is only stored in your API Repo**
 
-## [Getting Started](https://docs.useoptic.com) [https://docs.useoptic.com](https://docs.useoptic.com)
+## Documentation [https://docs.useoptic.com](https://docs.useoptic.com)
 
 ## License 
 MIT
