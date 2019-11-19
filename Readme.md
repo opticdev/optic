@@ -15,7 +15,7 @@
 
 <p align="center">
   <a href="#key-features">Key Features</a> •
-  <a href="#installing-optic">Documentation</a> •
+  <a href="#documentation">Documentation</a> •
   <a href="#license">License</a>
 </p>
 
