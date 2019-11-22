@@ -26,7 +26,7 @@ class Welcome extends React.Component {
 
         return (
             <div className={classes.pageWrapper}>
-              <Button color="primary" href="https://dashboard.useoptic.com">Install Optic</Button>
+              <Button color="primary" href="https://docs.useoptic.com">Install Optic</Button>
             </div>
         )
     }

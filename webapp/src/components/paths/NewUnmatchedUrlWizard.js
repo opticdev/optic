@@ -160,7 +160,6 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
         case 0:
           return (<>
             Optic observed traffic to the following paths. Click a path to begin documenting an API request.
-
             {suggestedPaths.length > 0   && (
               <>
                 <Typography variant="body1" color="primary" style={{marginTop: 12}}>Suggested Paths to Document</Typography>

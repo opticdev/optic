@@ -17,7 +17,7 @@ import {
   AddedGreenBackground,
   ChangedYellow,
   ChangedYellowBackground, RemovedRed,
-  RemovedRedBackground
+  RemovedRedBackground, UpdatedBlue, UpdatedBlueBackground
 } from '../../contexts/ColorContext';
 import classNames from 'classnames';
 import { MarkdownRender } from '../requests/DocContribution';
@@ -47,6 +47,10 @@ const useStyles = makeStyles({
     borderLeft: `5px solid ${RemovedRed}`,
     backgroundColor: RemovedRedBackground,
   },
+  blue: {
+    borderLeft: `5px solid ${UpdatedBlue}`,
+    backgroundColor: UpdatedBlueBackground,
+  },
   container: {
     marginBottom: 40
   }
@@ -56,7 +60,7 @@ function NewBehaviorCard({ source, color, children }) {
 
   const classes = useStyles();
 
-  const colorClass = color === 'red' ? classes.red : classes.yellow;
+  const colorClass = color === 'red' ? classes.red : color === 'blue' ? classes.blue : classes.yellow
 
   return (
     <div className={classNames(classes.card, colorClass)}>
@@ -73,8 +77,8 @@ function NewBehavior(props) {
 
   const undocumentedBehavior = (
     <NewBehaviorCard color="red" source={
-      `#### Undocumented API Behavior Observed
-Optic has observed several instances where your API does not follow the spec:
+      `##### Unexpected API Behavior Observed
+Optic has observed instances where your API does not follow the spec:
 `}>
       <List style={{ maxWidth: 550 }}>
         {requestIdsWithDiffs.map(requestId => {
@@ -107,15 +111,13 @@ Optic has observed several instances where your API does not follow the spec:
   );
 
   const newUrls = (
-    <NewBehaviorCard color="yellow" source={`#### Optic observed ${unrecognizedUrlCount} requests to URLs that are not in your API specification
-Click the button below to add these new URLs as paths in your specification`}>
+    <NewBehaviorCard color="yellow" source={`#### Undocumented URLs Observed
+Optic observed API traffic to ${unrecognizedUrlCount} undocumented URLs.`}>
       <Link style={{ textDecoration: 'none', color: 'black' }} to={`${baseUrl}/diff/${sessionId}/urls`}>
-        <Button color="primary" size="small" style={{ marginTop: 22, marginBottom: 22 }} variant="contained">Document New API
-          Request</Button>
+        <Button color="primary" size="small" style={{ marginTop: 22, marginBottom: 22 }} variant="contained">Review & Document</Button>
       </Link>
     </NewBehaviorCard>
   );
-
 
   return (
     <div className={classes.container}>
@@ -162,6 +164,7 @@ class NewBehaviorWrapper extends React.Component {
   }
 
   render() {
+    const {isEmpty} = this.props
     const { lastSession, lastSessionId, isLoading, error } = this.state;
     if (error) {
       return null;
@@ -172,6 +175,16 @@ class NewBehaviorWrapper extends React.Component {
     }
 
     if (!lastSession) {
+      if (isEmpty) {
+        return (
+          <NewBehaviorCard color="blue" source={`#### Finish Setting up Optic
+Optic has not observed any API traffic yet. Make sure you have set up the proxy properly and sent traffic through the API.`}>
+            <Button variant="contained" style={{margin: 8}} href="https://docs.useoptic.com" target="_blank">Read Docs</Button>
+            <Button variant="contained" style={{margin: 8}} onClick={() => window.drift.api.sidebar.open()}>Chat with Support</Button>
+            <Button variant="contained" style={{margin: 8}} href="https://calendly.com/optic-onboarding/setup-help" target="_blank">Schedule On-boarding Call</Button>
+          </NewBehaviorCard>
+        )
+      }
       return null;
     }
 
