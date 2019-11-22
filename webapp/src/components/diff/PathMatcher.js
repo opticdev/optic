@@ -54,7 +54,7 @@ class PathMatcher extends React.Component {
 
     return (
       <div>
-        <Typography variant="overline" style={{paddingBottom: 0}}>URL:</Typography>
+        <Typography variant="overline" style={{paddingBottom: 0}}>Path:</Typography>
         <div className={classes.pathWrapper}><span
           style={{color: '#277a4e', fontWeight: 800}}>{matched}</span><span>{remaining}</span></div>
 

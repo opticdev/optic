@@ -57,18 +57,13 @@ export default class Init extends Command {
       analytics.track('init from local oas')
       await this.importOas(flags.import)
     } else {
-
-      const {name, port, command, host} = flags
-      if (name && port && command && host) {
-        analytics.track('init from on-boarding', {name, port, command, host})
-        await this.blankWithName(name, parseInt(port, 10), command, host)
-      } else {
-        analytics.track('init blank')
-        return open('https://dashboard.useoptic.com/setup')
-      }
+      const name = await cli.prompt('API Name')
+      const port = await cli.prompt('Port')
+      const command = await cli.prompt('Command to Start API (see table on docs page)')
+      const host = 'localhost'
+      await this.blankWithName(name, parseInt(port, 10), command.split('\n')[0], host)
     }
     const {basePath} = await getPaths()
-
     this.log('\n')
     this.log(`API Spec successfully added to ${basePath} !`)
     this.log(" - Run 'api start' to run your API.")

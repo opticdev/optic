@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 15,
     paddingRight: 15,
     borderRight: '1px solid #e2e2e2',
-    maxWidth: 'inherit'
+    maxWidth: 'inherit',
   },
   rightDiff: {
     display: 'flex',
