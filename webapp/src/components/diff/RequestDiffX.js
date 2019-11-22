@@ -10,6 +10,7 @@ import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
 import { NamerStore } from '../shapes/Namer';
 import SimulatedCommandContext from './SimulatedCommandContext';
+import FirstTimeDiffTutorial from '../tutorial/FirstTimeDiffTutorial';
 
 class RequestDiffX extends React.Component {
   handleDiscard = async () => {
@@ -60,6 +61,9 @@ class RequestDiffX extends React.Component {
         taggedIds={diffSessionManager.getTaggedIds()}
         requestId={requestId}
         onSave={async () => {
+
+          const addedFirst = rfcState.requestsState.justAddedFirst
+
           const examples = diffSessionManager.listExamplesToAdd();
           diffSessionManager.reset();
           await specService.saveEvents(eventStore, rfcId)
@@ -70,7 +74,11 @@ class RequestDiffX extends React.Component {
               })
           )
 
-          this.props.pushRelative('')
+          if (addedFirst) {
+            this.props.pushRelative('?documented_endpoint=true')
+          } else {
+            this.props.pushRelative('')
+          }
         }}
         onDiscard={this.handleDiscard}
       />
@@ -139,6 +147,7 @@ const DiffPageStateManager = withRfcContext((props) => {
           ShapesCommands.RenameShape(shapeId, name)
         ])
       }}>
+        <FirstTimeDiffTutorial showWhen={true} />
         <DiffPage
           //request context
           url={sample.request.url}

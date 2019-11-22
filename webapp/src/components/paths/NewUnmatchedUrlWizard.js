@@ -38,6 +38,8 @@ import {Helmet} from 'react-helmet';
 import {LightTooltip} from '../tooltips/LightTooltip';
 import {resolvePath} from '../utilities/PathUtilities';
 import PathMatcher from '../diff/PathMatcher';
+import FirstTimeUrlPageTutorial from '../tutorial/FirstTimeUrlPageTutorial';
+import FirstTimeUrlPathMatcher from '../tutorial/FirstTimeUrlPathMatcher';
 
 const styles = theme => ({
   root: {
@@ -139,7 +141,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     );
 
     const withTooltip = (
-      <LightTooltip title={'To continue the path you provide must be able to match the observed URL'}>
+      <LightTooltip title={'To continue the path you provide must be able to match the observed Path'}>
         <span>{addPathButton}</span>
       </LightTooltip>
     );
@@ -147,7 +149,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
     const getSteps = () => {
       return [
-        <span onClick={this.reset} style={{ cursor: 'pointer' }}>Choose a url to document <span
+        <span onClick={this.reset} style={{ cursor: 'pointer' }}>Choose a Path to document <span
           className={classes.displayTargetUrl}>{targetUrl}</span></span>,
         'Add path to your API spec',
         'Document Request'];
@@ -157,7 +159,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
       switch (step) {
         case 0:
           return (<>
-            Optic observed traffic to the following URLs. Click a URL to begin documenting an API request.
+            Optic observed traffic to the following paths. Click a path to begin documenting an API request.
 
             {suggestedPaths.length > 0   && (
               <>
@@ -217,7 +219,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                 <List style={{ marginTop: 11, width: '100%' }}>
                   <ListSubheader className={classes.bgHeader}> <Typography variant="body1">The path you provided also
                     matches these
-                    URLs:</Typography> </ListSubheader>
+                    Paths:</Typography> </ListSubheader>
                   {matching
                     .map(({ url, method }) => {
                       //don't show self
@@ -308,6 +310,8 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
             </div>
           </Toolbar>
         </AppBar>
+        <FirstTimeUrlPageTutorial showWhen={activeStep === 0} />
+        <FirstTimeUrlPathMatcher showWhen={activeStep === 1} />
         <div className={classes.contentRegion}>
 
           <DiffDocGridRightSticky
@@ -331,7 +335,7 @@ const PreviewSample = ({ sample }) => {
   return (
     <div style={{paddingTop: 22, paddingBottom: 150}}>
       <Typography variant="h4" color="primary">Observed</Typography>
-      <DocSubGroup title="URL">
+      <DocSubGroup title="Path">
         <EndpointOverviewCodeBox method={method} url={url} />
       </DocSubGroup>
 

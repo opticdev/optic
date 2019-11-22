@@ -518,8 +518,8 @@
         "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
       },
       "./src/commands/init.ts": {
-        "version": "fc0f23add44fd6119b3c41174c104e6b70381fb509127ef29e7d5aad79041eb5",
-        "signature": "60b067d04606d840453d16764a330b578c0e4a057e61661a2de42ca889d01094"
+        "version": "25d6ecddb0349e0f101a05990ed5769dd2b0522fbf3c85cd8f1205880cfaf483",
+        "signature": "3166b8485e63fc6ac6806bc18196872b1602fcbd31a8c21f390e5af79870e34f"
       },
       "./src/lib/log-helper.ts": {
         "version": "0bf0a2716dbfd9d2c7392ee4bf2902a2623a90f50a3d5eaa63153c34049dcde4",
@@ -3204,7 +3204,6 @@
       ],
       "./src/commands/init.ts": [
         "./node_modules/@oclif/parser/lib/flags.d.ts",
-        "./node_modules/@types/node/child_process.d.ts",
         "./node_modules/@oclif/command/lib/index.d.ts"
       ],
       "./src/commands/generate.ts": [

@@ -23,7 +23,11 @@ import {PURPOSE} from '../../ContributionKeys';
 import compose from 'lodash.compose';
 import { DiffDocGrid } from '../requests/DocGrid';
 import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
-
+import Fab from '@material-ui/core/Fab';
+import FastForwardIcon from '@material-ui/icons/FastForward';
+import NavigationIcon from '@material-ui/icons/Navigation';
+import BugReportIcon from '@material-ui/icons/BugReport';
+import ReportBug from './ReportBug';
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -67,6 +71,16 @@ const styles = theme => ({
     overflow: 'scroll',
     paddingBottom: 300,
     paddingTop: 20,
+  },
+  fabs: {
+    width: '50%',
+    textAlign: 'center',
+    position: 'fixed',
+    bottom: 22,
+    paddingRight: 30
+  },
+  fab: {
+    margin: theme.spacing(1)
   }
 });
 
@@ -296,19 +310,8 @@ class DiffPage extends React.Component {
                 </Link>
               </div>
 
-              <Typography variant="overline" className={classes.remaining}>
-                {remainingInteractions} remaining
-              </Typography>
-
-              <Tooltip title="Skip Example">
-                <IconButton size="small" aria-label="delete" className={classes.margin} color="primary" disableRipple
-                  onClick={onSkip}>
-                  <SkipNextIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-
-              <div style={{ flex: 6.6, textAlign: 'center' }}>
-                <Typography variant="h6" color="primary">{purpose}</Typography>
+              <div>
+                <Typography variant="h6" color="primary">Review API Diff -- {purpose}</Typography>
               </div>
               <div style={{ flex: 1 }} />
 
@@ -318,8 +321,16 @@ class DiffPage extends React.Component {
 
           <div className={classes.scroll}>
 
-            <DiffDocGrid left={<Typography variant="h4" color="primary">Observed</Typography>}
-              right={<Typography variant="h4" color="primary">Expected</Typography>} />
+            <div className={classes.fabs}>
+              <ReportBug classes={classes} />
+              <Fab variant="extended" color="primary"  size="small"  onClick={onSkip} className={classes.fab}>
+                Skip
+                <FastForwardIcon fontSize="small"/>
+              </Fab>
+            </div>
+
+            <DiffDocGrid left={<Typography variant="h4" color="primary">Diff Observed</Typography>}
+              right={<Typography variant="h4" color="primary">Spec Change</Typography>} />
 
             <DiffPath path={path} method={method} url={url} />
 
