@@ -1,18 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React from 'react';
 import {DialogContent, DialogTitle, Typography} from '@material-ui/core';
 import TutorialBase from './TutorialBase';
@@ -36,11 +21,7 @@ function getStepContent(stepIndex, classes) {
                 </li>
               </ul>
             </Typography>
-            <div className={classes.center}>
-              <video autoPlay loop width={550}>
-                <source src="/tutorial/adding-paths.mp4" type="video/mp4" />
-              </video>
-            </div>
+            <div className={classes.center}><img src={'/tutorial/adding-path.gif'} width={550} /></div>
           </DialogContent>
         </>
       );
