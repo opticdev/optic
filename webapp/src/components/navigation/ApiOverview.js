@@ -160,12 +160,15 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
 
   const operationsToRender = flatMapOperations(paths.children);
 
+  const isEmpty = concepts.length === 0 && operationsToRender.length === 0
+
   return (
     <div className={classes.root}>
       <CssBaseline/>
       <Drawer
         className={classes.drawer}
-        variant="permanent"
+        open={!isEmpty}
+        variant={isEmpty ? undefined : "permanent"}
         classes={{
           paper: classes.drawerPaper,
         }}
@@ -181,7 +184,7 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
         <Divider/>
         <List
           component="nav"
-          subheader={<ListSubheader className={classes.subHeader}>{'Endpoints'}</ListSubheader>}
+          subheader={operationsToRender.length > 0 && <ListSubheader className={classes.subHeader}>{'Endpoints'}</ListSubheader>}
           aria-labelledby="nested-list-subheader"
           dense={true}
         >
@@ -192,7 +195,7 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
         <Divider/>
         <List
           component="nav"
-          subheader={<ListSubheader className={classes.subHeader}>{'Concepts'}</ListSubheader>}
+          subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>{'Concepts'}</ListSubheader>}
           aria-labelledby="nested-list-subheader"
           dense={true}
         >
@@ -218,8 +221,8 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
 
         {notificationAreaComponent}
 
-        <Typography variant="h3" color="primary" className={classes.sectionHeader}
-                    style={{paddingTop: 20}}>Endpoints</Typography>
+        {operationsToRender.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}
+                    style={{paddingTop: 20}}>Endpoints</Typography>}
 
         {operationsToRender.map(operation => {
           const {pathsById, contributions} = cachedQueryResults;
@@ -248,7 +251,7 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           );
         })}
 
-        <Typography variant="h3" color="primary" className={classes.sectionHeader}>Concepts</Typography>
+        {concepts.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}>Concepts</Typography>}
 
         {concepts.map(concept => (
           <ConceptOverview

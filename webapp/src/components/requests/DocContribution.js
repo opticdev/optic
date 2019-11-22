@@ -9,7 +9,7 @@ export function MarkdownRender({source, noHeadings}) {
     source={source}
     renderers={{
       heading: ({level, children}) => !noHeadings ? (
-        <Typography color="primary" variant={`h${level}`} style={{fontWeight: 300}}>
+        <Typography color="primary" variant={`h${level}`} style={{fontWeight: 300, marginBottom: 3}}>
           {children}
         </Typography>
       ) : null,

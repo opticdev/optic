@@ -116,11 +116,28 @@ export class LocalLoader extends React.Component {
 }
 
 class LocalSpecOverview extends React.Component {
+
+  state = {
+    isEmpty: false
+  }
+
+  componentDidMount() {
+    Promise.all([specService.listSessions().then(({sessions}) => sessions.length === 0), specService.listEvents().then(events => {
+      const numberOfEvents = JSON.parse(events).length
+      return numberOfEvents <= 2
+    })])
+    .then(result => {
+      this.setState({
+        isEmpty: result.every(i => i)
+      })
+    })
+  }
+
   render() {
     return (
       <SpecOverview
         specService={specService}
-        notificationAreaComponent={<NewBehavior specService={specService} />} />
+        notificationAreaComponent={<NewBehavior specService={specService} isEmpty={this.state.isEmpty} />} />
     );
   }
 }
