@@ -265,11 +265,11 @@ class RequestDifferSpec extends FunSpec {
       next = diff.next()
 
       assert(next == RequestDiffer.UnmatchedResponseBodyShape(responseId, "application/json", 200, ShapeDiffer.UnsetShape(
-        json"""{
+        ShapeLikeJs(Some(json"""{
            "id" : 2,
            "title" : "Post 2",
            "deleted" : false
-         }""")))
+         }""")))))
       interpretation = interpreter.interpret(next).head
       //      println(diff, interpretation.description)
 

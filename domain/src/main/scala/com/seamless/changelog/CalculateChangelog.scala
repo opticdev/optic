@@ -1,6 +1,6 @@
 package com.seamless.changelog
 
-import com.seamless.changelog.Changelog.Change
+import com.seamless.changelog.Changelog.{AddedRequest, Change, RemovedRequest}
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, UnsetBodyDescriptor}
 import com.seamless.contexts.requests.{PathComponent, RequestsState, Utilities}
 import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
@@ -14,6 +14,16 @@ import com.seamless.diff.ShapeDiffer.resolveBaseObject
 import com.seamless.diff.initial.ShapeResolver
 
 object CalculateChangelog {
+  /*
+  Considerations:
+  - This approach to generating the changelog relies on IDs to diff the high level components of the API
+    Paths, requests, responses. It will produce a semantic changelog when using a common history, but
+    can not be applied to two similar API specs with different underlying IDs
+
+   - An alternative approach would be to rig the logic at this level to do a full diff between
+     paths, requests, and possible responses, but the use case for that is less obvious, and would
+     probably be better approached by running example requests from one API against another's spec
+   */
 
   def prepare(events: Vector[RfcEvent], since: Int): ChangelogInput = {
     val (history, head) = events.splitAt(since)
@@ -42,23 +52,22 @@ object CalculateChangelog {
     val addedPaths = computeAddedPaths(changelogInput)
     val updatedPaths = computeUpdatedPaths(changelogInput)
 
-    null
+    Changelog(addedPaths, Vector(), updatedPaths)
   }
 
-  def computeUpdatedPaths(changelogInput: ChangelogInput): Vector[Change] = {
+  def computeUpdatedPaths(changelogInput: ChangelogInput): Map[RequestId, Vector[Change]] = {
     //only those that were present in both
     val requestsToCompare = (changelogInput.headPaths.keySet intersect changelogInput.historicalPaths.keySet).toVector
-
-    requestsToCompare.flatMap {
+    requestsToCompare.map {
       case requestId: RequestId => {
         val previous = RequestChangeHelper(requestId, changelogInput.historicalState)
         val current = RequestChangeHelper(requestId, changelogInput.headState)
-        CalculateRequestChangelog.requestDiff(previous, current)(changelogInput)
+        requestId -> CalculateRequestChangelog.requestDiff(previous, current)(changelogInput)
       }
-    }
+    }.toMap
   }
 
-  def computeAddedPaths(changelogInput: ChangelogInput): Vector[Change] = {
+  def computeAddedPaths(changelogInput: ChangelogInput): Vector[AddedRequest] = {
     val added = (changelogInput.historicalPaths.keySet added changelogInput.headPaths.keySet).toVector
 
     implicit val pathComponents: Map[PathComponentId, PathComponent] = changelogInput.headState.requestsState.pathComponents
@@ -69,6 +78,18 @@ object CalculateChangelog {
         val method = changelogInput.headState.requestsState.requests(requestId).requestDescriptor.httpMethod
         val absolutePath = Utilities.toAbsolutePath(changelogInput.headPaths(requestId))
         Changelog.AddedRequest(absolutePath, method, requestId)
+      }
+    }
+  }
+
+  def computeRemovedPaths(changelogInput: ChangelogInput): Vector[RemovedRequest] = {
+    val removed = (changelogInput.historicalPaths.keySet removed changelogInput.headPaths.keySet).toVector
+    implicit val pathComponents: Map[PathComponentId, PathComponent] = changelogInput.headState.requestsState.pathComponents
+    removed.map {
+      case requestId => {
+        val method = changelogInput.headState.requestsState.requests(requestId).requestDescriptor.httpMethod
+        val absolutePath = Utilities.toAbsolutePath(changelogInput.headPaths(requestId))
+        Changelog.RemovedRequest(absolutePath, method, requestId)
       }
     }
   }

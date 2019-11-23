@@ -66,11 +66,12 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     }
   }
 
-  def ConvertToOneOf(expectedShape: ShapeEntity, context: InterpretationContext, actual: Json, affectedId: ShapeId, f: Function[ShapeId, Seq[RfcCommand]]) = {
+  def ConvertToOneOf(expectedShape: ShapeEntity, context: InterpretationContext, actual: ShapeLikeJs, affectedId: ShapeId, f: Function[ShapeId, Seq[RfcCommand]]) = {
+    val actualJson = actual.json.get
     val wrapperShapeId = ShapesHelper.newShapeId()
     val p1 = ShapesHelper.newShapeParameterId()
     val p2 = ShapesHelper.newShapeParameterId()
-    val result = new ShapeBuilder(actual).run
+    val result = new ShapeBuilder(actualJson).run
 
     val commands =
       result.commands ++ Seq(
@@ -93,9 +94,10 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     )
   }
 
-  def AddToOneOf(expected: ShapeEntity, context: InterpretationContext, actual: Json) = {
+  def AddToOneOf(expected: ShapeEntity, context: InterpretationContext, actual: ShapeLikeJs) = {
+    val actualJson = actual.json.get
     val p1 = ShapesHelper.newShapeParameterId()
-    val result = new ShapeBuilder(actual).run
+    val result = new ShapeBuilder(actualJson).run
     val commands = result.commands ++ Seq(
       AddShapeParameter(p1, expected.shapeId, ""),
       SetParameterShape(ProviderInShape(expected.shapeId, ShapeProvider(result.rootShapeId), p1))

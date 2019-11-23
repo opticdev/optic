@@ -1,15 +1,18 @@
 package com.seamless.diff
 
 import com.seamless.contexts.rfc.RfcState
-import com.seamless.contexts.shapes.Commands.{FieldShapeFromParameter, FieldShapeFromShape, NoProvider, ParameterProvider, ShapeProvider}
+import com.seamless.contexts.shapes.Commands.{DynamicParameterList, FieldShapeFromParameter, FieldShapeFromShape, NoProvider, ParameterProvider, ShapeId, ShapeProvider}
 import com.seamless.contexts.shapes.ShapesHelper._
+import com.seamless.contexts.shapes.projections.NameForShapeId
 import com.seamless.contexts.shapes.{ShapeEntity, ShapesHelper}
-import com.seamless.diff.ShapeDiffer.resolveBaseObject
+import com.seamless.diff.ShapeDiffer.{resolveBaseObject, resolveParameterShape}
 import io.circe.Json
 
 abstract class ShapeLike {
   def isEmpty: Boolean
   def id: String
+  def idOption: Option[String]
+  def isSpecShape: Boolean = false
 
   def isString: Boolean
   def isBoolean: Boolean
@@ -27,12 +30,17 @@ abstract class ShapeLike {
   def asJsonOption: Option[Json]
 
   def asShapeEntityOption: Option[ShapeEntity]
+
+  def asJs: ShapeLikeJs = ShapeLikeJs(asJsonOption, idOption)
+  def asJsOption: Option[ShapeLikeJs] = if (isEmpty) None else Some(asJs)
 }
 
+case class ShapeLikeJs(json: Option[Json] = None, id: Option[String] = None)
 
 object ShapeLike {
   def fromActualJson(jsonOption: Option[Json]): ShapeLike = new ShapeLike {
     def id: String = null
+    def idOption: Option[String] = None
     override def isEmpty: Boolean = jsonOption.isEmpty
 
     override def isString: Boolean = jsonOption.exists(_.isString)
@@ -55,14 +63,18 @@ object ShapeLike {
 
     override def asJson: Json = jsonOption.get
     override def asJsonOption: Option[Json] = jsonOption
+
     override def asShapeEntityOption: Option[ShapeEntity] = None
   }
 
   def fromShapeEntity(shapeEntityOption: Option[ShapeEntity], rfcState: RfcState, _id: String = null): ShapeLike = new ShapeLike {
     override def isEmpty: Boolean = shapeEntityOption.isEmpty
     def id: String = _id
+    def idOption: Option[String] = Some(id)
 
-    private def asCoreShape = ShapesHelper.toCoreShape(shapeEntityOption.get, rfcState.shapesState)
+    override def isSpecShape: Boolean = true
+
+    private def asCoreShape: CoreShapeKind = ShapesHelper.toCoreShape(shapeEntityOption.get, rfcState.shapesState)
 
     override def isString: Boolean = asCoreShape == StringKind
     override def isBoolean: Boolean = asCoreShape == BooleanKind
@@ -71,8 +83,28 @@ object ShapeLike {
 
 
     override def isArray: Boolean = asCoreShape == ListKind
-    //todo implement this
-    override def items: Vector[ShapeLike] = Vector()
+
+    override def items: Vector[ShapeLike] = {
+      //@todo shape & field cases
+      val bindings = rfcState.shapesState.resolveParameterBindings(id)
+      val itemShape = resolveParameterShape(id, "$listItem")(rfcState.shapesState, bindings)
+      if (itemShape.isDefined) {
+        val oneOfId = itemShape.get.shapeId
+        if (itemShape.get.descriptor.baseShapeId == OneOfKind.baseShapeId) {
+          val shapeParameterIds = itemShape.get.descriptor.parameters match {
+            case DynamicParameterList(shapeParameterIds) => shapeParameterIds
+          }
+          shapeParameterIds.map(paramId => {
+            val innerShape = resolveParameterShape(oneOfId, paramId)(rfcState.shapesState, bindings)
+            ShapeLike.fromShapeEntity(innerShape, rfcState)
+          }).toVector
+        } else {
+          Vector(ShapeLike.fromShapeEntity(itemShape, rfcState))
+        }
+      } else {
+        Vector()
+      }
+    }
 
     override def isObject: Boolean = asCoreShape == ObjectKind
     override def fields: Map[String, ShapeLike] = {
@@ -113,8 +145,11 @@ object ShapeLike {
 //      fields.find(_._2.id == id).map(i => i._2)
 //    }
 
-    override def asJson: Json = null
-    override def asJsonOption: Option[Json] = None
+    override def asJson: Json = {
+      null
+    }
+
+    override def asJsonOption: Option[Json] = Some(asJson)
 
     override def getField(key: String): ShapeLike = fields.getOrElse(key, fromShapeEntity(None, rfcState, null))
     override def asShapeEntityOption: Option[ShapeEntity] = shapeEntityOption

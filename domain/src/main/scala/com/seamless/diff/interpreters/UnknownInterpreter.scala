@@ -2,7 +2,7 @@ package com.seamless.diff.interpreters
 
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
-import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, InterpretationContext}
+import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, InterpretationContext, ShapeLikeJs}
 import com.seamless.diff.RequestDiffer.{RequestDiffResult, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.seamless.diff.ShapeDiffer.NoExpectedShape
 import com.seamless.diff.initial.ShapeBuilder
@@ -53,8 +53,9 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
   }
 
 
-  def ChangeUnknownToSomething(expectedShapeId: ShapeId, raw: Json, shapesState: ShapesState, context: InterpretationContext) = {
-    val shapeBuilder = new ShapeBuilder(raw)
+  def ChangeUnknownToSomething(expectedShapeId: ShapeId, raw: ShapeLikeJs, shapesState: ShapesState, context: InterpretationContext) = {
+    val actualJson = raw.json.get
+    val shapeBuilder = new ShapeBuilder(actualJson)
     val result = shapeBuilder.run
     val commands = result.commands ++ Seq(
       SetBaseShape(expectedShapeId, result.rootShapeId)

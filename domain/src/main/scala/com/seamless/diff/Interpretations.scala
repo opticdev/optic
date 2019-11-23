@@ -100,8 +100,9 @@ object Interpretations {
     )
   }
 
-  def AddInitialRequestBodyShape(actual: Json, requestId: RequestId, contentType: String)(implicit shapesState: ShapesState) = {
-    val shape = new ShapeBuilder(actual).run
+  def AddInitialRequestBodyShape(actual: ShapeLikeJs, requestId: RequestId, contentType: String)(implicit shapesState: ShapesState) = {
+    val actualJson = actual.json.get
+    val shape = new ShapeBuilder(actualJson).run
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
 
@@ -123,10 +124,11 @@ object Interpretations {
     )
   }
 
-  def AddFieldToRequestShape(key: String, raw: Json, parentShapeId: String, requestId: RequestId)(implicit shapesState: ShapesState) = {
+  def AddFieldToRequestShape(key: String, raw: ShapeLikeJs, parentShapeId: String, requestId: RequestId)(implicit shapesState: ShapesState) = {
+    val actualJson = raw.json.get
     val fieldId = ShapesHelper.newFieldId()
 
-    val result = new ShapeBuilder(raw).run
+    val result = new ShapeBuilder(actualJson).run
     val commands = result.commands ++ Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, result.rootShapeId)))
 
     val parentConcept = shapesState.concepts.collectFirst {
@@ -158,8 +160,9 @@ object Interpretations {
     )
   }
 
-  def ChangeFieldInRequestShape(key: String, fieldId: FieldId, raw: Json, requestId: RequestId)(implicit shapesState: ShapesState) = {
-    val result = new ShapeBuilder(raw).run
+  def ChangeFieldInRequestShape(key: String, fieldId: FieldId, raw: ShapeLikeJs, requestId: RequestId)(implicit shapesState: ShapesState) = {
+    val actualJson = raw.json.get
+    val result = new ShapeBuilder(actualJson).run
 
     val commands = result.commands ++ Seq(
       SetFieldShape(FieldShapeFromShape(fieldId, result.rootShapeId))
@@ -174,8 +177,10 @@ object Interpretations {
     )
   }
 
-  def AddInitialResponseBodyShape(actual: Json, responseStatusCode: Int, responseId: String, contentType: String)(implicit shapesState: ShapesState) = {
-    val shape = new ShapeBuilder(actual).run
+  def AddInitialResponseBodyShape(actual: ShapeLikeJs, responseStatusCode: Int, responseId: String, contentType: String)(implicit shapesState: ShapesState) = {
+    val actualJson = actual.json.get
+
+    val shape = new ShapeBuilder(actualJson).run
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
 
@@ -197,12 +202,11 @@ object Interpretations {
     )
   }
 
-  def AddFieldToResponseShape(key: String, raw: Json, parentShapeId: String, responseStatusCode: Int, responseId: String)(implicit shapesState: ShapesState) = {
+  def AddFieldToResponseShape(key: String, raw: ShapeLikeJs, parentShapeId: String, responseStatusCode: Int, responseId: String)(implicit shapesState: ShapesState) = {
+    val actualJson = raw.json.get
     val fieldId = ShapesHelper.newFieldId()
 
-
-
-    val result = new ShapeBuilder(raw).run
+    val result = new ShapeBuilder(actualJson).run
     val commands = result.commands ++ Seq(AddField(fieldId, parentShapeId, key, FieldShapeFromShape(fieldId, result.rootShapeId)))
 
     val parentConcept = shapesState.concepts.collectFirst {
@@ -220,8 +224,9 @@ object Interpretations {
     )
   }
 
-  def ChangeFieldInResponseShape(key: String, fieldId: String, raw: Json, responseStatusCode: Int, responseId: ResponseId)(implicit shapesState: ShapesState) = {
-    val result = new ShapeBuilder(raw).run
+  def ChangeFieldInResponseShape(key: String, fieldId: String, raw: ShapeLikeJs, responseStatusCode: Int, responseId: ResponseId)(implicit shapesState: ShapesState) = {
+    val actualJson = raw.json.get
+    val result = new ShapeBuilder(actualJson).run
 
     val commands = result.commands ++ Seq(
       SetFieldShape(FieldShapeFromShape(fieldId, result.rootShapeId))

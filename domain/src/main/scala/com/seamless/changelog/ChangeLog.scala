@@ -1,12 +1,39 @@
 package com.seamless.changelog
 
-import com.seamless.changelog.Changelog.{AddedRequest}
-import com.seamless.contexts.requests.Commands.RequestId
+import com.seamless.changelog.Changelog.{Change, _}
+import com.seamless.contexts.requests.Commands.{RequestId, ResponseId}
+import com.seamless.contexts.shapes.Commands.{FieldId, ShapeId}
 
 object Changelog {
-  sealed trait Change
-  case class AddedRequest(path: String, method: String, requestId: RequestId) extends Change
-  case class PlaceHolder(thing: String) extends Change
+  sealed trait Change { def context: ChangelogContext; def tag: ChangeTag }
+
+  // Entry Points
+  case class AddedRequest(path: String, method: String, requestId: RequestId) extends Change {override def context: ChangelogContext = EntryPoint(); override def tag: ChangeTag = Addition}
+  case class RemovedRequest(path: String, method: String, requestId: RequestId) extends Change {override def context: ChangelogContext = EntryPoint(); override def tag: ChangeTag = Breaking("Clients using this request will be broken") }
+
+  case class AddedResponse(statusCode: Int, context: ChangelogContext) extends Change {override def tag: ChangeTag = Addition}
+  case class ChangedContentType(from: String, to: String, context: ChangelogContext) extends Change {override def tag: ChangeTag = Breaking("Content Type Changed")}
+
+  //Shapes
+  case class NewField(key: String, typeString: String, tag: ChangeTag, context: ChangelogContext) extends Change
+  case class RemovedField(fieldId: FieldId, key: String, tag: ChangeTag, context: ChangelogContext) extends Change
+  case class FieldShapeChange(fieldId: String, key: String, oldType: String, newType: String, tag: ChangeTag, context: ChangelogContext) extends Change
+  case class ShapeChange(shapeId: ShapeId, oldType: String, newType: String, tag: ChangeTag, context: ChangelogContext) extends Change
+  case class ListItemTypeChanged(listId: ShapeId, oldType: String, newType: String, tag: ChangeTag, context: ChangelogContext) extends Change
+
+
+  case class NoChange(context: ChangelogContext) extends Change {override def tag: ChangeTag = UnknownChange}
+  case class UnhandledDiff(diff: String, context: ChangelogContext) extends Change {override def tag: ChangeTag = UnknownChange}
 }
 
-case class Changelog(addedRequest: Vector[AddedRequest])
+case class Changelog(addedRequests: Vector[AddedRequest],
+                     removedRequests: Vector[RemovedRequest],
+                     updatedRequests: Map[RequestId, Vector[Change]])
+
+
+
+// Context
+trait ChangelogContext
+case class InRequest(requestId: RequestId) extends ChangelogContext
+case class InResponse(responseId: ResponseId, statusCode: Int)  extends ChangelogContext
+case class EntryPoint() extends ChangelogContext

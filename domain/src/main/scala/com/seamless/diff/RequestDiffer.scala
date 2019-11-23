@@ -69,7 +69,6 @@ object RequestDiffer {
       convertJsonToJs(this.asJson)
     }
   }
-  case class NoDiff() extends RequestDiffResult
   case class UnmatchedUrl(interaction: ApiInteraction) extends RequestDiffResult
   case class UnmatchedHttpMethod(pathId: PathComponentId, method: String, interaction: ApiInteraction) extends RequestDiffResult
   case class UnmatchedHttpStatusCode(requestId: RequestId, statusCode: Int, interaction: ApiInteraction) extends RequestDiffResult
@@ -126,7 +125,7 @@ object RequestDiffer {
           if (interaction.request.bodyShape.isEmpty) {
             None
           } else {
-            Some(Iterator(UnmatchedRequestBodyShape(request.requestId, interaction.request.contentType, ShapeDiffer.UnsetShape(interaction.request.bodyShape.asJson))))
+            Some(Iterator(UnmatchedRequestBodyShape(request.requestId, interaction.request.contentType, ShapeDiffer.UnsetShape(interaction.request.bodyShape.asJs))))
           }
         }
         case d: ShapedBodyDescriptor => {
@@ -172,7 +171,7 @@ object RequestDiffer {
                 responseId,
                 interaction.response.contentType,
                 interaction.response.statusCode,
-                ShapeDiffer.UnsetShape(interaction.response.bodyShape.asJson)
+                ShapeDiffer.UnsetShape(interaction.response.bodyShape.asJs)
               )
             )
           )
