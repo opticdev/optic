@@ -4,8 +4,8 @@ import io.circe.Json
 import io.circe.jawn.parseFile
 import java.io.File
 
-import com.seamless.contexts.rfc.Commands
-import com.seamless.serialization.CommandSerialization
+import com.seamless.contexts.rfc.{Commands, Events}
+import com.seamless.serialization.{CommandSerialization, EventSerialization}
 
 import scala.util.Try
 
@@ -18,5 +18,10 @@ trait JsonFileFixture {
     val filePath = "src/test/resources/diff-scenarios/" + slug + ".commands.json"
     val json = parseFile(new File(filePath)).right.get
     CommandSerialization.fromJson(json).get
+  }
+  def eventsFrom(slug: String): Vector[Events.RfcEvent] = {
+    val filePath = "src/test/resources/diff-scenarios/" + slug + ".events.json"
+    val json = parseFile(new File(filePath)).right.get
+    EventSerialization.fromJson(json).get
   }
 }

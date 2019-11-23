@@ -35,57 +35,60 @@ object ShapeDiffer {
   case class MultipleInterpretations(expected: ShapeEntity, actual: Json) extends ShapeDiffResult
   type ParameterBindings = Map[ShapeParameterId, Option[ProviderDescriptor]]
 
+  def diffJson(expectedShape: ShapeEntity, jsonOption: Option[Json])(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty): Iterator[ShapeDiffResult] = {
+    diff(expectedShape, ShapeLike.fromActualJson(jsonOption))
+  }
+
   //@TODO change bindings to UsageTrail
-  def diff(expectedShape: ShapeEntity, actualShapeOption: Option[Json])(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty): Iterator[ShapeDiffResult] = {
+  def diff(expectedShape: ShapeEntity, actualShape: ShapeLike)(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty): Iterator[ShapeDiffResult] = {
     val coreShape = toCoreShape(expectedShape, shapesState)
-    if (actualShapeOption.isEmpty) {
+    if (actualShape.isEmpty) {
       val diff = coreShape match {
-        case UnknownKind => Iterator(NoExpectedShape(expectedShape, actualShapeOption))
-        case AnyKind => Iterator(WeakNoDiff(expectedShape, actualShapeOption))
+        case UnknownKind => Iterator(NoExpectedShape(expectedShape, actualShape.asJsonOption))
+        case AnyKind => Iterator(WeakNoDiff(expectedShape, actualShape.asJsonOption))
         case OptionalKind => Iterator.empty
         case _ => Iterator(UnsetValue(expectedShape))
       }
       return diff
     }
 
-    val actualShape = actualShapeOption.get
     coreShape match {
       case AnyKind => {
-        Iterator(WeakNoDiff(expectedShape, actualShapeOption))
+        Iterator(WeakNoDiff(expectedShape, actualShape.asJsonOption))
       }
       case UnknownKind => {
-        Iterator(NoExpectedShape(expectedShape, actualShapeOption))
+        Iterator(NoExpectedShape(expectedShape, actualShape.asJsonOption))
       }
       case StringKind => {
         if (actualShape.isString) {
           Iterator.empty
         } else {
-          shapeMismatchOrMissing(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape.asJson)
         }
       }
       case BooleanKind => {
         if (actualShape.isBoolean) {
           Iterator.empty
         } else {
-          shapeMismatchOrMissing(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape.asJson)
         }
       }
       case NumberKind => {
         if (actualShape.isNumber) {
           Iterator.empty
         } else {
-          shapeMismatchOrMissing(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape.asJson)
         }
       }
       case ListKind => {
         if (actualShape.isArray) {
           val itemShape = resolveParameterShape(expectedShape.shapeId, "$listItem")
           if (itemShape.isDefined) {
-            actualShape.asArray.get.toIterator.flatMap(item => {
-              val diff = ShapeDiffer.diff(itemShape.get, Some(item))
+            actualShape.items.toIterator.flatMap(item => {
+              val diff = ShapeDiffer.diff(itemShape.get, item)
               diff.flatMap {
                 case sd: NoDiff => None
-                case sd: ShapeMismatch => Some(ListItemShapeMismatch(expectedShape, actualShape, itemShape.get, item))
+                case sd: ShapeMismatch => Some(ListItemShapeMismatch(expectedShape, actualShape.asJson, itemShape.get, item.asJson))
                 case x => {
 //                  println("diff within list")
                   Some(x)
@@ -96,12 +99,12 @@ object ShapeDiffer {
             Iterator.empty
           }
         } else {
-          shapeMismatchOrMissing(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape.asJson)
         }
       }
       case ObjectKind => {
         if (actualShape.isObject) {
-          val o = actualShape.asObject.get
+          val o = actualShape.fields
           val baseObject = resolveBaseObject(expectedShape.shapeId)
 
           val expectedFields = baseObject.descriptor.fieldOrdering
@@ -109,7 +112,7 @@ object ShapeDiffer {
               val field = shapesState.fields(fieldId)
               (field.descriptor.name, field)
             })
-          val actualFields = o.toIterable
+          val actualFields = actualShape.fields.toIterable
           val expectedKeys = expectedFields.map(_._1).toSet
           val actualKeys = actualFields.map(_._1).toSet
 
@@ -138,11 +141,11 @@ object ShapeDiffer {
               }
             }
             if (expectedFieldShape.isDefined) {
-              val actualFieldValue = o(key)
+              val actualFieldValue = actualShape.getField(key)
               implicit val bindings: ParameterBindings = flattenedField.bindings ++ flattenedShape.bindings
               val diffs = ShapeDiffer.diff(expectedFieldShape.get, actualFieldValue)
               diffs.flatMap {
-                case d: ShapeMismatch => Some(KeyShapeMismatch(field.fieldId, key, expectedFieldShape.get, actualFieldValue.get))
+                case d: ShapeMismatch => Some(KeyShapeMismatch(field.fieldId, key, expectedFieldShape.get, actualFieldValue.asJson))
                 case d: UnsetValue => Some(UnsetObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get))
                 case d: NullValue => Some(NullObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get))
                 case x: NoDiff => None
@@ -159,14 +162,14 @@ object ShapeDiffer {
           // detect keys that should not be present
           val extraKeys = actualKeys -- expectedKeys
           val extraKeysDiff = extraKeys.toIterator.flatMap(key => {
-            val actualFieldValue = o(key).get
-            Iterator(UnexpectedObjectKey(baseObject.shapeId, key, baseObject, actualFieldValue))
+            val actualFieldValue = o(key)
+            Iterator(UnexpectedObjectKey(baseObject.shapeId, key, baseObject, actualFieldValue.asJson))
           })
 
 
           expectedKeysDiff ++ extraKeysDiff
         } else {
-          shapeMismatchOrMissing(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape.asJson)
         }
       }
       case NullableKind => {
@@ -175,18 +178,18 @@ object ShapeDiffer {
           if (actualShape.isNull) {
             Iterator.empty
           } else {
-            ShapeDiffer.diff(referencedShape.get, actualShapeOption)
+            ShapeDiffer.diff(referencedShape.get, actualShape)
           }
         } else {
-          Iterator(WeakNoDiff(expectedShape, actualShapeOption))
+          Iterator(WeakNoDiff(expectedShape, actualShape.asJsonOption))
         }
       }
       case OptionalKind => {
         val referencedShape = resolveParameterShape(expectedShape.shapeId, "$optionalInner")
         if (referencedShape.isDefined) {
-          ShapeDiffer.diff(referencedShape.get, actualShapeOption)
+          ShapeDiffer.diff(referencedShape.get, actualShape)
         } else {
-          Iterator(WeakNoDiff(expectedShape, actualShapeOption))
+          Iterator(WeakNoDiff(expectedShape, actualShape.asJsonOption))
         }
       }
       case OneOfKind => {
@@ -197,7 +200,7 @@ object ShapeDiffer {
         val firstMatch = shapeParameterIds.find(shapeParameterId => {
           val referencedShape = resolveParameterShape(expectedShape.shapeId, shapeParameterId)
           if (referencedShape.isDefined) {
-            val diff = ShapeDiffer.diff(referencedShape.get, actualShapeOption)
+            val diff = ShapeDiffer.diff(referencedShape.get, actualShape)
             diff.isEmpty
           } else {
             false
@@ -207,29 +210,28 @@ object ShapeDiffer {
         if (firstMatch.isDefined) {
           Iterator.empty
         } else {
-          Iterator(MultipleInterpretations(expectedShape, actualShape))
+          Iterator(MultipleInterpretations(expectedShape, actualShape.asJson))
         }
       }
       case MapKind => {
         if (actualShape.isObject) {
-          val o = actualShape.asObject.get
           val referencedShape = resolveParameterShape(expectedShape.shapeId, "$mapValue")
           if (referencedShape.isDefined) {
-            o.keys.toIterator.flatMap(key => {
-              val v = o(key)
+            actualShape.fields.keys.toIterator.flatMap(key => {
+              val v = actualShape.fields(key)
               val diff = ShapeDiffer.diff(referencedShape.get, v)
               diff.flatMap {
-                case d: ShapeMismatch => Some(MapValueMismatch(key, referencedShape.get, v.get))
-                case d: UnsetValue => Some(MapValueMismatch(key, referencedShape.get, v.get))
+                case d: ShapeMismatch => Some(MapValueMismatch(key, referencedShape.get, v.asJson))
+                case d: UnsetValue => Some(MapValueMismatch(key, referencedShape.get, v.asJson))
                 case x: NoDiff => None
                 case x => Some(x)
               }
             })
           } else {
-            Iterator(WeakNoDiff(expectedShape, actualShapeOption))
+            Iterator(WeakNoDiff(expectedShape, actualShape.asJsonOption))
           }
         } else {
-          shapeMismatchOrMissing(expectedShape, actualShape)
+          shapeMismatchOrMissing(expectedShape, actualShape.asJson)
         }
       }
       case ReferenceKind => {
@@ -237,14 +239,14 @@ object ShapeDiffer {
         if (referencedShape.isDefined) {
           //@TODO: referencedShape should be an object. find the first field which is an Identifier<T>. Diff the actualShape against the resolved T
         }
-        Iterator(WeakNoDiff(expectedShape, actualShapeOption))
+        Iterator(WeakNoDiff(expectedShape, actualShape.asJsonOption))
       }
       case IdentifierKind => {
         val identifierShape = resolveParameterShape(expectedShape.shapeId, "$identifierInner")
         if (identifierShape.isDefined) {
           //@TODO: identifierShape should be a string or number. Diff the actualShape against it.
         }
-        Iterator(WeakNoDiff(expectedShape, actualShapeOption))
+        Iterator(WeakNoDiff(expectedShape, actualShape.asJsonOption))
       }
     }
   }
