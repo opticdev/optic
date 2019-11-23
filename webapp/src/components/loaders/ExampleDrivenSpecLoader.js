@@ -33,6 +33,7 @@ import { DocSubGroup } from '../requests/DocSubGroup';
 import JsonTextarea from '../shared/JsonTextarea';
 import { DocDivider } from '../requests/DocConstants';
 import Chip from '@material-ui/core/Chip';
+import jsonic from 'jsonic';
 
 export const basePath = `/spec-by-example`;
 
@@ -44,7 +45,7 @@ function parseLoosely(nonEmptyBodyString) {
     return [true, JSON.parse(nonEmptyBodyString)];
   } catch (e) {
     try {
-      const result = eval(`(${nonEmptyBodyString})`);
+      const result = jsonic(nonEmptyBodyString);
       console.log({ result });
       if (result) {
         return [true, result];
