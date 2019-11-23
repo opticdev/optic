@@ -44,7 +44,7 @@ class ShapeDifferSpec extends FunSpec {
           val diff = ShapeDiffer.diffJson(expected, Some(actual))
           assert(diff.hasNext)
           val next = diff.next()
-          assert(next == ShapeDiffer.ShapeMismatch(expected, ShapeLikeJs(Some(actual))))
+          assert(next == ShapeDiffer.ShapeMismatch(expected, ShapeLikeJs(Some(actual)), ShapeTrail.empty))
         }
       }
     }
@@ -83,7 +83,7 @@ class ShapeDifferSpec extends FunSpec {
           val diff = ShapeDiffer.diffJson(expected, Some(actual))
           assert(diff.hasNext)
           val next = diff.next()
-          assert(next == ShapeDiffer.ShapeMismatch(shapesState.shapes("$string"), ShapeLikeJs(Some(actual))))
+          assert(next == ShapeDiffer.ShapeMismatch(shapesState.shapes("$string"), ShapeLikeJs(Some(actual)), ShapeTrail.empty))
         }
       }
     }
@@ -122,7 +122,7 @@ class ShapeDifferSpec extends FunSpec {
           val diff = ShapeDiffer.diffJson(expected, Some(actual))
           assert(diff.hasNext)
           val next = diff.next()
-          assert(next == ShapeDiffer.ShapeMismatch(shapesState.shapes("$string"), ShapeLikeJs(Some(actual))))
+          assert(next == ShapeDiffer.ShapeMismatch(shapesState.shapes("$string"), ShapeLikeJs(Some(actual)), ShapeTrail.empty))
         }
       }
     }
@@ -149,7 +149,7 @@ class ShapeDifferSpec extends FunSpec {
           val diff = ShapeDiffer.diffJson(expected, Some(actual))
           assert(diff.hasNext)
           val next = diff.next()
-          assert(next == ShapeDiffer.MultipleInterpretations(expected, ShapeLikeJs(Some(actual))))
+          assert(next == ShapeDiffer.MultipleInterpretations(expected, ShapeLikeJs(Some(actual)), ShapeTrail.empty))
         }
       }
       describe("when given undefined") {
@@ -173,7 +173,7 @@ class ShapeDifferSpec extends FunSpec {
           val diff = ShapeDiffer.diffJson(expected, Some(actual))
           assert(diff.hasNext)
           val next = diff.next()
-          assert(next == MultipleInterpretations(expected, ShapeLikeJs(Some(actual))))
+          assert(next == MultipleInterpretations(expected, ShapeLikeJs(Some(actual)), ShapeTrail.empty))
         }
       }
     }
@@ -199,7 +199,7 @@ class ShapeDifferSpec extends FunSpec {
           val diff = ShapeDiffer.diffJson(expected, Some(actual))
           assert(diff.hasNext)
           val next = diff.next()
-          assert(next == ShapeDiffer.UnexpectedObjectKey("$x", "abc", expected, ShapeLikeJs(Some(json"""123"""))))
+          assert(next == ShapeDiffer.UnexpectedObjectKey("$x", "abc", expected, ShapeLikeJs(Some(json"""123""")), ShapeTrail.empty))
         }
       }
     }

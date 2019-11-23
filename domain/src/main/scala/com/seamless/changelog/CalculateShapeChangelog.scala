@@ -6,7 +6,7 @@ import com.seamless.contexts.shapes.Commands.ShapeId
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.contexts.shapes.projections.NameForShapeId
 import com.seamless.diff.ShapeDiffer.{KeyShapeMismatch, ListItemShapeMismatch, NoDiff, NoExpectedShape, NullValue, ShapeDiffResult, ShapeMismatch, UnexpectedObjectKey, UnsetObjectKey, UnsetShape, WeakNoDiff}
-import com.seamless.diff.{ShapeDiffer, ShapeLike}
+import com.seamless.diff.{ShapeDiffer, ShapeLike, ShapeTrail}
 
 import scala.collection.immutable
 
@@ -16,7 +16,7 @@ object CalculateShapeChangelog {
     val historical = toShapeLike(historicalShapeId, changelogInput.historicalState)
     val head       = toShapeLike(historicalShapeId, changelogInput.headState)
 
-    val shapeDiff: immutable.Seq[ShapeDiffer.ShapeDiffResult] = ShapeDiffer.diff(historical.asShapeEntityOption.get, head)(changelogInput.historicalState.shapesState).toVector
+    val shapeDiff: immutable.Seq[ShapeDiffer.ShapeDiffResult] = ShapeDiffer.diff(historical.asShapeEntityOption.get, head)(changelogInput.historicalState.shapesState, Map.empty, ShapeTrail.empty).toVector
     shapeDiff.map(i => diffToShapeChangeLog(i, context))
   }
 
@@ -50,25 +50,25 @@ object CalculateShapeChangelog {
       case NoDiff() => NoChange(context)
       case NoExpectedShape(_, _) => NoChange(context)
       case WeakNoDiff(_, _) => NoChange(context)
-      case KeyShapeMismatch(fieldId, key, expected, actual) => {
+      case KeyShapeMismatch(fieldId, key, expected, actual, trail) => {
         val tag = BasicBreakingChangeRules.changeShape(expected, actual, context)
-        FieldShapeChange(fieldId, key, oldShapeType(Some(expected.shapeId)), newFieldType(Some(fieldId)), tag, context)
+        FieldShapeChange(fieldId, key, oldShapeType(Some(expected.shapeId)), newFieldType(Some(fieldId)), tag, trail, context)
       }
-      case ShapeMismatch(expected, actual) => {
+      case ShapeMismatch(expected, actual, trail) => {
         val tag = BasicBreakingChangeRules.changeShape(expected, actual, context)
-        ShapeChange(actual.id.get, oldShapeType(Some(expected.shapeId)), newShapeType(Some(actual.id.get)), tag, context)
+        ShapeChange(actual.id.get, oldShapeType(Some(expected.shapeId)), newShapeType(Some(actual.id.get)), tag, trail, context)
       }
 
-      case ListItemShapeMismatch(expectedList, actualList, expectedItem, actualItem) => {
-        ListItemTypeChanged(actualList.id.get, oldShapeType(Some(expectedList.shapeId)), newShapeType(actualList.id), UnknownChange, context)
+      case ListItemShapeMismatch(expectedList, actualList, expectedItem, actualItem, trail) => {
+        ListItemTypeChanged(actualList.id.get, oldShapeType(Some(expectedList.shapeId)), newShapeType(actualList.id), UnknownChange, trail, context)
       }
 
-      case UnsetObjectKey(_, fieldId, key, _) => {
-        RemovedField(fieldId, key, BasicBreakingChangeRules.removeField(context), context)
+      case UnsetObjectKey(_, fieldId, key, _, trail) => {
+        RemovedField(fieldId, key, BasicBreakingChangeRules.removeField(context), trail, context)
       }
 
-      case UnexpectedObjectKey(_, key, _, actual) => {
-        NewField(key, newFieldType(actual.id), BasicBreakingChangeRules.addField(context), context)
+      case UnexpectedObjectKey(_, key, _, actual, trail) => {
+        NewField(key, newFieldType(actual.id), BasicBreakingChangeRules.addField(context), trail, context)
       }
 
       //    case MultipleInterpretations(expected, actual) =>

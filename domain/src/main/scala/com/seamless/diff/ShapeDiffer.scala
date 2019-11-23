@@ -6,6 +6,7 @@ import com.seamless.contexts.shapes.projections.NameForShapeId
 import com.seamless.contexts.shapes.{ShapeEntity, ShapesState}
 import io.circe._
 import io.circe.generic.auto._
+import com.seamless.diff.ShapeTrail.ShapeTrailImplicits
 import io.circe.syntax._
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportDescendentClasses}
@@ -27,14 +28,14 @@ object ShapeDiffer {
   case class UnsetShape(actual: ShapeLikeJs) extends ShapeDiffResult
   case class UnsetValue(expected: ShapeEntity) extends ShapeDiffResult
   case class NullValue(expected: ShapeEntity) extends ShapeDiffResult
-  case class ShapeMismatch(expected: ShapeEntity, actual: ShapeLikeJs) extends ShapeDiffResult
-  case class ListItemShapeMismatch(expectedList: ShapeEntity, actualList: ShapeLikeJs, expectedItem: ShapeEntity, actualItem: ShapeLikeJs) extends ShapeDiffResult
-  case class UnsetObjectKey(parentObjectShapeId: ShapeId, fieldId: FieldId, key: String, expected: ShapeEntity) extends ShapeDiffResult
-  case class NullObjectKey(parentObjectShapeId: ShapeId, fieldId: FieldId, key: String, expected: ShapeEntity) extends ShapeDiffResult
-  case class UnexpectedObjectKey(parentObjectShapeId: ShapeId, key: String, expected: ShapeEntity, actual: ShapeLikeJs) extends ShapeDiffResult
-  case class KeyShapeMismatch(fieldId: FieldId, key: String, expected: ShapeEntity, actual: ShapeLikeJs) extends ShapeDiffResult
+  case class ShapeMismatch(expected: ShapeEntity, actual: ShapeLikeJs, trail: ShapeTrail) extends ShapeDiffResult
+  case class ListItemShapeMismatch(expectedList: ShapeEntity, actualList: ShapeLikeJs, expectedItem: ShapeEntity, actualItem: ShapeLikeJs, trail: ShapeTrail) extends ShapeDiffResult
+  case class UnsetObjectKey(parentObjectShapeId: ShapeId, fieldId: FieldId, key: String, expected: ShapeEntity, trail: ShapeTrail) extends ShapeDiffResult
+  case class NullObjectKey(parentObjectShapeId: ShapeId, fieldId: FieldId, key: String, expected: ShapeEntity, trail: ShapeTrail) extends ShapeDiffResult
+  case class UnexpectedObjectKey(parentObjectShapeId: ShapeId, key: String, expected: ShapeEntity, actual: ShapeLikeJs, trail: ShapeTrail) extends ShapeDiffResult
+  case class KeyShapeMismatch(fieldId: FieldId, key: String, expected: ShapeEntity, actual: ShapeLikeJs, trail: ShapeTrail) extends ShapeDiffResult
   case class MapValueMismatch(key: String, expected: ShapeEntity, actual: ShapeLikeJs) extends ShapeDiffResult
-  case class MultipleInterpretations(expected: ShapeEntity, actual: ShapeLikeJs) extends ShapeDiffResult
+  case class MultipleInterpretations(expected: ShapeEntity, actual: ShapeLikeJs, trail: ShapeTrail) extends ShapeDiffResult
   type ParameterBindings = Map[ShapeParameterId, Option[ProviderDescriptor]]
 
   def diffJson(expectedShape: ShapeEntity, jsonOption: Option[Json])(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty): Iterator[ShapeDiffResult] = {
@@ -42,7 +43,7 @@ object ShapeDiffer {
   }
 
   //@TODO change bindings to UsageTrail
-  def diff(expectedShape: ShapeEntity, actualShape: ShapeLike)(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty): Iterator[ShapeDiffResult] = {
+  def diff(expectedShape: ShapeEntity, actualShape: ShapeLike)(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty, trail: ShapeTrail = ShapeTrail.empty): Iterator[ShapeDiffResult] = {
     val coreShape = toCoreShape(expectedShape, shapesState)
     if (actualShape.isEmpty) {
       val diff = coreShape match {
@@ -87,10 +88,10 @@ object ShapeDiffer {
           val itemShape = resolveParameterShape(expectedShape.shapeId, "$listItem")
           if (itemShape.isDefined) {
             actualShape.items.toIterator.flatMap(item => {
-              val diff = ShapeDiffer.diff(itemShape.get, item)
+              val diff = ShapeDiffer.diff(itemShape.get, item)(shapesState, bindings, trail.listItem)
               diff.flatMap {
                 case sd: NoDiff => None
-                case sd: ShapeMismatch => Some(ListItemShapeMismatch(expectedShape, actualShape.asJs, itemShape.get, item.asJs))
+                case sd: ShapeMismatch => Some(ListItemShapeMismatch(expectedShape, actualShape.asJs, itemShape.get, item.asJs, trail))
                 case x => {
 //                  println("diff within list")
                   Some(x)
@@ -148,11 +149,11 @@ object ShapeDiffer {
             if (expectedFieldShape.isDefined) {
               val actualFieldValue = actualShape.getField(key)
               implicit val bindings: ParameterBindings = flattenedField.bindings ++ flattenedShape.bindings
-              val diffs = ShapeDiffer.diff(expectedFieldShape.get, actualFieldValue)
+              val diffs = ShapeDiffer.diff(expectedFieldShape.get, actualFieldValue)(shapesState, bindings, trail.append(key))
               diffs.flatMap {
-                case d: ShapeMismatch => Some(KeyShapeMismatch(field.fieldId, key, expectedFieldShape.get, actualFieldValue.asJs))
-                case d: UnsetValue => Some(UnsetObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get))
-                case d: NullValue => Some(NullObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get))
+                case d: ShapeMismatch => Some(KeyShapeMismatch(field.fieldId, key, expectedFieldShape.get, actualFieldValue.asJs, trail))
+                case d: UnsetValue => Some(UnsetObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get, trail))
+                case d: NullValue => Some(NullObjectKey(expectedShape.shapeId, field.fieldId, key, expectedFieldShape.get, trail))
                 case x: NoDiff => None
                 case x => {
 //                  println("diff within object key")
@@ -168,7 +169,7 @@ object ShapeDiffer {
           val extraKeys = actualKeys -- expectedKeys
           val extraKeysDiff = extraKeys.toIterator.flatMap(key => {
             val actualFieldValue = o(key)
-            Iterator(UnexpectedObjectKey(baseObject.shapeId, key, baseObject, actualFieldValue.asJs))
+            Iterator(UnexpectedObjectKey(baseObject.shapeId, key, baseObject, actualFieldValue.asJs, trail))
           })
 
           expectedKeysDiff ++ extraKeysDiff
@@ -214,7 +215,7 @@ object ShapeDiffer {
         if (firstMatch.isDefined) {
           Iterator.empty
         } else {
-          Iterator(MultipleInterpretations(expectedShape, actualShape.asJs))
+          Iterator(MultipleInterpretations(expectedShape, actualShape.asJs, trail))
         }
       }
       case MapKind => {
@@ -280,14 +281,14 @@ object ShapeDiffer {
     }
   }
 
-  def shapeMismatchOrMissing(expectedShape: ShapeEntity, actualShape: ShapeLike)(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty): Iterator[ShapeDiffResult] = {
+  def shapeMismatchOrMissing(expectedShape: ShapeEntity, actualShape: ShapeLike)(implicit shapesState: ShapesState, bindings: ParameterBindings = Map.empty, trail: ShapeTrail): Iterator[ShapeDiffResult] = {
     if (actualShape.isSpecShape) {
-      Iterator(ShapeMismatch(expectedShape, actualShape.asJs))
+      Iterator(ShapeMismatch(expectedShape, actualShape.asJs, trail))
     } else {
       if (actualShape.isNull) {
         Iterator(NullValue(expectedShape))
       } else {
-        Iterator(ShapeMismatch(expectedShape, actualShape.asJs))
+        Iterator(ShapeMismatch(expectedShape, actualShape.asJs, trail))
       }
     }
 

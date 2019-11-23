@@ -3,6 +3,7 @@ package com.seamless.changelog
 import com.seamless.changelog.Changelog.{Change, _}
 import com.seamless.contexts.requests.Commands.{RequestId, ResponseId}
 import com.seamless.contexts.shapes.Commands.{FieldId, ShapeId}
+import com.seamless.diff.ShapeTrail
 
 object Changelog {
   sealed trait Change { def context: ChangelogContext; def tag: ChangeTag }
@@ -15,11 +16,11 @@ object Changelog {
   case class ChangedContentType(from: String, to: String, context: ChangelogContext) extends Change {override def tag: ChangeTag = Breaking("Content Type Changed")}
 
   //Shapes
-  case class NewField(key: String, typeString: String, tag: ChangeTag, context: ChangelogContext) extends Change
-  case class RemovedField(fieldId: FieldId, key: String, tag: ChangeTag, context: ChangelogContext) extends Change
-  case class FieldShapeChange(fieldId: String, key: String, oldType: String, newType: String, tag: ChangeTag, context: ChangelogContext) extends Change
-  case class ShapeChange(shapeId: ShapeId, oldType: String, newType: String, tag: ChangeTag, context: ChangelogContext) extends Change
-  case class ListItemTypeChanged(listId: ShapeId, oldType: String, newType: String, tag: ChangeTag, context: ChangelogContext) extends Change
+  case class NewField(key: String, typeString: String, tag: ChangeTag, trail: ShapeTrail, context: ChangelogContext) extends Change
+  case class RemovedField(fieldId: FieldId, key: String, tag: ChangeTag, trail: ShapeTrail, context: ChangelogContext) extends Change
+  case class FieldShapeChange(fieldId: String, key: String, oldType: String, newType: String, tag: ChangeTag, trail: ShapeTrail, context: ChangelogContext) extends Change
+  case class ShapeChange(shapeId: ShapeId, oldType: String, newType: String, tag: ChangeTag, trail: ShapeTrail, context: ChangelogContext) extends Change
+  case class ListItemTypeChanged(listId: ShapeId, oldType: String, newType: String, tag: ChangeTag, trail: ShapeTrail, context: ChangelogContext) extends Change
 
 
   case class NoChange(context: ChangelogContext) extends Change {override def tag: ChangeTag = UnknownChange}
