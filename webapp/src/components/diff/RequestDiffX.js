@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
 import { Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction } from '../../engine';
 import { RfcContext, withRfcContext } from '../../contexts/RfcContext';
@@ -112,76 +112,97 @@ class RequestDiffX extends React.Component {
 
 }
 
-const DiffPageStateManager = withRfcContext((props) => {
-  const {
-    item,
-    diff,
-    interpretations,
-    handleCommands: applyCommands,
-    rfcId,
-    diffSessionManager,
-    specService,
-    eventStore,
-    queries,
-    onDiscard
-  } = props;
-  const [interpretationIndex, setInterpretationIndex] = useState(0);
-  const [dependentCommands, setDependentCommands] = useState([]);
-  const interpretation = interpretations[interpretationIndex]
-  const commands = interpretation ? JsonHelper.seqToJsArray(interpretation.commands) : [];
-  const { sample, pathId, requestId, index } = item;
+class DiffPageStateManagerBase extends React.Component {
 
-  const diffCard = DiffToDiffCard(diff, queries)
+  state = {
+    interpretationIndex: 0,
+    dependentCommands: []
+  }
 
-  return (
-    <SimulatedCommandContext
-      shouldSimulate={true}
-      rfcId={rfcId}
-      eventStore={eventStore}
-      commands={[...commands, ...dependentCommands]}
-      specService={specService}
-    >
-      <NamerStore nameShape={(shapeId, name) => {
-        setDependentCommands([
-          ...dependentCommands,
-          ShapesCommands.RenameShape(shapeId, name)
-        ])
-      }}>
-        <FirstTimeDiffTutorial showWhen={true} />
-        <DiffPage
-          //request context
-          url={sample.request.url}
-          path={<PathIdToPathString pathId={pathId} />}
-          method={sample.request.method}
-          requestId={requestId}
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (this.props.interpretations != nextProps.interpretations) {
+      this.setInterpretationIndex(0)
+      this.setDependentCommands([])
+    }
+  }
 
-          //diff / interpretations
-          diff={diffCard}
-          interpretation={interpretation}
-          interpretationsLength={interpretations.length}
-          interpretationsIndex={interpretationIndex}
-          setInterpretationIndex={setInterpretationIndex}
-          applyCommands={(...commands) => applyCommands(...commands, ...dependentCommands)}
+  setInterpretationIndex = (i) => this.setState({interpretationIndex: i})
+  setDependentCommands = (commands) => this.setState({dependentCommands: commands})
 
-          //observation
-          observed={{
-            statusCode: sample.response.statusCode,
-            requestContentType: sample.request.headers['content-type'],
-            requestBody: sample.request.body,
-            responseContentType: sample.response.headers['content-type'],
-            responseBody: sample.response.body
-          }}
+  render() {
+    const {
+      item,
+      diff,
+      interpretations,
+      handleCommands: applyCommands,
+      rfcId,
+      diffSessionManager,
+      specService,
+      eventStore,
+      queries,
+      onDiscard
+    } = this.props;
 
-          //control
-          onSkip={() => {
-            diffSessionManager.skipInteraction(index)
-          }}
-          onDiscard={onDiscard}
-        />
-      </NamerStore>
-    </SimulatedCommandContext>
-  );
-});
+    const {interpretationIndex, dependentCommands} = this.state
+
+    const interpretation = interpretations[interpretationIndex]
+    const commands = interpretation ? JsonHelper.seqToJsArray(interpretation.commands) : [];
+    const {sample, pathId, requestId, index} = item;
+
+    const diffCard = DiffToDiffCard(diff, queries)
+
+    return (
+      <SimulatedCommandContext
+        shouldSimulate={true}
+        rfcId={rfcId}
+        eventStore={eventStore}
+        commands={[...commands, ...dependentCommands]}
+        specService={specService}
+      >
+        <NamerStore nameShape={(shapeId, name) => {
+          this.setDependentCommands([
+            ...dependentCommands,
+            ShapesCommands.RenameShape(shapeId, name)
+          ])
+        }}>
+          <FirstTimeDiffTutorial showWhen={true}/>
+          <DiffPage
+            //request context
+            url={sample.request.url}
+            path={<PathIdToPathString pathId={pathId}/>}
+            method={sample.request.method}
+            requestId={requestId}
+
+            //diff / interpretations
+            diff={diffCard}
+            interpretation={interpretation}
+            interpretationsLength={interpretations.length}
+            interpretationsIndex={interpretationIndex}
+            setInterpretationIndex={this.setInterpretationIndex}
+            applyCommands={(...commands) => applyCommands(...commands, ...dependentCommands)}
+
+            //observation
+            observed={{
+              statusCode: sample.response.statusCode,
+              requestContentType: sample.request.headers['content-type'],
+              requestBody: sample.request.body,
+              responseContentType: sample.response.headers['content-type'],
+              responseBody: sample.response.body
+            }}
+
+            //control
+            onSkip={() => {
+              diffSessionManager.skipInteraction(index)
+            }}
+            onDiscard={onDiscard}
+          />
+        </NamerStore>
+      </SimulatedCommandContext>
+    )
+  };
+}
+
+const DiffPageStateManager = compose(withRfcContext)(DiffPageStateManagerBase)
 
 
 export default compose(

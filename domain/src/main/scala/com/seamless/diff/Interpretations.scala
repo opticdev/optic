@@ -3,7 +3,7 @@ package com.seamless.diff
 import com.seamless.contexts.requests.Commands.{RequestId, ResponseId, SetRequestBodyShape, SetResponseBodyShape, ShapedBodyDescriptor}
 import com.seamless.contexts.requests.{Commands, RequestsServiceHelper}
 import com.seamless.contexts.rfc.Commands.RfcCommand
-import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldId, FieldShapeFromShape, SetFieldShape, ShapeId}
+import com.seamless.contexts.shapes.Commands.{AddField, AddShape, FieldId, FieldShapeFromShape, RemoveField, SetFieldShape, ShapeId}
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.diff.initial.{ShapeBuilder, ShapeExample, ShapeResolver}
 import io.circe.Json
@@ -45,7 +45,8 @@ case class InterpretationContext(responseId: Option[String], inRequestBody: Bool
 }
 
 case class FrontEndMetadata(addedIds: Seq[String] = Seq.empty,
-                            changedIds: Seq[String] = Seq.empty) {
+                            changedIds: Seq[String] = Seq.empty,
+                            removedIds: Seq[String] = Seq.empty) {
 
   def asJs: js.Any = {
     import io.circe.scalajs.convertJsonToJs
@@ -140,6 +141,20 @@ object Interpretations {
       commands,
       InterpretationContext(None, true),
       FrontEndMetadata(addedIds = Seq(fieldId))
+    )
+  }
+
+  def DeleteField(key: String, fieldId: FieldId, context: InterpretationContext)(implicit shapesState: ShapesState) = {
+
+    val commands = Seq(RemoveField(fieldId))
+
+
+    DiffInterpretation(
+      s"Delete Field",
+      DynamicDescription(s"Delete field `${key}`"),
+      commands,
+      context,
+      FrontEndMetadata(removedIds = Seq(fieldId))
     )
   }
 

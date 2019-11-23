@@ -107,11 +107,14 @@ object ShapeDiffer {
           val o = actualShape.fields
           val baseObject = resolveBaseObject(expectedShape.shapeId)
 
-          val expectedFields = baseObject.descriptor.fieldOrdering
-            .map(fieldId => {
-              val field = shapesState.fields(fieldId)
-              (field.descriptor.name, field)
-            })
+          val expectedFields = baseObject.descriptor.fieldOrdering.flatMap(fieldId => {
+            val field = shapesState.fields(fieldId)
+            if (field.isRemoved) {
+              None
+            } else {
+              Some((field.descriptor.name, field))
+            }
+          })
           val actualFields = actualShape.fields.toIterable
           val expectedKeys = expectedFields.map(_._1).toSet
           val actualKeys = actualFields.map(_._1).toSet

@@ -1,5 +1,6 @@
 package com.seamless.changelog
 
+import com.seamless.changelog.Changelog.Change
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, UnsetBodyDescriptor}
 import com.seamless.contexts.requests.{PathComponent, RequestsState, Utilities}
 import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
@@ -8,7 +9,6 @@ import com.seamless.contexts.rfc.{RfcAggregate, RfcServiceJSFacade, RfcState}
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.ddd.{CachedProjection, EventStore, InMemoryEventStore}
 import com.seamless.diff.{RequestDiffer, ShapeDiffer}
-
 import com.seamless.utilities.SetUtilities._
 import com.seamless.diff.ShapeDiffer.resolveBaseObject
 import com.seamless.diff.initial.ShapeResolver
@@ -39,11 +39,27 @@ object CalculateChangelog {
   }
 
   def generate(changelogInput: ChangelogInput) = {
-    computeAddedPaths(changelogInput)
+    val addedPaths = computeAddedPaths(changelogInput)
+    val updatedPaths = computeUpdatedPaths(changelogInput)
+
+    null
   }
 
-  def computeAddedPaths(changelogInput: ChangelogInput): Set[Changelog.AddedRequest] = {
-    val added = changelogInput.historicalPaths.keySet added changelogInput.headPaths.keySet
+  def computeUpdatedPaths(changelogInput: ChangelogInput): Vector[Change] = {
+    //only those that were present in both
+    val requestsToCompare = (changelogInput.headPaths.keySet intersect changelogInput.historicalPaths.keySet).toVector
+
+    requestsToCompare.flatMap {
+      case requestId: RequestId => {
+        val previous = RequestChangeHelper(requestId, changelogInput.historicalState)
+        val current = RequestChangeHelper(requestId, changelogInput.headState)
+        CalculateRequestChangelog.requestDiff(previous, current)(changelogInput)
+      }
+    }
+  }
+
+  def computeAddedPaths(changelogInput: ChangelogInput): Vector[Change] = {
+    val added = (changelogInput.historicalPaths.keySet added changelogInput.headPaths.keySet).toVector
 
     implicit val pathComponents: Map[PathComponentId, PathComponent] = changelogInput.headState.requestsState.pathComponents
 

@@ -21,8 +21,22 @@ class CalculateChangelogSpec extends FunSpec with JsonFileFixture {
     val addedPaths = CalculateChangelog.computeAddedPaths(input)
     assert(Vector(
       Changelog.AddedRequest("/todos/:todoId", "PATCH", "request_bJyzwU0FfJ"),
-    ).toSet == addedPaths)
+    ) == addedPaths)
   }
 
+
+  it("can calculate changelog for shape") {
+    val f = fixture("basic")
+    implicit val input = CalculateChangelog.prepare(f, 9)
+    val changelog = CalculateShapeChangelog.changeLogForShape("shape_xK4xBcs1TE", "shape_xK4xBcs1TE")
+    assert(changelog.size == 4)
+  }
+
+  it("can calculate for request") {
+    val f = fixture("basic")
+    implicit val input = CalculateChangelog.prepare(f, 9)
+    val fullChangelog = CalculateChangelog.generate(input)
+    null
+  }
 
 }

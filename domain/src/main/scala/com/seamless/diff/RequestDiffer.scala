@@ -81,6 +81,10 @@ object RequestDiffer {
   case class PipelineItem[T](item: Option[T], results: Iterator[RequestDiffResult])
 
   def compare(interaction: ApiInteraction, spec: RfcState): Iterator[RequestDiffResult] = {
+    compare(ApiInteractionLike.fromApiInteraction(interaction), spec)
+  }
+
+  def compare(interaction: ApiInteractionLike, spec: RfcState): Iterator[RequestDiffResult] = {
     val pathPipeline = pathDiff(interaction, spec)
     pathPipeline.item match {
       case None => pathPipeline.results
@@ -89,7 +93,7 @@ object RequestDiffer {
         requestPipeline.item match {
           case None => pathPipeline.results ++ requestPipeline.results
           case Some(request) => {
-            val responsePipeline = responseDiff(interaction, spec, request)
+            val responsePipeline = responseDiff(interaction, spec, request.requestId)
             requestPipeline.results ++ responsePipeline.results
           }
         }
@@ -97,45 +101,45 @@ object RequestDiffer {
     }
   }
 
-  def pathDiff(interaction: ApiInteraction, spec: RfcState): PipelineItem[PathComponentId] = {
-    val matchedPath = Utilities.resolvePath(interaction.apiRequest.url, spec.requestsState.pathComponents)
+  def pathDiff(interaction: ApiInteractionLike, spec: RfcState): PipelineItem[PathComponentId] = {
+    val matchedPath = Utilities.resolvePath(interaction.request.url, spec.requestsState.pathComponents)
 
     if (matchedPath.isEmpty) {
-      return PipelineItem(None, Iterator(UnmatchedUrl(interaction)))
+      return PipelineItem(None, Iterator(UnmatchedUrl(interaction.asApiInteraction)))
     }
     PipelineItem(matchedPath, Iterator())
   }
 
-  def requestDiff(interaction: ApiInteraction, spec: RfcState, pathId: PathComponentId): PipelineItem[HttpRequest] = {
+  def requestDiff(interaction: ApiInteractionLike, spec: RfcState, pathId: PathComponentId): PipelineItem[HttpRequest] = {
 
     val matchedOperation = spec.requestsState.requests.values
-      .find(r => r.requestDescriptor.pathComponentId == pathId && r.requestDescriptor.httpMethod == interaction.apiRequest.method)
+      .find(r => r.requestDescriptor.pathComponentId == pathId && r.requestDescriptor.httpMethod == interaction.request.method)
 
     if (matchedOperation.isEmpty) {
-      return PipelineItem(None, Iterator(UnmatchedHttpMethod(pathId, interaction.apiRequest.method, interaction)))
+      return PipelineItem(None, Iterator(UnmatchedHttpMethod(pathId, interaction.request.method, interaction.asApiInteraction)))
     }
 
     val request = matchedOperation.get
-    if ((200 until 400) contains interaction.apiResponse.statusCode) {
+    if ((200 until 400) contains interaction.response.statusCode) {
       val requestDiff: Option[Iterator[RequestDiffResult]] = request.requestDescriptor.bodyDescriptor match {
         case d: UnsetBodyDescriptor => {
-          if (interaction.apiRequest.body.isEmpty) {
+          if (interaction.request.bodyShape.isEmpty) {
             None
           } else {
-            Some(Iterator(UnmatchedRequestBodyShape(request.requestId, interaction.apiRequest.contentType, ShapeDiffer.UnsetShape(interaction.apiRequest.body.get))))
+            Some(Iterator(UnmatchedRequestBodyShape(request.requestId, interaction.request.contentType, ShapeDiffer.UnsetShape(interaction.request.bodyShape.asJson))))
           }
         }
         case d: ShapedBodyDescriptor => {
-          if (d.httpContentType == interaction.apiRequest.contentType) {
+          if (d.httpContentType == interaction.request.contentType) {
             val shape = spec.shapesState.shapes(d.shapeId)
-            val shapeDiff = ShapeDiffer.diff(shape, ShapeLike.fromActualJson(interaction.apiRequest.body))(spec.shapesState)
+            val shapeDiff = ShapeDiffer.diff(shape, interaction.request.bodyShape)(spec.shapesState)
             if (shapeDiff.isEmpty) {
               None
             } else {
-              Some(shapeDiff.map(d => UnmatchedRequestBodyShape(request.requestId, interaction.apiRequest.contentType, d)))
+              Some(shapeDiff.map(d => UnmatchedRequestBodyShape(request.requestId, interaction.request.contentType, d)))
             }
           } else {
-            Some(Iterator(UnmatchedRequestContentType(request.requestId, interaction.apiRequest.contentType, d.httpContentType)))
+            Some(Iterator(UnmatchedRequestContentType(request.requestId, interaction.request.contentType, d.httpContentType)))
           }
         }
       }
@@ -146,45 +150,45 @@ object RequestDiffer {
     PipelineItem(matchedOperation, Iterator.empty)
   }
 
-  def responseDiff(interaction: ApiInteraction, spec: RfcState, operation: HttpRequest): PipelineItem[HttpResponse] = {
+  def responseDiff(interaction: ApiInteractionLike, spec: RfcState, requestId: RequestId): PipelineItem[HttpResponse] = {
 
     // check for matching response status
     val matchedResponse = spec.requestsState.responses.values
-      .find(r => r.responseDescriptor.requestId == operation.requestId && r.responseDescriptor.httpStatusCode == interaction.apiResponse.statusCode)
+      .find(r => r.responseDescriptor.requestId == requestId && r.responseDescriptor.httpStatusCode == interaction.response.statusCode)
 
     if (matchedResponse.isEmpty) {
-      return PipelineItem(None, Iterator(UnmatchedHttpStatusCode(operation.requestId, interaction.apiResponse.statusCode, interaction)))
+      return PipelineItem(None, Iterator(UnmatchedHttpStatusCode(requestId, interaction.response.statusCode, interaction.asApiInteraction)))
     }
 
     val responseId = matchedResponse.get.responseId;
     val responseDiff: Option[Iterator[RequestDiffResult]] = matchedResponse.get.responseDescriptor.bodyDescriptor match {
       case d: UnsetBodyDescriptor => {
-        if (interaction.apiResponse.body.isEmpty) {
+        if (interaction.response.bodyShape.isEmpty) {
           None
         } else {
           Some(
             Iterator(
               UnmatchedResponseBodyShape(
                 responseId,
-                interaction.apiResponse.contentType,
-                interaction.apiResponse.statusCode,
-                ShapeDiffer.UnsetShape(interaction.apiResponse.body.get)
+                interaction.response.contentType,
+                interaction.response.statusCode,
+                ShapeDiffer.UnsetShape(interaction.response.bodyShape.asJson)
               )
             )
           )
         }
       }
       case d: ShapedBodyDescriptor => {
-        if (d.httpContentType == interaction.apiResponse.contentType) {
+        if (d.httpContentType == interaction.response.contentType) {
           val shape = spec.shapesState.shapes(d.shapeId)
-          val shapeDiff = ShapeDiffer.diff(shape,  ShapeLike.fromActualJson(interaction.apiResponse.body))(spec.shapesState)
+          val shapeDiff = ShapeDiffer.diff(shape, interaction.response.bodyShape)(spec.shapesState)
           if (shapeDiff.isEmpty) {
             None
           } else {
-            Some(shapeDiff.map(d => UnmatchedResponseBodyShape(responseId, interaction.apiResponse.contentType, interaction.apiResponse.statusCode, d)))
+            Some(shapeDiff.map(d => UnmatchedResponseBodyShape(responseId, interaction.response.contentType, interaction.response.statusCode, d)))
           }
         } else {
-          Some(Iterator(UnmatchedResponseContentType(matchedResponse.get.responseId, interaction.apiResponse.contentType, d.httpContentType, interaction.apiResponse.statusCode)))
+          Some(Iterator(UnmatchedResponseContentType(matchedResponse.get.responseId, interaction.response.contentType, d.httpContentType, interaction.response.statusCode)))
         }
       }
     }

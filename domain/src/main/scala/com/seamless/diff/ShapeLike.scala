@@ -25,6 +25,8 @@ abstract class ShapeLike {
 
   def asJson: Json
   def asJsonOption: Option[Json]
+
+  def asShapeEntityOption: Option[ShapeEntity]
 }
 
 
@@ -53,13 +55,14 @@ object ShapeLike {
 
     override def asJson: Json = jsonOption.get
     override def asJsonOption: Option[Json] = jsonOption
+    override def asShapeEntityOption: Option[ShapeEntity] = None
   }
 
   def fromShapeEntity(shapeEntityOption: Option[ShapeEntity], rfcState: RfcState, _id: String = null): ShapeLike = new ShapeLike {
     override def isEmpty: Boolean = shapeEntityOption.isEmpty
     def id: String = _id
 
-    private val asCoreShape = ShapesHelper.toCoreShape(shapeEntityOption.get, rfcState.shapesState)
+    private def asCoreShape = ShapesHelper.toCoreShape(shapeEntityOption.get, rfcState.shapesState)
 
     override def isString: Boolean = asCoreShape == StringKind
     override def isBoolean: Boolean = asCoreShape == BooleanKind
@@ -74,28 +77,35 @@ object ShapeLike {
     override def isObject: Boolean = asCoreShape == ObjectKind
     override def fields: Map[String, ShapeLike] = {
       val baseObject = resolveBaseObject(shapeEntityOption.get.shapeId)(rfcState.shapesState)
-      baseObject.descriptor.fieldOrdering.map(fieldId => {
+
+      val fieldsAll = baseObject.descriptor.fieldOrdering.map(fieldId => {
         val flattenedField = rfcState.shapesState.flattenedField(fieldId)
 
-        val expectedFieldShape = flattenedField.fieldShapeDescriptor match {
-          case fsd: FieldShapeFromShape => {
-            Some(rfcState.shapesState.shapes(fsd.shapeId))
-          }
-          case fsd: FieldShapeFromParameter => {
-            flattenedField.bindings(fsd.shapeParameterId) match {
-              case Some(value) => value match {
-                case p: ParameterProvider => {
-                  None
+        if (flattenedField.isRemoved) {
+          None
+        } else {
+          val expectedFieldShape = flattenedField.fieldShapeDescriptor match {
+            case fsd: FieldShapeFromShape => {
+              Some(rfcState.shapesState.shapes(fsd.shapeId))
+            }
+            case fsd: FieldShapeFromParameter => {
+              flattenedField.bindings(fsd.shapeParameterId) match {
+                case Some(value) => value match {
+                  case p: ParameterProvider => {
+                    None
+                  }
+                  case p: ShapeProvider => Some(rfcState.shapesState.shapes(p.shapeId))
+                  case p: NoProvider => None
                 }
-                case p: ShapeProvider => Some(rfcState.shapesState.shapes(p.shapeId))
-                case p: NoProvider => None
+                case None => None
               }
-              case None => None
             }
           }
+          Some((flattenedField.name, fromShapeEntity(expectedFieldShape, rfcState, flattenedField.fieldId)))
         }
-        (flattenedField.name, fromShapeEntity(expectedFieldShape, rfcState, flattenedField.fieldId))
-      }).toMap
+      })
+
+      fieldsAll.flatten.toMap
     }
 
 //    def getField(key: String, id: Option[String] = None): Option[ShapeLike] = {
@@ -106,7 +116,8 @@ object ShapeLike {
     override def asJson: Json = null
     override def asJsonOption: Option[Json] = None
 
-    override def getField(key: String): ShapeLike = ???
+    override def getField(key: String): ShapeLike = fields.getOrElse(key, fromShapeEntity(None, rfcState, null))
+    override def asShapeEntityOption: Option[ShapeEntity] = shapeEntityOption
   }
 
 }
