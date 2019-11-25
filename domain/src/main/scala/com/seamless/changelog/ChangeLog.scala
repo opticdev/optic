@@ -29,7 +29,11 @@ object Changelog {
 
 case class Changelog(addedRequests: Vector[AddedRequest],
                      removedRequests: Vector[RemovedRequest],
-                     updatedRequests: Map[RequestId, Vector[Change]])
+                     updatedRequests: Map[RequestId, Vector[Change]],
+                     markdown: String) {
+  def nonEmpty: Boolean = addedRequests.nonEmpty || removedRequests.nonEmpty || updatedRequests.nonEmpty
+  def isEmpty: Boolean = !nonEmpty
+}
 
 
 

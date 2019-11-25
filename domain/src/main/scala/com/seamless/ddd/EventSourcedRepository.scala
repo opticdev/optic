@@ -3,7 +3,9 @@ package com.seamless.ddd
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.serialization.EventSerialization
 import io.circe.Json
+import io.circe.parser.parse
 
+import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExport
 
 class EventSourcedRepository[State, Event](aggregate: EventSourcedAggregate[State, _, _, Event], eventStore: EventStore[Event]) {
@@ -75,13 +77,16 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
   @JSExport
   def bulkAdd(id: AggregateId, eventsString: String): Unit = {
     import io.circe.parser._
-
     val events = for {
       json <- parse(eventsString)
       events <- EventSerialization.fromJson(json).toEither
     } yield events
 
-    _store.put(id, scala.collection.mutable.ListBuffer[Event](events.right.get.asInstanceOf[Vector[Event]]: _*))
+    if (events.isRight) {
+      _store.put(id, scala.collection.mutable.ListBuffer[Event](events.right.get.asInstanceOf[Vector[Event]]: _*))
+    } else {
+      println("could not add events " + events.left.get.getMessage)
+    }
   }
 
   def fromJson(id: AggregateId, eventsJson: Json): Unit = {

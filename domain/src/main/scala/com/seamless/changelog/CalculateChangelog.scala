@@ -43,8 +43,12 @@ object CalculateChangelog {
     }
 
     ChangelogInput(
-      pathsWithRequestsHistorical, pathsWithRequestsHead,
-      historicalState, headState
+      pathsWithRequestsHistorical,
+      pathsWithRequestsHead,
+      historicalState,
+      headState,
+      history,
+      events
     )
   }
 
@@ -52,7 +56,9 @@ object CalculateChangelog {
     val addedPaths = computeAddedPaths(changelogInput)
     val updatedPaths = computeUpdatedPaths(changelogInput)
 
-    Changelog(addedPaths, Vector(), updatedPaths)
+    val markdown = new ChangelogMarkdown(addedPaths, updatedPaths, changelogInput).toString
+
+    Changelog(addedPaths, Vector(), updatedPaths, markdown)
   }
 
   def computeUpdatedPaths(changelogInput: ChangelogInput): Map[RequestId, Vector[Change]] = {

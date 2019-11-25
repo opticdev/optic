@@ -2,13 +2,18 @@ package com.seamless
 
 import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId, ShapedBodyDescriptor, UnsetBodyDescriptor}
 import com.seamless.contexts.requests.HttpResponse
+import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.RfcState
 import com.seamless.contexts.shapes.Commands.ShapeId
 import com.seamless.diff.ShapeLike
 
 package object changelog {
-  case class ChangelogInput(historicalPaths: Map[RequestId, PathComponentId], headPaths: Map[RequestId, PathComponentId],
-                            historicalState: RfcState, headState: RfcState)
+  case class ChangelogInput(historicalPaths: Map[RequestId, PathComponentId],
+                            headPaths: Map[RequestId, PathComponentId],
+                            historicalState: RfcState,
+                            headState: RfcState,
+                            historicalEvents: Vector[RfcEvent],
+                            headEvents: Vector[RfcEvent])
 
 
   def shapeLikeFromId(shapeId: ShapeId, rfcState: RfcState) = {

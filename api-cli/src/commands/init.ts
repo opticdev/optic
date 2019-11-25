@@ -9,6 +9,7 @@ import * as colors from 'colors'
 import cli from 'cli-ux'
 // @ts-ignore
 import * as fetch from 'node-fetch'
+import {VersionControl} from '../lib/version-control'
 import {getPaths} from '../Paths'
 import {prepareEvents} from '../PersistUtils'
 import * as yaml from 'js-yaml'
@@ -83,7 +84,17 @@ export default class Init extends Command {
       }
     }
     const events = [
-      {APINamed: {name}}
+      {
+        APINamed: {
+          eventContext: {
+            clientCommandBatchId: 'api-init',
+            clientId: 'anonymous',
+            clientSessionId: '0',
+            createdAt: new Date().toString()
+          },
+          name
+        }
+      }
     ]
     this.createFileTree(events, config)
   }

@@ -1,7 +1,8 @@
 package com.seamless.changelog
 
 import com.seamless.changelog.Changelog.{FieldShapeChange, ListItemTypeChanged}
-import com.seamless.contexts.rfc.Events
+import com.seamless.contexts.rfc.{Events, RfcService, RfcServiceJSFacade}
+import com.seamless.contexts.rfc.projections.ChangelogProjection
 import com.seamless.diff.JsonFileFixture
 import com.seamless.serialization.EventSerialization
 import org.scalatest.FunSpec
@@ -44,7 +45,7 @@ class CalculateChangelogSpec extends FunSpec with JsonFileFixture {
     val f = fixture("polymorphism")
     implicit val input = CalculateChangelog.prepare(f, 12)
     val fullChangelog = CalculateChangelog.generate(input)
-
+    println(fullChangelog.markdown)
     fullChangelog.updatedRequests.head._2.forall(_.isInstanceOf[FieldShapeChange])
   }
 
@@ -58,6 +59,34 @@ class CalculateChangelogSpec extends FunSpec with JsonFileFixture {
     assert(change.isInstanceOf[ListItemTypeChanged])
     assert(change.asInstanceOf[ListItemTypeChanged].oldType == "List of Number")
     assert(change.asInstanceOf[ListItemTypeChanged].newType == "List of Number , String or List of Boolean")
+  }
+
+  it("can calculate changelog from last commit") {
+    val f = fixture("todo-with-git")
+
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    eventStore.append("test", f)
+    val rfcService = new RfcService(eventStore)
+
+    val changelog = ChangelogProjection.branchChangelog("master", Some("e0e161ad1ed823376c0289b0c725361cf3890f41"), f, rfcService.currentState("test"))
+
+    assert(changelog.isDefined)
+    assert(changelog.get.changelog.updatedRequests.size == 1)
+    assert(changelog.get.changelog.addedRequests.size == 2)
+
+    println(changelog.get.changelog.markdown)
+  }
+
+  it("can calculate changelog from last commit 2") {
+    val f = fixture("todo-with-git2")
+
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    eventStore.append("test", f)
+    val rfcService = new RfcService(eventStore)
+
+    val changelog = ChangelogProjection.branchChangelog("master", Some("789e06c26ea45fa6a264f3226402764fa999cb39"), f, rfcService.currentState("test"))
+
+    println(changelog)
   }
 
 }

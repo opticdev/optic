@@ -6,7 +6,7 @@ import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.requests.{RequestsAggregate, RequestsCommandContext}
 import com.seamless.contexts.rfc.Commands.{AddContribution, ContributionCommand, RfcCommand, SetAPIName, VersionControlCommand}
 import com.seamless.contexts.rfc.Composition.forwardTo
-import com.seamless.contexts.rfc.Events.{APINamed, ContributionAdded, EventContext, RfcEvent}
+import com.seamless.contexts.rfc.Events.{APINamed, ContributionAdded, EventContext, GitStateSet, RfcEvent}
 import com.seamless.contexts.shapes.Commands.ShapesCommand
 import com.seamless.contexts.shapes.Events.ShapesEvent
 import com.seamless.contexts.shapes.{ShapesAggregate, ShapesCommandContext, ShapesState}
@@ -38,7 +38,6 @@ case class RfcCommandContext(
 object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcCommandContext, RfcEvent] {
 
   override def handleCommand(state: RfcState): PartialFunction[(RfcCommandContext, RfcCommand), Effects[RfcEvent]] = {
-
     case (cc: RfcCommandContext, command: ShapesCommand) =>
       forwardTo(ShapesAggregate)((cc.toShapesCommandContext(), command), state.shapesState).asInstanceOf[Effects[RfcEvent]]
     case (cc: RfcCommandContext, command: RequestsCommand) =>
@@ -72,9 +71,12 @@ object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcComma
         state.updateShapes(ShapesAggregate.applyEvent(shapesEvent, state.shapesState))
       case requestsEvent: RequestsEvent =>
         state.updateRequests(RequestsAggregate.applyEvent(requestsEvent, state.requestsState))
+      case gitStateSet: GitStateSet => {
+        state.updateScm(state.scmState.record(gitStateSet.branchName, gitStateSet.commitId))
+      }
       case _ => state
     }
   }
 
-  override def initialState: RfcState = RfcState(RequestsAggregate.initialState, ShapesAggregate.initialState)
+  override def initialState: RfcState = RfcState(RequestsAggregate.initialState, ShapesAggregate.initialState, ScmState.initialState)
 }

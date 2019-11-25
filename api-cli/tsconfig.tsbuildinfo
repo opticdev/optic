@@ -333,6 +333,10 @@
         "version": "dfeba328d828ed3d706dc9ebd28a02f64375c6e2a582c5e4e9f6c6527e40aa2f",
         "signature": "25363b39cb1e78c9d76e1ba49b50b5d8dd1fe22b61000f3d0e226dbbd74df5a8"
       },
+      "./src/changelog-engine.ts": {
+        "version": "099fcbb51c2c308cc25b2fb36a95643b38a18441ccea655440ed0d8a075ecb14",
+        "signature": "46a0b34e1264c4d25ca6646ff0e6cfaa7275ea1ae5a6bc23d4dfd84edf2f2b2e"
+      },
       "./node_modules/@oclif/parser/lib/args.d.ts": {
         "version": "b8fac2a2a066d140f34e5e0c698440f1f8c8a94eea2c95d156ce821ed53336e2",
         "signature": "b8fac2a2a066d140f34e5e0c698440f1f8c8a94eea2c95d156ce821ed53336e2"
@@ -1566,6 +1570,10 @@
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./src/persistutils.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/changelog-engine.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -4887,6 +4895,7 @@
       "./node_modules/@types/fs-extra/index.d.ts",
       "./src/paths.ts",
       "./src/persistutils.ts",
+      "./src/changelog-engine.ts",
       "./node_modules/@oclif/parser/lib/args.d.ts",
       "./node_modules/@oclif/parser/lib/alphabet.d.ts",
       "./node_modules/@oclif/parser/lib/flags.d.ts",
