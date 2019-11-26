@@ -17,6 +17,7 @@ import { VersionControl } from '../lib/version-control'
 // @ts-ignore
 import * as opticEngine from '../../provided/domain.js'
 import * as uuid from 'uuid';
+import { Utilities } from '../lib/ui-server/utilities'
 
 interface IOpticDiffState {
   status: 'started' | 'persisted'
@@ -24,7 +25,7 @@ interface IOpticDiffState {
   acceptedInterpretations: any[]
 }
 
-interface IOpticRequestAdditions {
+export interface IOpticRequestAdditions {
   session: Object
   diffState: IOpticDiffState
 }
@@ -97,7 +98,7 @@ class SessionUtilities {
   }
 }
 
-function makeInitialDiffState(): IOpticDiffState {
+export function makeInitialDiffState(): IOpticDiffState {
   return {
     status: 'started',
     interactionResults: {},
@@ -141,7 +142,7 @@ export async function emitGitState() {
 
 export default class Spec extends Command {
 
-  static description = 'Read the docs and design the API'
+  static description = 'open the API Docs'
 
   static args = []
 
@@ -172,9 +173,10 @@ export default class Spec extends Command {
     await emitGitState()
 
     const port = await getPort({ port: getPort.makeRange(3201, 3299) })
+    const sessionUtilities = new SessionUtilities(sessionsPath)
+    const sessionValidatorAndLoader = new FileSystemSessionValidatorAndLoader(sessionUtilities)
+    await startServer(sessionValidatorAndLoader, port)
 
-    await this.startServer(port, config)
-    
     const url = `http://localhost:${port}/`
     this.log(fromOptic('Displaying your API Spec at ' + url))
     await open(url)
@@ -182,132 +184,129 @@ export default class Spec extends Command {
     await cli.anykey('Press any key to exit')
     return process.exit()
   }
-
-  async startServer(port: number, config: IApiCliConfig) {
-    const { specStorePath, sessionsPath, exampleRequestsPath } = await getPaths()
-    const sessionUtilities = new SessionUtilities(sessionsPath)
-    const app = express()
-
-    app.get('/cli-api/events', async (req, res) => {
-      try {
-        const events = await fs.readJson(specStorePath)
-        res.json(events)
-      } catch (e) {
-        res.json([])
-      }
-    })
-    app.put('/cli-api/events', bodyParser.json({ limit: '100mb' }), async (req, res) => {
-      const events = req.body
-      await fs.writeFile(specStorePath, prepareEvents(events))
-      res.sendStatus(204)
-    })
-
-    app.post('/cli-api/example-requests/:requestId', bodyParser.json({ limit: '100mb' }), async (req, res) => {
-      const { requestId } = req.params;
-      const exampleFilePath = path.join(exampleRequestsPath, `${requestId}.json`)
-      const currentFileContents = await (async () => {
-        const exists = await fs.pathExists(exampleFilePath)
-        if (exists) {
-          return await fs.readJson(exampleFilePath)
-        }
-        return []
-      })()
-      currentFileContents.push(req.body);
-      await fs.ensureDir(exampleRequestsPath);
-      await fs.writeJson(exampleFilePath, currentFileContents, { spaces: 2 })
-      res.sendStatus(204)
-    })
-
-    app.get('/cli-api/example-requests/:requestId', async (req, res) => {
-      const { requestId } = req.params;
-      const exampleFilePath = path.join(exampleRequestsPath, `${requestId}.json`)
-      const currentFileContents = await (async () => {
-        const exists = await fs.pathExists(exampleFilePath)
-        if (exists) {
-          return await fs.readJson(exampleFilePath)
-        }
-        return []
-      })()
-      res.json({
-        examples: currentFileContents
-      })
-    })
-
-    app.get('/cli-api/sessions', async (req, res) => {
-      const sessions = await sessionUtilities.getSessions()
-
-      res.json({
-        sessions
-      })
-    })
-
-    async function validateSessionId(req: express.Request, res: express.Response, next: express.NextFunction) {
-      const { sessionId } = req.params
-      const isSessionIdValid = sessionUtilities.doesSessionIdExist(sessionId)
-      if (!isSessionIdValid) {
-        return res.status(400).json({
-          message: 'invalid session id'
-        })
-      }
-      const diffStateFilePath = sessionUtilities.getDiffStateFilePath(sessionId)
-      const diffStateExists = await fs.pathExists(diffStateFilePath)
-
-      try {
-        const diffState = diffStateExists ? await fs.readJson(diffStateFilePath) : makeInitialDiffState()
-        const session = await fs.readJson(sessionUtilities.getSessionFilePath(sessionId))
-        req.optic = {
-          session,
-          diffState
-        }
-        next()
-      } catch (e) {
-        console.error(e)
-        next(e)
-      }
-    }
-
-    app.get('/cli-api/sessions/:sessionId', validateSessionId, async (req, res) => {
-      const { optic } = req
-      const { session } = optic
-      res.json({
-        session
-      })
-    })
-
-    app.put('/cli-api/sessions/:sessionId/diff', bodyParser.json({ limit: '100mb' }), validateSessionId, async (req, res) => {
-      const { sessionId } = req.params
-      const diffStateFileName = `${sessionId}${diffStateFileSuffix}`
-      const diffStateFilePath = path.join(sessionsPath, diffStateFileName)
-      await fs.writeJson(diffStateFilePath, req.body)
-      res.sendStatus(204)
-    })
-
-    app.get('/cli-api/sessions/:sessionId/diff', validateSessionId, (req, res) => {
-      const { optic } = req
-      const { diffState } = optic
-      res.json({
-        diffState
-      })
-    })
-
-    app.get('/cli-api/command-context', async (req, res) => {
-      try {
-        const gitState = await new VersionControl().getCurrentGitState()
-        res.json({ userId: gitState.email })
-      } catch (e) {
-        res.sendStatus(500)
-      }
-    })
-
-    app.get('/cli-api/identity', async (req, res) => {
-      res.json({ distinctId: await getUser() || 'anon' })
-    })
-
-    app.use(express.static(path.join(__dirname, '../../resources/react')))
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../../resources/react/', 'index.html'))
-    })
-
-    await app.listen(port)
+}
+export interface ISessionValidatorAndLoader {
+  validateSessionId(req: express.Request, res: express.Response, next: express.NextFunction): void
+}
+class FileSystemSessionValidatorAndLoader {
+  sessionUtilities: SessionUtilities
+  constructor(sessionUtilities: SessionUtilities) {
+    this.sessionUtilities = sessionUtilities
   }
+  validateSessionId = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const { sessionId } = req.params
+    const isSessionIdValid = this.sessionUtilities.doesSessionIdExist(sessionId)
+    if (!isSessionIdValid) {
+      return res.status(400).json({
+        message: 'invalid session id'
+      })
+    }
+    const diffStateFilePath = this.sessionUtilities.getDiffStateFilePath(sessionId)
+    const diffStateExists = await fs.pathExists(diffStateFilePath)
+
+    try {
+      const diffState = diffStateExists ? await fs.readJson(diffStateFilePath) : makeInitialDiffState()
+      const session = await fs.readJson(this.sessionUtilities.getSessionFilePath(sessionId))
+      req.optic = {
+        session,
+        diffState
+      }
+      next()
+    } catch (e) {
+      console.error(e)
+      next(e)
+    }
+  }
+}
+export async function startServer(sessionValidatorAndLoader: ISessionValidatorAndLoader, port: number) {
+  const { specStorePath, sessionsPath, exampleRequestsPath } = await getPaths()
+  const sessionUtilities = new SessionUtilities(sessionsPath)
+  const app = express()
+
+  app.get('/cli-api/events', async (req, res) => {
+    try {
+      const events = await fs.readJson(specStorePath)
+      res.json(events)
+    } catch (e) {
+      res.json([])
+    }
+  })
+  app.put('/cli-api/events', bodyParser.json({ limit: '100mb' }), async (req, res) => {
+    const events = req.body
+    await fs.writeFile(specStorePath, prepareEvents(events))
+    res.sendStatus(204)
+  })
+
+  app.post('/cli-api/example-requests/:requestId', bodyParser.json({ limit: '100mb' }), async (req, res) => {
+    const { requestId } = req.params;
+    const exampleFilePath = path.join(exampleRequestsPath, `${requestId}.json`)
+    const currentFileContents = await (async () => {
+      const exists = await fs.pathExists(exampleFilePath)
+      if (exists) {
+        return await fs.readJson(exampleFilePath)
+      }
+      return []
+    })()
+    currentFileContents.push(req.body);
+    await fs.ensureDir(exampleRequestsPath);
+    await fs.writeJson(exampleFilePath, currentFileContents, { spaces: 2 })
+    res.sendStatus(204)
+  })
+
+  app.get('/cli-api/example-requests/:requestId', async (req, res) => {
+    const { requestId } = req.params;
+    const exampleFilePath = path.join(exampleRequestsPath, `${requestId}.json`)
+    const currentFileContents = await (async () => {
+      const exists = await fs.pathExists(exampleFilePath)
+      if (exists) {
+        return await fs.readJson(exampleFilePath)
+      }
+      return []
+    })()
+    res.json({
+      examples: currentFileContents
+    })
+  })
+
+  app.get('/cli-api/sessions', async (req, res) => {
+    const sessions = await sessionUtilities.getSessions()
+
+    res.json({
+      sessions
+    })
+  })
+
+
+  app.put('/cli-api/sessions/:sessionId', bodyParser.json({ limit: '100mb' }), async (req, res) => {
+    const { sessionId } = req.params;
+    const sessionFilePath = sessionUtilities.getSessionFilePath(sessionId)
+    await fs.writeJson(sessionFilePath, req.body)
+    res.json({
+      sessionId
+    })
+  })
+  app.get('/cli-api/sessions/:sessionId', sessionValidatorAndLoader.validateSessionId, async (req, res) => {
+    const { optic } = req
+    const { session } = optic
+    res.json({
+      session
+    })
+  })
+
+  app.get('/cli-api/command-context', async (req, res) => {
+    try {
+      const gitState = await new VersionControl().getCurrentGitState()
+      res.json({ userId: gitState.email })
+    } catch (e) {
+      res.sendStatus(500)
+    }
+  })
+
+  app.get('/cli-api/identity', async (req, res) => {
+    res.json({ distinctId: await getUser() || 'anon' })
+  })
+
+  Utilities.addUiServer(app)
+
+  await app.listen(port)
 }

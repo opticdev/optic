@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
-import { TrafficAndDiffSessionStore } from '../../contexts/TrafficAndDiffSessionContext';
+import { TrafficSessionStore } from '../../contexts/TrafficSessionContext';
 import { LocalDiffRfcStore, withRfcContext } from '../../contexts/RfcContext';
 import { Route, Switch } from 'react-router-dom';
 import { UrlsX } from '../paths/NewUnmatchedUrlWizard';
 import RequestDiffX from '../diff/RequestDiffX';
 import { NavigationStore } from '../../contexts/NavigationContext';
-import { routerPaths } from '../../routes';
+import { routerPaths, basePaths } from '../../RouterPaths';
 import { SpecOverview } from '../routes/local';
 import NewBehavior from '../navigation/NewBehavior';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
@@ -35,7 +35,7 @@ import { DocDivider } from '../requests/DocConstants';
 import Chip from '@material-ui/core/Chip';
 import jsonic from 'jsonic';
 
-export const basePath = `/spec-by-example`;
+export const basePath = basePaths.exampleDrivenSpecBasePath
 
 function parseLoosely(nonEmptyBodyString) {
   if (!nonEmptyBodyString) {
@@ -57,13 +57,13 @@ function parseLoosely(nonEmptyBodyString) {
   }
 }
 
-function DialogWrapper(props) {
+export function DialogWrapper(props) {
   const [showExampleBuilder, setShowExampleBuilder] = useState(false);
-  const { specService, onSampleAdded } = props;
+  const { specService, onSampleAdded, children } = props;
   return (
 
     <div>
-      <div style={{textAlign: 'right'}}>
+      <div style={{ textAlign: 'right' }}>
         <Button variant="contained" color="primary" onClick={() => setShowExampleBuilder(true)}>Add Example</Button>
       </div>
       <Dialog
@@ -76,7 +76,7 @@ function DialogWrapper(props) {
       >
         <ExampleBuilder onSampleAdded={onSampleAdded} specService={specService} />
       </Dialog>
-      <NewBehavior specService={specService} />
+      {children}
     </div>
   )
 }
@@ -174,7 +174,7 @@ function ExampleBuilderBase(props) {
 
         <DiffDocGrid
           colMaxWidth={'100%'}
-          style={{paddingBottom: 200}}
+          style={{ paddingBottom: 200 }}
           left={(
             <>
               <Typography variant="h4" color="primary">Request</Typography>
@@ -220,11 +220,11 @@ function ExampleBuilderBase(props) {
               </DocSubGroup>
               <DocSubGroup title="Response Body">
                 <JsonTextarea
-                      onChange={(value) => {
-                        setValue('response.body', value)
-                      }}
-                      value={formValues.response.body}
-                    />
+                  onChange={(value) => {
+                    setValue('response.body', value)
+                  }}
+                  value={formValues.response.body}
+                />
               </DocSubGroup>
             </>
           )}
@@ -332,7 +332,9 @@ class ExampleDrivenSpecLoader extends React.Component {
           notificationAreaComponent={(
             <DialogWrapper
               specService={specService}
-              onSampleAdded={this.handleSampleAdded} />
+              onSampleAdded={this.handleSampleAdded}>
+              <NewBehavior specService={specService} />
+            </DialogWrapper>
           )} />
       );
     };
@@ -341,12 +343,12 @@ class ExampleDrivenSpecLoader extends React.Component {
       const { match } = props;
       const { sessionId } = match.params;
       return (
-        <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
+        <TrafficSessionStore sessionId={sessionId} specService={specService}>
           <Switch>
             <Route exact path={routerPaths.diffUrls(diffBasePath)} component={UrlsX} />
             <Route exact path={routerPaths.diffRequest(diffBasePath)} component={RequestDiffX} />
           </Switch>
-        </TrafficAndDiffSessionStore>
+        </TrafficSessionStore>
       );
     }
 

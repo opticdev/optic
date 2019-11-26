@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
+import { withTrafficSessionContext } from '../../contexts/TrafficSessionContext';
 import { Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction } from '../../engine';
 import { RfcContext, withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
@@ -185,7 +185,7 @@ const DiffPageStateManager = withRfcContext((props) => {
 
 
 export default compose(
-  withTrafficAndDiffSessionContext,
+  withTrafficSessionContext,
   withNavigationContext,
   withRfcContext
 )(RequestDiffX);

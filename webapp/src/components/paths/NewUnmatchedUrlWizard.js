@@ -24,7 +24,7 @@ import { DocDarkGrey, methodColors } from '../requests/DocConstants';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import { Show } from '../shared/Show';
 import sortby from 'lodash.sortby';
-import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
+import { withTrafficSessionContext } from '../../contexts/TrafficSessionContext';
 import { HighlightedIDsStore } from '../shapes/HighlightedIDs';
 import { EndpointOverviewCodeBox, ExampleOnly } from '../requests/DocCodeBox';
 import { DocSubGroup } from '../requests/DocSubGroup';
@@ -360,7 +360,7 @@ const PreviewSample = ({ sample }) => {
 const UnmatchedUrlWizard = compose(
   withStyles(styles),
   withNavigationContext,
-  withTrafficAndDiffSessionContext,
+  withTrafficSessionContext,
   withRfcContext
 )(UnmatchedUrlWizardWithoutQuery);
 
@@ -452,7 +452,7 @@ export function pathComponentsToString(pathComponents) {
 }
 
 
-export const UrlsX = compose(withTrafficAndDiffSessionContext, withRfcContext)(props => {
+export const UrlsX = compose(withTrafficSessionContext, withRfcContext)(props => {
   const { diffStateProjections, cachedQueryResults, handleCommands } = props;
   const { sessionId } = props;
   const { sampleItemsWithResolvedPaths, sampleItemsWithoutResolvedPaths } = diffStateProjections;

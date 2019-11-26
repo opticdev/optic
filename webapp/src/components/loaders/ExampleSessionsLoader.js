@@ -1,18 +1,18 @@
 import React from 'react';
 import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
-import { TrafficAndDiffSessionStore } from '../../contexts/TrafficAndDiffSessionContext';
+import { TrafficSessionStore } from '../../contexts/TrafficSessionContext';
 import { LocalDiffRfcStore } from '../../contexts/RfcContext';
 import Loading from '../navigation/Loading';
 import { Route, Switch } from 'react-router-dom';
 import { UrlsX } from '../paths/NewUnmatchedUrlWizard';
 import RequestDiffX from '../diff/RequestDiffX';
 import { NavigationStore } from '../../contexts/NavigationContext';
-import { routerPaths } from '../../routes';
+import { routerPaths, basePaths } from '../../RouterPaths';
 import { SpecOverview } from '../routes/local';
 import NewBehavior from '../navigation/NewBehavior';
 import { RequestsDetailsPage } from '../requests/EndpointPage';
 
-export const basePath = `/example-sessions/:exampleId`;
+export const basePath = basePaths.exampleSessionsBasePath
 
 class ExampleSessionsLoader extends React.Component {
 
@@ -99,12 +99,12 @@ class ExampleSessionsLoader extends React.Component {
       const { match } = props;
       const { sessionId } = match.params;
       return (
-        <TrafficAndDiffSessionStore sessionId={sessionId} specService={specService}>
+        <TrafficSessionStore sessionId={sessionId} specService={specService}>
           <Switch>
             <Route exact path={routerPaths.diffUrls(diffBasePath)} component={UrlsX} />
             <Route exact path={routerPaths.diffRequest(diffBasePath)} component={RequestDiffX} />
           </Switch>
-        </TrafficAndDiffSessionStore>
+        </TrafficSessionStore>
       )
     }
 

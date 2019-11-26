@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core'
 import Loading from '../../components/navigation/Loading';
 import { SpecOverview } from '../routes/local';
-import { routerPaths } from '../../routes';
+import { routerPaths } from '../../RouterPaths';
 import { NavigationStore } from '../../contexts/NavigationContext';
 import { RequestsDetailsPage } from '../requests/EndpointPage';
 

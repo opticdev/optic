@@ -79,16 +79,19 @@ class SpecService {
         return this.putJson(`/cli-api/sessions/${sessionId}/diff`, JSON.stringify(diffState))
     }
 
+    saveSession(sessionId, session) {
+        return this.putJson(`/cli-api/sessions/${sessionId}`, JSON.stringify(session))
+    }
+    
     loadSession(sessionId) {
         const promises = [
-            this.getJson(`/cli-api/sessions/${sessionId}`),
-            this.getJson(`/cli-api/sessions/${sessionId}/diff`)
+            this.getJson(`/cli-api/sessions/${sessionId}`)
         ]
         return Promise.all(promises)
-            .then(([sessionResponse, diffStateResponse]) => {
+            .then(([sessionResponse]) => {
                 return {
                     sessionResponse,
-                    diffStateResponse
+                    diffStateResponse: null
                 }
             })
     }

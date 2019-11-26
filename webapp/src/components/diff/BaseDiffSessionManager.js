@@ -7,10 +7,9 @@ export const DiffStateStatus = {
 }
 
 class BaseDiffSessionManager {
-    constructor(sessionId, session, diffState, specService) {
+    constructor(sessionId, session, specService) {
         this.sessionId = sessionId;
         this.session = session;
-        this.diffState = diffState;
         this.specService = specService;
 
         this.skippedInteractions = new Set();
@@ -40,7 +39,7 @@ class BaseDiffSessionManager {
         }
     }
 
-    isStartable(diffState, item) {
+    isStartable(_, item) {
         return !this.skippedInteractions.has(item.index)
     }
 

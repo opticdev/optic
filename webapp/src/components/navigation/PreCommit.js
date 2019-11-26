@@ -7,7 +7,7 @@ import Drawer from '@material-ui/core/Drawer';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import DiffInfo from '../diff/DiffInfo';
 import { HighlightedIDsStore } from '../shapes/HighlightedIDs';
-import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
+import { withTrafficSessionContext } from '../../contexts/TrafficSessionContext';
 import compose from 'lodash.compose';
 import {NamerStore} from '../shapes/Namer';
 
@@ -130,4 +130,4 @@ class PreCommit extends React.Component {
   }
 }
 
-export default compose(withStyles(styles), withTrafficAndDiffSessionContext)(PreCommit);
+export default compose(withStyles(styles), withTrafficSessionContext)(PreCommit);

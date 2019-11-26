@@ -5,17 +5,8 @@ import ExampleCommandsLoader from './components/loaders/ExampleCommandsLoader.js
 import ExampleSessionsLoader, { basePath as exampleSessionsBasePath } from './components/loaders/ExampleSessionsLoader.js';
 import LocalLoader, { basePath as localBasePath } from './components/routes/local';
 import ExampleDrivenSpecLoader, { basePath as exampleDrivenSpecBasePath } from './components/loaders/ExampleDrivenSpecLoader.js';
-
-export const routerPaths = {
-  exampleCommandsRoot: () => '/examples/:exampleId',
-  exampleSessionsRoot: () => exampleSessionsBasePath,
-  exampleDrivenRoot: () => exampleDrivenSpecBasePath,
-  localRoot: () => localBasePath,
-  request: (base) => `${base}/requests/:requestId`,
-  diff: (base) => `${base}/diff/:sessionId`,
-  diffUrls: (base) => `${base}/urls`,
-  diffRequest: (base) => `${base}/requests/:requestId`,
-};
+import Interceptor, { basePath as interceptorBasePath } from './components/loaders/InterceptorLoader.js';
+import {routerPaths} from './RouterPaths'
 
 export const routerUrls = {
 };
@@ -27,6 +18,9 @@ class AppRoutes extends React.Component {
       return (
         <div>
           <Switch>
+
+            <Route strict path={routerPaths.interceptorRoot()} component={Interceptor} />
+            <Redirect from={routerPaths.interceptorRoot()} to={routerPaths.interceptorRoot()} />
             <Route path={routerPaths.localRoot()} component={LocalLoader} />
             <Redirect to={routerPaths.localRoot()} />
           </Switch>

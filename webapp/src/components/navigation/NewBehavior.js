@@ -7,7 +7,7 @@ import Button from '@material-ui/core/Button';
 import compose from 'lodash.compose';
 import { withRfcContext } from '../../contexts/RfcContext';
 import { getRequestIdsWithDiffs, getUnrecognizedUrlCount } from '../diff/DiffUtilities';
-import { computeDiffStateProjections } from '../../contexts/TrafficAndDiffSessionContext';
+import { computeDiffStateProjections, TrafficSessionContext, TrafficSessionStore } from '../../contexts/TrafficSessionContext';
 import { Link } from 'react-router-dom';
 import { DisplayPath } from '../paths/DisplayPath';
 import { PathIdToPathString } from '../paths/PathIdToPathString';
@@ -21,7 +21,7 @@ import {
 } from '../../contexts/ColorContext';
 import classNames from 'classnames';
 import { MarkdownRender } from '../requests/DocContribution';
-import {PURPOSE} from '../../ContributionKeys';
+import { PURPOSE } from '../../ContributionKeys';
 
 const useStyles = makeStyles({
   section: {
@@ -143,11 +143,9 @@ class NewBehaviorWrapper extends React.Component {
         const { sessions } = listSessionsResponse;
         if (sessions.length > 0) {
           const [lastSessionId] = sessions;
-          const session = await specService.loadSession(lastSessionId);
           this.setState({
             isLoading: false,
             lastSessionId,
-            lastSession: session
           });
         } else {
           this.setState({
@@ -164,8 +162,7 @@ class NewBehaviorWrapper extends React.Component {
   }
 
   render() {
-    const {isEmpty} = this.props
-    const { lastSession, lastSessionId, isLoading, error } = this.state;
+    const { lastSessionId, isLoading, error } = this.state;
     if (error) {
       return null;
     }
@@ -174,37 +171,49 @@ class NewBehaviorWrapper extends React.Component {
       return null;
     }
 
-    if (!lastSession) {
+    const { isEmpty } = this.props
+    if (!lastSessionId) {
       if (isEmpty) {
         return (
           <NewBehaviorCard color="blue" source={`#### Finish Setting up Optic
 Optic has not observed any API traffic yet. Make sure you have set up the proxy properly and sent traffic through the API.`}>
-            <Button variant="contained" style={{margin: 8}} href="https://docs.useoptic.com" target="_blank">Read Docs</Button>
-            <Button variant="contained" style={{margin: 8}} onClick={() => window.drift.api.sidebar.open()}>Chat with Support</Button>
-            <Button variant="contained" style={{margin: 8}} href="https://calendly.com/optic-onboarding/setup-help" target="_blank">Schedule On-boarding Call</Button>
+            <Button variant="contained" style={{ margin: 8 }} href="https://docs.useoptic.com" target="_blank">Read Docs</Button>
+            <Button variant="contained" style={{ margin: 8 }} onClick={() => window.drift.api.sidebar.open()}>Chat with Support</Button>
+            <Button variant="contained" style={{ margin: 8 }} href="https://calendly.com/optic-onboarding/setup-help" target="_blank">Schedule On-boarding Call</Button>
           </NewBehaviorCard>
         )
       }
       return null;
     }
+    const { specService } = this.props;
 
-    const { rfcId, rfcService } = this.props;
-    const { cachedQueryResults, queries, baseUrl } = this.props;
-    const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, { session: lastSession.sessionResponse.session });
-    const rfcState = rfcService.currentState(rfcId);
-    const requestIdsWithDiffs = getRequestIdsWithDiffs(rfcState, diffStateProjections);
-    const unrecognizedUrlCount = getUnrecognizedUrlCount(rfcState, diffStateProjections);
-    if (unrecognizedUrlCount === 0 && requestIdsWithDiffs.length === 0) {
-      return null;
-    }
 
     return (
-      <NewBehavior
-        requestIdsWithDiffs={requestIdsWithDiffs}
-        sessionId={lastSessionId}
-        baseUrl={baseUrl}
-        unrecognizedUrlCount={unrecognizedUrlCount}
-        cachedQueryResults={cachedQueryResults} />
+      <TrafficSessionStore sessionId={lastSessionId} specService={specService}>
+        <TrafficSessionContext.Consumer>
+          {(context) => {
+            const { rfcId, rfcService } = this.props;
+            const { cachedQueryResults, queries, baseUrl } = this.props;
+            const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, { session: context.session });
+            const rfcState = rfcService.currentState(rfcId);
+            const requestIdsWithDiffs = getRequestIdsWithDiffs(rfcState, diffStateProjections);
+            const unrecognizedUrlCount = getUnrecognizedUrlCount(rfcState, diffStateProjections);
+            if (unrecognizedUrlCount === 0 && requestIdsWithDiffs.length === 0) {
+              return null;
+            }
+
+            return (
+              <NewBehavior
+                requestIdsWithDiffs={requestIdsWithDiffs}
+                sessionId={lastSessionId}
+                baseUrl={baseUrl}
+                unrecognizedUrlCount={unrecognizedUrlCount}
+                cachedQueryResults={cachedQueryResults} />
+            )
+          }}
+        </TrafficSessionContext.Consumer>
+
+      </TrafficSessionStore>
     );
   }
 }
