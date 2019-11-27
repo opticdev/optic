@@ -1,0 +1,188 @@
+import { Command } from '@oclif/command'
+import { ProxyCaptureSession, ICaptureSessionResult } from '../lib/proxy-capture-session'
+import * as getPort from 'get-port'
+import { IApiInteraction } from '../lib/common'
+import { startServer, ISessionValidatorAndLoader, makeInitialDiffState } from './spec'
+import * as open from 'open'
+import * as Express from 'express'
+import { FreshChrome } from 'httptoolkit-server/lib/interceptors/fresh-chrome'
+import * as mockttp from 'mockttp'
+import * as fs from 'fs-extra'
+import * as tmp from 'tmp'
+import * as path from 'path'
+import { EventEmitter } from 'events'
+
+interface IWithSamples {
+  getSamples(): IApiInteraction[]
+}
+class InMemorySessionValidatorAndLoader implements ISessionValidatorAndLoader {
+  proxySession: IWithSamples
+  constructor(proxySession: IWithSamples) {
+    this.proxySession = proxySession
+  }
+  validateSessionId = (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+    req.optic = {
+      session: {
+        samples: this.proxySession.getSamples()
+      },
+      diffState: makeInitialDiffState()
+    }
+    next()
+  }
+
+}
+
+function extractBody(req: mockttp.CompletedRequest | mockttp.CompletedResponse) {
+  if (req.headers['content-type'] || req.headers['transfer-encoding']) {
+    return req.body.json || req.body.formData || req.body.text
+  }
+}
+
+class HttpToolkitProxyCaptureSession implements IWithSamples {
+  private proxy!: mockttp.Mockttp
+  private interceptor!: FreshChrome
+  private requests: Map<string, mockttp.CompletedRequest> = new Map()
+  private samples: IApiInteraction[] = []
+  public readonly events: EventEmitter = new EventEmitter()
+
+  async start(proxyPort: number, targetHost: string) {
+    const configPath = tmp.dirSync({ unsafeCleanup: true }).name;
+    const certificateInfo = await mockttp.generateCACertificate({
+      bits: 2048,
+      commonName: 'Optic Labs Corp'
+    })
+    const certificatePath = path.join(configPath, '.optic', 'certificates')
+    await fs.ensureDir(certificatePath);
+    const certPath = path.join(certificatePath, 'ca.cert')
+    const keyPath = path.join(certificatePath, 'ca.key')
+    await fs.writeFile(certPath, certificateInfo.cert)
+    await fs.writeFile(keyPath, certificateInfo.key)
+    const https = {
+      certPath,
+      keyPath
+    }
+
+    const proxy = mockttp.getLocal({
+      cors: true,
+      debug: false,
+      https,
+      recordTraffic: false
+    })
+    this.proxy = proxy;
+    proxy.addRules(
+      {
+        matchers: [
+          new mockttp.matchers.WildcardMatcher()
+        ],
+        handler: new mockttp.handlers.PassThroughHandler()
+      }
+    )
+
+    proxy.on('request', (req: mockttp.CompletedRequest) => {
+      if (req.headers.host === targetHost) {
+        this.requests.set(req.id, req)
+      }
+    })
+
+    proxy.on('response', (res: mockttp.CompletedResponse) => {
+      if (this.requests.has(res.id)) {
+        const req = this.requests.get(res.id) as mockttp.CompletedRequest
+
+        const sample: IApiInteraction = {
+          request: {
+            method: req.method,
+            url: req.path,
+            headers: req.headers,
+            cookies: {},
+            queryParameters: {},
+            body: extractBody(req)
+          },
+          response: {
+            statusCode: res.statusCode,
+            headers: res.headers,
+            body: extractBody(res)
+          }
+        }
+        this.samples.push(sample)
+      }
+    })
+    await proxy.start(proxyPort)
+
+    const interceptor = new FreshChrome({
+      configPath,
+      https
+    })
+    this.interceptor = interceptor;
+    interceptor.activate(proxyPort)
+  }
+
+  async stop() {
+    await this.proxy.stop()
+    await this.interceptor.deactivateAll()
+  }
+
+  getSamples() {
+    return this.samples
+  }
+}
+
+export default class Intercept extends Command {
+  
+  static args = [
+    {
+      required: true,
+      name: 'host',
+      description: 'hostname and port to intercept requests to (e.g. localhost:3000)'
+    }
+  ]
+
+  async run() {
+    const cliServerPort = await getPort({
+      port: [3201]
+    })
+    const proxyPort = await getPort({
+      port: [30333]
+    })
+
+    const proxySession = new HttpToolkitProxyCaptureSession()
+
+    const sessionValidatorAndLoader = new InMemorySessionValidatorAndLoader(proxySession)
+    await startServer(sessionValidatorAndLoader, cliServerPort)
+
+    const cliServerUrl = `http://localhost:${cliServerPort}`
+    await open(cliServerUrl)
+
+    await this.runProxySession(proxySession, proxyPort)
+
+    await process.exit(0)
+  }
+
+  async runProxySession(proxySession: HttpToolkitProxyCaptureSession, proxyPort: number): Promise<ICaptureSessionResult> {
+    const { args } = this.parse(Intercept)
+
+    const start = new Date()
+    const target = args.host
+
+    const processInterruptedPromise = new Promise((resolve) => {
+      process.removeAllListeners('SIGINT');
+      process.on('SIGINT', () => {
+        resolve()
+      })
+    })
+    await proxySession.start(proxyPort, target)
+    this.log('Press ^C (Control+C) to stop')
+    await Promise.race([processInterruptedPromise])
+    await proxySession.stop()
+
+    const end = new Date()
+    const samples = proxySession.getSamples()
+
+    return {
+      session: {
+        start,
+        end
+      },
+      samples
+    }
+  }
+}

@@ -139,6 +139,9 @@ class LocalSpecOverview extends React.Component {
           isEmpty: result.every(i => i)
         })
       })
+      .catch((e) => {
+        console.error(e)
+      });
   }
 
   handleSampleAdded = async (sample) => {

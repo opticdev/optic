@@ -111,24 +111,30 @@ class TrafficSessionStoreBase extends React.Component {
     checkForUpdates() {
         setTimeout(async () => {
             const { specService, sessionId } = this.props;
-            const result = await specService.loadSession(sessionId)
-            const { session, diffSessionManager } = this.state
-            const { session: latestSession } = result.sessionResponse
-            if (!session){
-                this.checkForUpdates()
+            try {
 
-                return;
+                const result = await specService.loadSession(sessionId)
+                const { session, diffSessionManager } = this.state
+                const { session: latestSession } = result.sessionResponse
+                if (!session){
+                    this.checkForUpdates()
+    
+                    return;
+                }
+                if (latestSession.samples.length > session.samples.length) {
+                    //@TODO: immutablize
+                    diffSessionManager.session = latestSession
+                    this.setState({
+                        session: latestSession,
+                        diffSessionManager: diffSessionManager
+                    })
+                }
+                //@TODO: add flag prop to disable checking for updates?
+                this.checkForUpdates()
+            } catch (e) {
+                console.error(e);
+                this.checkForUpdates()
             }
-            if (latestSession.samples.length > session.samples.length) {
-                //@TODO: immutablize
-                diffSessionManager.session = latestSession
-                this.setState({
-                    session: latestSession,
-                    diffSessionManager: diffSessionManager
-                })
-            }
-            //@TODO: add flag prop to disable checking for updates?
-            this.checkForUpdates()
         }, 1000)
     }
     render() {

@@ -14,7 +14,7 @@ class InterceptorSpecService extends SpecService {
   }
 }
 
-const specService = new InterceptorSpecService
+const specService = new InterceptorSpecService()
 
 const notificationAreaComponent = <NewBehavior specService={specService} />
 const {

@@ -1,30 +1,30 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {DocGrid} from './DocGrid';
-import {AppBar, Typography} from '@material-ui/core';
-import {DocSubGroup} from './DocSubGroup';
-import {DocParameter} from './DocParameter';
-import {HeadingContribution, MarkdownContribution} from './DocContribution';
-import {EndpointOverviewCodeBox} from './DocCodeBox';
+import { DocGrid } from './DocGrid';
+import { AppBar, Typography } from '@material-ui/core';
+import { DocSubGroup } from './DocSubGroup';
+import { DocParameter } from './DocParameter';
+import { HeadingContribution, MarkdownContribution } from './DocContribution';
+import { EndpointOverviewCodeBox } from './DocCodeBox';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import compose from 'lodash.compose'
-import {DocResponse} from './DocResponse';
+import { DocResponse } from './DocResponse';
 import Collapse from '@material-ui/core/Collapse';
-import {DocRequest} from './DocRequest';
-import {withRfcContext} from '../../contexts/RfcContext';
-import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../utilities/PathUtilities';
-import {updateContribution} from '../../engine/routines';
+import { DocRequest } from './DocRequest';
+import { withRfcContext } from '../../contexts/RfcContext';
+import { asPathTrail, getNameWithFormattedParameters, isPathParameter } from '../utilities/PathUtilities';
+import { updateContribution } from '../../engine/routines';
 import sortBy from 'lodash.sortby';
 import Button from '@material-ui/core/Button';
-import {HighlightedIDsStore} from '../shapes/HighlightedIDs';
+import { HighlightedIDsStore } from '../shapes/HighlightedIDs';
 import Toolbar from '@material-ui/core/Toolbar';
-import {Link} from 'react-router-dom';
-import {withNavigationContext} from '../../contexts/NavigationContext';
-import {Helmet} from 'react-helmet';
+import { Link } from 'react-router-dom';
+import { withNavigationContext } from '../../contexts/NavigationContext';
+import { Helmet } from 'react-helmet';
 import groupby from 'lodash.groupby'
-import {BODY_DESCRIPTION, DESCRIPTION, PURPOSE} from '../../ContributionKeys';
-import {NamerStore} from '../shapes/Namer';
-import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
+import { BODY_DESCRIPTION, DESCRIPTION, PURPOSE } from '../../ContributionKeys';
+import { NamerStore } from '../shapes/Namer';
+import { getNormalizedBodyDescriptor } from '../../utilities/RequestUtilities';
 
 const styles = theme => ({
   root: {
@@ -76,12 +76,15 @@ class EndpointPageDataLoader extends React.Component {
   }
 
   componentDidMount() {
-    const {specService, requestId} = this.props
+    const { specService, requestId } = this.props
     if (specService) {
       specService.listExamples(requestId)
-        .then(({examples}) => {
+        .then(({ examples }) => {
           //take from the end
-          this.setState({examples: examples.reverse()})
+          this.setState({ examples: examples.reverse() })
+        })
+        .catch(e => {
+          console.error(e)
         })
     }
   }
@@ -102,9 +105,9 @@ class EndpointPageDataLoader extends React.Component {
 
   render() {
 
-    const {requestId, showShapesFirst, classes, handleCommand, cachedQueryResults} = this.props
+    const { requestId, showShapesFirst, classes, handleCommand, cachedQueryResults } = this.props
 
-    const {requests, pathsById, responses, contributions} = cachedQueryResults;
+    const { requests, pathsById, responses, contributions } = cachedQueryResults;
 
     const request = requests[requestId];
 
@@ -112,8 +115,8 @@ class EndpointPageDataLoader extends React.Component {
       return <div>Request not found</div>
     }
 
-    const {requestDescriptor} = request;
-    const {httpMethod, pathComponentId, bodyDescriptor} = requestDescriptor;
+    const { requestDescriptor } = request;
+    const { httpMethod, pathComponentId, bodyDescriptor } = requestDescriptor;
 
     //Path
     const pathTrail = asPathTrail(pathComponentId, pathsById);
@@ -127,7 +130,7 @@ class EndpointPageDataLoader extends React.Component {
       };
     });
 
-    const fullPath = pathTrailWithNames.map(({pathComponentName}) => pathComponentName)
+    const fullPath = pathTrailWithNames.map(({ pathComponentName }) => pathComponentName)
       .join('/');
 
     const pathParameters = pathTrail
@@ -155,23 +158,23 @@ class EndpointPageDataLoader extends React.Component {
     return (
       <div className={classes.wrapper}>
         <NamerStore disable={true}>
-        <EndpointPage
-          endpointPurpose={contributions.getOrUndefined(requestId, PURPOSE)}
-          endpointDescription={contributions.getOrUndefined(requestId, DESCRIPTION)}
-          requestId={requestId}
-          updateContribution={(id, key, value) => {
-            handleCommand(updateContribution(id, key, value));
-          }}
-          getContribution={(id, key) => contributions.getOrUndefined(id, key)}
-          showShapesFirst={showShapesFirst}
-          method={httpMethod}
-          requestBody={requestBody}
-          requestBodyExample={this.requestBodyExample()}
-          responses={sortBy(responsesForRequest, (res) => res.responseDescriptor.httpStatusCode)}
-          responseExamples={this.responseExamples()}
-          url={fullPath}
-          parameters={pathParameters}
-        />
+          <EndpointPage
+            endpointPurpose={contributions.getOrUndefined(requestId, PURPOSE)}
+            endpointDescription={contributions.getOrUndefined(requestId, DESCRIPTION)}
+            requestId={requestId}
+            updateContribution={(id, key, value) => {
+              handleCommand(updateContribution(id, key, value));
+            }}
+            getContribution={(id, key) => contributions.getOrUndefined(id, key)}
+            showShapesFirst={showShapesFirst}
+            method={httpMethod}
+            requestBody={requestBody}
+            requestBodyExample={this.requestBodyExample()}
+            responses={sortBy(responsesForRequest, (res) => res.responseDescriptor.httpStatusCode)}
+            responseExamples={this.responseExamples()}
+            url={fullPath}
+            parameters={pathParameters}
+          />
         </NamerStore>
       </div>
     );
@@ -186,7 +189,7 @@ class _EndpointPage extends React.Component {
     showAllResponses: false
   };
 
-  toggleAllResponses = () => this.setState({showAllResponses: true});
+  toggleAllResponses = () => this.setState({ showAllResponses: true });
 
   render() {
     const {
@@ -216,29 +219,29 @@ class _EndpointPage extends React.Component {
               updateContribution(requestId, PURPOSE, value);
             }}
           />
-          <div style={{marginTop: -6, marginBottom: 6}}>
+          <div style={{ marginTop: -6, marginBottom: 6 }}>
             <MarkdownContribution
               value={endpointDescription}
               label="Detailed Description"
               onChange={(value) => {
                 updateContribution(requestId, DESCRIPTION, value);
-              }}/>
+              }} />
           </div>
 
           {parameters.length ? (
             <DocSubGroup title="Path Parameters">
               {parameters.map(i => <DocParameter title={i.name}
-                                                 paramId={i.pathId}
-                                                 updateContribution={updateContribution}
-                                                 description={i.description}/>)}
+                paramId={i.pathId}
+                updateContribution={updateContribution}
+                description={i.description} />)}
             </DocSubGroup>
           ) : null}
         </div>
       );
 
-      const right = <EndpointOverviewCodeBox method={method} url={url}/>;
+      const right = <EndpointOverviewCodeBox method={method} url={url} />;
 
-      return <DocGrid left={left} right={right}/>;
+      return <DocGrid left={left} right={right} />;
     })();
 
     // const qparams = [{title: 'filter'}, {title: 'count'}, {title: 'id'}];
@@ -253,7 +256,7 @@ class _EndpointPage extends React.Component {
 
 
     const requestBodyRender = (() => {
-      const {httpContentType, shapeId, isRemoved} = requestBody;
+      const { httpContentType, shapeId, isRemoved } = requestBody;
       if (Object.keys(requestBody).length && !isRemoved) {
         return (
           <DocRequest
@@ -271,9 +274,9 @@ class _EndpointPage extends React.Component {
 
 
     const responsesRendered = (() => responses.map(response => {
-      const {responseId, responseDescriptor} = response;
-      const {httpStatusCode, bodyDescriptor} = responseDescriptor;
-      const {httpContentType, shapeId} = getNormalizedBodyDescriptor(bodyDescriptor);
+      const { responseId, responseDescriptor } = response;
+      const { httpStatusCode, bodyDescriptor } = responseDescriptor;
+      const { httpContentType, shapeId } = getNormalizedBodyDescriptor(bodyDescriptor);
 
       return (
         <DocResponse
@@ -299,18 +302,18 @@ class _EndpointPage extends React.Component {
       <div className={classes.root}>
         {endpointOverview}
 
-        <div style={{marginTop: 65, marginBottom: 65}}/>
+        <div style={{ marginTop: 65, marginBottom: 65 }} />
         {/*{queryParameters}*/}
         {requestBodyRender}
-        <div style={{marginTop: 65, marginBottom: 65}}/>
+        <div style={{ marginTop: 65, marginBottom: 65 }} />
         {firstResponse}
 
         {showButton && (
           <Button variant="outlined"
-                  color="primary"
-                  onClick={this.toggleAllResponses}
-                  className={classes.showMore}>
-            <ExpandMoreIcon style={{marginRight: 6}}/>
+            color="primary"
+            onClick={this.toggleAllResponses}
+            className={classes.showMore}>
+            <ExpandMoreIcon style={{ marginRight: 6 }} />
             Show ({remainingResponses.length}) Other Response{remainingResponses.length > 1 && 's'}
           </Button>
         )}
@@ -324,9 +327,9 @@ class _EndpointPage extends React.Component {
 
 export const EndpointPage = withStyles(styles)(_EndpointPage);
 
-export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyles(styles)(({classes, cachedQueryResults, baseUrl, match}) => {
+export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyles(styles)(({ classes, cachedQueryResults, baseUrl, match }) => {
 
-  const {requestId} = match.params
+  const { requestId } = match.params
 
   const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE)
 
@@ -340,22 +343,22 @@ export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyl
       <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
         <Toolbar variant="dense">
 
-          <Link to={baseUrl} style={{textDecoration: 'none'}}>
-          <Button color="primary">Back to API Overview</Button>
+          <Link to={baseUrl} style={{ textDecoration: 'none' }}>
+            <Button color="primary">Back to API Overview</Button>
           </Link>
 
-          <div style={{flex: 1, textAlign: 'center'}}>
+          <div style={{ flex: 1, textAlign: 'center' }}>
             <Typography variant="h6" color="primary">{purpose}</Typography>
           </div>
 
-          <div style={{width: 175}}/>
+          <div style={{ width: 175 }} />
 
         </Toolbar>
       </AppBar>
 
       <div className={classes.scroll}>
         <HighlightedIDsStore>
-          <EndpointPageWithQuery requestId={requestId}/>
+          <EndpointPageWithQuery requestId={requestId} />
         </HighlightedIDsStore>
       </div>
 

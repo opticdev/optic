@@ -5,7 +5,6 @@ class Utilities {
         const resourceRoot = path.resolve(__dirname, '../../../resources');
         const reactRoot = path.join(resourceRoot, 'react');
         const indexHtmlPath = path.join(reactRoot, 'index.html')
-        console.log({reactRoot, indexHtmlPath})
         app.use(Express.static(reactRoot))
         app.get('*', (req, res) => {
             res.sendFile(indexHtmlPath)
