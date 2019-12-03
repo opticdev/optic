@@ -91,11 +91,10 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
         ],
         handler: new mockttp.handlers.CallbackHandler((request) => {
           const response: CallbackResponseResult = {
-            body:`
-            <html>
-              <head><title>Let's go</title></head>
-              <body>send a request to begin</body>
-            </html>` 
+            statusCode: 302,
+            headers: {
+              "location": "https://docs.useoptic.com"
+            }
           };
           return response
         })
