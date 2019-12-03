@@ -175,7 +175,8 @@ export default class Spec extends Command {
     const port = await getPort({ port: getPort.makeRange(3201, 3299) })
     const sessionUtilities = new SessionUtilities(sessionsPath)
     const sessionValidatorAndLoader = new FileSystemSessionValidatorAndLoader(sessionUtilities)
-    await startServer(sessionValidatorAndLoader, port)
+    const paths = await getPaths()
+    await startServer(paths, sessionValidatorAndLoader, port)
 
     const url = `http://localhost:${port}/`
     this.log(fromOptic('Displaying your API Spec at ' + url))
@@ -218,8 +219,8 @@ class FileSystemSessionValidatorAndLoader {
     }
   }
 }
-export async function startServer(sessionValidatorAndLoader: ISessionValidatorAndLoader, port: number) {
-  const { specStorePath, sessionsPath, exampleRequestsPath } = await getPaths()
+export async function startServer(paths: IPathMapping, sessionValidatorAndLoader: ISessionValidatorAndLoader, port: number) {
+  const { specStorePath, sessionsPath, exampleRequestsPath } = paths
   const sessionUtilities = new SessionUtilities(sessionsPath)
   const app = express()
 

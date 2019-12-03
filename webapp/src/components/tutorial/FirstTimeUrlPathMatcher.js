@@ -17,7 +17,7 @@ function getStepContent(stepIndex, classes) {
                   {`Constants in the path should be entered as a normal string`}
                 </li>
                 <li>
-                  {`Path parameters should be wrapped in {curly_braces} or :have_a_colan_in_front`}
+                  {`Path parameters should be wrapped in {curly_braces} or :have_a_colon_in_front`}
                 </li>
               </ul>
             </Typography>

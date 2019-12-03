@@ -1,9 +1,10 @@
-import { Command } from '@oclif/command'
-import { ProxyCaptureSession, ICaptureSessionResult } from '../lib/proxy-capture-session'
+import { Command, flags } from '@oclif/command'
+import { ICaptureSessionResult } from '../lib/proxy-capture-session'
 import * as getPort from 'get-port'
 import { IApiInteraction } from '../lib/common'
 import { startServer, ISessionValidatorAndLoader, makeInitialDiffState } from './spec'
-import * as open from 'open'
+//@ts-ignore
+import * as openBrowser from 'react-dev-utils/openBrowser'
 import * as Express from 'express'
 import { FreshChrome } from 'httptoolkit-server/lib/interceptors/fresh-chrome'
 import * as mockttp from 'mockttp'
@@ -11,6 +12,10 @@ import * as fs from 'fs-extra'
 import * as tmp from 'tmp'
 import * as path from 'path'
 import { EventEmitter } from 'events'
+import { fromOptic } from '../lib/log-helper'
+import { getPaths } from '../Paths'
+import * as os from 'os';
+import { CallbackResponseResult } from 'mockttp/dist/rules/handlers'
 
 interface IWithSamples {
   getSamples(): IApiInteraction[]
@@ -38,15 +43,25 @@ function extractBody(req: mockttp.CompletedRequest | mockttp.CompletedResponse) 
   }
 }
 
+interface IHttpToolkitProxyCaptureSessionConfig {
+  proxyPort: number,
+  targetHost: string,
+  flags: {
+    chrome: boolean
+  }
+}
+
 class HttpToolkitProxyCaptureSession implements IWithSamples {
   private proxy!: mockttp.Mockttp
   private interceptor!: FreshChrome
   private requests: Map<string, mockttp.CompletedRequest> = new Map()
   private samples: IApiInteraction[] = []
+  private config!: IHttpToolkitProxyCaptureSessionConfig
   public readonly events: EventEmitter = new EventEmitter()
 
-  async start(proxyPort: number, targetHost: string) {
-    const configPath = tmp.dirSync({ unsafeCleanup: true }).name;
+  async start(config: IHttpToolkitProxyCaptureSessionConfig) {
+    this.config = config
+    const configPath = tmp.dirSync({ unsafeCleanup: true }).name
     const certificateInfo = await mockttp.generateCACertificate({
       bits: 2048,
       commonName: 'Optic Labs Corp'
@@ -72,6 +87,21 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
     proxy.addRules(
       {
         matchers: [
+          new mockttp.matchers.HostMatcher('amiusing.httptoolkit.tech')
+        ],
+        handler: new mockttp.handlers.CallbackHandler((request) => {
+          const response: CallbackResponseResult = {
+            body:`
+            <html>
+              <head><title>Let's go</title></head>
+              <body>send a request to begin</body>
+            </html>` 
+          };
+          return response
+        })
+      },
+      {
+        matchers: [
           new mockttp.matchers.WildcardMatcher()
         ],
         handler: new mockttp.handlers.PassThroughHandler()
@@ -79,7 +109,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
     )
 
     proxy.on('request', (req: mockttp.CompletedRequest) => {
-      if (req.headers.host === targetHost) {
+      if (req.headers.host === config.targetHost) {
         this.requests.set(req.id, req)
       }
     })
@@ -106,19 +136,23 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
         this.samples.push(sample)
       }
     })
-    await proxy.start(proxyPort)
+    await proxy.start(config.proxyPort)
 
-    const interceptor = new FreshChrome({
-      configPath,
-      https
-    })
-    this.interceptor = interceptor;
-    interceptor.activate(proxyPort)
+    if (config.flags.chrome) {
+      const interceptor = new FreshChrome({
+        configPath,
+        https
+      })
+      this.interceptor = interceptor;
+      interceptor.activate(config.proxyPort)
+    }
   }
 
   async stop() {
     await this.proxy.stop()
-    await this.interceptor.deactivateAll()
+    if (this.config.flags.chrome) {
+      await this.interceptor.deactivateAll()
+    }
   }
 
   getSamples() {
@@ -127,7 +161,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
 }
 
 export default class Intercept extends Command {
-  
+
   static args = [
     {
       required: true,
@@ -135,8 +169,15 @@ export default class Intercept extends Command {
       description: 'hostname and port to intercept requests to (e.g. localhost:3000)'
     }
   ]
+  static flags = {
+    chrome: flags.boolean({
+      default: false,
+    })
+  }
 
   async run() {
+    const { args } = this.parse(Intercept);
+
     const cliServerPort = await getPort({
       port: [3201]
     })
@@ -147,21 +188,27 @@ export default class Intercept extends Command {
     const proxySession = new HttpToolkitProxyCaptureSession()
 
     const sessionValidatorAndLoader = new InMemorySessionValidatorAndLoader(proxySession)
-    await startServer(sessionValidatorAndLoader, cliServerPort)
+    const targetHost = normalizeHost(args.host)
 
-    const cliServerUrl = `http://localhost:${cliServerPort}`
-    await open(cliServerUrl)
+    const paths = await getPaths(() => {
+      const homePath = path.join(os.homedir(), '.apis', targetHost.replace(/:/gi, '_'), '.api')
+      this.log(fromOptic(`Working out of ${homePath}`))
+      return homePath
+    })
+    await startServer(paths, sessionValidatorAndLoader, cliServerPort)
 
-    await this.runProxySession(proxySession, proxyPort)
+    const cliServerUrl = `http://localhost:${cliServerPort}/live-session`
+    await openBrowser(cliServerUrl)
+
+    await this.runProxySession(proxySession, proxyPort, targetHost)
 
     await process.exit(0)
   }
 
-  async runProxySession(proxySession: HttpToolkitProxyCaptureSession, proxyPort: number): Promise<ICaptureSessionResult> {
-    const { args } = this.parse(Intercept)
+  async runProxySession(proxySession: HttpToolkitProxyCaptureSession, proxyPort: number, targetHost: string): Promise<ICaptureSessionResult> {
+    const { flags } = this.parse(Intercept)
 
     const start = new Date()
-    const target = args.host
 
     const processInterruptedPromise = new Promise((resolve) => {
       process.removeAllListeners('SIGINT');
@@ -169,8 +216,10 @@ export default class Intercept extends Command {
         resolve()
       })
     })
-    await proxySession.start(proxyPort, target)
-    this.log('Press ^C (Control+C) to stop')
+    await proxySession.start({ proxyPort, targetHost, flags: { chrome: flags.chrome } })
+    this.log(fromOptic(`Started proxy server on https://localhost:${proxyPort}`))
+    this.log(fromOptic(`Capturing requests to ${targetHost}`))
+    this.log(fromOptic('Press ^C (Control+C) to stop'))
     await Promise.race([processInterruptedPromise])
     await proxySession.stop()
 
@@ -185,4 +234,14 @@ export default class Intercept extends Command {
       samples
     }
   }
+}
+
+function normalizeHost(hostString: string) {
+  if (hostString.startsWith('http://')) {
+    return hostString.substring('http://'.length)
+  }
+  if (hostString.startsWith('https://')) {
+    return hostString.substring('https://'.length)
+  }
+  return hostString
 }

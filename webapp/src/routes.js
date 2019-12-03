@@ -2,14 +2,12 @@ import React from 'react';
 import { Redirect, Switch, Route } from 'react-router-dom';
 import Welcome from './components/onboarding/Welcome';
 import ExampleCommandsLoader from './components/loaders/ExampleCommandsLoader.js';
-import ExampleSessionsLoader, { basePath as exampleSessionsBasePath } from './components/loaders/ExampleSessionsLoader.js';
-import LocalLoader, { basePath as localBasePath } from './components/routes/local';
-import ExampleDrivenSpecLoader, { basePath as exampleDrivenSpecBasePath } from './components/loaders/ExampleDrivenSpecLoader.js';
-import Interceptor, { basePath as interceptorBasePath } from './components/loaders/InterceptorLoader.js';
+import ExampleSessionsLoader from './components/loaders/ExampleSessionsLoader.js';
+import LocalLoader from './components/routes/local';
+import ExampleDrivenSpecLoader from './components/loaders/ExampleDrivenSpecLoader.js';
+import Interceptor from './components/loaders/InterceptorLoader.js';
 import {routerPaths} from './RouterPaths'
 
-export const routerUrls = {
-};
 
 class AppRoutes extends React.Component {
   render() {
@@ -21,7 +19,7 @@ class AppRoutes extends React.Component {
 
             <Route strict path={routerPaths.interceptorRoot()} component={Interceptor} />
             <Redirect from={routerPaths.interceptorRoot()} to={routerPaths.interceptorRoot()} />
-            <Route path={routerPaths.localRoot()} component={LocalLoader} />
+            <Route strict path={routerPaths.localRoot()} component={LocalLoader} />
             <Redirect to={routerPaths.localRoot()} />
           </Switch>
         </div>

@@ -161,14 +161,16 @@ class LocalSpecOverview extends React.Component {
   }
 
   render() {
+    const key = `${this.state.sessionId}-${this.state.samples.length}`
     return (
       <SpecOverview
+        key={key}
         specService={specService}
         notificationAreaComponent={(
           <DialogWrapper
             specService={specService}
             onSampleAdded={this.handleSampleAdded}>
-            <NewBehavior key={this.state.samples.length} specService={specService} isEmpty={this.state.isEmpty} />
+            <NewBehavior specService={specService} isEmpty={this.state.isEmpty} />
           </DialogWrapper>
         )} />
     );

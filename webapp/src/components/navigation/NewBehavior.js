@@ -134,8 +134,14 @@ class NewBehaviorWrapper extends React.Component {
     lastSessionId: null,
     error: null
   };
-
   componentDidMount() {
+    this.loadLatestSession()
+  }
+  componentDidUpdate() {
+    this.loadLatestSession()
+  }
+
+  loadLatestSession() {
     const { specService } = this.props;
     specService
       .listSessions()
@@ -143,10 +149,12 @@ class NewBehaviorWrapper extends React.Component {
         const { sessions } = listSessionsResponse;
         if (sessions.length > 0) {
           const [lastSessionId] = sessions;
-          this.setState({
-            isLoading: false,
-            lastSessionId,
-          });
+          if (lastSessionId !== this.state.lastSessionId) {
+            this.setState({
+              isLoading: false,
+              lastSessionId,
+            });
+          }
         } else {
           this.setState({
             isLoading: false
