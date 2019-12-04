@@ -36,7 +36,7 @@
     "json-stable-stringify": "^1.0.1",
     "jwt-decode": "^2.2.0",
     "keytar": "^5.0.0-beta.0",
-    "mixpanel": "^0.10.2",
+    "mixpanel": "^0.11.0",
     "mockttp": "^0.19.2",
     "mustache": "^3.0.3",
     "nice-try": "^2.0.0",
