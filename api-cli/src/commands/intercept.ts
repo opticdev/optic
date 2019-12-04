@@ -89,11 +89,11 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
         matchers: [
           new mockttp.matchers.HostMatcher('amiusing.httptoolkit.tech')
         ],
-        handler: new mockttp.handlers.CallbackHandler((request) => {
+        handler: new mockttp.handlers.CallbackHandler(request => {
           const response: CallbackResponseResult = {
             statusCode: 302,
             headers: {
-              "location": "https://docs.useoptic.com"
+              location: 'https://google.com'
             }
           };
           return response
