@@ -1,4 +1,4 @@
-import { Command, flags } from '@oclif/command'
+import {Command, flags} from '@oclif/command'
 import * as fs from 'fs-extra'
 import * as clipboardy from 'clipboardy'
 // @ts-ignore
@@ -8,8 +8,8 @@ import * as path from 'path'
 import cli from 'cli-ux'
 // @ts-ignore
 import * as fetch from 'node-fetch'
-import { getPaths } from '../Paths'
-import { prepareEvents } from '../PersistUtils'
+import {getPaths} from '../Paths'
+import {prepareEvents} from '../PersistUtils'
 import * as yaml from 'js-yaml'
 import analytics from '../lib/analytics'
 
@@ -26,14 +26,14 @@ export default class Generate extends Command {
   ]
 
   async run() {
-    const { flags, args } = this.parse(Generate)
+    const {flags, args} = this.parse(Generate)
     const {buildId} = args
 
     if (flags.output) {
       analytics.track('init from web')
     }
-
-    const {basePath, outputPath, specStorePath} = await getPaths()
+    // @ts-ignore
+    const {outputPath, specStorePath} = await getPaths()
 
     if (buildId === 'oas') {
 
@@ -48,7 +48,7 @@ export default class Generate extends Command {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({fileContents})
-      });
+      })
 
       if (response.status === 200) {
         const oasJson = await response.json()

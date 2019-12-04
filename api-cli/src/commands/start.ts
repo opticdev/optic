@@ -17,6 +17,7 @@ import {IApiInteraction} from '../lib/common'
 import * as colors from 'colors'
 
 export async function readApiConfig(): Promise<IApiCliConfig> {
+  // @ts-ignore
   const {configPath} = await getPaths()
   const rawFile = await fs.readFile(configPath)
   const parsed = yaml.safeLoad(rawFile.toString())
@@ -43,6 +44,7 @@ export function toInteraction(sample: IApiInteraction) {
 }
 
 export async function checkDiffOrUnrecognizedPath(result: ICaptureSessionResult) {
+  // @ts-ignore
   const {specStorePath} = await getPaths()
   const specStoreExists = await fs.pathExists(specStorePath)
   if (!specStoreExists) {
@@ -105,6 +107,7 @@ export default class Start extends Command {
 
     const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`.replace(/:/g, '_')
     const fileName = `${sessionId}.optic_session.json`
+    // @ts-ignore
     const {sessionsPath} = await getPaths()
     const filePath = path.join(sessionsPath, fileName)
     await fs.ensureFile(filePath)
@@ -132,7 +135,7 @@ export default class Start extends Command {
       port: config.proxy.port
     })
     this.log(fromOptic(`Starting ${colors.bold(config.name)} on Port: ${colors.bold(config.proxy.port.toString())}, with ${colors.bold(config.commands.start)}`))
-    this.log(`\n`)
+    this.log('\n')
 
     if (config.commands.start) {
       await commandSession.start({
@@ -145,14 +148,14 @@ export default class Start extends Command {
       })
     }
 
-    const commandStoppedPromise = new Promise((resolve) => {
+    const commandStoppedPromise = new Promise(resolve => {
       const {'keep-alive': keepAlive} = flags
       if (!keepAlive) {
         commandSession.events.on('stopped', () => resolve())
       }
     })
 
-    const processInterruptedPromise = new Promise((resolve) => {
+    const processInterruptedPromise = new Promise(resolve => {
       process.on('SIGINT', () => {
         resolve()
       })
