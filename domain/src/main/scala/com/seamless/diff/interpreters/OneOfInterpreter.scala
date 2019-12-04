@@ -19,21 +19,21 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
         d.shapeDiff match {
           case sd: ListItemShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expectedItem, sd.actualItem, sd.expectedList.shapeId, id => Seq(
+              ConvertToOneOf(sd.expectedItem, InterpretationContext(None, true), sd.actualItem, sd.expectedList.shapeId, id => Seq(
                 SetParameterShape(ProviderInShape(sd.expectedList.shapeId, ShapeProvider(id), "$listItem"))
               ))
             )
           }
           case sd: KeyShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expected, sd.actual, sd.fieldId, id => Seq(
+              ConvertToOneOf(sd.expected, InterpretationContext(None, true), sd.actual, sd.fieldId, id => Seq(
                 SetFieldShape(FieldShapeFromShape(sd.fieldId, id))
               ))
             )
           }
           case sd: MultipleInterpretations => {
             Seq(
-              AddToOneOf(sd.expected, sd.actual)
+              AddToOneOf(sd.expected, InterpretationContext(None, true), sd.actual)
             )
           }
           case _ => Seq.empty
@@ -43,20 +43,20 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
         d.shapeDiff match {
           case sd: ListItemShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expectedItem, sd.actualItem, sd.expectedList.shapeId, id => Seq(
+              ConvertToOneOf(sd.expectedItem, InterpretationContext(Some(d.responseId), false), sd.actualItem, sd.expectedList.shapeId, id => Seq(
                 SetParameterShape(ProviderInShape(sd.expectedList.shapeId, ShapeProvider(id), "$listItem"))
               ))
             )
           }
           case sd: KeyShapeMismatch => {
             Seq(
-              ConvertToOneOf(sd.expected, sd.actual, sd.fieldId, id => Seq(
+              ConvertToOneOf(sd.expected, InterpretationContext(Some(d.responseId), false), sd.actual, sd.fieldId, id => Seq(
                 SetFieldShape(FieldShapeFromShape(sd.fieldId, id))
               )))
           }
           case sd: MultipleInterpretations => {
             Seq(
-              AddToOneOf(sd.expected, sd.actual)
+              AddToOneOf(sd.expected, InterpretationContext(Some(d.responseId), false), sd.actual)
             )
           }
           case _ => Seq.empty
@@ -66,7 +66,7 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     }
   }
 
-  def ConvertToOneOf(expectedShape: ShapeEntity, actual: Json, affectedId: ShapeId, f: Function[ShapeId, Seq[RfcCommand]]) = {
+  def ConvertToOneOf(expectedShape: ShapeEntity, context: InterpretationContext, actual: Json, affectedId: ShapeId, f: Function[ShapeId, Seq[RfcCommand]]) = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val p1 = ShapesHelper.newShapeParameterId()
     val p2 = ShapesHelper.newShapeParameterId()
@@ -82,18 +82,18 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
       ) ++ f(wrapperShapeId)
 
     DiffInterpretation(
-      "Change to a One Of",
+      "Add One Of",
+      DynamicDescription("Change to {{shapeId_SHAPE}}", shapeId = Some(wrapperShapeId)),
 //      "Optic observed multiple different shapes. If it can be any of these shapes, make it a OneOf",
       commands,
+      context,
       FrontEndMetadata(
-        example = Some(actual),
-        affectedIds = Seq(affectedId, p1, p2),
-        changed = true
+        addedIds = Seq(affectedId, p1, p2),
       )
     )
   }
 
-  def AddToOneOf(expected: ShapeEntity, actual: Json) = {
+  def AddToOneOf(expected: ShapeEntity, context: InterpretationContext, actual: Json) = {
     val p1 = ShapesHelper.newShapeParameterId()
     val result = new ShapeBuilder(actual).run
     val commands = result.commands ++ Seq(
@@ -102,13 +102,13 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     )
 
     DiffInterpretation(
-      "Add to One Of",
+      "Update One Of",
+      DynamicDescription("Add {{shapeId_SHAPE}} to One Of", shapeId = Some(expected.shapeId)),
 //      "Optic observed a shape that did not match any of the expected shapes. If it is expected, add it to the choices",
       commands,
+      context,
       FrontEndMetadata(
-        example = Some(actual),
-        affectedIds = Seq(expected.shapeId),
-        changed = true
+        changedIds = Seq(expected.shapeId)
       )
     )
   }

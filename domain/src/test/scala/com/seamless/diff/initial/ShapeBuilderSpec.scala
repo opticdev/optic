@@ -1,14 +1,13 @@
 package com.seamless.diff.initial
 
-import com.seamless.Analytics
-import com.seamless.contexts.rfc.{RfcService, RfcServiceJSFacade}
-import com.seamless.contexts.shapes.Commands.{AddShape, ProviderInShape, RenameShape, SetParameterShape, ShapeProvider}
+import com.seamless.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
+import com.seamless.contexts.shapes.Commands._
 import com.seamless.diff.JsonFileFixture
 import com.seamless.serialization.CommandSerialization
 import org.scalatest.FunSpec
 
 class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
-
+  val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
   it("can learn a basic concept with 3 string keys") {
     val basic = fromFile("basic-concept")
     val result = new ShapeBuilder(basic, "basic").run.asConceptNamed("Basic")
@@ -27,16 +26,13 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     assert(result.commands == commandsFrom("primitive-array"))
   }
 
-
-
   def fixture = {
     val basic = fromFile("todo")
     val result = new ShapeBuilder(basic, "Todo").run
-
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommandSequence("id", result.commands :+
-      RenameShape(result.examples.head.shapeId, "Todo"))
+      RenameShape(result.examples.head.shapeId, "Todo"), commandContext)
     rfcService.currentState("id").shapesState
   }
 
@@ -75,7 +71,7 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     println(CommandSerialization.toJson(result.commands))
-    rfcService.handleCommandSequence("id", result.commands)
+    rfcService.handleCommandSequence("id", result.commands, commandContext)
   }
 
 
@@ -86,7 +82,7 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     println(CommandSerialization.toJson(result.commands))
-    rfcService.handleCommandSequence("id", result.commands)
+    rfcService.handleCommandSequence("id", result.commands, commandContext)
   }
 
   it("works with Twitter example") {
@@ -95,7 +91,7 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
 
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", result.commands)
+    rfcService.handleCommandSequence("id", result.commands, commandContext)
   }
 
   it("works with Readme example") {
@@ -105,6 +101,6 @@ class ShapeBuilderSpec extends FunSpec with JsonFileFixture {
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
     println(CommandSerialization.toJson(result.commands))
-    rfcService.handleCommandSequence("id", result.commands)
+    rfcService.handleCommandSequence("id", result.commands, commandContext)
   }
 }

@@ -16,10 +16,11 @@ import org.scalatest.FunSpec
 
 
 class RequestDifferSpec extends FunSpec {
+  val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
   case class DiffAndInterpretation(result: RequestDiffer.RequestDiffResult, interpretation: DiffInterpretation)
   case class DiffSessionFixture(eventStore: EventStore[RfcEvent], rfcId: String, rfcService: RfcService) {
     def execute(commands: Seq[RfcCommand]): RfcState = {
-      rfcService.handleCommandSequence(rfcId, commands)
+      rfcService.handleCommandSequence(rfcId, commands, commandContext)
       rfcService.currentState(rfcId)
     }
 
@@ -246,19 +247,19 @@ class RequestDifferSpec extends FunSpec {
       var next = diff.next()
       assert(next == RequestDiffer.UnmatchedHttpMethod("root", interaction.apiRequest.method, interaction))
       var interpretation = interpreter.interpret(next).head
-//      println(diff, interpretation.description)
+      //      println(diff, interpretation.description)
       val requestId = interpretation.commands.head.asInstanceOf[AddRequest].requestId
 
-      rfcService.handleCommandSequence(rfcId, interpretation.commands)
+      rfcService.handleCommandSequence(rfcId, interpretation.commands, commandContext)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
       assert(diff.hasNext)
       next = diff.next()
       assert(next == RequestDiffer.UnmatchedHttpStatusCode(requestId, 200, interaction))
       interpretation = interpreter.interpret(next).head
-//      println(diff, interpretation.description)
+      //      println(diff, interpretation.description)
       val responseId = interpretation.commands.head.asInstanceOf[AddResponse].responseId
 
-      rfcService.handleCommandSequence(rfcId, interpretation.commands)
+      rfcService.handleCommandSequence(rfcId, interpretation.commands, commandContext)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
       assert(diff.hasNext)
       next = diff.next()
@@ -270,9 +271,9 @@ class RequestDifferSpec extends FunSpec {
            "deleted" : false
          }""")))
       interpretation = interpreter.interpret(next).head
-//      println(diff, interpretation.description)
+      //      println(diff, interpretation.description)
 
-      rfcService.handleCommandSequence(rfcId, interpretation.commands)
+      rfcService.handleCommandSequence(rfcId, interpretation.commands, commandContext)
       diff = RequestDiffer.compare(interaction, rfcService.currentState(rfcId))
 
       assert(diff.isEmpty)

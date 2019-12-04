@@ -7,7 +7,7 @@ import com.seamless.contexts.shapes.Commands.SetBaseShape
 import com.seamless.contexts.requests.Commands.SetResponseBodyShape
 import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.RfcService
+import com.seamless.contexts.rfc.{RfcCommandContext, RfcService}
 import com.seamless.ddd.InMemoryEventStore
 
 import scala.util.Try
@@ -28,7 +28,7 @@ class RequestsToCommandsImplicitsSpec extends ResolverTestFixture("2") {
     val service = new RfcService(new InMemoryEventStore[RfcEvent])
 
     pathContext.commands.init.foreach(i => {
-      val result = Try(service.handleCommand("test", i))
+      val result = Try(service.handleCommand("test", i, RfcCommandContext("oas", "s1", "b1")))
       if (result.isFailure) {
         result.failed.get.printStackTrace()
         throw new Error("STOP EVERYTHING")

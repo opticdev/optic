@@ -1,13 +1,9 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {withEditorContext} from '../../contexts/EditorContext';
-import PathInput from '../path-editor/PathInput';
+import PathInput from '../paths/PathInput';
 import pathToRegexp from 'path-to-regexp';
-import {pathComponentsToString} from './UnmatchedUrlWizard';
 import Typography from '@material-ui/core/Typography';
-import HelpIcon from '@material-ui/icons/HelpOutline';
-import {primary} from '../../theme';
-import {Tooltip} from '@material-ui/core';
+import {pathComponentsToString} from '../paths/NewUnmatchedUrlWizard';
 
 const styles = theme => ({
   pathWrapper: {
@@ -58,7 +54,7 @@ class PathMatcher extends React.Component {
 
     return (
       <div>
-        <Typography variant="overline" style={{paddingBottom: 0}}>URL:</Typography>
+        <Typography variant="overline" style={{paddingBottom: 0}}>Path:</Typography>
         <div className={classes.pathWrapper}><span
           style={{color: '#277a4e', fontWeight: 800}}>{matched}</span><span>{remaining}</span></div>
 
@@ -81,4 +77,4 @@ class PathMatcher extends React.Component {
   }
 }
 
-export default withEditorContext(withStyles(styles)(PathMatcher));
+export default withStyles(styles)(PathMatcher);

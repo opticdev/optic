@@ -47,7 +47,7 @@ export interface IRequestMetadata {
     headers: IHeaders
     cookies: IParameterMapping
     queryParameters: IMultiParameterMapping
-    body?: object
+    body?: any
 }
 
 export interface IResponseMetadata {

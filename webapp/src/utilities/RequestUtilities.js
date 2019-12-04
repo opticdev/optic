@@ -1,4 +1,3 @@
-import {getNormalizedBodyDescriptor} from '../components/PathPage.js';
 import {asAbsolutePath, asPathTrailComponents} from '../components/utilities/PathUtilities.js';
 
 class RequestUtilities {
@@ -35,4 +34,12 @@ class RequestUtilities {
 
 export {
     RequestUtilities
+}
+
+
+export function getNormalizedBodyDescriptor(value) {
+  if (value && value.ShapedBodyDescriptor) {
+    return value.ShapedBodyDescriptor;
+  }
+  return {};
 }

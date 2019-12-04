@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{SetRequestBodyShape, SetResponse
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes._
 import com.seamless.contexts.shapes.ShapesHelper._
-import com.seamless.diff.{DiffInterpretation, FrontEndMetadata, HighlightNestedRequestShape, HighlightNestedResponseShape, HighlightNestedShape}
+import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, InterpretationContext}
 import com.seamless.diff.RequestDiffer._
 import com.seamless.diff.ShapeDiffer._
 
@@ -17,12 +17,12 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
         d.shapeDiff match {
           case sd: UnsetValue => {
             Seq(
-              ChangeShapeToOptional(d, sd)
+              ChangeShapeToOptional(d, sd, InterpretationContext(None, true))
             )
           }
           case sd: UnsetObjectKey => {
             Seq(
-              ChangeFieldToOptional(sd, HighlightNestedRequestShape(sd.parentObjectShapeId))
+              ChangeFieldToOptional(sd, InterpretationContext(None, true))
             )
           }
           case sd: UnexpectedObjectKey => {
@@ -36,12 +36,12 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
         d.shapeDiff match {
           case sd: UnsetValue => {
             Seq(
-              ChangeShapeToOptional(d, sd)
+              ChangeShapeToOptional(d, sd, InterpretationContext(Some(d.responseId), false))
             )
           }
           case sd: UnsetObjectKey => {
             Seq(
-              ChangeFieldToOptional(sd, HighlightNestedResponseShape(d.responseStatusCode, sd.parentObjectShapeId))
+              ChangeFieldToOptional(sd, InterpretationContext(Some(d.responseId), false))
             )
           }
           case _ => Seq.empty
@@ -51,7 +51,7 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     }
   }
 
-  def ChangeFieldToOptional(shapeDiff: UnsetObjectKey, highlightNested: HighlightNestedShape): DiffInterpretation = {
+  def ChangeFieldToOptional(shapeDiff: UnsetObjectKey, context: InterpretationContext): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val field = shapesState.flattenedField(shapeDiff.fieldId)
     val commands = Seq(
@@ -69,14 +69,16 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       SetFieldShape(FieldShapeFromShape(field.fieldId, wrapperShapeId)),
     )
     DiffInterpretation(
-      s"Make <b>${shapeDiff.key}</b> Optional",
+      s"Make Optional",
+      DynamicDescription(s"Make `${shapeDiff.key}` `optional`"),
 //      s"Optic expected to see a value for the key ${shapeDiff.key}. If it is allowed to be omitted, make it Optional",
       commands,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.fieldId), changed = true, highlightNestedShape = Some(highlightNested))
+      context,
+      FrontEndMetadata(changedIds = Seq(shapeDiff.fieldId))
     )
   }
 
-  def ChangeShapeToOptional(requestDiffResult: UnmatchedRequestBodyShape, shapeDiff: UnsetValue): DiffInterpretation = {
+  def ChangeShapeToOptional(requestDiffResult: UnmatchedRequestBodyShape, shapeDiff: UnsetValue,  context: InterpretationContext): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val commands = Seq(
       AddShape(wrapperShapeId, OptionalKind.baseShapeId, ""),
@@ -85,16 +87,17 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       ),
       SetRequestBodyShape(requestDiffResult.requestId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )
-
     DiffInterpretation(
       "Make Request Optional",
+      DynamicDescription(s"Make request `optional`"),
 //      s"Optic expected to see a value for the request but instead saw nothing. If it is allowed to be omitted, make it Optional",
       commands,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
+      context,
+      FrontEndMetadata(changedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 
-  def ChangeShapeToOptional(requestDiffResult: UnmatchedResponseBodyShape, shapeDiff: UnsetValue): DiffInterpretation = {
+  def ChangeShapeToOptional(requestDiffResult: UnmatchedResponseBodyShape, shapeDiff: UnsetValue,  context: InterpretationContext): DiffInterpretation = {
     val wrapperShapeId = ShapesHelper.newShapeId()
     val commands = Seq(
       AddShape(wrapperShapeId, OptionalKind.baseShapeId, ""),
@@ -104,10 +107,12 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
       SetResponseBodyShape(requestDiffResult.responseId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )
     DiffInterpretation(
-      "Make Response Optional",
+      "Make Request Optional",
+      DynamicDescription(s"Make response `optional`"),
 //      s"Optic expected to see a value for the response but instead saw nothing. If it is allowed to be omitted, make it Optional",
       commands,
-      FrontEndMetadata(affectedIds = Seq(shapeDiff.expected.shapeId), changed = true)
+      context,
+      FrontEndMetadata(changedIds = Seq(shapeDiff.expected.shapeId))
     )
   }
 }

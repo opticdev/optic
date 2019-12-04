@@ -2,6 +2,8 @@ package com.seamless.contexts.requests
 
 import com.seamless.contexts.requests.Commands._
 
+import scala.scalajs.js.annotation.JSExport
+
 
 sealed trait RequestsGraph
 
@@ -62,6 +64,8 @@ case class RequestsState(
                           parentPath: Map[PathComponentId, PathComponentId]
                         ) {
 
+  @JSExport
+  def justAddedFirst = requests.size == 1
   ////////////////////////////////////////////////////////////////////////////////
 
   def withPathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String) = {

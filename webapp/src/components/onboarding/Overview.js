@@ -1,38 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import Typography from '@material-ui/core/Typography';
-import Editor, {FullSheetNoPaper} from '../navigation/Editor';
-import {EditorModes, withEditorContext} from '../../contexts/EditorContext';
-import {withRfcContext} from '../../contexts/RfcContext';
-import {addAbsolutePath, getName, getNameWithFormattedParameters, getParentPathId} from '../utilities/PathUtilities';
+import { withRfcContext } from '../../contexts/RfcContext';
+import { getNameWithFormattedParameters, getParentPathId } from '../utilities/PathUtilities';
 import sortBy from 'lodash.sortby';
-import Paper from '@material-ui/core/Paper';
-import {RfcCommands, ShapeCommands} from '../../engine';
-import ContributionTextField from '../contributions/ContributionTextField';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
-import StarBorder from '@material-ui/icons/StarBorder';
-import Collapse from '@material-ui/core/Collapse';
-import {Link} from 'react-router-dom';
-import {routerUrls} from '../../routes';
-import IconButton from '@material-ui/core/IconButton';
-import Chip from '@material-ui/core/Chip';
-import Button from '@material-ui/core/Button';
-import CreateNew from '../navigation/CreateNew';
-import {primary, secondary} from '../../theme';
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import Divider from '@material-ui/core/Divider';
-import SearchBar, {fuzzyConceptFilter, fuzzyPathsFilter} from '../navigation/Search';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import Toolbar from '@material-ui/core/Toolbar';
-import DescriptionIcon from '@material-ui/icons/Description';
-import AppBar from '@material-ui/core/AppBar';
-import {ActionButton} from '../navigation/TopBar';
-import CodeIcon from '@material-ui/icons/Code';
+import ApiOverview from '../navigation/ApiOverview';
+import EmptySpec from '../navigation/EmptySpec';
+import FuzzySearch from 'fuzzy-search';
 
 
 const styles = theme => ({
@@ -45,266 +18,52 @@ const styles = theme => ({
     flexDirection: 'column',
     height: 'fit-content',
   },
-  innerPath: {
-    padding: 8,
-    border: '1px solid rgba(49,54,111,0.15)',
-    borderRadius: 11,
-    marginBottom: 16
-  },
-  chip: {
-    backgroundColor: '#31366f',
-    color: 'white',
-  },
-  innerContent: {
-    backgroundColor: 'rgba(49,54,111,0.08)',
-    padding: '5px 10px 5px 10px'
-  },
-  buttonRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: 22
-  },
-  subView: {
-    minHeight: 90,
-    flex: 1,
-    padding: 11
-  },
-  bareLink: {
-    textDecoration: 'none',
-    color: 'inherit',
-    cursor: 'pointer'
-  },
-  apiNavigation: {
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  searchRegion: {
-    width: 600,
-    textAlign: 'center',
-    margin: '0 auto',
-    marginBottom: 60
-  }
 });
-
-const methodColors = {
-  'GET': '#608c52',
-  'POST': '#205B9B',
-  'PUT': '#D56915',
-  'PATCH': '#682189',
-  'DELETE': '#E71D36',
-};
-
-const PathListItem = withRfcContext(({path, baseUrl, cachedQueryResults}) => {
-
-  const {name, children, depth, toggled, pathId, full, visible} = path;
-  const requests = cachedQueryResults.requestIdsByPathId[pathId] || [];
-
-  const url = routerUrls.pathPage(baseUrl, pathId);
-
-  const requestsWithMethods = requests.map(id => {
-    return [id, cachedQueryResults.requests[id].requestDescriptor.httpMethod];
-  });
-
-  if (name === '/audit') {
-    debugger
-  }
-
-  if (!visible) {
-    return null;
-  }
-
-  return <div style={{flexDirection: 'row'}}>
-    <div style={{flexDirection: 'row', display: 'flex', marginBottom: 9}}>
-      <Link to={url} style={{color: 'inherit', textDecoration: 'none'}}>
-        <Typography component="span" variant="subtitle2">
-          <span style={{color: '#676767'}}>{full}</span>
-          <span style={{fontWeight: 600}}>{name}</span>
-        </Typography>
-      </Link>
-      <div style={{marginLeft: 16, marginTop: -1}}>
-        {requestsWithMethods.map(i => {
-          const method = i[1].toUpperCase();
-          const color = methodColors[method] || primary;
-
-          return <Link to={url + '#' + i[0]} style={{marginRight: 6, textDecoration: 'none'}}>
-            <span style={{
-              borderColor: color,
-              border: '1px solid',
-              color: color,
-              fontSize: 10,
-              padding: 2,
-              paddingLeft: 5,
-              paddingRight: 5,
-              borderRadius: 3,
-            }}>{i[1].toUpperCase()}</span>
-          </Link>;
-        })}
-      </div>
-    </div>
-    {children.length ? (
-      children.map(i => <PathListItem path={i} baseUrl={baseUrl}/>)
-    ) : null}
-  </div>;
-
-});
-
-
-function SetupCall({open, onClose}) {
-  return (
-    <Dialog
-      maxWidth="lg"
-      onClose={onClose}
-      open={open}>
-      <DialogContent>
-        <iframe src="https://calendly.com/optic-onboarding/30-min-session" style={{width: 450, height: 700}}
-                frameBorder="0"/>
-      </DialogContent>
-    </Dialog>);
-
-}
 
 
 class OverView extends React.Component {
 
-  componentDidMount() {
-    const {switchEditorMode} = this.props;
-    const {pathIdsWithRequests} = this.props.cachedQueryResults;
-
-    if (pathIdsWithRequests.size === 0) {
-      setTimeout(() => {
-        switchEditorMode(EditorModes.DESIGN);
-      }, 1);
-    }
-
+  state = {
+    hasSession: true,
   }
 
-  state = {
-    callModalOpen: false
-  };
-
-  openCallModal = () => {
-    this.setState({callModalOpen: true});
-  };
-  closeModal = () => {
-    this.setState({callModalOpen: false});
-  };
+  componentDidMount() {
+    const {specService} = this.props
+    if (specService) {
+      specService.listSessions().then( ({sessions}) => {
+        this.setState({hasSessions: sessions.length > 0})
+      })
+    }
+  }
 
   render() {
-    const {classes, cachedQueryResults, mode, handleCommand, queries, baseUrl} = this.props;
-    const {apiName, contributions, conceptsById, pathsById, pathIdsWithRequests} = cachedQueryResults;
-
+    const { classes, cachedQueryResults, baseUrl } = this.props;
+    const { conceptsById, pathsById, requestIdsByPathId } = cachedQueryResults;
+    const { specService, notificationAreaComponent } = this.props
     const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
     const sortedConcepts = sortBy(concepts, ['name']);
     const pathTree = flattenPaths('root', pathsById);
-    const conceptsFiltered = fuzzyConceptFilter(sortedConcepts, this.state.searchQuery);
-    const pathIdsFiltered = fuzzyPathsFilter(pathTree, this.state.searchQuery);
 
-    const pathTreeFiltered = flattenPaths('root', pathsById, 0, '', pathIdsFiltered);
+    const conceptsFiltered = fuzzyConceptFilter(sortedConcepts, '');
+    const pathIdsFiltered = fuzzyPathsFilter(pathTree, '');
+    const pathTreeFiltered = flattenPaths('root', pathsById, 0, '', pathIdsFiltered)
 
-    const hideComponents = (pathTree.children.length === 0 && concepts.length === 0);
+    const providesSpecService = !!specService
+    const isEmptySpec = Object.entries(conceptsById).length === 0 && Object.entries(requestIdsByPathId).length === 0
+
+    if (providesSpecService && isEmptySpec && !this.state.hasSession) {
+      return <EmptySpec />
+    }
 
     return (
-      <Editor>
-        <div className={classes.overview}>
-
-          <div className={classes.searchRegion}>
-            <SearchBar apiName={apiName}
-                       searchQuery={this.state.searchQuery}
-                       onChange={(e) => this.setState({searchQuery: e.target.value})}
-                       inputRef={this.searchRef}/>
-          </div>
-
-          {!hideComponents ? (
-            <div className={classes.apiNavigation}>
-              <Paper style={{flex: 1, marginRight: 33, padding: 22, height: 'fit-content'}}>
-                <Typography color="primary" variant="h5" style={{marginLeft: 6, marginBottom: 11}}>Paths</Typography>
-                {pathTreeFiltered.children.filter(i => i.visible).map(i => (
-                  <div className={classes.innerPath}>
-                    <div className={classes.innerContent}>
-                      <Typography color="primary"
-                                  style={{marginTop: 4}}>{(i.name.split('/')[1]).toUpperCase()}</Typography>
-                      <Divider style={{marginBottom: 9}}/>
-                      <PathListItem path={i} baseUrl={baseUrl}/>
-                    </div>
-                  </div>
-                ))}
-
-                {pathTreeFiltered.children.every(i => !i.visible) && this.state.searchQuery ? (
-                  <Typography variant="caption" color="error" style={{padding: 15}}>No Paths Found for
-                    '{this.state.searchQuery}'</Typography>
-                ) : null}
-
-              </Paper>
-              <Paper style={{width: 320, height: 'fit-content', paddingBottom: 15}}>
-                <Typography color="primary" variant="h5" style={{
-                  marginLeft: 6,
-                  paddingTop: 24,
-                  paddingLeft: 9,
-                  paddingBottom: 5
-                }}>Concepts</Typography>
-                <List dense>
-                  {conceptsFiltered.map(i => {
-                    const to = routerUrls.conceptPage(baseUrl, i.shapeId);
-                    return <Link to={to} style={{textDecoration: 'none', color: 'inherit'}}>
-                      <ListItem button dense
-                                style={{textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap'}}>
-                        <ListItemText primary={i.name}/>
-                      </ListItem>
-                    </Link>;
-                  })}
-
-                  {conceptsFiltered.length === 0 && this.state.searchQuery ? (
-                    <Typography variant="caption" color="error" style={{padding: 15, paddingBottom: 25}}>No Concepts
-                      Found
-                      for
-                      '{this.state.searchQuery}'</Typography>
-                  ) : null}
-
-                </List>
-              </Paper>
-            </div>) : (
-            <Paper className={classes.searchRegion} elevation={2}>
-              <ListItem alignItems="flex-start" button>
-                <div style={{marginRight: 20, marginLeft: 11, paddingTop: 16}}>
-                  <img src="chat.svg" width={50}/>
-                </div>
-                <ListItemText
-                  onClick={this.openCallModal}
-                  primary="Setup a free on-boarding session"
-                  secondary="Optic's creators will help you setup Optic, answer your questions, and send you some swag."
-                />
-              </ListItem>
-
-              <CreateNew render={({addConcept, addRequest, classes}) => {
-                return (
-                  <>
-                    <ListItem alignItems="flex-start" button onClick={addConcept}>
-                      <div style={{marginRight: 15, marginLeft: 10, paddingTop: 16}}>
-                        <DescriptionIcon className={classes.leftIcon} style={{width: 50, fontSize: 50, color: secondary}}/>
-                      </div>
-                      <ListItemText
-                        primary="Create a new Concept"
-                        secondary="Document a concept from your API"
-                      />
-                    </ListItem>
-                    <ListItem alignItems="flex-start" button onClick={addRequest}>
-                      <div style={{marginRight: 20, marginLeft: 11, paddingTop: 16}}>
-                        <CodeIcon style={{width: 50, fontSize: 45,  color: secondary}}/>
-                      </div>
-                      <ListItemText
-                        primary="New Request"
-                        secondary="Document one of your API Requests"
-                      />
-                    </ListItem>
-                  </>
-                );
-              }}/>
-
-            </Paper>
-          )}
-        </div>
-        <SetupCall open={this.state.callModalOpen} onClose={this.closeModal}/>
-      </Editor>
+      <div className={classes.overview}>
+        <ApiOverview
+          notificationAreaComponent={notificationAreaComponent}
+          isEmptySpec={isEmptySpec}
+          paths={pathTreeFiltered}
+          concepts={conceptsFiltered}
+          baseUrl={baseUrl} />
+      </div>
     );
   }
 }
@@ -321,9 +80,11 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
 
   const children = Object.entries(paths)
     .filter(i => {
+      // eslint-disable-next-line no-unused-vars
       const [childId, childPath] = i;
       return getParentPathId(childPath) === id;
     }).map(i => {
+      // eslint-disable-next-line no-unused-vars
       const [childId, childPath] = i;
       return flattenPaths(childId, paths, depth + 1, fullNew, filteredIds);
     });
@@ -343,4 +104,33 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
   };
 }
 
-export default withRfcContext(withEditorContext(withStyles(styles)(OverView)));
+export default withRfcContext(withStyles(styles)(OverView));
+
+
+function fuzzyPathsFilter(paths, query) {
+
+  function flattenAll(all, a = []) {
+    all.forEach(i => {
+      a.push(i)
+      flattenAll(i.children, a)
+    })
+  }
+
+  const allPaths = []
+  flattenAll(paths.children, allPaths)
+
+  const searcher = new FuzzySearch(allPaths, ['searchString', 'name'], {sort: true}, {
+    caseSensitive: false,
+  });
+
+  const pathIds = searcher.search(query).map(i => i.pathId)
+  return pathIds
+}
+
+function fuzzyConceptFilter(concepts, query) {
+  const searcher = new FuzzySearch(concepts, ['name'], {sort: true}, {
+    caseSensitive: false,
+  });
+
+  return searcher.search(query)
+}

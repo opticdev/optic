@@ -7,7 +7,7 @@
   <br>
 </h1>
 
-<h4 align="center">Developer Friendly APIs</h4>
+<h4 align="center">Automated documentation, tests, and change management for your APIs</h4>
 
 <p align="center">
 

@@ -1,0 +1,145 @@
+[
+  {
+    "AddPathComponent": {
+      "pathId": "path_NerMBkSuut",
+      "parentPathId": "root",
+      "name": "algorithms"
+    }
+  },
+  {
+    "AddPathComponent": {
+      "pathId": "path_32JjGSlaFO",
+      "parentPathId": "path_NerMBkSuut",
+      "name": "acunniffe"
+    }
+  },
+  {
+    "AddPathComponent": {
+      "pathId": "path_RKm4am8cXm",
+      "parentPathId": "path_32JjGSlaFO",
+      "name": "abc"
+    }
+  },
+  {
+    "AddPathComponent": {
+      "pathId": "path_zRvha8BpGF",
+      "parentPathId": "path_RKm4am8cXm",
+      "name": "commit"
+    }
+  },
+  {
+    "AddRequest": {
+      "requestId": "request_ojXN74OupG",
+      "pathId": "path_zRvha8BpGF",
+      "httpMethod": "POST"
+    }
+  },
+  {
+    "AddContribution": {
+      "id": "request_ojXN74OupG",
+      "key": "purpose",
+      "value": "post"
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "vaTMU1_0",
+      "baseShapeId": "$object",
+      "name": ""
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_FhCjHvmtxo",
+      "baseShapeId": "vaTMU1_0",
+      "name": ""
+    }
+  },
+  {
+    "SetRequestBodyShape": {
+      "requestId": "request_ojXN74OupG",
+      "bodyDescriptor": {
+        "httpContentType": "application/json;charset=UTF-8",
+        "shapeId": "shape_FhCjHvmtxo",
+        "isRemoved": false
+      }
+    }
+  },
+  {
+    "AddResponse": {
+      "responseId": "response_AHxtdDxUgr",
+      "requestId": "request_ojXN74OupG",
+      "httpStatusCode": 200
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "rJdDje_0",
+      "baseShapeId": "$object",
+      "name": ""
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "rJdDje_2",
+      "baseShapeId": "$string",
+      "name": ""
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "rJdDje_1",
+      "shapeId": "rJdDje_0",
+      "name": "result",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "rJdDje_1",
+          "shapeId": "rJdDje_2"
+        }
+      }
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "rJdDje_4",
+      "baseShapeId": "$string",
+      "name": ""
+    }
+  },
+  {
+    "AddField": {
+      "fieldId": "rJdDje_3",
+      "shapeId": "rJdDje_0",
+      "name": "version",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "rJdDje_3",
+          "shapeId": "rJdDje_4"
+        }
+      }
+    }
+  },
+  {
+    "AddShape": {
+      "shapeId": "shape_Me4aQ0D3VR",
+      "baseShapeId": "rJdDje_0",
+      "name": ""
+    }
+  },
+  {
+    "SetResponseBodyShape": {
+      "responseId": "response_AHxtdDxUgr",
+      "bodyDescriptor": {
+        "httpContentType": "application/json; charset=utf-8",
+        "shapeId": "shape_Me4aQ0D3VR",
+        "isRemoved": false
+      }
+    }
+  },
+  {
+    "RenameShape": {
+      "shapeId": "rJdDje_0",
+      "name": "abc"
+    }
+  }
+]

@@ -1,15 +1,14 @@
 package com.seamless.contexts.shapes
 
-import com.seamless.contexts.rfc.{RfcService, RfcServiceJSFacade}
-import com.seamless.contexts.shapes.Commands.FieldShapeFromShape
-import com.seamless.contexts.shapes.projections.NameForShapeId
-import com.seamless.diff.ShapeDiffer.resolveBaseObject
-import com.seamless.diff.{JsonFileFixture, ShapeDiffer}
+import com.seamless.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade}
+import com.seamless.contexts.shapes.Commands.{AddShape, FieldShapeFromShape}
+import com.seamless.contexts.shapes.projections.{FlatShapeProjection, NameForShapeId}
+import com.seamless.diff._
 import com.seamless.diff.initial.ShapeBuilder
-import com.seamless.serialization.CommandSerialization
 import org.scalatest.FunSpec
 
-class NameForShapeIdSpec extends FunSpec  with JsonFileFixture {
+class NameForShapeIdSpec extends FunSpec with JsonFileFixture {
+  val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
 
   def fixture(slug: String, nameConcept: String = null) = {
     val basic = fromFile(slug)
@@ -22,7 +21,7 @@ class NameForShapeIdSpec extends FunSpec  with JsonFileFixture {
     }
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", result.commands)
+    rfcService.handleCommandSequence("id", result.commands, commandContext)
     (result.rootShapeId, rfcService.currentState("id").shapesState)
   }
 
@@ -44,7 +43,7 @@ class NameForShapeIdSpec extends FunSpec  with JsonFileFixture {
     val commands = commandsFrom("shape-name-example")
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", commands)
+    rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
   }
 
@@ -66,7 +65,7 @@ class NameForShapeIdSpec extends FunSpec  with JsonFileFixture {
     val commands = commandsFrom("pagination")
     val eventStore = RfcServiceJSFacade.makeEventStore()
     val rfcService: RfcService = new RfcService(eventStore)
-    rfcService.handleCommandSequence("id", commands)
+    rfcService.handleCommandSequence("id", commands, commandContext)
     rfcService.currentState("id")
   }
 
@@ -82,5 +81,43 @@ class NameForShapeIdSpec extends FunSpec  with JsonFileFixture {
     val name = NameForShapeId.getFlatShapeName("shape_YPyuORdmZ7")(shapesState)
     assert(name == "PaginatedList Item: Owner")
   }
+
+  it("can name a field's shape") {
+    val shapesState = paginationExampleRfc.shapesState
+    val name = NameForShapeId.getFieldIdShapeName("field_SWppoWn6kT")(shapesState).map(_.name).mkString(" ")
+
+    assert(name == "List of PetId")
+  }
+
+  it("works for nested shapes") {
+    val commands = commandsFrom("nested-naming")
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    val rfcService: RfcService = new RfcService(eventStore)
+    rfcService.handleCommandSequence("id", commands, commandContext)
+    rfcService.currentState("id")
+    val shapesState = rfcService.currentState("id").shapesState
+
+    val a= FlatShapeProjection.forShapeId("shape_Me4aQ0D3VR")(shapesState)
+
+    assert(a.root.joinedTypeName == "abc")
+  }
+//
+//  it("works for nested shapes") {
+//
+//
+//
+//    val eventStore = RfcServiceJSFacade.makeEventStore()
+//    val rfcService: RfcService = new RfcService(eventStore)
+//
+//    val commands = Seq(
+//      AddShape("inner", "$object", "I have a names"),
+//      AddShape("outer", "inner", ""),
+//    )
+//    rfcService.handleCommandSequence("id", commands, commandContext)
+//    val shapesState = rfcService.currentState("id").shapesState
+//
+//    val name = NameForShapeId.getFlatShapeName("outer")(shapesState)
+//    println(name)
+//  }
 
 }
