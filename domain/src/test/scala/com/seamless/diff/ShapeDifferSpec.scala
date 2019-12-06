@@ -1,6 +1,7 @@
 package com.seamless.diff
 
 import com.seamless.contexts.shapes.Commands.{DynamicParameterList, NoParameterList, ProviderInShape, ShapeProvider}
+import com.seamless.contexts.shapes.ShapesHelper.OptionalKind
 import com.seamless.contexts.shapes.{ShapeEntity, ShapeValue, ShapesAggregate, ShapesState}
 import com.seamless.diff.ShapeDiffer.MultipleInterpretations
 import io.circe.Json
@@ -92,7 +93,7 @@ class ShapeDifferSpec extends FunSpec {
       val expected = ShapeEntity("$x", shape, isRemoved = false)
       implicit val shapesState: ShapesState = ShapesAggregate.initialState
         .withShape(expected.shapeId, shape.baseShapeId, shape.parameters, shape.name)
-        .withShapeParameterShape(ProviderInShape(expected.shapeId, ShapeProvider("$string"), "$optionalInner"))
+        .withShapeParameterShape(ProviderInShape(expected.shapeId, ShapeProvider("$string"), OptionalKind.innerParam))
 
       describe("when given a string") {
         it("should return an empty diff") {

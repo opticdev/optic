@@ -182,7 +182,7 @@ object ShapeDiffer {
         }
       }
       case OptionalKind => {
-        val referencedShape = resolveParameterShape(expectedShape.shapeId, "$optionalInner")
+        val referencedShape = resolveParameterShape(expectedShape.shapeId, OptionalKind.innerParam)
         if (referencedShape.isDefined) {
           ShapeDiffer.diff(referencedShape.get, actualShapeOption)
         } else {
