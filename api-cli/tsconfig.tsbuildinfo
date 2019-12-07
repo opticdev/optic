@@ -326,7 +326,7 @@
         "signature": "aca36e2d27783f4bad7fc1786a532ff76024f0fc8575df48bcd9a5eb452fe7e7"
       },
       "./src/paths.ts": {
-        "version": "cb8220ef6e1c6dcb45904a596b5df5f905674a71a7032a3e986499c522bdf8cd",
+        "version": "b769654f69bd018154204952ed7b46a249c225eadfe6b80fd45902e31c28a7c2",
         "signature": "3c6be598c4405724e8ed2c5bd640c27341b23c15c654ad8943a37100271ede6f"
       },
       "./src/persistutils.ts": {
@@ -421,6 +421,10 @@
         "version": "b48640c615edeac46a37fa4c3f9427539c7b0c9c9dced07d374dcec44fc4ffb7",
         "signature": "b48640c615edeac46a37fa4c3f9427539c7b0c9c9dced07d374dcec44fc4ffb7"
       },
+      "./node_modules/colors/index.d.ts": {
+        "version": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f",
+        "signature": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f"
+      },
       "./node_modules/@oclif/errors/lib/handle.d.ts": {
         "version": "207218b7704a71e718a25a35101afb2206581fd07c878c34540038639ad2759e",
         "signature": "207218b7704a71e718a25a35101afb2206581fd07c878c34540038639ad2759e"
@@ -504,14 +508,6 @@
       "./src/lib/analytics.ts": {
         "version": "72b62584101abbf031fd6e73a21842a99877186d422cb9e65aa470c2b98463f4",
         "signature": "60b33bcb9810f8e80f30a186b41f25d05b97a7781cf8f03edb9315d17a7aeaf1"
-      },
-      "./src/commands/generate.ts": {
-        "version": "017f9750f51931f278a1fe68425c674d64372bec942b3d3e30cdef285ca00a71",
-        "signature": "f6be6a1f6937bf42d3b2190e690070d2721913b5f162a1a359c189175d932696"
-      },
-      "./node_modules/colors/index.d.ts": {
-        "version": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f",
-        "signature": "a17e831d16c27cbe4d6f0bb238c1ded0d4a26c282009e431c68733be0b792f4f"
       },
       "./node_modules/open/index.d.ts": {
         "version": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703",
@@ -1161,8 +1157,12 @@
         "version": "0b0481c285c517664694fd9f2e7636dfcae7cafff4a54318d2c9453e61ed91b9",
         "signature": "02d804c0bb60cd4693267f760804c914bd4145db7c176ae1a70f346f0fa104fc"
       },
+      "./src/commands/generate/oas.ts": {
+        "version": "3f41d1d430eda1bcc52d60ce882522728679aacf461cc45fc53fdf52ac2275f7",
+        "signature": "7bbc3a0caebfd245e2b09fda2038ed29e8f8082081c2203ffe23b1f068eb0b10"
+      },
       "./src/commands/publish-oas.ts": {
-        "version": "f334103858999564b3d2cf5c64855f970401acfb14a93fef2e78caf4e6060e92",
+        "version": "c6342852cf3fb843ccabb1429845f0676bf7f4d6c1ec9472149038cbbb772976",
         "signature": "a5f91a172a7df9fb875aa8a83eee10175de0ff3ad2566ce4689b9ac27907615e"
       },
       "./node_modules/@types/anymatch/index.d.ts": {
@@ -1903,6 +1903,10 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./node_modules/colors/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./node_modules/@oclif/errors/lib/handle.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
@@ -2007,23 +2011,6 @@
       "./src/lib/analytics.ts": [
         "./node_modules/mixpanel/lib/mixpanel-node.d.ts",
         "./src/lib/credentials.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/commands/generate.ts": [
-        "./node_modules/@oclif/command/lib/index.d.ts",
-        "./node_modules/@types/fs-extra/index.d.ts",
-        "./node_modules/clipboardy/index.d.ts",
-        "./node_modules/@types/node/path.d.ts",
-        "./node_modules/cli-ux/lib/index.d.ts",
-        "./src/paths.ts",
-        "./src/persistutils.ts",
-        "./node_modules/@types/js-yaml/index.d.ts",
-        "./src/lib/analytics.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/colors/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -3335,6 +3322,19 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./src/commands/generate/oas.ts": [
+        "./node_modules/@oclif/command/lib/index.d.ts",
+        "./node_modules/@types/fs-extra/index.d.ts",
+        "./node_modules/clipboardy/index.d.ts",
+        "./node_modules/@types/node/path.d.ts",
+        "./node_modules/cli-ux/lib/index.d.ts",
+        "./src/paths.ts",
+        "./src/persistutils.ts",
+        "./src/lib/analytics.ts",
+        "./node_modules/@types/js-yaml/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./src/commands/publish-oas.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts",
         "./node_modules/@types/fs-extra/index.d.ts",
@@ -3343,7 +3343,7 @@
         "./node_modules/cli-ux/lib/index.d.ts",
         "./src/lib/log-helper.ts",
         "./node_modules/colors/index.d.ts",
-        "./src/commands/generate.ts",
+        "./src/commands/generate/oas.ts",
         "./node_modules/@types/node/child_process.d.ts",
         "./src/commands/init.ts",
         "./src/commands/start.ts",
@@ -3720,6 +3720,13 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./src/commands/generate/oas.ts": [
+        "./node_modules/@oclif/parser/lib/flags.d.ts",
+        "./node_modules/@oclif/command/lib/index.d.ts"
+      ],
+      "./src/commands/publish-oas.ts": [
+        "./node_modules/@oclif/command/lib/index.d.ts"
+      ],
       "./src/commands/intercept.ts": [
         "./node_modules/@oclif/parser/lib/flags.d.ts",
         "./src/lib/proxy-capture-session.ts",
@@ -3742,14 +3749,8 @@
         "./src/lib/proxy-capture-session.ts",
         "./node_modules/@oclif/command/lib/index.d.ts"
       ],
-      "./src/commands/publish-oas.ts": [
-        "./node_modules/@oclif/command/lib/index.d.ts"
-      ],
       "./src/commands/init.ts": [
         "./node_modules/@oclif/parser/lib/flags.d.ts",
-        "./node_modules/@oclif/command/lib/index.d.ts"
-      ],
-      "./src/commands/generate.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts"
       ],
       "./node_modules/@types/node/globals.d.ts": [
@@ -5439,10 +5440,6 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./node_modules/colors/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "./node_modules/keytar/keytar.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
@@ -5536,6 +5533,10 @@
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./node_modules/@oclif/errors/lib/handle.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/colors/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -5757,6 +5758,7 @@
       "./src/index.ts",
       "./src/typescript-overrides.d.ts",
       "./node_modules/clipboardy/index.d.ts",
+      "./node_modules/colors/index.d.ts",
       "./node_modules/@oclif/errors/lib/handle.d.ts",
       "./node_modules/@oclif/errors/lib/errors/cli.d.ts",
       "./node_modules/@oclif/errors/lib/errors/exit.d.ts",
@@ -5778,8 +5780,6 @@
       "./node_modules/keytar/keytar.d.ts",
       "./src/lib/credentials.ts",
       "./src/lib/analytics.ts",
-      "./src/commands/generate.ts",
-      "./node_modules/colors/index.d.ts",
       "./node_modules/open/index.d.ts",
       "./src/commands/init.ts",
       "./node_modules/@types/range-parser/index.d.ts",
@@ -5942,6 +5942,7 @@
       "./node_modules/mockttp/dist/main.d.ts",
       "./node_modules/@types/tmp/index.d.ts",
       "./src/commands/intercept.ts",
+      "./src/commands/generate/oas.ts",
       "./src/commands/publish-oas.ts",
       "./node_modules/@types/anymatch/index.d.ts",
       "./node_modules/@types/archy/index.d.ts",

@@ -10,7 +10,7 @@ import cli from 'cli-ux'
 import * as fetch from 'node-fetch'
 import {fromOptic} from '../lib/log-helper'
 import * as colors from 'colors'
-import Generate from './generate'
+import Oas from './generate/oas'
 import {exec, spawn, SpawnOptions} from 'child_process'
 import Init from './init'
 import {processSetting, readApiConfig} from './start'
@@ -37,7 +37,7 @@ export default class PublishOas extends Command {
       return this.error('No command registered for `publish-oas`. Add one to your api.yml file')
     }
 
-    const generated = await Generate.run(['oas'])
+    const generated = await Oas.run(['oas'])
     if (generated) {
       console.log(generated)
       const commandToRun = processSetting(publishOasCommand, {OAS_PATH: generated})

@@ -40,17 +40,17 @@ object ShapesHelper {
 
   sealed class CoreShapeKind(val baseShapeId: ShapeId, val name: String)
   case object ObjectKind extends CoreShapeKind("$object", "Object")
-  case object ListKind extends CoreShapeKind("$list", "List")
+  case object ListKind extends CoreShapeKind("$list", "List") {def innerParam: String = "$listItem"}
   case object MapKind extends CoreShapeKind("$map", "Map")
   case object OneOfKind extends CoreShapeKind("$oneOf", "One of")
   case object AnyKind extends CoreShapeKind("$any", "Any")
   case object StringKind extends CoreShapeKind("$string", "String")
   case object NumberKind extends CoreShapeKind("$number", "Number")
   case object BooleanKind extends CoreShapeKind("$boolean", "Boolean")
-  case object IdentifierKind extends CoreShapeKind("$identifier", "Identifier")
-  case object ReferenceKind extends CoreShapeKind("$reference", "Reference")
-  case object NullableKind extends CoreShapeKind("$nullable", "Nullable")
-  case object OptionalKind extends CoreShapeKind("$optional", "Optional")
+  case object IdentifierKind extends CoreShapeKind("$identifier", "Identifier") {def innerParam: String = "$identifierInner"}
+  case object ReferenceKind extends CoreShapeKind("$reference", "Reference") {def innerParam: String = "$referenceInner"}
+  case object NullableKind extends CoreShapeKind("$nullable", "Nullable") {def innerParam: String = "$nullableInner"}
+  case object OptionalKind extends CoreShapeKind("$optional", "Optional") {def innerParam: String = "$optionalInner"}
   case object UnknownKind extends CoreShapeKind("$unknown", "Unknown")
 
   val allCoreShapes = Set(ObjectKind, ListKind, MapKind, OneOfKind, AnyKind, StringKind, NumberKind, BooleanKind, IdentifierKind, ReferenceKind, NullableKind, OptionalKind, UnknownKind)

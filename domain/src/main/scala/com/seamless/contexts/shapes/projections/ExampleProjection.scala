@@ -21,7 +21,7 @@ object ExampleProjection {
 
   private def flatPrimitive(kind: CoreShapeKind, value: String): FlatShape = {
     val nameComponent = ColoredComponent(value, "primitive", None, primitiveId = Some(kind.baseShapeId))
-    FlatShape(kind.baseShapeId, Seq(nameComponent), Seq(), kind.baseShapeId, canName = false)
+    FlatShape(kind.baseShapeId, Seq(nameComponent), Seq(), kind.baseShapeId, canName = false, Map.empty)
   }
 
   private def jsonToFlatRender(json: Json)(implicit path: Seq[String]): FlatShape = {
