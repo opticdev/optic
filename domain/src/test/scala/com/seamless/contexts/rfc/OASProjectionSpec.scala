@@ -1,10 +1,8 @@
 package com.seamless.contexts.rfc
 
 import com.seamless.contexts.rfc.projections.OASProjection
-import com.seamless.contexts.shapes.ShapesState
-import com.seamless.contexts.shapes.projections.{FlatShapeProjection, JsonSchemaProjection}
+import com.seamless.contexts.shapes.projections.{JsonSchemaProjection}
 import com.seamless.diff.JsonFileFixture
-import com.seamless.diff.initial.ShapeBuilder
 import org.scalatest.FunSpec
 
 class OASProjectionSpec extends FunSpec with JsonFileFixture {

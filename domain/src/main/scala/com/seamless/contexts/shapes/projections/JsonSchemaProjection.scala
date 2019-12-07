@@ -24,6 +24,11 @@ class JsonSchemaProjection(shapeId: String)(implicit shapesState: ShapesState) {
       return schema.asJson
     }
 
+    if (isNamed && expand) {
+      val name = shapesState.shapes(shape.id).descriptor.name
+      schema.addTitle(name)
+    }
+
     shape.baseShapeId match {
       case ObjectKind.baseShapeId => {
         schema.assignType("object".asJson)
@@ -85,10 +90,15 @@ object JsonSchemaHelpers {
   }
 
   class JsonSchema {
+
     private var _internal = Json.obj().asObject.get
 
     def assignType(json: Json) = {
       _internal = _internal.add("type", json)
+    }
+
+    def addTitle(name: String) = {
+      _internal = _internal.add("title", Json.fromString(name))
     }
 
     def addProperties(fields: Seq[(String, Json)]) = {

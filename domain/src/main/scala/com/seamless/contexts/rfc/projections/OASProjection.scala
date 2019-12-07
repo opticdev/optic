@@ -2,12 +2,28 @@ package com.seamless.contexts.rfc.projections
 
 import com.seamless.contexts.requests.Commands.{BodyDescriptor, ParameterizedPathComponentDescriptor, ShapedBodyDescriptor}
 import com.seamless.contexts.requests.{HttpRequest, HttpResponse}
+import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.projections.OASDomain.{Body, Operation, Path, PathParameter, Response}
-import com.seamless.contexts.rfc.{InMemoryQueries, RfcService, RfcState}
+import com.seamless.contexts.rfc.{InMemoryQueries, RfcService, RfcServiceJSFacade, RfcState}
 import com.seamless.contexts.shapes.ShapesHelper
 import com.seamless.contexts.shapes.projections.JsonSchemaProjection
-import com.seamless.ddd.AggregateId
+import com.seamless.ddd.{AggregateId, InMemoryEventStore}
 import io.circe.Json
+import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
+import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+import scala.scalajs.js
+
+@JSExport
+@JSExportAll
+object OASProjectionHelper {
+  def fromEventString(eventString: String): js.Any = {
+    val eventStore = RfcServiceJSFacade.makeEventStore()
+    eventStore.bulkAdd("id", eventString)
+    val rfcService: RfcService = new RfcService(eventStore)
+    val queries = new InMemoryQueries(eventStore, rfcService, "id")
+    convertJsonToJs(new OASProjection(queries, rfcService, "id").generate)
+  }
+}
 
 class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateId: AggregateId) {
 
