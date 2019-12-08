@@ -1,11 +1,14 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { withRfcContext } from '../../contexts/RfcContext';
-import { getNameWithFormattedParameters, getParentPathId } from '../utilities/PathUtilities';
+import {withRfcContext} from '../../contexts/RfcContext';
+import {getNameWithFormattedParameters, getParentPathId} from '../utilities/PathUtilities';
 import sortBy from 'lodash.sortby';
 import ApiOverview from '../navigation/ApiOverview';
 import EmptySpec from '../navigation/EmptySpec';
 import FuzzySearch from 'fuzzy-search';
+import Navbar from '../navigation/Navbar';
+import {MarkdownRender} from '../requests/DocContribution';
+import EmptySpecWithSession from '../navigation/EmptySpecWithSession';
 
 
 const styles = theme => ({
@@ -25,45 +28,48 @@ class OverView extends React.Component {
 
   state = {
     hasSession: true,
-  }
+  };
 
   componentDidMount() {
-    const {specService} = this.props
+    const {specService} = this.props;
     if (specService) {
-      specService.listSessions().then( ({sessions}) => {
-        this.setState({hasSessions: sessions.length > 0})
-      })
+      specService.listSessions().then(({sessions}) => {
+        this.setState({hasSessions: sessions.length > 0});
+      });
     }
   }
 
   render() {
-    const { classes, cachedQueryResults, baseUrl } = this.props;
-    const { conceptsById, pathsById, requestIdsByPathId } = cachedQueryResults;
-    const { specService, notificationAreaComponent } = this.props
+    const {classes, cachedQueryResults, baseUrl} = this.props;
+    const {conceptsById, pathsById, requestIdsByPathId} = cachedQueryResults;
+    const {specService, notificationAreaComponent, addExampleComponent} = this.props;
     const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
     const sortedConcepts = sortBy(concepts, ['name']);
     const pathTree = flattenPaths('root', pathsById);
 
     const conceptsFiltered = fuzzyConceptFilter(sortedConcepts, '');
     const pathIdsFiltered = fuzzyPathsFilter(pathTree, '');
-    const pathTreeFiltered = flattenPaths('root', pathsById, 0, '', pathIdsFiltered)
+    const pathTreeFiltered = flattenPaths('root', pathsById, 0, '', pathIdsFiltered);
 
-    const providesSpecService = !!specService
-    const isEmptySpec = Object.entries(conceptsById).length === 0 && Object.entries(requestIdsByPathId).length === 0
+    const providesSpecService = !!specService;
+    const isEmptySpec = Object.entries(conceptsById).length === 0 && Object.entries(requestIdsByPathId).length === 0;
 
     if (providesSpecService && isEmptySpec && !this.state.hasSession) {
-      return <EmptySpec />
+      return <EmptySpec/>;
     }
 
     return (
-      <div className={classes.overview}>
-        <ApiOverview
-          notificationAreaComponent={notificationAreaComponent}
-          isEmptySpec={isEmptySpec}
-          paths={pathTreeFiltered}
-          concepts={conceptsFiltered}
-          baseUrl={baseUrl} />
-      </div>
+      <>
+        <Navbar color="primary" notifications={notificationAreaComponent} addExample={addExampleComponent}/>
+        {/*{providesSpecService && isEmptySpec ? (<EmptySpecWithSession />) : null}*/}
+        <div className={classes.overview}>
+          <ApiOverview
+            isEmptySpec={isEmptySpec}
+            paths={pathTreeFiltered}
+            concepts={conceptsFiltered}
+            baseUrl={baseUrl}/>
+        </div>
+      </>
     );
   }
 }
@@ -90,7 +96,7 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
     });
 
 
-  const visible = filteredIds ? (filteredIds.includes(id) || (children.some((i => i.visible)))) : null
+  const visible = filteredIds ? (filteredIds.includes(id) || (children.some((i => i.visible)))) : null;
 
   return {
     name,
@@ -111,20 +117,20 @@ function fuzzyPathsFilter(paths, query) {
 
   function flattenAll(all, a = []) {
     all.forEach(i => {
-      a.push(i)
-      flattenAll(i.children, a)
-    })
+      a.push(i);
+      flattenAll(i.children, a);
+    });
   }
 
-  const allPaths = []
-  flattenAll(paths.children, allPaths)
+  const allPaths = [];
+  flattenAll(paths.children, allPaths);
 
   const searcher = new FuzzySearch(allPaths, ['searchString', 'name'], {sort: true}, {
     caseSensitive: false,
   });
 
-  const pathIds = searcher.search(query).map(i => i.pathId)
-  return pathIds
+  const pathIds = searcher.search(query).map(i => i.pathId);
+  return pathIds;
 }
 
 function fuzzyConceptFilter(concepts, query) {
@@ -132,5 +138,5 @@ function fuzzyConceptFilter(concepts, query) {
     caseSensitive: false,
   });
 
-  return searcher.search(query)
+  return searcher.search(query);
 }

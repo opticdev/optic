@@ -25,6 +25,7 @@ import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import {Helmet} from 'react-helmet';
 
 const drawerWidth = 320;
+const appBarOffset = 50
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,6 +40,8 @@ const useStyles = makeStyles(theme => ({
     flexShrink: 0,
   },
   drawerPaper: {
+    height: `calc(100% - ${appBarOffset}px)`,
+    marginTop: appBarOffset,
     width: drawerWidth,
   },
   toolbar: {
@@ -82,7 +85,7 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
   const {contributions} = cachedQueryResults;
   const {name} = path;
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleClick = () => {
     setOpen(!open);
@@ -141,9 +144,7 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
 
 export default compose(withRfcContext, withNavigationContext)(function ApiOverview(props) {
   const {paths, concepts, cachedQueryResults, handleCommand} = props;
-  const {notificationAreaComponent = null} = props;
   const classes = useStyles();
-
 
   function flatMapOperations(children) {
     return children.flatMap(path => {
@@ -174,14 +175,9 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
         }}
         anchor="left"
       >
-        <div className={classes.toolbar}>
-          <Helmet>
-            <title>{cachedQueryResults.apiName} API Documentation</title>
-          </Helmet>
-          <Typography variant="subtitle1" className={classes.apiName}>{cachedQueryResults.apiName}</Typography>
-          {/*<ApiSearch />*/}
-        </div>
-        <Divider/>
+        <Helmet>
+          <title>{cachedQueryResults.apiName} API Documentation</title>
+        </Helmet>
         <List
           component="nav"
           subheader={operationsToRender.length > 0 && <ListSubheader className={classes.subHeader}>{'Endpoints'}</ListSubheader>}
@@ -218,9 +214,6 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
 
       </Drawer>
       <main className={classes.content}>
-
-        {notificationAreaComponent}
-
         {operationsToRender.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}
                     style={{paddingTop: 20}}>Endpoints</Typography>}
 
