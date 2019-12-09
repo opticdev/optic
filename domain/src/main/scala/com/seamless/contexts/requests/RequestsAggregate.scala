@@ -4,6 +4,9 @@ import com.seamless.contexts.base.BaseCommandContext
 import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.requests.Events._
 import com.seamless.contexts.rfc.Events.{EventContext, fromCommandContext}
+import com.seamless.contexts.shapes.Commands._
+import com.seamless.contexts.shapes.Events.ShapeAdded
+import com.seamless.contexts.shapes.ShapesHelper.ObjectKind
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.contexts.shapes.Validators.ensureShapeIdExists
 import com.seamless.ddd.{Effects, EventSourcedAggregate}
@@ -82,7 +85,14 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
         case AddRequest(requestId, pathId, httpMethod) => {
           Validators.ensureRequestIdAssignable(requestId)
           Validators.ensurePathComponentIdExists(pathId)
-          persist(Events.RequestAdded(requestId, pathId, httpMethod, eventContext))
+          val shapeId = ShapesHelper.newShapeId()
+          val queryStringParameterId = RequestsServiceHelper.newParameterId()
+          persist(Vector(
+            Events.RequestAdded(requestId, pathId, httpMethod, eventContext),
+            Events.RequestParameterAdded(queryStringParameterId, requestId, "query", "queryString", eventContext),
+            ShapeAdded(shapeId, ObjectKind.baseShapeId, DynamicParameterList(Seq.empty), "", eventContext),
+            Events.RequestParameterShapeSet(queryStringParameterId, ShapedRequestParameterShapeDescriptor(shapeId, false), eventContext)
+          ).asInstanceOf[Vector[RequestsEvent]]: _*)
         }
 
         case SetRequestContentType(requestId, contentType) => {
@@ -335,6 +345,8 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
     case e: RequestParameterRemoved => {
       state.withoutRequestParameter(e.parameterId)
     }
+
+    case _ => state
   }
 
   override def initialState: RequestsState = RequestsState(

@@ -35,6 +35,7 @@ import JsonTextarea from '../shared/JsonTextarea';
 import { DocDivider } from '../requests/DocConstants';
 import Chip from '@material-ui/core/Chip';
 import jsonic from 'jsonic';
+import { queryStringDiffer } from '../diff/DiffUtilities';
 import IconButton from '@material-ui/core/IconButton';
 import {LightTooltip} from '../tooltips/LightTooltip';
 
@@ -110,6 +111,7 @@ function ExampleBuilderBase(props) {
     const [parsedRequestBodySuccess, parsedRequestBody] = parseLoosely(state.request.body);
     const request = {
       method: state.request.method,
+      queryParameters: {},
       url: state.request.url || '/',
       headers: {}
     };
@@ -141,7 +143,7 @@ function ExampleBuilderBase(props) {
     const interactionDiffer = new InteractionDiffer(rfcState);
     const interaction = toInteraction(sample);
     const hasUnrecognizedPath = interactionDiffer.hasUnrecognizedPath(interaction);
-    const hasDiff = interactionDiffer.hasDiff(interaction);
+    const hasDiff = interactionDiffer.hasDiff(interaction, queryStringDiffer(rfcState.shapesState, sample));
     const result = {
       state,
       sample,

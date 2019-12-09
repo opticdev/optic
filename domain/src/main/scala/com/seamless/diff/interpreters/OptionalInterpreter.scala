@@ -13,6 +13,16 @@ import scala.util.Try
 class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestDiffResult] {
   override def interpret(diff: RequestDiffResult): Seq[DiffInterpretation] = {
     diff match {
+      case d: UnmatchedQueryParameterShape => {
+        d.shapeDiff match {
+          case sd: UnsetObjectKey => {
+            Seq(
+              ChangeFieldToOptional(sd, InterpretationContext(None, true))
+            )
+          }
+          case _ => Seq.empty
+        }
+      }
       case d: UnmatchedRequestBodyShape => {
         d.shapeDiff match {
           case sd: UnsetValue => {

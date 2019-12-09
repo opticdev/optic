@@ -11,6 +11,7 @@ import compose from 'lodash.compose';
 import { NamerStore } from '../shapes/Namer';
 import SimulatedCommandContext from './SimulatedCommandContext';
 import FirstTimeDiffTutorial from '../tutorial/FirstTimeDiffTutorial';
+import { queryStringDiffer } from './DiffUtilities';
 
 class RequestDiffX extends React.Component {
   handleDiscard = async () => {
@@ -39,7 +40,8 @@ class RequestDiffX extends React.Component {
 
     for (let item of startableSampleItems) {
       const interaction = toInteraction(item.sample);
-      const diffIterator = JsonHelper.iteratorToJsIterator(RequestDiffer.compare(interaction, rfcState));
+      const plugins = queryStringDiffer(rfcState.shapesState, item.sample)
+      const diffIterator = JsonHelper.iteratorToJsIterator(RequestDiffer.compare(interaction, rfcState, plugins));
 
       const diff = { [Symbol.iterator]: () => diffIterator };
       for (let diffItem of diff) {
@@ -167,6 +169,7 @@ const DiffPageStateManager = withRfcContext((props) => {
           observed={{
             statusCode: sample.response.statusCode,
             requestContentType: sample.request.headers['content-type'],
+            queryString: sample.request.queryParameters || {},
             requestBody: sample.request.body,
             responseContentType: sample.response.headers['content-type'],
             responseBody: sample.response.body

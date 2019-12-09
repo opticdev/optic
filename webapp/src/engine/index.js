@@ -50,11 +50,14 @@ export const lengthScala = (collection) => {
 const { ApiInteraction, ApiRequest, ApiResponse } = opticEngine.com.seamless.diff;
 export function toInteraction(sample) {
     return ApiInteraction(
-        ApiRequest(sample.request.url, sample.request.method, sample.request.headers['content-type'] || '*/*', fromJs(sample.request.body)),
+        ApiRequest(sample.request.url, sample.request.method, sample.queryString || '', sample.request.headers['content-type'] || '*/*', fromJs(sample.request.body)),
         ApiResponse(sample.response.statusCode, sample.response.headers['content-type'] || '*/*', fromJs(sample.response.body))
     )
 }
 export const InteractionDiffer = opticEngine.com.seamless.diff.InteractionDiffer;
 export const RequestDiffer = opticEngine.com.seamless.diff.RequestDiffer()
 export const Interpreters = opticEngine.com.seamless.diff.interpreters
+export const PluginRegistry = opticEngine.com.seamless.diff.PluginRegistry
+export const QueryStringDiffer = opticEngine.com.seamless.diff.query.QueryStringDiffer
+export const { JsQueryStringParser } = opticEngine
 console.log(opticEngine)

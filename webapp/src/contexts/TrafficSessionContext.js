@@ -118,7 +118,7 @@ class TrafficSessionStoreBase extends React.Component {
                 const { session: latestSession } = result.sessionResponse
                 if (!session){
                     this.checkForUpdates()
-    
+
                     return;
                 }
                 if (latestSession.samples.length > session.samples.length) {
@@ -143,7 +143,7 @@ class TrafficSessionStoreBase extends React.Component {
         const { isLoading, error, diffSessionManager, session } = this.state;
 
         if (isLoading) {
-            return <LoadingDiff />
+            return null
         }
 
         if (error) {
@@ -172,4 +172,4 @@ export {
     TrafficSessionStore,
     TrafficSessionContext,
     withTrafficSessionContext
-} 
+}

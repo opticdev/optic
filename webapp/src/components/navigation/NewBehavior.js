@@ -28,6 +28,7 @@ import {MarkdownRender} from '../requests/DocContribution';
 import {PURPOSE} from '../../ContributionKeys';
 import Chip from '@material-ui/core/Chip';
 import Menu from '@material-ui/core/Menu';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const useStyles = makeStyles({
   section: {
@@ -99,13 +100,19 @@ function NewBehaviorCard({source, color, children}) {
 
 function NewBehavior(props) {
   const classes = useStyles();
+  const {sessionId, requestIdsWithDiffs, unrecognizedUrlCount, cachedQueryResults, baseUrl, isLoading} = props;
   const [anchorEl, setAnchorEl] = useState(false);
+  if (isLoading) {
+    return (
+      <div className={classes.notificationBar}>
+        <LinearProgress  style={{width: '100%', opacity: .35, marginTop: 3}}/>
+      </div>
+    )
+  }
 
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
   };
-
-  const {sessionId, requestIdsWithDiffs, unrecognizedUrlCount, cachedQueryResults, baseUrl} = props;
 
   const undocumentedBehavior = (
     <div className={classes.chipNotif}>
@@ -245,7 +252,7 @@ class NewBehaviorWrapper extends React.Component {
     }
 
     if (isLoading) {
-      return null;
+      return (<NewBehavior isLoading={true}/>);
     }
 
     const {isEmpty} = this.props;
@@ -274,6 +281,7 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
           {(context) => {
             const {rfcId, rfcService} = this.props;
             const {cachedQueryResults, queries, baseUrl} = this.props;
+            const {isLoading} = context
             const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, {session: context.session});
             const rfcState = rfcService.currentState(rfcId);
             const requestIdsWithDiffs = getRequestIdsWithDiffs(rfcState, diffStateProjections);
@@ -284,6 +292,7 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
 
             return (
               <NewBehavior
+                isLoading={isLoading}
                 requestIdsWithDiffs={requestIdsWithDiffs}
                 sessionId={lastSessionId}
                 baseUrl={baseUrl}

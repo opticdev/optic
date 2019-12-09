@@ -164,10 +164,6 @@ object Interpretations {
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
 
-    val name = shapesState.concepts.collectFirst {
-      case (id, concept) if id == inlineShapeId => concept.descriptor.name
-    }
-
     val commands = shape.commands ++ Seq(
       AddShape(wrapperId, inlineShapeId, ""),
       SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, wrapperId, isRemoved = false))
