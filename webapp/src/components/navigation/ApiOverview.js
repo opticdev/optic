@@ -91,6 +91,35 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
     setOpen(!open);
   };
 
+  if (!name && operationsToRender[0]) {
+    const {requestId, request} = operationsToRender[0]
+    const {httpMethod, pathComponentId} = request.requestDescriptor;
+    const purpose = contributions.getOrUndefined(requestId, PURPOSE) || (
+      <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
+    );
+    return (
+      <NavLink
+        to={`#${requestId}`}
+        activeClassName="selected"
+        style={{textDecoration: 'none', color: 'black'}}
+      >
+        <ListItem button
+                  disableRipple
+                  component="div"
+                  dense
+                  className={classes.nested}>
+          <ListItemText
+            primary={purpose}
+            classes={{dense: classes.dense}}
+            primaryTypographyProps={{
+              variant: 'overline',
+              style: {textTransform: 'none', textOverflow: 'ellipsis'}
+            }}/>
+        </ListItem>
+      </NavLink>
+    )
+  }
+
   return (
     <>
       <ListItem button
@@ -159,7 +188,9 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
     });
   }
 
-  const operationsToRender = flatMapOperations(paths.children);
+  const allPaths = [paths, ...paths.children]
+
+  const operationsToRender = flatMapOperations(allPaths);
 
   const isEmpty = concepts.length === 0 && operationsToRender.length === 0
 
@@ -184,8 +215,7 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           aria-labelledby="nested-list-subheader"
           dense={true}
         >
-          {paths.children.map(i => <EndpointBasePath path={i}
-                                                     operationsToRender={flatMapOperations([i])}/>)}
+          {allPaths.map(i => <EndpointBasePath path={i} operationsToRender={flatMapOperations([i])}/>)}
         </List>
 
         <Divider/>

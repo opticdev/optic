@@ -18,9 +18,9 @@ export default function ReportBug({classes}) {
 
   return (
     <>
-      <Fab variant="extended" className={classes.fab} size="small" onClick={handleClick}>
+      <Button color="secondary" className={classes.fab} size="small" onClick={handleClick}>
         Report Bug
-      </Fab>
+      </Button>
       <Menu
         anchorEl={anchorEl}
         keepMounted
