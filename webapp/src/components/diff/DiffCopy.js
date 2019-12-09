@@ -38,7 +38,20 @@ export function DiffToDiffCard(diff, queries) {
       return <DiffInfo title="Shape Mismatch" description={ShapeDiffToCopy(diffData.shapeDiff, queries)} />;
     }
     case 'UnmatchedQueryParameterShape': {
-      return <DiffInfo title="Query Parameter Shape Mismatch" description={'The request query string does not match the spec'} />
+      const shapeDiff = Object.entries(diffData.shapeDiff)[0]
+      const description = ((diff) => {
+        const [type, diffData] = diff
+        switch (type) {
+          case 'UnexpectedObjectKey':
+            return `New Query Parameter Observed \`${diffData.key}\``
+          case 'UnsetObjectKey':
+            return `Required Query Parameter \`${diffData.key}\` not set`
+          default:
+            return 'Shape does not match'
+        }
+      })(shapeDiff)
+
+      return <DiffInfo title="Query String Does Not Match" description={description} />
     }
     default:
       return type;

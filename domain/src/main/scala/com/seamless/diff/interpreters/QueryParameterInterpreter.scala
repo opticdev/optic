@@ -21,7 +21,7 @@ class QueryParameterInterpreter(shapesState: ShapesState) extends Interpreter[Re
             Seq(
               DiffInterpretation(
                 "Add Query Parameter",
-                DynamicDescription("add parameter to spec"),
+                DynamicDescription(s"Add `${sd.key}`"),
                 commands,
                 InterpretationContext(None, inRequestBody = true),
                 FrontEndMetadata(addedIds = Seq(newFieldId, result.rootShapeId))
