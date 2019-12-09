@@ -10,32 +10,35 @@ export function DiffToDiffCard(diff, queries) {
     //operation level diffs
     case 'UnmatchedHttpStatusCode':
       return <DiffInfo title={`${diffData.statusCode} response observed`}
-                       description="This response code is not documented in the specification"/>;
+        description="This response code is not documented in the specification" />;
     //content type diffs
     case 'UnmatchedResponseContentType':
       return <DiffInfo title={`The \`content-type\` does not match the spec`}
-                       description="Expected `a/b`" />
+        description="Expected `a/b`" />
     case 'UnmatchedRequestContentType':
       return <DiffInfo title={`The \`content-type\` does not match the spec`}
-                       description="Expected `a/b`" />
+        description="Expected `a/b`" />
 
     //first time shapes observed
     case 'UnmatchedResponseBodyShape': {
       const isNewBody = Object.entries(diffData.shapeDiff)[0][0] === 'UnsetShape'
 
       if (isNewBody) {
-        return <DiffInfo title="Body Included with Response" description={'A response body was observed for the first time'}/>;
+        return <DiffInfo title="Body Included with Response" description={'A response body was observed for the first time'} />;
       }
-      return <DiffInfo title="Shape Mismatch" description={ShapeDiffToCopy(diffData.shapeDiff, queries)}/>;
+      return <DiffInfo title="Shape Mismatch" description={ShapeDiffToCopy(diffData.shapeDiff, queries)} />;
     }
     case 'UnmatchedRequestBodyShape': {
       const isNewBody = Object.entries(diffData.shapeDiff)[0][0] === 'UnsetShape'
 
       if (isNewBody) {
-        return <DiffInfo title="Request Body Included" description={'A request body was observed for the first time'}/>;
+        return <DiffInfo title="Request Body Included" description={'A request body was observed for the first time'} />;
       }
 
-      return <DiffInfo title="Shape Mismatch" description={ShapeDiffToCopy(diffData.shapeDiff, queries)}/>;
+      return <DiffInfo title="Shape Mismatch" description={ShapeDiffToCopy(diffData.shapeDiff, queries)} />;
+    }
+    case 'UnmatchedQueryParameterShape': {
+      return <DiffInfo title="Query Parameter Shape Mismatch" description={'The request query string does not match the spec'} />
     }
     default:
       return type;
@@ -60,7 +63,7 @@ export function ShapeDiffToCopy(diff, queries) {
       return 'The body shape has changed'
     case 'ListItemShapeMismatch': {
       const shapeStructure = queries.nameForShapeId(diffData.expectedList.shapeId)
-      const name = shapeStructure.map(({name}) => name).join(' ')
+      const name = shapeStructure.map(({ name }) => name).join(' ')
       return `Some items in the list do not match \`${name}\``
     }
     case 'UnsetObjectKey':
@@ -71,7 +74,7 @@ export function ShapeDiffToCopy(diff, queries) {
       return `\`${diffData.key}\` is present, but not expected`
     case 'KeyShapeMismatch': {
       const shapeStructure = queries.nameForShapeId(diffData.expected.shapeId)
-      const name = shapeStructure.map(({name}) => name).join(' ')
+      const name = shapeStructure.map(({ name }) => name).join(' ')
 
       return ` \`${diffData.key}\` was not a \`${name}\``
     }

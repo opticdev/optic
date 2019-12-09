@@ -13,6 +13,7 @@ import scala.util.Random
 @JSExport
 @JSExportAll
 object ShapesHelper {
+
   def newShapeId(): String = s"shape_${Random.alphanumeric take 10 mkString}"
 
   def newShapeParameterId(): String = s"shape-parameter_${Random.alphanumeric take 10 mkString}"

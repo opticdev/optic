@@ -3,20 +3,20 @@ package com.seamless.diff
 import com.seamless.contexts.requests.Commands._
 import com.seamless.contexts.requests._
 import com.seamless.contexts.rfc.RfcState
-import com.seamless.ddd.ExportedCommand
+import com.seamless.contexts.shapes.ShapesState
 import com.seamless.diff.ShapeDiffer.ShapeDiffResult
 import io.circe._
-import io.circe._
+import io.circe.literal._
 import io.circe.generic.auto._
 import io.circe.syntax._
-import io.circe.export.Exported
+import com.seamless.diff.query.{JvmQueryStringParser, QueryStringDiffer, QueryStringParser}
 
 import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportDescendentClasses}
+import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.{Failure, Success, Try}
 
 @JSExport
-case class ApiRequest(url: String, method: String, contentType: String, body: Option[Json] = None)
+case class ApiRequest(url: String, method: String, queryString: String, contentType: String, body: Option[Json] = None)
 
 @JSExport
 case class ApiResponse(statusCode: Int, contentType: String, body: Option[Json] = None)
@@ -57,6 +57,17 @@ object JsonHelper {
     x.toJSIterator
   }
 }
+object PluginRegistryUtilities {
+  def defaultPluginRegistry(shapesState: ShapesState) = {
+    val parser = new JvmQueryStringParser(JsonObject(("f1", JsonNumber.fromIntegralStringUnsafe("1").asJson)).asJson)
+    val differ = new QueryStringDiffer(shapesState, parser)
+    PluginRegistry(differ)
+  }
+}
+
+@JSExport
+@JSExportAll
+case class PluginRegistry(queryStringDiffer: QueryStringDiffer)
 
 @JSExport
 @JSExportAll
@@ -77,10 +88,11 @@ object RequestDiffer {
   case class UnmatchedResponseBodyShape(responseId: ResponseId, contentType: String, responseStatusCode: Int, shapeDiff: ShapeDiffResult) extends RequestDiffResult
   case class UnmatchedRequestBodyShape(requestId: RequestId, contentType: String, shapeDiff: ShapeDiffResult) extends RequestDiffResult
   case class UnmatchedRequestContentType(requestId: RequestId, contentType: String, previousContentType: String) extends RequestDiffResult
+  case class UnmatchedQueryParameterShape(requestId: RequestId, parameterId: RequestParameterId, shapeDiff: ShapeDiffResult, actual: Json) extends RequestDiffResult
 
   case class PipelineItem[T](item: Option[T], results: Iterator[RequestDiffResult])
 
-  def compare(interaction: ApiInteraction, spec: RfcState): Iterator[RequestDiffResult] = {
+  def compare(interaction: ApiInteraction, spec: RfcState, plugins: PluginRegistry): Iterator[RequestDiffResult] = {
     val pathPipeline = pathDiff(interaction, spec)
     pathPipeline.item match {
       case None => pathPipeline.results
@@ -89,8 +101,9 @@ object RequestDiffer {
         requestPipeline.item match {
           case None => pathPipeline.results ++ requestPipeline.results
           case Some(request) => {
+            val queryParameterPipeline = queryParameterDiff(interaction, spec, plugins, request)
             val responsePipeline = responseDiff(interaction, spec, request)
-            requestPipeline.results ++ responsePipeline.results
+            queryParameterPipeline.results ++ requestPipeline.results ++ responsePipeline.results
           }
         }
       }
@@ -106,6 +119,33 @@ object RequestDiffer {
     PipelineItem(matchedPath, Iterator())
   }
 
+  def shouldTrustRequest(interaction: ApiInteraction): Boolean = {
+    (200 until 400) contains interaction.apiResponse.statusCode
+  }
+
+  def queryParameterDiff(interaction: ApiInteraction, spec: RfcState, plugins: PluginRegistry, request: HttpRequest): PipelineItem[Any] = {
+    if (shouldTrustRequest(interaction)) {
+      val queryParameterWrapper = spec.requestsState.requestParameters
+        .filter(x => {
+          val (parameterId, parameter) = x
+          println(x)
+          parameter.requestParameterDescriptor.requestId == request.requestId && parameter.requestParameterDescriptor.location == "query"
+        })
+        .values.headOption
+      return queryParameterWrapper match {
+        case Some(value) => {
+          val diff = plugins.queryStringDiffer.diff(value, interaction.apiRequest.queryString)
+          PipelineItem(None, diff)
+        }
+        case None => {
+          PipelineItem(None, Iterator.empty)
+        }
+      }
+
+    }
+    PipelineItem(None, Iterator.empty)
+  }
+
   def requestDiff(interaction: ApiInteraction, spec: RfcState, pathId: PathComponentId): PipelineItem[HttpRequest] = {
 
     val matchedOperation = spec.requestsState.requests.values
@@ -116,7 +156,9 @@ object RequestDiffer {
     }
 
     val request = matchedOperation.get
-    if ((200 until 400) contains interaction.apiResponse.statusCode) {
+    if (shouldTrustRequest(interaction)) {
+
+      // request body
       val requestDiff: Option[Iterator[RequestDiffResult]] = request.requestDescriptor.bodyDescriptor match {
         case d: UnsetBodyDescriptor => {
           if (interaction.apiRequest.body.isEmpty) {
@@ -145,6 +187,7 @@ object RequestDiffer {
     }
     PipelineItem(matchedOperation, Iterator.empty)
   }
+
 
   def responseDiff(interaction: ApiInteraction, spec: RfcState, operation: HttpRequest): PipelineItem[HttpResponse] = {
 

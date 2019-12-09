@@ -11,6 +11,16 @@ import com.seamless.diff.ShapeDiffer._
 class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestDiffResult] {
   override def interpret(diff: RequestDiffResult): Seq[DiffInterpretation] = {
     diff match {
+      case d: UnmatchedQueryParameterShape => {
+        d.shapeDiff match {
+          case sd: NullObjectKey => {
+            Seq(
+              ChangeFieldToNullable(sd, InterpretationContext(None, true))
+            )
+          }
+          case _ => Seq.empty
+        }
+      }
       case d: UnmatchedRequestBodyShape => {
         d.shapeDiff match {
           case sd: NullValue => {
@@ -65,7 +75,7 @@ class NullableInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
 
     DiffInterpretation(
       s"Change to Nullable",
-//      s"Optic expected to see a value for the key ${shapeDiff.key} and instead saw null. If it is allowed to be null, make it Nullable",
+      //      s"Optic expected to see a value for the key ${shapeDiff.key} and instead saw null. If it is allowed to be null, make it Nullable",
       DynamicDescription(s"Make `${shapeDiff.key}` `Nullable`"),
       commands,
       context,
