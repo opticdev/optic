@@ -4,6 +4,7 @@ import com.seamless.contexts.base.BaseCommandContext
 import com.seamless.contexts.rfc.Events.{EventContext, fromCommandContext}
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.Events._
+import com.seamless.contexts.shapes.ShapesHelper.OptionalKind
 import com.seamless.ddd.{Effects, EventSourcedAggregate}
 
 import scala.collection.immutable.ListMap
@@ -254,7 +255,7 @@ object ShapesAggregate extends EventSourcedAggregate[ShapesState, ShapesCommand,
     val oneOfShape = CoreShape(oneOfShapeId, DynamicParameterList(Seq.empty), "OneOf")
 
     val optionalShapeId = "$optional"
-    val optionalParameter = ShapeParameterEntity("$optionalInner", ShapeParameterValue(optionalShapeId, ProviderInShape(optionalShapeId, NoProvider(), "$optionalInner"), "T"), isRemoved = false)
+    val optionalParameter = ShapeParameterEntity(OptionalKind.innerParam, ShapeParameterValue(optionalShapeId, ProviderInShape(optionalShapeId, NoProvider(), OptionalKind.innerParam), "T"), isRemoved = false)
     val optionalShape = CoreShape(optionalShapeId, StaticParameterList(Seq(optionalParameter.shapeParameterId)), "Optional")
 
     val nullableShapeId = "$nullable"

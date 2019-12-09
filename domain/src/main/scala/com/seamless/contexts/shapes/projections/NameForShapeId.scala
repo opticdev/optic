@@ -84,7 +84,7 @@ object NameForShapeId {
         nullableInner ++ Seq(ColoredComponent("(nullable)", "modifier", primitiveId= Some(NullableKind.baseShapeId)))
       }
       case OptionalKind.baseShapeId => {
-        val (innerId, optionalInner) = resolveInner("$optionalInner")
+        val (innerId, optionalInner) = resolveInner(OptionalKind.innerParam)
         optionalInner ++ Seq(ColoredComponent("(optional)", "modifier", primitiveId= Some(OptionalKind.baseShapeId)))
       }
       case ReferenceKind.baseShapeId => {

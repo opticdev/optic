@@ -73,7 +73,7 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
             case fs: FieldShapeFromShape => ShapeProvider(fs.shapeId)
             case fs: FieldShapeFromParameter => ParameterProvider(fs.shapeParameterId)
           },
-          "$optionalInner"
+          OptionalKind.innerParam
         )
       ),
       SetFieldShape(FieldShapeFromShape(field.fieldId, wrapperShapeId)),
@@ -93,7 +93,7 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     val commands = Seq(
       AddShape(wrapperShapeId, OptionalKind.baseShapeId, ""),
       SetParameterShape(
-        ProviderInShape(wrapperShapeId, ShapeProvider(shapeDiff.expected.shapeId), "$optionalInner")
+        ProviderInShape(wrapperShapeId, ShapeProvider(shapeDiff.expected.shapeId), OptionalKind.innerParam)
       ),
       SetRequestBodyShape(requestDiffResult.requestId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )
@@ -112,7 +112,7 @@ class OptionalInterpreter(shapesState: ShapesState) extends Interpreter[RequestD
     val commands = Seq(
       AddShape(wrapperShapeId, OptionalKind.baseShapeId, ""),
       SetParameterShape(
-        ProviderInShape(wrapperShapeId, ShapeProvider(shapeDiff.expected.shapeId), "$optionalInner")
+        ProviderInShape(wrapperShapeId, ShapeProvider(shapeDiff.expected.shapeId), OptionalKind.innerParam)
       ),
       SetResponseBodyShape(requestDiffResult.responseId, ShapedBodyDescriptor(requestDiffResult.contentType, wrapperShapeId, isRemoved = false))
     )

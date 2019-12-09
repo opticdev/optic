@@ -93,7 +93,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
           const response: CallbackResponseResult = {
             statusCode: 302,
             headers: {
-              location: 'https://google.com'
+              location: `https://${config.targetHost}`
             }
           };
           return response

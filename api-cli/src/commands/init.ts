@@ -63,6 +63,7 @@ export default class Init extends Command {
       const host = 'localhost'
       await this.blankWithName(name, parseInt(port, 10), command.split('\n')[0], host)
     }
+    // @ts-ignore
     const {basePath} = await getPaths()
     this.log('\n')
     this.log(`API Spec successfully added to ${basePath} !`)
@@ -103,6 +104,7 @@ export default class Init extends Command {
   }
 
   async createFileTree(events: any[], config?: IApiCliConfig) {
+    // @ts-ignore
     const {readmePath, specStorePath, configPath, gitignorePath} = await getPaths()
     const readmeContents = await fs.readFile(path.join(__dirname, '../../resources/docs-readme.md'))
     const files = [

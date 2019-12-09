@@ -3,7 +3,7 @@ import * as findUp from 'find-up'
 import * as fs from 'fs-extra'
 
 export interface IPathMapping {
-  
+
 }
 export async function getPaths(fallbackPath: (cwd: string) => string = (cwd) => path.join(cwd, '.api')) {
   const rootPath = await (async () => {
@@ -13,7 +13,7 @@ export async function getPaths(fallbackPath: (cwd: string) => string = (cwd) => 
     }
     return fallbackPath(process.cwd())
   })()
-  
+
   await fs.ensureDir(rootPath)
   process.chdir(path.resolve(rootPath, '../'))
 
@@ -31,7 +31,7 @@ async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> {
   const exampleRequestsPath = path.join(basePath, 'example-requests')
   await fs.ensureDir(sessionsPath)
   await fs.ensureDir(exampleRequestsPath)
-  const outputPath = path.join(basePath, 'output')
+  const outputPath = path.join(basePath, 'generated')
 
   return {
     cwd,

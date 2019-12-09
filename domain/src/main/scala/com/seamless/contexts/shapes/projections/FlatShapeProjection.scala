@@ -18,13 +18,13 @@ object FlatShapeProjection {
   @JSExportAll
   case class FlatField(fieldName: String, shape: FlatShape, fieldId: FieldId)
   @JSExportAll
-  case class FlatShape(baseShapeId: ShapeId, typeName: Seq[ColoredComponent], fields: Seq[FlatField], id: ShapeId, canName: Boolean) {
+  case class FlatShape(baseShapeId: ShapeId, typeName: Seq[ColoredComponent], fields: Seq[FlatField], id: ShapeId, canName: Boolean, links: Map[String, ShapeId]) {
     def joinedTypeName = typeName.map(_.name).mkString(" ")
   }
   @JSExportAll
   case class FlatShapeResult(root: FlatShape, parameterMap: Map[String, FlatShape], pathsForAffectedIds: Vector[Seq[String]])
 
-  private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false))
+  private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false, Map.empty))
 
   def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None, affectedIds: Seq[String] = Seq())(implicit shapesState: ShapesState, expandedName: Boolean = true) = {
     implicit val parametersByShapeId: mutable.Map[String, FlatShape] = scala.collection.mutable.HashMap[String, FlatShape]()
@@ -52,15 +52,15 @@ object FlatShapeProjection {
       .map(i => (i.shapeId, getFlatShape(i.shapeId, trail and InParameter(i.shapeId))(shapesState, None, false, parametersByShapeId, trailLogger)))
       .getOrElse(returnAny)
 
-    def returnWith( typeName: Seq[ColoredComponent], fields: Seq[FlatField] = Seq(), canName: Boolean = false ) = {
-      FlatShape(shape.baseShapeId, typeName, fields, shapeId, canName)
+    def returnWith( typeName: Seq[ColoredComponent], fields: Seq[FlatField] = Seq(), canName: Boolean = false, links: Map[String, ShapeId] ) = {
+      FlatShape(shape.coreShapeId, typeName, fields, shapeId, canName, links)
     }
 
     shape.coreShapeId match {
       case ListKind.baseShapeId => {
         val (innerShapeId, flatShape) = resolveInner("$listItem")
         addLinkToParameter(innerShapeId, flatShape)
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName))
+        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map("$listItem" -> innerShapeId))
       }
       case MapKind.baseShapeId => {
         val (keyInnerShapeId, keyFlatShape) = resolveInner("$mapKey")
@@ -69,7 +69,7 @@ object FlatShapeProjection {
         val (valueInnerShapeId, valueFlatShape) = resolveInner("$mapValue")
         addLinkToParameter(valueInnerShapeId, valueFlatShape)
 
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName))
+        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map("$mapKey" -> keyInnerShapeId, "$mapValue" -> valueInnerShapeId))
       }
       case OneOfKind.baseShapeId => {
         val inners = shapesState.shapes(shapeId).descriptor.parameters match {
@@ -81,28 +81,30 @@ object FlatShapeProjection {
           }
         }
 
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName))
+        val innerLinks = inners.map(resolveInner).map(_._1).zipWithIndex.map { case (innerId, index) => index.toString -> innerId }.toMap
+
+        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = innerLinks)
       }
       case NullableKind.baseShapeId => {
         val (innerShapeId, flatShape) = resolveInner("$nullableInner")
         addLinkToParameter(innerShapeId, flatShape)
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName))
+        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map("$nullableInner" -> innerShapeId))
       }
       case OptionalKind.baseShapeId => {
-        val (innerShapeId, flatShape) = resolveInner("$optionalInner")
+        val (innerShapeId, flatShape) = resolveInner(OptionalKind.innerParam)
         addLinkToParameter(innerShapeId, flatShape)
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName))
+        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map(OptionalKind.innerParam -> innerShapeId))
       }
       case ReferenceKind.baseShapeId => {
         val (innerShapeId, flatShape) = resolveInner("$referenceInner")
         addLinkToParameter(innerShapeId, flatShape)
 
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName))
+        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map("$referenceInner" -> innerShapeId))
       }
       case IdentifierKind.baseShapeId => {
         val (innerShapeId, flatShape) = resolveInner("$identifierInner")
         addLinkToParameter(innerShapeId, flatShape)
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName))
+        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map("$identifierInner" -> innerShapeId))
       }
       case ObjectKind.baseShapeId => {
         val baseObject = ShapeDiffer.resolveBaseObject(shapeId)(shapesState)
@@ -125,12 +127,12 @@ object FlatShapeProjection {
 //        })
 
 
-        FlatShape(baseObject.descriptor.baseShapeId, NameForShapeId.getShapeName(baseObject.shapeId), fields, baseObject.shapeId, canName)
+        FlatShape(baseObject.descriptor.baseShapeId, NameForShapeId.getShapeName(baseObject.shapeId), fields, baseObject.shapeId, canName, Map.empty)
       }
 
       //fallback to primitives
       case baseShapeId if ShapesHelper.allCoreShapes.exists(_.baseShapeId == baseShapeId) =>
-        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName))
+        returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map.empty)
       //fallback for unhandled -- should never be reached
       case _ => returnAny._2
     }
