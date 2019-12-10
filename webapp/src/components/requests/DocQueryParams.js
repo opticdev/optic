@@ -18,8 +18,11 @@ export function DocQueryParams({shapeId, flatShape, getContribution, updateContr
     <DocSubGroup title={'Query Parameters'}>
       {flatShape.root.fields.map(i => {
 
+        const joinedType = i.shape.typeName.map(tn => tn.name).join(' ')
+
         return (
           <DocParameter title={i.fieldName}
+                        typeName={joinedType}
                         updateContribution={updateContribution}
                         paramId={i.fieldId}
                         description={getContribution(i.fieldId, DESCRIPTION)}/>

@@ -22,6 +22,7 @@ import {NavigationStore} from '../../../contexts/NavigationContext.js';
 import NewBehavior from '../../navigation/NewBehavior.js';
 import {RequestsDetailsPage} from '../../requests/EndpointPage';
 import {DialogWrapper} from '../../loaders/ExampleDrivenSpecLoader';
+import {LocalRfcStore} from '../../../contexts/RfcContext';
 
 export const basePath = basePaths.localBasePath;
 
@@ -103,13 +104,13 @@ export class LocalLoader extends React.Component {
     return (
       <CommandContextStore clientSessionId={clientSessionId} clientId={clientId}>
         <InitialRfcCommandsStore initialEventsString={loadedEvents} rfcId="testRfcId">
-          <LocalDiffRfcStore specService={specService}>
+          <LocalRfcStore specService={specService}>
             <Switch>
               <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage}/>
               <Route exact path={basePath} component={LocalSpecOverview}/>
               <Route path={diffBasePath} component={SessionWrapper}/>
             </Switch>
-          </LocalDiffRfcStore>
+          </LocalRfcStore>
         </InitialRfcCommandsStore>
       </CommandContextStore>
     );

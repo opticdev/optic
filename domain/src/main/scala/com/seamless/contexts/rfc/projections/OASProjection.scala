@@ -3,7 +3,6 @@ package com.seamless.contexts.rfc.projections
 import com.seamless.contexts.requests.Commands.{BodyDescriptor, ParameterizedPathComponentDescriptor, ShapedBodyDescriptor}
 import com.seamless.contexts.requests.{Commands, HttpRequest, HttpResponse}
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.projections.OASDomain.{Body, Operation, Path, PathParameter, Response}
 import com.seamless.contexts.rfc.{InMemoryQueries, RfcService, RfcServiceJSFacade, RfcState}
 import com.seamless.contexts.shapes.ShapesHelper
 import com.seamless.contexts.shapes.ShapesHelper.OptionalKind
@@ -30,6 +29,7 @@ object OASProjectionHelper {
 }
 
 class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateId: AggregateId) {
+  import OASDomain._
 
   lazy val rfcState = rfcService.currentState(aggregateId)
 
@@ -145,105 +145,108 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
 
   }
 
-}
 
-object OASDomain {
+  object OASDomain {
 
-  case class Path(absolutePath: String, operations: Map[String, Operation], pathParameters: Vector[PathParameter]) {
-    def pathParametersToJson = {
-      "parameters" -> Json.arr(pathParameters.sortBy(p => absolutePath.indexOf("{" + p + "}")).map(_.toJson): _*)
-    }
-  }
-
-  case class Operation(operationId: String,
-                       summary: Option[String],
-                       description: Option[String],
-                       requestBody: Option[Body],
-                       query: Option[FlatShapeProjection.FlatShapeResult],
-                       responses: Vector[(String, Response)]) {
-
-    def toJson(rfcState: RfcState) = {
-      var json = Json.obj().asObject.get
-      json = json.add("operationId", Json.fromString(operationId))
-
-      if (summary.isDefined && summary.get.nonEmpty) {
-        json = json.add("purpose", Json.fromString(summary.get))
+    case class Path(absolutePath: String, operations: Map[String, Operation], pathParameters: Vector[PathParameter]) {
+      def pathParametersToJson = {
+        "parameters" -> Json.arr(pathParameters.sortBy(p => absolutePath.indexOf("{" + p + "}")).map(_.toJson): _*)
       }
-      if (description.isDefined && description.get.nonEmpty) {
-        json = json.add("description", Json.fromString(description.get))
-      }
-
-      if (requestBody.isDefined) {
-        json = json.add("requestBody", requestBody.get.toJson)
-      }
-
-      if (responses.nonEmpty) {
-        json = json.add("responses", Json.obj(responses.map(i => (i._1, i._2.toJson)): _*))
-      }
-
-      if (query.isDefined && query.get.root.fields.nonEmpty) {
-        val queryParameters = query.get.root.fields.map(i => {
-          val innerOption = i.shape.links.get(OptionalKind.innerParam)
-          if (innerOption.isDefined) {
-            //is optional
-            QueryParameter(i.fieldName, false, new JsonSchemaProjection(innerOption.get)(rfcState.shapesState).asJsonSchema(true))
-          } else {
-            //is required
-            QueryParameter(i.fieldName, true, new JsonSchemaProjection(i.shape.id)(rfcState.shapesState).asJsonSchema(true))
-          }
-        })
-        json = json.add("parameters", Json.arr(queryParameters.map(_.toJson):_*))
-      }
-
-      Json.fromJsonObject(json)
     }
 
-  }
+    case class Operation(operationId: String,
+                         summary: Option[String],
+                         description: Option[String],
+                         requestBody: Option[Body],
+                         query: Option[FlatShapeProjection.FlatShapeResult],
+                         responses: Vector[(String, Response)]) {
 
-  case class Body(contentType: String, asJsonSchema: Option[Json]) {
-    def toJson = {
-      Json.obj(
-        "content" -> Json.obj(
-          contentType -> Json.obj(
-            "schema" -> asJsonSchema.get
+      def toJson(rfcState: RfcState) = {
+        var json = Json.obj().asObject.get
+        json = json.add("operationId", Json.fromString(operationId))
+
+        if (summary.isDefined && summary.get.nonEmpty) {
+          json = json.add("purpose", Json.fromString(summary.get))
+        }
+        if (description.isDefined && description.get.nonEmpty) {
+          json = json.add("description", Json.fromString(description.get))
+        }
+
+        if (requestBody.isDefined) {
+          json = json.add("requestBody", requestBody.get.toJson)
+        }
+
+        if (responses.nonEmpty) {
+          json = json.add("responses", Json.obj(responses.map(i => (i._1, i._2.toJson)): _*))
+        }
+
+        if (query.isDefined && query.get.root.fields.nonEmpty) {
+          val queryParameters = query.get.root.fields.map(i => {
+            val innerOption = i.shape.links.get(OptionalKind.innerParam)
+            if (innerOption.isDefined) {
+              //is optional
+              QueryParameter(i.fieldName, false, new JsonSchemaProjection(innerOption.get)(rfcState.shapesState).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
+            } else {
+              //is required
+              QueryParameter(i.fieldName, true, new JsonSchemaProjection(i.shape.id)(rfcState.shapesState).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
+            }
+          })
+          json = json.add("parameters", Json.arr(queryParameters.map(_.toJson):_*))
+        }
+
+        Json.fromJsonObject(json)
+      }
+
+    }
+
+    case class Body(contentType: String, asJsonSchema: Option[Json]) {
+      def toJson = {
+        Json.obj(
+          "content" -> Json.obj(
+            contentType -> Json.obj(
+              "schema" -> asJsonSchema.get
+            )
           )
         )
-      )
-    }
-  }
-
-  case class PathParameter(name: String, asJsonSchema: Json) {
-    def toJson = {
-      Json.obj(
-        "in" -> Json.fromString("path"),
-        "name" -> Json.fromString(name),
-        "required" -> Json.fromBoolean(true),
-        "schema" -> asJsonSchema
-      )
-    }
-  }
-
-  case class QueryParameter(name: String, required: Boolean, schema: Json) {
-    def toJson = {
-      Json.obj(
-        "in" -> Json.fromString("query"),
-        "name" -> Json.fromString(name),
-        "required" -> Json.fromBoolean(required),
-        "schema" -> schema
-      )
-    }
-  }
-
-  case class Response(description: Option[String], responseBody: Option[Body]) {
-    def toJson = {
-      val base = if (responseBody.isDefined) {
-        responseBody.get.toJson
-      } else {
-        Json.obj()
       }
-      Json.fromJsonObject(base.asObject.get.add("description", Json.fromString(description.getOrElse(""))))
     }
-  }
 
+    case class PathParameter(name: String, asJsonSchema: Json) {
+      def toJson = {
+        Json.obj(
+          "in" -> Json.fromString("path"),
+          "name" -> Json.fromString(name),
+          "required" -> Json.fromBoolean(true),
+          "schema" -> asJsonSchema
+        )
+      }
+    }
+
+    case class QueryParameter(name: String, required: Boolean, schema: Json, description: Option[String]) {
+      def toJson = {
+        Json.obj(
+          "in" -> Json.fromString("query"),
+          "name" -> Json.fromString(name),
+          "required" -> Json.fromBoolean(required),
+          "schema" -> schema,
+          "description" -> Json.fromString(description.getOrElse(""))
+        )
+      }
+    }
+
+    case class Response(description: Option[String], responseBody: Option[Body]) {
+      def toJson = {
+        val base = if (responseBody.isDefined) {
+          responseBody.get.toJson
+        } else {
+          Json.obj()
+        }
+        Json.fromJsonObject(base.asObject.get.add("description", Json.fromString(description.getOrElse(""))))
+      }
+    }
+
+
+  }
 
 }
+
