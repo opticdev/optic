@@ -224,13 +224,18 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
 
     case class QueryParameter(name: String, required: Boolean, schema: Json, description: Option[String]) {
       def toJson = {
-        Json.obj(
+        var base = Json.obj(
           "in" -> Json.fromString("query"),
           "name" -> Json.fromString(name),
           "required" -> Json.fromBoolean(required),
-          "schema" -> schema,
-          "description" -> Json.fromString(description.getOrElse(""))
-        )
+          "schema" -> schema
+        ).asObject.get
+
+        if (description.isDefined) {
+          base = base.add("description", Json.fromString(description.get))
+        }
+
+        Json.fromJsonObject(base)
       }
     }
 
