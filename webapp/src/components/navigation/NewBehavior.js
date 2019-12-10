@@ -102,6 +102,7 @@ function NewBehavior(props) {
   const classes = useStyles();
   const {sessionId, requestIdsWithDiffs, unrecognizedUrlCount, cachedQueryResults, baseUrl, isLoading} = props;
   const [anchorEl, setAnchorEl] = useState(false);
+
   if (isLoading) {
     return (
       <div className={classes.notificationBar}>
