@@ -35,30 +35,30 @@ class NullableInterpreterSpec extends FunSpec {
   describe("when expecting a shape") {
     describe("when given null") {
       val interaction = ApiInteraction(
-        ApiRequest("/", "POST", requestContentType, Some(json"""null""")),
+        ApiRequest("/", "POST", "", requestContentType, Some(json"""null""")),
         ApiResponse(200, requestContentType, None)
       )
       it("should offer to make it nullable") {
         val initialState = fromCommands(Seq.empty)
-        val diff = RequestDiffer.compare(interaction, initialState)
+        val diff = RequestDiffer.compare(interaction, initialState, PluginRegistryUtilities.defaultPluginRegistry(initialState.shapesState))
         println(diff)
         val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff.next())
         assert(interpretations.length == 1)
         val interpretation = interpretations.head
         println(interpretation)
         val state = fromCommands(interpretation.commands)
-        val updatedDiff = RequestDiffer.compare(interaction, state)
+        val updatedDiff = RequestDiffer.compare(interaction, state, PluginRegistryUtilities.defaultPluginRegistry(state.shapesState))
         assert(updatedDiff.isEmpty)
       }
     }
     describe("when given an incorrect shape") {
       val interaction = ApiInteraction(
-        ApiRequest("/", "POST", requestContentType, Some(json"""1""")),
+        ApiRequest("/", "POST", "", requestContentType, Some(json"""1""")),
         ApiResponse(200, requestContentType, None)
       )
       it("should have a diff but offer no interpretation") {
         val initialState = fromCommands(Seq.empty)
-        val diff = RequestDiffer.compare(interaction, initialState)
+        val diff = RequestDiffer.compare(interaction, initialState, PluginRegistryUtilities.defaultPluginRegistry(initialState.shapesState))
         assert(diff.hasNext)
         val next = diff.next()
         assert(next.isInstanceOf[UnmatchedRequestBodyShape])
@@ -69,12 +69,13 @@ class NullableInterpreterSpec extends FunSpec {
     }
     describe("when given the correct shape") {
       val interaction = ApiInteraction(
-        ApiRequest("/", "POST", requestContentType, Some(json""""asdf"""")),
+        ApiRequest("/", "POST", "", requestContentType, Some(json""""asdf"""")),
         ApiResponse(200, requestContentType, None)
       )
       it("should have no diff or interpretation") {
         val initialState = fromCommands(Seq.empty)
-        val diff = RequestDiffer.compare(interaction, initialState)
+        val diff = RequestDiffer.compare(interaction, initialState, PluginRegistryUtilities.defaultPluginRegistry(initialState.shapesState))
+
         assert(diff.isEmpty)
       }
     }
@@ -87,30 +88,32 @@ class NullableInterpreterSpec extends FunSpec {
     )
     describe("when given null") {
       val interaction = ApiInteraction(
-        ApiRequest("/", "POST", requestContentType, Some(json"""{"a":null}""")),
+        ApiRequest("/", "POST", "", requestContentType, Some(json"""{"a":null}""")),
         ApiResponse(200, requestContentType, None)
       )
       it("should offer to make it nullable") {
         val initialState = fromCommands(initialCommands)
-        val diff = RequestDiffer.compare(interaction, initialState)
+        val diff = RequestDiffer.compare(interaction, initialState, PluginRegistryUtilities.defaultPluginRegistry(initialState.shapesState))
+
         println(diff)
         val interpretations = new NullableInterpreter(initialState.shapesState).interpret(diff.next())
         assert(interpretations.length == 1)
         val interpretation = interpretations.head
         println(interpretation)
         val state = fromCommands(initialCommands ++ interpretation.commands)
-        val updatedDiff = RequestDiffer.compare(interaction, state)
+        val updatedDiff = RequestDiffer.compare(interaction, state, PluginRegistryUtilities.defaultPluginRegistry(state.shapesState))
         assert(updatedDiff.isEmpty)
       }
     }
     describe("when given an incorrect shape") {
       val interaction = ApiInteraction(
-        ApiRequest("/", "POST", requestContentType, Some(json"""{"a":1}""")),
+        ApiRequest("/", "POST", "", requestContentType, Some(json"""{"a":1}""")),
         ApiResponse(200, requestContentType, None)
       )
       it("should have a diff but offer no interpretation") {
         val initialState = fromCommands(initialCommands)
-        val diff = RequestDiffer.compare(interaction, initialState)
+        val diff = RequestDiffer.compare(interaction, initialState, PluginRegistryUtilities.defaultPluginRegistry(initialState.shapesState))
+
         assert(diff.hasNext)
         val next = diff.next()
         assert(next.isInstanceOf[UnmatchedRequestBodyShape])
@@ -121,12 +124,13 @@ class NullableInterpreterSpec extends FunSpec {
     }
     describe("when given the correct shape") {
       val interaction = ApiInteraction(
-        ApiRequest("/", "POST", requestContentType, Some(json"""{"a":"asdf"}""")),
+        ApiRequest("/", "POST", "", requestContentType, Some(json"""{"a":"asdf"}""")),
         ApiResponse(200, requestContentType, None)
       )
       it("should have no diff or interpretation") {
         val initialState = fromCommands(initialCommands)
-        val diff = RequestDiffer.compare(interaction, initialState)
+        val diff = RequestDiffer.compare(interaction, initialState, PluginRegistryUtilities.defaultPluginRegistry(initialState.shapesState))
+
         assert(diff.isEmpty)
       }
     }

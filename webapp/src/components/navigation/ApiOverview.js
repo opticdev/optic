@@ -25,6 +25,7 @@ import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import {Helmet} from 'react-helmet';
 
 const drawerWidth = 320;
+const appBarOffset = 50
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,6 +40,8 @@ const useStyles = makeStyles(theme => ({
     flexShrink: 0,
   },
   drawerPaper: {
+    height: `calc(100% - ${appBarOffset}px)`,
+    marginTop: appBarOffset,
     width: drawerWidth,
   },
   toolbar: {
@@ -82,11 +85,40 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
   const {contributions} = cachedQueryResults;
   const {name} = path;
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleClick = () => {
     setOpen(!open);
   };
+
+  if (!name && operationsToRender[0]) {
+    const {requestId, request} = operationsToRender[0]
+    const {httpMethod, pathComponentId} = request.requestDescriptor;
+    const purpose = contributions.getOrUndefined(requestId, PURPOSE) || (
+      <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
+    );
+    return (
+      <NavLink
+        to={`#${requestId}`}
+        activeClassName="selected"
+        style={{textDecoration: 'none', color: 'black'}}
+      >
+        <ListItem button
+                  disableRipple
+                  component="div"
+                  dense
+                  className={classes.nested}>
+          <ListItemText
+            primary={purpose}
+            classes={{dense: classes.dense}}
+            primaryTypographyProps={{
+              variant: 'overline',
+              style: {textTransform: 'none', textOverflow: 'ellipsis'}
+            }}/>
+        </ListItem>
+      </NavLink>
+    )
+  }
 
   return (
     <>
@@ -141,9 +173,7 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
 
 export default compose(withRfcContext, withNavigationContext)(function ApiOverview(props) {
   const {paths, concepts, cachedQueryResults, handleCommand} = props;
-  const {notificationAreaComponent = null} = props;
   const classes = useStyles();
-
 
   function flatMapOperations(children) {
     return children.flatMap(path => {
@@ -158,7 +188,9 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
     });
   }
 
-  const operationsToRender = flatMapOperations(paths.children);
+  const allPaths = [paths, ...paths.children]
+
+  const operationsToRender = flatMapOperations(allPaths);
 
   const isEmpty = concepts.length === 0 && operationsToRender.length === 0
 
@@ -174,22 +206,16 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
         }}
         anchor="left"
       >
-        <div className={classes.toolbar}>
-          <Helmet>
-            <title>{cachedQueryResults.apiName} API Documentation</title>
-          </Helmet>
-          <Typography variant="subtitle1" className={classes.apiName}>{cachedQueryResults.apiName}</Typography>
-          {/*<ApiSearch />*/}
-        </div>
-        <Divider/>
+        <Helmet>
+          <title>{cachedQueryResults.apiName} API Documentation</title>
+        </Helmet>
         <List
           component="nav"
           subheader={operationsToRender.length > 0 && <ListSubheader className={classes.subHeader}>{'Endpoints'}</ListSubheader>}
           aria-labelledby="nested-list-subheader"
           dense={true}
         >
-          {paths.children.map(i => <EndpointBasePath path={i}
-                                                     operationsToRender={flatMapOperations([i])}/>)}
+          {allPaths.map(i => <EndpointBasePath path={i} operationsToRender={flatMapOperations([i])}/>)}
         </List>
 
         <Divider/>
@@ -218,9 +244,6 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
 
       </Drawer>
       <main className={classes.content}>
-
-        {notificationAreaComponent}
-
         {operationsToRender.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}
                     style={{paddingTop: 20}}>Endpoints</Typography>}
 

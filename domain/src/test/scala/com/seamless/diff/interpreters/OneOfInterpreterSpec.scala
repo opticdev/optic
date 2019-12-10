@@ -9,7 +9,7 @@ import com.seamless.contexts.shapes.ShapesHelper.StringKind
 import com.seamless.ddd.InMemoryEventStore
 import com.seamless.diff.RequestDiffer.RequestDiffResult
 import com.seamless.diff.initial.ShapeBuilder
-import com.seamless.diff.{ApiInteraction, ApiRequest, ApiResponse, RequestDiffer}
+import com.seamless.diff.{ApiInteraction, ApiRequest, ApiResponse, PluginRegistryUtilities, RequestDiffer}
 import org.scalatest.FunSpec
 import io.circe.literal._
 
@@ -36,12 +36,12 @@ class OneOfInterpreterSpec extends FunSpec {
     builtShape.commands.foreach(println)
     describe("both in the initial payload") {
       val interaction = ApiInteraction(
-        ApiRequest("/", "POST", requestContentType, Some(json"""{"f":[1, "two", 3]}""")),
+        ApiRequest("/", "POST", "", requestContentType, Some(json"""{"f":[1, "two", 3]}""")),
         ApiResponse(200, requestContentType, None)
       )
       it("should offer to make it a oneOf[string, number]") {
         val initialState = fromCommands(initialCommands)
-        val diff = RequestDiffer.compare(interaction, initialState)
+        val diff = RequestDiffer.compare(interaction, initialState, PluginRegistryUtilities.defaultPluginRegistry(initialState.shapesState))
         assert(diff.hasNext)
         val next = diff.next()
         println(next)
@@ -53,7 +53,7 @@ class OneOfInterpreterSpec extends FunSpec {
         interpretation.commands.foreach(println)
         val state = fromCommands(initialCommands ++ interpretation.commands)
         println("now i have applied the commands")
-        val updatedDiff = RequestDiffer.compare(interaction, state)
+        val updatedDiff = RequestDiffer.compare(interaction, state, PluginRegistryUtilities.defaultPluginRegistry(state.shapesState))
         if (updatedDiff.hasNext) {
           updatedDiff.toVector.foreach(println)
           assert(false)
@@ -73,12 +73,12 @@ class OneOfInterpreterSpec extends FunSpec {
     builtShape.commands.foreach(println)
     describe("all in initial payload") {
       val interaction = ApiInteraction(
-        ApiRequest("/", "POST", requestContentType, Some(json"""[{"f":1},{"f":"one"},{"f":false}]""")),
+        ApiRequest("/", "POST", "", requestContentType, Some(json"""[{"f":1},{"f":"one"},{"f":false}]""")),
         ApiResponse(200, requestContentType, None)
       )
       it("should offer to make it a oneof[string, boolean] and then a oneof[string, boolean, number]") {
         val initialState = fromCommands(initialCommands)
-        val diff = RequestDiffer.compare(interaction, initialState)
+        val diff = RequestDiffer.compare(interaction, initialState, PluginRegistryUtilities.defaultPluginRegistry(initialState.shapesState))
         assert(diff.hasNext)
 
         def commandsAndDiff(initialCommands: Seq[RfcCommand], next: RequestDiffResult) = {
@@ -89,7 +89,7 @@ class OneOfInterpreterSpec extends FunSpec {
           interpretation.commands.foreach(println)
           val state = fromCommands(initialCommands ++ interpretation.commands)
           println("now i have applied the commands")
-          val diff = RequestDiffer.compare(interaction, state)
+          val diff = RequestDiffer.compare(interaction, state, PluginRegistryUtilities.defaultPluginRegistry(state.shapesState))
           (interpretation.commands, diff)
         }
 
@@ -115,12 +115,12 @@ class OneOfInterpreterSpec extends FunSpec {
     describe("both in the initial payload") {
 
       val interaction = ApiInteraction(
-        ApiRequest("/", "POST", requestContentType, Some(json"""[1, "two", 3]""")),
+        ApiRequest("/", "POST", "", requestContentType, Some(json"""[1, "two", 3]""")),
         ApiResponse(200, requestContentType, None)
       )
       it("should offer to make it a oneOf[string, number") {
         val initialState = fromCommands(initialCommands)
-        val diff = RequestDiffer.compare(interaction, initialState)
+        val diff = RequestDiffer.compare(interaction, initialState, PluginRegistryUtilities.defaultPluginRegistry(initialState.shapesState))
         assert(diff.hasNext)
         val next = diff.next()
         println(next)
@@ -131,7 +131,7 @@ class OneOfInterpreterSpec extends FunSpec {
         interpretation.commands.foreach(println)
         val state = fromCommands(initialCommands ++ interpretation.commands)
         println("now i have applied the commands")
-        val updatedDiff = RequestDiffer.compare(interaction, state)
+        val updatedDiff = RequestDiffer.compare(interaction, state, PluginRegistryUtilities.defaultPluginRegistry(state.shapesState))
         if (updatedDiff.hasNext) {
           updatedDiff.toVector.foreach(println)
           assert(false)

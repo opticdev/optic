@@ -10,6 +10,7 @@ import { routerPaths, basePaths } from '../../RouterPaths';
 import { SpecOverview } from '../routes/local';
 import NewBehavior from '../navigation/NewBehavior';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
+import QueueIcon from '@material-ui/icons/Queue';
 import FiberNewIcon from '@material-ui/icons/FiberNew';
 import { RequestsDetailsPage } from '../requests/EndpointPage';
 import {
@@ -34,6 +35,9 @@ import JsonTextarea from '../shared/JsonTextarea';
 import { DocDivider } from '../requests/DocConstants';
 import Chip from '@material-ui/core/Chip';
 import jsonic from 'jsonic';
+import { queryStringDiffer } from '../diff/DiffUtilities';
+import IconButton from '@material-ui/core/IconButton';
+import {LightTooltip} from '../tooltips/LightTooltip';
 
 export const basePath = basePaths.exampleDrivenSpecBasePath
 
@@ -62,10 +66,12 @@ export function DialogWrapper(props) {
   const { specService, onSampleAdded, children } = props;
   return (
 
-    <div>
-      <div style={{ textAlign: 'right' }}>
-        <Button variant="contained" color="primary" onClick={() => setShowExampleBuilder(true)}>Add Example</Button>
-      </div>
+    <>
+      <LightTooltip title="Manually Add Example">
+      <IconButton color="primary" size="small" onClick={() => setShowExampleBuilder(true)}>
+        <QueueIcon />
+      </IconButton>
+      </LightTooltip>
       <Dialog
         fullWidth={true}
         maxWidth={'xl'}
@@ -77,7 +83,7 @@ export function DialogWrapper(props) {
         <ExampleBuilder onSampleAdded={onSampleAdded} specService={specService} />
       </Dialog>
       {children}
-    </div>
+    </>
   )
 }
 
@@ -105,6 +111,7 @@ function ExampleBuilderBase(props) {
     const [parsedRequestBodySuccess, parsedRequestBody] = parseLoosely(state.request.body);
     const request = {
       method: state.request.method,
+      queryParameters: {},
       url: state.request.url || '/',
       headers: {}
     };
@@ -136,7 +143,7 @@ function ExampleBuilderBase(props) {
     const interactionDiffer = new InteractionDiffer(rfcState);
     const interaction = toInteraction(sample);
     const hasUnrecognizedPath = interactionDiffer.hasUnrecognizedPath(interaction);
-    const hasDiff = interactionDiffer.hasDiff(interaction);
+    const hasDiff = interactionDiffer.hasDiff(interaction, queryStringDiffer(rfcState.shapesState, sample));
     const result = {
       state,
       sample,
@@ -329,13 +336,10 @@ class ExampleDrivenSpecLoader extends React.Component {
       return (
         <SpecOverview
           specService={specService}
-          notificationAreaComponent={(
-            <DialogWrapper
-              specService={specService}
-              onSampleAdded={this.handleSampleAdded}>
-              <NewBehavior specService={specService} />
-            </DialogWrapper>
-          )} />
+          addExampleComponent={<DialogWrapper
+            specService={specService}
+            onSampleAdded={this.handleSampleAdded}/>}
+          notificationAreaComponent={<NewBehavior specService={specService} />} />
       );
     };
 

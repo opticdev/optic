@@ -10,7 +10,7 @@ class ApiInteractionSerializationSpec extends FunSpec {
     describe("204 No Content") {
       it("should accept null bodies") {
         val interaction = ApiInteraction(
-          ApiRequest("uuu", "mmm", "ccc", None),
+          ApiRequest("uuu", "mmm", "", "ccc", None),
           ApiResponse(204, "ccc", None)
         )
         val asJson = ApiInteractionSerialization.asJson(interaction)

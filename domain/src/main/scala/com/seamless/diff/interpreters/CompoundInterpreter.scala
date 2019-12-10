@@ -5,6 +5,7 @@ import com.seamless.diff.DiffInterpretation
 import com.seamless.diff.RequestDiffer._
 
 class CompoundInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDiffResult] {
+  val queryParameterInterpreter = new QueryParameterInterpreter(_shapesState)
   val unknownInterpreter = new UnknownInterpreter(_shapesState)
   val oneOfInterpreter = new OneOfInterpreter(_shapesState)
   val nullableInterpreter = new NullableInterpreter(_shapesState)
@@ -12,7 +13,8 @@ class CompoundInterpreter(_shapesState: ShapesState) extends Interpreter[Request
   val basicDiffInterpreter = new BasicDiffInterpreter(_shapesState)
 
   override def interpret(diff: RequestDiffResult): Seq[DiffInterpretation] = {
-    unknownInterpreter.interpret(diff) ++
+    queryParameterInterpreter.interpret(diff) ++
+      unknownInterpreter.interpret(diff) ++
       nullableInterpreter.interpret(diff) ++
       optionalInterpreter.interpret(diff) ++
       oneOfInterpreter.interpret(diff) ++

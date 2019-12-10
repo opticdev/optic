@@ -4,7 +4,7 @@ import com.seamless.contexts.rfc.Commands.RfcCommand
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.ShapesHelper.OneOfKind
 import com.seamless.contexts.shapes._
-import com.seamless.diff.RequestDiffer.RequestDiffResult
+import com.seamless.diff.RequestDiffer.{RequestDiffResult, UnmatchedQueryParameterShape}
 import com.seamless.diff.ShapeDiffer._
 import com.seamless.diff._
 import com.seamless.diff.initial.ShapeBuilder
@@ -15,6 +15,18 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     implicit val shapesState: ShapesState = _shapesState
     implicit val bindings: ParameterBindings = Map.empty
     diff match {
+      case d: UnmatchedQueryParameterShape => {
+        d.shapeDiff match {
+          case sd: KeyShapeMismatch => {
+            Seq(
+              ConvertToOneOf(sd.expected, InterpretationContext(None, true), sd.actual, sd.fieldId, id => Seq(
+                SetFieldShape(FieldShapeFromShape(sd.fieldId, id))
+              ))
+            )
+          }
+          case _ => Seq.empty
+        }
+      }
       case d: RequestDiffer.UnmatchedRequestBodyShape => {
         d.shapeDiff match {
           case sd: ListItemShapeMismatch => {
@@ -84,7 +96,7 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     DiffInterpretation(
       "Add One Of",
       DynamicDescription("Change to {{shapeId_SHAPE}}", shapeId = Some(wrapperShapeId)),
-//      "Optic observed multiple different shapes. If it can be any of these shapes, make it a OneOf",
+      //      "Optic observed multiple different shapes. If it can be any of these shapes, make it a OneOf",
       commands,
       context,
       FrontEndMetadata(
@@ -104,7 +116,7 @@ class OneOfInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDif
     DiffInterpretation(
       "Update One Of",
       DynamicDescription("Add {{shapeId_SHAPE}} to One Of", shapeId = Some(expected.shapeId)),
-//      "Optic observed a shape that did not match any of the expected shapes. If it is expected, add it to the choices",
+      //      "Optic observed a shape that did not match any of the expected shapes. If it is expected, add it to the choices",
       commands,
       context,
       FrontEndMetadata(

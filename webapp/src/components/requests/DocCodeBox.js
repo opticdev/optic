@@ -91,21 +91,21 @@ export const ShapeOverview = withStyles(styles)(({shapeId, classes, contentType,
   );
 });
 
-export const ExampleOnly = withStyles(styles)(({classes, contentType, title, example}) => {
+export const ExampleOnly = withStyles(styles)(({classes, contentType, title, example, disableNaming}) => {
   return (
     <DocCodeBox title={title}>
       {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
-      <ExampleViewer example={example}/>
+      <ExampleViewer example={example} disableNaming={disableNaming} />
     </DocCodeBox>
   );
 });
 
-export const ShapeOnly = withStyles(styles)(({classes, title, contentType, shapeId}) => {
+export const ShapeOnly = withStyles(styles)(({classes, title, contentType, shapeId, disableNaming}) => {
 
   return (
     <DocCodeBox title={title}>
       {contentType && <Typography variant="subtitle1" className={classes.contentType}>{contentType}</Typography>}
-      <ShapeViewerWithQuery shapeId={shapeId}/>
+      <ShapeViewerWithQuery shapeId={shapeId} disableNaming={disableNaming}/>
     </DocCodeBox>
   );
 });

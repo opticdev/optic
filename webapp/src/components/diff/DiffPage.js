@@ -19,15 +19,16 @@ import { JsonHelper } from '../../engine';
 import Mustache from 'mustache';
 import { Link } from 'react-router-dom';
 import { withNavigationContext } from '../../contexts/NavigationContext';
-import {PURPOSE} from '../../ContributionKeys';
+import { PURPOSE } from '../../ContributionKeys';
 import compose from 'lodash.compose';
 import { DiffDocGrid } from '../requests/DocGrid';
-import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
+import { getNormalizedBodyDescriptor } from '../../utilities/RequestUtilities';
 import Fab from '@material-ui/core/Fab';
 import FastForwardIcon from '@material-ui/icons/FastForward';
 import NavigationIcon from '@material-ui/icons/Navigation';
 import BugReportIcon from '@material-ui/icons/BugReport';
 import ReportBug from './ReportBug';
+import Button from '@material-ui/core/Button';
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -42,6 +43,10 @@ const styles = theme => ({
     paddingRight: 20,
     paddingBottom: 350,
     overflow: 'scroll'
+  },
+  skipContainer: {
+    display: 'flex',
+    flexDirection: 'row'
   },
   requestContainer: {
     // display: 'flex',
@@ -114,57 +119,69 @@ const DiffPath = withStyles(styles)(({ classes, path, method, url }) => {
   );
 });
 
-const DiffRequest = withStyles(styles)(({
-  classes,
-  observedRequestBody,
-  observedContentType,
-  requestBody = {},
-  interpretation,
-  diff
-}) => {
+const DiffRequest = withStyles(styles)((props) => {
+  const {
+    classes,
+    requestQueryString,
+    observedQueryString,
+    observedRequestBody,
+    observedContentType,
+    requestBody = {},
+    interpretation,
+    diff
+  } = props;
+
+  console.log({ props })
 
   const { shapeId, httpContentType } = requestBody;
 
-  if (typeof observedRequestBody === 'undefined' && !shapeId) {
-    return null
-  }
+  const shouldShowObservedQueryString = Object.keys(observedQueryString).length > 0
+  const shouldShowSpecQueryString = shouldShowObservedQueryString
+  const shouldShowObservedExample = typeof observedRequestBody !== 'undefined'
+  const shouldShowSpecExample = !!shapeId
 
-  const opacity = (!diff && !interpretation) ? .6 : 1;
+  const opacity = opacityForGridItem(diff, interpretation)
 
   return (
     <DiffDocGrid
       style={{ opacity }}
       left={(
-        <DocSubGroup title="Observed Request Body">
+        <DocSubGroup title="Observed Request">
           {diff}
-          <ExampleOnly title="Example" contentType={observedContentType} example={observedRequestBody} />
+          {shouldShowObservedQueryString && <ExampleOnly title="Query String" example={observedQueryString} />}
+          {shouldShowObservedExample && <ExampleOnly title="Example" contentType={observedContentType} example={observedRequestBody} />}
         </DocSubGroup>
       )}
-      right={shapeId && (
-        <DocSubGroup title="Request Body">
+      right={(
+        <DocSubGroup title="Expected Request">
           {interpretation}
-          <ShapeOnly title="Shape" shapeId={shapeId} contentType={httpContentType} />
+          {shouldShowSpecQueryString && <ShapeOnly title="Query String Shape" disableNaming shapeId={requestQueryString.requestParameterDescriptor.shapeDescriptor.ShapedRequestParameterShapeDescriptor.shapeId} />}
+          {shouldShowSpecExample && <ShapeOnly title="Shape" shapeId={shapeId} contentType={httpContentType} />}
         </DocSubGroup>
       )}
     />
   );
 });
 
+function opacityForGridItem(diff, interpretation) {
+  return (!diff && !interpretation) ? .6 : 1;
+}
 
-const DiffResponse = withStyles(styles)(({
-  classes,
-  statusCode,
-  observedResponseBody,
-  observedContentType,
-  response,
-  responseBody = {},
-  diff,
-  interpretation
-}) => {
-
+const DiffResponse = withStyles(styles)((props) => {
+  const {
+    classes,
+    statusCode,
+    observedResponseBody,
+    observedContentType,
+    response,
+    responseBody = {},
+    diff,
+    interpretation
+  } = props
   const { shapeId, httpContentType } = responseBody;
 
-  const opacity = (!diff && !interpretation) ? .6 : 1;
+  const opacity = opacityForGridItem(diff, interpretation)
+  console.log({ props })
 
   return (
     <DiffDocGrid
@@ -192,15 +209,16 @@ class DiffPage extends React.Component {
 
   getSpecForRequest(observedStatusCode) {
     const { cachedQueryResults, requestId } = this.props;
-    const { requests, responses } = cachedQueryResults;
+    const { requests, responses, requestParameters } = cachedQueryResults;
     const request = requests[requestId];
     const { requestDescriptor } = request;
     const { bodyDescriptor } = requestDescriptor;
 
     const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
-
+    console.log({ cachedQueryResults })
+    const queryString = Object.values(requestParameters).find(x => x.requestParameterDescriptor.requestId === requestId && x.requestParameterDescriptor.location === 'query')
+    console.log({ queryString })
     const requestBody = getNormalizedBodyDescriptor(bodyDescriptor);
-
     const response = Object.values(responses)
       .find(({ responseDescriptor }) =>
         responseDescriptor.requestId === requestId &&
@@ -210,6 +228,7 @@ class DiffPage extends React.Component {
 
     return {
       purpose,
+      queryString,
       requestBody,
       response,
       responseBody
@@ -219,7 +238,9 @@ class DiffPage extends React.Component {
 
   getInterpretationCard(displayContext) {
     const { interpretation, interpretationsLength, interpretationsIndex, setInterpretationIndex, applyCommands, queries } = this.props;
-
+    if (!interpretation) {
+      debugger;
+    }
     const { contextJs: context, commands, actionTitle, descriptionJs: description, metadataJs } = interpretation;
 
     const descriptionProcessed = (() => {
@@ -285,11 +306,14 @@ class DiffPage extends React.Component {
   }
 
   render() {
-    const { classes, url, method, path, observed, onSkip, baseUrl, remainingInteractions } = this.props;
+    const { classes, url, method, path, observed, onSkip, baseUrl } = this.props;
 
-    const { requestBody, responseBody, response, purpose } = this.getSpecForRequest(observed.statusCode);
+    const { queryString, requestBody, responseBody, response, purpose } = this.getSpecForRequest(observed.statusCode);
 
     const { metadataJs } = this.props.interpretation;
+    if (!this.props.interpretation) {
+      debugger
+    }
     const { addedIds, changedIds } = metadataJs;
 
     return (
@@ -321,27 +345,40 @@ class DiffPage extends React.Component {
 
           <div className={classes.scroll}>
 
-            <div className={classes.fabs}>
-              <ReportBug classes={classes} />
-              <Fab variant="extended" color="primary"  size="small"  onClick={onSkip} className={classes.fab}>
-                Skip
-                <FastForwardIcon fontSize="small"/>
-              </Fab>
-            </div>
-
-            <DiffDocGrid left={<Typography variant="h4" color="primary">Diff Observed</Typography>}
+            <DiffDocGrid left={(
+              <div className={classes.skipContainer}>
+                <Typography variant="h4" color="primary">Diff Observed</Typography>
+                <div style={{flex: 1}}/>
+                <div style={{marginTop: -4}}>
+                  <ReportBug classes={classes}/>
+                  <Button endIcon={<FastForwardIcon fontSize="small"/>} color="primary" size="small" onClick={onSkip}
+                          className={classes.fab}>
+                    Skip
+                  </Button>
+                </div>
+              </div>
+            )}
               right={<Typography variant="h4" color="primary">Spec Change</Typography>} />
 
             <DiffPath path={path} method={method} url={url} />
+            {/*
+            <DiffQueryString
+              observed={observed.queryString}
+              specced={queryString}
+              /> */}
 
-            <DiffRequest observedRequestBody={observed.requestBody}
+            <DiffRequest
+              observedQueryString={observed.queryString}
+              observedRequestBody={observed.requestBody}
               observedContentType={observed.requestContentType}
               requestBody={requestBody}
+              requestQueryString={queryString}
               diff={this.getDiffCard('request')}
               interpretation={this.getInterpretationCard('request')}
             />
 
-            <DiffResponse statusCode={observed.statusCode}
+            <DiffResponse
+              statusCode={observed.statusCode}
               observedResponseBody={observed.responseBody}
               observedContentType={observed.responseContentType}
               response={response}

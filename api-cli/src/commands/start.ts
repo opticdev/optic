@@ -155,7 +155,9 @@ export default class Start extends Command {
       }
     })
 
-    const processInterruptedPromise = new Promise(resolve => {
+    
+    const processInterruptedPromise = new Promise((resolve) => {
+      process.removeAllListeners('SIGINT');
       process.on('SIGINT', () => {
         resolve()
       })
