@@ -594,7 +594,7 @@
         "signature": "a07ac5407b236f3f7e7aa48129835cdd30e09c6ef8f473bca50337334ed14391"
       },
       "./src/commands/start.ts": {
-        "version": "190180dbc27382a3f02764eafa2920dffd65db9711f7b83c6737cb7fd91ec76b",
+        "version": "dd138f4b20477e543e156f7e1e4388c36e83c9df6e19b156c3b4a97f337b799c",
         "signature": "280d39fe463dea101824c3cbcc7c725553e87da245b945f82ead9ef11740d8f5"
       },
       "./node_modules/@types/nodegit/oid.d.ts": {
