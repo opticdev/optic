@@ -25,6 +25,7 @@ import groupby from 'lodash.groupby'
 import { BODY_DESCRIPTION, DESCRIPTION, PURPOSE } from '../../ContributionKeys';
 import { NamerStore } from '../shapes/Namer';
 import { getNormalizedBodyDescriptor } from '../../utilities/RequestUtilities';
+import {DocQueryParams} from './DocQueryParams';
 
 const styles = theme => ({
   root: {
@@ -105,9 +106,9 @@ class EndpointPageDataLoader extends React.Component {
 
   render() {
 
-    const { requestId, showShapesFirst, classes, handleCommand, cachedQueryResults } = this.props
+    const { requestId, showShapesFirst, classes, handleCommand, cachedQueryResults, queries } = this.props
 
-    const { requests, pathsById, responses, contributions } = cachedQueryResults;
+    const { requests, pathsById, responses, contributions, requestParameters } = cachedQueryResults;
 
     const request = requests[requestId];
 
@@ -149,11 +150,16 @@ class EndpointPageDataLoader extends React.Component {
     const responsesForRequest = Object.values(responses)
       .filter((response) => response.responseDescriptor.requestId === requestId);
 
-    // const parametersForRequest = Object.values(requestParameters)
-    //   .filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId);
+    const parametersForRequest = Object.values(requestParameters)
+      .filter((requestParameter) => requestParameter.requestParameterDescriptor.requestId === requestId);
 
     // const headerParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'header');
-    // const queryParameters = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query');
+    const queryParameter = parametersForRequest.filter(x => x.requestParameterDescriptor.location === 'query')[0];
+
+    const queryString = queryParameter ? ({
+      shapeId: queryParameter.requestParameterDescriptor.shapeDescriptor.ShapedRequestParameterShapeDescriptor.shapeId,
+      flatShape: queries.flatShapeForShapeId(queryParameter.requestParameterDescriptor.shapeDescriptor.ShapedRequestParameterShapeDescriptor.shapeId, [])
+    }) : null
 
     return (
       <div className={classes.wrapper}>
@@ -169,6 +175,7 @@ class EndpointPageDataLoader extends React.Component {
             showShapesFirst={showShapesFirst}
             method={httpMethod}
             requestBody={requestBody}
+            queryString={queryString}
             requestBodyExample={this.requestBodyExample()}
             responses={sortBy(responsesForRequest, (res) => res.responseDescriptor.httpStatusCode)}
             responseExamples={this.responseExamples()}
@@ -200,6 +207,7 @@ class _EndpointPage extends React.Component {
       endpointDescription,
       method,
       url,
+      queryString,
       parameters = [],
       getContribution,
       updateContribution,
@@ -219,7 +227,7 @@ class _EndpointPage extends React.Component {
               updateContribution(requestId, PURPOSE, value);
             }}
           />
-          <div style={{ marginTop: -6, marginBottom: 6 }}>
+          <div style={{ marginBottom: 6 }}>
             <MarkdownContribution
               value={endpointDescription}
               label="Detailed Description"
@@ -244,16 +252,9 @@ class _EndpointPage extends React.Component {
       return <DocGrid left={left} right={right} />;
     })();
 
-    // const qparams = [{title: 'filter'}, {title: 'count'}, {title: 'id'}];
-    //
-    // const queryParameters = <DocQueryParams parameters={qparams}
-    //                                         example={{
-    //                                           filter: '>50',
-    //                                           count: 12,
-    //                                           id: 'abcdefg'
-    //                                         }}
-    // />;
-
+    const queryParameters = <DocQueryParams {...queryString}
+                                            updateContribution={updateContribution}
+                                            getContribution={getContribution}/>;
 
     const requestBodyRender = (() => {
       const { httpContentType, shapeId, isRemoved } = requestBody;
@@ -301,6 +302,7 @@ class _EndpointPage extends React.Component {
     return (
       <div className={classes.root}>
         {endpointOverview}
+        {queryParameters}
 
         <div style={{ marginTop: 65, marginBottom: 65 }} />
         {/*{queryParameters}*/}

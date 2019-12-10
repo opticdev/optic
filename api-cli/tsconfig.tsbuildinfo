@@ -514,8 +514,8 @@
         "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
       },
       "./src/commands/init.ts": {
-        "version": "e1802b9210f60432b896c21fc6e24e573788a7527d33c29b055c95435b6a6518",
-        "signature": "3166b8485e63fc6ac6806bc18196872b1602fcbd31a8c21f390e5af79870e34f"
+        "version": "bbd10803d5eb2b643cfd1e495fc9912418dd188a3d943ca327c879af6be45912",
+        "signature": "05031de0697c58bdf37f9e99f4ef268742bf9ab6446777543eec9b7f90a8b727"
       },
       "./node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
@@ -1158,11 +1158,11 @@
         "signature": "02d804c0bb60cd4693267f760804c914bd4145db7c176ae1a70f346f0fa104fc"
       },
       "./src/commands/generate/oas.ts": {
-        "version": "3f41d1d430eda1bcc52d60ce882522728679aacf461cc45fc53fdf52ac2275f7",
-        "signature": "7bbc3a0caebfd245e2b09fda2038ed29e8f8082081c2203ffe23b1f068eb0b10"
+        "version": "62913d6906f2d8a7cc2cd3f9a04866f7c885a9bc0129a4c78ea2c84019f7f2c8",
+        "signature": "dc34b0d91ecbd54fa105d86e083cad1b4432a7a5ecd4768aaf2253362e7b9f43"
       },
-      "./src/commands/publish-oas.ts": {
-        "version": "c6342852cf3fb843ccabb1429845f0676bf7f4d6c1ec9472149038cbbb772976",
+      "./src/commands/publish/oas.ts": {
+        "version": "1572bf1e09ca2065b8ff48b76d7ea1bf3e7bac47062a7dd6a788169daf3cf9cc",
         "signature": "a5f91a172a7df9fb875aa8a83eee10175de0ff3ad2566ce4689b9ac27907615e"
       },
       "./node_modules/@types/anymatch/index.d.ts": {
@@ -3335,17 +3335,12 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./src/commands/publish-oas.ts": [
+      "./src/commands/publish/oas.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts",
-        "./node_modules/@types/fs-extra/index.d.ts",
-        "./node_modules/clipboardy/index.d.ts",
-        "./node_modules/@types/node/path.d.ts",
-        "./node_modules/cli-ux/lib/index.d.ts",
-        "./src/lib/log-helper.ts",
-        "./node_modules/colors/index.d.ts",
-        "./src/commands/generate/oas.ts",
         "./node_modules/@types/node/child_process.d.ts",
-        "./src/commands/init.ts",
+        "./node_modules/colors/index.d.ts",
+        "./src/lib/log-helper.ts",
+        "./src/commands/generate/oas.ts",
         "./src/commands/start.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
@@ -3724,7 +3719,7 @@
         "./node_modules/@oclif/parser/lib/flags.d.ts",
         "./node_modules/@oclif/command/lib/index.d.ts"
       ],
-      "./src/commands/publish-oas.ts": [
+      "./src/commands/publish/oas.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts"
       ],
       "./src/commands/intercept.ts": [
@@ -5943,7 +5938,7 @@
       "./node_modules/@types/tmp/index.d.ts",
       "./src/commands/intercept.ts",
       "./src/commands/generate/oas.ts",
-      "./src/commands/publish-oas.ts",
+      "./src/commands/publish/oas.ts",
       "./node_modules/@types/anymatch/index.d.ts",
       "./node_modules/@types/archy/index.d.ts",
       "./node_modules/@types/aws-lambda/index.d.ts",

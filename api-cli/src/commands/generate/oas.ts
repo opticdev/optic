@@ -47,14 +47,16 @@ export default class GenerateOas extends Command {
         fs.ensureDirSync(outputPath)
         const oasPath = path.join(outputPath, 'openapi.json')
         fs.writeFileSync(path.join(outputPath, 'openapi.json'), JSON.stringify(specAsJson, null, 2))
-        return this.log('OpenAPI written to ' + oasPath)
+        this.log('OpenAPI written to ' + oasPath)
+        return outputPath
       }
 
       if (writeYaml) {
         fs.ensureDirSync(outputPath)
         const oasPath = path.join(outputPath, 'openapi.yaml')
         fs.writeFileSync(path.join(outputPath, 'openapi.yaml'), yaml.safeDump(specAsJson, {indent: 1}))
-        return this.log('OpenAPI written to ' + oasPath)
+        this.log('OpenAPI written to ' + oasPath)
+        return outputPath
       }
 
     } catch (e) {

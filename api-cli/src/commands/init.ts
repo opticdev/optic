@@ -22,7 +22,11 @@ export interface IApiCliProxyConfig {
 
 export interface IApiCliCommandsConfig {
   start: string,
-  'publish-oas'?: string
+  publish?: IApiCliPublishConfig
+}
+
+export interface IApiCliPublishConfig {
+  oas?: string,
 }
 
 export interface IApiCliConfig {

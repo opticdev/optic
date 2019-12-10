@@ -2,30 +2,38 @@ import React from 'react';
 import {DocSubGroup} from './DocSubGroup';
 import {MarkdownContribution} from './DocContribution';
 import {DocParameter} from './DocParameter';
-import {ExampleShapeViewer} from './DocCodeBox';
+import {ExampleShapeViewer, ShapeOnly} from './DocCodeBox';
 import {DocGrid} from './DocGrid';
+import {NamerStore} from '../shapes/Namer';
+import {DESCRIPTION} from '../../ContributionKeys';
 
-export function DocQueryParams({
-                                 parameters = [],
-                                 shapeId,
-                                 example
-                               }) {
+export function DocQueryParams({shapeId, flatShape, getContribution, updateContribution}) {
 
-
-  if (parameters.length === 0) {
+  if (!shapeId || !flatShape || flatShape.root.fields.length === 0) {
     return null;
   }
 
+
   const left = (
     <DocSubGroup title={'Query Parameters'}>
-      {parameters.map(i => <DocParameter title={i.title} description={i.description}/>)}
+      {flatShape.root.fields.map(i => {
+
+        return (
+          <DocParameter title={i.fieldName}
+                        updateContribution={updateContribution}
+                        paramId={i.fieldId}
+                        description={getContribution(i.fieldId, DESCRIPTION)}/>
+        );
+      })}
     </DocSubGroup>
   );
 
-  const right = <ExampleShapeViewer
-    title={'Query Parameters'}
-    shapeId={shapeId}
-    example={example}/>;
+  const right = (
+      <ShapeOnly
+        disableNaming={true}
+        title={'Query Shape'}
+        shapeId={shapeId}/>
+  );
 
   return <DocGrid left={left} right={right} style={{marginTop: 40}}/>;
 }
