@@ -28,6 +28,7 @@ import FastForwardIcon from '@material-ui/icons/FastForward';
 import NavigationIcon from '@material-ui/icons/Navigation';
 import BugReportIcon from '@material-ui/icons/BugReport';
 import ReportBug from './ReportBug';
+import Button from '@material-ui/core/Button';
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -42,6 +43,10 @@ const styles = theme => ({
     paddingRight: 20,
     paddingBottom: 350,
     overflow: 'scroll'
+  },
+  skipContainer: {
+    display: 'flex',
+    flexDirection: 'row'
   },
   requestContainer: {
     // display: 'flex',
@@ -141,16 +146,16 @@ const DiffRequest = withStyles(styles)((props) => {
     <DiffDocGrid
       style={{ opacity }}
       left={(
-        <DocSubGroup title="Observed Request Body">
+        <DocSubGroup title="Observed Request">
           {diff}
           {shouldShowObservedQueryString && <ExampleOnly title="Query String" example={observedQueryString} />}
           {shouldShowObservedExample && <ExampleOnly title="Example" contentType={observedContentType} example={observedRequestBody} />}
         </DocSubGroup>
       )}
       right={(
-        <DocSubGroup title="Request Body">
+        <DocSubGroup title="Expected Request">
           {interpretation}
-          {shouldShowSpecQueryString && <ShapeOnly title="Query String Shape" shapeId={requestQueryString.requestParameterDescriptor.shapeDescriptor.ShapedRequestParameterShapeDescriptor.shapeId} />}
+          {shouldShowSpecQueryString && <ShapeOnly title="Query String Shape" disableNaming shapeId={requestQueryString.requestParameterDescriptor.shapeDescriptor.ShapedRequestParameterShapeDescriptor.shapeId} />}
           {shouldShowSpecExample && <ShapeOnly title="Shape" shapeId={shapeId} contentType={httpContentType} />}
         </DocSubGroup>
       )}
@@ -340,21 +345,25 @@ class DiffPage extends React.Component {
 
           <div className={classes.scroll}>
 
-            <div className={classes.fabs}>
-              <ReportBug classes={classes} />
-              <Fab variant="extended" color="primary" size="small" onClick={onSkip} className={classes.fab}>
-                Skip
-                <FastForwardIcon fontSize="small" />
-              </Fab>
-            </div>
-
-            <DiffDocGrid left={<Typography variant="h4" color="primary">Diff Observed</Typography>}
+            <DiffDocGrid left={(
+              <div className={classes.skipContainer}>
+                <Typography variant="h4" color="primary">Diff Observed</Typography>
+                <div style={{flex: 1}}/>
+                <div style={{marginTop: -4}}>
+                  <ReportBug classes={classes}/>
+                  <Button endIcon={<FastForwardIcon fontSize="small"/>} color="primary" size="small" onClick={onSkip}
+                          className={classes.fab}>
+                    Skip
+                  </Button>
+                </div>
+              </div>
+            )}
               right={<Typography variant="h4" color="primary">Spec Change</Typography>} />
 
             <DiffPath path={path} method={method} url={url} />
-            {/* 
+            {/*
             <DiffQueryString
-              observed={observed.queryString} 
+              observed={observed.queryString}
               specced={queryString}
               /> */}
 
