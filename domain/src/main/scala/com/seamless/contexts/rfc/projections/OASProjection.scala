@@ -1,15 +1,19 @@
 package com.seamless.contexts.rfc.projections
 
 import com.seamless.contexts.requests.Commands.{BodyDescriptor, ParameterizedPathComponentDescriptor, ShapedBodyDescriptor}
-import com.seamless.contexts.requests.{HttpRequest, HttpResponse}
+import com.seamless.contexts.requests.{Commands, HttpRequest, HttpResponse}
 import com.seamless.contexts.rfc.Events.RfcEvent
 import com.seamless.contexts.rfc.projections.OASDomain.{Body, Operation, Path, PathParameter, Response}
 import com.seamless.contexts.rfc.{InMemoryQueries, RfcService, RfcServiceJSFacade, RfcState}
 import com.seamless.contexts.shapes.ShapesHelper
-import com.seamless.contexts.shapes.projections.JsonSchemaProjection
+import com.seamless.contexts.shapes.ShapesHelper.OptionalKind
+import com.seamless.contexts.shapes.projections.{FlatShapeProjection, JsonSchemaProjection}
 import com.seamless.ddd.{AggregateId, InMemoryEventStore}
+import com.seamless.diff.RequestDiffer.UnmatchedQueryParameterShape
+import com.seamless.diff.ShapeDiffer
 import io.circe.Json
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
+
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.scalajs.js
 
@@ -43,7 +47,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
 
   def responsesForRequest(requestId: String): Vector[HttpResponse] = {
     queries.requestsState.responses.collect {
-      case (responseId, response) if response.responseDescriptor.requestId == requestId && !response.isRemoved  => response
+      case (responseId, response) if response.responseDescriptor.requestId == requestId && !response.isRemoved => response
     }.toVector.sortBy(_.responseDescriptor.httpStatusCode)
   }
 
@@ -53,7 +57,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
   def operationFromRequest(request: HttpRequest): Operation = {
 
     val requestBody = bodyToOAS(request.requestDescriptor.bodyDescriptor)
-//
+
     val operationId = getContributionOption(request.requestId, "oas.operationId").getOrElse(request.requestId)
     val summary = getContributionOption(request.requestId, "oas.operationId")
     val description = getContributionOption(request.requestId, "oas.operationId")
@@ -66,7 +70,22 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
       }
     }
 
-    Operation(operationId, summary, description, requestBody, responses)
+    val queryParamShape: Option[FlatShapeProjection.FlatShapeResult] = rfcState.requestsState.requestParameters.filter(x => {
+      val (parameterId, parameter) = x
+      parameter.requestParameterDescriptor.requestId == request.requestId && parameter.requestParameterDescriptor.location == "query"
+    }).values.headOption.flatMap(query => {
+      query.requestParameterDescriptor.shapeDescriptor match {
+        case c: Commands.UnsetRequestParameterShapeDescriptor => {
+          None
+        }
+        case c: Commands.ShapedRequestParameterShapeDescriptor => {
+          Some(FlatShapeProjection.forShapeId(c.shapeId)(rfcState.shapesState))
+        }
+      }
+    })
+
+
+    Operation(operationId, summary, description, requestBody, queryParamShape, responses)
   }
 
   lazy val oasOperations = {
@@ -86,7 +105,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
     }
 
     val pathIdsWithRequests = queries.pathsWithRequests.values.toSet
-    pathIdsWithRequests.map(pathId => Path( pathMapping.find(_.pathId == pathId).get.absolutePath , {
+    pathIdsWithRequests.map(pathId => Path(pathMapping.find(_.pathId == pathId).get.absolutePath, {
       queries.pathsWithRequests.collect { case i if i._2 == pathId && !requestForId(i._1).isRemoved =>
         val request = requestForId(i._1)
         request.requestDescriptor.httpMethod.toLowerCase -> operationFromRequest(request)
@@ -113,13 +132,13 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
       "paths" -> Json.obj(
         oasOperations.toVector.sortBy(_.absolutePath).map(path => {
           path.absolutePath -> Json.obj(
-            (path.operations.toVector.sortBy(_._1).map { case (k, v) => k -> v.toJson } :+ path.pathParametersToJson ):_*
+            (path.operations.toVector.sortBy(_._1).map { case (k, v) => k -> v.toJson(rfcState) } :+ path.pathParametersToJson): _*
           )
-        }):_*
+        }): _*
       ),
       "components" -> Json.obj(
         "schemas" -> Json.obj(
-          sharedDefinitions:_*
+          sharedDefinitions: _*
         )
       )
     )
@@ -132,17 +151,18 @@ object OASDomain {
 
   case class Path(absolutePath: String, operations: Map[String, Operation], pathParameters: Vector[PathParameter]) {
     def pathParametersToJson = {
-      "parameters" -> Json.arr( pathParameters.sortBy(p => absolutePath.indexOf("{"+p+"}")).map(_.toJson):_*)
+      "parameters" -> Json.arr(pathParameters.sortBy(p => absolutePath.indexOf("{" + p + "}")).map(_.toJson): _*)
     }
   }
+
   case class Operation(operationId: String,
                        summary: Option[String],
                        description: Option[String],
                        requestBody: Option[Body],
-                       responses: Vector[(String, Response)])
-  {
+                       query: Option[FlatShapeProjection.FlatShapeResult],
+                       responses: Vector[(String, Response)]) {
 
-    def toJson = {
+    def toJson(rfcState: RfcState) = {
       var json = Json.obj().asObject.get
       json = json.add("operationId", Json.fromString(operationId))
 
@@ -158,7 +178,21 @@ object OASDomain {
       }
 
       if (responses.nonEmpty) {
-        json = json.add("responses", Json.obj( responses.map(i => (i._1, i._2.toJson)):_* ))
+        json = json.add("responses", Json.obj(responses.map(i => (i._1, i._2.toJson)): _*))
+      }
+
+      if (query.isDefined && query.get.root.fields.nonEmpty) {
+        val queryParameters = query.get.root.fields.map(i => {
+          val innerOption = i.shape.links.get(OptionalKind.innerParam)
+          if (innerOption.isDefined) {
+            //is optional
+            QueryParameter(i.fieldName, false, new JsonSchemaProjection(innerOption.get)(rfcState.shapesState).asJsonSchema(true))
+          } else {
+            //is required
+            QueryParameter(i.fieldName, true, new JsonSchemaProjection(i.shape.id)(rfcState.shapesState).asJsonSchema(true))
+          }
+        })
+        json = json.add("parameters", Json.arr(queryParameters.map(_.toJson):_*))
       }
 
       Json.fromJsonObject(json)
@@ -185,6 +219,17 @@ object OASDomain {
         "name" -> Json.fromString(name),
         "required" -> Json.fromBoolean(true),
         "schema" -> asJsonSchema
+      )
+    }
+  }
+
+  case class QueryParameter(name: String, required: Boolean, schema: Json) {
+    def toJson = {
+      Json.obj(
+        "in" -> Json.fromString("query"),
+        "name" -> Json.fromString(name),
+        "required" -> Json.fromBoolean(required),
+        "schema" -> schema
       )
     }
   }
