@@ -62,11 +62,11 @@ class JsonSchemaProjection(shapeId: String)(implicit shapesState: ShapesState) {
       }
 
       case MapKind.baseShapeId | ReferenceKind.baseShapeId | NullableKind.baseShapeId | OptionalKind.baseShapeId => {
-        println("Core shape not implemented "+  shape.baseShapeId)
+//        println("Core shape not implemented "+  shape.baseShapeId)
       }
 
       case _ => {
-        println("OAS not implemented for type "+ shape.baseShapeId)
+//        println("OAS not implemented for type "+ shape.baseShapeId)
       }
     }
 

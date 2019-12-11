@@ -59,8 +59,8 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
     val requestBody = bodyToOAS(request.requestDescriptor.bodyDescriptor)
 
     val operationId = getContributionOption(request.requestId, "oas.operationId").getOrElse(request.requestId)
-    val summary = getContributionOption(request.requestId, "oas.operationId")
-    val description = getContributionOption(request.requestId, "oas.operationId")
+    val summary = getContributionOption(request.requestId, "purpose")
+    val description = getContributionOption(request.requestId, "description")
 
     val r = responsesForRequest(request.requestId)
     val responses = responsesForRequest(request.requestId).sortBy(_.responseDescriptor.httpStatusCode).map {
@@ -166,7 +166,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
         json = json.add("operationId", Json.fromString(operationId))
 
         if (summary.isDefined && summary.get.nonEmpty) {
-          json = json.add("purpose", Json.fromString(summary.get))
+          json = json.add("summary", Json.fromString(summary.get))
         }
         if (description.isDefined && description.get.nonEmpty) {
           json = json.add("description", Json.fromString(description.get))

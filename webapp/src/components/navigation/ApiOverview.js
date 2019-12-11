@@ -23,6 +23,7 @@ import {updateContribution} from '../../engine/routines';
 import { NavHashLink as NavLink } from 'react-router-hash-link';
 import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import {Helmet} from 'react-helmet';
+import * as uniqBy from 'lodash.uniqby'
 
 const drawerWidth = 320;
 const appBarOffset = 50
@@ -92,6 +93,11 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
   };
 
   if (!name && operationsToRender[0]) {
+
+    if (operationsToRender[0].path.name) {
+      return null
+    }
+
     const {requestId, request} = operationsToRender[0]
     const {httpMethod, pathComponentId} = request.requestDescriptor;
     const purpose = contributions.getOrUndefined(requestId, PURPOSE) || (
@@ -190,7 +196,7 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
 
   const allPaths = [paths, ...paths.children]
 
-  const operationsToRender = flatMapOperations(allPaths);
+  const operationsToRender = uniqBy(flatMapOperations(allPaths), 'requestId');
 
   const isEmpty = concepts.length === 0 && operationsToRender.length === 0
 
