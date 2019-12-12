@@ -22,6 +22,8 @@
 
 ![screenshot](https://raw.githubusercontent.com/opticdev/optic/develop/webapp/public/netlify.png)
 
+![screenshot](https://raw.githubusercontent.com/opticdev/optic/develop/webapp/public/optic.gif)
+
 ## Key Features
 📝**Easily Document any API** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a change log of its behavior over time.
 
