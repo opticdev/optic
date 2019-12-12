@@ -69,7 +69,9 @@ It’s kind of like Git, but instead of tracking files, Optic automatically diff
 
 👋**100% Open Source, Runs locally, data is only stored in your API Repo**
 
+
 ## Documentation [https://docs.useoptic.com](https://docs.useoptic.com)
+Read the full docs at: [docs.useoptic.com](https://docs.useoptic.com)
 
 ## License 
 MIT
