@@ -1,19 +1,12 @@
-import { Command, flags } from '@oclif/command'
-import * as fs from 'fs-extra'
-import * as clipboardy from 'clipboardy'
+import {Command} from '@oclif/command'
+import {spawn, SpawnOptions} from 'child_process'
 // @ts-ignore
-import * as niceTry from 'nice-try'
-import * as path from 'path'
-// @ts-ignore
-import cli from 'cli-ux'
-// @ts-ignore
-import * as fetch from 'node-fetch'
-import {fromOptic} from '../lib/log-helper'
 import * as colors from 'colors'
-import Oas from './generate/oas'
-import {exec, spawn, SpawnOptions} from 'child_process'
-import Init from './init'
-import {processSetting, readApiConfig} from './start'
+// @ts-ignore
+// @ts-ignore
+import {fromOptic} from '../../lib/log-helper'
+import Oas from '../generate/oas'
+import {processSetting, readApiConfig} from '../start'
 
 export default class PublishOas extends Command {
 
@@ -32,14 +25,14 @@ export default class PublishOas extends Command {
       return this.error('Optic Config not found. Run `api init`')
     }
 
-    const publishOasCommand = config.commands['publish-oas']
+    const {oas} = config.commands.publish || {}
+    const publishOasCommand = oas
     if (!publishOasCommand) {
-      return this.error('No command registered for `publish-oas`. Add one to your api.yml file')
+      return this.error('No command registered for `publish.oas`. Add one to your api.yml file')
     }
+    const generated = await Oas.run([])
 
-    const generated = await Oas.run(['oas'])
     if (generated) {
-      console.log(generated)
       const commandToRun = processSetting(publishOasCommand, {OAS_PATH: generated})
       const taskOptions: SpawnOptions = {
         env: {

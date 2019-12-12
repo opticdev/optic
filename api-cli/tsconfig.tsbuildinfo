@@ -514,8 +514,8 @@
         "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
       },
       "./src/commands/init.ts": {
-        "version": "e1802b9210f60432b896c21fc6e24e573788a7527d33c29b055c95435b6a6518",
-        "signature": "3166b8485e63fc6ac6806bc18196872b1602fcbd31a8c21f390e5af79870e34f"
+        "version": "bbd10803d5eb2b643cfd1e495fc9912418dd188a3d943ca327c879af6be45912",
+        "signature": "05031de0697c58bdf37f9e99f4ef268742bf9ab6446777543eec9b7f90a8b727"
       },
       "./node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
@@ -1154,15 +1154,15 @@
         "signature": "5685ea2eb87a7a405e106c5bea5936fdaed1184eaaf9bd075d27c40b4984eea6"
       },
       "./src/commands/intercept.ts": {
-        "version": "0b0481c285c517664694fd9f2e7636dfcae7cafff4a54318d2c9453e61ed91b9",
-        "signature": "02d804c0bb60cd4693267f760804c914bd4145db7c176ae1a70f346f0fa104fc"
+        "version": "089e453d351a612b46bc20cdf5fd335b95e126c508aa393e7291e2bb7381c2f9",
+        "signature": "da66103353c3f4f2e789c5f34f4d03ae029a15b39d033dad33851f52752710c9"
       },
       "./src/commands/generate/oas.ts": {
-        "version": "3f41d1d430eda1bcc52d60ce882522728679aacf461cc45fc53fdf52ac2275f7",
-        "signature": "7bbc3a0caebfd245e2b09fda2038ed29e8f8082081c2203ffe23b1f068eb0b10"
+        "version": "469274f2a3ca117e2862df9bb6c4e410eca0cc7968aaef6db38ee38f02081b6a",
+        "signature": "35866b7a0cf82f1e0d1841cff2f82e0f9c2b6adc735794563d42db6c7db35de9"
       },
-      "./src/commands/publish-oas.ts": {
-        "version": "c6342852cf3fb843ccabb1429845f0676bf7f4d6c1ec9472149038cbbb772976",
+      "./src/commands/publish/oas.ts": {
+        "version": "1572bf1e09ca2065b8ff48b76d7ea1bf3e7bac47062a7dd6a788169daf3cf9cc",
         "signature": "a5f91a172a7df9fb875aa8a83eee10175de0ff3ad2566ce4689b9ac27907615e"
       },
       "./node_modules/@types/anymatch/index.d.ts": {
@@ -3326,26 +3326,24 @@
         "./node_modules/@oclif/command/lib/index.d.ts",
         "./node_modules/@types/fs-extra/index.d.ts",
         "./node_modules/clipboardy/index.d.ts",
+        "./node_modules/@types/node/os.d.ts",
         "./node_modules/@types/node/path.d.ts",
         "./node_modules/cli-ux/lib/index.d.ts",
+        "./src/lib/log-helper.ts",
         "./src/paths.ts",
         "./src/persistutils.ts",
         "./src/lib/analytics.ts",
         "./node_modules/@types/js-yaml/index.d.ts",
+        "./src/commands/intercept.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./src/commands/publish-oas.ts": [
+      "./src/commands/publish/oas.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts",
-        "./node_modules/@types/fs-extra/index.d.ts",
-        "./node_modules/clipboardy/index.d.ts",
-        "./node_modules/@types/node/path.d.ts",
-        "./node_modules/cli-ux/lib/index.d.ts",
-        "./src/lib/log-helper.ts",
-        "./node_modules/colors/index.d.ts",
-        "./src/commands/generate/oas.ts",
         "./node_modules/@types/node/child_process.d.ts",
-        "./src/commands/init.ts",
+        "./node_modules/colors/index.d.ts",
+        "./src/lib/log-helper.ts",
+        "./src/commands/generate/oas.ts",
         "./src/commands/start.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
@@ -3724,7 +3722,7 @@
         "./node_modules/@oclif/parser/lib/flags.d.ts",
         "./node_modules/@oclif/command/lib/index.d.ts"
       ],
-      "./src/commands/publish-oas.ts": [
+      "./src/commands/publish/oas.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts"
       ],
       "./src/commands/intercept.ts": [
@@ -5943,7 +5941,7 @@
       "./node_modules/@types/tmp/index.d.ts",
       "./src/commands/intercept.ts",
       "./src/commands/generate/oas.ts",
-      "./src/commands/publish-oas.ts",
+      "./src/commands/publish/oas.ts",
       "./node_modules/@types/anymatch/index.d.ts",
       "./node_modules/@types/archy/index.d.ts",
       "./node_modules/@types/aws-lambda/index.d.ts",

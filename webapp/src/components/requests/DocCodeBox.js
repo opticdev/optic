@@ -76,7 +76,7 @@ export const EndpointOverviewCodeBox = ({title = 'Endpoint', method, url}) => {
                     fontSize: 16,
                     wordBreak: 'break-all',
                     color: DocGrey
-                  }}>{url}</Typography>
+                  }}>{url || '/'}</Typography>
     </DocCodeBox>
   );
 };

@@ -235,7 +235,7 @@ export default class Intercept extends Command {
   }
 }
 
-function normalizeHost(hostString: string) {
+export function normalizeHost(hostString: string) {
   if (hostString.startsWith('http://')) {
     return hostString.substring('http://'.length)
   }
