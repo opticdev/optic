@@ -21,24 +21,41 @@
 
 
 # How it Works
+
+> Optic is like Git, but for your APIs
+
 ### Add Optic to your Development Enviroment 
+
+> Similar to `git init`
+
 Add the Optic Proxy so Optic can learn how your API works. It only takes 5 minutes and will save you hours if you write OpenAPI manually today.
 ```bash
 yarn add global @useoptic/cli
 api init
 ```
 
-### Turn on the Optic Proxy to Monitor your API's Behavior 
+### Use the Optic Proxy to Monitor your API's Behavior 
+
 ```bash
 api start
 [optic] Starting ToDo API on Port: 3005, with npm run server-start
 ```
 <h1 align="center">
-<img src="https://raw.githubusercontent.com/opticdev/optic/develop/watch.png" alt="Optic" width="200">
+<img src="https://raw.githubusercontent.com/opticdev/optic/develop/webapp/public/watch.png" width="200">
 </h1>
 
+### Use Optic to Manage your API Specification 
 
-![screenshot](https://raw.githubusercontent.com/opticdev/optic/master/webapp/public/optic.gif)
+> Similar to `git diff`, `git add` and `git commit`
+
+Optic constantly diffs your API's actual behavior against its specification. Optic shows you the API diff and makes it easy to:
+- Add new API Endpoints to your specification 
+- Update the specification when it observes new behavior for an existing API Endpoint 
+- Catch bugs and unexpected API behavior early :) 
+
+![gif](https://raw.githubusercontent.com/opticdev/optic/develop/webapp/public/optic.gif)
+
+# <a href="https://www.youtube.com/watch?v=y1XSUXbH3kQ" target="_blank">Watch a 3 minute Video Demo</a>
 
 ## Key Features
 📝**Accurate API Documentation** - We built Optic to make maintaining accurate specs for your APIs automatic and developer friendly. Once you add Optic to your API repo, it automatically tracks your API’s behavior and maintains a change log of its behavior over time.
