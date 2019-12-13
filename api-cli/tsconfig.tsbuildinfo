@@ -514,7 +514,7 @@
         "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
       },
       "./src/commands/init.ts": {
-        "version": "bbd10803d5eb2b643cfd1e495fc9912418dd188a3d943ca327c879af6be45912",
+        "version": "d5058ec16d92f48e71c2bc5ffc9df914e31382082e8d7d194f5b2a3878d3163a",
         "signature": "05031de0697c58bdf37f9e99f4ef268742bf9ab6446777543eec9b7f90a8b727"
       },
       "./node_modules/@types/range-parser/index.d.ts": {
