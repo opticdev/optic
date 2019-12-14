@@ -46,7 +46,7 @@ class SharedSpecUploadService {
     }
 }
 
-const sharedSpecUploadService = new SharedSpecUploadService('https://fiddleapi.useoptic.com')
+const sharedSpecUploadService = new SharedSpecUploadService('https://apis.useoptic.com')
 global.sharedSpecUploadService = sharedSpecUploadService
 
 export {

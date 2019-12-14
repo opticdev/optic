@@ -56,7 +56,7 @@ class Navbar extends React.Component {
 
   render() {
 
-    const {classes, notifications, addExample, cachedQueryResults} = this.props;
+    const {classes, notifications, addExample, shareButtonComponent, cachedQueryResults} = this.props;
 
     // const menu = (
     //   <Menu anchorEl={this.state.menuAnchorEl} open={Boolean(this.state.menuAnchorEl)} onClose={() => this.setState({menuAnchorEl: null})} style={{marginTop: 30}}>
@@ -82,7 +82,8 @@ class Navbar extends React.Component {
             {/*</IconButton>*/}
 
             <div>
-            {addExample}
+              {addExample}
+              {shareButtonComponent}
             </div>
           </Toolbar>
         </AppBar>

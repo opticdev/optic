@@ -175,9 +175,10 @@ class LocalSpecOverview extends React.Component {
 }
 
 export function SpecOverview(props) {
-  const {specService, notificationAreaComponent, addExampleComponent} = props;
+  const {specService, notificationAreaComponent, shareButtonComponent, addExampleComponent} = props;
   return (
     <Overview specService={specService}
+              shareButtonComponent={shareButtonComponent}
               notificationAreaComponent={notificationAreaComponent}
               addExampleComponent={addExampleComponent}/>
   );

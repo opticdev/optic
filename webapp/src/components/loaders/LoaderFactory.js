@@ -19,7 +19,7 @@ const {
 
 class LoaderFactory {
   static build(options) {
-    const { notificationAreaComponent, basePath, specServiceTask } = options;
+    const { notificationAreaComponent,shareButtonComponent, basePath, specServiceTask } = options;
 
     const diffBasePath = routerPaths.diff(basePath);
 
@@ -44,6 +44,7 @@ class LoaderFactory {
       return (
         <SpecOverview
           specService={specService}
+          shareButtonComponent={shareButtonComponent}
           notificationAreaComponent={notificationAreaComponent} />
       )
     }
@@ -94,7 +95,7 @@ class LoaderFactory {
       render() {
         const { initialEventsString, specService } = this.props;
         global.specService = specService
-        
+
         return (
           <SpecServiceContext.Provider value={{ specService }}>
             <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">

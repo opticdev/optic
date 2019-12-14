@@ -31,7 +31,6 @@ class AppRoutes extends React.Component {
     return (
       <div>
         <Switch>
-
           <Route strict path={routerPaths.sharedRoot()} component={SharedLoader} />
           <Redirect from={routerPaths.sharedRoot()} to={routerPaths.sharedRoot()} />
           <Route strict path={routerPaths.exampleDrivenRoot()} component={ExampleDrivenSpecLoader} />

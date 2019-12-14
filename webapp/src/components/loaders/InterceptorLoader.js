@@ -2,7 +2,7 @@ import React from 'react';
 import { LoaderFactory } from './LoaderFactory.js';
 import { SpecService } from '../../services/SpecService.js'
 import { basePaths } from '../../RouterPaths.js';
-import { notificationAreaComponent } from './SharedLoader.js';
+import { notificationAreaComponent, shareButtonComponent } from './SharedLoader.js';
 
 const basePath = basePaths.interceptorBasePath
 
@@ -22,6 +22,7 @@ const {
 } = LoaderFactory.build({
   specServiceTask,
   notificationAreaComponent,
+  shareButtonComponent,
   basePath
 })
 
