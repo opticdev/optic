@@ -9,15 +9,23 @@ import { SpecOverview } from '../routes/local';
 import { UrlsX } from '../paths/NewUnmatchedUrlWizard';
 import RequestDiffX from '../diff/RequestDiffX';
 import { TrafficSessionStore } from '../../contexts/TrafficSessionContext';
+import { GenericContextFactory } from '../../contexts/GenericContextFactory';
+import compose from 'lodash.compose';
+
+const {
+  Context: SpecServiceContext,
+  withContext: withSpecServiceContext
+} = GenericContextFactory(null)
 
 class LoaderFactory {
   static build(options) {
-    const { notificationAreaComponent, specService, basePath } = options;
+    const { notificationAreaComponent,shareButtonComponent, basePath, specServiceTask } = options;
 
     const diffBasePath = routerPaths.diff(basePath);
 
+
     function SessionWrapper(props) {
-      const { match } = props;
+      const { match, specService } = props;
       const { sessionId } = match.params;
       return (
         <TrafficSessionStore
@@ -32,10 +40,11 @@ class LoaderFactory {
       );
     }
 
-    function SpecOverviewWrapper() {
+    function SpecOverviewWrapper({ specService }) {
       return (
         <SpecOverview
           specService={specService}
+          shareButtonComponent={shareButtonComponent}
           notificationAreaComponent={notificationAreaComponent} />
       )
     }
@@ -52,7 +61,7 @@ class LoaderFactory {
             this.setState({
               isLoading: true
             })
-            taskFunction()
+            taskFunction(this.props)
               .then((result) => {
                 this.setState({
                   result,
@@ -60,6 +69,7 @@ class LoaderFactory {
                 })
               })
               .catch((e) => {
+                console.error(e)
                 this.setState({
                   isLoading: false,
                   error: e
@@ -74,7 +84,7 @@ class LoaderFactory {
             if (error) {
               return null
             }
-            return <Wrapped {...{[propName]: result}} />
+            return <Wrapped {...this.props} {...{ [propName]: result }} />
           }
         }
         return Runner
@@ -83,26 +93,37 @@ class LoaderFactory {
 
     class TopLevelRoutes extends React.Component {
       render() {
-        const {initialEventsString} = this.props;
-        debugger
+        const { initialEventsString, specService } = this.props;
+        global.specService = specService
+
         return (
-          <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
-            <RfcStore specService={specService}>
-              <Switch>
-                <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage} />
-                <Route exact path={basePath} component={SpecOverviewWrapper} />
-                <Route path={diffBasePath} component={SessionWrapper} />
-              </Switch>
-            </RfcStore>
-          </InitialRfcCommandsStore>
+          <SpecServiceContext.Provider value={{ specService }}>
+            <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
+              <RfcStore specService={specService}>
+                <Switch>
+                  <Route path={routerPaths.request(basePath)} component={withSpecServiceContext(RequestsDetailsPage)} />
+                  <Route exact path={basePath} component={withSpecServiceContext(SpecOverviewWrapper)} />
+                  <Route path={diffBasePath} component={withSpecServiceContext(SessionWrapper)} />
+                </Switch>
+              </RfcStore>
+            </InitialRfcCommandsStore>
+          </SpecServiceContext.Provider>
         );
       }
     }
 
-    const task = async () => {
+    const task = async (props) => {
+      const { specService } = props
       const results = await specService.listEvents()
       return results
     }
+
+    const withWrapper = compose(
+      withTask(specServiceTask, 'specService'),
+      withTask(task, 'initialEventsString'),
+    )
+
+    const wrappedTopLevelRoutes = withWrapper(TopLevelRoutes)
 
     class Routes extends React.Component {
       render() {
@@ -110,7 +131,7 @@ class LoaderFactory {
         return (
           <NavigationStore baseUrl={match.url}>
             <Switch>
-              <Route path={basePath} component={withTask(task, 'initialEventsString')(TopLevelRoutes)} />
+              <Route path={basePath} component={wrappedTopLevelRoutes} />
             </Switch>
           </NavigationStore>
         );
@@ -123,5 +144,7 @@ class LoaderFactory {
 }
 
 export {
-  LoaderFactory
+  LoaderFactory,
+  withSpecServiceContext,
+  SpecServiceContext,
 }

@@ -137,6 +137,7 @@ sessions/
       await fs.ensureFile(file.path)
       await fs.writeFile(file.path, file.contents)
     })
+    // @ts-ignore
     const {sessionsPath} = await getPaths()
     await fs.ensureDir(sessionsPath)
   }

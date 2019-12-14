@@ -133,6 +133,10 @@
         "version": "4984b48a97160eac5282ffeae690315420a626de83ccf6045c36d934c5c957c0",
         "signature": "4984b48a97160eac5282ffeae690315420a626de83ccf6045c36d934c5c957c0"
       },
+      "./src/oasengine.ts": {
+        "version": "3deca5a6646876a780f95ff4b81b90ca5b98047084a4cacd5a7d337a290e84c7",
+        "signature": "46a0b34e1264c4d25ca6646ff0e6cfaa7275ea1ae5a6bc23d4dfd84edf2f2b2e"
+      },
       "./node_modules/locate-path/index.d.ts": {
         "version": "82bf3772616ba306ba63c84550e2c45072f829abdb4392a54defe39a4e587b26",
         "signature": "82bf3772616ba306ba63c84550e2c45072f829abdb4392a54defe39a4e587b26"
@@ -514,7 +518,7 @@
         "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
       },
       "./src/commands/init.ts": {
-        "version": "bbd10803d5eb2b643cfd1e495fc9912418dd188a3d943ca327c879af6be45912",
+        "version": "d5058ec16d92f48e71c2bc5ffc9df914e31382082e8d7d194f5b2a3878d3163a",
         "signature": "05031de0697c58bdf37f9e99f4ef268742bf9ab6446777543eec9b7f90a8b727"
       },
       "./node_modules/@types/range-parser/index.d.ts": {
@@ -1154,7 +1158,7 @@
         "signature": "5685ea2eb87a7a405e106c5bea5936fdaed1184eaaf9bd075d27c40b4984eea6"
       },
       "./src/commands/intercept.ts": {
-        "version": "089e453d351a612b46bc20cdf5fd335b95e126c508aa393e7291e2bb7381c2f9",
+        "version": "b3c07e8f2e3ab0ee7217b45b4d421692033567eb3a4db02b05e100f437fa8c0f",
         "signature": "da66103353c3f4f2e789c5f34f4d03ae029a15b39d033dad33851f52752710c9"
       },
       "./src/commands/generate/oas.ts": {
@@ -1477,6 +1481,10 @@
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./node_modules/tslib/tslib.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/oasengine.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -3319,6 +3327,8 @@
         "./src/paths.ts",
         "./node_modules/@types/node/os.d.ts",
         "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/@types/node/url.d.ts",
+        "./node_modules/@types/node/querystring.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -5684,6 +5694,7 @@
     },
     "semanticDiagnosticsPerFile": [
       "./node_modules/tslib/tslib.d.ts",
+      "./src/oasengine.ts",
       "./node_modules/locate-path/index.d.ts",
       "./node_modules/find-up/index.d.ts",
       "./node_modules/@types/node/globals.d.ts",

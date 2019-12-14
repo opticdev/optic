@@ -1,22 +1,26 @@
-class SpecService {
-    getJson(url) {
+
+class NetworkUtilities {
+
+    static handleJsonResponse(response) {
+        if (response.ok) {
+            return response.json()
+        }
+        return response.text()
+            .then((text) => {
+                throw new Error(text)
+            })
+    }
+
+    static getJson(url) {
         return fetch(url, {
             headers: {
                 'accept': 'application/json',
             }
         })
-            .then((response) => {
-                if (response.ok) {
-                    return response.json()
-                }
-                return response.text()
-                    .then((text) => {
-                        throw new Error(text)
-                    })
-            })
+            .then(NetworkUtilities.handleJsonResponse)
     }
 
-    getJsonAsText(url) {
+    static getJsonAsText(url) {
         return fetch(url, {
             headers: {
                 'accept': 'application/json',
@@ -30,7 +34,7 @@ class SpecService {
     }
 
 
-    putJson(url, body) {
+    static putJson(url, body) {
         return fetch(url, {
             method: 'PUT',
             headers: {
@@ -40,7 +44,7 @@ class SpecService {
         })
     }
 
-    postJson(url, body) {
+    static postJson(url, body) {
         return fetch(url, {
             method: 'POST',
             headers: {
@@ -49,43 +53,46 @@ class SpecService {
             body
         })
     }
+}
+
+class SpecService {
 
     listEvents() {
-        return this.getJsonAsText(`/cli-api/events`)
+        return NetworkUtilities.getJsonAsText(`/cli-api/events`)
     }
 
     listSessions() {
-        return this.getJson(`/cli-api/sessions`)
+        return NetworkUtilities.getJson(`/cli-api/sessions`)
     }
 
     getCommandContext() {
-        return this.getJson(`/cli-api/command-context`)
+        return NetworkUtilities.getJson(`/cli-api/command-context`)
     }
 
     saveEvents(eventStore, rfcId) {
         const serializedEvents = eventStore.serializeEvents(rfcId);
-        return this.putJson(`/cli-api/events`, serializedEvents);
+        return NetworkUtilities.putJson(`/cli-api/events`, serializedEvents);
     }
 
     saveExample(interaction, requestId) {
-        return this.postJson(`/cli-api/example-requests/${requestId}`, JSON.stringify(interaction))
+        return NetworkUtilities.postJson(`/cli-api/example-requests/${requestId}`, JSON.stringify(interaction))
     }
 
     listExamples(requestId) {
-        return this.getJson(`/cli-api/example-requests/${requestId}`)
+        return NetworkUtilities.getJson(`/cli-api/example-requests/${requestId}`)
     }
 
     saveDiffState(sessionId, diffState) {
-        return this.putJson(`/cli-api/sessions/${sessionId}/diff`, JSON.stringify(diffState))
+        return NetworkUtilities.putJson(`/cli-api/sessions/${sessionId}/diff`, JSON.stringify(diffState))
     }
 
     saveSession(sessionId, session) {
-        return this.putJson(`/cli-api/sessions/${sessionId}`, JSON.stringify(session))
+        return NetworkUtilities.putJson(`/cli-api/sessions/${sessionId}`, JSON.stringify(session))
     }
-    
+
     loadSession(sessionId) {
         const promises = [
-            this.getJson(`/cli-api/sessions/${sessionId}`)
+            NetworkUtilities.getJson(`/cli-api/sessions/${sessionId}`)
         ]
         return Promise.all(promises)
             .then(([sessionResponse]) => {
@@ -100,6 +107,7 @@ class SpecService {
 const specService = new SpecService()
 
 export {
+    NetworkUtilities,
     SpecService,
     specService
 }

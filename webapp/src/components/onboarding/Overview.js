@@ -42,7 +42,7 @@ class OverView extends React.Component {
   render() {
     const {classes, cachedQueryResults, baseUrl} = this.props;
     const {conceptsById, pathsById, requestIdsByPathId} = cachedQueryResults;
-    const {specService, notificationAreaComponent, addExampleComponent} = this.props;
+    const {specService, notificationAreaComponent, shareButtonComponent, addExampleComponent} = this.props;
     const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
     const sortedConcepts = sortBy(concepts, ['name']);
     const pathTree = flattenPaths('root', pathsById);
@@ -60,7 +60,7 @@ class OverView extends React.Component {
 
     return (
       <>
-        <Navbar color="primary" notifications={notificationAreaComponent} addExample={addExampleComponent}/>
+        <Navbar color="primary" notifications={notificationAreaComponent} shareButtonComponent={shareButtonComponent} addExample={addExampleComponent}/>
         {/*{providesSpecService && isEmptySpec ? (<EmptySpecWithSession />) : null}*/}
         <div className={classes.overview}>
           <ApiOverview

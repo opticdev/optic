@@ -16,6 +16,8 @@ import { fromOptic } from '../lib/log-helper'
 import { getPaths } from '../Paths'
 import * as os from 'os';
 import { CallbackResponseResult } from 'mockttp/dist/rules/handlers'
+import * as url from 'url'
+import * as qs from 'querystring'
 
 interface IWithSamples {
   getSamples(): IApiInteraction[]
@@ -116,6 +118,8 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
     proxy.on('response', (res: mockttp.CompletedResponse) => {
       if (this.requests.has(res.id)) {
         const req = this.requests.get(res.id) as mockttp.CompletedRequest
+        const queryString: string = url.parse(req.url).query || ''
+        const queryParameters = qs.parse(queryString)
 
         const sample: IApiInteraction = {
           request: {
@@ -123,7 +127,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
             url: req.path,
             headers: req.headers,
             cookies: {},
-            queryParameters: {},
+            queryParameters,
             body: extractBody(req)
           },
           response: {
