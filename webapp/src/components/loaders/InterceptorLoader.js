@@ -1,26 +1,26 @@
 import React from 'react';
 import { LoaderFactory } from './LoaderFactory.js';
-import NewBehavior from '../navigation/NewBehavior.js';
 import { SpecService } from '../../services/SpecService.js'
 import { basePaths } from '../../RouterPaths.js';
+import { notificationAreaComponent } from './SharedLoader.js';
 
 const basePath = basePaths.interceptorBasePath
 
 class InterceptorSpecService extends SpecService {
   listSessions() {
     return Promise.resolve({
-      sessions: ['fakeSessionId']
+      sessions: ['interceptor-session-id']
     })
   }
 }
 
-const specService = new InterceptorSpecService()
+const specServiceTask = () => Promise.resolve(new InterceptorSpecService())
 
-const notificationAreaComponent = <NewBehavior specService={specService} />
+
 const {
   Routes: InterceptorLoaderRoutes
 } = LoaderFactory.build({
-  specService,
+  specServiceTask,
   notificationAreaComponent,
   basePath
 })

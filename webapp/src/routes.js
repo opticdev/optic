@@ -6,7 +6,8 @@ import ExampleSessionsLoader from './components/loaders/ExampleSessionsLoader.js
 import LocalLoader from './components/routes/local';
 import ExampleDrivenSpecLoader from './components/loaders/ExampleDrivenSpecLoader.js';
 import Interceptor from './components/loaders/InterceptorLoader.js';
-import {routerPaths} from './RouterPaths'
+import { routerPaths } from './RouterPaths'
+import SharedLoader from './components/loaders/SharedLoader';
 
 
 class AppRoutes extends React.Component {
@@ -30,6 +31,9 @@ class AppRoutes extends React.Component {
     return (
       <div>
         <Switch>
+
+          <Route strict path={routerPaths.sharedRoot()} component={SharedLoader} />
+          <Redirect from={routerPaths.sharedRoot()} to={routerPaths.sharedRoot()} />
           <Route strict path={routerPaths.exampleDrivenRoot()} component={ExampleDrivenSpecLoader} />
           <Redirect from={routerPaths.exampleDrivenRoot()} to={routerPaths.exampleDrivenRoot()} />
           <Route strict path={routerPaths.exampleCommandsRoot()} component={ExampleCommandsLoader} />
