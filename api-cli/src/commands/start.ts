@@ -1,12 +1,14 @@
 import {Command, flags} from '@oclif/command'
 import {fromOptic} from '../lib/log-helper'
-import Init, {IApiCliConfig} from './init'
+import {TransparentProxyCaptureSession} from '../lib/TransparentProxyCaptureSession'
+import Init, {IApiCliConfig, IApiIntegrationsConfig, IApiIntegrationsConfigHosts} from './init'
 import {ProxyCaptureSession, ICaptureSessionResult} from '../lib/proxy-capture-session'
 import {CommandSession} from '../lib/command-session'
 import * as fs from 'fs-extra'
 import * as path from 'path'
 import * as getPort from 'get-port'
 import {getPaths} from '../Paths'
+// @ts-ignore
 import analytics from '../lib/analytics'
 // @ts-ignore
 import * as Mustache from 'mustache'
@@ -15,6 +17,148 @@ import * as yaml from 'js-yaml'
 import * as opticEngine from '../../provided/domain.js'
 import {IApiInteraction} from '../lib/common'
 import * as colors from 'colors'
+import {normalizeHost} from './intercept'
+
+
+export default class Start extends Command {
+  static description = 'start your API and diff its behavior against the spec'
+
+  static flags = {
+    'keep-alive': flags.boolean({description: 'use this when your command terminates before the server terminates'})
+  }
+
+  static args = []
+
+  async run() {
+
+    let config
+    try {
+      config = await readApiConfig()
+    } catch (e) {
+      analytics.track('api start missing config')
+      this.log(fromOptic('Optic needs more information about your API to continue.'))
+      await Init.run([])
+      return
+    }
+    analytics.track('api start', {name: config.name})
+    const result = await this.runProxySession(config)
+    analytics.track('api server stopped. ', {name: config.name, sampleCount: result.samples.length})
+    await this.flushSession(result, config)
+    process.exit(0)
+  }
+
+  async flushSession(result: ICaptureSessionResult, config: IApiCliConfig) {
+    if (result.samples.length === 0 && result.integrationSamples.length === 0) {
+      // this.log(fromOptic('No API interactions were observed.'))
+      return null
+    }
+    // this.log(`[optic] Observed ${result.samples.length} API interaction(s)`)
+
+    const hasDiff = await checkDiffOrUnrecognizedPath(result)
+    if (hasDiff) {
+      this.log('`\n\n' + fromOptic(`New behavior was observed. Run ${colors.bold('api spec')} to review.`))
+    }
+
+    const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`.replace(/:/g, '_')
+    const fileName = `${sessionId}.optic_session.json`
+    // @ts-ignore
+    const {sessionsPath, integrationContracts} = await getPaths()
+    const filePath = path.join(sessionsPath, fileName)
+
+    if (result.integrationSamples.length > 0) {
+      (config.integrations || []).forEach(i => ensureIntegrationContractExists(i.name, integrationContracts))
+      result.integrationSamples.forEach(sample => {
+        const integrationName = integrationNameForHost(sample.request.host, config.integrations || [])
+        // @ts-ignore
+        sample.integrationName = integrationName
+      })
+    }
+
+    await fs.ensureFile(filePath)
+    await fs.writeJSON(filePath, result)
+  }
+
+  async runProxySession(config: IApiCliConfig): Promise<ICaptureSessionResult> {
+    const {flags} = this.parse(Start)
+    const proxySession = new ProxyCaptureSession()
+    const commandSession = new CommandSession()
+
+    const start = new Date()
+    const port = await getPort({port: getPort.makeRange(3300, 3900)})
+    const integrationsPort = await getPort({port: getPort.makeRange(4200, 4900)})
+    const inputs = {
+      ENV: {
+        OPTIC_API_PORT: port,
+        OPTIC_INTEGRATION_PORT: integrationsPort
+      }
+    }
+
+    //inbound proxy
+    const target = processSetting(config.proxy.target, inputs)
+    await proxySession.start({
+      target,
+      port: config.proxy.port
+    })
+    this.log(fromOptic(`Starting ${colors.bold(config.name)} on Port: ${colors.bold(config.proxy.port.toString())}, with ${colors.bold(config.commands.start)}`))
+    this.log(fromOptic(`Starting Integration Gateway on Port: ${colors.bold(integrationsPort.toString())}`))
+    this.log('\n')
+    //starting outbound proxy
+    const outboundProxy = new TransparentProxyCaptureSession()
+
+    const targetHosts = processHosts(config.integrations || [])
+    console.log(targetHosts)
+
+    outboundProxy.start({
+      proxyPort: integrationsPort,
+      targetHosts
+    })
+
+    if (config.commands.start) {
+      await commandSession.start({
+        command: config.commands.start,
+        environmentVariables: {
+          ...process.env,
+          //@ts-ignore
+          OPTIC_API_PORT: inputs.ENV.OPTIC_API_PORT,
+          OPTIC_INTEGRATION_PORT: integrationsPort.toString()
+        }
+      })
+    }
+
+    const commandStoppedPromise = new Promise(resolve => {
+      const {'keep-alive': keepAlive} = flags
+      if (!keepAlive) {
+        commandSession.events.on('stopped', () => resolve())
+      }
+    })
+
+    const processInterruptedPromise = new Promise((resolve) => {
+      process.removeAllListeners('SIGINT');
+      process.on('SIGINT', () => {
+        resolve()
+      })
+    })
+
+    await Promise.race([commandStoppedPromise, processInterruptedPromise])
+
+    commandSession.stop()
+    proxySession.stop()
+    outboundProxy.stop()
+
+    const end = new Date()
+    const samples = proxySession.getSamples()
+    const integrationSamples = outboundProxy.getSamples()
+
+    return {
+      session: {
+        start,
+        end
+      },
+      samples,
+      integrationSamples
+    }
+  }
+}
 
 export async function readApiConfig(): Promise<IApiCliConfig> {
   // @ts-ignore
@@ -65,118 +209,31 @@ export async function checkDiffOrUnrecognizedPath(result: ICaptureSessionResult)
   }
 }
 
-export default class Start extends Command {
-  static description = 'start your API and diff its behavior against the spec'
+function processHosts(iApiIntegrationsConfigs: IApiIntegrationsConfig[]): string[] {
+  const set: Set<string> = new Set()
+  iApiIntegrationsConfigs.forEach(integration => IApiIntegrationsConfigHosts(integration).forEach((host: string) => set.add(normalizeHost(host))))
+  return Array.from([...set])
+}
 
-  static flags = {
-    'keep-alive': flags.boolean({description: 'use this when your command terminates before the server terminates'})
+function integrationNameForHost(host: string, integrations: IApiIntegrationsConfig[]) {
+  const found = integrations.find(i => {
+    if (typeof i.host === 'string') {
+      return (i.host as string) === host
+    } else {
+      return (i.host as string[]).includes(host)
+    }
+  })
+  if (found) {
+    return found.name
   }
+}
 
-  static args = []
-
-  async run() {
-
-    let config
-    try {
-      config = await readApiConfig()
-    } catch (e) {
-      analytics.track('api start missing config')
-      this.log(fromOptic('Optic needs more information about your API to continue.'))
-      await Init.run([])
-      return
-    }
-    analytics.track('api start', {name: config.name})
-    const result = await this.runProxySession(config)
-    analytics.track('api server stopped. ', {name: config.name, sampleCount: result.samples.length})
-
-    await this.flushSession(result)
-    process.exit(0)
-  }
-
-  async flushSession(result: ICaptureSessionResult) {
-    if (result.samples.length === 0) {
-      // this.log(fromOptic('No API interactions were observed.'))
-      return null
-    }
-    // this.log(`[optic] Observed ${result.samples.length} API interaction(s)`)
-
-    const hasDiff = await checkDiffOrUnrecognizedPath(result)
-    if (hasDiff) {
-      this.log('`\n\n' + fromOptic(`New behavior was observed. Run ${colors.bold('api spec')} to review.`))
-    }
-
-    const sessionId = `${result.session.start.toISOString()}-${result.session.end.toISOString()}`.replace(/:/g, '_')
-    const fileName = `${sessionId}.optic_session.json`
-    // @ts-ignore
-    const {sessionsPath} = await getPaths()
-    const filePath = path.join(sessionsPath, fileName)
-    await fs.ensureFile(filePath)
-    await fs.writeJSON(filePath, result)
-  }
-
-  async runProxySession(config: IApiCliConfig): Promise<ICaptureSessionResult> {
-    const {flags} = this.parse(Start)
-    const proxySession = new ProxyCaptureSession()
-    const commandSession = new CommandSession()
-
-    const start = new Date()
-
-    const port = await getPort({port: getPort.makeRange(3300, 3900)})
-    const inputs = {
-      ENV: {
-        OPTIC_API_PORT: port
-      }
-    }
-
-    const target = processSetting(config.proxy.target, inputs)
-
-    await proxySession.start({
-      target,
-      port: config.proxy.port
-    })
-    this.log(fromOptic(`Starting ${colors.bold(config.name)} on Port: ${colors.bold(config.proxy.port.toString())}, with ${colors.bold(config.commands.start)}`))
-    this.log('\n')
-
-    if (config.commands.start) {
-      await commandSession.start({
-        command: config.commands.start,
-        environmentVariables: {
-          ...process.env,
-          //@ts-ignore
-          OPTIC_API_PORT: inputs.ENV.OPTIC_API_PORT
-        }
-      })
-    }
-
-    const commandStoppedPromise = new Promise(resolve => {
-      const {'keep-alive': keepAlive} = flags
-      if (!keepAlive) {
-        commandSession.events.on('stopped', () => resolve())
-      }
-    })
-
-    
-    const processInterruptedPromise = new Promise((resolve) => {
-      process.removeAllListeners('SIGINT');
-      process.on('SIGINT', () => {
-        resolve()
-      })
-    })
-
-    await Promise.race([commandStoppedPromise, processInterruptedPromise])
-
-    commandSession.stop()
-    proxySession.stop()
-
-    const end = new Date()
-    const samples = proxySession.getSamples()
-
-    return {
-      session: {
-        start,
-        end
-      },
-      samples
-    }
+async function ensureIntegrationContractExists(name: string, integrationContracts: string) {
+  const expectedPath = path.join(integrationContracts, `${name}_contract.json`)
+  if (!fs.existsSync(expectedPath)) {
+    const events = [
+      {APINamed: {name}}
+    ]
+    await fs.writeJson(expectedPath, events)
   }
 }

@@ -33,6 +33,10 @@ async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> {
   await fs.ensureDir(exampleRequestsPath)
   const outputPath = path.join(basePath, 'generated')
 
+  const integrationsPath = path.join(basePath, 'integrations')
+  const integrationContracts = path.join(integrationsPath, 'contracts')
+  await fs.ensureDir(integrationsPath)
+  await fs.ensureDir(integrationContracts)
   return {
     cwd,
     basePath,
@@ -42,6 +46,7 @@ async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> {
     gitignorePath,
     sessionsPath,
     exampleRequestsPath,
-    outputPath
+    outputPath,
+    integrationContracts
   }
 }
