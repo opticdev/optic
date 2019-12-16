@@ -12,6 +12,7 @@ import bodyParser = require('body-parser')
 import * as open from 'open'
 import {readApiConfig} from './start'
 import analytics from '../lib/analytics'
+import * as niceTry from 'nice-try'
 import Init, {IApiCliConfig} from './init'
 import {VersionControl} from '../lib/version-control'
 // @ts-ignore
@@ -177,7 +178,7 @@ export default class Spec extends Command {
     const sessionUtilities = new SessionUtilities(sessionsPath)
     const sessionValidatorAndLoader = new FileSystemSessionValidatorAndLoader(sessionUtilities)
     const paths = await getPaths()
-    await startServer(paths, sessionValidatorAndLoader, port)
+    await startServer(paths, sessionValidatorAndLoader, port, config)
 
     const url = `http://localhost:${port}/`
     this.log(fromOptic('Displaying your API Spec at ' + url))
@@ -225,9 +226,9 @@ class FileSystemSessionValidatorAndLoader {
   }
 }
 
-export async function startServer(paths: IPathMapping, sessionValidatorAndLoader: ISessionValidatorAndLoader, port: number) {
+export async function startServer(paths: IPathMapping, sessionValidatorAndLoader: ISessionValidatorAndLoader, port: number, config: IApiCliConfig) {
   // @ts-ignore
-  const {specStorePath, sessionsPath, exampleRequestsPath} = paths
+  const {specStorePath, sessionsPath, exampleRequestsPath, integrationContracts} = paths
   const sessionUtilities = new SessionUtilities(sessionsPath)
   const app = express()
 
@@ -278,7 +279,6 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
 
   app.get('/cli-api/sessions', async (req, res) => {
     const sessions = await sessionUtilities.getSessions()
-
     res.json({
       sessions
     })
@@ -311,6 +311,23 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
 
   app.get('/cli-api/identity', async (req, res) => {
     res.json({distinctId: await getUser() || 'anon'})
+  })
+  //Integrations
+  app.get('/cli-api/integrations', async (req, res) => {
+    res.json({integrations: (config.integrations || [])})
+  })
+  app.get('/cli-api/integrations/:integrationName', async (req, res) => {
+    const {integrationName} = req.params
+    const expectedPath = path.join(integrationContracts, `${integrationName}_contract.json`)
+    const events = niceTry(() => {
+      const contents = fs.readFileSync(expectedPath).toString()
+      return JSON.parse(contents)
+    })
+    if (fs.existsSync(expectedPath)) {
+      res.json(events)
+    } else {
+      res.sendStatus(404)
+    }
   })
 
   Utilities.addUiServer(app)

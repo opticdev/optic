@@ -4,7 +4,8 @@ export const basePaths = {
     exampleDrivenSpecBasePath: '/spec-by-example',
     exampleCommandsBasePath: '/examples/:exampleId',
     sharedBasePath: '/shared/:sharedId',
-    localBasePath: '/saved'
+    localBasePath: '/saved',
+    localIntegrationsPath: '/saved/integrations/:integrationName'
 }
 
 export const routerPaths = {
