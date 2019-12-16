@@ -2,7 +2,7 @@ import {Command} from '@oclif/command'
 import cli from 'cli-ux'
 import * as fs from 'fs-extra'
 import * as path from 'path'
-import {getUser} from '../lib/credentials'
+import {readLocalConfig} from '../lib/identity'
 import {fromOptic} from '../lib/log-helper'
 import {getPaths, IPathMapping} from '../Paths'
 import {prepareEvents} from '../PersistUtils'
@@ -310,7 +310,8 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
   })
 
   app.get('/cli-api/identity', async (req, res) => {
-    res.json({distinctId: await getUser() || 'anon'})
+    const {user_id, doNotTrack} = readLocalConfig()
+    res.json({distinctId: user_id, doNotTrack})
   })
 
   Utilities.addUiServer(app)

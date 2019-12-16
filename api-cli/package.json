@@ -1,6 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "Optic's open source tool for building APIs that document & test themselves",
+  "version": "6.5.12",
   "version": "6.6.0",
   "author": "@useoptic",
   "bin": {
@@ -35,12 +36,12 @@
     "js-yaml": "^3.13.1",
     "json-stable-stringify": "^1.0.1",
     "jwt-decode": "^2.2.0",
-    "keytar": "^5.0.0-beta.0",
     "mixpanel": "^0.11.0",
     "mockttp": "^0.19.2",
     "mustache": "^3.0.3",
     "nice-try": "^2.0.0",
     "node-fetch": "^2.6.0",
+    "node-localstorage": "^2.1.5",
     "nodegit": "^0.26.2",
     "open": "^6.3.0",
     "react-dev-utils": "^9.1.0",
@@ -106,7 +107,8 @@
     "xposttest": "tslint -p test -t stylish",
     "prepack": "cp ../Readme.md ./Readme.md && rm tsconfig.tsbuildinfo || true && rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "xtest": "ANALYTICS_IMPL=null nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif-dev readme && git add README.md"
+    "version": "oclif-dev readme && git add README.md",
+    "postinstall": "node -e \"require('./lib/lib/analytics.js').default.trackInstall()\""
   },
   "types": "lib/index.d.ts"
 }
