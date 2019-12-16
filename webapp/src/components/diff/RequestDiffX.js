@@ -12,6 +12,7 @@ import { NamerStore } from '../shapes/Namer';
 import SimulatedCommandContext from './SimulatedCommandContext';
 import FirstTimeDiffTutorial from '../tutorial/FirstTimeDiffTutorial';
 import { queryStringDiffer } from './DiffUtilities';
+import {track} from '../../Analytics';
 
 class RequestDiffX extends React.Component {
   handleDiscard = async () => {
@@ -78,6 +79,7 @@ class RequestDiffX extends React.Component {
 
           if (addedFirst) {
             this.props.pushRelative('?documented_endpoint=true')
+            track('Documented First Endpoint in an API')
           } else {
             this.props.pushRelative('')
           }

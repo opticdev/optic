@@ -1,11 +1,12 @@
 import mixpanel from 'mixpanel-browser'
+let isAnalyticsEnabled = process.env.REACT_APP_ENABLE_ANALYTICS !== 'no'
 
-const isAnalyticsEnabled = process.env.REACT_APP_ENABLE_ANALYTICS !== 'no'
+const init = () => mixpanel.init('78a42ccba0e9a55de00c30b454c5da8e');
+
 if (isAnalyticsEnabled) {
-  mixpanel.init('78a42ccba0e9a55de00c30b454c5da8e');
   if (!window.localStorage.getItem('_known_user')) {
+    init()
     window.localStorage.setItem('_known_user', 'true')
-
     const slack = "hNIv7B71oyUuRlczOFGqzRY3/ZFRBVM6NB/XDT4MQLFT".split("").reverse().join("")
     fetch('https://hooks.slack.com/services/'+slack, {
       method: 'POST',
@@ -21,8 +22,17 @@ if (isAnalyticsEnabled) {
       }
     })
       .then((res) => res.json())
-      .then(({ distinctId }) => {
-        mixpanel.identify(distinctId)
+      .then(({ distinctId, doNotTrack }) => {
+        if (!doNotTrack) {
+          init()
+          mixpanel.identify(distinctId)
+          window.FS.identify(distinctId);
+          window.FS.identify(distinctId);
+          track('Opened on Local')
+        } else {
+          window.FS.shutdown()
+          isAnalyticsEnabled = false
+        }
       });
   }
 } else {

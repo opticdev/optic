@@ -1,9 +1,10 @@
 import * as Mixpanel from 'mixpanel'
 //@ts-ignore
 import {hri} from 'human-readable-ids'
-import {getUser} from './credentials'
 //@ts-ignore
 import * as fetch from 'node-fetch'
+import {readLocalConfig, setDoNotTrack} from './identity'
+import * as os from 'os'
 
 interface IAnalyticsProperties {
   [key: string]: any
@@ -22,23 +23,42 @@ class NullAnalytics implements IAnalytics {
 class MixpanelAnalytics implements IAnalytics {
   client: Mixpanel.Mixpanel
   distinct_id: string
+  doNotTrack: boolean
 
   constructor(token: string) {
     if (!token) {
       throw new Error('missing mixpanel token')
     }
     this.client = Mixpanel.init(token)
-    this.distinct_id = 'anon_' + hri.random()
-    getUser().then(userId => {
-      if (userId) {
-        this.distinct_id = userId
-      }
+    const {user_id, doNotTrack} = readLocalConfig()
+    this.distinct_id = user_id
+    this.doNotTrack = doNotTrack
+  }
+
+  track(_event: string, _properties: IAnalyticsProperties = {}): Promise<void> {
+    if (this.doNotTrack) {
+      return Promise.resolve()
+    }
+    return new Promise(resolve => {
+      this.client.track(_event, {..._properties, distinct_id: this.distinct_id}, () => {
+        resolve()
+      })
     })
   }
 
-  track(_event: string, _properties: IAnalyticsProperties = {}): void {
-    this.client.track(_event, {..._properties, distinct_id: this.distinct_id})
-    //console.log(_event, {..._properties, distinct_id: this.distinct_id})
+  trackInstall(parentArgs: any) {
+    const doNotTrack = process.env.DO_NOT_TRACK === 'true'
+    if (doNotTrack) {
+      setDoNotTrack()
+    }
+    const properties = {
+      platform: os.platform(),
+      release: os.release(),
+      arch: os.arch(),
+      doNotTrack,
+      opticVersion: require('../../package.json').version
+    }
+    this.client.track('Install CLI', {...properties, distinct_id: this.distinct_id})
   }
 }
 

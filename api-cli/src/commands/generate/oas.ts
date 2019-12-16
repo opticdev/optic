@@ -52,7 +52,7 @@ export default class GenerateOas extends Command {
 
     try {
       const specAsJson = oasGenerator.fromEventString(fileContents)
-
+      analytics.track('generated oas', {size: specAsJson.length})
       const writeJson = flags.json || (!flags.json && !flags.yaml)
       const writeYaml = flags.yaml
 

@@ -1,4 +1,5 @@
 import { Command, flags } from '@oclif/command'
+import analytics from '../lib/analytics'
 import { ICaptureSessionResult } from '../lib/proxy-capture-session'
 import * as getPort from 'get-port'
 import { IApiInteraction } from '../lib/common'
@@ -63,6 +64,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
 
   async start(config: IHttpToolkitProxyCaptureSessionConfig) {
     this.config = config
+    analytics.track('api intercept', {host: this.config.targetHost, flags: this.config.flags})
     const configPath = tmp.dirSync({ unsafeCleanup: true }).name
     const certificateInfo = await mockttp.generateCACertificate({
       bits: 2048,
@@ -153,6 +155,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
 
   async stop() {
     await this.proxy.stop()
+    analytics.track('api intercept stopped', {samples: this.samples.length})
     if (this.config.flags.chrome) {
       await this.interceptor.deactivateAll()
     }

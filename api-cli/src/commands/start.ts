@@ -85,9 +85,9 @@ export default class Start extends Command {
       await Init.run([])
       return
     }
-    analytics.track('api start', {name: config.name})
+    analytics.track('api start', {name: config.name, startCommand: config.commands.start})
     const result = await this.runProxySession(config)
-    analytics.track('api server stopped. ', {name: config.name, sampleCount: result.samples.length})
+    await analytics.track('api server stopped', {name: config.name, sampleCount: result.samples.length})
 
     await this.flushSession(result)
     process.exit(0)
@@ -155,7 +155,7 @@ export default class Start extends Command {
       }
     })
 
-    
+
     const processInterruptedPromise = new Promise((resolve) => {
       process.removeAllListeners('SIGINT');
       process.on('SIGINT', () => {

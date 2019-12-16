@@ -52,21 +52,13 @@ export default class Init extends Command {
 
   async run() {
     const {flags} = this.parse(Init)
-    if (flags.paste) {
-      analytics.track('init from web')
-      trackSlack('init from web')
-      await this.webImport()
-    } else if (flags.import) {
-      trackSlack('init from oas')
-      analytics.track('init from local oas')
-      await this.importOas(flags.import)
-    } else {
-      const name = await cli.prompt('API Name')
-      const port = await cli.prompt('Port')
-      const command = await cli.prompt('Command to Start API (see table on docs page)')
-      const host = 'localhost'
-      await this.blankWithName(name, parseInt(port, 10), command.split('\n')[0], host)
-    }
+    const name = await cli.prompt('API Name')
+    const port = await cli.prompt('Port')
+    const command = await cli.prompt('Command to Start API (see table on docs page)')
+    const host = 'localhost'
+    analytics.track('api init', {name, port, command, host})
+    trackSlack(`New Local API Created ${name} ${command}`)
+    await this.blankWithName(name, parseInt(port, 10), command.split('\n')[0], host)
     // @ts-ignore
     const {basePath} = await getPaths()
     this.log('\n')
