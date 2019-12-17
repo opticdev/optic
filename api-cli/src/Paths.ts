@@ -35,6 +35,7 @@ async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> {
 
   const integrationsPath = path.join(basePath, 'integrations')
   const integrationContracts = path.join(integrationsPath, 'contracts')
+  const integrationExampleRequestsPath = path.join(integrationsPath, 'example-requests')
   await fs.ensureDir(integrationsPath)
   await fs.ensureDir(integrationContracts)
   return {
@@ -47,6 +48,7 @@ async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> {
     sessionsPath,
     exampleRequestsPath,
     outputPath,
-    integrationContracts
+    integrationContracts,
+    integrationExampleRequestsPath
   }
 }

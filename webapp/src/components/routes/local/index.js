@@ -111,7 +111,7 @@ export class LocalLoader extends React.Component {
               <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage}/>
               <Route exact path={basePath} component={LocalSpecOverview}/>
               <Route path={diffBasePath} component={SessionWrapper}/>
-              <Route path={basePathIntegrations} component={({match}) => <IntegrationsLoader name={match.params.integrationName}/>}/>
+              <Route path={basePathIntegrations} component={({match}) => <IntegrationsLoader match={match} name={match.params.integrationName}/>}/>
             </Switch>
           </LocalRfcStore>
         </InitialRfcCommandsStore>

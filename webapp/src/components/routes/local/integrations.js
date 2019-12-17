@@ -17,6 +17,7 @@ import {InitialRfcCommandsStore} from '../../../contexts/InitialRfcCommandsConte
 import {LocalRfcStore} from '../../../contexts/RfcContext';
 import {RequestsDetailsPage} from '../../requests/EndpointPage';
 import {LocalSpecOverview} from './index';
+import {NavigationStore} from '../../../contexts/NavigationContext';
 
 export class IntegrationsLoader extends React.Component {
 
@@ -31,7 +32,7 @@ export class IntegrationsLoader extends React.Component {
     this.setState({specService: new IntegrationsSpecService(this.props.name)}, () => {
       this.loadCommandContext()
         .then(() => this.loadEvents());
-    })
+    });
   }
 
   loadEvents = () => {
@@ -63,8 +64,8 @@ export class IntegrationsLoader extends React.Component {
 
   render() {
     const {loadedEvents, error, clientId, clientSessionId} = this.state;
-
-    const basePath = basePaths.localIntegrationsPath
+    const {match} = this.props;
+    const basePath = basePaths.localIntegrationsPath;
 
     if (error) {
       return (
@@ -84,37 +85,39 @@ export class IntegrationsLoader extends React.Component {
       return <Loading/>;
     }
 
-    const {specService} = this.state
+    const {specService} = this.state;
 
     const diffBasePath = routerPaths.diff(basePaths.localIntegrationsPath);
+
     function SessionWrapper(props) {
       const {match} = props;
       const {sessionId} = match.params;
       return (
         <TrafficSessionStore sessionId={sessionId} specService={specService}>
-          <Switch>
-            <Route exact path={routerPaths.diffUrls(diffBasePath)} component={UrlsX}/>
-            <Route exact path={routerPaths.diffRequest(diffBasePath)} component={RequestDiffX}/>
-          </Switch>
+            <Switch>
+              <Route exact path={routerPaths.diffUrls(diffBasePath)} component={UrlsX}/>
+              <Route exact path={routerPaths.diffRequest(diffBasePath)} component={RequestDiffX}/>
+            </Switch>
         </TrafficSessionStore>
       );
     }
 
     return (
       <CommandContextStore clientSessionId={clientSessionId} clientId={clientId}>
-        <InitialRfcCommandsStore initialEventsString={loadedEvents} rfcId="testRfcId">
-          <LocalRfcStore specService={this.state.specService}>
-            <Switch>
-              <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage}/>
-              <Route exact path={basePath} component={LocalSpecOverview}/>
-              <Route path={diffBasePath} component={SessionWrapper}/>
-            </Switch>
-          </LocalRfcStore>
-        </InitialRfcCommandsStore>
+        <NavigationStore baseUrl={match.url}>
+          <InitialRfcCommandsStore initialEventsString={loadedEvents} rfcId="testRfcId">
+            <LocalRfcStore specService={this.state.specService}>
+              <Switch>
+                <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage}/>
+                <Route exact path={basePath} component={LocalSpecOverview}/>
+                <Route path={diffBasePath} component={SessionWrapper}/>
+              </Switch>
+            </LocalRfcStore>
+          </InitialRfcCommandsStore>
+        </NavigationStore>
       </CommandContextStore>
     );
   }
-
 
 
 }
@@ -128,43 +131,43 @@ class IntegrationsSpecService extends SpecService {
   }
 
   listEvents() {
-    return NetworkUtilities.getJsonAsText(`/cli-api/integrations/${this.encodedName}`)
+    return NetworkUtilities.getJsonAsText(`/cli-api/integrations/${this.encodedName}/events`);
   }
 
   saveEvents(eventStore, rfcId) {
     const serializedEvents = eventStore.serializeEvents(rfcId);
-    return NetworkUtilities.putJson(`/cli-api/events`, serializedEvents);
+    return NetworkUtilities.putJson(`/cli-api/integrations/${this.encodedName}/events`, serializedEvents);
   }
 
   saveExample(interaction, requestId) {
-    return NetworkUtilities.postJson(`/cli-api/example-requests/${requestId}`, JSON.stringify(interaction))
+    return NetworkUtilities.postJson(`/cli-api/integrations/${this.encodedName}/example-requests/${requestId}`, JSON.stringify(interaction));
   }
 
   listExamples(requestId) {
-    return NetworkUtilities.getJson(`/cli-api/example-requests/${requestId}`)
+    return NetworkUtilities.getJson(`/cli-api/integrations/${this.encodedName}/example-requests/${requestId}`);
   }
 
   saveDiffState(sessionId, diffState) {
-    return NetworkUtilities.putJson(`/cli-api/sessions/${sessionId}/diff`, JSON.stringify(diffState))
+    return NetworkUtilities.putJson(`/cli-api/sessions/${sessionId}/diff`, JSON.stringify(diffState));
   }
 
   saveSession(sessionId, session) {
-    return NetworkUtilities.putJson(`/cli-api/sessions/${sessionId}`, JSON.stringify(session))
+    return NetworkUtilities.putJson(`/cli-api/sessions/${sessionId}`, JSON.stringify(session));
   }
 
   loadSession(sessionId) {
     const promises = [
       NetworkUtilities.getJson(`/cli-api/sessions/${sessionId}`)
-    ]
+    ];
     return Promise.all(promises)
       .then(([sessionResponse]) => {
         if (sessionResponse.session) {
-          sessionResponse.session.samples = (sessionResponse.session.integrationSamples || []).filter(i => i.integrationName === this.name)
+          sessionResponse.session.samples = (sessionResponse.session.integrationSamples || []).filter(i => i.integrationName === this.name);
         }
         return {
           sessionResponse,
           diffStateResponse: null
-        }
-      })
+        };
+      });
   }
 }
