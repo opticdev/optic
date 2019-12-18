@@ -1,32 +1,36 @@
-import { Command, flags } from '@oclif/command'
-import analytics from '../lib/analytics'
-import { ICaptureSessionResult } from '../lib/proxy-capture-session'
+import {Command, flags} from '@oclif/command'
+import {ICaptureSessionResult} from '../lib/proxy-capture-session'
 import * as getPort from 'get-port'
-import { IApiInteraction } from '../lib/common'
-import { startServer, ISessionValidatorAndLoader, makeInitialDiffState } from './spec'
+import {IApiInteraction} from '../lib/common'
+import {extractBody} from '../lib/TransparentProxyCaptureSession'
+import {startServer, ISessionValidatorAndLoader, makeInitialDiffState} from './spec'
 //@ts-ignore
 import * as openBrowser from 'react-dev-utils/openBrowser'
 import * as Express from 'express'
+import {FreshChrome} from 'httptoolkit-server/lib/interceptors/fresh-chrome'
 import * as mockttp from 'mockttp'
 import * as fs from 'fs-extra'
 import * as tmp from 'tmp'
 import * as path from 'path'
-import { EventEmitter } from 'events'
-import { fromOptic } from '../lib/log-helper'
-import { getPaths } from '../Paths'
-import * as os from 'os';
-import { CallbackResponseResult } from 'mockttp/dist/rules/handlers'
+import {EventEmitter} from 'events'
+import {fromOptic} from '../lib/log-helper'
+import {getPaths} from '../Paths'
+import * as os from 'os'
+import {CallbackResponseResult} from 'mockttp/dist/rules/handlers'
 import * as url from 'url'
 import * as qs from 'querystring'
 
 interface IWithSamples {
   getSamples(): IApiInteraction[]
 }
+
 class InMemorySessionValidatorAndLoader implements ISessionValidatorAndLoader {
   proxySession: IWithSamples
+
   constructor(proxySession: IWithSamples) {
     this.proxySession = proxySession
   }
+
   validateSessionId = (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
     req.optic = {
       session: {
@@ -39,12 +43,6 @@ class InMemorySessionValidatorAndLoader implements ISessionValidatorAndLoader {
 
 }
 
-function extractBody(req: mockttp.CompletedRequest | mockttp.CompletedResponse) {
-  if (req.headers['content-type'] || req.headers['transfer-encoding']) {
-    return req.body.json || req.body.formData || req.body.text
-  }
-}
-
 interface IHttpToolkitProxyCaptureSessionConfig {
   proxyPort: number,
   targetHost: string,
@@ -55,7 +53,7 @@ interface IHttpToolkitProxyCaptureSessionConfig {
 
 class HttpToolkitProxyCaptureSession implements IWithSamples {
   private proxy!: mockttp.Mockttp
-  // private interceptor!: FreshChrome
+  private interceptor!: FreshChrome
   private requests: Map<string, mockttp.CompletedRequest> = new Map()
   private samples: IApiInteraction[] = []
   private config!: IHttpToolkitProxyCaptureSessionConfig
@@ -63,14 +61,13 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
 
   async start(config: IHttpToolkitProxyCaptureSessionConfig) {
     this.config = config
-    analytics.track('api intercept', {host: this.config.targetHost, flags: this.config.flags})
-    const configPath = tmp.dirSync({ unsafeCleanup: true }).name
+    const configPath = tmp.dirSync({unsafeCleanup: true}).name
     const certificateInfo = await mockttp.generateCACertificate({
       bits: 2048,
       commonName: 'Optic Labs Corp'
     })
     const certificatePath = path.join(configPath, '.optic', 'certificates')
-    await fs.ensureDir(certificatePath);
+    await fs.ensureDir(certificatePath)
     const certPath = path.join(certificatePath, 'ca.cert')
     const keyPath = path.join(certificatePath, 'ca.key')
     await fs.writeFile(certPath, certificateInfo.cert)
@@ -86,7 +83,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
       https,
       recordTraffic: false
     })
-    this.proxy = proxy;
+    this.proxy = proxy
     proxy.addRules(
       {
         matchers: [
@@ -98,7 +95,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
             headers: {
               location: `https://${config.targetHost}`
             }
-          };
+          }
           return response
         })
       },
@@ -125,6 +122,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
         const sample: IApiInteraction = {
           request: {
             method: req.method,
+            host: normalizeHost(req.hostname || ''),
             url: req.path,
             headers: req.headers,
             cookies: {},
@@ -143,21 +141,19 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
     await proxy.start(config.proxyPort)
 
     if (config.flags.chrome) {
-      console.log('Chrome interceptor is currently in Beta. Please email aidan@useoptic.com for access.')
-      // const interceptor = new FreshChrome({
-      //   configPath,
-      //   https
-      // })
-      // this.interceptor = interceptor;
-      // interceptor.activate(config.proxyPort)
+      const interceptor = new FreshChrome({
+        configPath,
+        https
+      })
+      this.interceptor = interceptor
+      interceptor.activate(config.proxyPort)
     }
   }
 
   async stop() {
     await this.proxy.stop()
-    analytics.track('api intercept stopped', {samples: this.samples.length})
     if (this.config.flags.chrome) {
-      // await this.interceptor.deactivateAll()
+      await this.interceptor.deactivateAll()
     }
   }
 
@@ -182,7 +178,7 @@ export default class Intercept extends Command {
   }
 
   async run() {
-    const { args } = this.parse(Intercept);
+    const {args} = this.parse(Intercept)
 
     const cliServerPort = await getPort({
       port: [3201]
@@ -212,17 +208,17 @@ export default class Intercept extends Command {
   }
 
   async runProxySession(proxySession: HttpToolkitProxyCaptureSession, proxyPort: number, targetHost: string): Promise<ICaptureSessionResult> {
-    const { flags } = this.parse(Intercept)
+    const {flags} = this.parse(Intercept)
 
     const start = new Date()
 
     const processInterruptedPromise = new Promise((resolve) => {
-      process.removeAllListeners('SIGINT');
+      process.removeAllListeners('SIGINT')
       process.on('SIGINT', () => {
         resolve()
       })
     })
-    await proxySession.start({ proxyPort, targetHost, flags: { chrome: flags.chrome } })
+    await proxySession.start({proxyPort, targetHost, flags: {chrome: flags.chrome}})
     this.log(fromOptic(`Started proxy server on https://localhost:${proxyPort}`))
     this.log(fromOptic(`Capturing requests to ${targetHost}`))
     this.log(fromOptic('Press ^C (Control+C) to stop'))
@@ -237,12 +233,13 @@ export default class Intercept extends Command {
         start,
         end
       },
-      samples
+      samples,
+      integrationSamples: []
     }
   }
 }
 
-export function normalizeHost(hostString: string) {
+export function normalizeHost(hostString: string): string {
   if (hostString.startsWith('http://')) {
     return hostString.substring('http://'.length)
   }

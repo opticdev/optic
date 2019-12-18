@@ -29,10 +29,24 @@ export interface IApiCliPublishConfig {
   oas?: string,
 }
 
+export interface IApiIntegrationsConfig {
+  name: string,
+  host: string | string[]
+}
+
+export function IApiIntegrationsConfigHosts(a: IApiIntegrationsConfig): string[] {
+  if (typeof a.host === 'string') {
+    return [a.host]
+  } else {
+    return a.host
+  }
+}
+
 export interface IApiCliConfig {
   name: string
   proxy: IApiCliProxyConfig
-  commands: IApiCliCommandsConfig
+  commands: IApiCliCommandsConfig,
+  integrations?: IApiIntegrationsConfig[]
 }
 
 export default class Init extends Command {
