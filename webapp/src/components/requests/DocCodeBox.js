@@ -139,7 +139,7 @@ export const ExampleShapeViewer = withStyles(styles)(({shapeId, showShapesFirst,
   })();
 
   const shapeRender = (
-    <ShapeViewerWithQuery shapeId={shapeId}/>
+    <ShapeViewerWithQuery shapeId={shapeId} disableNaming={true}/>
   );
 
   return (

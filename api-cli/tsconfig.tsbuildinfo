@@ -1025,66 +1025,6 @@
         "version": "8ba3e2bd0cd6c50ebe3b236bff7b2925891516c022da0850904993cf7ab09bde",
         "signature": "8ba3e2bd0cd6c50ebe3b236bff7b2925891516c022da0850904993cf7ab09bde"
       },
-      "./node_modules/@types/lodash/ts3.1/common/common.d.ts": {
-        "version": "4025cf62742c5bb3d383c8a62342481622c87e3397ea5e7b7baab18b9efd5798",
-        "signature": "4025cf62742c5bb3d383c8a62342481622c87e3397ea5e7b7baab18b9efd5798"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/array.d.ts": {
-        "version": "80bcf7af2e82d675144a547960b4fbc72d145af19a961fed3573323703d7d2ec",
-        "signature": "80bcf7af2e82d675144a547960b4fbc72d145af19a961fed3573323703d7d2ec"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/collection.d.ts": {
-        "version": "0c75b204aed9cf6ff1c7b4bed87a3ece0d9d6fc857a6350c0c95ed0c38c814e8",
-        "signature": "0c75b204aed9cf6ff1c7b4bed87a3ece0d9d6fc857a6350c0c95ed0c38c814e8"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/date.d.ts": {
-        "version": "187119ff4f9553676a884e296089e131e8cc01691c546273b1d0089c3533ce42",
-        "signature": "187119ff4f9553676a884e296089e131e8cc01691c546273b1d0089c3533ce42"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/function.d.ts": {
-        "version": "45bf6da7cede8211b7d0579deabfa227490dfe8b932a56a962599efc48356e68",
-        "signature": "45bf6da7cede8211b7d0579deabfa227490dfe8b932a56a962599efc48356e68"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/lang.d.ts": {
-        "version": "c2d47e5668f89ed8768d306919c42bb88d50d4029d68f58343141360895cfcc0",
-        "signature": "c2d47e5668f89ed8768d306919c42bb88d50d4029d68f58343141360895cfcc0"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/math.d.ts": {
-        "version": "65648639567d214f62c1b21d200c852807e68bdb08311f95ab6f526ef5b98995",
-        "signature": "65648639567d214f62c1b21d200c852807e68bdb08311f95ab6f526ef5b98995"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/number.d.ts": {
-        "version": "00baffbe8a2f2e4875367479489b5d43b5fc1429ecb4a4cc98cfc3009095f52a",
-        "signature": "00baffbe8a2f2e4875367479489b5d43b5fc1429ecb4a4cc98cfc3009095f52a"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/object.d.ts": {
-        "version": "a46a28781991cd761431784ea72cb7772f4a9155a7ee78f0b040088e856ed9a2",
-        "signature": "a46a28781991cd761431784ea72cb7772f4a9155a7ee78f0b040088e856ed9a2"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/seq.d.ts": {
-        "version": "3c92b6dfd43cc1c2485d9eba5ff0b74a19bb8725b692773ef1d66dac48cda4bd",
-        "signature": "3c92b6dfd43cc1c2485d9eba5ff0b74a19bb8725b692773ef1d66dac48cda4bd"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/string.d.ts": {
-        "version": "e34f3f6159b1e23de9bb5521382795aaa5aaed6f53b4702e70a2ec45bc76ddb5",
-        "signature": "e34f3f6159b1e23de9bb5521382795aaa5aaed6f53b4702e70a2ec45bc76ddb5"
-      },
-      "./node_modules/@types/lodash/ts3.1/common/util.d.ts": {
-        "version": "c84107ce3522799b7a821463b1743ef230669093b2746afd1e817fcbb5885e67",
-        "signature": "c84107ce3522799b7a821463b1743ef230669093b2746afd1e817fcbb5885e67"
-      },
-      "./node_modules/@types/lodash/ts3.1/index.d.ts": {
-        "version": "bbf144d4354e2aaa6439f32761f3ee798cc68d1600adab6e2a596f25269f106d",
-        "signature": "bbf144d4354e2aaa6439f32761f3ee798cc68d1600adab6e2a596f25269f106d"
-      },
-      "./node_modules/httptoolkit-server/lib/interceptors/index.d.ts": {
-        "version": "3c409bee1ccdf1569ee642f744478d63de9aa0488b3ca3f75aebb5e795910d3c",
-        "signature": "3c409bee1ccdf1569ee642f744478d63de9aa0488b3ca3f75aebb5e795910d3c"
-      },
-      "./node_modules/httptoolkit-server/lib/interceptors/fresh-chrome.d.ts": {
-        "version": "9c0458ca14be994e79f64109e2d04a7109bad8e848d0085bb7661c4368470db3",
-        "signature": "9c0458ca14be994e79f64109e2d04a7109bad8e848d0085bb7661c4368470db3"
-      },
       "./node_modules/typed-error/lib/typed-error.d.ts": {
         "version": "bf7d11b62137f136abc446c183782ca524060634c273a8516dbec1a2a608a8f9",
         "signature": "bf7d11b62137f136abc446c183782ca524060634c273a8516dbec1a2a608a8f9"
@@ -1154,8 +1094,8 @@
         "signature": "5685ea2eb87a7a405e106c5bea5936fdaed1184eaaf9bd075d27c40b4984eea6"
       },
       "./src/commands/intercept.ts": {
-        "version": "83011281dea8e8e41a90d5bb8b968cf7e8ac9756d88368d29bfd0e431f055bf2",
-        "signature": "da66103353c3f4f2e789c5f34f4d03ae029a15b39d033dad33851f52752710c9"
+        "version": "beae7e057130fa269973a79c77c23b38b40b9499981d4e95c71c6f9453e38e61",
+        "signature": "8ae7f0838469e48e391034c4f32cd376f8a2f491a1a57b87fd5234378e816dca"
       },
       "./src/commands/generate/oas.ts": {
         "version": "f073a2dd7d8ec99c53fa1e199eac73f8868033a40d37335a704a1999e9882c86",
@@ -1173,10 +1113,6 @@
         "version": "e625c82243c9406552768e9e3cff3f74745945bbef7e65d60c8904f6f544cf57",
         "signature": "e625c82243c9406552768e9e3cff3f74745945bbef7e65d60c8904f6f544cf57"
       },
-      "./node_modules/@types/aws-lambda/index.d.ts": {
-        "version": "ed6370d3ab14d1e16b67ec851059b58b2a43eebb873de26978da30bb093e74b5",
-        "signature": "ed6370d3ab14d1e16b67ec851059b58b2a43eebb873de26978da30bb093e74b5"
-      },
       "./node_modules/@types/chai/index.d.ts": {
         "version": "af357b2ba5a4e0de1e64d973cf1369700a402fc81b4d0255d6242e5bd085633f",
         "signature": "af357b2ba5a4e0de1e64d973cf1369700a402fc81b4d0255d6242e5bd085633f"
@@ -1184,14 +1120,6 @@
       "./node_modules/@types/clean-css/index.d.ts": {
         "version": "4bfa64d72f076287ee5c40a3a91aa1ac2dc0b480cacc0f4fabdb3a2002d1ef67",
         "signature": "4bfa64d72f076287ee5c40a3a91aa1ac2dc0b480cacc0f4fabdb3a2002d1ef67"
-      },
-      "./node_modules/@types/color-name/index.d.ts": {
-        "version": "f0cb4b3ab88193e3e51e9e2622e4c375955003f1f81239d72c5b7a95415dad3e",
-        "signature": "f0cb4b3ab88193e3e51e9e2622e4c375955003f1f81239d72c5b7a95415dad3e"
-      },
-      "./node_modules/@types/command-exists/index.d.ts": {
-        "version": "c9a517452529a17888b3bf8e2722d2b38edc80ba4dbbd7f01cdb0ff8596320b2",
-        "signature": "c9a517452529a17888b3bf8e2722d2b38edc80ba4dbbd7f01cdb0ff8596320b2"
       },
       "./node_modules/@types/connect-history-api-fallback/index.d.ts": {
         "version": "bbfbe0c906eaac5a661232c334955878c9ed1f14421694c5d6ba500b05040a37",
@@ -1220,10 +1148,6 @@
       "./node_modules/@types/glob/index.d.ts": {
         "version": "d852d6282c8dc8156d26d6bda83ab4bde51fee05ba2fe0ecdc165ddda009d3ee",
         "signature": "d852d6282c8dc8156d26d6bda83ab4bde51fee05ba2fe0ecdc165ddda009d3ee"
-      },
-      "./node_modules/@types/graphql-deduplicator/index.d.ts": {
-        "version": "b979f70be8def00c3081559e125b6ac7f2a99b8563d67b336eca7269a7270311",
-        "signature": "b979f70be8def00c3081559e125b6ac7f2a99b8563d67b336eca7269a7270311"
       },
       "./node_modules/@types/har-format/index.d.ts": {
         "version": "3e3144d1b1eab267eab7041cfae2d258636944e96d8a0567f44b574b252ab1f1",
@@ -1285,6 +1209,58 @@
         "version": "789cac4ce6f86af267d2e94dcb55f628fe071672cc1c28439d55923dc783dc4c",
         "signature": "789cac4ce6f86af267d2e94dcb55f628fe071672cc1c28439d55923dc783dc4c"
       },
+      "./node_modules/@types/lodash/ts3.1/common/common.d.ts": {
+        "version": "4025cf62742c5bb3d383c8a62342481622c87e3397ea5e7b7baab18b9efd5798",
+        "signature": "4025cf62742c5bb3d383c8a62342481622c87e3397ea5e7b7baab18b9efd5798"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/array.d.ts": {
+        "version": "80bcf7af2e82d675144a547960b4fbc72d145af19a961fed3573323703d7d2ec",
+        "signature": "80bcf7af2e82d675144a547960b4fbc72d145af19a961fed3573323703d7d2ec"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/collection.d.ts": {
+        "version": "0c75b204aed9cf6ff1c7b4bed87a3ece0d9d6fc857a6350c0c95ed0c38c814e8",
+        "signature": "0c75b204aed9cf6ff1c7b4bed87a3ece0d9d6fc857a6350c0c95ed0c38c814e8"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/date.d.ts": {
+        "version": "187119ff4f9553676a884e296089e131e8cc01691c546273b1d0089c3533ce42",
+        "signature": "187119ff4f9553676a884e296089e131e8cc01691c546273b1d0089c3533ce42"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/function.d.ts": {
+        "version": "45bf6da7cede8211b7d0579deabfa227490dfe8b932a56a962599efc48356e68",
+        "signature": "45bf6da7cede8211b7d0579deabfa227490dfe8b932a56a962599efc48356e68"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/lang.d.ts": {
+        "version": "c2d47e5668f89ed8768d306919c42bb88d50d4029d68f58343141360895cfcc0",
+        "signature": "c2d47e5668f89ed8768d306919c42bb88d50d4029d68f58343141360895cfcc0"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/math.d.ts": {
+        "version": "65648639567d214f62c1b21d200c852807e68bdb08311f95ab6f526ef5b98995",
+        "signature": "65648639567d214f62c1b21d200c852807e68bdb08311f95ab6f526ef5b98995"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/number.d.ts": {
+        "version": "00baffbe8a2f2e4875367479489b5d43b5fc1429ecb4a4cc98cfc3009095f52a",
+        "signature": "00baffbe8a2f2e4875367479489b5d43b5fc1429ecb4a4cc98cfc3009095f52a"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/object.d.ts": {
+        "version": "a46a28781991cd761431784ea72cb7772f4a9155a7ee78f0b040088e856ed9a2",
+        "signature": "a46a28781991cd761431784ea72cb7772f4a9155a7ee78f0b040088e856ed9a2"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/seq.d.ts": {
+        "version": "3c92b6dfd43cc1c2485d9eba5ff0b74a19bb8725b692773ef1d66dac48cda4bd",
+        "signature": "3c92b6dfd43cc1c2485d9eba5ff0b74a19bb8725b692773ef1d66dac48cda4bd"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/string.d.ts": {
+        "version": "e34f3f6159b1e23de9bb5521382795aaa5aaed6f53b4702e70a2ec45bc76ddb5",
+        "signature": "e34f3f6159b1e23de9bb5521382795aaa5aaed6f53b4702e70a2ec45bc76ddb5"
+      },
+      "./node_modules/@types/lodash/ts3.1/common/util.d.ts": {
+        "version": "c84107ce3522799b7a821463b1743ef230669093b2746afd1e817fcbb5885e67",
+        "signature": "c84107ce3522799b7a821463b1743ef230669093b2746afd1e817fcbb5885e67"
+      },
+      "./node_modules/@types/lodash/ts3.1/index.d.ts": {
+        "version": "bbf144d4354e2aaa6439f32761f3ee798cc68d1600adab6e2a596f25269f106d",
+        "signature": "bbf144d4354e2aaa6439f32761f3ee798cc68d1600adab6e2a596f25269f106d"
+      },
       "./node_modules/@types/mocha/index.d.ts": {
         "version": "c4c03cf65951d980ba618ae9601d10438730803fc9c8a1f7b34af8739981e205",
         "signature": "c4c03cf65951d980ba618ae9601d10438730803fc9c8a1f7b34af8739981e205"
@@ -1317,10 +1293,6 @@
         "version": "b8a3f8e93185ef45981f3e22e3c9555d8ce09bf5b6786da52f46173a4153ea63",
         "signature": "b8a3f8e93185ef45981f3e22e3c9555d8ce09bf5b6786da52f46173a4153ea63"
       },
-      "./node_modules/@types/semver/index.d.ts": {
-        "version": "bb95470284971cf0cce66a339224fa5db412729bf3e22c2c02a1c343fd4444ab",
-        "signature": "bb95470284971cf0cce66a339224fa5db412729bf3e22c2c02a1c343fd4444ab"
-      },
       "./node_modules/@types/sinon/ts3.1/index.d.ts": {
         "version": "9e3da7edaee190a056237f7ec5104b021f3423df51daa00cd255200b0f3ac4d5",
         "signature": "9e3da7edaee190a056237f7ec5104b021f3423df51daa00cd255200b0f3ac4d5"
@@ -1328,10 +1300,6 @@
       "./node_modules/@types/webpack-dev-server/index.d.ts": {
         "version": "1bc361c82f40987f0b5e84a5c10b151d82445b78f808f469a222b6ac0f0396da",
         "signature": "1bc361c82f40987f0b5e84a5c10b151d82445b78f808f469a222b6ac0f0396da"
-      },
-      "./node_modules/@types/zen-observable/index.d.ts": {
-        "version": "4aef077167abe884ed5cdcf9415cc1e3bb5b9763fd0549e179bc70584a0aab91",
-        "signature": "4aef077167abe884ed5cdcf9415cc1e3bb5b9763fd0549e179bc70584a0aab91"
       }
     },
     "options": {
@@ -2961,6 +2929,327 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./node_modules/typed-error/lib/typed-error.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/types.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/@types/express/index.d.ts",
+        "./node_modules/@types/node/events.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/util/type-utils.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/util/serialization.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/matchers.d.ts": [
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/handlers.d.ts": [
+        "./node_modules/@types/express/index.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/typed-error/lib/typed-error.d.ts",
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts": [
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/mock-rule.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/mockttp/dist/rules/matchers.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts": [
+        "./node_modules/@types/node/http.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/util/tls.d.ts": [
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/mockttp.d.ts": [
+        "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/mockttp/dist/util/tls.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/client/mockttp-client.d.ts": [
+        "./node_modules/typed-error/lib/typed-error.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/mockttp.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/cors/index.d.ts": [
+        "./node_modules/@types/express/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts": [
+        "./node_modules/@types/cors/index.d.ts",
+        "./node_modules/mockttp/dist/mockttp.d.ts",
+        "./node_modules/mockttp/custom-typings/asynciterator.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/main.d.ts": [
+        "./node_modules/mockttp/dist/client/mockttp-client.d.ts",
+        "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts",
+        "./node_modules/mockttp/dist/mockttp.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/rules/matchers.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/mockttp/dist/util/tls.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/tmp/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/commands/intercept.ts": [
+        "./node_modules/@oclif/command/lib/index.d.ts",
+        "./src/lib/analytics.ts",
+        "./src/lib/proxy-capture-session.ts",
+        "./node_modules/get-port/index.d.ts",
+        "./src/lib/common.ts",
+        "./src/commands/spec.ts",
+        "./node_modules/@types/react-dev-utils/openbrowser.d.ts",
+        "./node_modules/@types/express/index.d.ts",
+        "./node_modules/mockttp/dist/main.d.ts",
+        "./node_modules/@types/fs-extra/index.d.ts",
+        "./node_modules/@types/tmp/index.d.ts",
+        "./node_modules/@types/node/path.d.ts",
+        "./node_modules/@types/node/events.d.ts",
+        "./src/lib/log-helper.ts",
+        "./src/paths.ts",
+        "./node_modules/@types/node/os.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/@types/node/url.d.ts",
+        "./node_modules/@types/node/querystring.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/commands/generate/oas.ts": [
+        "./node_modules/@oclif/command/lib/index.d.ts",
+        "./node_modules/@types/fs-extra/index.d.ts",
+        "./node_modules/clipboardy/index.d.ts",
+        "./node_modules/@types/node/os.d.ts",
+        "./node_modules/@types/node/path.d.ts",
+        "./node_modules/cli-ux/lib/index.d.ts",
+        "./src/lib/log-helper.ts",
+        "./src/paths.ts",
+        "./src/persistutils.ts",
+        "./src/lib/analytics.ts",
+        "./node_modules/@types/js-yaml/index.d.ts",
+        "./src/commands/intercept.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/commands/publish/oas.ts": [
+        "./node_modules/@oclif/command/lib/index.d.ts",
+        "./node_modules/@types/node/child_process.d.ts",
+        "./node_modules/colors/index.d.ts",
+        "./src/lib/log-helper.ts",
+        "./src/commands/generate/oas.ts",
+        "./src/commands/start.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/anymatch/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/archy/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/chai/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/clean-css/index.d.ts": [
+        "./node_modules/@types/node/https.d.ts",
+        "./node_modules/@types/node/http.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/connect-history-api-fallback/index.d.ts": [
+        "./node_modules/@types/node/url.d.ts",
+        "./node_modules/@types/express-serve-static-core/index.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/eslint/ts3.1/helpers.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/json-schema/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/estree/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/eslint/ts3.1/index.d.ts": [
+        "./node_modules/@types/json-schema/index.d.ts",
+        "./node_modules/@types/estree/index.d.ts",
+        "./node_modules/@types/eslint/ts3.1/helpers.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/minimatch/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/glob/index.d.ts": [
+        "./node_modules/@types/node/events.d.ts",
+        "./node_modules/@types/minimatch/index.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/har-format/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/uglify-js/index.d.ts": [
+        "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/relateurl/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/html-minifier/index.d.ts": [
+        "./node_modules/@types/uglify-js/index.d.ts",
+        "./node_modules/@types/clean-css/index.d.ts",
+        "./node_modules/@types/relateurl/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/tapable/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/webpack/node_modules/source-map/source-map.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/webpack-sources/node_modules/source-map/source-map.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/source-list-map/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/webpack-sources/index.d.ts": [
+        "./node_modules/@types/node/crypto.d.ts",
+        "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts",
+        "./node_modules/@types/source-list-map/index.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/webpack/index.d.ts": [
+        "./node_modules/@types/tapable/index.d.ts",
+        "./node_modules/@types/uglify-js/index.d.ts",
+        "./node_modules/@types/anymatch/index.d.ts",
+        "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts",
+        "./node_modules/@types/webpack-sources/index.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/html-webpack-plugin/index.d.ts": [
+        "./node_modules/@types/webpack/index.d.ts",
+        "./node_modules/@types/tapable/index.d.ts",
+        "./node_modules/@types/html-minifier/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/http-proxy/index.d.ts": [
+        "./node_modules/@types/node/net.d.ts",
+        "./node_modules/@types/node/http.d.ts",
+        "./node_modules/@types/node/https.d.ts",
+        "./node_modules/@types/node/events.d.ts",
+        "./node_modules/@types/node/url.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/http-proxy-middleware/index.d.ts": [
+        "./node_modules/@types/node/http.d.ts",
+        "./node_modules/@types/node/net.d.ts",
+        "./node_modules/@types/node/tls.d.ts",
+        "./node_modules/@types/connect/index.d.ts",
+        "./node_modules/@types/http-proxy/index.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/joi/index.d.ts": [
+        "./node_modules/@types/joi/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./node_modules/@types/lodash/ts3.1/common/common.d.ts": [
         "./node_modules/@types/lodash/ts3.1/index.d.ts",
         "./node_modules/@types/lodash/ts3.1/common/array.d.ts",
@@ -3169,354 +3458,6 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./node_modules/httptoolkit-server/lib/interceptors/index.d.ts": [
-        "./node_modules/@types/lodash/ts3.1/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/httptoolkit-server/lib/interceptors/fresh-chrome.d.ts": [
-        "./node_modules/httptoolkit-server/lib/interceptors/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/typed-error/lib/typed-error.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/types.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/@types/node/events.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/type-utils.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/serialization.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/matchers.d.ts": [
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/handlers.d.ts": [
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/typed-error/lib/typed-error.d.ts",
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts": [
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/mock-rule.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/mockttp/dist/rules/matchers.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts": [
-        "./node_modules/@types/node/http.d.ts",
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/tls.d.ts": [
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/mockttp.d.ts": [
-        "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/mockttp/dist/util/tls.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/client/mockttp-client.d.ts": [
-        "./node_modules/typed-error/lib/typed-error.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/mockttp.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/cors/index.d.ts": [
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts": [
-        "./node_modules/@types/cors/index.d.ts",
-        "./node_modules/mockttp/dist/mockttp.d.ts",
-        "./node_modules/mockttp/custom-typings/asynciterator.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/main.d.ts": [
-        "./node_modules/mockttp/dist/client/mockttp-client.d.ts",
-        "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts",
-        "./node_modules/mockttp/dist/mockttp.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/rules/matchers.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/mockttp/dist/util/tls.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/tmp/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/commands/intercept.ts": [
-        "./node_modules/@oclif/command/lib/index.d.ts",
-        "./src/lib/analytics.ts",
-        "./src/lib/proxy-capture-session.ts",
-        "./node_modules/get-port/index.d.ts",
-        "./src/lib/common.ts",
-        "./src/commands/spec.ts",
-        "./node_modules/@types/react-dev-utils/openbrowser.d.ts",
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/httptoolkit-server/lib/interceptors/fresh-chrome.d.ts",
-        "./node_modules/mockttp/dist/main.d.ts",
-        "./node_modules/@types/fs-extra/index.d.ts",
-        "./node_modules/@types/tmp/index.d.ts",
-        "./node_modules/@types/node/path.d.ts",
-        "./node_modules/@types/node/events.d.ts",
-        "./src/lib/log-helper.ts",
-        "./src/paths.ts",
-        "./node_modules/@types/node/os.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/@types/node/url.d.ts",
-        "./node_modules/@types/node/querystring.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/commands/generate/oas.ts": [
-        "./node_modules/@oclif/command/lib/index.d.ts",
-        "./node_modules/@types/fs-extra/index.d.ts",
-        "./node_modules/clipboardy/index.d.ts",
-        "./node_modules/@types/node/os.d.ts",
-        "./node_modules/@types/node/path.d.ts",
-        "./node_modules/cli-ux/lib/index.d.ts",
-        "./src/lib/log-helper.ts",
-        "./src/paths.ts",
-        "./src/persistutils.ts",
-        "./src/lib/analytics.ts",
-        "./node_modules/@types/js-yaml/index.d.ts",
-        "./src/commands/intercept.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/commands/publish/oas.ts": [
-        "./node_modules/@oclif/command/lib/index.d.ts",
-        "./node_modules/@types/node/child_process.d.ts",
-        "./node_modules/colors/index.d.ts",
-        "./src/lib/log-helper.ts",
-        "./src/commands/generate/oas.ts",
-        "./src/commands/start.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/anymatch/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/archy/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/aws-lambda/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/chai/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/clean-css/index.d.ts": [
-        "./node_modules/@types/node/https.d.ts",
-        "./node_modules/@types/node/http.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/color-name/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/command-exists/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/connect-history-api-fallback/index.d.ts": [
-        "./node_modules/@types/node/url.d.ts",
-        "./node_modules/@types/express-serve-static-core/index.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/eslint/ts3.1/helpers.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/json-schema/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/estree/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/eslint/ts3.1/index.d.ts": [
-        "./node_modules/@types/json-schema/index.d.ts",
-        "./node_modules/@types/estree/index.d.ts",
-        "./node_modules/@types/eslint/ts3.1/helpers.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/minimatch/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/glob/index.d.ts": [
-        "./node_modules/@types/node/events.d.ts",
-        "./node_modules/@types/minimatch/index.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/graphql-deduplicator/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/har-format/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/uglify-js/index.d.ts": [
-        "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/relateurl/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/html-minifier/index.d.ts": [
-        "./node_modules/@types/uglify-js/index.d.ts",
-        "./node_modules/@types/clean-css/index.d.ts",
-        "./node_modules/@types/relateurl/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/tapable/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/webpack/node_modules/source-map/source-map.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/webpack-sources/node_modules/source-map/source-map.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/source-list-map/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/webpack-sources/index.d.ts": [
-        "./node_modules/@types/node/crypto.d.ts",
-        "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts",
-        "./node_modules/@types/source-list-map/index.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/webpack/index.d.ts": [
-        "./node_modules/@types/tapable/index.d.ts",
-        "./node_modules/@types/uglify-js/index.d.ts",
-        "./node_modules/@types/anymatch/index.d.ts",
-        "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts",
-        "./node_modules/@types/webpack-sources/index.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/html-webpack-plugin/index.d.ts": [
-        "./node_modules/@types/webpack/index.d.ts",
-        "./node_modules/@types/tapable/index.d.ts",
-        "./node_modules/@types/html-minifier/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/http-proxy/index.d.ts": [
-        "./node_modules/@types/node/net.d.ts",
-        "./node_modules/@types/node/http.d.ts",
-        "./node_modules/@types/node/https.d.ts",
-        "./node_modules/@types/node/events.d.ts",
-        "./node_modules/@types/node/url.d.ts",
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/http-proxy-middleware/index.d.ts": [
-        "./node_modules/@types/node/http.d.ts",
-        "./node_modules/@types/node/net.d.ts",
-        "./node_modules/@types/node/tls.d.ts",
-        "./node_modules/@types/connect/index.d.ts",
-        "./node_modules/@types/http-proxy/index.d.ts",
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/joi/index.d.ts": [
-        "./node_modules/@types/joi/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "./node_modules/@types/mocha/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
@@ -3557,10 +3498,6 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./node_modules/@types/semver/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "./node_modules/@types/sinon/ts3.1/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
@@ -3573,10 +3510,6 @@
         "./node_modules/@types/node/https.d.ts",
         "./node_modules/@types/node/http.d.ts",
         "./node_modules/@types/connect-history-api-fallback/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/zen-observable/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ]
@@ -4818,15 +4751,7 @@
       "./node_modules/@types/node/util.d.ts": [
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./node_modules/@types/zen-observable/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "./node_modules/@types/sinon/ts3.1/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/semver/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -4854,121 +4779,6 @@
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./node_modules/@types/mocha/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/joi/index.d.ts": [
-        "./node_modules/@types/joi/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/source-list-map/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/webpack-sources/node_modules/source-map/source-map.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/webpack/node_modules/source-map/source-map.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/tapable/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/relateurl/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/uglify-js/index.d.ts": [
-        "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/har-format/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/graphql-deduplicator/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/minimatch/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/eslint/ts3.1/index.d.ts": [
-        "./node_modules/@types/json-schema/index.d.ts",
-        "./node_modules/@types/estree/index.d.ts",
-        "./node_modules/@types/eslint/ts3.1/helpers.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/estree/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/json-schema/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/eslint/ts3.1/helpers.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/command-exists/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/color-name/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/chai/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/aws-lambda/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/archy/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/anymatch/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/tmp/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/type-utils.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/typed-error/lib/typed-error.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/httptoolkit-server/lib/interceptors/fresh-chrome.d.ts": [
-        "./node_modules/httptoolkit-server/lib/interceptors/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/httptoolkit-server/lib/interceptors/index.d.ts": [
-        "./node_modules/@types/lodash/ts3.1/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -5177,6 +4987,95 @@
         "./node_modules/@types/lodash/ts3.1/common/seq.d.ts",
         "./node_modules/@types/lodash/ts3.1/common/string.d.ts",
         "./node_modules/@types/lodash/ts3.1/common/util.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/joi/index.d.ts": [
+        "./node_modules/@types/joi/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/source-list-map/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/webpack-sources/node_modules/source-map/source-map.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/webpack/node_modules/source-map/source-map.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/tapable/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/relateurl/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/uglify-js/index.d.ts": [
+        "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/har-format/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/minimatch/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/eslint/ts3.1/index.d.ts": [
+        "./node_modules/@types/json-schema/index.d.ts",
+        "./node_modules/@types/estree/index.d.ts",
+        "./node_modules/@types/eslint/ts3.1/helpers.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/estree/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/json-schema/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/eslint/ts3.1/helpers.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/chai/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/archy/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/anymatch/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/tmp/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/util/type-utils.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/typed-error/lib/typed-error.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -5908,21 +5807,6 @@
       "./src/lib/ui-server/utilities.ts",
       "./src/commands/spec.ts",
       "./node_modules/@types/react-dev-utils/openbrowser.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/common.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/array.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/collection.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/date.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/function.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/lang.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/math.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/number.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/object.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/seq.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/string.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/util.d.ts",
-      "./node_modules/@types/lodash/ts3.1/index.d.ts",
-      "./node_modules/httptoolkit-server/lib/interceptors/index.d.ts",
-      "./node_modules/httptoolkit-server/lib/interceptors/fresh-chrome.d.ts",
       "./node_modules/typed-error/lib/typed-error.d.ts",
       "./node_modules/mockttp/dist/types.d.ts",
       "./node_modules/mockttp/dist/util/type-utils.d.ts",
@@ -5945,11 +5829,8 @@
       "./src/commands/publish/oas.ts",
       "./node_modules/@types/anymatch/index.d.ts",
       "./node_modules/@types/archy/index.d.ts",
-      "./node_modules/@types/aws-lambda/index.d.ts",
       "./node_modules/@types/chai/index.d.ts",
       "./node_modules/@types/clean-css/index.d.ts",
-      "./node_modules/@types/color-name/index.d.ts",
-      "./node_modules/@types/command-exists/index.d.ts",
       "./node_modules/@types/connect-history-api-fallback/index.d.ts",
       "./node_modules/@types/eslint/ts3.1/helpers.d.ts",
       "./node_modules/@types/json-schema/index.d.ts",
@@ -5957,7 +5838,6 @@
       "./node_modules/@types/eslint/ts3.1/index.d.ts",
       "./node_modules/@types/minimatch/index.d.ts",
       "./node_modules/@types/glob/index.d.ts",
-      "./node_modules/@types/graphql-deduplicator/index.d.ts",
       "./node_modules/@types/har-format/index.d.ts",
       "./node_modules/@types/uglify-js/node_modules/source-map/source-map.d.ts",
       "./node_modules/@types/uglify-js/index.d.ts",
@@ -5973,6 +5853,19 @@
       "./node_modules/@types/http-proxy/index.d.ts",
       "./node_modules/@types/http-proxy-middleware/index.d.ts",
       "./node_modules/@types/joi/index.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/common.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/array.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/collection.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/date.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/function.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/lang.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/math.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/number.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/object.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/seq.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/string.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/util.d.ts",
+      "./node_modules/@types/lodash/ts3.1/index.d.ts",
       "./node_modules/@types/mocha/index.d.ts",
       "./node_modules/@types/nock/index.d.ts",
       "./node_modules/@types/node-forge/index.d.ts",
@@ -5981,10 +5874,8 @@
       "./node_modules/csstype/index.d.ts",
       "./node_modules/@types/react/index.d.ts",
       "./node_modules/@types/react-dev-utils/index.d.ts",
-      "./node_modules/@types/semver/index.d.ts",
       "./node_modules/@types/sinon/ts3.1/index.d.ts",
       "./node_modules/@types/webpack-dev-server/index.d.ts",
-      "./node_modules/@types/zen-observable/index.d.ts",
       "./node_modules/typescript/lib/lib.es2015.d.ts",
       "./node_modules/typescript/lib/lib.es2016.d.ts",
       "./node_modules/typescript/lib/lib.es2017.d.ts",

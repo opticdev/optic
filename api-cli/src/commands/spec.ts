@@ -12,6 +12,7 @@ import bodyParser = require('body-parser')
 import * as open from 'open'
 import {readApiConfig} from './start'
 import analytics from '../lib/analytics'
+import * as niceTry from 'nice-try'
 import Init, {IApiCliConfig} from './init'
 import {VersionControl} from '../lib/version-control'
 // @ts-ignore
@@ -177,7 +178,7 @@ export default class Spec extends Command {
     const sessionUtilities = new SessionUtilities(sessionsPath)
     const sessionValidatorAndLoader = new FileSystemSessionValidatorAndLoader(sessionUtilities)
     const paths = await getPaths()
-    await startServer(paths, sessionValidatorAndLoader, port)
+    await startServer(paths, sessionValidatorAndLoader, port, config)
 
     const url = `http://localhost:${port}/`
     this.log(fromOptic('Displaying your API Spec at ' + url))
@@ -225,12 +226,32 @@ class FileSystemSessionValidatorAndLoader {
   }
 }
 
-export async function startServer(paths: IPathMapping, sessionValidatorAndLoader: ISessionValidatorAndLoader, port: number) {
+export async function startServer(paths: IPathMapping, sessionValidatorAndLoader: ISessionValidatorAndLoader, port: number, config: IApiCliConfig) {
   // @ts-ignore
-  const {specStorePath, sessionsPath, exampleRequestsPath} = paths
+  const {specStorePath, sessionsPath, exampleRequestsPath, integrationContracts, integrationExampleRequestsPath} = paths
   const sessionUtilities = new SessionUtilities(sessionsPath)
   const app = express()
 
+  async function getExampleRequests(storagePath: string, requestId: string): Promise<any> {
+    const exampleFilePath = path.join(storagePath, `${requestId}.json`)
+    const currentFileContents = await (async () => {
+      const exists = await fs.pathExists(exampleFilePath)
+      if (exists) {
+        return fs.readJson(exampleFilePath)
+      }
+      return []
+    })()
+    return currentFileContents
+  }
+  async function saveExampleRequest(storagePath: string, requestId: string, example: any) {
+    const exampleFilePath = path.join(storagePath, `${requestId}.json`)
+    const currentFileContents = await getExampleRequests(storagePath, requestId)
+    currentFileContents.push(example)
+    await fs.ensureDir(storagePath)
+    await fs.writeJson(exampleFilePath, currentFileContents, {spaces: 2})
+  }
+
+  //Main API Spec
   app.get('/cli-api/events', async (req, res) => {
     try {
       const events = await fs.readJson(specStorePath)
@@ -247,38 +268,21 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
 
   app.post('/cli-api/example-requests/:requestId', bodyParser.json({limit: '100mb'}), async (req, res) => {
     const {requestId} = req.params
-    const exampleFilePath = path.join(exampleRequestsPath, `${requestId}.json`)
-    const currentFileContents = await (async () => {
-      const exists = await fs.pathExists(exampleFilePath)
-      if (exists) {
-        return await fs.readJson(exampleFilePath)
-      }
-      return []
-    })()
-    currentFileContents.push(req.body)
-    await fs.ensureDir(exampleRequestsPath)
-    await fs.writeJson(exampleFilePath, currentFileContents, {spaces: 2})
+    await saveExampleRequest(exampleRequestsPath, requestId, req.body)
     res.sendStatus(204)
   })
 
   app.get('/cli-api/example-requests/:requestId', async (req, res) => {
     const {requestId} = req.params
-    const exampleFilePath = path.join(exampleRequestsPath, `${requestId}.json`)
-    const currentFileContents = await (async () => {
-      const exists = await fs.pathExists(exampleFilePath)
-      if (exists) {
-        return await fs.readJson(exampleFilePath)
-      }
-      return []
-    })()
+    const currentFileContents = getExampleRequests(exampleRequestsPath, requestId)
     res.json({
       examples: currentFileContents
     })
   })
 
+  // Sessions / Diff State
   app.get('/cli-api/sessions', async (req, res) => {
     const sessions = await sessionUtilities.getSessions()
-
     res.json({
       sessions
     })
@@ -312,6 +316,43 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
   app.get('/cli-api/identity', async (req, res) => {
     const {user_id, doNotTrack} = readLocalConfig()
     res.json({distinctId: user_id, doNotTrack})
+  })
+  //Integrations
+  app.get('/cli-api/integrations', async (req, res) => {
+    res.json({integrations: (config.integrations || [])})
+  })
+  app.get('/cli-api/integrations/:integrationName/events', async (req, res) => {
+    const {integrationName} = req.params
+    const expectedPath = path.join(integrationContracts, `${integrationName}_contract.json`)
+    const events = niceTry(() => {
+      const contents = fs.readFileSync(expectedPath).toString()
+      return JSON.parse(contents)
+    })
+    if (fs.existsSync(expectedPath)) {
+      res.json(events)
+    } else {
+      res.sendStatus(404)
+    }
+  })
+  app.put('/cli-api/integrations/:integrationName/events', bodyParser.json({limit: '100mb'}), async (req, res) => {
+    const events = req.body
+    const {integrationName} = req.params
+    const expectedPath = path.join(integrationContracts, `${integrationName}_contract.json`)
+    await fs.writeFile(expectedPath, prepareEvents(events))
+    res.sendStatus(204)
+  })
+  app.post('/cli-api/integrations/:integrationName/example-requests/:requestId', bodyParser.json({limit: '100mb'}), async (req, res) => {
+    const {requestId} = req.params
+    await saveExampleRequest(integrationExampleRequestsPath, requestId, req.body)
+    res.sendStatus(204)
+  })
+
+  app.get('/cli-api/integrations/:integrationName/example-requests/:requestId', async (req, res) => {
+    const {requestId} = req.params
+    const currentFileContents = await getExampleRequests(integrationExampleRequestsPath, requestId)
+    res.json({
+      examples: currentFileContents
+    })
   })
 
   Utilities.addUiServer(app)

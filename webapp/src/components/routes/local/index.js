@@ -23,8 +23,10 @@ import NewBehavior from '../../navigation/NewBehavior.js';
 import {RequestsDetailsPage} from '../../requests/EndpointPage';
 import {DialogWrapper} from '../../loaders/ExampleDrivenSpecLoader';
 import {LocalRfcStore} from '../../../contexts/RfcContext';
+import {IntegrationsLoader} from './integrations';
 
 export const basePath = basePaths.localBasePath;
+export const basePathIntegrations = basePaths.localIntegrationsPath;
 
 export class LocalLoader extends React.Component {
 
@@ -109,6 +111,7 @@ export class LocalLoader extends React.Component {
               <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage}/>
               <Route exact path={basePath} component={LocalSpecOverview}/>
               <Route path={diffBasePath} component={SessionWrapper}/>
+              <Route path={basePathIntegrations} component={({match}) => <IntegrationsLoader match={match} name={match.params.integrationName}/>}/>
             </Switch>
           </LocalRfcStore>
         </InitialRfcCommandsStore>
@@ -117,7 +120,7 @@ export class LocalLoader extends React.Component {
   }
 }
 
-class LocalSpecOverview extends React.Component {
+export class LocalSpecOverview extends React.Component {
 
   state = {
     isEmpty: false,
