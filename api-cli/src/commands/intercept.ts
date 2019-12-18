@@ -7,7 +7,6 @@ import { startServer, ISessionValidatorAndLoader, makeInitialDiffState } from '.
 //@ts-ignore
 import * as openBrowser from 'react-dev-utils/openBrowser'
 import * as Express from 'express'
-import { FreshChrome } from 'httptoolkit-server/lib/interceptors/fresh-chrome'
 import * as mockttp from 'mockttp'
 import * as fs from 'fs-extra'
 import * as tmp from 'tmp'
@@ -56,7 +55,7 @@ interface IHttpToolkitProxyCaptureSessionConfig {
 
 class HttpToolkitProxyCaptureSession implements IWithSamples {
   private proxy!: mockttp.Mockttp
-  private interceptor!: FreshChrome
+  // private interceptor!: FreshChrome
   private requests: Map<string, mockttp.CompletedRequest> = new Map()
   private samples: IApiInteraction[] = []
   private config!: IHttpToolkitProxyCaptureSessionConfig
@@ -144,12 +143,13 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
     await proxy.start(config.proxyPort)
 
     if (config.flags.chrome) {
-      const interceptor = new FreshChrome({
-        configPath,
-        https
-      })
-      this.interceptor = interceptor;
-      interceptor.activate(config.proxyPort)
+      console.log('Chrome interceptor is currently in Beta. Please email aidan@useoptic.com for access.')
+      // const interceptor = new FreshChrome({
+      //   configPath,
+      //   https
+      // })
+      // this.interceptor = interceptor;
+      // interceptor.activate(config.proxyPort)
     }
   }
 
@@ -157,7 +157,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
     await this.proxy.stop()
     analytics.track('api intercept stopped', {samples: this.samples.length})
     if (this.config.flags.chrome) {
-      await this.interceptor.deactivateAll()
+      // await this.interceptor.deactivateAll()
     }
   }
 
