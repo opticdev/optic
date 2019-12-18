@@ -330,7 +330,7 @@
         "signature": "aca36e2d27783f4bad7fc1786a532ff76024f0fc8575df48bcd9a5eb452fe7e7"
       },
       "./src/paths.ts": {
-        "version": "b769654f69bd018154204952ed7b46a249c225eadfe6b80fd45902e31c28a7c2",
+        "version": "c9dc7a97a3db6b33d9dfab4273a05ef9162a3789d6f4e129a1a51803414c0362",
         "signature": "3c6be598c4405724e8ed2c5bd640c27341b23c15c654ad8943a37100271ede6f"
       },
       "./src/persistutils.ts": {
@@ -514,8 +514,8 @@
         "signature": "1d5adf522de176e09dcabab58740bce14bb99356fb6474f621a152461a5e4703"
       },
       "./src/commands/init.ts": {
-        "version": "172c263933b13d2cc413c1fc4a00906e2fd68d2d6e392f832d7beaa74ec526d6",
-        "signature": "05031de0697c58bdf37f9e99f4ef268742bf9ab6446777543eec9b7f90a8b727"
+        "version": "33911c5a1429940c1f8ba26357fcb47427ba586da4108c9d86b0e985f2847ef6",
+        "signature": "37526e37af74b169d65accfe36e02bbe60448f2297fadd58d27744ad3562d50d"
       },
       "./node_modules/@types/range-parser/index.d.ts": {
         "version": "4e88b833be14c7f384e0dcd57bb30acd799e8e34d212635d693e41a75a71164b",
@@ -550,8 +550,8 @@
         "signature": "8d77ed4e39114c32edc2e35b683b6f54a6b3292ecdf392e4bfc5f726734955d8"
       },
       "./src/lib/common.ts": {
-        "version": "ac78ce877595256ba94b9a4dd4f36162d3f0ed76f7eed9f1c8f2635d721905a6",
-        "signature": "ba09a9c7d45ecc2144e8b2e36f3af6c298aafcb7bdf02422700eed092d9bc6de"
+        "version": "75d0b3c32da6e4800d8a5bd393ffe008ae4969f8b1cca28ae8f8455bc4d35c18",
+        "signature": "7e76828b8ed1ddad1b52bf788b3a428fe1768f07277bbcad5aef7220d9d089aa"
       },
       "./node_modules/@types/debug/index.d.ts": {
         "version": "3cf5f191d75bbe7c92f921e5ae12004ac672266e2be2ece69f40b1d6b1b678f9",
@@ -566,8 +566,8 @@
         "signature": "12ef76a2a9b3421d58d5011ee561dd11978fbdb8c4764e44831602ccea45391b"
       },
       "./src/lib/proxy-capture-session.ts": {
-        "version": "ce348f3c4cf010f3c300b1435684fb6d3d93fd30a41c23e9f7ca32aa0dcb9b3b",
-        "signature": "d9aebc3f53e10fe4d4952d84569165eaedcf2bb22d9830eca07fc89c79c79716"
+        "version": "78e9d99ce5c9b8b10ddeac1c05152af65fd9b62dd368a275b91e55db66e0aaef",
+        "signature": "d379e959bc7c623d47375f653231e22aef13b6c04bee63945830c32e17c397a4"
       },
       "./node_modules/type-fest/source/package-json.d.ts": {
         "version": "194c880a791931344ff527830c3bf7fd37ad5c39ee8682c875e40bb0b8b39ada",
@@ -580,6 +580,78 @@
       "./node_modules/get-port/index.d.ts": {
         "version": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac",
         "signature": "05fc6a9e65c64422efcb0dfc6a10fec5b2885afe158c9e1eda40a31a0ee799ac"
+      },
+      "./node_modules/typed-error/lib/typed-error.d.ts": {
+        "version": "bf7d11b62137f136abc446c183782ca524060634c273a8516dbec1a2a608a8f9",
+        "signature": "bf7d11b62137f136abc446c183782ca524060634c273a8516dbec1a2a608a8f9"
+      },
+      "./node_modules/mockttp/dist/types.d.ts": {
+        "version": "5c361525512c654b1871d02bb658c0066676509128905c5d1fdcaca2584405c7",
+        "signature": "5c361525512c654b1871d02bb658c0066676509128905c5d1fdcaca2584405c7"
+      },
+      "./node_modules/mockttp/dist/util/type-utils.d.ts": {
+        "version": "ed5a2eeb4da14fbb707ca9ab0fdec8e0e136b7e3acda9f3e367f33c7a1f9f28d",
+        "signature": "ed5a2eeb4da14fbb707ca9ab0fdec8e0e136b7e3acda9f3e367f33c7a1f9f28d"
+      },
+      "./node_modules/mockttp/dist/util/serialization.d.ts": {
+        "version": "0e28d44f6897a0edeb4cbce056c9443ab9b58fa6cc1a0b7311662f268439adad",
+        "signature": "0e28d44f6897a0edeb4cbce056c9443ab9b58fa6cc1a0b7311662f268439adad"
+      },
+      "./node_modules/mockttp/dist/rules/matchers.d.ts": {
+        "version": "8a3cbb46dc171aaed1569a822417ffc23e104f0a2221d7c6211c2f40580f5196",
+        "signature": "8a3cbb46dc171aaed1569a822417ffc23e104f0a2221d7c6211c2f40580f5196"
+      },
+      "./node_modules/mockttp/dist/rules/handlers.d.ts": {
+        "version": "c211d644ff06e6d3babec94a0ccfc78b320fcad62345681aacec573fbf8a252f",
+        "signature": "c211d644ff06e6d3babec94a0ccfc78b320fcad62345681aacec573fbf8a252f"
+      },
+      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts": {
+        "version": "5f0c4a085a9d9a72ad599701a3def528a81c383a8d4bb7d54d004ade8ed70ab8",
+        "signature": "5f0c4a085a9d9a72ad599701a3def528a81c383a8d4bb7d54d004ade8ed70ab8"
+      },
+      "./node_modules/mockttp/dist/rules/mock-rule.d.ts": {
+        "version": "12853408f42c3e7fb9079d04d660ee40ef918c231b4b322639de2706bc0e4fba",
+        "signature": "12853408f42c3e7fb9079d04d660ee40ef918c231b4b322639de2706bc0e4fba"
+      },
+      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts": {
+        "version": "656483959bda33e4b70f138946858ae3c801dda375af3cf8e4b991d0d485bcba",
+        "signature": "656483959bda33e4b70f138946858ae3c801dda375af3cf8e4b991d0d485bcba"
+      },
+      "./node_modules/mockttp/dist/util/tls.d.ts": {
+        "version": "46ad91787655de4ebaae7c233e646fc2bacebbfd9f8924d60d4a17b4d9649373",
+        "signature": "46ad91787655de4ebaae7c233e646fc2bacebbfd9f8924d60d4a17b4d9649373"
+      },
+      "./node_modules/mockttp/dist/mockttp.d.ts": {
+        "version": "62aba6ec61a7de8fa6f08118d9feb00ad8bba389b110458c56cf313f665d809c",
+        "signature": "62aba6ec61a7de8fa6f08118d9feb00ad8bba389b110458c56cf313f665d809c"
+      },
+      "./node_modules/mockttp/dist/client/mockttp-client.d.ts": {
+        "version": "561a76dcacdecd721f84accd24bdd5f32436bd63f8ed7907ad7a131f358e48fb",
+        "signature": "561a76dcacdecd721f84accd24bdd5f32436bd63f8ed7907ad7a131f358e48fb"
+      },
+      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": {
+        "version": "f681911d2e00faa783e62d460b6ffa6938d87a7f47895ff3e41b8a206e470646",
+        "signature": "f681911d2e00faa783e62d460b6ffa6938d87a7f47895ff3e41b8a206e470646"
+      },
+      "./node_modules/@types/cors/index.d.ts": {
+        "version": "67a79af60f6e0f8eac8156364361915047de18fe367d7e0dd78a91add9f11bad",
+        "signature": "67a79af60f6e0f8eac8156364361915047de18fe367d7e0dd78a91add9f11bad"
+      },
+      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts": {
+        "version": "4d3becc98e9031ac12d189f12daf7323039922855c06e016fe580d86a770056d",
+        "signature": "4d3becc98e9031ac12d189f12daf7323039922855c06e016fe580d86a770056d"
+      },
+      "./node_modules/mockttp/dist/main.d.ts": {
+        "version": "d70d665614acbcd5007f7748a9c642f9b8792b22a5d122b922ca085d7780d724",
+        "signature": "d70d665614acbcd5007f7748a9c642f9b8792b22a5d122b922ca085d7780d724"
+      },
+      "./node_modules/@types/tmp/index.d.ts": {
+        "version": "5685ea2eb87a7a405e106c5bea5936fdaed1184eaaf9bd075d27c40b4984eea6",
+        "signature": "5685ea2eb87a7a405e106c5bea5936fdaed1184eaaf9bd075d27c40b4984eea6"
+      },
+      "./src/lib/transparentproxycapturesession.ts": {
+        "version": "ff88abad718625caef1e8f99fd6be8f98bba0f1fa2820c2f1014c46dae55bc1a",
+        "signature": "4189174b4a3f6cc940d51a4a080f2cc2d3d4e63286389f1070e28dc0f3e2bef1"
       },
       "./src/lib/log-helper.ts": {
         "version": "0bf0a2716dbfd9d2c7392ee4bf2902a2623a90f50a3d5eaa63153c34049dcde4",
@@ -594,8 +666,8 @@
         "signature": "a07ac5407b236f3f7e7aa48129835cdd30e09c6ef8f473bca50337334ed14391"
       },
       "./src/commands/start.ts": {
-        "version": "acf1f4a6aa2fdb014c58db1a06465c17b29db9f164d1611934224a1cf8079b4f",
-        "signature": "280d39fe463dea101824c3cbcc7c725553e87da245b945f82ead9ef11740d8f5"
+        "version": "5b6c69f1d5d1dc752587919e057b6525695ca2f994f12a937c2492d408281a29",
+        "signature": "f9d36e46d0a7a3fa20acf850efba728f700e901dec4b7e9051f5ef2754495494"
       },
       "./node_modules/@types/nodegit/oid.d.ts": {
         "version": "d729dea6596e0c12980346fe9b5ae1d5636cec7a1e464a36a20779f55b4f24dc",
@@ -1018,83 +1090,15 @@
         "signature": "eaa77bcb75ac9dcfa1687eeafd842f17112aec9efdb5a1d43b558446dd1dbdf7"
       },
       "./src/commands/spec.ts": {
-        "version": "85a10b2e8819b7fe1babeec02592f1e4cec19b221b7d29ab197e680c4ff4b2e7",
-        "signature": "45118b739e8805ad3ad2cc37339b5ddf9860dcac1db7767396c63b2dcfef8b17"
+        "version": "526ec96c2316d7be1e5b5f2147f43958b24bbe456af2c6a35fcbc3b40b586dfe",
+        "signature": "16705d4955ed9c36c8cf69322318bd1c39a7b0a469697f07dbff02ec960e0ea7"
       },
       "./node_modules/@types/react-dev-utils/openbrowser.d.ts": {
         "version": "8ba3e2bd0cd6c50ebe3b236bff7b2925891516c022da0850904993cf7ab09bde",
         "signature": "8ba3e2bd0cd6c50ebe3b236bff7b2925891516c022da0850904993cf7ab09bde"
       },
-      "./node_modules/typed-error/lib/typed-error.d.ts": {
-        "version": "bf7d11b62137f136abc446c183782ca524060634c273a8516dbec1a2a608a8f9",
-        "signature": "bf7d11b62137f136abc446c183782ca524060634c273a8516dbec1a2a608a8f9"
-      },
-      "./node_modules/mockttp/dist/types.d.ts": {
-        "version": "5c361525512c654b1871d02bb658c0066676509128905c5d1fdcaca2584405c7",
-        "signature": "5c361525512c654b1871d02bb658c0066676509128905c5d1fdcaca2584405c7"
-      },
-      "./node_modules/mockttp/dist/util/type-utils.d.ts": {
-        "version": "ed5a2eeb4da14fbb707ca9ab0fdec8e0e136b7e3acda9f3e367f33c7a1f9f28d",
-        "signature": "ed5a2eeb4da14fbb707ca9ab0fdec8e0e136b7e3acda9f3e367f33c7a1f9f28d"
-      },
-      "./node_modules/mockttp/dist/util/serialization.d.ts": {
-        "version": "0e28d44f6897a0edeb4cbce056c9443ab9b58fa6cc1a0b7311662f268439adad",
-        "signature": "0e28d44f6897a0edeb4cbce056c9443ab9b58fa6cc1a0b7311662f268439adad"
-      },
-      "./node_modules/mockttp/dist/rules/matchers.d.ts": {
-        "version": "8a3cbb46dc171aaed1569a822417ffc23e104f0a2221d7c6211c2f40580f5196",
-        "signature": "8a3cbb46dc171aaed1569a822417ffc23e104f0a2221d7c6211c2f40580f5196"
-      },
-      "./node_modules/mockttp/dist/rules/handlers.d.ts": {
-        "version": "c211d644ff06e6d3babec94a0ccfc78b320fcad62345681aacec573fbf8a252f",
-        "signature": "c211d644ff06e6d3babec94a0ccfc78b320fcad62345681aacec573fbf8a252f"
-      },
-      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts": {
-        "version": "5f0c4a085a9d9a72ad599701a3def528a81c383a8d4bb7d54d004ade8ed70ab8",
-        "signature": "5f0c4a085a9d9a72ad599701a3def528a81c383a8d4bb7d54d004ade8ed70ab8"
-      },
-      "./node_modules/mockttp/dist/rules/mock-rule.d.ts": {
-        "version": "12853408f42c3e7fb9079d04d660ee40ef918c231b4b322639de2706bc0e4fba",
-        "signature": "12853408f42c3e7fb9079d04d660ee40ef918c231b4b322639de2706bc0e4fba"
-      },
-      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts": {
-        "version": "656483959bda33e4b70f138946858ae3c801dda375af3cf8e4b991d0d485bcba",
-        "signature": "656483959bda33e4b70f138946858ae3c801dda375af3cf8e4b991d0d485bcba"
-      },
-      "./node_modules/mockttp/dist/util/tls.d.ts": {
-        "version": "46ad91787655de4ebaae7c233e646fc2bacebbfd9f8924d60d4a17b4d9649373",
-        "signature": "46ad91787655de4ebaae7c233e646fc2bacebbfd9f8924d60d4a17b4d9649373"
-      },
-      "./node_modules/mockttp/dist/mockttp.d.ts": {
-        "version": "62aba6ec61a7de8fa6f08118d9feb00ad8bba389b110458c56cf313f665d809c",
-        "signature": "62aba6ec61a7de8fa6f08118d9feb00ad8bba389b110458c56cf313f665d809c"
-      },
-      "./node_modules/mockttp/dist/client/mockttp-client.d.ts": {
-        "version": "561a76dcacdecd721f84accd24bdd5f32436bd63f8ed7907ad7a131f358e48fb",
-        "signature": "561a76dcacdecd721f84accd24bdd5f32436bd63f8ed7907ad7a131f358e48fb"
-      },
-      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": {
-        "version": "f681911d2e00faa783e62d460b6ffa6938d87a7f47895ff3e41b8a206e470646",
-        "signature": "f681911d2e00faa783e62d460b6ffa6938d87a7f47895ff3e41b8a206e470646"
-      },
-      "./node_modules/@types/cors/index.d.ts": {
-        "version": "67a79af60f6e0f8eac8156364361915047de18fe367d7e0dd78a91add9f11bad",
-        "signature": "67a79af60f6e0f8eac8156364361915047de18fe367d7e0dd78a91add9f11bad"
-      },
-      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts": {
-        "version": "4d3becc98e9031ac12d189f12daf7323039922855c06e016fe580d86a770056d",
-        "signature": "4d3becc98e9031ac12d189f12daf7323039922855c06e016fe580d86a770056d"
-      },
-      "./node_modules/mockttp/dist/main.d.ts": {
-        "version": "d70d665614acbcd5007f7748a9c642f9b8792b22a5d122b922ca085d7780d724",
-        "signature": "d70d665614acbcd5007f7748a9c642f9b8792b22a5d122b922ca085d7780d724"
-      },
-      "./node_modules/@types/tmp/index.d.ts": {
-        "version": "5685ea2eb87a7a405e106c5bea5936fdaed1184eaaf9bd075d27c40b4984eea6",
-        "signature": "5685ea2eb87a7a405e106c5bea5936fdaed1184eaaf9bd075d27c40b4984eea6"
-      },
       "./src/commands/intercept.ts": {
-        "version": "beae7e057130fa269973a79c77c23b38b40b9499981d4e95c71c6f9453e38e61",
+        "version": "1f1438226624a8aac08e5a825188bd3f3626b7b4c94bcfa231bdbbbc77886cec",
         "signature": "8ae7f0838469e48e391034c4f32cd376f8a2f491a1a57b87fd5234378e816dca"
       },
       "./src/commands/generate/oas.ts": {
@@ -2056,6 +2060,7 @@
         "./node_modules/@types/express/index.d.ts",
         "./node_modules/@types/body-parser/index.d.ts",
         "./node_modules/@types/cookie-parser/index.d.ts",
+        "./src/commands/intercept.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -2103,6 +2108,144 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./node_modules/typed-error/lib/typed-error.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/types.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/@types/express/index.d.ts",
+        "./node_modules/@types/node/events.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/util/type-utils.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/util/serialization.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/matchers.d.ts": [
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/handlers.d.ts": [
+        "./node_modules/@types/express/index.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/typed-error/lib/typed-error.d.ts",
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts": [
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/mock-rule.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/mockttp/dist/rules/matchers.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts": [
+        "./node_modules/@types/node/http.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/util/tls.d.ts": [
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/mockttp.d.ts": [
+        "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/mockttp/dist/util/tls.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/client/mockttp-client.d.ts": [
+        "./node_modules/typed-error/lib/typed-error.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/mockttp.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/cors/index.d.ts": [
+        "./node_modules/@types/express/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts": [
+        "./node_modules/@types/cors/index.d.ts",
+        "./node_modules/mockttp/dist/mockttp.d.ts",
+        "./node_modules/mockttp/custom-typings/asynciterator.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/main.d.ts": [
+        "./node_modules/mockttp/dist/client/mockttp-client.d.ts",
+        "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts",
+        "./node_modules/mockttp/dist/mockttp.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/rules/matchers.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/mockttp/dist/util/tls.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/tmp/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/lib/transparentproxycapturesession.ts": [
+        "./node_modules/@types/node/events.d.ts",
+        "./node_modules/@types/fs-extra/index.d.ts",
+        "./node_modules/mockttp/dist/main.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/@types/node/path.d.ts",
+        "./node_modules/@types/node/querystring.d.ts",
+        "./node_modules/@types/tmp/index.d.ts",
+        "./node_modules/@types/node/url.d.ts",
+        "./src/commands/intercept.ts",
+        "./src/lib/common.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./src/lib/log-helper.ts": [
         "./node_modules/colors/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
@@ -2122,6 +2265,7 @@
       "./src/commands/start.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts",
         "./src/lib/log-helper.ts",
+        "./src/lib/transparentproxycapturesession.ts",
         "./src/commands/init.ts",
         "./src/lib/proxy-capture-session.ts",
         "./src/lib/command-session.ts",
@@ -2133,6 +2277,7 @@
         "./node_modules/@types/js-yaml/index.d.ts",
         "./src/lib/common.ts",
         "./node_modules/colors/index.d.ts",
+        "./src/commands/intercept.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -2929,136 +3074,12 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./node_modules/typed-error/lib/typed-error.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/types.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/@types/node/events.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/type-utils.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/serialization.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/matchers.d.ts": [
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/handlers.d.ts": [
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/typed-error/lib/typed-error.d.ts",
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts": [
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/mock-rule.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/mockttp/dist/rules/matchers.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts": [
-        "./node_modules/@types/node/http.d.ts",
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/tls.d.ts": [
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/mockttp.d.ts": [
-        "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/mockttp/dist/util/tls.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/client/mockttp-client.d.ts": [
-        "./node_modules/typed-error/lib/typed-error.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/mockttp.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/cors/index.d.ts": [
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts": [
-        "./node_modules/@types/cors/index.d.ts",
-        "./node_modules/mockttp/dist/mockttp.d.ts",
-        "./node_modules/mockttp/custom-typings/asynciterator.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/main.d.ts": [
-        "./node_modules/mockttp/dist/client/mockttp-client.d.ts",
-        "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts",
-        "./node_modules/mockttp/dist/mockttp.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/rules/matchers.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/mockttp/dist/util/tls.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/@types/tmp/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "./src/commands/intercept.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts",
-        "./src/lib/analytics.ts",
         "./src/lib/proxy-capture-session.ts",
         "./node_modules/get-port/index.d.ts",
         "./src/lib/common.ts",
+        "./src/lib/transparentproxycapturesession.ts",
         "./src/commands/spec.ts",
         "./node_modules/@types/react-dev-utils/openbrowser.d.ts",
         "./node_modules/@types/express/index.d.ts",
@@ -3073,6 +3094,7 @@
         "./node_modules/mockttp/dist/rules/handlers.d.ts",
         "./node_modules/@types/node/url.d.ts",
         "./node_modules/@types/node/querystring.d.ts",
+        "./src/commands/start.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -3670,20 +3692,36 @@
         "./node_modules/@types/node/events.d.ts",
         "./src/lib/common.ts"
       ],
+      "./src/commands/start.ts": [
+        "./node_modules/@oclif/parser/lib/flags.d.ts",
+        "./src/lib/proxy-capture-session.ts",
+        "./src/commands/init.ts",
+        "./node_modules/@oclif/command/lib/index.d.ts",
+        "./src/lib/common.ts"
+      ],
       "./src/commands/spec.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts",
         "./node_modules/@types/express/index.d.ts",
-        "./src/paths.ts"
+        "./src/paths.ts",
+        "./src/commands/init.ts"
+      ],
+      "./src/lib/transparentproxycapturesession.ts": [
+        "./src/lib/common.ts",
+        "./node_modules/@types/node/events.d.ts",
+        "./node_modules/mockttp/dist/main.d.ts"
+      ],
+      "./src/lib/common.ts": [
+        "./node_modules/@types/express/index.d.ts"
+      ],
+      "./src/lib/proxy-capture-session.ts": [
+        "./src/lib/common.ts",
+        "./node_modules/@types/node/events.d.ts"
+      ],
+      "./src/lib/proxy-server.ts": [
+        "./node_modules/@types/node/events.d.ts"
       ],
       "./src/lib/version-control.ts": [
         "./node_modules/@types/nodegit/index.d.ts"
-      ],
-      "./src/commands/start.ts": [
-        "./node_modules/@oclif/parser/lib/flags.d.ts",
-        "./src/commands/init.ts",
-        "./src/lib/common.ts",
-        "./src/lib/proxy-capture-session.ts",
-        "./node_modules/@oclif/command/lib/index.d.ts"
       ],
       "./src/commands/init.ts": [
         "./node_modules/@oclif/parser/lib/flags.d.ts",
@@ -3842,109 +3880,6 @@
         "./node_modules/@types/uglify-js/index.d.ts",
         "./node_modules/@types/clean-css/index.d.ts",
         "./node_modules/@types/relateurl/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/tls.d.ts": [
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/main.d.ts": [
-        "./node_modules/mockttp/dist/client/mockttp-client.d.ts",
-        "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts",
-        "./node_modules/mockttp/dist/mockttp.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/rules/matchers.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/mockttp/dist/util/tls.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/mockttp.d.ts": [
-        "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/mockttp/dist/util/tls.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts": [
-        "./node_modules/@types/cors/index.d.ts",
-        "./node_modules/mockttp/dist/mockttp.d.ts",
-        "./node_modules/mockttp/custom-typings/asynciterator.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/client/mockttp-client.d.ts": [
-        "./node_modules/typed-error/lib/typed-error.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/mockttp.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts": [
-        "./node_modules/@types/node/http.d.ts",
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/mock-rule.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/mockttp/dist/rules/matchers.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
-        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/handlers.d.ts": [
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/typed-error/lib/typed-error.d.ts",
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/serialization.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts": [
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/rules/matchers.d.ts": [
-        "./node_modules/mockttp/dist/types.d.ts",
-        "./node_modules/mockttp/dist/util/serialization.d.ts",
-        "./node_modules/mockttp/dist/util/type-utils.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/types.d.ts": [
-        "./node_modules/@types/node/stream.d.ts",
-        "./node_modules/@types/express/index.d.ts",
-        "./node_modules/@types/node/events.d.ts",
-        "./node_modules/@types/node/ts3.2/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -4470,6 +4405,109 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./node_modules/mockttp/dist/util/tls.d.ts": [
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/main.d.ts": [
+        "./node_modules/mockttp/dist/client/mockttp-client.d.ts",
+        "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts",
+        "./node_modules/mockttp/dist/mockttp.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/rules/matchers.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/mockttp/dist/util/tls.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/mockttp.d.ts": [
+        "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/mockttp/dist/util/tls.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts": [
+        "./node_modules/@types/cors/index.d.ts",
+        "./node_modules/mockttp/dist/mockttp.d.ts",
+        "./node_modules/mockttp/custom-typings/asynciterator.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/client/mockttp-client.d.ts": [
+        "./node_modules/typed-error/lib/typed-error.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/mockttp.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts": [
+        "./node_modules/@types/node/http.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/mock-rule.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/mockttp/dist/rules/matchers.d.ts",
+        "./node_modules/mockttp/dist/rules/handlers.d.ts",
+        "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/handlers.d.ts": [
+        "./node_modules/@types/express/index.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/typed-error/lib/typed-error.d.ts",
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/util/serialization.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts": [
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/rules/matchers.d.ts": [
+        "./node_modules/mockttp/dist/types.d.ts",
+        "./node_modules/mockttp/dist/util/serialization.d.ts",
+        "./node_modules/mockttp/dist/util/type-utils.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/types.d.ts": [
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/@types/express/index.d.ts",
+        "./node_modules/@types/node/events.d.ts",
+        "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./node_modules/get-port/index.d.ts": [
         "./node_modules/type-fest/index.d.ts",
         "./node_modules/@types/node/net.d.ts",
@@ -4484,16 +4522,6 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./src/lib/common.ts": [
-        "./node_modules/@types/express/index.d.ts"
-      ],
-      "./src/lib/proxy-capture-session.ts": [
-        "./src/lib/common.ts",
-        "./node_modules/@types/node/events.d.ts"
-      ],
-      "./src/lib/proxy-server.ts": [
-        "./node_modules/@types/node/events.d.ts"
-      ],
       "./node_modules/@types/express/index.d.ts": [
         "./node_modules/@types/body-parser/index.d.ts",
         "./node_modules/@types/serve-static/index.d.ts",
@@ -4501,13 +4529,13 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./src/lib/ui-server/utilities.ts": [
+        "./node_modules/@types/express/index.d.ts"
+      ],
       "./node_modules/@types/cors/index.d.ts": [
         "./node_modules/@types/express/index.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/lib/ui-server/utilities.ts": [
-        "./node_modules/@types/express/index.d.ts"
       ],
       "./node_modules/@types/express-http-proxy/index.d.ts": [
         "./node_modules/@types/express/index.d.ts",
@@ -5063,22 +5091,6 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "./node_modules/@types/tmp/index.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/mockttp/dist/util/type-utils.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./node_modules/typed-error/lib/typed-error.d.ts": [
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/@types/node/ts3.2/util.d.ts"
-      ],
       "./node_modules/@types/react-dev-utils/openbrowser.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
@@ -5317,6 +5329,22 @@
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./node_modules/tree-kill/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/tmp/index.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/custom-typings/asynciterator.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/mockttp/dist/util/type-utils.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/typed-error/lib/typed-error.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -5696,6 +5724,24 @@
       "./node_modules/type-fest/source/package-json.d.ts",
       "./node_modules/type-fest/index.d.ts",
       "./node_modules/get-port/index.d.ts",
+      "./node_modules/typed-error/lib/typed-error.d.ts",
+      "./node_modules/mockttp/dist/types.d.ts",
+      "./node_modules/mockttp/dist/util/type-utils.d.ts",
+      "./node_modules/mockttp/dist/util/serialization.d.ts",
+      "./node_modules/mockttp/dist/rules/matchers.d.ts",
+      "./node_modules/mockttp/dist/rules/handlers.d.ts",
+      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
+      "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
+      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts",
+      "./node_modules/mockttp/dist/util/tls.d.ts",
+      "./node_modules/mockttp/dist/mockttp.d.ts",
+      "./node_modules/mockttp/dist/client/mockttp-client.d.ts",
+      "./node_modules/mockttp/custom-typings/asynciterator.d.ts",
+      "./node_modules/@types/cors/index.d.ts",
+      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts",
+      "./node_modules/mockttp/dist/main.d.ts",
+      "./node_modules/@types/tmp/index.d.ts",
+      "./src/lib/transparentproxycapturesession.ts",
       "./src/lib/log-helper.ts",
       "./node_modules/tree-kill/index.d.ts",
       "./src/lib/command-session.ts",
@@ -5807,23 +5853,6 @@
       "./src/lib/ui-server/utilities.ts",
       "./src/commands/spec.ts",
       "./node_modules/@types/react-dev-utils/openbrowser.d.ts",
-      "./node_modules/typed-error/lib/typed-error.d.ts",
-      "./node_modules/mockttp/dist/types.d.ts",
-      "./node_modules/mockttp/dist/util/type-utils.d.ts",
-      "./node_modules/mockttp/dist/util/serialization.d.ts",
-      "./node_modules/mockttp/dist/rules/matchers.d.ts",
-      "./node_modules/mockttp/dist/rules/handlers.d.ts",
-      "./node_modules/mockttp/dist/rules/completion-checkers.d.ts",
-      "./node_modules/mockttp/dist/rules/mock-rule.d.ts",
-      "./node_modules/mockttp/dist/rules/mock-rule-builder.d.ts",
-      "./node_modules/mockttp/dist/util/tls.d.ts",
-      "./node_modules/mockttp/dist/mockttp.d.ts",
-      "./node_modules/mockttp/dist/client/mockttp-client.d.ts",
-      "./node_modules/mockttp/custom-typings/asynciterator.d.ts",
-      "./node_modules/@types/cors/index.d.ts",
-      "./node_modules/mockttp/dist/standalone/mockttp-standalone.d.ts",
-      "./node_modules/mockttp/dist/main.d.ts",
-      "./node_modules/@types/tmp/index.d.ts",
       "./src/commands/intercept.ts",
       "./src/commands/generate/oas.ts",
       "./src/commands/publish/oas.ts",
