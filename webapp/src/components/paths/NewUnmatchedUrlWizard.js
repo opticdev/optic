@@ -34,6 +34,7 @@ import { withNavigationContext } from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
 import {PURPOSE} from '../../ContributionKeys';
 import {Link} from 'react-router-dom';
+import {track} from '../../Analytics'
 import {Helmet} from 'react-helmet';
 import {LightTooltip} from '../tooltips/LightTooltip';
 import {resolvePath} from '../utilities/PathUtilities';
@@ -72,6 +73,11 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     targetUrl: '',
     previewSample: null,
   };
+
+  componentDidMount() {
+    track('Unmatched_URL_Page.OPENED')
+  }
+
   handleChange = ({ pathExpression }) => {
     this.setState({
       pathExpression
@@ -91,10 +97,15 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
   setPreviewSample = (previewSample) => () => this.setState({ previewSample });
   setPurpose = (purpose) => this.setState({ purpose });
 
-  selectTarget = (targetUrl) => () => this.setState({ targetUrl });
+  selectTarget = (targetUrl) => () => {
+    track('Unmatched_URL_Page.SELECT_URL', {targetUrl})
+    this.setState({ targetUrl });
+  }
+
   quickAdd = (pathId) => () => this.setState({ pathId });
 
   handleAddPath = () => {
+    track('Unmatched_URL_Page.ADD_PATH', {targetUrl: this.state.targetUrl, pathExpression: this.state.pathExpression})
     const pathId = this.props.handleAddPath(this.state.pathExpression);
     this.setState({ pathId });
   };

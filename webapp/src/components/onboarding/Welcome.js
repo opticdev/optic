@@ -17,7 +17,7 @@ const styles = theme => ({
 class Welcome extends React.Component {
 
     componentDidMount() {
-        track('Loaded Welcome');
+        // track('Loaded Welcome');
     }
 
     render() {

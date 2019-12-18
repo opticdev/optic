@@ -7,7 +7,6 @@ import {startServer, ISessionValidatorAndLoader, makeInitialDiffState} from './s
 //@ts-ignore
 import * as openBrowser from 'react-dev-utils/openBrowser'
 import * as Express from 'express'
-import {FreshChrome} from 'httptoolkit-server/lib/interceptors/fresh-chrome'
 import * as mockttp from 'mockttp'
 import * as fs from 'fs-extra'
 import * as tmp from 'tmp'
@@ -19,6 +18,7 @@ import * as os from 'os'
 import {CallbackResponseResult} from 'mockttp/dist/rules/handlers'
 import * as url from 'url'
 import * as qs from 'querystring'
+import {readApiConfig} from './start'
 
 interface IWithSamples {
   getSamples(): IApiInteraction[]
@@ -53,7 +53,7 @@ interface IHttpToolkitProxyCaptureSessionConfig {
 
 class HttpToolkitProxyCaptureSession implements IWithSamples {
   private proxy!: mockttp.Mockttp
-  private interceptor!: FreshChrome
+  // private interceptor!: FreshChrome
   private requests: Map<string, mockttp.CompletedRequest> = new Map()
   private samples: IApiInteraction[] = []
   private config!: IHttpToolkitProxyCaptureSessionConfig
@@ -141,19 +141,20 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
     await proxy.start(config.proxyPort)
 
     if (config.flags.chrome) {
-      const interceptor = new FreshChrome({
-        configPath,
-        https
-      })
-      this.interceptor = interceptor
-      interceptor.activate(config.proxyPort)
+      console.log(fromOptic('Chrome is currently in beta. Email aidan@useoptic.com for access'))
+      // const interceptor = new FreshChrome({
+      //   configPath,
+      //   https
+      // })
+      // this.interceptor = interceptor
+      // interceptor.activate(config.proxyPort)
     }
   }
 
   async stop() {
     await this.proxy.stop()
     if (this.config.flags.chrome) {
-      await this.interceptor.deactivateAll()
+      // await this.interceptor.deactivateAll()
     }
   }
 
@@ -197,8 +198,8 @@ export default class Intercept extends Command {
       this.log(fromOptic(`Working out of ${homePath}`))
       return homePath
     })
-    await startServer(paths, sessionValidatorAndLoader, cliServerPort)
-
+    const config = await readApiConfig()
+    await startServer(paths, sessionValidatorAndLoader, cliServerPort, config)
     const cliServerUrl = `http://localhost:${cliServerPort}/live-session`
     await openBrowser(cliServerUrl)
 
