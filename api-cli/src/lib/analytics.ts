@@ -62,14 +62,6 @@ class MixpanelAnalytics implements IAnalytics {
   }
 }
 
-export function trackSlack(event: string, data: any = {}) {
-  fetch('https://ayiz1s0f8f.execute-api.us-east-2.amazonaws.com/production/log/slack', {
-    method: 'POST',
-    headers: {},
-    body: JSON.stringify({text: `${event} ${JSON.stringify(data)}`, distinct_id: analytics.distinct_id})
-  })
-}
-
 const providers: { [key: string]: any } = {
   mixpanel: () => new MixpanelAnalytics(process.env.MIXPANEL_TOKEN as string || '78a42ccba0e9a55de00c30b454c5da8e'),
   null: () => new NullAnalytics()
@@ -77,4 +69,11 @@ const providers: { [key: string]: any } = {
 const analyticsProviderFactory = providers[process.env.ANALYTICS_IMPL || 'mixpanel'] || providers.null
 const analytics = analyticsProviderFactory()
 
+export function trackSlack(event: string, data: any = {}) {
+  fetch('https://ayiz1s0f8f.execute-api.us-east-2.amazonaws.com/production/log/slack', {
+    method: 'POST',
+    headers: {},
+    body: JSON.stringify({text: `${event} ${JSON.stringify(data)}`, distinct_id: analytics ? analytics.distinct_id : 'anon'})
+  })
+}
 export default analytics
