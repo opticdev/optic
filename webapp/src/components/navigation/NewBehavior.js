@@ -29,6 +29,8 @@ import {PURPOSE} from '../../ContributionKeys';
 import Chip from '@material-ui/core/Chip';
 import Menu from '@material-ui/core/Menu';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import {primary} from '../../theme';
+import Collapse from '@material-ui/core/Collapse';
 
 const useStyles = makeStyles({
   section: {
@@ -36,10 +38,11 @@ const useStyles = makeStyles({
     marginBottom: 110
   },
   chipNotif: {
-    marginRight: 15,
     display: 'flex',
+    marginTop: 10,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    minWidth: 160,
   },
   menuItem: {
     marginTop: 30
@@ -51,19 +54,27 @@ const useStyles = makeStyles({
   },
   notificationBar: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
     userSelect: 'none',
+    backgroundColor: primary,
+    borderRadius: 10,
+    paddingBottom: 10,
+    cursor: 'pointer',
+    transition: 'background-color 0.1s ease',
+    '&:hover': {
+      transition: 'background-color 0.2s ease',
+      backgroundColor: '#3d4989'
+    }
   },
   notification: {
     borderLeft: `5px solid ${AddedGreen}`,
     backgroundColor: AddedGreenBackground,
-    paddingLeft: 12,
     paddingTop: 5,
     paddingBottom: 5,
     fontSize: 14,
-    marginRight: 10,
     marginTop: 13,
     marginBottom: 13,
   },
@@ -116,24 +127,29 @@ function NewBehavior(props) {
   };
 
   const undocumentedBehavior = (
-    <div className={classes.chipNotif}>
+    <div className={classes.chipNotif} style={{marginTop: 0}}>
       <Chip label={requestIdsWithDiffs.length} size="small"
-            style={{marginRight: 7, color: 'white', backgroundColor: RemovedRed}}/>
-      <Typography variant="subtitle2" style={{fontWeight: 100}}>Requests with Unexpected Behavior</Typography>
+            style={{color: 'white', backgroundColor: RemovedRed}}/>
+      <Typography variant="subtitle2" style={{color: 'white', marginLeft: 10, fontWeight: 200, fontSize: 12}}>Unexpected Behaviors</Typography>
     </div>
   );
 
   const newUrls = (
-    <div className={classes.chipNotif}>
-      <Chip label={unrecognizedUrlCount} size="small" style={{marginRight: 7, backgroundColor: ChangedYellowBright}}/>
-      <Typography variant="subtitle2" style={{fontWeight: 100}}>Undocumented URLs</Typography>
+    <div className={classes.chipNotif} >
+      <Chip label={unrecognizedUrlCount} size="small" style={{backgroundColor: ChangedYellowBright}}/>
+      <Typography variant="subtitle2" style={{color: 'white', marginLeft: 10, fontWeight: 200, fontSize: 12}}>Undocumented URLs</Typography>
     </div>
   )
+
+
 
   const noNotifications = !requestIdsWithDiffs.length && !unrecognizedUrlCount
 
   return (
-    <div className={classes.notificationBar} onClick={handleClick}>
+    <div className={classes.notificationBar} onClick={handleClick} onMouseLeave={() => setAnchorEl(false)}>
+
+      <Typography variant="subtitle1" style={{color: 'white', marginTop: 5}}>API Not Synced</Typography>
+
       {requestIdsWithDiffs.length > 0 && undocumentedBehavior}
       {unrecognizedUrlCount > 0 && newUrls}
 
@@ -143,61 +159,92 @@ function NewBehavior(props) {
         </div>
       )}
 
-      <Menu
-        className={classes.menuItem}
-        anchorEl={anchorEl}
-        MenuListProps={{className: classes.menuList}}
-        open={Boolean(anchorEl) && !noNotifications}
-        onClose={(e) => {
-          e.stopPropagation()
-          setAnchorEl(false)
-        }}>
-        <div style={{paddingLeft: 9}}>
+      <Collapse in={Boolean(anchorEl) && !noNotifications}>
+        {unrecognizedUrlCount > 0 && (
+          <Link style={{textDecoration: 'none', color: 'black'}}
+                to={`${baseUrl}/diff/${sessionId}/urls`}>
+            <Button color="secondary" size="small" variant="contained" style={{marginTop: 20}}>Document new URLs</Button>
+          </Link>
+        )}
 
-          {unrecognizedUrlCount === 0 && requestIdsWithDiffs.length === 0 && (
-            <Typography variant="subtitle2">No Notifications</Typography>
-          )}
+            <List>
+              {requestIdsWithDiffs.map(requestId => {
 
-          {unrecognizedUrlCount > 0 && (
-            <NewBehaviorCard color="yellow" source={`##### ${unrecognizedUrlCount} Undocumented URLs`}>
-              <Link style={{textDecoration: 'none', color: 'black', float: 'right'}}
-                    to={`${baseUrl}/diff/${sessionId}/urls`}>
-                <Button color="secondary" size="small" style={{marginTop: -58, marginRight: 8}}>Review & Document</Button>
-              </Link>
-            </NewBehaviorCard>
-          )}
+                const {pathComponentId: pathId, httpMethod: method} = cachedQueryResults.requests[requestId].requestDescriptor;
 
-          <List>
-            {requestIdsWithDiffs.map(requestId => {
+                const path = <DisplayPath url={<PathIdToPathString pathId={pathId}/>} method={method}/>;
 
-              const {pathComponentId: pathId, httpMethod: method} = cachedQueryResults.requests[requestId].requestDescriptor;
+                const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
+                return (
+                  <Link style={{textDecoration: 'none', color: 'black'}}
+                        to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}>
+                  <ListItem dense button>
+                    <ListItemText primary={name || path}
+                                  secondary={name && path}
+                                  primaryTypographyProps={{
+                                    style: {
+                                      fontSize: 12,
+                                      color: 'white'
+                                    }
+                                  }}/>
+                  </ListItem>
+                  </Link>
+                );
+              })}
+            </List>
+      </Collapse>
 
-              const path = <DisplayPath url={<PathIdToPathString pathId={pathId}/>} method={method}/>;
+      {/*<Menu*/}
+      {/*  className={classes.menuItem}*/}
+      {/*  anchorEl={anchorEl}*/}
+      {/*  MenuListProps={{className: classes.menuList}}*/}
+      {/*  open={Boolean(anchorEl) && !noNotifications}>*/}
+      {/*  <div style={{paddingLeft: 9}}>*/}
 
-              const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
-              return (
-                <ListItem dense>
-                  <ListItemText primary={name || path}
-                                secondary={name && path}
-                                primaryTypographyProps={{
-                                  style: {
-                                    fontSize: 16
-                                  }
-                                }}/>
-                  <ListItemSecondaryAction>
-                    <Link style={{textDecoration: 'none', color: 'black'}}
-                          to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}>
-                      <Button size="small" color="secondary">Review Diff</Button>
-                    </Link>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              );
-            })}
+      {/*    {unrecognizedUrlCount === 0 && requestIdsWithDiffs.length === 0 && (*/}
+      {/*      <Typography variant="subtitle2">No Notifications</Typography>*/}
+      {/*    )}*/}
 
-          </List>
+      {/*    {unrecognizedUrlCount > 0 && (*/}
+      {/*      <NewBehaviorCard color="yellow" source={`##### ${unrecognizedUrlCount} Undocumented URLs`}>*/}
+      {/*        <Link style={{textDecoration: 'none', color: 'black', float: 'right'}}*/}
+      {/*              to={`${baseUrl}/diff/${sessionId}/urls`}>*/}
+      {/*          <Button color="secondary" size="small" style={{marginTop: -58, marginRight: 8}}>Review & Document</Button>*/}
+      {/*        </Link>*/}
+      {/*      </NewBehaviorCard>*/}
+      {/*    )}*/}
 
-        </div>
-      </Menu>
+      {/*    <List>*/}
+      {/*      {requestIdsWithDiffs.map(requestId => {*/}
+
+      {/*        const {pathComponentId: pathId, httpMethod: method} = cachedQueryResults.requests[requestId].requestDescriptor;*/}
+
+      {/*        const path = <DisplayPath url={<PathIdToPathString pathId={pathId}/>} method={method}/>;*/}
+
+      {/*        const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);*/}
+      {/*        return (*/}
+      {/*          <ListItem dense>*/}
+      {/*            <ListItemText primary={name || path}*/}
+      {/*                          secondary={name && path}*/}
+      {/*                          primaryTypographyProps={{*/}
+      {/*                            style: {*/}
+      {/*                              fontSize: 16*/}
+      {/*                            }*/}
+      {/*                          }}/>*/}
+      {/*            <ListItemSecondaryAction>*/}
+      {/*              <Link style={{textDecoration: 'none', color: 'black'}}*/}
+      {/*                    to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}>*/}
+      {/*                <Button size="small" color="secondary">Review Diff</Button>*/}
+      {/*              </Link>*/}
+      {/*            </ListItemSecondaryAction>*/}
+      {/*          </ListItem>*/}
+      {/*        );*/}
+      {/*      })}*/}
+
+      {/*    </List>*/}
+
+      {/*  </div>*/}
+      {/*</Menu>*/}
     </div>
   );
 }

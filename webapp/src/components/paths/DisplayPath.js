@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import {DocDarkGrey, methodColors} from '../requests/DocConstants';
+import {DocDarkGrey, DocGrey, methodColors} from '../requests/DocConstants';
 import React from 'react';
 
 export function DisplayPath({ url, method }) {
@@ -10,7 +10,7 @@ export function DisplayPath({ url, method }) {
         color: methodColors[method.toUpperCase()]
       }}>{method.toUpperCase()}</Typography>
       <Typography variant="body" component="span"
-        style={{ marginLeft: 9, color: DocDarkGrey }}>{url}</Typography>
+        style={{ marginLeft: 9, color: DocGrey }}>{url}</Typography>
     </span>
   );
 }

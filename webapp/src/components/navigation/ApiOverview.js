@@ -203,52 +203,52 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
   return (
     <div className={classes.root}>
       <CssBaseline/>
-      <Drawer
-        className={classes.drawer}
-        open={!isEmpty}
-        variant={isEmpty ? undefined : "permanent"}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-        anchor="left"
-      >
-        <Helmet>
-          <title>{cachedQueryResults.apiName} API Documentation</title>
-        </Helmet>
-        <List
-          component="nav"
-          subheader={operationsToRender.length > 0 && <ListSubheader className={classes.subHeader}>{'Endpoints'}</ListSubheader>}
-          aria-labelledby="nested-list-subheader"
-          dense={true}
-        >
-          {allPaths.map(i => <EndpointBasePath path={i} operationsToRender={flatMapOperations([i])}/>)}
-        </List>
+      {/*<Drawer*/}
+      {/*  className={classes.drawer}*/}
+      {/*  open={!isEmpty}*/}
+      {/*  variant={isEmpty ? undefined : "permanent"}*/}
+      {/*  classes={{*/}
+      {/*    paper: classes.drawerPaper,*/}
+      {/*  }}*/}
+      {/*  anchor="left"*/}
+      {/*>*/}
+      {/*  <Helmet>*/}
+      {/*    <title>{cachedQueryResults.apiName} API Documentation</title>*/}
+      {/*  </Helmet>*/}
+      {/*  <List*/}
+      {/*    component="nav"*/}
+      {/*    subheader={operationsToRender.length > 0 && <ListSubheader className={classes.subHeader}>{'Endpoints'}</ListSubheader>}*/}
+      {/*    aria-labelledby="nested-list-subheader"*/}
+      {/*    dense={true}*/}
+      {/*  >*/}
+      {/*    {allPaths.map(i => <EndpointBasePath path={i} operationsToRender={flatMapOperations([i])}/>)}*/}
+      {/*  </List>*/}
 
-        <Divider/>
-        <List
-          component="nav"
-          subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>{'Concepts'}</ListSubheader>}
-          aria-labelledby="nested-list-subheader"
-          dense={true}
-        >
-          {concepts.map(i => (
-            <NavLink
-              to={`#${i.shapeId}`}
-              activeClassName="selected"
-              style={{textDecoration: 'none', color: 'black'}}
-            >
-            <ListItem button dense disableRipple>
-              <ListItemText
-                primary={i.name}
-                dense
-                classes={{dense: classes.dense}}
-                primaryTypographyProps={{variant: 'overline', style: {textTransform: 'none'}}}/>
-            </ListItem>
-            </NavLink>
-          ))}
-        </List>
+      {/*  <Divider/>*/}
+      {/*  <List*/}
+      {/*    component="nav"*/}
+      {/*    subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>{'Concepts'}</ListSubheader>}*/}
+      {/*    aria-labelledby="nested-list-subheader"*/}
+      {/*    dense={true}*/}
+      {/*  >*/}
+      {/*    {concepts.map(i => (*/}
+      {/*      <NavLink*/}
+      {/*        to={`#${i.shapeId}`}*/}
+      {/*        activeClassName="selected"*/}
+      {/*        style={{textDecoration: 'none', color: 'black'}}*/}
+      {/*      >*/}
+      {/*      <ListItem button dense disableRipple>*/}
+      {/*        <ListItemText*/}
+      {/*          primary={i.name}*/}
+      {/*          dense*/}
+      {/*          classes={{dense: classes.dense}}*/}
+      {/*          primaryTypographyProps={{variant: 'overline', style: {textTransform: 'none'}}}/>*/}
+      {/*      </ListItem>*/}
+      {/*      </NavLink>*/}
+      {/*    ))}*/}
+      {/*  </List>*/}
 
-      </Drawer>
+      {/*</Drawer>*/}
       <main className={classes.content}>
         {operationsToRender.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}
                     style={{paddingTop: 20}}>Endpoints</Typography>}

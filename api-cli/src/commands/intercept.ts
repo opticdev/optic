@@ -3,6 +3,7 @@ import {ICaptureSessionResult} from '../lib/proxy-capture-session'
 import * as getPort from 'get-port'
 import {IApiInteraction} from '../lib/common'
 import {extractBody} from '../lib/TransparentProxyCaptureSession'
+import {IApiCliConfig} from './init'
 import {startServer, ISessionValidatorAndLoader, makeInitialDiffState} from './spec'
 //@ts-ignore
 import * as openBrowser from 'react-dev-utils/openBrowser'
@@ -198,7 +199,17 @@ export default class Intercept extends Command {
       this.log(fromOptic(`Working out of ${homePath}`))
       return homePath
     })
-    const config = await readApiConfig()
+    const config: IApiCliConfig = {
+      integrations: [],
+      name: '',
+      commands: {
+        start: ''
+      },
+      proxy: {
+        target: '',
+        port: 99999
+      }
+    }
     await startServer(paths, sessionValidatorAndLoader, cliServerPort, config)
     const cliServerUrl = `http://localhost:${cliServerPort}/live-session`
     await openBrowser(cliServerUrl)

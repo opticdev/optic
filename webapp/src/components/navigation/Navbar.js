@@ -10,6 +10,21 @@ import IconButton from '@material-ui/core/IconButton';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
+import Drawer from '@material-ui/core/Drawer';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import MailIcon from '@material-ui/icons/Mail';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import {StyledTab, StyledTabs} from '../requests/DocCodeBox';
+const drawerWidth = 280;
 
 const styles = theme => ({
   root: {
@@ -19,32 +34,34 @@ const styles = theme => ({
     backgroundColor: 'white',
 
   },
-  title: {},
-  middleSection: {
-    // backgroundColor: 'rgba(49,54,111,0.1)',
-    borderRadius: 12,
-    width: '70%',
-    maxWidth: 570,
-    height: 38,
-    border: '1px solid #e2e2e2',
-    padding: 4,
+  drawer: {
+    width: drawerWidth,
+    flexShrink: 0,
+  },
+  drawerPaper: {
+    width: drawerWidth,
+    backgroundColor: '#1B2958'
+  },
+  title: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: '#ebedfc'
+  },
+  middle: {
+    padding: 10,
     display: 'flex',
     flexDirection: 'row',
-    paddingLeft: 10,
-    paddingRight: 10,
     alignItems: 'center',
-    cursor: 'pointer',
-    transition: 'background-color 0.1s ease',
-    '&:hover': {
-      transition: 'background-color 0.2s ease',
-      backgroundColor: 'rgba(136,160,245,0.13)'
-    }
   },
   background: {
     backgroundColor: 'transparent',
     display: 'flex',
     // alignItems: 'stretch'
     justifyContent: 'space-between'
+  },
+  lightDivider: {
+    backgroundColor: '#4755a1',
+    margin: 10
   }
 });
 
@@ -67,26 +84,56 @@ class Navbar extends React.Component {
 
     return (
       <>
-        <AppBar position="fixed" elevation={0} className={classes.root}>
-          <Toolbar className={classes.background} variant="dense">
-            <Typography variant="h6" className={classes.title} color="textPrimary">
+        <Drawer
+          elevation={2}
+          className={classes.drawer}
+          variant={'permanent'}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+          anchor="left"
+        >
+
+          <div>
+            <Typography variant="h6" className={classes.title}>
               {cachedQueryResults.apiName}
             </Typography>
 
-            <div className={classes.middleSection}>
+            <div className={classes.middle}>
               {notifications}
             </div>
 
-            {/*<IconButton edge="end" size="small" color="default" onClick={(e) => this.setState({menuAnchorEl: e.currentTarget})}>*/}
-            {/*  <MoreIcon/>*/}
-            {/*</IconButton>*/}
+            <StyledTabs value={0} style={{width: 190, margin: '0 auto'}}>
+              <StyledTab label="Dashboard" value={0} />}
+              <StyledTab label="Docs"  value={1} />
+              <StyledTab label="Integrations"  value={2} />
+            </StyledTabs>
 
-            <div>
-              {addExample}
-              {shareButtonComponent}
-            </div>
-          </Toolbar>
-        </AppBar>
+          </div>
+          <Divider className={classes.lightDivider}/>
+
+        </Drawer>
+
+        {/*<AppBar position="fixed" elevation={0} className={classes.root}>*/}
+        {/*  <Toolbar className={classes.background} variant="dense">*/}
+        {/*    <Typography variant="h6" className={classes.title} color="textPrimary">*/}
+        {/*      {cachedQueryResults.apiName}*/}
+        {/*    </Typography>*/}
+
+        {/*    <div className={classes.middleSection}>*/}
+        {/*      {notifications}*/}
+        {/*    </div>*/}
+
+        {/*    /!*<IconButton edge="end" size="small" color="default" onClick={(e) => this.setState({menuAnchorEl: e.currentTarget})}>*!/*/}
+        {/*    /!*  <MoreIcon/>*!/*/}
+        {/*    /!*</IconButton>*!/*/}
+
+        {/*    <div>*/}
+        {/*      {addExample}*/}
+        {/*      {shareButtonComponent}*/}
+        {/*    </div>*/}
+        {/*  </Toolbar>*/}
+        {/*</AppBar>*/}
       </>
     );
   }
