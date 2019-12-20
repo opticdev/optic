@@ -9,7 +9,7 @@ const readyPromise = new Promise(resolve => {
       init()
       window.localStorage.setItem('_known_user', 'true')
       const slack = "hNIv7B71oyUuRlczOFGqzRY3/ZFRBVM6NB/XDT4MQLFT".split("").reverse().join("")
-      fetch('https://hooks.slack.com/services/'+slack, {
+      fetch('https://hooks.slack.com/services/' + slack, {
         method: 'POST',
         headers: {},
         body: JSON.stringify({ text: 'New User with mixpanel ID: ' + mixpanel.persistence.props.distinct_id })
@@ -31,11 +31,16 @@ const readyPromise = new Promise(resolve => {
           if (!doNotTrack) {
             init()
             mixpanel.identify(distinctId)
-            window.FS.identify(distinctId);
-            window.FS.identify(distinctId);
+            if (window.FS) {
+              window.FS.identify(distinctId);
+              window.FS.identify(distinctId);
+            }
             track('Opened on Local')
           } else {
-            window.FS.shutdown()
+            if (window.FS) {
+              window.FS.shutdown()
+            }
+
             isAnalyticsEnabled = false
           }
           resolve()
