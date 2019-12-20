@@ -24,6 +24,7 @@ import Divider from '@material-ui/core/Divider';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import {StyledTab, StyledTabs} from '../requests/DocCodeBox';
+
 const drawerWidth = 280;
 
 const styles = theme => ({
@@ -62,7 +63,21 @@ const styles = theme => ({
   lightDivider: {
     backgroundColor: '#4755a1',
     margin: 10
+  },
+  item: {
+    color: '#ebedfc'
   }
+});
+
+const MainMenuItem = withStyles(styles)(({classes, name}) => {
+  return (
+    <ListItem button>
+      <ListItemIcon>
+        <InboxIcon />
+      </ListItemIcon>
+      <ListItemText primary={name} primaryTypographyProps={{className: classes.item}}/>
+    </ListItem>
+  );
 });
 
 class Navbar extends React.Component {
@@ -103,14 +118,18 @@ class Navbar extends React.Component {
               {notifications}
             </div>
 
-            <StyledTabs value={0} style={{width: 190, margin: '0 auto'}}>
-              <StyledTab label="Dashboard" value={0} />}
-              <StyledTab label="Docs"  value={1} />
-              <StyledTab label="Integrations"  value={2} />
+            <StyledTabs value={0} style={{width: 172, margin: '0 auto'}}>
+              <StyledTab label="Documentation" value={0}/>
+              <StyledTab label="Integrations" value={1}/>
             </StyledTabs>
 
+
+            <List>
+              <MainMenuItem name="Dashboard"/>
+            </List>
+
           </div>
-          <Divider className={classes.lightDivider}/>
+          {/*<Divider className={classes.lightDivider}/>*/}
 
         </Drawer>
 
