@@ -8,6 +8,7 @@
   },
   "bugs": "https://github.com/opticdev/optic",
   "dependencies": {
+    "@httptoolkit/browser-launcher": "^1.6.0",
     "@oclif/command": "^1.5.10",
     "@oclif/config": "^1.12.6",
     "@oclif/plugin-help": "^2.1.6",
@@ -106,8 +107,7 @@
     "xposttest": "tslint -p test -t stylish",
     "prepack": "cp ../Readme.md ./Readme.md && rm tsconfig.tsbuildinfo || true && rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "xtest": "ANALYTICS_IMPL=null nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif-dev readme && git add README.md",
-    "postinstall": "node -e \"require('./lib/lib/analytics.js').default.trackInstall()\""
+    "version": "oclif-dev readme && git add README.md"
   },
   "types": "lib/index.d.ts"
 }

@@ -23,14 +23,12 @@ import {Utilities} from '../lib/ui-server/utilities'
 
 interface IOpticDiffState {
   status: 'started' | 'persisted'
-  // tslint:disable-next-line:ban-types
-  interactionResults: Object
+  interactionResults: object
   acceptedInterpretations: any[]
 }
 
 export interface IOpticRequestAdditions {
-  // tslint:disable-next-line:ban-types
-  session: Object
+  session: object
   diffState: IOpticDiffState
 }
 

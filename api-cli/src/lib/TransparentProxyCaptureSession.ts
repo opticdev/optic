@@ -1,7 +1,6 @@
 import {EventEmitter} from 'events'
 import * as fs from 'fs-extra'
 import * as mockttp from 'mockttp'
-import {CallbackResponseResult} from 'mockttp/dist/rules/handlers'
 import * as path from 'path'
 import * as qs from 'querystring'
 import * as tmp from 'tmp'
