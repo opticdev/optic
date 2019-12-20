@@ -10,7 +10,6 @@ import * as openBrowser from 'react-dev-utils/openBrowser'
 import * as Express from 'express'
 import * as mockttp from 'mockttp'
 import * as fs from 'fs-extra'
-import * as tmp from 'tmp'
 import * as path from 'path'
 import {EventEmitter} from 'events'
 import {fromOptic} from '../lib/log-helper'
@@ -19,7 +18,6 @@ import * as os from 'os'
 import {CallbackResponseResult} from 'mockttp/dist/rules/handlers'
 import * as url from 'url'
 import * as qs from 'querystring'
-import {readApiConfig} from './start'
 import * as launcher from '@httptoolkit/browser-launcher'
 
 interface IWithSamples {
@@ -63,7 +61,8 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
 
   async start(config: IHttpToolkitProxyCaptureSessionConfig) {
     this.config = config
-    const configPath = tmp.dirSync({unsafeCleanup: true}).name
+    const tempBasePath = path.join(os.tmpdir(), 'optic-')
+    const configPath = await fs.mkdtemp(tempBasePath)
     const certificateInfo = await mockttp.generateCACertificate({
       bits: 2048,
       commonName: 'Optic Labs Corp'
@@ -145,13 +144,15 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
 
     if (config.flags.chrome) {
       this.chrome = await new Promise((resolve, reject) => {
-        launcher(configPath, function (err, launch) {
+        //@ts-ignore
+        launcher(function (err, launch) {
           if (err) {
             return reject(err)
           }
           const launchUrl = `https://docs.useoptic.com`
           const spkiFingerprint = mockttp.generateSPKIFingerprint(certificateInfo.cert)
           const launchOptions: launcher.LaunchOptions = {
+            profile: configPath,
             browser: 'chrome',
             proxy: `https://127.0.0.1:${config.proxyPort}`,
             noProxy: [
@@ -176,8 +177,12 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
     await this.proxy.stop()
     if (this.config.flags.chrome) {
       const promise = new Promise((resolve) => {
+        const timeoutId = setTimeout(resolve, 2000)
         //@ts-ignore
-        this.chrome.on('stop', () => resolve())
+        this.chrome.on('stop', () => {
+          clearTimeout(timeoutId)
+          resolve()
+        })
       })
       this.chrome.stop()
       await promise
