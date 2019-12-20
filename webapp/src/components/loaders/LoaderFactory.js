@@ -19,7 +19,14 @@ const {
 
 class LoaderFactory {
   static build(options) {
-    const { notificationAreaComponent,shareButtonComponent, basePath, specServiceTask } = options;
+    const {
+      notificationAreaComponent,
+      shareButtonComponent,
+      addExampleComponent,
+      basePath,
+      specServiceTask,
+      RfcStoreImpl = RfcStore
+    } = options;
 
     const diffBasePath = routerPaths.diff(basePath);
 
@@ -45,7 +52,9 @@ class LoaderFactory {
         <SpecOverview
           specService={specService}
           shareButtonComponent={shareButtonComponent}
-          notificationAreaComponent={notificationAreaComponent} />
+          notificationAreaComponent={notificationAreaComponent}
+          addExampleComponent={addExampleComponent}
+        />
       )
     }
 
@@ -99,13 +108,13 @@ class LoaderFactory {
         return (
           <SpecServiceContext.Provider value={{ specService }}>
             <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
-              <RfcStore specService={specService}>
+              <RfcStoreImpl specService={specService}>
                 <Switch>
                   <Route path={routerPaths.request(basePath)} component={withSpecServiceContext(RequestsDetailsPage)} />
                   <Route exact path={basePath} component={withSpecServiceContext(SpecOverviewWrapper)} />
                   <Route path={diffBasePath} component={withSpecServiceContext(SessionWrapper)} />
                 </Switch>
-              </RfcStore>
+              </RfcStoreImpl>
             </InitialRfcCommandsStore>
           </SpecServiceContext.Provider>
         );

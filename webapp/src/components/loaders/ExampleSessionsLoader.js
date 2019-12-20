@@ -48,7 +48,7 @@ class ExampleSessionsLoader extends React.Component {
     if (!this.state.isLoaded) {
       return <Loading />
     }
-    const sessionId = 'fakeSessionId';
+    const sessionId = 'live-session';
     const specService = {
       loadSession: (sessionId) => {
         return Promise.resolve({

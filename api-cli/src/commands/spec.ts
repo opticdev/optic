@@ -12,6 +12,7 @@ import bodyParser = require('body-parser')
 import * as open from 'open'
 import {readApiConfig} from './start'
 import analytics from '../lib/analytics'
+// @ts-ignore
 import * as niceTry from 'nice-try'
 import Init, {IApiCliConfig} from './init'
 import {VersionControl} from '../lib/version-control'
@@ -22,14 +23,12 @@ import {Utilities} from '../lib/ui-server/utilities'
 
 interface IOpticDiffState {
   status: 'started' | 'persisted'
-  // tslint:disable-next-line:ban-types
-  interactionResults: Object
+  interactionResults: object
   acceptedInterpretations: any[]
 }
 
 export interface IOpticRequestAdditions {
-  // tslint:disable-next-line:ban-types
-  session: Object
+  session: object
   diffState: IOpticDiffState
 }
 
