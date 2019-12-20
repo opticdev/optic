@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { InitialRfcCommandsStore } from '../../contexts/InitialRfcCommandsContext';
-import { TrafficSessionStore } from '../../contexts/TrafficSessionContext';
 import { LocalDiffRfcStore, withRfcContext } from '../../contexts/RfcContext';
-import { Route, Switch } from 'react-router-dom';
-import { UrlsX } from '../paths/NewUnmatchedUrlWizard';
-import RequestDiffX from '../diff/RequestDiffX';
-import { NavigationStore } from '../../contexts/NavigationContext';
-import { routerPaths, basePaths } from '../../RouterPaths';
-import { SpecOverview } from '../routes/local';
-import NewBehavior from '../navigation/NewBehavior';
+import { notificationAreaComponent, shareButtonComponent } from './SharedLoader.js';
+import { basePaths } from '../../RouterPaths';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import QueueIcon from '@material-ui/icons/Queue';
 import FiberNewIcon from '@material-ui/icons/FiberNew';
-import { RequestsDetailsPage } from '../requests/EndpointPage';
 import {
   TextField,
   Button,
@@ -37,7 +29,8 @@ import Chip from '@material-ui/core/Chip';
 import jsonic from 'jsonic';
 import { queryStringDiffer } from '../diff/DiffUtilities';
 import IconButton from '@material-ui/core/IconButton';
-import {LightTooltip} from '../tooltips/LightTooltip';
+import { LightTooltip } from '../tooltips/LightTooltip';
+import { LoaderFactory, SpecServiceContext } from './LoaderFactory';
 
 export const basePath = basePaths.exampleDrivenSpecBasePath
 
@@ -64,23 +57,25 @@ function parseLoosely(nonEmptyBodyString) {
 export function DialogWrapper(props) {
   const [showExampleBuilder, setShowExampleBuilder] = useState(false);
   const { specService, onSampleAdded, children } = props;
+  function handleSampleAdded(sample) {
+    onSampleAdded(sample)
+    setShowExampleBuilder(false)
+  }
   return (
-
     <>
       <LightTooltip title="Manually Add Example">
-      <IconButton color="primary" size="small" onClick={() => setShowExampleBuilder(true)}>
-        <QueueIcon />
-      </IconButton>
+        <IconButton color="primary" size="small" onClick={() => setShowExampleBuilder(true)}>
+          <QueueIcon />
+        </IconButton>
       </LightTooltip>
       <Dialog
         fullWidth={true}
         maxWidth={'xl'}
         fullScreen={true}
-        // open={showExampleBuilder}
         open={showExampleBuilder}
         onClose={() => setShowExampleBuilder(false)}
       >
-        <ExampleBuilder onSampleAdded={onSampleAdded} specService={specService} />
+        <ExampleBuilder onSampleAdded={handleSampleAdded} specService={specService} />
       </Dialog>
       {children}
     </>
@@ -188,7 +183,7 @@ function ExampleBuilderBase(props) {
               <DocSubGroup title="URL">
                 <div style={{ display: 'flex', marginTop: 11 }}>
                   <Select native label="Method" name="request.method" inputRef={register}>
-                    <option value="GET" selected>GET</option>
+                    <option value="GET">GET</option>
                     <option value="POST">POST</option>
                     <option value="PUT">PUT</option>
                     <option value="DELETE">DELETE</option>
@@ -269,118 +264,80 @@ function ExampleBuilderBase(props) {
 
 const ExampleBuilder = withRfcContext(ExampleBuilderBase);
 
-class ExampleDrivenSpecLoader extends React.Component {
-
-  state = {
-    events: '[]',
-    examples: [],
-    session: {
-      samples: []
-    }
-  };
-
-  handleSampleAdded = (sample) => {
-    console.log({ sample });
-    const session = {
-      ...this.state.session,
-      samples: [...this.state.session.samples, sample]
-    };
-    this.setState({
-      session
-    });
-  };
-
-  render() {
-    const sessionId = 'someSessionId';
-    const specService = {
-      loadSession: (sessionId) => {
-        return Promise.resolve({
-          diffStateResponse: {
-            diffState: {}
-          },
-          sessionResponse: {
-            session: this.state.session
-          }
-        });
-      },
-      listEvents() {
-        return Promise.resolve([]);
-      },
-      listSessions() {
-        return Promise.resolve({ sessions: [sessionId] });
-      },
-      saveEvents: (eventStore, rfcId) => {
-        const events = eventStore.serializeEvents(rfcId);
-        this.setState({
-          events
-        });
-      },
-      listExamples: (requestId) => {
-        return Promise.resolve({ examples: this.state.examples[requestId] || [] });
-      },
-      saveExample: (interaction, requestId) => {
-        const examples = this.state.examples;
-        const requestExamples = examples[requestId] || [];
-        requestExamples.push(interaction);
-        examples[requestId] = requestExamples;
-        this.setState({ examples });
-      },
-      saveDiffState: () => {
+const specServiceTask = () => {
+  const sessionId = 'manual-session';
+  let eventsString = '[]'
+  let session = {
+    samples: []
+  }
+  const examples = {}
+  const specService = {
+    loadSession: (sessionId) => {
+      return Promise.resolve({
+        diffStateResponse: {
+          diffState: {}
+        },
+        sessionResponse: {
+          session
+        }
+      });
+    },
+    listEvents() {
+      return Promise.resolve(eventsString);
+    },
+    listSessions() {
+      return Promise.resolve({ sessions: [sessionId] });
+    },
+    saveEvents: (eventStore, rfcId) => {
+      const events = eventStore.serializeEvents(rfcId);
+      eventsString = events;
+    },
+    listExamples: (requestId) => {
+      return Promise.resolve({ examples: examples[requestId] || [] });
+    },
+    saveExample: (interaction, requestId) => {
+      const requestExamples = examples[requestId] || [];
+      requestExamples.push(interaction);
+      examples[requestId] = requestExamples;
+    },
+    saveDiffState: () => {
+    },
+    handleSampleAdded(sample) {
+      session = {
+        ...session,
+        samples: [...session.samples, sample]
       }
-    };
-
-    const diffBasePath = routerPaths.diff(basePath);
-
-    //@todo add before modal here eventually
-    const ExampleSessionsSpecOverview = () => {
-      return (
-        <SpecOverview
-          specService={specService}
-          addExampleComponent={<DialogWrapper
-            specService={specService}
-            onSampleAdded={this.handleSampleAdded}/>}
-          notificationAreaComponent={<NewBehavior specService={specService} />} />
-      );
-    };
-
-    function SessionWrapper(props) {
-      const { match } = props;
-      const { sessionId } = match.params;
-      return (
-        <TrafficSessionStore sessionId={sessionId} specService={specService}>
-          <Switch>
-            <Route exact path={routerPaths.diffUrls(diffBasePath)} component={UrlsX} />
-            <Route exact path={routerPaths.diffRequest(diffBasePath)} component={RequestDiffX} />
-          </Switch>
-        </TrafficSessionStore>
-      );
     }
-
-    return (
-      <InitialRfcCommandsStore initialEventsString={this.state.events} rfcId="testRfcId">
-        <LocalDiffRfcStore specService={specService}>
-          <Switch>
-            <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage} />
-            <Route exact path={basePath} component={ExampleSessionsSpecOverview} />
-            <Route path={diffBasePath} component={SessionWrapper} />
-          </Switch>
-        </LocalDiffRfcStore>
-      </InitialRfcCommandsStore>
-    );
-  }
+  };
+  return Promise.resolve(specService)
 }
 
-class ExampleDrivenSpecLoaderRoutes extends React.Component {
-  render() {
-    const { match } = this.props;
-    return (
-      <NavigationStore baseUrl={match.url}>
-        <Switch>
-          <Route path={basePath} component={ExampleDrivenSpecLoader} />
-        </Switch>
-      </NavigationStore>
-    );
-  }
-}
+const addExampleComponent = (
+  <SpecServiceContext.Consumer>
+    {(context) => {
+      const { specService } = context;
+
+      return (
+        <DialogWrapper
+          specService={specService}
+          onSampleAdded={(sample) => {
+            specService.handleSampleAdded(sample)
+          }} />
+      )
+    }}
+  </SpecServiceContext.Consumer>
+
+)
+
+const {
+  Routes: ExampleDrivenSpecLoaderRoutes
+} = LoaderFactory.build({
+  specServiceTask,
+  notificationAreaComponent,
+  addExampleComponent,
+  shareButtonComponent,
+  basePath,
+  RfcStoreImpl: LocalDiffRfcStore
+})
 
 export default ExampleDrivenSpecLoaderRoutes;

@@ -9,7 +9,7 @@ const basePath = basePaths.interceptorBasePath
 class InterceptorSpecService extends SpecService {
   listSessions() {
     return Promise.resolve({
-      sessions: ['interceptor-session-id']
+      sessions: ['interceptor-session']
     })
   }
 }
