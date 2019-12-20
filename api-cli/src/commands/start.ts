@@ -106,8 +106,6 @@ export default class Start extends Command {
     const outboundProxy = new TransparentProxyCaptureSession()
 
     const targetHosts = processHosts(config.integrations || [])
-    console.log(targetHosts)
-
     outboundProxy.start({
       proxyPort: integrationsPort,
       targetHosts
