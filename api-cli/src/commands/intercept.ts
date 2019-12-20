@@ -145,7 +145,7 @@ class HttpToolkitProxyCaptureSession implements IWithSamples {
     if (config.flags.chrome) {
       this.chrome = await new Promise((resolve, reject) => {
         //@ts-ignore
-        launcher(function (err, launch) {
+        launcher((err, launch) => {
           if (err) {
             return reject(err)
           }

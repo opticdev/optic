@@ -650,7 +650,7 @@
         "signature": "5685ea2eb87a7a405e106c5bea5936fdaed1184eaaf9bd075d27c40b4984eea6"
       },
       "./src/lib/transparentproxycapturesession.ts": {
-        "version": "ff88abad718625caef1e8f99fd6be8f98bba0f1fa2820c2f1014c46dae55bc1a",
+        "version": "9d8cac5f3fc60d5b2a08e44e200ff4cec29686659792f55a96da66735e2d26bc",
         "signature": "4189174b4a3f6cc940d51a4a080f2cc2d3d4e63286389f1070e28dc0f3e2bef1"
       },
       "./src/lib/log-helper.ts": {
@@ -666,7 +666,7 @@
         "signature": "a07ac5407b236f3f7e7aa48129835cdd30e09c6ef8f473bca50337334ed14391"
       },
       "./src/commands/start.ts": {
-        "version": "5b6c69f1d5d1dc752587919e057b6525695ca2f994f12a937c2492d408281a29",
+        "version": "a08ee29503d15c9c2a271bd16b34ff0bd481c6a00f1b18903b8d6970f63d5b9e",
         "signature": "f9d36e46d0a7a3fa20acf850efba728f700e901dec4b7e9051f5ef2754495494"
       },
       "./node_modules/@types/nodegit/oid.d.ts": {
@@ -1090,16 +1090,20 @@
         "signature": "eaa77bcb75ac9dcfa1687eeafd842f17112aec9efdb5a1d43b558446dd1dbdf7"
       },
       "./src/commands/spec.ts": {
-        "version": "526ec96c2316d7be1e5b5f2147f43958b24bbe456af2c6a35fcbc3b40b586dfe",
-        "signature": "16705d4955ed9c36c8cf69322318bd1c39a7b0a469697f07dbff02ec960e0ea7"
+        "version": "29abaa70744fb4b2dda0b7185b6392220c316b2e146fdfa3e3c2ae3e6990c1f0",
+        "signature": "90555ab44711d34a36d7d5f92c1474a43dbba538e50d5dc92788ec825558abdf"
       },
       "./node_modules/@types/react-dev-utils/openbrowser.d.ts": {
         "version": "8ba3e2bd0cd6c50ebe3b236bff7b2925891516c022da0850904993cf7ab09bde",
         "signature": "8ba3e2bd0cd6c50ebe3b236bff7b2925891516c022da0850904993cf7ab09bde"
       },
+      "./node_modules/@httptoolkit/browser-launcher/types.d.ts": {
+        "version": "49ee1d642957e5193815530c963ee51f4448ee8799fc8e1bed7992247ff77acd",
+        "signature": "49ee1d642957e5193815530c963ee51f4448ee8799fc8e1bed7992247ff77acd"
+      },
       "./src/commands/intercept.ts": {
-        "version": "61af3510d47e3fc30b25dca408878d10a3ea2aff877f47e6a4357776dad9af70",
-        "signature": "8ae7f0838469e48e391034c4f32cd376f8a2f491a1a57b87fd5234378e816dca"
+        "version": "43b9980c11da14103cef0be5396b2a9970a7b73bcc76305d482d27677ae93869",
+        "signature": "71e6aff9043b2abfdcf0c177d440fac654078f11223d16975c32723bc538e9d8"
       },
       "./src/commands/generate/oas.ts": {
         "version": "f073a2dd7d8ec99c53fa1e199eac73f8868033a40d37335a704a1999e9882c86",
@@ -1124,6 +1128,10 @@
       "./node_modules/@types/clean-css/index.d.ts": {
         "version": "4bfa64d72f076287ee5c40a3a91aa1ac2dc0b480cacc0f4fabdb3a2002d1ef67",
         "signature": "4bfa64d72f076287ee5c40a3a91aa1ac2dc0b480cacc0f4fabdb3a2002d1ef67"
+      },
+      "./node_modules/@types/color-name/index.d.ts": {
+        "version": "f0cb4b3ab88193e3e51e9e2622e4c375955003f1f81239d72c5b7a95415dad3e",
+        "signature": "f0cb4b3ab88193e3e51e9e2622e4c375955003f1f81239d72c5b7a95415dad3e"
       },
       "./node_modules/@types/connect-history-api-fallback/index.d.ts": {
         "version": "bbfbe0c906eaac5a661232c334955878c9ed1f14421694c5d6ba500b05040a37",
@@ -1314,6 +1322,7 @@
       "outDir": "./lib",
       "rootDir": "./src",
       "strict": true,
+      "noImplicitAny": false,
       "target": 4,
       "skipLibCheck": true,
       "composite": true,
@@ -2236,7 +2245,6 @@
         "./node_modules/@types/node/events.d.ts",
         "./node_modules/@types/fs-extra/index.d.ts",
         "./node_modules/mockttp/dist/main.d.ts",
-        "./node_modules/mockttp/dist/rules/handlers.d.ts",
         "./node_modules/@types/node/path.d.ts",
         "./node_modules/@types/node/querystring.d.ts",
         "./node_modules/@types/tmp/index.d.ts",
@@ -3074,6 +3082,12 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./node_modules/@httptoolkit/browser-launcher/types.d.ts": [
+        "./node_modules/@types/node/child_process.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./src/commands/intercept.ts": [
         "./node_modules/@oclif/command/lib/index.d.ts",
         "./src/lib/proxy-capture-session.ts",
@@ -3086,7 +3100,6 @@
         "./node_modules/@types/express/index.d.ts",
         "./node_modules/mockttp/dist/main.d.ts",
         "./node_modules/@types/fs-extra/index.d.ts",
-        "./node_modules/@types/tmp/index.d.ts",
         "./node_modules/@types/node/path.d.ts",
         "./node_modules/@types/node/events.d.ts",
         "./src/lib/log-helper.ts",
@@ -3095,7 +3108,7 @@
         "./node_modules/mockttp/dist/rules/handlers.d.ts",
         "./node_modules/@types/node/url.d.ts",
         "./node_modules/@types/node/querystring.d.ts",
-        "./src/commands/start.ts",
+        "./node_modules/@httptoolkit/browser-launcher/types.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -3141,6 +3154,10 @@
         "./node_modules/@types/node/https.d.ts",
         "./node_modules/@types/node/http.d.ts",
         "./node_modules/@types/node/ts3.2/index.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/color-name/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -4605,6 +4622,12 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./node_modules/@httptoolkit/browser-launcher/types.d.ts": [
+        "./node_modules/@types/node/child_process.d.ts",
+        "./node_modules/@types/node/stream.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./src/lib/command-session.ts": [
         "./node_modules/@types/node/events.d.ts",
         "./node_modules/@types/node/child_process.d.ts"
@@ -5077,6 +5100,10 @@
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./node_modules/@types/eslint/ts3.1/helpers.d.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./node_modules/@types/color-name/index.d.ts": [
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -5854,6 +5881,7 @@
       "./src/lib/ui-server/utilities.ts",
       "./src/commands/spec.ts",
       "./node_modules/@types/react-dev-utils/openbrowser.d.ts",
+      "./node_modules/@httptoolkit/browser-launcher/types.d.ts",
       "./src/commands/intercept.ts",
       "./src/commands/generate/oas.ts",
       "./src/commands/publish/oas.ts",
@@ -5861,6 +5889,7 @@
       "./node_modules/@types/archy/index.d.ts",
       "./node_modules/@types/chai/index.d.ts",
       "./node_modules/@types/clean-css/index.d.ts",
+      "./node_modules/@types/color-name/index.d.ts",
       "./node_modules/@types/connect-history-api-fallback/index.d.ts",
       "./node_modules/@types/eslint/ts3.1/helpers.d.ts",
       "./node_modules/@types/json-schema/index.d.ts",
