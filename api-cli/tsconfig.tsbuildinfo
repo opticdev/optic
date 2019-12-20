@@ -1098,7 +1098,7 @@
         "signature": "8ba3e2bd0cd6c50ebe3b236bff7b2925891516c022da0850904993cf7ab09bde"
       },
       "./src/commands/intercept.ts": {
-        "version": "1f1438226624a8aac08e5a825188bd3f3626b7b4c94bcfa231bdbbbc77886cec",
+        "version": "61af3510d47e3fc30b25dca408878d10a3ea2aff877f47e6a4357776dad9af70",
         "signature": "8ae7f0838469e48e391034c4f32cd376f8a2f491a1a57b87fd5234378e816dca"
       },
       "./src/commands/generate/oas.ts": {
@@ -3080,6 +3080,7 @@
         "./node_modules/get-port/index.d.ts",
         "./src/lib/common.ts",
         "./src/lib/transparentproxycapturesession.ts",
+        "./src/commands/init.ts",
         "./src/commands/spec.ts",
         "./node_modules/@types/react-dev-utils/openbrowser.d.ts",
         "./node_modules/@types/express/index.d.ts",
