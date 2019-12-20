@@ -1,8 +1,6 @@
 import {EventEmitter} from 'events'
 import * as fs from 'fs-extra'
-import {FreshChrome} from 'httptoolkit-server/lib/interceptors/fresh-chrome'
 import * as mockttp from 'mockttp'
-import {CallbackResponseResult} from 'mockttp/dist/rules/handlers'
 import * as path from 'path'
 import * as qs from 'querystring'
 import * as tmp from 'tmp'
@@ -21,7 +19,6 @@ export interface ITransparentProxyCaptureSessionConfig {
 
 export class TransparentProxyCaptureSession implements IWithSamples {
   private proxy!: mockttp.Mockttp
-  private interceptor!: FreshChrome
   private requests: Map<string, mockttp.CompletedRequest> = new Map()
   private samples: IApiInteraction[] = []
   private config!: ITransparentProxyCaptureSessionConfig
