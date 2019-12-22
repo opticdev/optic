@@ -65,7 +65,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
     val r = responsesForRequest(request.requestId)
     val responses = responsesForRequest(request.requestId).sortBy(_.responseDescriptor.httpStatusCode).map {
       case res => {
-        val responseDescription = getContributionOption(res.responseId, "description")
+        val responseDescription = getContributionOption(res.responseId, "body_description")
         (res.responseDescriptor.httpStatusCode.toString, Response(responseDescription, bodyToOAS(res.responseDescriptor.bodyDescriptor)))
       }
     }
