@@ -17,7 +17,6 @@ import {LocalDiffRfcStore} from '../../../contexts/RfcContext.js';
 import {TrafficSessionStore} from '../../../contexts/TrafficSessionContext';
 import {CommandContextStore} from '../../../contexts/CommandContext.js';
 import {routerPaths, basePaths} from '../../../RouterPaths';
-import Overview from '../../onboarding/Overview.js';
 import {NavigationStore} from '../../../contexts/NavigationContext.js';
 import NewBehavior from '../../navigation/NewBehavior.js';
 import {RequestsDetailsPage} from '../../requests/EndpointPage';
@@ -179,12 +178,13 @@ export class LocalSpecOverview extends React.Component {
 
 export function SpecOverview(props) {
   const {specService, notificationAreaComponent, shareButtonComponent, addExampleComponent} = props;
-  return (
-    <Overview specService={specService}
-              shareButtonComponent={shareButtonComponent}
-              notificationAreaComponent={notificationAreaComponent}
-              addExampleComponent={addExampleComponent}/>
-  );
+  return <div>FIND ME</div>
+  // return (
+  //   <Overview specService={specService}
+  //             shareButtonComponent={shareButtonComponent}
+  //             notificationAreaComponent={notificationAreaComponent}
+  //             addExampleComponent={addExampleComponent}/>
+  // );
 }
 
 class LocalLoaderRoutes extends React.Component {

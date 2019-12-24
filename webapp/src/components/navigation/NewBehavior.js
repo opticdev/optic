@@ -159,7 +159,7 @@ function NewBehavior(props) {
         </div>
       )}
 
-      <Collapse in={Boolean(anchorEl) && !noNotifications}>
+      <Collapse in={Boolean(anchorEl) && !noNotifications} style={{width: '100%'}}>
         {unrecognizedUrlCount > 0 && (
           <Link style={{textDecoration: 'none', color: 'black'}}
                 to={`${baseUrl}/diff/${sessionId}/urls`}>

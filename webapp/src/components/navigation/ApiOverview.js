@@ -24,6 +24,7 @@ import { NavHashLink as NavLink } from 'react-router-hash-link';
 import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import {Helmet} from 'react-helmet';
 import * as uniqBy from 'lodash.uniqby'
+import {withApiOverviewContext} from '../../contexts/ApiOverviewContext';
 
 const drawerWidth = 320;
 const appBarOffset = 50
@@ -177,28 +178,11 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
 }));
 
 
-export default compose(withRfcContext, withNavigationContext)(function ApiOverview(props) {
-  const {paths, concepts, cachedQueryResults, handleCommand} = props;
+export default compose(withRfcContext, withApiOverviewContext, withNavigationContext)(function ApiOverview(props) {
+  const {paths, cachedQueryResults, handleCommand, apiOverview} = props;
   const classes = useStyles();
 
-  function flatMapOperations(children) {
-    return children.flatMap(path => {
-      const requests = cachedQueryResults.requestIdsByPathId[path.pathId] || [];
-      return requests.map(id => {
-        return {
-          requestId: id,
-          request: cachedQueryResults.requests[id],
-          path
-        };
-      }).concat(flatMapOperations(path.children));
-    });
-  }
-
-  const allPaths = [paths, ...paths.children]
-
-  const operationsToRender = uniqBy(flatMapOperations(allPaths), 'requestId');
-
-  const isEmpty = concepts.length === 0 && operationsToRender.length === 0
+  const {operationsToRender, concepts} = apiOverview
 
   return (
     <div className={classes.root}>

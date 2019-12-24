@@ -1,78 +1,67 @@
 import React from 'react';
-import withStyles from '@material-ui/core/styles/withStyles';
-import {withRfcContext} from '../../contexts/RfcContext';
-import {getNameWithFormattedParameters, getParentPathId} from '../utilities/PathUtilities';
+import {GenericContextFactory} from './GenericContextFactory';
+import uuidv4 from 'uuid/v4';
+import {withRfcContext} from './RfcContext';
 import sortBy from 'lodash.sortby';
-import ApiOverview from '../navigation/ApiOverview';
-import EmptySpec from '../navigation/EmptySpec';
+import {getNameWithFormattedParameters, getParentPathId} from '../components/utilities/PathUtilities';
 import FuzzySearch from 'fuzzy-search';
-import Navbar from '../navigation/Navbar';
-import {MarkdownRender} from '../requests/DocContribution';
-import EmptySpecWithSession from '../navigation/EmptySpecWithSession';
+import * as uniqBy from 'lodash.uniqby';
+
+const clientSessionId = uuidv4();
+const clientId = 'anonymous';
+
+const {
+  Context: ApiOverviewContext,
+  withContext: withApiOverviewContext
+} = GenericContextFactory({clientSessionId, clientId});
 
 
-const styles = theme => ({
-  overview: {
-    padding: 22,
-    display: 'flex',
-    width: '95%',
-    marginTop: 22,
-    marginBottom: 140,
-    flexDirection: 'column',
-    height: 'fit-content',
-  },
-});
-
-
-class OverView extends React.Component {
-
-  state = {
-    hasSession: true,
-  };
-
-  componentDidMount() {
-    const {specService} = this.props;
-    if (specService) {
-      specService.listSessions().then(({sessions}) => {
-        this.setState({hasSessions: sessions.length > 0});
-      });
-    }
-  }
-
+class ApiOverviewContextStoreWithoutContext extends React.Component {
   render() {
-    const {classes, cachedQueryResults, baseUrl} = this.props;
+    const {
+      specService,
+      cachedQueryResults,
+    } = this.props;
+
     const {conceptsById, pathsById, requestIdsByPathId} = cachedQueryResults;
-    const {specService, notificationAreaComponent, shareButtonComponent, addExampleComponent} = this.props;
+
     const concepts = Object.values(conceptsById).filter(i => !i.deprecated);
     const sortedConcepts = sortBy(concepts, ['name']);
     const pathTree = flattenPaths('root', pathsById);
 
+    const isEmptySpec = Object.entries(conceptsById).length === 0 && Object.entries(requestIdsByPathId).length === 0;
     const conceptsFiltered = fuzzyConceptFilter(sortedConcepts, '');
     const pathIdsFiltered = fuzzyPathsFilter(pathTree, '');
     const pathTreeFiltered = flattenPaths('root', pathsById, 0, '', pathIdsFiltered);
+    const allPaths = [pathTreeFiltered, ...pathTreeFiltered.children];
+    const operationsToRender = uniqBy(flatMapOperations(allPaths, cachedQueryResults), 'requestId');
 
-    const providesSpecService = !!specService;
-    const isEmptySpec = Object.entries(conceptsById).length === 0 && Object.entries(requestIdsByPathId).length === 0;
-
-    if (providesSpecService && isEmptySpec && !this.state.hasSession) {
-      return <EmptySpec/>;
-    }
+    const context = {
+      apiOverview: {
+        isEmptySpec,
+        allPaths,
+        operationsToRender,
+        pathTree: pathTreeFiltered,
+        concepts: conceptsFiltered
+      }
+    };
 
     return (
-      <>
-        <Navbar color="primary" notifications={notificationAreaComponent} shareButtonComponent={shareButtonComponent} addExample={addExampleComponent}/>
-        {/*{providesSpecService && isEmptySpec ? (<EmptySpecWithSession />) : null}*/}
-        <div className={classes.overview}>
-          <ApiOverview
-            isEmptySpec={isEmptySpec}
-            paths={pathTreeFiltered}
-            concepts={conceptsFiltered}
-            baseUrl={baseUrl}/>
-        </div>
-      </>
+      <ApiOverviewContext.Provider value={context}>
+        {this.props.children}
+      </ApiOverviewContext.Provider>
     );
   }
 }
+
+const ApiOverviewContextStore = withRfcContext(ApiOverviewContextStoreWithoutContext);
+
+export {
+  ApiOverviewContext,
+  withApiOverviewContext,
+  ApiOverviewContextStore
+};
+
 
 function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
   const path = paths[id];
@@ -110,8 +99,6 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
   };
 }
 
-export default withRfcContext(withStyles(styles)(OverView));
-
 
 function fuzzyPathsFilter(paths, query) {
 
@@ -139,4 +126,17 @@ function fuzzyConceptFilter(concepts, query) {
   });
 
   return searcher.search(query);
+}
+
+export function flatMapOperations(children, cachedQueryResults) {
+  return children.flatMap(path => {
+    const requests = cachedQueryResults.requestIdsByPathId[path.pathId] || [];
+    return requests.map(id => {
+      return {
+        requestId: id,
+        request: cachedQueryResults.requests[id],
+        path
+      };
+    }).concat(flatMapOperations(path.children, cachedQueryResults));
+  });
 }
