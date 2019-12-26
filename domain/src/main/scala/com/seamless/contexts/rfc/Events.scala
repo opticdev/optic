@@ -4,6 +4,7 @@ import java.time.Instant
 import java.time.format.DateTimeFormatter
 
 import com.seamless.contexts.base.BaseCommandContext
+import io.circe.Json
 
 //@TODO: add envelope to each event (includes which command/transaction they are from and which agent caused it at what time, etc.
 object Events {
@@ -15,6 +16,9 @@ object Events {
   case class GitStateSet(branchName: String, commitId: String, eventContext: Option[EventContext] = None) extends VersionControlEvent
 
   sealed trait VersionControlEvent extends RfcEvent
+
+  case class SetupStepReached(step: String, eventContext: Option[EventContext] = None) extends APISetupEvent
+  sealed trait APISetupEvent extends RfcEvent
 
   case class EventContext(clientId: String, clientSessionId: String, clientCommandBatchId: String, createdAt: String)
 

@@ -16,7 +16,7 @@ import {CommandContextStore} from '../../../contexts/CommandContext';
 import {InitialRfcCommandsStore} from '../../../contexts/InitialRfcCommandsContext';
 import {LocalRfcStore} from '../../../contexts/RfcContext';
 import {RequestsDetailsPage} from '../../requests/EndpointPage';
-import {LocalSpecOverview} from './index';
+// import {LocalSpecOverview} from './index';
 import {NavigationStore} from '../../../contexts/NavigationContext';
 
 export class IntegrationsLoader extends React.Component {
@@ -109,7 +109,7 @@ export class IntegrationsLoader extends React.Component {
             <LocalRfcStore specService={this.state.specService}>
               <Switch>
                 <Route path={routerPaths.request(basePath)} component={RequestsDetailsPage}/>
-                <Route exact path={basePath} component={LocalSpecOverview}/>
+                {/*<Route exact path={basePath} component={LocalSpecOverview}/>*/}
                 <Route path={diffBasePath} component={SessionWrapper}/>
               </Switch>
             </LocalRfcStore>

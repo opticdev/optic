@@ -64,6 +64,7 @@
     "react-hook-form": "^3.27.0",
     "react-keydown": "^1.9.10",
     "react-markdown": "^4.2.2",
+    "react-minimal-pie-chart": "^6.0.1",
     "react-router-dom": "^5.0.1",
     "react-router-hash-link": "^1.2.2",
     "react-scroll-into-view-if-needed": "^2.1.7",

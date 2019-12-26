@@ -1,5 +1,5 @@
 import mixpanel from 'mixpanel-browser'
-let isAnalyticsEnabled = true //process.env.REACT_APP_ENABLE_ANALYTICS !== 'no'
+let isAnalyticsEnabled = process.env.REACT_APP_ENABLE_ANALYTICS !== 'no'
 
 const init = () => mixpanel.init('78a42ccba0e9a55de00c30b454c5da8e');
 

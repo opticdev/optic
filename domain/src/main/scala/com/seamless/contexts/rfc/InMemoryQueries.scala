@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId}
 import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
 import com.seamless.contexts.requests.{PathComponent, RequestsState, Utilities}
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection}
+import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection, SetupState, SetupStateProjection}
 import com.seamless.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.contexts.shapes.projections.FlatShapeProjection.FlatShapeResult
@@ -75,6 +75,9 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   def flatShapeForExample(example: js.Any): js.Any = {
     convertJsonToJs(q.flatShapeForExample(convertJsToJson(example).right.get).asJson)
   }
+  def setupState(): js.Any = {
+    convertJsonToJs(q.setupState().asJson)
+  }
 }
 
 class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
@@ -139,6 +142,11 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
   }
   def flatShapeForExample(example: Json): FlatShapeResult = {
     ExampleProjection.fromJson(example)
+  }
+
+  private val apiSetupCache = new CachedProjection(SetupStateProjection, events)
+  def setupState(): SetupState = {
+    apiSetupCache.withEvents(events)
   }
 
 }

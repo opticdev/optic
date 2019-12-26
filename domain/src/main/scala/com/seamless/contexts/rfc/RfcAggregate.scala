@@ -4,9 +4,9 @@ import com.seamless.contexts.base.BaseCommandContext
 import com.seamless.contexts.requests.Commands.RequestsCommand
 import com.seamless.contexts.requests.Events.RequestsEvent
 import com.seamless.contexts.requests.{RequestsAggregate, RequestsCommandContext}
-import com.seamless.contexts.rfc.Commands.{AddContribution, ContributionCommand, RfcCommand, SetAPIName, VersionControlCommand}
+import com.seamless.contexts.rfc.Commands.{APISetupCommand, AddContribution, ContributionCommand, RfcCommand, SetAPIName, VersionControlCommand}
 import com.seamless.contexts.rfc.Composition.forwardTo
-import com.seamless.contexts.rfc.Events.{APINamed, ContributionAdded, EventContext, RfcEvent}
+import com.seamless.contexts.rfc.Events.{APINamed, ContributionAdded, EventContext, RfcEvent, SetupStepReached}
 import com.seamless.contexts.shapes.Commands.ShapesCommand
 import com.seamless.contexts.shapes.Events.ShapesEvent
 import com.seamless.contexts.shapes.{ShapesAggregate, ShapesCommandContext, ShapesState}
@@ -58,6 +58,16 @@ object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcComma
       versionControlCommand match {
         case c: Commands.SetGitState => {
           persist(Events.GitStateSet(c.branchName, c.commitId, eventContext))
+        }
+        case _ => noEffect()
+      }
+    }
+
+    case (cc: RfcCommandContext, apiSetupCommand: APISetupCommand) => {
+      val eventContext: Option[EventContext] = Some(Events.fromCommandContext(cc))
+      apiSetupCommand match {
+        case c: Commands.MarkSetupStageComplete => {
+          persist(Events.SetupStepReached(c.step))
         }
         case _ => noEffect()
       }

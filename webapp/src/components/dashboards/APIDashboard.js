@@ -8,11 +8,27 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import {DocDivider, DocSubHeading} from '../requests/DocConstants';
+import {DocDarkGrey, DocDivider, DocSubHeading} from '../requests/DocConstants';
 import {DocSubGroup} from '../requests/DocSubGroup';
 import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
+import CheckIcon from '@material-ui/icons/Check';
+import {AddedGreen, ChangedYellow} from '../shapes/HighlightedIDs';
+import ClearIcon from '@material-ui/icons/Clear';
+import {AddedGreenBackground, ChangedYellowBackground, RemovedRed} from '../../contexts/ColorContext';
+import {ListItemAvatar, ListItemSecondaryAction, ListItemText} from '@material-ui/core';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import DescriptionIcon from '@material-ui/icons/Description';
+import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
+import TimelineIcon from '@material-ui/icons/Timeline';
+import ReactMinimalPieChart from 'react-minimal-pie-chart';
+import {primary, secondary} from '../../theme';
+import TrendingUpIcon from '@material-ui/icons/TrendingUp';
+import classNames from 'classnames';
+import {MarkdownRender} from '../requests/DocContribution';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import {withRfcContext} from '../../contexts/RfcContext';
 
 const styles = theme => ({
   root: {
@@ -42,37 +58,47 @@ const styles = theme => ({
     textAlign: 'center',
     fontSize: 14,
     fontWeight: 800
-  }
+  },
+  notification: {
+    borderLeft: `5px solid ${ChangedYellow}`,
+    backgroundColor: ChangedYellowBackground,
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 8,
+    fontSize: 14,
+    marginTop: 13,
+    marginBottom: 13,
+  },
 });
 
 class APIDashboard extends React.Component {
   render() {
-    const {classes} = this.props;
+    const {classes, queries} = this.props;
+    const setupState = queries.setupState()
+
 
     return (
       <div className={classes.root}>
 
-        <Typography variant="h4" color="primary">{'ToDo API'}</Typography>
+        <Paper className={classes.statusCard} style={{flexDirection: 'row'}} elevation={0}>
+          <Typography variant="h4">{'ToDo API'}</Typography>
+          <div style={{flex: 1}}/>
+          <SummaryStatus on={false} onText="API & Spec in Sync" offText="API & Spec not in Sync"/>
+          <SummaryStatus on={true} onText="Integrations are Healthy" offText="Integrations not Healthy"/>
+        </Paper>
 
-        <DocDivider style={{marginTop: 6, marginBottom: 30}}/>
 
-        <Grid container>
+        <Grid container style={{marginTop: 65}}>
           <Grid item sm={5}>
 
-            <Grid container>
-              <StatCard number={22} label={'Endpoints'} />
-              <StatCard number={5} label={'Shapes'} />
-              <StatCard number={11} label={'Integrations'} />
-            </Grid>
+            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'API Overview'}</Typography>
+            <APINavLinks text={'Review API Documentation'} subtext={'22 Endpoints. 9 Shapes'}
+                         icon={<DescriptionIcon color="primary" style={{marginLeft: 10}}/>}/>
+            <APINavLinks text={'API Testing'} subtext={'Disabled. Click here to Setup'}
+                         icon={<TimelineIcon color="primary" style={{marginLeft: 10}}/>}/>
+            <APINavLinks text={'Integrations'} subtext={'0 Integrations'}
+                         icon={<SettingsEthernetIcon color="primary" style={{marginLeft: 10}}/>}/>
 
-            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>Status</Typography>
-            <ApiStatusCard env="Local" status="In Sync. Your API follows its specification"/>
-            <ApiStatusCard env="Development" disabled/>
-            <ApiStatusCard env="Production" disabled/>
-
-
-            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>Changelog</Typography>
-            <CheckList/>
 
           </Grid>
 
@@ -80,15 +106,88 @@ class APIDashboard extends React.Component {
 
           <Grid item sm={6}>
             <Typography variant="h6" color="primary" style={{marginBottom: 12}}>Checklist</Typography>
-            <CheckList/>
+            <CheckList setupState={setupState}/>
           </Grid>
 
         </Grid>
 
 
-
         <Typography variant="h4" color="primary" style={{marginTop: 70}}>{'Testing'}</Typography>
         <DocDivider style={{marginTop: 6, marginBottom: 30}}/>
+
+        <div className={classNames(classes.notification)}>
+          <MarkdownRender source={`##### Testing Dashboard Disabled\n Optic Live Testing is only enabled in the Optic Pro and Enterprise Subscriptions. The data below is not from your API.`}/>
+          <Button color="primary">Learn More</Button>
+          <Button color="primary">Get Optic Pro</Button>
+        </div>
+
+        <TestingDashboard/>
+
+        <Grid container>
+          <Grid item sm={5}>
+            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Environments'}</Typography>
+
+            <ApiStatusCard env="Development" status="No Issues Detected"/>
+            <ApiStatusCard env="Staging" status="2 Alerts. 8 Warnings"/>
+            <ApiStatusCard env="Production" status="No Issues Detected"/>
+
+          </Grid>
+
+          <Grid sm={1}></Grid>
+          <Grid item sm={6}>
+            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Checklist'}</Typography>
+            <TestingChecklist />
+          </Grid>
+        </Grid>
+
+
+        <Typography variant="h4" color="primary" style={{marginTop: 70}}>{'Integrations'}</Typography>
+
+        <DocDivider style={{marginTop: 6, marginBottom: 30}}/>
+
+        <div className={classNames(classes.notification)}>
+          <MarkdownRender source={`##### 0/2 Integrations Tracked \n For unlimited integrations, sign up for Optic Pro or Enterprise Subscriptions.`}/>
+          <Button color="primary">Learn More</Button>
+          <Button color="primary">Get Optic Pro</Button>
+        </div>
+
+        <Grid container>
+          <Grid item sm={5}>
+            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Providers'}</Typography>
+
+            <Paper className={classes.statusCard} style={{height: 430, overflow:'scroll', padding: 0}} elevation={0}>
+            <List subheader={<ListSubheader style={{backgroundColor: 'white'}}>{'4 Documented Providers'}</ListSubheader>}>
+              <ListItem button>
+                <ListItemText primary="Stripe" secondary="api.stripe.com"/>
+                <ListItemSecondaryAction>
+                  <Typography variant="overline">12 Endpoints</Typography>
+                </ListItemSecondaryAction>
+              </ListItem>
+            </List>
+            </Paper>
+
+          </Grid>
+
+          <Grid sm={1}></Grid>
+          <Grid item sm={6}>
+
+            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Integration Health'}</Typography>
+            <Paper className={classes.statusCard} style={{ overflow:'scroll', padding: 0}} elevation={0}>
+
+              <Typography variant="h2" style={{textAlign: 'center', color: AddedGreen, fontWeight: 800}}>A-</Typography>
+              <Typography variant="overline" style={{textAlign: 'center', color: DocDarkGrey}}>1-2 Breaking Changes a Month</Typography>
+              <DocDivider />
+              <div className={classNames(classes.notification)} style={{margin: 8}}>
+                <MarkdownRender source={`##### Advanced Integration Health \n Available in Optic Pro or Enterprise Subscriptions.`}/>
+                <Button color="primary">Learn More</Button>
+                <Button color="primary">Get Optic Pro</Button>
+              </div>
+            </Paper>
+
+            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Checklist'}</Typography>
+            <IntegrationsChecklist />
+          </Grid>
+        </Grid>
 
 
 
@@ -97,7 +196,30 @@ class APIDashboard extends React.Component {
   }
 }
 
-export default withStyles(styles)(APIDashboard);
+export default withRfcContext(withStyles(styles)(APIDashboard));
+
+const SummaryStatus = withStyles(styles)(({on, onText, offText, classes}) => {
+  return (
+    <div style={{alignItems: 'center', display: 'flex', marginRight: 14}}>
+      {on ? <CheckIcon style={{color: AddedGreen, fontSize: 14}}/> :
+        <ClearIcon style={{color: RemovedRed, fontSize: 14}}/>}
+      <Typography variant="overline"
+                  style={{color: on ? AddedGreen : RemovedRed, marginLeft: 8}}>{on ? onText : offText}</Typography>
+    </div>
+  );
+});
+
+const APINavLinks = withStyles(styles)(({text, subtext, icon, classes}) => {
+  return (
+    <ListItem button className={classes.statusCard} style={{flexDirection: 'row'}} elevation={0}>
+      <ListItemIcon>
+        {icon}
+      </ListItemIcon>
+      <ListItemText primary={text} secondary={subtext}/>
+    </ListItem>
+  );
+});
+
 
 const StatCard = withStyles(styles)(({number, label, classes}) => {
   return (
@@ -126,9 +248,9 @@ const ApiStatusCard = withStyles(styles)(({classes, env, disabled, status = 'No 
 });
 
 
-const CheckListItem = withStyles(styles)(({classes, text, checked = false}) => {
+const CheckListItem = withStyles(styles)(({classes, text, checked = false, disabled}) => {
   return (
-    <ListItem dense button={!checked} style={{height: 37}}>
+    <ListItem dense button={!checked} style={{height: 37}} disabled={disabled}>
       <FormControlLabel
         control={<Checkbox color="primary"
                            style={{pointerEvents: 'none', cursor: 'normal'}}
@@ -143,40 +265,123 @@ const CheckListItem = withStyles(styles)(({classes, text, checked = false}) => {
 });
 
 
-const CheckList = withStyles(styles)(({classes}) => {
+const CheckList = withStyles(styles)(({classes, setupState}) => {
+  const runningLocally = process.env.REACT_APP_CLI_MODE === true
+
   return (
     <Card elevation={0} className={classes.statusCard}>
-
       <DocSubGroup title={'Setup + Documentation'} style={{marginTop: -5}}>
         <List dense>
-          <CheckListItem text="Download Optic CLI" checked/>
-          <CheckListItem text="Add Optic to your API Project" checked/>
-          <CheckListItem text="Observe API Traffic"/>
-          <CheckListItem text="Document your API"/>
+          <CheckListItem text="Download Optic CLI" checked={runningLocally}/>
+          <CheckListItem text="Add Optic to your API Project" checked={runningLocally} disabled={!runningLocally}/>
+          <CheckListItem text="Observe API Traffic" checked={setupState.stages.includes('optic-integrated')} disabled={!runningLocally}/>
+          <CheckListItem text="Document your API" checked={setupState.stages.includes('documented-api-endpoint')} disabled={!runningLocally && !setupState.stages.includes('optic-integrated')}/>
         </List>
       </DocSubGroup>
-
-      {/*<DocSubGroup title={'Integrations'} style={{marginTop: -5}}>*/}
-      {/*  <List dense>*/}
-      {/*    <CheckListItem text="Document your API Integrations"/>*/}
-      {/*    <CheckListItem text="Deploy Integration Monitoring"/>*/}
-      {/*  </List>*/}
-      {/*</DocSubGroup>*/}
-
-      <DocSubGroup title={'Contract Testing'} style={{marginTop: -5}}>
+      <DocSubGroup title={'Share with your Team'} style={{marginTop: -5}}>
         <List dense>
-          <CheckListItem text="Enable Live API Testing"/>
-          <CheckListItem text="Add Optic to CI / CD"/>
+          <CheckListItem text="Check .api folder into Git"/>
+          <CheckListItem text="Sign up for Optic Account to add Team Features"/>
         </List>
       </DocSubGroup>
-
-      <DocSubGroup title={'Team Features'} style={{marginTop: -5}}>
-        <List dense>
-          <CheckListItem text="Install Optic Git Bot"/>
-          <CheckListItem text="Setup Slack Notifications"/>
-        </List>
-      </DocSubGroup>
-
     </Card>
+  );
+});
+
+const TestingChecklist = withStyles(styles)(({classes}) => {
+  return (
+    <Card elevation={0} className={classes.statusCard}>
+      <DocSubGroup title={'Setup Live Testing'} style={{marginTop: -5}}>
+        <List dense>
+          <CheckListItem text="Sign-up for Optic Pro"/>
+          <CheckListItem text="Add Optic Monitoring to your Infrastructure"/>
+        </List>
+      </DocSubGroup>
+    </Card>
+  );
+});
+
+const IntegrationsChecklist = withStyles(styles)(({classes}) => {
+  return (
+    <Card elevation={0} className={classes.statusCard}>
+      <DocSubGroup title={'Optic Integration Monitoring'} style={{marginTop: -5}}>
+        <List dense>
+          <CheckListItem text="Setup Integrations Documentation"/>
+          <CheckListItem text="Add Integration Monitoring to your Infrastructure"/>
+        </List>
+      </DocSubGroup>
+    </Card>
+  );
+});
+
+const TestingDashboard = withStyles(styles)(({classes}) => {
+
+  const data = [
+    {
+      color: primary,
+      title: 'Optic Live Testing',
+      value: 120
+    },
+    {
+      color: secondary,
+      title: 'Code Tests',
+      value: 32
+    },
+    {
+      color: '#e37d00',
+      title: 'Manual Testing',
+      value: 10
+    },
+    {
+      color: '#c4c4c4',
+      title: 'Untested',
+      value: 6
+    }
+  ];
+
+  const total = data.map(i => i.value).reduce((a, b) => a + b, 0);
+
+  return (
+    <>
+      <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Coverage'}</Typography>
+      <Paper className={classes.statusCard} style={{flexDirection: 'row'}} elevation={0}>
+
+        <div style={{display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'center', flex: 1}}>
+          <Typography variant="h2">
+            <span style={{color: AddedGreen, fontWeight: 800}}>98%</span>
+            <TrendingUpIcon style={{color: AddedGreen, fontSize: 40}}/>
+          </Typography>
+          <Typography variant="h5">API Test Coverage</Typography>
+        </div>
+
+        <div style={{display: 'flex', flexDirection: 'row', padding: 12}}>
+          <ReactMinimalPieChart
+            cx={50}
+            cy={50}
+            data={data}
+            labelPosition={50}
+            lengthAngle={360}
+            lineWidth={15}
+            paddingAngle={0}
+            radius={50}
+            startAngle={0}
+            viewBoxSize={[
+              65,
+              65
+            ]}
+          />
+
+          <List style={{marginLeft: 20}}>
+            {data.map(i => (
+              <ListItem>
+                <div style={{backgroundColor: i.color, width: 10, height: 10, marginRight: 10}}/>
+                <ListItemText primary={i.title} secondary={`${(i.value / total * 100).toFixed(0)}%`}/>
+              </ListItem>
+            ))}
+          </List>
+        </div>
+
+      </Paper>
+    </>
   );
 });

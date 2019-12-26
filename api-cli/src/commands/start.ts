@@ -1,5 +1,6 @@
 import {Command, flags} from '@oclif/command'
 import {fromOptic} from '../lib/log-helper'
+import {markSetupStage} from '../lib/mark-setup-event'
 import {TransparentProxyCaptureSession} from '../lib/TransparentProxyCaptureSession'
 import Init, {IApiCliConfig, IApiIntegrationsConfig, IApiIntegrationsConfigHosts} from './init'
 import {ProxyCaptureSession, ICaptureSessionResult} from '../lib/proxy-capture-session'
@@ -40,9 +41,14 @@ export default class Start extends Command {
       await Init.run([])
       return
     }
+    // @ts-ignore
+    const {specStorePath} = await getPaths()
     analytics.track('api start', {name: config.name})
     const result = await this.runProxySession(config)
     analytics.track('api server stopped. ', {name: config.name, sampleCount: result.samples.length})
+    if (result.samples.length > 0) {
+      markSetupStage('optic-integrated', specStorePath)
+    }
     await this.flushSession(result, config)
     process.exit(0)
   }

@@ -1,6 +1,7 @@
 package com.seamless.contexts.rfc
 
 import com.seamless.ddd.ExportedCommand
+import io.circe.Json
 
 import scala.scalajs.js.annotation.{JSExportAll, JSExportDescendentClasses}
 
@@ -10,6 +11,8 @@ object Commands {
   case class SetAPIName(newName: String) extends ContributionCommand
 
   case class SetGitState(commitId: String, branchName: String) extends VersionControlCommand
+
+  case class MarkSetupStageComplete(step: String) extends APISetupCommand
 
   @JSExportDescendentClasses
   @JSExportAll
@@ -21,6 +24,10 @@ object Commands {
 
   @JSExportDescendentClasses
   @JSExportAll
+  sealed trait APISetupCommand extends RfcCommand with ExportedCommand
+
+  @JSExportDescendentClasses
+  @JSExportAll
   trait RfcCommand extends ExportedCommand
-  
+
 }

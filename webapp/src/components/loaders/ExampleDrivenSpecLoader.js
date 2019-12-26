@@ -7,7 +7,6 @@ import { UrlsX } from '../paths/NewUnmatchedUrlWizard';
 import RequestDiffX from '../diff/RequestDiffX';
 import { NavigationStore } from '../../contexts/NavigationContext';
 import { routerPaths, basePaths } from '../../RouterPaths';
-import { SpecOverview } from '../routes/local';
 import NewBehavior from '../navigation/NewBehavior';
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
 import QueueIcon from '@material-ui/icons/Queue';
@@ -334,12 +333,13 @@ class ExampleDrivenSpecLoader extends React.Component {
     //@todo add before modal here eventually
     const ExampleSessionsSpecOverview = () => {
       return (
-        <SpecOverview
-          specService={specService}
-          addExampleComponent={<DialogWrapper
-            specService={specService}
-            onSampleAdded={this.handleSampleAdded}/>}
-          notificationAreaComponent={<NewBehavior specService={specService} />} />
+        <div>Deprecated</div>
+        // <SpecOverview
+        //   specService={specService}
+        //   addExampleComponent={<DialogWrapper
+        //     specService={specService}
+        //     onSampleAdded={this.handleSampleAdded}/>}
+        //   notificationAreaComponent={<NewBehavior specService={specService} />} />
       );
     };
 

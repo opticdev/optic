@@ -1,7 +1,7 @@
 package com.seamless.serialization
 
 import com.seamless.contexts.requests.Events.RequestsEvent
-import com.seamless.contexts.rfc.Events.{ContributionEvent, RfcEvent, VersionControlEvent}
+import com.seamless.contexts.rfc.Events.{APISetupEvent, ContributionEvent, RfcEvent, VersionControlEvent}
 import com.seamless.contexts.shapes.Events.ShapesEvent
 import io.circe.Decoder.Result
 import io.circe._
@@ -17,6 +17,7 @@ object EventSerialization {
       case requestEvent: RequestsEvent => requestEvent.asJson
       case contributionEvent: ContributionEvent => contributionEvent.asJson
       case versionControlEvent: VersionControlEvent => versionControlEvent.asJson
+      case apiSetupEvent: APISetupEvent => apiSetupEvent.asJson
       case _ => throw new java.lang.Error("Unhandled Event Type")
     }.asJson
   }
@@ -29,6 +30,8 @@ object EventSerialization {
 
   private def decodeVersionControlEvent(item: Json): Result[VersionControlEvent] = item.as[VersionControlEvent]
 
+  private def decodeAPISetupEvent(item: Json): Result[APISetupEvent] = item.as[APISetupEvent]
+
   def fromJson(json: Json): Try[Vector[RfcEvent]] = Try {
     val parseResults = json.asArray.get.map {
       case i => TryChainUtil.firstSuccessIn(i,
@@ -36,6 +39,7 @@ object EventSerialization {
         (j: Json) => Try(decodeRequestEvent(j).right.get),
         (j: Json) => Try(decodeContributionEvent(j).right.get),
         (j: Json) => Try(decodeVersionControlEvent(j).right.get),
+        (j: Json) => Try(decodeAPISetupEvent(j).right.get),
       )
     }
     require(parseResults.forall(_.isDefined), "Some events could not be decoded")
