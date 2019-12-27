@@ -10,6 +10,8 @@ import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {DocDarkGrey, DocDivider, DocSubHeading} from '../requests/DocConstants';
 import {DocSubGroup} from '../requests/DocSubGroup';
+import compose from 'lodash.compose'
+import {Link} from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
@@ -29,6 +31,8 @@ import classNames from 'classnames';
 import {MarkdownRender} from '../requests/DocContribution';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import {withRfcContext} from '../../contexts/RfcContext';
+import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
+import {withNavigationContext} from '../../contexts/NavigationContext';
 
 const styles = theme => ({
   root: {
@@ -73,9 +77,8 @@ const styles = theme => ({
 
 class APIDashboard extends React.Component {
   render() {
-    const {classes, queries} = this.props;
-    const setupState = queries.setupState()
-
+    const {classes, queries, integrations, goToIntegration, baseUrl} = this.props;
+    const setupState = queries.setupState();
 
     return (
       <div className={classes.root}>
@@ -96,7 +99,7 @@ class APIDashboard extends React.Component {
                          icon={<DescriptionIcon color="primary" style={{marginLeft: 10}}/>}/>
             <APINavLinks text={'API Testing'} subtext={'Disabled. Click here to Setup'}
                          icon={<TimelineIcon color="primary" style={{marginLeft: 10}}/>}/>
-            <APINavLinks text={'Integrations'} subtext={'0 Integrations'}
+            <APINavLinks text={'Integrations'} subtext={`${integrations.length} Integrations`}
                          icon={<SettingsEthernetIcon color="primary" style={{marginLeft: 10}}/>}/>
 
 
@@ -116,7 +119,8 @@ class APIDashboard extends React.Component {
         <DocDivider style={{marginTop: 6, marginBottom: 30}}/>
 
         <div className={classNames(classes.notification)}>
-          <MarkdownRender source={`##### Testing Dashboard Disabled\n Optic Live Testing is only enabled in the Optic Pro and Enterprise Subscriptions. The data below is not from your API.`}/>
+          <MarkdownRender
+            source={`##### Testing Dashboard Disabled\n Optic Live Testing is only enabled in the Optic Pro and Enterprise Subscriptions. The data below is not from your API.`}/>
           <Button color="primary">Learn More</Button>
           <Button color="primary">Get Optic Pro</Button>
         </div>
@@ -136,67 +140,16 @@ class APIDashboard extends React.Component {
           <Grid sm={1}></Grid>
           <Grid item sm={6}>
             <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Checklist'}</Typography>
-            <TestingChecklist />
+            <TestingChecklist/>
           </Grid>
         </Grid>
-
-
-        <Typography variant="h4" color="primary" style={{marginTop: 70}}>{'Integrations'}</Typography>
-
-        <DocDivider style={{marginTop: 6, marginBottom: 30}}/>
-
-        <div className={classNames(classes.notification)}>
-          <MarkdownRender source={`##### 0/2 Integrations Tracked \n For unlimited integrations, sign up for Optic Pro or Enterprise Subscriptions.`}/>
-          <Button color="primary">Learn More</Button>
-          <Button color="primary">Get Optic Pro</Button>
-        </div>
-
-        <Grid container>
-          <Grid item sm={5}>
-            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Providers'}</Typography>
-
-            <Paper className={classes.statusCard} style={{height: 430, overflow:'scroll', padding: 0}} elevation={0}>
-            <List subheader={<ListSubheader style={{backgroundColor: 'white'}}>{'4 Documented Providers'}</ListSubheader>}>
-              <ListItem button>
-                <ListItemText primary="Stripe" secondary="api.stripe.com"/>
-                <ListItemSecondaryAction>
-                  <Typography variant="overline">12 Endpoints</Typography>
-                </ListItemSecondaryAction>
-              </ListItem>
-            </List>
-            </Paper>
-
-          </Grid>
-
-          <Grid sm={1}></Grid>
-          <Grid item sm={6}>
-
-            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Integration Health'}</Typography>
-            <Paper className={classes.statusCard} style={{ overflow:'scroll', padding: 0}} elevation={0}>
-
-              <Typography variant="h2" style={{textAlign: 'center', color: AddedGreen, fontWeight: 800}}>A-</Typography>
-              <Typography variant="overline" style={{textAlign: 'center', color: DocDarkGrey}}>1-2 Breaking Changes a Month</Typography>
-              <DocDivider />
-              <div className={classNames(classes.notification)} style={{margin: 8}}>
-                <MarkdownRender source={`##### Advanced Integration Health \n Available in Optic Pro or Enterprise Subscriptions.`}/>
-                <Button color="primary">Learn More</Button>
-                <Button color="primary">Get Optic Pro</Button>
-              </div>
-            </Paper>
-
-            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Checklist'}</Typography>
-            <IntegrationsChecklist />
-          </Grid>
-        </Grid>
-
-
-
+        <IntegrationsDashboard />
       </div>
     );
   }
 }
 
-export default withRfcContext(withStyles(styles)(APIDashboard));
+export default withNavigationContext(withIntegrationsContext(withRfcContext(withStyles(styles)(APIDashboard))));
 
 const SummaryStatus = withStyles(styles)(({on, onText, offText, classes}) => {
   return (
@@ -266,7 +219,7 @@ const CheckListItem = withStyles(styles)(({classes, text, checked = false, disab
 
 
 const CheckList = withStyles(styles)(({classes, setupState}) => {
-  const runningLocally = process.env.REACT_APP_CLI_MODE === true
+  const runningLocally = process.env.REACT_APP_CLI_MODE === true;
 
   return (
     <Card elevation={0} className={classes.statusCard}>
@@ -274,8 +227,10 @@ const CheckList = withStyles(styles)(({classes, setupState}) => {
         <List dense>
           <CheckListItem text="Download Optic CLI" checked={runningLocally}/>
           <CheckListItem text="Add Optic to your API Project" checked={runningLocally} disabled={!runningLocally}/>
-          <CheckListItem text="Observe API Traffic" checked={setupState.stages.includes('optic-integrated')} disabled={!runningLocally}/>
-          <CheckListItem text="Document your API" checked={setupState.stages.includes('documented-api-endpoint')} disabled={!runningLocally && !setupState.stages.includes('optic-integrated')}/>
+          <CheckListItem text="Observe API Traffic" checked={setupState.stages.includes('optic-integrated')}
+                         disabled={!runningLocally}/>
+          <CheckListItem text="Document your API" checked={setupState.stages.includes('documented-api-endpoint')}
+                         disabled={!runningLocally && !setupState.stages.includes('optic-integrated')}/>
         </List>
       </DocSubGroup>
       <DocSubGroup title={'Share with your Team'} style={{marginTop: -5}}>
@@ -312,6 +267,62 @@ const IntegrationsChecklist = withStyles(styles)(({classes}) => {
       </DocSubGroup>
     </Card>
   );
+});
+
+export const IntegrationsDashboard = compose(withNavigationContext, withIntegrationsContext, withStyles(styles))(({classes, integrations, className, baseUrl, goToIntegration}) => {
+  return (
+    <div className={classes[className]}>
+      <Typography variant="h4" color="primary" style={{marginTop: 70}}>{'Integrations'}</Typography>
+
+      <DocDivider style={{marginTop: 6, marginBottom: 30}}/>
+
+      <div className={classNames(classes.notification)}>
+        <MarkdownRender source={`##### 0/2 Integrations Tracked \n For unlimited integrations, sign up for Optic Pro or Enterprise Subscriptions.`}/>
+        <Button color="primary">Learn More</Button>
+        <Button color="primary">Get Optic Pro</Button>
+      </div>
+
+      <Grid container>
+        <Grid item sm={5}>
+          <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Providers'}</Typography>
+
+          <Paper className={classes.statusCard} style={{height: 430, overflow:'scroll', padding: 0}} elevation={0}>
+            <List subheader={<ListSubheader style={{backgroundColor: 'white'}}>{`${integrations.length} Documented Providers`}</ListSubheader>}>
+              {integrations.map(i => (
+                <ListItem button component={Link} to={goToIntegration(baseUrl, i.name)}>
+                  <ListItemText primary={i.name} secondary={i.host.join(', ')}/>
+                  <ListItemSecondaryAction>
+                    <Typography variant="overline">12 Endpoints</Typography>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+
+        </Grid>
+
+        <Grid sm={1}></Grid>
+        <Grid item sm={6}>
+
+          <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Integration Health'}</Typography>
+          <Paper className={classes.statusCard} style={{ overflow:'scroll', padding: 0}} elevation={0}>
+
+            <Typography variant="h2" style={{textAlign: 'center', color: AddedGreen, fontWeight: 800}}>A-</Typography>
+            <Typography variant="overline" style={{textAlign: 'center', color: DocDarkGrey}}>1-2 Breaking Changes a Month</Typography>
+            <DocDivider />
+            <div className={classNames(classes.notification)} style={{margin: 8}}>
+              <MarkdownRender source={`##### Advanced Integration Health \n Available in Optic Pro or Enterprise Subscriptions.`}/>
+              <Button color="primary">Learn More</Button>
+              <Button color="primary">Get Optic Pro</Button>
+            </div>
+          </Paper>
+
+          <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Checklist'}</Typography>
+          <IntegrationsChecklist />
+        </Grid>
+      </Grid>
+    </div>
+    )
 });
 
 const TestingDashboard = withStyles(styles)(({classes}) => {

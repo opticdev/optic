@@ -35,8 +35,9 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import {routerPaths} from '../../RouterPaths';
-import {Route, Switch} from 'react-router-dom';
+import {Link, Route, Switch} from 'react-router-dom';
 import {flatMapOperations, withApiOverviewContext} from '../../contexts/ApiOverviewContext';
+import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
 
 const drawerWidth = 280;
 
@@ -109,7 +110,7 @@ class Navigation extends React.Component {
 
   render() {
 
-    const {classes, notifications, baseUrl, addExample, shareButtonComponent, cachedQueryResults, children, apiOverview} = this.props;
+    const {classes, notifications, baseUrl, addExample, shareButtonComponent, entryBasePath, cachedQueryResults, children, apiOverview, integrationMode} = this.props;
 
     const {operationsToRender, concepts, allPaths} = apiOverview;
 
@@ -121,9 +122,9 @@ class Navigation extends React.Component {
     // )
 
     const TabsMode = ({active}) => (
-      <StyledTabs value={active} style={{width: 172, margin: '0 auto'}}>
-        <StyledTab label="Documentation" value={0}/>
-        <StyledTab label="Integrations" value={1}/>
+      <StyledTabs value={active} style={{width: 180, margin: '0 auto'}}>
+        <StyledTab component={Link} to={routerPaths.apiDashboard(entryBasePath)} label="Documentation" value={0}/>
+        <StyledTab component={Link} to={routerPaths.integrationsDashboard(entryBasePath)} label="Integrations" value={1}/>
       </StyledTabs>
     );
 
@@ -141,7 +142,15 @@ class Navigation extends React.Component {
 
           <div>
             <Typography variant="h6" className={classes.title}>
-              {cachedQueryResults.apiName}
+              <Switch>
+                <Route path={routerPaths.integrationsPath(entryBasePath)} component={({match}) => <div>
+                  <Typography variant="overline">Integration with:</Typography>
+                  <br/>
+                  {match.params.integrationName}
+                </div>}/>
+                <Route exact path={routerPaths.integrationsDashboard(entryBasePath)} component={() => <>Integrations</>}/>
+                <Route path={entryBasePath} component={() => <>{cachedQueryResults.apiName}</>}/>
+              </Switch>
             </Typography>
 
             <div className={classes.middle}>
@@ -149,24 +158,32 @@ class Navigation extends React.Component {
             </div>
 
             <Switch>
-              <Route path={routerPaths.integrationsDashboard(baseUrl)} component={() => <TabsMode active={1}/>}/>
-              <Route path={baseUrl} component={() => <TabsMode active={0}/>}/>
+              <Route path={routerPaths.integrationsDashboard(entryBasePath)} component={() => <TabsMode active={1}/>}/>
+              <Route path={entryBasePath} component={() => <TabsMode active={0}/>}/>
             </Switch>
 
 
             <Switch>
-              <Route path={routerPaths.integrationsDashboard(baseUrl)} component={() => <div>HELLO DUDE</div>}/>
+              <Route path={routerPaths.integrationsDashboard(entryBasePath)} component={() => <IntegrationsSubMenu basePath={entryBasePath + '/integrations/'}/>}/>
               <Route path={baseUrl} component={() => (
                 <List>
-                  <MainMenuItem name="Dashboard" to={routerPaths.apiDashboard(baseUrl)}/>
-                  <MainMenuItem name="API Documentation" to={baseUrl}/>
+                  <MainMenuItem name="Dashboard" to={routerPaths.apiDashboard(entryBasePath)}/>
+                  <MainMenuItem name="API Documentation" to={entryBasePath}/>
 
                   <Switch>
-                    <Route exact path={baseUrl} component={() =>(
-                        <ApiDocsSubMenu operationsToRender={operationsToRender}
-                                        cachedQueryResults={cachedQueryResults}
-                                        allPaths={allPaths}
-                                        concepts={concepts}/>
+                    <Route exact path={baseUrl} component={() => (
+                      <ApiDocsSubMenu operationsToRender={operationsToRender}
+                                      cachedQueryResults={cachedQueryResults}
+                                      basePath={'#'}
+                                      allPaths={allPaths}
+                                      concepts={concepts}/>
+                    )}/>
+                    <Route path={routerPaths.request(baseUrl)} component={() => (
+                      <ApiDocsSubMenu operationsToRender={operationsToRender}
+                                      basePath={baseUrl + '/requests/'}
+                                      cachedQueryResults={cachedQueryResults}
+                                      allPaths={allPaths}
+                                      concepts={concepts}/>
                     )}/>
                   </Switch>
                 </List>
@@ -188,13 +205,13 @@ class Navigation extends React.Component {
   }
 }
 
-export default compose(withStyles(styles), withApiOverviewContext, withNavigationContext, withRfcContext)(Navigation);
+export default compose(withStyles(styles), withIntegrationsContext, withApiOverviewContext, withNavigationContext, withRfcContext)(Navigation);
 
 
 // Sub Menus
 
 const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext((props) => {
-  const {path, operationsToRender, cachedQueryResults, classes} = props;
+  const {path, operationsToRender, cachedQueryResults, classes, basePath} = props;
 
   const {contributions} = cachedQueryResults;
   const {name} = path;
@@ -217,25 +234,22 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
       <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
     );
     return (
-      <NavLink
-        to={`#${requestId}`}
-        activeClassName="selected"
-        style={{textDecoration: 'none', color: 'black'}}
-      >
-        <ListItem button
-                  disableRipple
-                  component="div"
-                  dense
-                  className={classes.nested}>
-          <ListItemText
-            primary={purpose}
-            classes={{dense: classes.dense}}
-            primaryTypographyProps={{
-              variant: 'overline',
-              style: {textTransform: 'none', textOverflow: 'ellipsis'}
-            }}/>
-        </ListItem>
-      </NavLink>
+      <ListItem button
+                to={`${basePath}${requestId}`} exact activeClassName={basePath !== '#' && classes.selected}
+                component={NavLink}
+                style={{textDecoration: 'none', color: 'black'}}
+                disableRipple
+                dense
+                className={classes.nested}>
+        <ListItemText
+          primary={purpose}
+          classes={{dense: classes.dense}}
+          primaryTypographyProps={{
+            variant: 'overline',
+            style: {textTransform: 'none', textOverflow: 'ellipsis'},
+            className: classes.item
+          }}/>
+      </ListItem>
     );
   }
 
@@ -267,26 +281,22 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
             );
 
             return (
-              <NavLink
-                to={`#${requestId}`}
-                activeClassName="selected"
-                style={{textDecoration: 'none', color: 'black'}}
-              >
-                <ListItem button
-                          disableRipple
-                          component="div"
-                          dense
-                          className={classes.nested}>
-                  <ListItemText
-                    primary={purpose}
-                    classes={{dense: classes.dense, selected: classes.selected}}
-                    primaryTypographyProps={{
-                      variant: 'overline',
-                      style: {textTransform: 'none', textOverflow: 'ellipsis'},
-                      className: classes.item
-                    }}/>
-                </ListItem>
-              </NavLink>
+              <ListItem button
+                        disableRipple
+                        to={`${basePath}${requestId}`} exact activeClassName={basePath !== '#' && classes.selected}
+                        component={NavLink}
+                        style={{textDecoration: 'none', color: 'black'}}
+                        dense
+                        className={classes.nested}>
+                <ListItemText
+                  primary={purpose}
+                  classes={{dense: classes.dense, selected: classes.selected}}
+                  primaryTypographyProps={{
+                    variant: 'overline',
+                    style: {textTransform: 'none', textOverflow: 'ellipsis'},
+                    className: classes.item
+                  }}/>
+              </ListItem>
             );
           })}
         </List>
@@ -295,14 +305,15 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
   );
 })));
 
-export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, allPaths, concepts, cachedQueryResults}) => {
+export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, allPaths, concepts, cachedQueryResults, basePath}) => {
 
   return <>
     <List
       component="nav"
       dense={true}
     >
-      {allPaths.map(i => <EndpointBasePath path={i} operationsToRender={flatMapOperations([i], cachedQueryResults)}/>)}
+      {allPaths.map(i => <EndpointBasePath path={i} basePath={basePath}
+                                           operationsToRender={flatMapOperations([i], cachedQueryResults)}/>)}
     </List>
     <Divider/>
     <List
@@ -312,21 +323,44 @@ export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, 
     >
       {
         concepts.map(i => (
-          <NavLink
-            to={`#${i.shapeId}`}
-            activeClassName="selected"
-            style={{textDecoration: 'none', color: 'black'}}
-          >
-            <ListItem button dense disableRipple>
-              <ListItemText
-                primary={i.name}
-                dense
-                classes={{dense: classes.dense, selected: classes.selected}}
-                primaryTypographyProps={{className: classes.item}}/>
-            </ListItem>
-          </NavLink>
+
+          <ListItem button dense disableRipple
+                    to={`${basePath}${i.shapeId}`}
+                    activeClassName={basePath !== '#' && classes.selected}
+                    style={{textDecoration: 'none', color: 'black'}}>
+            <ListItemText
+              primary={i.name}
+              dense
+              classes={{dense: classes.dense, selected: classes.selected}}
+              primaryTypographyProps={{className: classes.item}}/>
+          </ListItem>
         ))
       }
     </List>
   </>;
 });
+
+export const IntegrationsSubMenu = withIntegrationsContext(withStyles(styles)(({classes, basePath, integrations}) => {
+
+  return <>
+    <List
+      component="nav"
+      dense={true}
+    >
+      {integrations.map(i => {
+        const to = `${basePath}${encodeURIComponent(i.name)}`
+        return (<ListItem button dense disableRipple
+                          to={to}
+                          component={NavLink}
+                          activeClassName={classes.selected}
+                          style={{textDecoration: 'none', color: 'black'}}>
+          <ListItemText
+            primary={i.name}
+            dense
+            classes={{dense: classes.dense, selected: classes.selected}}
+            primaryTypographyProps={{className: classes.item}}/>
+        </ListItem>);
+      })}
+    </List>
+  </>;
+}));

@@ -727,5 +727,22 @@
         }
       }
     ]
-  }
+  },
+  "integrations": [
+    {
+      "name": "Stripe",
+      "host": [
+        "api.stripe.com",
+        "sandboxapi.stripe.com"
+      ],
+      "events": []
+    },
+    {
+      "name": "AccuWeather",
+      "host": [
+        "api.accuweather.com"
+      ],
+      "events": []
+    }
+  ]
 }

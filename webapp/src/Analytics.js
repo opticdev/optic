@@ -43,6 +43,11 @@ const readyPromise = new Promise(resolve => {
     }
   } else {
     console.warn('Analytics is disabled')
+    try {
+      window.FS.shutdown()
+    } catch(e) {
+
+    }
     resolve()
   }
 })

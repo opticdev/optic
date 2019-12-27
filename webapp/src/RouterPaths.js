@@ -18,6 +18,7 @@ export const routerPaths = {
     request: (base) => `${base}/requests/:requestId`,
     apiDashboard: (base) => `${base}/dashboard`,
     integrationsDashboard: (base) => `${base}/integrations`,
+    integrationsPath: (base) => `${base}/integrations/:integrationName`,
     diff: (base) => `${base}/diff/:sessionId`,
     diffUrls: (base) => `${base}/urls`,
     diffRequest: (base) => `${base}/requests/:requestId`,

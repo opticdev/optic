@@ -320,15 +320,13 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
       }
       return null;
     }
-    const {specService} = this.props;
-
-
+    const {specService, baseUrl} = this.props;
     return (
       <TrafficSessionStore sessionId={lastSessionId} specService={specService}>
         <TrafficSessionContext.Consumer>
           {(context) => {
             const {rfcId, rfcService} = this.props;
-            const {cachedQueryResults, queries, baseUrl} = this.props;
+            const {cachedQueryResults, queries} = this.props;
             const {isLoading} = context
             const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, {session: context.session});
             const rfcState = rfcService.currentState(rfcId);
