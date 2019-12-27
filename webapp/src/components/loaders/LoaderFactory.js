@@ -27,7 +27,7 @@ class LoaderFactory {
   static build(options) {
     const {notificationAreaComponent, shareButtonComponent, basePath, specServiceTask} = options;
 
-    const entryBasePath = basePath
+    const entryBasePath = basePath;
 
 
     function SessionWrapper(props) {
@@ -97,8 +97,8 @@ class LoaderFactory {
         global.specService = specService;
 
         return (
-          <SpecServiceContext.Provider value={{specService}}>
-            <IntegrationsContextStore integrations={integrations}>
+          <IntegrationsContextStore integrations={integrations}>
+            <SpecServiceContext.Provider value={{specService}}>
               <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
                 <RfcStore specService={specService}>
                   <ApiOverviewContextStore specService={specService}>
@@ -119,8 +119,8 @@ class LoaderFactory {
                   </ApiOverviewContextStore>
                 </RfcStore>
               </InitialRfcCommandsStore>
-            </IntegrationsContextStore>
-          </SpecServiceContext.Provider>
+            </SpecServiceContext.Provider>
+          </IntegrationsContextStore>
         );
       }
     }
@@ -133,28 +133,28 @@ class LoaderFactory {
         const basePath = match.path;
 
         return (
-          <SpecServiceContext.Provider value={{specService}}>
-            <IntegrationsContextStore integrations={integrations}>
+          <IntegrationsContextStore integrations={integrations}>
+            <SpecServiceContext.Provider value={{specService}}>
               <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
-              <NavigationStore baseUrl={match.url}>
-                <RfcStore specService={specService}>
-                  <ApiOverviewContextStore specService={specService}>
-                    <Navigation notifications={notificationAreaComponent}
-                                integrationMode={true}
-                                entryBasePath={entryBasePath}
-                                shareButtonComponent={shareButtonComponent}>
+                <NavigationStore baseUrl={match.url}>
+                  <RfcStore specService={specService}>
+                    <ApiOverviewContextStore specService={specService}>
+                      <Navigation notifications={notificationAreaComponent}
+                                  integrationMode={true}
+                                  entryBasePath={entryBasePath}
+                                  shareButtonComponent={shareButtonComponent}>
 
-                      <Route path={routerPaths.request(basePath)}
-                             component={withSpecServiceContext(RequestsDetailsPage)}/>
-                      <Route exact path={basePath} component={withSpecServiceContext(ApiOverview)}/>
-                      <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
-                    </Navigation>
-                  </ApiOverviewContextStore>
-                </RfcStore>
-              </NavigationStore>
+                        <Route path={routerPaths.request(basePath)}
+                               component={withSpecServiceContext(RequestsDetailsPage)}/>
+                        <Route exact path={basePath} component={withSpecServiceContext(ApiOverview)}/>
+                        <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
+                      </Navigation>
+                    </ApiOverviewContextStore>
+                  </RfcStore>
+                </NavigationStore>
               </InitialRfcCommandsStore>
-            </IntegrationsContextStore>
-          </SpecServiceContext.Provider>
+            </SpecServiceContext.Provider>
+          </IntegrationsContextStore>
         );
       }
     }

@@ -141,6 +141,11 @@ class Navigation extends React.Component {
         >
 
           <div>
+
+            <div className={classes.middle}>
+              {notifications}
+            </div>
+
             <Typography variant="h6" className={classes.title}>
               <Switch>
                 <Route path={routerPaths.integrationsPath(entryBasePath)} component={({match}) => <div>
@@ -152,10 +157,6 @@ class Navigation extends React.Component {
                 <Route path={entryBasePath} component={() => <>{cachedQueryResults.apiName}</>}/>
               </Switch>
             </Typography>
-
-            <div className={classes.middle}>
-              {notifications}
-            </div>
 
             <Switch>
               <Route path={routerPaths.integrationsDashboard(entryBasePath)} component={() => <TabsMode active={1}/>}/>

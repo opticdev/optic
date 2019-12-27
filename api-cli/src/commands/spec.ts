@@ -322,6 +322,8 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
   app.get('/cli-api/integrations', async (req, res) => {
     const integrations = config.integrations || []
     integrations.forEach(i => i.host = IApiIntegrationsConfigHosts(i))
+
+
     res.json({integrations})
   })
   app.get('/cli-api/integrations/:integrationName/events', async (req, res) => {

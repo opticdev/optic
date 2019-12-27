@@ -31,6 +31,8 @@ import Menu from '@material-ui/core/Menu';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {primary} from '../../theme';
 import Collapse from '@material-ui/core/Collapse';
+import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
+import {IntegrationsSpecService} from '../routes/local/integrations';
 
 const useStyles = makeStyles({
   section: {
@@ -111,15 +113,11 @@ function NewBehaviorCard({source, color, children}) {
 
 function NewBehavior(props) {
   const classes = useStyles();
-  const {sessionId, requestIdsWithDiffs, unrecognizedUrlCount, cachedQueryResults, baseUrl, isLoading} = props;
+  const {sessionId, requestIdsWithDiffs, unrecognizedUrlCount, integrationsWithDiff, cachedQueryResults, baseUrl, isLoading} = props;
   const [anchorEl, setAnchorEl] = useState(false);
 
   if (isLoading) {
-    return (
-      <div className={classes.notificationBar}>
-        <LinearProgress  style={{width: '100%', opacity: .35, marginTop: 3}}/>
-      </div>
-    )
+    return null;
   }
 
   const handleClick = event => {
@@ -130,54 +128,59 @@ function NewBehavior(props) {
     <div className={classes.chipNotif} style={{marginTop: 0}}>
       <Chip label={requestIdsWithDiffs.length} size="small"
             style={{color: 'white', backgroundColor: RemovedRed}}/>
-      <Typography variant="subtitle2" style={{color: 'white', marginLeft: 10, fontWeight: 200, fontSize: 12}}>Unexpected Behaviors</Typography>
+      <Typography variant="subtitle2" style={{color: 'white', marginLeft: 10, fontWeight: 200, fontSize: 12}}>Unexpected
+        Behaviors</Typography>
     </div>
   );
 
   const newUrls = (
-    <div className={classes.chipNotif} >
+    <div className={classes.chipNotif}>
       <Chip label={unrecognizedUrlCount} size="small" style={{backgroundColor: ChangedYellowBright}}/>
-      <Typography variant="subtitle2" style={{color: 'white', marginLeft: 10, fontWeight: 200, fontSize: 12}}>Undocumented URLs</Typography>
+      <Typography variant="subtitle2" style={{color: 'white', marginLeft: 10, fontWeight: 200, fontSize: 12}}>Undocumented
+        URLs</Typography>
     </div>
-  )
+  );
 
 
-
-  const noNotifications = !requestIdsWithDiffs.length && !unrecognizedUrlCount
+  const noNotifications = !requestIdsWithDiffs.length && !unrecognizedUrlCount;
 
   return (
-    <div className={classes.notificationBar} onClick={handleClick} onMouseLeave={() => setAnchorEl(false)}>
+    <Collapse in={true} appear={true} style={{width: '100%'}}>
+      <div className={classes.notificationBar} onClick={handleClick} onMouseLeave={() => setAnchorEl(false)}>
 
-      <Typography variant="subtitle1" style={{color: 'white', marginTop: 5}}>API Not Synced</Typography>
+        {integrationsWithDiff}
 
-      {requestIdsWithDiffs.length > 0 && undocumentedBehavior}
-      {unrecognizedUrlCount > 0 && newUrls}
+        <Typography variant="subtitle1" style={{color: 'white', marginTop: 5}}>Not Synced</Typography>
 
-      {noNotifications && (
-        <div className={classes.chipNotif}>
-          <Typography variant="h2">API and Specification are in Sync</Typography>
-        </div>
-      )}
+        {requestIdsWithDiffs.length > 0 && undocumentedBehavior}
+        {unrecognizedUrlCount > 0 && newUrls}
 
-      <Collapse in={Boolean(anchorEl) && !noNotifications} style={{width: '100%'}}>
-        {unrecognizedUrlCount > 0 && (
-          <Link style={{textDecoration: 'none', color: 'black'}}
-                to={`${baseUrl}/diff/${sessionId}/urls`}>
-            <Button color="secondary" size="small" variant="contained" style={{marginTop: 20}}>Document new URLs</Button>
-          </Link>
+        {noNotifications && (
+          <div className={classes.chipNotif}>
+            <Typography variant="h2">API and Specification are in Sync</Typography>
+          </div>
         )}
 
-            <List>
-              {requestIdsWithDiffs.map(requestId => {
+        <Collapse in={Boolean(anchorEl) && !noNotifications} style={{width: '100%'}}>
+          {unrecognizedUrlCount > 0 && (
+            <Link style={{textDecoration: 'none', color: 'black'}}
+                  to={`${baseUrl}/diff/${sessionId}/urls`}>
+              <Button color="secondary" size="small" variant="contained" style={{marginTop: 20}}>Document new
+                URLs</Button>
+            </Link>
+          )}
 
-                const {pathComponentId: pathId, httpMethod: method} = cachedQueryResults.requests[requestId].requestDescriptor;
+          <List>
+            {requestIdsWithDiffs.map(requestId => {
 
-                const path = <DisplayPath url={<PathIdToPathString pathId={pathId}/>} method={method}/>;
+              const {pathComponentId: pathId, httpMethod: method} = cachedQueryResults.requests[requestId].requestDescriptor;
 
-                const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
-                return (
-                  <Link style={{textDecoration: 'none', color: 'black'}}
-                        to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}>
+              const path = <DisplayPath url={<PathIdToPathString pathId={pathId}/>} method={method}/>;
+
+              const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
+              return (
+                <Link style={{textDecoration: 'none', color: 'black'}}
+                      to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}>
                   <ListItem dense button>
                     <ListItemText primary={name || path}
                                   secondary={name && path}
@@ -188,64 +191,65 @@ function NewBehavior(props) {
                                     }
                                   }}/>
                   </ListItem>
-                  </Link>
-                );
-              })}
-            </List>
-      </Collapse>
+                </Link>
+              );
+            })}
+          </List>
+        </Collapse>
 
-      {/*<Menu*/}
-      {/*  className={classes.menuItem}*/}
-      {/*  anchorEl={anchorEl}*/}
-      {/*  MenuListProps={{className: classes.menuList}}*/}
-      {/*  open={Boolean(anchorEl) && !noNotifications}>*/}
-      {/*  <div style={{paddingLeft: 9}}>*/}
+        {/*<Menu*/}
+        {/*  className={classes.menuItem}*/}
+        {/*  anchorEl={anchorEl}*/}
+        {/*  MenuListProps={{className: classes.menuList}}*/}
+        {/*  open={Boolean(anchorEl) && !noNotifications}>*/}
+        {/*  <div style={{paddingLeft: 9}}>*/}
 
-      {/*    {unrecognizedUrlCount === 0 && requestIdsWithDiffs.length === 0 && (*/}
-      {/*      <Typography variant="subtitle2">No Notifications</Typography>*/}
-      {/*    )}*/}
+        {/*    {unrecognizedUrlCount === 0 && requestIdsWithDiffs.length === 0 && (*/}
+        {/*      <Typography variant="subtitle2">No Notifications</Typography>*/}
+        {/*    )}*/}
 
-      {/*    {unrecognizedUrlCount > 0 && (*/}
-      {/*      <NewBehaviorCard color="yellow" source={`##### ${unrecognizedUrlCount} Undocumented URLs`}>*/}
-      {/*        <Link style={{textDecoration: 'none', color: 'black', float: 'right'}}*/}
-      {/*              to={`${baseUrl}/diff/${sessionId}/urls`}>*/}
-      {/*          <Button color="secondary" size="small" style={{marginTop: -58, marginRight: 8}}>Review & Document</Button>*/}
-      {/*        </Link>*/}
-      {/*      </NewBehaviorCard>*/}
-      {/*    )}*/}
+        {/*    {unrecognizedUrlCount > 0 && (*/}
+        {/*      <NewBehaviorCard color="yellow" source={`##### ${unrecognizedUrlCount} Undocumented URLs`}>*/}
+        {/*        <Link style={{textDecoration: 'none', color: 'black', float: 'right'}}*/}
+        {/*              to={`${baseUrl}/diff/${sessionId}/urls`}>*/}
+        {/*          <Button color="secondary" size="small" style={{marginTop: -58, marginRight: 8}}>Review & Document</Button>*/}
+        {/*        </Link>*/}
+        {/*      </NewBehaviorCard>*/}
+        {/*    )}*/}
 
-      {/*    <List>*/}
-      {/*      {requestIdsWithDiffs.map(requestId => {*/}
+        {/*    <List>*/}
+        {/*      {requestIdsWithDiffs.map(requestId => {*/}
 
-      {/*        const {pathComponentId: pathId, httpMethod: method} = cachedQueryResults.requests[requestId].requestDescriptor;*/}
+        {/*        const {pathComponentId: pathId, httpMethod: method} = cachedQueryResults.requests[requestId].requestDescriptor;*/}
 
-      {/*        const path = <DisplayPath url={<PathIdToPathString pathId={pathId}/>} method={method}/>;*/}
+        {/*        const path = <DisplayPath url={<PathIdToPathString pathId={pathId}/>} method={method}/>;*/}
 
-      {/*        const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);*/}
-      {/*        return (*/}
-      {/*          <ListItem dense>*/}
-      {/*            <ListItemText primary={name || path}*/}
-      {/*                          secondary={name && path}*/}
-      {/*                          primaryTypographyProps={{*/}
-      {/*                            style: {*/}
-      {/*                              fontSize: 16*/}
-      {/*                            }*/}
-      {/*                          }}/>*/}
-      {/*            <ListItemSecondaryAction>*/}
-      {/*              <Link style={{textDecoration: 'none', color: 'black'}}*/}
-      {/*                    to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}>*/}
-      {/*                <Button size="small" color="secondary">Review Diff</Button>*/}
-      {/*              </Link>*/}
-      {/*            </ListItemSecondaryAction>*/}
-      {/*          </ListItem>*/}
-      {/*        );*/}
-      {/*      })}*/}
+        {/*        const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);*/}
+        {/*        return (*/}
+        {/*          <ListItem dense>*/}
+        {/*            <ListItemText primary={name || path}*/}
+        {/*                          secondary={name && path}*/}
+        {/*                          primaryTypographyProps={{*/}
+        {/*                            style: {*/}
+        {/*                              fontSize: 16*/}
+        {/*                            }*/}
+        {/*                          }}/>*/}
+        {/*            <ListItemSecondaryAction>*/}
+        {/*              <Link style={{textDecoration: 'none', color: 'black'}}*/}
+        {/*                    to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}>*/}
+        {/*                <Button size="small" color="secondary">Review Diff</Button>*/}
+        {/*              </Link>*/}
+        {/*            </ListItemSecondaryAction>*/}
+        {/*          </ListItem>*/}
+        {/*        );*/}
+        {/*      })}*/}
 
-      {/*    </List>*/}
+        {/*    </List>*/}
 
-      {/*  </div>*/}
-      {/*</Menu>*/}
-    </div>
+        {/*  </div>*/}
+        {/*</Menu>*/}
+      </div>
+    </Collapse>
   );
 }
 
@@ -320,14 +324,14 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
       }
       return null;
     }
-    const {specService, baseUrl} = this.props;
+    const {specService, baseUrl, integrations = []} = this.props;
     return (
       <TrafficSessionStore sessionId={lastSessionId} specService={specService}>
         <TrafficSessionContext.Consumer>
           {(context) => {
             const {rfcId, rfcService} = this.props;
             const {cachedQueryResults, queries} = this.props;
-            const {isLoading} = context
+            const {isLoading} = context;
             const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, {session: context.session});
             const rfcState = rfcService.currentState(rfcId);
             const requestIdsWithDiffs = getRequestIdsWithDiffs(rfcState, diffStateProjections);
@@ -336,6 +340,26 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
               return null;
             }
 
+            const integrationsInSession = new Set(context.session.integrationSamples.map(i => i.integrationName));
+
+            const integrationsWithDiff = integrations.filter(i => integrationsInSession.has(i.name)).map(i => {
+              const integrationsSpecService = new IntegrationsSpecService(i.name);
+              return (
+                  <TrafficSessionStore sessionId={lastSessionId} specService={integrationsSpecService}>
+                    <TrafficSessionContext.Consumer>
+                      {(context) => {
+                        const {rfcId, rfcService} = this.props;
+                        const {cachedQueryResults, queries} = this.props;
+                        const {isLoading} = context;
+                        const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, {session: context.session});
+
+                        return <div>{i.name}</div>;
+                      }}
+                    </TrafficSessionContext.Consumer>
+                  </TrafficSessionStore>
+              );
+            });
+
             return (
               <NewBehavior
                 isLoading={isLoading}
@@ -343,6 +367,7 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
                 sessionId={lastSessionId}
                 baseUrl={baseUrl}
                 unrecognizedUrlCount={unrecognizedUrlCount}
+                integrationsWithDiff={integrationsWithDiff}
                 cachedQueryResults={cachedQueryResults}/>
             );
           }}
@@ -353,4 +378,4 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
   }
 }
 
-export default compose(withRfcContext, withNavigationContext)(NewBehaviorWrapper);
+export default compose(withRfcContext, withIntegrationsContext, withNavigationContext)(NewBehaviorWrapper);
