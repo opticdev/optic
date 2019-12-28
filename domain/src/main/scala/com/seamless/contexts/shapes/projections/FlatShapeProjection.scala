@@ -108,11 +108,17 @@ object FlatShapeProjection {
       }
       case ObjectKind.baseShapeId => {
         val baseObject = ShapeDiffer.resolveBaseObject(shapeId)(shapesState)
-        val fields = baseObject.descriptor.fieldOrdering.map(fieldId => {
+        val fields = baseObject.descriptor.fieldOrdering.flatMap(fieldId => {
           val field = shapesState.fields(fieldId)
-          val fieldShapeId = field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
-          val trailForFieldAndInnerShape = trail and InField(fieldId) and Leaf(fieldShapeId)
-          FlatField(field.descriptor.name, getFlatShape( fieldShapeId, trailForFieldAndInnerShape)(shapesState, Some(fieldId), false, parametersByShapeId, trailLogger), fieldId)
+
+          if (field.isRemoved) {
+            None
+          } else {
+            val fieldShapeId = field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
+            val trailForFieldAndInnerShape = trail and InField(fieldId) and Leaf(fieldShapeId)
+            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId, trailForFieldAndInnerShape)(shapesState, Some(fieldId), false, parametersByShapeId, trailLogger), fieldId))
+          }
+
         }).sortBy(_.fieldName)
 
         val canName = baseObject.descriptor.name == ""

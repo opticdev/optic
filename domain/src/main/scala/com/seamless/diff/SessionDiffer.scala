@@ -12,7 +12,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 class InteractionDiffer(rfcState: RfcState) {
 
   def hasDiff(interaction: ApiInteraction, plugins: PluginRegistry = PluginRegistryUtilities.defaultPluginRegistry(rfcState.shapesState)): Boolean = {
-    RequestDiffer.compare(interaction, rfcState, plugins).hasNext
+    RequestDiffer.compare(ApiInteractionLike.fromApiInteraction(interaction), rfcState, plugins).hasNext
   }
 
   def hasUnrecognizedPath(interaction: ApiInteraction): Boolean = {
@@ -33,7 +33,7 @@ class SessionDiffer(rawEvents: String) {
   val rfcState = rfcService.currentState(rfcId)
 
   def hasDiff(interaction: ApiInteraction, plugins: PluginRegistry = PluginRegistryUtilities.defaultPluginRegistry(rfcState.shapesState)): Boolean = {
-    RequestDiffer.compare(interaction, rfcState, plugins).hasNext
+    RequestDiffer.compare(ApiInteractionLike.fromApiInteraction(interaction), rfcState, plugins).hasNext
   }
 
   def hasUnrecognizedPath(interaction: ApiInteraction): Boolean = {

@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React, { useState } from 'react';
 import { withTrafficSessionContext } from '../../contexts/TrafficSessionContext';
+=======
+import React, {useEffect, useState} from 'react';
+import { withTrafficAndDiffSessionContext } from '../../contexts/TrafficAndDiffSessionContext';
+>>>>>>> feature/changelog
 import { Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction } from '../../engine';
 import { RfcContext, withRfcContext } from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
@@ -116,6 +121,7 @@ class RequestDiffX extends React.Component {
 
 }
 
+<<<<<<< HEAD
 const DiffPageStateManager = withRfcContext((props) => {
   const {
     item,
@@ -187,6 +193,99 @@ const DiffPageStateManager = withRfcContext((props) => {
     </SimulatedCommandContext>
   );
 });
+=======
+class DiffPageStateManagerBase extends React.Component {
+
+  state = {
+    interpretationIndex: 0,
+    dependentCommands: []
+  }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    if (this.props.interpretations != nextProps.interpretations) {
+      this.setInterpretationIndex(0)
+      this.setDependentCommands([])
+    }
+  }
+
+  setInterpretationIndex = (i) => this.setState({interpretationIndex: i})
+  setDependentCommands = (commands) => this.setState({dependentCommands: commands})
+
+  render() {
+    const {
+      item,
+      diff,
+      interpretations,
+      handleCommands: applyCommands,
+      rfcId,
+      diffSessionManager,
+      specService,
+      eventStore,
+      queries,
+      onDiscard
+    } = this.props;
+
+    const {interpretationIndex, dependentCommands} = this.state
+
+    const interpretation = interpretations[interpretationIndex]
+    const commands = interpretation ? JsonHelper.seqToJsArray(interpretation.commands) : [];
+    const {sample, pathId, requestId, index} = item;
+
+    const diffCard = DiffToDiffCard(diff, queries)
+
+    return (
+      <SimulatedCommandContext
+        shouldSimulate={true}
+        rfcId={rfcId}
+        eventStore={eventStore}
+        commands={[...commands, ...dependentCommands]}
+        specService={specService}
+      >
+        <NamerStore nameShape={(shapeId, name) => {
+          this.setDependentCommands([
+            ...dependentCommands,
+            ShapesCommands.RenameShape(shapeId, name)
+          ])
+        }}>
+          <FirstTimeDiffTutorial showWhen={true}/>
+          <DiffPage
+            //request context
+            url={sample.request.url}
+            path={<PathIdToPathString pathId={pathId}/>}
+            method={sample.request.method}
+            requestId={requestId}
+
+            //diff / interpretations
+            diff={diffCard}
+            interpretation={interpretation}
+            interpretationsLength={interpretations.length}
+            interpretationsIndex={interpretationIndex}
+            setInterpretationIndex={this.setInterpretationIndex}
+            applyCommands={(...commands) => applyCommands(...commands, ...dependentCommands)}
+
+            //observation
+            observed={{
+              statusCode: sample.response.statusCode,
+              requestContentType: sample.request.headers['content-type'],
+              requestBody: sample.request.body,
+              responseContentType: sample.response.headers['content-type'],
+              responseBody: sample.response.body
+            }}
+
+            //control
+            onSkip={() => {
+              diffSessionManager.skipInteraction(index)
+            }}
+            onDiscard={onDiscard}
+          />
+        </NamerStore>
+      </SimulatedCommandContext>
+    )
+  };
+}
+
+const DiffPageStateManager = compose(withRfcContext)(DiffPageStateManagerBase)
+>>>>>>> feature/changelog
 
 
 export default compose(

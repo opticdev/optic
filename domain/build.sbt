@@ -9,7 +9,7 @@ organization := "com.seamless"
 version := "0.1"
 
 
-scalaVersion := "2.12.8"
+scalaVersion := "2.12.10"
 
 enablePlugins(ScalaJSPlugin)
 scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
@@ -31,8 +31,8 @@ libraryDependencies ++= Seq(
 //webpackBundlingMode := BundlingMode.LibraryOnly()
 
 //for tests only
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % "test"
 libraryDependencies += "org.scalameta" %% "scalameta" % "4.1.9" % "test"
 libraryDependencies += "org.scala-lang.modules" %% "scala-async" % "0.10.0"
 libraryDependencies += "io.circe" %% "circe-jawn" % "0.10.0" % "test"

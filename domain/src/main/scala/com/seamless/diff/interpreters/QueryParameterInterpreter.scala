@@ -2,10 +2,11 @@ package com.seamless.diff.interpreters
 
 import com.seamless.contexts.shapes.Commands._
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
-import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, InterpretationContext}
+import com.seamless.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, InterpretationContext, ShapeLike}
 import com.seamless.diff.RequestDiffer.{RequestDiffResult, UnmatchedQueryParameterShape}
 import com.seamless.diff.ShapeDiffer.{KeyShapeMismatch, NullObjectKey, UnexpectedObjectKey, UnsetObjectKey}
 import com.seamless.diff.initial.ShapeBuilder
+import io.circe.Json
 
 class QueryParameterInterpreter(shapesState: ShapesState) extends Interpreter[RequestDiffResult] {
   override def interpret(diff: RequestDiffResult): Seq[DiffInterpretation] = {
@@ -13,7 +14,8 @@ class QueryParameterInterpreter(shapesState: ShapesState) extends Interpreter[Re
       case d: UnmatchedQueryParameterShape => {
         d.shapeDiff match {
           case sd: UnexpectedObjectKey => {
-          val result = new ShapeBuilder(sd.actual).run
+            //@todo make sure this works as expected
+            val result = new ShapeBuilder(sd.actual.json.getOrElse(Json.obj())).run
             val newFieldId = ShapesHelper.newFieldId()
             val commands = result.commands ++ Seq(
               AddField(newFieldId, sd.parentObjectShapeId, sd.key, FieldShapeFromShape(newFieldId, result.rootShapeId))
