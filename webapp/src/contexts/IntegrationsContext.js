@@ -12,7 +12,8 @@ class IntegrationsContextStore extends React.Component {
       integrations: this.props.integrations,
       goToIntegration: (baseUrl, name) => {
         return `${baseUrl}/integrations/${encodeURIComponent(name)}`
-      }
+      },
+      isIntegrationMode: this.props.isIntegrationMode || false
     }
     return (
       <IntegrationsContext.Provider value={context}>

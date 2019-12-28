@@ -133,7 +133,7 @@ class LoaderFactory {
         const basePath = match.path;
 
         return (
-          <IntegrationsContextStore integrations={integrations}>
+          <IntegrationsContextStore integrations={integrations} isIntegrationMode={true}>
             <SpecServiceContext.Provider value={{specService}}>
               <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
                 <NavigationStore baseUrl={match.url}>

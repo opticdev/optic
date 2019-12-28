@@ -1,28 +1,13 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import {withRfcContext} from '../../contexts/RfcContext';
 import compose from 'lodash.compose';
-import IconButton from '@material-ui/core/IconButton';
-import MoreIcon from '@material-ui/icons/MoreVert';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import Drawer from '@material-ui/core/Drawer';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import {StyledTab, StyledTabs} from '../requests/DocCodeBox';
 import {secondary} from '../../theme';
 import Collapse from '@material-ui/core/Collapse';
@@ -113,13 +98,6 @@ class Navigation extends React.Component {
     const {classes, notifications, baseUrl, addExample, shareButtonComponent, entryBasePath, cachedQueryResults, children, apiOverview, integrationMode} = this.props;
 
     const {operationsToRender, concepts, allPaths} = apiOverview;
-
-    // const menu = (
-    //   <Menu anchorEl={this.state.menuAnchorEl} open={Boolean(this.state.menuAnchorEl)} onClose={() => this.setState({menuAnchorEl: null})} style={{marginTop: 30}}>
-    //     <MenuItem>Manually Add Example</MenuItem>
-    //     {addExample}
-    //   </Menu>
-    // )
 
     const TabsMode = ({active}) => (
       <StyledTabs value={active} style={{width: 180, margin: '0 auto'}}>
