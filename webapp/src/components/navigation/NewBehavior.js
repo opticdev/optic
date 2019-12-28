@@ -343,7 +343,7 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
               return null;
             }
 
-            const integrationsInSession = new Set(context.session.integrationSamples.map(i => i.integrationName));
+            const integrationsInSession = new Set((context.session.integrationSamples || []).map(i => i.integrationName));
 
             const integrationsWithDiff = integrations.filter(i => integrationsInSession.has(i.name)).map(i => {
               const integrationsSpecService = new IntegrationsSpecService(i.name);

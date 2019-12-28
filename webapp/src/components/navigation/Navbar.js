@@ -101,8 +101,8 @@ class Navigation extends React.Component {
 
     const TabsMode = ({active}) => (
       <StyledTabs value={active} style={{width: 180, margin: '0 auto'}}>
-        <StyledTab component={Link} to={routerPaths.apiDashboard(entryBasePath)} label="Documentation" value={0}/>
-        <StyledTab component={Link} to={routerPaths.integrationsDashboard(entryBasePath)} label="Integrations" value={1}/>
+        <StyledTab component={Link} to={baseUrl+'/dashboard'} label="Documentation" value={0}/>
+        <StyledTab component={Link} to={baseUrl+'/integrations'} label="Integrations" value={1}/>
       </StyledTabs>
     );
 
@@ -146,8 +146,8 @@ class Navigation extends React.Component {
               <Route path={routerPaths.integrationsDashboard(entryBasePath)} component={() => <IntegrationsSubMenu basePath={entryBasePath + '/integrations/'}/>}/>
               <Route path={baseUrl} component={() => (
                 <List>
-                  <MainMenuItem name="Dashboard" to={routerPaths.apiDashboard(entryBasePath)}/>
-                  <MainMenuItem name="API Documentation" to={entryBasePath}/>
+                  <MainMenuItem name="Dashboard" to={baseUrl+'/dashboard'}/>
+                  <MainMenuItem name="API Documentation" to={baseUrl+'/documentation'}/>
 
                   <Switch>
                     <Route exact path={baseUrl} component={() => (

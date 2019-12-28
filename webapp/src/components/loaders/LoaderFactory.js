@@ -112,7 +112,7 @@ class LoaderFactory {
                                component={withSpecServiceContext(APIDashboard)}/>
                         <Route exact path={routerPaths.integrationsDashboard(basePath)}
                                component={() => <IntegrationsDashboard className={'root'}/>}/>
-                        <Route exact path={basePath} component={withSpecServiceContext(ApiOverview)}/>
+                        <Route exact path={routerPaths.apiDashboard(basePath)} component={withSpecServiceContext(ApiOverview)}/>
                         <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
                       </Switch>
                     </Navigation>

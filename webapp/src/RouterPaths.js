@@ -17,6 +17,7 @@ export const routerPaths = {
     localRoot: () => basePaths.localBasePath,
     request: (base) => `${base}/requests/:requestId`,
     apiDashboard: (base) => `${base}/dashboard`,
+    apiDocumentation: (base) => `${base}/documentation`,
     integrationsDashboard: (base) => `${base}/integrations`,
     integrationsPath: (base) => `${base}/integrations/:integrationName`,
     diff: (base) => `${base}/diff/:sessionId`,
