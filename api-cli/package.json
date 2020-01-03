@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "Optic's open source tool for building APIs that document & test themselves",
-  "version": "6.6.10",
+  "version": "6.6.11",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -31,10 +31,10 @@
     "fs-extra": "^7.0.1",
     "get-port": "^5.0.0",
     "globby": "^8.0.2",
-    "human-readable-ids": "^1.0.4",
     "js-yaml": "^3.13.1",
     "json-stable-stringify": "^1.0.1",
     "jwt-decode": "^2.2.0",
+    "knuth-shuffle-seeded": "^1.0.6",
     "mixpanel": "^0.11.0",
     "mockttp": "^0.19.2",
     "mustache": "^3.0.3",

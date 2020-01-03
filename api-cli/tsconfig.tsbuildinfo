@@ -501,12 +501,20 @@
         "version": "2800d035f9f0bfc4496c12f163e7aec035ca464e6990610e85b02c33119e3d36",
         "signature": "2800d035f9f0bfc4496c12f163e7aec035ca464e6990610e85b02c33119e3d36"
       },
+      "./src/lib/readable-ids/dictionary.ts": {
+        "version": "a9c32f42ad71a3daaef066f50017d1ae2c8dd9d2a90cdf4d1f88e2e3df06cb8c",
+        "signature": "3c97f4ccc7d7c910e4abb12d873be4c3673ac6b603e78991afb200cc2cf44874"
+      },
+      "./src/lib/readable-ids/index.ts": {
+        "version": "b2eb47a0ea836e027bbd5d8678ab3f8a4ace121ba80fa09789f0133d512af6ff",
+        "signature": "6140f6a8dbd5767587dfd05e6f412cb7d8643113ddbc07dc6acb2c90b53c3ee5"
+      },
       "./src/lib/identity.ts": {
-        "version": "78d6fe588dee0bff405ae40b29adb0fa6f86b14f3c34a6965ee5050f79378298",
+        "version": "b9291c94d57d83ccdc846c9616cde35b07704950dd678f53d2edb04d517c582a",
         "signature": "8c6b4defe6e589dd354ddbf91d5e78548c445a28f58a989672c40a8470d948da"
       },
       "./src/lib/analytics.ts": {
-        "version": "8fca3f5538077c524ae4285139419232d9fb05f00cb1f99495dcb1cae6b4d94d",
+        "version": "8bf868bbd522039561b8ca1d9aa1eb0a205420c415c03bafb30bbf3ac82c1e0f",
         "signature": "59985b9df011df3ec93b5440f116ff371ff47184799b6c00385ea1e21d71b2aa"
       },
       "./node_modules/open/index.d.ts": {
@@ -1984,9 +1992,19 @@
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
+      "./src/lib/readable-ids/dictionary.ts": [
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "./src/lib/readable-ids/index.ts": [
+        "./src/lib/readable-ids/dictionary.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
       "./src/lib/identity.ts": [
         "./node_modules/@types/node/path.d.ts",
         "./node_modules/@types/node/os.d.ts",
+        "./src/lib/readable-ids/index.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
@@ -5732,6 +5750,8 @@
       "./node_modules/cli-ux/lib/index.d.ts",
       "./node_modules/@types/js-yaml/index.d.ts",
       "./node_modules/mixpanel/lib/mixpanel-node.d.ts",
+      "./src/lib/readable-ids/dictionary.ts",
+      "./src/lib/readable-ids/index.ts",
       "./src/lib/identity.ts",
       "./src/lib/analytics.ts",
       "./node_modules/open/index.d.ts",
