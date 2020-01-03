@@ -19,7 +19,6 @@ import {IApiInteraction} from '../lib/common'
 import * as colors from 'colors'
 import {normalizeHost} from './intercept'
 
-
 export default class Start extends Command {
   static description = 'start your API and diff its behavior against the spec'
 
@@ -27,10 +26,12 @@ export default class Start extends Command {
     'keep-alive': flags.boolean({description: 'use this when your command terminates before the server terminates'})
   }
 
-  static args = []
+  static args = [{
+    name: 'startCommandOverride',
+  }]
 
   async run() {
-
+    const {args} = this.parse(Start)
     let config
     try {
       config = await readApiConfig()
@@ -41,6 +42,9 @@ export default class Start extends Command {
       return
     }
     analytics.track('api start', {name: config.name})
+    if (args.startCommandOverride) {
+      (config as IApiCliConfig).commands.start = args.startCommandOverride
+    }
     const result = await this.runProxySession(config)
     analytics.track('api server stopped. ', {name: config.name, sampleCount: result.samples.length})
     await this.flushSession(result, config)
@@ -131,7 +135,7 @@ export default class Start extends Command {
     })
 
     const processInterruptedPromise = new Promise((resolve) => {
-      process.removeAllListeners('SIGINT');
+      process.removeAllListeners('SIGINT')
       process.on('SIGINT', () => {
         resolve()
       })
