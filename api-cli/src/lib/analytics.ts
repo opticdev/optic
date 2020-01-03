@@ -1,7 +1,5 @@
 import * as Mixpanel from 'mixpanel'
 //@ts-ignore
-import {hri} from 'human-readable-ids'
-//@ts-ignore
 import * as fetch from 'node-fetch'
 import {readLocalConfig, setDoNotTrack} from './identity'
 import * as os from 'os'
