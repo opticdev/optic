@@ -2,9 +2,13 @@ import React from 'react';
 import {routerPaths, basePaths} from '../../RouterPaths';
 import {LoaderFactory} from './LoaderFactory';
 import {notificationAreaComponent, shareButtonComponent} from './SharedLoader';
+import EventEmitter from 'events'
+import ProductDemo from '../navigation/ProductDemo';
+
 
 export const basePath = basePaths.exampleSessionsBasePath;
 
+const demoEventEmitter = new EventEmitter()
 
 const specServiceTask = async (props) => {
   const body = await fetch(`/example-sessions/${props.match.params.exampleId}.json`, {
@@ -26,7 +30,8 @@ const specServiceTask = async (props) => {
 
   const sessionId = 'example-session';
   const specService = {
-    loadSession: (sessionId) => {
+    loadSession: async (sessionId) => {
+      await waitForEvent('simulate-session');
       return Promise.resolve({
         diffStateResponse: {
           diffState: {}
@@ -70,7 +75,27 @@ const {
   specServiceTask,
   notificationAreaComponent,
   shareButtonComponent,
-  basePath
+  basePath,
+  demo: true
 });
 
 export default ExampleSessionsLoaderRoutes;
+
+export function simulateSession() {
+  return demoEventEmitter.emit('simulate-session')
+}
+
+let wasOpenedBefore = false
+function waitForEvent(event) {
+
+  if (wasOpenedBefore || !window.location.pathname.endsWith('/dashboard')) {
+    return Promise.resolve()
+  }
+
+  return new Promise(resolve => {
+    demoEventEmitter.on(event, () => {
+      wasOpenedBefore = true
+      setTimeout(resolve, 400)
+    })
+  });
+}

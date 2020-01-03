@@ -10,6 +10,7 @@ import { HighlightedIDsStore } from '../shapes/HighlightedIDs';
 import { withTrafficSessionContext } from '../../contexts/TrafficSessionContext';
 import compose from 'lodash.compose';
 import {NamerStore} from '../shapes/Namer';
+import TextField from '@material-ui/core/TextField';
 
 const drawerWidth = 340;
 
@@ -92,6 +93,7 @@ class PreCommit extends React.Component {
             </div>
 
             <div style={{ marginTop: 25 }}>
+
               <Button size="large" color="error" onClick={onDiscard}>
                 Discard
               </Button>

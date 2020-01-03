@@ -109,6 +109,7 @@ class Navigation extends React.Component {
     return (
       <div className={classes.root}>
         <Drawer
+          id="navbar"
           elevation={2}
           className={classes.drawer}
           variant={'permanent'}
@@ -150,14 +151,14 @@ class Navigation extends React.Component {
                   <MainMenuItem name="API Documentation" to={baseUrl+'/documentation'}/>
 
                   <Switch>
-                    <Route exact path={baseUrl} component={() => (
+                    <Route exact path={routerPaths.apiDocumentation(entryBasePath)} component={() => (
                       <ApiDocsSubMenu operationsToRender={operationsToRender}
                                       cachedQueryResults={cachedQueryResults}
                                       basePath={'#'}
                                       allPaths={allPaths}
                                       concepts={concepts}/>
                     )}/>
-                    <Route path={routerPaths.request(baseUrl)} component={() => (
+                    <Route path={routerPaths.request(entryBasePath)} component={() => (
                       <ApiDocsSubMenu operationsToRender={operationsToRender}
                                       basePath={baseUrl + '/requests/'}
                                       cachedQueryResults={cachedQueryResults}

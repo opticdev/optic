@@ -39,8 +39,7 @@ import {Helmet} from 'react-helmet';
 import {LightTooltip} from '../tooltips/LightTooltip';
 import {resolvePath} from '../utilities/PathUtilities';
 import PathMatcher from '../diff/PathMatcher';
-import FirstTimeUrlPageTutorial from '../tutorial/FirstTimeUrlPageTutorial';
-import FirstTimeUrlPathMatcher from '../tutorial/FirstTimeUrlPathMatcher';
+import {withProductDemoContext} from '../navigation/ProductDemo';
 
 const styles = theme => ({
   root: {
@@ -125,7 +124,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
 
   render() {
-    const { classes, unmatchedPaths, matchedPaths, baseUrl } = this.props;
+    const { classes, unmatchedPaths, matchedPaths, baseUrl, demos } = this.props;
     const { pathExpression, targetUrl, previewSample, pathId, purpose } = this.state;
     const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression));
     const isCompleteMatch = regex.exec(targetUrl);
@@ -160,7 +159,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
     const getSteps = () => {
       return [
-        <span onClick={this.reset} style={{ cursor: 'pointer' }}>Choose a Path to document <span
+        <span onClick={this.reset} style={{ cursor: 'pointer' }}>Choose a URL to document <span
           className={classes.displayTargetUrl}>{targetUrl}</span></span>,
         'Add path to your API spec',
         'Document Request'];
@@ -169,8 +168,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     const getStepContent = (step) => {
       switch (step) {
         case 0:
-          return (<>
-            Optic observed traffic to the following paths. Click a path to begin documenting an API request.
+          return (<div id="new-url" key="new-url">
             {suggestedPaths.length > 0   && (
               <>
                 <Typography variant="body1" color="primary" style={{marginTop: 12}}>Suggested Paths to Document</Typography>
@@ -209,11 +207,11 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                   />))
               )}
             </List>
-          </>);
+          </div>);
         case 1:
           const matching = [...matchingUrls];
           return (
-            <>
+            <div id="new-url-match" key="new-url-match">
               <PathMatcher
                 initialPathString={pathExpression}
                 url={targetUrl}
@@ -242,9 +240,12 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                     })}
                 </List>
               </Show>
-            </>
+            </div>
           );
         case 2:
+
+          localStorage.setItem('new-url-reached-step-3', 'true')
+
           return (
             <div>
               <TextField
@@ -309,6 +310,8 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
         <Helmet>
           <title>Document New API Request</title>
         </Helmet>
+        {demos.newUrlDemo1 && demos.newUrlDemo1(activeStep === 0)}
+        {demos.newUrlDemo2 && demos.newUrlDemo2(activeStep === 1)}
         <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
           <Toolbar variant="dense">
             <div style={{ marginRight: 20 }}>
@@ -320,8 +323,6 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
             </div>
           </Toolbar>
         </AppBar>
-        <FirstTimeUrlPageTutorial showWhen={activeStep === 0} />
-        <FirstTimeUrlPathMatcher showWhen={activeStep === 1} />
         <div className={classes.contentRegion}>
 
           <DiffDocGridRightSticky
@@ -372,7 +373,8 @@ const UnmatchedUrlWizard = compose(
   withStyles(styles),
   withNavigationContext,
   withTrafficSessionContext,
-  withRfcContext
+  withRfcContext,
+  withProductDemoContext
 )(UnmatchedUrlWizardWithoutQuery);
 
 function UrlListItem(props) {
@@ -463,7 +465,7 @@ export function pathComponentsToString(pathComponents) {
 }
 
 
-export const UrlsX = compose(withTrafficSessionContext, withRfcContext)(props => {
+export const UrlsX = compose(withTrafficSessionContext, withProductDemoContext, withRfcContext)(props => {
   const { diffStateProjections, cachedQueryResults, handleCommands } = props;
   const { sessionId } = props;
   const { sampleItemsWithResolvedPaths, sampleItemsWithoutResolvedPaths } = diffStateProjections;

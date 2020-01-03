@@ -29,6 +29,7 @@ import NavigationIcon from '@material-ui/icons/Navigation';
 import BugReportIcon from '@material-ui/icons/BugReport';
 import ReportBug from './ReportBug';
 import Button from '@material-ui/core/Button';
+import {withProductDemoContext} from '../navigation/ProductDemo';
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -131,8 +132,6 @@ const DiffRequest = withStyles(styles)((props) => {
     diff
   } = props;
 
-  console.log({ props })
-
   const { shapeId, httpContentType } = requestBody;
 
   const shouldShowObservedQueryString = Object.keys(observedQueryString).length > 0
@@ -146,18 +145,22 @@ const DiffRequest = withStyles(styles)((props) => {
     <DiffDocGrid
       style={{ opacity }}
       left={(
+        <div id={diff && "diff-observed"}>
         <DocSubGroup title="Observed Request">
           {diff}
           {shouldShowObservedQueryString && <ExampleOnly title="Query String" example={observedQueryString} />}
           {shouldShowObservedExample && <ExampleOnly title="Example" contentType={observedContentType} example={observedRequestBody} />}
         </DocSubGroup>
+        </div>
       )}
       right={(
+        <div id={interpretation && "interpretation-card"}>
         <DocSubGroup title="Expected Request">
           {interpretation}
           {shouldShowSpecQueryString && <ShapeOnly title="Query String Shape" disableNaming shapeId={requestQueryString.requestParameterDescriptor.shapeDescriptor.ShapedRequestParameterShapeDescriptor.shapeId} />}
           {shouldShowSpecExample && <ShapeOnly title="Shape" shapeId={shapeId} contentType={httpContentType} />}
         </DocSubGroup>
+        </div>
       )}
     />
   );
@@ -187,12 +190,15 @@ const DiffResponse = withStyles(styles)((props) => {
     <DiffDocGrid
       style={{ opacity }}
       left={(
+        <div id={diff && "diff-observed"}>
         <DocSubGroup title={`Response Status: ${statusCode}`}>
           {diff}
           <ExampleOnly title="Response Body" contentType={observedContentType} example={observedResponseBody} />
         </DocSubGroup>
+        </div>
       )}
       right={response && (
+        <div id={interpretation && "interpretation-card"}>
         <DocSubGroup title={<Highlight id={response.responseId}
           style={{ color: AddedGreen }}>{`${statusCode} - ${STATUS_CODES[statusCode]} Response`}</Highlight>}>
           {interpretation}
@@ -200,6 +206,7 @@ const DiffResponse = withStyles(styles)((props) => {
             contentType={httpContentType} />
           }
         </DocSubGroup>
+        </div>
       )}
     />
   );
@@ -271,6 +278,7 @@ class DiffPage extends React.Component {
         {...{ interpretationsLength, interpretationsIndex, setInterpretationIndex }}
         onAccept={() => {
           const c = JsonHelper.seqToJsArray(commands)
+          localStorage.setItem('request-diff-reached-approve', 'true')
           applyCommands(...c)(metadataJs.addedIds, metadataJs.changedIds);
         }}
       />
@@ -306,7 +314,7 @@ class DiffPage extends React.Component {
   }
 
   render() {
-    const { classes, url, method, path, observed, onSkip, baseUrl } = this.props;
+    const { classes, url, method, path, observed, onSkip, baseUrl, demos } = this.props;
 
     const { queryString, requestBody, responseBody, response, purpose } = this.getSpecForRequest(observed.statusCode);
 
@@ -318,6 +326,7 @@ class DiffPage extends React.Component {
 
     return (
       <div className={classes.root}>
+        {demos.requestDiffDemo && demos.requestDiffDemo(!localStorage.getItem('request-diff-reached-approve'))}
         <CssBaseline />
         <HighlightedIDsStore addedIds={addedIds} changedIds={changedIds}>
           <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
@@ -415,5 +424,6 @@ DiffPage.propTypes = {
 export default compose(
   withNavigationContext,
   withRfcContext,
+  withProductDemoContext,
   withStyles(styles)
 )(DiffPage);

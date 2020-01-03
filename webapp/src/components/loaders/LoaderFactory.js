@@ -17,6 +17,8 @@ import APIDashboard, {IntegrationsDashboard} from '../dashboards/APIDashboard';
 import {IntegrationsContextStore} from '../../contexts/IntegrationsContext';
 import {IntegrationsSpecService} from '../routes/local/integrations';
 import NewBehavior from '../navigation/NewBehavior';
+import Redirect from 'react-router-dom/es/Redirect';
+import {ProductDemoStore} from '../navigation/ProductDemo';
 
 const {
   Context: SpecServiceContext,
@@ -25,7 +27,7 @@ const {
 
 class LoaderFactory {
   static build(options) {
-    const {notificationAreaComponent, shareButtonComponent, basePath, specServiceTask} = options;
+    const {notificationAreaComponent, shareButtonComponent, demo, basePath, specServiceTask} = options;
 
     const entryBasePath = basePath;
 
@@ -112,8 +114,9 @@ class LoaderFactory {
                                component={withSpecServiceContext(APIDashboard)}/>
                         <Route exact path={routerPaths.integrationsDashboard(basePath)}
                                component={() => <IntegrationsDashboard className={'root'}/>}/>
-                        <Route exact path={routerPaths.apiDashboard(basePath)} component={withSpecServiceContext(ApiOverview)}/>
+                        <Route exact path={routerPaths.apiDocumentation(basePath)} component={withSpecServiceContext(ApiOverview)}/>
                         <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
+                        <Redirect to={routerPaths.apiDocumentation(basePath)} />
                       </Switch>
                     </Navigation>
                   </ApiOverviewContextStore>
@@ -195,10 +198,12 @@ class LoaderFactory {
         const {match} = this.props;
         return (
           <NavigationStore baseUrl={match.url}>
+            <ProductDemoStore active={demo}>
             <Switch>
               <Route path={routerPaths.integrationsPath(basePath)} component={wrappedIntegrationRoutes}/>
               <Route path={basePath} component={wrappedTopLevelRoutes}/>
             </Switch>
+            </ProductDemoStore>
           </NavigationStore>
         );
       }

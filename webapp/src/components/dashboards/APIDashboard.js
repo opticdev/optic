@@ -33,6 +33,8 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import {withRfcContext} from '../../contexts/RfcContext';
 import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
 import {withNavigationContext} from '../../contexts/NavigationContext';
+import {withProductDemoContext} from '../navigation/ProductDemo';
+import {ProductDemoStoreBase} from '../onboarding/InlineDocs';
 
 const styles = theme => ({
   root: {
@@ -77,12 +79,13 @@ const styles = theme => ({
 
 class APIDashboard extends React.Component {
   render() {
-    const {classes, queries, integrations, goToIntegration, baseUrl} = this.props;
+    const {classes, queries, integrations, goToIntegration, baseUrl, demos} = this.props;
     const setupState = queries.setupState();
 
     return (
       <div className={classes.root}>
-
+        <ProductDemoStoreBase />
+        {demos.dashboardDemo}
         <Paper className={classes.statusCard} style={{flexDirection: 'row'}} elevation={0}>
           <Typography variant="h4">{'ToDo API'}</Typography>
           <div style={{flex: 1}}/>
@@ -149,7 +152,7 @@ class APIDashboard extends React.Component {
   }
 }
 
-export default withNavigationContext(withIntegrationsContext(withRfcContext(withStyles(styles)(APIDashboard))));
+export default withProductDemoContext(withNavigationContext(withIntegrationsContext(withRfcContext(withStyles(styles)(APIDashboard)))));
 
 const SummaryStatus = withStyles(styles)(({on, onText, offText, classes}) => {
   return (

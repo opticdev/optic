@@ -10,6 +10,10 @@ import {withRfcContext} from '../../contexts/RfcContext';
 import {Highlight, HighlightedIDsStore, withHighlightedIDs} from './HighlightedIDs';
 import Menu from '@material-ui/core/Menu';
 import {NamerStore, withNamer} from './Namer';
+import {AutoSizer, List as VirtualizedList} from 'react-virtualized';
+
+
+const rowHeight = 28
 
 const styles = theme => ({
   base: {
@@ -22,7 +26,7 @@ const styles = theme => ({
     flexDirection: 'row',
     color: 'rgb(249, 248, 245)',
     fontSize: 13,
-    // height: 26,
+    height: rowHeight,
     userSelect: 'none',
     fontFamily: 'monospace',
     '&:hover': {
@@ -98,7 +102,7 @@ export const ExpandableRow = withStyles(styles)(({classes, children, innerChildr
   );
 });
 
-export const RootRow = withHighlightedIDs(withStyles(styles)(({classes, expand, id, typeName, depth}) => {
+export const RootRow = (({classes, id, typeName, depth}, expand) => {
 
   const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
 
@@ -112,21 +116,27 @@ export const RootRow = withHighlightedIDs(withStyles(styles)(({classes, expand, 
     }
   };
 
-  return (
-    <>
-      <Row style={{paddingLeft: 6}}>
-        <TypeNameRender typeName={typeName} id={id} onLinkClick={setParam}/>
-      </Row>
-      {expandedParam && (
-        <div style={{paddingLeft: depth * 8}}>
-          <div className={classes.innerParam}>
-            <ShapeViewerWithQuery shapeId={expandedParam}/>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}));
+  return [
+    <Row style={{paddingLeft: 6}}>
+      <TypeNameRender typeName={typeName} id={id} onLinkClick={setParam}/>
+    </Row>
+  ]
+
+  // return (
+  //   <>
+  //     <Row style={{paddingLeft: 6}}>
+  //       <TypeNameRender typeName={typeName} id={id} onLinkClick={setParam}/>
+  //     </Row>
+  //     {expandedParam && (
+  //       <div style={{paddingLeft: depth * 8}}>
+  //         <div className={classes.innerParam}>
+  //           <ShapeViewerWithQuery shapeId={expandedParam}/>
+  //         </div>
+  //       </div>
+  //     )}
+  //   </>
+  // );
+});
 
 export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, typeName, fields, fieldName, canName, baseShapeId, parameters, depth, id, fieldId}) => {
 
@@ -255,7 +265,15 @@ export const Namer = compose(withNamer, withStyles(styles))(props => {
   </>);
 });
 
-export const ObjectViewer = withStyles(styles)(({classes, typeName, canName, id, fields, depth = 0}) => {
+export const ObjectViewer = ({typeName, canName, id, fields, depth = 0}, expand) => {
+
+  return [
+    <Row style={{paddingLeft: 6}}>
+      {<TypeNameRender typeName={typeName} id={id}/>}
+      {canName && <Namer id={id}/>}
+    </Row>,
+    ...fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} depth={depth + 1}/>)
+  ]
 
   return (<>
       <Row style={{paddingLeft: 6}}>
@@ -265,32 +283,72 @@ export const ObjectViewer = withStyles(styles)(({classes, typeName, canName, id,
       {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} depth={depth + 1}/>)}
     </>
   );
-});
+};
 
-function handleBaseShape(shape) {
+function rowsForBaseShape(shape, expand) {
   const {baseShapeId, typeName, id, fields} = shape;
   console.log('xxx', {shape});
   if (baseShapeId === '$object' || fields.length) {
-    return <ObjectViewer {...shape} />;
+    const rows = ObjectViewer(shape, expand)
+    return rows
   } else {
-    return <RootRow typeName={typeName} id={id}/>;
+    const rows = RootRow(shape, expand)
+    return  rows
   }
 }
 
-class _ShapeViewerBase extends React.Component {
-  render() {
-    const {shape, classes, disableNaming, nameShape} = this.props;
+class _ShapeViewerBase extends React.PureComponent {
 
-    const root = handleBaseShape(shape);
+  shouldComponentUpdate(nextProps) {
+    if (this.props.renderId === nextProps.renderId) {
+      return false
+    } else {
+      return true
+    }
+  }
+
+  render() {
+    const {shape, classes, expand, disableNaming, nameShape} = this.props;
+
+    const rows = rowsForBaseShape(shape, expand);
+    const eightPercentDocHeight = window.innerHeight * .8
+    const height = rows.length * rowHeight > eightPercentDocHeight ? eightPercentDocHeight : rows.length * rowHeight
+
+    const useThis = (
+      <AutoSizer disableHeight>
+        {({width}) => {
+          return (
+            <VirtualizedList
+              // className={styles.List}
+              height={height}
+              // noRowsRenderer={this._noRowsRenderer}
+              rowCount={rows.length}
+              rowHeight={rowHeight}
+              width={width}
+              rowRenderer={({index, isScrolling, key, style}) => {
+                return (
+                  <div key={key} style={style}>
+                    {rows[index]}
+                  </div>
+                )
+              }} />
+          )
+        }}
+      </AutoSizer>)
+
     return (
       <NamerStore disable={disableNaming} nameShape={nameShape}>
-        <div className={classes.base}>{root}</div>
+        {/*<div className={classes.base}>{root}</div>*/}
+        <div className={classes.base} style={{height, width: '100%'}}>
+          {useThis}
+        </div>
+
       </NamerStore>
     );
   }
 }
 
-const ShapeViewer = withNamer(withStyles(styles)(_ShapeViewerBase));
+const ShapeViewer = withHighlightedIDs(withNamer(withStyles(styles)(_ShapeViewerBase)));
 export default ShapeViewer;
 
 class ExampleViewerBase extends React.PureComponent {

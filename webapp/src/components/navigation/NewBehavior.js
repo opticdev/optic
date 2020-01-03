@@ -176,7 +176,7 @@ function NewBehavior(props) {
 
 
   return (
-    <Collapse in={true} appear={true} style={{width: '100%'}}>
+    <Collapse in={true} appear={true} style={{width: '100%'}} >
       <div className={classes.notificationBar} onClick={handleClick} onMouseLeave={() => setAnchorEl(false)}>
 
         <Typography variant="subtitle1" style={{color: 'white', marginTop: 5}}>Not Synced</Typography>
@@ -210,7 +210,7 @@ function NewBehavior(props) {
             </Link>
           )}
 
-          {requestIdsWithDiffs.length && (
+          {requestIdsWithDiffs.length > 0 && (
             <>
               {unrecognizedUrlCount > 0 && <DocDivider/>}
               <List subheader={<ListSubheader className={classes.subheader} style={{color: RemovedRed}}>Request
@@ -241,7 +241,7 @@ function NewBehavior(props) {
               </List>
             </>
           )}
-          {integrationsWithDiff.length && (
+          {integrationsWithDiff.length > 0 ? (
             <>
               <DocDivider/>
               <List subheader={<ListSubheader className={classes.subheader}
@@ -249,7 +249,7 @@ function NewBehavior(props) {
                 {integrationsWithDiff}
               </List>
             </>
-          )}
+          ): null}
         </Collapse>
       </div>
     </Collapse>
