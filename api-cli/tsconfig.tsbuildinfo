@@ -666,8 +666,8 @@
         "signature": "a07ac5407b236f3f7e7aa48129835cdd30e09c6ef8f473bca50337334ed14391"
       },
       "./src/commands/start.ts": {
-        "version": "a08ee29503d15c9c2a271bd16b34ff0bd481c6a00f1b18903b8d6970f63d5b9e",
-        "signature": "f9d36e46d0a7a3fa20acf850efba728f700e901dec4b7e9051f5ef2754495494"
+        "version": "9dfa206035d06765e74acdc3f0f564476faa6ff850171e1b3a3ae4377e8dde0c",
+        "signature": "2fdfb2a4296a42c8f4420bc0448e3500fed9318cd391fec732ef384dd38e42dc"
       },
       "./node_modules/@types/nodegit/oid.d.ts": {
         "version": "d729dea6596e0c12980346fe9b5ae1d5636cec7a1e464a36a20779f55b4f24dc",

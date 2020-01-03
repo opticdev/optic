@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "Optic's open source tool for building APIs that document & test themselves",
-  "version": "6.6.8",
+  "version": "6.6.10",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
