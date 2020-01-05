@@ -1,26 +1,20 @@
-import React, {useContext, useState} from 'react';
+import React, { useState } from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {TextField} from '@material-ui/core';
+import { TextField } from '@material-ui/core';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
-import {Show} from '../shared/Show';
+import { Show } from '../shared/Show';
 import compose from 'lodash.compose';
-import {primitiveDocColors} from '../requests/DocConstants';
-import {withRfcContext} from '../../contexts/RfcContext';
-import {Highlight, HighlightedIDsStore, withHighlightedIDs} from './HighlightedIDs';
+import { primitiveDocColors } from '../requests/DocConstants';
+import { withRfcContext } from '../../contexts/RfcContext';
+import { Highlight, HighlightedIDsStore, withHighlightedIDs } from './HighlightedIDs';
 import Menu from '@material-ui/core/Menu';
-import {NamerStore, withNamer} from './Namer';
-import {AutoSizer, CellMeasurer, CellMeasurerCache, List as VirtualizedList} from 'react-virtualized';
-
-
-const rowHeight = 28;
+import { NamerStore, withNamer } from './Namer';
+import equal from 'deep-equal'
 
 const styles = theme => ({
   base: {
     backgroundColor: '#4f5568',
-  },
-  listView: {
-    outline: 'none'
   },
   row: {
     padding: 4,
@@ -29,7 +23,7 @@ const styles = theme => ({
     flexDirection: 'row',
     color: 'rgb(249, 248, 245)',
     fontSize: 13,
-    height: rowHeight,
+    // height: 26,
     userSelect: 'none',
     fontFamily: 'monospace',
     '&:hover': {
@@ -45,9 +39,7 @@ const styles = theme => ({
     userSelect: 'none',
     marginTop: 2,
     fontWeight: 100,
-    wordBreak: 'break-all',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis'
+    wordBreak: 'break-all'
   },
   namer: {
     width: 20,
@@ -83,89 +75,34 @@ const styles = theme => ({
   }
 });
 
-export const Row = withStyles(styles)(({classes, children, style, depth = 0, render, defaultParam}) => {
-
-  const [expandedParam, setExpandedParam] = useState(defaultParam);
-
-  const setParam = (param) => {
-    if (expandedParam === param) {
-      setExpandedParam(null);
-    } else {
-      setExpandedParam(param);
-    }
-  };
-
-
+export const Row = withStyles(styles)(({ classes, children, style, depth = 0 }) => {
   return (
-    <>
-      <li className={classes.row}
-          style={{paddingLeft: depth * 8, ...style}}>{render ? render({setParam}) : children}</li>
-      {expandedParam && (
-        <div style={{paddingLeft: depth * 8}}>
-          <div className={classes.innerParam}>
-            <ShapeViewerWithQuery shapeId={expandedParam}/>
-          </div>
-        </div>
-      )}
-    </>
+    <li className={classes.row} style={{ paddingLeft: depth * 8, ...style }}>{children}</li>
   );
 });
 
-export const ExpandableRow = withStyles(styles)(({classes, children, innerChildren, fields, depth}) => {
-  const {resizeCell} = useContext(ResizeContext);
+export const ExpandableRow = withStyles(styles)(({ classes, children, innerChildren, fields, depth }) => {
   const [expanded, setExpanded] = useState(true);
-
-  const setExpandedWrapped = () => {
-    setExpanded(!expanded);
-    resizeCell()
-  };
-
   return (
-    <div>
-      <li className={classes.row} style={{paddingLeft: depth * 8, cursor: 'pointer'}}
-          onClick={() => setExpandedWrapped(!expanded)}>
+    <>
+      <li className={classes.row} style={{ paddingLeft: depth * 8, cursor: 'pointer' }}
+          onClick={() => setExpanded(!expanded)}>
         {expanded ?
-          <ArrowDropDownIcon className={classes.arrow} onClick={() => setExpandedWrapped(!expanded)}/> :
-          <ArrowRightIcon className={classes.arrow} onClick={() => setExpandedWrapped(!expanded)}/>}
+          <ArrowDropDownIcon className={classes.arrow} onClick={() => setExpanded(!expanded)} /> :
+          <ArrowRightIcon className={classes.arrow} onClick={() => setExpanded(!expanded)} />}
         {children}
       </li>
       <Show when={expanded}>
         {innerChildren}
       </Show>
-    </div>
+    </>
   );
 });
 
-export const RootRow = (({classes, id, typeName, depth}, expand) => {
+export const RootRow = withHighlightedIDs(withStyles(styles)(({ classes, expand, id, typeName, depth }) => {
 
-  const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
+  const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null
 
-  return [
-    <Row style={{paddingLeft: 6}} defaultParam={defaultParam} render={
-      ({setParam}) => <TypeNameRender typeName={typeName} id={id} onLinkClick={setParam}/>
-    }/>
-  ];
-
-  // return (
-  //   <>
-  //     <Row style={{paddingLeft: 6}}>
-  //       <TypeNameRender typeName={typeName} id={id} onLinkClick={setParam}/>
-  //     </Row>
-  //     {expandedParam && (
-  //       <div style={{paddingLeft: depth * 8}}>
-  //         <div className={classes.innerParam}>
-  //           <ShapeViewerWithQuery shapeId={expandedParam}/>
-  //         </div>
-  //       </div>
-  //     )}
-  //   </>
-  // );
-});
-
-export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, typeName, fields, fieldName, canName, baseShapeId, parameters, depth, id, fieldId}) => {
-
-  const {resizeCell} = useContext(ResizeContext);
-  const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
   const [expandedParam, setExpandedParam] = useState(defaultParam);
 
   const setParam = (param) => {
@@ -174,21 +111,49 @@ export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, ty
     } else {
       setExpandedParam(param);
     }
-    resizeCell()
+  };
+
+  return (
+    <>
+      <Row style={{ paddingLeft: 6 }}>
+        <TypeNameRender typeName={typeName} id={id} onLinkClick={setParam} />
+      </Row>
+      {expandedParam && (
+        <div style={{ paddingLeft: depth * 8 }}>
+          <div className={classes.innerParam}>
+            <ShapeViewerWithQuery shapeId={expandedParam} />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}));
+
+export const Field = withHighlightedIDs(withStyles(styles)(({ classes, expand, typeName, fields, fieldName, canName, baseShapeId, parameters, depth, id, fieldId }) => {
+
+  const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null
+  const [expandedParam, setExpandedParam] = useState(defaultParam);
+
+  const setParam = (param) => {
+    if (expandedParam === param) {
+      setExpandedParam(null);
+    } else {
+      setExpandedParam(param);
+    }
   };
 
   const shared = <>
     {typeName[0].colorKey !== 'index' ? (<>
       <div className={classes.fieldName}>{fieldName}</div>
       <div className={classes.colon}>:</div>
-    </>) : <span style={{marginTop: 2}}>-</span>}
-    <div style={{marginLeft: 4}}><TypeNameRender typeName={typeName} id={id} onLinkClick={setParam}/></div>
-    {canName && <Namer id={id}/>}
+    </>) : <span style={{ marginTop: 2 }}>-</span>}
+    <div style={{ marginLeft: 4 }}><TypeNameRender typeName={typeName} id={id} onLinkClick={setParam} /></div>
+    {canName && <Namer id={id} />}
   </>;
 
   if (fields.length) {
     const fieldsRendered = fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={fieldId}
-                                                  depth={depth + 2}/>);
+                                                  depth={depth + 2} />);
     //use expandable row
     return <ExpandableRow depth={depth + 1} innerChildren={fieldsRendered}>
       {shared}
@@ -204,20 +169,20 @@ export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, ty
         </Row>
       </Highlight>
       {expandedParam && (
-        <div style={{paddingLeft: depth * 8}}>
+        <div style={{ paddingLeft: depth * 8 }}>
           <div className={classes.innerParam}>
-            <ShapeViewerWithQuery shapeId={expandedParam}/>
+            <ShapeViewerWithQuery shapeId={expandedParam} />
           </div>
-          <div style={{height: 10}}/>
+          <div style={{ height: 10 }} />
         </div>
       )}
     </>
   );
 }));
 
-export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLinkClick}) => {
+export const TypeNameRender = withStyles(styles)(({ classes, id, typeName, onLinkClick }) => {
 
-  const components = typeName.map(({name, shapeLink, primitiveId}) => {
+  const components = typeName.map(({ name, shapeLink, primitiveId }) => {
 
     const color = primitiveDocColors[primitiveId];
 
@@ -230,12 +195,12 @@ export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLink
             }
           }}
           className={classes.link}
-          style={{color: color || '#00BFFF'}}>{name}</span>
+          style={{ color: color || '#00BFFF' }}>{name}</span>
         {' '}
       </>);
     }
 
-    return <span style={{color}}>{name + ' '}</span>;
+    return <span style={{ color }}>{name + ' '}</span>;
   });
 
   return <Highlight id={id}>
@@ -245,9 +210,9 @@ export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLink
 });
 
 export const Namer = compose(withNamer, withStyles(styles))(props => {
-  const {classes, nameShape, id, disable} = props;
+  const { classes, nameShape, id, disable } = props;
   if (disable) {
-    return null;
+    return null
   }
   const [anchorEl, setAnchorEl] = useState(null);
   const [conceptName, setConceptName] = useState('');
@@ -272,168 +237,91 @@ export const Namer = compose(withNamer, withStyles(styles))(props => {
             }
           }}
           onChange={(e) => {
-            setConceptName(e.target.value);
+            setConceptName(e.target.value)
             //the interpretation card was stealing focus. not sure why everything re-rendered. -- this fixed it.
-            e.stopPropagation();
-            e.currentTarget.focus();
-          }}/>
+            e.stopPropagation()
+            e.currentTarget.focus()
+          }} />
       </div>
     </Menu>
   );
 
   return (<>
     {menu}
-    <div style={{flex: 1}}/>
+    <div style={{ flex: 1 }} />
     <div className={classes.namer} onClick={(e) => {
-      setAnchorEl(e.currentTarget);
-      e.stopPropagation();
+      setAnchorEl(e.currentTarget)
+      e.stopPropagation()
     }} children={'○'}/>
   </>);
 });
 
-export const ObjectViewer = ({typeName, canName, id, fields, depth = 0}, expand) => {
-
-  return [
-    <Row style={{paddingLeft: 6}}>
-      {<TypeNameRender typeName={typeName} id={id}/>}
-      {canName && <Namer id={id}/>}
-    </Row>,
-    ...fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} depth={depth + 1}/>)
-  ];
+export const ObjectViewer = withStyles(styles)(({ classes, typeName, canName, id, fields, depth = 0 }) => {
 
   return (<>
-      <Row style={{paddingLeft: 6}}>
-        {<TypeNameRender typeName={typeName} id={id}/>}
-        {canName && <Namer id={id}/>}
+      <Row style={{ paddingLeft: 6 }}>
+        {<TypeNameRender typeName={typeName} id={id} />}
+        {canName && <Namer id={id} />}
       </Row>
-      {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} depth={depth + 1}/>)}
+      {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} depth={depth + 1} />)}
     </>
   );
-};
+});
 
-function rowsForBaseShape(shape, expand) {
-  const {baseShapeId, typeName, id, fields} = shape;
-  console.log('xxx', {shape});
+function handleBaseShape(shape) {
+  const { baseShapeId, typeName, id, fields } = shape;
+  console.log('xxx', { shape })
   if (baseShapeId === '$object' || fields.length) {
-    const rows = ObjectViewer(shape, expand);
-    return rows;
+    return <ObjectViewer {...shape} />;
   } else {
-    const rows = RootRow(shape, expand);
-    return rows;
+    return <RootRow typeName={typeName} id={id} />;
   }
 }
 
-const ResizeContext = React.createContext({
-  resizeCell: () => {
-  }
-});
-
-
 class _ShapeViewerBase extends React.PureComponent {
 
-  constructor() {
-    super();
-    this.refa = React.createRef();
-  }
-
-  shouldComponentUpdate(nextProps) {
-    if (this.props.renderId === nextProps.renderId) {
-      return false;
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    if (equal(nextProps.shape, this.props.shape)) {
+      return false
     } else {
-      return true;
+      return true
     }
   }
 
   render() {
-    const {shape, classes, expand, disableNaming, nameShape} = this.props;
+    const { shape, classes } = this.props;
+    console.log('rendering')
 
-    const cache = new CellMeasurerCache({
-      defaultHeight: rowHeight,
-      fixedWidth: true
-    });
-
-    const rows = rowsForBaseShape(shape, expand);
-    const minHeight = 400;
-    const height = rows.length * rowHeight < minHeight ? minHeight : rows.length * rowHeight;
-
-    const useThis = (
-      <AutoSizer>
-        {({width}) => {
-          return (
-            <VirtualizedList
-              className={classes.listView}
-              height={height}
-              ref={this.refa}
-              // noRowsRenderer={this._noRowsRenderer}
-              deferredMeasurementCache={cache}
-              rowHeight={cache.rowHeight}
-              rowCount={rows.length}
-              width={width}
-              rowRenderer={({index, isScrolling, parent, key, style}) => {
-                const list = this.refa.current;
-                return (
-                  <ResizeContext.Provider value={{
-                    resizeCell: () => {
-                      cache.clearAll();
-                      list.forceUpdateGrid();
-                    }
-                  }}>
-                    <CellMeasurer
-                      cache={cache}
-                      columnIndex={0}
-                      key={key}
-                      parent={parent}
-                      rowIndex={index}
-                    >
-                      <div key={key} style={style}>
-                        {rows[index]}
-                      </div>
-                    </CellMeasurer>
-                  </ResizeContext.Provider>
-                );
-              }}/>
-          );
-        }}
-      </AutoSizer>
-    );
-
+    const root = handleBaseShape(shape);
     return (
-      <NamerStore disable={disableNaming} nameShape={nameShape}>
-        {/*<div className={classes.base}>{root}</div>*/}
-        <div className={classes.base} style={{display: 'flex', height, minHeight: minHeight, flex: '1 1 auto'}}>
-          {useThis}
-        </div>
-
-      </NamerStore>
+      <div className={classes.base}>{root}</div>
     );
   }
 }
 
-const ShapeViewer = withHighlightedIDs(withNamer(withStyles(styles)(_ShapeViewerBase)));
+const ShapeViewer = withStyles(styles)(_ShapeViewerBase);
 export default ShapeViewer;
-
 class ExampleViewerBase extends React.PureComponent {
   render() {
-    const {queries, example, disableNaming} = this.props;
-    const flatShape = queries.memoizedFlatShapeForExample(example);
+    const { queries, example } = this.props;
+    const flatShape = queries.memoizedFlatShapeForExample(example)
     return (
-      <NamerStore diable={disableNaming}>
-        <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
+      <NamerStore>
+        <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} />
       </NamerStore>
-    );
+    )
   }
 }
-
 export const ExampleViewer = withRfcContext(ExampleViewerBase);
 
-export const ShapeViewerWithQuery = withHighlightedIDs(withRfcContext(({shapeId, addedIds, changedIds, queries, disableNaming}) => {
-  const affectedIds = [...addedIds, ...changedIds];
+export const ShapeViewerWithQuery = withHighlightedIDs(withRfcContext(({ shapeId, addedIds, changedIds, queries }) => {
+  const affectedIds = [...addedIds, ...changedIds]
   const flatShape = queries.flatShapeForShapeId(shapeId, affectedIds);
-  const expand = Array.from(new Set([...flatShape.pathsForAffectedIds.flatMap(x => x)]));
+  const expand = Array.from(new Set([...flatShape.pathsForAffectedIds.flatMap(x => x)]))
 
   return (
     <HighlightedIDsStore addedIds={addedIds} changedIds={changedIds} expand={expand}>
-      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} disableNaming={disableNaming}/>
+      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} />
     </HighlightedIDsStore>
   );
 }));

@@ -14,9 +14,8 @@ function TextF({}) {
   return (
     <div>
       <TextField autoFocus value={text} onChange={(e) => setText(e.target.value)}/>
-
       <HighlightedIDsStore  addedIds={[]} changedIds={[]} expand={false}>
-        <ShapeViewer shape={colors.root} renderId={"abc"} parameters={colors.parametersMap}/>
+        <ShapeViewer shape={colors.root} parameters={colors.parametersMap}/>
       </HighlightedIDsStore>
     </div>
   );
@@ -28,6 +27,7 @@ storiesOf('large shapes')
     return (
       <div>
         <TextF/>
+
       </div>
     );
   })()));
