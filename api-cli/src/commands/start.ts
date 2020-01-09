@@ -23,7 +23,15 @@ export default class Start extends Command {
   static description = 'start your API and diff its behavior against the spec'
 
   static flags = {
-    'keep-alive': flags.boolean({description: 'use this when your command terminates before the server terminates'})
+    'keep-alive': flags.boolean({description: 'use this when your command terminates before the server terminates'}),
+    port: flags.string({
+      char: 'p',
+      description: 'Override the port defined in api.yml',
+    }),
+    target: flags.string({
+      char: 't',
+      description: 'Override the target defined in api.yml',
+    }),
   }
 
   static args = [{
@@ -98,10 +106,12 @@ export default class Start extends Command {
     }
 
     //inbound proxy
-    const target = processSetting(config.proxy.target, inputs)
+    const proxyTarget = flags.target ? flags.target : config.proxy.target
+    const proxyPort = flags.port ? parseInt(flags.port, 10) : config.proxy.port
+    const target = processSetting(proxyTarget, inputs)
     await proxySession.start({
       target,
-      port: config.proxy.port
+      port: proxyPort
     })
     this.log(fromOptic(`Starting ${colors.bold(config.name)} on Port: ${colors.bold(config.proxy.port.toString())}, with ${colors.bold(config.commands.start)}`))
     this.log(fromOptic(`Starting Integration Gateway on Port: ${colors.bold(integrationsPort.toString())}`))
