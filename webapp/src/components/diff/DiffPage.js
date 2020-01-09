@@ -13,7 +13,7 @@ import SkipNextIcon from '@material-ui/icons/SkipNext';
 import Tooltip from '@material-ui/core/Tooltip';
 import ClearIcon from '@material-ui/icons/Clear';
 import InterpretationInfo from './InterpretationInfo';
-import { AddedGreen, Highlight, HighlightedIDsStore } from '../shapes/HighlightedIDs';
+import {AddedGreen, ChangedYellow, Highlight, HighlightedIDsStore} from '../shapes/HighlightedIDs';
 import { withRfcContext } from '../../contexts/RfcContext';
 import { JsonHelper } from '../../engine';
 import Mustache from 'mustache';
@@ -30,6 +30,7 @@ import BugReportIcon from '@material-ui/icons/BugReport';
 import ReportBug from './ReportBug';
 import Button from '@material-ui/core/Button';
 import {withProductDemoContext} from '../navigation/ProductDemo';
+import {ChangedYellowBackground} from '../../contexts/ColorContext';
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -71,7 +72,7 @@ const styles = theme => ({
   },
   appBar: {
     borderBottom: '1px solid #e2e2e2',
-    backgroundColor: 'white'
+    backgroundColor: ChangedYellowBackground
   },
   scroll: {
     overflow: 'scroll',
@@ -320,7 +321,7 @@ class DiffPage extends React.Component {
 
     const { metadataJs } = this.props.interpretation;
     if (!this.props.interpretation) {
-      debugger
+
     }
     const { addedIds, changedIds } = metadataJs;
 
@@ -333,7 +334,7 @@ class DiffPage extends React.Component {
             <Toolbar variant="dense">
               <div style={{ marginRight: 20 }}>
                 <Link to={baseUrl}>
-                  <Tooltip title="End Review">
+                  <Tooltip title="End Diff Review">
                     <IconButton size="small" aria-label="delete" className={classes.margin} color="primary"
                       disableRipple
                       onClick={this.handleDiscard}>

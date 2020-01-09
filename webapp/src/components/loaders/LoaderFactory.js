@@ -116,7 +116,7 @@ class LoaderFactory {
                                component={() => <IntegrationsDashboard className={'root'}/>}/>
                         <Route exact path={routerPaths.apiDocumentation(basePath)} component={withSpecServiceContext(ApiOverview)}/>
                         <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
-                        <Redirect to={routerPaths.apiDocumentation(basePath)} />
+                        <Redirect to={routerPaths.apiDashboard(basePath)} />
                       </Switch>
                     </Navigation>
                   </ApiOverviewContextStore>

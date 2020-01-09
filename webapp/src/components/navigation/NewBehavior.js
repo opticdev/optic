@@ -40,6 +40,7 @@ import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import {LightTooltip} from '../tooltips/LightTooltip';
+import {SummaryStatus} from '../dashboards/APIDashboard';
 
 const useStyles = makeStyles({
   section: {
@@ -176,7 +177,7 @@ function NewBehavior(props) {
 
 
   return (
-    <Collapse in={true} appear={true} style={{width: '100%'}} >
+    <Collapse in={true} appear={true} style={{width: '100%'}}>
       <div className={classes.notificationBar} onClick={handleClick} onMouseLeave={() => setAnchorEl(false)}>
 
         <Typography variant="subtitle1" style={{color: 'white', marginTop: 5}}>Not Synced</Typography>
@@ -189,11 +190,11 @@ function NewBehavior(props) {
                      style={isIntegrationMode && {marginRight: 0}}
                      tooltip={`${requestIdsWithDiffs.length} Request Diffs`}
                      disableTooltip={Boolean(anchorEl)}/>
-          {!isIntegrationMode &&
-          <NotifChip Icon={SettingsEthernetIcon} color={UpdatedBlue} number={integrationsWithDiff.length}
-                     style={{marginRight: 0}}
-                     tooltip={`${integrationsWithDiff.length} Integrations with New Behavior`}
-                     disableTooltip={Boolean(anchorEl)}/>}
+          {/*{!isIntegrationMode &&*/}
+          {/*<NotifChip Icon={SettingsEthernetIcon} color={UpdatedBlue} number={integrationsWithDiff.length}*/}
+          {/*           style={{marginRight: 0}}*/}
+          {/*           tooltip={`${integrationsWithDiff.length} Integrations with New Behavior`}*/}
+          {/*           disableTooltip={Boolean(anchorEl)}/>}*/}
         </div>
 
         <Collapse in={Boolean(anchorEl)} style={{width: '100%'}}>
@@ -241,15 +242,15 @@ function NewBehavior(props) {
               </List>
             </>
           )}
-          {integrationsWithDiff.length > 0 ? (
-            <>
-              <DocDivider/>
-              <List subheader={<ListSubheader className={classes.subheader}
-                                              style={{color: UpdatedBlue}}>Integrations</ListSubheader>}>
-                {integrationsWithDiff}
-              </List>
-            </>
-          ): null}
+          {/*{integrationsWithDiff.length > 0 ? (*/}
+          {/*  <>*/}
+          {/*    <DocDivider/>*/}
+          {/*    <List subheader={<ListSubheader className={classes.subheader}*/}
+          {/*                                    style={{color: UpdatedBlue}}>Integrations</ListSubheader>}>*/}
+          {/*      {integrationsWithDiff}*/}
+          {/*    </List>*/}
+          {/*  </>*/}
+          {/*): null}*/}
         </Collapse>
       </div>
     </Collapse>
@@ -257,7 +258,7 @@ function NewBehavior(props) {
 }
 
 
-class NewBehaviorWrapper extends React.Component {
+class NewBehaviorWrapperBase extends React.Component {
   state = {
     isLoading: true,
     lastSessionId: null,
@@ -310,24 +311,7 @@ class NewBehaviorWrapper extends React.Component {
       return (<NewBehavior isLoading={true}/>);
     }
 
-    const {isEmpty} = this.props;
-    if (!lastSessionId) {
-      if (isEmpty) {
-        return (
-          <NewBehaviorCard color="blue" source={`#### Finish Setting up Optic
-Optic has not observed any API traffic yet. Make sure you have set up the proxy properly and sent traffic through the API.`}>
-            <Button variant="contained" style={{margin: 8}} href="https://docs.useoptic.com" target="_blank">Read
-              Docs</Button>
-            <Button variant="contained" style={{margin: 8}} onClick={() => window.drift.api.sidebar.open()}>Chat with
-              Support</Button>
-            <Button variant="contained" style={{margin: 8}} href="https://calendly.com/optic-onboarding/setup-help"
-                    target="_blank">Schedule On-boarding Call</Button>
-          </NewBehaviorCard>
-        );
-      }
-      return null;
-    }
-    const {specService, baseUrl, integrations = [], isIntegrationMode} = this.props;
+    const {specService, baseUrl, children} = this.props;
     return (
       <TrafficSessionStore sessionId={lastSessionId} specService={specService}>
         <TrafficSessionContext.Consumer>
@@ -343,63 +327,16 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
               return null;
             }
 
-            const integrationsInSession = new Set((context.session.integrationSamples || []).map(i => i.integrationName));
-
-            const integrationsWithDiff = integrations.filter(i => integrationsInSession.has(i.name)).map(i => {
-              const integrationsSpecService = new IntegrationsSpecService(i.name);
-
-              const InteractionNotificationComponent = ({session, isLoading, rfcId, rfcService, cachedQueryResults, queries}) => {
-                const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, {session: context.session});
-                console.log('diff state projection ', diffStateProjections);
-
-                const requestIdsWithDiffs = getRequestIdsWithDiffs(rfcState, diffStateProjections);
-                const unrecognizedUrlCount = getUnrecognizedUrlCount(rfcState, diffStateProjections);
-                if (unrecognizedUrlCount === 0 && requestIdsWithDiffs.length === 0) {
-                  return null;
-                }
-
-                return (
-                  <Link style={{textDecoration: 'none', color: 'black'}}
-                    // to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}
-                  >
-                    <ListItem dense button component={Link}
-                              to={`${baseUrl}/integrations/${encodeURIComponent(i.name)}`}>
-                      <ListItemText primary={i.name}
-                                    primaryTypographyProps={{
-                                      style: {
-                                        fontSize: 12,
-                                        color: 'white'
-                                      }
-                                    }}/>
-                    </ListItem>
-                  </Link>
-                );
-              };
-
-              const InteractionNotificationComponentWithContext = compose(withRfcContext, withTrafficSessionContext)(InteractionNotificationComponent);
-
-              return (
-                <RfcStore specService={integrationsSpecService}>
-                  <TrafficSessionStore sessionId={lastSessionId} specService={integrationsSpecService}>
-                    <div>
-                      <InteractionNotificationComponentWithContext/>
-                    </div>
-                  </TrafficSessionStore>
-                </RfcStore>
-              );
-            });
-
-            return (
-              <NewBehavior
-                isLoading={isLoading}
-                requestIdsWithDiffs={requestIdsWithDiffs}
-                sessionId={lastSessionId}
-                baseUrl={baseUrl}
-                unrecognizedUrlCount={unrecognizedUrlCount}
-                integrationsWithDiff={integrationsWithDiff}
-                isIntegrationMode={isIntegrationMode}
-                cachedQueryResults={cachedQueryResults}/>
-            );
+            return (<>
+              {children({
+                isLoading,
+                requestIdsWithDiffs,
+                lastSessionId,
+                baseUrl,
+                unrecognizedUrlCount,
+                cachedQueryResults
+              })}
+            </>);
           }}
         </TrafficSessionContext.Consumer>
 
@@ -408,4 +345,52 @@ Optic has not observed any API traffic yet. Make sure you have set up the proxy 
   }
 }
 
-export default compose(withRfcContext, withIntegrationsContext, withNavigationContext)(NewBehaviorWrapper);
+const NewBehaviorWrapper = compose(withRfcContext, withIntegrationsContext, withNavigationContext)(NewBehaviorWrapperBase);
+
+export const NewBehaviorSideBar = () => (
+  <NewBehaviorWrapper>
+    {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl, unrecognizedUrlCount, cachedQueryResults}) => {
+      return <NewBehavior
+        isLoading={isLoading}
+        requestIdsWithDiffs={requestIdsWithDiffs}
+        sessionId={lastSessionId}
+        baseUrl={baseUrl}
+        unrecognizedUrlCount={unrecognizedUrlCount}
+        cachedQueryResults={cachedQueryResults}/>;
+    }}
+  </NewBehaviorWrapper>
+);
+
+export const HasDiffRequestToolBar = ({requestId}) => (
+  <NewBehaviorWrapper>
+    {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl, unrecognizedUrlCount, cachedQueryResults}) => {
+
+      if (!isLoading) {
+        const hasDiff = !requestIdsWithDiffs.includes(requestId);
+        return (
+          <Button style={{textDecoration: 'none'}} size="small" component={Link}
+                  to={`${baseUrl}/diff/${lastSessionId}/requests/${requestId}`} disabled={hasDiff}>
+            <SummaryStatus on={hasDiff} onText="In-Sync" offText="Endpoint Has Diff"/>
+          </Button>
+        );
+      }
+    }}
+  </NewBehaviorWrapper>
+);
+
+export const HasDiffDashboard = ({requestId}) => (
+  <NewBehaviorWrapper>
+    {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl, unrecognizedUrlCount, cachedQueryResults}) => {
+
+      if (!isLoading) {
+        const hasRequestDiff = requestIdsWithDiffs.length > 0
+
+        return (<>
+            <SummaryStatus on={!hasRequestDiff} onText="In-Sync" offText="API & Spec are not In-Sync"/>
+            <SummaryStatus on={unrecognizedUrlCount === 0} onText="No Undocumented URLs" offText="Undocumented Endpoints Detected"/>
+          </>
+        );
+      }
+    }}
+  </NewBehaviorWrapper>
+);

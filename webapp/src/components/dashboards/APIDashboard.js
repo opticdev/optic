@@ -35,6 +35,7 @@ import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
 import {withNavigationContext} from '../../contexts/NavigationContext';
 import {withProductDemoContext} from '../navigation/ProductDemo';
 import {ProductDemoStoreBase} from '../onboarding/InlineDocs';
+import {HasDiffDashboard} from '../navigation/NewBehavior';
 
 const styles = theme => ({
   root: {
@@ -79,7 +80,7 @@ const styles = theme => ({
 
 class APIDashboard extends React.Component {
   render() {
-    const {classes, queries, integrations, goToIntegration, baseUrl, demos} = this.props;
+    const {classes, queries, integrations, goToIntegration, baseUrl, demos, cachedQueryResults} = this.props;
     const setupState = queries.setupState();
 
     return (
@@ -87,10 +88,9 @@ class APIDashboard extends React.Component {
         <ProductDemoStoreBase />
         {demos.dashboardDemo}
         <Paper className={classes.statusCard} style={{flexDirection: 'row'}} elevation={0}>
-          <Typography variant="h4">{'ToDo API'}</Typography>
+          <Typography variant="h4">{cachedQueryResults.apiName}</Typography>
           <div style={{flex: 1}}/>
-          <SummaryStatus on={false} onText="API & Spec in Sync" offText="API & Spec not in Sync"/>
-          <SummaryStatus on={true} onText="Integrations are Healthy" offText="Integrations not Healthy"/>
+         <HasDiffDashboard />
         </Paper>
 
 
@@ -102,8 +102,7 @@ class APIDashboard extends React.Component {
                          icon={<DescriptionIcon color="primary" style={{marginLeft: 10}}/>}/>
             <APINavLinks text={'API Testing'} subtext={'Disabled. Click here to Setup'}
                          icon={<TimelineIcon color="primary" style={{marginLeft: 10}}/>}/>
-            <APINavLinks text={'Integrations'} subtext={`${integrations.length} Integrations`}
-                         icon={<SettingsEthernetIcon color="primary" style={{marginLeft: 10}}/>}/>
+
 
 
           </Grid>
@@ -146,7 +145,7 @@ class APIDashboard extends React.Component {
             <TestingChecklist/>
           </Grid>
         </Grid>
-        <IntegrationsDashboard />
+        {/*<IntegrationsDashboard />*/}
       </div>
     );
   }
@@ -154,7 +153,7 @@ class APIDashboard extends React.Component {
 
 export default withProductDemoContext(withNavigationContext(withIntegrationsContext(withRfcContext(withStyles(styles)(APIDashboard)))));
 
-const SummaryStatus = withStyles(styles)(({on, onText, offText, classes}) => {
+export const SummaryStatus = withStyles(styles)(({on, onText, offText, classes}) => {
   return (
     <div style={{alignItems: 'center', display: 'flex', marginRight: 14}}>
       {on ? <CheckIcon style={{color: AddedGreen, fontSize: 14}}/> :

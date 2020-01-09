@@ -1,31 +1,35 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import { DocGrid } from './DocGrid';
-import { AppBar, Typography } from '@material-ui/core';
-import { DocSubGroup } from './DocSubGroup';
-import { DocParameter } from './DocParameter';
-import { HeadingContribution, MarkdownContribution } from './DocContribution';
-import { EndpointOverviewCodeBox } from './DocCodeBox';
+import {DocGrid} from './DocGrid';
+import {AppBar, Typography} from '@material-ui/core';
+import {DocSubGroup} from './DocSubGroup';
+import {DocParameter} from './DocParameter';
+import {HeadingContribution, MarkdownContribution} from './DocContribution';
+import {EndpointOverviewCodeBox} from './DocCodeBox';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import compose from 'lodash.compose'
-import { DocResponse } from './DocResponse';
+import compose from 'lodash.compose';
+import {DocResponse} from './DocResponse';
 import Collapse from '@material-ui/core/Collapse';
-import { DocRequest } from './DocRequest';
-import { withRfcContext } from '../../contexts/RfcContext';
-import { asPathTrail, getNameWithFormattedParameters, isPathParameter } from '../utilities/PathUtilities';
-import { updateContribution } from '../../engine/routines';
+import {DocRequest} from './DocRequest';
+import {withRfcContext} from '../../contexts/RfcContext';
+import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../utilities/PathUtilities';
+import {updateContribution} from '../../engine/routines';
 import sortBy from 'lodash.sortby';
 import Button from '@material-ui/core/Button';
-import { HighlightedIDsStore } from '../shapes/HighlightedIDs';
+import {HighlightedIDsStore} from '../shapes/HighlightedIDs';
 import Toolbar from '@material-ui/core/Toolbar';
-import { Link } from 'react-router-dom';
-import { withNavigationContext } from '../../contexts/NavigationContext';
-import { Helmet } from 'react-helmet';
-import groupby from 'lodash.groupby'
-import { BODY_DESCRIPTION, DESCRIPTION, PURPOSE } from '../../ContributionKeys';
-import { NamerStore } from '../shapes/Namer';
-import { getNormalizedBodyDescriptor } from '../../utilities/RequestUtilities';
+import {Link} from 'react-router-dom';
+import {withNavigationContext} from '../../contexts/NavigationContext';
+import {Helmet} from 'react-helmet';
+import groupby from 'lodash.groupby';
+import {BODY_DESCRIPTION, DESCRIPTION, PURPOSE} from '../../ContributionKeys';
+import {NamerStore} from '../shapes/Namer';
+import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
 import {DocQueryParams} from './DocQueryParams';
+import {SummaryStatus} from '../dashboards/APIDashboard';
+import {LightTooltip} from '../tooltips/LightTooltip';
+import {TrafficSessionContext} from '../../contexts/TrafficSessionContext';
+import {HasDiffRequestToolBar} from '../navigation/NewBehavior';
 
 const styles = theme => ({
   root: {
@@ -74,50 +78,50 @@ class EndpointPageDataLoader extends React.Component {
 
   state = {
     examples: []
-  }
+  };
 
   componentDidMount() {
-    const { specService, requestId } = this.props
+    const {specService, requestId} = this.props;
     if (specService) {
       specService.listExamples(requestId)
-        .then(({ examples }) => {
+        .then(({examples}) => {
           //take from the end
-          this.setState({ examples: examples.reverse() })
+          this.setState({examples: examples.reverse()});
         })
         .catch(e => {
-          console.error(e)
-        })
+          console.error(e);
+        });
     }
   }
 
   requestBodyExample() {
-    const firstExample = this.state.examples[0]
+    const firstExample = this.state.examples[0];
     if (firstExample) {
-      return firstExample.request.body
+      return firstExample.request.body;
     }
   }
 
   responseExamples() {
-    const grouped = groupby(this.state.examples, (e) => e.response.statusCode)
+    const grouped = groupby(this.state.examples, (e) => e.response.statusCode);
     return (statusCode) => {
-      return grouped[statusCode] && grouped[statusCode][0].response.body
-    }
+      return grouped[statusCode] && grouped[statusCode][0].response.body;
+    };
   }
 
   render() {
 
-    const { requestId, showShapesFirst, classes, handleCommand, cachedQueryResults, queries } = this.props
+    const {requestId, showShapesFirst, classes, handleCommand, cachedQueryResults, queries} = this.props;
 
-    const { requests, pathsById, responses, contributions, requestParameters } = cachedQueryResults;
+    const {requests, pathsById, responses, contributions, requestParameters} = cachedQueryResults;
 
     const request = requests[requestId];
 
     if (!request) {
-      return <div>Request not found</div>
+      return <div>Request not found</div>;
     }
 
-    const { requestDescriptor } = request;
-    const { httpMethod, pathComponentId, bodyDescriptor } = requestDescriptor;
+    const {requestDescriptor} = request;
+    const {httpMethod, pathComponentId, bodyDescriptor} = requestDescriptor;
 
     //Path
     const pathTrail = asPathTrail(pathComponentId, pathsById);
@@ -131,7 +135,7 @@ class EndpointPageDataLoader extends React.Component {
       };
     });
 
-    const fullPath = pathTrailWithNames.map(({ pathComponentName }) => pathComponentName)
+    const fullPath = pathTrailWithNames.map(({pathComponentName}) => pathComponentName)
       .join('/');
 
     const pathParameters = pathTrail
@@ -159,7 +163,7 @@ class EndpointPageDataLoader extends React.Component {
     const queryString = queryParameter ? ({
       shapeId: queryParameter.requestParameterDescriptor.shapeDescriptor.ShapedRequestParameterShapeDescriptor.shapeId,
       flatShape: queries.flatShapeForShapeId(queryParameter.requestParameterDescriptor.shapeDescriptor.ShapedRequestParameterShapeDescriptor.shapeId, [])
-    }) : null
+    }) : null;
 
     return (
       <div className={classes.wrapper}>
@@ -188,7 +192,7 @@ class EndpointPageDataLoader extends React.Component {
   }
 }
 
-export const EndpointPageWithQuery = compose(withStyles(styles), withRfcContext)(EndpointPageDataLoader)
+export const EndpointPageWithQuery = compose(withStyles(styles), withRfcContext)(EndpointPageDataLoader);
 
 class _EndpointPage extends React.Component {
 
@@ -196,7 +200,7 @@ class _EndpointPage extends React.Component {
     showAllResponses: false
   };
 
-  toggleAllResponses = () => this.setState({ showAllResponses: true });
+  toggleAllResponses = () => this.setState({showAllResponses: true});
 
   render() {
     const {
@@ -227,29 +231,29 @@ class _EndpointPage extends React.Component {
               updateContribution(requestId, PURPOSE, value);
             }}
           />
-          <div style={{ marginBottom: 6 }}>
+          <div style={{marginBottom: 6}}>
             <MarkdownContribution
               value={endpointDescription}
               label="Detailed Description"
               onChange={(value) => {
                 updateContribution(requestId, DESCRIPTION, value);
-              }} />
+              }}/>
           </div>
 
           {parameters.length ? (
             <DocSubGroup title="Path Parameters">
               {parameters.map(i => <DocParameter title={i.name}
-                paramId={i.pathId}
-                updateContribution={updateContribution}
-                description={i.description} />)}
+                                                 paramId={i.pathId}
+                                                 updateContribution={updateContribution}
+                                                 description={i.description}/>)}
             </DocSubGroup>
           ) : null}
         </div>
       );
 
-      const right = <EndpointOverviewCodeBox method={method} url={url} />;
+      const right = <EndpointOverviewCodeBox method={method} url={url}/>;
 
-      return <DocGrid left={left} right={right} />;
+      return <DocGrid left={left} right={right}/>;
     })();
 
     const queryParameters = <DocQueryParams {...queryString}
@@ -257,7 +261,7 @@ class _EndpointPage extends React.Component {
                                             getContribution={getContribution}/>;
 
     const requestBodyRender = (() => {
-      const { httpContentType, shapeId, isRemoved } = requestBody;
+      const {httpContentType, shapeId, isRemoved} = requestBody;
       if (Object.keys(requestBody).length && !isRemoved) {
         return (
           <DocRequest
@@ -275,9 +279,9 @@ class _EndpointPage extends React.Component {
 
 
     const responsesRendered = (() => responses.map(response => {
-      const { responseId, responseDescriptor } = response;
-      const { httpStatusCode, bodyDescriptor } = responseDescriptor;
-      const { httpContentType, shapeId } = getNormalizedBodyDescriptor(bodyDescriptor);
+      const {responseId, responseDescriptor} = response;
+      const {httpStatusCode, bodyDescriptor} = responseDescriptor;
+      const {httpContentType, shapeId} = getNormalizedBodyDescriptor(bodyDescriptor);
 
       return (
         <DocResponse
@@ -304,18 +308,18 @@ class _EndpointPage extends React.Component {
         {endpointOverview}
         {queryParameters}
 
-        <div style={{ marginTop: 65, marginBottom: 65 }} />
+        <div style={{marginTop: 65, marginBottom: 65}}/>
         {/*{queryParameters}*/}
         {requestBodyRender}
-        <div style={{ marginTop: 65, marginBottom: 65 }} />
+        <div style={{marginTop: 65, marginBottom: 65}}/>
         {firstResponse}
 
         {showButton && (
           <Button variant="outlined"
-            color="primary"
-            onClick={this.toggleAllResponses}
-            className={classes.showMore}>
-            <ExpandMoreIcon style={{ marginRight: 6 }} />
+                  color="primary"
+                  onClick={this.toggleAllResponses}
+                  className={classes.showMore}>
+            <ExpandMoreIcon style={{marginRight: 6}}/>
             Show ({remainingResponses.length}) Other Response{remainingResponses.length > 1 && 's'}
           </Button>
         )}
@@ -329,11 +333,11 @@ class _EndpointPage extends React.Component {
 
 export const EndpointPage = withStyles(styles)(_EndpointPage);
 
-export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyles(styles)(({ classes, cachedQueryResults, baseUrl, match }) => {
+export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyles(styles)(({classes, cachedQueryResults, baseUrl, match}) => {
 
-  const { requestId } = match.params
+  const {requestId} = match.params;
 
-  const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE)
+  const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
 
   return (
     <div className={classes.container}>
@@ -341,29 +345,21 @@ export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyl
       <Helmet>
         <title>{purpose}</title>
       </Helmet>
-
       <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
         <Toolbar variant="dense">
-
-          <Link to={baseUrl} style={{ textDecoration: 'none' }}>
-            <Button color="primary">Back to API Overview</Button>
-          </Link>
-
-          <div style={{ flex: 1, textAlign: 'center' }}>
+          <HasDiffRequestToolBar requestId={requestId} />
+          <div style={{flex: 1, textAlign: 'center'}}>
             <Typography variant="h6" color="primary">{purpose}</Typography>
           </div>
-
-          <div style={{ width: 175 }} />
-
         </Toolbar>
       </AppBar>
 
       <div className={classes.scroll}>
         <HighlightedIDsStore>
-          <EndpointPageWithQuery requestId={requestId} />
+          <EndpointPageWithQuery requestId={requestId}/>
         </HighlightedIDsStore>
       </div>
 
     </div>
   );
-})))
+})));

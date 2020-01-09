@@ -8,7 +8,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider';
-import {StyledTab, StyledTabs} from '../requests/DocCodeBox';
 import {secondary} from '../../theme';
 import Collapse from '@material-ui/core/Collapse';
 import {withNavigationContext} from '../../contexts/NavigationContext';
@@ -99,12 +98,12 @@ class Navigation extends React.Component {
 
     const {operationsToRender, concepts, allPaths} = apiOverview;
 
-    const TabsMode = ({active}) => (
-      <StyledTabs value={active} style={{width: 180, margin: '0 auto'}}>
-        <StyledTab component={Link} to={baseUrl+'/dashboard'} label="Documentation" value={0}/>
-        <StyledTab component={Link} to={baseUrl+'/integrations'} label="Integrations" value={1}/>
-      </StyledTabs>
-    );
+    // const TabsMode = ({active}) => (
+    //   <StyledTabs value={active} style={{width: 180, margin: '0 auto'}}>
+    //     <StyledTab component={Link} to={baseUrl+'/dashboard'} label="Documentation" value={0}/>
+    //     <StyledTab component={Link} to={baseUrl+'/integrations'} label="Integrations" value={1}/>
+    //   </StyledTabs>
+    // );
 
     return (
       <div className={classes.root}>
@@ -126,22 +125,8 @@ class Navigation extends React.Component {
             </div>
 
             <Typography variant="h6" className={classes.title}>
-              <Switch>
-                <Route path={routerPaths.integrationsPath(entryBasePath)} component={({match}) => <div>
-                  <Typography variant="overline">Integration with:</Typography>
-                  <br/>
-                  {match.params.integrationName}
-                </div>}/>
-                <Route exact path={routerPaths.integrationsDashboard(entryBasePath)} component={() => <>Integrations</>}/>
-                <Route path={entryBasePath} component={() => <>{cachedQueryResults.apiName}</>}/>
-              </Switch>
+              {cachedQueryResults.apiName}
             </Typography>
-
-            <Switch>
-              <Route path={routerPaths.integrationsDashboard(entryBasePath)} component={() => <TabsMode active={1}/>}/>
-              <Route path={entryBasePath} component={() => <TabsMode active={0}/>}/>
-            </Switch>
-
 
             <Switch>
               <Route path={routerPaths.integrationsDashboard(entryBasePath)} component={() => <IntegrationsSubMenu basePath={entryBasePath + '/integrations/'}/>}/>
@@ -158,7 +143,7 @@ class Navigation extends React.Component {
                                       allPaths={allPaths}
                                       concepts={concepts}/>
                     )}/>
-                    <Route path={routerPaths.request(entryBasePath)} component={() => (
+                    <Route component={() => (
                       <ApiDocsSubMenu operationsToRender={operationsToRender}
                                       basePath={baseUrl + '/requests/'}
                                       cachedQueryResults={cachedQueryResults}

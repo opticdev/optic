@@ -15,13 +15,15 @@ import {track} from '../../Analytics';
 
 class RequestDiffX extends React.Component {
   handleDiscard = async () => {
-    const { specService, eventStore, rfcId } = this.props;
+    const { specService, eventStore, rfcId, match } = this.props;
+    const { requestId } = match.params;
     const { pushRelative } = this.props;
 
     const events = await specService.listEvents()
     eventStore.remove(rfcId)
     eventStore.bulkAdd(rfcId, events)
-    pushRelative('');
+
+    pushRelative('/requests/'+requestId);
   }
   render() {
     const { match } = this.props;
@@ -76,11 +78,13 @@ class RequestDiffX extends React.Component {
               })
           )
 
+          const redirectTo = `/requests/${requestId}`
+
           if (addedFirst) {
-            this.props.pushRelative('?documented_endpoint=true')
+            this.props.pushRelative(redirectTo+'?documented_endpoint=true')
             track('Documented First Endpoint in an API')
           } else {
-            this.props.pushRelative('')
+            this.props.pushRelative(redirectTo)
           }
         }}
         onDiscard={this.handleDiscard}
@@ -131,6 +135,13 @@ const DiffPageStateManager = withRfcContext((props) => {
   const [interpretationIndex, setInterpretationIndex] = useState(0);
   const [dependentCommands, setDependentCommands] = useState([]);
   const interpretation = interpretations[interpretationIndex]
+
+  if (!interpretation) {
+    //reset internal
+    setTimeout(() => setInterpretationIndex(0), 1)
+    return null
+  }
+
   const commands = interpretation ? JsonHelper.seqToJsArray(interpretation.commands) : [];
   const { sample, pathId, requestId, index } = item;
 
