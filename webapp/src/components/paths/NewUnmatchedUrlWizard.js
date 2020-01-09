@@ -94,7 +94,13 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     });
   };
 
-  setPreviewSample = (previewSample) => () => this.setState({ previewSample });
+  setPreviewSample = (previewSample) => () => {
+    if (!this.state.targetUrl) {
+      console.log('previewing')
+      this.setState({ previewSample });
+    }
+  }
+
   setPurpose = (purpose) => this.setState({ purpose });
 
   selectTarget = (targetUrl) => () => {
