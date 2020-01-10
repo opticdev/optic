@@ -19,13 +19,14 @@ import {DisplayPath} from '../paths/DisplayPath';
 import {withNavigationContext} from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
 import {PathIdToPathString} from '../paths/PathIdToPathString';
-import {updateContribution} from '../../engine/routines';
+import {renameShape, updateContribution} from '../../engine/routines';
 import { NavHashLink as NavLink } from 'react-router-hash-link';
 import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import {Helmet} from 'react-helmet';
 import * as uniqBy from 'lodash.uniqby'
 import {withApiOverviewContext} from '../../contexts/ApiOverviewContext';
 import {ProductDemoStoreBase} from '../onboarding/InlineDocs';
+import SetupSteps from '../onboarding/SetupSteps';
 
 const drawerWidth = 320;
 const appBarOffset = 50
@@ -181,9 +182,21 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
 
 export default compose(withRfcContext, withApiOverviewContext, withNavigationContext)(function ApiOverview(props) {
   const {paths, cachedQueryResults, handleCommand, apiOverview} = props;
+  const {pathsById, contributions} = cachedQueryResults;
   const classes = useStyles();
 
   const {operationsToRender, concepts} = apiOverview
+
+  if (operationsToRender.length === 0) {
+    return (
+      <div className={classes.root}>
+        <CssBaseline/>
+        <main className={classes.content}>
+        <SetupSteps />
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className={classes.root}>
@@ -193,7 +206,6 @@ export default compose(withRfcContext, withApiOverviewContext, withNavigationCon
                     style={{paddingTop: 20}}>Endpoints</Typography>}
 
         {operationsToRender.map(operation => {
-          const {pathsById, contributions} = cachedQueryResults;
           const pathTrail = asPathTrail(operation.path.pathId, pathsById);
           const pathParameters = pathTrail
             .map(pathId => pathsById[pathId])
@@ -219,13 +231,20 @@ export default compose(withRfcContext, withApiOverviewContext, withNavigationCon
           );
         })}
 
-        {concepts.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}>Concepts</Typography>}
+        {concepts.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}>Shapes</Typography>}
 
         {concepts.map(concept => (
           <ConceptOverview
             name={concept.name}
             shapeId={concept.shapeId}
             example={{name: 'fizo', age: 15, breed: 'husky'}}
+            description={contributions.getOrUndefined(concept.shapeId, DESCRIPTION)}
+            updateContribution={(id, key, value) => {
+              handleCommand(updateContribution(id, key, value));
+            }}
+            renameShape={(value) => {
+              handleCommand(renameShape(concept.shapeId, value));
+            }}
           />
         ))}
 

@@ -6,6 +6,7 @@ import {HeadingContribution, MarkdownContribution} from '../requests/DocContribu
 import {ShapeOnly} from '../requests/DocCodeBox';
 import {HighlightedIDsStore} from '../shapes/HighlightedIDs';
 import {StickyRegion} from '../shared/StickyRegion';
+import {DESCRIPTION} from '../../ContributionKeys';
 
 const styles = theme => ({
   root: {
@@ -29,14 +30,16 @@ const styles = theme => ({
 class ConceptOverview extends React.Component {
   render() {
 
-    const {classes, name, description, shapeId} = this.props;
+    const {classes, name, description, shapeId, renameShape, updateContribution} = this.props;
 
     const left = (
       <StickyRegion>
         <div>
-          <HeadingContribution value={name} label="What is this concept called?"/>
+          <HeadingContribution value={name} label="What is this concept called?" onChange={(value) => renameShape(value)}/>
           <div style={{marginTop: -6, marginBottom: 6}}>
-            <MarkdownContribution value={description} label="What is this concept used for?"/>
+            <MarkdownContribution value={description} label="What is this concept used for?" onChange={(value) => {
+              updateContribution(shapeId, DESCRIPTION, value)
+            }}/>
           </div>
           {/*<DocSubGroup title="Usages">*/}
           {/*  <ul className={classes.list}>*/}

@@ -20,6 +20,7 @@
     "classnames": "^2.2.6",
     "copy-to-clipboard": "^3.2.0",
     "css-loader": "2.1.1",
+    "deep-equal": "latest",
     "dotenv": "6.2.0",
     "dotenv-expand": "4.2.0",
     "eslint": "^5.16.0",
@@ -80,8 +81,7 @@
     "webpack": "4.29.6",
     "webpack-dev-server": "3.2.1",
     "webpack-manifest-plugin": "2.0.4",
-    "workbox-webpack-plugin": "4.2.0",
-    "deep-equal": "latest"
+    "workbox-webpack-plugin": "4.2.0"
   },
   "scripts": {
     "start": "node --max-old-space-size=8192 scripts/start.js",

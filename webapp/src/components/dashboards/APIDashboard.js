@@ -251,7 +251,7 @@ const TestingChecklist = withStyles(styles)(({classes}) => {
       <DocSubGroup title={'Setup Live Testing'} style={{marginTop: -5}}>
         <List dense>
           <CheckListItem text="Sign-up for Optic Pro"/>
-          <CheckListItem text="Add Optic Monitoring to your Infrastructure"/>
+          <CheckListItem disabled text="Add Optic Monitoring to your Infrastructure"/>
         </List>
       </DocSubGroup>
     </Card>

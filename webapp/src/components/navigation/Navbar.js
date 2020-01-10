@@ -22,6 +22,8 @@ import {routerPaths} from '../../RouterPaths';
 import {Link, Route, Switch} from 'react-router-dom';
 import {flatMapOperations, withApiOverviewContext} from '../../contexts/ApiOverviewContext';
 import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
+import {DocDivider} from '../requests/DocConstants';
+import {Show} from '../shared/Show';
 
 const drawerWidth = 280;
 
@@ -62,9 +64,8 @@ const styles = theme => ({
     borderRight: `3px solid ${secondary}`
   },
   subHeader: {
-    color: '#c4c4c4',
-    textTransform: 'uppercase',
-    padding: 0,
+    padding: 2,
+    textAlign: 'center'
   },
   arrow: {
     color: '#c4c4c4',
@@ -129,7 +130,6 @@ class Navigation extends React.Component {
             </Typography>
 
             <Switch>
-              <Route path={routerPaths.integrationsDashboard(entryBasePath)} component={() => <IntegrationsSubMenu basePath={entryBasePath + '/integrations/'}/>}/>
               <Route path={baseUrl} component={() => (
                 <List>
                   <MainMenuItem name="Dashboard" to={baseUrl+'/dashboard'}/>
@@ -140,12 +140,14 @@ class Navigation extends React.Component {
                       <ApiDocsSubMenu operationsToRender={operationsToRender}
                                       cachedQueryResults={cachedQueryResults}
                                       basePath={'#'}
+                                      baseConceptsPath={baseUrl + '/documentation#'}
                                       allPaths={allPaths}
                                       concepts={concepts}/>
                     )}/>
                     <Route component={() => (
                       <ApiDocsSubMenu operationsToRender={operationsToRender}
                                       basePath={baseUrl + '/requests/'}
+                                      baseConceptsPath={baseUrl + '/documentation#'}
                                       cachedQueryResults={cachedQueryResults}
                                       allPaths={allPaths}
                                       concepts={concepts}/>
@@ -186,6 +188,10 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
   const handleClick = () => {
     setOpen(!open);
   };
+
+  if (operationsToRender.length === 0) {
+    return null
+  }
 
   if (!name && operationsToRender[0]) {
 
@@ -245,12 +251,18 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
               <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
             );
 
+
             return (
               <ListItem button
                         disableRipple
-                        to={`${basePath}${requestId}`} exact activeClassName={basePath !== '#' && classes.selected}
+                        to={`${basePath}${requestId}`}
+                        exact
+                        activeClassName={classes.selected}
+                        isActive={(match, location) => {
+                          return (match && !match.path.endsWith('/documentation')) || location.hash === `#${requestId}`
+                        }}
                         component={NavLink}
-                        style={{textDecoration: 'none', color: 'black'}}
+                        style={{textDecoration: 'none', color: 'black', height: 36}}
                         dense
                         className={classes.nested}>
                 <ListItemText
@@ -270,38 +282,57 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
   );
 })));
 
-export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, allPaths, concepts, cachedQueryResults, basePath}) => {
+export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, baseConceptsPath, allPaths, concepts, cachedQueryResults, basePath}) => {
 
   return <>
+    <Show when={operationsToRender.length} style={{marginTop: 11}}>
+    <Divider style={{backgroundColor: '#3d4989'}}/>
     <List
       component="nav"
+      subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>
+        <Typography variant="overline" className={classes.title}>Endpoints</Typography>
+      </ListSubheader>}
       dense={true}
     >
       {allPaths.map(i => <EndpointBasePath path={i} basePath={basePath}
                                            operationsToRender={flatMapOperations([i], cachedQueryResults)}/>)}
     </List>
-    <Divider/>
+    </Show>
+    <Show when={concepts.length}>
+    <Divider style={{backgroundColor: '#3d4989'}}/>
     <List
       component='nav'
-      subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>{'Concepts'}</ListSubheader>}
+      subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>
+        <Typography variant="overline" className={classes.title}>Shapes</Typography>
+      </ListSubheader>}
       dense={true}
     >
       {
-        concepts.map(i => (
-
+        concepts.map(i => {
+          return (
           <ListItem button dense disableRipple
-                    to={`${basePath}${i.shapeId}`}
-                    activeClassName={basePath !== '#' && classes.selected}
+                    to={`${baseConceptsPath}${i.shapeId}`}
+                    exact
+                    activeClassName={classes.selected}
+                    isActive={(match, location) => {
+                      if (!match) {
+                        return false;
+                      }
+                      return location.hash === `#${i.shapeId}`
+                    }}
+                    component={NavLink}
+                    className={classes.nested}
                     style={{textDecoration: 'none', color: 'black'}}>
             <ListItemText
               primary={i.name}
               dense
               classes={{dense: classes.dense, selected: classes.selected}}
-              primaryTypographyProps={{className: classes.item}}/>
+              primaryTypographyProps={{className: classes.item, style: {fontSize: 12}}}/>
           </ListItem>
-        ))
+        )})
       }
     </List>
+    </Show>
   </>;
 });
 

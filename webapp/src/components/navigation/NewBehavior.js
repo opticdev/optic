@@ -41,6 +41,7 @@ import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import {LightTooltip} from '../tooltips/LightTooltip';
 import {SummaryStatus} from '../dashboards/APIDashboard';
+import CheckIcon from '@material-ui/icons/Check';
 
 const useStyles = makeStyles({
   section: {
@@ -137,6 +138,16 @@ function NewBehavior(props) {
 
   if (isLoading) {
     return null;
+  }
+
+  if (requestIdsWithDiffs.length === 0 && unrecognizedUrlCount === 0) {
+    return (
+      <Collapse in={true} appear={true} style={{width: '100%'}}>
+        <div className={classes.notificationBar}>
+          <Typography variant="subtitle1" style={{color: 'white', marginTop: 8}}> <CheckIcon style={{color: AddedGreen, fontSize: 16, paddingTop: 4, paddingRight: 5}}/>In-Sync</Typography>
+        </div>
+      </Collapse>
+    )
   }
 
   const handleClick = event => {
@@ -310,10 +321,20 @@ class NewBehaviorWrapperBase extends React.Component {
     if (isLoading) {
       return (<NewBehavior isLoading={true}/>);
     }
+    //
+    // const {isEmpty} = this.props;
+    // if (!lastSessionId) {
+    //   if (isEmpty) {
+    //     return (
+    //       <div>EMPTYYY FHJKDSHFJKSHFDK</div>
+    //     );
+    //   }
+    //   return <div>EMPTYYY A</div>;
+    // }
 
-    const {specService, baseUrl, children} = this.props;
+    const {specService, baseUrl, children, renderNoSession} = this.props;
     return (
-      <TrafficSessionStore sessionId={lastSessionId} specService={specService}>
+      <TrafficSessionStore sessionId={lastSessionId} specService={specService} renderNoSession={renderNoSession}>
         <TrafficSessionContext.Consumer>
           {(context) => {
             const {rfcId, rfcService} = this.props;
@@ -323,9 +344,6 @@ class NewBehaviorWrapperBase extends React.Component {
             const rfcState = rfcService.currentState(rfcId);
             const requestIdsWithDiffs = getRequestIdsWithDiffs(rfcState, diffStateProjections);
             const unrecognizedUrlCount = getUnrecognizedUrlCount(rfcState, diffStateProjections);
-            if (unrecognizedUrlCount === 0 && requestIdsWithDiffs.length === 0) {
-              return null;
-            }
 
             return (<>
               {children({
@@ -334,7 +352,8 @@ class NewBehaviorWrapperBase extends React.Component {
                 lastSessionId,
                 baseUrl,
                 unrecognizedUrlCount,
-                cachedQueryResults
+                cachedQueryResults,
+                session: context.session
               })}
             </>);
           }}
@@ -345,7 +364,7 @@ class NewBehaviorWrapperBase extends React.Component {
   }
 }
 
-const NewBehaviorWrapper = compose(withRfcContext, withIntegrationsContext, withNavigationContext)(NewBehaviorWrapperBase);
+export const NewBehaviorWrapper = compose(withRfcContext, withIntegrationsContext, withNavigationContext)(NewBehaviorWrapperBase);
 
 export const NewBehaviorSideBar = () => (
   <NewBehaviorWrapper>
