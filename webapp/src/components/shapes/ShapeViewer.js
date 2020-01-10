@@ -11,6 +11,10 @@ import { Highlight, HighlightedIDsStore, withHighlightedIDs } from './Highlighte
 import Menu from '@material-ui/core/Menu';
 import { NamerStore, withNamer } from './Namer';
 import equal from 'deep-equal'
+import sha1 from 'node-sha1'
+import stringify from 'json-stable-stringify'
+import niceTry from 'nice-try'
+
 
 const styles = theme => ({
   base: {
@@ -301,13 +305,16 @@ class _ShapeViewerBase extends React.PureComponent {
 
 const ShapeViewer = withStyles(styles)(_ShapeViewerBase);
 export default ShapeViewer;
-class ExampleViewerBase extends React.PureComponent {
+class ExampleViewerBase extends React.Component {
   render() {
     const { queries, example } = this.props;
-    const flatShape = queries.memoizedFlatShapeForExample(example)
+    console.log(example)
+    const hash = niceTry(() => sha1(stringify(example))) || 'empty-example'
+    const flatShape = queries.memoizedFlatShapeForExample(example, hash)
+    console.log('got here', flatShape.renderId)
     return (
       <NamerStore>
-        <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} />
+        <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} renderId={hash} />
       </NamerStore>
     )
   }
@@ -316,6 +323,7 @@ export const ExampleViewer = withRfcContext(ExampleViewerBase);
 
 export const ShapeViewerWithQuery = withHighlightedIDs(withRfcContext(({ shapeId, addedIds, changedIds, queries }) => {
   const affectedIds = [...addedIds, ...changedIds]
+
   const flatShape = queries.flatShapeForShapeId(shapeId, affectedIds);
   const expand = Array.from(new Set([...flatShape.pathsForAffectedIds.flatMap(x => x)]))
 

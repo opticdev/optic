@@ -95,7 +95,6 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
   setPreviewSample = (previewSample) => () => {
     if (!this.state.targetUrl) {
-      console.log('previewing')
       this.setState({ previewSample });
     }
   }
@@ -349,6 +348,7 @@ const PreviewSample = ({ sample }) => {
 
   const { url, method, body: requestBody } = sample.request;
   const { statusCode, body: responseBody } = sample.response;
+
   return (
     <div style={{paddingTop: 22, paddingBottom: 150}}>
       <Typography variant="h4" color="primary">Observed</Typography>

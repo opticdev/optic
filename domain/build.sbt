@@ -18,7 +18,6 @@ val circeVersion = "0.10.0"
 
 libraryDependencies += "io.github.cquiroz" %% "scala-java-time" % "2.0.0-RC2"
 libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.0.0-RC2"
-
 libraryDependencies ++= Seq(
   "io.circe" %%% "circe-core",
   "io.circe" %%% "circe-generic",

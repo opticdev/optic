@@ -62,16 +62,6 @@ object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcComma
       }
     }
 
-    case (cc: RfcCommandContext, apiSetupCommand: APISetupCommand) => {
-      val eventContext: Option[EventContext] = Some(Events.fromCommandContext(cc))
-      apiSetupCommand match {
-        case c: Commands.MarkSetupStageComplete => {
-          persist(Events.SetupStepReached(c.step))
-        }
-        case _ => noEffect()
-      }
-    }
-
     case _ => noEffect()
   }
 

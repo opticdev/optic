@@ -3581,7 +3581,7 @@ clone-deep@^2.0.1:
     kind-of "^6.0.0"
     shallow-clone "^1.0.0"
 
-clsx@^1.0.2, clsx@^1.0.4:
+clsx@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.0.4.tgz#0c0171f6d5cb2fe83848463c15fcc26b4df8c2ec"
   integrity sha512-1mQ557MIZTrL/140j+JVdRM6e31/OA4vTYxXgqIIZlndyfjHpyawKZia1Im05Vp9BWmImkcNrNtFYQMyFcgJDg==
@@ -8304,6 +8304,11 @@ node-releases@^1.1.29, node-releases@^1.1.42:
   integrity sha512-Rmfnj52WNhvr83MvuAWHEqXVoZXCcDQssSOffU4n4XOL9sPrP61mSZ88g25NqmABDvH7PiAlFCzoSCSdzA293w==
   dependencies:
     semver "^6.3.0"
+
+node-sha1@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/node-sha1/-/node-sha1-1.0.1.tgz#32ed847d8513157b96dec6b79e8c47bcaeb78e1c"
+  integrity sha1-Mu2EfYUTFXuW3sa3noxHvK63jhw=
 
 normalize-package-data@^2.3.2:
   version "2.5.0"

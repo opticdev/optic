@@ -17,9 +17,6 @@ object Events {
 
   sealed trait VersionControlEvent extends RfcEvent
 
-  case class SetupStepReached(step: String, eventContext: Option[EventContext] = None) extends APISetupEvent
-  sealed trait APISetupEvent extends RfcEvent
-
   case class EventContext(clientId: String, clientSessionId: String, clientCommandBatchId: String, createdAt: String)
 
   def fromCommandContext(commandContext: BaseCommandContext) = {
