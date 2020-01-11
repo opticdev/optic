@@ -135,10 +135,15 @@ class Navigation extends React.Component {
             <Switch>
               <Route path={baseUrl} component={() => (
                 <List>
+
+                  <Switch>
+                    <Route exact path={routerPaths.init(entryBasePath)}
+                           component={() => <MainMenuItem name="Finish Setup" to={baseUrl + '/init'}/>}/>
+                  </Switch>
+
                   <MainMenuItem name="Dashboard" to={baseUrl + '/dashboard'}/>
                   <MainMenuItem name="API Documentation" to={baseUrl + '/documentation'}/>
 
-                  <Switch>
                     <Route exact path={routerPaths.apiDocumentation(entryBasePath)} component={() => (
                       <ApiDocsSubMenu operationsToRender={operationsToRender}
                                       cachedQueryResults={cachedQueryResults}
@@ -155,7 +160,6 @@ class Navigation extends React.Component {
                                       allPaths={allPaths}
                                       concepts={concepts}/>
                     )}/>
-                  </Switch>
                 </List>
               )}/>
             </Switch>

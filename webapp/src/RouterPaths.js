@@ -16,6 +16,7 @@ export const routerPaths = {
     interceptorRoot: () => basePaths.interceptorBasePath,
     localRoot: () => basePaths.localBasePath,
     request: (base) => `${base}/requests/:requestId`,
+    init: (base) => `${base}/init`,
     apiDashboard: (base) => `${base}/dashboard`,
     apiDocumentation: (base) => `${base}/documentation`,
     integrationsDashboard: (base) => `${base}/integrations`,

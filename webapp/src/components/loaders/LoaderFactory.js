@@ -19,6 +19,7 @@ import {IntegrationsSpecService} from '../routes/local/integrations';
 import NewBehavior from '../navigation/NewBehavior';
 import Redirect from 'react-router-dom/es/Redirect';
 import {ProductDemoStore} from '../navigation/ProductDemo';
+import Init from '../onboarding/Init';
 
 const {
   Context: SpecServiceContext,
@@ -108,6 +109,8 @@ class LoaderFactory {
                                 entryBasePath={entryBasePath}
                                 shareButtonComponent={shareButtonComponent}>
                       <Switch>
+                        <Route exact path={routerPaths.init(basePath)}
+                               component={() => <Init />}/>
                         <Route path={routerPaths.request(basePath)}
                                component={withSpecServiceContext(RequestsDetailsPage)}/>
                         <Route path={routerPaths.apiDashboard(basePath)}
@@ -128,39 +131,39 @@ class LoaderFactory {
       }
     }
 
-    class IntegrationsRoutes extends React.Component {
-      render() {
-        const {integrations, match, specService, initialEventsString} = this.props;
-        global.specService = specService;
-
-        const basePath = match.path;
-
-        return (
-          <IntegrationsContextStore integrations={integrations} isIntegrationMode={true}>
-            <SpecServiceContext.Provider value={{specService}}>
-              <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
-                <NavigationStore baseUrl={match.url}>
-                  <RfcStore specService={specService}>
-                    <ApiOverviewContextStore specService={specService}>
-                      <Navigation notifications={notificationAreaComponent}
-                                  integrationMode={true}
-                                  entryBasePath={entryBasePath}
-                                  shareButtonComponent={shareButtonComponent}>
-
-                        <Route path={routerPaths.request(basePath)}
-                               component={withSpecServiceContext(RequestsDetailsPage)}/>
-                        <Route exact path={basePath} component={withSpecServiceContext(ApiOverview)}/>
-                        <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
-                      </Navigation>
-                    </ApiOverviewContextStore>
-                  </RfcStore>
-                </NavigationStore>
-              </InitialRfcCommandsStore>
-            </SpecServiceContext.Provider>
-          </IntegrationsContextStore>
-        );
-      }
-    }
+    // class IntegrationsRoutes extends React.Component {
+    //   render() {
+    //     const {integrations, match, specService, initialEventsString} = this.props;
+    //     global.specService = specService;
+    //
+    //     const basePath = match.path;
+    //
+    //     return (
+    //       <IntegrationsContextStore integrations={integrations} isIntegrationMode={true}>
+    //         <SpecServiceContext.Provider value={{specService}}>
+    //           <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
+    //             <NavigationStore baseUrl={match.url}>
+    //               <RfcStore specService={specService}>
+    //                 <ApiOverviewContextStore specService={specService}>
+    //                   <Navigation notifications={notificationAreaComponent}
+    //                               integrationMode={true}
+    //                               entryBasePath={entryBasePath}
+    //                               shareButtonComponent={shareButtonComponent}>
+    //
+    //                     <Route path={routerPaths.request(basePath)}
+    //                            component={withSpecServiceContext(RequestsDetailsPage)}/>
+    //                     <Route exact path={basePath} component={withSpecServiceContext(ApiOverview)}/>
+    //                     <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
+    //                   </Navigation>
+    //                 </ApiOverviewContextStore>
+    //               </RfcStore>
+    //             </NavigationStore>
+    //           </InitialRfcCommandsStore>
+    //         </SpecServiceContext.Provider>
+    //       </IntegrationsContextStore>
+    //     );
+    //   }
+    // }
 
     const task = async (props) => {
       const {specService} = props;
@@ -185,13 +188,13 @@ class LoaderFactory {
 
     const wrappedTopLevelRoutes = withWrapper(TopLevelRoutes);
 
-    const withIntegrationsWrapper = compose(
-      withTask(({match}) => Promise.resolve(new IntegrationsSpecService(match.params.integrationName)), 'specService'),
-      withTask(task, 'initialEventsString'),
-      withTask(integrationsTask, 'integrations'),
-    );
-
-    const wrappedIntegrationRoutes = withIntegrationsWrapper(IntegrationsRoutes);
+    // const withIntegrationsWrapper = compose(
+    //   withTask(({match}) => Promise.resolve(new IntegrationsSpecService(match.params.integrationName)), 'specService'),
+    //   withTask(task, 'initialEventsString'),
+    //   withTask(integrationsTask, 'integrations'),
+    // );
+    //
+    // const wrappedIntegrationRoutes = withIntegrationsWrapper(IntegrationsRoutes);
 
     class Routes extends React.Component {
       render() {
