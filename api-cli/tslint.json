@@ -15,6 +15,7 @@
     "no-console": false,
     "no-floating-promises": false,
     "no-unused": false,
+    "object-literal-shorthand": false,
     "no-http-string": false
   }
 }
