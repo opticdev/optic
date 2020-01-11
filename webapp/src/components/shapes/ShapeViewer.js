@@ -306,12 +306,19 @@ class _ShapeViewerBase extends React.PureComponent {
 const ShapeViewer = withStyles(styles)(_ShapeViewerBase);
 export default ShapeViewer;
 class ExampleViewerBase extends React.Component {
+
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    if (equal(nextProps.example, this.props.example)) {
+      return false
+    } else {
+      return true
+    }
+  }
+
   render() {
     const { queries, example } = this.props;
-    console.log(example)
     const hash = niceTry(() => sha1(stringify(example))) || 'empty-example'
     const flatShape = queries.memoizedFlatShapeForExample(example, hash)
-    console.log('got here', flatShape.renderId)
     return (
       <NamerStore>
         <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} renderId={hash} />

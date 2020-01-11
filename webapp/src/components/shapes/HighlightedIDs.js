@@ -10,15 +10,15 @@ const {
 class HighlightedIDsStore extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-
     const contextPropsChanged = (!equal(this.props.addedIds, nextProps.addedIds) ||
       !equal(this.props.changedIds, nextProps.changedIds) ||
       !equal(this.props.expand, nextProps.expand))
 
-    if (contextPropsChanged || !equal(this.props.children, nextProps.children)) {
+    const childrenDiff = equal(this.props.children, nextProps.children)
+
+    if (contextPropsChanged || !childrenDiff) {
       return true;
     }
-
   }
 
   render() {

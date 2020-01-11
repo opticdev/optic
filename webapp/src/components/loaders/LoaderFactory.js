@@ -200,7 +200,7 @@ class LoaderFactory {
           <NavigationStore baseUrl={match.url}>
             <ProductDemoStore active={demo}>
             <Switch>
-              <Route path={routerPaths.integrationsPath(basePath)} component={wrappedIntegrationRoutes}/>
+              {/*<Route path={routerPaths.integrationsPath(basePath)} component={wrappedIntegrationRoutes}/>*/}
               <Route path={basePath} component={wrappedTopLevelRoutes}/>
             </Switch>
             </ProductDemoStore>

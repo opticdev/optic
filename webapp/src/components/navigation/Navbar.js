@@ -58,7 +58,10 @@ const styles = theme => ({
     margin: 10
   },
   item: {
-    color: '#c4c4c4'
+    color: '#c4c4c4',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   },
   selected: {
     borderRight: `3px solid ${secondary}`
@@ -132,8 +135,8 @@ class Navigation extends React.Component {
             <Switch>
               <Route path={baseUrl} component={() => (
                 <List>
-                  <MainMenuItem name="Dashboard" to={baseUrl+'/dashboard'}/>
-                  <MainMenuItem name="API Documentation" to={baseUrl+'/documentation'}/>
+                  <MainMenuItem name="Dashboard" to={baseUrl + '/dashboard'}/>
+                  <MainMenuItem name="API Documentation" to={baseUrl + '/documentation'}/>
 
                   <Switch>
                     <Route exact path={routerPaths.apiDocumentation(entryBasePath)} component={() => (
@@ -183,14 +186,8 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
   const {contributions} = cachedQueryResults;
   const {name} = path;
 
-  const [open, setOpen] = React.useState(true);
-
-  const handleClick = () => {
-    setOpen(!open);
-  };
-
   if (operationsToRender.length === 0) {
-    return null
+    return null;
   }
 
   if (!name && operationsToRender[0]) {
@@ -217,6 +214,7 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
           classes={{dense: classes.dense}}
           primaryTypographyProps={{
             variant: 'overline',
+            component: 'div',
             style: {textTransform: 'none', textOverflow: 'ellipsis'},
             className: classes.item
           }}/>
@@ -225,60 +223,43 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
   }
 
   return (
-    <>
-      <ListItem button
-                dense
-                disableRipple
-                onClick={handleClick}>
-        <ListItemText primary={name.substr(1)}
-                      classes={{dense: classes.dense}}
-                      primaryTypographyProps={{
-                        variant: 'overline',
-                        style: {textTransform: 'none'},
-                        className: classes.item
-                      }}/>
-        {open ? <ExpandLess className={classes.arrow}/> : <ExpandMore className={classes.arrow}/>}
-      </ListItem>
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div"
-              dense
-              style={{paddingLeft: 10}}
-              disablePadding>
-          {operationsToRender.map(({requestId, request}) => {
+    <List component="div"
+          dense
+          disablePadding>
+      {operationsToRender.map(({requestId, request}) => {
 
-            const {httpMethod, pathComponentId} = request.requestDescriptor;
-            const purpose = contributions.getOrUndefined(requestId, PURPOSE) || (
-              <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
-            );
+        const {httpMethod, pathComponentId} = request.requestDescriptor;
+        const purpose = contributions.getOrUndefined(requestId, PURPOSE) || (
+          <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
+        );
 
 
-            return (
-              <ListItem button
-                        disableRipple
-                        to={`${basePath}${requestId}`}
-                        exact
-                        activeClassName={classes.selected}
-                        isActive={(match, location) => {
-                          return (match && !match.path.endsWith('/documentation')) || location.hash === `#${requestId}`
-                        }}
-                        component={NavLink}
-                        style={{textDecoration: 'none', color: 'black', height: 36}}
-                        dense
-                        className={classes.nested}>
-                <ListItemText
-                  primary={purpose}
-                  classes={{dense: classes.dense, selected: classes.selected}}
-                  primaryTypographyProps={{
-                    variant: 'overline',
-                    style: {textTransform: 'none', textOverflow: 'ellipsis'},
-                    className: classes.item
-                  }}/>
-              </ListItem>
-            );
-          })}
-        </List>
-      </Collapse>
-    </>
+        return (
+          <ListItem button
+                    disableRipple
+                    to={`${basePath}${requestId}`}
+                    exact
+                    activeClassName={classes.selected}
+                    isActive={(match, location) => {
+                      return (match && !match.path.endsWith('/documentation')) || location.hash === `#${requestId}`;
+                    }}
+                    component={NavLink}
+                    style={{textDecoration: 'none', color: 'black', height: 36}}
+                    dense
+                    className={classes.nested}>
+            <ListItemText
+              primary={purpose}
+              classes={{dense: classes.dense, selected: classes.selected}}
+              primaryTypographyProps={{
+                variant: 'overline',
+                component:'div',
+                style: {textTransform: 'none', textOverflow: 'ellipsis'},
+                className: classes.item
+              }}/>
+          </ListItem>
+        );
+      })}
+    </List>
   );
 })));
 
@@ -286,52 +267,53 @@ export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, 
 
   return <>
     <Show when={operationsToRender.length} style={{marginTop: 11}}>
-    <Divider style={{backgroundColor: '#3d4989'}}/>
-    <List
-      component="nav"
-      subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>
-        <Typography variant="overline" className={classes.title}>Endpoints</Typography>
-      </ListSubheader>}
-      dense={true}
-    >
-      {allPaths.map(i => <EndpointBasePath path={i} basePath={basePath}
-                                           operationsToRender={flatMapOperations([i], cachedQueryResults)}/>)}
-    </List>
+      <Divider style={{backgroundColor: '#3d4989'}}/>
+      <List
+        component="nav"
+        subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>
+          <Typography variant="overline" className={classes.title}>Endpoints</Typography>
+        </ListSubheader>}
+        dense={true}
+      >
+        {allPaths.map(i => <EndpointBasePath path={i} basePath={basePath}
+                                             operationsToRender={flatMapOperations([i], cachedQueryResults)}/>)}
+      </List>
     </Show>
     <Show when={concepts.length}>
-    <Divider style={{backgroundColor: '#3d4989'}}/>
-    <List
-      component='nav'
-      subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>
-        <Typography variant="overline" className={classes.title}>Shapes</Typography>
-      </ListSubheader>}
-      dense={true}
-    >
-      {
-        concepts.map(i => {
-          return (
-          <ListItem button dense disableRipple
-                    to={`${baseConceptsPath}${i.shapeId}`}
-                    exact
-                    activeClassName={classes.selected}
-                    isActive={(match, location) => {
-                      if (!match) {
-                        return false;
-                      }
-                      return location.hash === `#${i.shapeId}`
-                    }}
-                    component={NavLink}
-                    className={classes.nested}
-                    style={{textDecoration: 'none', color: 'black'}}>
-            <ListItemText
-              primary={i.name}
-              dense
-              classes={{dense: classes.dense, selected: classes.selected}}
-              primaryTypographyProps={{className: classes.item, style: {fontSize: 12}}}/>
-          </ListItem>
-        )})
-      }
-    </List>
+      <Divider style={{backgroundColor: '#3d4989'}}/>
+      <List
+        component='nav'
+        subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>
+          <Typography variant="overline" className={classes.title}>Shapes</Typography>
+        </ListSubheader>}
+        dense={true}
+      >
+        {
+          concepts.map(i => {
+            return (
+              <ListItem button dense disableRipple
+                        to={`${baseConceptsPath}${i.shapeId}`}
+                        exact
+                        activeClassName={classes.selected}
+                        isActive={(match, location) => {
+                          if (!match) {
+                            return false;
+                          }
+                          return location.hash === `#${i.shapeId}`;
+                        }}
+                        component={NavLink}
+                        className={classes.nested}
+                        style={{textDecoration: 'none', color: 'black'}}>
+                <ListItemText
+                  primary={i.name}
+                  dense
+                  classes={{dense: classes.dense, selected: classes.selected}}
+                  primaryTypographyProps={{className: classes.item, component:'div', style: {fontSize: 12}}}/>
+              </ListItem>
+            );
+          })
+        }
+      </List>
     </Show>
   </>;
 });
@@ -344,7 +326,7 @@ export const IntegrationsSubMenu = withIntegrationsContext(withStyles(styles)(({
       dense={true}
     >
       {integrations.map(i => {
-        const to = `${basePath}${encodeURIComponent(i.name)}`
+        const to = `${basePath}${encodeURIComponent(i.name)}`;
         return (<ListItem button dense disableRipple
                           to={to}
                           component={NavLink}

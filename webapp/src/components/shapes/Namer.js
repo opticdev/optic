@@ -1,5 +1,6 @@
 import React from 'react'
 import {GenericContextFactory} from '../../contexts/GenericContextFactory';
+import equal from 'deep-equal';
 
 const {
   Context: NamerContext,
