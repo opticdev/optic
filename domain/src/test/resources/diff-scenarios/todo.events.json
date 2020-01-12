@@ -1,70 +1,761 @@
 [
-  {"APINamed":{"eventContext":null,"name":"ToDo"}}
-,{"GitStateSet":{"branchName":"master","commitId":"843a3d0cf8d3db28303970fc9d031edef5e4c2d8","eventContext":{"clientCommandBatchId":"7553e386-a19b-4348-9b14-a380952f1eeb","clientId":"acunniffe@gmail.com","clientSessionId":"9cacd440-adf6-4c7a-bb42-7759e8ef8d59","createdAt":"2019-12-06T16:45:30.116Z"}}}
-,{"PathComponentAdded":{"eventContext":{"clientCommandBatchId":"d7e81fe3-e328-4453-a501-56047239b82f","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:06.192Z"},"name":"todos","parentPathId":"root","pathId":"path_qArblQGcu7"}}
-,{"RequestAdded":{"eventContext":{"clientCommandBatchId":"6e632555-87f5-4ba3-9125-2ec7e14690b6","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:09.241Z"},"httpMethod":"GET","pathId":"path_qArblQGcu7","requestId":"request_H4N9eE2ueT"}}
-,{"ContributionAdded":{"eventContext":{"clientCommandBatchId":"6e632555-87f5-4ba3-9125-2ec7e14690b6","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:09.241Z"},"id":"request_H4N9eE2ueT","key":"purpose","value":"Get todos"}}
-,{"ResponseAdded":{"eventContext":{"clientCommandBatchId":"ad9a7cf9-f1a5-4d37-b1fc-76d56361478e","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:10.268Z"},"httpStatusCode":200,"requestId":"request_H4N9eE2ueT","responseId":"response_arApyb67Wu"}}
-,{"ShapeAdded":{"baseShapeId":"$list","eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.059Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"jghsd0_0"}}
-,{"ShapeAdded":{"baseShapeId":"$object","eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.059Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"jghsd0_1"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.059Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"jghsd0_3"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.059Z"},"fieldId":"jghsd0_2","name":"id","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"jghsd0_2","shapeId":"jghsd0_3"}},"shapeId":"jghsd0_1"}}
-,{"ShapeAdded":{"baseShapeId":"$boolean","eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.060Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"jghsd0_5"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.060Z"},"fieldId":"jghsd0_4","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"jghsd0_4","shapeId":"jghsd0_5"}},"shapeId":"jghsd0_1"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.060Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"jghsd0_7"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.060Z"},"fieldId":"jghsd0_6","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"jghsd0_6","shapeId":"jghsd0_7"}},"shapeId":"jghsd0_1"}}
-,{"ShapeAdded":{"baseShapeId":"jghsd0_1","eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.061Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"jghsd0_8"}}
-,{"ShapeParameterShapeSet":{"eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.061Z"},"shapeDescriptor":{"ProviderInShape":{"consumingParameterId":"$listItem","providerDescriptor":{"ShapeProvider":{"shapeId":"jghsd0_8"}},"shapeId":"jghsd0_0"}}}}
-,{"ShapeAdded":{"baseShapeId":"jghsd0_0","eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.061Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_jUPd6UEZGs"}}
-,{"ResponseBodySet":{"bodyDescriptor":{"httpContentType":"application/json; charset=utf-8","isRemoved":false,"shapeId":"shape_jUPd6UEZGs"},"eventContext":{"clientCommandBatchId":"dae10e50-a602-4d7b-bdd1-9ddbcc654555","clientId":"acunniffe@gmail.com","clientSessionId":"f2707dc8-2186-4cd3-885d-e94464756165","createdAt":"2019-12-06T16:46:11.061Z"},"responseId":"response_arApyb67Wu"}}
-,{"GitStateSet":{"branchName":"master","commitId":"843a3d0cf8d3db28303970fc9d031edef5e4c2d8","eventContext":{"clientCommandBatchId":"ad384e5f-2a6e-4b46-94a8-96ed88807417","clientId":"acunniffe@gmail.com","clientSessionId":"52cab7cf-4b88-4880-80b3-6b116b3bdf3c","createdAt":"2019-12-06T16:47:38.587Z"}}}
-,{"GitStateSet":{"branchName":"master","commitId":"843a3d0cf8d3db28303970fc9d031edef5e4c2d8","eventContext":{"clientCommandBatchId":"18a80c63-8975-4a03-abe3-ea637f8a5a84","clientId":"acunniffe@gmail.com","clientSessionId":"64558272-7ebc-4e41-a359-3892576a6e9d","createdAt":"2019-12-06T18:56:40.417Z"}}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"bb6300a0-469b-4eb3-a807-04d60f333a35","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:46.041Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"LrvQ41_0"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"bb6300a0-469b-4eb3-a807-04d60f333a35","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:46.041Z"},"fieldId":"field_UEpeaLlcAX","name":"dueDate","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_UEpeaLlcAX","shapeId":"LrvQ41_0"}},"shapeId":"jghsd0_1"}}
-,{"ShapeAdded":{"baseShapeId":"$optional","eventContext":{"clientCommandBatchId":"064cb55c-b3e8-4c7e-bc59-784180b566c5","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:47.193Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_vs3HCCEI0J"}}
-,{"ShapeParameterShapeSet":{"eventContext":{"clientCommandBatchId":"064cb55c-b3e8-4c7e-bc59-784180b566c5","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:47.193Z"},"shapeDescriptor":{"ProviderInShape":{"consumingParameterId":"$optionalInner","providerDescriptor":{"ShapeProvider":{"shapeId":"LrvQ41_0"}},"shapeId":"shape_vs3HCCEI0J"}}}}
-,{"FieldShapeSet":{"eventContext":{"clientCommandBatchId":"064cb55c-b3e8-4c7e-bc59-784180b566c5","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:47.193Z"},"shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_UEpeaLlcAX","shapeId":"shape_vs3HCCEI0J"}}}}
-,{"PathParameterAdded":{"eventContext":null,"name":"todoId","parentPathId":"path_qArblQGcu7","pathId":"path_XQWUohD4L9"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":null,"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_s2vtP47FgY"}}
-,{"PathParameterShapeSet":{"eventContext":null,"pathId":"path_XQWUohD4L9","shapeDescriptor":{"isRemoved":false,"shapeId":"shape_s2vtP47FgY"}}}
-,{"RequestAdded":{"eventContext":{"clientCommandBatchId":"f8f194a7-a782-43a2-b598-7f160a03e59d","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:57.394Z"},"httpMethod":"PATCH","pathId":"path_XQWUohD4L9","requestId":"request_Pa77UBarCD"}}
-,{"ContributionAdded":{"eventContext":{"clientCommandBatchId":"f8f194a7-a782-43a2-b598-7f160a03e59d","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:57.394Z"},"id":"request_Pa77UBarCD","key":"purpose","value":"Update TODO"}}
-,{"ShapeAdded":{"baseShapeId":"$object","eventContext":{"clientCommandBatchId":"4ea96148-fc3d-4d61-8264-df1b8055cf0b","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:57.973Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"Eyd543_0"}}
-,{"ShapeAdded":{"baseShapeId":"$boolean","eventContext":{"clientCommandBatchId":"4ea96148-fc3d-4d61-8264-df1b8055cf0b","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:57.973Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"Eyd543_2"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"4ea96148-fc3d-4d61-8264-df1b8055cf0b","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:57.973Z"},"fieldId":"Eyd543_1","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"Eyd543_1","shapeId":"Eyd543_2"}},"shapeId":"Eyd543_0"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"4ea96148-fc3d-4d61-8264-df1b8055cf0b","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:57.973Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"Eyd543_4"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"4ea96148-fc3d-4d61-8264-df1b8055cf0b","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:57.973Z"},"fieldId":"Eyd543_3","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"Eyd543_3","shapeId":"Eyd543_4"}},"shapeId":"Eyd543_0"}}
-,{"ShapeAdded":{"baseShapeId":"Eyd543_0","eventContext":{"clientCommandBatchId":"4ea96148-fc3d-4d61-8264-df1b8055cf0b","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:57.974Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_HQJGC3zcvx"}}
-,{"RequestBodySet":{"bodyDescriptor":{"httpContentType":"application/json","isRemoved":false,"shapeId":"shape_HQJGC3zcvx"},"eventContext":{"clientCommandBatchId":"4ea96148-fc3d-4d61-8264-df1b8055cf0b","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:57.974Z"},"requestId":"request_Pa77UBarCD"}}
-,{"ResponseAdded":{"eventContext":{"clientCommandBatchId":"f93dcda3-c324-453f-b66b-34911a018d21","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.143Z"},"httpStatusCode":200,"requestId":"request_Pa77UBarCD","responseId":"response_69pufCOO2t"}}
-,{"ShapeAdded":{"baseShapeId":"$object","eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.294Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"VMPlOJ_0"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.294Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"VMPlOJ_2"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.294Z"},"fieldId":"VMPlOJ_1","name":"dueDate","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"VMPlOJ_1","shapeId":"VMPlOJ_2"}},"shapeId":"VMPlOJ_0"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.294Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"VMPlOJ_4"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.294Z"},"fieldId":"VMPlOJ_3","name":"id","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"VMPlOJ_3","shapeId":"VMPlOJ_4"}},"shapeId":"VMPlOJ_0"}}
-,{"ShapeAdded":{"baseShapeId":"$boolean","eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.294Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"VMPlOJ_6"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.294Z"},"fieldId":"VMPlOJ_5","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"VMPlOJ_5","shapeId":"VMPlOJ_6"}},"shapeId":"VMPlOJ_0"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.294Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"VMPlOJ_8"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.295Z"},"fieldId":"VMPlOJ_7","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"VMPlOJ_7","shapeId":"VMPlOJ_8"}},"shapeId":"VMPlOJ_0"}}
-,{"ShapeAdded":{"baseShapeId":"VMPlOJ_0","eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.295Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_xLSfCBk76V"}}
-,{"ResponseBodySet":{"bodyDescriptor":{"httpContentType":"application/json; charset=utf-8","isRemoved":false,"shapeId":"shape_xLSfCBk76V"},"eventContext":{"clientCommandBatchId":"f3ef721c-9c6d-47fd-9366-2a75476c277c","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:56:58.295Z"},"responseId":"response_69pufCOO2t"}}
-,{"RequestAdded":{"eventContext":{"clientCommandBatchId":"5b9b2514-db9a-480a-bfc1-abc9c2ffcc17","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.248Z"},"httpMethod":"POST","pathId":"path_qArblQGcu7","requestId":"request_jSdvEiRo9a"}}
-,{"ContributionAdded":{"eventContext":{"clientCommandBatchId":"5b9b2514-db9a-480a-bfc1-abc9c2ffcc17","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.248Z"},"id":"request_jSdvEiRo9a","key":"purpose","value":"Create todo"}}
-,{"ShapeAdded":{"baseShapeId":"$object","eventContext":{"clientCommandBatchId":"da83ad62-2a66-4f63-9f2b-4a3fe788c46d","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.807Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"Do9MEA_0"}}
-,{"ShapeAdded":{"baseShapeId":"$boolean","eventContext":{"clientCommandBatchId":"da83ad62-2a66-4f63-9f2b-4a3fe788c46d","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.808Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"Do9MEA_2"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"da83ad62-2a66-4f63-9f2b-4a3fe788c46d","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.808Z"},"fieldId":"Do9MEA_1","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"Do9MEA_1","shapeId":"Do9MEA_2"}},"shapeId":"Do9MEA_0"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"da83ad62-2a66-4f63-9f2b-4a3fe788c46d","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.808Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"Do9MEA_4"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"da83ad62-2a66-4f63-9f2b-4a3fe788c46d","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.808Z"},"fieldId":"Do9MEA_3","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"Do9MEA_3","shapeId":"Do9MEA_4"}},"shapeId":"Do9MEA_0"}}
-,{"ShapeAdded":{"baseShapeId":"Do9MEA_0","eventContext":{"clientCommandBatchId":"da83ad62-2a66-4f63-9f2b-4a3fe788c46d","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.808Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_R3MxTBL4Hy"}}
-,{"RequestBodySet":{"bodyDescriptor":{"httpContentType":"application/json","isRemoved":false,"shapeId":"shape_R3MxTBL4Hy"},"eventContext":{"clientCommandBatchId":"da83ad62-2a66-4f63-9f2b-4a3fe788c46d","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.808Z"},"requestId":"request_jSdvEiRo9a"}}
-,{"ResponseAdded":{"eventContext":{"clientCommandBatchId":"f02b37bb-f4a6-4aa8-91fb-32bdc0dda5af","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:06.974Z"},"httpStatusCode":200,"requestId":"request_jSdvEiRo9a","responseId":"response_Y6c4kqh5ru"}}
-,{"ShapeAdded":{"baseShapeId":"$object","eventContext":{"clientCommandBatchId":"2eb865ad-b1c6-471a-8a1b-48b020124b3f","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:07.142Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"TtrW0r_0"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"2eb865ad-b1c6-471a-8a1b-48b020124b3f","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:07.142Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"TtrW0r_2"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"2eb865ad-b1c6-471a-8a1b-48b020124b3f","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:07.142Z"},"fieldId":"TtrW0r_1","name":"id","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"TtrW0r_1","shapeId":"TtrW0r_2"}},"shapeId":"TtrW0r_0"}}
-,{"ShapeAdded":{"baseShapeId":"$boolean","eventContext":{"clientCommandBatchId":"2eb865ad-b1c6-471a-8a1b-48b020124b3f","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:07.142Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"TtrW0r_4"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"2eb865ad-b1c6-471a-8a1b-48b020124b3f","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:07.142Z"},"fieldId":"TtrW0r_3","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"TtrW0r_3","shapeId":"TtrW0r_4"}},"shapeId":"TtrW0r_0"}}
-,{"ShapeAdded":{"baseShapeId":"$string","eventContext":{"clientCommandBatchId":"2eb865ad-b1c6-471a-8a1b-48b020124b3f","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:07.143Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"TtrW0r_6"}}
-,{"FieldAdded":{"eventContext":{"clientCommandBatchId":"2eb865ad-b1c6-471a-8a1b-48b020124b3f","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:07.143Z"},"fieldId":"TtrW0r_5","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"TtrW0r_5","shapeId":"TtrW0r_6"}},"shapeId":"TtrW0r_0"}}
-,{"ShapeAdded":{"baseShapeId":"TtrW0r_0","eventContext":{"clientCommandBatchId":"2eb865ad-b1c6-471a-8a1b-48b020124b3f","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:07.143Z"},"name":"","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"shapeId":"shape_nipWvy4n2j"}}
-,{"ResponseBodySet":{"bodyDescriptor":{"httpContentType":"application/json; charset=utf-8","isRemoved":false,"shapeId":"shape_nipWvy4n2j"},"eventContext":{"clientCommandBatchId":"2eb865ad-b1c6-471a-8a1b-48b020124b3f","clientId":"acunniffe@gmail.com","clientSessionId":"661036ff-78db-407e-a94f-581f748f456b","createdAt":"2019-12-06T18:57:07.143Z"},"responseId":"response_Y6c4kqh5ru"}}
+  {
+    "APINamed": {
+      "eventContext": null,
+      "name": "ToDo"
+    }
+  },
+  {
+    "GitStateSet": {
+      "branchName": "master",
+      "commitId": "740f99ab1dd694262faa68f7a55292015e8358c4",
+      "eventContext": {
+        "clientCommandBatchId": "1259fd9b-451c-4c4d-838c-d20d8714df87",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "df0a3eb4-f576-48af-8168-8516ac47cb81",
+        "createdAt": "2019-11-22T18:23:47.448Z"
+      }
+    }
+  },
+  {
+    "PathComponentAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "b8ba99ee-258f-49d7-a1a8-43436076c700",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:08.232Z"
+      },
+      "name": "todos",
+      "parentPathId": "root",
+      "pathId": "path_HsSXFVOYLX"
+    }
+  },
+  {
+    "RequestAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "3e2d5241-ca01-4216-b462-d90643ee5650",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:11.117Z"
+      },
+      "httpMethod": "GET",
+      "pathId": "path_HsSXFVOYLX",
+      "requestId": "request_VwicxIWnwr"
+    }
+  },
+  {
+    "ContributionAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "3e2d5241-ca01-4216-b462-d90643ee5650",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:11.117Z"
+      },
+      "id": "request_VwicxIWnwr",
+      "key": "purpose",
+      "value": "Get todos"
+    }
+  },
+  {
+    "ResponseAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "2cbfc38f-5144-47e4-8c4a-5573be9826d9",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:11.669Z"
+      },
+      "httpStatusCode": 200,
+      "requestId": "request_VwicxIWnwr",
+      "responseId": "response_vDRZEfG6xP"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$list",
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.085Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WDPBZw_0"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$object",
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.086Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WDPBZw_1"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.086Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WDPBZw_3"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.086Z"
+      },
+      "fieldId": "WDPBZw_2",
+      "name": "dueDate",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WDPBZw_2",
+          "shapeId": "WDPBZw_3"
+        }
+      },
+      "shapeId": "WDPBZw_1"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.086Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WDPBZw_5"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.086Z"
+      },
+      "fieldId": "WDPBZw_4",
+      "name": "id",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WDPBZw_4",
+          "shapeId": "WDPBZw_5"
+        }
+      },
+      "shapeId": "WDPBZw_1"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$boolean",
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.086Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WDPBZw_7"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.086Z"
+      },
+      "fieldId": "WDPBZw_6",
+      "name": "isDone",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WDPBZw_6",
+          "shapeId": "WDPBZw_7"
+        }
+      },
+      "shapeId": "WDPBZw_1"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.086Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WDPBZw_9"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.087Z"
+      },
+      "fieldId": "WDPBZw_8",
+      "name": "task",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "WDPBZw_8",
+          "shapeId": "WDPBZw_9"
+        }
+      },
+      "shapeId": "WDPBZw_1"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "WDPBZw_1",
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.087Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "WDPBZw_10"
+    }
+  },
+  {
+    "ShapeParameterShapeSet": {
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.087Z"
+      },
+      "shapeDescriptor": {
+        "ProviderInShape": {
+          "consumingParameterId": "$listItem",
+          "providerDescriptor": {
+            "ShapeProvider": {
+              "shapeId": "WDPBZw_10"
+            }
+          },
+          "shapeId": "WDPBZw_0"
+        }
+      }
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "WDPBZw_0",
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.087Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "shape_yBBWmDKHYA"
+    }
+  },
+  {
+    "ResponseBodySet": {
+      "bodyDescriptor": {
+        "httpContentType": "application/json; charset=utf-8",
+        "isRemoved": false,
+        "shapeId": "shape_yBBWmDKHYA"
+      },
+      "eventContext": {
+        "clientCommandBatchId": "11f21575-b991-4aea-98d5-6866d27c0daf",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "0f8d6368-7fb1-428a-be79-9bcb2e261e2f",
+        "createdAt": "2019-11-22T18:24:12.087Z"
+      },
+      "responseId": "response_vDRZEfG6xP"
+    }
+  },
+  {
+    "GitStateSet": {
+      "branchName": "master",
+      "commitId": "740f99ab1dd694262faa68f7a55292015e8358c4",
+      "eventContext": {
+        "clientCommandBatchId": "492cf16f-8fa5-4209-8bd9-6ad3219effb5",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "cd26b488-064a-4e4f-bdb4-74c2127ab2f7",
+        "createdAt": "2019-11-22T22:48:56.083Z"
+      }
+    }
+  },
+  {
+    "GitStateSet": {
+      "branchName": "master",
+      "commitId": "740f99ab1dd694262faa68f7a55292015e8358c4",
+      "eventContext": {
+        "clientCommandBatchId": "1ff9be62-738a-41e6-8947-eb9dabbc7e4d",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "bfebfc5e-a537-449b-905c-f1230560f989",
+        "createdAt": "2019-11-22T22:51:07.843Z"
+      }
+    }
+  },
+  {
+    "GitStateSet": {
+      "branchName": "master",
+      "commitId": "740f99ab1dd694262faa68f7a55292015e8358c4",
+      "eventContext": {
+        "clientCommandBatchId": "aa40484c-ee44-4872-86d9-db3f068feba9",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "e2e8af27-68cd-4f9d-9a45-13d801fbfd75",
+        "createdAt": "2019-11-22T23:11:50.895Z"
+      }
+    }
+  },
+  {
+    "PathParameterAdded": {
+      "eventContext": null,
+      "name": "todoId",
+      "parentPathId": "path_HsSXFVOYLX",
+      "pathId": "path_egLMqmABlL"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$string",
+      "eventContext": null,
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "shape_oAewELVi8F"
+    }
+  },
+  {
+    "PathParameterShapeSet": {
+      "eventContext": null,
+      "pathId": "path_egLMqmABlL",
+      "shapeDescriptor": {
+        "isRemoved": false,
+        "shapeId": "shape_oAewELVi8F"
+      }
+    }
+  },
+  {
+    "RequestAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "9c73a3a4-14f9-4582-8413-c5f14a120996",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:09.710Z"
+      },
+      "httpMethod": "PATCH",
+      "pathId": "path_egLMqmABlL",
+      "requestId": "request_bJyzwU0FfJ"
+    }
+  },
+  {
+    "ContributionAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "9c73a3a4-14f9-4582-8413-c5f14a120996",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:09.710Z"
+      },
+      "id": "request_bJyzwU0FfJ",
+      "key": "purpose",
+      "value": "Update a todo by ID"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$object",
+      "eventContext": {
+        "clientCommandBatchId": "201dda0b-b625-47c2-9f58-30e1aa6d3ab5",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:10.824Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "gKfXSj_0"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$boolean",
+      "eventContext": {
+        "clientCommandBatchId": "201dda0b-b625-47c2-9f58-30e1aa6d3ab5",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:10.824Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "gKfXSj_2"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "201dda0b-b625-47c2-9f58-30e1aa6d3ab5",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:10.824Z"
+      },
+      "fieldId": "gKfXSj_1",
+      "name": "isDone",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "gKfXSj_1",
+          "shapeId": "gKfXSj_2"
+        }
+      },
+      "shapeId": "gKfXSj_0"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientCommandBatchId": "201dda0b-b625-47c2-9f58-30e1aa6d3ab5",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:10.824Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "gKfXSj_4"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "201dda0b-b625-47c2-9f58-30e1aa6d3ab5",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:10.825Z"
+      },
+      "fieldId": "gKfXSj_3",
+      "name": "task",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "gKfXSj_3",
+          "shapeId": "gKfXSj_4"
+        }
+      },
+      "shapeId": "gKfXSj_0"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "gKfXSj_0",
+      "eventContext": {
+        "clientCommandBatchId": "201dda0b-b625-47c2-9f58-30e1aa6d3ab5",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:10.825Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "shape_BpCrQC4UMA"
+    }
+  },
+  {
+    "RequestBodySet": {
+      "bodyDescriptor": {
+        "httpContentType": "application/json",
+        "isRemoved": false,
+        "shapeId": "shape_BpCrQC4UMA"
+      },
+      "eventContext": {
+        "clientCommandBatchId": "201dda0b-b625-47c2-9f58-30e1aa6d3ab5",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:10.825Z"
+      },
+      "requestId": "request_bJyzwU0FfJ"
+    }
+  },
+  {
+    "ResponseAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "752f1da7-8ce7-4d3a-8ed2-3833d2c925e4",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.005Z"
+      },
+      "httpStatusCode": 200,
+      "requestId": "request_bJyzwU0FfJ",
+      "responseId": "response_CjZlTuKOGj"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$object",
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.215Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "0uJPFW_0"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.216Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "0uJPFW_2"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.216Z"
+      },
+      "fieldId": "0uJPFW_1",
+      "name": "dueDate",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "0uJPFW_1",
+          "shapeId": "0uJPFW_2"
+        }
+      },
+      "shapeId": "0uJPFW_0"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.216Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "0uJPFW_4"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.216Z"
+      },
+      "fieldId": "0uJPFW_3",
+      "name": "id",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "0uJPFW_3",
+          "shapeId": "0uJPFW_4"
+        }
+      },
+      "shapeId": "0uJPFW_0"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$boolean",
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.216Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "0uJPFW_6"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.216Z"
+      },
+      "fieldId": "0uJPFW_5",
+      "name": "isDone",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "0uJPFW_5",
+          "shapeId": "0uJPFW_6"
+        }
+      },
+      "shapeId": "0uJPFW_0"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "$string",
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.217Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "0uJPFW_8"
+    }
+  },
+  {
+    "FieldAdded": {
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.217Z"
+      },
+      "fieldId": "0uJPFW_7",
+      "name": "task",
+      "shapeDescriptor": {
+        "FieldShapeFromShape": {
+          "fieldId": "0uJPFW_7",
+          "shapeId": "0uJPFW_8"
+        }
+      },
+      "shapeId": "0uJPFW_0"
+    }
+  },
+  {
+    "ShapeAdded": {
+      "baseShapeId": "0uJPFW_0",
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.217Z"
+      },
+      "name": "",
+      "parameters": {
+        "DynamicParameterList": {
+          "shapeParameterIds": []
+        }
+      },
+      "shapeId": "shape_lq3nVzCXqn"
+    }
+  },
+  {
+    "ResponseBodySet": {
+      "bodyDescriptor": {
+        "httpContentType": "application/json; charset=utf-8",
+        "isRemoved": false,
+        "shapeId": "shape_lq3nVzCXqn"
+      },
+      "eventContext": {
+        "clientCommandBatchId": "763a984f-ead1-42c1-8ba6-f23dd6d29934",
+        "clientId": "aidan@queuesoftware.com",
+        "clientSessionId": "dbd72045-4c6d-49fb-a325-0ede88233c36",
+        "createdAt": "2019-11-22T23:12:11.217Z"
+      },
+      "responseId": "response_CjZlTuKOGj"
+    }
+  }
 ]

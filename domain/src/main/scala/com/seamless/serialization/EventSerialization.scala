@@ -35,7 +35,7 @@ object EventSerialization {
         (j: Json) => Try(decodeShapesEvent(j).right.get),
         (j: Json) => Try(decodeRequestEvent(j).right.get),
         (j: Json) => Try(decodeContributionEvent(j).right.get),
-        (j: Json) => Try(decodeVersionControlEvent(j).right.get),
+        (j: Json) => Try(decodeVersionControlEvent(j).right.get)
       )
     }
     require(parseResults.forall(_.isDefined), "Some events could not be decoded")

@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.RequestId
 import com.seamless.contexts.requests._
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.diff.RequestDiffer.{RequestDiffResult, UnmatchedQueryParameterShape}
-import com.seamless.diff.ShapeDiffer
+import com.seamless.diff.{ShapeDiffer, ShapeLike}
 import io.circe.scalajs.convertJsToJson
 import io.circe.Json
 
@@ -52,7 +52,7 @@ class QueryStringDiffer(shapesState: ShapesState, parser: QueryStringParser) {
       }
       case c: Commands.ShapedRequestParameterShapeDescriptor => {
         val expectedShape = shapesState.shapes(c.shapeId)
-        val shapeDiff = ShapeDiffer.diff(expectedShape, Some(json))(shapesState)
+        val shapeDiff = ShapeDiffer.diff(expectedShape, ShapeLike.fromActualJson(Some(json)))(shapesState)
         println(shapeDiff.hasNext)
         val diff = shapeDiff.map(d => UnmatchedQueryParameterShape(expected.requestParameterDescriptor.requestId, expected.parameterId, d, json))
         println(diff.hasNext)

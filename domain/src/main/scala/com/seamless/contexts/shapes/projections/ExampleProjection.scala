@@ -14,9 +14,9 @@ import scala.scalajs.js.annotation.JSExportAll
 
 object ExampleProjection {
 
-  def fromJson(json: Json): FlatShapeResult = {
+  def fromJson(json: Json, renderId: String): FlatShapeResult = {
     val result = jsonToFlatRender(json)(Seq())
-    FlatShapeResult(result, Map(), Vector())
+    FlatShapeResult(result, Map(), Vector(), renderId)
   }
 
   private def flatPrimitive(kind: CoreShapeKind, value: String): FlatShape = {

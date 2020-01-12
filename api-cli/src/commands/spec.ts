@@ -14,7 +14,7 @@ import {readApiConfig} from './start'
 import analytics from '../lib/analytics'
 // @ts-ignore
 import * as niceTry from 'nice-try'
-import Init, {IApiCliConfig} from './init'
+import Init, {IApiCliConfig, IApiIntegrationsConfigHosts} from './init'
 import {VersionControl} from '../lib/version-control'
 // @ts-ignore
 import * as opticEngine from '../../provided/domain.js'
@@ -318,7 +318,11 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
   })
   //Integrations
   app.get('/cli-api/integrations', async (req, res) => {
-    res.json({integrations: (config.integrations || [])})
+    const integrations = config.integrations || []
+    integrations.forEach(i => i.host = IApiIntegrationsConfigHosts(i))
+
+
+    res.json({integrations})
   })
   app.get('/cli-api/integrations/:integrationName/events', async (req, res) => {
     const {integrationName} = req.params
@@ -336,6 +340,7 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
   app.put('/cli-api/integrations/:integrationName/events', bodyParser.json({limit: '100mb'}), async (req, res) => {
     const events = req.body
     const {integrationName} = req.params
+    console.log(integrationName)
     const expectedPath = path.join(integrationContracts, `${integrationName}_contract.json`)
     await fs.writeFile(expectedPath, prepareEvents(events))
     res.sendStatus(204)

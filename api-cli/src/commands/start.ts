@@ -41,6 +41,8 @@ export default class Start extends Command {
       await Init.run([])
       return
     }
+    // @ts-ignore
+    const {specStorePath} = await getPaths()
     analytics.track('api start', {name: config.name})
     if (args.startCommandOverride) {
       (config as IApiCliConfig).commands.start = args.startCommandOverride

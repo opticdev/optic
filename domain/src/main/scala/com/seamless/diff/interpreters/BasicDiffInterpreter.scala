@@ -2,7 +2,7 @@ package com.seamless.diff.interpreters
 
 import com.seamless.contexts.shapes._
 import com.seamless.diff.RequestDiffer._
-import com.seamless.diff.{DiffInterpretation, Interpretations, ShapeDiffer}
+import com.seamless.diff.{DiffInterpretation, InterpretationContext, Interpretations, ShapeDiffer}
 
 class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter[RequestDiffResult] {
 
@@ -20,6 +20,8 @@ class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
             Seq(Interpretations.AddFieldToRequestShape(sd.key, sd.actual, sd.parentObjectShapeId, d.requestId))
           case sd: ShapeDiffer.KeyShapeMismatch =>
             Seq(Interpretations.ChangeFieldInRequestShape(sd.key, sd.fieldId, sd.actual, d.requestId))
+          case sd: ShapeDiffer.UnsetObjectKey =>
+            Seq(Interpretations.DeleteField(sd.key, sd.fieldId, InterpretationContext(None, true)))
           case _ => Seq.empty
         }
       }
@@ -35,6 +37,8 @@ class BasicDiffInterpreter(_shapesState: ShapesState) extends Interpreter[Reques
             Seq(Interpretations.AddFieldToResponseShape(sd.key, sd.actual, sd.parentObjectShapeId, d.responseStatusCode, d.responseId))
           case sd: ShapeDiffer.KeyShapeMismatch =>
             Seq(Interpretations.ChangeFieldInResponseShape(sd.key, sd.fieldId, sd.actual, d.responseStatusCode, d.responseId))
+          case sd: ShapeDiffer.UnsetObjectKey =>
+            Seq(Interpretations.DeleteField(sd.key, sd.fieldId, InterpretationContext(Some(d.responseId), false)))
           case _ => Seq.empty
         }
       }

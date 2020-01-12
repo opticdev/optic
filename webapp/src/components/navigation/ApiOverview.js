@@ -19,11 +19,14 @@ import {DisplayPath} from '../paths/DisplayPath';
 import {withNavigationContext} from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
 import {PathIdToPathString} from '../paths/PathIdToPathString';
-import {updateContribution} from '../../engine/routines';
+import {renameShape, updateContribution} from '../../engine/routines';
 import { NavHashLink as NavLink } from 'react-router-hash-link';
 import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import {Helmet} from 'react-helmet';
 import * as uniqBy from 'lodash.uniqby'
+import {withApiOverviewContext} from '../../contexts/ApiOverviewContext';
+import {ProductDemoStoreBase} from '../onboarding/InlineDocs';
+import SetupSteps from '../onboarding/SetupSteps';
 
 const drawerWidth = 320;
 const appBarOffset = 50
@@ -177,84 +180,32 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
 }));
 
 
-export default compose(withRfcContext, withNavigationContext)(function ApiOverview(props) {
-  const {paths, concepts, cachedQueryResults, handleCommand} = props;
+export default compose(withRfcContext, withApiOverviewContext, withNavigationContext)(function ApiOverview(props) {
+  const {paths, cachedQueryResults, handleCommand, apiOverview} = props;
+  const {pathsById, contributions} = cachedQueryResults;
   const classes = useStyles();
 
-  function flatMapOperations(children) {
-    return children.flatMap(path => {
-      const requests = cachedQueryResults.requestIdsByPathId[path.pathId] || [];
-      return requests.map(id => {
-        return {
-          requestId: id,
-          request: cachedQueryResults.requests[id],
-          path
-        };
-      }).concat(flatMapOperations(path.children));
-    });
+  const {operationsToRender, concepts} = apiOverview
+
+  if (operationsToRender.length === 0) {
+    return (
+      <div className={classes.root}>
+        <CssBaseline/>
+        <main className={classes.content}>
+        <SetupSteps />
+        </main>
+      </div>
+    )
   }
-
-  const allPaths = [paths, ...paths.children]
-
-  const operationsToRender = uniqBy(flatMapOperations(allPaths), 'requestId');
-
-  const isEmpty = concepts.length === 0 && operationsToRender.length === 0
 
   return (
     <div className={classes.root}>
       <CssBaseline/>
-      <Drawer
-        className={classes.drawer}
-        open={!isEmpty}
-        variant={isEmpty ? undefined : "permanent"}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-        anchor="left"
-      >
-        <Helmet>
-          <title>{cachedQueryResults.apiName} API Documentation</title>
-        </Helmet>
-        <List
-          component="nav"
-          subheader={operationsToRender.length > 0 && <ListSubheader className={classes.subHeader}>{'Endpoints'}</ListSubheader>}
-          aria-labelledby="nested-list-subheader"
-          dense={true}
-        >
-          {allPaths.map(i => <EndpointBasePath path={i} operationsToRender={flatMapOperations([i])}/>)}
-        </List>
-
-        <Divider/>
-        <List
-          component="nav"
-          subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>{'Concepts'}</ListSubheader>}
-          aria-labelledby="nested-list-subheader"
-          dense={true}
-        >
-          {concepts.map(i => (
-            <NavLink
-              to={`#${i.shapeId}`}
-              activeClassName="selected"
-              style={{textDecoration: 'none', color: 'black'}}
-            >
-            <ListItem button dense disableRipple>
-              <ListItemText
-                primary={i.name}
-                dense
-                classes={{dense: classes.dense}}
-                primaryTypographyProps={{variant: 'overline', style: {textTransform: 'none'}}}/>
-            </ListItem>
-            </NavLink>
-          ))}
-        </List>
-
-      </Drawer>
       <main className={classes.content}>
         {operationsToRender.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}
                     style={{paddingTop: 20}}>Endpoints</Typography>}
 
         {operationsToRender.map(operation => {
-          const {pathsById, contributions} = cachedQueryResults;
           const pathTrail = asPathTrail(operation.path.pathId, pathsById);
           const pathParameters = pathTrail
             .map(pathId => pathsById[pathId])
@@ -280,13 +231,20 @@ export default compose(withRfcContext, withNavigationContext)(function ApiOvervi
           );
         })}
 
-        {concepts.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}>Concepts</Typography>}
+        {concepts.length > 0 && <Typography variant="h3" color="primary" className={classes.sectionHeader}>Shapes</Typography>}
 
         {concepts.map(concept => (
           <ConceptOverview
             name={concept.name}
             shapeId={concept.shapeId}
             example={{name: 'fizo', age: 15, breed: 'husky'}}
+            description={contributions.getOrUndefined(concept.shapeId, DESCRIPTION)}
+            updateContribution={(id, key, value) => {
+              handleCommand(updateContribution(id, key, value));
+            }}
+            renameShape={(value) => {
+              handleCommand(renameShape(concept.shapeId, value));
+            }}
           />
         ))}
 

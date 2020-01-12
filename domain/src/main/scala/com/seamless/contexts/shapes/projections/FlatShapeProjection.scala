@@ -22,15 +22,15 @@ object FlatShapeProjection {
     def joinedTypeName = typeName.map(_.name).mkString(" ")
   }
   @JSExportAll
-  case class FlatShapeResult(root: FlatShape, parameterMap: Map[String, FlatShape], pathsForAffectedIds: Vector[Seq[String]])
+  case class FlatShapeResult(root: FlatShape, parameterMap: Map[String, FlatShape], pathsForAffectedIds: Vector[Seq[String]], renderId: String)
 
   private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false, Map.empty))
 
-  def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None, affectedIds: Seq[String] = Seq())(implicit shapesState: ShapesState, expandedName: Boolean = true) = {
+  def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None, affectedIds: Seq[String] = Seq())(implicit shapesState: ShapesState, expandedName: Boolean = true, revision: Int = 0) = {
     implicit val parametersByShapeId: mutable.Map[String, FlatShape] = scala.collection.mutable.HashMap[String, FlatShape]()
     implicit val trailLogger = new ShapeTrailLogger
     val root = getFlatShape(shapeId, Seq.empty)(shapesState, fieldIdOption, expandedName, parametersByShapeId, trailLogger)
-    FlatShapeResult(root, parametersByShapeId.toMap, trailLogger.pathsForAffectedIds(affectedIds))
+    FlatShapeResult(root, parametersByShapeId.toMap, trailLogger.pathsForAffectedIds(affectedIds), s"${shapeId}_${revision.toString}")
   }
 
   private def addLinkToParameter(shapeId: ShapeId, shape: FlatShape)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None, parametersByShapeId: mutable.Map[String, FlatShape], trailLogger: ShapeTrailLogger): Unit = {
@@ -108,11 +108,17 @@ object FlatShapeProjection {
       }
       case ObjectKind.baseShapeId => {
         val baseObject = ShapeDiffer.resolveBaseObject(shapeId)(shapesState)
-        val fields = baseObject.descriptor.fieldOrdering.map(fieldId => {
+        val fields = baseObject.descriptor.fieldOrdering.flatMap(fieldId => {
           val field = shapesState.fields(fieldId)
-          val fieldShapeId = field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
-          val trailForFieldAndInnerShape = trail and InField(fieldId) and Leaf(fieldShapeId)
-          FlatField(field.descriptor.name, getFlatShape( fieldShapeId, trailForFieldAndInnerShape)(shapesState, Some(fieldId), false, parametersByShapeId, trailLogger), fieldId)
+
+          if (field.isRemoved) {
+            None
+          } else {
+            val fieldShapeId = field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
+            val trailForFieldAndInnerShape = trail and InField(fieldId) and Leaf(fieldShapeId)
+            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId, trailForFieldAndInnerShape)(shapesState, Some(fieldId), false, parametersByShapeId, trailLogger), fieldId))
+          }
+
         }).sortBy(_.fieldName)
 
         val canName = baseObject.descriptor.name == ""

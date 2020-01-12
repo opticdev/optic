@@ -6,7 +6,6 @@ import com.seamless.contexts.shapes.projections.FlatShapeProjection.{FlatField, 
 import com.seamless.contexts.shapes.{ShapesHelper, ShapesState}
 import com.seamless.diff.ShapeDiffer
 import com.seamless.diff.ShapeDiffer.resolveParameterShape
-import com.sun.tools.javac.main.Option.OptionKind
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Try
@@ -71,7 +70,6 @@ object NameForShapeId {
           case DynamicParameterList(shapeParameterIds) => shapeParameterIds
         }
         val innersResolved = inners.map(i => resolveInner(i))
-
 
         innersResolved.zipWithIndex.flatMap {
           case ((id, ty), index) if index == inners.length -1 => ColoredComponent("or", "text", None) +: ty

@@ -4,7 +4,7 @@ import com.seamless.contexts.requests.Commands.{PathComponentId, RequestId}
 import com.seamless.contexts.requests.projections.PathsWithRequestsProjection
 import com.seamless.contexts.requests.{PathComponent, RequestsState, Utilities}
 import com.seamless.contexts.rfc.Events.RfcEvent
-import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection}
+import com.seamless.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionWrapper, ContributionsProjection, SetupState, SetupStateProjection}
 import com.seamless.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.seamless.contexts.shapes.ShapesState
 import com.seamless.contexts.shapes.projections.FlatShapeProjection.FlatShapeResult
@@ -72,8 +72,11 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     import js.JSConverters._
     convertJsonToJs(q.flatShapeForShapeId(shapeId, affectedIds.toSeq).asJson)
   }
-  def flatShapeForExample(example: js.Any): js.Any = {
-    convertJsonToJs(q.flatShapeForExample(convertJsToJson(example).right.get).asJson)
+  def flatShapeForExample(example: js.Any, hash: String): js.Any = {
+    convertJsonToJs(q.flatShapeForExample(convertJsToJson(example).right.get, hash).asJson)
+  }
+  def setupState(): js.Any = {
+    convertJsonToJs(q.setupState().asJson)
   }
 }
 
@@ -135,10 +138,15 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
     NameForShapeId.getFieldIdShapeName(fieldId)(service.currentState(aggregateId).shapesState)
   }
   def flatShapeForShapeId(shapeId: ShapeId, affectedIds: Seq[String] = Seq.empty): FlatShapeResult = {
-    FlatShapeProjection.forShapeId(shapeId, affectedIds = affectedIds)(service.currentState(aggregateId).shapesState)
+    FlatShapeProjection.forShapeId(shapeId, affectedIds = affectedIds)(service.currentState(aggregateId).shapesState, revision = events.size)
   }
-  def flatShapeForExample(example: Json): FlatShapeResult = {
-    ExampleProjection.fromJson(example)
+  def flatShapeForExample(example: Json, hash: String): FlatShapeResult = {
+    ExampleProjection.fromJson(example, hash)
+  }
+
+  private val apiSetupCache = new CachedProjection(SetupStateProjection, events)
+  def setupState(): SetupState = {
+    apiSetupCache.withEvents(events)
   }
 
 }

@@ -81,6 +81,15 @@ class TrafficSessionStoreBase extends React.Component {
       diffSessionManager: null,
     });
     const {specService, sessionId} = this.props;
+
+    if (!sessionId) {
+      this.setState({
+        noSession: true,
+        isLoading: false
+      })
+      return
+    }
+
     specService
       .loadSession(sessionId)
       .then(result => {
@@ -97,6 +106,7 @@ class TrafficSessionStoreBase extends React.Component {
           session,
           isLoading: false,
           error: null,
+          noSession: false,
           diffSessionManager
         });
         this.checkForUpdates();
@@ -114,6 +124,11 @@ class TrafficSessionStoreBase extends React.Component {
   checkForUpdates() {
     setTimeout(async () => {
       const {specService, sessionId} = this.props;
+
+      if (!sessionId) {
+        return
+      }
+
       try {
 
         const result = await specService.loadSession(sessionId);
@@ -142,12 +157,16 @@ class TrafficSessionStoreBase extends React.Component {
   }
 
   render() {
-    const {sessionId, children} = this.props;
+    const {sessionId, children, renderNoSession} = this.props;
     const {queries, cachedQueryResults} = this.props;
-    const {isLoading, error, diffSessionManager, session} = this.state;
+    const {isLoading, error, diffSessionManager, session, noSession} = this.state;
 
     if (isLoading) {
       return null;
+    }
+
+    if (noSession) {
+      return renderNoSession || null
     }
 
     if (error) {
