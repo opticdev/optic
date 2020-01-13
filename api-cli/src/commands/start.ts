@@ -25,7 +25,7 @@ import {normalizeHost} from './intercept'
 export default class Start extends Command {
   static description = 'start your API and diff its behavior against the spec'
   async run() {
-    //migration check
+    //migration  check
     const shouldQuit = await checkFor6to7()
     if (shouldQuit) {
       return

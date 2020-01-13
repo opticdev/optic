@@ -141,8 +141,8 @@ class APIDashboard extends React.Component {
 
           <Grid sm={1}></Grid>
           <Grid item sm={6}>
-            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Checklist'}</Typography>
-            <TestingChecklist/>
+            {/*<Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Checklist'}</Typography>*/}
+            {/*<TestingChecklist/>*/}
           </Grid>
         </Grid>
         {/*<IntegrationsDashboard />*/}
@@ -225,22 +225,9 @@ const CheckList = withStyles(styles)(({classes, setupState}) => {
 
   return (
     <Card elevation={0} className={classes.statusCard}>
-      <DocSubGroup title={'Setup + Documentation'} style={{marginTop: -5}}>
-        <List dense>
-          <CheckListItem text="Download Optic CLI" checked={runningLocally}/>
-          <CheckListItem text="Add Optic to your API Project" checked={runningLocally} disabled={!runningLocally}/>
-          <CheckListItem text="Observe API Traffic" checked={setupState.stages.includes('optic-integrated')}
-                         disabled={!runningLocally}/>
-          <CheckListItem text="Document your API" checked={setupState.stages.includes('documented-api-endpoint')}
-                         disabled={!runningLocally && !setupState.stages.includes('optic-integrated')}/>
-        </List>
-      </DocSubGroup>
-      <DocSubGroup title={'Share with your Team'} style={{marginTop: -5}}>
-        <List dense>
-          <CheckListItem text="Check .api folder into Git"/>
-          <CheckListItem text="Sign up for Optic Account to add Team Features"/>
-        </List>
-      </DocSubGroup>
+      <CheckListItem disabled text="Add Optic to your API" checked={runningLocally}/>
+      <CheckListItem disabled text="Deploy in your infrastructure" checked={runningLocally}/>
+      <CheckListItem disabled text="Setup Automated Contract Testing" checked={runningLocally}/>
     </Card>
   );
 });
@@ -271,7 +258,13 @@ const IntegrationsChecklist = withStyles(styles)(({classes}) => {
   );
 });
 
-export const IntegrationsDashboard = compose(withNavigationContext, withIntegrationsContext, withStyles(styles))(({classes, integrations, className, baseUrl, goToIntegration}) => {
+export const IntegrationsDashboard = compose(withNavigationContext, withStyles(styles))(({classes, className, baseUrl}) => {
+
+  const integrations = [
+    {name: "Delta Flight Search", host: "https://booking.delta.com"},
+    {name: "Google Calendar", host: "https://api.calendar.google.com"}
+  ]
+
   return (
     <div className={classes[className]}>
       <Typography variant="h4" color="primary" style={{marginTop: 70}}>{'Integrations'}</Typography>
@@ -279,7 +272,7 @@ export const IntegrationsDashboard = compose(withNavigationContext, withIntegrat
       <DocDivider style={{marginTop: 6, marginBottom: 30}}/>
 
       <div className={classNames(classes.notification)}>
-        <MarkdownRender source={`##### 0/2 Integrations Tracked \n For unlimited integrations, sign up for Optic Pro or Enterprise Subscriptions.`}/>
+        <MarkdownRender source={`##### 2/2 Integrations Tracked \n For unlimited integrations, sign up for Optic Pro or Enterprise Subscriptions.`}/>
         <Button color="primary">Learn More</Button>
         <Button color="primary">Get Optic Pro</Button>
       </div>
@@ -291,8 +284,8 @@ export const IntegrationsDashboard = compose(withNavigationContext, withIntegrat
           <Paper className={classes.statusCard} style={{height: 430, overflow:'scroll', padding: 0}} elevation={0}>
             <List subheader={<ListSubheader style={{backgroundColor: 'white'}}>{`${integrations.length} Documented Providers`}</ListSubheader>}>
               {integrations.map(i => (
-                <ListItem button component={Link} to={goToIntegration(baseUrl, i.name)}>
-                  <ListItemText primary={i.name} secondary={i.host.join(', ')}/>
+                <ListItem button component={Link}>
+                  <ListItemText primary={i.name} secondary={i.host}/>
                   <ListItemSecondaryAction>
                     <Typography variant="overline">12 Endpoints</Typography>
                   </ListItemSecondaryAction>

@@ -310,12 +310,7 @@
               "task": "Do Dishes",
               "dueDate": "Sun Sep 15 2019 03:24:00 GMT-0400 (Eastern Daylight Time)",
               "isDone": true,
-              "id": "3yejj2wi1",
-              "data": {
-                "hello": "world",
-                "goodbye": ["cats", "dogs", "lightning"],
-                "sub": {"name":  "Bob"}
-              }
+              "id": "3yejj2wi1"
             },
             {
               "task": "Install Optic",
