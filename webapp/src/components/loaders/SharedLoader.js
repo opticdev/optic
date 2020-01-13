@@ -1,6 +1,5 @@
 import React from 'react';
 import { LoaderFactory, SpecServiceContext } from './LoaderFactory.js';
-import NewBehavior from '../navigation/NewBehavior.js';
 import { SpecService } from '../../services/SpecService.js';
 import { basePaths } from '../../RouterPaths.js';
 import { sharedSpecUploadService } from '../../services/SharedSpecUploadService.js';

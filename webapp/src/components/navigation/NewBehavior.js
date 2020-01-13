@@ -144,7 +144,7 @@ function NewBehavior(props) {
     return (
       <Collapse in={true} appear={true} style={{width: '100%'}}>
         <div className={classes.notificationBar}>
-          <Typography variant="subtitle1" style={{color: 'white', marginTop: 8}}> <CheckIcon style={{color: AddedGreen, fontSize: 16, paddingTop: 4, paddingRight: 5}}/>In-Sync</Typography>
+          <Typography variant="subtitle1" style={{color: 'white', marginTop: 8}}> <CheckIcon style={{color: AddedGreen, fontSize: 16, paddingTop: 4, marginLeft: -5}}/>In-Sync</Typography>
         </div>
       </Collapse>
     )

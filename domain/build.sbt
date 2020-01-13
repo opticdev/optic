@@ -25,6 +25,10 @@ libraryDependencies ++= Seq(
   "io.circe" %%% "circe-literal",
 ).map(_ % circeVersion)
 
+PB.targets in Compile := Seq(
+  scalapb.gen() -> (sourceManaged in Compile).value
+)
+
 //enablePlugins(ScalaJSBundlerPlugin)
 //scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
 //webpackBundlingMode := BundlingMode.LibraryOnly()

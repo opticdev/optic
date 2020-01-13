@@ -9,125 +9,84 @@ import * as colors from 'colors'
 import cli from 'cli-ux'
 // @ts-ignore
 import * as fetch from 'node-fetch'
-import {VersionControl} from '../lib/version-control'
 import {getPaths} from '../Paths'
 import {prepareEvents} from '../PersistUtils'
 import * as yaml from 'js-yaml'
 import analytics, {trackSlack} from '../lib/analytics'
 import * as open from 'open'
 
-export interface IApiCliProxyConfig {
-  target: string
-  port: number
-}
-
-export interface IApiCliCommandsConfig {
-  start: string,
-  publish?: IApiCliPublishConfig
-}
-
-export interface IApiCliPublishConfig {
-  oas?: string,
-}
-
-export interface IApiIntegrationsConfig {
-  name: string,
-  host: string | string[]
-}
-
-export function IApiIntegrationsConfigHosts(a: IApiIntegrationsConfig): string[] {
-  if (typeof a.host === 'string') {
-    return [a.host]
-  } else {
-    return a.host
-  }
+export interface IOpticTask {
+  command: string,
+  baseUrl: string
+  proxy?: string
 }
 
 export interface IApiCliConfig {
   name: string
-  proxy: IApiCliProxyConfig
-  commands: IApiCliCommandsConfig,
-  integrations?: IApiIntegrationsConfig[]
+  tasks: {
+    [key: string]: IOpticTask
+  }
 }
 
 export default class Init extends Command {
 
-  static description = 'add Optic to your API'
+  static description = 'Add Optic to your API'
 
-  static flags = {
-    paste: flags.boolean({}),
-    import: flags.string(),
-    name: flags.string(),
-    port: flags.string(),
-    host: flags.string(),
-    command: flags.string(),
-  }
+  static flags = {}
 
   static args = []
 
   async run() {
-    const {flags} = this.parse(Init)
-    const name = await cli.prompt('API Name')
-    const port = await cli.prompt('Port')
-    const command = await cli.prompt('Command to Start API (see table on docs page)')
-    const host = 'localhost'
-    analytics.track('api init', {name, port, command, host})
-    trackSlack(`New Local API Created ${name} ${command}`)
-    await this.blankWithName(name, parseInt(port, 10), command.split('\n')[0], host)
-    // @ts-ignore
-    const {basePath} = await getPaths()
-    this.log('\n')
-    this.log(`API Spec successfully added to ${basePath} !`)
-    this.log(" - Run 'api start' to run your API.")
-    this.log(" - Run 'api spec' to view and edit the specification")
-  }
+    const cwd = process.cwd()
+    const isCurrentDirectory = await cli.confirm(`${colors.bold.blue(cwd)}\nIs this your API's root directory? (yes/no)`)
 
-  async blankWithName(name: string, port: number, command: string, host: string) {
-    const config: IApiCliConfig = {
-      name,
-      commands: {
-        start: command
-      },
-      proxy: {
-        // tslint:disable-next-line:no-invalid-template-strings
-        target: `http://${host}:{{ENV.OPTIC_API_PORT}}`,
-        port
-      }
-    }
-    const events = [
-      {
-        APINamed: {
-          eventContext: {
-            clientCommandBatchId: 'api-init',
-            clientId: 'anonymous',
-            clientSessionId: '0',
-            createdAt: new Date().toString()
-          },
-          name
+    if (isCurrentDirectory) {
+      const config: IApiCliConfig = {
+        name: 'New API',
+        tasks: {
+          start: {
+            command: 'echo "Setup A Valid Command to Start your API!"',
+            baseUrl: 'http://localhost:3000'
+          }
         }
       }
-    ]
-    this.createFileTree(events, config)
-  }
-
-  webImport() {
-    const events = niceTry(() => {
-      const clipboardContents = clipboardy.readSync()
-      const parsedJson = JSON.parse(clipboardContents)
-      if (Array.isArray(parsedJson) && parsedJson.every(i => typeof i === 'object')) {
-        return parsedJson
-      }
-    })
-    if (!events) {
-      this.error('Website state not found in clipboard. Press "Copy State" on the webapp.')
+      this.createFileTree(config)
+    } else {
+      return this.log(colors.red(`Optic must be initialized in your API's root directory. Navigate there and then run ${colors.bold('api init')} again`))
     }
-    this.createFileTree(events)
   }
 
-  async createFileTree(events: any[], config?: IApiCliConfig) {
-    // @ts-ignore
-    const {readmePath, specStorePath, configPath, gitignorePath} = await getPaths()
-    const readmeContents = await fs.readFile(path.join(__dirname, '../../resources/docs-readme.md'))
+  // async blankWithName(name: string, port: number, command: string, host: string) {
+  //   const config: IApiCliConfig = {
+  //     name,
+  //     commands: {
+  //       start: command
+  //     },
+  //     proxy: {
+  //       // tslint:disable-next-line:no-invalid-template-strings
+  //       target: `http://${host}:{{ENV.OPTIC_API_PORT}}`,
+  //       port
+  //     }
+  //   }
+  //   const events = [
+  //     {
+  //       APINamed: {
+  //         eventContext: {
+  //           clientCommandBatchId: 'api-init',
+  //           clientId: 'anonymous',
+  //           clientSessionId: '0',
+  //           createdAt: new Date().toString()
+  //         },
+  //         name
+  //       }
+  //     }
+  //   ]
+  //   this.createFileTree(events, config)
+  // }
+  //
+
+  async createFileTree(config: IApiCliConfig) {
+    const {specStorePath, configPath, gitignorePath} = await getPaths()
     const files = [
       {
         path: gitignorePath,
@@ -137,12 +96,8 @@ sessions/
       },
       {
         path: specStorePath,
-        contents: prepareEvents(events)
+        contents: prepareEvents([])
       },
-      {
-        path: readmePath,
-        contents: readmeContents
-      }
     ]
     if (config) {
       files.push({
@@ -154,39 +109,8 @@ sessions/
       await fs.ensureFile(file.path)
       await fs.writeFile(file.path, file.contents)
     })
-    // @ts-ignore
-    const {sessionsPath} = await getPaths()
-    await fs.ensureDir(sessionsPath)
+    const {captures} = await getPaths()
+    await fs.ensureDir(captures)
   }
 
-  async importOas(oasFilePath: string) {
-
-    const absolutePath = path.resolve(oasFilePath)
-    const fileContents = niceTry(() => fs.readFileSync(absolutePath).toString())
-    if (!fileContents) {
-      return this.error(`No OpenAPI file found at ${absolutePath}`)
-    }
-
-    cli.action.start('Parsing OpenAPI file (this takes a few seconds)')
-
-    // @ts-ignore
-    const response = await fetch('https://ayiz1s0f8f.execute-api.us-east-2.amazonaws.com/production/oas/coversion/events', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({fileContents})
-    })
-
-    cli.action.stop()
-
-    if (response.status === 200) {
-      const events = await response.json()
-      return this.createFileTree(events)
-    } else {
-      return this.error('OAS parse error' + await response.text())
-    }
-
-  }
 }

@@ -1,0 +1,5 @@
+name: New API
+tasks:
+  start:
+    command: echo "Setup A Valid Command to Start your API!"
+    baseUrl: 'http://localhost:3000'

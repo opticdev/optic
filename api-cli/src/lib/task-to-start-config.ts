@@ -1,11 +1,6 @@
 import * as getPort from 'get-port'
 import * as url from 'url'
-
-export interface IOpticTask {
-  command: string,
-  baseUrl: string
-  proxy?: string
-}
+import {IOpticTask} from '../commands/init'
 
 export interface IOpticTaskRunnerConfig {
   serviceConfig: {

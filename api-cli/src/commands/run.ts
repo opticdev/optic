@@ -23,8 +23,14 @@ import * as colors from 'colors'
 import {normalizeHost} from './intercept'
 
 export default class Start extends Command {
-  static description = 'start your API and diff its behavior against the spec'
+  static description = 'run task by name'
+  static args = [{
+    name: 'taskName',
+  }]
+
   async run() {
+    const {args} = this.parse(Start)
+    const {taskName} = args
     //migration check
     const shouldQuit = await checkFor6to7()
     if (shouldQuit) {
@@ -40,7 +46,7 @@ export default class Start extends Command {
       await Init.run([])
       return
     }
-    await runTask(config, 'start')
+    await runTask(config, taskName)
     process.exit(0)
   }
 

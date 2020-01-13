@@ -14,7 +14,7 @@ import {readApiConfig} from './start'
 import analytics from '../lib/analytics'
 // @ts-ignore
 import * as niceTry from 'nice-try'
-import Init, {IApiCliConfig, IApiIntegrationsConfigHosts} from './init'
+import Init, {IApiCliConfig} from './init'
 import {VersionControl} from '../lib/version-control'
 // @ts-ignore
 import * as opticEngine from '../../provided/domain.js'
@@ -226,9 +226,8 @@ class FileSystemSessionValidatorAndLoader {
 }
 
 export async function startServer(paths: IPathMapping, sessionValidatorAndLoader: ISessionValidatorAndLoader, port: number, config: IApiCliConfig) {
-  // @ts-ignore
-  const {specStorePath, sessionsPath, exampleRequestsPath, integrationContracts, integrationExampleRequestsPath} = paths
-  const sessionUtilities = new SessionUtilities(sessionsPath)
+  const {specStorePath, captures, exampleRequestsPath} = paths
+  const sessionUtilities = new SessionUtilities(captures)
   const app = express()
 
   async function getExampleRequests(storagePath: string, requestId: string): Promise<any> {
@@ -315,48 +314,6 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
   app.get('/cli-api/identity', async (req, res) => {
     const {user_id, doNotTrack} = readLocalConfig()
     res.json({distinctId: user_id, doNotTrack})
-  })
-  //Integrations
-  app.get('/cli-api/integrations', async (req, res) => {
-    const integrations = config.integrations || []
-    integrations.forEach(i => i.host = IApiIntegrationsConfigHosts(i))
-
-
-    res.json({integrations})
-  })
-  app.get('/cli-api/integrations/:integrationName/events', async (req, res) => {
-    const {integrationName} = req.params
-    const expectedPath = path.join(integrationContracts, `${integrationName}_contract.json`)
-    const events = niceTry(() => {
-      const contents = fs.readFileSync(expectedPath).toString()
-      return JSON.parse(contents)
-    })
-    if (fs.existsSync(expectedPath)) {
-      res.json(events)
-    } else {
-      res.sendStatus(404)
-    }
-  })
-  app.put('/cli-api/integrations/:integrationName/events', bodyParser.json({limit: '100mb'}), async (req, res) => {
-    const events = req.body
-    const {integrationName} = req.params
-    console.log(integrationName)
-    const expectedPath = path.join(integrationContracts, `${integrationName}_contract.json`)
-    await fs.writeFile(expectedPath, prepareEvents(events))
-    res.sendStatus(204)
-  })
-  app.post('/cli-api/integrations/:integrationName/example-requests/:requestId', bodyParser.json({limit: '100mb'}), async (req, res) => {
-    const {requestId} = req.params
-    await saveExampleRequest(integrationExampleRequestsPath, requestId, req.body)
-    res.sendStatus(204)
-  })
-
-  app.get('/cli-api/integrations/:integrationName/example-requests/:requestId', async (req, res) => {
-    const {requestId} = req.params
-    const currentFileContents = await getExampleRequests(integrationExampleRequestsPath, requestId)
-    res.json({
-      examples: currentFileContents
-    })
   })
 
   Utilities.addUiServer(app)
