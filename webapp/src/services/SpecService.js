@@ -43,6 +43,16 @@ class NetworkUtilities {
     });
   }
 
+  static putString(url, body) {
+    return fetch(url, {
+      method: 'PUT',
+      headers: {
+        'content-type': 'text/plain'
+      },
+      body
+    });
+  }
+
   static postJson(url, body) {
     return fetch(url, {
       method: 'POST',
@@ -102,12 +112,12 @@ class SpecService {
       });
   }
 
-  async listIntegrations() {
-    const {integrations} = await NetworkUtilities.getJson(`/cli-api/integrations`);
-    return integrations
+  getConfig() {
+    return NetworkUtilities.getJson(`/cli-api/config`);
   }
-  supportsIntegrations () {
-    return true
+
+  putConfig(configYaml) {
+    return NetworkUtilities.putJson(`/cli-api/config`, JSON.stringify({yaml: configYaml}));
   }
 }
 

@@ -27,6 +27,8 @@ import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import {VerifiedUser} from '@material-ui/icons';
 import {Link} from 'react-router-dom'
 import {AddedGreen} from '../shapes/HighlightedIDs';
+import {withTrafficSessionContext} from '../../contexts/TrafficSessionContext';
+import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -68,9 +70,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function VerticalLinearStepper() {
+export default withSpecServiceContext(({specService}) => {
   const classes = useStyles();
-
   const [apiName, setApiName] = React.useState('');
   const [nameFinished, setNameFinished] = React.useState(false);
 
@@ -95,6 +96,13 @@ export default function VerticalLinearStepper() {
 
     return yaml || '';
   };
+
+  const saveIt = (v) => {
+    const value = v || opticYaml || triggerRegenerate()
+    setOpticYaml(value)
+    specService.putConfig(value)
+  };
+
 
   return (
     <div className={classes.root}>
@@ -179,7 +187,9 @@ Make sure your API starts on that port when \`$OPTIC_API_PORT\` is provided:`}
                 source={`###### Verify Configuration \n- Is this \`command\` the correct one to start API?\n- Is the \`baseUrl\` correct?\n \n\`optic.yml\` *Changes made here are saved to the file system.*`}
                 style={{maxWidth: 620}}/>
 
-              <YamlEditor value={opticYaml || triggerRegenerate()}/>
+              <YamlEditor value={opticYaml || triggerRegenerate()} onChange={(value) => {
+                saveIt(value)
+              }}/>
             </Grid>
             <Grid item sm={6}>
               <MarkdownRender
@@ -207,7 +217,7 @@ Make sure your API starts on that port when \`$OPTIC_API_PORT\` is provided:`}
       </div>
     </div>
   );
-}
+})
 
 class Status extends React.Component {
 

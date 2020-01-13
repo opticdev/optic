@@ -79,14 +79,7 @@
     lodash "^4.17.13"
     source-map "^0.5.0"
 
-"@babel/helper-annotate-as-pure@^7.0.0":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@babel/helper-annotate-as-pure/-/helper-annotate-as-pure-7.8.0.tgz#334ae2cb801e2381509631a5caa1ac6ab1c5016a"
-  integrity sha512-WWj+1amBdowU2g18p3/KUc1Y5kWnaNm1paohq2tT4/RreeMNssYkv6ul9wkE2iIqjwLBwNMZGH4pTGlMSUqMMg==
-  dependencies:
-    "@babel/types" "^7.8.0"
-
-"@babel/helper-annotate-as-pure@^7.7.4":
+"@babel/helper-annotate-as-pure@^7.0.0", "@babel/helper-annotate-as-pure@^7.7.4":
   version "7.7.4"
   resolved "https://registry.yarnpkg.com/@babel/helper-annotate-as-pure/-/helper-annotate-as-pure-7.7.4.tgz#bb3faf1e74b74bd547e867e48f551fa6b098b6ce"
   integrity sha512-2BQmQgECKzYKFPpiycoF9tlb5HA4lrVyAmLLVK177EcQAqjVLciUb2/R+n1boQ9y5ENV3uz2ZqiNw7QMBBw1Og==
@@ -975,15 +968,6 @@
   version "7.7.4"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.7.4.tgz#516570d539e44ddf308c07569c258ff94fde9193"
   integrity sha512-cz5Ji23KCi4T+YIE/BolWosrJuSmoZeN1EFnRtBwF+KKLi8GG/Z2c2hOJJeCXPk4mwk4QFvTmwIodJowXgttRA==
-  dependencies:
-    esutils "^2.0.2"
-    lodash "^4.17.13"
-    to-fast-properties "^2.0.0"
-
-"@babel/types@^7.8.0":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.8.0.tgz#1a2039a028057a2c888b668d94c98e61ea906e7f"
-  integrity sha512-1RF84ehyx9HH09dMMwGWl3UTWlVoCPtqqJPjGuC4JzMe1ZIVDJ2DT8mv3cPv/A7veLD6sgR7vi95lJqm+ZayIg==
   dependencies:
     esutils "^2.0.2"
     lodash "^4.17.13"
@@ -10297,9 +10281,9 @@ react@^16.8.3, react@^16.8.6:
     prop-types "^15.6.2"
 
 reactour@^1.15.5:
-  version "1.16.0"
-  resolved "https://registry.yarnpkg.com/reactour/-/reactour-1.16.0.tgz#b33df7334b80b5df599de20874a3e3e1976b54d5"
-  integrity sha512-1FVS8kgid9EDq/pwDKnM3LoTUK+vyWR1Ybzxl29hhik4ku3+Y/IMsjp+k1tmMY/uJCa7MosOgg/DRdmZf55AJQ==
+  version "1.15.5"
+  resolved "https://registry.yarnpkg.com/reactour/-/reactour-1.15.5.tgz#ea90965643982bf589de8e5f9295a7f67396f245"
+  integrity sha512-AUDhsHftM8cuOkrnvFycoVWjsnRZXeTLpowbq/JMBVGwcXPgv3MY4/KKnDh8kjdoLsF40GmTEQ+/yXekkr6a6Q==
   dependencies:
     "@rooks/use-mutation-observer" "3.4.0"
     classnames "2.2.6"

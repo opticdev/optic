@@ -226,7 +226,7 @@ class FileSystemSessionValidatorAndLoader {
 }
 
 export async function startServer(paths: IPathMapping, sessionValidatorAndLoader: ISessionValidatorAndLoader, port: number, config: IApiCliConfig) {
-  const {specStorePath, captures, exampleRequestsPath} = paths
+  const {specStorePath, captures, exampleRequestsPath, configPath} = paths
   const sessionUtilities = new SessionUtilities(captures)
   const app = express()
 
@@ -314,6 +314,17 @@ export async function startServer(paths: IPathMapping, sessionValidatorAndLoader
   app.get('/cli-api/identity', async (req, res) => {
     const {user_id, doNotTrack} = readLocalConfig()
     res.json({distinctId: user_id, doNotTrack})
+  })
+
+  //config
+  app.get('/cli-api/config', async (req, res) => {
+    const config = await readApiConfig()
+    res.json(config)
+  })
+
+  app.put('/cli-api/config', bodyParser.json({limit: '1mb'}), async (req, res) => {
+    fs.writeFileSync(configPath, req.body.yaml)
+    res.sendStatus(200)
   })
 
   Utilities.addUiServer(app)

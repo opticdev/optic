@@ -32,7 +32,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import {primary} from '../../theme';
 import Collapse from '@material-ui/core/Collapse';
 import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
-import {IntegrationsSpecService} from '../routes/local/integrations';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Divider from '@material-ui/core/Divider';
 import {DocDivider} from '../requests/DocConstants';
@@ -144,7 +143,7 @@ function NewBehavior(props) {
     return (
       <Collapse in={true} appear={true} style={{width: '100%'}}>
         <div className={classes.notificationBar}>
-          <Typography variant="subtitle1" style={{color: 'white', marginTop: 8}}> <CheckIcon style={{color: AddedGreen, fontSize: 16, paddingTop: 4, marginLeft: -5}}/>In-Sync</Typography>
+          <Typography variant="subtitle1" style={{color: 'white', marginTop: 8}}> <CheckIcon style={{color: AddedGreen, fontSize: 16, paddingTop: 4, paddingRight: 5}}/>In-Sync</Typography>
         </div>
       </Collapse>
     )

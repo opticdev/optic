@@ -61,10 +61,6 @@ const specServiceTask = async (props) => {
     },
     saveDiffState: () => {
     },
-    listIntegrations: () => {
-      return Promise.resolve(body.integrations || [])
-    },
-    supportsIntegrations: () => true
   };
   return specService;
 };

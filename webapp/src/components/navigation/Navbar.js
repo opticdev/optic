@@ -144,6 +144,7 @@ class Navigation extends React.Component {
                   <MainMenuItem name="Dashboard" to={baseUrl + '/dashboard'}/>
                   <MainMenuItem name="API Documentation" to={baseUrl + '/documentation'}/>
 
+                  <Switch>
                     <Route exact path={routerPaths.apiDocumentation(entryBasePath)} component={() => (
                       <ApiDocsSubMenu operationsToRender={operationsToRender}
                                       cachedQueryResults={cachedQueryResults}
@@ -160,6 +161,7 @@ class Navigation extends React.Component {
                                       allPaths={allPaths}
                                       concepts={concepts}/>
                     )}/>
+                  </Switch>
                 </List>
               )}/>
             </Switch>

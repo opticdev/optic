@@ -1,15 +1,17 @@
 import React from 'react';
-import { LoaderFactory, SpecServiceContext } from './LoaderFactory.js';
-import { SpecService } from '../../services/SpecService.js';
-import { basePaths } from '../../RouterPaths.js';
-import { sharedSpecUploadService } from '../../services/SharedSpecUploadService.js';
-import { withRfcContext } from '../../contexts/RfcContext.js';
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
-import { ExportUtilities } from '../../utilities/ExportUtilities.js';
+import {LoaderFactory} from './LoaderFactory.js';
+import {NewBehaviorSideBar} from '../navigation/NewBehavior.js';
+import {SpecService} from '../../services/SpecService.js';
+import {basePaths} from '../../RouterPaths.js';
+import {sharedSpecUploadService} from '../../services/SharedSpecUploadService.js';
+import {withRfcContext} from '../../contexts/RfcContext.js';
+import {Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@material-ui/core';
+import {ExportUtilities} from '../../utilities/ExportUtilities.js';
 import QueueIcon from '@material-ui/icons/Queue';
 import IconButton from '@material-ui/core/IconButton';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
-import { LightTooltip } from '../tooltips/LightTooltip';
+import {LightTooltip} from '../tooltips/LightTooltip';
+import {SpecServiceContext, withSpecServiceContext} from '../../contexts/SpecServiceContext';
 import Menu from '@material-ui/core/Menu';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -40,7 +42,7 @@ class SharedSpecService extends SpecService {
   }
 
   listExamples(requestId) {
-    return Promise.resolve({ examples: this.exampleRequests[requestId] || [] });
+    return Promise.resolve({examples: this.exampleRequests[requestId] || []});
   }
 
   listSessions() {
@@ -65,7 +67,7 @@ class SharedSpecService extends SpecService {
 }
 
 async function specServiceTask(props) {
-  const { sharedId } = props.match.params;
+  const {sharedId} = props.match.params;
   const sharedSpec = await sharedSpecUploadService.load(sharedId);
   const initialEventsString = JSON.stringify(sharedSpec.events);
   const exampleRequests = sharedSpec.exampleRequests;
@@ -79,7 +81,7 @@ function ShareButtonBase(props) {
   const [isLoading, setIsLoading] = React.useState(false);
   const [url, setUrl] = React.useState(null);
   const [oasUrl, setOasURL] = React.useState(null);
-  const { specService, cachedQueryResults, rfcId, eventStore } = props;
+  const {specService, cachedQueryResults, rfcId, eventStore} = props;
 
   async function exportSpec() {
     setIsLoading(true);
@@ -91,7 +93,7 @@ function ShareButtonBase(props) {
       cachedQueryResults
     });
 
-    const { id } = await sharedSpecUploadService.save(spec);
+    const {id} = await sharedSpecUploadService.save(spec);
     debugger
     //@TODO: set base url to whatever.useoptic.com
     setUrl(`https://app.useoptic.com/shared/${id}`);
@@ -99,13 +101,13 @@ function ShareButtonBase(props) {
     setIsLoading(false);
   }
 
-  function ShareLink({ name, url }) {
-    return (<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+  function ShareLink({name, url}) {
+    return (<div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
       <div>{name}:</div>
-      <a href={url} target="_blank" style={{ backgroundColor: '#f1f1f1', marginLeft: 7 }}>{url}</a>
+      <a href={url} target="_blank" style={{backgroundColor: '#f1f1f1', marginLeft: 7}}>{url}</a>
       <LightTooltip title={'Copy'}>
-        <IconButton color="default" size="small" onClick={() => copy(url)} style={{ marginLeft: 8 }}>
-          <LinkIcon />
+        <IconButton color="default" size="small" onClick={() => copy(url)} style={{marginLeft: 8}}>
+          <LinkIcon/>
         </IconButton>
       </LightTooltip>
     </div>);
@@ -118,18 +120,18 @@ function ShareButtonBase(props) {
           exportSpec();
           setAnchorEl(e.currentTarget);
         }}>
-          <FileCopyIcon />
+          <FileCopyIcon/>
         </IconButton>
       </LightTooltip>
-      <Menu open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)} anchorEl={anchorEl} style={{ marginTop: 30 }}>
-        <div style={{ padding: 12, width: 470, outline: 'none' }}>
+      <Menu open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)} anchorEl={anchorEl} style={{marginTop: 30}}>
+        <div style={{padding: 12, width: 470, outline: 'none'}}>
           <Typography variant="h6">Share API</Typography>
-          <Typography variant="subtitle2" style={{ fontWeight: 100 }}>These links share an immutable copy of the API:</Typography>
-          {isLoading && <LinearProgress size="small" />}
+          <Typography variant="subtitle2" style={{fontWeight: 100}}>These links share an immutable copy of the API:</Typography>
+          {isLoading && <LinearProgress size="small"/>}
           {!isLoading && url && (
             <>
-              <ShareLink name="Optic UI" url={url} />
-              <ShareLink name="OpenAPI" url={oasUrl} />
+              <ShareLink name="Optic UI" url={url}/>
+              <ShareLink name="OpenAPI" url={oasUrl}/>
             </>
           )}
         </div>
@@ -151,9 +153,9 @@ const ShareButton = withRfcContext(ShareButtonBase);
 export const notificationAreaComponent = (
   <SpecServiceContext.Consumer>
     {(context) => {
-      const { specService } = context;
+      const {specService} = context;
       return (
-        <NewBehavior specService={specService} />
+        <NewBehaviorSideBar specService={specService}/>
       );
     }}
   </SpecServiceContext.Consumer>
@@ -162,9 +164,9 @@ export const notificationAreaComponent = (
 export const shareButtonComponent = (
   <SpecServiceContext.Consumer>
     {(context) => {
-      const { specService } = context;
+      const {specService} = context;
       return (
-        <ShareButton specService={specService} />
+        <ShareButton specService={specService}/>
       );
     }}
   </SpecServiceContext.Consumer>

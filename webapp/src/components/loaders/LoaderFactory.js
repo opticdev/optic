@@ -15,15 +15,11 @@ import {ApiOverviewContextStore} from '../../contexts/ApiOverviewContext';
 import ApiOverview from '../navigation/ApiOverview';
 import APIDashboard, {IntegrationsDashboard} from '../dashboards/APIDashboard';
 import {IntegrationsContextStore} from '../../contexts/IntegrationsContext';
-import {IntegrationsSpecService} from '../routes/local/integrations';
 import NewBehavior from '../navigation/NewBehavior';
 import Redirect from 'react-router-dom/es/Redirect';
 import {ProductDemoStore} from '../navigation/ProductDemo';
-
-const {
-  Context: SpecServiceContext,
-  withContext: withSpecServiceContext
-} = GenericContextFactory(null);
+import Init from '../onboarding/Init';
+import {SpecServiceContext, withSpecServiceContext} from '../../contexts/SpecServiceContext';
 
 class LoaderFactory {
   static build(options) {
@@ -109,16 +105,17 @@ class LoaderFactory {
                                 shareButtonComponent={shareButtonComponent}>
                       <Switch>
                         <Route exact path={routerPaths.init(basePath)}
-                               component={() => <Init />}/>
+                               component={() => <Init/>}/>
                         <Route path={routerPaths.request(basePath)}
                                component={withSpecServiceContext(RequestsDetailsPage)}/>
                         <Route path={routerPaths.apiDashboard(basePath)}
                                component={withSpecServiceContext(APIDashboard)}/>
                         <Route exact path={routerPaths.integrationsDashboard(basePath)}
                                component={() => <IntegrationsDashboard className={'root'}/>}/>
-                        <Route exact path={routerPaths.apiDocumentation(basePath)} component={withSpecServiceContext(ApiOverview)}/>
+                        <Route exact path={routerPaths.apiDocumentation(basePath)}
+                               component={withSpecServiceContext(ApiOverview)}/>
                         <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
-                        <Redirect to={routerPaths.apiDashboard(basePath)} />
+                        <Redirect to={routerPaths.apiDashboard(basePath)}/>
                       </Switch>
                     </Navigation>
                   </ApiOverviewContextStore>
@@ -170,19 +167,9 @@ class LoaderFactory {
       return results;
     };
 
-    const integrationsTask = async (props) => {
-      const {specService} = props;
-      if (specService.supportsIntegrations()) {
-        return await specService.listIntegrations();
-      } else {
-        return [];
-      }
-    };
-
     const withWrapper = compose(
       withTask(specServiceTask, 'specService'),
       withTask(task, 'initialEventsString'),
-      withTask(integrationsTask, 'integrations'),
     );
 
     const wrappedTopLevelRoutes = withWrapper(TopLevelRoutes);
@@ -201,10 +188,10 @@ class LoaderFactory {
         return (
           <NavigationStore baseUrl={match.url}>
             <ProductDemoStore active={demo}>
-            <Switch>
-              {/*<Route path={routerPaths.integrationsPath(basePath)} component={wrappedIntegrationRoutes}/>*/}
-              <Route path={basePath} component={wrappedTopLevelRoutes}/>
-            </Switch>
+              <Switch>
+                {/*<Route path={routerPaths.integrationsPath(basePath)} component={wrappedIntegrationRoutes}/>*/}
+                <Route path={basePath} component={wrappedTopLevelRoutes}/>
+              </Switch>
             </ProductDemoStore>
           </NavigationStore>
         );
@@ -218,7 +205,5 @@ class LoaderFactory {
 }
 
 export {
-  LoaderFactory,
-  withSpecServiceContext,
-  SpecServiceContext,
+  LoaderFactory
 };
