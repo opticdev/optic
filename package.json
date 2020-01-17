@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "node ./workspaces/scripts/build/build.js"
+  },
+  "workspaces": [
+    "workspaces/domain",
+    "workspaces/ui",
+    "workspaces/cli-config",
+    "workspaces/proxy",
+    "workspaces/cli-client",
+    "workspaces/cli-server",
+    "workspaces/local-cli"
+  ],
+  "devDependencies": {
+    "@types/debug": "^4.1.5",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "debug": "^4.1.1"
+  }
+}
