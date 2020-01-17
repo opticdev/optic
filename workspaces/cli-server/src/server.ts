@@ -42,8 +42,8 @@ class CliServer {
   }
 
   addUiServer(app: express.Application) {
-    const resourceRoot = path.resolve(__dirname, '../../../resources');
-    const reactRoot = path.join(resourceRoot, 'react');
+    const resourceRoot = path.resolve(__dirname, '../resources');
+    const reactRoot = path.join(resourceRoot, 'ui');
     const indexHtmlPath = path.join(reactRoot, 'index.html');
     app.use(express.static(reactRoot));
     app.get('*', (req, res) => {
@@ -109,6 +109,9 @@ class CliServer {
     // specRouter
     const specRouter = makeRouter(sessions);
     app.use('/api/specs/:specId', specRouter);
+
+    // ui
+    this.addUiServer(app);
 
     return app;
   }

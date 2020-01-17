@@ -1,2 +1,5 @@
 build
 node_modules
+
+# the build process should inject the build ui here. It should not be in version control but it should be in the npm package
+resources/ui
