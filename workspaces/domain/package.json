@@ -2,13 +2,12 @@
   "name": "@useoptic/domain",
   "version": "0.1.0",
   "scripts": {
-    "test": "echo domain",
-    "build": "yarn run tsc -b && cp ./src/domain.js ./build/domain.js"
+    "ws:test": "echo domain",
+    "ws:build": "yarn run tsc -b && cp ./src/domain.js ./build/domain.js"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/proxy": "0.1.0"
   }
 }
 

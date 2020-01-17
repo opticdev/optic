@@ -2,8 +2,8 @@
   "name": "@useoptic/cli-client",
   "version": "0.1.0",
   "scripts": {
-    "build": "yarn run tsc -b",
-    "test": "echo cli-client"
+    "ws:build": "yarn run tsc -b",
+    "ws:test": "echo cli-client"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",

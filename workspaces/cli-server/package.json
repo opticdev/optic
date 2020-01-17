@@ -2,8 +2,8 @@
   "name": "@useoptic/cli-server",
   "version": "0.1.0",
   "scripts": {
-    "build": "yarn run tsc -b",
-    "test": "echo cli-server"
+    "ws:build": "yarn run tsc -b",
+    "ws:test": "echo cli-server"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",

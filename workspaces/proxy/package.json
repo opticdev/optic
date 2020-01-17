@@ -2,8 +2,8 @@
   "name": "@useoptic/proxy",
   "version": "0.1.0",
   "scripts": {
-    "test": "echo proxy",
-    "build": "yarn run tsc -b"
+    "ws:test": "echo proxy",
+    "ws:build": "yarn run tsc -b"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",

@@ -2,8 +2,8 @@
   "name": "@useoptic/cli-config",
   "version": "0.1.0",
   "scripts": {
-    "test": "echo config",
-    "build": "yarn run tsc -b"
+    "ws:test": "echo config",
+    "ws:build": "yarn run tsc -b"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",

@@ -17,7 +17,8 @@
     "colors": "^1.4.0",
     "react-dev-utils": "^10.0.0",
     "tree-kill": "^1.2.2",
-    "tslib": "^1"
+    "tslib": "^1",
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
@@ -26,6 +27,7 @@
     "@types/mocha": "^5",
     "@types/node": "^10",
     "@types/react-dev-utils": "^9.0.2",
+    "@types/uuid": "^3.4.6",
     "chai": "^4",
     "eslint": "^5.13",
     "eslint-config-oclif": "^3.1",
@@ -63,9 +65,10 @@
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "echo 'skipping posttest';#eslint . --ext .ts --config .eslintrc",
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
-    "test": "echo local-cli; #nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md",
-    "build": "echo building local-cli"
+    "ws:build": "echo building local-cli",
+    "ws:test": "echo local-cli"
   },
   "types": "lib/index.d.ts"
 }
