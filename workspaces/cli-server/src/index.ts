@@ -5,7 +5,7 @@ import {CliDaemon} from './daemon';
 import {fork} from 'child_process';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import {FileSystemSessionPersistence} from './file-system-session-persistence';
+import {FileSystemCaptureSaver} from './file-system-session-persistence';
 import {FileSystemCaptureLoader} from './file-system-session-loader';
 
 export interface ISessionManifest {
@@ -16,7 +16,7 @@ export interface ICaptureLoader {
   load(sessionId: string): Promise<ISessionManifest>
 }
 
-export interface ISessionPersistence {
+export interface ICaptureSaver {
   init(sessionId: string): Promise<void>
 
   save(sample: IApiInteraction): Promise<void>
@@ -27,6 +27,9 @@ export interface ICliDaemonState {
 }
 
 export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDaemonState> {
+  if (process.env.OPTIC_ENV === 'development') {
+    await ensureDaemonStopped(lockFilePath);
+  }
   await fs.ensureFile(lockFilePath);
   const isLocked = await lockfile.check(lockFilePath);
   if (!isLocked) {
@@ -64,6 +67,6 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
 
 export {
   CliDaemon,
-  FileSystemSessionPersistence,
+  FileSystemCaptureSaver,
   FileSystemCaptureLoader
 };

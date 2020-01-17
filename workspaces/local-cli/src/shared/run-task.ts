@@ -1,12 +1,12 @@
 import Command from '@oclif/command';
 import {Client} from '@useoptic/cli-client';
-import {IApiCliConfig, TaskToStartConfig} from '@useoptic/cli-config';
+import {TaskToStartConfig} from '@useoptic/cli-config';
 import {IOpticTask} from '@useoptic/cli-config';
-import {FileSystemSessionPersistence, FileSystemCaptureLoader} from '@useoptic/cli-server';
 import {getPaths, readApiConfig, shouldWarnAboutVersion7Compatibility} from '@useoptic/cli-config';
-import {ensureDaemonStarted, ensureDaemonStopped} from '@useoptic/cli-server';
-import * as path from 'path';
+import {ensureDaemonStarted, ensureDaemonStopped, FileSystemCaptureSaver} from '@useoptic/cli-server';
+import {ICaptureSaver} from '@useoptic/cli-server';
 import * as colors from 'colors';
+import * as path from 'path';
 import {fromOptic} from './conversation';
 import {lockFilePath} from './paths';
 import openBrowser = require('react-dev-utils/openBrowser.js');
@@ -37,9 +37,6 @@ export async function setupTask(cli: Command, taskName: string) {
     return cli.log(colors.red(`No task ${colors.bold(taskName)} found in optic.yml`));
   }
 
-  if (process.env.OPTIC_ENV === 'development') {
-    await ensureDaemonStopped(lockFilePath);
-  }
   const daemonState = await ensureDaemonStarted(lockFilePath);
 
   const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
@@ -53,28 +50,26 @@ export async function setupTask(cli: Command, taskName: string) {
   openBrowser(uiUrl);
 
   // start proxy and command session
-  await runTask(config, captureId, task);
+  const persistenceManagerFactory = () => {
+    return new FileSystemCaptureSaver({
+      captureBaseDirectory: path.join(cwd, '.optic', 'captures')
+    });
+  };
+  await runTask(captureId, task, persistenceManagerFactory);
 
-  if (process.env.OPTIC_ENV === 'development') {
-    await ensureDaemonStopped(lockFilePath);
-  }
   process.exit(0);
 }
 
-export async function runTask(config: IApiCliConfig, captureId: string, task: IOpticTask): Promise<void> {
+export async function runTask(captureId: string, task: IOpticTask, persistenceManagerFactory: () => ICaptureSaver): Promise<void> {
   const startConfig = await TaskToStartConfig(task, captureId);
 
   const sessionManager = new CommandAndProxySessionManager(startConfig);
 
-  const persistenceManager = new FileSystemSessionPersistence({
-    captureBaseDirectory: path.join('.optic', 'captures')
-  });
+  const persistenceManager = persistenceManagerFactory();
 
   await sessionManager.run(persistenceManager);
 
-  const captureLoader = new FileSystemCaptureLoader({
-    captureBaseDirectory: path.join('.optic', 'captures')
-  });
-  await captureLoader.load(captureId);
-
+  if (process.env.OPTIC_ENV === 'development') {
+    await ensureDaemonStopped(lockFilePath);
+  }
 }

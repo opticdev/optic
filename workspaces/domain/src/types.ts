@@ -11,8 +11,7 @@ export interface IMultiParameterMapping {
 }
 
 export interface IRequestMetadata {
-  host: string,
-  url: string,
+  url: string
   method: string
   headers: IHeaders
   queryString?: string
@@ -28,6 +27,8 @@ export interface IResponseMetadata {
 }
 
 export interface IApiInteraction {
+  id: string
+  host: string
   request: IRequestMetadata
   response: IResponseMetadata
 }

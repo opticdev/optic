@@ -7,16 +7,13 @@ import * as mockttp from 'mockttp';
 import * as fs from 'fs-extra';
 import launcher from '@httptoolkit/browser-launcher';
 import {CallbackResponseResult} from 'mockttp/dist/rules/handlers';
-import {CompletedRequest} from 'mockttp';
+import {CompletedRequest, MockRuleData} from 'mockttp';
 import {IApiInteraction} from '@useoptic/domain';
 
 
-export interface IWithSamples {
-  getSamples(): IApiInteraction[]
-}
-
 export interface IHttpToolkitCapturingProxyConfig {
-  proxyPort: number,
+  proxyTarget?: string
+  proxyPort: number
   flags: {
     chrome: boolean
   }
@@ -26,11 +23,27 @@ export interface IRequestFilter {
   shouldSkip(request: CompletedRequest): boolean
 }
 
-export class HttpToolkitCapturingProxy implements IWithSamples {
+class HttpToolkitRequestFilter implements IRequestFilter {
+  constructor(private target?: string) {
+  }
+
+  shouldSkip(request: CompletedRequest): boolean {
+    if (this.target) {
+      console.log({
+        hostname: request.hostname,
+        url: request.url,
+        target: this.target
+      });
+      return request.hostname === this.target || request.url.startsWith(this.target);
+    }
+    return true;
+  }
+}
+
+export class HttpToolkitCapturingProxy {
   private proxy!: mockttp.Mockttp;
   private chrome!: launcher.BrowserInstance;
   private requests: Map<string, mockttp.CompletedRequest> = new Map();
-  private samples: IApiInteraction[] = [];
   private config!: IHttpToolkitCapturingProxyConfig;
   public readonly events: EventEmitter = new EventEmitter();
 
@@ -62,7 +75,32 @@ export class HttpToolkitCapturingProxy implements IWithSamples {
 
     this.proxy = proxy;
 
-    proxy.addRules(
+    const rules: MockRuleData[] = [];
+    if (config.proxyTarget) {
+      rules.push(
+        {
+          matchers: [
+            new mockttp.matchers.WildcardMatcher()
+          ],
+          handler: new mockttp.handlers.PassThroughHandler({
+            forwarding: {
+              targetHost: config.proxyTarget,
+              updateHostHeader: false
+            }
+          })
+        }
+      );
+    } else {
+      rules.push(
+        {
+          matchers: [
+            new mockttp.matchers.WildcardMatcher()
+          ],
+          handler: new mockttp.handlers.PassThroughHandler()
+        }
+      );
+    }
+    await proxy.addRules(
       {
         matchers: [
           new mockttp.matchers.HostMatcher('amiusing.httptoolkit.tech')
@@ -77,18 +115,9 @@ export class HttpToolkitCapturingProxy implements IWithSamples {
           return response;
         })
       },
-      {
-        matchers: [
-          new mockttp.matchers.WildcardMatcher()
-        ],
-        handler: new mockttp.handlers.PassThroughHandler()
-      }
+      ...rules
     );
-    const requestFilter: IRequestFilter = {
-      shouldSkip(req: mockttp.CompletedRequest) {
-        return false;
-      }
-    };
+    const requestFilter: IRequestFilter = new HttpToolkitRequestFilter(config.proxyTarget);
 
     await proxy.on('request', (req: mockttp.CompletedRequest) => {
       if (!requestFilter.shouldSkip(req)) {
@@ -98,17 +127,22 @@ export class HttpToolkitCapturingProxy implements IWithSamples {
 
     await proxy.on('response', (res: mockttp.CompletedResponse) => {
       if (this.requests.has(res.id)) {
-        const req = this.requests.get(res.id) as mockttp.CompletedRequest;
+        const req = this.requests.get(res.id);
+        if (!req) {
+          return;
+        }
         const queryString: string = url.parse(req.url).query || '';
         const queryParameters = qs.parse(queryString);
-
+        console.log(req);
         const sample: IApiInteraction = {
+          id: res.id,
+          host: req.hostname || '',
           request: {
             method: req.method,
-            host: req.hostname || '',
             url: req.path,
             headers: req.headers,
             cookies: {},
+            queryString,
             queryParameters,
             body: extractBody(req)
           },
@@ -118,8 +152,9 @@ export class HttpToolkitCapturingProxy implements IWithSamples {
             body: extractBody(res)
           }
         };
-        this.events.emit('sample', sample)
-        this.requests.delete(res.id)
+        console.log({sample});
+        this.events.emit('sample', sample);
+        this.requests.delete(res.id);
       }
     });
 
@@ -170,10 +205,6 @@ export class HttpToolkitCapturingProxy implements IWithSamples {
       this.chrome.stop();
       await promise;
     }
-  }
-
-  getSamples() {
-    return this.samples;
   }
 }
 

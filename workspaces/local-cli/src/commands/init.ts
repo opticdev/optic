@@ -24,7 +24,7 @@ export default class Init extends Command {
         }
       }
     };
-    await createFileTree(config);
+    await createFileTree(config, cwd);
   }
 
 }

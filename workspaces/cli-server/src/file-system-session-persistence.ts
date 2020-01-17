@@ -2,20 +2,20 @@ import {IApiInteraction} from '@useoptic/proxy';
 import Bottleneck from 'bottleneck';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import {ISessionPersistence} from './index';
+import {ICaptureSaver} from './index';
 import {userDebugLogger} from './logger';
 
-interface IFileSystemSessionPersistenceConfig {
+interface IFileSystemCaptureSaverConfig {
   captureBaseDirectory: string
 }
 
 export const captureFileSuffix = '.optic-capture.json';
 
-class FileSystemSessionPersistence implements ISessionPersistence {
+class FileSystemCaptureSaver implements ICaptureSaver {
   private batcher: Bottleneck.Batcher = new Bottleneck.Batcher({maxSize: 100, maxTime: 1000});
   private batchCount: number = 0;
 
-  constructor(private config: IFileSystemSessionPersistenceConfig) {
+  constructor(private config: IFileSystemCaptureSaverConfig) {
 
   }
 
@@ -37,5 +37,5 @@ class FileSystemSessionPersistence implements ISessionPersistence {
 }
 
 export {
-  FileSystemSessionPersistence
+  FileSystemCaptureSaver
 };

@@ -1,5 +1,5 @@
 import {IOpticTaskRunnerConfig} from '@useoptic/cli-config';
-import {ISessionPersistence} from '@useoptic/cli-server';
+import {ICaptureSaver} from '@useoptic/cli-server';
 import {HttpToolkitCapturingProxy} from '@useoptic/proxy';
 import {IApiInteraction} from '@useoptic/proxy';
 import {CommandSession} from './command-session';
@@ -10,7 +10,7 @@ class CommandAndProxySessionManager {
 
   }
 
-  async run(persistenceManager: ISessionPersistence) {
+  async run(persistenceManager: ICaptureSaver) {
     const commandSession = new CommandSession();
     const inboundProxy = new HttpToolkitCapturingProxy();
     const inboundProxyPort = this.config.proxyConfig.port;
@@ -31,33 +31,37 @@ class CommandAndProxySessionManager {
       flags: {
         chrome: false
       },
+      //@TODO: add proxyTarget here if not intercepting everything
       proxyPort: inboundProxyPort
     });
 
-    userDebugLogger(`started proxy on port ${inboundProxyPort}`);
-
-    await commandSession.start({
-      command: this.config.command,
-      environmentVariables: {
-        ...process.env,
-        OPTIC_API_PORT: inputs.ENV.OPTIC_API_PORT,
-      }
-    });
-
-    const commandStoppedPromise = new Promise(resolve => {
-      commandSession.events.on('stopped', () => resolve());
-    });
+    userDebugLogger(`started inbound proxy on port ${inboundProxyPort}`);
+    const promises = [];
+    if (this.config.command) {
+      await commandSession.start({
+        command: this.config.command,
+        environmentVariables: {
+          ...process.env,
+          OPTIC_API_PORT: inputs.ENV.OPTIC_API_PORT,
+        }
+      });
+      const commandStoppedPromise = new Promise(resolve => {
+        commandSession.events.on('stopped', () => resolve());
+      });
+      promises.push(commandStoppedPromise);
+    }
 
     const processInterruptedPromise = new Promise((resolve) => {
       process.on('SIGINT', () => {
         resolve();
       });
     });
+    promises.push(processInterruptedPromise);
 
-    await Promise.race([commandStoppedPromise, processInterruptedPromise]);
+    await Promise.race(promises);
 
     commandSession.stop();
-    await commandStoppedPromise;
+    await Promise.all(promises);
     await inboundProxy.stop();
   }
 }

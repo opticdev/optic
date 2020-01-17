@@ -6,7 +6,7 @@ import getPort from 'get-port';
 import findUp from 'find-up';
 
 export interface IOpticTask {
-  command: string,
+  command?: string,
   baseUrl: string
   proxy?: string
 }
@@ -27,14 +27,16 @@ export async function readApiConfig(): Promise<IApiCliConfig> {
 
 
 export interface IOpticTaskRunnerConfig {
-  command: string
+  command?: string
   captureId: string
+  // where does the service normally live?
   serviceConfig: {
     port: number
     host: string
     protocol: string
     basePath: string
   }
+  // where should intercepted requests go?
   proxyConfig: {
     port: number
     host: string
@@ -81,31 +83,30 @@ export interface IPathMapping {
   outputPath: string
 }
 
-export async function getPaths(fallbackPath: (cwd: string) => string = (cwd) => cwd) {
+export async function getPaths() {
   const rootPath = await (async () => {
     const configPath = await findUp('optic.yml', {type: 'file'});
     if (configPath) {
       console.log({configPath});
       return path.resolve(configPath, '../');
     }
-    return fallbackPath(process.cwd());
+    throw new Error(`expected to find an optic.yml file`);
   })();
 
   console.log({rootPath});
-  process.chdir(rootPath);
 
-  const cwd = process.cwd();
-  return getPathsRelativeToCwd(cwd);
+  return getPathsRelativeToCwd(rootPath);
 }
 
 export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> {
   const configPath = path.join(cwd, 'optic.yml');
+
   const basePath = path.join(cwd, '.optic');
-  const specStorePath = path.join(basePath, 'specification.json');
+  const capturesPath = path.join(basePath, 'captures');
   const gitignorePath = path.join(basePath, '.gitignore');
-  const captures = path.join(basePath, 'captures');
-  const exampleRequestsPath = path.join(basePath, 'example-requests');
-  await fs.ensureDir(captures);
+  const specStorePath = path.join(basePath, 'api', 'specification.json');
+  const exampleRequestsPath = path.join(basePath, 'api', 'example-requests');
+  await fs.ensureDir(capturesPath);
   await fs.ensureDir(exampleRequestsPath);
   const outputPath = path.join(basePath, 'generated');
 
@@ -115,14 +116,14 @@ export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> 
     specStorePath,
     configPath,
     gitignorePath,
-    capturesPath: captures,
+    capturesPath,
     exampleRequestsPath,
     outputPath,
   };
 }
 
-export async function createFileTree(config: IApiCliConfig) {
-  const {specStorePath, configPath, gitignorePath, capturesPath} = await getPaths();
+export async function createFileTree(config: IApiCliConfig, basePath: string) {
+  const {specStorePath, configPath, gitignorePath, capturesPath} = await getPathsRelativeToCwd(basePath);
   const files = [
     {
       path: gitignorePath,
