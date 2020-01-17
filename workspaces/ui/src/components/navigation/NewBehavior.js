@@ -286,11 +286,11 @@ class NewBehaviorWrapperBase extends React.Component {
   loadLatestSession() {
     const {specService} = this.props;
     specService
-      .listSessions()
-      .then(async (listSessionsResponse) => {
-        const {sessions} = listSessionsResponse;
-        if (sessions.length > 0) {
-          const [lastSessionId] = sessions;
+      .listCaptures()
+      .then(async (listCapturesResponse) => {
+        const {captures} = listCapturesResponse;
+        if (captures.length > 0) {
+          const [lastSessionId] = captures;
           if (lastSessionId !== this.state.lastSessionId) {
             this.setState({
               isLoading: false,

@@ -28,6 +28,7 @@ export async function readApiConfig(): Promise<IApiCliConfig> {
 
 export interface IOpticTaskRunnerConfig {
   command: string
+  captureId: string
   serviceConfig: {
     port: number
     host: string
@@ -42,7 +43,7 @@ export interface IOpticTaskRunnerConfig {
   }
 }
 
-export async function TaskToStartConfig(task: IOpticTask): Promise<IOpticTaskRunnerConfig> {
+export async function TaskToStartConfig(task: IOpticTask, captureId: string): Promise<IOpticTaskRunnerConfig> {
 
   const parsedBaseUrl = url.parse(task.baseUrl);
   const randomPort = await getPort({port: getPort.makeRange(3300, 3900)});
@@ -53,6 +54,7 @@ export async function TaskToStartConfig(task: IOpticTask): Promise<IOpticTaskRun
 
   return {
     command: task.command,
+    captureId,
     serviceConfig: {
       port: randomPort,
       host: parsedBaseUrl.hostname || 'localhost',

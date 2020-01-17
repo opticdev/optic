@@ -292,21 +292,14 @@ class ExampleDrivenSpecLoader extends React.Component {
   render() {
     const sessionId = 'someSessionId';
     const specService = {
-      loadSession: (sessionId) => {
-        return Promise.resolve({
-          diffStateResponse: {
-            diffState: {}
-          },
-          sessionResponse: {
-            session: this.state.session
-          }
-        });
+      listCapturedSamples: (sessionId) => {
+        return Promise.resolve(this.state.session);
       },
       listEvents() {
         return Promise.resolve([]);
       },
-      listSessions() {
-        return Promise.resolve({ sessions: [sessionId] });
+      listCaptures() {
+        return Promise.resolve({ captures: [sessionId] });
       },
       saveEvents: (eventStore, rfcId) => {
         const events = eventStore.serializeEvents(rfcId);

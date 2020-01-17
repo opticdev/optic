@@ -7,9 +7,9 @@ import { notificationAreaComponent, shareButtonComponent } from './SharedLoader.
 const basePath = basePaths.interceptorBasePath
 
 class InterceptorSpecService extends SpecService {
-  listSessions() {
+  listCaptures() {
     return Promise.resolve({
-      sessions: ['interceptor-session-id']
+      captures: ['interceptor-session-id']
     })
   }
 }

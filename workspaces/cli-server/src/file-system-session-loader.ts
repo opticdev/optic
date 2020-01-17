@@ -1,16 +1,16 @@
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {captureFileSuffix} from './file-system-session-persistence';
-import {ISessionLoader, ISessionManifest} from './index';
+import {ICaptureLoader, ISessionManifest} from './index';
 
-interface IFileSystemSessionLoaderConfig {
+interface IFileSystemCaptureLoaderConfig {
   captureBaseDirectory: string
 }
 
 const suffixOffset = -1 * captureFileSuffix.length;
 
-class FileSystemSessionLoader implements ISessionLoader {
-  constructor(private config: IFileSystemSessionLoaderConfig) {
+class FileSystemCaptureLoader implements ICaptureLoader {
+  constructor(private config: IFileSystemCaptureLoaderConfig) {
   }
 
   async load(sessionId: string): Promise<ISessionManifest> {
@@ -39,5 +39,5 @@ class FileSystemSessionLoader implements ISessionLoader {
 }
 
 export {
-  FileSystemSessionLoader
+  FileSystemCaptureLoader
 };

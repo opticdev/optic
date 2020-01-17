@@ -1,19 +1,20 @@
-import {IApiInteraction} from '@useoptic/proxy';
+import {IApiInteraction} from './types';
 
+export {IApiInteraction};
 const opticEngine = require('./domain.js');
 
-export const ShapesCommands = opticEngine.com.seamless.contexts.shapes.Commands;
-export const ShapesHelper = opticEngine.com.seamless.contexts.shapes.ShapesHelper();
-export const RequestsHelper = opticEngine.com.seamless.contexts.requests.RequestsServiceHelper();
-export const ContentTypesHelper = opticEngine.com.seamless.contexts.requests.ContentTypes();
-export const NaiveSummary = opticEngine.com.seamless.diff.NaiveSummary();
+export const ShapesCommands = opticEngine.com.useoptic.contexts.shapes.Commands;
+export const ShapesHelper = opticEngine.com.useoptic.contexts.shapes.ShapesHelper();
+export const RequestsHelper = opticEngine.com.useoptic.contexts.requests.RequestsServiceHelper();
+export const ContentTypesHelper = opticEngine.com.useoptic.contexts.requests.ContentTypes();
+export const NaiveSummary = opticEngine.com.useoptic.diff.NaiveSummary();
 
-export const RfcCommands = opticEngine.com.seamless.contexts.rfc.Commands;
-export const RequestsCommands = opticEngine.com.seamless.contexts.requests.Commands;
-export const RfcCommandContext = opticEngine.com.seamless.contexts.rfc.RfcCommandContext;
+export const RfcCommands = opticEngine.com.useoptic.contexts.rfc.Commands;
+export const RequestsCommands = opticEngine.com.useoptic.contexts.requests.Commands;
+export const RfcCommandContext = opticEngine.com.useoptic.contexts.rfc.RfcCommandContext;
 export const ScalaJSHelpers = opticEngine.ScalaJSHelpers;
 
-export const Facade = opticEngine.com.seamless.contexts.rfc.RfcServiceJSFacade();
+export const Facade = opticEngine.com.useoptic.contexts.rfc.RfcServiceJSFacade();
 export const Queries = (eventStore: any, service: any, aggregateId: string) => new opticEngine.Queries(eventStore, service, aggregateId);
 
 
@@ -33,7 +34,7 @@ export function commandToJs(command: any) {
   return opticEngine.CommandSerialization.toJs(command);
 }
 
-export const JsonHelper = opticEngine.com.seamless.diff.JsonHelper();
+export const JsonHelper = opticEngine.com.useoptic.diff.JsonHelper();
 
 function fromJs(x: any) {
   if (typeof x === 'undefined') {
@@ -53,7 +54,7 @@ export const lengthScala = (collection: any) => {
   return ScalaJSHelpers.toJsArray(collection).length;
 };
 
-const {ApiInteraction, ApiRequest, ApiResponse} = opticEngine.com.seamless.diff;
+const {ApiInteraction, ApiRequest, ApiResponse} = opticEngine.com.useoptic.diff;
 
 export function toInteraction(sample: IApiInteraction) {
   return ApiInteraction(
@@ -62,10 +63,10 @@ export function toInteraction(sample: IApiInteraction) {
   );
 }
 
-export const InteractionDiffer = opticEngine.com.seamless.diff.InteractionDiffer;
-export const RequestDiffer = opticEngine.com.seamless.diff.RequestDiffer();
-export const Interpreters = opticEngine.com.seamless.diff.interpreters;
-export const PluginRegistry = opticEngine.com.seamless.diff.PluginRegistry;
-export const QueryStringDiffer = opticEngine.com.seamless.diff.query.QueryStringDiffer;
+export const InteractionDiffer = opticEngine.com.useoptic.diff.InteractionDiffer;
+export const RequestDiffer = opticEngine.com.useoptic.diff.RequestDiffer();
+export const Interpreters = opticEngine.com.useoptic.diff.interpreters;
+export const PluginRegistry = opticEngine.com.useoptic.diff.PluginRegistry;
+export const QueryStringDiffer = opticEngine.com.useoptic.diff.query.QueryStringDiffer;
 export const {JsQueryStringParser} = opticEngine;
 console.log(opticEngine);

@@ -6,13 +6,13 @@ import {fork} from 'child_process';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {FileSystemSessionPersistence} from './file-system-session-persistence';
-import {FileSystemSessionLoader} from './file-system-session-loader';
+import {FileSystemCaptureLoader} from './file-system-session-loader';
 
 export interface ISessionManifest {
   samples: IApiInteraction[]
 }
 
-export interface ISessionLoader {
+export interface ICaptureLoader {
   load(sessionId: string): Promise<ISessionManifest>
 }
 
@@ -65,5 +65,5 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
 export {
   CliDaemon,
   FileSystemSessionPersistence,
-  FileSystemSessionLoader
+  FileSystemCaptureLoader
 };

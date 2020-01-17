@@ -45,19 +45,15 @@ class SharedSpecService extends SpecService {
     return Promise.resolve({examples: this.exampleRequests[requestId] || []});
   }
 
-  listSessions() {
+  listCaptures() {
     return Promise.resolve({
-      sessions: [this.id]
+      captures: [this.id]
     });
   }
 
-  loadSession(sessionId) {
+  listCapturedSamples(sessionId) {
     return Promise.resolve({
-      sessionResponse: {
-        'session': {
-          'samples': []
-        }
-      }
+      'samples': []
     });
   }
 
@@ -126,7 +122,8 @@ function ShareButtonBase(props) {
       <Menu open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)} anchorEl={anchorEl} style={{marginTop: 30}}>
         <div style={{padding: 12, width: 470, outline: 'none'}}>
           <Typography variant="h6">Share API</Typography>
-          <Typography variant="subtitle2" style={{fontWeight: 100}}>These links share an immutable copy of the API:</Typography>
+          <Typography variant="subtitle2" style={{fontWeight: 100}}>These links share an immutable copy of the
+            API:</Typography>
           {isLoading && <LinearProgress size="small"/>}
           {!isLoading && url && (
             <>

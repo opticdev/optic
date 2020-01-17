@@ -91,9 +91,9 @@ class TrafficSessionStoreBase extends React.Component {
     }
 
     specService
-      .loadSession(sessionId)
+      .listCapturedSamples(sessionId)
       .then(result => {
-        const {session} = result.sessionResponse;
+        const session = result;
         const diffSessionManager = new BaseDiffSessionManager(
           sessionId,
           session,
@@ -130,10 +130,9 @@ class TrafficSessionStoreBase extends React.Component {
       }
 
       try {
-
-        const result = await specService.loadSession(sessionId);
+        const result = await specService.listCapturedSamples(sessionId);
         const {session, diffSessionManager} = this.state;
-        const {session: latestSession} = result.sessionResponse;
+        const latestSession = result;
         if (!session) {
           this.checkForUpdates();
 

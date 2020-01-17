@@ -12,7 +12,8 @@ export interface ICliServerConfig {
 }
 
 export interface IOpticExpressRequestAdditions {
-  paths: IPathMapping,
+  session: ICliServerSession
+  paths: IPathMapping
   capturesHelpers: CapturesHelpers
   exampleRequestsHelpers: ExampleRequestsHelpers
 }
@@ -28,6 +29,7 @@ declare global {
 export interface ICliServerSession {
   id: string
   path: string
+  captureIds: string[]
 }
 
 export const shutdownRequested = 'cli-server:shutdown-requested';
@@ -61,14 +63,16 @@ class CliServer {
       });
     });
     app.post('/api/sessions', bodyParser.json({limit: '1kb'}), async (req, res: express.Response) => {
-      const {path} = req.body;
+      const {path, captureId} = req.body;
 
       const existingSession = sessions.find(x => x.path === path);
       if (existingSession) {
+        existingSession.captureIds.push(captureId);
         return res.json({
           session: {
             id: existingSession.id,
-            path: existingSession.path
+            path: existingSession.path,
+            captureIds: existingSession.captureIds
           }
         });
       }
@@ -76,13 +80,16 @@ class CliServer {
       const sessionId = (sessions.length + 1).toString();
       const session: ICliServerSession = {
         id: sessionId,
-        path
+        path,
+        captureIds: [captureId]
       };
       sessions.push(session);
 
       return res.json({
         session: {
-          id: sessionId
+          id: sessionId,
+          path,
+          captureIds: [captureId]
         }
       });
     });

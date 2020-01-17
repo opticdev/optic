@@ -81,7 +81,7 @@ const styles = theme => ({
 class APIDashboard extends React.Component {
   render() {
     const {classes, queries, integrations, goToIntegration, baseUrl, demos, cachedQueryResults} = this.props;
-    const setupState = queries.setupState();
+    const setupState = {}//queries.setupState();
 
     return (
       <div className={classes.root}>

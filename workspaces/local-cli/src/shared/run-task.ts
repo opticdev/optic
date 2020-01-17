@@ -2,7 +2,7 @@ import Command from '@oclif/command';
 import {Client} from '@useoptic/cli-client';
 import {IApiCliConfig, TaskToStartConfig} from '@useoptic/cli-config';
 import {IOpticTask} from '@useoptic/cli-config';
-import {FileSystemSessionPersistence, FileSystemSessionLoader} from '@useoptic/cli-server';
+import {FileSystemSessionPersistence, FileSystemCaptureLoader} from '@useoptic/cli-server';
 import {getPaths, readApiConfig, shouldWarnAboutVersion7Compatibility} from '@useoptic/cli-config';
 import {ensureDaemonStarted, ensureDaemonStopped} from '@useoptic/cli-server';
 import * as path from 'path';
@@ -12,7 +12,7 @@ import {lockFilePath} from './paths';
 import openBrowser = require('react-dev-utils/openBrowser.js');
 import Init from '../commands/init';
 import {CommandAndProxySessionManager} from './command-and-proxy-session-manager';
-
+import * as uuidv4 from 'uuid/v4';
 
 export async function setupTask(cli: Command, taskName: string) {
 
@@ -45,14 +45,15 @@ export async function setupTask(cli: Command, taskName: string) {
   const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
   cli.log(apiBaseUrl);
   const cliClient = new Client(apiBaseUrl);
-  const cliSession = await cliClient.findSession(cwd);
+  const captureId = uuidv4();
+  const cliSession = await cliClient.findSession(cwd, captureId);
   console.log({cliSession});
   const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}`;
   cli.log(uiUrl);
   openBrowser(uiUrl);
 
   // start proxy and command session
-  await runTask(config, task);
+  await runTask(config, captureId, task);
 
   if (process.env.OPTIC_ENV === 'development') {
     await ensureDaemonStopped(lockFilePath);
@@ -60,8 +61,8 @@ export async function setupTask(cli: Command, taskName: string) {
   process.exit(0);
 }
 
-export async function runTask(config: IApiCliConfig, task: IOpticTask): Promise<void> {
-  const startConfig = await TaskToStartConfig(task);
+export async function runTask(config: IApiCliConfig, captureId: string, task: IOpticTask): Promise<void> {
+  const startConfig = await TaskToStartConfig(task, captureId);
 
   const sessionManager = new CommandAndProxySessionManager(startConfig);
 
@@ -71,9 +72,9 @@ export async function runTask(config: IApiCliConfig, task: IOpticTask): Promise<
 
   await sessionManager.run(persistenceManager);
 
-  const sessionLoader = new FileSystemSessionLoader({
+  const captureLoader = new FileSystemCaptureLoader({
     captureBaseDirectory: path.join('.optic', 'captures')
   });
-  await sessionLoader.load('sss');
+  await captureLoader.load(captureId);
 
 }

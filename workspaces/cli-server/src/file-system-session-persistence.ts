@@ -19,8 +19,8 @@ class FileSystemSessionPersistence implements ISessionPersistence {
 
   }
 
-  async init(sessionId: string) {
-    const outputDirectory = path.join(this.config.captureBaseDirectory, sessionId);
+  async init(captureId: string) {
+    const outputDirectory = path.join(this.config.captureBaseDirectory, captureId);
     await fs.ensureDir(outputDirectory);
     this.batcher.on('batch', async (items: IApiInteraction[]) => {
       userDebugLogger(`writing batch ${this.batchCount}`);

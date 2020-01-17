@@ -4,7 +4,7 @@ import express from 'express';
 import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {FileSystemSessionLoader} from '../file-system-session-loader';
+import {FileSystemCaptureLoader} from '../file-system-session-loader';
 import {ICliServerSession} from '../server';
 
 
@@ -86,6 +86,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     const capturesHelpers = new CapturesHelpers(capturesPath);
     const exampleRequestsHelpers = new ExampleRequestsHelpers(exampleRequestsPath);
     req.optic = {
+      session,
       paths,
       capturesHelpers,
       exampleRequestsHelpers
@@ -121,17 +122,22 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
   router.get('/example-requests/:requestId', async (req, res) => {
     const {requestId} = req.params;
-    const currentFileContents = req.optic.exampleRequestsHelpers.getExampleRequests(requestId);
+    const currentFileContents = await req.optic.exampleRequestsHelpers.getExampleRequests(requestId);
     res.json({
       examples: currentFileContents
     });
   });
 
   // captures router. cli picks captureId and writes to whatever persistence method and provides capture id to ui. api spec just shows spec?
-
+  router.get('/captures', async (req, res) => {
+    const {captureIds} = req.optic.session;
+    res.json({
+      captures: captureIds
+    });
+  });
   router.get('/captures/:captureId/samples', async (req, res) => {
     const {captureId} = req.params;
-    const loader = new FileSystemSessionLoader({
+    const loader = new FileSystemCaptureLoader({
       captureBaseDirectory: req.optic.paths.capturesPath
     });
     const capture = await loader.load(captureId);

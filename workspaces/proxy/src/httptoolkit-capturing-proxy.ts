@@ -8,7 +8,7 @@ import * as fs from 'fs-extra';
 import launcher from '@httptoolkit/browser-launcher';
 import {CallbackResponseResult} from 'mockttp/dist/rules/handlers';
 import {CompletedRequest} from 'mockttp';
-import {IApiInteraction} from './types';
+import {IApiInteraction} from '@useoptic/domain';
 
 
 export interface IWithSamples {

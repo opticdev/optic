@@ -20,7 +20,7 @@ class CommandAndProxySessionManager {
       }
     };
 
-    await persistenceManager.init('sss');
+    await persistenceManager.init(this.config.captureId);
 
     inboundProxy.events.on('sample', (sample: IApiInteraction) => {
       userDebugLogger(`got sample ${sample.request.method} ${sample.request.url}`);
@@ -29,7 +29,7 @@ class CommandAndProxySessionManager {
 
     await inboundProxy.start({
       flags: {
-        chrome: true
+        chrome: false
       },
       proxyPort: inboundProxyPort
     });

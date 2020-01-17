@@ -65,49 +65,41 @@ class NetworkUtilities {
 }
 
 class SpecService {
-
-  listEvents() {
-    return NetworkUtilities.getJsonAsText(`/cli-api/events`);
+  constructor(specId) {
+    this.specId = specId;
   }
 
-  listSessions() {
-    return NetworkUtilities.getJson(`/cli-api/sessions`);
+  listEvents() {
+    return NetworkUtilities.getJsonAsText(`/api/specs/${this.specId}/events`);
+  }
+
+  listCaptures() {
+    return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures`);
   }
 
   getCommandContext() {
-    return NetworkUtilities.getJson(`/cli-api/command-context`);
+    return NetworkUtilities.getJson(`/api/specs/${this.specId}/command-context`);
   }
 
   saveEvents(eventStore, rfcId) {
     const serializedEvents = eventStore.serializeEvents(rfcId);
-    return NetworkUtilities.putJson(`/cli-api/events`, serializedEvents);
+    return NetworkUtilities.putJson(`/api/specs/${this.specId}/events`, serializedEvents);
   }
 
   saveExample(interaction, requestId) {
-    return NetworkUtilities.postJson(`/cli-api/example-requests/${requestId}`, JSON.stringify(interaction));
+    return NetworkUtilities.postJson(`/api/specs/${this.specId}/example-requests/${requestId}`, JSON.stringify(interaction));
   }
 
   listExamples(requestId) {
-    return NetworkUtilities.getJson(`/cli-api/example-requests/${requestId}`);
+    return NetworkUtilities.getJson(`/api/specs/${this.specId}/example-requests/${requestId}`);
   }
 
-  saveDiffState(sessionId, diffState) {
-    return NetworkUtilities.putJson(`/cli-api/sessions/${sessionId}/diff`, JSON.stringify(diffState));
-  }
 
-  saveSession(sessionId, session) {
-    return NetworkUtilities.putJson(`/cli-api/sessions/${sessionId}`, JSON.stringify(session));
-  }
-
-  loadSession(sessionId) {
-    const promises = [
-      NetworkUtilities.getJson(`/cli-api/sessions/${sessionId}`)
-    ];
-    return Promise.all(promises)
-      .then(([sessionResponse]) => {
+  listCapturedSamples(captureId) {
+    return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures/${captureId}/samples`)
+      .then((body) => {
         return {
-          sessionResponse,
-          diffStateResponse: null
+          samples: body.samples
         };
       });
   }

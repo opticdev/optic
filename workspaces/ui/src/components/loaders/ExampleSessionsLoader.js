@@ -30,22 +30,17 @@ const specServiceTask = async (props) => {
 
   const sessionId = 'example-session';
   const specService = {
-    loadSession: async (sessionId) => {
+    listCapturedSamples: async (sessionId) => {
       await waitForEvent('simulate-session');
       return Promise.resolve({
-        diffStateResponse: {
-          diffState: {}
-        },
-        sessionResponse: {
-          session: session
-        }
+        samples: body.session.samples
       });
     },
     listEvents() {
       return Promise.resolve(events);
     },
-    listSessions() {
-      return Promise.resolve({sessions: [sessionId]});
+    listCaptures() {
+      return Promise.resolve({captures: [sessionId]});
     },
     saveEvents: (eventStore, rfcId) => {
       const serializedEvents = eventStore.serializeEvents(rfcId);
