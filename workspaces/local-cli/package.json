@@ -1,0 +1,74 @@
+{
+  "name": "@useoptic/cli",
+  "description": "CLI to document your API and generate related artifacts",
+  "version": "0.1.0",
+  "author": "@useoptic",
+  "bin": {
+    "api": "./bin/run"
+  },
+  "bugs": "https://github.com/opticdev/optic-2020/issues",
+  "dependencies": {
+    "@oclif/command": "^1",
+    "@oclif/config": "^1",
+    "@oclif/plugin-help": "^2",
+    "@useoptic/cli-config": "0.1.0",
+    "@useoptic/cli-server": "0.1.0",
+    "cli-ux": "^5.4.1",
+    "colors": "^1.4.0",
+    "react-dev-utils": "^10.0.0",
+    "tree-kill": "^1.2.2",
+    "tslib": "^1",
+    "uuid": "^3.4.0"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1",
+    "@oclif/test": "^1",
+    "@types/chai": "^4",
+    "@types/mocha": "^5",
+    "@types/node": "^10",
+    "@types/react-dev-utils": "^9.0.2",
+    "@types/uuid": "^3.4.6",
+    "chai": "^4",
+    "eslint": "^5.13",
+    "eslint-config-oclif": "^3.1",
+    "eslint-config-oclif-typescript": "^0.1",
+    "globby": "^10",
+    "mocha": "^5",
+    "nyc": "^14",
+    "ts-node": "^8",
+    "typescript": "^3.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/opticdev/optic-2020",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "api",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "opticdev/optic-2020",
+  "scripts": {
+    "postpack": "rm -f oclif.manifest.json",
+    "posttest": "echo 'skipping posttest';#eslint . --ext .ts --config .eslintrc",
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif-dev readme && git add README.md",
+    "ws:build": "echo building local-cli",
+    "ws:test": "echo local-cli"
+  },
+  "types": "lib/index.d.ts"
+}

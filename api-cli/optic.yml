@@ -1,5 +1,0 @@
-name: Aidan's API
-tasks:
-  start:
-    command: echo "Replace me with your start command"
-    baseUrl: http://localhost:3000

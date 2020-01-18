@@ -1,0 +1,5 @@
+build
+node_modules
+
+# the build process should inject the built domain here. It should not be in version control but it should be in the npm package
+src/domain.js

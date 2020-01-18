@@ -1,0 +1,19 @@
+{
+  "name": "@useoptic/cli-config",
+  "version": "0.1.0",
+  "scripts": {
+    "ws:test": "echo config",
+    "ws:build": "yarn run tsc -b"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "find-up": "^4.1.0",
+    "get-port": "^5.1.0",
+    "js-yaml": "^3.13.1"
+  },
+  "devDependencies": {
+    "@types/find-up": "^4.0.0",
+    "@types/js-yaml": "^3.12.1"
+  }
+}

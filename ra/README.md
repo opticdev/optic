@@ -1,1 +1,0 @@
-This is a chrome extension that allows you to record your network traffic for a tab. You can then dump the HAR file for use in other tools.

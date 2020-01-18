@@ -1,0 +1,27 @@
+{
+  "private": true,
+  "scripts": {
+    "build-workspace": "node ./workspaces/scripts/build/build.js",
+    "build-domain": "cd ./core && ./scripts/package.sh",
+    "copy-domain": "echo copied",
+    "build-ui": "cd workspaces/ui && yarn run build-local",
+    "copy-ui": "rm -rf ./workspaces/cli-server/resources/ui && mkdir -p ./workspaces/cli-server/resources/ui && cp -R ./workspaces/ui/build/* ./workspaces/cli-server/resources/ui/",
+    "postpull": "yarn run build-domain && yarn run build-ui && yarn run copy-ui && yarn run build-workspace && source export_development_aliases.sh"
+  },
+  "workspaces": [
+    "workspaces/domain",
+    "workspaces/ui",
+    "workspaces/cli-config",
+    "workspaces/proxy",
+    "workspaces/cli-client",
+    "workspaces/cli-server",
+    "workspaces/local-cli"
+  ],
+  "devDependencies": {
+    "@types/debug": "^4.1.5",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "debug": "^4.1.1"
+  }
+}
