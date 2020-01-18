@@ -1,4 +1,4 @@
-import {getPathsRelativeToCwd} from '@useoptic/cli-config';
+import {getPathsRelativeToCwd, readApiConfig} from '@useoptic/cli-config';
 import express from 'express';
 
 import * as bodyParser from 'body-parser';
@@ -83,11 +83,13 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
     const paths = await getPathsRelativeToCwd(session.path);
     const {capturesPath, exampleRequestsPath} = paths;
+    const config = await readApiConfig()
     const capturesHelpers = new CapturesHelpers(capturesPath);
     const exampleRequestsHelpers = new ExampleRequestsHelpers(exampleRequestsPath);
     req.optic = {
       session,
       paths,
+      config,
       capturesHelpers,
       exampleRequestsHelpers
     };
@@ -147,6 +149,16 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         {rel: 'next', href: ''}
       ]
     });
+  });
+
+  //config
+  router.get('/config', async (req, res) => {
+    res.json(req.optic.config)
+  });
+
+  router.put('/config', bodyParser.json({ limit: '2mb' }),async (req, res) => {
+    await fs.writeFile(req.optic.paths.configPath, req.body.yaml);
+    res.sendStatus(200)
   });
 
   return router;

@@ -103,7 +103,6 @@ export default withSpecServiceContext(({specService}) => {
     specService.putConfig(value)
   };
 
-
   return (
     <div className={classes.root}>
       <CssBaseline/>
@@ -118,7 +117,7 @@ export default withSpecServiceContext(({specService}) => {
           <ResuableInput placeholder="My API" value={apiName} setValue={setApiName} setFinished={setNameFinished}/>
         </SetupStep>
 
-        <SetupStep active={nameFinished} header={`What is the basepath of your API when you develop it locally?`} finished={validURL(apiBasePath) && nameFinished && apiBasePathFinished}>
+        <SetupStep active={nameFinished && !apiBasePathFinished} header={`What is the basepath of your API when you develop it locally?`} finished={validURL(apiBasePath) && nameFinished && apiBasePathFinished}>
           <ResuableInput placeholder="Local API Basepath" value={apiBasePath} setValue={setApiBasePath} setFinished={setApiBasePathFinished}/>
         </SetupStep>
 

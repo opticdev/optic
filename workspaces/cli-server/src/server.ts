@@ -1,4 +1,4 @@
-import {IPathMapping} from '@useoptic/cli-config';
+import {IApiCliConfig, IOpticTaskRunnerConfig, IPathMapping} from '@useoptic/cli-config';
 import {EventEmitter} from 'events';
 import express from 'express';
 import getPort from 'get-port';
@@ -14,6 +14,7 @@ export interface ICliServerConfig {
 export interface IOpticExpressRequestAdditions {
   session: ICliServerSession
   paths: IPathMapping
+  config: IApiCliConfig
   capturesHelpers: CapturesHelpers
   exampleRequestsHelpers: ExampleRequestsHelpers
 }
@@ -53,7 +54,7 @@ class CliServer {
 
   makeServer() {
     const app = express();
-
+    let lastStart: IOpticTaskRunnerConfig | undefined;
     const sessions: ICliServerSession[] = [];
 
     // @REFACTOR sessionsRouter
@@ -105,6 +106,22 @@ class CliServer {
 
       res.sendStatus(400);
     });
+
+    app.post('/last-start', bodyParser.json({limit: '10kb'}), async (req, res) => {
+      lastStart = req.body
+      res.sendStatus(200)
+    })
+
+    app.get('/last-start', async (req, res) => {
+      if (lastStart) {
+
+
+
+        res.json({config: lastStart, hasStart: true})
+      } else {
+        res.json({hasStart: false})
+      }
+    })
 
     // specRouter
     const specRouter = makeRouter(sessions);

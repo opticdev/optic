@@ -13,11 +13,11 @@ class CommandAndProxySessionManager {
   async run(persistenceManager: ICaptureSaver) {
     const commandSession = new CommandSession();
     const inboundProxy = new HttpToolkitCapturingProxy();
-    const inboundProxyPort = this.config.proxyConfig.port;
-    const inputs = {
-      ENV: {
-        OPTIC_API_PORT: inboundProxyPort.toString()
-      }
+    const servicePort = this.config.serviceConfig.port;
+    const serviceHost = this.config.serviceConfig.host;
+    const opticServiceConfig = {
+      OPTIC_API_PORT: servicePort.toString(),
+      OPTIC_API_HOST: serviceHost.toString(),
     };
 
     await persistenceManager.init(this.config.captureId);
@@ -27,22 +27,28 @@ class CommandAndProxySessionManager {
       persistenceManager.save(sample);
     });
 
+    const target = new URL('https://example.org')
+    target.host = serviceHost
+    target.port = servicePort.toString()
+    target.protocol = this.config.serviceConfig.protocol
+
     await inboundProxy.start({
       flags: {
         chrome: false
       },
-      //@TODO: add proxyTarget here if not intercepting everything
-      proxyPort: inboundProxyPort
+      proxyPort: this.config.proxyConfig.port,
+      proxyTarget: target.host.toString()
     });
 
-    userDebugLogger(`started inbound proxy on port ${inboundProxyPort}`);
+    userDebugLogger(`started inbound proxy on port ${servicePort}`);
     const promises = [];
     if (this.config.command) {
       await commandSession.start({
         command: this.config.command,
+        // @ts-ignore
         environmentVariables: {
           ...process.env,
-          OPTIC_API_PORT: inputs.ENV.OPTIC_API_PORT,
+          ...opticServiceConfig
         }
       });
       const commandStoppedPromise = new Promise(resolve => {

@@ -55,13 +55,15 @@ export async function setupTask(cli: Command, taskName: string) {
       captureBaseDirectory: path.join(cwd, '.optic', 'captures')
     });
   };
-  await runTask(captureId, task, persistenceManagerFactory);
+  await runTask(captureId, task, cliClient, persistenceManagerFactory);
 
   process.exit(0);
 }
 
-export async function runTask(captureId: string, task: IOpticTask, persistenceManagerFactory: () => ICaptureSaver): Promise<void> {
+export async function runTask(captureId: string, task: IOpticTask, cliClient: Client, persistenceManagerFactory: () => ICaptureSaver): Promise<void> {
   const startConfig = await TaskToStartConfig(task, captureId);
+
+  cliClient.postLastStart(startConfig)
 
   const sessionManager = new CommandAndProxySessionManager(startConfig);
 

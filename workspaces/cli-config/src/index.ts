@@ -5,6 +5,7 @@ import * as yaml from 'js-yaml';
 import getPort from 'get-port';
 import findUp from 'find-up';
 
+
 export interface IOpticTask {
   command?: string,
   baseUrl: string
@@ -21,7 +22,12 @@ export interface IApiCliConfig {
 export async function readApiConfig(): Promise<IApiCliConfig> {
   const {configPath} = await getPaths();
   const rawFile = await fs.readFile(configPath);
-  const parsed = yaml.safeLoad(rawFile.toString());
+  let parsed = null
+  try {
+    parsed = yaml.safeLoad(rawFile.toString())
+  } catch (e) {
+    throw Error('`optic.yml` will not parse. Make sure it is valid YAML.')
+  }
   return parsed;
 }
 
@@ -87,13 +93,10 @@ export async function getPaths() {
   const rootPath = await (async () => {
     const configPath = await findUp('optic.yml', {type: 'file'});
     if (configPath) {
-      console.log({configPath});
       return path.resolve(configPath, '../');
     }
     throw new Error(`expected to find an optic.yml file`);
   })();
-
-  console.log({rootPath});
 
   return getPathsRelativeToCwd(rootPath);
 }
@@ -144,7 +147,6 @@ captures/
   }
   await Promise.all(
     files.map(async file => {
-      console.log(file);
       await fs.ensureFile(file.path);
       await fs.writeFile(file.path, file.contents);
     })

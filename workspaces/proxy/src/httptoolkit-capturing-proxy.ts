@@ -84,7 +84,7 @@ export class HttpToolkitCapturingProxy {
           ],
           handler: new mockttp.handlers.PassThroughHandler({
             forwarding: {
-              targetHost: config.proxyTarget,
+              targetHost: config.proxyTarget!,
               updateHostHeader: false
             }
           })
@@ -101,6 +101,17 @@ export class HttpToolkitCapturingProxy {
       );
     }
     await proxy.addRules(
+      {
+        matchers: [
+          new mockttp.matchers.SimplePathMatcher('/__optic_status')
+        ],
+        handler: new mockttp.handlers.CallbackHandler(() => {
+          const response: CallbackResponseResult = {
+            statusCode: 200,
+          };
+          return response;
+        })
+      },
       {
         matchers: [
           new mockttp.matchers.HostMatcher('amiusing.httptoolkit.tech')

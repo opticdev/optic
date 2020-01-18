@@ -105,11 +105,11 @@ class SpecService {
   }
 
   getConfig() {
-    return NetworkUtilities.getJson(`/cli-api/config`);
+    return NetworkUtilities.getJson(`/api/specs/${this.specId}/config`);
   }
 
   putConfig(configYaml) {
-    return NetworkUtilities.putJson(`/cli-api/config`, JSON.stringify({yaml: configYaml}));
+    return NetworkUtilities.putJson(`/api/specs/${this.specId}/config`, JSON.stringify({yaml: configYaml}));
   }
 }
 
