@@ -229,6 +229,10 @@ class Status extends React.Component {
     const {specService} = this.props
 
     const poll = () => {
+      specService.getLastSession()
+        .then(session => {
+          debugger
+        })
       // specService.getLastStart()
       //   .then(config => {
       //     const {hasStart} = config

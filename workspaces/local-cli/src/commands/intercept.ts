@@ -6,6 +6,7 @@ import {cli} from 'cli-ux';
 import * as path from 'path';
 import * as os from 'os';
 import * as fs from 'fs-extra';
+import {developerDebugLogger} from '../shared/logger';
 import {lockFilePath} from '../shared/paths';
 import {runTask} from '../shared/run-task';
 import * as uuidv4 from 'uuid/v4';
@@ -23,11 +24,11 @@ export default class Intercept extends Command {
     const daemonState = await ensureDaemonStarted(lockFilePath);
 
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
-    cli.log(apiBaseUrl);
+    developerDebugLogger(`api started on: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
     //@TODO: add some metadata so daemon has information it needs to save in the correct place
     const cliSession = await cliClient.findSession(cwd, captureId);
-    console.log({cliSession});
+    developerDebugLogger({cliSession});
     const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}`;
     this.log(uiUrl);
     openBrowser(uiUrl);
@@ -42,6 +43,7 @@ export default class Intercept extends Command {
     await runTask(
       captureId,
       {baseUrl: '/'},
+      cliClient,
       persistenceManagerFactory
     );
   }

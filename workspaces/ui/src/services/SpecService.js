@@ -94,7 +94,6 @@ class SpecService {
     return NetworkUtilities.getJson(`/api/specs/${this.specId}/example-requests/${requestId}`);
   }
 
-
   listCapturedSamples(captureId) {
     return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures/${captureId}/samples`)
       .then((body) => {
@@ -102,6 +101,14 @@ class SpecService {
           samples: body.samples
         };
       });
+  }
+
+  getSessions() {
+    return NetworkUtilities.getJson(`/api/sessions`);
+  }
+
+  getLastSession() {
+    return NetworkUtilities.getJson(`/api/sessions/last`);
   }
 
   getConfig() {

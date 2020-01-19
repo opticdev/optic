@@ -1,13 +1,15 @@
 import Command from '@oclif/command';
 import {Client} from '@useoptic/cli-client';
-import {TaskToStartConfig} from '@useoptic/cli-config';
+import {IOpticTaskRunnerConfig, TaskToStartConfig} from '@useoptic/cli-config';
 import {IOpticTask} from '@useoptic/cli-config';
 import {getPaths, readApiConfig, shouldWarnAboutVersion7Compatibility} from '@useoptic/cli-config';
 import {ensureDaemonStarted, ensureDaemonStopped, FileSystemCaptureSaver} from '@useoptic/cli-server';
 import {ICaptureSaver} from '@useoptic/cli-server';
+import cli from 'cli-ux';
 import * as colors from 'colors';
 import * as path from 'path';
 import {fromOptic} from './conversation';
+import {developerDebugLogger} from './logger';
 import {lockFilePath} from './paths';
 import openBrowser = require('react-dev-utils/openBrowser.js');
 import Init from '../commands/init';
@@ -40,13 +42,15 @@ export async function setupTask(cli: Command, taskName: string) {
   const daemonState = await ensureDaemonStarted(lockFilePath);
 
   const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
-  cli.log(apiBaseUrl);
+  developerDebugLogger(`api started on: ${apiBaseUrl}`);
   const cliClient = new Client(apiBaseUrl);
   const captureId = uuidv4();
-  const cliSession = await cliClient.findSession(cwd, captureId);
-  console.log({cliSession});
+
+  const startConfig = await TaskToStartConfig(task, captureId);
+  const cliSession = await cliClient.findSession(cwd, captureId, startConfig);
+  developerDebugLogger({cliSession});
   const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}`;
-  cli.log(uiUrl);
+  cli.log(fromOptic(`opening ${uiUrl}`));
   openBrowser(uiUrl);
 
   // start proxy and command session
@@ -55,14 +59,13 @@ export async function setupTask(cli: Command, taskName: string) {
       captureBaseDirectory: path.join(cwd, '.optic', 'captures')
     });
   };
-  await runTask(captureId, task, cliClient, persistenceManagerFactory);
+  await runTask(startConfig, persistenceManagerFactory);
 
   process.exit(0);
 }
 
-export async function runTask(captureId: string, task: IOpticTask, persistenceManagerFactory: () => ICaptureSaver): Promise<void> {
-  const startConfig = await TaskToStartConfig(task, captureId);
-  const sessionManager = new CommandAndProxySessionManager(startConfig);
+export async function runTask(taskConfig: IOpticTaskRunnerConfig, persistenceManagerFactory: () => ICaptureSaver): Promise<void> {
+  const sessionManager = new CommandAndProxySessionManager(taskConfig);
 
   const persistenceManager = persistenceManagerFactory();
 
@@ -71,6 +74,4 @@ export async function runTask(captureId: string, task: IOpticTask, persistenceMa
   if (process.env.OPTIC_ENV === 'development') {
     await ensureDaemonStopped(lockFilePath);
   }
-
-  cliClient.postLastStart(startConfig)
 }

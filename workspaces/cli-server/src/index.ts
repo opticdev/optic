@@ -7,6 +7,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import {FileSystemCaptureSaver} from './file-system-session-persistence';
 import {FileSystemCaptureLoader} from './file-system-session-loader';
+import {developerDebugLogger} from './logger';
 
 export interface ISessionManifest {
   samples: IApiInteraction[]
@@ -33,11 +34,22 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
   await fs.ensureFile(lockFilePath);
   const isLocked = await lockfile.check(lockFilePath);
   if (!isLocked) {
+
     // fork process
-    const child = fork(path.join(__dirname, 'main'), [lockFilePath], {detached: true});
+    const child = fork(
+      path.join(__dirname, 'main'),
+      [lockFilePath],
+      {
+        detached: true,
+        stdio: 'pipe'
+      }
+    );
+
     await new Promise((resolve) => {
+      developerDebugLogger('waiting for message from forked child');
       child.on('message', (message: { type: string }) => {
         if (message && message.type === 'daemon:started') {
+          developerDebugLogger('got message from forked child');
           resolve();
         }
       });

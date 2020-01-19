@@ -10,7 +10,6 @@ export const basePathIntegrations = basePaths.localIntegrationsPath;
 
 const specServiceTask = async (props) => {
   console.log({props})
-  debugger;
   const specService = new SpecService(props.match.params.specId)
   return Promise.resolve(specService)
 }
