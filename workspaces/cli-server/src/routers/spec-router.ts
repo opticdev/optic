@@ -5,6 +5,7 @@ import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import {FileSystemCaptureLoader} from '../file-system-session-loader';
+import {developerDebugLogger} from '../logger';
 import {ICliServerSession} from '../server';
 
 
@@ -74,7 +75,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
   async function ensureValidSpecId(req: express.Request, res: express.Response, next: express.NextFunction) {
     const {specId} = req.params;
-    console.log({specId, sessions});
+    developerDebugLogger({specId, sessions});
     const session = sessions.find(x => x.id === specId);
     if (!session) {
       res.sendStatus(404);
@@ -83,7 +84,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
     const paths = await getPathsRelativeToCwd(session.path);
     const {capturesPath, exampleRequestsPath} = paths;
-    const config = await readApiConfig()
+    const config = await readApiConfig();
     const capturesHelpers = new CapturesHelpers(capturesPath);
     const exampleRequestsHelpers = new ExampleRequestsHelpers(exampleRequestsPath);
     req.optic = {
@@ -142,23 +143,27 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     const loader = new FileSystemCaptureLoader({
       captureBaseDirectory: req.optic.paths.capturesPath
     });
-    const capture = await loader.load(captureId);
-    res.json({
-      samples: capture.samples,
-      links: [
-        {rel: 'next', href: ''}
-      ]
-    });
+    try {
+      const capture = await loader.load(captureId);
+      res.json({
+        samples: capture.samples,
+        links: [
+          {rel: 'next', href: ''}
+        ]
+      });
+    } catch (e) {
+      res.sendStatus(500);
+    }
   });
 
   //config
   router.get('/config', async (req, res) => {
-    res.json(req.optic.config)
+    res.json(req.optic.config);
   });
 
-  router.put('/config', bodyParser.json({ limit: '2mb' }),async (req, res) => {
+  router.put('/config', bodyParser.json({limit: '2mb'}), async (req, res) => {
     await fs.writeFile(req.optic.paths.configPath, req.body.yaml);
-    res.sendStatus(200)
+    res.sendStatus(200);
   });
 
   return router;

@@ -9,6 +9,7 @@ import launcher from '@httptoolkit/browser-launcher';
 import {CallbackResponseResult} from 'mockttp/dist/rules/handlers';
 import {CompletedRequest, MockRuleData} from 'mockttp';
 import {IApiInteraction} from '@useoptic/domain';
+import {developerDebugLogger} from './logger';
 
 
 export interface IHttpToolkitCapturingProxyConfig {
@@ -29,7 +30,7 @@ class HttpToolkitRequestFilter implements IRequestFilter {
 
   shouldSkip(request: CompletedRequest): boolean {
     if (this.target) {
-      console.log({
+      developerDebugLogger({
         hostname: request.hostname,
         url: request.url,
         target: this.target
@@ -144,7 +145,7 @@ export class HttpToolkitCapturingProxy {
         }
         const queryString: string = url.parse(req.url).query || '';
         const queryParameters = qs.parse(queryString);
-        console.log(req);
+        developerDebugLogger(req);
         const sample: IApiInteraction = {
           id: res.id,
           host: req.hostname || '',
@@ -163,7 +164,7 @@ export class HttpToolkitCapturingProxy {
             body: extractBody(res)
           }
         };
-        console.log({sample});
+        developerDebugLogger({sample});
         this.events.emit('sample', sample);
         this.requests.delete(res.id);
       }

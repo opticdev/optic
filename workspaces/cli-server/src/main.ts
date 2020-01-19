@@ -1,5 +1,10 @@
+import * as fs from 'fs-extra';
 import {CliDaemon} from './daemon';
 import {userDebugLogger} from './logger';
+
+const logStream = fs.createWriteStream('.optic-daemon.log', {flags: 'a'});
+process.stdout.unpipe().pipe(logStream);
+process.stderr.unpipe().pipe(logStream);
 
 const [, , lockFilePath] = process.argv;
 userDebugLogger(`daemon lock file ${lockFilePath}`);

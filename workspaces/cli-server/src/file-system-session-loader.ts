@@ -2,6 +2,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import {captureFileSuffix} from './file-system-session-persistence';
 import {ICaptureLoader, ISessionManifest} from './index';
+import {developerDebugLogger} from './logger';
 
 interface IFileSystemCaptureLoaderConfig {
   captureBaseDirectory: string
@@ -16,16 +17,12 @@ class FileSystemCaptureLoader implements ICaptureLoader {
   async load(sessionId: string): Promise<ISessionManifest> {
     const sessionDirectory = path.join(this.config.captureBaseDirectory, sessionId);
     const entries = await fs.readdir(sessionDirectory);
-    console.log({entries});
+    developerDebugLogger({entries});
     const captureFiles = entries
       .filter(x => x.endsWith(captureFileSuffix))
       .sort((a, b) => {
         const aBatchNumber = parseInt(a.slice(0, suffixOffset), 10);
         const bBatchNumber = parseInt(b.slice(0, suffixOffset), 10);
-        console.log({
-          aBatchNumber,
-          bBatchNumber
-        });
         return aBatchNumber - bBatchNumber;
       });
 

@@ -5,9 +5,11 @@ import {IOpticTask} from '@useoptic/cli-config';
 import {getPaths, readApiConfig, shouldWarnAboutVersion7Compatibility} from '@useoptic/cli-config';
 import {ensureDaemonStarted, ensureDaemonStopped, FileSystemCaptureSaver} from '@useoptic/cli-server';
 import {ICaptureSaver} from '@useoptic/cli-server';
+import cli from 'cli-ux';
 import * as colors from 'colors';
 import * as path from 'path';
 import {fromOptic} from './conversation';
+import {developerDebugLogger} from './logger';
 import {lockFilePath} from './paths';
 import openBrowser = require('react-dev-utils/openBrowser.js');
 import Init from '../commands/init';
@@ -40,13 +42,13 @@ export async function setupTask(cli: Command, taskName: string) {
   const daemonState = await ensureDaemonStarted(lockFilePath);
 
   const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
-  cli.log(apiBaseUrl);
+  developerDebugLogger(`api started on: ${apiBaseUrl}`);
   const cliClient = new Client(apiBaseUrl);
   const captureId = uuidv4();
   const cliSession = await cliClient.findSession(cwd, captureId);
-  console.log({cliSession});
+  developerDebugLogger({cliSession});
   const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}`;
-  cli.log(uiUrl);
+  cli.log(fromOptic(`opening ${uiUrl}`));
   openBrowser(uiUrl);
 
   // start proxy and command session
@@ -62,8 +64,6 @@ export async function setupTask(cli: Command, taskName: string) {
 
 export async function runTask(captureId: string, task: IOpticTask, cliClient: Client, persistenceManagerFactory: () => ICaptureSaver): Promise<void> {
   const startConfig = await TaskToStartConfig(task, captureId);
-
-  cliClient.postLastStart(startConfig)
 
   const sessionManager = new CommandAndProxySessionManager(startConfig);
 
