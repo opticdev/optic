@@ -60,11 +60,8 @@ export async function setupTask(cli: Command, taskName: string) {
   process.exit(0);
 }
 
-export async function runTask(captureId: string, task: IOpticTask, cliClient: Client, persistenceManagerFactory: () => ICaptureSaver): Promise<void> {
+export async function runTask(captureId: string, task: IOpticTask, persistenceManagerFactory: () => ICaptureSaver): Promise<void> {
   const startConfig = await TaskToStartConfig(task, captureId);
-
-  cliClient.postLastStart(startConfig)
-
   const sessionManager = new CommandAndProxySessionManager(startConfig);
 
   const persistenceManager = persistenceManagerFactory();
@@ -74,4 +71,6 @@ export async function runTask(captureId: string, task: IOpticTask, cliClient: Cl
   if (process.env.OPTIC_ENV === 'development') {
     await ensureDaemonStopped(lockFilePath);
   }
+
+  cliClient.postLastStart(startConfig)
 }

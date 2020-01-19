@@ -200,7 +200,7 @@ Make sure your API starts on that port when \`$OPTIC_API_PORT\` is provided:`}
                   {`> api start\n\n  [optic] Starting ${apiName} App on ${'baseURL'}`}
                 </SyntaxHighlighter>
 
-                <Status apiBasePath={apiBasePath}/>
+                <Status apiBasePath={apiBasePath} specService={specService}/>
 
               </div>
 
@@ -220,38 +220,37 @@ Make sure your API starts on that port when \`$OPTIC_API_PORT\` is provided:`}
 
 class Status extends React.Component {
 
+  constructor(props) {
+    super(props)
+    this.componentDidMount = this.componentDidMount.bind(this)
+  }
+
+  componentDidMount() {
+    const {specService} = this.props
+
+    const poll = () => {
+      // specService.getLastStart()
+      //   .then(config => {
+      //     const {hasStart} = config
+      //     this.setState({hasStart})
+      //     setTimeout(poll, 1000)
+      //   })
+    }
+
+    poll()
+  }
+
   state = {
-    polling: false,
+    polling: true,
+    hasStart: false,
     serviceRunning: false,
     proxyRunning: false,
     numberOfSamples: 0
   };
 
-  startPolling = () => {
-    this.setState({polling: true});
-
-    setTimeout(() => {
-      this.setState({serviceRunning: true});
-    }, 1000);
-
-    setTimeout(() => {
-      this.setState({proxyRunning: true});
-    }, 3000);
-
-    setTimeout(() => {
-
-      setInterval(() => {
-        this.setState({numberOfSamples: this.state.numberOfSamples + Math.floor((Math.random() * 10) % 3)});
-      }, 600);
-
-      this.setState({proxyRunning: true});
-    }, 3500);
-
-  };
-
   render() {
 
-    const {apiBasePath} = this.props
+    const {apiBasePath, specService} = this.props
     const {polling, serviceRunning, proxyRunning, numberOfSamples} = this.state;
 
     const showSampling = proxyRunning && serviceRunning;
@@ -259,12 +258,9 @@ class Status extends React.Component {
 
     const allSetUp = numberOfSamples > 15;
 
+
     return (
       <div>
-        {!polling &&
-        <Button color="secondary" variant="contained" onClick={this.startPolling}>Click here after you run `api
-          start`</Button>}
-
         {polling && (
           <div style={{display: 'flex', flexDirection: 'row',}}>
             <CircularProgress color="secondary" size={20} style={{marginTop: 20, opacity: allSetUp ? 0 : 1}}/>
@@ -339,7 +335,7 @@ function ResuableInput(props) {
     <div className={classes.inputGroup}>
       <TextField
         inputProps={{
-          className: bashTheme && classes.bash
+          // className: bashTheme && classes.bash
         }}
         value={value}
         label={props.label}

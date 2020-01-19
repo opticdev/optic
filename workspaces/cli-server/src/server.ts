@@ -54,7 +54,6 @@ class CliServer {
 
   makeServer() {
     const app = express();
-    let lastStart: IOpticTaskRunnerConfig | undefined;
     const sessions: ICliServerSession[] = [];
 
     // @REFACTOR sessionsRouter
@@ -106,22 +105,6 @@ class CliServer {
 
       res.sendStatus(400);
     });
-
-    app.post('/last-start', bodyParser.json({limit: '10kb'}), async (req, res) => {
-      lastStart = req.body
-      res.sendStatus(200)
-    })
-
-    app.get('/last-start', async (req, res) => {
-      if (lastStart) {
-
-
-
-        res.json({config: lastStart, hasStart: true})
-      } else {
-        res.json({hasStart: false})
-      }
-    })
 
     // specRouter
     const specRouter = makeRouter(sessions);

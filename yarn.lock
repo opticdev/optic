@@ -10201,11 +10201,6 @@ nice-try@^1.0.4:
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
 
-nice-try@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-2.0.0.tgz#0ccb36ce82be13528f0217334adcf870c8eb3356"
-  integrity sha512-/o4KoXbUkEjD2NDwvBCkSzEDOfMuHPmbzSD5Pp2Bb5U/69MnEvpc4YfW2Y1BJqJpcaam04+fR0kF8n5xm8b6MQ==
-
 no-case@^2.2.0:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/no-case/-/no-case-2.3.2.tgz#60b813396be39b3f1288a4c1ed5d1e7d28b464ac"

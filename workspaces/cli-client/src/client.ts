@@ -10,11 +10,6 @@ class Client {
     return JsonHttpClient.postJson(url, {path, captureId});
   }
 
-  postLastStart(task: IOpticTaskRunnerConfig): Promise<any> {
-    const url = `${this.baseUrl}/last-start`;
-    return JsonHttpClient.postJson(url, task);
-  }
-
   stopDaemon() {
     const url = `${this.baseUrl}/commands`;
     return JsonHttpClient.postJson(url, {type: 'shutdown'});
