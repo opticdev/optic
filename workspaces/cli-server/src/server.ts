@@ -69,7 +69,9 @@ class CliServer {
 
       const existingSession = sessions.find(x => x.path === path);
       if (existingSession) {
-        existingSession.captures.push(taskConfig);
+        if (taskConfig) {
+          existingSession.captures.push(taskConfig);
+        }
         return res.json({
           session: existingSession
         });
@@ -79,7 +81,7 @@ class CliServer {
       const session: ICliServerSession = {
         id: sessionId,
         path,
-        captures: [taskConfig]
+        captures: taskConfig ? [taskConfig] : []
       };
       sessions.push(session);
 

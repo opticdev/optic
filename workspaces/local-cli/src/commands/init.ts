@@ -27,7 +27,7 @@ export default class Init extends Command {
       tasks: {
         start: {
           command: 'echo "Setup A Valid Command to Start your API!"',
-          baseUrl: 'http://localhost:3000'
+          baseUrl: 'http://localhost:4000'
         }
       }
     };

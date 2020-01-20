@@ -5,7 +5,7 @@ class Client {
   constructor(private baseUrl: string) {
   }
 
-  findSession(path: string, captureId: string, taskConfig: IOpticTaskRunnerConfig): Promise<{ session: { id: string } }> {
+  findSession(path: string, captureId: string, taskConfig: IOpticTaskRunnerConfig | undefined): Promise<{ session: { id: string } }> {
     const url = `${this.baseUrl}/sessions`;
     return JsonHttpClient.postJson(url, {path, captureId, taskConfig});
   }
