@@ -170,6 +170,7 @@ export class HttpToolkitCapturingProxy {
       }
     });
 
+    //@todo check if port if free, fail with useful error if something is already bound to it.
     await proxy.start(config.proxyPort);
 
     if (config.flags.chrome) {

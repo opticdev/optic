@@ -35,6 +35,7 @@ export async function readApiConfig(): Promise<IApiCliConfig> {
 export interface IOpticTaskRunnerConfig {
   command?: string
   captureId: string
+  startTime: string
   // where does the service normally live?
   serviceConfig: {
     port: number
@@ -62,6 +63,7 @@ export async function TaskToStartConfig(task: IOpticTask, captureId: string): Pr
 
   return {
     command: task.command,
+    startTime: new Date().toISOString(),
     captureId,
     serviceConfig: {
       port: randomPort,

@@ -7,6 +7,8 @@ import * as fs from 'fs-extra';
 import {FileSystemCaptureLoader} from '../file-system-session-loader';
 import {developerDebugLogger} from '../logger';
 import {ICliServerSession} from '../server';
+import * as URL from "url";
+import fetch from "cross-fetch";
 
 
 export class CapturesHelpers {
@@ -133,9 +135,9 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
   // captures router. cli picks captureId and writes to whatever persistence method and provides capture id to ui. api spec just shows spec?
   router.get('/captures', async (req, res) => {
-    const {captureIds} = req.optic.session;
+    const {captures} = req.optic.session;
     res.json({
-      captures: captureIds
+      captures: captures.map(i => i.captureId)
     });
   });
   router.get('/captures/:captureId/samples', async (req, res) => {
@@ -164,6 +166,48 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   router.put('/config', bodyParser.json({limit: '2mb'}), async (req, res) => {
     await fs.writeFile(req.optic.paths.configPath, req.body.yaml);
     res.sendStatus(200);
+  });
+
+
+  router.get('/captures/last', async (req, res: express.Response) => {
+
+    const capture = req.optic.session.captures[req.optic.session.captures.length - 1]
+
+    //proxy config
+    const {host: proxyHost, port: proxyPort} = capture.proxyConfig
+    const proxyUrl = URL.parse('http://example.com/__optic_status')
+    proxyUrl.host = proxyHost
+    proxyUrl.port = proxyPort.toString()
+    const proxyRunning = await new Promise(((resolve) => {
+      fetch(proxyUrl.toString())
+        .then(res => res.status === 200 ? resolve(true) : resolve(false)) // if proxy is on right port it will have the status endpoint
+        .catch(e => resolve(false)) //if this happens, the service is running on the port instead of the proxy
+    }))
+
+    //service config
+    const {host: serviceHost, port: servicePort} = capture.serviceConfig
+    const serviceUrl = URL.parse('http://example.com/')
+    serviceUrl.host = serviceHost
+    serviceUrl.port = servicePort.toString()
+    const serviceRunning = await new Promise(((resolve) => {
+      fetch(proxyUrl.toString())
+        .then(res => resolve(true)) //if service resolves we assume it's up.
+        .catch(e => resolve(false)) //if service does not resolve, you probably didn't use $OPTIC_API_PORT
+    }))
+
+
+    const loader = new FileSystemCaptureLoader({
+      captureBaseDirectory: req.optic.paths.capturesPath
+    });
+
+    const {samples} = await loader.load(capture.captureId);
+
+    res.json({
+      capture,
+      samples: samples.length,
+      proxyRunning,
+      serviceRunning
+    });
   });
 
   return router;
