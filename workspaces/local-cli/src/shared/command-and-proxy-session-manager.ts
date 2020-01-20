@@ -3,7 +3,7 @@ import {ICaptureSaver} from '@useoptic/cli-server';
 import {HttpToolkitCapturingProxy} from '@useoptic/proxy';
 import {IApiInteraction} from '@useoptic/proxy';
 import {CommandSession} from './command-session';
-import {userDebugLogger} from './logger';
+import {developerDebugLogger, userDebugLogger} from './logger';
 
 class CommandAndProxySessionManager {
   constructor(private config: IOpticTaskRunnerConfig) {
@@ -27,10 +27,10 @@ class CommandAndProxySessionManager {
       persistenceManager.save(sample);
     });
 
-    const target = new URL('https://example.org')
-    target.host = serviceHost
-    target.port = servicePort.toString()
-    target.protocol = this.config.serviceConfig.protocol
+    const target = new URL('https://example.org');
+    target.host = serviceHost;
+    target.port = servicePort.toString();
+    target.protocol = this.config.serviceConfig.protocol;
 
     await inboundProxy.start({
       flags: {
@@ -40,9 +40,12 @@ class CommandAndProxySessionManager {
       proxyTarget: target.host.toString()
     });
 
-    userDebugLogger(`started inbound proxy on port ${servicePort}`);
+    userDebugLogger(`started inbound proxy on port ${this.config.proxyConfig.port}`);
+    userDebugLogger(`Your service will start on port ${servicePort}. All traffic should go through the inbound proxy.`)
     const promises = [];
+    developerDebugLogger(this.config);
     if (this.config.command) {
+      userDebugLogger(`running command ${this.config.command}`);
       await commandSession.start({
         command: this.config.command,
         // @ts-ignore
@@ -52,7 +55,10 @@ class CommandAndProxySessionManager {
         }
       });
       const commandStoppedPromise = new Promise(resolve => {
-        commandSession.events.on('stopped', () => resolve());
+        commandSession.events.on('stopped', ({state}) => {
+          developerDebugLogger(`command session stopped (${state})`)
+          resolve()
+        });
       });
       promises.push(commandStoppedPromise);
     }
@@ -64,10 +70,9 @@ class CommandAndProxySessionManager {
     });
     promises.push(processInterruptedPromise);
 
+    developerDebugLogger(`waiting for command to complete or ^C`);
     await Promise.race(promises);
-
     commandSession.stop();
-    await Promise.all(promises);
     await inboundProxy.stop();
   }
 }

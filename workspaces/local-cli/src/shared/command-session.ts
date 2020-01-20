@@ -1,6 +1,7 @@
 import {ChildProcess, spawn, SpawnOptions} from 'child_process';
 import {EventEmitter} from 'events';
 import * as treeKill from 'tree-kill';
+import {developerDebugLogger} from './logger';
 
 export interface ICommandSessionConfig {
   command: string
@@ -31,6 +32,7 @@ class CommandSession {
       this.isRunning = false;
     });
     this.child.on('exit', (code) => {
+      developerDebugLogger(`command process exited with code ${code}`)
       this.events.emit('stopped', {state: code ? 'failed' : 'completed'});
     });
 

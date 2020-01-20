@@ -1,11 +1,9 @@
 import Command from '@oclif/command';
 import {Client} from '@useoptic/cli-client';
 import {IOpticTaskRunnerConfig, TaskToStartConfig} from '@useoptic/cli-config';
-import {IOpticTask} from '@useoptic/cli-config';
 import {getPaths, readApiConfig, shouldWarnAboutVersion7Compatibility} from '@useoptic/cli-config';
 import {ensureDaemonStarted, ensureDaemonStopped, FileSystemCaptureSaver} from '@useoptic/cli-server';
 import {ICaptureSaver} from '@useoptic/cli-server';
-import cli from 'cli-ux';
 import * as colors from 'colors';
 import * as path from 'path';
 import {fromOptic} from './conversation';
@@ -15,6 +13,7 @@ import openBrowser = require('react-dev-utils/openBrowser.js');
 import Init from '../commands/init';
 import {CommandAndProxySessionManager} from './command-and-proxy-session-manager';
 import * as uuidv4 from 'uuid/v4';
+import findProcess = require('find-process');
 
 export async function setupTask(cli: Command, taskName: string) {
 
@@ -39,14 +38,22 @@ export async function setupTask(cli: Command, taskName: string) {
     return cli.log(colors.red(`No task ${colors.bold(taskName)} found in optic.yml`));
   }
 
+  const captureId = uuidv4();
+  const startConfig = await TaskToStartConfig(task, captureId);
+
+  const blockers = await findProcess('port', startConfig.proxyConfig.port);
+  if (blockers.length > 0) {
+    cli.error(`Optic needs to start a proxy server on port ${startConfig.proxyConfig.port}.
+There is something else running on this port:
+${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
+`);
+  }
+
   const daemonState = await ensureDaemonStarted(lockFilePath);
 
   const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
   developerDebugLogger(`api started on: ${apiBaseUrl}`);
   const cliClient = new Client(apiBaseUrl);
-  const captureId = uuidv4();
-
-  const startConfig = await TaskToStartConfig(task, captureId);
   const cliSession = await cliClient.findSession(cwd, captureId, startConfig);
   developerDebugLogger({cliSession});
   const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}`;
@@ -59,7 +66,11 @@ export async function setupTask(cli: Command, taskName: string) {
       captureBaseDirectory: path.join(cwd, '.optic', 'captures')
     });
   };
-  await runTask(startConfig, persistenceManagerFactory);
+  try {
+    await runTask(startConfig, persistenceManagerFactory);
+  } catch (e) {
+    cli.error(e.message);
+  }
 
   process.exit(0);
 }
