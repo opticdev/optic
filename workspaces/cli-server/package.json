@@ -15,12 +15,14 @@
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
     "get-port": "^5.1.0",
-    "proper-lockfile": "^4.1.1"
+    "proper-lockfile": "^4.1.1",
+    "wait-on": "^4.0.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.2",
     "@types/fs-extra": "^8.0.1",
     "@types/node": "^13.1.6",
-    "@types/proper-lockfile": "^4.1.1"
+    "@types/proper-lockfile": "^4.1.1",
+    "@types/wait-on": "^3.2.0"
   }
 }
