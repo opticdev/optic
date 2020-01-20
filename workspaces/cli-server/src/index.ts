@@ -8,6 +8,7 @@ import * as path from 'path';
 import {FileSystemCaptureSaver} from './file-system-session-persistence';
 import {FileSystemCaptureLoader} from './file-system-session-loader';
 import {developerDebugLogger} from './logger';
+import waitOn from 'wait-on';
 
 export interface ISessionManifest {
   samples: IApiInteraction[]
@@ -40,19 +41,21 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
       path.join(__dirname, 'main'),
       [lockFilePath],
       {
+        execArgv: ['--inspect'],
         detached: true,
-        stdio: 'pipe'
+        stdio: 'ignore'
       }
     );
 
-    await new Promise((resolve) => {
-      developerDebugLogger('waiting for message from forked child');
-      child.on('message', (message: { type: string }) => {
-        if (message && message.type === 'daemon:started') {
-          developerDebugLogger('got message from forked child');
-          resolve();
-        }
+    await new Promise(async (resolve) => {
+      developerDebugLogger(`waiting for lock ${child.pid}`);
+      await waitOn({
+        resources: [
+          lockFilePath
+        ]
       });
+      developerDebugLogger(`lock created ${child.pid}`);
+      resolve();
     });
   }
   const contents = await fs.readJson(lockFilePath);

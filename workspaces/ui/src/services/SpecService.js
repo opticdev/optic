@@ -1,3 +1,5 @@
+import Bottleneck from "bottleneck"
+
 class NetworkUtilities {
 
   static handleJsonResponse(response) {
@@ -64,6 +66,11 @@ class NetworkUtilities {
   }
 }
 
+const outgoingPoll = new Bottleneck({
+  maxConcurrent: 1,
+  minTime: 1000,
+})
+
 class SpecService {
   constructor(specId) {
     this.specId = specId;
@@ -74,7 +81,9 @@ class SpecService {
   }
 
   listCaptures() {
-    return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures`);
+    return outgoingPoll.schedule(() => {
+      return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures`);
+    })
   }
 
   getCommandContext() {
