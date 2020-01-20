@@ -136,6 +136,8 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   // captures router. cli picks captureId and writes to whatever persistence method and provides capture id to ui. api spec just shows spec?
   router.get('/captures', async (req, res) => {
     const {captures} = req.optic.session;
+    developerDebugLogger('in captures')
+    developerDebugLogger(req.optic.session)
     res.json({
       captures: captures.map(i => i.captureId)
     });
@@ -178,6 +180,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     const proxyUrl = URL.parse('http://example.com/__optic_status')
     proxyUrl.host = proxyHost
     proxyUrl.port = proxyPort.toString()
+    console.log(proxyUrl)
     const proxyRunning = await new Promise(((resolve) => {
       fetch(proxyUrl.toString())
         .then(res => res.status === 200 ? resolve(true) : resolve(false)) // if proxy is on right port it will have the status endpoint
@@ -189,6 +192,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     const serviceUrl = URL.parse('http://example.com/')
     serviceUrl.host = serviceHost
     serviceUrl.port = servicePort.toString()
+    console.log(serviceUrl)
     const serviceRunning = await new Promise(((resolve) => {
       fetch(proxyUrl.toString())
         .then(res => resolve(true)) //if service resolves we assume it's up.

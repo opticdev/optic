@@ -229,16 +229,11 @@ class Status extends React.Component {
     const {specService} = this.props
 
     const poll = () => {
-      specService.getLastSession()
-        .then(session => {
-          debugger
+      specService.getLastCapture()
+        .then(({proxyRunning, serviceRunning, samples}) => {
+          this.setState({proxyRunning, serviceRunning, numberOfSamples: samples})
+          setTimeout(poll, 2000)
         })
-      // specService.getLastStart()
-      //   .then(config => {
-      //     const {hasStart} = config
-      //     this.setState({hasStart})
-      //     setTimeout(poll, 1000)
-      //   })
     }
 
     poll()
@@ -246,7 +241,7 @@ class Status extends React.Component {
 
   state = {
     polling: true,
-    hasStart: false,
+    hasStart: true,
     serviceRunning: false,
     proxyRunning: false,
     numberOfSamples: 0

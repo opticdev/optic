@@ -107,8 +107,8 @@ class SpecService {
     return NetworkUtilities.getJson(`/api/sessions`);
   }
 
-  getLastSession() {
-    return NetworkUtilities.getJson(`/api/sessions/last`);
+  getLastCapture() {
+    return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures/last`);
   }
 
   getConfig() {
