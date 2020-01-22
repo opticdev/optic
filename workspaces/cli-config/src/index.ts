@@ -4,7 +4,7 @@ import * as url from 'url';
 import * as yaml from 'js-yaml';
 import getPort from 'get-port';
 import findUp from 'find-up';
-
+import {parseRule, parseIgnore, IIgnoreRunnable} from './helpers/ignore-parser';
 
 export interface IOpticTask {
   command?: string,
@@ -17,25 +17,57 @@ export interface IApiCliConfig {
   tasks: {
     [key: string]: IOpticTask
   }
+  ignoreRequests?: string[]
 }
 
-export async function readApiConfig(): Promise<IApiCliConfig> {
-  const {configPath} = await getPaths();
+export async function readApiConfig(configPath: string): Promise<IApiCliConfig> {
   const rawFile = await fs.readFile(configPath);
-  let parsed = null
+  let parsed = null;
   try {
-    parsed = yaml.safeLoad(rawFile.toString())
+    parsed = yaml.safeLoad(rawFile.toString());
   } catch (e) {
-    throw Error('`optic.yml` will not parse. Make sure it is valid YAML.')
+    throw Error('`optic.yml` will not parse. Make sure it is valid YAML.');
   }
   return parsed;
 }
 
+export interface IOpticCliInitConfig {
+  type: 'init'
+}
+
+export interface IOpticCaptureConfig {
+  persistenceEngine: 'fs' | 's3'
+  captureId: string
+  captureDirectory: string
+}
+
+export interface IOpticApiRunConfig {
+  type: 'run'
+  captureConfig: IOpticCaptureConfig
+  // where does the service normally live?
+  serviceConfig: {
+    port: number
+    host: string
+    protocol: string
+    basePath: string
+  }
+  // where should intercepted requests go?
+  proxyConfig: {
+    port: number
+    host: string
+    protocol: string
+    basePath: string
+  }
+}
+
+export interface IOpticApiInterceptConfig {
+  type: 'intercept'
+}
 
 export interface IOpticTaskRunnerConfig {
   command?: string
   captureId: string
-  startTime: string
+  persistenceEngine: 'fs' | 's3'
   // where does the service normally live?
   serviceConfig: {
     port: number
@@ -63,7 +95,7 @@ export async function TaskToStartConfig(task: IOpticTask, captureId: string): Pr
 
   return {
     command: task.command,
-    startTime: new Date().toISOString(),
+    persistenceEngine: 'fs',
     captureId,
     serviceConfig: {
       port: randomPort,
@@ -88,19 +120,15 @@ export interface IPathMapping {
   gitignorePath: string
   capturesPath: string
   exampleRequestsPath: string
-  outputPath: string
 }
 
-export async function getPaths() {
-  const rootPath = await (async () => {
-    const configPath = await findUp('optic.yml', {type: 'file'});
-    if (configPath) {
-      return path.resolve(configPath, '../');
-    }
-    throw new Error(`expected to find an optic.yml file`);
-  })();
-
-  return getPathsRelativeToCwd(rootPath);
+export async function getPathsRelativeToConfig() {
+  const configPath = await findUp('optic.yml', {type: 'file'});
+  if (configPath) {
+    const configParentDirectory = path.resolve(configPath, '../');
+    return await getPathsRelativeToCwd(configParentDirectory);
+  }
+  throw new Error(`expected to find an optic.yml file`);
 }
 
 export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> {
@@ -113,7 +141,6 @@ export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> 
   const exampleRequestsPath = path.join(basePath, 'api', 'example-requests');
   await fs.ensureDir(capturesPath);
   await fs.ensureDir(exampleRequestsPath);
-  const outputPath = path.join(basePath, 'generated');
 
   return {
     cwd,
@@ -123,7 +150,6 @@ export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> 
     gitignorePath,
     capturesPath,
     exampleRequestsPath,
-    outputPath,
   };
 }
 
@@ -156,6 +182,12 @@ captures/
   await fs.ensureDir(capturesPath);
 }
 
+export {
+  parseIgnore,
+  parseRule,
+  IIgnoreRunnable
+};
+
 export async function shouldWarnAboutVersion7Compatibility() {
   const hasVersion6SpecStore = await findUp('.api/spec-store.json', {type: 'file'});
   const hasVersion7Config = await findUp('optic.yml', {type: 'file'});
@@ -168,3 +200,4 @@ export async function shouldWarnAboutVersion7Compatibility() {
   }
   return !hasVersion7Config;
 }
+

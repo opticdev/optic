@@ -30,15 +30,9 @@ class HttpToolkitRequestFilter implements IRequestFilter {
 
   shouldSkip(request: CompletedRequest): boolean {
     if (this.target) {
-      developerDebugLogger({
-        hostname: request.hostname,
-        url: request.url,
-        target: this.target
-      });
 
-      console.log('PATH IS HERE' + request.path)
       if (request.path === opticStatusPath) {
-        return true
+        return true;
       }
 
       return request.hostname === this.target || request.url.startsWith(this.target);
@@ -47,7 +41,7 @@ class HttpToolkitRequestFilter implements IRequestFilter {
   }
 }
 
-export const opticStatusPath = '/__optic_status'
+export const opticStatusPath = '/__optic_status';
 
 export class HttpToolkitCapturingProxy {
   private proxy!: mockttp.Mockttp;

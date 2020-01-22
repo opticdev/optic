@@ -1,15 +1,17 @@
 import {getPathsRelativeToCwd, readApiConfig} from '@useoptic/cli-config';
+import {parseIgnore} from '@useoptic/cli-config';
 import express from 'express';
 
 import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {FileSystemCaptureLoader} from '../file-system-session-loader';
+import {FileSystemCaptureLoader} from '../file-system-capture-loader';
+import {ICaptureLoader} from '../index';
 import {developerDebugLogger} from '../logger';
 import {ICliServerSession} from '../server';
 import * as URL from 'url';
 import fetch from 'cross-fetch';
-import {opticStatusPath} from "@useoptic/proxy/build/src/httptoolkit-capturing-proxy";
+import {opticStatusPath} from '@useoptic/proxy';
 
 
 export class CapturesHelpers {
@@ -86,14 +88,14 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     }
 
     const paths = await getPathsRelativeToCwd(session.path);
-    const {capturesPath, exampleRequestsPath} = paths;
-    const config = await readApiConfig();
+    const {configPath, capturesPath, exampleRequestsPath} = paths;
+    const config = await readApiConfig(configPath);
     const capturesHelpers = new CapturesHelpers(capturesPath);
     const exampleRequestsHelpers = new ExampleRequestsHelpers(exampleRequestsPath);
     req.optic = {
       session,
-      paths,
       config,
+      paths,
       capturesHelpers,
       exampleRequestsHelpers
     };
@@ -137,18 +139,24 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   // captures router. cli picks captureId and writes to whatever persistence method and provides capture id to ui. api spec just shows spec?
   router.get('/captures', async (req, res) => {
     const {captures} = req.optic.session;
-    developerDebugLogger('developerDebugLogger');
+    console.log(captures);
     res.json({
-      captures: captures.map(i => i.captureId)
+      captures: captures.map(i => i.taskConfig.captureId)
     });
   });
   router.get('/captures/:captureId/samples', async (req, res) => {
     const {captureId} = req.params;
-    const loader = new FileSystemCaptureLoader({
+    const captureInfo = req.optic.session.captures.find(x => x.taskConfig.captureId === captureId);
+    if (!captureInfo) {
+      return res.sendStatus(400);
+    }
+
+    const loader: ICaptureLoader = new FileSystemCaptureLoader({
       captureBaseDirectory: req.optic.paths.capturesPath
     });
     try {
-      const capture = await loader.load(captureId);
+      const filter = parseIgnore(req.optic.config.ignoreRequests || [])
+      const capture = await loader.loadWithFilter(captureId, filter);
       res.json({
         samples: capture.samples,
         links: [
@@ -174,13 +182,13 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   router.get('/captures/last', async (req, res: express.Response) => {
 
     const capture = req.optic.session.captures[req.optic.session.captures.length - 1];
-
+    const {taskConfig} = capture;
+    const {captureId, proxyConfig, serviceConfig} = taskConfig;
     //proxy config
-    const {host: proxyHost, port: proxyPort} = capture.proxyConfig;
     const proxyUrl = URL.format({
-      protocol: capture.proxyConfig.protocol,
-      hostname: capture.proxyConfig.host,
-      port: capture.proxyConfig.port,
+      protocol: proxyConfig.protocol,
+      hostname: proxyConfig.host,
+      port: proxyConfig.port,
       pathname: opticStatusPath
     });
 
@@ -191,11 +199,10 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     }));
 
     //service config
-    const {host: serviceHost, port: servicePort} = capture.serviceConfig;
-    const serviceUrl =URL.format({
-      protocol: capture.serviceConfig.protocol,
-      hostname: capture.serviceConfig.host,
-      port: capture.serviceConfig.port,
+    const serviceUrl = URL.format({
+      protocol: serviceConfig.protocol,
+      hostname: serviceConfig.host,
+      port: serviceConfig.port,
     });
 
     const serviceRunning = await new Promise(((resolve) => {
@@ -204,15 +211,11 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         .catch(e => resolve(false)); //if service does not resolve, you probably didn't use $OPTIC_API_PORT
     }));
 
-
-    console.log(proxyUrl);
-    console.log(serviceUrl);
-
     const loader = new FileSystemCaptureLoader({
       captureBaseDirectory: req.optic.paths.capturesPath
     });
 
-    const {samples} = await loader.load(capture.captureId);
+    const {samples} = await loader.load(captureId);
 
     res.json({
       capture,

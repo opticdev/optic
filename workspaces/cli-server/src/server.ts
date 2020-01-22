@@ -5,8 +5,8 @@ import getPort from 'get-port';
 import bodyParser from 'body-parser';
 import * as http from 'http';
 import * as path from 'path';
-import fetch from 'cross-fetch'
-import * as URL from 'url'
+import fetch from 'cross-fetch';
+import * as URL from 'url';
 import {CapturesHelpers, ExampleRequestsHelpers, makeRouter} from './routers/spec-router';
 
 export interface ICliServerConfig {
@@ -29,10 +29,16 @@ declare global {
   }
 }
 
+export interface ICliServerCaptureInfo {
+  captureType: 'run'
+  taskConfig: IOpticTaskRunnerConfig
+  env: { [key: string]: string }
+}
+
 export interface ICliServerSession {
   id: string
-  path: string,
-  captures: IOpticTaskRunnerConfig[]
+  path: string
+  captures: ICliServerCaptureInfo[]
 }
 
 export const shutdownRequested = 'cli-server:shutdown-requested';
@@ -65,12 +71,16 @@ class CliServer {
       });
     });
     app.post('/api/sessions', bodyParser.json({limit: '5kb'}), async (req, res: express.Response) => {
-      const {path, captureId, taskConfig} = req.body;
-
+      const {path, taskConfig} = req.body;
+      const captureInfo: ICliServerCaptureInfo = {
+        taskConfig,
+        captureType: 'run',
+        env: {}
+      };
       const existingSession = sessions.find(x => x.path === path);
       if (existingSession) {
         if (taskConfig) {
-          existingSession.captures.push(taskConfig);
+          existingSession.captures.push(captureInfo);
         }
         return res.json({
           session: existingSession
@@ -81,7 +91,7 @@ class CliServer {
       const session: ICliServerSession = {
         id: sessionId,
         path,
-        captures: taskConfig ? [taskConfig] : []
+        captures: taskConfig ? [captureInfo] : []
       };
       sessions.push(session);
 

@@ -1,21 +1,25 @@
 import {Client} from '@useoptic/cli-client';
+import {IIgnoreRunnable} from '@useoptic/cli-config';
 import {IApiInteraction} from '@useoptic/proxy';
 import * as lockfile from 'proper-lockfile';
 import {CliDaemon} from './daemon';
 import {fork} from 'child_process';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import {FileSystemCaptureSaver} from './file-system-session-persistence';
-import {FileSystemCaptureLoader} from './file-system-session-loader';
+import {FileSystemCaptureSaver} from './file-system-capture-saver';
+import {FileSystemCaptureLoader} from './file-system-capture-loader';
 import {developerDebugLogger} from './logger';
 import waitOn from 'wait-on';
+import findProcess = require('find-process');
 
-export interface ISessionManifest {
+export interface ICaptureManifest {
   samples: IApiInteraction[]
 }
 
 export interface ICaptureLoader {
-  load(sessionId: string): Promise<ISessionManifest>
+  load(sessionId: string): Promise<ICaptureManifest>
+
+  loadWithFilter(sessionId: string, filter: IIgnoreRunnable): Promise<ICaptureManifest>
 }
 
 export interface ICaptureSaver {
@@ -35,13 +39,16 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
   await fs.ensureFile(lockFilePath);
   const isLocked = await lockfile.check(lockFilePath);
   if (!isLocked) {
-
+    const isDebuggingEnabled = process.env.OPTIC_DAEMON_ENABLE_DEBUGGING === 'yes';
+    if (isDebuggingEnabled) {
+      developerDebugLogger(`node --inspect debugging enabled. go to chrome://inspect and open the node debugger`);
+    }
     // fork process
     const child = fork(
       path.join(__dirname, 'main'),
       [lockFilePath],
       {
-        execArgv: ['--inspect'],
+        execArgv: isDebuggingEnabled ? ['--inspect'] : [],
         detached: true,
         stdio: 'ignore'
       }
@@ -76,7 +83,22 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
   const {port} = contents;
   const apiBaseUrl = `http://localhost:${port}/admin-api`;
   const cliClient = new Client(apiBaseUrl);
-  await cliClient.stopDaemon();
+  try {
+    await cliClient.stopDaemon();
+  } catch (e) {
+    developerDebugLogger(e);
+    try {
+      await lockfile.unlock(lockFilePath);
+    } catch (e) {
+      developerDebugLogger(e);
+      const blockers = await findProcess('port', port);
+      if (blockers.length > 0) {
+        developerDebugLogger(blockers);
+        blockers.forEach(b => process.kill(b.pid, 9));
+      }
+    }
+    await fs.unlink(lockFilePath);
+  }
 }
 
 

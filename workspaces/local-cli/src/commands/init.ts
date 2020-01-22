@@ -29,7 +29,10 @@ export default class Init extends Command {
           command: 'echo "Setup A Valid Command to Start your API!"',
           baseUrl: 'http://localhost:4000'
         }
-      }
+      },
+      ignoreRequests: [
+        'OPTIONS *'
+      ]
     };
     //write initial config
     await createFileTree(config, cwd);
@@ -39,8 +42,7 @@ export default class Init extends Command {
     const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
     developerDebugLogger(`optic api base url: ${apiBaseUrl}`);
     const cliClient = new Client(apiBaseUrl);
-    const captureId = uuidv4();
-    const cliSession = await cliClient.findSession(cwd, captureId, undefined);
+    const cliSession = await cliClient.findSession(cwd, null);
     developerDebugLogger({cliSession});
     const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}/init`;
     cli.log(fromOptic(`opening ${uiUrl}`));
