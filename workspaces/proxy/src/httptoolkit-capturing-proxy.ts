@@ -178,8 +178,17 @@ export class HttpToolkitCapturingProxy {
       }
     });
 
-    //@todo check if port if free, fail with useful error if something is already bound to it.
-    await proxy.start(config.proxyPort);
+    developerDebugLogger(`trying to start proxy on port ${config.proxyPort}`);
+    try {
+
+      await proxy.start({
+        startPort: config.proxyPort,
+        endPort: config.proxyPort
+      });
+      developerDebugLogger(`proxy started on port ${proxy.port}`);
+    } catch (e) {
+      throw new Error(`Optic couldn't start a proxy on port ${config.proxyPort} - please make sure there is nothing running there`);
+    }
 
     if (config.flags.chrome) {
       this.chrome = await new Promise((resolve, reject) => {
