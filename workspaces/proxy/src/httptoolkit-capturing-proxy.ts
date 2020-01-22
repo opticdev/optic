@@ -35,11 +35,19 @@ class HttpToolkitRequestFilter implements IRequestFilter {
         url: request.url,
         target: this.target
       });
+
+      console.log('PATH IS HERE' + request.path)
+      if (request.path === opticStatusPath) {
+        return true
+      }
+
       return request.hostname === this.target || request.url.startsWith(this.target);
     }
     return true;
   }
 }
+
+export const opticStatusPath = '/__optic_status'
 
 export class HttpToolkitCapturingProxy {
   private proxy!: mockttp.Mockttp;
@@ -104,7 +112,7 @@ export class HttpToolkitCapturingProxy {
     await proxy.addRules(
       {
         matchers: [
-          new mockttp.matchers.SimplePathMatcher('/__optic_status')
+          new mockttp.matchers.SimplePathMatcher(opticStatusPath)
         ],
         handler: new mockttp.handlers.CallbackHandler(() => {
           const response: CallbackResponseResult = {
