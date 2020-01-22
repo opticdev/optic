@@ -36,6 +36,7 @@ class HttpToolkitRequestFilter implements IRequestFilter {
         target: this.target
       });
 
+      console.log('PATH IS HERE' + request.path)
       if (request.path === opticStatusPath) {
         return true
       }

@@ -117,34 +117,34 @@ class APIDashboard extends React.Component {
         </Grid>
 
 
-        <Typography variant="h4" color="primary" style={{marginTop: 70}}>{'Testing'}</Typography>
-        <DocDivider style={{marginTop: 6, marginBottom: 30}}/>
+        {/*<Typography variant="h4" color="primary" style={{marginTop: 70}}>{'Testing'}</Typography>*/}
+        {/*<DocDivider style={{marginTop: 6, marginBottom: 30}}/>*/}
 
-        <div className={classNames(classes.notification)}>
-          <MarkdownRender
-            source={`##### Testing Dashboard Disabled\n Optic Live Testing is only enabled in the Optic Pro and Enterprise Subscriptions. The data below is not from your API.`}/>
-          <Button color="primary">Learn More</Button>
-          <Button color="primary">Get Optic Pro</Button>
-        </div>
+        {/*<div className={classNames(classes.notification)}>*/}
+        {/*  <MarkdownRender*/}
+        {/*    source={`##### Testing Dashboard Disabled\n Optic Live Testing is only enabled in the Optic Pro and Enterprise Subscriptions. The data below is not from your API.`}/>*/}
+        {/*  <Button color="primary">Learn More</Button>*/}
+        {/*  <Button color="primary">Get Optic Pro</Button>*/}
+        {/*</div>*/}
 
-        <TestingDashboard/>
+        {/*<TestingDashboard/>*/}
 
-        <Grid container>
-          <Grid item sm={5}>
-            <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Environments'}</Typography>
+        {/*<Grid container>*/}
+        {/*  <Grid item sm={5}>*/}
+        {/*    <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Environments'}</Typography>*/}
 
-            <ApiStatusCard env="Development" status="No Issues Detected"/>
-            <ApiStatusCard env="Staging" status="2 Alerts. 8 Warnings"/>
-            <ApiStatusCard env="Production" status="No Issues Detected"/>
+        {/*    <ApiStatusCard env="Development" status="No Issues Detected"/>*/}
+        {/*    <ApiStatusCard env="Staging" status="2 Alerts. 8 Warnings"/>*/}
+        {/*    <ApiStatusCard env="Production" status="No Issues Detected"/>*/}
 
-          </Grid>
+        {/*  </Grid>*/}
 
-          <Grid sm={1}></Grid>
-          <Grid item sm={6}>
-            {/*<Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Checklist'}</Typography>*/}
-            {/*<TestingChecklist/>*/}
-          </Grid>
-        </Grid>
+        {/*  <Grid sm={1}></Grid>*/}
+        {/*  <Grid item sm={6}>*/}
+        {/*    /!*<Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'Checklist'}</Typography>*!/*/}
+        {/*    /!*<TestingChecklist/>*!/*/}
+        {/*  </Grid>*/}
+        {/*</Grid>*/}
         {/*<IntegrationsDashboard />*/}
       </div>
     );
