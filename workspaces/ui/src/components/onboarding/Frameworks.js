@@ -1,7 +1,9 @@
 export const Frameworks = []
 
-function addFramework(name, language, generateCommand, requireCodeUpdate) {
-  return Frameworks.push({name, language, generateCommand, requireCodeUpdate})
+function addFramework(name, language, generateCommand, requireCodeUpdate, other) {
+  const f = {name, language, generateCommand, requireCodeUpdate, ...other}
+  Frameworks.push(f)
+  return f
 }
 
 addFramework('Express JS', 'Node', () => `echo 'Add your Node Start Command in optic.yml'`,
@@ -18,9 +20,9 @@ addFramework('Play', 'Scala', () => `sbt "run -Dhttp.port=$OPTIC_PROXY_PORT"`)
 addFramework('Zeit Now', 'Other', () => `now dev --listen $OPTIC_PROXY_PORT`)
 
 
-
-
-
+export const OtherFramework = addFramework('I use another API Framework', 'Other', () => `echo 'Replace with your API Start Command'`,
+  `//make your API start on the $OPTIC_API_PORT\napp.listen(process.env.OPTIC_API_PORT || 3000)`
+  , {isOther: true})
 
 
 export const FrameworkLanguageOrder = ['Node', 'Ruby', 'PHP', 'Scala', 'Other']

@@ -11,7 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import {TextField} from '@material-ui/core';
 import {MarkdownRender} from '../requests/DocContribution';
-import {FrameworkLanguageOrder, Frameworks} from './Frameworks';
+import {FrameworkLanguageOrder, Frameworks, OtherFramework} from './Frameworks';
 import Grid from '@material-ui/core/Grid';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import {dracula} from 'react-syntax-highlighter/dist/esm/styles/hljs';
@@ -144,11 +144,10 @@ export default withNavigationContext(withSpecServiceContext(({specService, baseU
 
               <Grid container className={classes.frameworks}>
                 {FrameworkLanguageOrder.map(language => {
-                  const frameworksFiltered = Frameworks.filter(i => i.language === language);
+                  const frameworksFiltered = Frameworks.filter(i => i.language === language && !i.isOther);
                   return (
                     <Grid item sm={6}>
                       <Typography variant="subtitle1" className={classes.langTitle}>{language}</Typography>
-
                       {frameworksFiltered.map(i => {
                         return <Button color="primary" onClick={() => {
                           setFramework(i);
@@ -158,6 +157,12 @@ export default withNavigationContext(withSpecServiceContext(({specService, baseU
                     </Grid>
                   );
                 })}
+
+                <Grid sm={12} style={{marginTop: 22}}>
+                  <Button color="primary" onClick={() => {
+                    setFramework(OtherFramework);
+                  }}>{OtherFramework.name}</Button>
+                </Grid>
               </Grid>
 
             </SetupStep>
@@ -284,7 +289,6 @@ class Status extends React.Component {
 
     const allSetUp = numberOfSamples > 15;
 
-
     return (
       <div>
         {!hasStart && (
@@ -295,8 +299,7 @@ class Status extends React.Component {
         )}
         {hasStart && (
           <div style={{display: 'flex', flexDirection: 'row',}}>
-            <CircularProgress color="secondary" size={20} style={{marginTop: 20, opacity: allSetUp ? 0 : 1}}/>
-            <div style={{paddingLeft: 25}}>
+            <div style={{paddingLeft: 5}}>
               <SummaryStatus
                 on={serviceRunning}
                 onText={`Your API is running on \`$OPTIC_API_PORT\` ${capture && capture.taskConfig.serviceConfig.port}`}
@@ -330,7 +333,7 @@ class Status extends React.Component {
                         <MarkdownRender source={`##### Optic is all set up!`}/>
 
                         <LinkToDocumentUrls>
-                          <Button variant="outlined" color="primary" component={Link} to={baseUrl}>Start Documenting your
+                          <Button variant="outlined" color="primary">Start Documenting your
                             API</Button>
                         </LinkToDocumentUrls>
                       </div>
