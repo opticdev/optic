@@ -17,13 +17,13 @@ export interface ICaptureManifest {
 }
 
 export interface ICaptureLoader {
-  load(sessionId: string): Promise<ICaptureManifest>
+  load(captureId: string): Promise<ICaptureManifest>
 
-  loadWithFilter(sessionId: string, filter: IIgnoreRunnable): Promise<ICaptureManifest>
+  loadWithFilter(captureId: string, filter: IIgnoreRunnable): Promise<ICaptureManifest>
 }
 
 export interface ICaptureSaver {
-  init(sessionId: string): Promise<void>
+  init(captureId: string): Promise<void>
 
   save(sample: IApiInteraction): Promise<void>
 }

@@ -107,7 +107,8 @@ class SpecService {
     return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures/${captureId}/samples`)
       .then((body) => {
         return {
-          samples: body.samples
+          samples: body.samples,
+          metadata: body.metadata
         };
       });
   }

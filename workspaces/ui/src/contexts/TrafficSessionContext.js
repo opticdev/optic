@@ -147,10 +147,12 @@ class TrafficSessionStoreBase extends React.Component {
           });
         }
         //@TODO: add flag prop to disable checking for updates?
-        this.checkForUpdates();
+        if (latestSession.metadata.completed !== true) {
+          this.checkForUpdates();
+        }
       } catch (e) {
         console.error(e);
-        this.checkForUpdates();
+        //@GOTCHA: server will throw a 400 if capture is no longer active. could change this behavior in server or just update ui state
       }
     }, 1000);
   }

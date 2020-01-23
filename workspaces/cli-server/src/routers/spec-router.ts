@@ -172,12 +172,16 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       const filter = parseIgnore(req.optic.config.ignoreRequests || []);
       const capture = await loader.loadWithFilter(captureId, filter);
       res.json({
+        metadata: {
+          completed: captureInfo.status === 'completed'
+        },
         samples: capture.samples,
         links: [
           {rel: 'next', href: ''}
         ]
       });
     } catch (e) {
+      console.error(e);
       res.sendStatus(500);
     }
   });
@@ -242,8 +246,9 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     const loader = new FileSystemCaptureLoader({
       captureBaseDirectory: req.optic.paths.capturesPath
     });
+    const filter = parseIgnore(req.optic.config.ignoreRequests || []);
 
-    const {samples} = await loader.load(captureId);
+    const {samples} = await loader.loadWithFilter(captureId, filter);
 
     res.json({
       capture,

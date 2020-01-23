@@ -55,9 +55,9 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
   const cliClient = new Client(apiBaseUrl);
   const cliSession = await cliClient.findSession(cwd, startConfig);
   developerDebugLogger({cliSession});
-  const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}`;
+  const uiUrl = `http://localhost:${3000/*TODO revert*/}/specs/${cliSession.session.id}/diff/${captureId}`;
   cli.log(fromOptic(`opening ${uiUrl}`));
-  //openBrowser(uiUrl);
+  openBrowser(uiUrl);
 
   // start proxy and command session
   const persistenceManagerFactory = () => {

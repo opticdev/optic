@@ -19,7 +19,7 @@ $ npm install -g @useoptic/cli
 $ api COMMAND
 running command...
 $ api (-v|--version|version)
-@useoptic/cli/0.1.0 darwin-x64 node-v13.5.0
+@useoptic/cli/0.1.0 darwin-x64 node-v10.18.1
 $ api --help [COMMAND]
 USAGE
   $ api COMMAND
@@ -28,22 +28,20 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`api daemon:stop [FILE]`](#api-daemonstop-file)
+* [`api daemon:stop`](#api-daemonstop)
 * [`api help [COMMAND]`](#api-help-command)
+* [`api init`](#api-init)
+* [`api run [TASKNAME]`](#api-run-taskname)
+* [`api spec`](#api-spec)
 * [`api start`](#api-start)
 
-## `api daemon:stop [FILE]`
+## `api daemon:stop`
 
-describe the command here
+ensures the Optic daemon has been stopped
 
 ```
 USAGE
-  $ api daemon:stop [FILE]
-
-OPTIONS
-  -f, --force
-  -h, --help       show CLI help
-  -n, --name=name  name to print
+  $ api daemon:stop
 ```
 
 _See code: [src/commands/daemon/stop.ts](https://github.com/opticdev/optic-2020/blob/v0.1.0/src/commands/daemon/stop.ts)_
@@ -64,6 +62,39 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v2.2.3/src/commands/help.ts)_
+
+## `api init`
+
+Add Optic to your API
+
+```
+USAGE
+  $ api init
+```
+
+_See code: [src/commands/init.ts](https://github.com/opticdev/optic-2020/blob/v0.1.0/src/commands/init.ts)_
+
+## `api run [TASKNAME]`
+
+Run a task from your optic.yml
+
+```
+USAGE
+  $ api run [TASKNAME]
+```
+
+_See code: [src/commands/run.ts](https://github.com/opticdev/optic-2020/blob/v0.1.0/src/commands/run.ts)_
+
+## `api spec`
+
+Open your Optic API specification
+
+```
+USAGE
+  $ api spec
+```
+
+_See code: [src/commands/spec.ts](https://github.com/opticdev/optic-2020/blob/v0.1.0/src/commands/spec.ts)_
 
 ## `api start`
 

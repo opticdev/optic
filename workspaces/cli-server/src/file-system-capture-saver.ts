@@ -1,4 +1,4 @@
-import {IApiInteraction} from '@useoptic/proxy';
+import {IApiInteraction} from '@useoptic/domain';
 import Bottleneck from 'bottleneck';
 import * as fs from 'fs-extra';
 import * as path from 'path';

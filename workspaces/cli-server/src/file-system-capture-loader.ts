@@ -16,8 +16,8 @@ class FileSystemCaptureLoader implements ICaptureLoader {
   constructor(private config: IFileSystemCaptureLoaderConfig) {
   }
 
-  private async listSortedCaptureFiles(sessionId: string) {
-    const sessionDirectory = path.join(this.config.captureBaseDirectory, sessionId);
+  private async listSortedCaptureFiles(captureId: string) {
+    const sessionDirectory = path.join(this.config.captureBaseDirectory, captureId);
     const entries = await fs.readdir(sessionDirectory);
     developerDebugLogger({entries});
     const captureFiles = entries
@@ -32,8 +32,8 @@ class FileSystemCaptureLoader implements ICaptureLoader {
     return captureFiles;
   }
 
-  async load(sessionId: string): Promise<ICaptureManifest> {
-    const captureFiles = await this.listSortedCaptureFiles(sessionId);
+  async load(captureId: string): Promise<ICaptureManifest> {
+    const captureFiles = await this.listSortedCaptureFiles(captureId);
     //@TODO: robustify by only reading n files at a time
     const entriesContents: IApiInteraction[][] = await Promise.all(captureFiles.map(x => fs.readJson(x)));
     const allSamples = entriesContents.reduce((acc, entrySamples) => [...acc, ...entrySamples], []);
@@ -42,8 +42,8 @@ class FileSystemCaptureLoader implements ICaptureLoader {
     };
   }
 
-  async loadWithFilter(sessionId: string, filter: IIgnoreRunnable): Promise<ICaptureManifest> {
-    const captureFiles = await this.listSortedCaptureFiles(sessionId);
+  async loadWithFilter(captureId: string, filter: IIgnoreRunnable): Promise<ICaptureManifest> {
+    const captureFiles = await this.listSortedCaptureFiles(captureId);
     //@TODO: robustify by only reading n files at a time
     const entriesContents: IApiInteraction[][] = await Promise.all(captureFiles.map(x => fs.readJson(x)));
     const filteredSamples = entriesContents.reduce((acc: IApiInteraction[], entrySamples: IApiInteraction[]) => {
