@@ -15,5 +15,8 @@
   "devDependencies": {
     "@types/find-up": "^4.0.0",
     "@types/js-yaml": "^3.12.1"
-  }
+  },
+  "files": [
+    "/build"
+  ]
 }

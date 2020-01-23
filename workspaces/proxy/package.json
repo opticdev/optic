@@ -12,5 +12,8 @@
     "@useoptic/domain": "0.1.0",
     "fs-extra": "^8.1.0",
     "mockttp": "^0.19.2"
-  }
+  },
+  "files": [
+    "/build"
+  ]
 }

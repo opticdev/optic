@@ -6,7 +6,12 @@
     "copy-domain": "echo copied",
     "build-ui": "cd workspaces/ui && yarn run build-local",
     "copy-ui": "rm -rf ./workspaces/cli-server/resources/ui && mkdir -p ./workspaces/cli-server/resources/ui && cp -R ./workspaces/ui/build/* ./workspaces/cli-server/resources/ui/",
-    "postpull": "yarn install && yarn run build-domain && yarn run build-workspace && yarn run build-ui && yarn run copy-ui && source export_development_aliases.sh"
+    "postpull": "yarn install && yarn run build-domain && yarn run build-workspace && yarn run build-ui && yarn run copy-ui && source export_development_aliases.sh",
+    "registry:clean-optic": "rm -rf docker/private-npm-registry/storage/@useoptic/*",
+    "registry:start": "cd docker/private-npm-registry && docker-compose up &",
+    "registry:start-background": "yarn run registry:start && wait-on http-get://localhost:4873",
+    "registry:stop": "cd docker/private-npm-registry && docker-compose down",
+    "publish-local": "YARN_REGISTRY=http://localhost:4873 yarn workspaces run publish --non-interactive --registry=http://localhost:4873"
   },
   "workspaces": [
     "workspaces/domain",
@@ -20,6 +25,7 @@
   "devDependencies": {
     "@types/debug": "^4.1.5",
     "typescript": "^3.7.4",
+    "wait-on": "^4.0.0",
     "wsrun": "^5.2.0"
   },
   "dependencies": {

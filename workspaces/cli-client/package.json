@@ -10,5 +10,8 @@
   "dependencies": {
     "cross-fetch": "^3.0.4"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "files": [
+    "/build"
+  ]
 }

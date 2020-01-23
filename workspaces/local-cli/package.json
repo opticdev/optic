@@ -6,11 +6,12 @@
   "bin": {
     "api": "./bin/run"
   },
-  "bugs": "https://github.com/opticdev/optic-2020/issues",
+  "bugs": "https://github.com/opticdev/optic/issues",
   "dependencies": {
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
+    "@useoptic/cli-client": "0.1.0",
     "@useoptic/cli-config": "0.1.0",
     "@useoptic/cli-server": "0.1.0",
     "cli-ux": "^5.4.1",
@@ -49,7 +50,7 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/opticdev/optic-2020",
+  "homepage": "https://github.com/opticdev/optic",
   "keywords": [
     "oclif"
   ],

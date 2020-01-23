@@ -1,6 +1,9 @@
 {
   "name": "@useoptic/ui",
   "version": "0.1.0",
+  "files": [
+
+  ],
   "dependencies": {
     "@babel/core": "7.4.3",
     "@babel/plugin-proposal-decorators": "^7.4.4",
