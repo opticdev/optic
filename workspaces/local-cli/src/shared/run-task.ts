@@ -69,6 +69,8 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     await runTask(startConfig, persistenceManagerFactory);
   } catch (e) {
     cli.error(e.message);
+  } finally {
+    await cliClient.markCaptureAsCompleted(cliSession.session.id, captureId)
   }
 
   process.exit(0);

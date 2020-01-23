@@ -11,8 +11,8 @@ import {developerDebugLogger} from '../logger';
 import {ICliServerSession} from '../server';
 import * as URL from 'url';
 import fetch from 'cross-fetch';
-import {opticStatusPath} from "@useoptic/proxy";
-import * as yaml from "js-yaml";
+import {opticStatusPath} from '@useoptic/proxy';
+import * as yaml from 'js-yaml';
 
 
 export class CapturesHelpers {
@@ -142,8 +142,21 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     const {captures} = req.optic.session;
     console.log(captures);
     res.json({
-      captures: captures.map(i => i.taskConfig.captureId)
+      captures: captures.reverse().map(i => i.taskConfig.captureId)
     });
+  });
+  router.put('/captures/:captureId/status', bodyParser.json({limit: '1kb'}), async (req, res) => {
+    const {captureId} = req.params;
+    const captureInfo = req.optic.session.captures.find(x => x.taskConfig.captureId === captureId);
+    if (!captureInfo) {
+      return res.sendStatus(400);
+    }
+    const {status} = req.body;
+    if (status !== 'completed') {
+      return res.sendStatus(400);
+    }
+    captureInfo.status = 'completed';
+    res.sendStatus(204);
   });
   router.get('/captures/:captureId/samples', async (req, res) => {
     const {captureId} = req.params;
@@ -156,7 +169,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       captureBaseDirectory: req.optic.paths.capturesPath
     });
     try {
-      const filter = parseIgnore(req.optic.config.ignoreRequests || [])
+      const filter = parseIgnore(req.optic.config.ignoreRequests || []);
       const capture = await loader.loadWithFilter(captureId, filter);
       res.json({
         samples: capture.samples,
@@ -181,7 +194,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
 
   router.get('/captures/last', async (req, res: express.Response) => {
-    console.log(req.optic.session.captures)
+    console.log(req.optic.session.captures);
 
     const capture = req.optic.session.captures[req.optic.session.captures.length - 1];
 
@@ -198,7 +211,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     const {taskConfig} = capture;
     const {captureId, proxyConfig, serviceConfig} = taskConfig;
 
-    console.log(capture)
+    console.log(capture);
     //proxy config
     const proxyUrl = URL.format({
       protocol: proxyConfig.protocol,

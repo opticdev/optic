@@ -31,6 +31,7 @@ declare global {
 
 export interface ICliServerCaptureInfo {
   captureType: 'run'
+  status: 'started' | 'completed'
   taskConfig: IOpticTaskRunnerConfig
   env: { [key: string]: string }
 }
@@ -75,6 +76,7 @@ class CliServer {
       const captureInfo: ICliServerCaptureInfo = {
         taskConfig,
         captureType: 'run',
+        status: 'started',
         env: {}
       };
       const existingSession = sessions.find(x => x.path === path);
