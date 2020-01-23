@@ -194,11 +194,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
 
   router.get('/captures/last', async (req, res: express.Response) => {
-    console.log(req.optic.session.captures);
-
     const capture = req.optic.session.captures[req.optic.session.captures.length - 1];
-
-
     if (!capture) {
       return res.json({
         capture: null,
@@ -210,8 +206,6 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
     const {taskConfig} = capture;
     const {captureId, proxyConfig, serviceConfig} = taskConfig;
-
-    console.log(capture);
     //proxy config
     const proxyUrl = URL.format({
       protocol: proxyConfig.protocol,
