@@ -25,6 +25,18 @@ class JsonHttpClient {
     })
       .then(JsonHttpClient.handleJsonResponse);
   }
+
+  static putJson(url: string, body: object) {
+    return fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+      headers: {
+        'accept': 'application/json',
+        'content-type': 'application/json'
+      }
+    })
+      .then(JsonHttpClient.handleJsonResponse);
+  }
 }
 
 export {
