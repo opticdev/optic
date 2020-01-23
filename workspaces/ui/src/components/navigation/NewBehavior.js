@@ -143,10 +143,11 @@ function NewBehavior(props) {
     return (
       <Collapse in={true} appear={true} style={{width: '100%'}}>
         <div className={classes.notificationBar}>
-          <Typography variant="subtitle1" style={{color: 'white', marginTop: 8}}> <CheckIcon style={{color: AddedGreen, fontSize: 16, paddingTop: 4, paddingRight: 5}}/>In-Sync</Typography>
+          <Typography variant="subtitle1" style={{color: 'white', marginTop: 8}}> <CheckIcon
+            style={{color: AddedGreen, fontSize: 16, paddingTop: 4, paddingRight: 5}}/>In-Sync</Typography>
         </div>
       </Collapse>
-    )
+    );
   }
 
   const handleClick = event => {
@@ -378,6 +379,19 @@ export const NewBehaviorSideBar = () => (
     }}
   </NewBehaviorWrapper>
 );
+export const LinkToDocumentUrls = ({children}) => (
+  <NewBehaviorWrapper>
+    {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl, unrecognizedUrlCount, cachedQueryResults}) => {
+      return (
+        <Link style={{textDecoration: 'none', color: 'black', marginTop: 20}}
+              to={`${baseUrl}/diff/${lastSessionId}/urls`}>
+          {children}
+        </Link>
+      );
+    }}
+  </NewBehaviorWrapper>
+);
+
 
 export const HasDiffRequestToolBar = ({requestId}) => (
   <NewBehaviorWrapper>
@@ -401,11 +415,12 @@ export const HasDiffDashboard = ({requestId}) => (
     {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl, unrecognizedUrlCount, cachedQueryResults}) => {
 
       if (!isLoading) {
-        const hasRequestDiff = requestIdsWithDiffs.length > 0
+        const hasRequestDiff = requestIdsWithDiffs.length > 0;
 
         return (<>
             <SummaryStatus on={!hasRequestDiff} onText="In-Sync" offText="API & Spec are not In-Sync"/>
-            <SummaryStatus on={unrecognizedUrlCount === 0} onText="No Undocumented URLs" offText="Undocumented Endpoints Detected"/>
+            <SummaryStatus on={unrecognizedUrlCount === 0} onText="No Undocumented URLs"
+                           offText="Undocumented Endpoints Detected"/>
           </>
         );
       }

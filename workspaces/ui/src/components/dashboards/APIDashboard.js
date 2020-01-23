@@ -11,7 +11,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import {DocDarkGrey, DocDivider, DocSubHeading} from '../requests/DocConstants';
 import {DocSubGroup} from '../requests/DocSubGroup';
 import compose from 'lodash.compose'
-import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
@@ -36,6 +36,8 @@ import {withNavigationContext} from '../../contexts/NavigationContext';
 import {withProductDemoContext} from '../navigation/ProductDemo';
 import {ProductDemoStoreBase} from '../onboarding/InlineDocs';
 import {HasDiffDashboard} from '../navigation/NewBehavior';
+import {routerPaths} from '../../RouterPaths';
+import {withApiOverviewContext} from '../../contexts/ApiOverviewContext';
 
 const styles = theme => ({
   root: {
@@ -80,8 +82,12 @@ const styles = theme => ({
 
 class APIDashboard extends React.Component {
   render() {
-    const {classes, queries, integrations, goToIntegration, baseUrl, demos, cachedQueryResults} = this.props;
+    const {classes, queries, integrations, goToIntegration, baseUrl, demos, cachedQueryResults, apiOverview} = this.props;
     const setupState = {}//queries.setupState();
+
+    if (apiOverview.isEmptySpec) {
+      return <Redirect to={routerPaths.init(baseUrl)}/>
+    }
 
     return (
       <div className={classes.root}>
@@ -98,7 +104,7 @@ class APIDashboard extends React.Component {
           <Grid item sm={5}>
 
             <Typography variant="h6" color="primary" style={{marginBottom: 12}}>{'API Overview'}</Typography>
-            <APINavLinks text={'Review API Documentation'} subtext={'22 Endpoints. 9 Shapes'}
+            <APINavLinks text={'Review API Documentation'} subtext={`${apiOverview.operationsToRender.length} Endpoints. ${apiOverview.concepts.length} Shapes`}
                          icon={<DescriptionIcon color="primary" style={{marginLeft: 10}}/>}/>
             <APINavLinks text={'API Testing'} subtext={'Disabled. Click here to Setup'}
                          icon={<TimelineIcon color="primary" style={{marginLeft: 10}}/>}/>
@@ -151,7 +157,7 @@ class APIDashboard extends React.Component {
   }
 }
 
-export default withProductDemoContext(withNavigationContext(withIntegrationsContext(withRfcContext(withStyles(styles)(APIDashboard)))));
+export default withProductDemoContext(withApiOverviewContext(withNavigationContext(withIntegrationsContext(withRfcContext(withStyles(styles)(APIDashboard))))));
 
 export const SummaryStatus = withStyles(styles)(({on, onText, offText, classes}) => {
   return (

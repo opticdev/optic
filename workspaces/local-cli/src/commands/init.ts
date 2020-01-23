@@ -23,7 +23,7 @@ export default class Init extends Command {
     }
 
     const config: IApiCliConfig = {
-      name: 'New API',
+      name: 'Unnamed API',
       tasks: {
         start: {
           command: 'echo "Setup A Valid Command to Start your API!"',

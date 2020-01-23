@@ -27,6 +27,8 @@ import * as uniqBy from 'lodash.uniqby'
 import {withApiOverviewContext} from '../../contexts/ApiOverviewContext';
 import {ProductDemoStoreBase} from '../onboarding/InlineDocs';
 import SetupSteps from '../onboarding/SetupSteps';
+import {Redirect} from 'react-router-dom';
+import {routerPaths} from '../../RouterPaths';
 
 const drawerWidth = 320;
 const appBarOffset = 50
@@ -182,8 +184,11 @@ const EndpointBasePath = withRfcContext(withNavigationContext((props) => {
 
 export default compose(withRfcContext, withApiOverviewContext, withNavigationContext)(function ApiOverview(props) {
   const {paths, cachedQueryResults, handleCommand, apiOverview} = props;
+
+
   const {pathsById, contributions} = cachedQueryResults;
   const classes = useStyles();
+
 
   const {operationsToRender, concepts} = apiOverview
 

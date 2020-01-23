@@ -57,7 +57,7 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
   developerDebugLogger({cliSession});
   const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}`;
   cli.log(fromOptic(`opening ${uiUrl}`));
-  openBrowser(uiUrl);
+  //openBrowser(uiUrl);
 
   // start proxy and command session
   const persistenceManagerFactory = () => {
