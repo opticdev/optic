@@ -69,4 +69,4 @@ export const Interpreters = opticEngine.com.useoptic.diff.interpreters;
 export const PluginRegistry = opticEngine.com.useoptic.diff.PluginRegistry;
 export const QueryStringDiffer = opticEngine.com.useoptic.diff.query.QueryStringDiffer;
 export const {JsQueryStringParser} = opticEngine;
-console.log(opticEngine);
+export const OasProjectionHelper = opticEngine.com.useoptic.contexts.rfc.projections.OASProjectionHelper();
