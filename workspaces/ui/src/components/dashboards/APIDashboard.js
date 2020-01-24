@@ -38,6 +38,7 @@ import {ProductDemoStoreBase} from '../onboarding/InlineDocs';
 import {HasDiffDashboard} from '../navigation/NewBehavior';
 import {routerPaths} from '../../RouterPaths';
 import {withApiOverviewContext} from '../../contexts/ApiOverviewContext';
+import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
 
 const styles = theme => ({
   root: {
@@ -82,7 +83,7 @@ const styles = theme => ({
 
 class APIDashboard extends React.Component {
   render() {
-    const {classes, queries, integrations, goToIntegration, baseUrl, demos, cachedQueryResults, apiOverview} = this.props;
+    const {classes, baseUrl, demos, apiName, apiOverview} = this.props;
     const setupState = {}//queries.setupState();
 
     if (apiOverview.isEmptySpec) {
@@ -94,7 +95,7 @@ class APIDashboard extends React.Component {
         <ProductDemoStoreBase />
         {demos.dashboardDemo}
         <Paper className={classes.statusCard} style={{flexDirection: 'row'}} elevation={0}>
-          <Typography variant="h4">{cachedQueryResults.apiName}</Typography>
+          <Typography variant="h4">{apiName}</Typography>
           <div style={{flex: 1}}/>
          <HasDiffDashboard />
         </Paper>
@@ -157,7 +158,7 @@ class APIDashboard extends React.Component {
   }
 }
 
-export default withProductDemoContext(withApiOverviewContext(withNavigationContext(withIntegrationsContext(withRfcContext(withStyles(styles)(APIDashboard))))));
+export default withProductDemoContext(withApiOverviewContext(withNavigationContext(withIntegrationsContext(withSpecServiceContext(withRfcContext(withStyles(styles)(APIDashboard)))))));
 
 export const SummaryStatus = withStyles(styles)(({on, onText, offText, classes}) => {
   return (

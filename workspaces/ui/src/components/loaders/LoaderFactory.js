@@ -19,7 +19,7 @@ import NewBehavior from '../navigation/NewBehavior';
 import Redirect from 'react-router-dom/es/Redirect';
 import {ProductDemoStore} from '../navigation/ProductDemo';
 import Init from '../onboarding/Init';
-import {SpecServiceContext, withSpecServiceContext} from '../../contexts/SpecServiceContext';
+import {SpecServiceContext, SpecServiceStore, withSpecServiceContext} from '../../contexts/SpecServiceContext';
 
 class LoaderFactory {
   static build(options) {
@@ -96,7 +96,7 @@ class LoaderFactory {
 
         return (
           <IntegrationsContextStore integrations={integrations}>
-            <SpecServiceContext.Provider value={{specService}}>
+            <SpecServiceStore specService={specService}>
               <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
                 <RfcStore specService={specService}>
                   <ApiOverviewContextStore specService={specService}>
@@ -121,7 +121,7 @@ class LoaderFactory {
                   </ApiOverviewContextStore>
                 </RfcStore>
               </InitialRfcCommandsStore>
-            </SpecServiceContext.Provider>
+            </SpecServiceStore>
           </IntegrationsContextStore>
         );
       }

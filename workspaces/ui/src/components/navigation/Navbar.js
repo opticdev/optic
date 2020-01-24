@@ -24,6 +24,7 @@ import {flatMapOperations, withApiOverviewContext} from '../../contexts/ApiOverv
 import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
 import {DocDivider} from '../requests/DocConstants';
 import {Show} from '../shared/Show';
+import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
 
 const drawerWidth = 280;
 
@@ -98,7 +99,7 @@ class Navigation extends React.Component {
 
   render() {
 
-    const {classes, notifications, baseUrl, addExample, shareButtonComponent, entryBasePath, cachedQueryResults, children, apiOverview, integrationMode} = this.props;
+    const {classes, notifications, baseUrl, addExample, shareButtonComponent, entryBasePath, cachedQueryResults, children, apiOverview, integrationMode, apiName} = this.props;
 
     const {operationsToRender, concepts, allPaths} = apiOverview;
 
@@ -129,7 +130,7 @@ class Navigation extends React.Component {
             </div>
 
             <Typography variant="h6" className={classes.title}>
-              {cachedQueryResults.apiName}
+              {apiName}
             </Typography>
 
             <Switch>
@@ -181,7 +182,7 @@ class Navigation extends React.Component {
   }
 }
 
-export default compose(withStyles(styles), withIntegrationsContext, withApiOverviewContext, withNavigationContext, withRfcContext)(Navigation);
+export default compose(withStyles(styles), withSpecServiceContext, withIntegrationsContext, withApiOverviewContext, withNavigationContext, withRfcContext)(Navigation);
 
 
 // Sub Menus
