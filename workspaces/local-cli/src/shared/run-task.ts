@@ -56,8 +56,8 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
   const cliSession = await cliClient.findSession(cwd, startConfig);
   developerDebugLogger({cliSession});
   const uiUrl = `http://localhost:${3000/*TODO revert*/}/specs/${cliSession.session.id}/diff/${captureId}`;
-  cli.log(fromOptic(`opening ${uiUrl}`));
-  openBrowser(uiUrl);
+  cli.log(fromOptic(`Review the API Diff live at ${uiUrl}`));
+  // openBrowser(uiUrl);
 
   // start proxy and command session
   const persistenceManagerFactory = () => {

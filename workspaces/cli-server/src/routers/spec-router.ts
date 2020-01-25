@@ -15,6 +15,8 @@ import {opticStatusPath} from '@useoptic/proxy';
 import * as yaml from 'js-yaml';
 // @ts-ignore
 import sortBy from 'lodash.sortby'
+import {checkDiffOrUnrecognizedPath} from "../check-diff";
+import openBrowser = require('react-dev-utils/openBrowser.js');
 
 
 export class CapturesHelpers {
@@ -159,7 +161,28 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       return res.sendStatus(400);
     }
     captureInfo.status = 'completed';
-    res.sendStatus(204);
+
+    const loader: ICaptureLoader = new FileSystemCaptureLoader({
+      captureBaseDirectory: req.optic.paths.capturesPath
+    });
+    try {
+      const filter = parseIgnore(req.optic.config.ignoreRequests || []);
+      const capture = await loader.loadWithFilter(captureId, filter);
+
+      capture.samples
+
+      if (await checkDiffOrUnrecognizedPath(req.optic.paths.specStorePath, capture.samples)) {
+        const uiUrl = `http://localhost:${3000/*TODO revert*/}/specs/${req.optic.session.id}/diff/${captureId}`;
+        openBrowser(uiUrl);
+      }
+
+      res.sendStatus(204);
+
+    } catch (e) {
+      console.error(e);
+      res.sendStatus(500);
+    }
+
   });
   router.get('/captures/:captureId/samples', async (req, res) => {
     const {captureId} = req.params;

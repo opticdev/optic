@@ -1,7 +1,7 @@
 import {IApiInteraction} from './types';
 
 export {IApiInteraction};
-const opticEngine = require('./domain.js');
+export const opticEngine = require('./domain.js');
 
 export const ShapesCommands = opticEngine.com.useoptic.contexts.shapes.Commands;
 export const ShapesHelper = opticEngine.com.useoptic.contexts.shapes.ShapesHelper();
