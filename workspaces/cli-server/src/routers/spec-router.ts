@@ -13,6 +13,8 @@ import * as URL from 'url';
 import fetch from 'cross-fetch';
 import {opticStatusPath} from '@useoptic/proxy';
 import * as yaml from 'js-yaml';
+// @ts-ignore
+import sortBy from 'lodash.sortby'
 
 
 export class CapturesHelpers {
@@ -142,7 +144,8 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     const {captures} = req.optic.session;
     console.log(captures);
     res.json({
-      captures: captures.reverse().map(i => i.taskConfig.captureId)
+      //@ts-ignore
+      captures: sortBy(captures, i => i.taskConfig.startTime).reverse().map(i => i.taskConfig.captureId)
     });
   });
   router.put('/captures/:captureId/status', bodyParser.json({limit: '1kb'}), async (req, res) => {

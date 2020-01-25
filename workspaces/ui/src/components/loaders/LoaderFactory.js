@@ -36,10 +36,13 @@ class LoaderFactory {
           sessionId={sessionId}
           specService={specService}
         >
+          <SpecServiceStore specService={specService}>
           <Switch>
             <Route exact path={routerPaths.diffUrls(match.path)} component={UrlsX}/>
             <Route exact path={routerPaths.diffRequest(match.path)} component={RequestDiffX}/>
+            <Route component={withSpecServiceContext(ApiOverview)}/>
           </Switch>
+          </SpecServiceStore>
         </TrafficSessionStore>
       );
     }

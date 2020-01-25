@@ -67,6 +67,7 @@ export interface IOpticApiInterceptConfig {
 export interface IOpticTaskRunnerConfig {
   command?: string
   captureId: string
+  startTime: Date,
   persistenceEngine: 'fs' | 's3'
   // where does the service normally live?
   serviceConfig: {
@@ -97,6 +98,7 @@ export async function TaskToStartConfig(task: IOpticTask, captureId: string): Pr
     command: task.command,
     persistenceEngine: 'fs',
     captureId,
+    startTime: new Date(),
     serviceConfig: {
       port: randomPort,
       host: parsedBaseUrl.hostname || 'localhost',
