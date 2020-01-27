@@ -54,7 +54,7 @@ Optic constantly diffs your API's actual behavior against its specification. Opt
 - Update the specification when it observes new behavior for an existing API Endpoint 
 - Catch bugs and unexpected API behavior early :) 
 
-![gif](https://raw.githubusercontent.com/opticdev/optic/develop/webapp/public/optic.gif)
+![gif](https://raw.githubusercontent.com/opticdev/optic/master/webapp/public/optic.gif)
 
 # <a href="https://www.youtube.com/watch?v=y1XSUXbH3kQ" target="_blank">Watch a 3 minute Video Demo</a>
 
