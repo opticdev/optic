@@ -15,15 +15,18 @@ import * as uuidv4 from 'uuid/v4';
 import findProcess = require('find-process');
 
 export async function setupTask(cli: Command, taskName: string) {
-  const {cwd, capturesPath, configPath} = await getPathsRelativeToConfig();
 
   // const shouldWarn = shouldWarnAboutVersion7Compatibility();
   // if (shouldWarn) {
   //   this.log(fromOptic(`Optic >=7 replaced the ${colors.blue('.api')} folder with a ${colors.green('.optic')} folder.\n Read full migration guide here.`));
   //   return;
   // }
-  let config;
+  let config, cwd, capturesPath: string, configPath;
   try {
+    const pathConfig = await getPathsRelativeToConfig();
+    cwd = pathConfig.cwd
+    capturesPath = pathConfig.capturesPath
+    configPath = pathConfig.configPath
     config = await readApiConfig(configPath);
   } catch (e) {
     userDebugLogger(e);

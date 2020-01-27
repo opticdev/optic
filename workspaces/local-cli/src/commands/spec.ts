@@ -18,9 +18,9 @@ export default class Spec extends Command {
     let config: IApiCliConfig;
     try {
       paths = await getPathsRelativeToConfig();
-      console.log(paths)
+      // console.log(paths)
       config = await readApiConfig(paths.configPath);
-      console.log(config)
+      // console.log(config)
     } catch (e) {
       userDebugLogger(e);
       this.log(fromOptic(`No optic.yml file found. Add Optic to your API by running ${colors.bold('api init')}`));
@@ -39,7 +39,6 @@ export default class Spec extends Command {
     const cliSession = await cliClient.findSession(basePath, null);
     developerDebugLogger({cliSession});
     const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}/dashboard`;
-    this.log(fromOptic(`Finish your API setup at ${uiUrl}`));
     openBrowser(uiUrl);
   }
 }

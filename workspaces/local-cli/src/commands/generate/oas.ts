@@ -6,6 +6,7 @@ import {cli} from 'cli-ux';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as yaml from 'js-yaml';
+import {fromOptic} from "../../shared/conversation";
 
 export default class GenerateOas extends Command {
 
@@ -30,8 +31,8 @@ export default class GenerateOas extends Command {
         const eventsString = eventsBuffer.toString();
         cli.action.start('Generating OAS file');
         const parsedOas = OasProjectionHelper.fromEventString(eventsString);
-        await this.emit(paths, parsedOas);
-        cli.action.stop('Done!');
+        const outputFile = await this.emit(paths, parsedOas);
+        cli.action.stop('\n'+fromOptic('Generated OAS file at '+ outputFile));
       } catch (e) {
         this.error(e);
       }
@@ -40,7 +41,7 @@ export default class GenerateOas extends Command {
     }
   }
 
-  async emit(paths: IPathMapping, parsedOas: object) {
+  async emit(paths: IPathMapping, parsedOas: object): Promise<string> {
     const {flags} = this.parse(GenerateOas);
 
     const shouldOutputYaml = flags.yaml;
@@ -50,9 +51,11 @@ export default class GenerateOas extends Command {
     if (shouldOutputYaml) {
       const outputFile = path.join(outputPath, 'openapi.yaml');
       await fs.writeFile(outputFile, yaml.safeDump(parsedOas, {indent: 1}));
+      return outputFile
     } else {
       const outputFile = path.join(outputPath, 'openapi.json');
       await fs.writeJson(outputFile, parsedOas, {spaces: 2});
+      return outputFile
     }
   }
 }

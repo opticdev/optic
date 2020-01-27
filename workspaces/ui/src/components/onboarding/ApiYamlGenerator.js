@@ -7,5 +7,8 @@ tasks:
   start:
     command: ${command}
     baseUrl: ${baseUrl}
+ignoreRequests:
+  - GET /favicon.ico
+  - OPTIONS *
 `.trim()
 }

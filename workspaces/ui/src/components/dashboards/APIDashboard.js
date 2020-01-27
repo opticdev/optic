@@ -84,7 +84,9 @@ const styles = theme => ({
 class APIDashboard extends React.Component {
   render() {
     const {classes, baseUrl, demos, apiName, apiOverview} = this.props;
-    const setupState = {}//queries.setupState();
+    const setupState = {
+      isEmptySpec: apiOverview.isEmptySpec
+    }//queries.setupState();
 
     if (apiOverview.isEmptySpec) {
       return <Redirect to={routerPaths.init(baseUrl)}/>
@@ -108,6 +110,7 @@ class APIDashboard extends React.Component {
             <APINavLinks text={'Review API Documentation'} subtext={`${apiOverview.operationsToRender.length} Endpoints. ${apiOverview.concepts.length} Shapes`}
                          icon={<DescriptionIcon color="primary" style={{marginLeft: 10}}/>}/>
             <APINavLinks text={'API Testing'} subtext={'Disabled. Click here to Setup'}
+                         onClick={() => window.Intercom('showNewMessage', "Hey! Can we join Optic's contract testing beta?")}
                          icon={<TimelineIcon color="primary" style={{marginLeft: 10}}/>}/>
 
 
@@ -118,7 +121,7 @@ class APIDashboard extends React.Component {
 
           <Grid item sm={6}>
             <Typography variant="h6" color="primary" style={{marginBottom: 12}}>Checklist</Typography>
-            <CheckList setupState={setupState}/>
+            <CheckList setupState={setupState} />
           </Grid>
 
         </Grid>
@@ -171,9 +174,9 @@ export const SummaryStatus = withStyles(styles)(({on, onText, offText, classes})
   );
 });
 
-const APINavLinks = withStyles(styles)(({text, subtext, icon, classes}) => {
+const APINavLinks = withStyles(styles)(({text, subtext, icon, classes, onClick}) => {
   return (
-    <ListItem button className={classes.statusCard} style={{flexDirection: 'row'}} elevation={0}>
+    <ListItem button className={classes.statusCard} style={{flexDirection: 'row'}} elevation={0} onClick={onClick}>
       <ListItemIcon>
         {icon}
       </ListItemIcon>
@@ -210,11 +213,12 @@ const ApiStatusCard = withStyles(styles)(({classes, env, disabled, status = 'No 
 });
 
 
-const CheckListItem = withStyles(styles)(({classes, text, checked = false, disabled}) => {
+const CheckListItem = withStyles(styles)(({classes, text, checked = false, onClick, disabled}) => {
   return (
     <ListItem dense button={!checked} style={{height: 37}} disabled={disabled}>
       <FormControlLabel
         control={<Checkbox color="primary"
+                           onClick={onClick}
                            style={{pointerEvents: 'none', cursor: 'normal'}}
                            disabled={checked}
                            checked={checked}/>}
@@ -228,13 +232,10 @@ const CheckListItem = withStyles(styles)(({classes, text, checked = false, disab
 
 
 const CheckList = withStyles(styles)(({classes, setupState}) => {
-  const runningLocally = process.env.REACT_APP_CLI_MODE === true;
-
   return (
     <Card elevation={0} className={classes.statusCard}>
-      <CheckListItem disabled text="Add Optic to your API" checked={runningLocally}/>
-      <CheckListItem disabled text="Deploy in your infrastructure" checked={runningLocally}/>
-      <CheckListItem disabled text="Setup Automated Contract Testing" checked={runningLocally}/>
+      <CheckListItem text="Add Optic to your API" checked={!setupState.isEmptySpec}/>
+      <CheckListItem text="Setup Automated Contract Testing" onClick={() => window.Intercom('showNewMessage', "Hey! Can we join Optic's contract testing beta?")} checked={false}/>
     </Card>
   );
 });
