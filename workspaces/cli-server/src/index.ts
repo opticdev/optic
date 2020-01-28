@@ -8,6 +8,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import {FileSystemCaptureSaver} from './file-system-capture-saver';
 import {FileSystemCaptureLoader} from './file-system-capture-loader';
+import {makeUiBaseUrl} from './url-builders';
 import {developerDebugLogger} from './logger';
 import waitOn from 'wait-on';
 import findProcess = require('find-process');
@@ -105,5 +106,6 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
 export {
   CliDaemon,
   FileSystemCaptureSaver,
-  FileSystemCaptureLoader
+  FileSystemCaptureLoader,
+  makeUiBaseUrl
 };

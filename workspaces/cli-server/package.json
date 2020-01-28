@@ -26,6 +26,7 @@
     "@types/express": "^4.17.2",
     "@types/find-process": "^1.2.0",
     "@types/fs-extra": "^8.0.1",
+    "@types/lodash.sortby": "^4.7.6",
     "@types/node": "^13.1.6",
     "@types/proper-lockfile": "^4.1.1",
     "@types/wait-on": "^3.2.0"

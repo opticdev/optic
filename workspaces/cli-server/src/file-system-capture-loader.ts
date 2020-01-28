@@ -48,9 +48,6 @@ class FileSystemCaptureLoader implements ICaptureLoader {
     const entriesContents: IApiInteraction[][] = await Promise.all(captureFiles.map(x => fs.readJson(x)));
     const filteredSamples = entriesContents.reduce((acc: IApiInteraction[], entrySamples: IApiInteraction[]) => {
       const filteredEntrySamples = entrySamples.filter((x: IApiInteraction) => {
-        console.log(filter)
-        console.log(x)
-        console.log(filter.shouldIgnore(x.request.method, x.request.url))
         return !filter.shouldIgnore(x.request.method, x.request.url);
       });
       return [...acc, ...filteredEntrySamples];
