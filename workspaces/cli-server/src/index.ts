@@ -37,8 +37,16 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
   if (process.env.OPTIC_ENV === 'development') {
     await ensureDaemonStopped(lockFilePath);
   }
-  await fs.ensureFile(lockFilePath);
+  const fileExisted = await fs.pathExists(lockFilePath);
+  if (!fileExisted) {
+    await fs.ensureFile(lockFilePath);
+    await fs.writeJson(lockFilePath, {});
+  }
+  await fs.ensureDir(path.dirname(lockFilePath));
   const isLocked = await lockfile.check(lockFilePath);
+  if (isLocked && !fileExisted) {
+    developerDebugLogger('lockfile was missing but locked')
+  }
   if (!isLocked) {
     const isDebuggingEnabled = process.env.OPTIC_DAEMON_ENABLE_DEBUGGING === 'yes';
     if (isDebuggingEnabled) {
@@ -59,8 +67,10 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
       developerDebugLogger(`waiting for lock ${child.pid}`);
       await waitOn({
         resources: [
-          lockFilePath
-        ]
+          `file://${lockFilePath}`
+        ],
+        delay: 500,
+        window: 250
       });
       developerDebugLogger(`lock created ${child.pid}`);
       resolve();
@@ -73,10 +83,12 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
 export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
   const fileExists = await fs.pathExists(lockFilePath);
   if (!fileExists) {
+    developerDebugLogger('lockfile not present');
     return;
   }
   const isLocked = await lockfile.check(lockFilePath);
   if (!isLocked) {
+    developerDebugLogger('lockfile present but not locked');
     return;
   }
 
@@ -85,7 +97,9 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
   const apiBaseUrl = `http://localhost:${port}/admin-api`;
   const cliClient = new Client(apiBaseUrl);
   try {
+    developerDebugLogger('sending shutdown request')
     await cliClient.stopDaemon();
+    developerDebugLogger('sent shutdown request')
   } catch (e) {
     developerDebugLogger(e);
     try {
