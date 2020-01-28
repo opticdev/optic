@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "CLI to document your API and generate related artifacts",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -13,7 +13,7 @@
     "@oclif/plugin-help": "^2",
     "@useoptic/cli-client": "0.1.0",
     "@useoptic/cli-config": "0.1.0",
-    "@useoptic/cli-server": "0.1.0",
+    "@useoptic/cli-server": "0.1.1",
     "@useoptic/domain": "0.1.0",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
@@ -72,7 +72,8 @@
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md",
     "ws:build": "echo building local-cli",
-    "ws:test": "echo local-cli"
+    "ws:test": "echo local-cli",
+    "postinstall": "api daemon:stop"
   },
   "types": "lib/index.d.ts"
 }
