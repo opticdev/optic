@@ -83,7 +83,11 @@ export async function setupTask(cli: Command, taskName: string) {
   try {
     const paths = await getPathsRelativeToConfig();
     const config = await readApiConfig(paths.configPath);
-    await setupTaskWithConfig(cli, taskName, paths, config);
+    try {
+      await setupTaskWithConfig(cli, taskName, paths, config);
+    } catch (e) {
+      cli.error(e);
+    }
   } catch (e) {
     userDebugLogger(e);
     cli.log(fromOptic('Optic needs more information about your API to continue.'));
