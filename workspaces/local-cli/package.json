@@ -71,7 +71,7 @@
     "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "oclif-dev readme && git add README.md",
-    "ws:build": "echo building local-cli",
+    "ws:build": "rm -rf lib && tsc -b",
     "ws:test": "echo local-cli",
     "postinstall": "api daemon:stop"
   },

@@ -3,7 +3,7 @@ import {Client} from '@useoptic/cli-client';
 import {getPathsRelativeToConfig, IApiCliConfig, readApiConfig} from '@useoptic/cli-config';
 import {IPathMapping} from '@useoptic/cli-config';
 import {ensureDaemonStarted} from '@useoptic/cli-server';
-import {makeUiBaseUrl} from '@useoptic/cli-server/build/src';
+import {makeUiBaseUrl} from '@useoptic/cli-server';
 import {fromOptic} from '../shared/conversation';
 import {developerDebugLogger, userDebugLogger} from '../shared/logger';
 import {lockFilePath} from '../shared/paths';
