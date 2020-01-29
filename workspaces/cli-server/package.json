@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/cli-server",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "scripts": {
     "ws:build": "yarn run tsc -b",
     "ws:test": "echo cli-server"
@@ -8,7 +8,7 @@
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "dependencies": {
-    "@useoptic/cli-config": "0.1.0",
+    "@useoptic/cli-config": "0.1.1",
     "@useoptic/domain": "0.1.0",
     "@useoptic/proxy": "0.1.0",
     "body-parser": "^1.19.0",
