@@ -64,7 +64,7 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "opticdev/optic-2020",
+  "repository": "opticdev/optic",
   "scripts": {
     "postpack": "rm -f oclif.manifest.json",
     "posttest": "echo 'skipping posttest';#eslint . --ext .ts --config .eslintrc",
