@@ -2668,6 +2668,15 @@
     semver "^6.3.0"
     tsutils "^3.17.1"
 
+"@useoptic/cli-config@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@useoptic/cli-config/-/cli-config-0.1.0.tgz#e6d63f00f65039337c239d22aa0dc4b0dfdf6d52"
+  integrity sha512-4J9xzTvsoOgT9Ij8afgKede64T6Cls/FGahre+MR01ZYsd1xRw5YbBE4DRQjqCTfnX8wEEFNEH2iTGalNnr5Yg==
+  dependencies:
+    find-up "^4.1.0"
+    get-port "^5.1.0"
+    js-yaml "^3.13.1"
+
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.8.5.tgz#51b1c5fe6576a34953bf4b253df9f0d490d9e359"

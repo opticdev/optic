@@ -191,15 +191,13 @@ export {
 };
 
 export async function shouldWarnAboutVersion7Compatibility() {
-  const hasVersion6SpecStore = await findUp('.api/spec-store.json', {type: 'file'});
+  const hasVersion6SpecStore = await findUp('.api', {type: 'directory'});
   const hasVersion7Config = await findUp('optic.yml', {type: 'file'});
-  console.log({
-    hasVersion6SpecStore,
-    hasVersion7Config
-  });
-  if (!hasVersion6SpecStore) {
-    return false;
+  if (hasVersion6SpecStore) {
+    return true;
+  } else if (hasVersion7Config) {
+    return false
   }
-  return !hasVersion7Config;
+  return false
 }
 

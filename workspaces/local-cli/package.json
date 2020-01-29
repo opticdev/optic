@@ -1,7 +1,7 @@
 {
   "name": "@useoptic/cli",
   "description": "CLI to document your API and generate related artifacts",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "author": "@useoptic",
   "bin": {
     "api": "./bin/run"
@@ -12,7 +12,7 @@
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
     "@useoptic/cli-client": "0.1.0",
-    "@useoptic/cli-config": "0.1.0",
+    "@useoptic/cli-config": "0.1.1",
     "@useoptic/cli-server": "0.1.1",
     "@useoptic/domain": "0.1.0",
     "cli-ux": "^5.4.1",

@@ -75,11 +75,12 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
 export async function setupTask(cli: Command, taskName: string) {
 
-  // const shouldWarn = shouldWarnAboutVersion7Compatibility();
-  // if (shouldWarn) {
-  //   this.log(fromOptic(`Optic >=7 replaced the ${colors.blue('.api')} folder with a ${colors.green('.optic')} folder.\n Read full migration guide here.`));
-  //   return;
-  // }
+  const shouldWarn = await shouldWarnAboutVersion7Compatibility();
+  if (shouldWarn) {
+    cli.log(fromOptic(`Optic >=7 replaced the ${colors.blue('.api')} folder with a ${colors.green('.optic')} folder.\n Read full migration guide here ${'https://docs.useoptic.com/faqs#how-do-i-migrate-from-optic-less-than-6-to-7'}`));
+    return;
+  }
+
   try {
     const paths = await getPathsRelativeToConfig();
     const config = await readApiConfig(paths.configPath);
