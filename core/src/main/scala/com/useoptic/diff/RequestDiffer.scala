@@ -140,7 +140,7 @@ object RequestDiffer {
       val queryParameterWrapper = spec.requestsState.requestParameters
         .filter(x => {
           val (parameterId, parameter) = x
-          println(x)
+          //println(x)
           parameter.requestParameterDescriptor.requestId == request.requestId && parameter.requestParameterDescriptor.location == "query"
         })
         .values.headOption

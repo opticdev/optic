@@ -9,12 +9,19 @@ import {lockFilePath} from '../shared/paths';
 import {Client} from '@useoptic/cli-client';
 import * as uuidv4 from 'uuid/v4';
 import openBrowser = require('react-dev-utils/openBrowser.js');
+import * as fs from "fs-extra";
+import * as path from "path";
 
 export default class Init extends Command {
   static description = 'Add Optic to your API';
 
   async run() {
     const cwd = process.cwd();
+
+    if (fs.existsSync(path.join(cwd, 'optic.yml'))) {
+      return this.log(colors.red(`This directory already has an ${colors.bold('optic.yml')} file.`));
+    }
+
     const shouldUseThisDirectory = await cli.confirm(`${colors.bold.blue(cwd)}\nIs this your API's root directory? (yes/no)`);
 
     if (!shouldUseThisDirectory) {

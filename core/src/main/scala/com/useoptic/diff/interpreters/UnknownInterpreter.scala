@@ -60,7 +60,7 @@ class UnknownInterpreter(shapesState: ShapesState) extends Interpreter[RequestDi
     val commands = result.commands ++ Seq(
       SetBaseShape(expectedShapeId, result.rootShapeId)
     )
-    println(commands)
+    //println(commands)
     DiffInterpretation(
       "Replace Unknown",
       DynamicDescription(s"Replace Unknown with `{{shapeId_SHAPE}}`", shapeId = Some(result.rootShapeId)),

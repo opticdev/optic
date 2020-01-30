@@ -172,7 +172,7 @@ class TrafficSessionStoreBase extends React.Component {
 
     if (error) {
       console.error(error);
-      return <div>something went wrong :(</div>;
+      return <div></div>;
     }
     const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, diffSessionManager);
 

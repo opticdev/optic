@@ -2668,6 +2668,11 @@
     semver "^6.3.0"
     tsutils "^3.17.1"
 
+"@useoptic/domain@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@useoptic/domain/-/domain-0.1.0.tgz#1ff0c2182f07f181b5ab64731422ce148ff9d2fd"
+  integrity sha512-LlyfyTgraID3la7wt0iBzOhsHUtNu6ZSJG6pxuzCnkP0sAniKl2zFxtLW1H9X29PtoMPD8DFka66mRN0d7R/SA==
+
 "@webassemblyjs/ast@1.8.5":
   version "1.8.5"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.8.5.tgz#51b1c5fe6576a34953bf4b253df9f0d490d9e359"

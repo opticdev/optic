@@ -31,6 +31,7 @@ import {withTrafficSessionContext} from '../../contexts/TrafficSessionContext';
 import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
 import {withNavigationContext} from '../../contexts/NavigationContext';
 import {LinkToDocumentUrls, NewBehaviorSideBar} from '../navigation/NewBehavior';
+import Card from '@material-ui/core/Card';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -220,17 +221,18 @@ Make sure your API starts on that port when \`$OPTIC_API_PORT\` is provided:`}
               }}/>
             </Grid>
             <Grid item sm={6}>
-              <MarkdownRender
-                source={`###### Test Optic Integration \nFrom now on use Optic's \`api start\` command to start the API so Optic can monitor it locally.`}
-                style={{maxWidth: 620}}/>
 
-              <div style={{maxWidth: 620}}>
+              <Card style={{padding: 12, marginBottom: 20}}>
+                <MarkdownRender
+                  source={`#### Test Optic Integration\nNow that Optic is setup, use the 'api start' command to start your API.`}
+                  style={{maxWidth: 620}}/>
                 <SyntaxHighlighter language="bash" style={dracula}>
                   {`> api start`}
                 </SyntaxHighlighter>
+              </Card>
 
+              <div style={{maxWidth: 620}}>
                 <Status apiBasePath={apiBasePath} baseUrl={baseUrl} specService={specService} saveIt={saveIt}/>
-
               </div>
 
 
@@ -287,16 +289,10 @@ class Status extends React.Component {
     const showSampling = proxyRunning && serviceRunning;
     const currentSamplesNumber = numberOfSamples / 15 * 100;
 
-    const allSetUp = numberOfSamples > 15;
+    const allSetUp = numberOfSamples >= 15;
 
     return (
       <div>
-        {!hasStart && (
-          <div>
-            <Typography variant="overline">Waiting for you to run `api start`</Typography>
-            <LinearProgress/>
-          </div>
-        )}
         {hasStart && (
           <div style={{display: 'flex', flexDirection: 'row',}}>
             <div style={{paddingLeft: 5}}>

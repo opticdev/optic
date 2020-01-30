@@ -14,6 +14,7 @@ import fetch from 'cross-fetch';
 import {opticStatusPath} from '@useoptic/proxy';
 import * as yaml from 'js-yaml';
 import sortBy from 'lodash.sortby';
+import waitOn from "wait-on";
 
 export class CapturesHelpers {
   constructor(private basePath: string) {
@@ -140,7 +141,6 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   // captures router. cli picks captureId and writes to whatever persistence method and provides capture id to ui. api spec just shows spec?
   router.get('/captures', async (req, res) => {
     const {captures} = req.optic.session;
-    console.log(captures);
     res.json({
       captures: sortBy(captures, i => i.taskConfig.startTime).reverse().map(i => i.taskConfig.captureId)
     });
@@ -225,18 +225,17 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         .catch(e => resolve(false)); //if this happens, the service is running on the port instead of the proxy
     }));
 
-    //service config
-    const serviceUrl = URL.format({
-      protocol: serviceConfig.protocol,
-      hostname: serviceConfig.host,
-      port: serviceConfig.port,
+    const serviceRunning = await new Promise(async (resolve) => {
+      waitOn({
+        resources: [
+          `tcp:${serviceConfig.host}:${serviceConfig.port}`
+        ],
+        delay: 0,
+        tcpTimeout: 250,
+        window: 250
+      }).then(() => resolve(true)) //if service resolves we assume it's up.
+        .catch(() => resolve(false));
     });
-
-    const serviceRunning = await new Promise(((resolve) => {
-      fetch(serviceUrl.toString())
-        .then(res => resolve(true)) //if service resolves we assume it's up.
-        .catch(e => resolve(false)); //if service does not resolve, you probably didn't use $OPTIC_API_PORT
-    }));
 
     const loader = new FileSystemCaptureLoader({
       captureBaseDirectory: req.optic.paths.capturesPath
