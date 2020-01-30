@@ -1,0 +1,17 @@
+{
+  "name": "@useoptic/cli-client",
+  "version": "0.1.1",
+  "scripts": {
+    "ws:build": "yarn run tsc -b",
+    "ws:test": "echo cli-client"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "dependencies": {
+    "cross-fetch": "^3.0.4"
+  },
+  "devDependencies": {},
+  "files": [
+    "/build"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "c": {
+    "bool-key": true,
+    "number-key": 123.543,
+    "nested": {
+      "desc": "within"
+    }
+  }
+}
