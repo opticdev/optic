@@ -1,6 +1,6 @@
 import * as lockfile from 'proper-lockfile';
 import {userDebugLogger} from './logger';
-import {CliServer, shutdownRequested} from './server';
+import {CliServer, log, shutdownRequested} from './server';
 import * as fs from 'fs-extra';
 
 export interface ICliDaemon {
@@ -13,6 +13,7 @@ export interface ICliDaemonConfig {
 
 class CliDaemon {
   private apiServer!: CliServer;
+  private releaseLock!: () => Promise<void>;
 
   constructor(private config: ICliDaemonConfig) {
 
@@ -21,15 +22,23 @@ class CliDaemon {
   async start() {
     await this.acquireInstanceLock();
     const output = await this.startApiServer();
+    log.write(JSON.stringify(output) + '\n');
     return output;
   }
 
   async acquireInstanceLock() {
-    await lockfile.lock(this.config.lockFilePath);
+    log.write(`acquiring lock\n`);
+    this.releaseLock = await lockfile.lock(this.config.lockFilePath);
+    log.write(`acquired lock\n`);
+    const fileExists = await fs.pathExists(this.config.lockFilePath);
+    if (fileExists) {
+      log.write(`something exists at lock, deleting\n`);
+      await fs.unlink(this.config.lockFilePath);
+    }
   }
 
   async releaseInstanceLock() {
-    await lockfile.unlock(this.config.lockFilePath);
+    await this.releaseLock();
     await fs.unlink(this.config.lockFilePath);
   }
 

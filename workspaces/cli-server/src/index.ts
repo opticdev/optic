@@ -44,8 +44,9 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
   }
   await fs.ensureDir(path.dirname(lockFilePath));
   const isLocked = await lockfile.check(lockFilePath);
+  developerDebugLogger({isLocked});
   if (isLocked && !fileExisted) {
-    developerDebugLogger('lockfile was missing but locked')
+    developerDebugLogger('lockfile was missing but locked');
   }
   if (!isLocked) {
     const isDebuggingEnabled = process.env.OPTIC_DAEMON_ENABLE_DEBUGGING === 'yes';
@@ -97,9 +98,9 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
   const apiBaseUrl = `http://localhost:${port}/admin-api`;
   const cliClient = new Client(apiBaseUrl);
   try {
-    developerDebugLogger('sending shutdown request')
+    developerDebugLogger('sending shutdown request');
     await cliClient.stopDaemon();
-    developerDebugLogger('sent shutdown request')
+    developerDebugLogger('sent shutdown request');
   } catch (e) {
     developerDebugLogger(e);
     try {
@@ -109,7 +110,10 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
       const blockers = await findProcess('port', port);
       if (blockers.length > 0) {
         developerDebugLogger(blockers);
-        blockers.forEach(b => process.kill(b.pid, 9));
+        blockers.forEach(b => {
+          developerDebugLogger(`killing PID ${b.pid}`)
+          process.kill(b.pid, 9)
+        });
       }
     }
     await fs.unlink(lockFilePath);

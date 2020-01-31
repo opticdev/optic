@@ -4,10 +4,12 @@ import express from 'express';
 import getPort from 'get-port';
 import bodyParser from 'body-parser';
 import * as http from 'http';
+import {Socket} from 'net';
 import * as path from 'path';
-import fetch from 'cross-fetch';
-import * as URL from 'url';
+import * as fs from 'fs-extra';
 import {CapturesHelpers, ExampleRequestsHelpers, makeRouter} from './routers/spec-router';
+
+export const log = fs.createWriteStream('.optic-daemon.log');
 
 export interface ICliServerConfig {
   jwtSecret: string
@@ -47,6 +49,7 @@ export const shutdownRequested = 'cli-server:shutdown-requested';
 class CliServer {
   private server!: http.Server;
   public events: EventEmitter = new EventEmitter();
+  private connections: Socket[] = [];
 
   constructor(private config: ICliServerConfig) {
   }
@@ -136,15 +139,37 @@ class CliServer {
           port
         });
       });
+
+      this.server.on('connection', (connection) => {
+        log.write(`adding connection\n`);
+        this.connections.push(connection);
+        connection.on('close', () => {
+          log.write(`removing connection\n`);
+          this.connections = this.connections.filter(c => c !== connection);
+        });
+      });
     });
   }
 
   async stop() {
     if (this.server) {
       await new Promise((resolve) => {
+        log.write(`server closing ${this.connections.length} open\n`);
+        this.connections.forEach((connection) => {
+          log.write(`destroying existing connection\n`);
+          connection.end();
+          connection.destroy();
+        });
         this.server.close((err) => {
+          log.write(`server closed\n`);
+          this.connections.forEach((connection) => {
+            log.write(`destroying existing connection\n`);
+            connection.end();
+            connection.destroy();
+          });
           if (err) {
             console.error(err);
+            log.write(`${err.message}\n`);
           }
           resolve();
         });
