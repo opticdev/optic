@@ -73,7 +73,7 @@
     "version": "oclif-dev readme && git add README.md",
     "ws:build": "rm -rf lib && tsc -b",
     "ws:test": "echo local-cli",
-    "postinstall": "api daemon:stop"
+    "postinstall": "api daemon:stop || exit 0"
   },
   "types": "lib/index.d.ts"
 }
