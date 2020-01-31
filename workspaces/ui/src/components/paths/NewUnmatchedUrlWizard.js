@@ -133,7 +133,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     const {classes, unmatchedPaths, matchedPaths, baseUrl, demos} = this.props;
     const {pathExpression, targetUrl, previewSample, pathId, purpose} = this.state;
     const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression));
-    const isCompleteMatch = regex.exec(targetUrl);
+    const isCompleteMatch = true;
     const pathsToRender = sortby(unmatchedPaths.reduce(pathReducer, []), ['url', 'method']);
     const suggestedPaths = sortby(matchedPaths.filter(i => !i.requestId).reduce(pathReducer, []), ['url', 'method']);
 
