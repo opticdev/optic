@@ -11,7 +11,8 @@
     "registry:start": "cd docker/private-npm-registry && docker-compose up &",
     "registry:start-background": "yarn run registry:start && wait-on http-get://localhost:4873",
     "registry:stop": "cd docker/private-npm-registry && docker-compose down",
-    "publish-local": "YARN_REGISTRY=http://localhost:4873 yarn workspaces run publish --non-interactive --registry=http://localhost:4873"
+    "publish-local": "YARN_REGISTRY=http://localhost:4873 yarn workspaces run publish --non-interactive --registry=http://localhost:4873",
+    "publish": "node ./workspaces/scripts/publish.js"
   },
   "workspaces": [
     "workspaces/domain",
