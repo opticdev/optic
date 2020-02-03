@@ -38,7 +38,7 @@ function PathComponentItem(props) {
   if (item.isParameter) {
     return (
       <ButtonBase
-        onClick={() => updateItem({...item, isParameter: false})}
+        onClick={() => updateItem({...item, name: item.originalName, isParameter: false})}
       >
         <Typography className={classes.pathComponent}>{`{${item.name}}`}</Typography>
       </ButtonBase>
