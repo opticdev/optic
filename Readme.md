@@ -1,7 +1,6 @@
 
 <h1 align="center">
   <br>
-  <a href="https://useoptic.com"><img src="https://raw.githubusercontent.com/opticdev/optic/master/optic-png.png" alt="Optic" width="200"></a>
   <br>
   Optic
   <br>
