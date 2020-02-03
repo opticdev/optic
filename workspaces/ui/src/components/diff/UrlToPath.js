@@ -4,6 +4,8 @@ import Button from "@material-ui/core/Button";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
+import {createStyles, makeStyles} from '@material-ui/styles';
+import {primary} from '../../theme';
 
 export function urlStringToPathComponents(url) {
   const components = url.split('/')
@@ -18,20 +20,33 @@ export function urlStringToPathComponents(url) {
   return components;
 }
 
+const useStyles = makeStyles((theme) => createStyles({
+  component: {
+    fontWeight: 100,
+    '&:hover': {
+      color: '#cb5a77'
+    }
+  },
+  pathComponent: {
+    fontWeight: 600
+  }
+}));
+
 function PathComponentItem(props) {
+  const classes = useStyles()
   const {item, updateItem} = props;
   if (item.isParameter) {
     return (
       <ButtonBase
         onClick={() => updateItem({...item, isParameter: false})}
       >
-        <Typography>{`{${item.name}}`}</Typography>
+        <Typography className={classes.pathComponent}>{`{${item.name}}`}</Typography>
       </ButtonBase>
     )
   }
   return (
     <ButtonBase onClick={() => updateItem({...item, isParameter: true})}>
-      <Typography>
+      <Typography className={classes.component}>
         {item.name}
       </Typography>
     </ButtonBase>
@@ -65,13 +80,12 @@ function UrlToPath(props) {
   const parameters = pathComponents.filter(x => x.isParameter)
   return (
     <div>
-      <div><Typography variant="overline">Path Parameters:</Typography></div>
-      <div><Typography variant="caption">Click a path component to make it a parameter.</Typography></div>
+      <div style={{marginBottom: 6}}><Typography variant="caption">Click any path component to make it a parameter:</Typography></div>
       <div style={{display: 'flex', alignItems: 'center'}}>
         {
           pathComponents
             .map(item => [
-              <ButtonBase disabled><Typography>/</Typography></ButtonBase>,
+              <ButtonBase disabled><Typography style={{marginRight: 2, marginLeft: 2, fontWeight: 200}}>/</Typography></ButtonBase>,
               <PathComponentItem item={item} updateItem={setItemAt(item.index)}/>
             ])
         }
@@ -84,12 +98,12 @@ function UrlToPath(props) {
             parameters.map(item => {
               const updater = setItemAt(item.index)
               return (
-                <div>
+                <div style={{marginBottom: 11}}>
                   <TextField
                     fullWidth
                     value={item.name}
                     label={`"${item.originalName}" is an example of a...`}
-                    onChange={(e) => updater({...item, name: e.target.value})}
+                    onChange={(e) => updater({...item, name: e.target.value.trim()})}
                   >{item.name}</TextField>
                 </div>
               )
