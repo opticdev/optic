@@ -10,7 +10,6 @@ import io.circe.Json
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
-import scala.util.Try
 
 @JSExportAll
 case class DiffInterpretation(actionTitle: String,

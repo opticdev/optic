@@ -16,6 +16,9 @@ scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
 
 val circeVersion = "0.10.0"
 
+
+libraryDependencies += "com.useoptic" %% "types" % "0.1.0"
+
 libraryDependencies += "io.github.cquiroz" %% "scala-java-time" % "2.0.0-RC2"
 libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.0.0-RC2"
 libraryDependencies ++= Seq(
@@ -24,10 +27,6 @@ libraryDependencies ++= Seq(
   "io.circe" %%% "circe-parser",
   "io.circe" %%% "circe-literal",
 ).map(_ % circeVersion)
-
-PB.targets in Compile := Seq(
-  scalapb.gen() -> (sourceManaged in Compile).value
-)
 
 //for tests only
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0"

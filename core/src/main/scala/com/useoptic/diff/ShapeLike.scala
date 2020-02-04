@@ -7,7 +7,7 @@ import com.useoptic.contexts.shapes.projections.NameForShapeId
 import com.useoptic.contexts.shapes.{ShapeEntity, ShapesHelper}
 import com.useoptic.diff.ShapeDiffer.{resolveBaseObject, resolveParameterShape}
 import io.circe.Json
-import optic_shape_hash.shapehash.ShapeHash
+//import optic_shape_hash.shapehash.ShapeHash
 
 abstract class ShapeLike {
   def isEmpty: Boolean
@@ -156,38 +156,38 @@ object ShapeLike {
     override def asShapeEntityOption: Option[ShapeEntity] = shapeEntityOption
   }
 
-  def fromShapeHash(shapeHash: ShapeHash): ShapeLike = new ShapeLike {
-    override def isEmpty: Boolean = false
-    override def id: String = null
-    override def idOption: Option[String] = None
-
-    override def isString: Boolean = shapeHash.`type`.isString
-
-    override def isBoolean: Boolean = shapeHash.`type`.isBoolean
-
-    override def isNumber: Boolean = shapeHash.`type`.isNumber
-
-    override def isNull: Boolean = shapeHash.`type`.isNull
-
-    override def isArray: Boolean = shapeHash.`type`.isArray
-
-    override def items: Vector[ShapeLike] = shapeHash.items.map(fromShapeHash).toVector
-
-    override def isObject: Boolean = shapeHash.`type`.isObject
-
-    override def fields: Map[String, ShapeLike] = {
-      shapeHash.fields.collect {
-        case i if i.hash.isDefined => i.key -> fromShapeHash(i.hash.get)
-      }.toMap
-    }
-
-    override def getField(key: String): ShapeLike = shapeHash.fields.find(_.key == key).map(i => fromShapeHash(i.hash.get)).get
-
-    override def asJson: Json = null //@todo (something for examples
-
-    override def asJsonOption: Option[Json] = None
-
-    override def asShapeEntityOption: Option[ShapeEntity] = None
-  }
+//  def fromShapeHash(shapeHash: ShapeHash): ShapeLike = new ShapeLike {
+//    override def isEmpty: Boolean = false
+//    override def id: String = null
+//    override def idOption: Option[String] = None
+//
+//    override def isString: Boolean = shapeHash.`type`.isString
+//
+//    override def isBoolean: Boolean = shapeHash.`type`.isBoolean
+//
+//    override def isNumber: Boolean = shapeHash.`type`.isNumber
+//
+//    override def isNull: Boolean = shapeHash.`type`.isNull
+//
+//    override def isArray: Boolean = shapeHash.`type`.isArray
+//
+//    override def items: Vector[ShapeLike] = shapeHash.items.map(fromShapeHash).toVector
+//
+//    override def isObject: Boolean = shapeHash.`type`.isObject
+//
+//    override def fields: Map[String, ShapeLike] = {
+//      shapeHash.fields.collect {
+//        case i if i.hash.isDefined => i.key -> fromShapeHash(i.hash.get)
+//      }.toMap
+//    }
+//
+//    override def getField(key: String): ShapeLike = shapeHash.fields.find(_.key == key).map(i => fromShapeHash(i.hash.get)).get
+//
+//    override def asJson: Json = null //@todo (something for examples
+//
+//    override def asJsonOption: Option[Json] = None
+//
+//    override def asShapeEntityOption: Option[ShapeEntity] = None
+//  }
 
 }
