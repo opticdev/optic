@@ -17,9 +17,9 @@ case class Request(host: String,
                    path: String,
                    queryString: String,
                    headers: Vector[Header],
-                   body: Option[Body])
+                   body: Body)
 
-case class Response(statusCode: Int, headers: Vector[Header], body: Option[Body])
+case class Response(statusCode: Int, headers: Vector[Header], body: Body)
 
 case class Header(name: String, value: String)
 
