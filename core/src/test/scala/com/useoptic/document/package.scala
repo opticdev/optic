@@ -12,5 +12,4 @@ package object document {
   def shapesCommands = parseCaseClassesExtending("src/main/scala/com/useoptic/contexts/shapes/Commands.scala", "ShapesCommand")
   def requestCommands = parseCaseClassesExtending("src/main/scala/com/useoptic/contexts/requests/Commands.scala", "RequestsCommand")
 
-
 }

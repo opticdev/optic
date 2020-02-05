@@ -4,6 +4,7 @@ import com.useoptic.types.capture._
 import io.circe.Json
 import nl.codestar.scalatsi.TypescriptType.{TSNull, TSString}
 import nl.codestar.scalatsi._
+import nl.codestar.scalatsi.dsl._
 
 
 // A TSType[T] is what tells scala-tsi how to convert your type T into typescript
@@ -14,13 +15,7 @@ object MyTSTypes extends DefaultTSTypes {
 
   implicit val tsJson = TSType.sameAs[Json, Object]
 
-
-  implicit val tsBody: TSType[Body] = TSType.interface("IBody",
-    "asText" -> (TSString | TSNull),
-    "asForm" -> (TSString.array | TSNull),
-    "asJsonString" -> (TSString | TSNull)
-  )
-
+  implicit val tsBody: TSType[Body] = TSType.fromCaseClass[Body]
 
   implicit val tsHeader = TSType.fromCaseClass[Header]
   implicit val tsGrouping = TSType.fromCaseClass[GroupingIdentifiers]
