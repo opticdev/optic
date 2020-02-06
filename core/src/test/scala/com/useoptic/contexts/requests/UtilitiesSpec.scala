@@ -1,8 +1,8 @@
 package com.useoptic.contexts.requests
 
-import org.scalatest.FunSpec
 import com.useoptic.contexts.requests.Commands._
 import com.useoptic.contexts.requests.Utilities.PathComponentInfo
+import org.scalatest.FunSpec
 
 class UtilitiesSpec extends FunSpec {
   describe("prefixes") {

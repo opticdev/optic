@@ -1,14 +1,8 @@
 import {IApiInteraction, opticEngine, toInteraction} from './index';
-import * as fs from 'fs-extra';
 
-export async function checkDiffOrUnrecognizedPath(specStorePath: string, samples: IApiInteraction[]) {
-  const specStoreExists = await fs.pathExists(specStorePath);
-  if (!specStoreExists) {
-    return Promise.resolve(true);
-  }
-  const specAsBuffer = await fs.readFile(specStorePath);
+export async function checkDiffOrUnrecognizedPath(specStoreContents: string, samples: IApiInteraction[]) {
   try {
-    const differ = opticEngine.com.useoptic.diff.SessionDiffer(specAsBuffer.toString());
+    const differ = opticEngine.com.useoptic.diff.SessionDiffer(specStoreContents);
     for (const s of samples) {
       const interaction = toInteraction(s);
       if (differ.hasUnrecognizedPath(interaction) || differ.hasDiff(interaction)) {

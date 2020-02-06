@@ -17,6 +17,7 @@ import {CommandAndProxySessionManager} from './command-and-proxy-session-manager
 import * as uuidv4 from 'uuid/v4';
 import findProcess = require('find-process');
 import openBrowser = require('react-dev-utils/openBrowser');
+import * as fs from "fs-extra";
 
 async function setupTaskWithConfig(cli: Command, taskName: string, paths: IPathMapping, config: IApiCliConfig) {
   const {cwd, capturesPath, specStorePath} = paths;
@@ -66,7 +67,9 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     const filter = parseIgnore(config.ignoreRequests || []);
     const capture = await loader.loadWithFilter(captureId, filter);
 
-    if (await checkDiffOrUnrecognizedPath(specStorePath, capture.samples)) {
+
+    const specAsBuffer = await fs.readFile(specStorePath);
+    if (await checkDiffOrUnrecognizedPath(specAsBuffer.toString(), capture.samples)) {
       const uiUrl = `${uiBaseUrl}/specs/${cliSession.session.id}/diff/${captureId}`;
       openBrowser(uiUrl);
     }

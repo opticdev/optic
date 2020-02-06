@@ -14,7 +14,7 @@
     "@useoptic/cli-client": "0.1.1",
     "@useoptic/cli-config": "0.1.1",
     "@useoptic/cli-server": "0.1.4",
-    "@useoptic/domain": "0.1.2",
+    "@useoptic/domain": "0.1.3",
     "cli-ux": "^5.4.1",
     "colors": "^1.4.0",
     "find-process": "^1.4.3",
