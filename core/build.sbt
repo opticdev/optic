@@ -1,6 +1,4 @@
-import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
-import sbt._
-import sbt.Keys._
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 name := "optic-core"
 
@@ -8,29 +6,67 @@ organization := "com.useoptic"
 
 version := "1.0.0"
 
-
-scalaVersion := "2.12.10"
-
-enablePlugins(ScalaJSPlugin)
-scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
-
+scalaVersion := "2.13.1"
 
 val circeVersion = "0.10.0"
+//lazy val opticCore = crossProject.in(file(".")).
+//  settings(
+//    name := "optic-core",
+//    version := "0.1-SNAPSHOT",
+//    libraryDependencies ++= Seq(
+//      "com.useoptic" %% "types" % "0.1.0",
+//      "io.github.cquiroz" %%% "scala-java-time" % "2.0.0-RC2",
+//      "io.circe" %%% "circe-core" % circeVersion,
+//      "io.circe" %%% "circe-generic" % circeVersion,
+//      "io.circe" %%% "circe-parser" % circeVersion,
+//      "io.circe" %%% "circe-literal" % circeVersion,
+//      "org.scalactic" %% "scalactic" % "3.1.0",
+//      "org.scalatest" %% "scalatest" % "3.1.0" % "test",
+//      "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided"
+//    )
+//  ).
+//  jvmSettings(
+//    libraryDependencies ++= Seq(
+//      "io.circe" %% "circe-jawn" % circeVersion
+//    )
+//  ).
+//  jsSettings(
+//    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
+//    // Add JS-specific settings here
+//  )
 
-libraryDependencies += "com.useoptic" %% "types" % "0.1.0"
+//lazy val bar =
+//// select supported platforms
+//  crossProject(JSPlatform, JVMPlatform)
+//    .crossType(CrossType.Pure)
+//
+//
+//lazy val opticCoreJVM = opticCore.jvm
+//lazy val opticCoreJS = opticCore.js
 
-libraryDependencies += "io.github.cquiroz" %% "scala-java-time" % "2.0.0-RC2"
-libraryDependencies += "io.github.cquiroz" %%% "scala-java-time" % "2.0.0-RC2"
-libraryDependencies ++= Seq(
-  "io.circe" %%% "circe-core",
-  "io.circe" %%% "circe-generic",
-  "io.circe" %%% "circe-parser",
-  "io.circe" %%% "circe-literal",
-).map(_ % circeVersion)
+lazy val optic =
+// select supported platforms
+  crossProject(JSPlatform, JVMPlatform)
+    .crossType(CrossType.Full) // [Pure, Full, Dummy], default: CrossType.Full
+    .settings(
+      name := "optic-core",
+      version := "0.1-SNAPSHOT",
+      libraryDependencies ++= Seq(
+        "com.useoptic" %% "types" % "0.1.0",
+        "io.github.cquiroz" %%% "scala-java-time" % "2.0.0-RC2",
+        "io.circe" %%% "circe-core" % circeVersion,
+        "io.circe" %%% "circe-generic" % circeVersion,
+        "io.circe" %%% "circe-parser" % circeVersion,
+        "io.circe" %%% "circe-literal" % circeVersion,
+        "org.scalactic" %% "scalactic" % "3.1.0",
+        "org.scalatest" %% "scalatest" % "3.1.0" % "test",
+        "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided"
+      )
+    )
+    .jsSettings(
+      scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
+    ) // defined in sbt-scalajs-crossproject
+    .jvmSettings(/* ... */)
 
-//for tests only
-libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0"
-libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % "test"
-libraryDependencies += "org.scalameta" %% "scalameta" % "4.1.9" % "test"
-libraryDependencies += "org.scala-lang.modules" %% "scala-async" % "0.10.0"
-libraryDependencies += "io.circe" %% "circe-jawn" % "0.10.0" % "test"
+lazy val opticJS = optic.js
+lazy val opticJVM = optic.jvm
