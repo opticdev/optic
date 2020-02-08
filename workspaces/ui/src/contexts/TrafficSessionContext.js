@@ -14,18 +14,18 @@ export function computeDiffStateProjections(queries, cachedQueryResults, diffSes
       };
     })
     .sort((a, b) => {
-      const urlComparison = a.sample.request.url.localeCompare(b.sample.request.url);
+      const urlComparison = a.sample.request.path.localeCompare(b.sample.request.path);
       if (urlComparison !== 0) {
         return urlComparison;
       }
       const verbComparison = a.sample.request.method.localeCompare(b.sample.request.method);
       return verbComparison;
     });
-  const urls = new Set(sortedSampleItems.map(x => x.sample.request.url));
+  const urls = new Set(sortedSampleItems.map(x => x.sample.request.path));
 
   const sampleItemsAndResolvedPaths = sortedSampleItems
     .map((item) => {
-      const pathId = queries.resolvePath(item.sample.request.url);
+      const pathId = queries.resolvePath(item.sample.request.path);
       const requestId = ((pathId) => {
         if (!pathId) {
           return null;

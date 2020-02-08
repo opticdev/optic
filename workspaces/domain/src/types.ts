@@ -26,7 +26,7 @@ export interface IResponseMetadata {
   body?: object | string
 }
 
-export interface IApiInteraction {
+export interface IHttpInteraction {
   id: string
   host: string
   request: IRequestMetadata

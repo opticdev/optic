@@ -1,7 +1,7 @@
 import {IOpticTaskRunnerConfig} from '@useoptic/cli-config';
 import {ICaptureSaver} from '@useoptic/cli-server';
 import {HttpToolkitCapturingProxy} from '@useoptic/proxy';
-import {IApiInteraction} from '@useoptic/proxy';
+import {IHttpInteraction} from '@useoptic/proxy';
 import {CommandSession} from './command-session';
 import {developerDebugLogger, userDebugLogger} from './logger';
 
@@ -22,8 +22,8 @@ class CommandAndProxySessionManager {
 
     await persistenceManager.init(this.config.captureId);
 
-    inboundProxy.events.on('sample', (sample: IApiInteraction) => {
-      userDebugLogger(`got sample ${sample.request.method} ${sample.request.url}`);
+    inboundProxy.events.on('sample', (sample: IHttpInteraction) => {
+      userDebugLogger(`got sample ${sample.request.method} ${sample.request.path}`);
       persistenceManager.save(sample);
     });
 

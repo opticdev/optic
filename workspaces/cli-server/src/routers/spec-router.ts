@@ -5,7 +5,7 @@ import express from 'express';
 import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import {FileSystemCaptureLoader} from '../file-system-capture-loader';
+import {FileSystemCaptureLoader} from '../captures/file-system/avro/file-system-capture-loader';
 import {ICaptureLoader} from '../index';
 import {developerDebugLogger} from '../logger';
 import {ICliServerSession} from '../server';
@@ -14,7 +14,7 @@ import fetch from 'cross-fetch';
 import {opticStatusPath} from '@useoptic/proxy';
 import * as yaml from 'js-yaml';
 import sortBy from 'lodash.sortby';
-import waitOn from "wait-on";
+import waitOn from 'wait-on';
 
 export class CapturesHelpers {
   constructor(private basePath: string) {

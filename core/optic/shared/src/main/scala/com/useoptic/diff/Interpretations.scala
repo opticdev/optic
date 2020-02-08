@@ -18,6 +18,7 @@ case class DiffInterpretation(actionTitle: String,
                               context: InterpretationContext,
                               metadata: FrontEndMetadata = FrontEndMetadata())
 
+@JSExportAll
 case class DynamicDescription(template: String,
                               fieldId: Option[String] = None,
                               shapeId: Option[String] = None)
@@ -25,6 +26,7 @@ case class DynamicDescription(template: String,
 @JSExportAll
 case class InterpretationContext(responseId: Option[String], inRequestBody: Boolean)
 
+@JSExportAll
 case class FrontEndMetadata(addedIds: Seq[String] = Seq.empty,
                             changedIds: Seq[String] = Seq.empty,
                             removedIds: Seq[String] = Seq.empty)

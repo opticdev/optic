@@ -1,10 +1,10 @@
 import {IIgnoreRunnable} from '@useoptic/cli-config';
-import {IApiInteraction} from '@useoptic/domain';
+import {IHttpInteraction} from '@useoptic/domain';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import {captureFileSuffix} from './file-system-capture-saver';
-import {ICaptureLoader, ICaptureManifest} from './index';
-import {developerDebugLogger} from './logger';
+import {ICaptureLoader, ICaptureManifest} from '../avro/file-system-capture-loader';
+import {developerDebugLogger} from '../../../logger';
 
 interface IFileSystemCaptureLoaderConfig {
   captureBaseDirectory: string
@@ -35,7 +35,7 @@ class FileSystemCaptureLoader implements ICaptureLoader {
   async load(captureId: string): Promise<ICaptureManifest> {
     const captureFiles = await this.listSortedCaptureFiles(captureId);
     //@TODO: robustify by only reading n files at a time
-    const entriesContents: IApiInteraction[][] = await Promise.all(captureFiles.map(x => fs.readJson(x)));
+    const entriesContents: IHttpInteraction[][] = await Promise.all(captureFiles.map(x => fs.readJson(x)));
     const allSamples = entriesContents.reduce((acc, entrySamples) => [...acc, ...entrySamples], []);
     return {
       samples: allSamples
@@ -45,10 +45,10 @@ class FileSystemCaptureLoader implements ICaptureLoader {
   async loadWithFilter(captureId: string, filter: IIgnoreRunnable): Promise<ICaptureManifest> {
     const captureFiles = await this.listSortedCaptureFiles(captureId);
     //@TODO: robustify by only reading n files at a time
-    const entriesContents: IApiInteraction[][] = await Promise.all(captureFiles.map(x => fs.readJson(x)));
-    const filteredSamples = entriesContents.reduce((acc: IApiInteraction[], entrySamples: IApiInteraction[]) => {
-      const filteredEntrySamples = entrySamples.filter((x: IApiInteraction) => {
-        return !filter.shouldIgnore(x.request.method, x.request.url);
+    const entriesContents: IHttpInteraction[][] = await Promise.all(captureFiles.map(x => fs.readJson(x)));
+    const filteredSamples = entriesContents.reduce((acc: IHttpInteraction[], entrySamples: IHttpInteraction[]) => {
+      const filteredEntrySamples = entrySamples.filter((x: IHttpInteraction) => {
+        return !filter.shouldIgnore(x.request.method, x.request.path);
       });
       return [...acc, ...filteredEntrySamples];
     }, []);

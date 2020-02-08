@@ -2,15 +2,14 @@ import {EventEmitter} from 'events';
 import * as path from 'path';
 import * as os from 'os';
 import * as url from 'url';
-import * as qs from 'querystring';
 import * as mockttp from 'mockttp';
 import * as fs from 'fs-extra';
 import launcher from '@httptoolkit/browser-launcher';
 import {CallbackResponseResult} from 'mockttp/dist/rules/handlers';
 import {CompletedRequest, MockRuleData} from 'mockttp';
-import {IApiInteraction} from '@useoptic/domain';
+import {IHttpInteraction} from '@useoptic/domain';
 import {developerDebugLogger} from './logger';
-
+import {IncomingHttpHeaders} from 'http';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string
@@ -19,6 +18,31 @@ export interface IHttpToolkitCapturingProxyConfig {
     chrome: boolean
   }
 }
+
+function headerObjectToList(headers: IncomingHttpHeaders) {
+  return Object.entries(headers)
+    .map(([key, value]) => {
+      if (value === undefined) {
+        return [];
+      }
+      if (typeof value === 'string') {
+        return [
+          {
+            name: key,
+            value
+          }
+        ];
+      }
+      return value.map((v: string) => {
+        return {
+          name: key,
+          value: v
+        };
+      });
+    })
+    .reduce((acc, values) => [...acc, ...values], []);
+}
+
 
 export interface IRequestFilter {
   shouldSkip(request: CompletedRequest): boolean
@@ -146,24 +170,28 @@ export class HttpToolkitCapturingProxy {
           return;
         }
         const queryString: string = url.parse(req.url).query || '';
-        const queryParameters = qs.parse(queryString);
         developerDebugLogger(req);
-        const sample: IApiInteraction = {
-          id: res.id,
-          host: req.hostname || '',
+        const sample: IHttpInteraction = {
+          omitted: [],
+          uuid: res.id,
           request: {
+            host: req.hostname || '',
             method: req.method,
-            url: req.path,
-            headers: req.headers,
-            cookies: {},
+            path: req.path,
+            headers: headerObjectToList(req.headers),
             queryString,
-            queryParameters,
-            body: extractBody(req)
+            body: {
+              asJsonString: req.body.json ? JSON.stringify(req.body.json) : (req.body.formData ? JSON.stringify(req.body.formData) : null),
+              asText: req.body.text || null
+            }
           },
           response: {
             statusCode: res.statusCode,
-            headers: res.headers,
-            body: extractBody(res)
+            headers: headerObjectToList(res.headers),
+            body: {
+              asJsonString: res.body.json ? JSON.stringify(res.body.json) : (res.body.formData ? JSON.stringify(res.body.formData) : null),
+              asText: res.body.text || null
+            }
           }
         };
         developerDebugLogger({sample});

@@ -1,20 +1,20 @@
 import {Client} from '@useoptic/cli-client';
 import {IIgnoreRunnable} from '@useoptic/cli-config';
-import {IApiInteraction} from '@useoptic/proxy';
+import {IHttpInteraction} from '@useoptic/proxy';
 import * as lockfile from 'proper-lockfile';
 import {CliDaemon} from './daemon';
 import {fork} from 'child_process';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import {FileSystemCaptureSaver} from './file-system-capture-saver';
-import {FileSystemCaptureLoader} from './file-system-capture-loader';
+import {FileSystemCaptureLoader} from './captures/file-system/avro/file-system-capture-loader';
+import {FileSystemCaptureSaver} from './captures/file-system/avro/file-system-capture-saver';
 import {makeUiBaseUrl} from './url-builders';
 import {developerDebugLogger} from './logger';
 import waitOn from 'wait-on';
 import findProcess = require('find-process');
 
 export interface ICaptureManifest {
-  samples: IApiInteraction[]
+  samples: IHttpInteraction[]
 }
 
 export interface ICaptureLoader {
@@ -26,7 +26,7 @@ export interface ICaptureLoader {
 export interface ICaptureSaver {
   init(captureId: string): Promise<void>
 
-  save(sample: IApiInteraction): Promise<void>
+  save(sample: IHttpInteraction): Promise<void>
 }
 
 export interface ICliDaemonState {
@@ -111,8 +111,8 @@ export async function ensureDaemonStopped(lockFilePath: string): Promise<void> {
       if (blockers.length > 0) {
         developerDebugLogger(blockers);
         blockers.forEach(b => {
-          developerDebugLogger(`killing PID ${b.pid}`)
-          process.kill(b.pid, 9)
+          developerDebugLogger(`killing PID ${b.pid}`);
+          process.kill(b.pid, 9);
         });
       }
     }
