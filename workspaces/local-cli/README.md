@@ -19,7 +19,7 @@ $ npm install -g @useoptic/cli
 $ api COMMAND
 running command...
 $ api (-v|--version|version)
-@useoptic/cli/7.0.3 darwin-x64 node-v12.4.0
+@useoptic/cli/7.0.5 darwin-x64 node-v10.18.1
 $ api --help [COMMAND]
 USAGE
   $ api COMMAND
@@ -48,7 +48,7 @@ OPTIONS
   --yaml
 ```
 
-_See code: [src/commands/generate/oas.ts](https://github.com/opticdev/optic/blob/v7.0.3/src/commands/generate/oas.ts)_
+_See code: [src/commands/generate/oas.ts](https://github.com/opticdev/optic/blob/v7.0.5/src/commands/generate/oas.ts)_
 
 ## `api help [COMMAND]`
 
@@ -76,7 +76,7 @@ USAGE
   $ api init
 ```
 
-_See code: [src/commands/init.ts](https://github.com/opticdev/optic/blob/v7.0.3/src/commands/init.ts)_
+_See code: [src/commands/init.ts](https://github.com/opticdev/optic/blob/v7.0.5/src/commands/init.ts)_
 
 ## `api run [TASKNAME]`
 
@@ -87,7 +87,7 @@ USAGE
   $ api run [TASKNAME]
 ```
 
-_See code: [src/commands/run.ts](https://github.com/opticdev/optic/blob/v7.0.3/src/commands/run.ts)_
+_See code: [src/commands/run.ts](https://github.com/opticdev/optic/blob/v7.0.5/src/commands/run.ts)_
 
 ## `api spec`
 
@@ -98,7 +98,7 @@ USAGE
   $ api spec
 ```
 
-_See code: [src/commands/spec.ts](https://github.com/opticdev/optic/blob/v7.0.3/src/commands/spec.ts)_
+_See code: [src/commands/spec.ts](https://github.com/opticdev/optic/blob/v7.0.5/src/commands/spec.ts)_
 
 ## `api start`
 
@@ -109,5 +109,5 @@ USAGE
   $ api start
 ```
 
-_See code: [src/commands/start.ts](https://github.com/opticdev/optic/blob/v7.0.3/src/commands/start.ts)_
+_See code: [src/commands/start.ts](https://github.com/opticdev/optic/blob/v7.0.5/src/commands/start.ts)_
 <!-- commandsstop -->

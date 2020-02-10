@@ -1,6 +1,6 @@
 {
   "name": "@useoptic/proxy",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "ws:test": "echo proxy",
     "ws:build": "yarn run tsc -b"
