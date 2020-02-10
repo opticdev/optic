@@ -91,7 +91,6 @@ export async function TaskToStartConfig(task: IOpticTask, captureId: string): Pr
   const randomPort = await getPort({port: getPort.makeRange(3300, 3900)});
   const serviceProtocol = parsedBaseUrl.protocol || 'http:';
   const proxyPort = parsedBaseUrl.port || (serviceProtocol === 'http:' ? '80' : '443');
-
   const parsedProxyBaseUrl = task.proxy && url.parse(task.proxy);
 
   return {
@@ -100,7 +99,7 @@ export async function TaskToStartConfig(task: IOpticTask, captureId: string): Pr
     captureId,
     startTime: new Date(),
     serviceConfig: {
-      port: randomPort,
+      port: task.proxy ? parseInt(proxyPort, 10) : randomPort,
       host: parsedBaseUrl.hostname || 'localhost',
       protocol: serviceProtocol,
       basePath: parsedBaseUrl.path || '/',
@@ -196,8 +195,8 @@ export async function shouldWarnAboutVersion7Compatibility() {
   if (hasVersion6SpecStore) {
     return true;
   } else if (hasVersion7Config) {
-    return false
+    return false;
   }
-  return false
+  return false;
 }
 

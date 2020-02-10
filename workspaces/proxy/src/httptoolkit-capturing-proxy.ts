@@ -15,6 +15,7 @@ import {developerDebugLogger} from './logger';
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string
   proxyPort: number
+  host: string
   flags: {
     chrome: boolean
   }
@@ -25,14 +26,17 @@ export interface IRequestFilter {
 }
 
 class HttpToolkitRequestFilter implements IRequestFilter {
-  constructor(private target?: string) {
+  constructor(private self: string, private target?: string) {
   }
 
   shouldSkip(request: CompletedRequest): boolean {
     if (this.target) {
-
       if (request.path === opticStatusPath) {
         return true;
+      }
+
+      if (request.hostname === this.self || request.url.startsWith(this.self)) {
+        return false;
       }
 
       return request.hostname === this.target || request.url.startsWith(this.target);
@@ -80,6 +84,7 @@ export class HttpToolkitCapturingProxy {
 
     const rules: MockRuleData[] = [];
     if (config.proxyTarget) {
+      developerDebugLogger(`forwarding requests to ${config.proxyTarget}`);
       rules.push(
         {
           matchers: [
@@ -87,8 +92,8 @@ export class HttpToolkitCapturingProxy {
           ],
           handler: new mockttp.handlers.PassThroughHandler({
             forwarding: {
-              targetHost: config.proxyTarget!,
-              updateHostHeader: false
+              targetHost: config.proxyTarget,
+              updateHostHeader: true
             }
           })
         }
@@ -131,7 +136,7 @@ export class HttpToolkitCapturingProxy {
       },
       ...rules
     );
-    const requestFilter: IRequestFilter = new HttpToolkitRequestFilter(config.proxyTarget);
+    const requestFilter: IRequestFilter = new HttpToolkitRequestFilter(config.host, config.proxyTarget);
 
     await proxy.on('request', (req: mockttp.CompletedRequest) => {
       if (!requestFilter.shouldSkip(req)) {
