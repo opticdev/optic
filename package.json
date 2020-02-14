@@ -7,7 +7,7 @@
     "copy-domain": "echo copied",
     "build-ui": "cd workspaces/ui && yarn run build-local",
     "copy-ui": "rm -rf ./workspaces/cli-server/resources/ui && mkdir -p ./workspaces/cli-server/resources/ui && cp -R ./workspaces/ui/build/* ./workspaces/cli-server/resources/ui/",
-    "postpull": "yarn install && yarn run build-domain && yarn run build-workspace && yarn run build-ui && yarn run copy-ui && source export_development_aliases.sh",
+    "postpull": "yarn install && yarn run build-domain && yarn run build-workspace && yarn run build-ui && yarn run copy-ui && echo 'Run $ source export_development_aliases.sh'",
     "registry:clean-optic": "rm -rf docker/private-npm-registry/storage/@useoptic/*",
     "registry:start": "cd docker/private-npm-registry && docker-compose up &",
     "registry:start-background": "yarn run registry:start && wait-on http-get://localhost:4873",
