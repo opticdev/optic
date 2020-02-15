@@ -17,7 +17,6 @@ import io.circe.{Json, JsonNumber, JsonObject}
 import io.circe.literal._
 import org.scalatest.FunSpec
 
-
 class RequestDifferSpec extends FunSpec {
   val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
   case class DiffAndInterpretation(result: RequestDiffer.RequestDiffResult, interpretation: DiffInterpretation)

@@ -2,26 +2,20 @@ import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
-import {Box, Container, Typography} from '@material-ui/core';
+import {Box, Container, ListItemSecondaryAction, ListItemText, Typography} from '@material-ui/core';
 import {DocDivider} from '../../requests/DocConstants';
 import Chip from '@material-ui/core/Chip';
-import ReactMinimalPieChart from 'react-minimal-pie-chart';
 import {primary, secondary} from '../../../theme';
+import {buildStyles, CircularProgressbar} from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
 
 const styles = theme => ({});
 
-const data = [
-  {
-    color: primary,
-    title: 'Covered',
-    value: 70
-  },
-  {
-    color: 'white',
-    title: 'Not Covered',
-    value: 30
-  },
-];
+const report = {
+  coverage: 76,
+};
 
 class TestingDashboard extends React.Component {
   render() {
@@ -52,36 +46,39 @@ class TestingDashboard extends React.Component {
         <DocDivider/>
       </div>
 
-      <Grid container xs={12} spacing={2} direction='row' alignItems="stretch">
-        <Grid item xs={12}>
-          <Card>
+      <Grid container xs={12} spacing={2} direction='row'>
+        <Grid item xs={4}>
+          <Card style={{padding: 12}}>
+            <div style={{display: 'flex'}}>
+              <div style={{width: 50}}>
+                <CircularProgressbar value={report.coverage} text={`${report.coverage}%`} styles={buildStyles({
+                  pathColor: primary,
+                  textColor: secondary,
+                  trailColor: '#d6d6d6',
+                })}/>
+              </div>
+              <div style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Typography variant="subtitle2">{report.coverage}% Covered</Typography>
+                <Typography variant="subtitle2">{100 - report.coverage}% Uncovered</Typography>
+              </div>
+            </div>
+          </Card>
+        </Grid>
 
-            <Grid xs={12} container>
-
-              <Grid item xs={4} style={{padding: 20}}>
-                <ReactMinimalPieChart
-                  cx={25}
-                  cy={25}
-                  data={data}
-                  labelPosition={50}
-                  lengthAngle={360}
-                  lineWidth={15}
-                  paddingAngle={0}
-                  radius={25}
-                  startAngle={0}
-                  viewBoxSize={[
-                    65,
-                    65
-                  ]}
-                />
-              </Grid>
-
-              <Grid item xs={8} style={{padding: 20}}>
-                <Typography variant="h5">API Coverage</Typography>
-              </Grid>
-
-            </Grid>
-
+        <Grid item xs={8}>
+          <Card style={{padding: 12}}>
+            <Typography variant="h6">API Endpoints</Typography>
+            <List dense>
+              <ListItem dense style={{paddingLeft: 0}}>
+                <ListItemText primary="GET /users/:userId"/>
+              </ListItem>
+            </List>
           </Card>
         </Grid>
       </Grid>

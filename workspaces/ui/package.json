@@ -1,9 +1,7 @@
 {
   "name": "@useoptic/ui",
   "version": "0.1.0",
-  "files": [
-
-  ],
+  "files": [],
   "dependencies": {
     "@babel/core": "7.4.3",
     "@babel/plugin-proposal-decorators": "^7.4.4",
@@ -64,12 +62,12 @@
     "prop-types": "latest",
     "react": "^16.8.6",
     "react-ace": "^8.0.0",
+    "react-circular-progressbar": "^2.0.3",
     "react-dom": "^16.8.6",
     "react-helmet": "5.2.1",
     "react-hook-form": "^3.27.0",
     "react-keydown": "^1.9.10",
     "react-markdown": "^4.2.2",
-    "react-minimal-pie-chart": "^6.0.1",
     "react-router-dom": "^5.0.1",
     "react-router-hash-link": "^1.2.2",
     "react-scroll-into-view-if-needed": "^2.1.7",

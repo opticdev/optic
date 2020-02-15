@@ -60,6 +60,7 @@ object ShapeDiffer {
       case StringKind => {
         if (actualShape.isString) {
           Iterator.empty
+
         } else {
           shapeMismatchOrMissing(expectedShape, actualShape)
         }
