@@ -36,12 +36,14 @@ class CommandAndProxySessionManager {
       flags: {
         chrome: false
       },
+      host: this.config.proxyConfig.host,
       proxyPort: this.config.proxyConfig.port,
-      proxyTarget: target.host.toString()
+      proxyTarget: `${target.protocol}//${target.host.toString()}`
     });
 
     userDebugLogger(`started inbound proxy on port ${this.config.proxyConfig.port}`);
-    userDebugLogger(`Your service will start on port ${servicePort}. All traffic should go through the inbound proxy.`)
+    userDebugLogger(`Your command will be run with environment variable OPTIC_API_PORT=${servicePort}.`);
+    userDebugLogger(`All traffic should go through the inbound proxy on port ${this.config.proxyConfig.port} and it will be forwarded to ${this.config.serviceConfig.host}.`);
     const promises = [];
     developerDebugLogger(this.config);
     if (this.config.command) {
@@ -56,8 +58,8 @@ class CommandAndProxySessionManager {
       });
       const commandStoppedPromise = new Promise(resolve => {
         commandSession.events.on('stopped', ({state}) => {
-          developerDebugLogger(`command session stopped (${state})`)
-          resolve()
+          developerDebugLogger(`command session stopped (${state})`);
+          resolve();
         });
       });
       promises.push(commandStoppedPromise);

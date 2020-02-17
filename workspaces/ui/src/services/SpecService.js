@@ -130,10 +130,7 @@ class SpecService {
   }
 }
 
-const specService = new SpecService();
-
 export {
   NetworkUtilities,
-  SpecService,
-  specService
+  SpecService
 };
