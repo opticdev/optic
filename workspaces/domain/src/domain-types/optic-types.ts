@@ -1,21 +1,4 @@
 
-export interface IResponse {
-  statusCode: number
-  headers: IHeader[]
-  body?: IBody
-}
-       
-
-export interface IRequest {
-  host: string
-  method: string
-  path: string
-  queryString: string
-  headers: IHeader[]
-  body?: IBody
-}
-       
-
 export interface IBody {
   asText?: string
   asForm?: string[]
@@ -31,14 +14,6 @@ export interface IGroupingIdentifiers {
 }
        
 
-export interface IApiInteraction {
-  uuid: string
-  request: IRequest
-  response: IResponse
-  omitted: string[]
-}
-       
-
 export interface ICapture {
   groupingIdentifiers: IGroupingIdentifiers
   batchItems: IApiInteraction[]
@@ -48,5 +23,30 @@ export interface ICapture {
 export interface IHeader {
   name: string
   value: string
+}
+       
+
+export interface IRequest {
+  host: string
+  method: string
+  path: string
+  queryString: string
+  headers: IHeader[]
+  body: IBody
+}
+       
+
+export interface IResponse {
+  statusCode: number
+  headers: IHeader[]
+  body: IBody
+}
+       
+
+export interface IApiInteraction {
+  uuid: string
+  request: IRequest
+  response: IResponse
+  omitted: string[]
 }
        
