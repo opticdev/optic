@@ -1,10 +1,7 @@
 package com.useoptic.types
 
-import com.useoptic.types.capture._
 import io.circe.Json
-import nl.codestar.scalatsi.TypescriptType.{TSNull, TSString}
 import nl.codestar.scalatsi._
-import nl.codestar.scalatsi.dsl._
 
 
 // A TSType[T] is what tells scala-tsi how to convert your type T into typescript
