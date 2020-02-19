@@ -1,10 +1,10 @@
 import React from 'react';
 import DiffInfo from './DiffInfo';
+import {ScalaJSHelpers} from '@useoptic/domain';
 
 export function DiffToDiffCard(diff, queries) {
-  // eslint-disable-next-line no-unused-vars
-  const diffJs = diff.asJs;
-  const [type, diffData] = Object.entries(diff.asJs)[0];
+  const diffJs = ScalaJSHelpers.asJs(diff);
+  const [type, diffData] = Object.entries(diffJs)[0];
 
   switch (type) {
     //operation level diffs

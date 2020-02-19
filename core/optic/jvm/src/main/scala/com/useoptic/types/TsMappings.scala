@@ -1,6 +1,7 @@
 package com.useoptic.types
 
 import io.circe.Json
+import nl.codestar.scalatsi.TypescriptType.{TSNull, TSString}
 import nl.codestar.scalatsi._
 
 
@@ -12,7 +13,12 @@ object MyTSTypes extends DefaultTSTypes {
 
   implicit val tsJson = TSType.sameAs[Json, Object]
 
-  implicit val tsBody: TSType[Body] = TSType.fromCaseClass[Body]
+
+  implicit val tsBody: TSType[Body] = TSType.interface("IBody",
+    "asText" -> (TSString | TSNull),
+    "asJsonString" -> (TSString | TSNull)
+  )
+
 
   implicit val tsHeader = TSType.fromCaseClass[Header]
   implicit val tsGrouping = TSType.fromCaseClass[GroupingIdentifiers]
@@ -20,6 +26,6 @@ object MyTSTypes extends DefaultTSTypes {
   implicit val tsResponse = TSType.fromCaseClass[Response]
   // TSType.fromCaseClass will convert your case class to a typescript definition
   // `- ssn` indicated the ssn field should be removed
-  implicit val tsInteraction = TSType.fromCaseClass[ApiInteraction]
+  implicit val tsInteraction = TSType.fromCaseClass[HttpInteraction]
   implicit val tsCapture = TSType.fromCaseClass[Capture]
 }

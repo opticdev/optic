@@ -1,9 +1,9 @@
-import {IApiInteraction} from '@useoptic/domain';
+import {IHttpInteraction} from '@useoptic/domain';
 import Bottleneck from 'bottleneck';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import {ICaptureSaver} from './index';
-import {userDebugLogger} from './logger';
+import {ICaptureSaver} from '../avro/file-system-capture-loader';
+import {userDebugLogger} from '../../../logger';
 
 interface IFileSystemCaptureSaverConfig {
   captureBaseDirectory: string
@@ -22,7 +22,7 @@ class FileSystemCaptureSaver implements ICaptureSaver {
   async init(captureId: string) {
     const outputDirectory = path.join(this.config.captureBaseDirectory, captureId);
     await fs.ensureDir(outputDirectory);
-    this.batcher.on('batch', async (items: IApiInteraction[]) => {
+    this.batcher.on('batch', async (items: IHttpInteraction[]) => {
       userDebugLogger(`writing batch ${this.batchCount}`);
       const outputFile = path.join(outputDirectory, `${this.batchCount}${captureFileSuffix}`);
       await fs.writeJson(outputFile, items);
@@ -30,7 +30,7 @@ class FileSystemCaptureSaver implements ICaptureSaver {
     });
   }
 
-  async save(sample: IApiInteraction) {
+  async save(sample: IHttpInteraction) {
     // don't await flush, just enqueue
     this.batcher.add(sample);
   }

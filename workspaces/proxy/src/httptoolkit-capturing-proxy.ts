@@ -2,37 +2,65 @@ import {EventEmitter} from 'events';
 import * as path from 'path';
 import * as os from 'os';
 import * as url from 'url';
-import * as qs from 'querystring';
 import * as mockttp from 'mockttp';
 import * as fs from 'fs-extra';
 import launcher from '@httptoolkit/browser-launcher';
 import {CallbackResponseResult} from 'mockttp/dist/rules/handlers';
 import {CompletedRequest, MockRuleData} from 'mockttp';
-import {IApiInteraction} from '@useoptic/domain';
+import {IHttpInteraction} from '@useoptic/domain';
 import {developerDebugLogger} from './logger';
-
+import {IncomingHttpHeaders} from 'http';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string
   proxyPort: number
+  host: string
   flags: {
     chrome: boolean
   }
 }
+
+function headerObjectToList(headers: IncomingHttpHeaders) {
+  return Object.entries(headers)
+    .map(([key, value]) => {
+      if (value === undefined) {
+        return [];
+      }
+      if (typeof value === 'string') {
+        return [
+          {
+            name: key,
+            value
+          }
+        ];
+      }
+      return value.map((v: string) => {
+        return {
+          name: key,
+          value: v
+        };
+      });
+    })
+    .reduce((acc, values) => [...acc, ...values], []);
+}
+
 
 export interface IRequestFilter {
   shouldSkip(request: CompletedRequest): boolean
 }
 
 class HttpToolkitRequestFilter implements IRequestFilter {
-  constructor(private target?: string) {
+  constructor(private self: string, private target?: string) {
   }
 
   shouldSkip(request: CompletedRequest): boolean {
     if (this.target) {
-
       if (request.path === opticStatusPath) {
         return true;
+      }
+
+      if (request.hostname === this.self || request.url.startsWith(this.self)) {
+        return false;
       }
 
       return request.hostname === this.target || request.url.startsWith(this.target);
@@ -80,6 +108,7 @@ export class HttpToolkitCapturingProxy {
 
     const rules: MockRuleData[] = [];
     if (config.proxyTarget) {
+      developerDebugLogger(`forwarding requests to ${config.proxyTarget}`);
       rules.push(
         {
           matchers: [
@@ -87,8 +116,8 @@ export class HttpToolkitCapturingProxy {
           ],
           handler: new mockttp.handlers.PassThroughHandler({
             forwarding: {
-              targetHost: config.proxyTarget!,
-              updateHostHeader: false
+              targetHost: config.proxyTarget,
+              updateHostHeader: true
             }
           })
         }
@@ -131,7 +160,7 @@ export class HttpToolkitCapturingProxy {
       },
       ...rules
     );
-    const requestFilter: IRequestFilter = new HttpToolkitRequestFilter(config.proxyTarget);
+    const requestFilter: IRequestFilter = new HttpToolkitRequestFilter(config.host, config.proxyTarget);
 
     await proxy.on('request', (req: mockttp.CompletedRequest) => {
       if (!requestFilter.shouldSkip(req)) {
@@ -146,24 +175,28 @@ export class HttpToolkitCapturingProxy {
           return;
         }
         const queryString: string = url.parse(req.url).query || '';
-        const queryParameters = qs.parse(queryString);
         developerDebugLogger(req);
-        const sample: IApiInteraction = {
-          id: res.id,
-          host: req.hostname || '',
+        const sample: IHttpInteraction = {
+          omitted: [],
+          uuid: res.id,
           request: {
+            host: req.hostname || '',
             method: req.method,
-            url: req.path,
-            headers: req.headers,
-            cookies: {},
+            path: req.path,
+            headers: headerObjectToList(req.headers),
             queryString,
-            queryParameters,
-            body: extractBody(req)
+            body: {
+              asJsonString: req.body.json ? JSON.stringify(req.body.json) : (req.body.formData ? JSON.stringify(req.body.formData) : null),
+              asText: req.body.text || null
+            }
           },
           response: {
             statusCode: res.statusCode,
-            headers: res.headers,
-            body: extractBody(res)
+            headers: headerObjectToList(res.headers),
+            body: {
+              asJsonString: res.body.json ? JSON.stringify(res.body.json) : (res.body.formData ? JSON.stringify(res.body.formData) : null),
+              asText: res.body.text || null
+            }
           }
         };
         developerDebugLogger({sample});

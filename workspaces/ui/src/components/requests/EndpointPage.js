@@ -26,6 +26,7 @@ import {NamerStore} from '../shapes/Namer';
 import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
 import {DocQueryParams} from './DocQueryParams';
 import {HasDiffRequestToolBar} from '../navigation/NewBehavior';
+import {extractRequestAndResponseBodyAsJs} from '@useoptic/domain';
 
 const styles = theme => ({
   root: {
@@ -91,16 +92,19 @@ class EndpointPageDataLoader extends React.Component {
   }
 
   requestBodyExample() {
-    const firstExample = this.state.examples[0];
-    if (firstExample) {
-      return firstExample.request.body;
+    const [first] = this.state.examples;
+    if (first) {
+      return extractRequestAndResponseBodyAsJs(first).requestBody;
     }
   }
 
   responseExamples() {
     const grouped = groupby(this.state.examples, (e) => e.response.statusCode);
     return (statusCode) => {
-      return grouped[statusCode] && grouped[statusCode][0].response.body;
+      const [first] = grouped[statusCode] || [];
+      if (first) {
+        return extractRequestAndResponseBodyAsJs(first).responseBody;
+      }
     };
   }
 
@@ -343,7 +347,7 @@ export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyl
       </Helmet>
       <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
         <Toolbar variant="dense">
-          <HasDiffRequestToolBar requestId={requestId} />
+          <HasDiffRequestToolBar requestId={requestId}/>
           <div style={{flex: 1, textAlign: 'center'}}>
             <Typography variant="h6" color="primary">{purpose}</Typography>
           </div>

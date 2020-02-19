@@ -1,40 +1,42 @@
-import React, { useState } from 'react';
-import { withTrafficSessionContext } from '../../contexts/TrafficSessionContext';
-import { Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction } from '@useoptic/domain';
-import { RfcContext, withRfcContext } from '../../contexts/RfcContext';
+import React, {useState} from 'react';
+import {withTrafficSessionContext} from '../../contexts/TrafficSessionContext';
+import {Interpreters, JsonHelper, RequestDiffer, ShapesCommands, toInteraction} from '@useoptic/domain';
+import {RfcContext, withRfcContext} from '../../contexts/RfcContext';
 import DiffPage from './DiffPage';
-import { PathIdToPathString } from '../paths/PathIdToPathString';
-import { DiffToDiffCard } from './DiffCopy';
+import {PathIdToPathString} from '../paths/PathIdToPathString';
+import {DiffToDiffCard} from './DiffCopy';
 import PreCommit from '../navigation/PreCommit';
-import { withNavigationContext } from '../../contexts/NavigationContext';
+import {withNavigationContext} from '../../contexts/NavigationContext';
 import compose from 'lodash.compose';
-import { NamerStore } from '../shapes/Namer';
+import {NamerStore} from '../shapes/Namer';
 import SimulatedCommandContext from './SimulatedCommandContext';
-import { queryStringDiffer } from './DiffUtilities';
+import {queryStringDiffer} from './DiffUtilities';
 import {track} from '../../Analytics';
+import {extractRequestAndResponseBodyAsJs} from '@useoptic/domain';
 
 class RequestDiffX extends React.Component {
   handleDiscard = async () => {
-    const { specService, eventStore, rfcId, match } = this.props;
-    const { requestId } = match.params;
-    const { pushRelative } = this.props;
+    const {specService, eventStore, rfcId, match} = this.props;
+    const {requestId} = match.params;
+    const {pushRelative} = this.props;
 
-    const events = await specService.listEvents()
-    eventStore.remove(rfcId)
-    eventStore.bulkAdd(rfcId, events)
+    const events = await specService.listEvents();
+    eventStore.remove(rfcId);
+    eventStore.bulkAdd(rfcId, events);
 
-    pushRelative('/requests/'+requestId);
-  }
+    pushRelative('/requests/' + requestId);
+  };
+
   render() {
-    const { match } = this.props;
-    const { specService } = this.props;
-    const { diffStateProjections, diffSessionManager, rfcService, eventStore, rfcId } = this.props;
-    const { diffState } = diffSessionManager;
-    const { requestId } = match.params;
+    const {match} = this.props;
+    const {specService} = this.props;
+    const {diffStateProjections, diffSessionManager, rfcService, eventStore, rfcId} = this.props;
+    const {diffState} = diffSessionManager;
+    const {requestId} = match.params;
     const rfcState = rfcService.currentState(rfcId);
     const compoundInterpreter = new Interpreters.CompoundInterpreter(rfcState.shapesState);
 
-    const { sampleItemsWithResolvedPaths } = diffStateProjections;
+    const {sampleItemsWithResolvedPaths} = diffStateProjections;
     const matchingSampleItems = sampleItemsWithResolvedPaths.filter(i => i.requestId === requestId);
 
     const startableSampleItems = matchingSampleItems.filter(x => diffSessionManager.isStartable(diffState, x));
@@ -42,10 +44,10 @@ class RequestDiffX extends React.Component {
 
     for (let item of startableSampleItems) {
       const interaction = toInteraction(item.sample);
-      const plugins = queryStringDiffer(rfcState.shapesState, item.sample)
+      const plugins = queryStringDiffer(rfcState.shapesState, item.sample);
       const diffIterator = JsonHelper.iteratorToJsIterator(RequestDiffer.compare(interaction, rfcState, plugins));
 
-      const diff = { [Symbol.iterator]: () => diffIterator };
+      const diff = {[Symbol.iterator]: () => diffIterator};
       for (let diffItem of diff) {
         const allInterpretations = JsonHelper.seqToJsArray(compoundInterpreter.interpret(diffItem));
         return this.renderWrapped(item, (
@@ -66,43 +68,43 @@ class RequestDiffX extends React.Component {
         requestId={requestId}
         onSave={async (commitMessage) => {
 
-          const addedFirst = rfcState.requestsState.justAddedFirst
+          const addedFirst = rfcState.requestsState.justAddedFirst;
 
           const examples = diffSessionManager.listExamplesToAdd();
           diffSessionManager.reset();
-          await specService.saveEvents(eventStore, rfcId)
+          await specService.saveEvents(eventStore, rfcId);
           await Promise.all(
             [...examples]
               .map((exampleItem) => {
-                return specService.saveExample(exampleItem.sample, exampleItem.requestId)
+                return specService.saveExample(exampleItem.sample, exampleItem.requestId);
               })
-          )
+          );
 
-          const redirectTo = `/requests/${requestId}`
+          const redirectTo = `/requests/${requestId}`;
 
           if (addedFirst) {
-            this.props.pushRelative(redirectTo+'?documented_endpoint=true')
-            track('Documented First Endpoint in an API')
+            this.props.pushRelative(redirectTo + '?documented_endpoint=true');
+            track('Documented First Endpoint in an API');
           } else {
-            this.props.pushRelative(redirectTo)
+            this.props.pushRelative(redirectTo);
           }
         }}
         onDiscard={this.handleDiscard}
       />
-    )
+    );
   }
 
   renderWrapped(item, child) {
 
-    const { diffSessionManager } = this.props;
+    const {diffSessionManager} = this.props;
 
     const handleCommands = (...commands) => {
       this.props.handleCommands(...commands);
       diffSessionManager.acceptCommands(item, commands);
-      return diffSessionManager.tagIds
+      return diffSessionManager.tagIds;
     };
 
-    const { children, ...rest } = this.props; // @GOTCHA assumes withRfcContext on parent component
+    const {children, ...rest} = this.props; // @GOTCHA assumes withRfcContext on parent component
 
     const rfcContext = {
       ...rest,
@@ -134,19 +136,24 @@ const DiffPageStateManager = withRfcContext((props) => {
   } = props;
   const [interpretationIndex, setInterpretationIndex] = useState(0);
   const [dependentCommands, setDependentCommands] = useState([]);
-  const interpretation = interpretations[interpretationIndex]
+  const interpretation = interpretations[interpretationIndex];
 
   if (!interpretation) {
     //reset internal
-    setTimeout(() => setInterpretationIndex(0), 1)
-    return null
+    setTimeout(() => setInterpretationIndex(0), 1);
+    return null;
   }
 
   const commands = interpretation ? JsonHelper.seqToJsArray(interpretation.commands) : [];
-  const { sample, pathId, requestId, index } = item;
+  const {sample, pathId, requestId, index} = item;
 
-  const diffCard = DiffToDiffCard(diff, queries)
-
+  const diffCard = DiffToDiffCard(diff, queries);
+  const {
+    requestContentType,
+    responseContentType,
+    requestBody,
+    responseBody
+  } = extractRequestAndResponseBodyAsJs(sample);
   return (
     <SimulatedCommandContext
       shouldSimulate={true}
@@ -159,12 +166,12 @@ const DiffPageStateManager = withRfcContext((props) => {
         setDependentCommands([
           ...dependentCommands,
           ShapesCommands.RenameShape(shapeId, name)
-        ])
+        ]);
       }}>
         <DiffPage
           //request context
-          url={sample.request.url}
-          path={<PathIdToPathString pathId={pathId} />}
+          url={sample.request.path}
+          path={<PathIdToPathString pathId={pathId}/>}
           method={sample.request.method}
           requestId={requestId}
 
@@ -179,16 +186,16 @@ const DiffPageStateManager = withRfcContext((props) => {
           //observation
           observed={{
             statusCode: sample.response.statusCode,
-            requestContentType: sample.request.headers['content-type'],
+            requestContentType,
             queryString: sample.request.queryParameters || {},
-            requestBody: sample.request.body,
-            responseContentType: sample.response.headers['content-type'],
-            responseBody: sample.response.body
+            requestBody,
+            responseContentType,
+            responseBody
           }}
 
           //control
           onSkip={() => {
-            diffSessionManager.skipInteraction(index)
+            diffSessionManager.skipInteraction(index);
           }}
           onDiscard={onDiscard}
         />

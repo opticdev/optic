@@ -6,7 +6,7 @@ organization := "com.useoptic"
 
 version := "1.0.0"
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.12.10"
 
 val circeVersion = "0.10.0"
 

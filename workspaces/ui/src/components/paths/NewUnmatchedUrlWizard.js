@@ -41,6 +41,7 @@ import {resolvePath} from '../utilities/PathUtilities';
 import PathMatcher from '../diff/PathMatcher';
 import {withProductDemoContext} from '../navigation/ProductDemo';
 import equal from 'deep-equal';
+import {extractRequestAndResponseBodyAsJs} from '@useoptic/domain';
 
 const styles = theme => ({
   root: {
@@ -238,7 +239,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                   {matching
                     .map(({url, method}) => {
                       //don't show self
-                      if (previewSample && url === previewSample.request.url && method === previewSample.request.method) {
+                      if (previewSample && url === previewSample.request.path && method === previewSample.request.method) {
                         return null;
                       }
                       return (
@@ -347,21 +348,21 @@ class PreviewSample extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     if (equal(nextProps.sample, this.props.sample)) {
-      return false
+      return false;
     } else {
-      return true
+      return true;
     }
   }
 
   render() {
-    const {sample} = this.props
+    const {sample} = this.props;
 
     if (!sample) {
       return null;
     }
-    const {url, method, body: requestBody} = sample.request;
-    const {statusCode, body: responseBody} = sample.response;
-
+    const {url, method} = sample.request;
+    const {statusCode} = sample.response;
+    const {requestBody, responseBody, requestContentType, responseContentType} = extractRequestAndResponseBodyAsJs(sample);
     return (
       <div style={{paddingTop: 22, paddingBottom: 150}}>
         <Typography variant="h4" color="primary">Observed</Typography>
@@ -372,14 +373,14 @@ class PreviewSample extends React.Component {
         {requestBody && (
           <DocSubGroup title="Request Body">
             <HighlightedIDsStore>
-              <ExampleOnly title="Request Body" contentType="application/json" example={requestBody}/>
+              <ExampleOnly title="Request Body" contentType={requestContentType} example={requestBody}/>
             </HighlightedIDsStore>
           </DocSubGroup>
         )}
         {responseBody && (
           <DocSubGroup title={`${statusCode} - ${STATUS_CODES[statusCode]}`}>
             <HighlightedIDsStore>
-              <ExampleOnly title="Response Body" contentType="application/json" example={responseBody}/>
+              <ExampleOnly title="Response Body" contentType={responseContentType} example={responseBody}/>
             </HighlightedIDsStore>
           </DocSubGroup>
         )}
@@ -416,7 +417,7 @@ function UrlListItem(props) {
   } = props;
 
   const isSuggested = !!pathId;
-  const isSelected = previewSample && previewSample.request.url === url && previewSample.request.method === method;
+  const isSelected = previewSample && previewSample.request.path === url && previewSample.request.method === method;
   return (
     <ListItem button={!isSuggested && !disableButton}
               onClick={!isSuggested && selectTarget(url)}
@@ -454,12 +455,12 @@ function completePathMatcherRegex(pathComponents) {
 }
 
 function pathReducer(acc, item) {
-  if (acc.find(i => i.method === item.sample.request.method && i.url === item.sample.request.url)) {
+  if (acc.find(i => i.method === item.sample.request.method && i.url === item.sample.request.path)) {
     return acc;
   } else {
     return acc.concat({
       method: item.sample.request.method,
-      url: item.sample.request.url,
+      url: item.sample.request.path,
       pathId: item.pathId,
       requestId: item.requestId,
       sample: item.sample
