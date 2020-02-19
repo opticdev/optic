@@ -1,4 +1,4 @@
-import {EventEmitter} from 'events';
+import { EventEmitter } from 'events';
 import * as path from 'path';
 import * as os from 'os';
 import * as url from 'url';
@@ -65,7 +65,7 @@ class HttpToolkitRequestFilter implements IRequestFilter {
 
       return request.hostname === this.target || request.url.startsWith(this.target);
     }
-    return true;
+    return false;
   }
 }
 
@@ -163,7 +163,11 @@ export class HttpToolkitCapturingProxy {
     const requestFilter: IRequestFilter = new HttpToolkitRequestFilter(config.host, config.proxyTarget);
 
     await proxy.on('request', (req: mockttp.CompletedRequest) => {
-      if (!requestFilter.shouldSkip(req)) {
+      const shouldCapture = !requestFilter.shouldSkip(req);
+      if (!shouldCapture) {
+        developerDebugLogger(`skipping ${req.method} ${req.url}`);
+      }
+      if (shouldCapture) {
         this.requests.set(req.id, req);
       }
     });
@@ -199,11 +203,18 @@ export class HttpToolkitCapturingProxy {
             }
           }
         };
-        developerDebugLogger({sample});
+        developerDebugLogger({ sample });
         this.events.emit('sample', sample);
         this.requests.delete(res.id);
       }
     });
+
+    process.on('uncaughtException', (error: Error) => {
+      developerDebugLogger(error)
+    })
+    process.on('unhandledRejection', (reason, promise) => {
+      developerDebugLogger(reason, promise)
+    })
 
     developerDebugLogger(`trying to start proxy on port ${config.proxyPort}`);
     try {

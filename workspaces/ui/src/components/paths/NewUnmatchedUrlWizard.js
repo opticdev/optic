@@ -175,6 +175,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     const getStepContent = (step) => {
       switch (step) {
         case 0:
+          
           return (<div id="new-url" key="new-url">
             {suggestedPaths.length > 0 && (
               <>
@@ -183,7 +184,6 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                 <List dense>
                   {!targetUrl && (
                     suggestedPaths.map(({method, url, sample, pathId}) => {
-
                       const full = <PathIdToPathString pathId={pathId}/>;
 
                       return (<UrlListItem url={url}
@@ -434,6 +434,7 @@ function UrlListItem(props) {
               }}/>
       </ListItemAvatar>
       <ListItemText primary={full || url} component="div"
+      secondary={sample && sample.request.host}
                     primaryTypographyProps={{style: {paddingLeft: 10, whiteSpace: 'pre'}}}/>
       {isSuggested ? (
         <ListItemSecondaryAction>

@@ -2,8 +2,7 @@
   "private": true,
   "scripts": {
     "build-workspace": "node ./workspaces/scripts/build/build.js",
-    "build-types": "cd ./types && sh ./build.sh",
-    "build-domain": "yarn run build-types && cd ./core && ./scripts/package.sh",
+    "build-domain": "cd ./core && ./scripts/package.sh",
     "copy-domain": "echo copied",
     "build-ui": "cd workspaces/ui && yarn run build-local",
     "copy-ui": "rm -rf ./workspaces/cli-server/resources/ui && mkdir -p ./workspaces/cli-server/resources/ui && cp -R ./workspaces/ui/build/* ./workspaces/cli-server/resources/ui/",

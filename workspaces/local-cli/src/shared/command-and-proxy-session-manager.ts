@@ -34,11 +34,11 @@ class CommandAndProxySessionManager {
 
     await inboundProxy.start({
       flags: {
-        chrome: false
+        chrome: process.env.OPTIC_ENABLE_CHROME === 'yes'
       },
       host: this.config.proxyConfig.host,
-      proxyPort: this.config.proxyConfig.port,
-      proxyTarget: `${target.protocol}//${target.host.toString()}`
+      proxyTarget: process.env.OPTIC_ENABLE_TRANSPARENT_PROXY === 'yes' ? undefined : `${target.protocol}//${target.host.toString()}`,
+      proxyPort: this.config.proxyConfig.port
     });
 
     userDebugLogger(`started inbound proxy on port ${this.config.proxyConfig.port}`);
