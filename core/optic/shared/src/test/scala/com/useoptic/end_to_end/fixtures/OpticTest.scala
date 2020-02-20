@@ -7,8 +7,7 @@ import com.useoptic.diff.{DiffInterpretation, ShapeDiffer}
 import com.useoptic.diff.ShapeDiffer.ShapeDiffResult
 import com.useoptic.diff.interpreters.CompoundInterpreter
 import io.circe.Json
-
-import org.scalatest.{FunSpec, WordSpec}
+import org.scalatest.{FreeSpec, FunSpec, Status, WordSpec}
 
 object ShapeTestHelpers {
   implicit class ShapeDiffHelper(diffVector: Vector[ShapeDiffResult]) {
@@ -16,8 +15,8 @@ object ShapeTestHelpers {
     def isEmpty = diffVector.size == 1
     def nonEmpty = diffVector.size == 1
 
-    def matchesSnapshot(name: Set[String], name2: String = "_"): Boolean = {
-      OpticSnapshotHelper.checkD(name.toVector.sorted.mkString, name2, diffVector)
+    def matchesSnapshot(name2: String = "_")(implicit currentTestName: String): Boolean = {
+      OpticSnapshotHelper.checkD(currentTestName, name2, diffVector)
     }
 
   }
@@ -27,8 +26,8 @@ object ShapeTestHelpers {
     def isEmpty = interpretationsVector.size == 1
     def nonEmpty = interpretationsVector.size == 1
 
-    def matchesSnapshot(name: Set[String], name2: String = "_"): Boolean = {
-      OpticSnapshotHelper.checkI(name.toVector.sorted.mkString, name2, interpretationsVector)
+    def matchesSnapshot(name2: String = "_")(implicit currentTestName: String): Boolean = {
+      OpticSnapshotHelper.checkI(currentTestName, name2, interpretationsVector)
     }
 
   }
@@ -69,6 +68,14 @@ trait OpticShapeTest extends WordSpec {
     field.setAccessible(true)
     val map = field.get(System.getenv()).asInstanceOf[java.util.Map[java.lang.String, java.lang.String]]
     map.put(key, value)
+  }
+
+  private var _currentTestName: Option[String] = None
+  implicit def currentTestName = _currentTestName.getOrElse("No Name")
+
+  protected override def runTest(testName: String, args: org.scalatest.Args): Status = {
+    _currentTestName = Some(testName)
+    super.runTest(testName, args)
   }
 
   setEnv("TESTS_ARE_RUNNING", "TRUE")

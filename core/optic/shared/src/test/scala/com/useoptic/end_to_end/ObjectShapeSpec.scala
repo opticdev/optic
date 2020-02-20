@@ -6,16 +6,18 @@ class ObjectShapeSpec extends OpticShapeTest {
 
   "an object ShapeEntity" when {
     "diffed against a similar object with one unknown field" should {
+      compare(ShapeExamples.todoShape) to (JsonExamples.basicTodo)
+
       val (diff, interpretations) = compare (ShapeExamples.todoShape) to (JsonExamples.basicTodoWithDescription) forRequest
 
       "have a single diff" in {
         assert(diff isSingleDiff)
-        assert(diff matchesSnapshot(testNames, "1"))
+        assert(diff matchesSnapshot())
       }
 
       "and a single interpretation" in {
         assert(interpretations isSingleInterpretation)
-        assert(interpretations matchesSnapshot(testNames, "2"))
+        assert(interpretations matchesSnapshot())
       }
 
     }
@@ -27,9 +29,6 @@ class ObjectShapeSpec extends OpticShapeTest {
       }
 
       "and a single interpretation" in {
-
-        println(interpretations.head.commands)
-
         assert(interpretations isMultipleInterpretation)
       }
 

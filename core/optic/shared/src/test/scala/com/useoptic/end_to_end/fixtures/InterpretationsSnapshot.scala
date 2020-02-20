@@ -51,11 +51,9 @@ object OpticSnapshotHelper {
     val a = interpretationsVector.map(i => CommandSerialization.toJson(i.commands).noSpaces)
     val jsonDiff = a.asJson
     val snapshot = snapshotsDir / slugify(s"${testName}.${name2}.json")
-    println(testName)
-    println(snapshot)
+
+
     if (snapshot.exists) {
-      println(a.asJson.noSpaces)
-      println(snapshot.contentAsString)
       a.asJson.noSpaces == snapshot.contentAsString
     } else {
       println("Creating new snapshot. Don't trust this the first time -- doesn't mean things work"+ snapshot)
