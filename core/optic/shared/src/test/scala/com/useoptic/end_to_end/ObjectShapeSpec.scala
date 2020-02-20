@@ -10,10 +10,12 @@ class ObjectShapeSpec extends OpticShapeTest {
 
       "have a single diff" in {
         assert(diff isSingleDiff)
+        assert(diff matchesSnapshot(testNames, "1"))
       }
 
       "and a single interpretation" in {
         assert(interpretations isSingleInterpretation)
+        assert(interpretations matchesSnapshot(testNames, "2"))
       }
 
     }
@@ -25,6 +27,9 @@ class ObjectShapeSpec extends OpticShapeTest {
       }
 
       "and a single interpretation" in {
+
+        println(interpretations.head.commands)
+
         assert(interpretations isMultipleInterpretation)
       }
 

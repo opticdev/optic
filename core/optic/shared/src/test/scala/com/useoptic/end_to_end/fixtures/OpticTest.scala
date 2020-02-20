@@ -1,12 +1,13 @@
 package com.useoptic.end_to_end.fixtures
 
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.contexts.shapes.ShapeEntity
+import com.useoptic.contexts.shapes.{ShapeEntity, ShapesHelper}
 import com.useoptic.diff.RequestDiffer.{UnmatchedQueryParameterShape, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.useoptic.diff.{DiffInterpretation, ShapeDiffer}
 import com.useoptic.diff.ShapeDiffer.ShapeDiffResult
 import com.useoptic.diff.interpreters.CompoundInterpreter
 import io.circe.Json
+
 import org.scalatest.{FunSpec, WordSpec}
 
 object ShapeTestHelpers {
@@ -14,22 +15,34 @@ object ShapeTestHelpers {
     def isSingleDiff = diffVector.size == 1
     def isEmpty = diffVector.size == 1
     def nonEmpty = diffVector.size == 1
+
+    def matchesSnapshot(name: Set[String], name2: String = "_"): Boolean = {
+      OpticSnapshotHelper.checkD(name.toVector.sorted.mkString, name2, diffVector)
+    }
+
   }
-  implicit class DiffInterpretationHelper(diffVector: Vector[DiffInterpretation]) {
-    def isSingleInterpretation = diffVector.size == 1
-    def isMultipleInterpretation = diffVector.size > 1
-    def isEmpty = diffVector.size == 1
-    def nonEmpty = diffVector.size == 1
+  implicit class DiffInterpretationHelper(interpretationsVector: Vector[DiffInterpretation]) {
+    def isSingleInterpretation = interpretationsVector.size == 1
+    def isMultipleInterpretation = interpretationsVector.size > 1
+    def isEmpty = interpretationsVector.size == 1
+    def nonEmpty = interpretationsVector.size == 1
+
+    def matchesSnapshot(name: Set[String], name2: String = "_"): Boolean = {
+      OpticSnapshotHelper.checkI(name.toVector.sorted.mkString, name2, interpretationsVector)
+    }
+
   }
 }
 
 trait OpticShapeTest extends WordSpec {
 
-
   def compare(shape: (ShapeEntity, RfcState)) = new {
     def to(actual: Json) = {
 
+      //reset IDs so they're deterministic
+      ShapesHelper.test_resetCounter
       val diff = ShapeDiffer.diffJson(shape._1, Some(actual))(shape._2.shapesState).toVector
+
 
       val compoundInterpreter = new CompoundInterpreter(shape._2.shapesState)
 
@@ -50,4 +63,13 @@ trait OpticShapeTest extends WordSpec {
 
     }
   }
+
+  private def setEnv(key: String, value: String) = {
+    val field = System.getenv().getClass.getDeclaredField("m")
+    field.setAccessible(true)
+    val map = field.get(System.getenv()).asInstanceOf[java.util.Map[java.lang.String, java.lang.String]]
+    map.put(key, value)
+  }
+
+  setEnv("TESTS_ARE_RUNNING", "TRUE")
 }

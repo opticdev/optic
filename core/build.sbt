@@ -26,11 +26,14 @@ lazy val optic =
         "io.circe" %%% "circe-literal" % circeVersion,
         "org.scalactic" %% "scalactic" % "3.1.0",
         "org.scalatest" %% "scalatest" % "3.1.0" % "test",
-        "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided"
+        "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
+        "com.github.pathikrit" %% "better-files" % "3.8.0" % "test"
       )
     )
     .jsSettings(
-      scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
+      scalaJSLinkerConfig ~= {
+        _.withModuleKind(ModuleKind.CommonJSModule)
+      }
     ) // defined in sbt-scalajs-crossproject
     .jvmSettings(
       typescriptClassesToGenerateFor := Seq("com.useoptic.types.Capture"),

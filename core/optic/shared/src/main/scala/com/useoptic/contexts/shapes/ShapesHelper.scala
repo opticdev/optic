@@ -14,11 +14,15 @@ import scala.util.Random
 @JSExportAll
 object ShapesHelper {
 
-  def newShapeId(): String = s"shape_${Random.alphanumeric take 10 mkString}"
+  def newShapeId(): String = {
+    s"shape_${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
+  }
 
-  def newShapeParameterId(): String = s"shape-parameter_${Random.alphanumeric take 10 mkString}"
+  def newShapeParameterId(): String = {
+    s"shape-parameter_${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
+  }
 
-  def newFieldId(): String = s"field_${Random.alphanumeric take 10 mkString}"
+  def newFieldId(): String = s"field_${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
 
   def appendDefaultStringTypeEvents(adder: RequestParameterAdded, eventContext: Option[EventContext]): Vector[RequestsEvent] = {
     val shapeId = newShapeId()
@@ -64,6 +68,20 @@ object ShapesHelper {
       }
     }
   }
+
+
+  def test_resetCounter = {
+    test_counter = 0
+  }
+
+  private
+  var test_counter = 0
+  def nextId: Int = {
+    val a = test_counter
+    test_counter = a + 1
+    a
+  }
+
 }
 
 //STRICTLY FOR TESTING (because everything should go through the root (RfcService))
