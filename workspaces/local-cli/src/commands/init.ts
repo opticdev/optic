@@ -7,7 +7,6 @@ import {fromOptic} from '../shared/conversation';
 import {developerDebugLogger} from '../shared/logger';
 import {lockFilePath} from '../shared/paths';
 import {Client} from '@useoptic/cli-client';
-import * as uuidv4 from 'uuid/v4';
 import openBrowser = require('react-dev-utils/openBrowser.js');
 import * as fs from "fs-extra";
 import * as path from "path";
