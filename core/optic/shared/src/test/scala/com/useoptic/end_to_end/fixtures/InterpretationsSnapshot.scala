@@ -26,8 +26,6 @@ object OpticSnapshotHelper {
   def checkD(testName: String, name2: String, diffVector: Vector[ShapeDiffResult]): Boolean = {
     val jsonDiff = diffVector.asJson
     val snapshot = snapshotsDir / slugify(s"${testName}.${name2}.json")
-    println(testName)
-    println(snapshot)
     if (snapshot.exists) {
       val couldParse = Try {
         decode[Vector[ShapeDiffResult]](snapshot.contentAsString)

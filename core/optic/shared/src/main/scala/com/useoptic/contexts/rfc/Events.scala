@@ -24,7 +24,9 @@ object Events {
         clientId = commandContext.clientId,
         clientSessionId = commandContext.clientSessionId,
         clientCommandBatchId = commandContext.clientCommandBatchId,
-        createdAt = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+        createdAt = {
+          if (sys.env.get("TESTS_ARE_RUNNING").isDefined) "NOW" else DateTimeFormatter.ISO_INSTANT.format(Instant.now())
+        }
       )
   }
 

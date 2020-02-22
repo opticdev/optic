@@ -63,12 +63,6 @@ trait OpticShapeTest extends WordSpec {
     }
   }
 
-  private def setEnv(key: String, value: String) = {
-    val field = System.getenv().getClass.getDeclaredField("m")
-    field.setAccessible(true)
-    val map = field.get(System.getenv()).asInstanceOf[java.util.Map[java.lang.String, java.lang.String]]
-    map.put(key, value)
-  }
 
   private var _currentTestName: Option[String] = None
   implicit def currentTestName = _currentTestName.getOrElse("No Name")
@@ -78,5 +72,4 @@ trait OpticShapeTest extends WordSpec {
     super.runTest(testName, args)
   }
 
-  setEnv("TESTS_ARE_RUNNING", "TRUE")
 }
