@@ -2,28 +2,26 @@ import React from 'react';
 import {Route, Switch} from 'react-router-dom';
 import {InitialRfcCommandsStore} from '../../contexts/InitialRfcCommandsContext';
 import {RfcStore} from '../../contexts/RfcContext';
-import {basePaths, routerPaths} from '../../RouterPaths';
+import {routerPaths} from '../../RouterPaths';
 import {NavigationStore} from '../../contexts/NavigationContext';
 import {RequestsDetailsPage} from '../requests/EndpointPage';
 import {UrlsX} from '../paths/NewUnmatchedUrlWizard';
 import RequestDiffX from '../diff/RequestDiffX';
 import {TrafficSessionStore} from '../../contexts/TrafficSessionContext';
-import {GenericContextFactory} from '../../contexts/GenericContextFactory';
 import compose from 'lodash.compose';
 import Navigation from '../navigation/Navbar';
 import {ApiOverviewContextStore} from '../../contexts/ApiOverviewContext';
 import ApiOverview from '../navigation/ApiOverview';
 import APIDashboard, {IntegrationsDashboard} from '../dashboards/APIDashboard';
 import {IntegrationsContextStore} from '../../contexts/IntegrationsContext';
-import NewBehavior from '../navigation/NewBehavior';
 import Redirect from 'react-router-dom/es/Redirect';
 import {ProductDemoStore} from '../navigation/ProductDemo';
 import Init from '../onboarding/Init';
-import {SpecServiceContext, SpecServiceStore, withSpecServiceContext} from '../../contexts/SpecServiceContext';
+import {SpecServiceStore, withSpecServiceContext} from '../../contexts/SpecServiceContext';
 
 class LoaderFactory {
   static build(options) {
-    const {notificationAreaComponent, shareButtonComponent, demo, basePath, specServiceTask} = options;
+    const {notificationAreaComponent, shareButtonComponent, demo, basePath, specServiceTask, RfcStoreImpl = RfcStore} = options;
 
     const entryBasePath = basePath;
 
@@ -37,11 +35,11 @@ class LoaderFactory {
           specService={specService}
         >
           <SpecServiceStore specService={specService}>
-          <Switch>
-            <Route exact path={routerPaths.diffUrls(match.path)} component={UrlsX}/>
-            <Route exact path={routerPaths.diffRequest(match.path)} component={RequestDiffX}/>
-            <Route component={withSpecServiceContext(ApiOverview)}/>
-          </Switch>
+            <Switch>
+              <Route exact path={routerPaths.diffUrls(match.path)} component={UrlsX}/>
+              <Route exact path={routerPaths.diffRequest(match.path)} component={RequestDiffX}/>
+              <Route component={withSpecServiceContext(ApiOverview)}/>
+            </Switch>
           </SpecServiceStore>
         </TrafficSessionStore>
       );
@@ -101,7 +99,7 @@ class LoaderFactory {
           <IntegrationsContextStore integrations={integrations}>
             <SpecServiceStore specService={specService}>
               <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
-                <RfcStore specService={specService}>
+                <RfcStoreImpl specService={specService}>
                   <ApiOverviewContextStore specService={specService}>
                     <Navigation notifications={notificationAreaComponent}
                                 entryBasePath={entryBasePath}
@@ -122,7 +120,7 @@ class LoaderFactory {
                       </Switch>
                     </Navigation>
                   </ApiOverviewContextStore>
-                </RfcStore>
+                </RfcStoreImpl>
               </InitialRfcCommandsStore>
             </SpecServiceStore>
           </IntegrationsContextStore>

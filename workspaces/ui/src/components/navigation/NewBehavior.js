@@ -41,6 +41,7 @@ import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import {LightTooltip} from '../tooltips/LightTooltip';
 import {SummaryStatus} from '../dashboards/APIDashboard';
 import CheckIcon from '@material-ui/icons/Check';
+import LocalDoesNotMatch from './LocalDoesNotMatch';
 
 const useStyles = makeStyles({
   section: {
@@ -369,7 +370,7 @@ export const NewBehaviorWrapper = compose(withRfcContext, withIntegrationsContex
 export const NewBehaviorSideBar = () => (
   <NewBehaviorWrapper>
     {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl, unrecognizedUrlCount, cachedQueryResults}) => {
-      return <NewBehavior
+      return <LocalDoesNotMatch
         isLoading={isLoading}
         requestIdsWithDiffs={requestIdsWithDiffs}
         sessionId={lastSessionId}

@@ -98,7 +98,7 @@ export class HttpToolkitCapturingProxy {
     };
 
     const proxy = mockttp.getLocal({
-      cors: true,
+      cors: false,
       debug: false,
       https,
       recordTraffic: false

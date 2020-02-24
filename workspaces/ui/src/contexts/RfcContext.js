@@ -6,7 +6,6 @@ import debounce from 'lodash.debounce';
 import {withSnackbar} from 'notistack';
 import uuidv4 from 'uuid/v4';
 import {withCommandContext} from './CommandContext';
-import {specService} from '../services/SpecService';
 import memoize from 'memoize-weak';
 
 const {
@@ -168,7 +167,7 @@ class LocalRfcStoreWithoutContext extends RfcStoreWithoutContext {
   };
 
   persistEvents = debounce(async () => {
-    const response = await specService.saveEvents(this.state.eventStore, this.props.rfcId);
+    const response = await this.props.specService.saveEvents(this.state.eventStore, this.props.rfcId);
 
     if (response.ok) {
       // this.props.enqueueSnackbar('Saved', { 'variant': 'success' })

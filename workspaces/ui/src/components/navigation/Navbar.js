@@ -12,7 +12,7 @@ import {secondary} from '../../theme';
 import Collapse from '@material-ui/core/Collapse';
 import {withNavigationContext} from '../../contexts/NavigationContext';
 import {PURPOSE} from '../../ContributionKeys';
-import {DisplayPath} from '../paths/DisplayPath';
+import {DisplayPath, DisplayPathOnDark, DisplayPathSidebar} from '../paths/DisplayPath';
 import {PathIdToPathString} from '../paths/PathIdToPathString';
 import {NavHashLink as NavLink} from 'react-router-hash-link';
 import ExpandLess from '@material-ui/icons/ExpandLess';
@@ -25,8 +25,17 @@ import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
 import {DocDivider} from '../requests/DocConstants';
 import {Show} from '../shared/Show';
 import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
-
-const drawerWidth = 280;
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import IconButton from '@material-ui/core/IconButton';
+import DescriptionIcon from '@material-ui/icons/Description';
+import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
+import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
+import {LightTooltip} from '../tooltips/LightTooltip';
+import CodeIcon from '@material-ui/icons/Code';
+import LocalDoesNotMatch from './LocalDoesNotMatch';
+import Card from '@material-ui/core/Card';
+const drawerWidth = 270;
 
 const styles = theme => ({
   drawer: {
@@ -35,12 +44,38 @@ const styles = theme => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    backgroundColor: '#1B2958'
+    backgroundColor: '#1B2958',
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  topLevel: {
+    width: 55,
+    // backgroundColor: '#2b3966',
+    overflow: 'hidden',
+    borderRight: '1px solid #3F5597',
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
+  },
+  navButton: {
+    marginTop: 6
+  },
+  opticLogo: {
+      marginTop: 5
+  },
+  mainSection: {
+    flex: 1
   },
   title: {
-    textAlign: 'center',
-    marginTop: 20,
-    color: '#c4c4c4'
+    textAlign: 'left',
+    width: '100%',
+    color: '#c4c4c4',
+    paddingBottom: 3,
+    borderBottom: '1px solid #4755a1'
+  },
+  nested: {
+    padding: 0,
+    paddingLeft: 8
   },
   middle: {
     padding: 10,
@@ -110,6 +145,11 @@ class Navigation extends React.Component {
     //   </StyledTabs>
     // );
 
+    const menuItems = [
+      {name: 'Specification', icon: <DescriptionIcon style={{color: '#e2e2e2'}}/>, link:`${baseUrl}/documentation`},
+      // {name: 'Monitoring', icon: <NetworkCheckIcon style={{color: '#e2e2e2'}}/>},
+      // {name: 'Changelog', icon: <ChangeHistoryIcon style={{color: '#e2e2e2'}}/>},
+    ];
     return (
       <div className={classes.root}>
         <Drawer
@@ -123,28 +163,31 @@ class Navigation extends React.Component {
           anchor="left"
         >
 
-          <div>
+          <div className={classes.topLevel}>
+            <img src="/optic-logo.svg" width={50} className={classes.opticLogo}/>
+            <Switch>
+              <Route exact path={routerPaths.init(entryBasePath)}
+                     component={() => (
+                       <LightTooltip title={'Finish Setup'} placement="right">
+                         <IconButton className={classes.navButton}>
+                           <CodeIcon style={{color: '#e2e2e2'}} />
+                         </IconButton>
+                       </LightTooltip>
+                     )}/>
+            </Switch>
+            {menuItems.map(i => (
+              <LightTooltip title={i.name} component={Link} to={i.link} placement="right">
+                <IconButton className={classes.navButton}>
+                  {i.icon}
+                </IconButton>
+              </LightTooltip>
+            ))}
+          </div>
 
-            <div className={classes.middle}>
-              {notifications}
-            </div>
-
-            <Typography variant="h6" className={classes.title}>
-              {apiName}
-            </Typography>
-
+          <div className={classes.mainSection}>
             <Switch>
               <Route path={baseUrl} component={() => (
                 <List>
-
-                  <Switch>
-                    <Route exact path={routerPaths.init(entryBasePath)}
-                           component={() => <MainMenuItem name="Finish Setup" to={baseUrl + '/init'}/>}/>
-                  </Switch>
-
-                  <MainMenuItem name="Dashboard" to={baseUrl + '/dashboard'}/>
-                  <MainMenuItem name="API Documentation" to={baseUrl + '/documentation'}/>
-
                   <Switch>
                     <Route exact path={routerPaths.apiDocumentation(entryBasePath)} component={() => (
                       <ApiDocsSubMenu operationsToRender={operationsToRender}
@@ -177,6 +220,8 @@ class Navigation extends React.Component {
           {children}
         </div>
 
+        {notifications}
+
       </div>
     );
   }
@@ -205,9 +250,7 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
 
     const {requestId, request} = operationsToRender[0];
     const {httpMethod, pathComponentId} = request.requestDescriptor;
-    const purpose = contributions.getOrUndefined(requestId, PURPOSE) || (
-      <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
-    );
+    const purpose = contributions.getOrUndefined(requestId, PURPOSE)
     return (
       <ListItem button
                 to={`${basePath}${requestId}`} exact activeClassName={basePath !== '#' && classes.selected}
@@ -217,7 +260,7 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
                 dense
                 className={classes.nested}>
         <ListItemText
-          primary={purpose}
+          primary={<DisplayPathSidebar method={httpMethod} purpose={purpose} url={<PathIdToPathString pathId={pathComponentId}/>}/>}
           classes={{dense: classes.dense}}
           primaryTypographyProps={{
             variant: 'overline',
@@ -236,11 +279,7 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
       {operationsToRender.map(({requestId, request}) => {
 
         const {httpMethod, pathComponentId} = request.requestDescriptor;
-        const purpose = contributions.getOrUndefined(requestId, PURPOSE) || (
-          <DisplayPath method={httpMethod} url={<PathIdToPathString pathId={pathComponentId}/>}/>
-        );
-
-
+        const purpose = contributions.getOrUndefined(requestId, PURPOSE)
         return (
           <ListItem button
                     disableRipple
@@ -255,11 +294,11 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
                     dense
                     className={classes.nested}>
             <ListItemText
-              primary={purpose}
+              primary={<DisplayPathSidebar method={httpMethod} purpose={purpose} url={<PathIdToPathString pathId={pathComponentId}/>}/>}
               classes={{dense: classes.dense, selected: classes.selected}}
               primaryTypographyProps={{
                 variant: 'overline',
-                component:'div',
+                component: 'div',
                 style: {textTransform: 'none', textOverflow: 'ellipsis'},
                 className: classes.item
               }}/>
@@ -272,12 +311,22 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
 
 export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, baseConceptsPath, allPaths, concepts, cachedQueryResults, basePath}) => {
 
+  if (operationsToRender.length === 0) {
+    return (
+      <Card style={{backgroundColor: '#4755a1', margin: 20, padding: 5, textAlign: 'center'}}>
+        <Typography variant="subtitle2" style={{color: 'white'}}>
+          No Endpoints Documented
+        </Typography>
+      </Card>
+    )
+  }
+
   return <>
-    <Show when={operationsToRender.length} style={{marginTop: 11}}>
-      <Divider style={{backgroundColor: '#3d4989'}}/>
+
+    <Show when={operationsToRender.length > 0} style={{marginTop: 11}}>
       <List
         component="nav"
-        subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>
+        subheader={<ListSubheader className={classes.subHeader}>
           <Typography variant="overline" className={classes.title}>Endpoints</Typography>
         </ListSubheader>}
         dense={true}
@@ -287,7 +336,6 @@ export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, 
       </List>
     </Show>
     <Show when={concepts.length}>
-      <Divider style={{backgroundColor: '#3d4989'}}/>
       <List
         component='nav'
         subheader={concepts.length > 0 && <ListSubheader className={classes.subHeader}>
@@ -315,7 +363,7 @@ export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, 
                   primary={i.name}
                   dense
                   classes={{dense: classes.dense, selected: classes.selected}}
-                  primaryTypographyProps={{className: classes.item, component:'div', style: {fontSize: 12}}}/>
+                  primaryTypographyProps={{className: classes.item, component: 'div', style: {marginLeft: 6, fontSize: 12}}}/>
               </ListItem>
             );
           })

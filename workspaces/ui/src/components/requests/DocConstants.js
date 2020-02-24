@@ -31,6 +31,14 @@ export const methodColors = {
   'DELETE': '#cd8d8c',
 };
 
+export const methodColorsDark = {
+  'GET': '#276c4e',
+  'POST': '#264859',
+  'PUT': '#69340a',
+  'PATCH': '#796384',
+  'DELETE': '#634444',
+};
+
 export const primitiveDocColors = {
   $string: '#00f2ff',
   $number: '#e48f91',
