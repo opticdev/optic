@@ -9,7 +9,7 @@ import * as path from 'path';
 import * as fs from 'fs-extra';
 import {CapturesHelpers, ExampleRequestsHelpers, makeRouter} from './routers/spec-router';
 
-export const log = fs.createWriteStream('.optic-daemon.log');
+export const log = fs.createWriteStream('./.optic-daemon.log');
 
 export interface ICliServerConfig {
   jwtSecret: string
