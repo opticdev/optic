@@ -21,8 +21,53 @@ function TextF({}) {
   );
 }
 
+<<<<<<< Updated upstream
 storiesOf('large shapes')
   .add('basic', mui((() => {
+=======
+    return (
+      <div>
+        <TestingDashboard report={reportStub}/>
+      </div>
+    );
+  })()));
+
+storiesOf('new diff page')
+  .add('diff viewer', mui((() => {
+
+    const diffs = [
+      {
+        title: 'Unexpected field \'hello\' observed',
+        diffHash: 'a',
+        group: 'query',
+        interpretations: [
+          {'action': 'Add field \'hello\''},
+          {'action': 'Make parent field a Map[String, OneOf[String, Number]]'},
+        ],
+        interactions: [
+
+        ]
+      },
+      {
+        title: 'Missing expected field \'goodbye\'',
+        diffHash: 'ab',
+        group: 'requestBody',
+        interpretations: [
+          {'action': 'Make field \'goodbye\' optional'},
+          {'action': 'Remove field \'goodbye\''},
+        ]
+      },
+      {
+        title: 'Value for \'monkey\' was not a number',
+        diffHash: 'abc',
+        group: 'requestBody',
+        interpretations: [
+          {'action': 'Make field \'monkey\' a string'},
+          {'action': 'Remove field \'monkey\' OneOf[String, Number]'},
+        ]
+      },
+    ];
+>>>>>>> Stashed changes
 
     return (
       <div>

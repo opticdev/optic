@@ -146,11 +146,10 @@ class Navigation extends React.Component {
     // );
 
     const menuItems = [
-      {name: 'Specification', icon: <DescriptionIcon style={{color: '#e2e2e2'}}/>},
-      {name: 'Monitoring', icon: <NetworkCheckIcon style={{color: '#e2e2e2'}}/>},
-      {name: 'Changelog', icon: <ChangeHistoryIcon style={{color: '#e2e2e2'}}/>},
+      {name: 'Specification', icon: <DescriptionIcon style={{color: '#e2e2e2'}}/>, link:`${baseUrl}/documentation`},
+      // {name: 'Monitoring', icon: <NetworkCheckIcon style={{color: '#e2e2e2'}}/>},
+      // {name: 'Changelog', icon: <ChangeHistoryIcon style={{color: '#e2e2e2'}}/>},
     ];
-
     return (
       <div className={classes.root}>
         <Drawer
@@ -171,13 +170,13 @@ class Navigation extends React.Component {
                      component={() => (
                        <LightTooltip title={'Finish Setup'} placement="right">
                          <IconButton className={classes.navButton}>
-                           <CodeIcon color="secondary" />
+                           <CodeIcon style={{color: '#e2e2e2'}} />
                          </IconButton>
                        </LightTooltip>
                      )}/>
             </Switch>
             {menuItems.map(i => (
-              <LightTooltip title={i.name} placement="right">
+              <LightTooltip title={i.name} component={Link} to={i.link} placement="right">
                 <IconButton className={classes.navButton}>
                   {i.icon}
                 </IconButton>
