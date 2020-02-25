@@ -27,6 +27,13 @@ import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
 import {DocQueryParams} from './DocQueryParams';
 import {HasDiffRequestToolBar} from '../navigation/NewBehavior';
 import {extractRequestAndResponseBodyAsJs} from '@useoptic/domain';
+import IconButton from '@material-ui/core/IconButton';
+import VerticalSplitIcon from '@material-ui/icons/VerticalSplit';
+import TimelineIcon from '@material-ui/icons/Timeline';
+import {AccountCircle} from '@material-ui/icons';
+import {LightTooltip} from '../tooltips/LightTooltip';
+import Badge from '@material-ui/core/Badge';
+import {EndpointsContextStore, EndpointsContext, withEndpointsContext} from '../../contexts/EndpointContext';
 
 const styles = theme => ({
   root: {
@@ -261,6 +268,9 @@ class _EndpointPage extends React.Component {
                                             getContribution={getContribution}/>;
 
     const requestBodyRender = (() => {
+      if (!requestBody) {
+        return
+      }
       const {httpContentType, shapeId, isRemoved} = requestBody;
       if (Object.keys(requestBody).length && !isRemoved) {
         return (
@@ -278,30 +288,30 @@ class _EndpointPage extends React.Component {
     })();
 
 
-    const responsesRendered = (() => responses.map(response => {
-      const {responseId, responseDescriptor} = response;
-      const {httpStatusCode, bodyDescriptor} = responseDescriptor;
-      const {httpContentType, shapeId} = getNormalizedBodyDescriptor(bodyDescriptor);
-
-      return (
-        <DocResponse
-          statusCode={httpStatusCode}
-          responseId={responseId}
-          description={getContribution(responseId, BODY_DESCRIPTION)}
-          fields={[]}
-          contentType={httpContentType}
-          shapeId={shapeId}
-          showShapesFirst={showShapesFirst}
-          updateContribution={updateContribution}
-          example={responseExamples(httpStatusCode)}
-        />
-      );
-    }))();
-
-    const firstResponse = responsesRendered[0];
-    const remainingResponses = responsesRendered.slice(1);
-
-    const showButton = !this.state.showAllResponses && remainingResponses.length > 0;
+    // const responsesRendered = (() => responses.map(response => {
+    //   const {responseId, responseDescriptor} = response;
+    //   const {httpStatusCode, bodyDescriptor} = responseDescriptor;
+    //   const {httpContentType, shapeId} = getNormalizedBodyDescriptor(bodyDescriptor);
+    //
+    //   return (
+    //     <DocResponse
+    //       statusCode={httpStatusCode}
+    //       responseId={responseId}
+    //       description={getContribution(responseId, BODY_DESCRIPTION)}
+    //       fields={[]}
+    //       contentType={httpContentType}
+    //       shapeId={shapeId}
+    //       showShapesFirst={showShapesFirst}
+    //       updateContribution={updateContribution}
+    //       example={responseExamples(httpStatusCode)}
+    //     />
+    //   );
+    // }))();
+    //
+    // const firstResponse = responsesRendered[0];
+    // const remainingResponses = responsesRendered.slice(1);
+    //
+    // const showButton = !this.state.showAllResponses && remainingResponses.length > 0;
 
     return (
       <div className={classes.root}>
@@ -311,21 +321,21 @@ class _EndpointPage extends React.Component {
         <div style={{marginTop: 65, marginBottom: 65}}/>
         {/*{queryParameters}*/}
         {requestBodyRender}
-        <div style={{marginTop: 65, marginBottom: 65}}/>
-        {firstResponse}
+        {/*<div style={{marginTop: 65, marginBottom: 65}}/>*/}
+        {/*{firstResponse}*/}
 
-        {showButton && (
-          <Button variant="outlined"
-                  color="primary"
-                  onClick={this.toggleAllResponses}
-                  className={classes.showMore}>
-            <ExpandMoreIcon style={{marginRight: 6}}/>
-            Show ({remainingResponses.length}) Other Response{remainingResponses.length > 1 && 's'}
-          </Button>
-        )}
-        <Collapse in={this.state.showAllResponses}>
-          {remainingResponses}
-        </Collapse>
+        {/*{showButton && (*/}
+        {/*  <Button variant="outlined"*/}
+        {/*          color="primary"*/}
+        {/*          onClick={this.toggleAllResponses}*/}
+        {/*          className={classes.showMore}>*/}
+        {/*    <ExpandMoreIcon style={{marginRight: 6}}/>*/}
+        {/*    Show ({remainingResponses.length}) Other Response{remainingResponses.length > 1 && 's'}*/}
+        {/*  </Button>*/}
+        {/*)}*/}
+        {/*<Collapse in={this.state.showAllResponses}>*/}
+        {/*  {remainingResponses}*/}
+        {/*</Collapse>*/}
       </div>
     );
   }
@@ -335,31 +345,73 @@ export const EndpointPage = withStyles(styles)(_EndpointPage);
 
 export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyles(styles)(({classes, cachedQueryResults, baseUrl, match}) => {
 
-  const {requestId} = match.params;
-
-  const purpose = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
-
-  return (
-    <div className={classes.container}>
-
-      <Helmet>
-        <title>{purpose}</title>
-      </Helmet>
-      <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
-        <Toolbar variant="dense">
-          <HasDiffRequestToolBar requestId={requestId}/>
-          <div style={{flex: 1, textAlign: 'center'}}>
-            <Typography variant="h6" color="primary">{purpose}</Typography>
-          </div>
-        </Toolbar>
-      </AppBar>
-
-      <div className={classes.scroll}>
-        <HighlightedIDsStore>
-          <EndpointPageWithQuery requestId={requestId}/>
-        </HighlightedIDsStore>
-      </div>
-
-    </div>
-  );
+  return <div>DEPRECATED</div>
 })));
+
+
+export const RequestsDetailsPageNew = compose(withEndpointsContext, withStyles(styles))(({classes, match}) => {
+
+  const {pathId, method} = match.params;
+  return (
+    <EndpointsContextStore pathId={pathId} method={method}>
+      <EndpointsContext.Consumer>
+        {({endpointDescriptor}) => {
+          const {fullPath, httpMethod, endpointPurpose, pathParameters} = endpointDescriptor;
+          return (
+            <div className={classes.container}>
+              <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
+                <Toolbar variant="dense">
+                  {/*<HasDiffRequestToolBar requestId={requestId}/>*/}
+                  <div style={{flex: 1, textAlign: 'center'}}>
+                    <Typography variant="h6" color="primary">{endpointPurpose}</Typography>
+                  </div>
+                  {/**/}
+                  <div>
+                    <LightTooltip placement="bottom" title="Show Analytics Overlays">
+                      <IconButton>
+                        <TimelineIcon color="primary" size="small"/>
+                      </IconButton>
+                    </LightTooltip>
+                    <LightTooltip placement="bottom" title="Show Diff">
+                      <IconButton>
+                        <Badge badgeContent={4} color="secondary" overlap="circle">
+                          <VerticalSplitIcon color="primary" size="small"/>
+                        </Badge>
+                      </IconButton>
+                    </LightTooltip>
+                  </div>
+                </Toolbar>
+              </AppBar>
+
+              <div className={classes.scroll}>
+                <NamerStore disable={true}>
+                  <HighlightedIDsStore>
+                    <div className={classes.wrapper}>
+                      <EndpointPage
+                        // endpointPurpose={contributions.getOrUndefined(requestId, PURPOSE)}
+                        // endpointDescription={contributions.getOrUndefined(requestId, DESCRIPTION)}
+                        // requestId={requestId}
+                        // updateContribution={(id, key, value) => {
+                        //   handleCommand(updateContribution(id, key, value));
+                        // }}
+                        // getContribution={(id, key) => contributions.getOrUndefined(id, key)}
+                        // showShapesFirst={showShapesFirst}
+                        method={httpMethod}
+                        // requestBody={requestBody}
+                        // queryString={queryString}
+                        // requestBodyExample={this.requestBodyExample()}
+                        // responses={sortBy(responsesForRequest, (res) => res.responseDescriptor.httpStatusCode)}
+                        // responseExamples={this.responseExamples()}
+                        url={fullPath}
+                        parameters={pathParameters}
+                      />
+                    </div>
+                  </HighlightedIDsStore>
+                </NamerStore>
+              </div>
+            </div>);
+        }}
+      </EndpointsContext.Consumer>
+    </EndpointsContextStore>
+  );
+});

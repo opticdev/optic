@@ -16,6 +16,7 @@ export const routerPaths = {
     interceptorRoot: () => basePaths.interceptorBasePath,
     localRoot: () => basePaths.localBasePath,
     request: (base) => `${base}/requests/:requestId`,
+    pathMethod: (base) => `${base}/paths/:pathId/method/:method`,
     init: (base) => `${base}/init`,
     apiDashboard: (base) => `${base}/dashboard`,
     apiDocumentation: (base) => `${base}/documentation`,
@@ -24,4 +25,6 @@ export const routerPaths = {
     diff: (base) => `${base}/diff/:sessionId`,
     diffUrls: (base) => `${base}/urls`,
     diffRequest: (base) => `${base}/requests/:requestId`,
+    //@todo -- replace the old flow with this one
+    diffRequestNew: (base) => `${base}/requests-new/:requestId`,
 };

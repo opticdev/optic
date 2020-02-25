@@ -35,6 +35,7 @@ import {LightTooltip} from '../tooltips/LightTooltip';
 import CodeIcon from '@material-ui/icons/Code';
 import LocalDoesNotMatch from './LocalDoesNotMatch';
 import Card from '@material-ui/core/Card';
+
 const drawerWidth = 270;
 
 const styles = theme => ({
@@ -42,8 +43,17 @@ const styles = theme => ({
     width: drawerWidth,
     flexShrink: 0,
   },
+  miniDrawer: {
+    width: 55,
+    flexShrink: 0,
+  },
   drawerPaper: {
     width: drawerWidth,
+    backgroundColor: '#1B2958',
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  miniDrawerPaper: {
     backgroundColor: '#1B2958',
     display: 'flex',
     flexDirection: 'row'
@@ -61,10 +71,10 @@ const styles = theme => ({
     marginTop: 6
   },
   opticLogo: {
-      marginTop: 5
+    marginTop: 5
   },
   mainSection: {
-    flex: 1
+    flex: 1,
   },
   title: {
     textAlign: 'left',
@@ -146,31 +156,32 @@ class Navigation extends React.Component {
     // );
 
     const menuItems = [
-      {name: 'Specification', icon: <DescriptionIcon style={{color: '#e2e2e2'}}/>, link:`${baseUrl}/documentation`},
+      {name: 'Specification', icon: <DescriptionIcon style={{color: '#e2e2e2'}}/>, link: `${baseUrl}/documentation`},
       // {name: 'Monitoring', icon: <NetworkCheckIcon style={{color: '#e2e2e2'}}/>},
       // {name: 'Changelog', icon: <ChangeHistoryIcon style={{color: '#e2e2e2'}}/>},
     ];
-    return (
-      <div className={classes.root}>
+
+    const OpticDrawer = (props) => {
+      return (
         <Drawer
           id="navbar"
           elevation={2}
-          className={classes.drawer}
+          className={props.mini ? classes.miniDrawer : classes.drawer}
           variant={'permanent'}
           classes={{
-            paper: classes.drawerPaper,
+            paper: props.mini ? classes.miniDrawerPaper : classes.drawerPaper,
           }}
           anchor="left"
         >
 
-          <div className={classes.topLevel}>
+          <div className={classes.topLevel} style={props.mini && {borderRight: 'none'}}>
             <img src="/optic-logo.svg" width={50} className={classes.opticLogo}/>
             <Switch>
               <Route exact path={routerPaths.init(entryBasePath)}
                      component={() => (
                        <LightTooltip title={'Finish Setup'} placement="right">
                          <IconButton className={classes.navButton}>
-                           <CodeIcon style={{color: '#e2e2e2'}} />
+                           <CodeIcon style={{color: '#e2e2e2'}}/>
                          </IconButton>
                        </LightTooltip>
                      )}/>
@@ -183,38 +194,47 @@ class Navigation extends React.Component {
               </LightTooltip>
             ))}
           </div>
-
-          <div className={classes.mainSection}>
-            <Switch>
-              <Route path={baseUrl} component={() => (
-                <List>
-                  <Switch>
-                    <Route exact path={routerPaths.apiDocumentation(entryBasePath)} component={() => (
-                      <ApiDocsSubMenu operationsToRender={operationsToRender}
-                                      cachedQueryResults={cachedQueryResults}
-                                      basePath={'#'}
-                                      baseConceptsPath={baseUrl + '/documentation#'}
-                                      allPaths={allPaths}
-                                      concepts={concepts}/>
-                    )}/>
-                    <Route component={() => (
-                      <ApiDocsSubMenu operationsToRender={operationsToRender}
-                                      basePath={baseUrl + '/requests/'}
-                                      baseConceptsPath={baseUrl + '/documentation#'}
-                                      cachedQueryResults={cachedQueryResults}
-                                      allPaths={allPaths}
-                                      concepts={concepts}/>
-                    )}/>
-                  </Switch>
-                </List>
-              )}/>
-            </Switch>
-
-
-          </div>
-          {/*<Divider className={classes.lightDivider}/>*/}
-
+          {props.mini ? null : (<div className={classes.mainSection}>
+            {props.children}
+          </div>)}
         </Drawer>
+      );
+    }
+
+    return (
+      <div className={classes.root}>
+
+        <Switch>
+          <Route path={routerPaths.diff(entryBasePath)} component={() => {
+            return (
+              <OpticDrawer mini={true}/>
+            )
+          }}/>
+          <Route path={baseUrl} component={() => (
+            <OpticDrawer>
+              <List>
+                <Switch>
+                  <Route exact path={routerPaths.apiDocumentation(entryBasePath)} component={() => (
+                    <ApiDocsSubMenu operationsToRender={operationsToRender}
+                                    cachedQueryResults={cachedQueryResults}
+                                    basePath={'#'}
+                                    baseConceptsPath={baseUrl + '/documentation#'}
+                                    allPaths={allPaths}
+                                    concepts={concepts}/>
+                  )}/>
+                  <Route component={() => (
+                    <ApiDocsSubMenu operationsToRender={operationsToRender}
+                                    basePath={baseUrl + '/requests/'}
+                                    baseConceptsPath={baseUrl + '/documentation#'}
+                                    cachedQueryResults={cachedQueryResults}
+                                    allPaths={allPaths}
+                                    concepts={concepts}/>
+                  )}/>
+                </Switch>
+              </List>
+            </OpticDrawer>
+          )}/>
+        </Switch>
 
         <div className={classes.content}>
           {children}
@@ -250,7 +270,7 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
 
     const {requestId, request} = operationsToRender[0];
     const {httpMethod, pathComponentId} = request.requestDescriptor;
-    const purpose = contributions.getOrUndefined(requestId, PURPOSE)
+    const purpose = contributions.getOrUndefined(requestId, PURPOSE);
     return (
       <ListItem button
                 to={`${basePath}${requestId}`} exact activeClassName={basePath !== '#' && classes.selected}
@@ -260,7 +280,8 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
                 dense
                 className={classes.nested}>
         <ListItemText
-          primary={<DisplayPathSidebar method={httpMethod} purpose={purpose} url={<PathIdToPathString pathId={pathComponentId}/>}/>}
+          primary={<DisplayPathSidebar method={httpMethod} purpose={purpose}
+                                       url={<PathIdToPathString pathId={pathComponentId}/>}/>}
           classes={{dense: classes.dense}}
           primaryTypographyProps={{
             variant: 'overline',
@@ -279,7 +300,7 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
       {operationsToRender.map(({requestId, request}) => {
 
         const {httpMethod, pathComponentId} = request.requestDescriptor;
-        const purpose = contributions.getOrUndefined(requestId, PURPOSE)
+        const purpose = contributions.getOrUndefined(requestId, PURPOSE);
         return (
           <ListItem button
                     disableRipple
@@ -294,7 +315,8 @@ const EndpointBasePath = withStyles(styles)(withRfcContext(withNavigationContext
                     dense
                     className={classes.nested}>
             <ListItemText
-              primary={<DisplayPathSidebar method={httpMethod} purpose={purpose} url={<PathIdToPathString pathId={pathComponentId}/>}/>}
+              primary={<DisplayPathSidebar method={httpMethod} purpose={purpose}
+                                           url={<PathIdToPathString pathId={pathComponentId}/>}/>}
               classes={{dense: classes.dense, selected: classes.selected}}
               primaryTypographyProps={{
                 variant: 'overline',
@@ -318,7 +340,7 @@ export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, 
           No Endpoints Documented
         </Typography>
       </Card>
-    )
+    );
   }
 
   return <>
@@ -363,7 +385,11 @@ export const ApiDocsSubMenu = withStyles(styles)(({classes, operationsToRender, 
                   primary={i.name}
                   dense
                   classes={{dense: classes.dense, selected: classes.selected}}
-                  primaryTypographyProps={{className: classes.item, component: 'div', style: {marginLeft: 6, fontSize: 12}}}/>
+                  primaryTypographyProps={{
+                    className: classes.item,
+                    component: 'div',
+                    style: {marginLeft: 6, fontSize: 12}
+                  }}/>
               </ListItem>
             );
           })

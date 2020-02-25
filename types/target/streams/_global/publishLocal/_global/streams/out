@@ -1,0 +1,55 @@
+[0m[[0m[0minfo[0m] [0m[0m:: delivering :: com.useoptic#types_2.12;0.1.0 :: 0.1.0 :: release :: Mon Feb 24 08:24:13 EST 2020[0m
+[0m[[0m[0mdebug[0m] [0m[0m	options = status=release pubdate=Mon Feb 24 08:24:13 EST 2020 validate=true resolveDynamicRevisions=true merge=true resolveId=null pubBranch=null[0m
+[0m[[0m[0minfo[0m] [0m[0m	delivering ivy file to /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/ivy-0.1.0.xml[0m
+[0m[[0m[0mdebug[0m] [0m[0m	deliver done (28ms)[0m
+[0m[[0m[0mdebug[0m] [0m[0mlocal do not support transaction. ivy pattern does not use revision as a directory[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/poms/types_2.12.pom already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/poms/types_2.12.pom (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/poms/types_2.12.pom.sha1 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/poms/types_2.12.pom.sha1 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/poms/types_2.12.pom.md5 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/poms/types_2.12.pom.md5 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0minfo[0m] [0m[0m	published types_2.12 to /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/poms/types_2.12.pom[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/jars/types_2.12.jar already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/jars/types_2.12.jar (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/jars/types_2.12.jar.sha1 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/jars/types_2.12.jar.sha1 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/jars/types_2.12.jar.md5 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/jars/types_2.12.jar.md5 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0minfo[0m] [0m[0m	published types_2.12 to /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/jars/types_2.12.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/srcs/types_2.12-sources.jar already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/srcs/types_2.12-sources.jar (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/srcs/types_2.12-sources.jar.sha1 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/srcs/types_2.12-sources.jar.sha1 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/srcs/types_2.12-sources.jar.md5 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/srcs/types_2.12-sources.jar.md5 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0minfo[0m] [0m[0m	published types_2.12 to /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/srcs/types_2.12-sources.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/docs/types_2.12-javadoc.jar already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/docs/types_2.12-javadoc.jar (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/docs/types_2.12-javadoc.jar.sha1 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/docs/types_2.12-javadoc.jar.sha1 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/docs/types_2.12-javadoc.jar.md5 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/docs/types_2.12-javadoc.jar.md5 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0minfo[0m] [0m[0m	published types_2.12 to /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/docs/types_2.12-javadoc.jar[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/ivys/ivy.xml already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/ivys/ivy.xml (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/ivys/ivy.xml.sha1 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/ivys/ivy.xml.sha1 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0mdebug[0m] [0m[0m/Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/ivys/ivy.xml.md5 already exists, nothing done[0m
+[0m[[0m[33mwarn[0m] [0m[0mAttempting to overwrite /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/ivys/ivy.xml.md5 (non-SNAPSHOT)[0m
+[0m[[0m[33mwarn[0m] [0m[0m	You need to remove it from the cache manually to take effect.[0m
+[0m[[0m[0minfo[0m] [0m[0m	published ivy to /Users/aidancunniffe/.ivy2/local/com.useoptic/types_2.12/0.1.0/ivys/ivy.xml[0m

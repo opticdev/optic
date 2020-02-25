@@ -1,0 +1,31 @@
+[0m[[0m[0mdebug[0m] [0m[0mPackaging /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/types_2.12-0.1.0-tests.jar ...[0m
+[0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$$anon$8.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$$anon$8.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$$anon$9.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$$anon$9.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$$anon$5.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$$anon$5.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$$anon$7.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$$anon$7.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$$anon$3.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$$anon$3.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$$anon$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$$anon$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$$anon$6.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$$anon$6.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$$anon$4.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$$anon$4.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	com/useoptic/types/AvroMappings$$anon$2.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /Users/aidancunniffe/Developer/optic2020/optic/types/target/scala-2.12/test-classes/com/useoptic/types/AvroMappings$$anon$2.class[0m
+[0m[[0m[0mdebug[0m] [0m[0mDone packaging.[0m

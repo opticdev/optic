@@ -4,7 +4,7 @@ import {InitialRfcCommandsStore} from '../../contexts/InitialRfcCommandsContext'
 import {RfcStore} from '../../contexts/RfcContext';
 import {routerPaths} from '../../RouterPaths';
 import {NavigationStore} from '../../contexts/NavigationContext';
-import {RequestsDetailsPage} from '../requests/EndpointPage';
+import {RequestsDetailsPage, RequestsDetailsPageNew} from '../requests/EndpointPage';
 import {UrlsX} from '../paths/NewUnmatchedUrlWizard';
 import RequestDiffX from '../diff/RequestDiffX';
 import {TrafficSessionStore} from '../../contexts/TrafficSessionContext';
@@ -18,6 +18,7 @@ import Redirect from 'react-router-dom/es/Redirect';
 import {ProductDemoStore} from '../navigation/ProductDemo';
 import Init from '../onboarding/Init';
 import {SpecServiceStore, withSpecServiceContext} from '../../contexts/SpecServiceContext';
+import DiffPageNew from '../diff/v2/DiffPageNew';
 
 class LoaderFactory {
   static build(options) {
@@ -38,6 +39,7 @@ class LoaderFactory {
             <Switch>
               <Route exact path={routerPaths.diffUrls(match.path)} component={UrlsX}/>
               <Route exact path={routerPaths.diffRequest(match.path)} component={RequestDiffX}/>
+              <Route exact path={routerPaths.diffRequestNew(match.path)} component={DiffPageNew}/>
               <Route component={withSpecServiceContext(ApiOverview)}/>
             </Switch>
           </SpecServiceStore>
@@ -109,6 +111,8 @@ class LoaderFactory {
                                component={() => <Init/>}/>
                         <Route path={routerPaths.request(basePath)}
                                component={withSpecServiceContext(RequestsDetailsPage)}/>
+                        <Route path={routerPaths.pathMethod(basePath)}
+                               component={withSpecServiceContext(RequestsDetailsPageNew)}/>
                         <Route path={routerPaths.apiDashboard(basePath)}
                                component={withSpecServiceContext(APIDashboard)}/>
                         <Route exact path={routerPaths.integrationsDashboard(basePath)}
