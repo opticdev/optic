@@ -13,6 +13,7 @@ import {ArrowDownwardSharp} from '@material-ui/icons';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {DocGrid} from '../../requests/DocGrid';
+import {EndpointsContext, EndpointsContextStore} from '../../../contexts/EndpointContext';
 
 const styles = theme => ({
   root: {
@@ -41,42 +42,51 @@ const styles = theme => ({
 class DiffPageNew extends React.Component {
   render() {
 
-    const {classes, purpose = 'Hello World'} = this.props;
+    const {pathId, method}  = this.props.match;
+    const {classes}  = this.props;
 
-    return <div className={classes.container}>
+    return (
+      <EndpointsContextStore pathId={pathId} method={method}>
+        <EndpointsContext.Consumer>
+          {({endpointDescriptor}) => {
+            const {fullPath, httpMethod, endpointPurpose, pathParameters} = endpointDescriptor;
+            return (
+              <div className={classes.container}>
 
-      <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
-        <Toolbar variant="dense">
-          <div style={{flex: 1, textAlign: 'center'}}>
-            <Typography variant="h6" color="primary">{purpose}</Typography>
-          </div>
-          <div>
-            <Typography variant="caption" style={{marginRight: 9}}>(0) Changes</Typography>
-            <Button color="primary">Apply Changes</Button>
-          </div>
-        </Toolbar>
-      </AppBar>
+                <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
+                  <Toolbar variant="dense">
+                    <div style={{flex: 1, textAlign: 'center'}}>
+                      <Typography variant="h6" color="primary">{'ABC'}</Typography>
+                    </div>
+                    <div>
+                      <Typography variant="caption" style={{marginRight: 9}}>(0) Changes</Typography>
+                      <Button color="primary">Apply Changes</Button>
+                    </div>
+                  </Toolbar>
+                </AppBar>
 
-      <div className={classes.scroll}>
-        <div className={classes.root}>
-          <DocGrid
-            left={(
-              <Toolbar>
-                <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
-                <BatchActionsMenu />
-              </Toolbar>
-          )} right={(
-            <Toolbar>
-              <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
-              <BatchActionsMenu />
-            </Toolbar>
-          )} />
-
-
-
-        </div>
-      </div>
-    </div>;
+                <div className={classes.scroll}>
+                  <div className={classes.root}>
+                    <DocGrid
+                      left={(
+                        <Toolbar>
+                          <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
+                          <BatchActionsMenu />
+                        </Toolbar>
+                      )} right={(
+                      <Toolbar>
+                        <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
+                        <BatchActionsMenu />
+                      </Toolbar>
+                    )} />
+                  </div>
+                </div>
+              </div>
+            )
+          }}
+        </EndpointsContext.Consumer>
+      </EndpointsContextStore>
+    )
   }
 }
 
