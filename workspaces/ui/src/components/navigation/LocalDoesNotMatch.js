@@ -109,7 +109,7 @@ export default function LocalDoesNotMatch(props) {
                 const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
                 return (
                   <Link style={{textDecoration: 'none', color: 'black'}}
-                        to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}>
+                        to={`${baseUrl}/diff/${sessionId}/paths/${pathId}/methods/${method}`}>
                     <ListItem dense button>
                       <ListItemText primary={path}/>
                     </ListItem>

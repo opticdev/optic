@@ -42,6 +42,7 @@ import {LightTooltip} from '../tooltips/LightTooltip';
 import {SummaryStatus} from '../dashboards/APIDashboard';
 import CheckIcon from '@material-ui/icons/Check';
 import LocalDoesNotMatch from './LocalDoesNotMatch';
+import {BaseDiffSessionManager} from '../diff/BaseDiffSessionManager';
 
 const useStyles = makeStyles({
   section: {
@@ -341,7 +342,8 @@ class NewBehaviorWrapperBase extends React.Component {
             const {rfcId, rfcService} = this.props;
             const {cachedQueryResults, queries} = this.props;
             const {isLoading} = context;
-            const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, {session: context.session});
+            const diffSessionManager = new BaseDiffSessionManager(lastSessionId, context.session, specService)
+            const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, diffSessionManager);
             const rfcState = rfcService.currentState(rfcId);
             const requestIdsWithDiffs = getRequestIdsWithDiffs(rfcState, diffStateProjections);
             const unrecognizedUrlCount = getUnrecognizedUrlCount(rfcState, diffStateProjections);

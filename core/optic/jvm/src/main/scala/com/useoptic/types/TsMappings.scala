@@ -1,5 +1,6 @@
 package com.useoptic.types
 
+import com.useoptic.types.capture.{Body, Capture, GroupingIdentifiers, Header, HttpInteraction, Request, Response}
 import io.circe.Json
 import nl.codestar.scalatsi.TypescriptType.{TSNull, TSString}
 import nl.codestar.scalatsi._

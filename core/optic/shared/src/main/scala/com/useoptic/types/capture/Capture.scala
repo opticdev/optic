@@ -1,4 +1,4 @@
-package com.useoptic.types
+package com.useoptic.types.capture
 
 case class Capture(groupingIdentifiers: GroupingIdentifiers, batchItems: Vector[HttpInteraction])
 

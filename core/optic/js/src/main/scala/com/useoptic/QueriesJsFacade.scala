@@ -10,10 +10,8 @@ import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.generic.auto._
 import io.circe.syntax._
 
-import scala.scalajs.js
-import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
+import scala.scalajs.js.annotation.{JSExportTopLevel}
 import scala.scalajs.js.Dictionary
-import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.scalajs.js
 

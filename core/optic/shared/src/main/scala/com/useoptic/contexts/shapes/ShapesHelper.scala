@@ -82,6 +82,14 @@ object ShapesHelper {
     a
   }
 
+  def toCoreAndBaseShape(shapeEntity: ShapeEntity, shapesState: ShapesState): (ShapeId, CoreShapeKind) = {
+    allCoreShapes.find(_.baseShapeId == shapeEntity.descriptor.baseShapeId) match {
+      case Some(shape) => (shapeEntity.shapeId, shape)
+      case None => {
+        (shapeEntity.descriptor.baseShapeId, toCoreShape(shapesState.shapes(shapeEntity.descriptor.baseShapeId), shapesState))
+      }
+    }
+  }
 }
 
 //STRICTLY FOR TESTING (because everything should go through the root (RfcService))

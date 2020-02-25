@@ -82,17 +82,22 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        case AddRequest(requestId, pathId, httpMethod) => {
-          Validators.ensureRequestIdAssignable(requestId)
-          Validators.ensurePathComponentIdExists(pathId)
-          val shapeId = ShapesHelper.newShapeId()
-          val queryStringParameterId = RequestsServiceHelper.newParameterId()
-          persist(Vector(
-            Events.RequestAdded(requestId, pathId, httpMethod, eventContext),
-            Events.RequestParameterAdded(queryStringParameterId, requestId, "query", "queryString", eventContext),
-            ShapeAdded(shapeId, ObjectKind.baseShapeId, DynamicParameterList(Seq.empty), "", eventContext),
-            Events.RequestParameterShapeSet(queryStringParameterId, ShapedRequestParameterShapeDescriptor(shapeId, false), eventContext)
-          ).asInstanceOf[Vector[RequestsEvent]]: _*)
+        case c: AddRequest => {
+          Validators.ensureRequestIdAssignable(c.requestId)
+          Validators.ensurePathComponentIdExists(c.pathId)
+          val existingRequests = Resolvers.resolveRequests(state, c.pathId, c.httpMethod)
+          if (existingRequests.isEmpty) {
+            val shapeId = ShapesHelper.newShapeId()
+            val queryStringParameterId = RequestsServiceHelper.newParameterId()
+            persist(Vector(
+              Events.RequestParameterAddedByPathAndMethod(queryStringParameterId, c.pathId, c.httpMethod, "query", "queryString", eventContext),
+              ShapeAdded(shapeId, ObjectKind.baseShapeId, DynamicParameterList(Seq.empty), "", eventContext),
+              Events.RequestParameterShapeSet(queryStringParameterId, ShapedRequestParameterShapeDescriptor(shapeId, false), eventContext),
+              Events.RequestAdded(c.requestId, c.pathId, c.httpMethod, eventContext),
+            ).asInstanceOf[Vector[RequestsEvent]]: _*)
+          } else {
+            persist(Events.RequestAdded(c.requestId, c.pathId, c.httpMethod, eventContext))
+          }
         }
 
         case SetRequestContentType(requestId, contentType) => {
@@ -118,10 +123,16 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         ////////////////////////////////////////////////////////////////////////////////
 
-        case AddResponse(responseId, requestId, httpMethod) => {
-          Validators.ensureResponseIdAssignable(responseId)
-          Validators.ensureRequestIdExists(requestId)
-          persist(Events.ResponseAdded(responseId, requestId, httpMethod, eventContext))
+        case c: AddResponse => {
+          Validators.ensureResponseIdAssignable(c.responseId)
+          val request = Validators.ensureRequestIdExists(c.requestId)
+          persist(Events.ResponseAddedByPathAndMethod(c.responseId, request.requestDescriptor.pathComponentId, request.requestDescriptor.httpMethod, c.httpStatusCode, eventContext))
+        }
+
+        case c: AddResponseByPathAndMethod => {
+          Validators.ensureResponseIdAssignable(c.responseId)
+          Validators.ensureRequestExists(c.pathId, c.httpMethod)
+          persist(Events.ResponseAddedByPathAndMethod(c.responseId, c.pathId, c.httpMethod, c.httpStatusCode, eventContext))
         }
 
         case SetResponseBodyShape(responseId, bodyDescriptor) => {
@@ -290,6 +301,10 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
       state.withResponse(e.responseId, e.requestId, e.httpStatusCode)
     }
 
+    case e:ResponseAddedByPathAndMethod => {
+      state.withResponseByPathAndMethod(e.responseId, e.pathId, e.httpMethod, e.httpStatusCode)
+    }
+
     case e: ResponseContentTypeSet => {
       state.withResponseContentType(e.responseId, e.httpContentType)
     }
@@ -321,6 +336,10 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
     case e: RequestParameterAdded => {
       state.withRequestParameter(e.parameterId, e.requestId, e.parameterLocation, e.name)
+    }
+
+    case e: RequestParameterAddedByPathAndMethod => {
+      state.withRequestParameterByPathAndMethod(e.parameterId, e.pathId, e.httpMethod, e.parameterLocation, e.name)
     }
 
     case e: RequestParameterShapeSet => {

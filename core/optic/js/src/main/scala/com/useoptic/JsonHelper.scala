@@ -1,5 +1,6 @@
 package com.useoptic
 
+import com.useoptic.types.capture.HttpInteraction
 import io.circe.Json
 
 import scala.scalajs.js
@@ -30,11 +31,21 @@ object JsonHelper {
 
   //def fromAny(any: js.Any): Json = any.asJson
 
-  def seqToJsArray(x: Seq[AnyVal]): js.Array[AnyVal] = {
+  def seqToJsArray(x: Seq[Any]): js.Array[Any] = {
     x.toJSArray
   }
 
   def iteratorToJsIterator(x: Iterator[AnyVal]): js.Iterator[AnyVal] = {
     x.toJSIterator
+  }
+
+  def jsArrayToSeq(x: js.Array[AnyVal]): Seq[AnyVal] = {
+    x.toSeq
+  }
+
+  def fromInteraction(x: js.Any): HttpInteraction = {
+    import io.circe.generic.auto._
+    import io.circe.scalajs.convertJsToJson
+    convertJsToJson(x).right.get.as[HttpInteraction].right.get
   }
 }

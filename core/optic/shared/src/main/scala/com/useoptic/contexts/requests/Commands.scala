@@ -45,15 +45,23 @@ object Commands {
   case class RemovePathParameter(pathId: PathComponentId) extends RequestsCommand
 
   case class AddRequest(requestId: RequestId, pathId: PathComponentId, httpMethod: String) extends RequestsCommand
+  //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests
   case class SetRequestContentType(requestId: RequestId, httpContentType: String) extends RequestsCommand
+  //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command's ability to change the content type anymore, or enforce uniqueness of content types across multiple requests
   case class SetRequestBodyShape(requestId: RequestId, bodyDescriptor: ShapedBodyDescriptor) extends RequestsCommand
+  //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests
   case class UnsetRequestBodyShape(requestId: RequestId) extends RequestsCommand
   case class RemoveRequest(requestId: RequestId) extends RequestsCommand
 
+  @Deprecated
   case class AddQueryParameter(parameterId: RequestParameterId, requestId: RequestId, name: String) extends RequestsCommand
+  @Deprecated
   case class SetQueryParameterShape(parameterId: RequestParameterId, parameterDescriptor: ShapedRequestParameterShapeDescriptor) extends RequestsCommand
+  @Deprecated
   case class RenameQueryParameter(parameterId: RequestParameterId, name: String) extends RequestsCommand
+  @Deprecated
   case class UnsetQueryParameterShape(parameterId: RequestParameterId) extends RequestsCommand
+  @Deprecated
   case class RemoveQueryParameter(parameterId: RequestParameterId) extends RequestsCommand
 
   case class AddHeaderParameter(parameterId: RequestParameterId, requestId: RequestId, name: String) extends RequestsCommand
@@ -61,11 +69,16 @@ object Commands {
   case class RenameHeaderParameter(parameterId: RequestParameterId, name: String) extends RequestsCommand
   case class UnsetHeaderParameterShape(parameterId: RequestParameterId) extends RequestsCommand
   case class RemoveHeaderParameter(parameterId: RequestParameterId) extends RequestsCommand
-
+  @Deprecated
   case class AddResponse(responseId: ResponseId, requestId: RequestId, httpStatusCode: Int) extends RequestsCommand
+  case class AddResponseByPathAndMethod(responseId: ResponseId, pathId: PathComponentId, httpMethod: String, httpStatusCode: Int) extends RequestsCommand
+  //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple requests
   case class SetResponseContentType(responseId: ResponseId, httpContentType: String) extends RequestsCommand
+  //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command anymore
   case class SetResponseStatusCode(responseId: ResponseId, httpStatusCode: Int) extends RequestsCommand
+  //@GOTCHA #leftovers-from-designer-ui @TODO we should probably not support this command's ability to change the content type anymore, or enforce uniqueness of content types across multiple responses
   case class SetResponseBodyShape(responseId: ResponseId, bodyDescriptor: ShapedBodyDescriptor) extends RequestsCommand
+  //@GOTCHA @TODO we should probably not support this command anymore, or enforce uniqueness of content types across multiple responses
   case class UnsetResponseBodyShape(responseId: ResponseId) extends RequestsCommand
   case class RemoveResponse(responseId: ResponseId) extends RequestsCommand
 

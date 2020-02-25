@@ -23,6 +23,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
     const {requests, pathsById, requestIdsByPathId, responses, contributions, requestParameters} = cachedQueryResults;
 
     const requestIdsOnPath = (requestIdsByPathId[pathId] || []).map(requestId => requests[requestId]);
+    debugger
     const requestsOnPathAndMethod = requestIdsOnPath.filter(request => request.requestDescriptor.httpMethod === method.toUpperCase());
 
     if (requestsOnPathAndMethod.length) {
@@ -84,6 +85,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
       );
 
     } else {
+      debugger
       return <div>Endpoint Not Found</div>;
     }
   }

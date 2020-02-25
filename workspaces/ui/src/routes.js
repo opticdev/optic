@@ -19,6 +19,8 @@ class AppRoutes extends React.Component {
 
             <Route strict path={routerPaths.interceptorRoot()} component={Interceptor} />
             <Redirect from={routerPaths.interceptorRoot()} to={routerPaths.interceptorRoot()} />
+            <Route strict path={routerPaths.exampleSessionsRoot()} component={ExampleSessionsLoader} />
+            <Redirect from={routerPaths.exampleSessionsRoot()} to={routerPaths.exampleSessionsRoot()} />
             <Route strict path={routerPaths.localRoot()} component={LocalLoader} />
             <Redirect to={routerPaths.localRoot()} />
           </Switch>

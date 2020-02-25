@@ -18,7 +18,6 @@ lazy val optic =
       name := "optic-core",
       version := "0.1-SNAPSHOT",
       libraryDependencies ++= Seq(
-        "com.useoptic" %% "types" % "0.1.0",
         "io.github.cquiroz" %%% "scala-java-time" % "2.0.0-RC2",
         "io.circe" %%% "circe-core" % circeVersion,
         "io.circe" %%% "circe-generic" % circeVersion,
@@ -36,7 +35,7 @@ lazy val optic =
       }
     ) // defined in sbt-scalajs-crossproject
     .jvmSettings(
-      typescriptClassesToGenerateFor := Seq("com.useoptic.types.Capture"),
+      typescriptClassesToGenerateFor := Seq("com.useoptic.types.capture.Capture"),
       // The output file which will contain the typescript interfaces
       typescriptOutputFile := new java.io.File("build/optic-types.ts"),
       // Include the package(s) of the classes here

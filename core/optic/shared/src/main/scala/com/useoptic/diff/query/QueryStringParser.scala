@@ -45,7 +45,7 @@ class QueryStringDiffer(shapesState: ShapesState, parser: QueryStringParser) {
         val expectedShape = shapesState.shapes(c.shapeId)
         val shapeDiff = ShapeDiffer.diff(expectedShape, ShapeLike.fromActualJson(Some(json)))(shapesState)
         //println(shapeDiff.hasNext)
-        val diff = shapeDiff.map(d => UnmatchedQueryParameterShape(expected.requestParameterDescriptor.requestId, expected.parameterId, d, json))
+        val diff = shapeDiff.map(d => UnmatchedQueryParameterShape(expected.requestParameterDescriptor.pathId, expected.parameterId, d, json))
         //println(diff.hasNext)
         diff
       }

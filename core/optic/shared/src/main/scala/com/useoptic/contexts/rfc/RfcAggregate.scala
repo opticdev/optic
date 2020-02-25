@@ -12,6 +12,10 @@ import com.useoptic.contexts.shapes.Events.ShapesEvent
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesCommandContext, ShapesState}
 import com.useoptic.ddd.{Effects, EventSourcedAggregate}
 
+import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+
+@JSExport
+@JSExportAll
 case class RfcCommandContext(
                               override val clientId: String,
                               override val clientSessionId: String,

@@ -17,7 +17,6 @@ import io.circe.syntax._
 import scala.util.Try
 
 
-
 object OpticSnapshotHelper {
 
   val snapshotsDir = "domain-snapshots".toFile
@@ -39,7 +38,7 @@ object OpticSnapshotHelper {
       }
 
     } else {
-      println("Creating new snapshot. Don't trust this the first time -- doesn't mean things work"+ snapshot)
+      println("Creating new snapshot. Don't trust this the first time -- doesn't mean things work" + snapshot)
       snapshot.write(jsonDiff.noSpaces)
       true
     }
@@ -54,7 +53,7 @@ object OpticSnapshotHelper {
     if (snapshot.exists) {
       a.asJson.noSpaces == snapshot.contentAsString
     } else {
-      println("Creating new snapshot. Don't trust this the first time -- doesn't mean things work"+ snapshot)
+      println("Creating new snapshot. Don't trust this the first time -- doesn't mean things work" + snapshot)
       snapshot.write(jsonDiff.noSpaces)
       true
     }
@@ -71,7 +70,7 @@ object OpticSnapshotHelper {
     import java.math.BigInteger
     val md = MessageDigest.getInstance("MD5")
     val digest = md.digest(s.getBytes)
-    val bigInt = new BigInteger(1,digest)
+    val bigInt = new BigInteger(1, digest)
     val hashedString = bigInt.toString(16)
     hashedString
   }

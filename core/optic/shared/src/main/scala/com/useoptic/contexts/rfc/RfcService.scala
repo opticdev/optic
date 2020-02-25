@@ -10,6 +10,7 @@ import scala.util.Try
 
 class RfcService(eventStore: EventStore[RfcEvent]) extends EventSourcedService[RfcCommand, RfcCommandContext, RfcState] {
   private val repository = new EventSourcedRepository[RfcState, RfcEvent](RfcAggregate, eventStore)
+
   def handleCommand(id: AggregateId, command: RfcCommand, context: RfcCommandContext): Unit = {
     val state = repository.findById(id)
     val effects = RfcAggregate.handleCommand(state)((context, command))
@@ -31,13 +32,17 @@ object RfcServiceJSFacade {
     new InMemoryEventStore[RfcEvent]
   }
 
+  def makeRfcService(eventStore: EventStore[RfcEvent]) = {
+    new RfcService(eventStore)
+  }
+
   def fromCommands(eventStore: EventStore[RfcEvent], aggregateId: AggregateId, commands: Vector[RfcCommand], commandContext: RfcCommandContext): RfcService = {
     val service = new RfcService(eventStore)
     commands.foreach(command => {
       val result = Try(service.handleCommand(aggregateId, command, commandContext))
       if (result.isFailure) {
-//        println(command)
-//        println(result)
+                println(command)
+        //        println(result)
         throw result.failed.get
       }
     })

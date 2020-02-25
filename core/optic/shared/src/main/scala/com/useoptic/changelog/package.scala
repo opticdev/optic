@@ -23,8 +23,11 @@ package object changelog {
 
   case class RequestChangeHelper(requestId: RequestId, rfcState: RfcState) {
 
-    def responses: Map[ResponseId, ResponseChangeHelper] = rfcState.requestsState.responses.collect {
-      case i if i._2.responseDescriptor.requestId == requestId => (i._1, ResponseChangeHelper(i._2, rfcState))
+    def responses: Map[ResponseId, ResponseChangeHelper] = {
+      val request = rfcState.requestsState.requests(requestId)
+      rfcState.requestsState.responses.collect {
+        case i if i._2.responseDescriptor.pathId == request.requestDescriptor.pathComponentId && i._2.responseDescriptor.httpMethod == request.requestDescriptor.httpMethod => (i._1, ResponseChangeHelper(i._2, rfcState))
+      }
     }
 
     def pathId = rfcState.requestsState.requests(requestId).requestDescriptor.pathComponentId

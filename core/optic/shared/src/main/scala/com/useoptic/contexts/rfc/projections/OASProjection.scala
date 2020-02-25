@@ -13,6 +13,7 @@ import com.useoptic.diff.ShapeDiffer
 import io.circe.Json
 
 class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateId: AggregateId) {
+
   import OASDomain._
 
   lazy val rfcState = rfcService.currentState(aggregateId)
@@ -29,9 +30,11 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
     }
   }
 
-  def responsesForRequest(requestId: String): Vector[HttpResponse] = {
+  def responsesForRequest(request: HttpRequest): Vector[HttpResponse] = {
     queries.requestsState.responses.collect {
-      case (responseId, response) if response.responseDescriptor.requestId == requestId && !response.isRemoved => response
+      case (responseId, response) if response.responseDescriptor.httpMethod == request.requestDescriptor.httpMethod
+        && response.responseDescriptor.pathId == request.requestDescriptor.pathComponentId
+        && !response.isRemoved => response
     }.toVector.sortBy(_.responseDescriptor.httpStatusCode)
   }
 
@@ -46,8 +49,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
     val summary = getContributionOption(request.requestId, "purpose")
     val description = getContributionOption(request.requestId, "description")
 
-    val r = responsesForRequest(request.requestId)
-    val responses = responsesForRequest(request.requestId).sortBy(_.responseDescriptor.httpStatusCode).map {
+    val responses = responsesForRequest(request).sortBy(_.responseDescriptor.httpStatusCode).map {
       case res => {
         val responseDescription = getContributionOption(res.responseId, "body_description")
         (res.responseDescriptor.httpStatusCode.toString, Response(responseDescription, bodyToOAS(res.responseDescriptor.bodyDescriptor)))
@@ -56,7 +58,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
 
     val queryParamShape: Option[FlatShapeProjection.FlatShapeResult] = rfcState.requestsState.requestParameters.filter(x => {
       val (parameterId, parameter) = x
-      parameter.requestParameterDescriptor.requestId == request.requestId && parameter.requestParameterDescriptor.location == "query"
+      parameter.requestParameterDescriptor.pathId == request.requestDescriptor.pathComponentId && parameter.requestParameterDescriptor.httpMethod == request.requestDescriptor.httpMethod && parameter.requestParameterDescriptor.location == "query"
     }).values.headOption.flatMap(query => {
       query.requestParameterDescriptor.shapeDescriptor match {
         case c: Commands.UnsetRequestParameterShapeDescriptor => {
@@ -175,7 +177,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
               QueryParameter(i.fieldName, true, new JsonSchemaProjection(i.shape.id)(rfcState.shapesState).asJsonSchema(true), getContributionOption(i.fieldId, "description"))
             }
           })
-          json = json.add("parameters", Json.arr(queryParameters.map(_.toJson):_*))
+          json = json.add("parameters", Json.arr(queryParameters.map(_.toJson): _*))
         }
 
         Json.fromJsonObject(json)

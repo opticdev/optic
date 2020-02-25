@@ -22,7 +22,7 @@ case class PathComponent(pathId: PathComponentId, descriptor: PathComponentDescr
   }
 }
 
-case class RequestParameterDescriptor(requestId: RequestId, location: String, name: String, shapeDescriptor: RequestParameterShapeDescriptor)
+case class RequestParameterDescriptor(pathId: RequestId, httpMethod: String, location: String, name: String, shapeDescriptor: RequestParameterShapeDescriptor)
 
 case class HttpRequestParameter(parameterId: RequestParameterId, requestParameterDescriptor: RequestParameterDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
@@ -41,7 +41,7 @@ case class RequestDescriptor(pathComponentId: PathComponentId, httpMethod: Strin
 
 case class HttpRequest(requestId: RequestId, requestDescriptor: RequestDescriptor, isRemoved: Boolean) extends RequestsGraph with Removable
 
-case class ResponseDescriptor(requestId: RequestId, httpStatusCode: Int, bodyDescriptor: BodyDescriptor) {
+case class ResponseDescriptor(pathId: PathComponentId, httpMethod: String, httpStatusCode: Int, bodyDescriptor: BodyDescriptor) {
   def withContentType(httpContentType: String): ResponseDescriptor = {
     this.copy(
       bodyDescriptor = this.bodyDescriptor match {
@@ -64,8 +64,6 @@ case class RequestsState(
                           parentPath: Map[PathComponentId, PathComponentId]
                         ) {
 
-  @JSExport
-  def justAddedFirst = requests.size == 1
   ////////////////////////////////////////////////////////////////////////////////
 
   def withPathComponent(pathId: PathComponentId, parentPathId: PathComponentId, name: String) = {
@@ -149,8 +147,13 @@ case class RequestsState(
   ////////////////////////////////////////////////////////////////////////////////
 
   def withResponse(responseId: ResponseId, requestId: RequestId, httpStatusCode: Int) = {
+    val request = requests(requestId)
+    this.withResponseByPathAndMethod(responseId, request.requestDescriptor.pathComponentId, request.requestDescriptor.httpMethod, httpStatusCode)
+  }
+
+  def withResponseByPathAndMethod(responseId: ResponseId, pathId: PathComponentId, httpMethod: String, httpStatusCode: Int) = {
     this.copy(
-      responses = responses + (responseId -> HttpResponse(responseId, ResponseDescriptor(requestId, httpStatusCode, UnsetBodyDescriptor()), isRemoved = false)),
+      responses = responses + (responseId -> HttpResponse(responseId, ResponseDescriptor(pathId, httpMethod, httpStatusCode, UnsetBodyDescriptor()), isRemoved = false)),
     )
   }
 
@@ -187,8 +190,13 @@ case class RequestsState(
   ////////////////////////////////////////////////////////////////////////////////
 
   def withRequestParameter(parameterId: RequestParameterId, requestId: PathComponentId, parameterLocation: String, name: String) = {
+    val request = requests(requestId)
+    this.withRequestParameterByPathAndMethod(parameterId, request.requestDescriptor.pathComponentId, request.requestDescriptor.httpMethod, parameterLocation, name)
+  }
+
+  def withRequestParameterByPathAndMethod(parameterId: RequestParameterId, pathId: PathComponentId, httpMethod: String, parameterLocation: String, name: String) = {
     this.copy(
-      requestParameters = requestParameters + (parameterId -> HttpRequestParameter(parameterId, RequestParameterDescriptor(requestId, parameterLocation, name, UnsetRequestParameterShapeDescriptor()), isRemoved = false)),
+      requestParameters = requestParameters + (parameterId -> HttpRequestParameter(parameterId, RequestParameterDescriptor(pathId, httpMethod, parameterLocation, name, UnsetRequestParameterShapeDescriptor()), isRemoved = false)),
     )
   }
 

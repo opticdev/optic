@@ -126,7 +126,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
       purpose
     );
     await specService.saveEvents(eventStore, rfcId);
-    return this.props.pushRelative(`/diff/${sessionId}/requests/${requestId}`);
+    return this.props.pushRelative(`/diff/${sessionId}/paths/${pathId}/methods/${previewSample.request.method}`);
   };
 
 

@@ -6,14 +6,11 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.ShapesState
 import com.useoptic.diff.ShapeDiffer.ShapeDiffResult
 import io.circe._
-import io.circe.literal._
-import io.circe.generic.auto._
 import io.circe.syntax._
 import com.useoptic.diff.query.{JvmQueryStringParser, QueryStringDiffer, QueryStringParser}
+import com.useoptic.types.capture._
 
-import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
-import scala.util.{Failure, Success, Try}
 
 @JSExport
 case class ApiRequest(url: String, method: String, queryString: String, contentType: String, body: Option[Json] = None)
@@ -22,7 +19,34 @@ case class ApiRequest(url: String, method: String, queryString: String, contentT
 case class ApiResponse(statusCode: Int, contentType: String, body: Option[Json] = None)
 
 @JSExport
-case class ApiInteraction(apiRequest: ApiRequest, apiResponse: ApiResponse)
+@JSExportAll
+case class ApiInteraction(apiRequest: ApiRequest, apiResponse: ApiResponse) {
+  def toHttpInteraction(): HttpInteraction = {
+    HttpInteraction(
+      "uuid",
+      Request("some.host", apiRequest.method, apiRequest.url, apiRequest.queryString, headers(apiRequest.contentType), body(apiRequest.body)),
+      Response(apiResponse.statusCode, headers(apiRequest.contentType), body(apiResponse.body)),
+      Vector()
+    )
+  }
+
+  def body(body: Option[Json]): Body = {
+    body match {
+      case Some(value) => Body(None, Some(value.noSpaces))
+      case None => Body(None, None)
+    }
+  }
+
+  def headers(contentType: String): Vector[Header] = {
+    if (contentType == "") {
+      Vector()
+    } else if (contentType == "*/*") {
+      Vector()
+    } else {
+      Vector(Header("content-type", contentType))
+    }
+  }
+}
 
 
 object PluginRegistryUtilities {
@@ -103,7 +127,7 @@ object RequestDiffer {
         .filter(x => {
           val (parameterId, parameter) = x
           //println(x)
-          parameter.requestParameterDescriptor.requestId == request.requestId && parameter.requestParameterDescriptor.location == "query"
+          parameter.requestParameterDescriptor.pathId == request.requestDescriptor.pathComponentId && parameter.requestParameterDescriptor.httpMethod == request.requestDescriptor.httpMethod  && parameter.requestParameterDescriptor.location == "query"
         })
         .values.headOption
       return queryParameterWrapper match {
@@ -163,10 +187,13 @@ object RequestDiffer {
 
   def responseDiff(interaction: ApiInteractionLike, spec: RfcState, requestId: RequestId): PipelineItem[HttpResponse] = {
 
-
+val request = spec.requestsState.requests(requestId)
     // check for matching response status
     val matchedResponse = spec.requestsState.responses.values
-      .find(r => r.responseDescriptor.requestId == requestId && r.responseDescriptor.httpStatusCode == interaction.response.statusCode)
+      .find(r => r.responseDescriptor.pathId == request.requestDescriptor.pathComponentId
+        && r.responseDescriptor.httpMethod == request.requestDescriptor.httpMethod
+        && r.responseDescriptor.httpStatusCode == interaction.response.statusCode
+      )
 
     if (matchedResponse.isEmpty) {
       return PipelineItem(None, Iterator(UnmatchedHttpStatusCode(requestId, interaction.response.statusCode, interaction.asApiInteraction)))

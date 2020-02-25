@@ -1,0 +1,252 @@
+{
+  "events": [
+
+  ],
+  "session": {
+    "metadata": {
+      "completed": false
+    },
+    "samples": [
+      {
+        "uuid": "c880a98f-0462-43d8-9a24-23ebc17d50ae",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/users.json",
+          "queryString": "",
+          "headers": [
+            {
+              "name": "host",
+              "value": "localhost:3306"
+            },
+            {
+              "name": "user-agent",
+              "value": "HTTPie/1.0.2"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate"
+            },
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": null,
+            "asJsonString": null
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": [
+            {
+              "name": "content-length",
+              "value": "40"
+            },
+            {
+              "name": "content-disposition",
+              "value": "inline; filename=\"users.json\""
+            },
+            {
+              "name": "accept-ranges",
+              "value": "bytes"
+            },
+            {
+              "name": "etag",
+              "value": "\"378ea7153256f6376c3db9c33b6e5b4a20406345\""
+            },
+            {
+              "name": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "name": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "name": "date",
+              "value": "Tue, 25 Feb 2020 21:12:44 GMT"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": "[\n\"a\",\n1,\ntrue,\n{\"ha\":\"ha\"},\n[\"what\"]\n]\n",
+            "asJsonString": "[\"a\",1,true,{\"ha\":\"ha\"},[\"what\"]]"
+          }
+        },
+        "omitted": []
+      },
+      {
+        "uuid": "c218e262-f525-4c4a-a6e0-8477ad37c534",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/users.json",
+          "queryString": "",
+          "headers": [
+            {
+              "name": "host",
+              "value": "localhost:3306"
+            },
+            {
+              "name": "user-agent",
+              "value": "HTTPie/1.0.2"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate"
+            },
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": null,
+            "asJsonString": null
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": [
+            {
+              "name": "content-length",
+              "value": "40"
+            },
+            {
+              "name": "content-disposition",
+              "value": "inline; filename=\"users.json\""
+            },
+            {
+              "name": "accept-ranges",
+              "value": "bytes"
+            },
+            {
+              "name": "etag",
+              "value": "\"378ea7153256f6376c3db9c33b6e5b4a20406345\""
+            },
+            {
+              "name": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "name": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "name": "date",
+              "value": "Tue, 25 Feb 2020 21:23:40 GMT"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": "[\n\"a\",\n1,\ntrue,\n{\"ha\":\"ha\"},\n[\"what\"]\n]\n",
+            "asJsonString": "[\"a\",1,true,{\"ha\":\"ha\"},[\"what\"]]"
+          }
+        },
+        "omitted": []
+      },
+      {
+        "uuid": "a232aa40-d651-43d6-9e26-38c0d27f1aa7",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/users.json",
+          "queryString": "",
+          "headers": [
+            {
+              "name": "host",
+              "value": "localhost:3306"
+            },
+            {
+              "name": "user-agent",
+              "value": "HTTPie/1.0.2"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate"
+            },
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": null,
+            "asJsonString": null
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": [
+            {
+              "name": "content-length",
+              "value": "35"
+            },
+            {
+              "name": "content-disposition",
+              "value": "inline; filename=\"users.json\""
+            },
+            {
+              "name": "accept-ranges",
+              "value": "bytes"
+            },
+            {
+              "name": "etag",
+              "value": "\"f3085868c871b58d17b8f2e37637e8528feb5c39\""
+            },
+            {
+              "name": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "name": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "name": "date",
+              "value": "Tue, 25 Feb 2020 21:25:54 GMT"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": "[\n\"a\",\n1,\ntrue,\n{\"ha\":\"ha\"},\n[1]\n]\n",
+            "asJsonString": "[\"a\",1,true,{\"ha\":\"ha\"},[1]]"
+          }
+        },
+        "omitted": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {
+
+  }
+}

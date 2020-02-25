@@ -42,7 +42,7 @@ const styles = theme => ({
 class DiffPageNew extends React.Component {
   render() {
 
-    const {pathId, method}  = this.props.match;
+    const {pathId, method}  = this.props.match.params;
     const {classes}  = this.props;
 
     return (

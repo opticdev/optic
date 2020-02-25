@@ -14,11 +14,14 @@ object Events {
   case class PathParameterRenamed(pathId: PathComponentId, name: String, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class PathParameterRemoved(pathId: PathComponentId, eventContext: Option[EventContext] = None) extends RequestsEvent
 
-  case class RequestParameterAdded(parameterId: RequestParameterId, requestId: PathComponentId, parameterLocation: String, name: String, eventContext: Option[EventContext] = None) extends RequestsEvent
+  @Deprecated
+  case class RequestParameterAdded(parameterId: RequestParameterId, requestId: RequestId, parameterLocation: String, name: String, eventContext: Option[EventContext] = None) extends RequestsEvent
+  case class RequestParameterAddedByPathAndMethod(parameterId: RequestParameterId, pathId: PathComponentId, httpMethod: String, parameterLocation: String, name: String, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class RequestParameterRenamed(parameterId: RequestParameterId, name: String, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class RequestParameterShapeSet(parameterId: RequestParameterId, parameterDescriptor: ShapedRequestParameterShapeDescriptor, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class RequestParameterShapeUnset(parameterId: RequestParameterId, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class RequestParameterRemoved(parameterId: RequestParameterId, eventContext: Option[EventContext] = None) extends RequestsEvent
+
 
   case class RequestAdded(requestId: RequestId, pathId: PathComponentId, httpMethod: String, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class RequestContentTypeSet(requestId: RequestId, httpContentType: String, eventContext: Option[EventContext] = None) extends RequestsEvent
@@ -26,7 +29,9 @@ object Events {
   case class RequestBodyUnset(requestId: RequestId, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class RequestRemoved(requestId: RequestId, eventContext: Option[EventContext] = None) extends RequestsEvent
 
+  @Deprecated
   case class ResponseAdded(responseId: ResponseId, requestId: RequestId, httpStatusCode: Int, eventContext: Option[EventContext] = None) extends RequestsEvent
+  case class ResponseAddedByPathAndMethod(responseId: ResponseId, pathId: PathComponentId, httpMethod: String, httpStatusCode: Int, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class ResponseStatusCodeSet(responseId: ResponseId, httpStatusCode: Int, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class ResponseContentTypeSet(responseId: ResponseId, httpContentType: String, eventContext: Option[EventContext] = None) extends RequestsEvent
   case class ResponseBodySet(responseId: ResponseId, bodyDescriptor: ShapedBodyDescriptor, eventContext: Option[EventContext] = None) extends RequestsEvent
@@ -34,5 +39,6 @@ object Events {
   case class ResponseRemoved(responseId: ResponseId, eventContext: Option[EventContext] = None) extends RequestsEvent
 
   sealed trait RequestsEvent extends RfcEvent
+
 
 }
