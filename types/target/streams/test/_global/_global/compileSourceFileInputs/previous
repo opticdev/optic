@@ -1,1 +1,0 @@
-["sbt.Task[scala.collection.immutable.Map[java.lang.String, scala.collection.Seq[scala.Tuple2[java.nio.file.Path, sbt.nio.FileStamp]]]]",{"2.12.10":{"hashes":[["/Users/aidancunniffe/Developer/optic2020/optic/types/src/test/scala/com/useoptic/types/AvroMappings.scala","1770237899e2b5c2cdfc21b87dafd19825649716"]],"lastModifiedTimes":[]}}]
