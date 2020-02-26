@@ -4,7 +4,7 @@ name := "optic-core"
 
 organization := "com.useoptic"
 
-version := "1.0.0"
+version := "1.0.0-SNAPSHOT"
 
 scalaVersion := "2.12.10"
 
