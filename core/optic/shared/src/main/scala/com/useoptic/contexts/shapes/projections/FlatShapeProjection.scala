@@ -22,7 +22,9 @@ object FlatShapeProjection {
     def joinedTypeName = typeName.map(_.name).mkString(" ")
   }
   @JSExportAll
-  case class FlatShapeResult(root: FlatShape, parameterMap: Map[String, FlatShape], pathsForAffectedIds: Vector[Seq[String]], renderId: String)
+  case class
+
+  FlatShapeResult(root: FlatShape, parameterMap: Map[String, FlatShape], pathsForAffectedIds: Vector[Seq[String]], renderId: String)
 
   private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false, Map.empty))
 

@@ -1,14 +1,17 @@
 import React from 'react';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
-
+import events from 'events'
 const {
   Context: DiffContext,
   withContext: withDiffContext
 } = GenericContextFactory()
 
 
-const DiffUIEventEmitter = require('events');
-
+export const DiffUIEventEmitter = new events.EventEmitter();
+export const DiffUIEventEmitterEvents = {
+  'SHOW_EXAMPLE_WHEN_POSSIBLE': 'SHOW_EXAMPLE_WHEN_POSSIBLE',
+  'SHOW_SPEC_WHEN_POSSIBLE': 'SHOW_SPEC_WHEN_POSSIBLE',
+}
 
 /*
 ???s
@@ -27,45 +30,56 @@ class DiffContextStore extends React.Component {
 
   state = {
     selectedDiff: null,
+    exampleInteractions: [],
+    currentExampleIndex: 0,
     selectedInterpretation: null,
     selectedInterpretationIndex: null,
   }
 
   render() {
     const {
-      requestDiffs = [],
-      requestInteractions,
+      regionNames,
+      getDiffsByRegion,
+      getInteractionsForDiff,
+      interpretationsForDiffAndInteraction,
 
     } = this.props;
 
-    const diffsByGroup = (groupName) => requestDiffs.filter(i => i.group === groupName)
     const setSelectedDiff = (diff) => {
 
-      this.setState({selectedDiff: diff, selectedInterpretation: null, selectedInterpretationIndex: null}, () => {
-        // DiffUIEventEmitter.emit('ShowDiffExample')
+      this.setState({
+        selectedDiff: diff,
+        exampleInteractions: getInteractionsForDiff(diff),
+        currentExampleIndex: 0,
+        selectedInterpretation: null,
+        selectedInterpretationIndex: null}, () => {
+
+        // setTimeout(() => {
+          DiffUIEventEmitter.emit(DiffUIEventEmitterEvents.SHOW_EXAMPLE_WHEN_POSSIBLE)
+        // }, 0)
       })
     }
     const setSelectedInterpretation = (interpretation, index) => {
-      this.setState({selectedInterpretation: interpretation, selectedInterpretationIndex: index}, () => {
-        // DiffUIEventEmitter.emit('ShowInterpretationShape')
-      })
+      this.setState({selectedInterpretation: interpretation, selectedInterpretationIndex: index})
     }
 
     const context = {
-
-      diffs: requestDiffs,
-      diffsByGroup,
+      regionNames,
+      getDiffsByRegion,
 
       //selected diff
       selectedDiff: this.state.selectedDiff,
       selectedDiffId: this.state.selectedDiff && this.state.selectedDiff.diffHash,
       setSelectedDiff,
 
+      currentExample: this.state.exampleInteractions[this.state.currentExampleIndex],
+
+      interpretationsForDiffAndInteraction,
+
       //selected interpretation
       selectedInterpretation: this.state.selectedInterpretation,
       selectedInterpretationIndex: this.state.selectedInterpretationIndex,
       setSelectedInterpretation
-
       // simulate: approved + selectedInterpretation.commands
     };
 

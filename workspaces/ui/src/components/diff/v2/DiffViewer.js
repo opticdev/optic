@@ -31,6 +31,11 @@ const styles = theme => ({
   heading: {
     fontSize: theme.typography.pxToRem(15),
     flexShrink: 0,
+    textOverflow: 'none',
+  },
+  noOverflow: {
+    overflow: 'hidden',
+    wordBreak: 'break-all'
   },
   secondaryHeading: {
     fontSize: theme.typography.pxToRem(15),
@@ -40,7 +45,7 @@ const styles = theme => ({
 
 const nameMapping = {
   'query': 'Query parameters diff',
-  'requestBody': 'Request Body Diff'
+  'request-body': 'Request Body Diff'
 };
 
 class DiffViewer extends React.Component {
@@ -48,58 +53,62 @@ class DiffViewer extends React.Component {
   render() {
     const {
       classes,
-      diffsByGroup,
-      selectedDiffId,
+      regionName,
+      getDiffsByRegion,
       setSelectedDiff,
+      interpretationsForDiffAndInteraction,
+      currentExample,
+      selectedDiff,
       setSelectedInterpretation,
       selectedInterpretationIndex
     } = this.props;
 
-    const renderGroup = (groupName) => {
-      const groupDiffs = diffsByGroup(groupName);
-      if (groupDiffs.length === 0) {
-        return null;
-      }
-      return (
-        <DocSubGroup className={classes.root} title={nameMapping[groupName]} innerStyle={{marginTop: 12}}>
-          {groupDiffs.map((diff, index) => {
-            const selected = diff.diffHash === selectedDiffId;
-            return (
-              <ExpansionPanel expanded={selected}
-                              onChange={() => !selected ? setSelectedDiff(diff) : setSelectedDiff(null)}>
-                <ExpansionPanelSummary
-                  style={selected ? {backgroundColor: primary, color: 'white'} : {}}
-                  expandIcon={<ExpandMoreIcon style={selected ? {color: 'white'} : {}}/>}
-                >
-                  <Typography className={classes.heading}>{diff.title}</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails style={{display: 'flex', flexDirection: 'column', marginTop: 6}}>
-                  <FormHelperText style={{marginBottom: 8}}>Suggested changes to your specification:</FormHelperText>
-                  <List dense style={{marginLeft: -15}}>
-                    {diff.interpretations.map((interpretation, index) => {
-                      return (
-                        <InterpretationRow
-                          action={interpretation.action}
-                          active={selectedInterpretationIndex === index}
-                          onClick={() => setSelectedInterpretation(interpretation, index)}/>
-                      );
-                    })}
-                  </List>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            );
-
-          })}
-        </DocSubGroup>
-      );
-    };
+    const groupDiffs = getDiffsByRegion(regionName);
+    if (groupDiffs.length === 0) {
+      return null;
+    }
 
     return (
-      <div>
-        {renderGroup('query')}
-        {renderGroup('requestBody')}
-      </div>
+      <DocSubGroup className={classes.root} title={nameMapping[regionName]} innerStyle={{marginTop: 12}}>
+        {groupDiffs.map((diff, index) => {
+          const selected = selectedDiff === diff;
+
+          const interpretations = selected ? interpretationsForDiffAndInteraction(diff, currentExample) : []
+
+          if (selected) {
+            debugger
+          }
+
+          return (
+            <ExpansionPanel expanded={selected}
+                            onChange={() => !selected ? setSelectedDiff(diff) : setSelectedDiff(null)}>
+              <ExpansionPanelSummary
+                className={classes.noOverflow}
+                style={selected ? {backgroundColor: primary, color: 'white'} : {}}
+                expandIcon={<ExpandMoreIcon style={selected ? {color: 'white'} : {}}/>}
+              >
+                <Typography className={classes.heading}>{diff.toString()}</Typography>
+              </ExpansionPanelSummary>
+              <ExpansionPanelDetails style={{display: 'flex', flexDirection: 'column', marginTop: 6}}>
+                <FormHelperText style={{marginBottom: 8}}>Suggested changes to your specification:</FormHelperText>
+                <List dense style={{marginLeft: -15}}>
+                  {interpretations.map((interpretation, index) => {
+                    return (
+                      <InterpretationRow
+                        action={interpretation.title + interpretation.description}
+                        active={selectedInterpretationIndex === index}
+                        onClick={() => setSelectedInterpretation(interpretation, index)}/>
+                    );
+                  })}
+                </List>
+              </ExpansionPanelDetails>
+            </ExpansionPanel>
+          );
+
+        })}
+      </DocSubGroup>
     );
+
   }
 }
 
@@ -116,9 +125,9 @@ function InterpretationRow(props) {
       onKeyDown={(e) => {
         if (e.which === 13) {
           if (active) {
-            alert('finish')
+            alert('finish');
           } else {
-            onClick()
+            onClick();
           }
         }
       }}
@@ -127,7 +136,7 @@ function InterpretationRow(props) {
                                                     color="primary"/></ListItemAvatar>
       <ListItemText primary={action}/>
       <ListItemSecondaryAction>
-        <Zoom direction="up" in={active}  mountOnEnter unmountOnExit>
+        <Zoom direction="up" in={active} mountOnEnter unmountOnExit>
           <Button size="small" autoFocus variant="contained" color="secondary">Confirm</Button>
         </Zoom>
       </ListItemSecondaryAction>

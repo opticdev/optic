@@ -13,7 +13,12 @@ import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {opticEngine} from '@useoptic/domain';
+import {BodyUtilities, JsonHelper, opticEngine} from '@useoptic/domain';
+import DiffViewer from './DiffViewer';
+import {ExampleShapeViewer} from '../../requests/DocCodeBox';
+import {HighlightedIDsStore} from '../../shapes/HighlightedIDs';
+import niceTry from 'nice-try'
+import {NamerStore} from '../../shapes/Namer';
 
 const styles = theme => ({
   root: {
@@ -48,20 +53,80 @@ class DiffPageNew extends React.Component {
     return (
       <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId}>
         <EndpointsContextStore pathId={pathId} method={method}>
-            <DiffPageContent/>
+          <DiffPageContent/>
         </EndpointsContextStore>
       </CaptureSessionInlineContext>
     );
   }
 }
 
+
 class _DiffPageContent extends React.Component {
   render() {
-    const {endpointDescriptor, classes} = this.props
-    const {fullPath, httpMethod, endpointPurpose, pathParameters} = endpointDescriptor;
+    const {endpointDescriptor, classes, regionNames, currentExample} = this.props;
+    const {fullPath, httpMethod, endpointPurpose, pathParameters, responses} = endpointDescriptor;
+
+
+    const responseRegionRegex = /response-body-([0-9]{3})/;
+
+    const responseRegions = regionNames.map(i => {
+      const match = responseRegionRegex.exec(i);
+      if (match) {
+        return parseInt(match[1]);
+      }
+    }).filter(i => !!i);
+
+    const responsesToRender = Array.from(new Set([...responseRegions, ...responses.map(i => i.statusCode)])).sort((a, b) => a - b);
+
+    const RequestBodyRegion = () => {
+      return (
+        <DocGrid
+          left={(
+            <div>
+              Request body
+              <DiffViewer regionName={'request-body'}/>
+            </div>
+          )} right={(<div>spec {currentExample && currentExample.toString()}</div>)}/>
+      );
+    };
+
+    const ResponseBodyRegion = ({statusCode}) => {
+
+      console.log(currentExample)
+      const showExample = currentExample && currentExample.response.statusCode === statusCode;
+      const contentTypes = responses.filter(i => i.statusCode === statusCode);
+
+      return (
+        <DocGrid
+          left={(
+            <div>
+              {statusCode} Response
+              <DiffViewer regionName={`response-body-${statusCode}`}/>
+            </div>
+          )} right={(<div>
+          {contentTypes.map(response => {
+            const hasBody = response.responseBody.shapeId && !response.responseBody.isRemoved;
+            if (hasBody) {
+              const contentType = response.responseBody.httpContentType;
+              const example = currentExample && niceTry(() => JsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))
+              return (
+                <ExampleShapeViewer
+                  title={`${statusCode} Response Body`}
+                  shapeId={response.responseBody.shapeId}
+                  contentType={contentType}
+                  showShapesFirst={true}
+                  example={example}/>
+              );
+            }
+          })}
+        </div>)}
+        />
+      );
+    };
+
+
     return (
       <div className={classes.container}>
-
         <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
           <Toolbar variant="dense">
             <div style={{flex: 1, textAlign: 'center'}}>
@@ -76,26 +141,23 @@ class _DiffPageContent extends React.Component {
 
         <div className={classes.scroll}>
           <div className={classes.root}>
-            <DocGrid
-              left={(
-                <Toolbar>
-                  <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
-                  <BatchActionsMenu/>
-                </Toolbar>
-              )} right={(
-              <Toolbar>
-                <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
-                <BatchActionsMenu/>
-              </Toolbar>
-            )}/>
+            <HighlightedIDsStore>
+              <NamerStore disable={true}>
+
+                <RequestBodyRegion/>
+
+                {responsesToRender.map(responseStatusCode => <ResponseBodyRegion statusCode={responseStatusCode}/>)}
+
+              </NamerStore>
+            </HighlightedIDsStore>
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
-const DiffPageContent = compose(withStyles(styles), withDiffContext, withEndpointsContext)(_DiffPageContent)
+const DiffPageContent = compose(withStyles(styles), withDiffContext, withEndpointsContext)(_DiffPageContent);
 
 class _CaptureSessionInlineContext extends React.Component {
 
@@ -118,7 +180,7 @@ class _CaptureSessionInlineContext extends React.Component {
 
             const {isLoading} = context;
             if (isLoading) {
-              return <LinearProgress />
+              return <LinearProgress/>;
             }
 
             const {contexts, diff, JsonHelper} = opticEngine.com.useoptic;
@@ -126,15 +188,25 @@ class _CaptureSessionInlineContext extends React.Component {
             const {helpers} = diff;
             const rfcState = rfcService.currentState(rfcId);
 
-            const samples = jsonHelper.jsArrayToSeq(context.session.samples.map(i => jsonHelper.fromInteraction(i)))
+            const samples = jsonHelper.jsArrayToSeq(context.session.samples.map(i => jsonHelper.fromInteraction(i)));
             const diffResults = helpers.DiffHelpers().groupByDiffs(rfcState, samples);
+            const diffHelper = helpers.DiffResultHelpers(diffResults);
+            const regions = diffHelper.listRegions();
+            const regionNames = jsonHelper.seqToJsArray(regions.keys());
 
-            const regions = helpers.DiffResultHelpers(diffResults).listRegions().keys()
+            const getInteractionsForDiff = (diff) => jsonHelper.seqToJsArray(diffHelper.get(diff));
+            const getDiffsByRegion = (groupName) => jsonHelper.seqToJsArray(regions.getDiffsByRegion(groupName));
 
-            debugger
+            const interpreter = diff.interactions.interpreters.BasicInterpreters(rfcState)
+
+            const interpretationsForDiffAndInteraction = (diff, interaction) =>  jsonHelper.seqToJsArray(interpreter.interpret(diff, interaction))
 
             return (
-              <DiffContextStore>
+              <DiffContextStore
+                regionNames={regionNames}
+                getDiffsByRegion={getDiffsByRegion}
+                interpretationsForDiffAndInteraction={interpretationsForDiffAndInteraction}
+                getInteractionsForDiff={getInteractionsForDiff}>
                 {children}
               </DiffContextStore>
             );

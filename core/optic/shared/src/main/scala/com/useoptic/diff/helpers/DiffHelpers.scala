@@ -47,7 +47,7 @@ object DiffHelpers {
 @JSExportAll
 case class DiffRegionsHelpers(diffsGroupedByRegion: DiffsGroupedByRegion) {
   def keys(): Seq[String] = diffsGroupedByRegion.keys.toSeq
-  def get(group: String): Option[Iterable[InteractionDiffResult]] = diffsGroupedByRegion.get(group)
+  def getDiffsByRegion(group: String): Vector[InteractionDiffResult] = diffsGroupedByRegion.getOrElse(group, Iterable.empty).toVector
 
   override def equals(obj: Any): Boolean = {
     if (obj.isInstanceOf[DiffRegionsHelpers]) {
@@ -76,5 +76,5 @@ case class DiffResultHelpers(interactionsGroupedByDiff: InteractionsGroupedByDif
   }
 
   def keys(): Seq[InteractionDiffResult] = interactionsGroupedByDiff.keySet.toSeq
-  def get(diff: InteractionDiffResult): Option[Seq[HttpInteraction]] = interactionsGroupedByDiff.get(diff)
+  def get(diff: InteractionDiffResult): Seq[HttpInteraction] = interactionsGroupedByDiff.getOrElse(diff, Seq.empty)
 }

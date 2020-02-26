@@ -63,17 +63,18 @@ export function extractContentType(headers: IHeader[], fallback: string | null) 
 }
 
 export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
+  debugger
   const requestContentType = extractContentType(sample.request.headers, null);
   const responseContentType = extractContentType(sample.response.headers, null);
   const requestBody = sample.request.body.asJsonString ? JSON.parse(sample.request.body.asJsonString) : (sample.request.body.asText ? sample.request.body.asText : undefined);
   const responseBody = sample.response.body.asJsonString ? JSON.parse(sample.response.body.asJsonString) : (sample.response.body.asText ? sample.response.body.asText : undefined);
-  console.log({
-    sample,
-    requestContentType,
-    requestBody,
-    responseBody,
-    responseContentType
-  });
+  // console.log({
+  //   sample,
+  //   requestContentType,
+  //   requestBody,
+  //   responseBody,
+  //   responseContentType
+  // });
   return {
     requestContentType,
     requestBody,
@@ -108,6 +109,7 @@ export const PluginRegistry = diff.PluginRegistry;
 export const QueryStringDiffer = diff.query.QueryStringDiffer;
 export const {JsQueryStringParser} = opticEngine;
 export const OasProjectionHelper = opticEngine.com.useoptic.OASProjectionHelper();
+export const BodyUtilities = opticEngine.com.useoptic.diff.interactions.BodyUtilities();
 
 import {checkDiffOrUnrecognizedPath} from './check-diff';
 import {IHttpInteraction, IHeader} from './domain-types/optic-types';

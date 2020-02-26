@@ -6,6 +6,8 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.types.capture.{Body, HttpInteraction}
 import io.circe.Json
 
+import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+
 abstract class PathVisitor {
   def visit(interaction: HttpInteraction, context: PathVisitorContext)
 }
@@ -44,6 +46,8 @@ abstract class Visitors {
   val responseBodyVisitor: ResponseBodyVisitor
 }
 
+@JSExport
+@JSExportAll
 object BodyUtilities {
   def parseJsonBody(body: Body): Option[Json] = {
     body.asJsonString match {

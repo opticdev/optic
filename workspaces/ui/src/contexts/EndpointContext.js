@@ -65,6 +65,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
           return {
             responseId,
             responseBody,
+            statusCode: responseDescriptor.httpStatusCode
           };
         })
 
@@ -94,7 +95,6 @@ class EndpointsContextStoreWithoutContext extends React.Component {
       );
 
     } else {
-      debugger
       return <div>Endpoint Not Found</div>;
     }
   }

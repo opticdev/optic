@@ -6,6 +6,11 @@ import io.circe.Json
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.{Failure, Success, Try}
+import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
+import io.circe.generic.auto._
+import io.circe.syntax._
+
+import scala.scalajs.js.UndefOr
 @JSExport
 @JSExportAll
 object JsonHelper {
@@ -26,6 +31,10 @@ object JsonHelper {
   }
 
   def toSome(x: Json): Option[Json] = Some(x)
+
+  def toJs(x: Json): js.Any = convertJsonToJs(x)
+
+  def toJs(x: Some[Json]): UndefOr[js.Any] = x.map(convertJsonToJs).orUndefined
 
   def toNone(): Option[Json] = None
 
