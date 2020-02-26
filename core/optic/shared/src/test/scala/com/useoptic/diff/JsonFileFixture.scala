@@ -12,7 +12,11 @@ import scala.util.Try
 trait JsonFileFixture {
   def fromFile(slug: String): Json = {
     val filePath = "src/test/resources/diff-scenarios/" + slug + ".json"
-    parseFile(new File(filePath)).right.get
+    val attempt = parseFile(new File(filePath))
+    if (attempt.isLeft) {
+      throw new Error(attempt.left.get)
+    }
+    attempt.right.get
   }
   def commandsFrom(slug: String): Vector[Commands.RfcCommand] = {
     val filePath = "src/test/resources/diff-scenarios/" + slug + ".commands.json"
