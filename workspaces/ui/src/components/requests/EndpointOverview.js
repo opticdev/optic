@@ -40,7 +40,7 @@ const styles = theme => ({
 class EndpointOverview extends React.Component {
   render() {
 
-    const {classes, endpointPurpose, updateContribution, endpointDescription, method, url, parameters = [], baseUrl, requestId} = this.props;
+    const {classes, endpointPurpose, updateContribution, endpointDescription, method, url, parameters = [], baseUrl, pathId, requestId} = this.props;
 
     const left = (
       <div>
@@ -75,7 +75,8 @@ class EndpointOverview extends React.Component {
         ) : null}
       </div>
     );
-    const docsUrl = `${baseUrl}/requests/${requestId}`;
+
+    const docsUrl = `${baseUrl}/paths/${pathId}/methods/${method}`;
 
     const right = (
       <>

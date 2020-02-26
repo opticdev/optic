@@ -21,6 +21,6 @@ class CommandsToEventsSnapshotSpec
     val rfcService: RfcService = new RfcService(eventStore)
     rfcService.handleCommands(rfcId, RfcCommandContext("ccc", "sss", "bbb"), input:_*)
 
-    eventStore.listEvents("rfc-1")
+    eventStore.listEvents(rfcId)
   }
 }

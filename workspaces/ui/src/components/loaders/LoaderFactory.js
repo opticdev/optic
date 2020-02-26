@@ -26,7 +26,6 @@ class LoaderFactory {
 
     const entryBasePath = basePath;
 
-
     function SessionWrapper(props) {
       const {match, specService} = props;
       const {sessionId} = match.params;

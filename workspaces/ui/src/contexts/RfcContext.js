@@ -51,6 +51,7 @@ export function stuffFromQueries(queries) {
     requests,
     requestParameters,
     responses,
+    responsesArray: Object.values(responses),
     conceptsById,
     pathIdsByRequestId,
     requestIdsByPathId,

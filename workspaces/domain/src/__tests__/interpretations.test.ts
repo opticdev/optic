@@ -14,7 +14,6 @@ describe('Optic Domain', function () {
       const eventStore = rfcServiceFacade.makeEventStore();
       const rfcId = 'test';
 
-
       const specJson = '[]';
       eventStore.bulkAdd(rfcId, specJson);
 

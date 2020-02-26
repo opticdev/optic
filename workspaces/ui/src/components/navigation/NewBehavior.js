@@ -118,158 +118,6 @@ const useStyles = makeStyles({
   }
 });
 
-function NewBehaviorCard({source, color, children}) {
-
-  const classes = useStyles();
-
-  const colorClass = color === 'red' ? classes.red : color === 'blue' ? classes.blue : classes.yellow;
-
-  return (
-    <div className={classNames(classes.notification, colorClass)}>
-      <MarkdownRender source={source}/>
-      {children}
-    </div>
-  );
-}
-
-function NewBehavior(props) {
-  const classes = useStyles();
-  const {sessionId, requestIdsWithDiffs, unrecognizedUrlCount, isIntegrationMode, integrationsWithDiff, cachedQueryResults, baseUrl, isLoading} = props;
-  const [anchorEl, setAnchorEl] = useState(false);
-
-  if (isLoading) {
-    return null;
-  }
-
-  if (requestIdsWithDiffs.length === 0 && unrecognizedUrlCount === 0) {
-    return (
-      <Collapse in={true} appear={true} style={{width: '100%'}}>
-        <div className={classes.notificationBar}>
-          <Typography variant="subtitle1" style={{color: 'white', marginTop: 8}}> <CheckIcon
-            style={{color: AddedGreen, fontSize: 16, paddingTop: 4, paddingRight: 5}}/>In-Sync</Typography>
-        </div>
-      </Collapse>
-    );
-  }
-
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const undocumentedBehavior = (
-    <div className={classes.chipNotif} style={{marginTop: 0}}>
-      <Chip label={requestIdsWithDiffs.length} size="small"
-            style={{color: 'white', backgroundColor: RemovedRed}}/>
-      <Typography variant="subtitle2" style={{color: 'white', marginLeft: 10, fontWeight: 200, fontSize: 12}}>Unexpected
-        Behaviors</Typography>
-    </div>
-  );
-
-  const newUrls = (
-    <div className={classes.chipNotif}>
-      <Chip label={unrecognizedUrlCount} size="small" style={{backgroundColor: ChangedYellowBright}}/>
-      <Typography variant="subtitle2" style={{color: 'white', marginLeft: 10, fontWeight: 200, fontSize: 12}}>Undocumented
-        URLs</Typography>
-    </div>
-  );
-
-
-  const NotifChip = ({Icon, color, number, tooltip, disableTooltip, style = {}}) => {
-
-    return (
-      <LightTooltip title={tooltip} open={disableTooltip === true ? false : undefined}>
-        <div style={{...style, pointerEvents: number === 0 && 'none', opacity: number === 0 && '.2'}}
-             className={classes.notifChip}>
-          <Icon style={{color}}/>
-          <Typography variant="subtitle2"
-                      style={{color, marginLeft: 3, fontSize: 16}}>{number > 0 && number}</Typography>
-        </div>
-      </LightTooltip>
-    );
-  };
-
-
-  return (
-    <Collapse in={true} appear={true} style={{width: '100%'}}>
-      <div className={classes.notificationBar} onClick={handleClick} onMouseLeave={() => setAnchorEl(false)}>
-
-        <Typography variant="subtitle1" style={{color: 'white', marginTop: 5}}>Not Synced</Typography>
-
-        <div style={{display: 'flex', flexDirection: 'row'}}>
-          <NotifChip Icon={VisibilityOffIcon} color={ChangedYellow} number={unrecognizedUrlCount}
-                     tooltip={`${unrecognizedUrlCount} Undocumented URLs`}
-                     disableTooltip={Boolean(anchorEl)}/>
-          <NotifChip Icon={ReportProblemIcon} color={RemovedRed} number={requestIdsWithDiffs.length}
-                     style={isIntegrationMode && {marginRight: 0}}
-                     tooltip={`${requestIdsWithDiffs.length} Request Diffs`}
-                     disableTooltip={Boolean(anchorEl)}/>
-          {/*{!isIntegrationMode &&*/}
-          {/*<NotifChip Icon={SettingsEthernetIcon} color={UpdatedBlue} number={integrationsWithDiff.length}*/}
-          {/*           style={{marginRight: 0}}*/}
-          {/*           tooltip={`${integrationsWithDiff.length} Integrations with New Behavior`}*/}
-          {/*           disableTooltip={Boolean(anchorEl)}/>}*/}
-        </div>
-
-        <Collapse in={Boolean(anchorEl)} style={{width: '100%'}}>
-          {unrecognizedUrlCount > 0 && (
-            <Link style={{textDecoration: 'none', color: 'black', marginTop: 20}}
-                  to={`${baseUrl}/diff/${sessionId}/urls`}>
-              <List subheader={<ListSubheader className={classes.subheader} style={{color: ChangedYellow}}>Undocumented
-                URLs</ListSubheader>}>
-                <ListItem style={{textAlign: 'center'}}>
-                  <Button color="default" size="small" variant="contained" style={{margin: '0 auto'}}>Document new
-                    URLs</Button>
-                </ListItem>
-              </List>
-            </Link>
-          )}
-
-          {requestIdsWithDiffs.length > 0 && (
-            <>
-              {unrecognizedUrlCount > 0 && <DocDivider/>}
-              <List subheader={<ListSubheader className={classes.subheader} style={{color: RemovedRed}}>Request
-                Diffs</ListSubheader>}>
-                {requestIdsWithDiffs.map(requestId => {
-
-                  const {pathComponentId: pathId, httpMethod: method} = cachedQueryResults.requests[requestId].requestDescriptor;
-
-                  const path = <DisplayPath url={<PathIdToPathString pathId={pathId}/>} method={method}/>;
-
-                  const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
-                  return (
-                    <Link style={{textDecoration: 'none', color: 'black'}}
-                          to={`${baseUrl}/diff/${sessionId}/requests/${requestId}`}>
-                      <ListItem dense button>
-                        <ListItemText primary={name || path}
-                                      secondary={name && path}
-                                      primaryTypographyProps={{
-                                        style: {
-                                          fontSize: 12,
-                                          color: 'white'
-                                        }
-                                      }}/>
-                      </ListItem>
-                    </Link>
-                  );
-                })}
-              </List>
-            </>
-          )}
-          {/*{integrationsWithDiff.length > 0 ? (*/}
-          {/*  <>*/}
-          {/*    <DocDivider/>*/}
-          {/*    <List subheader={<ListSubheader className={classes.subheader}*/}
-          {/*                                    style={{color: UpdatedBlue}}>Integrations</ListSubheader>}>*/}
-          {/*      {integrationsWithDiff}*/}
-          {/*    </List>*/}
-          {/*  </>*/}
-          {/*): null}*/}
-        </Collapse>
-      </div>
-    </Collapse>
-  );
-}
-
 
 class NewBehaviorWrapperBase extends React.Component {
   state = {
@@ -321,7 +169,7 @@ class NewBehaviorWrapperBase extends React.Component {
     }
 
     if (isLoading) {
-      return (<NewBehavior isLoading={true}/>);
+      return null
     }
     //
     // const {isEmpty} = this.props;
@@ -367,7 +215,7 @@ class NewBehaviorWrapperBase extends React.Component {
   }
 }
 
-export const NewBehaviorWrapper = compose(withRfcContext, withIntegrationsContext, withNavigationContext)(NewBehaviorWrapperBase);
+export const NewBehaviorWrapper = compose(withRfcContext, withNavigationContext)(NewBehaviorWrapperBase);
 
 export const NewBehaviorSideBar = () => (
   <NewBehaviorWrapper>

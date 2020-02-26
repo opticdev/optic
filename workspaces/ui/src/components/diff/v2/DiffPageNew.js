@@ -2,18 +2,18 @@ import React, {useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {AppBar, Button, Typography} from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
-import {LightTooltip} from '../../tooltips/LightTooltip';
-import IconButton from '@material-ui/core/IconButton';
-import TimelineIcon from '@material-ui/icons/Timeline';
-import Badge from '@material-ui/core/Badge';
-import VerticalSplitIcon from '@material-ui/icons/VerticalSplit';
-import {HighlightedIDsStore} from '../../shapes/HighlightedIDs';
-import {EndpointPageWithQuery} from '../../requests/EndpointPage';
 import {ArrowDownwardSharp} from '@material-ui/icons';
+import compose from 'lodash.compose';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {DocGrid} from '../../requests/DocGrid';
 import {EndpointsContext, EndpointsContextStore} from '../../../contexts/EndpointContext';
+import {TrafficSessionContext, TrafficSessionStore} from '../../../contexts/TrafficSessionContext';
+import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
+import {DiffContextStore} from './DiffContext';
+import {withRfcContext} from '../../../contexts/RfcContext';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import {opticEngine} from '@useoptic/domain';
 
 const styles = theme => ({
   root: {
@@ -42,57 +42,112 @@ const styles = theme => ({
 class DiffPageNew extends React.Component {
   render() {
 
-    const {pathId, method}  = this.props.match.params;
-    const {classes}  = this.props;
+    const {classes, specStore} = this.props;
+    const {pathId, method, sessionId} = this.props.match.params;
+
 
     return (
-      <EndpointsContextStore pathId={pathId} method={method}>
-        <EndpointsContext.Consumer>
-          {({endpointDescriptor}) => {
-            const {fullPath, httpMethod, endpointPurpose, pathParameters} = endpointDescriptor;
-            return (
-              <div className={classes.container}>
+      <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId}>
+        <EndpointsContextStore pathId={pathId} method={method}>
+          <EndpointsContext.Consumer>
+            {({endpointDescriptor}) => {
+              const {fullPath, httpMethod, endpointPurpose, pathParameters} = endpointDescriptor;
+              return (
+                <div className={classes.container}>
 
-                <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
-                  <Toolbar variant="dense">
-                    <div style={{flex: 1, textAlign: 'center'}}>
-                      <Typography variant="h6" color="primary">{'ABC'}</Typography>
-                    </div>
-                    <div>
-                      <Typography variant="caption" style={{marginRight: 9}}>(0) Changes</Typography>
-                      <Button color="primary">Apply Changes</Button>
-                    </div>
-                  </Toolbar>
-                </AppBar>
+                  <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
+                    <Toolbar variant="dense">
+                      <div style={{flex: 1, textAlign: 'center'}}>
+                        <Typography variant="h6" color="primary">{'ABC'}</Typography>
+                      </div>
+                      <div>
+                        <Typography variant="caption" style={{marginRight: 9}}>(0) Changes</Typography>
+                        <Button color="primary">Apply Changes</Button>
+                      </div>
+                    </Toolbar>
+                  </AppBar>
 
-                <div className={classes.scroll}>
-                  <div className={classes.root}>
-                    <DocGrid
-                      left={(
+                  <div className={classes.scroll}>
+                    <div className={classes.root}>
+                      <DocGrid
+                        left={(
+                          <Toolbar>
+                            <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
+                            <BatchActionsMenu/>
+                          </Toolbar>
+                        )} right={(
                         <Toolbar>
                           <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
-                          <BatchActionsMenu />
+                          <BatchActionsMenu/>
                         </Toolbar>
-                      )} right={(
-                      <Toolbar>
-                        <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
-                        <BatchActionsMenu />
-                      </Toolbar>
-                    )} />
+                      )}/>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
-          }}
-        </EndpointsContext.Consumer>
-      </EndpointsContextStore>
-    )
+              );
+            }}
+          </EndpointsContext.Consumer>
+        </EndpointsContextStore>
+      </CaptureSessionInlineContext>
+    );
   }
 }
 
+
+class _CaptureSessionInlineContext extends React.Component {
+
+  render() {
+    const {
+      rfcId,
+      rfcService,
+      sessionId,
+      specService,
+      children,
+      cachedQueryResults,
+      queries
+    } = this.props;
+    return (
+      //@todo refactor sessionId to captureId
+      <TrafficSessionStore sessionId={sessionId} specService={specService} r
+                           enderNoSession={<div>No Capture</div>}>
+        <TrafficSessionContext.Consumer>
+          {(context) => {
+
+            const {isLoading} = context;
+            if (isLoading) {
+              return <LinearProgress />
+            }
+
+            const {contexts, diff, JsonHelper} = opticEngine.com.useoptic;
+            const jsonHelper = JsonHelper();
+            const {helpers} = diff;
+            const rfcState = rfcService.currentState(rfcId);
+
+            const samples = jsonHelper.jsArrayToSeq(context.session.samples.map(i => jsonHelper.fromInteraction(i)))
+            console.log(samples)
+            debugger
+            const diffResults = helpers.DiffHelpers().groupByDiffs(rfcState, samples);
+
+
+            return (
+              <DiffContextStore>
+                {children}
+              </DiffContextStore>
+            );
+
+          }}
+        </TrafficSessionContext.Consumer>
+      </TrafficSessionStore>
+    );
+  }
+};
+
+const CaptureSessionInlineContext = compose(withRfcContext)(_CaptureSessionInlineContext);
+
+
 function BatchActionsMenu(props) {
 
-  const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(null);
   return (
     <>
       <Button
@@ -102,7 +157,8 @@ function BatchActionsMenu(props) {
         style={{marginLeft: 12}}
         endIcon={<ArrowDownwardSharp/>}>
         Batch Actions</Button>
-      <Menu open={Boolean(anchorEl)} anchorEl={anchorEl} anchorOrigin={{vertical: 'bottom'}} onClose={() => setAnchorEl(null)}>
+      <Menu open={Boolean(anchorEl)} anchorEl={anchorEl} anchorOrigin={{vertical: 'bottom'}}
+            onClose={() => setAnchorEl(null)}>
         <MenuItem>Accept all Suggestions</MenuItem>
         <MenuItem>Ignore all Diffs</MenuItem>
         <MenuItem>Reset</MenuItem>
@@ -112,4 +168,4 @@ function BatchActionsMenu(props) {
 
 }
 
-export default withStyles(styles)(DiffPageNew);
+export default compose(withStyles(styles), withSpecServiceContext)(DiffPageNew);

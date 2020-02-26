@@ -45,7 +45,6 @@ const useStyles = makeStyles(theme => ({
 
 export default function LocalDoesNotMatch(props) {
 
-
   const {sessionId, requestIdsWithDiffs, unrecognizedUrlCount, isIntegrationMode, cachedQueryResults, baseUrl, isLoading} = props;
 
   const noDiff = requestIdsWithDiffs.length === 0 && unrecognizedUrlCount === 0;

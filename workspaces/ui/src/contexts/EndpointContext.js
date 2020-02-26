@@ -1,10 +1,9 @@
 import React from 'react';
 import {GenericContextFactory} from './GenericContextFactory';
 import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../components/utilities/PathUtilities';
-import {DESCRIPTION, PURPOSE} from '../ContributionKeys';
+import {DESCRIPTION, pathMethodKeyBuilder, PURPOSE} from '../ContributionKeys';
 import {getNormalizedBodyDescriptor} from '../utilities/RequestUtilities';
 import {withRfcContext} from './RfcContext';
-import {EndpointPage} from '../components/requests/EndpointPage';
 
 const {
   Context: EndpointsContext,
@@ -20,10 +19,9 @@ class EndpointsContextStoreWithoutContext extends React.Component {
     const lookupExampleForResponse = (responseId) => this.props.lookupExampleForResponse(pathId, method, responseId);
     //props from context
     const {cachedQueryResults, queries} = this.props;
-    const {requests, pathsById, requestIdsByPathId, responses, contributions, requestParameters} = cachedQueryResults;
+    const {requests, pathsById, requestIdsByPathId, responsesArray, contributions, requestParameters} = cachedQueryResults;
 
     const requestIdsOnPath = (requestIdsByPathId[pathId] || []).map(requestId => requests[requestId]);
-    debugger
     const requestsOnPathAndMethod = requestIdsOnPath.filter(request => request.requestDescriptor.httpMethod === method.toUpperCase());
 
     if (requestsOnPathAndMethod.length) {
@@ -59,15 +57,26 @@ class EndpointsContextStoreWithoutContext extends React.Component {
         };
       });
 
+
+      const responsesForPathAndMethod = responsesArray
+        .filter(response => response.responseDescriptor.httpMethod === method.toUpperCase() && response.responseDescriptor.pathId === pathId)
+        .map(({responseId, responseDescriptor}) => {
+          const responseBody = getNormalizedBodyDescriptor(responseDescriptor.bodyDescriptor);
+          return {
+            responseId,
+            responseBody,
+          };
+        })
+
       const endpointDescriptor = {
         httpMethod,
         pathId,
         fullPath,
         pathParameters,
         requestBodies,
-        responses: [],
-        endpointPurpose: contributions.getOrUndefined('requestId', PURPOSE),
-        endpointDescription: contributions.getOrUndefined('requestId', DESCRIPTION),
+        responses: responsesForPathAndMethod,
+        endpointPurpose: contributions.getOrUndefined(pathMethodKeyBuilder(pathId, method), PURPOSE),
+        endpointDescription: contributions.getOrUndefined(pathMethodKeyBuilder(pathId, method), DESCRIPTION),
 
       };
 

@@ -228,6 +228,7 @@ export default compose(withRfcContext, withApiOverviewContext, withNavigationCon
               requestId={operation.requestId}
               method={operation.request.requestDescriptor.httpMethod}
               parameters={pathParameters}
+              pathId={operation.path.pathId}
               url={operation.path.full + operation.path.name}
               updateContribution={(id, key, value) => {
                 handleCommand(updateContribution(id, key, value));

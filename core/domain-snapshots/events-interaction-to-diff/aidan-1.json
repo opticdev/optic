@@ -15,7 +15,7 @@
     },
     {
       "RequestAdded": {
-        "requestId": "request_OJoflQhooE",
+        "requestId": "$getTods",
         "pathId": "path_Lkc8qmz09n",
         "httpMethod": "GET",
         "eventContext": {
@@ -29,7 +29,7 @@
     {
       "RequestParameterAdded": {
         "parameterId": "parameter_MWW75qQqCt",
-        "requestId": "request_OJoflQhooE",
+        "requestId": "$getTods",
         "parameterLocation": "query",
         "name": "queryString",
         "eventContext": {
@@ -75,7 +75,7 @@
     },
     {
       "ContributionAdded": {
-        "id": "request_OJoflQhooE",
+        "id": "$getTods",
         "key": "purpose",
         "value": "Get Todos",
         "eventContext": {
@@ -89,7 +89,7 @@
     {
       "ResponseAdded": {
         "responseId": "response_VQq40aRZDN",
-        "requestId": "request_OJoflQhooE",
+        "requestId": "$getTods",
         "httpStatusCode": 200,
         "eventContext": {
           "clientId": "anonymous",
