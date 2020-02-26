@@ -27,9 +27,9 @@ class Traverser(spec: RfcState, visitors: Visitors) {
       val a = bodyJson.asArray.get
       visitors.arrayVisitor.begin(a, bodyTrail, resolved.shapeEntity)
       val listShapeId = resolved.shapeEntity.shapeId
+      val resolvedItem = Resolvers.resolveParameterToShape(spec.shapesState, listShapeId, ListKind.innerParam, resolved.bindings)
       a.zipWithIndex.foreach(entry => {
         val (value, index) = entry
-        val resolvedItem = Resolvers.resolveParameterToShape(spec.shapesState, listShapeId, ListKind.innerParam, resolved.bindings)
         val resolvedTrail = resolvedItem.flatMap(shapeEntity => {
           Some(trail.copy(path = trail.path :+ ListItemTrail(listShapeId, shapeEntity.shapeId)))
         })

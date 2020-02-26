@@ -39,7 +39,7 @@ object Resolvers {
       case ListKind => {
         pathComponent match {
           case c: ListItemTrail => {
-            resolveParameterToShape(shapesState, c.itemShapeId, ListKind.innerParam, parent.bindings) match {
+            resolveParameterToShape(shapesState, c.listShapeId, ListKind.innerParam, parent.bindings) match {
               case Some(value) => {
                 val (shapeId, coreShapeKind) = toCoreAndBaseShape(value, shapesState)
                 ResolvedTrail(shapesState.shapes(shapeId), coreShapeKind, parent.bindings)
