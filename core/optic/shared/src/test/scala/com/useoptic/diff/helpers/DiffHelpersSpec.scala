@@ -111,7 +111,7 @@ class DiffHelpersSpec extends FunSpec {
               SpecResponseBody("response2"),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("k"))),
-                ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1")))
+                ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1", "s3_2")))
               )
             )
           ))
@@ -172,7 +172,8 @@ class DiffHelpersSpec extends FunSpec {
             SpecResponseBody("response2"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
-              ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1")))
+              ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1", "s3_2"))
+              )
             )
           )
           assert(groups(key) == interactions)
@@ -192,7 +193,7 @@ class DiffHelpersSpec extends FunSpec {
             SpecResponseBody("response2"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
-              ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1")))
+              ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1", "s3_2")))
             )
           )
           assert(groups(key1) == Seq(interactions(0)))
@@ -202,7 +203,7 @@ class DiffHelpersSpec extends FunSpec {
             SpecResponseBody("response2"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"), JsonArrayItem(0), JsonObjectKey("b"))),
-              ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1"), ListItemTrail("s3_2", "s3_8"), ObjectFieldTrail("s3_6")))
+              ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1", "s3_2"), ListItemTrail("s3_2", "s3_8"), ObjectFieldTrail("s3_6", "s3_7")))
             )
           )
           assert(groups(key2) == Seq(interactions(1)))

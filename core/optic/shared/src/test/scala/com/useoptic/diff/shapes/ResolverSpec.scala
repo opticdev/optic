@@ -21,12 +21,12 @@ class ResolverSpec extends FunSpec {
       }
 
       it("should resolve the field 'f'") {
-        val resolvedTrail = Resolvers.resolveTrailToCoreShape(rfcState, ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1"))))
+        val resolvedTrail = Resolvers.resolveTrailToCoreShape(rfcState, ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2"))))
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_2"), ListKind, Map(ListKind.innerParam -> Some(ShapeProvider("s_3")))))
       }
 
       it("should resolve a value in field 'f'") {
-        val resolvedTrail = Resolvers.resolveTrailToCoreShape(rfcState, ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1"), ListItemTrail("s_2", "s_3"))))
+        val resolvedTrail = Resolvers.resolveTrailToCoreShape(rfcState, ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_3"))))
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_3"), NumberKind, Map(ListKind.innerParam -> Some(ShapeProvider("s_3")))))
       }
     }
@@ -43,7 +43,7 @@ class ResolverSpec extends FunSpec {
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_1"), ObjectKind, Map()))
       }
       it("should resolve the field id as a number") {
-        val resolvedTrail = Resolvers.resolveTrailToCoreShape(rfcState, ShapeTrail(builtShape.rootShapeId, Seq(ListItemTrail("s_0", "s_1"), ObjectFieldTrail("s_2"))))
+        val resolvedTrail = Resolvers.resolveTrailToCoreShape(rfcState, ShapeTrail(builtShape.rootShapeId, Seq(ListItemTrail("s_0", "s_1"), ObjectFieldTrail("s_2", "s_3"))))
         assert(resolvedTrail == ResolvedTrail(rfcState.shapesState.shapes("s_3"), NumberKind, Map()))
       }
     }

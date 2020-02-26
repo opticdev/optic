@@ -104,7 +104,7 @@ class DiffVisitorSpec extends FunSpec {
               SpecRequestBody(requestId),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("f"), JsonArrayItem(0))),
-                ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1"), ListItemTrail("s_2", "s_3")))
+                ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_3")))
               )
             )
           ))
@@ -174,7 +174,7 @@ class DiffVisitorSpec extends FunSpec {
               SpecResponseBody(responseId),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("f"), JsonArrayItem(0))),
-                ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1"), ListItemTrail("s_2", "s_3")))
+                ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_3")))
               )
             )
           ))

@@ -3,7 +3,7 @@ package com.useoptic.diff.shapes.visitors
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.contexts.shapes.ShapesHelper._
-import com.useoptic.diff.shapes.{ArrayVisitor, JsonObjectKey, JsonTrail, ObjectVisitor, PrimitiveVisitor, Resolvers, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape, Visitors}
+import com.useoptic.diff.shapes.{ArrayVisitor, JsonObjectKey, JsonTrail, ObjectFieldTrail, ObjectVisitor, PrimitiveVisitor, ResolvedTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape, Visitors}
 import io.circe.Json
 
 class DiffVisitors(spec: RfcState) extends Visitors {
@@ -36,19 +36,23 @@ class DiffVisitors(spec: RfcState) extends Visitors {
 
   class DiffObjectVisitor() extends ObjectVisitor {
 
-    override def begin(value: io.circe.JsonObject, bodyTrail: JsonTrail, expected: ShapeEntity, shapeTrail: ShapeTrail): Unit = {
+    override def begin(value: io.circe.JsonObject, bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
       println("visiting object")
       //@TODO: check against the expected shape for fundamental shape mismatch
-      val fieldNameToId = expected.descriptor.fieldOrdering
+      val fieldNameToId = expected.shapeEntity.descriptor.fieldOrdering
         .map(fieldId => {
           val field = spec.shapesState.fields(fieldId)
-          (field.descriptor.name -> fieldId)
+          //@GOTCHA need field bindings?
+          val fieldShapeId = Resolvers.resolveFieldToShape(spec.shapesState, fieldId, expected.bindings).flatMap(x => {
+            Some(x.shapeEntity.shapeId)
+          }).get
+          (field.descriptor.name -> (fieldId, fieldShapeId))
         }).toMap
       fieldNameToId.foreach(entry => {
-        val (fieldName, fieldId) = entry
+        val (fieldName, (fieldId, fieldShapeId)) = entry
         if (!value.contains(fieldName)) {
           println(s"object is missing field ${fieldName}")
-          emit(UnmatchedShape(bodyTrail.withChild(JsonObjectKey(fieldName)), shapeTrail))
+          emit(UnmatchedShape(bodyTrail.withChild(JsonObjectKey(fieldName)), shapeTrail.withChild(ObjectFieldTrail(fieldId, fieldShapeId))))
         }
       })
       value.keys.foreach(key => {

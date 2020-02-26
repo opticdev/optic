@@ -41,7 +41,7 @@ class Traverser(spec: RfcState, visitors: Visitors) {
     }
     else if (bodyJson.isObject) {
       val o = bodyJson.asObject.get
-      visitors.objectVisitor.begin(o, bodyTrail, resolved.shapeEntity, trail)
+      visitors.objectVisitor.begin(o, bodyTrail, resolved, trail)
       val objectEntries = o.toIterable
       objectEntries.foreach(entry => {
         val (key, value) = entry
@@ -49,7 +49,9 @@ class Traverser(spec: RfcState, visitors: Visitors) {
         val resolvedField = Resolvers.tryResolveFieldFromKey(spec.shapesState, resolved.shapeEntity, key)
 
         val resolvedTrail = resolvedField.flatMap(fieldId => {
-          Some(trail.copy(path = trail.path :+ ObjectFieldTrail(fieldId)))
+          //@GOTCHA need field bindings?
+          val fieldShapeId = Resolvers.resolveFieldToShape(spec.shapesState, fieldId, resolved.bindings)
+          Some(trail.copy(path = trail.path :+ ObjectFieldTrail(fieldId, fieldShapeId.get.shapeEntity.shapeId)))
         })
         val jsonTrail = bodyTrail.withChild(JsonObjectKey(key))
 

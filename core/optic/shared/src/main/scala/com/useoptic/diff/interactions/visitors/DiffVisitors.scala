@@ -167,7 +167,6 @@ class DiffVisitors extends Visitors {
         )
         return
       }
-      val request = context.request.get
       val response = context.response.get
       val actualContentType = Helpers.contentType(interaction.response)
       val expectedContentType = response.responseDescriptor.bodyDescriptor

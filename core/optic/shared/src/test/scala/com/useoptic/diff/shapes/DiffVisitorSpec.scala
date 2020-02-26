@@ -40,13 +40,13 @@ class DiffVisitorSpec extends FunSpec {
           assert(visitors.diffs.toSeq == Seq(
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("f"), JsonArrayItem(0), JsonObjectKey("k"))),
-              ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1"), ListItemTrail("s_2", "s_6")))),
+              ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_6"), ObjectFieldTrail("s_4", "s_5")))),
             UnspecifiedShape(
               JsonTrail(Seq(JsonObjectKey("f"), JsonArrayItem(0), JsonObjectKey("k2"))),
-              ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1"), ListItemTrail("s_2", "s_6")))),
+              ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_6")))),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("f"), JsonArrayItem(1), JsonObjectKey("k"))),
-              ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1"), ListItemTrail("s_2", "s_6"), ObjectFieldTrail("s_4"))))
+              ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_6"), ObjectFieldTrail("s_4", "s_5"))))
           ))
         }
       }
@@ -62,7 +62,7 @@ class DiffVisitorSpec extends FunSpec {
           val visitors = new DiffVisitors(rfcState)
           val traverser = new Traverser(rfcState, visitors)
           traverser.traverse(Some(json"""{}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
-          assert(visitors.diffs.toSeq == Seq(UnmatchedShape(JsonTrail(Seq(JsonObjectKey("f"))), ShapeTrail(builtShape.rootShapeId, Seq()))))
+          assert(visitors.diffs.toSeq == Seq(UnmatchedShape(JsonTrail(Seq(JsonObjectKey("f"))), ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2"))))))
         }
       }
       describe("when an unexpected key is observed") {
@@ -99,7 +99,7 @@ class DiffVisitorSpec extends FunSpec {
           val traverser = new Traverser(rfcState, visitors)
           traverser.traverse(Some(json"""{"f":"1"}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq(
-            UnmatchedShape(JsonTrail(Seq(JsonObjectKey("f"))), ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1")))))
+            UnmatchedShape(JsonTrail(Seq(JsonObjectKey("f"))), ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2")))))
           )
         }
       }

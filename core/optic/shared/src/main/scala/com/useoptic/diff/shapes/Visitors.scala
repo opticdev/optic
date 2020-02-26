@@ -4,7 +4,7 @@ import com.useoptic.contexts.shapes.ShapeEntity
 import io.circe.Json
 
 abstract class ObjectVisitor {
-  def begin(value: io.circe.JsonObject, bodyTrail: JsonTrail, expected: ShapeEntity, shapeTrail: ShapeTrail)
+  def begin(value: io.circe.JsonObject, bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail)
 
   def visit(key: String, value: Json, bodyTrail: JsonTrail, trail: Option[ShapeTrail])
 
