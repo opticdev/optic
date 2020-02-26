@@ -4,6 +4,7 @@ case class InteractionTrail(path: Seq[InteractionTrailPathComponent]) {
   def statusCode(): Int = {
     path.find {
       case r: ResponseStatusCode => return r.statusCode
+      case r: ResponseBody => return r.statusCode
       case _ => false
     }
     throw new Error("expected to find a response in trail")
@@ -42,4 +43,4 @@ case class RequestBody(contentType: String) extends InteractionTrailPathComponen
 
 case class ResponseHeaders(headerName: String) extends InteractionTrailPathComponent
 
-case class ResponseBody(contentType: String) extends InteractionTrailPathComponent
+case class ResponseBody(contentType: String, statusCode: Int) extends InteractionTrailPathComponent

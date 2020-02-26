@@ -50,7 +50,7 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
 
         s"Matches Snapshot" in {
 
-          val hash = md.digest((file.contentAsString + folderSlug).getBytes).mkString
+          val hash = convertBytesToHex(md.digest((file.contentAsString + folderSlug).getBytes))+".json"
           val snapshot = snapshotOutputDirectory / hash
           if (snapshot.exists) {
             val snapshotValue = deserializeOutput(parse(snapshot.contentAsString).right.get)
@@ -75,4 +75,12 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
     map.put(key, value)
   }
 
+
+  private def convertBytesToHex(bytes: Seq[Byte]): String = {
+    val sb = new StringBuilder
+    for (b <- bytes) {
+      sb.append(String.format("%02x", Byte.box(b)))
+    }
+    sb.toString
+  }
 }

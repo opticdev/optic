@@ -147,7 +147,7 @@ class DiffVisitorSpec extends FunSpec {
           traverser.traverse(interaction)
           assert(visitors.diffs.toSeq == Seq(
             UnmatchedResponseBodyContentType(
-              InteractionTrail(Seq(ResponseBody("bbb222"))),
+              InteractionTrail(Seq(ResponseBody("bbb222", 200))),
               SpecResponseBody(responseId)
             )
           ))
@@ -170,7 +170,7 @@ class DiffVisitorSpec extends FunSpec {
           traverser.traverse(interaction)
           assert(visitors.diffs.toSeq == Seq(
             UnmatchedResponseBodyShape(
-              InteractionTrail(Seq(ResponseBody("ccc222"))),
+              InteractionTrail(Seq(ResponseBody("ccc222", 200))),
               SpecResponseBody(responseId),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("f"), JsonArrayItem(0))),

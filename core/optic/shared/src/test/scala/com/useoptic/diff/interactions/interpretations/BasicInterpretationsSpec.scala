@@ -131,7 +131,7 @@ class BasicInterpretationsSpec extends FunSpec {
       val diffs = Helpers.getDiffs(rfcState, interaction)
       assert(diffs == Seq(
         UnmatchedResponseBodyContentType(
-          InteractionTrail(Seq(ResponseBody("application/json"))),
+          InteractionTrail(Seq(ResponseBody("application/json", 200))),
           SpecResponseBody("response1")
         )
       ))

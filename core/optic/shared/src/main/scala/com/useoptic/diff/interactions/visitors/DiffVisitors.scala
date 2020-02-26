@@ -193,7 +193,7 @@ class DiffVisitors extends Visitors {
             val body = BodyUtilities.parseJsonBody(interaction.response.body)
             traverser.traverse(body, JsonTrail(Seq()), Some(ShapeTrail(d.shapeId, Seq())))
             shapeDiffVisitors.diffs.foreach(diff => {
-              val interactionTrail = InteractionTrail(Seq(ResponseBody(contentTypeHeader.value)))
+              val interactionTrail = InteractionTrail(Seq(ResponseBody(contentTypeHeader.value, interaction.response.statusCode)))
               val requestsTrail = SpecResponseBody(response.responseId)
               emit(UnmatchedResponseBodyShape(interactionTrail, requestsTrail, diff))
             })
@@ -211,7 +211,7 @@ class DiffVisitors extends Visitors {
       if (visitedWithMatchedContentTypes.isEmpty) {
         val actualContentType = Helpers.contentType(interaction.response)
         val interactionTrail = actualContentType match {
-          case Some(contentType) => InteractionTrail(Seq(ResponseBody(contentType.value)))
+          case Some(contentType) => InteractionTrail(Seq(ResponseBody(contentType.value, interaction.response.statusCode)))
           case None => InteractionTrail(Seq(ResponseStatusCode(interaction.response.statusCode)))
         }
         println(actualContentType)

@@ -33,7 +33,7 @@ class DiffContextStore extends React.Component {
 
   render() {
     const {
-      requestDiffs,
+      requestDiffs = [],
       requestInteractions,
 
     } = this.props;

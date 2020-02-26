@@ -69,7 +69,7 @@ class DiffHelpersSpec extends FunSpec {
           val diff = fixture(commands, interactions)
           assert(diff == Set(
             UnmatchedResponseBodyShape(
-              InteractionTrail(Seq(ResponseBody("application/json"))),
+              InteractionTrail(Seq(ResponseBody("application/json", 200))),
               SpecResponseBody("response2"),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("k"))),
@@ -88,7 +88,7 @@ class DiffHelpersSpec extends FunSpec {
           val diff = fixture(commands, interactions)
           assert(diff == Set(
             UnmatchedResponseBodyShape(
-              InteractionTrail(Seq(ResponseBody("application/json"))),
+              InteractionTrail(Seq(ResponseBody("application/json", 200))),
               SpecResponseBody("response2"),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("k"))),
@@ -107,7 +107,7 @@ class DiffHelpersSpec extends FunSpec {
           val diff = fixture(commands, interactions)
           assert(diff == Set(
             UnmatchedResponseBodyShape(
-              InteractionTrail(Seq(ResponseBody("application/json"))),
+              InteractionTrail(Seq(ResponseBody("application/json", 200))),
               SpecResponseBody("response2"),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("k"))),
@@ -130,7 +130,7 @@ class DiffHelpersSpec extends FunSpec {
           val groups = mapFixture(commands, interactions)
           assert(groups.keySet.size == 1)
           val key = UnmatchedResponseBodyShape(
-            InteractionTrail(Seq(ResponseBody("application/json"))),
+            InteractionTrail(Seq(ResponseBody("application/json", 200))),
             SpecResponseBody("response2"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
@@ -149,7 +149,7 @@ class DiffHelpersSpec extends FunSpec {
           val groups = mapFixture(commands, interactions)
           assert(groups.keySet.size == 1)
           val key = UnmatchedResponseBodyShape(
-            InteractionTrail(Seq(ResponseBody("application/json"))),
+            InteractionTrail(Seq(ResponseBody("application/json", 200))),
             SpecResponseBody("response2"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
@@ -168,7 +168,7 @@ class DiffHelpersSpec extends FunSpec {
           val groups = mapFixture(commands, interactions)
           assert(groups.keySet.size == 1)
           val key = UnmatchedResponseBodyShape(
-            InteractionTrail(Seq(ResponseBody("application/json"))),
+            InteractionTrail(Seq(ResponseBody("application/json", 200))),
             SpecResponseBody("response2"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
@@ -188,7 +188,7 @@ class DiffHelpersSpec extends FunSpec {
           println(groups)
           assert(groups.keySet.size == 2)
           val key1 = UnmatchedResponseBodyShape(
-            InteractionTrail(Seq(ResponseBody("application/json"))),
+            InteractionTrail(Seq(ResponseBody("application/json", 200))),
             SpecResponseBody("response2"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
@@ -198,7 +198,7 @@ class DiffHelpersSpec extends FunSpec {
           assert(groups(key1) == Seq(interactions(0)))
 
           val key2 = UnmatchedResponseBodyShape(
-            InteractionTrail(Seq(ResponseBody("application/json"))),
+            InteractionTrail(Seq(ResponseBody("application/json", 200))),
             SpecResponseBody("response2"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"), JsonArrayItem(0), JsonObjectKey("b"))),

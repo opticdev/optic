@@ -7,10 +7,10 @@ import compose from 'lodash.compose';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {DocGrid} from '../../requests/DocGrid';
-import {EndpointsContext, EndpointsContextStore} from '../../../contexts/EndpointContext';
+import {EndpointsContext, EndpointsContextStore, withEndpointsContext} from '../../../contexts/EndpointContext';
 import {TrafficSessionContext, TrafficSessionStore} from '../../../contexts/TrafficSessionContext';
 import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
-import {DiffContextStore} from './DiffContext';
+import {DiffContextStore, withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {opticEngine} from '@useoptic/domain';
@@ -45,54 +45,57 @@ class DiffPageNew extends React.Component {
     const {classes, specStore} = this.props;
     const {pathId, method, sessionId} = this.props.match.params;
 
-
     return (
       <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId}>
         <EndpointsContextStore pathId={pathId} method={method}>
-          <EndpointsContext.Consumer>
-            {({endpointDescriptor}) => {
-              const {fullPath, httpMethod, endpointPurpose, pathParameters} = endpointDescriptor;
-              return (
-                <div className={classes.container}>
-
-                  <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
-                    <Toolbar variant="dense">
-                      <div style={{flex: 1, textAlign: 'center'}}>
-                        <Typography variant="h6" color="primary">{'ABC'}</Typography>
-                      </div>
-                      <div>
-                        <Typography variant="caption" style={{marginRight: 9}}>(0) Changes</Typography>
-                        <Button color="primary">Apply Changes</Button>
-                      </div>
-                    </Toolbar>
-                  </AppBar>
-
-                  <div className={classes.scroll}>
-                    <div className={classes.root}>
-                      <DocGrid
-                        left={(
-                          <Toolbar>
-                            <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
-                            <BatchActionsMenu/>
-                          </Toolbar>
-                        )} right={(
-                        <Toolbar>
-                          <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
-                          <BatchActionsMenu/>
-                        </Toolbar>
-                      )}/>
-                    </div>
-                  </div>
-                </div>
-              );
-            }}
-          </EndpointsContext.Consumer>
+            <DiffPageContent/>
         </EndpointsContextStore>
       </CaptureSessionInlineContext>
     );
   }
 }
 
+class _DiffPageContent extends React.Component {
+  render() {
+    const {endpointDescriptor, classes} = this.props
+    const {fullPath, httpMethod, endpointPurpose, pathParameters} = endpointDescriptor;
+    return (
+      <div className={classes.container}>
+
+        <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
+          <Toolbar variant="dense">
+            <div style={{flex: 1, textAlign: 'center'}}>
+              <Typography variant="h6" color="primary">{'ABC'}</Typography>
+            </div>
+            <div>
+              <Typography variant="caption" style={{marginRight: 9}}>(0) Changes</Typography>
+              <Button color="primary">Apply Changes</Button>
+            </div>
+          </Toolbar>
+        </AppBar>
+
+        <div className={classes.scroll}>
+          <div className={classes.root}>
+            <DocGrid
+              left={(
+                <Toolbar>
+                  <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
+                  <BatchActionsMenu/>
+                </Toolbar>
+              )} right={(
+              <Toolbar>
+                <Typography variant="subtitle1">21 Diffs observed in 19 examples</Typography>
+                <BatchActionsMenu/>
+              </Toolbar>
+            )}/>
+          </div>
+        </div>
+      </div>
+    )
+  }
+}
+
+const DiffPageContent = compose(withStyles(styles), withDiffContext, withEndpointsContext)(_DiffPageContent)
 
 class _CaptureSessionInlineContext extends React.Component {
 
@@ -124,10 +127,11 @@ class _CaptureSessionInlineContext extends React.Component {
             const rfcState = rfcService.currentState(rfcId);
 
             const samples = jsonHelper.jsArrayToSeq(context.session.samples.map(i => jsonHelper.fromInteraction(i)))
-            console.log(samples)
-            debugger
             const diffResults = helpers.DiffHelpers().groupByDiffs(rfcState, samples);
 
+            const regions = helpers.DiffResultHelpers(diffResults).listRegions().keys()
+
+            debugger
 
             return (
               <DiffContextStore>
