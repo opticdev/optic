@@ -1,0 +1,932 @@
+{
+  "diff": [
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_Jfdth9wxOQ"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "id"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_0fcIA9i9sp",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_wAkwfOz724"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "dueDate"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_PSPiazXASO",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_VQq40aRZDN"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "id"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_C3pRaPrHpk",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_wAkwfOz724"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "id"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_PSPiazXASO",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedRequestBodyContentType": {
+        "interactionTrail": {
+          "path": [
+            {
+              "Url": {
+                "url": "/todos"
+              }
+            },
+            {
+              "Method": {
+                "method": "POST"
+              }
+            },
+            {
+              "RequestBody": {
+                "contentType": "application/json; charset=utf-8"
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecRequestRoot": {
+            "requestId": "request_uQ42lrpzt5"
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_wAkwfOz724"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "isDone"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_PSPiazXASO",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_wAkwfOz724"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "task"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_PSPiazXASO",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_Jfdth9wxOQ"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "isDone"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_0fcIA9i9sp",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_Jfdth9wxOQ"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "dueDate"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_0fcIA9i9sp",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_VQq40aRZDN"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "task"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_C3pRaPrHpk",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_Jfdth9wxOQ"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "task"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_0fcIA9i9sp",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_VQq40aRZDN"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "dueDate"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_C3pRaPrHpk",
+              "path": []
+            }
+          }
+        }
+      }
+    },
+    {
+      "UnmatchedResponseBodyShape": {
+        "interactionTrail": {
+          "path": [
+            {
+              "ResponseBody": {
+                "contentType": "application/json; charset=utf-8",
+                "statusCode": 200
+              }
+            }
+          ]
+        },
+        "requestsTrail": {
+          "SpecResponseBody": {
+            "responseId": "response_VQq40aRZDN"
+          }
+        },
+        "shapeDiffResult": {
+          "UnspecifiedShape": {
+            "jsonTrail": {
+              "path": [
+                {
+                  "JsonObjectKey": {
+                    "key": "isDone"
+                  }
+                }
+              ]
+            },
+            "shapeTrail": {
+              "rootShapeId": "shape_C3pRaPrHpk",
+              "path": []
+            }
+          }
+        }
+      }
+    }
+  ],
+  "regions": {
+    "diffsGroupedByRegion": {
+      "request-body": [
+        {
+          "UnmatchedRequestBodyContentType": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "Url": {
+                    "url": "/todos"
+                  }
+                },
+                {
+                  "Method": {
+                    "method": "POST"
+                  }
+                },
+                {
+                  "RequestBody": {
+                    "contentType": "application/json; charset=utf-8"
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecRequestRoot": {
+                "requestId": "request_uQ42lrpzt5"
+              }
+            }
+          }
+        }
+      ],
+      "response-body-200": [
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_Jfdth9wxOQ"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "id"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_0fcIA9i9sp",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_wAkwfOz724"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "dueDate"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_PSPiazXASO",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_VQq40aRZDN"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "id"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_C3pRaPrHpk",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_wAkwfOz724"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "id"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_PSPiazXASO",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_wAkwfOz724"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "isDone"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_PSPiazXASO",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_wAkwfOz724"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "task"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_PSPiazXASO",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_Jfdth9wxOQ"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "isDone"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_0fcIA9i9sp",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_Jfdth9wxOQ"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "dueDate"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_0fcIA9i9sp",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_VQq40aRZDN"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "task"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_C3pRaPrHpk",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_Jfdth9wxOQ"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "task"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_0fcIA9i9sp",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_VQq40aRZDN"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "dueDate"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_C3pRaPrHpk",
+                  "path": []
+                }
+              }
+            }
+          }
+        },
+        {
+          "UnmatchedResponseBodyShape": {
+            "interactionTrail": {
+              "path": [
+                {
+                  "ResponseBody": {
+                    "contentType": "application/json; charset=utf-8",
+                    "statusCode": 200
+                  }
+                }
+              ]
+            },
+            "requestsTrail": {
+              "SpecResponseBody": {
+                "responseId": "response_VQq40aRZDN"
+              }
+            },
+            "shapeDiffResult": {
+              "UnspecifiedShape": {
+                "jsonTrail": {
+                  "path": [
+                    {
+                      "JsonObjectKey": {
+                        "key": "isDone"
+                      }
+                    }
+                  ]
+                },
+                "shapeTrail": {
+                  "rootShapeId": "shape_C3pRaPrHpk",
+                  "path": []
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

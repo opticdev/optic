@@ -182,6 +182,7 @@ class TrafficSessionStoreBase extends React.Component {
       diffSessionManager,
       diffStateProjections
     };
+
     return (
       <TrafficSessionContext.Provider value={context}>
         {children}
