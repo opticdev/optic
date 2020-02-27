@@ -3,7 +3,7 @@ package com.useoptic.diff.interactions
 import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.{HttpRequest, HttpResponse}
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.types.capture.{Body, HttpInteraction}
+import com.useoptic.types.capture.{Body, Header, HttpInteraction}
 import io.circe.Json
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}

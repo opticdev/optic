@@ -2,7 +2,7 @@ package com.useoptic.diff.interactions.interpreters
 
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
-import com.useoptic.diff.interactions.{Helpers, InteractionDiffResult, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
+import com.useoptic.diff.interactions.{ContentTypeHelpers, InteractionDiffResult, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.shapes.{JsonArray, JsonArrayItem, JsonObject, JsonObjectKey, JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape}
 import com.useoptic.types.capture.HttpInteraction
 
@@ -81,8 +81,8 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
         DiffDescription(s"${interaction.request.method} ${interaction.request.path} is not documented in the spec", None)
       }
       case d: UnmatchedRequestBodyContentType => {
-        Helpers.contentType(interaction.request) match {
-          case Some(contentTypeHeader) => DiffDescription(s"The ${contentTypeHeader.value} content type is not documented in the spec", None)
+        ContentTypeHelpers.contentType(interaction.request) match {
+          case Some(contentTypeHeader) => DiffDescription(s"The ${contentTypeHeader} content type is not documented in the spec", None)
           case None => DiffDescription("A request with no body is not documented in the spec", None)
         }
       }
@@ -95,8 +95,8 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
         DiffDescription(s"The ${interaction.response.statusCode} status code is not documented in the spec", None)
       }
       case d: UnmatchedResponseBodyContentType => {
-        Helpers.contentType(interaction.response) match {
-          case Some(contentTypeHeader) => DiffDescription(s"The ${contentTypeHeader.value} content type is not documented in the spec", None)
+        ContentTypeHelpers.contentType(interaction.response) match {
+          case Some(contentTypeHeader) => DiffDescription(s"The ${contentTypeHeader} content type is not documented in the spec", None)
           case None => DiffDescription("A response with no body is not documented in the spec", None)
         }
       }

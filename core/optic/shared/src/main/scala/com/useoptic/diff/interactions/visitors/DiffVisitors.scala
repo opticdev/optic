@@ -2,7 +2,7 @@ package com.useoptic.diff.interactions.visitors
 
 import com.useoptic.contexts.requests.Commands.{RequestId, ResponseId, ShapedBodyDescriptor, UnsetBodyDescriptor}
 import com.useoptic.contexts.requests.HttpResponse
-import com.useoptic.diff.interactions.{BodyUtilities, Helpers, InteractionDiffResult, InteractionTrail, Method, OperationVisitor, OperationVisitorContext, PathVisitor, PathVisitorContext, RequestBody, RequestBodyVisitor, RequestBodyVisitorContext, ResponseBody, ResponseBodyVisitor, ResponseBodyVisitorContext, ResponseStatusCode, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode, Url, Visitors}
+import com.useoptic.diff.interactions.{BodyUtilities, ContentTypeHelpers, InteractionDiffResult, InteractionTrail, Method, OperationVisitor, OperationVisitorContext, PathVisitor, PathVisitorContext, RequestBody, RequestBodyVisitor, RequestBodyVisitorContext, ResponseBody, ResponseBodyVisitor, ResponseBodyVisitorContext, ResponseStatusCode, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode, Url, Visitors}
 import com.useoptic.diff.shapes.{JsonTrail, ShapeTrail, UnmatchedShape}
 import com.useoptic.types.capture.HttpInteraction
 
@@ -74,7 +74,7 @@ class DiffVisitors extends Visitors {
       }
       context.request match {
         case Some(request) => {
-          val actualContentType = Helpers.contentType(interaction.request)
+          val actualContentType = ContentTypeHelpers.contentType(interaction.request)
           val expectedContentType = request.requestDescriptor.bodyDescriptor
           println(expectedContentType, actualContentType)
           (expectedContentType, actualContentType) match {
@@ -93,14 +93,14 @@ class DiffVisitors extends Visitors {
             }
             case (expected: ShapedBodyDescriptor, Some(contentTypeHeader)) => {
               println("spec says body, request has body")
-              if (expected.httpContentType == contentTypeHeader.value) {
+              if (expected.httpContentType == contentTypeHeader) {
                 visitedWithMatchedContentTypes = visitedWithMatchedContentTypes + request.requestId
                 val shapeDiffVisitors = new com.useoptic.diff.shapes.visitors.DiffVisitors(context.spec)
                 val traverser = new com.useoptic.diff.shapes.Traverser(context.spec, shapeDiffVisitors)
                 val body = BodyUtilities.parseJsonBody(interaction.request.body)
                 traverser.traverse(body, JsonTrail(Seq()), Some(ShapeTrail(expected.shapeId, Seq())))
                 shapeDiffVisitors.diffs.foreach(diff => {
-                  val interactionTrail = InteractionTrail(Seq(RequestBody(contentTypeHeader.value)))
+                  val interactionTrail = InteractionTrail(Seq(RequestBody(contentTypeHeader)))
                   val requestsTrail = SpecRequestBody(request.requestId)
                   emit(UnmatchedRequestBodyShape(interactionTrail, requestsTrail, diff))
                 })
@@ -121,9 +121,9 @@ class DiffVisitors extends Visitors {
       }
       if (visitedWithMatchedContentTypes.isEmpty) {
 
-        val actualContentType = Helpers.contentType(interaction.request)
+        val actualContentType = ContentTypeHelpers.contentType(interaction.request)
         val interactionTrail = actualContentType match {
-          case Some(contentType) => InteractionTrail(Seq(Url(interaction.request.path), Method(interaction.request.method), RequestBody(contentType.value)))
+          case Some(contentType) => InteractionTrail(Seq(Url(interaction.request.path), Method(interaction.request.method), RequestBody(contentType)))
           case None => InteractionTrail(Seq(Url(interaction.request.path), Method(interaction.request.method)))
         }
         println(actualContentType)
@@ -168,7 +168,7 @@ class DiffVisitors extends Visitors {
         return
       }
       val response = context.response.get
-      val actualContentType = Helpers.contentType(interaction.response)
+      val actualContentType = ContentTypeHelpers.contentType(interaction.response)
       val expectedContentType = response.responseDescriptor.bodyDescriptor
       (expectedContentType, actualContentType) match {
         case (d: UnsetBodyDescriptor, None) => {
@@ -185,14 +185,14 @@ class DiffVisitors extends Visitors {
         }
         case (d: ShapedBodyDescriptor, Some(contentTypeHeader)) => {
           println("comparing response bodies")
-          if (d.httpContentType == contentTypeHeader.value) {
+          if (d.httpContentType == contentTypeHeader) {
             visitedWithMatchedContentTypes = visitedWithMatchedContentTypes + response.responseId
             val shapeDiffVisitors = new com.useoptic.diff.shapes.visitors.DiffVisitors(context.spec)
             val traverser = new com.useoptic.diff.shapes.Traverser(context.spec, shapeDiffVisitors)
             val body = BodyUtilities.parseJsonBody(interaction.response.body)
             traverser.traverse(body, JsonTrail(Seq()), Some(ShapeTrail(d.shapeId, Seq())))
             shapeDiffVisitors.diffs.foreach(diff => {
-              val interactionTrail = InteractionTrail(Seq(ResponseBody(contentTypeHeader.value, interaction.response.statusCode)))
+              val interactionTrail = InteractionTrail(Seq(ResponseBody(contentTypeHeader, interaction.response.statusCode)))
               val requestsTrail = SpecResponseBody(response.responseId)
               emit(UnmatchedResponseBodyShape(interactionTrail, requestsTrail, diff))
             })
@@ -208,9 +208,9 @@ class DiffVisitors extends Visitors {
         return
       }
       if (visitedWithMatchedContentTypes.isEmpty) {
-        val actualContentType = Helpers.contentType(interaction.response)
+        val actualContentType = ContentTypeHelpers.contentType(interaction.response)
         val interactionTrail = actualContentType match {
-          case Some(contentType) => InteractionTrail(Seq(ResponseBody(contentType.value, interaction.response.statusCode)))
+          case Some(contentType) => InteractionTrail(Seq(ResponseBody(contentType, interaction.response.statusCode)))
           case None => InteractionTrail(Seq(ResponseStatusCode(interaction.response.statusCode)))
         }
         println(actualContentType)

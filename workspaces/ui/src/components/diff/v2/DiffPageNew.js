@@ -17,7 +17,7 @@ import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {BodyUtilities, opticEngine} from '@useoptic/domain';
+import {BodyUtilities, ContentTypeHelpers, opticEngine} from '@useoptic/domain';
 import DiffViewer from './DiffViewer';
 import {ExampleShapeViewer} from '../../requests/DocCodeBox';
 import {HighlightedIDsStore} from '../../shapes/HighlightedIDs';
@@ -73,7 +73,7 @@ class DiffPageNew extends React.Component {
 class _DiffPageContent extends React.Component {
   render() {
     const {endpointDescriptor, classes, regionNames, currentExample} = this.props;
-    const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses} = endpointDescriptor;
+    const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, selectedInterpretation} = endpointDescriptor;
 
 
     const responseRegionRegex = /response-body-([0-9]{3})/;
@@ -88,6 +88,9 @@ class _DiffPageContent extends React.Component {
     const responsesToRender = Array.from(new Set([...responseRegions, ...responses.map(i => i.statusCode)])).sort((a, b) => a - b);
 
     const RequestBodyRegion = () => {
+
+      const example = currentExample && niceTry(() => JsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)));
+
       return (
         <DocGrid
           left={(
@@ -95,13 +98,32 @@ class _DiffPageContent extends React.Component {
               Request body
               <DiffViewer regionName={'request-body'}/>
             </div>
-          )} right={(<pre>spec {JSON.stringify(requestBodies, null, 2)}</pre>)}/>
+          )} right={(
+          <div>
+            {requestBodies.filter(i => {
+              if (currentExample && selectedInterpretation) {
+                return ContentTypeHelpers.contentTypeOrNull(currentExample.request) === i.requestBody.httpContentType
+              }
+              return true
+            }).map(request => {
+              return (
+                <div>
+                  <ExampleShapeViewer
+                    title={`Request Body`}
+                    shapeId={request.requestBody.shapeId}
+                    contentType={request.requestBody.httpContentType}
+                    showShapesFirst={true}
+                    example={currentExample && example}/>
+                </div>
+              )
+            })}
+          </div>
+        )}/>
       );
     };
 
     const ResponseBodyRegion = ({statusCode}) => {
 
-      console.log(currentExample);
       const showExample = currentExample && currentExample.response.statusCode === statusCode;
       const contentTypes = responses.filter(i => i.statusCode === statusCode);
 
@@ -223,8 +245,9 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
       regionNames={regionNames}
       setSuggestionToPreview={setSuggestionToPreview}
       acceptSuggestion={() => {
-        debugger
-        setAcceptedSuggestions([...acceptedSuggestions, suggestionToPreview]);
+        if (suggestionToPreview) {
+          setAcceptedSuggestions([...acceptedSuggestions, suggestionToPreview]);
+        }
       }}
       getDiffsByRegion={getDiffsByRegion}
       interpretationsForDiffAndInteraction={interpretationsForDiffAndInteraction}
@@ -273,8 +296,6 @@ class _CaptureSessionInlineContext extends React.Component {
                 setAcceptedSuggestions
               } = suggestionsContext;
               const simulatedCommands = acceptedSuggestions.map(x => jsonHelper.seqToJsArray(x.commands)).reduce(flatten, []);
-
-              debugger
               console.log({
                 xxx: 'xxx',
                 suggestionToPreview,

@@ -1,17 +1,18 @@
 import React from 'react';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
-import events from 'events'
+import events from 'events';
+
 const {
   Context: DiffContext,
   withContext: withDiffContext
-} = GenericContextFactory()
+} = GenericContextFactory();
 
 
 export const DiffUIEventEmitter = new events.EventEmitter();
 export const DiffUIEventEmitterEvents = {
   'SHOW_EXAMPLE_WHEN_POSSIBLE': 'SHOW_EXAMPLE_WHEN_POSSIBLE',
   'SHOW_SPEC_WHEN_POSSIBLE': 'SHOW_SPEC_WHEN_POSSIBLE',
-}
+};
 
 /*
 ???s
@@ -31,10 +32,9 @@ class DiffContextStore extends React.Component {
   state = {
     selectedDiff: null,
     exampleInteractions: [],
-    currentExampleIndex: 0,
     selectedInterpretation: null,
     selectedInterpretationIndex: null,
-  }
+  };
 
   render() {
     const {
@@ -44,7 +44,9 @@ class DiffContextStore extends React.Component {
       interpretationsForDiffAndInteraction,
       getDiffDescription,
       setSuggestionToPreview,
+      acceptSuggestion
     } = this.props;
+
 
     const setSelectedDiff = (diff) => {
 
@@ -53,17 +55,21 @@ class DiffContextStore extends React.Component {
         exampleInteractions: getInteractionsForDiff(diff),
         currentExampleIndex: 0,
         selectedInterpretation: null,
-        selectedInterpretationIndex: null}, () => {
+        selectedInterpretationIndex: null
+      }, () => {
 
-        // setTimeout(() => {
-          DiffUIEventEmitter.emit(DiffUIEventEmitterEvents.SHOW_EXAMPLE_WHEN_POSSIBLE)
-        // }, 0)
-      })
-    }
+        setSuggestionToPreview(null);
+        if (diff) {
+          DiffUIEventEmitter.emit(DiffUIEventEmitterEvents.SHOW_EXAMPLE_WHEN_POSSIBLE);
+        }
+      });
+    };
     const setSelectedInterpretation = (interpretation, index) => {
-      setSuggestionToPreview(interpretation)
-      this.setState({selectedInterpretation: interpretation, selectedInterpretationIndex: index})
-    }
+      setSuggestionToPreview(interpretation);
+      this.setState({
+        selectedInterpretation: interpretation,
+      });
+    };
 
     const context = {
       regionNames,
@@ -81,8 +87,8 @@ class DiffContextStore extends React.Component {
 
       //selected interpretation
       selectedInterpretation: this.state.selectedInterpretation,
-      selectedInterpretationIndex: this.state.selectedInterpretationIndex,
-      setSelectedInterpretation
+      setSelectedInterpretation,
+      acceptSuggestion
       // simulate: approved + selectedInterpretation.commands
     };
 
@@ -90,7 +96,7 @@ class DiffContextStore extends React.Component {
       <DiffContext.Provider value={context}>
         {this.props.children}
       </DiffContext.Provider>
-    )
+    );
   }
 }
 
@@ -98,4 +104,4 @@ export {
   DiffContext,
   withDiffContext,
   DiffContextStore
-}
+};

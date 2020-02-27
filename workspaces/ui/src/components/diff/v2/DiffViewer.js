@@ -14,6 +14,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {ListItemAvatar, ListItemSecondaryAction} from '@material-ui/core';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
+import {CompareEquality} from '@useoptic/domain'
 import {withDiffContext} from './DiffContext';
 import Zoom from '@material-ui/core/Zoom';
 
@@ -56,7 +57,8 @@ class DiffViewer extends React.Component {
       currentExample,
       selectedDiff,
       setSelectedInterpretation,
-      selectedInterpretationIndex
+      selectedInterpretation,
+      acceptSuggestion
     } = this.props;
 
     const groupDiffs = getDiffsByRegion(regionName);
@@ -67,14 +69,10 @@ class DiffViewer extends React.Component {
     return (
       <DocSubGroup className={classes.root} title={nameMapping[regionName]} innerStyle={{marginTop: 12}}>
         {groupDiffs.map((diff, index) => {
-          const selected = selectedDiff === diff;
+          const selected = !!selectedDiff && CompareEquality.between(selectedDiff, diff);
           const interactions = getInteractionsForDiff(diff);
           const diffDescription = getDiffDescription(diff, interactions[0]);
           const interpretations = selected ? interpretationsForDiffAndInteraction(diff, currentExample) : [];
-
-          if (selected) {
-            debugger
-          }
 
           return (
             <ExpansionPanel expanded={selected}
@@ -89,11 +87,12 @@ class DiffViewer extends React.Component {
               <ExpansionPanelDetails style={{display: 'flex', flexDirection: 'column', marginTop: 6}}>
                 <FormHelperText style={{marginBottom: 8}}>Suggested changes to your specification:</FormHelperText>
                 <List dense style={{marginLeft: -15}}>
-                  {interpretations.map((interpretation, index) => {
+                  {selected && interpretations.map((interpretation, index) => {
                     return (
                       <InterpretationRow
                         action={interpretation.title + interpretation.description}
-                        active={selectedInterpretationIndex === index}
+                        active={selectedInterpretation && CompareEquality.betweenWithoutCommands(selectedInterpretation, interpretation)}
+                        confirm={acceptSuggestion}
                         onClick={() => setSelectedInterpretation(interpretation, index)}/>
                     );
                   })}
@@ -111,7 +110,7 @@ class DiffViewer extends React.Component {
 
 function InterpretationRow(props) {
 
-  const {action, active, onClick} = props;
+  const {action, active, onClick, confirm} = props;
 
   return (
     <ListItem
@@ -128,13 +127,17 @@ function InterpretationRow(props) {
           }
         }
       }}
-      onClick={onClick}>
+      onClick={!active && onClick}>
       <ListItemAvatar style={{minWidth: 25}}><Radio tabIndex={-1} checked={active} style={{pointerEvents: 'none'}}
                                                     color="primary"/></ListItemAvatar>
       <ListItemText primary={action}/>
       <ListItemSecondaryAction>
         <Zoom direction="up" in={active} mountOnEnter unmountOnExit>
-          <Button size="small" autoFocus variant="contained" color="secondary">Confirm</Button>
+          <Button size="small"
+                  autoFocus
+                  variant="contained"
+                  color="secondary"
+                  onClick={confirm}>Confirm</Button>
         </Zoom>
       </ListItemSecondaryAction>
     </ListItem>

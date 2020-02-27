@@ -16,6 +16,8 @@ export const RequestsCommands = contexts.requests.Commands;
 export const RfcCommandContext = contexts.rfc.RfcCommandContext;
 export const ScalaJSHelpers = opticEngine.ScalaJSHelpers;
 
+export const CompareEquality = opticEngine.com.useoptic.CompareEquality();
+
 export const Facade = contexts.rfc.RfcServiceJSFacade();
 export const Queries = (eventStore: any, service: any, aggregateId: string) => new opticEngine.Queries(eventStore, service, aggregateId);
 
@@ -110,6 +112,7 @@ export const QueryStringDiffer = diff.query.QueryStringDiffer;
 export const {JsQueryStringParser} = opticEngine;
 export const OasProjectionHelper = opticEngine.com.useoptic.OASProjectionHelper();
 export const BodyUtilities = opticEngine.com.useoptic.diff.interactions.BodyUtilities();
+export const ContentTypeHelpers = opticEngine.com.useoptic.diff.interactions.ContentTypeHelpers();
 
 import {checkDiffOrUnrecognizedPath} from './check-diff';
 import {IHttpInteraction, IHeader} from './domain-types/optic-types';
