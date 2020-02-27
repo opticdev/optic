@@ -14,7 +14,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {ListItemAvatar, ListItemSecondaryAction} from '@material-ui/core';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
-import {CompareEquality} from '@useoptic/domain'
+import {CompareEquality} from '@useoptic/domain';
 import {withDiffContext} from './DiffContext';
 import Zoom from '@material-ui/core/Zoom';
 
@@ -128,8 +128,13 @@ function InterpretationRow(props) {
         }
       }}
       onClick={!active && onClick}>
-      <ListItemAvatar style={{minWidth: 25}}><Radio tabIndex={-1} checked={active} style={{pointerEvents: 'none'}}
-                                                    color="primary"/></ListItemAvatar>
+      <ListItemAvatar style={{minWidth: 25}}>
+        <Radio
+          tabIndex={-1}
+          checked={active}
+          style={{pointerEvents: 'none'}}
+          color="primary"/>
+      </ListItemAvatar>
       <ListItemText primary={action}/>
       <ListItemSecondaryAction>
         <Zoom direction="up" in={active} mountOnEnter unmountOnExit>

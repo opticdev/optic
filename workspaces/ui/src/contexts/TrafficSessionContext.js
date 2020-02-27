@@ -86,8 +86,8 @@ class TrafficSessionStoreBase extends React.Component {
       this.setState({
         noSession: true,
         isLoading: false
-      })
-      return
+      });
+      return;
     }
 
     specService
@@ -126,7 +126,7 @@ class TrafficSessionStoreBase extends React.Component {
       const {specService, sessionId} = this.props;
 
       if (!sessionId) {
-        return
+        return;
       }
 
       try {
@@ -167,7 +167,7 @@ class TrafficSessionStoreBase extends React.Component {
     }
 
     if (noSession) {
-      return renderNoSession || null
+      return renderNoSession || null;
     }
 
     if (error) {
