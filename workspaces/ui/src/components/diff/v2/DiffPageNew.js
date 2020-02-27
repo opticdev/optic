@@ -233,7 +233,7 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   const getInteractionsForDiff = (diff) => jsonHelper.seqToJsArray(diffHelper.get(diff));
   const getDiffsByRegion = (groupName) => jsonHelper.seqToJsArray(regions.getDiffsByRegion(groupName));
 
-  const interpreter = diff.interactions.interpreters.BasicInterpreters(rfcState);
+  const interpreter = diff.interactions.interpreters.DefaultInterpreters(rfcState);
   const getDiffDescription = (x, interaction) => diff.interactions.interpreters.DiffDescriptionInterpreters(rfcState).interpret(x, interaction);
 
   const interpretationsForDiffAndInteraction = (diff, interaction) => {

@@ -24,7 +24,7 @@ class BasicInterpreters(rfcState: RfcState) extends InteractiveDiffInterpreter[I
         interpretations.AddResponse(d.interactionTrail, d.requestsTrail)
       )
       case d: UnmatchedRequestBodyContentType => Seq(
-        interpretations.AddRequestContentType(d.interactionTrail, d.requestsTrail)
+        interpretations.AddRequestContentType(d.interactionTrail, d.requestsTrail, interaction)
       )
       case d: UnmatchedRequestBodyShape => {
         d.shapeDiffResult match {
@@ -52,7 +52,7 @@ class BasicInterpreters(rfcState: RfcState) extends InteractiveDiffInterpreter[I
         }
       }
       case d: UnmatchedResponseBodyContentType => Seq(
-        interpretations.ChangeResponseContentType(d.interactionTrail, d.requestsTrail)
+        interpretations.AddResponseContentType(d.interactionTrail, d.requestsTrail, interaction)
       )
       case d: UnmatchedResponseBodyShape => {
         d.shapeDiffResult match {

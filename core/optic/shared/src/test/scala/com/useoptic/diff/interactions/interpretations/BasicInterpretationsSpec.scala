@@ -33,6 +33,7 @@ object InteractionHelpers {
       Vector()
     )
   }
+
   def simplePost(requestBody: Json, statusCode: Int = 200, contentType: String = "application/json"): HttpInteraction = {
     HttpInteraction(
       "uuid",
@@ -83,12 +84,12 @@ class BasicInterpretationsSpec extends FunSpec {
       Commands.AddRequest("request1", "root", "PUT")
     ) ++ builtShape.commands ++ Seq(
       Commands.SetRequestBodyShape("request1", ShapedBodyDescriptor("text/plain", builtShape.rootShapeId, false)),
-      Commands.AddResponse("response1", "request1", 200)
+      Commands.AddResponseByPathAndMethod("response1", "root", "PUT", 200)
     )
-    val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)
-    val interaction: HttpInteraction = InteractionHelpers.simplePut(json"""{}""")
 
-    it("should change the expected content type in the spec") {
+    it("should add the expected content type to the spec") {
+      val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)
+      val interaction: HttpInteraction = InteractionHelpers.simplePut(json"""999""")
       val diffs = DiffHelpers.diff(rfcState, interaction)
       assert(diffs == Seq(
         UnmatchedRequestBodyContentType(
@@ -112,13 +113,13 @@ class BasicInterpretationsSpec extends FunSpec {
     val initialCommands = Seq(
       Commands.AddRequest("request1", "root", "GET")
     ) ++ builtShape.commands ++ Seq(
-      Commands.AddResponse("response1", "request1", 200),
+      Commands.AddResponseByPathAndMethod("response1", "root", "GET", 200),
       Commands.SetResponseBodyShape("response1", ShapedBodyDescriptor("text/plain", builtShape.rootShapeId, false)),
     )
-    val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)
-    val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""{}""")
 
-    it("should change the expected content type in the spec") {
+    it("should add the expected content type to the spec") {
+      val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)
+      val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""999""")
       val diffs = DiffHelpers.diff(rfcState, interaction)
       assert(diffs == Seq(
         UnmatchedResponseBodyContentType(
@@ -143,7 +144,7 @@ class BasicInterpretationsSpec extends FunSpec {
         Commands.AddRequest("request1", "root", "PUT")
       ) ++ builtShape.commands ++ Seq(
         Commands.SetRequestBodyShape("request1", ShapedBodyDescriptor("application/json", builtShape.rootShapeId, false)),
-        Commands.AddResponse("response1", "request1", 200)
+        Commands.AddResponseByPathAndMethod("response1", "root", "PUT", 200)
       )
       val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)
       val interaction: HttpInteraction = InteractionHelpers.simplePut(json"""{"k":"s"}""")
@@ -167,7 +168,7 @@ class BasicInterpretationsSpec extends FunSpec {
         Commands.AddRequest("request1", "root", "PUT")
       ) ++ builtShape.commands ++ Seq(
         Commands.SetRequestBodyShape("request1", ShapedBodyDescriptor("application/json", builtShape.rootShapeId, false)),
-        Commands.AddResponse("response1", "request1", 200)
+        Commands.AddResponseByPathAndMethod("response1", "root", "PUT", 200)
       )
       val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)
       val interaction: HttpInteraction = InteractionHelpers.simplePut(json"""{"k":["s"]}""")
