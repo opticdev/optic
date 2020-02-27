@@ -5,12 +5,7 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {DocDarkGrey, DocDivider} from '../../requests/DocConstants';
 import {DocSubGroup} from '../../requests/DocSubGroup';
-import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Radio from '@material-ui/core/Radio';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import {primary} from '../../../theme';
@@ -20,7 +15,6 @@ import {ListItemAvatar, ListItemSecondaryAction} from '@material-ui/core';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
 import {withDiffContext} from './DiffContext';
-import Slide from '@material-ui/core/Slide';
 import Zoom from '@material-ui/core/Zoom';
 
 const styles = theme => ({
@@ -55,6 +49,8 @@ class DiffViewer extends React.Component {
       classes,
       regionName,
       getDiffsByRegion,
+      getDiffDescription,
+      getInteractionsForDiff,
       setSelectedDiff,
       interpretationsForDiffAndInteraction,
       currentExample,
@@ -72,8 +68,9 @@ class DiffViewer extends React.Component {
       <DocSubGroup className={classes.root} title={nameMapping[regionName]} innerStyle={{marginTop: 12}}>
         {groupDiffs.map((diff, index) => {
           const selected = selectedDiff === diff;
-
-          const interpretations = selected ? interpretationsForDiffAndInteraction(diff, currentExample) : []
+          const interactions = getInteractionsForDiff(diff);
+          const diffDescription = getDiffDescription(diff, interactions[0]);
+          const interpretations = selected ? interpretationsForDiffAndInteraction(diff, currentExample) : [];
 
           if (selected) {
             debugger
@@ -87,7 +84,7 @@ class DiffViewer extends React.Component {
                 style={selected ? {backgroundColor: primary, color: 'white'} : {}}
                 expandIcon={<ExpandMoreIcon style={selected ? {color: 'white'} : {}}/>}
               >
-                <Typography className={classes.heading}>{diff.toString()}</Typography>
+                <Typography className={classes.heading}>{diffDescription.title}</Typography>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails style={{display: 'flex', flexDirection: 'column', marginTop: 6}}>
                 <FormHelperText style={{marginBottom: 8}}>Suggested changes to your specification:</FormHelperText>

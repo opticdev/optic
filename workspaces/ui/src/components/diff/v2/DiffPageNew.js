@@ -7,18 +7,27 @@ import compose from 'lodash.compose';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import {DocGrid} from '../../requests/DocGrid';
-import {EndpointsContext, EndpointsContextStore, withEndpointsContext} from '../../../contexts/EndpointContext';
-import {TrafficSessionContext, TrafficSessionStore} from '../../../contexts/TrafficSessionContext';
+import {EndpointsContextStore, withEndpointsContext} from '../../../contexts/EndpointContext';
+import {
+  TrafficSessionContext,
+  TrafficSessionStore,
+  withTrafficSessionContext
+} from '../../../contexts/TrafficSessionContext';
 import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {BodyUtilities, JsonHelper, opticEngine} from '@useoptic/domain';
+import {BodyUtilities, opticEngine} from '@useoptic/domain';
 import DiffViewer from './DiffViewer';
 import {ExampleShapeViewer} from '../../requests/DocCodeBox';
 import {HighlightedIDsStore} from '../../shapes/HighlightedIDs';
-import niceTry from 'nice-try'
+import niceTry from 'nice-try';
 import {NamerStore} from '../../shapes/Namer';
+import SimulatedCommandContext from '../SimulatedCommandContext';
+
+const {diff, JsonHelper} = opticEngine.com.useoptic;
+const {helpers} = diff;
+const jsonHelper = JsonHelper();
 
 const styles = theme => ({
   root: {
@@ -64,7 +73,7 @@ class DiffPageNew extends React.Component {
 class _DiffPageContent extends React.Component {
   render() {
     const {endpointDescriptor, classes, regionNames, currentExample} = this.props;
-    const {fullPath, httpMethod, endpointPurpose, pathParameters, responses} = endpointDescriptor;
+    const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses} = endpointDescriptor;
 
 
     const responseRegionRegex = /response-body-([0-9]{3})/;
@@ -86,13 +95,13 @@ class _DiffPageContent extends React.Component {
               Request body
               <DiffViewer regionName={'request-body'}/>
             </div>
-          )} right={(<div>spec {currentExample && currentExample.toString()}</div>)}/>
+          )} right={(<pre>spec {JSON.stringify(requestBodies, null, 2)}</pre>)}/>
       );
     };
 
     const ResponseBodyRegion = ({statusCode}) => {
 
-      console.log(currentExample)
+      console.log(currentExample);
       const showExample = currentExample && currentExample.response.statusCode === statusCode;
       const contentTypes = responses.filter(i => i.statusCode === statusCode);
 
@@ -108,7 +117,7 @@ class _DiffPageContent extends React.Component {
             const hasBody = response.responseBody.shapeId && !response.responseBody.isRemoved;
             if (hasBody) {
               const contentType = response.responseBody.httpContentType;
-              const example = currentExample && niceTry(() => JsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))
+              const example = currentExample && niceTry(() => JsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)));
               return (
                 <ExampleShapeViewer
                   title={`${statusCode} Response Body`}
@@ -159,67 +168,142 @@ class _DiffPageContent extends React.Component {
 
 const DiffPageContent = compose(withStyles(styles), withDiffContext, withEndpointsContext)(_DiffPageContent);
 
+const SuggestionsContext = React.createContext(null);
+
+function SuggestionsStore({children}) {
+  const [suggestionToPreview, setSuggestionToPreview] = React.useState(null);
+  const [acceptedSuggestions, setAcceptedSuggestions] = React.useState([]);
+  const context = {
+    suggestionToPreview,
+    setSuggestionToPreview,
+    acceptedSuggestions,
+    setAcceptedSuggestions
+  };
+  return (
+    <SuggestionsContext.Provider value={context}>
+      {children}
+    </SuggestionsContext.Provider>
+  );
+}
+
+function flatten(acc, array) {
+  return [...acc, ...array];
+}
+
+const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function InnerDiffWrapperBase(props) {
+  const {eventStore, rfcService, rfcId} = props;
+  const {isLoading, session} = props;
+  const {children} = props;
+  const {setSuggestionToPreview, setAcceptedSuggestions, acceptedSuggestions, suggestionToPreview} = props;
+
+  if (isLoading) {
+    return <LinearProgress/>;
+  }
+
+  const rfcState = rfcService.currentState(rfcId);
+
+  const samples = jsonHelper.jsArrayToSeq(session.samples.map(i => jsonHelper.fromInteraction(i)));
+  const diffResults = helpers.DiffHelpers().groupByDiffs(rfcState, samples);
+  const diffHelper = helpers.DiffResultHelpers(diffResults);
+  const regions = diffHelper.listRegions();
+  const regionNames = jsonHelper.seqToJsArray(regions.keys());
+
+  const getInteractionsForDiff = (diff) => jsonHelper.seqToJsArray(diffHelper.get(diff));
+  const getDiffsByRegion = (groupName) => jsonHelper.seqToJsArray(regions.getDiffsByRegion(groupName));
+
+  const interpreter = diff.interactions.interpreters.BasicInterpreters(rfcState);
+  const getDiffDescription = (x, interaction) => diff.interactions.interpreters.DiffDescriptionInterpreters(rfcState).interpret(x, interaction);
+
+  const interpretationsForDiffAndInteraction = (diff, interaction) => {
+    return jsonHelper.seqToJsArray(interpreter.interpret(diff, interaction));
+  };
+  const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
+  return (
+    <DiffContextStore
+      regionNames={regionNames}
+      setSuggestionToPreview={setSuggestionToPreview}
+      acceptSuggestion={() => {
+        debugger
+        setAcceptedSuggestions([...acceptedSuggestions, suggestionToPreview]);
+      }}
+      getDiffsByRegion={getDiffsByRegion}
+      interpretationsForDiffAndInteraction={interpretationsForDiffAndInteraction}
+      getInteractionsForDiff={getInteractionsForDiff}
+      getDiffDescription={getDiffDescription}
+    >
+      <SimulatedCommandContext
+        rfcId={rfcId}
+        eventStore={eventStore.getCopy(rfcId)}
+        commands={simulatedCommands}
+        shouldSimulate={true}
+      >
+        {children}
+      </SimulatedCommandContext>
+    </DiffContextStore>
+  );
+}));
+
+
 class _CaptureSessionInlineContext extends React.Component {
 
   render() {
+
+
+    const jsonHelper = JsonHelper();
     const {
       rfcId,
-      rfcService,
+      eventStore,
       sessionId,
       specService,
-      children,
-      cachedQueryResults,
-      queries
+      children
     } = this.props;
     return (
       //@todo refactor sessionId to captureId
-      <TrafficSessionStore sessionId={sessionId} specService={specService} r
-                           enderNoSession={<div>No Capture</div>}>
-        <TrafficSessionContext.Consumer>
-          {(context) => {
+      <TrafficSessionStore
+        sessionId={sessionId}
+        specService={specService}
+        renderNoSession={<div>No Capture</div>}>
+        <SuggestionsStore>
+          <SuggestionsContext.Consumer>
+            {(suggestionsContext) => {
+              const {
+                suggestionToPreview,
+                setSuggestionToPreview,
+                acceptedSuggestions,
+                setAcceptedSuggestions
+              } = suggestionsContext;
+              const simulatedCommands = acceptedSuggestions.map(x => jsonHelper.seqToJsArray(x.commands)).reduce(flatten, []);
 
-            const {isLoading} = context;
-            if (isLoading) {
-              return <LinearProgress/>;
-            }
+              debugger
+              console.log({
+                xxx: 'xxx',
+                suggestionToPreview,
+                acceptedSuggestions
+              });
+              return (
+                <SimulatedCommandContext
+                  rfcId={rfcId}
+                  eventStore={eventStore.getCopy(rfcId)}
+                  commands={simulatedCommands}
+                  shouldSimulate={true}>
+                  <InnerDiffWrapper
+                    suggestionToPreview={suggestionToPreview}
+                    setSuggestionToPreview={setSuggestionToPreview}
+                    acceptedSuggestions={acceptedSuggestions}
+                    setAcceptedSuggestions={setAcceptedSuggestions}
+                  >{children}</InnerDiffWrapper>
+                </SimulatedCommandContext>
+              );
+            }}
+          </SuggestionsContext.Consumer>
 
-            const {contexts, diff, JsonHelper} = opticEngine.com.useoptic;
-            const jsonHelper = JsonHelper();
-            const {helpers} = diff;
-            const rfcState = rfcService.currentState(rfcId);
-
-            const samples = jsonHelper.jsArrayToSeq(context.session.samples.map(i => jsonHelper.fromInteraction(i)));
-            const diffResults = helpers.DiffHelpers().groupByDiffs(rfcState, samples);
-            const diffHelper = helpers.DiffResultHelpers(diffResults);
-            const regions = diffHelper.listRegions();
-            const regionNames = jsonHelper.seqToJsArray(regions.keys());
-
-            const getInteractionsForDiff = (diff) => jsonHelper.seqToJsArray(diffHelper.get(diff));
-            const getDiffsByRegion = (groupName) => jsonHelper.seqToJsArray(regions.getDiffsByRegion(groupName));
-
-            const interpreter = diff.interactions.interpreters.BasicInterpreters(rfcState)
-
-            const interpretationsForDiffAndInteraction = (diff, interaction) =>  jsonHelper.seqToJsArray(interpreter.interpret(diff, interaction))
-
-            return (
-              <DiffContextStore
-                regionNames={regionNames}
-                getDiffsByRegion={getDiffsByRegion}
-                interpretationsForDiffAndInteraction={interpretationsForDiffAndInteraction}
-                getInteractionsForDiff={getInteractionsForDiff}>
-                {children}
-              </DiffContextStore>
-            );
-
-          }}
-        </TrafficSessionContext.Consumer>
+        </SuggestionsStore>
       </TrafficSessionStore>
     );
   }
 };
 
 const CaptureSessionInlineContext = compose(withRfcContext)(_CaptureSessionInlineContext);
-
 
 function BatchActionsMenu(props) {
 

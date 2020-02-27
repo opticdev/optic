@@ -61,7 +61,7 @@ abstract class EventStore[Event] {
 }
 
 class InMemoryEventStore[Event] extends EventStore[Event] {
-  private type EventStream = scala.collection.mutable.ListBuffer[Event]
+  private type EventStream = Vector[Event]
   private[this] val _store = scala.collection.mutable.HashMap[AggregateId, EventStream]()
 
   override def listEvents(id: AggregateId): Vector[Event] = {
@@ -70,8 +70,8 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
   }
 
   override def append(id: AggregateId, newEvents: Vector[Event]): Unit = {
-    val events = _store.getOrElseUpdate(id, scala.collection.mutable.ListBuffer[Event]())
-    events.appendAll(newEvents)
+    val events = _store.getOrElseUpdate(id, Vector.empty)
+    _store.put(id, events ++ newEvents)
   }
 
   @JSExport
@@ -83,7 +83,7 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
     } yield events
 
     if (events.isRight) {
-      _store.put(id, scala.collection.mutable.ListBuffer[Event](events.right.get.asInstanceOf[Vector[Event]]: _*))
+      _store.put(id, events.right.get.asInstanceOf[Vector[Event]])
     } else {
       println("could not add events " + events.left.get.getMessage)
     }
@@ -95,7 +95,7 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
       events <- EventSerialization.fromJson(eventsJson).toEither
     } yield events
 
-    _store.put(id, scala.collection.mutable.ListBuffer[Event](events.right.get.asInstanceOf[Vector[Event]]: _*))
+    _store.put(id, events.right.get.asInstanceOf[Vector[Event]])
   }
 
   @JSExport
@@ -105,6 +105,13 @@ class InMemoryEventStore[Event] extends EventStore[Event] {
 
   @JSExport
   override def remove(id: AggregateId): Unit = _store.remove(id)
+
+  @JSExport
+  def getCopy(id: AggregateId) = {
+    val eventStore = new InMemoryEventStore[Event]
+    eventStore.append(id, listEvents(id))
+    eventStore
+  }
 }
 
 

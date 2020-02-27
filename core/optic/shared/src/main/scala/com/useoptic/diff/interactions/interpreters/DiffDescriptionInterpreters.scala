@@ -6,6 +6,8 @@ import com.useoptic.diff.interactions.{Helpers, InteractionDiffResult, Unmatched
 import com.useoptic.diff.shapes.{JsonArray, JsonArrayItem, JsonObject, JsonObjectKey, JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape}
 import com.useoptic.types.capture.HttpInteraction
 
+import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+
 
 sealed trait InteractionPointerDescription
 
@@ -15,8 +17,11 @@ case class SpecifiedButNotMatching(jsonTrail: JsonTrail, shapeTrail: ShapeTrail)
 
 case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) extends InteractionPointerDescription
 
+@JSExportAll
 case class DiffDescription(title: String, interactionPointerDescription: Option[InteractionPointerDescription])
 
+@JSExport
+@JSExportAll
 class DiffDescriptionInterpreters(rfcState: RfcState) {
   def interpret(diff: ShapeDiffResult, interaction: HttpInteraction): (String, InteractionPointerDescription) = {
     def shapeName(shapeId: ShapeId): String = {

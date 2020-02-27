@@ -42,7 +42,8 @@ class DiffContextStore extends React.Component {
       getDiffsByRegion,
       getInteractionsForDiff,
       interpretationsForDiffAndInteraction,
-
+      getDiffDescription,
+      setSuggestionToPreview,
     } = this.props;
 
     const setSelectedDiff = (diff) => {
@@ -60,13 +61,15 @@ class DiffContextStore extends React.Component {
       })
     }
     const setSelectedInterpretation = (interpretation, index) => {
+      setSuggestionToPreview(interpretation)
       this.setState({selectedInterpretation: interpretation, selectedInterpretationIndex: index})
     }
 
     const context = {
       regionNames,
       getDiffsByRegion,
-
+      getDiffDescription,
+      getInteractionsForDiff,
       //selected diff
       selectedDiff: this.state.selectedDiff,
       selectedDiffId: this.state.selectedDiff && this.state.selectedDiff.diffHash,
