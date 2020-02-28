@@ -14,18 +14,22 @@ import ListItemText from '@material-ui/core/ListItemText';
 import {ListItemAvatar, ListItemSecondaryAction} from '@material-ui/core';
 import List from '@material-ui/core/List';
 import Button from '@material-ui/core/Button';
-import {CompareEquality} from '@useoptic/domain'
+import {CompareEquality} from '@useoptic/domain';
 import {withDiffContext} from './DiffContext';
 import Zoom from '@material-ui/core/Zoom';
 
 const styles = theme => ({
   root: {},
+  container: {
+    maxWidth: 650
+  },
   formControl: {
     margin: theme.spacing(0),
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     flexShrink: 0,
+    fontWeight: 200,
     textOverflow: 'none',
   },
   noOverflow: {
@@ -37,11 +41,6 @@ const styles = theme => ({
     color: theme.palette.text.secondary,
   },
 });
-
-const nameMapping = {
-  'query': 'Query parameters diff',
-  'request-body': 'Request Body Diff'
-};
 
 class DiffViewer extends React.Component {
 
@@ -58,7 +57,8 @@ class DiffViewer extends React.Component {
       selectedDiff,
       setSelectedInterpretation,
       selectedInterpretation,
-      acceptSuggestion
+      acceptSuggestion,
+      nameOverride
     } = this.props;
 
     const groupDiffs = getDiffsByRegion(regionName);
@@ -67,42 +67,44 @@ class DiffViewer extends React.Component {
     }
 
     return (
-      <DocSubGroup className={classes.root} title={nameMapping[regionName]} innerStyle={{marginTop: 12}}>
-        {groupDiffs.map((diff, index) => {
-          const selected = !!selectedDiff && CompareEquality.between(selectedDiff, diff);
-          const interactions = getInteractionsForDiff(diff);
-          const diffDescription = getDiffDescription(diff, interactions[0]);
-          const interpretations = selected ? interpretationsForDiffAndInteraction(diff, currentExample) : [];
+      <div className={classes.container}>
+        <DocSubGroup className={classes.root} title={nameOverride} innerStyle={{marginTop: 12}}>
+          {groupDiffs.map((diff, index) => {
+            const selected = !!selectedDiff && CompareEquality.between(selectedDiff, diff);
+            const interactions = getInteractionsForDiff(diff);
+            const diffDescription = getDiffDescription(diff, interactions[0]);
+            const interpretations = selected ? interpretationsForDiffAndInteraction(diff, currentExample) : [];
 
-          return (
-            <ExpansionPanel expanded={selected}
-                            onChange={() => !selected ? setSelectedDiff(diff) : setSelectedDiff(null)}>
-              <ExpansionPanelSummary
-                className={classes.noOverflow}
-                style={selected ? {backgroundColor: primary, color: 'white'} : {}}
-                expandIcon={<ExpandMoreIcon style={selected ? {color: 'white'} : {}}/>}
-              >
-                <Typography className={classes.heading}>{diffDescription.title}</Typography>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails style={{display: 'flex', flexDirection: 'column', marginTop: 6}}>
-                <FormHelperText style={{marginBottom: 8}}>Suggested changes to your specification:</FormHelperText>
-                <List dense style={{marginLeft: -15}}>
-                  {selected && interpretations.map((interpretation, index) => {
-                    return (
-                      <InterpretationRow
-                        action={interpretation.title + interpretation.description}
-                        active={selectedInterpretation && CompareEquality.betweenWithoutCommands(selectedInterpretation, interpretation)}
-                        confirm={acceptSuggestion}
-                        onClick={() => setSelectedInterpretation(interpretation, index)}/>
-                    );
-                  })}
-                </List>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          );
+            return (
+              <ExpansionPanel expanded={selected}
+                              onChange={() => !selected ? setSelectedDiff(diff) : setSelectedDiff(null)}>
+                <ExpansionPanelSummary
+                  className={classes.noOverflow}
+                  style={selected ? {backgroundColor: primary, color: 'white'} : {}}
+                  expandIcon={<ExpandMoreIcon style={selected ? {color: 'white'} : {}}/>}
+                >
+                  <Typography className={classes.heading}>{diffDescription.title}</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails style={{display: 'flex', flexDirection: 'column', marginTop: 6}}>
+                  <FormHelperText style={{marginBottom: 8}}>Suggested changes to your specification:</FormHelperText>
+                  <List dense style={{marginLeft: -15}}>
+                    {selected && interpretations.map((interpretation, index) => {
+                      return (
+                        <InterpretationRow
+                          action={interpretation.title + interpretation.description}
+                          active={selectedInterpretation && CompareEquality.betweenWithoutCommands(selectedInterpretation, interpretation)}
+                          confirm={acceptSuggestion}
+                          onClick={() => setSelectedInterpretation(interpretation, index)}/>
+                      );
+                    })}
+                  </List>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            );
 
-        })}
-      </DocSubGroup>
+          })}
+        </DocSubGroup>
+      </div>
     );
 
   }

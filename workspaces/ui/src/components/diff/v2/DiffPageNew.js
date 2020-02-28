@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {AppBar, Button, Typography} from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
-import {ArrowDownwardSharp} from '@material-ui/icons';
+import {ArrowDownwardSharp, Cancel, Check} from '@material-ui/icons';
 import compose from 'lodash.compose';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -24,6 +24,8 @@ import {HighlightedIDsStore} from '../../shapes/HighlightedIDs';
 import niceTry from 'nice-try';
 import {NamerStore} from '../../shapes/Namer';
 import SimulatedCommandContext from '../SimulatedCommandContext';
+import Paper from '@material-ui/core/Paper';
+import {DocDarkGrey, DocGrey} from '../../requests/DocConstants';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -46,6 +48,9 @@ const styles = theme => ({
     overflow: 'scroll',
     paddingBottom: 300,
     paddingTop: 20,
+  },
+  rightRegion: {
+    paddingTop: 15,
   },
   appBar: {
     borderBottom: '1px solid #e2e2e2',
@@ -93,18 +98,18 @@ class _DiffPageContent extends React.Component {
 
       return (
         <DocGrid
+          style={{marginBottom: 40}}
           left={(
             <div>
-              Request body
-              <DiffViewer regionName={'request-body'}/>
+              <DiffViewer regionName={'request-body'} nameOverride={'Request Body Diff'}/>
             </div>
           )} right={(
-          <div>
+          <div className={classes.rightRegion}>
             {requestBodies.filter(i => {
               if (currentExample && selectedInterpretation) {
-                return ContentTypeHelpers.contentTypeOrNull(currentExample.request) === i.requestBody.httpContentType
+                return ContentTypeHelpers.contentTypeOrNull(currentExample.request) === i.requestBody.httpContentType;
               }
-              return true
+              return true;
             }).map(request => {
               return (
                 <div>
@@ -115,7 +120,7 @@ class _DiffPageContent extends React.Component {
                     showShapesFirst={true}
                     example={currentExample && example}/>
                 </div>
-              )
+              );
             })}
           </div>
         )}/>
@@ -129,12 +134,12 @@ class _DiffPageContent extends React.Component {
 
       return (
         <DocGrid
+          style={{marginBottom: 40}}
           left={(
             <div>
-              {statusCode} Response
-              <DiffViewer regionName={`response-body-${statusCode}`}/>
+              <DiffViewer regionName={`response-body-${statusCode}`} nameOverride={`${statusCode} Response Diff`}/>
             </div>
-          )} right={(<div>
+          )} right={(<div className={classes.rightRegion}>
           {contentTypes.map(response => {
             const hasBody = response.responseBody.shapeId && !response.responseBody.isRemoved;
             if (hasBody) {
@@ -160,12 +165,12 @@ class _DiffPageContent extends React.Component {
       <div className={classes.container}>
         <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
           <Toolbar variant="dense">
-            <div style={{flex: 1, textAlign: 'center'}}>
-              <Typography variant="h6" color="primary">{'ABC'}</Typography>
-            </div>
+            <Typography variant="h6">Review Endpoint Diff</Typography>
+            <BatchActionsMenu/>
+            <div style={{flex: 1}}/>
             <div>
-              <Typography variant="caption" style={{marginRight: 9}}>(0) Changes</Typography>
-              <Button color="primary">Apply Changes</Button>
+              <Typography variant="caption" style={{fontSize: 10, color: '#a4a4a4', marginRight: 15}}>Accepted (0) Suggestions</Typography>
+              <Button startIcon={<Check />} color="secondary">Finish</Button>
             </div>
           </Toolbar>
         </AppBar>
@@ -174,11 +179,8 @@ class _DiffPageContent extends React.Component {
           <div className={classes.root}>
             <HighlightedIDsStore>
               <NamerStore disable={true}>
-
                 <RequestBodyRegion/>
-
                 {responsesToRender.map(responseStatusCode => <ResponseBodyRegion statusCode={responseStatusCode}/>)}
-
               </NamerStore>
             </HighlightedIDsStore>
           </div>
