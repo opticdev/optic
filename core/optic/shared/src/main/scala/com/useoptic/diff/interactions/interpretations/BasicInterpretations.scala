@@ -94,18 +94,20 @@ class BasicInterpretations(rfcState: RfcState) {
     )
   }
 
-  def AddRequestContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail) = {
+  def AddRequestContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
     println(interactionTrail)
     println(requestsTrail)
     val requestId = RequestsServiceHelper.newRequestId()
-    val emptyObjectShapeId = ShapesHelper.newShapeId()
     val originalRequestId = RequestSpecTrailHelpers.requestId(requestsTrail).get
     val originalRequest = rfcState.requestsState.requests(originalRequestId)
+    val jsonBody = Resolvers.tryResolveJson(interactionTrail, JsonTrail(Seq()), interaction)
+    println(jsonBody)
+    val builtShape = new ShapeBuilder(jsonBody.get).run
     val commands = Seq(
       RequestsCommands.AddRequest(requestId, originalRequest.requestDescriptor.pathComponentId, originalRequest.requestDescriptor.httpMethod),
-      ShapesCommands.AddShape(emptyObjectShapeId, ObjectKind.baseShapeId, ""),
+    ) ++ builtShape.commands ++ Seq(
       //@BUG handle when interactionTrail.requestContentType() is not present (in which case we should just add a new request with no default body
-      RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(interactionTrail.requestContentType(), emptyObjectShapeId, isRemoved = false))
+      RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(interactionTrail.requestContentType(), builtShape.rootShapeId, isRemoved = false))
     )
     println("xxx")
     println(commands)
@@ -116,17 +118,18 @@ class BasicInterpretations(rfcState: RfcState) {
     )
   }
 
-  def AddResponseContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail) = {
+  def AddResponseContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction) = {
     val responseId = RequestsServiceHelper.newResponseId()
     val originalResponseId = RequestSpecTrailHelpers.responseId(requestsTrail).get
     val originalResponse = rfcState.requestsState.responses(originalResponseId)
-    val emptyObjectShapeId = ShapesHelper.newShapeId()
-
+    val jsonBody = Resolvers.tryResolveJson(interactionTrail, JsonTrail(Seq()), interaction)
+    println(jsonBody)
+    val builtShape = new ShapeBuilder(jsonBody.get).run
     val commands = Seq(
       RequestsCommands.AddResponseByPathAndMethod(responseId, originalResponse.responseDescriptor.pathId, originalResponse.responseDescriptor.httpMethod, originalResponse.responseDescriptor.httpStatusCode),
-      ShapesCommands.AddShape(emptyObjectShapeId, ObjectKind.baseShapeId, ""),
+    ) ++ builtShape.commands ++ Seq(
       //@BUG handle when interactionTrail.responseContentType() is not present (in which case we should just add a new response with no default body
-      RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(interactionTrail.responseContentType(), emptyObjectShapeId, isRemoved = false))
+      RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(interactionTrail.responseContentType(), builtShape.rootShapeId, isRemoved = false))
     )
 
     InteractiveDiffInterpretation(

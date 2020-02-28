@@ -49,7 +49,7 @@ class DiffContextStore extends React.Component {
 
 
     const setSelectedDiff = (diff) => {
-
+      global.opticDebug.diff = diff;
       this.setState({
         selectedDiff: diff,
         exampleInteractions: getInteractionsForDiff(diff),

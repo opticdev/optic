@@ -65,7 +65,6 @@ export function extractContentType(headers: IHeader[], fallback: string | null) 
 }
 
 export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
-  debugger
   const requestContentType = extractContentType(sample.request.headers, null);
   const responseContentType = extractContentType(sample.response.headers, null);
   const requestBody = sample.request.body.asJsonString ? JSON.parse(sample.request.body.asJsonString) : (sample.request.body.asText ? sample.request.body.asText : undefined);

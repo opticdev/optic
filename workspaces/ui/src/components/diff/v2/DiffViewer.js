@@ -130,8 +130,13 @@ function InterpretationRow(props) {
         }
       }}
       onClick={!active && onClick}>
-      <ListItemAvatar style={{minWidth: 25}}><Radio tabIndex={-1} checked={active} style={{pointerEvents: 'none'}}
-                                                    color="primary"/></ListItemAvatar>
+      <ListItemAvatar style={{minWidth: 25}}>
+        <Radio
+          tabIndex={-1}
+          checked={active}
+          style={{pointerEvents: 'none'}}
+          color="primary"/>
+      </ListItemAvatar>
       <ListItemText primary={action}/>
       <ListItemSecondaryAction>
         <Zoom direction="up" in={active} mountOnEnter unmountOnExit>

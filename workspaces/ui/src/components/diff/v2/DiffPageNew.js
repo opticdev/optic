@@ -95,7 +95,6 @@ class _DiffPageContent extends React.Component {
     const RequestBodyRegion = () => {
 
       const example = currentExample && niceTry(() => JsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)));
-
       return (
         <DocGrid
           style={{marginBottom: 40}}
@@ -106,6 +105,9 @@ class _DiffPageContent extends React.Component {
           )} right={(
           <div className={classes.rightRegion}>
             {requestBodies.filter(i => {
+              if (!i.requestBody.shapeId) {
+                return false;
+              }
               if (currentExample && selectedInterpretation) {
                 return ContentTypeHelpers.contentTypeOrNull(currentExample.request) === i.requestBody.httpContentType;
               }
@@ -231,17 +233,33 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   const diffHelper = helpers.DiffResultHelpers(diffResults);
   const regions = diffHelper.listRegions();
   const regionNames = jsonHelper.seqToJsArray(regions.keys());
-
   const getInteractionsForDiff = (diff) => jsonHelper.seqToJsArray(diffHelper.get(diff));
   const getDiffsByRegion = (groupName) => jsonHelper.seqToJsArray(regions.getDiffsByRegion(groupName));
 
-  const interpreter = diff.interactions.interpreters.BasicInterpreters(rfcState);
+  const interpreter = diff.interactions.interpreters.DefaultInterpreters(rfcState);
   const getDiffDescription = (x, interaction) => diff.interactions.interpreters.DiffDescriptionInterpreters(rfcState).interpret(x, interaction);
 
   const interpretationsForDiffAndInteraction = (diff, interaction) => {
     return jsonHelper.seqToJsArray(interpreter.interpret(diff, interaction));
   };
   const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
+
+  global.opticDebug.diffContext = {
+    samples,
+    diffResults,
+    acceptedSuggestions,
+    suggestionToPreview,
+    regions,
+    regionNames,
+    getInteractionsForDiff,
+    getDiffsByRegion,
+    interpreter,
+    interpretationsForDiffAndInteraction,
+    simulatedCommands,
+    eventStore,
+    rfcState
+  };
+
   return (
     <DiffContextStore
       regionNames={regionNames}

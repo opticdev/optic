@@ -14,7 +14,7 @@ import {ApiOverviewContextStore} from '../../contexts/ApiOverviewContext';
 import ApiOverview from '../navigation/ApiOverview';
 import APIDashboard, {IntegrationsDashboard} from '../dashboards/APIDashboard';
 import {IntegrationsContextStore} from '../../contexts/IntegrationsContext';
-import Redirect from 'react-router-dom/es/Redirect';
+import {Redirect} from 'react-router-dom';
 import {ProductDemoStore} from '../navigation/ProductDemo';
 import Init from '../onboarding/Init';
 import {SpecServiceStore, withSpecServiceContext} from '../../contexts/SpecServiceContext';
