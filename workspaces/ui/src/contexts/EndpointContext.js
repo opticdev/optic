@@ -14,7 +14,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
   render() {
 
     //usage defined props
-    const {pathId, method} = this.props;
+    const {pathId, method, inContextOfDiff} = this.props;
     const lookupExampleForRequest = (requestId) => this.props.lookupExampleForRequest(pathId, method, requestId);
     const lookupExampleForResponse = (responseId) => this.props.lookupExampleForResponse(pathId, method, responseId);
     //props from context
@@ -24,31 +24,31 @@ class EndpointsContextStoreWithoutContext extends React.Component {
     const requestIdsOnPath = (requestIdsByPathId[pathId] || []).map(requestId => requests[requestId]);
     const requestsOnPathAndMethod = requestIdsOnPath.filter(request => request.requestDescriptor.httpMethod === method.toUpperCase());
 
-    if (requestsOnPathAndMethod.length) {
-      const {httpMethod, pathComponentId} = requestsOnPathAndMethod[0].requestDescriptor;
-      const pathTrail = asPathTrail(pathComponentId, pathsById);
-      const pathTrailComponents = pathTrail.map(pathId => pathsById[pathId]);
-      const pathTrailWithNames = pathTrailComponents.map((pathComponent) => {
-        const pathComponentName = getNameWithFormattedParameters(pathComponent);
-        const pathComponentId = pathComponent.pathId;
-        return {
-          pathComponentName,
-          pathComponentId
-        };
-      });
+    const pathTrail = asPathTrail(pathId, pathsById);
+    const pathTrailComponents = pathTrail.map(pathId => pathsById[pathId]);
+    const pathTrailWithNames = pathTrailComponents.map((pathComponent) => {
+      const pathComponentName = getNameWithFormattedParameters(pathComponent);
+      const pathComponentId = pathComponent.pathId;
+      return {
+        pathComponentName,
+        pathComponentId
+      };
+    });
 
-      const fullPath = pathTrailWithNames.map(({pathComponentName}) => pathComponentName)
-        .join('/');
+    const fullPath = pathTrailWithNames.map(({pathComponentName}) => pathComponentName)
+      .join('/');
 
-      const pathParameters = pathTrail
-        .map(pathId => pathsById[pathId])
-        .filter((p) => isPathParameter(p))
-        .map(p => ({
-          pathId: p.pathId,
-          name: p.descriptor.ParameterizedPathComponentDescriptor.name,
-          description: contributions.getOrUndefined(p.pathId, DESCRIPTION)
-        }));
+    const pathParameters = pathTrail
+      .map(pathId => pathsById[pathId])
+      .filter((p) => isPathParameter(p))
+      .map(p => ({
+        pathId: p.pathId,
+        name: p.descriptor.ParameterizedPathComponentDescriptor.name,
+        description: contributions.getOrUndefined(p.pathId, DESCRIPTION)
+      }));
 
+    //inContextOfDiff -- allows endpoints that do not exist yet to be rendered.
+    if (requestsOnPathAndMethod.length || inContextOfDiff) {
       const requestBodies = requestsOnPathAndMethod.map(({requestId, requestDescriptor}) => {
         const requestBody = getNormalizedBodyDescriptor(requestDescriptor.bodyDescriptor);
         return {
@@ -56,7 +56,6 @@ class EndpointsContextStoreWithoutContext extends React.Component {
           requestBody,
         };
       });
-
 
       const responsesForPathAndMethod = responsesArray
         .filter(response => response.responseDescriptor.httpMethod === method.toUpperCase() && response.responseDescriptor.pathId === pathId)
@@ -70,7 +69,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
         })
 
       const endpointDescriptor = {
-        httpMethod,
+        httpMethod: method,
         pathId,
         fullPath,
         pathParameters,

@@ -19,7 +19,7 @@ import {withRfcContext} from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import {BodyUtilities, ContentTypeHelpers, opticEngine} from '@useoptic/domain';
 import DiffViewer from './DiffViewer';
-import {ExampleShapeViewer} from '../../requests/DocCodeBox';
+import {ExampleOnly, ExampleShapeViewer} from '../../requests/DocCodeBox';
 import {HighlightedIDsStore} from '../../shapes/HighlightedIDs';
 import niceTry from 'nice-try';
 import {NamerStore} from '../../shapes/Namer';
@@ -66,7 +66,7 @@ class DiffPageNew extends React.Component {
 
     return (
       <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId}>
-        <EndpointsContextStore pathId={pathId} method={method}>
+        <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
           <DiffPageContent/>
         </EndpointsContextStore>
       </CaptureSessionInlineContext>
@@ -77,52 +77,55 @@ class DiffPageNew extends React.Component {
 
 class _DiffPageContent extends React.Component {
   render() {
-    const {endpointDescriptor, classes, regionNames, currentExample} = this.props;
+    const {endpointDescriptor, classes, regions, currentExample, acceptedSuggestions} = this.props;
     const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, selectedInterpretation} = endpointDescriptor;
 
 
-    const responseRegionRegex = /response-body-([0-9]{3})/;
-
-    const responseRegions = regionNames.map(i => {
-      const match = responseRegionRegex.exec(i);
-      if (match) {
-        return parseInt(match[1]);
-      }
-    }).filter(i => !!i);
-
-    const responsesToRender = Array.from(new Set([...responseRegions, ...responses.map(i => i.statusCode)])).sort((a, b) => a - b);
-
     const RequestBodyRegion = () => {
+      const example = currentExample && niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.request.body)));
+      const requestContentTypes = jsonHelper.seqToJsArray(regions.requestContentTypes)
+      const diffs = jsonHelper.seqToJsArray(regions.inRequest)
 
-      const example = currentExample && niceTry(() => JsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)));
+
+      const requestContentTypesToRender = Array.from(
+        new Set([...requestContentTypes,
+          ...requestBodies
+          .filter(i => !!i.requestBody.httpContentType)
+          .map(i => i.requestBody.httpContentType)])
+        )
+        .sort((a, b) => a - b);
+
       return (
         <DocGrid
           style={{marginBottom: 40}}
           left={(
             <div>
-              <DiffViewer regionName={'request-body'} nameOverride={'Request Body Diff'}/>
+              <DiffViewer regionName={'request-body'} nameOverride={'Request Body Diff'} groupDiffs={diffs}/>
             </div>
           )} right={(
           <div className={classes.rightRegion}>
-            {requestBodies.filter(i => {
-              if (!i.requestBody.shapeId) {
-                return false;
+            {(requestContentTypesToRender.length === 0 && example) && (
+              <ExampleOnly
+                title={`Observed Request Body`}
+                contentType={ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
+                //this isn't safe, only works for JSON bodies
+                example={example}/>
+            )}
+            {requestContentTypesToRender.map(contentType => {
+              const request = requestBodies.find(i => i.requestBody.httpContentType === contentType)
+              if (request) {
+                const showExample = currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request) === contentType
+                return (
+                  <div>
+                    <ExampleShapeViewer
+                      title={`Request Body`}
+                      shapeId={request.requestBody.shapeId}
+                      contentType={request.requestBody.httpContentType}
+                      showShapesFirst={true}
+                      example={showExample ? example : undefined}/>
+                  </div>
+                );
               }
-              if (currentExample && selectedInterpretation) {
-                return ContentTypeHelpers.contentTypeOrNull(currentExample.request) === i.requestBody.httpContentType;
-              }
-              return true;
-            }).map(request => {
-              return (
-                <div>
-                  <ExampleShapeViewer
-                    title={`Request Body`}
-                    shapeId={request.requestBody.shapeId}
-                    contentType={request.requestBody.httpContentType}
-                    showShapesFirst={true}
-                    example={currentExample && example}/>
-                </div>
-              );
             })}
           </div>
         )}/>
@@ -131,22 +134,35 @@ class _DiffPageContent extends React.Component {
 
     const ResponseBodyRegion = ({statusCode}) => {
 
+      const diffs = jsonHelper.seqToJsArray(regions.inResponseWithStatusCode(statusCode))
+
+      const contentTypes = responses.filter(i => i.statusCode === statusCode && !!i.responseBody.httpContentType)
+      console.log('xxA', contentTypes)
+
+
       const showExample = currentExample && currentExample.response.statusCode === statusCode;
-      const contentTypes = responses.filter(i => i.statusCode === statusCode);
+
 
       return (
         <DocGrid
           style={{marginBottom: 40}}
           left={(
             <div>
-              <DiffViewer regionName={`response-body-${statusCode}`} nameOverride={`${statusCode} Response Diff`}/>
+              <DiffViewer nameOverride={`${statusCode} Response Diff`} groupDiffs={diffs}/>
             </div>
           )} right={(<div className={classes.rightRegion}>
+          {(contentTypes.length === 0 && showExample) && (
+            <ExampleOnly
+              title={`Observed ${statusCode} Response Body`}
+              contentType={ContentTypeHelpers.contentTypeOrNull(currentExample.response)}
+              //this isn't safe, only works for JSON bodies
+              example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>
+          )}
           {contentTypes.map(response => {
             const hasBody = response.responseBody.shapeId && !response.responseBody.isRemoved;
             if (hasBody) {
               const contentType = response.responseBody.httpContentType;
-              const example = currentExample && niceTry(() => JsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)));
+              const example = currentExample && niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)));
               return (
                 <ExampleShapeViewer
                   title={`${statusCode} Response Body`}
@@ -162,6 +178,8 @@ class _DiffPageContent extends React.Component {
       );
     };
 
+    const responseRegions = jsonHelper.seqToJsArray(regions.statusCodes)
+    const responsesToRender = Array.from(new Set([...responseRegions, ...responses.map(i => i.statusCode)])).sort((a, b) => a - b);
 
     return (
       <div className={classes.container}>
@@ -171,8 +189,9 @@ class _DiffPageContent extends React.Component {
             <BatchActionsMenu/>
             <div style={{flex: 1}}/>
             <div>
-              <Typography variant="caption" style={{fontSize: 10, color: '#a4a4a4', marginRight: 15}}>Accepted (0) Suggestions</Typography>
-              <Button startIcon={<Check />} color="secondary">Finish</Button>
+              <Typography variant="caption" style={{fontSize: 10, color: '#a4a4a4', marginRight: 15}}>Accepted ({acceptedSuggestions.length})
+                Suggestions</Typography>
+              <Button startIcon={<Check/>} color="secondary">Finish</Button>
             </div>
           </Toolbar>
         </AppBar>
@@ -194,16 +213,25 @@ class _DiffPageContent extends React.Component {
 
 const DiffPageContent = compose(withStyles(styles), withDiffContext, withEndpointsContext)(_DiffPageContent);
 
-const SuggestionsContext = React.createContext(null);
+export const SuggestionsContext = React.createContext(null);
 
 function SuggestionsStore({children}) {
   const [suggestionToPreview, setSuggestionToPreview] = React.useState(null);
   const [acceptedSuggestions, setAcceptedSuggestions] = React.useState([]);
+  const [acceptedSuggestionsWithDiff, setAcceptedSuggestionsWithDiff] = React.useState([]);
+
+  const addAcceptedSuggestion = (suggestion, diff) => setAcceptedSuggestionsWithDiff([...acceptedSuggestionsWithDiff, {
+    suggestion,
+    diff
+  }]);
+
   const context = {
     suggestionToPreview,
     setSuggestionToPreview,
     acceptedSuggestions,
-    setAcceptedSuggestions
+    setAcceptedSuggestions,
+    acceptedSuggestionsWithDiff,
+    addAcceptedSuggestion
   };
   return (
     <SuggestionsContext.Provider value={context}>
@@ -220,7 +248,7 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   const {eventStore, rfcService, rfcId} = props;
   const {isLoading, session} = props;
   const {children} = props;
-  const {setSuggestionToPreview, setAcceptedSuggestions, acceptedSuggestions, suggestionToPreview} = props;
+  const {setSuggestionToPreview, setAcceptedSuggestions, acceptedSuggestions, suggestionToPreview, addAcceptedSuggestion} = props;
 
   if (isLoading) {
     return <LinearProgress/>;
@@ -231,10 +259,9 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   const samples = jsonHelper.jsArrayToSeq(session.samples.map(i => jsonHelper.fromInteraction(i)));
   const diffResults = helpers.DiffHelpers().groupByDiffs(rfcState, samples);
   const diffHelper = helpers.DiffResultHelpers(diffResults);
-  const regions = diffHelper.listRegions();
-  const regionNames = jsonHelper.seqToJsArray(regions.keys());
+  const regions = diffHelper.listRegions()
+
   const getInteractionsForDiff = (diff) => jsonHelper.seqToJsArray(diffHelper.get(diff));
-  const getDiffsByRegion = (groupName) => jsonHelper.seqToJsArray(regions.getDiffsByRegion(groupName));
 
   const interpreter = diff.interactions.interpreters.DefaultInterpreters(rfcState);
   const getDiffDescription = (x, interaction) => diff.interactions.interpreters.DiffDescriptionInterpreters(rfcState).interpret(x, interaction);
@@ -250,9 +277,7 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
     acceptedSuggestions,
     suggestionToPreview,
     regions,
-    regionNames,
     getInteractionsForDiff,
-    getDiffsByRegion,
     interpreter,
     interpretationsForDiffAndInteraction,
     simulatedCommands,
@@ -262,17 +287,18 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
 
   return (
     <DiffContextStore
-      regionNames={regionNames}
+      regions={regions}
       setSuggestionToPreview={setSuggestionToPreview}
-      acceptSuggestion={() => {
-        if (suggestionToPreview) {
-          setAcceptedSuggestions([...acceptedSuggestions, suggestionToPreview]);
+      acceptSuggestion={(suggestion, diff) => {
+        if (suggestion) {
+          setAcceptedSuggestions([...acceptedSuggestions, suggestion]);
+          addAcceptedSuggestion(suggestion, diff)
         }
       }}
-      getDiffsByRegion={getDiffsByRegion}
       interpretationsForDiffAndInteraction={interpretationsForDiffAndInteraction}
       getInteractionsForDiff={getInteractionsForDiff}
       getDiffDescription={getDiffDescription}
+      acceptedSuggestions={acceptedSuggestions}
     >
       <SimulatedCommandContext
         rfcId={rfcId}
@@ -313,7 +339,8 @@ class _CaptureSessionInlineContext extends React.Component {
                 suggestionToPreview,
                 setSuggestionToPreview,
                 acceptedSuggestions,
-                setAcceptedSuggestions
+                setAcceptedSuggestions,
+                addAcceptedSuggestion,
               } = suggestionsContext;
               const simulatedCommands = acceptedSuggestions.map(x => jsonHelper.seqToJsArray(x.commands)).reduce(flatten, []);
               console.log({
@@ -332,6 +359,7 @@ class _CaptureSessionInlineContext extends React.Component {
                     setSuggestionToPreview={setSuggestionToPreview}
                     acceptedSuggestions={acceptedSuggestions}
                     setAcceptedSuggestions={setAcceptedSuggestions}
+                    addAcceptedSuggestion={addAcceptedSuggestion}
                   >{children}</InnerDiffWrapper>
                 </SimulatedCommandContext>
               );

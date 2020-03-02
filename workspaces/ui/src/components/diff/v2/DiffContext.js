@@ -38,13 +38,13 @@ class DiffContextStore extends React.Component {
 
   render() {
     const {
-      regionNames,
-      getDiffsByRegion,
+      regions,
       getInteractionsForDiff,
       interpretationsForDiffAndInteraction,
       getDiffDescription,
       setSuggestionToPreview,
-      acceptSuggestion
+      acceptSuggestion,
+      acceptedSuggestions
     } = this.props;
 
 
@@ -72,8 +72,7 @@ class DiffContextStore extends React.Component {
     };
 
     const context = {
-      regionNames,
-      getDiffsByRegion,
+      regions,
       getDiffDescription,
       getInteractionsForDiff,
       //selected diff
@@ -88,7 +87,8 @@ class DiffContextStore extends React.Component {
       //selected interpretation
       selectedInterpretation: this.state.selectedInterpretation,
       setSelectedInterpretation,
-      acceptSuggestion
+      acceptSuggestion,
+      acceptedSuggestions
       // simulate: approved + selectedInterpretation.commands
     };
 

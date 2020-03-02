@@ -22,6 +22,12 @@ export const DocSubGroupHeadingStyles = {
   fontWeight: 500,
   letterSpacing: '.41px',
 }
+export const DocSubGroupHeadingBigStyles = {
+  color : DocDarkGrey,
+  fontSize: '15px',
+  fontWeight: 500,
+  letterSpacing: '.41px',
+}
 
 export const methodColors = {
   'GET': '#52e2a3',

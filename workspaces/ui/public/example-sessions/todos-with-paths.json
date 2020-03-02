@@ -1,0 +1,363 @@
+{
+  "events": [
+    {
+      "PathComponentAdded": {
+        "pathId": "path_tQrApS1Cr1",
+        "parentPathId": "root",
+        "name": "todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "97a41b2f-a1cb-4ea4-ba1a-1eafe408fbf9",
+          "createdAt": "2020-02-28T14:45:49.794Z"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_oOK4piNUk9",
+        "pathId": "path_tQrApS1Cr1",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
+          "createdAt": "2020-02-28T14:45:51.357Z"
+        }
+      }
+    },
+    {
+      "RequestParameterAdded": {
+        "parameterId": "parameter_2QMSr3rQMZ",
+        "requestId": "request_oOK4piNUk9",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
+          "createdAt": "2020-02-28T14:45:51.357Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_wgoMnoNi9D",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
+          "createdAt": "2020-02-28T14:45:51.357Z"
+        }
+      }
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "parameter_2QMSr3rQMZ",
+        "parameterDescriptor": {
+          "shapeId": "shape_wgoMnoNi9D",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
+          "createdAt": "2020-02-28T14:45:51.357Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "request_oOK4piNUk9",
+        "key": "purpose",
+        "value": "Get Todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "36ad35e7-2344-447e-b9ba-82dd8cf92121",
+          "createdAt": "2020-02-28T14:45:51.360Z"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_dljgiOxl2P",
+        "pathId": "path_tQrApS1Cr1",
+        "httpMethod": "POST",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
+          "createdAt": "2020-02-28T14:46:00.141Z"
+        }
+      }
+    },
+    {
+      "RequestParameterAdded": {
+        "parameterId": "parameter_bLAOG8Iv6H",
+        "requestId": "request_dljgiOxl2P",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
+          "createdAt": "2020-02-28T14:46:00.141Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_kvn9ys2uai",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
+          "createdAt": "2020-02-28T14:46:00.141Z"
+        }
+      }
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "parameter_bLAOG8Iv6H",
+        "parameterDescriptor": {
+          "shapeId": "shape_kvn9ys2uai",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
+          "createdAt": "2020-02-28T14:46:00.141Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "request_dljgiOxl2P",
+        "key": "purpose",
+        "value": "Post Todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "f0100578-4fb1-4fa0-8bc5-3dc5db3fa00f",
+          "createdAt": "2020-02-28T14:46:00.141Z"
+        }
+      }
+    },
+    {
+      "PathParameterAdded": {
+        "pathId": "path_vdzGo0ZmPg",
+        "parentPathId": "path_tQrApS1Cr1",
+        "name": "todoId",
+        "eventContext": null
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_Hu8qlMJlQR",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": null
+      }
+    },
+    {
+      "PathParameterShapeSet": {
+        "pathId": "path_vdzGo0ZmPg",
+        "shapeDescriptor": {
+          "shapeId": "shape_Hu8qlMJlQR",
+          "isRemoved": false
+        },
+        "eventContext": null
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_TpiMJZl4Ua",
+        "pathId": "path_vdzGo0ZmPg",
+        "httpMethod": "PATCH",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
+          "createdAt": "2020-02-28T14:46:09.027Z"
+        }
+      }
+    },
+    {
+      "RequestParameterAdded": {
+        "parameterId": "parameter_V9mgu1GlmY",
+        "requestId": "request_TpiMJZl4Ua",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
+          "createdAt": "2020-02-28T14:46:09.027Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_Ncn3ujjrHT",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
+          "createdAt": "2020-02-28T14:46:09.027Z"
+        }
+      }
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "parameter_V9mgu1GlmY",
+        "parameterDescriptor": {
+          "shapeId": "shape_Ncn3ujjrHT",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
+          "createdAt": "2020-02-28T14:46:09.027Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "request_TpiMJZl4Ua",
+        "key": "purpose",
+        "value": "Update Todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "4b80fb35-2b30-43f7-9041-73d2e65e8a42",
+          "clientCommandBatchId": "19579bcf-7c45-4c01-8e42-9c6b83d7c2b3",
+          "createdAt": "2020-02-28T14:46:09.028Z"
+        }
+      }
+    }
+  ],
+  "session": {
+    "metadata": {
+      "completed": false
+    },
+    "samples": [
+      {
+        "uuid": "c880a98f-0462-43d8-9a24-23ebc17d50ae",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "queryString": "",
+          "headers": [
+            {
+              "name": "host",
+              "value": "localhost:3306"
+            },
+            {
+              "name": "user-agent",
+              "value": "HTTPie/1.0.2"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate"
+            },
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\"category\": \"home\",\n\t\"id\": \"idABC\",\n\t\"less=go\": true\n}",
+            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\"category\": \"home\",\n\t\"id\": \"idABC\",\n\t\"less=go\": true\n}"
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": [
+            {
+              "name": "content-length",
+              "value": "40"
+            },
+            {
+              "name": "content-disposition",
+              "value": "inline; filename=\"users.json\""
+            },
+            {
+              "name": "accept-ranges",
+              "value": "bytes"
+            },
+            {
+              "name": "etag",
+              "value": "\"378ea7153256f6376c3db9c33b6e5b4a20406345\""
+            },
+            {
+              "name": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "name": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "name": "date",
+              "value": "Tue, 25 Feb 2020 21:12:44 GMT"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\"}",
+            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\"}"
+          }
+        },
+        "omitted": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {
+  }
+}
