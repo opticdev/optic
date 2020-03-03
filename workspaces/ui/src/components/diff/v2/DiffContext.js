@@ -34,7 +34,9 @@ class DiffContextStore extends React.Component {
     exampleInteractions: [],
     selectedInterpretation: null,
     selectedInterpretationIndex: null,
+    isFinishing: false
   };
+
 
   render() {
     const {
@@ -44,7 +46,7 @@ class DiffContextStore extends React.Component {
       getDiffDescription,
       setSuggestionToPreview,
       acceptSuggestion,
-      acceptedSuggestions
+      acceptedSuggestions,
     } = this.props;
 
 
@@ -71,6 +73,8 @@ class DiffContextStore extends React.Component {
       });
     };
 
+    const setIsFinishing = (bool) => this.setState({isFinishing: bool});
+
     const context = {
       regions,
       getDiffDescription,
@@ -80,8 +84,20 @@ class DiffContextStore extends React.Component {
       selectedDiffId: this.state.selectedDiff && this.state.selectedDiff.diffHash,
       setSelectedDiff,
 
-      currentExample: this.state.exampleInteractions[this.state.currentExampleIndex],
+      isFinishing: this.state.isFinishing,
+      setIsFinishing,
+      reset: () => {
+        this.props.reset();
+        this.setState({
+          selectedDiff: null,
+          exampleInteractions: [],
+          selectedInterpretation: null,
+          selectedInterpretationIndex: null,
+          isFinishing: false
+        });
+      },
 
+      currentExample: this.state.exampleInteractions[this.state.currentExampleIndex],
       interpretationsForDiffAndInteraction,
 
       //selected interpretation

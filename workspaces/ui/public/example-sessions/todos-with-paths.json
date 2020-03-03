@@ -349,6 +349,87 @@
           }
         },
         "omitted": []
+      },
+      {
+        "uuid": "c880a98f-0462-43d8-9a24-23ebc1ad50ae",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "queryString": "",
+          "headers": [
+            {
+              "name": "host",
+              "value": "localhost:3306"
+            },
+            {
+              "name": "user-agent",
+              "value": "HTTPie/1.0.2"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "name": "accept-encoding",
+              "value": "gzip, deflate"
+            },
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\"category\": \"home\",\n\t\"id\": \"idABC\",\n\t\"less=go\": true\n}",
+            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\"category\": \"home\",\n\t\"id\": \"idABC\",\n\t\"less=go\": true\n}"
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": [
+            {
+              "name": "content-length",
+              "value": "40"
+            },
+            {
+              "name": "content-disposition",
+              "value": "inline; filename=\"users.json\""
+            },
+            {
+              "name": "accept-ranges",
+              "value": "bytes"
+            },
+            {
+              "name": "etag",
+              "value": "\"378ea7153256f6376c3db9c33b6e5b4a20406345\""
+            },
+            {
+              "name": "content-type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "name": "vary",
+              "value": "Accept-Encoding"
+            },
+            {
+              "name": "date",
+              "value": "Tue, 25 Feb 2020 21:12:44 GMT"
+            },
+            {
+              "name": "connection",
+              "value": "keep-alive"
+            }
+          ],
+          "body": {
+            "asText": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\"}",
+            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\"}"
+          }
+        },
+        "omitted": []
       }
     ],
     "links": [

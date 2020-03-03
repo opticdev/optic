@@ -87,7 +87,7 @@ class RfcStoreWithoutContext extends React.Component {
       } catch (e) {
         //@GOTCHA: eventStore is being mutated in the try{} so any commands that have succeeded will be part of eventStore here.
         console.error(e);
-        debugger;
+        // debugger;
         return Facade.fromJsonCommands(eventStore, rfcId, '[]', commandContext);
       }
     })();

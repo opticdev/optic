@@ -6,6 +6,7 @@ import {primary} from '../../theme';
 export const SubHeadingTitleColor = primary
 export const DocGrey = '#a3acb9'
 export const DocDarkGrey = '#818892'
+export const Dark = '#3d4045'
 export const ParametersStyles = {
   fontWeight: 600,
   fontSize: 13

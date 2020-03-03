@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {AppBar, Button, Typography} from '@material-ui/core';
+import {AppBar, Button, CardActions, Typography} from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
 import {ArrowDownwardSharp, Cancel, Check} from '@material-ui/icons';
 import compose from 'lodash.compose';
@@ -13,6 +13,7 @@ import {
   TrafficSessionStore,
   withTrafficSessionContext
 } from '../../../contexts/TrafficSessionContext';
+import PersonIcon from '@material-ui/icons/Person';
 import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
@@ -25,7 +26,17 @@ import niceTry from 'nice-try';
 import {NamerStore} from '../../shapes/Namer';
 import SimulatedCommandContext from '../SimulatedCommandContext';
 import Paper from '@material-ui/core/Paper';
-import {DocDarkGrey, DocGrey} from '../../requests/DocConstants';
+import {Dark, DocDarkGrey, DocGrey} from '../../requests/DocConstants';
+import Zoom from '@material-ui/core/Zoom';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import Avatar from '@material-ui/core/Avatar';
+import {primary, secondary} from '../../../theme';
+import CardContent from '@material-ui/core/CardContent';
+import TextField from '@material-ui/core/TextField';
+import {Show} from '../../shared/Show';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -52,6 +63,9 @@ const styles = theme => ({
   rightRegion: {
     paddingTop: 15,
   },
+  avatar: {
+    backgroundColor: primary,
+  },
   appBar: {
     borderBottom: '1px solid #e2e2e2',
     backgroundColor: 'white'
@@ -77,22 +91,55 @@ class DiffPageNew extends React.Component {
 
 class _DiffPageContent extends React.Component {
   render() {
-    const {endpointDescriptor, classes, regions, currentExample, acceptedSuggestions} = this.props;
+    const {endpointDescriptor, classes, regions, currentExample, acceptedSuggestions, isFinishing, setIsFinishing, reset} = this.props;
     const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, selectedInterpretation} = endpointDescriptor;
 
+    const showFinishPane = (isFinishing || regions.isEmpty);
+
+    const FinishPane = () => {
+
+      const [message, setMessage] = useState('')
+      return (
+        <Show when={showFinishPane}>
+          <div style={{marginLeft: -57, paddingBottom: 75}}>
+            <div style={{display: 'flex', flexDirection: 'row', maxWidth: 550}}>
+              <div style={{paddingTop: 7, marginLeft: 5}}>
+                <Avatar aria-label="recipe" className={classes.avatar}>
+                  <PersonIcon/>
+                </Avatar>
+              </div>
+              <Card style={{marginLeft: 12, flex: 1, maxWidth: 520}}>
+                <CardContent>
+                  <Typography variant="subtitle1" style={{color: Dark}}>Add Message to Changelog</Typography>
+                  <TextField value={message}
+                             autoFocus
+                             fullWidth
+                             multiline
+                             onChange={(e) => setMessage(e.target.value)}
+                             placeholder="Describe your changes"/>
+                </CardContent>
+                <CardActions style={{float: 'right'}}>
+                  <Button size="small" color="default">Discard</Button>
+                  <Button size="small" color="secondary">Apply Changes</Button>
+                </CardActions>
+              </Card>
+            </div>
+          </div>
+        </Show>
+      );
+    }
 
     const RequestBodyRegion = () => {
       const example = currentExample && niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.request.body)));
-      const requestContentTypes = jsonHelper.seqToJsArray(regions.requestContentTypes)
-      const diffs = jsonHelper.seqToJsArray(regions.inRequest)
-
+      const requestContentTypes = jsonHelper.seqToJsArray(regions.requestContentTypes);
+      const diffs = jsonHelper.seqToJsArray(regions.inRequest);
 
       const requestContentTypesToRender = Array.from(
         new Set([...requestContentTypes,
           ...requestBodies
-          .filter(i => !!i.requestBody.httpContentType)
-          .map(i => i.requestBody.httpContentType)])
-        )
+            .filter(i => !!i.requestBody.httpContentType)
+            .map(i => i.requestBody.httpContentType)])
+      )
         .sort((a, b) => a - b);
 
       return (
@@ -100,7 +147,8 @@ class _DiffPageContent extends React.Component {
           style={{marginBottom: 40}}
           left={(
             <div>
-              <DiffViewer regionName={'request-body'} nameOverride={'Request Body Diff'} groupDiffs={diffs}/>
+              <DiffViewer regionName={'request-body'} nameOverride={'Request Body Diff'} groupDiffs={diffs}
+                          approvedKey={'request'}/>
             </div>
           )} right={(
           <div className={classes.rightRegion}>
@@ -112,9 +160,9 @@ class _DiffPageContent extends React.Component {
                 example={example}/>
             )}
             {requestContentTypesToRender.map(contentType => {
-              const request = requestBodies.find(i => i.requestBody.httpContentType === contentType)
+              const request = requestBodies.find(i => i.requestBody.httpContentType === contentType);
               if (request) {
-                const showExample = currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request) === contentType
+                const showExample = currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request) === contentType;
                 return (
                   <div>
                     <ExampleShapeViewer
@@ -134,10 +182,10 @@ class _DiffPageContent extends React.Component {
 
     const ResponseBodyRegion = ({statusCode}) => {
 
-      const diffs = jsonHelper.seqToJsArray(regions.inResponseWithStatusCode(statusCode))
+      const diffs = jsonHelper.seqToJsArray(regions.inResponseWithStatusCode(statusCode));
 
-      const contentTypes = responses.filter(i => i.statusCode === statusCode && !!i.responseBody.httpContentType)
-      console.log('xxA', contentTypes)
+      const contentTypes = responses.filter(i => i.statusCode === statusCode && !!i.responseBody.httpContentType);
+      console.log('xxA', contentTypes);
 
 
       const showExample = currentExample && currentExample.response.statusCode === statusCode;
@@ -148,7 +196,8 @@ class _DiffPageContent extends React.Component {
           style={{marginBottom: 40}}
           left={(
             <div>
-              <DiffViewer nameOverride={`${statusCode} Response Diff`} groupDiffs={diffs}/>
+              <DiffViewer nameOverride={`${statusCode} Response Diff`} groupDiffs={diffs}
+                          approvedKey={'response-' + statusCode}/>
             </div>
           )} right={(<div className={classes.rightRegion}>
           {(contentTypes.length === 0 && showExample) && (
@@ -178,7 +227,7 @@ class _DiffPageContent extends React.Component {
       );
     };
 
-    const responseRegions = jsonHelper.seqToJsArray(regions.statusCodes)
+    const responseRegions = jsonHelper.seqToJsArray(regions.statusCodes);
     const responsesToRender = Array.from(new Set([...responseRegions, ...responses.map(i => i.statusCode)])).sort((a, b) => a - b);
 
     return (
@@ -186,12 +235,13 @@ class _DiffPageContent extends React.Component {
         <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
           <Toolbar variant="dense">
             <Typography variant="h6">Review Endpoint Diff</Typography>
-            <BatchActionsMenu/>
+            <BatchActionsMenu reset={reset}/>
             <div style={{flex: 1}}/>
             <div>
-              <Typography variant="caption" style={{fontSize: 10, color: '#a4a4a4', marginRight: 15}}>Accepted ({acceptedSuggestions.length})
+              <Typography variant="caption" style={{fontSize: 10, color: '#a4a4a4', marginRight: 15}}>Accepted
+                ({acceptedSuggestions.length})
                 Suggestions</Typography>
-              <Button startIcon={<Check/>} color="secondary">Finish</Button>
+              <Button onClick={() => setIsFinishing(true)} startIcon={<Check/>} color="secondary">Finish</Button>
             </div>
           </Toolbar>
         </AppBar>
@@ -200,6 +250,8 @@ class _DiffPageContent extends React.Component {
           <div className={classes.root}>
             <HighlightedIDsStore>
               <NamerStore disable={true}>
+
+                <FinishPane/>
                 <RequestBodyRegion/>
                 {responsesToRender.map(responseStatusCode => <ResponseBodyRegion statusCode={responseStatusCode}/>)}
               </NamerStore>
@@ -220,10 +272,16 @@ function SuggestionsStore({children}) {
   const [acceptedSuggestions, setAcceptedSuggestions] = React.useState([]);
   const [acceptedSuggestionsWithDiff, setAcceptedSuggestionsWithDiff] = React.useState([]);
 
-  const addAcceptedSuggestion = (suggestion, diff) => setAcceptedSuggestionsWithDiff([...acceptedSuggestionsWithDiff, {
+  const addAcceptedSuggestion = (suggestion, diff, key) => setAcceptedSuggestionsWithDiff([...acceptedSuggestionsWithDiff, {
     suggestion,
-    diff
+    diff,
+    key
   }]);
+
+  const resetAccepted = () => {
+    setAcceptedSuggestions([])
+    setAcceptedSuggestionsWithDiff([])
+  }
 
   const context = {
     suggestionToPreview,
@@ -231,7 +289,8 @@ function SuggestionsStore({children}) {
     acceptedSuggestions,
     setAcceptedSuggestions,
     acceptedSuggestionsWithDiff,
-    addAcceptedSuggestion
+    addAcceptedSuggestion,
+    resetAccepted
   };
   return (
     <SuggestionsContext.Provider value={context}>
@@ -239,6 +298,27 @@ function SuggestionsStore({children}) {
     </SuggestionsContext.Provider>
   );
 }
+
+export const IgnoreDiffContext = React.createContext(null);
+
+function IgnoreDiffStore({children}) {
+  const [ignoredDiffs, setIgnoredDiffs] = React.useState([]);
+
+  const ignoreDiff = (diff) => setIgnoredDiffs([...ignoredDiffs, diff]);
+  const resetIgnored = () => setIgnoredDiffs([]);
+
+  const context = {
+    ignoreDiff,
+    ignoredDiffs,
+    resetIgnored
+  };
+  return (
+    <IgnoreDiffContext.Provider value={context}>
+      {children}
+    </IgnoreDiffContext.Provider>
+  );
+}
+
 
 function flatten(acc, array) {
   return [...acc, ...array];
@@ -248,7 +328,7 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   const {eventStore, rfcService, rfcId} = props;
   const {isLoading, session} = props;
   const {children} = props;
-  const {setSuggestionToPreview, setAcceptedSuggestions, acceptedSuggestions, suggestionToPreview, addAcceptedSuggestion} = props;
+  const {setSuggestionToPreview, setAcceptedSuggestions, acceptedSuggestions, suggestionToPreview, addAcceptedSuggestion, ignoredDiffs, resetIgnored, resetAccepted} = props;
 
   if (isLoading) {
     return <LinearProgress/>;
@@ -259,7 +339,7 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   const samples = jsonHelper.jsArrayToSeq(session.samples.map(i => jsonHelper.fromInteraction(i)));
   const diffResults = helpers.DiffHelpers().groupByDiffs(rfcState, samples);
   const diffHelper = helpers.DiffResultHelpers(diffResults);
-  const regions = diffHelper.listRegions()
+  const regions = diffHelper.filterOut(jsonHelper.jsArrayToSeq(ignoredDiffs)).listRegions();
 
   const getInteractionsForDiff = (diff) => jsonHelper.seqToJsArray(diffHelper.get(diff));
 
@@ -289,10 +369,14 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
     <DiffContextStore
       regions={regions}
       setSuggestionToPreview={setSuggestionToPreview}
-      acceptSuggestion={(suggestion, diff) => {
+      reset={() => {
+        resetIgnored()
+        resetAccepted()
+      }}
+      acceptSuggestion={(suggestion, diff, key) => {
         if (suggestion) {
           setAcceptedSuggestions([...acceptedSuggestions, suggestion]);
-          addAcceptedSuggestion(suggestion, diff)
+          addAcceptedSuggestion(suggestion, diff, key);
         }
       }}
       interpretationsForDiffAndInteraction={interpretationsForDiffAndInteraction}
@@ -332,41 +416,51 @@ class _CaptureSessionInlineContext extends React.Component {
         sessionId={sessionId}
         specService={specService}
         renderNoSession={<div>No Capture</div>}>
-        <SuggestionsStore>
-          <SuggestionsContext.Consumer>
-            {(suggestionsContext) => {
-              const {
-                suggestionToPreview,
-                setSuggestionToPreview,
-                acceptedSuggestions,
-                setAcceptedSuggestions,
-                addAcceptedSuggestion,
-              } = suggestionsContext;
-              const simulatedCommands = acceptedSuggestions.map(x => jsonHelper.seqToJsArray(x.commands)).reduce(flatten, []);
-              console.log({
-                xxx: 'xxx',
-                suggestionToPreview,
-                acceptedSuggestions
-              });
-              return (
-                <SimulatedCommandContext
-                  rfcId={rfcId}
-                  eventStore={eventStore.getCopy(rfcId)}
-                  commands={simulatedCommands}
-                  shouldSimulate={true}>
-                  <InnerDiffWrapper
-                    suggestionToPreview={suggestionToPreview}
-                    setSuggestionToPreview={setSuggestionToPreview}
-                    acceptedSuggestions={acceptedSuggestions}
-                    setAcceptedSuggestions={setAcceptedSuggestions}
-                    addAcceptedSuggestion={addAcceptedSuggestion}
-                  >{children}</InnerDiffWrapper>
-                </SimulatedCommandContext>
-              );
-            }}
-          </SuggestionsContext.Consumer>
+        <IgnoreDiffStore>
+          <SuggestionsStore>
+            <IgnoreDiffContext.Consumer>
+              {({ignoredDiffs, resetIgnored}) => (
+              <SuggestionsContext.Consumer>
+                {(suggestionsContext) => {
+                  const {
+                    suggestionToPreview,
+                    setSuggestionToPreview,
+                    acceptedSuggestions,
+                    setAcceptedSuggestions,
+                    addAcceptedSuggestion,
+                    resetAccepted,
+                  } = suggestionsContext;
+                  const simulatedCommands = acceptedSuggestions.map(x => jsonHelper.seqToJsArray(x.commands)).reduce(flatten, []);
+                  console.log({
+                    xxx: 'xxx',
+                    suggestionToPreview,
+                    acceptedSuggestions
+                  });
+                  return (
+                    <SimulatedCommandContext
+                      rfcId={rfcId}
+                      eventStore={eventStore.getCopy(rfcId)}
+                      commands={simulatedCommands}
+                      shouldSimulate={true}>
+                      <InnerDiffWrapper
+                        ignoredDiffs={ignoredDiffs}
+                        resetIgnored={resetIgnored}
+                        resetAccepted={resetAccepted}
+                        suggestionToPreview={suggestionToPreview}
+                        setAcceptedSuggestions={setAcceptedSuggestions}
+                        setSuggestionToPreview={setSuggestionToPreview}
+                        acceptedSuggestions={acceptedSuggestions}
+                        addAcceptedSuggestion={addAcceptedSuggestion}
+                      >{children}</InnerDiffWrapper>
+                    </SimulatedCommandContext>
+                  );
+                }}
+              </SuggestionsContext.Consumer>
+              )}
+            </IgnoreDiffContext.Consumer>
 
-        </SuggestionsStore>
+          </SuggestionsStore>
+        </IgnoreDiffStore>
       </TrafficSessionStore>
     );
   }
@@ -377,6 +471,7 @@ const CaptureSessionInlineContext = compose(withRfcContext)(_CaptureSessionInlin
 function BatchActionsMenu(props) {
 
   const [anchorEl, setAnchorEl] = useState(null);
+
   return (
     <>
       <Button
@@ -390,7 +485,10 @@ function BatchActionsMenu(props) {
             onClose={() => setAnchorEl(null)}>
         <MenuItem>Accept all Suggestions</MenuItem>
         <MenuItem>Ignore all Diffs</MenuItem>
-        <MenuItem>Reset</MenuItem>
+        <MenuItem onClick={() => {
+          props.reset()
+          setAnchorEl(null)
+        }}>Reset</MenuItem>
       </Menu>
     </>
   );

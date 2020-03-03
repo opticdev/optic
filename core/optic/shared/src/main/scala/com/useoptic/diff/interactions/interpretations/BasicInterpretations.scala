@@ -1,13 +1,13 @@
 package com.useoptic.diff.interactions.interpretations
 
-import com.useoptic.contexts.requests.Commands.{ShapedBodyDescriptor}
+import com.useoptic.contexts.requests.Commands.ShapedBodyDescriptor
 import com.useoptic.contexts.requests.{RequestsServiceHelper, Commands => RequestsCommands}
 import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldShapeFromShape, ProviderInShape, ShapeProvider}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper, Commands => ShapesCommands}
-import com.useoptic.diff.InteractiveDiffInterpretation
+import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
 import com.useoptic.diff.shapes.{JsonObjectKey, JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, Resolvers, ShapeTrail}
@@ -23,8 +23,9 @@ class BasicInterpretations(rfcState: RfcState) {
     )
     InteractiveDiffInterpretation(
       s"Add ${interactionTrail.statusCode()} Response",
-      s"Include this response status code in the spec",
-      commands
+      s"Include status code in specification",
+      commands,
+      ChangeType.Addition
     )
   }
 
@@ -43,8 +44,9 @@ class BasicInterpretations(rfcState: RfcState) {
 
     InteractiveDiffInterpretation(
       "Add Request Body",
-      "Include this request body in the spec",
-      commands
+      s"Include a ${interactionTrail.requestContentType()} body",
+      commands,
+      ChangeType.Addition
     )
   }
 
@@ -63,8 +65,9 @@ class BasicInterpretations(rfcState: RfcState) {
 
     InteractiveDiffInterpretation(
       "Add Response Body",
-      "Include this response body in the spec",
-      commands
+      s"Include a ${interactionTrail.responseContentType()} body",
+      commands,
+      ChangeType.Addition
     )
   }
 
@@ -77,7 +80,8 @@ class BasicInterpretations(rfcState: RfcState) {
     InteractiveDiffInterpretation(
       "Set Response Content-Type",
       "",
-      commands
+      commands,
+      ChangeType.Update
     )
   }
 
@@ -90,7 +94,8 @@ class BasicInterpretations(rfcState: RfcState) {
     InteractiveDiffInterpretation(
       "Set Request Content-Type",
       "Change from ",
-      commands
+      commands,
+      ChangeType.Update
     )
   }
 
@@ -109,12 +114,12 @@ class BasicInterpretations(rfcState: RfcState) {
       //@BUG handle when interactionTrail.requestContentType() is not present (in which case we should just add a new request with no default body
       RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(interactionTrail.requestContentType(), builtShape.rootShapeId, isRemoved = false))
     )
-    println("xxx")
-    println(commands)
+
     InteractiveDiffInterpretation(
-      "Add New Request",
-      "Add new <request> with <content type> body",
-      commands
+      s"Add ${interactionTrail.requestContentType()}",
+      "Add new body content-type",
+      commands,
+      ChangeType.Addition
     )
   }
 
@@ -133,9 +138,10 @@ class BasicInterpretations(rfcState: RfcState) {
     )
 
     InteractiveDiffInterpretation(
-      "Add New Response",
-      "Add new <response> with <content type> body",
-      commands
+      s"Add ${interactionTrail.responseContentType()}",
+      "Add new body content-type",
+      commands,
+      ChangeType.Addition
     )
   }
 
@@ -170,9 +176,10 @@ class BasicInterpretations(rfcState: RfcState) {
     val commands = builtShape.commands ++ additionalCommands
 
     InteractiveDiffInterpretation(
-      "Change Shape",
-      "<place in spec> to match the request <place in interaction> which is a <>",
-      commands
+      "Change to a <shape>",
+      "Change from <old-type> to <new-type>",
+      commands,
+      ChangeType.Update
     )
   }
 
@@ -190,9 +197,10 @@ class BasicInterpretations(rfcState: RfcState) {
     )
     val commands = builtShape.commands ++ additionalCommands
     InteractiveDiffInterpretation(
-      "Add Field",
-      "Add <fieldName> (<>) to <place in spec>> to match <place in interaction>",
-      commands
+      s"Add Field <fieldName>",
+      "Add <fieldName> as <shape-type>",
+      commands,
+      ChangeType.Addition
     )
   }
 }

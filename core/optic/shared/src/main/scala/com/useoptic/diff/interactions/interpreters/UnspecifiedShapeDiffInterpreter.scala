@@ -4,7 +4,7 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{AddField, FieldShapeFromShape}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper}
 import com.useoptic.contexts.shapes.ShapesHelper.ObjectKind
-import com.useoptic.diff.InteractiveDiffInterpretation
+import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.{InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
@@ -55,7 +55,8 @@ class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDif
           InteractiveDiffInterpretation(
             "Add key",
             s"Add ${key} to the spec",
-            commands
+            commands,
+            ChangeType.Addition
           )
         )
       }

@@ -18,12 +18,18 @@ import {CompareEquality} from '@useoptic/domain';
 import PanoramaFishEyeIcon from '@material-ui/icons/PanoramaFishEye';
 import {withDiffContext} from './DiffContext';
 import Zoom from '@material-ui/core/Zoom';
-import {SuggestionsContext} from './DiffPageNew';
+import {SuggestionsContext, IgnoreDiffContext} from './DiffPageNew';
 import Card from '@material-ui/core/Card';
-import {UpdatedBlue, UpdatedBlueBackground} from '../../../contexts/ColorContext';
+import {
+  AddedGreenBackground,
+  ChangedYellowBackground, RemovedRedBackground,
+  UpdatedBlue,
+  UpdatedBlueBackground
+} from '../../../contexts/ColorContext';
 import MuiAlert from '@material-ui/lab/Alert';
 import {Show} from '../../shared/Show';
 import Paper from '@material-ui/core/Paper';
+import {DocGrid} from '../../requests/DocGrid';
 
 const styles = theme => ({
   root: {},
@@ -66,16 +72,15 @@ class DiffViewer extends React.Component {
       setSelectedInterpretation,
       selectedInterpretation,
       acceptSuggestion,
-      nameOverride
+      nameOverride,
+      approvedKey
     } = this.props;
 
-
-    const isEmpty = groupDiffs.length === 0
+    const isEmpty = groupDiffs.length === 0;
 
     return (
       <div className={classes.container}>
         <DocSubGroupBig className={classes.root} title={nameOverride} disabled={isEmpty}>
-          {isEmpty}
           <List dense>
             {groupDiffs.map((diff, index) => {
               const selected = !!selectedDiff && CompareEquality.between(selectedDiff, diff);
@@ -83,54 +88,83 @@ class DiffViewer extends React.Component {
               const diffDescription = getDiffDescription(diff, interactions[0]);
               const interpretations = selected ? interpretationsForDiffAndInteraction(diff, currentExample) : [];
               return (
-                <div style={{borderLeft: selected && `2px solid ${UpdatedBlue}`, backgroundColor: selected && UpdatedBlueBackground}}>
+                <div style={{
+                  borderLeft: selected && `2px solid ${UpdatedBlue}`,
+                  backgroundColor: selected && UpdatedBlueBackground
+                }}>
                   <ListItem button={!selected}
+                            disableRipple
+                            component={Card}
+                            style={{display: 'flex', flexDirection: 'column', marginBottom: 12, alignItems: 'baseline'}}
                             onClick={() => !selected ? setSelectedDiff(diff) : undefined}>
-                    <ListItemText primary={<Typography className={classes.heading}>{diffDescription.title}</Typography>}>
+                    <ListItemText
+                      primary={<Typography className={classes.heading}>{diffDescription.title}</Typography>}>
                     </ListItemText>
-                  </ListItem>
-                  <Show when={Boolean(selected)}>
-                    <div style={{marginLeft: 15}}>
-                      <FormHelperText>Suggested changes:</FormHelperText>
-                      <List dense>
-                        {selected && interpretations.map((interpretation, index) => {
-                          return (
-                            <InterpretationRow
-                              action={interpretation.title + interpretation.description}
-                              active={selectedInterpretation && CompareEquality.betweenWithoutCommands(selectedInterpretation, interpretation)}
-                              onClick={() => setSelectedInterpretation(interpretation, index)}/>
-                          );
-                        })}
-                        <div style={{textAlign: 'right', marginTop: 15, paddingRight: 15}}>
-                          <Button size="small" color="primary">Ignore Diff</Button>
+                    <div style={{width: '100%'}}>
+                    <Show when={Boolean(selected)}>
+                      <>
+                        <FormHelperText>Suggested changes:</FormHelperText>
+                        <List dense>
+                          {selected && interpretations.map((interpretation, index) => {
+                            return (
+                              <InterpretationRow
+                                action={interpretation.title}
+                                description={interpretation.description}
+                                active={selectedInterpretation && CompareEquality.betweenWithoutCommands(selectedInterpretation, interpretation)}
+                                onClick={() => setSelectedInterpretation(interpretation, index)}/>
+                            );
+                          })}
+                          <div style={{textAlign: 'right', marginTop: 15, paddingRight: 15}}>
+                            <IgnoreDiffContext.Consumer>
+                              {({ignoreDiff}) => <Button size="small" color="primary" disableRipple onClick={() => ignoreDiff(diff)}>Ignore Diff</Button>}
+                            </IgnoreDiffContext.Consumer>
                             <Button size="small" color="secondary" variant="contained"
+                                    disableRipple
                                     style={{marginLeft: 12}} disabled={!Boolean(selectedInterpretation)}
-                                    onClick={() => acceptSuggestion(selectedInterpretation, diff)}>Confirm</Button>
-                        </div>
-                      </List>
+                                    onClick={() => {
+                                      acceptSuggestion(selectedInterpretation, diff, approvedKey);
+                                    }}>Confirm</Button>
+                          </div>
+                        </List>
+                      </>
+                    </Show>
                     </div>
-                  </Show>
+                  </ListItem>
                 </div>
               );
 
             })}
           </List>
-          {/*<SuggestionsContext.Consumer>*/}
-          {/*  {(suggestionsContext) => {*/}
-          {/*    const {acceptedSuggestionsWithDiff} = suggestionsContext;*/}
 
-          {/*    return (*/}
-          {/*      <DocSubGroup title="Accepted Suggestions">*/}
-          {/*        <List>*/}
-          {/*          {acceptedSuggestionsWithDiff.map(i => (*/}
-          {/*            <ListItem>*/}
-          {/*              <ListItemText primary={i.suggestion.description}/>*/}
-          {/*            </ListItem>*/}
-          {/*          ))}*/}
-          {/*        </List>*/}
-          {/*      </DocSubGroup>);*/}
-          {/*  }}*/}
-          {/*</SuggestionsContext.Consumer>*/}
+          <SuggestionsContext.Consumer>
+            {({acceptedSuggestionsWithDiff}) => {
+              const filtered = acceptedSuggestionsWithDiff.filter(i => i.key === approvedKey);
+              if (filtered.length > 0) {
+
+                function colorForChangeType(name) {
+                  switch (name) {
+                    case 'Addition':
+                      return AddedGreenBackground
+                    case 'Removal':
+                      return RemovedRedBackground
+                    case 'Update':
+                      return ChangedYellowBackground
+                  }
+                }
+                return (
+                    <List>
+                      {filtered.map(i => (
+                        <ListItem style={{backgroundColor: colorForChangeType(i.suggestion.changeTypeAsString), marginTop: 4}}>
+                          <Typography variant="caption"
+                                      style={{paddingLeft: 0, marginLeft: -12}}>{i.suggestion.title}</Typography>
+                        </ListItem>
+                      ))}
+                    </List>
+                );
+              }
+
+            }}
+          </SuggestionsContext.Consumer>
         </DocSubGroupBig>
       </div>
     );
@@ -140,7 +174,7 @@ class DiffViewer extends React.Component {
 
 function InterpretationRow(props) {
 
-  const {action, active, onClick, confirm} = props;
+  const {action, description, active, onClick, confirm} = props;
 
   return (
     <ListItem
@@ -148,6 +182,7 @@ function InterpretationRow(props) {
       style={{padding: 0, paddingLeft: 0, marginLeft: 0}}
       button
       selected={active}
+      disableRipple
       onKeyDown={(e) => {
         if (e.which === 13) {
           if (active) {
@@ -166,7 +201,7 @@ function InterpretationRow(props) {
           style={{pointerEvents: 'none', fontSize: 11, marginLeft: -5}}
           color="primary"/>
       </ListItemAvatar>
-      <ListItemText primary={action} primaryTypographyProps={{fontSize: 12}}/>
+      <ListItemText primary={action} secondary={description} primaryTypographyProps={{fontSize: 12}}/>
     </ListItem>
   );
 }

@@ -17,7 +17,7 @@ export function DocSubGroup({title, children, style, innerStyle}) {
 
 export function DocSubGroupBig({title, children, disabled, style, innerStyle}) {
     return (
-        <div style={{marginTop: 11, ...style, opacity: disabled ? .6 : 1}}>
+        <div style={{marginTop: 11, ...style}}>
             <div style={{maxWidth: 650}}>
                 <Typography variant="overline" style={DocSubGroupHeadingBigStyles}>{title}</Typography>
                 <DocDivider />

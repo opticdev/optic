@@ -49,6 +49,8 @@ object DiffHelpers {
 case class DiffRegionsHelpers(diffsGroupedByRegion: DiffsGroupedByRegion) {
   def keys(): Seq[DiffLocation] = diffsGroupedByRegion.keys.toSeq
 
+  def isEmpty: Boolean = diffsGroupedByRegion.isEmpty
+
   def inRequest: Iterable[InteractionDiffResult] = diffsGroupedByRegion.collect{
     case (DiffInRequest, b) => b
     case (DiffInRequestWithContentType(_), b) => b
@@ -84,7 +86,6 @@ case class DiffRegionsHelpers(diffsGroupedByRegion: DiffsGroupedByRegion) {
     case (DiffInRequestWithContentType(contentType), b) => contentType
   }.toSeq.distinct.sorted
 
-
 }
 
 trait DiffLocation
@@ -113,7 +114,13 @@ case class DiffResultHelpers(interactionsGroupedByDiff: InteractionsGroupedByDif
     DiffRegionsHelpers(groupedKeys.asInstanceOf[Map[DiffLocation, Iterable[InteractionDiffResult]]])
   }
 
+  def isEmpty: Boolean = interactionsGroupedByDiff.keys.isEmpty
+
   def keys(): Seq[InteractionDiffResult] = interactionsGroupedByDiff.keySet.toSeq
 
   def get(diff: InteractionDiffResult): Seq[HttpInteraction] = interactionsGroupedByDiff.getOrElse(diff, Seq.empty)
+
+  def filterOut(ignored: Seq[InteractionDiffResult] = Seq.empty): DiffResultHelpers = {
+    DiffResultHelpers(interactionsGroupedByDiff.filterKeys(i => !ignored.contains(i)))
+  }
 }
