@@ -77,7 +77,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
         responses: responsesForPathAndMethod,
         endpointPurpose: contributions.getOrUndefined(pathMethodKeyBuilder(pathId, method), PURPOSE),
         endpointDescription: contributions.getOrUndefined(pathMethodKeyBuilder(pathId, method), DESCRIPTION),
-
+        isEmpty: requestBodies.length === 0 && responsesForPathAndMethod.length === 0
       };
 
       const context = {

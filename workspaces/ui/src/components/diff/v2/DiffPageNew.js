@@ -6,7 +6,7 @@ import {ArrowDownwardSharp, Cancel, Check} from '@material-ui/icons';
 import compose from 'lodash.compose';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import {DocGrid} from '../../requests/DocGrid';
+import {DiffDocGrid, DocGrid} from '../../requests/DocGrid';
 import {EndpointsContextStore, withEndpointsContext} from '../../../contexts/EndpointContext';
 import {
   TrafficSessionContext,
@@ -37,6 +37,7 @@ import TextField from '@material-ui/core/TextField';
 import {Show} from '../../shared/Show';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import BatchLearnDialog from './BatchLearnDialog';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -91,18 +92,27 @@ class DiffPageNew extends React.Component {
 
 class _DiffPageContent extends React.Component {
   render() {
-    const {endpointDescriptor, classes, regions, currentExample, acceptedSuggestions, isFinishing, setIsFinishing, reset} = this.props;
-    const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, selectedInterpretation} = endpointDescriptor;
+    const {endpointDescriptor, getInteractionsForDiff, classes, regions, selectedDiff, currentExample, getDiffDescription, acceptedSuggestions, isFinishing, setIsFinishing, reset} = this.props;
+    const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, isEmpty} = endpointDescriptor;
+
+    const shouldShowAcceptAll = isEmpty && !regions.isEmpty;
 
     const showFinishPane = (isFinishing || regions.isEmpty);
 
+    function description() {
+      if (selectedDiff) {
+        const interactions = getInteractionsForDiff(selectedDiff);
+        return getDiffDescription(selectedDiff, currentExample);
+      }
+    }
+
     const FinishPane = () => {
 
-      const [message, setMessage] = useState('')
+      const [message, setMessage] = useState('');
       return (
         <Show when={showFinishPane}>
-          <div style={{marginLeft: -57, paddingBottom: 75}}>
-            <div style={{display: 'flex', flexDirection: 'row', maxWidth: 550}}>
+          <div style={{display: 'flex', justifyContent: 'center', marginBottom: 120}}>
+            <div style={{display: 'flex', flexDirection: 'row', width: 550}}>
               <div style={{paddingTop: 7, marginLeft: 5}}>
                 <Avatar aria-label="recipe" className={classes.avatar}>
                   <PersonIcon/>
@@ -127,7 +137,7 @@ class _DiffPageContent extends React.Component {
           </div>
         </Show>
       );
-    }
+    };
 
     const RequestBodyRegion = () => {
       const example = currentExample && niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.request.body)));
@@ -143,14 +153,15 @@ class _DiffPageContent extends React.Component {
         .sort((a, b) => a - b);
 
       return (
-        <DocGrid
+        <DiffDocGrid
+          colMaxWidth={600}
           style={{marginBottom: 40}}
-          left={(
+          right={(
             <div>
               <DiffViewer regionName={'request-body'} nameOverride={'Request Body Diff'} groupDiffs={diffs}
                           approvedKey={'request'}/>
             </div>
-          )} right={(
+          )} left={(
           <div className={classes.rightRegion}>
             {(requestContentTypesToRender.length === 0 && example) && (
               <ExampleOnly
@@ -185,26 +196,26 @@ class _DiffPageContent extends React.Component {
       const diffs = jsonHelper.seqToJsArray(regions.inResponseWithStatusCode(statusCode));
 
       const contentTypes = responses.filter(i => i.statusCode === statusCode && !!i.responseBody.httpContentType);
-      console.log('xxA', contentTypes);
-
 
       const showExample = currentExample && currentExample.response.statusCode === statusCode;
 
-
+      const diffDescription = description();
       return (
-        <DocGrid
+        <DiffDocGrid
           style={{marginBottom: 40}}
-          left={(
+          colMaxWidth={600}
+          right={(
             <div>
               <DiffViewer nameOverride={`${statusCode} Response Diff`} groupDiffs={diffs}
                           approvedKey={'response-' + statusCode}/>
             </div>
-          )} right={(<div className={classes.rightRegion}>
+          )} left={(<div className={classes.rightRegion}>
           {(contentTypes.length === 0 && showExample) && (
             <ExampleOnly
               title={`Observed ${statusCode} Response Body`}
               contentType={ContentTypeHelpers.contentTypeOrNull(currentExample.response)}
               //this isn't safe, only works for JSON bodies
+              exampleTags={diffDescription && diffDescription.tags}
               example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>
           )}
           {contentTypes.map(response => {
@@ -212,12 +223,14 @@ class _DiffPageContent extends React.Component {
             if (hasBody) {
               const contentType = response.responseBody.httpContentType;
               const example = currentExample && niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)));
+              console.log('shape friend', selectedDiff);
               return (
                 <ExampleShapeViewer
                   title={`${statusCode} Response Body`}
                   shapeId={response.responseBody.shapeId}
                   contentType={contentType}
                   showShapesFirst={true}
+                  exampleTags={diffDescription && diffDescription.tags}
                   example={example}/>
               );
             }
@@ -247,6 +260,7 @@ class _DiffPageContent extends React.Component {
         </AppBar>
 
         <div className={classes.scroll}>
+          {shouldShowAcceptAll && <BatchLearnDialog open={true}/>}
           <div className={classes.root}>
             <HighlightedIDsStore>
               <NamerStore disable={true}>
@@ -279,9 +293,9 @@ function SuggestionsStore({children}) {
   }]);
 
   const resetAccepted = () => {
-    setAcceptedSuggestions([])
-    setAcceptedSuggestionsWithDiff([])
-  }
+    setAcceptedSuggestions([]);
+    setAcceptedSuggestionsWithDiff([]);
+  };
 
   const context = {
     suggestionToPreview,
@@ -370,8 +384,8 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
       regions={regions}
       setSuggestionToPreview={setSuggestionToPreview}
       reset={() => {
-        resetIgnored()
-        resetAccepted()
+        resetIgnored();
+        resetAccepted();
       }}
       acceptSuggestion={(suggestion, diff, key) => {
         if (suggestion) {
@@ -420,42 +434,42 @@ class _CaptureSessionInlineContext extends React.Component {
           <SuggestionsStore>
             <IgnoreDiffContext.Consumer>
               {({ignoredDiffs, resetIgnored}) => (
-              <SuggestionsContext.Consumer>
-                {(suggestionsContext) => {
-                  const {
-                    suggestionToPreview,
-                    setSuggestionToPreview,
-                    acceptedSuggestions,
-                    setAcceptedSuggestions,
-                    addAcceptedSuggestion,
-                    resetAccepted,
-                  } = suggestionsContext;
-                  const simulatedCommands = acceptedSuggestions.map(x => jsonHelper.seqToJsArray(x.commands)).reduce(flatten, []);
-                  console.log({
-                    xxx: 'xxx',
-                    suggestionToPreview,
-                    acceptedSuggestions
-                  });
-                  return (
-                    <SimulatedCommandContext
-                      rfcId={rfcId}
-                      eventStore={eventStore.getCopy(rfcId)}
-                      commands={simulatedCommands}
-                      shouldSimulate={true}>
-                      <InnerDiffWrapper
-                        ignoredDiffs={ignoredDiffs}
-                        resetIgnored={resetIgnored}
-                        resetAccepted={resetAccepted}
-                        suggestionToPreview={suggestionToPreview}
-                        setAcceptedSuggestions={setAcceptedSuggestions}
-                        setSuggestionToPreview={setSuggestionToPreview}
-                        acceptedSuggestions={acceptedSuggestions}
-                        addAcceptedSuggestion={addAcceptedSuggestion}
-                      >{children}</InnerDiffWrapper>
-                    </SimulatedCommandContext>
-                  );
-                }}
-              </SuggestionsContext.Consumer>
+                <SuggestionsContext.Consumer>
+                  {(suggestionsContext) => {
+                    const {
+                      suggestionToPreview,
+                      setSuggestionToPreview,
+                      acceptedSuggestions,
+                      setAcceptedSuggestions,
+                      addAcceptedSuggestion,
+                      resetAccepted,
+                    } = suggestionsContext;
+                    const simulatedCommands = acceptedSuggestions.map(x => jsonHelper.seqToJsArray(x.commands)).reduce(flatten, []);
+                    console.log({
+                      xxx: 'xxx',
+                      suggestionToPreview,
+                      acceptedSuggestions
+                    });
+                    return (
+                      <SimulatedCommandContext
+                        rfcId={rfcId}
+                        eventStore={eventStore.getCopy(rfcId)}
+                        commands={simulatedCommands}
+                        shouldSimulate={true}>
+                        <InnerDiffWrapper
+                          ignoredDiffs={ignoredDiffs}
+                          resetIgnored={resetIgnored}
+                          resetAccepted={resetAccepted}
+                          suggestionToPreview={suggestionToPreview}
+                          setAcceptedSuggestions={setAcceptedSuggestions}
+                          setSuggestionToPreview={setSuggestionToPreview}
+                          acceptedSuggestions={acceptedSuggestions}
+                          addAcceptedSuggestion={addAcceptedSuggestion}
+                        >{children}</InnerDiffWrapper>
+                      </SimulatedCommandContext>
+                    );
+                  }}
+                </SuggestionsContext.Consumer>
               )}
             </IgnoreDiffContext.Consumer>
 
@@ -481,13 +495,16 @@ function BatchActionsMenu(props) {
         style={{marginLeft: 12}}
         endIcon={<ArrowDownwardSharp/>}>
         Batch Actions</Button>
-      <Menu open={Boolean(anchorEl)} anchorEl={anchorEl} anchorOrigin={{vertical: 'bottom'}}
+      <Menu open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            anchorOrigin={{vertical: 'bottom'}}
             onClose={() => setAnchorEl(null)}>
-        <MenuItem>Accept all Suggestions</MenuItem>
+        <BatchLearnDialog
+          button={(handleClickOpen) => <MenuItem onClick={handleClickOpen}>Accept all Suggestions</MenuItem>}/>
         <MenuItem>Ignore all Diffs</MenuItem>
         <MenuItem onClick={() => {
-          props.reset()
-          setAnchorEl(null)
+          props.reset();
+          setAnchorEl(null);
         }}>Reset</MenuItem>
       </Menu>
     </>

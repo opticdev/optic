@@ -10,7 +10,8 @@ import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper, Commands => 
 import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
-import com.useoptic.diff.shapes.{JsonObjectKey, JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, Resolvers, ShapeTrail}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, Resolvers, ShapeTrail}
+import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.types.capture.HttpInteraction
 
 class BasicInterpretations(rfcState: RfcState) {

@@ -7,7 +7,8 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.{InteractionTrail, ResponseBody, SpecResponseBody, TestHelpers, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interactions.interpretations.InteractionHelpers
-import com.useoptic.diff.shapes.{JsonArrayItem, JsonObjectKey, JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
+import com.useoptic.diff.shapes.JsonTrailPathComponent._
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
 import com.useoptic.types.capture.HttpInteraction
 import io.circe.Json
 import org.scalatest.FunSpec

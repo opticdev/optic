@@ -5,6 +5,7 @@ import com.useoptic.diff.interactions.TestHelpers
 import com.useoptic.diff.shapes.visitors.DiffVisitors
 import org.scalatest.FunSpec
 import io.circe.literal._
+import com.useoptic.diff.shapes.JsonTrailPathComponent._
 
 class DiffVisitorSpec extends FunSpec {
   describe("shape diffing") {

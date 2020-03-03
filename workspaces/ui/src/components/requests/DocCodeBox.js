@@ -147,7 +147,7 @@ class _ExampleShapeViewer extends React.Component {
 	};
 
 	render() {
-		const {shapeId, showShapesFirst, classes, example, title, contentType} = this.props;
+		const {shapeId, showShapesFirst, classes, exampleTags, example, title, contentType} = this.props;
 		const {showExample} = this.state;
 
 		const exampleProvided = typeof example !== 'undefined';
@@ -161,7 +161,7 @@ class _ExampleShapeViewer extends React.Component {
 
 		const exampleRender = (() => {
 			return (
-				<ExampleViewer example={example}/>
+				<ExampleViewer example={example} exampleTags={exampleTags}/>
 			);
 		})();
 

@@ -13,20 +13,16 @@ const useStyles = makeStyles(theme => ({
     },
   },
   leftDiff: {
-    paddingTop: 15,
     display: 'flex',
     flexDirection: 'column',
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingRight: 40,
     borderRight: '1px solid #e2e2e2',
     maxWidth: 'inherit',
   },
   rightDiff: {
     display: 'flex',
     flexDirection: 'column',
-    paddingLeft: 15,
-    paddingRight: 15,
-    paddingTop: 15,
+    paddingLeft: 20,
     maxWidth: 'inherit',
   },
   maxWidth: {

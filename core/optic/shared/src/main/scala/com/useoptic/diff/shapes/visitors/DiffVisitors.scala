@@ -3,7 +3,8 @@ package com.useoptic.diff.shapes.visitors
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.contexts.shapes.ShapesHelper._
-import com.useoptic.diff.shapes.{ArrayVisitor, JsonObjectKey, JsonTrail, ObjectFieldTrail, ObjectVisitor, PrimitiveVisitor, ResolvedTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape, Visitors}
+import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
+import com.useoptic.diff.shapes.{ArrayVisitor, JsonTrail, ObjectFieldTrail, ObjectVisitor, PrimitiveVisitor, ResolvedTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape, Visitors}
 import io.circe.Json
 
 class DiffVisitors(spec: RfcState) extends Visitors {

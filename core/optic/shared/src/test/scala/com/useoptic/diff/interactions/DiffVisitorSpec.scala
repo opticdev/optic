@@ -8,6 +8,7 @@ import com.useoptic.contexts.rfc.{RfcCommandContext, RfcServiceJSFacade}
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.visitors.DiffVisitors
+import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes._
 import com.useoptic.types.capture._
 import io.circe.literal._

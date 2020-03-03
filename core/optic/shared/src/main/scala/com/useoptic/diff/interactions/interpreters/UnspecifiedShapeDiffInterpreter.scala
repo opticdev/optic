@@ -8,7 +8,8 @@ import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.{InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape}
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
-import com.useoptic.diff.shapes.{JsonObjectKey, Resolvers, UnspecifiedShape}
+import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
+import com.useoptic.diff.shapes.{Resolvers, UnspecifiedShape}
 import com.useoptic.types.capture.HttpInteraction
 
 class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDiffInterpreter[InteractionDiffResult] {
@@ -53,8 +54,8 @@ class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDif
         )
         Seq(
           InteractiveDiffInterpretation(
-            "Add key",
-            s"Add ${key} to the spec",
+            s"Add ${key}",
+            s"Add ${key} to the specification",
             commands,
             ChangeType.Addition
           )

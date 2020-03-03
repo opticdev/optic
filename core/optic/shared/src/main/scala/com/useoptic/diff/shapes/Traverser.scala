@@ -2,6 +2,7 @@ package com.useoptic.diff.shapes
 
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.ShapesHelper.ListKind
+import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import io.circe.Json
 
 class Traverser(spec: RfcState, visitors: Visitors) {

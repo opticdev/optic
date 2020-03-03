@@ -41,9 +41,9 @@ export function stuffFromQueries(queries) {
       acc[pathId] = value;
       return acc;
     }, {});
-  queries.memoizedFlatShapeForExample = memoize((x, h) => {
+  queries.memoizedFlatShapeForExample = memoize((x, h, k) => {
     console.count('memoizedFlatShapeForExample');
-    return queries.flatShapeForExample(x, h);
+    return queries.flatShapeForExample(x, h, k);
   });
   const cachedQueryResults = {
     apiName,

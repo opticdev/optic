@@ -2,7 +2,6 @@ package com.useoptic.contexts.shapes.projections
 
 import com.useoptic.contexts.shapes.ShapesHelper.{BooleanKind, ListKind, MapKind, NullableKind, NumberKind, ObjectKind, OptionalKind, ReferenceKind, StringKind}
 import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
-import com.useoptic.contexts.shapes.projections.FlatShapeProjection.{FlatShape, FlatShapeResult}
 import io.circe.Json
 import JsonSchemaHelpers._
 

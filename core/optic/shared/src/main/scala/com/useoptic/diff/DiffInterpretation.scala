@@ -1,12 +1,20 @@
 package com.useoptic.diff
 
 import com.useoptic.contexts.rfc.Commands.RfcCommand
+import com.useoptic.contexts.shapes.projections.TrailTags
 import com.useoptic.diff.ChangeType.ChangeType
+import com.useoptic.diff.shapes.JsonTrail
 
 import scala.scalajs.js.annotation.JSExportAll
 
 @JSExportAll
-case class InteractiveDiffInterpretation(title: String, description: String, commands: Seq[RfcCommand], changeType: ChangeType) {
+case class InteractiveDiffInterpretation(
+                                        //communication
+                                        title: String, description: String,
+                                        //domain
+                                         commands: Seq[RfcCommand],
+                                        //visualizations
+                                         changeType: ChangeType, jsonTags: TrailTags[JsonTrail] = TrailTags.empty) {
   def changeTypeAsString: String = changeType.toString
 }
 

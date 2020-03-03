@@ -7,14 +7,20 @@ case class JsonTrail(path: Seq[JsonTrailPathComponent]) {
   def withoutParent() = {
     this.copy(path = this.path.tail)
   }
+
+  override def toString = path.toString()
 }
 
 sealed trait JsonTrailPathComponent
 
-case class JsonObject() extends JsonTrailPathComponent
+object JsonTrailPathComponent {
 
-case class JsonArray() extends JsonTrailPathComponent
+  case class JsonObject() extends JsonTrailPathComponent
 
-case class JsonObjectKey(key: String) extends JsonTrailPathComponent
+  case class JsonArray() extends JsonTrailPathComponent
 
-case class JsonArrayItem(index: Int) extends JsonTrailPathComponent
+  case class JsonObjectKey(key: String) extends JsonTrailPathComponent
+
+  case class JsonArrayItem(index: Int) extends JsonTrailPathComponent
+
+}

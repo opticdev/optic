@@ -5,6 +5,7 @@ import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, NumberKind, ObjectKi
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.TestHelpers
 import org.scalatest.FunSpec
+import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import io.circe.literal._
 
 

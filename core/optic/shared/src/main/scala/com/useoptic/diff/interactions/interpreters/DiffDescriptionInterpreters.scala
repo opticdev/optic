@@ -2,23 +2,42 @@ package com.useoptic.diff.interactions.interpreters
 
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
+import com.useoptic.contexts.shapes.projections.TrailTags
+import com.useoptic.diff.ChangeType
 import com.useoptic.diff.interactions.{ContentTypeHelpers, InteractionDiffResult, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
-import com.useoptic.diff.shapes.{JsonArray, JsonArrayItem, JsonObject, JsonObjectKey, JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape}
+import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 
-sealed trait InteractionPointerDescription
+sealed trait InteractionPointerDescription {
+  def tags: TrailTags[JsonTrail]
+}
 
-case class Unspecified(jsonTrail: JsonTrail) extends InteractionPointerDescription
+case class Unspecified(jsonTrail: JsonTrail) extends InteractionPointerDescription {
+  override def tags: TrailTags[JsonTrail] = TrailTags(Map(
+    jsonTrail -> ChangeType.Addition
+  ))
+}
 
-case class SpecifiedButNotMatching(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) extends InteractionPointerDescription
+case class SpecifiedButNotMatching(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) extends InteractionPointerDescription {
+  override def tags: TrailTags[JsonTrail] = TrailTags(Map(
+    jsonTrail -> ChangeType.Update
+  ))
+}
 
-case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) extends InteractionPointerDescription
+case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) extends InteractionPointerDescription {
+  override def tags: TrailTags[JsonTrail] = TrailTags(Map(
+    jsonTrail -> ChangeType.Removal
+  ))
+}
 
 @JSExportAll
-case class DiffDescription(title: String, interactionPointerDescription: Option[InteractionPointerDescription])
+case class DiffDescription(title: String, interactionPointerDescription: Option[InteractionPointerDescription]) {
+  def tags: TrailTags[JsonTrail] = interactionPointerDescription.map(_.tags).getOrElse(TrailTags.empty)
+}
 
 @JSExport
 @JSExportAll

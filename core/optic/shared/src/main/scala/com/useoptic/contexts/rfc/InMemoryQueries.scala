@@ -7,9 +7,9 @@ import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionsProjection, SetupState, SetupStateProjection}
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.useoptic.contexts.shapes.ShapesState
-import com.useoptic.contexts.shapes.projections.FlatShapeProjection.FlatShapeResult
-import com.useoptic.contexts.shapes.projections.{ExampleProjection, FlatShapeProjection, NameForShapeId, NamedShape, NamedShapes}
+import com.useoptic.contexts.shapes.projections.{ExampleProjection, FlatShapeProjection, FlatShapeResult, NameForShapeId, NamedShape, NamedShapes, ShapeTrail, TrailTags}
 import com.useoptic.ddd.{AggregateId, CachedProjection, EventStore}
+import com.useoptic.diff.shapes.JsonTrail
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -77,8 +77,8 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
   def flatShapeForShapeId(shapeId: ShapeId, affectedIds: Seq[String] = Seq.empty): FlatShapeResult = {
     FlatShapeProjection.forShapeId(shapeId, affectedIds = affectedIds)(service.currentState(aggregateId).shapesState, revision = events.size)
   }
-  def flatShapeForExample(example: Json, hash: String): FlatShapeResult = {
-    ExampleProjection.fromJson(example, hash)
+  def flatShapeForExample(example: Json, hash: String, trailTags: TrailTags[JsonTrail]): FlatShapeResult = {
+    ExampleProjection.fromJson(example, hash, trailTags)
   }
 
   private val apiSetupCache = new CachedProjection(SetupStateProjection, events)

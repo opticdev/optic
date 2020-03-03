@@ -5,12 +5,16 @@ import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.rfc.projections.OASProjection
 import com.useoptic.contexts.rfc.{InMemoryQueries, RfcService, RfcServiceJSFacade}
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
+import com.useoptic.contexts.shapes.projections.TrailTags
 import com.useoptic.ddd.{AggregateId, EventStore}
+import com.useoptic.diff.ChangeType.ChangeType
+import com.useoptic.diff.shapes.JsonTrail
+import io.circe.{Encoder, Json}
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.generic.auto._
 import io.circe.syntax._
 
-import scala.scalajs.js.annotation.{JSExportTopLevel}
+import scala.scalajs.js.annotation.JSExportTopLevel
 import scala.scalajs.js.Dictionary
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.scalajs.js
@@ -48,6 +52,8 @@ case class ContributionWrapper(all: Map[String, Map[String, String]]) {
 @JSExportAll
 class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggregateId: AggregateId) {
   private val q = new InMemoryQueries(eventStore, service, aggregateId)
+
+  implicit val changeTypeEncoder: Encoder[ChangeType] = (a: ChangeType) => Json.fromString(a.toString)
 
   def pathsWithRequests(): js.Any = {
     convertJsonToJs(q.pathsWithRequests.asJson)
@@ -98,8 +104,8 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     import js.JSConverters._
     convertJsonToJs(q.flatShapeForShapeId(shapeId, affectedIds.toSeq).asJson)
   }
-  def flatShapeForExample(example: js.Any, hash: String): js.Any = {
-    convertJsonToJs(q.flatShapeForExample(convertJsToJson(example).right.get, hash).asJson)
+  def flatShapeForExample(example: js.Any, hash: String, trailTags: TrailTags[JsonTrail] = TrailTags.empty): js.Any = {
+    convertJsonToJs(q.flatShapeForExample(convertJsToJson(example).right.get, hash, trailTags).asJson)
   }
   def setupState(): js.Any = {
     convertJsonToJs(q.setupState().asJson)

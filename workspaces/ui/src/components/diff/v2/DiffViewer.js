@@ -40,10 +40,10 @@ const styles = theme => ({
     margin: theme.spacing(0),
   },
   heading: {
-    fontSize: theme.typography.pxToRem(16),
+    fontSize: theme.typography.pxToRem(14),
     fontWeight: 500,
     padding: 0,
-    marginLeft: 0,
+    marginLeft: -5,
     wordBreak: 'break-word',
     textOverflow: 'none',
   },
@@ -95,7 +95,7 @@ class DiffViewer extends React.Component {
                   <ListItem button={!selected}
                             disableRipple
                             component={Card}
-                            style={{display: 'flex', flexDirection: 'column', marginBottom: 12, alignItems: 'baseline'}}
+                            style={{display: 'flex', flexDirection: 'column', marginBottom: 8, alignItems: 'baseline'}}
                             onClick={() => !selected ? setSelectedDiff(diff) : undefined}>
                     <ListItemText
                       primary={<Typography className={classes.heading}>{diffDescription.title}</Typography>}>
@@ -152,7 +152,7 @@ class DiffViewer extends React.Component {
                   }
                 }
                 return (
-                    <List>
+                    <List style={{marginTop: -10}}>
                       {filtered.map(i => (
                         <ListItem style={{backgroundColor: colorForChangeType(i.suggestion.changeTypeAsString), marginTop: 4}}>
                           <Typography variant="caption"

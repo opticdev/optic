@@ -6,7 +6,7 @@ import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.rfc.{InMemoryQueries, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.contexts.shapes.ShapesHelper
 import com.useoptic.contexts.shapes.ShapesHelper.OptionalKind
-import com.useoptic.contexts.shapes.projections.{FlatShapeProjection, JsonSchemaProjection}
+import com.useoptic.contexts.shapes.projections.{FlatShapeProjection, FlatShapeResult, JsonSchemaProjection}
 import com.useoptic.ddd.{AggregateId, InMemoryEventStore}
 import com.useoptic.diff.RequestDiffer.UnmatchedQueryParameterShape
 import com.useoptic.diff.ShapeDiffer
@@ -56,7 +56,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
       }
     }
 
-    val queryParamShape: Option[FlatShapeProjection.FlatShapeResult] = rfcState.requestsState.requestParameters.filter(x => {
+    val queryParamShape: Option[FlatShapeResult] = rfcState.requestsState.requestParameters.filter(x => {
       val (parameterId, parameter) = x
       parameter.requestParameterDescriptor.pathId == request.requestDescriptor.pathComponentId && parameter.requestParameterDescriptor.httpMethod == request.requestDescriptor.httpMethod && parameter.requestParameterDescriptor.location == "query"
     }).values.headOption.flatMap(query => {
@@ -144,7 +144,7 @@ class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateI
                          summary: Option[String],
                          description: Option[String],
                          requestBody: Option[Body],
-                         query: Option[FlatShapeProjection.FlatShapeResult],
+                         query: Option[FlatShapeResult],
                          responses: Vector[(String, Response)]) {
 
       def toJson(rfcState: RfcState) = {

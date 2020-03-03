@@ -11,7 +11,7 @@ import scala.util.Try
 
 trait JsonFileFixture {
   def fromFile(slug: String): Json = {
-    val filePath = "src/test/resources/diff-scenarios/" + slug + ".json"
+    val filePath = "optic/shared/src/test/resources/diff-scenarios/" + slug + ".json"
     val attempt = parseFile(new File(filePath))
     if (attempt.isLeft) {
       throw new Error(attempt.left.get)

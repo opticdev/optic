@@ -7,6 +7,7 @@ import com.useoptic.contexts.shapes.{FlattenedShape, ShapesHelper, ShapesState}
 import com.useoptic.diff.ShapeDiffer
 import com.useoptic.diff.ShapeDiffer.resolveParameterShape
 import TrailImplicits._
+import com.useoptic.diff.ChangeType.ChangeType
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -14,19 +15,7 @@ import scala.scalajs.js.annotation.JSExportAll
 import scala.util.Try
 
 object FlatShapeProjection {
-  //{baseShapeId, typeName, fields, parameters, fieldName}
-  @JSExportAll
-  case class FlatField(fieldName: String, shape: FlatShape, fieldId: FieldId)
-  @JSExportAll
-  case class FlatShape(baseShapeId: ShapeId, typeName: Seq[ColoredComponent], fields: Seq[FlatField], id: ShapeId, canName: Boolean, links: Map[String, ShapeId]) {
-    def joinedTypeName = typeName.map(_.name).mkString(" ")
-  }
-  @JSExportAll
-  case class
-
-  FlatShapeResult(root: FlatShape, parameterMap: Map[String, FlatShape], pathsForAffectedIds: Vector[Seq[String]], renderId: String)
-
-  private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false, Map.empty))
+  private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false, Map.empty, None))
 
   def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None, affectedIds: Seq[String] = Seq())(implicit shapesState: ShapesState, expandedName: Boolean = true, revision: Int = 0) = {
     implicit val parametersByShapeId: mutable.Map[String, FlatShape] = scala.collection.mutable.HashMap[String, FlatShape]()
@@ -55,7 +44,7 @@ object FlatShapeProjection {
       .getOrElse(returnAny)
 
     def returnWith( typeName: Seq[ColoredComponent], fields: Seq[FlatField] = Seq(), canName: Boolean = false, links: Map[String, ShapeId] ) = {
-      FlatShape(shape.coreShapeId, typeName, fields, shapeId, canName, links)
+      FlatShape(shape.coreShapeId, typeName, fields, shapeId, canName, links, None)
     }
 
     shape.coreShapeId match {
@@ -118,7 +107,7 @@ object FlatShapeProjection {
           } else {
             val fieldShapeId = field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
             val trailForFieldAndInnerShape = trail and InField(fieldId) and Leaf(fieldShapeId)
-            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId, trailForFieldAndInnerShape)(shapesState, Some(fieldId), false, parametersByShapeId, trailLogger), fieldId))
+            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId, trailForFieldAndInnerShape)(shapesState, Some(fieldId), false, parametersByShapeId, trailLogger), fieldId, None))
           }
 
         }).sortBy(_.fieldName)
@@ -135,7 +124,7 @@ object FlatShapeProjection {
 //        })
 
 
-        FlatShape(baseObject.descriptor.baseShapeId, NameForShapeId.getShapeName(baseObject.shapeId), fields, baseObject.shapeId, canName, Map.empty)
+        FlatShape(baseObject.descriptor.baseShapeId, NameForShapeId.getShapeName(baseObject.shapeId), fields, baseObject.shapeId, canName, Map.empty, None)
       }
 
       //fallback to primitives

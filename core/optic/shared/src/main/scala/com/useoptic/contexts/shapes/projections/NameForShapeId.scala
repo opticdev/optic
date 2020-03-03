@@ -2,7 +2,6 @@ package com.useoptic.contexts.shapes.projections
 
 import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, FieldShapeFromShape, NoProvider, ParameterProvider, ShapeId, ShapeProvider}
 import com.useoptic.contexts.shapes.ShapesHelper.{AnyKind, IdentifierKind, ListKind, MapKind, NullableKind, ObjectKind, OneOfKind, OptionalKind, ReferenceKind, StringKind}
-import com.useoptic.contexts.shapes.projections.FlatShapeProjection.{FlatField, getFlatShape}
 import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
 import com.useoptic.diff.ShapeDiffer
 import com.useoptic.diff.ShapeDiffer.resolveParameterShape

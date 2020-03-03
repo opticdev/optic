@@ -133,7 +133,7 @@ export const RootRow = withHighlightedIDs(withStyles(styles)(({classes, expand, 
   );
 }));
 
-export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, typeName, fields, fieldName, canName, baseShapeId, parameters, depth, id, fieldId}) => {
+export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, typeName, fields, fieldName, tag, canName, baseShapeId, parameters, depth, id, fieldId}) => {
 
   const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
   const [expandedParam, setExpandedParam] = useState(defaultParam);
@@ -309,7 +309,7 @@ export default ShapeViewer;
 class ExampleViewerBase extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
-    if (equal(nextProps.example, this.props.example)) {
+    if (equal(nextProps.example, this.props.example) && equal(nextProps.exampleTags, this.props.exampleTags)) {
       return false;
     } else {
       return true;
@@ -317,12 +317,19 @@ class ExampleViewerBase extends React.Component {
   }
 
   render() {
-    const {queries, example} = this.props;
+    const {queries, example, exampleTags} = this.props;
     const hash = niceTry(() => sha1(stringify(example))) || 'empty-example';
-    const flatShape = queries.memoizedFlatShapeForExample(example, hash);
+    console.log('tag1', exampleTags)
+    const flatShape = queries.memoizedFlatShapeForExample(example, hash, exampleTags);
+    console.log('tag2', flatShape)
+
+    if (exampleTags) {
+      debugger
+    }
+
     return (
       <NamerStore>
-        <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} renderId={hash}/>
+        <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} renderId={hash} />
       </NamerStore>
     );
   }

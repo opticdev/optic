@@ -6,6 +6,7 @@ import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.diff.ShapeDiffer.ParameterBindings
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestBody, RequestSpecTrail, RequestSpecTrailHelpers, ResponseBody}
+import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.types.capture.HttpInteraction
 import io.circe.Json
 
