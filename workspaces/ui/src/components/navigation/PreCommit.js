@@ -6,7 +6,6 @@ import { EndpointPageWithQuery } from '../requests/EndpointPage';
 import Drawer from '@material-ui/core/Drawer';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import DiffInfo from '../diff/DiffInfo';
-import { HighlightedIDsStore } from '../shapes/HighlightedIDs';
 import { withTrafficSessionContext } from '../../contexts/TrafficSessionContext';
 import compose from 'lodash.compose';
 import {NamerStore} from '../shapes/Namer';
@@ -63,12 +62,10 @@ class PreCommit extends React.Component {
 
         <NamerStore disable={true}>
         <div className={classes.content}>
-          <HighlightedIDsStore {...taggedIds}>
             <EndpointPageWithQuery
               requestId={requestId}
               showShapesFirst={true}
             />
-          </HighlightedIDsStore>
         </div>
 
         <Drawer anchor="right"

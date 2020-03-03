@@ -6,31 +6,24 @@ import com.useoptic.contexts.shapes.projections.NameForShapeId.ColoredComponent
 import com.useoptic.contexts.shapes.{FlattenedShape, ShapesHelper, ShapesState}
 import com.useoptic.diff.ShapeDiffer
 import com.useoptic.diff.ShapeDiffer.resolveParameterShape
-import TrailImplicits._
-import com.useoptic.diff.ChangeType.ChangeType
-
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
-import scala.scalajs.js.annotation.JSExportAll
-import scala.util.Try
 
 object FlatShapeProjection {
   private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false, Map.empty, None))
 
   def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None, affectedIds: Seq[String] = Seq())(implicit shapesState: ShapesState, expandedName: Boolean = true, revision: Int = 0) = {
     implicit val parametersByShapeId: mutable.Map[String, FlatShape] = scala.collection.mutable.HashMap[String, FlatShape]()
-    implicit val trailLogger = new ShapeTrailLogger
-    val root = getFlatShape(shapeId, Seq.empty)(shapesState, fieldIdOption, expandedName, parametersByShapeId, trailLogger)
-    FlatShapeResult(root, parametersByShapeId.toMap, trailLogger.pathsForAffectedIds(affectedIds), s"${shapeId}_${revision.toString}")
+    val root = getFlatShape(shapeId)(shapesState, fieldIdOption, expandedName, parametersByShapeId)
+    FlatShapeResult(root, parametersByShapeId.toMap, Vector(), s"${shapeId}_${revision.toString}")
   }
 
-  private def addLinkToParameter(shapeId: ShapeId, shape: FlatShape)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None, parametersByShapeId: mutable.Map[String, FlatShape], trailLogger: ShapeTrailLogger): Unit = {
+  private def addLinkToParameter(shapeId: ShapeId, shape: FlatShape)(implicit shapesState: ShapesState, fieldIdOption: Option[String] = None, parametersByShapeId: mutable.Map[String, FlatShape]): Unit = {
     if (!parametersByShapeId.contains(shapeId)) {
       parametersByShapeId.put(shapeId, shape)
     }
   }
 
-  private def getFlatShape(shapeId: ShapeId, trail: Seq[ShapeTrail])(implicit shapesState: ShapesState, fieldIdOption: Option[String], expandedName: Boolean = false, parametersByShapeId: mutable.Map[String, FlatShape], trailLogger: ShapeTrailLogger): FlatShape = {
+  private def getFlatShape(shapeId: ShapeId)(implicit shapesState: ShapesState, fieldIdOption: Option[String], expandedName: Boolean = false, parametersByShapeId: mutable.Map[String, FlatShape]): FlatShape = {
     val shape = shapesState.flattenedShape(shapeId)
 
     def resolveInner(paramId: String) = resolveParameterShape(shapeId, paramId)(shapesState, {
@@ -40,7 +33,7 @@ object FlatShapeProjection {
         shapesState.flattenedShape(shapeId).bindings
       }
     })
-      .map(i => (i.shapeId, getFlatShape(i.shapeId, trail and InParameter(i.shapeId))(shapesState, None, false, parametersByShapeId, trailLogger)))
+      .map(i => (i.shapeId, getFlatShape(i.shapeId)(shapesState, None, false, parametersByShapeId)))
       .getOrElse(returnAny)
 
     def returnWith( typeName: Seq[ColoredComponent], fields: Seq[FlatField] = Seq(), canName: Boolean = false, links: Map[String, ShapeId] ) = {
@@ -106,8 +99,7 @@ object FlatShapeProjection {
             None
           } else {
             val fieldShapeId = field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
-            val trailForFieldAndInnerShape = trail and InField(fieldId) and Leaf(fieldShapeId)
-            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId, trailForFieldAndInnerShape)(shapesState, Some(fieldId), false, parametersByShapeId, trailLogger), fieldId, None))
+            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId)(shapesState, Some(fieldId), false, parametersByShapeId), fieldId, None))
           }
 
         }).sortBy(_.fieldName)
@@ -126,7 +118,6 @@ object FlatShapeProjection {
 
         FlatShape(baseObject.descriptor.baseShapeId, NameForShapeId.getShapeName(baseObject.shapeId), fields, baseObject.shapeId, canName, Map.empty, None)
       }
-
       //fallback to primitives
       case baseShapeId if ShapesHelper.allCoreShapes.exists(_.baseShapeId == baseShapeId) =>
         returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map.empty)
@@ -136,38 +127,3 @@ object FlatShapeProjection {
   }
 
 }
-
-class ShapeTrailLogger {
-  val _all = scala.collection.mutable.ListBuffer[Seq[ShapeTrail]]()
-
-  def finalize(id: String)(implicit trail: Seq[ShapeTrail]): Seq[ShapeTrail] = {
-    val f = trail :+ Leaf(id)
-    _all.append(f)
-    f
-  }
-
-  def pathsForAffectedIds(affectedIds: Seq[String]): Vector[Seq[String]] = {
-    _all.filter(i => i.nonEmpty && affectedIds.contains(i.last.id)).map(i => i.map(_.id)).toVector
-  }
-
-  def add(s: Seq[ShapeTrail]) = _all.append(s)
-}
-
-object TrailImplicits {
-
-  implicit class TrailSeqImplicitsA(seq: Seq[ShapeTrail]) {
-    def and(shapeTrail: ShapeTrail)(implicit trailLogger: ShapeTrailLogger): Seq[ShapeTrail] = {
-      val newTrail = seq :+ shapeTrail
-      trailLogger.add(newTrail)
-      newTrail
-    }
-  }
-
-}
-
-sealed trait ShapeTrail {
-  def id: String
-}
-case class InField(id: String) extends ShapeTrail
-case class InParameter(id: String) extends ShapeTrail
-case class Leaf(id: String) extends ShapeTrail

@@ -4,7 +4,6 @@ import {MarkdownContribution} from './DocContribution';
 import {ExampleShapeViewer} from './DocCodeBox';
 import {DocGrid} from './DocGrid';
 import {StickyRegion} from '../shared/StickyRegion';
-import {AddedGreen, Highlight} from '../shapes/HighlightedIDs';
 import {STATUS_CODES} from 'http';
 import {BODY_DESCRIPTION} from '../../ContributionKeys';
 
@@ -21,8 +20,7 @@ export function DocResponse({
 
   const left = (
     <StickyRegion>
-      <DocSubGroup title={<Highlight id={responseId}
-                                     style={{color: AddedGreen}}>{`${statusCode} - ${STATUS_CODES[statusCode]} Response`}</Highlight>}>
+      <DocSubGroup title={`${statusCode} - ${STATUS_CODES[statusCode]} Response`}>
         <MarkdownContribution
           value={description}
           label="What does this response mean?"

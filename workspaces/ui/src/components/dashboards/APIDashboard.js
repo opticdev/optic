@@ -16,7 +16,6 @@ import Button from '@material-ui/core/Button';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
 import CheckIcon from '@material-ui/icons/Check';
-import {AddedGreen, ChangedYellow} from '../shapes/HighlightedIDs';
 import ClearIcon from '@material-ui/icons/Clear';
 import {AddedGreenBackground, ChangedYellowBackground, RemovedRed} from '../../contexts/ColorContext';
 import {ListItemAvatar, ListItemSecondaryAction, ListItemText} from '@material-ui/core';
@@ -39,6 +38,7 @@ import {HasDiffDashboard} from '../navigation/NewBehavior';
 import {routerPaths} from '../../RouterPaths';
 import {withApiOverviewContext} from '../../contexts/ApiOverviewContext';
 import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
+import {AddedGreen, ChangedYellow} from '../shapes/ShapeViewer';
 
 const styles = theme => ({
   root: {

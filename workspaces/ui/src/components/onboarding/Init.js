@@ -26,12 +26,12 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import VerifiedUserIcon from '@material-ui/icons/VerifiedUser';
 import {VerifiedUser} from '@material-ui/icons';
 import {Link} from 'react-router-dom';
-import {AddedGreen} from '../shapes/HighlightedIDs';
 import {withTrafficSessionContext} from '../../contexts/TrafficSessionContext';
 import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
 import {withNavigationContext} from '../../contexts/NavigationContext';
 import {LinkToDocumentUrls, NewBehaviorSideBar} from '../navigation/NewBehavior';
 import Card from '@material-ui/core/Card';
+import {AddedGreen} from '../shapes/ShapeViewer';
 
 const useStyles = makeStyles(theme => ({
   content: {

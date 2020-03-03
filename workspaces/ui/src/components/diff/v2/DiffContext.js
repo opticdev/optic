@@ -70,6 +70,10 @@ class DiffContextStore extends React.Component {
       setSuggestionToPreview(interpretation);
       this.setState({
         selectedInterpretation: interpretation,
+      }, () => {
+        if (diff) {
+          DiffUIEventEmitter.emit(DiffUIEventEmitterEvents.SHOW_SPEC_WHEN_POSSIBLE);
+        }
       });
     };
 

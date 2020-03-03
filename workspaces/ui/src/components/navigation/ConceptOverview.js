@@ -4,7 +4,6 @@ import {DocGrid} from '../requests/DocGrid';
 import {DocDivider} from '../requests/DocConstants';
 import {HeadingContribution, MarkdownContribution} from '../requests/DocContribution';
 import {ShapeOnly} from '../requests/DocCodeBox';
-import {HighlightedIDsStore} from '../shapes/HighlightedIDs';
 import {StickyRegion} from '../shared/StickyRegion';
 import {DESCRIPTION} from '../../ContributionKeys';
 
@@ -54,11 +53,9 @@ class ConceptOverview extends React.Component {
 
 
     const right = (
-      <HighlightedIDsStore>
         <ShapeOnly
           title={name}
           shapeId={shapeId}/>
-      </HighlightedIDsStore>
     );
 
     return (

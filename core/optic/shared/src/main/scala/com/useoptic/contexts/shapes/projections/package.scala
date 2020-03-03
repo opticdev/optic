@@ -10,7 +10,7 @@ package object projections {
   case class TrailTags[A](trails: Map[A, ChangeType])
 
   object TrailTags {
-    def empty[A] = TrailTags[A](Map.empty)
+    def empty[A]: TrailTags[A] = TrailTags[A](Map.empty)
   }
 
   @JSExportAll

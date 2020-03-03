@@ -21,7 +21,6 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import {BodyUtilities, ContentTypeHelpers, opticEngine} from '@useoptic/domain';
 import DiffViewer from './DiffViewer';
 import {ExampleOnly, ExampleShapeViewer} from '../../requests/DocCodeBox';
-import {HighlightedIDsStore} from '../../shapes/HighlightedIDs';
 import niceTry from 'nice-try';
 import {NamerStore} from '../../shapes/Namer';
 import SimulatedCommandContext from '../SimulatedCommandContext';
@@ -180,7 +179,6 @@ class _DiffPageContent extends React.Component {
                       title={`Request Body`}
                       shapeId={request.requestBody.shapeId}
                       contentType={request.requestBody.httpContentType}
-                      showShapesFirst={true}
                       example={showExample ? example : undefined}/>
                   </div>
                 );
@@ -229,7 +227,6 @@ class _DiffPageContent extends React.Component {
                   title={`${statusCode} Response Body`}
                   shapeId={response.responseBody.shapeId}
                   contentType={contentType}
-                  showShapesFirst={true}
                   exampleTags={diffDescription && diffDescription.tags}
                   example={example}/>
               );
@@ -262,14 +259,11 @@ class _DiffPageContent extends React.Component {
         <div className={classes.scroll}>
           {shouldShowAcceptAll && <BatchLearnDialog open={true}/>}
           <div className={classes.root}>
-            <HighlightedIDsStore>
               <NamerStore disable={true}>
-
                 <FinishPane/>
                 <RequestBodyRegion/>
                 {responsesToRender.map(responseStatusCode => <ResponseBodyRegion statusCode={responseStatusCode}/>)}
               </NamerStore>
-            </HighlightedIDsStore>
           </div>
         </div>
       </div>

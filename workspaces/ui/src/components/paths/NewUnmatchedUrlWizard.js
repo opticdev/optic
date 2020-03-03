@@ -25,7 +25,6 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import {Show} from '../shared/Show';
 import sortby from 'lodash.sortby';
 import {withTrafficSessionContext} from '../../contexts/TrafficSessionContext';
-import {HighlightedIDsStore} from '../shapes/HighlightedIDs';
 import {EndpointOverviewCodeBox, ExampleOnly} from '../requests/DocCodeBox';
 import {DocSubGroup} from '../requests/DocSubGroup';
 import Chip from '@material-ui/core/Chip';
@@ -372,16 +371,12 @@ class PreviewSample extends React.Component {
 
         {requestBody && (
           <DocSubGroup title="Request Body">
-            <HighlightedIDsStore>
               <ExampleOnly title="Request Body" contentType={requestContentType} example={requestBody}/>
-            </HighlightedIDsStore>
           </DocSubGroup>
         )}
         {responseBody && (
           <DocSubGroup title={`${statusCode} - ${STATUS_CODES[statusCode]}`}>
-            <HighlightedIDsStore>
               <ExampleOnly title="Response Body" contentType={responseContentType} example={responseBody}/>
-            </HighlightedIDsStore>
           </DocSubGroup>
         )}
       </div>

@@ -12,7 +12,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import ClearIcon from '@material-ui/icons/Clear';
 import InterpretationInfo from './InterpretationInfo';
-import {AddedGreen, Highlight, HighlightedIDsStore} from '../shapes/HighlightedIDs';
 import {withRfcContext} from '../../contexts/RfcContext';
 import {JsonHelper} from '@useoptic/domain';
 import Mustache from 'mustache';
@@ -200,8 +199,7 @@ const DiffResponse = withStyles(styles)((props) => {
       )}
       right={response && (
         <div id={interpretation && 'interpretation-card'}>
-          <DocSubGroup title={<Highlight id={response.responseId}
-                                         style={{color: AddedGreen}}>{`${statusCode} - ${STATUS_CODES[statusCode]} Response`}</Highlight>}>
+          <DocSubGroup title={`${statusCode} - ${STATUS_CODES[statusCode]} Response`}>
             {interpretation}
             {shapeId && <ShapeOnly title="Response Body Shape" shapeId={shapeId}
                                    contentType={httpContentType}/>
@@ -332,7 +330,6 @@ class DiffPage extends React.Component {
       <div className={classes.root}>
         {demos.requestDiffDemo && demos.requestDiffDemo(!localStorage.getItem('request-diff-reached-approve'))}
         <CssBaseline/>
-        <HighlightedIDsStore addedIds={addedIds} changedIds={changedIds}>
           <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
             <Toolbar variant="dense">
               <div style={{marginRight: 20}}>
@@ -403,7 +400,6 @@ class DiffPage extends React.Component {
 
           </div>
           {/*<InterpretationCard/>*/}
-        </HighlightedIDsStore>
       </div>
     );
   }

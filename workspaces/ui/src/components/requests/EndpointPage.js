@@ -16,7 +16,6 @@ import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../u
 import {updateContribution} from '../../engine/routines';
 import sortBy from 'lodash.sortby';
 import Button from '@material-ui/core/Button';
-import {HighlightedIDsStore} from '../shapes/HighlightedIDs';
 import Toolbar from '@material-ui/core/Toolbar';
 import {withNavigationContext} from '../../contexts/NavigationContext';
 import {Helmet} from 'react-helmet';
@@ -385,7 +384,6 @@ export const RequestsDetailsPageNew = compose(withEndpointsContext, withStyles(s
 
               <div className={classes.scroll}>
                 <NamerStore disable={true}>
-                  <HighlightedIDsStore>
                     <div className={classes.wrapper}>
                       <EndpointPage
                         // endpointPurpose={contributions.getOrUndefined(requestId, PURPOSE)}
@@ -406,7 +404,6 @@ export const RequestsDetailsPageNew = compose(withEndpointsContext, withStyles(s
                         parameters={pathParameters}
                       />
                     </div>
-                  </HighlightedIDsStore>
                 </NamerStore>
               </div>
             </div>);

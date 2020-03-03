@@ -7,13 +7,13 @@ import {Show} from '../shared/Show';
 import compose from 'lodash.compose';
 import {primitiveDocColors} from '../requests/DocConstants';
 import {withRfcContext} from '../../contexts/RfcContext';
-import {Highlight, HighlightedIDsStore, withHighlightedIDs} from './HighlightedIDs';
 import Menu from '@material-ui/core/Menu';
 import {NamerStore, withNamer} from './Namer';
 import equal from 'deep-equal';
 import sha1 from 'node-sha1';
 import stringify from 'json-stable-stringify';
 import niceTry from 'nice-try';
+import {RemovedRedBackground} from '../../contexts/ColorContext';
 
 
 const styles = theme => ({
@@ -103,7 +103,7 @@ export const ExpandableRow = withStyles(styles)(({classes, children, innerChildr
   );
 });
 
-export const RootRow = withHighlightedIDs(withStyles(styles)(({classes, expand, id, typeName, depth}) => {
+export const RootRow = withStyles(styles)(({classes, expand, id, typeName, depth}) => {
 
   const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
 
@@ -131,10 +131,9 @@ export const RootRow = withHighlightedIDs(withStyles(styles)(({classes, expand, 
       )}
     </>
   );
-}));
+});
 
-export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, typeName, fields, fieldName, tag, canName, baseShapeId, parameters, depth, id, fieldId}) => {
-
+export const Field = withStyles(styles)(({classes, expand, typeName, fields, fieldName, tag, canName, baseShapeId, parameters, depth, id, fieldId}) => {
   const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
   const [expandedParam, setExpandedParam] = useState(defaultParam);
 
@@ -156,7 +155,7 @@ export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, ty
   </>;
 
   if (fields.length) {
-    const fieldsRendered = fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={fieldId}
+    const fieldsRendered = fields.map(i => <Field {...i.shape} fieldName={i.fieldName} tag={i.tag} fieldId={fieldId}
                                                   depth={depth + 2}/>);
     //use expandable row
     return <ExpandableRow depth={depth + 1} innerChildren={fieldsRendered}>
@@ -167,7 +166,7 @@ export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, ty
 
   return (
     <>
-      <Highlight id={fieldId}>
+      <Highlight tag={tag}>
         <Row depth={depth + 1}>
           {shared}
         </Row>
@@ -182,7 +181,7 @@ export const Field = withHighlightedIDs(withStyles(styles)(({classes, expand, ty
       )}
     </>
   );
-}));
+});
 
 export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLinkClick}) => {
 
@@ -267,7 +266,7 @@ export const ObjectViewer = withStyles(styles)(({classes, typeName, canName, id,
         {<TypeNameRender typeName={typeName} id={id}/>}
         {canName && <Namer id={id}/>}
       </Row>
-      {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} depth={depth + 1}/>)}
+      {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} tag={i.tag} depth={depth + 1}/>)}
     </>
   );
 });
@@ -319,14 +318,7 @@ class ExampleViewerBase extends React.Component {
   render() {
     const {queries, example, exampleTags} = this.props;
     const hash = niceTry(() => sha1(stringify(example))) || 'empty-example';
-    console.log('tag1', exampleTags)
     const flatShape = queries.memoizedFlatShapeForExample(example, hash, exampleTags);
-    console.log('tag2', flatShape)
-
-    if (exampleTags) {
-      debugger
-    }
-
     return (
       <NamerStore>
         <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} renderId={hash} />
@@ -337,18 +329,30 @@ class ExampleViewerBase extends React.Component {
 
 export const ExampleViewer = withRfcContext(ExampleViewerBase);
 
-export const ShapeViewerWithQuery = withHighlightedIDs(withRfcContext(({shapeId, addedIds, changedIds, queries}) => {
-  const affectedIds = [...addedIds, ...changedIds];
+export const ShapeViewerWithQuery = withRfcContext(({shapeId, addedIds, changedIds, queries}) => {
   if (!shapeId) {
     console.error('this should have a shape id...')
     return <div>why don't i have a shape id???</div>
   }
-  const flatShape = queries.flatShapeForShapeId(shapeId, affectedIds);
-  const expand = Array.from(new Set([...flatShape.pathsForAffectedIds.flatMap(x => x)]));
-
+  const flatShape = queries.flatShapeForShapeId(shapeId);
   return (
-    <HighlightedIDsStore addedIds={addedIds} changedIds={changedIds} expand={expand}>
       <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
-    </HighlightedIDsStore>
   );
-}));
+});
+
+
+
+export const AddedGreen = '#008d69';
+export const ChangedYellow = '#8d7200';
+export const Highlight = (({tag, children, style}) => {
+
+  if (tag === 'Addition') {
+    return (<div style={{backgroundColor: AddedGreen}}>{children}</div>)
+  } else if (tag === 'Update') {
+    return (<div style={{backgroundColor: ChangedYellow}}>{children}</div>);
+  } else if (tag === 'Removal') {
+    return (<div style={{backgroundColor: RemovedRedBackground}}>{children}</div>);
+  } else {
+    return children;
+  }
+});

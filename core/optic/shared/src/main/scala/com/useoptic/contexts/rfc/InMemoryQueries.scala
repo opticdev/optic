@@ -7,7 +7,7 @@ import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionsProjection, SetupState, SetupStateProjection}
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.useoptic.contexts.shapes.ShapesState
-import com.useoptic.contexts.shapes.projections.{ExampleProjection, FlatShapeProjection, FlatShapeResult, NameForShapeId, NamedShape, NamedShapes, ShapeTrail, TrailTags}
+import com.useoptic.contexts.shapes.projections.{ExampleProjection, FlatShapeProjection, FlatShapeResult, NameForShapeId, NamedShape, NamedShapes, TrailTags}
 import com.useoptic.ddd.{AggregateId, CachedProjection, EventStore}
 import com.useoptic.diff.shapes.JsonTrail
 import io.circe.Json
