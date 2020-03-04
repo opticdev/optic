@@ -7,7 +7,6 @@ import Tab from '@material-ui/core/Tab';
 import {secondary} from '../../theme';
 import {ExampleViewer, ShapeViewerWithQuery} from '../shapes/ShapeViewer';
 import {Show} from '../shared/Show';
-import {DiffUIEventEmitter, DiffUIEventEmitterEvents} from '../diff/v2/DiffContext';
 
 const styles = theme => ({
   container: {
@@ -139,16 +138,6 @@ class _ExampleShapeViewer extends React.Component {
       this.setShowExample(false);
     }
   };
-
-  componentDidMount() {
-    DiffUIEventEmitter.on(DiffUIEventEmitterEvents.SHOW_EXAMPLE_WHEN_POSSIBLE, this.showExampleIfPresent);
-    DiffUIEventEmitter.on(DiffUIEventEmitterEvents.SHOW_SPEC_WHEN_POSSIBLE, this.showSpecIfPossible);
-  }
-
-  componentWillUnmount() {
-    DiffUIEventEmitter.off(DiffUIEventEmitterEvents.SHOW_EXAMPLE_WHEN_POSSIBLE, this.showExampleIfPresent);
-    DiffUIEventEmitter.off(DiffUIEventEmitterEvents.SHOW_SPEC_WHEN_POSSIBLE, this.showSpecIfPossible);
-  }
 
   setShowExample = (bool) => {
     this.setState({showExample: bool});

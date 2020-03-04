@@ -4,8 +4,8 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.useoptic.contexts.shapes.projections.TrailTags
 import com.useoptic.diff.ChangeType
-import com.useoptic.diff.interactions.{ContentTypeHelpers, InteractionDiffResult, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape}
+import com.useoptic.diff.interactions.{ContentTypeHelpers, InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.types.capture.HttpInteraction
 
@@ -52,7 +52,7 @@ case class DiffDescription(title: String, interactionPointerDescription: Option[
 @JSExport
 @JSExportAll
 class DiffDescriptionInterpreters(rfcState: RfcState) {
-  def interpret(diff: ShapeDiffResult, interaction: HttpInteraction): (String, InteractionPointerDescription) = {
+  def interpret(diff: ShapeDiffResult, interactionTrail: InteractionTrail, interaction: HttpInteraction): (String, InteractionPointerDescription) = {
     def shapeName(shapeId: ShapeId): String = {
       val shape = rfcState.shapesState.shapes(shapeId)
       val name = shape.descriptor.name
@@ -95,8 +95,18 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
       case UnmatchedShape(jsonTrail, shapeTrail) => {
         val shapeDescription = expectedShapeDescription(shapeTrail)
         val title = s"The ${jsonTrailDescription(jsonTrail)} was not a ${shapeDescription}"
-        val pointer = SpecifiedButNotMatching(jsonTrail, shapeTrail)
-        (title, pointer)
+
+        val bodyOption = Resolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
+
+        if (bodyOption.isEmpty) {
+          val title = s"The ${jsonTrailDescription(jsonTrail)} was missing"
+          val pointer = SpecifiedButNotFound(jsonTrail, shapeTrail)
+          (title, pointer)
+        } else {
+          val title = s"The ${jsonTrailDescription(jsonTrail)} was not a ${shapeDescription}"
+          val pointer = SpecifiedButNotMatching(jsonTrail, shapeTrail)
+          (title, pointer)
+        }
       }
     }
   }
@@ -116,7 +126,7 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
         }
       }
       case d: UnmatchedRequestBodyShape => {
-        val (shapeDiffDescription, pointerDescription) = interpret(d.shapeDiffResult, interaction)
+        val (shapeDiffDescription, pointerDescription) = interpret(d.shapeDiffResult, d.interactionTrail, interaction)
         val title = s"${shapeDiffDescription}"
         DiffDescription(title, Some(pointerDescription))
       }
@@ -130,7 +140,7 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
         }
       }
       case d: UnmatchedResponseBodyShape => {
-        val (shapeDiffDescription, pointerDescription) = interpret(d.shapeDiffResult, interaction)
+        val (shapeDiffDescription, pointerDescription) = interpret(d.shapeDiffResult, d.interactionTrail, interaction)
         val title = s"${shapeDiffDescription}"
         DiffDescription(title, Some(pointerDescription))
       }

@@ -23,6 +23,8 @@ case class JsonTrail(path: Seq[JsonTrailPathComponent]) {
     (pathA.lift(pointerA), pathB.lift(pointerB)) match {
       case (None, None) => true
       case (None, Some(x)) => false
+      case (Some(a: JsonObject), None) => true
+      case (None, Some(a: JsonObject)) => true
       case (Some(x), None) => false
       case (Some(a: JsonObject), Some(b: JsonObjectKey)) => comparePathsHelper(pathA, pathB, pointerA + 1, pointerB)
       case (Some(a: JsonArray), Some(b: JsonArrayItem)) => comparePathsHelper(pathA, pathB, pointerA + 1, pointerB)

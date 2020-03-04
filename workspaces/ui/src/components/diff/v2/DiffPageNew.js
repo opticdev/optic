@@ -18,7 +18,7 @@ import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {BodyUtilities, ContentTypeHelpers, opticEngine} from '@useoptic/domain';
+import {BodyUtilities, CompareEquality, ContentTypeHelpers, opticEngine} from '@useoptic/domain';
 import DiffViewer from './DiffViewer';
 import {ExampleOnly, ExampleShapeViewer} from '../../requests/DocCodeBox';
 import niceTry from 'nice-try';
@@ -37,6 +37,7 @@ import {Show} from '../../shared/Show';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import BatchLearnDialog from './BatchLearnDialog';
+import {DiffShapeViewer, DiffToggleContextStore, URLViewer} from './DiffShapeViewer';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -70,6 +71,9 @@ const styles = theme => ({
     borderBottom: '1px solid #e2e2e2',
     backgroundColor: 'white'
   },
+  spacer: {
+    marginTop: 90
+  }
 });
 
 class DiffPageNew extends React.Component {
@@ -79,11 +83,13 @@ class DiffPageNew extends React.Component {
     const {pathId, method, sessionId} = this.props.match.params;
 
     return (
-      <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId}>
-        <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
-          <DiffPageContent/>
-        </EndpointsContextStore>
-      </CaptureSessionInlineContext>
+      <DiffToggleContextStore>
+        <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId}>
+          <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
+            <DiffPageContent/>
+          </EndpointsContextStore>
+        </CaptureSessionInlineContext>
+      </DiffToggleContextStore>
     );
   }
 }
@@ -105,8 +111,11 @@ class _DiffPageContent extends React.Component {
       }
     }
 
-    const FinishPane = () => {
+    function isActiveSection(diffs) {
+      return Boolean(selectedDiff) && !!diffs.find(i => CompareEquality.between(selectedDiff, i))
+    }
 
+    const FinishPane = () => {
       const [message, setMessage] = useState('');
       return (
         <Show when={showFinishPane}>
@@ -143,6 +152,8 @@ class _DiffPageContent extends React.Component {
       const requestContentTypes = jsonHelper.seqToJsArray(regions.requestContentTypes);
       const diffs = jsonHelper.seqToJsArray(regions.inRequest);
 
+      const isActive = isActiveSection(diffs)
+
       const requestContentTypesToRender = Array.from(
         new Set([...requestContentTypes,
           ...requestBodies
@@ -152,6 +163,7 @@ class _DiffPageContent extends React.Component {
         .sort((a, b) => a - b);
 
       return (
+        <div className={classes.spacer}>
         <DiffDocGrid
           colMaxWidth={600}
           style={{marginBottom: 40}}
@@ -162,30 +174,30 @@ class _DiffPageContent extends React.Component {
             </div>
           )} left={(
           <div className={classes.rightRegion}>
-            {(requestContentTypesToRender.length === 0 && example) && (
-              <ExampleOnly
-                title={`Observed Request Body`}
-                contentType={ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
-                //this isn't safe, only works for JSON bodies
-                example={example}/>
+            {(requestContentTypesToRender.length === 0) && (
+              <DiffShapeViewer title="Request Body"
+                               contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
+                               example={example}/>
             )}
             {requestContentTypesToRender.map(contentType => {
               const request = requestBodies.find(i => i.requestBody.httpContentType === contentType);
               if (request) {
                 const showExample = currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request) === contentType;
+                const diffDescription = description();
                 return (
                   <div>
-                    <ExampleShapeViewer
-                      title={`Request Body`}
-                      shapeId={request.requestBody.shapeId}
-                      contentType={request.requestBody.httpContentType}
-                      example={showExample ? example : undefined}/>
+                    <DiffShapeViewer title="Request Body"
+                                     contentType={request.requestBody.httpContentType}
+                                     example={showExample ? example : undefined}
+                                     exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
+                                     shapeId={request.requestBody.shapeId}/>
                   </div>
                 );
               }
             })}
           </div>
         )}/>
+        </div>
       );
     };
 
@@ -197,8 +209,11 @@ class _DiffPageContent extends React.Component {
 
       const showExample = currentExample && currentExample.response.statusCode === statusCode;
 
+      const isActive = isActiveSection(diffs)
+
       const diffDescription = description();
       return (
+        <div className={classes.spacer}>
         <DiffDocGrid
           style={{marginBottom: 40}}
           colMaxWidth={600}
@@ -207,33 +222,24 @@ class _DiffPageContent extends React.Component {
               <DiffViewer nameOverride={`${statusCode} Response Diff`} groupDiffs={diffs}
                           approvedKey={'response-' + statusCode}/>
             </div>
-          )} left={(<div className={classes.rightRegion}>
-          {(contentTypes.length === 0 && showExample) && (
-            <ExampleOnly
-              title={`Observed ${statusCode} Response Body`}
-              contentType={ContentTypeHelpers.contentTypeOrNull(currentExample.response)}
-              //this isn't safe, only works for JSON bodies
-              exampleTags={diffDescription && diffDescription.exampleTags}
-              example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>
-          )}
-          {contentTypes.map(response => {
-            const hasBody = response.responseBody.shapeId && !response.responseBody.isRemoved;
-            if (hasBody) {
-              const contentType = response.responseBody.httpContentType;
-              const example = currentExample && niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)));
-              console.log('shape friend', selectedDiff);
-              return (
-                <ExampleShapeViewer
-                  title={`${statusCode} Response Body`}
-                  shapeId={response.responseBody.shapeId}
-                  contentType={contentType}
-                  exampleTags={diffDescription && diffDescription.exampleTags}
-                  example={example}/>
-              );
-            }
-          })}
-        </div>)}
+          )} left={(
+          <div className={classes.rightRegion}>
+            {(contentTypes.length === 0) && (
+              <DiffShapeViewer title={`${statusCode} Response Body`}
+                               contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
+                               exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
+                               example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>
+            )}
+            {contentTypes.map(response => {
+              return (<DiffShapeViewer title={`${statusCode} Response Body`}
+                                       contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
+                                       exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
+                                       shapeId={response.responseBody.shapeId}
+                                       example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>);
+            })}
+          </div>)}
         />
+        </div>
       );
     };
 
@@ -259,11 +265,18 @@ class _DiffPageContent extends React.Component {
         <div className={classes.scroll}>
           {shouldShowAcceptAll && <BatchLearnDialog open={true}/>}
           <div className={classes.root}>
-              <NamerStore disable={true}>
-                <FinishPane/>
-                <RequestBodyRegion/>
-                {responsesToRender.map(responseStatusCode => <ResponseBodyRegion statusCode={responseStatusCode}/>)}
-              </NamerStore>
+            <NamerStore disable={true}>
+              <FinishPane/>
+
+              <div className={classes.spacer}>
+                <URLViewer
+                  url={currentExample && currentExample.request.path + currentExample && currentExample.request.queryString}
+                  host={currentExample && currentExample.request.host}
+                />
+              </div>
+              <RequestBodyRegion/>
+              {responsesToRender.map(responseStatusCode => <ResponseBodyRegion statusCode={responseStatusCode}/>)}
+            </NamerStore>
           </div>
         </div>
       </div>

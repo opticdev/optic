@@ -319,6 +319,8 @@ class ExampleViewerBase extends React.Component {
     const {queries, example, exampleTags} = this.props;
     const hash = niceTry(() => sha1(stringify(example))) || 'empty-example';
     const flatShape = queries.memoizedFlatShapeForExample(example, hash, exampleTags);
+
+    console.log('abnc', exampleTags)
     return (
       <NamerStore>
         <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} renderId={hash} />

@@ -100,7 +100,7 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   def nameForFieldId(fieldId: FieldId): js.Any = {
     convertJsonToJs(q.nameForFieldId(fieldId).asJson)
   }
-  def flatShapeForShapeId(shapeId: ShapeId, trailTags: TrailTags[ShapeTrail] ): js.Any = {
+  def flatShapeForShapeId(shapeId: ShapeId, trailTags: TrailTags[ShapeTrail] = TrailTags(Map.empty) ): js.Any = {
     import js.JSConverters._
     convertJsonToJs(q.flatShapeForShapeId(shapeId, trailTags).asJson)
   }

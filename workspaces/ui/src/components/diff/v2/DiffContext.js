@@ -1,6 +1,7 @@
 import React from 'react';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
 import events from 'events';
+import {DiffToggleStates, withDiffToggleContext} from './DiffShapeViewer';
 
 const {
   Context: DiffContext,
@@ -8,26 +9,7 @@ const {
 } = GenericContextFactory();
 
 
-export const DiffUIEventEmitter = new events.EventEmitter();
-export const DiffUIEventEmitterEvents = {
-  'SHOW_EXAMPLE_WHEN_POSSIBLE': 'SHOW_EXAMPLE_WHEN_POSSIBLE',
-  'SHOW_SPEC_WHEN_POSSIBLE': 'SHOW_SPEC_WHEN_POSSIBLE',
-};
-
-/*
-???s
-- Will Diffs have a unique ID? hash?
-  - Will also need to be grouped by part of the request that pertain to
-- Will interpretations have an ID? Or just index?
-- How will we group interactions by diffs? Will that be domain's concern?
-- Can we ignore a diff? Where does that state have to live?
-
-
-Map[Diff -> Vector[ApiInteraction]]
-- Interpretations computed after selecting diff
- */
-
-class DiffContextStore extends React.Component {
+class _DiffContextStore extends React.Component {
 
   state = {
     selectedDiff: null,
@@ -47,8 +29,8 @@ class DiffContextStore extends React.Component {
       setSuggestionToPreview,
       acceptSuggestion,
       acceptedSuggestions,
+      setTabTo
     } = this.props;
-
 
     const setSelectedDiff = (diff) => {
       global.opticDebug.diff = diff;
@@ -62,7 +44,7 @@ class DiffContextStore extends React.Component {
 
         setSuggestionToPreview(null);
         if (diff) {
-          DiffUIEventEmitter.emit(DiffUIEventEmitterEvents.SHOW_EXAMPLE_WHEN_POSSIBLE);
+          setTabTo(DiffToggleStates.EXAMPLE)
         }
       });
     };
@@ -72,7 +54,7 @@ class DiffContextStore extends React.Component {
         selectedInterpretation: interpretation,
       }, () => {
         if (interpretation) {
-          DiffUIEventEmitter.emit(DiffUIEventEmitterEvents.SHOW_SPEC_WHEN_POSSIBLE);
+          setTabTo(DiffToggleStates.SHAPE)
         }
       });
     };
@@ -119,6 +101,8 @@ class DiffContextStore extends React.Component {
     );
   }
 }
+
+const DiffContextStore = withDiffToggleContext(_DiffContextStore)
 
 export {
   DiffContext,

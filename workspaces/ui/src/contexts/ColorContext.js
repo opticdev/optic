@@ -39,7 +39,7 @@ export const ChangedYellow = '#c8b768'
 export const ChangedYellowBackground = 'rgba(200,183,104,0.1)'
 
 export const RemovedRed = '#c86363'
-export const RemovedRedBackground = 'rgba(200,99,99,0.1)'
+export const RemovedRedBackground = 'rgba(193,4,9,0.31)'
 
 export const UpdatedBlue = '#2b7bd1'
 export const UpdatedBlueBackground = 'rgba(43,123,209,0.11)'

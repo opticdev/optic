@@ -73,6 +73,35 @@ class ExampleProjectionSpec extends FunSpec with JsonFileFixture {
         .fields.find(_.fieldName == "nested2").get.shape
         .fields.find(_.fieldName == "0").get.tag.contains(ChangeType.Addition))
     }
+
+    it("can highlight a removed key that it knows about in array of objects") {
+      val basic = fromFile("todo-body")
+      val render = ExampleProjection.fromJson(basic, "", TrailTags(Map(
+        JsonTrail(Seq(
+          JsonArray(),
+          JsonArrayItem(0),
+          JsonObject(),
+          JsonObjectKey("dueDate")
+        )) -> ChangeType.Removal
+      )))
+
+      assert(render.root
+        .fields.find(_.fieldName == "0").get.shape
+        .fields.find(_.fieldName == "dueDate").get.tag.contains(ChangeType.Removal))
+    }
+
+    it("can highlight a removed key that it knows about ") {
+      val basic = fromFile("basic-concept")
+      val render = ExampleProjection.fromJson(basic, "", TrailTags(Map(
+        JsonTrail(Seq(
+          JsonObjectKey("new-field")
+        )) -> ChangeType.Removal
+      )))
+
+      assert(render.root.fields.find(_.fieldName == "new-field").get.tag.contains(ChangeType.Removal))
+    }
+
+
   }
 
 }

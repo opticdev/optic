@@ -5,8 +5,9 @@ import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.contexts.shapes.projections.NameForShapeId.ColoredComponent
 import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
 import com.useoptic.diff.ChangeType.ChangeType
-import com.useoptic.diff.ShapeDiffer
+import com.useoptic.diff.{ChangeType, ShapeDiffer}
 import com.useoptic.diff.ShapeDiffer.resolveParameterShape
+import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes.{JsonTrail, JsonTrailPathComponent}
 import io.circe.Json
 
@@ -41,12 +42,23 @@ object ExampleProjection {
       val fields = json.asObject.get.toList.sortBy(_._1)
       val objPath = path.withChild(JsonTrailPathComponent.JsonObject())
 
+
+      val missingFields = trailTags.trails.filter(_._2 == ChangeType.Removal).collect {
+        case (trail, changeType) if trail.path.nonEmpty && //has trail
+          trail.path.last.isInstanceOf[JsonObjectKey] && //ends with object key
+          objPath.compareToPath(JsonTrail(trail.path.dropRight(1))) => { // we're in its parent
+          val key = trail.path.last.asInstanceOf[JsonObjectKey].key
+          FlatField(key, FlatShape(key, Seq(ColoredComponent("(missing)", "modifier", None, None)), Seq.empty, trail.toString, false, Map.empty, None), trail.toString, Some(ChangeType.Removal))
+        }
+      }
+
       flatPrimitive(ObjectKind, "Object", tagsForCurrent(objPath)).copy(
-        fields = fields.map(i => {
+        fields = (fields.map(i => {
           val fieldPath = objPath.withChild(JsonTrailPathComponent.JsonObjectKey(i._1))
           FlatField(i._1, jsonToFlatRender(i._2)(trailTags, fieldPath), path.toString, tagsForCurrent(fieldPath))
-        })
+        }) ++ missingFields).sortBy(_.fieldName)
       )
+
     } else if (json.isArray) {
       val items = json.asArray.get
       val arrayPath = path.withChild(JsonTrailPathComponent.JsonArray())

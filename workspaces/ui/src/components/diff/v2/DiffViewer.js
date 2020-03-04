@@ -32,9 +32,8 @@ import Paper from '@material-ui/core/Paper';
 import {DocGrid} from '../../requests/DocGrid';
 
 const styles = theme => ({
-  root: {},
   container: {
-    maxWidth: 650
+    maxWidth: 650,
   },
   formControl: {
     margin: theme.spacing(0),
