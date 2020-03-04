@@ -131,7 +131,7 @@ object RequestsAggregate extends EventSourcedAggregate[RequestsState, RequestsCo
 
         case c: AddResponseByPathAndMethod => {
           Validators.ensureResponseIdAssignable(c.responseId)
-          Validators.ensureRequestExists(c.pathId, c.httpMethod)
+          Validators.ensurePathComponentIdExists(c.pathId)
           persist(Events.ResponseAddedByPathAndMethod(c.responseId, c.pathId, c.httpMethod, c.httpStatusCode, eventContext))
         }
 
