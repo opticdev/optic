@@ -165,6 +165,7 @@ class _DiffPageContent extends React.Component {
       return (
         <div className={classes.spacer}>
         <DiffDocGrid
+          active={isActive}
           colMaxWidth={600}
           style={{marginBottom: 40}}
           right={(
@@ -215,6 +216,7 @@ class _DiffPageContent extends React.Component {
       return (
         <div className={classes.spacer}>
         <DiffDocGrid
+          active={isActive}
           style={{marginBottom: 40}}
           colMaxWidth={600}
           right={(
