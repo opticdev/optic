@@ -213,7 +213,7 @@ class _DiffPageContent extends React.Component {
               title={`Observed ${statusCode} Response Body`}
               contentType={ContentTypeHelpers.contentTypeOrNull(currentExample.response)}
               //this isn't safe, only works for JSON bodies
-              exampleTags={diffDescription && diffDescription.tags}
+              exampleTags={diffDescription && diffDescription.exampleTags}
               example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>
           )}
           {contentTypes.map(response => {
@@ -227,7 +227,7 @@ class _DiffPageContent extends React.Component {
                   title={`${statusCode} Response Body`}
                   shapeId={response.responseBody.shapeId}
                   contentType={contentType}
-                  exampleTags={diffDescription && diffDescription.tags}
+                  exampleTags={diffDescription && diffDescription.exampleTags}
                   example={example}/>
               );
             }

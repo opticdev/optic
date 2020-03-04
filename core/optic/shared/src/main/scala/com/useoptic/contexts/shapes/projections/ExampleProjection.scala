@@ -27,9 +27,7 @@ object ExampleProjection {
 
   private def jsonToFlatRender(json: Json)(implicit trailTags: TrailTags[JsonTrail], path: JsonTrail = JsonTrail(Seq.empty)): FlatShape = {
 
-    def tagsForCurrent(newPath: JsonTrail): Option[ChangeType] = {
-      trailTags.trails.filterKeys(i => i.compareToPath(newPath)).values.headOption
-    }
+    def tagsForCurrent(newPath: JsonTrail): Option[ChangeType] = trailTags.trails.filterKeys(i => i.compareToPath(newPath)).values.headOption
 
     val result = if (json.isString) {
       flatPrimitive(StringKind, json.toString, tagsForCurrent(path))

@@ -13,30 +13,40 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 
 sealed trait InteractionPointerDescription {
-  def tags: TrailTags[JsonTrail]
+  def exampleTags: TrailTags[JsonTrail]
+  def specTags: TrailTags[ShapeTrail]
 }
 
 case class Unspecified(jsonTrail: JsonTrail) extends InteractionPointerDescription {
-  override def tags: TrailTags[JsonTrail] = TrailTags(Map(
+  override def exampleTags: TrailTags[JsonTrail] = TrailTags(Map(
     jsonTrail -> ChangeType.Addition
   ))
+  //always empty since not in the spec. might make sense to add 'specParent' so we can show the right part of the spec at least.
+  override def specTags: TrailTags[ShapeTrail] = TrailTags(Map.empty)
 }
 
 case class SpecifiedButNotMatching(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) extends InteractionPointerDescription {
-  override def tags: TrailTags[JsonTrail] = TrailTags(Map(
+  override def exampleTags: TrailTags[JsonTrail] = TrailTags(Map(
     jsonTrail -> ChangeType.Update
+  ))
+  override def specTags: TrailTags[ShapeTrail] = TrailTags(Map(
+    shapeTrail -> ChangeType.Update
   ))
 }
 
 case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) extends InteractionPointerDescription {
-  override def tags: TrailTags[JsonTrail] = TrailTags(Map(
+  override def exampleTags: TrailTags[JsonTrail] = TrailTags(Map(
     jsonTrail -> ChangeType.Removal
+  ))
+  override def specTags: TrailTags[ShapeTrail] = TrailTags(Map(
+    shapeTrail -> ChangeType.Removal
   ))
 }
 
 @JSExportAll
 case class DiffDescription(title: String, interactionPointerDescription: Option[InteractionPointerDescription]) {
-  def tags: TrailTags[JsonTrail] = interactionPointerDescription.map(_.tags).getOrElse(TrailTags.empty)
+  def exampleTags: TrailTags[JsonTrail] = interactionPointerDescription.map(_.exampleTags).getOrElse(TrailTags.empty)
+  def specTags: TrailTags[ShapeTrail] = interactionPointerDescription.map(_.specTags).getOrElse(TrailTags.empty)
 }
 
 @JSExport

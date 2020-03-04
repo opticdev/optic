@@ -9,7 +9,7 @@ import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.useoptic.contexts.shapes.ShapesState
 import com.useoptic.contexts.shapes.projections.{ExampleProjection, FlatShapeProjection, FlatShapeResult, NameForShapeId, NamedShape, NamedShapes, TrailTags}
 import com.useoptic.ddd.{AggregateId, CachedProjection, EventStore}
-import com.useoptic.diff.shapes.JsonTrail
+import com.useoptic.diff.shapes.{JsonTrail, ShapeTrail}
 import io.circe.Json
 import io.circe.generic.auto._
 import io.circe.syntax._
@@ -74,10 +74,10 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
   def nameForFieldId(fieldId: FieldId): Seq[NameForShapeId.ColoredComponent] = {
     NameForShapeId.getFieldIdShapeName(fieldId)(service.currentState(aggregateId).shapesState)
   }
-  def flatShapeForShapeId(shapeId: ShapeId, affectedIds: Seq[String] = Seq.empty): FlatShapeResult = {
-    FlatShapeProjection.forShapeId(shapeId, affectedIds = affectedIds)(service.currentState(aggregateId).shapesState, revision = events.size)
+  def flatShapeForShapeId(shapeId: ShapeId, trailTags: TrailTags[ShapeTrail] = TrailTags(Map.empty)): FlatShapeResult = {
+    FlatShapeProjection.forShapeId(shapeId, None, trailTags)(service.currentState(aggregateId).shapesState, revision = events.size)
   }
-  def flatShapeForExample(example: Json, hash: String, trailTags: TrailTags[JsonTrail]): FlatShapeResult = {
+  def flatShapeForExample(example: Json, hash: String, trailTags: TrailTags[JsonTrail]= TrailTags(Map.empty)): FlatShapeResult = {
     ExampleProjection.fromJson(example, hash, trailTags)
   }
 

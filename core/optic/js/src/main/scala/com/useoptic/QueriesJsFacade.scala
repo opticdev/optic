@@ -8,7 +8,7 @@ import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.useoptic.contexts.shapes.projections.TrailTags
 import com.useoptic.ddd.{AggregateId, EventStore}
 import com.useoptic.diff.ChangeType.ChangeType
-import com.useoptic.diff.shapes.JsonTrail
+import com.useoptic.diff.shapes.{JsonTrail, ShapeTrail}
 import io.circe.{Encoder, Json}
 import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.generic.auto._
@@ -100,9 +100,9 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   def nameForFieldId(fieldId: FieldId): js.Any = {
     convertJsonToJs(q.nameForFieldId(fieldId).asJson)
   }
-  def flatShapeForShapeId(shapeId: ShapeId, affectedIds: js.Array[String] = js.Array()): js.Any = {
+  def flatShapeForShapeId(shapeId: ShapeId, trailTags: TrailTags[ShapeTrail] ): js.Any = {
     import js.JSConverters._
-    convertJsonToJs(q.flatShapeForShapeId(shapeId, affectedIds.toSeq).asJson)
+    convertJsonToJs(q.flatShapeForShapeId(shapeId, trailTags).asJson)
   }
   def flatShapeForExample(example: js.Any, hash: String, trailTags: TrailTags[JsonTrail] = TrailTags.empty): js.Any = {
     convertJsonToJs(q.flatShapeForExample(convertJsToJson(example).right.get, hash, trailTags).asJson)

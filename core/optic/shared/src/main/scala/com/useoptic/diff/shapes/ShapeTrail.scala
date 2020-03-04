@@ -12,9 +12,16 @@ case class ListTrail(shapeId: ShapeId) extends ShapeTrailPathComponent
 
 case class ListItemTrail(listShapeId: ShapeId, itemShapeId: ShapeId) extends ShapeTrailPathComponent
 
+case class OneOfTrail(shapeId: ShapeId) extends ShapeTrailPathComponent
+case class OneOfItemTrail(oneOfId: ShapeId, itemShapeId: ShapeId) extends ShapeTrailPathComponent
+
 case class ShapeTrail(rootShapeId: ShapeId, path: Seq[ShapeTrailPathComponent]) {
   def withChild(pc: ShapeTrailPathComponent) = {
     this.copy(path = path :+ pc)
+  }
+
+  def withChildren(pc: ShapeTrailPathComponent*) = {
+    this.copy(path = path ++ pc)
   }
 
   def lastField(): Option[FieldId] = {
