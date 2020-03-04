@@ -12,27 +12,6 @@ case class JsonTrail(path: Seq[JsonTrailPathComponent]) {
   }
 
   override def toString = path.toString()
-
-  def compareToPath(jsonTrail: JsonTrail): Boolean = {
-    val left = path
-    val right = jsonTrail.path
-    comparePathsHelper(left, right, 0, 0)
-  }
-
-  def comparePathsHelper(pathA: Seq[JsonTrailPathComponent], pathB: Seq[JsonTrailPathComponent], pointerA: Int, pointerB: Int): Boolean = {
-    (pathA.lift(pointerA), pathB.lift(pointerB)) match {
-      case (None, None) => true
-      case (None, Some(x)) => false
-      case (Some(a: JsonObject), None) => true
-      case (None, Some(a: JsonObject)) => true
-      case (Some(x), None) => false
-      case (Some(a: JsonObject), Some(b: JsonObjectKey)) => comparePathsHelper(pathA, pathB, pointerA + 1, pointerB)
-      case (Some(a: JsonArray), Some(b: JsonArrayItem)) => comparePathsHelper(pathA, pathB, pointerA + 1, pointerB)
-      case (Some(a: JsonObjectKey), Some(b: JsonObject)) => comparePathsHelper(pathA, pathB, pointerA, pointerB + 1)
-      case (Some(a: JsonArrayItem), Some(b: JsonArray)) => comparePathsHelper(pathA, pathB, pointerA, pointerB + 1)
-      case (a, b) => a == b
-    }
-  }
 }
 
 sealed trait JsonTrailPathComponent

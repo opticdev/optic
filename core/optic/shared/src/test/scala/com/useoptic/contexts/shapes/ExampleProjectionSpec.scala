@@ -31,7 +31,6 @@ class ExampleProjectionSpec extends FunSpec with JsonFileFixture {
       val basic = fromFile("basic-concept")
       val render = ExampleProjection.fromJson(basic, "", TrailTags(Map(
         JsonTrail(Seq(
-          JsonObject(),
           JsonObjectKey("a")
         )) -> ChangeType.Addition
       )))
@@ -43,9 +42,7 @@ class ExampleProjectionSpec extends FunSpec with JsonFileFixture {
       val basic = fromFile("todo-body")
       val render = ExampleProjection.fromJson(basic, "", TrailTags(Map(
         JsonTrail(Seq(
-          JsonArray(),
           JsonArrayItem(0),
-          JsonObject(),
           JsonObjectKey("task")
         )) -> ChangeType.Removal
       )))
@@ -59,11 +56,8 @@ class ExampleProjectionSpec extends FunSpec with JsonFileFixture {
       val basic = fromFile("nested")
       val render = ExampleProjection.fromJson(basic, "", TrailTags(Map(
         JsonTrail(Seq(
-          JsonObject(),
           JsonObjectKey("nested"),
-          JsonObject(),
           JsonObjectKey("nested2"),
-          JsonArray(),
           JsonArrayItem(0)
         )) -> ChangeType.Addition
       )))
@@ -78,9 +72,7 @@ class ExampleProjectionSpec extends FunSpec with JsonFileFixture {
       val basic = fromFile("todo-body")
       val render = ExampleProjection.fromJson(basic, "", TrailTags(Map(
         JsonTrail(Seq(
-          JsonArray(),
           JsonArrayItem(0),
-          JsonObject(),
           JsonObjectKey("dueDate")
         )) -> ChangeType.Removal
       )))

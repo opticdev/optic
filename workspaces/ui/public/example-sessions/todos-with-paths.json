@@ -426,7 +426,7 @@
           ],
           "body": {
             "asText": "{\n\t\"task\": \"Do Dishes\",\n\t\"dueDate\": \"September 15, 2019 03:24:00\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\"}",
-            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\", \"aidan\": 134}"
+            "asJsonString": "{\n\t\"task\": \"Do Dishes\",\n\t\"isDone\": true,\n\t\n\t\"id\": \"idABC\", \"aidan\": 134, \"dev\": {\"a\": 1234, \"b\": true}}"
           }
         },
         "omitted": []
