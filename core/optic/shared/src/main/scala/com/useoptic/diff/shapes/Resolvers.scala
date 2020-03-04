@@ -26,6 +26,24 @@ object Resolvers {
 
   def resolveTrailPath(shapesState: ShapesState, parent: ResolvedTrail, pathComponent: ShapeTrailPathComponent): ResolvedTrail = {
     parent.coreShapeKind match {
+      case NullableKind => {
+        pathComponent match {
+          case c: NullableTrail => {
+            val (shapeId, coreShapeKind) = toCoreAndBaseShape(shapesState.shapes(c.innerShapeId), shapesState)
+            ResolvedTrail(shapesState.shapes(shapeId), coreShapeKind, parent.bindings)
+          }
+          case _ => throw new Error("did not expect a non-nullable path relative to a NullableKind")
+        }
+      }
+      case OptionalKind => {
+        pathComponent match {
+          case c: OptionalTrail => {
+            val (shapeId, coreShapeKind) = toCoreAndBaseShape(shapesState.shapes(c.innerShapeId), shapesState)
+            ResolvedTrail(shapesState.shapes(shapeId), coreShapeKind, parent.bindings)
+          }
+          case _ => throw new Error("did not expect a non-optional path relative to a OptionalKind")
+        }
+      }
       case ObjectKind => {
         pathComponent match {
           case c: ObjectFieldTrail => {
