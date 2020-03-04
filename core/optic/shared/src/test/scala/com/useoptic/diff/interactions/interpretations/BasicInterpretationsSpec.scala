@@ -6,7 +6,7 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.interpreters.BasicInterpreters
-import com.useoptic.diff.interactions.{InteractionTrail, Method, RequestBody, ResponseBody, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, TestHelpers, Traverser, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, Url}
+import com.useoptic.diff.interactions.{InteractionTrail, Method, RequestBody, ResponseBody, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, TestHelpers, Traverser, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, Url}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.types.capture._
@@ -95,7 +95,7 @@ class BasicInterpretationsSpec extends FunSpec {
       assert(diffs == Seq(
         UnmatchedRequestBodyContentType(
           InteractionTrail(Seq(Url("/"), Method("PUT"), RequestBody("application/json"))),
-          SpecRequestRoot("request1")
+          SpecPath("root")
         )
       ))
       val diff = diffs.head
@@ -125,7 +125,7 @@ class BasicInterpretationsSpec extends FunSpec {
       assert(diffs == Seq(
         UnmatchedResponseBodyContentType(
           InteractionTrail(Seq(ResponseBody("application/json", 200))),
-          SpecResponseBody("response1")
+          SpecPath("root")
         )
       ))
       val diff = diffs.head

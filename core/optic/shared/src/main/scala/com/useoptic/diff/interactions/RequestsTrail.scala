@@ -17,6 +17,13 @@ case class SpecResponseRoot(responseId: ResponseId) extends RequestSpecTrail
 case class SpecResponseBody(responseId: ResponseId) extends RequestSpecTrail
 
 object RequestSpecTrailHelpers {
+  def pathId(trail: RequestSpecTrail): Option[PathComponentId] = {
+    trail match {
+      case SpecPath(pathId) => Some(pathId)
+      case _ => None
+    }
+  }
+
   def requestId(trail: RequestSpecTrail): Option[RequestId] = {
     trail match {
       case c: SpecRequestRoot => Some(c.requestId)

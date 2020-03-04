@@ -18,12 +18,44 @@ case class InteractionTrail(path: Seq[InteractionTrailPathComponent]) {
     throw new Error("Expected to find a request body context in trail")
   }
 
+
   def responseContentType(): String = {
     path.find {
       case r: ResponseBody => return r.contentType
       case _ => false
     }
     throw new Error("Expected to find a response body context in trail")
+  }
+
+
+  def httpMethod(): Option[String] = {
+    val found = path.find {
+      case r: Method => true
+      case _ => false
+    }
+    found.flatMap {
+      case (c: Method) => Some(c.method)
+    }
+  }
+
+  def requestBodyContentTypeOption(): Option[String] = {
+    val found = path.find {
+      case r: RequestBody => true
+      case _ => false
+    }
+    found.flatMap {
+      case (c: RequestBody) => Some(c.contentType)
+    }
+  }
+
+  def responseBodyContentTypeOption(): Option[String] = {
+    val found = path.find {
+      case r: ResponseBody => true
+      case _ => false
+    }
+    found.flatMap {
+      case (c: ResponseBody) => Some(c.contentType)
+    }
   }
 }
 

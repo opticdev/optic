@@ -1,5 +1,6 @@
 package com.useoptic.diff.interactions
 
+import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.{Commands, RequestsState, Utilities}
 import com.useoptic.types.capture.HttpInteraction
 
@@ -22,6 +23,17 @@ object Resolvers {
         (
           r.responseDescriptor.pathId == request.requestDescriptor.pathComponentId
             && r.responseDescriptor.httpMethod == request.requestDescriptor.httpMethod
+            && r.responseDescriptor.httpStatusCode == interaction.response.statusCode
+          )
+      })
+  }
+
+  def resolveResponsesByPathAndMethod(interaction: HttpInteraction, pathId: PathComponentId, requestsState: RequestsState) = {
+    requestsState.responses.values
+      .filter(r => {
+        (
+          r.responseDescriptor.pathId == pathId
+            && r.responseDescriptor.httpMethod == interaction.request.method
             && r.responseDescriptor.httpStatusCode == interaction.response.statusCode
           )
       })

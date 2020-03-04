@@ -71,7 +71,7 @@ class DiffContextStore extends React.Component {
       this.setState({
         selectedInterpretation: interpretation,
       }, () => {
-        if (diff) {
+        if (interpretation) {
           DiffUIEventEmitter.emit(DiffUIEventEmitterEvents.SHOW_SPEC_WHEN_POSSIBLE);
         }
       });

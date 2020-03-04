@@ -26,55 +26,56 @@ class BasicInterpreters(rfcState: RfcState) extends InteractiveDiffInterpreter[I
       case d: UnmatchedRequestBodyContentType => Seq(
         interpretations.AddRequestContentType(d.interactionTrail, d.requestsTrail, interaction)
       )
-      case d: UnmatchedRequestBodyShape => {
-        d.shapeDiffResult match {
-          case sd: UnspecifiedShape => {
-            println("UnmatchedRequestBodyShape -> UnspecifiedShape")
-            println(d)
-            println(sd)
-            println(interaction)
-            if (sd.jsonTrail.path.isEmpty) {
-              Seq(
-                interpretations.SetRequestBodyShape(d.interactionTrail, d.requestsTrail, interaction)
-              )
-            } else {
-              Seq(
-                //@TODO: AddField
-              )
-            }
-          }
-          case sd: UnmatchedShape => {
-            Seq(
-              interpretations.ChangeShape(d.interactionTrail, d.requestsTrail, sd.shapeTrail, sd.jsonTrail, interaction)
-            )
-          }
-          case _ => Seq.empty
-        }
-      }
+//      case d: UnmatchedRequestBodyShape => {
+//        d.shapeDiffResult match {
+//          case sd: UnspecifiedShape => {
+//            println("UnmatchedRequestBodyShape -> UnspecifiedShape")
+//            println(d)
+//            println(sd)
+//            println(interaction)
+//            if (sd.jsonTrail.path.isEmpty) {
+//              Seq(
+//                interpretations.SetRequestBodyShape(d.interactionTrail, d.requestsTrail, interaction)
+//              )
+//            } else {
+//              Seq(
+//                //@TODO: AddField
+//              )
+//            }
+//          }
+//          case sd: UnmatchedShape => {
+//            Seq(
+//              interpretations.ChangeShape(d.interactionTrail, d.requestsTrail, sd.shapeTrail, sd.jsonTrail, interaction)
+//            )
+//          }
+//          case _ => Seq.empty
+//        }
+//      }
       case d: UnmatchedResponseBodyContentType => Seq(
         interpretations.AddResponseContentType(d.interactionTrail, d.requestsTrail, interaction)
       )
-      case d: UnmatchedResponseBodyShape => {
-        d.shapeDiffResult match {
-          case sd: UnspecifiedShape => {
-            if (sd.jsonTrail.path.isEmpty) {
-              Seq(
-                interpretations.SetResponseBodyShape(d.interactionTrail, d.requestsTrail, interaction)
-              )
-            } else {
-              Seq(
-                //@TODO: AddField
-              )
-            }
-          }
-          case sd: UnmatchedShape => {
-            Seq(
-              interpretations.ChangeShape(d.interactionTrail, d.requestsTrail, sd.shapeTrail, sd.jsonTrail, interaction)
-            )
-          }
-          case _ => Seq.empty
-        }
-      }
+//      case d: UnmatchedResponseBodyShape => {
+//        d.shapeDiffResult match {
+//          case sd: UnspecifiedShape => {
+//            if (sd.jsonTrail.path.isEmpty) {
+//              Seq(
+//                interpretations.SetResponseBodyShape(d.interactionTrail, d.requestsTrail, interaction)
+//              )
+//            } else {
+//              Seq(
+//                //@TODO: AddField
+//              )
+//            }
+//          }
+//          case sd: UnmatchedShape => {
+//            Seq(
+//              interpretations.ChangeShape(d.interactionTrail, d.requestsTrail, sd.shapeTrail, sd.jsonTrail, interaction)
+//            )
+//          }
+//          case _ => Seq.empty
+//        }
+//      }
+      case _ => Seq.empty
     }
   }
 }

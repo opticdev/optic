@@ -101,49 +101,69 @@ class BasicInterpretations(rfcState: RfcState) {
   }
 
   def AddRequestContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
-    println(interactionTrail)
-    println(requestsTrail)
     val requestId = RequestsServiceHelper.newRequestId()
-    val originalRequestId = RequestSpecTrailHelpers.requestId(requestsTrail).get
-    val originalRequest = rfcState.requestsState.requests(originalRequestId)
-    val jsonBody = Resolvers.tryResolveJson(interactionTrail, JsonTrail(Seq()), interaction)
-    println(jsonBody)
-    val builtShape = new ShapeBuilder(jsonBody.get).run
-    val commands = Seq(
-      RequestsCommands.AddRequest(requestId, originalRequest.requestDescriptor.pathComponentId, originalRequest.requestDescriptor.httpMethod),
-    ) ++ builtShape.commands ++ Seq(
-      //@BUG handle when interactionTrail.requestContentType() is not present (in which case we should just add a new request with no default body
-      RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(interactionTrail.requestContentType(), builtShape.rootShapeId, isRemoved = false))
+    val pathId = RequestSpecTrailHelpers.pathId(requestsTrail).get
+    val baseCommands = Seq(
+      RequestsCommands.AddRequest(requestId, pathId, interaction.request.method),
     )
+    interactionTrail.requestBodyContentTypeOption() match {
+      case Some(contentType) => {
+        val jsonBody = Resolvers.tryResolveJson(interactionTrail, JsonTrail(Seq()), interaction)
+        val builtShape = new ShapeBuilder(jsonBody.get).run
+        val commands = baseCommands ++ builtShape.commands ++ Seq(
+          RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
+        )
 
-    InteractiveDiffInterpretation(
-      s"Add ${interactionTrail.requestContentType()}",
-      "Add new body content-type",
-      commands,
-      ChangeType.Addition
-    )
+        InteractiveDiffInterpretation(
+          s"Add Request with ${contentType} body",
+          "Add new body content-type",
+          commands,
+          ChangeType.Addition
+        )
+      }
+      case None => {
+        val commands = baseCommands
+        InteractiveDiffInterpretation(
+          "Add Request without body",
+          "Add new request",
+          commands,
+          ChangeType.Addition
+        )
+      }
+    }
   }
 
   def AddResponseContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction) = {
     val responseId = RequestsServiceHelper.newResponseId()
-    val originalResponseId = RequestSpecTrailHelpers.responseId(requestsTrail).get
-    val originalResponse = rfcState.requestsState.responses(originalResponseId)
-    val jsonBody = Resolvers.tryResolveJson(interactionTrail, JsonTrail(Seq()), interaction)
-    println(jsonBody)
-    val builtShape = new ShapeBuilder(jsonBody.get).run
-    val commands = Seq(
-      RequestsCommands.AddResponseByPathAndMethod(responseId, originalResponse.responseDescriptor.pathId, originalResponse.responseDescriptor.httpMethod, originalResponse.responseDescriptor.httpStatusCode),
-    ) ++ builtShape.commands ++ Seq(
-      //@BUG handle when interactionTrail.responseContentType() is not present (in which case we should just add a new response with no default body
-      RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(interactionTrail.responseContentType(), builtShape.rootShapeId, isRemoved = false))
+    val pathId = RequestSpecTrailHelpers.pathId(requestsTrail).get
+    val baseCommands = Seq(
+      RequestsCommands.AddResponseByPathAndMethod(responseId, pathId, interaction.request.method, interaction.response.statusCode),
     )
+    interactionTrail.responseBodyContentTypeOption() match {
+      case Some(contentType) => {
+        val jsonBody = Resolvers.tryResolveJson(interactionTrail, JsonTrail(Seq()), interaction)
+        val builtShape = new ShapeBuilder(jsonBody.get).run
+        val commands = baseCommands ++ builtShape.commands ++ Seq(
+          RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
+        )
 
-    InteractiveDiffInterpretation(
-      s"Add ${interactionTrail.responseContentType()}",
-      "Add new body content-type",
-      commands,
-      ChangeType.Addition
-    )
+        InteractiveDiffInterpretation(
+          s"Add ${interactionTrail.responseContentType()}",
+          "Add new body content-type",
+          commands,
+          ChangeType.Addition
+        )
+      }
+      case None => {
+        val commands = baseCommands
+        InteractiveDiffInterpretation(
+          s"Add Response without Body",
+          "Add new response",
+          commands,
+          ChangeType.Addition
+        )
+      }
+    }
   }
 
   //@GOTCHA: this is not a backwards-compatible change

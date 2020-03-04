@@ -1,0 +1,43 @@
+{
+  "events": [
+  ],
+  "session": {
+    "metadata": {
+      "completed": false
+    },
+    "samples": [
+      {
+        "uuid": "1",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "queryString": "",
+          "headers": [],
+          "body": {
+            "asText": null,
+            "asJsonString": null
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": [
+          ],
+          "body": {
+            "asText": null,
+            "asJsonString": null
+          }
+        },
+        "omitted": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {
+  }
+}

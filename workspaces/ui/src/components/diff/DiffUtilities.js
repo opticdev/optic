@@ -1,8 +1,8 @@
 import { InteractionDiffer, toInteraction, JsQueryStringParser, PluginRegistry, QueryStringDiffer } from '@useoptic/domain';
 
 export function getUnrecognizedUrlCount(rfcState, diffStateProjections) {
-  const { sampleItemsWithoutResolvedPaths, sampleItemsWithResolvedPaths } = diffStateProjections;
-  return sampleItemsWithoutResolvedPaths.length + sampleItemsWithResolvedPaths.filter(x => !x.requestId).length;
+  const { sampleItemsWithoutResolvedPaths } = diffStateProjections;
+  return sampleItemsWithoutResolvedPaths.length;
 }
 
 export function queryStringDiffer(shapesState, sample) {

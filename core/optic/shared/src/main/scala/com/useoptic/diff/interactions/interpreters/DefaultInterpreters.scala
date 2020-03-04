@@ -13,8 +13,13 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 class DefaultInterpreters(rfcState: RfcState) extends InteractiveDiffInterpreter[InteractionDiffResult] {
   val basicInterpreters = new BasicInterpreters(rfcState)
   val unspecifiedShapeDiffInterpreter = new UnspecifiedShapeDiffInterpreter(rfcState)
+  val missingValueInterpreter = new MissingValueInterpreter(rfcState)
 
   override def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
-    basicInterpreters.interpret(diff, interaction) ++ unspecifiedShapeDiffInterpreter.interpret(diff, interaction)
+    (
+      basicInterpreters.interpret(diff, interaction)
+        ++ unspecifiedShapeDiffInterpreter.interpret(diff, interaction)
+        ++ missingValueInterpreter.interpret(diff, interaction)
+      )
   }
 }

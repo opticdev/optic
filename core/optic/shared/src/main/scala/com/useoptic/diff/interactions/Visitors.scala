@@ -77,4 +77,4 @@ case class RequestBodyVisitorContext(spec: RfcState, path: Option[PathComponentI
 
 case class ResponseVisitorContext(spec: RfcState, path: Option[PathComponentId], request: Option[HttpRequest])
 
-case class ResponseBodyVisitorContext(spec: RfcState, path: Option[PathComponentId], request: Option[HttpRequest], response: Option[HttpResponse])
+case class ResponseBodyVisitorContext(spec: RfcState, path: Option[PathComponentId], response: Option[HttpResponse])

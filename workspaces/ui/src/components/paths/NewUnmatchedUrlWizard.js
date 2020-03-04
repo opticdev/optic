@@ -513,7 +513,6 @@ export const UrlsX = compose(withTrafficSessionContext, withProductDemoContext, 
   const handleAddRequest = (parentPathId, httpMethod, purpose) => {
     const requestId = RequestsHelper.newRequestId();
     const commands = [
-      RequestsCommands.AddRequest(requestId, parentPathId, httpMethod),
       RfcCommands.AddContribution(requestId, PURPOSE, purpose),
     ];
 

@@ -55,19 +55,28 @@ class DiffVisitorSpec extends FunSpec {
           assert(visitors.diffs.toSeq == Seq(UnmatchedRequestUrl(InteractionTrail(Seq()), SpecRoot())))
         }
       }
-      describe("with interaction not matching spec method") {
-        it("should yield UnmatchedHttpMethod diff") {
+      describe("with interaction not matching any specified method or status Code") {
+        it("should yield UnmatchedRequestBodyContentType and UnmatchedResponseBodyContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
             Request("hhh", "GET", "/", "", Vector(), Body(None, None)),
-            Response(200, Vector(), Body(None, None)),
+            Response(204, Vector(), Body(None, None)),
             Vector()
           )
           val visitors = new DiffVisitors()
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
-          assert(visitors.diffs.toSeq == Seq(UnmatchedRequestMethod(InteractionTrail(Seq()), SpecRoot())))
+          assert(visitors.diffs.toSeq == Seq(
+            UnmatchedRequestBodyContentType(
+              InteractionTrail(Seq(Url("/"), Method("GET"))),
+              SpecPath("root")
+            ),
+            UnmatchedResponseBodyContentType(
+              InteractionTrail(Seq(ResponseStatusCode(204))),
+              SpecPath("root")
+            )
+          ))
         }
       }
       describe("with interaction not matching content type") {
@@ -83,7 +92,7 @@ class DiffVisitorSpec extends FunSpec {
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(visitors.diffs.toSeq == Seq(
-            UnmatchedRequestBodyContentType(InteractionTrail(Seq(Url("/"), Method("POST"), RequestBody("bbb"))), SpecRequestRoot(requestId))
+            UnmatchedRequestBodyContentType(InteractionTrail(Seq(Url("/"), Method("POST"), RequestBody("bbb"))), SpecPath("root"))
           ))
         }
       }
@@ -112,7 +121,7 @@ class DiffVisitorSpec extends FunSpec {
         }
       }
       describe("with interaction not matching response status code") {
-        it("should yield UnmatchedResponseStatusCode diff") {
+        it("should yield UnmatchedResponseBodyContentType diff") {
           val spec = TestHelpers.fromCommands(initialCommands)
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
@@ -124,9 +133,9 @@ class DiffVisitorSpec extends FunSpec {
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(visitors.diffs.toSeq == Seq(
-            UnmatchedResponseStatusCode(
+            UnmatchedResponseBodyContentType(
               InteractionTrail(Seq(ResponseStatusCode(304))),
-              SpecRequestRoot(requestId)
+              SpecPath("root")
             )
           ))
         }
@@ -149,7 +158,7 @@ class DiffVisitorSpec extends FunSpec {
           assert(visitors.diffs.toSeq == Seq(
             UnmatchedResponseBodyContentType(
               InteractionTrail(Seq(ResponseBody("bbb222", 200))),
-              SpecResponseBody(responseId)
+              SpecPath("root")
             )
           ))
         }
