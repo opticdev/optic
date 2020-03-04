@@ -105,7 +105,7 @@ export const ExpandableRow = withStyles(styles)(({classes, children, innerChildr
 
 export const RootRow = withStyles(styles)(({classes, expand, id, typeName, depth}) => {
 
-  const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
+  const defaultParam = ((typeName.find(i => i.shapeLink && expand && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
 
   const [expandedParam, setExpandedParam] = useState(defaultParam);
 
@@ -134,7 +134,7 @@ export const RootRow = withStyles(styles)(({classes, expand, id, typeName, depth
 });
 
 export const Field = withStyles(styles)(({classes, expand, typeName, fields, fieldName, tag, canName, baseShapeId, parameters, depth, id, fieldId}) => {
-  const defaultParam = ((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
+  const defaultParam = ((typeName.find(i => i.shapeLink && expand && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
   const [expandedParam, setExpandedParam] = useState(defaultParam);
 
   const setParam = (param) => {
