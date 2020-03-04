@@ -6,7 +6,6 @@ import com.useoptic.diff.interactions.{InteractionDiffResult, Traverser, Unmatch
 import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.types.capture.HttpInteraction
 
-import scala.collection.immutable
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 

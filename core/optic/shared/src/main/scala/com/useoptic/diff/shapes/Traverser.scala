@@ -63,7 +63,7 @@ class Traverser(spec: RfcState, visitors: Visitors) {
       visitors.objectVisitor.end()
     }
     else {
-      visitors.primitiveVisitor.visit(bodyJson, bodyTrail, Some(trail))
+      visitors.primitiveVisitor.visit(Some(bodyJson), bodyTrail, Some(trail))
     }
   }
 }

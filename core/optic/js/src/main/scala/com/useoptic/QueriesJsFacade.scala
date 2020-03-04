@@ -9,15 +9,14 @@ import com.useoptic.contexts.shapes.projections.TrailTags
 import com.useoptic.ddd.{AggregateId, EventStore}
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.shapes.{JsonTrail, ShapeTrail}
-import io.circe.{Encoder, Json}
-import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.generic.auto._
+import io.circe.scalajs.{convertJsToJson, convertJsonToJs}
 import io.circe.syntax._
+import io.circe.{Encoder, Json}
 
-import scala.scalajs.js.annotation.JSExportTopLevel
-import scala.scalajs.js.Dictionary
-import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.scalajs.js
+import scala.scalajs.js.Dictionary
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportTopLevel}
 
 @JSExport
 @JSExportAll
@@ -34,7 +33,9 @@ object OASProjectionHelper {
 @JSExport
 @JSExportAll
 case class ContributionWrapper(all: Map[String, Map[String, String]]) {
+
   import scala.scalajs.js
+
   def getOrUndefined(id: String, key: String): js.UndefOr[String] = {
     import js.JSConverters._
     all.get(id).flatMap(_.get(key)).orUndefined
@@ -94,19 +95,23 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
   def resolvePath(url: String): js.Any = {
     convertJsonToJs(q.resolvePath(url).asJson)
   }
+
   def nameForShapeId(shapeId: ShapeId): js.Any = {
     convertJsonToJs(q.nameForShapeId(shapeId).asJson)
   }
+
   def nameForFieldId(fieldId: FieldId): js.Any = {
     convertJsonToJs(q.nameForFieldId(fieldId).asJson)
   }
-  def flatShapeForShapeId(shapeId: ShapeId, trailTags: TrailTags[ShapeTrail] ): js.Any = {
-    import js.JSConverters._
+
+  def flatShapeForShapeId(shapeId: ShapeId, trailTags: TrailTags[ShapeTrail] = TrailTags.empty): js.Any = {
     convertJsonToJs(q.flatShapeForShapeId(shapeId, trailTags).asJson)
   }
+
   def flatShapeForExample(example: js.Any, hash: String, trailTags: TrailTags[JsonTrail] = TrailTags.empty): js.Any = {
     convertJsonToJs(q.flatShapeForExample(convertJsToJson(example).right.get, hash, trailTags).asJson)
   }
+
   def setupState(): js.Any = {
     convertJsonToJs(q.setupState().asJson)
   }

@@ -13,7 +13,12 @@ case class ListTrail(shapeId: ShapeId) extends ShapeTrailPathComponent
 case class ListItemTrail(listShapeId: ShapeId, itemShapeId: ShapeId) extends ShapeTrailPathComponent
 
 case class OneOfTrail(shapeId: ShapeId) extends ShapeTrailPathComponent
+
 case class OneOfItemTrail(oneOfId: ShapeId, itemShapeId: ShapeId) extends ShapeTrailPathComponent
+
+case class OptionalTrail(innerShapeId: ShapeId) extends ShapeTrailPathComponent
+
+case class NullableTrail(innerShapeId: ShapeId) extends ShapeTrailPathComponent
 
 case class ShapeTrail(rootShapeId: ShapeId, path: Seq[ShapeTrailPathComponent]) {
   def withChild(pc: ShapeTrailPathComponent) = {

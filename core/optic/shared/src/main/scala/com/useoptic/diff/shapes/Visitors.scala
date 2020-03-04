@@ -20,7 +20,7 @@ abstract class ArrayVisitor {
 }
 
 abstract class PrimitiveVisitor {
-  def visit(value: Json, bodyTrail: JsonTrail, trail: Option[ShapeTrail])
+  def visit(value: Option[Json], bodyTrail: JsonTrail, trail: Option[ShapeTrail])
 }
 
 abstract class EmptyVisitor {
