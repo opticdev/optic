@@ -39,16 +39,14 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
   def interpretUnmatchedShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
     val resolved = Resolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
     if (resolved.isEmpty) {
-      // remove from spec or make optional
       Seq(
         WrapWithOptional(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction),
         RemoveFromSpec(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction)
       )
     } else {
-      // change shape or make oneOf
       Seq(
+        WrapWithOneOf(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction),
         new BasicInterpretations(rfcState).ChangeShape(interactionTrail, requestsTrail, shapeTrail, jsonTrail, interaction),
-        WrapWithOneOf(interactionTrail, requestsTrail, jsonTrail, shapeTrail, interaction)
       )
     }
   }
