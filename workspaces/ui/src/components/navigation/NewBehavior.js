@@ -128,10 +128,11 @@ export const NewBehaviorSideBar = () => (
 );
 export const LinkToDocumentUrls = ({children}) => (
   <NewBehaviorWrapper>
-    {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl, unrecognizedUrlCount, cachedQueryResults}) => {
+    {({lastSessionId, baseUrl}) => {
       return (
-        <Link style={{textDecoration: 'none', color: 'black', marginTop: 20}}
-              to={`${baseUrl}/diff/${lastSessionId}/urls`}>
+        <Link
+          style={{textDecoration: 'none', color: 'black', marginTop: 20}}
+          to={`${baseUrl}/diff/${lastSessionId}/urls`}>
           {children}
         </Link>
       );
@@ -142,7 +143,7 @@ export const LinkToDocumentUrls = ({children}) => (
 
 export const HasDiffRequestToolBar = ({requestId}) => (
   <NewBehaviorWrapper>
-    {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl, unrecognizedUrlCount, cachedQueryResults}) => {
+    {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl}) => {
 
       if (!isLoading) {
         const hasDiff = !requestIdsWithDiffs.includes(requestId);
@@ -159,7 +160,7 @@ export const HasDiffRequestToolBar = ({requestId}) => (
 
 export const HasDiffDashboard = ({requestId}) => (
   <NewBehaviorWrapper>
-    {({isLoading, requestIdsWithDiffs, lastSessionId, baseUrl, unrecognizedUrlCount, cachedQueryResults}) => {
+    {({isLoading, requestIdsWithDiffs, unrecognizedUrlCount}) => {
 
       if (!isLoading) {
         const hasRequestDiff = requestIdsWithDiffs.length > 0;

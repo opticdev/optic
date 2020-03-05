@@ -23,6 +23,7 @@ import {DisplayPath, DisplayPathOnDark} from '../paths/DisplayPath';
 import {PathIdToPathString} from '../paths/PathIdToPathString';
 import {PURPOSE} from '../../ContributionKeys';
 import ListSubheader from '@material-ui/core/ListSubheader';
+import {keyToX} from '../diff/DiffUtilities';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,7 +46,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function LocalDoesNotMatch(props) {
 
-  const {sessionId, requestIdsWithDiffs, unrecognizedUrlCount, isIntegrationMode, cachedQueryResults, baseUrl, isLoading} = props;
+  const {sessionId, requestIdsWithDiffs, unrecognizedUrlCount, cachedQueryResults, baseUrl, isLoading} = props;
 
   const noDiff = requestIdsWithDiffs.length === 0 && unrecognizedUrlCount === 0;
 
@@ -87,28 +88,28 @@ export default function LocalDoesNotMatch(props) {
                 <ListItem dense button component={Link} to={`${baseUrl}/diff/${sessionId}/urls`}>
                   <ListItemText primary={`${unrecognizedUrlCount} Undocumented URLs Observed`}/>
                   <ListItemSecondaryAction>
-                      <IconButton edge="end" size="small" disabled>
-                        <PlusOneIcon/>
-                      </IconButton>
+                    <IconButton edge="end" size="small" disabled>
+                      <PlusOneIcon/>
+                    </IconButton>
                   </ListItemSecondaryAction>
 
                 </ListItem>
               </Show>
 
 
-              { requestIdsWithDiffs.length > 0 &&
-              <ListSubheader> Endpoint Diffs </ListSubheader> }
+              {requestIdsWithDiffs.length > 0 &&
+              <ListSubheader> Endpoint Diffs </ListSubheader>}
 
-              {requestIdsWithDiffs.map(requestId => {
-
-                const {pathComponentId: pathId, httpMethod: method} = cachedQueryResults.requests[requestId].requestDescriptor;
+              {requestIdsWithDiffs.map(key => {
+                const {pathId, method} = keyToX(key);
 
                 const path = <DisplayPathOnDark url={<PathIdToPathString pathId={pathId}/>} method={method}/>;
 
-                const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
+                //const name = cachedQueryResults.contributions.getOrUndefined(requestId, PURPOSE);
                 return (
-                  <Link style={{textDecoration: 'none', color: 'black'}}
-                        to={`${baseUrl}/diff/${sessionId}/paths/${pathId}/methods/${method}`}>
+                  <Link
+                    style={{textDecoration: 'none', color: 'black'}}
+                    to={`${baseUrl}/diff/${sessionId}/paths/${pathId}/methods/${method}`}>
                     <ListItem dense button>
                       <ListItemText primary={path}/>
                     </ListItem>
