@@ -26,7 +26,9 @@ lazy val optic =
         "org.scalactic" %% "scalactic" % "3.1.0",
         "org.scalatest" %% "scalatest" % "3.1.0" % "test",
         "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided",
-        "com.github.pathikrit" %% "better-files" % "3.8.0" % "test"
+        "com.github.pathikrit" %% "better-files" % "3.8.0" % "test",
+        "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion,
+        "com.thesamet.scalapb" %%% "scalapb-runtime" % scalapb.compiler.Version.scalapbVersion % "protobuf"
       )
     )
     .jsSettings(

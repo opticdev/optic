@@ -32,4 +32,7 @@ case class Header(name: String, value: String)
 
 @JSExportAll
 case class Body(asText: Option[String],
-                asJsonString: Option[String])
+                asJsonString: Option[String]) {
+//  def asJson
+//  def asJsonLike
+}

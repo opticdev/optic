@@ -7,7 +7,6 @@ import com.useoptic.contexts.shapes.projections.NameForShapeId
 import com.useoptic.contexts.shapes.{ShapeEntity, ShapesHelper}
 import com.useoptic.diff.ShapeDiffer.{resolveBaseObject, resolveParameterShape}
 import io.circe.Json
-//import optic_shape_hash.shapehash.ShapeHash
 
 abstract class ShapeLike {
   def isEmpty: Boolean
