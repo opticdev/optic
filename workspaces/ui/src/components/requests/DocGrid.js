@@ -1,6 +1,7 @@
 import React from 'react';
 import {Grid, makeStyles} from '@material-ui/core';
 import {StickyRegion} from '../shared/StickyRegion';
+import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 const useStyles = makeStyles(theme => ({
   right: {
@@ -84,19 +85,21 @@ export function DocGrid({left, right, style}) {
   );
 }
 
-export function DiffDocGrid({left, leftColor, right, style, colMaxWidth}) {
+export function DiffDocGrid({left, leftColor, right, active, style, colMaxWidth}) {
 
   const classes = useStyles();
 
   return (
-    <Grid container style={style}>
-      <Grid item xs={6} className={classes.leftDiff} alignItems="center">
-        <div className={classes.maxWidth} style={{maxWidth: colMaxWidth}}>{left}</div>
+    <ScrollIntoViewIfNeeded active={active} options={{behavior: 'instant'}}>
+      <Grid container style={style}>
+        <Grid item xs={6} className={classes.leftDiff} alignItems="center">
+          <div className={classes.maxWidth} style={{maxWidth: colMaxWidth}}>{left}</div>
+        </Grid>
+        <Grid item xs={6} className={classes.rightDiff} alignItems="center">
+          <div className={classes.maxWidth} style={{maxWidth: colMaxWidth}}>{right}</div>
+        </Grid>
       </Grid>
-      <Grid item xs={6} className={classes.rightDiff} alignItems="center">
-        <div className={classes.maxWidth} style={{maxWidth: colMaxWidth}}>{right}</div>
-      </Grid>
-    </Grid>
+    </ScrollIntoViewIfNeeded>
   );
 }
 

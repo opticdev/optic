@@ -28,7 +28,7 @@ object ExampleProjection {
 
   private def jsonToFlatRender(json: Json)(implicit trailTags: TrailTags[JsonTrail], path: JsonTrail = JsonTrail(Seq.empty)): FlatShape = {
 
-    def tagsForCurrent(newPath: JsonTrail): Option[ChangeType] = trailTags.trails.filterKeys(i => i.compareToPath(newPath)).values.headOption
+    def tagsForCurrent(newPath: JsonTrail): Option[ChangeType] = trailTags.trails.filterKeys(i => i.path == newPath.path).values.headOption
 
     val result = if (json.isString) {
       flatPrimitive(StringKind, json.toString, tagsForCurrent(path))
@@ -40,13 +40,12 @@ object ExampleProjection {
       flatPrimitive(NullableKind, "null", tagsForCurrent(path))
     } else if (json.isObject) {
       val fields = json.asObject.get.toList.sortBy(_._1)
-      val objPath = path.withChild(JsonTrailPathComponent.JsonObject())
-
+      val objPath = path
 
       val missingFields = trailTags.trails.filter(_._2 == ChangeType.Removal).collect {
         case (trail, changeType) if trail.path.nonEmpty && //has trail
           trail.path.last.isInstanceOf[JsonObjectKey] && //ends with object key
-          objPath.compareToPath(JsonTrail(trail.path.dropRight(1))) => { // we're in its parent
+          objPath.path == trail.path.dropRight(1) => { // we're in its parent
           val key = trail.path.last.asInstanceOf[JsonObjectKey].key
           FlatField(key, FlatShape(key, Seq(ColoredComponent("(missing)", "modifier", None, None)), Seq.empty, trail.toString, false, Map.empty, None), trail.toString, Some(ChangeType.Removal))
         }
@@ -61,7 +60,7 @@ object ExampleProjection {
 
     } else if (json.isArray) {
       val items = json.asArray.get
-      val arrayPath = path.withChild(JsonTrailPathComponent.JsonArray())
+      val arrayPath = path
 
       def transformItem(shape: FlatShape) = shape.copy(typeName = Seq(shape.typeName.head.copy(colorKey = "index")))
 
