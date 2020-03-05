@@ -1,4 +1,5 @@
-import { EventEmitter } from 'events';
+import {IBody} from '@useoptic/domain';
+import {EventEmitter} from 'events';
 import * as path from 'path';
 import * as os from 'os';
 import * as url from 'url';
@@ -181,40 +182,46 @@ export class HttpToolkitCapturingProxy {
         const queryString: string = url.parse(req.url).query || '';
         developerDebugLogger(req);
         const sample: IHttpInteraction = {
-          omitted: [],
+          tags: [],
           uuid: res.id,
           request: {
             host: req.hostname || '',
             method: req.method,
             path: req.path,
-            headers: headerObjectToList(req.headers),
-            queryString,
-            body: {
-              asJsonString: req.body.json ? JSON.stringify(req.body.json) : (req.body.formData ? JSON.stringify(req.body.formData) : null),
-              asText: req.body.text || null
-            }
+            headers: {
+              asJsonString: null,
+              asText: null,
+              asShapeHashBytes: null
+            },
+            query: {
+              asJsonString: null,
+              asText: null,
+              asShapeHashBytes: null
+            },
+            body: extractBody(req)
           },
           response: {
             statusCode: res.statusCode,
-            headers: headerObjectToList(res.headers),
-            body: {
-              asJsonString: res.body.json ? JSON.stringify(res.body.json) : (res.body.formData ? JSON.stringify(res.body.formData) : null),
-              asText: res.body.text || null
-            }
+            headers: {
+              asShapeHashBytes: null,
+              asJsonString: null,
+              asText: null
+            },
+            body: extractBody(res)
           }
         };
-        developerDebugLogger({ sample });
+        developerDebugLogger({sample});
         this.events.emit('sample', sample);
         this.requests.delete(res.id);
       }
     });
 
     process.on('uncaughtException', (error: Error) => {
-      developerDebugLogger(error)
-    })
+      developerDebugLogger(error);
+    });
     process.on('unhandledRejection', (reason, promise) => {
-      developerDebugLogger(reason, promise)
-    })
+      developerDebugLogger(reason, promise);
+    });
 
     developerDebugLogger(`trying to start proxy on port ${config.proxyPort}`);
     try {
@@ -276,8 +283,24 @@ export class HttpToolkitCapturingProxy {
   }
 }
 
-export function extractBody(req: mockttp.CompletedRequest | mockttp.CompletedResponse) {
+export function extractBody(req: mockttp.CompletedRequest | mockttp.CompletedResponse): IBody {
   if (req.headers['content-type'] || req.headers['transfer-encoding']) {
-    return req.body.json || req.body.formData || req.body.text;
+    const json = req.body.json || req.body.formData || null;
+    return {
+      contentType: req.headers['content-type'] || null,
+      value: {
+        asShapeHashBytes: null,
+        asJsonString: json ? JSON.stringify(json) : null,
+        asText: json ? null : req.body.text || null
+      }
+    };
   }
+  return {
+    contentType: null,
+    value: {
+      asText: null,
+      asJsonString: null,
+      asShapeHashBytes: null
+    }
+  };
 }

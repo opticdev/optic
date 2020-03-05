@@ -1,4 +1,4 @@
-import {IHttpInteraction, opticEngine, toInteraction} from './index';
+import {IHttpInteraction, opticEngine} from './index';
 import * as fs from 'fs-extra';
 
 export async function checkDiffOrUnrecognizedPath(specStorePath: string, samples: IHttpInteraction[]) {
@@ -10,9 +10,8 @@ export async function checkDiffOrUnrecognizedPath(specStorePath: string, samples
   try {
     const differ = opticEngine.com.useoptic.diff.SessionDiffer(specAsBuffer.toString());
     for (const s of samples) {
-      const interaction = toInteraction(s);
-      console.log(interaction);
-      if (differ.hasUnrecognizedPath(interaction) || differ.hasDiff(interaction)) {
+      console.log(s);
+      if (differ.hasUnrecognizedPath(s) || differ.hasDiff(s)) {
         return Promise.resolve(true);
       }
     }

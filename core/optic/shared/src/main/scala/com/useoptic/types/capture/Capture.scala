@@ -1,7 +1,5 @@
 package com.useoptic.types.capture
 
-import com.useoptic.diff.interactions.BodyUtilities
-
 import scala.scalajs.js.annotation.JSExportAll
 
 case class Capture(groupingIdentifiers: GroupingIdentifiers, batchItems: Vector[HttpInteraction])
@@ -11,28 +9,31 @@ case class GroupingIdentifiers(agentGroupId: String,
                                agentId: String,
                                batchId: String)
 
+case class ShapeHashBytes(bytes: Vector[Byte])
+
+@JSExportAll
+case class ArbitraryData(asShapeHashBytes: Option[ShapeHashBytes],
+                         asJsonString: Option[String],
+                         asText: Option[String])
+
+case class HttpInteractionTag(name: String, value: String)
+
 @JSExportAll
 case class HttpInteraction(uuid: String,
                            request: Request,
                            response: Response,
-                           omitted: Vector[String])
+                           tags: Vector[HttpInteractionTag])
+
 @JSExportAll
 case class Request(host: String,
                    method: String,
                    path: String,
-                   queryString: String,
-                   headers: Vector[Header],
+                   query: ArbitraryData,
+                   headers: ArbitraryData,
                    body: Body)
 
 @JSExportAll
-case class Response(statusCode: Int, headers: Vector[Header], body: Body)
+case class Response(statusCode: Int, headers: ArbitraryData, body: Body)
 
 @JSExportAll
-case class Header(name: String, value: String)
-
-@JSExportAll
-case class Body(asText: Option[String],
-                asJsonString: Option[String]) {
-//  def asJson
-//  def asJsonLike
-}
+case class Body(contentType: Option[String], value: ArbitraryData)

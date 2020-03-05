@@ -45,8 +45,8 @@ class DiffVisitorSpec extends FunSpec {
           println(spec.requestsState.responses)
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
-            Request("hhh", "GET", "/asdf", "", Vector(), Body(None, None)),
-            Response(200, Vector(), Body(None, None)),
+            Request("hhh", "GET", "/asdf", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
+            Response(200, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
           val visitors = new DiffVisitors()
@@ -60,8 +60,8 @@ class DiffVisitorSpec extends FunSpec {
           val spec = TestHelpers.fromCommands(initialCommands)
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
-            Request("hhh", "GET", "/", "", Vector(), Body(None, None)),
-            Response(204, Vector(), Body(None, None)),
+            Request("hhh", "GET", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
+            Response(204, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
           val visitors = new DiffVisitors()
@@ -84,8 +84,8 @@ class DiffVisitorSpec extends FunSpec {
           val spec = TestHelpers.fromCommands(initialCommands)
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
-            Request("hhh", "POST", "/", "", Vector(Header("content-type", "bbb")), Body(None, None)),
-            Response(200, Vector(), Body(None, None)),
+            Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("bbb"), ArbitraryData(None, None, None))),
+            Response(200, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
           val visitors = new DiffVisitors()
@@ -101,8 +101,8 @@ class DiffVisitorSpec extends FunSpec {
           val spec = TestHelpers.fromCommands(initialCommands)
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
-            Request("hhh", "POST", "/", "", Vector(Header("content-type", "ccc")), Body(None, Some(json"""{"f":["abc"]}""".noSpaces))),
-            Response(200, Vector(), Body(None, None)),
+            Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":["abc"]}""".noSpaces), None))),
+            Response(200, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
           val visitors = new DiffVisitors()
@@ -125,8 +125,8 @@ class DiffVisitorSpec extends FunSpec {
           val spec = TestHelpers.fromCommands(initialCommands)
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
-            Request("hhh", "POST", "/", "", Vector(Header("content-type", "ccc")), Body(None, Some(json"""{"f":[123]}""".noSpaces))),
-            Response(304, Vector(), Body(None, None)),
+            Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":[123]}""".noSpaces), None))),
+            Response(304, ArbitraryData(None, None, None), Body(None, ArbitraryData(None, None, None))),
             Vector()
           )
           val visitors = new DiffVisitors()
@@ -148,8 +148,8 @@ class DiffVisitorSpec extends FunSpec {
           ))
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
-            Request("hhh", "POST", "/", "", Vector(Header("content-type", "ccc")), Body(None, Some(json"""{"f":[123]}""".noSpaces))),
-            Response(200, Vector(Header("content-type", "bbb222")), Body(None, Some(json"""{"f":["abc"]}""".noSpaces))),
+            Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":[123]}""".noSpaces), None))),
+            Response(200, ArbitraryData(None, None, None), Body(Some("bbb222"), ArbitraryData(None, Some(json"""{"f":["abc"]}""".noSpaces), None))),
             Vector()
           )
           val visitors = new DiffVisitors()
@@ -171,8 +171,8 @@ class DiffVisitorSpec extends FunSpec {
           ))
           val interaction: HttpInteraction = HttpInteraction(
             "uuid",
-            Request("hhh", "POST", "/", "", Vector(Header("content-type", "ccc")), Body(None, Some(json"""{"f":[123]}""".noSpaces))),
-            Response(200, Vector(Header("content-type", "ccc222")), Body(None, Some(json"""{"f":["abc"]}""".noSpaces))),
+            Request("hhh", "POST", "/", ArbitraryData(None, None, None), ArbitraryData(None, None, None), Body(Some("ccc"), ArbitraryData(None, Some(json"""{"f":[123]}""".noSpaces), None))),
+            Response(200, ArbitraryData(None, None, None), Body(Some("ccc222"), ArbitraryData(None, Some(json"""{"f":["abc"]}""".noSpaces), None))),
             Vector()
           )
           val visitors = new DiffVisitors()

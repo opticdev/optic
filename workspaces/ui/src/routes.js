@@ -3,7 +3,6 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 import Welcome from './components/onboarding/Welcome';
 import ExampleSessionsLoader from './components/loaders/ExampleSessionsLoader.js';
 import LocalLoader from './components/routes/local';
-import ExampleDrivenSpecLoader from './components/loaders/ExampleDrivenSpecLoader.js';
 import Interceptor from './components/loaders/InterceptorLoader.js';
 import { routerPaths } from './RouterPaths'
 import SharedLoader from './components/loaders/SharedLoader';
@@ -34,8 +33,6 @@ class AppRoutes extends React.Component {
         <Switch>
           <Route strict path={routerPaths.sharedRoot()} component={SharedLoader} />
           <Redirect from={routerPaths.sharedRoot()} to={routerPaths.sharedRoot()} />
-          <Route strict path={routerPaths.exampleDrivenRoot()} component={ExampleDrivenSpecLoader} />
-          <Redirect from={routerPaths.exampleDrivenRoot()} to={routerPaths.exampleDrivenRoot()} />
           <Route strict path={routerPaths.exampleSessionsRoot()} component={ExampleSessionsLoader} />
           <Redirect from={routerPaths.exampleSessionsRoot()} to={routerPaths.exampleSessionsRoot()} />
           <Route exact path={'/'} component={Welcome} />

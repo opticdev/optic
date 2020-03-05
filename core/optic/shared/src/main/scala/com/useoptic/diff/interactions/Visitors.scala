@@ -3,7 +3,7 @@ package com.useoptic.diff.interactions
 import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.{HttpRequest, HttpResponse}
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.types.capture.{Body, Header, HttpInteraction}
+import com.useoptic.types.capture.{Body, HttpInteraction}
 import io.circe.Json
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -50,7 +50,7 @@ abstract class Visitors {
 @JSExportAll
 object BodyUtilities {
   def parseJsonBody(body: Body): Option[Json] = {
-    body.asJsonString match {
+    body.value.asJsonString match {
       case Some(s) => io.circe.parser.parse(s) match {
         case Left(e) => {
           println(e)
@@ -59,7 +59,7 @@ object BodyUtilities {
         case Right(json) => Some(json)
       }
       case None => {
-        body.asText match {
+        body.value.asText match {
           case None => None
           case Some(s) => Some(Json.fromString(s))
         }

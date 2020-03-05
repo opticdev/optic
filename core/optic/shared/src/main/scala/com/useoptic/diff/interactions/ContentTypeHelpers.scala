@@ -8,18 +8,18 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExportAll
 object ContentTypeHelpers {
   def contentType(request: Request): Option[String] = {
-    request.headers.find(x => x.name == "content-type").map(_.value)
+    request.body.contentType
   }
 
   def contentTypeOrNull(request: Request): String = {
-    request.headers.find(x => x.name == "content-type").map(_.value).orNull
+    request.body.contentType.orNull
   }
 
   def contentType(response: Response): Option[String] = {
-    response.headers.find(x => x.name == "content-type").map(_.value)
+    response.body.contentType
   }
 
   def contentTypeOrNull(response: Response): String = {
-    response.headers.find(x => x.name == "content-type").map(_.value).orNull
+    response.body.contentType.orNull
   }
 }

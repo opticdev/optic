@@ -1,6 +1,6 @@
 // @ts-ignore
 import * as domain from '../domain.js';
-import {IHttpInteraction} from '../domain-types/optic-types';
+import {IHttpInteraction, IArbitraryData} from '../domain-types/optic-types';
 
 describe('Optic Domain', function () {
   describe('diffing', function () {
@@ -24,25 +24,45 @@ describe('Optic Domain', function () {
       const interaction: IHttpInteraction = {
         uuid: 'iii',
         request: {
-          headers: [],
+          headers: {
+            asShapeHashBytes: null,
+            asJsonString: null,
+            asText: null
+          },
           method: 'GET',
           body: {
-            asJsonString: JSON.stringify({k: 'v'}),
-            asText: null
+            contentType: null,
+            value: {
+              asShapeHashBytes: null,
+              asJsonString: JSON.stringify({k: 'v'}),
+              asText: null
+            },
           },
           host: 'api.mydomain.com',
           path: '/v1/pets',
-          queryString: ''
-        },
-        response: {
-          statusCode: 200,
-          headers: [],
-          body: {
+          query: {
+            asShapeHashBytes: null,
             asJsonString: null,
             asText: null
           }
         },
-        omitted: []
+        response: {
+          statusCode: 200,
+          headers: {
+            asShapeHashBytes: null,
+            asJsonString: null,
+            asText: null
+          },
+          body: {
+            contentType: null,
+            value: {
+              asShapeHashBytes: null,
+              asJsonString: null,
+              asText: null
+            }
+          }
+        },
+        tags: []
       };
       const jsonHelper = JsonHelper();
       const interactions = [jsonHelper.fromInteraction(interaction), jsonHelper.fromInteraction(interaction), jsonHelper.fromInteraction(interaction)];

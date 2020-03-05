@@ -1,20 +1,8 @@
 
-export interface ICapture {
-  groupingIdentifiers: IGroupingIdentifiers
-  batchItems: IHttpInteraction[]
-}
-       
-
-export interface IResponse {
-  statusCode: number
-  headers: IHeader[]
-  body: IBody
-}
-       
-
-export interface IBody {
-  asText: (string | null)
+export interface IArbitraryData {
+  asShapeHashBytes: (IShapeHashBytes | null)
   asJsonString: (string | null)
+  asText: (string | null)
 }
        
 
@@ -26,7 +14,12 @@ export interface IGroupingIdentifiers {
 }
        
 
-export interface IHeader {
+export interface IShapeHashBytes {
+  bytes: number[]
+}
+       
+
+export interface IHttpInteractionTag {
   name: string
   value: string
 }
@@ -36,7 +29,20 @@ export interface IHttpInteraction {
   uuid: string
   request: IRequest
   response: IResponse
-  omitted: string[]
+  tags: IHttpInteractionTag[]
+}
+       
+
+export interface IResponse {
+  statusCode: number
+  headers: IArbitraryData
+  body: IBody
+}
+       
+
+export interface ICapture {
+  groupingIdentifiers: IGroupingIdentifiers
+  batchItems: IHttpInteraction[]
 }
        
 
@@ -44,8 +50,14 @@ export interface IRequest {
   host: string
   method: string
   path: string
-  queryString: string
-  headers: IHeader[]
+  query: IArbitraryData
+  headers: IArbitraryData
   body: IBody
+}
+       
+
+export interface IBody {
+  contentType: (string | null)
+  value: IArbitraryData
 }
        

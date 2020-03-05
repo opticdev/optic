@@ -21,29 +21,38 @@ case class ApiResponse(statusCode: Int, contentType: String, body: Option[Json] 
 @JSExport
 @JSExportAll
 case class ApiInteraction(apiRequest: ApiRequest, apiResponse: ApiResponse) {
+  def stringToArbitraryData(s: String): ArbitraryData = {
+    ArbitraryData(
+      None,
+      None,
+      Some(s)
+    )
+  }
+
   def toHttpInteraction(): HttpInteraction = {
     HttpInteraction(
       "uuid",
-      Request("some.host", apiRequest.method, apiRequest.url, apiRequest.queryString, headers(apiRequest.contentType), body(apiRequest.body)),
-      Response(apiResponse.statusCode, headers(apiRequest.contentType), body(apiResponse.body)),
+      Request(
+        "some.host",
+        apiRequest.method,
+        apiRequest.url,
+        stringToArbitraryData(apiRequest.queryString),
+        ArbitraryData(None, None, None),
+        body(apiRequest.contentType, apiRequest.body)
+      ),
+      Response(
+        apiResponse.statusCode,
+        ArbitraryData(None, None, None),
+        body(apiResponse.contentType, apiResponse.body)
+      ),
       Vector()
     )
   }
 
-  def body(body: Option[Json]): Body = {
+  def body(contentType: String, body: Option[Json]): Body = {
     body match {
-      case Some(value) => Body(None, Some(value.noSpaces))
-      case None => Body(None, None)
-    }
-  }
-
-  def headers(contentType: String): Vector[Header] = {
-    if (contentType == "") {
-      Vector()
-    } else if (contentType == "*/*") {
-      Vector()
-    } else {
-      Vector(Header("content-type", contentType))
+      case Some(value) => Body(Some(contentType), ArbitraryData(None, Some(value.noSpaces), None))
+      case None => Body(None, ArbitraryData(None, None, None))
     }
   }
 }
@@ -127,7 +136,7 @@ object RequestDiffer {
         .filter(x => {
           val (parameterId, parameter) = x
           //println(x)
-          parameter.requestParameterDescriptor.pathId == request.requestDescriptor.pathComponentId && parameter.requestParameterDescriptor.httpMethod == request.requestDescriptor.httpMethod  && parameter.requestParameterDescriptor.location == "query"
+          parameter.requestParameterDescriptor.pathId == request.requestDescriptor.pathComponentId && parameter.requestParameterDescriptor.httpMethod == request.requestDescriptor.httpMethod && parameter.requestParameterDescriptor.location == "query"
         })
         .values.headOption
       return queryParameterWrapper match {
@@ -187,7 +196,7 @@ object RequestDiffer {
 
   def responseDiff(interaction: ApiInteractionLike, spec: RfcState, requestId: RequestId): PipelineItem[HttpResponse] = {
 
-val request = spec.requestsState.requests(requestId)
+    val request = spec.requestsState.requests(requestId)
     // check for matching response status
     val matchedResponse = spec.requestsState.responses.values
       .find(r => r.responseDescriptor.pathId == request.requestDescriptor.pathComponentId

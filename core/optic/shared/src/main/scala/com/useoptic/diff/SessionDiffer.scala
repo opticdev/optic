@@ -4,6 +4,8 @@ import com.useoptic.contexts.requests.Utilities
 import com.useoptic.contexts.rfc.Events._
 import com.useoptic.contexts.rfc._
 import com.useoptic.ddd.InMemoryEventStore
+import com.useoptic.diff.helpers.DiffHelpers
+import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
@@ -11,12 +13,12 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 @JSExportAll
 class InteractionDiffer(rfcState: RfcState) {
 
-  def hasDiff(interaction: ApiInteraction, plugins: PluginRegistry = PluginRegistryUtilities.defaultPluginRegistry(rfcState.shapesState)): Boolean = {
-    RequestDiffer.compare(ApiInteractionLike.fromApiInteraction(interaction), rfcState, plugins).hasNext
+  def hasDiff(interaction: HttpInteraction): Boolean = {
+    DiffHelpers.diff(rfcState, interaction).nonEmpty
   }
 
-  def hasUnrecognizedPath(interaction: ApiInteraction): Boolean = {
-    Utilities.resolvePath(interaction.apiRequest.url, rfcState.requestsState.pathComponents) match {
+  def hasUnrecognizedPath(interaction: HttpInteraction): Boolean = {
+    Utilities.resolvePath(interaction.request.path, rfcState.requestsState.pathComponents) match {
       case None => true
       case Some(x) => false
     }
@@ -31,15 +33,13 @@ class SessionDiffer(rawEvents: String) {
   eventStore.bulkAdd(rfcId, rawEvents)
   val rfcService = new RfcService(eventStore)
   val rfcState = rfcService.currentState(rfcId)
+  val interactionDiffer = new InteractionDiffer(rfcState)
 
-  def hasDiff(interaction: ApiInteraction, plugins: PluginRegistry = PluginRegistryUtilities.defaultPluginRegistry(rfcState.shapesState)): Boolean = {
-    RequestDiffer.compare(ApiInteractionLike.fromApiInteraction(interaction), rfcState, plugins).hasNext
+  def hasDiff(interaction: HttpInteraction): Boolean = {
+    interactionDiffer.hasDiff(interaction)
   }
 
-  def hasUnrecognizedPath(interaction: ApiInteraction): Boolean = {
-    Utilities.resolvePath(interaction.apiRequest.url, rfcState.requestsState.pathComponents) match {
-      case None => true
-      case Some(x) => false
-    }
+  def hasUnrecognizedPath(interaction: HttpInteraction): Boolean = {
+    interactionDiffer.hasUnrecognizedPath(interaction)
   }
 }

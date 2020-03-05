@@ -22,14 +22,14 @@ object InteractionHelpers {
         "some.host",
         "PUT",
         "/",
-        "",
-        Vector(Header("content-type", contentType)),
-        Body(None, Some(requestBody.noSpaces))
+        ArbitraryData(None, None, None),
+        ArbitraryData(None, None, None),
+        Body(Some(contentType), ArbitraryData(None, Some(requestBody.noSpaces), None))
       ),
       Response(
         statusCode,
-        Vector(),
-        Body(None, None)
+        ArbitraryData(None, None, None),
+        Body(None, ArbitraryData(None, None, None))
       ),
       Vector()
     )
@@ -42,14 +42,14 @@ object InteractionHelpers {
         "some.host",
         "POST",
         "/",
-        "",
-        Vector(Header("content-type", contentType)),
-        Body(None, Some(requestBody.noSpaces))
+        ArbitraryData(None, None, None),
+        ArbitraryData(None, None, None),
+        Body(Some(contentType), ArbitraryData(None, Some(requestBody.noSpaces), None))
       ),
       Response(
         statusCode,
-        Vector(),
-        Body(None, None)
+        ArbitraryData(None, None, None),
+        Body(None, ArbitraryData(None, None, None))
       ),
       Vector()
     )
@@ -62,14 +62,14 @@ object InteractionHelpers {
         "some.host",
         "GET",
         "/",
-        "",
-        Vector(),
-        Body(None, None)
+        ArbitraryData(None, None, None),
+        ArbitraryData(None, None, None),
+        Body(None, ArbitraryData(None, None, None))
       ),
       Response(
         statusCode,
-        Vector(Header("content-type", contentType)),
-        Body(None, Some(responseBody.noSpaces))
+        ArbitraryData(None, None, None),
+        Body(Some(contentType), ArbitraryData(None, Some(responseBody.noSpaces), None))
       ),
       Vector()
     )

@@ -6,7 +6,6 @@ import {routerPaths} from '../../RouterPaths';
 import {NavigationStore} from '../../contexts/NavigationContext';
 import {RequestsDetailsPage, RequestsDetailsPageNew} from '../requests/EndpointPage';
 import {UrlsX} from '../paths/NewUnmatchedUrlWizard';
-import RequestDiffX from '../diff/RequestDiffX';
 import {TrafficSessionStore} from '../../contexts/TrafficSessionContext';
 import compose from 'lodash.compose';
 import Navigation from '../navigation/Navbar';
@@ -37,7 +36,6 @@ class LoaderFactory {
           <SpecServiceStore specService={specService}>
             <Switch>
               <Route exact path={routerPaths.diffUrls(match.path)} component={UrlsX}/>
-              <Route exact path={routerPaths.diffRequest(match.path)} component={RequestDiffX}/>
               <Route exact path={routerPaths.diffRequestNew(match.path)} component={DiffPageNew}/>
               <Route component={withSpecServiceContext(ApiOverview)}/>
             </Switch>
