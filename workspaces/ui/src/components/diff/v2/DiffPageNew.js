@@ -191,6 +191,7 @@ class _DiffPageContent extends React.Component {
                                      contentType={request.requestBody.httpContentType}
                                      example={showExample ? example : undefined}
                                      exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
+                                     shapeTags={(isActive && diffDescription) ? diffDescription.shapeTags : undefined}
                                      shapeId={request.requestBody.shapeId}/>
                   </div>
                 );
@@ -230,12 +231,14 @@ class _DiffPageContent extends React.Component {
               <DiffShapeViewer title={`${statusCode} Response Body`}
                                contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
                                exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
+                               shapeTags={(isActive && diffDescription) ? diffDescription.shapeTags : undefined}
                                example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>
             )}
             {contentTypes.map(response => {
               return (<DiffShapeViewer title={`${statusCode} Response Body`}
                                        contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
                                        exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
+                                       shapeTags={(isActive && diffDescription) ? diffDescription.shapeTags : undefined}
                                        shapeId={response.responseBody.shapeId}
                                        example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>);
             })}

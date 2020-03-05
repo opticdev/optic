@@ -14,7 +14,7 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 sealed trait InteractionPointerDescription {
   def exampleTags: TrailTags[JsonTrail]
-  def specTags: TrailTags[ShapeTrail]
+  def shapeTags: TrailTags[ShapeTrail]
 }
 
 case class Unspecified(jsonTrail: JsonTrail) extends InteractionPointerDescription {
@@ -22,14 +22,14 @@ case class Unspecified(jsonTrail: JsonTrail) extends InteractionPointerDescripti
     jsonTrail -> ChangeType.Addition
   ))
   //always empty since not in the spec. might make sense to add 'specParent' so we can show the right part of the spec at least.
-  override def specTags: TrailTags[ShapeTrail] = TrailTags(Map.empty)
+  override def shapeTags: TrailTags[ShapeTrail] = TrailTags(Map.empty)
 }
 
 case class SpecifiedButNotMatching(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) extends InteractionPointerDescription {
   override def exampleTags: TrailTags[JsonTrail] = TrailTags(Map(
     jsonTrail -> ChangeType.Update
   ))
-  override def specTags: TrailTags[ShapeTrail] = TrailTags(Map(
+  override def shapeTags: TrailTags[ShapeTrail] = TrailTags(Map(
     shapeTrail -> ChangeType.Update
   ))
 }
@@ -38,7 +38,7 @@ case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) ex
   override def exampleTags: TrailTags[JsonTrail] = TrailTags(Map(
     jsonTrail -> ChangeType.Removal
   ))
-  override def specTags: TrailTags[ShapeTrail] = TrailTags(Map(
+  override def shapeTags: TrailTags[ShapeTrail] = TrailTags(Map(
     shapeTrail -> ChangeType.Removal
   ))
 }
@@ -46,7 +46,7 @@ case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) ex
 @JSExportAll
 case class DiffDescription(title: String, interactionPointerDescription: Option[InteractionPointerDescription]) {
   def exampleTags: TrailTags[JsonTrail] = interactionPointerDescription.map(_.exampleTags).getOrElse(TrailTags.empty)
-  def specTags: TrailTags[ShapeTrail] = interactionPointerDescription.map(_.specTags).getOrElse(TrailTags.empty)
+  def shapeTags: TrailTags[ShapeTrail] = interactionPointerDescription.map(_.shapeTags).getOrElse(TrailTags.empty)
 }
 
 @JSExport
