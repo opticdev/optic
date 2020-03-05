@@ -5,44 +5,44 @@ import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesState}
 import com.useoptic.diff.MutableCommandStream
+import com.useoptic.types.capture.JsonLike
 import io.circe.Json
 
 import scala.scalajs.js.annotation.JSExportAll
 import scala.util.Random
 
 sealed trait ShapeBuilderContext
+
 case class IsField(named: String, parentId: String) extends ShapeBuilderContext
+
 case class IsInArray(index: Int) extends ShapeBuilderContext
+
 case class ValueShapeWithId(id: String, andFieldId: Option[String] = None) extends ShapeBuilderContext
+
 case class IsRoot(forceId: String) extends ShapeBuilderContext
 
-@JSExportAll
-case class ShapeExample(shapeId: ShapeId, example: Json)
-
-case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand], examples: Vector[ShapeExample], allIds: Vector[ShapeId]) {
+case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand], allIds: Vector[ShapeId]) {
   def asConceptNamed(name: String): ShapeBuilderResult =
-    ShapeBuilderResult(rootShapeId, commands :+ RenameShape(rootShapeId, name), examples, allIds)
+    ShapeBuilderResult(rootShapeId, commands :+ RenameShape(rootShapeId, name), allIds)
 }
 
-class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkString}")(implicit shapesState: ShapesState = ShapesAggregate.initialState) {
+class ShapeBuilder(r: JsonLike, seed: String = s"${Random.alphanumeric take 6 mkString}")(implicit shapesState: ShapesState = ShapesAggregate.initialState) {
 
   val commands = new MutableCommandStream
-  val shapeExample = scala.collection.mutable.ListBuffer[ShapeExample]()
   val allIdsStore = scala.collection.mutable.ListBuffer[ShapeId]()
 
   def run: ShapeBuilderResult = {
     commands.clear
     shapeExample.clear()
 
-    val matchedConcept = ShapeResolver.handleObject(r)
-    //match to an existing concept if possible
-    if (r.isObject && matchedConcept.isDefined) {
-      return ShapeBuilderResult(matchedConcept.get, Vector.empty, Vector.empty, Vector.empty)
-    }
+    //    //match to an existing concept if possible
+    //    if (r.isObject && matchedConcept.isDefined) {
+    //      return ShapeBuilderResult(matchedConcept.get, Vector.empty, Vector.empty, Vector.empty)
+    //    }
 
     val rootShapeId = idGenerator
     fromJson(r)(IsRoot(rootShapeId), Seq.empty) // has the side effect of appending commands
-    ShapeBuilderResult(rootShapeId, commands.toImmutable.flatten, shapeExample.toVector, allIdsStore.toVector)
+    ShapeBuilderResult(rootShapeId, commands.toImmutable.flatten, allIdsStore.toVector)
   }
 
   private var count = 0
@@ -54,7 +54,7 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     id
   }
 
-  private def fromJson(json: Json)(implicit cxt: ShapeBuilderContext, path: Seq[String]): Unit = {
+  private def fromJson(json: JsonLike)(implicit cxt: ShapeBuilderContext, path: Seq[String]): Unit = {
 
     val id = cxt match {
       case ValueShapeWithId(id, _) => id
@@ -63,17 +63,8 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     }
 
     if (json.isObject) {
-      val matchedConcept = ShapeResolver.handleObject(json)
-      //save the example
-      shapeExample append ShapeExample(id, json)
-
-      if (matchedConcept.isDefined) {
-        commands.appendInit(AddShape(id, matchedConcept.get, ""))
-      } else {
-        commands.appendInit(AddShape(id, ObjectKind.baseShapeId, ""))
-        fromJsonObject(json, id)
-      }
-
+      commands.appendInit(AddShape(id, ObjectKind.baseShapeId, ""))
+      fromJsonObject(json, id)
     } else if (json.isArray) {
       commands.appendInit(AddShape(id, ListKind.baseShapeId, ""))
       cxt match {
@@ -96,11 +87,11 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     }
   }
 
-  def isPrimitive(json: Json) = {
+  def isPrimitive(json: JsonLike) = {
     json.isString || json.isNumber || json.isBoolean || json.isNull
   }
 
-  def primitiveShapeProvider(json: Json) = {
+  def primitiveShapeProvider(json: JsonLike) = {
     if (json.isString) {
       StringKind
     } else if (json.isNumber) {
@@ -112,8 +103,8 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     }
   }
 
-  private def fromArray(a: Json, id: String, fieldId: Option[String] = None)(implicit cxt: ShapeBuilderContext, path: Seq[String]) = {
-    val array = a.asArray.get
+  private def fromArray(a: JsonLike, id: String, fieldId: Option[String] = None)(implicit cxt: ShapeBuilderContext, path: Seq[String]) = {
+    val array = a.items
 
     val innerId = fieldId.getOrElse(id)
     if (array.isEmpty) {
@@ -123,7 +114,6 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
     } else {
       //@todo let's add oneOf here
       if (isPrimitive(array.head)) {
-        shapeExample append ShapeExample(innerId, array.head)
         val primitiveWrapperId = idGenerator
         val primitiveId = primitiveShapeProvider(array.head).baseShapeId
         commands.appendInit(AddShape(primitiveWrapperId, primitiveId, ""))
@@ -131,31 +121,24 @@ class ShapeBuilder(r: Json, seed: String = s"${Random.alphanumeric take 6 mkStri
 
       } else {
 
-        val matchedConcept = ShapeResolver.handleObject(array.head)
-        val didMatch = array.head.isObject && matchedConcept.isDefined
+        val assignedItemShapeId =idGenerator
 
-        val assignedItemShapeId = if (didMatch) matchedConcept.get else idGenerator
-
-        if (!didMatch) { // if no concept is matched inline it
-          fromJson(array.head)(ValueShapeWithId(assignedItemShapeId), path :+ "[List Items]")
-        }
+        fromJson(array.head)(ValueShapeWithId(assignedItemShapeId), path :+ "[List Items]")
         val wrapperId = idGenerator
-
-        shapeExample append ShapeExample(innerId, array.head)
         commands.appendInit(AddShape(wrapperId, assignedItemShapeId, ""))
         commands.appendDescribe(SetParameterShape(ProviderInShape(id, ShapeProvider(wrapperId), "$listItem")))
       }
     }
   }
 
-  private def fromJsonObject(i: Json, id: String)(implicit cxt: ShapeBuilderContext, path: Seq[String]) = {
-    val asMap = i.asObject.get.toList.sortBy(_._1)
+  private def fromJsonObject(i: JsonLike, id: String)(implicit cxt: ShapeBuilderContext, path: Seq[String]) = {
+    val asMap = i.fields.toList.sortBy(_._1)
     asMap.foreach {
       case (key, value) => fromField(value)(IsField(key, id), path :+ key)
     }
   }
 
-  private def fromField(i: Json)(implicit cxt: IsField, path: Seq[String]) = {
+  private def fromField(i: JsonLike)(implicit cxt: IsField, path: Seq[String]) = {
 
     val fieldId = idGenerator
 

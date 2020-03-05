@@ -1,26 +1,27 @@
 package com.useoptic.diff.shapes
 
 import com.useoptic.contexts.shapes.ShapeEntity
+import com.useoptic.types.capture.JsonLike
 import io.circe.Json
 
 abstract class ObjectVisitor {
-  def begin(value: io.circe.JsonObject, bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail)
+  def begin(value: Map[String, JsonLike], bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail)
 
-  def visit(key: String, value: Json, bodyTrail: JsonTrail, trail: Option[ShapeTrail])
+  def visit(key: String, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail])
 
   def end()
 }
 
 abstract class ArrayVisitor {
-  def begin(value: Vector[Json], bodyTrail: JsonTrail, expected: ShapeEntity)
+  def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity)
 
-  def visit(index: Number, value: Json, bodyTrail: JsonTrail, trail: Option[ShapeTrail])
+  def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail])
 
   def end()
 }
 
 abstract class PrimitiveVisitor {
-  def visit(value: Option[Json], bodyTrail: JsonTrail, trail: Option[ShapeTrail])
+  def visit(value: Option[JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail])
 }
 
 abstract class EmptyVisitor {

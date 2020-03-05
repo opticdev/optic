@@ -31,7 +31,7 @@ class BasicInterpretations(rfcState: RfcState) {
   }
 
   def SetRequestBodyShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
-    val actualJson = BodyUtilities.parseJsonBody(interaction.request.body).get
+    val actualJson = BodyUtilities.parseBody(interaction.request.body).get
     val shape = new ShapeBuilder(actualJson).run
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
@@ -52,7 +52,7 @@ class BasicInterpretations(rfcState: RfcState) {
   }
 
   def SetResponseBodyShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
-    val actualJson = BodyUtilities.parseJsonBody(interaction.response.body).get
+    val actualJson = BodyUtilities.parseBody(interaction.response.body).get
     val shape = new ShapeBuilder(actualJson).run
     val inlineShapeId = shape.rootShapeId
     val wrapperId = ShapesHelper.newShapeId()
@@ -108,7 +108,7 @@ class BasicInterpretations(rfcState: RfcState) {
     )
     interactionTrail.requestBodyContentTypeOption() match {
       case Some(contentType) => {
-        val jsonBody = Resolvers.tryResolveJson(interactionTrail, JsonTrail(Seq()), interaction)
+        val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), interaction)
         val builtShape = new ShapeBuilder(jsonBody.get).run
         val commands = baseCommands ++ builtShape.commands ++ Seq(
           RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
@@ -141,7 +141,7 @@ class BasicInterpretations(rfcState: RfcState) {
     )
     interactionTrail.responseBodyContentTypeOption() match {
       case Some(contentType) => {
-        val jsonBody = Resolvers.tryResolveJson(interactionTrail, JsonTrail(Seq()), interaction)
+        val jsonBody = Resolvers.tryResolveJsonLike(interactionTrail, JsonTrail(Seq()), interaction)
         val builtShape = new ShapeBuilder(jsonBody.get).run
         val commands = baseCommands ++ builtShape.commands ++ Seq(
           RequestsCommands.SetResponseBodyShape(responseId, ShapedBodyDescriptor(contentType, builtShape.rootShapeId, isRemoved = false))
@@ -168,7 +168,7 @@ class BasicInterpretations(rfcState: RfcState) {
 
   //@GOTCHA: this is not a backwards-compatible change
   def ChangeShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, shapeTrail: ShapeTrail, jsonTrail: JsonTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
-    val resolved = Resolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
+    val resolved = Resolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
 
     //@TODO: inject real shapesState? for now this will always create a new shape
     val builtShape = new ShapeBuilder(resolved.get)(ShapesAggregate.initialState).run
@@ -206,7 +206,7 @@ class BasicInterpretations(rfcState: RfcState) {
 
   //@GOTCHA: this is not a backwards-compatible change
   def AddFieldToShape(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, shapeTrail: ShapeTrail, jsonTrail: JsonTrail, interaction: HttpInteraction) = {
-    val resolved = Resolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
+    val resolved = Resolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
 
     //@TODO: inject real shapesState? for now this will always create a new shape
     val builtShape = new ShapeBuilder(resolved.get)(ShapesAggregate.initialState).run

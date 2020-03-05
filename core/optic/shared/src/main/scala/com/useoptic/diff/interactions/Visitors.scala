@@ -3,7 +3,7 @@ package com.useoptic.diff.interactions
 import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.{HttpRequest, HttpResponse}
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.types.capture.{Body, HttpInteraction}
+import com.useoptic.types.capture.{Body, HttpInteraction, JsonLike, JsonLikeFrom}
 import io.circe.Json
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -49,23 +49,25 @@ abstract class Visitors {
 @JSExport
 @JSExportAll
 object BodyUtilities {
-  def parseJsonBody(body: Body): Option[Json] = {
-    body.value.asJsonString match {
-      case Some(s) => io.circe.parser.parse(s) match {
-        case Left(e) => {
-          println(e)
-          None
-        }
-        case Right(json) => Some(json)
+  def parseBody(body: Body): Option[JsonLike] = {
+    val asShapeHashBytes = body.value.asShapeHashBytes
+    val asJsonString = body.value.asJsonString
+    if (asShapeHashBytes.isDefined) {
+      if (asJsonString.isDefined) {
+        JsonLikeFrom.rawShapeHashWithRawJson(asShapeHashBytes.get.bytes, asJsonString.get)
+      } else {
+        JsonLikeFrom.rawShapeHash(asShapeHashBytes.get.bytes)
       }
-      case None => {
-        body.value.asText match {
-          case None => None
-          case Some(s) => Some(Json.fromString(s))
-        }
-      }
+    } else if (asJsonString.isDefined) {
+      JsonLikeFrom.rawJson(asJsonString.get)
+    } else if (body.value.asText.isDefined) {
+      JsonLikeFrom.knownText(body.value.asText.get)
+    } else {
+      None
     }
   }
+  def parseJsonBody(body: Body): Option[Json] = parseBody(body).map(_.asJson)
+
 }
 
 
