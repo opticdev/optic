@@ -44,6 +44,15 @@ object Resolvers {
           case _ => throw new Error("did not expect a non-optional path relative to a OptionalKind")
         }
       }
+      case OneOfKind => {
+        pathComponent match {
+          case c: OneOfItemTrail => {
+            val (shapeId, coreShapeKind) = toCoreAndBaseShape(shapesState.shapes(c.itemShapeId), shapesState)
+            ResolvedTrail(shapesState.shapes(shapeId), coreShapeKind, parent.bindings)
+          }
+          case _ => throw new Error("did not expect a non-oneOfItem path relative to a OneOf")
+        }
+      }
       case ObjectKind => {
         pathComponent match {
           case c: ObjectFieldTrail => {

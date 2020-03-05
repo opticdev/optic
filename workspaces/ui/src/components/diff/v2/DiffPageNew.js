@@ -401,6 +401,7 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
       }}
       acceptSuggestion={(suggestion, diff, key) => {
         if (suggestion) {
+          setSuggestionToPreview(null);
           setAcceptedSuggestions([...acceptedSuggestions, suggestion]);
           addAcceptedSuggestion(suggestion, diff, key);
         }

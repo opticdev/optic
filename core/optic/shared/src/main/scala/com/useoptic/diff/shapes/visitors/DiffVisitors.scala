@@ -1,10 +1,11 @@
 package com.useoptic.diff.shapes.visitors
 
 import com.useoptic.contexts.rfc.RfcState
+import com.useoptic.contexts.shapes.Commands.DynamicParameterList
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
-import com.useoptic.diff.shapes.{ArrayVisitor, JsonTrail, NullableTrail, ObjectFieldTrail, ObjectVisitor, OptionalTrail, PrimitiveVisitor, ResolvedTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape, Visitors}
+import com.useoptic.diff.shapes.{ArrayVisitor, JsonTrail, NullableTrail, ObjectFieldTrail, ObjectVisitor, OneOfItemTrail, OneOfTrail, OptionalTrail, PrimitiveVisitor, ResolvedTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape, Visitors}
 import io.circe.Json
 
 class DiffVisitors(spec: RfcState) extends Visitors {
@@ -74,7 +75,8 @@ class DiffVisitors(spec: RfcState) extends Visitors {
   }
 
   override val objectVisitor: ObjectVisitor = new DiffObjectVisitor()
-  override val primitiveVisitor: PrimitiveVisitor = new PrimitiveVisitor {
+
+  class DiffPrimitiveVisitor(emit: (ShapeDiffResult) => Unit) extends PrimitiveVisitor {
     override def visit(value: Option[Json], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
       println("primitive visitor")
       println(bodyTrail)
@@ -99,6 +101,32 @@ class DiffVisitors(spec: RfcState) extends Visitors {
       println(resolvedTrail.shapeEntity)
       println(resolvedTrail.coreShapeKind)
       resolvedTrail.coreShapeKind match {
+        case OneOfKind => {
+          val oneOfShapeId = resolvedTrail.shapeEntity.shapeId
+          // there's only a diff if none of the shapes match
+          val shapeParameterIds = resolvedTrail.shapeEntity.descriptor.parameters match {
+            case DynamicParameterList(shapeParameterIds) => shapeParameterIds
+            case _ => Seq()
+          }
+          val firstMatch = shapeParameterIds.find(shapeParameterId => {
+            val referencedShape = Resolvers.resolveParameterToShape(spec.shapesState, oneOfShapeId, shapeParameterId, resolvedTrail.bindings)
+            if (referencedShape.isDefined) {
+              var oneOfDiffs: Seq[ShapeDiffResult] = Seq.empty
+              val emit = (shapeDiff: ShapeDiffResult) => {
+                oneOfDiffs = oneOfDiffs :+ shapeDiff
+              }
+              new DiffPrimitiveVisitor(emit).visit(value, bodyTrail, Some(trail.get.withChildren(OneOfItemTrail(oneOfShapeId, referencedShape.get.shapeId))))
+              println("oneOf diffs")
+              println(oneOfDiffs)
+              oneOfDiffs.isEmpty
+            } else {
+              false
+            }
+          })
+          if (firstMatch.isEmpty) {
+            emit(UnmatchedShape(bodyTrail, trail.get))
+          }
+        }
         case NullableKind => {
           if (value.get.isNull) {
             println("expected null, got null")
@@ -136,6 +164,9 @@ class DiffVisitors(spec: RfcState) extends Visitors {
           emit(UnmatchedShape(bodyTrail, trail.get))
         }
       }
+
     }
   }
+
+  override val primitiveVisitor = new DiffPrimitiveVisitor(emit)
 }

@@ -29,6 +29,62 @@
           }
         },
         "omitted": []
+      },
+      {
+        "uuid": "2",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "queryString": "",
+          "headers": [],
+          "body": {
+            "asText": null,
+            "asJsonString": null
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "asText": null,
+            "asJsonString": "[{\"a\":1,\"b\":\"two\"}]"
+          }
+        },
+        "omitted": []
+      },
+      {
+        "uuid": "3",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "queryString": "",
+          "headers": [],
+          "body": {
+            "asText": null,
+            "asJsonString": null
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ],
+          "body": {
+            "asText": null,
+            "asJsonString": "[{\"a\":1,\"b\":2}]"
+          }
+        },
+        "omitted": []
       }
     ],
     "links": [
