@@ -4,15 +4,16 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes._
 import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.ShapesHelper._
-import com.useoptic.diff.ShapeDiffer.ParameterBindings
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestBody, RequestSpecTrail, RequestSpecTrailHelpers, ResponseBody}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.types.capture.{HttpInteraction, JsonLike}
 import io.circe.Json
 
-case class ResolvedTrail(shapeEntity: ShapeEntity, coreShapeKind: CoreShapeKind, bindings: ParameterBindings)
 
 object Resolvers {
+  case class ResolvedTrail(shapeEntity: ShapeEntity, coreShapeKind: CoreShapeKind, bindings: ParameterBindings)
+  type ParameterBindings = Map[ShapeParameterId, Option[ProviderDescriptor]]
+
   def resolveTrailToCoreShape(spec: RfcState, trail: ShapeTrail): ResolvedTrail = {
     val rootShape = spec.shapesState.shapes(trail.rootShapeId)
     //@GOTCHA: might need to resolve rootShape to its lowest baseShapeId
@@ -95,6 +96,15 @@ object Resolvers {
       case None => None
     }
     itemShape
+  }
+
+  def resolveBaseObject(objectId: ShapeId)(implicit shapesState: ShapesState): ShapeEntity = {
+    val o = shapesState.shapes(objectId)
+    if (o.descriptor.baseShapeId == ObjectKind.baseShapeId) {
+      o
+    } else {
+      resolveBaseObject(o.descriptor.baseShapeId)
+    }
   }
 
   def resolveFieldToShape(shapesState: ShapesState, fieldId: FieldId, bindings: ParameterBindings): Option[ResolvedTrail] = {

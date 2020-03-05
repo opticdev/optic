@@ -57,7 +57,7 @@ class Traverser(spec: RfcState, visitors: Visitors) {
         })
         val jsonTrail = bodyTrail.withChild(JsonObjectKey(key))
 
-        visitors.objectVisitor.visit(key, value, bodyTrail, resolvedTrail)
+        visitors.objectVisitor.visit(key, value.fields, bodyTrail, resolvedTrail)
 
         traverse(Some(value), jsonTrail, resolvedTrail)
       })

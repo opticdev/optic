@@ -9,7 +9,7 @@ import com.useoptic.diff.interactions.{InteractionTrail, ResponseBody, SpecRespo
 import com.useoptic.diff.interactions.interpretations.InteractionHelpers
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
-import com.useoptic.types.capture.HttpInteraction
+import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
 import io.circe.Json
 import org.scalatest.FunSpec
 import io.circe.literal._
@@ -25,7 +25,7 @@ object SpecHelpers {
   def simpleGet(responseBody: Json): Seq[RfcCommand] = {
     val requestId = s"request${nextId()}"
     val responseId = s"response${nextId()}"
-    val builtShape = new ShapeBuilder(responseBody, s"s${nextId()}").run
+    val builtShape = new ShapeBuilder(JsonLikeFrom.json(responseBody).get, s"s${nextId()}").run
     builtShape.commands ++ Seq(
       RequestsCommands.AddRequest(requestId, "root", "GET"),
       RequestsCommands.AddResponse(responseId, requestId, 200),
@@ -36,7 +36,7 @@ object SpecHelpers {
   def simplePost(requestBody: Json): Seq[RfcCommand] = {
     val requestId = s"request${nextId()}"
     val responseId = s"response${nextId()}"
-    val builtShape = new ShapeBuilder(requestBody, s"s${nextId()}").run
+    val builtShape = new ShapeBuilder(JsonLikeFrom.json(requestBody).get, s"s${nextId()}").run
     builtShape.commands ++ Seq(
       RequestsCommands.AddRequest(requestId, "root", "POST"),
       RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor("application/json", builtShape.rootShapeId, isRemoved = false)),

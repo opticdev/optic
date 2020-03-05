@@ -1,6 +1,5 @@
 package com.useoptic.types.capture
 
-import com.useoptic.diff.ShapeLike.fromActualJson
 import io.circe.{Json, JsonObject}
 import io.circe.parser.parse
 import optic_shape_hash.shapehash.ShapeDescriptor

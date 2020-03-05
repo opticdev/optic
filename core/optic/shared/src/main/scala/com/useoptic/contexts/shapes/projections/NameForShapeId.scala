@@ -3,8 +3,7 @@ package com.useoptic.contexts.shapes.projections
 import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, FieldShapeFromShape, NoProvider, ParameterProvider, ShapeId, ShapeProvider}
 import com.useoptic.contexts.shapes.ShapesHelper.{AnyKind, IdentifierKind, ListKind, MapKind, NullableKind, ObjectKind, OneOfKind, OptionalKind, ReferenceKind, StringKind}
 import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
-import com.useoptic.diff.ShapeDiffer
-import com.useoptic.diff.ShapeDiffer.resolveParameterShape
+import com.useoptic.diff.shapes.Resolvers
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 import scala.util.Try
@@ -39,7 +38,7 @@ object NameForShapeId {
 
     val shape = shapesState.flattenedShape(shapeId)
 
-    def resolveInner(paramId: String) = resolveParameterShape(shapeId, paramId)(shapesState, {
+    def resolveInner(paramId: String) = Resolvers.resolveParameterToShape(shapesState, shapeId, paramId,  {
       if (fieldIdOption.isDefined) {
         shapesState.flattenedField(fieldIdOption.get).bindings
       } else {
@@ -93,7 +92,7 @@ object NameForShapeId {
         Seq(ColoredComponent("Identifier as", "text", None)) ++ identifierInner
       }
       case ObjectKind.baseShapeId => {
-        val baseObject = ShapeDiffer.resolveBaseObject(shapeId)(shapesState)
+        val baseObject = Resolvers.resolveBaseObject(shapeId)(shapesState)
 
         val genericParams = Try(baseObject.descriptor.parameters.asInstanceOf
           [DynamicParameterList].shapeParameterIds).getOrElse(Seq.empty)

@@ -97,7 +97,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
   }
 
   def WrapWithOneOf(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail, jsonTrail: JsonTrail, shapeTrail: ShapeTrail, interaction: HttpInteraction): InteractiveDiffInterpretation = {
-    val resolved = Resolvers.tryResolveJson(interactionTrail, jsonTrail, interaction)
+    val resolved = Resolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
     val wrapperShapeId = ShapesHelper.newShapeId()
     val p1 = ShapesHelper.newShapeParameterId()
     val p2 = ShapesHelper.newShapeParameterId()

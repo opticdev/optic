@@ -44,7 +44,7 @@ class UnspecifiedShapeDiffInterpreter(rfcState: RfcState) extends InteractiveDif
     resolved.coreShapeKind match {
       case ObjectKind => {
         println(shapeDiff.jsonTrail)
-        val json = Resolvers.tryResolveJson(interactionTrail, shapeDiff.jsonTrail, interaction)
+        val json = Resolvers.tryResolveJsonLike(interactionTrail, shapeDiff.jsonTrail, interaction)
         println(json.get)
         val key = shapeDiff.jsonTrail.path.last.asInstanceOf[JsonObjectKey].key
         val builtShape = new ShapeBuilder(json.get)(ShapesAggregate.initialState).run

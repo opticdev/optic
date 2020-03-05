@@ -1,15 +1,8 @@
 package com.useoptic.end_to_end.fixtures
 
-import com.useoptic.diff.ShapeDiffer.ShapeDiffResult
 import org.scalatest.{FunSpec, Matchers, WordSpec}
-import io.circe._
 import io.circe.parser._
-import io.circe.syntax._
 import io.circe._
-import io.circe.generic.semiauto._
-
-import scala.util.Try
-import io.circe.syntax._
 import better.files._
 
 abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, snapshotName: String) extends WordSpec {
@@ -49,7 +42,6 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
         }
 
         s"Matches Snapshot" in {
-
           val hash = convertBytesToHex(md.digest((file.contentAsString + folderSlug).getBytes))+".json"
           val snapshot = snapshotOutputDirectory / hash
           if (snapshot.exists) {
@@ -60,8 +52,6 @@ abstract class SnapShotDriverFixture[InputJson, OutputJson](folderSlug: String, 
             snapshot.write(serializeOutput(output.get).noSpaces)
           }
         }
-
-
       }
     }
 

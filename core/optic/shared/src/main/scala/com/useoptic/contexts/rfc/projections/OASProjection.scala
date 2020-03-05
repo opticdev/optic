@@ -8,8 +8,6 @@ import com.useoptic.contexts.shapes.ShapesHelper
 import com.useoptic.contexts.shapes.ShapesHelper.OptionalKind
 import com.useoptic.contexts.shapes.projections.{FlatShapeProjection, FlatShapeResult, JsonSchemaProjection}
 import com.useoptic.ddd.{AggregateId, InMemoryEventStore}
-import com.useoptic.diff.RequestDiffer.UnmatchedQueryParameterShape
-import com.useoptic.diff.ShapeDiffer
 import io.circe.Json
 
 class OASProjection(queries: InMemoryQueries, rfcService: RfcService, aggregateId: AggregateId) {

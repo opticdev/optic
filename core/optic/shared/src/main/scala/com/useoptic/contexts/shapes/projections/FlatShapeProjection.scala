@@ -5,9 +5,7 @@ import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.contexts.shapes.projections.NameForShapeId.ColoredComponent
 import com.useoptic.contexts.shapes.{FlattenedShape, ShapesHelper, ShapesState}
 import com.useoptic.diff.ChangeType.ChangeType
-import com.useoptic.diff.ShapeDiffer
-import com.useoptic.diff.ShapeDiffer.resolveParameterShape
-import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, OneOfTrail, ShapeTrail, ShapeTrailPathComponent}
+import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, OneOfTrail, Resolvers, ShapeTrail, ShapeTrailPathComponent}
 
 import scala.collection.mutable
 
@@ -29,7 +27,8 @@ object FlatShapeProjection {
   private def getFlatShape(shapeId: ShapeId, path: ShapeTrail)(implicit shapesState: ShapesState, fieldIdOption: Option[String], expandedName: Boolean = false, parametersByShapeId: mutable.Map[String, FlatShape], trailTags: TrailTags[ShapeTrail]): FlatShape = {
     val shape = shapesState.flattenedShape(shapeId)
 
-    def resolveInner(paramId: String, pathNew: ShapeId => Seq[ShapeTrailPathComponent]) = resolveParameterShape(shapeId, paramId)(shapesState, {
+
+    def resolveInner(paramId: String, pathNew: ShapeId => Seq[ShapeTrailPathComponent]) = Resolvers.resolveParameterToShape(shapesState, shapeId, paramId,  {
       if (fieldIdOption.isDefined) {
         shapesState.flattenedField(fieldIdOption.get).bindings
       } else {
@@ -100,7 +99,7 @@ object FlatShapeProjection {
         returnWith(NameForShapeId.getShapeName(shapeId, expand = expandedName), links = Map("$identifierInner" -> innerShapeId))
       }
       case ObjectKind.baseShapeId => {
-        val baseObject = ShapeDiffer.resolveBaseObject(shapeId)(shapesState)
+        val baseObject = Resolvers.resolveBaseObject(shapeId)(shapesState)
         val fields = baseObject.descriptor.fieldOrdering.flatMap(fieldId => {
           val field = shapesState.fields(fieldId)
           if (field.isRemoved) {

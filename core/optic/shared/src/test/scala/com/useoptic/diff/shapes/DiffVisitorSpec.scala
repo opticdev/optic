@@ -6,6 +6,7 @@ import com.useoptic.diff.shapes.visitors.DiffVisitors
 import org.scalatest.FunSpec
 import io.circe.literal._
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
+import com.useoptic.types.capture.JsonLikeFrom
 
 class DiffVisitorSpec extends FunSpec {
   describe("shape diffing") {
@@ -20,7 +21,7 @@ class DiffVisitorSpec extends FunSpec {
         it("should yield no diff") {
           val visitors = new DiffVisitors(rfcState)
           val traverser = new Traverser(rfcState, visitors)
-          traverser.traverse(Some(json"""{"f":[]}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
+          traverser.traverse(JsonLikeFrom.json(json"""{"f":[]}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq())
         }
       }
@@ -28,7 +29,7 @@ class DiffVisitorSpec extends FunSpec {
         it("should yield no diff") {
           val visitors = new DiffVisitors(rfcState)
           val traverser = new Traverser(rfcState, visitors)
-          traverser.traverse(Some(json"""{"f":[{"k":"v1"},{"k":"v3"}]}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
+          traverser.traverse(JsonLikeFrom.json(json"""{"f":[{"k":"v1"},{"k":"v3"}]}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq())
         }
       }
@@ -37,7 +38,7 @@ class DiffVisitorSpec extends FunSpec {
 
           val visitors = new DiffVisitors(rfcState)
           val traverser = new Traverser(rfcState, visitors)
-          traverser.traverse(Some(json"""{"f":[{"k2":"v1"},{"k":3}]}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
+          traverser.traverse(JsonLikeFrom.json(json"""{"f":[{"k2":"v1"},{"k":3}]}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq(
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("f"), JsonArrayItem(0), JsonObjectKey("k"))),
@@ -62,7 +63,7 @@ class DiffVisitorSpec extends FunSpec {
 
           val visitors = new DiffVisitors(rfcState)
           val traverser = new Traverser(rfcState, visitors)
-          traverser.traverse(Some(json"""{}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
+          traverser.traverse(JsonLikeFrom.json(json"""{}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq(UnmatchedShape(JsonTrail(Seq(JsonObjectKey("f"))), ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2"))))))
         }
       }
@@ -70,7 +71,7 @@ class DiffVisitorSpec extends FunSpec {
         it("should yield a diff") {
           val visitors = new DiffVisitors(rfcState)
           val traverser = new Traverser(rfcState, visitors)
-          traverser.traverse(Some(json"""{"f":1,"g":"1"}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
+          traverser.traverse(JsonLikeFrom.json(json"""{"f":1,"g":"1"}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq(UnspecifiedShape(JsonTrail(Seq(JsonObjectKey("g"))), ShapeTrail(builtShape.rootShapeId, Seq()))))
         }
       }
@@ -78,7 +79,7 @@ class DiffVisitorSpec extends FunSpec {
         it("should yield a diff") {
           val visitors = new DiffVisitors(rfcState)
           val traverser = new Traverser(rfcState, visitors)
-          traverser.traverse(Some(json"""{"f":1,"g":"1", "h":"1", "i":"1"}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
+          traverser.traverse(JsonLikeFrom.json(json"""{"f":1,"g":"1", "h":"1", "i":"1"}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq(
             UnspecifiedShape(JsonTrail(Seq(JsonObjectKey("g"))), ShapeTrail(builtShape.rootShapeId, Seq())),
             UnspecifiedShape(JsonTrail(Seq(JsonObjectKey("h"))), ShapeTrail(builtShape.rootShapeId, Seq())),
@@ -90,7 +91,7 @@ class DiffVisitorSpec extends FunSpec {
         it("should yield no diff") {
           val visitors = new DiffVisitors(rfcState)
           val traverser = new Traverser(rfcState, visitors)
-          traverser.traverse(Some(json"""{"f":1}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
+          traverser.traverse(JsonLikeFrom.json(json"""{"f":1}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq())
         }
       }
@@ -98,7 +99,7 @@ class DiffVisitorSpec extends FunSpec {
         it("should yield a diff") {
           val visitors = new DiffVisitors(rfcState)
           val traverser = new Traverser(rfcState, visitors)
-          traverser.traverse(Some(json"""{"f":"1"}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
+          traverser.traverse(JsonLikeFrom.json(json"""{"f":"1"}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq(
             UnmatchedShape(JsonTrail(Seq(JsonObjectKey("f"))), ShapeTrail(builtShape.rootShapeId, Seq(ObjectFieldTrail("s_1", "s_2")))))
           )

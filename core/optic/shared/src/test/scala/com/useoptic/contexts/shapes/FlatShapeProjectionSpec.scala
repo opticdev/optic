@@ -6,6 +6,7 @@ import com.useoptic.contexts.shapes.ShapesHelper.ListKind
 import com.useoptic.contexts.shapes.projections.{FlatShapeProjection, NameForShapeId}
 import com.useoptic.diff.JsonFileFixture
 import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.types.capture.JsonLikeFrom
 import org.scalatest.FunSpec
 
 class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
@@ -15,9 +16,9 @@ class FlatShapeProjectionSpec extends FunSpec  with JsonFileFixture {
     val basic = fromFile(slug)
     val result = {
       if (nameConcept != null) {
-        new ShapeBuilder(basic, "pa").run.asConceptNamed(nameConcept)
+        new ShapeBuilder(JsonLikeFrom.json(basic).get, "pa").run.asConceptNamed(nameConcept)
       } else {
-        new ShapeBuilder(basic, "pa").run
+        new ShapeBuilder(JsonLikeFrom.json(basic).get, "pa").run
       }
     }
     val eventStore = RfcServiceJSFacade.makeEventStore()

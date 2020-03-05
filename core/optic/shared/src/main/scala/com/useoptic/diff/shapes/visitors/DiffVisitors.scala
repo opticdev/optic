@@ -5,7 +5,9 @@ import com.useoptic.contexts.shapes.Commands.DynamicParameterList
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
-import com.useoptic.diff.shapes.{ArrayVisitor, JsonTrail, NullableTrail, ObjectFieldTrail, ObjectVisitor, OneOfItemTrail, OneOfTrail, OptionalTrail, PrimitiveVisitor, ResolvedTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape, Visitors}
+import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
+import com.useoptic.diff.shapes._
+import com.useoptic.types.capture.JsonLike
 import io.circe.Json
 
 class DiffVisitors(spec: RfcState) extends Visitors {
@@ -17,12 +19,12 @@ class DiffVisitors(spec: RfcState) extends Visitors {
   }
 
   class DiffArrayVisitor extends ArrayVisitor {
-    override def begin(value: Vector[Json], bodyTrail: JsonTrail, expected: ShapeEntity): Unit = {
+    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity): Unit = {
       //@TODO: check against the expected shape for fundamental shape mismatch
       println("traversing array")
     }
 
-    override def visit(index: Number, value: Json, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
+    override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
       println(s"visiting $index")
       println(value)
       println(bodyTrail)
@@ -38,7 +40,7 @@ class DiffVisitors(spec: RfcState) extends Visitors {
 
   class DiffObjectVisitor() extends ObjectVisitor {
 
-    override def begin(value: io.circe.JsonObject, bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
+    override def begin(value: Map[String, JsonLike], bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
       println("visiting object")
       //@TODO: check against the expected shape for fundamental shape mismatch
       val fieldNameToId = expected.shapeEntity.descriptor.fieldOrdering
@@ -65,7 +67,7 @@ class DiffVisitors(spec: RfcState) extends Visitors {
       })
     }
 
-    override def visit(key: String, value: Json, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
+    override def visit(key: String, value: Map[String, JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
       println(s"visiting ${key}")
     }
 
@@ -77,7 +79,7 @@ class DiffVisitors(spec: RfcState) extends Visitors {
   override val objectVisitor: ObjectVisitor = new DiffObjectVisitor()
 
   class DiffPrimitiveVisitor(emit: (ShapeDiffResult) => Unit) extends PrimitiveVisitor {
-    override def visit(value: Option[Json], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
+    override def visit(value: Option[JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
       println("primitive visitor")
       println(bodyTrail)
       if (trail.isEmpty) {

@@ -5,7 +5,7 @@ import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesState}
 import com.useoptic.diff.MutableCommandStream
-import com.useoptic.types.capture.JsonLike
+import com.useoptic.types.capture.{JsonLike, JsonLikeFrom}
 import io.circe.Json
 
 import scala.scalajs.js.annotation.JSExportAll
@@ -27,13 +27,14 @@ case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand],
 }
 
 class ShapeBuilder(r: JsonLike, seed: String = s"${Random.alphanumeric take 6 mkString}")(implicit shapesState: ShapesState = ShapesAggregate.initialState) {
+  // test fixture helper
+  def this(r: Json, seed: String) = this(JsonLikeFrom.json(r).get, seed)
 
   val commands = new MutableCommandStream
   val allIdsStore = scala.collection.mutable.ListBuffer[ShapeId]()
 
   def run: ShapeBuilderResult = {
     commands.clear
-    shapeExample.clear()
 
     //    //match to an existing concept if possible
     //    if (r.isObject && matchedConcept.isDefined) {

@@ -1,7 +1,6 @@
 package com.useoptic
 
-import com.useoptic.contexts.requests.ContentTypes
-import com.useoptic.contexts.requests.ContentTypes.{_contentTypeMap, supported}
+import com.useoptic.contexts.requests.ContentTypes.supported
 import com.useoptic.contexts.requests.Requests.ContentType
 
 import scala.scalajs.js

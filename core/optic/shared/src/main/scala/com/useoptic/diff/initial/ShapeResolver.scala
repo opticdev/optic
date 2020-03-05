@@ -3,7 +3,6 @@ package com.useoptic.diff.initial
 import com.useoptic.contexts.shapes.Commands.ShapeId
 import com.useoptic.contexts.shapes.ShapesHelper.{BooleanKind, NullableKind, NumberKind, StringKind}
 import com.useoptic.contexts.shapes.ShapesState
-import com.useoptic.diff.{ShapeDiffer, ShapeLike}
 import io.circe.Json
 
 object ShapeResolver {
@@ -11,11 +10,6 @@ object ShapeResolver {
     val primitiveOption = handlePrimitive(x)
     if (primitiveOption.isDefined) {
       return primitiveOption
-    }
-
-    val handleObjectOption = handleObject(x)
-    if (handleObjectOption.isDefined) {
-      return handleObjectOption
     }
 
     None
@@ -31,11 +25,4 @@ object ShapeResolver {
     case _ => None
   }
 
-  def handleObject(x: Json)(implicit shapesState: ShapesState): Option[ShapeId] = {
-    val conceptsWithIds = shapesState.concepts
-
-    conceptsWithIds.collectFirst {
-      case (shapeId, entity) if ShapeDiffer.diff(entity, ShapeLike.fromActualJson(Some(x))).isEmpty => shapeId
-    }
-  }
 }

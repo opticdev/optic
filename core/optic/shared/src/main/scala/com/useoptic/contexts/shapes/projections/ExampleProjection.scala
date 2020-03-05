@@ -5,8 +5,7 @@ import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.contexts.shapes.projections.NameForShapeId.ColoredComponent
 import com.useoptic.contexts.shapes.{ShapesHelper, ShapesState}
 import com.useoptic.diff.ChangeType.ChangeType
-import com.useoptic.diff.{ChangeType, ShapeDiffer}
-import com.useoptic.diff.ShapeDiffer.resolveParameterShape
+import com.useoptic.diff.ChangeType
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes.{JsonTrail, JsonTrailPathComponent}
 import io.circe.Json

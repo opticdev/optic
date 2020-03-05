@@ -6,6 +6,8 @@ import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.TestHelpers
 import org.scalatest.FunSpec
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
+import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
+import com.useoptic.types.capture.JsonLikeFrom
 import io.circe.literal._
 
 
@@ -55,27 +57,27 @@ class ResolverSpec extends FunSpec {
     describe("primitives") {
       it("should resolve the value") {
 
-        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq()), Some(json""""string""""))
+        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq()), JsonLikeFrom.json(json""""string""""))
         assert(resolved.contains(json""""string""""))
       }
     }
     describe("object") {
       it("should resolve the value") {
-        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonObject(), JsonObjectKey("k"))), Some(json"""{"k":1}"""))
+        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonObject(), JsonObjectKey("k"))), JsonLikeFrom.json(json"""{"k":1}"""))
         assert(resolved.contains(json"""1"""))
       }
       it("should not resolve a value") {
-        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonObject(), JsonObjectKey("notk"))), Some(json"""{"k":1}"""))
+        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonObject(), JsonObjectKey("notk"))), JsonLikeFrom.json(json"""{"k":1}"""))
         assert(resolved.isEmpty)
       }
     }
     describe("array") {
       it("should resolve the value") {
-        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonArray(), JsonArrayItem(0))), Some(json"""[1]"""))
+        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonArray(), JsonArrayItem(0))), JsonLikeFrom.json(json"""[1]"""))
         assert(resolved.contains(json"""1"""))
       }
       it("should not resolve a value") {
-        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonArray(), JsonArrayItem(1))), Some(json"""[1]"""))
+        val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonArray(), JsonArrayItem(1))), JsonLikeFrom.json(json"""[1]"""))
         assert(resolved.isEmpty)
       }
     }
@@ -83,12 +85,12 @@ class ResolverSpec extends FunSpec {
       val nested = json"""{"k":[{"x": ["a", "b"]}]}"""
       it("should resolve .k[0].x[1] => 'b'") {
         val trail = JsonTrail(Seq(JsonObject(), JsonObjectKey("k"), JsonArray(), JsonArrayItem(0), JsonObject(), JsonObjectKey("x"), JsonArray(), JsonArrayItem(1)))
-        val resolved = Resolvers.tryResolveJsonTrail(trail, Some(nested))
+        val resolved = Resolvers.tryResolveJsonTrail(trail, JsonLikeFrom.json(nested))
         assert(resolved.contains(json""""b""""))
       }
       it("should not resolve .k[0].x[2]") {
         val trail = JsonTrail(Seq(JsonObject(), JsonObjectKey("k"), JsonArray(), JsonArrayItem(0), JsonObject(), JsonObjectKey("x"), JsonArray(), JsonArrayItem(2)))
-        val resolved = Resolvers.tryResolveJsonTrail(trail, Some(nested))
+        val resolved = Resolvers.tryResolveJsonTrail(trail, JsonLikeFrom.json(nested))
         assert(resolved.isEmpty)
       }
     }

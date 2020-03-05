@@ -1,8 +1,5 @@
 package com.useoptic
 
-import com.useoptic.diff.{DiffInterpretation, DynamicDescription, FrontEndMetadata, InterpretationContext}
-import com.useoptic.diff.RequestDiffer.RequestDiffResult
-import com.useoptic.diff.ShapeDiffer.ShapeDiffResult
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
@@ -18,25 +15,5 @@ object ScalaJSHelpers {
 
   def toJsArray[A](seq: Seq[A]) = {
     seq.toJSArray
-  }
-
-  def asJs(x: RequestDiffResult) = {
-    convertJsonToJs(x.asJson)
-  }
-
-  def asJs(x: ShapeDiffResult) = {
-    convertJsonToJs(x.asJson)
-  }
-
-  def asJs(x: DynamicDescription) = {
-    convertJsonToJs(x.asJson)
-  }
-
-  def asJs(x: InterpretationContext) = {
-    convertJsonToJs(x.asJson)
-  }
-
-  def asJs(x: FrontEndMetadata) = {
-    convertJsonToJs(x.asJson)
   }
 }

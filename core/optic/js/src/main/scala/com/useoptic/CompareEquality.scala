@@ -1,8 +1,8 @@
 package com.useoptic
 
 import com.useoptic.diff.InteractiveDiffInterpretation
-import com.useoptic.diff.ShapeDiffer.ShapeDiffResult
 import com.useoptic.diff.interactions.InteractionDiffResult
+import com.useoptic.diff.shapes.ShapeDiffResult
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
