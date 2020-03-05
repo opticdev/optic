@@ -113,7 +113,7 @@ export default class Start extends Command {
       target,
       port: proxyPort
     })
-    this.log(fromOptic(`Starting ${colors.bold(config.name)} on Port: ${colors.bold(config.proxy.port.toString())}, with ${colors.bold(config.commands.start)}`))
+    this.log(fromOptic(`Starting ${colors.bold(config.name)} on Port: ${colors.bold(proxyPort)}, with ${colors.bold(config.commands.start)}`))
     this.log(fromOptic(`Starting Integration Gateway on Port: ${colors.bold(integrationsPort.toString())}`))
     this.log('\n')
     //starting outbound proxy
