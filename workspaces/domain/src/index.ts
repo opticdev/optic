@@ -58,7 +58,6 @@ export const lengthScala = (collection: any) => {
   return ScalaJSHelpers.toJsArray(collection).length;
 };
 
-const {ApiInteraction, ApiRequest, ApiResponse} = diff;
 
 export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
   const requestContentType = sample.request.body.contentType;
@@ -80,32 +79,7 @@ export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
   };
 }
 
-export function toInteraction(sample: IHttpInteraction) {
-  const requestContentType = sample.request.body.contentType;
-  const responseContentType = sample.response.body.contentType;
-
-  const requestBody = sample.request.body.value.asJsonString ? fromJs(JSON.parse(sample.request.body.value.asJsonString)) : (sample.request.body.value.asText ? fromJs(sample.request.body.value.asText) : JsonHelper.toNone());
-  const responseBody = sample.response.body.value.asJsonString ? fromJs(JSON.parse(sample.response.body.value.asJsonString)) : (sample.response.body.value.asText ? fromJs(sample.response.body.value.asText) : JsonHelper.toNone());
-  console.log({
-    sample,
-    requestContentType,
-    requestBody,
-    responseBody,
-    responseContentType
-  });
-  return ApiInteraction(
-    ApiRequest(sample.request.path, sample.request.method, '', requestContentType, requestBody),
-    ApiResponse(sample.response.statusCode, responseContentType, responseBody)
-  );
-}
-
 export const InteractionDiffer = diff.InteractionDiffer;
-export const RequestDiffer = diff.RequestDiffer();
-export const Interpreters = diff.interpreters;
-export const PluginRegistry = diff.PluginRegistry;
-export const QueryStringDiffer = diff.query.QueryStringDiffer;
-export const {JsQueryStringParser} = opticEngine;
-export const OasProjectionHelper = opticEngine.com.useoptic.OASProjectionHelper();
 export const BodyUtilities = opticEngine.com.useoptic.diff.interactions.BodyUtilities();
 export const ContentTypeHelpers = opticEngine.com.useoptic.diff.interactions.ContentTypeHelpers();
 
