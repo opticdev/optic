@@ -1,9 +1,5 @@
 export const opticEngine = require('./domain.js');
-import debug from 'debug';
-import * as util from 'util';
 
-const developerDebugLogger = debug('optic-debug');
-developerDebugLogger(util.inspect(opticEngine, {colors: true, depth: 10}));
 const {contexts, diff} = opticEngine.com.useoptic;
 
 export const ShapesCommands = contexts.shapes.Commands;
@@ -82,6 +78,7 @@ export function extractRequestAndResponseBodyAsJs(sample: IHttpInteraction) {
 export const InteractionDiffer = diff.InteractionDiffer;
 export const BodyUtilities = opticEngine.com.useoptic.diff.interactions.BodyUtilities();
 export const ContentTypeHelpers = opticEngine.com.useoptic.diff.interactions.ContentTypeHelpers();
+export const OasProjectionHelper = opticEngine.com.useoptic.OASProjectionHelper();
 
 import {checkDiffOrUnrecognizedPath} from './check-diff';
 import {IHttpInteraction} from './domain-types/optic-types';
