@@ -8,6 +8,7 @@ import EventEmitter from 'events';
 export const basePath = basePaths.exampleSessionsBasePath;
 
 const demoEventEmitter = new EventEmitter();
+const specServiceEvents = new EventEmitter()
 
 const specServiceTask = async (props) => {
   const body = await fetch(`/example-sessions/${props.match.params.exampleId}.json`, {
@@ -31,7 +32,7 @@ const specServiceTask = async (props) => {
     getConfig: async function () {
       return Promise.resolve({
         config: {
-          apiName: 'Aidan'
+          apiName: body.config?.apiName || 'Example API'
         }
       });
     },
@@ -48,6 +49,7 @@ const specServiceTask = async (props) => {
     saveEvents: (eventStore, rfcId) => {
       const serializedEvents = eventStore.serializeEvents(rfcId);
       events = serializedEvents;
+      specServiceEvents.emit('events-updated')
     },
     listExamples: (requestId) => {
       return Promise.resolve({examples: examples[requestId] || []});
@@ -57,16 +59,14 @@ const specServiceTask = async (props) => {
       requestExamples.push(interaction);
       examples[requestId] = requestExamples;
     },
-    saveDiffState: () => {
-    },
   };
   return specService;
 };
-
 const {
   Routes: ExampleSessionsLoaderRoutes
 } = LoaderFactory.build({
   specServiceTask,
+  specServiceEvents,
   notificationAreaComponent,
   shareButtonComponent,
   basePath,

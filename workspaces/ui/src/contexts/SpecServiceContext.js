@@ -1,6 +1,5 @@
 import React from 'react'
 import {GenericContextFactory} from './GenericContextFactory';
-import {NavigationContext} from './NavigationContext';
 
 const {
   Context: SpecServiceContext,
@@ -14,8 +13,16 @@ class SpecServiceStore extends React.Component {
   }
 
   componentDidMount() {
-    const {specService} = this.props;
+    const {specService, specServiceEvents} = this.props;
     specService.getConfig().then(({config}) => this.setState({apiName: config.name}))
+    if (!specServiceEvents) {
+      console.warn('I need specServiceEvents')
+      debugger
+    } else {
+      specServiceEvents.on('events-updated', () => {
+        this.forceUpdate()
+      })
+    }
   }
 
   render() {

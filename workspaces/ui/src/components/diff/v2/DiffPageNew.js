@@ -18,26 +18,31 @@ import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {BodyUtilities, CompareEquality, ContentTypeHelpers, opticEngine} from '@useoptic/domain';
+import {
+  BodyUtilities,
+  Facade,
+  RfcCommandContext,
+  CompareEquality,
+  ContentTypeHelpers,
+  opticEngine
+} from '@useoptic/domain';
 import DiffViewer from './DiffViewer';
-import {ExampleOnly, ExampleShapeViewer} from '../../requests/DocCodeBox';
 import niceTry from 'nice-try';
 import {NamerStore} from '../../shapes/Namer';
 import SimulatedCommandContext from '../SimulatedCommandContext';
-import Paper from '@material-ui/core/Paper';
 import {Dark, DocDarkGrey, DocGrey} from '../../requests/DocConstants';
-import Zoom from '@material-ui/core/Zoom';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import Avatar from '@material-ui/core/Avatar';
 import {primary, secondary} from '../../../theme';
 import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import {Show} from '../../shared/Show';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import BatchLearnDialog from './BatchLearnDialog';
 import {DiffShapeViewer, DiffToggleContextStore, URLViewer} from './DiffShapeViewer';
+import uuidv4 from 'uuid/v4';
+import {withRouter} from 'react-router-dom';
+import {routerPaths} from '../../../RouterPaths';
+import {withNavigationContext} from '../../../contexts/NavigationContext';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -94,25 +99,72 @@ class DiffPageNew extends React.Component {
   }
 }
 
+function withSpecContext(eventStore, rfcId, clientId, clientSessionId) {
+  return {
+    applyCommands(commands) {
+      try {
+        const batchId = uuidv4();
+        const commandContext = new RfcCommandContext(clientId, clientSessionId, batchId);
+        Facade.fromCommands(eventStore, rfcId, commands, commandContext);
+      } catch (e) {
+        console.error(e);
+        debugger
+      }
+    }
+  };
+}
 
 class _DiffPageContent extends React.Component {
   render() {
-    const {endpointDescriptor, getInteractionsForDiff, classes, regions, selectedDiff, currentExample, getDiffDescription, acceptedSuggestions, isFinishing, setIsFinishing, reset} = this.props;
+    const {
+      history, baseUrl,
+      endpointDescriptor, getInteractionsForDiff,
+      classes,
+      regions, selectedDiff, currentExample,
+      getDiffDescription,
+      acceptedSuggestions,
+      initialEventStore, rfcId, clientId, clientSessionId,
+      specService,
+      isFinishing, setIsFinishing, reset
+    } = this.props;
     const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, isEmpty} = endpointDescriptor;
 
     const shouldShowAcceptAll = isEmpty && !regions.isEmpty;
 
     const showFinishPane = (isFinishing || regions.isEmpty);
 
+    function handleDiscard() {
+      //@GOTCHA this resets ignored state as well
+      reset();
+    }
+
+
+    async function handleApply(message) {
+      const newEventStore = initialEventStore.getCopy(rfcId);
+
+      const {StartBatchCommit, EndBatchCommit} = opticEngine.com.useoptic.contexts.rfc.Commands;
+      const batchId = uuidv4();
+      const specContext = withSpecContext(newEventStore, rfcId, clientId, clientSessionId);
+      specContext.applyCommands(jsonHelper.jsArrayToVector([StartBatchCommit(batchId, message)]));
+      acceptedSuggestions.forEach(suggestion => {
+        specContext.applyCommands(jsonHelper.seqToVector(suggestion.commands));
+      });
+      specContext.applyCommands(jsonHelper.jsArrayToVector([EndBatchCommit(batchId)]));
+      console.log(JSON.parse(newEventStore.serializeEvents(rfcId)));
+      await specService.saveEvents(newEventStore, rfcId);
+
+      history.push(routerPaths.apiDocumentation(baseUrl));
+    }
+
     function description() {
       if (selectedDiff) {
-        const interactions = getInteractionsForDiff(selectedDiff);
+        //const interactions = getInteractionsForDiff(selectedDiff);
         return getDiffDescription(selectedDiff, currentExample);
       }
     }
 
     function isActiveSection(diffs) {
-      return Boolean(selectedDiff) && !!diffs.find(i => CompareEquality.between(selectedDiff, i))
+      return Boolean(selectedDiff) && !!diffs.find(i => CompareEquality.between(selectedDiff, i));
     }
 
     const FinishPane = () => {
@@ -128,17 +180,20 @@ class _DiffPageContent extends React.Component {
               </div>
               <Card style={{marginLeft: 12, flex: 1, maxWidth: 520}}>
                 <CardContent>
-                  <Typography variant="subtitle1" style={{color: Dark}}>Add Message to Changelog</Typography>
-                  <TextField value={message}
-                             autoFocus
-                             fullWidth
-                             multiline
-                             onChange={(e) => setMessage(e.target.value)}
-                             placeholder="Describe your changes"/>
+                  <Typography
+                    variant="subtitle1" style={{color: Dark}}>Add Message to Changelog</Typography>
+                  <TextField
+                    value={message}
+                    autoFocus
+                    fullWidth
+                    multiline
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Describe your changes"/>
                 </CardContent>
                 <CardActions style={{float: 'right'}}>
-                  <Button size="small" color="default">Discard</Button>
-                  <Button size="small" color="secondary">Apply Changes</Button>
+                  <Button size="small" color="default" onClick={handleDiscard}>Discard</Button>
+                  <Button size="small" color="secondary" onClick={() => handleApply(message)}>Apply
+                    Changes</Button>
                 </CardActions>
               </Card>
             </div>
@@ -152,7 +207,7 @@ class _DiffPageContent extends React.Component {
       const requestContentTypes = jsonHelper.seqToJsArray(regions.requestContentTypes);
       const diffs = jsonHelper.seqToJsArray(regions.inRequest);
 
-      const isActive = isActiveSection(diffs)
+      const isActive = isActiveSection(diffs);
 
       const requestContentTypesToRender = Array.from(
         new Set([...requestContentTypes,
@@ -164,41 +219,45 @@ class _DiffPageContent extends React.Component {
 
       return (
         <div className={classes.spacer}>
-        <DiffDocGrid
-          active={isActive}
-          colMaxWidth={600}
-          style={{marginBottom: 40}}
-          right={(
-            <div>
-              <DiffViewer regionName={'request-body'} nameOverride={'Request Body Diff'} groupDiffs={diffs}
-                          approvedKey={'request'}/>
+          <DiffDocGrid
+            active={isActive}
+            colMaxWidth={600}
+            style={{marginBottom: 40}}
+            right={(
+              <div>
+                <DiffViewer
+                  regionName={'request-body'} nameOverride={'Request Body Diff'}
+                  groupDiffs={diffs}
+                  approvedKey={'request'}/>
+              </div>
+            )} left={(
+            <div className={classes.rightRegion}>
+              {(requestContentTypesToRender.length === 0) && (
+                <DiffShapeViewer
+                  title="Request Body"
+                  contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
+                  example={example}/>
+              )}
+              {requestContentTypesToRender.map(contentType => {
+                const request = requestBodies.find(i => i.requestBody.httpContentType === contentType);
+                if (request) {
+                  const showExample = currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request) === contentType;
+                  const diffDescription = description();
+                  return (
+                    <div>
+                      <DiffShapeViewer
+                        title="Request Body"
+                        contentType={request.requestBody.httpContentType}
+                        example={showExample ? example : undefined}
+                        exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
+                        shapeTags={(isActive && diffDescription) ? diffDescription.shapeTags : undefined}
+                        shapeId={request.requestBody.shapeId}/>
+                    </div>
+                  );
+                }
+              })}
             </div>
-          )} left={(
-          <div className={classes.rightRegion}>
-            {(requestContentTypesToRender.length === 0) && (
-              <DiffShapeViewer title="Request Body"
-                               contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
-                               example={example}/>
-            )}
-            {requestContentTypesToRender.map(contentType => {
-              const request = requestBodies.find(i => i.requestBody.httpContentType === contentType);
-              if (request) {
-                const showExample = currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request) === contentType;
-                const diffDescription = description();
-                return (
-                  <div>
-                    <DiffShapeViewer title="Request Body"
-                                     contentType={request.requestBody.httpContentType}
-                                     example={showExample ? example : undefined}
-                                     exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
-                                     shapeTags={(isActive && diffDescription) ? diffDescription.shapeTags : undefined}
-                                     shapeId={request.requestBody.shapeId}/>
-                  </div>
-                );
-              }
-            })}
-          </div>
-        )}/>
+          )}/>
         </div>
       );
     };
@@ -211,39 +270,39 @@ class _DiffPageContent extends React.Component {
 
       const showExample = currentExample && currentExample.response.statusCode === statusCode;
 
-      const isActive = isActiveSection(diffs)
+      const isActive = isActiveSection(diffs);
 
       const diffDescription = description();
       return (
         <div className={classes.spacer}>
-        <DiffDocGrid
-          active={isActive}
-          style={{marginBottom: 40}}
-          colMaxWidth={600}
-          right={(
-            <div>
-              <DiffViewer nameOverride={`${statusCode} Response Diff`} groupDiffs={diffs}
-                          approvedKey={'response-' + statusCode}/>
-            </div>
-          )} left={(
-          <div className={classes.rightRegion}>
-            {(contentTypes.length === 0) && (
-              <DiffShapeViewer title={`${statusCode} Response Body`}
-                               contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
-                               exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
-                               shapeTags={(isActive && diffDescription) ? diffDescription.shapeTags : undefined}
-                               example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>
-            )}
-            {contentTypes.map(response => {
-              return (<DiffShapeViewer title={`${statusCode} Response Body`}
-                                       contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
-                                       exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
-                                       shapeTags={(isActive && diffDescription) ? diffDescription.shapeTags : undefined}
-                                       shapeId={response.responseBody.shapeId}
-                                       example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>);
-            })}
-          </div>)}
-        />
+          <DiffDocGrid
+            active={isActive}
+            style={{marginBottom: 40}}
+            colMaxWidth={600}
+            right={(
+              <div>
+                <DiffViewer nameOverride={`${statusCode} Response Diff`} groupDiffs={diffs}
+                            approvedKey={'response-' + statusCode}/>
+              </div>
+            )} left={(
+            <div className={classes.rightRegion}>
+              {(contentTypes.length === 0) && (
+                <DiffShapeViewer title={`${statusCode} Response Body`}
+                                 contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
+                                 exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
+                                 shapeTags={(isActive && diffDescription) ? diffDescription.shapeTags : undefined}
+                                 example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>
+              )}
+              {contentTypes.map(response => {
+                return (<DiffShapeViewer title={`${statusCode} Response Body`}
+                                         contentType={currentExample && ContentTypeHelpers.contentTypeOrNull(currentExample.request)}
+                                         exampleTags={(isActive && diffDescription) ? diffDescription.exampleTags : undefined}
+                                         shapeTags={(isActive && diffDescription) ? diffDescription.shapeTags : undefined}
+                                         shapeId={response.responseBody.shapeId}
+                                         example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>);
+              })}
+            </div>)}
+          />
         </div>
       );
     };
@@ -262,7 +321,8 @@ class _DiffPageContent extends React.Component {
               <Typography variant="caption" style={{fontSize: 10, color: '#a4a4a4', marginRight: 15}}>Accepted
                 ({acceptedSuggestions.length})
                 Suggestions</Typography>
-              <Button onClick={() => setIsFinishing(true)} startIcon={<Check/>} color="secondary">Finish</Button>
+              <Button onClick={() => setIsFinishing(true)} startIcon={<Check/>}
+                      color="secondary">Finish</Button>
             </div>
           </Toolbar>
         </AppBar>
@@ -280,7 +340,8 @@ class _DiffPageContent extends React.Component {
                 />
               </div>
               <RequestBodyRegion/>
-              {responsesToRender.map(responseStatusCode => <ResponseBodyRegion statusCode={responseStatusCode}/>)}
+              {responsesToRender.map(responseStatusCode => <ResponseBodyRegion
+                statusCode={responseStatusCode}/>)}
             </NamerStore>
           </div>
         </div>
@@ -289,7 +350,12 @@ class _DiffPageContent extends React.Component {
   }
 }
 
-const DiffPageContent = compose(withStyles(styles), withDiffContext, withEndpointsContext)(_DiffPageContent);
+const DiffPageContent = compose(
+  withStyles(styles),
+  withDiffContext, withEndpointsContext,
+  withSpecServiceContext, withRfcContext,
+  withRouter, withNavigationContext
+)(_DiffPageContent);
 
 export const SuggestionsContext = React.createContext(null);
 
@@ -298,11 +364,16 @@ function SuggestionsStore({children}) {
   const [acceptedSuggestions, setAcceptedSuggestions] = React.useState([]);
   const [acceptedSuggestionsWithDiff, setAcceptedSuggestionsWithDiff] = React.useState([]);
 
-  const addAcceptedSuggestion = (suggestion, diff, key) => setAcceptedSuggestionsWithDiff([...acceptedSuggestionsWithDiff, {
-    suggestion,
-    diff,
-    key
-  }]);
+  const addAcceptedSuggestion = (suggestion, diff, key) => {
+    setAcceptedSuggestionsWithDiff([
+      ...acceptedSuggestionsWithDiff,
+      {
+        suggestion,
+        diff,
+        key
+      }
+    ]);
+  };
 
   const resetAccepted = () => {
     setAcceptedSuggestions([]);
@@ -351,7 +422,7 @@ function flatten(acc, array) {
 }
 
 const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function InnerDiffWrapperBase(props) {
-  const {eventStore, rfcService, rfcId} = props;
+  const {eventStore, initialEventStore, rfcService, rfcId} = props;
   const {isLoading, session} = props;
   const {children} = props;
   const {setSuggestionToPreview, setAcceptedSuggestions, acceptedSuggestions, suggestionToPreview, addAcceptedSuggestion, ignoredDiffs, resetIgnored, resetAccepted} = props;
@@ -388,6 +459,7 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
     interpretationsForDiffAndInteraction,
     simulatedCommands,
     eventStore,
+    initialEventStore,
     rfcState
   };
 
@@ -413,7 +485,7 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
     >
       <SimulatedCommandContext
         rfcId={rfcId}
-        eventStore={eventStore.getCopy(rfcId)}
+        eventStore={initialEventStore.getCopy(rfcId)}
         commands={simulatedCommands}
         shouldSimulate={true}
       >
@@ -513,7 +585,8 @@ function BatchActionsMenu(props) {
             anchorOrigin={{vertical: 'bottom'}}
             onClose={() => setAnchorEl(null)}>
         <BatchLearnDialog
-          button={(handleClickOpen) => <MenuItem onClick={handleClickOpen}>Accept all Suggestions</MenuItem>}/>
+          button={(handleClickOpen) => <MenuItem onClick={handleClickOpen}>Accept all
+            Suggestions</MenuItem>}/>
         <MenuItem>Ignore all Diffs</MenuItem>
         <MenuItem onClick={() => {
           props.reset();

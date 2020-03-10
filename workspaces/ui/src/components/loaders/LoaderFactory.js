@@ -18,10 +18,18 @@ import {ProductDemoStore} from '../navigation/ProductDemo';
 import Init from '../onboarding/Init';
 import {SpecServiceStore, withSpecServiceContext} from '../../contexts/SpecServiceContext';
 import DiffPageNew from '../diff/v2/DiffPageNew';
+import EventEmitter from 'events';
 
 class LoaderFactory {
   static build(options) {
-    const {notificationAreaComponent, shareButtonComponent, demo, basePath, specServiceTask, RfcStoreImpl = RfcStore} = options;
+    const {
+      notificationAreaComponent, shareButtonComponent, demo,
+      basePath, specServiceTask, specServiceEvents,
+      RfcStoreImpl = RfcStore
+    } = options;
+    if (!specServiceEvents) {
+      debugger
+    }
 
     const entryBasePath = basePath;
 
@@ -33,18 +41,16 @@ class LoaderFactory {
           sessionId={sessionId}
           specService={specService}
         >
-          <SpecServiceStore specService={specService}>
-            <Switch>
-              <Route exact path={routerPaths.diffUrls(match.path)} component={UrlsX}/>
-              <Route exact path={routerPaths.diffRequestNew(match.path)} component={DiffPageNew}/>
-              <Route component={withSpecServiceContext(ApiOverview)}/>
-            </Switch>
-          </SpecServiceStore>
+          <Switch>
+            <Route exact path={routerPaths.diffUrls(match.path)} component={UrlsX}/>
+            <Route exact path={routerPaths.diffRequestNew(match.path)} component={DiffPageNew}/>
+            <Route component={withSpecServiceContext(ApiOverview)}/>
+          </Switch>
         </TrafficSessionStore>
       );
     }
 
-    function withTask(taskFunction, propName) {
+    function withTask(taskFunction, propName, eventEmitter = null) {
       return function (Wrapped) {
         class Runner extends React.Component {
           state = {
@@ -54,6 +60,13 @@ class LoaderFactory {
           };
 
           componentDidMount() {
+            this.update();
+            eventEmitter && eventEmitter.on('rerun', () => {
+              this.update()
+            });
+          }
+
+          update() {
             this.setState({
               isLoading: true
             });
@@ -96,13 +109,14 @@ class LoaderFactory {
 
         return (
           <IntegrationsContextStore integrations={integrations}>
-            <SpecServiceStore specService={specService}>
+            <SpecServiceStore specService={specService} specServiceEvents={specServiceEvents}>
               <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
                 <RfcStoreImpl specService={specService}>
                   <ApiOverviewContextStore specService={specService}>
-                    <Navigation notifications={notificationAreaComponent}
-                                entryBasePath={entryBasePath}
-                                shareButtonComponent={shareButtonComponent}>
+                    <Navigation
+                      notifications={notificationAreaComponent}
+                      entryBasePath={entryBasePath}
+                      shareButtonComponent={shareButtonComponent}>
                       <Switch>
                         <Route exact path={routerPaths.init(basePath)}
                                component={() => <Init/>}/>
@@ -169,9 +183,15 @@ class LoaderFactory {
       return results;
     };
 
+    const initialEventsStringEmitter = new EventEmitter();
+    specServiceEvents.on('events-updated', () => {
+      debugger
+      initialEventsStringEmitter.emit('rerun')
+    });
+
     const withWrapper = compose(
       withTask(specServiceTask, 'specService'),
-      withTask(task, 'initialEventsString'),
+      withTask(task, 'initialEventsString', initialEventsStringEmitter),
     );
 
     const wrappedTopLevelRoutes = withWrapper(TopLevelRoutes);
