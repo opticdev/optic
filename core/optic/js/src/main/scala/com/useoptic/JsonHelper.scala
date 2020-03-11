@@ -1,7 +1,7 @@
 package com.useoptic
 
-import com.useoptic.types.capture.HttpInteraction
-import io.circe.Json
+import com.useoptic.types.capture.{HttpInteraction, ShapeHashBytes}
+import io.circe.{Decoder, Json}
 
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
@@ -44,17 +44,27 @@ object JsonHelper {
     x.toJSArray
   }
 
-  def iteratorToJsIterator(x: Iterator[AnyVal]): js.Iterator[AnyVal] = {
+  def iteratorToJsIterator(x: Iterator[Any]): js.Iterator[Any] = {
     x.toJSIterator
   }
 
-  def jsArrayToSeq(x: js.Array[AnyVal]): Seq[AnyVal] = {
+  def jsArrayToSeq(x: js.Array[Any]): Seq[Any] = {
     x.toSeq
+  }
+  def jsArrayToVector(x: js.Array[Any]): Vector[Any] = {
+    x.toVector
+  }
+
+  def seqToVector(x: Seq[Any]): Vector[Any] = {
+    x.toVector
   }
 
   def fromInteraction(x: js.Any): HttpInteraction = {
     import io.circe.generic.auto._
     import io.circe.scalajs.convertJsToJson
+    implicit val shapeHashDecoder: Decoder[ShapeHashBytes] = (json) => {
+      Right(ShapeHashBytes(json.downField("bytes").downField("data").as[Vector[Byte]].right.get))
+    }
     convertJsToJson(x).right.get.as[HttpInteraction].right.get
   }
 }

@@ -76,6 +76,8 @@ class RfcStoreWithoutContext extends React.Component {
       //console.log({ bulkAdd: JSON.parse(initialEventsString) })
       eventStore.bulkAdd(rfcId, initialEventsString);
     }
+    const initialEventStore = (props.initialEventStore || eventStore).getCopy(rfcId);
+    global.initialEventStore = initialEventStore;
     const rfcService = (() => {
       const batchId = 'initial-batch';
       const {clientId, clientSessionId} = this.props;
@@ -94,6 +96,7 @@ class RfcStoreWithoutContext extends React.Component {
     const queries = Queries(eventStore, rfcService, rfcId);
 
     this.state = {
+      initialEventStore,
       eventStore,
       rfcService,
       queries,
@@ -111,6 +114,10 @@ class RfcStoreWithoutContext extends React.Component {
 
   handleCommands(...commands) {
     const {clientId, clientSessionId} = this.props;
+    if (!clientId || !clientSessionId) {
+      console.warn('I need clientId and clientSessionId')
+      debugger
+    }
     const batchId = uuidv4();
     const commandContext = new RfcCommandContext(clientId, clientSessionId, batchId);
 
@@ -119,27 +126,34 @@ class RfcStoreWithoutContext extends React.Component {
       this.state.rfcService.handleCommands(this.props.rfcId, commandContext, ...commands);
       global.commands.push(...commands);
 
-      console.log(this.state.eventStore.serializeEvents(this.props.rfcId));
+      //console.log(this.state.eventStore.serializeEvents(this.props.rfcId));
       this.handleChange();
     } catch (e) {
       debugger
       console.error(e);
-      console.log(...commands);
-      console.log(commandsToJson(commands));
+      //console.log(...commands);
+      //console.log(commandsToJson(commands));
     }
 
     //commands.forEach(command => track('Command', { commandType: commandNameFor(command) }))
   }
 
   render() {
-    const {queries, eventStore, hasUnsavedChanges, rfcService} = this.state;
-    const {rfcId} = this.props;
+    const {queries, eventStore, initialEventStore, hasUnsavedChanges, rfcService} = this.state;
+    const {rfcId, clientId, clientSessionId} = this.props;
     const {specService} = this.props;
+    if (!specService) {
+      console.warn('I need specService')
+      debugger
+    }
     const cachedQueryResults = stuffFromQueries(queries);
     const value = {
       rfcId,
+      clientSessionId,
+      clientId,
       rfcService,
       specService,
+      initialEventStore,
       eventStore,
       queries,
       cachedQueryResults,

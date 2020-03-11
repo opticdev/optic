@@ -1,6 +1,5 @@
 import React from 'react';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
-import events from 'events';
 import {DiffToggleStates, withDiffToggleContext} from './DiffShapeViewer';
 
 const {

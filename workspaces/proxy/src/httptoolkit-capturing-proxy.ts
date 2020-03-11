@@ -2,7 +2,6 @@ import {IBody} from '@useoptic/domain';
 import {EventEmitter} from 'events';
 import * as path from 'path';
 import * as os from 'os';
-import * as url from 'url';
 import * as mockttp from 'mockttp';
 import * as fs from 'fs-extra';
 import launcher from '@httptoolkit/browser-launcher';
@@ -10,7 +9,8 @@ import {CallbackResponseResult} from 'mockttp/dist/rules/handlers';
 import {CompletedRequest, MockRuleData} from 'mockttp';
 import {IHttpInteraction} from '@useoptic/domain';
 import {developerDebugLogger} from './logger';
-import {IncomingHttpHeaders} from 'http';
+//@ts-ignore
+import {toBytes} from 'shape-hash';
 
 export interface IHttpToolkitCapturingProxyConfig {
   proxyTarget?: string
@@ -18,33 +18,11 @@ export interface IHttpToolkitCapturingProxyConfig {
   host: string
   flags: {
     chrome: boolean
+    includeJsonBody: boolean
+    includeTextBody: boolean
+    includeShapeHash: boolean
   }
 }
-
-function headerObjectToList(headers: IncomingHttpHeaders) {
-  return Object.entries(headers)
-    .map(([key, value]) => {
-      if (value === undefined) {
-        return [];
-      }
-      if (typeof value === 'string') {
-        return [
-          {
-            name: key,
-            value
-          }
-        ];
-      }
-      return value.map((v: string) => {
-        return {
-          name: key,
-          value: v
-        };
-      });
-    })
-    .reduce((acc, values) => [...acc, ...values], []);
-}
-
 
 export interface IRequestFilter {
   shouldSkip(request: CompletedRequest): boolean
@@ -145,20 +123,6 @@ export class HttpToolkitCapturingProxy {
           return response;
         })
       },
-      {
-        matchers: [
-          new mockttp.matchers.HostMatcher('amiusing.httptoolkit.tech')
-        ],
-        handler: new mockttp.handlers.CallbackHandler(request => {
-          const response: CallbackResponseResult = {
-            statusCode: 302,
-            headers: {
-              location: `https://docs.useoptic.com`
-            }
-          };
-          return response;
-        })
-      },
       ...rules
     );
     const requestFilter: IRequestFilter = new HttpToolkitRequestFilter(config.host, config.proxyTarget);
@@ -179,7 +143,6 @@ export class HttpToolkitCapturingProxy {
         if (!req) {
           return;
         }
-        const queryString: string = url.parse(req.url).query || '';
         developerDebugLogger(req);
         const sample: IHttpInteraction = {
           tags: [],
@@ -198,7 +161,7 @@ export class HttpToolkitCapturingProxy {
               asText: null,
               asShapeHashBytes: null
             },
-            body: extractBody(req)
+            body: this.extractBody(req)
           },
           response: {
             statusCode: res.statusCode,
@@ -207,7 +170,7 @@ export class HttpToolkitCapturingProxy {
               asJsonString: null,
               asText: null
             },
-            body: extractBody(res)
+            body: this.extractBody(res)
           }
         };
         developerDebugLogger({sample});
@@ -225,7 +188,6 @@ export class HttpToolkitCapturingProxy {
 
     developerDebugLogger(`trying to start proxy on port ${config.proxyPort}`);
     try {
-
       await proxy.start({
         startPort: config.proxyPort,
         endPort: config.proxyPort
@@ -266,6 +228,28 @@ export class HttpToolkitCapturingProxy {
     }
   }
 
+  extractBody(req: mockttp.CompletedRequest | mockttp.CompletedResponse): IBody {
+    if (req.headers['content-type'] || req.headers['transfer-encoding']) {
+      const json = req.body.json || req.body.formData || null;
+      return {
+        contentType: req.headers['content-type'] || null,
+        value: {
+          asShapeHashBytes: this.config.flags.includeShapeHash && json ? {bytes: toBytes(json)} : null,
+          asJsonString: this.config.flags.includeJsonBody && json ? JSON.stringify(json) : null,
+          asText: this.config.flags.includeTextBody && json ? null : req.body.text || null
+        }
+      };
+    }
+    return {
+      contentType: null,
+      value: {
+        asText: null,
+        asJsonString: null,
+        asShapeHashBytes: null
+      }
+    };
+  }
+
   async stop() {
     await this.proxy.stop();
     if (this.config.flags.chrome) {
@@ -283,24 +267,3 @@ export class HttpToolkitCapturingProxy {
   }
 }
 
-export function extractBody(req: mockttp.CompletedRequest | mockttp.CompletedResponse): IBody {
-  if (req.headers['content-type'] || req.headers['transfer-encoding']) {
-    const json = req.body.json || req.body.formData || null;
-    return {
-      contentType: req.headers['content-type'] || null,
-      value: {
-        asShapeHashBytes: null,
-        asJsonString: json ? JSON.stringify(json) : null,
-        asText: json ? null : req.body.text || null
-      }
-    };
-  }
-  return {
-    contentType: null,
-    value: {
-      asText: null,
-      asJsonString: null,
-      asShapeHashBytes: null
-    }
-  };
-}

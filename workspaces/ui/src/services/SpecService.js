@@ -1,4 +1,4 @@
-import Bottleneck from "bottleneck"
+import Bottleneck from 'bottleneck';
 
 class NetworkUtilities {
 
@@ -69,11 +69,12 @@ class NetworkUtilities {
 const outgoingPoll = new Bottleneck({
   maxConcurrent: 1,
   minTime: 1000,
-})
+});
 
 class SpecService {
-  constructor(specId) {
+  constructor(specId, eventEmitter) {
     this.specId = specId;
+    this.eventEmitter = eventEmitter;
   }
 
   listEvents() {
@@ -83,7 +84,7 @@ class SpecService {
   listCaptures() {
     return outgoingPoll.schedule(() => {
       return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures`);
-    })
+    });
   }
 
   getCommandContext() {
@@ -92,7 +93,11 @@ class SpecService {
 
   saveEvents(eventStore, rfcId) {
     const serializedEvents = eventStore.serializeEvents(rfcId);
-    return NetworkUtilities.putJson(`/api/specs/${this.specId}/events`, serializedEvents);
+    return NetworkUtilities.putJson(`/api/specs/${this.specId}/events`, serializedEvents)
+      .then((x) => {
+        this.eventEmitter.emit('events-updated');
+        return x;
+      });
   }
 
   saveExample(interaction, requestId) {

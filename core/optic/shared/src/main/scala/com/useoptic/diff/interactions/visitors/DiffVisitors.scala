@@ -193,5 +193,5 @@ class DiffVisitors extends Visitors {
     }
   }
 
-  override val responseBodyVisitor: ResponseBodyVisitor = new DiffResponseBodyVisitor()
+  override val responseBodyVisitor = new DiffResponseBodyVisitor()
 }

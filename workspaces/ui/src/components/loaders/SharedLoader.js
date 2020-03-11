@@ -18,8 +18,10 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import LinkIcon from '@material-ui/icons/Link';
 import copy from 'copy-to-clipboard';
+import EventEmitter from 'events';
 
 const basePath = basePaths.sharedBasePath;
+const specServiceEvents = new EventEmitter();
 
 class SharedSpecService extends SpecService {
   constructor(id, initialEventsString, exampleRequests) {
@@ -32,6 +34,7 @@ class SharedSpecService extends SpecService {
   saveEvents(eventStore, rfcId) {
     const serializedEvents = eventStore.serializeEvents(rfcId);
     this.eventsString = serializedEvents;
+    specServiceEvents.emit('events-updated');
     return Promise.resolve();
   }
 
@@ -173,6 +176,7 @@ const {
   Routes: SharedLoaderRoutes
 } = LoaderFactory.build({
   specServiceTask,
+  specServiceEvents,
   notificationAreaComponent,
   shareButtonComponent,
   basePath

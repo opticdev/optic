@@ -5,12 +5,13 @@ import {basePaths} from '../../../RouterPaths';
 import {LoaderFactory} from '../../loaders/LoaderFactory';
 import {notificationAreaComponent, shareButtonComponent} from '../../loaders/SharedLoader';
 import {LocalRfcStore} from '../../../contexts/RfcContext';
+import EventEmitter from 'events';
 
 export const basePath = basePaths.localBasePath;
-
+const specServiceEvents = new EventEmitter()
 const specServiceTask = async (props) => {
   console.log({props});
-  const specService = new SpecService(props.match.params.specId);
+  const specService = new SpecService(props.match.params.specId, specServiceEvents);
   return Promise.resolve(specService);
 };
 
@@ -19,6 +20,7 @@ const {
 } = LoaderFactory.build({
   RfcStoreImpl: LocalRfcStore,
   specServiceTask,
+  specServiceEvents,
   notificationAreaComponent,
   shareButtonComponent,
   basePath

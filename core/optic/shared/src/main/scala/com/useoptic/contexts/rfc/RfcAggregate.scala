@@ -4,9 +4,9 @@ import com.useoptic.contexts.base.BaseCommandContext
 import com.useoptic.contexts.requests.Commands.RequestsCommand
 import com.useoptic.contexts.requests.Events.RequestsEvent
 import com.useoptic.contexts.requests.{RequestsAggregate, RequestsCommandContext}
-import com.useoptic.contexts.rfc.Commands.{APISetupCommand, AddContribution, ContributionCommand, RfcCommand, SetAPIName, VersionControlCommand}
+import com.useoptic.contexts.rfc.Commands.{APISetupCommand, AddContribution, ContributionCommand, RfcCommand, SetAPIName, SpecEvolutionCommand, VersionControlCommand}
 import com.useoptic.contexts.rfc.Composition.forwardTo
-import com.useoptic.contexts.rfc.Events.{APINamed, ContributionAdded, EventContext, GitStateSet, RfcEvent}
+import com.useoptic.contexts.rfc.Events.{APINamed, BatchCommitEnded, BatchCommitStarted, ContributionAdded, EventContext, GitStateSet, RfcEvent}
 import com.useoptic.contexts.shapes.Commands.ShapesCommand
 import com.useoptic.contexts.shapes.Events.ShapesEvent
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesCommandContext, ShapesState}
@@ -53,6 +53,14 @@ object RfcAggregate extends EventSourcedAggregate[RfcState, RfcCommand, RfcComma
         case AddContribution(id, key, value) => persist(ContributionAdded(id, key, value, eventContext))
         case SetAPIName(name) => persist(APINamed(name, eventContext))
         case _ => noEffect()
+      }
+    }
+
+    case (cc: RfcCommandContext, specEvolutionCommand: SpecEvolutionCommand) => {
+      val eventContext: Option[EventContext] = Some(Events.fromCommandContext(cc))
+      specEvolutionCommand match {
+        case c: Commands.StartBatchCommit => persist(BatchCommitStarted(c.batchId, c.commitMessage, eventContext))
+        case c: Commands.EndBatchCommit => persist(BatchCommitEnded(c.batchId, eventContext))
       }
     }
 

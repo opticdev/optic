@@ -27,17 +27,22 @@ class CommandAndProxySessionManager {
       persistenceManager.save(sample);
     });
 
-    const target = new URL('https://example.org');
-    target.host = serviceHost;
-    target.port = servicePort.toString();
-    target.protocol = this.config.serviceConfig.protocol;
-
+    const target = require('url')
+      .format({
+        hostname: serviceHost,
+        port: servicePort,
+        protocol: this.config.serviceConfig.protocol
+      });
+    developerDebugLogger({target});
     await inboundProxy.start({
       flags: {
-        chrome: process.env.OPTIC_ENABLE_CHROME === 'yes'
+        chrome: process.env.OPTIC_ENABLE_CHROME === 'yes',
+        includeTextBody: true,
+        includeJsonBody: true,
+        includeShapeHash: true
       },
       host: this.config.proxyConfig.host,
-      proxyTarget: process.env.OPTIC_ENABLE_TRANSPARENT_PROXY === 'yes' ? undefined : `${target.protocol}//${target.host.toString()}`,
+      proxyTarget: process.env.OPTIC_ENABLE_TRANSPARENT_PROXY === 'yes' ? undefined : target,
       proxyPort: this.config.proxyConfig.port
     });
 
