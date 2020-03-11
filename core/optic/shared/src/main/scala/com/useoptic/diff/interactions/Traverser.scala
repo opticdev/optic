@@ -11,8 +11,8 @@ class Traverser(spec: RfcState, visitors: Visitors) {
   def traverse(interaction: HttpInteraction) {
     val resolvedPath = Utilities.resolvePath(interaction.request.path, spec.requestsState.pathComponents)
     visitors.pathVisitor.visit(interaction, PathVisitorContext(spec, resolvedPath))
+
     visitors.requestBodyVisitor.begin()
-    visitors.responseBodyVisitor.begin()
     resolvedPath match {
       case Some(pathId) => {
         val resolvedOperations = Resolvers.resolveOperations(interaction, pathId, spec.requestsState)
@@ -26,6 +26,9 @@ class Traverser(spec: RfcState, visitors: Visitors) {
         traverseRequest(interaction, resolvedPath, None)
       }
     }
+    visitors.requestBodyVisitor.end(interaction, PathVisitorContext(spec, resolvedPath))
+
+    visitors.responseBodyVisitor.begin()
     resolvedPath match {
       case Some(pathId) => {
         val resolvedResponses = Resolvers.resolveResponsesByPathAndMethod(interaction, pathId, spec.requestsState)
@@ -39,7 +42,6 @@ class Traverser(spec: RfcState, visitors: Visitors) {
         traverseResponse(interaction, resolvedPath, None)
       }
     }
-    visitors.requestBodyVisitor.end(interaction, PathVisitorContext(spec, resolvedPath))
     visitors.responseBodyVisitor.end(interaction, PathVisitorContext(spec, resolvedPath))
   }
 
