@@ -1,8 +1,9 @@
 package com.useoptic.diff.interactions
 
 import com.useoptic.diff.shapes.ShapeDiffResult
+import com.useoptic.serialization.StableHashable
 
-sealed trait InteractionDiffResult
+sealed trait InteractionDiffResult extends StableHashable
 
 case class UnmatchedRequestUrl(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail) extends InteractionDiffResult
 

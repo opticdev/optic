@@ -4,12 +4,9 @@ import com.useoptic.contexts.requests.Commands.{PathComponentId, RequestId, Resp
 import com.useoptic.diff.interactions.InteractionDiffResult
 import com.useoptic.diff.shapes.ShapeTrail
 import com.useoptic.dsa.Counter
+import com.useoptic.serialization.StableHashable
 
-import scala.scalajs.js.annotation.{JSExport, JSExportDescendentClasses}
-
-@JSExport
-@JSExportDescendentClasses
-sealed trait CoverageConcerns
+sealed trait CoverageConcerns extends StableHashable
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
