@@ -47,6 +47,10 @@ export const mapScala = (collection: any) => (handler: any) => {
   return ScalaJSHelpers.toJsArray(collection).map(handler);
 };
 
+export const getOrUndefined = (option: any) => {
+  return ScalaJSHelpers.getOrUndefined(option);
+};
+
 export const everyScala = (collection: any) => (handler: any) => {
   return ScalaJSHelpers.toJsArray(collection).every(handler);
 };

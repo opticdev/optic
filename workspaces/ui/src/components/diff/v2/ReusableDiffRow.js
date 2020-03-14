@@ -1,6 +1,6 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-
+import classnames from 'classnames'
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -20,9 +20,9 @@ const styles = theme => ({
 
 class ReusableDiffRow extends React.Component {
   render() {
-    const {classes, mainContentMax, notifications,  children} = this.props;
+    const {classes, className, mainContentMax, notifications,  children} = this.props;
     return (
-      <div className={classes.root}>
+      <div className={classnames(classes.root, className)}>
         <div className={classes.mainContent} style={{maxWidth: mainContentMax, width: '100%'}}>{children}</div>
         <div className={classes.spacer}/>
         <div className={classes.right}>{notifications}</div>

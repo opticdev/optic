@@ -1,6 +1,7 @@
 import React from 'react';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
 import {DiffToggleStates, withDiffToggleContext} from './DiffShapeViewer';
+import {withRequestTabsContext} from './ContentTabs';
 
 const {
   Context: DiffContext,
@@ -43,7 +44,7 @@ class _DiffContextStore extends React.Component {
 
         setSuggestionToPreview(null);
         if (diff) {
-          setTabTo(DiffToggleStates.EXAMPLE)
+          setTabTo(DiffToggleStates.SHAPE)
         }
       });
     };
@@ -101,7 +102,7 @@ class _DiffContextStore extends React.Component {
   }
 }
 
-const DiffContextStore = withDiffToggleContext(_DiffContextStore)
+const DiffContextStore = withRequestTabsContext(withDiffToggleContext(_DiffContextStore))
 
 export {
   DiffContext,

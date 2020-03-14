@@ -16,6 +16,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function _BatchLearnDialog(props) {
+  return null
   const {isEmpty} = props.endpointDescriptor;
 
   const [open, setOpen] = React.useState(props.open || false);

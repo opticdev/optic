@@ -5,6 +5,7 @@ import {secondary} from '../../../theme';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import ReusableDiffRow from './ReusableDiffRow';
+import {Typography} from '@material-ui/core';
 
 
 const {
@@ -24,7 +25,10 @@ class RequestTabsContextStore extends React.Component {
     const context = {
       setRequestContentType: (e) => this.setState({requestContentType: e}),
       setResponseStatusCode: (e) => this.setState({responseStatusCode: e}),
-      setResponseContentType: (e) => this.setState({responseContentType: e})
+      setResponseContentType: (e) => this.setState({responseContentType: e}),
+      requestContentType: this.state.requestContentType,
+      responseStatusCode: this.state.responseStatusCode,
+      responseContentType: this.state.responseContentType
     };
 
     return (
@@ -69,7 +73,7 @@ const ContentStyledTab = withStyles(theme => {
       minHeight: 'inherit',
       minWidth: 'inherit',
       fontWeight: theme.typography.fontWeightRegular,
-      fontSize: theme.typography.pxToRem(12),
+      fontSize: theme.typography.pxToRem(14),
       marginRight: theme.spacing(2),
       '&:focus': {
         opacity: 1,
@@ -87,22 +91,59 @@ const styles = theme => ({
 });
 
 class ContentTabs extends React.Component {
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    const {inRequest, responseContentType, setResponseContentType, setResponseStatusCode, responseStatusCode, requestContentType, options, setRequestContentType} = this.props
+    if (inRequest && !requestContentType && options.contentTypes.length > 0) {
+      setRequestContentType(options.contentTypes[0])
+    }
+    if (!inRequest && !responseStatusCode && options.length > 0) {
+      setResponseStatusCode(options[0].statusCode)
+      setResponseContentType(options[0].contentTypes[0])
+    }
+  }
+
   render() {
-    const {classes, options, notifications} = this.props;
+    const {classes, options, notifications, inRequest, requestContentType, responseContentType, setRequestContentType, setResponseContentType, responseStatusCode, setResponseStatusCode, renderResponse, renderRequest} = this.props;
+
+    const contentTypeTab = inRequest ? requestContentType : responseContentType;
+    const setContentTypeTab = inRequest ? setRequestContentType : setResponseContentType;
+
+    const contentTypeOptions = inRequest ? (options.contentTypes || []) :
+      (((options.find(i => i.statusCode === responseStatusCode) || {}).contentTypes) || []);
+
+    const children = inRequest ? renderRequest(requestContentType) : renderResponse(responseStatusCode, responseContentType)
+
     return (
-      <ReusableDiffRow notifications={notifications}>
+      <>
+        <ReusableDiffRow notifications={notifications}>
+          <div className={classes.root}>
+            <Typography variant="h6" color="primary">{inRequest ? 'Request' : 'Response'}</Typography>
+          </div>
+        </ReusableDiffRow>
         <div className={classes.root}>
-          <ContentStyledTabs value={0}>
-            {options.map(({statusCode}) => (<ContentStyledTab label={statusCode}/>))}
-          </ContentStyledTabs>
+          {!inRequest && (<ContentStyledTabs
+              onChange={(e, newValue) => setResponseStatusCode(newValue)}
+              value={responseStatusCode}>
+              {options.map(({statusCode}, index) => (
+                <ContentStyledTab label={statusCode} value={statusCode}/>
+              ))}
+            </ContentStyledTabs>
+          )}
 
           <div style={{flex: 1}}/>
 
-          <ContentStyledTabs value={0}>
-            {options[0].contentTypes.map((contentType) => (<ContentStyledTab label={contentType}/>))}
+          <ContentStyledTabs
+            value={contentTypeTab}
+            onChange={(e, newValue) => setContentTypeTab(newValue)}>
+            {contentTypeOptions.map((contentType) =>
+              (<ContentStyledTab label={contentType} value={contentType}/>))}
           </ContentStyledTabs>
         </div>
-      </ReusableDiffRow>
+        <div style={{paddingTop: 22}}>
+          {children}
+        </div>
+      </>
     );
   }
 }

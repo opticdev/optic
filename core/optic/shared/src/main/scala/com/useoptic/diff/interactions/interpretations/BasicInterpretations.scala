@@ -7,7 +7,7 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldShapeFromShape, ProviderInShape, ShapeProvider}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper, Commands => ShapesCommands}
-import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
+import com.useoptic.diff.{ChangeType, GotoPreview, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, Resolvers, ShapeTrail}
@@ -26,7 +26,8 @@ class BasicInterpretations(rfcState: RfcState) {
       s"Add ${interactionTrail.statusCode()} Response",
       s"Include status code in specification",
       commands,
-      ChangeType.Addition
+      ChangeType.Addition,
+      goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 
@@ -47,7 +48,8 @@ class BasicInterpretations(rfcState: RfcState) {
       "Add Request Body",
       s"Include a ${interactionTrail.requestContentType()} body",
       commands,
-      ChangeType.Addition
+      ChangeType.Addition,
+      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption())
     )
   }
 
@@ -68,7 +70,8 @@ class BasicInterpretations(rfcState: RfcState) {
       "Add Response Body",
       s"Include a ${interactionTrail.responseContentType()} body",
       commands,
-      ChangeType.Addition
+      ChangeType.Addition,
+      goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 
@@ -82,7 +85,8 @@ class BasicInterpretations(rfcState: RfcState) {
       "Set Response Content-Type",
       "",
       commands,
-      ChangeType.Update
+      ChangeType.Update,
+      goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 
@@ -96,7 +100,8 @@ class BasicInterpretations(rfcState: RfcState) {
       "Set Request Content-Type",
       "Change from ",
       commands,
-      ChangeType.Update
+      ChangeType.Update,
+      goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 
@@ -118,7 +123,8 @@ class BasicInterpretations(rfcState: RfcState) {
           s"Add Request with ${contentType} body",
           "Add new body content-type",
           commands,
-          ChangeType.Addition
+          ChangeType.Addition,
+          goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption())
         )
       }
       case None => {
@@ -127,7 +133,8 @@ class BasicInterpretations(rfcState: RfcState) {
           "Add Request without body",
           "Add new request",
           commands,
-          ChangeType.Addition
+          ChangeType.Addition,
+          goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption())
         )
       }
     }
@@ -151,7 +158,8 @@ class BasicInterpretations(rfcState: RfcState) {
           s"Add ${interactionTrail.responseContentType()}",
           "Add new body content-type",
           commands,
-          ChangeType.Addition
+          ChangeType.Addition,
+          goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
         )
       }
       case None => {
@@ -160,7 +168,8 @@ class BasicInterpretations(rfcState: RfcState) {
           s"Add Response without Body",
           "Add new response",
           commands,
-          ChangeType.Addition
+          ChangeType.Addition,
+          goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
         )
       }
     }
@@ -200,7 +209,8 @@ class BasicInterpretations(rfcState: RfcState) {
       "Change to a <shape>",
       "Change from <old-type> to <new-type>",
       commands,
-      ChangeType.Update
+      ChangeType.Update,
+      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 
@@ -221,7 +231,8 @@ class BasicInterpretations(rfcState: RfcState) {
       s"Add Field <fieldName>",
       "Add <fieldName> as <shape-type>",
       commands,
-      ChangeType.Addition
+      ChangeType.Addition,
+      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 }

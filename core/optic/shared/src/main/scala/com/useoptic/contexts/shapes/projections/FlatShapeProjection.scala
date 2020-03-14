@@ -5,16 +5,17 @@ import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.contexts.shapes.projections.NameForShapeId.ColoredComponent
 import com.useoptic.contexts.shapes.{FlattenedShape, ShapesHelper, ShapesState}
 import com.useoptic.diff.ChangeType.ChangeType
+import com.useoptic.diff.interactions.ShapeRelatedDiff
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, OneOfTrail, Resolvers, ShapeTrail, ShapeTrailPathComponent}
 
 import scala.collection.mutable
 
 object FlatShapeProjection {
-  private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false, Map.empty, None))
+  private val returnAny = (AnyKind.baseShapeId, FlatShape(AnyKind.baseShapeId, Seq(ColoredComponent("Any", "primitive", primitiveId = Some(AnyKind.baseShapeId))), Seq.empty, "$any", false, Map.empty, None, Seq.empty))
 
-  def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None, trailTags: TrailTags[ShapeTrail] = TrailTags(Map.empty))(implicit shapesState: ShapesState, expandedName: Boolean = true, revision: Int = 0) = {
+  def forShapeId(shapeId: ShapeId, fieldIdOption: Option[String] = None, trailTags: TrailTags[ShapeTrail] = TrailTags(Map.empty), shapeRelatedDiffs: Seq[ShapeRelatedDiff] = Seq.empty)(implicit shapesState: ShapesState, expandedName: Boolean = true, revision: Int = 0): FlatShapeResult = {
     implicit val parametersByShapeId: mutable.Map[String, FlatShape] = scala.collection.mutable.HashMap[String, FlatShape]()
-    val root = getFlatShape(shapeId, ShapeTrail(shapeId, Seq.empty))(shapesState, fieldIdOption, expandedName, parametersByShapeId, trailTags)
+    val root = getFlatShape(shapeId, ShapeTrail(shapeId, Seq.empty))(shapesState, fieldIdOption, expandedName, parametersByShapeId, trailTags, shapeRelatedDiffs)
     FlatShapeResult(root, parametersByShapeId.toMap, Vector(), s"${shapeId}_${revision.toString}")
   }
 
@@ -24,10 +25,9 @@ object FlatShapeProjection {
     }
   }
 
-  private def getFlatShape(shapeId: ShapeId, path: ShapeTrail)(implicit shapesState: ShapesState, fieldIdOption: Option[String], expandedName: Boolean = false, parametersByShapeId: mutable.Map[String, FlatShape], trailTags: TrailTags[ShapeTrail]): FlatShape = {
+  private def getFlatShape(shapeId: ShapeId, path: ShapeTrail)(implicit shapesState: ShapesState, fieldIdOption: Option[String], expandedName: Boolean = false, parametersByShapeId: mutable.Map[String, FlatShape], trailTags: TrailTags[ShapeTrail], shapeRelatedDiffs: Seq[ShapeRelatedDiff]): FlatShape = {
     val shape = shapesState.flattenedShape(shapeId)
-
-
+    
     def resolveInner(paramId: String, pathNew: ShapeId => Seq[ShapeTrailPathComponent]) = Resolvers.resolveParameterToShape(shapesState, shapeId, paramId,  {
       if (fieldIdOption.isDefined) {
         shapesState.flattenedField(fieldIdOption.get).bindings
@@ -37,13 +37,21 @@ object FlatShapeProjection {
     })
       .map(i => {
         val newPath = path.withChildren(pathNew(i.shapeId):_*)
-        (i.shapeId, getFlatShape(i.shapeId, newPath)(shapesState, None, false, parametersByShapeId, trailTags))
+        (i.shapeId, getFlatShape(i.shapeId, newPath)(shapesState, None, false, parametersByShapeId, trailTags, shapeRelatedDiffs))
       })
       .getOrElse(returnAny)
 
-    def returnWith( typeName: Seq[ColoredComponent], fields: Seq[FlatField] = Seq(), canName: Boolean = false, links: Map[String, ShapeId] ) = {
-      def tagForCurrent: Option[ChangeType] = trailTags.trails.filterKeys(i => i.path == path).values.headOption
-      FlatShape(shape.coreShapeId, typeName, fields, shapeId, canName, links, tagForCurrent)
+    def tagForCurrent(p: ShapeTrail = path): Option[ChangeType] = trailTags.trails.filterKeys(i => i.path == p).values.headOption
+    def shapeDiffsForCurrent(p: ShapeTrail = path): Seq[ShapeRelatedDiff] = {
+      println("fieldLook "+ shapeRelatedDiffs.length)
+      println("fieldLook "+ shapeRelatedDiffs.map(_.shapeDiffResult.shapeTrail.path).toString())
+      println("fieldLook target "+p.toString)
+      println("fieldLook ----------------------")
+      shapeRelatedDiffs.filter(i => i.shapeDiffResult.shapeTrail.path == p)
+    }
+    def returnWith( typeName: Seq[ColoredComponent], fields: Seq[FlatField] = Seq(), canName: Boolean = false, links: Map[String, ShapeId] ): FlatShape = {
+
+      FlatShape(shape.coreShapeId, typeName, fields, shapeId, canName, links, tagForCurrent(), shapeDiffsForCurrent())
     }
 
     shape.coreShapeId match {
@@ -107,7 +115,7 @@ object FlatShapeProjection {
           } else {
             val fieldShapeId = field.descriptor.shapeDescriptor.asInstanceOf[FieldShapeFromShape].shapeId
             val fieldPath = path.withChildren(ObjectTrail(baseObject.shapeId), ObjectFieldTrail(field.fieldId, fieldShapeId))
-            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId, fieldPath)(shapesState, Some(fieldId), false, parametersByShapeId, trailTags), fieldId, None))
+            Some(FlatField(field.descriptor.name, getFlatShape(fieldShapeId, fieldPath)(shapesState, Some(fieldId), false, parametersByShapeId, trailTags, shapeRelatedDiffs), fieldId, tagForCurrent(fieldPath), shapeDiffsForCurrent(fieldPath)))
           }
 
         }).sortBy(_.fieldName)
@@ -123,7 +131,7 @@ object FlatShapeProjection {
 //          Seq(ColoredComponent(param.split(":").last+":", "text", None)) ++ seq
 //        })
 
-        FlatShape(baseObject.descriptor.baseShapeId, NameForShapeId.getShapeName(baseObject.shapeId), fields, baseObject.shapeId, canName, Map.empty, None)
+        FlatShape(baseObject.descriptor.baseShapeId, NameForShapeId.getShapeName(baseObject.shapeId), fields, baseObject.shapeId, canName, Map.empty, tagForCurrent(), shapeDiffsForCurrent())
       }
       //fallback to primitives
       case baseShapeId if ShapesHelper.allCoreShapes.exists(_.baseShapeId == baseShapeId) =>

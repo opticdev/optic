@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import {makeStyles, useTheme} from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -17,137 +17,149 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import MailIcon from '@material-ui/icons/Mail';
+import Paper from '@material-ui/core/Paper';
+import {withDiffContext} from './DiffContext';
+import {DocSubGroup} from '../../requests/DocSubGroup';
+import {DocDarkGrey, DocDivider, DocGrey} from '../../requests/DocConstants';
+import {CompareEquality} from '@useoptic/domain';
+import {IgnoreDiffContext} from './DiffPageNew';
+import Button from '@material-ui/core/Button';
+import {InterpretationRow} from './DiffViewer';
+import {LightTooltip} from '../../tooltips/LightTooltip';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import TocIcon from '@material-ui/icons/Toc';
+import {DiffToggleStates, withDiffToggleContext} from './DiffShapeViewer';
 
-const drawerWidth = 240;
+const drawerWidth = 310;
 
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
   },
-  appBar: {
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-  },
-  appBarShift: {
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginRight: drawerWidth,
-  },
-  title: {
-    flexGrow: 1,
-  },
-  hide: {
-    display: 'none',
-  },
   drawer: {
     width: drawerWidth,
-    flexShrink: 0,
   },
-  drawerPaper: {
-    width: drawerWidth,
-  },
-  drawerHeader: {
+  emptyDiff: {
     display: 'flex',
+    flexDirection: 'column',
     alignItems: 'center',
-    padding: theme.spacing(0, 1),
-    ...theme.mixins.toolbar,
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    textAlign: 'center',
+    height: '100%'
   },
-  content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginRight: -drawerWidth,
-  },
-  contentShift: {
-    transition: theme.transitions.create('margin', {
-      easing: theme.transitions.easing.easeOut,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    marginRight: 0,
-  },
+  diffShow: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: 12,
+    paddingTop: 0,
+  }
 }));
 
-export default function DiffDrawer() {
+function DiffDrawer({regions, selectedDiff, getInteractionsForDiff, getDiffDescription, currentExample, interpretationsForDiffAndInteraction, setSelectedDiff, selectedInterpretation, setSelectedInterpretation, acceptSuggestion, approvedKey, showTab, setTabTo}) {
   const classes = useStyles();
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
-
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <main
-        className={clsx(classes.content, {
-          [classes.contentShift]: open,
-        })}
-      >
-        <Typography paragraph>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-          ut labore et dolore magna aliqua. Rhoncus dolor purus non enim praesent elementum
-          facilisis leo vel. Risus at ultrices mi tempus imperdiet. Semper risus in hendrerit
-          gravida rutrum quisque non tellus. Convallis convallis tellus id interdum velit laoreet id
-          donec ultrices. Odio morbi quis commodo odio aenean sed adipiscing. Amet nisl suscipit
-          adipiscing bibendum est ultricies integer quis. Cursus euismod quis viverra nibh cras.
-          Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Mauris commodo quis
-          imperdiet massa tincidunt. Cras tincidunt lobortis feugiat vivamus at augue. At augue eget
-          arcu dictum varius duis at consectetur lorem. Velit sed ullamcorper morbi tincidunt. Lorem
-          donec massa sapien faucibus et molestie ac.
-        </Typography>
-        <Typography paragraph>
-          Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper eget nulla
-          facilisi etiam dignissim diam. Pulvinar elementum integer enim neque volutpat ac
-          tincidunt. Ornare suspendisse sed nisi lacus sed viverra tellus. Purus sit amet volutpat
-          consequat mauris. Elementum eu facilisis sed odio morbi. Euismod lacinia at quis risus sed
-          vulputate odio. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in. In
-          hendrerit gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem et
-          tortor. Habitant morbi tristique senectus et. Adipiscing elit duis tristique sollicitudin
-          nibh sit. Ornare aenean euismod elementum nisi quis eleifend. Commodo viverra maecenas
-          accumsan lacus vel facilisis. Nulla posuere sollicitudin aliquam ultrices sagittis orci a.
-        </Typography>
-      </main>
-      <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="right"
-        open={open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-    </div>
+    <Paper
+      className={classes.drawer}
+    >
+
+      {selectedDiff && (() => {
+        const description = getDiffDescription(selectedDiff, currentExample);
+        const interactions = getInteractionsForDiff(selectedDiff);
+
+        const interpretations = interpretationsForDiffAndInteraction(selectedDiff, currentExample);
+
+        const showShape = showTab === DiffToggleStates.EXAMPLE;
+
+        const previewButton = !showShape ? (
+          <Button size="small" color="primary" onClick={() => setTabTo(DiffToggleStates.EXAMPLE)}
+                  startIcon={<VisibilityIcon style={{height: 20, width: 20}} color="primary"/>}>
+            Show Example
+          </Button>
+        ) : (
+          <Button size="small" color="primary" onClick={() => setTabTo(DiffToggleStates.SHAPE)}
+                  startIcon={<TocIcon style={{height: 20, width: 20}} color="primary"/>}>
+            Show Shape
+          </Button>
+        );
+
+        // const button = showShape ? (
+        //   <div className={classes.toggle} style={{backgroundColor: toggleColor}}>
+        //     <LightTooltip title="Show Example">
+        //       <IconButton onClick={() => setTabTo(DiffToggleStates.EXAMPLE)} size="small" disableRipple disableFocusRipple>
+        //
+        //     </LightTooltip>
+        //   </div>
+        // ) : (
+        //   <div className={classes.toggle} style={{backgroundColor: toggleColor}}>
+        //     <LightTooltip title="Show Shape">
+        //       <IconButton onClick={() => setTabTo(DiffToggleStates.SHAPE)} size="small" disableRipple disableFocusRipple>
+        //         <TocIcon style={{height: 20, width: 20, color: '#f9f9f9'}}/> </IconButton>
+        //     </LightTooltip>
+        //   </div>
+        // );
+
+        return (
+          <div className={classes.diffShow}>
+            <DocSubGroup title="Observed Diff">
+              <Typography variant="subtitle2" style={{marginTop: 3}}>{description.title}</Typography>
+              <Typography variant="caption" component="div" style={{
+                marginTop: 3,
+                textAlign: 'right',
+                color: DocDarkGrey
+              }}>Seen {interactions.length} times</Typography>
+            </DocSubGroup>
+
+            <DocSubGroup title="Suggested Changes">
+              <List dense>
+                {selectedDiff && interpretations.map((interpretation, index) => {
+                  return (
+                    <InterpretationRow
+                      action={interpretation.title}
+                      description={interpretation.description}
+                      active={selectedInterpretation && CompareEquality.betweenWithoutCommands(selectedInterpretation, interpretation)}
+                      confirm={() => acceptSuggestion(selectedInterpretation, selectedDiff, approvedKey)}
+                      onClick={() => setSelectedInterpretation(interpretation, index)}/>
+                  );
+                })}
+                <IgnoreDiffContext.Consumer>
+                  {({ignoreDiff}) => <InterpretationRow
+                    action={'Ignore this Diff'}
+                    description={''}
+                    active={false}
+                    onClick={() => {
+                      ignoreDiff(selectedDiff)
+                      setSelectedDiff(null)
+                    }}/>}
+                </IgnoreDiffContext.Consumer>
+              </List>
+
+                <div style={{textAlign: 'center', marginTop: 12}}>
+                  <DocDivider style={{marginBottom: 12}}/>
+                  {previewButton}
+                  <Button size="small" color="secondary" variant="contained"
+                          disableRipple
+                          style={{marginLeft: 12}} disabled={!Boolean(selectedInterpretation)}
+                          onClick={() => {
+                            acceptSuggestion(selectedInterpretation, selectedDiff, approvedKey);
+                          }}>Confirm</Button>
+                </div>
+
+            </DocSubGroup>
+          </div>
+        );
+      })()}
+
+      {!selectedDiff && (
+        <div className={classes.emptyDiff}>
+          <img src="/optic-logo.svg" width={75} style={{marginTop: -150}}/>
+          <Typography variant="h6" style={{fontSize: 16}}>Optic Observed {regions.allCount} Diffs</Typography>
+          <Typography variant="caption">Click any diff to review</Typography>
+        </div>
+      )}
+
+    </Paper>
   );
 }
+
+export default withDiffToggleContext(withDiffContext(DiffDrawer));

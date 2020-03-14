@@ -14,11 +14,18 @@ import sha1 from 'node-sha1';
 import stringify from 'json-stable-stringify';
 import niceTry from 'nice-try';
 import {RemovedRedBackground} from '../../contexts/ColorContext';
-
+import ReusableDiffRow from '../diff/v2/ReusableDiffRow';
+import {mapScala, getOrUndefined, JsonHelper} from '@useoptic/domain';
+import {SuggestionsContext} from '../diff/v2/DiffPageNew';
 
 const styles = theme => ({
   base: {
     backgroundColor: '#4f5568',
+  },
+  rowHover: {
+    '&:hover': {
+      backgroundColor: 'rgba(78,165,255,0.27)'
+    },
   },
   row: {
     padding: 4,
@@ -30,9 +37,6 @@ const styles = theme => ({
     // height: 26,
     userSelect: 'none',
     fontFamily: 'monospace',
-    '&:hover': {
-      backgroundColor: 'rgba(78,165,255,0.27)'
-    },
   },
   colon: {
     marginLeft: 5,
@@ -79,9 +83,11 @@ const styles = theme => ({
   }
 });
 
-export const Row = withStyles(styles)(({classes, children, style, depth = 0}) => {
+export const Row = withStyles(styles)(({classes, children, style, diffCount, depth = 0}) => {
   return (
-    <li className={classes.row} style={{paddingLeft: depth * 8, ...style}}>{children}</li>
+    <ReusableDiffRow className={classes.rowHover} notifications={<div>{diffCount}</div>}>
+      <li className={classes.row} style={{paddingLeft: depth * 8, ...style}}>{children}</li>
+    </ReusableDiffRow>
   );
 });
 
@@ -105,7 +111,7 @@ export const ExpandableRow = withStyles(styles)(({classes, children, innerChildr
 
 export const RootRow = withStyles(styles)(({classes, expand, id, typeName, depth}) => {
 
-  const defaultParam = null //((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
+  const defaultParam = null; //((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
 
   const [expandedParam, setExpandedParam] = useState(defaultParam);
 
@@ -133,8 +139,8 @@ export const RootRow = withStyles(styles)(({classes, expand, id, typeName, depth
   );
 });
 
-export const Field = withStyles(styles)(({classes, expand, typeName, fields, fieldName, tag, canName, baseShapeId, parameters, depth, id, fieldId}) => {
-  const defaultParam = null //((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
+export const Field = withStyles(styles)(({classes, expand, diffCount, typeNameJs, typeName, fields, fieldName, tag, canName, baseShapeId, parameters, depth, id, fieldId}) => {
+  const defaultParam = null; //((typeName.find(i => i.shapeLink && expand.includes(i.shapeLink)) || {}).shapeLink) || null;
   const [expandedParam, setExpandedParam] = useState(defaultParam);
 
   const setParam = (param) => {
@@ -146,7 +152,7 @@ export const Field = withStyles(styles)(({classes, expand, typeName, fields, fie
   };
 
   const shared = <>
-    {typeName[0].colorKey !== 'index' ? (<>
+    {typeNameJs[0].colorKey !== 'index' ? (<>
       <div className={classes.fieldName}>{fieldName}</div>
       <div className={classes.colon}>:</div>
     </>) : <span style={{marginTop: 2}}>-</span>}
@@ -155,10 +161,10 @@ export const Field = withStyles(styles)(({classes, expand, typeName, fields, fie
   </>;
 
   if (fields.length) {
-    const fieldsRendered = fields.map(i => <Field {...i.shape} fieldName={i.fieldName} tag={i.tag} fieldId={fieldId}
+    const fieldsRendered = fields.map(i => <Field {...fieldShapeToProps(i)}
                                                   depth={depth + 2}/>);
     //use expandable row
-    return <ExpandableRow depth={depth + 1} innerChildren={fieldsRendered}>
+    return <ExpandableRow depth={depth + 1} innerChildren={fieldsRendered} diffCount={diffCount}>
       {shared}
     </ExpandableRow>;
   }
@@ -167,7 +173,7 @@ export const Field = withStyles(styles)(({classes, expand, typeName, fields, fie
   return (
     <>
       <Highlight tag={tag}>
-        <Row depth={depth + 1}>
+        <Row depth={depth + 1} diffCount={diffCount}>
           {shared}
         </Row>
       </Highlight>
@@ -185,16 +191,16 @@ export const Field = withStyles(styles)(({classes, expand, typeName, fields, fie
 
 export const TypeNameRender = withStyles(styles)(({classes, id, typeName, onLinkClick}) => {
 
-  const components = typeName.map(({name, shapeLink, primitiveId}) => {
+  const components = mapScala(typeName)(({name, shapeLink, primitiveId}) => {
 
-    const color = primitiveDocColors[primitiveId];
+    const color = primitiveDocColors[getOrUndefined(primitiveId)];
 
     if (shapeLink) {
       return (<>
         <span
           onClick={() => {
             if (onLinkClick) {
-              onLinkClick(shapeLink);
+              onLinkClick(getOrUndefined(shapeLink));
             }
           }}
           className={classes.link}
@@ -266,7 +272,10 @@ export const ObjectViewer = withStyles(styles)(({classes, typeName, canName, id,
         {<TypeNameRender typeName={typeName} id={id}/>}
         {canName && <Namer id={id}/>}
       </Row>
-      {fields.map(i => <Field {...i.shape} fieldName={i.fieldName} fieldId={i.fieldId} tag={i.tag} depth={depth + 1}/>)}
+      {mapScala(fields)(i => {
+        return <Field {...fieldShapeToProps(i)}
+               depth={depth + 1}/>
+      })}
     </>
   );
 });
@@ -275,7 +284,8 @@ function handleBaseShape(shape) {
   const {baseShapeId, typeName, id, fields} = shape;
   console.log('xxx', {shape});
   if (baseShapeId === '$object' || fields.length) {
-    return <ObjectViewer {...shape} />;
+    return <ObjectViewer typeName={shape.typeName} canName={shape.canName} id={shape.id} fields={shape.fields}
+                         depth={0}/>;
   } else {
     return <RootRow typeName={typeName} id={id}/>;
   }
@@ -320,10 +330,10 @@ class ExampleViewerBase extends React.Component {
     const hash = niceTry(() => sha1(stringify(example))) || 'empty-example';
     const flatShape = queries.memoizedFlatShapeForExample(example, hash, exampleTags);
 
-    console.log('abnc', exampleTags)
+    console.log('abnc', exampleTags);
     return (
       <NamerStore>
-        <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} renderId={hash} />
+        <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap} renderId={hash}/>
       </NamerStore>
     );
   }
@@ -331,25 +341,56 @@ class ExampleViewerBase extends React.Component {
 
 export const ExampleViewer = withRfcContext(ExampleViewerBase);
 
-export const ShapeViewerWithQuery = withRfcContext(({shapeId, addedIds, changedIds, queries}) => {
+export const NestedDiffsContext = React.createContext(null);
+
+export const ShapeViewerWithQuery = withRfcContext(({shapeId, addedIds, changedIds, queries, diffs = JsonHelper.jsArrayToSeq([])}) => {
   if (!shapeId) {
-    console.error('this should have a shape id...')
-    return <div>why don't i have a shape id???</div>
+    console.error('this should have a shape id...');
+    return <div>why don't i have a shape id???</div>;
   }
-  const flatShape = queries.flatShapeForShapeId(shapeId);
+  const flatShape = queries.flatShapeForShapeId(shapeId, diffs);
   return (
-      <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
+    <NestedDiffsContext.Consumer>
+      {(context) => {
+        const {contextDiffs} = (context || {})
+        const producerDiffs = !contextDiffs ? diffs : contextDiffs
+        debugger
+        return (
+          <NestedDiffsContext.Provider value={{contextDiffs: producerDiffs}}>
+            <ShapeViewer shape={flatShape.root} parameters={flatShape.parametersMap}/>
+          </NestedDiffsContext.Provider>
+        )
+      }}
+    </NestedDiffsContext.Consumer>
   );
 });
 
-
+function fieldShapeToProps(field) {
+  console.log('fieldLook ', field.fieldName)
+  console.log('fieldLook ', field.diffCount)
+  console.log('fieldLook ', field.shape.diffCount)
+  return {
+    fieldName: field.fieldName,
+    fieldId: field.fieldId,
+    tag: field.tag,
+    baseShapeId: field.shape.baseShapeId,
+    fields: field.shape.fields,
+    typeName: field.shape.typeName,
+    typeNameJs: JsonHelper.seqToJsArray(field.shape.typeName),
+    id: field.shape.id,
+    canName: field.shape.canName,
+    expand: field.shape.expand,
+    parameters: field.shape.parameters,
+    diffCount: field.diffCount
+  }
+}
 
 export const AddedGreen = '#008d69';
 export const ChangedYellow = '#8d7200';
 export const Highlight = (({tag, children, style}) => {
 
   if (tag === 'Addition') {
-    return (<div style={{backgroundColor: AddedGreen}}>{children}</div>)
+    return (<div style={{backgroundColor: AddedGreen}}>{children}</div>);
   } else if (tag === 'Update') {
     return (<div style={{backgroundColor: ChangedYellow}}>{children}</div>);
   } else if (tag === 'Removal') {

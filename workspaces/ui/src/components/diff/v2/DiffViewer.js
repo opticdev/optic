@@ -171,8 +171,7 @@ class DiffViewer extends React.Component {
   }
 }
 
-function InterpretationRow(props) {
-
+export function InterpretationRow(props) {
   const {action, description, active, onClick, confirm} = props;
 
   return (
@@ -186,12 +185,13 @@ function InterpretationRow(props) {
         if (e.which === 13) {
           if (active) {
             alert('finish');
+            confirm()
           } else {
             onClick();
           }
         }
       }}
-      onClick={!active && onClick}>
+      onClick={!active ? onClick : confirm}>
       <ListItemAvatar style={{minWidth: 25}}>
         <Radio
           size="small"

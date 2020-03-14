@@ -6,7 +6,7 @@ import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper}
 import com.useoptic.contexts.shapes.ShapesHelper.{OneOfKind, OptionalKind}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.interpretations.BasicInterpretations
-import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
+import com.useoptic.diff.{ChangeType, GotoPreview, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, Resolvers, ShapeTrail, UnmatchedShape}
@@ -56,7 +56,8 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
       "Remove from Spec",
       "remove x from spec",
       Seq(),
-      ChangeType.Removal
+      ChangeType.Removal,
+      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 
@@ -92,7 +93,8 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
       "Make Optional",
       "Make it so x is optional",
       commands,
-      ChangeType.Addition
+      ChangeType.Addition,
+      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 
@@ -123,16 +125,18 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
       "Make OneOf",
       "Make it so x can be T1 or T2",
       commands,
-      ChangeType.Addition
+      ChangeType.Addition,
+      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 
-  def AddToOneOf(): InteractiveDiffInterpretation = {
+  def AddToOneOf(interactionTrail: InteractionTrail): InteractiveDiffInterpretation = {
     InteractiveDiffInterpretation(
       "Add to OneOf",
       "Make it so x can be T1, T2, ..., Tn",
       Seq(),
-      ChangeType.Addition
+      ChangeType.Addition,
+      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }
 }

@@ -70,6 +70,12 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     display: 'flex',
     overflow: 'auto',
+  },
+  diffDoc: {
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    maxWidth: 800
   }
 }));
 
@@ -103,6 +109,18 @@ export function DiffDocGrid({left, leftColor, right, active, style, colMaxWidth}
   );
 }
 
+export function DiffDoc({active, children}) {
+
+  const classes = useStyles();
+
+  return (
+      <div className={classes.diffDoc}>
+        <ScrollIntoViewIfNeeded active={false} options={{behavior: 'instant'}}>
+        {children}
+        </ScrollIntoViewIfNeeded>
+      </div>
+  );
+}
 
 export function DiffDocGridRightSticky({left, leftColor, right, style}) {
 

@@ -6,6 +6,7 @@ import com.useoptic.diff.interactions.{InteractionDiffResult, Traverser, Unmatch
 import com.useoptic.diff.interactions.visitors.DiffVisitors
 import com.useoptic.types.capture.HttpInteraction
 
+import scala.collection.immutable
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
 
 
@@ -50,6 +51,16 @@ case class DiffRegionsHelpers(diffsGroupedByRegion: DiffsGroupedByRegion) {
 
   def isEmpty: Boolean = diffsGroupedByRegion.isEmpty
 
+  def allCount: Int = diffsGroupedByRegion.flatMap(_._2).size
+
+  def unmatchedRequestContentType: Iterable[InteractionDiffResult] = diffsGroupedByRegion.collect{
+    case (DiffInRequestUnmatchedContentType, b) => b
+  }.flatten
+
+  def unmatchedResponseContentType: Iterable[InteractionDiffResult] = diffsGroupedByRegion.collect{
+    case (DiffInResponseWithStatusCodeAndUnmatchedContentType(_), b) => b
+  }.flatten
+
   def inRequest: Iterable[InteractionDiffResult] = diffsGroupedByRegion.collect{
     case (DiffInRequest, b) => b
     case (DiffInRequestWithContentType(_), b) => b
@@ -61,29 +72,46 @@ case class DiffRegionsHelpers(diffsGroupedByRegion: DiffsGroupedByRegion) {
 
   def inResponseWithStatusCode(statusCode: Int): Iterable[InteractionDiffResult] = diffsGroupedByRegion.collect{
     case (DiffInResponseWithStatusCode(_statusCode), b) if _statusCode == statusCode  => b
-    case (DiffInResponseWithStatusCodeAndContentType(_statusCode, _), b) if _statusCode == statusCode  => b
+    case (DiffInResponseShape(_statusCode, _), b) if _statusCode == statusCode  => b
   }.flatten
 
   def inResponseWithStatusCodeAndContentType(statusCode: Int, contentType: String): Iterable[InteractionDiffResult] = diffsGroupedByRegion.collect{
-    case (DiffInResponseWithStatusCodeAndContentType(_statusCode, _contentType), b) if _statusCode == statusCode && _contentType == contentType => b
+    case (DiffInResponseShape(_statusCode, _contentType), b) if _statusCode == statusCode && _contentType == contentType => b
   }.flatten
 
   def statusCodes: Seq[Int] = diffsGroupedByRegion.collect{
     case (DiffInResponseWithStatusCode(statusCode), b) => statusCode
-    case (DiffInResponseWithStatusCodeAndContentType(statusCode, _), b) => statusCode
+    case (DiffInResponseShape(statusCode, _), b) => statusCode
   }.toSeq.distinct.sorted
 
   def responseContentTypes: Seq[String] = diffsGroupedByRegion.collect{
-    case (DiffInResponseWithStatusCodeAndContentType(_, contentType), b) => contentType
+    case (DiffInResponseShape(_, contentType), b) => contentType
   }.toSeq.distinct.sorted
 
   def responseContentTypesForStatusCode(statusCode: Int): Seq[String] = diffsGroupedByRegion.collect{
-    case (DiffInResponseWithStatusCodeAndContentType(_statusCode, contentType), b) if _statusCode == statusCode => contentType
+    case (DiffInResponseShape(_statusCode, contentType), b) if _statusCode == statusCode => contentType
   }.toSeq.distinct.sorted
 
   def requestContentTypes: Seq[String] = diffsGroupedByRegion.collect{
     case (DiffInRequestWithContentType(contentType), b) => contentType
   }.toSeq.distinct.sorted
+
+  def inResponseBodyShape(statusCode: Int, contentType: String = null) = {
+    if (contentType == null) {
+      Iterable.empty
+    } else {
+      diffsGroupedByRegion.collect {
+        case (DiffInResponseShape(_statusCode, _contentType), b) if _statusCode == statusCode && _contentType == contentType => b
+      }.flatten
+    }
+  }
+
+  def withHashes(hashes: Seq[String]) = {
+    diffsGroupedByRegion.collect {
+      case (_, b) => b.filter(i => hashes.contains(i.toHash))
+    }.flatten
+  }
+
 
 }
 
@@ -91,9 +119,12 @@ trait DiffLocation
 case object UnmatchedUrl extends DiffLocation
 case object UnmatchedMethod extends DiffLocation
 case object DiffInRequest extends DiffLocation
+case object DiffInRequestUnmatchedContentType extends DiffLocation
 case class DiffInRequestWithContentType(contentType: String) extends DiffLocation
+case class DiffInRequestShape(contentType: String) extends DiffLocation
 case class DiffInResponseWithStatusCode(statusCode: Int) extends DiffLocation
-case class DiffInResponseWithStatusCodeAndContentType(statusCode: Int, contentType: String) extends DiffLocation
+case class DiffInResponseWithStatusCodeAndUnmatchedContentType(statusCode: Int) extends DiffLocation
+case class DiffInResponseShape(statusCode: Int, contentType: String) extends DiffLocation
 
 
 @JSExport
@@ -103,13 +134,12 @@ case class DiffResultHelpers(interactionsGroupedByDiff: InteractionsGroupedByDif
     val groupedKeys = interactionsGroupedByDiff.keys.groupBy {
       case d: UnmatchedRequestUrl => UnmatchedUrl
       case d: UnmatchedRequestMethod => UnmatchedMethod
-      case d: UnmatchedRequestBodyContentType => DiffInRequest
-      case d: UnmatchedRequestBodyShape => DiffInRequestWithContentType(d.interactionTrail.requestContentType())
+      case d: UnmatchedRequestBodyContentType => DiffInRequestUnmatchedContentType
+      case d: UnmatchedRequestBodyShape => DiffInRequestShape(d.interactionTrail.requestContentType())
       case d: UnmatchedResponseStatusCode =>  DiffInResponseWithStatusCode(d.interactionTrail.statusCode())
-      case d: UnmatchedResponseBodyContentType => DiffInResponseWithStatusCode(d.interactionTrail.statusCode())
-      case d: UnmatchedResponseBodyShape => DiffInResponseWithStatusCodeAndContentType(d.interactionTrail.statusCode(), d.interactionTrail.responseContentType())
+      case d: UnmatchedResponseBodyContentType => DiffInResponseWithStatusCodeAndUnmatchedContentType(d.interactionTrail.statusCode())
+      case d: UnmatchedResponseBodyShape => DiffInResponseShape(d.interactionTrail.statusCode(), d.interactionTrail.responseContentType())
     }
-
     DiffRegionsHelpers(groupedKeys.asInstanceOf[Map[DiffLocation, Iterable[InteractionDiffResult]]])
   }
 

@@ -11,7 +11,7 @@ import {ExampleViewer, ShapeViewerWithQuery} from '../../shapes/ShapeViewer';
 import {DocCodeBox, ExampleOnly} from '../../requests/DocCodeBox';
 import classNames from 'classnames';
 import {withEndpointsContext} from '../../../contexts/EndpointContext';
-import {DiffDocGrid} from '../../requests/DocGrid';
+import {DiffDoc, DiffDocGrid} from '../../requests/DocGrid';
 
 
 export const DiffToggleStates = {
@@ -57,7 +57,7 @@ const styles = theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    maxWidth: 650,
+    maxWidth: 750,
     minHeight: 120,
     overflow: 'hidden',
     borderRadius: 4
@@ -101,7 +101,7 @@ const styles = theme => ({
 
 class _DiffShapeViewer extends React.Component {
   render() {
-    const {classes, showTab, setTabTo, shapeId, example, exampleTags, shapeTags, contentType, title} = this.props;
+    const {classes, showTab, setTabTo, shapeId, example, exampleTags, shapeTags, diffs, contentType, title} = this.props;
     const showShape = showTab === DiffToggleStates.SHAPE;
 
     const toggleColor = showShape ? '#7da3af' : '#af544d';
@@ -116,13 +116,13 @@ class _DiffShapeViewer extends React.Component {
 
       if (showShape) {
         if (shapeId) {
-          return <ShapeViewerWithQuery shapeId={shapeId} shapeTags={shapeTags}/>;
+          return <ShapeViewerWithQuery shapeId={shapeId} shapeTags={shapeTags} diffs={diffs}/>;
         } else {
           return <Empty text="Not Documented in Specification"/>;
         }
       } else {
         if (example) {
-          return <ExampleViewer example={example} exampleTags={exampleTags}/>;
+          return <ExampleViewer example={example} exampleTags={exampleTags} diffs={diffs}/>;
         } else {
           return <Empty text="No Example to Show"/>;
         }
@@ -221,29 +221,26 @@ export const URLViewer = withDiffToggleContext(withStyles(styles)(withEndpointsC
   );
 
   return (
-    <DiffDocGrid
-      right={
-        <>
-          <Typography variant="h5" color="primary">Endpoint Purpose</Typography>
-          <Typography variant="subtitle1">Description</Typography>
-        </>
-      }
-      left={
-        <div className={classes.root} style={{minHeight: 'inherit'}}>
-          <div className={classes.header}>
-            <Typography variant="subtitle2" style={{color: '#a3acb9', fontSize: 14, fontWeight: 500}}>
-              URL + Path
-            </Typography>
-            <div style={{flex: 1}}/>
-            {button}
-          </div>
-          <div className={classes.inner}>
-            <div style={{flex: 1, padding: 12}}>
-              {contents}
-            </div>
+    <DiffDoc>
+      <div style={{paddingBottom: 18}}>
+      <Typography variant="h5" color="primary">Endpoint Purpose</Typography>
+      <Typography variant="body1">Description</Typography>
+      </div>
+      <div className={classes.root} style={{minHeight: 'inherit'}}>
+        <div className={classes.header}>
+          <Typography variant="subtitle2" style={{color: '#a3acb9', fontSize: 14, fontWeight: 500}}>
+            URL + Path
+          </Typography>
+          <div style={{flex: 1}}/>
+          {button}
+        </div>
+        <div className={classes.inner}>
+          <div style={{flex: 1, padding: 12}}>
+            {contents}
           </div>
         </div>
-      }/>
+      </div>
+    </DiffDoc>
   );
 
 })));

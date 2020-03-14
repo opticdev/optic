@@ -1,0 +1,173 @@
+{
+  "events": [
+    {
+      "PathComponentAdded": {
+        "pathId": "path_wYt9lgNJVf",
+        "parentPathId": "root",
+        "name": "todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "4e67502a-5a8d-4d94-aa11-30ffeb48b6fa",
+          "createdAt": "2020-03-05T00:43:21.487Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "request_xSl1g1g9AM",
+        "key": "purpose",
+        "value": "list all todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "76799af2-dd47-4af1-8f8a-5018313819c1",
+          "createdAt": "2020-03-05T00:43:26.051Z"
+        }
+      }
+    }
+  ],
+  "session": {
+    "metadata": {
+      "completed": false
+    },
+    "samples": [
+      {
+        "uuid": "2",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Demo It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Love It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Better It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Share It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Sell It\",\n\t\t\"isDone\": false\n\t}\n\n]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "3",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Demo It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Love It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Better It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Share It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Sell It\",\n\t\t\"isDone\": false\n\t}\n\n]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[{\n\t\t\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Demo It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Love It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Better It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Share It\",\n\t\t\"isDone\": false\n\t},\n\t{\n\t\t\"task\": \"Sell It\",\n\t\t\"isDone\": false\n\t}\n\n]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {}
+}

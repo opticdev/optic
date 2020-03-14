@@ -43,6 +43,9 @@ import uuidv4 from 'uuid/v4';
 import {withRouter} from 'react-router-dom';
 import {routerPaths} from '../../../RouterPaths';
 import {withNavigationContext} from '../../../contexts/NavigationContext';
+import ContentTabs, {RequestTabsContextStore} from './ContentTabs';
+import {DiffRegion} from './Notification';
+import DiffDrawer from './DiffDrawer';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -53,18 +56,31 @@ const styles = theme => ({
     maxWidth: '90%',
     paddingTop: 15,
     margin: '0 auto',
+    alignItems: 'center',
     paddingBottom: 120
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
-    overflow: 'hidden',
-    height: '100vh'
+    height: '100vh',
+    overflow: 'hidden'
+  },
+  middle: {
+    margin: '0 auto',
+    maxWidth: 750
   },
   scroll: {
     overflow: 'scroll',
+    flex: 1,
+    paddingLeft: 40,
     paddingBottom: 300,
+    height: '95vh',
     paddingTop: 20,
+  },
+  topContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    flex: 1
   },
   rightRegion: {
     paddingTop: 15,
@@ -89,11 +105,13 @@ class DiffPageNew extends React.Component {
 
     return (
       <DiffToggleContextStore>
-        <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId}>
-          <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
-            <DiffPageContent/>
-          </EndpointsContextStore>
-        </CaptureSessionInlineContext>
+        <RequestTabsContextStore>
+          <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId}>
+            <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
+              <DiffPageContent/>
+            </EndpointsContextStore>
+          </CaptureSessionInlineContext>
+        </RequestTabsContextStore>
       </DiffToggleContextStore>
     );
   }
@@ -167,6 +185,18 @@ class _DiffPageContent extends React.Component {
       return Boolean(selectedDiff) && !!diffs.find(i => CompareEquality.between(selectedDiff, i));
     }
 
+    const requestContentTypes = jsonHelper.seqToJsArray(regions.requestContentTypes);
+    const diffs = jsonHelper.seqToJsArray(regions.inRequest);
+
+    const isActive = isActiveSection(diffs);
+
+    const requestContentTypesToRender = Array.from(
+      new Set([...requestContentTypes,
+        ...requestBodies
+          .map(i => i.requestBody.httpContentType || 'No Body')])
+    )
+      .sort((a, b) => a - b);
+
     const FinishPane = () => {
       const [message, setMessage] = useState('');
       return (
@@ -204,18 +234,6 @@ class _DiffPageContent extends React.Component {
 
     const RequestBodyRegion = () => {
       const example = currentExample && niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.request.body)));
-      const requestContentTypes = jsonHelper.seqToJsArray(regions.requestContentTypes);
-      const diffs = jsonHelper.seqToJsArray(regions.inRequest);
-
-      const isActive = isActiveSection(diffs);
-
-      const requestContentTypesToRender = Array.from(
-        new Set([...requestContentTypes,
-          ...requestBodies
-            .filter(i => !!i.requestBody.httpContentType)
-            .map(i => i.requestBody.httpContentType)])
-      )
-        .sort((a, b) => a - b);
 
       return (
         <div className={classes.spacer}>
@@ -310,6 +328,13 @@ class _DiffPageContent extends React.Component {
     const responseRegions = jsonHelper.seqToJsArray(regions.statusCodes);
     const responsesToRender = Array.from(new Set([...responseRegions, ...responses.map(i => i.statusCode)])).sort((a, b) => a - b);
 
+    const responsesOptions = responseRegions
+      .map(i => ({
+        statusCode: i, contentTypes:
+          responses.filter(({statusCode}) => statusCode === i)
+            .map(res => res.responseBody.httpContentType || 'No Body')
+      }));
+
     return (
       <div className={classes.container}>
         <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
@@ -327,23 +352,58 @@ class _DiffPageContent extends React.Component {
           </Toolbar>
         </AppBar>
 
-        <div className={classes.scroll}>
-          {shouldShowAcceptAll && <BatchLearnDialog open={true}/>}
-          <div className={classes.root}>
-            <NamerStore disable={true}>
-              <FinishPane/>
+        <div className={classes.topContainer}>
+          <div className={classes.scroll}>
+            <div className={classes.middle}>
+              {shouldShowAcceptAll && <BatchLearnDialog open={true}/>}
+              <NamerStore disable={true}>
 
-              <div className={classes.spacer}>
+                {/*<FinishPane/>*/}
                 <URLViewer
                   url={currentExample && currentExample.request.path + currentExample && currentExample.request.queryString}
                   host={currentExample && currentExample.request.host}
                 />
-              </div>
-              <RequestBodyRegion/>
-              {responsesToRender.map(responseStatusCode => <ResponseBodyRegion
-                statusCode={responseStatusCode}/>)}
-            </NamerStore>
+
+                {/* for request body */}
+                <div style={{marginTop: 18}}>
+                  <ContentTabs inRequest={true}
+                               options={{contentTypes: requestContentTypesToRender}}
+                               renderRequest={(contentType) => {
+
+                                 return <div>request content type: {contentType}</div>;
+                               }}
+                               notifications={<DiffRegion
+                                 filter={(r) => jsonHelper.seqToJsArray(r.unmatchedRequestContentType)}/>}/>
+                </div>
+
+                <div style={{marginTop: 18}}>
+                  <ContentTabs inRequest={false}
+                               options={responsesOptions}
+                               renderResponse={(statusCode, contentType) => {
+
+                                 const response = responses.find(i => i.statusCode === statusCode && i.responseBody.httpContentType === contentType)
+                                 if (response && contentType) {
+                                   return (<DiffShapeViewer title={`${statusCode} Response ${contentType}`}
+                                                            contentType={contentType}
+                                                            diffs={regions.inResponseBodyShape(statusCode, contentType)}
+                                                            shapeId={response.responseBody.shapeId}
+                                                            example={niceTry(() => jsonHelper.toJs(BodyUtilities.parseJsonBody(currentExample.response.body)))}/>)
+
+                                 }
+
+                                 return <div>{statusCode} {contentType}</div>;
+                               }}
+                               notifications={
+                                 <DiffRegion filter={(r) => jsonHelper.seqToJsArray(r.unmatchedResponseContentType)}/>}/>
+                </div>
+
+                {/*<RequestBodyRegion/>*/}
+                {/*{responsesToRender.map(responseStatusCode => <ResponseBodyRegion*/}
+                {/*  statusCode={responseStatusCode}/>)}*/}
+              </NamerStore>
+            </div>
           </div>
+          <DiffDrawer/>
         </div>
       </div>
     );
