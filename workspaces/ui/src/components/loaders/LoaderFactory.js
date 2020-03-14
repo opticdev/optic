@@ -19,6 +19,7 @@ import Init from '../onboarding/Init';
 import {SpecServiceStore, withSpecServiceContext} from '../../contexts/SpecServiceContext';
 import DiffPageNew from '../diff/v2/DiffPageNew';
 import EventEmitter from 'events';
+import {dumpSpecServiceState} from '../../utilities/dump-spec-service-state';
 
 class LoaderFactory {
   static build(options) {
@@ -62,7 +63,7 @@ class LoaderFactory {
           componentDidMount() {
             this.update();
             eventEmitter && eventEmitter.on('rerun', () => {
-              this.update()
+              this.update();
             });
           }
 
@@ -106,7 +107,7 @@ class LoaderFactory {
       render() {
         const {initialEventsString, integrations, specService} = this.props;
         global.specService = specService;
-
+        global.opticDump = dumpSpecServiceState(specService);
         return (
           <IntegrationsContextStore integrations={integrations}>
             <SpecServiceStore specService={specService} specServiceEvents={specServiceEvents}>
@@ -186,7 +187,7 @@ class LoaderFactory {
     const initialEventsStringEmitter = new EventEmitter();
     specServiceEvents.on('events-updated', () => {
       debugger
-      initialEventsStringEmitter.emit('rerun')
+      initialEventsStringEmitter.emit('rerun');
     });
 
     const withWrapper = compose(
