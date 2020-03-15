@@ -92,8 +92,6 @@ class ExampleProjectionSpec extends FunSpec with JsonFileFixture {
 
       assert(render.root.fields.find(_.fieldName == "new-field").get.tag.contains(ChangeType.Removal))
     }
-
-
   }
 
 }

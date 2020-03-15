@@ -184,5 +184,4 @@ object Resolvers {
       }
     }
   }
-
 }

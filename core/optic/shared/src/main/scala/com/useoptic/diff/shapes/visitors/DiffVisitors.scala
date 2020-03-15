@@ -5,12 +5,12 @@ import com.useoptic.contexts.shapes.Commands.DynamicParameterList
 import com.useoptic.contexts.shapes.ShapeEntity
 import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
-import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
+import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
 import com.useoptic.diff.shapes._
 import com.useoptic.types.capture.JsonLike
 import io.circe.Json
 
-class DiffVisitors(spec: RfcState) extends Visitors {
+class DiffVisitors(spec: RfcState) extends JsonLikeVisitors {
   var diffs: Iterator[ShapeDiffResult] = Iterator.empty
 
   def emit(diff: ShapeDiffResult) = {
@@ -67,7 +67,7 @@ class DiffVisitors(spec: RfcState) extends Visitors {
       })
     }
 
-    override def visit(key: String, value: Map[String, JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
+    override def visit(key: String, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail], parentBindings: ParameterBindings): Unit = {
       println(s"visiting ${key}")
     }
 

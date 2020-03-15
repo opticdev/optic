@@ -1,6 +1,8 @@
 package com.useoptic.diff.shapes
 
-sealed trait ShapeDiffResult {
+import com.useoptic.diff.DiffResult
+
+sealed trait ShapeDiffResult extends DiffResult {
   def jsonTrail: JsonTrail
   def shapeTrail: ShapeTrail
 }

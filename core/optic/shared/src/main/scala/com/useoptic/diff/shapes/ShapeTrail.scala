@@ -21,6 +21,11 @@ case class OptionalTrail(innerShapeId: ShapeId) extends ShapeTrailPathComponent
 case class NullableTrail(innerShapeId: ShapeId) extends ShapeTrailPathComponent
 
 case class ShapeTrail(rootShapeId: ShapeId, path: Seq[ShapeTrailPathComponent]) {
+
+  def withoutParent(): ShapeTrail = {
+    this.copy(path = this.path.tail)
+  }
+
   def withChild(pc: ShapeTrailPathComponent) = {
     this.copy(path = path :+ pc)
   }

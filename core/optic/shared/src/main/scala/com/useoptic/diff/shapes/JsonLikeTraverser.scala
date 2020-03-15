@@ -6,7 +6,7 @@ import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjec
 import com.useoptic.types.capture.JsonLike
 import io.circe.Json
 
-class Traverser(spec: RfcState, visitors: Visitors) {
+class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
 
   def traverse(body: Option[JsonLike], bodyTrail: JsonTrail, resolvedTrail: Option[ShapeTrail]): Unit = {
     println("traversing...")
@@ -49,7 +49,6 @@ class Traverser(spec: RfcState, visitors: Visitors) {
         val (key, value) = entry
         //@TODO: could be a map instead of an object here, for now it'll return a None
         val resolvedField = Resolvers.tryResolveFieldFromKey(spec.shapesState, resolved.shapeEntity, key)
-
         val resolvedTrail = resolvedField.flatMap(fieldId => {
           //@GOTCHA need field bindings?
           val fieldShapeId = Resolvers.resolveFieldToShape(spec.shapesState, fieldId, resolved.bindings)
@@ -57,7 +56,7 @@ class Traverser(spec: RfcState, visitors: Visitors) {
         })
         val jsonTrail = bodyTrail.withChild(JsonObjectKey(key))
 
-        visitors.objectVisitor.visit(key, value.fields, bodyTrail, resolvedTrail)
+        visitors.objectVisitor.visit(key, value, bodyTrail, resolvedTrail, resolved.bindings)
 
         traverse(Some(value), jsonTrail, resolvedTrail)
       })

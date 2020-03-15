@@ -14,15 +14,15 @@ import scala.util.Random
 @JSExportAll
 object ShapesHelper {
 
-  def newShapeId(): String = {
-    s"shape_${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
+  def newShapeId(prefix: String = "shape_"): String = {
+    s"${prefix}${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
   }
 
   def newShapeParameterId(): String = {
     s"shape-parameter_${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
   }
 
-  def newFieldId(): String = s"field_${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
+  def newFieldId(prefix: String = "field_"): String = s"${prefix}${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
 
   def appendDefaultStringTypeEvents(adder: RequestParameterAdded, eventContext: Option[EventContext]): Vector[RequestsEvent] = {
     val shapeId = newShapeId()

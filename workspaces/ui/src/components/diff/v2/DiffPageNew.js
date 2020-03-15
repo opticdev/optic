@@ -102,11 +102,10 @@ class DiffPageNew extends React.Component {
 
     const {classes, specStore} = this.props;
     const {pathId, method, sessionId} = this.props.match.params;
-
     return (
       <DiffToggleContextStore>
         <RequestTabsContextStore>
-          <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId}>
+          <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId} pathId={pathId} method={method}>
             <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
               <DiffPageContent/>
             </EndpointsContextStore>
@@ -482,7 +481,7 @@ function flatten(acc, array) {
 }
 
 const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function InnerDiffWrapperBase(props) {
-  const {eventStore, initialEventStore, rfcService, rfcId} = props;
+  const {eventStore, initialEventStore, rfcService, rfcId, diffManager, pathId, method} = props;
   const {isLoading, session} = props;
   const {children} = props;
   const {setSuggestionToPreview, setAcceptedSuggestions, acceptedSuggestions, suggestionToPreview, addAcceptedSuggestion, ignoredDiffs, resetIgnored, resetAccepted} = props;
@@ -492,6 +491,9 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   }
 
   const rfcState = rfcService.currentState(rfcId);
+
+  diffManager.updatedRfcState(rfcState)
+  const endpointDiffManger = diffManager.managerForPathAndMethod(pathId, method)
 
   const samples = jsonHelper.jsArrayToSeq(session.samples.map(i => jsonHelper.fromInteraction(i)));
   const diffResults = helpers.DiffHelpers().groupByDiffs(rfcState, samples);
@@ -559,15 +561,15 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
 class _CaptureSessionInlineContext extends React.Component {
 
   render() {
-
-
     const jsonHelper = JsonHelper();
     const {
       rfcId,
       eventStore,
       sessionId,
       specService,
-      children
+      children,
+      pathId,
+      method
     } = this.props;
     return (
       //@todo refactor sessionId to captureId
@@ -602,6 +604,8 @@ class _CaptureSessionInlineContext extends React.Component {
                         commands={simulatedCommands}
                         shouldSimulate={true}>
                         <InnerDiffWrapper
+                          pathId={pathId}
+                          method={method}
                           ignoredDiffs={ignoredDiffs}
                           resetIgnored={resetIgnored}
                           resetAccepted={resetAccepted}

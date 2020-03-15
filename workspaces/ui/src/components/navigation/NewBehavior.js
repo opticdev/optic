@@ -4,7 +4,6 @@ import compose from 'lodash.compose';
 import {withRfcContext} from '../../contexts/RfcContext';
 import {getRequestIdsWithDiffs, getUnrecognizedUrlCount} from '../diff/DiffUtilities';
 import {
-  computeDiffStateProjections,
   TrafficSessionContext,
   TrafficSessionStore
 } from '../../contexts/TrafficSessionContext';
@@ -87,10 +86,10 @@ class NewBehaviorWrapperBase extends React.Component {
             const {cachedQueryResults, queries} = this.props;
             const {isLoading} = context;
             const diffSessionManager = new BaseDiffSessionManager(lastSessionId, context.session, specService);
-            const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, diffSessionManager);
-            const rfcState = rfcService.currentState(rfcId);
-            const requestIdsWithDiffs = getRequestIdsWithDiffs(rfcState, diffStateProjections);
-            const unrecognizedUrlCount = getUnrecognizedUrlCount(rfcState, diffStateProjections);
+            // const diffStateProjections = computeDiffStateProjections(queries, cachedQueryResults, diffSessionManager);
+            // const rfcState = rfcService.currentState(rfcId);
+            const requestIdsWithDiffs = []
+            const unrecognizedUrlCount = 0
 
             return (<>
               {children({

@@ -1,14 +1,13 @@
 package com.useoptic.diff.shapes
 
 import com.useoptic.contexts.shapes.ShapeEntity
-import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
+import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
 import com.useoptic.types.capture.JsonLike
-import io.circe.Json
 
 abstract class ObjectVisitor {
   def begin(value: Map[String, JsonLike], bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail)
 
-  def visit(key: String, value: Map[String, JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail])
+  def visit(key: String, jsonLike: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail], parentBindings: ParameterBindings)
 
   def end()
 }
@@ -29,7 +28,7 @@ abstract class EmptyVisitor {
   def visit(trail: Option[ShapeTrail])
 }
 
-abstract class Visitors {
+abstract class JsonLikeVisitors {
   val objectVisitor: ObjectVisitor
   val arrayVisitor: ArrayVisitor
   val primitiveVisitor: PrimitiveVisitor

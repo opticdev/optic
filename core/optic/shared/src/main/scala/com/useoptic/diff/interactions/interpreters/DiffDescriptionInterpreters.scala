@@ -3,7 +3,7 @@ package com.useoptic.diff.interactions.interpreters
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.useoptic.contexts.shapes.projections.TrailTags
-import com.useoptic.diff.ChangeType
+import com.useoptic.diff.{ChangeType, DiffResult}
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.interactions.{ContentTypeHelpers, InteractionDiffResult, InteractionTrail, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, Resolvers, ShapeDiffResult, ShapeTrail, UnmatchedShape, UnspecifiedShape}
@@ -49,7 +49,7 @@ case class SpecifiedButNotFound(jsonTrail: JsonTrail, shapeTrail: ShapeTrail) ex
 }
 
 @JSExportAll
-case class DiffDescription(title: String, interactionPointerDescription: Option[InteractionPointerDescription], changeType: ChangeType) {
+case class DiffDescription[+T <: DiffResult](title: String, interactionPointerDescription: Option[InteractionPointerDescription], changeType: ChangeType, diff: T) {
   def exampleTags: TrailTags[JsonTrail] = interactionPointerDescription.map(_.exampleTags).getOrElse(TrailTags.empty)
   def shapeTags: TrailTags[ShapeTrail] = interactionPointerDescription.map(_.shapeTags).getOrElse(TrailTags.empty)
   def changeTypeAsString: String = changeType.toString
@@ -117,38 +117,38 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
     }
   }
 
-  def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): DiffDescription = {
+  def interpret(diff: InteractionDiffResult, interaction: HttpInteraction): DiffDescription[InteractionDiffResult] = {
     diff match {
       case d: UnmatchedRequestUrl => {
-        DiffDescription(s"${interaction.request.method} ${interaction.request.path} is not documented in the spec", None, ChangeType.Addition)
+        DiffDescription(s"${interaction.request.method} ${interaction.request.path} is not documented in the spec", None, ChangeType.Addition, diff)
       }
       case d: UnmatchedRequestMethod => {
-        DiffDescription(s"${interaction.request.method} ${interaction.request.path} is not documented in the spec", None, ChangeType.Addition)
+        DiffDescription(s"${interaction.request.method} ${interaction.request.path} is not documented in the spec", None, ChangeType.Addition, diff)
       }
       case d: UnmatchedRequestBodyContentType => {
         ContentTypeHelpers.contentType(interaction.request) match {
-          case Some(contentTypeHeader) => DiffDescription(s"The ${contentTypeHeader} content type is not documented in the spec", None, ChangeType.Addition)
-          case None => DiffDescription("A request with no body is not documented in the spec", None, ChangeType.Addition)
+          case Some(contentTypeHeader) => DiffDescription(s"The ${contentTypeHeader} content type is not documented in the spec", None, ChangeType.Addition, diff)
+          case None => DiffDescription("A request with no body is not documented in the spec", None, ChangeType.Addition, diff)
         }
       }
       case d: UnmatchedRequestBodyShape => {
         val (shapeDiffDescription, pointerDescription) = interpret(d.shapeDiffResult, d.interactionTrail, interaction)
         val title = s"${shapeDiffDescription}"
-        DiffDescription(title, Some(pointerDescription), pointerDescription.changeType)
+        DiffDescription(title, Some(pointerDescription), pointerDescription.changeType, diff)
       }
       case d: UnmatchedResponseStatusCode => {
-        DiffDescription(s"The ${interaction.response.statusCode} status code is not documented in the spec", None, ChangeType.Addition)
+        DiffDescription(s"The ${interaction.response.statusCode} status code is not documented in the spec", None, ChangeType.Addition, diff)
       }
       case d: UnmatchedResponseBodyContentType => {
         ContentTypeHelpers.contentType(interaction.response) match {
-          case Some(contentTypeHeader) => DiffDescription(s"The ${contentTypeHeader} content type is not documented in the spec", None, ChangeType.Addition)
-          case None => DiffDescription("A response with no body is not documented in the spec", None, ChangeType.Addition)
+          case Some(contentTypeHeader) => DiffDescription(s"The ${contentTypeHeader} content type is not documented in the spec", None, ChangeType.Addition, diff)
+          case None => DiffDescription("A response with no body is not documented in the spec", None, ChangeType.Addition, diff)
         }
       }
       case d: UnmatchedResponseBodyShape => {
         val (shapeDiffDescription, pointerDescription) = interpret(d.shapeDiffResult, d.interactionTrail, interaction)
         val title = s"${shapeDiffDescription}"
-        DiffDescription(title, Some(pointerDescription), pointerDescription.changeType)
+        DiffDescription(title, Some(pointerDescription), pointerDescription.changeType, diff)
       }
     }
   }

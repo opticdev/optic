@@ -80,7 +80,7 @@ class DiffVisitors extends Visitors {
               if (expected.httpContentType == contentTypeHeader) {
                 visitedWithMatchedContentTypes = visitedWithMatchedContentTypes + request.requestId
                 val shapeDiffVisitors = new com.useoptic.diff.shapes.visitors.DiffVisitors(context.spec)
-                val traverser = new com.useoptic.diff.shapes.Traverser(context.spec, shapeDiffVisitors)
+                val traverser = new com.useoptic.diff.shapes.JsonLikeTraverser(context.spec, shapeDiffVisitors)
                 val body = BodyUtilities.parseBody(interaction.request.body)
                 traverser.traverse(body, JsonTrail(Seq()), Some(ShapeTrail(expected.shapeId, Seq())))
                 shapeDiffVisitors.diffs.foreach(diff => {
@@ -159,7 +159,7 @@ class DiffVisitors extends Visitors {
           if (d.httpContentType == contentTypeHeader) {
             visitedWithMatchedContentTypes = visitedWithMatchedContentTypes + response.responseId
             val shapeDiffVisitors = new com.useoptic.diff.shapes.visitors.DiffVisitors(context.spec)
-            val traverser = new com.useoptic.diff.shapes.Traverser(context.spec, shapeDiffVisitors)
+            val traverser = new com.useoptic.diff.shapes.JsonLikeTraverser(context.spec, shapeDiffVisitors)
             val body = BodyUtilities.parseBody(interaction.response.body)
             traverser.traverse(body, JsonTrail(Seq()), Some(ShapeTrail(d.shapeId, Seq())))
             shapeDiffVisitors.diffs.foreach(diff => {
