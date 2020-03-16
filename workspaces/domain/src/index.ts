@@ -79,6 +79,7 @@ export const InteractionDiffer = diff.InteractionDiffer;
 export const BodyUtilities = opticEngine.com.useoptic.diff.interactions.BodyUtilities();
 export const ContentTypeHelpers = opticEngine.com.useoptic.diff.interactions.ContentTypeHelpers();
 export const OasProjectionHelper = opticEngine.com.useoptic.OASProjectionHelper();
+export const StableHashableWrapper = opticEngine.com.useoptic.StableHashableWrapper;
 
 import {checkDiffOrUnrecognizedPath} from './check-diff';
 import {IHttpInteraction} from './domain-types/optic-types';

@@ -10,37 +10,37 @@ sealed trait CoverageConcerns extends StableHashable
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-case class TotalInteractions()
+case class TotalInteractions() extends CoverageConcerns
 
-case class TotalUnmatchedPath()
+case class TotalUnmatchedPath() extends CoverageConcerns
 
-case class TotalForPath(pathId: PathComponentId)
+case class TotalForPath(pathId: PathComponentId) extends CoverageConcerns
 
-case class TotalForPathAndMethod(pathId: PathComponentId, httpMethod: String)
+case class TotalForPathAndMethod(pathId: PathComponentId, httpMethod: String) extends CoverageConcerns
 
-case class TotalForPathAndMethodAndStatusCode(pathId: PathComponentId, httpMethod: String, httpStatusCode: Int)
+case class TotalForPathAndMethodAndStatusCode(pathId: PathComponentId, httpMethod: String, httpStatusCode: Int) extends CoverageConcerns
 
-case class TotalForPathAndMethodWithoutBody(pathId: PathComponentId, httpMethod: String)
+case class TotalForPathAndMethodWithoutBody(pathId: PathComponentId, httpMethod: String) extends CoverageConcerns
 
-case class TotalForPathAndMethodAndContentType(pathId: PathComponentId, httpMethod: String, requestContentType: String)
+case class TotalForPathAndMethodAndContentType(pathId: PathComponentId, httpMethod: String, requestContentType: String) extends CoverageConcerns
 
-case class TotalForPathAndMethodAndStatusCodeWithoutBody(pathId: PathComponentId, httpMethod: String, httpStatusCode: Int)
+case class TotalForPathAndMethodAndStatusCodeWithoutBody(pathId: PathComponentId, httpMethod: String, httpStatusCode: Int) extends CoverageConcerns
 
-case class TotalForPathAndMethodAndStatusCodeAndContentType(pathId: PathComponentId, httpMethod: String, httpStatusCode: Int, requestContentType: String)
+case class TotalForPathAndMethodAndStatusCodeAndContentType(pathId: PathComponentId, httpMethod: String, httpStatusCode: Int, responseContentType: String) extends CoverageConcerns
 
-case class TotalForRequest(requestId: RequestId)
+case class TotalForRequest(requestId: RequestId) extends CoverageConcerns
 
-case class TotalForResponse(responseId: ResponseId)
+case class TotalForResponse(responseId: ResponseId) extends CoverageConcerns
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 
-case class TotalForRequestBodyItem(requestId: RequestId, shapeTrail: ShapeTrail)
+case class TotalForRequestBodyItem(requestId: RequestId, shapeTrail: ShapeTrail) extends CoverageConcerns
 
-case class TotalForRequestBodyItemShapeHash(requestId: RequestId, shapeTrail: ShapeTrail, polymorphismVariantId: String)
+case class TotalForRequestBodyItemVariant(requestId: RequestId, shapeTrail: ShapeTrail, polymorphismVariantId: String) extends CoverageConcerns
 
-case class TotalForResponseBodyItem(requestId: RequestId, shapeTrail: ShapeTrail)
+case class TotalForResponseBodyItem(requestId: RequestId, shapeTrail: ShapeTrail) extends CoverageConcerns
 
-case class TotalForResponseBodyItemShapeHash(requestId: RequestId, shapeTrail: ShapeTrail, polymorphismVariantId: String)
+case class TotalForResponseBodyItemVariant(requestId: RequestId, shapeTrail: ShapeTrail, polymorphismVariantId: String) extends CoverageConcerns
 
 ////////////////////////////////////////////////////////////////////////////////////////////////
 //

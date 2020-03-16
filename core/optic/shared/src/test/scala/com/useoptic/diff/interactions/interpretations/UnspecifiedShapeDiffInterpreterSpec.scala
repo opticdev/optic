@@ -10,7 +10,8 @@ import io.circe.literal._
 
 class UnspecifiedShapeDiffInterpreterSpec extends FunSpec {
   describe("response body unspecified shape") {
-    val initialCommands = SpecHelpers.simpleGet(json"""{"x": {"k": "v"}}""")
+    val specHelpers = new SpecHelpers()
+    val initialCommands = specHelpers.simpleGet(json"""{"x": {"k": "v"}}""")
     val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)
 
     describe("unexpected object key") {
@@ -33,8 +34,8 @@ class UnspecifiedShapeDiffInterpreterSpec extends FunSpec {
   }
 
   describe("request body unspecified shape") {
-
-    val initialCommands = SpecHelpers.simplePost(json"""{"x": {"k": "v"}}""")
+    val specHelpers = new SpecHelpers()
+    val initialCommands = specHelpers.simplePost(json"""{"x": {"k": "v"}}""")
     val rfcState: RfcState = TestHelpers.fromCommands(initialCommands)
     it("should suggest adding a field") {
       val interaction: HttpInteraction = InteractionHelpers.simplePost(json"""{"x":{"k":"v","surprise":"!"}}""", 204)

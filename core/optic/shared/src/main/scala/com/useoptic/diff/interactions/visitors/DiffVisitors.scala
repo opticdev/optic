@@ -4,6 +4,7 @@ import com.useoptic.contexts.requests.Commands._
 import com.useoptic.contexts.requests._
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.{JsonTrail, ShapeTrail}
+import com.useoptic.dsa.Counter
 import com.useoptic.types.capture.HttpInteraction
 
 class DiffVisitors extends Visitors {
@@ -41,7 +42,7 @@ class DiffVisitors extends Visitors {
   class DiffRequestBodyVisitor extends RequestBodyVisitor {
     var visitedWithUnmatchedContentTypes: Set[RequestId] = Set()
     var visitedWithMatchedContentTypes: Set[RequestId] = Set()
-
+    var visitedShapeTrails: Counter[ShapeTrail] = new Counter[ShapeTrail]
 
     override def begin(): Unit = {
       visitedWithUnmatchedContentTypes = Set()
@@ -83,6 +84,10 @@ class DiffVisitors extends Visitors {
                 val traverser = new com.useoptic.diff.shapes.Traverser(context.spec, shapeDiffVisitors)
                 val body = BodyUtilities.parseBody(interaction.request.body)
                 traverser.traverse(body, JsonTrail(Seq()), Some(ShapeTrail(expected.shapeId, Seq())))
+
+                if (shapeDiffVisitors.diffs.isEmpty) {
+                  visitedShapeTrails = shapeDiffVisitors.visitedShapeTrails
+                }
                 shapeDiffVisitors.diffs.foreach(diff => {
                   val interactionTrail = InteractionTrail(Seq(RequestBody(contentTypeHeader)))
                   val requestsTrail = SpecRequestBody(request.requestId)
@@ -124,6 +129,7 @@ class DiffVisitors extends Visitors {
   class DiffResponseBodyVisitor extends ResponseBodyVisitor {
     var visitedWithUnmatchedContentTypes: Set[HttpResponse] = Set()
     var visitedWithMatchedContentTypes: Set[ResponseId] = Set()
+    var visitedShapeTrails: Counter[ShapeTrail] = new Counter[ShapeTrail]
 
 
     override def begin(): Unit = {
@@ -162,6 +168,9 @@ class DiffVisitors extends Visitors {
             val traverser = new com.useoptic.diff.shapes.Traverser(context.spec, shapeDiffVisitors)
             val body = BodyUtilities.parseBody(interaction.response.body)
             traverser.traverse(body, JsonTrail(Seq()), Some(ShapeTrail(d.shapeId, Seq())))
+            if (shapeDiffVisitors.diffs.isEmpty) {
+              visitedShapeTrails = shapeDiffVisitors.visitedShapeTrails
+            }
             shapeDiffVisitors.diffs.foreach(diff => {
               val interactionTrail = InteractionTrail(Seq(ResponseBody(contentTypeHeader, interaction.response.statusCode)))
               val requestsTrail = SpecResponseBody(response.responseId)

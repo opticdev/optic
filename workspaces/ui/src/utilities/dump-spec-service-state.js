@@ -26,6 +26,6 @@ export function dumpSpecServiceState(specService) {
     link.download = outputFileName;
     console.log(link);
     link.click()
-    return `mv "${downloadSourcePath}/${outputFileName}" "${downloadDestinationPath}/${outputFileName}`
+    return `mv "${downloadSourcePath}/${outputFileName}" "${downloadDestinationPath}/${outputFileName}"`
   };
 }

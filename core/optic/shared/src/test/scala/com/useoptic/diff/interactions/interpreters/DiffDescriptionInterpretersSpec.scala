@@ -11,7 +11,8 @@ import io.circe.literal._
 class DiffDescriptionInterpretersSpec extends FunSpec {
   describe("Request Content Type Diff") {
     it("should be x") {
-      val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simplePost(json"""1"""))
+      val specHelpers = new SpecHelpers()
+      val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simplePost(json"""1"""))
       val interaction: HttpInteraction = InteractionHelpers.simplePost(json"""1""", 204, "text/plain")
       val diffs = DiffHelpers.diff(rfcState, interaction)
       assert(diffs.size == 1)
@@ -23,7 +24,8 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
   }
   describe("Response Content Type Diff") {
     it("should be x") {
-      val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simpleGet(json"""1"""))
+      val specHelpers = new SpecHelpers()
+      val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""1"""))
       val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""1""", 200, "text/plain")
       val diffs = DiffHelpers.diff(rfcState, interaction)
       assert(diffs.size == 1)
@@ -36,7 +38,8 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
   describe("Response Body Diff") {
     describe("with a top level string") {
       it("should be x") {
-        val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simpleGet(json"""1"""))
+        val specHelpers = new SpecHelpers()
+        val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""1"""))
         val interaction: HttpInteraction = InteractionHelpers.simpleGet(json""""a"""")
         val diffs = DiffHelpers.diff(rfcState, interaction)
         assert(diffs.size == 1)
@@ -49,7 +52,8 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
     describe("with a top level array") {
       it("should be x") {
 
-        val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simpleGet(json"""[]"""))
+        val specHelpers = new SpecHelpers()
+        val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""[]"""))
         val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""1""")
         val diffs = DiffHelpers.diff(rfcState, interaction)
         assert(diffs.size == 1)
@@ -62,7 +66,8 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
     describe("with a top level object") {
       it("should be x") {
 
-        val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simpleGet(json"""{}"""))
+        val specHelpers = new SpecHelpers()
+        val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""{}"""))
         val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""1""")
         val diffs = DiffHelpers.diff(rfcState, interaction)
         assert(diffs.size == 1)
@@ -75,7 +80,8 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
     describe("with a nested object") {
       describe("with an extra key") {
         it("should be x") {
-          val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simpleGet(json"""{}"""))
+          val specHelpers = new SpecHelpers()
+          val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""{}"""))
           val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""{"k":1}""")
           val diffs = DiffHelpers.diff(rfcState, interaction)
           assert(diffs.size == 1)
@@ -88,7 +94,8 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
       describe("with a missing key") {
 
         it("should be x") {
-          val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simpleGet(json"""{"k": 1}"""))
+          val specHelpers = new SpecHelpers()
+          val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""{"k": 1}"""))
           val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""{}""")
           val diffs = DiffHelpers.diff(rfcState, interaction)
           assert(diffs.size == 1)
@@ -101,7 +108,8 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
       describe("with a mismatched key") {
 
         it("should be x") {
-          val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simpleGet(json"""{"k":"v"}"""))
+          val specHelpers = new SpecHelpers()
+          val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""{"k":"v"}"""))
           val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""{"k":1}""")
           val diffs = DiffHelpers.diff(rfcState, interaction)
           assert(diffs.size == 1)
@@ -115,7 +123,8 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
     describe("with a list") {
       describe("with a mismatched item") {
         it("should be x") {
-          val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simpleGet(json"""[{}]"""))
+          val specHelpers = new SpecHelpers()
+          val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""[{}]"""))
           val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""["a"]""")
           val diffs = DiffHelpers.diff(rfcState, interaction)
           assert(diffs.size == 1)
@@ -129,7 +138,8 @@ class DiffDescriptionInterpretersSpec extends FunSpec {
   }
   describe("Response Status Code Diff") {
     it("should be x") {
-      val rfcState: RfcState = TestHelpers.fromCommands(SpecHelpers.simpleGet(json"""1"""))
+      val specHelpers = new SpecHelpers()
+      val rfcState: RfcState = TestHelpers.fromCommands(specHelpers.simpleGet(json"""1"""))
       val interaction: HttpInteraction = InteractionHelpers.simpleGet(json"""1""", 299)
       val diffs = DiffHelpers.diff(rfcState, interaction)
       assert(diffs.size == 1)

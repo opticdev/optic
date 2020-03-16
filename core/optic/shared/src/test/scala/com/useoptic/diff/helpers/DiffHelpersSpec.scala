@@ -9,23 +9,21 @@ import com.useoptic.diff.interactions.{InteractionTrail, ResponseBody, SpecRespo
 import com.useoptic.diff.interactions.interpretations.InteractionHelpers
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, ShapeTrail, UnmatchedShape}
+import com.useoptic.dsa.SequentialIdGenerator
 import com.useoptic.types.capture.{HttpInteraction, JsonLikeFrom}
 import io.circe.Json
 import org.scalatest.FunSpec
 import io.circe.literal._
 
-object SpecHelpers {
-  var count = 0
-
-  def nextId() = {
-    count += 1
-    count
-  }
+class SpecHelpers {
+  val requestIdGenerator = new SequentialIdGenerator("request")
+  val responseIdGenerator = new SequentialIdGenerator("response")
+  val shapeIdPrefixGenerator = new SequentialIdGenerator("s")
 
   def simpleGet(responseBody: Json): Seq[RfcCommand] = {
-    val requestId = s"request${nextId()}"
-    val responseId = s"response${nextId()}"
-    val builtShape = new ShapeBuilder(JsonLikeFrom.json(responseBody).get, s"s${nextId()}").run
+    val requestId = requestIdGenerator.nextId()
+    val responseId = responseIdGenerator.nextId()
+    val builtShape = new ShapeBuilder(JsonLikeFrom.json(responseBody).get, shapeIdPrefixGenerator.nextId()).run
     builtShape.commands ++ Seq(
       RequestsCommands.AddRequest(requestId, "root", "GET"),
       RequestsCommands.AddResponse(responseId, requestId, 200),
@@ -34,9 +32,9 @@ object SpecHelpers {
   }
 
   def simplePost(requestBody: Json): Seq[RfcCommand] = {
-    val requestId = s"request${nextId()}"
-    val responseId = s"response${nextId()}"
-    val builtShape = new ShapeBuilder(JsonLikeFrom.json(requestBody).get, s"s${nextId()}").run
+    val requestId = requestIdGenerator.nextId()
+    val responseId = responseIdGenerator.nextId()
+    val builtShape = new ShapeBuilder(JsonLikeFrom.json(requestBody).get, shapeIdPrefixGenerator.nextId()).run
     builtShape.commands ++ Seq(
       RequestsCommands.AddRequest(requestId, "root", "POST"),
       RequestsCommands.SetRequestBodyShape(requestId, ShapedBodyDescriptor("application/json", builtShape.rootShapeId, isRemoved = false)),
@@ -59,7 +57,8 @@ class DiffHelpersSpec extends FunSpec {
   }
 
   describe("many interactions to the same path") {
-    val commands: Seq[RfcCommand] = SpecHelpers.simpleGet(json"""{"k": [{"a": 1, "b": false}]}""")
+    val specHelpers = new SpecHelpers()
+    val commands: Seq[RfcCommand] = specHelpers.simpleGet(json"""{"k": [{"a": 1, "b": false}]}""")
     describe("aggregate diff") {
       describe("with one interaction") {
 
@@ -71,10 +70,10 @@ class DiffHelpersSpec extends FunSpec {
           assert(diff == Set(
             UnmatchedResponseBodyShape(
               InteractionTrail(Seq(ResponseBody("application/json", 200))),
-              SpecResponseBody("response2"),
+              SpecResponseBody("response1"),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("k"))),
-                ShapeTrail("s3_0", Seq())
+                ShapeTrail("s1_0", Seq(ObjectFieldTrail("s1_1", "s1_2")))
               )
             )
           ))
@@ -90,10 +89,10 @@ class DiffHelpersSpec extends FunSpec {
           assert(diff == Set(
             UnmatchedResponseBodyShape(
               InteractionTrail(Seq(ResponseBody("application/json", 200))),
-              SpecResponseBody("response2"),
+              SpecResponseBody("response1"),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("k"))),
-                ShapeTrail("s3_0", Seq())
+                ShapeTrail("s1_0", Seq(ObjectFieldTrail("s1_1", "s1_2")))
               )
             )
           ))
@@ -109,10 +108,10 @@ class DiffHelpersSpec extends FunSpec {
           assert(diff == Set(
             UnmatchedResponseBodyShape(
               InteractionTrail(Seq(ResponseBody("application/json", 200))),
-              SpecResponseBody("response2"),
+              SpecResponseBody("response1"),
               UnmatchedShape(
                 JsonTrail(Seq(JsonObjectKey("k"))),
-                ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1", "s3_2")))
+                ShapeTrail("s1_0", Seq(ObjectFieldTrail("s1_1", "s1_2")))
               )
             )
           ))
@@ -132,10 +131,10 @@ class DiffHelpersSpec extends FunSpec {
           assert(groups.keySet.size == 1)
           val key = UnmatchedResponseBodyShape(
             InteractionTrail(Seq(ResponseBody("application/json", 200))),
-            SpecResponseBody("response2"),
+            SpecResponseBody("response1"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
-              ShapeTrail("s3_0", Seq())
+              ShapeTrail("s1_0", Seq(ObjectFieldTrail("s1_1", "s1_2")))
             )
           )
           assert(groups(key) == interactions)
@@ -151,10 +150,10 @@ class DiffHelpersSpec extends FunSpec {
           assert(groups.keySet.size == 1)
           val key = UnmatchedResponseBodyShape(
             InteractionTrail(Seq(ResponseBody("application/json", 200))),
-            SpecResponseBody("response2"),
+            SpecResponseBody("response1"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
-              ShapeTrail("s3_0", Seq())
+              ShapeTrail("s1_0", Seq(ObjectFieldTrail("s1_1", "s1_2")))
             )
           )
           assert(groups(key) == interactions)
@@ -170,10 +169,10 @@ class DiffHelpersSpec extends FunSpec {
           assert(groups.keySet.size == 1)
           val key = UnmatchedResponseBodyShape(
             InteractionTrail(Seq(ResponseBody("application/json", 200))),
-            SpecResponseBody("response2"),
+            SpecResponseBody("response1"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
-              ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1", "s3_2"))
+              ShapeTrail("s1_0", Seq(ObjectFieldTrail("s1_1", "s1_2"))
               )
             )
           )
@@ -191,20 +190,20 @@ class DiffHelpersSpec extends FunSpec {
           assert(groups.keySet.size == 2)
           val key1 = UnmatchedResponseBodyShape(
             InteractionTrail(Seq(ResponseBody("application/json", 200))),
-            SpecResponseBody("response2"),
+            SpecResponseBody("response1"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"))),
-              ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1", "s3_2")))
+              ShapeTrail("s1_0", Seq(ObjectFieldTrail("s1_1", "s1_2")))
             )
           )
           assert(groups(key1) == Seq(interactions(0)))
 
           val key2 = UnmatchedResponseBodyShape(
             InteractionTrail(Seq(ResponseBody("application/json", 200))),
-            SpecResponseBody("response2"),
+            SpecResponseBody("response1"),
             UnmatchedShape(
               JsonTrail(Seq(JsonObjectKey("k"), JsonArrayItem(0), JsonObjectKey("b"))),
-              ShapeTrail("s3_0", Seq(ObjectFieldTrail("s3_1", "s3_2"), ListItemTrail("s3_2", "s3_8"), ObjectFieldTrail("s3_6", "s3_7")))
+              ShapeTrail("s1_0", Seq(ObjectFieldTrail("s1_1", "s1_2"), ListItemTrail("s1_2", "s1_8"), ObjectFieldTrail("s1_6", "s1_7")))
             )
           )
           assert(groups(key2) == Seq(interactions(1)))

@@ -27,7 +27,8 @@ class Traverser(spec: RfcState, visitors: Visitors) {
     val bodyJson = body.get
     if (bodyJson.isArray) {
       val items = bodyJson.items
-      visitors.arrayVisitor.begin(items, bodyTrail, resolved.shapeEntity)
+      visitors.arrayVisitor.begin(items, bodyTrail, trail, resolved)
+
       val listShapeId = resolved.shapeEntity.shapeId
       val resolvedItem = Resolvers.resolveParameterToShape(spec.shapesState, listShapeId, ListKind.innerParam, resolved.bindings)
       items.zipWithIndex.foreach(entry => {
@@ -39,13 +40,14 @@ class Traverser(spec: RfcState, visitors: Visitors) {
         visitors.arrayVisitor.visit(index, value, jsonTrail, resolvedTrail)
         traverse(Some(value), jsonTrail, resolvedTrail)
       })
+
       visitors.arrayVisitor.end()
     }
     else if (bodyJson.isObject) {
       val fields = bodyJson.fields
       visitors.objectVisitor.begin(fields, bodyTrail, resolved, trail)
-      val objectEntries = fields.toIterable
-      objectEntries.foreach(entry => {
+
+      fields.foreach(entry => {
         val (key, value) = entry
         //@TODO: could be a map instead of an object here, for now it'll return a None
         val resolvedField = Resolvers.tryResolveFieldFromKey(spec.shapesState, resolved.shapeEntity, key)
@@ -61,6 +63,7 @@ class Traverser(spec: RfcState, visitors: Visitors) {
 
         traverse(Some(value), jsonTrail, resolvedTrail)
       })
+
       visitors.objectVisitor.end()
     }
     else {

@@ -7,19 +7,29 @@ import com.useoptic.contexts.shapes.ShapesHelper._
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
 import com.useoptic.diff.shapes._
+import com.useoptic.dsa.Counter
 import com.useoptic.types.capture.JsonLike
-import io.circe.Json
 
 class DiffVisitors(spec: RfcState) extends Visitors {
   var diffs: Iterator[ShapeDiffResult] = Iterator.empty
+  var visitedShapeTrails: Counter[ShapeTrail] = new Counter[ShapeTrail]()
 
+  //@TODO @REFACTOR this should be injected by caller
   def emit(diff: ShapeDiffResult) = {
     println(s"got diff ${diff}")
     diffs = diffs ++ Iterator(diff)
   }
 
+  //@TODO @REFACTOR this should be injected by caller
+  def log(trail: Option[ShapeTrail]): Unit = {
+    if (trail.isDefined) {
+      visitedShapeTrails.increment(trail.get)
+    }
+  }
+
   class DiffArrayVisitor extends ArrayVisitor {
-    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity): Unit = {
+    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, shapeTrail: ShapeTrail, resolvedShapeTrail: ResolvedTrail): Unit = {
+      log(Some(shapeTrail))
       //@TODO: check against the expected shape for fundamental shape mismatch
       println("traversing array")
     }
@@ -34,6 +44,7 @@ class DiffVisitors(spec: RfcState) extends Visitors {
     override def end(): Unit = {
 
     }
+
   }
 
   override val arrayVisitor: ArrayVisitor = new DiffArrayVisitor()
@@ -41,6 +52,7 @@ class DiffVisitors(spec: RfcState) extends Visitors {
   class DiffObjectVisitor() extends ObjectVisitor {
 
     override def begin(value: Map[String, JsonLike], bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
+      log(Some(shapeTrail))
       println("visiting object")
       //@TODO: check against the expected shape for fundamental shape mismatch
       val fieldNameToId = expected.shapeEntity.descriptor.fieldOrdering
@@ -80,6 +92,7 @@ class DiffVisitors(spec: RfcState) extends Visitors {
 
   class DiffPrimitiveVisitor(emit: (ShapeDiffResult) => Unit) extends PrimitiveVisitor {
     override def visit(value: Option[JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
+      log(trail)
       println("primitive visitor")
       println(bodyTrail)
       if (trail.isEmpty) {

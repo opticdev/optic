@@ -6,23 +6,28 @@ import com.useoptic.contexts.rfc.Events.EventContext
 import com.useoptic.contexts.shapes.Commands._
 import com.useoptic.contexts.shapes.Events._
 import com.useoptic.ddd.{AggregateId, EventSourcedRepository, InMemoryEventStore}
+import com.useoptic.dsa.{IdGenerator, RandomAlphanumericIdGenerator}
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
-import scala.util.Random
 
 @JSExport
 @JSExportAll
 object ShapesHelper {
+  val shapeIdGenerator = new RandomAlphanumericIdGenerator("shape", "_", 10)
+  val fieldIdGenerator = new RandomAlphanumericIdGenerator("field", "_", 10)
+  val shapeParameterIdGenerator = new RandomAlphanumericIdGenerator("shape-parameter", "_", 10)
 
   def newShapeId(): String = {
-    s"shape_${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
+    shapeIdGenerator.nextId()
   }
 
   def newShapeParameterId(): String = {
-    s"shape-parameter_${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
+    shapeParameterIdGenerator.nextId()
   }
 
-  def newFieldId(): String = s"field_${if (sys.env.get("TESTS_ARE_RUNNING").isDefined) nextId.toString else Random.alphanumeric take 10 mkString}"
+  def newFieldId(): String = {
+    fieldIdGenerator.nextId()
+  }
 
   def appendDefaultStringTypeEvents(adder: RequestParameterAdded, eventContext: Option[EventContext]): Vector[RequestsEvent] = {
     val shapeId = newShapeId()
@@ -67,19 +72,6 @@ object ShapesHelper {
         toCoreShape(shapesState.shapes(shapeEntity.descriptor.baseShapeId), shapesState)
       }
     }
-  }
-
-
-  def test_resetCounter = {
-    test_counter = 0
-  }
-
-  private
-  var test_counter = 0
-  def nextId: Int = {
-    val a = test_counter
-    test_counter = a + 1
-    a
   }
 
   def toCoreAndBaseShape(shapeEntity: ShapeEntity, shapesState: ShapesState): (ShapeId, CoreShapeKind) = {

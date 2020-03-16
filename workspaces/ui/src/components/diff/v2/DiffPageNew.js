@@ -43,6 +43,7 @@ import uuidv4 from 'uuid/v4';
 import {withRouter} from 'react-router-dom';
 import {routerPaths} from '../../../RouterPaths';
 import {withNavigationContext} from '../../../contexts/NavigationContext';
+import {StableHasher} from '../../../utilities/CoverageUtilities';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -460,8 +461,15 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
     simulatedCommands,
     eventStore,
     initialEventStore,
-    rfcState
+    rfcState,
+    opticEngine,
+    StableHasher
   };
+  /*
+const converter = new opticDebug.diffContext.opticEngine.com.useoptic.CoverageReportConverter(opticDebug.diffContext.StableHasher)
+const report = opticDebug.diffContext.opticEngine.com.useoptic.diff.helpers.CoverageHelpers().getCoverage(opticDebug.diffContext.rfcState, opticDebug.diffContext.samples)
+converter.toJs(report)
+   */
 
   return (
     <DiffContextStore
