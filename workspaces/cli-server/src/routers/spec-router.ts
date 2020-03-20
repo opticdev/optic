@@ -162,9 +162,6 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   router.get('/captures/:captureId/samples', async (req, res) => {
     const {captureId} = req.params;
     const captureInfo = req.optic.session.captures.find(x => x.taskConfig.captureId === captureId);
-    if (!captureInfo) {
-      return res.sendStatus(400);
-    }
 
     const loader: ICaptureLoader = new FileSystemCaptureLoader({
       captureBaseDirectory: req.optic.paths.capturesPath
@@ -174,7 +171,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       const capture = await loader.loadWithFilter(captureId, filter);
       res.json({
         metadata: {
-          completed: captureInfo.status === 'completed'
+          completed: captureInfo && captureInfo.status === 'completed'
         },
         samples: capture.samples,
         links: [
