@@ -26,6 +26,15 @@ export function cleanupPathComponentName(name) {
   return name.replace(/[{}:]/gi, '');
 }
 
+export function trimTrailingEmptyPath(components) {
+  if (components.length > 0) {
+    if (components[components.length - 1].name === '') {
+      return components.slice(0, -1)
+    }
+  }
+  return components
+}
+
 export function pathStringToPathComponents(pathString) {
   const components = pathString.split('/')
     .map(name => {
@@ -34,9 +43,9 @@ export function pathStringToPathComponents(pathString) {
     });
   const [root, ...rest] = components;
   if (root.name === '') {
-    return rest;
+    return trimTrailingEmptyPath(rest);
   }
-  return components;
+  return trimTrailingEmptyPath(components);
 }
 
 class PathInput extends React.Component {

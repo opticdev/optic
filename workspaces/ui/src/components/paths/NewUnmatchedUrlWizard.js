@@ -130,15 +130,14 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
 
 
   render() {
-    const {classes, unmatchedPaths, matchedPaths, baseUrl, demos} = this.props;
+    const {classes, baseUrl, demos} = this.props;
     const {pathExpression, targetUrl, previewSample, pathId, purpose} = this.state;
     const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression));
     const isCompleteMatch = true;
-    const pathsToRender = sortby(unmatchedPaths.reduce(pathReducer, []), ['url', 'method']);
-    const suggestedPaths = sortby(matchedPaths.filter(i => !i.requestId).reduce(pathReducer, []), ['url', 'method']);
+    const {pathsToRender, suggestedPaths} = this.props;
 
 
-    const matchingUrls = new Set([...pathsToRender, ...suggestedPaths].filter(({url}) => regex.exec(url)));
+    const matchingUrls = [...pathsToRender, ...suggestedPaths].filter(({url}) => regex.exec(url));
 
     const addPathButton = (
       <Button
@@ -174,6 +173,7 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
     const getStepContent = (step) => {
       switch (step) {
         case 0:
+
           return (<div id="new-url" key="new-url">
             {suggestedPaths.length > 0 && (
               <>
@@ -182,7 +182,6 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
                 <List dense>
                   {!targetUrl && (
                     suggestedPaths.map(({method, url, sample, pathId}) => {
-
                       const full = <PathIdToPathString pathId={pathId}/>;
 
                       return (<UrlListItem url={url}
@@ -343,18 +342,59 @@ class UnmatchedUrlWizardWithoutQuery extends React.Component {
   }
 }
 
+function withComputedPaths(C) {
+  return function (props) {
+    const {unmatchedPaths, matchedPaths} = props;
+    console.count('dddd recomputing paths')
+    const unmatchedUrlMethodUniques = new Set(
+      unmatchedPaths
+        .map(x => {
+          const uiItem = itemToUiItem(x);
+          const {url, method} = uiItem;
+          const key = JSON.stringify({url, method});
+          console.log('dddd', url, method);
+          return [key, uiItem];
+        })
+        .reduce((acc, [k, v]) => acc.set(k, v), new Map())
+        .values()
+    );
+    const pathsToRender = sortby([...unmatchedUrlMethodUniques], ['url', 'method']);
+    const matchedPathMethodUniques = new Set(
+      matchedPaths
+        .filter(x => !x.requestId)
+        .map(x => {
+          const uiItem = itemToUiItem(x);
+          const {pathId, method} = uiItem;
+          const key = JSON.stringify({pathId, method});
+          console.log('dddd', pathId, method);
+          return [key, uiItem];
+        })
+        .reduce((acc, [k, v]) => acc.set(k, v), new Map())
+        .values()
+    );
+    const suggestedPaths = sortby([...matchedPathMethodUniques], ['url', 'method']);
+    return (
+      <C
+        {...props}
+        pathsToRender={pathsToRender}
+        suggestedPaths={suggestedPaths}
+      />
+    );
+  };
+}
+
 class PreviewSample extends React.Component {
 
   shouldComponentUpdate(nextProps, nextState, nextContext) {
     if (equal(nextProps.sample, this.props.sample)) {
-      return false
+      return false;
     } else {
-      return true
+      return true;
     }
   }
 
   render() {
-    const {sample} = this.props
+    const {sample} = this.props;
 
     if (!sample) {
       return null;
@@ -395,7 +435,8 @@ const UnmatchedUrlWizard = compose(
   withNavigationContext,
   withTrafficSessionContext,
   withRfcContext,
-  withProductDemoContext
+  withProductDemoContext,
+  withComputedPaths
 )(UnmatchedUrlWizardWithoutQuery);
 
 function UrlListItem(props) {
@@ -453,18 +494,14 @@ function completePathMatcherRegex(pathComponents) {
   return regex;
 }
 
-function pathReducer(acc, item) {
-  if (acc.find(i => i.method === item.sample.request.method && i.url === item.sample.request.url)) {
-    return acc;
-  } else {
-    return acc.concat({
-      method: item.sample.request.method,
-      url: item.sample.request.url,
-      pathId: item.pathId,
-      requestId: item.requestId,
-      sample: item.sample
-    });
-  }
+function itemToUiItem(item) {
+  return {
+    method: item.sample.request.method,
+    url: item.sample.request.url,
+    pathId: item.pathId,
+    requestId: item.requestId,
+    sample: item.sample
+  };
 }
 
 export function pathComponentsToString(pathComponents) {
