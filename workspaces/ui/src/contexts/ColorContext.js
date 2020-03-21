@@ -33,13 +33,13 @@ export {
 //Shared Styles
 
 export const AddedGreen = '#17c8a3'
-export const AddedGreenBackground = 'rgba(23,200,163,0.1)'
+export const AddedGreenBackground = 'rgba(15,129,105,0.2)'
 
 export const ChangedYellow = '#c8b768'
 export const ChangedYellowBackground = 'rgba(200,183,104,0.1)'
 
 export const RemovedRed = '#c86363'
-export const RemovedRedBackground = 'rgba(193,4,9,0.31)'
+export const RemovedRedBackground = 'rgba(193,4,9,0.1)'
 
 export const UpdatedBlue = '#2b7bd1'
 export const UpdatedBlueBackground = 'rgba(43,123,209,0.11)'

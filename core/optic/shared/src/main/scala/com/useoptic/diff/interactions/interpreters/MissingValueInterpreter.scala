@@ -93,7 +93,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
       "Make Optional",
       "Make it so x is optional",
       commands,
-      ChangeType.Addition,
+      ChangeType.Update,
       goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
     )
   }

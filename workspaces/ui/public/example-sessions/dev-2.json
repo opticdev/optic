@@ -1,0 +1,631 @@
+{
+  "events": [
+    {
+      "PathComponentAdded": {
+        "pathId": "path_wYt9lgNJVf",
+        "parentPathId": "root",
+        "name": "todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "4e67502a-5a8d-4d94-aa11-30ffeb48b6fa",
+          "createdAt": "2020-03-05T00:43:21.487Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "request_xSl1g1g9AM",
+        "key": "purpose",
+        "value": "list all todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "76799af2-dd47-4af1-8f8a-5018313819c1",
+          "createdAt": "2020-03-05T00:43:26.051Z"
+        }
+      }
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_a0XIZXT9KN",
+        "pathId": "path_wYt9lgNJVf",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.006Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BSda3X_0",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.006Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BSda3X_1",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.007Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BSda3X_3",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.007Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "BSda3X_2",
+        "shapeId": "BSda3X_1",
+        "name": "a",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "BSda3X_2",
+            "shapeId": "BSda3X_3"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.008Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BSda3X_5",
+        "baseShapeId": "$string",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.010Z"
+        }
+      }
+    },
+    {
+      "FieldAdded": {
+        "fieldId": "BSda3X_4",
+        "shapeId": "BSda3X_1",
+        "name": "b",
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "BSda3X_4",
+            "shapeId": "BSda3X_5"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.010Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "BSda3X_6",
+        "baseShapeId": "BSda3X_1",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.011Z"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "BSda3X_0",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "BSda3X_6"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.011Z"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_a0XIZXT9KN",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "BSda3X_0",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.012Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "SEondx_0",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.012Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_znsNc22I33",
+        "baseShapeId": "$oneOf",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.012Z"
+        }
+      }
+    },
+    {
+      "ShapeParameterAdded": {
+        "shapeParameterId": "shape-parameter_suvWwUkdRX",
+        "shapeId": "shape_znsNc22I33",
+        "name": "",
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_znsNc22I33",
+            "providerDescriptor": {
+              "NoProvider": {}
+            },
+            "consumingParameterId": "shape-parameter_suvWwUkdRX"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.012Z"
+        }
+      }
+    },
+    {
+      "ShapeParameterAdded": {
+        "shapeParameterId": "shape-parameter_xHt3cggw04",
+        "shapeId": "shape_znsNc22I33",
+        "name": "",
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_znsNc22I33",
+            "providerDescriptor": {
+              "NoProvider": {}
+            },
+            "consumingParameterId": "shape-parameter_xHt3cggw04"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.013Z"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_znsNc22I33",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "SEondx_0"
+              }
+            },
+            "consumingParameterId": "shape-parameter_xHt3cggw04"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.013Z"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "shape_znsNc22I33",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "BSda3X_5"
+              }
+            },
+            "consumingParameterId": "shape-parameter_suvWwUkdRX"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.014Z"
+        }
+      }
+    },
+    {
+      "FieldShapeSet": {
+        "shapeDescriptor": {
+          "FieldShapeFromShape": {
+            "fieldId": "BSda3X_4",
+            "shapeId": "shape_znsNc22I33"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-05T00:43:38.014Z"
+        }
+      }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "3b502f36-e41e-4711-ad00-04dafb9159ee",
+        "commitMessage": "empty message",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "6ead1571-d221-469c-8be6-de0e0db42736",
+          "clientCommandBatchId": "9639fb6d-80d2-4b01-af67-29f36fd24ad1",
+          "createdAt": "2020-03-17T16:06:41.186Z"
+        }
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "parameter_LgUV21obBN",
+        "pathId": "path_wYt9lgNJVf",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "6ead1571-d221-469c-8be6-de0e0db42736",
+          "clientCommandBatchId": "32c38a24-9796-42ab-b794-103419a63bfe",
+          "createdAt": "2020-03-17T16:06:41.187Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_BaBpOXsusT",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "6ead1571-d221-469c-8be6-de0e0db42736",
+          "clientCommandBatchId": "32c38a24-9796-42ab-b794-103419a63bfe",
+          "createdAt": "2020-03-17T16:06:41.187Z"
+        }
+      }
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "parameter_LgUV21obBN",
+        "parameterDescriptor": {
+          "shapeId": "shape_BaBpOXsusT",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "6ead1571-d221-469c-8be6-de0e0db42736",
+          "clientCommandBatchId": "32c38a24-9796-42ab-b794-103419a63bfe",
+          "createdAt": "2020-03-17T16:06:41.187Z"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_5pQswss7Q8",
+        "pathId": "path_wYt9lgNJVf",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "6ead1571-d221-469c-8be6-de0e0db42736",
+          "clientCommandBatchId": "32c38a24-9796-42ab-b794-103419a63bfe",
+          "createdAt": "2020-03-17T16:06:41.187Z"
+        }
+      }
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_K3SVDGR0Xa",
+        "pathId": "path_wYt9lgNJVf",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "6ead1571-d221-469c-8be6-de0e0db42736",
+          "clientCommandBatchId": "65138305-2afc-410b-bb72-51e924c94461",
+          "createdAt": "2020-03-17T16:06:41.190Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "3b502f36-e41e-4711-ad00-04dafb9159ee",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "6ead1571-d221-469c-8be6-de0e0db42736",
+          "clientCommandBatchId": "36de40d5-58f9-45ad-b9c6-3453f8ef1090",
+          "createdAt": "2020-03-17T16:06:41.190Z"
+        }
+      }
+    }
+  ],
+  "session": {
+    "metadata": {
+      "completed": false
+    },
+    "samples": [
+      {
+        "uuid": "1",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "2",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[{\"a\":1,\"b\":\"two\"}]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "3",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[{\"a\":1,\"b\":2}]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[{\"a\":1,\"b\":false}]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {}
+}

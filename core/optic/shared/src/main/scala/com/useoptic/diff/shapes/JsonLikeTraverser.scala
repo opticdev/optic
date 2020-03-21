@@ -20,7 +20,6 @@ class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
     val resolved = Resolvers.resolveTrailToCoreShape(spec, trail)
     println(resolved, body)
     if (body.isEmpty) {
-
       return
     }
 

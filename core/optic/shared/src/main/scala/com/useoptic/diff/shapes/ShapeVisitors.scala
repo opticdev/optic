@@ -18,7 +18,7 @@ abstract class ArrayShapeVisitor {
 }
 
 abstract class PrimitiveShapeVisitor {
-  def visit(value: Option[JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail])
+  def visit(objectResolved: ResolvedTrail, shapeTrail: ShapeTrail)
 }
 
 abstract class EmptyShapeVisitor {

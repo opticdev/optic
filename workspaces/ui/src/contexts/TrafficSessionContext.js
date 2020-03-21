@@ -24,7 +24,9 @@ class TrafficSessionStoreBase extends React.Component {
       isLoading: true,
       error: null,
       session: null,
-      diffManager: DiffManagerFacade.newFromInteractions([])
+      diffManager: DiffManagerFacade.newFromInteractions([], () => {
+        this.forceUpdate()
+      })
     });
     const {specService, sessionId} = this.props;
 
@@ -49,7 +51,7 @@ class TrafficSessionStoreBase extends React.Component {
         this.checkForUpdates();
 
         DiffManagerFacade.updateInteractions(session.samples, this.state.diffManager)
-
+        const numberOfX = this.state.diffManager.inputStats
       })
       .catch((e) => {
         console.error(e);
@@ -84,6 +86,7 @@ class TrafficSessionStoreBase extends React.Component {
           this.setState({
             session: latestSession,
           });
+          DiffManagerFacade.updateInteractions(session.samples, this.state.diffManager)
         }
         //@TODO: add flag prop to disable checking for updates?
         if (latestSession.metadata.completed !== true) {

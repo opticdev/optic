@@ -1,7 +1,8 @@
 package com.useoptic.diff.interactions
 
 import com.useoptic.contexts.requests.Commands.PathComponentId
-import com.useoptic.contexts.requests.{Commands, RequestsState, Utilities}
+import com.useoptic.contexts.requests.{Commands, HttpRequest, HttpResponse, RequestsState, Utilities}
+import com.useoptic.contexts.shapes.Commands.ShapeId
 import com.useoptic.types.capture.HttpInteraction
 
 
@@ -38,4 +39,29 @@ object Resolvers {
           )
       })
   }
+
+  def resolveRequestShapeByInteraction(interaction: HttpInteraction, pathId: PathComponentId, requestsState: RequestsState): Option[ShapeId] = {
+    resolveOperations(interaction, pathId, requestsState).find(r => {
+      r.requestDescriptor.bodyDescriptor match {
+        case d: Commands.UnsetBodyDescriptor => interaction.request.body.contentType.isEmpty
+        case d: Commands.ShapedBodyDescriptor => interaction.request.body.contentType.contains(d.httpContentType)
+      }
+    }).flatMap(_.requestDescriptor.bodyDescriptor match {
+      case Commands.UnsetBodyDescriptor() => None
+      case Commands.ShapedBodyDescriptor(httpContentType, shapeId, isRemoved) => Some(shapeId)
+    })
+  }
+
+  def resolveResponseShapeByInteraction(interaction: HttpInteraction, pathId: PathComponentId, requestsState: RequestsState): Option[ShapeId] = {
+    resolveResponsesByPathAndMethod(interaction, pathId, requestsState).find(r => {
+      r.responseDescriptor.bodyDescriptor match {
+        case d: Commands.UnsetBodyDescriptor => interaction.response.body.contentType.isEmpty
+        case d: Commands.ShapedBodyDescriptor => interaction.response.body.contentType.contains(d.httpContentType)
+      }
+    }).flatMap(_.responseDescriptor.bodyDescriptor match {
+      case Commands.UnsetBodyDescriptor() => None
+      case Commands.ShapedBodyDescriptor(httpContentType, shapeId, isRemoved) => Some(shapeId)
+    })
+  }
+
 }

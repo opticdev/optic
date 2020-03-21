@@ -1,6 +1,8 @@
 package com.useoptic
 
 
+import io.circe.Json
+
 import scala.scalajs.js
 import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 import io.circe.generic.auto._
@@ -19,7 +21,30 @@ object ScalaJSHelpers {
     seq.toJSArray
   }
 
+  def length[A](seq: Seq[A]): Int = {
+    seq.length
+  }
+
+  def getIndex[A](seq: Seq[A], index: Int): A = seq(index)
+
   def getOrUndefined[A](option: Option[A]): UndefOr[A] = {
     option.orUndefined
   }
+
+  def toOption[A](undefOr: UndefOr[A]): Option[A] = {
+    undefOr.toOption
+  }
+
+  def headOrUndefined[A](seq: Seq[A]): UndefOr[A] = {
+    seq.headOption.orUndefined
+  }
+
+  def headOrUndefined[A](set: Set[A]): UndefOr[A] = {
+    set.headOption.orUndefined
+  }
+
+  def getOrUndefinedJson(option: Option[Json]): UndefOr[js.Any] = {
+    option.map(i => convertJsonToJs(i)).orUndefined
+  }
+
 }

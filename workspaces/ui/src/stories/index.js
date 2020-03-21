@@ -1,42 +1,27 @@
 import React from 'react';
 import {storiesOf} from '@storybook/react';
 import {mui} from './MUI';
-import ReusableDiffRow from '../components/diff/v2/ReusableDiffRow';
-import DiffNotification, {DiffRegion} from '../components/diff/v2/Notification';
-import DiffDrawer from '../components/diff/v2/DiffDrawer';
-import ContentTabs, {RequestTabsContextStore} from '../components/diff/v2/ContentTabs';
+import {DiffViewer, Row} from '../components/diff/v2/ShapeRows';
 
-storiesOf('diff page')
-  .add('resuable row for all diff page content', mui((() => {
-    const reportStub = {};
-
-    return (
-      <ReusableDiffRow notifications={<div>ABC</div>}>
-        <div style={{width: 400, backgroundColor: 'red'}}>Hello World</div>
-      </ReusableDiffRow>
-    );
-  })()))
-  .add('diff notification types', mui((() => {
+storiesOf('styles shape viewer')
+  .add('row', mui((() => {
     const reportStub = {};
     return (
-      <DiffRegion>
-        <DiffNotification diff={{title: 'Optic Observed A Change', changeType: 'Addition'}}/>
-        <DiffNotification diff={{title: 'Type is not correct', changeType: 'Update'}}/>
-      </DiffRegion>
+      <Row left="hello" right="world"/>
     );
   })()))
-  .add('diff drawer ', mui((() => {
+
+  .add('basic object', mui((() => {
+    const reportStub = {};
     return (
-      <DiffDrawer/>
-    );
-  })()))
-  .add('custom tabs ', mui((() => {
-    return (
-      <RequestTabsContextStore>
-        <ContentTabs options={[
-          {statusCode: 200, contentTypes: ['text/html', 'application/json']},
-          {statusCode: 204, contentTypes: ['text/html']}
-        ]}/>
-      </RequestTabsContextStore>
-    );
+      <DiffViewer shape={{
+        fields: [
+          {name: 'keyA', exampleValue: true, expectedType: 'String'},
+          {name: 'keyB', exampleValue: 'akhgjds gdsgh dfhgjkafdshbc', expectedType: 'String'},
+        ],
+        baseShapeId: '$object'
+      }}
+      />
+      )
+    ;
   })()));

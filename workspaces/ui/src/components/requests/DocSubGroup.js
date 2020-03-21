@@ -4,11 +4,11 @@ import {DocDivider, DocSubGroupHeadingBigStyles, DocSubGroupHeadingStyles} from 
 export function DocSubGroup({title, children, style, innerStyle}) {
   return (
     <div style={{marginTop: 11, ...style}}>
-      <div style={{maxWidth: 650}}>
+      <div>
       <Typography variant="overline" style={DocSubGroupHeadingStyles}>{title}</Typography>
       <DocDivider />
       </div>
-      <div style={{maxWidth: 650}} style={innerStyle}>
+      <div style={innerStyle}>
       {children}
       </div>
     </div>

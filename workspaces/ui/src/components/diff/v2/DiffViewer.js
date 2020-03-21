@@ -30,6 +30,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import {Show} from '../../shared/Show';
 import Paper from '@material-ui/core/Paper';
 import {DocGrid} from '../../requests/DocGrid';
+import MenuItem from '@material-ui/core/MenuItem';
 
 const styles = theme => ({
   container: {
@@ -172,12 +173,12 @@ class DiffViewer extends React.Component {
 }
 
 export function InterpretationRow(props) {
-  const {action, description, active, onClick, confirm} = props;
+  const {action, active, onClick, confirm} = props;
 
   return (
-    <ListItem
+    <MenuItem
       dense
-      style={{padding: 0, paddingLeft: 0, marginLeft: 0}}
+      style={{padding: 0, paddingLeft: 9, paddingRight: 9}}
       button
       selected={active}
       disableRipple
@@ -192,16 +193,8 @@ export function InterpretationRow(props) {
         }
       }}
       onClick={!active ? onClick : confirm}>
-      <ListItemAvatar style={{minWidth: 25}}>
-        <Radio
-          size="small"
-          tabIndex={-1}
-          checked={active}
-          style={{pointerEvents: 'none', fontSize: 11, marginLeft: -5}}
-          color="primary"/>
-      </ListItemAvatar>
-      <ListItemText primary={action} secondary={description} primaryTypographyProps={{fontSize: 12}}/>
-    </ListItem>
+      <Typography variant="subtitle1" style={{fontWeight: 200}}>{action}</Typography>
+    </MenuItem>
   );
 }
 

@@ -9,11 +9,10 @@ import com.useoptic.types.capture.JsonLike
 
 import scala.util.Try
 
-
 class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
   val shapesState = spec.shapesState
 
-  def traverse(shapeId: ShapeId, shapeTrail: ShapeTrail, exampleJson: Option[JsonLike]): Unit = {
+  def traverse(shapeId: ShapeId, shapeTrail: ShapeTrail): Unit = {
     val shapeEntityOption = Try(spec.shapesState.flattenedShape(shapeId)).toOption
 
     if (shapeEntityOption.isDefined) {
@@ -32,11 +31,20 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
               (field.descriptor.name -> (fieldId, fieldTrail))
             }).toMap
           fieldNameToId.map {
-            case (key, (id, fieldTrail)) => visitors.objectVisitor.visit(key, id, fieldTrail, shapeTrail.withChild(ObjectFieldTrail(id, fieldTrail.shapeEntity.shapeId)))
+            case (key, (id, fieldTrail)) => {
+              val fieldShapeTrail = shapeTrail.withChild(ObjectFieldTrail(id, fieldTrail.shapeEntity.shapeId))
+              //visit field
+              visitors.objectVisitor.visit(key, id, fieldTrail, fieldShapeTrail)
+              //traverse field shape
+              traverse(fieldTrail.shapeEntity.shapeId, fieldShapeTrail)
+            }
           }
 
         }
-        case _ => println("not implemented")
+        case _ => {
+          val resolved = Resolvers.resolveTrailToCoreShape(spec, shapeTrail)
+          visitors.primitiveVisitor.visit(resolved, shapeTrail)
+        }
       }
 
 

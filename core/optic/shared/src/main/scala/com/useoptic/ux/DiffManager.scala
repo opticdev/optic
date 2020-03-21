@@ -2,36 +2,38 @@ package com.useoptic.ux
 
 import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.rfc.RfcState
+import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.helpers.DiffHelpers
-import com.useoptic.diff.interactions.interpreters.{DiffDescription, DiffDescriptionInterpreters}
-import com.useoptic.diff.interactions.{InteractionDiffResult, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType, UnmatchedResponseStatusCode}
+import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescription, DiffDescriptionInterpreters}
+import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult, Resolvers, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js.annotation.JSExportAll
+import scala.util.Try
 
 @JSExportAll
-class DiffManager(initialInteractions: Seq[HttpInteraction]) {
+class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Unit) {
 
-  private var _initialRfcState: RfcState = null
   private var _currentRfcState: RfcState = null
-  private var _interactionsGroupedByDiffs: DiffsToInteractionsMap = null
+  private var _interactionsGroupedByDiffs: DiffsToInteractionsMap = Map.empty
   private var _interactions: Seq[HttpInteraction] = initialInteractions
 
   //put simulated rfc state here.
   def updatedRfcState(rfcState: RfcState): Unit = {
-    if (_initialRfcState == null) {
-      _initialRfcState = rfcState
-    }
-    _currentRfcState = rfcState
-    //compute diff
-
-    _interactionsGroupedByDiffs = DiffHelpers.groupByDiffs(_currentRfcState, _interactions).map {
-      case (diff, interactions) => (diff, interactions)
+    if (_currentRfcState != rfcState) {
+      _currentRfcState = rfcState
+      recomputeDiff
     }
   }
 
-  def updateInteractions(httpInteractions: Seq[HttpInteraction]) = {
-    _interactions = httpInteractions
+  def updateInteractions(httpInteractions: Seq[HttpInteraction]): Unit = {
+    if (_interactions != httpInteractions) {
+      _interactions = httpInteractions
+      recomputeDiff
+    }
+  }
+
+  def recomputeDiff() = {
     if (_currentRfcState != null) {
       _interactionsGroupedByDiffs = DiffHelpers.groupByDiffs(_currentRfcState, _interactions).map {
         case (diff, interactions) => (diff, interactions)
@@ -39,12 +41,16 @@ class DiffManager(initialInteractions: Seq[HttpInteraction]) {
     } else {
       _interactionsGroupedByDiffs = Map.empty
     }
+    onUpdated()
   }
 
-  def managerForPathAndMethod(pathComponentId: PathComponentId, httpMethod: String): PathAndMethodDiffManager = {
-    val parentManagerUpdate = (rfcState: RfcState) => updatedRfcState(rfcState)
+  def inputStats = s"${_interactions.length} interactions, yielding ${_interactionsGroupedByDiffs.flatMap(_._2).size} diffs"
 
-    new PathAndMethodDiffManager(pathComponentId, httpMethod)(_interactionsGroupedByDiffs) {
+  def managerForPathAndMethod(pathComponentId: PathComponentId, httpMethod: String, ignoredDiffs: Seq[DiffResult]): PathAndMethodDiffManager = {
+    val parentManagerUpdate = (rfcState: RfcState) => updatedRfcState(rfcState)
+    val filterIgnored = _interactionsGroupedByDiffs.filter(d => !ignoredDiffs.contains(d._1))
+
+    new PathAndMethodDiffManager(pathComponentId, httpMethod)(filterIgnored, _currentRfcState) {
       def updatedRfcState(rfcState: RfcState): Unit = parentManagerUpdate(rfcState)
     }
   }
@@ -52,40 +58,114 @@ class DiffManager(initialInteractions: Seq[HttpInteraction]) {
 }
 
 @JSExportAll
-abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMethod: String)(implicit val interactionsGroupedByDiffs: DiffsToInteractionsMap) {
+abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMethod: String)(implicit val interactionsGroupedByDiffs: DiffsToInteractionsMap, rfcState: RfcState) {
+
   def updatedRfcState(rfcState: RfcState): Unit
 
+  def suggestionsForDiff(diff: InteractionDiffResult, interaction: HttpInteraction): Seq[InteractiveDiffInterpretation] = {
+    val basicInterpreter = new DefaultInterpreters(rfcState)
+
+    basicInterpreter.interpret(diff, interaction)
+  }
+
+  def suggestionsForDiff(diff: InteractionDiffResult): Seq[InteractiveDiffInterpretation] = suggestionsForDiff(diff, interactionsGroupedByDiffs(diff.asInstanceOf[InteractionDiffResult]).head)
+
+  def noDiff = interactionsGroupedByDiffs.keySet.isEmpty
+
   def diffRegions: TopLevelRegions = {
+
+    val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
+
     val newRegions = Region("New Regions",
       interactionsGroupedByDiffs.collect {
-        case (diff: UnmatchedRequestBodyContentType, interactions) => NewRegionDiffBlock(diff, interactions, inRequest = true, inResponse = false, diff.interactionTrail.requestBodyContentTypeOption(), None)
-        case (diff: UnmatchedResponseBodyContentType, interactions) => NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, diff.interactionTrail.responseBodyContentTypeOption(), Some(diff.interactionTrail.statusCode()))
-        case (diff: UnmatchedResponseStatusCode, interactions) => NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, None, Some(diff.interactionTrail.statusCode()))
+        case (diff: UnmatchedRequestBodyContentType, interactions) => {
+          val description = descriptionInterpreters.interpret(diff, interactions.head)
+          NewRegionDiffBlock(diff, interactions, inRequest = true, inResponse = false, diff.interactionTrail.requestBodyContentTypeOption(), None, description)(() => suggestionsForDiff(diff))
+        }
+        case (diff: UnmatchedResponseBodyContentType, interactions) => {
+          val description = descriptionInterpreters.interpret(diff, interactions.head)
+          NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, diff.interactionTrail.responseBodyContentTypeOption(), Some(diff.interactionTrail.statusCode()), description)(() => suggestionsForDiff(diff))
+        }
+        case (diff: UnmatchedResponseStatusCode, interactions) => {
+          val description = descriptionInterpreters.interpret(diff, interactions.head)
+          NewRegionDiffBlock(diff, interactions, inRequest = false, inResponse = true, None, Some(diff.interactionTrail.statusCode()), description)(() => suggestionsForDiff(diff))
+        }
       }.toVector.sortBy(_.statusCode))
 
     val requestShapeRegions = interactionsGroupedByDiffs.filter {
       case (_: UnmatchedRequestBodyShape, _) => true
+      case _ => false
     }.toSeq
       .groupBy(_._1.interactionTrail.requestBodyContentTypeOption())
-      .filterNot(_._1.isEmpty) // there shouldn't be a shape diff for an empty body
       .map { case (contentType, diffMap) => Region(s"${contentType.get}", (diffMap.map(i => {
         val (diff, interactions) = i
-        BodyShapeDiffBlock(diff, diff.shapeDiffResultOption.get, interactions, inRequest = true, inResponse = false, contentType.get)
-      }))) }
+        val description = descriptionInterpreters.interpret(diff, interactions.head)
+
+        val previewRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => {
+          val innerRfcState = withRfcState.getOrElse(rfcState)
+          DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.request.body), innerRfcState, diff.shapeDiffResultOption.get.shapeTrail.rootShapeId, diff.shapeDiffResultOption)
+        }
+
+        val responseRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Try {
+          val innerRfcState = withRfcState.getOrElse(rfcState)
+          val responseShapeID = Resolvers.resolveRequestShapeByInteraction(interaction, pathComponentId, innerRfcState.requestsState).get
+          DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), innerRfcState, responseShapeID, None)
+        }.toOption
+
+        BodyShapeDiffBlock(
+          diff,
+          diff.shapeDiffResultOption.get,
+          interactions,
+          inRequest = true,
+          inResponse = false,
+          contentType.get,
+          description)(
+          () => suggestionsForDiff(diff),
+          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState),
+          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Some(previewRender(interaction, withRfcState)),
+          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => responseRender(interaction, withRfcState)
+        )})))}
       .toSeq
 
     val responseShapeRegions = interactionsGroupedByDiffs.filter {
-      case (_: UnmatchedResponseBodyContentType, _) => true
+      case (_: UnmatchedResponseBodyShape, _) => true
+      case _ => false
     }.toSeq
-      .groupBy(_._1.interactionTrail.requestBodyContentTypeOption())
-      .filterNot(_._1.isEmpty) // there shouldn't be a shape diff for an empty body
+      .groupBy(_._1.interactionTrail.responseBodyContentTypeOption())
       .map { case (contentType, diffMap) => Region(s"${contentType.get}", (diffMap.map(i => {
         val (diff, interactions) = i
-        BodyShapeDiffBlock(diff, diff.shapeDiffResultOption.get, interactions, inRequest = false, inResponse = true, contentType.get)
-      }))) }
+        val description = descriptionInterpreters.interpret(diff, interactions.head)
+
+        val previewRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => {
+          val innerRfcState = withRfcState.getOrElse(rfcState)
+          DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.response.body), innerRfcState, diff.shapeDiffResultOption.get.shapeTrail.rootShapeId, diff.shapeDiffResultOption)
+        }
+        val requestRender = (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Try {
+          val innerRfcState = withRfcState.getOrElse(rfcState)
+          val requestBodyShapeId = Resolvers.resolveRequestShapeByInteraction(interaction, pathComponentId, innerRfcState.requestsState).get
+          DiffPreviewer.previewDiff(BodyUtilities.parseBody(interaction.request.body), innerRfcState, requestBodyShapeId, None)
+        }.toOption
+
+        BodyShapeDiffBlock(
+          diff,
+          diff.shapeDiffResultOption.get,
+          interactions,
+          inRequest = false,
+          inResponse = true,
+          contentType.get,
+          description)(
+          () => suggestionsForDiff(diff),
+          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState),
+          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => requestRender(interaction, withRfcState),
+          (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Some(previewRender(interaction, withRfcState))
+        )})))}
       .toSeq
 
     TopLevelRegions(newRegions, requestShapeRegions, responseShapeRegions)
+  }
+
+  def inputStats = {
+    s"${interactionsGroupedByDiffs.values.flatten.seq.size} interactions, yielding ${interactionsGroupedByDiffs.keys.size} diffs \n\n ${interactionsGroupedByDiffs.keys.toString()}"
   }
 }
 

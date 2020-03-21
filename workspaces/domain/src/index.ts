@@ -47,15 +47,33 @@ export const mapScala = (collection: any) => (handler: any) => {
   return ScalaJSHelpers.toJsArray(collection).map(handler);
 };
 
+export const filterScala = (collection: any) => (handler: any) => {
+  return ScalaJSHelpers.toJsArray(collection).filter(handler);
+};
+
 export const getOrUndefined = (option: any) => {
   return ScalaJSHelpers.getOrUndefined(option);
+};
+
+export const getOrUndefinedJson = (option: any) => {
+  return ScalaJSHelpers.getOrUndefinedJson(option);
+};
+
+export const headOrUndefined = (seq: any) => {
+  return ScalaJSHelpers.headOrUndefined(seq);
 };
 
 export const everyScala = (collection: any) => (handler: any) => {
   return ScalaJSHelpers.toJsArray(collection).every(handler);
 };
 export const lengthScala = (collection: any) => {
-  return ScalaJSHelpers.toJsArray(collection).length;
+  return ScalaJSHelpers.length(collection);
+};
+export const toOption = (undefOr: any) => {
+  return ScalaJSHelpers.toOption(undefOr);
+};
+export const getIndex = (collection: any) => (index: number) => {
+  return ScalaJSHelpers.getIndex(collection, index);
 };
 
 

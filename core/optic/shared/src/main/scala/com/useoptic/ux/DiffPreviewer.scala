@@ -17,20 +17,18 @@ import scala.util.Try
 
 object DiffPreviewer {
 
-  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeId: ShapeId, diff: DiffResult): RenderShapeRoot = {
+  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeId: ShapeId, diffOption: Option[ShapeDiffResult]): RenderShapeRoot = {
     import com.useoptic.diff.shapes.JsonLikeTraverser
     //    val shapeRenderVisitor = new ShapeRenderVisitor(spec)
-
     //first traverse the example
-    val exampleRenderVisitor = new ExampleRenderVisitor(spec, diff)
+    val exampleRenderVisitor = new ExampleRenderVisitor(spec, diffOption)
     val jsonLikeTraverser = new JsonLikeTraverser(spec, exampleRenderVisitor)
     jsonLikeTraverser.traverse(jsonLike, JsonTrail(Seq.empty), Some(ShapeTrail(shapeId, Seq.empty)))
 
     //second traversal of spec with examples
-    val shapeRenderVisitor = new ShapeRenderVisitor(spec, diff, exampleRenderVisitor)
+    val shapeRenderVisitor = new ShapeRenderVisitor(spec, diffOption, exampleRenderVisitor)
     val specTraverser = new ShapeTraverser(spec, shapeRenderVisitor)
-    specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq()), jsonLike)
-
+    specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq()))
 
     RenderShapeRoot(shapeId,
       exampleRenderVisitor.fields, exampleRenderVisitor.shapes,
@@ -50,18 +48,21 @@ object DiffPreviewer {
 
 }
 
-class ExampleRenderVisitor(spec: RfcState, diff: DiffResult) extends JsonLikeVisitors with RenderVisitor {
+class ExampleRenderVisitor(spec: RfcState, diff: Option[DiffResult]) extends JsonLikeVisitors with RenderVisitor {
 
-  def diffsByTrail(bodyTrail: JsonTrail): Set[DiffResult] = diff match {
-    case sd: ShapeDiffResult if sd.jsonTrail == bodyTrail => Set(diff)
-    case _ => Set.empty
+  def diffsByTrail(bodyTrail: JsonTrail): Set[DiffResult] = {
+    if (diff.isDefined) {
+      diff.get match {
+        case sd: ShapeDiffResult if sd.jsonTrail == bodyTrail => Set(diff.get)
+        case _ => Set.empty
+      }
+    } else {
+     Set.empty
+    }
   }
 
   override val objectVisitor: ObjectVisitor = new ObjectVisitor {
     override def begin(value: Map[String, JsonLike], bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
-
-
-
       val fieldNameToId = expected.shapeEntity.descriptor.fieldOrdering
         .map(fieldId => {
           val field = spec.shapesState.fields(fieldId)
@@ -76,10 +77,9 @@ class ExampleRenderVisitor(spec: RfcState, diff: DiffResult) extends JsonLikeVis
       val missingFieldIds = fieldNameToId.flatMap(entry => {
         val (fieldName, (fieldId, fieldShapeId)) = entry
         if (!value.contains(fieldName)) {
-          val missingFieldId = ShapesHelper.newFieldId("missing_field_")
-          pushField(RenderField(missingFieldId, fieldName, None, value.get(fieldName).map(_.asJson), diffs = diffsByTrail(bodyTrail.withChild(JsonObjectKey(fieldName)))))
+          pushField(RenderField(fieldId, fieldName, None, value.get(fieldName).map(_.asJson), diffs = diffsByTrail(bodyTrail.withChild(JsonObjectKey(fieldName)))))
           //          primitiveVisitor.visit(None, bodyTrail.withChild(JsonObjectKey(fieldName)), Some(shapeTrail.withChild(ObjectFieldTrail(fieldId, fieldShapeId))))
-          Some(missingFieldId)
+          Some(fieldId)
         } else None
       })
 
@@ -121,11 +121,17 @@ class ExampleRenderVisitor(spec: RfcState, diff: DiffResult) extends JsonLikeVis
     override def end(): Unit = {}
   }
   override val arrayVisitor: ArrayVisitor = new ArrayVisitor {
-    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity): Unit = ???
+    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity): Unit = {
 
-    override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = ???
+    }
 
-    override def end(): Unit = ???
+    override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
+
+    }
+
+    override def end(): Unit = {
+
+    }
   }
   override val primitiveVisitor: PrimitiveVisitor = new PrimitiveVisitor {
     override def visit(value: Option[JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
@@ -142,11 +148,17 @@ class ExampleRenderVisitor(spec: RfcState, diff: DiffResult) extends JsonLikeVis
   }
 }
 
-class ShapeRenderVisitor(spec: RfcState, diff: DiffResult, exampleVisitor: ExampleRenderVisitor) extends ShapeVisitors with RenderVisitor  {
+class ShapeRenderVisitor(spec: RfcState, diff: Option[DiffResult], exampleVisitor: ExampleRenderVisitor) extends ShapeVisitors with RenderVisitor  {
 
-  def diffsByTrail(shapeTrail: ShapeTrail): Set[DiffResult] = diff match {
-    case sd: ShapeDiffResult if sd.shapeTrail == shapeTrail => Set(diff)
-    case _ => Set.empty
+  def diffsByTrail(shapeTrail: ShapeTrail): Set[DiffResult] = {
+    if (diff.isDefined) {
+      diff.get match {
+        case sd: ShapeDiffResult if sd.shapeTrail == shapeTrail => Set(diff.get)
+        case _ => Set.empty
+      }
+    } else {
+      Set.empty
+    }
   }
 
   private val exampleFields = exampleVisitor.fields
@@ -197,14 +209,24 @@ class ShapeRenderVisitor(spec: RfcState, diff: DiffResult, exampleVisitor: Examp
 
   }
   override val arrayVisitor: ArrayShapeVisitor = new ArrayShapeVisitor {
-    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity): Unit = ???
+    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity): Unit = {
 
-    override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = ???
+    }
+
+    override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
+
+    }
 
     override def end(): Unit = ???
   }
   override val primitiveVisitor: PrimitiveShapeVisitor = new PrimitiveShapeVisitor {
-    override def visit(value: Option[JsonLike], bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = ???
+    override def visit(objectResolved: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
+      pushShape(RenderShape(
+        objectResolved.shapeEntity.shapeId,
+        objectResolved.coreShapeKind.baseShapeId,
+        diffs = diffsByTrail(shapeTrail)
+      ))
+    }
   }
 }
 
