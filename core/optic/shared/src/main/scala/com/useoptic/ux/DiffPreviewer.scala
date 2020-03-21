@@ -86,7 +86,7 @@ class ExampleRenderVisitor(spec: RfcState, diff: Option[DiffResult]) extends Jso
       val extraFieldIds = value.flatMap { case (key, value) => {
         if (!fieldNameToId.contains(key)) {
           println(s"object has extra field ${key}")
-          val extraFieldId = ShapesHelper.newFieldId("extra_field_")
+          val extraFieldId = "extra_field_"+ShapesHelper.newFieldId()
           pushField(RenderField(extraFieldId, key, None, Some(value.asJson), diffs = diffsByTrail(bodyTrail.withChild(JsonObjectKey(key)))))
           Some(extraFieldId)
         } else None
@@ -121,7 +121,8 @@ class ExampleRenderVisitor(spec: RfcState, diff: Option[DiffResult]) extends Jso
     override def end(): Unit = {}
   }
   override val arrayVisitor: ArrayVisitor = new ArrayVisitor {
-    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity): Unit = {
+
+    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, shapeTrail: ShapeTrail, resolvedShapeTrail: ResolvedTrail): Unit = {
 
     }
 

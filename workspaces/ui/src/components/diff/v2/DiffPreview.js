@@ -253,7 +253,7 @@ function _ShapeDiffCard(props) {
 
   const currentRfcState = rfcService.currentState(rfcId);
 
-  debugger  //for some reason on aidan-1 this doesn't update? 
+  debugger  //for some reason on aidan-1 this doesn't update?
 
   let preview = diff.previewRender(headOrUndefined(diff.interactions), toOption(currentRfcState));
 
