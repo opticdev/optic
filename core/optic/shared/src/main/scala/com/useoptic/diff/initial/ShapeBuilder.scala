@@ -26,6 +26,7 @@ case class ShapeBuilderResult(rootShapeId: String, commands: Vector[RfcCommand],
     ShapeBuilderResult(rootShapeId, commands :+ RenameShape(rootShapeId, name), allIds)
 }
 
+//@TODO @REFACTOR this to accept an IdGenerator as input
 class ShapeBuilder(r: JsonLike, seed: String = s"${Random.alphanumeric take 6 mkString}")(implicit shapesState: ShapesState = ShapesAggregate.initialState) {
   // test fixture helper
   def this(r: Json, seed: String) = this(JsonLikeFrom.json(r).get, seed)

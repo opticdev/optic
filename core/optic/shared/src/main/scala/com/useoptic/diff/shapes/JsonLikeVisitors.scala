@@ -13,7 +13,7 @@ abstract class ObjectVisitor {
 }
 
 abstract class ArrayVisitor {
-  def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity)
+  def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, shapeTrail: ShapeTrail, resolvedShapeTrail: ResolvedTrail): Unit
 
   def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail])
 

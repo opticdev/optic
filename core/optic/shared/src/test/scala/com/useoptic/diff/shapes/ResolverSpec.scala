@@ -58,13 +58,13 @@ class ResolverSpec extends FunSpec {
       it("should resolve the value") {
 
         val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq()), JsonLikeFrom.json(json""""string""""))
-        assert(resolved.contains(json""""string""""))
+        assert(resolved.get.asJson == json""""string"""")
       }
     }
     describe("object") {
       it("should resolve the value") {
         val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonObject(), JsonObjectKey("k"))), JsonLikeFrom.json(json"""{"k":1}"""))
-        assert(resolved.contains(json"""1"""))
+        assert(resolved.get.asJson == json"""1""")
       }
       it("should not resolve a value") {
         val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonObject(), JsonObjectKey("notk"))), JsonLikeFrom.json(json"""{"k":1}"""))
@@ -74,7 +74,7 @@ class ResolverSpec extends FunSpec {
     describe("array") {
       it("should resolve the value") {
         val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonArray(), JsonArrayItem(0))), JsonLikeFrom.json(json"""[1]"""))
-        assert(resolved.contains(json"""1"""))
+        assert(resolved.get.asJson == json"""1""")
       }
       it("should not resolve a value") {
         val resolved = Resolvers.tryResolveJsonTrail(JsonTrail(Seq(JsonArray(), JsonArrayItem(1))), JsonLikeFrom.json(json"""[1]"""))
@@ -86,7 +86,7 @@ class ResolverSpec extends FunSpec {
       it("should resolve .k[0].x[1] => 'b'") {
         val trail = JsonTrail(Seq(JsonObject(), JsonObjectKey("k"), JsonArray(), JsonArrayItem(0), JsonObject(), JsonObjectKey("x"), JsonArray(), JsonArrayItem(1)))
         val resolved = Resolvers.tryResolveJsonTrail(trail, JsonLikeFrom.json(nested))
-        assert(resolved.contains(json""""b""""))
+        assert(resolved.get.asJson == json""""b"""")
       }
       it("should not resolve .k[0].x[2]") {
         val trail = JsonTrail(Seq(JsonObject(), JsonObjectKey("k"), JsonArray(), JsonArrayItem(0), JsonObject(), JsonObjectKey("x"), JsonArray(), JsonArrayItem(2)))

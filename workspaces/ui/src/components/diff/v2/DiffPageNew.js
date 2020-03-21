@@ -345,8 +345,14 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
     simulatedCommands,
     eventStore,
     initialEventStore,
-    rfcState
+    rfcState,
+    opticEngine
   };
+  /*
+const converter = new opticDebug.diffContext.opticEngine.com.useoptic.CoverageReportConverter(opticDebug.diffContext.StableHasher)
+const report = opticDebug.diffContext.opticEngine.com.useoptic.diff.helpers.CoverageHelpers().getCoverage(opticDebug.diffContext.rfcState, opticDebug.diffContext.samples)
+converter.toJs(report)
+   */
 
   return (
     <DiffContextStore

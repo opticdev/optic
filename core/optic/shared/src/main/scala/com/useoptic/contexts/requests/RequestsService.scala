@@ -4,9 +4,9 @@ import com.useoptic.contexts.requests.Commands.RequestsCommand
 import com.useoptic.contexts.requests.Events.RequestsEvent
 import com.useoptic.contexts.shapes.{ShapesService, ShapesState}
 import com.useoptic.ddd.{AggregateId, EventSourcedRepository, InMemoryEventStore}
+import com.useoptic.dsa.RandomAlphanumericIdGenerator
 
 import scala.scalajs.js.annotation.{JSExport, JSExportAll}
-import scala.util.Random
 
 //STRICTLY FOR TESTING (because everything should go through the root (RfcService))
 class RequestsService(shapesService: ShapesService) {
@@ -24,12 +24,20 @@ class RequestsService(shapesService: ShapesService) {
     repository.findById(id)
   }
 }
+
 @JSExport
 @JSExportAll
 object RequestsServiceHelper {
-  def suffix(): String = Random.alphanumeric take 10 mkString
-  def newPathId(): String = s"path_${suffix}"
-  def newRequestId(): String = s"request_${suffix}"
-  def newResponseId(): String = s"response_${suffix}"
-  def newParameterId(): String = s"parameter_${suffix}"
+  val pathIdGenerator = new RandomAlphanumericIdGenerator("path", "_", 10)
+  val requestIdGenerator = new RandomAlphanumericIdGenerator("request", "_", 10)
+  val responseIdGenerator = new RandomAlphanumericIdGenerator("response", "_", 10)
+  val parameterIdGenerator = new RandomAlphanumericIdGenerator("parameter", "_", 10)
+
+  def newPathId(): String = pathIdGenerator.nextId()
+
+  def newRequestId(): String = requestIdGenerator.nextId()
+
+  def newResponseId(): String = responseIdGenerator.nextId()
+
+  def newParameterId(): String = parameterIdGenerator.nextId()
 }

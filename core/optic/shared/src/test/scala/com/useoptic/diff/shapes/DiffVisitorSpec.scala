@@ -23,6 +23,10 @@ class DiffVisitorSpec extends FunSpec {
           val traverser = new JsonLikeTraverser(rfcState, visitors)
           traverser.traverse(JsonLikeFrom.json(json"""{"f":[]}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq())
+          println(visitors.visitedShapeTrails.counts)
+          assert(visitors.visitedShapeTrails.counts.keys.size == 2)
+          assert(visitors.visitedShapeTrails.counts(ShapeTrail("s_0", Seq())) == 1)
+          assert(visitors.visitedShapeTrails.counts(ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1", "s_2")))) == 1)
         }
       }
       describe("when given matching items") {
@@ -31,6 +35,12 @@ class DiffVisitorSpec extends FunSpec {
           val traverser = new JsonLikeTraverser(rfcState, visitors)
           traverser.traverse(JsonLikeFrom.json(json"""{"f":[{"k":"v1"},{"k":"v3"}]}"""), JsonTrail(Seq()), Some(ShapeTrail(builtShape.rootShapeId, Seq())))
           assert(visitors.diffs.toSeq == Seq())
+          println(visitors.visitedShapeTrails.counts)
+          assert(visitors.visitedShapeTrails.counts.keys.size == 4)
+          assert(visitors.visitedShapeTrails.counts(ShapeTrail("s_0", Seq())) == 1)
+          assert(visitors.visitedShapeTrails.counts(ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1", "s_2")))) == 1)
+          assert(visitors.visitedShapeTrails.counts(ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_6")))) == 2)
+          assert(visitors.visitedShapeTrails.counts(ShapeTrail("s_0", Seq(ObjectFieldTrail("s_1", "s_2"), ListItemTrail("s_2", "s_6"), ObjectFieldTrail("s_4", "s_5")))) == 2)
         }
       }
       describe("when given some items that do not match") {

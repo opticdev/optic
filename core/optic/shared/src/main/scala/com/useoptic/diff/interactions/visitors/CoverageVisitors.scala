@@ -1,22 +1,31 @@
 package com.useoptic.diff.interactions.visitors
 
 import com.useoptic.contexts.requests.Commands.{PathComponentId, RequestId, ResponseId}
-import com.useoptic.contexts.requests.{RequestsState, Utilities}
-import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.diff.interactions.{OperationVisitor, OperationVisitorContext, PathVisitor, PathVisitorContext, RequestBodyVisitor, RequestBodyVisitorContext, ResponseBodyVisitor, ResponseBodyVisitorContext, UnmatchedRequestBodyShape, UnmatchedResponseBodyShape, Visitors}
+import com.useoptic.coverage._
+import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.ShapeTrail
 import com.useoptic.dsa.Counter
 import com.useoptic.types.capture.HttpInteraction
 
+case class CoverageReport(coverageCounts: Counter[CoverageConcerns], diffs: Counter[InteractionDiffResult])
 
-class CoveragePathVisitor(counter: Counter[String]) extends PathVisitor {
+class CoveragePathVisitor(report: CoverageReport) extends PathVisitor {
+  val diffVisitors = new DiffVisitors()
+
   override def visit(interaction: HttpInteraction, context: PathVisitorContext): Unit = {
+    diffVisitors.pathVisitor.visit(interaction, context)
     val key = KeyFormatters.totalInteractions()
-    counter.increment(key)
+    report.coverageCounts.increment(key)
     if (context.path.isDefined) {
       val key = KeyFormatters.path(context.path.get)
-      counter.increment(key)
+      report.coverageCounts.increment(key)
+    } else {
+      val key = TotalUnmatchedPath()
+      report.coverageCounts.increment(key)
     }
+    diffVisitors.diffs.foreach(diff => {
+      report.diffs.increment(diff)
+    })
   }
 }
 
@@ -28,7 +37,7 @@ class CoverageOperationVisitor extends OperationVisitor {
   override def end(interaction: HttpInteraction, context: PathVisitorContext): Unit = ???
 }
 
-class CoverageRequestBodyVisitor(counter: Counter[String]) extends RequestBodyVisitor {
+class CoverageRequestBodyVisitor(report: CoverageReport) extends RequestBodyVisitor {
   val diffVisitors = new DiffVisitors()
 
   override def begin(): Unit = {
@@ -45,20 +54,37 @@ class CoverageRequestBodyVisitor(counter: Counter[String]) extends RequestBodyVi
       return
     }
     if (diffVisitors.requestBodyVisitor.visitedWithMatchedContentTypes.nonEmpty) {
-      diffVisitors.requestBodyVisitor.visitedWithMatchedContentTypes.foreach(requestId => {
-        val key = KeyFormatters.requestBody(requestId)
-        counter.increment(key)
-      })
-      diffVisitors.diffs.foreach(diff => {
-        diff match {
-          case d: UnmatchedRequestBodyShape =>
+      val requestId = diffVisitors.requestBodyVisitor.visitedWithMatchedContentTypes.head
+
+      val key = KeyFormatters.requestBody(requestId)
+      report.coverageCounts.increment(key)
+
+      report.coverageCounts.increment(TotalForPathAndMethod(context.path.get, interaction.request.method))
+
+      report.coverageCounts.increment(
+        interaction.request.body.contentType match {
+          case Some(contentType) => TotalForPathAndMethodAndContentType(context.path.get, interaction.request.method, contentType)
+          case None => TotalForPathAndMethodWithoutBody(context.path.get, interaction.request.method)
         }
-      })
+      )
+
+      if (diffVisitors.diffs.nonEmpty) {
+        diffVisitors.diffs.foreach(diff => {
+          report.diffs.increment(diff)
+        })
+      } else {
+        diffVisitors.requestBodyVisitor.visitedShapeTrails.counts.foreach(entry => {
+          val (shapeTrail, count) = entry
+
+          val key = KeyFormatters.requestBodyShape(requestId, shapeTrail)
+          report.coverageCounts.increment(key, count)
+        })
+      }
     }
   }
 }
 
-class CoverageResponseBodyVisitor(counter: Counter[String]) extends ResponseBodyVisitor {
+class CoverageResponseBodyVisitor(report: CoverageReport) extends ResponseBodyVisitor {
   val diffVisitors = new DiffVisitors()
 
   override def begin(): Unit = {
@@ -75,119 +101,76 @@ class CoverageResponseBodyVisitor(counter: Counter[String]) extends ResponseBody
       return
     }
     if (diffVisitors.responseBodyVisitor.visitedWithMatchedContentTypes.nonEmpty) {
-      diffVisitors.responseBodyVisitor.visitedWithMatchedContentTypes.foreach(responseId => {
-        val key = KeyFormatters.responseBody(responseId)
-        counter.increment(key)
-      })
-    }
-    diffVisitors.diffs.foreach(diff => {
-      diff match {
-        case d: UnmatchedResponseBodyShape =>
+      val responseId = diffVisitors.responseBodyVisitor.visitedWithMatchedContentTypes.head
+
+      val key = KeyFormatters.responseBody(responseId)
+      report.coverageCounts.increment(key)
+
+      report.coverageCounts.increment(TotalForPathAndMethodAndStatusCode(context.path.get, interaction.request.method, interaction.response.statusCode))
+
+      report.coverageCounts.increment(
+        interaction.response.body.contentType match {
+          case Some(contentType) => TotalForPathAndMethodAndStatusCodeAndContentType(context.path.get, interaction.request.method, interaction.response.statusCode, contentType)
+          case None => TotalForPathAndMethodAndStatusCodeWithoutBody(context.path.get, interaction.request.method, interaction.response.statusCode)
+        }
+      )
+
+      if (diffVisitors.diffs.nonEmpty) {
+        diffVisitors.diffs.foreach(diff => {
+          report.diffs.increment(diff)
+        })
+      } else {
+        diffVisitors.responseBodyVisitor.visitedShapeTrails.counts.foreach(entry => {
+          val (shapeTrail, count) = entry
+          val key = KeyFormatters.responseBodyShape(responseId, shapeTrail)
+          report.coverageCounts.increment(key, count)
+        })
       }
-    })
+    }
   }
 }
 
 class CoverageVisitors extends Visitors {
-  val counter = new Counter[String]()
-  override val pathVisitor: PathVisitor = new CoveragePathVisitor(counter)
+  val coverageCounts = new Counter[CoverageConcerns]()
+  val diffCounts = new Counter[InteractionDiffResult]()
+  val report = CoverageReport(coverageCounts, diffCounts)
+
+  override val pathVisitor: PathVisitor = new CoveragePathVisitor(report)
   override val operationVisitor: OperationVisitor = new CoverageOperationVisitor()
-  override val requestBodyVisitor: RequestBodyVisitor = new CoverageRequestBodyVisitor(counter)
-  override val responseBodyVisitor: ResponseBodyVisitor = new CoverageResponseBodyVisitor(counter)
-}
-
-case class TotalTrafficPartial(counts: Counter[String])
-
-trait KeyResolver {
-  def resolveKeys(interaction: HttpInteraction): Set[String]
-}
-
-class TotalKeyResolver extends KeyResolver {
-  val totalTrafficCountKey = "total"
-
-  override def resolveKeys(interaction: HttpInteraction): Set[String] = {
-    Set(totalTrafficCountKey)
-  }
-}
-
-class PathKeyResolver(rfcState: RfcState) extends KeyResolver {
-  override def resolveKeys(interaction: HttpInteraction): Set[String] = {
-    Utilities.resolvePath(interaction.request.path, rfcState.requestsState.pathComponents) match {
-      case Some(pathId) => Set(pathId)
-      case None => Set.empty
-    }
-  }
-}
-
-object Resolvers {
-  def resolveRequest(interaction: HttpInteraction, requestsState: RequestsState) = {
-    Utilities.resolvePath(interaction.request.path, requestsState.pathComponents) match {
-      case Some(pathId) => {
-        requestsState.requests.values
-          .find(r => r.requestDescriptor.pathComponentId == pathId && r.requestDescriptor.httpMethod == interaction.request.method)
-      }
-      case None => None
-    }
-  }
-
+  override val requestBodyVisitor: RequestBodyVisitor = new CoverageRequestBodyVisitor(report)
+  override val responseBodyVisitor: ResponseBodyVisitor = new CoverageResponseBodyVisitor(report)
 }
 
 object KeyFormatters {
-  def totalInteractions(): String = {
-    "total"
+  def totalInteractions(): CoverageConcerns = {
+    TotalInteractions()
   }
 
-  def path(pathId: PathComponentId): String = {
-    s"paths-${pathId}"
+  def path(pathId: PathComponentId): CoverageConcerns = {
+    TotalForPath(pathId)
   }
 
-  def request(pathId: PathComponentId, httpMethod: String): String = {
-    s"requests-${pathId}-${httpMethod}"
+  def request(pathId: PathComponentId, httpMethod: String): CoverageConcerns = {
+    TotalForPathAndMethod(pathId, httpMethod)
   }
 
-  def response(pathId: PathComponentId, httpMethod: String, httpStatusCode: Int): String = {
-    s"responses-${pathId}-${httpMethod}-${httpStatusCode}"
+  def response(pathId: PathComponentId, httpMethod: String, httpStatusCode: Int): CoverageConcerns = {
+    TotalForPathAndMethodAndStatusCode(pathId, httpMethod, httpStatusCode)
   }
 
-  def requestBody(requestId: RequestId): String = {
-    requestId
+  def requestBody(requestId: RequestId): CoverageConcerns = {
+    TotalForRequest(requestId)
   }
 
-  def responseBody(responseId: ResponseId): String = {
-    responseId
+  def responseBody(responseId: ResponseId): CoverageConcerns = {
+    TotalForResponse(responseId)
   }
 
-  def requestBodyShape(requestId: RequestId, shapeTrail: ShapeTrail): String = {
-    s"${requestId}-${shapeTrail}"
+  def requestBodyShape(requestId: RequestId, shapeTrail: ShapeTrail): CoverageConcerns = {
+    TotalForRequestBodyItem(requestId, shapeTrail)
   }
 
-  def interactionsWithDiffs(): String = {
-    "interactions-with-diffs"
-  }
-
-  def interactionsWithRequestDiffs(): String = {
-    "interactions-with-request-diffs"
-  }
-
-  def interactionsWithResponseDiffs(): String = {
-    "interactions-with-response-diffs"
-  }
-
-  def unrecognizedInteractions(): String = {
-    "interactions-not-recognized"
-  }
-
-  def interactionsWithoutDiffs(): String = {
-    "interactions-without-diffs"
-  }
-}
-
-class RequestIdKeyResolver(rfcState: RfcState) extends KeyResolver {
-
-  override def resolveKeys(interaction: HttpInteraction): Set[String] = {
-    Resolvers.resolveRequest(interaction, rfcState.requestsState) match {
-      case Some(request) => Set(request.requestId)
-      case None => Set.empty
-    }
+  def responseBodyShape(responseId: ResponseId, shapeTrail: ShapeTrail): CoverageConcerns = {
+    TotalForResponseBodyItem(responseId, shapeTrail)
   }
 }
