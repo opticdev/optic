@@ -4,6 +4,7 @@ import {LocalDiffRfcStore} from '../../contexts/RfcContext';
 import {commandsToJson} from '@useoptic/domain';
 import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
 import compose from 'lodash.compose';
+import sha1 from 'node-sha1';
 
 class SimulatedCommandContext extends React.Component {
   render() {
@@ -11,6 +12,7 @@ class SimulatedCommandContext extends React.Component {
     const initialEventStore = eventStore.getCopy(rfcId);
     const initialEventsString = eventStore.serializeEvents(rfcId);
     const initialCommandsString = shouldSimulate ? JSON.stringify(commandsToJson(commands)) : null;
+    const hash = sha1(`${initialEventsString}+${initialCommandsString}`);
     return (
       <InitialRfcCommandsStore
         rfcId={rfcId}
@@ -19,7 +21,7 @@ class SimulatedCommandContext extends React.Component {
         <LocalDiffRfcStore
           specService={specService}
           initialEventStore={initialEventStore}
-          key={initialCommandsString}
+          key={hash}
         >
           {this.props.children}
         </LocalDiffRfcStore>

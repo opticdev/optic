@@ -17,7 +17,7 @@ class SequentialIdGenerator(prefix: String = "", delimiter: String = "") extends
 
 class RandomAlphanumericIdGenerator(prefix: String = "", delimiter: String = "", length: Int = 10) extends IdGenerator[String] {
   override def nextId(): String = {
-    val currentValue = Random.alphanumeric take length
+    val currentValue = (Random.alphanumeric take length).mkString
     s"${prefix}${delimiter}${currentValue}"
   }
 }

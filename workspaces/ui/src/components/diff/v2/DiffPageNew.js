@@ -372,7 +372,7 @@ converter.toJs(report)
     >
       <SimulatedCommandContext
         rfcId={rfcId}
-        eventStore={initialEventStore.getCopy(rfcId)}
+        eventStore={eventStore.getCopy(rfcId)}
         commands={simulatedCommands}
         shouldSimulate={true}
       >
