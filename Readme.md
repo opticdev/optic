@@ -42,7 +42,7 @@ api start
 ```
 
 <h1 align="center">
-<img src="https://raw.githubusercontent.com/opticdev/optic/742aae18220ececd7dc65093b4e786ada7fe65d0/webapp/public/watch.png" width="200">
+<img src="https://raw.githubusercontent.com/opticdev/optic/master/optic-docs.png" width="200">
 </h1>
 
 ### Use Optic to Manage your API Specification
