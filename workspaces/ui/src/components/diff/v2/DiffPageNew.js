@@ -48,6 +48,7 @@ import {DiffRegion} from './Notification';
 import DiffDrawer from './DiffDrawer';
 import {NewRegions, ShapeDiffRegion} from './DiffPreview';
 import {CommitCard} from './CommitCard';
+import {StableHasher} from '../../../utilities/CoverageUtilities';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -332,9 +333,9 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   //   return jsonHelper.seqToJsArray(interpreter.interpret(diff, interaction));
   // };
   const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
-
   global.opticDebug.diffContext = {
-    // samples,
+    samples: session ? session.samples : [],
+    samplesSeq: jsonHelper.jsArrayToSeq((session? session.samples : []).map(x => jsonHelper.fromInteraction(x))),
     // diffResults,
     acceptedSuggestions,
     suggestionToPreview,
@@ -346,7 +347,8 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
     eventStore,
     initialEventStore,
     rfcState,
-    opticEngine
+    opticEngine,
+    StableHasher
   };
   /*
 const converter = new opticDebug.diffContext.opticEngine.com.useoptic.CoverageReportConverter(opticDebug.diffContext.StableHasher)

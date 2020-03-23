@@ -51,7 +51,6 @@ class TrafficSessionStoreBase extends React.Component {
         this.checkForUpdates();
 
         DiffManagerFacade.updateInteractions(session.samples, this.state.diffManager)
-        const numberOfX = this.state.diffManager.inputStats
       })
       .catch((e) => {
         console.error(e);
