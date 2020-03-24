@@ -317,22 +317,12 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
 
   const endpointDiffManger = diffManager.managerForPathAndMethod(pathId, method, ignored);
 
-  // alert(JSON.stringify(session))
-
-  // const samples = jsonHelper.jsArrayToSeq(session.samples.map(i => jsonHelper.fromInteraction(i)));
-  // const diffResults = helpers.DiffHelpers().groupByDiffs(rfcState, samples);
-  // const diffHelper = helpers.DiffResultHelpers(diffResults);
-  // const regions = diffHelper.filterOut(jsonHelper.jsArrayToSeq(ignoredDiffs)).listRegions();
-
-  // const getInteractionsForDiff = (diff) => jsonHelper.seqToJsArray(diffHelper.get(diff));
-  //
-  // const interpreter = diff.interactions.interpreters.DefaultInterpreters(rfcState);
-  // const getDiffDescription = (x, interaction) => diff.interactions.interpreters.DiffDescriptionInterpreters(rfcState).interpret(x, interaction);
-  //
-  // const interpretationsForDiffAndInteraction = (diff, interaction) => {
-  //   return jsonHelper.seqToJsArray(interpreter.interpret(diff, interaction));
-  // };
   const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
+
+  if (simulatedCommands.length) {
+    debugger
+  }
+
   global.opticDebug.diffContext = {
     samples: session ? session.samples : [],
     samplesSeq: jsonHelper.jsArrayToSeq((session? session.samples : []).map(x => jsonHelper.fromInteraction(x))),

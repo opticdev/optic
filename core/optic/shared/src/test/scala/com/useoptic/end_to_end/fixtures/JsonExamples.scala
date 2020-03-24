@@ -8,4 +8,7 @@ object JsonExamples {
   val basicWithDueDate = json"""{ "task": "Build It", "isDone": false , "dueData": "TUESDAY"}"""
   val basicTodoWithoutStatus = json"""{"message": "Hello"}"""
 
+
+  val stringArray = json"""["string1", "string2", "string3", "string4", "string5"]"""
+  val stringArrayWithNumbers = json"""["string1", "string2", 3, "string4", 5]"""
 }

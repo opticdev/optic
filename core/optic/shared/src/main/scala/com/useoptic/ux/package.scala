@@ -23,8 +23,10 @@ package object ux {
   @JSExportAll
   case class Region(name: String, diffBlocks: Seq[DiffBlock]) {
     def isEmpty: Boolean = diffBlocks.isEmpty
+
     def nonEmpty: Boolean = diffBlocks.nonEmpty
   }
+
   @JSExportAll
   case class TopLevelRegions(newRegions: Region, requestRegions: Seq[Region], responseRegions: Seq[Region])
 
@@ -34,11 +36,17 @@ package object ux {
   @JSExportAll
   trait DiffBlock {
     def inRequest: Boolean
+
     def inResponse: Boolean
+
     def interactions: Seq[HttpInteraction]
+
     def count = interactions.size
+
     def description: DiffDescription
+
     def suggestions: Seq[InteractiveDiffInterpretation]
+
     def firstSuggestion: InteractiveDiffInterpretation = suggestions.head
   }
 
@@ -53,6 +61,7 @@ package object ux {
                                (implicit val toSuggestions: ToSuggestions) extends DiffBlock {
     def suggestions = toSuggestions()
   }
+
   @JSExportAll
   case class BodyShapeDiffBlock(diff: DiffResult,
                                 shapeDiff: ShapeDiffResult,
@@ -60,29 +69,39 @@ package object ux {
                                 inRequest: Boolean,
                                 inResponse: Boolean,
                                 contentType: String,
-                                description:  DiffDescription)
+                                description: DiffDescription)
                                (implicit val toSuggestions: ToSuggestions,
                                 _previewDiff: (HttpInteraction, Option[RfcState]) => RenderShapeRoot,
                                 _previewRequest: (HttpInteraction, Option[RfcState]) => Option[RenderShapeRoot],
                                 _previewResponse: (HttpInteraction, Option[RfcState]) => Option[RenderShapeRoot]) extends DiffBlock {
 
     def suggestions = toSuggestions()
+
     def previewRender(interaction: HttpInteraction = interactions.head, withRfcState: Option[RfcState] = None): RenderShapeRoot = _previewDiff(interaction, withRfcState)
+
     def previewRequest(interaction: HttpInteraction = interactions.head, withRfcState: Option[RfcState] = None): Option[RenderShapeRoot] = _previewRequest(interaction, withRfcState)
-    def previewResponse(interaction: HttpInteraction = interactions.head,  withRfcState: Option[RfcState] = None): Option[RenderShapeRoot] = _previewResponse(interaction, withRfcState)
+
+    def previewResponse(interaction: HttpInteraction = interactions.head, withRfcState: Option[RfcState] = None): Option[RenderShapeRoot] = _previewResponse(interaction, withRfcState)
   }
 
   // Shape Renderer
   @JSExportAll
   case class RenderShapeRoot(rootId: ShapeId,
-                             exampleFields: Map[FieldId, RenderField], exampleShapes: Map[ShapeId, RenderShape],
-                             specFields: Map[FieldId, RenderField], specShapes: Map[ShapeId, RenderShape]) {
+                             exampleFields: Map[FieldId, RenderField], specFields: Map[FieldId, RenderField],
+                             exampleShapes: Map[ShapeId, RenderShape], specShapes: Map[ShapeId, RenderShape],
+                             exampleItems: Map[ShapeId, RenderItem], specItems: Map[ShapeId, RenderItem]) {
 
     def getUnifiedShape(shapeId: ShapeId): RenderShape = {
       val specShape = specShapes(shapeId)
       val exampleShape = exampleShapes.get(shapeId)
       val mergedFields = exampleShape.map(_.fields).getOrElse(Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty)).merge(specShape.fields)
       specShape.copy(fields = mergedFields, exampleValue = exampleShape.flatMap(_.exampleValue), diffs = specShape.diffs ++ exampleShape.map(_.diffs).getOrElse(Set.empty))
+    }
+
+    def getUnifiedItem(itemId: ShapeId, listItem: RenderItem): Option[RenderItem] = {
+      exampleItems.get(itemId).map(exampleItem => {
+        exampleItem.copy(shapeId = listItem.shapeId)
+      })
     }
 
     def getUnifiedField(fieldId: FieldId): Option[RenderField] = {
@@ -123,6 +142,25 @@ package object ux {
       (unifiedExpected ++ unifiedMissing ++ unifiedUnexpected).sortBy(_.fieldName)
     }
 
+    def listItemShape(listId: ShapeId): Option[RenderItem] = Try {
+      val listItemSpecId = specShapes(listId).items.all.head
+      specItems(listItemSpecId)
+    }.toOption
+
+    def resolvedItems(listId: ShapeId): Seq[DisplayItem] = {
+      val listItem = listItemShape(listId)
+      if (listItem.isDefined) {
+        val items = exampleShapes.get(listId).map(_.items).getOrElse(Items(Seq.empty, Seq.empty))
+        items.all.zipWithIndex.flatMap { case (itemId, index) => {
+          getUnifiedItem(itemId, listItem.get).map(i => DisplayItem(index, i, if (items.hidden.contains(itemId)) "hidden" else "visible"))
+        }
+        }
+      } else {
+        Seq.empty
+      }
+
+    }
+
     def resolveFieldShape(field: RenderField): Option[RenderShape] = Try(field.shapeId.map(getUnifiedShape)).toOption.flatten
 
   }
@@ -138,6 +176,7 @@ package object ux {
       )
     }
   }
+
   @JSExportAll
   case class Items(all: Seq[ShapeId], hidden: Seq[ShapeId])
 
@@ -145,9 +184,16 @@ package object ux {
   case class DisplayField(fieldName: String, field: RenderField, display: String)
 
   @JSExportAll
-  case class RenderField(fieldId: FieldId, fieldName: String, shapeId: Option[ShapeId], exampleValue: Option[Json], diffs: Set[DiffResult] = Set())
+  case class DisplayItem(index: Int, item: RenderItem, display: String)
+
   @JSExportAll
-  case class RenderShape(shapeId: FieldId,
+  case class RenderField(fieldId: FieldId, fieldName: String, shapeId: Option[ShapeId], exampleValue: Option[Json], diffs: Set[DiffResult] = Set())
+
+  @JSExportAll
+  case class RenderItem(itemId: ShapeId, index: Int, baseShapeId: String, shapeId: Option[ShapeId], exampleValue: Option[Json], diffs: Set[DiffResult] = Set())
+
+  @JSExportAll
+  case class RenderShape(shapeId: ShapeId,
                          baseShapeId: String,
                          fields: Fields = Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty),
                          items: Items = Items(Seq.empty, Seq.empty),

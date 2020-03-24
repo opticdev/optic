@@ -178,7 +178,7 @@ export function InterpretationRow(props) {
   return (
     <MenuItem
       dense
-      style={{padding: 0, paddingLeft: 9, paddingRight: 9}}
+      style={{padding: 0, paddingLeft: 9, paddingRight: 9, minWidth: 150}}
       button
       selected={active}
       disableRipple
@@ -193,7 +193,7 @@ export function InterpretationRow(props) {
         }
       }}
       onClick={!active ? onClick : confirm}>
-      <Typography variant="subtitle1" style={{fontWeight: 200}}>{action}</Typography>
+      <Typography variant="subtitle1" style={{fontWeight: 200, paddingLeft: 5, paddingRight: 12}}>{action}</Typography>
     </MenuItem>
   );
 }

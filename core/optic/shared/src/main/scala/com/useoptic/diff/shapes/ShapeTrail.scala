@@ -57,4 +57,16 @@ case class ShapeTrail(rootShapeId: ShapeId, path: Seq[ShapeTrailPathComponent]) 
       case None => Some(rootShapeId)
     }
   }
+
+  def lastListItem(): Option[ListItemTrail] = {
+    path.lastOption match {
+      case Some(pathComponent) => {
+        pathComponent match {
+          case a: ListItemTrail => Some(a)
+          case _ => None
+        }
+      }
+      case None => None
+    }
+  }
 }

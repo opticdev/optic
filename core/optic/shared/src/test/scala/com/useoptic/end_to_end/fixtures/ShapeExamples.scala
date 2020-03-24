@@ -8,6 +8,7 @@ import io.circe.Json
 object ShapeExamples {
 
   val todoShape: (ShapeEntity, RfcState) = buildBasicShapeFrom(JsonExamples.basicTodo)
+  val stringArray: (ShapeEntity, RfcState) = buildBasicShapeFrom(JsonExamples.stringArray)
 
   private
   def buildBasicShapeFrom(json: Json): (ShapeEntity, RfcState) = {

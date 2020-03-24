@@ -1,6 +1,6 @@
 package com.useoptic.diff.shapes
 
-import com.useoptic.contexts.shapes.Commands.FieldId
+import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.useoptic.contexts.shapes.{FlattenedField, ShapeEntity}
 import com.useoptic.diff.shapes.Resolvers.ResolvedTrail
 import com.useoptic.types.capture.JsonLike
@@ -11,14 +11,14 @@ abstract class ObjectShapeVisitor {
   def end()
 }
 
-abstract class ArrayShapeVisitor {
-  def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity)
-  def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail])
+abstract class ListShapeVisitor {
+  def begin(shapeTrail: ShapeTrail, listShape: ShapeEntity, itemShape: ShapeEntity)
+  def visit()
   def end()
 }
 
 abstract class PrimitiveShapeVisitor {
-  def visit(objectResolved: ResolvedTrail, shapeTrail: ShapeTrail)
+  def visit(resolved: ResolvedTrail, shapeTrail: ShapeTrail)
 }
 
 abstract class EmptyShapeVisitor {
@@ -27,6 +27,6 @@ abstract class EmptyShapeVisitor {
 
 abstract class ShapeVisitors {
   val objectVisitor: ObjectShapeVisitor
-  val arrayVisitor: ArrayShapeVisitor
+  val listVisitor: ListShapeVisitor
   val primitiveVisitor: PrimitiveShapeVisitor
 }

@@ -5,20 +5,22 @@ import classNames from 'classnames';
 import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground} from '../../../contexts/ColorContext';
 import Toolbar from '@material-ui/core/Toolbar';
 import WarningIcon from '@material-ui/icons/Warning';
-import {secondary} from '../../../theme';
+import {primary, secondary} from '../../../theme';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tooltip from '@material-ui/core/Tooltip';
 import {withShapeRenderContext} from './ShapeRenderContext';
-import {getOrUndefined, mapScala, getOrUndefinedJson, headOrUndefined, CompareEquality} from '@useoptic/domain';
+import {
+  getOrUndefined,
+  mapScala,
+  getOrUndefinedJson,
+  headOrUndefined,
+  CompareEquality,
+  lengthScala
+} from '@useoptic/domain';
 import {withDiffContext} from './DiffContext';
 import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
 import {InterpretationRow} from './DiffViewer';
-import List from '@material-ui/core/List';
-import MenuList from '@material-ui/core/MenuList';
-import {DocDivider} from '../../requests/DocConstants';
 import {DocSubGroup} from '../../requests/DocSubGroup';
 import {IgnoreDiffContext} from './DiffPageNew';
 
@@ -91,6 +93,10 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(2),
   },
+  dash: {
+    fontWeight: 500,
+    color: primary
+  }
 }));
 
 
@@ -106,13 +112,14 @@ export const DiffViewer = ({shape}) => {
 };
 
 function renderShape(shape) {
-
   switch (shape.baseShapeId) {
     case '$object':
       return <ObjectRender shape={shape}/>;
       break;
+    case '$list':
+      return <ListRender shape={shape}/>;
+      break;
   }
-
 }
 
 export const DepthContext = React.createContext({depth: 0});
@@ -174,6 +181,22 @@ export const ObjectRender = withShapeRenderContext((props) => {
   );
 });
 
+export const ListRender = withShapeRenderContext((props) => {
+  const classes = useStyles();
+  const {shapeRender, shape} = props;
+
+  const listItemShape = getOrUndefined(shapeRender.listItemShape(shape.shapeId))
+  const items = shapeRender.resolvedItems(shape.shapeId);
+
+  return (
+    <>
+      <Row left={<Symbols>{'['}</Symbols>} right={<TypeName typeName="$object"/>} noHover/>
+      {mapScala(items)((item, index) => <ItemRow item={item} listItemShape={listItemShape} isLast={index - 1 === lengthScala(items)}/>)}
+      <Row left={<Symbols>{']'}</Symbols>} noHover/>
+    </>
+  );
+});
+
 function FieldName({children, missing}) {
   const classes = useStyles();
   return (
@@ -187,7 +210,6 @@ const colors = {
   string: '#a31515',
   number: '#09885a',
   boolean: '#0000ff',
-
 };
 
 function Value({value}) {
@@ -196,17 +218,18 @@ function Value({value}) {
   const typeO = typeof value;
 
   if (typeO === 'string') {
-    return <Typography variant="caption" c
+    return <Typography variant="caption"
                        style={{color: colors[typeO]}}>"{value}"</Typography>;
   }
 
   if (typeO === 'boolean') {
-    return <Typography variant="caption" c
+    return <Typography variant="caption"
                        style={{color: colors[typeO]}}>{value ? 'true' : 'false'}</Typography>;
   }
 
-  return null;
 
+  return <Typography variant="caption"
+                     style={{color: colors[typeO]}}>{value}</Typography>;
 }
 
 function TypeName({typeName, style}) {
@@ -277,7 +300,7 @@ export const DiffNotif = withShapeRenderContext(withDiffContext((props) => {
                     <InterpretationRow
                       action={interpretation.title}
                       onClick={() => {
-                        setSelectedDiff(diff)
+                        setSelectedDiff(diff);
                         setSelectedInterpretation(interpretation);
                       }}/>);
                 })}
@@ -337,8 +360,8 @@ export const FieldRow = withShapeRenderContext((props) => {
       )}
       right={(() => {
 
-        console.log('yyy', shapeRender)
-        console.log('yyy', field)
+        console.log('yyy', shapeRender);
+        console.log('yyy', field);
 
         if (diffNotif && suggestion) {
           return <Indent>
@@ -356,6 +379,58 @@ export const FieldRow = withShapeRenderContext((props) => {
 
         if (fieldShape) {
           return <Indent><TypeName typeName={fieldShape.baseShapeId}></TypeName></Indent>;
+        }
+      })()}
+    />
+  );
+});
+
+export const ItemRow = withShapeRenderContext((props) => {
+  const classes = useStyles();
+  const {item, shapeRender, isLast, listItemShape, diffDescription, suggestion} = props;
+  const diff = headOrUndefined(item.item.diffs);
+
+  const diffNotif = diff && (
+    <Indent><DiffNotif/></Indent>
+  );
+
+  return (
+    <Row
+      highlight={(() => {
+        if (diff && suggestion) {
+          return suggestion.changeTypeAsString;
+        }
+
+        if (diff) {
+          return diffDescription.changeTypeAsString;
+        }
+      })()}
+      left={(
+        <Indent>
+          <div style={{display: 'flex'}}>
+            <div className={classes.dash}>-</div>
+            <div style={{flex: 1, paddingLeft: 4}}>
+              <Value value={getOrUndefinedJson(item.item.exampleValue)}/>
+            </div>
+          </div>
+        </Indent>
+      )}
+      right={(() => {
+
+        if (diffNotif && suggestion) {
+          return <Indent>
+            {suggestion.changeTypeAsString !== 'Removal' &&
+            <TypeName style={{marginRight: 9}} typeName={listItemShape.baseShapeId}/>}
+            <Typography variant="caption" className={classes.suggestion}>
+              ({suggestion.changeTypeAsString})
+            </Typography>
+          </Indent>;
+        }
+        if (diffNotif) {
+          return diffNotif;
+        }
+        if (listItemShape) {
+          return <Indent><TypeName typeName={listItemShape.baseShapeId}></TypeName></Indent>;
         }
       })()}
     />

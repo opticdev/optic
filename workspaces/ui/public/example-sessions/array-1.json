@@ -1,0 +1,301 @@
+{
+  "events": [
+    {
+      "PathComponentAdded": {
+        "pathId": "path_wYt9lgNJVf",
+        "parentPathId": "root",
+        "name": "todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "4e67502a-5a8d-4d94-aa11-30ffeb48b6fa",
+          "createdAt": "2020-03-05T00:43:21.487Z"
+        }
+      }
+    },
+    {
+      "ContributionAdded": {
+        "id": "request_xSl1g1g9AM",
+        "key": "purpose",
+        "value": "list all todos",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "2e33d87c-60d2-49d1-ac03-ba4b84522eb0",
+          "clientCommandBatchId": "76799af2-dd47-4af1-8f8a-5018313819c1",
+          "createdAt": "2020-03-05T00:43:26.051Z"
+        }
+      }
+    },
+    {
+      "RequestParameterAddedByPathAndMethod": {
+        "parameterId": "parameter_xevhpw6Gxf",
+        "pathId": "path_wYt9lgNJVf",
+        "httpMethod": "GET",
+        "parameterLocation": "query",
+        "name": "queryString",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-23T16:19:03.720Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "shape_KWNTYCEAFE",
+        "baseShapeId": "$object",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-23T16:19:03.720Z"
+        }
+      }
+    },
+    {
+      "RequestParameterShapeSet": {
+        "parameterId": "parameter_xevhpw6Gxf",
+        "parameterDescriptor": {
+          "shapeId": "shape_KWNTYCEAFE",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-23T16:19:03.720Z"
+        }
+      }
+    },
+    {
+      "RequestAdded": {
+        "requestId": "request_jjeZIt6jKG",
+        "pathId": "path_wYt9lgNJVf",
+        "httpMethod": "GET",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-23T16:19:03.720Z"
+        }
+      }
+    },
+    {
+      "ResponseAddedByPathAndMethod": {
+        "responseId": "response_6bFMSiTt8x",
+        "pathId": "path_wYt9lgNJVf",
+        "httpMethod": "GET",
+        "httpStatusCode": 200,
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-23T16:19:03.721Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "e6DfTA_0",
+        "baseShapeId": "$list",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-23T16:19:03.721Z"
+        }
+      }
+    },
+    {
+      "ShapeAdded": {
+        "shapeId": "e6DfTA_1",
+        "baseShapeId": "$number",
+        "parameters": {
+          "DynamicParameterList": {
+            "shapeParameterIds": []
+          }
+        },
+        "name": "",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-23T16:19:03.721Z"
+        }
+      }
+    },
+    {
+      "ShapeParameterShapeSet": {
+        "shapeDescriptor": {
+          "ProviderInShape": {
+            "shapeId": "e6DfTA_0",
+            "providerDescriptor": {
+              "ShapeProvider": {
+                "shapeId": "e6DfTA_1"
+              }
+            },
+            "consumingParameterId": "$listItem"
+          }
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-23T16:19:03.721Z"
+        }
+      }
+    },
+    {
+      "ResponseBodySet": {
+        "responseId": "response_6bFMSiTt8x",
+        "bodyDescriptor": {
+          "httpContentType": "application/json",
+          "shapeId": "e6DfTA_0",
+          "isRemoved": false
+        },
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "initial-batch",
+          "createdAt": "2020-03-23T16:19:03.722Z"
+        }
+      }
+    },
+    {
+      "BatchCommitStarted": {
+        "batchId": "e387da94-59ef-45df-95a7-3f68cf73ae9c",
+        "commitMessage": "dsdsa",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "7771ac55-1923-4b59-9b06-a9371d393124",
+          "createdAt": "2020-03-23T16:19:16.764Z"
+        }
+      }
+    },
+    {
+      "BatchCommitEnded": {
+        "batchId": "e387da94-59ef-45df-95a7-3f68cf73ae9c",
+        "eventContext": {
+          "clientId": "anonymous",
+          "clientSessionId": "bbd7856d-c95e-40d8-a4b2-43ba0c8c5f13",
+          "clientCommandBatchId": "235512db-2945-4e7c-b27c-e2b78d7519c2",
+          "createdAt": "2020-03-23T16:19:19.478Z"
+        }
+      }
+    }
+  ],
+  "session": {
+    "metadata": {
+      "completed": false
+    },
+    "samples": [
+      {
+        "uuid": "2",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[1,2,3,4,5]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[1,2, \"three\", 4, \"five\", true]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {}
+}

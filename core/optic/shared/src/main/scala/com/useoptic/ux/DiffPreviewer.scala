@@ -3,13 +3,13 @@ package com.useoptic.ux
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{DynamicParameterList, FieldId, ShapeId}
 import com.useoptic.contexts.shapes.{FlattenedField, ShapeEntity, ShapesHelper}
-import com.useoptic.contexts.shapes.ShapesHelper.{BooleanKind, NullableKind, NumberKind, ObjectKind, OneOfKind, OptionalKind, StringKind}
+import com.useoptic.contexts.shapes.ShapesHelper.{BooleanKind, ListKind, NullableKind, NumberKind, ObjectKind, OneOfKind, OptionalKind, StringKind}
 import com.useoptic.diff.DiffResult
-import com.useoptic.diff.interactions.InteractionDiffResult
 import com.useoptic.diff.interactions.interpreters.DiffDescription
-import com.useoptic.diff.shapes.{ArrayShapeVisitor, ArrayVisitor, JsonLikeVisitors, JsonTrail, ObjectShapeVisitor, ObjectVisitor, PrimitiveShapeVisitor, PrimitiveVisitor, Resolvers, ShapeDiffResult, ShapeTrail, ShapeTraverser, ShapeVisitors, UnmatchedShape}
+import com.useoptic.diff.shapes.{ArrayVisitor, JsonLikeVisitors, JsonTrail, ListShapeVisitor, ObjectShapeVisitor, ObjectVisitor, PrimitiveShapeVisitor, PrimitiveVisitor, Resolvers, ShapeDiffResult, ShapeTrail, ShapeTraverser, ShapeVisitors, UnmatchedShape}
 import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
 import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
+import com.useoptic.dsa.SequentialIdGenerator
 import com.useoptic.types.capture.JsonLike
 import io.circe.Json
 
@@ -17,22 +17,24 @@ import scala.util.Try
 
 object DiffPreviewer {
 
-  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeId: ShapeId, diffOption: Option[ShapeDiffResult]): RenderShapeRoot = {
+  def previewDiff(jsonLike: Option[JsonLike], spec: RfcState, shapeId: ShapeId, diffs: Set[ShapeDiffResult]): RenderShapeRoot = {
     import com.useoptic.diff.shapes.JsonLikeTraverser
     //    val shapeRenderVisitor = new ShapeRenderVisitor(spec)
     //first traverse the example
-    val exampleRenderVisitor = new ExampleRenderVisitor(spec, diffOption)
+    val exampleRenderVisitor = new ExampleRenderVisitor(spec, diffs)
     val jsonLikeTraverser = new JsonLikeTraverser(spec, exampleRenderVisitor)
     jsonLikeTraverser.traverse(jsonLike, JsonTrail(Seq.empty), Some(ShapeTrail(shapeId, Seq.empty)))
 
     //second traversal of spec with examples
-    val shapeRenderVisitor = new ShapeRenderVisitor(spec, diffOption, exampleRenderVisitor)
+    val shapeRenderVisitor = new ShapeRenderVisitor(spec, diffs, exampleRenderVisitor)
     val specTraverser = new ShapeTraverser(spec, shapeRenderVisitor)
     specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq()))
 
     RenderShapeRoot(shapeId,
-      exampleRenderVisitor.fields, exampleRenderVisitor.shapes,
-      shapeRenderVisitor.fields, shapeRenderVisitor.shapes)
+      exampleRenderVisitor.fields, shapeRenderVisitor.fields,
+      exampleRenderVisitor.shapes, shapeRenderVisitor.shapes,
+      exampleRenderVisitor.items, shapeRenderVisitor.items
+    )
 
   }
 
@@ -48,16 +50,11 @@ object DiffPreviewer {
 
 }
 
-class ExampleRenderVisitor(spec: RfcState, diff: Option[DiffResult]) extends JsonLikeVisitors with RenderVisitor {
+class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends JsonLikeVisitors with RenderVisitor {
 
   def diffsByTrail(bodyTrail: JsonTrail): Set[DiffResult] = {
-    if (diff.isDefined) {
-      diff.get match {
-        case sd: ShapeDiffResult if sd.jsonTrail == bodyTrail => Set(diff.get)
-        case _ => Set.empty
-      }
-    } else {
-     Set.empty
+    diffs.collect {
+      case sd: ShapeDiffResult if sd.jsonTrail == bodyTrail => sd
     }
   }
 
@@ -120,14 +117,44 @@ class ExampleRenderVisitor(spec: RfcState, diff: Option[DiffResult]) extends Jso
 
     override def end(): Unit = {}
   }
+
+
+
   override val arrayVisitor: ArrayVisitor = new ArrayVisitor {
+
+    def toId(index: Int, shapeId: String) = {
+        shapeId+"_items_" + index.toString
+    }
 
     override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, shapeTrail: ShapeTrail, resolvedShapeTrail: ResolvedTrail): Unit = {
 
+      val ids = value.zipWithIndex.map {
+        case (i, index) => toId(index, resolvedShapeTrail.shapeEntity.shapeId)
+      }
+
+      pushShape(RenderShape(
+        resolvedShapeTrail.shapeEntity.shapeId,
+        resolvedShapeTrail.coreShapeKind.baseShapeId,
+        items = Items(ids, Seq.empty),
+        exampleValue = Some(Json.fromValues(value.map(_.asJson))),
+        diffs = diffsByTrail(bodyTrail)
+      ))
     }
 
     override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
+      trail.foreach(shapeTrail => {
+        val lastListItem = shapeTrail.lastListItem().get
+        val id = toId(index.intValue(), lastListItem.listShapeId)
 
+        pushItem(RenderItem(
+          id,
+          index.intValue(),
+          Resolvers.jsonToCoreKind(value).baseShapeId,
+          Some(lastListItem.itemShapeId),
+          Some(value.asJson),
+          diffs = diffsByTrail(bodyTrail)
+        ))
+      })
     }
 
     override def end(): Unit = {
@@ -149,21 +176,16 @@ class ExampleRenderVisitor(spec: RfcState, diff: Option[DiffResult]) extends Jso
   }
 }
 
-class ShapeRenderVisitor(spec: RfcState, diff: Option[DiffResult], exampleVisitor: ExampleRenderVisitor) extends ShapeVisitors with RenderVisitor  {
+class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult], exampleVisitor: ExampleRenderVisitor) extends ShapeVisitors with RenderVisitor  {
 
   def diffsByTrail(shapeTrail: ShapeTrail): Set[DiffResult] = {
-    if (diff.isDefined) {
-      diff.get match {
-        case sd: ShapeDiffResult if sd.shapeTrail == shapeTrail => Set(diff.get)
-        case _ => Set.empty
-      }
-    } else {
-      Set.empty
-    }
-  }
+    diffs.collect {
+      case sd: ShapeDiffResult if sd.shapeTrail == shapeTrail => sd
+    }}
 
   private val exampleFields = exampleVisitor.fields
   private val exampleShapes = exampleVisitor.shapes
+  private val exampleItems = exampleVisitor.items
 
   override val objectVisitor: ObjectShapeVisitor = new ObjectShapeVisitor {
     override def begin(objectResolved: ResolvedTrail, shapeTrail: ShapeTrail, exampleJson: Option[JsonLike]): Unit = {
@@ -209,16 +231,26 @@ class ShapeRenderVisitor(spec: RfcState, diff: Option[DiffResult], exampleVisito
     override def end(): Unit = ???
 
   }
-  override val arrayVisitor: ArrayShapeVisitor = new ArrayShapeVisitor {
-    override def begin(value: Vector[JsonLike], bodyTrail: JsonTrail, expected: ShapeEntity): Unit = {
+  override val listVisitor: ListShapeVisitor = new ListShapeVisitor {
 
+    override def begin(shapeTrail: ShapeTrail, listShape: ShapeEntity, itemShape: ShapeEntity): Unit = {
+
+      val id = listShape.shapeId+"_$listItem"
+
+      pushItem(RenderItem(id, 0, itemShape.descriptor.baseShapeId, Some(itemShape.shapeId), None, Set.empty))
+
+      pushShape(
+        RenderShape(
+          listShape.shapeId,
+          ListKind.baseShapeId,
+          items = Items(Seq(id), Seq.empty),
+          diffs = diffsByTrail(shapeTrail))
+      )
     }
-
-    override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
-
-    }
-
     override def end(): Unit = ???
+
+
+    override def visit(): Unit = ???
   }
   override val primitiveVisitor: PrimitiveShapeVisitor = new PrimitiveShapeVisitor {
     override def visit(objectResolved: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
@@ -235,12 +267,14 @@ class ShapeRenderVisitor(spec: RfcState, diff: Option[DiffResult], exampleVisito
 trait RenderVisitor {
   private val _fields = scala.collection.mutable.Map[String, RenderField]()
   private val _shapes = scala.collection.mutable.Map[String, RenderShape]()
-
-  def pushField(renderField: RenderField): Unit = _fields.put(renderField.fieldId, renderField)
-
-  def pushShape(renderShape: RenderShape): Unit = _shapes.put(renderShape.shapeId, renderShape)
-
-  def shapes: Map[String, RenderShape] = _shapes.toMap
+  private val _items = scala.collection.mutable.Map[String, RenderItem]()
 
   def fields: Map[String, RenderField] = _fields.toMap
+  def pushField(renderField: RenderField): Unit = _fields.put(renderField.fieldId, renderField)
+
+  def shapes: Map[String, RenderShape] = _shapes.toMap
+  def pushShape(renderShape: RenderShape): Unit = _shapes.put(renderShape.shapeId, renderShape)
+
+  def items: Map[String, RenderItem] = _items.toMap
+  def pushItem(renderItem: RenderItem): Unit = _items.put(renderItem.itemId, renderItem)
 }

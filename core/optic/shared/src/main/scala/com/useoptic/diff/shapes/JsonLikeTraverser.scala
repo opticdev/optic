@@ -63,8 +63,7 @@ class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
       })
 
       visitors.objectVisitor.end()
-    }
-    else {
+    } else {
       visitors.primitiveVisitor.visit(Some(bodyJson), bodyTrail, Some(trail))
     }
   }

@@ -3,7 +3,7 @@ package com.useoptic.diff.shapes
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.ShapeId
 import com.useoptic.contexts.shapes.ShapeEntity
-import com.useoptic.contexts.shapes.ShapesHelper.{CoreShapeKind, ObjectKind}
+import com.useoptic.contexts.shapes.ShapesHelper.{CoreShapeKind, ListKind, ObjectKind}
 import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
 import com.useoptic.types.capture.JsonLike
 
@@ -40,6 +40,15 @@ class ShapeTraverser(spec: RfcState, visitors: ShapeVisitors) {
             }
           }
 
+        }
+        case ListKind.baseShapeId => {
+          val resolved = Resolvers.resolveTrailToCoreShape(spec, shapeTrail)
+          val listShape = resolved.shapeEntity
+          val resolvedItem = Resolvers.resolveParameterToShape(spec.shapesState, listShape.shapeId, ListKind.innerParam, resolved.bindings)
+          assert(resolvedItem.isDefined, "We expect all lists to have a parameter for list item")
+          visitors.listVisitor.begin(shapeTrail, listShape, resolvedItem.get)
+          val itemTrail = shapeTrail.withChild(ListItemTrail(listShape.shapeId, resolvedItem.get.shapeId))
+          visitors.primitiveVisitor.visit(Resolvers.resolveTrailToCoreShape(spec, itemTrail), itemTrail)
         }
         case _ => {
           val resolved = Resolvers.resolveTrailToCoreShape(spec, shapeTrail)
