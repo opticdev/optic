@@ -2,8 +2,8 @@ package com.useoptic.diff.interactions.interpreters
 
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands._
-import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper}
-import com.useoptic.contexts.shapes.ShapesHelper.{OneOfKind, OptionalKind}
+import com.useoptic.contexts.shapes.{Commands, ShapesAggregate, ShapesHelper}
+import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, OneOfKind, OptionalKind}
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.interpretations.BasicInterpretations
 import com.useoptic.diff.{ChangeType, GotoPreview, InteractiveDiffInterpretation}
@@ -117,7 +117,16 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
           SetFieldShape(FieldShapeFromShape(pc.fieldId, wrapperShapeId))
         )
       }
-      case _ => Seq.empty
+      case Some(pc: ListItemTrail) => {
+        Seq(
+          SetParameterShape(ProviderInShape(wrapperShapeId, ShapeProvider(pc.itemShapeId), p1)),
+          SetParameterShape(ProviderInShape(pc.listShapeId, ShapeProvider(wrapperShapeId), ListKind.innerParam))
+        )
+      }
+      case x => {
+        println(x)
+        Seq.empty
+      }
     }
     val commands = baseCommands ++ additionalCommands
 

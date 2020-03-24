@@ -1,5 +1,6 @@
 package com.useoptic
 
+import com.useoptic.serialization.InteractionSerialization
 import com.useoptic.types.capture.{HttpInteraction, ShapeHashBytes}
 import io.circe.{Decoder, Json}
 
@@ -60,11 +61,8 @@ object JsonHelper {
   }
 
   def fromInteraction(x: js.Any): HttpInteraction = {
-    import io.circe.generic.auto._
     import io.circe.scalajs.convertJsToJson
-    implicit val shapeHashDecoder: Decoder[ShapeHashBytes] = (json) => {
-      Right(ShapeHashBytes(json.downField("bytes").downField("data").as[Vector[Byte]].right.get))
-    }
-    convertJsToJson(x).right.get.as[HttpInteraction].right.get
+
+    InteractionSerialization.fromJson(convertJsToJson(x).right.get)
   }
 }

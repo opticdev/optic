@@ -4,7 +4,7 @@ import com.useoptic.contexts.requests.Commands
 import com.useoptic.contexts.requests.Commands.{AddRequest, AddResponse, SetRequestBodyShape, SetResponseBodyShape, ShapedBodyDescriptor}
 import com.useoptic.contexts.rfc.Commands.RfcCommand
 import com.useoptic.contexts.rfc.Events.RfcEvent
-import com.useoptic.contexts.rfc.{RfcCommandContext, RfcServiceJSFacade}
+import com.useoptic.contexts.rfc.{RfcCommandContext, RfcService, RfcServiceJSFacade, RfcState}
 import com.useoptic.ddd.InMemoryEventStore
 import com.useoptic.diff.initial.ShapeBuilder
 import com.useoptic.diff.interactions.visitors.DiffVisitors
@@ -16,10 +16,16 @@ import org.scalatest.FunSpec
 
 object TestHelpers {
   def fromCommands(commands: Seq[RfcCommand]) = {
-    val rfcId = "test"
+    val rfcId = "testRfcId"
     val eventStore = new InMemoryEventStore[RfcEvent]
     val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
     RfcServiceJSFacade.fromCommands(eventStore, rfcId, commands.toVector, commandContext).currentState(rfcId)
+  }
+
+  def fromRfcStateAndCommands(rfcService: RfcService, commands: Seq[RfcCommand], rfcId: String) = {
+    val commandContext: RfcCommandContext = RfcCommandContext("a", "b", "c")
+    rfcService.handleCommandSequence(rfcId, commands, commandContext)
+    rfcService.currentState(rfcId)
   }
 }
 
