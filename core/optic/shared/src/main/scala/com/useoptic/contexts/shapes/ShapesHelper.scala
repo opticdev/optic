@@ -48,7 +48,7 @@ object ShapesHelper {
     ).asInstanceOf[Vector[RequestsEvent]]
   }
 
-  sealed class CoreShapeKind(val baseShapeId: ShapeId, val name: String)
+  sealed class CoreShapeKind(val baseShapeId: ShapeId, val name: String) {def color = s"${name}Color"}
   case object ObjectKind extends CoreShapeKind("$object", "Object")
   case object ListKind extends CoreShapeKind("$list", "List") {def innerParam: String = "$listItem"}
   case object MapKind extends CoreShapeKind("$map", "Map")

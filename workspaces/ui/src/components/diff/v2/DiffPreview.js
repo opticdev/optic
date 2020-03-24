@@ -23,6 +23,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
 import WifiIcon from '@material-ui/icons/Wifi';
+import classNames from 'classnames';
 import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
@@ -33,19 +34,25 @@ import {
   filterScala,
   lengthScala,
   headOrUndefined,
-  toOption
+  JsonHelper,
+  toOption, opticEngine
 } from '@useoptic/domain';
-import {withDiffContext} from './DiffContext';
+import {DiffContextStore, withDiffContext} from './DiffContext';
 import {DocSubGroup} from '../../requests/DocSubGroup';
 import DiffHunkViewer from './DiffHunkViewer';
 import {primary} from '../../../theme';
 import DiffReviewExpanded from './DiffReviewExpanded';
 import Toolbar from '@material-ui/core/Toolbar';
 import {withRfcContext} from '../../../contexts/RfcContext';
+import SimulatedCommandContext from '../SimulatedCommandContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
+  },
+  blur: {
+    opacity: .3,
+    pointerEvents: 'none'
   },
   header: {
     paddingLeft: 10,
@@ -76,7 +83,8 @@ const useStyles = makeStyles(theme => ({
     fontWeight: theme.typography.fontWeightRegular,
   },
   wrapper: {
-    overflow: 'hidden'
+    overflow: 'hidden',
+    marginTop: 42,
     // border: '1px solid',
   },
   hunk: {
@@ -88,7 +96,6 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row'
   }
 }));
-
 const addition = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: AddedGreen}}/>;
 
 const update = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: ChangedYellow}}/>;
@@ -218,7 +225,7 @@ export const NewRegions = withDiffContext(_NewRegions);
 
 
 function _ShapeDiffRegion(props) {
-  const {ignoreDiff, acceptSuggestion, selectedDiff, selectedInterpretation, title, region} = props;
+  const {ignoreDiff, acceptSuggestion, selectedDiff, eventStore, rfcId, selectedInterpretation, title, region} = props;
   const classes = useStyles();
 
   if (lengthScala(region) === 0) {
@@ -231,11 +238,28 @@ function _ShapeDiffRegion(props) {
                   style={{marginBottom: 12}}>{title}</Typography>
       {mapScala(region)(r => {
         return (
-          <DocSubGroup title={r.name} innerStyle={{paddingTop: 12}}>
-            {mapScala(r.diffBlocks)(diff => <ShapeDiffCard
-              suggestion={selectedInterpretation} diff={diff}/>)}
-            {/*{mapScala(r.diffBlocks)(diff =>*/}
-            {/*<div>{diff.description.title}</div>)}*/}
+          <DocSubGroup title={r.name}>
+            {mapScala(r.diffBlocks)(diff => {
+              const inFocus = selectedDiff && diff.containsDiff(selectedDiff.diff)
+              const shouldBlur = selectedDiff && !inFocus && selectedInterpretation
+              //only render changes in card that is in focus
+              if (inFocus) {
+                const simulatedCommands = selectedInterpretation ? JsonHelper.seqToJsArray(selectedInterpretation.commands) : [];
+                return (
+                  <SimulatedCommandContext
+                    rfcId={rfcId}
+                    eventStore={eventStore.getCopy(rfcId)}
+                    commands={simulatedCommands}
+                    shouldSimulate={true}
+                  >
+                    <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus} shouldBlur={shouldBlur}/>
+                  </SimulatedCommandContext>
+                );
+              } else {
+                return <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus} shouldBlur={shouldBlur}/>
+              }
+            })}
+
           </DocSubGroup>
         );
       })}
@@ -246,7 +270,7 @@ function _ShapeDiffRegion(props) {
 }
 
 function _ShapeDiffCard(props) {
-  const {diff, suggestion, selectedDiff, clearPreview, acceptSuggestion, expandedPreviewDiff, setExpandedPreviewDiff, selectedInterpretation, rfcService, rfcId} = props;
+  const {diff, suggestion, inFocus, selectedDiff, clearPreview, acceptSuggestion, expandedPreviewDiff, setExpandedPreviewDiff, shouldBlur, rfcService, rfcId} = props;
   const classes = useStyles();
 
   const {description} = diff;
@@ -267,7 +291,7 @@ function _ShapeDiffCard(props) {
   };
 
   return (
-    <Paper className={classes.wrapper} elevation={2}>
+    <Paper className={classNames(classes.wrapper, {[classes.blur]: shouldBlur})} elevation={2}>
       <div className={classes.header}>
         {addition}
         <Typography style={{marginLeft: 11}} variant="subtitle2">{diff.description.title}</Typography>
@@ -288,10 +312,10 @@ function _ShapeDiffCard(props) {
 
       <div className={classes.diffsNewRegion} style={{flexDirection: 'column'}}>
         {showExpanded ? (
-          <DiffReviewExpanded diff={diff} diffDescription={description}/>
+          <DiffReviewExpanded diff={diff} diffDescription={description} suggestion={suggestion} inFocus={inFocus}/>
         ) : (
           <DiffHunkViewer
-            suggestion={selectedInterpretation}
+            suggestion={suggestion}
             diff={diff}
             preview={preview}
             diffDescription={description}/>
@@ -303,4 +327,4 @@ function _ShapeDiffCard(props) {
 
 const ShapeDiffCard = withRfcContext(withDiffContext(_ShapeDiffCard));
 
-export const ShapeDiffRegion = withDiffContext(_ShapeDiffRegion);
+export const ShapeDiffRegion = withRfcContext(withDiffContext(_ShapeDiffRegion));

@@ -107,6 +107,16 @@ object Resolvers {
     }
   }
 
+  def resolveToBaseShape(shapeId: ShapeId)(implicit shapesState: ShapesState): ShapeEntity = {
+    val o = shapesState.shapes(shapeId)
+    def isCoreShape(b: ShapeId) = ShapesHelper.allCoreShapes.exists(_.baseShapeId == b)
+    if (isCoreShape(o.descriptor.baseShapeId)) {
+      o
+    } else {
+      resolveBaseObject(o.descriptor.baseShapeId)
+    }
+  }
+
   def resolveFieldToShape(shapesState: ShapesState, fieldId: FieldId, bindings: ParameterBindings): Option[ResolvedTrail] = {
     val flattenedField = shapesState.flattenedField(fieldId)
     val resolvedShape = flattenedField.fieldShapeDescriptor match {

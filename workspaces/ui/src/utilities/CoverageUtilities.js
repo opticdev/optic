@@ -15,5 +15,4 @@ function hasher(input) {
   return hex;
 }
 
-debugger
 export const StableHasher = StableHashableWrapper(hasher);

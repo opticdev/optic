@@ -17,6 +17,16 @@ abstract class ListShapeVisitor {
   def end()
 }
 
+abstract class OneOfVisitor {
+  def begin(shapeTrail: ShapeTrail, oneOfShape: ShapeEntity, branches: Seq[ShapeId])
+  def visit(shapeTrail: ShapeTrail, oneOfShape: ShapeEntity, branchShape: ShapeEntity)
+  def end()
+}
+
+abstract class GenericWrapperVisitor {
+  def begin(shapeTrail: ShapeTrail, shape: ShapeEntity, innerShape: Option[ShapeEntity])
+}
+
 abstract class PrimitiveShapeVisitor {
   def visit(resolved: ResolvedTrail, shapeTrail: ShapeTrail)
 }
@@ -29,4 +39,7 @@ abstract class ShapeVisitors {
   val objectVisitor: ObjectShapeVisitor
   val listVisitor: ListShapeVisitor
   val primitiveVisitor: PrimitiveShapeVisitor
+  val oneOfVisitor: OneOfVisitor
+  val optionalVisitor: GenericWrapperVisitor
+  val nullableVisitor: GenericWrapperVisitor
 }

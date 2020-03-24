@@ -66,9 +66,20 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 600,
   },
   fieldName: {
-    fontWeight: 800,
+    fontWeight: 600,
     color: '#20223c',
     fontSize: 12,
+  },
+  indexMarker: {
+    fontWeight: 500,
+    color: '#393d6b',
+    fontSize: 12,
+  },
+  rowContents: {
+    display: 'flex',
+    alignItems: 'baseline',
+    justifyContent: 'center',
+    flexDirection: 'row'
   },
   left: {
     flex: 1,
@@ -95,6 +106,7 @@ const useStyles = makeStyles(theme => ({
   },
   dash: {
     fontWeight: 500,
+    marginLeft: -10,
     color: primary
   }
 }));
@@ -111,28 +123,47 @@ export const DiffViewer = ({shape}) => {
   );
 };
 
-function renderShape(shape) {
+function renderShape(shape, nested) {
+
+  if (!shape) {
+    return null;
+  }
+
   switch (shape.baseShapeId) {
     case '$object':
-      return <ObjectRender shape={shape}/>;
+      return (
+        <ObjectRender shape={shape} nested={Boolean(nested)}/>
+      );
       break;
     case '$list':
-      return <ListRender shape={shape}/>;
+      return <ListRender shape={shape} nested={Boolean(nested)}/>;
       break;
   }
 }
 
 export const DepthContext = React.createContext({depth: 0});
 
-const Indent = ({children}) => {
+const Indent = ({children, add = 1}) => {
   return (
     <DepthContext.Consumer>
       {({depth}) => (
-        <div style={{paddingLeft: (depth + 1) * 13}}>
-          <DepthContext.Provider value={{depth: depth + 1}}>
+        <div style={{paddingLeft: (depth + add) * 13}}>
+          <DepthContext.Provider value={{depth: depth + add}}>
             {children}
           </DepthContext.Provider>
         </div>
+      )}
+    </DepthContext.Consumer>
+  );
+};
+
+const IndentIncrement = ({children, add = 1}) => {
+  return (
+    <DepthContext.Consumer>
+      {({depth}) => (
+        <DepthContext.Provider value={{depth: depth + add}}>
+          {children}
+        </DepthContext.Provider>
       )}
     </DepthContext.Consumer>
   );
@@ -153,20 +184,18 @@ export function Row(props) {
   })();
 
   return (
-    <DepthContext.Provider value={{depth: 0}}>
-      <div className={classNames(classes.row, {[classes.rowWithHover]: !props.noHover})}
-           style={{backgroundColor: rowHighlightColor}}>
-        <div className={classes.left}>{props.left}</div>
-        <div className={classes.spacerBorder}>{' '.replace(/ /g, '\u00a0')}</div>
-        <div className={classes.right}>{props.right}</div>
-      </div>
-    </DepthContext.Provider>
+    <div className={classNames(classes.row, {[classes.rowWithHover]: !props.noHover})}
+         style={{backgroundColor: rowHighlightColor}}>
+      <div className={classes.left}>{props.left}</div>
+      <div className={classes.spacerBorder}>{' '.replace(/ /g, '\u00a0')}</div>
+      <div className={classes.right}>{props.right}</div>
+    </div>
   );
 }
 
 export const ObjectRender = withShapeRenderContext((props) => {
   const classes = useStyles();
-  const {shapeRender, shape} = props;
+  const {shapeRender, shape, nested} = props;
 
   const fields = shapeRender.resolveFields(shape.fields);
 
@@ -174,25 +203,27 @@ export const ObjectRender = withShapeRenderContext((props) => {
 
   return (
     <>
-      <Row left={<Symbols>{'{'}</Symbols>} right={<TypeName typeName="$object"/>} noHover/>
+      {!nested && <Row left={<Symbols>{'{'}</Symbols>} right={<TypeName typeName={shape.name}/>} noHover/>}
       {mapScala(fields)(field => <FieldRow field={field}/>)}
-      <Row left={<Symbols>{'}'}</Symbols>} noHover/>
+      <IndentIncrement><Row left={<Symbols withIndent>{'}'}</Symbols>} noHover/></IndentIncrement>
     </>
   );
 });
 
 export const ListRender = withShapeRenderContext((props) => {
   const classes = useStyles();
-  const {shapeRender, shape} = props;
+  const {shapeRender, shape, nested} = props;
 
-  const listItemShape = getOrUndefined(shapeRender.listItemShape(shape.shapeId))
+  const listItem = getOrUndefined(shapeRender.listItemShape(shape.shapeId));
+
   const items = shapeRender.resolvedItems(shape.shapeId);
 
   return (
     <>
-      <Row left={<Symbols>{'['}</Symbols>} right={<TypeName typeName="$object"/>} noHover/>
-      {mapScala(items)((item, index) => <ItemRow item={item} listItemShape={listItemShape} isLast={index - 1 === lengthScala(items)}/>)}
-      <Row left={<Symbols>{']'}</Symbols>} noHover/>
+      {!nested && <Row left={<Symbols>{'['}</Symbols>} right={<TypeName typeName={shape.name}/>} noHover/>}
+      {mapScala(items)((item, index) => <ItemRow item={item} listItemShape={listItem}
+                                                 isLast={index - 1 === lengthScala(items)}/>)}
+      <IndentIncrement><Row left={<Symbols withIndent>{']'}</Symbols>} noHover/></IndentIncrement>
     </>
   );
 });
@@ -205,6 +236,13 @@ function FieldName({children, missing}) {
   );
 }
 
+function IndexMarker({children}) {
+  const classes = useStyles();
+  return (
+    <Typography variant="caption" className={classes.indexMarker}>{children}:</Typography>
+  );
+}
+
 const colors = {
   key: '#0451a5',
   string: '#a31515',
@@ -212,47 +250,100 @@ const colors = {
   boolean: '#0000ff',
 };
 
-function Value({value}) {
+function ValueRows({value, shape}) {
   const classes = useStyles();
 
-  const typeO = typeof value;
+  const jsTypeString = Object.prototype.toString.call(value);
 
-  if (typeO === 'string') {
-    return <Typography variant="caption"
-                       style={{color: colors[typeO]}}>"{value}"</Typography>;
+  if (jsTypeString === '[object Array]' || jsTypeString === '[object Object]') {
+    return <IndentIncrement add={1}>{renderShape(shape, true)}</IndentIncrement>;
   }
 
-  if (typeO === 'boolean') {
+  return null;
+}
+
+function ValueContents({value, shape}) {
+  const classes = useStyles();
+
+  if (!value) {
+    return null;
+  }
+
+  const jsTypeString = Object.prototype.toString.call(value);
+
+  if (jsTypeString === '[object Array]') {
+    return <Symbols>{'['}</Symbols>;
+  }
+
+  if (jsTypeString === '[object Object]') {
+    return <Symbols>{'{'}</Symbols>;
+  }
+
+  if (jsTypeString === '[object String]') {
     return <Typography variant="caption"
-                       style={{color: colors[typeO]}}>{value ? 'true' : 'false'}</Typography>;
+                       style={{color: colors.string}}>"{value}"</Typography>;
+  }
+
+  if (jsTypeString === '[object Boolean]') {
+    return <Typography variant="caption"
+                       style={{color: colors.boolean}}>{value ? 'true' : 'false'}</Typography>;
+  }
+
+  if (jsTypeString === '[object Number]') {
+    return <Typography variant="caption"
+                       style={{color: colors.number}}>{value.toString()}</Typography>;
   }
 
 
-  return <Typography variant="caption"
-                     style={{color: colors[typeO]}}>{value}</Typography>;
+  return null;
+  // return <Typography variant="caption"
+  //                    style={{color: colors[typeO]}}>{value.toString()}</Typography>;
 }
 
-function TypeName({typeName, style}) {
+
+const useColor = {
+  key: '#0451a5',
+  string: '#a31515',
+  number: '#09885a',
+  boolean: '#0000ff',
+};
+
+
+const TypeName = withShapeRenderContext(({shapeRender, typeName, style}) => {
   const classes = useStyles();
 
-  const typeToColorsMap = {
-    '$string': colors.string,
-  };
+  if (!typeName) {
+    return null
+  }
 
-  return (
-    <Typography variant="caption"
-                style={{color: typeToColorsMap[typeName], fontWeight: 600, ...style}}>{typeName}</Typography>
-  );
+  const coloredComponents = typeName.asColoredString(shapeRender)
 
-}
+  return (<>{mapScala(coloredComponents)((i) => <span style={{color: useColor[i.color] || i.color}}>{i.text}</span>)}</>);
+  // const typeToColorsMap = {
+  //   '$string': colors.string,
+  // };
+  //
+  // return (
+  //   <Typography variant="caption"
+  //               style={{color: typeToColorsMap[typeName], fontWeight: 600, ...style}}>{typeName}</Typography>
+  // );
 
-function Symbols({children}) {
+})
+
+function Symbols({children, withIndent}) {
   const classes = useStyles();
 
-  return (
-    <Typography variant="caption"
-                className={classes.symbols}>{children}</Typography>
-  );
+  const symbol = <Typography variant="caption" className={classes.symbols}>{children}</Typography>;
+
+  if (withIndent) {
+    return (
+      <Indent add={-1}>
+        {symbol}
+      </Indent>
+    );
+  } else {
+    return symbol;
+  }
 
 }
 
@@ -264,7 +355,6 @@ export const DiffNotif = withShapeRenderContext(withDiffContext((props) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const handleClick = event => {
     setAnchorEl(event.currentTarget);
-    setSelectedDiff(diff);
   };
   const handleClose = () => {
     setAnchorEl(null);
@@ -336,104 +426,114 @@ export const FieldRow = withShapeRenderContext((props) => {
   );
 
   return (
-    <Row
-      highlight={(() => {
-        if (diff && suggestion) {
-          return suggestion.changeTypeAsString;
-        }
+    <>
+      <Row
+        highlight={(() => {
+          if (diff && suggestion) {
+            return suggestion.changeTypeAsString;
+          }
 
-        if (diff) {
-          return diffDescription.changeTypeAsString;
-        }
-      })()}
-      left={(
-        <Indent>
-          <div style={{display: 'flex'}}>
-            <div>
-              <FieldName missing={missing}>{field.fieldName}</FieldName>
+          if (diff) {
+            return diffDescription.changeTypeAsString;
+          }
+        })()}
+        left={(
+          <Indent>
+            <div className={classes.rowContents}>
+              <div>
+                <FieldName missing={missing}>{field.fieldName}</FieldName>
+              </div>
+              <div style={{flex: 1, paddingLeft: 4}}>
+                <ValueContents value={getOrUndefinedJson(field.field.exampleValue)} shape={fieldShape}/>
+              </div>
             </div>
-            <div style={{flex: 1, paddingLeft: 4}}>
-              <Value value={getOrUndefinedJson(field.field.exampleValue)}/>
-            </div>
-          </div>
-        </Indent>
-      )}
-      right={(() => {
+          </Indent>
+        )}
+        right={(() => {
 
-        console.log('yyy', shapeRender);
-        console.log('yyy', field);
+          console.log('yyy', shapeRender);
+          console.log('yyy', field);
 
-        if (diffNotif && suggestion) {
-          return <Indent>
-            {suggestion.changeTypeAsString !== 'Removal' &&
-            <TypeName style={{marginRight: 9}} typeName={fieldShape.baseShapeId}/>}
-            <Typography variant="caption" className={classes.suggestion}>
-              ({suggestion.changeTypeAsString})
-            </Typography>
-          </Indent>;
-        }
+          if (diffNotif && suggestion) {
+            return <Indent>
+              {suggestion.changeTypeAsString !== 'Removal' &&
+              <TypeName style={{marginRight: 9}} typeName={fieldShape.name}/>}
+              <Typography variant="caption" className={classes.suggestion}>
+                ({suggestion.changeTypeAsString})
+              </Typography>
+            </Indent>;
+          }
 
-        if (diffNotif) {
-          return diffNotif;
-        }
+          if (diffNotif) {
+            return diffNotif;
+          }
 
-        if (fieldShape) {
-          return <Indent><TypeName typeName={fieldShape.baseShapeId}></TypeName></Indent>;
-        }
-      })()}
-    />
+          if (fieldShape) {
+            return <Indent><TypeName typeName={fieldShape.name}></TypeName></Indent>;
+          }
+        })()}
+      />
+      {/* this will insert nested rows */}
+      <ValueRows value={getOrUndefinedJson(field.field.exampleValue)} shape={fieldShape}/>
+    </>
   );
 });
+
 
 export const ItemRow = withShapeRenderContext((props) => {
   const classes = useStyles();
   const {item, shapeRender, isLast, listItemShape, diffDescription, suggestion} = props;
   const diff = headOrUndefined(item.item.diffs);
 
+  const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(listItemShape));
+
   const diffNotif = diff && (
     <Indent><DiffNotif/></Indent>
   );
 
   return (
-    <Row
-      highlight={(() => {
-        if (diff && suggestion) {
-          return suggestion.changeTypeAsString;
-        }
+    <>
+      <Row
+        highlight={(() => {
+          if (diff && suggestion) {
+            return suggestion.changeTypeAsString;
+          }
 
-        if (diff) {
-          return diffDescription.changeTypeAsString;
-        }
-      })()}
-      left={(
-        <Indent>
-          <div style={{display: 'flex'}}>
-            <div className={classes.dash}>-</div>
-            <div style={{flex: 1, paddingLeft: 4}}>
-              <Value value={getOrUndefinedJson(item.item.exampleValue)}/>
+          if (diff) {
+            return diffDescription.changeTypeAsString;
+          }
+        })()}
+        left={(
+          <Indent>
+            <div className={classes.rowContents}>
+              <IndexMarker>{item.index}</IndexMarker>
+              <div style={{flex: 1, paddingLeft: 4}}>
+                <ValueContents value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>
+              </div>
             </div>
-          </div>
-        </Indent>
-      )}
-      right={(() => {
+          </Indent>
+        )}
+        right={(() => {
 
-        if (diffNotif && suggestion) {
-          return <Indent>
-            {suggestion.changeTypeAsString !== 'Removal' &&
-            <TypeName style={{marginRight: 9}} typeName={listItemShape.baseShapeId}/>}
-            <Typography variant="caption" className={classes.suggestion}>
-              ({suggestion.changeTypeAsString})
-            </Typography>
-          </Indent>;
-        }
-        if (diffNotif) {
-          return diffNotif;
-        }
-        if (listItemShape) {
-          return <Indent><TypeName typeName={listItemShape.baseShapeId}></TypeName></Indent>;
-        }
-      })()}
-    />
+          if (diffNotif && suggestion) {
+            return <Indent>
+              {suggestion.changeTypeAsString !== 'Removal' &&
+              <TypeName style={{marginRight: 9}} typeName={listItemShape.name}/>}
+              <Typography variant="caption" className={classes.suggestion}>
+                ({suggestion.changeTypeAsString})
+              </Typography>
+            </Indent>;
+          }
+          if (diffNotif) {
+            return diffNotif;
+          }
+          if (listItemShape) {
+            return <Indent><TypeName typeName={listItemShape.name}/></Indent>;
+          }
+        })()}
+      />
+      <ValueRows value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>
+    </>
   );
 });
 

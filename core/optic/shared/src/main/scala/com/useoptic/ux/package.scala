@@ -3,6 +3,8 @@ package com.useoptic
 import com.useoptic.contexts.requests.{HttpRequest, HttpResponse}
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
+import com.useoptic.contexts.shapes.ShapesHelper
+import com.useoptic.contexts.shapes.ShapesHelper.StringKind
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions.{InteractionDiffResult, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType}
@@ -69,7 +71,8 @@ package object ux {
                                 inRequest: Boolean,
                                 inResponse: Boolean,
                                 contentType: String,
-                                description: DiffDescription)
+                                description: DiffDescription,
+                                relatedDiffs: Set[ShapeDiffResult])
                                (implicit val toSuggestions: ToSuggestions,
                                 _previewDiff: (HttpInteraction, Option[RfcState]) => RenderShapeRoot,
                                 _previewRequest: (HttpInteraction, Option[RfcState]) => Option[RenderShapeRoot],
@@ -82,6 +85,8 @@ package object ux {
     def previewRequest(interaction: HttpInteraction = interactions.head, withRfcState: Option[RfcState] = None): Option[RenderShapeRoot] = _previewRequest(interaction, withRfcState)
 
     def previewResponse(interaction: HttpInteraction = interactions.head, withRfcState: Option[RfcState] = None): Option[RenderShapeRoot] = _previewResponse(interaction, withRfcState)
+
+    def containsDiff(diff: InteractionDiffResult): Boolean = diff.shapeDiffResultOption.exists(i => relatedDiffs.contains(i))
   }
 
   // Shape Renderer
@@ -163,6 +168,8 @@ package object ux {
 
     def resolveFieldShape(field: RenderField): Option[RenderShape] = Try(field.shapeId.map(getUnifiedShape)).toOption.flatten
 
+    def resolveItemShape(item: RenderItem): Option[RenderShape] = Try(item.shapeId.map(getUnifiedShape)).toOption.flatten
+
   }
 
   @JSExportAll
@@ -197,8 +204,37 @@ package object ux {
                          baseShapeId: String,
                          fields: Fields = Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty),
                          items: Items = Items(Seq.empty, Seq.empty),
+                         branches: Seq[ShapeId] = Seq.empty,
+                         innerId: Option[ShapeId] = None,
                          exampleValue: Option[Json] = None,
-                         diffs: Set[DiffResult] = Set())
+                         diffs: Set[DiffResult] = Set(),
+                         name: RenderName = RenderName(Seq.empty))
 
+
+  @JSExportAll
+  case class ColoredName(text: String, color: String)
+
+  @JSExportAll
+  case class RenderName(nameComponents: Seq[NameComponent]) {
+    def flatten(implicit shapeRoot: RenderShapeRoot): Seq[NameComponent] = {
+      nameComponents.flatMap(_.flatten)
+    }
+    def asColoredString(implicit shapeRoot: RenderShapeRoot): Seq[ColoredName] = flatten.map(i => ColoredName(i.startText, i.color))
+  }
+
+  @JSExportAll
+  case class NameComponent(startText: String, color: String, endText: String = "", inner: Option[ShapeId] = None) {
+    def flatten(implicit shapeRoot: RenderShapeRoot): Seq[NameComponent] = {
+      if (inner.isDefined) {
+        Seq(
+          Seq(NameComponent(startText, color)),
+          inner.map(i => shapeRoot.specShapes(i).name.flatten).getOrElse(Seq.empty),
+          Seq(NameComponent(startText = endText, color))
+        ).flatten
+      } else {
+        Seq(this)
+      }
+    }
+  }
 
 }

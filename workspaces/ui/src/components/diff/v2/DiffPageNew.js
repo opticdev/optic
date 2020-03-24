@@ -319,13 +319,9 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
 
   const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
 
-  if (simulatedCommands.length) {
-    debugger
-  }
-
   global.opticDebug.diffContext = {
     samples: session ? session.samples : [],
-    samplesSeq: jsonHelper.jsArrayToSeq((session? session.samples : []).map(x => jsonHelper.fromInteraction(x))),
+    samplesSeq: jsonHelper.jsArrayToSeq((session ? session.samples : []).map(x => jsonHelper.fromInteraction(x))),
     // diffResults,
     acceptedSuggestions,
     suggestionToPreview,
@@ -362,14 +358,7 @@ converter.toJs(report)
       }}
       acceptedSuggestions={acceptedSuggestions}
     >
-      <SimulatedCommandContext
-        rfcId={rfcId}
-        eventStore={eventStore.getCopy(rfcId)}
-        commands={simulatedCommands}
-        shouldSimulate={true}
-      >
-        {children}
-      </SimulatedCommandContext>
+      {children}
     </DiffContextStore>
   );
 }));

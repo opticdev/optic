@@ -52,7 +52,7 @@ const useStyles = makeStyles(theme => ({
 
 export default withRfcContext(withDiffContext(withEndpointsContext((props) => {
   const classes = useStyles();
-  const {diff, title, endpointDescriptor, diffDescription, selectedInterpretation, acceptSuggestion, setSelectedDiff, selectedDiff, setSelectedInterpretation, rfcService, rfcId} = props;
+  const {diff, title, suggestion, endpointDescriptor, diffDescription, selectedInterpretation, acceptSuggestion, setSelectedDiff, selectedDiff, setSelectedInterpretation, rfcService, rfcId} = props;
 
   const currentRfcState = rfcService.currentState(rfcId);
 
@@ -130,7 +130,7 @@ export default withRfcContext(withDiffContext(withEndpointsContext((props) => {
             <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Request
               Body</Typography>}>
 
-              <DiffHunkViewer suggestion={selectedInterpretation}
+              <DiffHunkViewer suggestion={suggestion}
                               diff={diff}
                               preview={renderedRequest}
                               diffDescription={diffDescription}/>
@@ -141,7 +141,7 @@ export default withRfcContext(withDiffContext(withEndpointsContext((props) => {
             <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Response
               Body</Typography>}>
 
-              <DiffHunkViewer suggestion={selectedInterpretation}
+              <DiffHunkViewer suggestion={suggestion}
                               diff={diff}
                               preview={renderedResponse}
                               diffDescription={diffDescription}/>
