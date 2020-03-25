@@ -27,4 +27,5 @@ export const routerPaths = {
     diffRequest: (base) => `${base}/requests/:requestId`,
     //@todo -- replace the old flow with this one
     diffRequestNew: (base) => `${base}/paths/:pathId/methods/:method`,
+    testingDashboard: (base) => `${base}/testing`
 };

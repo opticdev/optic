@@ -31,6 +31,7 @@ import IconButton from '@material-ui/core/IconButton';
 import DescriptionIcon from '@material-ui/icons/Description';
 import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
+import PolicyIcon from '@material-ui/icons/Policy';
 import {LightTooltip} from '../tooltips/LightTooltip';
 import CodeIcon from '@material-ui/icons/Code';
 import LocalDoesNotMatch from './LocalDoesNotMatch';
@@ -157,6 +158,7 @@ class Navigation extends React.Component {
 
     const menuItems = [
       {name: 'Specification', icon: <DescriptionIcon style={{color: '#e2e2e2'}}/>, link: `${baseUrl}/documentation`},
+      {name: 'Live Contract Testing', icon: <PolicyIcon style={{color: '#e2e2e2'}}/>, link: routerPaths.testingDashboard(baseUrl) },
       // {name: 'Monitoring', icon: <NetworkCheckIcon style={{color: '#e2e2e2'}}/>},
       // {name: 'Changelog', icon: <ChangeHistoryIcon style={{color: '#e2e2e2'}}/>},
     ];
