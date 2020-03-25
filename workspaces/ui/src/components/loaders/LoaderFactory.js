@@ -12,7 +12,6 @@ import Navigation from '../navigation/Navbar';
 import {ApiOverviewContextStore} from '../../contexts/ApiOverviewContext';
 import ApiOverview from '../navigation/ApiOverview';
 import APIDashboard, {IntegrationsDashboard} from '../dashboards/APIDashboard';
-import TestingDashboard from '../dashboards/TestingDashboard';
 import {IntegrationsContextStore} from '../../contexts/IntegrationsContext';
 import {Redirect} from 'react-router-dom';
 import {ProductDemoStore} from '../navigation/ProductDemo';
@@ -128,8 +127,6 @@ class LoaderFactory {
                                component={withSpecServiceContext(RequestsDetailsPageNew)}/>
                         <Route path={routerPaths.apiDashboard(basePath)}
                                component={withSpecServiceContext(APIDashboard)}/>
-                        <Route path={routerPaths.testingDashboard(basePath)}
-                               component={TestingDashboard} />
                         <Route exact path={routerPaths.integrationsDashboard(basePath)}
                                component={() => <IntegrationsDashboard className={'root'}/>}/>
                         <Route exact path={routerPaths.apiDocumentation(basePath)}
