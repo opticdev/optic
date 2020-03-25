@@ -74,6 +74,9 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
   def noDiff = interactionsGroupedByDiffs.keySet.isEmpty
 
+  def diffCount: Int = interactionsGroupedByDiffs.keys.size
+  def interactionsWithDiffsCount: Int = interactionsGroupedByDiffs.values.flatten.size
+
   def collectRelatedShapeDiffs(diff: InteractionDiffResult): Set[ShapeDiffResult] = {
     val groupingIdOption = diff.shapeDiffResultOption.flatMap(_.groupingId)
     groupingIdOption.map(groupingId => {

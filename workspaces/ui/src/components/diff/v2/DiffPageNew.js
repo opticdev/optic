@@ -70,7 +70,8 @@ const styles = theme => ({
   },
   middle: {
     margin: '0 auto',
-    maxWidth: 1200
+    maxWidth: 1200,
+    paddingTop: 25
   },
   scroll: {
     overflow: 'scroll',
@@ -159,8 +160,6 @@ class _DiffPageContent extends React.Component {
       reset();
     }
 
-    //
-    //
     async function handleApply(message = 'EMPTY MESSAGE') {
       const newEventStore = initialEventStore.getCopy(rfcId);
       const {StartBatchCommit, EndBatchCommit} = opticEngine.com.useoptic.contexts.rfc.Commands;
@@ -180,27 +179,19 @@ class _DiffPageContent extends React.Component {
       <IgnoreDiffContext.Consumer>
         {({ignoreDiff, ignoredDiffs}) => (
           <div className={classes.container}>
-            <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
-              <Toolbar variant="dense">
-                <Typography variant="h6">Review Endpoint Diff</Typography>
-                {/*<BatchActionsMenu reset={reset}/>*/}
-                <div style={{flex: 1}}/>
-                <div>
-                  <Typography variant="caption" style={{fontSize: 10, color: '#a4a4a4', marginRight: 15}}>Accepted
-                    {/*({acceptedSuggestions.length})*/}
-                    Suggestions</Typography>
-                  {/*<Button onClick={() => setIsFinishing(true)} startIcon={<Check/>}*/}
-                  {/*        color="secondary">Finish</Button>*/}
-                </div>
-              </Toolbar>
-            </AppBar>
-
-            <div className={classes.topContainer}>
               <div className={classes.scroll}>
                 <div className={classes.middle}>
 
-                  <Typography variant="h4" color="primary"
-                              style={{marginBottom: 12}}>{endpointPurpose || 'Endpoint Purpose'}</Typography>
+
+                  <CommitCard acceptedSuggestions={acceptedSuggestions}
+                              ignoredDiffs={ignoredDiffs}
+                              diffCount={endpointDiffManger.diffCount}
+                              interactionsWithDiffsCount={endpointDiffManger.interactionsWithDiffsCount}
+                              endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
+                              reset={handleDiscard}
+                              apply={handleApply}
+
+                  />
 
                   <NewRegions ignoreDiff={ignoreDiff}
                               regions={endpointDiffManger.diffRegions.newRegions}/>
@@ -214,22 +205,7 @@ class _DiffPageContent extends React.Component {
                     region={endpointDiffManger.diffRegions.responseRegions}
                     title="Response Body Diffs"/>
 
-                  {endpointDiffManger.noDiff && acceptedSuggestions.length === 0 ?
-                    <Typography variant="h6">No more diffs for this endpoint</Typography> : (
-                      <>
-                        <DocDivider style={{marginTop: 75, marginBottom: 25}}/>
-                        <CommitCard acceptedSuggestions={acceptedSuggestions}
-                                    ignoredDiffs={ignoredDiffs}
-                                    reset={handleDiscard}
-                                    apply={handleApply}
-
-                        />
-                      </>
-                    )}
-
-
                 </div>
-              </div>
             </div>
           </div>
         )}
