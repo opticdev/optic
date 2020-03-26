@@ -47,13 +47,36 @@ async function ExampleReportTestingDashboardServiceBuilder(exampleId) {
   return new ExampleReportTestingDashboardService(orgId);
 }
 
-function TestingDashboardHome() {
-  debugger
-  const routingNavigationContext = useContext(RoutingNavigationContext);
-  const {baseUrl} = routingNavigationContext;
+function TestingDashboardHome(props) {
+  const { match } = props;
+  const baseUrl = match.url;
+
+  // TODO: consider factoring this as a useCaptures hook, for re-use elsewhere
+  // ApolloClient's useQuery might serve as inspiration for this: https://github.com/apollographql/apollo-client/blob/master/src/react/hooks/utils/useBaseQuery.ts
+  const service = useContext(TestingDashboardServiceContext);
+  const [captures, setCaptures] = useState(null);
+  useEffect(() => {
+    const fetchCaptures = async () => {
+      debugger;
+      const captures = await service.listCaptures();
+      setCaptures(captures);
+    };
+
+    // TODO: add error handling
+    fetchCaptures();
+  }, []);
+
+  if (!captures) {
+    return <Loading />;
+  }
+
   return (
     <div>
-      <Link to={`${baseUrl}/captures/capture-1`}>capture 1</Link>
+      {captures.map(({ captureId }) => (
+        <Link key={captureId} to={`${baseUrl}/captures/${captureId}`}>
+          {captureId}
+        </Link>
+      ))}
     </div>
   );
 }
@@ -103,10 +126,9 @@ function SpecLoader(props) {
   );
 }
 
-const RoutingNavigationContext = React.createContext(null);
-
-function DashboardLoaderFactory({serviceFactory, getBaseUrl}) {
-  return function (props) {
+function DashboardLoaderFactory({ serviceFactory, getBaseUrl }) {
+  return function(props) {
+    const { match } = props;
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [service, setService] = useState(null);
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -119,28 +141,25 @@ function DashboardLoaderFactory({serviceFactory, getBaseUrl}) {
     }, []);
 
     if (!service) {
-      return <Loading/>;
+      return <Loading />;
     }
 
-    const baseUrl = props.match.url;
-    const basePath = props.match.path;
-
     return (
-      <RoutingNavigationContext.Provider value={{baseUrl, basePath}}>
-        <TestingDashboardServiceContext.Provider value={service}>
-          <Switch>
-            <Route path={`${basePath}/captures/:captureId`} component={TestingDashboard}/>
-            <Route component={TestingDashboardHome}/>
-          </Switch>
-        </TestingDashboardServiceContext.Provider>
-      </RoutingNavigationContext.Provider>
+      <TestingDashboardServiceContext.Provider value={service}>
+        <Switch>
+          <Route
+            path={`${match.url}/captures/:captureId`}
+            component={TestingDashboard}
+          />
+          <Route component={TestingDashboardHome} />
+        </Switch>
+      </TestingDashboardServiceContext.Provider>
     );
   };
 }
 
-
 export function TestingDashboard(props) {
-  const {captureId} = props.match.params;
+  const { captureId } = props.match.params;
 
   return (
     <div>
