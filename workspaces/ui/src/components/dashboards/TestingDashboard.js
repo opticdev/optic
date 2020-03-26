@@ -51,23 +51,17 @@ function DefaultReportRedirect(props) {
   const { match } = props;
   const baseUrl = match.url;
 
-  // TODO: consider factoring this as a useCaptures hook, for re-use elsewhere
-  // ApolloClient's useQuery might serve as inspiration for this: https://github.com/apollographql/apollo-client/blob/master/src/react/hooks/utils/useBaseQuery.ts
-  const service = useContext(TestingDashboardServiceContext);
-  const [captures, setCaptures] = useState(null);
-  useEffect(() => {
-    const fetchCaptures = async () => {
-      debugger;
-      const captures = await service.listCaptures();
-      setCaptures(captures);
-    };
+  const { loading, result: captures } = useDashboardService(service =>
+    service.listCaptures()
+  );
 
-    // TODO: add error handling
-    fetchCaptures();
-  }, []);
+  if (loading) {
+    return <Loading />;
+  }
 
   if (!captures) {
-    return <Loading />;
+    // TODO: revisit this state
+    return <div>Could not find any reports</div>;
   }
 
   let mostRecent = captures[0];
@@ -80,7 +74,8 @@ function DefaultReportRedirect(props) {
 }
 
 function useDashboardService(
-  performRequest // Note: this is where a TS interface would give some nice safety
+  performRequest, // Note: this is where a TS interface would give some nice safety
+  deps
 ) {
   const service = useContext(TestingDashboardServiceContext);
   const [result, setResult] = useState(null);
@@ -96,7 +91,7 @@ function useDashboardService(
       .catch(err => {
         setError(err);
       });
-  }, []);
+  }, deps);
 
   return { result, loading, error };
 }
@@ -120,25 +115,22 @@ export function specFromEvents(events) {
 }
 
 function SpecLoader(props) {
-  const {children, captureId} = props;
-  const service = useContext(TestingDashboardServiceContext);
-  const [events, setEvents] = useState(null);
-  useEffect(() => {
-    const task = async () => {
-      debugger
-      const e = await service.loadSpec(captureId);
-      debugger
-      setEvents(e);
-    };
-    task();
-  }, [captureId]);
+  const { children, captureId } = props;
+  const { result: events, loading } = useDashboardService(
+    service => service.loadSpec(captureId),
+    [captureId]
+  );
 
-  if (!events) {
-    return <Loading/>;
+  if (loading) {
+    return <Loading />;
   }
 
+  if (!events) {
+    // TODO: revisit the branch for this state
+    return <div>Could not find the spec for this report</div>;
+  }
   const rfcState = specFromEvents(events);
-  debugger
+
   return (
     <ReadonlySpecContext.Provider value={rfcState}>
       {children}
