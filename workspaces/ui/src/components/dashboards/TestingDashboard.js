@@ -200,10 +200,29 @@ export function TestingDashboard(props) {
 
 export function TestingReport(props) {
   const { report, rfcState } = props;
+  const { counts } = report;
 
   console.log(rfcState);
 
-  return <div>Fetched report! {report.counts.totalInteractions}</div>;
+  return (
+    <div>
+      <h3>Testing report</h3>
+
+      <h4>Summary</h4>
+      <ul>
+        <li>Created at: {report.createdAt}</li>
+        <li>Last updated: {report.updatedAt}</li>
+        <li>Total interactions: {counts.totalInteractions}</li>
+        <li>Compliant interactions: {counts.totalCompliantInteractions}</li>
+        <li>Unmatched paths: {counts.totalUnmatchedPaths}</li>
+        <li>Total diffs: {counts.totalDiffs}</li>
+      </ul>
+
+      <h4>Endpoints</h4>
+
+      <p>TODO: add list of endpoints here</p>
+    </div>
+  );
 }
 
 export function ExampleTestingDashboardLoader() {
