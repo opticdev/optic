@@ -96,6 +96,20 @@ function useDashboardService(
   return { result, loading, error };
 }
 
+function useSpec(captureId) {
+  const { result: events, ...hookRest } = useDashboardService(
+    service => service.loadSpec(captureId),
+    [captureId]
+  );
+
+  let rfcState = null;
+  if (events) {
+    rfcState = specFromEvents(events);
+  }
+
+  return { ...hookRest, result: rfcState };
+}
+
 const ReadonlySpecContext = React.createContext(null);
 const TestingDashboardServiceContext = React.createContext(null);
 
@@ -116,21 +130,16 @@ export function specFromEvents(events) {
 
 function SpecLoader(props) {
   const { children, captureId } = props;
-  const { result: events, loading } = useDashboardService(
-    service => service.loadSpec(captureId),
-    [captureId]
-  );
+  const { result: rfcState, loading } = useSpec(captureId);
 
   if (loading) {
     return <Loading />;
   }
 
-  if (!events) {
+  if (!rfcState) {
     // TODO: revisit the branch for this state
     return <div>Could not find the spec for this report</div>;
   }
-  const rfcState = specFromEvents(events);
-
   return (
     <ReadonlySpecContext.Provider value={rfcState}>
       {children}
@@ -175,25 +184,29 @@ export function TestingDashboard(props) {
   const {
     loading: loadingReport,
     result: report
-  } = useDashboardService(service => service.loadReport(captureId));
+  } = useDashboardService(service => service.loadReport(captureId), [
+    captureId
+  ]);
+
+  const { loading: loadingSpec, result: rfcState } = useSpec(captureId);
 
   return (
     <div>
       <h2>Live Contract Testing Dashboard for capture {captureId}</h2>
 
-      {loadingReport && <Loading />}
+      {(loadingReport || loadingSpec) && <Loading />}
 
-      {report && <TestingReport report={report} />}
-
-      <SpecLoader captureId={captureId}>
-        <div>spec loaded :)</div>
-      </SpecLoader>
+      {report && rfcState && (
+        <TestingReport report={report} rfcState={rfcState} />
+      )}
     </div>
   );
 }
 
 export function TestingReport(props) {
-  const { report } = props;
+  const { report, rfcState } = props;
+
+  console.log(rfcState);
 
   return <div>Fetched report! {report.counts.totalInteractions}</div>;
 }
