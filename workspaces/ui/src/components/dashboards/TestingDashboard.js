@@ -79,6 +79,28 @@ function DefaultReportRedirect(props) {
   }
 }
 
+function useDashboardService(
+  performRequest // Note: this is where a TS interface would give some nice safety
+) {
+  const service = useContext(TestingDashboardServiceContext);
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    performRequest(service)
+      .then(result => {
+        setResult(result);
+        setLoading(false);
+      })
+      .catch(err => {
+        setError(err);
+      });
+  }, []);
+
+  return { result, loading, error };
+}
+
 const ReadonlySpecContext = React.createContext(null);
 const TestingDashboardServiceContext = React.createContext(null);
 
@@ -158,15 +180,30 @@ function DashboardLoaderFactory({ serviceFactory, getBaseUrl }) {
 
 export function TestingDashboard(props) {
   const { captureId } = props.match.params;
+  const {
+    loading: loadingReport,
+    result: report
+  } = useDashboardService(service => service.loadReport(captureId));
 
   return (
     <div>
       <h2>Live Contract Testing Dashboard for capture {captureId}</h2>
+
+      {loadingReport && <Loading />}
+
+      {report && <TestingReport report={report} />}
+
       <SpecLoader captureId={captureId}>
         <div>spec loaded :)</div>
       </SpecLoader>
     </div>
   );
+}
+
+export function TestingReport(props) {
+  const { report } = props;
+
+  return <div>Fetched report! {report.counts.totalInteractions}</div>;
 }
 
 export function ExampleTestingDashboardLoader() {
