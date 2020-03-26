@@ -1,27 +1,21 @@
-import React, {useContext, useEffect, useState} from 'react';
-import Loading from '../navigation/Loading';
-import {Link, Switch, Route} from 'react-router-dom';
-import {opticEngine} from '@useoptic/domain';
+import React, { useContext, useEffect, useState } from "react";
+import Loading from "../navigation/Loading";
+import { Link, Switch, Route, Redirect } from "react-router-dom";
+import { opticEngine } from "@useoptic/domain";
 
 async function ExampleReportTestingDashboardServiceBuilder(exampleId) {
   const example = await fetch(`/example-reports/${exampleId}.json`, {
     headers: {
-      'accept': 'application/json'
+      accept: "application/json"
     }
-  })
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error();
-    });
+  }).then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    throw new Error();
+  });
 
-  const {
-    orgId,
-    specs,
-    reports,
-    captures
-  } = example;
+  const { orgId, specs, reports, captures } = example;
 
   class ExampleReportTestingDashboardService {
     constructor(orgId) {
@@ -114,8 +108,8 @@ const ReadonlySpecContext = React.createContext(null);
 const TestingDashboardServiceContext = React.createContext(null);
 
 export function specFromEvents(events) {
-  const {contexts} = opticEngine.com.useoptic;
-  const {RfcServiceJSFacade} = contexts.rfc;
+  const { contexts } = opticEngine.com.useoptic;
+  const { RfcServiceJSFacade } = contexts.rfc;
   const rfcServiceFacade = RfcServiceJSFacade();
   const eventStore = rfcServiceFacade.makeEventStore();
   // TODO: figure out where this is supposed to come from
@@ -214,6 +208,7 @@ export function TestingReport(props) {
 
 export function ExampleTestingDashboardLoader() {
   return DashboardLoaderFactory({
-    serviceFactory: (props) => ExampleReportTestingDashboardServiceBuilder(props.match.params.exampleId),
+    serviceFactory: props =>
+      ExampleReportTestingDashboardServiceBuilder(props.match.params.exampleId)
   });
 }
