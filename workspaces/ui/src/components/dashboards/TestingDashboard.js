@@ -118,7 +118,8 @@ export function specFromEvents(events) {
   const {RfcServiceJSFacade} = contexts.rfc;
   const rfcServiceFacade = RfcServiceJSFacade();
   const eventStore = rfcServiceFacade.makeEventStore();
-  const rfcId = 'testRfcId';
+  // TODO: figure out where this is supposed to come from
+  const rfcId = "testRfcId";
 
   const specJson = JSON.stringify(events);
   eventStore.bulkAdd(rfcId, specJson);
