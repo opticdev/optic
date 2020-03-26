@@ -28,15 +28,18 @@ async function ExampleReportTestingDashboardServiceBuilder(exampleId) {
       this.orgId = orgId;
     }
 
-    loadSpec(captureId) {
+    async loadSpec(captureId) {
+      await new Promise(r => setTimeout(r, 200));
       return specs[captureId];
     }
 
-    listCaptures() {
+    async listCaptures() {
+      await new Promise(r => setTimeout(r, 200));
       return captures;
     }
 
-    loadReport(captureId) {
+    async loadReport(captureId) {
+      await new Promise(r => setTimeout(r, 200));
       return reports[captureId];
     }
   }
