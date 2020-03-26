@@ -47,7 +47,7 @@ async function ExampleReportTestingDashboardServiceBuilder(exampleId) {
   return new ExampleReportTestingDashboardService(orgId);
 }
 
-function TestingDashboardHome(props) {
+function DefaultReportRedirect(props) {
   const { match } = props;
   const baseUrl = match.url;
 
@@ -70,15 +70,13 @@ function TestingDashboardHome(props) {
     return <Loading />;
   }
 
-  return (
-    <div>
-      {captures.map(({ captureId }) => (
-        <Link key={captureId} to={`${baseUrl}/captures/${captureId}`}>
-          {captureId}
-        </Link>
-      ))}
-    </div>
-  );
+  let mostRecent = captures[0];
+  if (mostRecent) {
+    return <Redirect to={`${baseUrl}/captures/${mostRecent.captureId}`} />;
+  } else {
+    // TODO: revisit this UI state
+    return <div>You don't have any captures yet</div>;
+  }
 }
 
 const ReadonlySpecContext = React.createContext(null);
@@ -151,7 +149,7 @@ function DashboardLoaderFactory({ serviceFactory, getBaseUrl }) {
             path={`${match.url}/captures/:captureId`}
             component={TestingDashboard}
           />
-          <Route component={TestingDashboardHome} />
+          <Route component={DefaultReportRedirect} />
         </Switch>
       </TestingDashboardServiceContext.Provider>
     );
