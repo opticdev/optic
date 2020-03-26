@@ -349,11 +349,22 @@
   },
   "reports": {
     "capture-1": {
+      "counts": {
+        "totalInteractions": 100,
+        "totalCompliantInteractions": 75,
+        "totalUnmatchedPaths": 10,
+        "totalDiffs": 15
+      },
+      "createdAt": "2020-03-05T00:43:21.487Z",
+      "updatedAt": "2020-03-05T00:43:21.487Z"
     }
   },
   "captures": [
     {
       "captureId": "capture-1",
+      "createdAt": "2020-03-05T00:43:21.487Z",
+      "updatedAt": "2020-03-05T00:43:21.487Z",
+      "completedAt": null,
       "tags": [
         {
           "name": "environment",
