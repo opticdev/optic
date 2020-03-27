@@ -63,7 +63,7 @@ export {
 };
 
 
-function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
+export function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
   const path = paths[id];
   let name = '/' + getNameWithFormattedParameters(path);
 
@@ -100,7 +100,7 @@ function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
 }
 
 
-function fuzzyPathsFilter(paths, query) {
+export function fuzzyPathsFilter(paths, query) {
 
   function flattenAll(all, a = []) {
     all.forEach(i => {
@@ -120,7 +120,7 @@ function fuzzyPathsFilter(paths, query) {
   return pathIds;
 }
 
-function fuzzyConceptFilter(concepts, query) {
+export function fuzzyConceptFilter(concepts, query) {
   const searcher = new FuzzySearch(concepts, ['name'], {sort: true}, {
     caseSensitive: false,
   });

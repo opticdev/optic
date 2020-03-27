@@ -1,7 +1,18 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Loading from '../navigation/Loading';
 import { Link, Switch, Route, Redirect } from 'react-router-dom';
-import { opticEngine } from '@useoptic/domain';
+import { opticEngine, Queries } from '@useoptic/domain';
+
+// TODO: find a more appropriate place for this logic to live rather than in
+// Contexts now that it's being re-used elsewhere.
+import {
+  flattenPaths,
+  fuzzyConceptFilter,
+  fuzzyPathsFilter,
+  flatMapOperations
+} from '../../contexts/ApiOverviewContext';
+import { stuffFromQueries } from '../../contexts/RfcContext';
+import * as uniqBy from 'lodash.uniqby';
 
 async function ExampleReportTestingDashboardServiceBuilder(exampleId) {
   const example = await fetch(`/example-reports/${exampleId}.json`, {
@@ -96,17 +107,20 @@ function useSpec(captureId) {
     [captureId]
   );
 
-  let rfcState = null;
+  // calling this spec instead of rfcState, to differentiate this as a ViewModel,
+  // rather than RfcState.
+  let spec = null;
   if (events) {
-    rfcState = specFromEvents(events);
+    spec = specFromEvents(events);
   }
 
-  return { ...hookRest, result: rfcState };
+  return { ...hookRest, result: spec };
 }
 
 const ReadonlySpecContext = React.createContext(null);
 const TestingDashboardServiceContext = React.createContext(null);
 
+// TODO: give this building of a ViewModel a more appropriate spot.
 export function specFromEvents(events) {
   const { contexts } = opticEngine.com.useoptic;
   const { RfcServiceJSFacade } = contexts.rfc;
@@ -114,28 +128,50 @@ export function specFromEvents(events) {
   const eventStore = rfcServiceFacade.makeEventStore();
   const rfcId = 'testRfcId';
 
-  const specJson = JSON.stringify(events);
-  eventStore.bulkAdd(rfcId, specJson);
-
+  // @TODO: figure out if it's wise to stop the parsing of JSON from the response, to prevent
+  // parse -> stringify -> parse
+  eventStore.bulkAdd(rfcId, JSON.stringify(events));
   const rfcService = rfcServiceFacade.makeRfcService(eventStore);
-  const rfcState = rfcService.currentState(rfcId);
-  return rfcState;
+  const queries = Queries(eventStore, rfcService, rfcId);
+
+  const { apiName, pathsById, requestIdsByPathId, requests } = stuffFromQueries(
+    queries
+  );
+  const pathTree = flattenPaths('root', pathsById);
+  const pathIdsFiltered = fuzzyPathsFilter(pathTree, '');
+  const pathTreeFiltered = flattenPaths(
+    'root',
+    pathsById,
+    0,
+    '',
+    pathIdsFiltered
+  );
+  const allPaths = [pathTreeFiltered, ...pathTreeFiltered.children];
+  const endpoints = uniqBy(
+    flatMapOperations(allPaths, { requests, requestIdsByPathId }),
+    'requestId'
+  );
+
+  return {
+    apiName,
+    endpoints
+  };
 }
 
 function SpecLoader(props) {
   const { children, captureId } = props;
-  const { result: rfcState, loading } = useSpec(captureId);
+  const { result: spec, loading } = useSpec(captureId);
 
   if (loading) {
     return <Loading />;
   }
 
-  if (!rfcState) {
+  if (!spec) {
     // TODO: revisit the branch for this state
     return <div>Could not find the spec for this report</div>;
   }
   return (
-    <ReadonlySpecContext.Provider value={rfcState}>
+    <ReadonlySpecContext.Provider value={spec}>
       {children}
     </ReadonlySpecContext.Provider>
   );
@@ -180,7 +216,7 @@ export function TestingDashboard(props) {
     [captureId]
   );
 
-  const { loading: loadingSpec, result: rfcState } = useSpec(captureId);
+  const { loading: loadingSpec, result: spec } = useSpec(captureId);
 
   return (
     <div>
@@ -188,24 +224,20 @@ export function TestingDashboard(props) {
 
       {(loadingReport || loadingSpec) && <Loading />}
 
-      {report && rfcState && (
-        <TestingReport report={report} rfcState={rfcState} />
-      )}
+      {report && spec && <TestingReport report={report} spec={spec} />}
     </div>
   );
 }
 
 export function TestingReport(props) {
-  const { report, rfcState } = props;
+  const { report, spec } = props;
   const { counts } = report;
-
-  console.log(rfcState);
 
   return (
     <div>
       <h3>Testing report</h3>
 
-      <h4>Summary</h4>
+      <h4>Summary for {spec.apiName}</h4>
       <ul>
         <li>Created at: {report.createdAt}</li>
         <li>Last updated: {report.updatedAt}</li>
