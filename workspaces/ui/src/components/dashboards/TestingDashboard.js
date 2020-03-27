@@ -150,7 +150,15 @@ export function specFromEvents(events) {
   const endpoints = uniqBy(
     flatMapOperations(allPaths, { requests, requestIdsByPathId }),
     'requestId'
-  );
+  ).map(({ request, path }) => ({
+    endpointId: `${request.requestId}${path.pathId}`,
+    request: {
+      requestId: request.requestId,
+      httpMethod: request.requestDescriptor.httpMethod,
+      isRemoved: request.isRemoved
+    },
+    path
+  }));
 
   return {
     apiName,
@@ -232,6 +240,7 @@ export function TestingDashboard(props) {
 export function TestingReport(props) {
   const { report, spec } = props;
   const { counts } = report;
+  const { endpoints } = spec;
 
   return (
     <div>
@@ -249,7 +258,19 @@ export function TestingReport(props) {
 
       <h4>Endpoints</h4>
 
-      <p>TODO: add list of endpoints here</p>
+      {endpoints.length > 0 ? (
+        <ul>
+          {endpoints.map((endpoint) => (
+            <li key={endpoint.request.requestId}>
+              <strong>{endpoint.request.httpMethod}</strong>{' '}
+              {endpoint.path.name}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        // @TODO: revisit this empty state
+        <p>No endpoints have been documented yet</p>
+      )}
     </div>
   );
 }
