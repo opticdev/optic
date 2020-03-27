@@ -38,7 +38,6 @@ import {Helmet} from 'react-helmet';
 import {LightTooltip} from '../tooltips/LightTooltip';
 import {resolvePath} from '../utilities/PathUtilities';
 import PathMatcher from '../diff/PathMatcher';
-import {withProductDemoContext} from '../navigation/ProductDemo';
 import equal from 'deep-equal';
 import {extractRequestAndResponseBodyAsJs} from '@useoptic/domain';
 
@@ -391,7 +390,6 @@ const UnmatchedUrlWizard = compose(
   withNavigationContext,
   withTrafficSessionContext,
   withRfcContext,
-  withProductDemoContext
 )(UnmatchedUrlWizardWithoutQuery);
 
 function UrlListItem(props) {
@@ -483,7 +481,7 @@ export function pathComponentsToString(pathComponents) {
 }
 
 
-export const UrlsX = compose(withTrafficSessionContext, withProductDemoContext, withRfcContext)(props => {
+export const UrlsX = compose(withTrafficSessionContext, withRfcContext)(props => {
   const {diffStateProjections, cachedQueryResults, handleCommands} = props;
   const {sessionId} = props;
   const {sampleItemsWithResolvedPaths, sampleItemsWithoutResolvedPaths} = diffStateProjections;

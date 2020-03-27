@@ -34,8 +34,10 @@ import {
   filterScala,
   lengthScala,
   headOrUndefined,
+  DiffPreviewer,
   JsonHelper,
-  toOption, opticEngine
+  toOption,
+  opticEngine
 } from '@useoptic/domain';
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {DocSubGroup} from '../../requests/DocSubGroup';
@@ -45,6 +47,7 @@ import DiffReviewExpanded from './DiffReviewExpanded';
 import Toolbar from '@material-ui/core/Toolbar';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import SimulatedCommandContext from '../SimulatedCommandContext';
+import {Show} from '../../shared/Show';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,8 +60,8 @@ const useStyles = makeStyles(theme => ({
   header: {
     paddingLeft: 10,
     paddingRight: 10,
-    paddingTop: 9,
-    paddingBottom: 9,
+    paddingTop: 5,
+    paddingBottom: 5,
     backgroundColor: '#f0f1f2',
     borderBottom: '1px solid',
     borderBottomColor: '#b2b2b2',
@@ -69,6 +72,8 @@ const useStyles = makeStyles(theme => ({
   },
   hunkHeader: {
     paddingRight: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
     backgroundColor: '#f0f1f2',
     borderBottom: '1px solid',
     borderBottomColor: '#b2b2b2',
@@ -90,6 +95,14 @@ const useStyles = makeStyles(theme => ({
   hunk: {
     backgroundColor: 'white',
     minHeight: 300,
+  },
+  subheader: {
+    fontWeight: 500,
+    color: primary,
+    paddingBottom: 0,
+    marginBottom: 0,
+    height: 33,
+    textDecoration: 'underline'
   },
   diffsNewRegion: {
     display: 'flex',
@@ -137,6 +150,7 @@ function _NewRegions(props) {
   const classes = useStyles();
 
   const [deselected, setDeselected] = useState([]);
+  const [showExpanded, setShowExpanded] = useState(false);
 
   if (regions.isEmpty) {
     return null;
@@ -160,63 +174,96 @@ function _NewRegions(props) {
 
   };
 
+  const newRequests = mapScala(regions.diffBlocks)((diff) => {
+    if (diff.inRequest) {
+      return (
+        <ListItem>
+          <ListItemText primary={getOrUndefined(diff.contentType) || 'No Body'}
+                        secondary={`Observed ${diff.count} times`}
+                        primaryTypographyProps={{style: {fontSize: 14}}}
+                        secondaryTypographyProps={{style: {fontSize: 12}}}
+          />
+          <ListItemSecondaryAction>
+            <Checkbox
+              checked={!isDeselected(diff)}
+              onChange={onChange(diff)}
+              color="primary"
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+      );
+    }
+  }).filter(i => !!i);
+
+  const newResponses = mapScala(regions.diffBlocks)((diff) => {
+    if (diff.inResponse) {
+      return (
+        <ListItem>
+          <ListItemText
+            primary={`${getOrUndefined(diff.statusCode)} Response ${getOrUndefined(diff.contentType) || 'No Body'}`}
+            secondary={`Observed ${diff.count} times`}
+            primaryTypographyProps={{style: {fontSize: 14}}}
+            secondaryTypographyProps={{style: {fontSize: 12}}}
+          />
+          <ListItemSecondaryAction>
+            <Checkbox
+              checked={!isDeselected(diff)}
+              onChange={onChange(diff)}
+              color="primary"
+            />
+          </ListItemSecondaryAction>
+        </ListItem>
+      );
+    }
+  }).filter(i => !!i);
+
   return (
     <Paper className={classes.wrapper} elevation={2}>
-      <div className={classes.header} style={{backgroundColor: AddedGreenBackground}}>
+      <div className={classes.header}>
+        {addition}
         <Typography style={{marginLeft: 11}} variant="subtitle2">Undocumented Requests / Responses</Typography>
         <div style={{flex: 1}}/>
-        {addition}
-        <Button style={{marginLeft: 5}} color="primary" onClick={onApply}>Document Selected</Button>
+        <Button size="small"
+                color="primary"
+                style={{marginRight: 8}}
+                startIcon={<VisibilityIcon color="primary"/>}
+                onClick={() => setShowExpanded(true)}>
+          Expand Examples
+        </Button>
+        <Button style={{marginLeft: 5}} color="secondary" onClick={onApply}>Add to Specification</Button>
       </div>
       <div className={classes.diffsNewRegion}>
-        <List style={{flex: 1, borderRight: '1px solid #e2e2e2'}}
-              subheader={<ListSubheader style={{height: 28}}>New Requests</ListSubheader>}>
-          {mapScala(regions.diffBlocks)((diff) => {
-
-            if (diff.inRequest) {
-              return (
-                <ListItem>
-                  <ListItemText primary={getOrUndefined(diff.contentType) || 'No Body'}
-                                secondary={`Observed ${diff.count} times`}
-                                primaryTypographyProps={{style: {fontSize: 14}}}
-                                secondaryTypographyProps={{style: {fontSize: 12}}}
-                  />
-                  <ListItemSecondaryAction>
-                    <Checkbox
-                      checked={!isDeselected(diff)}
-                      onChange={onChange(diff)}
-                      color="primary"
-                    />
-                  </ListItemSecondaryAction>
-                </ListItem>
-              );
-            }
-          })}
-        </List>
-        <List style={{flex: 1}} subheader={<ListSubheader style={{height: 28}}>New Responses</ListSubheader>}>
-          {mapScala(regions.diffBlocks)((diff) => {
-            if (diff.inResponse) {
-              return (
-                <ListItem>
-                  <ListItemText
-                    primary={`${getOrUndefined(diff.statusCode)} Response ${getOrUndefined(diff.contentType) || 'No Body'}`}
-                    secondary={`Observed ${diff.count} times`}
-                    primaryTypographyProps={{style: {fontSize: 14}}}
-                    secondaryTypographyProps={{style: {fontSize: 12}}}
-                  />
-                  <ListItemSecondaryAction>
-                    <Checkbox
-                      checked={!isDeselected(diff)}
-                      onChange={onChange(diff)}
-                      color="primary"
-                    />
-                  </ListItemSecondaryAction>
-                </ListItem>
-              );
-            }
-          })}
-        </List>
+        {newRequests.length > 0 && (
+          <List style={{flex: 1, borderRight: '1px solid #e2e2e2'}}
+                subheader={<ListSubheader className={classes.subheader}>New Requests</ListSubheader>}>
+            {newRequests}
+          </List>)}
+        {newResponses.length > 0 && (
+          <List style={{flex: 1}}
+                subheader={<ListSubheader className={classes.subheader}>New Responses</ListSubheader>}>
+            {newResponses}
+          </List>
+        )}
       </div>
+
+      {showExpanded && (
+        <>
+          <DocDivider/>
+          <DiffReviewExpanded
+            interactions={regions.allInteractions}
+            exampleOnly={true}
+            render={(interaction) => {
+              return {
+                request: getOrUndefined(DiffPreviewer.previewBody(interaction.request.body)),
+                response: getOrUndefined(DiffPreviewer.previewBody(interaction.response.body)),
+                httpMethod: interaction.request.method,
+                url: interaction.request.path,
+              };
+            }}
+          />
+        </>
+      )}
+
     </Paper>
   );
 }
@@ -240,8 +287,8 @@ function _ShapeDiffRegion(props) {
         return (
           <DocSubGroup title={r.name}>
             {mapScala(r.diffBlocks)(diff => {
-              const inFocus = selectedDiff && diff.containsDiff(selectedDiff.diff)
-              const shouldBlur = selectedDiff && !inFocus && selectedInterpretation
+              const inFocus = selectedDiff && diff.containsDiff(selectedDiff.diff);
+              const shouldBlur = selectedDiff && !inFocus && selectedInterpretation;
               //only render changes in card that is in focus
               if (inFocus) {
                 const simulatedCommands = selectedInterpretation ? JsonHelper.seqToJsArray(selectedInterpretation.commands) : [];
@@ -252,11 +299,13 @@ function _ShapeDiffRegion(props) {
                     commands={simulatedCommands}
                     shouldSimulate={true}
                   >
-                    <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus} shouldBlur={shouldBlur}/>
+                    <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus}
+                                   shouldBlur={shouldBlur}/>
                   </SimulatedCommandContext>
                 );
               } else {
-                return <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus} shouldBlur={shouldBlur}/>
+                return <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus}
+                                      shouldBlur={shouldBlur}/>;
               }
             })}
 
@@ -270,20 +319,18 @@ function _ShapeDiffRegion(props) {
 }
 
 function _ShapeDiffCard(props) {
-  const {diff, suggestion, inFocus, selectedDiff, clearPreview, acceptSuggestion, expandedPreviewDiff, setExpandedPreviewDiff, shouldBlur, rfcService, rfcId} = props;
+  const {diff, suggestion, inFocus, selectedDiff, clearPreview, acceptSuggestion, shouldBlur, rfcService, rfcId} = props;
   const classes = useStyles();
 
   const {description} = diff;
-
+  const [showExpanded, setShowExpanded] = useState(false);
   const currentRfcState = rfcService.currentState(rfcId);
-
   let preview = diff.previewRender(headOrUndefined(diff.interactions), toOption(currentRfcState));
 
   const title = <>{addition}<Typography style={{marginLeft: 11}}
                                         variant="subtitle2">{diff.description.title}</Typography></>;
 
   const showFinalize = selectedDiff && CompareEquality.between(selectedDiff, diff) && suggestion;
-  const showExpanded = expandedPreviewDiff && CompareEquality.between(expandedPreviewDiff, diff);
 
   const apply = () => {
     acceptSuggestion(suggestion);
@@ -302,7 +349,7 @@ function _ShapeDiffCard(props) {
                 color="primary"
                 style={{marginRight: 8}}
                 startIcon={<VisibilityIcon color="primary"/>}
-                onClick={() => setExpandedPreviewDiff(diff)}>Expand Examples</Button>}
+                onClick={() => setShowExpanded(true)}>Expand Examples</Button>}
 
         {showFinalize && <Button size="small" style={{marginRight: 8}} onClick={clearPreview}>Reset</Button>}
         {showFinalize &&
@@ -312,7 +359,21 @@ function _ShapeDiffCard(props) {
 
       <div className={classes.diffsNewRegion} style={{flexDirection: 'column'}}>
         {showExpanded ? (
-          <DiffReviewExpanded diff={diff} diffDescription={description} suggestion={suggestion} inFocus={inFocus}/>
+          <DiffReviewExpanded
+            suggestion={suggestion}
+            diff={diff}
+            diffDescription={diff.description}
+            inFocus={inFocus}
+            interactions={diff.interactions}
+            render={(interaction) => {
+              return {
+                request: getOrUndefined(diff.previewRequest(interaction, toOption(currentRfcState))),
+                response: getOrUndefined(diff.previewResponse(interaction, toOption(currentRfcState))),
+                httpMethod: interaction.request.method,
+                url: interaction.request.path,
+              };
+            }}
+          />
         ) : (
           <DiffHunkViewer
             suggestion={suggestion}

@@ -48,7 +48,7 @@ export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithD
   const finalizeWithOverride = finalize || diffCount === 0
 
   return (
-    <Card className={classNames(classes.root)} elevation={3}>
+    <Card className={classNames(classes.root)} elevation={2}>
       <CardContent>
 
         <div className={classes.content}>
@@ -58,8 +58,8 @@ export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithD
           <div style={{flex: 1}}>
             <Typography className={classes.title} color="textSecondary" gutterBottom>Review Endpoint Diff</Typography>
              <Typography variant="h5" component="h2" color="primary">
-               {diffCount && <>Optic observed {diffCount} diff{pluralIfI(diffCount)} across {interactionsWithDiffsCount} interaction{pluralIfI(interactionsWithDiffsCount)}</>}
-               {!diffCount && <>You've reviewed all the diffs Optic observed. Nice work!</>}
+               {diffCount.length > 0 && <>Optic observed {diffCount} diff{pluralIfI(diffCount)} across {interactionsWithDiffsCount} interaction{pluralIfI(interactionsWithDiffsCount)}</>}
+               {diffCount.length === 0 && <>You've reviewed all the diffs Optic observed. Nice work!</>}
             </Typography>
             <Typography variant="subtitle1" component="h2">
               You have accepted {acceptedSuggestions.length} suggestion{pluralIf(acceptedSuggestions)}, and

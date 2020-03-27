@@ -37,3 +37,23 @@ case class Response(statusCode: Int, headers: ArbitraryData, body: Body)
 
 @JSExportAll
 case class Body(contentType: Option[String], value: ArbitraryData)
+
+
+
+
+// Companion Objects
+
+
+object ArbitraryData {
+  def empty = ArbitraryData(None, None, None)
+}
+
+object Response {
+  def emptyWithStatusCode(statusCode: Int) = Response(statusCode, ArbitraryData.empty, Body.empty)
+}
+
+object Body {
+  def empty = Body(None, ArbitraryData.empty)
+}
+
+

@@ -106,13 +106,13 @@ class DiffPageNew extends React.Component {
   render() {
 
     const {classes, specStore} = this.props;
-    const {pathId, method, sessionId} = this.props.match.params;
+    const {pathId, method, captureId} = this.props.match.params;
     return (
       <DiffToggleContextStore>
         <RequestTabsContextStore>
-          <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId} pathId={pathId} method={method}>
+          <CaptureSessionInlineContext specStore={specStore} captureId={captureId} pathId={pathId} method={method}>
             <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
-              <DiffPageContent/>
+              <DiffPageContent captureId={captureId}/>
             </EndpointsContextStore>
           </CaptureSessionInlineContext>
         </RequestTabsContextStore>
@@ -151,6 +151,7 @@ class _DiffPageContent extends React.Component {
       clientSessionId,
       reset,
       specService,
+      captureId,
     } = this.props;
     const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, isEmpty} = endpointDescriptor;
 
@@ -172,8 +173,12 @@ class _DiffPageContent extends React.Component {
       specContext.applyCommands(jsonHelper.jsArrayToVector([EndBatchCommit(batchId)]));
       console.log(JSON.parse(newEventStore.serializeEvents(rfcId)));
       await specService.saveEvents(newEventStore, rfcId);
-      history.push(routerPaths.apiDocumentation(baseUrl));
+      history.push(`${baseUrl}/diff/${captureId}`);
     }
+
+    console.log('look here ', endpointDiffManger.inputStats)
+    console.log('look here ', endpointDiffManger.diffRegions.requestRegions)
+    console.log('look here ', endpointDiffManger.diffRegions.responseRegions)
 
     return (
       <IgnoreDiffContext.Consumer>
@@ -250,7 +255,7 @@ function SuggestionsStore({children}) {
 
 export const IgnoreDiffContext = React.createContext(null);
 
-function IgnoreDiffStore({children}) {
+export function IgnoreDiffStore({children}) {
   const [ignoredDiffs, setIgnoredDiffs] = React.useState([]);
 
   const ignoreDiff = (...diffs) => {
@@ -286,7 +291,6 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   }
 
   const rfcState = rfcService.currentState(rfcId);
-
   diffManager.updatedRfcState(rfcState);
 
   const ignored = jsonHelper.jsArrayToSeq(ignoredDiffs);
@@ -347,19 +351,12 @@ class _CaptureSessionInlineContext extends React.Component {
     const {
       rfcId,
       eventStore,
-      sessionId,
-      specService,
       children,
       pathId,
       method
     } = this.props;
     return (
       //@todo refactor sessionId to captureId
-      <TrafficSessionStore
-        sessionId={sessionId}
-        specService={specService}
-        renderNoSession={<div>No Capture</div>}>
-        <IgnoreDiffStore>
           <SuggestionsStore>
             <IgnoreDiffContext.Consumer>
               {({ignoredDiffs, resetIgnored}) => (
@@ -403,8 +400,6 @@ class _CaptureSessionInlineContext extends React.Component {
             </IgnoreDiffContext.Consumer>
 
           </SuggestionsStore>
-        </IgnoreDiffStore>
-      </TrafficSessionStore>
     );
   }
 };

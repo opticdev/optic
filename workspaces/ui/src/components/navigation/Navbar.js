@@ -36,7 +36,6 @@ import {LightTooltip} from '../tooltips/LightTooltip';
 import CodeIcon from '@material-ui/icons/Code';
 import LocalDoesNotMatch from './LocalDoesNotMatch';
 import Card from '@material-ui/core/Card';
-
 const drawerWidth = 270;
 
 const styles = theme => ({
@@ -157,6 +156,7 @@ class Navigation extends React.Component {
     // );
 
     const menuItems = [
+      {name: 'Review Diff', icon: <ChangeHistoryIcon style={{color: '#e2e2e2'}}/>, link: `${baseUrl}/diff`},
       {name: 'Specification', icon: <DescriptionIcon style={{color: '#e2e2e2'}}/>, link: `${baseUrl}/documentation`},
       {name: 'Live Contract Testing', icon: <PolicyIcon style={{color: '#e2e2e2'}}/>, link: routerPaths.testingDashboard(baseUrl) },
       // {name: 'Monitoring', icon: <NetworkCheckIcon style={{color: '#e2e2e2'}}/>},
@@ -178,16 +178,6 @@ class Navigation extends React.Component {
 
           <div className={classes.topLevel} style={props.mini && {borderRight: 'none'}}>
             <img src="/optic-logo.svg" width={50} className={classes.opticLogo}/>
-            <Switch>
-              <Route exact path={routerPaths.init(entryBasePath)}
-                     component={() => (
-                       <LightTooltip title={'Finish Setup'} placement="right">
-                         <IconButton className={classes.navButton}>
-                           <CodeIcon style={{color: '#e2e2e2'}}/>
-                         </IconButton>
-                       </LightTooltip>
-                     )}/>
-            </Switch>
             {menuItems.map(i => (
               <LightTooltip title={i.name} component={Link} to={i.link} placement="right">
                 <IconButton className={classes.navButton}>
@@ -207,7 +197,7 @@ class Navigation extends React.Component {
       <div className={classes.root}>
 
         <Switch>
-          <Route path={routerPaths.diff(entryBasePath)} component={() => {
+          <Route path={routerPaths.diffPage(entryBasePath)} component={() => {
             return (
               <OpticDrawer mini={true}/>
             )

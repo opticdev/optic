@@ -17,8 +17,9 @@ export const routerPaths = {
     localRoot: () => basePaths.localBasePath,
     request: (base) => `${base}/requests/:requestId`,
     pathMethod: (base) => `${base}/paths/:pathId/methods/:method`,
-    init: (base) => `${base}/init`,
     apiDashboard: (base) => `${base}/dashboard`,
+    diffPage: (base) => `${base}/diff`,
+    diffPageWithCapture: (base) => `${base}/diff/:captureId`,
     apiDocumentation: (base) => `${base}/documentation`,
     integrationsDashboard: (base) => `${base}/integrations`,
     integrationsPath: (base) => `${base}/integrations/:integrationName`,
@@ -26,6 +27,6 @@ export const routerPaths = {
     diffUrls: (base) => `${base}/urls`,
     diffRequest: (base) => `${base}/requests/:requestId`,
     //@todo -- replace the old flow with this one
-    diffRequestNew: (base) => `${base}/paths/:pathId/methods/:method`,
+    diffRequestNew: (base) => `${base}/diff/:captureId/paths/:pathId/methods/:method`,
     testingDashboard: (base) => `${base}/testing`
 };

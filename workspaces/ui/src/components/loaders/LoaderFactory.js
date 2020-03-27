@@ -15,17 +15,17 @@ import APIDashboard, {IntegrationsDashboard} from '../dashboards/APIDashboard';
 import TestingDashboard from '../dashboards/TestingDashboard';
 import {IntegrationsContextStore} from '../../contexts/IntegrationsContext';
 import {Redirect} from 'react-router-dom';
-import {ProductDemoStore} from '../navigation/ProductDemo';
 import Init from '../onboarding/Init';
 import {SpecServiceStore, withSpecServiceContext} from '../../contexts/SpecServiceContext';
-import DiffPageNew from '../diff/v2/DiffPageNew';
+import DiffPageNew, {IgnoreDiffStore} from '../diff/v2/DiffPageNew';
 import EventEmitter from 'events';
 import {dumpSpecServiceState} from '../../utilities/dump-spec-service-state';
+import {AllCapturesStore, CaptureManagerPage} from '../diff/v2/CaptureManagerPage';
 
 class LoaderFactory {
   static build(options) {
     const {
-      notificationAreaComponent, shareButtonComponent, demo,
+      notificationAreaComponent, shareButtonComponent,
       basePath, specServiceTask, specServiceEvents,
       RfcStoreImpl = RfcStore
     } = options;
@@ -110,39 +110,40 @@ class LoaderFactory {
         global.specService = specService;
         global.opticDump = dumpSpecServiceState(specService);
         return (
-          <IntegrationsContextStore integrations={integrations}>
-            <SpecServiceStore specService={specService} specServiceEvents={specServiceEvents}>
-              <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
-                <RfcStoreImpl specService={specService}>
-                  <ApiOverviewContextStore specService={specService}>
-                    <Navigation
-                      notifications={notificationAreaComponent}
-                      entryBasePath={entryBasePath}
-                      shareButtonComponent={shareButtonComponent}>
-                      <Switch>
-                        <Route exact path={routerPaths.init(basePath)}
-                               component={() => <Init/>}/>
-                        <Route path={routerPaths.request(basePath)}
-                               component={withSpecServiceContext(RequestsDetailsPage)}/>
-                        <Route path={routerPaths.pathMethod(basePath)}
-                               component={withSpecServiceContext(RequestsDetailsPageNew)}/>
-                        <Route path={routerPaths.apiDashboard(basePath)}
-                               component={withSpecServiceContext(APIDashboard)}/>
-                        <Route path={routerPaths.testingDashboard(basePath)}
-                               component={TestingDashboard} />
-                        <Route exact path={routerPaths.integrationsDashboard(basePath)}
-                               component={() => <IntegrationsDashboard className={'root'}/>}/>
-                        <Route exact path={routerPaths.apiDocumentation(basePath)}
-                               component={withSpecServiceContext(ApiOverview)}/>
-                        <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
-                        <Redirect to={routerPaths.apiDashboard(basePath)}/>
-                      </Switch>
-                    </Navigation>
-                  </ApiOverviewContextStore>
-                </RfcStoreImpl>
-              </InitialRfcCommandsStore>
-            </SpecServiceStore>
-          </IntegrationsContextStore>
+          <SpecServiceStore specService={specService} specServiceEvents={specServiceEvents}>
+            <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
+              <RfcStoreImpl specService={specService}>
+                <AllCapturesStore>
+                  <IgnoreDiffStore>
+                    <ApiOverviewContextStore specService={specService}>
+                      <Navigation
+                        notifications={notificationAreaComponent}
+                        entryBasePath={entryBasePath}
+                        shareButtonComponent={shareButtonComponent}>
+                        <Switch>
+                          <Route path={routerPaths.request(basePath)}
+                                 component={withSpecServiceContext(RequestsDetailsPage)}/>
+                          <Route path={routerPaths.diffPage(basePath)}
+                                 component={withSpecServiceContext(CaptureManagerPage)}/>
+                          <Route path={routerPaths.pathMethod(basePath)}
+                                 component={withSpecServiceContext(RequestsDetailsPageNew)}/>
+                          <Route path={routerPaths.apiDashboard(basePath)}
+                                 component={withSpecServiceContext(APIDashboard)}/>
+                          <Route path={routerPaths.testingDashboard(basePath)}
+                                 component={TestingDashboard}/>
+                          <Route exact path={routerPaths.integrationsDashboard(basePath)}
+                                 component={() => <IntegrationsDashboard className={'root'}/>}/>
+                          <Route exact path={routerPaths.apiDocumentation(basePath)}
+                                 component={withSpecServiceContext(ApiOverview)}/>
+                          <Redirect to={routerPaths.apiDashboard(basePath)}/>
+                        </Switch>
+                      </Navigation>
+                    </ApiOverviewContextStore>
+                  </IgnoreDiffStore>
+                </AllCapturesStore>
+              </RfcStoreImpl>
+            </InitialRfcCommandsStore>
+          </SpecServiceStore>
         );
       }
     }
@@ -189,7 +190,6 @@ class LoaderFactory {
 
     const initialEventsStringEmitter = new EventEmitter();
     specServiceEvents.on('events-updated', () => {
-      debugger
       initialEventsStringEmitter.emit('rerun');
     });
 
@@ -213,12 +213,10 @@ class LoaderFactory {
         const {match} = this.props;
         return (
           <NavigationStore baseUrl={match.url}>
-            <ProductDemoStore active={demo}>
-              <Switch>
-                {/*<Route path={routerPaths.integrationsPath(basePath)} component={wrappedIntegrationRoutes}/>*/}
-                <Route path={basePath} component={wrappedTopLevelRoutes}/>
-              </Switch>
-            </ProductDemoStore>
+            <Switch>
+              {/*<Route path={routerPaths.integrationsPath(basePath)} component={wrappedIntegrationRoutes}/>*/}
+              <Route path={basePath} component={wrappedTopLevelRoutes}/>
+            </Switch>
           </NavigationStore>
         );
       }

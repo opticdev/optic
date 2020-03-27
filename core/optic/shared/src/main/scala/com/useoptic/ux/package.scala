@@ -1,5 +1,6 @@
 package com.useoptic
 
+import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.{HttpRequest, HttpResponse}
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
@@ -25,7 +26,7 @@ package object ux {
   @JSExportAll
   case class Region(name: String, diffBlocks: Seq[DiffBlock]) {
     def isEmpty: Boolean = diffBlocks.isEmpty
-
+    def allInteractions: Seq[HttpInteraction] = diffBlocks.flatMap(_.interactions).distinct
     def nonEmpty: Boolean = diffBlocks.nonEmpty
   }
 
@@ -51,6 +52,14 @@ package object ux {
 
     def firstSuggestion: InteractiveDiffInterpretation = suggestions.head
   }
+
+  @JSExportAll
+  case class UndocumentedURL(method: String, path: String, pathId: Option[PathComponentId], interactions: Seq[HttpInteraction]) {
+    def count = interactions.length
+  }
+
+  @JSExportAll
+  case class EndpointDiff(method: String, pathId: String, addedCount: Int, changedCount: Int, removedCount: Int)
 
   @JSExportAll
   case class NewRegionDiffBlock(diff: DiffResult,
@@ -97,10 +106,19 @@ package object ux {
                              exampleItems: Map[ShapeId, RenderItem], specItems: Map[ShapeId, RenderItem]) {
 
     def getUnifiedShape(shapeId: ShapeId): RenderShape = {
-      val specShape = specShapes(shapeId)
+      val specShape = specShapes.get(shapeId)
       val exampleShape = exampleShapes.get(shapeId)
-      val mergedFields = exampleShape.map(_.fields).getOrElse(Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty)).merge(specShape.fields)
-      specShape.copy(fields = mergedFields, exampleValue = exampleShape.flatMap(_.exampleValue), diffs = specShape.diffs ++ exampleShape.map(_.diffs).getOrElse(Set.empty))
+
+      assert(specShape.isDefined || exampleShape.isDefined, s"one of the render maps must include shapeId ${shapeId}")
+
+      val sFields = specShape.map(_.fields).getOrElse(Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty))
+      val eFields = exampleShape.map(_.fields).getOrElse(Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty))
+      val mergedFields = sFields merge eFields
+
+      val diffs = Set(specShape.map(_.diffs), exampleShape.map(_.diffs)).flatten.flatten
+
+      val copyTarget = Seq(specShape, exampleShape).flatten.head
+      copyTarget.copy(fields = mergedFields, exampleValue = exampleShape.flatMap(_.exampleValue), diffs = diffs)
     }
 
     def getUnifiedItem(itemId: ShapeId, listItem: RenderItem): Option[RenderItem] = {
@@ -238,3 +256,6 @@ package object ux {
   }
 
 }
+
+@JSExportAll
+case class DiffStats(totalInteractions: Int, totalDiffs: Int, undocumentedEndpoints: Int)

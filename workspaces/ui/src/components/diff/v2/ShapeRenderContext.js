@@ -14,6 +14,7 @@ class ShapeRenderStore extends React.Component {
       diffDescription: this.props.diffDescription,
       suggestion: this.props.suggestion,
       diff: this.props.diff,
+      exampleOnly: this.props.exampleOnly,
     }
 
     return (

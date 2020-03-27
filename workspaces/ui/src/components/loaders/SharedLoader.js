@@ -1,6 +1,5 @@
 import React from 'react';
 import {LoaderFactory} from './LoaderFactory.js';
-import {NewBehaviorSideBar} from '../navigation/NewBehavior.js';
 import {SpecService} from '../../services/SpecService.js';
 import {basePaths} from '../../RouterPaths.js';
 import {sharedSpecUploadService} from '../../services/SharedSpecUploadService.js';
@@ -150,17 +149,6 @@ function ShareButtonBase(props) {
 
 const ShareButton = withRfcContext(ShareButtonBase);
 
-export const notificationAreaComponent = (
-  <SpecServiceContext.Consumer>
-    {(context) => {
-      const {specService} = context;
-      return (
-        <NewBehaviorSideBar specService={specService}/>
-      );
-    }}
-  </SpecServiceContext.Consumer>
-);
-
 export const shareButtonComponent = (
   <SpecServiceContext.Consumer>
     {(context) => {
@@ -177,7 +165,6 @@ const {
 } = LoaderFactory.build({
   specServiceTask,
   specServiceEvents,
-  notificationAreaComponent,
   shareButtonComponent,
   basePath
 });

@@ -11,14 +11,14 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function DiffHunkViewer(props) {
-  const {preview, diffDescription, suggestion, diff} = props;
+  const {preview, diffDescription, suggestion, exampleOnly, diff} = props;
   const classes = useStyles();
 
   const rootShape = preview.rootId;
   const shape = preview.getUnifiedShape(rootShape);
 
   return (
-    <ShapeRenderStore shape={preview} diff={diff} diffDescription={diffDescription} suggestion={suggestion}>
+    <ShapeRenderStore shape={preview} diff={diff} diffDescription={diffDescription} suggestion={suggestion} exampleOnly={exampleOnly}>
       <DiffViewer shape={shape}/>
     </ShapeRenderStore>
   );

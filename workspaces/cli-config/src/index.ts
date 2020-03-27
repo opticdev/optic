@@ -68,6 +68,7 @@ export interface IOpticTaskRunnerConfig {
   command?: string
   captureId: string
   startTime: Date,
+  lastUpdateTime: Date,
   persistenceEngine: 'fs' | 's3'
   // where does the service normally live?
   serviceConfig: {
@@ -98,6 +99,7 @@ export async function TaskToStartConfig(task: IOpticTask, captureId: string): Pr
     persistenceEngine: 'fs',
     captureId,
     startTime: new Date(),
+    lastUpdateTime: new Date(),
     serviceConfig: {
       port: task.proxy ? parseInt(proxyPort, 10) : randomPort,
       host: parsedBaseUrl.hostname || 'localhost',

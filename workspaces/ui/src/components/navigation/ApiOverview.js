@@ -26,7 +26,6 @@ import {Helmet} from 'react-helmet';
 import * as uniqBy from 'lodash.uniqby'
 import {withApiOverviewContext} from '../../contexts/ApiOverviewContext';
 import {ProductDemoStoreBase} from '../onboarding/InlineDocs';
-import SetupSteps from '../onboarding/SetupSteps';
 import {Redirect} from 'react-router-dom';
 import {routerPaths} from '../../RouterPaths';
 
@@ -197,7 +196,6 @@ export default compose(withRfcContext, withApiOverviewContext, withNavigationCon
       <div className={classes.root}>
         <CssBaseline/>
         <main className={classes.content}>
-        <SetupSteps />
         </main>
       </div>
     )

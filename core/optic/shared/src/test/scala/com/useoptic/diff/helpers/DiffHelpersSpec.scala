@@ -16,6 +16,7 @@ import org.scalatest.FunSpec
 import io.circe.literal._
 
 class SpecHelpers {
+
   val requestIdGenerator = new SequentialIdGenerator("request")
   val responseIdGenerator = new SequentialIdGenerator("response")
   val shapeIdPrefixGenerator = new SequentialIdGenerator("s")

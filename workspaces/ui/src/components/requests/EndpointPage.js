@@ -24,7 +24,6 @@ import {BODY_DESCRIPTION, DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import {NamerStore} from '../shapes/Namer';
 import {getNormalizedBodyDescriptor} from '../../utilities/RequestUtilities';
 import {DocQueryParams} from './DocQueryParams';
-import {HasDiffRequestToolBar} from '../navigation/NewBehavior';
 import {extractRequestAndResponseBodyAsJs} from '@useoptic/domain';
 import IconButton from '@material-ui/core/IconButton';
 import VerticalSplitIcon from '@material-ui/icons/VerticalSplit';
@@ -360,7 +359,6 @@ export const RequestsDetailsPageNew = compose(withEndpointsContext, withStyles(s
             <div className={classes.container}>
               <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
                 <Toolbar variant="dense">
-                  {/*<HasDiffRequestToolBar requestId={requestId}/>*/}
                   <div style={{flex: 1, textAlign: 'center'}}>
                     <Typography variant="h6" color="primary">{endpointPurpose}</Typography>
                   </div>

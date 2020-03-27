@@ -1,7 +1,6 @@
 import { getPathsRelativeToCwd, readApiConfig } from '@useoptic/cli-config';
 import { parseIgnore } from '@useoptic/cli-config';
 import express from 'express';
-
 import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -142,7 +141,10 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   router.get('/captures', async (req, res) => {
     const { captures } = req.optic.session;
     res.json({
-      captures: sortBy(captures, i => i.taskConfig.startTime).reverse().map(i => i.taskConfig.captureId)
+      captures:
+        sortBy(captures, i => i.taskConfig.startTime)
+        .reverse()
+        .map(i => ({captureId: i.taskConfig.captureId, lastUpdate: i.taskConfig.startTime, hasDiff: false}))
     });
   });
   router.put('/captures/:captureId/status', bodyParser.json({ limit: '1kb' }), async (req, res) => {

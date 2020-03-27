@@ -26,6 +26,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
 
     const pathTrail = asPathTrail(pathId, pathsById);
     const pathTrailComponents = pathTrail.map(pathId => pathsById[pathId]);
+
     const pathTrailWithNames = pathTrailComponents.map((pathComponent) => {
       const pathComponentName = getNameWithFormattedParameters(pathComponent);
       const pathComponentId = pathComponent.pathId;

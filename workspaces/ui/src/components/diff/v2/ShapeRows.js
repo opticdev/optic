@@ -170,8 +170,10 @@ const IndentIncrement = ({children, add = 1}) => {
 };
 
 
-export function Row(props) {
+export const Row = withShapeRenderContext((props) => {
   const classes = useStyles();
+
+  const {exampleOnly} = props
 
   const rowHighlightColor = (() => {
     if (props.highlight === 'Addition') {
@@ -187,11 +189,11 @@ export function Row(props) {
     <div className={classNames(classes.row, {[classes.rowWithHover]: !props.noHover})}
          style={{backgroundColor: rowHighlightColor}}>
       <div className={classes.left}>{props.left}</div>
-      <div className={classes.spacerBorder}>{' '.replace(/ /g, '\u00a0')}</div>
-      <div className={classes.right}>{props.right}</div>
+      {!exampleOnly && <div className={classes.spacerBorder}>{' '.replace(/ /g, '\u00a0')}</div>}
+      {!exampleOnly && <div className={classes.right}>{props.right}</div>}
     </div>
   );
-}
+})
 
 export const ObjectRender = withShapeRenderContext((props) => {
   const classes = useStyles();
@@ -265,7 +267,7 @@ function ValueRows({value, shape}) {
 function ValueContents({value, shape}) {
   const classes = useStyles();
 
-  if (!value) {
+  if (typeof value === 'undefined') {
     return null;
   }
 
