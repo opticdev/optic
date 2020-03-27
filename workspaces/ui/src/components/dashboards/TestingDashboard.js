@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
-import Loading from "../navigation/Loading";
-import { Link, Switch, Route, Redirect } from "react-router-dom";
-import { opticEngine } from "@useoptic/domain";
+import React, { useContext, useEffect, useState } from 'react';
+import Loading from '../navigation/Loading';
+import { Link, Switch, Route, Redirect } from 'react-router-dom';
+import { opticEngine } from '@useoptic/domain';
 
 async function ExampleReportTestingDashboardServiceBuilder(exampleId) {
   const example = await fetch(`/example-reports/${exampleId}.json`, {
     headers: {
-      accept: "application/json"
+      accept: 'application/json'
     }
-  }).then(response => {
+  }).then((response) => {
     if (response.ok) {
       return response.json();
     }
@@ -23,17 +23,17 @@ async function ExampleReportTestingDashboardServiceBuilder(exampleId) {
     }
 
     async loadSpec(captureId) {
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200));
       return specs[captureId];
     }
 
     async listCaptures() {
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200));
       return captures;
     }
 
     async loadReport(captureId) {
-      await new Promise(r => setTimeout(r, 200));
+      await new Promise((r) => setTimeout(r, 200));
       return reports[captureId];
     }
   }
@@ -45,7 +45,7 @@ function DefaultReportRedirect(props) {
   const { match } = props;
   const baseUrl = match.url;
 
-  const { loading, result: captures } = useDashboardService(service =>
+  const { loading, result: captures } = useDashboardService((service) =>
     service.listCaptures()
   );
 
@@ -78,11 +78,11 @@ function useDashboardService(
 
   useEffect(() => {
     performRequest(service)
-      .then(result => {
+      .then((result) => {
         setResult(result);
         setLoading(false);
       })
-      .catch(err => {
+      .catch((err) => {
         setError(err);
       });
   }, deps);
@@ -92,7 +92,7 @@ function useDashboardService(
 
 function useSpec(captureId) {
   const { result: events, ...hookRest } = useDashboardService(
-    service => service.loadSpec(captureId),
+    (service) => service.loadSpec(captureId),
     [captureId]
   );
 
@@ -113,7 +113,7 @@ export function specFromEvents(events) {
   const rfcServiceFacade = RfcServiceJSFacade();
   const eventStore = rfcServiceFacade.makeEventStore();
   // TODO: figure out where this is supposed to come from
-  const rfcId = "testRfcId";
+  const rfcId = 'testRfcId';
 
   const specJson = JSON.stringify(events);
   eventStore.bulkAdd(rfcId, specJson);
@@ -176,12 +176,10 @@ function DashboardLoaderFactory({ serviceFactory, getBaseUrl }) {
 
 export function TestingDashboard(props) {
   const { captureId } = props.match.params;
-  const {
-    loading: loadingReport,
-    result: report
-  } = useDashboardService(service => service.loadReport(captureId), [
-    captureId
-  ]);
+  const { loading: loadingReport, result: report } = useDashboardService(
+    (service) => service.loadReport(captureId),
+    [captureId]
+  );
 
   const { loading: loadingSpec, result: rfcState } = useSpec(captureId);
 
@@ -227,7 +225,7 @@ export function TestingReport(props) {
 
 export function ExampleTestingDashboardLoader() {
   return DashboardLoaderFactory({
-    serviceFactory: props =>
+    serviceFactory: (props) =>
       ExampleReportTestingDashboardServiceBuilder(props.match.params.exampleId)
   });
 }
