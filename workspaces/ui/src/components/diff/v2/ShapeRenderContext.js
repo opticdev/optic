@@ -27,5 +27,6 @@ class ShapeRenderStore extends React.Component {
 
 export {
   ShapeRenderStore,
+  ShapeRenderContext,
   withShapeRenderContext
 }

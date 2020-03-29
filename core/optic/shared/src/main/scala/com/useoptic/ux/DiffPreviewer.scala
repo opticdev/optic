@@ -300,7 +300,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult], exampleVis
           ListKind.baseShapeId,
           items = Items(Seq(id), Seq.empty),
           diffs = diffsByTrail(shapeTrail),
-          name = RenderName(Seq(NameComponent("List of ", ListKind.color, inner = Some(baseItem.shapeId)))))
+          name = RenderName(Seq(NameComponent("List of", ListKind.color, inner = Some(baseItem.shapeId)))))
       )
     }
 
@@ -334,7 +334,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult], exampleVis
     override def begin(shapeTrail: ShapeTrail, oneOfShape: ShapeEntity, branches: Seq[ShapeId]): Unit = {
 
       val nameComponents = branches.map(branch => {
-        NameComponent(if (branches.lastOption.contains(branch) && branches.size > 1) "or " else "", "black", endText = if (branches.lastOption.contains(branch)) "" else ", ", inner = Some(branch))
+        NameComponent(if (branches.lastOption.contains(branch) && branches.size > 1) "or " else "", "modifier", endText = if (branches.lastOption.contains(branch)) "" else ", ", inner = Some(branch))
       })
 
       pushShape(RenderShape(
@@ -358,7 +358,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult], exampleVis
         OptionalKind.baseShapeId,
         innerId = innerShape.map(_.shapeId),
         diffs = diffsByTrail(shapeTrail),
-        name = RenderName(Seq(NameComponent("", "black", "(optional)", innerShape.map(_.shapeId))))
+        name = RenderName(Seq(NameComponent("", "modifier", "(optional)", innerShape.map(_.shapeId))))
       ))
     }
   }
@@ -369,7 +369,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult], exampleVis
         NullableKind.baseShapeId,
         innerId = innerShape.map(_.shapeId),
         diffs = diffsByTrail(shapeTrail),
-        name = RenderName(Seq(NameComponent("", "black", "(nullable)", innerShape.map(_.shapeId))))
+        name = RenderName(Seq(NameComponent("", "modifier", "(nullable)", innerShape.map(_.shapeId))))
       ))
     }
   }

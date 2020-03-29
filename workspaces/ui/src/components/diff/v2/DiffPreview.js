@@ -6,12 +6,8 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {DocDarkGrey, DocDivider, DocGrey} from '../../requests/DocConstants';
-import Rating from '@material-ui/lab/Rating';
-import StarBorderIcon from '@material-ui/icons/StarBorder';
-import AddIcon from '@material-ui/icons/Add';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import Badge from '@material-ui/core/Badge';
-import {AddedGreen, RemovedRed, ChangedYellow, AddedGreenBackground} from '../../../contexts/ColorContext';
 import {Button, Checkbox} from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import Paper from '@material-ui/core/Paper';
@@ -42,12 +38,12 @@ import {
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {DocSubGroup} from '../../requests/DocSubGroup';
 import DiffHunkViewer from './DiffHunkViewer';
-import {primary} from '../../../theme';
+import {ChangedYellowBackground, primary, RemovedRedBackground,AddedGreenBackground} from '../../../theme';
 import DiffReviewExpanded from './DiffReviewExpanded';
 import Toolbar from '@material-ui/core/Toolbar';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import SimulatedCommandContext from '../SimulatedCommandContext';
-import {Show} from '../../shared/Show';
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -62,9 +58,10 @@ const useStyles = makeStyles(theme => ({
     paddingRight: 10,
     paddingTop: 5,
     paddingBottom: 5,
-    backgroundColor: '#f0f1f2',
-    borderBottom: '1px solid',
-    borderBottomColor: '#b2b2b2',
+    color: '#25292e',
+    minHeight: 40,
+    backgroundColor: '#f2f8ff',
+    fontWeight: 800,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
@@ -74,9 +71,10 @@ const useStyles = makeStyles(theme => ({
     paddingRight: 10,
     paddingTop: 5,
     paddingBottom: 5,
-    backgroundColor: '#f0f1f2',
-    borderBottom: '1px solid',
-    borderBottomColor: '#b2b2b2',
+    color: '#25292e',
+    minHeight: 40,
+    backgroundColor: '#eaebff',
+    fontWeight: 800,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'start',
@@ -106,14 +104,14 @@ const useStyles = makeStyles(theme => ({
   },
   diffsNewRegion: {
     display: 'flex',
-    flexDirection: 'row'
+    flexDirection: 'row',
   }
 }));
-const addition = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: AddedGreen}}/>;
+const addition = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: AddedGreenBackground}}/>;
 
-const update = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: ChangedYellow}}/>;
+const update = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: ChangedYellowBackground}}/>;
 
-const removal = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: RemovedRed}}/>;
+const removal = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: RemovedRedBackground}}/>;
 
 
 export default function DiffPreview() {
@@ -223,13 +221,13 @@ function _NewRegions(props) {
         {addition}
         <Typography style={{marginLeft: 11}} variant="subtitle2">Undocumented Requests / Responses</Typography>
         <div style={{flex: 1}}/>
-        <Button size="small"
-                color="primary"
-                style={{marginRight: 8}}
-                startIcon={<VisibilityIcon color="primary"/>}
-                onClick={() => setShowExpanded(true)}>
-          Expand Examples
-        </Button>
+          <Button size="small"
+                  color="primary"
+                  style={{marginRight: 8}}
+                  startIcon={<VisibilityIcon color="primary"/>}
+                  onClick={() => setShowExpanded(true)}>
+            Expand Examples
+          </Button>
         <Button style={{marginLeft: 5}} color="secondary" onClick={onApply}>Add to Specification</Button>
       </div>
       <div className={classes.diffsNewRegion}>
