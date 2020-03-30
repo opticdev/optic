@@ -5,7 +5,7 @@ import ExampleSessionsLoader from './components/loaders/ExampleSessionsLoader.js
 import LocalLoader from './components/routes/local';
 import { routerPaths } from './RouterPaths'
 import SharedLoader from './components/loaders/SharedLoader';
-import {ExampleTestingDashboardLoader} from './components/dashboards/TestingDashboard';
+import { createExampleTestingServiceLoaderComponent } from './components/loaders/TestingDashboardLoader';
 
 
 class AppRoutes extends React.Component {
@@ -15,11 +15,30 @@ class AppRoutes extends React.Component {
       return (
         <div>
           <Switch>
-            <Route strict path={routerPaths.exampleTestingDashboard()} component={ExampleTestingDashboardLoader()} />
-            <Route strict path={routerPaths.exampleTestingDashboard()} to={routerPaths.exampleTestingDashboard()} />
-            <Route strict path={routerPaths.exampleSessionsRoot()} component={ExampleSessionsLoader} />
-            <Redirect from={routerPaths.exampleSessionsRoot()} to={routerPaths.exampleSessionsRoot()} />
-            <Route strict path={routerPaths.localRoot()} component={LocalLoader} />
+            <Route
+              strict
+              path={routerPaths.exampleTestingDashboard()}
+              component={createExampleTestingServiceLoaderComponent()}
+            />
+            <Route
+              strict
+              path={routerPaths.exampleTestingDashboard()}
+              to={routerPaths.exampleTestingDashboard()}
+            />
+            <Route
+              strict
+              path={routerPaths.exampleSessionsRoot()}
+              component={ExampleSessionsLoader}
+            />
+            <Redirect
+              from={routerPaths.exampleSessionsRoot()}
+              to={routerPaths.exampleSessionsRoot()}
+            />
+            <Route
+              strict
+              path={routerPaths.localRoot()}
+              component={LocalLoader}
+            />
             <Redirect to={routerPaths.localRoot()} />
           </Switch>
         </div>

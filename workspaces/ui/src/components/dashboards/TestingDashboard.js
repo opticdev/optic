@@ -129,36 +129,24 @@ export function specFromEvents(events) {
   };
 }
 
-function DashboardLoaderFactory({ serviceFactory, getBaseUrl }) {
-  return function(props) {
-    const { match } = props;
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [service, setService] = useState(null);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      const task = async () => {
-        const s = await serviceFactory(props);
-        setService(s);
-      };
-      task();
-    }, []);
+export default function TestingDashboardContainer(props) {
+  const { match, service } = props;
 
-    if (!service) {
-      return <Loading />;
-    }
+  if (!service) {
+    return <Loading />;
+  }
 
-    return (
-      <TestingDashboardServiceContext.Provider value={service}>
-        <Switch>
-          <Route
-            path={`${match.url}/captures/:captureId`}
-            component={TestingDashboard}
-          />
-          <Route component={DefaultReportRedirect} />
-        </Switch>
-      </TestingDashboardServiceContext.Provider>
-    );
-  };
+  return (
+    <TestingDashboardServiceContext.Provider value={service}>
+      <Switch>
+        <Route
+          path={`${match.url}/captures/:captureId`}
+          component={TestingDashboard}
+        />
+        <Route component={DefaultReportRedirect} />
+      </Switch>
+    </TestingDashboardServiceContext.Provider>
+  );
 }
 
 export function TestingDashboard(props) {
@@ -217,11 +205,4 @@ export function TestingReport(props) {
       )}
     </div>
   );
-}
-
-export function ExampleTestingDashboardLoader() {
-  return DashboardLoaderFactory({
-    serviceFactory: (props) =>
-      createExampleTestingService(props.match.params.exampleId)
-  });
 }
