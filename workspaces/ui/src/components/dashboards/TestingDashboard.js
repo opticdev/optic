@@ -1,8 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React from 'react';
 import Loading from '../navigation/Loading';
 import { Link, Switch, Route, Redirect } from 'react-router-dom';
 import { opticEngine, Queries } from '@useoptic/domain';
-import { createExampleTestingService } from '../../services/TestingService';
+import {
+  Provider as TestingServiceContextProvider,
+  useTestingService
+} from '../../contexts/TestingServiceContext';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -19,7 +22,7 @@ function DefaultReportRedirect(props) {
   const { match } = props;
   const baseUrl = match.url;
 
-  const { loading, result: captures } = useDashboardService((service) =>
+  const { loading, result: captures } = useTestingService((service) =>
     service.listCaptures()
   );
 
@@ -41,31 +44,8 @@ function DefaultReportRedirect(props) {
   }
 }
 
-function useDashboardService(
-  performRequest, // Note: this is where a TS interface would give some nice safety
-  deps
-) {
-  const service = useContext(TestingDashboardServiceContext);
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    performRequest(service)
-      .then((result) => {
-        setResult(result);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-      });
-  }, deps);
-
-  return { result, loading, error };
-}
-
 function useSpec(captureId) {
-  const { result: events, ...hookRest } = useDashboardService(
+  const { result: events, ...hookRest } = useTestingService(
     (service) => service.loadSpec(captureId),
     [captureId]
   );
@@ -79,9 +59,6 @@ function useSpec(captureId) {
 
   return { ...hookRest, result: spec };
 }
-
-const ReadonlySpecContext = React.createContext(null);
-const TestingDashboardServiceContext = React.createContext(null);
 
 // TODO: give this building of a ViewModel a more appropriate spot.
 export function specFromEvents(events) {
@@ -137,7 +114,7 @@ export default function TestingDashboardContainer(props) {
   }
 
   return (
-    <TestingDashboardServiceContext.Provider value={service}>
+    <TestingServiceContextProvider value={service}>
       <Switch>
         <Route
           path={`${match.url}/captures/:captureId`}
@@ -145,13 +122,13 @@ export default function TestingDashboardContainer(props) {
         />
         <Route component={DefaultReportRedirect} />
       </Switch>
-    </TestingDashboardServiceContext.Provider>
+    </TestingServiceContextProvider>
   );
 }
 
 export function TestingDashboard(props) {
   const { captureId } = props.match.params;
-  const { loading: loadingReport, result: report } = useDashboardService(
+  const { loading: loadingReport, result: report } = useTestingService(
     (service) => service.loadReport(captureId),
     [captureId]
   );
