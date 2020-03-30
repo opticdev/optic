@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import Loading from '../navigation/Loading';
 import { Link, Switch, Route, Redirect } from 'react-router-dom';
 import { opticEngine, Queries } from '@useoptic/domain';
+import { createExampleTestingService } from '../../services/TestingService';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -13,44 +14,6 @@ import {
 } from '../../contexts/ApiOverviewContext';
 import { stuffFromQueries } from '../../contexts/RfcContext';
 import * as uniqBy from 'lodash.uniqby';
-
-async function ExampleReportTestingDashboardServiceBuilder(exampleId) {
-  const example = await fetch(`/example-reports/${exampleId}.json`, {
-    headers: {
-      accept: 'application/json'
-    }
-  }).then((response) => {
-    if (response.ok) {
-      return response.json();
-    }
-    throw new Error();
-  });
-
-  const { orgId, specs, reports, captures } = example;
-
-  class ExampleReportTestingDashboardService {
-    constructor(orgId) {
-      this.orgId = orgId;
-    }
-
-    async loadSpec(captureId) {
-      await new Promise((r) => setTimeout(r, 200));
-      return specs[captureId];
-    }
-
-    async listCaptures() {
-      await new Promise((r) => setTimeout(r, 200));
-      return captures;
-    }
-
-    async loadReport(captureId) {
-      await new Promise((r) => setTimeout(r, 200));
-      return reports[captureId];
-    }
-  }
-
-  return new ExampleReportTestingDashboardService(orgId);
-}
 
 function DefaultReportRedirect(props) {
   const { match } = props;
@@ -166,25 +129,6 @@ export function specFromEvents(events) {
   };
 }
 
-function SpecLoader(props) {
-  const { children, captureId } = props;
-  const { result: spec, loading } = useSpec(captureId);
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (!spec) {
-    // TODO: revisit the branch for this state
-    return <div>Could not find the spec for this report</div>;
-  }
-  return (
-    <ReadonlySpecContext.Provider value={spec}>
-      {children}
-    </ReadonlySpecContext.Provider>
-  );
-}
-
 function DashboardLoaderFactory({ serviceFactory, getBaseUrl }) {
   return function(props) {
     const { match } = props;
@@ -278,6 +222,6 @@ export function TestingReport(props) {
 export function ExampleTestingDashboardLoader() {
   return DashboardLoaderFactory({
     serviceFactory: (props) =>
-      ExampleReportTestingDashboardServiceBuilder(props.match.params.exampleId)
+      createExampleTestingService(props.match.params.exampleId)
   });
 }
