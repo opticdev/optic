@@ -3,9 +3,10 @@ import Loading from '../navigation/Loading';
 import { Link, Switch, Route, Redirect } from 'react-router-dom';
 import { opticEngine, Queries } from '@useoptic/domain';
 import {
-  Provider as TestingServiceContextProvider,
+  createContext,
+  Provider as TestingDashboardContextProvider,
   useTestingService
-} from '../../contexts/TestingServiceContext';
+} from '../../contexts/TestingDashboardContext';
 import ReportsNavigation from '../testing/reports-nav';
 
 // TODO: find a more appropriate place for this logic to live rather than in
@@ -26,8 +27,10 @@ export default function TestingDashboardContainer(props) {
     return <Loading />;
   }
 
+  const dashboardContext = createContext({ service, baseUrl: match.url });
+
   return (
-    <TestingServiceContextProvider value={service}>
+    <TestingDashboardContextProvider value={dashboardContext}>
       <Switch>
         <Route
           path={`${match.url}/captures/:captureId`}
@@ -35,7 +38,7 @@ export default function TestingDashboardContainer(props) {
         />
         <Route component={DefaultReportRedirect} />
       </Switch>
-    </TestingServiceContextProvider>
+    </TestingDashboardContextProvider>
   );
 }
 

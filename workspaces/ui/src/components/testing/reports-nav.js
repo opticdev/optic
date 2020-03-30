@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTestingService } from '../../contexts/TestingServiceContext';
+import { useTestingService } from '../../contexts/TestingDashboardContext';
 import Loading from '../navigation/Loading';
 
 export default function ReportsNavigation() {
