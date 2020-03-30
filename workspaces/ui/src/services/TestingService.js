@@ -18,6 +18,17 @@ export async function createExampleTestingService(exampleId) {
 
   const { orgId, specs, reports, captures } = example;
 
+  function getSpec(captureId) {
+    const spec = specs[captureId];
+    if (typeof spec === 'string') {
+      // allow specs for one capture reference other specs, to keep example json
+      // under control
+      return getSpec(spec);
+    } else {
+      return spec;
+    }
+  }
+
   class ExampleTestingService {
     constructor(orgId) {
       this.orgId = orgId;
@@ -25,7 +36,8 @@ export async function createExampleTestingService(exampleId) {
 
     async loadSpec(captureId) {
       await new Promise((r) => setTimeout(r, 200));
-      return specs[captureId];
+
+      return getSpec(captureId);
     }
 
     async listCaptures() {
