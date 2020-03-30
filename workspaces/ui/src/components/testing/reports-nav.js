@@ -34,7 +34,7 @@ function CaptureNavItem(props) {
 
   return (
     <ReportLink captureId={captureId}>
-      build {buildIdTag && buildIdTag.value + ' '}
+      {buildIdTag && `Build "${buildIdTag.value}" `}
       {envTag && `in ${envTag.value}`}
     </ReportLink>
   );
