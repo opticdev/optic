@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTestingService } from '../../contexts/TestingDashboardContext';
 import Loading from '../navigation/Loading';
+import ReportLink from './report-link';
 
 export default function ReportsNavigation() {
   const { loading, result: captures } = useTestingService((service) =>
@@ -32,9 +33,9 @@ function CaptureNavItem(props) {
   const envTag = tags.find(({ name }) => name === 'environment');
 
   return (
-    <Link path={`${}`}>
+    <ReportLink captureId={captureId}>
       build {buildIdTag && buildIdTag.value + ' '}
       {envTag && `in ${envTag.value}`}
-    </Link>
+    </ReportLink>
   );
 }

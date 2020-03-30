@@ -33,3 +33,9 @@ export function useTestingService(
 
   return { result, loading, error };
 }
+
+export function useReportPath(captureId) {
+  const { baseUrl } = useContext(TestingDashboardContext);
+
+  return `${baseUrl}/captures/${captureId}`;
+}
