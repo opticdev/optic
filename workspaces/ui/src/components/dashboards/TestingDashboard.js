@@ -6,6 +6,7 @@ import {
   Provider as TestingServiceContextProvider,
   useTestingService
 } from '../../contexts/TestingServiceContext';
+import ReportsNavigation from '../testing/reports-nav';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -74,6 +75,8 @@ export function TestingDashboard(props) {
 
   return (
     <div>
+      <ReportsNavigation />
+
       <h2>Live Contract Testing Dashboard for capture {captureId}</h2>
 
       {(loadingReport || loadingSpec) && <Loading />}
