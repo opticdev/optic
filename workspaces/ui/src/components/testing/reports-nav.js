@@ -34,7 +34,7 @@ function CaptureNavItem(props) {
   const envTag = tags.find(({ name }) => name === 'environment');
 
   return (
-    <ReportLink captureId={captureId}>
+    <ReportLink captureId={captureId} activeStyle={{ fontWeight: 'bold' }}>
       {buildIdTag && `Build "${buildIdTag.value}" `}
       {envTag && `in ${envTag.value}`}
     </ReportLink>
