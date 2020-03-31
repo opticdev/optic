@@ -14,7 +14,7 @@ import {
   getOrUndefinedJson,
   headOrUndefined,
   CompareEquality,
-  lengthScala
+  lengthScala, toOption
 } from '@useoptic/domain';
 import {withDiffContext} from './DiffContext';
 import Paper from '@material-ui/core/Paper';
@@ -225,9 +225,7 @@ export const ObjectRender = withShapeRenderContext((props) => {
 export const ListRender = withShapeRenderContext((props) => {
   const classes = useStyles();
   const {shapeRender, shape, nested} = props;
-
   const listItem = getOrUndefined(shapeRender.listItemShape(shape.shapeId));
-
   const items = shapeRender.resolvedItems(shape.shapeId);
 
   return (
@@ -510,7 +508,7 @@ export const ItemRow = withShapeRenderContext((props) => {
   const {item, shapeRender, isLast, listItemShape, diffDescription, suggestion} = props;
   const diff = headOrUndefined(item.item.diffs);
 
-  const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(listItemShape));
+  const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(toOption(listItemShape))) || getOrUndefined(shapeRender.resolveItemShapeFromShapeId(item.item.shapeId))
 
   const diffNotif = diff && (
     <Indent><DiffNotif/></Indent>

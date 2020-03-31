@@ -8,7 +8,7 @@ import com.useoptic.diff.DiffResult
 import com.useoptic.diff.interactions.BodyUtilities
 import com.useoptic.diff.interactions.interpreters.DiffDescription
 import com.useoptic.diff.shapes.{ArrayVisitor, GenericWrapperVisitor, JsonLikeTraverser, JsonLikeVisitors, JsonTrail, ListShapeVisitor, ObjectShapeVisitor, ObjectVisitor, OneOfVisitor, PrimitiveShapeVisitor, PrimitiveVisitor, Resolvers, ShapeDiffResult, ShapeTrail, ShapeTraverser, ShapeVisitors, UnmatchedShape}
-import com.useoptic.diff.shapes.JsonTrailPathComponent.JsonObjectKey
+import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
 import com.useoptic.dsa.SequentialIdGenerator
 import com.useoptic.types.capture.{Body, JsonLike}
@@ -73,7 +73,6 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
 
   override val objectVisitor: ObjectVisitor = new ObjectVisitor {
     override def begin(value: Map[String, JsonLike], bodyTrail: JsonTrail, expected: ResolvedTrail, shapeTrail: ShapeTrail): Unit = {
-      println("ABC")
       val fieldNameToId = expected.shapeEntity.descriptor.fieldOrdering
         .map(fieldId => {
           val field = spec.shapesState.fields(fieldId)
@@ -113,10 +112,11 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
     }
 
     override def beginUnknown(value: Map[String, JsonLike], bodyTrail: JsonTrail): Unit = {
-      val objectId = "anon_object_" + ShapesHelper.newShapeId()
+      val objectId = bodyTrail.toString
       val fieldIds = value.map{ case (key, value) => {
         val fieldId = "anon_" + ShapesHelper.newFieldId()
-        pushField(RenderField(fieldId, key, None, Some(value.asJson)))
+        val fieldShapeId = bodyTrail.withChild(JsonObjectKey(key)).toString
+        pushField(RenderField(fieldId, key, Some(fieldShapeId), Some(value.asJson)))
         fieldId
       }}.toSeq
 
@@ -147,7 +147,7 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
     }
 
     override def beginUnknown(value: Vector[JsonLike], bodyTrail: JsonTrail): Unit = {
-      val arrayId = "anon_array_" + ShapesHelper.newShapeId()
+      val arrayId = bodyTrail.toString
       val ids = value.zipWithIndex.map {
         case (i, index) => {
           val id = "anon_"+toId(index, arrayId)
@@ -155,7 +155,7 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
             id,
             index.intValue(),
             Resolvers.jsonToCoreKind(i).baseShapeId,
-            None,
+            Some(bodyTrail.withChild(JsonArrayItem(index)).toString), //simulate the id of the child
             Some(i.asJson)
           ))
           id
@@ -220,7 +220,7 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
 
     override def visitUnknown(value: Option[JsonLike], bodyTrail: JsonTrail): Unit = {
       if (value.isDefined) {
-        val shapeId = "anon_shape_" + ShapesHelper.newShapeId()
+        val shapeId = bodyTrail.toString
         val baseShapeId = Resolvers.jsonToCoreKind(value.get).baseShapeId
         pushShape(RenderShape(shapeId, baseShapeId, exampleValue = value.map(_.asJson)))
       }

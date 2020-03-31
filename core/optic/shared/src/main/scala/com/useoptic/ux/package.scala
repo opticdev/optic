@@ -121,9 +121,9 @@ package object ux {
       copyTarget.copy(fields = mergedFields, exampleValue = exampleShape.flatMap(_.exampleValue), diffs = diffs)
     }
 
-    def getUnifiedItem(itemId: ShapeId, listItem: RenderItem): Option[RenderItem] = {
+    def getUnifiedItem(itemId: ShapeId, shapeIdOption: Option[ShapeId]): Option[RenderItem] = {
       exampleItems.get(itemId).map(exampleItem => {
-        exampleItem.copy(shapeId = listItem.shapeId)
+        exampleItem.copy(shapeId = shapeIdOption)
       })
     }
 
@@ -137,7 +137,7 @@ package object ux {
         Some(RenderField(
           if (specField.isDefined) specField.get.fieldId else exampleField.get.fieldId,
           if (specField.isDefined) specField.get.fieldName else exampleField.get.fieldName,
-          specField.flatMap(_.shapeId),
+          Seq(specField.flatMap(_.shapeId), exampleField.flatMap(_.shapeId)).flatten.headOption,
           exampleField.flatMap(_.exampleValue),
           specField.map(_.diffs).getOrElse(Set.empty) ++ exampleField.map(_.diffs).getOrElse(Set.empty)
         ))
@@ -171,23 +171,21 @@ package object ux {
     }.toOption
 
     def resolvedItems(listId: ShapeId): Seq[DisplayItem] = {
-      val listItem = listItemShape(listId)
-      if (listItem.isDefined) {
-        val items = exampleShapes.get(listId).map(_.items).getOrElse(Items(Seq.empty, Seq.empty))
-        items.all.zipWithIndex.flatMap { case (itemId, index) => {
-          getUnifiedItem(itemId, listItem.get).map(i => DisplayItem(index, i, if (items.hidden.contains(itemId)) "hidden" else "visible"))
-        }
-        }
-      } else {
-        Seq.empty
-      }
+      val listItemOption = listItemShape(listId)
 
+
+      val items = exampleShapes.get(listId).map(_.items).getOrElse(Items(Seq.empty, Seq.empty))
+      items.all.zipWithIndex.flatMap { case (itemId, index) => {
+        //use spec one if provided, else fallback on example shape pointer
+        val shapeIdOption = Seq(listItemOption.flatMap(_.shapeId), exampleItems.get(itemId).flatMap(_.shapeId)).flatten.headOption
+        getUnifiedItem(itemId, shapeIdOption).map(i => DisplayItem(index, i, if (items.hidden.contains(itemId)) "hidden" else "visible"))
+      }}
     }
 
     def resolveFieldShape(field: RenderField): Option[RenderShape] = Try(field.shapeId.map(getUnifiedShape)).toOption.flatten
 
-    def resolveItemShape(item: RenderItem): Option[RenderShape] = Try(item.shapeId.map(getUnifiedShape)).toOption.flatten
-
+    def resolveItemShapeFromShapeId(shapeId: Option[ShapeId]): Option[RenderShape] = Try(getUnifiedShape(shapeId.get)).toOption
+    def resolveItemShape(itemOption: Option[RenderItem]): Option[RenderShape] = itemOption.flatMap(item => resolveItemShapeFromShapeId(item.shapeId))
   }
 
   @JSExportAll

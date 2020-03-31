@@ -229,7 +229,6 @@ export const CaptureManager = withRfcContext(withNavigationContext(({interaction
             </FormControl>
           </div>
         </Paper>
-
         {captureId && (
           <TrafficSessionStore
             sessionId={captureId}
@@ -258,7 +257,6 @@ export const CaptureManager = withRfcContext(withNavigationContext(({interaction
                       <DocSubGroup title={`Endpoint Diffs (${lengthScala(endpointDiffs)})`}>
                         <List fullWidth>
                           {mapScala(endpointDiffs)(i => {
-
                             const to = `${baseUrl}/diff/${captureId}/paths/${i.pathId}/methods/${i.method}`;
                             return (
                               <EndpointsContextStore pathId={i.pathId} method={i.method}>

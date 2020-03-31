@@ -27,7 +27,8 @@
     "@types/debug": "^4.1.5",
     "typescript": "^3.7.4",
     "wait-on": "^4.0.0",
-    "wsrun": "^5.2.0"
+    "wsrun": "^5.2.0",
+    "all-contributors-cli": "^6.14.0"
   },
   "dependencies": {
     "debug": "^4.1.1"
