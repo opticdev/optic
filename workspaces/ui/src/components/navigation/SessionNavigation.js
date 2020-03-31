@@ -3,7 +3,6 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Typography from '@material-ui/core/Typography';
 import {withRfcContext} from '../../contexts/RfcContext';
 import compose from 'lodash.compose';
-import Drawer from '@material-ui/core/Drawer';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import List from '@material-ui/core/List';
@@ -27,56 +26,16 @@ import {Show} from '../shared/Show';
 import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
-import IconButton from '@material-ui/core/IconButton';
 import DescriptionIcon from '@material-ui/icons/Description';
 import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
-import PolicyIcon from '@material-ui/icons/Policy';
-import {LightTooltip} from '../tooltips/LightTooltip';
-import CodeIcon from '@material-ui/icons/Code';
 import LocalDoesNotMatch from './LocalDoesNotMatch';
 import Card from '@material-ui/core/Card';
+import Navbar from './Navbar'
 
 const drawerWidth = 270;
 
 const styles = theme => ({
-  drawer: {
-    width: drawerWidth,
-    flexShrink: 0,
-  },
-  miniDrawer: {
-    width: 55,
-    flexShrink: 0,
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    backgroundColor: '#1B2958',
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  miniDrawerPaper: {
-    backgroundColor: '#1B2958',
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  topLevel: {
-    width: 55,
-    // backgroundColor: '#2b3966',
-    overflow: 'hidden',
-    borderRight: '1px solid #3F5597',
-    display: 'flex',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  navButton: {
-    marginTop: 6
-  },
-  opticLogo: {
-    marginTop: 5
-  },
-  mainSection: {
-    flex: 1,
-  },
   title: {
     textAlign: 'left',
     width: '100%',
@@ -156,64 +115,17 @@ class SessionNavigation extends React.Component {
     //   </StyledTabs>
     // );
 
-    const menuItems = [
-      {name: 'Specification', icon: <DescriptionIcon style={{color: '#e2e2e2'}}/>, link: `${baseUrl}/documentation`},
-      {name: 'Live Contract Testing', icon: <PolicyIcon style={{color: '#e2e2e2'}}/>, link: routerPaths.testingDashboard(baseUrl) },
-      // {name: 'Monitoring', icon: <NetworkCheckIcon style={{color: '#e2e2e2'}}/>},
-      // {name: 'Changelog', icon: <ChangeHistoryIcon style={{color: '#e2e2e2'}}/>},
-    ];
-
-    const OpticDrawer = (props) => {
-      return (
-        <Drawer
-          id="navbar"
-          elevation={2}
-          className={props.mini ? classes.miniDrawer : classes.drawer}
-          variant={'permanent'}
-          classes={{
-            paper: props.mini ? classes.miniDrawerPaper : classes.drawerPaper,
-          }}
-          anchor="left"
-        >
-
-          <div className={classes.topLevel} style={props.mini && {borderRight: 'none'}}>
-            <img src="/optic-logo.svg" width={50} className={classes.opticLogo}/>
-            <Switch>
-              <Route exact path={routerPaths.init(entryBasePath)}
-                     component={() => (
-                       <LightTooltip title={'Finish Setup'} placement="right">
-                         <IconButton className={classes.navButton}>
-                           <CodeIcon style={{color: '#e2e2e2'}}/>
-                         </IconButton>
-                       </LightTooltip>
-                     )}/>
-            </Switch>
-            {menuItems.map(i => (
-              <LightTooltip title={i.name} component={Link} to={i.link} placement="right">
-                <IconButton className={classes.navButton}>
-                  {i.icon}
-                </IconButton>
-              </LightTooltip>
-            ))}
-          </div>
-          {props.mini ? null : (<div className={classes.mainSection}>
-            {props.children}
-          </div>)}
-        </Drawer>
-      );
-    }
-
     return (
       <div className={classes.root}>
 
         <Switch>
           <Route path={routerPaths.diff(entryBasePath)} component={() => {
             return (
-              <OpticDrawer mini={true}/>
+              <Navbar mini={true} baseUrl={baseUrl} entryBasePath={entryBasePath} />
             )
           }}/>
           <Route path={baseUrl} component={() => (
-            <OpticDrawer>
+            <Navbar baseUrl={baseUrl} entryBasePath={entryBasePath}>
               <List>
                 <Switch>
                   <Route exact path={routerPaths.apiDocumentation(entryBasePath)} component={() => (
@@ -234,7 +146,7 @@ class SessionNavigation extends React.Component {
                   )}/>
                 </Switch>
               </List>
-            </OpticDrawer>
+            </Navbar>
           )}/>
         </Switch>
 
