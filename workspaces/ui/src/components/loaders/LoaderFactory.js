@@ -148,40 +148,6 @@ class LoaderFactory {
       }
     }
 
-    // class IntegrationsRoutes extends React.Component {
-    //   render() {
-    //     const {integrations, match, specService, initialEventsString} = this.props;
-    //     global.specService = specService;
-    //
-    //     const basePath = match.path;
-    //
-    //     return (
-    //       <IntegrationsContextStore integrations={integrations} isIntegrationMode={true}>
-    //         <SpecServiceContext.Provider value={{specService}}>
-    //           <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
-    //             <NavigationStore baseUrl={match.url}>
-    //               <RfcStore specService={specService}>
-    //                 <ApiOverviewContextStore specService={specService}>
-    //                   <Navigation notifications={notificationAreaComponent}
-    //                               integrationMode={true}
-    //                               entryBasePath={entryBasePath}
-    //                               shareButtonComponent={shareButtonComponent}>
-    //
-    //                     <Route path={routerPaths.request(basePath)}
-    //                            component={withSpecServiceContext(RequestsDetailsPage)}/>
-    //                     <Route exact path={basePath} component={withSpecServiceContext(ApiOverview)}/>
-    //                     <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
-    //                   </Navigation>
-    //                 </ApiOverviewContextStore>
-    //               </RfcStore>
-    //             </NavigationStore>
-    //           </InitialRfcCommandsStore>
-    //         </SpecServiceContext.Provider>
-    //       </IntegrationsContextStore>
-    //     );
-    //   }
-    // }
-
     const task = async (props) => {
       const {specService} = props;
       const results = await specService.listEvents();
@@ -200,21 +166,12 @@ class LoaderFactory {
 
     const wrappedTopLevelRoutes = withWrapper(TopLevelRoutes);
 
-    // const withIntegrationsWrapper = compose(
-    //   withTask(({match}) => Promise.resolve(new IntegrationsSpecService(match.params.integrationName)), 'specService'),
-    //   withTask(task, 'initialEventsString'),
-    //   withTask(integrationsTask, 'integrations'),
-    // );
-    //
-    // const wrappedIntegrationRoutes = withIntegrationsWrapper(IntegrationsRoutes);
-
     class Routes extends React.Component {
       render() {
         const {match} = this.props;
         return (
           <NavigationStore baseUrl={match.url}>
             <Switch>
-              {/*<Route path={routerPaths.integrationsPath(basePath)} component={wrappedIntegrationRoutes}/>*/}
               <Route path={basePath} component={wrappedTopLevelRoutes}/>
             </Switch>
           </NavigationStore>

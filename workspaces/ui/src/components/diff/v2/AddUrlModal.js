@@ -20,6 +20,7 @@ import {getOrUndefined, RequestsCommands, RequestsHelper, RfcCommands} from '@us
 import {withRfcContext} from '../../../contexts/RfcContext';
 import {pathMethodKeyBuilder, PURPOSE} from '../../../ContributionKeys';
 import {withNavigationContext} from '../../../contexts/NavigationContext';
+import {PathAndMethod} from './PathAndMethod';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -87,7 +88,6 @@ export const NewUrlModal = withNavigationContext(withRfcContext(({pushRelative, 
 
     //redirect
     const to = `/diff/${captureId}/paths/${lastParentPathId}/methods/${newUrl.method}`
-    debugger
     pushRelative(to)
   };
 
@@ -98,9 +98,9 @@ export const NewUrlModal = withNavigationContext(withRfcContext(({pushRelative, 
   const namingDialog = (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" aria-labelledby="form-dialog-title">
       <DialogTitle>Add New Endpoint</DialogTitle>
-
-      <DialogContent>
-        <DialogContentText>
+      <DialogContent style={{marginTop: -20}}>
+        <PathAndMethod method={newUrl.method} path={pathExpression}/>
+        <DialogContentText style={{marginTop: 12}}>
           What does this endpoint do?
         </DialogContentText>
         <TextField value={purpose} onChange={(e) => setPurpose(e.target.value)} autoFocus fullWidth/>
@@ -123,10 +123,10 @@ export const NewUrlModal = withNavigationContext(withRfcContext(({pushRelative, 
       {naming ? namingDialog : (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" aria-labelledby="form-dialog-title">
           <DialogTitle>Add New Endpoint</DialogTitle>
-
-          <DialogContent>
-            <DialogContentText>
-              To add an endpoint, specify the pattern that matches this URL:
+          <DialogContent style={{marginTop: -20}}>
+            <PathAndMethod method={newUrl.method} path={newUrl.path}/>
+            <DialogContentText style={{marginTop: 12}}>
+              Specify the pattern that matches this URL:
             </DialogContentText>
 
             <div style={{display: 'flex', flexDirection: 'row'}}>

@@ -139,7 +139,8 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     }.flatten
 
     val descriptionInterpreters = new DiffDescriptionInterpreters(_currentRfcState)
-    allEndpointDiffs.groupBy(i => (i._1, i._2)).map {
+
+    val endpointDiffs = allEndpointDiffs.groupBy(i => (i._1, i._2)).map {
       case ((path, method), v) => {
         val diffs = v.map(_._3).toSet
         val changeTypes = diffs.map(diff => descriptionInterpreters.interpret(diff, _interactionsGroupedByDiffs(diff).head).changeType)
@@ -150,6 +151,11 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
         )
       }
     }.toSeq
+
+    val unmatched = unmatchedUrls(true, ignoredDiffs)
+
+    //don't show an endpoint diff if its in the unmatched list
+    endpointDiffs.filterNot(i => unmatched.exists(u => u.pathId.contains(i.pathId) && u.method == i.method))
   }
 
   def stats(ignoredDiffs: Seq[DiffResult]): DiffStats = {
