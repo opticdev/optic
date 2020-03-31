@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Loading from '../navigation/Loading';
 import { Link, Switch, Route, Redirect } from 'react-router-dom';
 import { opticEngine, Queries } from '@useoptic/domain';
@@ -22,18 +22,23 @@ import * as uniqBy from 'lodash.uniqby';
 
 export default function TestingDashboardContainer(props) {
   const { match, service } = props;
+  const hasService = !!service;
+  const baseUrl = match.url;
 
-  if (!service) {
+  const dashboardContext = useMemo(() => createContext({ service, baseUrl }), [
+    hasService,
+    baseUrl
+  ]);
+
+  if (!hasService) {
     return <Loading />;
   }
-
-  const dashboardContext = createContext({ service, baseUrl: match.url });
 
   return (
     <TestingDashboardContextProvider value={dashboardContext}>
       <Switch>
         <Route
-          path={`${match.url}/captures/:captureId`}
+          path={`${baseUrl}/captures/:captureId`}
           component={TestingDashboard}
         />
         <Route component={DefaultReportRedirect} />
