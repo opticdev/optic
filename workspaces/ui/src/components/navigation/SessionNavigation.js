@@ -31,7 +31,7 @@ import NetworkCheckIcon from '@material-ui/icons/NetworkCheck';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import LocalDoesNotMatch from './LocalDoesNotMatch';
 import Card from '@material-ui/core/Card';
-import Navbar from './Navbar'
+import Page from '../Page';
 
 const drawerWidth = 270;
 
@@ -116,16 +116,15 @@ class SessionNavigation extends React.Component {
     // );
 
     return (
-      <div className={classes.root}>
-
+      <Page>
         <Switch>
           <Route path={routerPaths.diff(entryBasePath)} component={() => {
             return (
-              <Navbar mini={true} baseUrl={baseUrl} entryBasePath={entryBasePath} />
+              <Page.Navbar mini={true} baseUrl={baseUrl} entryBasePath={entryBasePath} />
             )
           }}/>
           <Route path={baseUrl} component={() => (
-            <Navbar baseUrl={baseUrl} entryBasePath={entryBasePath}>
+            <Page.Navbar baseUrl={baseUrl} entryBasePath={entryBasePath}>
               <List>
                 <Switch>
                   <Route exact path={routerPaths.apiDocumentation(entryBasePath)} component={() => (
@@ -146,17 +145,16 @@ class SessionNavigation extends React.Component {
                   )}/>
                 </Switch>
               </List>
-            </Navbar>
+            </Page.Navbar>
           )}/>
         </Switch>
 
-        <div className={classes.content}>
+        <Page.Body>
           {children}
-        </div>
+        </Page.Body>>
 
         {notifications}
-
-      </div>
+      </Page>
     );
   }
 }
