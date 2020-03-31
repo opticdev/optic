@@ -36,6 +36,8 @@ export default function TestingDashboardContainer(props) {
 
   return (
     <TestingDashboardContextProvider value={dashboardContext}>
+      <ReportsNavigation />
+
       <Switch>
         <Route
           path={`${baseUrl}/captures/:captureId`}
@@ -83,8 +85,6 @@ export function TestingDashboard(props) {
 
   return (
     <div>
-      <ReportsNavigation />
-
       <h2>Live Contract Testing Dashboard for capture {captureId}</h2>
 
       {(loadingReport || loadingSpec) && <Loading />}

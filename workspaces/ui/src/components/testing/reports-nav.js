@@ -4,8 +4,9 @@ import Loading from '../navigation/Loading';
 import ReportLink from './report-link';
 
 export default function ReportsNavigation() {
-  const { loading, result: captures } = useTestingService((service) =>
-    service.listCaptures()
+  const { loading, result: captures } = useTestingService(
+    (service) => service.listCaptures(),
+    []
   );
 
   if (loading) {
