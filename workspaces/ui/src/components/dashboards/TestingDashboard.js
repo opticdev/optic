@@ -8,6 +8,7 @@ import {
   useTestingService
 } from '../../contexts/TestingDashboardContext';
 import ReportsNavigation from '../testing/reports-nav';
+import Navbar from '../navigation/Navbar';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -36,8 +37,14 @@ export default function TestingDashboardContainer(props) {
 
   return (
     <TestingDashboardContextProvider value={dashboardContext}>
+      <Navbar
+        mini={true}
+        baseUrl={baseUrl}
+        // @TODO: remove entryBasePath. It's is a Session concern, rather than Testing.
+        // Shows how Navbar should be further generalised to work across both contexts.
+        entryBasePath={baseUrl}
+      />
       <ReportsNavigation />
-
       <Switch>
         <Route
           path={`${baseUrl}/captures/:captureId`}
