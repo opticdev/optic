@@ -8,6 +8,7 @@ import {
   useTestingService
 } from '../../contexts/TestingDashboardContext';
 import ReportsNavigation from '../testing/reports-nav';
+import Page from '../Page';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -36,15 +37,26 @@ export default function TestingDashboardContainer(props) {
 
   return (
     <TestingDashboardContextProvider value={dashboardContext}>
-      <ReportsNavigation />
-
-      <Switch>
-        <Route
-          path={`${baseUrl}/captures/:captureId`}
-          component={TestingDashboard}
+      <Page title="Optic Live Contracting Dashboard">
+        <Page.Navbar
+          mini={true}
+          baseUrl={baseUrl}
+          // @TODO: remove entryBasePath. It's is a Session concern, rather than Testing.
+          // Shows how Navbar should be further generalised to work across both contexts.
+          entryBasePath={baseUrl}
         />
-        <Route component={DefaultReportRedirect} />
-      </Switch>
+
+        <Page.Body>
+          <ReportsNavigation />
+          <Switch>
+            <Route
+              path={`${baseUrl}/captures/:captureId`}
+              component={TestingDashboard}
+            />
+            <Route component={DefaultReportRedirect} />
+          </Switch>
+        </Page.Body>
+      </Page>
     </TestingDashboardContextProvider>
   );
 }
