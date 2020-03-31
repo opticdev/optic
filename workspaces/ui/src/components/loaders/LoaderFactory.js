@@ -8,7 +8,7 @@ import {RequestsDetailsPage, RequestsDetailsPageNew} from '../requests/EndpointP
 import {UrlsX} from '../paths/NewUnmatchedUrlWizard';
 import {TrafficSessionStore} from '../../contexts/TrafficSessionContext';
 import compose from 'lodash.compose';
-import Navigation from '../navigation/Navbar';
+import SessionNavigation from '../navigation/SessionNavigation';
 import {ApiOverviewContextStore} from '../../contexts/ApiOverviewContext';
 import ApiOverview from '../navigation/ApiOverview';
 import APIDashboard, {IntegrationsDashboard} from '../dashboards/APIDashboard';
@@ -114,7 +114,7 @@ class LoaderFactory {
               <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
                 <RfcStoreImpl specService={specService}>
                   <ApiOverviewContextStore specService={specService}>
-                    <Navigation
+                    <SessionNavigation
                       notifications={notificationAreaComponent}
                       entryBasePath={entryBasePath}
                       shareButtonComponent={shareButtonComponent}>
@@ -134,7 +134,7 @@ class LoaderFactory {
                         <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
                         <Redirect to={routerPaths.apiDashboard(basePath)}/>
                       </Switch>
-                    </Navigation>
+                    </SessionNavigation>
                   </ApiOverviewContextStore>
                 </RfcStoreImpl>
               </InitialRfcCommandsStore>

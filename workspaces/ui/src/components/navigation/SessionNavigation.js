@@ -137,7 +137,7 @@ const MainMenuItem = withStyles(styles)(({classes, to = '', name}) => {
   );
 });
 
-class Navigation extends React.Component {
+class SessionNavigation extends React.Component {
 
   // state = {
   //   menuAnchorEl: null
@@ -249,7 +249,7 @@ class Navigation extends React.Component {
   }
 }
 
-export default compose(withStyles(styles), withSpecServiceContext, withIntegrationsContext, withApiOverviewContext, withNavigationContext, withRfcContext)(Navigation);
+export default compose(withStyles(styles), withSpecServiceContext, withIntegrationsContext, withApiOverviewContext, withNavigationContext, withRfcContext)(SessionNavigation);
 
 
 // Sub Menus
