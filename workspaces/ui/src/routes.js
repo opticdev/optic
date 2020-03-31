@@ -5,7 +5,7 @@ import ExampleSessionsLoader from './components/loaders/ExampleSessionsLoader.js
 import LocalLoader from './components/routes/local';
 import { routerPaths } from './RouterPaths'
 import SharedLoader from './components/loaders/SharedLoader';
-import { createExampleTestingServiceLoaderComponent } from './components/loaders/TestingDashboardLoader';
+import { ExampleTestingServiceLoaderComponent } from './components/loaders/TestingDashboardLoader';
 
 
 class AppRoutes extends React.Component {
@@ -18,7 +18,7 @@ class AppRoutes extends React.Component {
             <Route
               strict
               path={routerPaths.exampleTestingDashboard()}
-              component={createExampleTestingServiceLoaderComponent()}
+              component={ExampleTestingServiceLoaderComponent}
             />
             <Route
               strict

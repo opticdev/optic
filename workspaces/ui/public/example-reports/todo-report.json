@@ -218,7 +218,8 @@
           }
         }
       }
-    ]
+    ],
+    "capture-2": "capture-1"
   },
   "reports": {
     "capture-1": {
@@ -230,6 +231,16 @@
       },
       "createdAt": "2020-03-05T00:43:21.487Z",
       "updatedAt": "2020-03-05T00:43:21.487Z"
+    },
+    "capture-2": {
+      "counts": {
+        "totalInteractions": 2530,
+        "totalCompliantInteractions": 2138,
+        "totalUnmatchedPaths": 242,
+        "totalDiffs": 392
+      },
+      "createdAt": "2020-03-06T13:26:18.020Z",
+      "updatedAt": "2020-03-06T13:26:18.020Z"
     }
   },
   "captures": [
@@ -242,6 +253,22 @@
         {
           "name": "environment",
           "value": "development"
+        },
+        {
+          "name": "buildId",
+          "value": "build-123"
+        }
+      ]
+    },
+    {
+      "captureId": "capture-2",
+      "createdAt": "2020-03-06T13:26:18.020Z",
+      "updatedAt": "2020-03-06T13:26:18.020Z",
+      "completedAt": null,
+      "tags": [
+        {
+          "name": "environment",
+          "value": "production"
         },
         {
           "name": "buildId",

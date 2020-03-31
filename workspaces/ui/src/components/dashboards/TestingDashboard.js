@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Loading from '../navigation/Loading';
 import { Link, Switch, Route, Redirect } from 'react-router-dom';
 import { opticEngine, Queries } from '@useoptic/domain';
 import {
-  Provider as TestingServiceContextProvider,
+  createContext,
+  Provider as TestingDashboardContextProvider,
   useTestingService
-} from '../../contexts/TestingServiceContext';
+} from '../../contexts/TestingDashboardContext';
+import ReportsNavigation from '../testing/reports-nav';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -20,21 +22,30 @@ import * as uniqBy from 'lodash.uniqby';
 
 export default function TestingDashboardContainer(props) {
   const { match, service } = props;
+  const hasService = !!service;
+  const baseUrl = match.url;
 
-  if (!service) {
+  const dashboardContext = useMemo(() => createContext({ service, baseUrl }), [
+    hasService,
+    baseUrl
+  ]);
+
+  if (!hasService) {
     return <Loading />;
   }
 
   return (
-    <TestingServiceContextProvider value={service}>
+    <TestingDashboardContextProvider value={dashboardContext}>
+      <ReportsNavigation />
+
       <Switch>
         <Route
-          path={`${match.url}/captures/:captureId`}
+          path={`${baseUrl}/captures/:captureId`}
           component={TestingDashboard}
         />
         <Route component={DefaultReportRedirect} />
       </Switch>
-    </TestingServiceContextProvider>
+    </TestingDashboardContextProvider>
   );
 }
 

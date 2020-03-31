@@ -26,3 +26,5 @@ export function createExampleTestingServiceLoaderComponent() {
     createExampleTestingService(props.match.params.exampleId)
   );
 }
+
+export const ExampleTestingServiceLoaderComponent = createExampleTestingServiceLoaderComponent();
