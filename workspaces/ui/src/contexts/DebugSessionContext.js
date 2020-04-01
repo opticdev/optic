@@ -42,20 +42,25 @@ export function useDebugSession(sessionId) {
 }
 
 export function useDebugData(deps) {
-  const { getData } = useContext(DebugSessionContext);
+  const debugSession = useContext(DebugSessionContext);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    getData()
-      .then((result) => {
-        setData(result);
-        setLoading(false);
-      })
-      .catch((err) => {
-        setError(err);
-      });
+    if (!debugSession) {
+      setData(null);
+      setLoading(false);
+    } else {
+      getData()
+        .then((result) => {
+          setData(result);
+          setLoading(false);
+        })
+        .catch((err) => {
+          setError(err);
+        });
+    }
   }, deps);
 
   return { data, loading, error };
