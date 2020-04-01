@@ -1,15 +1,26 @@
 import React from 'react';
 import {
+  useLocation,
   Link as RouterLink,
   NavLink as RouterNavLink,
   Redirect as RouterRedirect,
   Route as RouterRoute,
   Switch
+  Switch as RouterSwitch
 } from 'react-router-dom';
 import { useDebugPath } from '../contexts/DebugSessionContext';
 
-// re-export Switch for convenience
-export { Switch };
+export function Switch(props) {
+  const debugPrefix = useDebugPath();
+  const prefix = typeof props.prefix === 'undefined' ? false : props.prefix;
+  const location = useLocation();
+  const prefixedLocation = prefix
+    ? prefixPath(location, debugPrefix)
+    : location;
+
+  return <RouterSwitch {...props} location={prefixedLocation} />;
+}
+Link.displayName = 'OpticSwitch';
 
 export function Link(props) {
   const debugPrefix = useDebugPath();
