@@ -5,6 +5,10 @@ import ExampleSessionsLoader from './components/loaders/ExampleSessionsLoader.js
 import LocalLoader from './components/routes/local';
 import { routerPaths } from './RouterPaths';
 import SharedLoader from './components/loaders/SharedLoader';
+import {
+  useDebugSession,
+  Provider as DebugSessionContextProvider
+} from './contexts/DebugSessionContext';
 import { ExampleTestingServiceLoaderComponent } from './components/loaders/TestingDashboardLoader';
 
 function AppRoutes(props) {
@@ -43,17 +47,26 @@ function AppRoutes(props) {
   );
 }
 
-function ExampleRoutes(props) {
-  // TODO: wrap with context that provides the example data
+function DebuggedRoutes(props) {
+  const { match } = props;
+  const debugSession = useDebugSession(match.params.sessionId);
 
-  return <AppRoutes baseUrl={props.match.url} />;
+  return (
+    <DebugSessionContextProvider value={debugSession}>
+      <AppRoutes baseUrl={props.match.url} />;
+    </DebugSessionContextProvider>
+  );
 }
 
 export default function Routes() {
   return (
     <div>
       <Switch>
-        <Route strict path="/debug" component={ExampleRoutes} />
+        <Route
+          strict
+          path="/debug-sessions/:sessionId"
+          component={DebuggedRoutes}
+        />
         <Route component={AppRoutes} />
       </Switch>
     </div>
