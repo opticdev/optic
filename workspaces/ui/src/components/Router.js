@@ -1,26 +1,6 @@
 import React from 'react';
-import {
-  useLocation,
-  Link as RouterLink,
-  NavLink as RouterNavLink,
-  Redirect as RouterRedirect,
-  Route as RouterRoute,
-  Switch
-  Switch as RouterSwitch
-} from 'react-router-dom';
+import { Link as RouterLink, NavLink as RouterNavLink } from 'react-router-dom';
 import { useDebugPath } from '../contexts/DebugSessionContext';
-
-export function Switch(props) {
-  const debugPrefix = useDebugPath();
-  const prefix = typeof props.prefix === 'undefined' ? false : props.prefix;
-  const location = useLocation();
-  const prefixedLocation = prefix
-    ? prefixPath(location, debugPrefix)
-    : location;
-
-  return <RouterSwitch {...props} location={prefixedLocation} />;
-}
-Link.displayName = 'OpticSwitch';
 
 export function Link(props) {
   const debugPrefix = useDebugPath();
@@ -39,24 +19,6 @@ export function NavLink(props) {
   return <RouterNavLink {...props} to={to} />;
 }
 NavLink.dislayName = 'OpticNavLink';
-
-export function Redirect(props) {
-  const debugPrefix = useDebugPath();
-  const prefix = typeof props.prefix === 'undefined' ? false : props.prefix;
-  const from = prefix ? prefixPath(props.from, debugPrefix) : props.from;
-  const to = prefix ? prefixPath(props.to, debugPrefix) : props.to;
-
-  return <RouterRedirect from={from} to={to} />;
-}
-Redirect.displayName = 'OpticRedirect';
-
-export function Route(props) {
-  const debugPrefix = useDebugPath();
-  const path = prefixPath(props.path, debugPrefix);
-
-  return <RouterRoute {...props} path={path} />;
-}
-Route.displayName = 'OpticRoute';
 
 function prefixPath(path, prefix) {
   if (!path) {
