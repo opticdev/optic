@@ -43,19 +43,25 @@ export function useDebugSession(sessionId) {
 
 export function useDebugData(deps) {
   const debugSession = useContext(DebugSessionContext);
+  // TODO: consider using useReducer here instead, lots of moving bits of state here
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [available, setAvailable] = useState(!!debugSession);
 
   useEffect(() => {
     if (!debugSession) {
+      setAvailable(false);
       setData(null);
       setLoading(false);
     } else {
-      getData()
+      setAvailable(true);
+      debugSession
+        .getData()
         .then((result) => {
           setData(result);
           setLoading(false);
+          return result;
         })
         .catch((err) => {
           setError(err);
@@ -63,5 +69,5 @@ export function useDebugData(deps) {
     }
   }, deps);
 
-  return { data, loading, error };
+  return { available, data, loading, error };
 }
