@@ -3,47 +3,40 @@ import { Redirect, Switch, Route } from 'react-router-dom';
 import Welcome from './components/onboarding/Welcome';
 import ExampleSessionsLoader from './components/loaders/ExampleSessionsLoader.js';
 import LocalLoader from './components/routes/local';
-import { routerPaths } from './RouterPaths';
+import { useRouterPaths } from './RouterPaths';
 import SharedLoader from './components/loaders/SharedLoader';
 import {
   useDebugSession,
-  useDebugPath,
   Provider as DebugSessionContextProvider
 } from './contexts/DebugSessionContext';
 import TestingDashboardLoader from './components/loaders/TestingDashboardLoader';
 
 function AppRoutes(props) {
-  const baseUrl = useDebugPath();
+  const routerPaths = useRouterPaths();
 
-  // TODO: refactor router paths to no longer have special example routes and accept
-  // baseurl natively
   return (
     <Switch>
       <Route
         strict
-        path={routerPaths.testingDashboard(baseUrl)}
+        path={routerPaths.testingDashboard()}
         component={TestingDashboardLoader}
       />
       <Route
         strict
-        path={baseUrl + routerPaths.exampleTestingDashboard()}
+        path={routerPaths.exampleTestingDashboard()}
         to={routerPaths.exampleTestingDashboard()}
       />
       <Route
         strict
-        path={baseUrl + routerPaths.exampleSessionsRoot()}
+        path={routerPaths.exampleSessionsRoot()}
         component={ExampleSessionsLoader}
       />
       <Redirect
-        from={baseUrl + routerPaths.exampleSessionsRoot()}
-        to={baseUrl + routerPaths.exampleSessionsRoot()}
+        from={routerPaths.exampleSessionsRoot()}
+        to={routerPaths.exampleSessionsRoot()}
       />
-      <Route
-        strict
-        path={baseUrl + routerPaths.localRoot()}
-        component={LocalLoader}
-      />
-      <Redirect to={baseUrl + routerPaths.localRoot()} />
+      <Route strict path={routerPaths.localRoot()} component={LocalLoader} />
+      <Redirect to={routerPaths.localRoot()} />
     </Switch>
   );
 }
