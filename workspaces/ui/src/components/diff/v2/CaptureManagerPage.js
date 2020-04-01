@@ -185,7 +185,7 @@ export const CaptureManager = withRfcContext(withNavigationContext(({interaction
   const classes = useStyles();
   const captureContext = useContext(AllCapturesContext);
   const {ignoredDiffs} = useContext(IgnoreDiffContext);
-  const [alphabetize, setAlphabetize] = useState(false);
+  const [alphabetize, setAlphabetize] = useState(true);
   const rfcState = rfcService.currentState(rfcId);
 
   function handleChange(event) {
@@ -242,7 +242,7 @@ export const CaptureManager = withRfcContext(withNavigationContext(({interaction
                 const stats = diffManager.stats(ignoredAsSeq);
                 const allUnmatchedPaths = JsonHelper.seqToJsArray(diffManager.allUnmatchedPaths);
                 const newUrls = diffManager.unmatchedUrls(alphabetize, ignoredAsSeq);
-                const endpointDiffs = diffManager.endpointDiffs(ignoredAsSeq);
+                const endpointDiffs = diffManager.endpointDiffs(ignoredAsSeq, /* filter ouunmatched URLs */ true);
 
                 return (
                   <>

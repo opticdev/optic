@@ -165,7 +165,7 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
       pushShape(RenderShape(
         arrayId,
         ListKind.baseShapeId,
-        items = Items(ids, Seq.empty),
+        items = Items(ids),
         exampleValue = Some(Json.fromValues(value.map(_.asJson))),
         diffs = diffsByTrail(bodyTrail)
       ))
@@ -180,7 +180,7 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
       pushShape(RenderShape(
         resolvedShapeTrail.shapeEntity.shapeId,
         resolvedShapeTrail.coreShapeKind.baseShapeId,
-        items = Items(ids, Seq.empty),
+        items = Items(ids),
         exampleValue = Some(Json.fromValues(value.map(_.asJson))),
         diffs = diffsByTrail(bodyTrail)
       ))
@@ -264,7 +264,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult], exampleVis
         objectResolved.shapeEntity.shapeId,
         ObjectKind.baseShapeId,
         Fields(expectedShapeIds, fieldsFromExample.missing, fieldsFromExample.unexpected, fieldsFromExample.hidden),
-        Items(Seq.empty, Seq.empty),
+        Items(Seq.empty),
         diffs = diffsByTrail(shapeTrail),
         name = RenderName(Seq(NameComponent(ObjectKind.name, ObjectKind.color)))
       ))
@@ -298,7 +298,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult], exampleVis
         RenderShape(
           listShape.shapeId,
           ListKind.baseShapeId,
-          items = Items(Seq(id), Seq.empty),
+          items = Items(Seq(id)),
           diffs = diffsByTrail(shapeTrail),
           name = RenderName(Seq(NameComponent("List of", ListKind.color, inner = Some(baseItem.shapeId)))))
       )

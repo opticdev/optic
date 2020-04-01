@@ -83,6 +83,8 @@ export const NewUrlModal = withNavigationContext(withRfcContext(({pushRelative, 
       RfcCommands.AddContribution(pathMethodKeyBuilder(lastParentPathId, newUrl.method), PURPOSE, purpose),
     )
 
+    debugger
+
     //apply commands
     handleCommands(...commands);
 

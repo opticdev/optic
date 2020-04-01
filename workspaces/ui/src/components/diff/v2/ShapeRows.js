@@ -7,7 +7,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import {AddedGreenBackground, ChangedYellowBackground, primary, RemovedRedBackground, secondary} from '../../../theme';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tooltip from '@material-ui/core/Tooltip';
-import {ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
+import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
 import {
   getOrUndefined,
   mapScala,
@@ -22,6 +22,7 @@ import Menu from '@material-ui/core/Menu';
 import {InterpretationRow} from './DiffViewer';
 import {DocSubGroup} from '../../requests/DocSubGroup';
 import {IgnoreDiffContext} from './DiffPageNew';
+import Chip from '@material-ui/core/Chip';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,6 +51,14 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     textAlign: 'right',
     paddingRight: 10
+  },
+  hiddenItem: {
+    color: '#070707',
+    fontSize: 10,
+    paddingLeft: 7,
+    paddingRight: 7,
+    backgroundColor: '#ababab',
+    borderRadius: 12
   },
   diffNotif: {
     backgroundColor: '#e3ebf2',
@@ -185,7 +194,7 @@ const IndentIncrement = ({children, add = 1}) => {
 export const Row = withShapeRenderContext((props) => {
   const classes = useStyles();
 
-  const {exampleOnly} = props;
+  const {exampleOnly, onLeftClick} = props;
 
   const rowHighlightColor = (() => {
     if (props.highlight === 'Addition') {
@@ -200,7 +209,7 @@ export const Row = withShapeRenderContext((props) => {
   return (
     <div className={classNames(classes.row, {[classes.rowWithHover]: !props.noHover})}
          style={{backgroundColor: rowHighlightColor}}>
-      <div className={classes.left}>{props.left}</div>
+      <div className={classes.left} onClick={onLeftClick}>{props.left}</div>
       {!exampleOnly && <div className={classes.spacerBorder}>{' '.replace(/ /g, '\u00a0')}</div>}
       {!exampleOnly && <div className={classes.right}>{props.right}</div>}
     </div>
@@ -210,8 +219,9 @@ export const Row = withShapeRenderContext((props) => {
 export const ObjectRender = withShapeRenderContext((props) => {
   const classes = useStyles();
   const {shapeRender, shape, nested} = props;
-
   const fields = shapeRender.resolveFields(shape.fields);
+
+  const objectId = shape.shapeId
 
   return (
     <>
@@ -225,14 +235,23 @@ export const ObjectRender = withShapeRenderContext((props) => {
 export const ListRender = withShapeRenderContext((props) => {
   const classes = useStyles();
   const {shapeRender, shape, nested} = props;
-  const listItem = getOrUndefined(shapeRender.listItemShape(shape.shapeId));
-  const items = shapeRender.resolvedItems(shape.shapeId);
+  const listId = shape.shapeId
+  const listItem = getOrUndefined(shapeRender.listItemShape(listId));
+
+
+  const {showAllLists} = useContext(ShapeExpandedContext)
+
+  const items = shapeRender.resolvedItems(shape.shapeId, !showAllLists.includes(listId));
 
   return (
     <>
       {!nested && <Row left={<Symbols>{'['}</Symbols>} right={<TypeName typeName={shape.name}/>} noHover/>}
-      {mapScala(items)((item, index) => <ItemRow item={item} listItemShape={listItem}
-                                                 isLast={index - 1 === lengthScala(items)}/>)}
+      {mapScala(items)((item, index) => {
+        return <ItemRow item={item}
+                        listItemShape={listItem}
+                        listId={listId}
+                        isLast={index - 1 === lengthScala(items)}/>;
+      })}
       <IndentIncrement><Row left={<Symbols withIndent>{']'}</Symbols>} noHover/></IndentIncrement>
     </>
   );
@@ -341,7 +360,7 @@ const TypeName = ({typeName, style}) => {
 
   return (<div className={classes.typeName}>{mapScala(coloredComponents)((i) => {
     if (i.text) {
-      return <span style={{color: useColor[i.color] || i.color}}>{i.text}{' '}</span>
+      return <span style={{color: useColor[i.color] || i.color}}>{i.text}{' '}</span>;
     }
   })}
   </div>);
@@ -505,10 +524,10 @@ export const FieldRow = withShapeRenderContext((props) => {
 
 export const ItemRow = withShapeRenderContext((props) => {
   const classes = useStyles();
-  const {item, shapeRender, isLast, listItemShape, diffDescription, suggestion} = props;
+  const {item, shapeRender, isLast, listId, listItemShape, diffDescription, suggestion} = props;
   const diff = headOrUndefined(item.item.diffs);
 
-  const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(toOption(listItemShape))) || getOrUndefined(shapeRender.resolveItemShapeFromShapeId(item.item.shapeId))
+  const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(toOption(listItemShape))) || getOrUndefined(shapeRender.resolveItemShapeFromShapeId(item.item.shapeId));
 
   const diffNotif = diff && (
     <Indent><DiffNotif/></Indent>
@@ -526,16 +545,22 @@ export const ItemRow = withShapeRenderContext((props) => {
             return diffDescription.changeTypeAsString;
           }
         })()}
-        left={(
-          <Indent>
-            <div className={classes.rowContents}>
-              <IndexMarker>{item.index}</IndexMarker>
-              <div style={{flex: 1, paddingLeft: 4}}>
-                <ValueContents value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>
+        left={(() => {
+
+          if (item.display === 'hidden') {
+            return <Indent><HiddenItemEllipsis expandId={listId} /></Indent>
+          }
+
+          return (<Indent>
+              <div className={classes.rowContents}>
+                <IndexMarker>{item.index}</IndexMarker>
+                <div style={{flex: 1, paddingLeft: 4}}>
+                  <ValueContents value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>
+                </div>
               </div>
-            </div>
-          </Indent>
-        )}
+            </Indent>
+          );
+        })()}
         right={(() => {
 
           if (diffNotif && suggestion) {
@@ -561,6 +586,15 @@ export const ItemRow = withShapeRenderContext((props) => {
   );
 });
 
+export const HiddenItemEllipsis = withShapeRenderContext((props) => {
+  const classes = useStyles();
+  const {setShowAllLists} = useContext(ShapeExpandedContext)
+  const {expandId} = props
+  return (<DiffToolTip placement="right" title="(Hidden) Click to Expand">
+    <div className={classes.hiddenItem} onClick={() => setShowAllLists(expandId, true)}>{'⋯'}</div>
+  </DiffToolTip>)
+})
+
 
 export const DiffToolTip = withStyles(theme => ({
   tooltip: {
@@ -570,6 +604,6 @@ export const DiffToolTip = withStyles(theme => ({
     maxWidth: 200,
     fontSize: 11,
     fontWeight: 200,
-    padding: 0,
+    padding: 4,
   },
 }))(Tooltip);

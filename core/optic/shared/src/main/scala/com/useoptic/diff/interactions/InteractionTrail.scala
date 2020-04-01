@@ -61,7 +61,7 @@ case class InteractionTrail(path: Seq[InteractionTrailPathComponent]) {
 
 sealed trait InteractionTrailPathComponent
 
-case class Url(url: String) extends InteractionTrailPathComponent
+case class Url() extends InteractionTrailPathComponent
 
 case class Method(method: String) extends InteractionTrailPathComponent
 

@@ -38,11 +38,15 @@ import {
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {DocSubGroup} from '../../requests/DocSubGroup';
 import DiffHunkViewer from './DiffHunkViewer';
-import {ChangedYellowBackground, primary, RemovedRedBackground,AddedGreenBackground} from '../../../theme';
+import {ChangedYellowBackground, primary, RemovedRedBackground, AddedGreenBackground} from '../../../theme';
 import DiffReviewExpanded from './DiffReviewExpanded';
 import Toolbar from '@material-ui/core/Toolbar';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import SimulatedCommandContext from '../SimulatedCommandContext';
+import Scrolling from './Scrolling';
+import {ShapeExpandedStore} from './ShapeRenderContext';
+import Breadcrumbs from '@material-ui/core/Breadcrumbs';
+import Link from '@material-ui/core/Link';
 
 
 const useStyles = makeStyles(theme => ({
@@ -79,6 +83,21 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     alignItems: 'start',
     justifyContent: 'start',
+  },
+  location: {
+    marginLeft: 12
+  },
+  diff: {
+    fontSize: 12,
+    fontWeight: 600,
+    color: '#f8333c',
+    marginLeft: 11,
+    flex: 1,
+    paddingLeft: 30
+  },
+  crumb: {
+    fontSize: 12,
+    textTransform: 'uppercase'
   },
   heading: {
     fontSize: theme.typography.pxToRem(17),
@@ -221,13 +240,13 @@ function _NewRegions(props) {
         {addition}
         <Typography style={{marginLeft: 11}} variant="subtitle2">Undocumented Requests / Responses</Typography>
         <div style={{flex: 1}}/>
-          <Button size="small"
-                  color="primary"
-                  style={{marginRight: 8}}
-                  startIcon={<VisibilityIcon color="primary"/>}
-                  onClick={() => setShowExpanded(true)}>
-            Expand Examples
-          </Button>
+        <Button size="small"
+                color="primary"
+                style={{marginRight: 8}}
+                startIcon={<VisibilityIcon color="primary"/>}
+                onClick={() => setShowExpanded(true)}>
+          Expand Examples
+        </Button>
         <Button style={{marginLeft: 5}} color="secondary" onClick={onApply}>Add to Specification</Button>
       </div>
       <div className={classes.diffsNewRegion}>
@@ -279,35 +298,43 @@ function _ShapeDiffRegion(props) {
 
   return (
     <div>
-      <Typography variant="h6" color="primary"
-                  style={{marginBottom: 12}}>{title}</Typography>
       {mapScala(region)(r => {
         return (
-          <DocSubGroup title={r.name}>
+          <>
             {mapScala(r.diffBlocks)(diff => {
               const inFocus = selectedDiff && diff.containsDiff(selectedDiff.diff);
               const shouldBlur = selectedDiff && !inFocus && selectedInterpretation;
               //only render changes in card that is in focus
-              if (inFocus) {
-                const simulatedCommands = selectedInterpretation ? JsonHelper.seqToJsArray(selectedInterpretation.commands) : [];
-                return (
-                  <SimulatedCommandContext
-                    rfcId={rfcId}
-                    eventStore={eventStore.getCopy(rfcId)}
-                    commands={simulatedCommands}
-                    shouldSimulate={true}
-                  >
-                    <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus}
-                                   shouldBlur={shouldBlur}/>
-                  </SimulatedCommandContext>
-                );
-              } else {
-                return <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus}
-                                      shouldBlur={shouldBlur}/>;
-              }
+
+
+              const inner = (() => {
+                if (inFocus) {
+                  const simulatedCommands = selectedInterpretation ? JsonHelper.seqToJsArray(selectedInterpretation.commands) : [];
+                  return (
+                    <SimulatedCommandContext
+                      rfcId={rfcId}
+                      eventStore={eventStore.getCopy(rfcId)}
+                      commands={simulatedCommands}
+                      shouldSimulate={true}
+                    >
+                      <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus}
+                                     shouldBlur={shouldBlur}/>
+                    </SimulatedCommandContext>
+                  );
+                } else {
+                  return <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus}
+                                        shouldBlur={shouldBlur}/>;
+                }
+              })();
+
+              return (
+                <ShapeExpandedStore>
+                  {inner}
+                </ShapeExpandedStore>
+              )
             })}
 
-          </DocSubGroup>
+          </>
         );
       })}
       <DocDivider/>
@@ -321,6 +348,7 @@ function _ShapeDiffCard(props) {
   const classes = useStyles();
 
   const {description} = diff;
+  const location = JsonHelper.seqToJsArray(diff.location)
   const [showExpanded, setShowExpanded] = useState(false);
   const currentRfcState = rfcService.currentState(rfcId);
   let preview = diff.previewRender(headOrUndefined(diff.interactions), toOption(currentRfcState));
@@ -339,8 +367,8 @@ function _ShapeDiffCard(props) {
     <Paper className={classNames(classes.wrapper, {[classes.blur]: shouldBlur})} elevation={2}>
       <div className={classes.header}>
         {addition}
-        <Typography style={{marginLeft: 11}} variant="subtitle2">{diff.description.title}</Typography>
-        <div style={{flex: 1}}/>
+        <Breadcrumbs className={classes.location} separator={<span style={{fontSize: 13}}>{"›"}</span>} aria-label="breadcrumb">{location.map(n => <Typography className={classes.crumb} color="primary">{n}</Typography>)}</Breadcrumbs>
+        <Typography className={classes.diff} variant="subtitle2">{diff.description.title}</Typography>
 
         {(!showFinalize && !showExpanded) &&
         <Button size="small"
@@ -373,11 +401,13 @@ function _ShapeDiffCard(props) {
             }}
           />
         ) : (
-          <DiffHunkViewer
-            suggestion={suggestion}
-            diff={diff}
-            preview={preview}
-            diffDescription={description}/>
+          <Scrolling>
+            <DiffHunkViewer
+              suggestion={suggestion}
+              diff={diff}
+              preview={preview}
+              diffDescription={description}/>
+          </Scrolling>
         )}
       </div>
     </Paper>

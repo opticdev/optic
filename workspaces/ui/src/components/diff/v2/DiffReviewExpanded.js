@@ -21,6 +21,7 @@ import {InterpretationRow} from './DiffViewer';
 import {IgnoreDiffContext} from './DiffPageNew';
 import {withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
+import Scrolling from './Scrolling';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -60,7 +61,7 @@ export default withDiffContext((props) => {
 
   const currentInteraction = getIndex(interactions)(interactionIndex - 1);
 
-  const {request, response, httpMethod, url} = render(currentInteraction)
+  const {request, response, httpMethod, url} = render(currentInteraction);
 
   const method = <Typography variant="body" component="span" style={{
     fontWeight: 400,
@@ -70,11 +71,10 @@ export default withDiffContext((props) => {
     borderRadius: 2,
     marginTop: -3,
     backgroundColor: methodColorsDark[httpMethod.toUpperCase()]
-  }}>{httpMethod.toUpperCase()}</Typography>
+  }}>{httpMethod.toUpperCase()}</Typography>;
   // const path = <Typography variant="subtitle1" component="span" style={{fontSize: 12}}>{fullPath}</Typography>;
   const renderedUrl = <Typography variant="subtitle1" component="span"
-                          style={{fontSize: 12}}>{currentInteraction.request.path}</Typography>;
-
+                                  style={{fontSize: 12}}>{currentInteraction.request.path}</Typography>;
 
   return (
     <div style={{padding: 12}}>
@@ -95,24 +95,26 @@ export default withDiffContext((props) => {
             <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Request
               Body</Typography>}>
 
-              <DiffHunkViewer suggestion={suggestion}
-                              diff={diff}
-                              exampleOnly={exampleOnly}
-                              preview={request}
-                              diffDescription={diffDescription}/>
-
+              <Scrolling>
+                <DiffHunkViewer suggestion={suggestion}
+                                diff={diff}
+                                exampleOnly={exampleOnly}
+                                preview={request}
+                                diffDescription={diffDescription}/>
+              </Scrolling>
             </DocSubGroup>
           </Show>
           <Show when={response}>
             <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Response
               Body</Typography>}>
 
-              <DiffHunkViewer suggestion={suggestion}
-                              diff={diff}
-                              exampleOnly={exampleOnly}
-                              preview={response}
-                              diffDescription={diffDescription}/>
-
+              <Scrolling>
+                <DiffHunkViewer suggestion={suggestion}
+                                diff={diff}
+                                exampleOnly={exampleOnly}
+                                preview={response}
+                                diffDescription={diffDescription}/>
+              </Scrolling>
             </DocSubGroup>
           </Show>
         </div>

@@ -153,8 +153,8 @@ class _DiffPageContent extends React.Component {
       specService,
       captureId,
     } = this.props;
-    const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, isEmpty} = endpointDescriptor;
 
+    const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, isEmpty} = endpointDescriptor;
 
     function handleDiscard() {
       //@GOTCHA this resets ignored state as well
@@ -176,10 +176,6 @@ class _DiffPageContent extends React.Component {
       history.push(`${baseUrl}/diff/${captureId}`);
     }
 
-    console.log('look here ', endpointDiffManger.inputStats)
-    console.log('look here ', endpointDiffManger.diffRegions.requestRegions)
-    console.log('look here ', endpointDiffManger.diffRegions.responseRegions)
-
     return (
       <IgnoreDiffContext.Consumer>
         {({ignoreDiff, ignoredDiffs}) => (
@@ -193,6 +189,8 @@ class _DiffPageContent extends React.Component {
                               diffCount={endpointDiffManger.diffCount}
                               interactionsWithDiffsCount={endpointDiffManger.interactionsWithDiffsCount}
                               endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
+                              method={httpMethod}
+                              fullPath={fullPath}
                               reset={handleDiscard}
                               apply={handleApply}
 
@@ -296,6 +294,8 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   const ignored = jsonHelper.jsArrayToSeq(ignoredDiffs);
 
   const endpointDiffManger = diffManager.managerForPathAndMethod(pathId, method, ignored);
+
+
 
   const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
 

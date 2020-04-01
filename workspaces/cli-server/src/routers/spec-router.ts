@@ -1,16 +1,16 @@
-import { getPathsRelativeToCwd, readApiConfig } from '@useoptic/cli-config';
-import { parseIgnore } from '@useoptic/cli-config';
+import {getPathsRelativeToCwd, readApiConfig} from '@useoptic/cli-config';
+import {parseIgnore} from '@useoptic/cli-config';
 import express from 'express';
 import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { FileSystemCaptureLoader } from '../captures/file-system/avro/file-system-capture-loader';
-import { ICaptureLoader } from '../index';
-import { developerDebugLogger } from '../logger';
-import { ICliServerSession } from '../server';
+import {FileSystemCaptureLoader} from '../captures/file-system/avro/file-system-capture-loader';
+import {ICaptureLoader} from '../index';
+import {developerDebugLogger} from '../logger';
+import {ICliServerSession} from '../server';
 import * as URL from 'url';
 import fetch from 'cross-fetch';
-import { opticStatusPath } from '@useoptic/proxy';
+import {opticStatusPath} from '@useoptic/proxy';
 import * as yaml from 'js-yaml';
 import sortBy from 'lodash.sortby';
 import waitOn from 'wait-on';
@@ -20,7 +20,7 @@ export class CapturesHelpers {
   }
 
   async validateCaptureId(req: express.Request, res: express.Response, next: express.NextFunction) {
-    const { captureId } = req.params;
+    const {captureId} = req.params;
     const captureDirectoryPath = this.captureDirectory(captureId);
     const exists = await fs.pathExists(captureDirectoryPath);
     if (exists) {
@@ -65,7 +65,7 @@ export class ExampleRequestsHelpers {
     const currentFileContents = await this.getExampleRequests(requestId);
     currentFileContents.push(example);
     await fs.ensureFile(exampleFilePath);
-    await fs.writeJson(exampleFilePath, currentFileContents, { spaces: 2 });
+    await fs.writeJson(exampleFilePath, currentFileContents, {spaces: 2});
   }
 }
 
@@ -80,8 +80,8 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   }
 
   async function ensureValidSpecId(req: express.Request, res: express.Response, next: express.NextFunction) {
-    const { specId } = req.params;
-    developerDebugLogger({ specId, sessions });
+    const {specId} = req.params;
+    developerDebugLogger({specId, sessions});
     const session = sessions.find(x => x.id === specId);
     if (!session) {
       res.sendStatus(404);
@@ -89,7 +89,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     }
 
     const paths = await getPathsRelativeToCwd(session.path);
-    const { configPath, capturesPath, exampleRequestsPath } = paths;
+    const {configPath, capturesPath, exampleRequestsPath} = paths;
     const config = await readApiConfig(configPath);
     const capturesHelpers = new CapturesHelpers(capturesPath);
     const exampleRequestsHelpers = new ExampleRequestsHelpers(exampleRequestsPath);
@@ -104,7 +104,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   }
 
 
-  const router = express.Router({ mergeParams: true });
+  const router = express.Router({mergeParams: true});
   router.use(ensureValidSpecId);
 
   // events router
@@ -116,21 +116,21 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
       res.json([]);
     }
   });
-  router.put('/events', bodyParser.json({ limit: '100mb' }), async (req, res) => {
+  router.put('/events', bodyParser.json({limit: '100mb'}), async (req, res) => {
     const events = req.body;
     await fs.writeFile(req.optic.paths.specStorePath, prepareEvents(events));
     res.sendStatus(204);
   });
 
   // example requests router
-  router.post('/example-requests/:requestId', bodyParser.json({ limit: '100mb' }), async (req, res) => {
-    const { requestId } = req.params;
+  router.post('/example-requests/:requestId', bodyParser.json({limit: '100mb'}), async (req, res) => {
+    const {requestId} = req.params;
     await req.optic.exampleRequestsHelpers.saveExampleRequest(requestId, req.body);
     res.sendStatus(204);
   });
 
   router.get('/example-requests/:requestId', async (req, res) => {
-    const { requestId } = req.params;
+    const {requestId} = req.params;
     const currentFileContents = await req.optic.exampleRequestsHelpers.getExampleRequests(requestId);
     res.json({
       examples: currentFileContents
@@ -139,21 +139,21 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
 
   // captures router. cli picks captureId and writes to whatever persistence method and provides capture id to ui. api spec just shows spec?
   router.get('/captures', async (req, res) => {
-    const { captures } = req.optic.session;
+    const {captures} = req.optic.session;
     res.json({
       captures:
         sortBy(captures, i => i.taskConfig.startTime)
-        .reverse()
-        .map(i => ({captureId: i.taskConfig.captureId, lastUpdate: i.taskConfig.startTime, hasDiff: false}))
+          .reverse()
+          .map(i => ({captureId: i.taskConfig.captureId, lastUpdate: i.taskConfig.startTime, hasDiff: false}))
     });
   });
-  router.put('/captures/:captureId/status', bodyParser.json({ limit: '1kb' }), async (req, res) => {
-    const { captureId } = req.params;
+  router.put('/captures/:captureId/status', bodyParser.json({limit: '1kb'}), async (req, res) => {
+    const {captureId} = req.params;
     const captureInfo = req.optic.session.captures.find(x => x.taskConfig.captureId === captureId);
     if (!captureInfo) {
       return res.sendStatus(400);
     }
-    const { status } = req.body;
+    const {status} = req.body;
     if (status !== 'completed') {
       return res.sendStatus(400);
     }
@@ -162,7 +162,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
     res.sendStatus(204);
   });
   router.get('/captures/:captureId/samples', async (req, res) => {
-    const { captureId } = req.params;
+    const {captureId} = req.params;
     const captureInfo = req.optic.session.captures.find(x => x.taskConfig.captureId === captureId);
     if (!captureInfo) {
       return res.sendStatus(400);
@@ -183,7 +183,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
           },
           samples: capture.samples,
           links: [
-            { rel: 'next', href: '' }
+            {rel: 'next', href: ''}
           ]
         });
     } catch (e) {

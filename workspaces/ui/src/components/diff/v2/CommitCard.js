@@ -8,6 +8,8 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import classNames from 'classnames';
+import {PathAndMethod} from './PathAndMethod';
+import {DocDivider} from '../../requests/DocConstants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithDiffsCount, diffCount, reset, apply}) => {
+export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithDiffsCount, diffCount, method, fullPath, endpointPurpose, reset, apply}) => {
   const classes = useStyles();
   const [commitMessage, setCommitMessage] = useState('');
   const pluralIf = (collection) => collection.length !== 1 ? 's' : '';
@@ -45,7 +47,7 @@ export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithD
 
   const [finalize, setFinalize] = useState(false);
 
-  const finalizeWithOverride = finalize || diffCount === 0
+  const finalizeWithOverride = finalize || diffCount === 0;
 
   return (
     <Card className={classNames(classes.root)} elevation={2}>
@@ -56,10 +58,18 @@ export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithD
             <img src="/optic-logo.svg" width={75}/>
           </div>
           <div style={{flex: 1}}>
+
+            <Typography variant="h6">{endpointPurpose}</Typography>
+            <PathAndMethod method={method}
+                           path={fullPath}/>
+
+            <DocDivider style={{marginTop: 20, marginBottom: 20}}/>
+
             <Typography className={classes.title} color="textSecondary" gutterBottom>Review Endpoint Diff</Typography>
-             <Typography variant="h5" component="h2" color="primary">
-               {diffCount.length > 0 && <>Optic observed {diffCount} diff{pluralIfI(diffCount)} across {interactionsWithDiffsCount} interaction{pluralIfI(interactionsWithDiffsCount)}</>}
-               {diffCount.length === 0 && <>You've reviewed all the diffs Optic observed. Nice work!</>}
+            <Typography variant="h5" component="h2" color="primary">
+              {diffCount.length > 0 && <>Optic
+                observed {diffCount} diff{pluralIfI(diffCount)} across {interactionsWithDiffsCount} interaction{pluralIfI(interactionsWithDiffsCount)}</>}
+              {diffCount.length === 0 && <>You've reviewed all the diffs Optic observed. Nice work!</>}
             </Typography>
             <Typography variant="subtitle1" component="h2">
               You have accepted {acceptedSuggestions.length} suggestion{pluralIf(acceptedSuggestions)}, and
@@ -67,21 +77,23 @@ export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithD
             </Typography>
 
             {finalizeWithOverride && (<TextField multiline
-                                     style={{marginTop: 15}}
-                                     value={commitMessage}
-                                     fullWidth
-                                     placeholder="Describe the changes you made to the API Contract"
-                                     onChange={(e) => setCommitMessage(e.target.value)}/>)}
+                                                 style={{marginTop: 15}}
+                                                 value={commitMessage}
+                                                 fullWidth
+                                                 placeholder="Describe the changes you made to the API Contract"
+                                                 onChange={(e) => setCommitMessage(e.target.value)}/>)}
 
 
             <div style={{marginTop: 15}}>
               <Button size="small" onClick={() => {
-                reset()
-                setFinalize(false)
+                reset();
+                setFinalize(false);
               }} variant="outlined">Reset</Button>
-              {!finalizeWithOverride && <Button size="small" onClick={() => setFinalize(true)} style={{marginLeft: 11}} variant="contained"
+              {!finalizeWithOverride &&
+              <Button size="small" onClick={() => setFinalize(true)} style={{marginLeft: 11}} variant="contained"
                       color="secondary">Finalize</Button>}
-              {finalizeWithOverride && <Button size="small" onClick={() => apply(commitMessage)} style={{marginLeft: 11}} variant="contained"
+              {finalizeWithOverride &&
+              <Button size="small" onClick={() => apply(commitMessage)} style={{marginLeft: 11}} variant="contained"
                       color="secondary">Commit Changes</Button>}
             </div>
             {/*<CardActions style={{textAlign: 'right'}}>*/}

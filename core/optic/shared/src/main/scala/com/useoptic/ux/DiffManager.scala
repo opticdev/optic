@@ -100,7 +100,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     val allUnmatchedUrls = fromDiff.map { case ((method, path, pathOption), interactions) => UndocumentedURL(method, path, pathOption, interactions.toSeq) }.toSeq
 
     if (alphabetize) {
-      allUnmatchedUrls.sortBy(i => i.path).sortBy(i => i.method)
+      allUnmatchedUrls.sortBy(_.path)
     } else {
       allUnmatchedUrls.sortBy(_.interactions.size).reverse
     }
@@ -108,7 +108,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
 
   def allUnmatchedPaths: Seq[String] = unmatchedUrls(true, Seq.empty).map(_.path).distinct
 
-  def endpointDiffs(ignoredDiffs: Seq[DiffResult]): Seq[EndpointDiff] = {
+  def endpointDiffs(ignoredDiffs: Seq[DiffResult], filterUnmatched: Boolean = false): Seq[EndpointDiff] = {
     val diffs = filterIgnored(ignoredDiffs)
 
     val allEndpointDiffs = diffs.collect {
@@ -155,7 +155,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     val unmatched = unmatchedUrls(true, ignoredDiffs)
 
     //don't show an endpoint diff if its in the unmatched list
-    endpointDiffs.filterNot(i => unmatched.exists(u => u.pathId.contains(i.pathId) && u.method == i.method))
+    if (filterUnmatched) endpointDiffs.filterNot(i => unmatched.exists(u => u.pathId.contains(i.pathId) && u.method == i.method)) else endpointDiffs
   }
 
   def stats(ignoredDiffs: Seq[DiffResult]): DiffStats = {
@@ -171,7 +171,12 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
 
   def managerForPathAndMethod(pathComponentId: PathComponentId, httpMethod: String, ignoredDiffs: Seq[DiffResult]): PathAndMethodDiffManager = {
     val parentManagerUpdate = (rfcState: RfcState) => updatedRfcState(rfcState)
+
+    println("filter progress " + "Start")
+    println("filter progress " + endpointDiffs(ignoredDiffs).toString())
+    println("filter progress " + _interactionsGroupedByDiffs.keys.size)
     val filterIgnored = _interactionsGroupedByDiffs.filter(d => !ignoredDiffs.contains(d._1))
+    println("filter progress " + filterIgnored.size)
 
     val filterThisEndpoint = {
       //collect all request and response ids we have diffs computed for
@@ -197,10 +202,14 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
         }
         case _ => false
       }
+
+      println("filter progress " + diffsFiltered.size)
       //@hack spec trails don't contain method :(
       //this makes sure that other methods don't sneak their way
       diffsFiltered.mapValues(_.filter(_.request.method == httpMethod)).filter(_._2.nonEmpty)
     }
+
+    println("filter progress " + filterThisEndpoint.keys.size)
 
     new PathAndMethodDiffManager(pathComponentId, httpMethod)(filterThisEndpoint, _currentRfcState) {
       def updatedRfcState(rfcState: RfcState): Unit = parentManagerUpdate(rfcState)
@@ -282,11 +291,11 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         BodyShapeDiffBlock(
           diff,
+          Seq("Request Body", contentType.get),
           diff.shapeDiffResultOption.get,
           interactions,
           inRequest = true,
           inResponse = false,
-          contentType.get,
           description,
           relatedDiffs)(
           () => suggestionsForDiff(diff),
@@ -322,11 +331,11 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         BodyShapeDiffBlock(
           diff,
+          Seq(s"${interactions.head.response.statusCode} Response", "Body", contentType.get),
           diff.shapeDiffResultOption.get,
           interactions,
           inRequest = false,
           inResponse = true,
-          contentType.get,
           description,
           relatedDiffs)(
           () => suggestionsForDiff(diff),
@@ -337,6 +346,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
       })))
       }
       .toSeq
+        .sortBy(_.name)
 
     TopLevelRegions(newRegions, requestShapeRegions, responseShapeRegions)
   }

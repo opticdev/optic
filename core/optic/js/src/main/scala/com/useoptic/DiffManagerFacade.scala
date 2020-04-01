@@ -1,5 +1,6 @@
 package com.useoptic
 
+import com.useoptic.serialization.InteractionSerialization.shapeHashDecoder
 import com.useoptic.types.capture.{HttpInteraction, ShapeHashBytes}
 import com.useoptic.ux.DiffManager
 import io.circe.Decoder
@@ -13,9 +14,7 @@ object DiffManagerFacade {
   def newFromInteractions(x: js.Array[js.Any], updatedCallback: js.Function0[Unit]): DiffManager = {
     import io.circe.generic.auto._
     import io.circe.scalajs.convertJsToJson
-    implicit val shapeHashDecoder: Decoder[ShapeHashBytes] = (json) => {
-      Right(ShapeHashBytes(json.downField("bytes").downField("data").as[Vector[Byte]].right.get))
-    }
+    import shapeHashDecoder._
     val interactions = convertJsToJson(x).right.get.as[Seq[HttpInteraction]].right.get
     new DiffManager(interactions, () => updatedCallback())
   }
@@ -23,9 +22,7 @@ object DiffManagerFacade {
   def updateInteractions(x: js.Array[js.Any], diffManager: DiffManager): Unit = {
     import io.circe.generic.auto._
     import io.circe.scalajs.convertJsToJson
-    implicit val shapeHashDecoder: Decoder[ShapeHashBytes] = (json) => {
-      Right(ShapeHashBytes(json.downField("bytes").downField("data").as[Vector[Byte]].right.get))
-    }
+    import shapeHashDecoder._
     val interactions = convertJsToJson(x).right.get.as[Seq[HttpInteraction]].right.get
     diffManager.updateInteractions(interactions)
   }

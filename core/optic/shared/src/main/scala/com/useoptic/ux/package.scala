@@ -42,6 +42,8 @@ package object ux {
 
     def inResponse: Boolean
 
+    def location: Seq[String] = Seq.empty
+
     def interactions: Seq[HttpInteraction]
 
     def count = interactions.size
@@ -75,11 +77,11 @@ package object ux {
 
   @JSExportAll
   case class BodyShapeDiffBlock(diff: DiffResult,
+                                location: Seq[String],
                                 shapeDiff: ShapeDiffResult,
                                 interactions: Seq[HttpInteraction],
                                 inRequest: Boolean,
                                 inResponse: Boolean,
-                                contentType: String,
                                 description: DiffDescription,
                                 relatedDiffs: Set[ShapeDiffResult])
                                (implicit val toSuggestions: ToSuggestions,
@@ -170,16 +172,26 @@ package object ux {
       specItems(listItemSpecId)
     }.toOption
 
-    def resolvedItems(listId: ShapeId): Seq[DisplayItem] = {
+    def resolvedItems(listId: ShapeId, hideItems: Boolean = false): Seq[DisplayItem] = {
       val listItemOption = listItemShape(listId)
-
-
-      val items = exampleShapes.get(listId).map(_.items).getOrElse(Items(Seq.empty, Seq.empty))
-      items.all.zipWithIndex.flatMap { case (itemId, index) => {
+      val items = exampleShapes.get(listId).map(_.items).getOrElse(Items(Seq.empty))
+      val allItems = items.all.zipWithIndex.flatMap { case (itemId, index) => {
         //use spec one if provided, else fallback on example shape pointer
         val shapeIdOption = Seq(listItemOption.flatMap(_.shapeId), exampleItems.get(itemId).flatMap(_.shapeId)).flatten.headOption
-        getUnifiedItem(itemId, shapeIdOption).map(i => DisplayItem(index, i, if (items.hidden.contains(itemId)) "hidden" else "visible"))
+        getUnifiedItem(itemId, shapeIdOption).map(i => DisplayItem(index, i, "visible"))
       }}
+
+      if (hideItems) {
+        allItems.zipWithIndex.map {
+          case (item, index) => {
+            if (item.item.diffs.nonEmpty || index < 6) {
+              item.copy(display = "visible")
+            } else {
+              item.copy(display = "hidden")
+            }
+          }
+        }
+      } else allItems
     }
 
     def resolveFieldShape(field: RenderField): Option[RenderShape] = Try(field.shapeId.map(getUnifiedShape)).toOption.flatten
@@ -201,7 +213,7 @@ package object ux {
   }
 
   @JSExportAll
-  case class Items(all: Seq[ShapeId], hidden: Seq[ShapeId])
+  case class Items(all: Seq[ShapeId])
 
   @JSExportAll
   case class DisplayField(fieldName: String, field: RenderField, display: String)
@@ -219,7 +231,7 @@ package object ux {
   case class RenderShape(shapeId: ShapeId,
                          baseShapeId: String,
                          fields: Fields = Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty),
-                         items: Items = Items(Seq.empty, Seq.empty),
+                         items: Items = Items(Seq.empty),
                          branches: Seq[ShapeId] = Seq.empty,
                          innerId: Option[ShapeId] = None,
                          exampleValue: Option[Json] = None,
