@@ -4,8 +4,10 @@
 // placeholder for actual remote service
 export class TestingService {}
 
-export async function createExampleTestingService(exampleId) {
-  const example = await fetch(`/example-reports/${exampleId}.json`, {
+export async function createExampleTestingService(
+  exampleUrl = '/example-reports/todo-report.json'
+) {
+  const example = await fetch(exampleUrl, {
     headers: {
       accept: 'application/json'
     }

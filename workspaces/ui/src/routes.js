@@ -9,7 +9,7 @@ import {
   useDebugSession,
   Provider as DebugSessionContextProvider
 } from './contexts/DebugSessionContext';
-import { ExampleTestingServiceLoaderComponent } from './components/loaders/TestingDashboardLoader';
+import TestingDashboardLoader from './components/loaders/TestingDashboardLoader';
 
 function AppRoutes(props) {
   const baseUrl = props.baseUrl || '';
@@ -20,8 +20,8 @@ function AppRoutes(props) {
     <Switch>
       <Route
         strict
-        path={baseUrl + routerPaths.exampleTestingDashboard()}
-        component={ExampleTestingServiceLoaderComponent}
+        path={routerPaths.testingDashboard(baseUrl)}
+        component={TestingDashboardLoader}
       />
       <Route
         strict
