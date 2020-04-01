@@ -4,7 +4,7 @@ import { useDebugPath } from '../contexts/DebugSessionContext';
 
 export function Link(props) {
   const debugPrefix = useDebugPath();
-  const prefix = typeof props.prefix === 'undefined' ? false : props.prefix;
+  const prefix = typeof props.prefix === 'undefined' ? true : props.prefix;
   const to = prefix ? prefixPath(props.to, debugPrefix) : props.to;
 
   return <RouterLink {...props} to={to} />;
@@ -13,12 +13,12 @@ Link.displayName = 'OpticLink';
 
 export function NavLink(props) {
   const debugPrefix = useDebugPath();
-  const prefix = typeof props.prefix === 'undefined' ? false : props.prefix;
+  const prefix = typeof props.prefix === 'undefined' ? true : props.prefix;
   const to = prefix ? prefixPath(props.to, debugPrefix) : props.to;
 
   return <RouterNavLink {...props} to={to} />;
 }
-NavLink.dislayName = 'OpticNavLink';
+NavLink.displayName = 'OpticNavLink';
 
 function prefixPath(path, prefix) {
   if (!path) {
