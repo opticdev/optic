@@ -13,7 +13,7 @@ class CommandSession {
   private isRunning: boolean = false;
   public events: EventEmitter = new EventEmitter();
 
-  start(config: ICommandSessionConfig) {
+  start(config: ICommandSessionConfig, silent: boolean = false) {
     const taskOptions: SpawnOptions = {
       env: {
         ...process.env,
@@ -21,7 +21,7 @@ class CommandSession {
       },
       shell: true,
       cwd: process.cwd(),
-      stdio: 'inherit',
+      stdio: silent ? 'ignore' : 'inherit',
     };
 
     this.isRunning = true;
