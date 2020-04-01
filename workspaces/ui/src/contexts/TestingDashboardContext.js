@@ -7,8 +7,8 @@ export const { Provider } = TestingDashboardContext;
 
 // to make sure the actual shape of the context remains an implementation detail
 // we're in control of here
-export function createContext({ service, baseUrl }) {
-  return { service, baseUrl };
+export function createContext({ service }) {
+  return { service };
 }
 
 export function useTestingService(
@@ -32,10 +32,4 @@ export function useTestingService(
   }, deps);
 
   return { result, loading, error };
-}
-
-export function useReportPath(captureId) {
-  const { baseUrl } = useContext(TestingDashboardContext);
-
-  return `${baseUrl}/captures/${captureId}`;
 }
