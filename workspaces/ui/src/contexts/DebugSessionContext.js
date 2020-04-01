@@ -6,7 +6,7 @@ DebugSessionContext.displayName = 'DebugSessionContext';
 // only expose the Provider component, but hide the Consumer in favour of hooks
 export const { Provider } = DebugSessionContext;
 
-function createDebugSession(sessionId) {
+function createDebugSession({ sessionId, path }) {
   let fetchedData = null;
   async function getData(refresh = false) {
     if (!fetchedData || refresh) {
@@ -26,6 +26,7 @@ function createDebugSession(sessionId) {
 
   return {
     sessionId,
+    path,
     getData
   };
 }
@@ -33,10 +34,11 @@ function createDebugSession(sessionId) {
 // Hooks
 // -----
 
-export function useDebugSession(sessionId) {
-  const dashboardContext = useMemo(() => createDebugSession(sessionId), [
-    sessionId
-  ]);
+export function useDebugSession({ sessionId, path }) {
+  const dashboardContext = useMemo(
+    () => createDebugSession({ sessionId, path }),
+    [sessionId, path]
+  );
 
   return dashboardContext;
 }
@@ -70,4 +72,10 @@ export function useDebugData(deps) {
   }, deps);
 
   return { available, data, loading, error };
+}
+
+export function useDebugPath() {
+  const debugSession = useContext(DebugSessionContext);
+
+  return !!debugSession ? debugSession.path : '/';
 }

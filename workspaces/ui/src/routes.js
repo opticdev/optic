@@ -7,12 +7,13 @@ import { routerPaths } from './RouterPaths';
 import SharedLoader from './components/loaders/SharedLoader';
 import {
   useDebugSession,
+  useDebugPath,
   Provider as DebugSessionContextProvider
 } from './contexts/DebugSessionContext';
 import TestingDashboardLoader from './components/loaders/TestingDashboardLoader';
 
 function AppRoutes(props) {
-  const baseUrl = props.baseUrl || '';
+  const baseUrl = useDebugPath();
 
   // TODO: refactor router paths to no longer have special example routes and accept
   // baseurl natively
@@ -49,11 +50,14 @@ function AppRoutes(props) {
 
 function DebuggedRoutes(props) {
   const { match } = props;
-  const debugSession = useDebugSession(match.params.sessionId);
+  const debugSession = useDebugSession({
+    sessionId: match.params.sessionId,
+    path: match.url
+  });
 
   return (
     <DebugSessionContextProvider value={debugSession}>
-      <AppRoutes baseUrl={props.match.url} />;
+      <AppRoutes />;
     </DebugSessionContextProvider>
   );
 }
