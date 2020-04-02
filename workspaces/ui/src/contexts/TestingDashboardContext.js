@@ -27,6 +27,8 @@ export function useTestingService(
         setLoading(false);
       })
       .catch((err) => {
+        console.error(err)
+        debugger
         setError(err);
       });
   }, deps);

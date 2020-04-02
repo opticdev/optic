@@ -19,7 +19,8 @@ import {
   flatMapOperations
 } from '../../contexts/ApiOverviewContext';
 import { stuffFromQueries } from '../../contexts/RfcContext';
-import * as uniqBy from 'lodash.uniqby';
+import { getName } from '../utilities/PathUtilities';
+import { StableHasher } from '../../utilities/CoverageUtilities';
 
 export default function TestingDashboardContainer(props) {
   const { match, service } = props;
@@ -86,6 +87,7 @@ function DefaultReportRedirect(props) {
     return <div>You don't have any captures yet</div>;
   }
 }
+
 export function TestingDashboard(props) {
   const { captureId } = props.match.params;
   const { loading: loadingReport, result: report } = useTestingService(
@@ -108,22 +110,25 @@ export function TestingDashboard(props) {
 
 export function TestingReport(props) {
   const { report, spec } = props;
-  const { counts } = report;
-  const { endpoints } = spec;
+  ///const {counts} = report;
 
+  const { queries, rfcState } = spec;
+
+  const vm = viewModel(queries, rfcState, report);
+  const { endpoints, totalInteractions } = vm;
   return (
     <div>
       <h3>Testing report</h3>
 
       <h4>Summary for {spec.apiName}</h4>
-      <ul>
-        <li>Created at: {report.createdAt}</li>
-        <li>Last updated: {report.updatedAt}</li>
-        <li>Total interactions: {counts.totalInteractions}</li>
-        <li>Compliant interactions: {counts.totalCompliantInteractions}</li>
-        <li>Unmatched paths: {counts.totalUnmatchedPaths}</li>
-        <li>Total diffs: {counts.totalDiffs}</li>
-      </ul>
+      {/*<ul>*/}
+      {/*  <li>Created at: {report.createdAt}</li>*/}
+      {/*  <li>Last updated: {report.updatedAt}</li>*/}
+      <li>Total interactions: {totalInteractions}</li>
+      {/*  <li>Compliant interactions: {counts.totalCompliantInteractions}</li>*/}
+      {/*  <li>Unmatched paths: {counts.totalUnmatchedPaths}</li>*/}
+      {/*  <li>Total diffs: {counts.totalDiffs}</li>*/}
+      {/*</ul>*/}
 
       <h4>Endpoints</h4>
 
@@ -173,35 +178,50 @@ export function specFromEvents(events) {
   eventStore.bulkAdd(rfcId, JSON.stringify(events));
   const rfcService = rfcServiceFacade.makeRfcService(eventStore);
   const queries = Queries(eventStore, rfcService, rfcId);
+  const rfcState = rfcService.currentState(rfcId);
+  return {
+    queries,
+    rfcState
+  };
+}
 
+function viewModel(queries, rfcState, report) {
   const { apiName, pathsById, requestIdsByPathId, requests } = stuffFromQueries(
     queries
   );
-  const pathTree = flattenPaths('root', pathsById);
-  const pathIdsFiltered = fuzzyPathsFilter(pathTree, '');
-  const pathTreeFiltered = flattenPaths(
-    'root',
-    pathsById,
-    0,
-    '',
-    pathIdsFiltered
+  const pathIds = Object.keys(pathsById);
+  const requestIds = pathIds.flatMap(
+    (pathId) => requestIdsByPathId[pathId] || []
   );
-  const allPaths = [pathTreeFiltered, ...pathTreeFiltered.children];
-  const endpoints = uniqBy(
-    flatMapOperations(allPaths, { requests, requestIdsByPathId }),
-    'requestId'
-  ).map(({ request, path }) => ({
-    endpointId: `${request.requestId}${path.pathId}`,
-    request: {
-      requestId: request.requestId,
-      httpMethod: request.requestDescriptor.httpMethod,
-      isRemoved: request.isRemoved
-    },
-    path
-  }));
+  const endpoints = requestIds.map((requestId) => {
+    const request = requests[requestId];
+    if (!request) {
+    }
+    const { requestDescriptor, isRemoved } = request;
+    const { httpMethod, pathComponentId } = requestDescriptor;
 
+    return {
+      request: {
+        requestId,
+        httpMethod,
+        isRemoved
+      },
+      path: {
+        name: getName(pathsById[pathComponentId])
+      }
+    };
+  });
+
+  const totalInteractionsKey = StableHasher.hash(
+    opticEngine.com.useoptic.coverage.TotalInteractions()
+  );
+
+  const totalInteractions = report.coverageCounts[totalInteractionsKey] || 0;
+  const totalUnmatchedUrls = 0;
   return {
     apiName,
-    endpoints
+    endpoints,
+    totalInteractions,
+    totalUnmatchedUrls
   };
 }
