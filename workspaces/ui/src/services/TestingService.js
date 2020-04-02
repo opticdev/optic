@@ -2,10 +2,7 @@
 // interace ITestingService
 import { opticEngine } from '@useoptic/domain';
 // placeholder for actual remote service
-import {
-  reportSamples,
-  specFromEvents
-} from '../components/dashboards/TestingDashboard';
+import { specFromEvents } from '../components/dashboards/TestingDashboard';
 import { StableHasher } from '../utilities/CoverageUtilities';
 import { JsonHelper } from '@useoptic/domain';
 
@@ -23,7 +20,7 @@ export async function createExampleTestingService(exampleId) {
     throw new Error();
   });
 
-  const { orgId, specs, reports, captures } = example;
+  const { orgId, specs, samples: samplesByCaptureId, captures } = example;
 
   function getSpec(captureId) {
     const spec = specs[captureId];
@@ -33,6 +30,17 @@ export async function createExampleTestingService(exampleId) {
       return getSpec(spec);
     } else {
       return spec;
+    }
+  }
+
+  function getSamples(captureId) {
+    const samples = samplesByCaptureId[captureId];
+    if (typeof samples === 'string') {
+      // allow samples for one capture reference other samples, to keep example json
+      // under control
+      return getSamples(samples);
+    } else {
+      return samples;
     }
   }
 
@@ -55,10 +63,11 @@ export async function createExampleTestingService(exampleId) {
     async loadReport(captureId) {
       await new Promise((r) => setTimeout(r, 200));
       const events = getSpec(captureId);
+      const samples = getSamples(captureId);
       const { rfcState } = specFromEvents(events);
 
       const samplesSeq = JsonHelper.jsArrayToSeq(
-        reportSamples.map((x) => JsonHelper.fromInteraction(x))
+        samples.map((x) => JsonHelper.fromInteraction(x))
       );
       const converter = new opticEngine.com.useoptic.CoverageReportConverter(
         StableHasher
