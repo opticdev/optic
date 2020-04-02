@@ -8,10 +8,8 @@ import { JsonHelper } from '@useoptic/domain';
 
 export class TestingService {}
 
-export async function createExampleTestingService(
-  exampleUrl = '/example-reports/todo-report.json'
-) {
-  const example = await fetch(exampleUrl, {
+export async function createExampleTestingService(exampleId) {
+  const example = await fetch(`/example-reports/${exampleId}.json`, {
     headers: {
       accept: 'application/json'
     }
