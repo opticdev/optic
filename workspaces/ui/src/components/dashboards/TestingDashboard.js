@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
 import Loading from '../navigation/Loading';
 import { Link, Switch, Route, Redirect } from 'react-router-dom';
-import { opticEngine, Queries } from '@useoptic/domain';
+import { opticEngine } from '@useoptic/domain';
 import {
   createContext,
   Provider as TestingDashboardContextProvider,
+  queriesFromEvents,
   useTestingService
 } from '../../contexts/TestingDashboardContext';
 import ReportsNavigation from '../testing/reports-nav';
@@ -110,12 +111,9 @@ export function TestingDashboard(props) {
 
 export function TestingReport(props) {
   const { report, spec } = props;
-  ///const {counts} = report;
 
-  const { queries, rfcState } = spec;
-
-  const vm = viewModel(queries, rfcState, report);
-  const { endpoints, totalInteractions } = vm;
+  const summary = useMemo(() => createSummary(spec, report), [spec, report]);
+  const { endpoints, totalInteractions } = summary;
   return (
     <div>
       <h3>Testing report</h3>
@@ -150,45 +148,44 @@ export function TestingReport(props) {
 }
 
 function useSpec(captureId) {
-  const { result: events, ...hookRest } = useTestingService(
-    (service) => service.loadSpec(captureId),
+  const { result: specEvents, ...hookRest } = useTestingService(
+    (service) => service.loadSpecEvents(captureId),
     [captureId]
   );
 
+  const spec = useMemo(() => {
+    if (!specEvents) return null;
+
+    return createSpec(specEvents);
+  }, [specEvents]);
+
   // calling this spec instead of rfcState, to differentiate this as a ViewModel,
   // rather than RfcState.
-  let spec = null;
-  if (events) {
-    spec = specFromEvents(events);
-  }
-
   return { ...hookRest, result: spec };
 }
 
-// TODO: give this building of a ViewModel a more appropriate spot.
-export function specFromEvents(events) {
-  const { contexts } = opticEngine.com.useoptic;
-  const { RfcServiceJSFacade } = contexts.rfc;
-  const rfcServiceFacade = RfcServiceJSFacade();
-  const eventStore = rfcServiceFacade.makeEventStore();
-  const rfcId = 'testRfcId';
+// View models
+// -----------
+// TODO: consider moving these into their own modules or another appropriate spot (probably stable
+// for the entire dashboard context if not all of the app?)
 
-  // @TODO: figure out if it's wise to stop the parsing of JSON from the response, to prevent
-  // parse -> stringify -> parse
-  eventStore.bulkAdd(rfcId, JSON.stringify(events));
-  const rfcService = rfcServiceFacade.makeRfcService(eventStore);
-  const queries = Queries(eventStore, rfcService, rfcId);
-  const rfcState = rfcService.currentState(rfcId);
-  return {
-    queries,
-    rfcState
-  };
-}
-
-function viewModel(queries, rfcState, report) {
+function createSpec(specEvents) {
+  const { queries } = queriesFromEvents(specEvents);
   const { apiName, pathsById, requestIdsByPathId, requests } = stuffFromQueries(
     queries
   );
+
+  return {
+    apiName,
+    pathsById,
+    requestIdsByPathId,
+    requests
+  };
+}
+
+// TODO: give this building of a ViewModel a more appropriate spot.
+function createSummary(spec, report) {
+  const { apiName, pathsById, requestIdsByPathId, requests } = spec;
   const pathIds = Object.keys(pathsById);
   const requestIds = pathIds.flatMap(
     (pathId) => requestIdsByPathId[pathId] || []
