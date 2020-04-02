@@ -21,6 +21,8 @@ import * as uniqBy from 'lodash.uniqby';
 import { stuffFromQueries } from '../../contexts/RfcContext';
 import { StableHasher } from '../../utilities/CoverageUtilities';
 
+const CoverageConcerns = opticEngine.com.useoptic.coverage;
+
 export default function TestingDashboardContainer(props) {
   const { match, service } = props;
   const hasService = !!service;
@@ -111,7 +113,7 @@ export function TestingReport(props) {
   const { report, spec } = props;
 
   const summary = useMemo(() => createSummary(spec, report), [spec, report]);
-  const { endpoints, totalInteractions } = summary;
+  const { endpoints, totalInteractions, totalUnmatchedPaths } = summary;
   return (
     <div>
       <h3>Testing report</h3>
@@ -122,7 +124,7 @@ export function TestingReport(props) {
       {/*  <li>Last updated: {report.updatedAt}</li>*/}
       <li>Total interactions: {totalInteractions}</li>
       {/*  <li>Compliant interactions: {counts.totalCompliantInteractions}</li>*/}
-      {/*  <li>Unmatched paths: {counts.totalUnmatchedPaths}</li>*/}
+      <li>Unmatched paths: {totalUnmatchedPaths}</li>
       {/*  <li>Total diffs: {counts.totalDiffs}</li>*/}
       {/*</ul>*/}
 
@@ -133,7 +135,8 @@ export function TestingReport(props) {
           {endpoints.map((endpoint) => (
             <li key={endpoint.request.requestId}>
               <strong>{endpoint.request.httpMethod}</strong>{' '}
-              {endpoint.path.name}
+              {endpoint.path.name}: ({endpoint.counts.interactions}{' '}
+              interactions)
             </li>
           ))}
         </ul>
@@ -193,6 +196,7 @@ function createSummary(spec, report) {
     flatMapOperations(allPaths, { requests, requestIdsByPathId }),
     'requestId'
   ).map(({ request, path }) => {
+    const { pathId } = path;
     const { requestDescriptor, isRemoved, requestId } = request;
     const { httpMethod } = requestDescriptor;
 
@@ -204,20 +208,30 @@ function createSummary(spec, report) {
       },
       path: {
         name: path.name
+      },
+      counts: {
+        interactions: getCoverageCount(
+          CoverageConcerns.TotalForPathAndMethod(pathId, httpMethod)
+        )
       }
     };
   });
 
-  const totalInteractionsKey = StableHasher.hash(
-    opticEngine.com.useoptic.coverage.TotalInteractions()
+  const totalInteractions = getCoverageCount(
+    CoverageConcerns.TotalInteractions()
   );
-
-  const totalInteractions = report.coverageCounts[totalInteractionsKey] || 0;
-  const totalUnmatchedUrls = 0;
+  const totalUnmatchedPaths = getCoverageCount(
+    CoverageConcerns.TotalUnmatchedPath()
+  );
   return {
     apiName,
     endpoints,
     totalInteractions,
-    totalUnmatchedUrls
+    totalUnmatchedPaths
   };
+
+  function getCoverageCount(concern) {
+    const key = StableHasher.hash(concern);
+    return report.coverageCounts[key] || 0;
+  }
 }
