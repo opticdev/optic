@@ -42,8 +42,6 @@ package object ux {
 
     def inResponse: Boolean
 
-    def location: Seq[String] = Seq.empty
-
     def interactions: Seq[HttpInteraction]
 
     def count = interactions.size
