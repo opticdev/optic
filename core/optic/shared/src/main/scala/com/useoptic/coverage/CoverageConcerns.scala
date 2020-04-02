@@ -6,6 +6,10 @@ import com.useoptic.diff.shapes.ShapeTrail
 import com.useoptic.dsa.Counter
 import com.useoptic.serialization.StableHashable
 
+import scala.scalajs.js.annotation.{JSExportAll, JSExportDescendentClasses}
+
+@JSExportDescendentClasses
+@JSExportAll
 sealed trait CoverageConcerns extends StableHashable
 
 ////////////////////////////////////////////////////////////////////////////////////////////////

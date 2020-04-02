@@ -1,6 +1,5 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import Navigation, {ApiDocsSubMenu} from '../navigation/Navbar';
 import ApiOverview from '../navigation/ApiOverview';
 import Paper from '@material-ui/core/Paper';
 import Card from '@material-ui/core/Card';

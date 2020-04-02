@@ -1,12 +1,13 @@
 export const basePaths = {
-    exampleSessionsBasePath: '/example-sessions/:exampleId',
-    interceptorBasePath: '/live-session',
-    exampleDrivenSpecBasePath: '/spec-by-example',
-    exampleCommandsBasePath: '/examples/:exampleId',
-    sharedBasePath: '/shared/:sharedId',
-    localBasePath: '/specs/:specId',
-    localIntegrationsPath: '/specs/:specId/integrations/:integrationName'
-}
+  exampleSessionsBasePath: '/example-sessions/:exampleId',
+  exampleTestingDashboardBasePath: '/example-reports/:exampleId',
+  interceptorBasePath: '/live-session',
+  exampleDrivenSpecBasePath: '/spec-by-example',
+  exampleCommandsBasePath: '/examples/:exampleId',
+  sharedBasePath: '/shared/:sharedId',
+  localBasePath: '/specs/:specId',
+  localIntegrationsPath: '/specs/:specId/integrations/:integrationName'
+};
 
 export const routerPaths = {
     exampleCommandsRoot: () => basePaths.exampleCommandsBasePath,
@@ -27,6 +28,8 @@ export const routerPaths = {
     diffUrls: (base) => `${base}/urls`,
     diffRequest: (base) => `${base}/requests/:requestId`,
     //@todo -- replace the old flow with this one
-    diffRequestNew: (base) => `${base}/diff/:captureId/paths/:pathId/methods/:method`,
-    testingDashboard: (base) => `${base}/testing`
-};
+    diffRequestNew: (base) => `${base}/paths/:pathId/methods/:method`,
+    testingDashboard: (base) => `${base}/testing`,
+    exampleTestingDashboard: () => basePaths.exampleTestingDashboardBasePath
+  }
+;
