@@ -15,12 +15,10 @@ import Page from '../Page';
 // Contexts now that it's being re-used elsewhere.
 import {
   flattenPaths,
-  fuzzyConceptFilter,
-  fuzzyPathsFilter,
   flatMapOperations
 } from '../../contexts/ApiOverviewContext';
+import * as uniqBy from 'lodash.uniqby';
 import { stuffFromQueries } from '../../contexts/RfcContext';
-import { getName } from '../utilities/PathUtilities';
 import { StableHasher } from '../../utilities/CoverageUtilities';
 
 export default function TestingDashboardContainer(props) {
@@ -186,16 +184,17 @@ function createSpec(specEvents) {
 // TODO: give this building of a ViewModel a more appropriate spot.
 function createSummary(spec, report) {
   const { apiName, pathsById, requestIdsByPathId, requests } = spec;
+
   const pathIds = Object.keys(pathsById);
-  const requestIds = pathIds.flatMap(
-    (pathId) => requestIdsByPathId[pathId] || []
-  );
-  const endpoints = requestIds.map((requestId) => {
-    const request = requests[requestId];
-    if (!request) {
-    }
-    const { requestDescriptor, isRemoved } = request;
-    const { httpMethod, pathComponentId } = requestDescriptor;
+  const flattenedPaths = flattenPaths('root', pathsById, 0, '', []);
+  const allPaths = [flattenedPaths, ...flattenedPaths.children];
+
+  const endpoints = uniqBy(
+    flatMapOperations(allPaths, { requests, requestIdsByPathId }),
+    'requestId'
+  ).map(({ request, path }) => {
+    const { requestDescriptor, isRemoved, requestId } = request;
+    const { httpMethod } = requestDescriptor;
 
     return {
       request: {
@@ -204,7 +203,7 @@ function createSummary(spec, report) {
         isRemoved
       },
       path: {
-        name: getName(pathsById[pathComponentId])
+        name: path.name
       }
     };
   });
