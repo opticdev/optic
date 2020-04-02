@@ -27,8 +27,9 @@ export default function TestingDashboardContainer(props) {
   const hasService = !!service;
   const baseUrl = match.url;
 
-  const dashboardContext = useMemo(() => createContext({ service }), [
-    hasService
+  const dashboardContext = useMemo(() => createContext({ service, baseUrl }), [
+    hasService,
+    baseUrl
   ]);
 
   if (!hasService) {
