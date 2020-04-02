@@ -185,5 +185,11 @@
       }
     ]
   },
-  "examples": {}
+  "examples": {},
+  "links": [
+    {
+      "rel": "testing",
+      "href": "/example-reports/todo-report.json"
+    }
+  ]
 }
