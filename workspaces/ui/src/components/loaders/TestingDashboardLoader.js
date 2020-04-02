@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import TestingDashboard from '../dashboards/TestingDashboard';
-import { useDebugData } from '../../contexts/DebugSessionContext';
+import { useMockData } from '../../contexts/MockDataContext';
 
 import { createExampleTestingService } from '../../services/TestingService';
 
 export default function TestingServiceLoader(props) {
-  const debugData = useDebugData();
+  const debugData = useMockData();
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [service, setService] = useState(null);
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     if (debugData.available && debugData.loading) return;
 

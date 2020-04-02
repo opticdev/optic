@@ -17,6 +17,7 @@ import List from '@material-ui/core/List';
 import GridList from '@material-ui/core/GridList';
 import {PathAndMethod} from './PathAndMethod';
 import WarningIcon from '@material-ui/icons/Warning';
+import {useHistory} from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
 import {Link, withRouter} from 'react-router-dom';
 import {matchPath} from 'react-router';
@@ -30,9 +31,8 @@ import {
 import {TrafficSessionStore, TrafficSessionContext} from '../../../contexts/TrafficSessionContext';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
 import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
-import {routerPaths} from '../../../RouterPaths';
-import {withNavigationContext} from '../../../contexts/NavigationContext';
-import {withRfcContext} from '../../../contexts/RfcContext';
+import {routerPaths, useRouterPaths} from '../../../RouterPaths';
+import {RfcContext, withRfcContext} from '../../../contexts/RfcContext';
 import {lengthScala, mapScala, JsonHelper} from '@useoptic/domain';
 import {NewUrlModal} from './AddUrlModal';
 import {Route, Switch} from 'react-router-dom';
@@ -42,6 +42,11 @@ import ApiOverview from '../../navigation/ApiOverview';
 import {Show, ShowSpan} from '../../shared/Show';
 import {EndpointsContextStore, EndpointsContext} from '../../../contexts/EndpointContext';
 import MoreRecentCapture from './MoreRecentCapture';
+import Page from '../../Page';
+import ReportsNavigation from '../../testing/reports-nav';
+import {Provider as TestingDashboardContextProvider} from '../../../contexts/TestingDashboardContext';
+import {TestingDashboard} from '../../dashboards/TestingDashboard';
+import {InitialRfcCommandsContext} from '../../../contexts/InitialRfcCommandsContext';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -126,23 +131,24 @@ class _AllCapturesStore extends React.Component {
 
   render() {
 
-    const { location } = this.props;
+    const {location} = this.props;
     const matched = matchPath(location.pathname, {
+      //@todo fix this
       path: routerPaths.diffPageWithCapture(this.props.baseUrl),
       exact: false,
       strict: true
     });
 
-    const currentCaptureId = matched && matched.params.captureId
-    const lastCaptureId = (this.state.captures[0] || {}).captureId
-    const to = `/diff/${lastCaptureId}`
+    const currentCaptureId = matched && matched.params.captureId;
+    const lastCaptureId = (this.state.captures[0] || {}).captureId;
+    const to = `/diff/${lastCaptureId}`;
 
     const context = {
       captures: this.state.captures,
       lastCapture: this.state.captures[0],
     };
 
-    const shouldShow = matched && lastCaptureId && currentCaptureId !== lastCaptureId && this.state.dismiss !== lastCaptureId
+    const shouldShow = matched && lastCaptureId && currentCaptureId !== lastCaptureId && this.state.dismiss !== lastCaptureId;
     return (
       <AllCapturesContext.Provider value={context}>
         {this.props.children}
@@ -155,34 +161,50 @@ class _AllCapturesStore extends React.Component {
   }
 }
 
-export const AllCapturesStore = withNavigationContext(withRouter(withSpecServiceContext(_AllCapturesStore)));
+export const AllCapturesStore = withRouter(withSpecServiceContext(_AllCapturesStore));
 
-export const CaptureManagerPage = withNavigationContext(({match, baseUrl, specService}) => {
+export const CaptureManagerPage = ({match, specService}) => {
+
+  const routerPaths = useRouterPaths();
+
+
   return (
-    <AllCapturesStore>
-      <IgnoreDiffStore>
-          <Switch>
-            <Route exact path={routerPaths.diffPage(baseUrl)}
-                   component={() => <CaptureManager specService={specService}/>}/>
-            <Route exact path={routerPaths.diffPageWithCapture(baseUrl)}
-                   component={(props) => <CaptureManager specService={specService}
-                                                         captureId={props.match.params.captureId}/>}/>
-
-            <Route exact path={routerPaths.diffRequestNew(baseUrl)} component={(props) => {
-              return (
-                <TrafficSessionStore sessionId={props.match.params.captureId} specService={specService}>
-                  <DiffPageNew {...props} />
-                </TrafficSessionStore>
-              );
-            }}/>
-          </Switch>
-      </IgnoreDiffStore>
-    </AllCapturesStore>
+    <Page title="Optic Live Contracting Dashboard">
+      <Page.Navbar
+        mini={true}
+        baseUrl={match.url}
+      />
+      <Page.Body>
+        <Switch>
+          <AllCapturesStore>
+            <IgnoreDiffStore>
+              <Switch>
+                <Route exact path={routerPaths.diffPage()}
+                       component={() => <CaptureManager specService={specService}/>}/>
+                <Route exact path={routerPaths.diffPageWithCapture()}
+                       component={(props) => <CaptureManager specService={specService}
+                                                             captureId={props.match.params.captureId}/>}/>
+                <Route exact path={routerPaths.diffRequestNew()} component={(props) => {
+                  return (
+                    <TrafficSessionStore sessionId={props.match.params.captureId} specService={specService}>
+                      <DiffPageNew {...props} />
+                    </TrafficSessionStore>
+                  );
+                }}/>
+              </Switch>
+            </IgnoreDiffStore>
+          </AllCapturesStore>
+        </Switch>
+      </Page.Body>
+    </Page>
   );
-});
 
-export const CaptureManager = withRfcContext(withNavigationContext(({interactionsWithDiffsCount, captureId, rfcId, baseUrl, rfcService, specService, pushRelative}) => {
+};
+
+export const CaptureManager = ({captureId, specService}) => {
   const classes = useStyles();
+  const {rfcService, rfcId} = useContext(RfcContext);
+  const history = useHistory();
   const captureContext = useContext(AllCapturesContext);
   const {ignoredDiffs} = useContext(IgnoreDiffContext);
   const [alphabetize, setAlphabetize] = useState(true);
@@ -190,12 +212,12 @@ export const CaptureManager = withRfcContext(withNavigationContext(({interaction
 
   function handleChange(event) {
     const captureId = event.target.value;
-    pushRelative(`/diff/${captureId}`);
+    history.push(`diff/${captureId}`);
   }
 
   if (captureContext.captures.length > 0 && !captureId) {
-    pushRelative(`/diff/${captureContext.captures[0].captureId}`);
-    return null
+    history.push(`diff/${captureContext.captures[0].captureId}`);
+    return null;
   }
 
   return (
@@ -236,6 +258,7 @@ export const CaptureManager = withRfcContext(withNavigationContext(({interaction
             renderNoSession={<div>No Capture</div>}>
             <TrafficSessionContext.Consumer>
               {({diffManager}) => {
+
                 diffManager.updatedRfcState(rfcState);
 
                 const ignoredAsSeq = JsonHelper.jsArrayToSeq(ignoredDiffs);
@@ -253,11 +276,16 @@ export const CaptureManager = withRfcContext(withNavigationContext(({interaction
                         and <Stat number={stats.undocumentedEndpoints} label="undocumented endpoint"/>.</Typography>
                     </div>
 
+                    {rfcState.toString()}
+                    <div>
+                      {rfcState.toString().length}
+                    </div>
+
                     <Show when={lengthScala(endpointDiffs) > 0}>
                       <DocSubGroup title={`Endpoint Diffs (${lengthScala(endpointDiffs)})`}>
                         <List fullWidth>
                           {mapScala(endpointDiffs)(i => {
-                            const to = `${baseUrl}/diff/${captureId}/paths/${i.pathId}/methods/${i.method}`;
+                            const to = `${captureId}/paths/${i.pathId}/methods/${i.method}`;
                             return (
                               <EndpointsContextStore pathId={i.pathId} method={i.method}>
                                 <EndpointsContext.Consumer>
@@ -324,7 +352,7 @@ export const CaptureManager = withRfcContext(withNavigationContext(({interaction
       </div>
     </div>
   );
-}));
+};
 
 const Stat = ({number, label}) => {
   const classes = useStyles();

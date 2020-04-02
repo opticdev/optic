@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link as RouterLink, NavLink as RouterNavLink } from 'react-router-dom';
-import { useDebugPath } from '../contexts/DebugSessionContext';
+import {useBathUrl} from '../contexts/MockDataContext';
 
 export function Link(props) {
-  const debugPrefix = useDebugPath();
+  const debugPrefix = useBathUrl();
   const prefix = typeof props.prefix === 'undefined' ? true : props.prefix;
   const to = prefix ? prefixPath(props.to, debugPrefix) : props.to;
 
@@ -12,7 +12,7 @@ export function Link(props) {
 Link.displayName = 'OpticLink';
 
 export function NavLink(props) {
-  const debugPrefix = useDebugPath();
+  const debugPrefix = useBathUrl();
   const prefix = typeof props.prefix === 'undefined' ? true : props.prefix;
   const to = prefix ? prefixPath(props.to, debugPrefix) : props.to;
 

@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 
-const DebugSessionContext = React.createContext(null);
-DebugSessionContext.displayName = 'DebugSessionContext';
+const MockDataContext = React.createContext(null);
+MockDataContext.displayName = 'MockDataContext';
 
 // only expose the Provider component, but hide the Consumer in favour of hooks
-export const { Provider } = DebugSessionContext;
+export const { Provider } = MockDataContext;
 
 function createDebugSession({ sessionId, path }) {
   let fetchedData = null;
@@ -34,7 +34,7 @@ function createDebugSession({ sessionId, path }) {
 // Hooks
 // -----
 
-export function useDebugSession({ sessionId, path }) {
+export function useMockSession({ sessionId, path }) {
   const dashboardContext = useMemo(
     () => createDebugSession({ sessionId, path }),
     [sessionId, path]
@@ -43,8 +43,8 @@ export function useDebugSession({ sessionId, path }) {
   return dashboardContext;
 }
 
-export function useDebugData(deps) {
-  const debugSession = useContext(DebugSessionContext);
+export function useMockData(deps) {
+  const debugSession = useContext(MockDataContext);
   // TODO: consider using useReducer here instead, lots of moving bits of state here
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -74,8 +74,8 @@ export function useDebugData(deps) {
   return { available, data, loading, error };
 }
 
-export function useDebugPath() {
-  const debugSession = useContext(DebugSessionContext);
+export function useBathUrl() {
+  const debugSession = useContext(MockDataContext);
 
   return !!debugSession ? debugSession.path : '/';
 }

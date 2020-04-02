@@ -66,7 +66,7 @@ class RfcStoreWithoutContext extends React.Component {
 
   constructor(props) {
     super(props);
-
+    //@todo Dev Doshi will refactor
     this.handleCommands = this.handleCommands.bind(this);
     const {initialCommandsString, initialEventsString, rfcId} = this.props;
     const eventStore = Facade.makeEventStore();
