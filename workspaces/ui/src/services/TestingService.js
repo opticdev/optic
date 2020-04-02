@@ -67,8 +67,6 @@ export async function createExampleTestingService(exampleId) {
         .CoverageHelpers()
         .getCoverage(rfcState, samplesSeq);
       const serializedReport = converter.toJs(report);
-      console.log({ serializedReport });
-      debugger;
       return serializedReport;
     }
   }
