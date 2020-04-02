@@ -1,7 +1,7 @@
-import React, {useMemo} from 'react';
+import React, { useMemo } from 'react';
 import Loading from '../navigation/Loading';
-import {Link, Switch, Route, Redirect} from 'react-router-dom';
-import {opticEngine, Queries} from '@useoptic/domain';
+import { Link, Switch, Route, Redirect } from 'react-router-dom';
+import { opticEngine, Queries } from '@useoptic/domain';
 import {
   createContext,
   Provider as TestingDashboardContextProvider,
@@ -18,22 +18,22 @@ import {
   fuzzyPathsFilter,
   flatMapOperations
 } from '../../contexts/ApiOverviewContext';
-import {stuffFromQueries} from '../../contexts/RfcContext';
-import {getName} from '../utilities/PathUtilities';
-import {StableHasher} from '../../utilities/CoverageUtilities';
+import { stuffFromQueries } from '../../contexts/RfcContext';
+import { getName } from '../utilities/PathUtilities';
+import { StableHasher } from '../../utilities/CoverageUtilities';
 
 export default function TestingDashboardContainer(props) {
-  const {match, service} = props;
+  const { match, service } = props;
   const hasService = !!service;
   const baseUrl = match.url;
 
-  const dashboardContext = useMemo(() => createContext({service, baseUrl}), [
+  const dashboardContext = useMemo(() => createContext({ service, baseUrl }), [
     hasService,
     baseUrl
   ]);
 
   if (!hasService) {
-    return <Loading/>;
+    return <Loading />;
   }
 
   return (
@@ -48,13 +48,13 @@ export default function TestingDashboardContainer(props) {
         />
 
         <Page.Body>
-          <ReportsNavigation/>
+          <ReportsNavigation />
           <Switch>
             <Route
               path={`${baseUrl}/captures/:captureId`}
               component={TestingDashboard}
             />
-            <Route component={DefaultReportRedirect}/>
+            <Route component={DefaultReportRedirect} />
           </Switch>
         </Page.Body>
       </Page>
@@ -63,15 +63,15 @@ export default function TestingDashboardContainer(props) {
 }
 
 function DefaultReportRedirect(props) {
-  const {match} = props;
+  const { match } = props;
   const baseUrl = match.url;
 
-  const {loading, result: captures} = useTestingService((service) =>
+  const { loading, result: captures } = useTestingService((service) =>
     service.listCaptures()
   );
 
   if (loading) {
-    return <Loading/>;
+    return <Loading />;
   }
 
   if (!captures) {
@@ -81,7 +81,7 @@ function DefaultReportRedirect(props) {
 
   let mostRecent = captures[0];
   if (mostRecent) {
-    return <Redirect to={`${baseUrl}/captures/${mostRecent.captureId}`}/>;
+    return <Redirect to={`${baseUrl}/captures/${mostRecent.captureId}`} />;
   } else {
     // TODO: revisit this UI state
     return <div>You don't have any captures yet</div>;
@@ -89,33 +89,33 @@ function DefaultReportRedirect(props) {
 }
 
 export function TestingDashboard(props) {
-  const {captureId} = props.match.params;
-  const {loading: loadingReport, result: report} = useTestingService(
+  const { captureId } = props.match.params;
+  const { loading: loadingReport, result: report } = useTestingService(
     (service) => service.loadReport(captureId),
     [captureId]
   );
 
-  const {loading: loadingSpec, result: spec} = useSpec(captureId);
+  const { loading: loadingSpec, result: spec } = useSpec(captureId);
 
   return (
     <div>
       <h2>Live Contract Testing Dashboard for capture {captureId}</h2>
 
-      {(loadingReport || loadingSpec) && <Loading/>}
+      {(loadingReport || loadingSpec) && <Loading />}
 
-      {report && spec && <TestingReport report={report} spec={spec}/>}
+      {report && spec && <TestingReport report={report} spec={spec} />}
     </div>
   );
 }
 
 export function TestingReport(props) {
-  const {report, spec} = props;
+  const { report, spec } = props;
   ///const {counts} = report;
 
-  const {queries, rfcState} = spec;
+  const { queries, rfcState } = spec;
 
   const vm = viewModel(queries, rfcState, report);
-  const {endpoints, totalInteractions} = vm;
+  const { endpoints, totalInteractions } = vm;
   return (
     <div>
       <h3>Testing report</h3>
@@ -124,7 +124,7 @@ export function TestingReport(props) {
       {/*<ul>*/}
       {/*  <li>Created at: {report.createdAt}</li>*/}
       {/*  <li>Last updated: {report.updatedAt}</li>*/}
-        <li>Total interactions: {totalInteractions}</li>
+      <li>Total interactions: {totalInteractions}</li>
       {/*  <li>Compliant interactions: {counts.totalCompliantInteractions}</li>*/}
       {/*  <li>Unmatched paths: {counts.totalUnmatchedPaths}</li>*/}
       {/*  <li>Total diffs: {counts.totalDiffs}</li>*/}
@@ -150,7 +150,7 @@ export function TestingReport(props) {
 }
 
 function useSpec(captureId) {
-  const {result: events, ...hookRest} = useTestingService(
+  const { result: events, ...hookRest } = useTestingService(
     (service) => service.loadSpec(captureId),
     [captureId]
   );
@@ -162,17 +162,16 @@ function useSpec(captureId) {
     spec = specFromEvents(events);
   }
 
-  return {...hookRest, result: spec};
+  return { ...hookRest, result: spec };
 }
 
 // TODO: give this building of a ViewModel a more appropriate spot.
 export function specFromEvents(events) {
-  const {contexts} = opticEngine.com.useoptic;
-  const {RfcServiceJSFacade} = contexts.rfc;
+  const { contexts } = opticEngine.com.useoptic;
+  const { RfcServiceJSFacade } = contexts.rfc;
   const rfcServiceFacade = RfcServiceJSFacade();
   const eventStore = rfcServiceFacade.makeEventStore();
   const rfcId = 'testRfcId';
-
 
   // @TODO: figure out if it's wise to stop the parsing of JSON from the response, to prevent
   // parse -> stringify -> parse
@@ -187,16 +186,19 @@ export function specFromEvents(events) {
 }
 
 function viewModel(queries, rfcState, report) {
-  const {apiName, pathsById, requestIdsByPathId, requests} = stuffFromQueries(queries);
+  const { apiName, pathsById, requestIdsByPathId, requests } = stuffFromQueries(
+    queries
+  );
   const pathIds = Object.keys(pathsById);
-  const requestIds = pathIds.flatMap(pathId => requestIdsByPathId[pathId] || []);
-  const endpoints = requestIds.map(requestId => {
+  const requestIds = pathIds.flatMap(
+    (pathId) => requestIdsByPathId[pathId] || []
+  );
+  const endpoints = requestIds.map((requestId) => {
     const request = requests[requestId];
     if (!request) {
-
     }
-    const {requestDescriptor, isRemoved} = request;
-    const {httpMethod, pathComponentId} = requestDescriptor;
+    const { requestDescriptor, isRemoved } = request;
+    const { httpMethod, pathComponentId } = requestDescriptor;
 
     return {
       request: {
@@ -206,11 +208,13 @@ function viewModel(queries, rfcState, report) {
       },
       path: {
         name: getName(pathsById[pathComponentId])
-      },
+      }
     };
   });
 
-  const totalInteractionsKey = StableHasher.hash(opticEngine.com.useoptic.coverage.TotalInteractions());
+  const totalInteractionsKey = StableHasher.hash(
+    opticEngine.com.useoptic.coverage.TotalInteractions()
+  );
 
   const totalInteractions = report.coverageCounts[totalInteractionsKey] || 0;
   const totalUnmatchedUrls = 0;
@@ -224,175 +228,178 @@ function viewModel(queries, rfcState, report) {
 
 export const reportSamples = [
   {
-    'uuid': '2',
-    'request': {
-      'host': 'localhost',
-      'method': 'GET',
-      'path': '/todos',
-      'query': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+    uuid: '2',
+    request: {
+      host: 'localhost',
+      method: 'GET',
+      path: '/todos',
+      query: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'headers': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+      headers: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'body': {
-        'contentType': null,
-        'value': {
-          'asJsonString': null,
-          'asText': null,
-          'asShapeHashBytes': null
+      body: {
+        contentType: null,
+        value: {
+          asJsonString: null,
+          asText: null,
+          asShapeHashBytes: null
         }
       }
     },
-    'response': {
-      'statusCode': 200,
-      'headers': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+    response: {
+      statusCode: 200,
+      headers: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'body': {
-        'contentType': 'application/json',
-        'value': {
-          'asJsonString': '{\n\t\t"task": "Build It",\n\t\t"isDone": false\n\t}',
-          'asText': null,
-          'asShapeHashBytes': null
+      body: {
+        contentType: 'application/json',
+        value: {
+          asJsonString: '{\n\t\t"task": "Build It",\n\t\t"isDone": false\n\t}',
+          asText: null,
+          asShapeHashBytes: null
         }
       }
     },
-    'tags': []
+    tags: []
   },
   {
-    'uuid': '3',
-    'request': {
-      'host': 'localhost',
-      'method': 'GET',
-      'path': '/todos',
-      'query': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+    uuid: '3',
+    request: {
+      host: 'localhost',
+      method: 'GET',
+      path: '/todos',
+      query: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'headers': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+      headers: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'body': {
-        'contentType': null,
-        'value': {
-          'asJsonString': null,
-          'asText': null,
-          'asShapeHashBytes': null
+      body: {
+        contentType: null,
+        value: {
+          asJsonString: null,
+          asText: null,
+          asShapeHashBytes: null
         }
       }
     },
-    'response': {
-      'statusCode': 200,
-      'headers': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+    response: {
+      statusCode: 200,
+      headers: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'body': {
-        'contentType': 'application/json',
-        'value': {
-          'asJsonString': '{\n\t\t"task": "Build It",\n\t\t"isDone": false\n\t, "dueData": "MONDAY"}',
-          'asText': null,
-          'asShapeHashBytes': null
+      body: {
+        contentType: 'application/json',
+        value: {
+          asJsonString:
+            '{\n\t\t"task": "Build It",\n\t\t"isDone": false\n\t, "dueData": "MONDAY"}',
+          asText: null,
+          asShapeHashBytes: null
         }
       }
     },
-    'tags': []
+    tags: []
   },
   {
-    'uuid': '4',
-    'request': {
-      'host': 'localhost',
-      'method': 'GET',
-      'path': '/todos',
-      'query': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+    uuid: '4',
+    request: {
+      host: 'localhost',
+      method: 'GET',
+      path: '/todos',
+      query: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'headers': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+      headers: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'body': {
-        'contentType': null,
-        'value': {
-          'asJsonString': null,
-          'asText': null,
-          'asShapeHashBytes': null
+      body: {
+        contentType: null,
+        value: {
+          asJsonString: null,
+          asText: null,
+          asShapeHashBytes: null
         }
       }
     },
-    'response': {
-      'statusCode': 200,
-      'headers': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+    response: {
+      statusCode: 200,
+      headers: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'body': {
-        'contentType': 'application/json',
-        'value': {
-          'asJsonString': '{\n\t\t"task": "Build It",\n\t\t"isDone": false\n\t, "dueData": "TUESDAY"}',
-          'asText': null,
-          'asShapeHashBytes': null
+      body: {
+        contentType: 'application/json',
+        value: {
+          asJsonString:
+            '{\n\t\t"task": "Build It",\n\t\t"isDone": false\n\t, "dueData": "TUESDAY"}',
+          asText: null,
+          asShapeHashBytes: null
         }
       }
     },
-    'tags': []
+    tags: []
   },
   {
-    'uuid': '5',
-    'request': {
-      'host': 'localhost',
-      'method': 'GET',
-      'path': '/todos',
-      'query': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+    uuid: '5',
+    request: {
+      host: 'localhost',
+      method: 'GET',
+      path: '/todos',
+      query: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'headers': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+      headers: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'body': {
-        'contentType': null,
-        'value': {
-          'asJsonString': null,
-          'asText': null,
-          'asShapeHashBytes': null
+      body: {
+        contentType: null,
+        value: {
+          asJsonString: null,
+          asText: null,
+          asShapeHashBytes: null
         }
       }
     },
-    'response': {
-      'statusCode': 200,
-      'headers': {
-        'asJsonString': null,
-        'asText': null,
-        'asShapeHashBytes': null
+    response: {
+      statusCode: 200,
+      headers: {
+        asJsonString: null,
+        asText: null,
+        asShapeHashBytes: null
       },
-      'body': {
-        'contentType': 'application/json',
-        'value': {
-          'asJsonString': '{\n\t\t"task": "Build It",\n\t\t"isDone": false\n\t, "dueData": "WEDNESDAY"}',
-          'asText': null,
-          'asShapeHashBytes': null
+      body: {
+        contentType: 'application/json',
+        value: {
+          asJsonString:
+            '{\n\t\t"task": "Build It",\n\t\t"isDone": false\n\t, "dueData": "WEDNESDAY"}',
+          asText: null,
+          asShapeHashBytes: null
         }
       }
     },
-    'tags': []
+    tags: []
   }
 ];
