@@ -3,7 +3,7 @@ import React from 'react';
 import {SpecService} from '../../../services/SpecService.js';
 import {basePaths} from '../../../RouterPaths';
 import {LoaderFactory} from '../../loaders/LoaderFactory';
-import {notificationAreaComponent, shareButtonComponent} from '../../loaders/SharedLoader';
+import {shareButtonComponent} from '../../loaders/SharedLoader';
 import {LocalRfcStore} from '../../../contexts/RfcContext';
 import EventEmitter from 'events';
 
@@ -21,7 +21,6 @@ const {
   RfcStoreImpl: LocalRfcStore,
   specServiceTask,
   specServiceEvents,
-  notificationAreaComponent,
   shareButtonComponent,
   basePath
 });

@@ -13,7 +13,6 @@ class _DiffContextStore extends React.Component {
 
   state = {
     selectedDiff: null,
-    expandedPreviewDiff: null,
     selectedInterpretation: null,
     isFinishing: false
   };
@@ -31,9 +30,6 @@ class _DiffContextStore extends React.Component {
     const setSelectedDiff = (diff) => {
       this.setState({selectedDiff: diff || null, selectedInterpretation: null})
     };
-    const setExpandedPreviewDiff = (diff) => {
-      this.setState({expandedPreviewDiff: diff})
-    };
     const setSelectedInterpretation = (interpretation) => {
       setSuggestionToPreview(interpretation);
       this.setState({selectedInterpretation: interpretation});
@@ -50,8 +46,6 @@ class _DiffContextStore extends React.Component {
       selectedDiff: this.state.selectedDiff,
       setSelectedDiff,
       isFinishing: this.state.isFinishing,
-      expandedPreviewDiff: this.state.expandedPreviewDiff,
-      setExpandedPreviewDiff,
 
       // setIsFinishing,
       clearPreview: () => {

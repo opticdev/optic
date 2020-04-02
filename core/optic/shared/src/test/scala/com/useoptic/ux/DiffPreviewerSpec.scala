@@ -42,7 +42,18 @@ class DiffPreviewerSpec extends FunSpec with JsonFileFixture {
 
   it("can render a diff in array items preview") {
     val preview = previewFor(ShapeExamples.stringArray, JsonExamples.stringArrayWithNumbers)
-    null
+  }
+
+  describe("Example only render") {
+
+    it("can render arbitrary json") {
+
+      val preview = DiffPreviewer.previewJson(
+        JsonLikeFrom.json(Json.obj("a" -> Json.fromBoolean(true), "b" -> Json.fromString("Aidan"))).get
+      )
+
+    }
+
   }
 
 }

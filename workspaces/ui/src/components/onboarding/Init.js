@@ -29,7 +29,6 @@ import {Link} from 'react-router-dom';
 import {withTrafficSessionContext} from '../../contexts/TrafficSessionContext';
 import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
 import {withNavigationContext} from '../../contexts/NavigationContext';
-import {LinkToDocumentUrls, NewBehaviorSideBar} from '../navigation/NewBehavior';
 import Card from '@material-ui/core/Card';
 import {AddedGreen} from '../shapes/ShapeViewer';
 
@@ -327,11 +326,8 @@ class Status extends React.Component {
                       <VerifiedUserIcon color="primary" style={{color: AddedGreen, height: 60, width: 60}}/>
                       <div style={{paddingLeft: 18}}>
                         <MarkdownRender source={`##### Optic is all set up!`}/>
-
-                        <LinkToDocumentUrls>
                           <Button variant="outlined" color="primary">Start Documenting your
                             API</Button>
-                        </LinkToDocumentUrls>
                       </div>
                     </Paper>
                   )}

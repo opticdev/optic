@@ -6,6 +6,7 @@ import com.useoptic.serialization.StableHashable
 
 sealed trait InteractionDiffResult extends StableHashable with DiffResult {
   def interactionTrail: InteractionTrail
+  def requestsTrail: RequestSpecTrail
   def shapeDiffResultOption: Option[ShapeDiffResult] = None
 }
 

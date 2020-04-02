@@ -68,6 +68,7 @@ export interface IOpticTaskRunnerConfig {
   command?: string
   captureId: string
   startTime: Date,
+  lastUpdateTime: Date,
   persistenceEngine: 'fs' | 's3'
   // where does the service normally live?
   serviceConfig: {
@@ -98,6 +99,7 @@ export async function TaskToStartConfig(task: IOpticTask, captureId: string): Pr
     persistenceEngine: 'fs',
     captureId,
     startTime: new Date(),
+    lastUpdateTime: new Date(),
     serviceConfig: {
       port: task.proxy ? parseInt(proxyPort, 10) : randomPort,
       host: parsedBaseUrl.hostname || 'localhost',
@@ -121,6 +123,7 @@ export interface IPathMapping {
   gitignorePath: string
   capturesPath: string
   exampleRequestsPath: string
+  tokenStorePath: string
 }
 
 export async function getPathsRelativeToConfig() {
@@ -140,6 +143,7 @@ export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> 
   const gitignorePath = path.join(basePath, '.gitignore');
   const specStorePath = path.join(basePath, 'api', 'specification.json');
   const exampleRequestsPath = path.join(basePath, 'api', 'example-requests');
+  const tokenStorePath = path.join(basePath, 'api', 'token');
   await fs.ensureDir(capturesPath);
   await fs.ensureDir(exampleRequestsPath);
 
@@ -151,11 +155,12 @@ export async function getPathsRelativeToCwd(cwd: string): Promise<IPathMapping> 
     gitignorePath,
     capturesPath,
     exampleRequestsPath,
+    tokenStorePath
   };
 }
 
-export async function createFileTree(config: IApiCliConfig, basePath: string) {
-  const {specStorePath, configPath, gitignorePath, capturesPath} = await getPathsRelativeToCwd(basePath);
+export async function createFileTree(config: string, token: string, basePath: string) {
+  const {specStorePath, configPath, gitignorePath, capturesPath, tokenStorePath} = await getPathsRelativeToCwd(basePath);
   const files = [
     {
       path: gitignorePath,
@@ -167,11 +172,15 @@ captures/
       path: specStorePath,
       contents: JSON.stringify([])
     },
+    {
+      path: tokenStorePath,
+      contents: token
+    },
   ];
   if (config) {
     files.push({
       path: configPath,
-      contents: yaml.safeDump(config)
+      contents: config
     });
   }
   await Promise.all(
@@ -181,6 +190,11 @@ captures/
     })
   );
   await fs.ensureDir(capturesPath);
+  return {
+    configPath,
+    basePath,
+    capturesPath
+  }
 }
 
 export {

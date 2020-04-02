@@ -10,6 +10,11 @@ export const appTheme = createMuiTheme({
 	},
 	typography: {
 		// Use the system font instead of the default Roboto font.
-		fontFamily: ['Ubuntu']
+		fontFamily: ['Ubuntu', 'Inter']
 	}
 });
+
+
+export const AddedGreenBackground = 'rgba(0,196,70,0.3)';
+export const ChangedYellowBackground = 'rgba(252,171,16,0.3)';
+export const RemovedRedBackground = 'rgba(248,51,60,0.3)'

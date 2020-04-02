@@ -70,7 +70,8 @@ const styles = theme => ({
   },
   middle: {
     margin: '0 auto',
-    maxWidth: 1200
+    maxWidth: 1200,
+    paddingTop: 25
   },
   scroll: {
     overflow: 'scroll',
@@ -105,13 +106,13 @@ class DiffPageNew extends React.Component {
   render() {
 
     const {classes, specStore} = this.props;
-    const {pathId, method, sessionId} = this.props.match.params;
+    const {pathId, method, captureId} = this.props.match.params;
     return (
       <DiffToggleContextStore>
         <RequestTabsContextStore>
-          <CaptureSessionInlineContext specStore={specStore} sessionId={sessionId} pathId={pathId} method={method}>
+          <CaptureSessionInlineContext specStore={specStore} captureId={captureId} pathId={pathId} method={method}>
             <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
-              <DiffPageContent/>
+              <DiffPageContent captureId={captureId}/>
             </EndpointsContextStore>
           </CaptureSessionInlineContext>
         </RequestTabsContextStore>
@@ -150,17 +151,16 @@ class _DiffPageContent extends React.Component {
       clientSessionId,
       reset,
       specService,
+      captureId,
     } = this.props;
-    const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, isEmpty} = endpointDescriptor;
 
+    const {fullPath, httpMethod, endpointPurpose, requestBodies, pathParameters, responses, isEmpty} = endpointDescriptor;
 
     function handleDiscard() {
       //@GOTCHA this resets ignored state as well
       reset();
     }
 
-    //
-    //
     async function handleApply(message = 'EMPTY MESSAGE') {
       const newEventStore = initialEventStore.getCopy(rfcId);
       const {StartBatchCommit, EndBatchCommit} = opticEngine.com.useoptic.contexts.rfc.Commands;
@@ -173,34 +173,28 @@ class _DiffPageContent extends React.Component {
       specContext.applyCommands(jsonHelper.jsArrayToVector([EndBatchCommit(batchId)]));
       console.log(JSON.parse(newEventStore.serializeEvents(rfcId)));
       await specService.saveEvents(newEventStore, rfcId);
-      history.push(routerPaths.apiDocumentation(baseUrl));
+      history.push(`${baseUrl}/diff/${captureId}`);
     }
 
     return (
       <IgnoreDiffContext.Consumer>
         {({ignoreDiff, ignoredDiffs}) => (
           <div className={classes.container}>
-            <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
-              <Toolbar variant="dense">
-                <Typography variant="h6">Review Endpoint Diff</Typography>
-                {/*<BatchActionsMenu reset={reset}/>*/}
-                <div style={{flex: 1}}/>
-                <div>
-                  <Typography variant="caption" style={{fontSize: 10, color: '#a4a4a4', marginRight: 15}}>Accepted
-                    {/*({acceptedSuggestions.length})*/}
-                    Suggestions</Typography>
-                  {/*<Button onClick={() => setIsFinishing(true)} startIcon={<Check/>}*/}
-                  {/*        color="secondary">Finish</Button>*/}
-                </div>
-              </Toolbar>
-            </AppBar>
-
-            <div className={classes.topContainer}>
               <div className={classes.scroll}>
                 <div className={classes.middle}>
 
-                  <Typography variant="h4" color="primary"
-                              style={{marginBottom: 12}}>{endpointPurpose || 'Endpoint Purpose'}</Typography>
+
+                  <CommitCard acceptedSuggestions={acceptedSuggestions}
+                              ignoredDiffs={ignoredDiffs}
+                              diffCount={endpointDiffManger.diffCount}
+                              interactionsWithDiffsCount={endpointDiffManger.interactionsWithDiffsCount}
+                              endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
+                              method={httpMethod}
+                              fullPath={fullPath}
+                              reset={handleDiscard}
+                              apply={handleApply}
+
+                  />
 
                   <NewRegions ignoreDiff={ignoreDiff}
                               regions={endpointDiffManger.diffRegions.newRegions}/>
@@ -214,22 +208,7 @@ class _DiffPageContent extends React.Component {
                     region={endpointDiffManger.diffRegions.responseRegions}
                     title="Response Body Diffs"/>
 
-                  {endpointDiffManger.noDiff && acceptedSuggestions.length === 0 ?
-                    <Typography variant="h6">No more diffs for this endpoint</Typography> : (
-                      <>
-                        <DocDivider style={{marginTop: 75, marginBottom: 25}}/>
-                        <CommitCard acceptedSuggestions={acceptedSuggestions}
-                                    ignoredDiffs={ignoredDiffs}
-                                    reset={handleDiscard}
-                                    apply={handleApply}
-
-                        />
-                      </>
-                    )}
-
-
                 </div>
-              </div>
             </div>
           </div>
         )}
@@ -274,7 +253,7 @@ function SuggestionsStore({children}) {
 
 export const IgnoreDiffContext = React.createContext(null);
 
-function IgnoreDiffStore({children}) {
+export function IgnoreDiffStore({children}) {
   const [ignoredDiffs, setIgnoredDiffs] = React.useState([]);
 
   const ignoreDiff = (...diffs) => {
@@ -310,12 +289,13 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   }
 
   const rfcState = rfcService.currentState(rfcId);
-
   diffManager.updatedRfcState(rfcState);
 
   const ignored = jsonHelper.jsArrayToSeq(ignoredDiffs);
 
   const endpointDiffManger = diffManager.managerForPathAndMethod(pathId, method, ignored);
+
+
 
   const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
 
@@ -371,19 +351,12 @@ class _CaptureSessionInlineContext extends React.Component {
     const {
       rfcId,
       eventStore,
-      sessionId,
-      specService,
       children,
       pathId,
       method
     } = this.props;
     return (
       //@todo refactor sessionId to captureId
-      <TrafficSessionStore
-        sessionId={sessionId}
-        specService={specService}
-        renderNoSession={<div>No Capture</div>}>
-        <IgnoreDiffStore>
           <SuggestionsStore>
             <IgnoreDiffContext.Consumer>
               {({ignoredDiffs, resetIgnored}) => (
@@ -427,8 +400,6 @@ class _CaptureSessionInlineContext extends React.Component {
             </IgnoreDiffContext.Consumer>
 
           </SuggestionsStore>
-        </IgnoreDiffStore>
-      </TrafficSessionStore>
     );
   }
 };

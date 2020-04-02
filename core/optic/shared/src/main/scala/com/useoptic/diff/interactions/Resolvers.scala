@@ -16,6 +16,15 @@ object Resolvers {
       )
   }
 
+  def resolveOperations(method: String, pathId: Commands.PathComponentId, requestsState: RequestsState) = {
+    requestsState.requests.values
+      .filter(r => (
+        r.requestDescriptor.pathComponentId == pathId
+          && r.requestDescriptor.httpMethod == method
+        )
+      )
+  }
+
   def resolveResponses(interaction: HttpInteraction, requestId: Commands.RequestId, requestsState: RequestsState) = {
     val request = requestsState.requests(requestId)
     println(requestsState.responses.values)
@@ -28,6 +37,17 @@ object Resolvers {
           )
       })
   }
+
+  def resolveResponses(method: String, pathId: Commands.PathComponentId, requestsState: RequestsState) = {
+    requestsState.responses.values
+      .filter(r => {
+        (
+          r.responseDescriptor.pathId == pathId
+            && r.responseDescriptor.httpMethod == method
+          )
+      })
+  }
+
 
   def resolveResponsesByPathAndMethod(interaction: HttpInteraction, pathId: PathComponentId, requestsState: RequestsState) = {
     requestsState.responses.values

@@ -105,6 +105,7 @@ export const StableHashableWrapper = opticEngine.com.useoptic.StableHashableWrap
 
 
 export const DiffManagerFacade = opticEngine.com.useoptic.DiffManagerFacade()
+export const DiffPreviewer = opticEngine.com.useoptic.ux.DiffPreviewer()
 
 import {checkDiffOrUnrecognizedPath} from './check-diff';
 import {IHttpInteraction} from './domain-types/optic-types';

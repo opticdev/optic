@@ -1,21 +1,20 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from '@material-ui/core';
 import classNames from 'classnames';
-import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground} from '../../../contexts/ColorContext';
 import Toolbar from '@material-ui/core/Toolbar';
 import WarningIcon from '@material-ui/icons/Warning';
-import {primary, secondary} from '../../../theme';
+import {AddedGreenBackground, ChangedYellowBackground, primary, RemovedRedBackground, secondary} from '../../../theme';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tooltip from '@material-ui/core/Tooltip';
-import {withShapeRenderContext} from './ShapeRenderContext';
+import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
 import {
   getOrUndefined,
   mapScala,
   getOrUndefinedJson,
   headOrUndefined,
   CompareEquality,
-  lengthScala
+  lengthScala, toOption
 } from '@useoptic/domain';
 import {withDiffContext} from './DiffContext';
 import Paper from '@material-ui/core/Paper';
@@ -23,18 +22,19 @@ import Menu from '@material-ui/core/Menu';
 import {InterpretationRow} from './DiffViewer';
 import {DocSubGroup} from '../../requests/DocSubGroup';
 import {IgnoreDiffContext} from './DiffPageNew';
+import Chip from '@material-ui/core/Chip';
 
 const useStyles = makeStyles(theme => ({
   root: {
     paddingTop: 10,
-    paddingBottom: 5
+    paddingBottom: 10,
+    backgroundColor: '#16203F'
   },
   row: {
     display: 'flex',
     padding: 0,
     paddingLeft: 4,
     flexDirection: 'row',
-    backgroundColor: 'white',
   },
   rowWithHover: {
     cursor: 'pointer',
@@ -47,6 +47,18 @@ const useStyles = makeStyles(theme => ({
   },
   suggestion: {
     fontStyle: 'italic',
+    color: 'white',
+    flex: 1,
+    textAlign: 'right',
+    paddingRight: 10
+  },
+  hiddenItem: {
+    color: '#070707',
+    fontSize: 10,
+    paddingLeft: 7,
+    paddingRight: 7,
+    backgroundColor: '#ababab',
+    borderRadius: 12
   },
   diffNotif: {
     backgroundColor: '#e3ebf2',
@@ -59,20 +71,23 @@ const useStyles = makeStyles(theme => ({
     // border: '1px solid',
   },
   symbols: {
-    color: '#595959',
-    fontWeight: 800
+    color: '#cfcfcf',
+    fontWeight: 800,
+    fontFamily: 'Inter'
   },
   value: {
     fontWeight: 600,
+    fontFamily: 'Inter'
   },
   fieldName: {
     fontWeight: 600,
-    color: '#20223c',
+    color: '#cfcfcf',
     fontSize: 12,
+    fontFamily: 'Inter',
   },
   indexMarker: {
     fontWeight: 500,
-    color: '#393d6b',
+    color: '#9cdcfe',
     fontSize: 12,
   },
   rowContents: {
@@ -90,7 +105,7 @@ const useStyles = makeStyles(theme => ({
   },
   spacerBorder: {
     maxWidth: 1,
-    backgroundColor: '#a7a7a7'
+    backgroundColor: '#4B5A8C'
   },
   right: {
     display: 'flex',
@@ -98,6 +113,12 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 3,
     paddingBottom: 3,
     flex: 1,
+  },
+  typeName: {
+    display: 'flex',
+    whiteSpace: 'pre',
+    flex: 1,
+    fontWeight: 600
   },
   toolbar: {
     alignItems: 'flex-start',
@@ -143,11 +164,11 @@ function renderShape(shape, nested) {
 
 export const DepthContext = React.createContext({depth: 0});
 
-const Indent = ({children, add = 1}) => {
+const Indent = ({children, add = 1, style}) => {
   return (
     <DepthContext.Consumer>
       {({depth}) => (
-        <div style={{paddingLeft: (depth + add) * 13}}>
+        <div style={{paddingLeft: (depth + add) * 13, ...style}}>
           <DepthContext.Provider value={{depth: depth + add}}>
             {children}
           </DepthContext.Provider>
@@ -170,8 +191,10 @@ const IndentIncrement = ({children, add = 1}) => {
 };
 
 
-export function Row(props) {
+export const Row = withShapeRenderContext((props) => {
   const classes = useStyles();
+
+  const {exampleOnly, onLeftClick} = props;
 
   const rowHighlightColor = (() => {
     if (props.highlight === 'Addition') {
@@ -186,20 +209,19 @@ export function Row(props) {
   return (
     <div className={classNames(classes.row, {[classes.rowWithHover]: !props.noHover})}
          style={{backgroundColor: rowHighlightColor}}>
-      <div className={classes.left}>{props.left}</div>
-      <div className={classes.spacerBorder}>{' '.replace(/ /g, '\u00a0')}</div>
-      <div className={classes.right}>{props.right}</div>
+      <div className={classes.left} onClick={onLeftClick}>{props.left}</div>
+      {!exampleOnly && <div className={classes.spacerBorder}>{' '.replace(/ /g, '\u00a0')}</div>}
+      {!exampleOnly && <div className={classes.right}>{props.right}</div>}
     </div>
   );
-}
+});
 
 export const ObjectRender = withShapeRenderContext((props) => {
   const classes = useStyles();
   const {shapeRender, shape, nested} = props;
-
   const fields = shapeRender.resolveFields(shape.fields);
 
-  console.log('resolved fields ' + fields.toString());
+  const objectId = shape.shapeId
 
   return (
     <>
@@ -213,16 +235,23 @@ export const ObjectRender = withShapeRenderContext((props) => {
 export const ListRender = withShapeRenderContext((props) => {
   const classes = useStyles();
   const {shapeRender, shape, nested} = props;
+  const listId = shape.shapeId
+  const listItem = getOrUndefined(shapeRender.listItemShape(listId));
 
-  const listItem = getOrUndefined(shapeRender.listItemShape(shape.shapeId));
 
-  const items = shapeRender.resolvedItems(shape.shapeId);
+  const {showAllLists} = useContext(ShapeExpandedContext)
+
+  const items = shapeRender.resolvedItems(shape.shapeId, !showAllLists.includes(listId));
 
   return (
     <>
       {!nested && <Row left={<Symbols>{'['}</Symbols>} right={<TypeName typeName={shape.name}/>} noHover/>}
-      {mapScala(items)((item, index) => <ItemRow item={item} listItemShape={listItem}
-                                                 isLast={index - 1 === lengthScala(items)}/>)}
+      {mapScala(items)((item, index) => {
+        return <ItemRow item={item}
+                        listItemShape={listItem}
+                        listId={listId}
+                        isLast={index - 1 === lengthScala(items)}/>;
+      })}
       <IndentIncrement><Row left={<Symbols withIndent>{']'}</Symbols>} noHover/></IndentIncrement>
     </>
   );
@@ -243,12 +272,16 @@ function IndexMarker({children}) {
   );
 }
 
-const colors = {
-  key: '#0451a5',
-  string: '#a31515',
-  number: '#09885a',
-  boolean: '#0000ff',
+
+const useColor = {
+  StringColor: '#e29f84',
+  NumberColor: '#09885a',
+  BooleanColor: '#E3662E',
+  ObjectColor: '#30B1C4',
+  ListColor: '#c47078',
+  modifier: '#d5d4ff'
 };
+
 
 function ValueRows({value, shape}) {
   const classes = useStyles();
@@ -265,7 +298,7 @@ function ValueRows({value, shape}) {
 function ValueContents({value, shape}) {
   const classes = useStyles();
 
-  if (!value) {
+  if (typeof value === 'undefined') {
     return null;
   }
 
@@ -281,17 +314,31 @@ function ValueContents({value, shape}) {
 
   if (jsTypeString === '[object String]') {
     return <Typography variant="caption"
-                       style={{color: colors.string}}>"{value}"</Typography>;
+                       component="pre"
+                       style={{
+                         fontWeight: 600,
+                         whiteSpace: 'pre-line',
+                         fontFamily: 'Inter',
+                         color: useColor.StringColor
+                       }}>"{value}"</Typography>;
   }
 
   if (jsTypeString === '[object Boolean]') {
     return <Typography variant="caption"
-                       style={{color: colors.boolean}}>{value ? 'true' : 'false'}</Typography>;
+                       style={{
+                         fontWeight: 600,
+                         fontFamily: 'Inter',
+                         color: useColor.BooleanColor
+                       }}>{value ? 'true' : 'false'}</Typography>;
   }
 
   if (jsTypeString === '[object Number]') {
     return <Typography variant="caption"
-                       style={{color: colors.number}}>{value.toString()}</Typography>;
+                       style={{
+                         fontWeight: 600,
+                         fontFamily: 'Inter',
+                         color: useColor.NumberColor
+                       }}>{value.toString()}</Typography>;
   }
 
 
@@ -300,25 +347,23 @@ function ValueContents({value, shape}) {
   //                    style={{color: colors[typeO]}}>{value.toString()}</Typography>;
 }
 
-
-const useColor = {
-  key: '#0451a5',
-  string: '#a31515',
-  number: '#09885a',
-  boolean: '#0000ff',
-};
-
-
-const TypeName = withShapeRenderContext(({shapeRender, typeName, style}) => {
+const TypeName = ({typeName, style}) => {
   const classes = useStyles();
 
+  const {shapeRender} = useContext(ShapeRenderContext);
+
   if (!typeName) {
-    return null
+    return null;
   }
 
-  const coloredComponents = typeName.asColoredString(shapeRender)
+  const coloredComponents = typeName.asColoredString(shapeRender);
 
-  return (<>{mapScala(coloredComponents)((i) => <span style={{color: useColor[i.color] || i.color}}>{i.text}</span>)}</>);
+  return (<div className={classes.typeName}>{mapScala(coloredComponents)((i) => {
+    if (i.text) {
+      return <span style={{color: useColor[i.color] || i.color}}>{i.text}{' '}</span>;
+    }
+  })}
+  </div>);
   // const typeToColorsMap = {
   //   '$string': colors.string,
   // };
@@ -328,7 +373,7 @@ const TypeName = withShapeRenderContext(({shapeRender, typeName, style}) => {
   //               style={{color: typeToColorsMap[typeName], fontWeight: 600, ...style}}>{typeName}</Typography>
   // );
 
-})
+};
 
 function Symbols({children, withIndent}) {
   const classes = useStyles();
@@ -450,15 +495,12 @@ export const FieldRow = withShapeRenderContext((props) => {
           </Indent>
         )}
         right={(() => {
-
-          console.log('yyy', shapeRender);
-          console.log('yyy', field);
-
           if (diffNotif && suggestion) {
-            return <Indent>
+            return <Indent style={{flex: 1, display: 'flex'}}>
               {suggestion.changeTypeAsString !== 'Removal' &&
               <TypeName style={{marginRight: 9}} typeName={fieldShape.name}/>}
-              <Typography variant="caption" className={classes.suggestion}>
+              <Typography variant="caption" className={classes.suggestion}
+                          style={{marginLeft: suggestion.changeTypeAsString !== 'Removal' ? 15 : 0}}>
                 ({suggestion.changeTypeAsString})
               </Typography>
             </Indent>;
@@ -482,10 +524,10 @@ export const FieldRow = withShapeRenderContext((props) => {
 
 export const ItemRow = withShapeRenderContext((props) => {
   const classes = useStyles();
-  const {item, shapeRender, isLast, listItemShape, diffDescription, suggestion} = props;
+  const {item, shapeRender, isLast, listId, listItemShape, diffDescription, suggestion} = props;
   const diff = headOrUndefined(item.item.diffs);
 
-  const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(listItemShape));
+  const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(toOption(listItemShape))) || getOrUndefined(shapeRender.resolveItemShapeFromShapeId(item.item.shapeId));
 
   const diffNotif = diff && (
     <Indent><DiffNotif/></Indent>
@@ -503,23 +545,30 @@ export const ItemRow = withShapeRenderContext((props) => {
             return diffDescription.changeTypeAsString;
           }
         })()}
-        left={(
-          <Indent>
-            <div className={classes.rowContents}>
-              <IndexMarker>{item.index}</IndexMarker>
-              <div style={{flex: 1, paddingLeft: 4}}>
-                <ValueContents value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>
+        left={(() => {
+
+          if (item.display === 'hidden') {
+            return <Indent><HiddenItemEllipsis expandId={listId} /></Indent>
+          }
+
+          return (<Indent>
+              <div className={classes.rowContents}>
+                <IndexMarker>{item.index}</IndexMarker>
+                <div style={{flex: 1, paddingLeft: 4}}>
+                  <ValueContents value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>
+                </div>
               </div>
-            </div>
-          </Indent>
-        )}
+            </Indent>
+          );
+        })()}
         right={(() => {
 
           if (diffNotif && suggestion) {
-            return <Indent>
+            return <Indent style={{flex: 1, display: 'flex'}}>
               {suggestion.changeTypeAsString !== 'Removal' &&
               <TypeName style={{marginRight: 9}} typeName={listItemShape.name}/>}
-              <Typography variant="caption" className={classes.suggestion}>
+              <Typography variant="caption" className={classes.suggestion}
+                          style={{marginLeft: suggestion.changeTypeAsString !== 'Removal' ? 15 : 0}}>
                 ({suggestion.changeTypeAsString})
               </Typography>
             </Indent>;
@@ -537,6 +586,15 @@ export const ItemRow = withShapeRenderContext((props) => {
   );
 });
 
+export const HiddenItemEllipsis = withShapeRenderContext((props) => {
+  const classes = useStyles();
+  const {setShowAllLists} = useContext(ShapeExpandedContext)
+  const {expandId} = props
+  return (<DiffToolTip placement="right" title="(Hidden) Click to Expand">
+    <div className={classes.hiddenItem} onClick={() => setShowAllLists(expandId, true)}>{'⋯'}</div>
+  </DiffToolTip>)
+})
+
 
 export const DiffToolTip = withStyles(theme => ({
   tooltip: {
@@ -546,6 +604,6 @@ export const DiffToolTip = withStyles(theme => ({
     maxWidth: 200,
     fontSize: 11,
     fontWeight: 200,
-    padding: 0,
+    padding: 4,
   },
 }))(Tooltip);

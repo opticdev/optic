@@ -6,6 +6,7 @@ import { Link, Route, Switch } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
 import CodeIcon from '@material-ui/icons/Code';
 import DescriptionIcon from '@material-ui/icons/Description';
+import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import PolicyIcon from '@material-ui/icons/Policy';
 import { LightTooltip } from '../tooltips/LightTooltip';
 
@@ -58,6 +59,11 @@ export default function Navbar(props) {
   const menuItems = useMemo(
     () => [
       {
+        name: 'Review Diff',
+        icon: <ChangeHistoryIcon style={{ color: '#e2e2e2' }} />,
+        link: `${baseUrl}/diff`
+      },
+      {
         name: 'Specification',
         icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
         link: `${baseUrl}/documentation`
@@ -67,8 +73,6 @@ export default function Navbar(props) {
         icon: <PolicyIcon style={{ color: '#e2e2e2' }} />,
         link: routerPaths.testingDashboard(baseUrl)
       }
-      // {name: 'Monitoring', icon: <NetworkCheckIcon style={{color: '#e2e2e2'}}/>},
-      // {name: 'Changelog', icon: <ChangeHistoryIcon style={{color: '#e2e2e2'}}/>},
     ],
     [baseUrl]
   );
@@ -89,19 +93,6 @@ export default function Navbar(props) {
         style={props.mini && { borderRight: 'none' }}
       >
         <img src="/optic-logo.svg" width={50} className={classes.opticLogo} />
-        <Switch>
-          <Route
-            exact
-            path={routerPaths.init(entryBasePath)}
-            component={() => (
-              <LightTooltip title={'Finish Setup'} placement="right">
-                <IconButton className={classes.navButton}>
-                  <CodeIcon style={{ color: '#e2e2e2' }} />
-                </IconButton>
-              </LightTooltip>
-            )}
-          />
-        </Switch>
         {menuItems.map((i) => (
           <LightTooltip
             title={i.name}

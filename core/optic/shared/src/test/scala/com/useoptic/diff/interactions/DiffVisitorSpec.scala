@@ -75,7 +75,7 @@ class DiffVisitorSpec extends FunSpec {
           traverser.traverse(interaction)
           assert(visitors.diffs.toSeq == Seq(
             UnmatchedRequestBodyContentType(
-              InteractionTrail(Seq(Url("/"), Method("GET"))),
+              InteractionTrail(Seq(Url(), Method("GET"))),
               SpecPath("root")
             ),
             UnmatchedResponseBodyContentType(
@@ -98,7 +98,7 @@ class DiffVisitorSpec extends FunSpec {
           val traverser = new Traverser(spec, visitors)
           traverser.traverse(interaction)
           assert(visitors.diffs.toSeq == Seq(
-            UnmatchedRequestBodyContentType(InteractionTrail(Seq(Url("/"), Method("POST"), RequestBody("bbb"))), SpecPath("root"))
+            UnmatchedRequestBodyContentType(InteractionTrail(Seq(Url(), Method("POST"), RequestBody("bbb"))), SpecPath("root"))
           ))
         }
       }

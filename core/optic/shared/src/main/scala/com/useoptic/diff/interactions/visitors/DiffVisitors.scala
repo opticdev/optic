@@ -112,8 +112,8 @@ class DiffVisitors extends Visitors {
 
         val actualContentType = ContentTypeHelpers.contentType(interaction.request)
         val interactionTrail = actualContentType match {
-          case Some(contentType) => InteractionTrail(Seq(Url(interaction.request.path), Method(interaction.request.method), RequestBody(contentType)))
-          case None => InteractionTrail(Seq(Url(interaction.request.path), Method(interaction.request.method)))
+          case Some(contentType) => InteractionTrail(Seq(Url(), Method(interaction.request.method), RequestBody(contentType)))
+          case None => InteractionTrail(Seq(Url(), Method(interaction.request.method)))
         }
         emit(
           UnmatchedRequestBodyContentType(

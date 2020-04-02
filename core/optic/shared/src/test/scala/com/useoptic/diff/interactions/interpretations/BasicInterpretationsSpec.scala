@@ -94,7 +94,7 @@ class BasicInterpretationsSpec extends FunSpec {
       val diffs = DiffHelpers.diff(rfcState, interaction)
       assert(diffs == Seq(
         UnmatchedRequestBodyContentType(
-          InteractionTrail(Seq(Url("/"), Method("PUT"), RequestBody("application/json"))),
+          InteractionTrail(Seq(Url(), Method("PUT"), RequestBody("application/json"))),
           SpecPath("root")
         )
       ))

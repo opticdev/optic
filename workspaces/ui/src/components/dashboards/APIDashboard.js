@@ -31,9 +31,6 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import {withRfcContext} from '../../contexts/RfcContext';
 import {withIntegrationsContext} from '../../contexts/IntegrationsContext';
 import {withNavigationContext} from '../../contexts/NavigationContext';
-import {withProductDemoContext} from '../navigation/ProductDemo';
-import {ProductDemoStoreBase} from '../onboarding/InlineDocs';
-import {HasDiffDashboard} from '../navigation/NewBehavior';
 import {routerPaths} from '../../RouterPaths';
 import {withApiOverviewContext} from '../../contexts/ApiOverviewContext';
 import {withSpecServiceContext} from '../../contexts/SpecServiceContext';
@@ -82,23 +79,16 @@ const styles = theme => ({
 
 class APIDashboard extends React.Component {
   render() {
-    const {classes, baseUrl, demos, apiName, apiOverview} = this.props;
+    const {classes, baseUrl, apiName, apiOverview} = this.props;
     const setupState = {
       isEmptySpec: apiOverview.isEmptySpec
     }//queries.setupState();
 
-    if (apiOverview.isEmptySpec) {
-      return <Redirect to={routerPaths.init(baseUrl)}/>
-    }
-
     return (
       <div className={classes.root}>
-        <ProductDemoStoreBase />
-        {demos.dashboardDemo}
         <Paper className={classes.statusCard} style={{flexDirection: 'row'}} elevation={0}>
           <Typography variant="h4">{apiName}</Typography>
           <div style={{flex: 1}}/>
-         <HasDiffDashboard />
         </Paper>
 
 
@@ -160,7 +150,7 @@ class APIDashboard extends React.Component {
   }
 }
 
-export default withProductDemoContext(withApiOverviewContext(withNavigationContext(withIntegrationsContext(withSpecServiceContext(withRfcContext(withStyles(styles)(APIDashboard)))))));
+export default withApiOverviewContext(withNavigationContext(withIntegrationsContext(withSpecServiceContext(withRfcContext(withStyles(styles)(APIDashboard))))))
 
 export const SummaryStatus = withStyles(styles)(({on, onText, offText, classes}) => {
   return (

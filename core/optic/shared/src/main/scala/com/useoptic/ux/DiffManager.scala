@@ -1,11 +1,13 @@
 package com.useoptic.ux
 
+import com.useoptic.DiffStats
 import com.useoptic.contexts.requests.Commands.PathComponentId
+import com.useoptic.contexts.requests.Utilities
 import com.useoptic.contexts.rfc.RfcState
-import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
+import com.useoptic.diff.{ChangeType, DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescription, DiffDescriptionInterpreters}
-import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult, Resolvers, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
+import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers, Resolvers, ShapeRelatedDiff, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.shapes.ShapeDiffResult
 import com.useoptic.types.capture.HttpInteraction
 
@@ -14,7 +16,7 @@ import scala.util.Try
 import com.useoptic.utilities.DistinctBy._
 
 @JSExportAll
-class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Unit) {
+class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Unit = () => {}) {
 
   private var _currentRfcState: RfcState = null
   private var _interactionsGroupedByDiffs: DiffsToInteractionsMap = Map.empty
@@ -46,17 +48,173 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     onUpdated()
   }
 
-  def inputStats = s"${_interactions.length} interactions, yielding ${_interactionsGroupedByDiffs.flatMap(_._2).size} diffs"
+  def filterIgnored(ignoredDiffs: Seq[DiffResult]) = _interactionsGroupedByDiffs.filter(d => !ignoredDiffs.contains(d._1))
 
-  def managerForPathAndMethod(pathComponentId: PathComponentId, httpMethod: String, ignoredDiffs: Seq[DiffResult]): PathAndMethodDiffManager = {
-    val parentManagerUpdate = (rfcState: RfcState) => updatedRfcState(rfcState)
-    val filterIgnored = _interactionsGroupedByDiffs.filter(d => !ignoredDiffs.contains(d._1))
+  def unmatchedUrls(alphabetize: Boolean = false, ignoredDiffs: Seq[DiffResult] = Seq.empty): Seq[UndocumentedURL] = {
+    if (_currentRfcState == null) {
+      return Seq.empty
+    }
 
-    new PathAndMethodDiffManager(pathComponentId, httpMethod)(filterIgnored, _currentRfcState) {
-      def updatedRfcState(rfcState: RfcState): Unit = parentManagerUpdate(rfcState)
+    val pathComponents = _interactions.flatMap(interaction => Utilities.resolvePath(interaction.request.path, _currentRfcState.requestsState.pathComponents))
+
+    def checkForEmptyContentType(interactionTrail: InteractionTrail, specTrail: RequestSpecTrail, interactions: Seq[HttpInteraction]) = {
+      val pathOption = RequestSpecTrailHelpers.pathId(specTrail)
+      if (pathOption.isDefined) {
+        interactions.flatMap(interaction => {
+          val noOps = Resolvers.resolveOperations(interaction.request.method, pathOption.get, _currentRfcState.requestsState).isEmpty
+          val noResponses = Resolvers.resolveResponses(interaction.request.method, pathOption.get, _currentRfcState.requestsState).isEmpty
+
+          if (noOps && noResponses) {
+            Some((interaction.request.method, interaction.request.path, pathOption) -> interaction)
+          } else {
+            None
+          }
+        })
+      } else {
+        Seq.empty
+      }
+    }
+
+    val fromDiff = filterIgnored(ignoredDiffs).collect {
+      case (UnmatchedRequestUrl(interactionTrail, requestsTrail), interactions) => {
+        interactions.map(i => (i.request.method, i.request.path, None) -> i)
+      }
+      case (UnmatchedRequestBodyContentType(interactionTrail, specTrail), interactions) => {
+        checkForEmptyContentType(interactionTrail, specTrail, interactions)
+      }
+      case (UnmatchedResponseBodyContentType(interactionTrail, specTrail), interactions) => {
+        checkForEmptyContentType(interactionTrail, specTrail, interactions)
+      }
+      case (UnmatchedResponseBodyContentType(interactionTrail, specTrail), interactions) => {
+        checkForEmptyContentType(interactionTrail, specTrail, interactions)
+      }
+      case (UnmatchedResponseStatusCode(interactionTrail, specTrail), interactions) => {
+        checkForEmptyContentType(interactionTrail, specTrail, interactions)
+      }
+    }.flatten
+      .groupBy(_._1)
+      .mapValues(i => i.map(_._2))
+      .filter(_._2.exists(i => i.response.statusCode >= 200 && i.response.statusCode < 300))
+
+
+    val allUnmatchedUrls = fromDiff.map { case ((method, path, pathOption), interactions) => UndocumentedURL(method, path, pathOption, interactions.toSeq) }.toSeq
+
+    if (alphabetize) {
+      allUnmatchedUrls.sortBy(_.path)
+    } else {
+      allUnmatchedUrls.sortBy(_.interactions.size).reverse
     }
   }
 
+  def allUnmatchedPaths: Seq[String] = unmatchedUrls(true, Seq.empty).map(_.path).distinct
+
+  def endpointDiffs(ignoredDiffs: Seq[DiffResult], filterUnmatched: Boolean = false): Seq[EndpointDiff] = {
+    val diffs = filterIgnored(ignoredDiffs)
+
+    val allEndpointDiffs = diffs.collect {
+      case (_: UnmatchedRequestUrl, interactions) => None
+      case (d: InteractionDiffResult, interactions) => {
+        d.requestsTrail match {
+          case SpecRoot() => None
+          case SpecPath(pathId) => Some(pathId, interactions.head.request.method, d)
+          case SpecRequestRoot(requestId) => {
+            val request = _currentRfcState.requestsState.requests(requestId).requestDescriptor
+            Some(request.pathComponentId, request.httpMethod, d)
+          }
+          case SpecRequestBody(requestId) => {
+            val request = _currentRfcState.requestsState.requests(requestId).requestDescriptor
+            Some(request.pathComponentId, request.httpMethod, d)
+          }
+          case SpecResponseRoot(responseId) => {
+            val response = _currentRfcState.requestsState.responses(responseId).responseDescriptor
+            Some(response.pathId, response.httpMethod, d)
+          }
+          case SpecResponseBody(responseId) => {
+            val response = _currentRfcState.requestsState.responses(responseId).responseDescriptor
+            Some(response.pathId, response.httpMethod, d)
+          }
+        }
+      }
+      case _ => None
+    }.flatten
+
+    val descriptionInterpreters = new DiffDescriptionInterpreters(_currentRfcState)
+
+    val endpointDiffs = allEndpointDiffs.groupBy(i => (i._1, i._2)).map {
+      case ((path, method), v) => {
+        val diffs = v.map(_._3).toSet
+        val changeTypes = diffs.map(diff => descriptionInterpreters.interpret(diff, _interactionsGroupedByDiffs(diff).head).changeType)
+        EndpointDiff(method, path,
+          changeTypes.count(_ == ChangeType.Addition),
+          changeTypes.count(_ == ChangeType.Update),
+          changeTypes.count(_ == ChangeType.Removal)
+        )
+      }
+    }.toSeq
+
+    val unmatched = unmatchedUrls(true, ignoredDiffs)
+
+    //don't show an endpoint diff if its in the unmatched list
+    if (filterUnmatched) endpointDiffs.filterNot(i => unmatched.exists(u => u.pathId.contains(i.pathId) && u.method == i.method)) else endpointDiffs
+  }
+
+  def stats(ignoredDiffs: Seq[DiffResult]): DiffStats = {
+    DiffStats(
+      _interactions.size,
+      _interactionsGroupedByDiffs.keys.filterNot {
+        case UnmatchedRequestUrl(_, _) => true
+        case _ => false
+      }.size,
+      unmatchedUrls(true, ignoredDiffs).size
+    )
+  }
+
+  def managerForPathAndMethod(pathComponentId: PathComponentId, httpMethod: String, ignoredDiffs: Seq[DiffResult]): PathAndMethodDiffManager = {
+    val parentManagerUpdate = (rfcState: RfcState) => updatedRfcState(rfcState)
+
+    println("filter progress " + "Start")
+    println("filter progress " + endpointDiffs(ignoredDiffs).toString())
+    println("filter progress " + _interactionsGroupedByDiffs.keys.size)
+    val filterIgnored = _interactionsGroupedByDiffs.filter(d => !ignoredDiffs.contains(d._1))
+    println("filter progress " + filterIgnored.size)
+
+    val filterThisEndpoint = {
+      //collect all request and response ids we have diffs computed for
+      val requestIds = _currentRfcState.requestsState.requests.collect {
+        case req if req._2.requestDescriptor.httpMethod == httpMethod && req._2.requestDescriptor.pathComponentId == pathComponentId => req._1
+      }.toSet
+
+      val responseIds = _currentRfcState.requestsState.responses.collect {
+        case res if res._2.responseDescriptor.httpMethod == httpMethod && res._2.responseDescriptor.pathId == pathComponentId => res._1
+      }.toSet
+
+      val diffsFiltered = filterIgnored.filterKeys {
+        case _: UnmatchedRequestUrl => false
+        case d: InteractionDiffResult => {
+          d.requestsTrail match {
+            case SpecRoot() => false
+            case SpecPath(pathId) => pathComponentId == pathId
+            case SpecRequestRoot(requestId) => requestIds.contains(requestId)
+            case SpecRequestBody(requestId) => requestIds.contains(requestId)
+            case SpecResponseRoot(responseId) => responseIds.contains(responseId)
+            case SpecResponseBody(responseId) => responseIds.contains(responseId)
+          }
+        }
+        case _ => false
+      }
+
+      println("filter progress " + diffsFiltered.size)
+      //@hack spec trails don't contain method :(
+      //this makes sure that other methods don't sneak their way
+      diffsFiltered.mapValues(_.filter(_.request.method == httpMethod)).filter(_._2.nonEmpty)
+    }
+
+    println("filter progress " + filterThisEndpoint.keys.size)
+
+    new PathAndMethodDiffManager(pathComponentId, httpMethod)(filterThisEndpoint, _currentRfcState) {
+      def updatedRfcState(rfcState: RfcState): Unit = parentManagerUpdate(rfcState)
+    }
+  }
 }
 
 @JSExportAll
@@ -74,6 +232,10 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
   def noDiff = interactionsGroupedByDiffs.keySet.isEmpty
 
+  def diffCount: Int = interactionsGroupedByDiffs.keys.size
+
+  def interactionsWithDiffsCount: Int = interactionsGroupedByDiffs.values.flatten.size
+
   def collectRelatedShapeDiffs(diff: InteractionDiffResult): Set[ShapeDiffResult] = {
     val groupingIdOption = diff.shapeDiffResultOption.flatMap(_.groupingId)
     groupingIdOption.map(groupingId => {
@@ -81,7 +243,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
         case d if d.shapeDiffResultOption.flatMap(_.groupingId).contains(groupingId) => d.shapeDiffResultOption.get
       }.toSet
     })
-    .getOrElse(Set(diff.shapeDiffResultOption.get))
+      .getOrElse(Set(diff.shapeDiffResultOption.get))
   }
 
   def diffRegions: TopLevelRegions = {
@@ -105,7 +267,7 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
       }.toVector.sortBy(_.statusCode))
 
     val requestShapeRegions = interactionsGroupedByDiffs.filter {
-      case (_: UnmatchedRequestBodyShape, _) => true
+      case (a: UnmatchedRequestBodyShape, _) => true
       case _ => false
     }.toSeq
       .distinctByIfDefined(a => a._1.shapeDiffResultOption.flatMap(_.groupingId))
@@ -129,18 +291,20 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         BodyShapeDiffBlock(
           diff,
+          Seq("Request Body", contentType.get),
           diff.shapeDiffResultOption.get,
           interactions,
           inRequest = true,
           inResponse = false,
-          contentType.get,
           description,
           relatedDiffs)(
           () => suggestionsForDiff(diff),
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState),
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Some(previewRender(interaction, withRfcState)),
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => responseRender(interaction, withRfcState)
-        )})))}
+        )
+      })))
+      }
       .toSeq
 
     val responseShapeRegions = interactionsGroupedByDiffs.filter {
@@ -167,19 +331,22 @@ abstract class PathAndMethodDiffManager(pathComponentId: PathComponentId, httpMe
 
         BodyShapeDiffBlock(
           diff,
+          Seq(s"${interactions.head.response.statusCode} Response", "Body", contentType.get),
           diff.shapeDiffResultOption.get,
           interactions,
           inRequest = false,
           inResponse = true,
-          contentType.get,
           description,
           relatedDiffs)(
           () => suggestionsForDiff(diff),
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => previewRender(interaction, withRfcState),
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => requestRender(interaction, withRfcState),
           (interaction: HttpInteraction, withRfcState: Option[RfcState]) => Some(previewRender(interaction, withRfcState))
-        )})))}
+        )
+      })))
+      }
       .toSeq
+        .sortBy(_.name)
 
     TopLevelRegions(newRegions, requestShapeRegions, responseShapeRegions)
   }

@@ -7,3 +7,11 @@ export function Show({when, children, style}) {
     </div>
   )
 }
+
+export function ShowSpan({when, children, style}) {
+  return (
+    <span style={{display: !when && 'none', ...style}}>
+      {when && children}
+    </span>
+  )
+}

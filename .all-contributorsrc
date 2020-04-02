@@ -1,0 +1,42 @@
+{
+  "projectName": "Optic",
+  "projectOwner": "opticdev",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "acunniffe",
+      "name": "Aidan Cunniffe",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/5900338?v=4",
+      "profile": "http://aidancunniffe.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "devdoshi",
+      "name": "devdoshi",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1463179?v=4",
+      "profile": "https://devdoshi.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "esopian",
+      "name": "Evan Mallory",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/4691748?v=4",
+      "profile": "https://www.take2.co/consulting-development",
+      "contributions": [
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}

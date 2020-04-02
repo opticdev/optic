@@ -12,16 +12,34 @@ class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
     println("traversing...")
     println(body)
     println(resolvedTrail)
-    if (resolvedTrail.isEmpty) {
-      println("no trail...aborting traversal???")
+    if (resolvedTrail.isEmpty && body.isEmpty) {
       return
     }
+    // visit unknown parts of the JSON (used during example rendering)
+    if (resolvedTrail.isEmpty && body.isDefined) {
+      val bodyJson = body.get
+      if (bodyJson.isArray) {
+        visitors.arrayVisitor.beginUnknown(bodyJson.items, bodyTrail)
+        bodyJson.items.zipWithIndex.foreach{ case (item, index) => {
+          val itemTrail = bodyTrail.withChild(JsonArrayItem(index))
+          traverse(Some(item), itemTrail, None)
+        }}
+      } else if (bodyJson.isObject) {
+        visitors.objectVisitor.beginUnknown(bodyJson.fields, bodyTrail)
+        bodyJson.fields.foreach{ case (key, value) => {
+          val fieldTrail = bodyTrail.withChild(JsonObjectKey(key))
+          traverse(Some(value), fieldTrail, None)
+        }}
+      } else {
+        visitors.primitiveVisitor.visitUnknown(Some(bodyJson), bodyTrail)
+      }
+
+      return
+    }
+
+    // normal path for parallel traversing json and spec
     val trail = resolvedTrail.get
     val resolved = Resolvers.resolveTrailToCoreShape(spec, trail)
-    println(resolved, body)
-    if (body.isEmpty) {
-      return
-    }
 
     val bodyJson = body.get
     if (bodyJson.isArray) {
@@ -63,7 +81,8 @@ class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
       })
 
       visitors.objectVisitor.end()
-    } else {
+    }
+    else {
       visitors.primitiveVisitor.visit(Some(bodyJson), bodyTrail, Some(trail))
     }
   }

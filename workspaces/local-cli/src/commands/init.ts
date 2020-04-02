@@ -28,31 +28,26 @@ export default class Init extends Command {
       process.exit(1);
     }
 
-    const config: IApiCliConfig = {
-      name: 'Unnamed API',
-      tasks: {
-        start: {
-          command: 'echo "Setup A Valid Command to Start your API!"',
-          baseUrl: 'http://localhost:4000'
-        }
-      },
-      ignoreRequests: [
-        'OPTIONS *'
-      ]
-    };
-    //write initial config
-    await createFileTree(config, cwd);
+    const name = await cli.prompt('What is this API named?')
 
-    //open init flow in the UI
-    const daemonState = await ensureDaemonStarted(lockFilePath);
-    const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
-    developerDebugLogger(`optic api base url: ${apiBaseUrl}`);
-    const cliClient = new Client(apiBaseUrl);
-    const cliSession = await cliClient.findSession(cwd, null);
-    developerDebugLogger({cliSession});
-    const uiUrl = `http://localhost:${daemonState.port}/specs/${cliSession.session.id}/init`;
-    cli.log(fromOptic(`opening ${uiUrl}`));
-    openBrowser(uiUrl);
+    const config = `
+name: ${name}
+tasks:
+  # The default task, invoke using \`api run start\`
+  # Learn how to finish setting up Optic at http://docs.useoptic.com/setup
+  start:
+    command: echo "Setup A Valid Command to Start your API!"
+    baseUrl: http://localhost:4000
+ignoreRequests:
+- OPTIONS *`.trimLeft()
+
+
+    const token: string = await Promise.resolve('token-from-backend')
+
+    const {configPath} = await createFileTree(config, token, cwd);
+    cli.log(fromOptic(`Added Optic configuration to ${configPath}`));
+    cli.log(fromOptic(`Open that file to finish adding Optic to your API`));
+
     process.exit();
   }
 

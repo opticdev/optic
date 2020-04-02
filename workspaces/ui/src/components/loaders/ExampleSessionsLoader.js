@@ -1,9 +1,8 @@
 import React from 'react';
 import {basePaths} from '../../RouterPaths';
 import {LoaderFactory} from './LoaderFactory';
-import {notificationAreaComponent, shareButtonComponent} from './SharedLoader';
+import {shareButtonComponent} from './SharedLoader';
 import EventEmitter from 'events';
-
 
 export const basePath = basePaths.exampleSessionsBasePath;
 
@@ -27,7 +26,7 @@ const specServiceTask = async (props) => {
   let events = JSON.stringify(body.events);
   const examples = body.examples || {};
 
-  const sessionId = 'example-session';
+  const captureId = 'example-session';
   const specService = {
     getConfig: async function () {
       return Promise.resolve({
@@ -36,15 +35,14 @@ const specServiceTask = async (props) => {
         }
       });
     },
-    listCapturedSamples: async (sessionId) => {
-      await waitForEvent('simulate-session');
+    listCapturedSamples: async (captureId) => {
       return Promise.resolve(body.session);
     },
     listEvents() {
       return Promise.resolve(events);
     },
     listCaptures() {
-      return Promise.resolve({captures: [sessionId]});
+      return Promise.resolve({captures: [{captureId, lastUpdate: new Date().toISOString(), hasDiff: true}]});
     },
     saveEvents: (eventStore, rfcId) => {
       const serializedEvents = eventStore.serializeEvents(rfcId);
@@ -67,30 +65,9 @@ const {
 } = LoaderFactory.build({
   specServiceTask,
   specServiceEvents,
-  notificationAreaComponent,
   shareButtonComponent,
   basePath,
   demo: true
 });
 
 export default ExampleSessionsLoaderRoutes;
-
-export function simulateSession() {
-  return demoEventEmitter.emit('simulate-session');
-}
-
-let wasOpenedBefore = false;
-
-function waitForEvent(event) {
-
-  if (wasOpenedBefore || !window.location.pathname.endsWith('/dashboard')) {
-    return Promise.resolve();
-  }
-
-  return new Promise(resolve => {
-    demoEventEmitter.on(event, () => {
-      wasOpenedBefore = true;
-      setTimeout(resolve, 400);
-    });
-  });
-}

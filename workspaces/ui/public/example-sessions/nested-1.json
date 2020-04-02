@@ -591,7 +591,7 @@
           "body": {
             "contentType": "application/json",
             "value": {
-              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
+              "asJsonString": "{\n\t\"fieldA\": true,\n\t\"arrayField\": [1, 2, 3, 4, 5, 6, 7 , 8, 9],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
               "asText": null,
               "asShapeHashBytes": null
             }
@@ -634,7 +634,7 @@
           "body": {
             "contentType": "application/json",
             "value": {
-              "asJsonString": "{\n\t\"fieldA\": 124,\n\t\"arrayField\": [1, 2, 3, 4],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t, \"one\": true}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
+              "asJsonString": "{\n\t\"fieldA\": 124,\n\t\"arrayField\": [1, 2, 3, 4, 5, 6, 7 , 8, 9],\n\t\"arrayOfObjField\": [{\n\t\t\"hello\": \"world\"\n\t, \"one\": true}],\n\t\"nested_object\": {\n\t\t\"a\": true,\n\t\t\"b\": 123,\n\t\t\"c\": \"text\"\n\t}\n}",
               "asText": null,
               "asShapeHashBytes": null
             }

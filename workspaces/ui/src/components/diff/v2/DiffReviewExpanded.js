@@ -21,6 +21,7 @@ import {InterpretationRow} from './DiffViewer';
 import {IgnoreDiffContext} from './DiffPageNew';
 import {withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
+import Scrolling from './Scrolling';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -50,47 +51,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-export default withRfcContext(withDiffContext(withEndpointsContext((props) => {
+export default withDiffContext((props) => {
   const classes = useStyles();
-  const {diff, title, suggestion, endpointDescriptor, diffDescription, selectedInterpretation, acceptSuggestion, setSelectedDiff, selectedDiff, setSelectedInterpretation, rfcService, rfcId} = props;
+  const {interactions, render, exampleOnly, suggestion, diffDescription, diff} = props;
 
-  const currentRfcState = rfcService.currentState(rfcId);
-
-  const interactions = diff.interactions;
   const length = lengthScala(interactions);
 
   const [interactionIndex, setInteractionIndex] = React.useState(1);
-  const [ignoreSelected, setIgnoreSelected] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setSelectedDiff(diff);
-  };
-  const handleClose = () => {
-    setSelectedDiff(null);
-    setSelectedInterpretation(null);
-  };
-
-  const apply = (ignoreDiff) => () => {
-    if (selectedInterpretation) {
-      if (ignoreSelected) {
-        const toIgnore = selectedDiff.diff;
-        setSelectedDiff(null);
-        setSelectedInterpretation(null);
-        ignoreDiff(toIgnore);
-      } else {
-        const suggestionToApply = selectedInterpretation;
-        setSelectedDiff(null);
-        setSelectedInterpretation(null);
-        acceptSuggestion(suggestionToApply);
-      }
-    }
-  };
 
   const currentInteraction = getIndex(interactions)(interactionIndex - 1);
-  const diffInRequest = diff.inRequest;
-  const diffInResponse = diff.inResponse;
 
-  const {fullPath, httpMethod} = endpointDescriptor;
+  const {request, response, httpMethod, url} = render(currentInteraction);
+
   const method = <Typography variant="body" component="span" style={{
     fontWeight: 400,
     color: '#ffffff',
@@ -99,21 +71,14 @@ export default withRfcContext(withDiffContext(withEndpointsContext((props) => {
     borderRadius: 2,
     marginTop: -3,
     backgroundColor: methodColorsDark[httpMethod.toUpperCase()]
-  }}>{httpMethod.toUpperCase()}</Typography>
-  const path = <Typography variant="subtitle1" component="span" style={{fontSize: 12}}>{fullPath}</Typography>;
-  const url = <Typography variant="subtitle1" component="span"
-                          style={{fontSize: 12}}>{currentInteraction.request.path}</Typography>;
-
-
-  const renderedRequest = getOrUndefined(diff.previewRequest(currentInteraction, toOption(currentRfcState)));
-  const renderedResponse = getOrUndefined(diff.previewResponse(currentInteraction, toOption(currentRfcState)));
+  }}>{httpMethod.toUpperCase()}</Typography>;
+  // const path = <Typography variant="subtitle1" component="span" style={{fontSize: 12}}>{fullPath}</Typography>;
+  const renderedUrl = <Typography variant="subtitle1" component="span"
+                                  style={{fontSize: 12}}>{currentInteraction.request.path}</Typography>;
 
   return (
     <div style={{padding: 12}}>
       <div className={classes.title}>
-        <div>
-          <div style={{display: 'flex', flexDirection: 'row'}}>{title}</div>
-        </div>
         <div style={{flex: 1}}/>
         <Pagination color="primary"
                     count={length}
@@ -125,27 +90,31 @@ export default withRfcContext(withDiffContext(withEndpointsContext((props) => {
       </div>
       <div className={classes.content}>
         <div className={classes.leftContent}>
-          <div>{method} {path}</div>
-          <Show when={renderedRequest}>
+          <div>{method} {url}</div>
+          <Show when={request}>
             <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Request
               Body</Typography>}>
 
-              <DiffHunkViewer suggestion={suggestion}
-                              diff={diff}
-                              preview={renderedRequest}
-                              diffDescription={diffDescription}/>
-
+              <Scrolling>
+                <DiffHunkViewer suggestion={suggestion}
+                                diff={diff}
+                                exampleOnly={exampleOnly}
+                                preview={request}
+                                diffDescription={diffDescription}/>
+              </Scrolling>
             </DocSubGroup>
           </Show>
-          <Show when={renderedResponse}>
+          <Show when={response}>
             <DocSubGroup title={<Typography variant="subtitle1" color="primary" style={{marginTop: 15}}>Response
               Body</Typography>}>
 
-              <DiffHunkViewer suggestion={suggestion}
-                              diff={diff}
-                              preview={renderedResponse}
-                              diffDescription={diffDescription}/>
-
+              <Scrolling>
+                <DiffHunkViewer suggestion={suggestion}
+                                diff={diff}
+                                exampleOnly={exampleOnly}
+                                preview={response}
+                                diffDescription={diffDescription}/>
+              </Scrolling>
             </DocSubGroup>
           </Show>
         </div>
@@ -153,4 +122,4 @@ export default withRfcContext(withDiffContext(withEndpointsContext((props) => {
     </div>
 
   );
-})));
+});
