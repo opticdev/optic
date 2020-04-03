@@ -95,38 +95,51 @@ export function TestingDashboard(props) {
     (service) => service.loadReport(captureId),
     [captureId]
   );
-
   const { loading: loadingSpec, result: spec } = useSpec(captureId);
+  const { loading: loadingCapture, result: capture } = useTestingService(
+    (service) => service.loadCapture(captureId),
+    [captureId]
+  );
 
   return (
     <div>
       <h2>Live Contract Testing Dashboard for capture {captureId}</h2>
 
-      {(loadingReport || loadingSpec) && <Loading />}
+      {(loadingReport || loadingSpec || loadingCapture) && <Loading />}
 
-      {report && spec && <TestingReport report={report} spec={spec} />}
+      {report && spec && capture && (
+        <TestingReport report={report} spec={spec} capture={capture} />
+      )}
     </div>
   );
 }
 
 export function TestingReport(props) {
-  const { report, spec } = props;
+  const { capture, report, spec } = props;
 
-  const summary = useMemo(() => createSummary(spec, report), [spec, report]);
+  const summary = useMemo(() => createSummary(capture, spec, report), [
+    capture,
+    spec,
+    report
+  ]);
   const { endpoints, totalInteractions, totalUnmatchedPaths } = summary;
+
   return (
     <div>
       <h3>Testing report</h3>
 
-      <h4>Summary for {spec.apiName}</h4>
-      {/*<ul>*/}
-      {/*  <li>Created at: {report.createdAt}</li>*/}
-      {/*  <li>Last updated: {report.updatedAt}</li>*/}
-      <li>Total interactions: {totalInteractions}</li>
-      {/*  <li>Compliant interactions: {counts.totalCompliantInteractions}</li>*/}
-      <li>Unmatched paths: {totalUnmatchedPaths}</li>
-      {/*  <li>Total diffs: {counts.totalDiffs}</li>*/}
-      {/*</ul>*/}
+      <h4>
+        Summary for {summary.apiName}{' '}
+        <small>
+          Captured from {summary.createdAt} until {summary.updatedAt}
+        </small>
+      </h4>
+      <ul>
+        <li>Total interactions: {totalInteractions}</li>
+        {/*  <li>Compliant interactions: {counts.totalCompliantInteractions}</li>*/}
+        <li>Unmatched paths: {totalUnmatchedPaths}</li>
+        {/*  <li>Total diffs: {counts.totalDiffs}</li>*/}
+      </ul>
 
       <h4>Endpoints</h4>
 
@@ -185,7 +198,7 @@ function createSpec(specEvents) {
 }
 
 // TODO: give this building of a ViewModel a more appropriate spot.
-function createSummary(spec, report) {
+function createSummary(capture, spec, report) {
   const { apiName, pathsById, requestIdsByPathId, requests } = spec;
 
   const pathIds = Object.keys(pathsById);
@@ -225,6 +238,8 @@ function createSummary(spec, report) {
   );
   return {
     apiName,
+    createdAt: capture.createdAt,
+    updatedAt: capture.updatedAt,
     endpoints,
     totalInteractions,
     totalUnmatchedPaths

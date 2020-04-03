@@ -59,6 +59,11 @@ export async function createExampleTestingService(exampleId) {
       return captures;
     }
 
+    async loadCapture(captureId) {
+      await new Promise((r) => setTimeout(r, 200));
+      return captures.find((capture) => captureId === capture.captureId);
+    }
+
     async loadReport(captureId) {
       await new Promise((r) => setTimeout(r, 200));
       const events = getSpecEvents(captureId);
