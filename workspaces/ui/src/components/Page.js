@@ -7,7 +7,9 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex'
   },
   content: {
-    flex: 1
+    flex: 1,
+    paddingLeft: 25,
+    paddingRight: 25,
   }
 }));
 

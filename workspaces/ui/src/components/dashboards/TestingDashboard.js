@@ -43,9 +43,6 @@ export default function TestingDashboardContainer(props) {
         <Page.Navbar
           mini={true}
           baseUrl={baseUrl}
-          // @TODO: remove entryBasePath. It's is a Session concern, rather than Testing.
-          // Shows how Navbar should be further generalised to work across both contexts.
-          entryBasePath={baseUrl}
         />
 
         <Page.Body>

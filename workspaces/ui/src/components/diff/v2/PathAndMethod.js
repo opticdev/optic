@@ -15,7 +15,5 @@ export const PathAndMethod = ({path, method}) => {
   }}>{method.toUpperCase()}</Typography>
   const pathRender = <Typography variant="subtitle1" component="span" style={{fontSize: 12, marginLeft: 7}}>{path}</Typography>;
 
-
-
   return (<span> {methodRender} {pathRender} </span>)
 }

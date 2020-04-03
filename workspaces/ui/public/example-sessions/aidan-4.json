@@ -1,0 +1,189 @@
+{
+  "events": [{"PathComponentAdded":{"pathId":"path_OL1J25YaF2","parentPathId":"root","name":"todos","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"3365e5b7-387f-4c52-b666-c4fc68d63d1c","createdAt":"2020-04-03T01:17:42.059Z"}}},{"ContributionAdded":{"id":"path_OL1J25YaF2.GET","key":"purpose","value":"get all todos","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"3365e5b7-387f-4c52-b666-c4fc68d63d1c","createdAt":"2020-04-03T01:17:42.064Z"}}},{"BatchCommitStarted":{"batchId":"6578cb66-d1b6-4036-b831-97f1ddaf0ee7","commitMessage":"Get All todos","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"49ed4468-9341-4026-98e1-b00dd77fd771","createdAt":"2020-04-03T01:17:53.913Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_uSBjv1Kgjj","pathId":"path_OL1J25YaF2","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"457d0c10-3e37-40af-9791-bf9fe01e582b","createdAt":"2020-04-03T01:17:53.914Z"}}},{"ShapeAdded":{"shapeId":"shape_1dIerH2Lor","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"457d0c10-3e37-40af-9791-bf9fe01e582b","createdAt":"2020-04-03T01:17:53.914Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_uSBjv1Kgjj","parameterDescriptor":{"shapeId":"shape_1dIerH2Lor","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"457d0c10-3e37-40af-9791-bf9fe01e582b","createdAt":"2020-04-03T01:17:53.914Z"}}},{"RequestAdded":{"requestId":"request_noS5ztVkg5","pathId":"path_OL1J25YaF2","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"457d0c10-3e37-40af-9791-bf9fe01e582b","createdAt":"2020-04-03T01:17:53.914Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_mStmm0SeAc","pathId":"path_OL1J25YaF2","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"916bb55e-646d-4de4-89cf-67dff0c0f3c2","createdAt":"2020-04-03T01:17:53.914Z"}}},{"ShapeAdded":{"shapeId":"MRZ9JW_0","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"916bb55e-646d-4de4-89cf-67dff0c0f3c2","createdAt":"2020-04-03T01:17:53.915Z"}}},{"ShapeAdded":{"shapeId":"MRZ9JW_2","baseShapeId":"$boolean","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"916bb55e-646d-4de4-89cf-67dff0c0f3c2","createdAt":"2020-04-03T01:17:53.915Z"}}},{"FieldAdded":{"fieldId":"MRZ9JW_1","shapeId":"MRZ9JW_0","name":"isDone","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"MRZ9JW_1","shapeId":"MRZ9JW_2"}},"eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"916bb55e-646d-4de4-89cf-67dff0c0f3c2","createdAt":"2020-04-03T01:17:53.915Z"}}},{"ShapeAdded":{"shapeId":"MRZ9JW_4","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"916bb55e-646d-4de4-89cf-67dff0c0f3c2","createdAt":"2020-04-03T01:17:53.915Z"}}},{"FieldAdded":{"fieldId":"MRZ9JW_3","shapeId":"MRZ9JW_0","name":"task","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"MRZ9JW_3","shapeId":"MRZ9JW_4"}},"eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"916bb55e-646d-4de4-89cf-67dff0c0f3c2","createdAt":"2020-04-03T01:17:53.915Z"}}},{"ResponseBodySet":{"responseId":"response_mStmm0SeAc","bodyDescriptor":{"httpContentType":"application/json","shapeId":"MRZ9JW_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"916bb55e-646d-4de4-89cf-67dff0c0f3c2","createdAt":"2020-04-03T01:17:53.916Z"}}},{"ShapeAdded":{"shapeId":"ADRxjA_0","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"a14a83fb-984b-4ce8-9f5b-1b63c4900769","createdAt":"2020-04-03T01:17:53.916Z"}}},{"FieldAdded":{"fieldId":"field_m4ZmHA77gg","shapeId":"MRZ9JW_0","name":"dueData","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_m4ZmHA77gg","shapeId":"ADRxjA_0"}},"eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"a14a83fb-984b-4ce8-9f5b-1b63c4900769","createdAt":"2020-04-03T01:17:53.916Z"}}},{"BatchCommitEnded":{"batchId":"6578cb66-d1b6-4036-b831-97f1ddaf0ee7","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"b30a83cd-0735-4354-abf8-d1b443a49dee","createdAt":"2020-04-03T01:17:53.917Z"}}},{"BatchCommitStarted":{"batchId":"47b9bf09-ed5b-446f-9f9c-98389beb9bc5","commitMessage":"Finalizing","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"9fa88dad-341b-4458-925b-002fbeb1b637","createdAt":"2020-04-03T01:18:04.397Z"}}},{"ShapeAdded":{"shapeId":"shape_TyQP0Kn208","baseShapeId":"$optional","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"03ed8176-83c9-48ed-b213-42262d82cb23","createdAt":"2020-04-03T01:18:04.397Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"shape_TyQP0Kn208","providerDescriptor":{"ShapeProvider":{"shapeId":"ADRxjA_0"}},"consumingParameterId":"$optionalInner"}},"eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"03ed8176-83c9-48ed-b213-42262d82cb23","createdAt":"2020-04-03T01:18:04.398Z"}}},{"FieldShapeSet":{"shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"field_m4ZmHA77gg","shapeId":"shape_TyQP0Kn208"}},"eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"03ed8176-83c9-48ed-b213-42262d82cb23","createdAt":"2020-04-03T01:18:04.398Z"}}},{"BatchCommitEnded":{"batchId":"47b9bf09-ed5b-446f-9f9c-98389beb9bc5","eventContext":{"clientId":"anonymous","clientSessionId":"075a3ecf-c588-49cc-a10b-a6ab4eaa5d78","clientCommandBatchId":"29a16431-33c4-46e4-a009-f4d9a6d357ea","createdAt":"2020-04-03T01:18:04.399Z"}}}],
+  "session": {
+    "metadata": {
+      "completed": false
+    },
+    "samples": [
+      {
+        "uuid": "2",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "3",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t, \"dueData\": \"MONDAY\"}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t, \"dueData\": \"TUESDAY\"}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "5",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\t\"task\": \"Build It\",\n\t\t\"isDone\": false\n\t, \"dueData\": \"WEDNESDAY\"}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {}
+}

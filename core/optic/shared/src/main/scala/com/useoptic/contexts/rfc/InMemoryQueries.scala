@@ -1,7 +1,7 @@
 package com.useoptic.contexts.rfc
 
 import com.useoptic.contexts.requests.Commands.{PathComponentId, RequestId}
-import com.useoptic.contexts.requests.projections.PathsWithRequestsProjection
+import com.useoptic.contexts.requests.projections.{AllEndpointsProjection, PathsWithRequestsProjection}
 import com.useoptic.contexts.requests.{PathComponent, RequestsState, Utilities}
 import com.useoptic.contexts.rfc.Events.RfcEvent
 import com.useoptic.contexts.rfc.projections.{APINameProjection, ComplexityScoreProjection, ContributionsProjection, SetupState, SetupStateProjection}
@@ -67,6 +67,10 @@ class InMemoryQueries(eventStore: EventStore[RfcEvent], service: RfcService, agg
 
   def resolvePath(url: String) = {
     Utilities.resolvePath(url, requestsState.pathComponents)
+  }
+
+  def endpoints(): Seq[AllEndpointsProjection.Endpoint] = {
+    AllEndpointsProjection.fromRfcState(service.currentState(aggregateId))
   }
 
   def nameForShapeId(shapeId: ShapeId): Seq[NameForShapeId.ColoredComponent] = {

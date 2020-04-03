@@ -44,7 +44,7 @@ class LoaderFactory {
         >
           <Switch>
             <Route exact path={routerPaths.diffUrls(match.path)} component={UrlsX}/>
-            <Route exact path={routerPaths.diffRequestNew(match.path)} component={DiffPageNew}/>
+            <Route exact path={routerPaths.diffRequest(match.path)} component={DiffPageNew}/>
             <Route component={withSpecServiceContext(ApiOverview)}/>
           </Switch>
         </TrafficSessionStore>
@@ -109,37 +109,40 @@ class LoaderFactory {
         global.specService = specService;
         global.opticDump = dumpSpecServiceState(specService);
         return (
-          <IntegrationsContextStore integrations={integrations}>
-            <SpecServiceStore specService={specService} specServiceEvents={specServiceEvents}>
-              <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
-                <RfcStoreImpl specService={specService}>
-                  <ApiOverviewContextStore specService={specService}>
-                    <SessionNavigation
-                      notifications={notificationAreaComponent}
-                      entryBasePath={entryBasePath}
-                      shareButtonComponent={shareButtonComponent}>
-                      <Switch>
-                        <Route exact path={routerPaths.init(basePath)}
-                               component={() => <Init/>}/>
-                        <Route path={routerPaths.request(basePath)}
-                               component={withSpecServiceContext(RequestsDetailsPage)}/>
-                        <Route path={routerPaths.pathMethod(basePath)}
-                               component={withSpecServiceContext(RequestsDetailsPageNew)}/>
-                        <Route path={routerPaths.apiDashboard(basePath)}
-                               component={withSpecServiceContext(APIDashboard)}/>
-                        <Route exact path={routerPaths.integrationsDashboard(basePath)}
-                               component={() => <IntegrationsDashboard className={'root'}/>}/>
-                        <Route exact path={routerPaths.apiDocumentation(basePath)}
-                               component={withSpecServiceContext(ApiOverview)}/>
-                        <Route path={routerPaths.diff(basePath)} component={withSpecServiceContext(SessionWrapper)}/>
-                        <Redirect to={routerPaths.apiDashboard(basePath)}/>
-                      </Switch>
-                    </SessionNavigation>
-                  </ApiOverviewContextStore>
-                </RfcStoreImpl>
-              </InitialRfcCommandsStore>
-            </SpecServiceStore>
-          </IntegrationsContextStore>
+          <SpecServiceStore specService={specService} specServiceEvents={specServiceEvents}>
+            <InitialRfcCommandsStore initialEventsString={initialEventsString} rfcId="testRfcId">
+              <RfcStoreImpl specService={specService}>
+                <AllCapturesStore>
+                  <IgnoreDiffStore>
+                    <ApiOverviewContextStore specService={specService}>
+                      {/*<Navigation*/}
+                      {/*  notifications={notificationAreaComponent}*/}
+                      {/*  entryBasePath={entryBasePath}*/}
+                      {/*  shareButtonComponent={shareButtonComponent}>*/}
+                        <Switch>
+                          <Route path={routerPaths.request(basePath)}
+                                 component={withSpecServiceContext(RequestsDetailsPage)}/>
+                          <Route path={routerPaths.diffPage(basePath)}
+                                 component={withSpecServiceContext(CaptureManagerPage)}/>
+                          <Route path={routerPaths.pathMethod(basePath)}
+                                 component={withSpecServiceContext(RequestsDetailsPageNew)}/>
+                          <Route path={routerPaths.apiDashboard(basePath)}
+                                 component={withSpecServiceContext(APIDashboard)}/>
+                          {/*<Route path={routerPaths.testingDashboard(basePath)}*/}
+                          {/*       component={TestingDashboard}/>*/}
+                          <Route exact path={routerPaths.integrationsDashboard(basePath)}
+                                 component={() => <IntegrationsDashboard className={'root'}/>}/>
+                          <Route exact path={routerPaths.apiDocumentation(basePath)}
+                                 component={withSpecServiceContext(ApiOverview)}/>
+                          <Redirect to={routerPaths.apiDashboard(basePath)}/>
+                        </Switch>
+                      {/*</Navigation>*/}
+                    </ApiOverviewContextStore>
+                  </IgnoreDiffStore>
+                </AllCapturesStore>
+              </RfcStoreImpl>
+            </InitialRfcCommandsStore>
+          </SpecServiceStore>
         );
       }
     }

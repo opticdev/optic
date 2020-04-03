@@ -79,6 +79,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
 
       const endpointDescriptor = {
         httpMethod: method,
+        method,
         pathId,
         fullPath,
         pathParameters,

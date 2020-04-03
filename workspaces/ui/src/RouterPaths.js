@@ -1,35 +1,38 @@
-export const basePaths = {
-  exampleSessionsBasePath: '/example-sessions/:exampleId',
-  exampleTestingDashboardBasePath: '/example-reports/:exampleId',
-  interceptorBasePath: '/live-session',
-  exampleDrivenSpecBasePath: '/spec-by-example',
-  exampleCommandsBasePath: '/examples/:exampleId',
-  sharedBasePath: '/shared/:sharedId',
-  localBasePath: '/specs/:specId',
-  localIntegrationsPath: '/specs/:specId/integrations/:integrationName'
+import {useBathUrl} from './contexts/MockDataContext';
+import {join} from 'path';
+
+// TODO: migrate away from various base paths. Everything is from root, unless prefixed ???
+
+// TODO: migrate away from routes as functions ???
+export const routerPaths = {
+  //@todo -- replace the old flow with this one
+  testingDashboard: (base = '') => `${base}/testing`,
+  documentationPage: (base = '') => `${base}/documentation`, //???
+  expandedDocsPage: (base = '') => `${base}/documentation/paths/:pathId/methods/:method`,
+  diffPage: (base = '') => `${base}/diff`,//???
+  diffPageWithCapture: (base = '') => `${base}/diff/:captureId`,
+  diffRequest: (base = '') => `${base}/diff/:captureId/paths/:pathId/methods/:method`,
 };
 
-export const routerPaths = {
-    exampleCommandsRoot: () => basePaths.exampleCommandsBasePath,
-    exampleSessionsRoot: () => basePaths.exampleSessionsBasePath,
-    exampleDrivenRoot: () => basePaths.exampleDrivenSpecBasePath,
-    sharedRoot: () => basePaths.sharedBasePath,
-    interceptorRoot: () => basePaths.interceptorBasePath,
-    localRoot: () => basePaths.localBasePath,
-    request: (base) => `${base}/requests/:requestId`,
-    pathMethod: (base) => `${base}/paths/:pathId/methods/:method`,
-    apiDashboard: (base) => `${base}/dashboard`,
-    diffPage: (base) => `${base}/diff`,
-    diffPageWithCapture: (base) => `${base}/diff/:captureId`,
-    apiDocumentation: (base) => `${base}/documentation`,
-    integrationsDashboard: (base) => `${base}/integrations`,
-    integrationsPath: (base) => `${base}/integrations/:integrationName`,
-    diff: (base) => `${base}/diff/:sessionId`,
-    diffUrls: (base) => `${base}/urls`,
-    diffRequest: (base) => `${base}/requests/:requestId`,
-    //@todo -- replace the old flow with this one
-    diffRequestNew: (base) => `${base}/paths/:pathId/methods/:method`,
-    testingDashboard: (base) => `${base}/testing`,
-    exampleTestingDashboard: () => basePaths.exampleTestingDashboardBasePath
-  }
-;
+export function useRouterPaths() {
+  const debugPrefix = useBathUrl();
+
+  return Object.keys(routerPaths).reduce(
+    (routesByName, routeName) => {
+      let route = routesByName[routeName];
+      if (typeof route === 'function') {
+        let routeFn = route;
+        // we're not passing the base url, as we want to use Path.join to deal with differences
+        // in trailing slashes. Supporting functions is mostly for backwards-compatibility
+        // ??? urljoin?
+        route = (...args) => join(debugPrefix, routeFn(...args));
+      } else {
+        route = join(debugPrefix, route);
+      }
+      routesByName[routeName] = route;
+
+      return routesByName;
+    },
+    {...routerPaths}
+  );
+}

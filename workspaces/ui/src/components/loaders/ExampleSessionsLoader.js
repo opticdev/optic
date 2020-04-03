@@ -1,10 +1,7 @@
 import React from 'react';
-import {basePaths} from '../../RouterPaths';
 import {LoaderFactory} from './LoaderFactory';
 import {shareButtonComponent} from './SharedLoader';
 import EventEmitter from 'events';
-
-export const basePath = basePaths.exampleSessionsBasePath;
 
 const demoEventEmitter = new EventEmitter();
 const specServiceEvents = new EventEmitter()
@@ -66,7 +63,6 @@ const {
   specServiceTask,
   specServiceEvents,
   shareButtonComponent,
-  basePath,
   demo: true
 });
 

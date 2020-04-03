@@ -1,30 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import TestingDashboard from '../dashboards/TestingDashboard';
+import { useMockData } from '../../contexts/MockDataContext';
 
 import { createExampleTestingService } from '../../services/TestingService';
 
-export function createTestingServiceLoaderComponent(serviceFactory) {
-  return function(props) {
-    const { match } = props;
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [service, setService] = useState(null);
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      const task = async () => {
-        const s = await serviceFactory(props);
-        setService(s);
-      };
-      task();
-    }, []);
+export default function TestingServiceLoader(props) {
+  const debugData = useMockData();
 
-    return <TestingDashboard service={service} {...props} />;
-  };
+  const [service, setService] = useState(null);
+  useEffect(() => {
+
+    const serviceFactory = debugData.available
+      ? () => createExampleTestingServiceFactory(debugData.data)
+      : () => Promise.reject(new Error('TestingService not implemented yet'));
+
+    const task = async () => {
+      const s = await serviceFactory();
+      setService(s);
+    };
+    task();
+  }, [debugData.available, debugData.loading]);
+
+  return <TestingDashboard service={service} {...props} />;
 }
 
-export function createExampleTestingServiceLoaderComponent() {
-  return createTestingServiceLoaderComponent((props) =>
-    createExampleTestingService(props.match.params.exampleId)
-  );
-}
+async function createExampleTestingServiceFactory(data) {
+  const testingLink =
+    data.links && data.links.find(({ rel }) => rel === 'testing');
 
-export const ExampleTestingServiceLoaderComponent = createExampleTestingServiceLoaderComponent();
+  return createExampleTestingService(testingLink && testingLink.href);
+}

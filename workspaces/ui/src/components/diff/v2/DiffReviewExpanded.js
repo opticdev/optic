@@ -22,6 +22,7 @@ import {IgnoreDiffContext} from './DiffPageNew';
 import {withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import Scrolling from './Scrolling';
+import {ShapeExpandedStore} from './ShapeRenderContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -77,6 +78,7 @@ export default withDiffContext((props) => {
                                   style={{fontSize: 12}}>{currentInteraction.request.path}</Typography>;
 
   return (
+    <ShapeExpandedStore>
     <div style={{padding: 12}}>
       <div className={classes.title}>
         <div style={{flex: 1}}/>
@@ -120,6 +122,6 @@ export default withDiffContext((props) => {
         </div>
       </div>
     </div>
-
+    </ShapeExpandedStore>
   );
 });

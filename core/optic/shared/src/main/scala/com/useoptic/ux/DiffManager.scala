@@ -54,10 +54,10 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     if (_currentRfcState == null) {
       return Seq.empty
     }
-
-    val pathComponents = _interactions.flatMap(interaction => Utilities.resolvePath(interaction.request.path, _currentRfcState.requestsState.pathComponents))
+    println("HERE LOOK")
 
     def checkForEmptyContentType(interactionTrail: InteractionTrail, specTrail: RequestSpecTrail, interactions: Seq[HttpInteraction]) = {
+      println(specTrail)
       val pathOption = RequestSpecTrailHelpers.pathId(specTrail)
       if (pathOption.isDefined) {
         interactions.flatMap(interaction => {
@@ -95,7 +95,6 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
       .groupBy(_._1)
       .mapValues(i => i.map(_._2))
       .filter(_._2.exists(i => i.response.statusCode >= 200 && i.response.statusCode < 300))
-
 
     val allUnmatchedUrls = fromDiff.map { case ((method, path, pathOption), interactions) => UndocumentedURL(method, path, pathOption, interactions.toSeq) }.toSeq
 

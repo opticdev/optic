@@ -1,7 +1,6 @@
 import React from 'react';
 import {LoaderFactory} from './LoaderFactory.js';
 import {SpecService} from '../../services/SpecService.js';
-import {basePaths} from '../../RouterPaths.js';
 import {sharedSpecUploadService} from '../../services/SharedSpecUploadService.js';
 import {withRfcContext} from '../../contexts/RfcContext.js';
 import {Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions} from '@material-ui/core';
@@ -19,7 +18,6 @@ import LinkIcon from '@material-ui/icons/Link';
 import copy from 'copy-to-clipboard';
 import EventEmitter from 'events';
 
-const basePath = basePaths.sharedBasePath;
 const specServiceEvents = new EventEmitter();
 
 class SharedSpecService extends SpecService {
@@ -166,7 +164,6 @@ const {
   specServiceTask,
   specServiceEvents,
   shareButtonComponent,
-  basePath
 });
 
 export default SharedLoaderRoutes;

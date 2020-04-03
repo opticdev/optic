@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -17,10 +17,11 @@ import {Show} from '../../shared/Show';
 import {DocSubGroup} from '../../requests/DocSubGroup';
 import {resolvePath} from '../../utilities/PathUtilities';
 import {getOrUndefined, RequestsCommands, RequestsHelper, RfcCommands} from '@useoptic/domain';
-import {withRfcContext} from '../../../contexts/RfcContext';
+import {RfcContext, withRfcContext} from '../../../contexts/RfcContext';
 import {pathMethodKeyBuilder, PURPOSE} from '../../../ContributionKeys';
 import {withNavigationContext} from '../../../contexts/NavigationContext';
 import {PathAndMethod} from './PathAndMethod';
+import {useHistory} from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -34,14 +35,13 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const NewUrlModal = withNavigationContext(withRfcContext(({pushRelative, captureId, children, newUrl, allUnmatchedPaths, cachedQueryResults, handleCommands}) => {
+export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, newUrl, allUnmatchedPaths}) => {
   const classes = useStyles();
-
+  const {cachedQueryResults, handleCommands} = useContext(RfcContext)
+  const history = useHistory()
   const knownPathId = getOrUndefined(newUrl.pathId);
-
   const [open, setOpen] = React.useState(false);
   const [naming, setNaming] = React.useState(Boolean(knownPathId));
-  const [purpose, setPurpose] = React.useState('');
   const [pathExpression, setPathExpression] = React.useState(newUrl.path);
 
   const handleClickOpen = () => {
@@ -57,7 +57,7 @@ export const NewUrlModal = withNavigationContext(withRfcContext(({pushRelative, 
     setPathExpression(pathExpression);
   };
 
-  const handleCreate = () => {
+  const handleCreate = (purpose) => {
 
     let lastParentPathId = knownPathId
     const commands = [];
@@ -89,40 +89,45 @@ export const NewUrlModal = withNavigationContext(withRfcContext(({pushRelative, 
     handleCommands(...commands);
 
     //redirect
-    const to = `/diff/${captureId}/paths/${lastParentPathId}/methods/${newUrl.method}`
-    pushRelative(to)
+    const to = `${captureId}/paths/${lastParentPathId}/methods/${newUrl.method}`
+    history.push(to)
   };
 
   const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression));
   const matches = regex.exec(newUrl.path) !== null;
   const matchingUrls = Array.from(allUnmatchedPaths.filter((url) => regex.exec(url) && url !== newUrl.path));
 
-  const namingDialog = (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" aria-labelledby="form-dialog-title">
-      <DialogTitle>Add New Endpoint</DialogTitle>
-      <DialogContent style={{marginTop: -20}}>
-        <PathAndMethod method={newUrl.method} path={pathExpression}/>
-        <DialogContentText style={{marginTop: 12}}>
-          What does this endpoint do?
-        </DialogContentText>
-        <TextField value={purpose} onChange={(e) => setPurpose(e.target.value)} autoFocus fullWidth/>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setNaming(false)}>
-          Back
-        </Button>
-        <Button onClick={handleCreate} color="secondary" disabled={!matches}
-                endIcon={<NavigateNextIcon/>}>Finish</Button>
-      </DialogActions>
-    </Dialog>
-  );
+  function NamingDialog() {
+    const [purpose, setPurpose] = React.useState('');
+
+    return (
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" aria-labelledby="form-dialog-title">
+        <DialogTitle>Add New Endpoint</DialogTitle>
+        <DialogContent style={{marginTop: -20}}>
+          <PathAndMethod method={newUrl.method} path={pathExpression}/>
+          <DialogContentText style={{marginTop: 12}}>
+            What does this endpoint do?
+          </DialogContentText>
+          <TextField value={purpose} onChange={(e) => setPurpose(e.target.value)} autoFocus fullWidth/>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNaming(false)}>
+            Back
+          </Button>
+          <Button onClick={() => handleCreate(purpose)} color="secondary" disabled={!matches}
+                  endIcon={<NavigateNextIcon/>}>Finish</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
 
   return (
     <>
       <div onClick={handleClickOpen}>
         {children}
       </div>
-      {naming ? namingDialog : (
+      {naming ? <NamingDialog /> : (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" aria-labelledby="form-dialog-title">
           <DialogTitle>Add New Endpoint</DialogTitle>
           <DialogContent style={{marginTop: -20}}>
@@ -167,7 +172,7 @@ export const NewUrlModal = withNavigationContext(withRfcContext(({pushRelative, 
   );
 
 
-}));
+});
 
 
 function completePathMatcherRegex(pathComponents) {
