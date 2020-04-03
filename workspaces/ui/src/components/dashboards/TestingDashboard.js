@@ -122,7 +122,13 @@ export function TestingReport(props) {
     spec,
     report
   ]);
-  const { endpoints, totalInteractions, totalUnmatchedPaths } = summary;
+  const {
+    endpoints,
+    totalInteractions,
+    totalCompliantInteractions,
+    totalDiffs,
+    totalUnmatchedPaths
+  } = summary;
 
   return (
     <div>
@@ -136,9 +142,9 @@ export function TestingReport(props) {
       </h4>
       <ul>
         <li>Total interactions: {totalInteractions}</li>
-        {/*  <li>Compliant interactions: {counts.totalCompliantInteractions}</li>*/}
+        <li>Compliant interactions: {totalCompliantInteractions}</li>
         <li>Unmatched paths: {totalUnmatchedPaths}</li>
-        {/*  <li>Total diffs: {counts.totalDiffs}</li>*/}
+        <li>Total diffs: {totalDiffs}</li>
       </ul>
 
       <h4>Endpoints</h4>
@@ -148,8 +154,8 @@ export function TestingReport(props) {
           {endpoints.map((endpoint) => (
             <li key={endpoint.request.requestId}>
               <strong>{endpoint.request.httpMethod}</strong>{' '}
-              {endpoint.path.name}: ({endpoint.counts.interactions}{' '}
-              interactions)
+              {endpoint.path.name}: ({endpoint.counts.compliant}/
+              {endpoint.counts.interactions} interactions compliant)
             </li>
           ))}
         </ul>
@@ -206,12 +212,21 @@ function createSummary(capture, spec, report) {
   const allPaths = [flattenedPaths, ...flattenedPaths.children];
 
   const endpoints = uniqBy(
-    flatMapOperations(allPaths, { requests, requestIdsByPathId }),
+    flatMapOperations(allPaths, {
+      requests,
+      requestIdsByPathId
+    }),
     'requestId'
   ).map(({ request, path }) => {
     const { pathId } = path;
     const { requestDescriptor, isRemoved, requestId } = request;
     const { httpMethod } = requestDescriptor;
+
+    const interactionsCounts = getCoverageCount(
+      CoverageConcerns.TotalForPathAndMethod(pathId, httpMethod)
+    );
+    const diffsCount = 1; // TODO: Hardcoded test value, replace by deriving from report,
+    const compliantCount = interactionsCounts - diffsCount;
 
     return {
       request: {
@@ -223,9 +238,9 @@ function createSummary(capture, spec, report) {
         name: path.name
       },
       counts: {
-        interactions: getCoverageCount(
-          CoverageConcerns.TotalForPathAndMethod(pathId, httpMethod)
-        )
+        interactions: interactionsCounts,
+        diffs: diffsCount,
+        compliant: compliantCount
       }
     };
   });
@@ -236,13 +251,19 @@ function createSummary(capture, spec, report) {
   const totalUnmatchedPaths = getCoverageCount(
     CoverageConcerns.TotalUnmatchedPath()
   );
+
+  const totalDiffs = 1; // TODO: Hardcoded test value, replace by deriving from report
+  const totalCompliantInteractions = totalInteractions - totalDiffs;
+
   return {
     apiName,
     createdAt: capture.createdAt,
     updatedAt: capture.updatedAt,
     endpoints,
     totalInteractions,
-    totalUnmatchedPaths
+    totalUnmatchedPaths,
+    totalDiffs,
+    totalCompliantInteractions
   };
 
   function getCoverageCount(concern) {
