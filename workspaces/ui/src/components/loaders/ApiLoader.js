@@ -20,8 +20,6 @@ export default function ApiSpecServiceLoader(props) {
 
     const task = async () => {
       const {specService} = await serviceFactory();
-      const events = await specService.listEvents();
-      setEvents(events); //@ issue here with ordering, must be before setService
       setService(specService);
       specService.eventEmitter.on('events-updated', async () => {
         const events = await specService.listEvents();
@@ -31,14 +29,23 @@ export default function ApiSpecServiceLoader(props) {
     task();
   }, [debugData.available, debugData.loading]);
 
+  useEffect(() => {
+    if (service) {
+      const task = async () => {
+        const events = await service.listEvents();
+        setEvents(events);
+      };
+      task()
+    }
+  }, [service]);
 
   if (!service) {
     return <LinearProgress/>;
   }
 
   return (
-    <SpecServiceStore specService={service} apiName="example API" specServiceEvents={service.eventEmitter}>
-      <InitialRfcCommandsStore initialEventsString={events} rfcId="testRfcId">
+    <SpecServiceStore specService={service} specServiceEvents={service.eventEmitter}>
+      <InitialRfcCommandsStore initialEventsString={events} rfcId="testRfcId" instance="the one in ApiLoader.js">
         <RfcStore specService={service}>
           {props.children}
         </RfcStore>
@@ -48,15 +55,13 @@ export default function ApiSpecServiceLoader(props) {
 }
 
 async function createExampleSpecServiceFactory(data) {
-  const testingLink =
-    data.links && data.links.find(({rel}) => rel === 'testing');
-
   let events = JSON.stringify(data.events);
 
   const examples = data.examples || {};
-  const eventEmitter = new EventEmitter()
+  const eventEmitter = new EventEmitter();
 
   const captureId = 'example-session';
+
   const specService = {
     eventEmitter,
     getConfig: async function () {

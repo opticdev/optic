@@ -85,8 +85,8 @@ class QueriesFacade(eventStore: EventStore[RfcEvent], service: RfcService, aggre
     convertJsonToJs(q.shapesState.flattenedShape(shapeId).asJson)
   }
 
-  def complexityScore(): String = {
-    q.complexityScore
+  def endpoints(): js.Any = {
+    convertJsonToJs(q.endpoints().asJson)
   }
 
   def absolutePath(pathComponentId: PathComponentId): String = {

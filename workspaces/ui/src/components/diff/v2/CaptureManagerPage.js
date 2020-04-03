@@ -36,24 +36,17 @@ import {RfcContext, withRfcContext} from '../../../contexts/RfcContext';
 import {lengthScala, mapScala, JsonHelper} from '@useoptic/domain';
 import {NewUrlModal} from './AddUrlModal';
 import {Route, Switch} from 'react-router-dom';
-import {UrlsX} from '../../paths/NewUnmatchedUrlWizard';
 import DiffPageNew, {IgnoreDiffContext, IgnoreDiffStore} from './DiffPageNew';
-import ApiOverview from '../../navigation/ApiOverview';
 import {Show, ShowSpan} from '../../shared/Show';
 import {EndpointsContextStore, EndpointsContext} from '../../../contexts/EndpointContext';
 import MoreRecentCapture from './MoreRecentCapture';
 import Page from '../../Page';
-import ReportsNavigation from '../../testing/reports-nav';
-import {Provider as TestingDashboardContextProvider} from '../../../contexts/TestingDashboardContext';
-import {TestingDashboard} from '../../dashboards/TestingDashboard';
-import {InitialRfcCommandsContext} from '../../../contexts/InitialRfcCommandsContext';
 
 const useStyles = makeStyles(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
-    overflow: 'hidden',
     margin: '0 auto',
     maxWidth: 1200,
     paddingTop: 35,
@@ -167,9 +160,8 @@ export const CaptureManagerPage = ({match, specService}) => {
 
   const routerPaths = useRouterPaths();
 
-
   return (
-    <Page title="Optic Live Contracting Dashboard">
+    <Page title="Optic Live Contract Testing Dashboard">
       <Page.Navbar
         mini={true}
         baseUrl={match.url}
@@ -184,7 +176,7 @@ export const CaptureManagerPage = ({match, specService}) => {
                 <Route exact path={routerPaths.diffPageWithCapture()}
                        component={(props) => <CaptureManager specService={specService}
                                                              captureId={props.match.params.captureId}/>}/>
-                <Route exact path={routerPaths.diffRequestNew()} component={(props) => {
+                <Route exact path={routerPaths.diffRequest()} component={(props) => {
                   return (
                     <TrafficSessionStore sessionId={props.match.params.captureId} specService={specService}>
                       <DiffPageNew {...props} />
@@ -222,7 +214,6 @@ export const CaptureManager = ({captureId, specService}) => {
 
   return (
     <div className={classes.container}>
-      <div className={classes.scroll}>
         <Paper>
           <div className={classes.header}>
             <FiberManualRecordIcon color="secondary" fontSize="medium" style={{marginRight: 10}}/>
@@ -275,12 +266,6 @@ export const CaptureManager = ({captureId, specService}) => {
                         yielding in <Stat number={stats.totalDiffs} label="diff"/>{' '}
                         and <Stat number={stats.undocumentedEndpoints} label="undocumented endpoint"/>.</Typography>
                     </div>
-
-                    {rfcState.toString()}
-                    <div>
-                      {rfcState.toString().length}
-                    </div>
-
                     <Show when={lengthScala(endpointDiffs) > 0}>
                       <DocSubGroup title={`Endpoint Diffs (${lengthScala(endpointDiffs)})`}>
                         <List fullWidth>
@@ -350,7 +335,6 @@ export const CaptureManager = ({captureId, specService}) => {
           </TrafficSessionStore>
         )}
       </div>
-    </div>
   );
 };
 

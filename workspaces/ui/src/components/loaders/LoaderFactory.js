@@ -44,7 +44,7 @@ class LoaderFactory {
         >
           <Switch>
             <Route exact path={routerPaths.diffUrls(match.path)} component={UrlsX}/>
-            <Route exact path={routerPaths.diffRequestNew(match.path)} component={DiffPageNew}/>
+            <Route exact path={routerPaths.diffRequest(match.path)} component={DiffPageNew}/>
             <Route component={withSpecServiceContext(ApiOverview)}/>
           </Switch>
         </TrafficSessionStore>

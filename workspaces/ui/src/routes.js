@@ -8,6 +8,7 @@ import SharedLoader from './components/loaders/SharedLoader';
 import TestingDashboardLoader from './components/loaders/TestingDashboardLoader';
 import ApiSpecServiceLoader from './components/loaders/ApiLoader';
 import {CaptureManagerPage} from './components/diff/v2/CaptureManagerPage';
+import {DocsPage} from './components/docs/DocsPage';
 
 export function ApiRoutes(props) {
   const routerPaths = useRouterPaths();
@@ -17,19 +18,19 @@ export function ApiRoutes(props) {
     <Switch>
       <Route
         strict
-        path={routerPaths.diffPage()}
-        component={CaptureManagerPage}
+        path={routerPaths.documentationPage()}
+        component={DocsPage}
       />
       <Route
         strict
         path={routerPaths.diffPage()}
         component={CaptureManagerPage}
       />
-      <Route
-        strict
-        path={routerPaths.testingDashboard()}
-        component={TestingDashboardLoader}
-      />
+      {/*<Route*/}
+      {/*  strict*/}
+      {/*  path={routerPaths.testingDashboard()}*/}
+      {/*  component={TestingDashboardLoader}*/}
+      {/*/>*/}
       {/*<Route*/}
       {/*  strict*/}
       {/*  path={routerPaths.exampleSessionsRoot()}*/}

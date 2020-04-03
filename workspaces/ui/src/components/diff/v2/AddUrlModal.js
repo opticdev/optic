@@ -42,7 +42,6 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
   const knownPathId = getOrUndefined(newUrl.pathId);
   const [open, setOpen] = React.useState(false);
   const [naming, setNaming] = React.useState(Boolean(knownPathId));
-  const [purpose, setPurpose] = React.useState('');
   const [pathExpression, setPathExpression] = React.useState(newUrl.path);
 
   const handleClickOpen = () => {
@@ -58,7 +57,7 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
     setPathExpression(pathExpression);
   };
 
-  const handleCreate = () => {
+  const handleCreate = (purpose) => {
 
     let lastParentPathId = knownPathId
     const commands = [];
@@ -84,6 +83,8 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
       RfcCommands.AddContribution(pathMethodKeyBuilder(lastParentPathId, newUrl.method), PURPOSE, purpose),
     )
 
+    debugger
+
     //apply commands
     handleCommands(...commands);
 
@@ -96,32 +97,37 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
   const matches = regex.exec(newUrl.path) !== null;
   const matchingUrls = Array.from(allUnmatchedPaths.filter((url) => regex.exec(url) && url !== newUrl.path));
 
-  const namingDialog = (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" aria-labelledby="form-dialog-title">
-      <DialogTitle>Add New Endpoint</DialogTitle>
-      <DialogContent style={{marginTop: -20}}>
-        <PathAndMethod method={newUrl.method} path={pathExpression}/>
-        <DialogContentText style={{marginTop: 12}}>
-          What does this endpoint do?
-        </DialogContentText>
-        <TextField value={purpose} onChange={(e) => setPurpose(e.target.value)} autoFocus fullWidth/>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={() => setNaming(false)}>
-          Back
-        </Button>
-        <Button onClick={handleCreate} color="secondary" disabled={!matches}
-                endIcon={<NavigateNextIcon/>}>Finish</Button>
-      </DialogActions>
-    </Dialog>
-  );
+  function NamingDialog() {
+    const [purpose, setPurpose] = React.useState('');
+
+    return (
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" aria-labelledby="form-dialog-title">
+        <DialogTitle>Add New Endpoint</DialogTitle>
+        <DialogContent style={{marginTop: -20}}>
+          <PathAndMethod method={newUrl.method} path={pathExpression}/>
+          <DialogContentText style={{marginTop: 12}}>
+            What does this endpoint do?
+          </DialogContentText>
+          <TextField value={purpose} onChange={(e) => setPurpose(e.target.value)} autoFocus fullWidth/>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNaming(false)}>
+            Back
+          </Button>
+          <Button onClick={() => handleCreate(purpose)} color="secondary" disabled={!matches}
+                  endIcon={<NavigateNextIcon/>}>Finish</Button>
+        </DialogActions>
+      </Dialog>
+    );
+  }
+
 
   return (
     <>
       <div onClick={handleClickOpen}>
         {children}
       </div>
-      {naming ? namingDialog : (
+      {naming ? <NamingDialog /> : (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" aria-labelledby="form-dialog-title">
           <DialogTitle>Add New Endpoint</DialogTitle>
           <DialogContent style={{marginTop: -20}}>

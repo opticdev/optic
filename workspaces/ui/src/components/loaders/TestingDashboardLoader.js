@@ -9,7 +9,6 @@ export default function TestingServiceLoader(props) {
 
   const [service, setService] = useState(null);
   useEffect(() => {
-    if (debugData.available && debugData.loading) return;
 
     const serviceFactory = debugData.available
       ? () => createExampleTestingServiceFactory(debugData.data)

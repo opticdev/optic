@@ -39,7 +39,6 @@ export function useMockSession({ sessionId, path }) {
     () => createDebugSession({ sessionId, path }),
     [sessionId, path]
   );
-
   return dashboardContext;
 }
 
@@ -49,7 +48,7 @@ export function useMockData(deps) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [available, setAvailable] = useState(!!debugSession);
+  const [available, setAvailable] = useState(true);
 
   useEffect(() => {
     if (!debugSession) {
@@ -76,6 +75,5 @@ export function useMockData(deps) {
 
 export function useBathUrl() {
   const debugSession = useContext(MockDataContext);
-
-  return !!debugSession ? debugSession.path : '/';
+  return debugSession.path;
 }

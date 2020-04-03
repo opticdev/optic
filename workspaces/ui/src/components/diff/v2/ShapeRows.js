@@ -581,7 +581,7 @@ export const ItemRow = withShapeRenderContext((props) => {
           }
         })()}
       />
-      <ValueRows value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>
+      {item.display !== 'hidden' && <ValueRows value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>}
     </>
   );
 });

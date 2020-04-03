@@ -15,6 +15,7 @@ class SimulatedCommandContext extends React.Component {
     const hash = sha1(`${initialEventsString}+${initialCommandsString}`);
     return (
       <InitialRfcCommandsStore
+        instance="the one in simulated command context"
         rfcId={rfcId}
         initialEventsString={initialEventsString}
         initialCommandsString={initialCommandsString}>
