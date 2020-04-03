@@ -1,8 +1,7 @@
 // TODO: Consider using a TypeScript interface here
 // interace ITestingService
-import { opticEngine } from '@useoptic/domain';
+import { opticEngine, Queries } from '@useoptic/domain';
 // placeholder for actual remote service
-import { specFromEvents } from '../components/dashboards/TestingDashboard';
 import { StableHasher } from '../utilities/CoverageUtilities';
 import { JsonHelper } from '@useoptic/domain';
 
@@ -22,12 +21,12 @@ export async function createExampleTestingService(exampleId) {
 
   const { orgId, specs, samples: samplesByCaptureId, captures } = example;
 
-  function getSpec(captureId) {
+  function getSpecEvents(captureId) {
     const spec = specs[captureId];
     if (typeof spec === 'string') {
       // allow specs for one capture reference other specs, to keep example json
       // under control
-      return getSpec(spec);
+      return getSpecEvents(spec);
     } else {
       return spec;
     }
@@ -49,10 +48,10 @@ export async function createExampleTestingService(exampleId) {
       this.orgId = orgId;
     }
 
-    async loadSpec(captureId) {
+    async loadSpecEvents(captureId) {
       await new Promise((r) => setTimeout(r, 200));
 
-      return getSpec(captureId);
+      return getSpecEvents(captureId);
     }
 
     async listCaptures() {
@@ -60,11 +59,16 @@ export async function createExampleTestingService(exampleId) {
       return captures;
     }
 
+    async loadCapture(captureId) {
+      await new Promise((r) => setTimeout(r, 200));
+      return captures.find((capture) => captureId === capture.captureId);
+    }
+
     async loadReport(captureId) {
       await new Promise((r) => setTimeout(r, 200));
-      const events = getSpec(captureId);
+      const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
-      const { rfcState } = specFromEvents(events);
+      const { rfcState } = queriesFromEvents(events);
 
       const samplesSeq = JsonHelper.jsArrayToSeq(
         samples.map((x) => JsonHelper.fromInteraction(x))
@@ -81,4 +85,22 @@ export async function createExampleTestingService(exampleId) {
   }
 
   return new ExampleTestingService(orgId);
+}
+
+// Might belong in a (View)Model somewhere
+export function queriesFromEvents(events) {
+  const { contexts } = opticEngine.com.useoptic;
+  const { RfcServiceJSFacade } = contexts.rfc;
+  const rfcServiceFacade = RfcServiceJSFacade();
+  const eventStore = rfcServiceFacade.makeEventStore();
+  const rfcId = 'testRfcId';
+
+  // @TODO: figure out if it's wise to stop the parsing of JSON from the response, to prevent
+  // parse -> stringify -> parse
+  eventStore.bulkAdd(rfcId, JSON.stringify(events));
+  const rfcService = rfcServiceFacade.makeRfcService(eventStore);
+  const queries = Queries(eventStore, rfcService, rfcId);
+  const rfcState = rfcService.currentState(rfcId);
+
+  return { queries, rfcState };
 }
