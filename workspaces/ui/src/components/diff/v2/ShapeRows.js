@@ -8,6 +8,7 @@ import {AddedGreenBackground, ChangedYellowBackground, primary, RemovedRedBackgr
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tooltip from '@material-ui/core/Tooltip';
 import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
+import CheckIcon from '@material-ui/icons/Check';
 import {
   getOrUndefined,
   mapScala,
@@ -60,35 +61,26 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: '#ababab',
     borderRadius: 12
   },
-  diffNotif: {
-    backgroundColor: '#e3ebf2',
-    paddingLeft: 7,
-    paddingRight: 7,
-    '&:hover': {
-      transform: 'scale(1.07)',
-      transition: 'transform .2s'
-    },
-    // border: '1px solid',
-  },
   symbols: {
     color: '#cfcfcf',
     fontWeight: 800,
-    fontFamily: 'Inter'
+    fontFamily: '\'Source Code Pro\', monospace'
   },
   value: {
     fontWeight: 600,
-    fontFamily: 'Inter'
+    fontFamily: '\'Source Code Pro\', monospace'
   },
   fieldName: {
     fontWeight: 600,
     color: '#cfcfcf',
     fontSize: 12,
-    fontFamily: 'Inter',
+    fontFamily: '\'Source Code Pro\', monospace'
   },
   indexMarker: {
     fontWeight: 500,
     color: '#9cdcfe',
     fontSize: 12,
+    fontFamily: '\'Source Code Pro\', monospace'
   },
   rowContents: {
     display: 'flex',
@@ -118,7 +110,24 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     whiteSpace: 'pre',
     flex: 1,
-    fontWeight: 600
+    fontWeight: 600,
+    fontFamily: '\'Source Code Pro\', monospace'
+  },
+  assertionMet: {
+    display: 'flex',
+    whiteSpace: 'pre',
+    flex: 1,
+    fontWeight: 400,
+    color: '#646464',
+    fontStyle: 'italic',
+    fontFamily: '\'Source Code Pro\', monospace'
+  },
+  diffAssertion: {
+    color: '#f8edf4',
+    flex: 1,
+    fontSize: 14,
+    fontWeight: 800,
+    fontFamily: '\'Source Code Pro\', monospace'
   },
   toolbar: {
     alignItems: 'flex-start',
@@ -221,11 +230,11 @@ export const ObjectRender = withShapeRenderContext((props) => {
   const {shapeRender, shape, nested} = props;
   const fields = shapeRender.resolveFields(shape.fields);
 
-  const objectId = shape.shapeId
+  const objectId = shape.shapeId;
 
   return (
     <>
-      {!nested && <Row left={<Symbols>{'{'}</Symbols>} right={<TypeName typeName={shape.name}/>} noHover/>}
+      {!nested && <Row left={<Symbols>{'{'}</Symbols>} right={<AssertionMetTypeName typeName={shape.name}/>} noHover/>}
       {mapScala(fields)(field => <FieldRow field={field}/>)}
       <IndentIncrement><Row left={<Symbols withIndent>{'}'}</Symbols>} noHover/></IndentIncrement>
     </>
@@ -235,17 +244,17 @@ export const ObjectRender = withShapeRenderContext((props) => {
 export const ListRender = withShapeRenderContext((props) => {
   const classes = useStyles();
   const {shapeRender, shape, nested} = props;
-  const listId = shape.shapeId
+  const listId = shape.shapeId;
   const listItem = getOrUndefined(shapeRender.listItemShape(listId));
 
 
-  const {showAllLists} = useContext(ShapeExpandedContext)
+  const {showAllLists} = useContext(ShapeExpandedContext);
 
   const items = shapeRender.resolvedItems(shape.shapeId, !showAllLists.includes(listId));
 
   return (
     <>
-      {!nested && <Row left={<Symbols>{'['}</Symbols>} right={<TypeName typeName={shape.name}/>} noHover/>}
+      {!nested && <Row left={<Symbols>{'['}</Symbols>} right={<AssertionMetTypeName typeName={shape.name}/>} noHover/>}
       {mapScala(items)((item, index) => {
         return <ItemRow item={item}
                         listItemShape={listItem}
@@ -318,7 +327,7 @@ function ValueContents({value, shape}) {
                        style={{
                          fontWeight: 600,
                          whiteSpace: 'pre-line',
-                         fontFamily: 'Inter',
+                         fontFamily: '\'Source Code Pro\', monospace',
                          color: useColor.StringColor
                        }}>"{value}"</Typography>;
   }
@@ -327,7 +336,7 @@ function ValueContents({value, shape}) {
     return <Typography variant="caption"
                        style={{
                          fontWeight: 600,
-                         fontFamily: 'Inter',
+                         fontFamily: '\'Source Code Pro\', monospace',
                          color: useColor.BooleanColor
                        }}>{value ? 'true' : 'false'}</Typography>;
   }
@@ -336,7 +345,7 @@ function ValueContents({value, shape}) {
     return <Typography variant="caption"
                        style={{
                          fontWeight: 600,
-                         fontFamily: 'Inter',
+                         fontFamily: '\'Source Code Pro\', monospace',
                          color: useColor.NumberColor
                        }}>{value.toString()}</Typography>;
   }
@@ -364,15 +373,27 @@ const TypeName = ({typeName, style}) => {
     }
   })}
   </div>);
-  // const typeToColorsMap = {
-  //   '$string': colors.string,
-  // };
-  //
-  // return (
-  //   <Typography variant="caption"
-  //               style={{color: typeToColorsMap[typeName], fontWeight: 600, ...style}}>{typeName}</Typography>
-  // );
+};
 
+const AssertionMetTypeName = ({typeName, style}) => {
+  const classes = useStyles();
+
+  const {shapeRender} = useContext(ShapeRenderContext);
+
+  if (!typeName) {
+    return null;
+  }
+
+  const coloredComponents = typeName.asColoredString(shapeRender);
+
+  return (<div className={classes.assertionMet}>
+    <CheckIcon style={{color: '#646464', height: 10, width: 10, marginTop: 6, marginRight: 6}}/>
+    {mapScala(coloredComponents)((i) => {
+      if (i.text) {
+        return <span>{i.text}{' '}</span>;
+      }
+    })}
+  </div>);
 };
 
 function Symbols({children, withIndent}) {
@@ -395,64 +416,15 @@ function Symbols({children, withIndent}) {
 
 export const DiffNotif = withShapeRenderContext(withDiffContext((props) => {
   const classes = useStyles();
-  const {diffDescription, diff, selectedInterpretation, setSelectedInterpretation, setSelectedDiff} = props;
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const contents = (
-    <>
-      <WarningIcon style={{color: secondary, height: 10, width: 10}}/>
-      <Typography variant="caption" style={{marginLeft: 6}}>{diffDescription.assertion}</Typography>
-    </>
-  );
+  const {diffDescription} = props;
 
   return (
-    <>
-      <Paper elevation={2} className={classes.diffNotif} onClick={handleClick}>
-        {contents}
-      </Paper>
-      <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
-        anchorOrigin={{vertical: 'bottom'}}
-        elevation={4}
-        onClose={handleClose}
-      >
-        <IgnoreDiffContext.Consumer>
-          {({ignoreDiff}) => (
-            <div className={classes.menu}>
-              {/*<div style={{padding: 4}}>{contents}</div>*/}
-              <DocSubGroup title={<Typography style={{marginLeft: 6}} variant="overline" color="primary">Suggestions
-              </Typography>} style={{marginTop: 0}}>
-                {mapScala(diff.suggestions)((interpretation) => {
-                  return (
-                    <InterpretationRow
-                      action={interpretation.title}
-                      onClick={() => {
-                        setSelectedDiff(diff);
-                        setSelectedInterpretation(interpretation);
-                      }}/>);
-                })}
-                <InterpretationRow
-                  action={'Ignore Diff'}
-                  onClick={() => {
-                    setSelectedInterpretation(null);
-                    ignoreDiff(diff.diff);
-                  }}/>
-
-              </DocSubGroup>
-            </div>
-          )}
-        </IgnoreDiffContext.Consumer>
-      </Menu>
-    </>
+    <span className={classes.diffAssertion}>
+      <WarningIcon style={{color: secondary, height: 10, width: 10}}/>
+      <span style={{marginLeft: 6}}>{diffDescription.assertion}</span>
+    </span>
   );
+
 
 }));
 
@@ -467,7 +439,7 @@ export const FieldRow = withShapeRenderContext((props) => {
   const diff = headOrUndefined(field.field.diffs);
 
   const diffNotif = diff && (
-    <Indent><DiffNotif/></Indent>
+    <DiffNotif/>
   );
 
   return (
@@ -496,14 +468,14 @@ export const FieldRow = withShapeRenderContext((props) => {
         )}
         right={(() => {
           if (diffNotif && suggestion) {
-            return <Indent style={{flex: 1, display: 'flex'}}>
+            return <div style={{flex: 1, display: 'flex', marginLeft: 16}}>
               {suggestion.changeTypeAsString !== 'Removal' &&
               <TypeName style={{marginRight: 9}} typeName={fieldShape.name}/>}
               <Typography variant="caption" className={classes.suggestion}
                           style={{marginLeft: suggestion.changeTypeAsString !== 'Removal' ? 15 : 0}}>
                 ({suggestion.changeTypeAsString})
               </Typography>
-            </Indent>;
+            </div>;
           }
 
           if (diffNotif) {
@@ -511,7 +483,7 @@ export const FieldRow = withShapeRenderContext((props) => {
           }
 
           if (fieldShape) {
-            return <Indent><TypeName typeName={fieldShape.name}></TypeName></Indent>;
+            return <AssertionMetTypeName typeName={fieldShape.name}></AssertionMetTypeName>;
           }
         })()}
       />
@@ -530,7 +502,7 @@ export const ItemRow = withShapeRenderContext((props) => {
   const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(toOption(listItemShape))) || getOrUndefined(shapeRender.resolveItemShapeFromShapeId(item.item.shapeId));
 
   const diffNotif = diff && (
-    <Indent><DiffNotif/></Indent>
+    <DiffNotif/>
   );
 
   return (
@@ -548,7 +520,7 @@ export const ItemRow = withShapeRenderContext((props) => {
         left={(() => {
 
           if (item.display === 'hidden') {
-            return <Indent><HiddenItemEllipsis expandId={listId} /></Indent>
+            return <Indent><HiddenItemEllipsis expandId={listId}/></Indent>;
           }
 
           return (<Indent>
@@ -564,36 +536,37 @@ export const ItemRow = withShapeRenderContext((props) => {
         right={(() => {
 
           if (diffNotif && suggestion) {
-            return <Indent style={{flex: 1, display: 'flex'}}>
+            return <div style={{flex: 1, display: 'flex', marginLeft: 16}}>
               {suggestion.changeTypeAsString !== 'Removal' &&
               <TypeName style={{marginRight: 9}} typeName={listItemShape.name}/>}
               <Typography variant="caption" className={classes.suggestion}
                           style={{marginLeft: suggestion.changeTypeAsString !== 'Removal' ? 15 : 0}}>
                 ({suggestion.changeTypeAsString})
               </Typography>
-            </Indent>;
+            </div>;
           }
           if (diffNotif) {
             return diffNotif;
           }
           if (listItemShape) {
-            return <Indent><TypeName typeName={listItemShape.name}/></Indent>;
+            return <AssertionMetTypeName typeName={listItemShape.name}></AssertionMetTypeName>;
           }
         })()}
       />
-      {item.display !== 'hidden' && <ValueRows value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>}
+      {item.display !== 'hidden' &&
+      <ValueRows value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>}
     </>
   );
 });
 
 export const HiddenItemEllipsis = withShapeRenderContext((props) => {
   const classes = useStyles();
-  const {setShowAllLists} = useContext(ShapeExpandedContext)
-  const {expandId} = props
+  const {setShowAllLists} = useContext(ShapeExpandedContext);
+  const {expandId} = props;
   return (<DiffToolTip placement="right" title="(Hidden) Click to Expand">
     <div className={classes.hiddenItem} onClick={() => setShowAllLists(expandId, true)}>{'⋯'}</div>
-  </DiffToolTip>)
-})
+  </DiffToolTip>);
+});
 
 
 export const DiffToolTip = withStyles(theme => ({

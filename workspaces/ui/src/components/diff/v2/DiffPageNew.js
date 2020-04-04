@@ -26,29 +26,21 @@ import {
   ContentTypeHelpers,
   opticEngine
 } from '@useoptic/domain';
-import DiffViewer from './DiffViewer';
-import niceTry from 'nice-try';
-import {NamerStore} from '../../shapes/Namer';
 import SimulatedCommandContext from '../SimulatedCommandContext';
-import {Dark, DocDarkGrey, DocDivider, DocGrey} from '../../requests/DocConstants';
-import Card from '@material-ui/core/Card';
-import Avatar from '@material-ui/core/Avatar';
 import {primary, secondary} from '../../../theme';
-import CardContent from '@material-ui/core/CardContent';
-import TextField from '@material-ui/core/TextField';
-import {Show} from '../../shared/Show';
 import BatchLearnDialog from './BatchLearnDialog';
 import {DiffShapeViewer, DiffToggleContextStore, URLViewer} from './DiffShapeViewer';
 import uuidv4 from 'uuid/v4';
 import {withRouter} from 'react-router-dom';
-import {routerPaths} from '../../../RouterPaths';
-import ContentTabs, {RequestTabsContextStore} from './ContentTabs';
-import {DiffRegion} from './Notification';
-import DiffDrawer from './DiffDrawer';
-import {NewRegions, ShapeDiffRegion} from './DiffPreview';
+
+import {DiffCursor, NewRegions, ShapeDiffRegion} from './DiffPreview';
 import {CommitCard} from './CommitCard';
 import {StableHasher} from '../../../utilities/CoverageUtilities';
 import {useBathUrl} from '../../../contexts/MockDataContext';
+import DiffReviewExpanded from './DiffReviewExpanded';
+import {DocDivider} from '../../requests/DocConstants';
+import {PathAndMethod} from './PathAndMethod';
+import Paper from '@material-ui/core/Paper';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -71,7 +63,6 @@ const styles = theme => ({
   middle: {
     margin: '0 auto',
     maxWidth: 1200,
-    paddingTop: 25
   },
   scroll: {
     overflow: 'scroll',
@@ -142,6 +133,7 @@ function _DiffPageContent(props) {
     rfcId,
     acceptedSuggestions,
     acceptSuggestion,
+    selectedDiff,
     clientId,
     clientSessionId,
     reset,
@@ -173,6 +165,8 @@ function _DiffPageContent(props) {
     history.push(`${baseUrl}/diff/${captureId}`);
   }
 
+  const diffRegions = endpointDiffManger.diffRegions
+
   return (
     <IgnoreDiffContext.Consumer>
       {({ignoreDiff, ignoredDiffs}) => (
@@ -180,6 +174,35 @@ function _DiffPageContent(props) {
           <div className={classes.scroll}>
             <div className={classes.middle}>
 
+              <Paper style={{flex: 1, padding: 15, marginBottom: 25}}>
+
+                <Typography variant="h6">{endpointPurpose}</Typography>
+                <PathAndMethod method={httpMethod}
+                               path={fullPath}/>
+
+              </Paper>
+
+
+                <NewRegions ignoreDiff={ignoreDiff}
+                          endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
+                          method={httpMethod}
+                          fullPath={fullPath}
+                          newRegions={diffRegions.newRegions}/>
+
+              <DiffCursor diffs={diffRegions.bodyDiffs} />
+
+              {selectedDiff && <DiffReviewExpanded diff={selectedDiff} />}
+
+              {/*<ShapeDiffRegion*/}
+              {/*  region={endpointDiffManger.diffRegions.requestRegions}*/}
+              {/*  title="Request Body Diffs"/>*/}
+
+              {/*<ShapeDiffRegion*/}
+              {/*  region={endpointDiffManger.diffRegions.responseRegions}*/}
+              {/*  title="Response Body Diffs"/>*/}
+
+
+              {endpointDiffManger.diffCount !== 0 && <DocDivider style={{marginTop: 60, marginBottom: 60}}/>}
 
               <CommitCard acceptedSuggestions={acceptedSuggestions}
                           ignoredDiffs={ignoredDiffs}
@@ -192,18 +215,6 @@ function _DiffPageContent(props) {
                           apply={handleApply}
 
               />
-
-              <NewRegions ignoreDiff={ignoreDiff}
-                          regions={endpointDiffManger.diffRegions.newRegions}/>
-
-
-              <ShapeDiffRegion
-                region={endpointDiffManger.diffRegions.requestRegions}
-                title="Request Body Diffs"/>
-
-              <ShapeDiffRegion
-                region={endpointDiffManger.diffRegions.responseRegions}
-                title="Response Body Diffs"/>
 
             </div>
           </div>

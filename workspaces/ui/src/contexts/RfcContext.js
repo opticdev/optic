@@ -79,6 +79,7 @@ function BaseRfcStore(props) {
   useEffect(function () {
     try {
       const eventStore = Facade.makeEventStore();
+      global.eventStore = eventStore
       if (initialEventsString) {
         eventStore.bulkAdd(rfcId, initialEventsString);
       }

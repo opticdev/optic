@@ -31,7 +31,7 @@ package object ux {
   }
 
   @JSExportAll
-  case class TopLevelRegions(newRegions: Region, requestRegions: Seq[Region], responseRegions: Seq[Region])
+  case class TopLevelRegions(newRegions: Seq[NewRegionDiffBlock], bodyDiffs: Seq[BodyShapeDiffBlock])
 
   type ToSuggestions = () => Seq[InteractiveDiffInterpretation]
 

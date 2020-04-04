@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -8,9 +8,10 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {DocDarkGrey, DocDivider, DocGrey} from '../../requests/DocConstants';
 import VisibilityIcon from '@material-ui/icons/Visibility';
 import Badge from '@material-ui/core/Badge';
-import {Button, Checkbox} from '@material-ui/core';
+import {Button, CardActions, Checkbox, Collapse, ListItemAvatar, Tooltip} from '@material-ui/core';
 import Chip from '@material-ui/core/Chip';
 import Paper from '@material-ui/core/Paper';
+import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -35,7 +36,7 @@ import {
   toOption,
   opticEngine
 } from '@useoptic/domain';
-import {DiffContextStore, withDiffContext} from './DiffContext';
+import {DiffContext, DiffContextStore, withDiffContext} from './DiffContext';
 import {DocSubGroup} from '../../requests/DocSubGroup';
 import DiffHunkViewer from './DiffHunkViewer';
 import {ChangedYellowBackground, primary, RemovedRedBackground, AddedGreenBackground} from '../../../theme';
@@ -47,6 +48,13 @@ import Scrolling from './Scrolling';
 import {ShapeExpandedStore} from './ShapeRenderContext';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
+import Card from '@material-ui/core/Card';
+import {UpdatedBlue} from '../../../contexts/ColorContext';
+import CardHeader from '@material-ui/core/CardHeader';
+import IconButton from '@material-ui/core/IconButton';
+import {DiffToolTip} from './ShapeRows';
+import {PulsingOptic} from './DiffHelperCard';
+import {PathAndMethod} from './PathAndMethod';
 
 
 const useStyles = makeStyles(theme => ({
@@ -58,18 +66,11 @@ const useStyles = makeStyles(theme => ({
     pointerEvents: 'none'
   },
   header: {
-    paddingLeft: 10,
+    paddingLeft: 20,
     paddingRight: 10,
-    paddingTop: 5,
+    paddingTop: 10,
     paddingBottom: 5,
-    color: '#25292e',
-    minHeight: 40,
-    backgroundColor: '#f2f8ff',
     fontWeight: 800,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   hunkHeader: {
     paddingRight: 10,
@@ -106,24 +107,51 @@ const useStyles = makeStyles(theme => ({
   },
   wrapper: {
     overflow: 'hidden',
-    marginTop: 42,
-    // border: '1px solid',
+    borderLeft: `3px solid ${UpdatedBlue}`
   },
   hunk: {
     backgroundColor: 'white',
     minHeight: 300,
   },
   subheader: {
-    fontWeight: 500,
-    color: primary,
+    fontWeight: 100,
     paddingBottom: 0,
     marginBottom: 0,
     height: 33,
-    textDecoration: 'underline'
   },
   diffsNewRegion: {
     display: 'flex',
     flexDirection: 'row',
+    paddingLeft: 5,
+    maxWidth: 670
+  },
+  diffCursor: {
+    position: 'sticky',
+    top: 1,
+    zIndex: 500,
+    paddingTop: 10,
+    paddingBottom: 10,
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    borderLeft: `3px solid ${UpdatedBlue}`
+  },
+  diffTitle: {
+    fontSize: 19,
+    fontWeight: 400,
+    paddingLeft: 11,
+  },
+  diffCursorActions: {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'row',
+    paddingRight: 10
+  },
+  diffItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'baseline',
+    paddingLeft: 5
   }
 }));
 const addition = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: AddedGreenBackground}}/>;
@@ -132,6 +160,64 @@ const update = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', col
 
 const removal = <FiberManualRecordIcon style={{width: '.7em', height: '.7em', color: RemovedRedBackground}}/>;
 
+export function DiffCursor(props) {
+  const classes = useStyles();
+  const {diffs} = props;
+  const diffCount = lengthScala(diffs);
+
+  const {selectedDiff, setSelectedDiff} = useContext(DiffContext);
+
+  const [showAllDiffs, setShowAllDiffs] = useState(false);
+
+  useEffect(() => {
+    if (selectedDiff === null && diffCount > 0) {
+      setSelectedDiff(headOrUndefined(diffs));
+      setShowAllDiffs(false);
+    }
+  }, [selectedDiff, diffCount]);
+
+  const DiffItem = ({diff, button}) => {
+
+    return (
+      <ListItem button={button} className={classes.diffItem} onClick={() => {
+        setSelectedDiff(diff);
+        setShowAllDiffs(false);
+      }}>
+        <Typography variant="h5" className={classes.diffTitle}>{diff.description.title}</Typography>
+        <BreadcumbX location={JsonHelper.seqToJsArray(diff.location)}/>
+      </ListItem>
+    );
+  };
+
+  if (!selectedDiff && diffCount === 0) {
+    return null;
+  }
+
+  return (
+    <Card className={classes.diffCursor} elevation={3}>
+      <div style={{flex: 1}}>
+        {(!showAllDiffs && selectedDiff) && <DiffItem button={false} diff={selectedDiff}/>}
+        <Collapse in={showAllDiffs}>
+          <Typography variant="subtitle2" style={{paddingLeft: 12}}>Choose a diff to review</Typography>
+          <List>
+            {mapScala(diffs)(diff => <DiffItem diff={diff} button={true}/>)}
+          </List>
+        </Collapse>
+      </div>
+      {!showAllDiffs && (
+        <div className={classes.diffCursorActions}>
+          <Typography variant="overline" style={{color: DocDarkGrey, marginRight: 10}}>{diffCount} diffs</Typography>
+          <DiffToolTip title="See all Diffs">
+            <IconButton color="primary" disabled={diffCount <= 1} onClick={() => setShowAllDiffs(true)}>
+              <MenuOpenIcon/>
+            </IconButton>
+          </DiffToolTip>
+        </div>
+      )}
+    </Card>
+  );
+
+}
 
 export default function DiffPreview() {
   const classes = useStyles();
@@ -163,13 +249,13 @@ export default function DiffPreview() {
 }
 
 function _NewRegions(props) {
-  const {regions, ignoreDiff, acceptSuggestion} = props;
+  const {newRegions, ignoreDiff, acceptSuggestion, endpointPurpose, method, fullPath} = props;
   const classes = useStyles();
 
   const [deselected, setDeselected] = useState([]);
   const [showExpanded, setShowExpanded] = useState(false);
 
-  if (regions.isEmpty) {
+  if (lengthScala(newRegions) === 0) {
     return null;
   }
 
@@ -183,105 +269,92 @@ function _NewRegions(props) {
   };
 
   const onApply = () => {
-    const allIgnored = filterScala(regions.diffBlocks)(diffBlock => isDeselected(diffBlock)).map(i => i.diff);
+    const allIgnored = filterScala(newRegions)(diffBlock => isDeselected(diffBlock)).map(i => i.diff);
     ignoreDiff(...allIgnored);
-    const allApproved = filterScala(regions.diffBlocks)(diffBlock => !isDeselected(diffBlock)).map(i => i.firstSuggestion);
+    const allApproved = filterScala(newRegions)(diffBlock => !isDeselected(diffBlock)).map(i => i.firstSuggestion);
     acceptSuggestion(...allApproved);
 
 
   };
 
-  const newRequests = mapScala(regions.diffBlocks)((diff) => {
+  const newRequests = mapScala(newRegions)((diff) => {
     if (diff.inRequest) {
       return (
         <ListItem>
-          <ListItemText primary={getOrUndefined(diff.contentType) || 'No Body'}
-                        secondary={`Observed ${diff.count} times`}
-                        primaryTypographyProps={{style: {fontSize: 14}}}
-                        secondaryTypographyProps={{style: {fontSize: 12}}}
-          />
-          <ListItemSecondaryAction>
+          <ListItemAvatar>
             <Checkbox
               checked={!isDeselected(diff)}
               onChange={onChange(diff)}
               color="primary"
             />
-          </ListItemSecondaryAction>
+          </ListItemAvatar>
+          <ListItemText primary={getOrUndefined(diff.contentType) || 'No Body'}
+                        secondary={`Observed ${diff.count} times`}
+                        primaryTypographyProps={{style: {fontSize: 14}}}
+                        secondaryTypographyProps={{style: {fontSize: 12}}}
+          />
         </ListItem>
       );
     }
   }).filter(i => !!i);
 
-  const newResponses = mapScala(regions.diffBlocks)((diff) => {
+  const newResponses = mapScala(newRegions)((diff) => {
     if (diff.inResponse) {
       return (
         <ListItem>
+          <ListItemAvatar>
+            <Checkbox
+              checked={!isDeselected(diff)}
+              onChange={onChange(diff)}
+              color="primary"
+            />
+          </ListItemAvatar>
           <ListItemText
             primary={`${getOrUndefined(diff.statusCode)} Response ${getOrUndefined(diff.contentType) || 'No Body'}`}
             secondary={`Observed ${diff.count} times`}
             primaryTypographyProps={{style: {fontSize: 14}}}
             secondaryTypographyProps={{style: {fontSize: 12}}}
           />
-          <ListItemSecondaryAction>
-            <Checkbox
-              checked={!isDeselected(diff)}
-              onChange={onChange(diff)}
-              color="primary"
-            />
-          </ListItemSecondaryAction>
         </ListItem>
       );
     }
   }).filter(i => !!i);
 
+  const copy = (newResponses.length > 0 && newRequests.length > 0) && 'request and response types'
+  const copyFallback = (newResponses.length > 0 && newRequests.length === 0) ? 'response types' : 'request types'
+
+  const approveCount = newResponses.length + newRequests.length - deselected.length
+
   return (
-    <Paper className={classes.wrapper} elevation={2}>
+    <Card className={classes.wrapper} elevation={2}>
       <div className={classes.header}>
-        {addition}
-        <Typography style={{marginLeft: 11}} variant="subtitle2">Undocumented Requests / Responses</Typography>
-        <div style={{flex: 1}}/>
-        <Button size="small"
-                color="primary"
-                style={{marginRight: 8}}
-                startIcon={<VisibilityIcon color="primary"/>}
-                onClick={() => setShowExpanded(true)}>
-          Expand Examples
-        </Button>
-        <Button style={{marginLeft: 5}} color="secondary" onClick={onApply}>Add to Specification</Button>
+        <Typography variant="h6" color="primary">Generate Initial Documentation</Typography>
+        <Typography variant="caption" color="textSecondary">{`New ${copy || copyFallback} types observed. Click Approve to document them.`}</Typography>
+        {/*<div>*/}
+        {/*  <Typography variant="h6">{endpointPurpose}</Typography>*/}
+        {/*  <PathAndMethod method={method}*/}
+        {/*                 path={fullPath}/>*/}
+        {/*</div>*/}
       </div>
+
+      <div style={{float: 'right', marginTop: -55}}><PulsingOptic/></div>
       <div className={classes.diffsNewRegion}>
         {newRequests.length > 0 && (
-          <List style={{flex: 1, borderRight: '1px solid #e2e2e2'}}
-                subheader={<ListSubheader className={classes.subheader}>New Requests</ListSubheader>}>
+          <List style={{flex: 1}}
+                subheader={<ListSubheader className={classes.subheader}>Requests</ListSubheader>}>
             {newRequests}
           </List>)}
         {newResponses.length > 0 && (
           <List style={{flex: 1}}
-                subheader={<ListSubheader className={classes.subheader}>New Responses</ListSubheader>}>
+                subheader={<ListSubheader className={classes.subheader}>Responses</ListSubheader>}>
             {newResponses}
           </List>
         )}
       </div>
-
-      {showExpanded && (
-        <>
-          <DocDivider/>
-          <DiffReviewExpanded
-            interactions={regions.allInteractions}
-            exampleOnly={true}
-            render={(interaction) => {
-              return {
-                request: getOrUndefined(DiffPreviewer.previewBody(interaction.request.body)),
-                response: getOrUndefined(DiffPreviewer.previewBody(interaction.response.body)),
-                httpMethod: interaction.request.method,
-                url: interaction.request.path,
-              };
-            }}
-          />
-        </>
-      )}
-
-    </Paper>
+      <CardActions style={{float: 'right', padding: 15}}>
+        <Button color="primary" variant="contained" disabled={approveCount === 0} onClick={onApply}>Approve ({approveCount})</Button>
+      </CardActions>
+    </Card>
   );
 }
 
@@ -331,7 +404,7 @@ function _ShapeDiffRegion(props) {
                 <ShapeExpandedStore>
                   {inner}
                 </ShapeExpandedStore>
-              )
+              );
             })}
 
           </>
@@ -343,12 +416,23 @@ function _ShapeDiffRegion(props) {
   );
 }
 
+export const BreadcumbX = (props) => {
+  const classes = useStyles();
+  const {location, itemStyles} = props;
+  return (
+    <Breadcrumbs className={classes.location} separator={<span style={{fontSize: 13, ...itemStyles}}>{'›'}</span>}
+                 aria-label="breadcrumb">{location.filter(i => !!i).map(n => <Typography style={itemStyles}
+                                                                                         className={classes.crumb}
+                                                                                         color="primary">{n}</Typography>)}</Breadcrumbs>
+  );
+};
+
 function _ShapeDiffCard(props) {
   const {diff, suggestion, inFocus, selectedDiff, clearPreview, acceptSuggestion, shouldBlur, rfcService, rfcId} = props;
   const classes = useStyles();
 
   const {description} = diff;
-  const location = JsonHelper.seqToJsArray(diff.location)
+  const location = JsonHelper.seqToJsArray(diff.location);
   const [showExpanded, setShowExpanded] = useState(false);
   const currentRfcState = rfcService.currentState(rfcId);
   let preview = diff.previewRender(headOrUndefined(diff.interactions), toOption(currentRfcState));
@@ -367,7 +451,9 @@ function _ShapeDiffCard(props) {
     <Paper className={classNames(classes.wrapper, {[classes.blur]: shouldBlur})} elevation={2}>
       <div className={classes.header}>
         {addition}
-        <Breadcrumbs className={classes.location} separator={<span style={{fontSize: 13}}>{"›"}</span>} aria-label="breadcrumb">{location.map(n => <Typography className={classes.crumb} color="primary">{n}</Typography>)}</Breadcrumbs>
+        <Breadcrumbs className={classes.location} separator={<span style={{fontSize: 13}}>{'›'}</span>}
+                     aria-label="breadcrumb">{location.map(n => <Typography className={classes.crumb}
+                                                                            color="primary">{n}</Typography>)}</Breadcrumbs>
         <Typography className={classes.diff} variant="subtitle2">{diff.description.title}</Typography>
 
         {(!showFinalize && !showExpanded) &&

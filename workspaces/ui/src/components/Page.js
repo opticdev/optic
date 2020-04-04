@@ -8,8 +8,6 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     flex: 1,
-    paddingLeft: 25,
-    paddingRight: 25,
   }
 }));
 
@@ -28,7 +26,11 @@ export default function Page(props) {
 function PageBody(props) {
   const classes = useStyles();
 
-  return <div className={classes.content}>{props.children}</div>;
+  return <div className={classes.content}>
+    <div className={classes.innerScroll}>
+    {props.children}
+    </div>
+  </div>;
 }
 
 // require the use of sub components in context of the Page, to nudge the use of them
