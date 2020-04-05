@@ -25,12 +25,14 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItem: 'center',
     justifyContent: 'center',
-    paddingLeft: 9,
-    paddingTop: 9,
+    paddingLeft: 11,
+    paddingTop: 14,
+    paddingBottom: 9,
   },
   font: {
     fontSize: 13,
-    fontWeight: 400
+    fontWeight: 800,
+    fontFamily: '\'Source Code Pro\', monospace'
   },
   icon: {
     paddingRight: 0,
@@ -40,6 +42,15 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1) + 7,
     marginBottom: 7,
   },
+  suggestion: {
+    fontWeight: 400,
+    marginLeft: -5,
+    fontSize: 12
+  },
+  buttons: {
+    textAlign: 'right',
+    padding: 8
+  }
 }));
 
 
@@ -55,36 +66,37 @@ export const DiffHelperCard = (props) => {
 
   const suggestions = selectedDiff.suggestions;
 
-
   return (
     <div className={classes.root}>
       <Card elevation={3}>
         <div className={classes.header}>
-          <Typography className={classes.font} variant="subtitle1">New Field X was observed in response
-            body</Typography>
+          <Typography className={classes.font} variant="subtitle1">{selectedDiff.description.summary}</Typography>
           <div style={{flex: 1, minWidth: 20}}/>
           <PulsingOptic />
         </div>
 
-        <DocDivider style={{marginBottom: 10}}/>
+        <DocDivider />
+
         <FormControl component="fieldset" className={classes.formControl}>
           <RadioGroup>
             {mapScala(suggestions)(suggestion => {
               return <FormControlLabel
                 onClick={() => setSelectedInterpretation(suggestion)}
-                control={<Radio color="primary"  value={suggestion} checked={selectedInterpretation && CompareEquality.betweenWithoutCommands(suggestion, selectedInterpretation)}/>}
-                label={<Typography variant="subtitle2">{suggestion.title}</Typography>}
+                control={<Radio size="small" color="primary"  value={suggestion} checked={selectedInterpretation && CompareEquality.betweenWithoutCommands(suggestion, selectedInterpretation)}/>}
+                label={<Typography variant="subtitle2" className={classes.suggestion}>{suggestion.action}</Typography>}
               />
             })}
-            {/*<FormControlLabel value="female" control={<Radio color="primary" />} label="Female" />*/}
-            {/*<FormControlLabel value="male" control={<Radio color="primary" />} label="Male" />*/}
-            {/*<FormControlLabel value="other" control={<Radio color="primary" />} label="Other" />*/}
+
           </RadioGroup>
         </FormControl>
-        <CardActions style={{float: 'right', marginTop: -22}}>
+
+        <DocDivider />
+
+        <div className={classes.buttons}>
           <Button size="small" onClick={clearPreview}>Ignore</Button>
-          <Button color="primary" size="small" onClick={() => acceptSuggestion(selectedInterpretation)}>Approve</Button>
-        </CardActions>
+          <Button color="primary" size="small" disabled={!selectedInterpretation} onClick={() => acceptSuggestion(selectedInterpretation)}>Approve</Button>
+        </div>
+
       </Card>
     </div>
   );

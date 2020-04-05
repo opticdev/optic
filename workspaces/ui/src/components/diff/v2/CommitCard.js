@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import TypeModal from '../../shared/JsonTextarea';
@@ -10,6 +10,7 @@ import Button from '@material-ui/core/Button';
 import classNames from 'classnames';
 import {PathAndMethod} from './PathAndMethod';
 import {DocDivider} from '../../requests/DocConstants';
+import {JsonHelper} from '@useoptic/domain';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,6 +50,13 @@ export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithD
 
   const finalizeWithOverride = finalize || diffCount === 0;
 
+  useEffect(() => {
+    if (finalizeWithOverride) {
+      const pastTenseChanges = acceptedSuggestions.map(i => `- ${i.pastTenseAction}`).join("\n")
+      setCommitMessage(`\n\nChanges:\n${pastTenseChanges}`)
+    }
+  }, [finalizeWithOverride])
+
   if (acceptedSuggestions.length === 0 ) {
     return null
   }
@@ -69,6 +77,7 @@ export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithD
                                                  style={{marginTop: 15}}
                                                  value={commitMessage}
                                                  fullWidth
+                                                 onFocus={(e) => e.currentTarget.setSelectionRange(0, 0)}
                                                  placeholder="Describe the changes you made to the API Contract"
                                                  onChange={(e) => setCommitMessage(e.target.value)}/>)}
 
