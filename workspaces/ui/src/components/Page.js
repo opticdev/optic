@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1
   },
   content: ({ padded } = { padded: true }) => ({
+    display: 'flex',
     flexGrow: 1,
     paddingLeft: padded ? theme.spacing(3) : 0,
     paddingRight: padded ? theme.spacing(3) : 0

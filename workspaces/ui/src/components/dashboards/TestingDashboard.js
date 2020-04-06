@@ -43,6 +43,8 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 0,
     flexShrink: 0,
 
+    borderRight: `1px solid ${theme.palette.grey[300]}`,
+
     [theme.breakpoints.up('sm')]: {
       width: (theme.breakpoints.values.sm / 3) * 2
     }
