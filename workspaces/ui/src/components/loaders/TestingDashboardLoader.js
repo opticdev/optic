@@ -9,6 +9,7 @@ export default function TestingServiceLoader(props) {
 
   const [service, setService] = useState(null);
   useEffect(() => {
+    if (debugData.available && debugData.loading) return; // wait until next time when example data has been fetched
 
     const serviceFactory = debugData.available
       ? () => createExampleTestingServiceFactory(debugData.data)
@@ -25,8 +26,8 @@ export default function TestingServiceLoader(props) {
 }
 
 async function createExampleTestingServiceFactory(data) {
-  const testingLink =
-    data.links && data.links.find(({ rel }) => rel === 'testing');
+  const reportsExample =
+    data.refs && data.refs.find(({ rel }) => rel === 'example-reports');
 
-  return createExampleTestingService(testingLink && testingLink.href);
+  return createExampleTestingService(reportsExample && reportsExample.id);
 }

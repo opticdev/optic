@@ -40,10 +40,7 @@ export default function TestingDashboardContainer(props) {
   return (
     <TestingDashboardContextProvider value={dashboardContext}>
       <Page title="Optic Live Contracting Dashboard">
-        <Page.Navbar
-          mini={true}
-          baseUrl={baseUrl}
-        />
+        <Page.Navbar mini={true} />
 
         <Page.Body>
           <ReportsNavigation />
