@@ -22,10 +22,7 @@ export const DocsPage = ({match, specService}) => {
   const routerPaths = useRouterPaths();
   return (
     <Page title="Optic Live Contract Testing Dashboard">
-      <Page.Navbar
-        mini={true}
-        baseUrl={match.url}
-      />
+      <Page.Navbar mini={true} />
       <Page.Body>
 
         <Switch>
