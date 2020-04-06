@@ -1,12 +1,12 @@
 #root {
   height: 100vh !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .pulse {
-  animation: shadow-pulse 2s infinite ease-in
+  animation: shadow-pulse 2s infinite ease-in;
 }
 
-@keyframes shadow-pulse
-{
-
+@keyframes shadow-pulse {
 }
