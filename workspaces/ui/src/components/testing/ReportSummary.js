@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { opticEngine } from '@useoptic/domain';
+import { makeStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -9,9 +11,11 @@ import {
 } from '../../contexts/ApiOverviewContext';
 import * as uniqBy from 'lodash.uniqby';
 import { StableHasher } from '../../utilities/CoverageUtilities';
+import { SummaryStatus } from '../dashboards/APIDashboard';
 
 export default function ReportSummary(props) {
   const { capture, report, spec } = props;
+  const classes = useStyles();
 
   const summary = useMemo(() => createSummary(capture, spec, report), [
     capture,
@@ -27,21 +31,18 @@ export default function ReportSummary(props) {
   } = summary;
 
   return (
-    <div>
-      <h3>Testing report</h3>
+    <div className={classes.root}>
+      <div className={classes.stats}>
+        <SummaryStats
+          totalInteractions={totalInteractions}
+          totalDiffs={totalDiffs}
+          totalUnmatchedPaths={totalUnmatchedPaths}
+        />
+      </div>
 
-      <h4>
-        Summary for {summary.apiName}{' '}
-        <small>
-          Captured from {summary.createdAt} until {summary.updatedAt}
-        </small>
-      </h4>
-      <ul>
-        <li>Total interactions: {totalInteractions}</li>
-        <li>Compliant interactions: {totalCompliantInteractions}</li>
-        <li>Unmatched paths: {totalUnmatchedPaths}</li>
-        <li>Total diffs: {totalDiffs}</li>
-      </ul>
+      <small>
+        Captured from {summary.createdAt} until {summary.updatedAt}
+      </small>
 
       <h4>Endpoints</h4>
 
@@ -62,6 +63,52 @@ export default function ReportSummary(props) {
     </div>
   );
 }
+ReportSummary.displayName = 'Testing/ReportSummary';
+
+function SummaryStats({ totalInteractions, totalDiffs, totalUnmatchedPaths }) {
+  const classes = useStyles();
+
+  return (
+    <Typography variant="h6" color="primary" style={{ fontWeight: 200 }}>
+      Optic observed <Stat value={totalInteractions} label="interaction" />
+      , yielding in <Stat value={totalDiffs} label="diff" /> and{' '}
+      <Stat value={totalUnmatchedPaths} label="undocumented endpoint" />.
+    </Typography>
+  );
+}
+SummaryStats.displayName = 'Testing/ReportSummary/SummaryStats';
+
+function Stat({ value = 0, label = '' }) {
+  return (
+    <span>
+      {value !== 0 && (
+        <Typography
+          variant="h6"
+          component="span"
+          color="secondary"
+          style={{ fontWeight: 800 }}
+        >
+          {value}{' '}
+        </Typography>
+      )}
+      <Typography variant="h6" component="span" style={{ fontWeight: 800 }}>
+        {value === 0 && 'no '}
+        {label}
+        {value === 1 ? '' : 's'}
+      </Typography>
+    </span>
+  );
+}
+
+// Styles
+// -------
+const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: theme.spacing(3, 4)
+  },
+
+  summaryStat: {}
+}));
 
 const CoverageConcerns = opticEngine.com.useoptic.coverage;
 

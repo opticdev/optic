@@ -131,8 +131,6 @@ export function TestingDashboard(props) {
 
   return (
     <div>
-      <h2>Live Contract Testing Dashboard for capture {captureId}</h2>
-
       {(loadingReport || loadingSpec || loadingCapture) && <Loading />}
 
       {report && spec && capture && (
