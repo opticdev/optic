@@ -1,15 +1,6 @@
 import React, { useMemo } from 'react';
 import Loading from '../navigation/Loading';
-import { Link, Switch, Route, Redirect } from 'react-router-dom';
 import { opticEngine } from '@useoptic/domain';
-import {
-  createContext,
-  Provider as TestingDashboardContextProvider,
-  queriesFromEvents,
-  useTestingService
-} from '../../contexts/TestingDashboardContext';
-import ReportsNavigation from '../testing/reports-nav';
-import Page from '../Page';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -19,14 +10,59 @@ import {
 } from '../../contexts/ApiOverviewContext';
 import * as uniqBy from 'lodash.uniqby';
 import { stuffFromQueries } from '../../contexts/RfcContext';
+
 import { StableHasher } from '../../utilities/CoverageUtilities';
+
+// Components and hooks
+// --------------------
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+
+import {
+  createContext,
+  Provider as TestingDashboardContextProvider,
+  queriesFromEvents,
+  useTestingService
+} from '../../contexts/TestingDashboardContext';
+import ReportsNavigation from '../testing/reports-nav';
+import Page from '../Page';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexGrow: 1,
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column' // stack vertically on smaller screens for now
+    },
+    [theme.breakpoints.up('sm')]: {
+      flexDirection: 'row' // horizontally on larger screens
+    }
+  },
+  navigationContainer: {
+    // keep then navigation fixed
+    width: '100%',
+    flexGrow: 0,
+    flexShrink: 0,
+
+    borderRight: `1px solid ${theme.palette.grey[300]}`,
+
+    [theme.breakpoints.up('sm')]: {
+      width: (theme.breakpoints.values.sm / 3) * 2
+    }
+  },
+  reportContainer: {
+    flexGrow: 1,
+    flexShrink: 1
+  }
+}));
 
 const CoverageConcerns = opticEngine.com.useoptic.coverage;
 
-export default function TestingDashboardContainer(props) {
+export default function TestingDashboardPage(props) {
   const { match, service } = props;
   const hasService = !!service;
   const baseUrl = match.url;
+  const classes = useStyles();
 
   const dashboardContext = useMemo(() => createContext({ service, baseUrl }), [
     hasService,
@@ -42,15 +78,22 @@ export default function TestingDashboardContainer(props) {
       <Page title="Optic Live Contracting Dashboard">
         <Page.Navbar mini={true} />
 
-        <Page.Body>
-          <ReportsNavigation />
-          <Switch>
-            <Route
-              path={`${baseUrl}/captures/:captureId`}
-              component={TestingDashboard}
-            />
-            <Route component={DefaultReportRedirect} />
-          </Switch>
+        <Page.Body padded={false}>
+          <div className={classes.root}>
+            <div className={classes.navigationContainer}>
+              <ReportsNavigation />
+            </div>
+
+            <div className={classes.reportContainer}>
+              <Switch>
+                <Route
+                  path={`${baseUrl}/captures/:captureId`}
+                  component={TestingDashboard}
+                />
+                <Route component={DefaultReportRedirect} />
+              </Switch>
+            </div>
+          </div>
         </Page.Body>
       </Page>
     </TestingDashboardContextProvider>
