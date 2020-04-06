@@ -30,6 +30,7 @@ import Page from '../Page';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    flexGrow: 1,
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column' // stack vertically on smaller screens for now
     },

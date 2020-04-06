@@ -7,8 +7,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexGrow: 1
   },
-  content: ({ padded } = { padded: true }) => ({
+  content: ({ padded = true }) => ({
     display: 'flex',
+    flexDirection: 'column', // default to vertical stacking of child elements by default
+
     flexGrow: 1,
     paddingLeft: padded ? theme.spacing(3) : 0,
     paddingRight: padded ? theme.spacing(3) : 0
