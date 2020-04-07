@@ -44,10 +44,11 @@ import Page from '../../Page';
 
 const useStyles = makeStyles(theme => ({
   container: {
+    width: '100%',
+    alignSelf: 'center', // center on page
+    flexGrow: 1, // grow to fill whole page vertically
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
-    margin: '0 auto',
     maxWidth: 1200,
     paddingTop: 35,
   },

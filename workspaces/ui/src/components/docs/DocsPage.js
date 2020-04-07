@@ -25,8 +25,9 @@ import ContentTabs, {RequestTabsContextStore} from '../diff/v2/ContentTabs';
 
 const useStyles = makeStyles(theme => ({
   maxWidth: {
+    width: '100%',
     maxWidth: 1200,
-    margin: '0px auto'
+    alignSelf: 'center'
   },
   diffTocCard: {
     display: 'flex',

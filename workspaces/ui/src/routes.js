@@ -26,11 +26,11 @@ export function ApiRoutes(props) {
         path={routerPaths.diffPage()}
         component={CaptureManagerPage}
       />
-      {/*<Route*/}
-      {/*  strict*/}
-      {/*  path={routerPaths.testingDashboard()}*/}
-      {/*  component={TestingDashboardLoader}*/}
-      {/*/>*/}
+      <Route
+        strict
+        path={routerPaths.testingDashboard()}
+        component={TestingDashboardLoader}
+        />
       {/*<Route*/}
       {/*  strict*/}
       {/*  path={routerPaths.exampleSessionsRoot()}*/}
