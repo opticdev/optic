@@ -119,15 +119,26 @@ function DefaultReportRedirect(props) {
 
 export function TestingDashboard(props) {
   const { captureId } = props.match.params;
-  const { loading: loadingReport, result: report } = useTestingService(
-    (service) => service.loadReport(captureId),
-    [captureId]
+  const {
+    loading: loadingReport,
+    result: report,
+    error: reportError
+  } = useTestingService((service) => service.loadReport(captureId), [
+    captureId
+  ]);
+  const { loading: loadingSpec, result: spec, error: specError } = useSpec(
+    captureId
   );
-  const { loading: loadingSpec, result: spec } = useSpec(captureId);
-  const { loading: loadingCapture, result: capture } = useTestingService(
-    (service) => service.loadCapture(captureId),
-    [captureId]
-  );
+  const {
+    loading: loadingCapture,
+    result: capture,
+    error: captureError
+  } = useTestingService((service) => service.loadCapture(captureId), [
+    captureId
+  ]);
+
+  const error = reportError || specError || captureError;
+  if (error) throw error; // allow React error boundaries to render as we're not handling them explicitly
 
   return (
     <div>
