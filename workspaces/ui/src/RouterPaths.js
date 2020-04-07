@@ -1,5 +1,5 @@
-import {useBathUrl} from './contexts/MockDataContext';
 import {join} from 'path';
+import {useBaseUrl} from './contexts/BaseUrlContext';
 
 // TODO: migrate away from various base paths. Everything is from root, unless prefixed ???
 
@@ -15,7 +15,7 @@ export const routerPaths = {
 };
 
 export function useRouterPaths() {
-  const debugPrefix = useBathUrl();
+  const debugPrefix = useBaseUrl();
 
   return Object.keys(routerPaths).reduce(
     (routesByName, routeName) => {

@@ -36,11 +36,11 @@ import {withRouter} from 'react-router-dom';
 import {DiffCursor, NewRegions, ShapeDiffRegion} from './DiffPreview';
 import {CommitCard} from './CommitCard';
 import {StableHasher} from '../../../utilities/CoverageUtilities';
-import {useBathUrl} from '../../../contexts/MockDataContext';
 import DiffReviewExpanded from './DiffReviewExpanded';
 import {DocDivider} from '../../requests/DocConstants';
 import {PathAndMethod} from './PathAndMethod';
 import Paper from '@material-ui/core/Paper';
+import {useBaseUrl} from '../../../contexts/BaseUrlContext';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
 const {helpers} = diff;
@@ -148,7 +148,7 @@ function _DiffPageContent(props) {
     reset();
   }
 
-  const baseUrl = useBathUrl()
+  const baseUrl = useBaseUrl()
 
   async function handleApply(message = 'EMPTY MESSAGE') {
     const newEventStore = initialEventStore.getCopy(rfcId);

@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {useMockData} from '../../contexts/MockDataContext';
 import {SpecServiceStore} from '../../contexts/SpecServiceContext';
 import {LinearProgress} from '@material-ui/core';
-import {RfcStore} from '../../contexts/RfcContext';
+import {LocalRfcStore, RfcStore} from '../../contexts/RfcContext';
 import {InitialRfcCommandsStore} from '../../contexts/InitialRfcCommandsContext';
 import EventEmitter from 'events';
 
-export default function ApiSpecServiceLoader(props) {
+export function ApiSpecServiceLoader(props) {
   const debugData = useMockData();
 
   const [service, setService] = useState(null);
@@ -14,9 +14,7 @@ export default function ApiSpecServiceLoader(props) {
   useEffect(() => {
     if (debugData.available && debugData.loading) return;
 
-    const serviceFactory = debugData.available
-      ? () => createExampleSpecServiceFactory(debugData.data)
-      : () => Promise.reject(new Error('Local Spec Service not implemented yet'));
+    const serviceFactory = () => createExampleSpecServiceFactory(debugData.data)
 
     const task = async () => {
       const {specService} = await serviceFactory();
@@ -49,6 +47,45 @@ export default function ApiSpecServiceLoader(props) {
         <RfcStore specService={service}>
           {props.children}
         </RfcStore>
+      </InitialRfcCommandsStore>
+    </SpecServiceStore>
+  );
+}
+
+export function ApiLocalCLiSpecServiceLoader(props) {
+
+  const [events, setEvents] = useState(null);
+  const {specService} = props
+  useEffect(() => {
+    const task = async () => {
+      specService.eventEmitter.on('events-updated', async () => {
+        const events = await specService.listEvents();
+        setEvents(events);
+      });
+    };
+    task();
+  });
+
+  useEffect(() => {
+    if (specService) {
+      const task = async () => {
+        const events = await specService.listEvents();
+        setEvents(events);
+      };
+      task()
+    }
+  }, [specService]);
+
+  if (!events) {
+    return <LinearProgress/>;
+  }
+
+  return (
+    <SpecServiceStore specService={specService} specServiceEvents={specService.eventEmitter}>
+      <InitialRfcCommandsStore initialEventsString={events} rfcId="testRfcId" instance="the one in CliLoader.js">
+        <LocalRfcStore specService={specService}>
+          {props.children}
+        </LocalRfcStore>
       </InitialRfcCommandsStore>
     </SpecServiceStore>
   );
