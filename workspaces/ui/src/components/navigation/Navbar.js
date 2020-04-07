@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
-import { routerPaths } from '../../RouterPaths';
+import { useRouterPaths } from '../../RouterPaths';
 import { Link, Route, Switch } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
 import CodeIcon from '@material-ui/icons/Code';
@@ -53,28 +53,28 @@ const useStyles = makeStyles({
 });
 
 export default function Navbar(props) {
-  const { baseUrl, entryBasePath } = props;
   const classes = useStyles();
+  const routerPaths = useRouterPaths();
 
   const menuItems = useMemo(
     () => [
       {
         name: 'Review Diff',
         icon: <ChangeHistoryIcon style={{ color: '#e2e2e2' }} />,
-        link: `${baseUrl}/diff`
+        link: routerPaths.diffPage()
       },
       {
         name: 'Specification',
         icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
-        link: `${baseUrl}/documentation`
+        link: routerPaths.documentationPage()
       },
       {
         name: 'Live Contract Testing',
         icon: <PolicyIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.testingDashboard(baseUrl)
+        link: routerPaths.testingDashboard()
       }
     ],
-    [baseUrl]
+    [routerPaths]
   );
 
   return (

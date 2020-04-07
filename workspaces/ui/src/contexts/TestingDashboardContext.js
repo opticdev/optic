@@ -27,8 +27,7 @@ export function useTestingService(
         setLoading(false);
       })
       .catch((err) => {
-        console.error(err)
-        debugger
+        console.error(err);
         setError(err);
       });
   }, deps);
@@ -41,3 +40,5 @@ export function useReportPath(captureId) {
 
   return `${baseUrl}/captures/${captureId}`;
 }
+
+export { queriesFromEvents } from '../services/TestingService';

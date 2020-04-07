@@ -1,31 +1,59 @@
 import React, { useMemo } from 'react';
 import Loading from '../navigation/Loading';
-import { Link, Switch, Route, Redirect } from 'react-router-dom';
-import { opticEngine, Queries } from '@useoptic/domain';
+
+// TODO: find a more appropriate place for this logic to live rather than in
+// Contexts now that it's being re-used elsewhere.
+import { stuffFromQueries } from '../../contexts/RfcContext';
+
+// Components and hooks
+// --------------------
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import ReportSummary from '../testing/ReportSummary';
+
 import {
   createContext,
   Provider as TestingDashboardContextProvider,
+  queriesFromEvents,
   useTestingService
 } from '../../contexts/TestingDashboardContext';
 import ReportsNavigation from '../testing/reports-nav';
 import Page from '../Page';
 
-// TODO: find a more appropriate place for this logic to live rather than in
-// Contexts now that it's being re-used elsewhere.
-import {
-  flattenPaths,
-  fuzzyConceptFilter,
-  fuzzyPathsFilter,
-  flatMapOperations
-} from '../../contexts/ApiOverviewContext';
-import { stuffFromQueries } from '../../contexts/RfcContext';
-import { getName } from '../utilities/PathUtilities';
-import { StableHasher } from '../../utilities/CoverageUtilities';
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    flexGrow: 1,
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column' // stack vertically on smaller screens for now
+    },
+    [theme.breakpoints.up('sm')]: {
+      flexDirection: 'row' // horizontally on larger screens
+    }
+  },
+  navigationContainer: {
+    // keep then navigation fixed
+    width: '100%',
+    flexGrow: 0,
+    flexShrink: 0,
 
-export default function TestingDashboardContainer(props) {
+    borderRight: `1px solid ${theme.palette.grey[300]}`,
+
+    [theme.breakpoints.up('sm')]: {
+      width: (theme.breakpoints.values.sm / 3) * 2
+    }
+  },
+  reportContainer: {
+    flexGrow: 1,
+    flexShrink: 1
+  }
+}));
+
+export default function TestingDashboardPage(props) {
   const { match, service } = props;
   const hasService = !!service;
   const baseUrl = match.url;
+  const classes = useStyles();
 
   const dashboardContext = useMemo(() => createContext({ service, baseUrl }), [
     hasService,
@@ -39,20 +67,24 @@ export default function TestingDashboardContainer(props) {
   return (
     <TestingDashboardContextProvider value={dashboardContext}>
       <Page title="Optic Live Contracting Dashboard">
-        <Page.Navbar
-          mini={true}
-          baseUrl={baseUrl}
-        />
+        <Page.Navbar mini={true} />
 
-        <Page.Body>
-          <ReportsNavigation />
-          <Switch>
-            <Route
-              path={`${baseUrl}/captures/:captureId`}
-              component={TestingDashboard}
-            />
-            <Route component={DefaultReportRedirect} />
-          </Switch>
+        <Page.Body padded={false}>
+          <div className={classes.root}>
+            <div className={classes.navigationContainer}>
+              <ReportsNavigation />
+            </div>
+
+            <div className={classes.reportContainer}>
+              <Switch>
+                <Route
+                  path={`${baseUrl}/captures/:captureId`}
+                  component={TestingDashboard}
+                />
+                <Route component={DefaultReportRedirect} />
+              </Switch>
+            </div>
+          </div>
         </Page.Body>
       </Page>
     </TestingDashboardContextProvider>
@@ -87,138 +119,70 @@ function DefaultReportRedirect(props) {
 
 export function TestingDashboard(props) {
   const { captureId } = props.match.params;
-  const { loading: loadingReport, result: report } = useTestingService(
-    (service) => service.loadReport(captureId),
-    [captureId]
+  const {
+    loading: loadingReport,
+    result: report,
+    error: reportError
+  } = useTestingService((service) => service.loadReport(captureId), [
+    captureId
+  ]);
+  const { loading: loadingSpec, result: spec, error: specError } = useSpec(
+    captureId
   );
+  const {
+    loading: loadingCapture,
+    result: capture,
+    error: captureError
+  } = useTestingService((service) => service.loadCapture(captureId), [
+    captureId
+  ]);
 
-  const { loading: loadingSpec, result: spec } = useSpec(captureId);
+  const error = reportError || specError || captureError;
+  if (error) throw error; // allow React error boundaries to render as we're not handling them explicitly
 
   return (
     <div>
-      <h2>Live Contract Testing Dashboard for capture {captureId}</h2>
+      {(loadingReport || loadingSpec || loadingCapture) && <Loading />}
 
-      {(loadingReport || loadingSpec) && <Loading />}
-
-      {report && spec && <TestingReport report={report} spec={spec} />}
-    </div>
-  );
-}
-
-export function TestingReport(props) {
-  const { report, spec } = props;
-  ///const {counts} = report;
-
-  const { queries, rfcState } = spec;
-
-  const vm = viewModel(queries, rfcState, report);
-  const { endpoints, totalInteractions } = vm;
-  return (
-    <div>
-      <h3>Testing report</h3>
-
-      <h4>Summary for {spec.apiName}</h4>
-      {/*<ul>*/}
-      {/*  <li>Created at: {report.createdAt}</li>*/}
-      {/*  <li>Last updated: {report.updatedAt}</li>*/}
-      <li>Total interactions: {totalInteractions}</li>
-      {/*  <li>Compliant interactions: {counts.totalCompliantInteractions}</li>*/}
-      {/*  <li>Unmatched paths: {counts.totalUnmatchedPaths}</li>*/}
-      {/*  <li>Total diffs: {counts.totalDiffs}</li>*/}
-      {/*</ul>*/}
-
-      <h4>Endpoints</h4>
-
-      {endpoints.length > 0 ? (
-        <ul>
-          {endpoints.map((endpoint) => (
-            <li key={endpoint.request.requestId}>
-              <strong>{endpoint.request.httpMethod}</strong>{' '}
-              {endpoint.path.name}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        // @TODO: revisit this empty state
-        <p>No endpoints have been documented yet</p>
+      {report && spec && capture && (
+        <ReportSummary report={report} spec={spec} capture={capture} />
       )}
     </div>
   );
 }
 
 function useSpec(captureId) {
-  const { result: events, ...hookRest } = useTestingService(
-    (service) => service.loadSpec(captureId),
+  const { result: specEvents, ...hookRest } = useTestingService(
+    (service) => service.loadSpecEvents(captureId),
     [captureId]
   );
 
+  const spec = useMemo(() => {
+    if (!specEvents) return null;
+
+    return createSpec(specEvents);
+  }, [specEvents]);
+
   // calling this spec instead of rfcState, to differentiate this as a ViewModel,
   // rather than RfcState.
-  let spec = null;
-  if (events) {
-    spec = specFromEvents(events);
-  }
-
   return { ...hookRest, result: spec };
 }
 
-// TODO: give this building of a ViewModel a more appropriate spot.
-export function specFromEvents(events) {
-  const { contexts } = opticEngine.com.useoptic;
-  const { RfcServiceJSFacade } = contexts.rfc;
-  const rfcServiceFacade = RfcServiceJSFacade();
-  const eventStore = rfcServiceFacade.makeEventStore();
-  const rfcId = 'testRfcId';
+// View models
+// -----------
+// TODO: consider moving these into their own modules or another appropriate spot (probably stable
+// for the entire dashboard context if not all of the app?)
 
-  // @TODO: figure out if it's wise to stop the parsing of JSON from the response, to prevent
-  // parse -> stringify -> parse
-  eventStore.bulkAdd(rfcId, JSON.stringify(events));
-  const rfcService = rfcServiceFacade.makeRfcService(eventStore);
-  const queries = Queries(eventStore, rfcService, rfcId);
-  const rfcState = rfcService.currentState(rfcId);
-  return {
-    queries,
-    rfcState
-  };
-}
-
-function viewModel(queries, rfcState, report) {
+function createSpec(specEvents) {
+  const { queries } = queriesFromEvents(specEvents);
   const { apiName, pathsById, requestIdsByPathId, requests } = stuffFromQueries(
     queries
   );
-  const pathIds = Object.keys(pathsById);
-  const requestIds = pathIds.flatMap(
-    (pathId) => requestIdsByPathId[pathId] || []
-  );
-  const endpoints = requestIds.map((requestId) => {
-    const request = requests[requestId];
-    if (!request) {
-    }
-    const { requestDescriptor, isRemoved } = request;
-    const { httpMethod, pathComponentId } = requestDescriptor;
 
-    return {
-      request: {
-        requestId,
-        httpMethod,
-        isRemoved
-      },
-      path: {
-        name: getName(pathsById[pathComponentId])
-      }
-    };
-  });
-
-  const totalInteractionsKey = StableHasher.hash(
-    opticEngine.com.useoptic.coverage.TotalInteractions()
-  );
-
-  const totalInteractions = report.coverageCounts[totalInteractionsKey] || 0;
-  const totalUnmatchedUrls = 0;
   return {
     apiName,
-    endpoints,
-    totalInteractions,
-    totalUnmatchedUrls
+    pathsById,
+    requestIdsByPathId,
+    requests
   };
 }
