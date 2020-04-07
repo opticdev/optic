@@ -6,7 +6,7 @@ MockDataContext.displayName = 'MockDataContext';
 // only expose the Provider component, but hide the Consumer in favour of hooks
 export const { Provider } = MockDataContext;
 
-function createDebugSession({ sessionId, path }) {
+function createDebugSession({ sessionId }) {
   let fetchedData = null;
   async function getData(refresh = false) {
     if (!fetchedData || refresh) {
@@ -26,7 +26,6 @@ function createDebugSession({ sessionId, path }) {
 
   return {
     sessionId,
-    path,
     getData
   };
 }
@@ -34,10 +33,10 @@ function createDebugSession({ sessionId, path }) {
 // Hooks
 // -----
 
-export function useMockSession({ sessionId, path }) {
+export function useMockSession({ sessionId }) {
   const dashboardContext = useMemo(
-    () => createDebugSession({ sessionId, path }),
-    [sessionId, path]
+    () => createDebugSession({ sessionId }),
+    [sessionId]
   );
   return dashboardContext;
 }
@@ -71,9 +70,4 @@ export function useMockData(deps) {
   }, deps);
 
   return { available, data, loading, error };
-}
-
-export function useBathUrl() {
-  const debugSession = useContext(MockDataContext);
-  return debugSession.path;
 }

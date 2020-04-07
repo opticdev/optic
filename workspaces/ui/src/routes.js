@@ -6,7 +6,6 @@ import LocalLoader from './components/routes/local';
 import {useRouterPaths} from './RouterPaths';
 import SharedLoader from './components/loaders/SharedLoader';
 import TestingDashboardLoader from './components/loaders/TestingDashboardLoader';
-import ApiSpecServiceLoader from './components/loaders/ApiLoader';
 import {CaptureManagerPage} from './components/diff/v2/CaptureManagerPage';
 import {DocsPage} from './components/docs/DocsPage';
 
@@ -14,7 +13,6 @@ export function ApiRoutes(props) {
   const routerPaths = useRouterPaths();
 
   return (
-    <ApiSpecServiceLoader>
     <Switch>
       <Route
         strict
@@ -39,6 +37,5 @@ export function ApiRoutes(props) {
       {/*<Route strict path={routerPaths.localRoot()} component={LocalLoader} />*/}
       {/*<Redirect to={routerPaths.localRoot()} />*/}
     </Switch>
-    </ApiSpecServiceLoader>
   );
 }

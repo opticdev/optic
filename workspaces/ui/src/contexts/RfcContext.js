@@ -98,7 +98,6 @@ function BaseRfcStore(props) {
 
   if (error) {
     console.error(error);
-    debugger
     return (
       <div>Error! :(</div>
     );
@@ -170,7 +169,9 @@ function LocalRfcStore(props) {
   }
 
   return (
-    <RfcStore onChange={debounce(handleChange, 4000, {leading: true, trailing: true})}/>
+    <RfcStore onChange={debounce(handleChange, 4000, {leading: true, trailing: true})}>
+      {props.children}
+    </RfcStore>
   );
 }
 

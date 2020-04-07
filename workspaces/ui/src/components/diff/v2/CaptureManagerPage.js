@@ -30,7 +30,7 @@ import {
 } from '../../../contexts/ColorContext';
 import {TrafficSessionStore, TrafficSessionContext} from '../../../contexts/TrafficSessionContext';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
-import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
+import {SpecServiceContext, withSpecServiceContext} from '../../../contexts/SpecServiceContext';
 import {routerPaths, useRouterPaths} from '../../../RouterPaths';
 import {RfcContext, withRfcContext} from '../../../contexts/RfcContext';
 import {lengthScala, mapScala, JsonHelper} from '@useoptic/domain';
@@ -157,9 +157,12 @@ class _AllCapturesStore extends React.Component {
 
 export const AllCapturesStore = withRouter(withSpecServiceContext(_AllCapturesStore));
 
-export const CaptureManagerPage = ({match, specService}) => {
+export const CaptureManagerPage = ({match}) => {
 
+  const {specService} = useContext(SpecServiceContext)
   const routerPaths = useRouterPaths();
+
+  debugger
 
   return (
     <Page title="Optic Live Contract Testing Dashboard">
@@ -208,10 +211,10 @@ export const CaptureManager = ({captureId, specService}) => {
     history.push(`diff/${captureId}`);
   }
 
-  if (captureContext.captures.length > 0 && !captureId) {
-    history.push(`diff/${captureContext.captures[0].captureId}`);
-    return null;
-  }
+  // if (captureContext.captures.length > 0 && !captureId) {
+  //   history.push(`diff/${captureContext.captures[0].captureId}`);
+  //   return null;
+  // }
 
   return (
     <div className={classes.container}>
