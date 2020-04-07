@@ -65,9 +65,9 @@ export const DocsPage = ({match, specService}) => {
       <Page.Body>
 
         <Switch>
-          <Route exact path={routerPaths.documentationPage}
+          <Route exact path={routerPaths.docsRoot}
                  component={DocumentationToc}/>
-          <Route path={routerPaths.expandedDocsPage}
+          <Route path={routerPaths.requestDocsRoot}
                  component={EndpointDocumentationWrapper}/>
 
         </Switch>

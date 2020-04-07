@@ -167,7 +167,7 @@ export function CaptureManagerPage(props) {
         <AllCapturesStore>
           <IgnoreDiffStore>
             <Switch>
-              <Route path={routerPaths.diffPage} component={CaptureManager}/>
+              <Route path={routerPaths.diffsRoot} component={CaptureManager}/>
             </Switch>
           </IgnoreDiffStore>
         </AllCapturesStore>
@@ -184,8 +184,8 @@ export const CaptureManager = ({}) => {
   return (
     <div className={classes.container}>
       <Switch>
-        <Route exact path={routerPaths.diffPageWithCapture} component={CaptureDiffWrapper}/>
-        <Route exact path={routerPaths.diffRequest} component={RequestDiffWrapper}/>
+        <Route exact path={routerPaths.captureRoot} component={CaptureDiffWrapper}/>
+        <Route exact path={routerPaths.captureRequestDiffsRoot} component={RequestDiffWrapper}/>
         <Route component={RootDiffWrapper}/>
       </Switch>
     </div>

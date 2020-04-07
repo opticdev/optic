@@ -2,11 +2,11 @@ import {useBaseUrl} from './contexts/BaseUrlContext';
 
 const routerPaths = {
   testingDashboard: (base = '') => `${base}/testing`,
-  documentationPage: (base = '') => `${base}/documentation`,
-  expandedDocsPage: (base = '') => `${base}/documentation/paths/:pathId/methods/:method`,
-  diffPage: (base = '') => `${base}/diffs`,
-  diffPageWithCapture: (base = '') => `${base}/diffs/:captureId`,
-  diffRequest: (base = '') => `${base}/diffs/:captureId/paths/:pathId/methods/:method`,
+  docsRoot: (base = '') => `${base}/documentation`,
+  requestDocsRoot: (base = '') => `${routerPaths.docsRoot(base)}/paths/:pathId/methods/:method`,
+  diffsRoot: (base = '') => `${base}/diffs`,
+  captureRoot: (base = '') => `${routerPaths.diffsRoot(base)}/:captureId`,
+  captureRequestDiffsRoot: (base = '') => `${routerPaths.captureRoot(base)}/paths/:pathId/methods/:method`,
 };
 
 export function useRouterPaths() {

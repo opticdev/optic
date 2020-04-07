@@ -12,12 +12,12 @@ export function ApiRoutes(props) {
     <Switch>
       <Route
         strict
-        path={routerPaths.documentationPage}
+        path={routerPaths.docsRoot}
         component={DocsPage}
       />
       <Route
         strict
-        path={routerPaths.diffPage}
+        path={routerPaths.diffsRoot}
         component={CaptureManagerPage}
       />
       <Route
@@ -25,7 +25,7 @@ export function ApiRoutes(props) {
         path={routerPaths.testingDashboard}
         component={TestingDashboardLoader}
       />
-      <Redirect to={routerPaths.documentationPage}/>
+      <Redirect to={routerPaths.docsRoot}/>
     </Switch>
   );
 }

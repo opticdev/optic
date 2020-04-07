@@ -60,12 +60,12 @@ export default function Navbar(props) {
       {
         name: 'Review Diff',
         icon: <ChangeHistoryIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.diffPage
+        link: routerPaths.diffsRoot
       },
       {
         name: 'Specification',
         icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.documentationPage
+        link: routerPaths.docsRoot
       },
       {
         name: 'Live Contract Testing',
