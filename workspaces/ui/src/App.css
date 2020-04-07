@@ -1,5 +1,7 @@
 #root {
   height: 100vh !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .blob {
