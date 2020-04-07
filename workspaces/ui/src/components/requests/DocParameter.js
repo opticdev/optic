@@ -7,8 +7,8 @@ import {DESCRIPTION} from '../../ContributionKeys';
 
 export function DocParameter({title, description, typeName, children, paramId, updateContribution = () => {}}) {
   return (
-    <div style={{maxWidth: 500}}>
-      <div style={{paddingTop: 6, paddingBottom: 6, paddingLeft: 4}}>
+    <div>
+      <div style={{paddingTop: 6, paddingBottom: 6, paddingLeft: 2}}>
         <div>
           <Typography variant="subtitle1" component="span" style={ParametersStyles}>{title}</Typography>
           <Typography component="span" style={{marginLeft: 6, fontSize: 12}}>{typeName || 'String'}</Typography>
@@ -20,7 +20,7 @@ export function DocParameter({title, description, typeName, children, paramId, u
                               }}
         />
       </div>
-      <DocDivider/>
+      {/*<DocDivider/>*/}
     </div>
   );
 }

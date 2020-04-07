@@ -8,20 +8,56 @@ import {SpecServiceContext} from '../../contexts/SpecServiceContext';
 import {RfcContext} from '../../contexts/RfcContext';
 import List from '@material-ui/core/List';
 import {mapScala} from '@useoptic/domain';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ListItem from '@material-ui/core/ListItem';
-import {Card, ListItemText} from '@material-ui/core';
+import {Button, Card, ListItemText} from '@material-ui/core';
 import {EndpointsContextStore, EndpointsContext} from '../../contexts/EndpointContext';
-import {PathAndMethod} from '../diff/v2/PathAndMethod';
+import {PathAndMethod, SquareChip} from '../diff/v2/PathAndMethod';
+import Typography from '@material-ui/core/Typography';
+import {DocDarkGrey, DocDivider} from '../requests/DocConstants';
+import {UpdatedBlue} from '../../contexts/ColorContext';
+import {DocParameter} from '../requests/DocParameter';
+import {DocSubGroup} from '../requests/DocSubGroup';
+import {HeadingContribution, MarkdownContribution} from '../requests/DocContribution';
+import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
+import groupBy from 'lodash.groupby'
+import ContentTabs, {RequestTabsContextStore} from '../diff/v2/ContentTabs';
 
 const useStyles = makeStyles(theme => ({
-
+  maxWidth: {
+    maxWidth: 1200,
+    margin: '0px auto'
+  },
+  diffTocCard: {
+    display: 'flex',
+    flexDirection: 'row',
+    paddingRight: 20
+  },
+  contributions: {
+    width: '60%',
+    display: 'flex',
+    flexDirection: 'column',
+    paddingRight: 20
+  },
+  expand: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    marginTop: 20
+  },
+  specPreview: {
+    borderLeft: `1px solid #e3e8ee`,
+    paddingLeft: 12,
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column'
+  }
 }));
 
 export const DocsPage = ({match, specService}) => {
 
   const routerPaths = useRouterPaths();
   return (
-    <Page title="Optic Live Contract Testing Dashboard">
+    <Page title="Documentation">
       <Page.Navbar
         mini={true}
         baseUrl={match.url}
@@ -44,46 +80,97 @@ export const DocsPage = ({match, specService}) => {
 
 export const DocumentationToc = () => {
 
-  const {specService} = useContext(SpecServiceContext)
-  const {cachedQueryResults} = useContext(RfcContext)
-  const {endpoints} = cachedQueryResults
+  const classes = useStyles();
+  const {specService} = useContext(SpecServiceContext);
+  const {cachedQueryResults} = useContext(RfcContext);
+  const {endpoints} = cachedQueryResults;
 
   return (
-    <div>
-
-      <List>
-
+    <div className={classes.maxWidth}>
+      <div style={{paddingTop: 60}}>
         {endpoints.map(i => {
-
           return (
             <EndpointsContextStore method={i.method} pathId={i.pathId}>
               <EndpointsContext.Consumer>
-              {({endpointDescriptor}) => {
-                return (
-                  <Card elevation={2}>
-                  <ListItem button component={Link} elevation={2} to={`paths/${i.pathId}/methods/${i.method}`}>
-                    <ListItemText primary={endpointDescriptor.endpointPurpose} secondary={<PathAndMethod path={endpointDescriptor.fullPath} method={endpointDescriptor.method} />} />
-                  </ListItem>
-                  </Card>
-                )
-              }}
+                {({endpointDescriptor, updateContribution}) => {
+
+                  const {endpointId} = endpointDescriptor
+
+                  return (
+                    <div>
+                    <div className={classes.diffTocCard}>
+
+                      <div className={classes.contributions}>
+                        <HeadingContribution
+                          value={endpointDescriptor.endpointPurpose}
+                          label="What does this endpoint do?"
+                          onChange={(value) => {
+                            updateContribution(endpointId, PURPOSE, value);
+                          }}
+                        />
+                          <MarkdownContribution
+                            value={endpointDescriptor.endpointDescription}
+                            label="Detailed Description"
+                            onChange={(value) => {
+                              updateContribution(endpointId, DESCRIPTION, value);
+                            }}/>
+
+
+                      </div>
+
+                      <div className={classes.specPreview}>
+                      <PathAndMethod path={endpointDescriptor.fullPath}
+                                     method={endpointDescriptor.method}/>
+
+                       <div style={{display: 'flex', flexDirection: 'column', marginTop: 7}}>
+                           {endpointDescriptor.pathParameters.map(i => <DocParameter title={i.name}
+                                                              paramId={i.pathId}
+                                                              // updateContribution={updateContribution}
+                                                              description={i.description}/>)}
+
+                       </div>
+
+
+                        <div style={{flex: 1}} />
+
+
+                        <div className={classes.expand} >
+                          <Button
+                            component={Link}
+                            to={`documentation/paths/${endpointDescriptor.pathId}/methods/${endpointDescriptor.method}`}
+                            size="small"
+                            color="primary"
+                            startIcon={<ExpandMoreIcon />}>
+                            Expand Documentation
+                          </Button>
+                        </div>
+                       {/*<div style={{marginTop: 3, display: 'flex', alignItems: 'center'}}>*/}
+                       {/*  {endpointDescriptor.responses.map(res => {*/}
+                       {/*    return <SquareChip label={res.statusCode} bgColor={'#32536a'} color="white" style={{marginRight: 12}}/>*/}
+                       {/*  })}*/}
+                       {/*</div>*/}
+
+                      </div>
+                    </div>
+                      <DocDivider style={{marginTop: 20, marginBottom: 20}} />
+                    </div>
+                  );
+                }}
               </EndpointsContext.Consumer>
             </EndpointsContextStore>
-          )
+          );
         })}
 
-      </List>
+      </div>
     </div>
-  )
+  );
 
-}
+};
 
 export const EndpointDocumentationWrapper = (props) => {
 
-  const {match} = props
-  const {pathId, method} = useParams()
-
-  debugger
+  const {match} = props;
+  const {pathId, method} = useParams();
 
   return (
     <EndpointsContextStore method={method} pathId={pathId}>
@@ -91,34 +178,83 @@ export const EndpointDocumentationWrapper = (props) => {
         {({endpointDescriptor}) => {
           return (
             <Page title="Optic Live Contract Testing Dashboard">
-            <Page.Navbar
-              mini={true}
-              baseUrl={match.url}
-            />
-            <Page.Body>
+              <Page.Navbar
+                mini={true}
+                baseUrl={match.url}
+              />
+              <Page.Body>
 
-              <EndpointDocs/>
+                <EndpointDocs/>
 
-            </Page.Body>
-          </Page>)
+              </Page.Body>
+            </Page>);
         }}
-          </EndpointsContext.Consumer>
+      </EndpointsContext.Consumer>
     </EndpointsContextStore>
-  )
-}
+  );
+};
 
 export const EndpointDocs = (props) => {
 
-  const classes = useStyles()
+  const classes = useStyles();
 
   return (
+    <div className={classes.maxWidth} style={{paddingTop: 30}}>
     <EndpointsContext.Consumer>
-      {({endpointDescriptor}) => {
+      {({endpointDescriptor, updateContribution}) => {
+
+        const {endpointId, requestBodies, responses} = endpointDescriptor
+
+        const responsesGroupedByStatusCode = groupBy(responses, (i) => i.statusCode)
+
+        const allResponses = Object.keys(responsesGroupedByStatusCode).map(parseInt).sort().map(i => {
+          return {statusCode: i, contentTypes: responsesGroupedByStatusCode[i.toString()]
+              .map(res => res.responseBody.httpContentType || 'No Body').sort()}
+        })
+
+        return (
+          <div>
+
+            <HeadingContribution
+              value={endpointDescriptor.endpointPurpose}
+              label="What does this endpoint do?"
+              onChange={(value) => {
+                updateContribution(endpointId, PURPOSE, value);
+              }}
+            />
+            <MarkdownContribution
+              value={endpointDescriptor.endpointDescription}
+              label="Detailed Description"
+              onChange={(value) => {
+                updateContribution(endpointId, DESCRIPTION, value);
+              }}/>
+
+              <DocDivider style={{marginTop: 10, marginBottom: 10}} />
+
+              <RequestTabsContextStore>
+
+              <ContentTabs inRequest options={{contentTypes: requestBodies.map(i => i.requestBody.httpContentType).filter(i => !!i)}} renderRequest={(contentType) => {
+                return <div>{contentType}</div>
+              }}>
+
+              </ContentTabs>
+
+              <ContentTabs options={allResponses} renderResponse={(statusCode, contentType) => {
+                return <div>{statusCode} {contentType}</div>
+              }}>
+
+              </ContentTabs>
 
 
-        return <div>{endpointDescriptor.endpointPurpose}</div>
+              </RequestTabsContextStore>
+
+
+
+          </div>
+        )
 
       }}
     </EndpointsContext.Consumer>
-  )
-}
+    </div>
+  );
+};

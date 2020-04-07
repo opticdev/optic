@@ -4,7 +4,9 @@ import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../c
 import {DESCRIPTION, pathMethodKeyBuilder, PURPOSE} from '../ContributionKeys';
 import {getNormalizedBodyDescriptor} from '../utilities/RequestUtilities';
 import {withRfcContext} from './RfcContext';
-
+import sortBy from 'lodash.sortby'
+import {EndpointPage} from '../components/requests/EndpointPage';
+import {updateContribution as commandsForUpdatingContribution} from '../engine/routines';
 const {
   Context: EndpointsContext,
   withContext: withEndpointsContext
@@ -18,14 +20,16 @@ class EndpointsContextStoreWithoutContext extends React.Component {
     const lookupExampleForRequest = (requestId) => this.props.lookupExampleForRequest(pathId, method, requestId);
     const lookupExampleForResponse = (responseId) => this.props.lookupExampleForResponse(pathId, method, responseId);
     //props from context
-    const {cachedQueryResults, queries} = this.props;
+    const {cachedQueryResults, queries, handleCommand} = this.props;
     const {requests, pathsById, requestIdsByPathId, responsesArray, contributions, requestParameters} = cachedQueryResults;
 
     const requestIdsOnPath = (requestIdsByPathId[pathId] || []).map(requestId => requests[requestId]);
     const requestsOnPathAndMethod = requestIdsOnPath.filter(request => request.requestDescriptor.httpMethod === method.toUpperCase());
 
     let fullPath;
-    let pathParameters;
+    let pathParameters = [];
+
+    const endpointId = pathMethodKeyBuilder(pathId, method)
 
     //try to resolve this path
     try {
@@ -44,7 +48,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
       fullPath = pathTrailWithNames.map(({pathComponentName}) => pathComponentName)
         .join('/');
 
-      const pathParameters = pathTrail
+      pathParameters = pathTrail
         .map(pathId => pathsById[pathId])
         .filter((p) => isPathParameter(p))
         .map(p => ({
@@ -65,7 +69,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
         };
       });
 
-      const responsesForPathAndMethod = responsesArray
+      const responsesForPathAndMethod = sortBy(responsesArray
         .filter(response => response.responseDescriptor.httpMethod === method.toUpperCase() && response.responseDescriptor.pathId === pathId)
         .map(({responseId, responseDescriptor}) => {
           const responseBody = getNormalizedBodyDescriptor(responseDescriptor.bodyDescriptor);
@@ -74,7 +78,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
             responseBody,
             statusCode: responseDescriptor.httpStatusCode
           };
-        });
+        }), ['statusCode']);
 
 
       const endpointDescriptor = {
@@ -85,16 +89,20 @@ class EndpointsContextStoreWithoutContext extends React.Component {
         pathParameters,
         requestBodies,
         responses: responsesForPathAndMethod,
-        endpointPurpose: contributions.getOrUndefined(pathMethodKeyBuilder(pathId, method), PURPOSE),
-        endpointDescription: contributions.getOrUndefined(pathMethodKeyBuilder(pathId, method), DESCRIPTION),
+        endpointPurpose: contributions.getOrUndefined(endpointId, PURPOSE),
+        endpointDescription: contributions.getOrUndefined(endpointId, DESCRIPTION),
         isEmpty: requestBodies.length === 0 && responsesForPathAndMethod.length === 0
       };
 
       const context = {
+        endpointId,
         endpointDescriptor,
         getContributions: (id, key) => contributions.getOrUndefined(id, key),
         lookupExampleForRequest,
-        lookupExampleForResponse
+        lookupExampleForResponse,
+        updateContribution: (id, key, value) => {
+          handleCommand(commandsForUpdatingContribution(id, key, value));
+        }
       };
 
       return (
