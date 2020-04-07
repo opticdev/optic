@@ -85,7 +85,7 @@ export default function LocalDoesNotMatch(props) {
 
             <List dense>
               <Show when={unrecognizedUrlCount > 0}>
-                <ListItem dense button component={Link} to={`${baseUrl}/diff/${sessionId}/urls`}>
+                <ListItem dense button component={Link} to={`${baseUrl}/diffs/${sessionId}/urls`}>
                   <ListItemText primary={`${unrecognizedUrlCount} Undocumented URLs Observed`}/>
                   <ListItemSecondaryAction>
                     <IconButton edge="end" size="small" disabled>
@@ -109,7 +109,7 @@ export default function LocalDoesNotMatch(props) {
                 return (
                   <Link
                     style={{textDecoration: 'none', color: 'black'}}
-                    to={`${baseUrl}/diff/${sessionId}/paths/${pathId}/methods/${method}`}>
+                    to={`${baseUrl}/diffs/${sessionId}/paths/${pathId}/methods/${method}`}>
                     <ListItem dense button>
                       <ListItemText primary={path}/>
                     </ListItem>

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext } from 'react';
 
 const BaseUrlContext = React.createContext(null);
 BaseUrlContext.displayName = 'BaseUrlContext';
@@ -9,5 +9,5 @@ export const { Provider } = BaseUrlContext;
 
 export function useBaseUrl() {
   const context = useContext(BaseUrlContext);
-  return context.path;
+  return context.url;
 }

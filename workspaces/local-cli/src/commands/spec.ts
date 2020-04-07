@@ -37,7 +37,7 @@ export default class Spec extends Command {
     const cliSession = await cliClient.findSession(basePath, null);
     developerDebugLogger({cliSession});
     const uiBaseUrl = makeUiBaseUrl(daemonState);
-    const uiUrl = `${uiBaseUrl}/specs/${cliSession.session.id}/dashboard`;
+    const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/dashboard`;
     openBrowser(uiUrl);
   }
 }

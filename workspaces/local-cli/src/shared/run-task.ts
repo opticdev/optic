@@ -45,7 +45,7 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
   const cliSession = await cliClient.findSession(cwd, startConfig);
   developerDebugLogger({cliSession});
   const uiBaseUrl = makeUiBaseUrl(daemonState);
-  const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diff`;
+  const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs`;
   cli.log(fromOptic(`Review the API Diff live at ${uiUrl}`));
 
   // start proxy and command session
@@ -70,7 +70,7 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     const specAsBuffer = await fs.readFile(specStorePath);
     if (await checkDiffOrUnrecognizedPath(specAsBuffer.toString(), capture.samples)) {
-      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diff/${captureId}`;
+      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;
       openBrowser(uiUrl);
     }
   }

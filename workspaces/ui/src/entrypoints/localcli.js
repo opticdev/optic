@@ -1,25 +1,24 @@
 import React from 'react';
-import {Route, Switch, useParams} from 'react-router-dom';
-import {ApiLocalCLiSpecServiceLoader} from '../components/loaders/ApiLoader';
-import {Provider as DebugSessionContextProvider, useMockSession} from '../contexts/MockDataContext';
+import {useRouteMatch, useParams} from 'react-router-dom';
+import {LocalCliSpecServiceLoader} from '../components/loaders/ApiLoader';
 import {ApiRoutes} from '../routes';
-import EventEmitter from "events";
+import EventEmitter from 'events';
 import {SpecService} from '../services/SpecService';
-import {Provider as BaseUrlContext } from '../contexts/BaseUrlContext'
+import {Provider as BaseUrlContext} from '../contexts/BaseUrlContext';
 
-export default function LocalCLI(props) {
+export default function LocalCli(props) {
 
-  const {match} = props;
+  const match = useRouteMatch();
   const {apiId} = useParams();
 
   const eventEmitter = new EventEmitter();
-  const specService = new SpecService(apiId, eventEmitter)
+  const specService = new SpecService(apiId, eventEmitter);
 
   return (
-    <BaseUrlContext value={{path: match.url}}>
-      <ApiLocalCLiSpecServiceLoader specService={specService}>
-        <ApiRoutes />
-      </ApiLocalCLiSpecServiceLoader>
+    <BaseUrlContext value={{path: match.path, url: match.url}}>
+      <LocalCliSpecServiceLoader specService={specService}>
+        <ApiRoutes/>
+      </LocalCliSpecServiceLoader>
     </BaseUrlContext>
   );
 

@@ -1,38 +1,28 @@
-import {join} from 'path';
 import {useBaseUrl} from './contexts/BaseUrlContext';
 
-// TODO: migrate away from various base paths. Everything is from root, unless prefixed ???
-
-// TODO: migrate away from routes as functions ???
-export const routerPaths = {
-  //@todo -- replace the old flow with this one
+const routerPaths = {
   testingDashboard: (base = '') => `${base}/testing`,
-  documentationPage: (base = '') => `${base}/documentation`, //???
+  documentationPage: (base = '') => `${base}/documentation`,
   expandedDocsPage: (base = '') => `${base}/documentation/paths/:pathId/methods/:method`,
-  diffPage: (base = '') => `${base}/diff`,//???
-  diffPageWithCapture: (base = '') => `${base}/diff/:captureId`,
-  diffRequest: (base = '') => `${base}/diff/:captureId/paths/:pathId/methods/:method`,
+  diffPage: (base = '') => `${base}/diffs`,
+  diffPageWithCapture: (base = '') => `${base}/diffs/:captureId`,
+  diffRequest: (base = '') => `${base}/diffs/:captureId/paths/:pathId/methods/:method`,
 };
 
 export function useRouterPaths() {
-  const debugPrefix = useBaseUrl();
+  const baseUrl = useBaseUrl();
 
-  return Object.keys(routerPaths).reduce(
-    (routesByName, routeName) => {
-      let route = routesByName[routeName];
-      if (typeof route === 'function') {
-        let routeFn = route;
-        // we're not passing the base url, as we want to use Path.join to deal with differences
-        // in trailing slashes. Supporting functions is mostly for backwards-compatibility
-        // ??? urljoin?
-        route = (...args) => join(debugPrefix, routeFn(...args));
-      } else {
-        route = join(debugPrefix, route);
-      }
-      routesByName[routeName] = route;
+  return Object
+    .entries(routerPaths)
+    .reduce(
+      (routesByName, entry) => {
+        const [routeName, route] = entry;
+        if (typeof route === 'function') {
+          routesByName[routeName] = route(baseUrl);
+        }
 
-      return routesByName;
-    },
-    {...routerPaths}
-  );
+        return routesByName;
+      },
+      {}
+    );
 }

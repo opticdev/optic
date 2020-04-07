@@ -82,9 +82,7 @@ class SpecService {
   }
 
   listCaptures() {
-    return outgoingPoll.schedule(() => {
-      return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures`);
-    });
+    return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures`);
   }
 
   getCommandContext() {
@@ -109,13 +107,15 @@ class SpecService {
   }
 
   listCapturedSamples(captureId) {
-    return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures/${captureId}/samples`)
-      .then((body) => {
-        return {
-          samples: body.samples,
-          metadata: body.metadata
-        };
-      });
+    return outgoingPoll.schedule(() => {
+      return NetworkUtilities.getJson(`/api/specs/${this.specId}/captures/${captureId}/samples`)
+        .then((body) => {
+          return {
+            samples: body.samples,
+            metadata: body.metadata
+          };
+        });
+    });
   }
 
   getSessions() {
