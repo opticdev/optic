@@ -57,7 +57,7 @@ const styles = theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    height: '100vh',
+    flexGrow: 1, // grow to fill the entire page
     overflow: 'hidden'
   },
   middle: {
