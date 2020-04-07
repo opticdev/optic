@@ -4,17 +4,11 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexGrow: 1
+    display: 'flex'
   },
-  content: ({ padded = true }) => ({
-    display: 'flex',
-    flexDirection: 'column', // default to vertical stacking of child elements by default
-
-    flexGrow: 1,
-    paddingLeft: padded ? theme.spacing(3) : 0,
-    paddingRight: padded ? theme.spacing(3) : 0
-  })
+  content: {
+    flex: 1,
+  }
 }));
 
 export default function Page(props) {
@@ -30,9 +24,13 @@ export default function Page(props) {
 }
 
 function PageBody(props) {
-  const classes = useStyles(props);
+  const classes = useStyles();
 
-  return <div className={classes.content}>{props.children}</div>;
+  return <div className={classes.content}>
+    <div className={classes.innerScroll}>
+    {props.children}
+    </div>
+  </div>;
 }
 
 // require the use of sub components in context of the Page, to nudge the use of them

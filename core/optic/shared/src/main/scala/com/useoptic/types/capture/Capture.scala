@@ -36,7 +36,10 @@ case class Request(host: String,
 case class Response(statusCode: Int, headers: ArbitraryData, body: Body)
 
 @JSExportAll
-case class Body(contentType: Option[String], value: ArbitraryData)
+case class Body(contentType: Option[String], value: ArbitraryData) {
+  def isEmpty: Boolean = contentType.isEmpty && value.asShapeHashBytes.isEmpty && value.asJsonString.isEmpty && value.asText.isEmpty
+  def nonEmpty: Boolean = !isEmpty
+}
 
 
 

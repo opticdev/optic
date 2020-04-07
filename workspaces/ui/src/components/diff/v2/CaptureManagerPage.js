@@ -162,7 +162,10 @@ export const CaptureManagerPage = ({match, specService}) => {
 
   return (
     <Page title="Optic Live Contract Testing Dashboard">
-      <Page.Navbar mini={true} />
+      <Page.Navbar
+        mini={true}
+        baseUrl={match.url}
+      />
       <Page.Body>
         <Switch>
           <AllCapturesStore>

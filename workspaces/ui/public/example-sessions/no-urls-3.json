@@ -1,32 +1,5 @@
 {
-  "events": [
-    {
-      "PathComponentAdded": {
-        "pathId": "path_PN2ee15iMd",
-        "parentPathId": "root",
-        "name": "todos",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "8556687c-3771-4dc3-b4ed-3658939cc5bb",
-          "clientCommandBatchId": "7ff81f0c-8834-4206-9363-db265f657f07",
-          "createdAt": "2020-03-31T12:54:05.409Z"
-        }
-      }
-    },
-    {
-      "ContributionAdded": {
-        "id": "path_PN2ee15iMd.GET",
-        "key": "purpose",
-        "value": "Get Todos",
-        "eventContext": {
-          "clientId": "anonymous",
-          "clientSessionId": "8556687c-3771-4dc3-b4ed-3658939cc5bb",
-          "clientCommandBatchId": "7ff81f0c-8834-4206-9363-db265f657f07",
-          "createdAt": "2020-03-31T12:54:05.413Z"
-        }
-      }
-    }
-  ],
+  "events": [{"PathComponentAdded":{"pathId":"path_PN2ee15iMd","parentPathId":"root","name":"todos","eventContext":{"clientId":"anonymous","clientSessionId":"8556687c-3771-4dc3-b4ed-3658939cc5bb","clientCommandBatchId":"7ff81f0c-8834-4206-9363-db265f657f07","createdAt":"2020-03-31T12:54:05.409Z"}}},{"ContributionAdded":{"id":"path_PN2ee15iMd.GET","key":"purpose","value":"Get Todos","eventContext":{"clientId":"anonymous","clientSessionId":"8556687c-3771-4dc3-b4ed-3658939cc5bb","clientCommandBatchId":"7ff81f0c-8834-4206-9363-db265f657f07","createdAt":"2020-03-31T12:54:05.413Z"}}},{"PathParameterAdded":{"pathId":"path_nYD4QHZFq1","parentPathId":"path_PN2ee15iMd","name":"todoId","eventContext":null}},{"ShapeAdded":{"shapeId":"shape_KfHrdDdh2u","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":null}},{"PathParameterShapeSet":{"pathId":"path_nYD4QHZFq1","shapeDescriptor":{"shapeId":"shape_KfHrdDdh2u","isRemoved":false},"eventContext":null}},{"ContributionAdded":{"id":"path_nYD4QHZFq1.GET","key":"purpose","value":"Get Todos by ID","eventContext":{"clientId":"anonymous","clientSessionId":"f3b89014-f3ea-4a40-851f-ad992c98b5a1","clientCommandBatchId":"fa82ecff-8ac9-4452-ae2f-7b41d31a07bc","createdAt":"2020-04-04T19:57:47.310Z"}}}],
   "session": {
     "metadata": {
       "completed": true

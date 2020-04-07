@@ -7,14 +7,18 @@ import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldShapeFromShape, ProviderInShape, ShapeProvider}
 import com.useoptic.contexts.shapes.ShapesHelper.{ListKind, ObjectKind}
 import com.useoptic.contexts.shapes.{ShapesAggregate, ShapesHelper, Commands => ShapesCommands}
-import com.useoptic.diff.{ChangeType, GotoPreview, InteractiveDiffInterpretation}
+import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.initial.ShapeBuilder
+import com.useoptic.diff.interactions.interpreters.DiffDescriptionInterpreters
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers}
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, Resolvers, ShapeTrail}
 import com.useoptic.diff.shapes.JsonTrailPathComponent._
 import com.useoptic.types.capture.HttpInteraction
 
 class BasicInterpretations(rfcState: RfcState) {
+
+  private val descriptionInterpreters = new DiffDescriptionInterpreters(rfcState)
+
   def AddResponse(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail): InteractiveDiffInterpretation = {
     val requestId = RequestSpecTrailHelpers.requestId(requestsTrail).get
 
@@ -23,11 +27,10 @@ class BasicInterpretations(rfcState: RfcState) {
       RequestsCommands.AddResponse(responseId, requestId, interactionTrail.statusCode())
     )
     InteractiveDiffInterpretation(
-      s"Add ${interactionTrail.statusCode()} Response",
-      s"Include status code in specification",
+      s"Add ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
+      s"Added ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
       commands,
-      ChangeType.Addition,
-      goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+      ChangeType.Addition
     )
   }
 
@@ -45,11 +48,10 @@ class BasicInterpretations(rfcState: RfcState) {
     )
 
     InteractiveDiffInterpretation(
-      "Add Request Body",
-      s"Include a ${interactionTrail.requestContentType()} body",
+      s"Add Request with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
+      s"Added Request with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
       commands,
-      ChangeType.Addition,
-      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption())
+      ChangeType.Addition
     )
   }
 
@@ -67,41 +69,10 @@ class BasicInterpretations(rfcState: RfcState) {
     )
 
     InteractiveDiffInterpretation(
-      "Add Response Body",
-      s"Include a ${interactionTrail.responseContentType()} body",
+      s"Add ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
+      s"Added ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
       commands,
-      ChangeType.Addition,
-      goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
-    )
-  }
-
-  //@GOTCHA: this is not a backwards-compatible change
-  def ChangeResponseContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail): InteractiveDiffInterpretation = {
-    val responseId = RequestSpecTrailHelpers.responseId(requestsTrail).get
-    val commands = Seq(
-      RequestsCommands.SetResponseContentType(responseId, interactionTrail.responseContentType())
-    )
-    InteractiveDiffInterpretation(
-      "Set Response Content-Type",
-      "",
-      commands,
-      ChangeType.Update,
-      goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
-    )
-  }
-
-  //@GOTCHA: this is not a backwards-compatible change
-  def ChangeRequestContentType(interactionTrail: InteractionTrail, requestsTrail: RequestSpecTrail): InteractiveDiffInterpretation = {
-    val requestId = RequestSpecTrailHelpers.requestId(requestsTrail).get
-    val commands = Seq(
-      RequestsCommands.SetRequestContentType(requestId, interactionTrail.requestContentType())
-    )
-    InteractiveDiffInterpretation(
-      "Set Request Content-Type",
-      "Change from ",
-      commands,
-      ChangeType.Update,
-      goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+      ChangeType.Addition
     )
   }
 
@@ -120,21 +91,19 @@ class BasicInterpretations(rfcState: RfcState) {
         )
 
         InteractiveDiffInterpretation(
-          s"Add Request with ${contentType} body",
-          "Add new body content-type",
+          s"Add Request with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
+          s"Added Request with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
           commands,
-          ChangeType.Addition,
-          goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption())
+          ChangeType.Addition
         )
       }
       case None => {
         val commands = baseCommands
         InteractiveDiffInterpretation(
-          "Add Request without body",
-          "Add new request",
+          s"Add Request with No Body",
+          s"Added Request with No Body",
           commands,
-          ChangeType.Addition,
-          goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption())
+          ChangeType.Addition
         )
       }
     }
@@ -155,21 +124,19 @@ class BasicInterpretations(rfcState: RfcState) {
         )
 
         InteractiveDiffInterpretation(
-          s"Add ${interactionTrail.responseContentType()}",
-          "Add new body content-type",
+          s"Add ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
+          s"Added ${interactionTrail.statusCode()} Response with ${interactionTrail.responseBodyContentTypeOption().getOrElse("No")} Body",
           commands,
-          ChangeType.Addition,
-          goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+          ChangeType.Addition
         )
       }
       case None => {
         val commands = baseCommands
         InteractiveDiffInterpretation(
-          s"Add Response without Body",
-          "Add new response",
+          s"Add ${interactionTrail.statusCode()} Response with No Body",
+          s"Added ${interactionTrail.statusCode()} Response with No Body",
           commands,
-          ChangeType.Addition,
-          goto = GotoPreview(_responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+          ChangeType.Addition
         )
       }
     }
@@ -180,7 +147,8 @@ class BasicInterpretations(rfcState: RfcState) {
     val resolved = Resolvers.tryResolveJsonLike(interactionTrail, jsonTrail, interaction)
 
     //@TODO: inject real shapesState? for now this will always create a new shape
-    val builtShape = new ShapeBuilder(resolved.get)(ShapesAggregate.initialState).run
+    val builtShape = new ShapeBuilder(resolved.get)(rfcState.shapesState).run
+
 
     val additionalCommands: Seq[RfcCommand] = shapeTrail.path.lastOption match {
       case Some(trailItem) => trailItem match {
@@ -205,12 +173,13 @@ class BasicInterpretations(rfcState: RfcState) {
     }
     val commands = builtShape.commands ++ additionalCommands
 
+    val toShape = Resolvers.jsonToCoreKind(resolved.get).name
+
     InteractiveDiffInterpretation(
-      "Change to a <shape>",
-      "Change from <old-type> to <new-type>",
+      s"Change shape to ${toShape}",
+      s"Changed the shape of ${descriptionInterpreters.jsonTrailDetailedDescription(jsonTrail)} ${descriptionInterpreters.shapeName(shapeTrail.rootShapeId)} to ${toShape}",
       commands,
-      ChangeType.Update,
-      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+      ChangeType.Update
     )
   }
 
@@ -226,13 +195,13 @@ class BasicInterpretations(rfcState: RfcState) {
     val additionalCommands = Seq(
       ShapesCommands.AddField(fieldId, shapeId, fieldName, FieldShapeFromShape(fieldId, builtShape.rootShapeId))
     )
+
     val commands = builtShape.commands ++ additionalCommands
     InteractiveDiffInterpretation(
-      s"Add Field <fieldName>",
-      "Add <fieldName> as <shape-type>",
+      s"Add field '${fieldName}'",
+      s"Added ${fieldName}",
       commands,
-      ChangeType.Addition,
-      goto = GotoPreview(_requestContentType = interactionTrail.requestBodyContentTypeOption(), _responseStatusCode = Some(interactionTrail.statusCode()), _responseContentType = interactionTrail.responseBodyContentTypeOption())
+      ChangeType.Addition
     )
   }
 }

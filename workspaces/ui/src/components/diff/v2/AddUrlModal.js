@@ -83,8 +83,6 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
       RfcCommands.AddContribution(pathMethodKeyBuilder(lastParentPathId, newUrl.method), PURPOSE, purpose),
     )
 
-    debugger
-
     //apply commands
     handleCommands(...commands);
 
@@ -108,7 +106,15 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
           <DialogContentText style={{marginTop: 12}}>
             What does this endpoint do?
           </DialogContentText>
-          <TextField value={purpose} onChange={(e) => setPurpose(e.target.value)} autoFocus fullWidth/>
+          <TextField value={purpose}
+                     onChange={(e) => setPurpose(e.target.value)}
+                     autoFocus
+                     onKeyPress={(e) => {
+                       if (e.key === 'Enter') {
+                         handleCreate(purpose)
+                       }
+                     }}
+                     fullWidth/>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setNaming(false)}>

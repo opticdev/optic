@@ -92,7 +92,7 @@ const styles = theme => ({
 
 class ContentTabs extends React.Component {
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidMount() {
     const {inRequest, responseContentType, setResponseContentType, setResponseStatusCode, responseStatusCode, requestContentType, options, setRequestContentType} = this.props
     if (inRequest && !requestContentType && options.contentTypes.length > 0) {
       setRequestContentType(options.contentTypes[0])
@@ -113,6 +113,14 @@ class ContentTabs extends React.Component {
       (((options.find(i => i.statusCode === responseStatusCode) || {}).contentTypes) || []);
 
     const children = inRequest ? renderRequest(requestContentType) : renderResponse(responseStatusCode, responseContentType)
+
+    if (inRequest && options.contentTypes.length === 0) {
+      return null
+    }
+
+    if (!inRequest && options.length === 0) {
+      return null
+    }
 
     return (
       <>

@@ -1,12 +1,29 @@
 #root {
   height: 100vh !important;
-  display: flex;
-  flex-direction: column;
 }
 
-.pulse {
-  animation: shadow-pulse 2s infinite ease-in;
+.blob {
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  box-shadow: 0 0 0 0 rgb(85, 108, 161);
+  transform: scale(1);
+  animation: pulse 2s infinite;
 }
 
-@keyframes shadow-pulse {
+@keyframes pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgb(96, 141, 196);
+  }
+
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
 }
