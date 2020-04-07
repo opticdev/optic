@@ -8,12 +8,7 @@ import {FileSystemCaptureLoader} from '../captures/file-system/avro/file-system-
 import {ICaptureLoader} from '../index';
 import {developerDebugLogger} from '../logger';
 import {ICliServerSession} from '../server';
-import * as URL from 'url';
-import fetch from 'cross-fetch';
-import {opticStatusPath} from '@useoptic/proxy';
-import * as yaml from 'js-yaml';
 import sortBy from 'lodash.sortby';
-import waitOn from 'wait-on';
 
 export class CapturesHelpers {
   constructor(private basePath: string) {
@@ -164,9 +159,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
   router.get('/captures/:captureId/samples', async (req, res) => {
     const {captureId} = req.params;
     const captureInfo = req.optic.session.captures.find(x => x.taskConfig.captureId === captureId);
-    if (!captureInfo) {
-      return res.sendStatus(400);
-    }
+
 
     const loader: ICaptureLoader = new FileSystemCaptureLoader({
       captureBaseDirectory: req.optic.paths.capturesPath
@@ -179,7 +172,7 @@ ${events.map((x: any) => JSON.stringify(x)).join('\n,')}
         .header('ETag', `"optic-etag-v1-${capture.samples.length}"`)
         .json({
           metadata: {
-            completed: captureInfo.status === 'completed'
+            completed: captureInfo ? captureInfo.status === 'completed' : true
           },
           samples: capture.samples,
           links: [
