@@ -2,9 +2,8 @@ import React, { useMemo } from 'react';
 import Drawer from '@material-ui/core/Drawer';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouterPaths } from '../../RouterPaths';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
-import CodeIcon from '@material-ui/icons/Code';
 import DescriptionIcon from '@material-ui/icons/Description';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import PolicyIcon from '@material-ui/icons/Policy';
@@ -61,17 +60,17 @@ export default function Navbar(props) {
       {
         name: 'Review Diff',
         icon: <ChangeHistoryIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.diffPage()
+        link: routerPaths.diffsRoot
       },
       {
         name: 'Specification',
         icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.documentationPage()
+        link: routerPaths.docsRoot
       },
       {
         name: 'Live Contract Testing',
         icon: <PolicyIcon style={{ color: '#e2e2e2' }} />,
-        link: routerPaths.testingDashboard()
+        link: routerPaths.testingDashboard
       }
     ],
     [routerPaths]

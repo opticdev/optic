@@ -162,7 +162,7 @@ function _DiffPageContent(props) {
     specContext.applyCommands(jsonHelper.jsArrayToVector([EndBatchCommit(batchId)]));
     console.log(JSON.parse(newEventStore.serializeEvents(rfcId)));
     await specService.saveEvents(newEventStore, rfcId);
-    history.push(`${baseUrl}/diff/${captureId}`);
+    history.push(`${baseUrl}/diffs/${captureId}`);
   }
 
   const diffRegions = endpointDiffManger.diffRegions

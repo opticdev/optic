@@ -14,11 +14,9 @@ import * as cp from 'child_process'
 import {fromOptic} from './conversation';
 import {developerDebugLogger, userDebugLogger} from './logger';
 import {lockFilePath} from './paths';
-import Init from '../commands/init';
 import {CommandAndProxySessionManager} from './command-and-proxy-session-manager';
 import * as uuidv4 from 'uuid/v4';
 import findProcess = require('find-process');
-import openBrowser = require('react-dev-utils/openBrowser');
 import * as fs from "fs-extra";
 
 async function setupTaskWithConfig(cli: Command, taskName: string, paths: IPathMapping, config: IApiCliConfig) {
@@ -47,7 +45,7 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
   const cliSession = await cliClient.findSession(cwd, startConfig);
   developerDebugLogger({cliSession});
   const uiBaseUrl = makeUiBaseUrl(daemonState);
-  const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diff`;
+  const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs`;
   cli.log(fromOptic(`Review the API Diff live at ${uiUrl}`));
 
   // start proxy and command session
@@ -73,7 +71,7 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
     const specAsBuffer = await fs.readFile(specStorePath);
     if (await checkDiffOrUnrecognizedPath(specAsBuffer.toString(), capture.samples)) {
       const shouldBeNodePath = process.argv[0]
-      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diff/${captureId}`;
+      const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;
       const notifyScriptPath = path.resolve(__dirname, '../../scripts/notify.js')
       cp.spawn(shouldBeNodePath, [notifyScriptPath, uiUrl], {detached: true, stdio: ['ignore', null, null]});
       cli.log(fromOptic(`Observed Unexpected API Behavior. Click here to review: ${uiUrl}`))

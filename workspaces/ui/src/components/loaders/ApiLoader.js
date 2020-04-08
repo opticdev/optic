@@ -43,7 +43,7 @@ export function ApiSpecServiceLoader(props) {
 
   return (
     <SpecServiceStore specService={service} specServiceEvents={service.eventEmitter}>
-      <InitialRfcCommandsStore initialEventsString={events} rfcId="testRfcId" instance="the one in ApiLoader.js">
+      <InitialRfcCommandsStore initialEventsString={events} rfcId="testRfcId" instance="the one in ApiSpecServiceLoader">
         <RfcStore specService={service}>
           {props.children}
         </RfcStore>
@@ -52,7 +52,7 @@ export function ApiSpecServiceLoader(props) {
   );
 }
 
-export function ApiLocalCLiSpecServiceLoader(props) {
+export function LocalCliSpecServiceLoader(props) {
 
   const [events, setEvents] = useState(null);
   const {specService} = props
@@ -82,7 +82,7 @@ export function ApiLocalCLiSpecServiceLoader(props) {
 
   return (
     <SpecServiceStore specService={specService} specServiceEvents={specService.eventEmitter}>
-      <InitialRfcCommandsStore initialEventsString={events} rfcId="testRfcId" instance="the one in CliLoader.js">
+      <InitialRfcCommandsStore initialEventsString={events} rfcId="testRfcId" instance="the one in LocalCliSpecServiceLoader">
         <LocalRfcStore specService={specService}>
           {props.children}
         </LocalRfcStore>

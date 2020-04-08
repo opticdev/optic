@@ -18,7 +18,6 @@ import sortBy from 'lodash.sortby';
 import Button from '@material-ui/core/Button';
 import Toolbar from '@material-ui/core/Toolbar';
 import {withNavigationContext} from '../../contexts/NavigationContext';
-import {Helmet} from 'react-helmet';
 import groupby from 'lodash.groupby';
 import {BODY_DESCRIPTION, DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import {NamerStore} from '../shapes/Namer';
@@ -28,7 +27,6 @@ import {extractRequestAndResponseBodyAsJs} from '@useoptic/domain';
 import IconButton from '@material-ui/core/IconButton';
 import VerticalSplitIcon from '@material-ui/icons/VerticalSplit';
 import TimelineIcon from '@material-ui/icons/Timeline';
-import {AccountCircle} from '@material-ui/icons';
 import {LightTooltip} from '../tooltips/LightTooltip';
 import Badge from '@material-ui/core/Badge';
 import {EndpointsContextStore, EndpointsContext, withEndpointsContext} from '../../contexts/EndpointContext';
@@ -205,7 +203,6 @@ class _EndpointPage extends React.Component {
     showAllResponses: false
   };
 
-  toggleAllResponses = () => this.setState({showAllResponses: true});
 
   render() {
     const {
@@ -267,7 +264,7 @@ class _EndpointPage extends React.Component {
 
     const requestBodyRender = (() => {
       if (!requestBody) {
-        return
+        return;
       }
       const {httpContentType, shapeId, isRemoved} = requestBody;
       if (Object.keys(requestBody).length && !isRemoved) {
@@ -285,128 +282,16 @@ class _EndpointPage extends React.Component {
       }
     })();
 
-
-    // const responsesRendered = (() => responses.map(response => {
-    //   const {responseId, responseDescriptor} = response;
-    //   const {httpStatusCode, bodyDescriptor} = responseDescriptor;
-    //   const {httpContentType, shapeId} = getNormalizedBodyDescriptor(bodyDescriptor);
-    //
-    //   return (
-    //     <DocResponse
-    //       statusCode={httpStatusCode}
-    //       responseId={responseId}
-    //       description={getContribution(responseId, BODY_DESCRIPTION)}
-    //       fields={[]}
-    //       contentType={httpContentType}
-    //       shapeId={shapeId}
-    //       showShapesFirst={showShapesFirst}
-    //       updateContribution={updateContribution}
-    //       example={responseExamples(httpStatusCode)}
-    //     />
-    //   );
-    // }))();
-    //
-    // const firstResponse = responsesRendered[0];
-    // const remainingResponses = responsesRendered.slice(1);
-    //
-    // const showButton = !this.state.showAllResponses && remainingResponses.length > 0;
-
     return (
       <div className={classes.root}>
         {endpointOverview}
         {queryParameters}
 
         <div style={{marginTop: 65, marginBottom: 65}}/>
-        {/*{queryParameters}*/}
-        {requestBodyRender}
-        {/*<div style={{marginTop: 65, marginBottom: 65}}/>*/}
-        {/*{firstResponse}*/}
-
-        {/*{showButton && (*/}
-        {/*  <Button variant="outlined"*/}
-        {/*          color="primary"*/}
-        {/*          onClick={this.toggleAllResponses}*/}
-        {/*          className={classes.showMore}>*/}
-        {/*    <ExpandMoreIcon style={{marginRight: 6}}/>*/}
-        {/*    Show ({remainingResponses.length}) Other Response{remainingResponses.length > 1 && 's'}*/}
-        {/*  </Button>*/}
-        {/*)}*/}
-        {/*<Collapse in={this.state.showAllResponses}>*/}
-        {/*  {remainingResponses}*/}
-        {/*</Collapse>*/}
+        {requestBodyRender}\
       </div>
     );
   }
 }
 
 export const EndpointPage = withStyles(styles)(_EndpointPage);
-
-export const RequestsDetailsPage = withRfcContext(withNavigationContext(withStyles(styles)(({classes, cachedQueryResults, baseUrl, match}) => {
-
-  return <div>DEPRECATED</div>
-})));
-
-
-export const RequestsDetailsPageNew = compose(withEndpointsContext, withStyles(styles))(({classes, match}) => {
-
-  const {pathId, method} = match.params;
-  return (
-    <EndpointsContextStore pathId={pathId} method={method}>
-      <EndpointsContext.Consumer>
-        {({endpointDescriptor}) => {
-          const {fullPath, httpMethod, endpointPurpose, pathParameters} = endpointDescriptor;
-          return (
-            <div className={classes.container}>
-              <AppBar position="static" color="default" className={classes.appBar} elevation={0}>
-                <Toolbar variant="dense">
-                  <div style={{flex: 1, textAlign: 'center'}}>
-                    <Typography variant="h6" color="primary">{endpointPurpose}</Typography>
-                  </div>
-                  {/**/}
-                  <div>
-                    <LightTooltip placement="bottom" title="Show Analytics Overlays">
-                      <IconButton>
-                        <TimelineIcon color="primary" size="small"/>
-                      </IconButton>
-                    </LightTooltip>
-                    <LightTooltip placement="bottom" title="Show Diff">
-                      <IconButton>
-                        <Badge badgeContent={4} color="secondary" overlap="circle">
-                          <VerticalSplitIcon color="primary" size="small"/>
-                        </Badge>
-                      </IconButton>
-                    </LightTooltip>
-                  </div>
-                </Toolbar>
-              </AppBar>
-
-              <div className={classes.scroll}>
-                <NamerStore disable={true}>
-                    <div className={classes.wrapper}>
-                      <EndpointPage
-                        // endpointPurpose={contributions.getOrUndefined(requestId, PURPOSE)}
-                        // endpointDescription={contributions.getOrUndefined(requestId, DESCRIPTION)}
-                        // requestId={requestId}
-                        // updateContribution={(id, key, value) => {
-                        //   handleCommand(updateContribution(id, key, value));
-                        // }}
-                        // getContribution={(id, key) => contributions.getOrUndefined(id, key)}
-                        // showShapesFirst={showShapesFirst}
-                        method={httpMethod}
-                        // requestBody={requestBody}
-                        // queryString={queryString}
-                        // requestBodyExample={this.requestBodyExample()}
-                        // responses={sortBy(responsesForRequest, (res) => res.responseDescriptor.httpStatusCode)}
-                        // responseExamples={this.responseExamples()}
-                        url={fullPath}
-                        parameters={pathParameters}
-                      />
-                    </div>
-                </NamerStore>
-              </div>
-            </div>);
-        }}
-      </EndpointsContext.Consumer>
-    </EndpointsContextStore>
-  );
-});

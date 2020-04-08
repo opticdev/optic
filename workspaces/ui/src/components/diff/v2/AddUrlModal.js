@@ -22,6 +22,7 @@ import {pathMethodKeyBuilder, PURPOSE} from '../../../ContributionKeys';
 import {withNavigationContext} from '../../../contexts/NavigationContext';
 import {PathAndMethod} from './PathAndMethod';
 import {useHistory} from 'react-router-dom';
+import {useBaseUrl} from '../../../contexts/BaseUrlContext';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -35,10 +36,12 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, newUrl, allUnmatchedPaths}) => {
+export const NewUrlModal = withRfcContext((props) => {
+  const {children, newUrl, allUnmatchedPaths, onAdd} = props;
   const classes = useStyles();
-  const {cachedQueryResults, handleCommands} = useContext(RfcContext)
-  const history = useHistory()
+  const {cachedQueryResults, handleCommands} = useContext(RfcContext);
+  const history = useHistory();
+  const baseUrl = useBaseUrl();
   const knownPathId = getOrUndefined(newUrl.pathId);
   const [open, setOpen] = React.useState(false);
   const [naming, setNaming] = React.useState(Boolean(knownPathId));
@@ -59,7 +62,7 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
 
   const handleCreate = (purpose) => {
 
-    let lastParentPathId = knownPathId
+    let lastParentPathId = knownPathId;
     const commands = [];
     //create path if missing
     if (!lastParentPathId) {
@@ -81,14 +84,15 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
     //name it
     commands.push(
       RfcCommands.AddContribution(pathMethodKeyBuilder(lastParentPathId, newUrl.method), PURPOSE, purpose),
-    )
+    );
 
     //apply commands
     handleCommands(...commands);
 
-    //redirect
-    const to = `${captureId}/paths/${lastParentPathId}/methods/${newUrl.method}`
-    history.push(to)
+    onAdd({
+      pathId: lastParentPathId,
+      method: newUrl.method
+    })
   };
 
   const regex = completePathMatcherRegex(pathStringToPathComponents(pathExpression));
@@ -111,7 +115,7 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
                      autoFocus
                      onKeyPress={(e) => {
                        if (e.key === 'Enter') {
-                         handleCreate(purpose)
+                         handleCreate(purpose);
                        }
                      }}
                      fullWidth/>
@@ -133,7 +137,7 @@ export const NewUrlModal = withRfcContext(({pushRelative, captureId, children, n
       <div onClick={handleClickOpen}>
         {children}
       </div>
-      {naming ? <NamingDialog /> : (
+      {naming ? <NamingDialog/> : (
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md" aria-labelledby="form-dialog-title">
           <DialogTitle>Add New Endpoint</DialogTitle>
           <DialogContent style={{marginTop: -20}}>
