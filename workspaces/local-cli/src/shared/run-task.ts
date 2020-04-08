@@ -9,14 +9,14 @@ import {FileSystemCaptureLoader, ICaptureLoader} from '@useoptic/cli-server';
 import {makeUiBaseUrl} from '@useoptic/cli-server';
 import {checkDiffOrUnrecognizedPath} from '@useoptic/domain';
 import * as colors from 'colors';
+import * as path from 'path'
+import * as cp from 'child_process'
 import {fromOptic} from './conversation';
 import {developerDebugLogger, userDebugLogger} from './logger';
 import {lockFilePath} from './paths';
-import Init from '../commands/init';
 import {CommandAndProxySessionManager} from './command-and-proxy-session-manager';
 import * as uuidv4 from 'uuid/v4';
 import findProcess = require('find-process');
-import openBrowser = require('react-dev-utils/openBrowser');
 import * as fs from "fs-extra";
 
 async function setupTaskWithConfig(cli: Command, taskName: string, paths: IPathMapping, config: IApiCliConfig) {
@@ -70,8 +70,13 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     const specAsBuffer = await fs.readFile(specStorePath);
     if (await checkDiffOrUnrecognizedPath(specAsBuffer.toString(), capture.samples)) {
+      const shouldBeNodePath = process.argv[0]
       const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;
-      openBrowser(uiUrl);
+      const notifyScriptPath = path.resolve(__dirname, '../../scripts/notify.js')
+      cp.spawn(shouldBeNodePath, [notifyScriptPath, uiUrl], {detached: true, stdio: ['ignore', null, null]});
+      cli.log(fromOptic(`Observed Unexpected API Behavior. Click here to review: ${uiUrl}`))
+    } else {
+      cli.log(fromOptic(`All API interactions followed your specification.`))
     }
   }
 }
