@@ -104,7 +104,7 @@ function CaptureNavLink(props) {
     <ReportLink
       className={classes.navLink}
       captureId={capture.captureId}
-      activeStyle={{ fontWeight: 'bold' }}
+      activeClassName={classes.isCurrent}
     >
       {props.children}
     </ReportLink>
@@ -143,17 +143,35 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(2),
     boxShadow: '0 2px 4px 0 rgba(138, 148, 159, 0.3)',
 
+    willChange: 'transform,box-shadow',
+    transform: 'translateX(0)',
+    transition: '0.1s ease-out transform, 0.1s ease-out box-shadow',
+
     ['&$isComplete']: {
       opacity: 0.7
     },
 
+    // wrapping Link hovered
     ['$navLink:hover &, $navLink:focus &']: {
       boxShadow: '0 2px 4px 0 rgba(138, 148, 159, 0.6)',
       opacity: 1
+    },
+
+    // currently selected
+    ['$navLink$isCurrent &']: {
+      borderLeft: `3px solid ${theme.palette.updated.main}`,
+      opacity: 1,
+      transform: `translateX(${theme.spacing(1)}px)`,
+      boxShadow: [
+        '0 2px 4px 0 rgba(138, 148, 159, 0.6)',
+        '0 4px 8px 2px rgba(138, 148, 159, 0.15)'
+      ].join(',')
     }
   },
 
+  // states, just so we can use them as modifiers for other rules
   isComplete: {},
+  isCurrent: {},
 
   buildName: {
     ...theme.typography.subtitle1,
