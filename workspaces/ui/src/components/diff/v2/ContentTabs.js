@@ -4,7 +4,7 @@ import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
 import {secondary} from '../../../theme';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import ReusableDiffRow from './ReusableDiffRow';
+import ReusableDiffRow from './shape_viewers/ReusableDiffRow';
 import {Typography} from '@material-ui/core';
 
 
@@ -47,7 +47,8 @@ export {
 
 const ContentStyledTabs = withStyles({
   root: {
-    height: 29,
+    // height: 29,
+    paddingRight: 12,
     minHeight: 'inherit'
   },
   indicator: {
@@ -66,13 +67,13 @@ const ContentStyledTab = withStyles(theme => {
   return ({
     root: {
       textTransform: 'none',
-      color: '#707070',
+      color: '#726e6e',
       padding: 0,
       marginTop: 5,
       height: 25,
       minHeight: 'inherit',
       minWidth: 'inherit',
-      fontWeight: theme.typography.fontWeightRegular,
+      fontWeight: 800,
       fontSize: theme.typography.pxToRem(14),
       marginRight: theme.spacing(2),
       '&:focus': {
@@ -85,8 +86,13 @@ const ContentStyledTab = withStyles(theme => {
 
 const styles = theme => ({
   root: {
+    marginTop: 15,
     display: 'flex',
     flex: 1,
+  },
+  content: {
+    paddingRight: 12,
+    paddingTop: 15
   },
 });
 
@@ -104,7 +110,7 @@ class ContentTabs extends React.Component {
   }
 
   render() {
-    const {classes, options, notifications, inRequest, requestContentType, responseContentType, setRequestContentType, setResponseContentType, responseStatusCode, setResponseStatusCode, renderResponse, renderRequest} = this.props;
+    const {classes, options, notifications, renderDescription, inRequest, requestContentType, responseContentType, setRequestContentType, setResponseContentType, responseStatusCode, setResponseStatusCode, renderResponse, renderRequest} = this.props;
 
     const contentTypeTab = inRequest ? requestContentType : responseContentType;
     const setContentTypeTab = inRequest ? setRequestContentType : setResponseContentType;
@@ -113,6 +119,7 @@ class ContentTabs extends React.Component {
       (((options.find(i => i.statusCode === responseStatusCode) || {}).contentTypes) || []);
 
     const children = inRequest ? renderRequest(requestContentType) : renderResponse(responseStatusCode, responseContentType)
+    const contribution = renderDescription && (inRequest ? renderDescription(requestContentType) : renderDescription(responseStatusCode, responseContentType))
 
     if (inRequest && options.contentTypes.length === 0) {
       return null
@@ -126,9 +133,10 @@ class ContentTabs extends React.Component {
       <>
         <ReusableDiffRow notifications={notifications}>
           <div className={classes.root}>
-            <Typography variant="h6" color="primary">{inRequest ? 'Request' : 'Response'}</Typography>
+            <Typography variant="h5" color="primary">{inRequest ? 'Request' : 'Response'}</Typography>
           </div>
         </ReusableDiffRow>
+        {contribution}
         <div className={classes.root}>
           {!inRequest && (<ContentStyledTabs
               onChange={(e, newValue) => setResponseStatusCode(newValue)}
@@ -147,8 +155,9 @@ class ContentTabs extends React.Component {
             {contentTypeOptions.map((contentType) =>
               (<ContentStyledTab label={contentType} value={contentType}/>))}
           </ContentStyledTabs>
+
         </div>
-        <div style={{paddingTop: 22}}>
+        <div className={classes.content}>
           {children}
         </div>
       </>

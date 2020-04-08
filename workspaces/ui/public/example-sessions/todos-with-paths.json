@@ -4,7 +4,94 @@
     "metadata": {
       "completed": false
     },
-    "samples": [],
+    "samples": [
+      {
+        "uuid": "5",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/nested",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\"fieldA\": {\"hello\": {\"n\": 123}}, \"fieldB\": {\"nested\": true}}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "5",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/nested",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\"fieldA\": {\"hello\": \"abc\"}}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
     "links": [
       {
         "rel": "next",

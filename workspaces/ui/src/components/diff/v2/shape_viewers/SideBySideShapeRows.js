@@ -4,7 +4,7 @@ import {Typography} from '@material-ui/core';
 import classNames from 'classnames';
 import Toolbar from '@material-ui/core/Toolbar';
 import WarningIcon from '@material-ui/icons/Warning';
-import {AddedGreenBackground, ChangedYellowBackground, primary, RemovedRedBackground, secondary} from '../../../theme';
+import {AddedGreenBackground, ChangedYellowBackground, primary, RemovedRedBackground, secondary} from '../../../../theme';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tooltip from '@material-ui/core/Tooltip';
 import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
@@ -17,133 +17,12 @@ import {
   CompareEquality,
   lengthScala, toOption
 } from '@useoptic/domain';
-import {withDiffContext} from './DiffContext';
-import Paper from '@material-ui/core/Paper';
-import Menu from '@material-ui/core/Menu';
-import {InterpretationRow} from './DiffViewer';
-import {DocSubGroup} from '../../requests/DocSubGroup';
-import {IgnoreDiffContext} from './DiffPageNew';
-import Chip from '@material-ui/core/Chip';
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: '#16203F'
-  },
-  row: {
-    display: 'flex',
-    padding: 0,
-    paddingLeft: 4,
-    flexDirection: 'row',
-  },
-  rowWithHover: {
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: 'rgba(78,165,255,0.27) !important',
-    },
-  },
-  menu: {
-    userSelect: 'none'
-  },
-  suggestion: {
-    fontStyle: 'italic',
-    color: 'white',
-    flex: 1,
-    textAlign: 'right',
-    paddingRight: 10
-  },
-  hiddenItem: {
-    color: '#070707',
-    fontSize: 10,
-    paddingLeft: 7,
-    paddingRight: 7,
-    backgroundColor: '#ababab',
-    borderRadius: 12
-  },
-  symbols: {
-    color: '#cfcfcf',
-    fontWeight: 800,
-    fontFamily: '\'Source Code Pro\', monospace'
-  },
-  value: {
-    fontWeight: 600,
-    fontFamily: '\'Source Code Pro\', monospace'
-  },
-  fieldName: {
-    fontWeight: 600,
-    color: '#cfcfcf',
-    fontSize: 12,
-    fontFamily: '\'Source Code Pro\', monospace'
-  },
-  indexMarker: {
-    fontWeight: 500,
-    color: '#9cdcfe',
-    fontSize: 12,
-    fontFamily: '\'Source Code Pro\', monospace'
-  },
-  rowContents: {
-    display: 'flex',
-    alignItems: 'baseline',
-    justifyContent: 'center',
-    flexDirection: 'row'
-  },
-  left: {
-    flex: 1,
-    display: 'flex',
-    paddingTop: 3,
-    paddingBottom: 3,
-    paddingLeft: 5
-  },
-  spacerBorder: {
-    maxWidth: 1,
-    backgroundColor: '#4B5A8C'
-  },
-  right: {
-    display: 'flex',
-    paddingLeft: 5,
-    paddingTop: 3,
-    paddingBottom: 3,
-    flex: 1,
-  },
-  typeName: {
-    display: 'flex',
-    whiteSpace: 'pre',
-    flex: 1,
-    fontWeight: 600,
-    fontFamily: '\'Source Code Pro\', monospace'
-  },
-  assertionMet: {
-    display: 'flex',
-    whiteSpace: 'pre',
-    flex: 1,
-    fontWeight: 400,
-    color: '#646464',
-    fontStyle: 'italic',
-    fontFamily: '\'Source Code Pro\', monospace'
-  },
-  diffAssertion: {
-    color: '#f8edf4',
-    flex: 1,
-    fontSize: 14,
-    fontWeight: 800,
-    fontFamily: '\'Source Code Pro\', monospace'
-  },
-  toolbar: {
-    alignItems: 'flex-start',
-    paddingTop: theme.spacing(1),
-    paddingBottom: theme.spacing(2),
-  },
-  dash: {
-    fontWeight: 500,
-    marginLeft: -10,
-    color: primary
-  }
-}));
-
+import {withDiffContext} from '../DiffContext';
+import {Indent, IndentIncrement, DepthContext} from './Indent';
+import {HiddenItemEllipsis, useShapeViewerStyles} from './styles';
 
 export const DiffViewer = ({shape}) => {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
   return (
     <div className={classes.root}>
       <DepthContext.Provider value={{depth: 0}}>
@@ -171,37 +50,8 @@ function renderShape(shape, nested) {
   }
 }
 
-export const DepthContext = React.createContext({depth: 0});
-
-const Indent = ({children, add = 1, style}) => {
-  return (
-    <DepthContext.Consumer>
-      {({depth}) => (
-        <div style={{paddingLeft: (depth + add) * 13, ...style}}>
-          <DepthContext.Provider value={{depth: depth + add}}>
-            {children}
-          </DepthContext.Provider>
-        </div>
-      )}
-    </DepthContext.Consumer>
-  );
-};
-
-const IndentIncrement = ({children, add = 1}) => {
-  return (
-    <DepthContext.Consumer>
-      {({depth}) => (
-        <DepthContext.Provider value={{depth: depth + add}}>
-          {children}
-        </DepthContext.Provider>
-      )}
-    </DepthContext.Consumer>
-  );
-};
-
-
 export const Row = withShapeRenderContext((props) => {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
 
   const {exampleOnly, onLeftClick} = props;
 
@@ -226,7 +76,7 @@ export const Row = withShapeRenderContext((props) => {
 });
 
 export const ObjectRender = withShapeRenderContext((props) => {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
   const {shapeRender, shape, nested} = props;
   const fields = shapeRender.resolveFields(shape.fields);
 
@@ -242,7 +92,7 @@ export const ObjectRender = withShapeRenderContext((props) => {
 });
 
 export const ListRender = withShapeRenderContext((props) => {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
   const {shapeRender, shape, nested} = props;
   const listId = shape.shapeId;
   const listItem = getOrUndefined(shapeRender.listItemShape(listId));
@@ -267,7 +117,7 @@ export const ListRender = withShapeRenderContext((props) => {
 });
 
 function FieldName({children, missing}) {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
   return (
     <Typography variant="caption" className={classes.fieldName}
                 style={{opacity: missing ? .4 : 1}}>{children}:</Typography>
@@ -275,7 +125,7 @@ function FieldName({children, missing}) {
 }
 
 function IndexMarker({children}) {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
   return (
     <Typography variant="caption" className={classes.indexMarker}>{children}:</Typography>
   );
@@ -293,9 +143,13 @@ const useColor = {
 
 
 function ValueRows({value, shape}) {
-  const classes = useStyles();
-
+  const classes = useShapeViewerStyles();
+  const {shapeRender} = useContext(ShapeRenderContext);
   const jsTypeString = Object.prototype.toString.call(value);
+
+  if (shape.isOptional || shape.isNullable) {
+    return <ValueRows value={value} shape={getOrUndefined(shapeRender.unwrapInner(shape))}/>
+  }
 
   if (jsTypeString === '[object Array]' || jsTypeString === '[object Object]') {
     return <IndentIncrement add={1}>{renderShape(shape, true)}</IndentIncrement>;
@@ -305,13 +159,18 @@ function ValueRows({value, shape}) {
 }
 
 function ValueContents({value, shape}) {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
+  const {shapeRender} = useContext(ShapeRenderContext);
 
   if (typeof value === 'undefined') {
     return null;
   }
 
   const jsTypeString = Object.prototype.toString.call(value);
+
+  if (shape.isOptional || shape.isNullable) {
+    return <ValueContents value={value} shape={getOrUndefined(shapeRender.unwrapInner(shape))}/>
+  }
 
   if (jsTypeString === '[object Array]') {
     return <Symbols>{'['}</Symbols>;
@@ -357,7 +216,7 @@ function ValueContents({value, shape}) {
 }
 
 const TypeName = ({typeName, style}) => {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
 
   const {shapeRender} = useContext(ShapeRenderContext);
 
@@ -376,7 +235,7 @@ const TypeName = ({typeName, style}) => {
 };
 
 const AssertionMetTypeName = ({typeName, style}) => {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
 
   const {shapeRender} = useContext(ShapeRenderContext);
 
@@ -397,7 +256,7 @@ const AssertionMetTypeName = ({typeName, style}) => {
 };
 
 function Symbols({children, withIndent}) {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
 
   const symbol = <Typography variant="caption" className={classes.symbols}>{children}</Typography>;
 
@@ -415,7 +274,7 @@ function Symbols({children, withIndent}) {
 
 
 export const DiffNotif = withShapeRenderContext(withDiffContext((props) => {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
   const {diffDescription} = props;
 
   return (
@@ -425,11 +284,10 @@ export const DiffNotif = withShapeRenderContext(withDiffContext((props) => {
     </span>
   );
 
-
 }));
 
 export const FieldRow = withShapeRenderContext((props) => {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
   const {field, shapeRender, diffDescription, suggestion} = props;
 
   const missing = field.display === 'missing';
@@ -495,7 +353,7 @@ export const FieldRow = withShapeRenderContext((props) => {
 
 
 export const ItemRow = withShapeRenderContext((props) => {
-  const classes = useStyles();
+  const classes = useShapeViewerStyles();
   const {item, shapeRender, isLast, listId, listItemShape, diffDescription, suggestion} = props;
   const diff = headOrUndefined(item.item.diffs);
 
@@ -558,25 +416,3 @@ export const ItemRow = withShapeRenderContext((props) => {
     </>
   );
 });
-
-export const HiddenItemEllipsis = withShapeRenderContext((props) => {
-  const classes = useStyles();
-  const {setShowAllLists} = useContext(ShapeExpandedContext);
-  const {expandId} = props;
-  return (<DiffToolTip placement="right" title="(Hidden) Click to Expand">
-    <div className={classes.hiddenItem} onClick={() => setShowAllLists(expandId, true)}>{'⋯'}</div>
-  </DiffToolTip>);
-});
-
-
-export const DiffToolTip = withStyles(theme => ({
-  tooltip: {
-    backgroundColor: '#2A3B72',
-    color: 'rgba(247, 248, 240, 1)',
-    boxShadow: theme.shadows[1],
-    maxWidth: 200,
-    fontSize: 11,
-    fontWeight: 200,
-    padding: 4,
-  },
-}))(Tooltip);

@@ -7,7 +7,7 @@ import {CaptureManager} from '../diff/v2/CaptureManagerPage';
 import {SpecServiceContext} from '../../contexts/SpecServiceContext';
 import {RfcContext} from '../../contexts/RfcContext';
 import List from '@material-ui/core/List';
-import {mapScala} from '@useoptic/domain';
+import {DiffPreviewer, getOrUndefined, mapScala, toOption} from '@useoptic/domain';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ListItem from '@material-ui/core/ListItem';
 import {Button, Card, ListItemText} from '@material-ui/core';
@@ -22,11 +22,15 @@ import {HeadingContribution, MarkdownContribution} from '../requests/DocContribu
 import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import groupBy from 'lodash.groupby';
 import ContentTabs, {RequestTabsContextStore} from '../diff/v2/ContentTabs';
+import DiffPreview, {BreadcumbX} from '../diff/v2/DiffPreview';
+import {ShapeExpandedStore} from '../diff/v2/shape_viewers/ShapeRenderContext';
+import {ShapeOnlyViewer} from '../diff/v2/shape_viewers/ShapeOnlyShapeRows';
+import {ShapeBox} from '../diff/v2/DiffReviewExpanded';
 
 const useStyles = makeStyles(theme => ({
   maxWidth: {
     width: '100%',
-    maxWidth: 1200,
+    maxWidth: 980,
     alignSelf: 'center'
   },
   diffTocCard: {
@@ -39,6 +43,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     paddingRight: 20
+  },
+  overviewSection: {
+    paddingTop: 15,
+    paddingBottom: 15,
   },
   expand: {
     display: 'flex',
@@ -91,9 +99,7 @@ export const DocumentationToc = () => {
           return (
             <EndpointsContextStore method={i.method} pathId={i.pathId}>
               <EndpointsContext.Consumer>
-                {({endpointDescriptor, updateContribution}) => {
-
-                  const {endpointId} = endpointDescriptor;
+                {({endpointDescriptor, updateContribution, getContribution, endpointId}) => {
 
                   return (
                     <div>
@@ -101,14 +107,14 @@ export const DocumentationToc = () => {
 
                         <div className={classes.contributions}>
                           <HeadingContribution
-                            value={endpointDescriptor.endpointPurpose}
+                            value={getContribution(endpointId, PURPOSE)}
                             label="What does this endpoint do?"
                             onChange={(value) => {
                               updateContribution(endpointId, PURPOSE, value);
                             }}
                           />
                           <MarkdownContribution
-                            value={endpointDescriptor.endpointDescription}
+                            value={getContribution(endpointId, DESCRIPTION)}
                             label="Detailed Description"
                             onChange={(value) => {
                               updateContribution(endpointId, DESCRIPTION, value);
@@ -124,7 +130,7 @@ export const DocumentationToc = () => {
                           <div style={{display: 'flex', flexDirection: 'column', marginTop: 7}}>
                             {endpointDescriptor.pathParameters.map(i => <DocParameter title={i.name}
                                                                                       paramId={i.pathId}
-                              // updateContribution={updateContribution}
+                                                                                      updateContribution={updateContribution}
                                                                                       description={i.description}/>)}
 
                           </div>
@@ -139,8 +145,10 @@ export const DocumentationToc = () => {
                               to={`documentation/paths/${endpointDescriptor.pathId}/methods/${endpointDescriptor.method}`}
                               size="small"
                               color="primary"
-                              startIcon={<ExpandMoreIcon/>}>
-                              Expand Documentation
+                              varient="contained"
+                              // startIcon={<ExpandMoreIcon/>}>
+                            >
+                              Read Documentation
                             </Button>
                           </div>
                           {/*<div style={{marginTop: 3, display: 'flex', alignItems: 'center'}}>*/}
@@ -195,66 +203,135 @@ export const EndpointDocs = (props) => {
 
   const classes = useStyles();
 
+  const {rfcService, rfcId} = useContext(RfcContext);
+
+  const currentRfcState = rfcService.currentState(rfcId);
+
   return (
-    <div className={classes.maxWidth} style={{paddingTop: 30}}>
-      <EndpointsContext.Consumer>
-        {({endpointDescriptor, updateContribution}) => {
+    <ShapeExpandedStore>
+      <div className={classes.maxWidth} style={{paddingTop: 30}}>
+        <EndpointsContext.Consumer>
+          {({endpointDescriptor, updateContribution, getContribution, endpointId}) => {
 
-          const {endpointId, requestBodies, responses} = endpointDescriptor;
+            const {requestBodies, responses} = endpointDescriptor;
 
-          const responsesGroupedByStatusCode = groupBy(responses, (i) => i.statusCode);
+            const responsesGroupedByStatusCode = groupBy(responses, (i) => i.statusCode);
 
-          const allResponses = Object.keys(responsesGroupedByStatusCode).map(parseInt).sort().map(i => {
-            return {
-              statusCode: i, contentTypes: responsesGroupedByStatusCode[i.toString()]
-                .map(res => res.responseBody.httpContentType || 'No Body').sort()
-            };
-          });
+            const allResponses = Object.keys(responsesGroupedByStatusCode).map(parseInt).sort().map(i => {
+              return {
+                statusCode: i, contentTypes: responsesGroupedByStatusCode[i.toString()]
+                  .map(res => res.responseBody.httpContentType || 'No Body').sort()
+              };
+            });
 
-          return (
-            <div>
-
-              <HeadingContribution
-                value={endpointDescriptor.endpointPurpose}
-                label="What does this endpoint do?"
-                onChange={(value) => {
-                  updateContribution(endpointId, PURPOSE, value);
-                }}
-              />
-              <MarkdownContribution
-                value={endpointDescriptor.endpointDescription}
-                label="Detailed Description"
-                onChange={(value) => {
-                  updateContribution(endpointId, DESCRIPTION, value);
-                }}/>
-
-              <DocDivider style={{marginTop: 10, marginBottom: 10}}/>
-
-              <RequestTabsContextStore>
-
-                <ContentTabs inRequest
-                             options={{contentTypes: requestBodies.map(i => i.requestBody.httpContentType).filter(i => !!i)}}
-                             renderRequest={(contentType) => {
-                               return <div>{contentType}</div>;
-                             }}>
-
-                </ContentTabs>
-
-                <ContentTabs options={allResponses} renderResponse={(statusCode, contentType) => {
-                  return <div>{statusCode} {contentType}</div>;
-                }}>
-
-                </ContentTabs>
+            return (
+              <div>
+                <HeadingContribution
+                  value={getContribution(endpointId, PURPOSE)}
+                  label="What does this endpoint do?"
+                  onChange={(value) => {
+                    updateContribution(endpointId, PURPOSE, value);
+                  }}
+                />
+                <MarkdownContribution
+                  value={getContribution(endpointId, DESCRIPTION)}
+                  label="Detailed Description"
+                  onChange={(value) => {
+                    updateContribution(endpointId, DESCRIPTION, value);
+                  }}/>
 
 
-              </RequestTabsContextStore>
+                <DocDivider style={{marginTop: 10, marginBottom: 10}}/>
+
+                <div className={classes.overviewSection}>
+                  <PathAndMethod path={endpointDescriptor.fullPath}
+                                 method={endpointDescriptor.method}/>
 
 
-            </div>
-          );
+                  <div style={{marginTop: 7}}>
+                    {endpointDescriptor.pathParameters.map(i => <DocParameter title={i.name}
+                                                                              paramId={i.pathId}
+                                                                              updateContribution={updateContribution}
+                                                                              description={i.description}/>)}
+                  </div>
+                </div>
 
-        }}
-      </EndpointsContext.Consumer>
-    </div>
+                <DocDivider style={{marginTop: 10, marginBottom: 10}}/>
+
+                <RequestTabsContextStore>
+
+                  <ContentTabs inRequest
+                               options={{contentTypes: requestBodies.map(i => i.requestBody.httpContentType).filter(i => !!i)}}
+                               renderDescription={(contentType) => {
+                                 const id = `${endpointId}_request_body`;
+                                 return (
+                                   <MarkdownContribution
+                                     value={getContribution(id, DESCRIPTION)}
+                                     label="Request Body Description"
+                                     onChange={(value) => {
+                                       updateContribution(id, DESCRIPTION, value);
+                                     }}/>
+
+                                 );
+                               }}
+                               renderRequest={(contentType) => {
+                                 const r = requestBodies.find(i => i.requestBody.httpContentType === contentType);
+                                 const renderedShape = r && getOrUndefined(DiffPreviewer.previewShape(currentRfcState, toOption(r.requestBody.shapeId)));
+
+                                 return renderedShape && (
+                                   <ShapeBox header={<BreadcumbX
+                                     itemStyles={{fontSize: 13, color: 'white'}}
+                                     location={['Request Body', contentType]}/>}>
+                                     <ShapeOnlyViewer preview={renderedShape}/>
+                                   </ShapeBox>
+                                 );
+                               }}>
+
+                  </ContentTabs>
+
+                  <ContentTabs options={allResponses}
+                               renderDescription={(statusCode, contentType) => {
+                                 const id = `${endpointId}_${statusCode}_response`;
+                                 return (
+                                   <MarkdownContribution
+                                     value={getContribution(id, DESCRIPTION)}
+                                     label={`${statusCode} Response Description`}
+                                     onChange={(value) => {
+                                       updateContribution(id, DESCRIPTION, value);
+                                     }}/>
+
+                                 );
+                               }}
+                               renderResponse={(statusCode, contentType) => {
+
+                                 const response = responses.find(i => i.statusCode === statusCode && i.responseBody.httpContentType === contentType);
+                                 const renderedShape = response && getOrUndefined(DiffPreviewer.previewShape(currentRfcState, toOption(response.responseBody.shapeId)));
+
+                                 return renderedShape && (
+                                   <ShapeBox header={<BreadcumbX
+                                     itemStyles={{fontSize: 13, color: 'white'}}
+                                     location={[`${statusCode} Response Body`, contentType]}/>}>
+                                     <ShapeOnlyViewer preview={renderedShape}/>
+                                   </ShapeBox>
+                                 );
+                                 // return <div>{statusCode} {contentType}</div>;
+                               }}>
+
+                  </ContentTabs>
+
+
+                </RequestTabsContextStore>
+
+                <div style={{height: '100vh'}}/>
+
+              </div>
+            );
+
+          }}
+        </EndpointsContext.Consumer>
+      </div>
+    </ShapeExpandedStore>
   );
 };
+
+

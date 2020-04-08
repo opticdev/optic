@@ -36,8 +36,6 @@ class TrafficSessionStoreBase extends React.Component {
       return;
     }
 
-    debugger
-
     specService
       .listCapturedSamples(sessionId)
       .then(result => {
