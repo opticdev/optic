@@ -208,10 +208,12 @@ const useStyles = makeStyles((theme) => ({
 
     '$isActive &': {
       ...theme.typography.subtitle1,
+      fontWeight: theme.typography.fontWeightLight,
       margin: 0,
       marginBottom: theme.spacing(0.75),
       // color: theme.palette.primary.main,
       '& code': {
+        fontWeight: 'bold',
         fontSize: theme.typography.subtitle2.fontSize
       }
     }
