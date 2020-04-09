@@ -18,6 +18,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import {useHistory} from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
 import {Link, withRouter} from 'react-router-dom';
+import { dumpSpecServiceState } from '../../../utilities/dump-spec-service-state'
 
 import {
   AddedGreen,
@@ -132,6 +133,10 @@ function AllCapturesStore(props) {
 
     return cleanup;
   }, []);
+
+  useEffect(() => {
+    global.opticDump = dumpSpecServiceState(specService)
+  }, [])
 
   function dismissCapture(captureId) {
     setDismissed([...dismissed, captureId]);

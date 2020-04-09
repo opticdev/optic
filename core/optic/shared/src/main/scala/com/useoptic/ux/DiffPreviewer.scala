@@ -11,6 +11,7 @@ import com.useoptic.diff.shapes.{ArrayVisitor, GenericWrapperVisitor, JsonLikeTr
 import com.useoptic.diff.shapes.JsonTrailPathComponent.{JsonArrayItem, JsonObjectKey}
 import com.useoptic.diff.shapes.Resolvers.{ParameterBindings, ResolvedTrail}
 import com.useoptic.dsa.SequentialIdGenerator
+import com.useoptic.logging.Logger
 import com.useoptic.types.capture.{Body, JsonLike}
 import io.circe.Json
 
@@ -46,7 +47,7 @@ object DiffPreviewer {
     val jsonLikeTraverser = new JsonLikeTraverser(RfcState.empty, exampleRenderVisitor)
 
     jsonLikeTraverser.traverse(Some(jsonLike), JsonTrail(Seq.empty), None)
-
+    Logger.log(exampleRenderVisitor.shapes)
     RenderShapeRoot(
       exampleRenderVisitor.rootShape.shapeId,
       exampleRenderVisitor.fields, Map.empty,
@@ -104,7 +105,7 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
 
       val extraFieldIds = value.flatMap { case (key, value) => {
         if (!fieldNameToId.contains(key)) {
-          println(s"object has extra field ${key}")
+          Logger.log(s"object has extra field ${key}")
           val extraFieldId = "extra_field_" + ShapesHelper.newFieldId()
           pushField(RenderField(extraFieldId, key, None, Some(value.asJson), diffs = diffsByTrail(bodyTrail.withChild(JsonObjectKey(key)))))
           Some(extraFieldId)

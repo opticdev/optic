@@ -1,6 +1,6 @@
 package com.useoptic
 
-import scala.scalajs.js
+import com.useoptic.logging.Logger
 
 object DebuggingHelper {
   def withDebugger[A](f: => A): A = {
@@ -8,7 +8,7 @@ object DebuggingHelper {
       f
     } catch {
       case a: Throwable => {
-        println(a)
+        Logger.log(a)
         scala.scalajs.js.special.debugger()
         throw new Error("Error within from JS")
       }

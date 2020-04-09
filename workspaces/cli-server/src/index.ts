@@ -12,6 +12,7 @@ import {makeUiBaseUrl} from './url-builders';
 import {developerDebugLogger} from './logger';
 import waitOn from 'wait-on';
 import findProcess = require('find-process');
+import uuidv4 from 'uuid/v4';
 
 export interface ICaptureManifest {
   samples: IHttpInteraction[]
@@ -53,10 +54,12 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
     if (isDebuggingEnabled) {
       developerDebugLogger(`node --inspect debugging enabled. go to chrome://inspect and open the node debugger`);
     }
+    const sentinelFileName = uuidv4();
+    const sentinelFilePath = path.join(path.dirname(lockFilePath), sentinelFileName);
     // fork process
     const child = fork(
       path.join(__dirname, 'main'),
-      [lockFilePath],
+      [lockFilePath, sentinelFilePath],
       {
         execArgv: isDebuggingEnabled ? ['--inspect'] : [],
         detached: true,
@@ -65,14 +68,15 @@ export async function ensureDaemonStarted(lockFilePath: string): Promise<ICliDae
     );
 
     await new Promise(async (resolve) => {
-      developerDebugLogger(`waiting for lock ${child.pid}`);
+      developerDebugLogger(`waiting for lock ${child.pid} sentinel file ${sentinelFilePath}`);
       await waitOn({
         resources: [
-          `file://${lockFilePath}`
+          `file://${sentinelFilePath}`
         ],
-        delay: 500,
+        delay: 250,
         window: 250
       });
+      await fs.unlink(sentinelFilePath);
       developerDebugLogger(`lock created ${child.pid}`);
       resolve();
     });

@@ -7,6 +7,7 @@ import com.useoptic.contexts.shapes.{FlattenedShape, ShapesHelper, ShapesState}
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.interactions.ShapeRelatedDiff
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ListTrail, ObjectFieldTrail, ObjectTrail, OneOfItemTrail, OneOfTrail, Resolvers, ShapeTrail, ShapeTrailPathComponent}
+import com.useoptic.logging.Logger
 
 import scala.collection.mutable
 
@@ -43,10 +44,10 @@ object FlatShapeProjection {
 
     def tagForCurrent(p: ShapeTrail = path): Option[ChangeType] = trailTags.trails.filterKeys(i => i.path == p).values.headOption
     def shapeDiffsForCurrent(p: ShapeTrail = path): Seq[ShapeRelatedDiff] = {
-      println("fieldLook "+ shapeRelatedDiffs.length)
-      println("fieldLook "+ shapeRelatedDiffs.map(_.shapeDiffResult.shapeTrail.path).toString())
-      println("fieldLook target "+p.toString)
-      println("fieldLook ----------------------")
+      Logger.log("fieldLook "+ shapeRelatedDiffs.length)
+      Logger.log("fieldLook "+ shapeRelatedDiffs.map(_.shapeDiffResult.shapeTrail.path).toString())
+      Logger.log("fieldLook target "+p.toString)
+      Logger.log("fieldLook ----------------------")
       shapeRelatedDiffs.filter(i => i.shapeDiffResult.shapeTrail.path == p)
     }
     def returnWith( typeName: Seq[ColoredComponent], fields: Seq[FlatField] = Seq(), canName: Boolean = false, links: Map[String, ShapeId] ): FlatShape = {
