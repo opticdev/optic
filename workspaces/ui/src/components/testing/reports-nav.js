@@ -108,6 +108,11 @@ function CompletedCapture(props) {
         <div className={classes.buildName}>
           Build <code>{buildIdTag.value}</code> in <code>{envTag.value}</code>
         </div>
+
+        <div className={classes.captureTime}>
+          <ScheduleIcon className={classes.historyIcon} />
+          last Monday for 4 hours
+        </div>
       </Card>
     </CaptureNavLink>
   );
@@ -232,6 +237,12 @@ const useStyles = makeStyles((theme) => ({
 
   liveLabel: {
     ...theme.typography.caption
+  },
+
+  historyIcon: {
+    width: 14,
+    height: 14,
+    marginRight: theme.spacing(0.5)
   },
 
   envTag: {
