@@ -3,6 +3,7 @@ package com.useoptic.diff.interactions
 import com.useoptic.contexts.requests.Commands.PathComponentId
 import com.useoptic.contexts.requests.{Commands, HttpRequest, HttpResponse, RequestsState, Utilities}
 import com.useoptic.contexts.shapes.Commands.ShapeId
+import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 
@@ -27,7 +28,7 @@ object Resolvers {
 
   def resolveResponses(interaction: HttpInteraction, requestId: Commands.RequestId, requestsState: RequestsState) = {
     val request = requestsState.requests(requestId)
-    println(requestsState.responses.values)
+    Logger.log(requestsState.responses.values)
     requestsState.responses.values
       .filter(r => {
         (

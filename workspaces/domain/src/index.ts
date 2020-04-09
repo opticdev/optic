@@ -1,7 +1,9 @@
 export const opticEngine = require('./domain.js');
 
-const {contexts, diff} = opticEngine.com.useoptic;
-
+const {logging, contexts, diff} = opticEngine.com.useoptic;
+const silentLogWrapper = new opticEngine.com.useoptic.LoggerWrapper(() => {
+});
+logging.Logger().setLoggerImplementation(silentLogWrapper);
 export const ShapesCommands = contexts.shapes.Commands;
 export const ShapesHelper = contexts.shapes.ShapesHelper();
 export const RequestsHelper = contexts.requests.RequestsServiceHelper();
@@ -104,8 +106,8 @@ export const OasProjectionHelper = opticEngine.com.useoptic.OASProjectionHelper(
 export const StableHashableWrapper = opticEngine.com.useoptic.StableHashableWrapper;
 
 
-export const DiffManagerFacade = opticEngine.com.useoptic.DiffManagerFacade()
-export const DiffPreviewer = opticEngine.com.useoptic.ux.DiffPreviewer()
+export const DiffManagerFacade = opticEngine.com.useoptic.DiffManagerFacade();
+export const DiffPreviewer = opticEngine.com.useoptic.ux.DiffPreviewer();
 
 import {checkDiffOrUnrecognizedPath} from './check-diff';
 import {IHttpInteraction} from './domain-types/optic-types';
