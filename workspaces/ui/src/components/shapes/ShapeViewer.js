@@ -14,7 +14,7 @@ import sha1 from 'node-sha1';
 import stringify from 'json-stable-stringify';
 import niceTry from 'nice-try';
 import {RemovedRedBackground} from '../../contexts/ColorContext';
-import ReusableDiffRow from '../diff/v2/ReusableDiffRow';
+import ReusableDiffRow from '../diff/v2/shape_viewers/ReusableDiffRow';
 import {mapScala, getOrUndefined, JsonHelper} from '@useoptic/domain';
 import {SuggestionsContext} from '../diff/v2/DiffPageNew';
 

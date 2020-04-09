@@ -31,7 +31,7 @@ import {IgnoreDiffContext} from './DiffPageNew';
 import {DiffContext, withDiffContext} from './DiffContext';
 import {RfcContext, withRfcContext} from '../../../contexts/RfcContext';
 import Scrolling from './Scrolling';
-import {ShapeExpandedStore} from './ShapeRenderContext';
+import {ShapeExpandedStore} from './shape_viewers/ShapeRenderContext';
 import {PathAndMethod, PathAndMethodLarge} from './PathAndMethod';
 import {DiffHelperCard} from './DiffHelperCard';
 import SimulatedCommandContext from '../SimulatedCommandContext';
@@ -264,7 +264,7 @@ const InnerRow = ({left, right}) => {
 
 }
 
-const ShapeBox = ({header, children}) => {
+export const ShapeBox = ({header, children}) => {
 
   const classes = useStyles()
 

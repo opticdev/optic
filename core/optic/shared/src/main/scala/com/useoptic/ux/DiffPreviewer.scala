@@ -47,8 +47,6 @@ object DiffPreviewer {
 
     jsonLikeTraverser.traverse(Some(jsonLike), JsonTrail(Seq.empty), None)
 
-    println(println(exampleRenderVisitor.shapes))
-
     RenderShapeRoot(
       exampleRenderVisitor.rootShape.shapeId,
       exampleRenderVisitor.fields, Map.empty,
@@ -59,6 +57,18 @@ object DiffPreviewer {
 
   def previewBody(body: Body): Option[RenderShapeRoot] = {
     BodyUtilities.parseBody(body).map(previewJson)
+  }
+
+  def previewShape(spec: RfcState, shapeIdOption: Option[ShapeId]): Option[RenderShapeRoot] = shapeIdOption map { shapeId =>
+    val exampleRenderVisitor = new ExampleRenderVisitor(spec, Set.empty)
+    val shapeRenderVisitor = new ShapeRenderVisitor(spec, Set.empty, exampleRenderVisitor)
+    val specTraverser = new ShapeTraverser(spec, shapeRenderVisitor)
+    specTraverser.traverse(shapeId, ShapeTrail(shapeId, Seq()))
+    RenderShapeRoot(shapeId,
+      exampleRenderVisitor.fields, shapeRenderVisitor.fields,
+      exampleRenderVisitor.shapes, shapeRenderVisitor.shapes,
+      exampleRenderVisitor.items, shapeRenderVisitor.items
+    )
   }
 
 }

@@ -15,7 +15,7 @@ export function MarkdownRender({source, style, noHeadings}) {
           </Typography>
         ) : null,
         paragraph: ({children}) => (
-          <Typography variant="body2" style={{fontWeight: 200, marginTop: 11}}>
+          <Typography variant="body2" style={{fontWeight: 200, marginTop: 11, whiteSpace: 'pre-wrap'}}>
             {children}
           </Typography>
         ),

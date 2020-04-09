@@ -97,7 +97,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
       const context = {
         endpointId,
         endpointDescriptor,
-        getContributions: (id, key) => contributions.getOrUndefined(id, key),
+        getContribution: (id, key) => contributions.getOrUndefined(id, key),
         lookupExampleForRequest,
         lookupExampleForResponse,
         updateContribution: (id, key, value) => {

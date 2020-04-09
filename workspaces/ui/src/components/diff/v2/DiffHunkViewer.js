@@ -1,7 +1,7 @@
 import React from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {DiffViewer} from './ShapeRows';
-import {ShapeRenderStore} from './ShapeRenderContext';
+import {ShapeRenderStore} from './shape_viewers/ShapeRenderContext';
+import {DiffViewer} from './shape_viewers/SideBySideShapeRows';
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -5,7 +5,7 @@ import com.useoptic.contexts.requests.{HttpRequest, HttpResponse}
 import com.useoptic.contexts.rfc.RfcState
 import com.useoptic.contexts.shapes.Commands.{FieldId, ShapeId}
 import com.useoptic.contexts.shapes.ShapesHelper
-import com.useoptic.contexts.shapes.ShapesHelper.StringKind
+import com.useoptic.contexts.shapes.ShapesHelper.{NullableKind, OptionalKind, StringKind}
 import com.useoptic.diff.ChangeType.ChangeType
 import com.useoptic.diff.{DiffResult, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions.{InteractionDiffResult, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedResponseBodyContentType}
@@ -127,6 +127,14 @@ package object ux {
       })
     }
 
+    def unwrapInner(shape: RenderShape): Option[RenderShape] = {
+      if (Set(OptionalKind.baseShapeId, NullableKind.baseShapeId).contains(shape.baseShapeId) && shape.innerId.isDefined) {
+        Some(getUnifiedShape(shape.innerId.get))
+      } else {
+        None
+      }
+    }
+
     def getUnifiedField(fieldId: FieldId): Option[RenderField] = {
       val specField = specFields.get(fieldId)
       val exampleField = exampleFields.get(fieldId)
@@ -234,7 +242,11 @@ package object ux {
                          innerId: Option[ShapeId] = None,
                          exampleValue: Option[Json] = None,
                          diffs: Set[DiffResult] = Set(),
-                         name: RenderName = RenderName(Seq.empty))
+                         name: RenderName = RenderName(Seq.empty)) {
+
+    def isOptional = OptionalKind.baseShapeId == baseShapeId
+    def isNullable = NullableKind.baseShapeId == baseShapeId
+  }
 
 
   @JSExportAll

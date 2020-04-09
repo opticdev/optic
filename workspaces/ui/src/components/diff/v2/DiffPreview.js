@@ -45,16 +45,16 @@ import Toolbar from '@material-ui/core/Toolbar';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import SimulatedCommandContext from '../SimulatedCommandContext';
 import Scrolling from './Scrolling';
-import {ShapeExpandedStore} from './ShapeRenderContext';
+import {ShapeExpandedStore} from './shape_viewers/ShapeRenderContext';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
 import Card from '@material-ui/core/Card';
 import {UpdatedBlue} from '../../../contexts/ColorContext';
 import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
-import {DiffToolTip} from './ShapeRows';
 import {PulsingOptic} from './DiffHelperCard';
 import {PathAndMethod} from './PathAndMethod';
+import {DiffToolTip} from './shape_viewers/styles';
 
 
 const useStyles = makeStyles(theme => ({
