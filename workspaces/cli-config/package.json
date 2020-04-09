@@ -3,7 +3,7 @@
   "version": "0.1.2",
   "scripts": {
     "ws:test": "echo config",
-    "ws:build": "yarn run tsc -b"
+    "ws:build": "yarn run tsc -b --verbose"
   },
   "main": "build/index.js",
   "types": "build/index.d.ts",
