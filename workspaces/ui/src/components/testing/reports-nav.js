@@ -71,11 +71,15 @@ function ActiveCapture(props) {
   return (
     <CaptureNavLink capture={capture}>
       <Card className={classes.card}>
-        <h5 className={classes.buildName}>{buildIdTag.value}</h5>
-        <div className={classes.envTag}>
+        <h5 className={classes.buildName}>
+          Build <code className={classes.buildId}>{buildIdTag.value}</code> in{' '}
+          <code>{envTag.value}</code>
+        </h5>
+
+        {/* <div className={classes.envTag}>
           <div className={classes.envTagName}>env</div>{' '}
           <div className={classes.envTagVal}>{envTag.value}</div>
-        </div>
+        </div> */}
       </Card>
     </CaptureNavLink>
   );
@@ -181,8 +185,16 @@ const useStyles = makeStyles((theme) => ({
 
   buildName: {
     ...theme.typography.subtitle1,
-    margin: 0
+    margin: 0,
+    // color: theme.palette.primary.main,
+
+    '& code': {
+      color: theme.palette.primary.light,
+      fontSize: theme.typography.subtitle2.fontSize
+    }
   },
+
+  buildId: {},
 
   envTag: {
     display: 'flex',
@@ -194,9 +206,11 @@ const useStyles = makeStyles((theme) => ({
   envTagName: {
     display: 'flex',
     alignItems: 'center',
-    height: theme.spacing(3),
+    height: theme.spacing(2.5),
     background: theme.palette.grey[100],
     border: `1px solid ${theme.palette.grey[200]}`,
+    borderTopLeftRadius: 4,
+    borderBottomLeftRadius: 4,
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1)
   },
@@ -204,12 +218,12 @@ const useStyles = makeStyles((theme) => ({
   envTagVal: {
     display: 'flex',
     alignItems: 'center',
-    height: theme.spacing(3),
+    height: theme.spacing(2.5),
     paddingLeft: theme.spacing(1),
     paddingRight: theme.spacing(1),
     borderTopRightRadius: 4,
     borderBottomRightRadius: 4,
-    background: '#31366f',
+    background: theme.palette.primary.light,
     color: '#fff'
   }
 }));
