@@ -3,6 +3,7 @@ package com.useoptic.serialization
 import com.useoptic.contexts.requests.Commands.RequestsCommand
 import com.useoptic.contexts.rfc.Commands.{ContributionCommand, RfcCommand, VersionControlCommand}
 import com.useoptic.contexts.shapes.Commands.ShapesCommand
+import com.useoptic.logging.Logger
 import io.circe.Decoder.Result
 import io.circe._
 import io.circe.generic.auto._
@@ -72,7 +73,7 @@ object CommandSerialization {
         commandsVector <- CommandSerialization.fromJson(json)
       } yield commandsVector
     if (commandsVector.isFailure) {
-      println(commandsVector.failed.get)
+      Logger.log(commandsVector.failed.get)
     }
     require(commandsVector.isSuccess, "failed to parse and handle commands")
     commandsVector.get

@@ -9,6 +9,7 @@ import com.useoptic.diff.helpers.DiffHelpers
 import com.useoptic.diff.interactions.interpreters.{DefaultInterpreters, DiffDescription, DiffDescriptionInterpreters}
 import com.useoptic.diff.interactions.{BodyUtilities, InteractionDiffResult, InteractionTrail, RequestSpecTrail, RequestSpecTrailHelpers, Resolvers, ShapeRelatedDiff, SpecPath, SpecRequestBody, SpecRequestRoot, SpecResponseBody, SpecResponseRoot, SpecRoot, UnmatchedRequestBodyContentType, UnmatchedRequestBodyShape, UnmatchedRequestMethod, UnmatchedRequestUrl, UnmatchedResponseBodyContentType, UnmatchedResponseBodyShape, UnmatchedResponseStatusCode}
 import com.useoptic.diff.shapes.ShapeDiffResult
+import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 import scala.scalajs.js.annotation.JSExportAll
@@ -56,7 +57,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     }
 
     def checkForEmptyContentType(interactionTrail: InteractionTrail, specTrail: RequestSpecTrail, interactions: Seq[HttpInteraction]) = {
-      println(specTrail)
+      Logger.log(specTrail)
       val pathOption = RequestSpecTrailHelpers.pathId(specTrail)
       if (pathOption.isDefined) {
         interactions.flatMap(interaction => {
