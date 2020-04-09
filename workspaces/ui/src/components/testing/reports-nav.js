@@ -153,9 +153,7 @@ const useStyles = makeStyles((theme) => ({
     listStyleType: 'none'
   },
 
-  captureListItem: {
-    marginBottom: theme.spacing(1.5)
-  },
+  captureListItem: {},
 
   navLink: {
     textDecoration: 'none'
@@ -166,14 +164,17 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     padding: theme.spacing(2),
+    marginBottom: theme.spacing(1.5),
     boxShadow: '0 2px 4px 0 rgba(138, 148, 159, 0.3)',
 
-    willChange: 'transform,box-shadow',
+    willChange: 'transform,box-shadow,margin-bottom',
     transform: 'translateX(0)',
-    transition: '0.1s ease-out transform, 0.1s ease-out box-shadow',
+    transition:
+      '0.1s ease-out transform, 0.1s ease-out box-shadow, 0.1s ease-out marginBottom',
 
     ['&$isComplete']: {
-      opacity: 0.7
+      backgroundColor: 'transparent',
+      boxShadow: 'none'
     },
 
     // wrapping Link hovered
@@ -190,7 +191,8 @@ const useStyles = makeStyles((theme) => ({
       boxShadow: [
         '0 2px 4px 0 rgba(138, 148, 159, 0.6)',
         '0 4px 8px 2px rgba(138, 148, 159, 0.15)'
-      ].join(',')
+      ].join(','),
+      background: '#fff'
     }
   },
 
