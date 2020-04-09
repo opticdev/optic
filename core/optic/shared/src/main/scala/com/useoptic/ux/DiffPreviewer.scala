@@ -47,9 +47,7 @@ object DiffPreviewer {
     val jsonLikeTraverser = new JsonLikeTraverser(RfcState.empty, exampleRenderVisitor)
 
     jsonLikeTraverser.traverse(Some(jsonLike), JsonTrail(Seq.empty), None)
-
     Logger.log(exampleRenderVisitor.shapes)
-
     RenderShapeRoot(
       exampleRenderVisitor.rootShape.shapeId,
       exampleRenderVisitor.fields, Map.empty,

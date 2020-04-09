@@ -174,13 +174,14 @@ function _DiffPageContent(props) {
           <div className={classes.scroll}>
             <div className={classes.middle}>
 
-              <Paper style={{flex: 1, padding: 15, marginBottom: 25}}>
+              <div style={{flex: 1, padding: 0, marginBottom: 55}}>
 
+                <Typography variant="overline" color="textSecondary">Reviewing Diff For:</Typography>
                 <Typography variant="h6">{endpointPurpose}</Typography>
                 <PathAndMethod method={httpMethod}
                                path={fullPath}/>
 
-              </Paper>
+              </div>
 
 
                 <NewRegions ignoreDiff={ignoreDiff}

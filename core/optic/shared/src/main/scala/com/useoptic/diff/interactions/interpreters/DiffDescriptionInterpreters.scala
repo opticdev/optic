@@ -61,7 +61,7 @@ class DiffDescriptionInterpreters(rfcState: RfcState) {
           (title, pointer)
         } else {
           val title = s"${jsonTrailDescription(jsonTrail)} in the ${inLocation} was not a ${shapeDescription}"
-          val pointer = SpecifiedButNotMatching(jsonTrail, shapeTrail, s"expected a ${shapeDescription}", s"Expected ${jsonTrailDetailedDescription(jsonTrail)}} to be ${shapeDescription}")
+          val pointer = SpecifiedButNotMatching(jsonTrail, shapeTrail, s"expected a ${shapeDescription}", s"Expected ${jsonTrailDetailedDescription(jsonTrail)} to be ${shapeDescription}")
           (title, pointer)
         }
       }
