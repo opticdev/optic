@@ -71,7 +71,7 @@ function ActiveCapture(props) {
 
   return (
     <CaptureNavLink capture={capture}>
-      <Card className={classes.card}>
+      <Card className={classNames(classes.card, classes.isActive)}>
         <h5 className={classes.buildName}>
           Build <code className={classes.buildId}>{buildIdTag.value}</code> in{' '}
           <code>{envTag.value}</code>
@@ -105,8 +105,9 @@ function CompletedCapture(props) {
   return (
     <CaptureNavLink capture={capture}>
       <Card className={classNames(classes.card, classes.isComplete)}>
-        {buildIdTag && `Build "${buildIdTag.value}" `}
-        {envTag && `in ${envTag.value}`}
+        <div className={classes.buildName}>
+          Build <code>{buildIdTag.value}</code> in <code>{envTag.value}</code>
+        </div>
       </Card>
     </CaptureNavLink>
   );
@@ -191,16 +192,21 @@ const useStyles = makeStyles((theme) => ({
   // states, just so we can use them as modifiers for other rules
   isComplete: {},
   isCurrent: {},
+  isActive: {},
 
   buildName: {
-    ...theme.typography.subtitle1,
-    margin: 0,
-    marginBottom: theme.spacing(0.75),
-    // color: theme.palette.primary.main,
-
     '& code': {
-      color: theme.palette.primary.light,
-      fontSize: theme.typography.subtitle2.fontSize
+      color: theme.palette.primary.light
+    },
+
+    '$isActive &': {
+      ...theme.typography.subtitle1,
+      margin: 0,
+      marginBottom: theme.spacing(0.75),
+      // color: theme.palette.primary.main,
+      '& code': {
+        fontSize: theme.typography.subtitle2.fontSize
+      }
     }
   },
 
