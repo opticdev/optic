@@ -9,6 +9,7 @@ import groupBy from 'lodash.groupby';
 import Loading from '../navigation/Loading';
 import { Card } from '@material-ui/core';
 import ScheduleIcon from '@material-ui/icons/Schedule';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { makeStyles } from '@material-ui/core/styles';
 
 export default function ReportsNavigation() {
@@ -75,6 +76,14 @@ function ActiveCapture(props) {
           Build <code className={classes.buildId}>{buildIdTag.value}</code> in{' '}
           <code>{envTag.value}</code>
         </h5>
+
+        <div className={classes.captureTime}>
+          <div className={classes.liveIndicator}>
+            <FiberManualRecordIcon className={classes.recordIcon} />
+            <span className={classes.liveLabel}>LIVE</span>
+          </div>
+          since 14:03
+        </div>
 
         {/* <div className={classes.envTag}>
           <div className={classes.envTagName}>env</div>{' '}
@@ -186,6 +195,7 @@ const useStyles = makeStyles((theme) => ({
   buildName: {
     ...theme.typography.subtitle1,
     margin: 0,
+    marginBottom: theme.spacing(0.75),
     // color: theme.palette.primary.main,
 
     '& code': {
@@ -194,7 +204,29 @@ const useStyles = makeStyles((theme) => ({
     }
   },
 
-  buildId: {},
+  captureTime: {
+    display: 'flex',
+    alignItems: 'center',
+    color: theme.palette.grey[500],
+    fontSize: theme.typography.pxToRem(12)
+  },
+
+  liveIndicator: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: theme.spacing(0.5)
+  },
+
+  recordIcon: {
+    width: 16,
+    height: 16,
+    marginRight: theme.spacing(0.5),
+    fill: theme.palette.secondary.main
+  },
+
+  liveLabel: {
+    ...theme.typography.caption
+  },
 
   envTag: {
     display: 'flex',
