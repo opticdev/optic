@@ -8,6 +8,7 @@ import groupBy from 'lodash.groupby';
 // Components
 import Loading from '../navigation/Loading';
 import { Card } from '@material-ui/core';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 import { makeStyles } from '@material-ui/core/styles';
 
 export default function ReportsNavigation() {
@@ -65,14 +66,16 @@ function ActiveCapture(props) {
   const classes = useStyles();
 
   const buildIdTag = tags.find(({ name }) => name === 'buildId');
-  const envTag = tags.find(({ name }) => name === 'environment');
+  const envTag = tags.find(({ name }) => name === 'environment') || 'unknown';
 
   return (
     <CaptureNavLink capture={capture}>
       <Card className={classes.card}>
         <h5 className={classes.buildName}>{buildIdTag.value}</h5>
-
-        {envTag && `in ${envTag.value}`}
+        <div className={classes.envTag}>
+          <div className={classes.envTagName}>env</div>{' '}
+          <div className={classes.envTagVal}>{envTag.value}</div>
+        </div>
       </Card>
     </CaptureNavLink>
   );
@@ -140,6 +143,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   card: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     padding: theme.spacing(2),
     boxShadow: '0 2px 4px 0 rgba(138, 148, 159, 0.3)',
 
@@ -176,6 +182,35 @@ const useStyles = makeStyles((theme) => ({
   buildName: {
     ...theme.typography.subtitle1,
     margin: 0
+  },
+
+  envTag: {
+    display: 'flex',
+    justifyContent: 'center',
+
+    fontSize: theme.typography.pxToRem(12)
+  },
+
+  envTagName: {
+    display: 'flex',
+    alignItems: 'center',
+    height: theme.spacing(3),
+    background: theme.palette.grey[100],
+    border: `1px solid ${theme.palette.grey[200]}`,
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1)
+  },
+
+  envTagVal: {
+    display: 'flex',
+    alignItems: 'center',
+    height: theme.spacing(3),
+    paddingLeft: theme.spacing(1),
+    paddingRight: theme.spacing(1),
+    borderTopRightRadius: 4,
+    borderBottomRightRadius: 4,
+    background: '#31366f',
+    color: '#fff'
   }
 }));
 
