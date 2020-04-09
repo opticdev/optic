@@ -10,6 +10,7 @@ import com.useoptic.diff.{ChangeType, InteractiveDiffInterpretation}
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.interpreters.InteractiveDiffInterpreter
 import com.useoptic.diff.shapes.{JsonTrail, ListItemTrail, ObjectFieldTrail, Resolvers, ShapeTrail, UnmatchedShape}
+import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpreter[InteractionDiffResult] {
@@ -130,7 +131,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
         )
       }
       case x => {
-        println(x)
+        Logger.log(x)
         Seq.empty
       }
     }
@@ -142,7 +143,7 @@ class MissingValueInterpreter(rfcState: RfcState) extends InteractiveDiffInterpr
       case Some(pc: ObjectFieldTrail) => descriptionInterpreters.shapeName(pc.fieldShapeId)
       case Some(pc: ListItemTrail) =>  descriptionInterpreters.shapeName(pc.listShapeId)
       case x => {
-        println(x)
+        Logger.log(x)
         ""
       }
     }

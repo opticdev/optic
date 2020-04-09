@@ -1,10 +1,10 @@
 const packageJson = require('../../package.json');
-const {exec, execFileSync} = require('child_process');
+const { exec, execFileSync } = require('child_process');
 const path = require('path');
 
-const {workspaces} = packageJson;
-console.log({workspaces});
-
+const { workspaces } = packageJson;
+console.log({ workspaces });
+const isPrivatePublish = process.env.OPTIC_PUBLISH_SCOPE !== 'public'
 const promise = workspaces.reduce((acc, workspace) => {
   return acc
     .then((previousResults) => {
@@ -12,7 +12,7 @@ const promise = workspaces.reduce((acc, workspace) => {
         const workspacePackage = require(path.join(process.cwd(), workspace, 'package.json'));
         const packageId = `${workspacePackage.name}@${workspacePackage.version}`
         console.log(`checking ${packageId}`)
-        exec(`npm info ${packageId}`, (err, stdout, stderr) => {
+        exec(`npm info ${packageId} ${isPrivatePublish ? '--registry http://localhost:4873' : ''}`, (err, stdout, stderr) => {
           if (err) {
             console.error(err);
             return resolve([...previousResults, false])
@@ -37,7 +37,7 @@ promise
           skip: result
         }
       })
-      .reduce((acc, {workspace, skip}) => {
+      .reduce((acc, { workspace, skip }) => {
         if (skip) {
           return acc
         }
@@ -50,7 +50,7 @@ promise
               try {
                 const stdout = execFileSync(
                   'npm',
-                  ['publish', '--access', 'public'],
+                  isPrivatePublish ? ['publish', '--registry', 'http://localhost:4873'] : ['publish', '--access', 'public'],
                   {
                     cwd,
                     stdio: 'inherit'

@@ -1,5 +1,6 @@
 package com.useoptic
 
+import com.useoptic.logging.Logger
 import com.useoptic.serialization.InteractionSerialization
 import com.useoptic.types.capture.{HttpInteraction, ShapeHashBytes}
 import io.circe.{Decoder, Json}
@@ -24,7 +25,7 @@ object JsonHelper {
       parse(s).right.get
     } match {
       case Failure(exception) => {
-        println(exception)
+        Logger.log(exception)
         Json.Null
       }
       case Success(value) => value

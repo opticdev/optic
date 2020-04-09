@@ -8,7 +8,7 @@ export function dumpSpecServiceState(specService) {
 
     const events = await specService.listEvents();
     const captures = await specService.listCaptures();
-    const captureId = captures.captures[0];
+    const { captureId } = captures.captures[0];
     const session = await specService.listCapturedSamples(captureId);
 
     const output = JSON.stringify({

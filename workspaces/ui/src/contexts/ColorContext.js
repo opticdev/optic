@@ -41,8 +41,7 @@ export const ChangedYellowBackground = 'rgba(200,183,104,0.1)'
 export const RemovedRed = '#c86363'
 export const RemovedRedBackground = 'rgba(193,4,9,0.1)'
 
-export const UpdatedBlue = '#2b7bd1'
-export const UpdatedBlueBackground = 'rgba(43,123,209,0.11)'
+export { UpdatedBlue, UpdatedBlueBackground } from '../theme'
 
 export const ChangedYellowBright = '#f2dd7e'
 

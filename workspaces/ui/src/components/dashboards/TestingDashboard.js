@@ -36,6 +36,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     flexGrow: 0,
     flexShrink: 0,
+    display: 'flex',
 
     borderRight: `1px solid ${theme.palette.grey[300]}`,
 

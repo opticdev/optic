@@ -5,6 +5,7 @@ import com.useoptic.contexts.requests._
 import com.useoptic.diff.interactions._
 import com.useoptic.diff.shapes.{JsonTrail, ShapeTrail}
 import com.useoptic.dsa.Counter
+import com.useoptic.logging.Logger
 import com.useoptic.types.capture.HttpInteraction
 
 class DiffVisitors extends Visitors {
@@ -16,7 +17,7 @@ class DiffVisitors extends Visitors {
 
   override val pathVisitor = new PathVisitor {
     def visit(interaction: HttpInteraction, context: PathVisitorContext): Unit = {
-      println("visiting path", interaction.request.path, context.path)
+      Logger.log("visiting path", interaction.request.path, context.path)
       if (context.path.isEmpty) {
         val interactionTrail = InteractionTrail(Seq())
         val requestsTrail = SpecRoot()
@@ -61,23 +62,23 @@ class DiffVisitors extends Visitors {
         case Some(request) => {
           val actualContentType = ContentTypeHelpers.contentType(interaction.request)
           val expectedContentType = request.requestDescriptor.bodyDescriptor
-          // println(expectedContentType, actualContentType)
+          // Logger.log(expectedContentType, actualContentType)
           (expectedContentType, actualContentType) match {
             case (expected: UnsetBodyDescriptor, None) => {
-              // println("spec says no body, request has no body")
+              // Logger.log("spec says no body, request has no body")
               visitedWithMatchedContentTypes = visitedWithMatchedContentTypes + request.requestId
             }
             case (expected: UnsetBodyDescriptor, Some(contentTypeHeader)) => {
               // spec says no body, request has body
-              // println("spec says no body, request has body")
+              // Logger.log("spec says no body, request has body")
               visitedWithUnmatchedContentTypes = visitedWithUnmatchedContentTypes + request.requestId
             }
             case (expected: ShapedBodyDescriptor, None) => {
-              // println("spec says body, request has no body")
+              // Logger.log("spec says body, request has no body")
               visitedWithUnmatchedContentTypes = visitedWithUnmatchedContentTypes + request.requestId
             }
             case (expected: ShapedBodyDescriptor, Some(contentTypeHeader)) => {
-              // println("spec says body, request has body")
+              // Logger.log("spec says body, request has body")
               if (expected.httpContentType == contentTypeHeader) {
                 visitedWithMatchedContentTypes = visitedWithMatchedContentTypes + request.requestId
                 val shapeDiffVisitors = new com.useoptic.diff.shapes.visitors.DiffVisitors(context.spec)
@@ -149,19 +150,19 @@ class DiffVisitors extends Visitors {
       val expectedContentType = response.responseDescriptor.bodyDescriptor
       (expectedContentType, actualContentType) match {
         case (d: UnsetBodyDescriptor, None) => {
-          // println("spec says no body, response has no body")
+          // Logger.log("spec says no body, response has no body")
           visitedWithMatchedContentTypes = visitedWithMatchedContentTypes + response.responseId
         }
         case (d: UnsetBodyDescriptor, Some(contentTypeHeader)) => {
-          // println("spec says no body, response has body")
+          // Logger.log("spec says no body, response has body")
           visitedWithUnmatchedContentTypes = visitedWithUnmatchedContentTypes + response
         }
         case (d: ShapedBodyDescriptor, None) => {
-          // println("spec says body, response has no body")
+          // Logger.log("spec says body, response has no body")
           visitedWithUnmatchedContentTypes = visitedWithUnmatchedContentTypes + response
         }
         case (d: ShapedBodyDescriptor, Some(contentTypeHeader)) => {
-          // println("comparing response bodies")
+          // Logger.log("comparing response bodies")
           if (d.httpContentType == contentTypeHeader) {
             visitedWithMatchedContentTypes = visitedWithMatchedContentTypes + response.responseId
             val shapeDiffVisitors = new com.useoptic.diff.shapes.visitors.DiffVisitors(context.spec)
