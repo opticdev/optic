@@ -1,0 +1,61 @@
+{
+  "events": [{"PathComponentAdded":{"pathId":"path_P9TQyLf47v","parentPathId":"root","name":"todos","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"8b42f629-3557-448e-b810-81fe79a941e5","createdAt":"2020-04-09T17:49:32.878Z"}}},{"ContributionAdded":{"id":"path_P9TQyLf47v.GET","key":"purpose","value":"get todos","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"8b42f629-3557-448e-b810-81fe79a941e5","createdAt":"2020-04-09T17:49:32.882Z"}}},{"BatchCommitStarted":{"batchId":"6faf1bfa-09ca-48e9-ae00-39bd66b937a9","commitMessage":"\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"5ad2d528-dc81-4380-8234-6d9859926e09","createdAt":"2020-04-09T17:50:33.976Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_9jeVaIjUdN","pathId":"path_P9TQyLf47v","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"35f8d27c-6681-4418-9bfb-020cb79968c3","createdAt":"2020-04-09T17:50:33.977Z"}}},{"ShapeAdded":{"shapeId":"shape_sOPA3t7ajn","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"35f8d27c-6681-4418-9bfb-020cb79968c3","createdAt":"2020-04-09T17:50:33.977Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_9jeVaIjUdN","parameterDescriptor":{"shapeId":"shape_sOPA3t7ajn","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"35f8d27c-6681-4418-9bfb-020cb79968c3","createdAt":"2020-04-09T17:50:33.977Z"}}},{"RequestAdded":{"requestId":"request_IlY6c3mcyG","pathId":"path_P9TQyLf47v","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"35f8d27c-6681-4418-9bfb-020cb79968c3","createdAt":"2020-04-09T17:50:33.977Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_3k3wsdKnry","pathId":"path_P9TQyLf47v","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"28871a21-653c-4fbf-af5a-5592b9315713","createdAt":"2020-04-09T17:50:33.978Z"}}},{"ShapeAdded":{"shapeId":"TjLcTK_0","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"28871a21-653c-4fbf-af5a-5592b9315713","createdAt":"2020-04-09T17:50:33.978Z"}}},{"ShapeAdded":{"shapeId":"TjLcTK_1","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"28871a21-653c-4fbf-af5a-5592b9315713","createdAt":"2020-04-09T17:50:33.978Z"}}},{"ShapeAdded":{"shapeId":"TjLcTK_3","baseShapeId":"$boolean","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"28871a21-653c-4fbf-af5a-5592b9315713","createdAt":"2020-04-09T17:50:33.978Z"}}},{"FieldAdded":{"fieldId":"TjLcTK_2","shapeId":"TjLcTK_1","name":"a","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"TjLcTK_2","shapeId":"TjLcTK_3"}},"eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"28871a21-653c-4fbf-af5a-5592b9315713","createdAt":"2020-04-09T17:50:33.979Z"}}},{"ShapeAdded":{"shapeId":"TjLcTK_4","baseShapeId":"TjLcTK_1","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"28871a21-653c-4fbf-af5a-5592b9315713","createdAt":"2020-04-09T17:50:33.979Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"TjLcTK_0","providerDescriptor":{"ShapeProvider":{"shapeId":"TjLcTK_4"}},"consumingParameterId":"$listItem"}},"eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"28871a21-653c-4fbf-af5a-5592b9315713","createdAt":"2020-04-09T17:50:33.979Z"}}},{"ResponseBodySet":{"responseId":"response_3k3wsdKnry","bodyDescriptor":{"httpContentType":"application/json","shapeId":"TjLcTK_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"28871a21-653c-4fbf-af5a-5592b9315713","createdAt":"2020-04-09T17:50:33.979Z"}}},{"BatchCommitEnded":{"batchId":"6faf1bfa-09ca-48e9-ae00-39bd66b937a9","eventContext":{"clientId":"anonymous","clientSessionId":"d592900e-468e-4ec0-b660-e5e0b88eba60","clientCommandBatchId":"94f2f41d-e65f-4500-a465-1ffc7b6adc14","createdAt":"2020-04-09T17:50:33.980Z"}}}],
+  "session": {
+    "metadata": {
+      "completed": false
+    },
+    "samples": [
+      {
+        "uuid": "2",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/todos",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[{\"a\": 6354}, {\"a\": 1234}, {\"a\": 987}]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {},
+  "refs": [{ "rel": "example-reports", "id": "todo-report" }]
+}

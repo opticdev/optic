@@ -172,6 +172,11 @@ function ValueContents({value, shape}) {
     return <ValueContents value={value} shape={getOrUndefined(shapeRender.unwrapInner(shape))}/>
   }
 
+
+  if (jsTypeString === '[object Null]') {
+    return <Symbols>{'null'}</Symbols>;
+  }
+
   if (jsTypeString === '[object Array]') {
     return <Symbols>{'['}</Symbols>;
   }
@@ -357,6 +362,7 @@ export const ItemRow = withShapeRenderContext((props) => {
   const {item, shapeRender, isLast, listId, listItemShape, diffDescription, suggestion} = props;
   const diff = headOrUndefined(item.item.diffs);
 
+  const exampleItemShape = shapeRender.getUnifiedShape(item.item.itemId)
   const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(toOption(listItemShape))) || getOrUndefined(shapeRender.resolveItemShapeFromShapeId(item.item.shapeId));
 
   const diffNotif = diff && (
@@ -385,7 +391,7 @@ export const ItemRow = withShapeRenderContext((props) => {
               <div className={classes.rowContents}>
                 <IndexMarker>{item.index}</IndexMarker>
                 <div style={{flex: 1, paddingLeft: 4}}>
-                  <ValueContents value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>
+                  <ValueContents value={getOrUndefinedJson(item.item.exampleValue)} shape={exampleItemShape}/>
                 </div>
               </div>
             </Indent>
@@ -412,7 +418,7 @@ export const ItemRow = withShapeRenderContext((props) => {
         })()}
       />
       {item.display !== 'hidden' &&
-      <ValueRows value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>}
+      <ValueRows value={getOrUndefinedJson(item.item.exampleValue)} shape={exampleItemShape}/>}
     </>
   );
 });

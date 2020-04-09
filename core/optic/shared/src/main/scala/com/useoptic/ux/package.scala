@@ -107,7 +107,8 @@ package object ux {
 
     def getUnifiedShape(shapeId: ShapeId): RenderShape = {
       val specShape = specShapes.get(shapeId)
-      val exampleShape = exampleShapes.get(shapeId)
+      //prefer the shape that's in the spec
+      val exampleShape = Seq(exampleShapes.find(_._2.specShapeId.contains(shapeId)).map(_._2), exampleShapes.get(shapeId)).flatten.headOption
 
       assert(specShape.isDefined || exampleShape.isDefined, s"one of the render maps must include shapeId ${shapeId}")
 
@@ -136,14 +137,24 @@ package object ux {
     }
 
     def getUnifiedField(fieldId: FieldId): Option[RenderField] = {
+
+      println("xxx TRYING TO RENDER "+fieldId)
+
       val specField = specFields.get(fieldId)
-      val exampleField = exampleFields.get(fieldId)
+
+      println("xxx "+ specFields)
+
+      //prefer example that exists in the spec
+      val exampleField = Seq(exampleFields.find(_._2.specFieldId.contains(fieldId)).map(_._2),  exampleFields.get(fieldId)).flatten.headOption
+
+      println("xxx "+ exampleFields)
 
       if (specField.isEmpty && exampleField.isEmpty) {
         None
       } else {
         Some(RenderField(
           if (specField.isDefined) specField.get.fieldId else exampleField.get.fieldId,
+          specField.flatMap(_.shapeId),
           if (specField.isDefined) specField.get.fieldName else exampleField.get.fieldName,
           Seq(specField.flatMap(_.shapeId), exampleField.flatMap(_.shapeId)).flatten.headOption,
           exampleField.flatMap(_.exampleValue),
@@ -180,7 +191,8 @@ package object ux {
 
     def resolvedItems(listId: ShapeId, hideItems: Boolean = false): Seq[DisplayItem] = {
       val listItemOption = listItemShape(listId)
-      val items = exampleShapes.get(listId).map(_.items).getOrElse(Items(Seq.empty))
+      val exampleShapeOption = exampleShapes.find(_._2.specShapeId.contains(listId)).map(_._2)
+      val items = exampleShapeOption.map(_.items).getOrElse(Items(Seq.empty))
       val allItems = items.all.zipWithIndex.flatMap { case (itemId, index) => {
         //use spec one if provided, else fallback on example shape pointer
         val shapeIdOption = Seq(listItemOption.flatMap(_.shapeId), exampleItems.get(itemId).flatMap(_.shapeId)).flatten.headOption
@@ -228,13 +240,14 @@ package object ux {
   case class DisplayItem(index: Int, item: RenderItem, display: String)
 
   @JSExportAll
-  case class RenderField(fieldId: FieldId, fieldName: String, shapeId: Option[ShapeId], exampleValue: Option[Json], diffs: Set[DiffResult] = Set())
+  case class RenderField(fieldId: FieldId, specFieldId: Option[FieldId], fieldName: String, shapeId: Option[ShapeId], exampleValue: Option[Json], diffs: Set[DiffResult] = Set())
 
   @JSExportAll
   case class RenderItem(itemId: ShapeId, index: Int, baseShapeId: String, shapeId: Option[ShapeId], exampleValue: Option[Json], diffs: Set[DiffResult] = Set())
 
   @JSExportAll
   case class RenderShape(shapeId: ShapeId,
+                         specShapeId: Option[ShapeId],
                          baseShapeId: String,
                          fields: Fields = Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty),
                          items: Items = Items(Seq.empty),
