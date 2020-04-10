@@ -93,14 +93,14 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
           val fieldShape = Resolvers.resolveFieldToShape(spec.shapesState, fieldId, expected.bindings).flatMap(x => {
             Some(x.shapeEntity)
           }).get
-          (field.descriptor.name -> (idFromName(field.descriptor.name), fieldShape))
+          (field.descriptor.name -> (idFromName(field.descriptor.name), field, fieldShape))
         }).toMap
 
       val knownFieldsIds = fieldNameToId.values.map(_._1)
       val missingFieldIds = fieldNameToId.flatMap(entry => {
-        val (fieldName, (fieldId, fieldShape)) = entry
+        val (fieldName, (fieldId, field, fieldShape)) = entry
         if (!value.contains(fieldName)) {
-          pushField(RenderField(fieldId, Some(fieldShape.shapeId), fieldName, None, value.get(fieldName).map(_.asJson), diffs = diffsByTrail(bodyTrail.withChild(JsonObjectKey(fieldName)))))
+          pushField(RenderField(fieldId, Some(field.fieldId), fieldName, Some(fieldShape.shapeId), value.get(fieldName).map(_.asJson), diffs = diffsByTrail(bodyTrail.withChild(JsonObjectKey(fieldName)))))
           Some(fieldId)
         } else None
       })
@@ -313,7 +313,7 @@ class ShapeRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult], exampleVis
           ListKind.baseShapeId,
           items = Items(Seq(id)),
           diffs = diffsByTrail(shapeTrail),
-          name = RenderName(Seq(NameComponent("List of", ListKind.color, inner = Some(baseItem.shapeId)))))
+          name = RenderName(Seq(NameComponent("List of ", ListKind.color, inner = Some(baseItem.shapeId)))))
       )
     }
 

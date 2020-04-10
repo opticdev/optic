@@ -19,7 +19,7 @@ import {
 } from '@useoptic/domain';
 import {withDiffContext} from '../DiffContext';
 import {Indent, IndentIncrement, DepthContext} from './Indent';
-import {HiddenItemEllipsis, useShapeViewerStyles} from './styles';
+import {HiddenItemEllipsis, TypeName, useColor, useShapeViewerStyles} from './styles';
 
 export const DiffViewer = ({shape}) => {
   const classes = useShapeViewerStyles();
@@ -131,17 +131,6 @@ function IndexMarker({children}) {
   );
 }
 
-
-const useColor = {
-  StringColor: '#e29f84',
-  NumberColor: '#09885a',
-  BooleanColor: '#E3662E',
-  ObjectColor: '#30B1C4',
-  ListColor: '#c47078',
-  modifier: '#d5d4ff'
-};
-
-
 function ValueRows({value, shape}) {
   const classes = useShapeViewerStyles();
   const {shapeRender} = useContext(ShapeRenderContext);
@@ -220,24 +209,6 @@ function ValueContents({value, shape}) {
   //                    style={{color: colors[typeO]}}>{value.toString()}</Typography>;
 }
 
-const TypeName = ({typeName, style}) => {
-  const classes = useShapeViewerStyles();
-
-  const {shapeRender} = useContext(ShapeRenderContext);
-
-  if (!typeName) {
-    return null;
-  }
-
-  const coloredComponents = typeName.asColoredString(shapeRender);
-
-  return (<div className={classes.typeName}>{mapScala(coloredComponents)((i) => {
-    if (i.text) {
-      return <span style={{color: useColor[i.color] || i.color}}>{i.text}{' '}</span>;
-    }
-  })}
-  </div>);
-};
 
 const AssertionMetTypeName = ({typeName, style}) => {
   const classes = useShapeViewerStyles();
@@ -254,7 +225,7 @@ const AssertionMetTypeName = ({typeName, style}) => {
     <CheckIcon style={{color: '#646464', height: 10, width: 10, marginTop: 6, marginRight: 6}}/>
     {mapScala(coloredComponents)((i) => {
       if (i.text) {
-        return <span>{i.text}{' '}</span>;
+        return <span style={{whiteSpace: 'pre'}}>{i.text}</span>;
       }
     })}
   </div>);
@@ -331,6 +302,7 @@ export const FieldRow = withShapeRenderContext((props) => {
         )}
         right={(() => {
           if (diffNotif && suggestion) {
+
             return <div style={{flex: 1, display: 'flex', marginLeft: 16}}>
               {suggestion.changeTypeAsString !== 'Removal' &&
               <TypeName style={{marginRight: 9}} typeName={fieldShape.name}/>}
