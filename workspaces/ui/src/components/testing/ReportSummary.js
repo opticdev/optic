@@ -14,10 +14,14 @@ import { StableHasher } from '../../utilities/CoverageUtilities';
 
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
+import { Card } from '@material-ui/core';
+import { PathAndMethod } from '../diff/v2/PathAndMethod';
+import { ReportEndpointLink } from './report-link';
 
 export default function ReportSummary(props) {
   const { capture, report, spec } = props;
   const classes = useStyles();
+  const { captureId } = capture;
 
   const summary = useMemo(() => createSummary(capture, spec, report), [
     capture,
@@ -61,15 +65,33 @@ export default function ReportSummary(props) {
         </h4>
       </div>
 
-      <h4>Endpoints</h4>
+      <h4 className={classes.endpointsHeader}>Endpoints</h4>
 
       {endpoints.length > 0 ? (
-        <ul>
+        <ul className={classes.endpointsList}>
           {endpoints.map((endpoint) => (
-            <li key={endpoint.request.requestId}>
-              <strong>{endpoint.request.httpMethod}</strong>{' '}
-              {endpoint.path.name}: ({endpoint.counts.compliant}/
-              {endpoint.counts.interactions} interactions compliant)
+            <li
+              key={endpoint.request.requestId}
+              className={classes.endpointsListItem}
+            >
+              <Card className={classes.endpointCard}>
+                <ReportEndpointLink
+                  className={classes.endpointLink}
+                  captureId={captureId}
+                  endpointId={endpoint.id}
+                >
+                  <div className={classes.endpointHeader}>
+                    <PathAndMethod
+                      path={endpoint.path.name}
+                      method={endpoint.request.httpMethod}
+                    />
+                    <small>
+                      ({endpoint.counts.compliant}/
+                      {endpoint.counts.interactions} interactions compliant)
+                    </small>
+                  </div>
+                </ReportEndpointLink>
+              </Card>
             </li>
           ))}
         </ul>
@@ -180,7 +202,31 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(0.5)
   },
 
-  summaryStat: {}
+  summaryStat: {},
+
+  endpointsHeader: {
+    ...theme.typography.overline,
+    color: '#818892',
+    borderBottom: `1px solid #e3e8ee`
+  },
+
+  endpointsList: {
+    margin: 0,
+    padding: 0,
+    listStyleType: 'none'
+  },
+
+  endpointCard: {
+    marginBottom: theme.spacing(2)
+  },
+
+  endpointLink: {
+    textDecoration: 'none'
+  },
+
+  endpointHeader: {
+    padding: theme.spacing(2, 2)
+  }
 }));
 
 const CoverageConcerns = opticEngine.com.useoptic.coverage;
@@ -215,6 +261,7 @@ function createSummary(capture, spec, report) {
     const compliantCount = interactionsCounts - diffsCount;
 
     return {
+      id: `${httpMethod}-${pathId}`,
       request: {
         requestId,
         httpMethod,
