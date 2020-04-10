@@ -1,11 +1,12 @@
 package com.useoptic.logging
 
-import scala.scalajs.js.annotation.{JSExport, JSExportAll}
+import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
 
 trait SimpleLogger {
   def log(x: Any): Any
 }
-@JSExport
+
+@JSExportTopLevel("Logger")
 @JSExportAll
 object Logger {
   var logger: SimpleLogger = new SimpleLogger {

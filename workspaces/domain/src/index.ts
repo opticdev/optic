@@ -1,9 +1,11 @@
 export const opticEngine = require('./domain.js');
 
-const {logging, contexts, diff} = opticEngine.com.useoptic;
-const silentLogWrapper = new opticEngine.com.useoptic.LoggerWrapper(() => {
-});
-logging.Logger().setLoggerImplementation(silentLogWrapper);
+const {contexts, diff} = opticEngine.com.useoptic;
+
+export function setLogger(f: Function) {
+  const wrapper = new opticEngine.com.useoptic.LoggerWrapper(f);
+  opticEngine.Logger.setLoggerImplementation(wrapper);
+}
 export const ShapesCommands = contexts.shapes.Commands;
 export const ShapesHelper = contexts.shapes.ShapesHelper();
 export const RequestsHelper = contexts.requests.RequestsServiceHelper();
