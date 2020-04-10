@@ -11,7 +11,9 @@ import {
 } from '../../contexts/ApiOverviewContext';
 import * as uniqBy from 'lodash.uniqby';
 import { StableHasher } from '../../utilities/CoverageUtilities';
-import { SummaryStatus } from '../dashboards/APIDashboard';
+
+import ScheduleIcon from '@material-ui/icons/Schedule';
+import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 
 export default function ReportSummary(props) {
   const { capture, report, spec } = props;
@@ -24,6 +26,7 @@ export default function ReportSummary(props) {
   ]);
   const {
     endpoints,
+    isCapturing,
     totalInteractions,
     totalCompliantInteractions,
     totalDiffs,
@@ -32,17 +35,31 @@ export default function ReportSummary(props) {
 
   return (
     <div className={classes.root}>
+      <div className={classes.reportMeta}>
+        <div className={classes.captureTime}>
+          {summary.isCapturing ? (
+            <div className={classes.liveIndicator}>
+              <FiberManualRecordIcon className={classes.recordIcon} />
+              <span className={classes.liveLabel}>LIVE</span>
+            </div>
+          ) : (
+            <ScheduleIcon className={classes.historyIcon} />
+          )}
+          {summary.isCapturing ? 'since' : ''} last Monday for 4 hours
+        </div>
+      </div>
+
       <div className={classes.stats}>
         <SummaryStats
           totalInteractions={totalInteractions}
           totalDiffs={totalDiffs}
           totalUnmatchedPaths={totalUnmatchedPaths}
         />
+        <h4 className={classes.buildName}>
+          from capturing interactions for build <code>{summary.buildId}</code>{' '}
+          in <code>{summary.environment}</code>
+        </h4>
       </div>
-
-      <small>
-        Captured from {summary.createdAt} until {summary.updatedAt}
-      </small>
 
       <h4>Endpoints</h4>
 
@@ -104,7 +121,63 @@ function Stat({ value = 0, label = '' }) {
 // -------
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: theme.spacing(3, 4)
+    padding: theme.spacing(3, 4),
+    maxWidth: theme.breakpoints.values.lg,
+    flexGrow: 1
+  },
+
+  reportMeta: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginBottom: theme.spacing(3)
+  },
+
+  captureTime: {
+    display: 'flex',
+    alignItems: 'center',
+    color: theme.palette.grey[500],
+    fontSize: theme.typography.pxToRem(12)
+  },
+
+  buildName: {
+    ...theme.typography.subtitle2,
+    fontWeight: theme.typography.fontWeightLight,
+    margin: 0,
+    marginTop: theme.spacing(0.25),
+    color: theme.palette.primary.light,
+
+    '& code': {
+      color: theme.palette.primary.light,
+      fontWeight: 'bold'
+    }
+  },
+
+  stats: {
+    marginBottom: theme.spacing(6)
+  },
+
+  liveIndicator: {
+    display: 'flex',
+    alignItems: 'center',
+    marginRight: theme.spacing(0.5)
+  },
+
+  recordIcon: {
+    width: 16,
+    height: 16,
+    marginRight: theme.spacing(0.5),
+    fill: theme.palette.secondary.main
+  },
+
+  liveLabel: {
+    ...theme.typography.caption
+  },
+
+  historyIcon: {
+    width: 14,
+    height: 14,
+    marginRight: theme.spacing(0.5)
   },
 
   summaryStat: {}
@@ -168,10 +241,17 @@ function createSummary(capture, spec, report) {
   const totalDiffs = 1; // TODO: Hardcoded test value, replace by deriving from report
   const totalCompliantInteractions = totalInteractions - totalDiffs;
 
+  const buildIdTag = capture.tags.find(({ name }) => name === 'buildId');
+  const envTag = capture.tags.find(({ name }) => name === 'environment');
+
   return {
     apiName,
     createdAt: capture.createdAt,
     updatedAt: capture.updatedAt,
+    completedAt: capture.completedAt,
+    isCapturing: !capture.completedAt,
+    buildId: (buildIdTag && buildIdTag.value) || '',
+    environment: (envTag && envTag.value) || '',
     endpoints,
     totalInteractions,
     totalUnmatchedPaths,

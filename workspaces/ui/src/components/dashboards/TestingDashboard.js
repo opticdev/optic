@@ -45,8 +45,10 @@ const useStyles = makeStyles((theme) => ({
     }
   },
   reportContainer: {
+    display: 'flex',
     flexGrow: 1,
-    flexShrink: 1
+    flexShrink: 1,
+    justifyContent: 'center'
   }
 }));
 
@@ -142,13 +144,13 @@ export function TestingDashboard(props) {
   if (error) throw error; // allow React error boundaries to render as we're not handling them explicitly
 
   return (
-    <div>
+    <>
       {(loadingReport || loadingSpec || loadingCapture) && <Loading />}
 
       {report && spec && capture && (
         <ReportSummary report={report} spec={spec} capture={capture} />
       )}
-    </div>
+    </>
   );
 }
 
