@@ -176,6 +176,12 @@ export function DiffCursor(props) {
     }
   }, [selectedDiff, diffCount]);
 
+  try {
+    console.log('diff ' +selectedDiff.diff)
+  } catch (e) {
+
+  }
+
   const DiffItem = ({diff, button}) => {
 
     return (
@@ -352,7 +358,7 @@ function _NewRegions(props) {
         )}
       </div>
       <CardActions style={{float: 'right', padding: 15}}>
-        <Button color="primary" variant="contained" disabled={approveCount === 0} onClick={onApply}>Approve ({approveCount})</Button>
+        <Button color="primary" variant="contained" disabled={approveCount === 0} onClick={onApply} autoFocus>Approve ({approveCount})</Button>
       </CardActions>
     </Card>
   );
