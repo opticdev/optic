@@ -302,7 +302,6 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
 
   const endpointDiffManger = diffManager.managerForPathAndMethod(pathId, method, ignored);
 
-
   const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
 
   global.opticDebug.diffContext = {

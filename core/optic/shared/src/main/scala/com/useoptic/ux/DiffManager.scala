@@ -49,7 +49,10 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
     onUpdated()
   }
 
-  def filterIgnored(ignoredDiffs: Seq[DiffResult]) = _interactionsGroupedByDiffs.filter(d => !ignoredDiffs.contains(d._1))
+  def filterIgnored(ignoredDiffs: Seq[DiffResult]): Map[InteractionDiffResult, Seq[HttpInteraction]] = {
+    val ignoredKeys = _interactionsGroupedByDiffs.keySet intersect ignoredDiffs.toSet.asInstanceOf[Set[InteractionDiffResult]]
+    _interactionsGroupedByDiffs.filterKeys(i => !ignoredKeys.contains(i))
+  }
 
   def unmatchedUrls(alphabetize: Boolean = false, ignoredDiffs: Seq[DiffResult] = Seq.empty): Seq[UndocumentedURL] = {
     if (_currentRfcState == null) {
@@ -171,7 +174,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
   def managerForPathAndMethod(pathComponentId: PathComponentId, httpMethod: String, ignoredDiffs: Seq[DiffResult]): PathAndMethodDiffManager = {
     val parentManagerUpdate = (rfcState: RfcState) => updatedRfcState(rfcState)
 
-    val filterIgnored = _interactionsGroupedByDiffs.filter(d => !ignoredDiffs.contains(d._1))
+    val filtered = filterIgnored(ignoredDiffs)
 
     val filterThisEndpoint = {
       //collect all request and response ids we have diffs computed for
@@ -183,7 +186,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
         case res if res._2.responseDescriptor.httpMethod == httpMethod && res._2.responseDescriptor.pathId == pathComponentId => res._1
       }.toSet
 
-      val diffsFiltered = filterIgnored.filterKeys {
+      val diffsFiltered = filtered.filterKeys {
         case _: UnmatchedRequestUrl => false
         case d: InteractionDiffResult => {
           d.requestsTrail match {
@@ -201,7 +204,7 @@ class DiffManager(initialInteractions: Seq[HttpInteraction], onUpdated: () => Un
       //this makes sure that other methods don't sneak their way
       diffsFiltered.mapValues(_.filter(_.request.method == httpMethod)).filter(_._2.nonEmpty)
     }
-
+    
     new PathAndMethodDiffManager(pathComponentId, httpMethod)(filterThisEndpoint, _currentRfcState) {
       def updatedRfcState(rfcState: RfcState): Unit = parentManagerUpdate(rfcState)
     }

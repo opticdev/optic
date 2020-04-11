@@ -101,9 +101,6 @@ export const ListRender = withShapeRenderContext((props) => {
 
   const items = shapeRender.resolvedItems(shape.shapeId, !showAllLists.includes(listId));
 
-  console.log(shapeRender.exampleShapes)
-  debugger
-
   return (
     <>
       {!nested && <Row left={<Symbols>{'['}</Symbols>} right={<AssertionMetTypeName typeName={shape.name}/>} noHover/>}

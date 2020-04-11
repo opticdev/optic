@@ -15,6 +15,7 @@ import {CardActions} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import {DiffContext} from './DiffContext';
 import {mapScala, CompareEquality} from '@useoptic/domain';
+import {IgnoreDiffContext} from './DiffPageNew';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,7 +58,7 @@ const useStyles = makeStyles(theme => ({
 export const DiffHelperCard = (props) => {
   const classes = useStyles();
   const {inRequest, inResponse} = props;
-  const {selectedInterpretation, setSelectedInterpretation, selectedDiff, acceptSuggestion, clearPreview} = useContext(DiffContext);
+  const {selectedInterpretation, setSelectedDiff, setSelectedInterpretation, selectedDiff, acceptSuggestion, clearPreview} = useContext(DiffContext);
   const showIt = selectedDiff && selectedDiff.inRequest && inRequest || selectedDiff.inResponse && inResponse;
 
   if (!showIt) {
@@ -93,7 +94,15 @@ export const DiffHelperCard = (props) => {
         <DocDivider />
 
         <div className={classes.buttons}>
-          <Button size="small" onClick={clearPreview}>Ignore</Button>
+          <IgnoreDiffContext.Consumer>
+            {({ignoreDiff}) => {
+              return <Button size="small" onClick={() => {
+                const toIgnore = selectedDiff.diff
+                setSelectedDiff(null)
+                ignoreDiff(toIgnore)
+              }}>Ignore</Button>
+            }}
+          </IgnoreDiffContext.Consumer>
           <Button color="primary" size="small" disabled={!selectedInterpretation} onClick={() => acceptSuggestion(selectedInterpretation)}>Approve</Button>
         </div>
 
