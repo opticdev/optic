@@ -85,6 +85,9 @@ const ContentStyledTab = withStyles(theme => {
 
 
 const styles = theme => ({
+  container: {
+    marginBottom: 45
+  },
   root: {
     marginTop: 15,
     display: 'flex',
@@ -130,7 +133,7 @@ class ContentTabs extends React.Component {
     }
 
     return (
-      <>
+      <div className={classes.container}>
         <ReusableDiffRow notifications={notifications}>
           <div className={classes.root}>
             <Typography variant="h5" color="primary">{inRequest ? 'Request' : 'Response'}</Typography>
@@ -160,7 +163,7 @@ class ContentTabs extends React.Component {
         <div className={classes.content}>
           {children}
         </div>
-      </>
+      </div>
     );
   }
 }

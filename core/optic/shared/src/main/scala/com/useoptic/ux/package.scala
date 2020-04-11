@@ -116,10 +116,6 @@ package object ux {
       val eFields = exampleShape.map(_.fields).getOrElse(Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty))
       val mergedFields = sFields.merge(eFields, this)
 
-      println("xxx "+sFields.toString)
-      println("xxx "+eFields.toString)
-      println("xxx "+mergedFields)
-
       val diffs = Set(specShape.map(_.diffs), exampleShape.map(_.diffs)).flatten.flatten
 
       val copyTarget = Seq(specShape, exampleShape).flatten.head
@@ -142,8 +138,6 @@ package object ux {
 
     def getUnifiedField(fieldId: FieldId): Option[RenderField] = {
 
-      println("xxx "+ fieldId)
-
       val specField = specFields.get(fieldId)
       //prefer example that exists in the spec
       val exampleField = Seq(exampleFields.find(_._2.specFieldId.contains(fieldId)).map(_._2),  exampleFields.get(fieldId)).flatten.headOption
@@ -157,7 +151,7 @@ package object ux {
           if (specField.isDefined) specField.get.fieldName else exampleField.get.fieldName,
           Seq(specField.flatMap(_.shapeId), exampleField.flatMap(_.shapeId)).flatten.headOption,
           exampleField.flatMap(_.exampleValue),
-          specField.map(_.diffs).getOrElse(Set.empty) ++ exampleField.map(_.diffs).getOrElse(Set.empty)
+          exampleField.map(_.diffs).getOrElse(Set.empty) ++ specField.map(_.diffs).getOrElse(Set.empty)
         ))
       }
     }
@@ -190,8 +184,17 @@ package object ux {
 
     def resolvedItems(listId: ShapeId, hideItems: Boolean = false): Seq[DisplayItem] = {
       val listItemOption = listItemShape(listId)
-      val exampleShapeOption = exampleShapes.find(_._2.specShapeId.contains(listId)).map(_._2)
-      val items = exampleShapeOption.map(_.items).getOrElse(Items(Seq.empty))
+
+
+      val itemsFromSpec = {
+        val exampleShapeOption = exampleShapes.find(_._2.specShapeId.contains(listId)).map(_._2)
+        exampleShapeOption.map(_.items).getOrElse(Items(Seq.empty))
+      }
+
+      val itemsFromExample = exampleShapes.get(listId).map(_.items).getOrElse(Items(Seq.empty))
+
+      val items = if (itemsFromSpec.all.nonEmpty) itemsFromSpec else itemsFromExample
+
       val allItems = items.all.zipWithIndex.flatMap { case (itemId, index) => {
         //use spec one if provided, else fallback on example shape pointer
         val shapeIdOption = Seq(listItemOption.flatMap(_.shapeId), exampleItems.get(itemId).flatMap(_.shapeId)).flatten.headOption
@@ -211,7 +214,10 @@ package object ux {
       } else allItems
     }
 
-    def resolveFieldShape(field: RenderField): Option[RenderShape] = field.shapeId.map(i => getUnifiedShape(i))
+    def resolveFieldShape(field: RenderField): Option[RenderShape] = {
+
+      field.shapeId.map(i => getUnifiedShape(i))
+    }
 
     def resolveItemShapeFromShapeId(shapeId: Option[ShapeId]): Option[RenderShape] = Try(getUnifiedShape(shapeId.get)).toOption
     def resolveItemShape(itemOption: Option[RenderItem]): Option[RenderShape] = itemOption.flatMap(item => resolveItemShapeFromShapeId(item.shapeId))
@@ -261,8 +267,8 @@ package object ux {
                          items: Items = Items(Seq.empty),
                          branches: Seq[ShapeId] = Seq.empty,
                          innerId: Option[ShapeId] = None,
-                         exampleValue: Option[Json] = None,
-                         diffs: Set[DiffResult] = Set(),
+                         exampleValue: Option[Json],
+                         diffs: Set[DiffResult],
                          name: RenderName = RenderName(Seq.empty)) {
 
     def isOptional = OptionalKind.baseShapeId == baseShapeId

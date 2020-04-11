@@ -16,7 +16,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
   render() {
 
     //usage defined props
-    const {pathId, method} = this.props;
+    const {pathId, method, notFound} = this.props;
     const lookupExampleForRequest = (requestId) => this.props.lookupExampleForRequest(pathId, method, requestId);
     const lookupExampleForResponse = (responseId) => this.props.lookupExampleForResponse(pathId, method, responseId);
     //props from context
@@ -112,7 +112,7 @@ class EndpointsContextStoreWithoutContext extends React.Component {
       );
 
     } else {
-      return <div>Endpoint Not Found {method} {pathId}</div>;
+      return notFound || <div>Endpoint Not Found {method} {pathId}</div>
     }
   }
 }

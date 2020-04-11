@@ -31,7 +31,7 @@ export const PathAndMethodLarge = ({path, method}) => {
     backgroundColor: methodColorsDark[method.toUpperCase()]
   }}>{method.toUpperCase()}</Typography>;
   const pathRender = <Typography variant="subtitle1" component="span"
-                                 style={{fontSize: 17, marginLeft: 7}}>{path}</Typography>;
+                                 style={{fontSize: 17, marginLeft: 7, fontWeight: 200}}>{path}</Typography>;
 
   return (<span> {methodRender} {pathRender} </span>);
 };

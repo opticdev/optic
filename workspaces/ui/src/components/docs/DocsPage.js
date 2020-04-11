@@ -12,7 +12,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ListItem from '@material-ui/core/ListItem';
 import {Button, Card, ListItemText} from '@material-ui/core';
 import {EndpointsContextStore, EndpointsContext} from '../../contexts/EndpointContext';
-import {PathAndMethod, SquareChip} from '../diff/v2/PathAndMethod';
+import {PathAndMethod, PathAndMethodLarge, SquareChip} from '../diff/v2/PathAndMethod';
 import Typography from '@material-ui/core/Typography';
 import {DocDarkGrey, DocDivider} from '../requests/DocConstants';
 import {UpdatedBlue} from '../../contexts/ColorContext';
@@ -26,23 +26,32 @@ import DiffPreview, {BreadcumbX} from '../diff/v2/DiffPreview';
 import {ShapeExpandedStore} from '../diff/v2/shape_viewers/ShapeRenderContext';
 import {ShapeOnlyViewer} from '../diff/v2/shape_viewers/ShapeOnlyShapeRows';
 import {ShapeBox} from '../diff/v2/DiffReviewExpanded';
+import Paper from '@material-ui/core/Paper';
 
 const useStyles = makeStyles(theme => ({
   maxWidth: {
     width: '100%',
+    paddingTop: 60,
     maxWidth: 980,
     alignSelf: 'center'
   },
-  diffTocCard: {
+  paper: {
+    padding: 17,
+    marginTop: 22
+  },
+  header: {
     display: 'flex',
     flexDirection: 'row',
-    paddingRight: 20
+    // backgroundColor: 'red',
+    alignItems: 'center',
+    paddingTop: 10,
+    paddingBottom: 5
   },
   contributions: {
-    width: '60%',
     display: 'flex',
     flexDirection: 'column',
-    paddingRight: 20
+    paddingRight: 20,
+    width: '60%'
   },
   overviewSection: {
     paddingTop: 15,
@@ -50,11 +59,10 @@ const useStyles = makeStyles(theme => ({
   },
   expand: {
     display: 'flex',
-    justifyContent: 'flex-end',
-    marginTop: 20
+    justifyContent: 'center',
+    marginTop: 37
   },
   specPreview: {
-    borderLeft: `1px solid #e3e8ee`,
     paddingLeft: 12,
     flex: 1,
     display: 'flex',
@@ -94,7 +102,9 @@ export const DocumentationToc = () => {
 
   return (
     <div className={classes.maxWidth}>
-      <div style={{paddingTop: 60}}>
+      <Typography variant="h5" color="textSecondary">Documentation</Typography>
+      <DocDivider />
+      <div>
         {endpoints.map(i => {
           return (
             <EndpointsContextStore method={i.method} pathId={i.pathId}>
@@ -102,10 +112,9 @@ export const DocumentationToc = () => {
                 {({endpointDescriptor, updateContribution, getContribution, endpointId}) => {
 
                   return (
-                    <div>
-                      <div className={classes.diffTocCard}>
-
-                        <div className={classes.contributions}>
+                    <Paper className={classes.paper}>
+                      <div>
+                        <div className={classes.header}>
                           <HeadingContribution
                             value={getContribution(endpointId, PURPOSE)}
                             label="What does this endpoint do?"
@@ -113,41 +122,35 @@ export const DocumentationToc = () => {
                               updateContribution(endpointId, PURPOSE, value);
                             }}
                           />
-                          <MarkdownContribution
-                            value={getContribution(endpointId, DESCRIPTION)}
-                            label="Detailed Description"
-                            onChange={(value) => {
-                              updateContribution(endpointId, DESCRIPTION, value);
-                            }}/>
-
-
-                        </div>
-
-                        <div className={classes.specPreview}>
-                          <PathAndMethod path={endpointDescriptor.fullPath}
-                                         method={endpointDescriptor.method}/>
-
-                          <div style={{display: 'flex', flexDirection: 'column', marginTop: 7}}>
-                            {endpointDescriptor.pathParameters.map(i => <DocParameter title={i.name}
-                                                                                      paramId={i.pathId}
-                                                                                      updateContribution={updateContribution}
-                                                                                      description={i.description}/>)}
-
-                          </div>
-
 
                           <div style={{flex: 1}}/>
 
+                          <PathAndMethodLarge path={endpointDescriptor.fullPath}
+                                              method={endpointDescriptor.method}/>
+
+                        </div>
+
+
+                        <div className={classes.contributions}>
+                            <MarkdownContribution
+                              value={getContribution(endpointId, DESCRIPTION)}
+                              label="Detailed Description"
+                              onChange={(value) => {
+                                updateContribution(endpointId, DESCRIPTION, value);
+                              }}/>
+                        </div>
+
+                        <div className={classes.specPreview}>
+
+                          <div style={{flex: 1}}/>
 
                           <div className={classes.expand}>
                             <Button
                               component={Link}
                               to={`documentation/paths/${endpointDescriptor.pathId}/methods/${endpointDescriptor.method}`}
-                              size="small"
+                              size="medium"
                               color="primary"
-                              varient="contained"
-                              // startIcon={<ExpandMoreIcon/>}>
-                            >
+                              startIcon={<ExpandMoreIcon/>}>
                               Read Documentation
                             </Button>
                           </div>
@@ -159,8 +162,7 @@ export const DocumentationToc = () => {
 
                         </div>
                       </div>
-                      <DocDivider style={{marginTop: 20, marginBottom: 20}}/>
-                    </div>
+                    </Paper>
                   );
                 }}
               </EndpointsContext.Consumer>
@@ -244,7 +246,8 @@ export const EndpointDocs = (props) => {
                 <DocDivider style={{marginTop: 10, marginBottom: 10}}/>
 
                 <div className={classes.overviewSection}>
-                  <PathAndMethod path={endpointDescriptor.fullPath}
+
+                  <PathAndMethodLarge path={endpointDescriptor.fullPath}
                                  method={endpointDescriptor.method}/>
 
 
