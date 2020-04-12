@@ -1,11 +1,15 @@
 // TODO: Consider using a TypeScript interface here
 // interace ITestingService
-import { opticEngine, Queries } from '@useoptic/domain';
+import {opticEngine, Queries} from '@useoptic/domain';
 // placeholder for actual remote service
-import { StableHasher } from '../utilities/CoverageUtilities';
-import { JsonHelper } from '@useoptic/domain';
+import {StableHasher} from '../utilities/CoverageUtilities';
+import {JsonHelper} from '@useoptic/domain';
+import {InitialRfcCommandsStore} from '../contexts/InitialRfcCommandsContext';
+import React from 'react';
+import {ImmutableRfcStore} from '../contexts/RfcContext';
 
-export class TestingService {}
+export class TestingService {
+}
 
 export async function createExampleTestingService(exampleId = 'todo-report') {
   const example = await fetch(`/example-reports/${exampleId}.json`, {
@@ -19,7 +23,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
     throw new Error();
   });
 
-  const { orgId, specs, samples: samplesByCaptureId, captures } = example;
+  const {orgId, specs, samples: samplesByCaptureId, captures} = example;
 
   function getSpecEvents(captureId) {
     const spec = specs[captureId];
@@ -68,7 +72,7 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
       await new Promise((r) => setTimeout(r, 200));
       const events = getSpecEvents(captureId);
       const samples = getSamples(captureId);
-      const { rfcState } = queriesFromEvents(events);
+      const {rfcState} = queriesFromEvents(events);
 
       const samplesSeq = JsonHelper.jsArrayToSeq(
         samples.map((x) => JsonHelper.fromInteraction(x))
@@ -89,18 +93,29 @@ export async function createExampleTestingService(exampleId = 'todo-report') {
 
 // Might belong in a (View)Model somewhere
 export function queriesFromEvents(events) {
-  const { contexts } = opticEngine.com.useoptic;
-  const { RfcServiceJSFacade } = contexts.rfc;
+  const {contexts} = opticEngine.com.useoptic;
+  const {RfcServiceJSFacade} = contexts.rfc;
   const rfcServiceFacade = RfcServiceJSFacade();
   const eventStore = rfcServiceFacade.makeEventStore();
   const rfcId = 'testRfcId';
 
   // @TODO: figure out if it's wise to stop the parsing of JSON from the response, to prevent
   // parse -> stringify -> parse
-  eventStore.bulkAdd(rfcId, JSON.stringify(events));
+  const stringifiedEvents = JSON.stringify(events);
+  eventStore.bulkAdd(rfcId, stringifiedEvents);
   const rfcService = rfcServiceFacade.makeRfcService(eventStore);
   const queries = Queries(eventStore, rfcService, rfcId);
   const rfcState = rfcService.currentState(rfcId);
 
-  return { queries, rfcState };
+  const SimulatedContext = (props) => (
+    <InitialRfcCommandsStore
+      instance="the one in simulated command context"
+      rfcId={rfcId}
+      initialEventsString={stringifiedEvents}>
+      <ImmutableRfcStore>
+        {props.children}
+      </ImmutableRfcStore>
+    </InitialRfcCommandsStore>);
+
+  return {queries, rfcState, SimulatedContext};
 }

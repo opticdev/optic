@@ -1,20 +1,12 @@
 import React, {useContext} from 'react';
 import {Typography} from '@material-ui/core';
 import classNames from 'classnames';
-import {AddedGreenBackground, ChangedYellowBackground, primary, RemovedRedBackground, secondary} from '../../../../theme';
-import {ShapeExpandedContext, ShapeRenderContext, ShapeRenderStore, withShapeRenderContext} from './ShapeRenderContext';
-import CheckIcon from '@material-ui/icons/Check';
-import {
-  getOrUndefined,
-  mapScala,
-  getOrUndefinedJson,
-  headOrUndefined,
-  CompareEquality,
-  lengthScala, toOption
-} from '@useoptic/domain';
+import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground} from '../../../../theme';
+import {ShapeExpandedContext, ShapeRenderStore, withShapeRenderContext} from './ShapeRenderContext';
+import {getOrUndefined, getOrUndefinedJson, lengthScala, mapScala, toOption} from '@useoptic/domain';
 
 import {HiddenItemEllipsis, TypeName, useColor, useShapeViewerStyles} from './styles';
-import {Indent, IndentIncrement, DepthContext} from './Indent';
+import {DepthContext, Indent, IndentIncrement} from './Indent';
 
 export function ShapeOnlyViewer(props) {
   const {preview} = props;

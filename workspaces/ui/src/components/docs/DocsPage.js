@@ -1,28 +1,22 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {useRouterPaths} from '../../RouterPaths';
 import Page from '../Page';
 import {Link, Route, Switch, useParams} from 'react-router-dom';
-import {CaptureManager} from '../diff/v2/CaptureManagerPage';
-import {SpecServiceContext} from '../../contexts/SpecServiceContext';
 import {RfcContext} from '../../contexts/RfcContext';
-import List from '@material-ui/core/List';
-import {DiffPreviewer, getOrUndefined, mapScala, toOption} from '@useoptic/domain';
+import {DiffPreviewer, getOrUndefined, toOption} from '@useoptic/domain';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import ListItem from '@material-ui/core/ListItem';
-import {Button, Card, ListItemText} from '@material-ui/core';
-import {EndpointsContextStore, EndpointsContext} from '../../contexts/EndpointContext';
-import {PathAndMethod, PathAndMethodLarge, SquareChip} from '../diff/v2/PathAndMethod';
+import {Button} from '@material-ui/core';
+import {EndpointsContext, EndpointsContextStore} from '../../contexts/EndpointContext';
+import {PathAndMethodLarge} from '../diff/v2/PathAndMethod';
 import Typography from '@material-ui/core/Typography';
-import {DocDarkGrey, DocDivider} from '../requests/DocConstants';
-import {UpdatedBlue} from '../../contexts/ColorContext';
-import {DocParameter} from '../requests/DocParameter';
-import {DocSubGroup} from '../requests/DocSubGroup';
-import {HeadingContribution, MarkdownContribution} from '../requests/DocContribution';
+import {DocDivider} from './DocConstants';
+import {DocParameter} from './DocParameter';
+import {HeadingContribution, MarkdownContribution} from './DocContribution';
 import {DESCRIPTION, PURPOSE} from '../../ContributionKeys';
 import groupBy from 'lodash.groupby';
-import ContentTabs, {RequestTabsContextStore} from '../diff/v2/ContentTabs';
-import DiffPreview, {BreadcumbX} from '../diff/v2/DiffPreview';
+import ContentTabs, {RequestTabsContextStore} from './ContentTabs';
+import {BreadcumbX} from '../diff/v2/DiffPreview';
 import {ShapeExpandedStore} from '../diff/v2/shape_viewers/ShapeRenderContext';
 import {ShapeOnlyViewer} from '../diff/v2/shape_viewers/ShapeOnlyShapeRows';
 import {ShapeBox} from '../diff/v2/DiffReviewExpanded';
@@ -100,7 +94,6 @@ export const DocumentationToc = () => {
   const classes = useStyles();
   const {cachedQueryResults} = useContext(RfcContext);
   const {endpoints} = cachedQueryResults;
-
 
   return (
     <div className={classes.maxWidth}>

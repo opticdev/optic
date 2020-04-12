@@ -1,13 +1,13 @@
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import Drawer from '@material-ui/core/Drawer';
-import { makeStyles } from '@material-ui/core/styles';
-import { useRouterPaths } from '../../RouterPaths';
-import { Link } from 'react-router-dom';
+import {makeStyles} from '@material-ui/core/styles';
+import {useRouterPaths} from '../../RouterPaths';
+import {Link} from 'react-router-dom';
 import IconButton from '@material-ui/core/IconButton';
 import DescriptionIcon from '@material-ui/icons/Description';
 import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import PolicyIcon from '@material-ui/icons/Policy';
-import { LightTooltip } from '../tooltips/LightTooltip';
+import {LightTooltip} from '../tooltips/LightTooltip';
 
 const drawerWidth = 270;
 

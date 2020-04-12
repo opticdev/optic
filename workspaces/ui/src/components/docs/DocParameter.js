@@ -1,7 +1,6 @@
-
 import React from 'react';
 import {Typography} from '@material-ui/core';
-import {DocDivider, ParametersStyles} from './DocConstants';
+import {ParametersStyles} from './DocConstants';
 import {MarkdownContribution} from './DocContribution';
 import {DESCRIPTION} from '../../ContributionKeys';
 

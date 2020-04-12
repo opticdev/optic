@@ -4,9 +4,9 @@ import {asPathTrail, getNameWithFormattedParameters, isPathParameter} from '../c
 import {DESCRIPTION, pathMethodKeyBuilder, PURPOSE} from '../ContributionKeys';
 import {getNormalizedBodyDescriptor} from '../utilities/RequestUtilities';
 import {withRfcContext} from './RfcContext';
-import sortBy from 'lodash.sortby'
-import {EndpointPage} from '../components/requests/EndpointPage';
+import sortBy from 'lodash.sortby';
 import {updateContribution as commandsForUpdatingContribution} from '../engine/routines';
+
 const {
   Context: EndpointsContext,
   withContext: withEndpointsContext

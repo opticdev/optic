@@ -1,6 +1,6 @@
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-import {methodColorsDark} from '../../requests/DocConstants';
+import {methodColorsDark} from '../../docs/DocConstants';
 
 export const PathAndMethod = ({path, method}) => {
 

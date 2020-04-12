@@ -1,10 +1,9 @@
-import React from 'react'
+import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {primary} from '../../../../theme';
 import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tooltip from '@material-ui/core/Tooltip';
-import {useContext} from 'react';
 import {mapScala} from '@useoptic/domain';
 
 export const useShapeViewerStyles = makeStyles(theme => ({

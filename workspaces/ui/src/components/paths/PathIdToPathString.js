@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import {asPathTrail, getNameWithFormattedParameters} from '../utilities/PathUtilities';
 import {withRfcContext} from '../../contexts/RfcContext';
 

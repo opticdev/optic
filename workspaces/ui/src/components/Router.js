@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link as RouterLink, NavLink as RouterNavLink } from 'react-router-dom';
+import {Link as RouterLink, NavLink as RouterNavLink} from 'react-router-dom';
 import {useBaseUrl} from '../contexts/BaseUrlContext';
 
 export function Link(props) {

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Grid, makeStyles} from '@material-ui/core';
-import {StickyRegion} from '../shared/StickyRegion';
+import {StickyRegion} from './StickyRegion';
 import ScrollIntoViewIfNeeded from 'react-scroll-into-view-if-needed';
 
 const useStyles = makeStyles(theme => ({

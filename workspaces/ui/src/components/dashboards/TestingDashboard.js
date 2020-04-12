@@ -1,14 +1,12 @@
-import React, { useMemo } from 'react';
+import React, {useMemo} from 'react';
 import Loading from '../navigation/Loading';
-
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
-import { stuffFromQueries } from '../../contexts/RfcContext';
-
+import {stuffFromQueries} from '../../contexts/RfcContext';
 // Components and hooks
 // --------------------
-import { Switch, Route, Redirect } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import {Redirect, Route, Switch} from 'react-router-dom';
+import {makeStyles} from '@material-ui/core/styles';
 import ReportSummary from '../testing/ReportSummary';
 
 import {
@@ -175,15 +173,13 @@ function useSpec(captureId) {
 // for the entire dashboard context if not all of the app?)
 
 function createSpec(specEvents) {
-  const { queries } = queriesFromEvents(specEvents);
-  const { apiName, pathsById, requestIdsByPathId, requests } = stuffFromQueries(
+  const { queries, SimulatedContext } = queriesFromEvents(specEvents);
+  const { endpoints } = stuffFromQueries(
     queries
   );
 
   return {
-    apiName,
-    pathsById,
-    requestIdsByPathId,
-    requests
+    endpoints,
+    SimulatedContext
   };
 }

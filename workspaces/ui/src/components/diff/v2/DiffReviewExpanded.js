@@ -1,38 +1,15 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import {Button, CssBaseline, Paper} from '@material-ui/core';
-import Dialog from '@material-ui/core/Dialog';
-import IconButton from '@material-ui/core/IconButton';
-import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
 import Pagination from '@material-ui/lab/Pagination';
-import {
-  CompareEquality,
-  getIndex,
-  getOrUndefined,
-  lengthScala,
-  toOption,
-  mapScala,
-  JsonHelper,
-  DiffPreviewer, headOrUndefined
-} from '@useoptic/domain';
-import Drawer from '@material-ui/core/Drawer';
-import {withEndpointsContext} from '../../../contexts/EndpointContext';
-import {DocDarkGrey, DocDivider, methodColors, methodColorsDark} from '../../requests/DocConstants';
-import {DocSubGroup, DocSubGroupBig} from '../../requests/DocSubGroup';
+import {DiffPreviewer, getIndex, getOrUndefined, JsonHelper, lengthScala, toOption,} from '@useoptic/domain';
+import {DocDarkGrey, DocDivider} from '../../docs/DocConstants';
 import {Show} from '../../shared/Show';
 import DiffHunkViewer from './DiffHunkViewer';
-import List from '@material-ui/core/List';
-import {InterpretationRow} from './DiffViewer';
-import {IgnoreDiffContext} from './DiffPageNew';
-import {DiffContext, withDiffContext} from './DiffContext';
-import {RfcContext, withRfcContext} from '../../../contexts/RfcContext';
-import Scrolling from './Scrolling';
+import {DiffContext} from './DiffContext';
+import {RfcContext} from '../../../contexts/RfcContext';
 import {ShapeExpandedStore} from './shape_viewers/ShapeRenderContext';
-import {PathAndMethod, PathAndMethodLarge} from './PathAndMethod';
+import {PathAndMethod} from './PathAndMethod';
 import {DiffHelperCard} from './DiffHelperCard';
 import SimulatedCommandContext from '../SimulatedCommandContext';
 import {BreadcumbX} from './DiffPreview';

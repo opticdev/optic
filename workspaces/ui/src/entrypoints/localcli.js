@@ -1,5 +1,5 @@
 import React from 'react';
-import {useRouteMatch, useParams} from 'react-router-dom';
+import {useParams, useRouteMatch} from 'react-router-dom';
 import {LocalCliSpecServiceLoader} from '../components/loaders/ApiLoader';
 import {ApiRoutes} from '../routes';
 import EventEmitter from 'events';

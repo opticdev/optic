@@ -1,6 +1,5 @@
 import React from 'react';
 import {GenericContextFactory} from './GenericContextFactory.js';
-import {withRfcContext} from './RfcContext.js';
 import compose from 'lodash.compose';
 import {DiffManagerFacade} from '@useoptic/domain';
 
