@@ -97,7 +97,6 @@ export const ListRender = withShapeRenderContext((props) => {
   const listId = shape.shapeId;
   const listItem = getOrUndefined(shapeRender.listItemShape(listId));
 
-
   const {showAllLists} = useContext(ShapeExpandedContext);
 
   const items = shapeRender.resolvedItems(shape.shapeId, !showAllLists.includes(listId));
@@ -269,6 +268,7 @@ export const FieldRow = withShapeRenderContext((props) => {
   const missing = field.display === 'missing';
 
   const fieldShape = getOrUndefined(shapeRender.resolveFieldShape(field.field)) || {};
+  const example = getOrUndefinedJson(field.field.exampleValue) || (fieldShape && getOrUndefinedJson(fieldShape.exampleValue))
 
   const diff = headOrUndefined(field.field.diffs);
 
@@ -295,7 +295,7 @@ export const FieldRow = withShapeRenderContext((props) => {
                 <FieldName missing={missing}>{field.fieldName}</FieldName>
               </div>
               <div style={{flex: 1, paddingLeft: 4}}>
-                <ValueContents value={getOrUndefinedJson(field.field.exampleValue)} shape={fieldShape}/>
+                <ValueContents value={example} shape={fieldShape}/>
               </div>
             </div>
           </Indent>
@@ -323,7 +323,7 @@ export const FieldRow = withShapeRenderContext((props) => {
         })()}
       />
       {/* this will insert nested rows */}
-      <ValueRows value={getOrUndefinedJson(field.field.exampleValue)} shape={fieldShape}/>
+      <ValueRows value={example} shape={fieldShape}/>
     </>
   );
 });

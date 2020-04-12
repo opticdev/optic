@@ -63,7 +63,7 @@ export default function Navbar(props) {
         link: routerPaths.diffsRoot
       },
       {
-        name: 'Specification',
+        name: 'Documentation',
         icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
         link: routerPaths.docsRoot
       },

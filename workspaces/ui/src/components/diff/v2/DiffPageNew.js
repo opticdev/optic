@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
 import {AppBar, Button, CardActions, Typography} from '@material-ui/core';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -14,7 +14,7 @@ import {
   withTrafficSessionContext
 } from '../../../contexts/TrafficSessionContext';
 import PersonIcon from '@material-ui/icons/Person';
-import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
+import {SpecServiceContext, withSpecServiceContext} from '../../../contexts/SpecServiceContext';
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
@@ -31,7 +31,7 @@ import {primary, secondary} from '../../../theme';
 import BatchLearnDialog from './BatchLearnDialog';
 import {DiffShapeViewer, DiffToggleContextStore, URLViewer} from './DiffShapeViewer';
 import uuidv4 from 'uuid/v4';
-import {withRouter} from 'react-router-dom';
+import {Redirect, withRouter} from 'react-router-dom';
 
 import {DiffCursor, NewRegions, ShapeDiffRegion} from './DiffPreview';
 import {CommitCard} from './CommitCard';
@@ -93,19 +93,18 @@ const styles = theme => ({
   }
 });
 
-class DiffPageNew extends React.Component {
-  render() {
-
-    const {classes, specStore} = this.props;
-    const {pathId, method, captureId} = this.props.match.params;
-    return (
-      <CaptureSessionInlineContext specStore={specStore} captureId={captureId} pathId={pathId} method={method}>
-        <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
-          <DiffPageContent captureId={captureId}/>
-        </EndpointsContextStore>
-      </CaptureSessionInlineContext>
-    );
-  }
+function DiffPageNew(props) {
+  const {specStore} = useContext(SpecServiceContext);
+  const baseUrl = useBaseUrl();
+  const {pathId, method, captureId} = props.match.params;
+  return (
+    <CaptureSessionInlineContext specStore={specStore} captureId={captureId} pathId={pathId} method={method}>
+      <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}
+                             notFound={<Redirect to={`${baseUrl}/diffs`}/>}>
+        <DiffPageContent captureId={captureId}/>
+      </EndpointsContextStore>
+    </CaptureSessionInlineContext>
+  );
 }
 
 function withSpecContext(eventStore, rfcId, clientId, clientSessionId) {
@@ -148,7 +147,7 @@ function _DiffPageContent(props) {
     reset();
   }
 
-  const baseUrl = useBaseUrl()
+  const baseUrl = useBaseUrl();
 
   async function handleApply(message = 'EMPTY MESSAGE') {
     const newEventStore = initialEventStore.getCopy(rfcId);
@@ -165,7 +164,7 @@ function _DiffPageContent(props) {
     history.push(`${baseUrl}/diffs/${captureId}`);
   }
 
-  const diffRegions = endpointDiffManger.diffRegions
+  const diffRegions = endpointDiffManger.diffRegions;
 
   return (
     <IgnoreDiffContext.Consumer>
@@ -184,15 +183,15 @@ function _DiffPageContent(props) {
               </div>
 
 
-                <NewRegions ignoreDiff={ignoreDiff}
+              <NewRegions ignoreDiff={ignoreDiff}
                           endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
                           method={httpMethod}
                           fullPath={fullPath}
                           newRegions={diffRegions.newRegions}/>
 
-              <DiffCursor diffs={diffRegions.bodyDiffs} />
+              <DiffCursor diffs={diffRegions.bodyDiffs}/>
 
-              {selectedDiff && <DiffReviewExpanded diff={selectedDiff} />}
+              {selectedDiff && <DiffReviewExpanded diff={selectedDiff}/>}
 
               {/*<ShapeDiffRegion*/}
               {/*  region={endpointDiffManger.diffRegions.requestRegions}*/}
@@ -302,7 +301,6 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
   const ignored = jsonHelper.jsArrayToSeq(ignoredDiffs);
 
   const endpointDiffManger = diffManager.managerForPathAndMethod(pathId, method, ignored);
-
 
   const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
 

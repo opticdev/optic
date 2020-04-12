@@ -57,7 +57,7 @@ export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithD
     }
   }, [finalizeWithOverride])
 
-  if (acceptedSuggestions.length === 0 ) {
+  if (acceptedSuggestions.length === 0 && ignoredDiffs.length === 0) {
     return null
   }
 
