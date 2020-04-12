@@ -27,6 +27,7 @@ import {ShapeExpandedStore} from '../diff/v2/shape_viewers/ShapeRenderContext';
 import {ShapeOnlyViewer} from '../diff/v2/shape_viewers/ShapeOnlyShapeRows';
 import {ShapeBox} from '../diff/v2/DiffReviewExpanded';
 import Paper from '@material-ui/core/Paper';
+import EmptyState from '../support/EmptyState';
 
 const useStyles = makeStyles(theme => ({
   maxWidth: {
@@ -100,10 +101,17 @@ export const DocumentationToc = () => {
   const {cachedQueryResults} = useContext(RfcContext);
   const {endpoints} = cachedQueryResults;
 
+
   return (
     <div className={classes.maxWidth}>
-      <Typography variant="h5" color="textSecondary">Documentation</Typography>
-      <DocDivider />
+      {endpoints.length === 0 && <EmptyState title="Document your First Endpoint"
+content={`
+1. Follow the [Getting Started Tutorial](https://google.com)
+2. Run \`api start\` and send the API some traffic
+3. Optic will help write your documentation
+`
+.trim()} />}
+      {endpoints.length > 0 && <><Typography variant="h5" color="textSecondary">Documentation</Typography><DocDivider /></>}
       <div>
         {endpoints.map(i => {
           return (

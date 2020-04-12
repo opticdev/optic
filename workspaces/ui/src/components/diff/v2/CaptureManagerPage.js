@@ -41,6 +41,7 @@ import {EndpointsContextStore, EndpointsContext} from '../../../contexts/Endpoin
 import MoreRecentCapture from './MoreRecentCapture';
 import Page from '../../Page';
 import {useBaseUrl} from '../../../contexts/BaseUrlContext';
+import EmptyState from '../../support/EmptyState';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -262,6 +263,20 @@ function CaptureDiffWrapper(props) {
   const {ignoredDiffs} = useContext(IgnoreDiffContext);
   const {rfcService, rfcId} = useContext(RfcContext);
   const rfcState = rfcService.currentState(rfcId);
+  const {captures} = useContext(AllCapturesContext)
+
+  if (captures.length === 0) {
+    return (
+      <EmptyState title="Optic has not observed any traffic"
+                  content={`
+Run \`api start\` and send the API some traffic
+
+Not setup yet? Follow the [Getting Started Tutorial](https://google.com)
+`
+                    .trim()} />
+    )
+  }
+
   return (
     <>
       <CaptureChooserComponent captureId={captureId} />
