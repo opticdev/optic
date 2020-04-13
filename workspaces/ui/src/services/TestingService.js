@@ -115,7 +115,8 @@ export function queriesFromEvents(events) {
       <ImmutableRfcStore>
         {props.children}
       </ImmutableRfcStore>
-    </InitialRfcCommandsStore>);
+    </InitialRfcCommandsStore>
+  );
 
   return {queries, rfcState, SimulatedContext};
 }
