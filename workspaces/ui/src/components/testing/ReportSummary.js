@@ -339,7 +339,7 @@ function createSummary(capture, spec, report) {
       requestIdsByPathId,
     }),
     'requestId'
-  ).map(({ request, path }) => {
+  ).map(({ request, path }, i) => {
     const { pathId } = path;
     const { requestDescriptor, isRemoved, requestId } = request;
     const { httpMethod } = requestDescriptor;
@@ -347,8 +347,9 @@ function createSummary(capture, spec, report) {
     const interactionsCounts = getCoverageCount(
       CoverageConcerns.TotalForPathAndMethod(pathId, httpMethod)
     );
-    const diffsCount = 1; // TODO: Hardcoded test value, replace by deriving from report,
-    const compliantCount = interactionsCounts - diffsCount;
+    const incompliantInteractions = i % 2; // TODO: Hardcoded test value, replace by deriving from report,
+    const diffsCount = incompliantInteractions * (i % 3 === 0 ? 1 : 2); // TODO: Hardcoded test value, replace by deriving from report,
+    const compliantCount = interactionsCounts - incompliantInteractions;
 
     return {
       id: `${httpMethod}-${pathId}`,
@@ -364,6 +365,7 @@ function createSummary(capture, spec, report) {
         interactions: interactionsCounts,
         diffs: diffsCount,
         compliant: compliantCount,
+        incompliant: incompliantInteractions,
       },
     };
   });
@@ -375,7 +377,9 @@ function createSummary(capture, spec, report) {
     CoverageConcerns.TotalUnmatchedPath()
   );
 
-  const totalDiffs = 1; // TODO: Hardcoded test value, replace by deriving from report
+  const totalDiffs = endpoints // TODO: Hardcoded test value, replace by deriving from report
+    .map((endpoint) => endpoint.counts.diffs)
+    .reduce((sum, num) => sum + num, 0);
   const totalCompliantInteractions = totalInteractions - totalDiffs;
 
   const buildIdTag = capture.tags.find(({ name }) => name === 'buildId');
