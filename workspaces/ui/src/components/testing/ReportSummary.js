@@ -228,7 +228,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   endpointCard: {
-    marginBottom: theme.spacing(2),
+    display: 'flex',
     backgroundColor: 'rgba(255,255,255,0)',
     boxShadow: 'none',
 
@@ -236,14 +236,30 @@ const useStyles = makeStyles((theme) => ({
     transition: '0.1s ease-out backgroundColor',
 
     '$isCurrent &': {
+      margin: theme.spacing(1, 0),
       boxShadow: theme.shadows[2],
       backgroundColor: 'rgba(255,255,255,1)',
     },
   },
 
   endpointLink: {
+    flexGrow: 1,
+    padding: theme.spacing(1, 0),
     textDecoration: 'none',
     color: 'inherit',
+
+    '&:hover': {
+      backgroundColor: theme.palette.grey[100],
+    },
+
+    '$isCurrent &': {
+      backgroundColor: 'transparent',
+      padding: 0,
+
+      '&:hover': {
+        backgroundColor: 'transparent',
+      },
+    },
   },
 
   endpointHeader: {
