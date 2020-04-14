@@ -222,9 +222,15 @@ const useStyles = makeStyles((theme) => ({
 
   endpointCard: {
     marginBottom: theme.spacing(2),
+    backgroundColor: 'rgba(255,255,255,0)',
+    boxShadow: 'none',
+
+    willChange: 'backgroundColor',
+    transition: '0.1s ease-out backgroundColor',
 
     '$isCurrent &': {
-      background: 'red',
+      boxShadow: theme.shadows[2],
+      backgroundColor: 'rgba(255,255,255,1)',
     },
   },
 
@@ -233,7 +239,18 @@ const useStyles = makeStyles((theme) => ({
   },
 
   endpointHeader: {
-    padding: theme.spacing(2, 2),
+    padding: theme.spacing(0, 2),
+    // paddingTop: 0,
+    // paddingBottom: 0,
+
+    willChange: 'padding',
+    transition: '0.1s ease-out padding',
+
+    '$isCurrent &': {
+      padding: theme.spacing(2, 2),
+      // paddingTop: theme.spacing(2),
+      // paddingBottom: theme.spacing(2),
+    },
   },
 
   // states
