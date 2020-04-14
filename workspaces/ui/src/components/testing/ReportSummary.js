@@ -93,9 +93,9 @@ export default function ReportSummary(props) {
                     >
                       {endpoint.request.httpMethod}
                     </span>
-                    <span className={classes.endpointPath}>
+                    <code className={classes.endpointPath}>
                       {endpoint.path.name}
-                    </span>
+                    </code>
                     <small>
                       ({endpoint.counts.compliant}/
                       {endpoint.counts.interactions} interactions compliant)
@@ -243,6 +243,7 @@ const useStyles = makeStyles((theme) => ({
 
   endpointLink: {
     textDecoration: 'none',
+    color: 'inherit',
   },
 
   endpointHeader: {
@@ -271,6 +272,11 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
 
     fontWeight: theme.typography.fontWeightRegular,
+  },
+
+  endpointPath: {
+    fontSize: theme.typography.pxToRem(13),
+    color: theme.palette.primary.main,
   },
 
   // states
