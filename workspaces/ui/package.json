@@ -21,6 +21,7 @@
     "camelcase": "^5.2.0",
     "case-sensitive-paths-webpack-plugin": "2.2.0",
     "classnames": "^2.2.6",
+    "color": "^3.1.2",
     "copy-to-clipboard": "^3.2.0",
     "css-loader": "2.1.1",
     "date-fns": "^2.11.1",

@@ -3,6 +3,7 @@ import { opticEngine } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
+import Color from 'color';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -96,10 +97,47 @@ export default function ReportSummary(props) {
                     <code className={classes.endpointPath}>
                       {endpoint.path.name}
                     </code>
-                    <small>
-                      ({endpoint.counts.compliant}/
-                      {endpoint.counts.interactions} interactions compliant)
-                    </small>
+
+                    <div className={classes.endpointStats}>
+                      {endpoint.counts.diffs > 0 && (
+                        <span
+                          className={classNames(
+                            classes.endpointChip,
+                            classes.endpointDiffsChip
+                          )}
+                        >
+                          <strong>{endpoint.counts.diffs}</strong>
+                          {endpoint.counts.diffs > 1 ? ' diffs' : ' diff'}
+                        </span>
+                      )}
+                      {endpoint.counts.incompliant > 0 ? (
+                        <span
+                          className={classNames(
+                            classes.endpointChip,
+                            classes.endpointIncompliantChip
+                          )}
+                        >
+                          <strong>
+                            {endpoint.counts.incompliant}/
+                            {endpoint.counts.interactions}
+                          </strong>
+                          {' incompliant'}
+                        </span>
+                      ) : (
+                        <span
+                          className={classNames(
+                            classes.endpointChip,
+                            classes.endpointCompliantChip
+                          )}
+                        >
+                          <strong>
+                            {endpoint.counts.compliant}/
+                            {endpoint.counts.interactions}
+                          </strong>
+                          {' compliant'}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </ReportEndpointLink>
               </Card>
@@ -293,6 +331,43 @@ const useStyles = makeStyles((theme) => ({
   endpointPath: {
     fontSize: theme.typography.pxToRem(13),
     color: theme.palette.primary.main,
+  },
+
+  endpointStats: {
+    display: 'flex',
+  },
+
+  endpointChip: {
+    flexGrow: 0,
+    flexShrink: 0,
+
+    height: theme.spacing(3),
+    padding: theme.spacing(0, 1),
+    marginRight: theme.spacing(1),
+
+    borderRadius: theme.spacing(3 / 2),
+    fontSize: theme.typography.pxToRem(11),
+    lineHeight: `${theme.spacing(3)}px`,
+
+    '& > strong': {
+      fontSize: theme.typography.pxToRem(13),
+    },
+  },
+
+  endpointDiffsChip: {
+    background: Color(theme.palette.error.light).lighten(0.3).hex(),
+
+    color: Color(theme.palette.error.dark).darken(0.5).hex(),
+  },
+
+  endpointIncompliantChip: {
+    background: Color(theme.palette.warning.light).lighten(0.3).hex(),
+    color: Color(theme.palette.warning.dark).darken(0.5).hex(),
+  },
+
+  endpointCompliantChip: {
+    background: Color(theme.palette.success.light).lighten(0.3).hex(),
+    color: Color(theme.palette.success.dark).darken(0.5).hex(),
   },
 
   // states
