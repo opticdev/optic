@@ -15,21 +15,22 @@ import {
   createContext,
   Provider as TestingDashboardContextProvider,
   queriesFromEvents,
-  useTestingService
+  useTestingService,
 } from '../../contexts/TestingDashboardContext';
 import ReportsNavigation from '../testing/reports-nav';
 import Page from '../Page';
+import { useRouterPaths } from '../../RouterPaths';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
     flexGrow: 1,
     [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column' // stack vertically on smaller screens for now
+      flexDirection: 'column', // stack vertically on smaller screens for now
     },
     [theme.breakpoints.up('sm')]: {
-      flexDirection: 'row' // horizontally on larger screens
-    }
+      flexDirection: 'row', // horizontally on larger screens
+    },
   },
   navigationContainer: {
     // keep then navigation fixed
@@ -41,15 +42,15 @@ const useStyles = makeStyles((theme) => ({
     borderRight: `1px solid ${theme.palette.grey[300]}`,
 
     [theme.breakpoints.up('sm')]: {
-      width: (theme.breakpoints.values.sm / 3) * 2
-    }
+      width: (theme.breakpoints.values.sm / 3) * 2,
+    },
   },
   reportContainer: {
     display: 'flex',
     flexGrow: 1,
     flexShrink: 1,
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 }));
 
 export default function TestingDashboardPage(props) {
@@ -57,10 +58,11 @@ export default function TestingDashboardPage(props) {
   const hasService = !!service;
   const baseUrl = match.url;
   const classes = useStyles();
+  const routerPaths = useRouterPaths();
 
   const dashboardContext = useMemo(() => createContext({ service, baseUrl }), [
     hasService,
-    baseUrl
+    baseUrl,
   ]);
 
   if (!hasService) {
@@ -81,7 +83,13 @@ export default function TestingDashboardPage(props) {
             <div className={classes.reportContainer}>
               <Switch>
                 <Route
-                  path={`${baseUrl}/captures/:captureId`}
+                  strict
+                  path={routerPaths.testingEndpointDetails}
+                  component={TestingDashboard}
+                />
+                <Route
+                  strict
+                  path={routerPaths.testingCapture}
                   component={TestingDashboard}
                 />
                 <Route component={DefaultReportRedirect} />
@@ -121,13 +129,13 @@ function DefaultReportRedirect(props) {
 }
 
 export function TestingDashboard(props) {
-  const { captureId } = props.match.params;
+  const { captureId, endpointId } = props.match.params;
   const {
     loading: loadingReport,
     result: report,
-    error: reportError
+    error: reportError,
   } = useTestingService((service) => service.loadReport(captureId), [
-    captureId
+    captureId,
   ]);
   const { loading: loadingSpec, result: spec, error: specError } = useSpec(
     captureId
@@ -135,9 +143,9 @@ export function TestingDashboard(props) {
   const {
     loading: loadingCapture,
     result: capture,
-    error: captureError
+    error: captureError,
   } = useTestingService((service) => service.loadCapture(captureId), [
-    captureId
+    captureId,
   ]);
 
   const error = reportError || specError || captureError;
@@ -148,7 +156,12 @@ export function TestingDashboard(props) {
       {(loadingReport || loadingSpec || loadingCapture) && <Loading />}
 
       {report && spec && capture && (
-        <ReportSummary report={report} spec={spec} capture={capture} />
+        <ReportSummary
+          report={report}
+          spec={spec}
+          capture={capture}
+          currentEndpointId={endpointId}
+        />
       )}
     </>
   );
@@ -186,6 +199,6 @@ function createSpec(specEvents) {
     apiName,
     pathsById,
     requestIdsByPathId,
-    requests
+    requests,
   };
 }

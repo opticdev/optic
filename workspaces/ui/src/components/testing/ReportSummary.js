@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { opticEngine } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import classNames from 'classnames';
 
 // TODO: find a more appropriate place for this logic to live rather than in
 // Contexts now that it's being re-used elsewhere.
@@ -19,14 +20,14 @@ import { PathAndMethod } from '../diff/v2/PathAndMethod';
 import { ReportEndpointLink } from './report-link';
 
 export default function ReportSummary(props) {
-  const { capture, report, spec } = props;
+  const { capture, report, spec, currentEndpointId } = props;
   const classes = useStyles();
   const { captureId } = capture;
 
   const summary = useMemo(() => createSummary(capture, spec, report), [
     capture,
     spec,
-    report
+    report,
   ]);
   const {
     endpoints,
@@ -34,7 +35,7 @@ export default function ReportSummary(props) {
     totalInteractions,
     totalCompliantInteractions,
     totalDiffs,
-    totalUnmatchedPaths
+    totalUnmatchedPaths,
   } = summary;
 
   return (
@@ -72,7 +73,10 @@ export default function ReportSummary(props) {
           {endpoints.map((endpoint) => (
             <li
               key={endpoint.request.requestId}
-              className={classes.endpointsListItem}
+              className={classNames(classes.endpointsListItem, {
+                [classes.isCurrent]:
+                  currentEndpointId && endpoint.id === currentEndpointId,
+              })}
             >
               <Card className={classes.endpointCard}>
                 <ReportEndpointLink
@@ -145,21 +149,21 @@ const useStyles = makeStyles((theme) => ({
   root: {
     padding: theme.spacing(3, 4),
     maxWidth: theme.breakpoints.values.lg,
-    flexGrow: 1
+    flexGrow: 1,
   },
 
   reportMeta: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
   },
 
   captureTime: {
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.grey[500],
-    fontSize: theme.typography.pxToRem(12)
+    fontSize: theme.typography.pxToRem(12),
   },
 
   buildName: {
@@ -171,35 +175,35 @@ const useStyles = makeStyles((theme) => ({
 
     '& code': {
       color: theme.palette.primary.light,
-      fontWeight: 'bold'
-    }
+      fontWeight: 'bold',
+    },
   },
 
   stats: {
-    marginBottom: theme.spacing(6)
+    marginBottom: theme.spacing(6),
   },
 
   liveIndicator: {
     display: 'flex',
     alignItems: 'center',
-    marginRight: theme.spacing(0.5)
+    marginRight: theme.spacing(0.5),
   },
 
   recordIcon: {
     width: 16,
     height: 16,
     marginRight: theme.spacing(0.5),
-    fill: theme.palette.secondary.main
+    fill: theme.palette.secondary.main,
   },
 
   liveLabel: {
-    ...theme.typography.caption
+    ...theme.typography.caption,
   },
 
   historyIcon: {
     width: 14,
     height: 14,
-    marginRight: theme.spacing(0.5)
+    marginRight: theme.spacing(0.5),
   },
 
   summaryStat: {},
@@ -207,26 +211,33 @@ const useStyles = makeStyles((theme) => ({
   endpointsHeader: {
     ...theme.typography.overline,
     color: '#818892',
-    borderBottom: `1px solid #e3e8ee`
+    borderBottom: `1px solid #e3e8ee`,
   },
 
   endpointsList: {
     margin: 0,
     padding: 0,
-    listStyleType: 'none'
+    listStyleType: 'none',
   },
 
   endpointCard: {
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(2),
+
+    '$isCurrent &': {
+      background: 'red',
+    },
   },
 
   endpointLink: {
-    textDecoration: 'none'
+    textDecoration: 'none',
   },
 
   endpointHeader: {
-    padding: theme.spacing(2, 2)
-  }
+    padding: theme.spacing(2, 2),
+  },
+
+  // states
+  isCurrent: {},
 }));
 
 const CoverageConcerns = opticEngine.com.useoptic.coverage;
@@ -246,7 +257,7 @@ function createSummary(capture, spec, report) {
   const endpoints = uniqBy(
     flatMapOperations(allPaths, {
       requests,
-      requestIdsByPathId
+      requestIdsByPathId,
     }),
     'requestId'
   ).map(({ request, path }) => {
@@ -265,16 +276,16 @@ function createSummary(capture, spec, report) {
       request: {
         requestId,
         httpMethod,
-        isRemoved
+        isRemoved,
       },
       path: {
-        name: path.name
+        name: path.name,
       },
       counts: {
         interactions: interactionsCounts,
         diffs: diffsCount,
-        compliant: compliantCount
-      }
+        compliant: compliantCount,
+      },
     };
   });
 
@@ -303,7 +314,7 @@ function createSummary(capture, spec, report) {
     totalInteractions,
     totalUnmatchedPaths,
     totalDiffs,
-    totalCompliantInteractions
+    totalCompliantInteractions,
   };
 
   function getCoverageCount(concern) {
