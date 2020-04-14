@@ -222,7 +222,7 @@ const useStyles = makeStyles((theme) => ({
   },
 
   endpointsList: {
-    margin: 0,
+    margin: theme.spacing(0, -2),
     padding: 0,
     listStyleType: 'none',
   },
