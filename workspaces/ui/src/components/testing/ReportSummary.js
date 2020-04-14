@@ -18,6 +18,7 @@ import ScheduleIcon from '@material-ui/icons/Schedule';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { Card } from '@material-ui/core';
 import { ReportEndpointLink } from './report-link';
+import EndpointReport from './EndpointReport';
 
 export default function ReportSummary(props) {
   const { capture, report, spec, currentEndpointId } = props;
@@ -139,6 +140,10 @@ export default function ReportSummary(props) {
                       )}
                     </div>
                   </div>
+
+                  {currentEndpointId && endpoint.id === currentEndpointId && (
+                    <EndpointReport endpoint={endpoint} />
+                  )}
                 </ReportEndpointLink>
               </Card>
             </li>
