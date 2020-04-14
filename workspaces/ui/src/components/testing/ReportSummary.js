@@ -8,7 +8,7 @@ import classNames from 'classnames';
 // Contexts now that it's being re-used elsewhere.
 import {
   flattenPaths,
-  flatMapOperations
+  flatMapOperations,
 } from '../../contexts/ApiOverviewContext';
 import * as uniqBy from 'lodash.uniqby';
 import { StableHasher } from '../../utilities/CoverageUtilities';
@@ -16,12 +16,12 @@ import { StableHasher } from '../../utilities/CoverageUtilities';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import { Card } from '@material-ui/core';
-import { PathAndMethod } from '../diff/v2/PathAndMethod';
 import { ReportEndpointLink } from './report-link';
 
 export default function ReportSummary(props) {
   const { capture, report, spec, currentEndpointId } = props;
   const classes = useStyles();
+  const classesHttpMethods = useHttpMethodStyles();
   const { captureId } = capture;
 
   const summary = useMemo(() => createSummary(capture, spec, report), [
@@ -85,10 +85,17 @@ export default function ReportSummary(props) {
                   endpointId={endpoint.id}
                 >
                   <div className={classes.endpointHeader}>
-                    <PathAndMethod
-                      path={endpoint.path.name}
-                      method={endpoint.request.httpMethod}
-                    />
+                    <span
+                      className={classNames(
+                        classes.endpointMethod,
+                        classesHttpMethods[endpoint.request.httpMethod]
+                      )}
+                    >
+                      {endpoint.request.httpMethod}
+                    </span>
+                    <span className={classes.endpointPath}>
+                      {endpoint.path.name}
+                    </span>
                     <small>
                       ({endpoint.counts.compliant}/
                       {endpoint.counts.interactions} interactions compliant)
@@ -239,6 +246,10 @@ const useStyles = makeStyles((theme) => ({
   },
 
   endpointHeader: {
+    display: 'grid',
+    gridTemplateColumns: 'max-content 1fr max-content',
+    gridColumnGap: theme.spacing(2),
+    alignItems: 'center',
     padding: theme.spacing(0, 2),
     // paddingTop: 0,
     // paddingBottom: 0,
@@ -253,9 +264,38 @@ const useStyles = makeStyles((theme) => ({
     },
   },
 
+  endpointMethod: {
+    padding: theme.spacing(0.5),
+    flexGrow: 0,
+    flexShrink: 0,
+    borderRadius: theme.shape.borderRadius,
+
+    fontWeight: theme.typography.fontWeightRegular,
+  },
+
   // states
   isCurrent: {},
 }));
+
+// TODO: Consider moving this to PathAndMethod or some other more general module, for consistency.
+// Take note that probably means allowing injecting base styles, as context dictates a lot of that.
+const useHttpMethodStyles = makeStyles((theme) => {
+  const base = {
+    color: '#fff',
+  };
+
+  return ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'].reduce(
+    (styles, httpMethod) => {
+      const color = theme.palette.httpMethods[httpMethod];
+      styles[httpMethod] = {
+        ...base,
+        backgroundColor: color.dark,
+      };
+      return styles;
+    },
+    {}
+  );
+});
 
 const CoverageConcerns = opticEngine.com.useoptic.coverage;
 
