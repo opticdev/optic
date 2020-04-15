@@ -87,13 +87,13 @@ export default function ReportSummary(props) {
                     <span
                       className={classNames(
                         classes.endpointMethod,
-                        classesHttpMethods[endpoint.httpMethod]
+                        classesHttpMethods[endpoint.descriptor.httpMethod]
                       )}
                     >
-                      {endpoint.httpMethod}
+                      {endpoint.descriptor.httpMethod}
                     </span>
                     <code className={classes.endpointPath}>
-                      {endpoint.fullPath}
+                      {endpoint.descriptor.fullPath}
                     </code>
 
                     <div className={classes.endpointStats}>
@@ -421,7 +421,9 @@ function createSummary(capture, spec, report) {
 
     return {
       id: endpointId,
-      ...endpointDescriptor,
+      pathId: endpoint.pathId,
+      method: endpoint.method,
+      descriptor: endpointDescriptor,
       counts: {
         interactions: interactionsCounts,
         diffs: diffsCount,
