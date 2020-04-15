@@ -13,14 +13,44 @@ import {
 import { getNormalizedBodyDescriptor } from './RequestUtilities';
 import sortBy from 'lodash.sortby';
 
+export interface EndpointDescriptor {
+  httpMethod: string;
+  method: string;
+  pathId: string;
+  fullPath: string;
+  pathParameters: Array<{
+    pathId: string;
+    name: string;
+    description: string;
+  }>;
+  requestBodies: Array<{
+    requestId: string;
+    requestBody: any; // replace with RequestBodyDescriptor
+  }>;
+  responses: Array<{
+    responseId: string;
+    responseBody: any; // replace with ResponseBodyDescriptor
+    statusCode: number; // replace with HttpStatusCode enum?
+  }>;
+  endpointPurpose?: string;
+  endpointDescription?: string;
+  isEmpty: boolean;
+}
+
 export function getEndpointId({ method, pathId }) {
   return pathMethodKeyBuilder(pathId, method);
 }
 
 export function createEndpointDescriptor(
-  { method, pathId },
-  cachedQueryResults
-) {
+  { method, pathId }: { method: string; pathId: string },
+  cachedQueryResults: {
+    requests: any[];
+    pathsById: { [id: string]: any };
+    requestIdsByPathId: { [id: string]: any };
+    responsesArray: any[];
+    contributions: any;
+  }
+): EndpointDescriptor {
   const {
     requests,
     pathsById,
