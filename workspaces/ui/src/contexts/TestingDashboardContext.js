@@ -41,4 +41,10 @@ export function useReportPath(captureId) {
   return `${baseUrl}/captures/${captureId}`;
 }
 
+export function useEndpointPath(captureId, endpointId) {
+  const { baseUrl } = useContext(TestingDashboardContext);
+
+  return `${baseUrl}/captures/${captureId}/endpoints/${endpointId}`;
+}
+
 export { queriesFromEvents } from '../services/TestingService';
