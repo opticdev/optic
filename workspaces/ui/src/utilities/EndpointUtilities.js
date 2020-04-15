@@ -21,7 +21,6 @@ export function createEndpointDescriptor(
   { method, pathId },
   cachedQueryResults
 ) {
-  debugger;
   const {
     requests,
     pathsById,
