@@ -3,15 +3,13 @@ import { opticEngine } from '@useoptic/domain';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 
-// TODO: find a more appropriate place for this logic to live rather than in
-// Contexts now that it's being re-used elsewhere.
 import {
-  flattenPaths,
-  flatMapOperations
-} from '../../contexts/ApiOverviewContext';
+  getNameWithFormattedParameters,
+  getParentPathId,
+} from '../utilities/PathUtilities';
 import * as uniqBy from 'lodash.uniqby';
+import sortBy from 'lodash.sortby';
 import { StableHasher } from '../../utilities/CoverageUtilities';
-import { SummaryStatus } from '../dashboards/APIDashboard';
 
 export default function ReportSummary(props) {
   const { capture, report, spec } = props;
@@ -20,14 +18,14 @@ export default function ReportSummary(props) {
   const summary = useMemo(() => createSummary(capture, spec, report), [
     capture,
     spec,
-    report
+    report,
   ]);
   const {
     endpoints,
     totalInteractions,
     totalCompliantInteractions,
     totalDiffs,
-    totalUnmatchedPaths
+    totalUnmatchedPaths,
   } = summary;
 
   return (
@@ -104,10 +102,10 @@ function Stat({ value = 0, label = '' }) {
 // -------
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: theme.spacing(3, 4)
+    padding: theme.spacing(3, 4),
   },
 
-  summaryStat: {}
+  summaryStat: {},
 }));
 
 const CoverageConcerns = opticEngine.com.useoptic.coverage;
@@ -127,7 +125,7 @@ function createSummary(capture, spec, report) {
   const endpoints = uniqBy(
     flatMapOperations(allPaths, {
       requests,
-      requestIdsByPathId
+      requestIdsByPathId,
     }),
     'requestId'
   ).map(({ request, path }) => {
@@ -145,16 +143,16 @@ function createSummary(capture, spec, report) {
       request: {
         requestId,
         httpMethod,
-        isRemoved
+        isRemoved,
       },
       path: {
-        name: path.name
+        name: path.name,
       },
       counts: {
         interactions: interactionsCounts,
         diffs: diffsCount,
-        compliant: compliantCount
-      }
+        compliant: compliantCount,
+      },
     };
   });
 
@@ -176,11 +174,64 @@ function createSummary(capture, spec, report) {
     totalInteractions,
     totalUnmatchedPaths,
     totalDiffs,
-    totalCompliantInteractions
+    totalCompliantInteractions,
   };
 
   function getCoverageCount(concern) {
     const key = StableHasher.hash(concern);
     return report.coverageCounts[key] || 0;
   }
+}
+
+function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
+  const path = paths[id];
+  let name = '/' + getNameWithFormattedParameters(path);
+
+  if (name === '/') {
+    name = '';
+  }
+
+  const fullNew = full + name;
+
+  const children = Object.entries(paths)
+    .filter((i) => {
+      // eslint-disable-next-line no-unused-vars
+      const [childId, childPath] = i;
+      return getParentPathId(childPath) === id;
+    })
+    .map((i) => {
+      // eslint-disable-next-line no-unused-vars
+      const [childId, childPath] = i;
+      return flattenPaths(childId, paths, depth + 1, fullNew, filteredIds);
+    });
+
+  const visible = filteredIds
+    ? filteredIds.includes(id) || children.some((i) => i.visible)
+    : null;
+
+  return {
+    name,
+    full: full,
+    toggled: depth < 2,
+    children: sortBy(children, 'name'),
+    depth,
+    searchString: `${full}${name}`.split('/').join(' '),
+    pathId: id,
+    visible,
+  };
+}
+
+function flatMapOperations(children, cachedQueryResults) {
+  return children.flatMap((path) => {
+    const requests = cachedQueryResults.requestIdsByPathId[path.pathId] || [];
+    return requests
+      .map((id) => {
+        return {
+          requestId: id,
+          request: cachedQueryResults.requests[id],
+          path,
+        };
+      })
+      .concat(flatMapOperations(path.children, cachedQueryResults));
+  });
 }
