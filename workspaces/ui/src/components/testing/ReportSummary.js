@@ -5,13 +5,10 @@ import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
 import Color from 'color';
 
-// TODO: find a more appropriate place for this logic to live rather than in
-// Contexts now that it's being re-used elsewhere.
 import {
-  flattenPaths,
-  flatMapOperations,
-} from '../../contexts/ApiOverviewContext';
-import * as uniqBy from 'lodash.uniqby';
+  createEndpointDescriptor,
+  getEndpointId,
+} from '../../utilities/EndpointUtilities';
 import { StableHasher } from '../../utilities/CoverageUtilities';
 
 import ScheduleIcon from '@material-ui/icons/Schedule';
@@ -74,7 +71,7 @@ export default function ReportSummary(props) {
         <ul className={classes.endpointsList}>
           {endpoints.map((endpoint) => (
             <li
-              key={endpoint.request.requestId}
+              key={endpoint.id}
               className={classNames(classes.endpointsListItem, {
                 [classes.isCurrent]:
                   currentEndpointId && endpoint.id === currentEndpointId,
@@ -90,13 +87,13 @@ export default function ReportSummary(props) {
                     <span
                       className={classNames(
                         classes.endpointMethod,
-                        classesHttpMethods[endpoint.request.httpMethod]
+                        classesHttpMethods[endpoint.httpMethod]
                       )}
                     >
-                      {endpoint.request.httpMethod}
+                      {endpoint.httpMethod}
                     </span>
                     <code className={classes.endpointPath}>
-                      {endpoint.path.name}
+                      {endpoint.fullPath}
                     </code>
 
                     <div className={classes.endpointStats}>
@@ -407,22 +404,13 @@ const CoverageConcerns = opticEngine.com.useoptic.coverage;
 // for the entire dashboard context if not all of the app?)
 
 function createSummary(capture, spec, report) {
-  const { apiName, pathsById, requestIdsByPathId, requests } = spec;
+  const { apiName, endpoints: specEndpoints } = spec;
 
-  const pathIds = Object.keys(pathsById);
-  const flattenedPaths = flattenPaths('root', pathsById, 0, '', []);
-  const allPaths = [flattenedPaths, ...flattenedPaths.children];
+  const endpoints = specEndpoints.map((endpoint, i) => {
+    const endpointDescriptor = createEndpointDescriptor(endpoint, spec);
+    const endpointId = getEndpointId(endpoint);
 
-  const endpoints = uniqBy(
-    flatMapOperations(allPaths, {
-      requests,
-      requestIdsByPathId,
-    }),
-    'requestId'
-  ).map(({ request, path }, i) => {
-    const { pathId } = path;
-    const { requestDescriptor, isRemoved, requestId } = request;
-    const { httpMethod } = requestDescriptor;
+    const { pathId, httpMethod } = endpointDescriptor;
 
     const interactionsCounts = getCoverageCount(
       CoverageConcerns.TotalForPathAndMethod(pathId, httpMethod)
@@ -432,15 +420,8 @@ function createSummary(capture, spec, report) {
     const compliantCount = interactionsCounts - incompliantInteractions;
 
     return {
-      id: `${httpMethod}-${pathId}`,
-      request: {
-        requestId,
-        httpMethod,
-        isRemoved,
-      },
-      path: {
-        name: path.name,
-      },
+      id: endpointId,
+      ...endpointDescriptor,
       counts: {
         interactions: interactionsCounts,
         diffs: diffsCount,

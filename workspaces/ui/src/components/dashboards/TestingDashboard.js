@@ -191,14 +191,7 @@ function useSpec(captureId) {
 
 function createSpec(specEvents) {
   const { queries } = queriesFromEvents(specEvents);
-  const { apiName, pathsById, requestIdsByPathId, requests } = stuffFromQueries(
-    queries
-  );
+  const spec = stuffFromQueries(queries);
 
-  return {
-    apiName,
-    pathsById,
-    requestIdsByPathId,
-    requests,
-  };
+  return spec;
 }
