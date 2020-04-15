@@ -1,10 +1,10 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
-import {secondary} from '../../../theme';
+import {GenericContextFactory} from '../../contexts/GenericContextFactory';
+import {secondary} from '../../theme';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import ReusableDiffRow from './shape_viewers/ReusableDiffRow';
+import ReusableDiffRow from '../diff/v2/shape_viewers/ReusableDiffRow';
 import {Typography} from '@material-ui/core';
 
 
@@ -113,6 +113,7 @@ class ContentTabs extends React.Component {
   }
 
   render() {
+    //@ts-ignore
     const {classes, options, notifications, renderDescription, inRequest, requestContentType, responseContentType, setRequestContentType, setResponseContentType, responseStatusCode, setResponseStatusCode, renderResponse, renderRequest} = this.props;
 
     const contentTypeTab = inRequest ? requestContentType : responseContentType;

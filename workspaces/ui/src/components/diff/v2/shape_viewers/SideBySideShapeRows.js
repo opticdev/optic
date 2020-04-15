@@ -1,24 +1,13 @@
 import React, {useContext} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from '@material-ui/core';
 import classNames from 'classnames';
-import Toolbar from '@material-ui/core/Toolbar';
 import WarningIcon from '@material-ui/icons/Warning';
-import {AddedGreenBackground, ChangedYellowBackground, primary, RemovedRedBackground, secondary} from '../../../../theme';
-import withStyles from '@material-ui/core/styles/withStyles';
-import Tooltip from '@material-ui/core/Tooltip';
+import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground, secondary} from '../../../../theme';
 import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
 import CheckIcon from '@material-ui/icons/Check';
-import {
-  getOrUndefined,
-  mapScala,
-  getOrUndefinedJson,
-  headOrUndefined,
-  CompareEquality,
-  lengthScala, toOption
-} from '@useoptic/domain';
+import {getOrUndefined, getOrUndefinedJson, headOrUndefined, lengthScala, mapScala, toOption} from '@useoptic/domain';
 import {withDiffContext} from '../DiffContext';
-import {Indent, IndentIncrement, DepthContext} from './Indent';
+import {DepthContext, Indent, IndentIncrement} from './Indent';
 import {HiddenItemEllipsis, TypeName, useColor, useShapeViewerStyles} from './styles';
 
 export const DiffViewer = ({shape}) => {
@@ -43,10 +32,8 @@ function renderShape(shape, nested) {
       return (
         <ObjectRender shape={shape} nested={Boolean(nested)}/>
       );
-      break;
     case '$list':
       return <ListRender shape={shape} nested={Boolean(nested)}/>;
-      break;
   }
 }
 
@@ -76,11 +63,8 @@ export const Row = withShapeRenderContext((props) => {
 });
 
 export const ObjectRender = withShapeRenderContext((props) => {
-  const classes = useShapeViewerStyles();
   const {shapeRender, shape, nested} = props;
   const fields = shapeRender.resolveFields(shape.fields);
-
-  const objectId = shape.shapeId;
 
   return (
     <>

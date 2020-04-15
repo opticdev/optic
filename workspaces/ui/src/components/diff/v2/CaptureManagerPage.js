@@ -9,39 +9,30 @@ import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import {DocDarkGrey} from '../../requests/DocConstants';
-import {DocSubGroup} from '../../requests/DocSubGroup';
+import {DocDarkGrey} from '../../docs/DocConstants';
+import {DocSubGroup} from '../../docs/DocSubGroup';
 import ListItem from '@material-ui/core/ListItem';
 import List from '@material-ui/core/List';
 import {PathAndMethod} from './PathAndMethod';
 import WarningIcon from '@material-ui/icons/Warning';
-import {Redirect, useHistory} from 'react-router-dom';
+import {Link, Redirect, Route, Switch, useHistory} from 'react-router-dom';
 import Chip from '@material-ui/core/Chip';
-import {Link, withRouter} from 'react-router-dom';
 import {dumpSpecServiceState} from '../../../utilities/dump-spec-service-state';
-
-import {
-  AddedGreen,
-  AddedGreenBackground,
-  ChangedYellow, ChangedYellowBackground,
-  RemovedRed,
-  RemovedRedBackground
-} from '../../../contexts/ColorContext';
-import {TrafficSessionStore, TrafficSessionContext} from '../../../contexts/TrafficSessionContext';
+import {TrafficSessionContext, TrafficSessionStore} from '../../../contexts/TrafficSessionContext';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
-import {SpecServiceContext, useSpecService, withSpecServiceContext} from '../../../contexts/SpecServiceContext';
+import {useSpecService} from '../../../contexts/SpecServiceContext';
 import {useRouterPaths} from '../../../RouterPaths';
-import {RfcContext, withRfcContext} from '../../../contexts/RfcContext';
-import {lengthScala, mapScala, JsonHelper} from '@useoptic/domain';
+import {RfcContext} from '../../../contexts/RfcContext';
+import {JsonHelper, lengthScala, mapScala} from '@useoptic/domain';
 import {NewUrlModal} from './AddUrlModal';
-import {Route, Switch} from 'react-router-dom';
 import DiffPageNew, {IgnoreDiffContext, IgnoreDiffStore} from './DiffPageNew';
 import {Show, ShowSpan} from '../../shared/Show';
-import {EndpointsContextStore, EndpointsContext} from '../../../contexts/EndpointContext';
+import {EndpointsContext, EndpointsContextStore} from '../../../contexts/EndpointContext';
 import MoreRecentCapture from './MoreRecentCapture';
 import Page from '../../Page';
 import {useBaseUrl} from '../../../contexts/BaseUrlContext';
 import EmptyState from '../../support/EmptyState';
+import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground} from '../../../theme';
 
 const useStyles = makeStyles(theme => ({
   container: {

@@ -175,11 +175,21 @@ function LocalRfcStore(props) {
   );
 }
 
+function ImmutableRfcStore(props) {
+  return (
+    <RfcStore onChange={() => console.log('not mutable')}>
+      {props.children}
+    </RfcStore>
+  );
+}
+
+
 
 const LocalDiffRfcStore = BaseRfcStore;
 
 export {
   RfcStore,
+  ImmutableRfcStore,
   LocalRfcStore,
   LocalDiffRfcStore,
   RfcContext,

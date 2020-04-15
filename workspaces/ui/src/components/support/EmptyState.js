@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
+import {makeStyles} from '@material-ui/core/styles';
 import ReactMarkdown from 'react-markdown';
-import {Button, CardActions, Typography} from '@material-ui/core';
+import {Button, Typography} from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
-import {DocDivider} from '../requests/DocConstants';
+import {DocDivider} from '../docs/DocConstants';
 import {secondary} from '../../theme';
 
 const useStyles = makeStyles((theme) => ({

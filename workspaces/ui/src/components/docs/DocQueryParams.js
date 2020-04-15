@@ -1,10 +1,8 @@
 import React from 'react';
 import {DocSubGroup} from './DocSubGroup';
-import {MarkdownContribution} from './DocContribution';
 import {DocParameter} from './DocParameter';
-import {ExampleShapeViewer, ShapeOnly} from './DocCodeBox';
-import {DocGrid} from './DocGrid';
-import {NamerStore} from '../shapes/Namer';
+import {ShapeOnly} from './DocCodeBox';
+import {DocGrid} from '../shared/DocGrid';
 import {DESCRIPTION} from '../../ContributionKeys';
 
 export function DocQueryParams({shapeId, flatShape, getContribution, updateContribution}) {

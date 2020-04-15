@@ -468,3 +468,56 @@ function createSummary(capture, spec, report) {
     return report.coverageCounts[key] || 0;
   }
 }
+
+function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
+  const path = paths[id];
+  let name = '/' + getNameWithFormattedParameters(path);
+
+  if (name === '/') {
+    name = '';
+  }
+
+  const fullNew = full + name;
+
+  const children = Object.entries(paths)
+    .filter((i) => {
+      // eslint-disable-next-line no-unused-vars
+      const [childId, childPath] = i;
+      return getParentPathId(childPath) === id;
+    })
+    .map((i) => {
+      // eslint-disable-next-line no-unused-vars
+      const [childId, childPath] = i;
+      return flattenPaths(childId, paths, depth + 1, fullNew, filteredIds);
+    });
+
+  const visible = filteredIds
+    ? filteredIds.includes(id) || children.some((i) => i.visible)
+    : null;
+
+  return {
+    name,
+    full: full,
+    toggled: depth < 2,
+    children: sortBy(children, 'name'),
+    depth,
+    searchString: `${full}${name}`.split('/').join(' '),
+    pathId: id,
+    visible,
+  };
+}
+
+function flatMapOperations(children, cachedQueryResults) {
+  return children.flatMap((path) => {
+    const requests = cachedQueryResults.requestIdsByPathId[path.pathId] || [];
+    return requests
+      .map((id) => {
+        return {
+          requestId: id,
+          request: cachedQueryResults.requests[id],
+          path,
+        };
+      })
+      .concat(flatMapOperations(path.children, cachedQueryResults));
+  });
+}

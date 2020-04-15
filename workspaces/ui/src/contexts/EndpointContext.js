@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { GenericContextFactory } from './GenericContextFactory';
 import {
   createEndpointDescriptor,
@@ -6,6 +7,7 @@ import {
 } from '../utilities/EndpointUtilities';
 import { withRfcContext } from './RfcContext';
 import { updateContribution as commandsForUpdatingContribution } from '../engine/routines';
+
 const {
   Context: EndpointsContext,
   withContext: withEndpointsContext,
