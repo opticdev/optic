@@ -6,11 +6,9 @@ import classNames from 'classnames';
 import Color from 'color';
 
 import {
-  getNameWithFormattedParameters,
-  getParentPathId,
-} from '../utilities/PathUtilities';
-import * as uniqBy from 'lodash.uniqby';
-import sortBy from 'lodash.sortby';
+  createEndpointDescriptor,
+  getEndpointId,
+} from '../../utilities/EndpointUtilities';
 import { StableHasher } from '../../utilities/CoverageUtilities';
 
 import ScheduleIcon from '@material-ui/icons/Schedule';
@@ -73,7 +71,7 @@ export default function ReportSummary(props) {
         <ul className={classes.endpointsList}>
           {endpoints.map((endpoint) => (
             <li
-              key={endpoint.request.requestId}
+              key={endpoint.id}
               className={classNames(classes.endpointsListItem, {
                 [classes.isCurrent]:
                   currentEndpointId && endpoint.id === currentEndpointId,
@@ -89,13 +87,13 @@ export default function ReportSummary(props) {
                     <span
                       className={classNames(
                         classes.endpointMethod,
-                        classesHttpMethods[endpoint.request.httpMethod]
+                        classesHttpMethods[endpoint.descriptor.httpMethod]
                       )}
                     >
-                      {endpoint.request.httpMethod}
+                      {endpoint.descriptor.httpMethod}
                     </span>
                     <code className={classes.endpointPath}>
-                      {endpoint.path.name}
+                      {endpoint.descriptor.fullPath}
                     </code>
 
                     <div className={classes.endpointStats}>
@@ -406,22 +404,13 @@ const CoverageConcerns = opticEngine.com.useoptic.coverage;
 // for the entire dashboard context if not all of the app?)
 
 function createSummary(capture, spec, report) {
-  const { apiName, pathsById, requestIdsByPathId, requests } = spec;
+  const { apiName, endpoints: specEndpoints } = spec;
 
-  const pathIds = Object.keys(pathsById);
-  const flattenedPaths = flattenPaths('root', pathsById, 0, '', []);
-  const allPaths = [flattenedPaths, ...flattenedPaths.children];
+  const endpoints = specEndpoints.map((endpoint, i) => {
+    const endpointDescriptor = createEndpointDescriptor(endpoint, spec);
+    const endpointId = getEndpointId(endpoint);
 
-  const endpoints = uniqBy(
-    flatMapOperations(allPaths, {
-      requests,
-      requestIdsByPathId,
-    }),
-    'requestId'
-  ).map(({ request, path }, i) => {
-    const { pathId } = path;
-    const { requestDescriptor, isRemoved, requestId } = request;
-    const { httpMethod } = requestDescriptor;
+    const { pathId, httpMethod } = endpointDescriptor;
 
     const interactionsCounts = getCoverageCount(
       CoverageConcerns.TotalForPathAndMethod(pathId, httpMethod)
@@ -431,15 +420,10 @@ function createSummary(capture, spec, report) {
     const compliantCount = interactionsCounts - incompliantInteractions;
 
     return {
-      id: `${httpMethod}-${pathId}`,
-      request: {
-        requestId,
-        httpMethod,
-        isRemoved,
-      },
-      path: {
-        name: path.name,
-      },
+      id: endpointId,
+      pathId: endpoint.pathId,
+      method: endpoint.method,
+      descriptor: endpointDescriptor,
       counts: {
         interactions: interactionsCounts,
         diffs: diffsCount,
@@ -483,57 +467,4 @@ function createSummary(capture, spec, report) {
     const key = StableHasher.hash(concern);
     return report.coverageCounts[key] || 0;
   }
-}
-
-function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
-  const path = paths[id];
-  let name = '/' + getNameWithFormattedParameters(path);
-
-  if (name === '/') {
-    name = '';
-  }
-
-  const fullNew = full + name;
-
-  const children = Object.entries(paths)
-    .filter((i) => {
-      // eslint-disable-next-line no-unused-vars
-      const [childId, childPath] = i;
-      return getParentPathId(childPath) === id;
-    })
-    .map((i) => {
-      // eslint-disable-next-line no-unused-vars
-      const [childId, childPath] = i;
-      return flattenPaths(childId, paths, depth + 1, fullNew, filteredIds);
-    });
-
-  const visible = filteredIds
-    ? filteredIds.includes(id) || children.some((i) => i.visible)
-    : null;
-
-  return {
-    name,
-    full: full,
-    toggled: depth < 2,
-    children: sortBy(children, 'name'),
-    depth,
-    searchString: `${full}${name}`.split('/').join(' '),
-    pathId: id,
-    visible,
-  };
-}
-
-function flatMapOperations(children, cachedQueryResults) {
-  return children.flatMap((path) => {
-    const requests = cachedQueryResults.requestIdsByPathId[path.pathId] || [];
-    return requests
-      .map((id) => {
-        return {
-          requestId: id,
-          request: cachedQueryResults.requests[id],
-          path,
-        };
-      })
-      .concat(flatMapOperations(path.children, cachedQueryResults));
-  });
 }
