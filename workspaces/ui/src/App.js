@@ -14,8 +14,12 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { ThemeProvider } from '@material-ui/core/styles'
 import TopLevelRoutes from './entrypoints';
-
+import {touchAnalytics} from './Analytics';
 class App extends React.Component {
+
+  componentDidMount() {
+    touchAnalytics();
+  }
 
   render() {
     return (

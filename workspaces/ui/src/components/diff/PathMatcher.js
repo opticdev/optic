@@ -1,10 +1,7 @@
 import React from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import PathInput from '../paths/PathInput';
-import pathToRegexp from 'path-to-regexp';
-import Typography from '@material-ui/core/Typography';
-import {pathComponentsToString} from '../paths/NewUnmatchedUrlWizard';
 import UrlToPath from "./UrlToPath";
+import {pathComponentsToString} from './v2/AddUrlModal';
 
 const styles = theme => ({
   pathWrapper: {

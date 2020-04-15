@@ -1,5 +1,5 @@
 import React from 'react';
-import { GenericContextFactory } from './GenericContextFactory';
+import {GenericContextFactory} from './GenericContextFactory';
 import uuidv4 from 'uuid/v4';
 
 const clientSessionId = uuidv4()

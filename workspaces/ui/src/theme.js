@@ -7,6 +7,9 @@ export const UpdatedBlueBackground = 'rgba(43,123,209,0.11)';
 export const AddedGreenBackground = 'rgba(0,196,70,0.3)';
 export const ChangedYellowBackground = 'rgba(252,171,16,0.3)';
 export const RemovedRedBackground = 'rgba(248,51,60,0.3)';
+export const AddedGreen = '#17c8a3'
+export const ChangedYellow = '#c8b768'
+export const RemovedRed = '#c86363'
 
 export const methodColors = {
   GET: '#52e2a3',

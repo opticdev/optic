@@ -5,13 +5,12 @@ import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
 import Color from 'color';
 
-// TODO: find a more appropriate place for this logic to live rather than in
-// Contexts now that it's being re-used elsewhere.
 import {
-  flattenPaths,
-  flatMapOperations,
-} from '../../contexts/ApiOverviewContext';
+  getNameWithFormattedParameters,
+  getParentPathId,
+} from '../utilities/PathUtilities';
 import * as uniqBy from 'lodash.uniqby';
+import sortBy from 'lodash.sortby';
 import { StableHasher } from '../../utilities/CoverageUtilities';
 
 import ScheduleIcon from '@material-ui/icons/Schedule';
@@ -484,4 +483,57 @@ function createSummary(capture, spec, report) {
     const key = StableHasher.hash(concern);
     return report.coverageCounts[key] || 0;
   }
+}
+
+function flattenPaths(id, paths, depth = 0, full = '', filteredIds) {
+  const path = paths[id];
+  let name = '/' + getNameWithFormattedParameters(path);
+
+  if (name === '/') {
+    name = '';
+  }
+
+  const fullNew = full + name;
+
+  const children = Object.entries(paths)
+    .filter((i) => {
+      // eslint-disable-next-line no-unused-vars
+      const [childId, childPath] = i;
+      return getParentPathId(childPath) === id;
+    })
+    .map((i) => {
+      // eslint-disable-next-line no-unused-vars
+      const [childId, childPath] = i;
+      return flattenPaths(childId, paths, depth + 1, fullNew, filteredIds);
+    });
+
+  const visible = filteredIds
+    ? filteredIds.includes(id) || children.some((i) => i.visible)
+    : null;
+
+  return {
+    name,
+    full: full,
+    toggled: depth < 2,
+    children: sortBy(children, 'name'),
+    depth,
+    searchString: `${full}${name}`.split('/').join(' '),
+    pathId: id,
+    visible,
+  };
+}
+
+function flatMapOperations(children, cachedQueryResults) {
+  return children.flatMap((path) => {
+    const requests = cachedQueryResults.requestIdsByPathId[path.pathId] || [];
+    return requests
+      .map((id) => {
+        return {
+          requestId: id,
+          request: cachedQueryResults.requests[id],
+          path,
+        };
+      })
+      .concat(flatMapOperations(path.children, cachedQueryResults));
+  });
 }
