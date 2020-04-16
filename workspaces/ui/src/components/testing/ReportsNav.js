@@ -3,6 +3,8 @@ import { useTestingService } from '../../contexts/TestingDashboardContext';
 import classNames from 'classnames';
 import ReportLink from './report-link';
 import dateParseISO from 'date-fns/parseISO';
+import dateFormatRelative from 'date-fns/formatRelative';
+import dateFormatDistance from 'date-fns/formatDistance';
 import groupBy from 'lodash.groupby';
 
 // Components
@@ -20,7 +22,7 @@ export default function ReportsNavigation() {
   );
 
   const capturesLists = useMemo(() => createCapturesLists(captures || []), [
-    captures
+    captures,
   ]);
 
   if (loading) {
@@ -68,6 +70,7 @@ function ActiveCapture(props) {
 
   const buildIdTag = tags.find(({ name }) => name === 'buildId');
   const envTag = tags.find(({ name }) => name === 'environment') || 'unknown';
+  const now = new Date();
 
   return (
     <CaptureNavLink capture={capture}>
@@ -82,13 +85,8 @@ function ActiveCapture(props) {
             <FiberManualRecordIcon className={classes.recordIcon} />
             <span className={classes.liveLabel}>LIVE</span>
           </div>
-          since 14:03
+          since {dateFormatRelative(capture.createdAt, now)}
         </div>
-
-        {/* <div className={classes.envTag}>
-          <div className={classes.envTagName}>env</div>{' '}
-          <div className={classes.envTagVal}>{envTag.value}</div>
-        </div> */}
       </Card>
     </CaptureNavLink>
   );
@@ -101,6 +99,7 @@ function CompletedCapture(props) {
 
   const buildIdTag = tags.find(({ name }) => name === 'buildId');
   const envTag = tags.find(({ name }) => name === 'environment');
+  const now = new Date();
 
   return (
     <CaptureNavLink capture={capture}>
@@ -111,7 +110,8 @@ function CompletedCapture(props) {
 
         <div className={classes.captureTime}>
           <ScheduleIcon className={classes.historyIcon} />
-          last Monday for 4 hours
+          {dateFormatRelative(capture.createdAt, now)} for{' '}
+          {dateFormatDistance(capture.updatedAt, capture.createdAt)}
         </div>
       </Card>
     </CaptureNavLink>
@@ -140,23 +140,23 @@ const useStyles = makeStyles((theme) => ({
   navRoot: {
     padding: theme.spacing(2),
     flexGrow: 1,
-    background: theme.palette.grey[100]
+    background: theme.palette.grey[100],
   },
 
   activeCaptures: {
-    marginBottom: theme.spacing(3)
+    marginBottom: theme.spacing(3),
   },
 
   capturesList: {
     margin: 0,
     padding: 0,
-    listStyleType: 'none'
+    listStyleType: 'none',
   },
 
   captureListItem: {},
 
   navLink: {
-    textDecoration: 'none'
+    textDecoration: 'none',
   },
 
   card: {
@@ -174,13 +174,13 @@ const useStyles = makeStyles((theme) => ({
 
     ['&$isComplete']: {
       backgroundColor: 'transparent',
-      boxShadow: 'none'
+      boxShadow: 'none',
     },
 
     // wrapping Link hovered
     ['$navLink:hover &, $navLink:focus &']: {
       boxShadow: '0 2px 4px 0 rgba(138, 148, 159, 0.6)',
-      opacity: 1
+      opacity: 1,
     },
 
     // currently selected
@@ -190,10 +190,10 @@ const useStyles = makeStyles((theme) => ({
       transform: `translateX(${theme.spacing(1)}px)`,
       boxShadow: [
         '0 2px 4px 0 rgba(138, 148, 159, 0.6)',
-        '0 4px 8px 2px rgba(138, 148, 159, 0.15)'
+        '0 4px 8px 2px rgba(138, 148, 159, 0.15)',
       ].join(','),
-      background: '#fff'
-    }
+      background: '#fff',
+    },
   },
 
   // states, just so we can use them as modifiers for other rules
@@ -203,7 +203,7 @@ const useStyles = makeStyles((theme) => ({
 
   buildName: {
     '& code': {
-      color: theme.palette.primary.light
+      color: theme.palette.primary.light,
     },
 
     '$isActive &': {
@@ -214,46 +214,46 @@ const useStyles = makeStyles((theme) => ({
       // color: theme.palette.primary.main,
       '& code': {
         fontWeight: 'bold',
-        fontSize: theme.typography.subtitle2.fontSize
-      }
-    }
+        fontSize: theme.typography.subtitle2.fontSize,
+      },
+    },
   },
 
   captureTime: {
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.grey[500],
-    fontSize: theme.typography.pxToRem(12)
+    fontSize: theme.typography.pxToRem(12),
   },
 
   liveIndicator: {
     display: 'flex',
     alignItems: 'center',
-    marginRight: theme.spacing(0.5)
+    marginRight: theme.spacing(0.5),
   },
 
   recordIcon: {
     width: 16,
     height: 16,
     marginRight: theme.spacing(0.5),
-    fill: theme.palette.secondary.main
+    fill: theme.palette.secondary.main,
   },
 
   liveLabel: {
-    ...theme.typography.caption
+    ...theme.typography.caption,
   },
 
   historyIcon: {
     width: 14,
     height: 14,
-    marginRight: theme.spacing(0.5)
+    marginRight: theme.spacing(0.5),
   },
 
   envTag: {
     display: 'flex',
     justifyContent: 'center',
 
-    fontSize: theme.typography.pxToRem(12)
+    fontSize: theme.typography.pxToRem(12),
   },
 
   envTagName: {
@@ -265,7 +265,7 @@ const useStyles = makeStyles((theme) => ({
     borderTopLeftRadius: 4,
     borderBottomLeftRadius: 4,
     paddingLeft: theme.spacing(1),
-    paddingRight: theme.spacing(1)
+    paddingRight: theme.spacing(1),
   },
 
   envTagVal: {
@@ -277,8 +277,8 @@ const useStyles = makeStyles((theme) => ({
     borderTopRightRadius: 4,
     borderBottomRightRadius: 4,
     background: theme.palette.primary.light,
-    color: '#fff'
-  }
+    color: '#fff',
+  },
 }));
 
 // View models
@@ -296,7 +296,7 @@ function createCapturesLists(rawCaptures) {
       isActive,
       createdAt,
       updatedAt,
-      completedAt
+      completedAt,
     };
   });
 

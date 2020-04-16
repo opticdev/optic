@@ -17,7 +17,7 @@ import {
   queriesFromEvents,
   useTestingService,
 } from '../../contexts/TestingDashboardContext';
-import ReportsNavigation from '../testing/reports-nav';
+import ReportsNavigation from '../testing/ReportsNav';
 import Page from '../Page';
 import { useRouterPaths } from '../../RouterPaths';
 
