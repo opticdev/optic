@@ -2,8 +2,8 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as url from 'url';
 import * as yaml from 'js-yaml';
-import getPort from 'get-port';
-import findUp from 'find-up';
+import * as getPort from 'get-port';
+import * as findUp from 'find-up';
 import {parseRule, parseIgnore, IIgnoreRunnable} from './helpers/ignore-parser';
 
 export interface IOpticTask {
