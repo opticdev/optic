@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import ReportLink from './report-link';
 import dateParseISO from 'date-fns/parseISO';
 import dateFormatRelative from 'date-fns/formatRelative';
+import dateFormatDistance from 'date-fns/formatDistance';
 import groupBy from 'lodash.groupby';
 
 // Components
@@ -98,6 +99,7 @@ function CompletedCapture(props) {
 
   const buildIdTag = tags.find(({ name }) => name === 'buildId');
   const envTag = tags.find(({ name }) => name === 'environment');
+  const now = new Date();
 
   return (
     <CaptureNavLink capture={capture}>
@@ -108,7 +110,8 @@ function CompletedCapture(props) {
 
         <div className={classes.captureTime}>
           <ScheduleIcon className={classes.historyIcon} />
-          last Monday for 4 hours
+          {dateFormatRelative(capture.createdAt, now)} for{' '}
+          {dateFormatDistance(capture.updatedAt, capture.createdAt)}
         </div>
       </Card>
     </CaptureNavLink>
