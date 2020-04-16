@@ -3,6 +3,7 @@ import { useTestingService } from '../../contexts/TestingDashboardContext';
 import classNames from 'classnames';
 import ReportLink from './report-link';
 import dateParseISO from 'date-fns/parseISO';
+import dateFormatRelative from 'date-fns/formatRelative';
 import groupBy from 'lodash.groupby';
 
 // Components
@@ -68,6 +69,7 @@ function ActiveCapture(props) {
 
   const buildIdTag = tags.find(({ name }) => name === 'buildId');
   const envTag = tags.find(({ name }) => name === 'environment') || 'unknown';
+  const now = new Date();
 
   return (
     <CaptureNavLink capture={capture}>
@@ -82,7 +84,7 @@ function ActiveCapture(props) {
             <FiberManualRecordIcon className={classes.recordIcon} />
             <span className={classes.liveLabel}>LIVE</span>
           </div>
-          since 14:03
+          since {dateFormatRelative(capture.createdAt, now)}
         </div>
       </Card>
     </CaptureNavLink>
