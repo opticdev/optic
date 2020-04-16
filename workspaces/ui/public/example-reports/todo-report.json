@@ -219,7 +219,12 @@
         }
       }
     ],
-    "capture-2": "capture-1"
+    "capture-2": "capture-1",
+    "capture-3": "capture-1",
+    "capture-4": "capture-1",
+    "capture-5": "capture-1",
+    "capture-6": "capture-1",
+    "capture-7": "capture-1"
   },
   "captures": [
     {
@@ -251,6 +256,86 @@
         {
           "name": "buildId",
           "value": "build-123"
+        }
+      ]
+    },
+    {
+      "captureId": "capture-3",
+      "createdAt": "2020-03-04T23:43:21.487Z",
+      "updatedAt": "2020-03-05T00:39:21.487Z",
+      "completedAt": "2020-03-05T00:39:21.487Z",
+      "tags": [
+        {
+          "name": "environment",
+          "value": "development"
+        },
+        {
+          "name": "buildId",
+          "value": "aa33ead"
+        }
+      ]
+    },
+    {
+      "captureId": "capture-4",
+      "createdAt": "2020-03-04T20:11:21.487Z",
+      "updatedAt": "2020-03-04T22:02:21.487Z",
+      "completedAt": "2020-03-04T22:02:21.487Z",
+      "tags": [
+        {
+          "name": "environment",
+          "value": "development"
+        },
+        {
+          "name": "buildId",
+          "value": "3900fac"
+        }
+      ]
+    },
+    {
+      "captureId": "capture-5",
+      "createdAt": "2020-03-01T13:26:18.020Z",
+      "updatedAt": "2020-03-06T13:25:03.020Z",
+      "completedAt": "2020-03-06T13:25:03.020Z",
+      "tags": [
+        {
+          "name": "environment",
+          "value": "production"
+        },
+        {
+          "name": "buildId",
+          "value": "b3e08017"
+        }
+      ]
+    },
+    {
+      "captureId": "capture-6",
+      "createdAt": "2020-03-01T13:03:18.020Z",
+      "updatedAt": "2020-03-01T13:22:18.020Z",
+      "completedAt": "2020-03-01T13:22:18.020Z",
+      "tags": [
+        {
+          "name": "environment",
+          "value": "staging"
+        },
+        {
+          "name": "buildId",
+          "value": "b3e08017"
+        }
+      ]
+    },
+    {
+      "captureId": "capture-7",
+      "createdAt": "2020-03-01T09:03:18.020Z",
+      "updatedAt": "2020-03-01T12:22:18.020Z",
+      "completedAt": "2020-03-01T12:22:18.020Z",
+      "tags": [
+        {
+          "name": "environment",
+          "value": "development"
+        },
+        {
+          "name": "buildId",
+          "value": "b3e08017"
         }
       ]
     }
@@ -430,6 +515,11 @@
         "tags": []
       }
     ],
-    "capture-2": "capture-1"
+    "capture-2": "capture-1",
+    "capture-3": "capture-1",
+    "capture-4": "capture-1",
+    "capture-5": "capture-1",
+    "capture-6": "capture-1",
+    "capture-7": "capture-1"
   }
 }

@@ -8,7 +8,8 @@ import {Socket} from 'net';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import {CapturesHelpers, ExampleRequestsHelpers, makeRouter} from './routers/spec-router';
-
+import cors, {CorsOptions} from 'cors'
+import {getUser, makeAuthenticationServer} from "./authentication";
 export const log = fs.createWriteStream('./.optic-daemon.log');
 
 export interface ICliServerConfig {
@@ -48,6 +49,7 @@ export const shutdownRequested = 'cli-server:shutdown-requested';
 
 class CliServer {
   private server!: http.Server;
+  private authServer!: http.Server;
   public events: EventEmitter = new EventEmitter();
   private connections: Socket[] = [];
 
@@ -68,12 +70,23 @@ class CliServer {
     const app = express();
     const sessions: ICliServerSession[] = [];
 
+    // share identity with webapp
+    app.get('/identity', async (req, res: express.Response) => {
+      const user = await getUser()
+      if (user) {
+        res.json(user)
+      } else {
+        res.sendStatus(404)
+      }
+    })
+
     // @REFACTOR sessionsRouter
     app.get('/api/sessions', (req, res: express.Response) => {
       res.json({
         sessions
       });
     });
+
     app.post('/api/sessions', bodyParser.json({limit: '5kb'}), async (req, res: express.Response) => {
       const {path, taskConfig} = req.body;
       const captureInfo: ICliServerCaptureInfo = {
@@ -148,10 +161,14 @@ class CliServer {
           this.connections = this.connections.filter(c => c !== connection);
         });
       });
+
+      this.authServer = makeAuthenticationServer()
+
     });
   }
 
   async stop() {
+    this.authServer.close()
     if (this.server) {
       await new Promise((resolve) => {
         log.write(`server closing ${this.connections.length} open\n`);

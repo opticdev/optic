@@ -1,25 +1,14 @@
 import React, {useContext} from 'react';
-import {makeStyles} from '@material-ui/core/styles';
 import {Typography} from '@material-ui/core';
 import classNames from 'classnames';
-import Toolbar from '@material-ui/core/Toolbar';
 import WarningIcon from '@material-ui/icons/Warning';
-import {AddedGreenBackground, ChangedYellowBackground, primary, RemovedRedBackground, secondary} from '../../../../theme';
-import withStyles from '@material-ui/core/styles/withStyles';
-import Tooltip from '@material-ui/core/Tooltip';
+import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground, secondary} from '../../../../theme';
 import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
 import CheckIcon from '@material-ui/icons/Check';
-import {
-  getOrUndefined,
-  mapScala,
-  getOrUndefinedJson,
-  headOrUndefined,
-  CompareEquality,
-  lengthScala, toOption
-} from '@useoptic/domain';
+import {getOrUndefined, getOrUndefinedJson, headOrUndefined, lengthScala, mapScala, toOption} from '@useoptic/domain';
 import {withDiffContext} from '../DiffContext';
-import {Indent, IndentIncrement, DepthContext} from './Indent';
-import {HiddenItemEllipsis, useShapeViewerStyles} from './styles';
+import {DepthContext, Indent, IndentIncrement} from './Indent';
+import {HiddenItemEllipsis, TypeName, useColor, useShapeViewerStyles} from './styles';
 
 export const DiffViewer = ({shape}) => {
   const classes = useShapeViewerStyles();
@@ -43,10 +32,8 @@ function renderShape(shape, nested) {
       return (
         <ObjectRender shape={shape} nested={Boolean(nested)}/>
       );
-      break;
     case '$list':
       return <ListRender shape={shape} nested={Boolean(nested)}/>;
-      break;
   }
 }
 
@@ -76,11 +63,8 @@ export const Row = withShapeRenderContext((props) => {
 });
 
 export const ObjectRender = withShapeRenderContext((props) => {
-  const classes = useShapeViewerStyles();
   const {shapeRender, shape, nested} = props;
   const fields = shapeRender.resolveFields(shape.fields);
-
-  const objectId = shape.shapeId;
 
   return (
     <>
@@ -96,7 +80,6 @@ export const ListRender = withShapeRenderContext((props) => {
   const {shapeRender, shape, nested} = props;
   const listId = shape.shapeId;
   const listItem = getOrUndefined(shapeRender.listItemShape(listId));
-
 
   const {showAllLists} = useContext(ShapeExpandedContext);
 
@@ -131,17 +114,6 @@ function IndexMarker({children}) {
   );
 }
 
-
-const useColor = {
-  StringColor: '#e29f84',
-  NumberColor: '#09885a',
-  BooleanColor: '#E3662E',
-  ObjectColor: '#30B1C4',
-  ListColor: '#c47078',
-  modifier: '#d5d4ff'
-};
-
-
 function ValueRows({value, shape}) {
   const classes = useShapeViewerStyles();
   const {shapeRender} = useContext(ShapeRenderContext);
@@ -170,6 +142,11 @@ function ValueContents({value, shape}) {
 
   if (shape.isOptional || shape.isNullable) {
     return <ValueContents value={value} shape={getOrUndefined(shapeRender.unwrapInner(shape))}/>
+  }
+
+
+  if (jsTypeString === '[object Null]') {
+    return <Symbols>{'null'}</Symbols>;
   }
 
   if (jsTypeString === '[object Array]') {
@@ -215,24 +192,6 @@ function ValueContents({value, shape}) {
   //                    style={{color: colors[typeO]}}>{value.toString()}</Typography>;
 }
 
-const TypeName = ({typeName, style}) => {
-  const classes = useShapeViewerStyles();
-
-  const {shapeRender} = useContext(ShapeRenderContext);
-
-  if (!typeName) {
-    return null;
-  }
-
-  const coloredComponents = typeName.asColoredString(shapeRender);
-
-  return (<div className={classes.typeName}>{mapScala(coloredComponents)((i) => {
-    if (i.text) {
-      return <span style={{color: useColor[i.color] || i.color}}>{i.text}{' '}</span>;
-    }
-  })}
-  </div>);
-};
 
 const AssertionMetTypeName = ({typeName, style}) => {
   const classes = useShapeViewerStyles();
@@ -249,7 +208,7 @@ const AssertionMetTypeName = ({typeName, style}) => {
     <CheckIcon style={{color: '#646464', height: 10, width: 10, marginTop: 6, marginRight: 6}}/>
     {mapScala(coloredComponents)((i) => {
       if (i.text) {
-        return <span>{i.text}{' '}</span>;
+        return <span style={{whiteSpace: 'pre'}}>{i.text}</span>;
       }
     })}
   </div>);
@@ -293,6 +252,7 @@ export const FieldRow = withShapeRenderContext((props) => {
   const missing = field.display === 'missing';
 
   const fieldShape = getOrUndefined(shapeRender.resolveFieldShape(field.field)) || {};
+  const example = getOrUndefinedJson(field.field.exampleValue) || (fieldShape && getOrUndefinedJson(fieldShape.exampleValue))
 
   const diff = headOrUndefined(field.field.diffs);
 
@@ -319,13 +279,14 @@ export const FieldRow = withShapeRenderContext((props) => {
                 <FieldName missing={missing}>{field.fieldName}</FieldName>
               </div>
               <div style={{flex: 1, paddingLeft: 4}}>
-                <ValueContents value={getOrUndefinedJson(field.field.exampleValue)} shape={fieldShape}/>
+                <ValueContents value={example} shape={fieldShape}/>
               </div>
             </div>
           </Indent>
         )}
         right={(() => {
           if (diffNotif && suggestion) {
+
             return <div style={{flex: 1, display: 'flex', marginLeft: 16}}>
               {suggestion.changeTypeAsString !== 'Removal' &&
               <TypeName style={{marginRight: 9}} typeName={fieldShape.name}/>}
@@ -346,7 +307,7 @@ export const FieldRow = withShapeRenderContext((props) => {
         })()}
       />
       {/* this will insert nested rows */}
-      <ValueRows value={getOrUndefinedJson(field.field.exampleValue)} shape={fieldShape}/>
+      <ValueRows value={example} shape={fieldShape}/>
     </>
   );
 });
@@ -357,6 +318,7 @@ export const ItemRow = withShapeRenderContext((props) => {
   const {item, shapeRender, isLast, listId, listItemShape, diffDescription, suggestion} = props;
   const diff = headOrUndefined(item.item.diffs);
 
+  const exampleItemShape = shapeRender.getUnifiedShape(item.item.itemId)
   const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(toOption(listItemShape))) || getOrUndefined(shapeRender.resolveItemShapeFromShapeId(item.item.shapeId));
 
   const diffNotif = diff && (
@@ -385,7 +347,7 @@ export const ItemRow = withShapeRenderContext((props) => {
               <div className={classes.rowContents}>
                 <IndexMarker>{item.index}</IndexMarker>
                 <div style={{flex: 1, paddingLeft: 4}}>
-                  <ValueContents value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>
+                  <ValueContents value={getOrUndefinedJson(item.item.exampleValue)} shape={exampleItemShape}/>
                 </div>
               </div>
             </Indent>
@@ -412,7 +374,7 @@ export const ItemRow = withShapeRenderContext((props) => {
         })()}
       />
       {item.display !== 'hidden' &&
-      <ValueRows value={getOrUndefinedJson(item.item.exampleValue)} shape={resolvedShape}/>}
+      <ValueRows value={getOrUndefinedJson(item.item.exampleValue)} shape={exampleItemShape}/>}
     </>
   );
 });

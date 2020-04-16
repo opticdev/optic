@@ -1,20 +1,12 @@
 import React, {useContext} from 'react';
 import {Typography} from '@material-ui/core';
 import classNames from 'classnames';
-import {AddedGreenBackground, ChangedYellowBackground, primary, RemovedRedBackground, secondary} from '../../../../theme';
-import {ShapeExpandedContext, ShapeRenderContext, ShapeRenderStore, withShapeRenderContext} from './ShapeRenderContext';
-import CheckIcon from '@material-ui/icons/Check';
-import {
-  getOrUndefined,
-  mapScala,
-  getOrUndefinedJson,
-  headOrUndefined,
-  CompareEquality,
-  lengthScala, toOption
-} from '@useoptic/domain';
+import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground} from '../../../../theme';
+import {ShapeExpandedContext, ShapeRenderStore, withShapeRenderContext} from './ShapeRenderContext';
+import {getOrUndefined, getOrUndefinedJson, lengthScala, mapScala, toOption} from '@useoptic/domain';
 
-import {HiddenItemEllipsis, useShapeViewerStyles} from './styles';
-import {Indent, IndentIncrement, DepthContext} from './Indent';
+import {HiddenItemEllipsis, TypeName, useColor, useShapeViewerStyles} from './styles';
+import {DepthContext, Indent, IndentIncrement} from './Indent';
 
 export function ShapeOnlyViewer(props) {
   const {preview} = props;
@@ -133,17 +125,6 @@ function IndexMarker({children}) {
   );
 }
 
-
-const useColor = {
-  StringColor: '#e29f84',
-  NumberColor: '#09885a',
-  BooleanColor: '#E3662E',
-  ObjectColor: '#30B1C4',
-  ListColor: '#c47078',
-  modifier: '#d5d4ff'
-};
-
-
 function ValueRows({value, shape}) {
   const classes = useShapeViewerStyles();
 
@@ -208,45 +189,6 @@ function ValueContents({value, shape}) {
   //                    style={{color: colors[typeO]}}>{value.toString()}</Typography>;
 }
 
-const TypeName = ({typeName, style}) => {
-  const classes = useShapeViewerStyles();
-
-  const {shapeRender} = useContext(ShapeRenderContext);
-
-  if (!typeName) {
-    return null;
-  }
-
-  const coloredComponents = typeName.asColoredString(shapeRender);
-
-  return (<div className={classes.typeName}>{mapScala(coloredComponents)((i) => {
-    if (i.text) {
-      return <span style={{color: useColor[i.color] || i.color}}>{i.text}{' '}</span>;
-    }
-  })}
-  </div>);
-};
-
-const AssertionMetTypeName = ({typeName, style}) => {
-  const classes = useShapeViewerStyles();
-
-  const {shapeRender} = useContext(ShapeRenderContext);
-
-  if (!typeName) {
-    return null;
-  }
-
-  const coloredComponents = typeName.asColoredString(shapeRender);
-
-  return (<div className={classes.assertionMet}>
-    <CheckIcon style={{color: '#646464', height: 10, width: 10, marginTop: 6, marginRight: 6}}/>
-    {mapScala(coloredComponents)((i) => {
-      if (i.text) {
-        return <span>{i.text}{' '}</span>;
-      }
-    })}
-  </div>);
-};
 
 function Symbols({children, withIndent}) {
   const classes = useShapeViewerStyles();

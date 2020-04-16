@@ -1,7 +1,6 @@
 import React from 'react';
 import {GenericContextFactory} from '../../../contexts/GenericContextFactory';
-import {DiffToggleStates, withDiffToggleContext} from './DiffShapeViewer';
-import {withRequestTabsContext} from './ContentTabs';
+import {withRequestTabsContext} from '../../docs/ContentTabs';
 
 const {
   Context: DiffContext,
@@ -82,7 +81,7 @@ class _DiffContextStore extends React.Component {
   }
 }
 
-const DiffContextStore = withRequestTabsContext(withDiffToggleContext(_DiffContextStore))
+const DiffContextStore = withRequestTabsContext(_DiffContextStore)
 
 export {
   DiffContext,

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, {useContext} from 'react';
 
 const BaseUrlContext = React.createContext(null);
 BaseUrlContext.displayName = 'BaseUrlContext';

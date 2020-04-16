@@ -1,5 +1,5 @@
 import Typography from '@material-ui/core/Typography';
-import {DocDarkGrey, DocGrey, methodColors, methodColorsDark} from '../requests/DocConstants';
+import {DocGrey, methodColors, methodColorsDark} from '../docs/DocConstants';
 import React from 'react';
 import {LightTooltip} from '../tooltips/LightTooltip';
 

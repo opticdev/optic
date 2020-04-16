@@ -1,61 +1,31 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {DocDarkGrey, DocDivider, DocGrey} from '../../requests/DocConstants';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import Badge from '@material-ui/core/Badge';
-import {Button, CardActions, Checkbox, Collapse, ListItemAvatar, Tooltip} from '@material-ui/core';
-import Chip from '@material-ui/core/Chip';
+import {DocDarkGrey} from '../../docs/DocConstants';
+import {Button, CardActions, Checkbox, Collapse, ListItemAvatar} from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
 import MenuOpenIcon from '@material-ui/icons/MenuOpen';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import Switch from '@material-ui/core/Switch';
-import WifiIcon from '@material-ui/icons/Wifi';
-import classNames from 'classnames';
-import DoubleArrowIcon from '@material-ui/icons/DoubleArrow';
-import ChangeHistoryIcon from '@material-ui/icons/ChangeHistory';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';
 import {
-  getOrUndefined,
-  mapScala,
   CompareEquality,
   filterScala,
-  lengthScala,
+  getOrUndefined,
   headOrUndefined,
-  DiffPreviewer,
   JsonHelper,
-  toOption,
-  opticEngine
+  lengthScala,
+  mapScala
 } from '@useoptic/domain';
-import {DiffContext, DiffContextStore, withDiffContext} from './DiffContext';
-import {DocSubGroup} from '../../requests/DocSubGroup';
-import DiffHunkViewer from './DiffHunkViewer';
-import {ChangedYellowBackground, primary, RemovedRedBackground, AddedGreenBackground} from '../../../theme';
-import DiffReviewExpanded from './DiffReviewExpanded';
-import Toolbar from '@material-ui/core/Toolbar';
-import {withRfcContext} from '../../../contexts/RfcContext';
-import SimulatedCommandContext from '../SimulatedCommandContext';
-import Scrolling from './Scrolling';
-import {ShapeExpandedStore} from './shape_viewers/ShapeRenderContext';
+import {DiffContext, withDiffContext} from './DiffContext';
+import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground, UpdatedBlue} from '../../../theme';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
-import Link from '@material-ui/core/Link';
 import Card from '@material-ui/core/Card';
-import {UpdatedBlue} from '../../../contexts/ColorContext';
-import CardHeader from '@material-ui/core/CardHeader';
 import IconButton from '@material-ui/core/IconButton';
 import {PulsingOptic} from './DiffHelperCard';
-import {PathAndMethod} from './PathAndMethod';
 import {DiffToolTip} from './shape_viewers/styles';
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -175,6 +145,12 @@ export function DiffCursor(props) {
       setShowAllDiffs(false);
     }
   }, [selectedDiff, diffCount]);
+
+  try {
+    console.log('diff ' +selectedDiff.diff)
+  } catch (e) {
+
+  }
 
   const DiffItem = ({diff, button}) => {
 
@@ -352,69 +328,13 @@ function _NewRegions(props) {
         )}
       </div>
       <CardActions style={{float: 'right', padding: 15}}>
-        <Button color="primary" variant="contained" disabled={approveCount === 0} onClick={onApply}>Approve ({approveCount})</Button>
+        <Button color="primary" variant="contained" disabled={approveCount === 0} onClick={onApply} autoFocus>Approve ({approveCount})</Button>
       </CardActions>
     </Card>
   );
 }
 
 export const NewRegions = withDiffContext(_NewRegions);
-
-
-function _ShapeDiffRegion(props) {
-  const {ignoreDiff, acceptSuggestion, selectedDiff, eventStore, rfcId, selectedInterpretation, title, region} = props;
-  const classes = useStyles();
-
-  if (lengthScala(region) === 0) {
-    return null;
-  }
-
-  return (
-    <div>
-      {mapScala(region)(r => {
-        return (
-          <>
-            {mapScala(r.diffBlocks)(diff => {
-              const inFocus = selectedDiff && diff.containsDiff(selectedDiff.diff);
-              const shouldBlur = selectedDiff && !inFocus && selectedInterpretation;
-              //only render changes in card that is in focus
-
-
-              const inner = (() => {
-                if (inFocus) {
-                  const simulatedCommands = selectedInterpretation ? JsonHelper.seqToJsArray(selectedInterpretation.commands) : [];
-                  return (
-                    <SimulatedCommandContext
-                      rfcId={rfcId}
-                      eventStore={eventStore.getCopy(rfcId)}
-                      commands={simulatedCommands}
-                      shouldSimulate={true}
-                    >
-                      <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus}
-                                     shouldBlur={shouldBlur}/>
-                    </SimulatedCommandContext>
-                  );
-                } else {
-                  return <ShapeDiffCard suggestion={inFocus && selectedInterpretation} diff={diff} inFocus={inFocus}
-                                        shouldBlur={shouldBlur}/>;
-                }
-              })();
-
-              return (
-                <ShapeExpandedStore>
-                  {inner}
-                </ShapeExpandedStore>
-              );
-            })}
-
-          </>
-        );
-      })}
-      <DocDivider/>
-
-    </div>
-  );
-}
 
 export const BreadcumbX = (props) => {
   const classes = useStyles();
@@ -426,80 +346,3 @@ export const BreadcumbX = (props) => {
                                                                                          color="primary">{n}</Typography>)}</Breadcrumbs>
   );
 };
-
-function _ShapeDiffCard(props) {
-  const {diff, suggestion, inFocus, selectedDiff, clearPreview, acceptSuggestion, shouldBlur, rfcService, rfcId} = props;
-  const classes = useStyles();
-
-  const {description} = diff;
-  const location = JsonHelper.seqToJsArray(diff.location);
-  const [showExpanded, setShowExpanded] = useState(false);
-  const currentRfcState = rfcService.currentState(rfcId);
-  let preview = diff.previewRender(headOrUndefined(diff.interactions), toOption(currentRfcState));
-
-  const title = <>{addition}<Typography style={{marginLeft: 11}}
-                                        variant="subtitle2">{diff.description.title}</Typography></>;
-
-  const showFinalize = selectedDiff && CompareEquality.between(selectedDiff, diff) && suggestion;
-
-  const apply = () => {
-    acceptSuggestion(suggestion);
-    clearPreview();
-  };
-
-  return (
-    <Paper className={classNames(classes.wrapper, {[classes.blur]: shouldBlur})} elevation={2}>
-      <div className={classes.header}>
-        {addition}
-        <Breadcrumbs className={classes.location} separator={<span style={{fontSize: 13}}>{'›'}</span>}
-                     aria-label="breadcrumb">{location.map(n => <Typography className={classes.crumb}
-                                                                            color="primary">{n}</Typography>)}</Breadcrumbs>
-        <Typography className={classes.diff} variant="subtitle2">{diff.description.title}</Typography>
-
-        {(!showFinalize && !showExpanded) &&
-        <Button size="small"
-                color="primary"
-                style={{marginRight: 8}}
-                startIcon={<VisibilityIcon color="primary"/>}
-                onClick={() => setShowExpanded(true)}>Expand Examples</Button>}
-
-        {showFinalize && <Button size="small" style={{marginRight: 8}} onClick={clearPreview}>Reset</Button>}
-        {showFinalize &&
-        <Button color="secondary" variant="outlined" size="small" onClick={apply}>Apply Changes</Button>}
-      </div>
-
-
-      <div className={classes.diffsNewRegion} style={{flexDirection: 'column'}}>
-        {showExpanded ? (
-          <DiffReviewExpanded
-            suggestion={suggestion}
-            diff={diff}
-            diffDescription={diff.description}
-            inFocus={inFocus}
-            interactions={diff.interactions}
-            render={(interaction) => {
-              return {
-                request: getOrUndefined(diff.previewRequest(interaction, toOption(currentRfcState))),
-                response: getOrUndefined(diff.previewResponse(interaction, toOption(currentRfcState))),
-                httpMethod: interaction.request.method,
-                url: interaction.request.path,
-              };
-            }}
-          />
-        ) : (
-          <Scrolling>
-            <DiffHunkViewer
-              suggestion={suggestion}
-              diff={diff}
-              preview={preview}
-              diffDescription={description}/>
-          </Scrolling>
-        )}
-      </div>
-    </Paper>
-  );
-}
-
-const ShapeDiffCard = withRfcContext(withDiffContext(_ShapeDiffCard));
-
-export const ShapeDiffRegion = withRfcContext(withDiffContext(_ShapeDiffRegion));

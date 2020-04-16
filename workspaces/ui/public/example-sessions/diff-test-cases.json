@@ -1,0 +1,619 @@
+{
+  "events": [{"PathComponentAdded":{"pathId":"path_d5a2yONq59","parentPathId":"root","name":"field-removal","eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"ba1e3d6a-a0be-47a7-98e0-0a90821955ad","createdAt":"2020-04-09T15:47:52.994Z"}}},{"ContributionAdded":{"id":"path_d5a2yONq59.GET","key":"purpose","value":"remove field endpoint","eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"ba1e3d6a-a0be-47a7-98e0-0a90821955ad","createdAt":"2020-04-09T15:47:52.998Z"}}},{"BatchCommitStarted":{"batchId":"7f9bcc90-6988-4e42-92e9-8d4279cbbc14","commitMessage":"\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body","eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"dac81ada-a628-4b11-b995-b3014e97c841","createdAt":"2020-04-09T15:48:11.980Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_faAJ4toSrb","pathId":"path_d5a2yONq59","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"4efc7c07-e400-4549-bf9b-4777e752f376","createdAt":"2020-04-09T15:48:11.981Z"}}},{"ShapeAdded":{"shapeId":"shape_ih3EEDwUUC","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"4efc7c07-e400-4549-bf9b-4777e752f376","createdAt":"2020-04-09T15:48:11.981Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_faAJ4toSrb","parameterDescriptor":{"shapeId":"shape_ih3EEDwUUC","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"4efc7c07-e400-4549-bf9b-4777e752f376","createdAt":"2020-04-09T15:48:11.981Z"}}},{"RequestAdded":{"requestId":"request_PJ81EwtujJ","pathId":"path_d5a2yONq59","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"4efc7c07-e400-4549-bf9b-4777e752f376","createdAt":"2020-04-09T15:48:11.981Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_H67WmGBQgJ","pathId":"path_d5a2yONq59","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"810ed089-a98c-4856-9b72-bfc298c8317e","createdAt":"2020-04-09T15:48:11.982Z"}}},{"ShapeAdded":{"shapeId":"kQ9pdn_0","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"810ed089-a98c-4856-9b72-bfc298c8317e","createdAt":"2020-04-09T15:48:11.982Z"}}},{"ShapeAdded":{"shapeId":"kQ9pdn_2","baseShapeId":"$string","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"810ed089-a98c-4856-9b72-bfc298c8317e","createdAt":"2020-04-09T15:48:11.982Z"}}},{"FieldAdded":{"fieldId":"kQ9pdn_1","shapeId":"kQ9pdn_0","name":"field","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"kQ9pdn_1","shapeId":"kQ9pdn_2"}},"eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"810ed089-a98c-4856-9b72-bfc298c8317e","createdAt":"2020-04-09T15:48:11.983Z"}}},{"ResponseBodySet":{"responseId":"response_H67WmGBQgJ","bodyDescriptor":{"httpContentType":"application/json","shapeId":"kQ9pdn_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"810ed089-a98c-4856-9b72-bfc298c8317e","createdAt":"2020-04-09T15:48:11.983Z"}}},{"BatchCommitEnded":{"batchId":"7f9bcc90-6988-4e42-92e9-8d4279cbbc14","eventContext":{"clientId":"anonymous","clientSessionId":"41fc1f55-ec10-41a0-a1de-3b60df9ced63","clientCommandBatchId":"85f5a792-a9f3-4cf5-bbf2-9a18ccd66c4c","createdAt":"2020-04-09T15:48:11.984Z"}}},{"PathComponentAdded":{"pathId":"path_xNZwBCBHUI","parentPathId":"root","name":"making-array-field-optional","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"3301ea40-2890-4f08-9242-b2a702e8e82d","createdAt":"2020-04-09T15:51:52.209Z"}}},{"ContributionAdded":{"id":"path_xNZwBCBHUI.GET","key":"purpose","value":"making array field optional","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"3301ea40-2890-4f08-9242-b2a702e8e82d","createdAt":"2020-04-09T15:51:52.213Z"}}},{"BatchCommitStarted":{"batchId":"55c47b9d-6482-471e-98b7-015a0e627dd8","commitMessage":"\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"9893ffad-250f-419c-b316-65429184f276","createdAt":"2020-04-09T15:52:00.127Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_0WcVWnGYOd","pathId":"path_xNZwBCBHUI","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"37edcc05-a6ab-464f-bed3-809822779c97","createdAt":"2020-04-09T15:52:00.128Z"}}},{"ShapeAdded":{"shapeId":"shape_8Wuvw7BnKG","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"37edcc05-a6ab-464f-bed3-809822779c97","createdAt":"2020-04-09T15:52:00.128Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_0WcVWnGYOd","parameterDescriptor":{"shapeId":"shape_8Wuvw7BnKG","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"37edcc05-a6ab-464f-bed3-809822779c97","createdAt":"2020-04-09T15:52:00.128Z"}}},{"RequestAdded":{"requestId":"request_FUwCWtMMb3","pathId":"path_xNZwBCBHUI","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"37edcc05-a6ab-464f-bed3-809822779c97","createdAt":"2020-04-09T15:52:00.128Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_ShhMKYR8hw","pathId":"path_xNZwBCBHUI","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"9ad70add-36d5-4dc8-9db0-6ece8497c22f","createdAt":"2020-04-09T15:52:00.129Z"}}},{"ShapeAdded":{"shapeId":"juJCDq_0","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"9ad70add-36d5-4dc8-9db0-6ece8497c22f","createdAt":"2020-04-09T15:52:00.129Z"}}},{"ShapeAdded":{"shapeId":"juJCDq_2","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"9ad70add-36d5-4dc8-9db0-6ece8497c22f","createdAt":"2020-04-09T15:52:00.129Z"}}},{"ShapeAdded":{"shapeId":"juJCDq_3","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"9ad70add-36d5-4dc8-9db0-6ece8497c22f","createdAt":"2020-04-09T15:52:00.129Z"}}},{"FieldAdded":{"fieldId":"juJCDq_1","shapeId":"juJCDq_0","name":"array","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"juJCDq_1","shapeId":"juJCDq_2"}},"eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"9ad70add-36d5-4dc8-9db0-6ece8497c22f","createdAt":"2020-04-09T15:52:00.129Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"juJCDq_2","providerDescriptor":{"ShapeProvider":{"shapeId":"juJCDq_3"}},"consumingParameterId":"$listItem"}},"eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"9ad70add-36d5-4dc8-9db0-6ece8497c22f","createdAt":"2020-04-09T15:52:00.129Z"}}},{"ResponseBodySet":{"responseId":"response_ShhMKYR8hw","bodyDescriptor":{"httpContentType":"application/json","shapeId":"juJCDq_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"9ad70add-36d5-4dc8-9db0-6ece8497c22f","createdAt":"2020-04-09T15:52:00.130Z"}}},{"BatchCommitEnded":{"batchId":"55c47b9d-6482-471e-98b7-015a0e627dd8","eventContext":{"clientId":"anonymous","clientSessionId":"a2a3b2a5-b376-49c2-afe9-786c28aeded2","clientCommandBatchId":"06023dbb-64e2-42f5-9f67-78633b7fa734","createdAt":"2020-04-09T15:52:00.130Z"}}},{"PathComponentAdded":{"pathId":"path_nTPxiL9cwD","parentPathId":"root","name":"array-of-one-of","eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"d2920de6-ec54-470f-9e8f-1954a2f62151","createdAt":"2020-04-09T15:56:16.503Z"}}},{"ContributionAdded":{"id":"path_nTPxiL9cwD.GET","key":"purpose","value":"Array of One Of","eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"d2920de6-ec54-470f-9e8f-1954a2f62151","createdAt":"2020-04-09T15:56:16.508Z"}}},{"BatchCommitStarted":{"batchId":"15e8f768-e77d-4ebb-959b-1b4d571baad4","commitMessage":"\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body","eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"8f42c718-db78-4f03-9600-2cb5f7b4bc04","createdAt":"2020-04-09T15:56:22.541Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_gN3YTtqp24","pathId":"path_nTPxiL9cwD","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"17fe73ae-4b04-453c-bc6c-ae2273b8a6f9","createdAt":"2020-04-09T15:56:22.542Z"}}},{"ShapeAdded":{"shapeId":"shape_co6Q8Vs0Py","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"17fe73ae-4b04-453c-bc6c-ae2273b8a6f9","createdAt":"2020-04-09T15:56:22.542Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_gN3YTtqp24","parameterDescriptor":{"shapeId":"shape_co6Q8Vs0Py","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"17fe73ae-4b04-453c-bc6c-ae2273b8a6f9","createdAt":"2020-04-09T15:56:22.542Z"}}},{"RequestAdded":{"requestId":"request_ILJ4PAzUrJ","pathId":"path_nTPxiL9cwD","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"17fe73ae-4b04-453c-bc6c-ae2273b8a6f9","createdAt":"2020-04-09T15:56:22.542Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_no8Y6emnFk","pathId":"path_nTPxiL9cwD","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"3e1454ab-ed4f-4059-81f2-a381b0c96df0","createdAt":"2020-04-09T15:56:22.543Z"}}},{"ShapeAdded":{"shapeId":"aylHyG_0","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"3e1454ab-ed4f-4059-81f2-a381b0c96df0","createdAt":"2020-04-09T15:56:22.543Z"}}},{"ShapeAdded":{"shapeId":"aylHyG_1","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"3e1454ab-ed4f-4059-81f2-a381b0c96df0","createdAt":"2020-04-09T15:56:22.543Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"aylHyG_0","providerDescriptor":{"ShapeProvider":{"shapeId":"aylHyG_1"}},"consumingParameterId":"$listItem"}},"eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"3e1454ab-ed4f-4059-81f2-a381b0c96df0","createdAt":"2020-04-09T15:56:22.544Z"}}},{"ResponseBodySet":{"responseId":"response_no8Y6emnFk","bodyDescriptor":{"httpContentType":"application/json","shapeId":"aylHyG_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"3e1454ab-ed4f-4059-81f2-a381b0c96df0","createdAt":"2020-04-09T15:56:22.544Z"}}},{"BatchCommitEnded":{"batchId":"15e8f768-e77d-4ebb-959b-1b4d571baad4","eventContext":{"clientId":"anonymous","clientSessionId":"3395d7ee-7c6c-4783-8316-055cf274e4e9","clientCommandBatchId":"fa170725-e958-4c5d-9e31-497910cabacf","createdAt":"2020-04-09T15:56:22.545Z"}}},{"PathComponentAdded":{"pathId":"path_n0E3Geb4kb","parentPathId":"root","name":"array-of-nullable","eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"c8e2d3b1-76ba-4000-b521-eb621ac339a4","createdAt":"2020-04-09T16:02:09.826Z"}}},{"ContributionAdded":{"id":"path_n0E3Geb4kb.GET","key":"purpose","value":"array of nullable","eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"c8e2d3b1-76ba-4000-b521-eb621ac339a4","createdAt":"2020-04-09T16:02:09.830Z"}}},{"BatchCommitStarted":{"batchId":"fca1916e-735f-4875-8c41-1e89f09aabf9","commitMessage":"\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body","eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"a1dd8b45-b16e-4cb9-bb48-2ddf79a731ff","createdAt":"2020-04-09T16:02:15.720Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_MXMUeUbqSN","pathId":"path_n0E3Geb4kb","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"a2498d51-42e1-445d-bf9b-7edf61119199","createdAt":"2020-04-09T16:02:15.722Z"}}},{"ShapeAdded":{"shapeId":"shape_iP87p3MhqF","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"a2498d51-42e1-445d-bf9b-7edf61119199","createdAt":"2020-04-09T16:02:15.722Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_MXMUeUbqSN","parameterDescriptor":{"shapeId":"shape_iP87p3MhqF","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"a2498d51-42e1-445d-bf9b-7edf61119199","createdAt":"2020-04-09T16:02:15.722Z"}}},{"RequestAdded":{"requestId":"request_e8j4euKPw4","pathId":"path_n0E3Geb4kb","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"a2498d51-42e1-445d-bf9b-7edf61119199","createdAt":"2020-04-09T16:02:15.722Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_t4YGfwniol","pathId":"path_n0E3Geb4kb","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"c1c9df6f-9305-4a1d-8869-d87a6a3f019b","createdAt":"2020-04-09T16:02:15.723Z"}}},{"ShapeAdded":{"shapeId":"tHxNXd_0","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"c1c9df6f-9305-4a1d-8869-d87a6a3f019b","createdAt":"2020-04-09T16:02:15.723Z"}}},{"ShapeAdded":{"shapeId":"tHxNXd_1","baseShapeId":"$number","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"c1c9df6f-9305-4a1d-8869-d87a6a3f019b","createdAt":"2020-04-09T16:02:15.724Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"tHxNXd_0","providerDescriptor":{"ShapeProvider":{"shapeId":"tHxNXd_1"}},"consumingParameterId":"$listItem"}},"eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"c1c9df6f-9305-4a1d-8869-d87a6a3f019b","createdAt":"2020-04-09T16:02:15.724Z"}}},{"ResponseBodySet":{"responseId":"response_t4YGfwniol","bodyDescriptor":{"httpContentType":"application/json","shapeId":"tHxNXd_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"c1c9df6f-9305-4a1d-8869-d87a6a3f019b","createdAt":"2020-04-09T16:02:15.724Z"}}},{"BatchCommitEnded":{"batchId":"fca1916e-735f-4875-8c41-1e89f09aabf9","eventContext":{"clientId":"anonymous","clientSessionId":"76a7eb79-7ac8-47de-a93b-553291db86c8","clientCommandBatchId":"82524576-1580-4003-8f64-827eca7b6348","createdAt":"2020-04-09T16:02:15.725Z"}}},{"PathComponentAdded":{"pathId":"path_rE00lc9Pp0","parentPathId":"root","name":"empty-array","eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"150dfa6a-5af6-475e-8d60-c3e3dfa24548","createdAt":"2020-04-09T16:11:23.838Z"}}},{"ContributionAdded":{"id":"path_rE00lc9Pp0.GET","key":"purpose","value":"empty array","eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"150dfa6a-5af6-475e-8d60-c3e3dfa24548","createdAt":"2020-04-09T16:11:23.843Z"}}},{"BatchCommitStarted":{"batchId":"37bddb9d-a1f3-4fa7-809a-7ac4a36d0133","commitMessage":"\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body","eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"fb389641-9ca7-4890-9815-32823e8a5704","createdAt":"2020-04-09T16:11:27.155Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_X0fPy5kxpX","pathId":"path_rE00lc9Pp0","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"d4bbb7c1-1023-415c-9f8f-0184b678ca5e","createdAt":"2020-04-09T16:11:27.156Z"}}},{"ShapeAdded":{"shapeId":"shape_v1cTUVDjpU","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"d4bbb7c1-1023-415c-9f8f-0184b678ca5e","createdAt":"2020-04-09T16:11:27.156Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_X0fPy5kxpX","parameterDescriptor":{"shapeId":"shape_v1cTUVDjpU","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"d4bbb7c1-1023-415c-9f8f-0184b678ca5e","createdAt":"2020-04-09T16:11:27.156Z"}}},{"RequestAdded":{"requestId":"request_nkqkzbbgAu","pathId":"path_rE00lc9Pp0","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"d4bbb7c1-1023-415c-9f8f-0184b678ca5e","createdAt":"2020-04-09T16:11:27.156Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_vNJjvF2aNE","pathId":"path_rE00lc9Pp0","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"69f8f75a-4507-40cb-a36e-60a330620497","createdAt":"2020-04-09T16:11:27.158Z"}}},{"ShapeAdded":{"shapeId":"bPaygW_0","baseShapeId":"$list","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"69f8f75a-4507-40cb-a36e-60a330620497","createdAt":"2020-04-09T16:11:27.158Z"}}},{"ShapeAdded":{"shapeId":"bPaygW_1","baseShapeId":"$unknown","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"69f8f75a-4507-40cb-a36e-60a330620497","createdAt":"2020-04-09T16:11:27.158Z"}}},{"ShapeParameterShapeSet":{"shapeDescriptor":{"ProviderInShape":{"shapeId":"bPaygW_0","providerDescriptor":{"ShapeProvider":{"shapeId":"bPaygW_1"}},"consumingParameterId":"$listItem"}},"eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"69f8f75a-4507-40cb-a36e-60a330620497","createdAt":"2020-04-09T16:11:27.158Z"}}},{"ResponseBodySet":{"responseId":"response_vNJjvF2aNE","bodyDescriptor":{"httpContentType":"application/json","shapeId":"bPaygW_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"69f8f75a-4507-40cb-a36e-60a330620497","createdAt":"2020-04-09T16:11:27.159Z"}}},{"BatchCommitEnded":{"batchId":"37bddb9d-a1f3-4fa7-809a-7ac4a36d0133","eventContext":{"clientId":"anonymous","clientSessionId":"138e7756-7afe-494e-a095-c7e90a3c60bf","clientCommandBatchId":"c48f165a-1a18-492f-8550-83fa2ddc141e","createdAt":"2020-04-09T16:11:27.160Z"}}},{"PathComponentAdded":{"pathId":"path_dRFH120JnU","parentPathId":"root","name":"nullable-field","eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"21e424a4-a1ab-4049-b500-95e0d39bb8e0","createdAt":"2020-04-09T16:19:01.906Z"}}},{"ContributionAdded":{"id":"path_dRFH120JnU.GET","key":"purpose","value":"nullable field","eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"21e424a4-a1ab-4049-b500-95e0d39bb8e0","createdAt":"2020-04-09T16:19:01.911Z"}}},{"BatchCommitStarted":{"batchId":"f6ce25f2-e956-46e9-81cb-390f18219994","commitMessage":"\n\nChanges:\n- Added 200 Response with application/json Body\n- Added Request with No Body","eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"f7162cc6-6907-476c-8efb-af1358d75a20","createdAt":"2020-04-09T16:19:05.034Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_RVYGpPUuLK","pathId":"path_dRFH120JnU","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"edcb851e-f23a-4b05-99d2-a8388015c7d7","createdAt":"2020-04-09T16:19:05.036Z"}}},{"ShapeAdded":{"shapeId":"Abs0zS_0","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"edcb851e-f23a-4b05-99d2-a8388015c7d7","createdAt":"2020-04-09T16:19:05.036Z"}}},{"ShapeAdded":{"shapeId":"Abs0zS_2","baseShapeId":"$boolean","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"edcb851e-f23a-4b05-99d2-a8388015c7d7","createdAt":"2020-04-09T16:19:05.036Z"}}},{"FieldAdded":{"fieldId":"Abs0zS_1","shapeId":"Abs0zS_0","name":"nullableField","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"Abs0zS_1","shapeId":"Abs0zS_2"}},"eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"edcb851e-f23a-4b05-99d2-a8388015c7d7","createdAt":"2020-04-09T16:19:05.036Z"}}},{"ResponseBodySet":{"responseId":"response_RVYGpPUuLK","bodyDescriptor":{"httpContentType":"application/json","shapeId":"Abs0zS_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"edcb851e-f23a-4b05-99d2-a8388015c7d7","createdAt":"2020-04-09T16:19:05.037Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_PeDjn7y7Yt","pathId":"path_dRFH120JnU","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"e7138d6e-d443-44ee-b0d1-809f242da0e1","createdAt":"2020-04-09T16:19:05.038Z"}}},{"ShapeAdded":{"shapeId":"shape_8e9L6wOT8f","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"e7138d6e-d443-44ee-b0d1-809f242da0e1","createdAt":"2020-04-09T16:19:05.038Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_PeDjn7y7Yt","parameterDescriptor":{"shapeId":"shape_8e9L6wOT8f","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"e7138d6e-d443-44ee-b0d1-809f242da0e1","createdAt":"2020-04-09T16:19:05.038Z"}}},{"RequestAdded":{"requestId":"request_XoQ25eLA62","pathId":"path_dRFH120JnU","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"e7138d6e-d443-44ee-b0d1-809f242da0e1","createdAt":"2020-04-09T16:19:05.038Z"}}},{"BatchCommitEnded":{"batchId":"f6ce25f2-e956-46e9-81cb-390f18219994","eventContext":{"clientId":"anonymous","clientSessionId":"4ee5971b-f10b-4396-92f4-f341a9906439","clientCommandBatchId":"e378e4d3-edd1-4c9c-abbd-c33b8a30b5b4","createdAt":"2020-04-09T16:19:05.039Z"}}},{"PathComponentAdded":{"pathId":"path_RprUCJWAER","parentPathId":"root","name":"optional-nested-object","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"736eeabd-f540-4f0b-9b9f-d9745fe2c5d8","createdAt":"2020-04-09T16:24:49.820Z"}}},{"ContributionAdded":{"id":"path_RprUCJWAER.GET","key":"purpose","value":"optional nested object","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"736eeabd-f540-4f0b-9b9f-d9745fe2c5d8","createdAt":"2020-04-09T16:24:49.824Z"}}},{"BatchCommitStarted":{"batchId":"f8a1b7aa-6967-4f4d-8bf3-b9f94402824b","commitMessage":"\n\nChanges:\n- Added Request with No Body\n- Added 200 Response with application/json Body","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"08764ef9-2a8e-43f0-84d6-bbcb8be4f09c","createdAt":"2020-04-09T16:24:55.241Z"}}},{"RequestParameterAddedByPathAndMethod":{"parameterId":"parameter_GL1oc4RkHU","pathId":"path_RprUCJWAER","httpMethod":"GET","parameterLocation":"query","name":"queryString","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"983d09b3-36e6-4669-a518-e88cad9b6287","createdAt":"2020-04-09T16:24:55.242Z"}}},{"ShapeAdded":{"shapeId":"shape_u9VdtgNPcH","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"983d09b3-36e6-4669-a518-e88cad9b6287","createdAt":"2020-04-09T16:24:55.242Z"}}},{"RequestParameterShapeSet":{"parameterId":"parameter_GL1oc4RkHU","parameterDescriptor":{"shapeId":"shape_u9VdtgNPcH","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"983d09b3-36e6-4669-a518-e88cad9b6287","createdAt":"2020-04-09T16:24:55.242Z"}}},{"RequestAdded":{"requestId":"request_I3dAjak0p0","pathId":"path_RprUCJWAER","httpMethod":"GET","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"983d09b3-36e6-4669-a518-e88cad9b6287","createdAt":"2020-04-09T16:24:55.242Z"}}},{"ResponseAddedByPathAndMethod":{"responseId":"response_psDVcvsxdI","pathId":"path_RprUCJWAER","httpMethod":"GET","httpStatusCode":200,"eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"8d79b43e-645f-4629-b192-65b4f0fdc681","createdAt":"2020-04-09T16:24:55.244Z"}}},{"ShapeAdded":{"shapeId":"tgIsSu_0","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"8d79b43e-645f-4629-b192-65b4f0fdc681","createdAt":"2020-04-09T16:24:55.244Z"}}},{"ShapeAdded":{"shapeId":"tgIsSu_2","baseShapeId":"$object","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"8d79b43e-645f-4629-b192-65b4f0fdc681","createdAt":"2020-04-09T16:24:55.244Z"}}},{"ShapeAdded":{"shapeId":"tgIsSu_4","baseShapeId":"$boolean","parameters":{"DynamicParameterList":{"shapeParameterIds":[]}},"name":"","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"8d79b43e-645f-4629-b192-65b4f0fdc681","createdAt":"2020-04-09T16:24:55.244Z"}}},{"FieldAdded":{"fieldId":"tgIsSu_3","shapeId":"tgIsSu_2","name":"inner","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"tgIsSu_3","shapeId":"tgIsSu_4"}},"eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"8d79b43e-645f-4629-b192-65b4f0fdc681","createdAt":"2020-04-09T16:24:55.244Z"}}},{"FieldAdded":{"fieldId":"tgIsSu_1","shapeId":"tgIsSu_0","name":"nested","shapeDescriptor":{"FieldShapeFromShape":{"fieldId":"tgIsSu_1","shapeId":"tgIsSu_2"}},"eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"8d79b43e-645f-4629-b192-65b4f0fdc681","createdAt":"2020-04-09T16:24:55.244Z"}}},{"ResponseBodySet":{"responseId":"response_psDVcvsxdI","bodyDescriptor":{"httpContentType":"application/json","shapeId":"tgIsSu_0","isRemoved":false},"eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"8d79b43e-645f-4629-b192-65b4f0fdc681","createdAt":"2020-04-09T16:24:55.245Z"}}},{"BatchCommitEnded":{"batchId":"f8a1b7aa-6967-4f4d-8bf3-b9f94402824b","eventContext":{"clientId":"anonymous","clientSessionId":"69ab57af-2a8f-4aad-9b08-b0c5d5e5dc66","clientCommandBatchId":"84675478-3043-4f24-bfbd-3541bb2aa271","createdAt":"2020-04-09T16:24:55.246Z"}}}],
+  "session": {
+    "metadata": {
+      "completed": true
+    },
+    "samples": [
+      {
+        "uuid": "4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/field-removal",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\"field\": \"i dare you to remove me\"}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "4",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/field-removal",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "5",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/making-array-field-optional",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\"array\": [1,2,3,4,5]}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "6",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/making-array-field-optional",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "7",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/array-of-one-of",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[1,2,3,4,5]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "6",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/array-of-one-of",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[1,2,3,4,5, true, \"string\"]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "7",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/array-of-nullable",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[1,2,3,4,5]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "6",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/array-of-nullable",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[1,2,3,4,5, null, null]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "7",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/empty-array",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "6",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/empty-array",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "[1,2,3]",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "7",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/nullable-field",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\"nullableField\": true }",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "6",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/nullable-field",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\"nullableField\": null }",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "6",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/optional-nested-object",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{\n\t\"nested\": {\n\t\t\"inner\": true\n\t}\n}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      },
+      {
+        "uuid": "6",
+        "request": {
+          "host": "localhost",
+          "method": "GET",
+          "path": "/optional-nested-object",
+          "query": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": null,
+            "value": {
+              "asJsonString": null,
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "response": {
+          "statusCode": 200,
+          "headers": {
+            "asJsonString": null,
+            "asText": null,
+            "asShapeHashBytes": null
+          },
+          "body": {
+            "contentType": "application/json",
+            "value": {
+              "asJsonString": "{}",
+              "asText": null,
+              "asShapeHashBytes": null
+            }
+          }
+        },
+        "tags": []
+      }
+    ],
+    "links": [
+      {
+        "rel": "next",
+        "href": ""
+      }
+    ]
+  },
+  "examples": {}
+}

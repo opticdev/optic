@@ -1,20 +1,16 @@
 import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import {DocDivider} from '../../requests/DocConstants';
-import CardContent from '@material-ui/core/CardContent';
+import {DocDivider} from '../../docs/DocConstants';
 import Typography from '@material-ui/core/Typography';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormLabel from '@material-ui/core/FormLabel';
-import {CardActions} from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import {DiffContext} from './DiffContext';
-import {mapScala, CompareEquality} from '@useoptic/domain';
+import {CompareEquality, mapScala} from '@useoptic/domain';
+import {IgnoreDiffContext} from './DiffPageNew';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,7 +53,7 @@ const useStyles = makeStyles(theme => ({
 export const DiffHelperCard = (props) => {
   const classes = useStyles();
   const {inRequest, inResponse} = props;
-  const {selectedInterpretation, setSelectedInterpretation, selectedDiff, acceptSuggestion, clearPreview} = useContext(DiffContext);
+  const {selectedInterpretation, setSelectedDiff, setSelectedInterpretation, selectedDiff, acceptSuggestion, clearPreview} = useContext(DiffContext);
   const showIt = selectedDiff && selectedDiff.inRequest && inRequest || selectedDiff.inResponse && inResponse;
 
   if (!showIt) {
@@ -93,7 +89,15 @@ export const DiffHelperCard = (props) => {
         <DocDivider />
 
         <div className={classes.buttons}>
-          <Button size="small" onClick={clearPreview}>Ignore</Button>
+          <IgnoreDiffContext.Consumer>
+            {({ignoreDiff}) => {
+              return <Button size="small" onClick={() => {
+                const toIgnore = selectedDiff.diff
+                setSelectedDiff(null)
+                ignoreDiff(toIgnore)
+              }}>Ignore</Button>
+            }}
+          </IgnoreDiffContext.Consumer>
           <Button color="primary" size="small" disabled={!selectedInterpretation} onClick={() => acceptSuggestion(selectedInterpretation)}>Approve</Button>
         </div>
 

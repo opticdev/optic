@@ -18,6 +18,7 @@ class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
     }
     // visit unknown parts of the JSON (used during example rendering)
     if (resolvedTrail.isEmpty && body.isDefined) {
+      println("TOP LEVEL", bodyTrail)
       val bodyJson = body.get
       if (bodyJson.isArray) {
         visitors.arrayVisitor.beginUnknown(bodyJson.items, bodyTrail)
@@ -34,7 +35,6 @@ class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
       } else {
         visitors.primitiveVisitor.visitUnknown(Some(bodyJson), bodyTrail)
       }
-
       return
     }
 
@@ -76,7 +76,7 @@ class JsonLikeTraverser(spec: RfcState, visitors: JsonLikeVisitors) {
         })
         val jsonTrail = bodyTrail.withChild(JsonObjectKey(key))
 
-        visitors.objectVisitor.visit(key, value, bodyTrail, resolvedTrail, resolved.bindings)
+        visitors.objectVisitor.visit(key, value, jsonTrail, resolvedTrail, resolved.bindings)
 
         traverse(Some(value), jsonTrail, resolvedTrail)
       })

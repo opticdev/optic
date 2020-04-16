@@ -1,10 +1,10 @@
-import React from 'react'
+import React, {useContext} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import {primary} from '../../../../theme';
-import {ShapeExpandedContext, withShapeRenderContext} from './ShapeRenderContext';
+import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
 import withStyles from '@material-ui/core/styles/withStyles';
 import Tooltip from '@material-ui/core/Tooltip';
-import {useContext} from 'react';
+import {mapScala} from '@useoptic/domain';
 
 export const useShapeViewerStyles = makeStyles(theme => ({
   root: {
@@ -70,7 +70,8 @@ export const useShapeViewerStyles = makeStyles(theme => ({
     flexDirection: 'row'
   },
   left: {
-    flex: 1,
+    flex: '50%',
+    overflow: 'hidden',
     display: 'flex',
     paddingTop: 3,
     paddingBottom: 3,
@@ -85,7 +86,8 @@ export const useShapeViewerStyles = makeStyles(theme => ({
     paddingLeft: 5,
     paddingTop: 3,
     paddingBottom: 3,
-    flex: 1,
+    flex: '50%',
+    overflow: 'hidden'
   },
   typeName: {
     display: 'flex',
@@ -96,7 +98,6 @@ export const useShapeViewerStyles = makeStyles(theme => ({
   },
   assertionMet: {
     display: 'flex',
-    whiteSpace: 'pre',
     flex: 1,
     fontWeight: 400,
     color: '#646464',
@@ -143,3 +144,32 @@ export const DiffToolTip = withStyles(theme => ({
     padding: 4,
   },
 }))(Tooltip);
+
+
+export const useColor = {
+  StringColor: '#e29f84',
+  NumberColor: '#09885a',
+  BooleanColor: '#E3662E',
+  ObjectColor: '#30B1C4',
+  ListColor: '#c47078',
+  modifier: '#d5d4ff'
+};
+
+export const TypeName = ({typeName, style}) => {
+  const classes = useShapeViewerStyles();
+
+  const {shapeRender} = useContext(ShapeRenderContext);
+
+  if (!typeName) {
+    return null;
+  }
+
+  const coloredComponents = typeName.asColoredString(shapeRender);
+
+  return (<div className={classes.typeName}>{mapScala(coloredComponents)((i) => {
+    if (i.text) {
+      return <span style={{color: useColor[i.color] || i.color, whiteSpace: 'pre'}}>{i.text}{' '}</span>;
+    }
+  })}
+  </div>);
+};

@@ -1,45 +1,24 @@
-import React, {useState} from 'react';
+import React, {useContext} from 'react';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {AppBar, Button, CardActions, Typography} from '@material-ui/core';
-import Toolbar from '@material-ui/core/Toolbar';
-import {ArrowDownwardSharp, Cancel, Check} from '@material-ui/icons';
+import {Typography} from '@material-ui/core';
 import compose from 'lodash.compose';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import {DiffDocGrid, DocGrid} from '../../requests/DocGrid';
 import {EndpointsContextStore, withEndpointsContext} from '../../../contexts/EndpointContext';
-import {
-  TrafficSessionContext,
-  TrafficSessionStore,
-  withTrafficSessionContext
-} from '../../../contexts/TrafficSessionContext';
-import PersonIcon from '@material-ui/icons/Person';
-import {withSpecServiceContext} from '../../../contexts/SpecServiceContext';
+import {withTrafficSessionContext} from '../../../contexts/TrafficSessionContext';
+import {SpecServiceContext, withSpecServiceContext} from '../../../contexts/SpecServiceContext';
 import {DiffContextStore, withDiffContext} from './DiffContext';
 import {withRfcContext} from '../../../contexts/RfcContext';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import {
-  BodyUtilities,
-  Facade,
-  RfcCommandContext,
-  CompareEquality,
-  ContentTypeHelpers,
-  opticEngine
-} from '@useoptic/domain';
+import {Facade, opticEngine, RfcCommandContext} from '@useoptic/domain';
 import SimulatedCommandContext from '../SimulatedCommandContext';
-import {primary, secondary} from '../../../theme';
-import BatchLearnDialog from './BatchLearnDialog';
-import {DiffShapeViewer, DiffToggleContextStore, URLViewer} from './DiffShapeViewer';
+import {primary} from '../../../theme';
 import uuidv4 from 'uuid/v4';
-import {withRouter} from 'react-router-dom';
-
-import {DiffCursor, NewRegions, ShapeDiffRegion} from './DiffPreview';
+import {Redirect, withRouter} from 'react-router-dom';
+import {DiffCursor, NewRegions} from './DiffPreview';
 import {CommitCard} from './CommitCard';
 import {StableHasher} from '../../../utilities/CoverageUtilities';
 import DiffReviewExpanded from './DiffReviewExpanded';
-import {DocDivider} from '../../requests/DocConstants';
+import {DocDivider} from '../../docs/DocConstants';
 import {PathAndMethod} from './PathAndMethod';
-import Paper from '@material-ui/core/Paper';
 import {useBaseUrl} from '../../../contexts/BaseUrlContext';
 
 const {diff, JsonHelper} = opticEngine.com.useoptic;
@@ -93,19 +72,18 @@ const styles = theme => ({
   }
 });
 
-class DiffPageNew extends React.Component {
-  render() {
-
-    const {classes, specStore} = this.props;
-    const {pathId, method, captureId} = this.props.match.params;
-    return (
-      <CaptureSessionInlineContext specStore={specStore} captureId={captureId} pathId={pathId} method={method}>
-        <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}>
-          <DiffPageContent captureId={captureId}/>
-        </EndpointsContextStore>
-      </CaptureSessionInlineContext>
-    );
-  }
+function DiffPageNew(props) {
+  const {specStore} = useContext(SpecServiceContext);
+  const baseUrl = useBaseUrl();
+  const {pathId, method, captureId} = props.match.params;
+  return (
+    <CaptureSessionInlineContext specStore={specStore} captureId={captureId} pathId={pathId} method={method}>
+      <EndpointsContextStore pathId={pathId} method={method} inContextOfDiff={true}
+                             notFound={<Redirect to={`${baseUrl}/diffs`}/>}>
+        <DiffPageContent captureId={captureId}/>
+      </EndpointsContextStore>
+    </CaptureSessionInlineContext>
+  );
 }
 
 function withSpecContext(eventStore, rfcId, clientId, clientSessionId) {
@@ -148,7 +126,7 @@ function _DiffPageContent(props) {
     reset();
   }
 
-  const baseUrl = useBaseUrl()
+  const baseUrl = useBaseUrl();
 
   async function handleApply(message = 'EMPTY MESSAGE') {
     const newEventStore = initialEventStore.getCopy(rfcId);
@@ -165,7 +143,7 @@ function _DiffPageContent(props) {
     history.push(`${baseUrl}/diffs/${captureId}`);
   }
 
-  const diffRegions = endpointDiffManger.diffRegions
+  const diffRegions = endpointDiffManger.diffRegions;
 
   return (
     <IgnoreDiffContext.Consumer>
@@ -174,24 +152,25 @@ function _DiffPageContent(props) {
           <div className={classes.scroll}>
             <div className={classes.middle}>
 
-              <Paper style={{flex: 1, padding: 15, marginBottom: 25}}>
+              <div style={{flex: 1, padding: 0, marginBottom: 55}}>
 
+                <Typography variant="overline" color="textSecondary">Reviewing Diff For:</Typography>
                 <Typography variant="h6">{endpointPurpose}</Typography>
                 <PathAndMethod method={httpMethod}
                                path={fullPath}/>
 
-              </Paper>
+              </div>
 
 
-                <NewRegions ignoreDiff={ignoreDiff}
+              <NewRegions ignoreDiff={ignoreDiff}
                           endpointPurpose={endpointPurpose || 'Endpoint Purpose'}
                           method={httpMethod}
                           fullPath={fullPath}
                           newRegions={diffRegions.newRegions}/>
 
-              <DiffCursor diffs={diffRegions.bodyDiffs} />
+              <DiffCursor diffs={diffRegions.bodyDiffs}/>
 
-              {selectedDiff && <DiffReviewExpanded diff={selectedDiff} />}
+              {selectedDiff && <DiffReviewExpanded diff={selectedDiff}/>}
 
               {/*<ShapeDiffRegion*/}
               {/*  region={endpointDiffManger.diffRegions.requestRegions}*/}
@@ -302,7 +281,6 @@ const InnerDiffWrapper = withTrafficSessionContext(withRfcContext(function Inner
 
   const endpointDiffManger = diffManager.managerForPathAndMethod(pathId, method, ignored);
 
-
   const simulatedCommands = suggestionToPreview ? jsonHelper.seqToJsArray(suggestionToPreview.commands) : [];
 
   global.opticDebug.diffContext = {
@@ -411,36 +389,5 @@ class _CaptureSessionInlineContext extends React.Component {
 };
 
 const CaptureSessionInlineContext = compose(withRfcContext)(_CaptureSessionInlineContext);
-
-function BatchActionsMenu(props) {
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  return (
-    <>
-      <Button
-        color="secondary"
-        size="small"
-        onClick={(e) => setAnchorEl(e.target)}
-        style={{marginLeft: 12}}
-        endIcon={<ArrowDownwardSharp/>}>
-        Batch Actions</Button>
-      <Menu open={Boolean(anchorEl)}
-            anchorEl={anchorEl}
-            anchorOrigin={{vertical: 'bottom'}}
-            onClose={() => setAnchorEl(null)}>
-        <BatchLearnDialog
-          button={(handleClickOpen) => <MenuItem onClick={handleClickOpen}>Accept all
-            Suggestions</MenuItem>}/>
-        <MenuItem>Ignore all Diffs</MenuItem>
-        <MenuItem onClick={() => {
-          props.reset();
-          setAnchorEl(null);
-        }}>Reset</MenuItem>
-      </Menu>
-    </>
-  );
-
-}
 
 export default compose(withStyles(styles), withSpecServiceContext)(DiffPageNew);

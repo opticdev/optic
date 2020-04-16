@@ -1,16 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import TypeModal from '../../shared/JsonTextarea';
 import Typography from '@material-ui/core/Typography';
 import {Card, TextField} from '@material-ui/core';
 import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import classNames from 'classnames';
-import {PathAndMethod} from './PathAndMethod';
-import {DocDivider} from '../../requests/DocConstants';
-import {JsonHelper} from '@useoptic/domain';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -57,7 +51,7 @@ export const CommitCard = ({acceptedSuggestions, ignoredDiffs, interactionsWithD
     }
   }, [finalizeWithOverride])
 
-  if (acceptedSuggestions.length === 0 ) {
+  if (acceptedSuggestions.length === 0 && ignoredDiffs.length === 0) {
     return null
   }
 

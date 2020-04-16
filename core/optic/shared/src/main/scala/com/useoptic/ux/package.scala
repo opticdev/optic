@@ -107,13 +107,14 @@ package object ux {
 
     def getUnifiedShape(shapeId: ShapeId): RenderShape = {
       val specShape = specShapes.get(shapeId)
-      val exampleShape = exampleShapes.get(shapeId)
+      //prefer the shape that's in the spec
+      val exampleShape = Seq(exampleShapes.find(_._2.specShapeId.contains(shapeId)).map(_._2), exampleShapes.get(shapeId)).flatten.headOption
 
       assert(specShape.isDefined || exampleShape.isDefined, s"one of the render maps must include shapeId ${shapeId}")
 
       val sFields = specShape.map(_.fields).getOrElse(Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty))
       val eFields = exampleShape.map(_.fields).getOrElse(Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty))
-      val mergedFields = sFields merge eFields
+      val mergedFields = sFields.merge(eFields, this)
 
       val diffs = Set(specShape.map(_.diffs), exampleShape.map(_.diffs)).flatten.flatten
 
@@ -136,18 +137,21 @@ package object ux {
     }
 
     def getUnifiedField(fieldId: FieldId): Option[RenderField] = {
+
       val specField = specFields.get(fieldId)
-      val exampleField = exampleFields.get(fieldId)
+      //prefer example that exists in the spec
+      val exampleField = Seq(exampleFields.find(_._2.specFieldId.contains(fieldId)).map(_._2),  exampleFields.get(fieldId)).flatten.headOption
 
       if (specField.isEmpty && exampleField.isEmpty) {
         None
       } else {
         Some(RenderField(
           if (specField.isDefined) specField.get.fieldId else exampleField.get.fieldId,
+          exampleField.flatMap(_.specFieldId),
           if (specField.isDefined) specField.get.fieldName else exampleField.get.fieldName,
           Seq(specField.flatMap(_.shapeId), exampleField.flatMap(_.shapeId)).flatten.headOption,
           exampleField.flatMap(_.exampleValue),
-          specField.map(_.diffs).getOrElse(Set.empty) ++ exampleField.map(_.diffs).getOrElse(Set.empty)
+          exampleField.map(_.diffs).getOrElse(Set.empty) ++ specField.map(_.diffs).getOrElse(Set.empty)
         ))
       }
     }
@@ -180,7 +184,17 @@ package object ux {
 
     def resolvedItems(listId: ShapeId, hideItems: Boolean = false): Seq[DisplayItem] = {
       val listItemOption = listItemShape(listId)
-      val items = exampleShapes.get(listId).map(_.items).getOrElse(Items(Seq.empty))
+
+
+      val itemsFromSpec = {
+        val exampleShapeOption = exampleShapes.find(_._2.specShapeId.contains(listId)).map(_._2)
+        exampleShapeOption.map(_.items).getOrElse(Items(Seq.empty))
+      }
+
+      val itemsFromExample = exampleShapes.get(listId).map(_.items).getOrElse(Items(Seq.empty))
+
+      val items = if (itemsFromSpec.all.nonEmpty) itemsFromSpec else itemsFromExample
+
       val allItems = items.all.zipWithIndex.flatMap { case (itemId, index) => {
         //use spec one if provided, else fallback on example shape pointer
         val shapeIdOption = Seq(listItemOption.flatMap(_.shapeId), exampleItems.get(itemId).flatMap(_.shapeId)).flatten.headOption
@@ -200,7 +214,10 @@ package object ux {
       } else allItems
     }
 
-    def resolveFieldShape(field: RenderField): Option[RenderShape] = Try(field.shapeId.map(getUnifiedShape)).toOption.flatten
+    def resolveFieldShape(field: RenderField): Option[RenderShape] = {
+
+      field.shapeId.map(i => getUnifiedShape(i))
+    }
 
     def resolveItemShapeFromShapeId(shapeId: Option[ShapeId]): Option[RenderShape] = Try(getUnifiedShape(shapeId.get)).toOption
     def resolveItemShape(itemOption: Option[RenderItem]): Option[RenderShape] = itemOption.flatMap(item => resolveItemShapeFromShapeId(item.shapeId))
@@ -208,12 +225,21 @@ package object ux {
 
   @JSExportAll
   case class Fields(expected: Seq[FieldId], missing: Seq[FieldId], unexpected: Seq[FieldId], hidden: Seq[FieldId] = Seq.empty) {
-    def merge(o: Fields) = {
+    def merge(o: Fields, renderShapeRoot: RenderShapeRoot) = {
+
+      def mergeFieldSet(spec: Seq[FieldId], examples: Seq[FieldId]) = {
+        val flattenedSpecFields = spec.flatMap(i => renderShapeRoot.getUnifiedField(i))
+        val flattenedExampleFields = examples.flatMap(i => renderShapeRoot.getUnifiedField(i))
+        import com.useoptic.utilities.DistinctBy._
+        //take named fields from spec first, then fallback on the example fields
+        (flattenedSpecFields ++ flattenedExampleFields).distinctByIfDefined(i => Some(i.fieldName)).map(_.fieldId)
+      }
+
       Fields(
-        (expected ++ o.expected).distinct,
-        (missing ++ o.missing).distinct,
-        (unexpected ++ o.unexpected).distinct,
-        (hidden ++ o.hidden).distinct
+        mergeFieldSet(this.expected, o.expected),
+        mergeFieldSet(this.missing, o.missing),
+        mergeFieldSet(this.unexpected, o.unexpected),
+        mergeFieldSet(this.hidden, o.hidden)
       )
     }
   }
@@ -228,20 +254,21 @@ package object ux {
   case class DisplayItem(index: Int, item: RenderItem, display: String)
 
   @JSExportAll
-  case class RenderField(fieldId: FieldId, fieldName: String, shapeId: Option[ShapeId], exampleValue: Option[Json], diffs: Set[DiffResult] = Set())
+  case class RenderField(fieldId: FieldId, specFieldId: Option[FieldId], fieldName: String, shapeId: Option[ShapeId], exampleValue: Option[Json], diffs: Set[DiffResult] = Set())
 
   @JSExportAll
   case class RenderItem(itemId: ShapeId, index: Int, baseShapeId: String, shapeId: Option[ShapeId], exampleValue: Option[Json], diffs: Set[DiffResult] = Set())
 
   @JSExportAll
   case class RenderShape(shapeId: ShapeId,
+                         specShapeId: Option[ShapeId],
                          baseShapeId: String,
                          fields: Fields = Fields(Seq.empty, Seq.empty, Seq.empty, Seq.empty),
                          items: Items = Items(Seq.empty),
                          branches: Seq[ShapeId] = Seq.empty,
                          innerId: Option[ShapeId] = None,
-                         exampleValue: Option[Json] = None,
-                         diffs: Set[DiffResult] = Set(),
+                         exampleValue: Option[Json],
+                         diffs: Set[DiffResult],
                          name: RenderName = RenderName(Seq.empty)) {
 
     def isOptional = OptionalKind.baseShapeId == baseShapeId
