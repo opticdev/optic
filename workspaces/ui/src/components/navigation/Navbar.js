@@ -67,7 +67,8 @@ export default function Navbar(props) {
         icon: <DescriptionIcon style={{ color: '#e2e2e2' }} />,
         link: routerPaths.docsRoot,
       },
-      ...(process.env.REACT_APP_TESTING_DASHBOARD === 'true'
+      ...(process.env.REACT_APP_TESTING_DASHBOARD === 'true' ||
+      process.env.REACT_APP_TESTING_DASHBOARD_TEASER === 'true'
         ? [
             {
               name: 'Live Contract Testing',

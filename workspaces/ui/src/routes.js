@@ -9,6 +9,10 @@ const TestingDashboardLoader = React.lazy(() =>
   import('./components/loaders/TestingDashboardLoader')
 );
 
+const TestindDashboardTeaserPage = React.lazy(() =>
+  import('./components/testing/TeaserPage')
+);
+
 export function ApiRoutes(props) {
   const routerPaths = useRouterPaths();
   return (
@@ -27,6 +31,16 @@ export function ApiRoutes(props) {
             component={TestingDashboardLoader}
           />
         )}
+
+        {process.env.REACT_APP_TESTING_DASHBOARD !== 'true' &&
+          process.env.REACT_APP_TESTING_DASHBOARD_TEASER === 'true' && (
+            <Route
+              strict
+              path={routerPaths.testingDashboard}
+              component={TestindDashboardTeaserPage}
+            />
+          )}
+
         <Redirect to={routerPaths.docsRoot} />
       </Switch>
     </Suspense>
