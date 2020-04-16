@@ -101,7 +101,7 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
         val (fieldName, (fieldId, field, fieldShape)) = entry
         val fieldTrail = bodyTrail.withChild(JsonObjectKey(fieldName))
         if (!value.contains(fieldName)) {
-          pushField(RenderField(fieldId, Some(field.fieldId), fieldName, Some(fieldShape.shapeId), value.get(fieldName).map(_.asJson), diffs = diffsByTrail(fieldTrail)))
+          pushField(RenderField(fieldTrail.toString, Some(field.fieldId), fieldName, Some(fieldShape.shapeId), value.get(fieldName).map(_.asJson), diffs = diffsByTrail(fieldTrail)))
           Some(fieldId)
         } else None
       })
@@ -116,12 +116,16 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
         } else None
       }
       }
+
+
+      val fields = Fields(
+        expected = knownFieldsIds.toSeq,
+        missing = missingFieldIds.toSeq,
+        unexpected = extraFieldIds.toSeq
+      )
+
       pushShape(
-        RenderShape(bodyTrail.toString, Some(expected.shapeEntity.shapeId), ObjectKind.baseShapeId, Fields(
-          expected = knownFieldsIds.toSeq,
-          missing = missingFieldIds.toSeq,
-          unexpected = extraFieldIds.toSeq
-        ),
+        RenderShape(bodyTrail.toString, Some(expected.shapeEntity.shapeId), ObjectKind.baseShapeId, fields,
           diffs = diffsByTrail(bodyTrail),
           exampleValue = Some(Json.fromJsonObject(JsonObject.fromMap(value.mapValues(_.asJson))))
         )
@@ -202,6 +206,7 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
     }
 
     override def visit(index: Number, value: JsonLike, bodyTrail: JsonTrail, trail: Option[ShapeTrail]): Unit = {
+
       trail.foreach(shapeTrail => {
         val lastListItem = shapeTrail.lastListItem().get
         pushItem(RenderItem(
@@ -233,9 +238,8 @@ class ExampleRenderVisitor(spec: RfcState, diffs: Set[ShapeDiffResult]) extends 
 
     override def visitUnknown(value: Option[JsonLike], bodyTrail: JsonTrail): Unit = {
       if (value.isDefined) {
-        val shapeId = bodyTrail.toString
         val baseShapeId = Resolvers.jsonToCoreKind(value.get).baseShapeId
-        pushShape(RenderShape(shapeId, None, baseShapeId, exampleValue = value.map(_.asJson), diffs = diffsByTrail(bodyTrail)))
+        pushShape(RenderShape(bodyTrail.toString, None, baseShapeId, exampleValue = value.map(_.asJson), diffs = diffsByTrail(bodyTrail)))
       }
     }
   }

@@ -13,7 +13,11 @@ export function ShapeOnlyViewer(props) {
   const classes = useShapeViewerStyles();
 
   const rootShape = preview.rootId;
-  const shape = preview.getUnifiedShape(rootShape);
+  const shape = getOrUndefined(preview.getUnifiedShape(rootShape));
+
+  if (!shape) {
+    throw new Error('Could not render root shape')
+  }
 
   return (
     <ShapeRenderStore shape={preview} exampleOnly={true}>

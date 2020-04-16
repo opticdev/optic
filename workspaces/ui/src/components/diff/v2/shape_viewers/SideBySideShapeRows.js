@@ -5,7 +5,15 @@ import WarningIcon from '@material-ui/icons/Warning';
 import {AddedGreenBackground, ChangedYellowBackground, RemovedRedBackground, secondary} from '../../../../theme';
 import {ShapeExpandedContext, ShapeRenderContext, withShapeRenderContext} from './ShapeRenderContext';
 import CheckIcon from '@material-ui/icons/Check';
-import {getOrUndefined, getOrUndefinedJson, headOrUndefined, lengthScala, mapScala, toOption} from '@useoptic/domain';
+import {
+  getOrUndefined,
+  getOrUndefinedJson,
+  headOrUndefined,
+  JsonHelper,
+  lengthScala,
+  mapScala,
+  toOption
+} from '@useoptic/domain';
 import {withDiffContext} from '../DiffContext';
 import {DepthContext, Indent, IndentIncrement} from './Indent';
 import {HiddenItemEllipsis, TypeName, useColor, useShapeViewerStyles} from './styles';
@@ -66,10 +74,12 @@ export const ObjectRender = withShapeRenderContext((props) => {
   const {shapeRender, shape, nested} = props;
   const fields = shapeRender.resolveFields(shape.fields);
 
+  // console.log("LOOK AAA " + JsonHelper.seqToJsArray(fields))
+
   return (
     <>
       {!nested && <Row left={<Symbols>{'{'}</Symbols>} right={<AssertionMetTypeName typeName={shape.name}/>} noHover/>}
-      {mapScala(fields)(field => <FieldRow field={field}/>)}
+      {mapScala(fields)(field => <FieldRow field={field} parent={shape}/>)}
       <IndentIncrement><Row left={<Symbols withIndent>{'}'}</Symbols>} noHover/></IndentIncrement>
     </>
   );
@@ -247,12 +257,27 @@ export const DiffNotif = withShapeRenderContext(withDiffContext((props) => {
 
 export const FieldRow = withShapeRenderContext((props) => {
   const classes = useShapeViewerStyles();
-  const {field, shapeRender, diffDescription, suggestion} = props;
+  const {field, parent, shapeRender, diffDescription, suggestion} = props;
 
   const missing = field.display === 'missing';
 
-  const fieldShape = getOrUndefined(shapeRender.resolveFieldShape(field.field)) || {};
+  const fieldShape = getOrUndefined(shapeRender.resolveFieldShapeWithExampleBias(field.field)) || {};
+
+  const fieldExampleShape = getOrUndefined(shapeRender.getUnifiedShape(field.field.fieldId))
+
   const example = getOrUndefinedJson(field.field.exampleValue) || (fieldShape && getOrUndefinedJson(fieldShape.exampleValue))
+
+
+
+  if (field.fieldName === 'familyName') {
+    console.log('field ', field)
+    console.log('field id', field.field.fieldId)
+    console.log('field shape', fieldShape.shapeId)
+    console.log('field example shape', fieldExampleShape.shapeId)
+    console.log('field parent', parent.shapeId)
+    // console.log('field ', field)
+    // console.log('field ', example)
+  }
 
   const diff = headOrUndefined(field.field.diffs);
 
@@ -318,8 +343,13 @@ export const ItemRow = withShapeRenderContext((props) => {
   const {item, shapeRender, isLast, listId, listItemShape, diffDescription, suggestion} = props;
   const diff = headOrUndefined(item.item.diffs);
 
-  const exampleItemShape = shapeRender.getUnifiedShape(item.item.itemId)
-  const resolvedShape = getOrUndefined(shapeRender.resolveItemShape(toOption(listItemShape))) || getOrUndefined(shapeRender.resolveItemShapeFromShapeId(item.item.shapeId));
+  const exampleItemShape = getOrUndefined(shapeRender.getUnifiedShape(item.item.itemId))
+
+  const resolvedShape = getOrUndefined(shapeRender.resolveItemShapeFromShapeId(item.item.shapeId));
+  // debugger
+  //
+  // console.log('item ', item.toString())
+  // console.log('item ', resolvedShape)
 
   const diffNotif = diff && (
     <DiffNotif/>
