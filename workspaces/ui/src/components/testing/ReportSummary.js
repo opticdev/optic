@@ -4,6 +4,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import classNames from 'classnames';
 import Color from 'color';
+import dateFormatRelative from 'date-fns/formatRelative';
+import dateFormatDistance from 'date-fns/formatDistance';
+import { parseISO as dateParseISO } from 'date-fns';
 
 import {
   createEndpointDescriptor,
@@ -37,6 +40,8 @@ export default function ReportSummary(props) {
     totalUnmatchedPaths,
   } = summary;
 
+  const now = new Date();
+
   return (
     <div className={classes.root}>
       <div className={classes.reportMeta}>
@@ -49,7 +54,14 @@ export default function ReportSummary(props) {
           ) : (
             <ScheduleIcon className={classes.historyIcon} />
           )}
-          {summary.isCapturing ? 'since' : ''} last Monday for 4 hours
+          {summary.isCapturing ? (
+            <>since {dateFormatRelative(summary.createdAt, now)}</>
+          ) : (
+            <>
+              {dateFormatRelative(summary.createdAt, now)} for{' '}
+              {dateFormatDistance(summary.completedAt, summary.createdAt)}
+            </>
+          )}
         </div>
       </div>
 
@@ -450,9 +462,9 @@ function createSummary(capture, spec, report) {
 
   return {
     apiName,
-    createdAt: capture.createdAt,
-    updatedAt: capture.updatedAt,
-    completedAt: capture.completedAt,
+    createdAt: asDate(capture.createdAt),
+    updatedAt: asDate(capture.updatedAt),
+    completedAt: asDate(capture.completedAt),
     isCapturing: !capture.completedAt,
     buildId: (buildIdTag && buildIdTag.value) || '',
     environment: (envTag && envTag.value) || '',
@@ -466,5 +478,9 @@ function createSummary(capture, spec, report) {
   function getCoverageCount(concern) {
     const key = StableHasher.hash(concern);
     return report.coverageCounts[key] || 0;
+  }
+
+  function asDate(isoDate) {
+    return isoDate && dateParseISO(isoDate);
   }
 }

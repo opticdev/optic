@@ -111,7 +111,7 @@ function CompletedCapture(props) {
         <div className={classes.captureTime}>
           <ScheduleIcon className={classes.historyIcon} />
           {dateFormatRelative(capture.createdAt, now)} for{' '}
-          {dateFormatDistance(capture.updatedAt, capture.createdAt)}
+          {dateFormatDistance(capture.completedAt, capture.createdAt)}
         </div>
       </Card>
     </CaptureNavLink>
