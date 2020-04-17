@@ -1,26 +1,27 @@
 import Command from '@oclif/command';
-import {Client} from '@useoptic/cli-client';
-import {IOpticTaskRunnerConfig, parseIgnore, TaskToStartConfig} from '@useoptic/cli-config';
-import {getPathsRelativeToConfig, readApiConfig, shouldWarnAboutVersion7Compatibility} from '@useoptic/cli-config';
-import {IApiCliConfig, IPathMapping} from '@useoptic/cli-config';
-import {ensureDaemonStarted, ensureDaemonStopped, FileSystemCaptureSaver} from '@useoptic/cli-server';
-import {ICaptureSaver, ICliDaemonState} from '@useoptic/cli-server';
-import {FileSystemCaptureLoader, ICaptureLoader} from '@useoptic/cli-server';
-import {makeUiBaseUrl} from '@useoptic/cli-server';
-import {checkDiffOrUnrecognizedPath} from '@useoptic/domain';
+import { Client } from '@useoptic/cli-client';
+import { IOpticTaskRunnerConfig, parseIgnore, TaskToStartConfig } from '@useoptic/cli-config';
+import { getPathsRelativeToConfig, readApiConfig } from '@useoptic/cli-config';
+import { IApiCliConfig, IPathMapping } from '@useoptic/cli-config';
+import { ensureDaemonStarted, ensureDaemonStopped, FileSystemCaptureSaver } from '@useoptic/cli-server';
+import { ICaptureSaver, ICliDaemonState } from '@useoptic/cli-server';
+import { FileSystemCaptureLoader, ICaptureLoader } from '@useoptic/cli-server';
+import { makeUiBaseUrl } from '@useoptic/cli-server';
+import { checkDiffOrUnrecognizedPath } from '@useoptic/domain';
 import * as colors from 'colors';
-import * as path from 'path'
-import * as cp from 'child_process'
-import {fromOptic} from './conversation';
-import {developerDebugLogger, userDebugLogger} from './logger';
-import {lockFilePath} from './paths';
-import {CommandAndProxySessionManager} from './command-and-proxy-session-manager';
+import * as path from 'path';
+import * as cp from 'child_process';
+import { fromOptic } from './conversation';
+import { developerDebugLogger, userDebugLogger } from './logger';
+import { lockFilePath } from './paths';
+import { CommandAndProxySessionManager } from './command-and-proxy-session-manager';
 import * as uuidv4 from 'uuid/v4';
 import findProcess = require('find-process');
-import * as fs from "fs-extra";
+import * as fs from 'fs-extra';
+import { getCredentials, getUserFromCredentials } from './authentication-server';
 
 async function setupTaskWithConfig(cli: Command, taskName: string, paths: IPathMapping, config: IApiCliConfig) {
-  const {cwd, capturesPath, specStorePath} = paths;
+  const { cwd, capturesPath, specStorePath } = paths;
   const task = config.tasks[taskName];
   if (!task) {
     return cli.log(colors.red(`No task ${colors.bold(taskName)} found in optic.yml`));
@@ -38,12 +39,19 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
   }
 
   const daemonState = await ensureDaemonStarted(lockFilePath);
-
   const apiBaseUrl = `http://localhost:${daemonState.port}/api`;
   developerDebugLogger(`api base url: ${apiBaseUrl}`);
   const cliClient = new Client(apiBaseUrl);
+
+  const credentials = await getCredentials();
+  if (credentials) {
+    const user = await getUserFromCredentials(credentials);
+    await cliClient.setIdentity(user)
+  }
+
   const cliSession = await cliClient.findSession(cwd, startConfig);
-  developerDebugLogger({cliSession});
+  developerDebugLogger({ cliSession });
+
   const uiBaseUrl = makeUiBaseUrl(daemonState);
   const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs`;
   cli.log(fromOptic(`Review the API Diff live at ${uiUrl}`));
@@ -70,13 +78,13 @@ ${blockers.map(x => `[pid ${x.pid}]: ${x.cmd}`).join('\n')}
 
     const specAsBuffer = await fs.readFile(specStorePath);
     if (await checkDiffOrUnrecognizedPath(specAsBuffer.toString(), capture.samples)) {
-      const shouldBeNodePath = process.argv[0]
+      const shouldBeNodePath = process.argv[0];
       const uiUrl = `${uiBaseUrl}/apis/${cliSession.session.id}/diffs/${captureId}`;
-      const notifyScriptPath = path.resolve(__dirname, '../../scripts/notify.js')
-      cp.spawn(shouldBeNodePath, [notifyScriptPath, uiUrl], {detached: true, stdio: ['ignore', null, null]});
-      cli.log(fromOptic(`Observed Unexpected API Behavior. Click here to review: ${uiUrl}`))
+      const notifyScriptPath = path.resolve(__dirname, '../../scripts/notify.js');
+      cp.spawn(shouldBeNodePath, [notifyScriptPath, uiUrl], { detached: true, stdio: ['ignore', null, null] });
+      cli.log(fromOptic(`Observed Unexpected API Behavior. Click here to review: ${uiUrl}`));
     } else {
-      cli.log(fromOptic(`All API interactions followed your specification.`))
+      cli.log(fromOptic(`All API interactions followed your specification.`));
     }
   }
 }

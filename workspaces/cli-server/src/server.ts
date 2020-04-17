@@ -8,14 +8,11 @@ import { Socket } from 'net';
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import { CapturesHelpers, ExampleRequestsHelpers, makeRouter } from './routers/spec-router';
-import { getUser, makeAuthenticationServer } from './authentication';
-//@ts-ignore
 import { basePath } from '@useoptic/ui';
 
 export const log = fs.createWriteStream('./.optic-daemon.log');
 
 export interface ICliServerConfig {
-  jwtSecret: string
 }
 
 export interface IOpticExpressRequestAdditions {
@@ -51,7 +48,6 @@ export const shutdownRequested = 'cli-server:shutdown-requested';
 
 class CliServer {
   private server!: http.Server;
-  private authServer!: http.Server;
   public events: EventEmitter = new EventEmitter();
   private connections: Socket[] = [];
 
@@ -71,12 +67,21 @@ class CliServer {
   makeServer() {
     const app = express();
     const sessions: ICliServerSession[] = [];
+    let user: object | null;
 
-    // share identity with webapp
-    app.get('/identity', async (req, res: express.Response) => {
-      const user = await getUser();
+    app.get('/api/identity', async (req, res: express.Response) => {
       if (user) {
-        res.json(user);
+        res.json({ user });
+      } else {
+        res.sendStatus(404);
+      }
+    });
+    app.put('/api/identity', bodyParser.json({ limit: '5kb' }), async (req, res: express.Response) => {
+      if (req.body.user) {
+        user = req.body.user;
+      }
+      if (user) {
+        res.sendStatus(202).json({});
       } else {
         res.sendStatus(404);
       }
@@ -163,14 +168,10 @@ class CliServer {
           this.connections = this.connections.filter(c => c !== connection);
         });
       });
-
-      this.authServer = makeAuthenticationServer();
-
     });
   }
 
   async stop() {
-    this.authServer.close();
     if (this.server) {
       await new Promise((resolve) => {
         log.write(`server closing ${this.connections.length} open\n`);

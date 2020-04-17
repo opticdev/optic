@@ -43,7 +43,7 @@ class CliDaemon {
   }
 
   async startApiServer() {
-    this.apiServer = new CliServer({jwtSecret: 'notverysecret'});
+    this.apiServer = new CliServer({});
     this.apiServer.events.on(shutdownRequested, () => {
       userDebugLogger('shutting down daemon');
       this.stop();

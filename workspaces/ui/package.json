@@ -15,6 +15,7 @@
     "@types/react-dom": "^16.9.6",
     "@typescript-eslint/eslint-plugin": "1.6.0",
     "@typescript-eslint/parser": "1.6.0",
+    "@useoptic/cli-client": "0.2.1",
     "@useoptic/domain": "0.2.1",
     "bottleneck": "^2.19.5",
     "camelcase": "^5.2.0",

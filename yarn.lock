@@ -4923,6 +4923,7 @@ color-string@^1.5.2:
     color-name "^1.0.0"
     simple-swizzle "^0.2.2"
 
+color@^3.0.0, color@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/color/-/color-3.1.2.tgz#68148e7f85d41ad7649c5fa8c8106f098d229e10"
   integrity sha512-vXTJhHebByxZn3lDvDJYw4lR5+uB3vuoHsuYA5AKuxRVn5wzzIfQKGLBmgdVRHKTJYeK5rvJcHnrd0Li49CFpg==
@@ -10498,11 +10499,6 @@ nice-try@^1.0.4:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-1.0.5.tgz#a3378a7696ce7d223e88fc9b764bd7ef1089e366"
   integrity sha512-1nh45deeb5olNY7eX82BkPO7SSxR5SSYJiPTrTdFUVYwAl8CKMA5N9PjTYkHiRjisVcxcQ1HXdLhx2qxxJzLNQ==
-
-nice-try@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/nice-try/-/nice-try-2.0.1.tgz#7099dfc79b1fe8ac04870288385217a48a5d6e25"
-  integrity sha512-+F6drVcPo6ABeuxhTieYy8aH/JkyrxM0g2nNK9p9mIHAVypyKqPr2fC2qLNNmVUtMWGGXSIJSJQAjpQ+B8bllg==
 
 no-case@^2.2.0:
   version "2.3.2"
