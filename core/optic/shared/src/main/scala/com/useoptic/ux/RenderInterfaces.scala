@@ -91,10 +91,9 @@ object ShapaeRenderInterfaces {
 
   case class SpecField(fieldName: String, specFieldId: SpecFieldId, expectedShape: SpecShapeId, diffs: Set[DiffResult])
 
-  case class SpecArray(specArrayId: SpecShapeId, specArrayItemId: SpecShapeId, diffs: Set[DiffResult]) extends SpecShape {
+  case class SpecArray(specArrayId: SpecShapeId, specArrayItemId: SpecShapeId, name: RenderName, diffs: Set[DiffResult]) extends SpecShape {
     override def specShapeId: SpecShapeId = specArrayId
     def baseShapeId: ShapeId = ListKind.baseShapeId
-    def name: RenderName = RenderName(Seq(NameComponent(ListKind.name, ListKind.color)))
   }
 
   case class SpecPrimitive(specShapeId: SpecShapeId, baseShapeId: String, name: RenderName, diffs: Set[DiffResult]) extends SpecShape

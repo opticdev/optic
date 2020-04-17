@@ -286,7 +286,7 @@ export const EndpointDocs = (props) => {
                                    <ShapeBox header={<BreadcumbX
                                      itemStyles={{fontSize: 13, color: 'white'}}
                                      location={['Request Body', contentType]}/>}>
-                                     {/*<ShapeOnlyViewer preview={renderedShape}/>*/}
+                                     <ShapeOnlyViewer preview={renderedShape}/>
                                    </ShapeBox>
                                  );
                                }}>
@@ -315,7 +315,7 @@ export const EndpointDocs = (props) => {
                                    <ShapeBox header={<BreadcumbX
                                      itemStyles={{fontSize: 13, color: 'white'}}
                                      location={[`${statusCode} Response Body`, contentType]}/>}>
-                                     {/*<ShapeOnlyViewer preview={renderedShape}/>*/}
+                                     <ShapeOnlyViewer preview={renderedShape}/>
                                    </ShapeBox>
                                  );
                                  // return <div>{statusCode} {contentType}</div>;
